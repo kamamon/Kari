@@ -9,7 +9,7 @@
 - 素材ビューア: https://kamamon.github.io/Kari/viewer.html
 - 設計書: [docs/source/VEILBOUND_HUNTERS_design_v1.0.pdf](docs/source/VEILBOUND_HUNTERS_design_v1.0.pdf)
 
-## いまの段階: v0.2.1（M2 前半: ガルドロス戦）
+## いまの段階: v0.2.3（M2 前半: ガルドロス戦）
 
 設計書の開発段階 M0（基盤）・M1（戦闘）と、M2（狩猟）の前半まで。**見た目・動き・音はすべて仮素材**です。
 
@@ -72,7 +72,7 @@ npm run smoke      # 本番ビルドをヘッドレス Chrome で操作する検
 | `public/data/` | 技・軌道・武器・モンスター・依頼・マップのデータ（JSON、読み込み時に検証） |
 | `docs/` | 仕様・決定の記録・素材台帳・アニメーション規格・引き継ぎ・試験・ChatGPT への依頼文 |
 | `art-source/` | 原画などの編集原本（配信物には含めない） |
-| `tools/` `tests/` | 検査スクリプト / 自動テスト |
+| `tools/` `tests/` | 検査スクリプト、Blender 用のスクリプト（`tools/blender/`）/ 自動テスト |
 
 ## 公開（GitHub Pages）
 
