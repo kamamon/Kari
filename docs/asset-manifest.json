@@ -64,7 +64,7 @@
       "id": "audio.se.placeholder_synth", "name": "仮の効果音一式（合成音）", "type": "audio", "use": "M1 の効果音と環境音（風）",
       "owner": "ChatGPT（音の役割設計）→ 音声制作ツール → Claude（接続）", "status": "planned", "version": 0, "path": null,
       "source": "Web Audio でコード合成", "terms": "本作オリジナル",
-      "ids": ["hb_swing_01", "hb_swing_02", "hb_draw_01", "hb_sheathe_01", "roll_01", "hit_rock", "hit_shell", "hit_hide", "part_break", "guard", "guard_break", "hurt", "evade", "charge_1", "charge_2", "charge_3", "dummy_warn_01", "dummy_swing_01", "ground_slam", "monster_dead", "no_stamina", "ui", "galdros_roar", "galdros_warn", "galdros_swing", "galdros_scrape", "galdros_charge", "galdros_rumble", "rock_impact", "part_sever", "monster_topple", "hunt_clear", "hunt_fail"],
+      "ids": ["hb_swing_01", "hb_swing_02", "hb_draw_01", "hb_sheathe_01", "roll_01", "hit_rock", "hit_shell", "hit_hide", "part_break", "guard", "guard_break", "hurt", "evade", "charge_1", "charge_2", "charge_3", "dummy_warn_01", "dummy_swing_01", "ground_slam", "monster_dead", "no_stamina", "ui", "galdros_roar", "galdros_warn", "galdros_swing", "galdros_scrape", "galdros_charge", "galdros_rumble", "galdros_step", "rock_impact", "part_sever", "monster_topple", "hunt_clear", "hunt_fail"],
       "clips": [], "dependsOn": [],
       "placeholder": { "kind": "procedural", "source": "src/core/audio.ts", "note": "音声ファイルは 1 つも無い。BGM は未制作。" },
       "verification": "仮素材: 空振りは振り音だけ、命中時だけ材質別の命中音が鳴ることを確認。実機の音量バランスは未確認。"

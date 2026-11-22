@@ -7,7 +7,7 @@ import { AudioSystem } from './core/audio';
 import type { Content } from './data/schemas';
 import { guardSurface, installGestureGuard } from './input/gestureGuard';
 import { SettingsStore } from './save/settings';
-import { fullscreenHint } from './ui/fullscreen';
+import { enableSwipeToShrinkBars, fullscreenHint } from './ui/fullscreen';
 
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
 
@@ -24,7 +24,8 @@ async function boot(): Promise<void> {
   const startBtn = $<HTMLButtonElement>('boot-start');
   const retryBtn = $<HTMLButtonElement>('boot-retry');
   const hint = fullscreenHint();
-  $('boot-note').textContent = `v${APP_VERSION} (${BUILD_ID}) ／ 仮モデル・仮の音で動作を確かめる段階です${hint ? `\n${hint}` : ''}`;
+  const swipe = enableSwipeToShrinkBars();
+  $('boot-note').textContent = `v${APP_VERSION} (${BUILD_ID}) ／ 仮モデル・仮の音で動作を確かめる段階です${hint ? `\n${hint}` : ''}${swipe ? '\nタブのまま遊ぶ場合: この画面を上へなぞると、上の欄が小さくなることがあります。' : ''}`;
   startBtn.hidden = true;
   retryBtn.hidden = true;
 

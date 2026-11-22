@@ -156,13 +156,14 @@ export class Geo {
   get count(): number {
     return this.pos.length / 3;
   }
-  vert(p: Vector3, n: Vector3, c: RGB, u: number, v: number, b0: number, b1: number, w1: number, part: number): number {
+  /** b2 / w2 は 3 本目の骨（呼吸でふくらむ胸など）。w2 を先に取り、残りを b0 と b1 で分ける。 */
+  vert(p: Vector3, n: Vector3, c: RGB, u: number, v: number, b0: number, b1: number, w1: number, part: number, b2 = 0, w2 = 0): number {
     this.pos.push(p.x, p.y, p.z);
     this.nor.push(n.x, n.y, n.z);
     this.col.push(c[0], c[1], c[2]);
     this.uv.push(u, v);
-    this.si.push(b0, b1, 0, 0);
-    this.sw.push(1 - w1, w1, 0, 0);
+    this.si.push(b0, b1, b2, 0);
+    this.sw.push((1 - w1) * (1 - w2), w1 * (1 - w2), w2, 0);
     this.part.push(part);
     return this.count - 1;
   }
@@ -202,6 +203,8 @@ export interface Ring {
   part: number;
 }
 export interface LoftOpts {
+  /** 3 本目の骨と、その重み（頂点ごと）。 */
+  third?: { bone: number; weight: (ring: Ring, a: number, p: Vector3) => number };
   seg: number;
   /** 断面の角ばり。2 で楕円、大きいほど四角に近い */
   exponent?: number;
@@ -264,7 +267,7 @@ export function loft(g: Geo, rings: Ring[], o: LoftOpts): void {
       if (n.lengthSq() < 1e-12) n.copy(out);
       n.normalize();
       if (n.dot(out) < 0) n.negate();
-      g.vert(p, n, o.color(p, n, r, A[kk]!), (k / seg) * uRep, vAcc, r.b0, r.b1, r.w1, r.part);
+      g.vert(p, n, o.color(p, n, r, A[kk]!), (k / seg) * uRep, vAcc, r.b0, r.b1, r.w1, r.part, o.third?.bone ?? 0, o.third ? o.third.weight(r, A[kk]!, p) : 0);
     }
   }
   // 面の向き: 最初の四角形の法線が外を向くように決める
@@ -436,4 +439,19 @@ export function horn(g: Geo, base: Vector3, dir: Vector3, len: number, radius: n
     rings.push({ c, right, up, rx: r, top: r, bottom: r, b0: bone, b1: bone, w1: 0, part });
   }
   loft(g, rings, { seg: 7, color: (_p, _n, _r, _a) => color, uRepeat: 1, vScale: 0.3 });
+}
+
+/** 楕円体（目玉・こぶ・岩の塊）。axis の向きに長さ len、太さ rx × ry。 */
+export function blob(g: Geo, center: Vector3, axis: Vector3, len: number, rx: number, ry: number, color: (p: Vector3, n: Vector3) => RGB, bone: number, part: number, seg = 8, steps = 5, b1 = bone, w1 = 0): void {
+  const d = axis.clone().normalize();
+  const ref = Math.abs(d.y) < 0.9 ? new Vector3(0, 1, 0) : new Vector3(1, 0, 0);
+  const right = new Vector3().crossVectors(ref, d).normalize();
+  const up = new Vector3().crossVectors(d, right).normalize();
+  const rings: Ring[] = [];
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const s = Math.max(0.03, Math.sin(Math.PI * (0.04 + 0.92 * t)));
+    rings.push({ c: center.clone().addScaledVector(d, (t - 0.5) * len), right, up, rx: rx * s, top: ry * s, bottom: ry * s, b0: bone, b1, w1, part });
+  }
+  loft(g, rings, { seg, uRepeat: 1, vScale: 0.4, color: (p, n) => color(p, n) });
 }

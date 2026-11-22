@@ -11,6 +11,13 @@ export interface MonsterRigCtx {
   dt: number;
   time: number;
   content: Content;
+  /** 目で追う相手（狩人）の位置。無ければ正面を向く。 */
+  lookAt?: { x: number; y: number; z: number };
+  /** 見た目の側から出す効果（足音・土ぼこり）。戦闘の計算には関わらない。 */
+  fx?: {
+    footfall(x: number, y: number, z: number, strength: number): void;
+    puff(x: number, y: number, z: number, amount: number): void;
+  };
 }
 
 /** モンスターの見た目の共通の口。正式モデル（GLB）へ替える時も、この形に合わせる。 */
@@ -19,6 +26,8 @@ export interface MonsterRig {
   /** モンスターに付いて動かない物（切り落とした尾など）。シーンへ直接置く。 */
   readonly extras?: Group[];
   hitFlash(partIndex: number): void;
+  /** 命中した位置（ワールド座標）に応じた、のけぞり。 */
+  hitReact?(partIndex: number, wx: number, wz: number, strength?: number): void;
   update(m: MonsterState, c: MonsterRigCtx): void;
   placeSevered?(x: number, y: number, z: number, yaw: number): void;
 }

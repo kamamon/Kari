@@ -49,6 +49,23 @@ export class GameView {
   private monsterShadow = blobShadow(1.7);
   private phase = 0;
   private time = 0;
+  /** 見た目の側から鳴らす音（モンスターの足音など）。App が音声へつなぐ。 */
+  onSound: ((id: string, intensity: number) => void) | null = null;
+  /** モンスターの見た目が出す効果: 足音と土ぼこり。近いほど大きく、画面も少し揺れる。 */
+  private monsterFx = {
+    px: 0,
+    pz: 0,
+    footfall: (x: number, y: number, z: number, strength: number): void => {
+      this.dust.emit(Math.round(3 + strength * 4), { x, y: y + 0.12, z }, 1.4 + strength, 0.5, 0.7, [0.62, 0.6, 0.54], 0.7);
+      const near = Math.max(0, 1 - Math.hypot(x - this.monsterFx.px, z - this.monsterFx.pz) / 16);
+      if (near <= 0) return;
+      this.cam.addShake(0.07 * strength * near * near);
+      this.onSound?.('galdros_step', strength * near);
+    },
+    puff: (x: number, y: number, z: number, amount: number): void => {
+      this.dust.emit(Math.round(2 + amount * 2), { x, y, z }, 1.2, 0.5, 0.6, [0.7, 0.68, 0.62], 0.5);
+    },
+  };
   private renderY = 0;
   private poseKey = '';
   private lastPose: BodyPose = emptyPose();
@@ -134,6 +151,7 @@ export class GameView {
           this.sparks.emit(10 + e.chargeLevel * 6, e.pos, 4.5 + e.chargeLevel, 1.6, 0.34, c);
           this.dust.emit(3, e.pos, 1.2, 0.4, 0.5, [0.6, 0.6, 0.55], 0.6);
           this.monsterRig?.hitFlash(e.partIndex);
+          this.monsterRig?.hitReact?.(e.partIndex, e.pos.x, e.pos.z, 0.8 + e.chargeLevel * 0.3);
           this.cam.addShake(0.22 + e.chargeLevel * 0.12);
           break;
         }
@@ -295,7 +313,9 @@ export class GameView {
       const mp = lerpV(m.prevPos, m.pos, alpha);
       this.monsterRig.root.position.set(mp.x, mp.y, mp.z);
       this.monsterRig.root.rotation.y = m.prevYaw + angleDiff(m.prevYaw, m.yaw) * alpha;
-      this.monsterRig.update(m, { alpha, dt, time: this.time, content });
+      this.monsterFx.px = pos.x;
+      this.monsterFx.pz = pos.z;
+      this.monsterRig.update(m, { alpha, dt, time: this.time, content, lookAt: pos, fx: this.monsterFx });
       this.monsterShadow.position.set(mp.x, sim.world.groundHeight(mp.x, mp.z) + 0.03, mp.z);
     }
     this.syncHazards(sim);

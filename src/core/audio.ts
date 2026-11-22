@@ -8,7 +8,7 @@ type Bus = 'se' | 'bgm' | 'env';
 export const SOUND_IDS = [
   'hb_swing_01', 'hb_swing_02', 'hb_draw_01', 'hb_sheathe_01', 'roll_01', 'hit_rock', 'hit_shell', 'hit_hide', 'part_break', 'guard', 'guard_break',
   'hurt', 'evade', 'charge_1', 'charge_2', 'charge_3', 'dummy_warn_01', 'dummy_swing_01', 'ground_slam', 'monster_dead', 'no_stamina', 'ui',
-  'galdros_roar', 'galdros_warn', 'galdros_swing', 'galdros_scrape', 'galdros_charge', 'galdros_rumble', 'rock_impact', 'part_sever', 'monster_topple',
+  'galdros_roar', 'galdros_warn', 'galdros_swing', 'galdros_scrape', 'galdros_charge', 'galdros_rumble', 'galdros_step', 'rock_impact', 'part_sever', 'monster_topple',
   'hunt_clear', 'hunt_fail',
 ] as const;
 
@@ -225,6 +225,11 @@ export class AudioSystem {
       case 'galdros_rumble':
         this.tone('sine', 48, 40, 0.9, 0.6);
         this.noiseBurst(0.9, 'lowpass', 260, 90, 0.5);
+        break;
+      case 'galdros_step':
+        // 重い足音: 低い鈍い音と、砂利を踏む短い雑音
+        this.tone('sine', 74, 38, 0.16, 0.5 * k);
+        this.noiseBurst(0.12, 'lowpass', 420, 120, 0.3 * k);
         break;
       case 'rock_impact':
         this.tone('sine', 120, 36, 0.4, 0.8 * k);
