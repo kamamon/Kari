@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "actions": [
+    {
+      "schemaVersion": 1,
+      "actionId": "player.common.roll",
+      "clip": "common_roll_01",
+      "tickRate": 60, "durationTicks": 36,
+      "phases": [
+        {"id":"startup", "from":0, "to":3},
+        {"id":"invulnerable", "from":3, "to":11},
+        {"id":"recovery", "from":11, "to":36}
+      ],
+      "rootMotion": {"mode":"controller", "curveId":"roll_std"},
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [
+        {"tick":0, "type":"sound", "id":"roll_01"}
+      ],
+      "onFinish":"keep",
+      "staminaCost": 25,
+      "invulnerable": [{"from":3, "to":11}]
+    }
+  ]
+}

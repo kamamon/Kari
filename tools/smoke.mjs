@@ -1,0 +1,400 @@
+// 本番ビルドをヘッドレス Chrome で起動し、実際に操作して画面を保存する簡易検査。
+// 使い方: npm run build && npm run smoke   （Chrome が必要。CI では実行しない）
+import { spawn } from 'node:child_process';
+import { mkdirSync } from 'node:fs';
+import { chromium } from 'playwright-core';
+
+const OUT = new URL('./out/', import.meta.url).pathname;
+mkdirSync(OUT, { recursive: true });
+const PORT = 4179;
+const BASE = process.env.SMOKE_BASE ?? '/Kari/';
+
+const server = spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--port', String(PORT), '--strictPort', '--base', BASE], { stdio: 'pipe' });
+await new Promise((resolve, reject) => {
+  const t = setTimeout(() => reject(new Error('preview が起動しない')), 20000);
+  server.stdout.on('data', (d) => {
+    if (String(d).includes('Local')) {
+      clearTimeout(t);
+      resolve();
+    }
+  });
+  server.stderr.on('data', (d) => process.stderr.write(d));
+});
+
+const browser = await chromium.launch({
+  executablePath: process.env.CHROME ?? '/usr/bin/google-chrome',
+  args: ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--autoplay-policy=no-user-gesture-required'],
+});
+const errors = [];
+let failed = false;
+const check = (name, ok, detail = '') => {
+  console.log(`${ok ? 'OK  ' : 'FAIL'} ${name}${detail ? '  ' + detail : ''}`);
+  if (!ok) failed = true;
+};
+
+async function open(viewport, touch) {
+  const ctx = await browser.newContext({ viewport, hasTouch: touch, isMobile: touch, deviceScaleFactor: touch ? 2 : 1 });
+  const page = await ctx.newPage();
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('veilbound-hunters:prod:settings')) {
+      localStorage.setItem('veilbound-hunters:prod:settings', JSON.stringify({ schemaVersion: 1, renderScale: 0.65, shadows: false }));
+    }
+  });
+  page.on('console', (m) => {
+    if (m.type() === 'error') errors.push(m.text());
+  });
+  page.on('pageerror', (e) => errors.push(String(e)));
+  page.on('requestfailed', (r) => errors.push(`requestfailed ${r.url()}`));
+  page.on('response', (r) => {
+    if (r.status() >= 400) errors.push(`${r.status()} ${r.url()}`);
+  });
+  await page.goto(`http://localhost:${PORT}${BASE}`);
+  await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
+  return { ctx, page };
+}
+
+const state = (page) =>
+  page.evaluate(() => {
+    const s = window.__vh.sim;
+    const p = s.player;
+    const m = s.monsters[0];
+    return { tick: s.tick, x: p.pos.x, z: p.pos.z, y: p.pos.y, hp: p.hp, st: p.stamina, mode: p.mode, drawn: p.drawn, action: p.action?.def.actionId ?? null, mhp: m?.hp, hits: s.hitCount, taken: s.damageTaken };
+  });
+
+/** 条件が成り立つまで待つ（ソフトウェア描画は遅いので、固定の待ち時間に頼らない）。 */
+async function until(page, fn, timeout = 20000) {
+  try {
+    await page.waitForFunction(fn, null, { timeout, polling: 50 });
+    return true;
+  } catch {
+    return false;
+  }
+}
+const click = async (page, button = 'left') => {
+  await page.mouse.down({ button });
+  await page.waitForTimeout(80);
+  await page.mouse.up({ button });
+};
+const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free');
+
+// ---- PC（キーボード・マウス） ----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false);
+  await page.screenshot({ path: `${OUT}01_boot.png` });
+  await page.click('#boot-start');
+  check('起動して simulation が進む', await until(page, () => window.__vh?.sim.tick > 10));
+  await page.screenshot({ path: `${OUT}02_start.png` });
+  // 技を 1 つずつ確かめる間は、標的の攻撃を止めておく（防御・被弾の確認の所で再開する）
+  await page.evaluate(() => (window.__vh.sim.monsters[0].aiEnabled = false));
+
+  await page.keyboard.down('KeyW');
+  check('W で前進する', await until(page, () => window.__vh.sim.player.pos.z > -16));
+  await page.keyboard.down('ShiftLeft');
+  check('Shift の疾走でスタミナが減る', await until(page, () => window.__vh.sim.player.stamina < 92));
+  await page.screenshot({ path: `${OUT}03_sprint.png` });
+  await page.keyboard.up('ShiftLeft');
+  // 標的（z=6、胴の半径 1.3）の手前で止まるまで押し続ける
+  await until(page, () => window.__vh.sim.player.pos.z > 4.2);
+  await page.waitForTimeout(600);
+  await page.keyboard.up('KeyW');
+  const s3 = await state(page);
+  check('標的の手前で止まる（胴を抜けない）', Math.abs(s3.z - (6 - 1.3 - 0.38)) < 0.05, `z ${s3.z.toFixed(2)} (期待 4.32)`);
+  await page.screenshot({ path: `${OUT}04_at_target.png` });
+
+  await idle(page);
+  await page.evaluate(() => {
+    const p = window.__vh.sim.player;
+    p.pos.x = 0;
+    p.pos.z = 2.0;
+    p.yaw = 0;
+    window.__vh.view.cam.snap(0.9);
+  });
+  await page.keyboard.press('F3');
+  await page.mouse.move(640, 360);
+  await click(page);
+  await until(page, () => window.__vh.sim.player.action?.tick >= 22);
+  await page.screenshot({ path: `${OUT}05_draw_slash.png` });
+  await idle(page);
+  const s4 = await state(page);
+  check('抜刀斬りで抜刀状態になり、命中する', s4.drawn && s4.hits === 1, `hits ${s4.hits} 標的HP ${s4.mhp}`);
+
+  await click(page);
+  await until(page, () => window.__vh.sim.player.action?.tick >= 17);
+  await page.screenshot({ path: `${OUT}06_overhead_raise.png` });
+  await until(page, () => window.__vh.sim.player.action?.tick >= 27);
+  await page.screenshot({ path: `${OUT}07_overhead_hit.png` });
+  await idle(page);
+  check('縦斬りが 1 回だけ命中する', (await state(page)).hits === 2);
+
+  await click(page, 'right');
+  await until(page, () => window.__vh.sim.player.action?.tick >= 22);
+  await page.screenshot({ path: `${OUT}08_side_sweep.png` });
+  await idle(page);
+  check('横薙ぎが 1 回だけ命中する', (await state(page)).hits === 3);
+
+  // 溜め: 押し続けて段階 2 で離す
+  await page.mouse.down();
+  await until(page, () => window.__vh.sim.player.action?.chargeLevel >= 2);
+  await page.screenshot({ path: `${OUT}09_charge.png` });
+  await page.mouse.up();
+  await idle(page);
+  const s5 = await state(page);
+  const last = await page.evaluate(() => window.__vh.sim.recentHits.at(-1));
+  // 段階 2 は 92、離すのが遅れて段階 3 に入ると 117（通常の縦斬りは 56）
+  check('溜め斬り（段階 2 以上）が命中し、威力が上がる', s5.hits === 4 && (last.damage === 92 || last.damage === 117), `damage ${last?.damage} part ${last?.partId}`);
+
+  // 防御: 標的の攻撃を再開して正面で受ける
+  await page.evaluate(() => {
+    const m = window.__vh.sim.monsters[0];
+    m.aiEnabled = true;
+    m.cooldown = 0;
+    const p = window.__vh.sim.player;
+    p.pos.x = -0.6;
+    p.pos.z = 3.6;
+    p.yaw = 0;
+  });
+  await page.keyboard.down('KeyC');
+  await until(page, () => window.__vh.sim.monsters[0].action?.tick >= 40);
+  await page.screenshot({ path: `${OUT}10_guard_telegraph.png` });
+  const guarded = await until(page, () => window.__vh.sim.damageTaken > 0);
+  await page.screenshot({ path: `${OUT}11_guard_hit.png` });
+  await page.keyboard.up('KeyC');
+  const s6 = await state(page);
+  check('正面の防御で受け止める（削り 6）', guarded && s6.taken === 6 && s6.hp === 94, `被ダメ ${s6.taken} HP ${s6.hp}`);
+
+  // 被弾 → 転倒
+  await idle(page);
+  await page.evaluate(() => (window.__vh.sim.monsters[0].cooldown = 0));
+  await until(page, () => window.__vh.sim.player.mode === 'hurt' && window.__vh.sim.player.hurt.tick > 24);
+  await page.screenshot({ path: `${OUT}12_knockdown.png` });
+  check('無防備なら被弾して転倒する', (await state(page)).hp === 70);
+  await idle(page);
+
+  // 回避
+  await page.keyboard.down('KeyS');
+  await page.keyboard.press('Space');
+  await until(page, () => window.__vh.sim.player.action?.def.actionId === 'player.common.roll' && window.__vh.sim.player.action.tick >= 12);
+  await page.screenshot({ path: `${OUT}13_roll.png` });
+  await idle(page);
+  await page.keyboard.up('KeyS');
+  check('回避でスタミナを 25 使う', (await state(page)).st <= 100);
+  await page.keyboard.press('KeyR');
+  await idle(page);
+  check('R で納刀する', !(await state(page)).drawn);
+  await page.screenshot({ path: `${OUT}14_sheathed.png` });
+
+  // 30/60fps 一致チェック（メニュー → 検証）
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('#menu:not([hidden])');
+  await page.click('.menu-head .tab:nth-child(3)');
+  await page.click('text=確認する');
+  const result = await page.textContent('.menu-body pre');
+  // このテストは途中で位置や標的の状態を直接書き換えているので、「いまの画面との一致」は対象外。60 と 30 の一致だけを見る。
+  check('30/60fps の一致チェック', /結果: 一致/.test(result), result.split('\n')[3]);
+  await page.screenshot({ path: `${OUT}15_menu_verify.png` });
+  await page.click('.menu-head .tab:nth-child(1)');
+  await page.screenshot({ path: `${OUT}16_menu_settings.png` });
+  await page.click('.menu-head .tab:nth-child(2)');
+  await page.screenshot({ path: `${OUT}17_menu_controls.png` });
+  const tickA = (await state(page)).tick;
+  await page.waitForTimeout(400);
+  check('メニュー中は一時停止', (await state(page)).tick === tickA);
+  await page.keyboard.press('Escape');
+
+  // やり直し → 手を加えない操作だけで「いまの画面の状態とも一致」を確かめる
+  await page.evaluate(() => window.__vh.restartTraining());
+  await page.keyboard.down('KeyW');
+  await until(page, () => window.__vh.sim.player.pos.z > 4.2, 40000);
+  await page.keyboard.up('KeyW');
+  await click(page);
+  await idle(page);
+  await click(page, 'right');
+  await idle(page);
+  await page.keyboard.press('Space');
+  await idle(page);
+  await page.keyboard.press('Escape');
+  await page.click('.menu-head .tab:nth-child(3)');
+  await page.click('text=確認する');
+  const result2 = await page.textContent('.menu-body pre');
+  check('記録した入力の再生が、いまの画面の状態と一致', /結果: 一致/.test(result2) && /いまの画面の状態とも一致/.test(result2), result2.split('\n').slice(1, 2).join(''));
+  await page.keyboard.press('Escape');
+
+  // 段差: 東の段々（0.3m ずつ）を登る。高い岩棚（1.4m）は登れない。
+  await page.evaluate(() => {
+    window.__vh.sim.monsters[0].aiEnabled = false;
+    const p = window.__vh.sim.player;
+    p.pos.x = 14;
+    p.pos.z = 20;
+    window.__vh.view.cam.snap(0);
+  });
+  await page.keyboard.down('KeyA');
+  check('小さな段差を登れる（0.9m の段の上へ）', await until(page, () => window.__vh.sim.player.pos.y > 0.85));
+  await page.keyboard.up('KeyA');
+  await page.screenshot({ path: `${OUT}18_steps.png` });
+  await page.evaluate(() => {
+    const p = window.__vh.sim.player;
+    p.pos.x = -24;
+    p.pos.y = 0;
+    p.pos.z = -23;
+    window.__vh.view.cam.snap(0);
+  });
+  await page.keyboard.down('KeyA');
+  await page.waitForTimeout(1500);
+  await page.keyboard.up('KeyA');
+  await page.keyboard.down('KeyD');
+  await until(page, () => window.__vh.sim.player.pos.x < -26.9, 15000);
+  await page.waitForTimeout(800);
+  await page.keyboard.up('KeyD');
+  const s9 = await state(page);
+  // 岩棚の縁は x = -27。1 tick の移動量（約 0.07m）より手前で止まり、上には乗らない。
+  check('高い段差は壁として止まる', s9.y === 0 && s9.x >= -27 && s9.x < -26.9, `x ${s9.x.toFixed(2)} y ${s9.y}`);
+  await page.screenshot({ path: `${OUT}19_ledge.png` });
+  const stats = await page.evaluate(() => ({ ...window.__vh.view.stats(), fps: window.__vh.fps }));
+  console.log(`     描画統計: draw calls ${stats.calls} / triangles ${stats.triangles}（ソフトウェア描画 ${stats.fps.toFixed(0)}fps。実機の値ではない）`);
+  check('描画量が目標内（100 draw calls / 20万 tri）', stats.calls <= 100 && stats.triangles <= 200000, `calls ${stats.calls} tris ${stats.triangles}`);
+  await ctx.close();
+}
+
+// ---- 横向きスマホ（タッチ） ----
+{
+  const { ctx, page } = await open({ width: 844, height: 390 }, true);
+  await page.tap('#boot-start');
+  await until(page, () => window.__vh?.sim.tick > 10);
+  await page.screenshot({ path: `${OUT}20_touch_start.png` });
+  const cdp = await ctx.newCDPSession(page);
+  const touch = (type, points) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: points });
+  // 指 1: 左スティックを上へ / 指 2: 右側ドラッグで視点 / 指 3: 攻撃ボタン。3 本同時。
+  await touch('touchStart', [{ x: 120, y: 280, id: 1 }]);
+  await touch('touchMove', [{ x: 120, y: 215, id: 1 }]);
+  check('タッチ: スティックで移動', await until(page, () => window.__vh.sim.player.pos.z > -17));
+  await touch('touchStart', [{ x: 120, y: 215, id: 1 }, { x: 520, y: 180, id: 2 }]);
+  for (let i = 1; i <= 6; i++) {
+    await touch('touchMove', [{ x: 120, y: 215, id: 1 }, { x: 520 + i * 12, y: 180, id: 2 }]);
+    await page.waitForTimeout(40);
+  }
+  check('タッチ: 移動しながら視点を回せる', await until(page, () => Math.abs(window.__vh.view.cam.yaw) > 0.2));
+  const z1 = (await state(page)).z;
+  const main = await page.evaluate(() => {
+    const r = document.querySelector('.tbtn-main').getBoundingClientRect();
+    return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+  });
+  await touch('touchStart', [{ x: 120, y: 215, id: 1 }, { x: 592, y: 180, id: 2 }, { x: main.x, y: main.y, id: 3 }]);
+  check('タッチ: 移動+視点+攻撃の同時操作', await until(page, () => window.__vh.sim.player.action?.def.actionId === 'player.heavy_blade.draw_slash', 5000), `移動中 z ${z1.toFixed(1)}`);
+  await page.screenshot({ path: `${OUT}21_touch_three_fingers.png` });
+  // 押しっぱなしのまま touchcancel（通知・ジェスチャー等で指が奪われた状況）→ 入力が解除されること
+  await touch('touchCancel', []);
+  await page.waitForTimeout(300);
+  const held = await page.evaluate(() => window.__vh.hub.sample(0));
+  check('タッチ: cancel で押しっぱなしが残らない', held.held === 0 && held.moveX === 0 && held.moveZ === 0, JSON.stringify(held));
+  await idle(page);
+  await page.screenshot({ path: `${OUT}22_touch_after.png` });
+
+  // 同じボタンに 2 本の指 → 押下は 1 回だけ
+  const starts0 = await page.evaluate(() => window.__vh.recorded.filter((f) => f.pressed & 1).length);
+  await touch('touchStart', [{ x: main.x - 8, y: main.y, id: 1 }]);
+  await touch('touchStart', [{ x: main.x - 8, y: main.y, id: 1 }, { x: main.x + 8, y: main.y, id: 2 }]);
+  await page.waitForTimeout(200);
+  await touch('touchEnd', []);
+  await page.waitForTimeout(200);
+  const starts1 = await page.evaluate(() => window.__vh.recorded.filter((f) => f.pressed & 1).length);
+  check('タッチ: 同じボタンへ 2 本指でも二重発火しない', starts1 - starts0 === 1, `押下 ${starts1 - starts0} 回`);
+  await idle(page);
+
+  // HUD のボタンはタッチ操作の層に隠れず押せる
+  await page.tap('.hud-btn:nth-of-type(1)');
+  check('タッチ: 「検証」ボタンで検証表示が出る', await until(page, () => !document.getElementById('verify').hidden, 3000));
+  await page.screenshot({ path: `${OUT}25_touch_verify.png` });
+  await page.tap('.hud-btn:nth-of-type(1)');
+  await page.tap('.hud-btn:nth-of-type(2)');
+  check('タッチ: ☰ でメニューが開く', await until(page, () => !document.getElementById('menu').hidden, 3000));
+  await page.screenshot({ path: `${OUT}26_touch_menu.png` });
+  await page.tap('.menu-head .close');
+  check('タッチ: 「戻る」でメニューが閉じる', await until(page, () => document.getElementById('menu').hidden, 3000));
+  // ボタン配置の編集: 回避ボタンを左上へ 40px 動かして保存される
+  await page.tap('.hud-btn:nth-of-type(2)');
+  await page.tap('text=配置を編集');
+  const dodge = await page.evaluate(() => {
+    const r = document.querySelector('.tbtn-dodge').getBoundingClientRect();
+    return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+  });
+  await touch('touchStart', [{ x: dodge.x, y: dodge.y, id: 1 }]);
+  await touch('touchMove', [{ x: dodge.x - 40, y: dodge.y - 40, id: 1 }]);
+  await touch('touchEnd', []);
+  await page.screenshot({ path: `${OUT}27_touch_edit.png` });
+  await page.tap('.edit-bar button:not(.sub)');
+  const moved = await page.evaluate(() => {
+    const r = document.querySelector('.tbtn-dodge').getBoundingClientRect();
+    return { x: r.x + r.width / 2, y: r.y + r.height / 2, saved: JSON.parse(localStorage.getItem('veilbound-hunters:prod:settings')).layout.dodge };
+  });
+  check('タッチ: ボタンをドラッグで動かして保存できる', Math.abs(moved.x - (dodge.x - 40)) < 2 && Math.abs(moved.y - (dodge.y - 40)) < 2 && moved.saved?.dx === -40, JSON.stringify(moved.saved));
+  await page.evaluate(() => window.__vh.store.set({ layout: {} }));
+
+  // 左利き配置
+  await page.evaluate(() => window.__vh.store.set({ leftHanded: true }));
+  await page.waitForTimeout(200);
+  await page.screenshot({ path: `${OUT}23_touch_lefty.png` });
+  await page.evaluate(() => window.__vh.store.set({ leftHanded: false }));
+
+  // 縦持ち → 案内と一時停止 → 横へ戻すと再開
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.waitForTimeout(500);
+  const t0 = (await state(page)).tick;
+  await page.waitForTimeout(400);
+  const rotateShown = await page.evaluate(() => getComputedStyle(document.getElementById('rotate')).display !== 'none');
+  check('縦持ち: 回転案内を表示して一時停止', rotateShown && (await state(page)).tick === t0);
+  await page.screenshot({ path: `${OUT}24_portrait.png` });
+  await page.setViewportSize({ width: 844, height: 390 });
+  check('横向きへ戻すと再開', await until(page, () => window.__vh.sim.tick > 0 && !window.__vh.paused, 5000));
+  const t1 = (await state(page)).tick;
+  check('再開後に simulation が進む', await until(page, `window.__vh.sim.tick > ${t1 + 5}`, 5000));
+  // 回転後も入力が効く
+  await touch('touchStart', [{ x: 120, y: 280, id: 1 }]);
+  await touch('touchMove', [{ x: 120, y: 215, id: 1 }]);
+  const zBefore = (await state(page)).z;
+  check('回転後の入力復帰', await until(page, `Math.abs(window.__vh.sim.player.pos.z - (${zBefore})) + Math.abs(window.__vh.sim.player.pos.x) > 0.5`, 5000));
+  await touch('touchEnd', []);
+  await ctx.close();
+}
+
+// ---- 素材ビューア ----
+{
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+  const page = await ctx.newPage();
+  page.on('console', (m) => {
+    if (m.type() === 'error') errors.push(m.text());
+  });
+  page.on('pageerror', (e) => errors.push(String(e)));
+  page.on('response', (r) => {
+    if (r.status() >= 400) errors.push(`${r.status()} ${r.url()}`);
+  });
+  const shots = [
+    ['30_viewer_idle', ''],
+    ['31_viewer_overhead_raise', '?action=player.heavy_blade.overhead&tick=18&yaw=-1.5708'],
+    ['32_viewer_overhead_active', '?action=player.heavy_blade.overhead&tick=26&yaw=-1.5708'],
+    ['33_viewer_overhead_end', '?action=player.heavy_blade.overhead&tick=34&yaw=-1.5708'],
+    ['34_viewer_side_sweep', '?action=player.heavy_blade.side_sweep&tick=22&yaw=0.6'],
+    ['35_viewer_roll', '?action=player.common.roll&tick=14&yaw=-1.5708'],
+    ['36_viewer_dummy_slam', '?action=monster.training_dummy.slam&tick=52&yaw=-1.2'],
+    ['37_viewer_draw', '?action=player.heavy_blade.draw&tick=4&yaw=2.6'],
+  ];
+  for (const [name, q] of shots) {
+    await page.goto(`http://localhost:${PORT}${BASE}viewer.html${q}`);
+    await page.waitForFunction(() => window.__viewer, null, { timeout: 15000 });
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: `${OUT}${name}.png` });
+  }
+  const text = await page.textContent('#panel');
+  check('ビューア: 仮リグの全高が 1.75m', /全高 1\.7[45]\dm/.test(text), (text.match(/全高 [\d.]+m/) ?? [''])[0]);
+  await page.goto(`http://localhost:${PORT}${BASE}viewer.html?glb=assets/models/ref_cube_1m.glb`);
+  await page.waitForFunction(() => window.__viewer, null, { timeout: 15000 });
+  await page.waitForTimeout(300);
+  const glb = await page.textContent('#panel pre');
+  check('ビューア: 基準 GLB を読み、1m 立方体と +Z 矢印の寸法が合う', /幅 1\.000 \/ 高さ 1\.000 \/ 奥行 2\.000/.test(glb) && /前端 z=1\.500/.test(glb), glb.split('\n')[1]);
+  await page.screenshot({ path: `${OUT}38_viewer_glb.png` });
+  await ctx.close();
+}
+
+check('コンソールエラー・404 なし', errors.length === 0, errors.slice(0, 5).join(' | '));
+await browser.close();
+server.kill();
+process.exit(failed ? 1 : 0);

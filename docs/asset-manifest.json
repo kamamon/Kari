@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-11-22",
+  "note": "素材台帳の正本。3D は planned→concept→modeled→rigged→animated→integrated→approved、2D と音は planned→generated→validated→integrated→approved。path が null の素材はまだファイルが無い。placeholder がある素材は、ゲーム内で仮素材（コードで生成）を使っている。",
+  "assets": [
+    {
+      "id": "model.player.hunter_base", "name": "基準ハンター", "type": "model", "use": "プレイヤー本体（共通骨格 1 体型）",
+      "owner": "ChatGPT（設定画）→ Blender（モデル・リグ・動作）→ Claude（統合）", "status": "planned", "version": 0, "path": null,
+      "source": "未制作。設定画は COPY 12 で依頼する", "terms": "本作オリジナル",
+      "dims": "身長 1.75m / Y 上 / +Z 前", "tris": "目標 1〜2 万", "bones": "docs/animation-contract.md の人型骨格 + socket 4",
+      "clips": ["common_roll_01", "hb_attack_vertical_01", "hb_attack_side_01", "hb_draw_slash_01", "hb_draw_01", "hb_sheathe_01"],
+      "clipsPlanned": ["common_idle_01", "common_walk_01", "common_run_01", "common_sprint_01", "common_flinch_01", "common_knockdown_01", "common_getup_01", "common_dead_01", "hb_idle_01", "hb_walk_01", "hb_guard_01", "hb_guard_recoil_01"],
+      "dependsOn": ["art.player.hunter_base.turnaround"],
+      "placeholder": { "kind": "procedural", "source": "src/render/rig.ts + src/render/poses.ts", "note": "プリミティブを骨の階層に並べた関節付き仮モデル。待機・歩行・防御・被弾は手続き生成、技は手付けのキー姿勢。腕は武器の軌道へ IK で追従。" },
+      "verification": "仮素材: ビューアで全高 1.75m・関節 17・socket 4 を確認。足滑り・接地・握りは未調整（仮）。"
+    },
+    {
+      "id": "model.weapon.heavy_blade.001", "name": "里鍛ちの断岳剣", "type": "model", "use": "断岳剣の初期武器",
+      "owner": "ChatGPT（設定画）→ Blender → Claude", "status": "planned", "version": 0, "path": null,
+      "source": "未制作", "terms": "本作オリジナル",
+      "dims": "握り原点から刃先まで 1.77m / +Y が刃先・X が厚み・Z が刃幅 / 判定は握りから 0.30〜1.75m・半径 0.20m", "tris": "目標 1 千以下", "bones": "なし（socket_hand_r に握り原点を合わせる）",
+      "clips": [], "dependsOn": [],
+      "placeholder": { "kind": "procedural", "source": "src/render/rig.ts buildHeavyBlade()" },
+      "verification": "仮素材: 見える刃と判定カプセルが同じ軌道データから動くことを検証表示で確認。"
+    },
+    {
+      "id": "model.monster.training_dummy", "name": "訓練標的・岩偶", "type": "model", "use": "M1 の部位付き標的（訓練区画専用）",
+      "owner": "Claude", "status": "planned", "version": 0, "path": null,
+      "source": "コードで生成", "terms": "本作オリジナル。正式素材へ置き換える予定は未定（ガルドロス実装後は訓練場専用）",
+      "dims": "全長 約 4.6m / 胴の衝突半径 1.3m", "tris": "約 600", "bones": "なし（腕だけ軌道データで動かす）",
+      "clips": ["dummy_slam_01"], "dependsOn": [],
+      "placeholder": { "kind": "procedural", "source": "src/render/monsterRig.ts", "note": "部位の見た目は当たり形状に合わせてある。頭と背殻は破壊で見た目が変わる。" },
+      "verification": "仮素材: 部位判定の重ね表示で見た目と一致を確認。"
+    },
+    {
+      "id": "env.basin.training", "name": "風礫盆地・外縁（訓練区画）", "type": "env", "use": "M0〜M1 の戦闘区画 80m×60m",
+      "owner": "ChatGPT（環境原画）→ Blender → Claude", "status": "planned", "version": 0, "path": null,
+      "source": "未制作。環境原画は COPY 15 で依頼する", "terms": "本作オリジナル",
+      "dims": "80m × 60m。寸法と衝突は public/data/maps/basin_training.json が正本", "tris": "仮: 約 1.2 万（草・小石のインスタンス含む）", "bones": "なし",
+      "clips": [], "dependsOn": ["art.env.basin.overview"],
+      "placeholder": { "kind": "procedural", "source": "src/render/arena.ts", "note": "地面・岩・段差・外周の岩壁・キャンプ・遠景をコードで生成。" },
+      "verification": "仮素材: 壁・岩・高い段差を抜けないこと、0.3m の段を登れることを自動検査で確認。"
+    },
+    {
+      "id": "model.ref.cube_1m", "name": "基準 GLB（1m 立方体と +Z 矢印）", "type": "model", "use": "素材ビューアで単位・軸を照合する物差し。GLB 読み込み経路の確認用",
+      "owner": "Claude", "status": "integrated", "version": 1, "path": "assets/models/ref_cube_1m.glb",
+      "source": "tools/make-ref-glb.mjs で生成", "terms": "本作オリジナル",
+      "dims": "立方体 1×1×1m（底面中央が原点）+ 前方 +Z へ 1.5m まで伸びる矢印", "tris": 36, "bones": "なし",
+      "clips": [], "dependsOn": [],
+      "verification": "ビューアで読み込み、大きさ 幅 1.000 / 高さ 1.000 / 奥行 2.000、前端 z=1.500 を確認（2026-11-22）。"
+    },
+    {
+      "id": "audio.se.placeholder_synth", "name": "仮の効果音一式（合成音）", "type": "audio", "use": "M1 の効果音と環境音（風）",
+      "owner": "ChatGPT（音の役割設計）→ 音声制作ツール → Claude（接続）", "status": "planned", "version": 0, "path": null,
+      "source": "Web Audio でコード合成", "terms": "本作オリジナル",
+      "ids": ["hb_swing_01", "hb_swing_02", "hb_draw_01", "hb_sheathe_01", "roll_01", "hit_rock", "hit_shell", "hit_hide", "part_break", "guard", "guard_break", "hurt", "evade", "charge_1", "charge_2", "charge_3", "dummy_warn_01", "dummy_swing_01", "ground_slam", "monster_dead", "no_stamina", "ui"],
+      "clips": [], "dependsOn": [],
+      "placeholder": { "kind": "procedural", "source": "src/core/audio.ts", "note": "音声ファイルは 1 つも無い。BGM は未制作。" },
+      "verification": "仮素材: 空振りは振り音だけ、命中時だけ材質別の命中音が鳴ることを確認。実機の音量バランスは未確認。"
+    },
+
+    { "id": "art.board.style_v1", "name": "アート基準ボード", "type": "image", "use": "以後の画像依頼に必ず添付する見た目の基準", "owner": "ChatGPT", "status": "planned", "version": 0, "path": null, "source": "COPY 10", "terms": "本作オリジナル。既存作品のキャラクター・装備の輪郭・ロゴ・UI を写さない", "dims": "確認用 1 枚", "clips": [], "dependsOn": [], "verification": "未受領" },
+    { "id": "art.monster.galdros.turnaround", "name": "岩殻獣ガルドロス 設定図（正面・左・右・背面）", "type": "image", "use": "M2 のガルドロス 3D 化の資料", "owner": "ChatGPT", "status": "planned", "version": 0, "path": null, "source": "COPY 11", "terms": "本作オリジナル", "dims": "全長 約 5.8m / 肩高 約 2.4m。4 方向を同じ個体・姿勢・縮尺・接地線で。長辺 2048px 目標", "clips": [], "dependsOn": ["art.board.style_v1"], "verification": "未受領" },
+    { "id": "art.player.hunter_base.turnaround", "name": "基準ハンター 設定図（正面・側面・背面）+ 顔と髪", "type": "image", "use": "基準ハンターの 3D 化の資料", "owner": "ChatGPT", "status": "planned", "version": 0, "path": null, "source": "COPY 12", "terms": "本作オリジナル", "dims": "身長 1.75m 基準・A ポーズに近い立ち姿・全身", "clips": [], "dependsOn": ["art.board.style_v1"], "verification": "未受領" },
+    { "id": "art.npc.minagi", "name": "受付ミナギ（全身設定・会話用バストアップ）", "type": "image", "use": "M3 の村 NPC", "owner": "ChatGPT", "status": "planned", "version": 0, "path": null, "source": "COPY 12", "terms": "本作オリジナル", "dims": "全身 1 枚 + バストアップ 1 枚", "clips": [], "dependsOn": ["art.board.style_v1"], "verification": "未受領" },
+    { "id": "art.equip.galdros_set", "name": "岩殻の断岳剣・護刃・防具 1 式", "type": "image", "use": "M3 の大型素材装備の資料", "owner": "ChatGPT", "status": "planned", "version": 0, "path": null, "source": "COPY 13", "terms": "本作オリジナル", "dims": "武器は側面・裏面・握りの拡大。防具は着用した正面・側面・背面", "clips": [], "dependsOn": ["art.board.style_v1", "art.player.hunter_base.turnaround", "art.monster.galdros.turnaround"], "verification": "未受領" },
+    { "id": "icon.item.first6", "name": "素材アイコン 6 点（岩殻片・硬骨・青銅晶脈・前脚甲・回復液・研磨石）", "type": "icon", "use": "M3 の所持品・工房の表示", "owner": "ChatGPT", "status": "planned", "version": 0, "path": null, "source": "COPY 14", "terms": "本作オリジナル", "dims": "1 対象 1 画像・正方形・余白約 10%・実際の alpha 透過。原本 1024px / 実行用 256px", "clips": [], "dependsOn": ["art.board.style_v1"], "verification": "未受領。受領時に Claude がサイズ・alpha・余白を検査する" },
+    { "id": "art.env.basin.overview", "name": "風礫盆地 環境原画（斜め俯瞰・上面図・小物）", "type": "image", "use": "最初の戦闘区画の立体化資料", "owner": "ChatGPT", "status": "planned", "version": 0, "path": null, "source": "COPY 15", "terms": "本作オリジナル", "dims": "約 80m×60m の区画。位置と寸法の正本は地形データ", "clips": [], "dependsOn": ["art.board.style_v1"], "verification": "未受領" },
+    { "id": "art.ui_fx.refs", "name": "UI 枠・選択状態・素材枠 / 刃の軌跡・岩の粉塵・回復の光の見本", "type": "image", "use": "UI 装飾とエフェクトの設計資料", "owner": "ChatGPT", "status": "planned", "version": 0, "path": null, "source": "COPY 16", "terms": "本作オリジナル。文字と数値は焼き込まない", "dims": "透過背景", "clips": [], "dependsOn": ["art.board.style_v1"], "verification": "未受領。実行用の粒子・整列済み素材への変換は別工程" },
+    { "id": "doc.motion.hb_overhead", "name": "断岳剣・縦斬りの動作仕様（7 キー姿勢の表とキー画）", "type": "doc", "use": "Blender でキーフレームを作る資料。仮アニメーションの調整にも使う", "owner": "ChatGPT", "status": "planned", "version": 0, "path": null, "source": "COPY 17", "terms": "本作オリジナル。元作品のモーションを抽出しない", "dims": "player.heavy_blade.overhead / 60Hz / 全 72tick", "clips": ["hb_attack_vertical_01"], "dependsOn": ["art.player.hunter_base.turnaround"], "verification": "未受領" }
+  ]
+}

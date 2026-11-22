@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "families": [
+    {
+      "id": "heavy_blade",
+      "name": "断岳剣",
+      "twoHanded": true,
+      "drawnMoveSpeed": 2.4,
+      "drawnTurnDegPerSec": 300,
+      "ready": { "grip": [-0.18, 1.02, 0.22], "dir": [-0.10, 0.92, -0.38], "planeNormal": [1, 0, 0] },
+      "blade": { "from": 0.30, "to": 1.75, "radius": 0.20 },
+      "actions": {
+        "main": "player.heavy_blade.overhead",
+        "sub": "player.heavy_blade.side_sweep",
+        "drawAttack": "player.heavy_blade.draw_slash",
+        "draw": "player.heavy_blade.draw",
+        "sheathe": "player.heavy_blade.sheathe"
+      },
+      "cancelNames": {
+        "overhead": "player.heavy_blade.overhead",
+        "side_sweep": "player.heavy_blade.side_sweep"
+      },
+      "guard": {
+        "startTicks": 10,
+        "activeFromTick": 5,
+        "endTicks": 14,
+        "recoilTicks": 24,
+        "breakTicks": 60,
+        "arcDegrees": 120,
+        "chipScale": 0.25,
+        "breakDamageScale": 0.7,
+        "turnDegPerSec": 90,
+        "pose": { "grip": [-0.05, 1.05, 0.36], "dir": [0.55, 0.80, 0.10], "planeNormal": [0, 0, 1] }
+      }
+    }
+  ],
+  "weapons": [
+    {
+      "id": "weapon.heavy_blade.001",
+      "family": "heavy_blade",
+      "name": "里鍛ちの断岳剣",
+      "attack": 80,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.heavy_blade.001"
+    }
+  ]
+}

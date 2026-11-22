@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "maxHp": 100,
+  "maxStamina": 100,
+  "radius": 0.38,
+  "height": 1.75,
+  "walkSpeed": 4.0,
+  "sprintSpeed": 6.4,
+  "turnDegPerSec": 720,
+  "sprintCostPerSec": 10,
+  "sprintRestartStamina": 20,
+  "staminaRegenPerSec": 24,
+  "staminaRegenDelayTicks": 50,
+  "inputBufferTicks": 6,
+  "rollActionId": "player.common.roll",
+  "flinchTicks": 30,
+  "knockdownTicks": 84,
+  "knockdownInvulnTicks": 96,
+  "respawnTicks": 210,
+  "critMultiplier": 1.25,
+  "gravity": 22
+}

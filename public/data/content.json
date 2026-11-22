@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "0.1.0",
+  "files": {
+    "actions": ["actions/player_common.json", "actions/heavy_blade.json", "actions/training_dummy.json"],
+    "tracks": ["tracks/heavy_blade.json", "tracks/training_dummy.json"],
+    "curves": "curves.json",
+    "weapons": "weapons.json",
+    "monsters": ["monsters/training_dummy.json"],
+    "maps": ["maps/basin_training.json"],
+    "player": "player.json"
+  }
+}

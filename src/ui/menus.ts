@@ -1,0 +1,225 @@
+// メニュー（設定 / 操作表 / 検証）。設定画面は通常のスクロールを保つ（touch-action を殺さない）。
+import { APP_VERSION, BUILD_ID } from '../core/assets';
+import type { Settings, SettingsStore } from '../save/settings';
+
+export interface MenuHost {
+  closeMenu(): void;
+  startLayoutEdit(): void;
+  restartTraining(): void;
+  resumeAudio(): Promise<boolean>;
+  runDeterminismCheck(): string;
+  audioState(): string;
+}
+
+type Tab = 'settings' | 'controls' | 'verify';
+
+const CONTROLS_HTML = `
+<h3>操作表</h3>
+<table>
+<tr><th>行動</th><th>タッチ</th><th>PC</th><th>ゲームパッド</th></tr>
+<tr><td>移動 / 疾走</td><td>左スティック / 疾走</td><td>WASD / Shift</td><td>左スティック / LB</td></tr>
+<tr><td>視点 / 正面復帰</td><td>空いた所をドラッグ / 正面</td><td>中ボタンドラッグ・矢印 / F</td><td>右スティック / 押込み</td></tr>
+<tr><td>主攻撃 / 副攻撃</td><td>斬る / 薙ぐ</td><td>左クリック / 右クリック</td><td>X(□) / Y(△)</td></tr>
+<tr><td>回避 / 防御</td><td>回避 / 防御</td><td>Space / Ctrl または C</td><td>A(×) / RB</td></tr>
+<tr><td>抜刀・納刀</td><td>抜刀</td><td>R</td><td>B(○)</td></tr>
+<tr><td>メニュー / 検証表示</td><td>☰ / 検証</td><td>Esc / F3</td><td>Start / -</td></tr>
+</table>
+<h3>断岳剣</h3>
+<table>
+<tr><th>技</th><th>出し方</th><th>特徴</th></tr>
+<tr><td>抜刀斬り</td><td>納刀中に 主攻撃</td><td>踏み込みながら抜いて斬る</td></tr>
+<tr><td>縦斬り</td><td>抜刀中に 主攻撃</td><td>予備動作が長く重い。終わり際だけ回避へ繋がる</td></tr>
+<tr><td>溜め斬り</td><td>主攻撃を押し続けて離す</td><td>3 段階。溜めるほど威力が上がる</td></tr>
+<tr><td>横薙ぎ</td><td>抜刀中に 副攻撃</td><td>広く払う。後半から縦斬り・回避へ繋がる</td></tr>
+<tr><td>防御</td><td>抜刀中に 防御を押し続ける</td><td>正面だけ。スタミナを消費し、少し削られる</td></tr>
+<tr><td>回避</td><td>回避（スティックで方向）</td><td>スタミナ 25。出始めの短い間だけ無敵</td></tr>
+</table>
+<p><small>ゲームパッドは実機で未検証です。道具・砥ぎ・採取は次の段階（M3）で追加します。</small></p>`;
+
+export class Menu {
+  readonly root: HTMLElement;
+  private body: HTMLElement;
+  private tab: Tab = 'settings';
+  private tabs = new Map<Tab, HTMLButtonElement>();
+  open = false;
+
+  constructor(
+    parent: HTMLElement,
+    private store: SettingsStore,
+    private host: MenuHost,
+  ) {
+    this.root = document.createElement('div');
+    this.root.id = 'menu';
+    this.root.hidden = true;
+    const card = document.createElement('div');
+    card.className = 'menu-card';
+    const head = document.createElement('div');
+    head.className = 'menu-head';
+    for (const [id, label] of [['settings', '設定'], ['controls', '操作'], ['verify', '検証']] as [Tab, string][]) {
+      const b = document.createElement('button');
+      b.className = 'tab';
+      b.textContent = label;
+      b.addEventListener('click', () => this.show(id));
+      head.appendChild(b);
+      this.tabs.set(id, b);
+    }
+    const close = document.createElement('button');
+    close.className = 'close';
+    close.textContent = '戻る';
+    close.addEventListener('click', () => host.closeMenu());
+    head.appendChild(close);
+    this.body = document.createElement('div');
+    this.body.className = 'menu-body';
+    card.append(head, this.body);
+    this.root.appendChild(card);
+    parent.appendChild(this.root);
+  }
+
+  setOpen(open: boolean): void {
+    this.open = open;
+    this.root.hidden = !open;
+    if (open) this.show(this.tab);
+  }
+
+  private show(tab: Tab): void {
+    this.tab = tab;
+    for (const [id, b] of this.tabs) b.classList.toggle('on', id === tab);
+    this.body.textContent = '';
+    this.body.scrollTop = 0;
+    if (tab === 'settings') this.renderSettings();
+    else if (tab === 'controls') this.body.innerHTML = CONTROLS_HTML;
+    else this.renderVerify();
+  }
+
+  private row(label: string, hint: string, control: HTMLElement): void {
+    const r = document.createElement('div');
+    r.className = 'row';
+    const l = document.createElement('label');
+    l.textContent = label;
+    if (hint) {
+      const s = document.createElement('small');
+      s.textContent = hint;
+      l.appendChild(s);
+    }
+    r.append(l, control);
+    this.body.appendChild(r);
+  }
+
+  private heading(text: string): void {
+    const h = document.createElement('h3');
+    h.textContent = text;
+    this.body.appendChild(h);
+  }
+
+  private range<K extends keyof Settings>(key: K, min: number, max: number, step: number): HTMLInputElement {
+    const i = document.createElement('input');
+    i.type = 'range';
+    i.min = String(min);
+    i.max = String(max);
+    i.step = String(step);
+    i.value = String(this.store.value[key]);
+    i.addEventListener('input', () => this.store.set({ [key]: Number(i.value) } as Partial<Settings>));
+    return i;
+  }
+
+  private check<K extends keyof Settings>(key: K, after?: () => void): HTMLInputElement {
+    const i = document.createElement('input');
+    i.type = 'checkbox';
+    i.checked = Boolean(this.store.value[key]);
+    i.addEventListener('change', () => {
+      this.store.set({ [key]: i.checked } as Partial<Settings>);
+      after?.();
+    });
+    return i;
+  }
+
+  private select<K extends keyof Settings>(key: K, options: [string, string][], numeric = false): HTMLSelectElement {
+    const s = document.createElement('select');
+    for (const [v, label] of options) {
+      const o = document.createElement('option');
+      o.value = v;
+      o.textContent = label;
+      s.appendChild(o);
+    }
+    s.value = String(this.store.value[key]);
+    s.addEventListener('change', () => this.store.set({ [key]: numeric ? Number(s.value) : s.value } as Partial<Settings>));
+    return s;
+  }
+
+  private button(text: string, onClick: () => void): HTMLButtonElement {
+    const b = document.createElement('button');
+    b.textContent = text;
+    b.addEventListener('click', onClick);
+    return b;
+  }
+
+  private renderSettings(): void {
+    this.heading('視点');
+    this.row('視点の感度', '', this.range('camSensitivity', 0.4, 2, 0.05));
+    this.row('左右を反転', '', this.check('invertX'));
+    this.row('上下を反転', '', this.check('invertY'));
+    this.row('対象への向き直り補助', '「正面」を押すと標的の方向へ視点を向ける', this.check('targetAssist'));
+    this.row('画面の揺れ', '', this.select('shake', [['off', '無'], ['weak', '弱'], ['mid', '中']]));
+    this.heading('タッチ操作');
+    this.row('左利き配置', 'スティックを右、ボタンを左へ', this.check('leftHanded'));
+    this.row('ボタンの大きさ', '', this.range('buttonScale', 0.8, 1.4, 0.05));
+    this.row('ボタンの濃さ', '', this.range('buttonOpacity', 0.3, 1, 0.05));
+    this.row('疾走の方法', '外周押込みは誤発動しやすい場合に「ボタン」へ', this.select('sprintMode', [['button', '疾走ボタン（押すと切替）'], ['outer', 'スティックを外周まで倒す']]));
+    this.row('ボタンの位置', 'ドラッグで 1 つずつ動かせます', this.button('配置を編集', () => this.host.startLayoutEdit()));
+    this.heading('描画');
+    this.row('描画の上限', '計算は常に 60Hz', this.select('fpsCap', [['60', '60fps'], ['30', '30fps（発熱を抑える）']], true));
+    this.row('内部解像度', '3D だけを粗くする。文字は鮮明なまま', this.range('renderScale', 0.65, 1, 0.05));
+    this.row('影', '切り替えは次回の起動から', this.check('shadows'));
+    this.heading('音');
+    this.row('全体', '', this.range('volMaster', 0, 1, 0.05));
+    this.row('効果音', '', this.range('volSe', 0, 1, 0.05));
+    this.row('BGM', 'まだ曲はありません', this.range('volBgm', 0, 1, 0.05));
+    this.row('環境音', '', this.range('volEnv', 0, 1, 0.05));
+    this.row('ミュート', '', this.check('mute'));
+    const state = document.createElement('small');
+    const resume = this.button('音声を再開', () => {
+      void this.host.resumeAudio().then((ok) => (state.textContent = ok ? ' 再開しました' : ' 再開できませんでした'));
+    });
+    const wrap = document.createElement('span');
+    wrap.append(resume, state);
+    this.row('音が出ない時', `現在の状態: ${this.host.audioState()}`, wrap);
+  }
+
+  private renderVerify(): void {
+    this.heading('検証');
+    this.row('検証表示', '行動 tick・攻撃判定・部位判定・標的の HP・ダメージ値を重ねる', this.check('verify'));
+    this.row('標的の攻撃', '切り替えると訓練をやり直します', this.check('dummyAttacks', () => this.host.restartTraining()));
+    this.row('訓練をやり直す', '位置・HP・乱数を最初の状態へ戻す', this.button('やり直す', () => {
+      this.host.restartTraining();
+      this.host.closeMenu();
+    }));
+    const out = document.createElement('pre');
+    out.textContent = '「確認する」を押すと、この訓練で記録した入力を描画 60fps と 30fps の両方で再生し、\n同じ tick の結果（命中・HP・状態・スタミナ）が一致するかを比べます。';
+    this.row('30 / 60fps の一致', '', this.button('確認する', () => (out.textContent = this.host.runDeterminismCheck())));
+    this.body.appendChild(out);
+    this.heading('不具合報告用の情報');
+    const info = document.createElement('pre');
+    const report = [
+      `ビルド・コミット：v${APP_VERSION} (${BUILD_ID})`,
+      `機種 / OS / ブラウザ：${navigator.userAgent}`,
+      `画面：${window.innerWidth}×${window.innerHeight} DPR ${window.devicePixelRatio}`,
+      'クエスト / 装備 / 素材ID：訓練区画 / weapon.heavy_blade.001',
+      '操作手順：1 → 2 → 3',
+      '期待した結果 / 実際の結果：',
+      '再現頻度 / 録画 / コンソールログ：',
+      '直前の変更：',
+    ].join('\n');
+    info.textContent = report;
+    this.body.appendChild(info);
+    const copied = document.createElement('small');
+    const copy = this.button('コピー', () => {
+      void navigator.clipboard?.writeText(report).then(
+        () => (copied.textContent = ' コピーしました'),
+        () => (copied.textContent = ' コピーできませんでした（長押しで選択してください）'),
+      );
+    });
+    const wrap = document.createElement('span');
+    wrap.append(copy, copied);
+    this.row('報告テンプレート', '', wrap);
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "monster.training_dummy",
+  "name": "訓練標的・岩偶",
+  "rigFamily": "placeholder_quadruped",
+  "assetId": "model.monster.training_dummy",
+  "hp": 1200,
+  "bodyRadius": 1.3,
+  "turnDegPerSec": 50,
+  "captureAllowed": false,
+  "lootId": null,
+  "respawnTicks": 300,
+  "breakStaggerTicks": 70,
+  "parts": [
+    {
+      "id": "head", "name": "頭",
+      "hitzone": {"cut": 0.70, "blunt": 0.80, "shot": 0.60}, "elementZone": 0.20,
+      "breakDurability": 150, "material": "rock",
+      "shapes": [{"a": [0, 1.25, 1.75], "r": 0.50}]
+    },
+    {
+      "id": "tail", "name": "尾",
+      "hitzone": {"cut": 0.55, "blunt": 0.40, "shot": 0.45}, "elementZone": 0.15,
+      "breakDurability": null, "material": "hide",
+      "shapes": [{"a": [0, 1.0, -1.5], "b": [0, 0.7, -2.9], "r": 0.30}]
+    },
+    {
+      "id": "back", "name": "背殻",
+      "hitzone": {"cut": 0.30, "blunt": 0.45, "shot": 0.25}, "elementZone": 0.10,
+      "breakDurability": 200, "material": "shell",
+      "shapes": [{"a": [0, 1.85, 0.6], "b": [0, 1.85, -0.7], "r": 0.55}]
+    },
+    {
+      "id": "legs", "name": "脚",
+      "hitzone": {"cut": 0.35, "blunt": 0.40, "shot": 0.30}, "elementZone": 0.10,
+      "breakDurability": null, "material": "rock",
+      "shapes": [
+        {"a": [-0.75, 0.15, 0.8], "b": [-0.75, 0.8, 0.8], "r": 0.28},
+        {"a": [0.75, 0.15, 0.8], "b": [0.75, 0.8, 0.8], "r": 0.28},
+        {"a": [-0.75, 0.15, -0.8], "b": [-0.75, 0.8, -0.8], "r": 0.28},
+        {"a": [0.75, 0.15, -0.8], "b": [0.75, 0.8, -0.8], "r": 0.28}
+      ]
+    },
+    {
+      "id": "body", "name": "胴",
+      "hitzone": {"cut": 0.45, "blunt": 0.45, "shot": 0.40}, "elementZone": 0.15,
+      "breakDurability": null, "material": "hide",
+      "shapes": [{"a": [0, 1.15, 0.9], "b": [0, 1.15, -0.9], "r": 0.75}]
+    }
+  ],
+  "ai": {
+    "aggroRange": 12,
+    "cooldownTicks": [100, 160],
+    "choices": [
+      {"actionId": "monster.training_dummy.slam", "minDist": 0, "maxDist": 4.6, "maxAngleDeg": 25, "weight": 1}
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "actions": [
+    {
+      "schemaVersion": 1,
+      "actionId": "monster.training_dummy.slam",
+      "clip": "dummy_slam_01",
+      "tickRate": 60, "durationTicks": 130,
+      "phases": [
+        {"id":"startup", "from":0, "to":50},
+        {"id":"active", "from":50, "to":58},
+        {"id":"recovery", "from":58, "to":130}
+      ],
+      "rootMotion": {"mode":"none"},
+      "turning": {"untilTick":30, "maxDegreesPerSecond":60},
+      "hitWindows": [{
+        "id":"foreleg", "from":50, "to":58,
+        "shapeTrack":"dummy_slam_arm",
+        "damageType":"blunt", "damageCoefficient":1.0,
+        "maxHitsPerTarget":1, "hitstopTicks":0,
+        "baseDamage":24, "guardable":true, "guardCost":30, "reaction":"knockdown"
+      }],
+      "cancelWindows": [],
+      "events": [
+        {"tick":2, "type":"sound", "id":"dummy_warn_01"},
+        {"tick":48, "type":"sound", "id":"dummy_swing_01"},
+        {"tick":57, "type":"vfx", "id":"ground_slam"}
+      ],
+      "onFinish":"keep",
+      "weaponTrack":"dummy_slam_arm"
+    }
+  ]
+}
