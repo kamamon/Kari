@@ -148,3 +148,23 @@ button { font: inherit; color: inherit; }
 @keyframes tilt { 0%, 30% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
 @media (orientation: portrait) and (pointer: coarse) { #rotate.armed { display: grid; } }
 @media (prefers-reduced-motion: reduce) { .toast, .dmg, #rotate .icon { animation-duration: 0.01s; } }
+
+/* ---- 拠点（仮）と結果 ---- */
+#base, #result { position: absolute; inset: 0; z-index: 35; display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(120% 90% at 50% 30%, rgba(43, 56, 48, 0.94) 0%, rgba(16, 21, 18, 0.96) 70%);
+  padding: calc(var(--sat) + 10px) calc(var(--sar) + 10px) calc(var(--sab) + 10px) calc(var(--sal) + 10px); }
+#result { background: rgba(10, 14, 12, 0.8); }
+.base-card { width: min(100%, 40rem); max-height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-y; padding: 14px 18px; background: var(--panel); border: 1px solid var(--line); }
+.base-card h2 { margin: 0 0 4px; font-size: 1.25rem; letter-spacing: 0.14em; color: var(--bronze); }
+#result.failed .base-card h2 { color: #c9785a; }
+.base-lead { margin: 0 0 10px; color: var(--ink-dim); font-size: 0.85rem; }
+.base-choice { display: block; width: 100%; text-align: left; margin: 0 0 10px; padding: 12px 14px; background: #2a332d; border: 1px solid var(--line); border-left: 4px solid var(--bronze); border-radius: 3px; cursor: pointer; }
+.base-choice b { display: block; font-size: 1.05rem; margin-bottom: 4px; }
+.base-choice span { display: block; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.5; }
+.base-note { font-size: 0.72rem; color: var(--ink-dim); line-height: 1.6; margin: 8px 0 0; }
+.result-body table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.result-body th, .result-body td { text-align: left; padding: 6px 4px; border-bottom: 1px solid rgba(235, 231, 215, 0.1); }
+.result-body th { color: var(--ink-dim); font-weight: 600; width: 9em; }
+.result-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px; }
+.result-actions button { padding: 10px 20px; background: var(--bronze); color: #1b1710; border: 0; font-weight: 800; border-radius: 3px; cursor: pointer; }
+.result-actions button.sub { background: #2a332d; color: var(--ink); border: 1px solid var(--line); }

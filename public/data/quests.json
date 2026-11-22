@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "quests": [
+    {
+      "id": "quest.basin.003",
+      "name": "岩場の足音",
+      "kind": "slay",
+      "summary": "風礫盆地に現れた岩殻獣ガルドロスを討伐する。",
+      "mapId": "map.basin.training",
+      "targetMonsterId": "monster.galdros",
+      "monsterSpawn": {"x": 4, "z": 15, "yaw": 2.6},
+      "timeLimitTicks": 54000,
+      "maxFaints": 3,
+      "monsterAttackScale": 0.75
+    }
+  ]
+}

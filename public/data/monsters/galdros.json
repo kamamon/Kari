@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "id": "monster.galdros",
+  "name": "岩殻獣 ガルドロス",
+  "rigFamily": "quadruped_heavy",
+  "assetId": "model.monster.galdros",
+  "hp": 1800,
+  "bodyRadius": 1.5,
+  "turnDegPerSec": 65,
+  "moveSpeed": 2.6,
+  "captureAllowed": true,
+  "lootId": null,
+  "respawnTicks": null,
+  "breakStaggerTicks": 80,
+  "collision": [{"z": 0, "r": 1.45}, {"z": 1.15, "r": 1.05}, {"z": -1.15, "r": 1.05}],
+  "approach": {"stopDist": 3.4, "faceDeg": 55},
+  "discover": {"range": 16, "fovDeg": 130, "closeRange": 6, "actionId": "monster.galdros.roar"},
+  "rage": {"threshold": 450, "durationTicks": 2100, "actionId": "monster.galdros.roar", "speedScale": 1.25, "damageScale": 1.2, "cooldownScale": 0.6},
+  "parts": [
+    {
+      "id": "head", "name": "頭",
+      "hitzone": {"cut": 0.65, "blunt": 0.75, "shot": 0.55}, "brokenHitzone": {"cut": 0.75, "blunt": 0.85, "shot": 0.65},
+      "elementZone": 0.20, "breakDurability": 220, "material": "rock",
+      "flinch": {"threshold": 180, "growth": 60, "ticks": 50},
+      "shapes": [{"a": [0, 1.55, 2.0], "r": 0.55}, {"a": [0, 1.38, 2.5], "r": 0.34}]
+    },
+    {
+      "id": "tail", "name": "尾",
+      "hitzone": {"cut": 0.55, "blunt": 0.40, "shot": 0.45}, "elementZone": 0.15,
+      "breakDurability": null, "material": "hide",
+      "flinch": {"threshold": 160, "growth": 60, "ticks": 46},
+      "sever": {"threshold": 260, "staggerTicks": 110, "shapesAfter": [{"a": [0, 1.0, -1.6], "b": [0, 0.9, -2.3], "r": 0.36}]},
+      "shapes": [{"a": [0, 1.0, -1.6], "b": [0, 0.75, -3.3], "r": 0.38}]
+    },
+    {
+      "id": "back", "name": "背殻",
+      "hitzone": {"cut": 0.25, "blunt": 0.40, "shot": 0.20}, "brokenHitzone": {"cut": 0.45, "blunt": 0.55, "shot": 0.40},
+      "elementZone": 0.10, "breakDurability": 320, "material": "shell",
+      "flinch": {"threshold": 240, "growth": 80, "ticks": 46},
+      "shapes": [{"a": [0, 1.9, 0.9], "b": [0, 1.9, -1.0], "r": 0.62}]
+    },
+    {
+      "id": "foreleg", "name": "前脚",
+      "hitzone": {"cut": 0.38, "blunt": 0.42, "shot": 0.30}, "elementZone": 0.10,
+      "breakDurability": null, "material": "rock",
+      "flinch": {"threshold": 200, "growth": 110, "ticks": 190, "topple": true},
+      "shapes": [
+        {"a": [1.0, 0.3, 1.05], "b": [1.0, 1.1, 1.05], "r": 0.42},
+        {"a": [-1.0, 0.3, 1.05], "b": [-1.0, 1.1, 1.05], "r": 0.42}
+      ]
+    },
+    {
+      "id": "hindleg", "name": "後脚",
+      "hitzone": {"cut": 0.40, "blunt": 0.42, "shot": 0.32}, "elementZone": 0.10,
+      "breakDurability": null, "material": "hide",
+      "flinch": {"threshold": 200, "growth": 110, "ticks": 190, "topple": true},
+      "shapes": [
+        {"a": [0.95, 0.3, -1.05], "b": [0.95, 1.05, -1.05], "r": 0.42},
+        {"a": [-0.95, 0.3, -1.05], "b": [-0.95, 1.05, -1.05], "r": 0.42}
+      ]
+    },
+    {
+      "id": "body", "name": "胴",
+      "hitzone": {"cut": 0.45, "blunt": 0.45, "shot": 0.40}, "elementZone": 0.15,
+      "breakDurability": null, "material": "hide",
+      "flinch": {"threshold": 300, "growth": 100, "ticks": 46},
+      "shapes": [{"a": [0, 1.2, 1.1], "b": [0, 1.2, -1.1], "r": 0.9}]
+    }
+  ],
+  "ai": {
+    "aggroRange": 200,
+    "cooldownTicks": [50, 100],
+    "choices": [
+      {"actionId": "monster.galdros.slam_l", "minDist": 0, "maxDist": 4.8, "maxAngleDeg": 40, "side": "left", "weight": 3},
+      {"actionId": "monster.galdros.slam_r", "minDist": 0, "maxDist": 4.8, "maxAngleDeg": 40, "side": "right", "weight": 3},
+      {"actionId": "monster.galdros.charge", "minDist": 6.5, "maxDist": 22, "maxAngleDeg": 30, "weight": 2, "cooldownTicks": 420, "clearAhead": 9},
+      {"actionId": "monster.galdros.tail_sweep", "minDist": 0, "maxDist": 5.2, "minAngleDeg": 70, "maxAngleDeg": 180, "weight": 3, "ifSevered": {"partId": "tail", "actionId": "monster.galdros.tail_sweep_short"}},
+      {"actionId": "monster.galdros.rockfall", "minDist": 0, "maxDist": 20, "maxAngleDeg": 180, "weight": 1.5, "cooldownTicks": 600}
+    ]
+  }
+}

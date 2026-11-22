@@ -29,6 +29,8 @@ export class Hud {
   private stBar: HTMLElement;
   private pips: HTMLElement[] = [];
   private time: HTMLElement;
+  private goal: HTMLElement;
+  private faints: HTMLElement;
   private enemy: HTMLElement;
   private enemyBar: HTMLElement;
   private enemyParts: HTMLElement;
@@ -58,7 +60,8 @@ export class Hud {
     const tr = el('div', 'hud-top-right', this.root);
     const quest = el('div', 'hud-quest', tr);
     this.time = el('div', 'time', quest, '00:00');
-    el('div', 'goal', quest, '訓練: 標的で動作を確かめる');
+    this.goal = el('div', 'goal', quest, '');
+    this.faints = el('div', 'goal', quest, '');
     this.verifyBtn = el('button', 'hud-btn', tr, '検証');
     this.verifyBtn.addEventListener('click', () => hub.ui('verify'));
     const menuBtn = el('button', 'hud-btn', tr, '☰');
@@ -117,7 +120,19 @@ export class Hud {
           break;
         }
         case 'monster_dead':
-          this.toast('標的を倒した（しばらくすると復帰）');
+          this.toast(sim.hunt ? '討伐した' : '標的を倒した（しばらくすると復帰）');
+          break;
+        case 'part_sever':
+          this.toast('尾を切断');
+          break;
+        case 'monster_stagger':
+          if (e.kind === 'topple') this.toast('転倒');
+          break;
+        case 'monster_aware':
+          this.toast('気付かれた');
+          break;
+        case 'monster_rage':
+          this.toast(e.on ? '怒り状態' : '怒りが収まった');
           break;
         case 'evade':
           this.toast('回避');
@@ -152,8 +167,14 @@ export class Hud {
     this.set('stlow', p.exhausted || p.stamina < 25 ? 1 : 0, () => this.stBar.classList.toggle('low', p.exhausted || p.stamina < 25));
     const lv = p.action?.chargeLevel ?? 0;
     this.set('charge', lv, () => this.pips.forEach((b, i) => b.classList.toggle('on', i < lv)));
-    const sec = Math.floor(sim.tick / 60);
+    // 依頼中は残り時間、訓練は経過時間
+    const h = sim.hunt;
+    const sec = h ? Math.ceil(Math.max(0, h.quest.timeLimitTicks - h.ticks) / 60) : Math.floor(sim.tick / 60);
     this.set('time', sec, () => (this.time.textContent = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`));
+    const goal = h ? `${h.quest.name}: ${sim.monsters[0]?.def.name ?? ''}の討伐` : '訓練: 標的で動作を確かめる';
+    this.set('goal', goal, () => (this.goal.textContent = goal));
+    const faints = h ? `力尽き ${h.faints} / ${h.quest.maxFaints}` : '';
+    this.set('faints', faints, () => (this.faints.textContent = faints));
 
     if (!this.verify) return;
     const m = sim.monsters[0];
@@ -161,7 +182,11 @@ export class Hud {
       const r = m.hp / m.def.hp;
       this.set('ehp', Math.round(r * 300), () => (this.enemyBar.style.transform = `scaleX(${r})`));
       const parts = m.def.parts
-        .map((d, i) => (d.breakDurability === null ? null : `${d.name} ${m.parts[i]!.broken ? '破壊' : `${Math.ceil(m.parts[i]!.durability)}/${d.breakDurability}`}`))
+        .map((d, i) => {
+          const st = m.parts[i]!;
+          if (d.sever) return `${d.name} ${st.severed ? '切断' : `${Math.floor(st.severAcc)}/${d.sever.threshold}`}`;
+          return d.breakDurability === null ? null : `${d.name} ${st.broken ? '破壊' : `${Math.ceil(st.durability)}/${d.breakDurability}`}`;
+        })
         .filter(Boolean)
         .join('　');
       const text = `${m.def.name}  HP ${m.hp}/${m.def.hp}　${parts}`;
@@ -184,10 +209,11 @@ export class Hud {
     ];
     if (m) {
       const ma = m.action;
-      lines.push(`標的 ${m.dead ? '死亡' : m.staggerTicks > 0 ? `怯み ${m.staggerTicks}` : ma ? `${ma.def.actionId.split('.').pop()} t${ma.tick} ${phaseAt(ma.def, Math.min(ma.tick, ma.def.durationTicks - 1))?.id ?? ''}` : `待機 cd${m.cooldown}`}`);
+      lines.push(`${m.aware ? '' : '未発見 '}${m.enraged ? `怒り ${m.enragedTicks} ` : ''}標的 ${m.dead ? '死亡' : m.staggerTicks > 0 ? `${m.staggerKind} ${m.staggerTicks}` : ma ? `${ma.def.actionId.split('.').pop()} t${ma.tick} ${phaseAt(ma.def, Math.min(ma.tick, ma.def.durationTicks - 1))?.id ?? ''}` : `待機 cd${m.cooldown}`}`);
     }
     for (const h of sim.recentHits.slice(-3)) lines.push(`命中 tick${h.tick} ${h.actionId.split('.').pop()}/${h.windowId} t${h.actionTick} ${h.partId} ${h.damage}`);
     lines.push(`累計 与ダメ ${sim.totalDamage} (${sim.hitCount}回)  被ダメ ${sim.damageTaken}`);
+    if (h) lines.push(`依頼 ${h.phase}${h.reason ? `(${h.reason})` : ''} tick ${h.ticks}  落下物 ${sim.hazards.length}`);
     if (view.missingClips.size > 0) lines.push(`欠落clip: ${[...view.missingClips].join(', ')}`);
     const text = lines.join('\n');
     this.set('verify', text, () => (this.verifyBox.textContent = text));

@@ -1,11 +1,23 @@
-// モンスター（M1 では訓練標的）の状態と行動選択。
+// モンスターの状態と行動選択（訓練標的とガルドロスで共通）。
 // 技は開始時に一度だけ抽選し、攻撃中に毎 tick 選び直さない。旋回は turning.untilTick まで。
-import { DEG, angleDiff, forwardOf, turnToward, v3, yawOf, type V3 } from '../core/math';
-import type { MonsterDef } from '../data/schemas';
+// 本体 HP・部位の耐久・切断の蓄積・怯みの蓄積・怒りは、それぞれ別の値として持つ。
+import { DEG, angleDiff, forwardOf, fromArr, toWorld, turnToward, v3, yawOf, type V3 } from '../core/math';
+import type { DamageType, MonsterAiChoice, MonsterDef } from '../data/schemas';
 import { newRun, type ActionRun } from './action';
 import { shapeToWorld, type WorldShape } from './combat';
 import type { PlayerState, SimCtx } from './player';
 import { sampleCurve } from './tracks';
+
+export type StaggerKind = 'break' | 'flinch' | 'topple' | 'sever';
+
+export interface MonsterPartState {
+  durability: number;
+  broken: boolean;
+  severed: boolean;
+  severAcc: number;
+  flinchAcc: number;
+  flinchThreshold: number;
+}
 
 export interface MonsterState {
   id: string;
@@ -15,17 +27,41 @@ export interface MonsterState {
   yaw: number;
   prevYaw: number;
   hp: number;
-  parts: { durability: number; broken: boolean }[];
+  parts: MonsterPartState[];
   action: ActionRun | null;
   attackEval: { run: ActionRun; t: number } | null;
   cooldown: number;
+  moveCooldowns: Record<string, number>;
   staggerTicks: number;
+  staggerTotal: number;
+  staggerKind: StaggerKind | null;
+  /** 怯みから立ち直った直後は、次の怯みを受け付けない */
+  flinchImmune: number;
   hitstop: number;
   dead: boolean;
   deadTicks: number;
   aiEnabled: boolean;
+  /** プレイヤーに気付いているか（発見前は動かない） */
+  aware: boolean;
+  enraged: boolean;
+  enragedTicks: number;
+  rageAcc: number;
+  pendingRoar: boolean;
   lastActionId: string | null;
   spawn: { x: number; z: number; yaw: number };
+}
+
+const IMMUNE_AFTER_STAGGER = 90;
+
+function freshParts(def: MonsterDef): MonsterPartState[] {
+  return def.parts.map((p) => ({
+    durability: p.breakDurability ?? 0,
+    broken: false,
+    severed: false,
+    severAcc: 0,
+    flinchAcc: 0,
+    flinchThreshold: p.flinch?.threshold ?? 0,
+  }));
 }
 
 export function createMonster(def: MonsterDef, spawn: { x: number; z: number; yaw: number }, id: string): MonsterState {
@@ -38,52 +74,83 @@ export function createMonster(def: MonsterDef, spawn: { x: number; z: number; ya
     yaw: spawn.yaw,
     prevYaw: spawn.yaw,
     hp: def.hp,
-    parts: def.parts.map((p) => ({ durability: p.breakDurability ?? 0, broken: false })),
+    parts: freshParts(def),
     action: null,
     attackEval: null,
     cooldown: def.ai.cooldownTicks[0],
+    moveCooldowns: {},
     staggerTicks: 0,
+    staggerTotal: 0,
+    staggerKind: null,
+    flinchImmune: 0,
     hitstop: 0,
     dead: false,
     deadTicks: 0,
     aiEnabled: true,
+    aware: !def.discover,
+    enraged: false,
+    enragedTicks: 0,
+    rageAcc: 0,
+    pendingRoar: false,
     lastActionId: null,
     spawn,
   };
 }
 
 export function resetMonster(m: MonsterState): void {
-  m.pos = v3(m.spawn.x, 0, m.spawn.z);
-  m.prevPos = { ...m.pos };
-  m.yaw = m.spawn.yaw;
-  m.prevYaw = m.yaw;
-  m.hp = m.def.hp;
-  m.parts = m.def.parts.map((p) => ({ durability: p.breakDurability ?? 0, broken: false }));
-  m.action = null;
-  m.attackEval = null;
-  m.cooldown = m.def.ai.cooldownTicks[0];
-  m.staggerTicks = 0;
-  m.hitstop = 0;
-  m.dead = false;
-  m.deadTicks = 0;
-  m.lastActionId = null;
+  const fresh = createMonster(m.def, m.spawn, m.id);
+  fresh.aiEnabled = m.aiEnabled;
+  Object.assign(m, fresh);
 }
 
-/** 部位の当たり形状（ワールド座標）。並び順が「同時接触の固定優先順」になる。 */
+/** 部位の当たり形状（ワールド座標）。並び順が「同時接触の固定優先順」になる。切断済みの部位は短い形状へ替わる。 */
 export function monsterShapes(m: MonsterState): WorldShape[] {
   const out: WorldShape[] = [];
   m.def.parts.forEach((part, i) => {
-    for (const s of part.shapes) out.push(shapeToWorld(s, i, m.pos, m.yaw));
+    const shapes = m.parts[i]!.severed && part.sever ? part.sever.shapesAfter : part.shapes;
+    for (const s of shapes) out.push(shapeToWorld(s, i, m.pos, m.yaw));
   });
   return out;
 }
 
-function chooseAction(m: MonsterState, player: PlayerState, ctx: SimCtx): string | null {
+/** プレイヤーが通り抜けられない円（ワールド座標）。 */
+export function monsterBlockers(m: MonsterState): { x: number; z: number; r: number }[] {
+  const list = m.def.collision ?? [{ z: 0, r: m.def.bodyRadius }];
+  const f = forwardOf(m.yaw);
+  return list.map((c) => ({ x: m.pos.x + f.x * c.z, z: m.pos.z + f.z * c.z, r: c.r }));
+}
+
+const isSevered = (m: MonsterState, partId: string): boolean => {
+  const i = m.def.parts.findIndex((p) => p.id === partId);
+  return i >= 0 && m.parts[i]!.severed;
+};
+
+function clearAhead(m: MonsterState, dist: number, ctx: SimCtx): boolean {
+  const b = ctx.world.map.bounds;
+  const f = forwardOf(m.yaw);
+  const x = m.pos.x + f.x * dist;
+  const z = m.pos.z + f.z * dist;
+  const r = m.def.bodyRadius;
+  return x > b.minX + r && x < b.maxX - r && z > b.minZ + r && z < b.maxZ - r;
+}
+
+function chooseAction(m: MonsterState, player: PlayerState, ctx: SimCtx): MonsterAiChoice | null {
   const dx = player.pos.x - m.pos.x;
   const dz = player.pos.z - m.pos.z;
   const dist = Math.hypot(dx, dz);
-  const ang = Math.abs(angleDiff(m.yaw, yawOf(dx, dz))) / DEG;
-  let cands = m.def.ai.choices.filter((c) => dist >= c.minDist && dist <= c.maxDist && ang <= c.maxAngleDeg);
+  // rel > 0 ならプレイヤーはモンスターの左側（+X 側）
+  const rel = angleDiff(m.yaw, yawOf(dx, dz)) / DEG;
+  const ang = Math.abs(rel);
+  let cands = m.def.ai.choices.filter(
+    (c) =>
+      dist >= c.minDist &&
+      dist <= c.maxDist &&
+      ang <= c.maxAngleDeg &&
+      ang >= (c.minAngleDeg ?? 0) &&
+      (!c.side || (c.side === 'left' ? rel > 0 : rel <= 0)) &&
+      !(m.moveCooldowns[c.actionId]! > 0) &&
+      (!c.clearAhead || clearAhead(m, c.clearAhead, ctx)),
+  );
   if (cands.length === 0) return null;
   if (cands.length > 1) {
     const others = cands.filter((c) => c.actionId !== m.lastActionId);
@@ -93,19 +160,25 @@ function chooseAction(m: MonsterState, player: PlayerState, ctx: SimCtx): string
   let r = ctx.rng.next() * total;
   for (const c of cands) {
     r -= c.weight;
-    if (r <= 0) return c.actionId;
+    if (r <= 0) return c;
   }
-  return cands[cands.length - 1]!.actionId;
+  return cands[cands.length - 1]!;
+}
+
+function begin(m: MonsterState, actionId: string, ctx: SimCtx): void {
+  m.action = newRun(ctx.content.actions.get(actionId)!, ctx.newInstanceId(), m.yaw);
+  ctx.emit({ type: 'action_start', actor: m.id, actionId, instanceId: m.action.instanceId });
 }
 
 export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): void {
   m.prevPos = { ...m.pos };
   m.prevYaw = m.yaw;
   m.attackEval = null;
+  const def = m.def;
 
   if (m.dead) {
     m.deadTicks++;
-    if (m.def.respawnTicks !== null && m.deadTicks >= m.def.respawnTicks) {
+    if (def.respawnTicks !== null && m.deadTicks >= def.respawnTicks) {
       resetMonster(m);
       ctx.emit({ type: 'monster_respawn', target: m.id });
     }
@@ -116,8 +189,24 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
     if (m.action) m.action.advanced = false;
     return;
   }
+
+  // 時間で減るもの（怯み中も進む）
+  if (m.flinchImmune > 0) m.flinchImmune--;
+  for (const k in m.moveCooldowns) if (m.moveCooldowns[k]! > 0) m.moveCooldowns[k]!--;
+  if (m.enraged) {
+    m.enragedTicks--;
+    if (m.enragedTicks <= 0) {
+      m.enraged = false;
+      ctx.emit({ type: 'monster_rage', target: m.id, on: false });
+    }
+  }
+
   if (m.staggerTicks > 0) {
     m.staggerTicks--;
+    if (m.staggerTicks === 0) {
+      m.staggerKind = null;
+      m.flinchImmune = IMMUNE_AFTER_STAGGER;
+    }
     return;
   }
 
@@ -125,55 +214,98 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   const dz = player.pos.z - m.pos.z;
   const dist = Math.hypot(dx, dz);
   const toPlayer = yawOf(dx, dz);
-  const turnStep = (m.def.turnDegPerSec * DEG) / 60;
-  const aware = m.aiEnabled && player.mode !== 'dead' && dist <= m.def.ai.aggroRange;
+  const ang = Math.abs(angleDiff(m.yaw, toPlayer)) / DEG;
+  const rage = m.enraged ? def.rage : undefined;
+
+  // 発見: 視界に入るか、すぐ近くまで寄られたら気付く
+  if (!m.aware) {
+    const d = def.discover!;
+    if (m.aiEnabled && player.mode !== 'dead' && (dist <= d.closeRange || (dist <= d.range && ang <= d.fovDeg / 2))) {
+      m.aware = true;
+      ctx.emit({ type: 'monster_aware', target: m.id });
+      begin(m, d.actionId, ctx);
+    } else return;
+  }
+
+  const active = m.aiEnabled && player.mode !== 'dead' && dist <= def.ai.aggroRange;
 
   if (!m.action) {
-    if (!aware) return;
-    m.yaw = turnToward(m.yaw, toPlayer, turnStep);
-    if (m.cooldown > 0) {
-      m.cooldown--;
-      return;
+    if (m.pendingRoar && def.rage) {
+      m.pendingRoar = false;
+      begin(m, def.rage.actionId, ctx);
+    } else {
+      if (!active) return;
+      m.yaw = turnToward(m.yaw, toPlayer, (def.turnDegPerSec * (rage ? rage.speedScale : 1) * DEG) / 60);
+      // 間合い取り: 正面に捉えていて遠ければ歩いて近づく
+      if (def.moveSpeed && def.approach && dist > def.approach.stopDist && ang < def.approach.faceDeg) {
+        const step = (def.moveSpeed * (rage ? rage.speedScale : 1)) / 60;
+        const f = forwardOf(m.yaw);
+        ctx.world.move(m.pos, def.bodyRadius, f.x * step, f.z * step);
+      }
+      if (m.cooldown > 0) {
+        m.cooldown--;
+        return;
+      }
+      const choice = chooseAction(m, player, ctx);
+      if (!choice) return;
+      const actionId = choice.ifSevered && isSevered(m, choice.ifSevered.partId) ? choice.ifSevered.actionId : choice.actionId;
+      m.lastActionId = choice.actionId;
+      if (choice.cooldownTicks) m.moveCooldowns[choice.actionId] = choice.cooldownTicks;
+      begin(m, actionId, ctx);
+      // 開始した tick に行動の 0 tick 目を処理する（プレイヤーと同じ数え方）
     }
-    const actionId = chooseAction(m, player, ctx);
-    if (!actionId) return;
-    m.action = newRun(ctx.content.actions.get(actionId)!, ctx.newInstanceId(), m.yaw);
-    m.lastActionId = actionId;
-    ctx.emit({ type: 'action_start', actor: m.id, actionId, instanceId: m.action.instanceId });
-    // 開始した tick に行動の 0 tick 目を処理する（プレイヤーと同じ数え方）
   }
 
-  const run = m.action;
-  const def = run.def;
+  const run = m.action!;
+  const adef = run.def;
   const t = run.tick;
-  if (aware && def.turning && t < def.turning.untilTick) {
-    m.yaw = turnToward(m.yaw, toPlayer, (def.turning.maxDegreesPerSecond * DEG) / 60);
+  if (active && adef.turning && t < adef.turning.untilTick) {
+    m.yaw = turnToward(m.yaw, toPlayer, (adef.turning.maxDegreesPerSecond * DEG) / 60);
   }
-  if (def.rootMotion.mode === 'controller' && def.rootMotion.curveId) {
-    const curve = ctx.content.curves.get(def.rootMotion.curveId)!;
+  if (adef.rootMotion.mode === 'controller' && adef.rootMotion.curveId) {
+    const curve = ctx.content.curves.get(adef.rootMotion.curveId)!;
     const d = sampleCurve(curve, t + 1) - sampleCurve(curve, t);
-    const f = forwardOf(m.yaw);
-    ctx.world.move(m.pos, m.def.bodyRadius, f.x * d, f.z * d);
+    if (d !== 0) {
+      const f = forwardOf(m.yaw);
+      ctx.world.move(m.pos, def.bodyRadius, f.x * d, f.z * d);
+    }
   }
-  for (const ev of def.events) {
+  for (const hz of adef.hazards ?? []) {
+    if (hz.tick === t) ctx.spawnHazards(hz, player.pos);
+  }
+  for (const ev of adef.events) {
     if (ev.tick === t) ctx.emit({ type: 'action_event', actor: m.id, kind: ev.type, id: ev.id, pos: { ...m.pos } });
   }
   m.attackEval = { run, t };
   run.advanced = true;
   run.tick++;
-  if (run.tick >= def.durationTicks) {
+  if (run.tick >= adef.durationTicks) {
     m.action = null;
-    const [lo, hi] = m.def.ai.cooldownTicks;
-    m.cooldown = lo + ctx.rng.int(hi - lo + 1);
+    const [lo, hi] = def.ai.cooldownTicks;
+    m.cooldown = Math.round((lo + ctx.rng.int(hi - lo + 1)) * (rage ? rage.cooldownScale : 1));
   }
 }
 
-/** ダメージを適用する。本体 HP と部位の耐久は別に持つ。死亡（終端状態）を先に確定する。 */
-export function applyDamageToMonster(m: MonsterState, partIndex: number, damage: number, ctx: SimCtx): void {
+function stagger(m: MonsterState, kind: StaggerKind, ticks: number, partIndex: number, ctx: SimCtx): void {
+  // 長い方を優先（切断 > 破壊 > 転倒 > 怯み の順に長くしてある）
+  if (ticks <= m.staggerTicks) return;
+  m.action = null;
+  m.staggerTicks = ticks;
+  m.staggerTotal = ticks;
+  m.staggerKind = kind;
+  ctx.emit({ type: 'monster_stagger', target: m.id, kind, partIndex });
+}
+
+/**
+ * ダメージを適用する。死亡（終端状態）を先に確定し、その後に破壊・切断・怯み・怒りを見る。
+ * 切断の蓄積は切断属性（cut）のダメージだけ。
+ */
+export function applyDamageToMonster(m: MonsterState, partIndex: number, damage: number, type: DamageType, ctx: SimCtx): void {
   if (m.dead || damage <= 0) return;
   m.hp = Math.max(0, m.hp - damage);
   const part = m.parts[partIndex]!;
   const def = m.def.parts[partIndex]!;
+
   let broke = false;
   if (def.breakDurability !== null && !part.broken) {
     part.durability -= damage;
@@ -183,18 +315,65 @@ export function applyDamageToMonster(m: MonsterState, partIndex: number, damage:
       broke = true;
     }
   }
+  let severed = false;
+  if (def.sever && !part.severed && type === 'cut') {
+    part.severAcc += damage;
+    if (part.severAcc >= def.sever.threshold) {
+      part.severed = true;
+      severed = true;
+    }
+  }
+  const emitChanges = (): void => {
+    if (broke) ctx.emit({ type: 'part_break', target: m.id, partId: def.id, partIndex });
+    if (severed) {
+      // 切り落とした先端の落ちる位置（切断前の形状の先端）
+      const tip = def.shapes[def.shapes.length - 1]!;
+      const pos = toWorld(fromArr(tip.b ?? tip.a), m.pos, m.yaw);
+      ctx.emit({ type: 'part_sever', target: m.id, partId: def.id, partIndex, pos: { x: pos.x, y: m.pos.y, z: pos.z }, yaw: m.yaw });
+    }
+  };
+
   if (m.hp <= 0) {
     m.dead = true;
     m.deadTicks = 0;
     m.action = null;
     m.staggerTicks = 0;
-    if (broke) ctx.emit({ type: 'part_break', target: m.id, partId: def.id, partIndex });
+    m.staggerKind = null;
+    if (m.enraged) m.enraged = false;
+    emitChanges();
     ctx.emit({ type: 'monster_dead', target: m.id });
     return;
   }
-  if (broke) {
-    m.action = null;
-    m.staggerTicks = m.def.breakStaggerTicks;
-    ctx.emit({ type: 'part_break', target: m.id, partId: def.id, partIndex });
+  emitChanges();
+
+  // 攻撃されたら気付く
+  if (!m.aware && m.def.discover) {
+    m.aware = true;
+    ctx.emit({ type: 'monster_aware', target: m.id });
+    m.pendingRoar = !!m.def.rage;
+  }
+
+  if (severed) stagger(m, 'sever', def.sever!.staggerTicks, partIndex, ctx);
+  if (broke) stagger(m, 'break', m.def.breakStaggerTicks, partIndex, ctx);
+
+  if (def.flinch && m.staggerTicks === 0 && m.flinchImmune === 0) {
+    part.flinchAcc += damage;
+    if (part.flinchAcc >= part.flinchThreshold) {
+      part.flinchAcc = 0;
+      part.flinchThreshold += def.flinch.growth;
+      stagger(m, def.flinch.topple ? 'topple' : 'flinch', def.flinch.ticks, partIndex, ctx);
+    }
+  }
+
+  const rage = m.def.rage;
+  if (rage && !m.enraged) {
+    m.rageAcc += damage;
+    if (m.rageAcc >= rage.threshold) {
+      m.rageAcc = 0;
+      m.enraged = true;
+      m.enragedTicks = rage.durationTicks;
+      m.pendingRoar = true;
+      ctx.emit({ type: 'monster_rage', target: m.id, on: true });
+    }
   }
 }

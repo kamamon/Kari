@@ -8,6 +8,8 @@ type Bus = 'se' | 'bgm' | 'env';
 export const SOUND_IDS = [
   'hb_swing_01', 'hb_swing_02', 'hb_draw_01', 'hb_sheathe_01', 'roll_01', 'hit_rock', 'hit_shell', 'hit_hide', 'part_break', 'guard', 'guard_break',
   'hurt', 'evade', 'charge_1', 'charge_2', 'charge_3', 'dummy_warn_01', 'dummy_swing_01', 'ground_slam', 'monster_dead', 'no_stamina', 'ui',
+  'galdros_roar', 'galdros_warn', 'galdros_swing', 'galdros_scrape', 'galdros_charge', 'galdros_rumble', 'rock_impact', 'part_sever', 'monster_topple',
+  'hunt_clear', 'hunt_fail',
 ] as const;
 
 export class AudioSystem {
@@ -200,6 +202,51 @@ export class AudioSystem {
       case 'monster_dead':
         this.tone('sawtooth', 120, 40, 0.9, 0.25);
         this.noiseBurst(0.7, 'lowpass', 600, 80, 0.6, 1, 0.3);
+        break;
+      case 'galdros_roar':
+        this.tone('sawtooth', 96, 52, 1.1, 0.34);
+        this.tone('sawtooth', 143, 70, 1.0, 0.2);
+        this.noiseBurst(1.0, 'bandpass', 420, 160, 0.5, 1.4);
+        break;
+      case 'galdros_warn':
+        this.tone('sawtooth', 62, 50, 0.55, 0.24);
+        this.noiseBurst(0.4, 'lowpass', 300, 120, 0.3);
+        break;
+      case 'galdros_swing':
+        this.noiseBurst(0.4, 'bandpass', 120, 520, 0.7, 0.8);
+        break;
+      case 'galdros_scrape':
+        this.noiseBurst(0.3, 'bandpass', 900, 300, 0.35, 1.2);
+        break;
+      case 'galdros_charge':
+        this.tone('sawtooth', 70, 110, 0.5, 0.25);
+        this.noiseBurst(1.2, 'lowpass', 500, 160, 0.7);
+        break;
+      case 'galdros_rumble':
+        this.tone('sine', 48, 40, 0.9, 0.6);
+        this.noiseBurst(0.9, 'lowpass', 260, 90, 0.5);
+        break;
+      case 'rock_impact':
+        this.tone('sine', 120, 36, 0.4, 0.8 * k);
+        this.noiseBurst(0.35, 'bandpass', 1400, 200, 0.7 * k, 0.6);
+        break;
+      case 'part_sever':
+        this.noiseBurst(0.3, 'highpass', 1800, 700, 0.5);
+        this.tone('triangle', 700, 180, 0.5, 0.3);
+        this.tone('sine', 140, 50, 0.4, 0.6);
+        break;
+      case 'monster_topple':
+        this.tone('sine', 90, 30, 0.6, 0.9);
+        this.noiseBurst(0.6, 'lowpass', 500, 90, 0.8);
+        break;
+      case 'hunt_clear':
+        this.tone('triangle', 523, 523, 0.18, 0.16);
+        this.tone('triangle', 659, 659, 0.18, 0.16, 0.16);
+        this.tone('triangle', 784, 784, 0.5, 0.18, 0.32);
+        break;
+      case 'hunt_fail':
+        this.tone('triangle', 392, 370, 0.3, 0.14);
+        this.tone('triangle', 294, 262, 0.7, 0.16, 0.28);
         break;
       case 'no_stamina':
         this.tone('square', 180, 150, 0.09, 0.08);

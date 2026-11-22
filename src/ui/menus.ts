@@ -9,9 +9,13 @@ export interface MenuHost {
   resumeAudio(): Promise<boolean>;
   runDeterminismCheck(): string;
   audioState(): string;
+  /** いまの行き先（訓練か依頼か）と、その説明 */
+  sessionInfo(): { hunt: boolean; title: string; lines: string[] };
+  /** 訓練なら拠点へ戻る。依頼ならリタイアする。 */
+  leave(): void;
 }
 
-type Tab = 'settings' | 'controls' | 'verify';
+type Tab = 'quest' | 'settings' | 'controls' | 'verify';
 
 const CONTROLS_HTML = `
 <h3>操作表</h3>
@@ -34,12 +38,21 @@ const CONTROLS_HTML = `
 <tr><td>防御</td><td>抜刀中に 防御を押し続ける</td><td>正面だけ。スタミナを消費し、少し削られる</td></tr>
 <tr><td>回避</td><td>回避（スティックで方向）</td><td>スタミナ 25。出始めの短い間だけ無敵</td></tr>
 </table>
-<p><small>ゲームパッドは実機で未検証です。道具・砥ぎ・採取は次の段階（M3）で追加します。</small></p>`;
+<h3>岩殻獣ガルドロス</h3>
+<table>
+<tr><th>技</th><th>予備動作</th><th>対処</th></tr>
+<tr><td>前脚叩き</td><td>片方の前脚を持ち上げ、体を後ろへ引く</td><td>横へ動く。着地の後は頭を狙える</td></tr>
+<tr><td>直線突進</td><td>頭を下げ、前脚で地面を掻く</td><td>横へ避ける。走り出したら向きを変えない</td></tr>
+<tr><td>半円尾払い</td><td>後ろに居ると、尾を右へ引いてから払う</td><td>前脚側へ回る。尾を切ると届く距離が縮む</td></tr>
+<tr><td>鉱殻崩落</td><td>背を震わせ、落ちる場所に輪が出る</td><td>輪の外へ出る。落ちる場所は変わらない</td></tr>
+</table>
+<p><small>頭と背殻は壊せます。尾は斬って切断できます。脚を攻め続けると転倒します。ダメージが溜まると怒り、攻撃の間隔が詰まります。</small></p>
+<p><small>ゲームパッドは実機で未検証です。捕獲・剥ぎ取り・道具・砥ぎは、これから追加します。</small></p>`;
 
 export class Menu {
   readonly root: HTMLElement;
   private body: HTMLElement;
-  private tab: Tab = 'settings';
+  private tab: Tab = 'quest';
   private tabs = new Map<Tab, HTMLButtonElement>();
   open = false;
 
@@ -55,7 +68,7 @@ export class Menu {
     card.className = 'menu-card';
     const head = document.createElement('div');
     head.className = 'menu-head';
-    for (const [id, label] of [['settings', '設定'], ['controls', '操作'], ['verify', '検証']] as [Tab, string][]) {
+    for (const [id, label] of [['quest', '依頼'], ['settings', '設定'], ['controls', '操作'], ['verify', '検証']] as [Tab, string][]) {
       const b = document.createElement('button');
       b.className = 'tab';
       b.textContent = label;
@@ -86,7 +99,8 @@ export class Menu {
     for (const [id, b] of this.tabs) b.classList.toggle('on', id === tab);
     this.body.textContent = '';
     this.body.scrollTop = 0;
-    if (tab === 'settings') this.renderSettings();
+    if (tab === 'quest') this.renderQuest();
+    else if (tab === 'settings') this.renderSettings();
     else if (tab === 'controls') this.body.innerHTML = CONTROLS_HTML;
     else this.renderVerify();
   }
@@ -153,6 +167,26 @@ export class Menu {
     return b;
   }
 
+  private renderQuest(): void {
+    const info = this.host.sessionInfo();
+    this.heading(info.hunt ? '受注中の依頼' : 'いまの場所');
+    const t = document.createElement('p');
+    t.style.cssText = 'font-size:1.05rem;font-weight:700;margin:6px 0';
+    t.textContent = info.title;
+    this.body.appendChild(t);
+    for (const line of info.lines) {
+      const p = document.createElement('p');
+      p.style.cssText = 'margin:2px 0;color:var(--ink-dim);font-size:0.86rem';
+      p.textContent = line;
+      this.body.appendChild(p);
+    }
+    this.row(
+      info.hunt ? 'リタイア' : '拠点へ戻る',
+      info.hunt ? '依頼を諦めて拠点へ戻ります。失敗として終わります。' : '依頼を選ぶ画面へ戻ります。',
+      this.button(info.hunt ? 'リタイアする' : '戻る', () => this.host.leave()),
+    );
+  }
+
   private renderSettings(): void {
     this.heading('視点');
     this.row('視点の感度', '', this.range('camSensitivity', 0.4, 2, 0.05));
@@ -188,13 +222,15 @@ export class Menu {
   private renderVerify(): void {
     this.heading('検証');
     this.row('検証表示', '行動 tick・攻撃判定・部位判定・標的の HP・ダメージ値を重ねる', this.check('verify'));
-    this.row('標的の攻撃', '切り替えると訓練をやり直します', this.check('dummyAttacks', () => this.host.restartTraining()));
-    this.row('訓練をやり直す', '位置・HP・乱数を最初の状態へ戻す', this.button('やり直す', () => {
-      this.host.restartTraining();
-      this.host.closeMenu();
-    }));
+    if (!this.host.sessionInfo().hunt) {
+      this.row('標的の攻撃', '切り替えると訓練をやり直します', this.check('dummyAttacks', () => this.host.restartTraining()));
+      this.row('訓練をやり直す', '位置・HP・乱数を最初の状態へ戻す', this.button('やり直す', () => {
+        this.host.restartTraining();
+        this.host.closeMenu();
+      }));
+    }
     const out = document.createElement('pre');
-    out.textContent = '「確認する」を押すと、この訓練で記録した入力を描画 60fps と 30fps の両方で再生し、\n同じ tick の結果（命中・HP・状態・スタミナ）が一致するかを比べます。';
+    out.textContent = '「確認する」を押すと、出発してから記録した入力を描画 60fps と 30fps の両方で再生し、\n同じ tick の結果（命中・HP・状態・スタミナ）が一致するかを比べます。';
     this.row('30 / 60fps の一致', '', this.button('確認する', () => (out.textContent = this.host.runDeterminismCheck())));
     this.body.appendChild(out);
     this.heading('不具合報告用の情報');
@@ -203,7 +239,7 @@ export class Menu {
       `ビルド・コミット：v${APP_VERSION} (${BUILD_ID})`,
       `機種 / OS / ブラウザ：${navigator.userAgent}`,
       `画面：${window.innerWidth}×${window.innerHeight} DPR ${window.devicePixelRatio}`,
-      'クエスト / 装備 / 素材ID：訓練区画 / weapon.heavy_blade.001',
+      `クエスト / 装備 / 素材ID：${this.host.sessionInfo().title} / weapon.heavy_blade.001`,
       '操作手順：1 → 2 → 3',
       '期待した結果 / 実際の結果：',
       '再現頻度 / 録画 / コンソールログ：',

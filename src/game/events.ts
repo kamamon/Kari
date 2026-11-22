@@ -21,6 +21,13 @@ export type SimEvent =
       tick: number;
     }
   | { type: 'part_break'; target: string; partId: string; partIndex: number }
+  | { type: 'part_sever'; target: string; partId: string; partIndex: number; pos: V3; yaw: number }
+  | { type: 'monster_stagger'; target: string; kind: 'break' | 'flinch' | 'topple' | 'sever'; partIndex: number }
+  | { type: 'monster_aware'; target: string }
+  | { type: 'monster_rage'; target: string; on: boolean }
+  | { type: 'hazard_warn'; id: number; x: number; z: number; radius: number; warnTicks: number }
+  | { type: 'hazard_impact'; id: number; x: number; z: number; radius: number }
+  | { type: 'hunt_end'; phase: 'success' | 'failed'; reason: 'slay' | 'time' | 'faints' | 'retire' }
   | { type: 'monster_dead'; target: string }
   | { type: 'monster_respawn'; target: string }
   | { type: 'player_hurt'; damage: number; reaction: 'flinch' | 'knockdown'; pos: V3 }

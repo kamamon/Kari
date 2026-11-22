@@ -82,7 +82,10 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const { ctx, page } = await open({ width: 1280, height: 720 }, false);
   await page.screenshot({ path: `${OUT}01_boot.png` });
   await page.click('#boot-start');
-  check('起動して simulation が進む', await until(page, () => window.__vh?.sim.tick > 10));
+  check('起動すると拠点の画面が出て、一時停止している', await until(page, () => window.__vh && !document.getElementById('base').hidden && window.__vh.sim.tick === 0));
+  await page.screenshot({ path: `${OUT}02_base.png` });
+  await page.click('.base-choice:last-of-type');
+  check('訓練場を選ぶと simulation が進む', await until(page, () => window.__vh.sim.tick > 10));
   await page.screenshot({ path: `${OUT}02_start.png` });
   // 技を 1 つずつ確かめる間は、標的の攻撃を止めておく（防御・被弾の確認の所で再開する）
   await page.evaluate(() => (window.__vh.sim.monsters[0].aiEnabled = false));
@@ -186,15 +189,15 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   // 30/60fps 一致チェック（メニュー → 検証）
   await page.keyboard.press('Escape');
   await page.waitForSelector('#menu:not([hidden])');
-  await page.click('.menu-head .tab:nth-child(3)');
+  await page.click('.menu-head .tab:nth-child(4)');
   await page.click('text=確認する');
   const result = await page.textContent('.menu-body pre');
   // このテストは途中で位置や標的の状態を直接書き換えているので、「いまの画面との一致」は対象外。60 と 30 の一致だけを見る。
   check('30/60fps の一致チェック', /結果: 一致/.test(result), result.split('\n')[3]);
   await page.screenshot({ path: `${OUT}15_menu_verify.png` });
-  await page.click('.menu-head .tab:nth-child(1)');
-  await page.screenshot({ path: `${OUT}16_menu_settings.png` });
   await page.click('.menu-head .tab:nth-child(2)');
+  await page.screenshot({ path: `${OUT}16_menu_settings.png` });
+  await page.click('.menu-head .tab:nth-child(3)');
   await page.screenshot({ path: `${OUT}17_menu_controls.png` });
   const tickA = (await state(page)).tick;
   await page.waitForTimeout(400);
@@ -213,7 +216,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.keyboard.press('Space');
   await idle(page);
   await page.keyboard.press('Escape');
-  await page.click('.menu-head .tab:nth-child(3)');
+  await page.click('.menu-head .tab:nth-child(4)');
   await page.click('text=確認する');
   const result2 = await page.textContent('.menu-body pre');
   check('記録した入力の再生が、いまの画面の状態と一致', /結果: 一致/.test(result2) && /いまの画面の状態とも一致/.test(result2), result2.split('\n').slice(1, 2).join(''));
@@ -252,6 +255,89 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const stats = await page.evaluate(() => ({ ...window.__vh.view.stats(), fps: window.__vh.fps }));
   console.log(`     描画統計: draw calls ${stats.calls} / triangles ${stats.triangles}（ソフトウェア描画 ${stats.fps.toFixed(0)}fps。実機の値ではない）`);
   check('描画量が目標内（100 draw calls / 20万 tri）', stats.calls <= 100 && stats.triangles <= 200000, `calls ${stats.calls} tris ${stats.triangles}`);
+
+  // ---- 依頼: ガルドロス討伐 ----
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('#menu:not([hidden])');
+  await page.click('.menu-head .tab:nth-child(1)');
+  await page.click('.menu-body button');
+  check('メニューから拠点へ戻れる', await until(page, () => !document.getElementById('base').hidden));
+  await page.click('.base-choice:first-of-type');
+  check('依頼を選ぶと狩猟が始まる（ガルドロスは未発見）', await until(page, () => window.__vh.sim.hunt?.phase === 'active' && window.__vh.sim.tick > 5 && !window.__vh.sim.monsters[0].aware));
+  await page.screenshot({ path: `${OUT}51_hunt_start.png` });
+  await page.keyboard.down('KeyW');
+  await page.keyboard.down('ShiftLeft');
+  check('近づくと気付かれて咆哮する', await until(page, () => window.__vh.sim.monsters[0].aware, 60000));
+  await page.keyboard.up('ShiftLeft');
+  await page.keyboard.up('KeyW');
+  await page.waitForTimeout(500);
+  await page.keyboard.press('F3');
+  await page.screenshot({ path: `${OUT}52_hunt_roar.png` });
+  await page.evaluate(() => (window.__vh.sim.player.invulnTicks = 1e9));
+  await until(page, () => {
+    const a = window.__vh.sim.monsters[0].action;
+    return a && a.def.actionId !== 'monster.galdros.roar' && a.tick > 34;
+  }, 60000);
+  await page.screenshot({ path: `${OUT}53_hunt_first_attack.png` });
+  // 鉱殻崩落だけを選ばせて、落下地点の予告を確かめる
+  await page.evaluate(() => {
+    const m = window.__vh.sim.monsters[0];
+    for (const c of m.def.ai.choices) m.moveCooldowns[c.actionId] = c.actionId.endsWith('rockfall') ? 0 : 1e9;
+  });
+  check('鉱殻崩落で落下地点の予告が 5 か所に出る', await until(page, () => window.__vh.sim.hazards.length === 5, 60000));
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: `${OUT}54_hunt_rockfall.png` });
+  // 転倒の見た目
+  await page.evaluate(() => {
+    const m = window.__vh.sim.monsters[0];
+    m.action = null;
+    m.staggerTicks = 600;
+    m.staggerTotal = 600;
+    m.staggerKind = 'topple';
+  });
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: `${OUT}55_hunt_topple.png` });
+  const hstats = await page.evaluate(() => ({ ...window.__vh.view.stats() }));
+  check('ガルドロス戦の描画量が目標内（100 draw calls / 20万 tri）', hstats.calls <= 100 && hstats.triangles <= 200000, `calls ${hstats.calls} tris ${hstats.triangles}`);
+  // 頭の正面へ立ち、残り体力わずかの状態から討伐する
+  await page.evaluate(() => {
+    const v = window.__vh;
+    const m = v.sim.monsters[0];
+    m.hp = 30;
+    const p = v.sim.player;
+    const f = { x: Math.sin(m.yaw), z: Math.cos(m.yaw) };
+    p.pos.x = m.pos.x + f.x * 4.2;
+    p.pos.z = m.pos.z + f.z * 4.2;
+    p.yaw = m.yaw + Math.PI;
+    p.mode = 'free';
+    p.action = null;
+    p.hurt = null;
+    p.guard = null;
+    v.view.cam.snap(p.yaw);
+  });
+  await click(page);
+  check('討伐すると狩猟が成功で終わる', await until(page, () => window.__vh.sim.hunt.phase === 'success', 20000));
+  check('少し間を置いて結果の画面が出る', await until(page, () => !document.getElementById('result').hidden, 20000));
+  const resultText = await page.textContent('#result');
+  check('結果に「依頼達成」と討伐成功が出る', /依頼達成/.test(resultText) && /討伐に成功/.test(resultText));
+  await page.screenshot({ path: `${OUT}56_hunt_result.png` });
+  const tickR = (await state(page)).tick;
+  await page.waitForTimeout(300);
+  check('結果の表示中は止まっている', (await state(page)).tick === tickR);
+  await page.click('#result .result-actions button.sub');
+  check('「もう一度」で同じ依頼を最初から', await until(page, () => window.__vh.sim.hunt?.phase === 'active' && window.__vh.sim.monsters[0].hp === window.__vh.sim.monsters[0].def.hp && document.getElementById('result').hidden));
+  await page.waitForTimeout(400);
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('#menu:not([hidden])');
+  await page.screenshot({ path: `${OUT}57_menu_quest_hunt.png` });
+  await page.click('.menu-body button');
+  check('リタイアで失敗として終わる', await until(page, () => window.__vh.sim.hunt.phase === 'failed' && window.__vh.sim.hunt.reason === 'retire', 8000));
+  check('リタイアの結果画面が出る', await until(page, () => !document.getElementById('result').hidden && /依頼失敗/.test(document.getElementById('result').textContent), 10000));
+  await page.screenshot({ path: `${OUT}58_hunt_retire.png` });
+  const det = await page.evaluate(() => window.__vh.runDeterminismCheck());
+  check('依頼の入力記録（リタイアを含む）の再生が、いまの状態と一致', /結果: 一致/.test(det) && /いまの画面の状態とも一致/.test(det), det.split('\n')[3]);
+  await page.click('#result .result-actions button:not(.sub)');
+  check('結果から拠点へ戻れる', await until(page, () => !document.getElementById('base').hidden && document.getElementById('result').hidden));
   await ctx.close();
 }
 
@@ -259,7 +345,10 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
 {
   const { ctx, page } = await open({ width: 844, height: 390 }, true);
   await page.tap('#boot-start');
-  await until(page, () => window.__vh?.sim.tick > 10);
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  await page.screenshot({ path: `${OUT}20_touch_base.png` });
+  await page.tap('.base-choice:last-of-type');
+  await until(page, () => window.__vh.sim.tick > 10);
   await page.screenshot({ path: `${OUT}20_touch_start.png` });
   const cdp = await ctx.newCDPSession(page);
   const touch = (type, points) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: points });
@@ -312,6 +401,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   check('タッチ: 「戻る」でメニューが閉じる', await until(page, () => document.getElementById('menu').hidden, 3000));
   // ボタン配置の編集: 回避ボタンを左上へ 40px 動かして保存される
   await page.tap('.hud-btn:nth-of-type(2)');
+  await page.tap('.menu-head .tab:nth-child(2)');
   await page.tap('text=配置を編集');
   const dodge = await page.evaluate(() => {
     const r = document.querySelector('.tbtn-dodge').getBoundingClientRect();
@@ -376,6 +466,18 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     ['35_viewer_roll', '?action=player.common.roll&tick=14&yaw=-1.5708'],
     ['36_viewer_dummy_slam', '?action=monster.training_dummy.slam&tick=52&yaw=-1.2'],
     ['37_viewer_draw', '?action=player.heavy_blade.draw&tick=4&yaw=2.6'],
+    ['60_galdros_idle', '?subject=galdros&yaw=0.9&shapes=0'],
+    ['61_galdros_right', '?subject=galdros&yaw=-1.5708&shapes=0'],
+    ['62_galdros_front', '?subject=galdros&yaw=0&shapes=0'],
+    ['69_galdros_left', '?subject=galdros&yaw=1.5708&shapes=0'],
+    ['70_galdros_back', '?subject=galdros&yaw=3.1416&shapes=0'],
+    ['71_galdros_shapes', '?subject=galdros&yaw=-1.5708'],
+    ['63_galdros_slam', '?action=monster.galdros.slam_l&tick=44&yaw=0.9'],
+    ['64_galdros_slam_hit', '?action=monster.galdros.slam_l&tick=53&yaw=0.9'],
+    ['65_galdros_charge', '?action=monster.galdros.charge&tick=40&yaw=0.9'],
+    ['66_galdros_tail', '?action=monster.galdros.tail_sweep&tick=47&yaw=2.6'],
+    ['67_galdros_roar', '?action=monster.galdros.roar&tick=30&yaw=0.9'],
+    ['68_galdros_damaged', '?subject=galdros&yaw=2.4&damaged=1'],
   ];
   for (const [name, q] of shots) {
     await page.goto(`http://localhost:${PORT}${BASE}viewer.html${q}`);
@@ -383,6 +485,9 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     await page.waitForTimeout(300);
     await page.screenshot({ path: `${OUT}${name}.png` });
   }
+  await page.goto(`http://localhost:${PORT}${BASE}viewer.html`);
+  await page.waitForFunction(() => window.__viewer, null, { timeout: 15000 });
+  await page.waitForTimeout(200);
   const text = await page.textContent('#panel');
   check('ビューア: 仮リグの全高が 1.75m', /全高 1\.7[45]\dm/.test(text), (text.match(/全高 [\d.]+m/) ?? [''])[0]);
   await page.goto(`http://localhost:${PORT}${BASE}viewer.html?glb=assets/models/ref_cube_1m.glb`);

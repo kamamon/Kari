@@ -1,13 +1,28 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.1.0",
+  "contentVersion": "0.2.0",
   "files": {
-    "actions": ["actions/player_common.json", "actions/heavy_blade.json", "actions/training_dummy.json"],
-    "tracks": ["tracks/heavy_blade.json", "tracks/training_dummy.json"],
+    "actions": [
+      "actions/player_common.json",
+      "actions/heavy_blade.json",
+      "actions/training_dummy.json",
+      "actions/galdros.json"
+    ],
+    "tracks": [
+      "tracks/heavy_blade.json",
+      "tracks/training_dummy.json",
+      "tracks/galdros.json"
+    ],
     "curves": "curves.json",
     "weapons": "weapons.json",
-    "monsters": ["monsters/training_dummy.json"],
-    "maps": ["maps/basin_training.json"],
-    "player": "player.json"
+    "monsters": [
+      "monsters/training_dummy.json",
+      "monsters/galdros.json"
+    ],
+    "maps": [
+      "maps/basin_training.json"
+    ],
+    "player": "player.json",
+    "quests": "quests.json"
   }
 }

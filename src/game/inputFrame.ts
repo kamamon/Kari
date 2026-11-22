@@ -11,6 +11,8 @@ export const Btn = {
   Item: 64,
   ItemPrev: 128,
   ItemNext: 256,
+  /** 依頼のリタイア。入力として記録するので、再生でも同じ tick に終わる。 */
+  Retire: 512,
 } as const;
 
 export interface InputFrame {

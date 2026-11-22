@@ -1,11 +1,11 @@
 // 描画のまとめ役。simulation の状態を読んで、仮モデル・カメラ・エフェクト・検証表示を更新する。
 // ここから simulation へ値を書き戻すことはしない（描画補間や骨の姿勢を計算の正本にしない）。
-import { Scene, Vector3, WebGLRenderer } from 'three';
+import { CylinderGeometry, DoubleSide, Group, IcosahedronGeometry, Mesh, MeshBasicMaterial, MeshLambertMaterial, RingGeometry, Scene, Vector3, WebGLRenderer } from 'three';
 import { angleDiff, fromArr, lerpV, norm, smoothstep, toWorld, type V3 } from '../core/math';
 import type { Content } from '../data/schemas';
 import { inWindow, renderTick } from '../game/action';
 import type { SimEvent } from '../game/events';
-import { monsterShapes } from '../game/monster';
+import { monsterBlockers, monsterShapes } from '../game/monster';
 import { familyOf, isGuarding, playerHurtCapsule } from '../game/player';
 import type { Simulation } from '../game/sim';
 import { sampleTrack, trackSegment } from '../game/tracks';
@@ -14,7 +14,8 @@ import { blobShadow, buildArena, type Arena } from './arena';
 import { FollowCamera } from './camera';
 import { DebugDraw } from './debugDraw';
 import { BladeTrail, GroundRings, Particles } from './effects';
-import { DummyRig } from './monsterRig';
+import { GaldrosRig } from './galdrosRig';
+import { DummyRig, type MonsterRig } from './monsterRig';
 import { blendPose, clipPose, deadPose, emptyPose, guardPose, hurtPose, locomotionPose, type BodyPose } from './poses';
 import { HunterRig } from './rig';
 
@@ -34,7 +35,10 @@ export class GameView {
   readonly scene = new Scene();
   readonly cam: FollowCamera;
   readonly hunter = new HunterRig();
-  readonly dummy: DummyRig | null = null;
+  readonly monsterRig: MonsterRig | null = null;
+  private hazardViews = new Map<number, { group: Group; ring: Mesh; rock: Mesh }>();
+  private hazardRock = new IcosahedronGeometry(1, 0);
+  private hazardRockMat = new MeshLambertMaterial({ color: 0x80847a, flatShading: true });
   private arena: Arena;
   private trail: BladeTrail;
   private sparks: Particles;
@@ -68,8 +72,10 @@ export class GameView {
     this.scene.add(this.hunter.root, this.playerShadow);
     const m = sim.monsters[0];
     if (m) {
-      this.dummy = new DummyRig(m.def.parts.map((p) => p.id));
-      this.scene.add(this.dummy.root, this.monsterShadow);
+      const ids = m.def.parts.map((p) => p.id);
+      this.monsterRig = m.def.rigFamily === 'quadruped_heavy' ? new GaldrosRig(ids) : new DummyRig(ids);
+      this.monsterShadow.scale.setScalar(m.def.rigFamily === 'quadruped_heavy' ? 1.45 : 1);
+      this.scene.add(this.monsterRig.root, this.monsterShadow, ...(this.monsterRig.extras ?? []));
     }
     this.trail = new BladeTrail(this.scene);
     this.sparks = new Particles(this.scene, 260, 0.11, true, 9, 1.2);
@@ -127,7 +133,7 @@ export class GameView {
           const c = MATERIAL_SPARK[e.material] ?? [1, 1, 1];
           this.sparks.emit(10 + e.chargeLevel * 6, e.pos, 4.5 + e.chargeLevel, 1.6, 0.34, c);
           this.dust.emit(3, e.pos, 1.2, 0.4, 0.5, [0.6, 0.6, 0.55], 0.6);
-          this.dummy?.hitFlash(e.partIndex);
+          this.monsterRig?.hitFlash(e.partIndex);
           this.cam.addShake(0.22 + e.chargeLevel * 0.12);
           break;
         }
@@ -139,6 +145,28 @@ export class GameView {
             this.dust.emit(14, at, 2.6, 1.5, 1.0, [0.55, 0.55, 0.5]);
             this.cam.addShake(0.5);
           }
+          break;
+        case 'part_sever':
+          this.monsterRig?.placeSevered?.(e.pos.x, e.pos.y, e.pos.z, e.yaw);
+          this.sparks.emit(36, { x: e.pos.x, y: 0.9, z: e.pos.z }, 6, 3, 0.7, [1, 0.8, 0.45]);
+          this.dust.emit(12, { x: e.pos.x, y: 0.4, z: e.pos.z }, 2.4, 1.2, 0.9, [0.55, 0.52, 0.48]);
+          this.cam.addShake(0.55);
+          break;
+        case 'monster_stagger':
+          if (m && e.kind === 'topple') {
+            this.dust.emit(24, { x: m.pos.x, y: 0.4, z: m.pos.z }, 3.4, 1, 1.0, [0.6, 0.6, 0.54], 0.5);
+            this.cam.addShake(0.45);
+          }
+          break;
+        case 'monster_aware':
+        case 'monster_rage':
+          this.cam.addShake(0.35);
+          break;
+        case 'hazard_impact':
+          this.rings.spawn(e.x, 0, e.z, e.radius * 1.5, 0.45, 0xe9e2c8);
+          this.dust.emit(14, { x: e.x, y: 0.3, z: e.z }, 3, 1.4, 0.9, [0.6, 0.6, 0.55], 0.6);
+          this.sparks.emit(8, { x: e.x, y: 0.4, z: e.z }, 4, 2.5, 0.4, [0.9, 0.85, 0.7]);
+          this.cam.addShake(0.3);
           break;
         case 'guard':
           this.sparks.emit(16, e.pos, 5, 1.5, 0.3, [1, 0.95, 0.7]);
@@ -261,20 +289,16 @@ export class GameView {
     const tip = this.bladePoint(1);
     this.trail.update(dt, this.tmpA.set(base.x, base.y, base.z), new Vector3(tip.x, tip.y, tip.z));
 
-    // ---- 標的 ----
+    // ---- モンスター ----
     const m = sim.monsters[0];
-    if (m && this.dummy) {
+    if (m && this.monsterRig) {
       const mp = lerpV(m.prevPos, m.pos, alpha);
-      this.dummy.root.position.set(mp.x, mp.y, mp.z);
-      this.dummy.root.rotation.y = m.prevYaw + angleDiff(m.prevYaw, m.yaw) * alpha;
-      const trackId = m.action?.def.weaponTrack ?? content.actions.get(m.def.ai.choices[0]!.actionId)?.weaponTrack;
-      if (trackId) {
-        const s = sampleTrack(content.tracks.get(trackId)!, m.action ? renderTick(m.action, alpha) : 0);
-        this.dummy.setArm(s.grip, s.dir);
-      }
-      this.dummy.update(m, dt, this.time);
-      this.monsterShadow.position.set(mp.x, 0.03, mp.z);
+      this.monsterRig.root.position.set(mp.x, mp.y, mp.z);
+      this.monsterRig.root.rotation.y = m.prevYaw + angleDiff(m.prevYaw, m.yaw) * alpha;
+      this.monsterRig.update(m, { alpha, dt, time: this.time, content });
+      this.monsterShadow.position.set(mp.x, sim.world.groundHeight(mp.x, mp.z) + 0.03, mp.z);
     }
+    this.syncHazards(sim);
 
     // ---- カメラ・光・エフェクト ----
     const sens = this.settings.camSensitivity;
@@ -287,6 +311,43 @@ export class GameView {
     this.dust.update(dt);
     this.rings.update(dt);
     this.drawDebug(sim, alpha, verify);
+  }
+
+  /** 落下物: 落ちる場所に輪を出し、岩を予告時間ちょうどで地面へ届かせる。 */
+  private syncHazards(sim: Simulation): void {
+    const seen = new Set<number>();
+    for (const h of sim.hazards) {
+      seen.add(h.id);
+      let v = this.hazardViews.get(h.id);
+      if (!v) {
+        const group = new Group();
+        const ring = new Mesh(new RingGeometry(0.86, 1, 28), new MeshBasicMaterial({ color: 0xff7a3a, transparent: true, depthWrite: false, side: DoubleSide, fog: false }));
+        ring.rotation.x = -Math.PI / 2;
+        ring.position.y = 0.06;
+        const disc = new Mesh(new CylinderGeometry(1, 1, 0.02, 24), new MeshBasicMaterial({ color: 0xff7a3a, transparent: true, opacity: 0.16, depthWrite: false, fog: false }));
+        disc.position.y = 0.04;
+        const rock = new Mesh(this.hazardRock, this.hazardRockMat);
+        rock.castShadow = true;
+        group.add(ring, disc, rock);
+        group.position.set(h.x, sim.world.groundHeight(h.x, h.z), h.z);
+        this.scene.add(group);
+        v = { group, ring, rock };
+        this.hazardViews.set(h.id, v);
+      }
+      const u = h.warnTotal > 0 ? h.warn / h.warnTotal : 0;
+      v.group.scale.set(h.radius, 1, h.radius);
+      (v.ring.material as MeshBasicMaterial).opacity = 0.35 + 0.65 * (1 - u) * (0.7 + 0.3 * Math.sin(this.time * 22));
+      v.rock.position.y = 0.5 + 15 * u * u;
+      v.rock.scale.set(0.55, 0.75 / Math.max(0.5, h.radius) * h.radius, 0.55);
+      v.rock.rotation.set(this.time * 3 + h.id, this.time * 2, 0);
+    }
+    for (const [id, v] of this.hazardViews) {
+      if (seen.has(id)) continue;
+      this.scene.remove(v.group);
+      v.ring.geometry.dispose();
+      (v.ring.material as MeshBasicMaterial).dispose();
+      this.hazardViews.delete(id);
+    }
   }
 
   private drawDebug(sim: Simulation, alpha: number, verify: boolean): void {
@@ -315,6 +376,7 @@ export class GameView {
           const k = m.dead ? 0.25 : m.parts[s.partIndex]!.broken ? 0.55 : 1;
           d.capsule(s.a, s.b, s.r, [c[0] * k, c[1] * k, c[2] * k]);
         }
+        if (!m.dead) for (const b of monsterBlockers(m)) d.circle({ x: b.x, y: m.pos.y + 0.05, z: b.z }, b.r, [0.45, 0.45, 0.45]);
         if (m.action) {
           const t = renderTick(m.action, alpha);
           for (const hw of m.action.def.hitWindows) {
@@ -325,6 +387,7 @@ export class GameView {
           }
         }
       }
+      for (const h of sim.hazards) d.capsule({ x: h.x, y: 0.1, z: h.z }, { x: h.x, y: 1.8, z: h.z }, h.radius, h.warn > 0 ? [0.8, 0.6, 0.2] : [1, 0.15, 0.1]);
     }
     d.end(verify);
   }
@@ -339,7 +402,18 @@ export class GameView {
     return { calls: r.calls, triangles: r.triangles };
   }
 
+  /** 依頼の切り替えで作り直す時に、古いシーンの GPU 資源を解放する（同じ canvas を使い続けるため）。 */
   dispose(): void {
+    this.scene.traverse((o) => {
+      const mesh = o as Mesh;
+      if (!mesh.geometry) return;
+      mesh.geometry.dispose();
+      for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+        (mat as MeshLambertMaterial).map?.dispose();
+        mat?.dispose();
+      }
+    });
+    this.hazardViews.clear();
     this.renderer.dispose();
   }
 }

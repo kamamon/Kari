@@ -33,6 +33,16 @@ export class DebugDraw {
     this.n++;
   }
 
+  /** 地面に平行な円。 */
+  circle(c: V3, r: number, color: [number, number, number]): void {
+    const N = 20;
+    for (let i = 0; i < N; i++) {
+      const t0 = (i / N) * Math.PI * 2;
+      const t1 = ((i + 1) / N) * Math.PI * 2;
+      this.line({ x: c.x + Math.cos(t0) * r, y: c.y, z: c.z + Math.sin(t0) * r }, { x: c.x + Math.cos(t1) * r, y: c.y, z: c.z + Math.sin(t1) * r }, color);
+    }
+  }
+
   /** カプセル（b が null なら球）を輪で描く。 */
   capsule(a: V3, b: V3 | null, r: number, color: [number, number, number]): void {
     const end = b ?? a;

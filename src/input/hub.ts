@@ -53,6 +53,11 @@ export class InputHub {
     return r;
   }
 
+  /** 押してすぐ離した扱いの入力を 1 回だけ積む（メニューからのリタイアなど）。 */
+  pulse(btn: number): void {
+    this.pendPressed |= btn;
+  }
+
   ui(action: UiAction): void {
     for (const l of this.uiListeners) l(action);
   }
@@ -68,7 +73,7 @@ export class InputHub {
   /** ある機器の入力をすべて離す（pointercancel・切断・フォーカス喪失など）。 */
   releaseDevice(dev: Device): void {
     const held = this.heldBy[dev];
-    for (let b = 1; b <= Btn.ItemNext; b <<= 1) if (held & b) this.setButton(dev, b, false);
+    for (let b = 1; b <= Btn.Retire; b <<= 1) if (held & b) this.setButton(dev, b, false);
     this.axes[dev].x = 0;
     this.axes[dev].y = 0;
   }

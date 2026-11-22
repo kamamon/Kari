@@ -11,10 +11,12 @@ import {
 } from 'three';
 import { assetUrl, fetchJson, loadContent } from './core/assets';
 import type { ActionDef, Content } from './data/schemas';
-import { inWindow, phaseAt } from './game/action';
+import { inWindow, newRun, phaseAt } from './game/action';
+import { createMonster, monsterShapes, type MonsterState } from './game/monster';
 import { sampleTrack, trackSegment } from './game/tracks';
 import { DebugDraw } from './render/debugDraw';
-import { DummyRig } from './render/monsterRig';
+import { GaldrosRig } from './render/galdrosRig';
+import { DummyRig, type MonsterRig } from './render/monsterRig';
 import { CLIPS, JOINTS, clipPose, emptyPose, locomotionPose } from './render/poses';
 import { HunterRig } from './render/rig';
 
@@ -51,7 +53,10 @@ scene.add(cube, axes);
 const debug = new DebugDraw(scene);
 
 const hunter = new HunterRig();
-const dummy = new DummyRig(['head', 'tail', 'back', 'legs', 'body']);
+const MONSTER_IDS = { dummy: 'monster.training_dummy', galdros: 'monster.galdros' } as const;
+type MonsterKey = keyof typeof MONSTER_IDS;
+const monsters = {} as Record<MonsterKey, { m: MonsterState; rig: MonsterRig }>;
+let damaged = false;
 const socketAxes: AxesHelper[] = [];
 for (const s of Object.values(hunter.sockets)) {
   const a = new AxesHelper(0.14);
@@ -64,7 +69,7 @@ let glbClips: AnimationClip[] = [];
 let glbInfo = '';
 
 const state = {
-  subject: 'hunter' as 'hunter' | 'dummy' | 'glb',
+  subject: 'hunter' as 'hunter' | MonsterKey | 'glb',
   actionId: '',
   tick: 0,
   playing: true,
@@ -108,7 +113,9 @@ canvas.addEventListener('wheel', (e) => (state.camDist = Math.max(1.5, Math.min(
 
 function actionsFor(subject: string): ActionDef[] {
   const all = [...content.actions.values()];
-  return subject === 'dummy' ? all.filter((a) => a.actionId.startsWith('monster.')) : all.filter((a) => a.actionId.startsWith('player.'));
+  if (subject === 'dummy') return all.filter((a) => a.actionId.startsWith('monster.training_dummy.'));
+  if (subject === 'galdros') return all.filter((a) => a.actionId.startsWith('monster.galdros.'));
+  return all.filter((a) => a.actionId.startsWith('player.'));
 }
 
 function button(label: string, onClick: () => void, parent: HTMLElement): HTMLButtonElement {
@@ -140,6 +147,7 @@ function buildPanel(): void {
   const r1 = row();
   button('ハンター', () => setSubject('hunter'), r1);
   button('訓練標的', () => setSubject('dummy'), r1);
+  button('ガルドロス', () => setSubject('galdros'), r1);
   for (const a of manifest.filter((m) => m.type === 'model' && m.path?.endsWith('.glb'))) button(`GLB: ${a.id}`, () => void loadGlb(a.path!), r1);
   const r2 = row();
   actionSelect = document.createElement('select');
@@ -182,6 +190,7 @@ function buildPanel(): void {
   const r5 = row();
   button('骨・socket', () => (state.bones = !state.bones), r5);
   button('判定', () => (state.shapes = !state.shapes), r5);
+  button('破壊・切断の姿', () => (damaged = !damaged), r5);
   panel.appendChild(info);
 }
 
@@ -209,14 +218,14 @@ function syncSlider(): void {
   slider.value = String(Math.floor(state.tick));
 }
 
-function setSubject(s: 'hunter' | 'dummy' | 'glb'): void {
+function setSubject(s: 'hunter' | MonsterKey | 'glb'): void {
   state.subject = s;
   state.actionId = '';
   state.tick = 0;
   hunter.root.visible = s === 'hunter';
-  dummy.root.visible = s === 'dummy';
+  for (const [k, v] of Object.entries(monsters)) v.rig.root.visible = s === k;
   if (glbRoot) glbRoot.visible = s === 'glb';
-  state.camDist = s === 'dummy' ? 9 : 5.2;
+  state.camDist = s === 'dummy' ? 9 : s === 'galdros' ? 10 : 5.2;
   syncActions();
 }
 
@@ -321,17 +330,24 @@ function frame(ts: number): void {
       }
     }
     for (const ax of socketAxes) ax.visible = state.bones;
-  } else if (state.subject === 'dummy') {
-    const track = content.tracks.get(a?.weaponTrack ?? 'dummy_slam_arm');
-    if (track) {
-      const s = sampleTrack(track, a ? t : 0);
-      dummy.setArm(s.grip, s.dir);
-    }
-    const def = content.monsters.get('monster.training_dummy')!;
+  } else if (state.subject !== 'glb') {
+    // モンスター: ゲームと同じ update を通す（行動の時刻だけビューアが決める）
+    const { m, rig } = monsters[state.subject];
+    if (a) {
+      m.action = newRun(a, 1, 0);
+      m.action.tick = Math.floor(t) + 1;
+      m.action.advanced = true;
+    } else m.action = null;
+    m.def.parts.forEach((d, i) => {
+      m.parts[i]!.broken = damaged && d.breakDurability !== null;
+      m.parts[i]!.severed = damaged && !!d.sever;
+    });
+    rig.update(m, { alpha: t - Math.floor(t), dt, time, content });
     if (state.shapes) {
-      for (const part of def.parts) for (const s of part.shapes) debug.capsule({ x: s.a[0], y: s.a[1], z: s.a[2] }, s.b ? { x: s.b[0], y: s.b[1], z: s.b[2] } : null, s.r, [0.5, 0.8, 1]);
+      for (const sh of monsterShapes(m)) debug.capsule(sh.a, sh.b, sh.r, [0.5, 0.8, 1]);
     }
-    lines.push(`${def.name}: 部位 ${def.parts.map((p) => `${p.name}(斬 ${p.hitzone.cut})`).join(' / ')}`);
+    lines.push(`${m.def.name}: 部位 ${m.def.parts.map((p) => `${p.name}(斬 ${p.hitzone.cut})`).join(' / ')}`);
+    lines.push(`表示: ${damaged ? '頭・背殻を破壊、尾を切断した姿' : '通常の姿'}`);
   } else {
     glbMixer?.update(state.playing ? dt * state.speed : 0);
     lines.push(glbInfo);
@@ -360,7 +376,7 @@ function frame(ts: number): void {
   const text = lines.join('\n');
   if (info.textContent !== text) info.textContent = text;
 
-  const target = new Vector3(0, state.subject === 'dummy' ? 1.2 : 0.95, 0);
+  const target = new Vector3(0, state.subject === 'dummy' || state.subject === 'galdros' ? 1.2 : 0.95, 0);
   const cp = Math.cos(state.camPitch);
   // 正面 = カメラがキャラクターの前（+Z 側）に立つ
   camera.position.set(target.x + Math.sin(state.camYaw) * cp * state.camDist, target.y + Math.sin(state.camPitch) * state.camDist, target.z + Math.cos(state.camYaw) * cp * state.camDist);
@@ -379,7 +395,16 @@ async function main(): Promise<void> {
     panel.textContent = `読み込みに失敗しました: ${e instanceof Error ? e.message : String(e)}`;
     return;
   }
-  scene.add(hunter.root, dummy.root);
+  scene.add(hunter.root);
+  for (const [key, id] of Object.entries(MONSTER_IDS) as [MonsterKey, string][]) {
+    const def = content.monsters.get(id)!;
+    const m = createMonster(def, { x: 0, z: 0, yaw: 0 }, key);
+    m.aware = true;
+    const ids = def.parts.map((p) => p.id);
+    const rig: MonsterRig = def.rigFamily === 'quadruped_heavy' ? new GaldrosRig(ids) : new DummyRig(ids);
+    monsters[key] = { m, rig };
+    scene.add(rig.root);
+  }
   hunter.setPose(emptyPose());
   restHeight = hunter.measureHeight();
   buildPanel();
@@ -388,7 +413,8 @@ async function main(): Promise<void> {
   const q = new URLSearchParams(location.search);
   const act = q.get('action');
   if (act && content.actions.has(act)) {
-    if (act.startsWith('monster.')) setSubject('dummy');
+    if (act.startsWith('monster.galdros.')) setSubject('galdros');
+    else if (act.startsWith('monster.')) setSubject('dummy');
     state.actionId = act;
     actionSelect.value = act;
     syncSlider();
@@ -398,6 +424,10 @@ async function main(): Promise<void> {
     state.tick = Number(q.get('tick'));
   }
   if (q.has('yaw')) state.camYaw = Number(q.get('yaw'));
+  if (q.get('subject') === 'galdros' && !act) setSubject('galdros');
+  if (q.has('damaged')) damaged = true;
+  if (q.get('shapes') === '0') state.shapes = false;
+  if (q.get('bones') === '0') state.bones = false;
   const glb = q.get('glb');
   if (glb) await loadGlb(glb);
   (window as unknown as { __viewer?: unknown }).__viewer = { state };

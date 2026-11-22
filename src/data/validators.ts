@@ -12,6 +12,7 @@ import {
   type MapDef,
   type MonsterDef,
   type PlayerTuning,
+  type QuestDef,
   type ShapeTrackDef,
   type WeaponDef,
   type WeaponFamilyDef,
@@ -170,8 +171,30 @@ export function crossCheck(c: Content, errors: string[]): void {
     if (!isNum(wpn.attack) || wpn.attack <= 0) errors.push(`weapon ${wpn.id}: attack が不正`);
   }
   for (const m of c.monsters.values()) {
+    const partIds = new Set(m.parts.map((p) => p.id));
     for (const ch of m.ai.choices) {
       if (!c.actions.has(ch.actionId)) errors.push(`monster ${m.id}: ai の ${ch.actionId} が無い`);
+      if (ch.ifSevered) {
+        if (!c.actions.has(ch.ifSevered.actionId)) errors.push(`monster ${m.id}: ifSevered の ${ch.ifSevered.actionId} が無い`);
+        if (!partIds.has(ch.ifSevered.partId)) errors.push(`monster ${m.id}: ifSevered の部位 ${ch.ifSevered.partId} が無い`);
+      }
+    }
+    if (m.discover && !c.actions.has(m.discover.actionId)) errors.push(`monster ${m.id}: discover の ${m.discover.actionId} が無い`);
+    if (m.rage && !c.actions.has(m.rage.actionId)) errors.push(`monster ${m.id}: rage の ${m.rage.actionId} が無い`);
+    for (const p of m.parts) {
+      if (p.sever && (!Array.isArray(p.sever.shapesAfter) || !(p.sever.threshold > 0))) errors.push(`monster ${m.id}: part ${p.id} の sever が不正`);
+      if (p.flinch && !(p.flinch.threshold > 0 && p.flinch.ticks > 0)) errors.push(`monster ${m.id}: part ${p.id} の flinch が不正`);
+    }
+  }
+  for (const q of c.quests.values()) {
+    if (!c.maps.has(q.mapId)) errors.push(`quest ${q.id}: map ${q.mapId} が無い`);
+    if (!c.monsters.has(q.targetMonsterId)) errors.push(`quest ${q.id}: monster ${q.targetMonsterId} が無い`);
+    if (!(q.timeLimitTicks > 0) || !(q.maxFaints > 0)) errors.push(`quest ${q.id}: 制限が不正`);
+    if (q.monsterAttackScale !== undefined && !(q.monsterAttackScale > 0 && q.monsterAttackScale <= 3)) errors.push(`quest ${q.id}: monsterAttackScale が不正`);
+  }
+  for (const a of c.actions.values()) {
+    for (const h of a.hazards ?? []) {
+      if (!Number.isInteger(h.tick) || h.tick < 0 || h.tick >= a.durationTicks || !(h.count > 0) || !(h.radius > 0) || !(h.warnTicks > 0)) errors.push(`action ${a.actionId}: hazards が不正`);
     }
   }
   if (!c.actions.has(c.player.rollActionId)) errors.push(`player: rollActionId ${c.player.rollActionId} が無い`);
@@ -202,6 +225,7 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     weapons: new Map(),
     monsters: new Map(),
     maps: new Map(),
+    quests: new Map(),
     player: (await get(index.files.player)) as PlayerTuning,
   };
   checkVersion(index.files.player, content.player.schemaVersion, errors);
@@ -238,6 +262,8 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     validateMap(m, errors);
     putUnique(content.maps, m.id, m, 'map', errors);
   }
+  const quests = (await get(index.files.quests)) as { quests: QuestDef[] };
+  for (const q of quests.quests ?? []) putUnique(content.quests, q.id, q, 'quest', errors);
   crossCheck(content, errors);
   if (errors.length > 0) throw new ContentError(errors);
   return content;

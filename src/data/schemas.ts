@@ -70,6 +70,7 @@ export interface ActionDef {
   staminaCost?: number;
   invulnerable?: { from: number; to: number }[];
   charge?: ChargeDef;
+  hazards?: HazardDef[];
 }
 
 /** 移動曲線。keys は [tick, 累積距離m]。controller がこの距離だけ進める。 */
@@ -150,6 +151,12 @@ export interface MonsterPartDef {
   breakDurability: number | null;
   material: 'rock' | 'hide' | 'shell';
   shapes: HurtShapeDef[];
+  /** 破壊後の肉質（無ければ破壊前と同じ） */
+  brokenHitzone?: Record<DamageType, number>;
+  /** 怯みの蓄積。threshold に達すると怯み、次の threshold は growth だけ上がる（永久拘束を防ぐ）。topple なら転倒。 */
+  flinch?: { threshold: number; growth: number; ticks: number; topple?: boolean };
+  /** 切断。切断属性のダメージだけが蓄積する。切断後は当たり形状が shapesAfter に替わる。 */
+  sever?: { threshold: number; staggerTicks: number; shapesAfter: HurtShapeDef[] };
 }
 
 export interface MonsterAiChoice {
@@ -158,6 +165,28 @@ export interface MonsterAiChoice {
   maxDist: number;
   maxAngleDeg: number;
   weight: number;
+  /** 正面からの角度の下限（後方用の技など） */
+  minAngleDeg?: number;
+  /** プレイヤーがモンスターの左右どちらに居る時だけ使うか */
+  side?: 'left' | 'right';
+  /** この技だけの再使用待ち */
+  cooldownTicks?: number;
+  /** 正面にこの距離だけ空きが必要（壁際で突進しない） */
+  clearAhead?: number;
+  /** 指定の部位が切断済みなら、代わりにこの技を使う */
+  ifSevered?: { partId: string; actionId: string };
+}
+
+/** 技が生む落下物など。出現位置は出た時点で固定し、予告の後に判定が出る。 */
+export interface HazardDef {
+  tick: number;
+  count: number;
+  spread: number;
+  radius: number;
+  warnTicks: number;
+  activeTicks: number;
+  baseDamage: number;
+  reaction: 'flinch' | 'knockdown';
 }
 
 export interface MonsterDef {
@@ -173,6 +202,16 @@ export interface MonsterDef {
   lootId: string | null;
   respawnTicks: number | null;
   breakStaggerTicks: number;
+  /** 歩く速さ (m/s)。無ければその場から動かない。 */
+  moveSpeed?: number;
+  /** プレイヤーが通り抜けられない円（体の前後方向 z にずらして並べる）。無ければ bodyRadius の円 1 つ。 */
+  collision?: { z: number; r: number }[];
+  /** 技を出していない間の間合い取り */
+  approach?: { stopDist: number; faceDeg: number };
+  /** 発見。気付くまでは動かない。 */
+  discover?: { range: number; fovDeg: number; closeRange: number; actionId: string } | null;
+  /** 怒り。受けたダメージが threshold に達すると durationTicks の間続く。 */
+  rage?: { threshold: number; durationTicks: number; actionId: string; speedScale: number; damageScale: number; cooldownScale: number };
   parts: MonsterPartDef[];
   ai: {
     aggroRange: number;
@@ -218,6 +257,21 @@ export interface PlayerTuning {
   gravity: number;
 }
 
+/** 依頼。M2 前半は大型 1 体の討伐だけ。 */
+export interface QuestDef {
+  id: string;
+  name: string;
+  kind: 'slay';
+  summary: string;
+  mapId: string;
+  targetMonsterId: string;
+  monsterSpawn: { x: number; z: number; yaw: number };
+  timeLimitTicks: number;
+  maxFaints: number;
+  /** この依頼でモンスターの攻撃・落石が与えるダメージの倍率（省略時 1）。 */
+  monsterAttackScale?: number;
+}
+
 export interface ContentIndex {
   schemaVersion: number;
   contentVersion: string;
@@ -228,6 +282,7 @@ export interface ContentIndex {
     weapons: string;
     monsters: string[];
     maps: string[];
+    quests: string;
     player: string;
   };
 }
@@ -241,6 +296,7 @@ export interface Content {
   weapons: Map<string, WeaponDef>;
   monsters: Map<string, MonsterDef>;
   maps: Map<string, MapDef>;
+  quests: Map<string, QuestDef>;
   player: PlayerTuning;
 }
 

@@ -2,7 +2,7 @@
 // 状態: free（移動）/ action（データ定義の行動）/ guard / hurt / dead
 import { DEG, angleDiff, forwardOf, turnToward, v3, yawOf, type V3 } from '../core/math';
 import type { SeededRng } from '../core/seededRng';
-import type { Content, GuardDef, WeaponDef, WeaponFamilyDef } from '../data/schemas';
+import type { Content, GuardDef, HazardDef, WeaponDef, WeaponFamilyDef } from '../data/schemas';
 import { inWindow, newRun, type ActionRun } from './action';
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
@@ -49,6 +49,8 @@ export interface SimCtx {
   newInstanceId(): number;
   /** プレイヤーが通り抜けられない円（生きている大型の胴体など） */
   blockers(): Circle[];
+  /** 落下物などを出す。位置は target を基準にこの時点で固定する。 */
+  spawnHazards(def: HazardDef, target: V3): void;
 }
 
 const MOVE_DEADZONE = 0.12;

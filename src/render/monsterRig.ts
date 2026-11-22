@@ -1,11 +1,31 @@
 // 訓練標的「岩偶」の仮モデル。部位の見た目は当たり形状（public/data/monsters/training_dummy.json）に合わせてある。
 // 破壊した部位は見た目を切り替え、判定側の状態と一致させる。
 import { BoxGeometry, ConeGeometry, CylinderGeometry, Group, IcosahedronGeometry, Matrix4, Mesh, MeshLambertMaterial, Vector3 } from 'three';
+import type { Content } from '../data/schemas';
+import { renderTick } from '../game/action';
 import type { MonsterState } from '../game/monster';
+import { sampleTrack } from '../game/tracks';
+
+export interface MonsterRigCtx {
+  alpha: number;
+  dt: number;
+  time: number;
+  content: Content;
+}
+
+/** モンスターの見た目の共通の口。正式モデル（GLB）へ替える時も、この形に合わせる。 */
+export interface MonsterRig {
+  readonly root: Group;
+  /** モンスターに付いて動かない物（切り落とした尾など）。シーンへ直接置く。 */
+  readonly extras?: Group[];
+  hitFlash(partIndex: number): void;
+  update(m: MonsterState, c: MonsterRigCtx): void;
+  placeSevered?(x: number, y: number, z: number, yaw: number): void;
+}
 
 const lam = (color: number, emissive = 0): MeshLambertMaterial => new MeshLambertMaterial({ color, emissive, flatShading: true });
 
-export class DummyRig {
+export class DummyRig implements MonsterRig {
   readonly root = new Group();
   private tilt = new Group();
   readonly arm = new Group();
@@ -112,7 +132,14 @@ export class DummyRig {
     this.flash[partIndex] = 1;
   }
 
-  update(m: MonsterState, dt: number, time: number): void {
+  update(m: MonsterState, c: MonsterRigCtx): void {
+    const { dt, time } = c;
+    // 腕は技の軌道データで動かす。技を出していない時は軌道の最初の姿勢。
+    const trackId = m.action?.def.weaponTrack ?? c.content.actions.get(m.def.ai.choices[0]!.actionId)?.weaponTrack;
+    if (trackId) {
+      const s = sampleTrack(c.content.tracks.get(trackId)!, m.action ? renderTick(m.action, c.alpha) : 0);
+      this.setArm(s.grip, s.dir);
+    }
     const headIndex = m.def.parts.findIndex((p) => p.id === 'head');
     this.headMask.visible = !(headIndex >= 0 && m.parts[headIndex]!.broken);
     const backIndex = m.def.parts.findIndex((p) => p.id === 'back');
