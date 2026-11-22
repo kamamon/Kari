@@ -36,7 +36,9 @@ const REST_TAIL_PITCH = 0.173;
 const HIDE = hex(0x857a6c), BELLY = hex(0xb3a68e), DARK = hex(0x5b534a), DUST = hex(0xa39a86), STAIN = hex(0x7a7d69);
 const SCAR = hex(0x3a322e), FLESH = hex(0x6e2f2a), MOUTH = hex(0x5a2422), TONGUE_C = hex(0x9a5450), TOOTH = hex(0xe0d6ba);
 const HORN = hex(0xcfc2a0), HORN_DARK = hex(0x8a7d62), BLACK = hex(0x0c0a09);
-const ROCK = hex(0x97928a), ROCK_DARK = hex(0x77736b), MOSS = hex(0x7d8563), BRONZE = hex(0xc9a062), AMBER = hex(0xffc66e);
+const ROCK = hex(0x97928a), ROCK_DARK = hex(0x77736b), MOSS = hex(0x7d8563), BRONZE = hex(0xc9a062);
+// 目: 琥珀がかった茶色の虹彩に、丸く黒い瞳（設定図の目）
+const IRIS = hex(0xb07a30), IRIS_RIM = hex(0x4a2f14), GLINT = hex(0xfff4dc);
 
 type Profile = readonly (readonly [number, number, number, number, number])[];
 // 体の軸に沿った断面: [z, 中心の高さ, 横の半径, 上の半径, 下の半径]（尾先 → 鼻先）
@@ -131,8 +133,12 @@ const gauss = (x: number, c: number, w: number): number => Math.exp(-((x - c) * 
 const clamp = (v: number, lo: number, hi: number): number => Math.min(hi, Math.max(lo, v));
 const wrapPi = (a: number): number => Math.atan2(Math.sin(a), Math.cos(a));
 const X = new Vector3(1, 0, 0), Y = new Vector3(0, 1, 0), Z = new Vector3(0, 0, 1);
-const EYES = [new Vector3(0.5, 1.7, 2.24), new Vector3(-0.5, 1.7, 2.24)];
-const NOSTRILS = [new Vector3(0.11, 1.6, 2.8), new Vector3(-0.11, 1.6, 2.8)];
+// 目: 設定図に合わせ、頭の岩のひさしの下・やや前向きに置く小さな目
+const EYES = [new Vector3(0.455, 1.728, 2.36), new Vector3(-0.455, 1.728, 2.36)];
+const EYE_OUT = EYES.map((e) => new Vector3(Math.sign(e.x) * 0.62, 0.12, 0.78).normalize());
+/** まぶたを下ろす時の回転軸（目の中心を通る、顔の表面に沿った水平の向き） */
+const LID_AXIS = EYE_OUT.map((o) => new Vector3().crossVectors(new Vector3(0, 1, 0), new Vector3(o.x, 0, o.z).normalize()).normalize());
+const NOSTRILS = [new Vector3(0.14, 1.6, 2.77), new Vector3(-0.14, 1.6, 2.77)];
 
 /** 皮の色。上は暗く腹は明るく、まだらと土ぼこり、腹の横じまを足す。 */
 function hideColor(p: Vector3, n: Vector3): RGB {
@@ -503,33 +509,30 @@ export class GaldrosRig implements MonsterRig {
       tongue.push({ c: new Vector3(0, j.cy + j.top + 0.015, z), right: X, up: Y, rx: w, top: 0.05, bottom: 0.03, b0: JAW, b1: TONGUE, w1: sstep(0.2, 0.7, t), part: part.head });
     }
     loft(hide, tongue, { seg: 10, uRepeat: 1, capStart: TONGUE_C, capEnd: TONGUE_C, color: (p) => shade(TONGUE_C, 0.85 + 0.3 * fbm(p.x * 14, p.y * 14, p.z * 14, 2)) });
-    // 歯: 上あごは下向き、下あごは上向き
+    // 歯: 上あごは下向き、下あごは上向き。口を閉じている間は隠れ、開くと見える（設定図は口を閉じた姿で、歯は見えない）
     for (const s of [1, -1]) {
       for (let j = 0; j < 7; j++) {
         const z = 2.06 + j * 0.1;
         const up = spineAt(z), lo = profileAt(JAW_PROFILE, z);
         const big = j === 5 ? 1.7 : 1;
-        horn(hide, new Vector3(s * up.rx * 0.8, up.cy - up.bottom * 0.72, z), new Vector3(s * 0.12, -1, 0.05), 0.085 * big, 0.03 * big, TOOTH, HEAD, part.head);
-        horn(hide, new Vector3(s * lo.rx * 0.78, lo.cy + lo.top * 0.7, z + 0.05), new Vector3(s * 0.1, 1, -0.05), 0.075, 0.027, TOOTH, JAW, part.head);
+        horn(hide, new Vector3(s * up.rx * 0.6, up.cy - up.bottom * 0.8, z), new Vector3(s * 0.12, -1, 0.05), 0.085 * big, 0.03 * big, TOOTH, HEAD, part.head);
+        horn(hide, new Vector3(s * lo.rx * 0.6, lo.cy + lo.top * 0.75, z + 0.05), new Vector3(s * 0.1, 1, -0.05), 0.075, 0.027, TOOTH, JAW, part.head);
       }
     }
-    // くちばし、下あごの先、牙、あごのとげ
+    // くちばしと、下あごの先（設定図の頭には角やとげが無いので、付けない）
     horn(hide, new Vector3(0, 1.4, 2.8), new Vector3(0, -0.45, 1), 0.3, 0.17, HORN, HEAD, part.head, new Vector3(0, -0.2, 0));
     horn(hide, new Vector3(0, 1.26, 2.74), new Vector3(0, 0.5, 1), 0.16, 0.1, HORN, JAW, part.head);
-    for (const s of [1, -1]) {
-      horn(hide, new Vector3(s * 0.36, 1.3, 2.4), new Vector3(s * 0.25, 1, 0.25), 0.22, 0.062, HORN, JAW, part.head, new Vector3(0, 0, 0.05));
-      horn(hide, new Vector3(s * 0.16, 1.05, 2.28), new Vector3(s * 0.2, -1, -0.35), 0.15, 0.045, HORN_DARK, JAW, part.head);
-      horn(hide, new Vector3(s * 0.3, 1.04, 2.02), new Vector3(s * 0.3, -1, -0.4), 0.13, 0.042, HORN_DARK, JAW, part.head);
-      // 頬のとげ（後ろ向き）と、頭の後ろの角
-      for (let j = 0; j < 3; j++) horn(hide, new Vector3(s * (0.57 - j * 0.02), 1.5 - j * 0.11, 1.98 - j * 0.07), new Vector3(s, -0.1 - j * 0.15, -0.75), 0.26 - j * 0.045, 0.06, HORN_DARK, HEAD, part.head, new Vector3(0, 0, -0.06));
-      horn(hide, new Vector3(s * 0.5, 1.9, 1.8), new Vector3(s * 0.6, 0.7, -0.6), 0.4, 0.1, HORN, HEAD, part.head, new Vector3(0, 0.05, -0.12));
-    }
-    // 目: 光る眼球、縦長の瞳、まぶた
+    // 目: 暗い縁、琥珀がかった茶色の虹彩、丸い瞳、小さな光の点、上下のまぶた
     EYES.forEach((e, i) => {
-      const out = new Vector3(Math.sign(e.x), 0.1, 0.25).normalize();
-      blob(glow, e.clone().addScaledVector(out, 0.012), out, 0.13, 0.082, 0.07, () => AMBER, HEAD, part.head, 10, 5);
-      blob(hide, e.clone().addScaledVector(out, 0.062), out, 0.05, 0.022, 0.058, () => BLACK, HEAD, part.head, 6, 3);
-      blob(hide, e.clone().add(new Vector3(Math.sign(e.x) * 0.03, 0.085, 0.01)), Z, 0.24, 0.085, 0.04, (p, n) => shade(hideColor(p, n), 0.8), LID + i, part.head, 8, 4);
+      const out = EYE_OUT[i]!, axis = LID_AXIS[i]!;
+      blob(hide, e.clone().addScaledVector(out, -0.012), out, 0.13, 0.078, 0.066, () => IRIS_RIM, HEAD, part.head, 10, 5);
+      blob(glow, e.clone().addScaledVector(out, 0.012), out, 0.11, 0.058, 0.052, () => IRIS, HEAD, part.head, 10, 5);
+      blob(hide, e.clone().addScaledVector(out, 0.052), out, 0.036, 0.027, 0.027, () => BLACK, HEAD, part.head, 8, 4);
+      blob(glow, e.clone().addScaledVector(out, 0.066).add(new Vector3(0, 0.02, 0)).addScaledVector(axis, 0.014), out, 0.012, 0.009, 0.009, () => GLINT, HEAD, part.head, 5, 3);
+      const lidColor = (p: Vector3, n: Vector3): RGB => shade(hideColor(p, n), 0.78);
+      // 上まぶた（骨で下りる）と、下まぶた（動かない）
+      blob(hide, e.clone().add(new Vector3(0, 0.066, 0)).addScaledVector(out, 0.012), axis, 0.2, 0.07, 0.034, lidColor, LID + i, part.head, 8, 4);
+      blob(hide, e.clone().add(new Vector3(0, -0.058, 0)).addScaledVector(out, 0.008), axis, 0.18, 0.062, 0.028, lidColor, HEAD, part.head, 8, 4);
     });
 
     // ---- 脚 ----
@@ -882,7 +885,7 @@ export class GaldrosRig implements MonsterRig {
     P.archF += 0.012 * breath;
     if (time > this.blinkAt) this.blinkAt = time + 2.2 + this.rnd() * 3.5;
     const blinking = this.blinkAt - time < 0.13 ? 1 : 0;
-    P.lid = Math.max(blinking, enraged ? 0.34 : 0, weak ? 0.45 : 0);
+    P.lid = Math.max(0.2, blinking, enraged ? 0.38 : 0, weak ? 0.5 : 0);
     if (!m.aware) {
       // 気付いていない: 頭を下げて地面を嗅いでいる
       P.neckPitch += 0.26 + 0.05 * Math.sin(time * 0.6);
@@ -1216,8 +1219,7 @@ export class GaldrosRig implements MonsterRig {
     B[TONGUE]!.rotation.set(-0.35 * P.tongue + 0.1 * P.tongue * Math.sin(time * 23), 0.15 * P.tongue * Math.sin(time * 17), 0);
     B[TONGUE]!.position.z = 0.36 + 0.1 * P.tongue;
     this.lid += (P.lid - this.lid) * (1 - Math.exp(-dt * 30));
-    B[LID]!.rotation.z = -1.05 * this.lid;
-    B[LID + 1]!.rotation.z = 1.05 * this.lid;
+    for (let i = 0; i < 2; i++) B[LID + i]!.quaternion.setFromAxisAngle(LID_AXIS[i]!, 0.95 * this.lid);
     // 岩板の揺れ
     const rat = Math.min(1.5, this.rattle);
     for (let i = 0; i < PLATE_N; i++) {
