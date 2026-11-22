@@ -6,7 +6,7 @@
 
 - **v0.1.0（M1 訓練版）** / リポジトリ kamamon/Kari の main、実装のコミットは `9198e35`
 - タグ `v0.1.0-m1` は、作業環境からタグを送れなかったため **まだ付いていない**（GitHub の Releases →「Draft a new release」で `9198e35` に付けられる）
-- 公開 URL: https://kamamon.github.io/Kari/ 。配信元は `gh-pages` ブランチ（ビルド結果）。Pages の Source が「Deploy from a branch / gh-pages」になるまでは、ゲームは表示されない
+- 公開 URL: https://kamamon.github.io/Kari/ 。配信元は `gh-pages` ブランチ（ビルド結果）。2026-11-22 22:07 に、ビルド済みのページとデータが配信されていることを確認した
 - 2026-11-22、設計書 COPY 01〜04（総合指示・CLAUDE.md・M0 基盤・M1 断岳剣の戦闘）の範囲を実装
 
 ## できたこと（確認した内容だけ）
@@ -18,6 +18,7 @@
 - タッチ（3 本指の同時操作、cancel での解除、2 本指の二重発火防止、縦持ちの一時停止）、キーボード/マウス。
 - 断岳剣: 抜刀/納刀、抜刀斬り、縦斬り（設計書 p.23 の値）、溜め 3 段階、横薙ぎ、連係、防御、回避（無敵 [3,11)）。
 - 部位付きの訓練標的: 5 部位、部位破壊、叩きつけ攻撃、怯み、死亡と復帰。
+- GitHub Pages での配信（gh-pages 方式）。main へ push すると Actions（Build and publish）が gh-pages を更新することも確認した（`cebe30d` の push で bot が公開）。
 - 60Hz 固定 tick。同じ入力列が描画 30/60/144fps・不規則な間隔で同じ結果になる。
 - 検証表示（行動 tick・区間・判定・部位・標的 HP・ダメージ値・描画統計）、ゲーム内の 30/60fps 一致チェック、入力の記録。
 - 素材ビューア（仮リグ・技・判定・基準 GLB）。
@@ -28,7 +29,7 @@
 
 | 素材 | 状態 |
 | --- | --- |
-| アート基準ボード v1（`art-source/board/style_board_v1.png`、ChatGPT 生成） | 受領済み・採用待ち。ゲームにはまだ反映していない |
+| アート基準ボード v2（`art-source/board/style_board_v2.png`、ChatGPT 生成。v1 も保存） | 照合済み・採用確認待ち。ゲームにはまだ反映していない |
 
 ## 仮素材（正式素材ではないもの）
 
@@ -54,16 +55,14 @@
 ## 未確認
 
 - **実機（iPhone / iPad Safari、PC の実 GPU）での動作・操作感・性能・音。** 自動検査はヘッドレス Chrome のソフトウェア描画だけ。
-- 実際の GitHub Pages での配信。Source を「GitHub Actions」にしても公開 URL が更新されなかったため、2026-11-22 に gh-pages ブランチからの配信へ変更した（decisions D-020）。Pages の設定を gh-pages に切り替えた後に、公開 URL で確認する。Actions（Build and publish）が動いているかも未確認。
 - ゲームパッド。
 - 数値の手触り（縦斬りの重さ、回避距離、標的の攻撃の読みやすさ、ボタン配置）。初期値のまま。
 
 ## お願いしたいこと（ユーザー）
 
-1. GitHub の **Settings → Pages** で、Source を **「Deploy from a branch」**、Branch を **「gh-pages」/「/ (root)」** にして Save。
-2. 公開 URL を iPhone の Safari で開き、[tests.md](tests.md) の「実機チェック表」を試す。気になった点を Claude へ。
-3. アート基準ボード v1 を採用するか決める（受領済み。照合の記録は `art-source/board/style_board_v1.md`）。採用したら ChatGPT へ ②（ガルドロス設定図）を依頼し、画像を Claude へ添付。
-4. （任意）動く版の目印として、GitHub の Releases で `9198e35` にタグ `v0.1.0-m1` を付ける。
+1. 公開 URL を iPhone の Safari で開き、[tests.md](tests.md) の「実機チェック表」を試す。気になった点を Claude へ。
+2. アート基準ボード v2 を採用するか決める（照合の記録は `art-source/board/style_board_v2.md`）。採用したら ChatGPT へ ②（ガルドロス設定図）を依頼し、画像を Claude へ添付。
+3. （任意）動く版の目印として、GitHub の Releases で `9198e35` にタグ `v0.1.0-m1` を付ける。
 
 ## 次の一作業
 

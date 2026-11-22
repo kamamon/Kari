@@ -22,7 +22,7 @@ TypeScript + Vite + Three.js。入力、simulation、render、data、save、UI �
 PC と横向き iPhone/iPad Safari を対象とする。複数指、safe area、回転、音声開始、非表示からの復帰を扱う。素材パスは Vite BASE_URL から解決する。通常の Safari タブで操作できることを優先する。
 
 # Delivery
-main へ push したら `npm run publish:pages` で gh-pages（配信元）も更新し、公開 URL で反映を確かめる。
+main へ push すると Actions（Build and publish）が gh-pages（配信元）を更新する。数分後に公開 URL で反映を確かめ、更新されていなければ `npm run publish:pages` で手元から更新する。
 変更を小さく保ち、同じ範囲の受入条件を確認する。typecheck、test、build、assets:validate のコマンドを用意し、必要なものを実行する。未実行は未検証と記載する。仮素材・未実装・欠落を完成扱いにしない。README と handoff を更新し、動く版をタグで残す。
 
 # Commands
