@@ -48,7 +48,7 @@
 ## 未確認
 
 - **実機（iPhone / iPad Safari、PC の実 GPU）での動作・操作感・性能・音。** 自動検査はヘッドレス Chrome のソフトウェア描画だけ。
-- 実際の GitHub Pages での配信（Pages の Source を「GitHub Actions」にする操作が必要）。
+- 実際の GitHub Pages での配信。2026-11-22 の時点で Pages の配信元が「main ブランチ」になっており、公開 URL にはビルド前のページ（設定の案内）が出る。Source を「GitHub Actions」へ切り替えた後に確認する。
 - ゲームパッド。
 - 数値の手触り（縦斬りの重さ、回避距離、標的の攻撃の読みやすさ、ボタン配置）。初期値のまま。
 

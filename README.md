@@ -68,7 +68,7 @@ npm run smoke      # 本番ビルドをヘッドレス Chrome で操作する検
 
 ## 公開（GitHub Pages）
 
-1. GitHub のこのリポジトリで **Settings → Pages → Build and deployment → Source を「GitHub Actions」** にする（最初の 1 回だけ）。
+1. GitHub のこのリポジトリで **Settings → Pages → Build and deployment → Source を「GitHub Actions」** にする（最初の 1 回だけ）。「Deploy from a branch」のままだと、ビルド前のページが表示されてゲームは始まりません（その場合は画面に案内が出ます）。
 2. **Actions → Deploy to GitHub Pages → Run workflow**（または main へ push）。型検査とテストが通るとビルドして配信します。
 3. https://kamamon.github.io/Kari/ を開く。画面の起動画面とメニュー「検証」にビルド番号が出ます。
 
