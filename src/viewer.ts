@@ -4,6 +4,7 @@
 //   - 正面 / 側面 / 背面 / 斜め後ろ
 //   - 攻撃判定の重ね表示（有効区間は赤）
 //   - GLB: scene・骨・clip 名・長さ・大きさの一覧。必須 clip の欠落は似た名前で代用せずに表示する。
+import { packCharts } from './render/procGeo';
 import './ui/style.css';
 import {
   AnimationMixer, AxesHelper, Box3, BoxGeometry, Color, DirectionalLight, EdgesGeometry, GridHelper, HemisphereLight, LineBasicMaterial, LineSegments, Object3D,
@@ -79,6 +80,9 @@ const state = {
   camYaw: Math.PI * 0.75,
   camPitch: 0.18,
   camDist: 5.2,
+  /** 注目する点の高さと前後（確認用の指定。NaN は既定） */
+  lookY: NaN,
+  lookZ: 0,
 };
 
 let content: Content;
@@ -376,7 +380,7 @@ function frame(ts: number): void {
   const text = lines.join('\n');
   if (info.textContent !== text) info.textContent = text;
 
-  const target = new Vector3(0, state.subject === 'dummy' || state.subject === 'galdros' ? 1.2 : 0.95, 0);
+  const target = new Vector3(0, Number.isNaN(state.lookY) ? (state.subject === 'dummy' || state.subject === 'galdros' ? 1.2 : 0.95) : state.lookY, state.lookZ);
   const cp = Math.cos(state.camPitch);
   // 正面 = カメラがキャラクターの前（+Z 側）に立つ
   camera.position.set(target.x + Math.sin(state.camYaw) * cp * state.camDist, target.y + Math.sin(state.camPitch) * state.camDist, target.z + Math.cos(state.camYaw) * cp * state.camDist);
@@ -426,11 +430,16 @@ async function main(): Promise<void> {
   if (q.has('yaw')) state.camYaw = Number(q.get('yaw'));
   if (q.get('subject') === 'galdros' && !act) setSubject('galdros');
   if (q.has('damaged')) damaged = true;
+  // 確認用の静止画のための指定: 距離、見上げ・見下ろしの角度、注目する高さと前後
+  if (q.has('dist')) state.camDist = Number(q.get('dist'));
+  if (q.has('pitch')) state.camPitch = Number(q.get('pitch'));
+  if (q.has('ty')) state.lookY = Number(q.get('ty'));
+  if (q.has('tz')) state.lookZ = Number(q.get('tz'));
   if (q.get('shapes') === '0') state.shapes = false;
   if (q.get('bones') === '0') state.bones = false;
   const glb = q.get('glb');
   if (glb) await loadGlb(glb);
-  (window as unknown as { __viewer?: unknown }).__viewer = { state, monsters };
+  (window as unknown as { __viewer?: unknown }).__viewer = { state, monsters, packCharts };
   requestAnimationFrame(frame);
 }
 

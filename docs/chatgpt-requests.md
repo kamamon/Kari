@@ -35,7 +35,7 @@ ChatGPT へファイルごと渡したい時は、同じ内容を ChatGPT 宛て
 
 ```
 プロジェクト：霧境の狩人 - VEILBOUND HUNTERS
-現在の版：v0.2.4（M2 前半: ガルドロス戦） https://github.com/kamamon/Kari
+現在の版：v0.2.5（M2 前半: ガルドロス戦） https://github.com/kamamon/Kari
 遊べる場所：https://kamamon.github.io/Kari/
 今回の範囲：（例：アート基準ボードを 1 枚作る）
 現在動くこと：拠点の画面から依頼を選び、岩殻獣ガルドロス（設定図をもとにした、骨で動く仮モデル）を断岳剣で討伐して結果の画面まで。ハンターは箱を並べた仮の人形。捕獲・剥ぎ取り・報酬・道具・村は無い。

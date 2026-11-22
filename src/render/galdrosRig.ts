@@ -10,14 +10,16 @@
 //   - 前脚叩きの脚も、判定と同じ軌道データに従う。
 //   - 叩かれた部位に応じて、体・頭・尾がのけぞる。部位破壊で岩板が砕けて飛ぶ。
 // コードで作った形であり、正式モデル（GLB）が来るまでの仮素材であることは変わらない。
-import { Bone, Group, Matrix4, Mesh, MeshStandardMaterial, Quaternion, Skeleton, SkinnedMesh, Vector3, type BufferGeometry } from 'three';
+import { Bone, DataTexture, Group, Matrix4, Mesh, MeshStandardMaterial, Quaternion, RepeatWrapping, SRGBColorSpace, Skeleton, SkinnedMesh, TextureLoader, Vector3, type BufferGeometry, type Texture } from 'three';
+import { assetUrl } from '../core/assets';
 import { smoothstep } from '../core/math';
 import { renderTick } from '../game/action';
 import type { MonsterState } from '../game/monster';
 import { sampleTrack } from '../game/tracks';
 import type { MonsterRig, MonsterRigCtx } from './monsterRig';
 import { GALDROS_AO } from './galdrosAo';
-import { Geo, blob, crystal, fbm, hash3, hex, horn, loft, makeHideTextures, makeRockTextures, mix, shade, slab, sstep, type RGB, type Ring, type SlabOpts } from './procGeo';
+import { GALDROS_ATLAS } from './galdrosAtlas';
+import { Geo, blob, crystal, fbm, hash3, hex, horn, loft, makeHideTextures, makeRockTextures, mix, packCharts, shade, slab, sstep, type AtlasChart, type RGB, type Ring, type SlabOpts } from './procGeo';
 
 // ---- 骨の番号 ----
 const ROOT = 0, BODY = 1, LUMBAR = 2, PELVIS = 3, THORAX = 4, CHEST = 5, RIBS = 6, NECK1 = 7, NECK2 = 8, HEAD = 9, JAW = 10, TONGUE = 11, LID = 12, TAIL = 14, LEG = 22, PLATE = 38;
@@ -33,10 +35,19 @@ const ANKLE_H = 0.2;
 const REST_TAIL_PITCH = 0.173;
 
 // ---- 色（採用した基準ボード: 岩は灰〜灰褐色、苔の灰緑、縁取りは明るい青銅） ----
-const HIDE = hex(0x857a6c), BELLY = hex(0xb3a68e), DARK = hex(0x5b534a), DUST = hex(0xa39a86), STAIN = hex(0x7a7d69);
+const DARK = hex(0x5b534a);
 const SCAR = hex(0x3a322e), FLESH = hex(0x6e2f2a), MOUTH = hex(0x5a2422), TONGUE_C = hex(0x9a5450), TOOTH = hex(0xe0d6ba);
 const HORN = hex(0xcfc2a0), HORN_DARK = hex(0x8a7d62), BLACK = hex(0x0c0a09);
-const ROCK = hex(0x97928a), ROCK_DARK = hex(0x77736b), MOSS = hex(0x7d8563), BRONZE = hex(0xc9a062);
+const ROCK = hex(0xa69c8b), ROCK_DARK = hex(0x878071), MOSS = hex(0x8b8d6c), BRONZE = hex(0xc9a062);
+// 皮の色は、設定図から焼いた絵（galdros_hide）が持つ。頂点の色は「絵に掛ける倍率」で、白が素通し。
+// SKIN_AVG は絵の平均の色（絵が読み込まれるまでの代わりの色と、決まった色を出したい所の倍率の計算に使う）。
+const WHITE: RGB = [1, 1, 1];
+const SKIN_AVG = hex(0x7d6c5c);
+/** この色に見せたい時に、頂点へ入れる倍率（絵の平均の色で割る） */
+const over = (c: RGB): RGB => [Math.min(1, c[0] / SKIN_AVG[0]), Math.min(1, c[1] / SKIN_AVG[1]), Math.min(1, c[2] / SKIN_AVG[2])];
+/** 絵を貼らない皮（まぶた・切り落とした尾の切り口のまわりなど）の色 */
+const SKIN_PLAIN = shade(SKIN_AVG, 1.05);
+const HIDE_TEX = 'assets/textures/galdros/galdros_hide_v1.webp', ROCK_TEX = 'assets/textures/galdros/galdros_rock_v1.webp';
 // 目: 琥珀がかった茶色の虹彩に、丸く黒い瞳（設定図の目）
 const IRIS = hex(0xb07a30), IRIS_RIM = hex(0x4a2f14), GLINT = hex(0xfff4dc);
 
@@ -140,18 +151,6 @@ const EYE_OUT = EYES.map((e) => new Vector3(Math.sign(e.x) * 0.62, 0.12, 0.78).n
 const LID_AXIS = EYE_OUT.map((o) => new Vector3().crossVectors(new Vector3(0, 1, 0), new Vector3(o.x, 0, o.z).normalize()).normalize());
 const NOSTRILS = [new Vector3(0.14, 1.6, 2.77), new Vector3(-0.14, 1.6, 2.77)];
 
-/** 皮の色。上は暗く腹は明るく、まだらと土ぼこり、腹の横じまを足す。 */
-function hideColor(p: Vector3, n: Vector3): RGB {
-  let c = mix(BELLY, HIDE, sstep(-0.6, 0.1, n.y));
-  c = mix(c, DARK, 0.5 * sstep(0.3, 0.95, n.y));
-  // 腹は板を並べたような横じま
-  c = shade(c, 1 - 0.14 * sstep(-0.45, -0.85, n.y) * (0.5 + 0.5 * Math.sin(p.z * 11)));
-  c = mix(c, STAIN, 0.3 * sstep(0.45, 0.7, fbm(p.x * 0.9 + 3, p.y * 0.9, p.z * 0.9 + 8, 2)));
-  c = shade(c, 0.8 + 0.4 * fbm(p.x * 3.3, p.y * 3.3 + 5, p.z * 3.3, 3));
-  c = mix(c, DUST, 0.55 * sstep(0.6, 0.08, p.y));
-  return c;
-}
-
 interface PartIds {
   head: number;
   tail: number;
@@ -227,7 +226,9 @@ function applyAo(geo: BufferGeometry, name: string): boolean {
   if (!e || !col || e.count !== col.count) return false;
   const bin = atob(e.data);
   for (let i = 0; i < col.count; i++) {
-    const k = 0.42 + 0.58 * Math.pow(bin.charCodeAt(i) / 255, 0.9);
+    // 皮の絵には設定図のしわの陰が入っているので、皮へ掛ける陰は弱める
+    const floor = name === 'hide' ? 0.6 : 0.42;
+    const k = floor + (1 - floor) * Math.pow(bin.charCodeAt(i) / 255, 0.9);
     col.setXYZ(i, col.getX(i) * k, col.getY(i) * k, col.getZ(i) * k);
   }
   return true;
@@ -271,6 +272,13 @@ export class GaldrosRig implements MonsterRig {
   private flashUniform = { value: new Float32Array(8) };
   /** 焼いた陰が、いまの形（頂点の数）と合っていて、すべて掛けられたか */
   aoApplied = true;
+  /** 皮の絵を貼る区画（書き出しと検査用） */
+  atlasCharts: AtlasChart[] = [];
+  /** 区画の並びが、焼いた絵と同じ（galdrosAtlas.ts の通り）か */
+  atlasStored = false;
+  /** 設定図から焼いた絵（皮・岩）の読み込みが終わったか / 失敗したか */
+  artLoaded = false;
+  artFailed = false;
   private index: Record<string, number> = {};
   private part: PartIds;
   // 砕けた岩
@@ -437,15 +445,22 @@ export class GaldrosRig implements MonsterRig {
     const cutZ = TAIL_Z[CUT]!;
     const zs: number[] = [];
     for (let z = TAIL_END; z < 2.93; z += z < -1.4 ? 0.08 : z < 1.3 ? 0.09 : 0.055) zs.push(Math.abs(z - cutZ) < 0.04 ? cutZ - 0.045 : z);
-    type SRing = Ring & { z: number; flesh?: boolean };
+    type SRing = Ring & { z: number; flesh?: boolean; brk?: boolean };
     const rings: SRing[] = [];
-    const ringAt = (z: number, afterCut: boolean, flesh = false): void => {
+    const ringAt = (z: number, afterCut: boolean, flesh = false, brk = false): void => {
       const s = spineAt(z);
       const [b0, b1, w1] = spineBones(z, afterCut);
-      rings.push({ c: new Vector3(0, s.cy, z), right: X, up: Y, rx: s.rx, top: s.top, bottom: s.bottom, b0, b1, w1, z, flesh, part: z > 1.6 ? part.head : z < -1.6 ? part.tail : part.body });
+      rings.push({ c: new Vector3(0, s.cy, z), right: X, up: Y, rx: s.rx, top: s.top, bottom: s.bottom, b0, b1, w1, z, flesh, brk, part: z > 1.6 ? part.head : z < -1.6 ? part.tail : part.body });
     };
     let cutDone = false;
+    // 絵を貼る区画の切れ目（尾の付け根と首）。同じ位置に輪を 2 つ重ねる。
+    const breaks = [-1.5, 1.5];
     for (const z of zs) {
+      while (breaks.length > 0 && z > breaks[0]! + 0.02) {
+        const zb = breaks.shift()!;
+        ringAt(zb, true);
+        ringAt(zb, true, false, true);
+      }
       if (!cutDone && z > cutZ) {
         // 切断面: 同じ位置に輪を 4 つ重ねる（先側の 2 つは切った時に 1 点へ縮み、残った輪との間が断面になる）
         ringAt(cutZ, true);
@@ -458,6 +473,8 @@ export class GaldrosRig implements MonsterRig {
     }
     loft(hide, rings, {
       seg: 32, exponent: 2.25, noise: 0.028, noiseFreq: 1.9, uRepeat: 5, capStart: DARK, capEnd: HORN_DARK,
+      // 絵を貼る区画: 尾先 / 尾の付け根側 / 胴 / 首と頭。切断面（flesh）には貼らない。
+      atlas: { kinds: ['tailTip', 'tailBase', 'body', 'head'], t: (r) => (r as SRing).z, plain: (r) => !!(r as SRing).flesh, breakBefore: (r) => !!(r as SRing).brk, density: [1, 1, 0.8, 1.5] },
       // 呼吸でふくらむのは、岩板に覆われていない脇腹と腹
       third: { bone: RIBS, weight: (r, a) => 0.6 * sstep(-1.05, -0.5, (r as SRing).z) * sstep(1.15, 0.6, (r as SRing).z) * sstep(0.75, 0.1, Math.sin(a)) },
       bulge: (r, a) => {
@@ -480,26 +497,23 @@ export class GaldrosRig implements MonsterRig {
       color: (p, n, r, a) => {
         const rr = r as SRing;
         if (rr.flesh) return FLESH;
-        let c = hideColor(p, n);
+        let c: RGB = WHITE;
         const dTop = Math.abs(a - Math.PI / 2);
         // 岩板の下に隠れている面（壊すと見える）: 傷んだ暗い地肌
         const under = Math.max(sstep(0.85, 0.5, dTop) * sstep(-1.25, -0.9, rr.z) * sstep(1.1, 0.8, rr.z), sstep(0.7, 0.4, dTop) * sstep(1.8, 1.95, rr.z) * sstep(2.6, 2.45, rr.z));
-        c = mix(c, shade(SCAR, 0.8 + 0.5 * fbm(p.x * 6, p.y * 6, p.z * 6, 2)), under * 0.85);
-        // しわの谷と、脚の付け根のくぼみは暗く（陰の代わり）
-        c = shade(c, 1 - 0.22 * gauss(rr.z, 1.45, 0.3) * (0.5 - 0.5 * Math.sin(rr.z * 24)));
-        c = shade(c, 1 - 0.3 * (gauss(rr.z, 1.05, 0.3) + gauss(rr.z, -1.05, 0.3)) * sstep(0.5, 0.95, Math.abs(Math.cos(a))) * sstep(0.3, -0.5, Math.sin(a)));
-        for (const e of EYES) c = mix(c, SCAR, 0.8 * sstep(0.17, 0.07, p.distanceTo(e)));
+        c = mix(c, over(shade(SCAR, 0.9 + 0.5 * fbm(p.x * 6, p.y * 6, p.z * 6, 2))), under * 0.75);
+        // 目のくぼみと鼻の穴
+        for (const e of EYES) c = shade(c, 1 - 0.3 * sstep(0.17, 0.07, p.distanceTo(e)));
         for (const e of NOSTRILS) c = mix(c, BLACK, sstep(0.07, 0.03, p.distanceTo(e)));
-        if (rr.z > 2.7) c = mix(c, HORN_DARK, sstep(2.7, 2.85, rr.z));
         // 口の中（上あごの裏）
-        if (rr.z > 1.95) c = mix(c, MOUTH, sstep(-0.75, -0.95, n.y) * sstep(1.95, 2.1, rr.z));
+        if (rr.z > 1.95) c = mix(c, over(MOUTH), sstep(-0.75, -0.95, n.y) * sstep(1.95, 2.1, rr.z));
         return c;
       },
     });
 
     // ---- 下あご・舌・歯 ----
     const jawRings: Ring[] = JAW_PROFILE.map(([z, cy, rx, top, bottom]) => ({ c: new Vector3(0, cy, z), right: X, up: Y, rx, top, bottom, b0: JAW, b1: JAW, w1: 0, part: part.head }));
-    loft(hide, jawRings, { seg: 16, exponent: 2.3, noise: 0.012, uRepeat: 2, capStart: MOUTH, capEnd: HORN_DARK, color: (p, n) => mix(mix(hideColor(p, n), BELLY, 0.35), MOUTH, sstep(0.75, 0.95, n.y)) });
+    loft(hide, jawRings, { seg: 16, exponent: 2.3, noise: 0.012, uRepeat: 2, capStart: MOUTH, capEnd: HORN_DARK, atlas: { kinds: ['jaw'], t: (r) => r.c.z }, color: (_p, n) => mix(WHITE, over(MOUTH), sstep(0.75, 0.95, n.y)) });
     const tongue: Ring[] = [];
     for (let i = 0; i <= 7; i++) {
       const t = i / 7;
@@ -520,7 +534,8 @@ export class GaldrosRig implements MonsterRig {
       }
     }
     // くちばしと、下あごの先（設定図の頭には角やとげが無いので、付けない）
-    horn(hide, new Vector3(0, 1.4, 2.8), new Vector3(0, -0.45, 1), 0.3, 0.17, HORN, HEAD, part.head, new Vector3(0, -0.2, 0));
+    // くちばしは短く、下へ曲がる（設定図は上あごの先が鉤になっている）
+    horn(hide, new Vector3(0, 1.36, 2.8), new Vector3(0, -1, 0.5), 0.2, 0.19, HORN, HEAD, part.head, new Vector3(0, -0.12, -0.1));
     horn(hide, new Vector3(0, 1.26, 2.74), new Vector3(0, 0.5, 1), 0.16, 0.1, HORN, JAW, part.head);
     // 目: 暗い縁、琥珀がかった茶色の虹彩、丸い瞳、小さな光の点、上下のまぶた
     EYES.forEach((e, i) => {
@@ -529,7 +544,7 @@ export class GaldrosRig implements MonsterRig {
       blob(glow, e.clone().addScaledVector(out, 0.012), out, 0.11, 0.058, 0.052, () => IRIS, HEAD, part.head, 10, 5);
       blob(hide, e.clone().addScaledVector(out, 0.052), out, 0.036, 0.027, 0.027, () => BLACK, HEAD, part.head, 8, 4);
       blob(glow, e.clone().addScaledVector(out, 0.066).add(new Vector3(0, 0.02, 0)).addScaledVector(axis, 0.014), out, 0.012, 0.009, 0.009, () => GLINT, HEAD, part.head, 5, 3);
-      const lidColor = (p: Vector3, n: Vector3): RGB => shade(hideColor(p, n), 0.78);
+      const lidColor = (p: Vector3): RGB => shade(SKIN_PLAIN, 0.8 + 0.25 * fbm(p.x * 30, p.y * 30, p.z * 30, 2));
       // 上まぶた（骨で下りる）と、下まぶた（動かない）
       blob(hide, e.clone().add(new Vector3(0, 0.066, 0)).addScaledVector(out, 0.012), axis, 0.2, 0.07, 0.034, lidColor, LID + i, part.head, 8, 4);
       blob(hide, e.clone().add(new Vector3(0, -0.058, 0)).addScaledVector(out, 0.008), axis, 0.18, 0.062, 0.028, lidColor, HEAD, part.head, 8, 4);
@@ -562,7 +577,8 @@ export class GaldrosRig implements MonsterRig {
       loft(hide, lr, {
         seg: 14, exponent: 2.2, noise: 0.022, noiseFreq: 2.6, uRepeat: 2,
         bulge: (_r, a, idx) => 0.05 * Math.sin(idx * 2.1 + i) + (idx === 4 ? 0.08 * Math.max(0, Math.sin(a) * (s.front ? -1 : 1)) : 0) + (idx === 6 ? -0.04 : 0),
-        color: (p, n) => shade(hideColor(p, n), 0.92 - 0.12 * gauss(p.y, r.joint.y, 0.1)),
+        atlas: { kinds: [`leg${i}`], t: (_r, idx) => prof[idx]![0], meta: { front: s.front ? 1 : 0 } },
+        color: () => WHITE,
       });
       // 足: 平たく広い。かかと側は足首の骨、前半分は指の骨に付く（踏み切りで指が反る）。
       const fx = r.ankle.x, fz = r.ankle.z;
@@ -574,7 +590,9 @@ export class GaldrosRig implements MonsterRig {
         seg: 16, exponent: 2.6, noise: 0.012, uRepeat: 2, capStart: DARK, capEnd: DARK,
         // 指の間のくぼみ（4 本指）
         bulge: (_r, a, idx) => (idx >= 5 ? -0.1 * Math.pow(Math.abs(Math.sin(Math.cos(a) * 3.3)), 6) * sstep(-0.2, 0.5, Math.sin(a)) : 0),
-        color: (p, n) => mix(mix(shade(hideColor(p, n), 0.85), DUST, 0.3), DARK, 0.8 * sstep(-0.35, -0.8, n.y)),
+        atlas: { kinds: [`foot${i}`], t: (rr) => rr.c.z - fz, meta: { front: s.front ? 1 : 0 } },
+        // 足の裏は暗く
+        color: (_p, n) => shade(WHITE, 1 - 0.55 * sstep(-0.35, -0.8, n.y)),
       });
       for (const cx of [-0.36, -0.12, 0.12, 0.36]) {
         horn(hide, new Vector3(fx + cx * k, 0.13, fz + 0.5 - Math.abs(cx) * 0.3), new Vector3(cx * 0.5, -0.1, 1), 0.27, 0.115, HORN, b + 3, pid, new Vector3(0, -0.1, 0));
@@ -592,7 +610,7 @@ export class GaldrosRig implements MonsterRig {
         const rr = Math.max(0.02, Math.sin(Math.PI * (0.06 + 0.88 * t)));
         lump.push({ c: lc.clone().add(new Vector3(0, 0, -0.56 + 1.12 * t)), right: X, up: Y, rx: 0.42 * rr, top: 0.52 * rr, bottom: 0.5 * rr, b0: s.front ? CHEST : PELVIS, b1: b, w1: 0.35, part: pid });
       }
-      loft(hide, lump, { seg: 12, noise: 0.02, uRepeat: 2, color: (p, n) => hideColor(p, n) });
+      loft(hide, lump, { seg: 12, noise: 0.02, uRepeat: 2, atlas: { kinds: [`lump${i}`], t: (rr) => rr.c.z, density: [0.6], meta: { front: s.front ? 1 : 0, cy: lc.y, top: 0.52, bottom: 0.5 } }, color: () => WHITE });
     });
 
     // ---- 岩板（1 枚ずつ骨に付く） ----
@@ -638,9 +656,22 @@ export class GaldrosRig implements MonsterRig {
     tailCrystals.forEach(([x, y, z, len, rad], j) => crystal(glow, tip.clone().add(new Vector3(x * 0.08, y * 0.08, 0.06)), new Vector3(x, y, z), len, rad, BRONZE, TAIL + TAIL_N - 1, part.tail, j + 1));
 
     // ================= 素材 =================
+    // 絵を貼る区画の位置を決める。焼いた絵と同じ並び（galdrosAtlas.ts）を使う。
+    // 形を変えて区画が増減した時は、その場で並べ直す（絵とは合わなくなるので atlasStored を false にして知らせる）。
+    this.atlasCharts = hide.charts;
+    const stored = GALDROS_ATLAS.rects as Record<string, readonly [number, number, number, number] | undefined>;
+    this.atlasStored = hide.charts.length === Object.keys(stored).length && hide.charts.every((c) => stored[c.kind]);
+    const rects = this.atlasStored ? stored : packCharts(hide.charts);
+    for (const c of hide.charts) c.rect = rects[c.kind]!;
+
     const hideTex = makeHideTextures(), rockTex = makeRockTextures();
-    const hideMat = new MeshStandardMaterial({ vertexColors: true, map: hideTex.map, normalMap: hideTex.normal, roughness: 0.82, metalness: 0 });
-    hideMat.normalScale.set(0.85, 0.85);
+    // 皮の絵は読み込みが終わるまで、平均の色 1 色で代わりをする
+    const flat = new DataTexture(new Uint8Array([125, 108, 92, 255]), 1, 1);
+    flat.colorSpace = SRGBColorSpace;
+    flat.channel = 1;
+    flat.needsUpdate = true;
+    const hideMat = new MeshStandardMaterial({ vertexColors: true, map: flat, normalMap: hideTex.normal, roughness: 0.82, metalness: 0 });
+    hideMat.normalScale.set(0.45, 0.45);
     const rockMat = new MeshStandardMaterial({ vertexColors: true, map: rockTex.map, normalMap: rockTex.normal, roughness: 0.95, metalness: 0 });
     rockMat.normalScale.set(0.9, 0.9);
     // 命中した部位だけを一瞬光らせる（部位番号を頂点に持たせてある）
@@ -699,10 +730,34 @@ export class GaldrosRig implements MonsterRig {
       const s = spineAt(Math.max(TAIL_END, z));
       piece.push({ c: new Vector3(0, s.cy - baseY, z - cutZ), right: X, up: Y, rx: s.rx, top: s.top, bottom: s.bottom, b0: 0, b1: 0, w1: 0, part: 0 });
     }
-    loft(dropGeo, piece, { seg: 16, exponent: 2.25, noise: 0.02, uRepeat: 2, capStart: FLESH, capEnd: DARK, color: (p, n) => hideColor(new Vector3(p.x, p.y + baseY, p.z + cutZ), n) });
+    // 絵の貼り位置は、体の尾先の区画を借りる
+    const tipChart = hide.charts.find((c) => c.kind === 'tailTip');
+    loft(dropGeo, piece, { seg: 16, exponent: 2.25, noise: 0.02, uRepeat: 2, capStart: FLESH, capEnd: DARK, atlasRef: tipChart ? { chart: tipChart, t: (r) => r.c.z + cutZ } : undefined, color: () => (tipChart ? WHITE : SKIN_PLAIN) });
     const dtip = new Vector3(TAIL_TIP[0], TAIL_TIP[1] - baseY, TAIL_TIP[2] - cutZ);
     tailCrystals.forEach(([x, y, z, len, rad], j) => crystal(dropGlow, dtip.clone().add(new Vector3(x * 0.08, y * 0.08, 0.06)), new Vector3(x, y, z), len, rad, BRONZE, 0, 0, j + 1));
-    const dropHide = new MeshStandardMaterial({ vertexColors: true, map: hideTex.map, normalMap: hideTex.normal, roughness: 0.84 });
+    const dropHide = new MeshStandardMaterial({ vertexColors: true, map: flat, normalMap: hideTex.normal, roughness: 0.84 });
+    dropHide.normalScale.set(0.45, 0.45);
+    // 設定図から焼いた絵を読み込む。皮は専用の貼り位置（uv1）、岩は繰り返しの模様。
+    const loader = new TextureLoader();
+    const waitFor = (path: string, apply: (t: Texture) => void): Promise<boolean> =>
+      new Promise((resolve) => {
+        loader.load(assetUrl(path), (t) => { t.colorSpace = SRGBColorSpace; t.anisotropy = 4; apply(t); resolve(true); }, undefined, () => resolve(false));
+      });
+    void Promise.all([
+      waitFor(HIDE_TEX, (t) => {
+        t.channel = 1;
+        hideMat.map = t;
+        dropHide.map = t;
+        flat.dispose();
+      }),
+      waitFor(ROCK_TEX, (t) => {
+        t.wrapS = t.wrapT = RepeatWrapping;
+        const old = rockMat.map;
+        rockMat.map = t;
+        this.debrisMat.map = t;
+        old?.dispose();
+      }),
+    ]).then((ok) => { this.artLoaded = ok.every(Boolean); this.artFailed = !this.artLoaded; });
     const dropGlowMat = new MeshStandardMaterial({ vertexColors: true, roughness: 0.38, metalness: 0.15, emissive: 0x3a2a12 });
     const drop = new Group();
     for (const [g, mat] of [[dropGeo, dropHide], [dropGlow, dropGlowMat]] as const) {

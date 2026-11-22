@@ -268,6 +268,8 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.keyboard.down('KeyW');
   await page.keyboard.down('ShiftLeft');
   check('ガルドロスの陰（Blender で焼いた値）が、いまの形と合っている', await page.evaluate(() => window.__vh.view.monsterRig.aoApplied === true));
+  check('ガルドロスの皮の絵の区画が、焼いた絵と同じ並び', await page.evaluate(() => window.__vh.view.monsterRig.atlasStored === true && window.__vh.view.monsterRig.atlasCharts.length === 17));
+  check('設定図から焼いた絵（皮・岩）を読み込める', await until(page, () => window.__vh.view.monsterRig.artLoaded === true && !window.__vh.view.monsterRig.artFailed, 15000));
   check('近づくと気付かれて咆哮する', await until(page, () => window.__vh.sim.monsters[0].aware, 60000));
   await page.keyboard.up('ShiftLeft');
   await page.keyboard.up('KeyW');

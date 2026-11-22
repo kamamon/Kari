@@ -143,7 +143,79 @@ export function makeRockTextures(): { map: Texture; normal: Texture } {
 
 // ---------- 形の組み立て ----------
 /** 頂点を貯めていく入れ物。骨への重み（最大 2 本）と、部位番号（命中時に光らせる用）を持つ。 */
+/** 設定図から焼いた絵を貼る区画。筒（loft）を切り開いた長方形 1 枚が、絵の中の長方形 1 つに当たる。 */
+export interface AtlasChart {
+  kind: string;
+  /** 各行（輪）の先頭の頂点番号。1 行は cols 個で、筒の継ぎ目の 1 個が重なる */
+  rowStart: number[];
+  cols: number;
+  /** 行ごとの、区画の中の縦位置（0〜1）と、目印の値（胴なら z、脚なら付け根からの割合） */
+  v: number[];
+  t: number[];
+  /** 実寸 (m): 輪の周の長さの最大と、表面に沿った長さ */
+  width: number;
+  height: number;
+  /** 細かさの倍率（顔は細かく、隠れる所は粗く） */
+  density: number;
+  /** 焼く側へ渡す追加の値 */
+  meta: Record<string, number>;
+  /** 絵の中の位置 (px、左上が原点): [x0, y0, x1, y1] */
+  rect?: readonly [number, number, number, number];
+}
+export const ATLAS_SIZE = 2048;
+/** 区画のまわりの余白と、絵を貼らない頂点が指す白い区画（左上）の大きさ (px) */
+const ATLAS_GUTTER = 8, ATLAS_WHITE = 64;
+
+/** 区画を絵の中へ並べる（高い順に、左から右へ段を作る）。入る最大の細かさを探す。 */
+export function packCharts(charts: readonly AtlasChart[]): Record<string, [number, number, number, number]> {
+  const order = charts.map((_, i) => i).sort((a, b) => charts[b]!.height * charts[b]!.density - charts[a]!.height * charts[a]!.density || a - b);
+  const G = ATLAS_GUTTER;
+  const place = (s: number, out?: Record<string, [number, number, number, number]>): boolean => {
+    let x = ATLAS_WHITE + G, y = 0, shelf = ATLAS_WHITE + G;
+    for (const i of order) {
+      const c = charts[i]!;
+      const w = Math.max(8, Math.round(c.width * c.density * s)), h = Math.max(8, Math.round(c.height * c.density * s));
+      if (w + 2 * G > ATLAS_SIZE) return false;
+      if (x + w + 2 * G > ATLAS_SIZE) { x = 0; y += shelf; shelf = 0; }
+      if (y + h + 2 * G > ATLAS_SIZE) return false;
+      if (out) out[c.kind] = [x + G, y + G, x + G + w, y + G + h];
+      x += w + 2 * G;
+      shelf = Math.max(shelf, h + 2 * G);
+    }
+    return true;
+  };
+  let lo = 4, hi = 4000;
+  for (let i = 0; i < 40; i++) {
+    const mid = (lo + hi) / 2;
+    if (place(mid)) lo = mid; else hi = mid;
+  }
+  const out: Record<string, [number, number, number, number]> = {};
+  place(Math.floor(lo), out);
+  return out;
+}
+
+/** 区画の中の位置（横 0〜1、目印の値 t）を、絵の中の位置 (px) へ直す。 */
+export function chartPx(c: AtlasChart, u: number, t: number): [number, number] {
+  const r = c.rect!;
+  const n = c.t.length;
+  const inc = c.t[n - 1]! >= c.t[0]!;
+  let v = c.v[n - 1]!;
+  for (let i = 0; i < n - 1; i++) {
+    const a = c.t[i]!, b = c.t[i + 1]!;
+    if (inc ? t <= b : t >= b) {
+      const k = Math.abs(b - a) < 1e-9 ? 0 : Math.min(1, Math.max(0, (t - a) / (b - a)));
+      v = c.v[i]! + (c.v[i + 1]! - c.v[i]!) * k;
+      break;
+    }
+  }
+  return [r[0] + (r[2] - r[0]) * u, r[1] + (r[3] - r[1]) * v];
+}
+
 export class Geo {
+  /** 絵を貼る区画（loft の atlas 指定で増える） */
+  readonly charts: AtlasChart[] = [];
+  private uv1: number[] = [];
+  private usesAtlas = false;
   private pos: number[] = [];
   private nor: number[] = [];
   private col: number[] = [];
@@ -162,6 +234,7 @@ export class Geo {
     this.nor.push(n.x, n.y, n.z);
     this.col.push(c[0], c[1], c[2]);
     this.uv.push(u, v);
+    this.uv1.push(-1, -1);
     this.si.push(b0, b1, b2, 0);
     this.sw.push((1 - w1) * (1 - w2), w1 * (1 - w2), w2, 0);
     this.part.push(part);
@@ -169,6 +242,22 @@ export class Geo {
   }
   tri(a: number, b: number, c: number): void {
     this.idx.push(a, b, c);
+  }
+  /** 頂点 i が指す絵の中の位置 (px) を決める */
+  atlasPx(i: number, x: number, y: number): void {
+    this.uv1[i * 2] = x / ATLAS_SIZE;
+    this.uv1[i * 2 + 1] = 1 - y / ATLAS_SIZE;
+    this.usesAtlas = true;
+  }
+  /** 区画の位置（rect）が決まった後に呼ぶ。区画に入った頂点の貼り位置を書く。 */
+  private writeCharts(): void {
+    for (const c of this.charts) {
+      const r = c.rect;
+      if (!r) continue;
+      c.rowStart.forEach((first, row) => {
+        for (let k = 0; k < c.cols; k++) this.atlasPx(first + k, r[0] + ((r[2] - r[0]) * k) / (c.cols - 1), r[1] + (r[3] - r[1]) * c.v[row]!);
+      });
+    }
   }
   get triangles(): number {
     return this.idx.length / 3;
@@ -179,6 +268,15 @@ export class Geo {
     g.setAttribute('normal', new Float32BufferAttribute(this.nor, 3));
     g.setAttribute('color', new Float32BufferAttribute(this.col, 3));
     g.setAttribute('uv', new Float32BufferAttribute(this.uv, 2));
+    if (this.charts.length > 0 || this.usesAtlas) {
+      this.writeCharts();
+      // 区画に入らない頂点（歯・爪・目・切り口など）は白い区画を指す: 絵の影響を受けず、頂点の色がそのまま出る
+      const w = ATLAS_WHITE / 2 / ATLAS_SIZE;
+      for (let i = 0; i < this.uv1.length; i += 2) {
+        if (this.uv1[i]! < 0) { this.uv1[i] = w; this.uv1[i + 1] = 1 - w; }
+      }
+      g.setAttribute('uv1', new Float32BufferAttribute(this.uv1, 2));
+    }
     g.setAttribute('skinIndex', new Uint16BufferAttribute(this.si, 4));
     g.setAttribute('skinWeight', new Float32BufferAttribute(this.sw, 4));
     g.setAttribute('aPart', new Float32BufferAttribute(this.part, 1));
@@ -218,6 +316,20 @@ export interface LoftOpts {
   capEnd?: RGB;
   uRepeat?: number;
   vScale?: number;
+  /** 設定図から焼いた絵を貼る区画を作る。切れ目ごとに 1 区画で、kinds がその名前。 */
+  atlas?: {
+    kinds: string[];
+    /** 輪ごとの目印の値（焼く側が、設定図のどこを写すかを決めるのに使う） */
+    t: (ring: Ring, index: number) => number;
+    /** この輪から新しい区画を始める（同じ位置に輪を 2 つ重ねて切る） */
+    breakBefore?: (ring: Ring, index: number) => boolean;
+    /** この輪には絵を貼らない（頂点の色だけにする） */
+    plain?: (ring: Ring, index: number) => boolean;
+    density?: number[];
+    meta?: Record<string, number>;
+  };
+  /** 別のメッシュの区画の貼り位置を借りる（切り落とした尾の先） */
+  atlasRef?: { chart: AtlasChart; t: (ring: Ring, index: number) => number };
 }
 
 const spow = (v: number, e: number): number => Math.sign(v) * Math.pow(Math.abs(v), e);
@@ -270,8 +382,51 @@ export function loft(g: Geo, rings: Ring[], o: LoftOpts): void {
       g.vert(p, n, o.color(p, n, r, A[kk]!), (k / seg) * uRep, vAcc, r.b0, r.b1, r.w1, r.part, o.third?.bone ?? 0, o.third ? o.third.weight(r, A[kk]!, p) : 0);
     }
   }
-  // 面の向き: 最初の四角形の法線が外を向くように決める
   const w = seg + 1;
+  if (o.atlas) {
+    const at = o.atlas;
+    let rows: number[] = [];
+    let ci = 0;
+    const close = (): void => {
+      if (rows.length >= 2) {
+        const v: number[] = [0];
+        let width = 0;
+        rows.forEach((i, j) => {
+          let circ = 0;
+          for (let k = 0; k < seg; k++) circ += P[i]![k]!.distanceTo(P[i]![(k + 1) % seg]!);
+          width = Math.max(width, circ);
+          if (j > 0) {
+            let d = 0;
+            for (let k = 0; k < seg; k++) d += P[i]![k]!.distanceTo(P[rows[j - 1]!]![k]!);
+            v.push(v[j - 1]! + d / seg);
+          }
+        });
+        const height = v[v.length - 1]!;
+        g.charts.push({
+          kind: at.kinds[ci] ?? `${at.kinds[0]}_${ci}`, rowStart: rows.map((i) => base + i * w), cols: w,
+          v: v.map((x) => (height > 1e-9 ? x / height : 0)), t: rows.map((i) => at.t(rings[i]!, i)),
+          width, height, density: at.density?.[ci] ?? 1, meta: at.meta ?? {},
+        });
+        ci++;
+      }
+      rows = [];
+    };
+    rings.forEach((r, i) => {
+      if (at.plain?.(r, i)) { close(); return; }
+      if (at.breakBefore?.(r, i)) close();
+      rows.push(i);
+    });
+    close();
+  }
+  if (o.atlasRef) {
+    for (let i = 0; i < rings.length; i++) {
+      for (let k = 0; k <= seg; k++) {
+        const [x, y] = chartPx(o.atlasRef.chart, k / seg, o.atlasRef.t(rings[i]!, i));
+        g.atlasPx(base + i * w + k, x, y);
+      }
+    }
+  }
+  // 面の向き: 最初の四角形の法線が外を向くように決める
   const p00 = P[0]![0]!, p01 = P[0]![1]!, p10 = P[1]![0]!;
   const face = new Vector3().crossVectors(new Vector3().subVectors(p01, p00), new Vector3().subVectors(p10, p00));
   const mid = new Vector3().addVectors(rings[0]!.c, rings[1]!.c).multiplyScalar(0.5);
