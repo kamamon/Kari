@@ -23,7 +23,7 @@
     </div>
     <noscript>このゲームは JavaScript を有効にして遊びます。</noscript>
     <script>
-      // GitHub Pages の配信元が「ブランチ」のままだと、ビルド前のこのファイルがそのまま表示され、ゲームは起動できない。
+      // GitHub Pages の配信元が main ブランチだと、ビルド前のこのファイルがそのまま表示され、ゲームは起動できない。
       // その時に「読み込み中…」のまま黙って止まらず、直し方を表示する。ビルド後の index.html はこの条件に当たらない。
       window.addEventListener('load', function () {
         var unbuilt = document.querySelector('script[src$="/src/main.ts"]');
@@ -36,8 +36,8 @@
         var repo = location.pathname.split('/')[1];
         var url = host[1] === 'github' && repo ? 'https://github.com/' + host[0] + '/' + repo + '/settings/pages' : '';
         note.innerHTML =
-          'GitHub の <b>Settings → Pages → Build and deployment → Source</b> を<br><b>「GitHub Actions」</b>に変えてください。' +
-          '<br>変えた後、<b>Actions → Deploy to GitHub Pages → Run workflow</b> を実行し、数分後にこのページを開き直すと始まります。' +
+          'GitHub の <b>Settings → Pages → Build and deployment</b> で、<br>Source を<b>「Deploy from a branch」</b>、Branch を<b>「gh-pages」</b>と<b>「/ (root)」</b>にして Save を押してください。' +
+          '<br>1〜2 分後にこのページを開き直すと始まります。' +
           (url ? '<br><br><a href="' + url + '" style="color:#b89460;font-size:1rem;font-weight:700">Pages の設定を開く</a>' : '');
         note.style.fontSize = '0.86rem';
       });

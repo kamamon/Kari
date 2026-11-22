@@ -14,6 +14,7 @@ interface ManifestAsset {
   type: string;
   status: string;
   path: string | null;
+  sourcePath?: string;
   owner: string;
   clips?: string[];
   ids?: string[];
@@ -96,7 +97,8 @@ describe('素材台帳（docs/asset-manifest.json）', () => {
       expect(a.owner.length, `${a.id} の owner`).toBeGreaterThan(0);
       // 存在しないファイルを素材として登録しない
       if (a.path !== null) expect(existsSync(root(`public/${a.path}`)), `${a.id}: ${a.path} が無い`).toBe(true);
-      else expect(['planned', 'concept'], `${a.id}: ファイルが無いのに ${a.status}`).toContain(a.status);
+      if (a.sourcePath) expect(existsSync(root(a.sourcePath)), `${a.id}: 原本 ${a.sourcePath} が無い`).toBe(true);
+      if (a.path === null && !a.sourcePath) expect(['planned', 'concept'], `${a.id}: ファイルが無いのに ${a.status}`).toContain(a.status);
       if (a.placeholder) expect(existsSync(root(a.placeholder.source.split(' ')[0]!)), `${a.id} の仮素材の出所`).toBe(true);
       for (const d of a.dependsOn ?? []) expect(assets.some((x) => x.id === d), `${a.id} の依存先 ${d}`).toBe(true);
     }

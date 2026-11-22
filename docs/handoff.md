@@ -6,7 +6,7 @@
 
 - **v0.1.0（M1 訓練版）** / リポジトリ kamamon/Kari の main、実装のコミットは `9198e35`
 - タグ `v0.1.0-m1` は、作業環境からタグを送れなかったため **まだ付いていない**（GitHub の Releases →「Draft a new release」で `9198e35` に付けられる）
-- 公開予定 URL: https://kamamon.github.io/Kari/ （Pages の設定が済むまでは開けない）
+- 公開 URL: https://kamamon.github.io/Kari/ 。配信元は `gh-pages` ブランチ（ビルド結果）。Pages の Source が「Deploy from a branch / gh-pages」になるまでは、ゲームは表示されない
 - 2026-11-22、設計書 COPY 01〜04（総合指示・CLAUDE.md・M0 基盤・M1 断岳剣の戦闘）の範囲を実装
 
 ## できたこと（確認した内容だけ）
@@ -23,6 +23,12 @@
 - 素材ビューア（仮リグ・技・判定・基準 GLB）。
 - 設定の保存（感度・反転・左利き・ボタンの大きさ/濃さ/位置・疾走方法・揺れ・描画上限・内部解像度・音量）。
 - 型検査・自動テスト 34 件・本番ビルド・ブラウザ操作検査 34 項目が通過。
+
+## 受け取った素材
+
+| 素材 | 状態 |
+| --- | --- |
+| アート基準ボード v1（`art-source/board/style_board_v1.png`、ChatGPT 生成） | 受領済み・採用待ち。ゲームにはまだ反映していない |
 
 ## 仮素材（正式素材ではないもの）
 
@@ -48,15 +54,15 @@
 ## 未確認
 
 - **実機（iPhone / iPad Safari、PC の実 GPU）での動作・操作感・性能・音。** 自動検査はヘッドレス Chrome のソフトウェア描画だけ。
-- 実際の GitHub Pages での配信。2026-11-22 の時点で Pages の配信元が「main ブランチ」になっており、公開 URL にはビルド前のページ（設定の案内）が出る。Source を「GitHub Actions」へ切り替えた後に確認する。
+- 実際の GitHub Pages での配信。Source を「GitHub Actions」にしても公開 URL が更新されなかったため、2026-11-22 に gh-pages ブランチからの配信へ変更した（decisions D-020）。Pages の設定を gh-pages に切り替えた後に、公開 URL で確認する。Actions（Build and publish）が動いているかも未確認。
 - ゲームパッド。
 - 数値の手触り（縦斬りの重さ、回避距離、標的の攻撃の読みやすさ、ボタン配置）。初期値のまま。
 
 ## お願いしたいこと（ユーザー）
 
-1. GitHub の **Settings → Pages → Source を「GitHub Actions」** にして、**Actions → Deploy to GitHub Pages → Run workflow**。
+1. GitHub の **Settings → Pages** で、Source を **「Deploy from a branch」**、Branch を **「gh-pages」/「/ (root)」** にして Save。
 2. 公開 URL を iPhone の Safari で開き、[tests.md](tests.md) の「実機チェック表」を試す。気になった点を Claude へ。
-3. ChatGPT へ [chatgpt-requests.md](chatgpt-requests.md) の ①（アート基準）と ②（ガルドロス設定図）を依頼し、採用した画像を Claude へ添付。
+3. アート基準ボード v1 を採用するか決める（受領済み。照合の記録は `art-source/board/style_board_v1.md`）。採用したら ChatGPT へ ②（ガルドロス設定図）を依頼し、画像を Claude へ添付。
 4. （任意）動く版の目印として、GitHub の Releases で `9198e35` にタグ `v0.1.0-m1` を付ける。
 
 ## 次の一作業

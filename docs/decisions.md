@@ -23,6 +23,7 @@
 | D-017 | 2026-11-22 | リポジトリは kamamon/Kari（ユーザー指定）。公開は GitHub Actions から GitHub Pages | 設計書 p.30 | Settings → Pages の Source を「GitHub Actions」にする操作が 1 回必要 |
 | D-018 | 2026-11-22 | 仮リグは、立っている姿勢で低い方の足裏が地面へ付くよう骨盤を自動で上下させる | 手付けのキー姿勢で足が沈む・浮くのを防ぐ簡易処置 | 描画だけの処理。正式クリップでは接地をクリップ側で作る |
 | D-019 | 2026-11-22 | ビルド前の index.html がそのまま配信された時（Pages の配信元が「ブランチ」のまま）は、設定の直し方を画面に出す | 最初の push の時点で Pages が main ブランチ直配信になっており、「読み込み中…」のまま止まって見えた | index.html の小さなインラインスクリプト。ビルド後の画面には影響しない |
+| D-020 | 2026-11-22 | 配信方法を変更: ビルド結果を `gh-pages` ブランチへ置き、Pages は「Deploy from a branch」で gh-pages を配る。D-017 の「Actions から Pages へ直接デプロイ」は取りやめ | Source を「GitHub Actions」に切り替えた後も公開 URL が更新されず、作業環境から Actions の結果を確認できなかった。gh-pages なら push した内容がそのまま配信され、反映を公開 URL で確かめられる | workflow は gh-pages を更新する形に変更。手元からは `npm run publish:pages`。設計書 p.30 の手順 04 と異なる |
 
 ## 見送ったこと
 
