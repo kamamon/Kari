@@ -410,8 +410,10 @@ export class GameView {
       mesh.geometry.dispose();
       for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
         (mat as MeshLambertMaterial).map?.dispose();
+        (mat as MeshLambertMaterial).normalMap?.dispose();
         mat?.dispose();
       }
+      (mesh as unknown as { skeleton?: { dispose(): void } }).skeleton?.dispose();
     });
     this.hazardViews.clear();
     this.renderer.dispose();
