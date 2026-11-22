@@ -267,6 +267,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.screenshot({ path: `${OUT}51_hunt_start.png` });
   await page.keyboard.down('KeyW');
   await page.keyboard.down('ShiftLeft');
+  check('ガルドロスの陰（Blender で焼いた値）が、いまの形と合っている', await page.evaluate(() => window.__vh.view.monsterRig.aoApplied === true));
   check('近づくと気付かれて咆哮する', await until(page, () => window.__vh.sim.monsters[0].aware, 60000));
   await page.keyboard.up('ShiftLeft');
   await page.keyboard.up('KeyW');

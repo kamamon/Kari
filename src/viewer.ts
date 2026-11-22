@@ -430,7 +430,7 @@ async function main(): Promise<void> {
   if (q.get('bones') === '0') state.bones = false;
   const glb = q.get('glb');
   if (glb) await loadGlb(glb);
-  (window as unknown as { __viewer?: unknown }).__viewer = { state };
+  (window as unknown as { __viewer?: unknown }).__viewer = { state, monsters };
   requestAnimationFrame(frame);
 }
 

@@ -36,11 +36,11 @@
       "id": "model.monster.galdros", "name": "岩殻獣 ガルドロス", "type": "model", "use": "最初の大型モンスター（M2）",
       "owner": "ChatGPT（設定図）→ Blender（モデル・リグ・動作）→ Claude（統合）", "status": "concept", "version": 0, "path": null,
       "source": "設定図 4 枚を受領・採用済み（art.monster.galdros.turnaround）。3D モデルは未制作", "terms": "本作オリジナル",
-      "dims": "全長 5.8m / 全高 約 2.45m / 全幅 約 3.2m。Y 上・+Z 前", "tris": "目標 1.5〜3 万（仮モデルは約 1 万）", "bones": "四足重の骨格群（未定義。代表 1 体としてこのモデルで決める）",
+      "dims": "全長 5.8m / 全高 約 2.45m / 全幅 約 3.2m。Y 上・+Z 前", "tris": "目標 1.5〜3 万（仮モデルは約 1.5 万）", "bones": "四足重の骨格群（未定義。代表 1 体としてこのモデルで決める）",
       "clips": ["galdros_roar_01", "galdros_slam_l_01", "galdros_slam_r_01", "galdros_charge_01", "galdros_tail_sweep_01", "galdros_rockfall_01"],
       "clipsPlanned": ["galdros_idle_01", "galdros_walk_01", "galdros_turn_01", "galdros_flinch_01", "galdros_topple_01", "galdros_getup_01", "galdros_dead_01"],
       "dependsOn": ["art.monster.galdros.turnaround"],
-      "placeholder": { "kind": "procedural", "source": "src/render/galdrosRig.ts", "note": "コードで組んだ仮モデル（2 代目）。骨 24 本で曲がる皮（胴・首・頭・あご・尾・脚）と欠けた岩板、うろこ状の模様。体つき・配色・左右で違う岩板・頭の岩・尾先の晶は設定図に寄せた。前脚叩きの脚と尾払いの尾は判定と同じ軌道で動く。歩行は足先を地面に置く方式、怯み・転倒・咆哮・死亡は手続き生成。" },
+      "placeholder": { "kind": "procedural", "source": "src/render/galdrosRig.ts", "note": "コードで組んだ仮モデル（3 代目）。骨 53 本（背骨 5 節・首 2 節・あご・舌・まぶた・尾 8 節・脚の指・岩板 15 枚）。歯・舌・瞳・角・とげ・背殻 6 枚。陰は Blender で焼いた値を頂点の色へ掛ける。前脚叩きの脚と尾払いの尾は判定と同じ軌道で動く。歩行は足先を地面に置く方式。しぐさ・のけぞり・怯み・転倒・咆哮・死亡は手続き生成。" },
       "verification": "仮素材: 素材ビューアで部位判定と見た目の重なり、破壊・切断後の姿を確認。ゲーム内で歩行・旋回・4 つの技・転倒・死亡・怒りの見た目を画面で確認（ヘッドレス Chrome）。実機での見え方と性能は未確認。"
     },
     {

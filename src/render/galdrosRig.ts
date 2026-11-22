@@ -16,6 +16,7 @@ import { renderTick } from '../game/action';
 import type { MonsterState } from '../game/monster';
 import { sampleTrack } from '../game/tracks';
 import type { MonsterRig, MonsterRigCtx } from './monsterRig';
+import { GALDROS_AO } from './galdrosAo';
 import { Geo, blob, crystal, fbm, hash3, hex, horn, loft, makeHideTextures, makeRockTextures, mix, shade, slab, sstep, type RGB, type Ring, type SlabOpts } from './procGeo';
 
 // ---- 骨の番号 ----
@@ -213,6 +214,19 @@ function solveJoint(s: Vector3, a: Vector3, l1: number, l2: number, pole: Vector
   outJoint.copy(s).addScaledVector(dir, along).addScaledVector(perp, h);
 }
 
+/** Blender で焼いた陰（頂点ごとの明るさ 0〜255）を、頂点の色へ掛ける。形が変わって数が合わない時は掛けない。 */
+function applyAo(geo: BufferGeometry, name: string): boolean {
+  const e = GALDROS_AO[name];
+  const col = geo.getAttribute('color');
+  if (!e || !col || e.count !== col.count) return false;
+  const bin = atob(e.data);
+  for (let i = 0; i < col.count; i++) {
+    const k = 0.42 + 0.58 * Math.pow(bin.charCodeAt(i) / 255, 0.9);
+    col.setXYZ(i, col.getX(i) * k, col.getY(i) * k, col.getZ(i) * k);
+  }
+  return true;
+}
+
 /** 1 フレーム分の姿勢の量。層（しぐさ・技・怯み・歩き）ごとに足し込んでから骨へ書く。 */
 interface Pose {
   x: number; y: number; z: number;
@@ -249,6 +263,8 @@ export class GaldrosRig implements MonsterRig {
   private coreMesh: SkinnedMesh;
   private glowMat: MeshStandardMaterial;
   private flashUniform = { value: new Float32Array(8) };
+  /** 焼いた陰が、いまの形（頂点の数）と合っていて、すべて掛けられたか */
+  aoApplied = true;
   private index: Record<string, number> = {};
   private part: PartIds;
   // 砕けた岩
@@ -644,8 +660,12 @@ export class GaldrosRig implements MonsterRig {
     };
     this.glowMat.customProgramCacheKey = () => 'galdros-glow';
 
-    const skin = (g: Geo, mat: MeshStandardMaterial): SkinnedMesh => {
-      const mesh = new SkinnedMesh(g.build(), mat);
+    const skin = (g: Geo, mat: MeshStandardMaterial, name: string): SkinnedMesh => {
+      const geo = g.build();
+      // くぼみや岩板の下の陰（Blender で焼いた値）を頂点の色へ掛ける。光る部分には掛けない。
+      if (mat !== this.glowMat && !applyAo(geo, name)) this.aoApplied = false;
+      const mesh = new SkinnedMesh(geo, mat);
+      mesh.name = name;
       mesh.bind(skeleton, new Matrix4());
       mesh.castShadow = true;
       // 骨で大きく動くので、元の形の大きさでの視界判定は使わない
@@ -653,13 +673,13 @@ export class GaldrosRig implements MonsterRig {
       this.root.add(mesh);
       return mesh;
     };
-    skin(hide, hideMat);
-    skin(rock, rockMat);
-    this.capMesh = skin(cap, rockMat);
-    this.domeMesh = skin(dome, rockMat);
-    this.domeRimMesh = skin(domeRim, this.glowMat);
-    this.coreMesh = skin(core, rockMat);
-    skin(glow, this.glowMat);
+    skin(hide, hideMat, 'hide');
+    skin(rock, rockMat, 'rock');
+    this.capMesh = skin(cap, rockMat, 'cap');
+    this.domeMesh = skin(dome, rockMat, 'dome');
+    this.domeRimMesh = skin(domeRim, this.glowMat, 'domeRim');
+    this.coreMesh = skin(core, rockMat, 'core');
+    skin(glow, this.glowMat, 'glow');
 
     // ================= 体から離れる物 =================
     const plain = (g: Geo): BufferGeometry => {
