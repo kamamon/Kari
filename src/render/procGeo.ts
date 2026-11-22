@@ -262,6 +262,9 @@ export class Geo {
   get triangles(): number {
     return this.idx.length / 3;
   }
+  positionOf(i: number): Vector3 {
+    return new Vector3(this.pos[i * 3]!, this.pos[i * 3 + 1]!, this.pos[i * 3 + 2]!);
+  }
   build(): BufferGeometry {
     const g = new BufferGeometry();
     g.setAttribute('position', new Float32BufferAttribute(this.pos, 3));
@@ -491,6 +494,110 @@ export interface SlabOpts {
 }
 
 /** 欠けた縁を持つ岩板。rim を渡すと、下の縁に沿って晶脈の帯を作る。 */
+export interface PlateOpts {
+  /** 板が乗る面: (u, v) ∈ [-1, 1]² → 位置。体の丸みに沿った面を渡す */
+  surface: (u: number, v: number) => Vector3;
+  /** 体の内側にある点（面の表裏を決める） */
+  inside: Vector3;
+  /** 実寸の目安 (m)。模様の大きさに使う */
+  w: number;
+  d: number;
+  /** 板の厚み (m) と、縁から体へ下ろす壁の深さ (m) */
+  thickness: number;
+  skirt?: number;
+  seed: number;
+  bone: number;
+  part: number;
+  rock: RGB;
+  moss?: number;
+  mossColor?: RGB;
+  /** 輪郭の角の数と、四角さ（小さいほど四角に近い） */
+  points?: number;
+  square?: number;
+}
+/**
+ * なめらかな岩板（設定図の背殻・肩・腰の板）。体の面に沿って反った薄い板で、輪郭は角のある多角形、
+ * 上面は平らでなめらか、縁は斜めに落ちる面取り（rim の色。設定図の青銅色の縁）になる。
+ */
+export function plate(g: Geo, o: PlateOpts, rim: { geo: Geo; color: RGB }): void {
+  const N = o.points ?? 9;
+  const q = o.square ?? 0.5;
+  const rnd = (i: number, j: number): number => hash3(o.seed, i, j);
+  // 輪郭: 角の点と、その間の点（辺はまっすぐ）
+  const corner: [number, number][] = [];
+  for (let j = 0; j < N; j++) {
+    const th = ((j + 0.5 + (rnd(j, 0) - 0.5) * 0.5) / N) * Math.PI * 2;
+    const rr = 0.94 + 0.06 * rnd(j, 1);
+    corner.push([spow(Math.cos(th), q) * rr, spow(Math.sin(th), q) * rr]);
+  }
+  const outline: [number, number][] = [];
+  for (let j = 0; j < N; j++) {
+    const a = corner[j]!, b = corner[(j + 1) % N]!;
+    outline.push(a, [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]);
+  }
+  const M = outline.length;
+  const e = 0.01;
+  const du = new Vector3(), dv = new Vector3();
+  const c0 = o.surface(0, 0);
+  const n0 = new Vector3().crossVectors(du.subVectors(o.surface(e, 0), o.surface(-e, 0)), dv.subVectors(o.surface(0, e), o.surface(0, -e)));
+  const sign = n0.dot(new Vector3().subVectors(c0, o.inside)) >= 0 ? 1 : -1;
+  const normalAt = (u: number, v: number): Vector3 =>
+    new Vector3().crossVectors(du.subVectors(o.surface(u + e, v), o.surface(u - e, v)), dv.subVectors(o.surface(u, v + e), o.surface(u, v - e))).normalize().multiplyScalar(sign);
+  const moss = o.mossColor ?? o.rock;
+  const colorAt = (p: Vector3, n: Vector3): RGB => {
+    let col = shade(o.rock, 0.86 + 0.26 * fbm(p.x * 1.7 + o.seed, p.y * 1.7, p.z * 1.7, 3));
+    if (o.moss) col = mix(col, moss, o.moss * sstep(0.2, 0.75, n.y) * sstep(0.42, 0.68, fbm(p.x * 1.1 + 5, p.y * 1.1 + o.seed, p.z * 1.1, 3)));
+    return col;
+  };
+  // 上面: 中心から縁の手前（0.9）まで。なめらかな法線で、厚みに少しむらを付ける
+  // 面取りの幅は板の大きさによらず一定（約 3.5cm）: 輪郭から内側へ、実寸で同じだけ入った所までが上面
+  const BEVEL = 0.035;
+  const fu = Math.max(0.6, 1 - BEVEL / (o.w / 2)), fv = Math.max(0.6, 1 - BEVEL / (o.d / 2));
+  const F = [0.3, 0.58, 0.82, 1];
+  const top = (u: number, v: number): number => {
+    const n = normalAt(u, v);
+    const base = o.surface(u, v);
+    const p = base.clone().addScaledVector(n, o.thickness * (0.92 + 0.16 * fbm(base.x * 3 + o.seed, base.y * 3, base.z * 3, 2)));
+    return g.vert(p, n, colorAt(p, n), (u * o.w * 0.5 + o.seed * 0.37) * 0.6, (v * o.d * 0.5 + o.seed * 0.11) * 0.6, o.bone, o.bone, 0, o.part);
+  };
+  const center = top(0, 0);
+  const ringIdx: number[][] = F.map((f) => outline.map(([u, v]) => top(u * f * fu, v * f * fv)));
+  // 面の向き: 最初の三角形が外を向く順を調べる
+  const P = (i: number): Vector3 => g.positionOf(i);
+  const t0 = new Vector3().crossVectors(new Vector3().subVectors(P(ringIdx[0]![0]!), P(center)), new Vector3().subVectors(P(ringIdx[0]![1]!), P(center)));
+  const ccw = t0.dot(normalAt(0, 0)) > 0;
+  const tri = (a: number, b: number, c: number): void => (ccw ? g.tri(a, b, c) : g.tri(a, c, b));
+  for (let j = 0; j < M; j++) {
+    const j2 = (j + 1) % M;
+    tri(center, ringIdx[0]![j]!, ringIdx[0]![j2]!);
+    for (let k = 0; k < F.length - 1; k++) {
+      const a = ringIdx[k]![j]!, b = ringIdx[k]![j2]!, c = ringIdx[k + 1]![j]!, d = ringIdx[k + 1]![j2]!;
+      tri(a, c, d);
+      tri(a, d, b);
+    }
+  }
+  // 縁: 面取り（青銅色）と、体へ下りる壁（暗い岩）。平らな面として作る
+  const skirt = o.skirt ?? 0.05;
+  const edge: { hi: Vector3; mid: Vector3; lo: Vector3 }[] = outline.map(([u, v], j) => {
+    const n = normalAt(u * 0.97, v * 0.97);
+    const base = o.surface(u, v);
+    return { hi: P(ringIdx[F.length - 1]![j]!).clone(), mid: base.clone().addScaledVector(n, o.thickness * 0.38), lo: base.clone().addScaledVector(n, -skirt) };
+  });
+  const flat = (geo: Geo, a: Vector3, b: Vector3, c: Vector3, col: RGB): void => {
+    const nn = new Vector3().crossVectors(new Vector3().subVectors(b, a), new Vector3().subVectors(c, a));
+    if (nn.dot(new Vector3().subVectors(a, o.inside)) >= 0) flatTri(geo, a, b, c, col, o.bone, o.part);
+    else flatTri(geo, a, c, b, col, o.bone, o.part);
+  };
+  for (let j = 0; j < M; j++) {
+    const a = edge[j]!, b = edge[(j + 1) % M]!;
+    const rc = shade(rim.color, 0.82 + 0.3 * rnd(40 + j, 2));
+    flat(rim.geo, a.hi, b.hi, b.mid, rc);
+    flat(rim.geo, a.hi, b.mid, a.mid, rc);
+    const wc = shade(o.rock, 0.5 + 0.12 * rnd(60 + j, 3));
+    flat(g, a.mid, b.mid, b.lo, wc);
+    flat(g, a.mid, b.lo, a.lo, wc);
+  }
+}
 export function slab(g: Geo, o: SlabOpts, rim?: { geo: Geo; color: RGB }): void {
   const N = o.points ?? 11;
   const m = new Matrix4().compose(new Vector3(...o.pos), new Quaternion().setFromEuler(new Euler(...o.rot)), new Vector3(1, 1, 1));

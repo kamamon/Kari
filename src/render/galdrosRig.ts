@@ -1,5 +1,6 @@
 // 岩殻獣ガルドロスの仮モデル（3 代目）。
 // 骨 53 本: 背骨 5 節・首 2 節・頭・あご・舌・まぶた・尾 8 節・脚 4 本（付け根 / ひじ / 足首 / 指）・岩板 15 枚。
+// 皮の色は設定図から焼いた絵、背殻はなめらかな殻の面を分け合う薄い板（D-039、D-040）。
 // 皮は骨で曲がる一続きの面、岩板は 1 枚ずつ骨を持ち、歩く・吠える・叩かれると揺れる。
 // 体つきと岩板の分け方は、採用した設定図（art-source/monster/galdros/）に合わせてある。
 //
@@ -10,7 +11,7 @@
 //   - 前脚叩きの脚も、判定と同じ軌道データに従う。
 //   - 叩かれた部位に応じて、体・頭・尾がのけぞる。部位破壊で岩板が砕けて飛ぶ。
 // コードで作った形であり、正式モデル（GLB）が来るまでの仮素材であることは変わらない。
-import { Bone, DataTexture, Group, Matrix4, Mesh, MeshStandardMaterial, Quaternion, RepeatWrapping, SRGBColorSpace, Skeleton, SkinnedMesh, TextureLoader, Vector3, type BufferGeometry, type Texture } from 'three';
+import { Bone, DataTexture, Euler, Group, Matrix4, Mesh, MeshStandardMaterial, Quaternion, RepeatWrapping, SRGBColorSpace, Skeleton, SkinnedMesh, TextureLoader, Vector3, type BufferGeometry, type Texture } from 'three';
 import { assetUrl } from '../core/assets';
 import { smoothstep } from '../core/math';
 import { renderTick } from '../game/action';
@@ -19,7 +20,7 @@ import { sampleTrack } from '../game/tracks';
 import type { MonsterRig, MonsterRigCtx } from './monsterRig';
 import { GALDROS_AO } from './galdrosAo';
 import { GALDROS_ATLAS } from './galdrosAtlas';
-import { Geo, blob, crystal, fbm, hash3, hex, horn, loft, makeHideTextures, makeRockTextures, mix, packCharts, shade, slab, sstep, type AtlasChart, type RGB, type Ring, type SlabOpts } from './procGeo';
+import { Geo, blob, crystal, fbm, hash3, hex, horn, loft, makeHideTextures, makeRockTextures, mix, packCharts, plate, shade, slab, sstep, type AtlasChart, type RGB, type Ring, type SlabOpts } from './procGeo';
 
 // ---- 骨の番号 ----
 const ROOT = 0, BODY = 1, LUMBAR = 2, PELVIS = 3, THORAX = 4, CHEST = 5, RIBS = 6, NECK1 = 7, NECK2 = 8, HEAD = 9, JAW = 10, TONGUE = 11, LID = 12, TAIL = 14, LEG = 22, PLATE = 38;
@@ -256,7 +257,23 @@ function resetPose(p: Pose): Pose {
 }
 
 type Fidget = '' | 'shake' | 'snort' | 'sniff' | 'glance' | 'growl' | 'scrape' | 'tailflick';
-type PlateDef = { group: 'dome' | 'cap' | 'fixed'; parent: number; part: number; slab: Omit<SlabOpts, 'bone' | 'part' | 'rock' | 'mossColor'> };
+type PlateDef = {
+  group: 'dome' | 'cap' | 'fixed'; parent: number; part: number; slab: Omit<SlabOpts, 'bone' | 'part' | 'rock' | 'mossColor'>;
+  /** 背殻の板: 殻の面（z と、真上からの角度 alpha）の中の範囲 */
+  shell?: { z0: number; z1: number; a0: number; a1: number };
+};
+
+/**
+ * 背殻の面。胴の断面より少し外側の、なめらかな山形（設定図の、甲羅のような大きな背殻）。
+ * z は体の前後、alpha は真上から横へ下りる角度（+ が左 = +X 側）。
+ */
+function shellPoint(z: number, alpha: number): Vector3 {
+  const s = spineAt(z);
+  const e = 2 / 2.25;
+  const lift = 0.08 + 0.17 * sstep(-1.6, 0.1, z) * sstep(1.5, 0.7, z);
+  const sn = Math.sin(alpha), cs = Math.max(0, Math.cos(alpha));
+  return new Vector3(Math.sign(sn) * Math.pow(Math.abs(sn), e) * (s.rx + 0.13), s.cy + Math.pow(cs, e) * (s.top + lift), z);
+}
 
 export class GaldrosRig implements MonsterRig {
   readonly root = new Group();
@@ -388,20 +405,25 @@ export class GaldrosRig implements MonsterRig {
 
     // 岩板: 1 枚ずつ骨を持つ（揺れる・砕ける）。背殻 6 枚、頭 2 枚、肩 3 枚、腰 2 枚、前脚の甲 2 枚。
     const plates: PlateDef[] = [];
-    const domeRow = (z: number, y: number, w: number, d: number, rx: number, par: number, seed: number): void => {
-      plates.push({ group: 'dome', parent: par, part: part.back, slab: { w, d, h: 0.34, seed, pos: [0.6, y, z], rot: [rx, 0.03, -0.3], moss: 0.3, bendX: 0.16, bendZ: 0.07, points: 10 } });
-      plates.push({ group: 'dome', parent: par, part: part.back, slab: { w, d, h: 0.34, seed: seed + 1, pos: [-0.6, y, z], rot: [rx, -0.03, 0.3], moss: 0.85, bendX: 0.16, bendZ: 0.07, points: 10 } });
+    // 背殻: 前・中・後ろの 3 列 × 左右の 6 枚が、1 つのなめらかな殻の面を分け合う（設定図の、中央に合わせ目のある大きな甲）。
+    // 中の列は脇まで下り、前後の列は肩・腰の板に場所をゆずる。
+    const domeRow = (z0: number, z1: number, side: number, par: number, seed: number): void => {
+      for (const sgn of [1, -1]) {
+        const shell = { z0, z1, a0: sgn * 0.012, a1: sgn * side };
+        const c = shellPoint((z0 + z1) / 2, (shell.a0 + shell.a1) / 2);
+        plates.push({ group: 'dome', parent: par, part: part.back, shell, slab: { w: side * 1.25, d: z1 - z0, h: 0.2, seed: seed + (sgn > 0 ? 0 : 1), pos: [c.x, c.y, c.z], rot: [0, 0, 0], moss: sgn > 0 ? 0.35 : 0.7, points: 8 } });
+      }
     };
-    domeRow(0.74, 2.13, 1.28, 1.02, 0.2, THORAX, 11);
-    domeRow(-0.14, 2.23, 1.34, 0.98, 0, BODY, 13);
-    domeRow(-1.0, 2.1, 1.24, 1.0, -0.22, LUMBAR, 15);
+    domeRow(0.35, 1.3, 0.62, THORAX, 11);
+    domeRow(-0.55, 0.35, 1.3, BODY, 13);
+    domeRow(-1.42, -0.55, 0.62, LUMBAR, 15);
     plates.push({ group: 'cap', parent: HEAD, part: part.head, slab: { w: 0.58, d: 1.0, h: 0.2, seed: 21, pos: [0.27, 2.04, 2.12], rot: [0.22, 0.05, -0.16], moss: 0.2, bendX: 0.3, points: 9 } });
     plates.push({ group: 'cap', parent: HEAD, part: part.head, slab: { w: 0.56, d: 0.95, h: 0.2, seed: 22, pos: [-0.27, 2.04, 2.1], rot: [0.22, -0.05, 0.16], moss: 0.5, bendX: 0.3, points: 9 } });
     // 肩と腰: 左は大きな一枚、右は中 1 枚 + 小 1 枚（設定図の左右差）
-    plates.push({ group: 'fixed', parent: CHEST, part: part.body, slab: { w: 1.4, d: 1.5, h: 0.3, seed: 31, pos: [1.12, 1.72, 1.0], rot: [0.05, 0.15, -0.82], moss: 0.8, bendX: 0.12 } });
-    plates.push({ group: 'fixed', parent: CHEST, part: part.body, slab: { w: 0.98, d: 1.05, h: 0.27, seed: 32, pos: [-1.05, 1.8, 1.08], rot: [0.05, -0.1, 0.76], moss: 0.2, bendX: 0.12 } });
+    plates.push({ group: 'fixed', parent: CHEST, part: part.body, slab: { w: 1.15, d: 1.2, h: 0.3, seed: 31, pos: [1.2, 1.62, 1.0], rot: [0.05, 0.15, -0.82], moss: 0.8, bendX: 0.12 } });
+    plates.push({ group: 'fixed', parent: CHEST, part: part.body, slab: { w: 0.98, d: 1.05, h: 0.27, seed: 32, pos: [-1.15, 1.68, 1.08], rot: [0.05, -0.1, 0.76], moss: 0.2, bendX: 0.12 } });
     plates.push({ group: 'fixed', parent: CHEST, part: part.body, slab: { w: 0.62, d: 0.66, h: 0.2, seed: 33, pos: [-1.22, 1.32, 1.32], rot: [0, -0.2, 1.05], points: 8 } });
-    plates.push({ group: 'fixed', parent: PELVIS, part: part.body, slab: { w: 1.1, d: 1.15, h: 0.27, seed: 34, pos: [1.05, 1.56, -1.14], rot: [-0.1, -0.1, -0.86], moss: 0.3, bendX: 0.12 } });
+    plates.push({ group: 'fixed', parent: PELVIS, part: part.body, slab: { w: 0.95, d: 1.1, h: 0.27, seed: 34, pos: [1.1, 1.48, -1.14], rot: [-0.1, -0.1, -0.86], moss: 0.3, bendX: 0.12 } });
     plates.push({ group: 'fixed', parent: PELVIS, part: part.body, slab: { w: 0.78, d: 0.86, h: 0.23, seed: 35, pos: [-1.05, 1.5, -1.2], rot: [-0.1, 0.1, 0.86], moss: 0.75, bendX: 0.12 } });
     // 前脚の外側の甲。左が大きい。
     plates.push({ group: 'fixed', parent: LEG + 1, part: part.foreleg, slab: { w: 0.74, d: 0.72, h: 0.16, seed: 36, pos: [1.6, 0.66, 1.22], rot: [0, 0, -Math.PI / 2 + 0.06], moss: 0.4, bendX: 0.45, points: 8 } });
@@ -599,9 +621,6 @@ export class GaldrosRig implements MonsterRig {
       }
       // かかとのけづめ
       horn(hide, new Vector3(fx - s.side * 0.1, 0.24, fz - 0.36), new Vector3(-s.side * 0.2, 0.25, -1), 0.2, 0.07, HORN_DARK, b + 2, pid, new Vector3(0, -0.06, 0));
-      // ひじ・ひざの硬い皮（岩のこぶ）
-      const knob = r.joint.clone().addScaledVector(r.pole, 0.36);
-      slab(rock, { w: 0.34, d: 0.36, h: 0.16, seed: 80 + i, pos: [knob.x, knob.y, knob.z], rot: [s.front ? -1.2 : 1.2, 0, s.side * 0.2], bone: b, part: pid, rock: ROCK_DARK, points: 6, bendX: 0.6 });
       // 肩・腰の筋肉のふくらみ（脚が動いても付け根に隙間が出ない）
       const lump: Ring[] = [];
       const lc = new Vector3(s.hip[0] * 0.93, s.hip[1] - 0.02, s.hip[2]);
@@ -614,39 +633,38 @@ export class GaldrosRig implements MonsterRig {
     });
 
     // ---- 岩板（1 枚ずつ骨に付く） ----
+    // 設定図の板は、体に沿って反った薄くなめらかな板で、縁が青銅色。背殻は殻の面、ほかは位置と傾きで決めた反った面に乗せる。
     plates.forEach((pl, i) => {
-      const opts: SlabOpts = { ...pl.slab, bone: PLATE + i, part: pl.part, rock: ROCK, mossColor: MOSS };
-      if (pl.group === 'dome') slab(dome, opts, { geo: domeRim, color: BRONZE });
-      else if (pl.group === 'cap') slab(cap, opts, { geo: cap, color: BRONZE });
-      else slab(rock, opts, { geo: glow, color: BRONZE });
+      const o = pl.slab;
+      const sh = pl.shell;
+      const m = new Matrix4().compose(new Vector3(...o.pos), new Quaternion().setFromEuler(new Euler(...o.rot)), new Vector3(1, 1, 1));
+      // 肩・腰の板は、脚の付け根のふくらみに埋まらないよう、面の外側へ浮かせる
+      const floatUp = pl.group === 'fixed' && (pl.parent === CHEST || pl.parent === PELVIS) ? 0.13 : 0;
+      const surface = sh
+        ? (u: number, v: number): Vector3 => shellPoint((sh.z0 + sh.z1) / 2 + (v * (sh.z1 - sh.z0)) / 2, (sh.a0 + sh.a1) / 2 + (u * (sh.a1 - sh.a0)) / 2)
+        : (u: number, v: number): Vector3 => {
+          const x = (u * o.w) / 2, z = (v * o.d) / 2;
+          return new Vector3(x, floatUp - (o.bendX ?? 0) * x * x - (o.bendZ ?? 0) * z * z, z).applyMatrix4(m);
+        };
+      const inside = sh ? new Vector3(0, spineAt(o.pos[2]).cy, o.pos[2]) : new Vector3(0, -1, 0).applyMatrix4(m);
+      const opts = {
+        surface, inside, w: o.w, d: o.d, seed: o.seed, bone: PLATE + i, part: pl.part, rock: ROCK, moss: o.moss, mossColor: MOSS, points: o.points ?? 8,
+        thickness: sh ? 0.1 : Math.min(0.11, o.h * 0.42), skirt: sh ? 0.07 : o.h * 0.45, square: sh ? 0.13 : 0.5,
+      };
+      // 縁は光る素材へ入れるので、色は少し落とす
+      const rimColor = shade(BRONZE, 0.78);
+      if (pl.group === 'dome') plate(dome, opts, { geo: domeRim, color: rimColor });
+      else if (pl.group === 'cap') plate(cap, opts, { geo: cap, color: BRONZE });
+      else plate(rock, opts, { geo: glow, color: rimColor });
     });
-    // 背の稜線の岩のとげ（背殻と一緒に砕ける）と、殻のふちに並ぶ小さな岩
     const rowBone = (z: number): number => (z > 0.3 ? THORAX : z > -0.55 ? BODY : LUMBAR);
-    for (const [z, len] of [[1.08, 0.3], [0.62, 0.4], [0.18, 0.5], [-0.28, 0.52], [-0.74, 0.44], [-1.2, 0.34]] as const) {
-      crystal(dome, new Vector3(0, backY(0, z) + 0.1, z), new Vector3(0.06 * Math.sin(z * 7), 1, -0.45), len, 0.13, shade(ROCK, 0.95), rowBone(z), part.back, z * 10 + 2);
-    }
-    for (const s of [1, -1]) {
-      for (const [z, w] of [[1.0, 0.42], [0.5, 0.48], [-0.02, 0.5], [-0.55, 0.48], [-1.08, 0.42]] as const) {
-        const x = s * (spineAt(z).rx * 0.93 + 0.06);
-        slab(dome, { w, d: 0.5, h: 0.14, seed: 100 + Math.round(z * 10) + (s > 0 ? 0 : 50), pos: [x, backY(x * 0.86, z) + 0.02, z], rot: [0, s * 0.1, -s * 1.02], bone: rowBone(z), part: part.back, rock: ROCK, moss: s > 0 ? 0.2 : 0.6, mossColor: MOSS, points: 7, bendX: 0.5 });
-      }
-    }
     // 壊れた後に残る根元
     for (let j = 0; j < 12; j++) {
       const a = (j / 12) * Math.PI * 2 + 0.2;
       const x = Math.cos(a) * 0.78, z = -0.12 + Math.sin(a) * 1.05;
       slab(core, { w: 0.42, d: 0.5, h: 0.26, seed: 60 + j, pos: [x, backY(x, z) + 0.03, z], rot: [Math.sin(a) * 0.25, a, -x * 0.5], bone: rowBone(z), part: part.back, rock: ROCK_DARK, points: 6 });
     }
-    // 首の後ろと尾の背に並ぶ小さな岩（尾の先側は、切ると一緒に無くなる）
-    for (const [z, w] of [[1.52, 0.4], [1.3, 0.48]] as const) {
-      slab(rock, { w, d: 0.3, h: 0.13, seed: 120 + Math.round(z * 10), pos: [0, backY(0, z) + 0.04, z], rot: [0.25, 0, 0], bone: spineBones(z, true)[0], part: part.body, rock: ROCK, points: 6, bendX: 0.8 });
-    }
-    TAIL_Z.forEach((z, i) => {
-      if (i === CUT || i === TAIL_N - 1) return;
-      const zz = z - 0.13;
-      slab(rock, { w: 0.42 - i * 0.03, d: 0.26, h: 0.12, seed: 140 + i, pos: [0, backY(0, zz) + 0.03, zz], rot: [-0.2, i % 2 ? 0.3 : -0.3, 0], bone: TAIL + i, part: part.tail, rock: i % 2 ? ROCK : ROCK_DARK, points: 6, bendX: 0.9 });
-      crystal(rock, new Vector3(0, backY(0, zz) + 0.06, zz - 0.02), new Vector3(0, 1, -0.6), 0.2 - i * 0.012, 0.07, shade(ROCK, 0.9), TAIL + i, part.tail, 300 + i);
-    });
+    // 設定図に無い部品（背のとげ、殻のふちの小岩、首の後ろと尾の背の岩、ひじ・ひざのこぶ）は付けない（D-040）
     // 尾の先の晶の塊
     const tip = new Vector3(...TAIL_TIP);
     const tailCrystals: [number, number, number, number, number][] = [

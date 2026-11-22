@@ -40,7 +40,7 @@
       "clips": ["galdros_roar_01", "galdros_slam_l_01", "galdros_slam_r_01", "galdros_charge_01", "galdros_tail_sweep_01", "galdros_rockfall_01"],
       "clipsPlanned": ["galdros_idle_01", "galdros_walk_01", "galdros_turn_01", "galdros_flinch_01", "galdros_topple_01", "galdros_getup_01", "galdros_dead_01"],
       "dependsOn": ["art.monster.galdros.turnaround"],
-      "placeholder": { "kind": "procedural", "source": "src/render/galdrosRig.ts", "note": "コードで組んだ仮モデル（3 代目）。骨 53 本（背骨 5 節・首 2 節・あご・舌・まぶた・尾 8 節・脚の指・岩板 15 枚）。歯・舌・瞳・とげ・背殻 6 枚。皮は設定図（右側面）から焼いた絵（tex.monster.galdros.hide）を貼り、岩は設定図から取った模様（tex.monster.galdros.rock）を重ねる。形（背殻・頭・脚の太さ）は設定図とまだ違う。陰は Blender で焼いた値を頂点の色へ掛ける。前脚叩きの脚と尾払いの尾は判定と同じ軌道で動く。歩行は足先を地面に置く方式。しぐさ・のけぞり・怯み・転倒・咆哮・死亡は手続き生成。" },
+      "placeholder": { "kind": "procedural", "source": "src/render/galdrosRig.ts", "note": "コードで組んだ仮モデル（3 代目）。骨 53 本（背骨 5 節・首 2 節・あご・舌・まぶた・尾 8 節・脚の指・岩板 15 枚）。歯・舌・瞳。背殻は、なめらかな殻の面を分け合う薄い板 6 枚（縁は青銅色）で、とげは無い。皮は設定図（右側面）から焼いた絵（tex.monster.galdros.hide）を貼り、岩は設定図から取った模様（tex.monster.galdros.rock）を重ねる。頭・脚の太さ・尾の長さは設定図とまだ違い、背殻も設定図より小さく 6 枚に分かれている。陰は Blender で焼いた値を頂点の色へ掛ける。前脚叩きの脚と尾払いの尾は判定と同じ軌道で動く。歩行は足先を地面に置く方式。しぐさ・のけぞり・怯み・転倒・咆哮・死亡は手続き生成。" },
       "verification": "仮素材: 素材ビューアで部位判定と見た目の重なり、破壊・切断後の姿を確認。ゲーム内で歩行・旋回・4 つの技・転倒・死亡・怒りの見た目を画面で確認（ヘッドレス Chrome）。実機での見え方と性能は未確認。"
     },
     {
