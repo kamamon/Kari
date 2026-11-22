@@ -29,7 +29,7 @@
 
 | 素材 | 状態 |
 | --- | --- |
-| アート基準ボード v2（`art-source/board/style_board_v2.png`、ChatGPT 生成。v1 も保存） | 照合済み・採用確認待ち。ゲームにはまだ反映していない |
+| アート基準ボード v2（`art-source/board/style_board_v2.png`、ChatGPT 生成。v1 も保存） | **採用（2026-11-22）**。ゲームにはまだ反映していない |
 
 ## 仮素材（正式素材ではないもの）
 
@@ -61,7 +61,7 @@
 ## お願いしたいこと（ユーザー）
 
 1. 公開 URL を iPhone の Safari で開き、[tests.md](tests.md) の「実機チェック表」を試す。気になった点を Claude へ。
-2. アート基準ボード v2 を採用するか決める（照合の記録は `art-source/board/style_board_v2.md`）。採用したら ChatGPT へ ②（ガルドロス設定図）を依頼し、画像を Claude へ添付。
+2. ChatGPT へ依頼 2（ガルドロス設定図）を依頼中（2026-11-22）。四方向の画像が揃ったら Claude へ添付。
 3. （任意）動く版の目印として、GitHub の Releases で `9198e35` にタグ `v0.1.0-m1` を付ける。
 
 ## 次の一作業
