@@ -4,7 +4,8 @@
 
 ## 現在の版
 
-- **v0.1.0（M1 訓練版）** / タグ `v0.1.0-m1` / リポジトリ kamamon/Kari の main
+- **v0.1.0（M1 訓練版）** / リポジトリ kamamon/Kari の main、実装のコミットは `9198e35`
+- タグ `v0.1.0-m1` は、作業環境からタグを送れなかったため **まだ付いていない**（GitHub の Releases →「Draft a new release」で `9198e35` に付けられる）
 - 公開予定 URL: https://kamamon.github.io/Kari/ （Pages の設定が済むまでは開けない）
 - 2026-11-22、設計書 COPY 01〜04（総合指示・CLAUDE.md・M0 基盤・M1 断岳剣の戦闘）の範囲を実装
 
@@ -56,6 +57,7 @@
 1. GitHub の **Settings → Pages → Source を「GitHub Actions」** にして、**Actions → Deploy to GitHub Pages → Run workflow**。
 2. 公開 URL を iPhone の Safari で開き、[tests.md](tests.md) の「実機チェック表」を試す。気になった点を Claude へ。
 3. ChatGPT へ [chatgpt-requests.md](chatgpt-requests.md) の ①（アート基準）と ②（ガルドロス設定図）を依頼し、採用した画像を Claude へ添付。
+4. （任意）動く版の目印として、GitHub の Releases で `9198e35` にタグ `v0.1.0-m1` を付ける。
 
 ## 次の一作業
 
@@ -71,7 +73,7 @@
 
 ```
 プロジェクト：霧境の狩人 - VEILBOUND HUNTERS
-現在の版：v0.1.0（M1 訓練版） タグ v0.1.0-m1 https://github.com/kamamon/Kari
+現在の版：v0.1.0（M1 訓練版） コミット 9198e35 https://github.com/kamamon/Kari
 今回の範囲：
 現在動くこと：横画面の訓練区画で、仮ハンターの移動・カメラ・断岳剣（縦斬り/溜め/横薙ぎ/防御/回避）・部位付き標的。仮素材。
 使う素材：
