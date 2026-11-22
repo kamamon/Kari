@@ -5,6 +5,7 @@
 モンスター・武器・人物・世界・コードはすべて本作のための新規制作です。
 
 - 遊ぶ: **https://kamamon.github.io/Kari/**
+- iPhone で画面を広く使う: Safari の共有 →「ホーム画面に追加」。できたアイコンから開くと、URL の欄が出ません（設定は Safari とは別に保存されます）
 - 素材ビューア: https://kamamon.github.io/Kari/viewer.html
 - 設計書: [docs/source/VEILBOUND_HUNTERS_design_v1.0.pdf](docs/source/VEILBOUND_HUNTERS_design_v1.0.pdf)
 

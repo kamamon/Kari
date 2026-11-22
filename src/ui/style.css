@@ -24,7 +24,7 @@ body { position: fixed; inset: 0; overflow: hidden; height: 100dvh; touch-action
 #ui { position: absolute; inset: 0; pointer-events: none; }
 #ui > * { pointer-events: auto; }
 [hidden] { display: none !important; }
-button { font: inherit; color: inherit; }
+button { font: inherit; color: inherit; touch-action: manipulation; }
 
 /* ---- 起動画面 ---- */
 #boot {
@@ -40,7 +40,7 @@ button { font: inherit; color: inherit; }
   margin-top: 0.6rem; padding: 0.85rem 2.6rem; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.2em;
   background: var(--bronze); color: #1b1710; border: 0; border-radius: 4px; cursor: pointer;
 }
-.boot-note { font-size: 0.72rem; color: var(--ink-dim); margin-top: 1.2rem; line-height: 1.6; }
+.boot-note { font-size: 0.72rem; color: var(--ink-dim); margin-top: 1.2rem; line-height: 1.6; white-space: pre-line; }
 
 /* ---- HUD ---- */
 /* HUD はタッチ操作の層より手前。HUD 自体は指を素通しし、ボタンだけが反応する */
@@ -162,6 +162,8 @@ button { font: inherit; color: inherit; }
 .base-choice b { display: block; font-size: 1.05rem; margin-bottom: 4px; }
 .base-choice span { display: block; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.5; }
 .base-note { font-size: 0.72rem; color: var(--ink-dim); line-height: 1.6; margin: 8px 0 0; }
+.base-hint { font-size: 0.8rem; line-height: 1.6; margin: 8px 0 0; padding: 8px 10px; border-left: 3px solid var(--bronze); background: rgba(184, 148, 96, 0.12); }
+.base-fs { margin: 10px 0 0; padding: 10px 16px; min-height: 44px; background: #2a332d; border: 1px solid var(--line); border-radius: 4px; font-weight: 700; cursor: pointer; }
 .result-body table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
 .result-body th, .result-body td { text-align: left; padding: 6px 4px; border-bottom: 1px solid rgba(235, 231, 215, 0.1); }
 .result-body th { color: var(--ink-dim); font-weight: 600; width: 9em; }

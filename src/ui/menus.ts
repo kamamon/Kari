@@ -1,6 +1,7 @@
 // メニュー（設定 / 操作表 / 検証）。設定画面は通常のスクロールを保つ（touch-action を殺さない）。
 import { APP_VERSION, BUILD_ID } from '../core/assets';
 import type { Settings, SettingsStore } from '../save/settings';
+import { canFullscreen, fullscreenHint, isFullscreen, isStandalone, toggleFullscreen } from './fullscreen';
 
 export interface MenuHost {
   closeMenu(): void;
@@ -201,6 +202,14 @@ export class Menu {
     this.row('疾走の方法', '外周押込みは誤発動しやすい場合に「ボタン」へ', this.select('sprintMode', [['button', '疾走ボタン（押すと切替）'], ['outer', 'スティックを外周まで倒す']]));
     this.row('ボタンの位置', 'ドラッグで 1 つずつ動かせます', this.button('配置を編集', () => this.host.startLayoutEdit()));
     this.heading('描画');
+    if (canFullscreen()) {
+      const fs = this.button(isFullscreen() ? '全画面をやめる' : '全画面にする', () => void toggleFullscreen().then((on) => (fs.textContent = on ? '全画面をやめる' : '全画面にする')));
+      this.row('全画面', 'ブラウザの枠を隠して画面を広く使う', fs);
+    } else if (isStandalone()) {
+      this.row('全画面', 'ホーム画面のアイコンから開いています', document.createElement('span'));
+    } else {
+      this.row('全画面', fullscreenHint() ?? 'このブラウザでは全画面にできません', document.createElement('span'));
+    }
     this.row('描画の上限', '計算は常に 60Hz', this.select('fpsCap', [['60', '60fps'], ['30', '30fps（発熱を抑える）']], true));
     this.row('内部解像度', '3D だけを粗くする。文字は鮮明なまま', this.range('renderScale', 0.65, 1, 0.05));
     this.row('影', '切り替えは次回の起動から', this.check('shadows'));

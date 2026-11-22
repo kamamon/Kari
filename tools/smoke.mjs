@@ -84,7 +84,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('#boot-start');
   check('起動すると拠点の画面が出て、一時停止している', await until(page, () => window.__vh && !document.getElementById('base').hidden && window.__vh.sim.tick === 0));
   await page.screenshot({ path: `${OUT}02_base.png` });
-  await page.click('.base-choice:last-of-type');
+  await page.locator('.base-choice').last().click();
   check('訓練場を選ぶと simulation が進む', await until(page, () => window.__vh.sim.tick > 10));
   await page.screenshot({ path: `${OUT}02_start.png` });
   // 技を 1 つずつ確かめる間は、標的の攻撃を止めておく（防御・被弾の確認の所で再開する）
@@ -262,7 +262,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('.menu-head .tab:nth-child(1)');
   await page.click('.menu-body button');
   check('メニューから拠点へ戻れる', await until(page, () => !document.getElementById('base').hidden));
-  await page.click('.base-choice:first-of-type');
+  await page.locator('.base-choice').first().click();
   check('依頼を選ぶと狩猟が始まる（ガルドロスは未発見）', await until(page, () => window.__vh.sim.hunt?.phase === 'active' && window.__vh.sim.tick > 5 && !window.__vh.sim.monsters[0].aware));
   await page.screenshot({ path: `${OUT}51_hunt_start.png` });
   await page.keyboard.down('KeyW');
@@ -347,7 +347,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.tap('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   await page.screenshot({ path: `${OUT}20_touch_base.png` });
-  await page.tap('.base-choice:last-of-type');
+  await page.locator('.base-choice').last().tap();
   await until(page, () => window.__vh.sim.tick > 10);
   await page.screenshot({ path: `${OUT}20_touch_start.png` });
   const cdp = await ctx.newCDPSession(page);
@@ -399,6 +399,44 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.screenshot({ path: `${OUT}26_touch_menu.png` });
   await page.tap('.menu-head .close');
   check('タッチ: 「戻る」でメニューが閉じる', await until(page, () => document.getElementById('menu').hidden, 3000));
+  // 連続タップ: ボタンは 2 回とも効き、画面は拡大されない
+  {
+    const tapAt = async (x, y) => {
+      await touch('touchStart', [{ x, y, id: 9 }]);
+      await touch('touchEnd', []);
+    };
+    const vb = await page.evaluate(() => {
+      const b = document.querySelector('.hud-btn');
+      window.__clicks = 0;
+      b.addEventListener('click', () => window.__clicks++);
+      const r = b.getBoundingClientRect();
+      return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+    });
+    await tapAt(vb.x, vb.y);
+    await page.waitForTimeout(70);
+    await tapAt(vb.x, vb.y);
+    await page.waitForTimeout(350);
+    const clicks = await page.evaluate(() => window.__clicks);
+    check('タッチ: ボタンを続けて 2 回叩くと、ちょうど 2 回効く', clicks === 2, `${clicks} 回`);
+    await tapAt(600, 120);
+    await page.waitForTimeout(70);
+    await tapAt(600, 120);
+    await page.waitForTimeout(350);
+    const zoom = await page.evaluate(() => ({
+      scale: window.visualViewport.scale,
+      prevented: ['touch', 'game'].map((id) => !document.getElementById(id).dispatchEvent(new TouchEvent('touchstart', { cancelable: true, bubbles: true }))),
+    }));
+    check('タッチ: 操作領域のダブルタップで拡大されない（既定の動作を止めている）', zoom.scale === 1 && zoom.prevented.every(Boolean), JSON.stringify(zoom));
+    await idle(page);
+  }
+  const pwa = await page.evaluate(async () => {
+    const link = document.querySelector('link[rel=manifest]');
+    const m = await (await fetch(link.href)).json();
+    const icons = await Promise.all(m.icons.map((i) => fetch(new URL(i.src, link.href)).then((r) => r.ok)));
+    const apple = await fetch(document.querySelector('link[rel=apple-touch-icon]').href).then((r) => r.ok);
+    return { display: m.display, icons, apple, start: new URL(m.start_url, link.href).pathname };
+  });
+  check('ホーム画面用の設定とアイコンが配信される', pwa.display === 'fullscreen' && pwa.icons.every(Boolean) && pwa.apple && pwa.start === new URL(page.url()).pathname.replace(/index\.html$/, ''), JSON.stringify(pwa));
   // ボタン配置の編集: 回避ボタンを左上へ 40px 動かして保存される
   await page.tap('.hud-btn:nth-of-type(2)');
   await page.tap('.menu-head .tab:nth-child(2)');

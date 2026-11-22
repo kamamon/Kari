@@ -102,6 +102,8 @@ M1 の「部位付きダミー」。ガルドロスではない。HP 1200、倒�
 
 - viewport-fit=cover と safe-area-inset、高さは 100dvh。操作領域だけ touch-action:none、メニューは通常のスクロール。
 - 縦持ち（タッチ端末）は回転の案内を出して一時停止。全画面や向きの固定には頼らない。
+- 拡大の防止: touch-action に加えて、操作領域の touch イベントの既定の動作・Safari のピンチ・連続タップの 2 回目を止める（`src/input/gestureGuard.ts`）。
+- 画面を広く使う方法（任意）: ホーム画面に追加したアイコンから開くと、ブラウザの枠なしで起動する（`public/manifest.webmanifest`）。Fullscreen API が使える端末（iPad・Android・PC）では、拠点画面と設定に「全画面にする」を出す。iPhone の Safari には全画面の API が無いので、拠点画面にホーム画面への追加を案内する。
 - 音声は「はじめる」の操作で開始。設定に「音声を再開」。
 - WebGL2 が使えない場合と読み込み失敗は、理由と再試行ボタンを表示する。
 - 内部解像度は DPR 上限 1.5 × 倍率 0.65〜1.0（HUD は HTML なので鮮明なまま）。

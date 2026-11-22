@@ -2,6 +2,7 @@
 // 里を歩く・受付・工房・道具箱は M3 で作る。
 import { APP_VERSION, BUILD_ID } from '../core/assets';
 import type { Content } from '../data/schemas';
+import { canFullscreen, fullscreenHint, toggleFullscreen } from './fullscreen';
 
 export interface BaseHost {
   startTraining(): void;
@@ -48,6 +49,22 @@ export class BaseScreen {
     note.className = 'base-note';
     note.textContent = `v${APP_VERSION} (${BUILD_ID}) ／ 見た目・動き・音は仮素材。回復の道具・素材の剥ぎ取り・捕獲・工房・セーブは、これから追加します。`;
     card.appendChild(note);
+    // 画面を広く使う方法: 全画面にできる端末はボタン、iPhone は「ホーム画面に追加」の案内
+    if (canFullscreen() && window.matchMedia('(pointer: coarse)').matches) {
+      const fs = document.createElement('button');
+      fs.className = 'base-fs';
+      fs.textContent = '全画面にする';
+      fs.addEventListener('click', () => void toggleFullscreen().then((on) => (fs.textContent = on ? '全画面をやめる' : '全画面にする')));
+      card.appendChild(fs);
+    } else {
+      const hint = fullscreenHint();
+      if (hint) {
+        const p = document.createElement('p');
+        p.className = 'base-hint';
+        p.textContent = hint;
+        card.appendChild(p);
+      }
+    }
     root.appendChild(card);
     parent.appendChild(root);
     this.root = root;

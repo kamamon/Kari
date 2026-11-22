@@ -5,7 +5,9 @@ import { App } from './app';
 import { APP_VERSION, BUILD_ID, loadContent } from './core/assets';
 import { AudioSystem } from './core/audio';
 import type { Content } from './data/schemas';
+import { guardSurface, installGestureGuard } from './input/gestureGuard';
 import { SettingsStore } from './save/settings';
+import { fullscreenHint } from './ui/fullscreen';
 
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
 
@@ -21,7 +23,8 @@ async function boot(): Promise<void> {
   const status = $('boot-status');
   const startBtn = $<HTMLButtonElement>('boot-start');
   const retryBtn = $<HTMLButtonElement>('boot-retry');
-  $('boot-note').textContent = `v${APP_VERSION} (${BUILD_ID}) ／ M1 訓練版: 仮モデル・仮の音で動作を確かめる段階です`;
+  const hint = fullscreenHint();
+  $('boot-note').textContent = `v${APP_VERSION} (${BUILD_ID}) ／ 仮モデル・仮の音で動作を確かめる段階です${hint ? `\n${hint}` : ''}`;
   startBtn.hidden = true;
   retryBtn.hidden = true;
 
@@ -51,7 +54,11 @@ async function boot(): Promise<void> {
     // 音声はこのボタン操作の中で開始する（自動再生制限のため）
     void audio.start();
     try {
-      const app = new App($<HTMLCanvasElement>('game'), $('ui'), content, store, audio);
+      const canvas = $<HTMLCanvasElement>('game');
+      const app = new App(canvas, $('ui'), content, store, audio);
+      guardSurface(canvas);
+      const touchLayer = document.getElementById('touch');
+      if (touchLayer) guardSurface(touchLayer);
       $('boot').hidden = true;
       app.start();
       (window as unknown as { __vh?: unknown }).__vh = app;
@@ -66,4 +73,5 @@ async function boot(): Promise<void> {
   };
 }
 
+installGestureGuard();
 void boot();
