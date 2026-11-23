@@ -6,6 +6,8 @@ import { APP_VERSION, BUILD_ID, loadContent } from './core/assets';
 import { AudioSystem } from './core/audio';
 import type { Content } from './data/schemas';
 import { guardSurface, installGestureGuard } from './input/gestureGuard';
+import { IdbBackend, type SaveBackend } from './save/saveDb';
+import { SaveManager } from './save/saveManager';
 import { SettingsStore } from './save/settings';
 import { enableSwipeToShrinkBars, fullscreenHint } from './ui/fullscreen';
 
@@ -46,6 +48,21 @@ async function boot(): Promise<void> {
     return;
   }
 
+  // 里の持ち物・装備・進行の保存を開く。使えない端末では、保存なしで動かす（知らせは拠点の画面に出る）
+  status.textContent = '保存データを読んでいます…';
+  let backend: SaveBackend | null = null;
+  try {
+    if (typeof indexedDB !== 'undefined') backend = await IdbBackend.open(indexedDB);
+  } catch (e) {
+    console.warn('保存の場所を開けませんでした', e);
+  }
+  const storage = typeof navigator !== 'undefined' ? navigator.storage : undefined;
+  const save = await SaveManager.open(content, backend, {
+    now: () => new Date().toISOString(),
+    appVersion: APP_VERSION,
+    requestPersist: storage && typeof storage.persist === 'function' ? () => storage.persist() : undefined,
+  });
+
   const store = new SettingsStore();
   const audio = new AudioSystem(store.value);
   status.textContent = '横向きで遊びます。音が出ます。';
@@ -56,7 +73,7 @@ async function boot(): Promise<void> {
     void audio.start();
     try {
       const canvas = $<HTMLCanvasElement>('game');
-      const app = new App(canvas, $('ui'), content, store, audio);
+      const app = new App(canvas, $('ui'), content, store, audio, save);
       guardSurface(canvas);
       const touchLayer = document.getElementById('touch');
       if (touchLayer) guardSurface(touchLayer);

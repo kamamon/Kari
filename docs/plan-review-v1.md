@@ -2,6 +2,8 @@
 
 2026-11-23、v0.5.1 の時点。ChatGPT が書いた次の 3 つを読み、いまの実装と突き合わせた結果。
 
+> **追記（2026-11-24、v0.6.0）**: この文書で「足りない」と書いたもののうち、**保存と強化 1 件を実装した**（`docs/spec.md` 15 章、D-057）。受注 → 狩猟 → 報酬 → 帰還 → 強化 1 件 → 読み込み直しても同じ、が通る。残りは、研磨石と刃の状態、実機の計測。以下の本文は v0.5.1 の時点のまま。
+
 - 計画書（28 ページ）: `docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_next_production_plan_v1.pdf`
 - Claude への指示（完全版）: `docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_Claude_instructions_v1.txt`
 - 素材 50 項目の一覧: `docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv`

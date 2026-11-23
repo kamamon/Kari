@@ -5,6 +5,14 @@ import type { Simulation } from '../game/sim';
 export interface ResultHost {
   toBase(): void;
   retry(): void;
+  /** 保存できなかった報酬を、もう一度保存する */
+  retryUnsaved(): Promise<unknown>;
+}
+
+/** 報酬の保存の状態。持ち物へ入ったと言えるのは saved になってから */
+export interface RewardSaveState {
+  state: 'none' | 'saving' | 'saved' | 'failed';
+  text: string;
 }
 
 const REASON: Record<string, string> = {
@@ -19,8 +27,12 @@ export class ResultScreen {
   readonly root: HTMLElement;
   private title: HTMLElement;
   private body: HTMLElement;
+  private saveLine: HTMLElement;
 
-  constructor(parent: HTMLElement, host: ResultHost) {
+  constructor(
+    parent: HTMLElement,
+    private host: ResultHost,
+  ) {
     const root = document.createElement('div');
     root.id = 'result';
     root.hidden = true;
@@ -39,7 +51,10 @@ export class ResultScreen {
     back.textContent = '拠点へ戻る';
     back.addEventListener('click', () => host.toBase());
     row.append(again, back);
-    card.append(this.title, this.body, row);
+    this.saveLine = document.createElement('p');
+    this.saveLine.className = 'result-save';
+    this.saveLine.setAttribute('role', 'status');
+    card.append(this.title, this.body, this.saveLine, row);
     root.appendChild(card);
     parent.appendChild(root);
     this.root = root;
@@ -53,7 +68,24 @@ export class ResultScreen {
     this.root.hidden = true;
   }
 
-  show(sim: Simulation): void {
+  /** 報酬の保存の状態を出す（保存が完了・失敗した時にも呼ばれる） */
+  setSaveState(s: RewardSaveState): void {
+    this.saveLine.textContent = s.text;
+    this.saveLine.dataset.state = s.state;
+    this.saveLine.hidden = s.state === 'none';
+    if (s.state === 'failed') {
+      const b = document.createElement('button');
+      b.textContent = 'もう一度保存する';
+      b.addEventListener('click', () => {
+        b.disabled = true;
+        void this.host.retryUnsaved();
+      });
+      this.saveLine.appendChild(b);
+    }
+  }
+
+  show(sim: Simulation, save: RewardSaveState): void {
+    this.setSaveState(save);
     const h = sim.hunt!;
     const m = sim.monsters[0];
     this.root.classList.toggle('failed', h.phase === 'failed');
@@ -113,10 +145,7 @@ export class ResultScreen {
         ul.appendChild(li);
       }
       box.append(head, ul);
-      const note = document.createElement('p');
-      note.className = 'base-note';
-      note.textContent = '素材と通貨は拠点の持ち物に入ります。保存はまだ無いので、ページを閉じると消えます（保存は次の段階）。';
-      this.body.append(box, note);
+      this.body.append(box);
     } else if (h.phase === 'failed') {
       const note = document.createElement('p');
       note.className = 'base-note';

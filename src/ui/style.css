@@ -126,6 +126,47 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 .tbtn[hidden] { display: none; }
 .tbtn-item { border-radius: 16px; border-color: var(--bronze); white-space: pre-line; text-align: center; line-height: 1.15; font-size: calc(11px * var(--btn-scale)); }
 .base-inv { margin: 8px 0 0; padding: 6px 10px; border-radius: 8px; background: rgba(0, 0, 0, 0.22); font-size: 13px; }
+.base-inv p { margin: 0; line-height: 1.6; }
+.base-inv .base-unknown { font-size: 11px; opacity: 0.75; word-break: break-all; }
+.base-inv .base-save-state { font-size: 11px; opacity: 0.7; }
+/* 知らせ（保存できない、読めないデータがある、保存できていない報酬がある） */
+.base-banner { margin: 0 0 8px; padding: 8px 10px; font-size: 12px; line-height: 1.6; border-left: 3px solid var(--bronze); background: rgba(184, 148, 96, 0.14); }
+.base-banner.bad { border-left-color: #c9785a; background: rgba(201, 120, 90, 0.16); }
+.base-banner button { margin-left: 8px; }
+/* 工房とデータ（折りたたみ） */
+.base-section { margin: 8px 0 0; border: 1px solid var(--line); border-radius: 6px; background: rgba(0, 0, 0, 0.16); }
+.base-section > summary { padding: 10px 12px; min-height: 44px; display: flex; align-items: center; font-weight: 700; cursor: pointer; list-style: none; }
+.base-section > summary::-webkit-details-marker { display: none; }
+.base-section > summary::after { content: '開く'; margin-left: auto; font-size: 11px; font-weight: 400; opacity: 0.6; }
+.base-section[open] > summary::after { content: '閉じる'; }
+.base-section > div { padding: 0 12px 12px; }
+#base button, #result .result-save button { font: inherit; }
+.base-section button, .base-banner button, .result-save button { min-height: 40px; padding: 8px 14px; border-radius: 4px; border: 1px solid var(--line); background: #2a332d; color: var(--ink); cursor: pointer; }
+.base-section button.go { background: var(--bronze); color: #1b1710; border-color: transparent; font-weight: 800; }
+.base-section button:disabled { opacity: 0.5; cursor: default; background: #2a332d; color: var(--ink-dim); font-weight: 400; }
+/* 保存の完了を待つ間は押せない（数 ms なので、見た目は変えない。変えると持ち替えのたびにちらつく） */
+#base.busy button, #base.busy summary { pointer-events: none; }
+.forge-recipe { padding: 8px 0 0; }
+.forge-recipe b { font-size: 0.95rem; }
+.forge-stat { margin-left: 10px; font-size: 12px; color: var(--bronze); }
+.forge-cost { margin: 6px 0 8px; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; }
+.forge-cost li::before { content: '✓ '; color: #8fb58a; }
+.forge-cost li.short { color: #d99a82; }
+.forge-cost li.short::before { content: '不足 '; color: #d99a82; font-size: 11px; }
+.forge-done { margin: 6px 0 0; font-size: 13px; color: #8fb58a; }
+.forge-confirm { margin: 6px 0 0; padding: 8px 10px; font-size: 12px; line-height: 1.7; border-left: 3px solid var(--bronze); background: rgba(184, 148, 96, 0.12); }
+.forge-confirm button { margin: 6px 8px 0 0; }
+.data-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+#base-data input[type='file'] { display: block; width: 100%; margin: 4px 0; font-size: 12px; color: var(--ink-dim); }
+.data-paste { display: block; width: 100%; margin: 4px 0 6px; padding: 6px 8px; font: 12px/1.4 ui-monospace, monospace; color: var(--ink); background: rgba(0, 0, 0, 0.3); border: 1px solid var(--line); border-radius: 4px; user-select: text; -webkit-user-select: text; }
+.data-backup { display: flex; align-items: center; gap: 8px; margin: 4px 0; font-size: 12px; }
+.data-backup span { flex: 1 1 auto; }
+.base-message { margin: 8px 0 0; min-height: 1.4em; font-size: 13px; color: #8fb58a; }
+.base-message.bad { color: #d99a82; }
+.result-save { margin: 10px 0 0; padding: 8px 10px; font-size: 13px; line-height: 1.6; border-left: 3px solid #8fb58a; background: rgba(143, 181, 138, 0.12); }
+.result-save[data-state='saving'] { border-left-color: var(--line); background: rgba(0, 0, 0, 0.2); color: var(--ink-dim); }
+.result-save[data-state='failed'] { border-left-color: #c9785a; background: rgba(201, 120, 90, 0.16); }
+.result-save button { margin-left: 8px; }
 .item-empty .tbtn-item { opacity: calc(var(--btn-opacity) * 0.45); border-color: rgba(235, 231, 215, 0.35); }
 /* 道具の欄（キーボード・ゲームパッドでも見える）と、達成後の案内 */
 #hud .hud-item { position: absolute; left: 50%; bottom: calc(var(--sab) + 82px); transform: translateX(-50%); padding: 3px 10px; border-radius: 10px; background: rgba(20, 26, 22, 0.55); color: var(--ink); font-size: 12px; font-weight: 700; white-space: nowrap; pointer-events: none; }

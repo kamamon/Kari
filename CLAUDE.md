@@ -16,7 +16,7 @@ TypeScript + Vite + Three.js。入力、simulation、render、data、save、UI �
 
 # Save
 ゲーム固有の DB 名、schemaVersion、revision を持つ。報酬・生産は原子的に確定する。保存成功は transaction 完了後に表示する。旧版や未知 ID のデータを黙って消さない。JSON バックアップを提供する。
-（M2 前半の時点でセーブは未実装。操作設定だけを localStorage の `veilbound-hunters:prod:settings` に保存している。）
+（v0.6.0 で実装した。持ち物・装備・進行は IndexedDB の `veilbound-hunters:prod:save`、コードは `src/save/`、決まりは docs/spec.md の 15 章。操作設定は別で、localStorage の `veilbound-hunters:prod:settings`。）
 
 # Browser
 PC と横向き iPhone/iPad Safari を対象とする。複数指、safe area、回転、音声開始、非表示からの復帰を扱う。素材パスは Vite BASE_URL から解決する。通常の Safari タブで操作できることを優先する。

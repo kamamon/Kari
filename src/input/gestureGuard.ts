@@ -46,8 +46,9 @@ export function installGestureGuard(): void {
       const target = e.target instanceof Element ? e.target : null;
       if (!target || target.closest('input, select, textarea, a, [contenteditable]')) return;
       e.preventDefault();
-      const button = target.closest('button');
-      if (button && !button.disabled) {
+      // 折りたたみの見出し（summary）も、ボタンと同じく自前で押す（止めたままだと開閉できない）
+      const button = target.closest<HTMLElement>('button, summary');
+      if (button && !(button instanceof HTMLButtonElement && button.disabled)) {
         swallow = { el: button, until: now + 500 };
         button.click();
       }
@@ -60,7 +61,7 @@ export function installGestureGuard(): void {
     'click',
     (e) => {
       if (!swallow || !e.isTrusted || performance.now() > swallow.until) return;
-      if (e.target instanceof Element && e.target.closest('button') === swallow.el) {
+      if (e.target instanceof Element && e.target.closest('button, summary') === swallow.el) {
         e.stopImmediatePropagation();
         e.preventDefault();
       }

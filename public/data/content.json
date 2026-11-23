@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.5.1",
+  "contentVersion": "0.6.0",
   "files": {
     "actions": [
       "actions/player_common.json",
@@ -39,6 +39,7 @@
     "player": "player.json",
     "quests": "quests.json",
     "items": "items.json",
-    "loot": "loot.json"
+    "loot": "loot.json",
+    "recipes": "recipes.json"
   }
 }

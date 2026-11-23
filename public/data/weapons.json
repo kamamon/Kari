@@ -242,7 +242,18 @@
       "element": { "type": "none", "value": 0 },
       "affinity": 0,
       "sharpnessModifier": 1.0,
-      "assetId": "model.weapon.heavy_blade.001"
+      "assetId": "model.weapon.heavy_blade.001",
+      "starter": true
+    },
+    {
+      "id": "weapon.heavy_blade.002",
+      "family": "heavy_blade",
+      "name": "岩殻の断岳剣",
+      "attack": 92,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.heavy_blade.002"
     },
     {
       "id": "weapon.guard_blade.001",
@@ -252,7 +263,8 @@
       "element": { "type": "none", "value": 0 },
       "affinity": 0,
       "sharpnessModifier": 1.0,
-      "assetId": "model.weapon.guard_blade.001"
+      "assetId": "model.weapon.guard_blade.001",
+      "starter": true
     },
     {
       "id": "weapon.war_maul.001",
@@ -262,7 +274,8 @@
       "element": { "type": "none", "value": 0 },
       "affinity": 0,
       "sharpnessModifier": 1.0,
-      "assetId": "model.weapon.war_maul.001"
+      "assetId": "model.weapon.war_maul.001",
+      "starter": true
     },
     {
       "id": "weapon.twin_blades.001",
@@ -272,7 +285,8 @@
       "element": { "type": "none", "value": 0 },
       "affinity": 0,
       "sharpnessModifier": 1.0,
-      "assetId": "model.weapon.twin_blades.001"
+      "assetId": "model.weapon.twin_blades.001",
+      "starter": true
     },
     {
       "id": "weapon.long_blade.001",
@@ -282,7 +296,8 @@
       "element": { "type": "none", "value": 0 },
       "affinity": 0,
       "sharpnessModifier": 1.0,
-      "assetId": "model.weapon.long_blade.001"
+      "assetId": "model.weapon.long_blade.001",
+      "starter": true
     },
     {
       "id": "weapon.long_lance.001",
@@ -292,7 +307,8 @@
       "element": { "type": "none", "value": 0 },
       "affinity": 0,
       "sharpnessModifier": 1.0,
-      "assetId": "model.weapon.long_lance.001"
+      "assetId": "model.weapon.long_lance.001",
+      "starter": true
     },
     {
       "id": "weapon.ring_bow.001",
@@ -302,7 +318,8 @@
       "element": { "type": "none", "value": 0 },
       "affinity": 0,
       "sharpnessModifier": 1.0,
-      "assetId": "model.weapon.ring_bow.001"
+      "assetId": "model.weapon.ring_bow.001",
+      "starter": true
     }
   ]
 }

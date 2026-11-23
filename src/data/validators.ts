@@ -17,6 +17,7 @@ import {
   type MonsterDef,
   type PlayerTuning,
   type QuestDef,
+  type RecipeDef,
   type ShapeTrackDef,
   type WeaponDef,
   type WeaponFamilyDef,
@@ -252,6 +253,50 @@ export function crossCheck(c: Content, errors: string[]): void {
   for (const a of c.actions.values()) {
     for (const cw of a.cancelWindows) for (const n of cw.into) if (!known.has(n)) errors.push(`action ${a.actionId}: cancel 先 "${n}" が未定義`);
   }
+  // 最初から持つ武器が 1 つはあること
+  if (![...c.weapons.values()].some((w) => w.starter)) errors.push('weapons: starter の武器が 1 つも無い');
+  // 工房: 元と結果の武器があり、同じ系統で、素材はどこかで手に入ること（手に入らない素材を要求しない）
+  const obtainable = obtainableMaterials(c);
+  const results = new Set<string>();
+  for (const r of c.recipes.values()) {
+    const w = `recipe ${r.id}`;
+    if (r.kind !== 'upgrade') errors.push(`${w}: kind "${String(r.kind)}" は未定義`);
+    const from = c.weapons.get(r.fromWeaponId);
+    const to = c.weapons.get(r.resultWeaponId);
+    if (!from) errors.push(`${w}: 元の武器 ${r.fromWeaponId} が無い`);
+    if (!to) errors.push(`${w}: 結果の武器 ${r.resultWeaponId} が無い`);
+    if (from && to && from.family !== to.family) errors.push(`${w}: 元と結果の系統が違う`);
+    if (r.fromWeaponId === r.resultWeaponId) errors.push(`${w}: 元と結果が同じ`);
+    if (to?.starter) errors.push(`${w}: 結果の武器が最初から持つ武器になっている`);
+    if (results.has(r.resultWeaponId)) errors.push(`${w}: 結果の武器 ${r.resultWeaponId} を作るレシピが重複`);
+    results.add(r.resultWeaponId);
+    if (!(r.cost && isInt(r.cost.money) && r.cost.money >= 0 && Array.isArray(r.cost.items))) {
+      errors.push(`${w}: cost が不正`);
+      continue;
+    }
+    const seen = new Set<string>();
+    for (const s of r.cost.items) {
+      if (!c.materials.has(s.itemId)) errors.push(`${w}: 素材 ${s.itemId} が無い`);
+      else if (!obtainable.has(s.itemId)) errors.push(`${w}: 素材 ${s.itemId} は、どの報酬・剥ぎ取りからも手に入らない`);
+      if (!(isInt(s.count) && s.count > 0)) errors.push(`${w}: 素材 ${s.itemId} の数が不正`);
+      if (seen.has(s.itemId)) errors.push(`${w}: 素材 ${s.itemId} が重複`);
+      seen.add(s.itemId);
+    }
+  }
+}
+
+/** いまの依頼で手に入る素材（依頼の報酬と、その依頼の標的の剥ぎ取り・捕獲・部位）。 */
+export function obtainableMaterials(c: Content): Set<string> {
+  const out = new Set<string>();
+  for (const q of c.quests.values()) {
+    for (const s of q.rewards?.items ?? []) out.add(s.itemId);
+    const m = c.monsters.get(q.targetMonsterId);
+    const l = m?.lootId ? c.loot.get(m.lootId) : undefined;
+    if (!l) continue;
+    const rolls: (LootRoll | undefined)[] = [l.carve, m?.captureAllowed && q.kind === 'hunt' ? l.capture : undefined, ...Object.values(l.severed ?? {}), ...Object.values(l.breaks ?? {})];
+    for (const r of rolls) for (const e of r?.table ?? []) out.add(e.itemId);
+  }
+  return out;
 }
 
 function putUnique<T>(map: Map<string, T>, id: string, value: T, kind: string, errors: string[]): void {
@@ -277,6 +322,7 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     items: new Map(),
     materials: new Map(),
     loot: new Map(),
+    recipes: new Map(),
     player: (await get(index.files.player)) as PlayerTuning,
   };
   checkVersion(index.files.player, content.player.schemaVersion, errors);
@@ -325,6 +371,9 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
   const loot = (await get(index.files.loot)) as { schemaVersion: number; tables: LootDef[] };
   checkVersion(index.files.loot, loot.schemaVersion, errors);
   for (const l of loot.tables ?? []) putUnique(content.loot, l.id, l, 'loot', errors);
+  const recipes = (await get(index.files.recipes)) as { schemaVersion: number; recipes: RecipeDef[] };
+  checkVersion(index.files.recipes, recipes.schemaVersion, errors);
+  for (const r of recipes.recipes ?? []) putUnique(content.recipes, r.id, r, 'recipe', errors);
   crossCheck(content, errors);
   if (errors.length > 0) throw new ContentError(errors);
   return content;

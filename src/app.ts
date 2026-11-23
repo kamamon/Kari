@@ -14,6 +14,8 @@ import { InputHub } from './input/hub';
 import { KeyboardMouse } from './input/keyboard';
 import { TouchControls } from './input/touch';
 import { GameView } from './render/view';
+import { playWeaponId, type RunRewards } from './save/profile';
+import type { SaveManager, SaveResult } from './save/saveManager';
 import type { SettingsStore } from './save/settings';
 import { BaseScreen, type BaseHost } from './ui/base';
 import { Hud } from './ui/hud';
@@ -61,6 +63,8 @@ export class App implements MenuHost, BaseHost, ResultHost {
     private content: Content,
     private store: SettingsStore,
     private audio: AudioSystem,
+    /** 里の持ち物・装備・進行の保存 */
+    readonly save: SaveManager,
   ) {
     this.keyboard = new KeyboardMouse(this.hub, canvas);
     this.gamepad = new GamepadInput(this.hub);
@@ -136,25 +140,65 @@ export class App implements MenuHost, BaseHost, ResultHost {
   }
 
   /**
-   * 拠点の持ち物。依頼の結果が閉じた時に、その依頼の報酬を一度だけ足す。
-   * 保存はまだ無い（M3）ので、ページを閉じると消える。
+   * 拠点の持ち物（保存データの写し）。検査用に、以前と同じ形で読めるようにしてある。
+   * 中身を変えるのは保存の管理役だけで、書き込みが完了してから増える。
    */
-  readonly inventory = { money: 0, items: new Map<string, number>() };
-  private runId = 0;
-  private settledRun = -1;
-
-  /** 依頼の報酬を持ち物へ入れる。同じ依頼（runId）では一度だけ。 */
-  private settleRewards(): void {
-    const h = this.sim.hunt;
-    if (!h || !h.closed || !h.rewards || this.settledRun === this.runId) return;
-    this.settledRun = this.runId;
-    this.inventory.money += h.rewards.money;
-    for (const s of h.rewards.items) this.inventory.items.set(s.itemId, (this.inventory.items.get(s.itemId) ?? 0) + s.count);
+  get inventory(): { money: number; items: Map<string, number> } {
+    return { money: this.save.doc.money, items: new Map(Object.entries(this.save.doc.items)) };
   }
 
-  inventoryLines(): string[] {
-    const items = [...this.inventory.items].map(([id, n]) => `${this.content.materials.get(id)?.name ?? id} ×${n}`);
-    return [`通貨 ${this.inventory.money}`, items.length ? items.join('　') : '素材はまだ無い'];
+  /** いまの依頼の識別子。出発のたびに新しくなる。報酬は、この識別子につき 1 度だけ持ち物へ入る（保存データに記録する） */
+  private runId = '';
+  /** いまの依頼の報酬の保存の状態（結果の画面に出す） */
+  private settleState: { runId: string; state: 'saving' | 'saved' | 'failed'; message: string } | null = null;
+  /** 保存に失敗して、まだ持ち物へ入っていない報酬 */
+  private unsaved: RunRewards[] = [];
+
+  /** 依頼が閉じた時に、報酬を保存へ送る。同じ依頼では 1 度だけ送る（保存の側でも runId で 1 度だけにしている）。 */
+  private settleRewards(): void {
+    const h = this.sim.hunt;
+    if (!h || !h.closed || !h.rewards || h.phase !== 'success' || this.runId === '') return;
+    if (this.settleState?.runId === this.runId) return;
+    const rewards: RunRewards = { runId: this.runId, questId: h.quest.id, money: h.rewards.money, items: h.rewards.items.map((s) => ({ ...s })) };
+    this.settleState = { runId: this.runId, state: 'saving', message: '' };
+    void this.saveRewards(rewards);
+  }
+
+  private async saveRewards(r: RunRewards): Promise<SaveResult> {
+    const res = await this.save.settle(r);
+    if (res.ok) this.unsaved = this.unsaved.filter((u) => u.runId !== r.runId);
+    else if (!this.unsaved.some((u) => u.runId === r.runId)) this.unsaved.push(r);
+    if (this.settleState?.runId === r.runId) {
+      this.settleState = { runId: r.runId, state: res.ok ? 'saved' : 'failed', message: res.ok ? '' : res.message };
+      this.result.setSaveState(this.rewardSaveState());
+    }
+    return res;
+  }
+
+  /** 結果の画面に出す、報酬の保存の状態 */
+  rewardSaveState(): { state: 'none' | 'saving' | 'saved' | 'failed'; text: string } {
+    const st = this.settleState;
+    if (!st || st.runId !== this.runId) return { state: 'none', text: '' };
+    if (st.state === 'saving') return { state: 'saving', text: '報酬を保存しています…' };
+    if (st.state === 'failed') return { state: 'failed', text: `${st.message} 報酬は、まだ持ち物に入っていません。` };
+    return {
+      state: 'saved',
+      text: this.save.mode === 'persistent' ? '素材と通貨を持ち物に入れて、保存しました。' : '素材と通貨を持ち物に入れました。この端末では保存されないので、ページを閉じると無くなります。',
+    };
+  }
+
+  unsavedRewards(): number {
+    return this.unsaved.length;
+  }
+
+  /** 保存できていない報酬を、もう一度保存する */
+  async retryUnsaved(): Promise<SaveResult> {
+    let last: SaveResult = { ok: true };
+    for (const r of [...this.unsaved]) {
+      const res = await this.saveRewards(r);
+      if (!res.ok) last = res;
+    }
+    return last;
   }
 
   /** 達成後に、剥ぎ取りを切り上げて帰る（入力として simulation へ渡す） */
@@ -165,7 +209,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
 
   private createSession(questId: string | null): void {
     this.questId = questId;
-    this.runId++;
+    this.runId = questId ? makeRunId() : '';
     this.sim = new Simulation(this.content, this.options(questId));
     this.view?.dispose();
     this.view = new GameView(this.canvas, this.content, this.sim, this.store.value);
@@ -177,9 +221,8 @@ export class App implements MenuHost, BaseHost, ResultHost {
 
   /** 拠点・結果の画面を出す / 消す。出ている間は操作ボタンを隠して一時停止する。 */
   private setOverlay(which: 'base' | 'result' | null): void {
-    if (which === 'base') this.base.refresh(this.inventoryLines());
     this.base.setOpen(which === 'base');
-    if (which === 'result') this.result.show(this.sim);
+    if (which === 'result') this.result.show(this.sim, this.rewardSaveState());
     else this.result.hide();
     const playing = which === null;
     this.keyboard.enabled = playing;
@@ -206,14 +249,22 @@ export class App implements MenuHost, BaseHost, ResultHost {
   }
 
   // ---- BaseHost / ResultHost ----
-  /** いま装備している武器（保存はまだ無い。ページを読み込み直すと断岳剣に戻る） */
-  weaponId = 'weapon.heavy_blade.001';
+  /** いま持たせている武器（保存データの装備。この版で使えない武器なら、持っている中の最初の武器） */
+  get weaponId(): string {
+    return playWeaponId(this.save.doc, this.content);
+  }
 
-  setWeapon(id: string): void {
-    if (!this.content.weapons.has(id) || id === this.weaponId) return;
-    this.weaponId = id;
-    this.audio.play('ui');
-    // 拠点の後ろに見えている訓練場のハンターも、選んだ武器に持ち替える
+  /** 武器を持ち替える。保存が完了してから替わる。 */
+  async setWeapon(id: string): Promise<SaveResult> {
+    const r = await this.save.equip(id);
+    if (r.ok) this.audio.play('ui');
+    this.saveChanged();
+    return r;
+  }
+
+  /** 保存データが変わった後（持ち替え・強化・取り込み・別のタブの内容の読み直し）: 拠点の後ろに見えているハンターを、いまの装備で作り直す */
+  saveChanged(): void {
+    if (!this.base.open || this.sim.player.weaponId === this.weaponId) return;
     this.createSession(null);
     this.setOverlay('base');
   }
@@ -309,6 +360,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
     const info = this.view.stats();
     return [
       `装備：${this.weaponId}`,
+      `保存：${this.save.mode === 'persistent' ? '端末に保存' : this.save.mode === 'memory' ? '保存なし' : '読めないデータあり（保存なし）'}（revision ${this.save.doc.revision}）`,
       `設定：描画の上限 ${v.fpsCap}fps / 内部解像度 ${v.renderScale.toFixed(2)} / 影 ${v.shadows ? 'あり' : 'なし'}`,
       describeFrames(this.meter.summary()),
       `描画量：draw calls ${info.calls} / 三角形 ${info.triangles}（メニューを開く直前の 1 フレーム）　捨てた tick ${this.clock.droppedTicks}`,
@@ -497,4 +549,11 @@ export class App implements MenuHost, BaseHost, ResultHost {
       }
     }
   }
+}
+
+/** 依頼 1 回ごとの識別子。戦闘の計算には使わない（報酬を 1 度だけ確定するための目印）。 */
+function makeRunId(): string {
+  const c = globalThis.crypto;
+  if (c && typeof c.randomUUID === 'function') return `run-${c.randomUUID()}`;
+  return `run-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
 }

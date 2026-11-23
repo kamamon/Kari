@@ -35,6 +35,10 @@ const WEAPON_BUILDERS: Record<string, () => WeaponModel> = {
   ring_bow: () => buildBow(false),
 };
 /** 左手に持つもの: 盾、または双剣のもう 1 本 */
+/** 系統の既定の形ではなく、武器ごとの形があるもの（モデルの ID → 作り方）。 */
+const MODEL_BUILDERS: Record<string, () => WeaponModel> = {
+  'model.weapon.heavy_blade.002': () => buildHeavyBlade('shell'),
+};
 const SHIELD_BUILDERS = { shield_small: buildGuardBladeShield, shield_great: buildGreatShield, blade_left: buildTwinBlade } as const;
 export type ShieldKind = keyof typeof SHIELD_BUILDERS;
 
@@ -62,6 +66,8 @@ export class HunterRig {
   readonly weapon = new Group();
   readonly shield = new Group();
   familyId = '';
+  /** いま手に持たせている形（武器ごとの形があればモデルの ID、無ければ系統の ID） */
+  modelKey = '';
   private models: Record<string, WeaponModel> = {};
   private shields: Partial<Record<ShieldKind, WeaponModel>> = {};
   private tumbleYaw = new Group();
@@ -189,10 +195,12 @@ export class HunterRig {
   }
 
   /** 手に持つ武器（と左腕の盾）を、武器系統のものへ差し替える。 */
-  setFamily(id: string, offhand?: ShieldKind): void {
-    if (id === this.familyId) return;
+  setFamily(id: string, offhand?: ShieldKind, assetId?: string): void {
+    const modelKey = assetId && MODEL_BUILDERS[assetId] ? assetId : id;
+    if (id === this.familyId && modelKey === this.modelKey) return;
     this.familyId = id;
-    const m = (this.models[id] ??= (WEAPON_BUILDERS[id] ?? buildHeavyBlade)());
+    this.modelKey = modelKey;
+    const m = (this.models[modelKey] ??= (MODEL_BUILDERS[modelKey] ?? WEAPON_BUILDERS[id] ?? (() => buildHeavyBlade()))());
     this.weapon.clear();
     this.weapon.add(m.group);
     this.weaponArt = m.art;

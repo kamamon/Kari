@@ -24,6 +24,15 @@
       "verification": "仮素材（2 代目、v0.3.4）: 素材ビューアで、背負った姿・縦斬り・横薙ぎ・抜刀の姿を画面で確認。実機では未確認。見える刃と判定カプセルが同じ軌道データから動くことを検証表示で確認。"
     },
     {
+      "id": "model.weapon.heavy_blade.002", "name": "岩殻の断岳剣", "type": "model", "use": "断岳剣の強化（工房で、里鍛ちの断岳剣から作る。v0.6.0）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude", "status": "concept", "version": 0, "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの断岳剣の図を流用している）", "terms": "本作オリジナル",
+      "dims": "里鍛ちの断岳剣と同じ（握り原点から刃先まで 1.795m）。峰に岩の板 4 枚（高さ 0.5〜1.36m、峰から 4〜6.5cm 張り出す）と青銅色の留め帯。判定は里鍛ちと同じ", "tris": "目標 1 千以下", "bones": "なし（socket_hand_r に握り原点を合わせる）",
+      "clips": [], "dependsOn": ["art.weapon.dangaku"],
+      "placeholder": { "kind": "procedural", "source": "src/render/heavyBlade.ts buildHeavyBlade('shell')（里鍛ちの断岳剣に、単色の箱で岩の板と留め帯を足しただけの仮の形）" },
+      "verification": "仮素材（v0.6.0）: 素材ビューアとゲーム内の静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
       "id": "model.monster.training_dummy", "name": "訓練標的・岩偶", "type": "model", "use": "M1 の部位付き標的（訓練区画専用）",
       "owner": "Claude", "status": "planned", "version": 0, "path": null,
       "source": "コードで生成", "terms": "本作オリジナル。正式素材へ置き換える予定は未定（ガルドロス実装後は訓練場専用）",

@@ -62,9 +62,9 @@ const state = (page) =>
   });
 
 /** 条件が成り立つまで待つ（ソフトウェア描画は遅いので、固定の待ち時間に頼らない）。 */
-async function until(page, fn, timeout = 20000) {
+async function until(page, fn, timeout = 20000, arg = null) {
   try {
-    await page.waitForFunction(fn, null, { timeout, polling: 50 });
+    await page.waitForFunction(fn, arg, { timeout, polling: 50 });
     return true;
   } catch {
     return false;
@@ -371,7 +371,10 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const resultText = await page.textContent('#result');
   check('結果に「依頼達成」と討伐成功が出る', /依頼達成/.test(resultText) && /討伐に成功/.test(resultText));
   check('結果に報酬（600 通貨、剥ぎ取り 1 + 依頼の報酬 1 = 素材 2 個）が出る', /報酬\s*600 通貨\s*素材 2 個/.test(resultText) && /剥ぎ取り/.test(resultText) && /依頼の報酬/.test(resultText), resultText.slice(0, 200));
-  check('報酬は持ち物へ一度だけ入る', await page.evaluate(() => window.__vh.inventory.money === 600 && [...window.__vh.inventory.items.values()].reduce((a, b) => a + b, 0) === 2));
+  // 持ち物へ入るのは、保存（IndexedDB への書き込み）が完了してから
+  check('報酬は、保存が完了してから持ち物へ一度だけ入る', await until(page, () => window.__vh.inventory.money === 600 && [...window.__vh.inventory.items.values()].reduce((a, b) => a + b, 0) === 2, 8000));
+  check('結果の画面に「保存しました」が出る', await until(page, () => document.querySelector('.result-save')?.dataset.state === 'saved' && /保存しました/.test(document.querySelector('.result-save').textContent), 8000),
+    await page.evaluate(() => `保存の場所: ${window.__vh.save.mode} / revision ${window.__vh.save.doc.revision}`));
   await page.screenshot({ path: `${OUT}56_hunt_result.png` });
   const tickR = (await state(page)).tick;
   await page.waitForTimeout(300);
@@ -410,12 +413,27 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await until(page, () => window.__vh.sim.monsters[0].tranq === 1 && window.__vh.sim.player.mode === 'free', 8000);
   await page.keyboard.press('KeyE');
   check('弱って罠にかかった相手に鎮静玉を 2 個当てると捕獲になる', await until(page, () => window.__vh.sim.monsters[0].captured && window.__vh.sim.hunt.reason === 'capture', 8000));
+  // この依頼の報酬の保存を、1 度だけ失敗させる（容量不足などの代わり）
+  await page.evaluate(() => {
+    const orig = IDBObjectStore.prototype.put;
+    IDBObjectStore.prototype.put = function () {
+      IDBObjectStore.prototype.put = orig;
+      throw new DOMException('quota', 'QuotaExceededError');
+    };
+  });
   await page.waitForTimeout(1200);
   await page.screenshot({ path: `${OUT}60_hunt_capture.png` });
   check('捕獲の結果画面に、捕獲の素材が出る', await until(page, () => !document.getElementById('result').hidden && /捕獲に成功/.test(document.getElementById('result').textContent) && /素材 5 個/.test(document.getElementById('result').textContent), 20000));
   await page.screenshot({ path: `${OUT}61_hunt_capture_result.png` });
+  check('保存に失敗した時は、結果の画面に「保存できませんでした」と出て、持ち物は増えていない', await until(page, () => {
+    const e = document.querySelector('.result-save');
+    return e?.dataset.state === 'failed' && /保存できませんでした/.test(e.textContent) && /まだ持ち物に入っていません/.test(e.textContent) && !!e.querySelector('button') && window.__vh.inventory.money === 600 && window.__vh.unsavedRewards() === 1;
+  }, 8000), await page.textContent('.result-save'));
+  await page.screenshot({ path: `${OUT}61b_hunt_save_failed.png` });
+  await page.click('.result-save button');
+  check('「もう一度保存する」で保存でき、1 回分だけ入る', await until(page, () => document.querySelector('.result-save')?.dataset.state === 'saved' && window.__vh.inventory.money === 1200 && window.__vh.unsavedRewards() === 0, 8000));
   // 結果画面を開いたままでも、もう一度やり直しても、同じ依頼の報酬は増えない
-  check('持ち物は 2 回分（通貨 1200）', await page.evaluate(() => window.__vh.inventory.money === 1200));
+  check('持ち物は 2 回分（通貨 1200）', await until(page, () => window.__vh.inventory.money === 1200, 8000));
   await page.click('#result .result-actions button.sub');
   await until(page, () => window.__vh.sim.hunt?.phase === 'active' && document.getElementById('result').hidden, 8000);
   await page.waitForTimeout(400);
@@ -432,6 +450,154 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   check('結果から拠点へ戻れる', await until(page, () => !document.getElementById('base').hidden && document.getElementById('result').hidden));
   check('拠点に持ち物（通貨 1200 と素材）が出る。リタイアでは増えていない', await page.evaluate(() => /通貨 1200/.test(document.querySelector('.base-inv').textContent) && /×/.test(document.querySelector('.base-inv').textContent) && window.__vh.inventory.money === 1200), await page.textContent('.base-inv'));
   await page.screenshot({ path: `${OUT}62_base_inventory.png` });
+
+  // ---- 保存（IndexedDB）: 読み込み直し、二重取り、失敗、取り込み、強化、別のタブ ----
+  const boot = async (pg) => {
+    await pg.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
+    await pg.click('#boot-start');
+    await until(pg, () => window.__vh && !document.getElementById('base').hidden);
+  };
+  const saved = (pg) => pg.evaluate(() => JSON.parse(JSON.stringify(window.__vh.save.doc)));
+  const before = await saved(page);
+  check('保存の場所は IndexedDB（ゲーム固有の名前）で、2 回の報酬が revision 2 として入っている',
+    (await page.evaluate(() => window.__vh.save.mode)) === 'persistent' && before.revision === 2 && before.settledRuns.length === 2 && before.schemaVersion === 1
+      && (await page.evaluate(async () => (await indexedDB.databases()).some((d) => d.name === 'veilbound-hunters:prod:save'))),
+    `通貨 ${before.money} / 素材 ${JSON.stringify(before.items)} / 達成 ${JSON.stringify(before.progress.questClears)}`);
+  await page.reload();
+  await boot(page);
+  const after = await saved(page);
+  check('ページを読み込み直しても、持ち物・装備・進行・処理済みの依頼が同じ', JSON.stringify(after) === JSON.stringify(before) && /通貨 1200/.test(await page.textContent('.base-inv')));
+  check('同じ依頼の報酬をもう一度送っても、増えない（処理済みの記録で 1 度だけ）', await page.evaluate(async (runId) => {
+    const s = window.__vh.save;
+    const r1 = await s.settle({ runId, questId: 'quest.basin.003', money: 600, items: [{ itemId: 'mat.galdros.shell_shard', count: 5 }] });
+    const r2 = await s.settle({ runId, questId: 'quest.basin.003', money: 600, items: [] });
+    return r1.ok && r2.ok && s.doc.money === 1200 && s.doc.revision === 2;
+  }, before.settledRuns[0]));
+  // 書き込みの途中で失敗させる（容量不足の代わり）。持ち物は増えず、失敗が返る。やり直すと 1 回分だけ入る
+  const fail = await page.evaluate(async () => {
+    const s = window.__vh.save;
+    const orig = IDBObjectStore.prototype.put;
+    IDBObjectStore.prototype.put = function () {
+      IDBObjectStore.prototype.put = orig;
+      throw new DOMException('quota', 'QuotaExceededError');
+    };
+    const rw = { runId: 'smoke-fail-1', questId: 'quest.basin.003', money: 50, items: [] };
+    const r1 = await s.settle(rw);
+    const mid = { money: s.doc.money, revision: s.doc.revision, settled: s.isSettled('smoke-fail-1') };
+    const r2 = await s.settle(rw);
+    return { r1, mid, r2, money: s.doc.money, revision: s.doc.revision };
+  });
+  check('書き込みに失敗したら、持ち物は増えず「保存できませんでした」が返る。やり直すと 1 回分だけ入る',
+    fail.r1.ok === false && fail.r1.reason === 'failed' && fail.mid.money === 1200 && fail.mid.revision === 2 && !fail.mid.settled && fail.r2.ok && fail.money === 1250 && fail.revision === 3, JSON.stringify(fail.r1));
+
+  // 取り込み: 書き出した内容を書き換えて（強化に足りる素材を持たせて）取り込む。壊れた内容は断る
+  await page.click('#base-data > summary');
+  const exported = await page.evaluate(() => window.__vh.save.exportText());
+  const rich = JSON.parse(exported);
+  check('書き出した内容に、目印・版・持ち物が入っている', rich.format === 'veilbound-hunters-save' && rich.save.schemaVersion === 1 && rich.save.money === 1250);
+  await page.fill('.data-paste', exported.slice(0, 80));
+  await page.click('text=貼り付けた内容を確かめる');
+  check('途中で切れた内容は取り込まない（理由が出る）', await until(page, () => /取り込めません/.test(document.querySelector('.base-message').textContent), 4000) && (await saved(page)).revision === 3);
+  rich.save.items = { 'mat.galdros.shell_shard': 4, 'mat.galdros.hard_bone': 2, 'mat.galdros.bronze_vein': 1, 'mat.future.star_core': 2 };
+  await page.fill('.data-paste', JSON.stringify(rich));
+  await page.click('text=貼り付けた内容を確かめる');
+  await page.click('#base-data button.go');
+  check('取り込むと、内容が入れ替わる。知らない素材も消さずに持つ', await until(page, () => window.__vh.save.doc.items['mat.galdros.shell_shard'] === 4 && window.__vh.save.doc.items['mat.future.star_core'] === 2 && window.__vh.save.doc.revision === 4 && /取り込みました/.test(document.querySelector('.base-message').textContent), 6000),
+    await page.evaluate(() => document.querySelector('.base-unknown')?.textContent ?? ''));
+  check('取り込む前の内容が、控えに残っている', await page.evaluate(async () => {
+    const bs = await window.__vh.save.backups();
+    return bs.some((b) => b.reason === 'import' && b.doc.money === 1250 && b.doc.revision === 3) && bs.some((b) => b.reason === 'session');
+  }));
+  await page.screenshot({ path: `${OUT}63_base_data.png` });
+
+  // 工房: 岩殻の断岳剣へ強化
+  await page.click('#base-forge > summary');
+  await page.screenshot({ path: `${OUT}64_base_forge.png` });
+  check('工房に、必要な素材と持っている数が出る', await page.evaluate(() => {
+    const t = document.querySelector('.forge-recipe')?.textContent ?? '';
+    return /里鍛ちの断岳剣 → 岩殻の断岳剣/.test(t) && /攻撃力 80 → 92/.test(t) && /岩殻片 4 \/ 3/.test(t) && /硬骨 2 \/ 2/.test(t) && /青銅晶脈 1 \/ 1/.test(t) && /通貨 1250 \/ 120/.test(t);
+  }), await page.evaluate(() => document.querySelector('.forge-recipe')?.textContent ?? ''));
+  await page.click('.forge-recipe button.go');
+  await page.screenshot({ path: `${OUT}65_base_forge_confirm.png` });
+  await page.click('.forge-confirm button.go');
+  check('強化すると、素材 3+2+1 と 120 通貨が減り、断岳剣が岩殻の断岳剣に変わって装備される', await until(page, () => {
+    const d = window.__vh.save.doc;
+    return d.money === 1130 && d.items['mat.galdros.shell_shard'] === 1 && !('mat.galdros.hard_bone' in d.items) && !('mat.galdros.bronze_vein' in d.items)
+      && d.weapons.includes('weapon.heavy_blade.002') && !d.weapons.includes('weapon.heavy_blade.001') && d.equippedWeaponId === 'weapon.heavy_blade.002' && d.revision === 5
+      && /岩殻の断岳剣に強化しました/.test(document.querySelector('.base-message').textContent) && /強化済み/.test(document.querySelector('.forge-recipe').textContent);
+  }, 6000));
+  check('後ろのハンターが、岩殻の断岳剣（岩の板を足した形）を持つ', await until(page, () => window.__vh.sim.player.weaponId === 'weapon.heavy_blade.002' && window.__vh.view.hunter.modelKey === 'model.weapon.heavy_blade.002', 6000));
+  await page.screenshot({ path: `${OUT}66_base_forged.png` });
+  await page.reload();
+  await boot(page);
+  check('読み込み直しても、強化した武器と減った素材のまま', await page.evaluate(() => {
+    const d = window.__vh.save.doc;
+    return d.equippedWeaponId === 'weapon.heavy_blade.002' && d.money === 1130 && d.revision === 5 && window.__vh.weaponId === 'weapon.heavy_blade.002' && /岩殻の断岳剣（攻撃力 92）/.test(document.querySelector('.base-weapon-note').textContent);
+  }));
+  await page.locator('.base-choice').last().click();
+  await until(page, () => window.__vh.sim.tick > 10);
+  check('訓練場でも岩殻の断岳剣（攻撃力 92）を持っている', await page.evaluate(() => window.__vh.sim.player.weaponId === 'weapon.heavy_blade.002' && window.__vh.sim.content.weapons.get(window.__vh.sim.player.weaponId).attack === 92));
+  await page.keyboard.press('KeyR');
+  await until(page, () => window.__vh.sim.player.drawn && !window.__vh.sim.player.action, 6000);
+  await page.screenshot({ path: `${OUT}67_forged_in_field.png` });
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('#menu:not([hidden])');
+  await page.click('.menu-body button');
+  await until(page, () => !document.getElementById('base').hidden);
+
+  // 別のタブ: 同じ保存データを 2 つのタブで開く。新しい方が書いた後、古い方から書こうとしても上書きしない
+  const page2 = await ctx.newPage();
+  await page2.goto(`http://localhost:${PORT}${BASE}`);
+  await boot(page2);
+  await page2.click('.base-weapon[data-weapon="weapon.twin_blades.001"]');
+  check('別のタブ: 2 つ目のタブで双剣に持ち替えて保存', await until(page2, () => window.__vh.save.doc.equippedWeaponId === 'weapon.twin_blades.001' && window.__vh.save.doc.revision === 6, 6000));
+  await page.click('.base-weapon[data-weapon="weapon.long_blade.001"]');
+  check('別のタブ: 古い内容のままの 1 つ目のタブからは上書きせず、新しい内容（双剣）を読み直して知らせる', await until(page, () => {
+    const d = window.__vh.save.doc;
+    return d.equippedWeaponId === 'weapon.twin_blades.001' && d.revision === 6 && /ほかのタブ/.test(document.querySelector('.base-message').textContent) && window.__vh.sim.player.weaponId === 'weapon.twin_blades.001';
+  }, 6000), await page.textContent('.base-message'));
+  await page.click('.base-weapon[data-weapon="weapon.long_blade.001"]');
+  check('別のタブ: 読み直した後は、ふつうに持ち替えられる', await until(page, () => window.__vh.save.doc.equippedWeaponId === 'weapon.long_blade.001' && window.__vh.save.doc.revision === 7, 6000));
+  await page2.close();
+  await ctx.close();
+}
+
+// ---- 保存: 新しい版のデータ・壊れたデータには触れない ----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false);
+  const seed = (pg, doc) => pg.evaluate((d) => new Promise((resolve, reject) => {
+    const req = indexedDB.open('veilbound-hunters:prod:save');
+    req.onsuccess = () => {
+      const tx = req.result.transaction('slots', 'readwrite');
+      tx.objectStore('slots').put(d);
+      tx.oncomplete = () => { req.result.close(); resolve(true); };
+      tx.onabort = () => reject(tx.error);
+    };
+    req.onerror = () => reject(req.error);
+  }), doc);
+  const stored = (pg) => pg.evaluate(() => new Promise((resolve, reject) => {
+    const req = indexedDB.open('veilbound-hunters:prod:save');
+    req.onsuccess = () => {
+      const g = req.result.transaction('slots', 'readonly').objectStore('slots').get('main');
+      g.onsuccess = () => { req.result.close(); resolve(g.result ?? null); };
+      g.onerror = () => reject(g.error);
+    };
+    req.onerror = () => reject(req.error);
+  }));
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  check('最初は何も書き込まない（保存するものが無い間は、端末に何も置かない）', (await stored(page)) === null && (await page.evaluate(() => window.__vh.save.doc.revision)) === 0);
+  const future = { slotId: 'main', schemaVersion: 2, revision: 40, updatedAt: '2027-01-01T00:00:00.000Z', money: 9999, newThing: { a: [1, 2, 3] } };
+  await seed(page, future);
+  await page.reload();
+  await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  check('新しい版のデータがある時は、知らせを出して、保存なしで動く', await page.evaluate(() => window.__vh.save.mode === 'readonly' && /新しい版/.test(document.querySelector('.base-banner')?.textContent ?? '') && /保存されません/.test(document.querySelector('.base-save-state').textContent)));
+  await page.click('.base-weapon[data-weapon="weapon.ring_bow.001"]');
+  await until(page, () => window.__vh.weaponId === 'weapon.ring_bow.001', 6000);
+  check('その間に持ち替えても、置いてあるデータは 1 文字も変わらない', JSON.stringify(await stored(page)) === JSON.stringify(future) && (await page.evaluate(() => window.__vh.weaponId)) === 'weapon.ring_bow.001');
+  await page.screenshot({ path: `${OUT}68_base_newer_data.png` });
   await ctx.close();
 }
 
@@ -611,13 +777,15 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     ['67_galdros_roar', '?action=monster.galdros.roar&tick=30&yaw=0.9'],
     ['68_galdros_damaged', '?subject=galdros&yaw=2.4&damaged=1'],
   ];
-  // ---- 武器 5 系統: 拠点で持ち替えて、訓練場で主攻撃を当てる ----
+  // ---- 断岳剣以外の 6 系統: 拠点で持ち替えて、訓練場で主攻撃を当てる ----
   await page.goto(`http://localhost:${PORT}${BASE}`);
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   await page.screenshot({ path: `${OUT}weapon_select.png` });
   for (const [fam, name, dist, holdMs] of [['guard_blade', '護刃', 1.2, 60], ['long_lance', '長尖槍', 2.4, 60], ['ring_bow', '環弓', 8, 1300], ['war_maul', '大槌', 1.2, 60], ['twin_blades', '双剣', 0.9, 60], ['long_blade', '太刀', 1.3, 60]]) {
     await page.locator(`.base-weapon[data-weapon="weapon.${fam}.001"]`).click();
+    // 持ち替えは、保存が完了してから替わる
+    await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy'), 6000, `weapon.${fam}.001`);
     const picked = await page.evaluate(() => window.__vh.weaponId);
     await page.locator('.base-choice').last().click();
     await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
@@ -663,10 +831,10 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   // 武器の一覧: 設定図から組んだ仮モデル（護刃・断岳剣・長尖槍・環弓）は絵がすべて読み込める。大槌・双剣・太刀は絵の無い仮の形
   const rackOk = await until(page, () => {
     const rack = window.__viewer?.rack;
-    return !!rack && ['guardShield', 'guardSword', 'heavyBlade', 'lance', 'greatShield', 'bow', 'arrow', 'quiver'].every((k) => rack[k] && rack[k].triangles > 50 && rack[k].art.length > 0 && rack[k].art.every((a) => a.loaded && !a.failed))
+    return !!rack && ['guardShield', 'guardSword', 'heavyBlade', 'heavyBladeShell', 'lance', 'greatShield', 'bow', 'arrow', 'quiver'].every((k) => rack[k] && rack[k].triangles > 50 && rack[k].art.length > 0 && rack[k].art.every((a) => a.loaded && !a.failed))
       && ['warMaul', 'twinBladeR', 'twinBladeL', 'longBlade'].every((k) => rack[k] && rack[k].triangles > 20 && rack[k].art.length === 0);
   }, 15000);
-  check('ビューア: 7 武器の 12 点（護刃の剣・盾、断岳剣、長尖槍の槍・大盾、環弓・矢・矢筒は形と絵。大槌・双剣 2 本・太刀は絵の無い仮の形）を読み込める', rackOk);
+  check('ビューア: 7 武器の 13 点（護刃の剣・盾、断岳剣と岩殻の断岳剣、長尖槍の槍・大盾、環弓・矢・矢筒は形と絵。大槌・双剣 2 本・太刀は絵の無い仮の形）を読み込める', rackOk);
   await page.goto(`http://localhost:${PORT}${BASE}viewer.html?glb=assets/models/ref_cube_1m.glb`);
   await page.waitForFunction(() => window.__viewer, null, { timeout: 15000 });
   await page.waitForTimeout(300);

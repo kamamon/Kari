@@ -202,6 +202,20 @@ export interface WeaponDef {
   affinity: number;
   sharpnessModifier: number;
   assetId: string;
+  /** 最初から持っている武器（新しい保存データへ配る） */
+  starter?: boolean;
+}
+
+/**
+ * 工房で作るもの。kind: upgrade は、持っている武器（fromWeaponId）を素材と通貨で別の武器に変える。
+ * 元の武器は無くなる。必要な数の確認・減算・武器の入れ替えは、保存の 1 回の書き込みの中で行う（src/save/profile.ts）。
+ */
+export interface RecipeDef {
+  id: string;
+  kind: 'upgrade';
+  fromWeaponId: string;
+  resultWeaponId: string;
+  cost: { money: number; items: ItemStack[] };
 }
 
 /** 部位の当たり形状。b が無ければ球、あればカプセル。モンスターのローカル座標。 */
@@ -416,6 +430,7 @@ export interface ContentIndex {
     quests: string;
     items: string;
     loot: string;
+    recipes: string;
     player: string;
   };
 }
@@ -433,6 +448,7 @@ export interface Content {
   items: Map<string, ItemDef>;
   materials: Map<string, MaterialDef>;
   loot: Map<string, LootDef>;
+  recipes: Map<string, RecipeDef>;
   player: PlayerTuning;
 }
 

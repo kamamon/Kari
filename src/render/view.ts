@@ -260,7 +260,7 @@ export class GameView {
     let key: string;
     let pose: BodyPose;
     let weapon: WeaponPlace = p.drawn ? { mode: 'hand' } : { mode: 'back' };
-    this.hunter.setFamily(fam.id, fam.offhand);
+    this.hunter.setFamily(fam.id, fam.offhand, sim.content.weapons.get(p.weaponId)?.assetId);
     // 盾（左腕）の位置: 構えていない時の位置から、防御の位置へどれだけ寄せるか。行動が軌道を持つ時はそれに従う。
     let shieldU = 0;
     let shieldAt: V3 | null = null;
