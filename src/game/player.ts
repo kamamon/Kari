@@ -34,7 +34,7 @@ export interface PlayerState {
   deadTicks: number;
   invulnTicks: number;
   buffer: { main: number; sub: number; dodge: number; weapon: number; item: number; special: number };
-  /** 勢い（旋鎌）の段階と、最後に振ってからの tick 数。勢いの無い武器では 0 のまま。 */
+  /** 勢い（双剣）の段階と、最後に振ってからの tick 数。勢いの無い武器では 0 のまま。 */
   momentum: number;
   momentumTicks: number;
   /** 狩猟中の持ち物（依頼の支給品）。数が 0 になっても欄は残る。 */
@@ -174,7 +174,7 @@ export function startAction(p: PlayerState, actionId: string, ctx: SimCtx): Acti
   p.guard = null;
   p.hurt = null;
   if (def.staminaCost) spendStamina(p, def.staminaCost, ctx);
-  // 勢い（旋鎌）: 始めた時の段階で、この行動の速さと威力が決まる。大技は段階をすべて使う。
+  // 勢い（双剣）: 始めた時の段階で、この行動の速さと威力が決まる。大技は段階をすべて使う。
   const M = familyOf(p, ctx.content).momentum;
   if (M && def.momentum) {
     run.momentumLevel = p.momentum;
@@ -244,7 +244,7 @@ function finishAction(p: PlayerState): void {
 
 const inHitWindow = (def: ActionDef, t: number): boolean => def.hitWindows.some((hw) => inWindow(t, hw));
 
-/** 行動の最中にスティックで歩く（旋鎌の振り、環弓の引き絞り）。 */
+/** 行動の最中にスティックで歩く（環弓の引き絞り）。 */
 function freeMove(p: PlayerState, def: ActionDef, t: number, inp: InputFrame, ctx: SimCtx): void {
   const fm = def.freeMove;
   if (!fm || t < (fm.from ?? 0) || t >= (fm.to ?? def.durationTicks)) return;
@@ -321,7 +321,7 @@ function stepAction(p: PlayerState, inp: InputFrame, ctx: SimCtx, depth = 0): vo
   turn();
   freeMove(p, def, run.tick, inp, ctx);
 
-  // 行動の tick を 1 つ進める。勢いで速くなっている時（旋鎌）は、判定の時間枠の外でだけ、もう 1 tick 進めることがある。
+  // 行動の tick を 1 つ進める。勢いで速くなっている時（双剣）は、判定の時間枠の外でだけ、もう 1 tick 進めることがある。
   const one = (): void => {
     const t = run.tick;
     if (def.rootMotion.mode === 'controller' && def.rootMotion.curveId) {
@@ -332,7 +332,7 @@ function stepAction(p: PlayerState, inp: InputFrame, ctx: SimCtx, depth = 0): vo
         ctx.world.move(p.pos, T.radius, f.x * d, f.z * d, ctx.blockers());
       }
     }
-    // 体ごと回る（旋鎌の回し薙ぎ・大刈り）
+    // 体ごと回る（spin を持つ技。v0.5.0 の時点では使う技が無い。旋鎌で使っていた）
     const sp = def.spin;
     if (sp && t >= sp.from && t < sp.to) {
       const y = p.yaw + (sp.degrees * DEG) / (sp.to - sp.from);
@@ -607,7 +607,7 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     if (!p.action || p.action.instanceId !== cv.instanceId) p.carving = null;
   }
 
-  // 勢い（旋鎌）: 振っていない時間が続くと消える
+  // 勢い（双剣）: 振っていない時間が続くと消える
   const M = familyOf(p, ctx.content).momentum;
   if (M && p.momentum > 0) {
     if (p.mode === 'action' && p.action?.def.momentum) p.momentumTicks = 0;

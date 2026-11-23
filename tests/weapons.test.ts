@@ -1,4 +1,4 @@
-// 武器 5 系統（護刃・旋鎌・長尖槍・環弓）の技と固有の仕組み。断岳剣は combat.test.ts。
+// 断岳剣以外の 6 系統（護刃・長尖槍・環弓・大槌・双剣・太刀）の技と固有の仕組み。断岳剣は combat.test.ts。
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { Content } from '../src/data/schemas';
 import type { SimEvent } from '../src/game/events';
@@ -34,9 +34,9 @@ const slamTick = (w: string): number => {
   throw new Error('叩きつけが来ない');
 };
 
-describe('5 系統の共通', () => {
+describe('武器系統の共通', () => {
   it('どの武器も、主攻撃が訓練標的に当たる（武器ごとの間合い）', () => {
-    for (const [w, dist] of [['guard_blade', 1.2], ['reap_scythe', 1.4], ['long_lance', 2.7]] as const) {
+    for (const [w, dist] of [['guard_blade', 1.2], ['long_lance', 2.7], ['war_maul', 1.2], ['twin_blades', 0.9], ['long_blade', 1.3]] as const) {
       const sim = mk(w);
       placeInFrontOfHead(sim, dist);
       const h = hits(run(sim, 70, (i) => (i === 0 ? press(Btn.Main) : frame())));
@@ -54,7 +54,7 @@ describe('5 系統の共通', () => {
   });
 
   it('同じ入力なら、どの武器でも結果が同じ（決定論）', () => {
-    for (const w of ['guard_blade', 'reap_scythe', 'long_lance', 'ring_bow']) {
+    for (const w of ['guard_blade', 'long_lance', 'ring_bow', 'war_maul', 'twin_blades', 'long_blade']) {
       const play = (): string => {
         const sim = mk(w, { monsterAttacks: true });
         placeInFrontOfHead(sim, 1.6);
@@ -114,18 +114,29 @@ describe('護刃（短剣と盾）', () => {
   });
 });
 
-describe('旋鎌（大鎌）', () => {
-  it('1 回の振りで当たるのは、刃か柄のどちらか 1 つだけ', () => {
-    const sim = mk('reap_scythe');
-    placeInFrontOfHead(sim, 1.4);
-    const h = hits(run(sim, 60, (i) => (i === 0 ? press(Btn.Main) : frame())));
-    expect(h).toHaveLength(1);
-    expect(h[0]!.windowId).toBe('blade_w');
+describe('双剣', () => {
+  it('主ボタンを続けて押すと、右 → 左 → 交差 とつながり、交差は 2 回当たる', () => {
+    const sim = mk('twin_blades');
+    placeInFrontOfHead(sim, 0.9);
+    // 交差まで出たら押すのをやめる（押し続けると、交差のあとにまた右の斬りから始まる）
+    let started = 0;
+    const evs: SimEvent[] = [];
+    for (let i = 0; i < 110; i++) {
+      sim.step(started < 3 && i % 8 === 0 ? press(Btn.Main) : frame());
+      const out = sim.drainEvents();
+      started += starts(out).length;
+      evs.push(...out);
+    }
+    expect(starts(evs)).toEqual(['player.twin_blades.slash1', 'player.twin_blades.slash2', 'player.twin_blades.cross']);
+    const h = hits(evs);
+    expect(h.filter((x) => x.actionId === 'player.twin_blades.slash1').map((x) => x.windowId)).toEqual(['blade_r']);
+    expect(h.filter((x) => x.actionId === 'player.twin_blades.slash2').map((x) => x.windowId)).toEqual(['blade_l']);
+    expect(h.filter((x) => x.actionId === 'player.twin_blades.cross').map((x) => x.windowId).sort()).toEqual(['blade_l', 'blade_r']);
   });
 
   it('当て続けると勢いが 3 まで上がり、振らずにいると消える', () => {
-    const sim = mk('reap_scythe');
-    placeInFrontOfHead(sim, 1.4);
+    const sim = mk('twin_blades');
+    placeInFrontOfHead(sim, 0.9);
     const evs = run(sim, 260, (i) => (i % 9 === 0 ? press(Btn.Main) : frame()));
     const levels = evs.filter((e) => e.type === 'momentum').map((e) => (e as Extract<SimEvent, { type: 'momentum' }>).level);
     expect(levels.slice(0, 3)).toEqual([1, 2, 3]);
@@ -134,9 +145,9 @@ describe('旋鎌（大鎌）', () => {
     expect(sim.player.momentum).toBe(0);
   });
 
-  it('勢いが高いと、同じ薙ぎが速く終わる', () => {
+  it('勢いが高いと、同じ斬りが速く終わる', () => {
     const ticksFor = (momentum: number): number => {
-      const sim = mk('reap_scythe');
+      const sim = mk('twin_blades');
       sim.player.drawn = true;
       sim.player.momentum = momentum;
       sim.step(press(Btn.Main));
@@ -147,32 +158,88 @@ describe('旋鎌（大鎌）', () => {
       }
       return n;
     };
-    expect(ticksFor(0)).toBe(48);
+    expect(ticksFor(0)).toBe(24);
     expect(ticksFor(3)).toBeLessThan(ticksFor(2));
     expect(ticksFor(2)).toBeLessThan(ticksFor(0));
   });
 
-  it('大刈りは勢いをすべて使い、段階が高いほど強い', () => {
+  it('連ね斬りは 5 回当たり、勢いをすべて使い、段階が高いほど強い', () => {
     const total = (momentum: number): { damage: number; left: number; n: number } => {
-      const sim = mk('reap_scythe');
-      placeInFrontOfHead(sim, 1.4);
+      const sim = mk('twin_blades');
+      placeInFrontOfHead(sim, 0.9);
       sim.player.momentum = momentum;
-      const h = hits(run(sim, 150, (i) => (i === 0 ? press(Btn.Special) : frame())));
+      const h = hits(run(sim, 100, (i) => (i === 0 ? press(Btn.Special) : frame())));
       return { damage: h.reduce((s, x) => s + x.damage, 0), left: sim.player.momentum, n: h.length };
     };
     const low = total(0), high = total(3);
-    expect(low.n).toBe(2); // 2 回転で 2 回
+    expect(low.n).toBe(5);
     expect(high.left).toBe(0);
-    expect(high.damage).toBeGreaterThan(low.damage * 1.8);
+    expect(high.damage).toBeGreaterThan(low.damage * 1.7);
   });
 
   it('被弾すると勢いを失う', () => {
-    const sim = underSlam('reap_scythe');
+    const sim = underSlam('twin_blades');
     sim.player.momentum = 3;
     sim.player.momentumTicks = -100000;
     const evs = run(sim, 120);
     expect(evs.some((e) => e.type === 'player_hurt')).toBe(true);
     expect(sim.player.momentum).toBe(0);
+  });
+});
+
+describe('大槌', () => {
+  it('主ボタンを続けて押すと、叩きつけ → 横殴り とつながり、どちらも打撃で当たる', () => {
+    const sim = mk('war_maul');
+    placeInFrontOfHead(sim, 1.2);
+    const evs = run(sim, 150, (i) => (i % 10 === 0 ? press(Btn.Main) : frame()));
+    expect(starts(evs).slice(0, 2)).toEqual(['player.war_maul.smash', 'player.war_maul.swing']);
+    const h = hits(evs);
+    expect(h.length).toBeGreaterThanOrEqual(2);
+    expect(h.every((x) => x.windowId === 'head')).toBe(true);
+    expect(content.actions.get('player.war_maul.smash')!.hitWindows[0]!.damageType).toBe('blunt');
+  });
+
+  it('副ボタンを押し続けて溜めるほど、叩きつけが強い', () => {
+    const smash = (holdTicks: number): number => {
+      const sim = mk('war_maul');
+      placeInFrontOfHead(sim, 1.2);
+      const h = hits(run(sim, holdTicks + 80, (i) => (i === 0 ? press(Btn.Sub) : i < holdTicks ? hold(Btn.Sub) : frame())));
+      expect(h, `溜め ${holdTicks}`).toHaveLength(1);
+      return h[0]!.damage;
+    };
+    const d0 = smash(2), d2 = smash(90), d3 = smash(125);
+    expect(d2).toBeGreaterThan(d0 * 1.5);
+    expect(d3).toBeGreaterThan(d2);
+  });
+});
+
+describe('太刀', () => {
+  it('主ボタンを続けて押すと、袈裟 → 斬り上げ → 突き とつながる', () => {
+    const sim = mk('long_blade');
+    placeInFrontOfHead(sim, 1.3);
+    const evs = run(sim, 130, (i) => (i % 8 === 0 ? press(Btn.Main) : frame()));
+    expect(starts(evs).slice(0, 3)).toEqual(['player.long_blade.kesa', 'player.long_blade.rise', 'player.long_blade.thrust']);
+    expect(hits(evs).length).toBeGreaterThanOrEqual(3);
+  });
+
+  it('下がり斬りは、当てながら後ろへ下がる', () => {
+    const sim = mk('long_blade');
+    placeInFrontOfHead(sim, 1.2);
+    const z0 = sim.player.pos.z;
+    const h = hits(run(sim, 50, (i) => (i === 0 ? press(Btn.Sub) : frame())));
+    expect(h).toHaveLength(1);
+    expect(sim.player.pos.z).toBeLessThan(z0 - 0.4);
+  });
+
+  it('兜割りは遅いが、袈裟より大きく削る', () => {
+    const one = (btn: number, ticks: number): number => {
+      const sim = mk('long_blade');
+      placeInFrontOfHead(sim, 1.3);
+      const h = hits(run(sim, ticks, (i) => (i === 0 ? press(btn) : frame())));
+      expect(h).toHaveLength(1);
+      return h[0]!.damage;
+    };
+    expect(one(Btn.Special, 80)).toBeGreaterThan(one(Btn.Main, 40) * 2);
   });
 });
 

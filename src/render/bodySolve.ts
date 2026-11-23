@@ -123,9 +123,10 @@ export interface Ctl {
   grip: number[];
   dir: number[];
   edge: number[];
-  /** もう片方の手の行き先と、盾の表が向く方（胸の座標）。使い方は持ち方で決まる。 */
+  /** もう片方の手の行き先と、盾の表が向く方（胸の座標）。使い方は持ち方で決まる。双剣では、offN が左の剣の向き、offE がその刃の向く方。 */
   off: number[];
   offN: number[];
+  offE: number[];
   /** ひじを出す方（胸の座標。全部 0 なら自動） */
   elbowR: number[];
   elbowL: number[];
@@ -138,11 +139,11 @@ export interface Ctl {
   grab: number[];
 }
 export type Channel = keyof Ctl;
-export const CHANNELS: readonly Channel[] = ['hip', 'hipR', 'spine', 'chest', 'look', 'grip', 'dir', 'edge', 'off', 'offN', 'elbowR', 'elbowL', 'pull', 'on', 'arrow', 'grab'];
+export const CHANNELS: readonly Channel[] = ['hip', 'hipR', 'spine', 'chest', 'look', 'grip', 'dir', 'edge', 'off', 'offN', 'offE', 'elbowR', 'elbowL', 'pull', 'on', 'arrow', 'grab'];
 const DEFAULT_CTL: Ctl = {
   hip: [0, 0, 0], hipR: [0, 0, 0], spine: [0, 0, 0], chest: [0, 0, 0], look: [0, 0],
   grip: [-0.2, -0.45, 0.25], dir: [0, 0.8, 0.6], edge: [0, -0.6, 0.8],
-  off: [0.2, -0.5, 0.1], offN: [0, 0, 1], elbowR: [0, 0, 0], elbowL: [0, 0, 0], pull: [0], on: [0], arrow: [0], grab: [1],
+  off: [0.2, -0.5, 0.1], offN: [0, 0, 1], offE: [0, -0.6, 0.8], elbowR: [0, 0, 0], elbowL: [0, 0, 0], pull: [0], on: [0], arrow: [0], grab: [1],
 };
 /** 何も持たない手が下がる位置（胸の座標。side は 左 +1 / 右 -1） */
 export const hangHand = (side: number): Vec => [side * 0.235, -0.555, 0.07];
@@ -151,8 +152,8 @@ export const hangHand = (side: number): Vec => [side * 0.235, -0.555, 0.07];
 export interface Hands {
   /** 武器を握る手 */
   primary: 'R' | 'L';
-  /** もう片方の手: along = 同じ柄を握る / shield = 盾（前腕に固定）/ string = 弓の弦 / free = 何も持たない */
-  second: 'along' | 'shield' | 'string' | 'free';
+  /** もう片方の手: along = 同じ柄を握る / shield = 盾（前腕に固定）/ string = 弓の弦 / blade = もう 1 本の剣（双剣）/ free = 何も持たない */
+  second: 'along' | 'shield' | 'string' | 'blade' | 'free';
   /** along: 握りから何 m 先を握るか */
   along?: number;
   /** shield: 盾のローカル座標での、手が握る取っ手の位置 */
@@ -317,8 +318,10 @@ export interface Solved {
   pose: BodyPose;
   /** 武器の置き場所（アクターの座標）。normal は武器の +X（刃の厚みの向き）。 */
   weapon: { grip: Vec; dir: Vec; normal: Vec };
-  /** 盾の置き場所（原点と向き）。盾を持たない時は null。 */
+  /** 盾（双剣では、もう 1 本の剣）の置き場所（原点と向き）。持っていない時は null。 */
   shield: { pos: Vec; quat: Quat } | null;
+  /** 双剣: もう 1 本の剣の握りと向き（判定の軌道に使う）。ほかの武器では null。 */
+  off: { grip: Vec; dir: Vec } | null;
   /** 弓: 弦を引いた点（弓のローカル座標）と、矢をつがえているか */
   string: { y: number; z: number; arrow: boolean } | null;
   frames: Frames;
@@ -400,9 +403,10 @@ export function solveBody(ctl: Ctl, footL: Foot, footR: Foot, hands: Hands): Sol
   const reach = (P: Vec, i: number): number => vlen(vsub(ankleOf(feet[i]!), hipOf(P, sides[i]!)));
   // 1) 置いた足へ届かない時は、まず かかとを上げる（後ろ足）。それでも届かなければ腰を落とす。
   let P = pelvisAt(0);
+  // （離れ際・着き際の足にも、浮きに応じて少しずつ効かせる。そうしないと、足を離した瞬間に腰が跳ねる）
   for (let i = 0; i < 2; i++) {
-    if (!planted(i)) continue;
-    for (let k = 0; k < 14 && reach(P, i) > LEG_MAX && feet[i]![4] < 42; k++) {
+    const heelMax = 42 * clamp(1 - feet[i]![1] / 0.03, 0, 1);
+    for (let k = 0; k < 14 && reach(P, i) > LEG_MAX && feet[i]![4] < heelMax; k++) {
       const before = reach(P, i);
       feet[i]![4] += 3;
       if (reach(P, i) > before) {
@@ -490,6 +494,12 @@ export function solveBody(ctl: Ctl, footL: Foot, footR: Foot, hands: Hands): Sol
     if (hands.primary === 'L') tR = o;
     else tL = o;
     string = { y: sy, z: sz + pull * on, arrow: (ctl.arrow[0] ?? 0) > 0.5 };
+  } else if (hands.second === 'blade') {
+    // もう 1 本の剣: 握っていない間（納めている間）は、手を体の横に下げる
+    const side = hands.primary === 'R' ? 1 : -1;
+    const o = vlerp(toActor(hangHand(side)), toActor(ctl.off), on);
+    if (hands.primary === 'R') tL = o;
+    else tR = o;
   } else {
     const o = toActor(ctl.off);
     if (hands.primary === 'R') tL = o;
@@ -508,6 +518,16 @@ export function solveBody(ctl: Ctl, footL: Foot, footR: Foot, hands: Hands): Sol
     const y = vcross(z, x);
     const g = hands.shieldGrip ?? [0, 0, 0];
     shield = { pos: vsub(arm.H, vadd(vadd(vmul(x, g[0]), vmul(y, g[1])), vmul(z, g[2]))), quat: qbasis(x, y, z) };
+  }
+  let off: Solved['off'] = null;
+  if (hands.second === 'blade' && on >= 0.5) {
+    // もう 1 本の剣は手に持つ: 原点が握り、+Y が刃先、-Z が刃（1 本目と同じ決め方）
+    const arm = hands.primary === 'R' ? armL : armR;
+    const d2 = dirActor(ctl.offN);
+    const e2 = vnorm(vsub(dirActor(ctl.offE), vmul(d2, vdot(dirActor(ctl.offE), d2))), [1, 0, 0]);
+    const n2 = vnorm(vcross(e2, d2), [1, 0, 0]);
+    shield = { pos: arm.H, quat: qbasis(n2, d2, vcross(n2, d2)) };
+    off = { grip: arm.H, dir: d2 };
   }
 
   // ---- 関節の角度へ ----
@@ -533,6 +553,7 @@ export function solveBody(ctl: Ctl, footL: Foot, footR: Foot, hands: Hands): Sol
     pose: { j, px: P[0], py: P[1] - REST.pelvisY, pz: P[2], grounded: true, tumble: 0, tumbleDir: 0, drop: 0 },
     weapon: { grip, dir, normal },
     shield,
+    off,
     string,
     frames: {
       pelvis: P, chest: chestP, sc, head: headP, qPelvis: qP, qChest: qC, qHead: qH,

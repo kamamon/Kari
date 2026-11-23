@@ -203,7 +203,7 @@ export const CLIPS: Record<string, Clip> = {
   },
 };
 
-// 護刃・旋鎌・長尖槍・環弓の動きは、ここには無い。体・武器・盾をまとめて解く方式（hunterAnim.ts、bodySolve.ts）で、
+// 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）の動きは、ここには無い。体・武器・盾をまとめて解く方式（hunterAnim.ts、bodySolve.ts）で、
 // キーは tools/gen-weapons.mjs が weaponClipSpecs.ts へ書き出す。
 
 /** clip の姿勢。未定義の clip は null を返す（呼び出し側が欠落として表示する）。 */

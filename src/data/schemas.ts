@@ -25,7 +25,7 @@ export interface HitWindowDef {
   hitstopTicks: number;
   /**
    * 同じ group の時間枠は、1 回の行動で同じ相手に 1 つだけ当たる（先に書いた方が優先）。
-   * 旋鎌の「刃」と「柄」のように、1 本の武器を威力の違う 2 つの形で判定する時に使う。
+   * 「刃」と「柄」のように、1 本の武器を威力の違う 2 つの形で判定する時に使う（v0.5.0 の時点では使う技が無い。旋鎌で使っていた）。
    */
   group?: string;
   // ここから下は「敵 → プレイヤー」の攻撃で使う拡張
@@ -88,16 +88,16 @@ export interface ActionDef {
   charge?: ChargeDef;
   hazards?: HazardDef[];
   // ---- 武器 5 系統のための拡張（docs/decisions.md D-052）----
-  /** 行動の最中も、スティックで歩ける（旋鎌の振り、環弓の引き絞り）。from/to を省くと行動の全体。 */
+  /** 行動の最中も、スティックで歩ける（環弓の引き絞り）。from/to を省くと行動の全体。 */
   freeMove?: { speed: number; turnDegPerSec: number; from?: number; to?: number };
   /** この区間は、行動の最中でも防御が有効（長尖槍の構え突き）。 */
   guardWindows?: { from: number; to: number }[];
   /** この区間に正面から攻撃を受けると、無傷で into の行動へ移る（長尖槍の受け返し）。 */
   counter?: { from: number; to: number; into: string };
-  /** 勢い（旋鎌）: gain = 当てると 1 段階上がる / spendScale = 始めた時の段階をすべて使い、威力をその段階の倍率にする */
+  /** 勢い（双剣）: gain = 当てると 1 段階上がる / spendScale = 始めた時の段階をすべて使い、威力をその段階の倍率にする */
   momentum?: { gain?: boolean; spendScale?: number[] };
   shoot?: ShootDef[];
-  /** この区間に、体ごと回る（度。+ が左回り）。旋鎌の回し薙ぎ・大刈り。武器の軌道は体に対して決まるので、判定も一緒に回る。 */
+  /** この区間に、体ごと回る（度。+ が左回り）。v0.5.0 の時点では使う技が無い（旋鎌で使っていた）。武器の軌道は体に対して決まるので、判定も一緒に回る。 */
   spin?: { from: number; to: number; degrees: number };
   /** 左腕の盾の軌道（見た目用。盾打ちでは判定の形と同じ軌道を指す） */
   offhandTrack?: string;
@@ -160,7 +160,7 @@ export interface WeaponFamilyDef {
     drawAttack: string;
     draw: string;
     sheathe: string;
-    /** 固有ボタンの技（防御の無い武器。旋鎌の大刈り） */
+    /** 固有ボタンの技（防御の無い武器。双剣の連ね斬り、太刀の兜割り） */
     special?: string;
     /** 防御を構えている時の、主・副ボタンの技（長尖槍の構え突き・受け返し） */
     guardMain?: string;
@@ -174,15 +174,15 @@ export interface WeaponFamilyDef {
   guard: GuardDef | null;
   /** 抜刀したまま道具を使える（護刃） */
   itemsWhileDrawn?: boolean;
-  /** 勢い（旋鎌）。段階ごとの威力の倍率と、行動の時間の倍率（1 より小さいと速い）。 */
+  /** 勢い（双剣）。段階ごとの威力の倍率と、行動の時間の倍率（1 より小さいと速い）。 */
   momentum?: { max: number; decayTicks: number; damageScale: number[]; speedScale: number[] };
   // ---- ここから下は見た目だけに使う ----
   /** 両手で持つ時、もう片方の手を握りから dir の向きへ何 m 離すか。省くと 0.2。 */
   otherHandAlong?: number;
   /** 軌道の握りを、どちらの手で持つか。省くと右。環弓は左手で弓を持ち、右手で弦を引く。 */
   primaryHand?: 'right' | 'left';
-  /** 左腕に付ける盾と、構えていない時・防御の時の盾の位置（アクターのローカル座標） */
-  offhand?: 'shield_small' | 'shield_great';
+  /** 左手に持つもの（盾、または双剣のもう 1 本）と、構えていない時・防御の時の盾の位置（アクターのローカル座標） */
+  offhand?: 'shield_small' | 'shield_great' | 'blade_left';
   offhandReady?: Triple;
   offhandGuard?: Triple;
   /** 納刀した武器を付ける場所。省くと背中。 */

@@ -1,4 +1,4 @@
-// 護刃・旋鎌・長尖槍・環弓の体の動かし方。技の動き・構え・防御・歩きを、同じ解き方（bodySolve.ts）へ通す。
+// 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）の体の動かし方。技の動き・構え・防御・歩きを、同じ解き方（bodySolve.ts）へ通す。
 // ゲームの画面（view.ts）と素材ビューア（viewer.ts）と検査（tests/human-motion.test.ts）が、ここを使う。
 import { evalMotion, gaitFeet, mixCtl, mixFoot, solveBody, type Ctl, type Foot, type Solved } from './bodySolve';
 import type { HunterRig } from './rig';
@@ -119,11 +119,18 @@ export function solveState(familyId: string, st: AnimState, moveSpeed = 0, time 
   return new HunterAnimator().frame(familyId, st, '', 1, moveSpeed, time);
 }
 
-/** 解いた結果を、リグへ渡す。 */
-export function applySolved(rig: HunterRig, s: Solved): void {
+/** 解いた結果を、リグへ渡す。familyId は、左手のものを持っていない時の置き場所を決めるのに使う。 */
+export function applySolved(rig: HunterRig, s: Solved, familyId: string): void {
   rig.setPose(s.pose);
   rig.placeWeapon(s.weapon.grip, s.weapon.dir, s.weapon.normal);
   if (s.shield) rig.placeShield(s.shield.pos, s.shield.quat);
-  else rig.shieldToBack();
+  else stowOffhand(rig, familyId);
   rig.setString(s.string);
+}
+
+/** 左手のもの（盾・双剣のもう 1 本）を、納めた時の置き場所へ付ける。姿勢を設定した後に呼ぶ。 */
+export function stowOffhand(rig: HunterRig, familyId: string): void {
+  const sh = WEAPON_STANCES[familyId]?.sheath2;
+  if (sh) rig.shieldToSheath(sh);
+  else rig.shieldToBack();
 }

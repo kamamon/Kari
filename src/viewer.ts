@@ -24,10 +24,10 @@ import { DummyRig, type MonsterRig } from './render/monsterRig';
 import { CLIPS, JOINTS, clipPose, emptyPose, locomotionPose } from './render/poses';
 import { buildGreatShield, buildLance } from './render/lance';
 import { HunterRig } from './render/rig';
-import { applySolved, canSolve, solveState, type AnimState } from './render/hunterAnim';
+import { applySolved, canSolve, solveState, stowOffhand, type AnimState } from './render/hunterAnim';
 import type { Solved } from './render/bodySolve';
 import { WEAPON_STANCES } from './render/weaponClipSpecs';
-import { buildScythe } from './render/scythe';
+import { buildLongBlade, buildTwinBlade, buildWarMaul } from './render/provisionalWeapons';
 
 interface ManifestAsset {
   id: string;
@@ -84,16 +84,19 @@ const stand = (key: string, model: WeaponModel, x: number, y: number, turn: numb
   rack.add(model.group);
   rackModels[key] = model;
 };
-// 左から: 護刃（盾・剣）、断岳剣、長尖槍（槍・大盾）、ハンター、旋鎌、環弓（弓・矢・矢筒）
+// 左から: 護刃（盾・剣）、断岳剣、長尖槍（槍・大盾）、ハンター、大槌・双剣・太刀（設定図が無いので単色の仮の形）、環弓（弓・矢・矢筒）
 stand('guardShield', buildGuardBladeShield(), -3.0, 0.3, 0);
 stand('guardSword', buildGuardBladeSword(), -2.55, 0.1224, Math.PI / 2);
 stand('heavyBlade', buildHeavyBlade(), -2.05, 0.155, Math.PI / 2);
 stand('lance', buildLance(), -1.55, 0.541, Math.PI / 2);
 stand('greatShield', buildGreatShield(), -0.95, 0.55, 0);
-stand('scythe', buildScythe(), 1.05, 0.4295, Math.PI / 2);
-stand('bow', buildBow(), 1.55, 0.75, Math.PI / 2);
-stand('arrow', buildArrow(), 1.95, 0.4, Math.PI / 2);
-stand('quiver', buildQuiver(), 2.25, 0.303, Math.PI / 2);
+stand('warMaul', buildWarMaul(), 0.95, 0.2, Math.PI / 2);
+stand('twinBladeR', buildTwinBlade(), 1.35, 0.1, Math.PI / 2);
+stand('twinBladeL', buildTwinBlade(), 1.6, 0.1, Math.PI / 2);
+stand('longBlade', buildLongBlade(), 2.0, 0.29, Math.PI / 2);
+stand('bow', buildBow(), 2.5, 0.75, Math.PI / 2);
+stand('arrow', buildArrow(), 2.9, 0.4, Math.PI / 2);
+stand('quiver', buildQuiver(), 3.2, 0.303, Math.PI / 2);
 
 let glbRoot: Object3D | null = null;
 let glbMixer: AnimationMixer | null = null;
@@ -367,10 +370,10 @@ function frame(ts: number): void {
     const st: AnimState | null = a ? { kind: 'action', clip: a.clip, t, dirAngle: 0, chargeTicks: 0, freeMove: false } : state.stance !== 'none' ? (state.stance === 'guard' ? { kind: 'guard', blend: 1, shake: 0 } : { kind: 'idle' }) : null;
     const stFam = a ? fam : content.families.get(state.stanceFamily) ?? fam;
     if (st && canSolve(stFam.id, st)) {
-      // 護刃・旋鎌・長尖槍・環弓: ゲームと同じ解き方で、体・武器・盾を置く
+      // 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）: ゲームと同じ解き方で、体・武器・盾を置く
       hunter.setFamily(stFam.id, stFam.offhand);
       const sol = solveState(stFam.id, st, state.stance === 'walk' ? stFam.drawnMoveSpeed : 0, state.stance === 'walk' ? t / 60 : time);
-      applySolved(hunter, sol);
+      applySolved(hunter, sol, stFam.id);
       lastSolved = sol;
     } else if (a) {
       lastSolved = null;
@@ -390,14 +393,14 @@ function frame(ts: number): void {
         }
       } else {
         sheathWeapon(fam);
-        if (fam.offhand) hunter.shieldToBack();
+        if (fam.offhand) stowOffhand(hunter, fam.id);
       }
     } else {
       lastSolved = null;
       hunter.setString(null);
       hunter.setPose(locomotionPose(false, t < 60 ? 0 : 4, time * 9, time));
       sheathWeapon(fam);
-      if (fam.offhand) hunter.shieldToBack();
+      if (fam.offhand) stowOffhand(hunter, fam.id);
     }
     hunter.root.updateMatrixWorld(true);
     lines.push(`仮リグ: 関節 ${JOINTS.length} / socket ${Object.keys(hunter.sockets).length} / 全高 ${restHeight.toFixed(3)}m（基準姿勢。規格は 1.75m）`);

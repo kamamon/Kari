@@ -39,7 +39,7 @@ export interface WeaponShape {
   from: number;
   to: number;
   radius: number;
-  /** 旋鎌の刃のように、柄から横へ伸びる部分: 握りからの距離と、武器の -Z 方向への長さ */
+  /** 鎌の刃のように、柄から横へ伸びる部分（v0.5.0 の時点では使う武器が無い）: 握りからの距離と、武器の -Z 方向への長さ */
   blade?: { at: number; out: number };
   /** 武器を回す速さの上限（°/秒）。軽い片手の剣は速く、長く重い武器は遅い。 */
   maxTurn?: number;
@@ -54,7 +54,7 @@ export function checkFrame(s: Solved, hands: Hands, weapon?: WeaponShape | null)
 
   // ---- 腕 ----
   for (const [S, sh, el, hand, target, side] of [['L', F.shoulderL, F.elbowL, F.handL, F.targetL, 1], ['R', F.shoulderR, F.elbowR, F.handR, F.targetR, -1]] as const) {
-    const w = hands.primary === S ? F.grab : hands.second === 'string' || hands.second === 'along' ? F.on : 1;
+    const w = hands.primary === S ? F.grab : hands.second === 'string' || hands.second === 'along' || hands.second === 'blade' ? F.on : 1;
     const holds = w > 0.99;
     // 持ち替えの途中（下げた手から握りへ向かう間）は、手の通り道をまっすぐ結んだだけなので、ひじと胴の検査はしない
     const transit = w > 0.01 && w < 0.99;
@@ -79,6 +79,11 @@ export function checkFrame(s: Solved, hands: Hands, weapon?: WeaponShape | null)
   const prim = hands.primary === 'R' ? [F.elbowR, F.handR] as const : [F.elbowL, F.handL] as const;
   const wrist = vangle(vsub(prim[1], prim[0]), s.weapon.dir);
   if (F.grab > 0.99 && (wrist < hands.wrist[0] || wrist > hands.wrist[1])) bad('手首の角度', wrist, `${hands.wrist[0]}〜${hands.wrist[1]}°`);
+  if (s.off && F.on > 0.99) {
+    const sec = hands.primary === 'R' ? [F.elbowL, F.handL] as const : [F.elbowR, F.handR] as const;
+    const w2 = vangle(vsub(sec[1], sec[0]), s.off.dir);
+    if (w2 < hands.wrist[0] || w2 > hands.wrist[1]) bad('もう 1 本の剣の手首の角度', w2, `${hands.wrist[0]}〜${hands.wrist[1]}°`);
+  }
   if (hands.second === 'along' && F.grab > 0.99 && F.on > 0.99) {
     const sec = hands.primary === 'R' ? [F.elbowL, F.handL] as const : [F.elbowR, F.handR] as const;
     const w2 = vangle(vsub(sec[1], sec[0]), s.weapon.dir);

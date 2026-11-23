@@ -519,12 +519,12 @@ export class Simulation implements SimCtx {
     const { run, t } = ev;
     for (const hw of run.def.hitWindows) {
       if (!inWindow(t, hw)) continue;
-      // 体ごと回る技（旋鎌の回し薙ぎ）は、前の tick の向きから掃引する（1 tick で大きく回っても、間を飛び越えない）
+      // 体ごと回る技（spin。v0.5.0 の時点では使う技が無い）は、前の tick の向きから掃引する（1 tick で大きく回っても、間を飛び越えない）
       const sw = run.def.spin ? this.windowSweep(hw, t, p.pos, p.yaw, p.prevPos, p.prevYaw) : this.windowSweep(hw, t, p.pos, p.yaw);
       for (const m of this.monsters) {
         if (m.dead || m.captured) continue;
         if (this.ledger.count(run.instanceId, hw.id, m.id) >= hw.maxHitsPerTarget) continue;
-        // 同じ group の別の形（旋鎌の刃と柄）が先に当たっていたら、この形は当てない
+        // 同じ group の別の形（1 本の武器の刃と柄など。v0.5.0 の時点では使う技が無い）が先に当たっていたら、この形は当てない
         if (hw.group && this.ledger.count(run.instanceId, `group:${hw.group}`, m.id) > 0) continue;
         const hit = sweepCapsule(sw.a0, sw.b0, sw.a1, sw.b1, sw.r, monsterShapes(m));
         if (!hit) continue;
@@ -538,7 +538,7 @@ export class Simulation implements SimCtx {
   private applyPlayerHit(run: ActionRun, hw: HitWindowDef, t: number, m: MonsterState, partIndex: number, point: V3): void {
     const charge = run.def.charge;
     let scale = charge ? charge.coefficientScale[run.chargeLevel] ?? 1 : 1;
-    // 勢い（旋鎌）: 始めた時の段階で威力が変わる。大技は、使った段階の倍率になる。
+    // 勢い（双剣）: 始めた時の段階で威力が変わる。大技は、使った段階の倍率になる。
     const M = familyOf(this.player, this.content).momentum;
     const mo = run.def.momentum;
     if (M && mo) scale *= mo.spendScale ? mo.spendScale[run.momentumLevel] ?? 1 : M.damageScale[run.momentumLevel] ?? 1;

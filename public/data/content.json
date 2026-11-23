@@ -1,12 +1,14 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.4.2",
+  "contentVersion": "0.5.0",
   "files": {
     "actions": [
       "actions/player_common.json",
       "actions/heavy_blade.json",
       "actions/guard_blade.json",
-      "actions/reap_scythe.json",
+      "actions/war_maul.json",
+      "actions/twin_blades.json",
+      "actions/long_blade.json",
       "actions/long_lance.json",
       "actions/ring_bow.json",
       "actions/training_dummy.json",
@@ -16,7 +18,9 @@
     "tracks": [
       "tracks/heavy_blade.json",
       "tracks/guard_blade.json",
-      "tracks/reap_scythe.json",
+      "tracks/war_maul.json",
+      "tracks/twin_blades.json",
+      "tracks/long_blade.json",
       "tracks/long_lance.json",
       "tracks/ring_bow.json",
       "tracks/training_dummy.json",

@@ -9,7 +9,7 @@ import { BOW_STRING, buildArrow, buildBow } from './bow';
 import { buildGuardBladeShield, buildGuardBladeSword } from './guardBlade';
 import { buildHeavyBlade, type WeaponModel } from './heavyBlade';
 import { buildGreatShield, buildLance } from './lance';
-import { buildScythe } from './scythe';
+import { buildLongBlade, buildTwinBlade, buildWarMaul } from './provisionalWeapons';
 import { HUNTER_ATLAS } from './hunterAtlas';
 import { REST, buildHunterBody } from './hunterBody';
 import { JOINTS, type BodyPose, type JointName } from './poses';
@@ -27,12 +27,15 @@ const TUMBLE_PIVOT = 0.55;
 const WEAPON_BUILDERS: Record<string, () => WeaponModel> = {
   heavy_blade: buildHeavyBlade,
   guard_blade: buildGuardBladeSword,
-  reap_scythe: buildScythe,
+  war_maul: buildWarMaul,
+  twin_blades: buildTwinBlade,
+  long_blade: buildLongBlade,
   long_lance: buildLance,
   // 弦は、引いた形に合わせてリグが張る
   ring_bow: () => buildBow(false),
 };
-const SHIELD_BUILDERS = { shield_small: buildGuardBladeShield, shield_great: buildGreatShield } as const;
+/** 左手に持つもの: 盾、または双剣のもう 1 本 */
+const SHIELD_BUILDERS = { shield_small: buildGuardBladeShield, shield_great: buildGreatShield, blade_left: buildTwinBlade } as const;
 export type ShieldKind = keyof typeof SHIELD_BUILDERS;
 
 /** 両腕の持ち方。two = 両手で 1 本を持つ（もう片方は握りから along だけ先）/ other = もう片方の手の位置（武器のローカル座標。弓の弦） */
@@ -41,6 +44,14 @@ export interface HandsSpec {
   along?: number;
   primary?: 'right' | 'left';
   other?: { x: number; y: number; z: number } | null;
+}
+
+/** 納めた時の置き場所: 付く骨、その骨の座標での握りの位置、武器の向き（+Y）、武器の +X の向き */
+export interface SheathPlace {
+  parent: 'chest' | 'pelvis';
+  pos: readonly number[];
+  dir: readonly number[];
+  normal: readonly number[];
 }
 
 export class HunterRig {
@@ -255,13 +266,22 @@ export class HunterRig {
   }
 
   /** 武器を、納めた時の置き場所（骨と、その骨の座標での位置・向き）へ付ける。姿勢を設定した後に呼ぶ。 */
-  weaponToSheath(sh: { parent: 'chest' | 'pelvis'; pos: readonly number[]; dir: readonly number[]; normal: readonly number[] }): void {
+  weaponToSheath(sh: SheathPlace): void {
+    this.toSheath(this.weapon, sh);
+  }
+
+  /** 左手に持つもの（双剣のもう 1 本）を、納めた時の置き場所へ付ける。 */
+  shieldToSheath(sh: SheathPlace): void {
+    this.toSheath(this.shield, sh);
+  }
+
+  private toSheath(obj: Group, sh: SheathPlace): void {
     this.root.updateMatrixWorld(true);
     const inv = this.m2.copy(this.root.matrixWorld).invert();
     const local = this.basis(this.v4.set(sh.dir[0]!, sh.dir[1]!, sh.dir[2]!).normalize(), new Vector3(sh.normal[0], sh.normal[1], sh.normal[2])).setPosition(sh.pos[0]!, sh.pos[1]!, sh.pos[2]!);
     const world = new Matrix4().multiplyMatrices(this.joints[sh.parent].matrixWorld, local);
-    this.weapon.matrix.multiplyMatrices(inv, world);
-    this.weapon.matrixWorldNeedsUpdate = true;
+    obj.matrix.multiplyMatrices(inv, world);
+    obj.matrixWorldNeedsUpdate = true;
   }
 
   /** +Y を dir、+X を normal に近い向きへ揃える回転を obj に設定する。 */

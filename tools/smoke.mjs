@@ -610,7 +610,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   await page.screenshot({ path: `${OUT}weapon_select.png` });
-  for (const [fam, name, dist, holdMs] of [['guard_blade', '護刃', 1.2, 60], ['reap_scythe', '旋鎌', 1.4, 60], ['long_lance', '長尖槍', 2.4, 60], ['ring_bow', '環弓', 8, 1300]]) {
+  for (const [fam, name, dist, holdMs] of [['guard_blade', '護刃', 1.2, 60], ['long_lance', '長尖槍', 2.4, 60], ['ring_bow', '環弓', 8, 1300], ['war_maul', '大槌', 1.2, 60], ['twin_blades', '双剣', 0.9, 60], ['long_blade', '太刀', 1.3, 60]]) {
     await page.locator(`.base-weapon[data-weapon="weapon.${fam}.001"]`).click();
     const picked = await page.evaluate(() => window.__vh.weaponId);
     await page.locator('.base-choice').last().click();
@@ -632,7 +632,8 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     await page.screenshot({ path: `${OUT}weapon_${fam}.png` });
     const info = await page.evaluate(() => ({
       fam: window.__vh.view.hunter.familyId,
-      art: window.__vh.view.hunter.weaponArt.length > 0 && window.__vh.view.hunter.weaponArt.every((a) => a.loaded && !a.failed),
+      // 大槌・双剣・太刀は設定図がまだ無い（単色の仮の形）ので、絵は 0 枚でよい
+      art: window.__vh.view.hunter.weaponArt.every((a) => a.loaded && !a.failed),
       hits: window.__vh.sim.hitCount,
       missing: [...window.__vh.view.missingClips],
     }));
@@ -653,12 +654,13 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.waitForTimeout(200);
   const text = await page.textContent('#panel');
   check('ビューア: 仮リグの全高が 1.75m', /全高 1\.7[45]\dm/.test(text), (text.match(/全高 [\d.]+m/) ?? [''])[0]);
-  // 武器の一覧（設定図から組んだ仮モデル）: 護刃の剣と盾、断岳剣、旋鎌の絵がすべて読み込める
+  // 武器の一覧: 設定図から組んだ仮モデル（護刃・断岳剣・長尖槍・環弓）は絵がすべて読み込める。大槌・双剣・太刀は絵の無い仮の形
   const rackOk = await until(page, () => {
     const rack = window.__viewer?.rack;
-    return !!rack && ['guardShield', 'guardSword', 'heavyBlade', 'lance', 'greatShield', 'scythe', 'bow', 'arrow', 'quiver'].every((k) => rack[k] && rack[k].triangles > 50 && rack[k].art.length > 0 && rack[k].art.every((a) => a.loaded && !a.failed));
+    return !!rack && ['guardShield', 'guardSword', 'heavyBlade', 'lance', 'greatShield', 'bow', 'arrow', 'quiver'].every((k) => rack[k] && rack[k].triangles > 50 && rack[k].art.length > 0 && rack[k].art.every((a) => a.loaded && !a.failed))
+      && ['warMaul', 'twinBladeR', 'twinBladeL', 'longBlade'].every((k) => rack[k] && rack[k].triangles > 20 && rack[k].art.length === 0);
   }, 15000);
-  check('ビューア: 5 武器の 9 点（護刃の剣・盾、断岳剣、長尖槍の槍・大盾、旋鎌、環弓・矢・矢筒）の形と絵を読み込める', rackOk);
+  check('ビューア: 7 武器の 12 点（護刃の剣・盾、断岳剣、長尖槍の槍・大盾、環弓・矢・矢筒は形と絵。大槌・双剣 2 本・太刀は絵の無い仮の形）を読み込める', rackOk);
   await page.goto(`http://localhost:${PORT}${BASE}viewer.html?glb=assets/models/ref_cube_1m.glb`);
   await page.waitForFunction(() => window.__viewer, null, { timeout: 15000 });
   await page.waitForTimeout(300);

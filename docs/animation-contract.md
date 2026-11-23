@@ -50,8 +50,9 @@ pelvis 高さ 0.92 / 肩幅 0.37（肩の関節は左右 0.185）/ 上腕 0.29�
 
 - `public/data/tracks/*.json` の shapeTrack が判定の正本。アクターのローカル座標で、tick ごとに握り位置 `grip` と向き `dir` を持つ。判定カプセルは `grip + dir × from` 〜 `grip + dir × to`、太さ `radius`。
 - 仮アニメーションは武器をこの軌道へ置き、腕を IK で伸ばしている（見える刃 = 判定）。断岳剣はこの方式。
-- 護刃・旋鎌・長尖槍・環弓は逆で、**体の動きが先**: 体の動きを解いた握りと向きを、毎 tick 書き出したものが shapeTrack（`tools/gen-weapons.mjs`）。描画も同じ動きを解くので、見える武器と判定は一致する（`tests/human-motion.test.ts` が、全 tick で 2mm 以内を確かめる）。
-- この 4 系統の動きは、関節の曲がる範囲・手の届き・手首・重心・足の滑り・速さの検査（`src/render/humanLimits.ts`）を全 tick で通すこと。正式クリップへ替える時も、同じ検査を目安にする。
+- 護刃・長尖槍・環弓・大槌・双剣・太刀は逆で、**体の動きが先**: 体の動きを解いた握りと向きを、毎 tick 書き出したものが shapeTrack（`tools/gen-weapons.mjs`）。描画も同じ動きを解くので、見える武器と判定は一致する（`tests/human-motion.test.ts` が、全 tick で 2mm 以内を確かめる）。
+- 双剣は左手にも剣を持つ。左の剣の判定は `<技>_l` の shapeTrack（同じ解き方から書き出す）。
+- この 6 系統の動きは、関節の曲がる範囲・手の届き・手首・重心・足の滑り・速さの検査（`src/render/humanLimits.ts`）を全 tick で通すこと。正式クリップへ替える時も、同じ検査を目安にする。
 - 納めた武器の置き場所は、武器系統ごとに持つ（`weaponClipSpecs.ts` の sheath: 付く骨と位置と向き）。socket_back / socket_hip は断岳剣と、正式モデルの目安。
 - 正式クリップへ替える時は、クリップの刃の位置と shapeTrack の誤差を検証表示で比べ、**どちらを基準に直すかを先に決める**。
 

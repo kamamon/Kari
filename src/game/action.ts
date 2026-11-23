@@ -19,7 +19,7 @@ export interface ActionRun {
   dirIndex: number;
   /** 抜刀したまま始めた道具の行動: 終わっても抜刀のまま（護刃） */
   keepDrawn: boolean;
-  /** 行動の時間の倍率（1 より小さいと速い）と、その端数の積み立て。旋鎌の勢い。 */
+  /** 行動の時間の倍率（1 より小さいと速い）と、その端数の積み立て。双剣の勢い。 */
   speed: number;
   speedAcc: number;
   /** 始めた時の勢いの段階（威力の倍率に使う）と、この行動で勢いを上げたか */

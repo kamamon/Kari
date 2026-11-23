@@ -17,7 +17,7 @@ import { BladeTrail, GroundRings, Particles } from './effects';
 import { GaldrosRig } from './galdrosRig';
 import { DummyRig, type MonsterRig } from './monsterRig';
 import { blendPose, clipPose, deadPose, emptyPose, guardPose, hurtPose, locomotionPose, type BodyPose } from './poses';
-import { HunterAnimator, applySolved, canSolve, type AnimState } from './hunterAnim';
+import { HunterAnimator, applySolved, canSolve, stowOffhand, type AnimState } from './hunterAnim';
 import type { Solved } from './bodySolve';
 import { WEAPON_STANCES } from './weaponClipSpecs';
 import { buildArrow } from './bow';
@@ -78,7 +78,7 @@ export class GameView {
   private lastPose: BodyPose = emptyPose();
   private blendFrom: BodyPose | null = null;
   private blendT = 1;
-  /** 護刃・旋鎌・長尖槍・環弓の体を解く係 */
+  /** 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）の体を解く係 */
   private anim = new HunterAnimator();
   private tmpA = new Vector3();
   private tmpB = new Vector3();
@@ -333,7 +333,7 @@ export class GameView {
         st = { kind: 'idle' };
       }
     }
-    // 護刃・旋鎌・長尖槍・環弓: 体・武器・盾をまとめて解く（足は地面に、手は武器に付いたままになる）
+    // 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）: 体・武器・盾（双剣は左の剣）をまとめて解く（足は地面に、手は武器に付いたままになる）
     const continued = this.anim.continuing;
     let solved: Solved | null = null;
     if (st && canSolve(fam.id, st)) {
@@ -354,7 +354,7 @@ export class GameView {
     this.lastPose = pose;
 
     if (solved) {
-      applySolved(this.hunter, solved);
+      applySolved(this.hunter, solved, fam.id);
       // 混ぜている途中は、混ぜた姿勢を置き直す（武器と盾は解いた位置のまま）
       if (pose !== solved.pose) this.hunter.setPose(pose);
     } else {
@@ -372,7 +372,7 @@ export class GameView {
         const at = shieldAt ?? (fam.offhandGuard ? lerpV(ready, fromArr(fam.offhandGuard), shieldU) : ready);
         this.hunter.shieldTo(at, shieldAt ? 0 : 0.5 * (1 - shieldU));
       } else {
-        this.hunter.shieldToBack();
+        stowOffhand(this.hunter, fam.id);
       }
     }
     this.hunter.root.updateMatrixWorld(true);

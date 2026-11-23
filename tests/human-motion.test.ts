@@ -1,4 +1,4 @@
-// 護刃・旋鎌・長尖槍・環弓の体の動きが「人にできる範囲」に収まっているかを、全部の技の全 tick で調べる。
+// 護刃・長尖槍・環弓・大槌・双剣・太刀の体の動きが「人にできる範囲」に収まっているかを、全部の技の全 tick で調べる。
 // 調べる中身（関節の曲がる範囲・手が武器に届くか・手首・重心・足の滑り・自分の体と武器の重なり・速さ）は src/render/humanLimits.ts。
 // 断岳剣は対象外（キー姿勢 + 腕の IK の方式のまま）。
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -15,7 +15,7 @@ beforeAll(async () => {
   content = await loadContent();
 });
 
-const FAMILIES = ['guard_blade', 'reap_scythe', 'long_lance', 'ring_bow'];
+const FAMILIES = Object.keys(WEAPON_STANCES);
 /**
  * いまも外れている所（数は増やさない。直したら消す）。どれも、納めた武器や背の盾へ手を伸ばす間・体ごと回る間の、短い区間。
  * 値は「いちばん悪い値」の上限。
@@ -53,7 +53,8 @@ function worstOf(clip: string): Map<string, { v: Violation; t: number }> {
 }
 
 describe('体の動きが人にできる範囲にある', () => {
-  it('4 系統の技は、すべて「解く方式」の動きを持つ', () => {
+  it('断岳剣以外の 6 系統の技は、すべて「解く方式」の動きを持つ', () => {
+    expect(FAMILIES.sort()).toEqual(['guard_blade', 'long_blade', 'long_lance', 'ring_bow', 'twin_blades', 'war_maul']);
     for (const a of content.actions.values()) {
       const fam = a.actionId.split('.')[1]!;
       if (!FAMILIES.includes(fam)) continue;

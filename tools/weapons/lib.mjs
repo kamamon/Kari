@@ -13,7 +13,7 @@ export const v3 = (v) => v.map(r4);
 
 const BODY = ['hip', 'hipR', 'spine', 'chest', 'look', 'elbowR', 'elbowL', 'pull', 'on', 'arrow', 'grab'];
 const HAND_POS = ['grip', 'off'];
-const HAND_DIR = ['dir', 'edge', 'offN'];
+const HAND_DIR = ['dir', 'edge', 'offN', 'offE'];
 
 export const state = { curves: [], motions: {}, stances: {}, out: {}, clips: new Map(), problems: [] };
 
@@ -90,7 +90,7 @@ export function family(id, hands, shape) {
     }
     // 手のチャンネル: キーの時刻での体を解いて、胸の座標へ直す
     const body = (t) => B.evalMotion(m, t);
-    const hk = { grip: [], dir: [], edge: [], off: [], offN: [] };
+    const hk = { grip: [], dir: [], edge: [], off: [], offN: [], offE: [] };
     for (const k of all) {
       const e = body(k.t);
       const conv = k._c ? k : toChest(k, e.ctl, e.footL, e.footR, hands);

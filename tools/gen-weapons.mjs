@@ -1,4 +1,4 @@
-// 護刃・旋鎌・長尖槍・環弓の、技（actions）・軌道（tracks）・移動曲線・体の動きのデータを作る。
+// 護刃・長尖槍・環弓・大槌・双剣・太刀の、技（actions）・軌道（tracks）・移動曲線・体の動きのデータを作る。
 //
 //   node tools/gen-weapons.mjs
 //
@@ -14,14 +14,18 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { B, checkAll, r4, state } from './weapons/lib.mjs';
 import { guardBlade } from './weapons/guard_blade.mjs';
-import { reapScythe } from './weapons/reap_scythe.mjs';
+import { warMaul } from './weapons/war_maul.mjs';
+import { twinBlades } from './weapons/twin_blades.mjs';
+import { longBlade } from './weapons/long_blade.mjs';
 import { longLance } from './weapons/long_lance.mjs';
 import { ringBow } from './weapons/ring_bow.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 guardBlade();
-reapScythe();
+warMaul();
+twinBlades();
+longBlade();
 longLance();
 ringBow();
 
@@ -69,7 +73,7 @@ for (const [id, F] of Object.entries(state.out)) {
   const js = (o) => JSON.stringify(o, num);
   const ts = [
     '// 生成物（tools/gen-weapons.mjs）。手で編集しない。',
-    '// 護刃・旋鎌・長尖槍・環弓の体の動き: 構え（立ち姿）と、技ごとのキー。解き方は bodySolve.ts。',
+    '// 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）の体の動き: 構え（立ち姿）と、技ごとのキー。解き方は bodySolve.ts。',
     "import type { Ctl, Foot, Hands, Motion } from './bodySolve';",
     "import type { WeaponShape } from './humanLimits';",
     '',
@@ -77,9 +81,9 @@ for (const [id, F] of Object.entries(state.out)) {
     '/** 武器系統ごとの持ち方と立ち姿（idle = 抜刀して構えた姿、guard = 防御、sheathed = 納刀）と、自分の体と重なってはいけない武器の範囲 */',
     '/** 納めた時の武器の置き場所: 付く骨、その骨の座標での握りの位置、武器の向き（+Y）、武器の +X の向き */',
     "export interface Sheath { parent: 'chest' | 'pelvis'; pos: number[]; dir: number[]; normal: number[] }",
-    'export interface WeaponStances { hands: Hands; shape: WeaponShape; sheath: Sheath; idle: Stance; guard?: Stance; sheathed?: Stance }',
+    'export interface WeaponStances { hands: Hands; shape: WeaponShape; sheath: Sheath; sheath2?: Sheath; idle: Stance; guard?: Stance; sheathed?: Stance }',
     'export const WEAPON_STANCES: Record<string, WeaponStances> = {',
-    ...Object.values(state.stances).map((f) => `  ${f.id}: ${js({ hands: f.hands, shape: f.shape, sheath: f.sheath, ...f.stances })},`),
+    ...Object.values(state.stances).map((f) => `  ${f.id}: ${js({ hands: f.hands, shape: f.shape, sheath: f.sheath, ...(f.sheath2 ? { sheath2: f.sheath2 } : {}), ...f.stances })},`),
     '};',
     '',
     'export const WEAPON_MOTIONS: Record<string, Motion> = {',

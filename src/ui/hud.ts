@@ -220,7 +220,7 @@ export class Hud {
     this.set('item', itemText, () => {
       this.item.textContent = itemText;
       this.item.hidden = itemText === '';
-      // 勢い（旋鎌）: 段階を印で出す
+      // 勢い（双剣）: 段階を印で出す
       const M = familyOf(sim.player, sim.content).momentum;
       this.momentum.hidden = !M || !sim.player.drawn;
       if (M) this.momentum.textContent = `勢い ${'●'.repeat(sim.player.momentum)}${'○'.repeat(M.max - sim.player.momentum)}`;

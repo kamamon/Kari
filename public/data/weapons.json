@@ -80,33 +80,88 @@
       }
     },
     {
-      "id": "reap_scythe",
-      "labels": { "main": "薙ぐ", "sub": "引き刈り", "special": "大刈り" },
-      "summary": "大鎌。振りながら歩ける。当て続けると勢いが上がり、速く強くなる。被弾で勢いを失う。",
-      "name": "旋鎌",
+      "id": "war_maul",
+      "labels": { "main": "叩く", "sub": "溜め叩き" },
+      "summary": "大槌。遅くて重い打撃。主は叩きつけ → 横殴り。副を押し続けて溜め、離して叩きつける。守りは無い。",
+      "name": "大槌",
       "twoHanded": true,
-      "otherHandAlong": 0.64,
-      "drawnMoveSpeed": 3.0,
-      "drawnTurnDegPerSec": 360,
-      "ready": { "grip": [-0.1284, 0.9935, -0.1773], "dir": [-0.1539, 0.2682, 0.951], "planeNormal": [-0.9735, -0.2061, -0.0994] },
-      "blade": { "from": 0.35, "to": 1.4, "radius": 0.07 },
+      "otherHandAlong": 0.5,
+      "drawnMoveSpeed": 2.6,
+      "drawnTurnDegPerSec": 300,
+      "ready": { "grip": [-0.2186, 0.8903, -0.0045], "dir": [0.2516, 0.7346, 0.6301], "planeNormal": [-0.8461, 0.4831, -0.2254] },
+      "blade": { "from": 0.95, "to": 1.27, "radius": 0.2 },
       "actions": {
-        "main": "player.reap_scythe.sweep1",
-        "sub": "player.reap_scythe.pull",
-        "drawAttack": "player.reap_scythe.draw_sweep",
-        "draw": "player.reap_scythe.draw",
-        "sheathe": "player.reap_scythe.sheathe",
-        "special": "player.reap_scythe.great"
+        "main": "player.war_maul.smash",
+        "sub": "player.war_maul.charge",
+        "drawAttack": "player.war_maul.draw_smash",
+        "draw": "player.war_maul.draw",
+        "sheathe": "player.war_maul.sheathe"
       },
       "cancelNames": {
-        "rs_sweep1": "player.reap_scythe.sweep1",
-        "rs_sweep2": "player.reap_scythe.sweep2",
-        "rs_spin": "player.reap_scythe.spin",
-        "rs_pull": "player.reap_scythe.pull",
-        "rs_great": "player.reap_scythe.great"
+        "wm_smash": "player.war_maul.smash",
+        "wm_swing": "player.war_maul.swing"
       },
-      "cancelButtons": { "rs_sweep2": "main", "rs_spin": "main", "rs_great": "special" },
-      "momentum": { "max": 3, "decayTicks": 90, "damageScale": [1, 1, 1.1, 1.2], "speedScale": [1, 1, 0.9, 0.8] },
+      "cancelButtons": { "wm_swing": "main" },
+      "guard": null
+    },
+    {
+      "id": "twin_blades",
+      "labels": { "main": "斬る", "sub": "突き込む", "special": "連ね斬り" },
+      "summary": "双剣。両手の剣で手数。当て続けると勢いが上がり、速く強くなる。固有で、勢いを使い切る連撃。守りは無い。",
+      "name": "双剣",
+      "twoHanded": false,
+      "drawnMoveSpeed": 3.8,
+      "drawnTurnDegPerSec": 540,
+      "ready": { "grip": [-0.26, 1.1, 0.24], "dir": [0.1498, 0.7188, 0.6789], "planeNormal": [-0.9838, 0.0401, 0.1745] },
+      "blade": { "from": 0.1, "to": 0.62, "radius": 0.1 },
+      "actions": {
+        "main": "player.twin_blades.slash1",
+        "sub": "player.twin_blades.stab",
+        "drawAttack": "player.twin_blades.draw_cross",
+        "draw": "player.twin_blades.draw",
+        "sheathe": "player.twin_blades.sheathe",
+        "special": "player.twin_blades.flurry"
+      },
+      "cancelNames": {
+        "tb_slash1": "player.twin_blades.slash1",
+        "tb_slash2": "player.twin_blades.slash2",
+        "tb_cross": "player.twin_blades.cross",
+        "tb_stab": "player.twin_blades.stab",
+        "tb_flurry": "player.twin_blades.flurry"
+      },
+      "cancelButtons": { "tb_slash2": "main", "tb_cross": "main", "tb_flurry": "special" },
+      "momentum": { "max": 3, "decayTicks": 90, "damageScale": [1, 1, 1.1, 1.2], "speedScale": [1, 1, 0.92, 0.85] },
+      "offhand": "blade_left",
+      "sheathSocket": "hip",
+      "guard": null
+    },
+    {
+      "id": "long_blade",
+      "labels": { "main": "斬る", "sub": "下がり斬り", "special": "兜割り" },
+      "summary": "太刀。大剣より軽く速い両手の斬り。主は踏み込む 3 連、副は下がりながらの斬り、固有は隙の大きい兜割り。守りは無い。",
+      "name": "太刀",
+      "twoHanded": true,
+      "otherHandAlong": -0.2,
+      "drawnMoveSpeed": 3.2,
+      "drawnTurnDegPerSec": 420,
+      "ready": { "grip": [-0.04, 1.08, 0.34], "dir": [0.0201, 0.4511, 0.8922], "planeNormal": [-0.9998, 0.009, 0.0179] },
+      "blade": { "from": 0.15, "to": 1.2, "radius": 0.12 },
+      "actions": {
+        "main": "player.long_blade.kesa",
+        "sub": "player.long_blade.back_cut",
+        "drawAttack": "player.long_blade.draw_cut",
+        "draw": "player.long_blade.draw",
+        "sheathe": "player.long_blade.sheathe",
+        "special": "player.long_blade.helm"
+      },
+      "cancelNames": {
+        "lb_kesa": "player.long_blade.kesa",
+        "lb_rise": "player.long_blade.rise",
+        "lb_thrust": "player.long_blade.thrust",
+        "lb_back": "player.long_blade.back_cut",
+        "lb_helm": "player.long_blade.helm"
+      },
+      "cancelButtons": { "lb_rise": "main", "lb_thrust": "main", "lb_helm": "special" },
       "guard": null
     },
     {
@@ -200,14 +255,34 @@
       "assetId": "model.weapon.guard_blade.001"
     },
     {
-      "id": "weapon.reap_scythe.001",
-      "family": "reap_scythe",
-      "name": "里鍛ちの旋鎌",
-      "attack": 74,
+      "id": "weapon.war_maul.001",
+      "family": "war_maul",
+      "name": "里鍛ちの大槌",
+      "attack": 86,
       "element": { "type": "none", "value": 0 },
       "affinity": 0,
       "sharpnessModifier": 1.0,
-      "assetId": "model.weapon.reap_scythe.001"
+      "assetId": "model.weapon.war_maul.001"
+    },
+    {
+      "id": "weapon.twin_blades.001",
+      "family": "twin_blades",
+      "name": "里鍛ちの双剣",
+      "attack": 60,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.twin_blades.001"
+    },
+    {
+      "id": "weapon.long_blade.001",
+      "family": "long_blade",
+      "name": "里鍛ちの太刀",
+      "attack": 76,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_blade.001"
     },
     {
       "id": "weapon.long_lance.001",
