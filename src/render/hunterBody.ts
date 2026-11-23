@@ -48,29 +48,21 @@ export function buildHunterBody(): Geo {
   const head: Bones = [B.head, B.head, 0];
 
   // ---- 頭: あご先 1.565 〜 てっぺん 1.75。前が顔、後ろが後頭部。髪のふくらみは輪郭に含める。----
-  tube(
-    'head',
-    [
-      ringY(1.552, 0.04, 0.05, 0.044, [B.neck, B.head, 0.6]),
-      ringY(1.565, 0.05, 0.086, 0.054, head),
-      ringY(1.59, 0.064, 0.098, 0.074, head),
-      ringY(1.622, 0.073, 0.103, 0.09, head),
-      ringY(1.655, 0.078, 0.099, 0.098, head),
-      ringY(1.69, 0.082, 0.097, 0.102, head),
-      ringY(1.72, 0.076, 0.086, 0.097, head),
-      ringY(1.741, 0.054, 0.058, 0.07, head),
-      ringY(1.75, 0.02, 0.02, 0.026, head),
-    ],
-    (r) => r.c.y,
-    {
-      seg: 18, density: 2.6, capEnd: DARK,
-      // 鼻（正面のふくらみ）とあご
-      bulge: (r, a) => {
-        const f = Math.max(0, Math.sin(a));
-        return 0.13 * Math.pow(f, 10) * Math.exp(-0.5 * ((r.c.y - 1.632) / 0.018) ** 2) + 0.05 * Math.pow(f, 6) * Math.exp(-0.5 * ((r.c.y - 1.57) / 0.012) ** 2);
-      },
+  // 各高さの前後の奥行きは、設定図（左真横の図）の横顔の輪郭を測った値。左右の幅は正面の図から。
+  // 鼻は断面の輪に乗らない（幅が狭い）ので、正面だけ細く盛り上げて、横顔の鼻先の位置に合わせる。
+  const headShape: [number, number, number, number][] = [
+    [1.565, 0.046, 0.08, 0.06], [1.578, 0.049, 0.083, 0.062], [1.592, 0.053, 0.085, 0.066], [1.606, 0.058, 0.086, 0.074], [1.62, 0.064, 0.085, 0.083], [1.632, 0.071, 0.083, 0.089],
+    [1.644, 0.074, 0.081, 0.094], [1.656, 0.078, 0.084, 0.094], [1.668, 0.079, 0.092, 0.092], [1.68, 0.078, 0.097, 0.091], [1.695, 0.075, 0.098, 0.085], [1.71, 0.068, 0.094, 0.076],
+    [1.725, 0.052, 0.085, 0.06], [1.738, 0.034, 0.066, 0.041], [1.747, 0.015, 0.036, 0.022],
+  ];
+  tube('head', [ringY(1.552, 0.042, 0.05, 0.048, [B.neck, B.head, 0.6]), ...headShape.map(([y, rx, f, bk]) => ringY(y, rx, f, bk, head))], (r) => r.c.y, {
+    seg: 20, density: 2.6, capEnd: DARK,
+    bulge: (r, a) => {
+      const f = Math.max(0, Math.sin(a));
+      // 鼻（鼻先は高さ 1.62m、横顔で顔の面から約 1.5cm 出る）と、あご先
+      return 0.19 * Math.pow(f, 40) * Math.exp(-0.5 * ((r.c.y - 1.622) / 0.012) ** 2) + 0.03 * Math.pow(f, 8) * Math.exp(-0.5 * ((r.c.y - 1.572) / 0.01) ** 2);
     },
-  );
+  });
 
   // ---- 胴: 首の付け根 〜 腰。肩は外套の下なので、なで肩でよい。----
   // 首は、あごの下から鎖骨まで見える（えりは前が開いている）。上端は頭の中へ入れて、すき間を作らない。
@@ -130,7 +122,7 @@ export function buildHunterBody(): Geo {
     const d = new Vector3(dx, dy, dz).normalize();
     // 毛先は、束ごとに左右どちらかへ流す
     const bend = new Vector3().crossVectors(d, Y).multiplyScalar(i % 2 === 0 ? 0.014 : -0.014).add(new Vector3(0, -0.006, 0));
-    horn(g, new Vector3(x, y, z).addScaledVector(d, -0.006), d, len * 0.72, rad * 0.8, i % 3 === 0 ? HAIR_DARK : HAIR, B.head, 0, bend);
+    horn(g, new Vector3(x, y, z).addScaledVector(d, -0.008), d, len * 0.58, rad * 0.85, i % 3 === 0 ? HAIR_DARK : HAIR, B.head, 0, bend);
   });
   // 耳は小さく、頭に沿わせる（張り出させない）
   for (const side of [1, -1]) blob(g, new Vector3(0.0775 * side, 1.648, -0.01), Y, 0.04, 0.006, 0.014, () => [SKIN[0] * 0.9, SKIN[1] * 0.86, SKIN[2] * 0.84], B.head, 0, 6, 4);

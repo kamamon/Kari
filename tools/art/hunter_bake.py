@@ -132,7 +132,10 @@ def bake(debug=False):
         if kind == 'head':
             # あごより下は、えりの布を拾わないよう、首の幅だけを写す
             narrow = lambda lo, hi: (lambda t: lo + (hi - lo) * sstep(1.562, 1.588, t))
-            return [(FF, 'front', vertical(650, head(40, 710)), narrow(115, 340)), (FL, 'side', vertical(650, head(50, 700)), narrow(130, 420)), (FB, 'back', vertical(632, head(40, 705)), narrow(115, 340))]
+            # 真横の図: あごの高さでは、首の後ろで立つえり（フード）まで人物の区間に入ってしまい、
+            # ほおへ髪やえりの色が写る。軸を顔の側（x=560）へ寄せ、耳の高さより下では後ろをえり足までに限る。
+            side_cap = lambda t: 190 + (440 - 190) * sstep(1.6, 1.66, t)
+            return [(FF, 'front', vertical(650, head(40, 710)), narrow(115, 340)), (FL, 'side', vertical(560, head(50, 700)), side_cap), (FB, 'back', vertical(632, head(40, 705)), narrow(115, 340))]
         if kind == 'torso':
             # 首（高さ 1.5m より上）は、えりや髪を拾わないよう、首の幅だけを写す
             cap = lambda t: 34 + (112 - 34) * sstep(1.5, 1.46, t)
@@ -184,7 +187,8 @@ def bake(debug=False):
         wsum = np.zeros((len(ys), len(xs)), np.float32)
         for im, facing, axis, cap in srcs:
             if facing == 'front':
-                w = 1 - sstep(np.radians(48 if three else 80), np.radians(68 if three else 100), phi)
+                # 頭と脚（横の絵がある所）: 正面の絵を、ほおの手前（54 度）まで使う。目や口が、横の絵と二重に出ないようにする。
+                w = 1 - sstep(np.radians(54 if three else 80), np.radians(72 if three else 100), phi)
                 fo = (1 + np.cos(a)) / 2
                 fl = 1 - np.clip(((a + 2 * np.pi) % (2 * np.pi)) / np.pi, 0, 1)
             elif facing == 'back':
@@ -196,7 +200,7 @@ def bake(debug=False):
                 fo = (1 + np.sin(a)) / 2  # 筒のいちばん上が、絵の上端
                 fl = fo
             else:
-                w = (sstep(np.radians(48), np.radians(68), phi)) * (1 - sstep(np.radians(112), np.radians(132), phi))
+                w = (sstep(np.radians(54), np.radians(72), phi)) * (1 - sstep(np.radians(112), np.radians(132), phi))
                 # 左真横の図は前が絵の左、右真横の図は前が絵の右
                 fo = (1 - np.sin(a)) / 2 if facing == 'side' else (1 + np.sin(a)) / 2
                 fl = fo
