@@ -32,6 +32,11 @@ SHEETS = {
     'gojinShieldBack': dict(src='weapon_gojin_shield_back_v1.png', x0=92, y0=152, w=900, h=1143, cx=542, py0=723.5, m=0.6 / 1109, out=(512, 640), file='gojin_shield_back_v1.webp'),
     # 旋鎌: 全高 1312px = 1.95m。柄の中心 x=701.5。原点は下の握りの中央（py 1090）
     'senren': dict(src='weapon_senren_front_v1.png', x0=180, y0=50, w=565, h=1345, cx=701.5, py0=1090, m=1.95 / 1312, out=(512, 1216), file='senren_v1.webp'),
+    # 長尖槍の槍: 正面の図。全長 1232px = 2.9m。原点は革巻きの握りの中央（py 1120）
+    'chosensoLance': dict(src='weapon_chosenso_lance_front_v1.png', x0=505, y0=100, w=75, h=1265, cx=542, py0=1120, m=2.9 / 1232, out=(96, 1536), file='chosenso_lance_v1.webp'),
+    # 長尖槍の大盾: 高さ 1147px = 1.1m。原点は盾の中央
+    'chosensoShieldFront': dict(src='weapon_chosenso_shield_front_v1.png', x0=220, y0=114, w=646, h=1184, cx=542.5, py0=705.5, m=1.1 / 1147, out=(512, 944), file='chosenso_shield_front_v1.webp'),
+    'chosensoShieldBack': dict(src='weapon_chosenso_shield_back_v1.png', x0=220, y0=114, w=646, h=1184, cx=542.5, py0=705.5, m=1.1 / 1147, out=(512, 944), file='chosenso_shield_back_v1.webp'),
     # 環弓: 横からの図。全高 1315px = 1.5m。原点は弓の上下の中央（握りの中央）、握りの厚みの中心が x=449
     'kankyuBow': dict(src='weapon_kankyu_bow_side_v1.png', x0=385, y0=40, w=265, h=1348, cx=449, py0=713.5, m=1.5 / 1315, out=(256, 1280), file='kankyu_bow_v1.webp', byColor=True),
     # 矢（長さ 1285px = 0.8m。原点は矢の中央）と矢筒（同じ図の右側。原点は筒の中央）
@@ -82,11 +87,25 @@ def main():
     lines.append('} as const satisfies Record<string, ArtSheet>;')
 
     # 盾の外形（表から見て。x は右が +、y は上が +）
-    s = SHEETS['gojinShieldFront']
-    c, _ = cv2.findContours(masks['gojinShieldFront'].astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    poly = cv2.approxPolyDP(max(c, key=cv2.contourArea), 6, True)[:, 0, :]
-    pts = ', '.join('[%.4f, %.4f]' % ((x - s['cx']) * s['m'], (s['py0'] - y) * s['m']) for x, y in poly)
-    lines += ['', '/** 護刃の盾の外形（表から見た角の点。原点は盾の中央） */', 'export const GOJIN_SHIELD_OUTLINE: readonly (readonly [number, number])[] = [%s];' % pts]
+    for key, const, label in (('gojinShieldFront', 'GOJIN_SHIELD_OUTLINE', '護刃の盾'), ('chosensoShieldFront', 'CHOSENSO_SHIELD_OUTLINE', '長尖槍の大盾')):
+        s = SHEETS[key]
+        c, _ = cv2.findContours(masks[key].astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        poly = cv2.approxPolyDP(max(c, key=cv2.contourArea), 6, True)[:, 0, :]
+        pts = ', '.join('[%.4f, %.4f]' % ((x - s['cx']) * s['m'], (s['py0'] - y) * s['m']) for x, y in poly)
+        lines += ['', '/** %sの外形（表から見た角の点。原点は盾の中央） */' % label, 'export const %s: readonly (readonly [number, number])[] = [%s];' % (const, pts)]
+
+    # 槍: 穂先から石突へ [高さ, 正面の図での半幅, 真横の図での半幅]。2 枚の図は同じ高さに描かれている。
+    s = SHEETS['chosensoLance']
+    fm, sm = masks['chosensoLance'], hb.load('weapon_chosenso_lance_side_v1.png')['mask']
+    rows = list(range(120, 470, 6)) + list(range(470, 1300, 46)) + list(range(1300, 1351, 5)) + [1350]
+    lance = []
+    for y in rows:
+        wf, ws = int(fm[y].sum()), int(sm[min(y, 1349)].sum())
+        if y < 370:
+            ws = max(ws, 3)  # 真横の図は、穂先のいちばん先が細すぎて欠ける
+        lance.append('[%.4f, %.4f, %.4f]' % ((s['py0'] - y) * s['m'], wf * s['m'] / 2, max(ws, 4) * s['m'] / 2))
+    lines += ['', '/** 長尖槍の槍。穂先から石突へ [高さ, 正面の図での半幅, 真横の図での半幅]。原点は握りの中央 */',
+              'export const CHOSENSO_LANCE: readonly (readonly [number, number, number])[] = [', '  ' + ', '.join(lance) + ',', '];']
 
     # 鎌の刃: 刃先から根元へ、[z, 上の端の高さ, 下の端の高さ]。柄と金具（x >= 688px）は含めない。
     s = SHEETS['senren']

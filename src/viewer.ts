@@ -22,6 +22,7 @@ import { buildGuardBladeShield, buildGuardBladeSword } from './render/guardBlade
 import { buildHeavyBlade, type WeaponModel } from './render/heavyBlade';
 import { DummyRig, type MonsterRig } from './render/monsterRig';
 import { CLIPS, JOINTS, clipPose, emptyPose, locomotionPose } from './render/poses';
+import { buildGreatShield, buildLance } from './render/lance';
 import { HunterRig } from './render/rig';
 import { buildScythe } from './render/scythe';
 
@@ -80,9 +81,12 @@ const stand = (key: string, model: WeaponModel, x: number, y: number, turn: numb
   rack.add(model.group);
   rackModels[key] = model;
 };
-stand('guardShield', buildGuardBladeShield(), -1.7, 0.3, 0);
-stand('guardSword', buildGuardBladeSword(), -1.2, 0.1224, Math.PI / 2);
-stand('heavyBlade', buildHeavyBlade(), -0.72, 0.155, Math.PI / 2);
+// 左から: 護刃（盾・剣）、断岳剣、長尖槍（槍・大盾）、ハンター、旋鎌、環弓（弓・矢・矢筒）
+stand('guardShield', buildGuardBladeShield(), -3.0, 0.3, 0);
+stand('guardSword', buildGuardBladeSword(), -2.55, 0.1224, Math.PI / 2);
+stand('heavyBlade', buildHeavyBlade(), -2.05, 0.155, Math.PI / 2);
+stand('lance', buildLance(), -1.55, 0.541, Math.PI / 2);
+stand('greatShield', buildGreatShield(), -0.95, 0.55, 0);
 stand('scythe', buildScythe(), 1.05, 0.4295, Math.PI / 2);
 stand('bow', buildBow(), 1.55, 0.75, Math.PI / 2);
 stand('arrow', buildArrow(), 1.95, 0.4, Math.PI / 2);
@@ -260,11 +264,12 @@ function setSubject(s: 'hunter' | MonsterKey | 'glb' | 'weapons'): void {
   rack.visible = s === 'weapons';
   // 一覧では、ハンターは大きさの目安として立たせるだけ（手の剣と、取り付け位置の印は消す）
   hunter.weapon.visible = s !== 'weapons';
+  state.lookX = s === 'weapons' ? -0.35 : 0; // 一覧は左右に長いので、中央を見る
   cube.visible = axes.visible = s !== 'weapons'; // 物差しの立方体は、並べた武器と重なるので消す
   if (s === 'weapons') for (const ax of socketAxes) ax.visible = false;
   for (const [k, v] of Object.entries(monsters)) v.rig.root.visible = s === k;
   if (glbRoot) glbRoot.visible = s === 'glb';
-  state.camDist = s === 'dummy' ? 9 : s === 'galdros' ? 10 : 5.2;
+  state.camDist = s === 'dummy' ? 9 : s === 'galdros' ? 10 : s === 'weapons' ? 9 : 5.2;
   syncActions();
 }
 
