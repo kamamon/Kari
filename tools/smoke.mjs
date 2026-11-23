@@ -194,6 +194,12 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const result = await page.textContent('.menu-body pre');
   // このテストは途中で位置や標的の状態を直接書き換えているので、「いまの画面との一致」は対象外。60 と 30 の一致だけを見る。
   check('30/60fps の一致チェック', /結果: 一致/.test(result), result.split('\n')[3]);
+  // 報告用の情報: 装備（選んでいる武器）、設定、描画の間隔の計測値が出る
+  const report = await page.evaluate(() => [...document.querySelectorAll('.menu-body pre')].map((e) => e.textContent).join('\n'));
+  const frameLine = report.split('\n').find((l) => l.startsWith('描画の間隔')) ?? '';
+  check('検証メニューの報告に、装備・設定・描画の間隔（平均 / p95 / 100ms 超）が出る',
+    /装備：weapon\.heavy_blade\.001/.test(report) && /設定：描画の上限 \d+fps \/ 内部解像度 [\d.]+ \/ 影/.test(report) && /平均 [\d.]+ms \/ p95 [\d.]+ms \/ 最大 \d+ms \/ 100ms 超 \d+ 回/.test(frameLine),
+    `${frameLine}（ヘッドレスのソフトウェア描画の値。実機の値ではない）`);
   await page.screenshot({ path: `${OUT}15_menu_verify.png` });
   await page.click('.menu-head .tab:nth-child(2)');
   await page.screenshot({ path: `${OUT}16_menu_settings.png` });

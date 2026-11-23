@@ -9,6 +9,9 @@ export interface MenuHost {
   restartTraining(): void;
   resumeAudio(): Promise<boolean>;
   runDeterminismCheck(): string;
+  /** 報告に付ける行（装備・設定・描画の計測） */
+  reportLines(): string[];
+  resetMeter(): void;
   audioState(): string;
   /** いまの行き先（訓練か依頼か）と、その説明 */
   sessionInfo(): { hunt: boolean; done: boolean; title: string; lines: string[] };
@@ -245,13 +248,18 @@ export class Menu {
     out.textContent = '「確認する」を押すと、出発してから記録した入力を描画 60fps と 30fps の両方で再生し、\n同じ tick の結果（命中・HP・状態・スタミナ）が一致するかを比べます。';
     this.row('30 / 60fps の一致', '', this.button('確認する', () => (out.textContent = this.host.runDeterminismCheck())));
     this.body.appendChild(out);
-    this.heading('不具合報告用の情報');
+    this.heading('報告用の情報（不具合・重さ）');
+    this.row('重さの計測', '狩場で 1 分ほど動かしてからここを開くと、下の「描画の間隔」に結果が出ます', this.button('計測をやり直す', () => {
+      this.host.resetMeter();
+      this.host.closeMenu();
+    }));
     const info = document.createElement('pre');
     const report = [
       `ビルド・コミット：v${APP_VERSION} (${BUILD_ID})`,
       `機種 / OS / ブラウザ：${navigator.userAgent}`,
       `画面：${window.innerWidth}×${window.innerHeight} DPR ${window.devicePixelRatio}`,
-      `クエスト / 装備 / 素材ID：${this.host.sessionInfo().title} / weapon.heavy_blade.001`,
+      `クエスト：${this.host.sessionInfo().title}`,
+      ...this.host.reportLines(),
       '操作手順：1 → 2 → 3',
       '期待した結果 / 実際の結果：',
       '再現頻度 / 録画 / コンソールログ：',

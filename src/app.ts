@@ -2,6 +2,7 @@
 // 行き先は 拠点（選択画面）/ 訓練場 / 依頼 の 3 つ。依頼の成否は simulation が決め、ここは表示するだけ。
 import { AudioSystem } from './core/audio';
 import { FixedClock } from './core/clock';
+import { FrameMeter, describeFrames, type FrameSummary } from './core/frameMeter';
 import { yawOf } from './core/math';
 import type { Content } from './data/schemas';
 import { Btn, type InputFrame } from './game/inputFrame';
@@ -45,6 +46,11 @@ export class App implements MenuHost, BaseHost, ResultHost {
   private lastTs = 0;
   private lastRender = 0;
   private fps = 60;
+  /** 描画の間隔の記録（実機の重さの報告用）。止まっていた間と、その直後の 1 フレームは入れない。 */
+  private meter = new FrameMeter();
+  private meterSummary: FrameSummary = this.meter.summary();
+  private meterSkip = true;
+  private meterAge = 0;
   private paused = false;
   private warned = new Set<string>();
   private portrait = matchMedia('(orientation: portrait) and (pointer: coarse)');
@@ -297,6 +303,26 @@ export class App implements MenuHost, BaseHost, ResultHost {
     return this.audio.resume();
   }
 
+  /** 不具合や重さの報告に付ける行（装備・設定・描画の計測）。 */
+  reportLines(): string[] {
+    const v = this.store.value;
+    const info = this.view.stats();
+    return [
+      `装備：${this.weaponId}`,
+      `設定：描画の上限 ${v.fpsCap}fps / 内部解像度 ${v.renderScale.toFixed(2)} / 影 ${v.shadows ? 'あり' : 'なし'}`,
+      describeFrames(this.meter.summary()),
+      `描画量：draw calls ${info.calls} / 三角形 ${info.triangles}（メニューを開く直前の 1 フレーム）　捨てた tick ${this.clock.droppedTicks}`,
+      '※ 間隔は画面の更新と更新の間の時間で、GPU の処理時間そのものではありません。',
+    ];
+  }
+
+  /** 計測をやり直す（設定を変えた後や、場面を変えて測りたい時）。 */
+  resetMeter(): void {
+    this.meter.reset();
+    this.meterSummary = this.meter.summary();
+    this.meterSkip = true;
+  }
+
   audioState(): string {
     return this.audio.state;
   }
@@ -335,8 +361,16 @@ export class App implements MenuHost, BaseHost, ResultHost {
       this.releaseInputs();
     }
     if (this.lastTs === 0) this.lastTs = ts;
-    const dt = Math.min(0.25, (ts - this.lastTs) / 1000);
+    const rawMs = ts - this.lastTs;
+    const dt = Math.min(0.25, rawMs / 1000);
     this.lastTs = ts;
+    if (paused) this.meterSkip = true;
+    else if (this.meterSkip) this.meterSkip = false;
+    else this.meter.push(rawMs);
+    if (++this.meterAge >= 30) {
+      this.meterAge = 0;
+      this.meterSummary = this.meter.summary();
+    }
     if (dt > 0) this.fps += (1 / dt - this.fps) * 0.08;
 
     let alpha = 1;
@@ -379,7 +413,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
     }
     this.view.update(this.sim, alpha, paused ? 0 : dt, paused ? { x: 0, y: 0 } : this.hub.consumeLook(), this.store.value.verify);
     this.view.render();
-    this.hud.update(this.sim, this.view, { fps: this.fps, droppedTicks: this.clock.droppedTicks }, dt);
+    this.hud.update(this.sim, this.view, { fps: this.fps, droppedTicks: this.clock.droppedTicks, frames: this.meterSummary }, dt);
   };
 
   private playSounds(events: ReturnType<Simulation['drainEvents']>): void {

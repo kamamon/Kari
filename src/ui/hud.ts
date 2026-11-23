@@ -1,6 +1,7 @@
 // HUD。3D は Canvas、文字と数値は HTML で描く。値が変わった時だけ DOM を触る。
 // 敵の HP は通常は表示せず、検証表示を入れた時だけ出す。
 import { APP_VERSION, BUILD_ID } from '../core/assets';
+import type { FrameSummary } from '../core/frameMeter';
 import { phaseAt } from '../game/action';
 import type { SimEvent } from '../game/events';
 import { familyOf, isInvulnerable } from '../game/player';
@@ -19,6 +20,8 @@ function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls: string, parent: 
 export interface FrameStats {
   fps: number;
   droppedTicks: number;
+  /** 描画の間隔の集計（直近の約 15 秒） */
+  frames: FrameSummary;
 }
 
 export class Hud {
@@ -259,6 +262,7 @@ export class Hud {
     const lines = [
       `v${APP_VERSION} build ${BUILD_ID}  seed ${sim.options.seed}  tick ${sim.tick}`,
       `描画 ${stats.fps.toFixed(0)}fps / 計算 60Hz  calls ${info.calls}  tris ${(info.triangles / 1000).toFixed(1)}k  捨てtick ${stats.droppedTicks}`,
+      `間隔 平均 ${stats.frames.avgMs.toFixed(1)}ms  p95 ${stats.frames.p95Ms.toFixed(1)}ms  最大 ${stats.frames.maxMs.toFixed(0)}ms  100ms超 ${stats.frames.longFrames}回`,
       `player ${p.mode}${p.drawn ? ' 抜刀' : ' 納刀'}  HP ${p.hp}  ST ${p.stamina.toFixed(1)}${isInvulnerable(p) ? '  無敵' : ''}`,
       a
         ? `  ${a.def.actionId}\n  tick ${a.tick}/${a.def.durationTicks} ${phaseAt(a.def, Math.min(a.tick, a.def.durationTicks - 1))?.id ?? ''}  hitstop ${a.hitstop}  溜め ${a.chargeTicks}(Lv${a.chargeLevel})`
