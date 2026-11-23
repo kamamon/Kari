@@ -1,6 +1,6 @@
 // ガルドロスの素材で強化した武器（岩殻 → 脈殻 → 晶殻 → 輝殻）の仮の見た目。
 // 設定図がまだ無いので、元の武器の形に、単色の岩の板と青銅色の留め帯を足すだけにしてある（当たり判定は元の武器と同じ）。
-// 段が上がると、板の色が変わり（岩 → 暗い岩 → 晶の緑青 → 光る晶）、少しだけ大きくなる。板の位置は 4 段とも同じ。
+// 段が上がると、板の色が変わり（岩 → 暗い岩 → 琥珀色の晶 → 光る晶。ガルドロスの晶の色）、少しだけ大きくなる。板の位置は 4 段とも同じ。
 // 断岳剣だけは heavyBlade.ts の中で同じことをしている（先に作ったため。色は同じ表を使う）。
 // 武器の向きは共通: 原点が握り、+Y が先、-Z が刃（弓は背）、+Z が峰（弓は弦）。単位 m。
 import { BoxGeometry, Mesh, MeshLambertMaterial } from 'three';
@@ -66,8 +66,9 @@ export interface ShellPalette {
 export const SHELL_PALETTES: Record<number, ShellPalette> = {
   2: { rock: 0xa69c8b, rockDark: 0x7c7466, band: 0xb08a4e, glow: 0, scale: 1 },
   3: { rock: 0x80705a, rockDark: 0x54493b, band: 0xd6a04a, glow: 0, scale: 1.06 },
-  4: { rock: 0x5f9a8f, rockDark: 0x3f6f68, band: 0xcda65c, glow: 0x0c2a26, scale: 1.12 },
-  5: { rock: 0xd4efe4, rockDark: 0x86d6c4, band: 0xecd07a, glow: 0x2c6c60, scale: 1.18 },
+  // 晶殻・輝殻は、ガルドロスの晶（尾の先の塊と同じ、青銅色〜琥珀色）の色にする
+  4: { rock: 0xc08a3a, rockDark: 0x8a5f24, band: 0xe6bf66, glow: 0x2a1905, scale: 1.12 },
+  5: { rock: 0xf4d27c, rockDark: 0xdba640, band: 0xfff1b8, glow: 0x6e4c12, scale: 1.18 },
 };
 /** モデルの ID の末尾（.002〜.005）から段を読む。読めなければ 2 */
 export const tierOf = (modelId: string): number => {

@@ -266,9 +266,9 @@ describe('防具（5 部位 × 5 段）', () => {
   it('強化すると、その部位の防具が入れ替わり、防御力の合計が上がる。素材と通貨が減る', async () => {
     const b = new MemoryBackend();
     const m = await open(b);
-    await m.settle(rewards('run-1', 200, [[SHELL, 5], [BONE, 3]]));
+    await m.settle(rewards('run-1', 200, [[SHELL, 4], [BONE, 2]]));
     expect(await m.craft('recipe.armor.head.002')).toEqual({ ok: true }); // 岩殻片 2 + 硬骨 1 + 80
-    expect(await m.craft('recipe.armor.chest.002')).toEqual({ ok: true }); // 岩殻片 3 + 硬骨 2 + 80
+    expect(await m.craft('recipe.armor.chest.002')).toEqual({ ok: true }); // 岩殻片 2 + 硬骨 1 + 80（設計書 p.17 の例）
     expect(m.doc.armor).toEqual(['armor.head.002', 'armor.chest.002', 'armor.arms.001', 'armor.waist.001', 'armor.legs.001']);
     expect(defenseOf(m.doc, content)).toBe(12);
     expect(m.doc.money).toBe(40);
@@ -576,17 +576,17 @@ describe('実機で書き出したデータ（tests/fixtures/save-v1-device-0.7.
     expect(await again.backups()).toHaveLength(1);
   });
 
-  it('この持ち物で強化できる武器は太刀と双剣、防具は頭と腰。太刀を強化すると、装備が岩殻の太刀になり、青銅晶脈が無くなる', async () => {
+  it('この持ち物で強化できる武器は太刀と双剣、防具は頭・胴・腰。太刀を強化すると、装備が岩殻の太刀になり、青銅晶脈が無くなる', async () => {
     const m = await open(new MemoryBackend());
     await m.importText(text);
     const can = (): string[] => [...content.recipes.values()].filter((r) => checkCraft(m.doc, r).ok).map((r) => r.id).sort();
-    expect(can()).toEqual(['recipe.armor.head.002', 'recipe.armor.waist.002', 'recipe.long_blade.002', 'recipe.twin_blades.002']);
+    expect(can()).toEqual(['recipe.armor.chest.002', 'recipe.armor.head.002', 'recipe.armor.waist.002', 'recipe.long_blade.002', 'recipe.twin_blades.002']);
     expect(await m.craft('recipe.long_blade.002')).toEqual({ ok: true });
     expect(m.doc.equippedWeaponId).toBe('weapon.long_blade.002');
     expect(playWeaponId(m.doc, content)).toBe('weapon.long_blade.002');
     expect(m.doc.money).toBe(1080);
     expect(m.doc.items).toEqual({ [SHELL]: 4, [BONE]: 1 });
     expect(m.doc.settledRuns).toHaveLength(2);
-    expect(can()).toEqual(['recipe.armor.head.002']); // 腰は青銅晶脈が要る
+    expect(can()).toEqual(['recipe.armor.chest.002', 'recipe.armor.head.002']); // 腰は青銅晶脈が要る
   });
 });

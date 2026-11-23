@@ -611,7 +611,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     const first = boxes[0]?.textContent ?? '';
     const heavy = boxes.find((b) => b.dataset.recipe === 'recipe.heavy_blade.002');
     return boxes.length === 12 && /里鍛ちの太刀 → 岩殻の太刀/.test(first) && /攻撃力 76 → 87/.test(first) && /岩殻片 7 \/ 3/.test(first) && /青銅晶脈 2 \/ 2/.test(first) && !boxes[0].querySelector('button.go').disabled
-      && /不足 硬骨 1 \/ 2|硬骨 1 \/ 2/.test(heavy.textContent) && heavy.querySelector('button.go').disabled && /強化できます: 4/.test(document.querySelector('#base-forge > summary').textContent); // 武器は太刀と双剣、防具は頭と腰（どちらも青銅晶脈 2 を使うので、作れるのは片方）
+      && /不足 硬骨 1 \/ 2|硬骨 1 \/ 2/.test(heavy.textContent) && heavy.querySelector('button.go').disabled && /強化できます: 5/.test(document.querySelector('#base-forge > summary').textContent); // 武器は太刀と双剣、防具は頭・胴・腰（どちらも青銅晶脈 2 を使うので、作れるのは片方）
   }), await page.evaluate(() => document.querySelector('.forge-recipe')?.textContent ?? ''));
   await page.screenshot({ path: `${OUT}72_forge_seven.png` });
   await page.click('.forge-recipe button.go');
