@@ -1,0 +1,205 @@
+"""基準ハンターの体の絵（区画に並べた 1 枚）を、設定図から作る。
+
+入力:
+  tools/out/hunter_atlas.json … node tools/export-hunter-atlas.mjs が書く（区画の位置と目印の値）
+  art-source/player/hunter_base_{front,back}_v1.png … 体（全身図の正面と背面）
+  art-source/player/hunter_face_{front,left,back}_v1.png … 頭（顔と髪の近接図）
+出力（ゲームが読む）:
+  public/assets/textures/hunter/hunter_body_v1.webp（1024 四方）
+
+写し方: 体の各部は筒。筒の前半分へ正面図、後ろ半分へ背面図を写す（頭だけは、横へ左真横の図も使う。右側は鏡写し）。
+筒の各高さ（腕と脚は付け根からの距離）ごとに、設定図の中の「軸の点」と「横切る向き」を決め、
+その線が人物の輪郭と交わる 2 点を自動で測って、筒の左右の端に合わせる（輪郭に合わせて伸び縮みする）。
+設定図は腕を開いた姿、モデルの静止姿勢は腕を下ろした姿なので、腕は設定図の腕の向きに沿って写す。
+
+使い方: python3 tools/art/hunter_bake.py [--debug]
+"""
+import json
+import os
+import sys
+import cv2
+import numpy as np
+
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+SRC = os.path.join(ROOT, 'art-source/player')
+DST = os.path.join(ROOT, 'public/assets/textures/hunter')
+OUT_SIZE = 1024
+# 全身図: 1px = 1.35mm、足の裏の行
+MM = 0.00135
+SOLE = 1362.0
+# 体の横（前後の絵の境目）で、角度に比例した写し方をどれだけ混ぜるか（0 = 見えたまま。端が引き伸ばされる）
+WRAP_BODY = 0.35
+# 明るさの倍率（ゲームの照明の下で、設定図の見え方に近づける）
+GAIN = 1.12
+
+
+def load(name):
+    img = cv2.imread(os.path.join(SRC, name)).astype(np.float32)
+    lab = cv2.cvtColor(img.astype(np.uint8), cv2.COLOR_BGR2LAB).astype(np.float32)
+    bg = np.median(lab[:30, :30].reshape(-1, 3), axis=0)
+    # 人物 = 絵の端からつながった背景「以外」。生成りの服のように背景と色が近い所も、内側なら人物に入る。
+    like = (np.abs(lab - bg).sum(axis=2) < 20).astype(np.uint8) * 255
+    h, w = like.shape
+    # 足元の影（彩度の低い灰色）も背景として扱う
+    hsv = cv2.cvtColor(img.astype(np.uint8), cv2.COLOR_BGR2HSV)
+    like[(hsv[..., 1] < 40) & (np.arange(h)[:, None] > h * 0.9) & (lab[..., 0] > 120)] = 255
+    ff = np.zeros((h + 2, w + 2), np.uint8)
+    for sx, sy in [(1, 1), (w - 2, 1), (1, h // 2), (w - 2, h // 2), (w // 2, 1)]:
+        if like[sy, sx] == 255:
+            cv2.floodFill(like, ff, (sx, sy), 128)
+    mask = like != 128
+    mask = cv2.morphologyEx(mask.astype(np.uint8), cv2.MORPH_OPEN, np.ones((3, 3), np.uint8)).astype(bool)
+    rows = np.where(mask[:200].sum(axis=1) > 6)[0]
+    xs = np.where(mask[rows[0] + 40])[0]
+    return {'img': img, 'mask': mask, 'cx': float(xs.min() + xs.max()) / 2}
+
+
+def polyline(points):
+    """[(t, x, y), ...] → t から (中心 x, 中心 y, 横切る向き nx, ny) を返す関数。横切る向きは絵の右側を向く。"""
+    ts = np.array([p[0] for p in points], np.float32)
+    xs = np.array([p[1] for p in points], np.float32)
+    ys = np.array([p[2] for p in points], np.float32)
+
+    def f(t):
+        cx = np.interp(t, ts, xs)
+        cy = np.interp(t, ts, ys)
+        i = np.clip(np.searchsorted(ts, t, side='right') - 1, 0, len(ts) - 2)
+        dx, dy = xs[i + 1] - xs[i], ys[i + 1] - ys[i]
+        n = np.hypot(dx, dy)
+        nx, ny = dy / n, -dx / n
+        flip = nx < 0
+        return cx, cy, np.where(flip, -nx, nx), np.where(flip, -ny, ny)
+
+    return f
+
+
+def vertical(cx, rowOf):
+    return lambda t: (np.full_like(t, cx), rowOf(t), np.ones_like(t), np.zeros_like(t))
+
+
+def edges(mask, cx, cy, nx, ny, cap):
+    """行ごとに、軸の点を含む（無ければいちばん近い）人物の区間の両端（軸からの距離 px）を測る。"""
+    h, w = mask.shape
+    s = np.arange(-cap, cap + 1, dtype=np.float32)
+    lo = np.zeros(len(cx), np.float32)
+    hi = np.zeros(len(cx), np.float32)
+    for i in range(len(cx)):
+        px = np.clip(np.round(cx[i] + nx[i] * s).astype(int), 0, w - 1)
+        py = np.clip(np.round(cy[i] + ny[i] * s).astype(int), 0, h - 1)
+        m = mask[py, px]
+        if not m.any():
+            lo[i], hi[i] = -cap * 0.5, cap * 0.5
+            continue
+        idx = np.where(m)[0]
+        c = cap if m[cap] else idx[np.argmin(np.abs(idx - cap))]
+        a = c
+        while a > 0 and m[a - 1]:
+            a -= 1
+        b = c
+        while b < len(m) - 1 and m[b + 1]:
+            b += 1
+        lo[i], hi[i] = s[a], s[b]
+    k = 9
+    pad = lambda v: np.pad(v, k // 2, mode='edge')
+    med = lambda v: np.median(np.lib.stride_tricks.sliding_window_view(pad(v), k), axis=1)
+    return med(lo) + 3, med(hi) - 3
+
+
+def sstep(a, b, x):
+    t = np.clip((x - a) / (b - a), 0, 1)
+    return t * t * (3 - 2 * t)
+
+
+def bake(debug=False):
+    data = json.load(open(os.path.join(ROOT, 'tools/out/hunter_atlas.json')))
+    size = data['size']
+    F, Bk = load('hunter_base_front_v1.png'), load('hunter_base_back_v1.png')
+    FF, FL, FB = load('hunter_face_front_v1.png'), load('hunter_face_left_v1.png'), load('hunter_face_back_v1.png')
+    row = lambda y: SOLE - y / MM
+    lin = lambda t, t0, r0, t1, r1: r0 + (r1 - r0) * (t - t0) / (t1 - t0)
+    mirror = lambda im, pts: [(t, 2 * im['cx'] - x, y) for (t, x, y) in pts]
+    # 正面図での、人物の右腕・右脚（絵の左側）の軸。左側と背面図は、中心で折り返す。
+    ARM = [(0, 415, 300), (0.29, 267, 478), (0.56, 118, 655), (0.68, 92, 748)]
+    LEG = [(0, 468, 735), (0.43, 427, 1052), (0.87, 413, 1312)]
+    FOOT = [(-0.075, 413, 1288), (0.19, 413, 1344)]
+    head = lambda top, chin: (lambda t: lin(t, 1.565, chin, 1.75, top))
+
+    def body(kind):
+        """区画ごとの写す元: [(絵, 向き 'front'|'back'|'side', 軸の関数, 幅の上限)]"""
+        if kind == 'head':
+            return [(FF, 'front', vertical(650, head(40, 710)), 340), (FL, 'side', vertical(650, head(50, 700)), 420), (FB, 'back', vertical(632, head(40, 705)), 340)]
+        if kind == 'torso':
+            return [(F, 'front', vertical(F['cx'], row), 112), (Bk, 'back', vertical(Bk['cx'], row), 112)]
+        if kind == 'mantle':
+            r = lambda t: lin(t, 1.6, 214, 1.335, 392)
+            return [(F, 'front', vertical(F['cx'], r), 260), (Bk, 'back', vertical(Bk['cx'], r), 260)]
+        if kind == 'skirt':
+            r = lambda t: lin(t, 1.07, 572, 0.77, 800)
+            return [(F, 'front', vertical(F['cx'], r), 172), (Bk, 'back', vertical(Bk['cx'], r), 172)]
+        base = ARM if kind.startswith('arm') else LEG if kind.startswith('leg') else FOOT
+        cap = 54 if kind.startswith('arm') else 74 if kind.startswith('leg') else 104
+        left = kind.endswith('L')
+        # 正面図では、人物の左（+X）が絵の右。背面図では、人物の左が絵の左。
+        pf = mirror(F, [(t, x - 538 + F['cx'], y) for t, x, y in base]) if left else [(t, x - 538 + F['cx'], y) for t, x, y in base]
+        pb = [(t, x - 538 + Bk['cx'], y) for t, x, y in base] if left else mirror(Bk, [(t, x - 538 + Bk['cx'], y) for t, x, y in base])
+        return [(F, 'front', polyline(pf), cap), (Bk, 'back', polyline(pb), cap)]
+
+    out = np.zeros((size, size, 3), np.float32)
+    filled = np.zeros((size, size), bool)
+    PAD = 7
+    for c in data['charts']:
+        x0, y0, x1, y1 = c['rect']
+        xs = np.arange(max(0, x0 - PAD), min(size, x1 + PAD))
+        ys = np.arange(max(0, y0 - PAD), min(size, y1 + PAD))
+        u = ((xs + 0.5 - x0) / (x1 - x0)) % 1.0
+        v = np.clip((ys + 0.5 - y0) / (y1 - y0), 0, 1)
+        t = np.interp(v, np.array(c['v'], np.float32), np.array(c['t'], np.float32)).astype(np.float32)
+        a = -np.pi / 2 + 2 * np.pi * u  # 0 = +X（人物の左）、π/2 = 前、π = 右、-π/2 = 後ろ
+        phi = np.abs((a - np.pi / 2 + np.pi) % (2 * np.pi) - np.pi)  # 真正面からの角度
+        srcs = body(c['kind'])
+        three = len(srcs) == 3
+        acc = np.zeros((len(ys), len(xs), 3), np.float32)
+        wsum = np.zeros((len(ys), len(xs)), np.float32)
+        for im, facing, axis, cap in srcs:
+            if facing == 'front':
+                w = 1 - sstep(np.radians(48 if three else 80), np.radians(68 if three else 100), phi)
+                fo = (1 + np.cos(a)) / 2
+                fl = 1 - np.clip(((a + 2 * np.pi) % (2 * np.pi)) / np.pi, 0, 1)
+            elif facing == 'back':
+                w = sstep(np.radians(112 if three else 80), np.radians(132 if three else 100), phi)
+                fo = (1 - np.cos(a)) / 2
+                fl = np.clip((2 * np.pi - ((a + 2 * np.pi) % (2 * np.pi))) / np.pi, 0, 1)
+            else:
+                w = (sstep(np.radians(48), np.radians(68), phi)) * (1 - sstep(np.radians(112), np.radians(132), phi))
+                fo = (1 - np.sin(a)) / 2  # 前が絵の左（左真横の図。右側は鏡写し）
+                fl = fo
+            if not (w > 0).any():
+                continue
+            wrap = 0.0 if three else WRAP_BODY
+            f = (fo * (1 - wrap) + fl * wrap).astype(np.float32)
+            cx, cy, nx, ny = axis(t)
+            lo, hi = edges(im['mask'], cx, cy, nx, ny, cap)
+            sx = lo[:, None] + (hi - lo)[:, None] * f[None, :]
+            mx = (cx[:, None] + nx[:, None] * sx).astype(np.float32)
+            my = (cy[:, None] + ny[:, None] * sx).astype(np.float32)
+            tex = cv2.remap(im['img'], mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
+            acc += tex * w[None, :, None]
+            wsum += w[None, :]
+        acc /= np.maximum(wsum, 1e-4)[..., None]
+        out[ys[0]:ys[-1] + 1, xs[0]:xs[-1] + 1] = acc
+        filled[ys[0]:ys[-1] + 1, xs[0]:xs[-1] + 1] = True
+    out *= GAIN
+    avg = out[filled].mean(axis=0)
+    out[~filled] = avg
+    out[0:72, 0:72] = 255  # 絵を貼らない頂点が指す白い区画
+    small = cv2.resize(np.clip(out, 0, 255).astype(np.uint8), (OUT_SIZE, OUT_SIZE), interpolation=cv2.INTER_AREA)
+    path = os.path.join(DST, 'hunter_body_v1.webp')
+    cv2.imwrite(path, small, [cv2.IMWRITE_WEBP_QUALITY, 88])
+    b, g, r = avg
+    print('体: %s  %d KB  平均の色 #%02x%02x%02x' % (os.path.relpath(path, ROOT), os.path.getsize(path) // 1024, int(r), int(g), int(b)))
+    if debug:
+        cv2.imwrite(os.path.join(ROOT, 'tools/out/art/_hunter_atlas_preview.jpg'), cv2.resize(small, (760, 760)))
+
+
+if __name__ == '__main__':
+    bake('--debug' in sys.argv)

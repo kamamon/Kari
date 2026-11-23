@@ -1,15 +1,23 @@
-// 関節付きの仮ハンター。プリミティブを骨の階層に並べただけの仮素材で、正式モデル（GLB）の差し替え口になる。
+// 関節付きの仮ハンター（2 代目）。骨の階層へ、設定図に合わせた体の皮（hunterBody.ts）を重み付けして付ける。
+// コードで組んだ仮素材で、正式モデル（GLB）の差し替え口になる。
 // 骨と socket の名前・向きは docs/animation-contract.md と揃える。
 //   root → pelvis → spine → chest → neck → head / 腕 / 脚、socket_hand_r / socket_hand_l / socket_back / socket_hip
 // 単位 m、Y 上、+Z 前。身長 1.75m。右手側は -X。
 import {
-  BoxGeometry, CylinderGeometry, ExtrudeGeometry, Group, Matrix4, Mesh, MeshLambertMaterial, Object3D, Quaternion, Shape, SphereGeometry, Vector3,
+  Bone, BoxGeometry, CylinderGeometry, DataTexture, DoubleSide, ExtrudeGeometry, Group, Matrix4, Mesh, MeshLambertMaterial, Object3D, Quaternion, SRGBColorSpace, Shape, Skeleton,
+  SkinnedMesh, SphereGeometry, TextureLoader, Vector3,
 } from 'three';
+import { assetUrl } from '../core/assets';
+import { HUNTER_ATLAS } from './hunterAtlas';
+import { REST, buildHunterBody } from './hunterBody';
 import { JOINTS, type BodyPose, type JointName } from './poses';
+import { packCharts, type AtlasChart } from './procGeo';
+
+const HUNTER_TEX = 'assets/textures/hunter/hunter_body_v1.webp';
 
 const D2R = Math.PI / 180;
-const UPPER_ARM = 0.29;
-const FOREARM = 0.27;
+const UPPER_ARM = REST.upperArm;
+const FOREARM = REST.forearm;
 const HAND = 0.04;
 const TUMBLE_PIVOT = 0.55;
 
@@ -68,6 +76,13 @@ export class HunterRig {
   private tumbleBack = new Group();
   private body = new Group();
   private materials: MeshLambertMaterial[] = [];
+  /** 体の絵を貼る区画（書き出しと検査用）と、区画の並びが焼いた絵と同じか */
+  atlasCharts: AtlasChart[] = [];
+  atlasStored = false;
+  /** 設定図から焼いた絵の読み込みが終わったか / 失敗したか */
+  artLoaded = false;
+  artFailed = false;
+  bodyTriangles = 0;
   // 計算用の使い回し
   private v1 = new Vector3();
   private v2 = new Vector3();
@@ -79,16 +94,9 @@ export class HunterRig {
   private m2 = new Matrix4();
 
   constructor() {
-    const C = HUNTER_COLORS;
-    const cloth = mat(C.cloth);
-    const leather = mat(C.leather);
-    const skin = mat(C.skin);
-    const bronze = mat(C.bronze);
-    const dark = mat(C.dark);
-    this.materials = [cloth, leather, skin, bronze, dark];
     this.root.name = 'root';
     const j = (name: JointName, parent: Object3D, x: number, y: number, z: number): Object3D => {
-      const o = new Object3D();
+      const o = new Bone();
       o.name = name;
       o.position.set(x, y, z);
       parent.add(o);
@@ -102,42 +110,61 @@ export class HunterRig {
     this.tumble.add(this.tumbleBack);
     this.tumbleBack.add(this.body);
 
-    const pelvis = j('pelvis', this.body, 0, 0.92, 0);
-    pelvis.add(box(0.3, 0.16, 0.19, leather), box(0.34, 0.2, 0.04, cloth, 0, -0.08, -0.1));
-    const spine = j('spine', pelvis, 0, 0.1, 0);
-    spine.add(box(0.27, 0.17, 0.17, cloth, 0, 0.07, 0));
-    const chest = j('chest', spine, 0, 0.16, 0);
-    chest.add(box(0.36, 0.3, 0.21, cloth, 0, 0.16, 0), box(0.07, 0.07, 0.03, bronze, -0.08, 0.2, 0.11), box(0.4, 0.05, 0.23, leather, 0, 0.03, 0));
-    const neck = j('neck', chest, 0, 0.34, 0);
-    neck.add(limb(0.045, 0.05, 0.08, skin).translateY(0.08));
-    const head = j('head', neck, 0, 0.06, 0);
-    const skull = new Mesh(new SphereGeometry(0.108, 10, 8), skin);
-    skull.position.y = 0.062;
-    skull.castShadow = true;
-    const hair = new Mesh(new SphereGeometry(0.115, 10, 6, 0, Math.PI * 2, 0, Math.PI * 0.55), dark);
-    hair.position.set(0, 0.07, -0.012);
-    // 鼻（向きが分かるように）と首巻き
-    head.add(skull, hair, box(0.03, 0.035, 0.04, skin, 0, 0.052, 0.108), box(0.2, 0.06, 0.2, mat(0x7d9274), 0, -0.035, 0));
-
+    // 骨の静止位置は hunterBody.ts の REST と同じ値（体の皮はこの位置に合わせて作ってある）
+    const pelvis = j('pelvis', this.body, 0, REST.pelvisY, 0);
+    const spine = j('spine', pelvis, 0, REST.spineY - REST.pelvisY, 0);
+    const chest = j('chest', spine, 0, REST.chestY - REST.spineY, 0);
+    const neck = j('neck', chest, 0, REST.neckY - REST.chestY, 0);
+    j('head', neck, 0, REST.headY - REST.neckY, 0);
     for (const side of [-1, 1] as const) {
       const S = side < 0 ? 'R' : 'L';
-      const upper = j(`upperArm${S}` as JointName, chest, 0.215 * side, 0.28, 0);
-      upper.add(limb(0.055, 0.045, UPPER_ARM, cloth), box(0.12, 0.07, 0.13, leather, 0, 0.0, 0));
+      const upper = j(`upperArm${S}` as JointName, chest, REST.shoulderX * side, REST.shoulderY - REST.chestY, 0);
       const fore = j(`forearm${S}` as JointName, upper, 0, -UPPER_ARM, 0);
-      fore.add(limb(0.046, 0.04, FOREARM, leather));
       const hand = j(`hand${S}` as JointName, fore, 0, -FOREARM, 0);
-      hand.add(box(0.07, 0.08, 0.075, skin, 0, -HAND, 0));
       const socket = side < 0 ? this.sockets.hand_r : this.sockets.hand_l;
       socket.name = side < 0 ? 'socket_hand_r' : 'socket_hand_l';
       socket.position.set(0, -HAND, 0);
       hand.add(socket);
-      const thigh = j(`thigh${S}` as JointName, pelvis, 0.095 * side, -0.04, 0);
-      thigh.add(limb(0.075, 0.06, 0.43, cloth));
-      const shin = j(`shin${S}` as JointName, thigh, 0, -0.43, 0);
-      shin.add(limb(0.058, 0.048, 0.41, leather));
-      const foot = j(`foot${S}` as JointName, shin, 0, -0.41, 0);
-      foot.add(box(0.095, 0.07, 0.24, leather, 0, -0.005, 0.055));
+      const thigh = j(`thigh${S}` as JointName, pelvis, REST.hipX * side, REST.hipY - REST.pelvisY, 0);
+      const shin = j(`shin${S}` as JointName, thigh, 0, -REST.thigh, 0);
+      j(`foot${S}` as JointName, shin, 0, -REST.shin, 0);
     }
+
+    // ---- 体の皮: 骨に重み付けした 1 枚のメッシュ。色は設定図から焼いた絵（読み込みが終わるまでは平均の色）----
+    const body = buildHunterBody();
+    this.atlasCharts = body.charts;
+    const stored = HUNTER_ATLAS.rects as Record<string, readonly [number, number, number, number] | undefined>;
+    this.atlasStored = body.charts.length === Object.keys(stored).length && body.charts.every((c) => stored[c.kind]);
+    const rects = this.atlasStored ? stored : packCharts(body.charts);
+    for (const c of body.charts) c.rect = rects[c.kind]!;
+    const flat = new DataTexture(new Uint8Array([130, 104, 83, 255]), 1, 1);
+    flat.colorSpace = SRGBColorSpace;
+    flat.channel = 1;
+    flat.needsUpdate = true;
+    const bodyMat = new MeshLambertMaterial({ map: flat, vertexColors: true, side: DoubleSide });
+    this.materials.push(bodyMat);
+    this.root.updateMatrixWorld(true);
+    const skeleton = new Skeleton(JOINTS.map((n) => this.joints[n] as Bone));
+    const mesh = new SkinnedMesh(body.build(), bodyMat);
+    mesh.name = 'hunter_body';
+    mesh.castShadow = true;
+    mesh.frustumCulled = false;
+    this.root.add(mesh);
+    mesh.bind(skeleton, new Matrix4());
+    this.bodyTriangles = body.triangles;
+    new TextureLoader().load(
+      assetUrl(HUNTER_TEX),
+      (t) => {
+        t.colorSpace = SRGBColorSpace;
+        t.channel = 1;
+        t.anisotropy = 4;
+        bodyMat.map = t;
+        flat.dispose();
+        this.artLoaded = true;
+      },
+      undefined,
+      () => (this.artFailed = true),
+    );
 
     // 背中の socket: 納刀時の武器位置（握りが右肩の上、刃は左下へ）
     this.sockets.back.name = 'socket_back';
@@ -174,7 +201,7 @@ export class HunterRig {
       const r = p.j[n];
       this.joints[n].rotation.set(r[0] * D2R, r[1] * D2R, r[2] * D2R);
     }
-    this.joints.pelvis.position.y = 0.92 + p.py;
+    this.joints.pelvis.position.y = REST.pelvisY + p.py;
     this.tumbleYaw.position.y = TUMBLE_PIVOT + p.drop;
     this.tumbleYaw.rotation.y = p.tumbleDir;
     this.tumble.rotation.x = p.tumble * D2R;
@@ -264,7 +291,7 @@ export class HunterRig {
     this.root.updateMatrixWorld(true);
     const p = this.joints.head.getWorldPosition(new Vector3());
     const base = this.root.getWorldPosition(new Vector3());
-    return p.y - base.y + 0.062 + 0.108;
+    return p.y - base.y + (REST.top - REST.headY);
   }
 }
 
