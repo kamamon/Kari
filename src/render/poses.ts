@@ -1,28 +1,12 @@
 // 仮ハンターの姿勢データ（手付けのキー姿勢）。正式な GLB クリップが来るまでの仮素材。
 // clip 名は技データ（public/data/actions）の clip と対応する。無い clip を似た名前で代用しない。
 // 角度は度。関節の回転軸: X 正 = 上体は前屈・脚は後ろ振り / Y 正 = 左へひねる / Z 正 = 左へ倒す。
-import { WEAPON_CLIP_SPECS } from './weaponClipSpecs';
+import { JOINTS, type BodyPose, type JRot, type JointName } from './bodySolve';
+import { WEAPON_MOTIONS } from './weaponClipSpecs';
 import { smoothstep } from '../core/math';
 
-export const JOINTS = [
-  'pelvis', 'spine', 'chest', 'neck', 'head',
-  'upperArmL', 'forearmL', 'handL', 'upperArmR', 'forearmR', 'handR',
-  'thighL', 'shinL', 'footL', 'thighR', 'shinR', 'footR',
-] as const;
-export type JointName = (typeof JOINTS)[number];
-export type JRot = [number, number, number];
+export { JOINTS, type BodyPose, type JRot, type JointName };
 type J = Partial<Record<JointName, JRot>>;
-
-export interface BodyPose {
-  j: Record<JointName, JRot>;
-  /** 骨盤の上下 (m) */
-  py: number;
-  /** 体全体の前転角（度）と、その向き（向きに対する相対角・ラジアン） */
-  tumble: number;
-  tumbleDir: number;
-  /** 回転の中心を下げる量 (m)。倒れた時に地面へ寝かせる。 */
-  drop: number;
-}
 
 interface Key {
   t: number;
@@ -60,6 +44,10 @@ export function blendPose(a: BodyPose, b: BodyPose, t: number): BodyPose {
     p.j[n] = [x[0] + (y[0] - x[0]) * t, x[1] + (y[1] - x[1]) * t, x[2] + (y[2] - x[2]) * t];
   }
   p.py = a.py + (b.py - a.py) * t;
+  // 骨盤の左右・前後のずれ（足を解いた姿勢だけが持つ）。混ぜている間は、リグの側で足を地面へ合わせ直す。
+  const ax = a.px ?? 0, az = a.pz ?? 0;
+  p.px = ax + ((b.px ?? 0) - ax) * t;
+  p.pz = az + ((b.pz ?? 0) - az) * t;
   p.tumble = a.tumble + (b.tumble - a.tumble) * t;
   p.drop = a.drop + (b.drop - a.drop) * t;
   p.tumbleDir = t < 0.5 ? a.tumbleDir : b.tumbleDir;
@@ -215,55 +203,8 @@ export const CLIPS: Record<string, Clip> = {
   },
 };
 
-// ---- 護刃・旋鎌・長尖槍・環弓の仮アニメーション ----
-// 腕は武器の軌道へ IK で伸びるので、ここでは体のひねり・前傾・脚の踏み込みだけを、技の型ごとに決める。
-// 長さと有効判定の区間は、技のデータを作る道具（tools/gen-weapons.mjs）が書き出した一覧から取る。
-/** 上体のひねり（度。- が右へ開く）、前傾、ひざの沈み */
-const tw = (yaw: number, lean = 6, crouch = 0): J => ({
-  ...STANCE,
-  spine: [lean, yaw * 0.4, 0],
-  chest: [0, yaw, 0],
-  thighL: [-13 - crouch, 0, 4],
-  shinL: [17 + crouch * 1.3, 0, 0],
-  thighR: [12 + crouch * 0.4, 0, -4],
-  shinR: [15 + crouch * 0.6, 0, 0],
-});
-/** 左足を大きく踏み込んだ前傾 */
-const lunge = (lean: number, yaw = 10): J => ({ spine: [lean, 0, 0], chest: [lean * 0.5, yaw, 0], thighL: [-45, 0, 4], shinL: [50, 0, 0], thighR: [25, 0, -4], shinR: [20, 0, 0], head: [-lean * 0.6, 0, 0] });
-/** 構えを打ち消して、まっすぐ立つ（抜刀の始まり・納刀の終わり） */
-const UPRIGHT: J = { spine: [0, 0, 0], chest: [0, 0, 0], thighL: [0, 0, 0], shinL: [0, 0, 0], thighR: [0, 0, 0], shinR: [0, 0, 0], head: [0, 0, 0] };
-
-function styleClip(style: string, d: number, a0: number, a1: number): Clip {
-  const hold = Math.round(a1 + (d - a1) * 0.45);
-  const swing = (from: number, to: number, crouch: number): Key[] => [
-    { t: 0 },
-    { t: Math.round(a0 * 0.7), j: tw(from * 1.15, 2), py: -0.03 },
-    { t: a0, j: tw(from, 6, crouch), py: -0.05 },
-    { t: a1, j: tw(to, 12, crouch * 1.5), py: -0.08 },
-    { t: hold, j: tw(to * 0.85, 10, crouch), py: -0.07 },
-    { t: d },
-  ];
-  let keys: Key[];
-  switch (style) {
-    case 'slash_r2l': keys = swing(-34, 40, 6); break;
-    case 'slash_l2r': keys = swing(34, -42, 6); break;
-    case 'sweep_r2l': keys = swing(-58, 62, 9); break;
-    case 'sweep_l2r': keys = swing(58, -62, 9); break;
-    case 'thrust': keys = [{ t: 0 }, { t: Math.round(a0 * 0.7), j: tw(-35, 0, 4), py: -0.03 }, { t: a0, j: tw(-20, 8, 8), py: -0.06 }, { t: a1, j: lunge(18), py: -0.12 }, { t: hold, j: lunge(14), py: -0.1 }, { t: d }]; break;
-    case 'bash': keys = [{ t: 0 }, { t: Math.round(a0 * 0.8), j: tw(25, 0, 4), py: -0.03 }, { t: a1, j: lunge(14, -25), py: -0.1 }, { t: hold, j: lunge(10, -18), py: -0.08 }, { t: d }]; break;
-    case 'lunge': keys = [{ t: 0, j: UPRIGHT, py: 0.035 }, { t: Math.round(a0 * 0.6), j: tw(-20, -8), py: -0.02 }, { t: a0, j: tw(-10, -4, 4), py: -0.04 }, { t: a1, j: lunge(24), py: -0.16 }, { t: hold, j: lunge(18), py: -0.12 }, { t: d }]; break;
-    case 'spin': keys = [{ t: 0 }, { t: Math.round(a0 * 0.7), j: tw(-50, 4, 6), py: -0.05 }, { t: a0, j: tw(-30, 10, 12), py: -0.1 }, { t: a1, j: tw(-20, 12, 12), py: -0.1 }, { t: hold, j: tw(20, 10, 8), py: -0.07 }, { t: d }]; break;
-    case 'pull': keys = [{ t: 0 }, { t: a0, j: lunge(16), py: -0.1 }, { t: a1, j: tw(-25, -6, 4), py: -0.03 }, { t: hold, j: tw(-18, -2, 2), py: -0.03 }, { t: d }]; break;
-    case 'hop': keys = [{ t: 0 }, { t: Math.round(d * 0.35), j: tw(-10, 12, 14), py: -0.12 }, { t: Math.round(d * 0.75), j: tw(-10, 8, 8), py: -0.07 }, { t: d }]; break;
-    case 'stance': keys = [{ t: 0 }, { t: 6, j: tw(-12, 12, 12), py: -0.1 }, { t: d - 8, j: tw(-12, 12, 12), py: -0.1 }, { t: d }]; break;
-    case 'shoot': keys = [{ t: 0 }, { t: a0, j: { ...tw(-62, 0, 3), head: [0, 55, 0] }, py: -0.04 }, { t: d - 12, j: { ...tw(-62, 0, 3), head: [0, 55, 0] }, py: -0.04 }, { t: d }]; break;
-    case 'draw': keys = [{ t: 0, j: UPRIGHT, py: 0.035 }, { t: Math.round(d * 0.5), j: tw(-26, 4), py: -0.02 }, { t: d }]; break;
-    case 'sheathe': keys = [{ t: 0 }, { t: Math.round(d * 0.5), j: tw(-26, 4), py: -0.02 }, { t: d, j: UPRIGHT, py: 0.035 }]; break;
-    default: keys = [{ t: 0 }, { t: d }];
-  }
-  return { base: STANCE, basePy: STANCE_PY, keys };
-}
-for (const [name, style, d, a0, a1] of WEAPON_CLIP_SPECS) CLIPS[name] = styleClip(style, d, a0, a1);
+// 護刃・旋鎌・長尖槍・環弓の動きは、ここには無い。体・武器・盾をまとめて解く方式（hunterAnim.ts、bodySolve.ts）で、
+// キーは tools/gen-weapons.mjs が weaponClipSpecs.ts へ書き出す。
 
 /** clip の姿勢。未定義の clip は null を返す（呼び出し側が欠落として表示する）。 */
 export function clipPose(name: string, tick: number): BodyPose | null {
@@ -284,10 +225,13 @@ export function clipPose(name: string, tick: number): BodyPose | null {
   return p;
 }
 
+/** clip の長さ（tick）。キー姿勢の clip と、解く方式の動きの両方を見る。無ければ 0。 */
 export const clipDuration = (name: string): number => {
   const c = CLIPS[name];
-  return c ? c.keys[c.keys.length - 1]!.t : 0;
+  return c ? c.keys[c.keys.length - 1]!.t : WEAPON_MOTIONS[name]?.dur ?? 0;
 };
+/** clip があるか（キー姿勢か、解く方式の動きのどちらか） */
+export const hasClip = (name: string): boolean => !!CLIPS[name] || !!WEAPON_MOTIONS[name];
 
 /** 待機・歩行・疾走。phase は進んだ距離から作る（足の動きを移動量に合わせる）。 */
 export function locomotionPose(drawn: boolean, speed: number, phase: number, time: number): BodyPose {

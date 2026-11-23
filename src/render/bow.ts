@@ -12,18 +12,23 @@ const RING_R = 0.04; // 輪の外側の半径
 const RING_TUBE = 0.006;
 const RING_X = 0.05; // 輪の中心。弓の本体のすぐ横（正面の図で、本体の右）
 
-/** 弓。原点は握りの中央、+Y が上、-Z が弓の背（的の方）、+Z が弦（射手の方）。 */
-export function buildBow(): WeaponModel {
+// 握り（高さ 0 に最も近い点）を基準に、前後の位置を縮める率を決める
+const GRIP = KANKYU_BOW.reduce((best, s) => (Math.abs(s[0]) < Math.abs(best[0]) ? s : best));
+const KZ = (DEPTH - GRIP[2]) / (KANKYU_ART.stringZ - GRIP[1]);
+const zOf = (zArt: number): number => (zArt - GRIP[1]) * KZ;
+/** 弦を掛ける上下の先端の高さと、引いていない弦の前後の位置（弓のローカル座標） */
+export const BOW_STRING = { top: KANKYU_BOW[1]![0], bottom: KANKYU_BOW[KANKYU_BOW.length - 2]![0], z: zOf(KANKYU_ART.stringZ) };
+
+/**
+ * 弓。原点は握りの中央、+Y が上、-Z が弓の背（的の方）、+Z が弦（射手の方）。
+ * withString を false にすると弦を作らない（狩人が持つ弓は、引いた形の弦をリグが張る）。
+ */
+export function buildBow(withString = true): WeaponModel {
   const m = new ArtMesh(WEAPON_SHEETS.kankyuBow);
-  // 握り（高さ 0 に最も近い点）を基準に、前後の位置を縮める率を決める
-  const grip = KANKYU_BOW.reduce((best, s) => (Math.abs(s[0]) < Math.abs(best[0]) ? s : best));
-  const kz = (DEPTH - grip[2]) / (KANKYU_ART.stringZ - grip[1]);
-  const zOf = (zArt: number): number => (zArt - grip[1]) * kz;
   m.sweep(KANKYU_BOW.map(([y, czArt, rz, rx]) => ({ y, cz: zOf(czArt), rx, rz, czArt, rArt: rz })));
   // 弦: 上下の先端のあいだに、まっすぐ 1 本
-  const top = KANKYU_BOW[1]!, bottom = KANKYU_BOW[KANKYU_BOW.length - 2]!;
-  const sz = zOf(KANKYU_ART.stringZ);
-  m.sweep([{ y: bottom[0], cz: sz, rx: 0.002, rz: 0.002, czArt: KANKYU_ART.stringZ, rArt: 0.001 }, { y: top[0], cz: sz, rx: 0.002, rz: 0.002, czArt: KANKYU_ART.stringZ, rArt: 0.001 }], 6);
+  const sz = BOW_STRING.z;
+  if (withString) m.sweep([{ y: BOW_STRING.bottom, cz: sz, rx: 0.002, rz: 0.002, czArt: KANKYU_ART.stringZ, rArt: 0.001 }, { y: BOW_STRING.top, cz: sz, rx: 0.002, rz: 0.002, czArt: KANKYU_ART.stringZ, rArt: 0.001 }], 6);
   // 狙うための輪（青銅色）: 握りのすぐ上、本体の横。輪の面は的の方を向く。色は、図の輪の所から 1 色で取る。
   const bronze: UV = m.planar([0, KANKYU_ART.ringY, KANKYU_ART.ringZ]);
   const flat: [UV, UV, UV, UV] = [bronze, bronze, bronze, bronze];

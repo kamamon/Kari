@@ -3,9 +3,9 @@
 // 骨と socket の名前・向きは docs/animation-contract.md と揃える。
 //   root → pelvis → spine → chest → neck → head / 腕 / 脚、socket_hand_r / socket_hand_l / socket_back / socket_hip
 // 単位 m、Y 上、+Z 前。身長 1.75m。右手側は -X。
-import { Bone, DataTexture, DoubleSide, Group, Matrix4, MeshLambertMaterial, Object3D, Quaternion, SRGBColorSpace, Skeleton, SkinnedMesh, TextureLoader, Vector3 } from 'three';
+import { Bone, BufferAttribute, BufferGeometry, DataTexture, DoubleSide, Group, Line, LineBasicMaterial, Matrix4, MeshLambertMaterial, Object3D, Quaternion, SRGBColorSpace, Skeleton, SkinnedMesh, TextureLoader, Vector3 } from 'three';
 import { assetUrl } from '../core/assets';
-import { buildBow } from './bow';
+import { BOW_STRING, buildArrow, buildBow } from './bow';
 import { buildGuardBladeShield, buildGuardBladeSword } from './guardBlade';
 import { buildHeavyBlade, type WeaponModel } from './heavyBlade';
 import { buildGreatShield, buildLance } from './lance';
@@ -29,7 +29,8 @@ const WEAPON_BUILDERS: Record<string, () => WeaponModel> = {
   guard_blade: buildGuardBladeSword,
   reap_scythe: buildScythe,
   long_lance: buildLance,
-  ring_bow: buildBow,
+  // 弦は、引いた形に合わせてリグが張る
+  ring_bow: () => buildBow(false),
 };
 const SHIELD_BUILDERS = { shield_small: buildGuardBladeShield, shield_great: buildGreatShield } as const;
 export type ShieldKind = keyof typeof SHIELD_BUILDERS;
@@ -57,6 +58,9 @@ export class HunterRig {
   private tumbleBack = new Group();
   private body = new Group();
   private materials: MeshLambertMaterial[] = [];
+  /** 弓の弦（上の先 → 引いた点 → 下の先）と、つがえた矢 */
+  private bowString: Line | null = null;
+  private bowArrow: Group | null = null;
   /** 体の絵を貼る区画（書き出しと検査用）と、区画の並びが焼いた絵と同じか */
   atlasCharts: AtlasChart[] = [];
   atlasStored = false;
@@ -160,10 +164,12 @@ export class HunterRig {
     pelvis.add(this.sockets.hip);
     // 手の socket: 刃は前腕の前方やや上へ向く
     this.orient(this.sockets.hand_r, new Vector3(0, 0.35, 1), new Vector3(1, 0, 0));
+    this.orient(this.sockets.hand_l, new Vector3(0, 0.35, 1), new Vector3(1, 0, 0));
 
-    // 腰の socket: 短い剣を納める（握りが左腰、刃は後ろ下へ）
-    this.sockets.hip.position.set(0.2, 0.02, -0.02);
-    this.orient(this.sockets.hip, new Vector3(0.05, -0.85, -0.5), new Vector3(1, 0, 0));
+    // 腰の socket: 短い剣を納める（握りが左腰の前寄り、刃は後ろ下へ）。右手が届く位置にしてある。
+    // 位置と向きは、抜刀・納刀の動き（tools/weapons/guard_blade.mjs の HILT・SHEATH）と同じ値。
+    this.sockets.hip.position.set(0.17, 0.08, 0.06);
+    this.orient(this.sockets.hip, new Vector3(0.1, -0.8, -0.6), new Vector3(1, 0, 0));
     this.weapon.matrixAutoUpdate = false;
     this.shield.matrixAutoUpdate = false;
     this.shield.visible = false;
@@ -180,6 +186,18 @@ export class HunterRig {
     this.weapon.add(m.group);
     this.weaponArt = m.art;
     this.weaponTriangles = m.triangles;
+    if (id === 'ring_bow') {
+      if (!this.bowString) {
+        const g = new BufferGeometry();
+        g.setAttribute('position', new BufferAttribute(new Float32Array(9), 3));
+        this.bowString = new Line(g, new LineBasicMaterial({ color: 0xd8cfb4 }));
+        this.bowString.frustumCulled = false;
+        this.bowArrow = buildArrow().group;
+        this.bowArrow.rotation.x = -Math.PI / 2;
+      }
+      this.weapon.add(this.bowString, this.bowArrow!);
+      this.setString(null);
+    }
     this.shield.clear();
     this.shield.visible = !!offhand;
     if (offhand) {
@@ -208,6 +226,44 @@ export class HunterRig {
     this.shield.matrixWorldNeedsUpdate = true;
   }
 
+  /** 武器を、解いた置き場所（アクターのローカル座標）へ置く。腕は姿勢の側で解いてあるので、ここでは動かさない。 */
+  placeWeapon(grip: readonly number[], dir: readonly number[], normal: readonly number[]): void {
+    const b = this.basis(this.v4.set(dir[0]!, dir[1]!, dir[2]!).normalize(), new Vector3(normal[0], normal[1], normal[2]));
+    b.setPosition(grip[0]!, grip[1]!, grip[2]!);
+    this.weapon.matrix.copy(b);
+    this.weapon.matrixWorldNeedsUpdate = true;
+  }
+
+  /** 盾を、解いた置き場所（アクターのローカル座標の位置と向き）へ置く。 */
+  placeShield(pos: readonly number[], quat: readonly number[]): void {
+    this.shield.matrix.compose(this.v1.set(pos[0]!, pos[1]!, pos[2]!), this.q1.set(quat[0]!, quat[1]!, quat[2]!, quat[3]!), this.v2.set(1, 1, 1));
+    this.shield.matrixWorldNeedsUpdate = true;
+  }
+
+  /** 弓の弦を、引いた点（弓のローカル座標）まで張る。null なら、引いていない形へ戻す。矢をつがえている時は矢も出す。 */
+  setString(s: { y: number; z: number; arrow: boolean } | null): void {
+    if (!this.bowString || !this.bowArrow || this.familyId !== 'ring_bow') return;
+    const y = s ? s.y : 0, z = s ? Math.max(BOW_STRING.z, s.z) : BOW_STRING.z;
+    const p = this.bowString.geometry.getAttribute('position') as BufferAttribute;
+    p.setXYZ(0, 0, BOW_STRING.top, BOW_STRING.z);
+    p.setXYZ(1, 0, s ? y : 0, z);
+    p.setXYZ(2, 0, BOW_STRING.bottom, BOW_STRING.z);
+    p.needsUpdate = true;
+    // 矢: 矢はずを弦の引いた点に掛け、矢じりを的（弓の背の方）へ向ける。矢の原点は中央（長さ 0.8m）。
+    this.bowArrow.visible = !!s && s.arrow;
+    this.bowArrow.position.set(0, y, z - 0.4);
+  }
+
+  /** 武器を、納めた時の置き場所（骨と、その骨の座標での位置・向き）へ付ける。姿勢を設定した後に呼ぶ。 */
+  weaponToSheath(sh: { parent: 'chest' | 'pelvis'; pos: readonly number[]; dir: readonly number[]; normal: readonly number[] }): void {
+    this.root.updateMatrixWorld(true);
+    const inv = this.m2.copy(this.root.matrixWorld).invert();
+    const local = this.basis(this.v4.set(sh.dir[0]!, sh.dir[1]!, sh.dir[2]!).normalize(), new Vector3(sh.normal[0], sh.normal[1], sh.normal[2])).setPosition(sh.pos[0]!, sh.pos[1]!, sh.pos[2]!);
+    const world = new Matrix4().multiplyMatrices(this.joints[sh.parent].matrixWorld, local);
+    this.weapon.matrix.multiplyMatrices(inv, world);
+    this.weapon.matrixWorldNeedsUpdate = true;
+  }
+
   /** +Y を dir、+X を normal に近い向きへ揃える回転を obj に設定する。 */
   private orient(obj: Object3D, dir: Vector3, normal: Vector3): void {
     obj.quaternion.setFromRotationMatrix(this.basis(dir, normal));
@@ -227,14 +283,15 @@ export class HunterRig {
       const r = p.j[n];
       this.joints[n].rotation.set(r[0] * D2R, r[1] * D2R, r[2] * D2R);
     }
-    this.joints.pelvis.position.y = REST.pelvisY + p.py;
+    this.joints.pelvis.position.set(p.px ?? 0, REST.pelvisY + p.py, p.pz ?? 0);
     this.tumbleYaw.position.y = TUMBLE_PIVOT + p.drop;
     this.tumbleYaw.rotation.y = p.tumbleDir;
     this.tumble.rotation.x = p.tumble * D2R;
     this.tumbleBack.rotation.y = -p.tumbleDir;
     // 立っている姿勢では、低い方の足裏が地面（root の高さ）へ付くように骨盤を上下させる。
     // 仮のキー姿勢でも足が沈んだり浮いたりしないようにするための簡易な接地。
-    if (Math.abs(p.tumble) < 1 && p.drop === 0) {
+    // （足を解き終えた姿勢は、もう地面に合っているので触らない）
+    if (!p.grounded && Math.abs(p.tumble) < 1 && p.drop === 0) {
       this.root.updateMatrixWorld(true);
       let min = Infinity;
       for (const foot of [this.joints.footL, this.joints.footR]) {
@@ -248,7 +305,7 @@ export class HunterRig {
   }
 
   /** 武器を socket（背中・手）へ付ける。姿勢を設定した後に呼ぶ。 */
-  weaponToSocket(which: 'back' | 'hand_r' | 'hip'): void {
+  weaponToSocket(which: 'back' | 'hand_r' | 'hand_l' | 'hip'): void {
     this.root.updateMatrixWorld(true);
     const inv = this.m2.copy(this.root.matrixWorld).invert();
     this.weapon.matrix.multiplyMatrices(inv, this.sockets[which].matrixWorld);

@@ -1,5 +1,7 @@
 // 木の板の盾（護刃の盾・長尖槍の大盾）の仮モデルの組み方。設定図の外形（角の点）から、前へ丸くふくらむ板を作り、
-// 表には表の図、裏には裏の図（後ろから見た図なので左右を反転）を貼る。
+// 表には表の図、裏には裏の図を貼る。
+// 裏の図は、取っ手が持ち手の左・革帯が右に描かれていて、そのままでは右腕用の並びになる。左腕に通して握れるように、
+// 裏だけ左右を逆にして使う（取っ手が持ち手の右 = 体の中心側、革帯が左 = ひじ側。D-054）。
 // 原点は裏面の中央（腕を当てる所）、+Z が表（敵の方）、+Y が上、+X は表から見て右。
 // 裏の取っ手（縦の棒）と革帯（縦に渡した弧）も、裏の図の位置に形として作る。色は裏の図から取る。
 import { Group } from 'three';
@@ -15,7 +17,7 @@ export interface ShieldDims {
   halfH: number;
   /** 幅の補正（設定図の幅 × この値。指定の幅に合わせる時に使う。絵の位置は変えない） */
   xScale?: number;
-  /** 裏の取っ手と革帯。x は表から見て右が +（裏の図では左右が逆）。y0 が上の端、y1 が下の端。 */
+  /** 裏の取っ手と革帯。x は持ち手から見て左が +（表から見て右）。y0 が上の端、y1 が下の端。 */
   handle?: { x: number; y0: number; y1: number; r: number; off: number };
   strap?: { x: number; y0: number; y1: number; w: number; off: number };
 }
@@ -23,7 +25,7 @@ export interface ShieldDims {
 export function buildPlankShield(name: string, frontSheet: ArtSheet, backSheet: ArtSheet, outline: readonly (readonly [number, number])[], d: ShieldDims): WeaponModel {
   const RINGS = 6, STEP = 0.03;
   const front = new ArtMesh(frontSheet, 'xy');
-  const back = new ArtMesh(backSheet, 'xy-back');
+  const back = new ArtMesh(backSheet, 'xy');
   const k = d.xScale ?? 1;
   front.transform = back.transform = (p) => [p[0] * k, p[1], p[2]];
   // 外形の辺を細かく分ける

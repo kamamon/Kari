@@ -610,7 +610,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   await page.screenshot({ path: `${OUT}weapon_select.png` });
-  for (const [fam, name, dist, holdMs] of [['guard_blade', '護刃', 1.2, 60], ['reap_scythe', '旋鎌', 1.8, 60], ['long_lance', '長尖槍', 2.4, 60], ['ring_bow', '環弓', 8, 1300]]) {
+  for (const [fam, name, dist, holdMs] of [['guard_blade', '護刃', 1.2, 60], ['reap_scythe', '旋鎌', 1.4, 60], ['long_lance', '長尖槍', 2.4, 60], ['ring_bow', '環弓', 8, 1300]]) {
     await page.locator(`.base-weapon[data-weapon="weapon.${fam}.001"]`).click();
     const picked = await page.evaluate(() => window.__vh.weaponId);
     await page.locator('.base-choice').last().click();

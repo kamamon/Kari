@@ -24,6 +24,9 @@ import { DummyRig, type MonsterRig } from './render/monsterRig';
 import { CLIPS, JOINTS, clipPose, emptyPose, locomotionPose } from './render/poses';
 import { buildGreatShield, buildLance } from './render/lance';
 import { HunterRig } from './render/rig';
+import { applySolved, canSolve, solveState, type AnimState } from './render/hunterAnim';
+import type { Solved } from './render/bodySolve';
+import { WEAPON_STANCES } from './render/weaponClipSpecs';
 import { buildScythe } from './render/scythe';
 
 interface ManifestAsset {
@@ -105,6 +108,9 @@ const state = {
   speed: 1,
   bones: true,
   shapes: true,
+  /** 技を選んでいない時に見せる立ち姿: none = 納刀の歩き / idle = 構え / walk = 構えたまま歩く / guard = 防御（確認用。URL の stance= と family= で決める） */
+  stance: 'none' as 'none' | 'idle' | 'walk' | 'guard',
+  stanceFamily: 'guard_blade',
   camYaw: Math.PI * 0.75,
   camPitch: 0.18,
   camDist: 5.2,
@@ -329,8 +335,17 @@ async function loadGlb(path: string): Promise<void> {
   }
 }
 
+/** 納めた武器を、その武器系統の置き場所へ付ける */
+function sheathWeapon(fam: { id: string; sheathSocket?: 'back' | 'hip' }): void {
+  const sh = WEAPON_STANCES[fam.id]?.sheath;
+  if (sh) hunter.weaponToSheath(sh);
+  else hunter.weaponToSocket(fam.sheathSocket ?? 'back');
+}
+
 let last = 0;
 let time = 0;
+/** 直前に解いた姿（検査用に window.__viewer から読める） */
+let lastSolved: Solved | null = null;
 function frame(ts: number): void {
   requestAnimationFrame(frame);
   const dt = Math.min(0.1, (ts - last) / 1000 || 0);
@@ -349,7 +364,17 @@ function frame(ts: number): void {
     const fam = content.families.get(a?.actionId.split('.')[1] ?? '') ?? content.families.get('heavy_blade')!;
     hunter.setFamily(fam.id, fam.offhand);
     let missing = false;
-    if (a) {
+    const st: AnimState | null = a ? { kind: 'action', clip: a.clip, t, dirAngle: 0, chargeTicks: 0, freeMove: false } : state.stance !== 'none' ? (state.stance === 'guard' ? { kind: 'guard', blend: 1, shake: 0 } : { kind: 'idle' }) : null;
+    const stFam = a ? fam : content.families.get(state.stanceFamily) ?? fam;
+    if (st && canSolve(stFam.id, st)) {
+      // 護刃・旋鎌・長尖槍・環弓: ゲームと同じ解き方で、体・武器・盾を置く
+      hunter.setFamily(stFam.id, stFam.offhand);
+      const sol = solveState(stFam.id, st, state.stance === 'walk' ? stFam.drawnMoveSpeed : 0, state.stance === 'walk' ? t / 60 : time);
+      applySolved(hunter, sol);
+      lastSolved = sol;
+    } else if (a) {
+      lastSolved = null;
+      hunter.setString(null);
       const pose = clipPose(a.clip, t);
       missing = !pose;
       hunter.setPose(pose ?? emptyPose());
@@ -364,12 +389,14 @@ function frame(ts: number): void {
           hunter.shieldTo(at, a.offhandTrack ? 0 : 0.5);
         }
       } else {
-        hunter.weaponToSocket(fam.sheathSocket ?? 'back');
+        sheathWeapon(fam);
         if (fam.offhand) hunter.shieldToBack();
       }
     } else {
+      lastSolved = null;
+      hunter.setString(null);
       hunter.setPose(locomotionPose(false, t < 60 ? 0 : 4, time * 9, time));
-      hunter.weaponToSocket(fam.sheathSocket ?? 'back');
+      sheathWeapon(fam);
       if (fam.offhand) hunter.shieldToBack();
     }
     hunter.root.updateMatrixWorld(true);
@@ -493,11 +520,14 @@ async function main(): Promise<void> {
   if (q.has('ty')) state.lookY = Number(q.get('ty'));
   if (q.has('tz')) state.lookZ = Number(q.get('tz'));
   if (q.has('tx')) state.lookX = Number(q.get('tx'));
+  const stance = q.get('stance');
+  if (stance === 'idle' || stance === 'walk' || stance === 'guard') state.stance = stance;
+  if (q.get('family')) state.stanceFamily = q.get('family')!;
   if (q.get('shapes') === '0') state.shapes = false;
   if (q.get('bones') === '0') state.bones = false;
   const glb = q.get('glb');
   if (glb) await loadGlb(glb);
-  (window as unknown as { __viewer?: unknown }).__viewer = { state, monsters, packCharts, hunter, rack: rackModels };
+  (window as unknown as { __viewer?: unknown }).__viewer = { state, monsters, packCharts, hunter, rack: rackModels, solved: () => lastSolved };
   requestAnimationFrame(frame);
 }
 

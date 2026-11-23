@@ -36,7 +36,7 @@ const slamTick = (w: string): number => {
 
 describe('5 系統の共通', () => {
   it('どの武器も、主攻撃が訓練標的に当たる（武器ごとの間合い）', () => {
-    for (const [w, dist] of [['guard_blade', 1.2], ['reap_scythe', 1.8], ['long_lance', 2.7]] as const) {
+    for (const [w, dist] of [['guard_blade', 1.2], ['reap_scythe', 1.4], ['long_lance', 2.7]] as const) {
       const sim = mk(w);
       placeInFrontOfHead(sim, dist);
       const h = hits(run(sim, 70, (i) => (i === 0 ? press(Btn.Main) : frame())));
@@ -117,7 +117,7 @@ describe('護刃（短剣と盾）', () => {
 describe('旋鎌（大鎌）', () => {
   it('1 回の振りで当たるのは、刃か柄のどちらか 1 つだけ', () => {
     const sim = mk('reap_scythe');
-    placeInFrontOfHead(sim, 1.8);
+    placeInFrontOfHead(sim, 1.4);
     const h = hits(run(sim, 60, (i) => (i === 0 ? press(Btn.Main) : frame())));
     expect(h).toHaveLength(1);
     expect(h[0]!.windowId).toBe('blade_w');
@@ -125,7 +125,7 @@ describe('旋鎌（大鎌）', () => {
 
   it('当て続けると勢いが 3 まで上がり、振らずにいると消える', () => {
     const sim = mk('reap_scythe');
-    placeInFrontOfHead(sim, 1.8);
+    placeInFrontOfHead(sim, 1.4);
     const evs = run(sim, 260, (i) => (i % 9 === 0 ? press(Btn.Main) : frame()));
     const levels = evs.filter((e) => e.type === 'momentum').map((e) => (e as Extract<SimEvent, { type: 'momentum' }>).level);
     expect(levels.slice(0, 3)).toEqual([1, 2, 3]);
@@ -147,7 +147,7 @@ describe('旋鎌（大鎌）', () => {
       }
       return n;
     };
-    expect(ticksFor(0)).toBe(42);
+    expect(ticksFor(0)).toBe(48);
     expect(ticksFor(3)).toBeLessThan(ticksFor(2));
     expect(ticksFor(2)).toBeLessThan(ticksFor(0));
   });
@@ -155,9 +155,9 @@ describe('旋鎌（大鎌）', () => {
   it('大刈りは勢いをすべて使い、段階が高いほど強い', () => {
     const total = (momentum: number): { damage: number; left: number; n: number } => {
       const sim = mk('reap_scythe');
-      placeInFrontOfHead(sim, 1.8);
+      placeInFrontOfHead(sim, 1.4);
       sim.player.momentum = momentum;
-      const h = hits(run(sim, 110, (i) => (i === 0 ? press(Btn.Special) : frame())));
+      const h = hits(run(sim, 150, (i) => (i === 0 ? press(Btn.Special) : frame())));
       return { damage: h.reduce((s, x) => s + x.damage, 0), left: sim.player.momentum, n: h.length };
     };
     const low = total(0), high = total(3);

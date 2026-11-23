@@ -38,7 +38,8 @@ export function buildGreatShield(): WeaponModel {
     halfW: 0.2925,
     halfH: 0.55,
     xScale: 0.6 / 0.585,
-    handle: { x: 0.115, y0: 0.175, y1: -0.11, r: 0.018, off: 0.04 },
-    strap: { x: -0.102, y0: 0.175, y1: -0.115, w: 0.09, off: 0.075 },
+    // 護刃の盾と同じく、裏は左右を逆にして使う（左腕に通せる並び）
+    handle: { x: -0.115, y0: 0.175, y1: -0.11, r: 0.018, off: 0.04 },
+    strap: { x: 0.102, y0: 0.175, y1: -0.115, w: 0.09, off: 0.075 },
   });
 }

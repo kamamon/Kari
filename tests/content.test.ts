@@ -6,7 +6,7 @@ import { SOUND_IDS } from '../src/core/audio';
 import type { ActionDef, Content } from '../src/data/schemas';
 import { ContentError, assembleContent, validateAction } from '../src/data/validators';
 import { sampleTrack } from '../src/game/tracks';
-import { CLIPS, clipDuration } from '../src/render/poses';
+import { clipDuration, hasClip } from '../src/render/poses';
 import { loadContent } from './helpers';
 
 interface ManifestAsset {
@@ -120,7 +120,7 @@ describe('素材台帳（docs/asset-manifest.json）', () => {
     for (const a of content.actions.values()) {
       expect(listed.has(a.clip), `台帳に無い clip: ${a.clip}`).toBe(true);
       if (a.actionId.startsWith('player.')) {
-        expect(CLIPS[a.clip], `仮アニメーションに無い clip: ${a.clip}`).toBeDefined();
+        expect(hasClip(a.clip), `仮アニメーションに無い clip: ${a.clip}`).toBe(true);
         expect(clipDuration(a.clip), `${a.clip} の長さ`).toBe(a.durationTicks);
       }
     }

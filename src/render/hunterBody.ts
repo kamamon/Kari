@@ -3,17 +3,11 @@
 // 色は、設定図から焼いた絵（public/assets/textures/hunter/hunter_body_v1.webp）が持つ。区画の並びは hunterAtlas.ts。
 // 静止姿勢は「気をつけ」（腕は真下）。設定図は腕を約 40 度開いた姿なので、絵を写す時に腕の向きを合わせる（tools/art/hunter_bake.py）。
 import { Vector3 } from 'three';
-import { JOINTS, type JointName } from './poses';
+import { JOINTS, REST, type JointName } from './bodySolve';
 import { Geo, blob, hex, horn, loft, sstep, type RGB, type Ring } from './procGeo';
 
 /** 骨の静止位置 (m、root 基準)。rig.ts の骨の配置と、ここの形の両方が使う。 */
-export const REST = {
-  pelvisY: 0.92, spineY: 1.02, chestY: 1.18, neckY: 1.52, headY: 1.58,
-  shoulderX: 0.185, shoulderY: 1.46, upperArm: 0.29, forearm: 0.27,
-  hipX: 0.095, hipY: 0.88, thigh: 0.43, shin: 0.41,
-  /** 頭のてっぺん（全高） */
-  top: 1.75,
-} as const;
+export { REST };
 
 const B = Object.fromEntries(JOINTS.map((n, i) => [n, i])) as Record<JointName, number>;
 const X = new Vector3(1, 0, 0), Y = new Vector3(0, 1, 0), Z = new Vector3(0, 0, 1);

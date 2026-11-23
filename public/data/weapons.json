@@ -43,7 +43,7 @@
       "twoHanded": false,
       "drawnMoveSpeed": 3.6,
       "drawnTurnDegPerSec": 540,
-      "ready": { "grip": [-0.28, 0.98, 0.28], "dir": [0.05, 0.75, 0.66], "planeNormal": [1, 0, 0] },
+      "ready": { "grip": [-0.31, 1.08, 0.14], "dir": [0.1001, 0.8008, 0.5906], "planeNormal": [-0.9753, -0.0384, 0.2174] },
       "blade": { "from": 0.13, "to": 0.88, "radius": 0.11 },
       "actions": {
         "main": "player.guard_blade.slash1",
@@ -76,7 +76,7 @@
         "turnDegPerSec": 180,
         "parryTicks": 6,
         "recoilDistance": 0.5,
-        "pose": { "grip": [-0.35, 0.95, 0.1], "dir": [0.1, 0.6, 0.8], "planeNormal": [1, 0, 0] }
+        "pose": { "grip": [-0.34, 0.98, 0.02], "dir": [0.1507, 0.6027, 0.7836], "planeNormal": [-0.9738, -0.0461, 0.2228] }
       }
     },
     {
@@ -88,7 +88,7 @@
       "otherHandAlong": 0.64,
       "drawnMoveSpeed": 3.0,
       "drawnTurnDegPerSec": 360,
-      "ready": { "grip": [-0.2165, 1.0, 0.25], "dir": [-0.866, 0.5, 0.5], "planeNormal": [0, -1, 0] },
+      "ready": { "grip": [-0.1284, 0.9935, -0.1773], "dir": [-0.1539, 0.2682, 0.951], "planeNormal": [-0.9735, -0.2061, -0.0994] },
       "blade": { "from": 0.35, "to": 1.4, "radius": 0.07 },
       "actions": {
         "main": "player.reap_scythe.sweep1",
@@ -117,7 +117,7 @@
       "twoHanded": false,
       "drawnMoveSpeed": 1.8,
       "drawnTurnDegPerSec": 200,
-      "ready": { "grip": [-0.32, 1.0, 0.05], "dir": [0.05, 0.12, 1], "planeNormal": [1, 0, 0] },
+      "ready": { "grip": [-0.3, 1.02, 0.1], "dir": [0.0597, 0.0697, 0.9958], "planeNormal": [-0.9982, 0, 0.0599] },
       "blade": { "from": 0.9, "to": 2.36, "radius": 0.1 },
       "actions": {
         "main": "player.long_lance.thrust1",
@@ -150,7 +150,7 @@
         "breakDamageScale": 0.6,
         "turnDegPerSec": 120,
         "recoilDistance": 0.3,
-        "pose": { "grip": [-0.35, 1.05, -0.05], "dir": [0.05, 0.2, 1], "planeNormal": [1, 0, 0] }
+        "pose": { "grip": [-0.32, 0.95, -0.02], "dir": [0.0596, 0.0993, 0.9933], "planeNormal": [-0.9982, 0, 0.0599] }
       }
     },
     {
@@ -162,7 +162,7 @@
       "primaryHand": "left",
       "drawnMoveSpeed": 3.0,
       "drawnTurnDegPerSec": 420,
-      "ready": { "grip": [0.25, 1.1, 0.3], "dir": [0.25, 0.95, 0.15], "planeNormal": [-1, 0, 0] },
+      "ready": { "grip": [0.26, 1.08, 0.36], "dir": [-0.3015, 0.9045, 0.3015], "planeNormal": [-0.9534, -0.2889, -0.0867] },
       "blade": { "from": -0.75, "to": 0.75, "radius": 0.05 },
       "actions": {
         "main": "player.ring_bow.shot",

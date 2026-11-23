@@ -8,9 +8,9 @@
 - iPhone で画面を広く使う: Safari の共有 →「ホーム画面に追加」。できたアイコンから開くと、URL の欄が出ません（設定は Safari とは別に保存されます）
 - 素材ビューア: https://kamamon.github.io/Kari/viewer.html
 - 設計書: [docs/source/VEILBOUND_HUNTERS_design_v1.0.pdf](docs/source/VEILBOUND_HUNTERS_design_v1.0.pdf)
-- 武器種は 5 系統（大剣・短剣と盾・ランス・弓・大鎌）: [docs/weapons.md](docs/weapons.md)。拠点の画面で持ち替えられる（v0.4.0。動きと強さは仮）。形の一覧は [素材ビューアの「武器」](https://kamamon.github.io/Kari/viewer.html?subject=weapons)
+- 武器種は 5 系統（大剣・短剣と盾・ランス・弓・大鎌）: [docs/weapons.md](docs/weapons.md)。拠点の画面で持ち替えられる（v0.4.0。強さは仮）。断岳剣以外の 4 系統の体の動きは、v0.4.2 で人にできる動きへ組み直した（足が地面に付いたまま踏み込む・腰から回す・盾は腕に固定）。形の一覧は [素材ビューアの「武器」](https://kamamon.github.io/Kari/viewer.html?subject=weapons)
 
-## いまの段階: v0.4.1（M2: ガルドロスを狩って帰る + 武器 5 系統）
+## いまの段階: v0.4.2（M2: ガルドロスを狩って帰る + 武器 5 系統）
 
 設計書の開発段階 M0（基盤）・M1（戦闘）と、M2（狩猟）の前半まで。**見た目・動き・音はすべて仮素材**です。
 

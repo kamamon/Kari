@@ -17,6 +17,9 @@ import { BladeTrail, GroundRings, Particles } from './effects';
 import { GaldrosRig } from './galdrosRig';
 import { DummyRig, type MonsterRig } from './monsterRig';
 import { blendPose, clipPose, deadPose, emptyPose, guardPose, hurtPose, locomotionPose, type BodyPose } from './poses';
+import { HunterAnimator, applySolved, canSolve, type AnimState } from './hunterAnim';
+import type { Solved } from './bodySolve';
+import { WEAPON_STANCES } from './weaponClipSpecs';
 import { buildArrow } from './bow';
 import { HunterRig, type HandsSpec } from './rig';
 
@@ -75,6 +78,8 @@ export class GameView {
   private lastPose: BodyPose = emptyPose();
   private blendFrom: BodyPose | null = null;
   private blendT = 1;
+  /** 護刃・旋鎌・長尖槍・環弓の体を解く係 */
+  private anim = new HunterAnimator();
   private tmpA = new Vector3();
   private tmpB = new Vector3();
   /** 技データが指す clip のうち、仮アニメーションに無いもの。黙って代用せず検証表示へ出す。 */
@@ -262,11 +267,15 @@ export class GameView {
     let shieldOut = p.drawn;
     const hands: HandsSpec = { two: fam.twoHanded, along: fam.otherHandAlong, primary: fam.primaryHand, other: null };
     const ready: WeaponPlace = { mode: 'track', grip: fromArr(fam.ready.grip), dir: norm(fromArr(fam.ready.dir)), normal: fam.ready.planeNormal };
+    // 体を解ける状態（技・構え・防御）なら、その中身。解けない状態（被弾・納刀など）は null のまま。
+    let st: AnimState | null = null;
 
     if (p.mode === 'action' && p.action) {
       const run = p.action;
       const t = renderTick(run, alpha);
-      const cp = clipPose(run.def.clip, t);
+      const fm = run.def.freeMove;
+      st = { kind: 'action', clip: run.def.clip, t, dirAngle: (run.dirIndex * Math.PI) / 2, chargeTicks: run.chargeTicks, freeMove: !!fm && t >= (fm.from ?? 0) && t < (fm.to ?? run.def.durationTicks) };
+      const cp = canSolve(fam.id, st) ? emptyPose() : clipPose(run.def.clip, t);
       if (!cp) this.missingClips.add(run.def.clip);
       pose = cp ?? emptyPose();
       pose.tumbleDir = (run.dirIndex * Math.PI) / 2;
@@ -299,6 +308,7 @@ export class GameView {
         else if (g.phase === 'end') blend = 1 - (g.tick + alpha) / G.endTicks;
         else if (g.phase === 'recoil') shake = 1 - g.tick / G.recoilTicks;
         pose = guardPose(blend, shake);
+        st = { kind: 'guard', blend, shake };
         const u = smoothstep(blend);
         shieldU = u;
         weapon = {
@@ -318,13 +328,24 @@ export class GameView {
     } else {
       pose = locomotionPose(p.drawn, p.moveSpeed, this.phase, this.time);
       key = p.drawn ? 'free-drawn' : 'free-sheathed';
-      if (p.drawn) weapon = ready;
+      if (p.drawn) {
+        weapon = ready;
+        st = { kind: 'idle' };
+      }
     }
+    // 護刃・旋鎌・長尖槍・環弓: 体・武器・盾をまとめて解く（足は地面に、手は武器に付いたままになる）
+    const continued = this.anim.continuing;
+    let solved: Solved | null = null;
+    if (st && canSolve(fam.id, st)) {
+      solved = this.anim.frame(fam.id, st, key, dt, p.moveSpeed, this.time);
+      pose = solved.pose;
+    } else this.anim.reset();
 
     // 状態が切り替わった瞬間は、直前の姿勢から短く混ぜる
     if (key !== this.poseKey) {
       this.poseKey = key;
-      this.blendFrom = { ...this.lastPose, tumble: ((((this.lastPose.tumble + 180) % 360) + 360) % 360) - 180 };
+      // 解いた姿どうしの切り替えは、解く側が混ぜ終えている
+      this.blendFrom = solved && continued ? null : { ...this.lastPose, tumble: ((((this.lastPose.tumble + 180) % 360) + 360) % 360) - 180 };
       this.blendT = 0;
     }
     this.blendT += dt;
@@ -332,10 +353,19 @@ export class GameView {
     if (w < 1 && this.blendFrom) pose = blendPose(this.blendFrom, pose, w);
     this.lastPose = pose;
 
-    this.hunter.setPose(pose);
-    if (weapon.mode === 'track') this.hunter.weaponToTrack(weapon.grip, weapon.dir, weapon.normal, hands);
-    else this.hunter.weaponToSocket(weapon.mode === 'back' ? fam.sheathSocket ?? 'back' : 'hand_r');
-    if (fam.offhand) {
+    if (solved) {
+      applySolved(this.hunter, solved);
+      // 混ぜている途中は、混ぜた姿勢を置き直す（武器と盾は解いた位置のまま）
+      if (pose !== solved.pose) this.hunter.setPose(pose);
+    } else {
+      this.hunter.setPose(pose);
+      this.hunter.setString(null);
+      const sheath = WEAPON_STANCES[fam.id]?.sheath;
+      if (weapon.mode === 'track') this.hunter.weaponToTrack(weapon.grip, weapon.dir, weapon.normal, hands);
+      else if (weapon.mode === 'back' && sheath) this.hunter.weaponToSheath(sheath);
+      else this.hunter.weaponToSocket(weapon.mode === 'back' ? fam.sheathSocket ?? 'back' : fam.primaryHand === 'left' ? 'hand_l' : 'hand_r');
+    }
+    if (fam.offhand && !solved) {
       // 盾: 抜刀中は左腕で前に持ち、納刀中・被弾中・力尽きた時は背中へ
       if (shieldOut && p.mode !== 'hurt' && p.mode !== 'dead' && fam.offhandReady) {
         const ready = fromArr(fam.offhandReady);
