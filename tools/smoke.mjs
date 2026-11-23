@@ -614,9 +614,9 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   // 武器の一覧（設定図から組んだ仮モデル）: 護刃の剣と盾、断岳剣、旋鎌の絵がすべて読み込める
   const rackOk = await until(page, () => {
     const rack = window.__viewer?.rack;
-    return !!rack && ['guardShield', 'guardSword', 'heavyBlade', 'scythe'].every((k) => rack[k] && rack[k].triangles > 50 && rack[k].art.length > 0 && rack[k].art.every((a) => a.loaded && !a.failed));
+    return !!rack && ['guardShield', 'guardSword', 'heavyBlade', 'scythe', 'bow', 'arrow', 'quiver'].every((k) => rack[k] && rack[k].triangles > 50 && rack[k].art.length > 0 && rack[k].art.every((a) => a.loaded && !a.failed));
   }, 15000);
-  check('ビューア: 武器 4 つ（護刃の剣・盾、断岳剣、旋鎌）の形と絵を読み込める', rackOk);
+  check('ビューア: 武器 7 点（護刃の剣・盾、断岳剣、旋鎌、環弓・矢・矢筒）の形と絵を読み込める', rackOk);
   await page.goto(`http://localhost:${PORT}${BASE}viewer.html?glb=assets/models/ref_cube_1m.glb`);
   await page.waitForFunction(() => window.__viewer, null, { timeout: 15000 });
   await page.waitForTimeout(300);

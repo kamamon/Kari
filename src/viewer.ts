@@ -17,6 +17,7 @@ import { createMonster, monsterShapes, type MonsterState } from './game/monster'
 import { sampleTrack, trackSegment } from './game/tracks';
 import { DebugDraw } from './render/debugDraw';
 import { GaldrosRig } from './render/galdrosRig';
+import { buildArrow, buildBow, buildQuiver } from './render/bow';
 import { buildGuardBladeShield, buildGuardBladeSword } from './render/guardBlade';
 import { buildHeavyBlade, type WeaponModel } from './render/heavyBlade';
 import { DummyRig, type MonsterRig } from './render/monsterRig';
@@ -83,6 +84,9 @@ stand('guardShield', buildGuardBladeShield(), -1.7, 0.3, 0);
 stand('guardSword', buildGuardBladeSword(), -1.2, 0.1224, Math.PI / 2);
 stand('heavyBlade', buildHeavyBlade(), -0.72, 0.155, Math.PI / 2);
 stand('scythe', buildScythe(), 1.05, 0.4295, Math.PI / 2);
+stand('bow', buildBow(), 1.55, 0.75, Math.PI / 2);
+stand('arrow', buildArrow(), 1.95, 0.4, Math.PI / 2);
+stand('quiver', buildQuiver(), 2.25, 0.303, Math.PI / 2);
 
 let glbRoot: Object3D | null = null;
 let glbMixer: AnimationMixer | null = null;
@@ -256,6 +260,7 @@ function setSubject(s: 'hunter' | MonsterKey | 'glb' | 'weapons'): void {
   rack.visible = s === 'weapons';
   // 一覧では、ハンターは大きさの目安として立たせるだけ（手の剣と、取り付け位置の印は消す）
   hunter.weapon.visible = s !== 'weapons';
+  cube.visible = axes.visible = s !== 'weapons'; // 物差しの立方体は、並べた武器と重なるので消す
   if (s === 'weapons') for (const ax of socketAxes) ax.visible = false;
   for (const [k, v] of Object.entries(monsters)) v.rig.root.visible = s === k;
   if (glbRoot) glbRoot.visible = s === 'glb';

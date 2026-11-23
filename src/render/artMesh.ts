@@ -36,6 +36,8 @@ export type SheetAxis = 'zy' | 'xy' | 'xy-back';
 export class ArtMesh {
   private readonly pos: number[] = [];
   private readonly uv: number[] = [];
+  /** 置き場所の変換。絵の位置（UV）は変換の前の形から決め、頂点だけを動かす（同じ部品を、向きを変えて何個も置ける）。 */
+  transform: ((p: P3) => P3) | null = null;
 
   constructor(
     readonly sheet: ArtSheet,
@@ -52,7 +54,9 @@ export class ArtMesh {
   }
 
   tri(a: P3, b: P3, c: P3, ua = this.planar(a), ub = this.planar(b), uc = this.planar(c)): void {
-    this.pos.push(...a, ...b, ...c);
+    const t = this.transform;
+    if (t) this.pos.push(...t(a), ...t(b), ...t(c));
+    else this.pos.push(...a, ...b, ...c);
     this.uv.push(...ua, ...ub, ...uc);
   }
 
@@ -73,26 +77,33 @@ export class ArtMesh {
 
   /**
    * Y 軸のまわりに回した形（握り・柄・柄頭）。profile は [高さ, 半径, 設定図での半幅]。'zy' の図で使う。
-   * 絵は、正面から見えている幅を前半周へ引き伸ばして貼り、後ろ半周はその鏡写しにする（巻き革の模様が横でつぶれない）。
    */
   lathe(profile: readonly (readonly [number, number, number])[], seg = 12): void {
+    this.sweep(profile.map(([y, r, rArt]) => ({ y, cz: 0, rx: r, rz: r, czArt: 0, rArt })), seg);
+  }
+
+  /**
+   * 高さごとの輪（中心の前後位置・幅の半分・厚みの半分）をつないだ筒。曲がった弓の本体などに使う。'zy' の図で使う。
+   * 絵は、図で見えている幅（czArt ± rArt）を前半周へ引き伸ばして貼り、後ろ半周はその鏡写しにする（巻き革の模様が横でつぶれない）。
+   */
+  sweep(rings: readonly { y: number; cz: number; rx: number; rz: number; czArt: number; rArt: number }[], seg = 12): void {
     const point = (k: number, i: number): [P3, UV] => {
-      const [y, r, rArt] = profile[k]!;
+      const r = rings[k]!;
       const phi = -Math.PI + (2 * Math.PI * i) / seg; // 0 が設定図の正面（-X）
       const fold = Math.abs(phi) <= Math.PI / 2 ? phi : Math.sign(phi) * (Math.PI - Math.abs(phi));
-      const p: P3 = [-r * Math.cos(phi), y, r * Math.sin(phi)];
-      return [p, this.planar([0, y, rArt * 0.92 * (fold / (Math.PI / 2))])];
+      const p: P3 = [-r.rx * Math.cos(phi), r.y, r.cz + r.rz * Math.sin(phi)];
+      return [p, this.planar([0, r.y, r.czArt + r.rArt * 0.92 * (fold / (Math.PI / 2))])];
     };
-    for (let k = 0; k < profile.length - 1; k++) {
+    for (let k = 0; k < rings.length - 1; k++) {
       for (let i = 0; i < seg; i++) {
         const [a, ua] = point(k, i), [b, ub] = point(k, i + 1), [c, uc] = point(k + 1, i + 1), [d, ud] = point(k + 1, i);
         this.quad(a, b, c, d, [ua, ub, uc, ud]);
       }
     }
-    for (const k of [0, profile.length - 1]) {
-      const [y, , rArt] = profile[k]!;
-      const flat = this.planar([0, y, rArt * 0.3]);
-      for (let i = 0; i < seg; i++) this.tri([0, y, 0], point(k, i)[0], point(k, i + 1)[0], flat, flat, flat);
+    for (const k of [0, rings.length - 1]) {
+      const r = rings[k]!;
+      const flat = this.planar([0, r.y, r.czArt + r.rArt * 0.3]);
+      for (let i = 0; i < seg; i++) this.tri([0, r.y, r.cz], point(k, i)[0], point(k, i + 1)[0], flat, flat, flat);
     }
   }
 
