@@ -283,6 +283,16 @@
       "starter": true
     },
     {
+      "id": "weapon.guard_blade.002",
+      "family": "guard_blade",
+      "name": "岩殻の護刃",
+      "attack": 76,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.guard_blade.002"
+    },
+    {
       "id": "weapon.war_maul.001",
       "family": "war_maul",
       "name": "里鍛ちの大槌",
@@ -292,6 +302,16 @@
       "sharpnessModifier": 1.0,
       "assetId": "model.weapon.war_maul.001",
       "starter": true
+    },
+    {
+      "id": "weapon.war_maul.002",
+      "family": "war_maul",
+      "name": "岩殻の大槌",
+      "attack": 99,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.war_maul.002"
     },
     {
       "id": "weapon.twin_blades.001",
@@ -305,6 +325,16 @@
       "starter": true
     },
     {
+      "id": "weapon.twin_blades.002",
+      "family": "twin_blades",
+      "name": "岩殻の双剣",
+      "attack": 69,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.twin_blades.002"
+    },
+    {
       "id": "weapon.long_blade.001",
       "family": "long_blade",
       "name": "里鍛ちの太刀",
@@ -314,6 +344,16 @@
       "sharpnessModifier": 1.0,
       "assetId": "model.weapon.long_blade.001",
       "starter": true
+    },
+    {
+      "id": "weapon.long_blade.002",
+      "family": "long_blade",
+      "name": "岩殻の太刀",
+      "attack": 87,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_blade.002"
     },
     {
       "id": "weapon.long_lance.001",
@@ -327,6 +367,16 @@
       "starter": true
     },
     {
+      "id": "weapon.long_lance.002",
+      "family": "long_lance",
+      "name": "岩殻の長尖槍",
+      "attack": 83,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_lance.002"
+    },
+    {
       "id": "weapon.ring_bow.001",
       "family": "ring_bow",
       "name": "里鍛ちの環弓",
@@ -336,6 +386,16 @@
       "sharpnessModifier": 1.0,
       "assetId": "model.weapon.ring_bow.001",
       "starter": true
+    },
+    {
+      "id": "weapon.ring_bow.002",
+      "family": "ring_bow",
+      "name": "岩殻の環弓",
+      "attack": 80,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.ring_bow.002"
     }
   ]
 }

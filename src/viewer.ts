@@ -28,6 +28,7 @@ import { applySolved, canSolve, solveState, stowOffhand, type AnimState } from '
 import type { Solved } from './render/bodySolve';
 import { WEAPON_STANCES } from './render/weaponClipSpecs';
 import { buildLongBlade, buildTwinBlade, buildWarMaul } from './render/provisionalWeapons';
+import { withShell } from './render/shellPlates';
 
 interface ManifestAsset {
   id: string;
@@ -85,18 +86,23 @@ const stand = (key: string, model: WeaponModel, x: number, y: number, turn: numb
   rackModels[key] = model;
 };
 // 左から: 護刃（盾・剣）、断岳剣、長尖槍（槍・大盾）、ハンター、大槌・双剣・太刀（設定図が無いので単色の仮の形）、環弓（弓・矢・矢筒）
+// URL に ?tier=2 を付けると、強化後（岩殻の〜。元の形に岩の板を足した仮の形）を並べる
+const tier2 = new URLSearchParams(location.search).get('tier') === '2';
+const up = (base: WeaponModel, fam: string): WeaponModel => (tier2 ? withShell(base, `model.weapon.${fam}.002`) : base);
+/** ?tier=2 の時、ハンターにも強化後の形を持たせる */
+const held = (fam: string): string | undefined => (tier2 ? `model.weapon.${fam}.002` : undefined);
 stand('guardShield', buildGuardBladeShield(), -3.0, 0.3, 0);
-stand('guardSword', buildGuardBladeSword(), -2.68, 0.1224, Math.PI / 2);
+stand('guardSword', up(buildGuardBladeSword(), 'guard_blade'), -2.68, 0.1224, Math.PI / 2);
 stand('heavyBlade', buildHeavyBlade(), -2.27, 0.155, Math.PI / 2);
 // 岩殻の断岳剣（強化後。設定図は無く、岩の板を足しただけの仮の形）
 stand('heavyBladeShell', buildHeavyBlade('shell'), -1.8, 0.155, Math.PI / 2);
-stand('lance', buildLance(), -1.35, 0.541, Math.PI / 2);
+stand('lance', up(buildLance(), 'long_lance'), -1.35, 0.541, Math.PI / 2);
 stand('greatShield', buildGreatShield(), -0.85, 0.55, 0);
-stand('warMaul', buildWarMaul(), 0.95, 0.2, Math.PI / 2);
-stand('twinBladeR', buildTwinBlade(), 1.35, 0.1, Math.PI / 2);
-stand('twinBladeL', buildTwinBlade(), 1.6, 0.1, Math.PI / 2);
-stand('longBlade', buildLongBlade(), 2.0, 0.29, Math.PI / 2);
-stand('bow', buildBow(), 2.5, 0.75, Math.PI / 2);
+stand('warMaul', up(buildWarMaul(), 'war_maul'), 0.95, 0.2, Math.PI / 2);
+stand('twinBladeR', up(buildTwinBlade(), 'twin_blades'), 1.35, 0.1, Math.PI / 2);
+stand('twinBladeL', up(buildTwinBlade(), 'twin_blades'), 1.6, 0.1, Math.PI / 2);
+stand('longBlade', up(buildLongBlade(), 'long_blade'), 2.0, 0.29, Math.PI / 2);
+stand('bow', up(buildBow(), 'ring_bow'), 2.5, 0.75, Math.PI / 2);
 stand('arrow', buildArrow(), 2.9, 0.4, Math.PI / 2);
 stand('quiver', buildQuiver(), 3.2, 0.303, Math.PI / 2);
 
@@ -367,13 +373,13 @@ function frame(ts: number): void {
   if (state.subject === 'hunter') {
     // 技の id（player.<系統>.<技>）から武器系統を決め、その武器と盾を持たせる。共通の技は断岳剣で見せる。
     const fam = content.families.get(a?.actionId.split('.')[1] ?? '') ?? content.families.get('heavy_blade')!;
-    hunter.setFamily(fam.id, fam.offhand);
+    hunter.setFamily(fam.id, fam.offhand, held(fam.id));
     let missing = false;
     const st: AnimState | null = a ? { kind: 'action', clip: a.clip, t, dirAngle: 0, chargeTicks: 0, freeMove: false } : state.stance !== 'none' ? (state.stance === 'guard' ? { kind: 'guard', blend: 1, shake: 0 } : { kind: 'idle' }) : null;
     const stFam = a ? fam : content.families.get(state.stanceFamily) ?? fam;
     if (st && canSolve(stFam.id, st)) {
       // 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）: ゲームと同じ解き方で、体・武器・盾を置く
-      hunter.setFamily(stFam.id, stFam.offhand);
+      hunter.setFamily(stFam.id, stFam.offhand, held(stFam.id));
       const sol = solveState(stFam.id, st, state.stance === 'walk' ? stFam.drawnMoveSpeed : 0, state.stance === 'walk' ? t / 60 : time);
       applySolved(hunter, sol, stFam.id);
       lastSolved = sol;

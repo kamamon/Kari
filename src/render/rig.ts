@@ -10,6 +10,7 @@ import { buildGuardBladeShield, buildGuardBladeSword } from './guardBlade';
 import { buildHeavyBlade, type WeaponModel } from './heavyBlade';
 import { buildGreatShield, buildLance } from './lance';
 import { buildLongBlade, buildTwinBlade, buildWarMaul } from './provisionalWeapons';
+import { withShell } from './shellPlates';
 import { HUNTER_ATLAS } from './hunterAtlas';
 import { REST, buildHunterBody } from './hunterBody';
 import { JOINTS, type BodyPose, type JointName } from './poses';
@@ -38,6 +39,17 @@ const WEAPON_BUILDERS: Record<string, () => WeaponModel> = {
 /** 系統の既定の形ではなく、武器ごとの形があるもの（モデルの ID → 作り方）。 */
 const MODEL_BUILDERS: Record<string, () => WeaponModel> = {
   'model.weapon.heavy_blade.002': () => buildHeavyBlade('shell'),
+  // 岩殻の〜（強化後）: 元の形に、岩の板を足す（shellPlates.ts。設定図が無い間の仮の見た目）
+  'model.weapon.guard_blade.002': () => withShell(buildGuardBladeSword(), 'model.weapon.guard_blade.002'),
+  'model.weapon.war_maul.002': () => withShell(buildWarMaul(), 'model.weapon.war_maul.002'),
+  'model.weapon.twin_blades.002': () => withShell(buildTwinBlade(), 'model.weapon.twin_blades.002'),
+  'model.weapon.long_blade.002': () => withShell(buildLongBlade(), 'model.weapon.long_blade.002'),
+  'model.weapon.long_lance.002': () => withShell(buildLance(), 'model.weapon.long_lance.002'),
+  'model.weapon.ring_bow.002': () => withShell(buildBow(false), 'model.weapon.ring_bow.002'),
+};
+/** 左手に持つ物にも、武器ごとの形があるもの（手に持つ武器のモデルの ID → 作り方）。双剣の左の剣 */
+const OFFHAND_MODEL_BUILDERS: Record<string, () => WeaponModel> = {
+  'model.weapon.twin_blades.002': () => withShell(buildTwinBlade(), 'model.weapon.twin_blades.002'),
 };
 const SHIELD_BUILDERS = { shield_small: buildGuardBladeShield, shield_great: buildGreatShield, blade_left: buildTwinBlade } as const;
 export type ShieldKind = keyof typeof SHIELD_BUILDERS;
@@ -69,7 +81,8 @@ export class HunterRig {
   /** いま手に持たせている形（武器ごとの形があればモデルの ID、無ければ系統の ID） */
   modelKey = '';
   private models: Record<string, WeaponModel> = {};
-  private shields: Partial<Record<ShieldKind, WeaponModel>> = {};
+  /** 左手に持つ物の形（盾の種類、または武器ごとの形があるものはモデルの ID で覚える） */
+  private shields: Record<string, WeaponModel> = {};
   private tumbleYaw = new Group();
   private tumble = new Group();
   private tumbleBack = new Group();
@@ -220,7 +233,8 @@ export class HunterRig {
     this.shield.clear();
     this.shield.visible = !!offhand;
     if (offhand) {
-      const s = (this.shields[offhand] ??= SHIELD_BUILDERS[offhand]());
+      const offKey = OFFHAND_MODEL_BUILDERS[modelKey] ? modelKey : offhand;
+      const s = (this.shields[offKey] ??= (OFFHAND_MODEL_BUILDERS[offKey] ?? SHIELD_BUILDERS[offhand])());
       this.shield.add(s.group);
       this.weaponArt = [...m.art, ...s.art];
     }

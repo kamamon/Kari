@@ -1,7 +1,7 @@
 // 本番ビルドをヘッドレス Chrome で起動し、実際に操作して画面を保存する簡易検査。
 // 使い方: npm run build && npm run smoke   （Chrome が必要。CI では実行しない）
 import { spawn } from 'node:child_process';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, readFileSync } from 'node:fs';
 import { chromium } from 'playwright-core';
 
 const OUT = new URL('./out/', import.meta.url).pathname;
@@ -562,6 +562,73 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await ctx.close();
 }
 
+// ---- 工房: 7 武器すべての強化（岩殻の〜）----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false);
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  // 利用者の端末から受け取った保存データ（依頼 2 回分、太刀を装備）を取り込む。太刀の強化だけ、素材が足りている
+  const device = readFileSync(new URL('../tests/fixtures/save-v1-device-0.7.0.json', import.meta.url), 'utf8');
+  await page.click('#base-data > summary');
+  await page.fill('.data-paste', device);
+  await page.click('text=貼り付けた内容を確かめる');
+  await page.click('#base-data button.go');
+  check('実機の保存データ（v0.7.0）を取り込める。太刀を装備した状態になる', await until(page, () => window.__vh.save.doc.money === 1200 && window.__vh.weaponId === 'weapon.long_blade.001' && window.__vh.sim.player.weaponId === 'weapon.long_blade.001', 8000));
+  await page.click('#base-forge > summary');
+  check('工房: いま装備している太刀がいちばん上に出て、強化できる（岩殻片 7 / 3、青銅晶脈 2 / 2）。断岳剣は硬骨が足りない', await page.evaluate(() => {
+    const boxes = [...document.querySelectorAll('.forge-recipe')];
+    const first = boxes[0]?.textContent ?? '';
+    const heavy = boxes.find((b) => b.dataset.recipe === 'recipe.heavy_blade.002');
+    return boxes.length === 7 && /里鍛ちの太刀 → 岩殻の太刀/.test(first) && /攻撃力 76 → 87/.test(first) && /岩殻片 7 \/ 3/.test(first) && /青銅晶脈 2 \/ 2/.test(first) && !boxes[0].querySelector('button.go').disabled
+      && /不足 硬骨 1 \/ 2|硬骨 1 \/ 2/.test(heavy.textContent) && heavy.querySelector('button.go').disabled && /強化できます: 2/.test(document.querySelector('#base-forge > summary').textContent); // 太刀と双剣（どちらも青銅晶脈 2 を使うので、作れるのは片方）
+  }), await page.evaluate(() => document.querySelector('.forge-recipe')?.textContent ?? ''));
+  await page.screenshot({ path: `${OUT}72_forge_seven.png` });
+  await page.click('.forge-recipe button.go');
+  await page.click('.forge-confirm button.go');
+  check('太刀を強化すると、岩殻片 3・青銅晶脈 2・120 通貨が減り、岩殻の太刀（攻撃力 87）を装備している', await until(page, () => {
+    const d = window.__vh.save.doc;
+    return d.money === 1080 && d.items['mat.galdros.shell_shard'] === 4 && !('mat.galdros.bronze_vein' in d.items) && d.equippedWeaponId === 'weapon.long_blade.002'
+      && window.__vh.view.hunter.modelKey === 'model.weapon.long_blade.002' && /岩殻の太刀（攻撃力 87）/.test(document.querySelector('.base-weapon-note').textContent);
+  }, 8000));
+  // 残りの 5 つ（護刃・大槌・双剣・長尖槍・環弓）は、素材を持たせてから強化する
+  const all = await page.evaluate(async () => {
+    const s = window.__vh.save;
+    const text = JSON.parse(s.exportText());
+    text.save.items = { 'mat.galdros.shell_shard': 30, 'mat.galdros.hard_bone': 20, 'mat.galdros.bronze_vein': 20, 'mat.galdros.foreleg_plate': 10 };
+    await s.importText(JSON.stringify(text));
+    const out = [];
+    for (const fam of ['heavy_blade', 'guard_blade', 'war_maul', 'twin_blades', 'long_lance', 'ring_bow']) out.push([fam, (await s.craft(`recipe.${fam}.002`)).ok]);
+    window.__vh.saveChanged();
+    return { out, weapons: s.doc.weapons, money: s.doc.money };
+  });
+  check('7 武器すべてを強化できる（1 つ 120 通貨）。持っている武器は 7 つのまま、すべて岩殻の〜に変わる',
+    all.out.every((x) => x[1]) && all.weapons.length === 7 && all.weapons.every((w) => w.endsWith('.002')) && all.money === 1080 - 120 * 6, JSON.stringify(all.out));
+  const shapes = [];
+  for (const fam of ['guard_blade', 'war_maul', 'twin_blades', 'long_lance', 'ring_bow', 'heavy_blade']) {
+    await page.click(`.base-weapon[data-weapon="weapon.${fam}.002"]`);
+    await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy') && window.__vh.view.hunter.modelKey === id.replace('weapon.', 'model.weapon.'), 8000, `weapon.${fam}.002`);
+    shapes.push(await page.evaluate(() => {
+      const h = window.__vh.view.hunter;
+      const names = [];
+      h.weapon.traverse((o) => o.name && names.push(o.name));
+      const off = [];
+      h.shield.traverse((o) => o.name && off.push(o.name));
+      return { key: h.modelKey, named: names.includes(h.modelKey), off: off.find((n) => n.startsWith('model.weapon')) ?? '', art: h.weaponArt.every((a) => a.loaded && !a.failed) };
+    }));
+  }
+  check('強化後の武器は、それぞれ岩の板を足した形を持つ（双剣は左の剣も）', shapes.every((x) => x.named && x.art) && shapes.find((x) => x.key === 'model.weapon.twin_blades.002').off === 'model.weapon.twin_blades.002', shapes.map((x) => x.key.split('.')[2]).join(' / '));
+  await page.reload();
+  await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  check('読み込み直しても、7 つとも岩殻の〜のまま。工房は「強化済み」が 7 つ', await page.evaluate(() => {
+    document.querySelector('#base-forge').open = true;
+    const d = window.__vh.save.doc;
+    return d.weapons.every((w) => w.endsWith('.002')) && d.equippedWeaponId === 'weapon.heavy_blade.002' && [...document.querySelectorAll('.forge-recipe')].filter((b) => /強化済み/.test(b.textContent)).length === 7 && document.querySelectorAll('.base-weapon').length === 7;
+  }));
+  await ctx.close();
+}
+
 // ---- 保存: 新しい版のデータ・壊れたデータには触れない ----
 {
   const { ctx, page } = await open({ width: 1280, height: 720 }, false);
@@ -898,6 +965,16 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
       && ['warMaul', 'twinBladeR', 'twinBladeL', 'longBlade'].every((k) => rack[k] && rack[k].triangles > 20 && rack[k].art.length === 0);
   }, 15000);
   check('ビューア: 7 武器の 13 点（護刃の剣・盾、断岳剣と岩殻の断岳剣、長尖槍の槍・大盾、環弓・矢・矢筒は形と絵。大槌・双剣 2 本・太刀は絵の無い仮の形）を読み込める', rackOk);
+  // 強化後（岩殻の〜）の形: ?tier=2 で並ぶ
+  await page.goto(`http://localhost:${PORT}${BASE}viewer.html?subject=weapons&tier=2`);
+  check('ビューア: ?tier=2 で、強化後（岩殻の〜）の形が 7 武器ぶん並ぶ', await until(page, () => {
+    const rack = window.__viewer?.rack;
+    return !!rack && ['guardSword', 'heavyBladeShell', 'lance', 'bow'].every((k) => rack[k] && rack[k].art.length > 0 && rack[k].art.every((a) => a.loaded && !a.failed))
+      && [['guardSword', 'guard_blade'], ['lance', 'long_lance'], ['warMaul', 'war_maul'], ['twinBladeR', 'twin_blades'], ['twinBladeL', 'twin_blades'], ['longBlade', 'long_blade'], ['bow', 'ring_bow']].every(([k, fam]) => rack[k]?.group?.name === `model.weapon.${fam}.002`);
+  }, 15000));
+  await page.screenshot({ path: `${OUT}73_viewer_tier2.png` });
+  await page.goto(`http://localhost:${PORT}${BASE}viewer.html?tier=2&stance=idle&family=long_blade`);
+  check('ビューア: ?tier=2 で、ハンターも強化後の形（岩殻の太刀）を持つ', await until(page, () => window.__viewer?.hunter?.modelKey === 'model.weapon.long_blade.002', 15000));
   await page.goto(`http://localhost:${PORT}${BASE}viewer.html?glb=assets/models/ref_cube_1m.glb`);
   await page.waitForFunction(() => window.__viewer, null, { timeout: 15000 });
   await page.waitForTimeout(300);

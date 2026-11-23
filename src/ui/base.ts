@@ -4,7 +4,7 @@
 // 持ち物・装備の表示は、保存の管理役（SaveManager）が持つ「書き込みが完了した内容」だけを映す。
 // 強化・取り込みなどの結果は、書き込みが完了してから表示する（押した時点では「保存しています…」）。
 import { APP_VERSION, BUILD_ID } from '../core/assets';
-import type { Content } from '../data/schemas';
+import type { Content, RecipeDef } from '../data/schemas';
 import { checkCraft, parseImport, unknownIds, usableWeapons } from '../save/profile';
 import type { SaveManager, SaveResult } from '../save/saveManager';
 import { canFullscreen, fullscreenHint, toggleFullscreen } from './fullscreen';
@@ -234,7 +234,15 @@ export class BaseScreen {
     this.forgeBody.textContent = '';
     let ready = 0;
     let shown = 0;
-    for (const r of c.recipes.values()) {
+    // 並べる順: いま装備している武器 → 強化できるもの → まだのもの → 強化済み
+    const equipped = this.host.weaponId;
+    const rank = (r: RecipeDef): number => {
+      const chk = checkCraft(doc, r);
+      if (r.fromWeaponId === equipped || r.resultWeaponId === equipped) return 0;
+      return chk.ok ? 1 : chk.ownsResult ? 3 : 2;
+    };
+    const recipes = [...c.recipes.values()].sort((x, y) => rank(x) - rank(y));
+    for (const r of recipes) {
       const from = c.weapons.get(r.fromWeaponId)!;
       const to = c.weapons.get(r.resultWeaponId)!;
       const chk = checkCraft(doc, r);

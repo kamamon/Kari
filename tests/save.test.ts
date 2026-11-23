@@ -163,6 +163,66 @@ describe('強化（岩殻の断岳剣）', () => {
   });
 });
 
+describe('強化（7 武器すべて）', () => {
+  const FORE = 'mat.galdros.foreleg_plate';
+
+  it('どの武器種にも強化が 1 つずつあり、最初の武器から同じ武器種の武器へ変わる', () => {
+    const byFamily = new Map<string, number>();
+    for (const r of content.recipes.values()) {
+      const from = content.weapons.get(r.fromWeaponId)!, to = content.weapons.get(r.resultWeaponId)!;
+      expect(from.starter, r.id).toBe(true);
+      expect(to.starter ?? false, r.id).toBe(false);
+      expect(to.family, r.id).toBe(from.family);
+      byFamily.set(from.family, (byFamily.get(from.family) ?? 0) + 1);
+    }
+    expect([...byFamily.keys()].sort()).toEqual([...content.families.keys()].sort());
+    expect([...byFamily.values()]).toEqual([1, 1, 1, 1, 1, 1, 1]);
+  });
+
+  it('強化後の攻撃力は元の 1.15 倍（端数は 0.5 以内）。ほかの値は変わらない', () => {
+    for (const r of content.recipes.values()) {
+      const from = content.weapons.get(r.fromWeaponId)!, to = content.weapons.get(r.resultWeaponId)!;
+      expect(to.attack, r.id).toBeGreaterThan(from.attack);
+      expect(Math.abs(to.attack - from.attack * 1.15), r.id).toBeLessThanOrEqual(0.5);
+      expect({ element: to.element, affinity: to.affinity, sharpnessModifier: to.sharpnessModifier }, r.id).toEqual({ element: from.element, affinity: from.affinity, sharpnessModifier: from.sharpnessModifier });
+    }
+  });
+
+  it('それぞれ、書いてある素材と通貨がちょうどあれば強化でき、使い切る。1 つでも欠けるとできない', async () => {
+    for (const r of content.recipes.values()) {
+      const exact: [string, number][] = r.cost.items.map((s) => [s.itemId, s.count]);
+      const m = await open(new MemoryBackend());
+      await m.settle(rewards('run-1', r.cost.money, exact));
+      expect(await m.craft(r.id), r.id).toEqual({ ok: true });
+      expect(m.doc.money, r.id).toBe(0);
+      expect(m.doc.items, r.id).toEqual({});
+      expect(m.doc.weapons, r.id).toContain(r.resultWeaponId);
+      expect(m.doc.weapons, r.id).not.toContain(r.fromWeaponId);
+      expect(m.doc.weapons, r.id).toHaveLength(7);
+
+      const short: [string, number][] = exact.map(([id, n], i) => [id, i === 0 ? n - 1 : n]);
+      const m2 = await open(new MemoryBackend());
+      await m2.settle(rewards('run-1', r.cost.money, short.filter(([, n]) => n > 0)));
+      expect(await m2.craft(r.id), r.id).toMatchObject({ ok: false, reason: 'rule' });
+      expect(m2.doc.weapons, r.id).toContain(r.fromWeaponId);
+    }
+  });
+
+  it('7 つ全部を強化すると、持っている武器は 7 つのまま、全部が強化後になる', async () => {
+    const b = new MemoryBackend();
+    const m = await open(b);
+    await m.settle(rewards('run-1', 120 * 7, [[SHELL, 18], [BONE, 10], [VEIN, 6], [FORE, 3]]));
+    for (const r of content.recipes.values()) expect(await m.craft(r.id), r.id).toEqual({ ok: true });
+    expect(m.doc.money).toBe(0);
+    expect(m.doc.items).toEqual({});
+    expect([...m.doc.weapons].sort()).toEqual([...content.recipes.values()].map((r) => r.resultWeaponId).sort());
+    // 読み込み直しても、最初の武器が配り直されることはない
+    const again = await open(b);
+    expect(again.doc).toEqual(m.doc);
+    expect(usableWeapons(again.doc, content)).toHaveLength(7);
+  });
+});
+
 describe('装備', () => {
   it('持っている武器へ替えると保存され、読み込み直しても同じ', async () => {
     const b = new MemoryBackend();
@@ -382,5 +442,19 @@ describe('実機で書き出したデータ（tests/fixtures/save-v1-device-0.7.
     expect(c.ok).toBe(false);
     expect(c.items.filter((i) => i.have < i.need)).toEqual([{ itemId: BONE, have: 1, need: 2 }]);
     expect(c.money).toEqual({ have: 1200, need: 120 });
+  });
+
+  it('この持ち物で強化できるのは太刀と双剣。太刀を強化すると、装備が岩殻の太刀になり、青銅晶脈が無くなって双剣はできなくなる', async () => {
+    const m = await open(new MemoryBackend());
+    await m.importText(text);
+    const can = (): string[] => [...content.recipes.values()].filter((r) => checkCraft(m.doc, r).ok).map((r) => r.id).sort();
+    expect(can()).toEqual(['recipe.long_blade.002', 'recipe.twin_blades.002']);
+    expect(await m.craft('recipe.long_blade.002')).toEqual({ ok: true });
+    expect(m.doc.equippedWeaponId).toBe('weapon.long_blade.002');
+    expect(playWeaponId(m.doc, content)).toBe('weapon.long_blade.002');
+    expect(m.doc.money).toBe(1080);
+    expect(m.doc.items).toEqual({ [SHELL]: 4, [BONE]: 1 });
+    expect(m.doc.settledRuns).toHaveLength(2);
+    expect(can()).toEqual([]);
   });
 });

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "note": "工房で作るもの。kind: upgrade は、持っている武器（fromWeaponId）を素材と通貨で別の武器（resultWeaponId）に変える。元の武器は無くなる。素材と費用は設計書 p.24 の例。攻撃力（weapons.json）は机上の初期値。",
+  "note": "工房で作るもの。kind: upgrade は、持っている武器（fromWeaponId）を素材と通貨で別の武器（resultWeaponId）に変える。元の武器は無くなる。岩殻の断岳剣の素材と費用は設計書 p.24 の例。ほかの 6 つは本作で決めた（設計書の岩殻の護刃は硬石 3 を使うが、採掘がまだ無いので硬骨に替えてある）。攻撃力（weapons.json）は元の 1.15 倍で、机上の初期値。",
   "recipes": [
     {
       "id": "recipe.heavy_blade.002",
@@ -13,6 +13,87 @@
           { "itemId": "mat.galdros.shell_shard", "count": 3 },
           { "itemId": "mat.galdros.hard_bone", "count": 2 },
           { "itemId": "mat.galdros.bronze_vein", "count": 1 }
+        ]
+      }
+    },
+    {
+      "id": "recipe.guard_blade.002",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.002",
+      "cost": {
+        "money": 120,
+        "items": [
+          { "itemId": "mat.galdros.shell_shard", "count": 2 },
+          { "itemId": "mat.galdros.foreleg_plate", "count": 1 },
+          { "itemId": "mat.galdros.hard_bone", "count": 2 }
+        ]
+      }
+    },
+    {
+      "id": "recipe.war_maul.002",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.002",
+      "cost": {
+        "money": 120,
+        "items": [
+          { "itemId": "mat.galdros.shell_shard", "count": 4 },
+          { "itemId": "mat.galdros.hard_bone", "count": 2 }
+        ]
+      }
+    },
+    {
+      "id": "recipe.twin_blades.002",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.002",
+      "cost": {
+        "money": 120,
+        "items": [
+          { "itemId": "mat.galdros.shell_shard", "count": 2 },
+          { "itemId": "mat.galdros.bronze_vein", "count": 2 },
+          { "itemId": "mat.galdros.hard_bone", "count": 1 }
+        ]
+      }
+    },
+    {
+      "id": "recipe.long_blade.002",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.002",
+      "cost": {
+        "money": 120,
+        "items": [
+          { "itemId": "mat.galdros.shell_shard", "count": 3 },
+          { "itemId": "mat.galdros.bronze_vein", "count": 2 }
+        ]
+      }
+    },
+    {
+      "id": "recipe.long_lance.002",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.002",
+      "cost": {
+        "money": 120,
+        "items": [
+          { "itemId": "mat.galdros.shell_shard", "count": 3 },
+          { "itemId": "mat.galdros.foreleg_plate", "count": 2 }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ring_bow.002",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.002",
+      "cost": {
+        "money": 120,
+        "items": [
+          { "itemId": "mat.galdros.hard_bone", "count": 3 },
+          { "itemId": "mat.galdros.bronze_vein", "count": 1 },
+          { "itemId": "mat.galdros.shell_shard", "count": 1 }
         ]
       }
     }
