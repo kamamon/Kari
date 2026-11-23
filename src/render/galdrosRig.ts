@@ -27,13 +27,15 @@ const ROOT = 0, BODY = 1, LUMBAR = 2, PELVIS = 3, THORAX = 4, CHEST = 5, RIBS = 
 const TAIL_N = 8, PLATE_N = 15, BONES = PLATE + PLATE_N;
 const BODY_Y = 1.25;
 /** 尾の関節の位置 (z)。CUT 番目（-2.5）が切断面。 */
-const TAIL_Z = [-1.5, -1.75, -2.0, -2.25, -2.5, -2.78, -3.06, -3.34];
-const TAIL_END = -3.62;
+const TAIL_Z = [-1.5, -1.68, -1.86, -2.04, -2.22, -2.42, -2.62, -2.82];
+const TAIL_END = -3.0;
+/** 鼻先の位置 (z)。体つきは設定図に合わせてある: 全長 約 5.8m（晶の塊の先 -3.2 〜 鼻先 2.64） */
+const HEAD_END = 2.64;
 const CUT = 4;
 /** 尾の先の晶の塊の中心 */
-const TAIL_TIP: readonly [number, number, number] = [0, 0.73, -3.5];
+const TAIL_TIP: readonly [number, number, number] = [0, 0.7, -2.72];
 const ANKLE_H = 0.2;
-const REST_TAIL_PITCH = 0.173;
+const REST_TAIL_PITCH = 0.197;
 
 // ---- 色（採用した基準ボード: 岩は灰〜灰褐色、苔の灰緑、縁取りは明るい青銅） ----
 const DARK = hex(0x5b534a);
@@ -55,37 +57,38 @@ const IRIS = hex(0xb07a30), IRIS_RIM = hex(0x4a2f14), GLINT = hex(0xfff4dc);
 type Profile = readonly (readonly [number, number, number, number, number])[];
 // 体の軸に沿った断面: [z, 中心の高さ, 横の半径, 上の半径, 下の半径]（尾先 → 鼻先）
 const SPINE: Profile = [
-  [TAIL_END, 0.71, 0.1, 0.1, 0.1],
-  [-3.44, 0.73, 0.2, 0.2, 0.18],
-  [-3.1, 0.76, 0.26, 0.26, 0.23],
-  [-2.8, 0.8, 0.3, 0.3, 0.26],
-  [-2.5, 0.85, 0.32, 0.32, 0.28],
-  [-2.2, 0.9, 0.36, 0.36, 0.31],
-  [-1.85, 0.97, 0.43, 0.42, 0.36],
-  [-1.5, 1.05, 0.58, 0.54, 0.45],
-  [-1.2, 1.12, 0.86, 0.78, 0.6],
-  [-0.8, 1.18, 1.05, 0.9, 0.72],
-  [-0.3, 1.22, 1.14, 0.93, 0.8],
-  [0.3, 1.22, 1.14, 0.93, 0.8],
-  [0.8, 1.22, 1.08, 0.9, 0.76],
-  [1.15, 1.25, 0.94, 0.8, 0.66],
-  [1.45, 1.33, 0.74, 0.66, 0.52],
-  [1.7, 1.42, 0.63, 0.58, 0.42],
-  [1.9, 1.52, 0.6, 0.52, 0.32],
-  [2.2, 1.54, 0.57, 0.46, 0.28],
-  [2.5, 1.5, 0.5, 0.38, 0.25],
-  [2.72, 1.45, 0.39, 0.29, 0.2],
-  [2.86, 1.41, 0.24, 0.17, 0.13],
-  [2.92, 1.39, 0.1, 0.07, 0.06],
+  [TAIL_END, 0.68, 0.1, 0.1, 0.1],
+  [-2.88, 0.69, 0.18, 0.18, 0.16],
+  [-2.62, 0.7, 0.21, 0.21, 0.19],
+  [-2.42, 0.72, 0.23, 0.23, 0.21],
+  [-2.22, 0.75, 0.25, 0.25, 0.23],
+  [-2.0, 0.8, 0.29, 0.29, 0.26],
+  [-1.76, 0.88, 0.38, 0.37, 0.32],
+  [-1.5, 1.0, 0.56, 0.52, 0.43],
+  [-1.2, 1.12, 0.86, 0.78, 0.58],
+  [-0.8, 1.18, 1.05, 0.9, 0.64],
+  [-0.3, 1.22, 1.14, 0.93, 0.68],
+  [0.3, 1.22, 1.14, 0.93, 0.68],
+  [0.8, 1.22, 1.08, 0.9, 0.66],
+  [1.15, 1.25, 0.94, 0.8, 0.62],
+  [1.45, 1.36, 0.76, 0.66, 0.5],
+  [1.66, 1.5, 0.66, 0.54, 0.44],
+  [1.82, 1.6, 0.6, 0.42, 0.36],
+  [2.0, 1.65, 0.5, 0.33, 0.25],
+  [2.2, 1.66, 0.41, 0.27, 0.24],
+  [2.4, 1.61, 0.34, 0.2, 0.19],
+  [2.54, 1.58, 0.27, 0.15, 0.14],
+  [2.61, 1.57, 0.17, 0.1, 0.09],
+  [HEAD_END, 1.57, 0.08, 0.05, 0.05],
 ];
 // 下あごの断面
 const JAW_PROFILE: Profile = [
-  [1.84, 1.2, 0.46, 0.13, 0.17],
-  [2.05, 1.19, 0.5, 0.15, 0.19],
-  [2.3, 1.19, 0.47, 0.15, 0.17],
-  [2.55, 1.2, 0.4, 0.13, 0.14],
-  [2.72, 1.22, 0.27, 0.1, 0.1],
-  [2.82, 1.24, 0.09, 0.04, 0.04],
+  [1.78, 1.36, 0.42, 0.12, 0.15],
+  [1.95, 1.34, 0.45, 0.13, 0.15],
+  [2.15, 1.34, 0.38, 0.13, 0.14],
+  [2.35, 1.36, 0.31, 0.11, 0.12],
+  [2.5, 1.4, 0.22, 0.08, 0.08],
+  [2.57, 1.42, 0.09, 0.04, 0.04],
 ];
 
 /** 断面の表を z でなめらかに補間する。 */
@@ -115,9 +118,9 @@ function backY(x: number, z: number): number {
 const TAIL_MID = TAIL_Z.map((z, i) => (z + (TAIL_Z[i + 1] ?? TAIL_END)) / 2);
 /** 体の軸上の位置 z が、どの骨にどれだけ付くか。尾の切断面では骨をまたがない（切った時に平らな断面になる）。 */
 function spineBones(z: number, afterCut: boolean): [number, number, number] {
-  if (z >= 1.92) return [HEAD, HEAD, 0];
-  if (z >= 1.7) return [NECK2, HEAD, sstep(1.7, 1.92, z)];
-  if (z >= 1.45) return [NECK1, NECK2, sstep(1.45, 1.7, z)];
+  if (z >= 1.84) return [HEAD, HEAD, 0];
+  if (z >= 1.66) return [NECK2, HEAD, sstep(1.66, 1.84, z)];
+  if (z >= 1.45) return [NECK1, NECK2, sstep(1.45, 1.66, z)];
   if (z >= 1.2) return [CHEST, NECK1, sstep(1.2, 1.45, z)];
   if (z >= 0.6) return [THORAX, CHEST, sstep(0.6, 1.15, z)];
   if (z >= 0.3) return [THORAX, THORAX, 0];
@@ -146,11 +149,11 @@ const clamp = (v: number, lo: number, hi: number): number => Math.min(hi, Math.m
 const wrapPi = (a: number): number => Math.atan2(Math.sin(a), Math.cos(a));
 const X = new Vector3(1, 0, 0), Y = new Vector3(0, 1, 0), Z = new Vector3(0, 0, 1);
 // 目: 設定図に合わせ、頭の岩のひさしの下・やや前向きに置く小さな目
-const EYES = [new Vector3(0.455, 1.728, 2.36), new Vector3(-0.455, 1.728, 2.36)];
+const EYES = [new Vector3(0.375, 1.735, 2.2), new Vector3(-0.375, 1.735, 2.2)];
 const EYE_OUT = EYES.map((e) => new Vector3(Math.sign(e.x) * 0.62, 0.12, 0.78).normalize());
 /** まぶたを下ろす時の回転軸（目の中心を通る、顔の表面に沿った水平の向き） */
 const LID_AXIS = EYE_OUT.map((o) => new Vector3().crossVectors(new Vector3(0, 1, 0), new Vector3(o.x, 0, o.z).normalize()).normalize());
-const NOSTRILS = [new Vector3(0.14, 1.6, 2.77), new Vector3(-0.14, 1.6, 2.77)];
+const NOSTRILS = [new Vector3(0.12, 1.66, 2.55), new Vector3(-0.12, 1.66, 2.55)];
 
 interface PartIds {
   head: number;
@@ -374,10 +377,10 @@ export class GaldrosRig implements MonsterRig {
     def(CHEST, THORAX, 0, BODY_Y, 0.95);
     def(RIBS, BODY, 0, 1.2, 0.15);
     def(NECK1, CHEST, 0, 1.34, 1.4);
-    def(NECK2, NECK1, 0, 1.43, 1.65);
-    def(HEAD, NECK2, 0, 1.52, 1.9);
-    def(JAW, HEAD, 0, 1.36, 1.92);
-    def(TONGUE, JAW, 0, 1.3, 2.28);
+    def(NECK2, NECK1, 0, 1.5, 1.63);
+    def(HEAD, NECK2, 0, 1.6, 1.82);
+    def(JAW, HEAD, 0, 1.44, 1.84);
+    def(TONGUE, JAW, 0, 1.44, 2.1);
     EYES.forEach((e, i) => def(LID + i, HEAD, e.x, e.y, e.z));
     TAIL_Z.forEach((z, i) => def(TAIL + i, i === 0 ? PELVIS : TAIL + i - 1, 0, spineAt(z).cy, z));
     // 脚: 前左・前右・後左・後右。左が +X。付け根の位置は判定の軌道データ（肩 y=1.5）に合わせる。
@@ -417,8 +420,8 @@ export class GaldrosRig implements MonsterRig {
     domeRow(0.35, 1.3, 0.62, THORAX, 11);
     domeRow(-0.55, 0.35, 1.3, BODY, 13);
     domeRow(-1.42, -0.55, 0.62, LUMBAR, 15);
-    plates.push({ group: 'cap', parent: HEAD, part: part.head, slab: { w: 0.58, d: 1.0, h: 0.2, seed: 21, pos: [0.27, 2.04, 2.12], rot: [0.22, 0.05, -0.16], moss: 0.2, bendX: 0.3, points: 9 } });
-    plates.push({ group: 'cap', parent: HEAD, part: part.head, slab: { w: 0.56, d: 0.95, h: 0.2, seed: 22, pos: [-0.27, 2.04, 2.1], rot: [0.22, -0.05, 0.16], moss: 0.5, bendX: 0.3, points: 9 } });
+    plates.push({ group: 'cap', parent: HEAD, part: part.head, slab: { w: 0.5, d: 0.92, h: 0.2, seed: 21, pos: [0.23, 2.0, 2.06], rot: [0.3, 0.05, -0.16], moss: 0.2, bendX: 0.3, points: 9 } });
+    plates.push({ group: 'cap', parent: HEAD, part: part.head, slab: { w: 0.5, d: 0.9, h: 0.2, seed: 22, pos: [-0.23, 2.0, 2.05], rot: [0.3, -0.05, 0.16], moss: 0.5, bendX: 0.3, points: 9 } });
     // 肩と腰: 左は大きな一枚、右は中 1 枚 + 小 1 枚（設定図の左右差）
     plates.push({ group: 'fixed', parent: CHEST, part: part.body, slab: { w: 1.15, d: 1.2, h: 0.3, seed: 31, pos: [1.2, 1.62, 1.0], rot: [0.05, 0.15, -0.82], moss: 0.8, bendX: 0.12 } });
     plates.push({ group: 'fixed', parent: CHEST, part: part.body, slab: { w: 0.98, d: 1.05, h: 0.27, seed: 32, pos: [-1.15, 1.68, 1.08], rot: [0.05, -0.1, 0.76], moss: 0.2, bendX: 0.12 } });
@@ -466,7 +469,7 @@ export class GaldrosRig implements MonsterRig {
     // ---- 胴・首・頭（上あご）・尾: 尾先から鼻先まで 1 本の皮 ----
     const cutZ = TAIL_Z[CUT]!;
     const zs: number[] = [];
-    for (let z = TAIL_END; z < 2.93; z += z < -1.4 ? 0.08 : z < 1.3 ? 0.09 : 0.055) zs.push(Math.abs(z - cutZ) < 0.04 ? cutZ - 0.045 : z);
+    for (let z = TAIL_END; z < HEAD_END + 0.01; z += z < -1.4 ? 0.08 : z < 1.3 ? 0.09 : 0.055) zs.push(Math.abs(z - cutZ) < 0.04 ? cutZ - 0.045 : z);
     type SRing = Ring & { z: number; flesh?: boolean; brk?: boolean };
     const rings: SRing[] = [];
     const ringAt = (z: number, afterCut: boolean, flesh = false, brk = false): void => {
@@ -505,12 +508,12 @@ export class GaldrosRig implements MonsterRig {
         let b = 0;
         b += 0.11 * gauss(z, 1.0, 0.36) * side * sstep(-0.7, 0.3, upness); // 肩
         b += 0.09 * gauss(z, -1.0, 0.34) * side * sstep(-0.7, 0.3, upness); // 腰
-        b += 0.035 * sstep(0.9, 1.0, upness) * sstep(-3.0, -1.2, z) * sstep(1.7, 1.2, z); // 背骨の稜線
+        b += 0.035 * sstep(0.9, 1.0, upness) * sstep(-2.6, -1.2, z) * sstep(1.7, 1.2, z); // 背骨の稜線
         b += 0.06 * gauss(z, -0.1, 0.8) * sstep(-0.35, -1, upness); // 腹のたるみ
         b += 0.16 * gauss(z, 1.5, 0.22) * sstep(-0.55, -1, upness); // のどのたるみ
-        b += 0.2 * gauss(z, 2.16, 0.12) * gauss(dTop, 0.78, 0.2); // 眉
-        b += 0.07 * gauss(z, 1.98, 0.18) * side * gauss(upness, -0.15, 0.4); // 頬
-        b -= 0.07 * gauss(z, 2.52, 0.1) * gauss(dTop, 1.05, 0.25); // 鼻づらのくぼみ
+        b += 0.2 * gauss(z, 2.05, 0.1) * gauss(dTop, 0.78, 0.2); // 眉
+        b += 0.07 * gauss(z, 1.9, 0.15) * side * gauss(upness, -0.15, 0.4); // 頬
+        b -= 0.07 * gauss(z, 2.34, 0.08) * gauss(dTop, 1.05, 0.25); // 鼻づらのくぼみ
         b += 0.022 * Math.sin(z * 24) * gauss(z, 1.45, 0.3); // 首のしわ
         b += 0.014 * Math.sin(z * 21 + 1) * (gauss(z, -1.4, 0.3) + gauss(z, 0.55, 0.3)); // 肩・腰のしわ
         b += 0.012 * Math.sin(z * 26) * sstep(-1.7, -2.0, z); // 尾の節
@@ -522,13 +525,13 @@ export class GaldrosRig implements MonsterRig {
         let c: RGB = WHITE;
         const dTop = Math.abs(a - Math.PI / 2);
         // 岩板の下に隠れている面（壊すと見える）: 傷んだ暗い地肌
-        const under = Math.max(sstep(0.85, 0.5, dTop) * sstep(-1.25, -0.9, rr.z) * sstep(1.1, 0.8, rr.z), sstep(0.7, 0.4, dTop) * sstep(1.8, 1.95, rr.z) * sstep(2.6, 2.45, rr.z));
+        const under = Math.max(sstep(0.85, 0.5, dTop) * sstep(-1.25, -0.9, rr.z) * sstep(1.1, 0.8, rr.z), sstep(0.7, 0.4, dTop) * sstep(1.72, 1.85, rr.z) * sstep(2.42, 2.3, rr.z));
         c = mix(c, over(shade(SCAR, 0.9 + 0.5 * fbm(p.x * 6, p.y * 6, p.z * 6, 2))), under * 0.75);
         // 目のくぼみと鼻の穴
         for (const e of EYES) c = shade(c, 1 - 0.3 * sstep(0.17, 0.07, p.distanceTo(e)));
         for (const e of NOSTRILS) c = mix(c, BLACK, sstep(0.07, 0.03, p.distanceTo(e)));
         // 口の中（上あごの裏）
-        if (rr.z > 1.95) c = mix(c, over(MOUTH), sstep(-0.75, -0.95, n.y) * sstep(1.95, 2.1, rr.z));
+        if (rr.z > 1.86) c = mix(c, over(MOUTH), sstep(-0.75, -0.95, n.y) * sstep(1.86, 1.98, rr.z));
         return c;
       },
     });
@@ -539,7 +542,7 @@ export class GaldrosRig implements MonsterRig {
     const tongue: Ring[] = [];
     for (let i = 0; i <= 7; i++) {
       const t = i / 7;
-      const z = 1.98 + 0.66 * t;
+      const z = 1.9 + 0.52 * t;
       const j = profileAt(JAW_PROFILE, z);
       const w = Math.max(0.03, 0.2 * Math.sin(Math.PI * (0.25 + 0.72 * t)));
       tongue.push({ c: new Vector3(0, j.cy + j.top + 0.015, z), right: X, up: Y, rx: w, top: 0.05, bottom: 0.03, b0: JAW, b1: TONGUE, w1: sstep(0.2, 0.7, t), part: part.head });
@@ -548,7 +551,7 @@ export class GaldrosRig implements MonsterRig {
     // 歯: 上あごは下向き、下あごは上向き。口を閉じている間は隠れ、開くと見える（設定図は口を閉じた姿で、歯は見えない）
     for (const s of [1, -1]) {
       for (let j = 0; j < 7; j++) {
-        const z = 2.06 + j * 0.1;
+        const z = 1.96 + j * 0.075;
         const up = spineAt(z), lo = profileAt(JAW_PROFILE, z);
         const big = j === 5 ? 1.7 : 1;
         horn(hide, new Vector3(s * up.rx * 0.6, up.cy - up.bottom * 0.8, z), new Vector3(s * 0.12, -1, 0.05), 0.085 * big, 0.03 * big, TOOTH, HEAD, part.head);
@@ -557,8 +560,8 @@ export class GaldrosRig implements MonsterRig {
     }
     // くちばしと、下あごの先（設定図の頭には角やとげが無いので、付けない）
     // くちばしは短く、下へ曲がる（設定図は上あごの先が鉤になっている）
-    horn(hide, new Vector3(0, 1.36, 2.8), new Vector3(0, -1, 0.5), 0.2, 0.19, HORN, HEAD, part.head, new Vector3(0, -0.12, -0.1));
-    horn(hide, new Vector3(0, 1.26, 2.74), new Vector3(0, 0.5, 1), 0.16, 0.1, HORN, JAW, part.head);
+    horn(hide, new Vector3(0, 1.52, 2.55), new Vector3(0, -1, 0.45), 0.2, 0.13, HORN, HEAD, part.head, new Vector3(0, -0.1, -0.08));
+    horn(hide, new Vector3(0, 1.41, 2.5), new Vector3(0, 0.5, 1), 0.1, 0.07, HORN, JAW, part.head);
     // 目: 暗い縁、琥珀がかった茶色の虹彩、丸い瞳、小さな光の点、上下のまぶた
     EYES.forEach((e, i) => {
       const out = EYE_OUT[i]!, axis = LID_AXIS[i]!;
@@ -671,7 +674,9 @@ export class GaldrosRig implements MonsterRig {
       [0, 0.1, -1, 0.52, 0.25], [0.6, 0.4, -0.7, 0.42, 0.22], [-0.6, 0.35, -0.75, 0.42, 0.22], [0.1, 0.9, -0.4, 0.38, 0.21], [-0.3, -0.6, -0.7, 0.36, 0.2], [0.35, -0.5, -0.7, 0.34, 0.19],
       [0, 0.7, 0.3, 0.32, 0.2], [0.6, 0, 0.2, 0.3, 0.18], [-0.6, 0, 0.2, 0.3, 0.18], [0.45, 0.6, -0.2, 0.3, 0.17], [-0.45, 0.6, -0.2, 0.3, 0.17], [0, -0.7, 0.1, 0.28, 0.17],
     ];
-    tailCrystals.forEach(([x, y, z, len, rad], j) => crystal(glow, tip.clone().add(new Vector3(x * 0.08, y * 0.08, 0.06)), new Vector3(x, y, z), len, rad, BRONZE, TAIL + TAIL_N - 1, part.tail, j + 1));
+    // 設定図の晶の塊は、尾の先を前後に長く覆う。後ろ向きの晶ほど後ろから生やす。
+    const crystalBase = (c: Vector3, x: number, y: number, z: number): Vector3 => c.clone().add(new Vector3(x * 0.08, y * 0.08, 0.04 + z * 0.2));
+    tailCrystals.forEach(([x, y, z, len, rad], j) => crystal(glow, crystalBase(tip, x, y, z), new Vector3(x, y, z), len * 0.85, rad * 0.9, BRONZE, TAIL + TAIL_N - 1, part.tail, j + 1));
 
     // ================= 素材 =================
     // 絵を貼る区画の位置を決める。焼いた絵と同じ並び（galdrosAtlas.ts）を使う。
@@ -752,7 +757,7 @@ export class GaldrosRig implements MonsterRig {
     const tipChart = hide.charts.find((c) => c.kind === 'tailTip');
     loft(dropGeo, piece, { seg: 16, exponent: 2.25, noise: 0.02, uRepeat: 2, capStart: FLESH, capEnd: DARK, atlasRef: tipChart ? { chart: tipChart, t: (r) => r.c.z + cutZ } : undefined, color: () => (tipChart ? WHITE : SKIN_PLAIN) });
     const dtip = new Vector3(TAIL_TIP[0], TAIL_TIP[1] - baseY, TAIL_TIP[2] - cutZ);
-    tailCrystals.forEach(([x, y, z, len, rad], j) => crystal(dropGlow, dtip.clone().add(new Vector3(x * 0.08, y * 0.08, 0.06)), new Vector3(x, y, z), len, rad, BRONZE, 0, 0, j + 1));
+    tailCrystals.forEach(([x, y, z, len, rad], j) => crystal(dropGlow, crystalBase(dtip, x, y, z), new Vector3(x, y, z), len * 0.85, rad * 0.9, BRONZE, 0, 0, j + 1));
     const dropHide = new MeshStandardMaterial({ vertexColors: true, map: flat, normalMap: hideTex.normal, roughness: 0.84 });
     dropHide.normalScale.set(0.45, 0.45);
     // 設定図から焼いた絵を読み込む。皮は専用の貼り位置（uv1）、岩は繰り返しの模様。

@@ -143,15 +143,17 @@ describe('技の選択と追尾の打ち切り', () => {
   });
 
   it('半円尾払い: 背後に居ると使う。尾を切ると短い尾払いに替わり、届く距離が縮む', () => {
+    // 尾の判定は付け根（z -1.5）から 1.75m + 半径 0.45m（体の中心から 3.7m）。切断後は 0.95m + 0.45m（2.9m）。
+    // 真後ろ 3.6m は、切る前だけ届く距離。
     const long = arena('tail_sweep');
-    at(long.sim, 0, -4.2);
+    at(long.sim, 0, -3.6);
     let ev = run(long.sim, 110);
     expect(started(ev, 'tail_sweep')).toBe(true);
     expect(long.sim.player.hp).toBe(100 - taken(26));
 
     const short = arena('tail_sweep');
     short.m.parts[part(short.m, 'tail')]!.severed = true;
-    at(short.sim, 0, -4.2);
+    at(short.sim, 0, -3.6);
     ev = run(short.sim, 110);
     expect(started(ev, 'tail_sweep_short')).toBe(true);
     expect(short.sim.player.hp).toBe(100);
@@ -214,8 +216,8 @@ describe('部位・切断・怯み・怒り', () => {
     const ev = sim.drainEvents();
     expect(ev.filter((e) => e.type === 'part_sever')).toHaveLength(1);
     expect(m.staggerKind).toBe('sever');
-    // -Z 向きなので、尾はワールドの +Z 側へ伸びる。切断後は 1m 短い。
-    expect(before - reach()).toBeCloseTo(1.0, 5);
+    // -Z 向きなので、尾はワールドの +Z 側へ伸びる。切断後は 0.8m 短い（判定の先端が z -2.9 → -2.1）。
+    expect(before - reach()).toBeCloseTo(0.8, 5);
     // 2 回は切れない
     applyDamageToMonster(m, tail, 500, 'cut', sim);
     expect(sim.drainEvents().filter((e) => e.type === 'part_sever')).toHaveLength(0);
