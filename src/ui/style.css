@@ -121,6 +121,23 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
   opacity: var(--btn-opacity);
 }
 .lefty .tbtn { right: auto; left: calc(var(--sal) + var(--x) * var(--btn-scale) * 1px); }
+/* 道具のボタン: 下・中央。名前と数の 2 行 */
+.tbtn.center, .lefty .tbtn.center { right: auto; left: calc(50% + (var(--x) - var(--s) / 2) * var(--btn-scale) * 1px); }
+.tbtn[hidden] { display: none; }
+.tbtn-item { border-radius: 16px; border-color: var(--bronze); white-space: pre-line; text-align: center; line-height: 1.15; font-size: calc(11px * var(--btn-scale)); }
+.base-inv { margin: 8px 0 0; padding: 6px 10px; border-radius: 8px; background: rgba(0, 0, 0, 0.22); font-size: 13px; }
+.item-empty .tbtn-item { opacity: calc(var(--btn-opacity) * 0.45); border-color: rgba(235, 231, 215, 0.35); }
+/* 道具の欄（キーボード・ゲームパッドでも見える）と、達成後の案内 */
+#hud .hud-item { position: absolute; left: 50%; bottom: calc(var(--sab) + 82px); transform: translateX(-50%); padding: 3px 10px; border-radius: 10px; background: rgba(20, 26, 22, 0.55); color: var(--ink); font-size: 12px; font-weight: 700; white-space: nowrap; pointer-events: none; }
+#hud .hud-wrap { position: absolute; left: 50%; top: calc(var(--sat) + 54px); transform: translateX(-50%); display: flex; align-items: center; gap: 10px; padding: 6px 12px; border-radius: 12px; background: rgba(20, 26, 22, 0.72); border: 1px solid var(--bronze); color: var(--ink); font-size: 13px; font-weight: 700; white-space: nowrap; }
+#hud .hud-wrap[hidden], #hud .hud-item[hidden] { display: none; }
+/* タッチでは道具ボタンに名前と数が出るので、欄は出さない */
+@media (pointer: coarse) { #hud .hud-item { display: none; } }
+#hud .hud-wrap button { pointer-events: auto; padding: 6px 12px; border-radius: 10px; border: 1px solid var(--bronze); background: rgba(184, 148, 96, 0.9); color: #1b1710; font-weight: 800; font-size: 13px; }
+.result-loot { margin: 8px 0 0; padding: 8px 10px; border-radius: 10px; background: rgba(0, 0, 0, 0.22); }
+.result-loot h3 { margin: 0 0 4px; font-size: 13px; color: var(--bronze); }
+.result-loot ul { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 14px; font-size: 13px; }
+.result-loot li span { opacity: 0.7; font-size: 11px; margin-left: 4px; }
 .tbtn-main { border-color: var(--bronze); font-size: calc(16px * var(--btn-scale)); }
 .tbtn.on { background: rgba(184, 148, 96, 0.75); color: #1b1710; text-shadow: none; opacity: 1; }
 .tbtn.latched { background: rgba(125, 146, 116, 0.85); opacity: 1; }

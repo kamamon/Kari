@@ -37,6 +37,9 @@ export class Hud {
   private verifyBox: HTMLElement;
   private verifyBtn: HTMLButtonElement;
   private toasts: HTMLElement;
+  private item: HTMLElement;
+  private wrap: HTMLElement;
+  private wrapText: HTMLElement;
   private dmgLayer: HTMLElement;
   private last: Record<string, string | number> = {};
   private lagHp = 1;
@@ -75,6 +78,14 @@ export class Hud {
     this.verifyBox.id = 'verify';
     this.toasts = el('div', '', this.root);
     this.toasts.id = 'toasts';
+    // 選んでいる道具と、達成後の案内（剥ぎ取りの残りと帰還）
+    this.item = el('div', 'hud-item', this.root);
+    this.wrap = el('div', 'hud-wrap', this.root);
+    this.wrap.hidden = true;
+    this.wrapText = el('span', '', this.wrap);
+    const back = el('button', '', this.wrap, '帰還する');
+    back.id = 'hud-return';
+    back.addEventListener('click', () => hub.ui('return'));
     this.dmgLayer = el('div', '', this.root);
     this.setVerify(false);
   }
@@ -149,6 +160,28 @@ export class Hud {
         case 'stamina_empty':
           this.toast('スタミナ不足');
           break;
+        case 'item_effect': {
+          const name = sim.content.items.get(e.itemId)?.name ?? '';
+          if (e.kind === 'heal') this.toast(`${name}: 体力 +${e.amount}`);
+          else if (e.kind === 'trap') this.toast(e.ok ? `${name}を仕掛けた` : `${name}は置けなかった`);
+          else this.toast(e.ok ? `${name}が当たった（${e.amount} 個目）` : `${name}は外れた`);
+          break;
+        }
+        case 'item_fail':
+          this.toast(e.reason === 'empty' ? '道具が残っていない' : 'いまは使えない');
+          break;
+        case 'trap_trigger':
+          this.toast('罠にかかった！');
+          break;
+        case 'trap_end':
+          this.toast('罠が消えた');
+          break;
+        case 'monster_captured':
+          this.toast('捕獲した');
+          break;
+        case 'carve':
+          this.toast(`${sim.content.materials.get(e.itemId)?.name ?? e.itemId} を手に入れた`);
+          break;
         default:
           break;
       }
@@ -171,10 +204,29 @@ export class Hud {
     const h = sim.hunt;
     const sec = h ? Math.ceil(Math.max(0, h.quest.timeLimitTicks - h.ticks) / 60) : Math.floor(sim.tick / 60);
     this.set('time', sec, () => (this.time.textContent = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`));
-    const goal = h ? `${h.quest.name}: ${sim.monsters[0]?.def.name ?? ''}の討伐` : '訓練: 標的で動作を確かめる';
+    const goal = h ? `${h.quest.name}: ${sim.monsters[0]?.def.name ?? ''}の${h.quest.kind === 'hunt' ? '狩猟' : '討伐'}` : '訓練: 標的で動作を確かめる';
     this.set('goal', goal, () => (this.goal.textContent = goal));
     const faints = h ? `力尽き ${h.faints} / ${h.quest.maxFaints}` : '';
     this.set('faints', faints, () => (this.faints.textContent = faints));
+    // 道具
+    const stack = p.items[p.itemIndex];
+    const itemText = stack ? `${sim.content.items.get(stack.itemId)?.name ?? ''} ×${stack.count}` : '';
+    this.set('item', itemText, () => {
+      this.item.textContent = itemText;
+      this.item.hidden = itemText === '';
+    });
+    // 達成後: 剥ぎ取りの残りと、帰還までの時間
+    let wrap = '';
+    if (h && h.phase === 'success' && !h.closed) {
+      const left = Object.values(h.carves).reduce((a, b) => a + b, 0);
+      const s2 = Math.ceil(h.returnTicks / 60);
+      const head = h.reason === 'capture' ? '捕獲成功' : left > 0 ? `剥ぎ取り 残り ${left} 回${sim.carveTarget() ? '（攻撃ボタン）' : '（近づく）'}` : '剥ぎ取り完了';
+      wrap = `${head}　帰還まで ${Math.floor(s2 / 60)}:${String(s2 % 60).padStart(2, '0')}`;
+    }
+    this.set('wrap', wrap, () => {
+      this.wrapText.textContent = wrap;
+      this.wrap.hidden = wrap === '';
+    });
 
     if (!this.verify) return;
     const m = sim.monsters[0];
@@ -205,7 +257,7 @@ export class Hud {
           : p.hurt
             ? `  ${p.hurt.kind} ${p.hurt.tick}/${p.hurt.duration}`
             : '  -',
-      `  先行入力 主${p.buffer.main} 副${p.buffer.sub} 避${p.buffer.dodge} 武${p.buffer.weapon}`,
+      `  先行入力 主${p.buffer.main} 副${p.buffer.sub} 避${p.buffer.dodge} 武${p.buffer.weapon} 道${p.buffer.item}`,
     ];
     if (m) {
       const ma = m.action;
@@ -213,7 +265,7 @@ export class Hud {
     }
     for (const h of sim.recentHits.slice(-3)) lines.push(`命中 tick${h.tick} ${h.actionId.split('.').pop()}/${h.windowId} t${h.actionTick} ${h.partId} ${h.damage}`);
     lines.push(`累計 与ダメ ${sim.totalDamage} (${sim.hitCount}回)  被ダメ ${sim.damageTaken}`);
-    if (h) lines.push(`依頼 ${h.phase}${h.reason ? `(${h.reason})` : ''} tick ${h.ticks}  落下物 ${sim.hazards.length}`);
+    if (h) lines.push(`依頼 ${h.phase}${h.reason ? `(${h.reason})` : ''} tick ${h.ticks}  落下物 ${sim.hazards.length}  罠 ${sim.traps.map((t) => t.state).join(',') || '-'}${m ? `  拘束 ${m.trapTicks} 鎮静 ${m.tranq}` : ''}`);
     if (view.missingClips.size > 0) lines.push(`欠落clip: ${[...view.missingClips].join(', ')}`);
     const text = lines.join('\n');
     this.set('verify', text, () => (this.verifyBox.textContent = text));

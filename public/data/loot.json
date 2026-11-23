@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "note": "モンスターから得る素材。carve は討伐後の剥ぎ取り（本体）、severed は切り落とした部位からの剥ぎ取り、capture は捕獲した時、breaks は壊した部位ごとの追加。count 回、weight の重みで抽選する（seed 付き乱数）。尾端晶と脈動晶芯は拡張で足す。",
+  "tables": [
+    {
+      "id": "loot.galdros",
+      "carve": {"count": 3, "table": [{"itemId": "mat.galdros.shell_shard", "weight": 45}, {"itemId": "mat.galdros.hard_bone", "weight": 30}, {"itemId": "mat.galdros.bronze_vein", "weight": 15}, {"itemId": "mat.galdros.foreleg_plate", "weight": 10}]},
+      "severed": {"tail": {"count": 1, "table": [{"itemId": "mat.galdros.hard_bone", "weight": 55}, {"itemId": "mat.galdros.bronze_vein", "weight": 45}]}},
+      "capture": {"count": 4, "table": [{"itemId": "mat.galdros.shell_shard", "weight": 35}, {"itemId": "mat.galdros.hard_bone", "weight": 30}, {"itemId": "mat.galdros.bronze_vein", "weight": 20}, {"itemId": "mat.galdros.foreleg_plate", "weight": 15}]},
+      "breaks": {
+        "head": {"count": 1, "table": [{"itemId": "mat.galdros.shell_shard", "weight": 60}, {"itemId": "mat.galdros.bronze_vein", "weight": 40}]},
+        "back": {"count": 1, "table": [{"itemId": "mat.galdros.shell_shard", "weight": 70}, {"itemId": "mat.galdros.bronze_vein", "weight": 30}]}
+      }
+    }
+  ]
+}

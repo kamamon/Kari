@@ -10,6 +10,7 @@ export const SOUND_IDS = [
   'hurt', 'evade', 'charge_1', 'charge_2', 'charge_3', 'dummy_warn_01', 'dummy_swing_01', 'ground_slam', 'monster_dead', 'no_stamina', 'ui',
   'galdros_roar', 'galdros_warn', 'galdros_swing', 'galdros_scrape', 'galdros_charge', 'galdros_rumble', 'galdros_step', 'rock_impact', 'part_sever', 'monster_topple',
   'hunt_clear', 'hunt_fail',
+  'item_drink', 'item_heal', 'item_fail', 'trap_set', 'trap_armed', 'trap_trigger', 'orb_throw', 'tranq_hit', 'capture', 'carve', 'carve_get',
 ] as const;
 
 export class AudioSystem {
@@ -255,6 +256,47 @@ export class AudioSystem {
         break;
       case 'no_stamina':
         this.tone('square', 180, 150, 0.09, 0.08);
+        break;
+      // ---- 道具・捕獲・剥ぎ取り（M2 後半。すべて合成音の仮素材）----
+      case 'item_drink':
+        this.tone('sine', 420, 300, 0.09, 0.12);
+        this.tone('sine', 380, 270, 0.09, 0.12, 0.16);
+        break;
+      case 'item_heal':
+        this.tone('triangle', 660, 880, 0.22, 0.14);
+        this.tone('triangle', 990, 1320, 0.3, 0.1, 0.12);
+        break;
+      case 'item_fail':
+        this.tone('square', 200, 160, 0.08, 0.07);
+        break;
+      case 'trap_set':
+        this.noiseBurst(0.12, 'bandpass', 1200, 400, 0.35);
+        this.tone('square', 240, 200, 0.08, 0.1, 0.08);
+        break;
+      case 'trap_armed':
+        this.tone('triangle', 880, 1100, 0.1, 0.12);
+        break;
+      case 'trap_trigger':
+        this.noiseBurst(0.35, 'bandpass', 2600, 500, 0.6, 0.5);
+        this.tone('sawtooth', 300, 90, 0.35, 0.18);
+        break;
+      case 'orb_throw':
+        this.noiseBurst(0.14, 'highpass', 900, 2600, 0.25);
+        break;
+      case 'tranq_hit':
+        this.noiseBurst(0.3, 'lowpass', 1400, 300, 0.4);
+        this.tone('sine', 520, 260, 0.4, 0.12);
+        break;
+      case 'capture':
+        this.tone('triangle', 392, 392, 0.2, 0.15);
+        this.tone('triangle', 523, 523, 0.2, 0.15, 0.18);
+        this.tone('triangle', 659, 784, 0.6, 0.17, 0.36);
+        break;
+      case 'carve':
+        this.noiseBurst(0.16, 'bandpass', 1900, 600, 0.4);
+        break;
+      case 'carve_get':
+        this.tone('triangle', 784, 1047, 0.16, 0.13);
         break;
       case 'ui':
         this.tone('triangle', 660, 880, 0.07, 0.1);

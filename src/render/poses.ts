@@ -150,6 +150,56 @@ export const CLIPS: Record<string, Clip> = {
       { t: 44, j: {}, py: 0 },
     ],
   },
+  // ---- 道具と剥ぎ取り（M2 後半）----
+  // 回復液: 右手を口元へ上げ、上を向いて飲む。58 tick で効果。
+  common_item_drink_01: {
+    base: NEUTRAL, basePy: 0,
+    keys: [
+      { t: 0 },
+      { t: 16, j: { upperArmR: [-70, 0, -18], forearmR: [-95, 0, 0], head: [6, 0, 0] } },
+      { t: 30, j: { upperArmR: [-98, 0, -22], forearmR: [-118, 0, 0], head: [-22, 0, 0], chest: [-6, 0, 0] } },
+      { t: 58, j: { upperArmR: [-102, 0, -22], forearmR: [-122, 0, 0], head: [-26, 0, 0], chest: [-8, 0, 0] } },
+      { t: 74, j: { upperArmR: [-40, 0, -12], forearmR: [-60, 0, 0] } },
+      { t: 92 },
+    ],
+  },
+  // 拘束罠: しゃがんで地面に据える。84 tick で設置。
+  common_item_place_01: {
+    base: NEUTRAL, basePy: 0,
+    keys: [
+      { t: 0 },
+      { t: 20, j: { spine: [30, 0, 0], chest: [18, 0, 0], thighL: [-78, 0, 6], shinL: [110, 0, 0], thighR: [-20, 0, -6], shinR: [96, 0, 0], upperArmL: [-52, 0, 8], upperArmR: [-52, 0, -8], forearmL: [-30, 0, 0], forearmR: [-30, 0, 0] }, py: -0.42 },
+      { t: 50, j: { spine: [38, 0, 0], chest: [22, 6, 0], thighL: [-80, 0, 6], shinL: [112, 0, 0], thighR: [-20, 0, -6], shinR: [98, 0, 0], upperArmL: [-62, 0, 14], upperArmR: [-58, 0, -4], forearmL: [-16, 0, 0], forearmR: [-34, 0, 0] }, py: -0.44 },
+      { t: 84, j: { spine: [36, 0, 0], chest: [20, -6, 0], thighL: [-80, 0, 6], shinL: [112, 0, 0], thighR: [-20, 0, -6], shinR: [98, 0, 0], upperArmL: [-58, 0, 4], upperArmR: [-62, 0, -14], forearmL: [-34, 0, 0], forearmR: [-16, 0, 0] }, py: -0.44 },
+      { t: 100, j: { spine: [12, 0, 0], thighL: [-30, 0, 4], shinL: [40, 0, 0], thighR: [-8, 0, -4], shinR: [30, 0, 0] }, py: -0.12 },
+      { t: 112 },
+    ],
+  },
+  // 鎮静玉: 右手を引いて、前へ投げる。22 tick で手を離れる。
+  common_item_throw_01: {
+    base: NEUTRAL, basePy: 0,
+    keys: [
+      { t: 0 },
+      { t: 12, j: { chest: [-4, -28, 0], upperArmR: [-150, 0, -30], forearmR: [-80, 0, 0], thighL: [-14, 0, 4], shinL: [14, 0, 0] } },
+      { t: 22, j: { chest: [10, 26, 0], spine: [8, 0, 0], upperArmR: [-70, 0, 8], forearmR: [-10, 0, 0], thighL: [-22, 0, 4], shinL: [20, 0, 0] } },
+      { t: 32, j: { chest: [8, 16, 0], upperArmR: [-20, 0, 0], forearmR: [-20, 0, 0] } },
+      { t: 46 },
+    ],
+  },
+  // 剥ぎ取り: 片ひざを突いて、右手の小刀を前後に動かす。80 tick で素材が手に入る。
+  common_carve_01: {
+    base: NEUTRAL, basePy: 0,
+    keys: [
+      { t: 0 },
+      { t: 18, j: { spine: [26, 0, 0], chest: [14, 0, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-58, 0, -10], forearmR: [-40, 0, 0], upperArmL: [-40, 0, 12], forearmL: [-50, 0, 0] }, py: -0.43 },
+      { t: 34, j: { spine: [32, 0, 0], chest: [18, 10, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-74, 0, -6], forearmR: [-14, 0, 0], upperArmL: [-40, 0, 12], forearmL: [-50, 0, 0] }, py: -0.44 },
+      { t: 48, j: { spine: [26, 0, 0], chest: [14, -6, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-52, 0, -12], forearmR: [-56, 0, 0], upperArmL: [-40, 0, 12], forearmL: [-50, 0, 0] }, py: -0.43 },
+      { t: 64, j: { spine: [32, 0, 0], chest: [18, 10, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-74, 0, -6], forearmR: [-14, 0, 0], upperArmL: [-40, 0, 12], forearmL: [-50, 0, 0] }, py: -0.44 },
+      { t: 80, j: { spine: [20, 0, 0], chest: [8, 0, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-90, 0, -16], forearmR: [-70, 0, 0], upperArmL: [-40, 0, 12], forearmL: [-50, 0, 0] }, py: -0.42 },
+      { t: 92, j: { spine: [10, 0, 0], thighL: [-30, 0, 4], shinL: [40, 0, 0], thighR: [-8, 0, -4], shinR: [30, 0, 0] }, py: -0.12 },
+      { t: 100 },
+    ],
+  },
   common_roll_01: {
     base: NEUTRAL, basePy: 0,
     keys: [

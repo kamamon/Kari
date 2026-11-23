@@ -49,6 +49,21 @@ export interface MonsterState {
   pendingRoar: boolean;
   lastActionId: string | null;
   spawn: { x: number; z: number; yaw: number };
+  /** 罠にかかっている残り時間。この間は動けない（攻撃は受ける）。 */
+  trapTicks: number;
+  /** 罠にかかった回数（2 回目からは止まる時間が短くなる） */
+  trapCount: number;
+  /** たまっている鎮静玉の数と、効き目が消えるまでの時間 */
+  tranq: number;
+  tranqTicks: number;
+  /** 捕獲された（終端。以後は動かず、ダメージも受けない） */
+  captured: boolean;
+}
+
+/** 弱っているか（体力が捕獲できる割合以下）。見た目の合図と捕獲の条件が同じ値を使う。 */
+export function isWeak(m: MonsterState): boolean {
+  const c = m.def.capture;
+  return !!c && !m.dead && m.hp <= m.def.hp * c.hpRatio;
 }
 
 const IMMUNE_AFTER_STAGGER = 90;
@@ -93,6 +108,11 @@ export function createMonster(def: MonsterDef, spawn: { x: number; z: number; ya
     rageAcc: 0,
     pendingRoar: false,
     lastActionId: null,
+    trapTicks: 0,
+    trapCount: 0,
+    tranq: 0,
+    tranqTicks: 0,
+    captured: false,
     spawn,
   };
 }
@@ -201,12 +221,21 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
     }
   }
 
+  if (m.captured) return;
+  if (m.tranqTicks > 0 && --m.tranqTicks === 0) m.tranq = 0;
+
   if (m.staggerTicks > 0) {
     m.staggerTicks--;
     if (m.staggerTicks === 0) {
       m.staggerKind = null;
       m.flinchImmune = IMMUNE_AFTER_STAGGER;
     }
+    if (m.trapTicks > 0) m.trapTicks--;
+    return;
+  }
+  if (m.trapTicks > 0) {
+    m.trapTicks--;
+    m.action = null;
     return;
   }
 
@@ -301,7 +330,7 @@ function stagger(m: MonsterState, kind: StaggerKind, ticks: number, partIndex: n
  * 切断の蓄積は切断属性（cut）のダメージだけ。
  */
 export function applyDamageToMonster(m: MonsterState, partIndex: number, damage: number, type: DamageType, ctx: SimCtx): void {
-  if (m.dead || damage <= 0) return;
+  if (m.dead || m.captured || damage <= 0) return;
   m.hp = Math.max(0, m.hp - damage);
   const part = m.parts[partIndex]!;
   const def = m.def.parts[partIndex]!;

@@ -37,6 +37,7 @@ export class GameView {
   readonly hunter = new HunterRig();
   readonly monsterRig: MonsterRig | null = null;
   private hazardViews = new Map<number, { group: Group; ring: Mesh; rock: Mesh }>();
+  private trapViews = new Map<number, { group: Group; ring: Mesh; core: Mesh }>();
   private hazardRock = new IcosahedronGeometry(1, 0);
   private hazardRockMat = new MeshLambertMaterial({ color: 0x80847a, flatShading: true });
   private arena: Arena;
@@ -204,6 +205,23 @@ export class GameView {
         case 'monster_respawn':
           if (m) this.dust.emit(26, { x: m.pos.x, y: 0.6, z: m.pos.z }, 3.2, 1.2, 1.1, [0.6, 0.62, 0.55], 0.6);
           break;
+        // ---- 道具・捕獲・剥ぎ取り（見た目は仮）----
+        case 'item_effect':
+          if (e.kind === 'heal') this.sparks.emit(14, { x: e.pos.x, y: 1.1, z: e.pos.z }, 1.2, 2.2, 0.7, [0.55, 0.95, 0.6], 0.5);
+          else if (e.kind === 'trap' && e.ok) this.dust.emit(8, { x: e.pos.x, y: 0.15, z: e.pos.z }, 1.4, 0.6, 0.6, [0.6, 0.6, 0.55], 0.5);
+          else if (e.kind === 'tranq') this.dust.emit(e.ok ? 22 : 8, e.pos, e.ok ? 2.4 : 1.2, 1.2, 1.2, [0.62, 0.78, 0.92], 0.8);
+          break;
+        case 'trap_trigger':
+          this.rings.spawn(e.x, 0, e.z, 2.6, 0.5, 0xfff0a0);
+          this.sparks.emit(24, { x: e.x, y: 0.3, z: e.z }, 5, 3, 0.5, [1, 0.92, 0.6]);
+          this.cam.addShake(0.25);
+          break;
+        case 'monster_captured':
+          if (m) this.dust.emit(30, { x: m.pos.x, y: 1.2, z: m.pos.z }, 2.2, 1, 1.6, [0.62, 0.78, 0.92], 0.9);
+          break;
+        case 'carve':
+          this.sparks.emit(6, { x: e.pos.x, y: 0.5, z: e.pos.z }, 1.6, 1.6, 0.4, [0.95, 0.85, 0.6], 0.4);
+          break;
         default:
           break;
       }
@@ -319,6 +337,7 @@ export class GameView {
       this.monsterShadow.position.set(mp.x, sim.world.groundHeight(mp.x, mp.z) + 0.03, mp.z);
     }
     this.syncHazards(sim);
+    this.syncTraps(sim);
 
     // ---- カメラ・光・エフェクト ----
     const sens = this.settings.camSensitivity;
@@ -331,6 +350,50 @@ export class GameView {
     this.dust.update(dt);
     this.rings.update(dt);
     this.drawDebug(sim, alpha, verify);
+  }
+
+  /** 罠: 置いた場所に輪と芯を出す。作動前は暗く、作動可能で青銅色に脈打ち、捕らえている間は明るくちらつく。 */
+  private syncTraps(sim: Simulation): void {
+    const seen = new Set<number>();
+    for (const t of sim.traps) {
+      seen.add(t.id);
+      let v = this.trapViews.get(t.id);
+      if (!v) {
+        const group = new Group();
+        const ring = new Mesh(new RingGeometry(0.8, 1, 24), new MeshBasicMaterial({ color: 0xd8b56a, transparent: true, depthWrite: false, side: DoubleSide, fog: false }));
+        ring.rotation.x = -Math.PI / 2;
+        ring.position.y = 0.05;
+        const core = new Mesh(new CylinderGeometry(0.22, 0.3, 0.12, 8), new MeshLambertMaterial({ color: 0x8a7a55 }));
+        core.position.y = 0.06;
+        group.add(ring, core);
+        group.position.set(t.x, sim.world.groundHeight(t.x, t.z), t.z);
+        this.scene.add(group);
+        v = { group, ring, core };
+        this.trapViews.set(t.id, v);
+      }
+      v.ring.scale.set(t.radius, t.radius, 1);
+      const mat = v.ring.material as MeshBasicMaterial;
+      if (t.state === 'arming') {
+        mat.color.setHex(0x9a9c88);
+        mat.opacity = 0.25 + 0.15 * Math.sin(this.time * 10);
+      } else if (t.state === 'armed') {
+        mat.color.setHex(0xd8b56a);
+        mat.opacity = 0.55 + 0.3 * Math.sin(this.time * 4);
+      } else {
+        mat.color.setHex(0xfff0a0);
+        mat.opacity = 0.6 + 0.4 * Math.sin(this.time * 31);
+        if (Math.sin(this.time * 17 + t.id) > 0.82) this.sparks.emit(1, { x: t.x + Math.sin(this.time * 9) * t.radius, y: 0.3, z: t.z + Math.cos(this.time * 7) * t.radius }, 2, 2.5, 0.35, [1, 0.92, 0.6]);
+      }
+    }
+    for (const [id, v] of this.trapViews) {
+      if (seen.has(id)) continue;
+      this.scene.remove(v.group);
+      for (const mesh of [v.ring, v.core]) {
+        mesh.geometry.dispose();
+        (mesh.material as MeshBasicMaterial).dispose();
+      }
+      this.trapViews.delete(id);
+    }
   }
 
   /** 落下物: 落ちる場所に輪を出し、岩を予告時間ちょうどで地面へ届かせる。 */

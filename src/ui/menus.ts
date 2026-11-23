@@ -11,7 +11,7 @@ export interface MenuHost {
   runDeterminismCheck(): string;
   audioState(): string;
   /** いまの行き先（訓練か依頼か）と、その説明 */
-  sessionInfo(): { hunt: boolean; title: string; lines: string[] };
+  sessionInfo(): { hunt: boolean; done: boolean; title: string; lines: string[] };
   /** 訓練なら拠点へ戻る。依頼ならリタイアする。 */
   leave(): void;
 }
@@ -181,11 +181,14 @@ export class Menu {
       p.textContent = line;
       this.body.appendChild(p);
     }
-    this.row(
-      info.hunt ? 'リタイア' : '拠点へ戻る',
-      info.hunt ? '依頼を諦めて拠点へ戻ります。失敗として終わります。' : '依頼を選ぶ画面へ戻ります。',
-      this.button(info.hunt ? 'リタイアする' : '戻る', () => this.host.leave()),
-    );
+    // 達成した後は、リタイアではなく帰還（剥ぎ取りを切り上げて結果へ進む）
+    if (info.hunt && info.done) this.row('帰還', '剥ぎ取りを切り上げて、結果へ進みます。達成は変わりません。', this.button('帰還する', () => this.host.leave()));
+    else
+      this.row(
+        info.hunt ? 'リタイア' : '拠点へ戻る',
+        info.hunt ? '依頼を諦めて拠点へ戻ります。失敗として終わり、報酬と素材は出ません。' : '依頼を選ぶ画面へ戻ります。',
+        this.button(info.hunt ? 'リタイアする' : '戻る', () => this.host.leave()),
+      );
   }
 
   private renderSettings(): void {

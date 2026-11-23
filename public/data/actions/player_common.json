@@ -20,6 +20,66 @@
       "onFinish":"keep",
       "staminaCost": 25,
       "invulnerable": [{"from":3, "to":11}]
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.item.drink",
+      "clip": "common_item_drink_01",
+      "tickRate": 60, "durationTicks": 92,
+      "phases": [
+        {"id":"startup", "from":0, "to":58},
+        {"id":"recovery", "from":58, "to":92}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [{"tick":58, "type":"sound", "id":"item_drink"}],
+      "onFinish": "sheathed_idle"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.item.set_trap",
+      "clip": "common_item_place_01",
+      "tickRate": 60, "durationTicks": 112,
+      "phases": [
+        {"id":"startup", "from":0, "to":84},
+        {"id":"recovery", "from":84, "to":112}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [{"tick":84, "type":"sound", "id":"trap_set"}],
+      "onFinish": "sheathed_idle"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.item.throw_orb",
+      "clip": "common_item_throw_01",
+      "tickRate": 60, "durationTicks": 46,
+      "phases": [
+        {"id":"startup", "from":0, "to":22},
+        {"id":"recovery", "from":22, "to":46}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [{"tick":22, "type":"sound", "id":"orb_throw"}],
+      "onFinish": "sheathed_idle"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.common.carve",
+      "clip": "common_carve_01",
+      "tickRate": 60, "durationTicks": 100,
+      "phases": [
+        {"id":"startup", "from":0, "to":80},
+        {"id":"recovery", "from":80, "to":100}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [{"tick":80, "type":"sound", "id":"carve"}],
+      "onFinish": "sheathed_idle"
     }
   ]
 }

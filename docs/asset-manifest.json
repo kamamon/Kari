@@ -8,7 +8,7 @@
       "owner": "ChatGPT（設定画）→ Blender（モデル・リグ・動作）→ Claude（統合）", "status": "planned", "version": 0, "path": null,
       "source": "未制作。設定画は COPY 12 で依頼する", "terms": "本作オリジナル",
       "dims": "身長 1.75m / Y 上 / +Z 前", "tris": "目標 1〜2 万", "bones": "docs/animation-contract.md の人型骨格 + socket 4",
-      "clips": ["common_roll_01", "hb_attack_vertical_01", "hb_attack_side_01", "hb_draw_slash_01", "hb_draw_01", "hb_sheathe_01"],
+      "clips": ["common_roll_01", "common_item_drink_01", "common_item_place_01", "common_item_throw_01", "common_carve_01", "hb_attack_vertical_01", "hb_attack_side_01", "hb_draw_slash_01", "hb_draw_01", "hb_sheathe_01"],
       "clipsPlanned": ["common_idle_01", "common_walk_01", "common_run_01", "common_sprint_01", "common_flinch_01", "common_knockdown_01", "common_getup_01", "common_dead_01", "hb_idle_01", "hb_walk_01", "hb_guard_01", "hb_guard_recoil_01"],
       "dependsOn": ["art.player.hunter_base.turnaround"],
       "placeholder": { "kind": "procedural", "source": "src/render/rig.ts + src/render/poses.ts", "note": "プリミティブを骨の階層に並べた関節付き仮モデル。待機・歩行・防御・被弾は手続き生成、技は手付けのキー姿勢。腕は武器の軌道へ IK で追従。" },
@@ -64,7 +64,7 @@
       "id": "audio.se.placeholder_synth", "name": "仮の効果音一式（合成音）", "type": "audio", "use": "M1 の効果音と環境音（風）",
       "owner": "ChatGPT（音の役割設計）→ 音声制作ツール → Claude（接続）", "status": "planned", "version": 0, "path": null,
       "source": "Web Audio でコード合成", "terms": "本作オリジナル",
-      "ids": ["hb_swing_01", "hb_swing_02", "hb_draw_01", "hb_sheathe_01", "roll_01", "hit_rock", "hit_shell", "hit_hide", "part_break", "guard", "guard_break", "hurt", "evade", "charge_1", "charge_2", "charge_3", "dummy_warn_01", "dummy_swing_01", "ground_slam", "monster_dead", "no_stamina", "ui", "galdros_roar", "galdros_warn", "galdros_swing", "galdros_scrape", "galdros_charge", "galdros_rumble", "galdros_step", "rock_impact", "part_sever", "monster_topple", "hunt_clear", "hunt_fail"],
+      "ids": ["hb_swing_01", "hb_swing_02", "hb_draw_01", "hb_sheathe_01", "roll_01", "hit_rock", "hit_shell", "hit_hide", "part_break", "guard", "guard_break", "hurt", "evade", "charge_1", "charge_2", "charge_3", "dummy_warn_01", "dummy_swing_01", "ground_slam", "monster_dead", "no_stamina", "ui", "galdros_roar", "galdros_warn", "galdros_swing", "galdros_scrape", "galdros_charge", "galdros_rumble", "galdros_step", "rock_impact", "part_sever", "monster_topple", "hunt_clear", "hunt_fail", "item_drink", "item_heal", "item_fail", "trap_set", "trap_armed", "trap_trigger", "orb_throw", "tranq_hit", "capture", "carve", "carve_get"],
       "clips": [], "dependsOn": [],
       "placeholder": { "kind": "procedural", "source": "src/core/audio.ts", "note": "音声ファイルは 1 つも無い。BGM は未制作。" },
       "verification": "仮素材: 空振りは振り音だけ、命中時だけ材質別の命中音が鳴ることを確認。実機の音量バランスは未確認。"

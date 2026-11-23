@@ -18,6 +18,7 @@ import { renderTick } from '../game/action';
 import type { MonsterState } from '../game/monster';
 import { sampleTrack } from '../game/tracks';
 import type { MonsterRig, MonsterRigCtx } from './monsterRig';
+import { isWeak } from '../game/monster';
 import { GALDROS_AO } from './galdrosAo';
 import { GALDROS_ATLAS } from './galdrosAtlas';
 import { Geo, blob, crystal, fbm, hash3, hex, horn, loft, makeHideTextures, makeRockTextures, mix, packCharts, plate, shade, slab, sstep, type AtlasChart, type RGB, type Ring, type SlabOpts } from './procGeo';
@@ -290,6 +291,8 @@ export class GaldrosRig implements MonsterRig {
   private coreMesh: SkinnedMesh;
   private glowMat: MeshStandardMaterial;
   private flashUniform = { value: new Float32Array(8) };
+  /** 捕獲されてからの時間（眠る姿勢へ移る） */
+  private capT = 0;
   /** 焼いた陰が、いまの形（頂点の数）と合っていて、すべて掛けられたか */
   aoApplied = true;
   /** 皮の絵を貼る区画（書き出しと検査用） */
@@ -924,7 +927,9 @@ export class GaldrosRig implements MonsterRig {
     this.stepDebris(dt, ground);
 
     const enraged = m.enraged && !m.dead;
-    const weak = !m.dead && m.hp <= m.def.hp * 0.25;
+    // 弱っている合図は、捕獲の条件と同じ値（モンスターのデータの capture.hpRatio）を使う
+    const weak = isWeak(m);
+    this.capT = m.captured ? this.capT + c.dt : 0;
     // 怒り: 晶脈と目が赤く脈打つ
     const rage = enraged ? 0.6 + 0.4 * Math.sin(time * 7) : 0;
     this.glowMat.emissive.setRGB(1 + rage * 2.2, 1 - rage * 0.45, 1 - rage * 0.75);
@@ -955,7 +960,7 @@ export class GaldrosRig implements MonsterRig {
     const slamTarget = this.v5;
 
     // ---- 呼吸・まばたき・基本の構え ----
-    const breathRate = m.dead ? 0 : enraged ? 3.4 : weak ? 3.9 : m.aware ? 1.9 : 1.3;
+    const breathRate = m.dead ? 0 : m.captured ? 0.9 : enraged ? 3.4 : weak ? 3.9 : m.aware ? 1.9 : 1.3;
     this.breathPhase += breathRate * dt;
     const breath = Math.sin(this.breathPhase);
     P.breath = (enraged || weak ? 0.045 : 0.03) * breath;
@@ -987,7 +992,7 @@ export class GaldrosRig implements MonsterRig {
     }
 
     // ---- しぐさ（技も怯みも無く、ほぼ止まっている間だけ） ----
-    const calm = !m.action && m.staggerTicks <= 0 && !m.dead && speed < 0.45 && Math.abs(this.yawVel) < 0.25;
+    const calm = !m.action && m.staggerTicks <= 0 && !m.dead && !m.captured && m.trapTicks <= 0 && speed < 0.45 && Math.abs(this.yawVel) < 0.25;
     const fid = this.fid;
     if (!calm) {
       fid.kind = '';
@@ -1162,8 +1167,34 @@ export class GaldrosRig implements MonsterRig {
       }
     }
 
-    // ---- 死亡・転倒・怯み ----
-    if (m.dead) {
+    // ---- 罠にかかっている間: 足を取られて体が沈み、もがく（怯みの動きはこの上に重なる）----
+    if (!m.dead && !m.captured && m.trapTicks > 0) {
+      const s1 = Math.sin(time * 8.5), s2 = Math.sin(time * 6.1 + 1.3);
+      P.y += -0.16 + 0.03 * s1;
+      P.roll += 0.06 * s2;
+      P.yaw += 0.05 * s1;
+      P.neckYaw += 0.35 * Math.sin(time * 3.4);
+      P.neckPitch += -0.12 + 0.1 * s2;
+      P.jaw += 0.3 + 0.12 * s1;
+      P.tailWag = 4.5;
+      P.look = 0.2;
+    }
+    // ---- 捕獲・死亡・転倒・怯み ----
+    if (m.captured) {
+      // 眠る: 腹ばいに沈み、首を下ろして目を閉じる。ゆっくり息をする。
+      const e1 = smoothstep(this.capT / 1.4), e2 = smoothstep((this.capT - 0.8) / 1.6);
+      P.y = -0.34 * e1;
+      P.roll = 0.08 * e2;
+      P.pitch = 0;
+      P.neckPitch = 0.42 * e1;
+      P.headPitch = 0.3 * e2;
+      P.neckYaw = 0.25 * e2;
+      P.jaw = 0.04;
+      P.lid = Math.max(P.lid, e1);
+      P.tailLift = -0.25 * e1;
+      P.tailWag = 0;
+      P.look = 0;
+    } else if (m.dead) {
       // ひざが折れて沈み、横倒しになる。最後に息を吐く。
       const e1 = smoothstep(m.deadTicks / 30), e2 = smoothstep((m.deadTicks - 22) / 50), e3 = smoothstep((m.deadTicks - 70) / 60);
       P.roll = 1.3 * e2;

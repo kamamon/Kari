@@ -97,8 +97,8 @@ describe('技の選択と追尾の打ち切り', () => {
     }
   });
 
-  it('依頼の倍率（いまは 0.75）が、受けるダメージに掛かる。倍率 1 なら技データの値のまま', () => {
-    expect(content.quests.get(QUEST)!.monsterAttackScale).toBe(0.75);
+  it('依頼の倍率が、受けるダメージに掛かる。この依頼は倍率なし（回復液を支給するので 1.0 へ戻した）', () => {
+    expect(content.quests.get(QUEST)!.monsterAttackScale).toBeUndefined();
     const hp = (scale: number | null): number => {
       const { sim, m } = arena();
       m.moveCooldowns[G + 'rockfall'] = 1e9;
@@ -107,8 +107,8 @@ describe('技の選択と追尾の打ち切り', () => {
       run(sim, 120);
       return sim.player.hp;
     };
-    expect(hp(null)).toBe(100 - 21);
-    expect(hp(1)).toBe(100 - 28);
+    expect(hp(null)).toBe(100 - 28);
+    expect(hp(0.75)).toBe(100 - 21);
   });
 
   it('直線突進: 遠い正面で使い、発進後は追尾しない。立ち止まると 1 回だけ轢かれ、横へ避ければ当たらない', () => {

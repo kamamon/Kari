@@ -63,6 +63,10 @@ pelvis 高さ 0.92 / 肩幅 0.43 / 上腕 0.29・前腕 0.27 / 大腿 0.43・下
 | hb_draw_slash_01 | player.heavy_blade.draw_slash | 64 tick | 背中から抜いてそのまま振り下ろす |
 | hb_draw_01 / hb_sheathe_01 | …draw / …sheathe | 26 / 44 tick | |
 | common_roll_01 | player.common.roll | 36 tick | 前転。抜刀中は前後左右の 4 方向が必要（いまは前転を回して代用している仮の処理） |
+| common_item_drink_01 | player.item.drink | 92 tick | 回復液を飲む。58 tick で効果（それまでに口元へ） |
+| common_item_place_01 | player.item.set_trap | 112 tick | しゃがんで罠を据える。84 tick で設置 |
+| common_item_throw_01 | player.item.throw_orb | 46 tick | 右手で前へ投げる。22 tick で手を離れる |
+| common_carve_01 | player.common.carve | 100 tick | 片ひざを突いて剥ぎ取る。80 tick で素材が手に入る |
 | dummy_slam_01 | monster.training_dummy.slam | 130 tick | 訓練標的専用 |
 
 いま手続き生成で代用していて、正式素材では clip が必要なもの（台帳の `clipsPlanned`）:

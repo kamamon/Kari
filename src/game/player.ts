@@ -2,7 +2,7 @@
 // 状態: free（移動）/ action（データ定義の行動）/ guard / hurt / dead
 import { DEG, angleDiff, forwardOf, turnToward, v3, yawOf, type V3 } from '../core/math';
 import type { SeededRng } from '../core/seededRng';
-import type { Content, GuardDef, HazardDef, WeaponDef, WeaponFamilyDef } from '../data/schemas';
+import type { Content, GuardDef, HazardDef, ItemDef, ItemStack, WeaponDef, WeaponFamilyDef } from '../data/schemas';
 import { inWindow, newRun, type ActionRun } from './action';
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
@@ -33,7 +33,16 @@ export interface PlayerState {
   hurt: { kind: 'flinch' | 'knockdown'; tick: number; duration: number; dirYaw: number } | null;
   deadTicks: number;
   invulnTicks: number;
-  buffer: { main: number; sub: number; dodge: number; weapon: number };
+  buffer: { main: number; sub: number; dodge: number; weapon: number; item: number };
+  /** 狩猟中の持ち物（依頼の支給品）。数が 0 になっても欄は残る。 */
+  items: ItemStack[];
+  itemIndex: number;
+  /** 使っている途中の道具。効果が出る tick より前に妨害されると、消費しない。 */
+  itemUse: { itemId: string; instanceId: number; done: boolean } | null;
+  /** 抜刀中に道具ボタンを押した: 納刀が終わったら続けて使う */
+  pendingItem: boolean;
+  /** 剥ぎ取りの途中（source は剥ぎ取る対象） */
+  carving: { source: string; instanceId: number; done: boolean } | null;
   sprinting: boolean;
   /** 見た目用の現在速度 (m/s) */
   moveSpeed: number;
@@ -51,11 +60,40 @@ export interface SimCtx {
   blockers(): Circle[];
   /** 落下物などを出す。位置は target を基準にこの時点で固定する。 */
   spawnHazards(def: HazardDef, target: V3): void;
+  /** いまこの道具を使い始められるか（罠は狩猟中に 1 つまで、など） */
+  canUseItem(item: ItemDef): boolean;
+  /** 道具の効果を出す。効果が出なかった時は false を返し、道具は減らない。 */
+  applyItem(item: ItemDef): boolean;
+  /** いま剥ぎ取れる対象（近くにあり、回数が残っている）。無ければ null。 */
+  carveTarget(): string | null;
+  /** 剥ぎ取り 1 回分を確定する */
+  carve(source: string): void;
+}
+
+/** 剥ぎ取りの行動。素材は recovery の始まりで手に入る。 */
+const CARVE_ACTION = 'player.common.carve';
+
+/** 選んでいる道具を使い始める。使えない時は理由を知らせて false。 */
+function tryUseItem(p: PlayerState, ctx: SimCtx): boolean {
+  const stack = p.items[p.itemIndex];
+  const item = stack ? ctx.content.items.get(stack.itemId) : undefined;
+  if (!stack || !item || stack.count <= 0) {
+    ctx.emit({ type: 'item_fail', reason: 'empty' });
+    return false;
+  }
+  if (!ctx.canUseItem(item)) {
+    ctx.emit({ type: 'item_fail', reason: 'not_now' });
+    return false;
+  }
+  const run = startAction(p, item.useActionId, ctx);
+  p.itemUse = { itemId: item.id, instanceId: run.instanceId, done: false };
+  ctx.emit({ type: 'item_use', itemId: item.id, pos: { ...p.pos } });
+  return true;
 }
 
 const MOVE_DEADZONE = 0.12;
 
-export function createPlayer(content: Content, spawn: { x: number; z: number; yaw: number }, weaponId: string): PlayerState {
+export function createPlayer(content: Content, spawn: { x: number; z: number; yaw: number }, weaponId: string, supplies: readonly ItemStack[] = []): PlayerState {
   const T = content.player;
   const pos = v3(spawn.x, 0, spawn.z);
   return {
@@ -78,7 +116,12 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
     hurt: null,
     deadTicks: 0,
     invulnTicks: 0,
-    buffer: { main: 0, sub: 0, dodge: 0, weapon: 0 },
+    buffer: { main: 0, sub: 0, dodge: 0, weapon: 0, item: 0 },
+    items: supplies.map((s) => ({ itemId: s.itemId, count: s.count })),
+    itemIndex: 0,
+    itemUse: null,
+    pendingItem: false,
+    carving: null,
     sprinting: false,
     moveSpeed: 0,
     weaponId,
@@ -247,8 +290,35 @@ function stepFree(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   const T = ctx.content.player;
   const fam = familyOf(p, ctx.content);
 
-  if (consume(p, 'dodge') && tryStartRoll(p, inp, ctx)) return stepAction(p, inp, ctx, 1);
+  if (consume(p, 'dodge') && tryStartRoll(p, inp, ctx)) {
+    p.pendingItem = false;
+    return stepAction(p, inp, ctx, 1);
+  }
+  // 剥ぎ取り: 達成後、対象の近くで攻撃ボタン（道具ボタンでもよい）
+  if (p.buffer.main > 0 || p.buffer.item > 0) {
+    const source = ctx.carveTarget();
+    if (source) {
+      p.buffer.main = 0;
+      p.buffer.item = 0;
+      p.pendingItem = false;
+      p.drawn = false;
+      const run = startAction(p, CARVE_ACTION, ctx);
+      p.carving = { source, instanceId: run.instanceId, done: false };
+      return stepAction(p, inp, ctx, 1);
+    }
+  }
+  // 道具: 納刀中だけ使える。抜刀中に押したら、納刀してから続けて使う。
+  if (consume(p, 'item') || (p.pendingItem && !p.drawn)) {
+    if (p.drawn) {
+      p.pendingItem = true;
+      startAction(p, fam.actions.sheathe, ctx);
+      return stepAction(p, inp, ctx, 1);
+    }
+    p.pendingItem = false;
+    if (tryUseItem(p, ctx)) return stepAction(p, inp, ctx, 1);
+  }
   if (consume(p, 'weapon')) {
+    p.pendingItem = false;
     startAction(p, p.drawn ? fam.actions.sheathe : fam.actions.draw, ctx);
     return stepAction(p, inp, ctx, 1);
   }
@@ -389,12 +459,19 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   p.moveSpeed = 0;
 
   // 先行入力: 押した tick を含めて inputBufferTicks の間だけ有効
-  for (const k of ['main', 'sub', 'dodge', 'weapon'] as const) if (p.buffer[k] > 0) p.buffer[k]--;
+  for (const k of ['main', 'sub', 'dodge', 'weapon', 'item'] as const) if (p.buffer[k] > 0) p.buffer[k]--;
   if (inp.pressed & Btn.Main) p.buffer.main = T.inputBufferTicks;
   if (inp.pressed & Btn.Sub) p.buffer.sub = T.inputBufferTicks;
   if (inp.pressed & Btn.Dodge) p.buffer.dodge = T.inputBufferTicks;
   if (inp.pressed & Btn.Weapon) p.buffer.weapon = T.inputBufferTicks;
+  if (inp.pressed & Btn.Item) p.buffer.item = T.inputBufferTicks;
+  // 道具の切り替えは、いつでもできる（使っている途中の道具は変わらない）
+  if (p.items.length > 0) {
+    if (inp.pressed & Btn.ItemNext) p.itemIndex = (p.itemIndex + 1) % p.items.length;
+    if (inp.pressed & Btn.ItemPrev) p.itemIndex = (p.itemIndex + p.items.length - 1) % p.items.length;
+  }
   if (p.invulnTicks > 0) p.invulnTicks--;
+  if (p.mode === 'hurt' || p.mode === 'dead' || p.mode === 'guard') p.pendingItem = false;
 
   switch (p.mode) {
     case 'dead':
@@ -413,6 +490,28 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     case 'free':
       stepFree(p, inp, ctx);
       break;
+  }
+
+  // 道具の効果と剥ぎ取り: 行動がその tick まで進んだ時にだけ起きる。途中で妨害されたら何も起きない。
+  const ev = p.attackEval as PlayerState['attackEval'];
+  const use = p.itemUse;
+  if (use) {
+    const item = ctx.content.items.get(use.itemId)!;
+    if (!use.done && ev && ev.run.instanceId === use.instanceId && ev.t >= item.effectTick) {
+      use.done = true;
+      const stack = p.items.find((s) => s.itemId === use.itemId);
+      if (stack && stack.count > 0 && ctx.applyItem(item)) stack.count--;
+    }
+    if (!p.action || p.action.instanceId !== use.instanceId) p.itemUse = null;
+  }
+  const cv = p.carving;
+  if (cv) {
+    const at = ev && ev.run.instanceId === cv.instanceId ? ev.run.def.phases.find((ph) => ph.id === 'recovery')?.from ?? 0 : 0;
+    if (!cv.done && ev && ev.run.instanceId === cv.instanceId && ev.t >= at) {
+      cv.done = true;
+      ctx.carve(cv.source);
+    }
+    if (!p.action || p.action.instanceId !== cv.instanceId) p.carving = null;
   }
 
   p.grounded = ctx.world.settle(p.pos, p.vel, T.gravity, 1 / 60);

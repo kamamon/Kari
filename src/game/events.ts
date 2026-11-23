@@ -27,7 +27,19 @@ export type SimEvent =
   | { type: 'monster_rage'; target: string; on: boolean }
   | { type: 'hazard_warn'; id: number; x: number; z: number; radius: number; warnTicks: number }
   | { type: 'hazard_impact'; id: number; x: number; z: number; radius: number }
-  | { type: 'hunt_end'; phase: 'success' | 'failed'; reason: 'slay' | 'time' | 'faints' | 'retire' }
+  | { type: 'hunt_end'; phase: 'success' | 'failed'; reason: 'slay' | 'capture' | 'time' | 'faints' | 'retire' }
+  /** 結果が閉じた（報酬が確定した）。これ以後は何も変わらない。 */
+  | { type: 'hunt_close' }
+  /** 道具を使い始めた / 効果が出た（ok が false なら効果なし。amount は回復量など）/ 使えなかった */
+  | { type: 'item_use'; itemId: string; pos: V3 }
+  | { type: 'item_effect'; itemId: string; kind: 'heal' | 'trap' | 'tranq'; ok: boolean; amount: number; pos: V3 }
+  | { type: 'item_fail'; reason: 'empty' | 'not_now' }
+  | { type: 'trap_armed'; id: number; x: number; z: number }
+  | { type: 'trap_trigger'; id: number; target: string; x: number; z: number; ticks: number }
+  | { type: 'trap_end'; id: number }
+  | { type: 'monster_captured'; target: string }
+  /** 剥ぎ取り 1 回分。source は carve（本体）か severed:<部位 id> */
+  | { type: 'carve'; itemId: string; source: string; pos: V3 }
   | { type: 'monster_dead'; target: string }
   | { type: 'monster_respawn'; target: string }
   | { type: 'player_hurt'; damage: number; reaction: 'flinch' | 'knockdown'; pos: V3 }

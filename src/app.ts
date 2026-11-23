@@ -21,7 +21,8 @@ import { ResultScreen, type ResultHost } from './ui/result';
 const DEFAULT_SEED = 20261122;
 const MAX_RECORD = 60 * 60 * 16;
 /** 依頼が終わってから結果を出すまでの間（倒れる動きを見せる） */
-const RESULT_DELAY_TICKS = { success: 200, failed: 90 };
+/** 結果が閉じてから結果画面を出すまでの間 */
+const RESULT_DELAY_TICKS = { success: 50, failed: 90 };
 
 export class App implements MenuHost, BaseHost, ResultHost {
   private sim!: Simulation;
@@ -92,6 +93,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
       if (a === 'menu') this.menu.open ? this.closeMenu() : this.openMenu();
       else if (a === 'verify') store.set({ verify: !store.value.verify });
       else if (a === 'camReset' && !this.paused) this.resetCamera();
+      else if (a === 'return' && !this.paused) this.returnNow();
     });
     store.onChange((s) => {
       this.audio.applySettings(s);
@@ -126,8 +128,37 @@ export class App implements MenuHost, BaseHost, ResultHost {
     };
   }
 
+  /**
+   * 拠点の持ち物。依頼の結果が閉じた時に、その依頼の報酬を一度だけ足す。
+   * 保存はまだ無い（M3）ので、ページを閉じると消える。
+   */
+  readonly inventory = { money: 0, items: new Map<string, number>() };
+  private runId = 0;
+  private settledRun = -1;
+
+  /** 依頼の報酬を持ち物へ入れる。同じ依頼（runId）では一度だけ。 */
+  private settleRewards(): void {
+    const h = this.sim.hunt;
+    if (!h || !h.closed || !h.rewards || this.settledRun === this.runId) return;
+    this.settledRun = this.runId;
+    this.inventory.money += h.rewards.money;
+    for (const s of h.rewards.items) this.inventory.items.set(s.itemId, (this.inventory.items.get(s.itemId) ?? 0) + s.count);
+  }
+
+  inventoryLines(): string[] {
+    const items = [...this.inventory.items].map(([id, n]) => `${this.content.materials.get(id)?.name ?? id} ×${n}`);
+    return [`通貨 ${this.inventory.money}`, items.length ? items.join('　') : '素材はまだ無い'];
+  }
+
+  /** 達成後に、剥ぎ取りを切り上げて帰る（入力として simulation へ渡す） */
+  private returnNow(): void {
+    const h = this.sim.hunt;
+    if (h && h.phase === 'success' && !h.closed) this.hub.pulse(Btn.Retire);
+  }
+
   private createSession(questId: string | null): void {
     this.questId = questId;
+    this.runId++;
     this.sim = new Simulation(this.content, this.options(questId));
     this.view?.dispose();
     this.view = new GameView(this.canvas, this.content, this.sim, this.store.value);
@@ -139,6 +170,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
 
   /** 拠点・結果の画面を出す / 消す。出ている間は操作ボタンを隠して一時停止する。 */
   private setOverlay(which: 'base' | 'result' | null): void {
+    if (which === 'base') this.base.refresh(this.inventoryLines());
     this.base.setOpen(which === 'base');
     if (which === 'result') this.result.show(this.sim);
     else this.result.hide();
@@ -227,12 +259,13 @@ export class App implements MenuHost, BaseHost, ResultHost {
     this.hud.toast('訓練をやり直しました');
   }
 
-  sessionInfo(): { hunt: boolean; title: string; lines: string[] } {
+  sessionInfo(): { hunt: boolean; done: boolean; title: string; lines: string[] } {
     const h = this.sim.hunt;
-    if (!h) return { hunt: false, title: '訓練場', lines: ['動かない標的で、操作と技を確かめる場所です。'] };
+    if (!h) return { hunt: false, done: false, title: '訓練場', lines: ['動かない標的で、操作と技を確かめる場所です。'] };
     const left = Math.ceil(Math.max(0, h.quest.timeLimitTicks - h.ticks) / 60);
     return {
       hunt: true,
+      done: h.phase === 'success',
       title: h.quest.name,
       lines: [h.quest.summary, `残り ${Math.floor(left / 60)} 分 ${left % 60} 秒　力尽き ${h.faints} / ${h.quest.maxFaints}`],
     };
@@ -240,8 +273,9 @@ export class App implements MenuHost, BaseHost, ResultHost {
 
   leave(): void {
     this.closeMenu();
-    if (this.sim.hunt?.phase === 'active') {
-      // リタイアは入力として simulation へ渡す（記録した入力の再生でも同じ tick に終わる）
+    const h = this.sim.hunt;
+    if (h && !h.closed) {
+      // リタイア（達成後は帰還）は入力として simulation へ渡す（記録した入力の再生でも同じ tick に終わる）
       this.hub.pulse(Btn.Retire);
     } else this.toBase();
   }
@@ -310,9 +344,20 @@ export class App implements MenuHost, BaseHost, ResultHost {
         this.hud.onEvents(events, this.sim, this.view);
         this.playSounds(events);
       }
-      this.touch.setLabels({ weapon: this.sim.player.drawn ? '納刀' : '抜刀' });
+      const pl = this.sim.player;
+      const stack = pl.items[pl.itemIndex];
+      this.touch.setHidden(['item', 'itemprev', 'itemnext'], pl.items.length === 0);
+      this.touch.setLabels({
+        weapon: pl.drawn ? '納刀' : '抜刀',
+        main: this.sim.carveTarget() ? '剥ぎ取り' : '斬る',
+        item: stack ? `${this.content.items.get(stack.itemId)?.name ?? ''}\n×${stack.count}` : '道具',
+      });
+      this.touch.root.classList.toggle('item-empty', !!stack && stack.count === 0);
       const h = this.sim.hunt;
-      if (h && h.phase !== 'active' && this.sim.tick - h.endTick >= RESULT_DELAY_TICKS[h.phase]) this.setOverlay('result');
+      if (h?.closed) {
+        this.settleRewards();
+        if (this.sim.tick - (h.phase === 'failed' ? h.endTick : h.closeTick) >= RESULT_DELAY_TICKS[h.phase === 'failed' ? 'failed' : 'success']) this.setOverlay('result');
+      }
     }
     this.view.update(this.sim, alpha, paused ? 0 : dt, paused ? { x: 0, y: 0 } : this.hub.consumeLook(), this.store.value.verify);
     this.view.render();
@@ -371,6 +416,26 @@ export class App implements MenuHost, BaseHost, ResultHost {
           break;
         case 'stamina_empty':
           play('no_stamina');
+          break;
+        case 'item_effect':
+          if (e.kind === 'heal') play('item_heal');
+          else if (e.kind === 'tranq' && e.ok) play('tranq_hit');
+          else if (!e.ok && e.kind === 'trap') play('item_fail');
+          break;
+        case 'item_fail':
+          play('item_fail');
+          break;
+        case 'trap_armed':
+          play('trap_armed');
+          break;
+        case 'trap_trigger':
+          play('trap_trigger');
+          break;
+        case 'monster_captured':
+          play('capture');
+          break;
+        case 'carve':
+          play('carve_get');
           break;
         default:
           break;

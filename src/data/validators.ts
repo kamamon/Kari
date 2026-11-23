@@ -9,7 +9,11 @@ import {
   type Content,
   type ContentIndex,
   type CurveDef,
+  type ItemDef,
+  type LootDef,
+  type LootRoll,
   type MapDef,
+  type MaterialDef,
   type MonsterDef,
   type PlayerTuning,
   type QuestDef,
@@ -191,6 +195,50 @@ export function crossCheck(c: Content, errors: string[]): void {
     if (!c.monsters.has(q.targetMonsterId)) errors.push(`quest ${q.id}: monster ${q.targetMonsterId} が無い`);
     if (!(q.timeLimitTicks > 0) || !(q.maxFaints > 0)) errors.push(`quest ${q.id}: 制限が不正`);
     if (q.monsterAttackScale !== undefined && !(q.monsterAttackScale > 0 && q.monsterAttackScale <= 3)) errors.push(`quest ${q.id}: monsterAttackScale が不正`);
+    if (q.kind !== 'slay' && q.kind !== 'hunt') errors.push(`quest ${q.id}: kind "${String(q.kind)}" は未定義`);
+    if (q.returnTicks !== undefined && !(isInt(q.returnTicks) && q.returnTicks >= 0)) errors.push(`quest ${q.id}: returnTicks が不正`);
+    for (const s of q.supplies ?? []) {
+      const it = c.items.get(s.itemId);
+      if (!it) errors.push(`quest ${q.id}: 支給品 ${s.itemId} が無い`);
+      else if (!(isInt(s.count) && s.count > 0 && s.count <= it.carryMax)) errors.push(`quest ${q.id}: 支給品 ${s.itemId} の数が不正（持てるのは ${it.carryMax} 個まで）`);
+    }
+    if (q.rewards) {
+      if (!(isInt(q.rewards.money) && q.rewards.money >= 0)) errors.push(`quest ${q.id}: 報酬の金額が不正`);
+      for (const s of q.rewards.items ?? []) if (!c.materials.has(s.itemId) || !(isInt(s.count) && s.count > 0)) errors.push(`quest ${q.id}: 報酬 ${s.itemId} が不正`);
+    }
+  }
+  for (const it of c.items.values()) {
+    const w = `item ${it.id}`;
+    const a = c.actions.get(it.useActionId);
+    if (!a) errors.push(`${w}: useActionId ${it.useActionId} が無い`);
+    else if (!(isInt(it.effectTick) && it.effectTick >= 0 && it.effectTick < a.durationTicks)) errors.push(`${w}: effectTick が行動の長さの外`);
+    if (!(isInt(it.carryMax) && it.carryMax > 0)) errors.push(`${w}: carryMax が不正`);
+    if (it.kind === 'heal') {
+      if (!(isNum(it.heal) && it.heal > 0)) errors.push(`${w}: heal が不正`);
+    } else if (it.kind === 'trap') {
+      if (!(it.trap && it.trap.armTicks >= 0 && it.trap.radius > 0 && it.trap.holdTicks > 0 && it.trap.lifeTicks > 0)) errors.push(`${w}: trap が不正`);
+    } else if (it.kind === 'tranq') {
+      if (!(it.tranq && it.tranq.range > 0 && it.tranq.halfAngleDeg > 0)) errors.push(`${w}: tranq が不正`);
+    } else errors.push(`${w}: kind "${String(it.kind)}" は未定義`);
+  }
+  const checkRoll = (w: string, r: LootRoll | undefined): void => {
+    if (!r || !(isInt(r.count) && r.count > 0) || !Array.isArray(r.table) || r.table.length === 0) {
+      errors.push(`${w}: 抽選の定義が不正`);
+      return;
+    }
+    for (const e of r.table) if (!c.materials.has(e.itemId) || !(e.weight > 0)) errors.push(`${w}: ${e.itemId} が不正`);
+  };
+  for (const l of c.loot.values()) {
+    checkRoll(`loot ${l.id} carve`, l.carve);
+    checkRoll(`loot ${l.id} capture`, l.capture);
+    for (const [k, r] of Object.entries(l.severed ?? {})) checkRoll(`loot ${l.id} severed.${k}`, r);
+    for (const [k, r] of Object.entries(l.breaks ?? {})) checkRoll(`loot ${l.id} breaks.${k}`, r);
+  }
+  for (const m of c.monsters.values()) {
+    const l = m.lootId ? c.loot.get(m.lootId) : undefined;
+    if (m.lootId && !l) errors.push(`monster ${m.id}: lootId ${m.lootId} が無い`);
+    for (const k of [...Object.keys(l?.severed ?? {}), ...Object.keys(l?.breaks ?? {})]) if (!m.parts.some((p) => p.id === k)) errors.push(`monster ${m.id}: loot の部位 ${k} が無い`);
+    if (m.captureAllowed && !(m.capture && m.capture.hpRatio > 0 && m.capture.hpRatio < 1 && isInt(m.capture.tranqNeeded) && m.capture.tranqNeeded > 0 && m.capture.tranqDecayTicks > 0)) errors.push(`monster ${m.id}: capture が不正`);
   }
   for (const a of c.actions.values()) {
     for (const h of a.hazards ?? []) {
@@ -226,6 +274,9 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     monsters: new Map(),
     maps: new Map(),
     quests: new Map(),
+    items: new Map(),
+    materials: new Map(),
+    loot: new Map(),
     player: (await get(index.files.player)) as PlayerTuning,
   };
   checkVersion(index.files.player, content.player.schemaVersion, errors);
@@ -264,6 +315,16 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
   }
   const quests = (await get(index.files.quests)) as { quests: QuestDef[] };
   for (const q of quests.quests ?? []) putUnique(content.quests, q.id, q, 'quest', errors);
+  const items = (await get(index.files.items)) as { schemaVersion: number; items: ItemDef[]; materials: MaterialDef[] };
+  checkVersion(index.files.items, items.schemaVersion, errors);
+  for (const it of items.items ?? []) putUnique(content.items, it.id, it, 'item', errors);
+  for (const m of items.materials ?? []) {
+    if (content.items.has(m.id)) errors.push(`material id "${m.id}" が道具と重複`);
+    putUnique(content.materials, m.id, m, 'material', errors);
+  }
+  const loot = (await get(index.files.loot)) as { schemaVersion: number; tables: LootDef[] };
+  checkVersion(index.files.loot, loot.schemaVersion, errors);
+  for (const l of loot.tables ?? []) putUnique(content.loot, l.id, l, 'loot', errors);
   crossCheck(content, errors);
   if (errors.length > 0) throw new ContentError(errors);
   return content;

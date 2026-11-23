@@ -302,6 +302,24 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.screenshot({ path: `${OUT}55_hunt_topple.png` });
   const hstats = await page.evaluate(() => ({ ...window.__vh.view.stats() }));
   check('ガルドロス戦の描画量が目標内（100 draw calls / 20万 tri）', hstats.calls <= 100 && hstats.triangles <= 200000, `calls ${hstats.calls} tris ${hstats.triangles}`);
+  // ---- 道具（M2 後半）: 回復液を E キーで飲む ----
+  check('依頼では道具ボタンが出て、支給品を持っている', await page.evaluate(() => !document.querySelector('.tbtn-item').hidden && window.__vh.sim.player.items.length === 3 && /回復液 ×5/.test(document.querySelector('.hud-item').textContent)));
+  await page.evaluate(() => {
+    const v = window.__vh;
+    v.sim.monsters[0].aiEnabled = false;
+    v.sim.monsters[0].action = null;
+    const p = v.sim.player;
+    p.hp = 50;
+    p.mode = 'free';
+    p.action = null;
+    p.hurt = null;
+    p.guard = null;
+    p.drawn = false;
+    p.itemIndex = 0;
+  });
+  await page.keyboard.press('KeyE');
+  check('回復液を飲むと体力が 40 回復し、1 個減る', await until(page, () => window.__vh.sim.player.hp === 90 && window.__vh.sim.player.items[0].count === 4, 8000));
+  await until(page, () => window.__vh.sim.player.mode === 'free', 8000);
   // 頭の正面へ立ち、残り体力わずかの状態から討伐する
   await page.evaluate(() => {
     const v = window.__vh;
@@ -320,15 +338,73 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   });
   await click(page);
   check('討伐すると狩猟が成功で終わる', await until(page, () => window.__vh.sim.hunt.phase === 'success', 20000));
-  check('少し間を置いて結果の画面が出る', await until(page, () => !document.getElementById('result').hidden, 20000));
+  // ---- 剥ぎ取りと帰還 ----
+  check('討伐後は結果をすぐ出さず、剥ぎ取りの案内（残り 3 回）が出る', await until(page, () => !document.querySelector('.hud-wrap').hidden && /剥ぎ取り 残り 3 回/.test(document.querySelector('.hud-wrap').textContent) && document.getElementById('result').hidden, 8000));
+  await until(page, () => window.__vh.sim.player.mode === 'free', 8000);
+  await page.evaluate(() => {
+    const v = window.__vh;
+    const m = v.sim.monsters[0];
+    const p = v.sim.player;
+    p.pos.x = m.pos.x + 2.4;
+    p.pos.z = m.pos.z;
+  });
+  await page.waitForTimeout(150);
+  check('亡骸の近くでは、攻撃ボタンが「剥ぎ取り」に変わる', await until(page, () => document.querySelector('.tbtn-main').textContent === '剥ぎ取り', 3000));
+  await click(page);
+  check('剥ぎ取ると素材が 1 個手に入り、残りが 2 回になる', await until(page, () => window.__vh.sim.hunt.carves.body === 2 && window.__vh.sim.hunt.loot.length === 1, 8000));
+  await page.screenshot({ path: `${OUT}55_hunt_carve.png` });
+  await page.click('#hud-return');
+  check('「帰還する」で結果が閉じ、少し間を置いて結果の画面が出る', await until(page, () => window.__vh.sim.hunt.closed && !document.getElementById('result').hidden, 20000));
   const resultText = await page.textContent('#result');
   check('結果に「依頼達成」と討伐成功が出る', /依頼達成/.test(resultText) && /討伐に成功/.test(resultText));
+  check('結果に報酬（600 通貨、剥ぎ取り 1 + 依頼の報酬 1 = 素材 2 個）が出る', /報酬\s*600 通貨\s*素材 2 個/.test(resultText) && /剥ぎ取り/.test(resultText) && /依頼の報酬/.test(resultText), resultText.slice(0, 200));
+  check('報酬は持ち物へ一度だけ入る', await page.evaluate(() => window.__vh.inventory.money === 600 && [...window.__vh.inventory.items.values()].reduce((a, b) => a + b, 0) === 2));
   await page.screenshot({ path: `${OUT}56_hunt_result.png` });
   const tickR = (await state(page)).tick;
   await page.waitForTimeout(300);
   check('結果の表示中は止まっている', (await state(page)).tick === tickR);
   await page.click('#result .result-actions button.sub');
   check('「もう一度」で同じ依頼を最初から', await until(page, () => window.__vh.sim.hunt?.phase === 'active' && window.__vh.sim.monsters[0].hp === window.__vh.sim.monsters[0].def.hp && document.getElementById('result').hidden));
+  // ---- 捕獲: 弱らせる → 罠 → 鎮静玉 2 個 ----
+  await page.evaluate(() => {
+    const v = window.__vh;
+    const m = v.sim.monsters[0];
+    m.aiEnabled = false;
+    m.hp = Math.floor(m.def.hp * 0.2);
+    const p = v.sim.player;
+    p.invulnTicks = 1e9;
+    p.itemIndex = 1;
+  });
+  await page.keyboard.press('KeyE');
+  check('拘束罠を置くと、少しして作動可能になる', await until(page, () => window.__vh.sim.traps[0]?.state === 'armed' && window.__vh.sim.player.items[1].count === 0, 10000));
+  await page.evaluate(() => {
+    const v = window.__vh;
+    const t = v.sim.traps[0];
+    const m = v.sim.monsters[0];
+    m.pos.x = t.x;
+    m.pos.z = t.z + 1.2;
+    const p = v.sim.player;
+    p.pos.x = t.x;
+    p.pos.z = t.z - 4;
+    p.yaw = 0;
+    p.itemIndex = 2;
+    v.view.cam.snap(0);
+  });
+  check('大型が罠を踏むと動きが止まる', await until(page, () => window.__vh.sim.monsters[0].trapTicks > 0 && window.__vh.sim.traps[0]?.state === 'holding', 5000));
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${OUT}59_hunt_trap.png` });
+  await page.keyboard.press('KeyE');
+  await until(page, () => window.__vh.sim.monsters[0].tranq === 1 && window.__vh.sim.player.mode === 'free', 8000);
+  await page.keyboard.press('KeyE');
+  check('弱って罠にかかった相手に鎮静玉を 2 個当てると捕獲になる', await until(page, () => window.__vh.sim.monsters[0].captured && window.__vh.sim.hunt.reason === 'capture', 8000));
+  await page.waitForTimeout(1200);
+  await page.screenshot({ path: `${OUT}60_hunt_capture.png` });
+  check('捕獲の結果画面に、捕獲の素材が出る', await until(page, () => !document.getElementById('result').hidden && /捕獲に成功/.test(document.getElementById('result').textContent) && /素材 5 個/.test(document.getElementById('result').textContent), 20000));
+  await page.screenshot({ path: `${OUT}61_hunt_capture_result.png` });
+  // 結果画面を開いたままでも、もう一度やり直しても、同じ依頼の報酬は増えない
+  check('持ち物は 2 回分（通貨 1200）', await page.evaluate(() => window.__vh.inventory.money === 1200));
+  await page.click('#result .result-actions button.sub');
+  await until(page, () => window.__vh.sim.hunt?.phase === 'active' && document.getElementById('result').hidden, 8000);
   await page.waitForTimeout(400);
   await page.keyboard.press('Escape');
   await page.waitForSelector('#menu:not([hidden])');
@@ -341,6 +417,8 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   check('依頼の入力記録（リタイアを含む）の再生が、いまの状態と一致', /結果: 一致/.test(det) && /いまの画面の状態とも一致/.test(det), det.split('\n')[3]);
   await page.click('#result .result-actions button:not(.sub)');
   check('結果から拠点へ戻れる', await until(page, () => !document.getElementById('base').hidden && document.getElementById('result').hidden));
+  check('拠点に持ち物（通貨 1200 と素材）が出る。リタイアでは増えていない', await page.evaluate(() => /通貨 1200/.test(document.querySelector('.base-inv').textContent) && /×/.test(document.querySelector('.base-inv').textContent) && window.__vh.inventory.money === 1200), await page.textContent('.base-inv'));
+  await page.screenshot({ path: `${OUT}62_base_inventory.png` });
   await ctx.close();
 }
 

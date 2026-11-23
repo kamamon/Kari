@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "note": "狩猟中に使う道具と、持ち帰る素材。道具は use の行動の effectTick で効果が出て、その時に 1 個減る（それより前に妨害されると減らない）。研磨石は刃の状態（M3）と一緒に入れる。",
+  "items": [
+    {"id": "item.heal_tonic", "name": "回復液", "kind": "heal", "carryMax": 10, "useActionId": "player.item.drink", "effectTick": 58, "heal": 40, "summary": "体力を 40 回復する。飲み終わるまで動けない。"},
+    {"id": "item.bind_trap", "name": "拘束罠", "kind": "trap", "carryMax": 1, "useActionId": "player.item.set_trap", "effectTick": 84, "trap": {"armTicks": 60, "radius": 1.5, "holdTicks": 540, "lifeTicks": 5400}, "summary": "足元に仕掛ける。大型が踏むと 9 秒ほど動きを止める。"},
+    {"id": "item.calm_orb", "name": "鎮静玉", "kind": "tranq", "carryMax": 4, "useActionId": "player.item.throw_orb", "effectTick": 22, "tranq": {"range": 7, "halfAngleDeg": 50}, "summary": "正面 7m 以内の大型に当てる。弱って罠にかかった相手に 2 個当てると捕獲できる。"}
+  ],
+  "materials": [
+    {"id": "mat.galdros.shell_shard", "name": "岩殻片"},
+    {"id": "mat.galdros.hard_bone", "name": "硬骨"},
+    {"id": "mat.galdros.bronze_vein", "name": "青銅晶脈"},
+    {"id": "mat.galdros.foreleg_plate", "name": "前脚甲"}
+  ]
+}

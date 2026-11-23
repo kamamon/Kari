@@ -1,4 +1,4 @@
-// 拠点（仮）。M2 前半は、訓練場と依頼 1 件を選ぶだけの画面。
+// 拠点（仮）。訓練場と依頼 1 件を選び、持ち帰った素材を確かめるだけの画面。
 // 里を歩く・受付・工房・道具箱は M3 で作る。
 import { APP_VERSION, BUILD_ID } from '../core/assets';
 import type { Content } from '../data/schemas';
@@ -11,6 +11,7 @@ export interface BaseHost {
 
 export class BaseScreen {
   readonly root: HTMLElement;
+  private inv: HTMLElement;
 
   constructor(parent: HTMLElement, content: Content, host: BaseHost) {
     const root = document.createElement('div');
@@ -41,13 +42,22 @@ export class BaseScreen {
     };
     for (const q of content.quests.values()) {
       const target = content.monsters.get(q.targetMonsterId)?.name ?? '';
-      choice(`依頼「${q.name}」`, [q.summary, `目標: ${target}の討伐　制限 ${Math.round(q.timeLimitTicks / 3600)} 分　力尽き ${q.maxFaints} 回で失敗`], () => host.startHunt(q.id));
+      const goal = q.kind === 'hunt' ? '狩猟（討伐か捕獲）' : '討伐';
+      const lines = [q.summary, `目標: ${target}の${goal}　制限 ${Math.round(q.timeLimitTicks / 3600)} 分　力尽き ${q.maxFaints} 回で失敗`];
+      if (q.supplies?.length) lines.push(`支給品: ${q.supplies.map((s) => `${content.items.get(s.itemId)?.name ?? s.itemId} ×${s.count}`).join('　')}`);
+      if (q.rewards) lines.push(`報酬: ${q.rewards.money} 通貨 + 素材`);
+      choice(`依頼「${q.name}」`, lines, () => host.startHunt(q.id));
     }
     choice('訓練場', ['動かない標的で、操作と技を確かめる。'], () => host.startTraining());
 
+    // 持ち物（保存はまだ無い）
+    this.inv = document.createElement('p');
+    this.inv.className = 'base-inv';
+    card.appendChild(this.inv);
+
     const note = document.createElement('p');
     note.className = 'base-note';
-    note.textContent = `v${APP_VERSION} (${BUILD_ID}) ／ 見た目・動き・音は仮素材。回復の道具・素材の剥ぎ取り・捕獲・工房・セーブは、これから追加します。`;
+    note.textContent = `v${APP_VERSION} (${BUILD_ID}) ／ 見た目・動き・音は仮素材。持ち物の保存・工房・里を歩く画面は、これから追加します（いまはページを閉じると持ち物が消えます）。`;
     card.appendChild(note);
     // 画面を広く使う方法: 全画面にできる端末はボタン、iPhone は「ホーム画面に追加」の案内
     if (canFullscreen() && window.matchMedia('(pointer: coarse)').matches) {
@@ -76,5 +86,10 @@ export class BaseScreen {
 
   setOpen(open: boolean): void {
     this.root.hidden = !open;
+  }
+
+  /** 持ち物の表示を更新する */
+  refresh(inventory: readonly string[]): void {
+    this.inv.textContent = `持ち物: ${inventory.join('　')}`;
   }
 }

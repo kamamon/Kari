@@ -3,7 +3,7 @@
 import { Btn, type InputFrame } from '../game/inputFrame';
 
 export type Device = 'touch' | 'keyboard' | 'gamepad';
-export type UiAction = 'menu' | 'camReset' | 'verify';
+export type UiAction = 'menu' | 'camReset' | 'verify' | 'return';
 
 export { Btn };
 

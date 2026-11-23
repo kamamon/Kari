@@ -200,6 +200,12 @@ export interface MonsterDef {
   turnDegPerSec: number;
   captureAllowed: boolean;
   lootId: string | null;
+  /**
+   * 捕獲の条件（captureAllowed の時に使う）。体力が hp × hpRatio 以下で「弱った」状態になり、
+   * その間に罠にかかっていて、鎮静玉が tranqNeeded 個たまっていると捕獲が成立する。
+   * 鎮静玉の効き目は、最後に当ててから tranqDecayTicks で消える。
+   */
+  capture?: { hpRatio: number; tranqNeeded: number; tranqDecayTicks: number };
   respawnTicks: number | null;
   breakStaggerTicks: number;
   /** 歩く速さ (m/s)。無ければその場から動かない。 */
@@ -261,7 +267,8 @@ export interface PlayerTuning {
 export interface QuestDef {
   id: string;
   name: string;
-  kind: 'slay';
+  /** slay: 討伐だけで達成（捕獲はできない）。hunt: 討伐でも捕獲でも達成。 */
+  kind: 'slay' | 'hunt';
   summary: string;
   mapId: string;
   targetMonsterId: string;
@@ -270,6 +277,56 @@ export interface QuestDef {
   maxFaints: number;
   /** この依頼でモンスターの攻撃・落石が与えるダメージの倍率（省略時 1）。 */
   monsterAttackScale?: number;
+  /** 達成してから拠点へ戻るまでの時間（剥ぎ取りに使える時間）。省略時 3600。 */
+  returnTicks?: number;
+  /** 出発の時に支給する道具 */
+  supplies?: ItemStack[];
+  /** 達成した時の報酬（失敗・リタイアでは出ない） */
+  rewards?: { money: number; items: ItemStack[] };
+}
+
+export interface ItemStack {
+  itemId: string;
+  count: number;
+}
+
+/** 狩猟中に使う道具。use の行動の effectTick で効果が出て、その時に 1 個減る。 */
+export interface ItemDef {
+  id: string;
+  name: string;
+  kind: 'heal' | 'trap' | 'tranq';
+  carryMax: number;
+  useActionId: string;
+  effectTick: number;
+  summary: string;
+  heal?: number;
+  /** 仕掛けてから armTicks で作動可能になり、大型が radius 内に入ると holdTicks の間止める。lifeTicks で消える。 */
+  trap?: { armTicks: number; radius: number; holdTicks: number; lifeTicks: number };
+  /** 正面 ±halfAngleDeg、range 以内の大型に当たる */
+  tranq?: { range: number; halfAngleDeg: number };
+}
+
+export interface MaterialDef {
+  id: string;
+  name: string;
+}
+
+export interface LootRoll {
+  count: number;
+  table: { itemId: string; weight: number }[];
+}
+
+/** モンスターから得る素材の表 */
+export interface LootDef {
+  id: string;
+  /** 討伐後の剥ぎ取り（本体） */
+  carve: LootRoll;
+  /** 切り落とした部位からの剥ぎ取り（部位 id ごと） */
+  severed?: Record<string, LootRoll>;
+  /** 捕獲した時 */
+  capture: LootRoll;
+  /** 壊した部位ごとの追加 */
+  breaks?: Record<string, LootRoll>;
 }
 
 export interface ContentIndex {
@@ -283,6 +340,8 @@ export interface ContentIndex {
     monsters: string[];
     maps: string[];
     quests: string;
+    items: string;
+    loot: string;
     player: string;
   };
 }
@@ -297,6 +356,9 @@ export interface Content {
   monsters: Map<string, MonsterDef>;
   maps: Map<string, MapDef>;
   quests: Map<string, QuestDef>;
+  items: Map<string, ItemDef>;
+  materials: Map<string, MaterialDef>;
+  loot: Map<string, LootDef>;
   player: PlayerTuning;
 }
 

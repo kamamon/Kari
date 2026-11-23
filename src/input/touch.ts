@@ -12,6 +12,8 @@ interface ButtonSpec {
   y: number;
   s: number;
   btn?: number;
+  /** 画面の下・中央を基準に置く（x は中央からの左右のずれ） */
+  center?: boolean;
 }
 
 export const TOUCH_BUTTONS: ButtonSpec[] = [
@@ -22,6 +24,10 @@ export const TOUCH_BUTTONS: ButtonSpec[] = [
   { name: 'weapon', label: '抜刀', x: 24, y: 196, s: 54, btn: Btn.Weapon },
   { name: 'sprint', label: '疾走', x: 204, y: 22, s: 54 },
   { name: 'camreset', label: '正面', x: 200, y: 104, s: 48 },
+  // 道具: 画面の下・中央。中央が「使う」、左右が切り替え（依頼で道具を持っている時だけ出る）
+  { name: 'item', label: '道具', x: 0, y: 10, s: 62, btn: Btn.Item, center: true },
+  { name: 'itemprev', label: '◀', x: -62, y: 16, s: 42, btn: Btn.ItemPrev, center: true },
+  { name: 'itemnext', label: '▶', x: 62, y: 16, s: 42, btn: Btn.ItemNext, center: true },
 ];
 
 type Owner = { kind: 'stick'; ox: number; oy: number } | { kind: 'look'; lx: number; ly: number } | { kind: 'button'; name: string } | { kind: 'edit'; name: string; sx: number; sy: number; dx0: number; dy0: number };
@@ -55,7 +61,7 @@ export class TouchControls {
     root.appendChild(this.base);
     for (const spec of TOUCH_BUTTONS) {
       const el = document.createElement('div');
-      el.className = `tbtn tbtn-${spec.name}`;
+      el.className = `tbtn tbtn-${spec.name}${spec.center ? ' center' : ''}`;
       el.dataset.name = spec.name;
       el.textContent = spec.label;
       el.style.setProperty('--x', String(spec.x));
@@ -87,6 +93,14 @@ export class TouchControls {
       el.style.setProperty('--dy', `${o ? o.dy : 0}px`);
     }
     this.els.get('sprint')!.hidden = s.sprintMode !== 'button';
+  }
+
+  /** ボタンを出す / 隠す（道具を持っていない時の道具ボタンなど） */
+  setHidden(names: readonly string[], hidden: boolean): void {
+    for (const name of names) {
+      const el = this.els.get(name);
+      if (el && el.hidden !== hidden) el.hidden = hidden;
+    }
   }
 
   /** 武器の状態に合わせてボタンの表示名を変える。 */

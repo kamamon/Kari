@@ -1,4 +1,5 @@
-// 依頼の結果。simulation が確定した結果を表示するだけで、ここでは何も加算しない。
+// 依頼の結果。simulation が確定した結果（成否・素材・報酬）を表示するだけで、ここでは何も決めない。
+// 持ち物への加算は App が依頼 1 回につき一度だけ行う（結果画面を何度開いても増えない）。
 import type { Simulation } from '../game/sim';
 
 export interface ResultHost {
@@ -8,6 +9,7 @@ export interface ResultHost {
 
 const REASON: Record<string, string> = {
   slay: '討伐に成功しました。',
+  capture: '捕獲に成功しました。',
   time: '制限時間を過ぎました。',
   faints: '力尽きた回数が上限に達しました。',
   retire: 'リタイアしました。',
@@ -83,10 +85,44 @@ export class ResultScreen {
       tr.append(th, td);
       table.appendChild(tr);
     }
-    const note = document.createElement('p');
-    note.className = 'base-note';
-    note.textContent = '素材の剥ぎ取りと報酬は、次の段階で追加します（いまは結果の表示だけです）。';
-    this.body.append(table, note);
+    this.body.append(table);
+    const rw = h.rewards;
+    if (h.phase === 'success' && rw) {
+      const SOURCE: Record<string, string> = { carve: '剥ぎ取り', capture: '捕獲', quest: '依頼の報酬' };
+      const label = (src: string): string => {
+        if (SOURCE[src]) return SOURCE[src]!;
+        const [kind, partId] = src.split(':');
+        const part = m?.def.parts.find((d) => d.id === partId)?.name ?? partId ?? '';
+        return kind === 'break' ? `${part}の破壊` : `${part}の剥ぎ取り`;
+      };
+      const box = document.createElement('div');
+      box.className = 'result-loot';
+      const head = document.createElement('h3');
+      head.textContent = `報酬　${rw.money} 通貨　素材 ${h.loot.length} 個`;
+      const ul = document.createElement('ul');
+      // 同じ素材・同じ入手元をまとめて表示する
+      const rows2 = new Map<string, number>();
+      for (const g of h.loot) rows2.set(`${g.itemId}|${g.source}`, (rows2.get(`${g.itemId}|${g.source}`) ?? 0) + 1);
+      for (const [key, n] of rows2) {
+        const [itemId, src] = key.split('|');
+        const li = document.createElement('li');
+        li.textContent = `${sim.content.materials.get(itemId!)?.name ?? itemId} ×${n}`;
+        const sp = document.createElement('span');
+        sp.textContent = label(src!);
+        li.appendChild(sp);
+        ul.appendChild(li);
+      }
+      box.append(head, ul);
+      const note = document.createElement('p');
+      note.className = 'base-note';
+      note.textContent = '素材と通貨は拠点の持ち物に入ります。保存はまだ無いので、ページを閉じると消えます（保存は次の段階）。';
+      this.body.append(box, note);
+    } else if (h.phase === 'failed') {
+      const note = document.createElement('p');
+      note.className = 'base-note';
+      note.textContent = '失敗・リタイアでは、報酬と素材は出ません。';
+      this.body.append(note);
+    }
     this.root.hidden = false;
   }
 }

@@ -1,8 +1,8 @@
 // simulation 本体。60Hz 固定 tick で step() を 1 回ずつ呼ぶ。
 // ここは DOM・Three.js・Math.random・現在時刻に触れない。同じ seed と同じ入力列なら同じ結果になる。
-import { toWorld, type V3 } from '../core/math';
+import { DEG, angleDiff, forwardOf, toWorld, yawOf, type V3 } from '../core/math';
 import { SeededRng } from '../core/seededRng';
-import type { Content, HazardDef, HitWindowDef, QuestDef } from '../data/schemas';
+import type { Content, HazardDef, HitWindowDef, ItemDef, ItemStack, LootRoll, QuestDef } from '../data/schemas';
 import { inWindow, type ActionRun } from './action';
 import { HitLedger, computeDamage, sweepCapsule, type WorldShape } from './combat';
 import type { SimEvent } from './events';
@@ -36,9 +36,32 @@ export interface Hazard {
   hit: boolean;
 }
 
-export type HuntReason = 'slay' | 'time' | 'faints' | 'retire';
+export type HuntReason = 'slay' | 'capture' | 'time' | 'faints' | 'retire';
 
-/** 狩猟の進行。phase が active 以外になったら終端で、以後は変わらない（結果を一度だけ確定する）。 */
+/** 仕掛けた罠。arming → armed（大型が踏むと作動）→ holding（止めている間）。 */
+export interface Trap {
+  id: number;
+  x: number;
+  z: number;
+  radius: number;
+  holdTicks: number;
+  arm: number;
+  life: number;
+  state: 'arming' | 'armed' | 'holding';
+  target: string | null;
+}
+
+/** 手に入れたもの 1 個。source は carve / severed:<部位> / break:<部位> / capture / quest */
+export interface LootGain {
+  itemId: string;
+  source: string;
+}
+
+/**
+ * 狩猟の進行。phase が active 以外になったら成否は終端で、以後は変わらない。
+ * 達成した後は、拠点へ戻るまでの時間（returnTicks）だけ剥ぎ取りができ、その後 closed になる。
+ * 報酬（rewards）は closed になった時に一度だけ確定し、以後は何も変わらない。
+ */
 export interface HuntState {
   quest: QuestDef;
   phase: 'active' | 'success' | 'failed';
@@ -46,7 +69,25 @@ export interface HuntState {
   ticks: number;
   faints: number;
   endTick: number;
+  returnTicks: number;
+  /** 剥ぎ取りの残り回数。'body'（本体）と、切り落とした部位の id */
+  carves: Record<string, number>;
+  loot: LootGain[];
+  closed: boolean;
+  closeTick: number;
+  rewards: { money: number; items: ItemStack[] } | null;
 }
+
+/** 達成後、剥ぎ取りを使い切ってから結果が閉じるまでの間 */
+const CLOSE_AFTER_LAST_CARVE = 150;
+/** 捕獲した時に、結果が閉じるまでの時間 */
+const CAPTURE_RETURN_TICKS = 300;
+/** 罠を置く位置（足元から前へ）と、大型の中心がこれだけ罠の縁に近づくと作動する距離 */
+const TRAP_AHEAD = 0.9;
+const TRAP_REACH = 0.9;
+/** 剥ぎ取りができる距離（本体は胴の半径に足す / 切り落とした部位） */
+const CARVE_REACH = 1.4;
+const CARVE_PIECE_REACH = 1.7;
 
 export interface HitRecord {
   tick: number;
@@ -81,6 +122,10 @@ export class Simulation implements SimCtx {
   hazards: Hazard[] = [];
   private nextHazard = 1;
   hunt: HuntState | null = null;
+  traps: Trap[] = [];
+  private nextTrap = 1;
+  /** 切り落とした部位が落ちた位置（部位 id ごと）。剥ぎ取りの場所になる。 */
+  severedAt: Record<string, { x: number; z: number }> = {};
 
   constructor(content: Content, options: SimOptions) {
     this.content = content;
@@ -92,7 +137,7 @@ export class Simulation implements SimCtx {
     if (!content.weapons.has(options.weaponId)) throw new Error(`weapon ${options.weaponId} が無い`);
     this.world = new World(map);
     this.rng = new SeededRng(options.seed);
-    this.player = createPlayer(content, map.spawn, options.weaponId);
+    this.player = createPlayer(content, map.spawn, options.weaponId, quest?.supplies ?? []);
     const monsterId = quest ? quest.targetMonsterId : options.monsterId;
     if (monsterId) {
       const def = content.monsters.get(monsterId);
@@ -102,7 +147,7 @@ export class Simulation implements SimCtx {
       this.monsters.push(m);
     }
     if (quest) {
-      this.hunt = { quest, phase: 'active', reason: null, ticks: 0, faints: 0, endTick: 0 };
+      this.hunt = { quest, phase: 'active', reason: null, ticks: 0, faints: 0, endTick: 0, returnTicks: 0, carves: {}, loot: [], closed: false, closeTick: 0, rewards: null };
       this.monsterAttackScale = quest.monsterAttackScale ?? 1;
     }
   }
@@ -110,6 +155,7 @@ export class Simulation implements SimCtx {
   emit(ev: SimEvent): void {
     if (ev.type === 'player_hurt' || ev.type === 'guard' || ev.type === 'guard_break') this.damageTaken += ev.damage;
     if (ev.type === 'player_dead' && this.hunt?.phase === 'active') this.hunt.faints++;
+    if (ev.type === 'part_sever') this.severedAt[ev.partId] = { x: ev.pos.x, z: ev.pos.z };
     this.events.push(ev);
   }
 
@@ -158,10 +204,190 @@ export class Simulation implements SimCtx {
     this.hazards = this.hazards.filter((h) => h.warn > 0 || h.active > 0);
   }
 
-  /** 狩猟の成否。同じ tick に重なった時は 討伐 → リタイア → 力尽き → 時間切れ の順で先に確定する。 */
+  // ---- 道具 ----
+
+  canUseItem(item: ItemDef): boolean {
+    // 回復は依頼の外（訓練場）や達成後でも使える。罠と鎮静玉は狩猟中だけ。罠は同時に 1 つまで。
+    if (item.kind === 'heal') return true;
+    if (this.hunt?.phase !== 'active') return false;
+    return item.kind !== 'trap' || this.traps.length === 0;
+  }
+
+  applyItem(item: ItemDef): boolean {
+    const p = this.player;
+    const pos = { ...p.pos };
+    if (item.kind === 'heal') {
+      const before = p.hp;
+      p.hp = Math.min(this.content.player.maxHp, p.hp + (item.heal ?? 0));
+      this.emit({ type: 'item_effect', itemId: item.id, kind: 'heal', ok: true, amount: p.hp - before, pos });
+      return true;
+    }
+    if (!this.canUseItem(item)) {
+      this.emit({ type: 'item_effect', itemId: item.id, kind: item.kind, ok: false, amount: 0, pos });
+      return false;
+    }
+    if (item.kind === 'trap') {
+      const t = item.trap!;
+      const f = forwardOf(p.yaw);
+      const trap: Trap = { id: this.nextTrap++, x: p.pos.x + f.x * TRAP_AHEAD, z: p.pos.z + f.z * TRAP_AHEAD, radius: t.radius, holdTicks: t.holdTicks, arm: t.armTicks, life: t.lifeTicks, state: 'arming', target: null };
+      this.traps.push(trap);
+      this.emit({ type: 'item_effect', itemId: item.id, kind: 'trap', ok: true, amount: 0, pos: { x: trap.x, y: p.pos.y, z: trap.z } });
+      return true;
+    }
+    // 鎮静玉: 正面の範囲に居る、いちばん近い大型に当たる。外しても 1 個減る。
+    const q = item.tranq!;
+    let best: MonsterState | null = null;
+    let bestDist = Infinity;
+    for (const m of this.monsters) {
+      if (m.dead || m.captured) continue;
+      const dx = m.pos.x - p.pos.x, dz = m.pos.z - p.pos.z;
+      const dist = Math.max(0, Math.hypot(dx, dz) - m.def.bodyRadius);
+      if (dist > q.range || dist >= bestDist) continue;
+      if (Math.abs(angleDiff(yawOf(dx, dz), p.yaw)) > q.halfAngleDeg * DEG) continue;
+      best = m;
+      bestDist = dist;
+    }
+    if (best && best.def.capture) {
+      best.tranq++;
+      best.tranqTicks = best.def.capture.tranqDecayTicks;
+    }
+    const f = forwardOf(p.yaw);
+    this.emit({ type: 'item_effect', itemId: item.id, kind: 'tranq', ok: !!best, amount: best ? best.tranq : 0, pos: best ? { x: best.pos.x, y: 1.4, z: best.pos.z } : { x: p.pos.x + f.x * q.range, y: 0.3, z: p.pos.z + f.z * q.range } });
+    return true;
+  }
+
+  private stepTraps(): void {
+    if (this.traps.length === 0) return;
+    for (const t of this.traps) {
+      if (t.state === 'holding') {
+        const m = this.monsters.find((x) => x.id === t.target);
+        if (!m || m.dead || m.captured || m.trapTicks <= 0) t.life = 0;
+        continue;
+      }
+      t.life--;
+      if (t.state === 'arming') {
+        if (--t.arm > 0) continue;
+        t.state = 'armed';
+        this.emit({ type: 'trap_armed', id: t.id, x: t.x, z: t.z });
+      }
+      for (const m of this.monsters) {
+        if (m.dead || m.captured || m.trapTicks > 0) continue;
+        if (Math.hypot(m.pos.x - t.x, m.pos.z - t.z) > t.radius + TRAP_REACH) continue;
+        // 2 回目からは慣れて、止まる時間が 6 割ずつになる
+        m.trapTicks = Math.max(60, Math.round(t.holdTicks * Math.pow(0.6, m.trapCount)));
+        m.trapCount++;
+        m.action = null;
+        m.attackEval = null;
+        t.state = 'holding';
+        t.target = m.id;
+        this.emit({ type: 'trap_trigger', id: t.id, target: m.id, x: t.x, z: t.z, ticks: m.trapTicks });
+        break;
+      }
+    }
+    for (const t of this.traps) if (t.life <= 0) this.emit({ type: 'trap_end', id: t.id });
+    this.traps = this.traps.filter((t) => t.life > 0);
+  }
+
+  /**
+   * 捕獲。捕獲できる相手が、弱っていて、罠にかかっていて、鎮静玉が必要な数たまっている時に成立する。
+   * 死亡（終端）はこの前に確定しているので、同じ tick に倒していたら捕獲にはならない。
+   */
+  private stepCapture(): void {
+    const h = this.hunt;
+    if (!h || h.phase !== 'active' || h.quest.kind !== 'hunt') return;
+    for (const m of this.monsters) {
+      const c = m.def.capture;
+      if (m.dead || m.captured || !m.def.captureAllowed || !c) continue;
+      if (m.hp > m.def.hp * c.hpRatio || m.trapTicks <= 0 || m.tranq < c.tranqNeeded) continue;
+      m.captured = true;
+      m.action = null;
+      m.attackEval = null;
+      m.staggerTicks = 0;
+      m.staggerKind = null;
+      m.enraged = false;
+      this.emit({ type: 'monster_captured', target: m.id });
+    }
+  }
+
+  // ---- 素材 ----
+
+  private roll(r: LootRoll, source: string, h: HuntState): void {
+    let total = 0;
+    for (const e of r.table) total += e.weight;
+    for (let i = 0; i < r.count; i++) h.loot.push({ itemId: this.pick(r, total), source });
+  }
+
+  private pick(r: LootRoll, total: number): string {
+    let x = this.rng.next() * total;
+    for (const e of r.table) {
+      x -= e.weight;
+      if (x < 0) return e.itemId;
+    }
+    return r.table[r.table.length - 1]!.itemId;
+  }
+
+  carveTarget(): string | null {
+    const h = this.hunt;
+    const m = this.monsters[0];
+    if (!h || h.phase !== 'success' || h.closed || !m) return null;
+    const p = this.player;
+    if ((h.carves.body ?? 0) > 0 && Math.hypot(p.pos.x - m.pos.x, p.pos.z - m.pos.z) <= m.def.bodyRadius + CARVE_REACH) return 'body';
+    for (const [partId, at] of Object.entries(this.severedAt)) {
+      if ((h.carves[partId] ?? 0) > 0 && Math.hypot(p.pos.x - at.x, p.pos.z - at.z) <= CARVE_PIECE_REACH) return partId;
+    }
+    return null;
+  }
+
+  carve(source: string): void {
+    const h = this.hunt;
+    const m = this.monsters[0];
+    const loot = m?.def.lootId ? this.content.loot.get(m.def.lootId) : undefined;
+    if (!h || h.closed || !loot || !((h.carves[source] ?? 0) > 0)) return;
+    const table = source === 'body' ? loot.carve : loot.severed?.[source];
+    if (!table) return;
+    h.carves[source]!--;
+    let total = 0;
+    for (const e of table.table) total += e.weight;
+    const itemId = this.pick(table, total);
+    const tag = source === 'body' ? 'carve' : `severed:${source}`;
+    h.loot.push({ itemId, source: tag });
+    this.emit({ type: 'carve', itemId, source: tag, pos: { ...this.player.pos } });
+  }
+
+  /** 結果を閉じる。報酬はここで一度だけ確定する。 */
+  private closeHunt(h: HuntState): void {
+    if (h.closed) return;
+    h.closed = true;
+    h.closeTick = this.tick;
+    h.returnTicks = 0;
+    if (h.phase === 'success') {
+      for (const s of h.quest.rewards?.items ?? []) for (let i = 0; i < s.count; i++) h.loot.push({ itemId: s.itemId, source: 'quest' });
+      const count = new Map<string, number>();
+      for (const g of h.loot) count.set(g.itemId, (count.get(g.itemId) ?? 0) + 1);
+      h.rewards = { money: h.quest.rewards?.money ?? 0, items: [...count].map(([itemId, n]) => ({ itemId, count: n })) };
+    } else {
+      // 失敗・リタイアでは報酬も素材も出ない
+      h.loot = [];
+      h.rewards = { money: 0, items: [] };
+    }
+    this.emit({ type: 'hunt_close' });
+  }
+
+  /**
+   * 狩猟の成否。同じ tick に重なった時は 討伐 → 捕獲 → リタイア → 力尽き → 時間切れ の順で先に確定する。
+   * 達成した後は、拠点へ戻るまでの間だけ剥ぎ取りができる。
+   */
   private stepHunt(input: InputFrame): void {
     const h = this.hunt;
-    if (!h || h.phase !== 'active') return;
+    if (!h || h.closed) return;
+    if (h.phase === 'success') {
+      // 帰還: 時間切れ / リタイアのボタン（達成後は「帰還する」）/ 剥ぎ取りを使い切った少し後
+      h.returnTicks--;
+      const left = Object.values(h.carves).reduce((a, b) => a + b, 0);
+      if (left === 0 && !this.player.carving && h.returnTicks > CLOSE_AFTER_LAST_CARVE) h.returnTicks = CLOSE_AFTER_LAST_CARVE;
+      if (h.returnTicks <= 0 || input.pressed & Btn.Retire) this.closeHunt(h);
+      return;
+    }
     h.ticks++;
     const end = (phase: 'success' | 'failed', reason: HuntReason): void => {
       h.phase = phase;
@@ -169,8 +395,28 @@ export class Simulation implements SimCtx {
       h.endTick = this.tick;
       for (const m of this.monsters) m.aiEnabled = false;
       this.emit({ type: 'hunt_end', phase, reason });
+      if (phase === 'failed') return this.closeHunt(h);
+      const m = this.monsters[0];
+      const loot = m?.def.lootId ? this.content.loot.get(m.def.lootId) : undefined;
+      if (m && loot) {
+        // 壊した部位の追加は、達成した時点で確定する
+        m.def.parts.forEach((d, i) => {
+          const r = loot.breaks?.[d.id];
+          if (r && m.parts[i]!.broken) this.roll(r, `break:${d.id}`, h);
+        });
+        if (reason === 'capture') this.roll(loot.capture, 'capture', h);
+        else {
+          h.carves.body = loot.carve.count;
+          m.def.parts.forEach((d, i) => {
+            const r = loot.severed?.[d.id];
+            if (r && m.parts[i]!.severed && this.severedAt[d.id]) h.carves[d.id] = r.count;
+          });
+        }
+      }
+      h.returnTicks = reason === 'capture' ? CAPTURE_RETURN_TICKS : h.quest.returnTicks ?? 3600;
     };
     if (this.monsters[0]?.dead) end('success', 'slay');
+    else if (this.monsters[0]?.captured) end('success', 'capture');
     else if (input.pressed & Btn.Retire) end('failed', 'retire');
     else if (h.faints >= h.quest.maxFaints) end('failed', 'faints');
     else if (h.ticks >= h.quest.timeLimitTicks) end('failed', 'time');
@@ -192,6 +438,8 @@ export class Simulation implements SimCtx {
     this.resolvePlayerAttacks();
     if (this.hunt?.phase !== 'success' && this.hunt?.phase !== 'failed') this.resolveMonsterAttacks();
     this.stepHazards();
+    this.stepTraps();
+    this.stepCapture();
     this.stepHunt(input);
     const active = new Set<number>();
     if (this.player.action) active.add(this.player.action.instanceId);
@@ -223,7 +471,7 @@ export class Simulation implements SimCtx {
       if (!inWindow(t, hw)) continue;
       const sw = this.windowSweep(hw, t, p.pos, p.yaw);
       for (const m of this.monsters) {
-        if (m.dead) continue;
+        if (m.dead || m.captured) continue;
         if (this.ledger.count(run.instanceId, hw.id, m.id) >= hw.maxHitsPerTarget) continue;
         const hit = sweepCapsule(sw.a0, sw.b0, sw.a1, sw.b1, sw.r, monsterShapes(m));
         if (!hit) continue;
@@ -285,7 +533,7 @@ export class Simulation implements SimCtx {
     const p = this.player;
     for (const m of this.monsters) {
       const ev = m.attackEval;
-      if (!ev || m.dead) continue;
+      if (!ev || m.dead || m.captured || m.trapTicks > 0) continue;
       const { run, t } = ev;
       for (const hw of run.def.hitWindows) {
         if (!inWindow(t, hw)) continue;
@@ -346,7 +594,13 @@ export class Simulation implements SimCtx {
       for (const q of m.parts) parts.push(q.durability, q.broken ? 1 : 0, q.severed ? 1 : 0, q.severAcc, q.flinchAcc, q.flinchThreshold);
     }
     for (const h of this.hazards) parts.push(h.x, h.z, h.warn, h.active, h.hit ? 1 : 0);
-    if (this.hunt) parts.push(this.hunt.phase, this.hunt.reason ?? '-', this.hunt.ticks, this.hunt.faints);
+    parts.push(p.itemIndex, p.items.map((s) => s.count).join(','), p.itemUse ? `${p.itemUse.itemId}:${p.itemUse.done ? 1 : 0}` : '-', p.pendingItem ? 1 : 0, p.carving ? p.carving.source : '-');
+    for (const m of this.monsters) parts.push(m.trapTicks, m.trapCount, m.tranq, m.tranqTicks, m.captured ? 1 : 0);
+    for (const t of this.traps) parts.push(t.x, t.z, t.state, t.arm, t.life);
+    if (this.hunt) {
+      const h = this.hunt;
+      parts.push(h.phase, h.reason ?? '-', h.ticks, h.faints, h.returnTicks, h.closed ? 1 : 0, h.loot.map((g) => `${g.itemId}@${g.source}`).join(','), Object.entries(h.carves).map(([k, v]) => `${k}=${v}`).join(','));
+    }
     return parts.join('|');
   }
 }
