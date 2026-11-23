@@ -262,6 +262,15 @@ export class Geo {
   get triangles(): number {
     return this.idx.length / 3;
   }
+  /** 頂点 i に、もう 1 本の骨の影響を足す（重み w。既にある影響は 1 - w 倍になる）。布を腕や脚に付いて行かせるのに使う。 */
+  addInfluence(i: number, bone: number, w: number): void {
+    if (w <= 0) return;
+    const o = i * 4;
+    this.sw[o] = this.sw[o]! * (1 - w);
+    this.sw[o + 1] = this.sw[o + 1]! * (1 - w);
+    this.si[o + 2] = bone;
+    this.sw[o + 2] = w;
+  }
   positionOf(i: number): Vector3 {
     return new Vector3(this.pos[i * 3]!, this.pos[i * 3 + 1]!, this.pos[i * 3 + 2]!);
   }

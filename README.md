@@ -9,7 +9,7 @@
 - 素材ビューア: https://kamamon.github.io/Kari/viewer.html
 - 設計書: [docs/source/VEILBOUND_HUNTERS_design_v1.0.pdf](docs/source/VEILBOUND_HUNTERS_design_v1.0.pdf)
 
-## いまの段階: v0.3.1（M2: ガルドロスを狩って帰る + ハンターの体）
+## いまの段階: v0.3.2（M2: ガルドロスを狩って帰る + ハンターの体）
 
 設計書の開発段階 M0（基盤）・M1（戦闘）と、M2（狩猟）の前半まで。**見た目・動き・音はすべて仮素材**です。
 

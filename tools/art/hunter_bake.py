@@ -77,13 +77,15 @@ def vertical(cx, rowOf):
     return lambda t: (np.full_like(t, cx), rowOf(t), np.ones_like(t), np.zeros_like(t))
 
 
-def edges(mask, cx, cy, nx, ny, cap):
+def edges(mask, cx, cy, nx, ny, cap, inset=3):
     """行ごとに、軸の点を含む（無ければいちばん近い）人物の区間の両端（軸からの距離 px）を測る。"""
     h, w = mask.shape
-    s = np.arange(-cap, cap + 1, dtype=np.float32)
+    caps = np.broadcast_to(np.asarray(cap, np.float32), cx.shape)  # 幅の上限は、行ごとに変えられる
     lo = np.zeros(len(cx), np.float32)
     hi = np.zeros(len(cx), np.float32)
     for i in range(len(cx)):
+        cap = int(round(float(caps[i])))
+        s = np.arange(-cap, cap + 1, dtype=np.float32)
         px = np.clip(np.round(cx[i] + nx[i] * s).astype(int), 0, w - 1)
         py = np.clip(np.round(cy[i] + ny[i] * s).astype(int), 0, h - 1)
         m = mask[py, px]
@@ -102,7 +104,7 @@ def edges(mask, cx, cy, nx, ny, cap):
     k = 9
     pad = lambda v: np.pad(v, k // 2, mode='edge')
     med = lambda v: np.median(np.lib.stride_tricks.sliding_window_view(pad(v), k), axis=1)
-    return med(lo) + 3, med(hi) - 3
+    return med(lo) + inset, med(hi) - inset
 
 
 def sstep(a, b, x):
@@ -115,6 +117,7 @@ def bake(debug=False):
     size = data['size']
     F, Bk = load('hunter_base_front_v1.png'), load('hunter_base_back_v1.png')
     FF, FL, FB = load('hunter_face_front_v1.png'), load('hunter_face_left_v1.png'), load('hunter_face_back_v1.png')
+    SL, SR = load('hunter_base_left_v1.png'), load('hunter_base_right_v1.png')
     row = lambda y: SOLE - y / MM
     lin = lambda t, t0, r0, t1, r1: r0 + (r1 - r0) * (t - t0) / (t1 - t0)
     mirror = lambda im, pts: [(t, 2 * im['cx'] - x, y) for (t, x, y) in pts]
@@ -127,22 +130,41 @@ def bake(debug=False):
     def body(kind):
         """区画ごとの写す元: [(絵, 向き 'front'|'back'|'side', 軸の関数, 幅の上限)]"""
         if kind == 'head':
-            return [(FF, 'front', vertical(650, head(40, 710)), 340), (FL, 'side', vertical(650, head(50, 700)), 420), (FB, 'back', vertical(632, head(40, 705)), 340)]
+            # あごより下は、えりの布を拾わないよう、首の幅だけを写す
+            narrow = lambda lo, hi: (lambda t: lo + (hi - lo) * sstep(1.562, 1.588, t))
+            return [(FF, 'front', vertical(650, head(40, 710)), narrow(115, 340)), (FL, 'side', vertical(650, head(50, 700)), narrow(130, 420)), (FB, 'back', vertical(632, head(40, 705)), narrow(115, 340))]
         if kind == 'torso':
-            return [(F, 'front', vertical(F['cx'], row), 112), (Bk, 'back', vertical(Bk['cx'], row), 112)]
+            # 首（高さ 1.5m より上）は、えりや髪を拾わないよう、首の幅だけを写す
+            cap = lambda t: 34 + (112 - 34) * sstep(1.5, 1.46, t)
+            return [(F, 'front', vertical(F['cx'], row), cap), (Bk, 'back', vertical(Bk['cx'], row), cap)]
         if kind == 'mantle':
-            r = lambda t: lin(t, 1.6, 214, 1.335, 392)
+            r = lambda t: lin(t, 1.53, 226, 1.335, 392)
             return [(F, 'front', vertical(F['cx'], r), 260), (Bk, 'back', vertical(Bk['cx'], r), 260)]
         if kind == 'skirt':
             r = lambda t: lin(t, 1.07, 572, 0.77, 800)
             return [(F, 'front', vertical(F['cx'], r), 172), (Bk, 'back', vertical(Bk['cx'], r), 172)]
-        base = ARM if kind.startswith('arm') else LEG if kind.startswith('leg') else FOOT
-        cap = 54 if kind.startswith('arm') else 74 if kind.startswith('leg') else 104
         left = kind.endswith('L')
+        if kind.startswith('foot'):
+            # 足は、真横の図の長靴を写す（左足は左真横、右足は右真横）。かかと → つま先が絵の横、甲 → 靴底が絵の縦。
+            # 外側と内側の両方へ同じ絵を回し、いちばん上（甲の中央）が絵の上端になる。
+            if left:
+                ax = lambda t: (594 - (t + 0.075) / 0.265 * 172, np.full_like(t, 1322), np.zeros_like(t), -np.ones_like(t))
+                return [(SL, 'wrap', ax, 85)]
+            ax = lambda t: (464 + (t + 0.075) / 0.265 * 172, np.full_like(t, 1322), np.zeros_like(t), -np.ones_like(t))
+            return [(SR, 'wrap', ax, 85)]
+        base = ARM if kind.startswith('arm') else LEG
+        cap = 54 if kind.startswith('arm') else 74
         # 正面図では、人物の左（+X）が絵の右。背面図では、人物の左が絵の左。
         pf = mirror(F, [(t, x - 538 + F['cx'], y) for t, x, y in base]) if left else [(t, x - 538 + F['cx'], y) for t, x, y in base]
         pb = [(t, x - 538 + Bk['cx'], y) for t, x, y in base] if left else mirror(Bk, [(t, x - 538 + Bk['cx'], y) for t, x, y in base])
-        return [(F, 'front', polyline(pf), cap), (Bk, 'back', polyline(pb), cap)]
+        out = [(F, 'front', polyline(pf), cap), (Bk, 'back', polyline(pb), cap)]
+        if kind.startswith('leg'):
+            # 脚の横は、真横の図から（左脚は左真横、右脚は右真横。内側は同じ絵の鏡写し）
+            if left:
+                out.insert(1, (SL, 'side', polyline([(0, 535, 735), (0.43, 552, 1052), (0.87, 552, 1312)]), 95))
+            else:
+                out.insert(1, (SR, 'sideR', polyline([(0, 534, 735), (0.43, 512, 1052), (0.87, 512, 1312)]), 95))
+        return out
 
     out = np.zeros((size, size, 3), np.float32)
     filled = np.zeros((size, size), bool)
@@ -169,16 +191,21 @@ def bake(debug=False):
                 w = sstep(np.radians(112 if three else 80), np.radians(132 if three else 100), phi)
                 fo = (1 - np.cos(a)) / 2
                 fl = np.clip((2 * np.pi - ((a + 2 * np.pi) % (2 * np.pi))) / np.pi, 0, 1)
+            elif facing == 'wrap':
+                w = np.ones_like(a)
+                fo = (1 + np.sin(a)) / 2  # 筒のいちばん上が、絵の上端
+                fl = fo
             else:
                 w = (sstep(np.radians(48), np.radians(68), phi)) * (1 - sstep(np.radians(112), np.radians(132), phi))
-                fo = (1 - np.sin(a)) / 2  # 前が絵の左（左真横の図。右側は鏡写し）
+                # 左真横の図は前が絵の左、右真横の図は前が絵の右
+                fo = (1 - np.sin(a)) / 2 if facing == 'side' else (1 + np.sin(a)) / 2
                 fl = fo
             if not (w > 0).any():
                 continue
             wrap = 0.0 if three else WRAP_BODY
             f = (fo * (1 - wrap) + fl * wrap).astype(np.float32)
             cx, cy, nx, ny = axis(t)
-            lo, hi = edges(im['mask'], cx, cy, nx, ny, cap)
+            lo, hi = edges(im['mask'], cx, cy, nx, ny, cap(t) if callable(cap) else cap, 7 if facing == 'wrap' else 3)
             sx = lo[:, None] + (hi - lo)[:, None] * f[None, :]
             mx = (cx[:, None] + nx[:, None] * sx).astype(np.float32)
             my = (cy[:, None] + ny[:, None] * sx).astype(np.float32)
