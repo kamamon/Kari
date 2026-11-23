@@ -12,7 +12,7 @@
       "timeLimitTicks": 54000,
       "maxFaints": 3,
       "returnTicks": 3600,
-      "supplies": [{"itemId": "item.heal_tonic", "count": 5}, {"itemId": "item.bind_trap", "count": 1}, {"itemId": "item.calm_orb", "count": 3}],
+      "supplies": [{"itemId": "item.heal_tonic", "count": 5}, {"itemId": "item.bind_trap", "count": 1}, {"itemId": "item.calm_orb", "count": 3}, { "itemId": "item.whetstone", "count": 3 }],
       "rewards": {"money": 600, "items": [{"itemId": "mat.galdros.shell_shard", "count": 1}]}
     }
   ]

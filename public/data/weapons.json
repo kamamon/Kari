@@ -1,8 +1,19 @@
 {
   "schemaVersion": 1,
+  "edge": {
+    "note": "刃の状態（全武器で共通の決まり）。値は 0〜max。当てるたびに「技の威力の係数 × 系統の wearPerMotion」だけ減る。段階の damageScale はダメージ式の刃補正へ掛ける。当てた部位の物理部位係数が bounceBelow より小さいと弾かれる。数値はすべて机上の初期値。",
+    "max": 100,
+    "stages": [
+      { "id": "keen", "name": "鋭い", "min": 60, "damageScale": 1.0, "bounceBelow": 0.22 },
+      { "id": "worn", "name": "並", "min": 25, "damageScale": 0.88, "bounceBelow": 0.32 },
+      { "id": "dull", "name": "鈍い", "min": 0, "damageScale": 0.7, "bounceBelow": 0.42 }
+    ],
+    "bounce": { "wearScale": 2, "recoilTicks": 26, "pushback": 0.3 }
+  },
   "families": [
     {
       "id": "heavy_blade",
+      "edge": { "wearPerMotion": 1.6, "label": "刃" },
       "labels": { "main": "斬る", "sub": "薙ぐ", "special": "防御" },
       "summary": "大剣。隙を読んで、重い一撃を当てる。溜め斬りと、遅い防御。",
       "name": "断岳剣",
@@ -37,6 +48,7 @@
     },
     {
       "id": "guard_blade",
+      "edge": { "wearPerMotion": 1.5, "label": "刃" },
       "labels": { "main": "斬る", "sub": "盾打ち", "special": "防御" },
       "summary": "短剣と盾。張り付いて手数。抜刀したまま道具が使え、構えてすぐ受けると受け流し。",
       "name": "護刃",
@@ -81,6 +93,7 @@
     },
     {
       "id": "war_maul",
+      "edge": { "wearPerMotion": 1.3, "label": "打面" },
       "labels": { "main": "叩く", "sub": "溜め叩き" },
       "summary": "大槌。遅くて重い打撃。主は叩きつけ → 横殴り。副を押し続けて溜め、離して叩きつける。守りは無い。",
       "name": "大槌",
@@ -106,6 +119,7 @@
     },
     {
       "id": "twin_blades",
+      "edge": { "wearPerMotion": 1.2, "label": "刃" },
       "labels": { "main": "斬る", "sub": "突き込む", "special": "連ね斬り" },
       "summary": "双剣。両手の剣で手数。当て続けると勢いが上がり、速く強くなる。固有で、勢いを使い切る連撃。守りは無い。",
       "name": "双剣",
@@ -137,6 +151,7 @@
     },
     {
       "id": "long_blade",
+      "edge": { "wearPerMotion": 1.6, "label": "刃" },
       "labels": { "main": "斬る", "sub": "下がり斬り", "special": "兜割り" },
       "summary": "太刀。大剣より軽く速い両手の斬り。主は踏み込む 3 連、副は下がりながらの斬り、固有は隙の大きい兜割り。守りは無い。",
       "name": "太刀",
@@ -166,6 +181,7 @@
     },
     {
       "id": "long_lance",
+      "edge": { "wearPerMotion": 1.4, "label": "穂先" },
       "labels": { "main": "突く", "sub": "上段", "special": "防御", "dodge": "跳び" },
       "summary": "ランス。固い盾で受けて刺す。防御中に主で構え突き、副で受け返し。回避は短い跳び。",
       "name": "長尖槍",

@@ -32,6 +32,9 @@ const PART_COLORS: Record<string, [number, number, number]> = {
   legs: [0.5, 1, 0.5],
   body: [0.45, 0.7, 1],
 };
+/** 研磨石で研ぐ時の動きの名前と、武器を渡す位置（アクターのローカル座標。片ひざを突いた時の、ひざの前） */
+const WHET_CLIP = 'common_item_whet_01';
+const WHET_HOLD = { grip: { x: -0.2, y: 0.74, z: 0.28 }, dir: norm({ x: 0.9, y: -0.08, z: 0.42 }), normal: [0, 1, 0] as [number, number, number] };
 const MATERIAL_SPARK: Record<string, [number, number, number]> = { rock: [1, 0.8, 0.45], shell: [0.9, 0.85, 0.6], hide: [0.95, 0.9, 0.8] };
 
 export class GameView {
@@ -162,6 +165,11 @@ export class GameView {
           this.monsterRig?.hitFlash(e.partIndex);
           this.monsterRig?.hitReact?.(e.partIndex, e.pos.x, e.pos.z, 0.8 + e.chargeLevel * 0.3);
           this.cam.addShake(0.22 + e.chargeLevel * 0.12);
+          // 弾かれた: 白い火花を足す（刃が通っていないことが分かるように）
+          if (e.bounced) {
+            this.sparks.emit(18, e.pos, 6.5, 2.4, 0.3, [1, 1, 0.92]);
+            this.cam.addShake(0.2);
+          }
           break;
         }
         case 'part_break':
@@ -288,6 +296,24 @@ export class GameView {
       }
       if (run.def.offhandTrack) shieldAt = sampleTrack(content.tracks.get(run.def.offhandTrack)!, t).grip;
       else if (run.def.guardWindows) shieldU = 1;
+      // 研磨石: 構えの位置から、ひざの前へ武器を渡し（片ひざを突く）、研ぎ終わったら構えへ戻す
+      if (run.def.clip === WHET_CLIP) {
+        const u = smoothstep(Math.min(1, t / 18)) * (1 - smoothstep((t - 102) / 18));
+        weapon = {
+          mode: 'track',
+          grip: lerpV(fromArr(fam.ready.grip), WHET_HOLD.grip, u),
+          dir: norm(lerpV(norm(fromArr(fam.ready.dir)), WHET_HOLD.dir, u)),
+          normal: u < 0.5 ? fam.ready.planeNormal : WHET_HOLD.normal,
+        };
+        shieldOut = true;
+        // 左手が空く武器（両手持ち、または左の剣を腰へ納める双剣）は、左手の石で刃をなでる（3 往復）。左腕に盾を持つ武器は、右手で支えるだけ（仮）
+        if ((!fam.offhand || !fam.offhandReady) && fam.primaryHand !== 'left' && u > 0.5) {
+          const s = 0.5 - 0.5 * Math.cos(Math.min(1, Math.max(0, (t - 20) / 76)) * Math.PI * 6);
+          const from = Math.min(fam.blade.from + 0.05, 0.4);
+          hands.two = false;
+          hands.other = { x: 0.03, y: from + 0.3 * s, z: -Math.min(0.08, fam.blade.radius * 0.5) };
+        }
+      }
       // 弓: 矢を放つまで、右手で弦を引く
       const shoot = run.def.shoot?.[0];
       if (shoot && fam.primaryHand === 'left' && t < shoot.tick) {

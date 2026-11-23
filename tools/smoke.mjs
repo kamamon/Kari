@@ -316,7 +316,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const hstats = await page.evaluate(() => ({ ...window.__vh.view.stats() }));
   check('ガルドロス戦の描画量が目標内（100 draw calls / 20万 tri）', hstats.calls <= 100 && hstats.triangles <= 200000, `calls ${hstats.calls} tris ${hstats.triangles}`);
   // ---- 道具（M2 後半）: 回復液を E キーで飲む ----
-  check('依頼では道具ボタンが出て、支給品を持っている', await page.evaluate(() => !document.querySelector('.tbtn-item').hidden && window.__vh.sim.player.items.length === 3 && /回復液 ×5/.test(document.querySelector('.hud-item').textContent)));
+  check('依頼では道具ボタンが出て、支給品を持っている', await page.evaluate(() => !document.querySelector('.tbtn-item').hidden && window.__vh.sim.player.items.length === 4 && /回復液 ×5/.test(document.querySelector('.hud-item').textContent)));
   await page.evaluate(() => {
     const v = window.__vh;
     v.sim.monsters[0].aiEnabled = false;
@@ -782,6 +782,69 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   await page.screenshot({ path: `${OUT}weapon_select.png` });
+  // ---- 刃の状態と研磨石（訓練場、断岳剣）----
+  await page.locator('.base-choice').last().click();
+  await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+  check('訓練場: 刃の棒が出て「鋭い」。道具は研磨石 ×10', await page.evaluate(() => {
+    const e = document.querySelector('.hud-blade .edge');
+    const it = window.__vh.sim.player.items;
+    return !e.hidden && e.dataset.stage === 'keen' && e.querySelector('.stage').textContent === '鋭い' && it.length === 1 && it[0].itemId === 'item.whetstone' && it[0].count === 10 && /研磨石\s*×10/.test(document.querySelector('.hud-item').textContent);
+  }), await page.evaluate(() => document.querySelector('.hud-item').textContent.replace(/\s+/g, ' ')));
+  const toHead = (edge) => page.evaluate((v) => {
+    const s = window.__vh.sim, m = s.monsters[0], p = s.player;
+    m.aiEnabled = false;
+    p.pos = { x: m.pos.x, y: 0, z: m.pos.z - 1.75 - 2.25 };
+    p.prevPos = { ...p.pos };
+    p.yaw = 0;
+    p.drawn = true;
+    if (v !== null) p.edge = v;
+    window.__vh.view.cam.snap(0.9);
+  }, edge);
+  await toHead(null);
+  await page.mouse.move(640, 360);
+  await click(page);
+  check('縦斬りを 1 回当てると、刃が 1.6 減る', await until(page, () => window.__vh.sim.hitCount === 1 && Math.abs(window.__vh.sim.player.edge - 98.4) < 1e-6, 8000));
+  await until(page, () => window.__vh.sim.player.mode === 'free', 8000);
+  // 並まで減った状態で、硬い部位（頭を一時的に硬くする）を斬る → 弾かれる
+  await toHead(50);
+  await page.evaluate(() => (window.__vh.sim.content.monsters.get('monster.training_dummy').parts[0].hitzone.cut = 0.3));
+  await click(page);
+  check('刃が「並」の時に硬い部位を斬ると、弾かれてよろける（棒は黄色、「弾かれた」と出る）', await until(page, () => {
+    const p = window.__vh.sim.player;
+    const e = document.querySelector('.hud-blade .edge');
+    return p.hurt?.kind === 'bounce' && Math.abs(p.edge - 46.8) < 1e-6 && e.dataset.stage === 'worn' && e.querySelector('.stage').textContent === '並' && /弾かれた/.test(document.getElementById('toasts').textContent);
+  }, 8000));
+  await page.screenshot({ path: `${OUT}70_edge_bounce.png` });
+  await page.evaluate(() => (window.__vh.sim.content.monsters.get('monster.training_dummy').parts[0].hitzone.cut = 0.7));
+  await until(page, () => window.__vh.sim.player.mode === 'free', 8000);
+  // 研磨石（E キー）: 片ひざを突いて研ぎ、最大へ戻る
+  await page.keyboard.press('KeyE');
+  check('研磨石を使うと、研ぐ動きが始まる', await until(page, () => window.__vh.sim.player.action?.def.actionId === 'player.item.whet', 6000));
+  await until(page, () => (window.__vh.sim.player.action?.tick ?? 0) >= 52, 8000);
+  await page.screenshot({ path: `${OUT}71_edge_whet.png` });
+  check('研ぎ終わると、刃が最大（鋭い）へ戻り、研磨石が 1 個減る。抜刀のまま', await until(page, () => {
+    const p = window.__vh.sim.player;
+    const e = document.querySelector('.hud-blade .edge');
+    return p.mode === 'free' && p.edge === 100 && p.items[0].count === 9 && p.drawn && e.dataset.stage === 'keen' && [...window.__vh.view.missingClips].length === 0;
+  }, 10000));
+  await page.keyboard.press('KeyE');
+  check('刃が最大の時は、研磨石は使えない（減らない）', await until(page, () => /まだ研がなくてよい/.test(document.getElementById('toasts').textContent), 4000) && (await page.evaluate(() => window.__vh.sim.player.items[0].count === 9 && !window.__vh.sim.player.action)));
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('#menu:not([hidden])');
+  await page.click('.menu-body button');
+  await until(page, () => !document.getElementById('base').hidden);
+  check('環弓では、刃の棒と研磨石が出ない', await (async () => {
+    await page.locator('.base-weapon[data-weapon="weapon.ring_bow.001"]').click();
+    await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy'), 6000, 'weapon.ring_bow.001');
+    await page.locator('.base-choice').last().click();
+    await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+    const ok = await page.evaluate(() => document.querySelector('.hud-blade .edge').hidden && window.__vh.sim.player.items.length === 0);
+    await page.keyboard.press('Escape');
+    await page.waitForSelector('#menu:not([hidden])');
+    await page.click('.menu-body button');
+    await until(page, () => !document.getElementById('base').hidden);
+    return ok;
+  })());
   for (const [fam, name, dist, holdMs] of [['guard_blade', '護刃', 1.2, 60], ['long_lance', '長尖槍', 2.4, 60], ['ring_bow', '環弓', 8, 1300], ['war_maul', '大槌', 1.2, 60], ['twin_blades', '双剣', 0.9, 60], ['long_blade', '太刀', 1.3, 60]]) {
     await page.locator(`.base-weapon[data-weapon="weapon.${fam}.001"]`).click();
     // 持ち替えは、保存が完了してから替わる

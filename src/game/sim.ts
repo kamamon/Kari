@@ -4,7 +4,7 @@ import { DEG, angleDiff, forwardOf, toWorld, yawOf, type V3 } from '../core/math
 import { SeededRng } from '../core/seededRng';
 import type { Content, DamageType, HazardDef, HitWindowDef, ItemDef, ItemStack, LootRoll, QuestDef, ShootDef } from '../data/schemas';
 import { inWindow, type ActionRun } from './action';
-import { HitLedger, computeDamage, sweepCapsule, type WorldShape } from './combat';
+import { HitLedger, computeDamage, edgeStage, sweepCapsule, type WorldShape } from './combat';
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
 import { applyDamageToMonster, createMonster, monsterBlockers, monsterShapes, stepMonster, type MonsterState } from './monster';
@@ -173,7 +173,8 @@ export class Simulation implements SimCtx {
     if (!content.weapons.has(options.weaponId)) throw new Error(`weapon ${options.weaponId} が無い`);
     this.world = new World(map);
     this.rng = new SeededRng(options.seed);
-    this.player = createPlayer(content, map.spawn, options.weaponId, quest?.supplies ?? []);
+    // 支給品: 依頼なら依頼の支給品、訓練場なら訓練用（研磨石）
+    this.player = createPlayer(content, map.spawn, options.weaponId, quest ? quest.supplies ?? [] : content.player.trainingSupplies ?? []);
     const monsterId = quest ? quest.targetMonsterId : options.monsterId;
     if (monsterId) {
       const def = content.monsters.get(monsterId);
@@ -256,8 +257,8 @@ export class Simulation implements SimCtx {
   // ---- 道具 ----
 
   canUseItem(item: ItemDef): boolean {
-    // 回復は依頼の外（訓練場）や達成後でも使える。罠と鎮静玉は狩猟中だけ。罠は同時に 1 つまで。
-    if (item.kind === 'heal') return true;
+    // 回復と研磨石は依頼の外（訓練場）や達成後でも使える。罠と鎮静玉は狩猟中だけ。罠は同時に 1 つまで。
+    if (item.kind === 'heal' || item.kind === 'whet') return true;
     if (this.hunt?.phase !== 'active') return false;
     return item.kind !== 'trap' || this.traps.length === 0;
   }
@@ -269,6 +270,17 @@ export class Simulation implements SimCtx {
       const before = p.hp;
       p.hp = Math.min(this.content.player.maxHp, p.hp + (item.heal ?? 0));
       this.emit({ type: 'item_effect', itemId: item.id, kind: 'heal', ok: true, amount: p.hp - before, pos });
+      return true;
+    }
+    if (item.kind === 'whet') {
+      // 研磨石: 刃の状態を最大まで戻す
+      const E = this.content.edge;
+      const before = p.edge;
+      const stage = edgeStage(E, before).id;
+      p.edge = E.max;
+      this.emit({ type: 'item_effect', itemId: item.id, kind: 'whet', ok: true, amount: Math.round(p.edge - before), pos });
+      const now = edgeStage(E, p.edge);
+      if (now.id !== stage) this.emit({ type: 'edge', stage: now.id, value: p.edge });
       return true;
     }
     if (!this.canUseItem(item)) {
@@ -531,6 +543,8 @@ export class Simulation implements SimCtx {
         this.ledger.record(run.instanceId, hw.id, m.id);
         if (hw.group) this.ledger.record(run.instanceId, `group:${hw.group}`, m.id);
         this.applyPlayerHit(run, hw, t, m, hit.partIndex, hit.point);
+        // 弾かれて行動が止まったら、この行動の残りの判定は見ない
+        if (p.action !== run) return;
       }
     }
   }
@@ -544,7 +558,8 @@ export class Simulation implements SimCtx {
     if (M && mo) scale *= mo.spendScale ? mo.spendScale[run.momentumLevel] ?? 1 : M.damageScale[run.momentumLevel] ?? 1;
     const hitstop = hw.hitstopTicks + (charge ? charge.hitstopBonus[run.chargeLevel] ?? 0 : 0);
     run.hitstop = hitstop;
-    this.dealPlayerDamage(m, partIndex, point, { actionId: run.def.actionId, windowId: hw.id, actionTick: t, motion: hw.damageCoefficient * scale, elementMotion: hw.elementCoefficient ?? 1, damageType: hw.damageType, hitstop, chargeLevel: run.chargeLevel });
+    // 刃の減り方は、溜めや勢いの倍率を掛ける前の、技そのものの係数で決める
+    const bounced = this.dealPlayerDamage(m, partIndex, point, { actionId: run.def.actionId, windowId: hw.id, actionTick: t, motion: hw.damageCoefficient * scale, elementMotion: hw.elementCoefficient ?? 1, damageType: hw.damageType, hitstop, chargeLevel: run.chargeLevel, wearMotion: hw.damageCoefficient });
     if (M && mo?.gain && !run.momentumGained) {
       run.momentumGained = true;
       const p = this.player;
@@ -554,6 +569,18 @@ export class Simulation implements SimCtx {
         this.emit({ type: 'momentum', level: p.momentum });
       }
     }
+    if (bounced) this.bouncePlayer(run);
+  }
+
+  /** 攻撃が弾かれた: いまの行動を止めて、少しの間よろける（被弾ではないので、体力は減らず、無敵も付かない）。 */
+  private bouncePlayer(run: ActionRun): void {
+    const p = this.player;
+    if (p.action !== run || p.mode !== 'action') return;
+    p.action = null;
+    p.guard = null;
+    p.pendingItem = false;
+    p.mode = 'hurt';
+    p.hurt = { kind: 'bounce', tick: 0, duration: this.content.edge.bounce.recoilTicks, dirYaw: p.yaw + Math.PI };
   }
 
   /** プレイヤーの攻撃（武器・矢）が部位に当たった時の、ダメージの計算と記録。 */
@@ -561,10 +588,17 @@ export class Simulation implements SimCtx {
     m: MonsterState,
     partIndex: number,
     point: V3,
-    h: { actionId: string; windowId: string; actionTick: number; motion: number; elementMotion: number; damageType: DamageType; hitstop: number; chargeLevel: number },
-  ): void {
-    const weapon = weaponOf(this.player, this.content);
+    h: { actionId: string; windowId: string; actionTick: number; motion: number; elementMotion: number; damageType: DamageType; hitstop: number; chargeLevel: number; /** 武器で直接当てた時の、技の係数（刃の減り方に使う）。矢は省く */ wearMotion?: number },
+  ): boolean {
+    const p = this.player;
+    const weapon = weaponOf(p, this.content);
     const part = m.def.parts[partIndex]!;
+    // 刃の状態: 武器で直接当てた時だけ（矢には無い）。段階で刃補正が変わり、硬い部位では弾かれる
+    const E = this.content.edge;
+    const famEdge = h.wearMotion !== undefined ? familyOf(p, this.content).edge : undefined;
+    const stage = famEdge ? edgeStage(E, p.edge) : null;
+    const hitzone = (m.parts[partIndex]!.broken && part.brokenHitzone ? part.brokenHitzone : part.hitzone)[h.damageType];
+    const bounced = !!stage && hitzone < stage.bounceBelow;
     // 会心は seed 付き乱数。1 命中につき必ず 1 回引き、乱数列を入力だけで決まるようにする。
     const roll = this.rng.next() * 100;
     const T = this.content.player;
@@ -574,8 +608,8 @@ export class Simulation implements SimCtx {
     const damage = computeDamage({
       attack: weapon.attack,
       motion: h.motion,
-      sharpness: weapon.sharpnessModifier,
-      hitzone: (m.parts[partIndex]!.broken && part.brokenHitzone ? part.brokenHitzone : part.hitzone)[h.damageType],
+      sharpness: weapon.sharpnessModifier * (stage?.damageScale ?? 1),
+      hitzone,
       crit: crit > 0 ? T.critMultiplier : crit < 0 ? 0.75 : 1,
       element: weapon.element.value,
       elementMotion: h.elementMotion,
@@ -602,8 +636,16 @@ export class Simulation implements SimCtx {
       hitstop: h.hitstop,
       chargeLevel: h.chargeLevel,
       tick: this.tick,
+      bounced,
     });
     applyDamageToMonster(m, partIndex, damage, h.damageType, this);
+    if (famEdge && stage) {
+      // 当てるたびに減る。弾かれた時は余分に減る
+      p.edge = Math.max(0, p.edge - famEdge.wearPerMotion * (h.wearMotion ?? 0) * (bounced ? E.bounce.wearScale : 1));
+      const now = edgeStage(E, p.edge);
+      if (now.id !== stage.id) this.emit({ type: 'edge', stage: now.id, value: p.edge });
+    }
+    return bounced;
   }
 
   /**
@@ -720,6 +762,7 @@ export class Simulation implements SimCtx {
       p.yaw,
       p.hp,
       p.stamina,
+      p.edge.toFixed(4),
       p.mode,
       p.drawn ? 1 : 0,
       act(p.action),

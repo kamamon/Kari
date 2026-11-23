@@ -175,6 +175,22 @@ export const CLIPS: Record<string, Clip> = {
       { t: 46 },
     ],
   },
+  // 研磨石: 片ひざを突き、ひざの前に渡した武器を研ぐ。96 tick で研ぎ上がる。
+  // ここで決めるのは脚と体だけ。武器の位置と腕は、描画の側（view.ts）が構えから渡した位置へ動かして、手を合わせる。
+  common_item_whet_01: {
+    base: STANCE, basePy: STANCE_PY,
+    keys: [
+      { t: 0 },
+      { t: 18, j: { spine: [24, 0, 0], chest: [12, 6, 0], head: [16, 8, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0] } },
+      { t: 38, j: { spine: [26, 0, 0], chest: [14, 10, 0], head: [18, 10, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0] } },
+      { t: 51, j: { spine: [24, 0, 0], chest: [12, 4, 0], head: [16, 8, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0] } },
+      { t: 64, j: { spine: [26, 0, 0], chest: [14, 10, 0], head: [18, 10, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0] } },
+      { t: 77, j: { spine: [24, 0, 0], chest: [12, 4, 0], head: [16, 8, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0] } },
+      { t: 96, j: { spine: [22, 0, 0], chest: [10, 8, 0], head: [12, 8, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0] } },
+      { t: 110, j: { spine: [10, 0, 0], thighL: [-30, 0, 4], shinL: [40, 0, 0], thighR: [-8, 0, -4], shinR: [30, 0, 0] }, py: -0.12 },
+      { t: 120 },
+    ],
+  },
   // 剥ぎ取り: 片ひざを突いて、右手の小刀を前後に動かす。80 tick で素材が手に入る。
   common_carve_01: {
     base: NEUTRAL, basePy: 0,
@@ -274,13 +290,14 @@ export function guardPose(blend: number, shake: number): BodyPose {
   return blendPose(a, b, smoothstep(blend));
 }
 
-export function hurtPose(kind: 'flinch' | 'knockdown' | 'break', tick: number, duration: number, drawn: boolean): BodyPose {
+export function hurtPose(kind: 'flinch' | 'knockdown' | 'break' | 'bounce', tick: number, duration: number, drawn: boolean): BodyPose {
   const base = drawn ? STANCE : NEUTRAL;
   const basePy = drawn ? STANCE_PY : 0;
   if (kind !== 'knockdown') {
     const u = Math.min(1, tick / Math.max(1, duration));
     const k = Math.sin(Math.min(1, u * 3) * Math.PI * 0.5) * (1 - smoothstep((u - 0.4) / 0.6));
-    const lean = kind === 'break' ? 26 : -20;
+    // 弾かれ（bounce）: 専用の動きはまだ無く、怯みより大きくのけぞる形で代用している（仮）
+    const lean = kind === 'break' ? 26 : kind === 'bounce' ? -28 : -20;
     const a = fromKey(base, basePy, { t: 0 });
     const b = fromKey(base, basePy, { t: 0, j: { ...base, spine: [lean, 0, 0], chest: [lean * 0.5, 0, 0], head: [lean * 0.6, 0, 0], thighL: [-20, 0, 4], shinL: [30, 0, 0], thighR: [14, 0, -4], shinR: [26, 0, 0] }, py: basePy - 0.08 });
     return blendPose(a, b, k);

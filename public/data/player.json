@@ -18,5 +18,6 @@
   "knockdownInvulnTicks": 96,
   "respawnTicks": 210,
   "critMultiplier": 1.25,
-  "gravity": 22
+  "gravity": 22,
+  "trainingSupplies": [{ "itemId": "item.whetstone", "count": 10 }]
 }

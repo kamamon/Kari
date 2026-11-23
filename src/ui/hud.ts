@@ -3,6 +3,7 @@
 import { APP_VERSION, BUILD_ID } from '../core/assets';
 import type { FrameSummary } from '../core/frameMeter';
 import { phaseAt } from '../game/action';
+import { edgeStage } from '../game/combat';
 import type { SimEvent } from '../game/events';
 import { familyOf, isInvulnerable } from '../game/player';
 import type { Simulation } from '../game/sim';
@@ -31,6 +32,10 @@ export class Hud {
   private st: HTMLElement;
   private stBar: HTMLElement;
   private pips: HTMLElement[] = [];
+  private edgeBox!: HTMLElement;
+  private edgeLabel!: HTMLElement;
+  private edgeFill!: HTMLElement;
+  private edgeStageEl!: HTMLElement;
   private time: HTMLElement;
   private goal: HTMLElement;
   private faints: HTMLElement;
@@ -59,8 +64,11 @@ export class Hud {
     this.stBar = el('div', 'bar bar-st', bars);
     this.st = el('i', '', this.stBar);
     const blade = el('div', 'hud-blade', bars);
-    el('span', '', blade, '刃');
-    el('i', '', el('div', 'gauge', blade));
+    // 刃の状態: 名前（刃 / 打面 / 穂先）、残りの棒、段階の名前。刃の状態の無い武器（環弓）では棒を隠す
+    this.edgeBox = el('div', 'edge', blade);
+    this.edgeLabel = el('span', '', this.edgeBox, '刃');
+    this.edgeFill = el('i', '', el('div', 'gauge', this.edgeBox));
+    this.edgeStageEl = el('span', 'stage', this.edgeBox, '');
     const charge = el('div', 'charge', blade);
     for (let i = 0; i < 3; i++) this.pips.push(el('b', '', charge));
 
@@ -130,7 +138,17 @@ export class Hud {
               setTimeout(() => d.remove(), 820);
             }
           }
+          if (e.bounced) this.toast('弾かれた');
           break;
+        case 'edge': {
+          // 刃の状態の段階が下がった時だけ知らせる（研いで戻った時は「研ぎ上がった」が出る）
+          const stages = sim.content.edge.stages;
+          const i = stages.findIndex((s) => s.id === e.stage);
+          const label = familyOf(sim.player, sim.content).edge?.label ?? '刃';
+          if (i === stages.length - 1 && i > 0) this.toast(`${label}が鈍った: 弾かれやすい（研磨石で戻せる）`);
+          else if (i > 0) this.toast(`${label}が鈍ってきた`);
+          break;
+        }
         case 'part_break': {
           const name = sim.monsters[0]?.def.parts[e.partIndex]?.name ?? e.partId;
           this.toast(`部位破壊: ${name}`);
@@ -172,12 +190,13 @@ export class Hud {
         case 'item_effect': {
           const name = sim.content.items.get(e.itemId)?.name ?? '';
           if (e.kind === 'heal') this.toast(`${name}: 体力 +${e.amount}`);
+          else if (e.kind === 'whet') this.toast(`${name}: 研ぎ上がった`);
           else if (e.kind === 'trap') this.toast(e.ok ? `${name}を仕掛けた` : `${name}は置けなかった`);
           else this.toast(e.ok ? `${name}が当たった（${e.amount} 個目）` : `${name}は外れた`);
           break;
         }
         case 'item_fail':
-          this.toast(e.reason === 'empty' ? '道具が残っていない' : 'いまは使えない');
+          this.toast(e.reason === 'empty' ? '道具が残っていない' : e.reason === 'no_need' ? 'まだ研がなくてよい' : 'いまは使えない');
           break;
         case 'trap_trigger':
           this.toast('罠にかかった！');
@@ -209,6 +228,22 @@ export class Hud {
     this.set('stlow', p.exhausted || p.stamina < 25 ? 1 : 0, () => this.stBar.classList.toggle('low', p.exhausted || p.stamina < 25));
     const lv = p.action?.chargeLevel ?? 0;
     this.set('charge', lv, () => this.pips.forEach((b, i) => b.classList.toggle('on', i < lv)));
+    // 刃の状態
+    const famEdge = familyOf(p, sim.content).edge;
+    const E = sim.content.edge;
+    this.set('edgeon', famEdge ? famEdge.label : '', () => {
+      this.edgeBox.hidden = !famEdge;
+      if (famEdge) this.edgeLabel.textContent = famEdge.label;
+    });
+    if (famEdge) {
+      const stage = edgeStage(E, p.edge);
+      const fill = p.edge / E.max;
+      this.set('edge', Math.round(fill * 200), () => (this.edgeFill.style.transform = `scaleX(${fill})`));
+      this.set('edgestage', stage.id, () => {
+        this.edgeBox.dataset.stage = stage.id;
+        this.edgeStageEl.textContent = stage.name;
+      });
+    }
     // 依頼中は残り時間、訓練は経過時間
     const h = sim.hunt;
     const sec = h ? Math.ceil(Math.max(0, h.quest.timeLimitTicks - h.ticks) / 60) : Math.floor(sim.tick / 60);
@@ -263,7 +298,7 @@ export class Hud {
       `v${APP_VERSION} build ${BUILD_ID}  seed ${sim.options.seed}  tick ${sim.tick}`,
       `描画 ${stats.fps.toFixed(0)}fps / 計算 60Hz  calls ${info.calls}  tris ${(info.triangles / 1000).toFixed(1)}k  捨てtick ${stats.droppedTicks}`,
       `間隔 平均 ${stats.frames.avgMs.toFixed(1)}ms  p95 ${stats.frames.p95Ms.toFixed(1)}ms  最大 ${stats.frames.maxMs.toFixed(0)}ms  100ms超 ${stats.frames.longFrames}回`,
-      `player ${p.mode}${p.drawn ? ' 抜刀' : ' 納刀'}  HP ${p.hp}  ST ${p.stamina.toFixed(1)}${isInvulnerable(p) ? '  無敵' : ''}`,
+      `player ${p.mode}${p.drawn ? ' 抜刀' : ' 納刀'}  HP ${p.hp}  ST ${p.stamina.toFixed(1)}  刃 ${p.edge.toFixed(1)}（${edgeStage(sim.content.edge, p.edge).name}）${isInvulnerable(p) ? '  無敵' : ''}`,
       a
         ? `  ${a.def.actionId}\n  tick ${a.tick}/${a.def.durationTicks} ${phaseAt(a.def, Math.min(a.tick, a.def.durationTicks - 1))?.id ?? ''}  hitstop ${a.hitstop}  溜め ${a.chargeTicks}(Lv${a.chargeLevel})`
         : p.guard

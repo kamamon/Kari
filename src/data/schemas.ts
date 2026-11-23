@@ -174,6 +174,11 @@ export interface WeaponFamilyDef {
   guard: GuardDef | null;
   /** 抜刀したまま道具を使える（護刃） */
   itemsWhileDrawn?: boolean;
+  /**
+   * 刃の状態（15 章の次、16 章）。wearPerMotion: 当てるたびに、技の威力の係数 × この値だけ減る。
+   * label は画面に出す名前（刃 / 打面）。省くと、この系統に刃の状態は無い（環弓）。
+   */
+  edge?: { wearPerMotion: number; label: string };
   /** 勢い（双剣）。段階ごとの威力の倍率と、行動の時間の倍率（1 より小さいと速い）。 */
   momentum?: { max: number; decayTicks: number; damageScale: number[]; speedScale: number[] };
   // ---- ここから下は見た目だけに使う ----
@@ -204,6 +209,25 @@ export interface WeaponDef {
   assetId: string;
   /** 最初から持っている武器（新しい保存データへ配る） */
   starter?: boolean;
+}
+
+/** 刃の状態の 1 段階。値が min 以上（で、上の段階の min 未満）の時にこの段階になる。 */
+export interface EdgeStageDef {
+  id: string;
+  name: string;
+  min: number;
+  /** ダメージ式の「刃補正」へ掛ける倍率 */
+  damageScale: number;
+  /** 当てた部位の物理部位係数がこれより小さいと、弾かれる */
+  bounceBelow: number;
+}
+
+/** 刃の状態の決まり（全武器で共通）。段階は、鋭い順（min の大きい順）に並べる。最後の min は 0。 */
+export interface EdgeRules {
+  max: number;
+  stages: EdgeStageDef[];
+  /** 弾かれた時: 減り方の倍率、動けない時間、後ろへ下がる距離 */
+  bounce: { wearScale: number; recoilTicks: number; pushback: number };
 }
 
 /**
@@ -349,6 +373,8 @@ export interface PlayerTuning {
   respawnTicks: number;
   critMultiplier: number;
   gravity: number;
+  /** 訓練場（依頼ではない時）に持たせる道具。省くと無し */
+  trainingSupplies?: ItemStack[];
 }
 
 /** 依頼。M2 前半は大型 1 体の討伐だけ。 */
@@ -382,7 +408,8 @@ export interface ItemStack {
 export interface ItemDef {
   id: string;
   name: string;
-  kind: 'heal' | 'trap' | 'tranq';
+  /** whet: 研磨石。刃の状態を最大まで戻す。抜刀して、手に持った武器を研ぐ */
+  kind: 'heal' | 'trap' | 'tranq' | 'whet';
   carryMax: number;
   useActionId: string;
   effectTick: number;
@@ -442,6 +469,8 @@ export interface Content {
   tracks: Map<string, ShapeTrackDef>;
   families: Map<string, WeaponFamilyDef>;
   weapons: Map<string, WeaponDef>;
+  /** 刃の状態の決まり */
+  edge: EdgeRules;
   monsters: Map<string, MonsterDef>;
   maps: Map<string, MapDef>;
   quests: Map<string, QuestDef>;

@@ -30,13 +30,16 @@ export interface PlayerState {
   /** この tick に処理した行動の tick。命中判定はこれを見て 1 回だけ評価する。 */
   attackEval: { run: ActionRun; t: number } | null;
   guard: { phase: GuardPhase; tick: number } | null;
-  hurt: { kind: 'flinch' | 'knockdown'; tick: number; duration: number; dirYaw: number } | null;
+  /** bounce: 攻撃が弾かれて、よろけている（被弾ではない） */
+  hurt: { kind: 'flinch' | 'knockdown' | 'bounce'; tick: number; duration: number; dirYaw: number } | null;
   deadTicks: number;
   invulnTicks: number;
   buffer: { main: number; sub: number; dodge: number; weapon: number; item: number; special: number };
   /** 勢い（双剣）の段階と、最後に振ってからの tick 数。勢いの無い武器では 0 のまま。 */
   momentum: number;
   momentumTicks: number;
+  /** 刃の状態（0〜最大）。当てると減り、研磨石で最大へ戻る。狩りごとの値で、保存はしない。刃の状態の無い武器（環弓）では最大のまま */
+  edge: number;
   /** 狩猟中の持ち物（依頼の支給品）。数が 0 になっても欄は残る。 */
   items: ItemStack[];
   itemIndex: number;
@@ -78,18 +81,32 @@ export interface SimCtx {
 /** 剥ぎ取りの行動。素材は recovery の始まりで手に入る。 */
 const CARVE_ACTION = 'player.common.carve';
 
-/** 選んでいる道具を使い始める。使えない時は理由を知らせて false。 */
-function tryUseItem(p: PlayerState, ctx: SimCtx, keepDrawn = false): boolean {
+/** 選んでいる道具を、いま使えない理由（使えるなら null）。 */
+function itemBlock(p: PlayerState, ctx: SimCtx): 'empty' | 'not_now' | 'no_need' | null {
   const stack = p.items[p.itemIndex];
   const item = stack ? ctx.content.items.get(stack.itemId) : undefined;
-  if (!stack || !item || stack.count <= 0) {
-    ctx.emit({ type: 'item_fail', reason: 'empty' });
+  if (!stack || !item || stack.count <= 0) return 'empty';
+  if (item.kind === 'whet') {
+    if (!familyOf(p, ctx.content).edge) return 'not_now';
+    if (p.edge >= ctx.content.edge.max) return 'no_need';
+  }
+  return ctx.canUseItem(item) ? null : 'not_now';
+}
+
+/** 選んでいる道具（無ければ undefined） */
+function selectedItem(p: PlayerState, ctx: SimCtx): ItemDef | undefined {
+  const stack = p.items[p.itemIndex];
+  return stack ? ctx.content.items.get(stack.itemId) : undefined;
+}
+
+/** 選んでいる道具を使い始める。使えない時は理由を知らせて false。 */
+function tryUseItem(p: PlayerState, ctx: SimCtx, keepDrawn = false): boolean {
+  const why = itemBlock(p, ctx);
+  if (why) {
+    ctx.emit({ type: 'item_fail', reason: why });
     return false;
   }
-  if (!ctx.canUseItem(item)) {
-    ctx.emit({ type: 'item_fail', reason: 'not_now' });
-    return false;
-  }
+  const item = selectedItem(p, ctx)!;
   const run = startAction(p, item.useActionId, ctx);
   run.keepDrawn = keepDrawn;
   p.itemUse = { itemId: item.id, instanceId: run.instanceId, done: false };
@@ -102,6 +119,9 @@ const MOVE_DEADZONE = 0.12;
 export function createPlayer(content: Content, spawn: { x: number; z: number; yaw: number }, weaponId: string, supplies: readonly ItemStack[] = []): PlayerState {
   const T = content.player;
   const pos = v3(spawn.x, 0, spawn.z);
+  // 研磨石は、刃の状態のある武器でだけ持つ（環弓では使えないので、持たせない）
+  const fam = content.families.get(content.weapons.get(weaponId)!.family)!;
+  const carried = supplies.filter((s) => fam.edge || content.items.get(s.itemId)?.kind !== 'whet');
   return {
     id: 'player',
     pos,
@@ -125,7 +145,8 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
     buffer: { main: 0, sub: 0, dodge: 0, weapon: 0, item: 0, special: 0 },
     momentum: 0,
     momentumTicks: 0,
-    items: supplies.map((s) => ({ itemId: s.itemId, count: s.count })),
+    edge: content.edge.max,
+    items: carried.map((s) => ({ itemId: s.itemId, count: s.count })),
     itemIndex: 0,
     itemUse: null,
     pendingItem: false,
@@ -378,8 +399,26 @@ function stepFree(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
       return stepAction(p, inp, ctx, 1);
     }
   }
+  // 研磨石: 抜刀して、手に持った武器を研ぐ。納刀中に押したら、使えることを確かめてから、抜いて続けて使う。
+  const whet = selectedItem(p, ctx)?.kind === 'whet';
+  if (whet && (consume(p, 'item') || (p.pendingItem && p.drawn))) {
+    if (p.drawn) {
+      p.pendingItem = false;
+      if (tryUseItem(p, ctx, true)) return stepAction(p, inp, ctx, 1);
+      return;
+    }
+    const why = itemBlock(p, ctx);
+    if (why) {
+      p.pendingItem = false;
+      ctx.emit({ type: 'item_fail', reason: why });
+      return;
+    }
+    p.pendingItem = true;
+    startAction(p, fam.actions.draw, ctx);
+    return stepAction(p, inp, ctx, 1);
+  }
   // 道具: 納刀中だけ使える。抜刀中に押したら、納刀してから続けて使う。護刃だけは、抜刀したまま使える。
-  if (consume(p, 'item') || (p.pendingItem && !p.drawn)) {
+  if (!whet && (consume(p, 'item') || (p.pendingItem && !p.drawn))) {
     if (p.drawn && fam.itemsWhileDrawn) {
       p.pendingItem = false;
       if (tryUseItem(p, ctx, true)) return stepAction(p, inp, ctx, 1);
@@ -506,9 +545,9 @@ function stepGuard(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
 function stepHurt(p: PlayerState, ctx: SimCtx): void {
   const h = p.hurt!;
   const T = ctx.content.player;
-  // 吹き飛び距離: 怯み 0.5m / 転倒 3.2m。前半で進み切る。
-  const travelTicks = h.kind === 'knockdown' ? 28 : 10;
-  const total = h.kind === 'knockdown' ? 3.2 : 0.5;
+  // 吹き飛び距離: 怯み 0.5m / 転倒 3.2m / 弾かれ（データの pushback）。前半で進み切る。
+  const travelTicks = h.kind === 'knockdown' ? 28 : h.kind === 'bounce' ? 8 : 10;
+  const total = h.kind === 'knockdown' ? 3.2 : h.kind === 'bounce' ? ctx.content.edge.bounce.pushback : 0.5;
   if (h.tick < travelTicks) {
     const u = h.tick / travelTicks;
     const d = (total * 2 * (1 - u)) / travelTicks;
@@ -560,8 +599,11 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   if (inp.pressed & Btn.Special) p.buffer.special = T.inputBufferTicks;
   // 道具の切り替えは、いつでもできる（使っている途中の道具は変わらない）
   if (p.items.length > 0) {
+    const before = p.itemIndex;
     if (inp.pressed & Btn.ItemNext) p.itemIndex = (p.itemIndex + 1) % p.items.length;
     if (inp.pressed & Btn.ItemPrev) p.itemIndex = (p.itemIndex + p.items.length - 1) % p.items.length;
+    // 「納刀（抜刀）してから使う」の待ちは、道具を替えたら取り消す（別の道具が勝手に使われないように）
+    if (p.itemIndex !== before) p.pendingItem = false;
   }
   if (p.invulnTicks > 0) p.invulnTicks--;
   if (p.mode === 'hurt' || p.mode === 'dead' || p.mode === 'guard') p.pendingItem = false;

@@ -1,6 +1,12 @@
 // ダメージ計算と命中判定。式・係数はすべて本作独自（設計書 p.10 の初期案）。
 import { add, distPointSeg, distSegSeg, lerpV, scale, sub, dot, clamp, toWorld, fromArr, type V3 } from '../core/math';
-import type { HurtShapeDef } from '../data/schemas';
+import type { EdgeRules, EdgeStageDef, HurtShapeDef } from '../data/schemas';
+
+/** 刃の状態の値から、いまの段階を求める（段階は鋭い順に並んでいる）。 */
+export function edgeStage(rules: EdgeRules, value: number): EdgeStageDef {
+  for (const s of rules.stages) if (value >= s.min) return s;
+  return rules.stages[rules.stages.length - 1]!;
+}
 
 export interface DamageInput {
   attack: number;

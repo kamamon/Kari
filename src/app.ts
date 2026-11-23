@@ -484,6 +484,8 @@ export class App implements MenuHost, BaseHost, ResultHost {
         case 'hit':
           // 空振りは振り音だけ。命中した時にだけ、部位の材質に応じた命中音を鳴らす。
           play(`hit_${e.material}`, 1 + e.chargeLevel * 0.2);
+          // 弾かれた時は、金属が跳ね返る音を足す（専用の音はまだ無く、防御の音を流用）
+          if (e.bounced) play('guard');
           break;
         case 'part_break':
           play('part_break');
@@ -526,6 +528,8 @@ export class App implements MenuHost, BaseHost, ResultHost {
           break;
         case 'item_effect':
           if (e.kind === 'heal') play('item_heal');
+          // 研ぎ上がり（専用の音はまだ無く、溜めの段階の音を流用）
+          else if (e.kind === 'whet') play('charge_2');
           else if (e.kind === 'tranq' && e.ok) play('tranq_hit');
           else if (!e.ok && e.kind === 'trap') play('item_fail');
           break;

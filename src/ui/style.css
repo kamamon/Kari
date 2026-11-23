@@ -67,7 +67,15 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 .bar-st.low > i { background: #c96a4a; }
 .hud-blade { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-dim); text-shadow: 0 1px 2px #000; }
 .hud-blade .gauge { width: 84px; height: 6px; background: rgba(12, 16, 13, 0.7); border: 1px solid var(--line); }
-.hud-blade .gauge i { display: block; height: 100%; width: 100%; background: #9fd0c2; }
+.hud-blade .edge { display: flex; align-items: center; gap: 6px; }
+.hud-blade .edge[hidden] { display: none; }
+.hud-blade .gauge i { display: block; height: 100%; width: 100%; background: #9fd0c2; transform-origin: left center; }
+/* 刃の状態の段階: 鋭い = 青緑、並 = 黄、鈍い = 赤（色だけに頼らず、段階の名前も出す） */
+.hud-blade .edge[data-stage='worn'] .gauge i { background: #e2c56a; }
+.hud-blade .edge[data-stage='dull'] .gauge i { background: #d9785a; }
+.hud-blade .edge .stage { min-width: 2.2em; }
+.hud-blade .edge[data-stage='worn'] .stage { color: #e2c56a; }
+.hud-blade .edge[data-stage='dull'] .stage { color: #e79a80; font-weight: 700; }
 .charge { display: flex; gap: 4px; margin-left: 8px; }
 .charge b { width: 12px; height: 12px; border: 1px solid var(--line); transform: rotate(45deg); background: rgba(12, 16, 13, 0.6); }
 .charge b.on { background: #ffd98a; box-shadow: 0 0 8px #ffd98a; }

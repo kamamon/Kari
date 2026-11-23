@@ -51,10 +51,12 @@ const weaken = (m: MonsterState, sim: Simulation): void => {
 };
 
 describe('支給品と道具', () => {
-  it('依頼の支給品を持って出発する。訓練場では何も持たない', () => {
+  it('依頼の支給品を持って出発する。訓練場では研磨石だけを持つ。環弓は研磨石を持たない', () => {
     const sim = hunt();
-    expect(sim.player.items).toEqual([{ itemId: HEAL, count: 5 }, { itemId: TRAP, count: 1 }, { itemId: ORB, count: 3 }]);
-    expect(new Simulation(content, baseOptions()).player.items).toEqual([]);
+    expect(sim.player.items).toEqual([{ itemId: HEAL, count: 5 }, { itemId: TRAP, count: 1 }, { itemId: ORB, count: 3 }, { itemId: 'item.whetstone', count: 3 }]);
+    expect(new Simulation(content, baseOptions()).player.items).toEqual([{ itemId: 'item.whetstone', count: 10 }]);
+    expect(new Simulation(content, baseOptions({ questId: QUEST, weaponId: 'weapon.ring_bow.001' })).player.items.map((s) => s.itemId)).toEqual([HEAL, TRAP, ORB]);
+    expect(new Simulation(content, baseOptions({ weaponId: 'weapon.ring_bow.001' })).player.items).toEqual([]);
   });
 
   it('道具の切り替えは端で回り込む', () => {
@@ -63,7 +65,7 @@ describe('支給品と道具', () => {
     expect(sim.player.itemIndex).toBe(1);
     run(sim, 1, () => press(Btn.ItemPrev));
     run(sim, 1, () => press(Btn.ItemPrev));
-    expect(sim.player.itemIndex).toBe(2);
+    expect(sim.player.itemIndex).toBe(sim.player.items.length - 1);
   });
 
   it('回復液: 飲み終わる tick で 40 回復して 1 個減る。上限は超えない', () => {

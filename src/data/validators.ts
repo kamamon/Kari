@@ -9,6 +9,7 @@ import {
   type Content,
   type ContentIndex,
   type CurveDef,
+  type EdgeRules,
   type ItemDef,
   type LootDef,
   type LootRoll,
@@ -220,6 +221,9 @@ export function crossCheck(c: Content, errors: string[]): void {
       if (!(it.trap && it.trap.armTicks >= 0 && it.trap.radius > 0 && it.trap.holdTicks > 0 && it.trap.lifeTicks > 0)) errors.push(`${w}: trap が不正`);
     } else if (it.kind === 'tranq') {
       if (!(it.tranq && it.tranq.range > 0 && it.tranq.halfAngleDeg > 0)) errors.push(`${w}: tranq が不正`);
+    } else if (it.kind === 'whet') {
+      // 研いだ後は抜刀のままにする（手に持った武器を研ぐ）
+      if (a && a.onFinish !== 'drawn_idle') errors.push(`${w}: 研ぐ行動の onFinish は drawn_idle にする`);
     } else errors.push(`${w}: kind "${String(it.kind)}" は未定義`);
   }
   const checkRoll = (w: string, r: LootRoll | undefined): void => {
@@ -253,6 +257,14 @@ export function crossCheck(c: Content, errors: string[]): void {
   for (const a of c.actions.values()) {
     for (const cw of a.cancelWindows) for (const n of cw.into) if (!known.has(n)) errors.push(`action ${a.actionId}: cancel 先 "${n}" が未定義`);
   }
+  for (const f of c.families.values()) {
+    if (f.edge !== undefined && !(f.edge && f.edge.wearPerMotion > 0 && f.edge.wearPerMotion <= 20 && typeof f.edge.label === 'string' && f.edge.label !== '')) errors.push(`family ${f.id}: edge が不正`);
+  }
+  for (const s of c.player.trainingSupplies ?? []) {
+    const it = c.items.get(s.itemId);
+    if (!it) errors.push(`player: 訓練用の道具 ${s.itemId} が無い`);
+    else if (!(isInt(s.count) && s.count > 0 && s.count <= it.carryMax)) errors.push(`player: 訓練用の道具 ${s.itemId} の数が不正`);
+  }
   // 最初から持つ武器が 1 つはあること
   if (![...c.weapons.values()].some((w) => w.starter)) errors.push('weapons: starter の武器が 1 つも無い');
   // 工房: 元と結果の武器があり、同じ系統で、素材はどこかで手に入ること（手に入らない素材を要求しない）
@@ -283,6 +295,28 @@ export function crossCheck(c: Content, errors: string[]): void {
       seen.add(s.itemId);
     }
   }
+}
+
+/** 刃の状態の決まり: 段階は鋭い順、最後は 0 から、倍率と弾かれる境目は鋭いほど有利。 */
+export function validateEdge(e: EdgeRules | undefined, errors: string[]): void {
+  if (!e || !(e.max > 0) || !Array.isArray(e.stages) || e.stages.length === 0) {
+    errors.push('weapons: edge（刃の状態の決まり）が無い、または不正');
+    return;
+  }
+  const ids = new Set<string>();
+  e.stages.forEach((s, i) => {
+    const w = `edge.stages[${i}]`;
+    if (typeof s.id !== 'string' || s.id === '' || ids.has(s.id)) errors.push(`${w}: id が無い、または重複`);
+    ids.add(s.id);
+    if (typeof s.name !== 'string' || s.name === '') errors.push(`${w}: name が無い`);
+    if (!(isNum(s.min) && s.min >= 0 && s.min < e.max)) errors.push(`${w}: min が不正`);
+    if (!(isNum(s.damageScale) && s.damageScale > 0 && s.damageScale <= 1.5)) errors.push(`${w}: damageScale が不正`);
+    if (!(isNum(s.bounceBelow) && s.bounceBelow >= 0 && s.bounceBelow < 1)) errors.push(`${w}: bounceBelow が不正`);
+    const prev = e.stages[i - 1];
+    if (prev && !(s.min < prev.min && s.damageScale <= prev.damageScale && s.bounceBelow >= prev.bounceBelow)) errors.push(`${w}: 段階は鋭い順に並べる（min は小さく、damageScale は同じか小さく、bounceBelow は同じか大きく）`);
+  });
+  if (e.stages[e.stages.length - 1]!.min !== 0) errors.push('edge.stages: 最後の段階の min は 0 にする');
+  if (!(e.bounce && e.bounce.wearScale >= 1 && isInt(e.bounce.recoilTicks) && e.bounce.recoilTicks > 0 && e.bounce.pushback >= 0)) errors.push('edge.bounce が不正');
 }
 
 /** いまの依頼で手に入る素材（依頼の報酬と、その依頼の標的の剥ぎ取り・捕獲・部位）。 */
@@ -323,6 +357,7 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     materials: new Map(),
     loot: new Map(),
     recipes: new Map(),
+    edge: { max: 0, stages: [], bounce: { wearScale: 1, recoilTicks: 1, pushback: 0 } },
     player: (await get(index.files.player)) as PlayerTuning,
   };
   checkVersion(index.files.player, content.player.schemaVersion, errors);
@@ -346,7 +381,9 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     validateCurve(c, errors);
     putUnique(content.curves, c.id, c, 'curve', errors);
   }
-  const weapons = (await get(index.files.weapons)) as { families: WeaponFamilyDef[]; weapons: WeaponDef[] };
+  const weapons = (await get(index.files.weapons)) as { families: WeaponFamilyDef[]; weapons: WeaponDef[]; edge: EdgeRules };
+  content.edge = weapons.edge;
+  validateEdge(weapons.edge, errors);
   for (const f of weapons.families ?? []) putUnique(content.families, f.id, f, 'family', errors);
   for (const w of weapons.weapons ?? []) putUnique(content.weapons, w.id, w, 'weapon', errors);
   for (const f of index.files.monsters) {

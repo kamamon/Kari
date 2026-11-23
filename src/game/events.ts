@@ -19,6 +19,8 @@ export type SimEvent =
       hitstop: number;
       chargeLevel: number;
       tick: number;
+      /** 刃が通らず、弾かれた（ダメージは入る。振った側は少しの間よろける） */
+      bounced: boolean;
     }
   | { type: 'part_break'; target: string; partId: string; partIndex: number }
   | { type: 'part_sever'; target: string; partId: string; partIndex: number; pos: V3; yaw: number }
@@ -32,8 +34,11 @@ export type SimEvent =
   | { type: 'hunt_close' }
   /** 道具を使い始めた / 効果が出た（ok が false なら効果なし。amount は回復量など）/ 使えなかった */
   | { type: 'item_use'; itemId: string; pos: V3 }
-  | { type: 'item_effect'; itemId: string; kind: 'heal' | 'trap' | 'tranq'; ok: boolean; amount: number; pos: V3 }
-  | { type: 'item_fail'; reason: 'empty' | 'not_now' }
+  | { type: 'item_effect'; itemId: string; kind: 'heal' | 'trap' | 'tranq' | 'whet'; ok: boolean; amount: number; pos: V3 }
+  /** no_need: 研磨石を、刃が最大の時に使おうとした */
+  | { type: 'item_fail'; reason: 'empty' | 'not_now' | 'no_need' }
+  /** 刃の状態の段階が変わった（当てて下がった、または研いで戻った） */
+  | { type: 'edge'; stage: string; value: number }
   | { type: 'trap_armed'; id: number; x: number; z: number }
   | { type: 'trap_trigger'; id: number; target: string; x: number; z: number; ticks: number }
   | { type: 'trap_end'; id: number }

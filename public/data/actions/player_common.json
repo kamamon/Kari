@@ -80,6 +80,21 @@
       "cancelWindows": [],
       "events": [{"tick":80, "type":"sound", "id":"carve"}],
       "onFinish": "sheathed_idle"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.item.whet",
+      "clip": "common_item_whet_01",
+      "tickRate": 60, "durationTicks": 120,
+      "phases": [
+        {"id":"startup", "from":0, "to":96},
+        {"id":"recovery", "from":96, "to":120}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [{"from":102, "to":120, "into":["roll"]}],
+      "events": [{"tick":26, "type":"sound", "id":"hb_sheathe_01"}, {"tick":51, "type":"sound", "id":"hb_sheathe_01"}, {"tick":77, "type":"sound", "id":"hb_sheathe_01"}],
+      "onFinish": "drawn_idle"
     }
   ]
 }
