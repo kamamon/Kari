@@ -269,7 +269,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.keyboard.down('ShiftLeft');
   check('ハンターの体の絵: 区画が焼いた絵と同じ並びで、読み込める', await until(page, () => window.__vh.view.hunter.atlasStored === true && window.__vh.view.hunter.atlasCharts.length === 10 && window.__vh.view.hunter.artLoaded === true && !window.__vh.view.hunter.artFailed, 15000));
   check('ガルドロスの陰（Blender で焼いた値）が、いまの形と合っている', await page.evaluate(() => window.__vh.view.monsterRig.aoApplied === true));
-  check('断岳剣: 設定図から作った形で、絵を読み込める', await until(page, () => window.__vh.view.hunter.weaponArt.loaded === true && !window.__vh.view.hunter.weaponArt.failed && window.__vh.view.hunter.weaponTriangles > 100, 15000));
+  check('断岳剣: 設定図から作った形で、絵を読み込める', await until(page, () => window.__vh.view.hunter.weaponArt.length > 0 && window.__vh.view.hunter.weaponArt.every((a) => a.loaded && !a.failed) && window.__vh.view.hunter.weaponTriangles > 100, 15000));
   check('ガルドロスの皮の絵の区画が、焼いた絵と同じ並び', await page.evaluate(() => window.__vh.view.monsterRig.atlasStored === true && window.__vh.view.monsterRig.atlasCharts.length === 17));
   check('設定図から焼いた絵（皮・岩）を読み込める', await until(page, () => window.__vh.view.monsterRig.artLoaded === true && !window.__vh.view.monsterRig.artFailed, 15000));
   check('近づくと気付かれて咆哮する', await until(page, () => window.__vh.sim.monsters[0].aware, 60000));
@@ -611,6 +611,12 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.waitForTimeout(200);
   const text = await page.textContent('#panel');
   check('ビューア: 仮リグの全高が 1.75m', /全高 1\.7[45]\dm/.test(text), (text.match(/全高 [\d.]+m/) ?? [''])[0]);
+  // 武器の一覧（設定図から組んだ仮モデル）: 護刃の剣と盾、断岳剣、旋鎌の絵がすべて読み込める
+  const rackOk = await until(page, () => {
+    const rack = window.__viewer?.rack;
+    return !!rack && ['guardShield', 'guardSword', 'heavyBlade', 'scythe'].every((k) => rack[k] && rack[k].triangles > 50 && rack[k].art.length > 0 && rack[k].art.every((a) => a.loaded && !a.failed));
+  }, 15000);
+  check('ビューア: 武器 4 つ（護刃の剣・盾、断岳剣、旋鎌）の形と絵を読み込める', rackOk);
   await page.goto(`http://localhost:${PORT}${BASE}viewer.html?glb=assets/models/ref_cube_1m.glb`);
   await page.waitForFunction(() => window.__viewer, null, { timeout: 15000 });
   await page.waitForTimeout(300);

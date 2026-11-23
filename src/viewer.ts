@@ -7,7 +7,7 @@
 import { packCharts } from './render/procGeo';
 import './ui/style.css';
 import {
-  AnimationMixer, AxesHelper, Box3, BoxGeometry, Color, DirectionalLight, EdgesGeometry, GridHelper, HemisphereLight, LineBasicMaterial, LineSegments, Object3D,
+  AnimationMixer, AxesHelper, Box3, BoxGeometry, Color, DirectionalLight, EdgesGeometry, GridHelper, Group, HemisphereLight, LineBasicMaterial, LineSegments, Object3D,
   PerspectiveCamera, Scene, Vector3, WebGLRenderer, type AnimationClip, type Bone, type SkinnedMesh,
 } from 'three';
 import { assetUrl, fetchJson, loadContent } from './core/assets';
@@ -17,9 +17,12 @@ import { createMonster, monsterShapes, type MonsterState } from './game/monster'
 import { sampleTrack, trackSegment } from './game/tracks';
 import { DebugDraw } from './render/debugDraw';
 import { GaldrosRig } from './render/galdrosRig';
+import { buildGuardBladeShield, buildGuardBladeSword } from './render/guardBlade';
+import { buildHeavyBlade, type WeaponModel } from './render/heavyBlade';
 import { DummyRig, type MonsterRig } from './render/monsterRig';
 import { CLIPS, JOINTS, clipPose, emptyPose, locomotionPose } from './render/poses';
 import { HunterRig } from './render/rig';
+import { buildScythe } from './render/scythe';
 
 interface ManifestAsset {
   id: string;
@@ -64,13 +67,30 @@ for (const s of Object.values(hunter.sockets)) {
   s.add(a);
   socketAxes.push(a);
 }
+// 武器の一覧: 設定図から組んだ仮モデルを、立てて並べる（ハンターは大きさの目安）。ゲームに出ているのは断岳剣だけ。
+// 剣と鎌は、設定図の正面（-X の面）が手前（+Z）を向くように 90 度回す。
+const rack = new Group();
+rack.visible = false;
+scene.add(rack);
+const rackModels: Record<string, WeaponModel> = {};
+const stand = (key: string, model: WeaponModel, x: number, y: number, turn: number): void => {
+  model.group.position.set(x, y, 0);
+  model.group.rotation.y = turn;
+  rack.add(model.group);
+  rackModels[key] = model;
+};
+stand('guardShield', buildGuardBladeShield(), -1.7, 0.3, 0);
+stand('guardSword', buildGuardBladeSword(), -1.2, 0.1224, Math.PI / 2);
+stand('heavyBlade', buildHeavyBlade(), -0.72, 0.155, Math.PI / 2);
+stand('scythe', buildScythe(), 1.05, 0.4295, Math.PI / 2);
+
 let glbRoot: Object3D | null = null;
 let glbMixer: AnimationMixer | null = null;
 let glbClips: AnimationClip[] = [];
 let glbInfo = '';
 
 const state = {
-  subject: 'hunter' as 'hunter' | MonsterKey | 'glb',
+  subject: 'hunter' as 'hunter' | MonsterKey | 'glb' | 'weapons',
   actionId: '',
   tick: 0,
   playing: true,
@@ -83,6 +103,7 @@ const state = {
   /** 注目する点の高さと前後（確認用の指定。NaN は既定） */
   lookY: NaN,
   lookZ: 0,
+  lookX: 0,
 };
 
 let content: Content;
@@ -119,6 +140,7 @@ function actionsFor(subject: string): ActionDef[] {
   const all = [...content.actions.values()];
   if (subject === 'dummy') return all.filter((a) => a.actionId.startsWith('monster.training_dummy.'));
   if (subject === 'galdros') return all.filter((a) => a.actionId.startsWith('monster.galdros.'));
+  if (subject === 'weapons') return [];
   return all.filter((a) => a.actionId.startsWith('player.'));
 }
 
@@ -152,6 +174,10 @@ function buildPanel(): void {
   button('ハンター', () => setSubject('hunter'), r1);
   button('訓練標的', () => setSubject('dummy'), r1);
   button('ガルドロス', () => setSubject('galdros'), r1);
+  button('武器', () => {
+    setSubject('weapons');
+    state.camYaw = 0;
+  }, r1);
   for (const a of manifest.filter((m) => m.type === 'model' && m.path?.endsWith('.glb'))) button(`GLB: ${a.id}`, () => void loadGlb(a.path!), r1);
   const r2 = row();
   actionSelect = document.createElement('select');
@@ -222,11 +248,15 @@ function syncSlider(): void {
   slider.value = String(Math.floor(state.tick));
 }
 
-function setSubject(s: 'hunter' | MonsterKey | 'glb'): void {
+function setSubject(s: 'hunter' | MonsterKey | 'glb' | 'weapons'): void {
   state.subject = s;
   state.actionId = '';
   state.tick = 0;
-  hunter.root.visible = s === 'hunter';
+  hunter.root.visible = s === 'hunter' || s === 'weapons';
+  rack.visible = s === 'weapons';
+  // 一覧では、ハンターは大きさの目安として立たせるだけ（手の剣と、取り付け位置の印は消す）
+  hunter.weapon.visible = s !== 'weapons';
+  if (s === 'weapons') for (const ax of socketAxes) ax.visible = false;
   for (const [k, v] of Object.entries(monsters)) v.rig.root.visible = s === k;
   if (glbRoot) glbRoot.visible = s === 'glb';
   state.camDist = s === 'dummy' ? 9 : s === 'galdros' ? 10 : 5.2;
@@ -334,7 +364,7 @@ function frame(ts: number): void {
       }
     }
     for (const ax of socketAxes) ax.visible = state.bones;
-  } else if (state.subject !== 'glb') {
+  } else if (state.subject !== 'glb' && state.subject !== 'weapons') {
     // モンスター: ゲームと同じ update を通す（行動の時刻だけビューアが決める）
     const { m, rig } = monsters[state.subject];
     if (a) {
@@ -380,7 +410,7 @@ function frame(ts: number): void {
   const text = lines.join('\n');
   if (info.textContent !== text) info.textContent = text;
 
-  const target = new Vector3(0, Number.isNaN(state.lookY) ? (state.subject === 'dummy' || state.subject === 'galdros' ? 1.2 : 0.95) : state.lookY, state.lookZ);
+  const target = new Vector3(state.lookX, Number.isNaN(state.lookY) ? (state.subject === 'dummy' || state.subject === 'galdros' ? 1.2 : 0.95) : state.lookY, state.lookZ);
   const cp = Math.cos(state.camPitch);
   // 正面 = カメラがキャラクターの前（+Z 側）に立つ
   camera.position.set(target.x + Math.sin(state.camYaw) * cp * state.camDist, target.y + Math.sin(state.camPitch) * state.camDist, target.z + Math.cos(state.camYaw) * cp * state.camDist);
@@ -429,17 +459,22 @@ async function main(): Promise<void> {
   }
   if (q.has('yaw')) state.camYaw = Number(q.get('yaw'));
   if (q.get('subject') === 'galdros' && !act) setSubject('galdros');
+  if (q.get('subject') === 'weapons') {
+    setSubject('weapons');
+    if (!q.has('yaw')) state.camYaw = 0;
+  }
   if (q.has('damaged')) damaged = true;
   // 確認用の静止画のための指定: 距離、見上げ・見下ろしの角度、注目する高さと前後
   if (q.has('dist')) state.camDist = Number(q.get('dist'));
   if (q.has('pitch')) state.camPitch = Number(q.get('pitch'));
   if (q.has('ty')) state.lookY = Number(q.get('ty'));
   if (q.has('tz')) state.lookZ = Number(q.get('tz'));
+  if (q.has('tx')) state.lookX = Number(q.get('tx'));
   if (q.get('shapes') === '0') state.shapes = false;
   if (q.get('bones') === '0') state.bones = false;
   const glb = q.get('glb');
   if (glb) await loadGlb(glb);
-  (window as unknown as { __viewer?: unknown }).__viewer = { state, monsters, packCharts, hunter };
+  (window as unknown as { __viewer?: unknown }).__viewer = { state, monsters, packCharts, hunter, rack: rackModels };
   requestAnimationFrame(frame);
 }
 

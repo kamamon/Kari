@@ -37,7 +37,7 @@ export class HunterRig {
   artFailed = false;
   bodyTriangles = 0;
   /** 断岳剣の絵の読み込み状態と、面の数（検査用） */
-  weaponArt = { loaded: false, failed: false };
+  weaponArt: { loaded: boolean; failed: boolean }[] = [];
   weaponTriangles = 0;
   // 計算用の使い回し
   private v1 = new Vector3();
