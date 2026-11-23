@@ -131,6 +131,13 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 #hud .hud-item { position: absolute; left: 50%; bottom: calc(var(--sab) + 82px); transform: translateX(-50%); padding: 3px 10px; border-radius: 10px; background: rgba(20, 26, 22, 0.55); color: var(--ink); font-size: 12px; font-weight: 700; white-space: nowrap; pointer-events: none; }
 #hud .hud-wrap { position: absolute; left: 50%; top: calc(var(--sat) + 54px); transform: translateX(-50%); display: flex; align-items: center; gap: 10px; padding: 6px 12px; border-radius: 12px; background: rgba(20, 26, 22, 0.72); border: 1px solid var(--bronze); color: var(--ink); font-size: 13px; font-weight: 700; white-space: nowrap; }
 #hud .hud-wrap[hidden], #hud .hud-item[hidden] { display: none; }
+#hud .hud-momentum { position: absolute; left: calc(var(--sal) + 14px); top: calc(var(--sat) + 54px); padding: 2px 8px; border-radius: 9px; background: rgba(20, 26, 22, 0.55); color: #e8c27a; font-size: 13px; font-weight: 700; letter-spacing: 2px; pointer-events: none; }
+#hud .hud-momentum[hidden] { display: none; }
+#base .base-weapon-label { margin: 6px 0 2px; font-size: 12px; opacity: 0.75; }
+#base .base-weapons { display: flex; flex-wrap: wrap; gap: 6px; }
+#base .base-weapon { flex: 1 1 auto; min-width: 58px; padding: 8px 6px; border-radius: 9px; border: 1px solid rgba(232, 226, 205, 0.28); background: rgba(232, 226, 205, 0.06); color: inherit; font: inherit; font-size: 14px; font-weight: 700; }
+#base .base-weapon.on { border-color: #b08d57; background: rgba(176, 141, 87, 0.28); }
+#base .base-weapon-note { margin: 4px 0 8px; font-size: 12px; line-height: 1.5; opacity: 0.85; }
 /* タッチでは道具ボタンに名前と数が出るので、欄は出さない */
 @media (pointer: coarse) { #hud .hud-item { display: none; } }
 #hud .hud-wrap button { pointer-events: auto; padding: 6px 12px; border-radius: 10px; border: 1px solid var(--bronze); background: rgba(184, 148, 96, 0.9); color: #1b1710; font-weight: 800; font-size: 13px; }

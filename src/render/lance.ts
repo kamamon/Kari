@@ -1,5 +1,5 @@
 // 長尖槍（里鍛ちの長尖槍）の槍と大盾の仮モデル。設定図（art-source/weapon/weapon_chosenso_*_v1.png）の輪郭を測った寸法で
-// 形を組み、図をそのまま貼る。まだゲームには出ない（武器としての実装は未着手。素材ビューアで見られる）。
+// 形を組み、図をそのまま貼る。v0.4.0 からゲーム内で使う。
 import { Group } from 'three';
 import { ArtMesh, type ArtStatus } from './artMesh';
 import type { WeaponModel } from './heavyBlade';
@@ -38,5 +38,7 @@ export function buildGreatShield(): WeaponModel {
     halfW: 0.2925,
     halfH: 0.55,
     xScale: 0.6 / 0.585,
+    handle: { x: 0.115, y0: 0.175, y1: -0.11, r: 0.018, off: 0.04 },
+    strap: { x: -0.102, y0: 0.175, y1: -0.115, w: 0.09, off: 0.075 },
   });
 }

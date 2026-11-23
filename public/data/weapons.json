@@ -3,6 +3,8 @@
   "families": [
     {
       "id": "heavy_blade",
+      "labels": { "main": "斬る", "sub": "薙ぐ", "special": "防御" },
+      "summary": "大剣。隙を読んで、重い一撃を当てる。溜め斬りと、遅い防御。",
       "name": "断岳剣",
       "twoHanded": true,
       "drawnMoveSpeed": 2.4,
@@ -32,6 +34,148 @@
         "turnDegPerSec": 90,
         "pose": { "grip": [-0.05, 1.05, 0.36], "dir": [0.55, 0.80, 0.10], "planeNormal": [0, 0, 1] }
       }
+    },
+    {
+      "id": "guard_blade",
+      "labels": { "main": "斬る", "sub": "盾打ち", "special": "防御" },
+      "summary": "短剣と盾。張り付いて手数。抜刀したまま道具が使え、構えてすぐ受けると受け流し。",
+      "name": "護刃",
+      "twoHanded": false,
+      "drawnMoveSpeed": 3.6,
+      "drawnTurnDegPerSec": 540,
+      "ready": { "grip": [-0.28, 0.98, 0.28], "dir": [0.05, 0.75, 0.66], "planeNormal": [1, 0, 0] },
+      "blade": { "from": 0.13, "to": 0.88, "radius": 0.11 },
+      "actions": {
+        "main": "player.guard_blade.slash1",
+        "sub": "player.guard_blade.bash",
+        "drawAttack": "player.guard_blade.lunge",
+        "draw": "player.guard_blade.draw",
+        "sheathe": "player.guard_blade.sheathe"
+      },
+      "cancelNames": {
+        "gb_slash1": "player.guard_blade.slash1",
+        "gb_slash2": "player.guard_blade.slash2",
+        "gb_thrust": "player.guard_blade.thrust",
+        "gb_bash": "player.guard_blade.bash"
+      },
+      "cancelButtons": { "gb_slash2": "main", "gb_thrust": "main" },
+      "itemsWhileDrawn": true,
+      "offhand": "shield_small",
+      "offhandReady": [0.3, 1.08, 0.28],
+      "offhandGuard": [0.1, 1.2, 0.48],
+      "sheathSocket": "hip",
+      "guard": {
+        "startTicks": 4,
+        "activeFromTick": 2,
+        "endTicks": 8,
+        "recoilTicks": 14,
+        "breakTicks": 50,
+        "arcDegrees": 150,
+        "chipScale": 0.2,
+        "breakDamageScale": 0.7,
+        "turnDegPerSec": 180,
+        "parryTicks": 6,
+        "recoilDistance": 0.5,
+        "pose": { "grip": [-0.35, 0.95, 0.1], "dir": [0.1, 0.6, 0.8], "planeNormal": [1, 0, 0] }
+      }
+    },
+    {
+      "id": "reap_scythe",
+      "labels": { "main": "薙ぐ", "sub": "引き刈り", "special": "大刈り" },
+      "summary": "大鎌。振りながら歩ける。当て続けると勢いが上がり、速く強くなる。被弾で勢いを失う。",
+      "name": "旋鎌",
+      "twoHanded": true,
+      "otherHandAlong": 0.64,
+      "drawnMoveSpeed": 3.0,
+      "drawnTurnDegPerSec": 360,
+      "ready": { "grip": [-0.2165, 1.0, 0.25], "dir": [-0.866, 0.5, 0.5], "planeNormal": [0, -1, 0] },
+      "blade": { "from": 0.35, "to": 1.4, "radius": 0.07 },
+      "actions": {
+        "main": "player.reap_scythe.sweep1",
+        "sub": "player.reap_scythe.pull",
+        "drawAttack": "player.reap_scythe.draw_sweep",
+        "draw": "player.reap_scythe.draw",
+        "sheathe": "player.reap_scythe.sheathe",
+        "special": "player.reap_scythe.great"
+      },
+      "cancelNames": {
+        "rs_sweep1": "player.reap_scythe.sweep1",
+        "rs_sweep2": "player.reap_scythe.sweep2",
+        "rs_spin": "player.reap_scythe.spin",
+        "rs_pull": "player.reap_scythe.pull",
+        "rs_great": "player.reap_scythe.great"
+      },
+      "cancelButtons": { "rs_sweep2": "main", "rs_spin": "main", "rs_great": "special" },
+      "momentum": { "max": 3, "decayTicks": 90, "damageScale": [1, 1, 1.1, 1.2], "speedScale": [1, 1, 0.9, 0.8] },
+      "guard": null
+    },
+    {
+      "id": "long_lance",
+      "labels": { "main": "突く", "sub": "上段", "special": "防御", "dodge": "跳び" },
+      "summary": "ランス。固い盾で受けて刺す。防御中に主で構え突き、副で受け返し。回避は短い跳び。",
+      "name": "長尖槍",
+      "twoHanded": false,
+      "drawnMoveSpeed": 1.8,
+      "drawnTurnDegPerSec": 200,
+      "ready": { "grip": [-0.32, 1.0, 0.05], "dir": [0.05, 0.12, 1], "planeNormal": [1, 0, 0] },
+      "blade": { "from": 0.9, "to": 2.36, "radius": 0.1 },
+      "actions": {
+        "main": "player.long_lance.thrust1",
+        "sub": "player.long_lance.high",
+        "drawAttack": "player.long_lance.lunge",
+        "draw": "player.long_lance.draw",
+        "sheathe": "player.long_lance.sheathe",
+        "guardMain": "player.long_lance.guard_thrust",
+        "guardSub": "player.long_lance.counter",
+        "dodge": "player.long_lance.hop"
+      },
+      "cancelNames": {
+        "ll_thrust1": "player.long_lance.thrust1",
+        "ll_thrust2": "player.long_lance.thrust2",
+        "ll_thrust3": "player.long_lance.thrust3",
+        "ll_high": "player.long_lance.high"
+      },
+      "cancelButtons": { "ll_thrust2": "main", "ll_thrust3": "main" },
+      "offhand": "shield_great",
+      "offhandReady": [0.3, 1.0, 0.25],
+      "offhandGuard": [0.05, 1.12, 0.5],
+      "guard": {
+        "startTicks": 6,
+        "activeFromTick": 3,
+        "endTicks": 10,
+        "recoilTicks": 16,
+        "breakTicks": 60,
+        "arcDegrees": 160,
+        "chipScale": 0.1,
+        "breakDamageScale": 0.6,
+        "turnDegPerSec": 120,
+        "recoilDistance": 0.3,
+        "pose": { "grip": [-0.35, 1.05, -0.05], "dir": [0.05, 0.2, 1], "planeNormal": [1, 0, 0] }
+      }
+    },
+    {
+      "id": "ring_bow",
+      "labels": { "main": "射る", "sub": "散らし" },
+      "summary": "弓。主を押し続けて溜め、離して射る。6〜12m が適正距離。守りは無い。",
+      "name": "環弓",
+      "twoHanded": false,
+      "primaryHand": "left",
+      "drawnMoveSpeed": 3.0,
+      "drawnTurnDegPerSec": 420,
+      "ready": { "grip": [0.25, 1.1, 0.3], "dir": [0.25, 0.95, 0.15], "planeNormal": [-1, 0, 0] },
+      "blade": { "from": -0.75, "to": 0.75, "radius": 0.05 },
+      "actions": {
+        "main": "player.ring_bow.shot",
+        "sub": "player.ring_bow.spread",
+        "drawAttack": "player.ring_bow.shot",
+        "draw": "player.ring_bow.draw",
+        "sheathe": "player.ring_bow.sheathe"
+      },
+      "cancelNames": {
+        "rb_shot": "player.ring_bow.shot",
+        "rb_spread": "player.ring_bow.spread"
+      },
+      "guard": null
     }
   ],
   "weapons": [
@@ -44,6 +188,46 @@
       "affinity": 0,
       "sharpnessModifier": 1.0,
       "assetId": "model.weapon.heavy_blade.001"
+    },
+    {
+      "id": "weapon.guard_blade.001",
+      "family": "guard_blade",
+      "name": "里鍛ちの護刃",
+      "attack": 66,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.guard_blade.001"
+    },
+    {
+      "id": "weapon.reap_scythe.001",
+      "family": "reap_scythe",
+      "name": "里鍛ちの旋鎌",
+      "attack": 74,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.reap_scythe.001"
+    },
+    {
+      "id": "weapon.long_lance.001",
+      "family": "long_lance",
+      "name": "里鍛ちの長尖槍",
+      "attack": 72,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_lance.001"
+    },
+    {
+      "id": "weapon.ring_bow.001",
+      "family": "ring_bow",
+      "name": "里鍛ちの環弓",
+      "attack": 70,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.ring_bow.001"
     }
   ]
 }

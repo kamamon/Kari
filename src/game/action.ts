@@ -17,10 +17,18 @@ export interface ActionRun {
   fixedDir: boolean;
   /** 回避の見た目用: 0 前 / 1 左 / 2 後 / 3 右（向きに対する相対） */
   dirIndex: number;
+  /** 抜刀したまま始めた道具の行動: 終わっても抜刀のまま（護刃） */
+  keepDrawn: boolean;
+  /** 行動の時間の倍率（1 より小さいと速い）と、その端数の積み立て。旋鎌の勢い。 */
+  speed: number;
+  speedAcc: number;
+  /** 始めた時の勢いの段階（威力の倍率に使う）と、この行動で勢いを上げたか */
+  momentumLevel: number;
+  momentumGained: boolean;
 }
 
 export function newRun(def: ActionDef, instanceId: number, yaw: number): ActionRun {
-  return { def, instanceId, tick: 0, hitstop: 0, chargeTicks: 0, chargeLevel: 0, released: false, advanced: false, moveYaw: yaw, fixedDir: false, dirIndex: 0 };
+  return { def, instanceId, tick: 0, hitstop: 0, chargeTicks: 0, chargeLevel: 0, released: false, advanced: false, moveYaw: yaw, fixedDir: false, dirIndex: 0, keepDrawn: false, speed: 1, speedAcc: 0, momentumLevel: 0, momentumGained: false };
 }
 
 export function phaseAt(def: ActionDef, tick: number): PhaseDef | null {

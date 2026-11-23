@@ -2,13 +2,13 @@
 // ここは DOM・Three.js・Math.random・現在時刻に触れない。同じ seed と同じ入力列なら同じ結果になる。
 import { DEG, angleDiff, forwardOf, toWorld, yawOf, type V3 } from '../core/math';
 import { SeededRng } from '../core/seededRng';
-import type { Content, HazardDef, HitWindowDef, ItemDef, ItemStack, LootRoll, QuestDef } from '../data/schemas';
+import type { Content, DamageType, HazardDef, HitWindowDef, ItemDef, ItemStack, LootRoll, QuestDef, ShootDef } from '../data/schemas';
 import { inWindow, type ActionRun } from './action';
 import { HitLedger, computeDamage, sweepCapsule, type WorldShape } from './combat';
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
 import { applyDamageToMonster, createMonster, monsterBlockers, monsterShapes, stepMonster, type MonsterState } from './monster';
-import { createPlayer, playerHurtCapsule, resolveIncomingHit, stepPlayer, weaponOf, type PlayerState, type SimCtx } from './player';
+import { createPlayer, familyOf, playerHurtCapsule, resolveIncomingHit, stepPlayer, weaponOf, type PlayerState, type SimCtx } from './player';
 import { trackSegment } from './tracks';
 import { World, type Circle } from './world';
 
@@ -99,6 +99,37 @@ export interface HitRecord {
   crit: number;
 }
 
+/** 飛んでいる矢（環弓）。まっすぐ飛び、最初に触れた部位に当たって消える。 */
+export interface Projectile {
+  id: number;
+  pos: V3;
+  prevPos: V3;
+  /** 1 tick ぶんの移動 */
+  vel: V3;
+  /** 残りの寿命（tick） */
+  life: number;
+  /** 飛んだ距離 (m)。適正距離の倍率に使う。 */
+  travelled: number;
+  actionId: string;
+  coefficient: number;
+  level: number;
+}
+
+/** 矢の適正距離: 6〜12m で威力そのまま。近すぎ・遠すぎは下がる。 */
+export function arrowDistanceScale(d: number): number {
+  if (d < 4) return 0.6;
+  if (d < 6) return 0.6 + (0.4 * (d - 4)) / 2;
+  if (d <= 12) return 1;
+  if (d < 16) return 1 - (0.5 * (d - 12)) / 4;
+  return 0.5;
+}
+
+const ARROW_RADIUS = 0.1;
+const ARROW_LIFE_TICKS = 70;
+/** 狙いの補助: 正面からこの角度までにある部位へ、矢の向きを合わせる */
+const AIM_ASSIST_DEG = 14;
+const AIM_RANGE = 28;
+
 export class Simulation implements SimCtx {
   readonly content: Content;
   readonly world: World;
@@ -126,6 +157,8 @@ export class Simulation implements SimCtx {
   private nextTrap = 1;
   /** 切り落とした部位が落ちた位置（部位 id ごと）。剥ぎ取りの場所になる。 */
   severedAt: Record<string, { x: number; z: number }> = {};
+  projectiles: Projectile[] = [];
+  private nextProjectile = 1;
 
   constructor(content: Content, options: SimOptions) {
     this.content = content;
@@ -436,6 +469,7 @@ export class Simulation implements SimCtx {
     // 歩いてきた大型に重なったら押し出す（プレイヤーが動いていなくても胴を抜けない）
     if (this.player.mode !== 'dead') this.world.move(this.player.pos, this.content.player.radius, 0, 0, this.blockers());
     this.resolvePlayerAttacks();
+    this.stepProjectiles();
     if (this.hunt?.phase !== 'success' && this.hunt?.phase !== 'failed') this.resolveMonsterAttacks();
     this.stepHazards();
     this.stepTraps();
@@ -449,13 +483,13 @@ export class Simulation implements SimCtx {
   }
 
   /** hitWindow の武器カプセルを「この tick の始点 → 終点」で返す（ワールド座標）。 */
-  private windowSweep(hw: HitWindowDef, t: number, pos: V3, yaw: number): { a0: V3; b0: V3; a1: V3; b1: V3; r: number } {
+  private windowSweep(hw: HitWindowDef, t: number, pos: V3, yaw: number, pos0: V3 = pos, yaw0: number = yaw): { a0: V3; b0: V3; a1: V3; b1: V3; r: number } {
     const tr = this.content.tracks.get(hw.shapeTrack)!;
     const s0 = trackSegment(tr, t);
     const s1 = trackSegment(tr, t + 1);
     return {
-      a0: toWorld(s0.a, pos, yaw),
-      b0: toWorld(s0.b, pos, yaw),
+      a0: toWorld(s0.a, pos0, yaw0),
+      b0: toWorld(s0.b, pos0, yaw0),
       a1: toWorld(s1.a, pos, yaw),
       b1: toWorld(s1.b, pos, yaw),
       r: tr.radius,
@@ -469,23 +503,52 @@ export class Simulation implements SimCtx {
     const { run, t } = ev;
     for (const hw of run.def.hitWindows) {
       if (!inWindow(t, hw)) continue;
-      const sw = this.windowSweep(hw, t, p.pos, p.yaw);
+      // 体ごと回る技（旋鎌の回し薙ぎ）は、前の tick の向きから掃引する（1 tick で大きく回っても、間を飛び越えない）
+      const sw = run.def.spin ? this.windowSweep(hw, t, p.pos, p.yaw, p.prevPos, p.prevYaw) : this.windowSweep(hw, t, p.pos, p.yaw);
       for (const m of this.monsters) {
         if (m.dead || m.captured) continue;
         if (this.ledger.count(run.instanceId, hw.id, m.id) >= hw.maxHitsPerTarget) continue;
+        // 同じ group の別の形（旋鎌の刃と柄）が先に当たっていたら、この形は当てない
+        if (hw.group && this.ledger.count(run.instanceId, `group:${hw.group}`, m.id) > 0) continue;
         const hit = sweepCapsule(sw.a0, sw.b0, sw.a1, sw.b1, sw.r, monsterShapes(m));
         if (!hit) continue;
         this.ledger.record(run.instanceId, hw.id, m.id);
+        if (hw.group) this.ledger.record(run.instanceId, `group:${hw.group}`, m.id);
         this.applyPlayerHit(run, hw, t, m, hit.partIndex, hit.point);
       }
     }
   }
 
   private applyPlayerHit(run: ActionRun, hw: HitWindowDef, t: number, m: MonsterState, partIndex: number, point: V3): void {
+    const charge = run.def.charge;
+    let scale = charge ? charge.coefficientScale[run.chargeLevel] ?? 1 : 1;
+    // 勢い（旋鎌）: 始めた時の段階で威力が変わる。大技は、使った段階の倍率になる。
+    const M = familyOf(this.player, this.content).momentum;
+    const mo = run.def.momentum;
+    if (M && mo) scale *= mo.spendScale ? mo.spendScale[run.momentumLevel] ?? 1 : M.damageScale[run.momentumLevel] ?? 1;
+    const hitstop = hw.hitstopTicks + (charge ? charge.hitstopBonus[run.chargeLevel] ?? 0 : 0);
+    run.hitstop = hitstop;
+    this.dealPlayerDamage(m, partIndex, point, { actionId: run.def.actionId, windowId: hw.id, actionTick: t, motion: hw.damageCoefficient * scale, elementMotion: hw.elementCoefficient ?? 1, damageType: hw.damageType, hitstop, chargeLevel: run.chargeLevel });
+    if (M && mo?.gain && !run.momentumGained) {
+      run.momentumGained = true;
+      const p = this.player;
+      p.momentumTicks = 0;
+      if (p.momentum < M.max) {
+        p.momentum++;
+        this.emit({ type: 'momentum', level: p.momentum });
+      }
+    }
+  }
+
+  /** プレイヤーの攻撃（武器・矢）が部位に当たった時の、ダメージの計算と記録。 */
+  private dealPlayerDamage(
+    m: MonsterState,
+    partIndex: number,
+    point: V3,
+    h: { actionId: string; windowId: string; actionTick: number; motion: number; elementMotion: number; damageType: DamageType; hitstop: number; chargeLevel: number },
+  ): void {
     const weapon = weaponOf(this.player, this.content);
     const part = m.def.parts[partIndex]!;
-    const charge = run.def.charge;
-    const scale = charge ? charge.coefficientScale[run.chargeLevel] ?? 1 : 1;
     // 会心は seed 付き乱数。1 命中につき必ず 1 回引き、乱数列を入力だけで決まるようにする。
     const roll = this.rng.next() * 100;
     const T = this.content.player;
@@ -494,39 +557,101 @@ export class Simulation implements SimCtx {
     else if (weapon.affinity < 0 && roll < -weapon.affinity) crit = -1;
     const damage = computeDamage({
       attack: weapon.attack,
-      motion: hw.damageCoefficient * scale,
+      motion: h.motion,
       sharpness: weapon.sharpnessModifier,
-      hitzone: (m.parts[partIndex]!.broken && part.brokenHitzone ? part.brokenHitzone : part.hitzone)[hw.damageType],
+      hitzone: (m.parts[partIndex]!.broken && part.brokenHitzone ? part.brokenHitzone : part.hitzone)[h.damageType],
       crit: crit > 0 ? T.critMultiplier : crit < 0 ? 0.75 : 1,
       element: weapon.element.value,
-      elementMotion: hw.elementCoefficient ?? 1,
+      elementMotion: h.elementMotion,
       elementZone: part.elementZone,
       questModifier: this.questModifier,
     });
-    const hitstop = hw.hitstopTicks + (charge ? charge.hitstopBonus[run.chargeLevel] ?? 0 : 0);
-    run.hitstop = hitstop;
-    m.hitstop = hitstop;
+    m.hitstop = h.hitstop;
     this.totalDamage += damage;
     this.hitCount++;
-    this.recentHits.push({ tick: this.tick, actionId: run.def.actionId, windowId: hw.id, actionTick: t, partId: part.id, damage, crit });
+    this.recentHits.push({ tick: this.tick, actionId: h.actionId, windowId: h.windowId, actionTick: h.actionTick, partId: part.id, damage, crit });
     if (this.recentHits.length > 8) this.recentHits.shift();
     this.emit({
       type: 'hit',
       attacker: this.player.id,
       target: m.id,
-      actionId: run.def.actionId,
-      windowId: hw.id,
+      actionId: h.actionId,
+      windowId: h.windowId,
       partId: part.id,
       partIndex,
       damage,
       crit,
       pos: point,
       material: part.material,
-      hitstop,
-      chargeLevel: run.chargeLevel,
+      hitstop: h.hitstop,
+      chargeLevel: h.chargeLevel,
       tick: this.tick,
     });
-    applyDamageToMonster(m, partIndex, damage, hw.damageType, this);
+    applyDamageToMonster(m, partIndex, damage, h.damageType, this);
+  }
+
+  /**
+   * 矢を放つ（環弓）。向きは体の向き。正面の近くに部位があれば、いちばん近いものへ向きと高さを合わせる（狙いの補助）。
+   * 何も無ければ、胸の高さから水平に飛ぶ。
+   */
+  spawnProjectiles(spec: ShootDef, run: ActionRun): void {
+    const p = this.player;
+    const level = Math.min(run.chargeLevel, spec.speed.length - 1);
+    const from: V3 = { x: p.pos.x + Math.sin(p.yaw) * 0.5, y: p.pos.y + 1.35, z: p.pos.z + Math.cos(p.yaw) * 0.5 };
+    let yaw = p.yaw;
+    let pitch = 0;
+    let best = Infinity;
+    for (const m of this.monsters) {
+      if (m.dead || m.captured) continue;
+      for (const s of monsterShapes(m)) {
+        const c = s.b ? { x: (s.a.x + s.b.x) / 2, y: (s.a.y + s.b.y) / 2, z: (s.a.z + s.b.z) / 2 } : s.a;
+        const dx = c.x - from.x, dz = c.z - from.z;
+        const flat = Math.hypot(dx, dz);
+        if (flat < 0.5 || flat > AIM_RANGE) continue;
+        const off = Math.abs(angleDiff(p.yaw, yawOf(dx, dz)));
+        if (off > AIM_ASSIST_DEG * DEG) continue;
+        // 正面に近く、手前にあるものを優先する
+        const score = off * 20 + flat;
+        if (score < best) {
+          best = score;
+          yaw = yawOf(dx, dz);
+          pitch = Math.atan2(c.y - from.y, flat);
+        }
+      }
+    }
+    const speed = (spec.speed[level] ?? spec.speed[0] ?? 30) / 60;
+    for (let i = 0; i < spec.count; i++) {
+      const spread = spec.count > 1 ? (i / (spec.count - 1) - 0.5) * spec.spreadDeg * DEG : 0;
+      const y = yaw + spread;
+      const vel: V3 = { x: Math.sin(y) * Math.cos(pitch) * speed, y: Math.sin(pitch) * speed, z: Math.cos(y) * Math.cos(pitch) * speed };
+      this.projectiles.push({ id: this.nextProjectile++, pos: { ...from }, prevPos: { ...from }, vel, life: ARROW_LIFE_TICKS, travelled: 0, actionId: run.def.actionId, coefficient: spec.coefficient[level] ?? spec.coefficient[0] ?? 0.3, level });
+    }
+    this.emit({ type: 'shoot', count: spec.count, level, pos: from });
+  }
+
+  private stepProjectiles(): void {
+    if (this.projectiles.length === 0) return;
+    const keep: Projectile[] = [];
+    for (const a of this.projectiles) {
+      a.prevPos = { ...a.pos };
+      const next: V3 = { x: a.pos.x + a.vel.x, y: a.pos.y + a.vel.y, z: a.pos.z + a.vel.z };
+      let done = false;
+      for (const m of this.monsters) {
+        if (m.dead || m.captured) continue;
+        const hit = sweepCapsule(a.pos, a.pos, next, next, ARROW_RADIUS, monsterShapes(m));
+        if (!hit) continue;
+        const dist = a.travelled + Math.hypot(hit.point.x - a.pos.x, hit.point.y - a.pos.y, hit.point.z - a.pos.z);
+        this.dealPlayerDamage(m, hit.partIndex, hit.point, { actionId: a.actionId, windowId: 'arrow', actionTick: 0, motion: a.coefficient * arrowDistanceScale(dist), elementMotion: 1, damageType: 'shot', hitstop: 2, chargeLevel: a.level });
+        done = true;
+        break;
+      }
+      if (done) continue;
+      a.pos = next;
+      a.travelled += Math.hypot(a.vel.x, a.vel.y, a.vel.z);
+      a.life--;
+      if (a.life > 0 && a.pos.y > -0.5) keep.push(a);
+    }
+    this.projectiles = keep;
   }
 
   private resolveMonsterAttacks(): void {
@@ -597,6 +722,8 @@ export class Simulation implements SimCtx {
     parts.push(p.itemIndex, p.items.map((s) => s.count).join(','), p.itemUse ? `${p.itemUse.itemId}:${p.itemUse.done ? 1 : 0}` : '-', p.pendingItem ? 1 : 0, p.carving ? p.carving.source : '-');
     for (const m of this.monsters) parts.push(m.trapTicks, m.trapCount, m.tranq, m.tranqTicks, m.captured ? 1 : 0);
     for (const t of this.traps) parts.push(t.x, t.z, t.state, t.arm, t.life);
+    parts.push(p.momentum, p.momentumTicks);
+    for (const a of this.projectiles) parts.push(a.pos.x, a.pos.y, a.pos.z, a.life);
     if (this.hunt) {
       const h = this.hunt;
       parts.push(h.phase, h.reason ?? '-', h.ticks, h.faints, h.returnTicks, h.closed ? 1 : 0, h.loot.map((g) => `${g.itemId}@${g.source}`).join(','), Object.entries(h.carves).map(([k, v]) => `${k}=${v}`).join(','));

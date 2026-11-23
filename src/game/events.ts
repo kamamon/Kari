@@ -44,6 +44,9 @@ export type SimEvent =
   | { type: 'monster_respawn'; target: string }
   | { type: 'player_hurt'; damage: number; reaction: 'flinch' | 'knockdown'; pos: V3 }
   | { type: 'guard'; damage: number; pos: V3 }
+  | { type: 'parry'; kind: 'parry' | 'counter'; pos: V3 }
+  | { type: 'momentum'; level: number }
+  | { type: 'shoot'; count: number; level: number; pos: V3 }
   | { type: 'guard_break'; damage: number; pos: V3 }
   | { type: 'evade'; pos: V3 }
   | { type: 'player_dead' }

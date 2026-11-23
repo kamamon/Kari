@@ -1,15 +1,23 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.3.0",
+  "contentVersion": "0.4.0",
   "files": {
     "actions": [
       "actions/player_common.json",
       "actions/heavy_blade.json",
+      "actions/guard_blade.json",
+      "actions/reap_scythe.json",
+      "actions/long_lance.json",
+      "actions/ring_bow.json",
       "actions/training_dummy.json",
       "actions/galdros.json"
     ],
     "tracks": [
       "tracks/heavy_blade.json",
+      "tracks/guard_blade.json",
+      "tracks/reap_scythe.json",
+      "tracks/long_lance.json",
+      "tracks/ring_bow.json",
       "tracks/training_dummy.json",
       "tracks/galdros.json"
     ],

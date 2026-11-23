@@ -3,7 +3,7 @@
 import { APP_VERSION, BUILD_ID } from '../core/assets';
 import { phaseAt } from '../game/action';
 import type { SimEvent } from '../game/events';
-import { isInvulnerable } from '../game/player';
+import { familyOf, isInvulnerable } from '../game/player';
 import type { Simulation } from '../game/sim';
 import type { InputHub } from '../input/hub';
 import type { GameView } from '../render/view';
@@ -38,6 +38,7 @@ export class Hud {
   private verifyBtn: HTMLButtonElement;
   private toasts: HTMLElement;
   private item: HTMLElement;
+  private momentum: HTMLElement;
   private wrap: HTMLElement;
   private wrapText: HTMLElement;
   private dmgLayer: HTMLElement;
@@ -80,6 +81,8 @@ export class Hud {
     this.toasts.id = 'toasts';
     // 選んでいる道具と、達成後の案内（剥ぎ取りの残りと帰還）
     this.item = el('div', 'hud-item', this.root);
+    this.momentum = el('div', 'hud-momentum', this.root);
+    this.momentum.hidden = true;
     this.wrap = el('div', 'hud-wrap', this.root);
     this.wrap.hidden = true;
     this.wrapText = el('span', '', this.wrap);
@@ -148,6 +151,9 @@ export class Hud {
         case 'evade':
           this.toast('回避');
           break;
+        case 'parry':
+          this.toast(e.kind === 'counter' ? '受け返し' : '受け流し');
+          break;
         case 'guard':
           this.toast('防御');
           break;
@@ -214,6 +220,10 @@ export class Hud {
     this.set('item', itemText, () => {
       this.item.textContent = itemText;
       this.item.hidden = itemText === '';
+      // 勢い（旋鎌）: 段階を印で出す
+      const M = familyOf(sim.player, sim.content).momentum;
+      this.momentum.hidden = !M || !sim.player.drawn;
+      if (M) this.momentum.textContent = `勢い ${'●'.repeat(sim.player.momentum)}${'○'.repeat(M.max - sim.player.momentum)}`;
     });
     // 達成後: 剥ぎ取りの残りと、帰還までの時間
     let wrap = '';

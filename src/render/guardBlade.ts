@@ -1,5 +1,5 @@
 // 護刃（里鍛ちの護刃）の剣と盾の仮モデル。設定図（art-source/weapon/weapon_gojin_*_v1.png）の輪郭を測った寸法で
-// 形を組み、図をそのまま貼る。まだゲームには出ない（武器としての実装は未着手。素材ビューアで見られる）。
+// 形を組み、図をそのまま貼る。v0.4.0 からゲーム内で使う。
 import { Group } from 'three';
 import { addSingleEdgeSword, ArtMesh, type ArtStatus, type SwordDims } from './artMesh';
 import type { WeaponModel } from './heavyBlade';
@@ -45,5 +45,13 @@ export function buildGuardBladeSword(): WeaponModel {
  * 原点は裏面の中央、+Z が表。組み方は shield.ts。
  */
 export function buildGuardBladeShield(): WeaponModel {
-  return buildPlankShield('model.weapon.guard_blade.001.shield', WEAPON_SHEETS.gojinShieldFront, WEAPON_SHEETS.gojinShieldBack, GOJIN_SHIELD_OUTLINE, { bulge: 0.034, thick: 0.024, halfW: 0.2345, halfH: 0.3 });
+  return buildPlankShield('model.weapon.guard_blade.001.shield', WEAPON_SHEETS.gojinShieldFront, WEAPON_SHEETS.gojinShieldBack, GOJIN_SHIELD_OUTLINE, {
+    bulge: 0.034,
+    thick: 0.024,
+    halfW: 0.2345,
+    halfH: 0.3,
+    // 裏の図（採用）を測った位置: 取っ手は表から見て右、革帯は左
+    handle: { x: 0.116, y0: 0.125, y1: -0.045, r: 0.016, off: 0.034 },
+    strap: { x: -0.084, y0: 0.12, y1: -0.075, w: 0.042, off: 0.06 },
+  });
 }

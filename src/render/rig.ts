@@ -5,7 +5,11 @@
 // 単位 m、Y 上、+Z 前。身長 1.75m。右手側は -X。
 import { Bone, DataTexture, DoubleSide, Group, Matrix4, MeshLambertMaterial, Object3D, Quaternion, SRGBColorSpace, Skeleton, SkinnedMesh, TextureLoader, Vector3 } from 'three';
 import { assetUrl } from '../core/assets';
-import { buildHeavyBlade } from './heavyBlade';
+import { buildBow } from './bow';
+import { buildGuardBladeShield, buildGuardBladeSword } from './guardBlade';
+import { buildHeavyBlade, type WeaponModel } from './heavyBlade';
+import { buildGreatShield, buildLance } from './lance';
+import { buildScythe } from './scythe';
 import { HUNTER_ATLAS } from './hunterAtlas';
 import { REST, buildHunterBody } from './hunterBody';
 import { JOINTS, type BodyPose, type JointName } from './poses';
@@ -19,11 +23,35 @@ const FOREARM = REST.forearm;
 const HAND = 0.04;
 const TUMBLE_PIVOT = 0.55;
 
+/** 武器系統ごとの仮モデル（握りが原点、+Y が武器の先）。無い系統は断岳剣で代用する。 */
+const WEAPON_BUILDERS: Record<string, () => WeaponModel> = {
+  heavy_blade: buildHeavyBlade,
+  guard_blade: buildGuardBladeSword,
+  reap_scythe: buildScythe,
+  long_lance: buildLance,
+  ring_bow: buildBow,
+};
+const SHIELD_BUILDERS = { shield_small: buildGuardBladeShield, shield_great: buildGreatShield } as const;
+export type ShieldKind = keyof typeof SHIELD_BUILDERS;
+
+/** 両腕の持ち方。two = 両手で 1 本を持つ（もう片方は握りから along だけ先）/ other = もう片方の手の位置（武器のローカル座標。弓の弦） */
+export interface HandsSpec {
+  two: boolean;
+  along?: number;
+  primary?: 'right' | 'left';
+  other?: { x: number; y: number; z: number } | null;
+}
+
 export class HunterRig {
   readonly root = new Group();
   readonly joints = {} as Record<JointName, Object3D>;
   readonly sockets = { hand_r: new Object3D(), hand_l: new Object3D(), back: new Object3D(), hip: new Object3D() };
-  readonly weapon: Group;
+  /** 手に持つ武器の入れ物（中身は武器系統ごとに差し替える）と、左腕の盾の入れ物 */
+  readonly weapon = new Group();
+  readonly shield = new Group();
+  familyId = '';
+  private models: Record<string, WeaponModel> = {};
+  private shields: Partial<Record<ShieldKind, WeaponModel>> = {};
   private tumbleYaw = new Group();
   private tumble = new Group();
   private tumbleBack = new Group();
@@ -133,12 +161,51 @@ export class HunterRig {
     // 手の socket: 刃は前腕の前方やや上へ向く
     this.orient(this.sockets.hand_r, new Vector3(0, 0.35, 1), new Vector3(1, 0, 0));
 
-    const blade = buildHeavyBlade();
-    this.weapon = blade.group;
-    this.weaponArt = blade.art;
-    this.weaponTriangles = blade.triangles;
+    // 腰の socket: 短い剣を納める（握りが左腰、刃は後ろ下へ）
+    this.sockets.hip.position.set(0.2, 0.02, -0.02);
+    this.orient(this.sockets.hip, new Vector3(0.05, -0.85, -0.5), new Vector3(1, 0, 0));
     this.weapon.matrixAutoUpdate = false;
-    this.root.add(this.weapon);
+    this.shield.matrixAutoUpdate = false;
+    this.shield.visible = false;
+    this.root.add(this.weapon, this.shield);
+    this.setFamily('heavy_blade');
+  }
+
+  /** 手に持つ武器（と左腕の盾）を、武器系統のものへ差し替える。 */
+  setFamily(id: string, offhand?: ShieldKind): void {
+    if (id === this.familyId) return;
+    this.familyId = id;
+    const m = (this.models[id] ??= (WEAPON_BUILDERS[id] ?? buildHeavyBlade)());
+    this.weapon.clear();
+    this.weapon.add(m.group);
+    this.weaponArt = m.art;
+    this.weaponTriangles = m.triangles;
+    this.shield.clear();
+    this.shield.visible = !!offhand;
+    if (offhand) {
+      const s = (this.shields[offhand] ??= SHIELD_BUILDERS[offhand]());
+      this.shield.add(s.group);
+      this.weaponArt = [...m.art, ...s.art];
+    }
+  }
+
+  /** 盾を、アクターのローカル座標の位置へ置き（表は前。yaw で左右へ向ける）、左腕を IK で伸ばす。姿勢と武器を置いた後に呼ぶ。 */
+  shieldTo(pos: { x: number; y: number; z: number }, yaw = 0): void {
+    this.shield.matrix.makeRotationY(yaw).setPosition(pos.x, pos.y, pos.z);
+    this.shield.matrixWorldNeedsUpdate = true;
+    this.root.updateMatrixWorld(true);
+    const target = new Vector3(pos.x, pos.y, pos.z - 0.04).applyMatrix4(this.root.matrixWorld);
+    const rootQ = this.root.getWorldQuaternion(this.q2);
+    this.solveArm(this.joints.upperArmL, this.joints.forearmL, target, new Vector3(0.7, -0.6, -0.3).applyQuaternion(rootQ));
+  }
+
+  /** 盾を背中へ付ける（納刀中）。姿勢を設定した後に呼ぶ。 */
+  shieldToBack(): void {
+    this.root.updateMatrixWorld(true);
+    const inv = this.m2.copy(this.root.matrixWorld).invert();
+    const local = this.m1.makeRotationY(Math.PI).setPosition(0.04, 0.2, -0.2);
+    this.shield.matrix.multiplyMatrices(inv, this.joints.chest.matrixWorld).multiply(local);
+    this.shield.matrixWorldNeedsUpdate = true;
   }
 
   /** +Y を dir、+X を normal に近い向きへ揃える回転を obj に設定する。 */
@@ -181,7 +248,7 @@ export class HunterRig {
   }
 
   /** 武器を socket（背中・手）へ付ける。姿勢を設定した後に呼ぶ。 */
-  weaponToSocket(which: 'back' | 'hand_r'): void {
+  weaponToSocket(which: 'back' | 'hand_r' | 'hip'): void {
     this.root.updateMatrixWorld(true);
     const inv = this.m2.copy(this.root.matrixWorld).invert();
     this.weapon.matrix.multiplyMatrices(inv, this.sockets[which].matrixWorld);
@@ -192,7 +259,7 @@ export class HunterRig {
    * 武器を軌道（アクターのローカル座標）へ置き、両腕を IK で握りへ伸ばす。
    * 判定と同じ軌道データを使うので、見える刃と当たり判定が一致する。
    */
-  weaponToTrack(grip: { x: number; y: number; z: number }, dir: { x: number; y: number; z: number }, normal: readonly number[], twoHanded: boolean): void {
+  weaponToTrack(grip: { x: number; y: number; z: number }, dir: { x: number; y: number; z: number }, normal: readonly number[], hands: HandsSpec): void {
     const d = this.v4.set(dir.x, dir.y, dir.z).normalize();
     const b = this.basis(d, new Vector3(normal[0], normal[1], normal[2]));
     b.setPosition(grip.x, grip.y, grip.z);
@@ -202,10 +269,17 @@ export class HunterRig {
     const gripW = new Vector3(grip.x, grip.y, grip.z).applyMatrix4(this.root.matrixWorld);
     const dirW = new Vector3(dir.x, dir.y, dir.z).normalize().transformDirection(this.root.matrixWorld);
     const rootQ = this.root.getWorldQuaternion(this.q2);
-    this.solveArm(this.joints.upperArmR, this.joints.forearmR, gripW, new Vector3(-0.6, -0.6, -0.5).applyQuaternion(rootQ));
-    if (twoHanded) {
-      const left = gripW.clone().addScaledVector(dirW, 0.2);
-      this.solveArm(this.joints.upperArmL, this.joints.forearmL, left, new Vector3(0.6, -0.6, -0.5).applyQuaternion(rootQ));
+    const J = this.joints;
+    const right: [Object3D, Object3D, Vector3] = [J.upperArmR, J.forearmR, new Vector3(-0.6, -0.6, -0.5).applyQuaternion(rootQ)];
+    const left: [Object3D, Object3D, Vector3] = [J.upperArmL, J.forearmL, new Vector3(0.6, -0.6, -0.5).applyQuaternion(rootQ)];
+    const [first, second] = hands.primary === 'left' ? [left, right] : [right, left];
+    this.solveArm(first[0], first[1], gripW, first[2]);
+    if (hands.two) {
+      this.solveArm(second[0], second[1], gripW.clone().addScaledVector(dirW, hands.along ?? 0.2), second[2]);
+    } else if (hands.other) {
+      // もう片方の手は、武器の上の決まった点へ（弓の弦）
+      const o = new Vector3(hands.other.x, hands.other.y, hands.other.z).applyMatrix4(this.weapon.matrix).applyMatrix4(this.root.matrixWorld);
+      this.solveArm(second[0], second[1], o, second[2]);
     }
   }
 

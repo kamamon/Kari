@@ -17,7 +17,8 @@ import { BladeTrail, GroundRings, Particles } from './effects';
 import { GaldrosRig } from './galdrosRig';
 import { DummyRig, type MonsterRig } from './monsterRig';
 import { blendPose, clipPose, deadPose, emptyPose, guardPose, hurtPose, locomotionPose, type BodyPose } from './poses';
-import { HunterRig } from './rig';
+import { buildArrow } from './bow';
+import { HunterRig, type HandsSpec } from './rig';
 
 type WeaponPlace = { mode: 'back' } | { mode: 'hand' } | { mode: 'track'; grip: V3; dir: V3; normal: readonly number[] };
 
@@ -35,6 +36,8 @@ export class GameView {
   readonly scene = new Scene();
   readonly cam: FollowCamera;
   readonly hunter = new HunterRig();
+  /** 飛んでいる矢の形（使い回す） */
+  private arrows: Group[] = [];
   readonly monsterRig: MonsterRig | null = null;
   private hazardViews = new Map<number, { group: Group; ring: Mesh; rock: Mesh }>();
   private trapViews = new Map<number, { group: Group; ring: Mesh; core: Mesh }>();
@@ -252,6 +255,12 @@ export class GameView {
     let key: string;
     let pose: BodyPose;
     let weapon: WeaponPlace = p.drawn ? { mode: 'hand' } : { mode: 'back' };
+    this.hunter.setFamily(fam.id, fam.offhand);
+    // 盾（左腕）の位置: 構えていない時の位置から、防御の位置へどれだけ寄せるか。行動が軌道を持つ時はそれに従う。
+    let shieldU = 0;
+    let shieldAt: V3 | null = null;
+    let shieldOut = p.drawn;
+    const hands: HandsSpec = { two: fam.twoHanded, along: fam.otherHandAlong, primary: fam.primaryHand, other: null };
     const ready: WeaponPlace = { mode: 'track', grip: fromArr(fam.ready.grip), dir: norm(fromArr(fam.ready.dir)), normal: fam.ready.planeNormal };
 
     if (p.mode === 'action' && p.action) {
@@ -266,6 +275,15 @@ export class GameView {
         const tr = content.tracks.get(run.def.weaponTrack)!;
         const s = sampleTrack(tr, t);
         weapon = { mode: 'track', grip: s.grip, dir: s.dir, normal: tr.planeNormal ?? [1, 0, 0] };
+        shieldOut = true;
+      }
+      if (run.def.offhandTrack) shieldAt = sampleTrack(content.tracks.get(run.def.offhandTrack)!, t).grip;
+      else if (run.def.guardWindows) shieldU = 1;
+      // 弓: 矢を放つまで、右手で弦を引く
+      const shoot = run.def.shoot?.[0];
+      if (shoot && fam.primaryHand === 'left' && t < shoot.tick) {
+        const pull = Math.min(1, (t + run.chargeTicks) / (shoot.tick + 14));
+        hands.other = { x: 0, y: 0.02, z: 0.17 + 0.36 * pull };
       }
     } else if (p.mode === 'guard' && p.guard && fam.guard) {
       const g = p.guard;
@@ -282,6 +300,7 @@ export class GameView {
         else if (g.phase === 'recoil') shake = 1 - g.tick / G.recoilTicks;
         pose = guardPose(blend, shake);
         const u = smoothstep(blend);
+        shieldU = u;
         weapon = {
           mode: 'track',
           grip: lerpV(fromArr(fam.ready.grip), fromArr(G.pose.grip), u),
@@ -314,8 +333,18 @@ export class GameView {
     this.lastPose = pose;
 
     this.hunter.setPose(pose);
-    if (weapon.mode === 'track') this.hunter.weaponToTrack(weapon.grip, weapon.dir, weapon.normal, fam.twoHanded);
-    else this.hunter.weaponToSocket(weapon.mode === 'back' ? 'back' : 'hand_r');
+    if (weapon.mode === 'track') this.hunter.weaponToTrack(weapon.grip, weapon.dir, weapon.normal, hands);
+    else this.hunter.weaponToSocket(weapon.mode === 'back' ? fam.sheathSocket ?? 'back' : 'hand_r');
+    if (fam.offhand) {
+      // 盾: 抜刀中は左腕で前に持ち、納刀中・被弾中・力尽きた時は背中へ
+      if (shieldOut && p.mode !== 'hurt' && p.mode !== 'dead' && fam.offhandReady) {
+        const ready = fromArr(fam.offhandReady);
+        const at = shieldAt ?? (fam.offhandGuard ? lerpV(ready, fromArr(fam.offhandGuard), shieldU) : ready);
+        this.hunter.shieldTo(at, shieldAt ? 0 : 0.5 * (1 - shieldU));
+      } else {
+        this.hunter.shieldToBack();
+      }
+    }
     this.hunter.root.updateMatrixWorld(true);
     this.hunter.setGhost(p.invulnTicks > 0 && p.mode !== 'hurt' && Math.floor(this.time * 14) % 2 === 0);
     this.playerShadow.position.set(pos.x, sim.world.groundHeight(pos.x, pos.z) + 0.03, pos.z);
@@ -338,6 +367,7 @@ export class GameView {
     }
     this.syncHazards(sim);
     this.syncTraps(sim);
+    this.syncArrows(sim, alpha);
 
     // ---- カメラ・光・エフェクト ----
     const sens = this.settings.camSensitivity;
@@ -353,6 +383,28 @@ export class GameView {
   }
 
   /** 罠: 置いた場所に輪と芯を出す。作動前は暗く、作動可能で青銅色に脈打ち、捕らえている間は明るくちらつく。 */
+  /** 飛んでいる矢を、simulation の位置へ置く（向きは進む向き）。 */
+  private syncArrows(sim: Simulation, alpha: number): void {
+    const list = sim.projectiles;
+    for (let i = 0; i < Math.max(list.length, this.arrows.length); i++) {
+      const a = list[i];
+      let g = this.arrows[i];
+      if (!a) {
+        if (g) g.visible = false;
+        continue;
+      }
+      if (!g) {
+        g = buildArrow().group;
+        this.arrows[i] = g;
+        this.scene.add(g);
+      }
+      g.visible = true;
+      const pos = lerpV(a.prevPos, a.pos, alpha);
+      g.position.set(pos.x, pos.y, pos.z);
+      g.quaternion.setFromUnitVectors(this.tmpA.set(0, 1, 0), this.tmpB.set(a.vel.x, a.vel.y, a.vel.z).normalize());
+    }
+  }
+
   private syncTraps(sim: Simulation): void {
     const seen = new Set<number>();
     for (const t of sim.traps) {

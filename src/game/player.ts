@@ -2,7 +2,7 @@
 // 状態: free（移動）/ action（データ定義の行動）/ guard / hurt / dead
 import { DEG, angleDiff, forwardOf, turnToward, v3, yawOf, type V3 } from '../core/math';
 import type { SeededRng } from '../core/seededRng';
-import type { Content, GuardDef, HazardDef, ItemDef, ItemStack, WeaponDef, WeaponFamilyDef } from '../data/schemas';
+import type { ActionDef, Content, GuardDef, HazardDef, ItemDef, ItemStack, ShootDef, WeaponDef, WeaponFamilyDef } from '../data/schemas';
 import { inWindow, newRun, type ActionRun } from './action';
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
@@ -33,7 +33,10 @@ export interface PlayerState {
   hurt: { kind: 'flinch' | 'knockdown'; tick: number; duration: number; dirYaw: number } | null;
   deadTicks: number;
   invulnTicks: number;
-  buffer: { main: number; sub: number; dodge: number; weapon: number; item: number };
+  buffer: { main: number; sub: number; dodge: number; weapon: number; item: number; special: number };
+  /** 勢い（旋鎌）の段階と、最後に振ってからの tick 数。勢いの無い武器では 0 のまま。 */
+  momentum: number;
+  momentumTicks: number;
   /** 狩猟中の持ち物（依頼の支給品）。数が 0 になっても欄は残る。 */
   items: ItemStack[];
   itemIndex: number;
@@ -68,13 +71,15 @@ export interface SimCtx {
   carveTarget(): string | null;
   /** 剥ぎ取り 1 回分を確定する */
   carve(source: string): void;
+  /** 矢を放つ（環弓）。向きと狙いは、この時点のプレイヤーと敵の位置から決める。 */
+  spawnProjectiles(spec: ShootDef, run: ActionRun): void;
 }
 
 /** 剥ぎ取りの行動。素材は recovery の始まりで手に入る。 */
 const CARVE_ACTION = 'player.common.carve';
 
 /** 選んでいる道具を使い始める。使えない時は理由を知らせて false。 */
-function tryUseItem(p: PlayerState, ctx: SimCtx): boolean {
+function tryUseItem(p: PlayerState, ctx: SimCtx, keepDrawn = false): boolean {
   const stack = p.items[p.itemIndex];
   const item = stack ? ctx.content.items.get(stack.itemId) : undefined;
   if (!stack || !item || stack.count <= 0) {
@@ -86,6 +91,7 @@ function tryUseItem(p: PlayerState, ctx: SimCtx): boolean {
     return false;
   }
   const run = startAction(p, item.useActionId, ctx);
+  run.keepDrawn = keepDrawn;
   p.itemUse = { itemId: item.id, instanceId: run.instanceId, done: false };
   ctx.emit({ type: 'item_use', itemId: item.id, pos: { ...p.pos } });
   return true;
@@ -116,7 +122,9 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
     hurt: null,
     deadTicks: 0,
     invulnTicks: 0,
-    buffer: { main: 0, sub: 0, dodge: 0, weapon: 0, item: 0 },
+    buffer: { main: 0, sub: 0, dodge: 0, weapon: 0, item: 0, special: 0 },
+    momentum: 0,
+    momentumTicks: 0,
     items: supplies.map((s) => ({ itemId: s.itemId, count: s.count })),
     itemIndex: 0,
     itemUse: null,
@@ -166,13 +174,26 @@ export function startAction(p: PlayerState, actionId: string, ctx: SimCtx): Acti
   p.guard = null;
   p.hurt = null;
   if (def.staminaCost) spendStamina(p, def.staminaCost, ctx);
+  // 勢い（旋鎌）: 始めた時の段階で、この行動の速さと威力が決まる。大技は段階をすべて使う。
+  const M = familyOf(p, ctx.content).momentum;
+  if (M && def.momentum) {
+    run.momentumLevel = p.momentum;
+    run.speed = M.speedScale[p.momentum] ?? 1;
+    p.momentumTicks = 0;
+    if (def.momentum.spendScale && p.momentum > 0) {
+      p.momentum = 0;
+      ctx.emit({ type: 'momentum', level: 0 });
+    }
+  }
   ctx.emit({ type: 'action_start', actor: p.id, actionId, instanceId: run.instanceId });
   return run;
 }
 
 function tryStartRoll(p: PlayerState, inp: InputFrame, ctx: SimCtx): boolean {
   const T = ctx.content.player;
-  const def = ctx.content.actions.get(T.rollActionId)!;
+  // 回避の行動は武器ごと（長尖槍は短い跳び）。無ければ共通の転がる回避。
+  const dodgeId = familyOf(p, ctx.content).actions.dodge ?? T.rollActionId;
+  const def = ctx.content.actions.get(p.drawn ? dodgeId : T.rollActionId)!;
   if (p.stamina < (def.staminaCost ?? 0)) {
     ctx.emit({ type: 'stamina_empty' });
     return false;
@@ -187,7 +208,7 @@ function tryStartRoll(p: PlayerState, inp: InputFrame, ctx: SimCtx): boolean {
   } else {
     p.yaw = dir;
   }
-  const run = startAction(p, T.rollActionId, ctx);
+  const run = startAction(p, def.actionId, ctx);
   run.moveYaw = dir;
   run.fixedDir = true;
   run.dirIndex = dirIndex;
@@ -201,8 +222,10 @@ function tryCancelInto(p: PlayerState, name: string, inp: InputFrame, ctx: SimCt
   const fam = familyOf(p, ctx.content);
   const actionId = fam.cancelNames[name];
   if (!actionId) return false;
-  const key = actionId === fam.actions.main ? 'main' : actionId === fam.actions.sub ? 'sub' : null;
+  const key = fam.cancelButtons?.[name] ?? (actionId === fam.actions.main ? 'main' : actionId === fam.actions.sub ? 'sub' : null);
   if (!key || p.buffer[key] <= 0) return false;
+  const def = ctx.content.actions.get(actionId);
+  if (def?.staminaCost && p.stamina < def.staminaCost) return false;
   consume(p, key);
   startAction(p, actionId, ctx);
   return true;
@@ -211,9 +234,29 @@ function tryCancelInto(p: PlayerState, name: string, inp: InputFrame, ctx: SimCt
 function finishAction(p: PlayerState): void {
   const fin = p.action?.def.onFinish;
   if (fin === 'drawn_idle') p.drawn = true;
-  else if (fin === 'sheathed_idle') p.drawn = false;
+  else if (fin === 'sheathed_idle' && !p.action?.keepDrawn) {
+    p.drawn = false;
+    p.momentum = 0; // 納刀で勢いは消える
+  }
   p.mode = 'free';
   p.action = null;
+}
+
+const inHitWindow = (def: ActionDef, t: number): boolean => def.hitWindows.some((hw) => inWindow(t, hw));
+
+/** 行動の最中にスティックで歩く（旋鎌の振り、環弓の引き絞り）。 */
+function freeMove(p: PlayerState, def: ActionDef, t: number, inp: InputFrame, ctx: SimCtx): void {
+  const fm = def.freeMove;
+  if (!fm || t < (fm.from ?? 0) || t >= (fm.to ?? def.durationTicks)) return;
+  const mag = Math.min(1, Math.hypot(inp.moveX, inp.moveZ));
+  if (mag <= MOVE_DEADZONE) return;
+  const want = yawOf(inp.moveX, inp.moveZ);
+  // 体ごと回る区間（回し薙ぎ）では、向きは変えずに歩くだけ
+  const spinning = !!def.spin && t >= def.spin.from && t < def.spin.to;
+  if (!spinning) p.yaw = turnToward(p.yaw, want, (fm.turnDegPerSec * DEG) / 60);
+  const d = (fm.speed * mag) / 60;
+  ctx.world.move(p.pos, ctx.content.player.radius, Math.sin(want) * d, Math.cos(want) * d, ctx.blockers());
+  p.moveSpeed = fm.speed * mag;
 }
 
 function stepAction(p: PlayerState, inp: InputFrame, ctx: SimCtx, depth = 0): void {
@@ -233,29 +276,39 @@ function stepAction(p: PlayerState, inp: InputFrame, ctx: SimCtx, depth = 0): vo
     }
   };
 
-  // 溜め: holdTick で止まり、ボタンを離す（または上限）で続きへ進む
+  // 溜め: holdTick で止まり、ボタンを離す（または上限、スタミナ切れ）で続きへ進む
   if (def.charge && run.tick === def.charge.holdTick && !run.released) {
     const b = def.charge.button === 'main' ? Btn.Main : Btn.Sub;
-    if (inp.held & b && run.chargeTicks < def.charge.maxHoldTicks) {
+    const drain = def.charge.staminaPerSec ?? 0;
+    if (inp.held & b && run.chargeTicks < def.charge.maxHoldTicks && (drain <= 0 || p.stamina > 0)) {
       run.chargeTicks++;
+      if (drain > 0) spendStamina(p, drain / 60, ctx);
       let level = 0;
       for (const lt of def.charge.levelTicks) if (run.chargeTicks >= lt) level++;
       if (level > run.chargeLevel) {
         run.chargeLevel = level;
         ctx.emit({ type: 'charge_level', level, pos: { ...p.pos } });
       }
+      // 溜めの最中に回避へ移れる技もある（環弓）
+      if (depth === 0) {
+        for (const cw of def.cancelWindows) {
+          if (!inWindow(run.tick, cw)) continue;
+          for (const name of cw.into) {
+            if (tryCancelInto(p, name, inp, ctx)) return stepAction(p, inp, ctx, 1);
+          }
+        }
+      }
       turn();
+      freeMove(p, def, run.tick, inp, ctx);
       return;
     }
     run.released = true;
   }
 
-  const t = run.tick;
-
   // キャンセルは定義した区間でだけ受け付ける
   if (depth === 0) {
     for (const cw of def.cancelWindows) {
-      if (!inWindow(t, cw)) continue;
+      if (!inWindow(run.tick, cw)) continue;
       for (const name of cw.into) {
         if (tryCancelInto(p, name, inp, ctx)) {
           stepAction(p, inp, ctx, 1);
@@ -266,23 +319,41 @@ function stepAction(p: PlayerState, inp: InputFrame, ctx: SimCtx, depth = 0): vo
   }
 
   turn();
+  freeMove(p, def, run.tick, inp, ctx);
 
-  if (def.rootMotion.mode === 'controller' && def.rootMotion.curveId) {
-    const curve = ctx.content.curves.get(def.rootMotion.curveId)!;
-    const d = sampleCurve(curve, t + 1) - sampleCurve(curve, t);
-    if (d !== 0) {
-      const f = forwardOf(run.fixedDir ? run.moveYaw : p.yaw);
-      ctx.world.move(p.pos, T.radius, f.x * d, f.z * d, ctx.blockers());
+  // 行動の tick を 1 つ進める。勢いで速くなっている時（旋鎌）は、判定の時間枠の外でだけ、もう 1 tick 進めることがある。
+  const one = (): void => {
+    const t = run.tick;
+    if (def.rootMotion.mode === 'controller' && def.rootMotion.curveId) {
+      const curve = ctx.content.curves.get(def.rootMotion.curveId)!;
+      const d = sampleCurve(curve, t + 1) - sampleCurve(curve, t);
+      if (d !== 0) {
+        const f = forwardOf(run.fixedDir ? run.moveYaw : p.yaw);
+        ctx.world.move(p.pos, T.radius, f.x * d, f.z * d, ctx.blockers());
+      }
+    }
+    // 体ごと回る（旋鎌の回し薙ぎ・大刈り）
+    const sp = def.spin;
+    if (sp && t >= sp.from && t < sp.to) {
+      const y = p.yaw + (sp.degrees * DEG) / (sp.to - sp.from);
+      p.yaw = Math.atan2(Math.sin(y), Math.cos(y));
+    }
+    for (const ev of def.events) {
+      if (ev.tick === t) ctx.emit({ type: 'action_event', actor: p.id, kind: ev.type, id: ev.id, pos: { ...p.pos } });
+    }
+    for (const sh of def.shoot ?? []) if (sh.tick === t) ctx.spawnProjectiles(sh, run);
+    p.attackEval = { run, t };
+    run.advanced = true;
+    run.tick++;
+  };
+  one();
+  if (run.speed < 1) {
+    run.speedAcc += 1 / run.speed - 1;
+    while (run.speedAcc >= 1 && run.tick < def.durationTicks && !inHitWindow(def, run.tick - 1) && !inHitWindow(def, run.tick)) {
+      run.speedAcc -= 1;
+      one();
     }
   }
-
-  for (const ev of def.events) {
-    if (ev.tick === t) ctx.emit({ type: 'action_event', actor: p.id, kind: ev.type, id: ev.id, pos: { ...p.pos } });
-  }
-
-  p.attackEval = { run, t };
-  run.advanced = true;
-  run.tick++;
   if (run.tick >= def.durationTicks) finishAction(p);
 }
 
@@ -307,8 +378,13 @@ function stepFree(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
       return stepAction(p, inp, ctx, 1);
     }
   }
-  // 道具: 納刀中だけ使える。抜刀中に押したら、納刀してから続けて使う。
+  // 道具: 納刀中だけ使える。抜刀中に押したら、納刀してから続けて使う。護刃だけは、抜刀したまま使える。
   if (consume(p, 'item') || (p.pendingItem && !p.drawn)) {
+    if (p.drawn && fam.itemsWhileDrawn) {
+      p.pendingItem = false;
+      if (tryUseItem(p, ctx, true)) return stepAction(p, inp, ctx, 1);
+      return;
+    }
     if (p.drawn) {
       p.pendingItem = true;
       startAction(p, fam.actions.sheathe, ctx);
@@ -334,6 +410,11 @@ function stepFree(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     p.mode = 'guard';
     p.guard = { phase: 'start', tick: 0 };
     return;
+  }
+  // 固有ボタンの技（防御の無い武器）
+  if (p.drawn && !fam.guard && fam.actions.special && consume(p, 'special')) {
+    startAction(p, fam.actions.special, ctx);
+    return stepAction(p, inp, ctx, 1);
   }
 
   const mag = Math.min(1, Math.hypot(inp.moveX, inp.moveZ));
@@ -367,6 +448,17 @@ function stepGuard(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   const T = ctx.content.player;
   const canAct = g.phase === 'start' || g.phase === 'hold' || g.phase === 'end';
   if (canAct && p.buffer.dodge > 0 && consume(p, 'dodge') && tryStartRoll(p, inp, ctx)) return stepAction(p, inp, ctx, 1);
+  // 構えたまま出す技（長尖槍の構え突き・受け返し）
+  if (isGuarding(p, G)) {
+    for (const [key, id] of [['main', fam.actions.guardMain], ['sub', fam.actions.guardSub]] as const) {
+      if (!id || p.buffer[key] <= 0) continue;
+      const def = ctx.content.actions.get(id)!;
+      if (p.stamina < (def.staminaCost ?? 0)) continue;
+      consume(p, key);
+      startAction(p, id, ctx);
+      return stepAction(p, inp, ctx, 1);
+    }
+  }
   const held = (inp.held & Btn.Special) !== 0;
   switch (g.phase) {
     case 'start':
@@ -387,7 +479,7 @@ function stepGuard(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     case 'recoil': {
       // 受け止めた反動で少し下がる（前半に大きく、後半は止まる）
       const u = g.tick / G.recoilTicks;
-      const d = (0.9 * 2 * (1 - u)) / G.recoilTicks;
+      const d = ((G.recoilDistance ?? 0.9) * 2 * (1 - u)) / G.recoilTicks;
       const f = forwardOf(p.yaw);
       ctx.world.move(p.pos, T.radius, -f.x * d, -f.z * d, ctx.blockers());
       g.tick++;
@@ -459,12 +551,13 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   p.moveSpeed = 0;
 
   // 先行入力: 押した tick を含めて inputBufferTicks の間だけ有効
-  for (const k of ['main', 'sub', 'dodge', 'weapon', 'item'] as const) if (p.buffer[k] > 0) p.buffer[k]--;
+  for (const k of ['main', 'sub', 'dodge', 'weapon', 'item', 'special'] as const) if (p.buffer[k] > 0) p.buffer[k]--;
   if (inp.pressed & Btn.Main) p.buffer.main = T.inputBufferTicks;
   if (inp.pressed & Btn.Sub) p.buffer.sub = T.inputBufferTicks;
   if (inp.pressed & Btn.Dodge) p.buffer.dodge = T.inputBufferTicks;
   if (inp.pressed & Btn.Weapon) p.buffer.weapon = T.inputBufferTicks;
   if (inp.pressed & Btn.Item) p.buffer.item = T.inputBufferTicks;
+  if (inp.pressed & Btn.Special) p.buffer.special = T.inputBufferTicks;
   // 道具の切り替えは、いつでもできる（使っている途中の道具は変わらない）
   if (p.items.length > 0) {
     if (inp.pressed & Btn.ItemNext) p.itemIndex = (p.itemIndex + 1) % p.items.length;
@@ -514,6 +607,16 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     if (!p.action || p.action.instanceId !== cv.instanceId) p.carving = null;
   }
 
+  // 勢い（旋鎌）: 振っていない時間が続くと消える
+  const M = familyOf(p, ctx.content).momentum;
+  if (M && p.momentum > 0) {
+    if (p.mode === 'action' && p.action?.def.momentum) p.momentumTicks = 0;
+    else if (++p.momentumTicks >= M.decayTicks) {
+      p.momentum = 0;
+      ctx.emit({ type: 'momentum', level: 0 });
+    }
+  }
+
   p.grounded = ctx.world.settle(p.pos, p.vel, T.gravity, 1 / 60);
 
   // スタミナ: 消費が終わってから待ち時間を置いて回復
@@ -547,12 +650,36 @@ export function resolveIncomingHit(p: PlayerState, hit: IncomingHit, ctx: SimCtx
   const toAttacker = yawOf(hit.attackerPos.x - p.pos.x, hit.attackerPos.z - p.pos.z);
   const pos = { x: p.pos.x, y: p.pos.y + 1.1, z: p.pos.z };
 
-  if (G && hit.guardable && isGuarding(p, G) && Math.abs(angleDiff(p.yaw, toAttacker)) <= (G.arcDegrees * DEG) / 2) {
+  // この tick に処理した行動 tick（行動の最中の防御と受け返しは、ここで見る）
+  const run = p.mode === 'action' ? p.action : null;
+  const at = run ? (p.attackEval && p.attackEval.run === run ? p.attackEval.t : run.tick) : 0;
+  const facing = (arc: number): boolean => Math.abs(angleDiff(p.yaw, toAttacker)) <= (arc * DEG) / 2;
+
+  // 受け返し（長尖槍）: 構えの区間に正面から受けると、無傷で反撃へ移る
+  const counter = run?.def.counter;
+  if (run && counter && hit.guardable && inWindow(at, counter) && facing(G?.arcDegrees ?? 120)) {
+    ctx.emit({ type: 'parry', kind: 'counter', pos });
+    startAction(p, counter.into, ctx);
+    return 'guarded';
+  }
+
+  const actionGuard = !!run && !!G && (run.def.guardWindows ?? []).some((w) => inWindow(at, w));
+  if (G && hit.guardable && (isGuarding(p, G) || actionGuard) && facing(G.arcDegrees)) {
+    // 受け流し（護刃）: 構えてすぐに受けると、削りもスタミナ消費も後退も無い
+    if (!actionGuard && G.parryTicks && p.guard) {
+      const since = p.guard.phase === 'start' ? p.guard.tick - G.activeFromTick : p.guard.phase === 'hold' ? G.startTicks - G.activeFromTick + p.guard.tick : Infinity;
+      if (since < G.parryTicks) {
+        p.guard = { phase: 'hold', tick: G.parryTicks };
+        ctx.emit({ type: 'parry', kind: 'parry', pos });
+        return 'guarded';
+      }
+    }
     if (p.stamina >= hit.guardCost) {
       spendStamina(p, hit.guardCost, ctx);
       const chip = Math.floor(hit.baseDamage * G.chipScale);
       p.hp = Math.max(0, p.hp - chip);
-      p.guard = { phase: 'recoil', tick: 0 };
+      // 行動の最中に受けた時は、その行動を続ける（後退しない）
+      if (!actionGuard) p.guard = { phase: 'recoil', tick: 0 };
       ctx.emit({ type: 'guard', damage: chip, pos });
       if (p.hp <= 0) killPlayer(p, ctx);
       return 'guarded';
@@ -562,6 +689,8 @@ export function resolveIncomingHit(p: PlayerState, hit: IncomingHit, ctx: SimCtx
     p.staminaDelay = T.staminaRegenDelayTicks;
     const dmg = Math.max(1, Math.floor(hit.baseDamage * G.breakDamageScale));
     p.hp = Math.max(0, p.hp - dmg);
+    p.mode = 'guard';
+    p.action = null;
     p.guard = { phase: 'break', tick: 0 };
     ctx.emit({ type: 'guard_break', damage: dmg, pos });
     if (p.hp <= 0) killPlayer(p, ctx);
@@ -578,6 +707,10 @@ export function resolveIncomingHit(p: PlayerState, hit: IncomingHit, ctx: SimCtx
   p.action = null;
   p.guard = null;
   p.mode = 'hurt';
+  if (p.momentum > 0) {
+    p.momentum = 0; // 被弾で勢いを失う
+    ctx.emit({ type: 'momentum', level: 0 });
+  }
   const knock = hit.reaction === 'knockdown';
   p.hurt = { kind: hit.reaction, tick: 0, duration: knock ? T.knockdownTicks : T.flinchTicks, dirYaw: toAttacker + Math.PI };
   if (knock) p.invulnTicks = T.knockdownInvulnTicks;

@@ -6,6 +6,7 @@ import { yawOf } from './core/math';
 import type { Content } from './data/schemas';
 import { Btn, type InputFrame } from './game/inputFrame';
 import { firstMismatch, runReplay } from './game/replay';
+import { familyOf } from './game/player';
 import { Simulation, type SimOptions } from './game/sim';
 import { GamepadInput } from './input/gamepad';
 import { InputHub } from './input/hub';
@@ -121,7 +122,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
     return {
       seed: DEFAULT_SEED,
       mapId: 'map.basin.training',
-      weaponId: 'weapon.heavy_blade.001',
+      weaponId: this.weaponId,
       monsterId: 'monster.training_dummy',
       monsterAttacks: this.store.value.dummyAttacks,
       questId,
@@ -199,6 +200,18 @@ export class App implements MenuHost, BaseHost, ResultHost {
   }
 
   // ---- BaseHost / ResultHost ----
+  /** いま装備している武器（保存はまだ無い。ページを読み込み直すと断岳剣に戻る） */
+  weaponId = 'weapon.heavy_blade.001';
+
+  setWeapon(id: string): void {
+    if (!this.content.weapons.has(id) || id === this.weaponId) return;
+    this.weaponId = id;
+    this.audio.play('ui');
+    // 拠点の後ろに見えている訓練場のハンターも、選んだ武器に持ち替える
+    this.createSession(null);
+    this.setOverlay('base');
+  }
+
   startTraining(): void {
     this.createSession(null);
     this.setOverlay(null);
@@ -347,9 +360,14 @@ export class App implements MenuHost, BaseHost, ResultHost {
       const pl = this.sim.player;
       const stack = pl.items[pl.itemIndex];
       this.touch.setHidden(['item', 'itemprev', 'itemnext'], pl.items.length === 0);
+      const labels = familyOf(pl, this.content).labels;
+      this.touch.setHidden(['special'], !labels?.special);
       this.touch.setLabels({
         weapon: pl.drawn ? '納刀' : '抜刀',
-        main: this.sim.carveTarget() ? '剥ぎ取り' : '斬る',
+        main: this.sim.carveTarget() ? '剥ぎ取り' : labels?.main ?? '斬る',
+        sub: labels?.sub ?? '薙ぐ',
+        special: labels?.special ?? '',
+        dodge: (pl.drawn && labels?.dodge) || '回避',
         item: stack ? `${this.content.items.get(stack.itemId)?.name ?? ''}\n×${stack.count}` : '道具',
       });
       this.touch.root.classList.toggle('item-empty', !!stack && stack.count === 0);
@@ -397,6 +415,9 @@ export class App implements MenuHost, BaseHost, ResultHost {
           play(e.phase === 'success' ? 'hunt_clear' : 'hunt_fail');
           break;
         case 'guard':
+          play('guard');
+          break;
+        case 'parry':
           play('guard');
           break;
         case 'guard_break':

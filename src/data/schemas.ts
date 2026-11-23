@@ -23,6 +23,11 @@ export interface HitWindowDef {
   elementCoefficient?: number;
   maxHitsPerTarget: number;
   hitstopTicks: number;
+  /**
+   * 同じ group の時間枠は、1 回の行動で同じ相手に 1 つだけ当たる（先に書いた方が優先）。
+   * 旋鎌の「刃」と「柄」のように、1 本の武器を威力の違う 2 つの形で判定する時に使う。
+   */
+  group?: string;
   // ここから下は「敵 → プレイヤー」の攻撃で使う拡張
   baseDamage?: number;
   guardable?: boolean;
@@ -50,6 +55,17 @@ export interface ChargeDef {
   maxHoldTicks: number;
   coefficientScale: number[];
   hitstopBonus: number[];
+  /** 溜めている間に減るスタミナ（毎秒）。0 になると自動で放つ（環弓）。 */
+  staminaPerSec?: number;
+}
+
+/** 矢を放つ。speed と coefficient は溜めの段階ごと（溜めの無い技は先頭の値）。 */
+export interface ShootDef {
+  tick: number;
+  count: number;
+  spreadDeg: number;
+  speed: number[];
+  coefficient: number[];
 }
 
 export interface ActionDef {
@@ -71,6 +87,20 @@ export interface ActionDef {
   invulnerable?: { from: number; to: number }[];
   charge?: ChargeDef;
   hazards?: HazardDef[];
+  // ---- 武器 5 系統のための拡張（docs/decisions.md D-052）----
+  /** 行動の最中も、スティックで歩ける（旋鎌の振り、環弓の引き絞り）。from/to を省くと行動の全体。 */
+  freeMove?: { speed: number; turnDegPerSec: number; from?: number; to?: number };
+  /** この区間は、行動の最中でも防御が有効（長尖槍の構え突き）。 */
+  guardWindows?: { from: number; to: number }[];
+  /** この区間に正面から攻撃を受けると、無傷で into の行動へ移る（長尖槍の受け返し）。 */
+  counter?: { from: number; to: number; into: string };
+  /** 勢い（旋鎌）: gain = 当てると 1 段階上がる / spendScale = 始めた時の段階をすべて使い、威力をその段階の倍率にする */
+  momentum?: { gain?: boolean; spendScale?: number[] };
+  shoot?: ShootDef[];
+  /** この区間に、体ごと回る（度。+ が左回り）。旋鎌の回し薙ぎ・大刈り。武器の軌道は体に対して決まるので、判定も一緒に回る。 */
+  spin?: { from: number; to: number; degrees: number };
+  /** 左腕の盾の軌道（見た目用。盾打ちでは判定の形と同じ軌道を指す） */
+  offhandTrack?: string;
 }
 
 /** 移動曲線。keys は [tick, 累積距離m]。controller がこの距離だけ進める。 */
@@ -110,6 +140,10 @@ export interface GuardDef {
   breakDamageScale: number;
   turnDegPerSec: number;
   pose: { grip: Triple; dir: Triple; planeNormal: Triple };
+  /** 防御が有効になってからこの tick 数の間に受けると「受け流し」: 削りもスタミナ消費も後退も無い（護刃）。 */
+  parryTicks?: number;
+  /** 受け止めた時に下がる距離 (m)。省くと 0.9。 */
+  recoilDistance?: number;
 }
 
 export interface WeaponFamilyDef {
@@ -120,9 +154,43 @@ export interface WeaponFamilyDef {
   drawnTurnDegPerSec: number;
   ready: { grip: Triple; dir: Triple; planeNormal: Triple };
   blade: { from: number; to: number; radius: number };
-  actions: { main: string; sub: string; drawAttack: string; draw: string; sheathe: string };
+  actions: {
+    main: string;
+    sub: string;
+    drawAttack: string;
+    draw: string;
+    sheathe: string;
+    /** 固有ボタンの技（防御の無い武器。旋鎌の大刈り） */
+    special?: string;
+    /** 防御を構えている時の、主・副ボタンの技（長尖槍の構え突き・受け返し） */
+    guardMain?: string;
+    guardSub?: string;
+    /** 回避の行動。省くと共通の転がる回避。 */
+    dodge?: string;
+  };
   cancelNames: Record<string, string>;
+  /** cancelNames の技を、どのボタンで出すか。省いた名前は、actions.main / sub と同じ技ならそのボタン。 */
+  cancelButtons?: Record<string, 'main' | 'sub' | 'special'>;
   guard: GuardDef | null;
+  /** 抜刀したまま道具を使える（護刃） */
+  itemsWhileDrawn?: boolean;
+  /** 勢い（旋鎌）。段階ごとの威力の倍率と、行動の時間の倍率（1 より小さいと速い）。 */
+  momentum?: { max: number; decayTicks: number; damageScale: number[]; speedScale: number[] };
+  // ---- ここから下は見た目だけに使う ----
+  /** 両手で持つ時、もう片方の手を握りから dir の向きへ何 m 離すか。省くと 0.2。 */
+  otherHandAlong?: number;
+  /** 軌道の握りを、どちらの手で持つか。省くと右。環弓は左手で弓を持ち、右手で弦を引く。 */
+  primaryHand?: 'right' | 'left';
+  /** 左腕に付ける盾と、構えていない時・防御の時の盾の位置（アクターのローカル座標） */
+  offhand?: 'shield_small' | 'shield_great';
+  offhandReady?: Triple;
+  offhandGuard?: Triple;
+  /** 納刀した武器を付ける場所。省くと背中。 */
+  sheathSocket?: 'back' | 'hip';
+  /** ボタンの表示名。special を省くと、固有ボタンを隠す。 */
+  labels?: { main: string; sub: string; special?: string; dodge?: string };
+  /** 拠点の武器選びに出す、ひとことの説明 */
+  summary?: string;
 }
 
 export interface WeaponDef {

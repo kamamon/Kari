@@ -264,6 +264,7 @@ function setSubject(s: 'hunter' | MonsterKey | 'glb' | 'weapons'): void {
   rack.visible = s === 'weapons';
   // 一覧では、ハンターは大きさの目安として立たせるだけ（手の剣と、取り付け位置の印は消す）
   hunter.weapon.visible = s !== 'weapons';
+  if (s === 'weapons') hunter.shield.visible = false;
   state.lookX = s === 'weapons' ? -0.35 : 0; // 一覧は左右に長いので、中央を見る
   cube.visible = axes.visible = s !== 'weapons'; // 物差しの立方体は、並べた武器と重なるので消す
   if (s === 'weapons') for (const ax of socketAxes) ax.visible = false;
@@ -344,7 +345,9 @@ function frame(ts: number): void {
   debug.begin();
 
   if (state.subject === 'hunter') {
-    const fam = content.families.get('heavy_blade')!;
+    // 技の id（player.<系統>.<技>）から武器系統を決め、その武器と盾を持たせる。共通の技は断岳剣で見せる。
+    const fam = content.families.get(a?.actionId.split('.')[1] ?? '') ?? content.families.get('heavy_blade')!;
+    hunter.setFamily(fam.id, fam.offhand);
     let missing = false;
     if (a) {
       const pose = clipPose(a.clip, t);
@@ -353,11 +356,21 @@ function frame(ts: number): void {
       if (a.weaponTrack) {
         const tr = content.tracks.get(a.weaponTrack)!;
         const s = sampleTrack(tr, t);
-        hunter.weaponToTrack(s.grip, s.dir, tr.planeNormal ?? [1, 0, 0], fam.twoHanded);
-      } else hunter.weaponToSocket('back');
+        const shoot = a.shoot?.[0];
+        const other = shoot && fam.primaryHand === 'left' && t < shoot.tick ? { x: 0, y: 0.02, z: 0.17 + 0.36 * Math.min(1, t / shoot.tick) } : null;
+        hunter.weaponToTrack(s.grip, s.dir, tr.planeNormal ?? [1, 0, 0], { two: fam.twoHanded, along: fam.otherHandAlong, primary: fam.primaryHand, other });
+        if (fam.offhand && fam.offhandReady) {
+          const at = a.offhandTrack ? sampleTrack(content.tracks.get(a.offhandTrack)!, t).grip : { x: fam.offhandReady[0], y: fam.offhandReady[1], z: fam.offhandReady[2] };
+          hunter.shieldTo(at, a.offhandTrack ? 0 : 0.5);
+        }
+      } else {
+        hunter.weaponToSocket(fam.sheathSocket ?? 'back');
+        if (fam.offhand) hunter.shieldToBack();
+      }
     } else {
       hunter.setPose(locomotionPose(false, t < 60 ? 0 : 4, time * 9, time));
-      hunter.weaponToSocket('back');
+      hunter.weaponToSocket(fam.sheathSocket ?? 'back');
+      if (fam.offhand) hunter.shieldToBack();
     }
     hunter.root.updateMatrixWorld(true);
     lines.push(`仮リグ: 関節 ${JOINTS.length} / socket ${Object.keys(hunter.sockets).length} / 全高 ${restHeight.toFixed(3)}m（基準姿勢。規格は 1.75m）`);

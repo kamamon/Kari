@@ -1,6 +1,7 @@
 // 仮ハンターの姿勢データ（手付けのキー姿勢）。正式な GLB クリップが来るまでの仮素材。
 // clip 名は技データ（public/data/actions）の clip と対応する。無い clip を似た名前で代用しない。
 // 角度は度。関節の回転軸: X 正 = 上体は前屈・脚は後ろ振り / Y 正 = 左へひねる / Z 正 = 左へ倒す。
+import { WEAPON_CLIP_SPECS } from './weaponClipSpecs';
 import { smoothstep } from '../core/math';
 
 export const JOINTS = [
@@ -213,6 +214,56 @@ export const CLIPS: Record<string, Clip> = {
     ],
   },
 };
+
+// ---- 護刃・旋鎌・長尖槍・環弓の仮アニメーション ----
+// 腕は武器の軌道へ IK で伸びるので、ここでは体のひねり・前傾・脚の踏み込みだけを、技の型ごとに決める。
+// 長さと有効判定の区間は、技のデータを作る道具（tools/gen-weapons.mjs）が書き出した一覧から取る。
+/** 上体のひねり（度。- が右へ開く）、前傾、ひざの沈み */
+const tw = (yaw: number, lean = 6, crouch = 0): J => ({
+  ...STANCE,
+  spine: [lean, yaw * 0.4, 0],
+  chest: [0, yaw, 0],
+  thighL: [-13 - crouch, 0, 4],
+  shinL: [17 + crouch * 1.3, 0, 0],
+  thighR: [12 + crouch * 0.4, 0, -4],
+  shinR: [15 + crouch * 0.6, 0, 0],
+});
+/** 左足を大きく踏み込んだ前傾 */
+const lunge = (lean: number, yaw = 10): J => ({ spine: [lean, 0, 0], chest: [lean * 0.5, yaw, 0], thighL: [-45, 0, 4], shinL: [50, 0, 0], thighR: [25, 0, -4], shinR: [20, 0, 0], head: [-lean * 0.6, 0, 0] });
+/** 構えを打ち消して、まっすぐ立つ（抜刀の始まり・納刀の終わり） */
+const UPRIGHT: J = { spine: [0, 0, 0], chest: [0, 0, 0], thighL: [0, 0, 0], shinL: [0, 0, 0], thighR: [0, 0, 0], shinR: [0, 0, 0], head: [0, 0, 0] };
+
+function styleClip(style: string, d: number, a0: number, a1: number): Clip {
+  const hold = Math.round(a1 + (d - a1) * 0.45);
+  const swing = (from: number, to: number, crouch: number): Key[] => [
+    { t: 0 },
+    { t: Math.round(a0 * 0.7), j: tw(from * 1.15, 2), py: -0.03 },
+    { t: a0, j: tw(from, 6, crouch), py: -0.05 },
+    { t: a1, j: tw(to, 12, crouch * 1.5), py: -0.08 },
+    { t: hold, j: tw(to * 0.85, 10, crouch), py: -0.07 },
+    { t: d },
+  ];
+  let keys: Key[];
+  switch (style) {
+    case 'slash_r2l': keys = swing(-34, 40, 6); break;
+    case 'slash_l2r': keys = swing(34, -42, 6); break;
+    case 'sweep_r2l': keys = swing(-58, 62, 9); break;
+    case 'sweep_l2r': keys = swing(58, -62, 9); break;
+    case 'thrust': keys = [{ t: 0 }, { t: Math.round(a0 * 0.7), j: tw(-35, 0, 4), py: -0.03 }, { t: a0, j: tw(-20, 8, 8), py: -0.06 }, { t: a1, j: lunge(18), py: -0.12 }, { t: hold, j: lunge(14), py: -0.1 }, { t: d }]; break;
+    case 'bash': keys = [{ t: 0 }, { t: Math.round(a0 * 0.8), j: tw(25, 0, 4), py: -0.03 }, { t: a1, j: lunge(14, -25), py: -0.1 }, { t: hold, j: lunge(10, -18), py: -0.08 }, { t: d }]; break;
+    case 'lunge': keys = [{ t: 0, j: UPRIGHT, py: 0.035 }, { t: Math.round(a0 * 0.6), j: tw(-20, -8), py: -0.02 }, { t: a0, j: tw(-10, -4, 4), py: -0.04 }, { t: a1, j: lunge(24), py: -0.16 }, { t: hold, j: lunge(18), py: -0.12 }, { t: d }]; break;
+    case 'spin': keys = [{ t: 0 }, { t: Math.round(a0 * 0.7), j: tw(-50, 4, 6), py: -0.05 }, { t: a0, j: tw(-30, 10, 12), py: -0.1 }, { t: a1, j: tw(-20, 12, 12), py: -0.1 }, { t: hold, j: tw(20, 10, 8), py: -0.07 }, { t: d }]; break;
+    case 'pull': keys = [{ t: 0 }, { t: a0, j: lunge(16), py: -0.1 }, { t: a1, j: tw(-25, -6, 4), py: -0.03 }, { t: hold, j: tw(-18, -2, 2), py: -0.03 }, { t: d }]; break;
+    case 'hop': keys = [{ t: 0 }, { t: Math.round(d * 0.35), j: tw(-10, 12, 14), py: -0.12 }, { t: Math.round(d * 0.75), j: tw(-10, 8, 8), py: -0.07 }, { t: d }]; break;
+    case 'stance': keys = [{ t: 0 }, { t: 6, j: tw(-12, 12, 12), py: -0.1 }, { t: d - 8, j: tw(-12, 12, 12), py: -0.1 }, { t: d }]; break;
+    case 'shoot': keys = [{ t: 0 }, { t: a0, j: { ...tw(-62, 0, 3), head: [0, 55, 0] }, py: -0.04 }, { t: d - 12, j: { ...tw(-62, 0, 3), head: [0, 55, 0] }, py: -0.04 }, { t: d }]; break;
+    case 'draw': keys = [{ t: 0, j: UPRIGHT, py: 0.035 }, { t: Math.round(d * 0.5), j: tw(-26, 4), py: -0.02 }, { t: d }]; break;
+    case 'sheathe': keys = [{ t: 0 }, { t: Math.round(d * 0.5), j: tw(-26, 4), py: -0.02 }, { t: d, j: UPRIGHT, py: 0.035 }]; break;
+    default: keys = [{ t: 0 }, { t: d }];
+  }
+  return { base: STANCE, basePy: STANCE_PY, keys };
+}
+for (const [name, style, d, a0, a1] of WEAPON_CLIP_SPECS) CLIPS[name] = styleClip(style, d, a0, a1);
 
 /** clip の姿勢。未定義の clip は null を返す（呼び出し側が欠落として表示する）。 */
 export function clipPose(name: string, tick: number): BodyPose | null {

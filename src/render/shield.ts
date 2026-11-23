@@ -1,7 +1,7 @@
 // 木の板の盾（護刃の盾・長尖槍の大盾）の仮モデルの組み方。設定図の外形（角の点）から、前へ丸くふくらむ板を作り、
 // 表には表の図、裏には裏の図（後ろから見た図なので左右を反転）を貼る。
 // 原点は裏面の中央（腕を当てる所）、+Z が表（敵の方）、+Y が上、+X は表から見て右。
-// 裏の取っ手と革帯は、まだ絵だけ（立体にしていない）。
+// 裏の取っ手（縦の棒）と革帯（縦に渡した弧）も、裏の図の位置に形として作る。色は裏の図から取る。
 import { Group } from 'three';
 import { ArtMesh, type ArtSheet, type ArtStatus, type P3 } from './artMesh';
 import type { WeaponModel } from './heavyBlade';
@@ -15,6 +15,9 @@ export interface ShieldDims {
   halfH: number;
   /** 幅の補正（設定図の幅 × この値。指定の幅に合わせる時に使う。絵の位置は変えない） */
   xScale?: number;
+  /** 裏の取っ手と革帯。x は表から見て右が +（裏の図では左右が逆）。y0 が上の端、y1 が下の端。 */
+  handle?: { x: number; y0: number; y1: number; r: number; off: number };
+  strap?: { x: number; y0: number; y1: number; w: number; off: number };
 }
 
 export function buildPlankShield(name: string, frontSheet: ArtSheet, backSheet: ArtSheet, outline: readonly (readonly [number, number])[], d: ShieldDims): WeaponModel {
@@ -54,6 +57,26 @@ export function buildPlankShield(name: string, frontSheet: ArtSheet, backSheet: 
     const a = at(p, RINGS, zFront), b = at(q, RINGS, zFront), c = at(q, RINGS, zBack), e = at(p, RINGS, zBack);
     const ua = front.planar([p[0] * 0.96, p[1] * 0.96, 0]), ub = front.planar([q[0] * 0.96, q[1] * 0.96, 0]);
     front.quad(a, b, c, e, [ua, ub, ub, ua]);
+  }
+  // 取っ手: 板から off だけ浮いた縦の棒（八角）と、上下の留め金
+  if (d.handle) {
+    const h = d.handle;
+    const zc = (y: number): number => zBack(h.x, y) - h.off;
+    const ring = (y: number, i: number): P3 => {
+      const a = (Math.PI * 2 * i) / 8;
+      return [h.x + h.r * Math.cos(a), y, zc(y) + h.r * Math.sin(a)];
+    };
+    for (let i = 0; i < 8; i++) back.quad(ring(h.y1, i), ring(h.y1, i + 1), ring(h.y0, i + 1), ring(h.y0, i));
+    for (const y of [h.y0, h.y1]) back.box(h.x - h.r * 1.3, h.x + h.r * 1.3, y - h.r, y + h.r, zc(y) - h.r, zBack(h.x, y));
+  }
+  // 革帯: 上下の 2 点で板に留め、あいだが板から離れる弧（腕を横から通す）
+  if (d.strap) {
+    const s = d.strap, N = 10;
+    const at2 = (x: number, k: number): P3 => {
+      const y = s.y0 + ((s.y1 - s.y0) * k) / N;
+      return [x, y, zBack(x, y) - 0.004 - s.off * Math.sin((Math.PI * k) / N)];
+    };
+    for (let k = 0; k < N; k++) back.quad(at2(s.x - s.w / 2, k), at2(s.x + s.w / 2, k), at2(s.x + s.w / 2, k + 1), at2(s.x - s.w / 2, k + 1));
   }
   const art: ArtStatus[] = [];
   const group = new Group();

@@ -7,11 +7,16 @@ import { canFullscreen, fullscreenHint, toggleFullscreen } from './fullscreen';
 export interface BaseHost {
   startTraining(): void;
   startHunt(questId: string): void;
+  /** いま装備している武器の id と、持ち替え */
+  weaponId: string;
+  setWeapon(id: string): void;
 }
 
 export class BaseScreen {
   readonly root: HTMLElement;
   private inv: HTMLElement;
+  private weaponButtons = new Map<string, HTMLButtonElement>();
+  private weaponNote: HTMLElement;
 
   constructor(parent: HTMLElement, content: Content, host: BaseHost) {
     const root = document.createElement('div');
@@ -25,6 +30,29 @@ export class BaseScreen {
     lead.className = 'base-lead';
     lead.textContent = '行き先を選んでください。';
     card.append(h, lead);
+
+    // 武器選び（保存はまだ無い。工房で作る流れは M3）
+    const wl = document.createElement('p');
+    wl.className = 'base-weapon-label';
+    wl.textContent = '武器';
+    const row = document.createElement('div');
+    row.className = 'base-weapons';
+    for (const w of content.weapons.values()) {
+      const b = document.createElement('button');
+      b.className = 'base-weapon';
+      b.dataset.weapon = w.id;
+      b.textContent = content.families.get(w.family)?.name ?? w.name;
+      b.addEventListener('click', () => {
+        host.setWeapon(w.id);
+        this.showWeapon(content, host.weaponId);
+      });
+      this.weaponButtons.set(w.id, b);
+      row.appendChild(b);
+    }
+    this.weaponNote = document.createElement('p');
+    this.weaponNote.className = 'base-weapon-note';
+    card.append(wl, row, this.weaponNote);
+    this.showWeapon(content, host.weaponId);
 
     const choice = (title: string, lines: string[], onClick: () => void): void => {
       const b = document.createElement('button');
@@ -86,6 +114,13 @@ export class BaseScreen {
 
   setOpen(open: boolean): void {
     this.root.hidden = !open;
+  }
+
+  private showWeapon(content: Content, id: string): void {
+    for (const [wid, b] of this.weaponButtons) b.classList.toggle('on', wid === id);
+    const w = content.weapons.get(id);
+    const fam = w ? content.families.get(w.family) : undefined;
+    this.weaponNote.textContent = w && fam ? `${w.name}: ${fam.summary ?? ''}` : '';
   }
 
   /** 持ち物の表示を更新する */

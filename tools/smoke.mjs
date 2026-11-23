@@ -600,6 +600,43 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     ['67_galdros_roar', '?action=monster.galdros.roar&tick=30&yaw=0.9'],
     ['68_galdros_damaged', '?subject=galdros&yaw=2.4&damaged=1'],
   ];
+  // ---- 武器 5 系統: 拠点で持ち替えて、訓練場で主攻撃を当てる ----
+  await page.goto(`http://localhost:${PORT}${BASE}`);
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  await page.screenshot({ path: `${OUT}weapon_select.png` });
+  for (const [fam, name, dist, holdMs] of [['guard_blade', '護刃', 1.2, 60], ['reap_scythe', '旋鎌', 1.8, 60], ['long_lance', '長尖槍', 2.4, 60], ['ring_bow', '環弓', 8, 1300]]) {
+    await page.locator(`.base-weapon[data-weapon="weapon.${fam}.001"]`).click();
+    const picked = await page.evaluate(() => window.__vh.weaponId);
+    await page.locator('.base-choice').last().click();
+    await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+    await page.evaluate((d) => {
+      const s = window.__vh.sim, m = s.monsters[0], p = s.player;
+      m.aiEnabled = false;
+      p.pos = { x: m.pos.x, y: 0, z: m.pos.z - 1.75 - d };
+      p.prevPos = { ...p.pos };
+      p.yaw = 0;
+      p.drawn = true;
+      window.__vh.view.cam.snap(0.9);
+    }, dist);
+    await page.mouse.move(640, 360);
+    await page.mouse.down();
+    await page.waitForTimeout(holdMs);
+    await page.mouse.up();
+    const hit = await until(page, () => window.__vh.sim.hitCount >= 1, 8000);
+    await page.screenshot({ path: `${OUT}weapon_${fam}.png` });
+    const info = await page.evaluate(() => ({
+      fam: window.__vh.view.hunter.familyId,
+      art: window.__vh.view.hunter.weaponArt.length > 0 && window.__vh.view.hunter.weaponArt.every((a) => a.loaded && !a.failed),
+      hits: window.__vh.sim.hitCount,
+      missing: [...window.__vh.view.missingClips],
+    }));
+    check(`${name}: 拠点で持ち替えて、訓練場で主攻撃が当たる`, picked === `weapon.${fam}.001` && hit && info.fam === fam && info.art && info.missing.length === 0, `命中 ${info.hits} / 形 ${info.fam} / 絵 ${info.art} / 欠落 clip ${info.missing.join(',') || 'なし'}`);
+    await page.evaluate(() => window.__vh.toBase());
+    await until(page, () => !document.getElementById('base').hidden);
+  }
+  await page.locator('.base-weapon[data-weapon="weapon.heavy_blade.001"]').click();
+
   for (const [name, q] of shots) {
     await page.goto(`http://localhost:${PORT}${BASE}viewer.html${q}`);
     await page.waitForFunction(() => window.__viewer, null, { timeout: 15000 });
