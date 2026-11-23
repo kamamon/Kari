@@ -350,55 +350,6 @@
    ],
    "onFinish": "keep",
    "weaponTrack": "galdros_tail_sweep_short"
-  },
-  {
-   "schemaVersion": 1,
-   "actionId": "monster.galdros.rockfall",
-   "clip": "galdros_rockfall_01",
-   "tickRate": 60,
-   "durationTicks": 170,
-   "phases": [
-    {
-     "id": "startup",
-     "from": 0,
-     "to": 50
-    },
-    {
-     "id": "active",
-     "from": 50,
-     "to": 60
-    },
-    {
-     "id": "recovery",
-     "from": 60,
-     "to": 170
-    }
-   ],
-   "rootMotion": {
-    "mode": "none"
-   },
-   "hitWindows": [],
-   "cancelWindows": [],
-   "events": [
-    {
-     "tick": 4,
-     "type": "sound",
-     "id": "galdros_rumble"
-    }
-   ],
-   "hazards": [
-    {
-     "tick": 34,
-     "count": 5,
-     "spread": 4.5,
-     "radius": 1.5,
-     "warnTicks": 54,
-     "activeTicks": 6,
-     "baseDamage": 22,
-     "reaction": "knockdown"
-    }
-   ],
-   "onFinish": "keep"
   }
  ]
 }

@@ -37,11 +37,11 @@
       "owner": "ChatGPT（設定図）→ Blender（モデル・リグ・動作）→ Claude（統合）", "status": "concept", "version": 0, "path": null,
       "source": "設定図 4 枚を受領・採用済み（art.monster.galdros.turnaround）。3D モデルは未制作", "terms": "本作オリジナル",
       "dims": "全長 5.8m / 全高 約 2.45m / 全幅 約 3.2m。Y 上・+Z 前", "tris": "目標 1.5〜3 万（仮モデルは約 1.5 万）", "bones": "四足重の骨格群（未定義。代表 1 体としてこのモデルで決める）",
-      "clips": ["galdros_roar_01", "galdros_slam_l_01", "galdros_slam_r_01", "galdros_charge_01", "galdros_tail_sweep_01", "galdros_rockfall_01"],
+      "clips": ["galdros_roar_01", "galdros_slam_l_01", "galdros_slam_r_01", "galdros_charge_01", "galdros_tail_sweep_01", "galdros_rockfall_01", "galdros_bite_01", "galdros_head_swing_01", "galdros_double_slam_01", "galdros_stomp_01", "galdros_body_press_01", "galdros_side_bash_l_01", "galdros_side_bash_r_01", "galdros_charge_short_01", "galdros_tail_slam_01", "galdros_tail_sweep_rev_01", "galdros_rock_stomp_01", "galdros_rock_fling_01", "galdros_retreat_01", "galdros_threat_01"],
       "clipsPlanned": ["galdros_idle_01", "galdros_walk_01", "galdros_turn_01", "galdros_flinch_01", "galdros_topple_01", "galdros_getup_01", "galdros_dead_01"],
       "dependsOn": ["art.monster.galdros.turnaround"],
       "placeholder": { "kind": "procedural", "source": "src/render/galdrosRig.ts", "note": "コードで組んだ仮モデル（3 代目）。骨 53 本（背骨 5 節・首 2 節・あご・舌・まぶた・尾 8 節・脚の指・岩板 15 枚）。歯・舌・瞳。背殻は、なめらかな殻の面を分け合う薄い板 6 枚（縁は青銅色）で、とげは無い。皮は設定図（右側面）から焼いた絵（tex.monster.galdros.hide）を貼り、岩は設定図から取った模様（tex.monster.galdros.rock）を重ねる。全長・頭・尾・腹の高さは設定図の比率に合わせた（当たり判定も同じ形）。脚の太さは設定図より細く、背殻は設定図より小さく 6 枚に分かれている。陰は Blender で焼いた値を頂点の色へ掛ける。前脚叩きの脚と尾払いの尾は判定と同じ軌道で動く。歩行は足先を地面に置く方式。しぐさ・のけぞり・怯み・転倒・咆哮・死亡は手続き生成。" },
-      "verification": "仮素材: 素材ビューアで部位判定と見た目の重なり、破壊・切断後の姿を確認。ゲーム内で歩行・旋回・4 つの技・転倒・死亡・怒りの見た目を画面で確認（ヘッドレス Chrome）。実機での見え方と性能は未確認。"
+      "verification": "仮素材: 素材ビューアで部位判定と見た目の重なり、破壊・切断後の姿を確認。ゲーム内で歩行・旋回・4 つの技・転倒・死亡・怒りの見た目を画面で確認（ヘッドレス Chrome）。v0.4.1 で技の clip を 20 に増やし、素材ビューアの静止画（各技の予備動作と判定が出ている時）で体の向きと判定の重なりを、ゲーム内の画面で落石が山なりに飛ぶことを確認。動いている様子を通して見てはいない。実機での見え方と性能は未確認。"
     },
     {
       "id": "env.basin.training", "name": "風礫盆地・外縁（訓練区画）", "type": "env", "use": "M0〜M1 の戦闘区画 80m×60m",

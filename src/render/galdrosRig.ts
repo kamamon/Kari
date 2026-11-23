@@ -1066,6 +1066,9 @@ export class GaldrosRig implements MonsterRig {
       const t = renderTick(run, c.alpha);
       const clip = run.def.clip;
       const track = run.def.weaponTrack ? c.content.tracks.get(run.def.weaponTrack) : undefined;
+      // 短い突進（130 tick）は、突進（190 tick）の振り付けを時間を縮めて使う
+      const tc = clip === 'galdros_charge_short_01' ? t * 1.46 : t;
+      const TAIL_CLIPS = ['galdros_tail_sweep_01', 'galdros_tail_sweep_rev_01', 'galdros_tail_slam_01', 'galdros_rockfall_01'];
       if (clip.startsWith('galdros_slam') && track) {
         slamLeg = clip.includes('_l_') ? 0 : 1;
         const s = sampleTrack(track, t);
@@ -1093,10 +1096,10 @@ export class GaldrosRig implements MonsterRig {
         P.spread += 0.18 * (wind + after);
         P.rattle = Math.max(P.rattle, hitNow);
         P.look = 0.6;
-      } else if (clip === 'galdros_charge_01') {
-        const wind = smoothstep(t / 30) * (1 - smoothstep((t - 140) / 40));
-        const pre = t < 60 ? smoothstep(t / 45) : 0;
-        const brake = t > 132 ? Math.sin(Math.PI * Math.min(1, (t - 132) / 40)) : 0;
+      } else if (clip === 'galdros_charge_01' || clip === 'galdros_charge_short_01') {
+        const wind = smoothstep(tc / 30) * (1 - smoothstep((tc - 140) / 40));
+        const pre = tc < 60 ? smoothstep(tc / 45) : 0;
+        const brake = tc > 132 ? Math.sin(Math.PI * Math.min(1, (tc - 132) / 40)) : 0;
         P.neckPitch += 0.3 * wind;
         P.headPitch += 0.2 * wind;
         P.pitch += 0.07 * wind - 0.1 * brake;
@@ -1104,17 +1107,17 @@ export class GaldrosRig implements MonsterRig {
         P.z += -0.24 * pre + 0.2 * brake;
         P.archR += 0.1 * pre;
         // 構えている間は頭を左右に振り、走り出すと首が上下に揺れる
-        P.headYaw += 0.12 * pre * Math.sin(t * 0.5);
+        P.headYaw += 0.12 * pre * Math.sin(tc * 0.5);
         P.neckPitch += 0.06 * gallop * Math.sin(this.runPhase * 2);
         P.tailLift += 0.3 * wind;
         P.rattle = Math.max(P.rattle, 0.5 * gallop, brake);
-        if (t > 10 && t < 52) {
+        if (tc > 10 && tc < 52) {
           pawLeg = 1; // 右前脚で地面を掻く
-          pawT = t;
+          pawT = tc;
         }
-        P.jaw += t > 60 && t < 132 ? 0.2 : 0.04 + 0.2 * brake;
+        P.jaw += tc > 60 && tc < 132 ? 0.2 : 0.04 + 0.2 * brake;
         P.look = 0.25;
-      } else if (clip === 'galdros_tail_sweep_01' && track) {
+      } else if (TAIL_CLIPS.includes(clip) && track) {
         const s = sampleTrack(track, t);
         tailYaw = Math.atan2(s.dir.x, -s.dir.z);
         tailPitch = Math.asin(clamp(s.dir.y, -1, 1));
@@ -1127,10 +1130,149 @@ export class GaldrosRig implements MonsterRig {
         P.neckPitch += 0.08;
         P.jaw += 0.12;
         P.spread += 0.12;
-      } else if (clip === 'galdros_rockfall_01') {
-        // 前を浮かせてから踏み鳴らし、背を震わせる
-        const rear = Math.sin(Math.PI * clamp(t / 26, 0, 1));
-        const stomp = smoothstep((t - 24) / 8) * (1 - smoothstep((t - 60) / 34));
+        if (clip === 'galdros_tail_slam_01' || clip === 'galdros_rockfall_01') {
+          // 尾を高く上げ、真後ろの地面へ叩きつける。落石は、ここで岩が打ち上がる。
+          const hitT = clip === 'galdros_rockfall_01' ? 57 : 55;
+          const up = sstep(0, 0.8, s.dir.y);
+          const impact = gauss(t, hitT + 1, 3), after = smoothstep((t - hitT) / 3) * (1 - smoothstep((t - hitT - 12) / 40));
+          P.pitch += 0.09 * up - 0.06 * after;
+          P.archR += 0.14 * up;
+          P.y += -0.05 * up - 0.14 * after;
+          P.z += 0.1 * up - 0.08 * after;
+          P.neckPitch += 0.1 * up;
+          P.jaw += 0.2 * up + 0.32 * after;
+          P.tongue += 0.4 * after;
+          P.rattle = Math.max(P.rattle, impact * 1.4);
+          P.jitter += 0.035 * after;
+          P.spread += 0.16 * after;
+          P.look = 0.4;
+        }
+      } else if (clip === 'galdros_bite_01') {
+        // 首を引いて口を開け、体ごと踏み込んで噛む
+        const pull = Math.sin(Math.PI * clamp((t - 8) / 30, 0, 1));
+        const snap = smoothstep((t - 38) / 5) * (1 - smoothstep((t - 54) / 30));
+        P.neckPitch += 0.16 * pull - 0.26 * snap;
+        P.headPitch += 0.1 * pull - 0.16 * snap;
+        P.z += -0.16 * pull + 0.34 * snap;
+        P.y += 0.04 * pull - 0.08 * snap;
+        P.pitch += -0.04 * pull + 0.07 * snap;
+        P.jaw += 0.7 * smoothstep((t - 12) / 14) * (1 - smoothstep((t - 44) / 3));
+        P.tongue += 0.5 * pull;
+        P.tailLift += 0.3 * snap;
+        P.rattle = Math.max(P.rattle, gauss(t, 45, 3) * 0.8);
+        P.look = 0.7;
+      } else if (clip === 'galdros_head_swing_01' && track) {
+        // 頭を片側へ溜めて、反対側へ振り抜く（首の向きは判定の軌道に合わせる）
+        const s = sampleTrack(track, t);
+        const a = Math.atan2(s.dir.x, s.dir.z);
+        P.neckYaw += a * 0.55;
+        P.headYaw += a * 0.35;
+        P.bendF += a * 0.12;
+        P.roll += -a * 0.05;
+        P.x += Math.sin(a) * 0.12;
+        P.neckPitch += 0.1;
+        P.jaw += 0.3 * sstep(30, 42, t) * (1 - smoothstep((t - 56) / 20));
+        P.y -= 0.06 * Math.sin(Math.PI * clamp(t / 80, 0, 1));
+        P.spread += 0.1;
+        P.look = 0.2;
+      } else if (clip === 'galdros_double_slam_01' || clip === 'galdros_rock_stomp_01') {
+        // 上体を大きく起こし、両前脚で正面を叩く（岩を打ち上げる方は、溜めが少し短い）
+        const hitT = clip === 'galdros_double_slam_01' ? 65 : 57;
+        const strike = smoothstep((t - (hitT - 5)) / 5);
+        const wind = smoothstep(t / 38) * (1 - strike), after = strike * (1 - smoothstep((t - hitT - 6) / 54));
+        const impact = gauss(t, hitT + 1, 3);
+        P.pitch += -0.24 * wind + 0.15 * after;
+        P.y += 0.14 * wind - 0.36 * after;
+        P.z += -0.14 * wind + 0.18 * after;
+        P.archF += -0.16 * wind + 0.06 * after;
+        P.neckPitch += -0.2 * wind + 0.24 * after;
+        P.headPitch += -0.08 * wind + 0.12 * after;
+        P.jaw += 0.2 * wind + 0.4 * after;
+        P.tongue += 0.4 * after;
+        P.tailLift += 0.4 * wind + 0.5 * impact;
+        P.spread += 0.22 * (wind + after);
+        P.rattle = Math.max(P.rattle, impact * 1.5);
+        P.jitter += 0.03 * after;
+        P.look = 0.5;
+      } else if (clip === 'galdros_body_press_01') {
+        // 沈んでから前へ跳び、腹で潰す
+        const crouch = smoothstep(t / 40) * (1 - smoothstep((t - 50) / 5));
+        const air = Math.sin(Math.PI * clamp((t - 52) / 17, 0, 1));
+        const land = smoothstep((t - 68) / 3) * (1 - smoothstep((t - 86) / 52));
+        P.y += -0.26 * crouch + 0.6 * air - 0.42 * land;
+        P.pitch += 0.07 * crouch - 0.22 * air + 0.1 * land;
+        P.archF += -0.1 * air;
+        P.neckPitch += 0.14 * crouch - 0.2 * air + 0.22 * land;
+        P.jaw += 0.12 * crouch + 0.5 * air + 0.3 * land;
+        P.tongue += 0.5 * air;
+        P.tailLift += 0.5 * air;
+        P.spread += 0.3 * land;
+        P.rattle = Math.max(P.rattle, gauss(t, 70, 3) * 1.6);
+        P.jitter += 0.03 * land;
+        P.look = 0.5;
+      } else if (clip.startsWith('galdros_side_bash_')) {
+        // 体を反対へ引いてから、横にいる相手へぶつける
+        const side = clip.includes('_l_') ? 1 : -1;
+        const lean = Math.sin(Math.PI * clamp((t - 6) / 30, 0, 1));
+        const bash = smoothstep((t - 36) / 6) * (1 - smoothstep((t - 50) / 34));
+        P.x += side * (-0.25 * lean + 0.8 * bash);
+        P.roll += side * (0.07 * lean - 0.16 * bash);
+        P.bendF += side * (-0.1 * lean + 0.12 * bash);
+        P.bendR += side * (-0.06 * lean + 0.1 * bash);
+        P.y -= 0.1 * bash;
+        P.neckYaw += side * (-0.2 * lean + 0.35 * bash);
+        P.jaw += 0.2 * bash;
+        P.spread += 0.15 * bash;
+        P.rattle = Math.max(P.rattle, gauss(t, 44, 3));
+        P.look = 0.3;
+      } else if (clip === 'galdros_rock_fling_01') {
+        // 左前脚で地面を掻き、岩を前へ弾き飛ばす
+        const kick = gauss(t, 44, 4), after = smoothstep((t - 44) / 4) * (1 - smoothstep((t - 60) / 40));
+        if (t > 6 && t < 42) {
+          pawLeg = 0;
+          pawT = t;
+          pawAmp = 1.2;
+        }
+        P.neckPitch += 0.2 * smoothstep(t / 20) * (1 - after) - 0.15 * after;
+        P.pitch += 0.05 * smoothstep(t / 20) - 0.1 * kick;
+        P.y += -0.06 + 0.1 * kick;
+        P.roll += -0.06 * kick;
+        P.jaw += 0.1 + 0.3 * after;
+        P.tailLift += 0.4 * kick;
+        P.rattle = Math.max(P.rattle, kick);
+        P.look = 0.8;
+      } else if (clip === 'galdros_retreat_01') {
+        // 沈んで、後ろへ跳ぶ
+        const crouch = smoothstep(t / 16) * (1 - smoothstep((t - 20) / 4));
+        const air = Math.sin(Math.PI * clamp((t - 20) / 18, 0, 1));
+        const land = smoothstep((t - 38) / 3) * (1 - smoothstep((t - 46) / 24));
+        P.y += -0.2 * crouch + 0.36 * air - 0.24 * land;
+        P.pitch += -0.06 * crouch + 0.1 * air - 0.08 * land;
+        P.neckPitch += 0.12 * crouch + 0.1 * land;
+        P.tailLift += 0.5 * air;
+        P.jaw += 0.2 * land;
+        P.spread += 0.2 * land;
+        P.rattle = Math.max(P.rattle, gauss(t, 39, 3));
+        P.look = 1;
+      } else if (clip === 'galdros_threat_01') {
+        // 短く吠えて威嚇する（咆哮より小さい）
+        const inhale = Math.sin(Math.PI * clamp(t / 12, 0, 1));
+        const k = smoothstep((t - 6) / 8) * (1 - smoothstep((t - 44) / 16));
+        P.breath += 0.04 * inhale;
+        P.neckPitch += 0.08 * inhale - 0.2 * k;
+        P.headPitch += -0.16 * k;
+        P.z += 0.1 * k;
+        P.jaw += 0.45 * k + 0.04 * k * Math.sin(time * 46);
+        P.tongue += 0.5 * k;
+        P.headRoll += 0.08 * k * Math.sin(time * 9);
+        P.tailLift += 0.4 * k;
+        P.tailWag = 0.4;
+        P.rattle = Math.max(P.rattle, 0.5 * k);
+        P.look = 0.9;
+      } else if (clip === 'galdros_stomp_01') {
+        // 前を浮かせてから踏み鳴らし、背を震わせる（足もとに張り付いた相手を払う）
+        const rear = Math.sin(Math.PI * clamp(t / 30, 0, 1));
+        const stomp = smoothstep((t - 32) / 6) * (1 - smoothstep((t - 46) / 30));
         P.pitch += -0.13 * rear + 0.09 * stomp;
         P.y += 0.1 * rear - 0.22 * stomp;
         P.archF += -0.1 * rear;

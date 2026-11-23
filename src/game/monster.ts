@@ -300,7 +300,7 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
     }
   }
   for (const hz of adef.hazards ?? []) {
-    if (hz.tick === t) ctx.spawnHazards(hz, player.pos);
+    if (hz.tick === t) ctx.spawnHazards(hz, player.pos, hz.origin ? toWorld(fromArr(hz.origin), m.pos, m.yaw) : undefined);
   }
   for (const ev of adef.events) {
     if (ev.tick === t) ctx.emit({ type: 'action_event', actor: m.id, kind: ev.type, id: ev.id, pos: { ...m.pos } });

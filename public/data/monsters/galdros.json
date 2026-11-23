@@ -75,8 +75,21 @@
       {"actionId": "monster.galdros.slam_l", "minDist": 0, "maxDist": 4.8, "maxAngleDeg": 40, "side": "left", "weight": 3},
       {"actionId": "monster.galdros.slam_r", "minDist": 0, "maxDist": 4.8, "maxAngleDeg": 40, "side": "right", "weight": 3},
       {"actionId": "monster.galdros.charge", "minDist": 6.5, "maxDist": 22, "maxAngleDeg": 30, "weight": 2, "cooldownTicks": 420, "clearAhead": 9},
-      {"actionId": "monster.galdros.tail_sweep", "minDist": 0, "maxDist": 4.4, "minAngleDeg": 70, "maxAngleDeg": 180, "weight": 3, "ifSevered": {"partId": "tail", "actionId": "monster.galdros.tail_sweep_short"}},
-      {"actionId": "monster.galdros.rockfall", "minDist": 0, "maxDist": 20, "maxAngleDeg": 180, "weight": 1.5, "cooldownTicks": 600}
+      {"actionId": "monster.galdros.tail_sweep", "minDist": 0, "maxDist": 4.4, "minAngleDeg": 70, "maxAngleDeg": 180, "weight": 2, "ifSevered": {"partId": "tail", "actionId": "monster.galdros.tail_sweep_short"}},
+      {"actionId": "monster.galdros.bite", "minDist": 0, "maxDist": 4.6, "maxAngleDeg": 30, "weight": 2.5},
+      {"actionId": "monster.galdros.head_swing", "minDist": 0, "maxDist": 4.4, "maxAngleDeg": 55, "weight": 2},
+      {"actionId": "monster.galdros.double_slam", "minDist": 2, "maxDist": 5.2, "maxAngleDeg": 30, "weight": 1.5, "cooldownTicks": 360},
+      {"actionId": "monster.galdros.stomp", "minDist": 0, "maxDist": 3.2, "maxAngleDeg": 100, "weight": 2, "cooldownTicks": 240},
+      {"actionId": "monster.galdros.side_bash_l", "minDist": 0, "maxDist": 4, "minAngleDeg": 45, "maxAngleDeg": 125, "side": "left", "weight": 2.5},
+      {"actionId": "monster.galdros.side_bash_r", "minDist": 0, "maxDist": 4, "minAngleDeg": 45, "maxAngleDeg": 125, "side": "right", "weight": 2.5},
+      {"actionId": "monster.galdros.tail_sweep_rev", "minDist": 0, "maxDist": 4.4, "minAngleDeg": 70, "maxAngleDeg": 180, "weight": 2, "ifSevered": {"partId": "tail", "actionId": "monster.galdros.tail_sweep_rev_short"}},
+      {"actionId": "monster.galdros.tail_slam", "minDist": 0, "maxDist": 4.6, "minAngleDeg": 135, "maxAngleDeg": 180, "weight": 2.5, "ifSevered": {"partId": "tail", "actionId": "monster.galdros.tail_slam_short"}},
+      {"actionId": "monster.galdros.body_press", "minDist": 4, "maxDist": 8.5, "maxAngleDeg": 35, "weight": 2, "cooldownTicks": 400, "clearAhead": 4},
+      {"actionId": "monster.galdros.charge_short", "minDist": 4.5, "maxDist": 10, "maxAngleDeg": 30, "weight": 1.5, "cooldownTicks": 300, "clearAhead": 6},
+      {"actionId": "monster.galdros.rock_fling", "minDist": 6, "maxDist": 16, "maxAngleDeg": 40, "weight": 1.5, "cooldownTicks": 420},
+      {"actionId": "monster.galdros.rockfall", "minDist": 0, "maxDist": 20, "maxAngleDeg": 180, "weight": 1.5, "cooldownTicks": 600, "ifSevered": {"partId": "tail", "actionId": "monster.galdros.rock_stomp"}},
+      {"actionId": "monster.galdros.retreat", "minDist": 0, "maxDist": 2.6, "maxAngleDeg": 180, "weight": 0.8, "cooldownTicks": 500},
+      {"actionId": "monster.galdros.threat", "minDist": 8, "maxDist": 22, "maxAngleDeg": 60, "weight": 0.6, "cooldownTicks": 700}
     ]
   }
 }

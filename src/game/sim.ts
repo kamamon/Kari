@@ -34,6 +34,9 @@ export interface Hazard {
   baseDamage: number;
   reaction: 'flinch' | 'knockdown';
   hit: boolean;
+  /** 岩が打ち上がった場所（見た目用。ここから弧を描いて (x, z) へ落ちる）。null は真上から。 */
+  from: V3 | null;
+  peak: number;
 }
 
 export type HuntReason = 'slay' | 'capture' | 'time' | 'faints' | 'retire';
@@ -202,18 +205,31 @@ export class Simulation implements SimCtx {
     return out;
   }
 
-  spawnHazards(def: HazardDef, target: V3): void {
+  spawnHazards(def: HazardDef, target: V3, origin?: V3): void {
+    // 打ち上げた場所から狙った位置へ向かう向き（一列に並べる時に使う）
+    const ox = origin?.x ?? target.x, oz = origin?.z ?? target.z;
+    const dist = Math.hypot(target.x - ox, target.z - oz);
+    const dx = dist > 0.01 ? (target.x - ox) / dist : 0, dz = dist > 0.01 ? (target.z - oz) / dist : 1;
     for (let i = 0; i < def.count; i++) {
-      // 1 個目は狙った位置、残りはその周りへ散らす。出した時点で位置を固定する（予告後に動かさない）。
       let x = target.x;
       let z = target.z;
-      if (i > 0) {
+      if (def.pattern === 'line') {
+        // 手前から奥へ: 狙った位置までの半分から、狙った位置まで。左右へ少しずらす（最後の 1 個は、狙った位置の近くに落ちる）
+        const along = dist * (def.count > 1 ? 0.5 + (0.5 * i) / (def.count - 1) : 1);
+        const side = (this.rng.next() - 0.5) * 2 * def.spread;
+        x = ox + dx * along - dz * side;
+        z = oz + dz * along + dx * side;
+      } else if (i > 0) {
+        // 1 個目は狙った位置、残りはその周りへ散らす。出した時点で位置を固定する（予告後に動かさない）。
         const a = this.rng.next() * Math.PI * 2;
         const r = def.spread * (0.45 + 0.55 * this.rng.next());
         x += Math.cos(a) * r;
         z += Math.sin(a) * r;
       }
-      const h: Hazard = { id: this.nextHazard++, x, z, radius: def.radius, warn: def.warnTicks, warnTotal: def.warnTicks, active: def.activeTicks, baseDamage: def.baseDamage, reaction: def.reaction, hit: false };
+      const h: Hazard = {
+        id: this.nextHazard++, x, z, radius: def.radius, warn: def.warnTicks, warnTotal: def.warnTicks, active: def.activeTicks, baseDamage: def.baseDamage, reaction: def.reaction, hit: false,
+        from: origin ? { x: origin.x, y: origin.y, z: origin.z } : null, peak: def.peak ?? 6,
+      };
       this.hazards.push(h);
       this.emit({ type: 'hazard_warn', id: h.id, x, z, radius: h.radius, warnTicks: h.warn });
     }

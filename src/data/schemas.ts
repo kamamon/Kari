@@ -255,6 +255,12 @@ export interface HazardDef {
   activeTicks: number;
   baseDamage: number;
   reaction: 'flinch' | 'knockdown';
+  /** 岩が打ち上がる場所（モンスターのローカル座標。尾の先・前脚の前など）。ここから弧を描いて落ちる。省くと真上から。 */
+  origin?: Triple;
+  /** 弧のいちばん高い所 (m) */
+  peak?: number;
+  /** around（省略時）= 狙った位置のまわりへ散らす / line = 打ち上げた場所から狙った位置へ、一列に並べる */
+  pattern?: 'around' | 'line';
 }
 
 export interface MonsterDef {

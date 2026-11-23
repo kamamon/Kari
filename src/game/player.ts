@@ -62,7 +62,7 @@ export interface SimCtx {
   /** プレイヤーが通り抜けられない円（生きている大型の胴体など） */
   blockers(): Circle[];
   /** 落下物などを出す。位置は target を基準にこの時点で固定する。 */
-  spawnHazards(def: HazardDef, target: V3): void;
+  spawnHazards(def: HazardDef, target: V3, origin?: V3): void;
   /** いまこの道具を使い始められるか（罠は狩猟中に 1 つまで、など） */
   canUseItem(item: ItemDef): boolean;
   /** 道具の効果を出す。効果が出なかった時は false を返し、道具は減らない。 */

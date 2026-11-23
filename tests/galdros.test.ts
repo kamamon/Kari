@@ -22,7 +22,7 @@ const hunt = (): Simulation => new Simulation(content, baseOptions({ questId: QU
 const taken = (base: number): number => Math.floor(base * (content.quests.get(QUEST)!.monsterAttackScale ?? 1));
 
 /** ガルドロスを (0,10) に -Z 向きで置き、気付いた状態にする。only を渡すと、その技だけを選べるようにする。 */
-function arena(only?: string): { sim: Simulation; m: MonsterState } {
+function arena(only?: string | string[]): { sim: Simulation; m: MonsterState } {
   const sim = hunt();
   const m = sim.monsters[0]!;
   m.pos = { x: 0, y: 0, z: 10 };
@@ -31,7 +31,8 @@ function arena(only?: string): { sim: Simulation; m: MonsterState } {
   m.prevYaw = Math.PI;
   m.aware = true;
   m.cooldown = 0;
-  if (only) for (const c of m.def.ai.choices) if (c.actionId !== G + only) m.moveCooldowns[c.actionId] = 1e9;
+  const allow = only === undefined ? null : (Array.isArray(only) ? only : [only]).map((x) => G + x);
+  if (allow) for (const c of m.def.ai.choices) if (!allow.includes(c.actionId)) m.moveCooldowns[c.actionId] = 1e9;
   return { sim, m };
 }
 /** モンスターのローカル座標（左 +X、前 +Z）でプレイヤーを置く。 */
@@ -80,8 +81,8 @@ describe('発見', () => {
 describe('技の選択と追尾の打ち切り', () => {
   it('前脚叩き: 正面の左右で使う脚を選び、28 tick 以降は向きを変えない', () => {
     for (const [lx, id] of [[0.6, 'slam_l'], [-0.6, 'slam_r']] as const) {
-      const { sim, m } = arena();
-      m.moveCooldowns[G + 'rockfall'] = 1e9;
+      // 正面の近くで選べる技は多いので、前脚叩きだけに絞って、脚の選び方を確かめる
+      const { sim, m } = arena(['slam_l', 'slam_r']);
       at(sim, lx, 3.2);
       const ev: SimEvent[] = [];
       let yaw28 = 0;
@@ -100,8 +101,7 @@ describe('技の選択と追尾の打ち切り', () => {
   it('依頼の倍率が、受けるダメージに掛かる。この依頼は倍率なし（回復液を支給するので 1.0 へ戻した）', () => {
     expect(content.quests.get(QUEST)!.monsterAttackScale).toBeUndefined();
     const hp = (scale: number | null): number => {
-      const { sim, m } = arena();
-      m.moveCooldowns[G + 'rockfall'] = 1e9;
+      const { sim } = arena(['slam_l', 'slam_r']);
       if (scale !== null) sim.monsterAttackScale = scale;
       at(sim, 0.6, 3.2);
       run(sim, 120);
@@ -159,14 +159,20 @@ describe('技の選択と追尾の打ち切り', () => {
     expect(short.sim.player.hp).toBe(100);
   });
 
-  it('鉱殻崩落: 落下地点は予告の時点で固定。その場に居れば 1 回当たり、離れれば当たらない', () => {
+  it('鉱殻崩落: 尾で地面を叩いた時に岩が打ち上がり、落下地点はその時点で固定。その場に居れば 1 回当たり、離れれば当たらない', () => {
     const stay = arena('rockfall');
     at(stay.sim, 0, 8);
-    let ev = run(stay.sim, 35);
+    // 尾が地面を叩く（技の 58 tick 目）までは、岩は出ない
+    let ev = run(stay.sim, 50);
+    expect(stay.sim.hazards).toHaveLength(0);
+    ev = [...ev, ...run(stay.sim, 12)];
     expect(started(ev, 'rockfall')).toBe(true);
     expect(stay.sim.hazards).toHaveLength(5);
     expect(ev.filter((e) => e.type === 'hazard_warn')).toHaveLength(5);
     expect([stay.sim.hazards[0]!.x, stay.sim.hazards[0]!.z]).toEqual([stay.sim.player.pos.x, stay.sim.player.pos.z]);
+    // 岩は、尾の先（モンスターの後ろ 3m）から打ち上がる
+    const from = stay.sim.hazards[0]!.from!;
+    expect(Math.hypot(from.x - stay.m.pos.x, from.z - stay.m.pos.z)).toBeCloseTo(3.0, 1);
     ev = run(stay.sim, 80);
     expect(ev.filter((e) => e.type === 'hazard_impact')).toHaveLength(5);
     expect(ev.filter((e) => e.type === 'player_hurt')).toHaveLength(1);
@@ -175,7 +181,7 @@ describe('技の選択と追尾の打ち切り', () => {
 
     const leave = arena('rockfall');
     at(leave.sim, 0, 8);
-    run(leave.sim, 35);
+    run(leave.sim, 62);
     const before = leave.sim.hazards.map((h) => [h.x, h.z]);
     leave.sim.player.pos = { x: 30, y: 0, z: -20 };
     run(leave.sim, 40);
@@ -339,7 +345,7 @@ describe('狩猟の終了（結果は一度だけ確定する）', () => {
   it('終了後はモンスターの攻撃も落石も当たらない', () => {
     const { sim, m } = arena('rockfall');
     at(sim, 0, 8);
-    run(sim, 36);
+    run(sim, 62);
     expect(sim.hazards.length).toBe(5);
     run(sim, 1, () => frame({ pressed: Btn.Retire }));
     run(sim, 120);

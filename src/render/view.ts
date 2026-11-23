@@ -468,11 +468,19 @@ export class GameView {
         this.scene.add(group);
         v = { group, ring, rock };
         this.hazardViews.set(h.id, v);
+        // 岩が打ち上がった場所に、土ぼこり
+        if (h.from) this.dust.emit(5, { x: h.from.x, y: h.from.y + 0.2, z: h.from.z }, 4, 2.6, 0.8, [0.6, 0.58, 0.5], 0.7);
       }
       const u = h.warnTotal > 0 ? h.warn / h.warnTotal : 0;
       v.group.scale.set(h.radius, 1, h.radius);
       (v.ring.material as MeshBasicMaterial).opacity = 0.35 + 0.65 * (1 - u) * (0.7 + 0.3 * Math.sin(this.time * 22));
-      v.rock.position.y = 0.5 + 15 * u * u;
+      if (h.from) {
+        // 打ち上がった場所から、弧を描いて落ちる場所へ（u は 1 → 0）。入れ物は落ちる場所にあり、横は半径で拡大されている。
+        const w = 1 - u;
+        v.rock.position.set(((h.from.x - h.x) * u) / h.radius, 0.5 + (h.from.y - v.group.position.y) * u + h.peak * 4 * w * (1 - w), ((h.from.z - h.z) * u) / h.radius);
+      } else {
+        v.rock.position.y = 0.5 + 15 * u * u;
+      }
       v.rock.scale.set(0.55, 0.75 / Math.max(0.5, h.radius) * h.radius, 0.55);
       v.rock.rotation.set(this.time * 3 + h.id, this.time * 2, 0);
     }

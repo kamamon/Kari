@@ -290,6 +290,11 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     for (const c of m.def.ai.choices) m.moveCooldowns[c.actionId] = c.actionId.endsWith('rockfall') ? 0 : 1e9;
   });
   check('鉱殻崩落で落下地点の予告が 5 か所に出る', await until(page, () => window.__vh.sim.hazards.length === 5, 60000));
+  const launch = await page.evaluate(() => {
+    const s = window.__vh.sim, m = s.monsters[0];
+    return { all: s.hazards.every((h) => !!h.from), clip: m.action?.def.clip ?? '', behind: s.hazards[0]?.from ? Math.hypot(s.hazards[0].from.x - m.pos.x, s.hazards[0].from.z - m.pos.z) : 0 };
+  });
+  check('鉱殻崩落: 岩は空からではなく、尾で叩いた地面（体の後ろ約 3m）から打ち上がる', launch.all && launch.clip === 'galdros_rockfall_01' && Math.abs(launch.behind - 3) < 0.3, `尾の先まで ${launch.behind.toFixed(2)}m`);
   await page.waitForTimeout(400);
   await page.screenshot({ path: `${OUT}54_hunt_rockfall.png` });
   // 転倒の見た目

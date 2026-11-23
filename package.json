@@ -1,7 +1,7 @@
 {
   "name": "veilbound-hunters",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "霧境の狩人 - VEILBOUND HUNTERS / 横画面・三人称3Dのオリジナル狩猟アクション",
   "type": "module",
   "engines": {
