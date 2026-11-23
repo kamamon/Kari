@@ -283,7 +283,9 @@ export class SaveManager {
   }
 
   private replaceWith(doc: SaveDoc, reason: 'import' | 'restore'): Promise<SaveResult> {
-    return this.commit(() => cloneSave(doc), { backupReason: reason });
+    // 古い版で書き出したデータには、後から増えた「最初から持つ武器・防具」が無い。入れ替える時に配っておく
+    const ready = grantStarters(doc, this.content) ?? doc;
+    return this.commit(() => cloneSave(ready), { backupReason: reason });
   }
 
   /**

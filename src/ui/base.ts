@@ -4,8 +4,9 @@
 // 持ち物・装備の表示は、保存の管理役（SaveManager）が持つ「書き込みが完了した内容」だけを映す。
 // 強化・取り込みなどの結果は、書き込みが完了してから表示する（押した時点では「保存しています…」）。
 import { APP_VERSION, BUILD_ID } from '../core/assets';
-import type { Content, RecipeDef } from '../data/schemas';
-import { checkCraft, parseImport, unknownIds, usableWeapons } from '../save/profile';
+import { recipeFrom, type Content, type RecipeDef } from '../data/schemas';
+import { materialRanks } from '../data/validators';
+import { checkCraft, defenseOf, parseImport, questUnlocked, unknownIds, usableWeapons, wornArmor } from '../save/profile';
 import type { SaveManager, SaveResult } from '../save/saveManager';
 import { canFullscreen, fullscreenHint, toggleFullscreen } from './fullscreen';
 
@@ -50,6 +51,10 @@ export class BaseScreen {
   private banners: HTMLElement;
   private weaponRow: HTMLElement;
   private weaponNote: HTMLElement;
+  private armorNote: HTMLElement;
+  private questBox: HTMLElement;
+  /** 素材ごとの、手に入るいちばん下の段階（工房で「どこから出るか」を添えるため） */
+  private matRank: Map<string, number>;
   private inv: HTMLElement;
   private forge: HTMLDetailsElement;
   private forgeBody: HTMLElement;
@@ -81,22 +86,13 @@ export class BaseScreen {
     this.weaponNote = el('p', 'base-weapon-note');
     card.append(this.weaponRow, this.weaponNote);
 
-    const choice = (title: string, lines: string[], onClick: () => void): void => {
-      const b = el('button', 'base-choice');
-      b.appendChild(el('b', undefined, title));
-      for (const line of lines) b.appendChild(el('span', undefined, line));
-      b.addEventListener('click', onClick);
-      card.appendChild(b);
-    };
-    for (const q of content.quests.values()) {
-      const target = content.monsters.get(q.targetMonsterId)?.name ?? '';
-      const goal = q.kind === 'hunt' ? '狩猟（討伐か捕獲）' : '討伐';
-      const lines = [q.summary, `目標: ${target}の${goal}　制限 ${Math.round(q.timeLimitTicks / 3600)} 分　力尽き ${q.maxFaints} 回で失敗`];
-      if (q.supplies?.length) lines.push(`支給品: ${q.supplies.map((s) => `${content.items.get(s.itemId)?.name ?? s.itemId} ×${s.count}`).join('　')}`);
-      if (q.rewards) lines.push(`報酬: ${q.rewards.money} 通貨 + 素材`);
-      choice(`依頼「${q.name}」`, lines, () => host.startHunt(q.id));
-    }
-    choice('訓練場', ['動かない標的で、操作と技を確かめる。'], () => host.startTraining());
+    this.armorNote = el('p', 'base-armor-note');
+    card.appendChild(this.armorNote);
+    this.matRank = materialRanks(content);
+
+    // 依頼（段階の順）と訓練場。受けられるかどうかは進行で変わるので、中身は refresh で作る
+    this.questBox = el('div', 'base-quests');
+    card.appendChild(this.questBox);
 
     this.inv = el('div', 'base-inv');
     card.appendChild(this.inv);
@@ -122,7 +118,7 @@ export class BaseScreen {
     this.message.setAttribute('role', 'status');
     card.appendChild(this.message);
 
-    card.appendChild(el('p', 'base-note', `v${APP_VERSION} (${BUILD_ID}) ／ 見た目・動き・音は仮素材。里を歩く画面・道具の補充・防具は、これから追加します。`));
+    card.appendChild(el('p', 'base-note', `v${APP_VERSION} (${BUILD_ID}) ／ 見た目・動き・音は仮素材。防具の見た目・里を歩く画面・道具の補充は、これから追加します。`));
     // 画面を広く使う方法: 全画面にできる端末はボタン、iPhone は「ホーム画面に追加」の案内
     if (canFullscreen() && window.matchMedia('(pointer: coarse)').matches) {
       const fs = el('button', 'base-fs', '全画面にする');
@@ -192,7 +188,7 @@ export class BaseScreen {
       this.banners.appendChild(p);
     }
 
-    if ([...c.recipes.values()].some((r) => checkCraft(doc, r).ok)) this.banners.appendChild(el('p', 'base-banner', '強化できる武器があります（下の「工房」）。'));
+    if ([...c.recipes.values()].some((r) => checkCraft(doc, r).ok)) this.banners.appendChild(el('p', 'base-banner', '強化できる装備があります（下の「工房」）。'));
 
     // 武器（持っていて、この版で使えるもの）
     this.weaponRow.textContent = '';
@@ -211,6 +207,10 @@ export class BaseScreen {
     const w = c.weapons.get(current);
     const fam = w ? c.families.get(w.family) : undefined;
     this.weaponNote.textContent = w && fam ? `${w.name}（攻撃力 ${w.attack}）: ${fam.summary ?? ''}` : '';
+    const worn = wornArmor(doc, c);
+    this.armorNote.textContent = `防具: 防御力 ${defenseOf(doc, c)}（${worn.map((x) => x.name).join('・') || 'なし'}）`;
+
+    this.renderQuests();
 
     // 持ち物
     this.inv.textContent = '';
@@ -218,8 +218,8 @@ export class BaseScreen {
     const items = known.map(([id, n]) => `${c.materials.get(id)!.name} ×${n}`);
     this.inv.appendChild(el('p', undefined, `持ち物: 通貨 ${doc.money}　${items.length ? items.join('　') : '素材はまだ無い'}`));
     const unk = unknownIds(doc, c);
-    if (unk.items.length + unk.weapons.length > 0) {
-      this.inv.appendChild(el('p', 'base-unknown', `この版では使えないもの（消さずに持っています）: ${[...unk.items.map((id) => `${id} ×${doc.items[id]}`), ...unk.weapons].join('　')}`));
+    if (unk.items.length + unk.weapons.length + unk.armor.length > 0) {
+      this.inv.appendChild(el('p', 'base-unknown', `この版では使えないもの（消さずに持っています）: ${[...unk.items.map((id) => `${id} ×${doc.items[id]}`), ...unk.weapons, ...unk.armor].join('　')}`));
     }
     const state = save.mode === 'persistent' ? (doc.revision > 0 ? `この端末に保存済み（${when(doc.updatedAt)}）` : 'まだ保存するものがありません') : '保存されません（ページを閉じると最初に戻ります）';
     this.inv.appendChild(el('p', 'base-save-state', state));
@@ -228,71 +228,118 @@ export class BaseScreen {
     if (this.data.open) this.renderData();
   }
 
+  /** 依頼の並び（段階の順）と訓練場。まだ受けられない依頼は、押せない 1 行にする。 */
+  private renderQuests(): void {
+    const c = this.content;
+    const doc = this.host.save.doc;
+    this.questBox.textContent = '';
+    const choice = (title: string, lines: string[], onClick: (() => void) | null): HTMLButtonElement => {
+      const b = el('button', 'base-choice');
+      b.appendChild(el('b', undefined, title));
+      for (const line of lines) b.appendChild(el('span', undefined, line));
+      if (onClick) b.addEventListener('click', onClick);
+      else b.disabled = true;
+      this.questBox.appendChild(b);
+      return b;
+    };
+    const order = (rankId: string): number => c.ranks.get(rankId)?.order ?? 0;
+    const quests = [...c.quests.values()].sort((x, y) => order(x.rankId) - order(y.rankId));
+    for (const q of quests) {
+      const rank = c.ranks.get(q.rankId)?.name ?? '';
+      const clears = doc.progress.questClears[q.id] ?? 0;
+      const title = `【${rank}】依頼「${q.name}」${clears > 0 ? `　達成 ${clears} 回` : ''}`;
+      let b: HTMLButtonElement;
+      if (!questUnlocked(doc, q)) {
+        const need = (q.requires ?? []).filter((id) => !(doc.progress.questClears[id] ?? 0)).map((id) => `「${c.quests.get(id)?.name ?? id}」`);
+        b = choice(title, [`${need.join('と')}を達成すると受けられます。`], null);
+        b.classList.add('locked');
+      } else {
+        const target = c.monsters.get(q.targetMonsterId)?.name ?? '';
+        const goal = q.kind === 'hunt' ? '狩猟（討伐か捕獲）' : '討伐';
+        const lines = [q.summary, `目標: ${target}の${goal}　制限 ${Math.round(q.timeLimitTicks / 3600)} 分　力尽き ${q.maxFaints} 回で失敗`];
+        if (q.supplies?.length) lines.push(`支給品: ${q.supplies.map((s) => `${c.items.get(s.itemId)?.name ?? s.itemId} ×${s.count}`).join('　')}`);
+        if (q.rewards) lines.push(`報酬: ${q.rewards.money} 通貨 + 素材`);
+        b = choice(title, lines, () => this.host.startHunt(q.id));
+      }
+      b.dataset.quest = q.id;
+      b.dataset.rank = q.rankId;
+    }
+    choice('訓練場', ['動かない標的で、操作と技を確かめる。'], () => this.host.startTraining());
+  }
+
+  /**
+   * 工房。持っている武器と防具それぞれの「次の強化」を 1 つずつ出す（強化は入れ替えなので、進める先は 1 つ）。
+   * 並べる順: いま装備している武器 → 強化できるもの → まだ足りないもの。最後の段まで進んだものは 1 行にまとめる。
+   */
   private renderForge(): void {
     const c = this.content;
     const doc = this.host.save.doc;
     this.forgeBody.textContent = '';
     let ready = 0;
-    let shown = 0;
-    // 並べる順: いま装備している武器 → 強化できるもの → まだのもの → 強化済み
     const equipped = this.host.weaponId;
-    const rank = (r: RecipeDef): number => {
-      const chk = checkCraft(doc, r);
-      if (r.fromWeaponId === equipped || r.resultWeaponId === equipped) return 0;
-      return chk.ok ? 1 : chk.ownsResult ? 3 : 2;
+    const rankName = (itemId: string): string => {
+      const order = this.matRank.get(itemId) ?? 1;
+      const r = order > 1 ? [...c.ranks.values()].find((x) => x.order === order) : undefined;
+      return r ? `（${r.name}から）` : '';
     };
-    const recipes = [...c.recipes.values()].sort((x, y) => rank(x) - rank(y));
-    for (const r of recipes) {
-      const from = c.weapons.get(r.fromWeaponId)!;
-      const to = c.weapons.get(r.resultWeaponId)!;
-      const chk = checkCraft(doc, r);
-      if (!chk.ownsBase && !chk.ownsResult) continue;
-      shown++;
-      const box = el('div', 'forge-recipe');
-      box.dataset.recipe = r.id;
-      box.appendChild(el('b', undefined, `${from.name} → ${to.name}`));
-      box.appendChild(el('span', 'forge-stat', `攻撃力 ${from.attack} → ${to.attack}`));
-      if (chk.ownsResult) {
-        box.appendChild(el('p', 'forge-done', '強化済みです。'));
-        this.forgeBody.appendChild(box);
-        continue;
-      }
-      const ul = el('ul', 'forge-cost');
-      for (const i of chk.items) {
-        const li = el('li', i.have >= i.need ? undefined : 'short', `${c.materials.get(i.itemId)?.name ?? i.itemId} ${i.have} / ${i.need}`);
-        ul.appendChild(li);
-      }
-      ul.appendChild(el('li', chk.money.have >= chk.money.need ? undefined : 'short', `通貨 ${chk.money.have} / ${chk.money.need}`));
-      box.appendChild(ul);
-      if (chk.ok) ready++;
-      if (this.confirming === r.id && chk.ok) {
-        const p = el('p', 'forge-confirm', `素材と通貨を使って、${from.name}を${to.name}に変えます。元には戻せません。`);
-        const yes = el('button', 'go', '強化する');
-        yes.addEventListener('click', () => {
-          this.confirming = null;
-          void this.run('強化しています', () => this.host.save.craft(r.id), `${to.name}に強化しました。`).then((ok) => {
-            if (ok) this.host.saveChanged();
+    const nameOf = (id: string): string => c.weapons.get(id)?.name ?? c.armor.get(id)?.name ?? id;
+    const statOf = (id: string): string => (c.weapons.has(id) ? `攻撃力 ${c.weapons.get(id)!.attack}` : `防御力 ${c.armor.get(id)?.defense ?? 0}`);
+    const section = (title: string, kind: RecipeDef['kind'], ownedIds: string[]): void => {
+      this.forgeBody.appendChild(el('p', 'forge-head', title));
+      const next = [...c.recipes.values()].filter((r) => r.kind === kind && checkCraft(doc, r).ownsBase);
+      const sortKey = (r: RecipeDef): number => (recipeFrom(r) === equipped ? 0 : checkCraft(doc, r).ok ? 1 : 2);
+      next.sort((x, y) => sortKey(x) - sortKey(y));
+      for (const r of next) {
+        const chk = checkCraft(doc, r);
+        if (chk.ownsResult) continue;
+        const from = r.kind === 'upgrade' ? r.fromWeaponId : r.fromArmorId;
+        const to = r.kind === 'upgrade' ? r.resultWeaponId : r.resultArmorId;
+        const box = el('div', 'forge-recipe');
+        box.dataset.recipe = r.id;
+        box.appendChild(el('b', undefined, `${nameOf(from)} → ${nameOf(to)}`));
+        box.appendChild(el('span', 'forge-stat', `${statOf(from)} → ${statOf(to).replace(/^\S+ /, '')}`));
+        const ul = el('ul', 'forge-cost');
+        for (const i of chk.items) {
+          const short = i.have < i.need;
+          ul.appendChild(el('li', short ? 'short' : undefined, `${c.materials.get(i.itemId)?.name ?? i.itemId} ${i.have} / ${i.need}${short ? rankName(i.itemId) : ''}`));
+        }
+        ul.appendChild(el('li', chk.money.have >= chk.money.need ? undefined : 'short', `通貨 ${chk.money.have} / ${chk.money.need}`));
+        box.appendChild(ul);
+        if (chk.ok) ready++;
+        if (this.confirming === r.id && chk.ok) {
+          const p = el('p', 'forge-confirm', `素材と通貨を使って、${nameOf(from)}を${nameOf(to)}に変えます。元には戻せません。`);
+          const yes = el('button', 'go', '強化する');
+          yes.addEventListener('click', () => {
+            this.confirming = null;
+            void this.run('強化しています', () => this.host.save.craft(r.id), `${nameOf(to)}に強化しました。`).then((ok) => {
+              if (ok) this.host.saveChanged();
+            });
           });
-        });
-        const no = el('button', undefined, 'やめる');
-        no.addEventListener('click', () => {
-          this.confirming = null;
-          this.refresh();
-        });
-        p.append(yes, no);
-        box.appendChild(p);
-      } else {
-        const b = el('button', 'go', chk.ok ? '強化する' : '素材か通貨が足りません');
-        b.disabled = !chk.ok;
-        b.addEventListener('click', () => {
-          this.confirming = r.id;
-          this.refresh();
-        });
-        box.appendChild(b);
+          const no = el('button', undefined, 'やめる');
+          no.addEventListener('click', () => {
+            this.confirming = null;
+            this.refresh();
+          });
+          p.append(yes, no);
+          box.appendChild(p);
+        } else {
+          const b = el('button', 'go', chk.ok ? '強化する' : '素材か通貨が足りません');
+          b.disabled = !chk.ok;
+          b.addEventListener('click', () => {
+            this.confirming = r.id;
+            this.refresh();
+          });
+          box.appendChild(b);
+        }
+        this.forgeBody.appendChild(box);
       }
-      this.forgeBody.appendChild(box);
-    }
-    if (shown === 0) this.forgeBody.appendChild(el('p', 'base-note', 'いま強化できる武器はありません。'));
+      // 最後の段まで進んだもの（進める先のレシピが無い）
+      const sources = new Set([...c.recipes.values()].map(recipeFrom));
+      const done = ownedIds.filter((id) => (c.weapons.has(id) || c.armor.has(id)) && !sources.has(id));
+      if (done.length > 0) this.forgeBody.appendChild(el('p', 'forge-done', `最後の段まで強化済み: ${done.map((id) => `${nameOf(id)}（${statOf(id)}）`).join('　')}`));
+    };
+    section('武器', 'upgrade', doc.weapons);
+    section('防具', 'armor_upgrade', doc.armor);
     this.forge.querySelector('summary')!.textContent = ready > 0 ? `工房（強化できます: ${ready}）` : '工房';
   }
 

@@ -1,6 +1,7 @@
-// 「岩殻の〜」（ガルドロスの素材で強化した武器）の仮の見た目。
+// ガルドロスの素材で強化した武器（岩殻 → 脈殻 → 晶殻 → 輝殻）の仮の見た目。
 // 設定図がまだ無いので、元の武器の形に、単色の岩の板と青銅色の留め帯を足すだけにしてある（当たり判定は元の武器と同じ）。
-// 断岳剣だけは heavyBlade.ts の中で同じことをしている（先に作ったため）。
+// 段が上がると、板の色が変わり（岩 → 暗い岩 → 晶の緑青 → 光る晶）、少しだけ大きくなる。板の位置は 4 段とも同じ。
+// 断岳剣だけは heavyBlade.ts の中で同じことをしている（先に作ったため。色は同じ表を使う）。
 // 武器の向きは共通: 原点が握り、+Y が先、-Z が刃（弓は背）、+Z が峰（弓は弦）。単位 m。
 import { BoxGeometry, Mesh, MeshLambertMaterial } from 'three';
 import type { WeaponModel } from './heavyBlade';
@@ -54,14 +55,43 @@ export const SHELL_PLATES: Record<string, ShellPlate[]> = {
   ],
 };
 
-const ROCK = 0xa69c8b, ROCK_DARK = 0x7c7466, BRONZE = 0xb08a4e;
+/** 段ごとの色と大きさ（2 = 岩殻、3 = 脈殻、4 = 晶殻、5 = 輝殻）。glow は自分で光る色（0 なら光らない）。机上で決めた仮の色 */
+export interface ShellPalette {
+  rock: number;
+  rockDark: number;
+  band: number;
+  glow: number;
+  scale: number;
+}
+export const SHELL_PALETTES: Record<number, ShellPalette> = {
+  2: { rock: 0xa69c8b, rockDark: 0x7c7466, band: 0xb08a4e, glow: 0, scale: 1 },
+  3: { rock: 0x80705a, rockDark: 0x54493b, band: 0xd6a04a, glow: 0, scale: 1.06 },
+  4: { rock: 0x5f9a8f, rockDark: 0x3f6f68, band: 0xcda65c, glow: 0x0c2a26, scale: 1.12 },
+  5: { rock: 0xd4efe4, rockDark: 0x86d6c4, band: 0xecd07a, glow: 0x2c6c60, scale: 1.18 },
+};
+/** モデルの ID の末尾（.002〜.005）から段を読む。読めなければ 2 */
+export const tierOf = (modelId: string): number => {
+  const t = Number(/\.00(\d)$/.exec(modelId)?.[1] ?? 2);
+  return SHELL_PALETTES[t] ? t : 2;
+};
+export const shellMaterials = (tier: number): { rock: MeshLambertMaterial; rockDark: MeshLambertMaterial; band: MeshLambertMaterial; scale: number } => {
+  const p = SHELL_PALETTES[tier] ?? SHELL_PALETTES[2]!;
+  return {
+    rock: new MeshLambertMaterial({ color: p.rock, emissive: p.glow }),
+    rockDark: new MeshLambertMaterial({ color: p.rockDark, emissive: p.glow }),
+    band: new MeshLambertMaterial({ color: p.band }),
+    scale: p.scale,
+  };
+};
 
-/** 元の武器の形に、岩の板と留め帯を足す。name はモデルの ID（強化後）。 */
+/** 元の武器の形に、岩の板と留め帯を足す。name はモデルの ID（強化後。末尾の .002〜.005 が段）。 */
 export function withShell(base: WeaponModel, name: string): WeaponModel {
-  const plates = SHELL_PLATES[name] ?? [];
-  const rock = new MeshLambertMaterial({ color: ROCK });
-  const rockDark = new MeshLambertMaterial({ color: ROCK_DARK });
-  const bronze = new MeshLambertMaterial({ color: BRONZE });
+  const plates = (SHELL_PLATES[name.replace(/\.00\d$/, '.002')] ?? []).map((q) => ({ ...q }));
+  const { rock, rockDark, band: bronze, scale } = shellMaterials(tierOf(name));
+  for (const q of plates) {
+    q.h *= scale;
+    q.d *= scale;
+  }
   let triangles = base.triangles;
   plates.forEach((p, i) => {
     const plate = new Mesh(new BoxGeometry(p.t, p.h, p.d), i % 2 ? rockDark : rock);

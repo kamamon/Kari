@@ -86,16 +86,17 @@ const stand = (key: string, model: WeaponModel, x: number, y: number, turn: numb
   rackModels[key] = model;
 };
 // 左から: 護刃（盾・剣）、断岳剣、長尖槍（槍・大盾）、ハンター、大槌・双剣・太刀（設定図が無いので単色の仮の形）、環弓（弓・矢・矢筒）
-// URL に ?tier=2 を付けると、強化後（岩殻の〜。元の形に岩の板を足した仮の形）を並べる
-const tier2 = new URLSearchParams(location.search).get('tier') === '2';
-const up = (base: WeaponModel, fam: string): WeaponModel => (tier2 ? withShell(base, `model.weapon.${fam}.002`) : base);
-/** ?tier=2 の時、ハンターにも強化後の形を持たせる */
-const held = (fam: string): string | undefined => (tier2 ? `model.weapon.${fam}.002` : undefined);
+// URL に ?tier=2〜5 を付けると、強化後（2 岩殻・3 脈殻・4 晶殻・5 輝殻。元の形に岩の板を足した仮の形）を並べる
+const tierParam = Number(new URLSearchParams(location.search).get('tier'));
+const tier = [2, 3, 4, 5].includes(tierParam) ? tierParam : 0;
+const up = (base: WeaponModel, fam: string): WeaponModel => (tier ? withShell(base, `model.weapon.${fam}.00${tier}`) : base);
+/** ?tier= を付けた時、ハンターにも強化後の形を持たせる */
+const held = (fam: string): string | undefined => (tier ? `model.weapon.${fam}.00${tier}` : undefined);
 stand('guardShield', buildGuardBladeShield(), -3.0, 0.3, 0);
 stand('guardSword', up(buildGuardBladeSword(), 'guard_blade'), -2.68, 0.1224, Math.PI / 2);
 stand('heavyBlade', buildHeavyBlade(), -2.27, 0.155, Math.PI / 2);
 // 岩殻の断岳剣（強化後。設定図は無く、岩の板を足しただけの仮の形）
-stand('heavyBladeShell', buildHeavyBlade('shell'), -1.8, 0.155, Math.PI / 2);
+stand('heavyBladeShell', buildHeavyBlade('shell', tier || 2), -1.8, 0.155, Math.PI / 2);
 stand('lance', up(buildLance(), 'long_lance'), -1.35, 0.541, Math.PI / 2);
 stand('greatShield', buildGreatShield(), -0.85, 0.55, 0);
 stand('warMaul', up(buildWarMaul(), 'war_maul'), 0.95, 0.2, Math.PI / 2);

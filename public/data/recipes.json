@@ -1,101 +1,54 @@
 {
   "schemaVersion": 1,
-  "note": "工房で作るもの。kind: upgrade は、持っている武器（fromWeaponId）を素材と通貨で別の武器（resultWeaponId）に変える。元の武器は無くなる。岩殻の断岳剣の素材と費用は設計書 p.24 の例。ほかの 6 つは本作で決めた（設計書の岩殻の護刃は硬石 3 を使うが、採掘がまだ無いので硬骨に替えてある）。攻撃力（weapons.json）は元の 1.15 倍で、机上の初期値。",
+  "note": "工房で作るもの。kind: upgrade は、持っている武器（fromWeaponId）を素材と通貨で別の武器（resultWeaponId）に変える。armor_upgrade は防具で同じことをする。どちらも元は無くなる。武器も防具も 5 段（里 → 岩殻 → 脈殻 → 晶殻 → 輝殻）で、2 段目は初級、3 段目は中級、4 段目は上級、5 段目は極級の個体から出る素材が要る（D-060）。岩殻の断岳剣の素材と費用だけが設計書 p.24 の例で、ほかは本作で決めた机上の値。大槌と環弓の 3 段目は、尾を切れない武器なので尾端晶を使わない。",
   "recipes": [
-    {
-      "id": "recipe.heavy_blade.002",
-      "kind": "upgrade",
-      "fromWeaponId": "weapon.heavy_blade.001",
-      "resultWeaponId": "weapon.heavy_blade.002",
-      "cost": {
-        "money": 120,
-        "items": [
-          { "itemId": "mat.galdros.shell_shard", "count": 3 },
-          { "itemId": "mat.galdros.hard_bone", "count": 2 },
-          { "itemId": "mat.galdros.bronze_vein", "count": 1 }
-        ]
-      }
-    },
-    {
-      "id": "recipe.guard_blade.002",
-      "kind": "upgrade",
-      "fromWeaponId": "weapon.guard_blade.001",
-      "resultWeaponId": "weapon.guard_blade.002",
-      "cost": {
-        "money": 120,
-        "items": [
-          { "itemId": "mat.galdros.shell_shard", "count": 2 },
-          { "itemId": "mat.galdros.foreleg_plate", "count": 1 },
-          { "itemId": "mat.galdros.hard_bone", "count": 2 }
-        ]
-      }
-    },
-    {
-      "id": "recipe.war_maul.002",
-      "kind": "upgrade",
-      "fromWeaponId": "weapon.war_maul.001",
-      "resultWeaponId": "weapon.war_maul.002",
-      "cost": {
-        "money": 120,
-        "items": [
-          { "itemId": "mat.galdros.shell_shard", "count": 4 },
-          { "itemId": "mat.galdros.hard_bone", "count": 2 }
-        ]
-      }
-    },
-    {
-      "id": "recipe.twin_blades.002",
-      "kind": "upgrade",
-      "fromWeaponId": "weapon.twin_blades.001",
-      "resultWeaponId": "weapon.twin_blades.002",
-      "cost": {
-        "money": 120,
-        "items": [
-          { "itemId": "mat.galdros.shell_shard", "count": 2 },
-          { "itemId": "mat.galdros.bronze_vein", "count": 2 },
-          { "itemId": "mat.galdros.hard_bone", "count": 1 }
-        ]
-      }
-    },
-    {
-      "id": "recipe.long_blade.002",
-      "kind": "upgrade",
-      "fromWeaponId": "weapon.long_blade.001",
-      "resultWeaponId": "weapon.long_blade.002",
-      "cost": {
-        "money": 120,
-        "items": [
-          { "itemId": "mat.galdros.shell_shard", "count": 3 },
-          { "itemId": "mat.galdros.bronze_vein", "count": 2 }
-        ]
-      }
-    },
-    {
-      "id": "recipe.long_lance.002",
-      "kind": "upgrade",
-      "fromWeaponId": "weapon.long_lance.001",
-      "resultWeaponId": "weapon.long_lance.002",
-      "cost": {
-        "money": 120,
-        "items": [
-          { "itemId": "mat.galdros.shell_shard", "count": 3 },
-          { "itemId": "mat.galdros.foreleg_plate", "count": 2 }
-        ]
-      }
-    },
-    {
-      "id": "recipe.ring_bow.002",
-      "kind": "upgrade",
-      "fromWeaponId": "weapon.ring_bow.001",
-      "resultWeaponId": "weapon.ring_bow.002",
-      "cost": {
-        "money": 120,
-        "items": [
-          { "itemId": "mat.galdros.hard_bone", "count": 3 },
-          { "itemId": "mat.galdros.bronze_vein", "count": 1 },
-          { "itemId": "mat.galdros.shell_shard", "count": 1 }
-        ]
-      }
-    }
+    {"id": "recipe.heavy_blade.002", "kind": "upgrade", "fromWeaponId": "weapon.heavy_blade.001", "resultWeaponId": "weapon.heavy_blade.002", "cost": {"money": 120, "items": [{"itemId": "mat.galdros.shell_shard", "count": 3}, {"itemId": "mat.galdros.hard_bone", "count": 2}, {"itemId": "mat.galdros.bronze_vein", "count": 1}]}},
+    {"id": "recipe.heavy_blade.003", "kind": "upgrade", "fromWeaponId": "weapon.heavy_blade.002", "resultWeaponId": "weapon.heavy_blade.003", "cost": {"money": 400, "items": [{"itemId": "mat.galdros.veined_shell", "count": 3}, {"itemId": "mat.galdros.tail_crystal", "count": 1}, {"itemId": "mat.galdros.hard_bone", "count": 2}]}},
+    {"id": "recipe.heavy_blade.004", "kind": "upgrade", "fromWeaponId": "weapon.heavy_blade.003", "resultWeaponId": "weapon.heavy_blade.004", "cost": {"money": 900, "items": [{"itemId": "mat.galdros.crystal_shell", "count": 4}, {"itemId": "mat.galdros.bronze_lump", "count": 2}, {"itemId": "mat.galdros.veined_shell", "count": 2}]}},
+    {"id": "recipe.heavy_blade.005", "kind": "upgrade", "fromWeaponId": "weapon.heavy_blade.004", "resultWeaponId": "weapon.heavy_blade.005", "cost": {"money": 1800, "items": [{"itemId": "mat.galdros.radiant_shell", "count": 5}, {"itemId": "mat.galdros.pulse_core", "count": 1}, {"itemId": "mat.galdros.bronze_lump", "count": 3}]}},
+    {"id": "recipe.guard_blade.002", "kind": "upgrade", "fromWeaponId": "weapon.guard_blade.001", "resultWeaponId": "weapon.guard_blade.002", "cost": {"money": 120, "items": [{"itemId": "mat.galdros.shell_shard", "count": 2}, {"itemId": "mat.galdros.foreleg_plate", "count": 1}, {"itemId": "mat.galdros.hard_bone", "count": 2}]}},
+    {"id": "recipe.guard_blade.003", "kind": "upgrade", "fromWeaponId": "weapon.guard_blade.002", "resultWeaponId": "weapon.guard_blade.003", "cost": {"money": 400, "items": [{"itemId": "mat.galdros.veined_shell", "count": 3}, {"itemId": "mat.galdros.tail_crystal", "count": 1}, {"itemId": "mat.galdros.foreleg_plate", "count": 1}]}},
+    {"id": "recipe.guard_blade.004", "kind": "upgrade", "fromWeaponId": "weapon.guard_blade.003", "resultWeaponId": "weapon.guard_blade.004", "cost": {"money": 900, "items": [{"itemId": "mat.galdros.crystal_shell", "count": 3}, {"itemId": "mat.galdros.bronze_lump", "count": 2}, {"itemId": "mat.galdros.veined_shell", "count": 2}, {"itemId": "mat.galdros.foreleg_plate", "count": 1}]}},
+    {"id": "recipe.guard_blade.005", "kind": "upgrade", "fromWeaponId": "weapon.guard_blade.004", "resultWeaponId": "weapon.guard_blade.005", "cost": {"money": 1800, "items": [{"itemId": "mat.galdros.radiant_shell", "count": 4}, {"itemId": "mat.galdros.pulse_core", "count": 1}, {"itemId": "mat.galdros.crystal_shell", "count": 3}]}},
+    {"id": "recipe.war_maul.002", "kind": "upgrade", "fromWeaponId": "weapon.war_maul.001", "resultWeaponId": "weapon.war_maul.002", "cost": {"money": 120, "items": [{"itemId": "mat.galdros.shell_shard", "count": 4}, {"itemId": "mat.galdros.hard_bone", "count": 2}]}},
+    {"id": "recipe.war_maul.003", "kind": "upgrade", "fromWeaponId": "weapon.war_maul.002", "resultWeaponId": "weapon.war_maul.003", "cost": {"money": 400, "items": [{"itemId": "mat.galdros.veined_shell", "count": 4}, {"itemId": "mat.galdros.hard_bone", "count": 3}]}},
+    {"id": "recipe.war_maul.004", "kind": "upgrade", "fromWeaponId": "weapon.war_maul.003", "resultWeaponId": "weapon.war_maul.004", "cost": {"money": 900, "items": [{"itemId": "mat.galdros.crystal_shell", "count": 5}, {"itemId": "mat.galdros.bronze_lump", "count": 1}, {"itemId": "mat.galdros.veined_shell", "count": 3}]}},
+    {"id": "recipe.war_maul.005", "kind": "upgrade", "fromWeaponId": "weapon.war_maul.004", "resultWeaponId": "weapon.war_maul.005", "cost": {"money": 1800, "items": [{"itemId": "mat.galdros.radiant_shell", "count": 6}, {"itemId": "mat.galdros.pulse_core", "count": 1}, {"itemId": "mat.galdros.crystal_shell", "count": 2}]}},
+    {"id": "recipe.twin_blades.002", "kind": "upgrade", "fromWeaponId": "weapon.twin_blades.001", "resultWeaponId": "weapon.twin_blades.002", "cost": {"money": 120, "items": [{"itemId": "mat.galdros.shell_shard", "count": 2}, {"itemId": "mat.galdros.bronze_vein", "count": 2}, {"itemId": "mat.galdros.hard_bone", "count": 1}]}},
+    {"id": "recipe.twin_blades.003", "kind": "upgrade", "fromWeaponId": "weapon.twin_blades.002", "resultWeaponId": "weapon.twin_blades.003", "cost": {"money": 400, "items": [{"itemId": "mat.galdros.veined_shell", "count": 2}, {"itemId": "mat.galdros.tail_crystal", "count": 2}, {"itemId": "mat.galdros.bronze_vein", "count": 2}]}},
+    {"id": "recipe.twin_blades.004", "kind": "upgrade", "fromWeaponId": "weapon.twin_blades.003", "resultWeaponId": "weapon.twin_blades.004", "cost": {"money": 900, "items": [{"itemId": "mat.galdros.crystal_shell", "count": 3}, {"itemId": "mat.galdros.bronze_lump", "count": 3}, {"itemId": "mat.galdros.tail_crystal", "count": 1}]}},
+    {"id": "recipe.twin_blades.005", "kind": "upgrade", "fromWeaponId": "weapon.twin_blades.004", "resultWeaponId": "weapon.twin_blades.005", "cost": {"money": 1800, "items": [{"itemId": "mat.galdros.radiant_shell", "count": 4}, {"itemId": "mat.galdros.pulse_core", "count": 1}, {"itemId": "mat.galdros.bronze_lump", "count": 4}]}},
+    {"id": "recipe.long_blade.002", "kind": "upgrade", "fromWeaponId": "weapon.long_blade.001", "resultWeaponId": "weapon.long_blade.002", "cost": {"money": 120, "items": [{"itemId": "mat.galdros.shell_shard", "count": 3}, {"itemId": "mat.galdros.bronze_vein", "count": 2}]}},
+    {"id": "recipe.long_blade.003", "kind": "upgrade", "fromWeaponId": "weapon.long_blade.002", "resultWeaponId": "weapon.long_blade.003", "cost": {"money": 400, "items": [{"itemId": "mat.galdros.veined_shell", "count": 3}, {"itemId": "mat.galdros.tail_crystal", "count": 1}, {"itemId": "mat.galdros.bronze_vein", "count": 2}]}},
+    {"id": "recipe.long_blade.004", "kind": "upgrade", "fromWeaponId": "weapon.long_blade.003", "resultWeaponId": "weapon.long_blade.004", "cost": {"money": 900, "items": [{"itemId": "mat.galdros.crystal_shell", "count": 4}, {"itemId": "mat.galdros.bronze_lump", "count": 2}, {"itemId": "mat.galdros.tail_crystal", "count": 1}]}},
+    {"id": "recipe.long_blade.005", "kind": "upgrade", "fromWeaponId": "weapon.long_blade.004", "resultWeaponId": "weapon.long_blade.005", "cost": {"money": 1800, "items": [{"itemId": "mat.galdros.radiant_shell", "count": 5}, {"itemId": "mat.galdros.pulse_core", "count": 1}, {"itemId": "mat.galdros.bronze_lump", "count": 3}]}},
+    {"id": "recipe.long_lance.002", "kind": "upgrade", "fromWeaponId": "weapon.long_lance.001", "resultWeaponId": "weapon.long_lance.002", "cost": {"money": 120, "items": [{"itemId": "mat.galdros.shell_shard", "count": 3}, {"itemId": "mat.galdros.foreleg_plate", "count": 2}]}},
+    {"id": "recipe.long_lance.003", "kind": "upgrade", "fromWeaponId": "weapon.long_lance.002", "resultWeaponId": "weapon.long_lance.003", "cost": {"money": 400, "items": [{"itemId": "mat.galdros.veined_shell", "count": 3}, {"itemId": "mat.galdros.tail_crystal", "count": 1}, {"itemId": "mat.galdros.foreleg_plate", "count": 2}]}},
+    {"id": "recipe.long_lance.004", "kind": "upgrade", "fromWeaponId": "weapon.long_lance.003", "resultWeaponId": "weapon.long_lance.004", "cost": {"money": 900, "items": [{"itemId": "mat.galdros.crystal_shell", "count": 4}, {"itemId": "mat.galdros.bronze_lump", "count": 2}, {"itemId": "mat.galdros.foreleg_plate", "count": 2}]}},
+    {"id": "recipe.long_lance.005", "kind": "upgrade", "fromWeaponId": "weapon.long_lance.004", "resultWeaponId": "weapon.long_lance.005", "cost": {"money": 1800, "items": [{"itemId": "mat.galdros.radiant_shell", "count": 5}, {"itemId": "mat.galdros.pulse_core", "count": 1}, {"itemId": "mat.galdros.crystal_shell", "count": 3}]}},
+    {"id": "recipe.ring_bow.002", "kind": "upgrade", "fromWeaponId": "weapon.ring_bow.001", "resultWeaponId": "weapon.ring_bow.002", "cost": {"money": 120, "items": [{"itemId": "mat.galdros.hard_bone", "count": 3}, {"itemId": "mat.galdros.bronze_vein", "count": 1}, {"itemId": "mat.galdros.shell_shard", "count": 1}]}},
+    {"id": "recipe.ring_bow.003", "kind": "upgrade", "fromWeaponId": "weapon.ring_bow.002", "resultWeaponId": "weapon.ring_bow.003", "cost": {"money": 400, "items": [{"itemId": "mat.galdros.veined_shell", "count": 3}, {"itemId": "mat.galdros.hard_bone", "count": 3}, {"itemId": "mat.galdros.bronze_vein", "count": 1}]}},
+    {"id": "recipe.ring_bow.004", "kind": "upgrade", "fromWeaponId": "weapon.ring_bow.003", "resultWeaponId": "weapon.ring_bow.004", "cost": {"money": 900, "items": [{"itemId": "mat.galdros.crystal_shell", "count": 3}, {"itemId": "mat.galdros.bronze_lump", "count": 3}, {"itemId": "mat.galdros.veined_shell", "count": 2}]}},
+    {"id": "recipe.ring_bow.005", "kind": "upgrade", "fromWeaponId": "weapon.ring_bow.004", "resultWeaponId": "weapon.ring_bow.005", "cost": {"money": 1800, "items": [{"itemId": "mat.galdros.radiant_shell", "count": 4}, {"itemId": "mat.galdros.pulse_core", "count": 1}, {"itemId": "mat.galdros.bronze_lump", "count": 4}]}},
+    {"id": "recipe.armor.head.002", "kind": "armor_upgrade", "fromArmorId": "armor.head.001", "resultArmorId": "armor.head.002", "cost": {"money": 80, "items": [{"itemId": "mat.galdros.shell_shard", "count": 2}, {"itemId": "mat.galdros.hard_bone", "count": 1}]}},
+    {"id": "recipe.armor.head.003", "kind": "armor_upgrade", "fromArmorId": "armor.head.002", "resultArmorId": "armor.head.003", "cost": {"money": 250, "items": [{"itemId": "mat.galdros.veined_shell", "count": 2}, {"itemId": "mat.galdros.tail_crystal", "count": 1}]}},
+    {"id": "recipe.armor.head.004", "kind": "armor_upgrade", "fromArmorId": "armor.head.003", "resultArmorId": "armor.head.004", "cost": {"money": 550, "items": [{"itemId": "mat.galdros.crystal_shell", "count": 2}, {"itemId": "mat.galdros.bronze_lump", "count": 1}]}},
+    {"id": "recipe.armor.head.005", "kind": "armor_upgrade", "fromArmorId": "armor.head.004", "resultArmorId": "armor.head.005", "cost": {"money": 1100, "items": [{"itemId": "mat.galdros.radiant_shell", "count": 2}, {"itemId": "mat.galdros.pulse_core", "count": 1}]}},
+    {"id": "recipe.armor.chest.002", "kind": "armor_upgrade", "fromArmorId": "armor.chest.001", "resultArmorId": "armor.chest.002", "cost": {"money": 80, "items": [{"itemId": "mat.galdros.shell_shard", "count": 3}, {"itemId": "mat.galdros.hard_bone", "count": 2}]}},
+    {"id": "recipe.armor.chest.003", "kind": "armor_upgrade", "fromArmorId": "armor.chest.002", "resultArmorId": "armor.chest.003", "cost": {"money": 250, "items": [{"itemId": "mat.galdros.veined_shell", "count": 3}, {"itemId": "mat.galdros.hard_bone", "count": 2}]}},
+    {"id": "recipe.armor.chest.004", "kind": "armor_upgrade", "fromArmorId": "armor.chest.003", "resultArmorId": "armor.chest.004", "cost": {"money": 550, "items": [{"itemId": "mat.galdros.crystal_shell", "count": 3}, {"itemId": "mat.galdros.bronze_lump", "count": 2}]}},
+    {"id": "recipe.armor.chest.005", "kind": "armor_upgrade", "fromArmorId": "armor.chest.004", "resultArmorId": "armor.chest.005", "cost": {"money": 1100, "items": [{"itemId": "mat.galdros.radiant_shell", "count": 4}, {"itemId": "mat.galdros.bronze_lump", "count": 2}]}},
+    {"id": "recipe.armor.arms.002", "kind": "armor_upgrade", "fromArmorId": "armor.arms.001", "resultArmorId": "armor.arms.002", "cost": {"money": 80, "items": [{"itemId": "mat.galdros.shell_shard", "count": 2}, {"itemId": "mat.galdros.foreleg_plate", "count": 1}]}},
+    {"id": "recipe.armor.arms.003", "kind": "armor_upgrade", "fromArmorId": "armor.arms.002", "resultArmorId": "armor.arms.003", "cost": {"money": 250, "items": [{"itemId": "mat.galdros.veined_shell", "count": 2}, {"itemId": "mat.galdros.foreleg_plate", "count": 1}]}},
+    {"id": "recipe.armor.arms.004", "kind": "armor_upgrade", "fromArmorId": "armor.arms.003", "resultArmorId": "armor.arms.004", "cost": {"money": 550, "items": [{"itemId": "mat.galdros.crystal_shell", "count": 2}, {"itemId": "mat.galdros.veined_shell", "count": 2}]}},
+    {"id": "recipe.armor.arms.005", "kind": "armor_upgrade", "fromArmorId": "armor.arms.004", "resultArmorId": "armor.arms.005", "cost": {"money": 1100, "items": [{"itemId": "mat.galdros.radiant_shell", "count": 2}, {"itemId": "mat.galdros.crystal_shell", "count": 2}]}},
+    {"id": "recipe.armor.waist.002", "kind": "armor_upgrade", "fromArmorId": "armor.waist.001", "resultArmorId": "armor.waist.002", "cost": {"money": 80, "items": [{"itemId": "mat.galdros.shell_shard", "count": 2}, {"itemId": "mat.galdros.bronze_vein", "count": 1}]}},
+    {"id": "recipe.armor.waist.003", "kind": "armor_upgrade", "fromArmorId": "armor.waist.002", "resultArmorId": "armor.waist.003", "cost": {"money": 250, "items": [{"itemId": "mat.galdros.veined_shell", "count": 2}, {"itemId": "mat.galdros.bronze_vein", "count": 2}]}},
+    {"id": "recipe.armor.waist.004", "kind": "armor_upgrade", "fromArmorId": "armor.waist.003", "resultArmorId": "armor.waist.004", "cost": {"money": 550, "items": [{"itemId": "mat.galdros.crystal_shell", "count": 2}, {"itemId": "mat.galdros.tail_crystal", "count": 1}]}},
+    {"id": "recipe.armor.waist.005", "kind": "armor_upgrade", "fromArmorId": "armor.waist.004", "resultArmorId": "armor.waist.005", "cost": {"money": 1100, "items": [{"itemId": "mat.galdros.radiant_shell", "count": 2}, {"itemId": "mat.galdros.bronze_lump", "count": 2}]}},
+    {"id": "recipe.armor.legs.002", "kind": "armor_upgrade", "fromArmorId": "armor.legs.001", "resultArmorId": "armor.legs.002", "cost": {"money": 80, "items": [{"itemId": "mat.galdros.shell_shard", "count": 2}, {"itemId": "mat.galdros.hard_bone", "count": 1}, {"itemId": "mat.galdros.foreleg_plate", "count": 1}]}},
+    {"id": "recipe.armor.legs.003", "kind": "armor_upgrade", "fromArmorId": "armor.legs.002", "resultArmorId": "armor.legs.003", "cost": {"money": 250, "items": [{"itemId": "mat.galdros.veined_shell", "count": 2}, {"itemId": "mat.galdros.hard_bone", "count": 2}]}},
+    {"id": "recipe.armor.legs.004", "kind": "armor_upgrade", "fromArmorId": "armor.legs.003", "resultArmorId": "armor.legs.004", "cost": {"money": 550, "items": [{"itemId": "mat.galdros.crystal_shell", "count": 2}, {"itemId": "mat.galdros.bronze_lump", "count": 1}, {"itemId": "mat.galdros.foreleg_plate", "count": 1}]}},
+    {"id": "recipe.armor.legs.005", "kind": "armor_upgrade", "fromArmorId": "armor.legs.004", "resultArmorId": "armor.legs.005", "cost": {"money": 1100, "items": [{"itemId": "mat.galdros.radiant_shell", "count": 3}, {"itemId": "mat.galdros.tail_crystal", "count": 1}]}}
   ]
 }

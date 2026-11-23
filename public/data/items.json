@@ -11,6 +11,12 @@
     {"id": "mat.galdros.shell_shard", "name": "岩殻片"},
     {"id": "mat.galdros.hard_bone", "name": "硬骨"},
     {"id": "mat.galdros.bronze_vein", "name": "青銅晶脈"},
-    {"id": "mat.galdros.foreleg_plate", "name": "前脚甲"}
+    {"id": "mat.galdros.foreleg_plate", "name": "前脚甲"},
+    {"id": "mat.galdros.veined_shell", "name": "脈岩殻"},
+    {"id": "mat.galdros.tail_crystal", "name": "尾端晶"},
+    {"id": "mat.galdros.crystal_shell", "name": "晶岩殻"},
+    {"id": "mat.galdros.bronze_lump", "name": "青銅晶塊"},
+    {"id": "mat.galdros.radiant_shell", "name": "輝岩殻"},
+    {"id": "mat.galdros.pulse_core", "name": "脈動晶芯"}
   ]
 }

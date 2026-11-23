@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "note": "防具。頭・胴・腕・腰・脚の 5 部位（設計書 p.14）。部位ごとに 1 つを身に着け、5 部位の防御力の合計で受けるダメージが減る: 受けるダメージ = 元のダメージ × base / (base + 防御力の合計)。5 段（里 → 岩殻 → 脈殻 → 晶殻 → 輝殻）で、1 部位の防御力は 0 / 6 / 13 / 21 / 30。里の装束は 0 なので、v0.8.0 までと同じ痛さ。1 つ下の段階で揃えた防具を着て上の段階へ行くと、初級を里の装束で受けるのとほぼ同じ痛さになるように決めた（中級 ×1.3 に 30、上級 ×1.65 に 65、極級 ×2.05 に 105）。数値は机上の初期値。見た目は変わらない（絵が無い）。スキルと装飾品は未実装。",
+  "defense": {"base": 100},
+  "slots": [{"id": "head", "name": "頭"}, {"id": "chest", "name": "胴"}, {"id": "arms", "name": "腕"}, {"id": "waist", "name": "腰"}, {"id": "legs", "name": "脚"}],
+  "armor": [
+    {"id": "armor.head.001", "slot": "head", "name": "里の頭巾", "defense": 0, "starter": true},
+    {"id": "armor.head.002", "slot": "head", "name": "岩殻の兜", "defense": 6},
+    {"id": "armor.head.003", "slot": "head", "name": "脈殻の兜", "defense": 13},
+    {"id": "armor.head.004", "slot": "head", "name": "晶殻の兜", "defense": 21},
+    {"id": "armor.head.005", "slot": "head", "name": "輝殻の兜", "defense": 30},
+    {"id": "armor.chest.001", "slot": "chest", "name": "里の上衣", "defense": 0, "starter": true},
+    {"id": "armor.chest.002", "slot": "chest", "name": "岩殻の胸当て", "defense": 6},
+    {"id": "armor.chest.003", "slot": "chest", "name": "脈殻の胸当て", "defense": 13},
+    {"id": "armor.chest.004", "slot": "chest", "name": "晶殻の胸当て", "defense": 21},
+    {"id": "armor.chest.005", "slot": "chest", "name": "輝殻の胸当て", "defense": 30},
+    {"id": "armor.arms.001", "slot": "arms", "name": "里の手甲", "defense": 0, "starter": true},
+    {"id": "armor.arms.002", "slot": "arms", "name": "岩殻の籠手", "defense": 6},
+    {"id": "armor.arms.003", "slot": "arms", "name": "脈殻の籠手", "defense": 13},
+    {"id": "armor.arms.004", "slot": "arms", "name": "晶殻の籠手", "defense": 21},
+    {"id": "armor.arms.005", "slot": "arms", "name": "輝殻の籠手", "defense": 30},
+    {"id": "armor.waist.001", "slot": "waist", "name": "里の腰帯", "defense": 0, "starter": true},
+    {"id": "armor.waist.002", "slot": "waist", "name": "岩殻の腰当て", "defense": 6},
+    {"id": "armor.waist.003", "slot": "waist", "name": "脈殻の腰当て", "defense": 13},
+    {"id": "armor.waist.004", "slot": "waist", "name": "晶殻の腰当て", "defense": 21},
+    {"id": "armor.waist.005", "slot": "waist", "name": "輝殻の腰当て", "defense": 30},
+    {"id": "armor.legs.001", "slot": "legs", "name": "里の脚絆", "defense": 0, "starter": true},
+    {"id": "armor.legs.002", "slot": "legs", "name": "岩殻の脛当て", "defense": 6},
+    {"id": "armor.legs.003", "slot": "legs", "name": "脈殻の脛当て", "defense": 13},
+    {"id": "armor.legs.004", "slot": "legs", "name": "晶殻の脛当て", "defense": 21},
+    {"id": "armor.legs.005", "slot": "legs", "name": "輝殻の脛当て", "defense": 30}
+  ]
+}

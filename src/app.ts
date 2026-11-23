@@ -14,7 +14,7 @@ import { InputHub } from './input/hub';
 import { KeyboardMouse } from './input/keyboard';
 import { TouchControls } from './input/touch';
 import { GameView } from './render/view';
-import { playWeaponId, type RunRewards } from './save/profile';
+import { defenseOf, playWeaponId, questUnlocked, wornArmor, type RunRewards } from './save/profile';
 import type { SaveManager, SaveResult } from './save/saveManager';
 import type { SettingsStore } from './save/settings';
 import { BaseScreen, type BaseHost } from './ui/base';
@@ -136,6 +136,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
       monsterId: 'monster.training_dummy',
       monsterAttacks: this.store.value.dummyAttacks,
       questId,
+      armorIds: wornArmor(this.save.doc, this.content).map((a) => a.id),
     };
   }
 
@@ -275,7 +276,10 @@ export class App implements MenuHost, BaseHost, ResultHost {
     this.audio.play('ui');
   }
 
+  /** 依頼へ出発する。まだ受けられない依頼（下の段階を達成していない）は、何もしない。 */
   startHunt(questId: string): void {
+    const quest = this.content.quests.get(questId);
+    if (!quest || !questUnlocked(this.save.doc, quest)) return;
     this.createSession(questId);
     this.setOverlay(null);
     this.audio.play('ui');
@@ -336,7 +340,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
     return {
       hunt: true,
       done: h.phase === 'success',
-      title: h.quest.name,
+      title: `【${this.sim.rank?.name ?? ''}】${h.quest.name}`,
       lines: [h.quest.summary, `残り ${Math.floor(left / 60)} 分 ${left % 60} 秒　力尽き ${h.faints} / ${h.quest.maxFaints}`],
     };
   }
@@ -359,7 +363,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
     const v = this.store.value;
     const info = this.view.stats();
     return [
-      `装備：${this.weaponId}`,
+      `装備：${this.weaponId} / 防御力 ${defenseOf(this.save.doc, this.content)}${this.sim.rank ? ` / 依頼の段階 ${this.sim.rank.name}` : ''}`,
       `保存：${this.save.mode === 'persistent' ? '端末に保存' : this.save.mode === 'memory' ? '保存なし' : '読めないデータあり（保存なし）'}（revision ${this.save.doc.revision}）`,
       `設定：描画の上限 ${v.fpsCap}fps / 内部解像度 ${v.renderScale.toFixed(2)} / 影 ${v.shadows ? 'あり' : 'なし'}`,
       describeFrames(this.meter.summary()),

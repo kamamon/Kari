@@ -933,7 +933,9 @@ export class GaldrosRig implements MonsterRig {
     // 怒り: 晶脈と目が赤く脈打つ
     const rage = enraged ? 0.6 + 0.4 * Math.sin(time * 7) : 0;
     this.glowMat.emissive.setRGB(1 + rage * 2.2, 1 - rage * 0.45, 1 - rage * 0.75);
-    this.glowMat.emissiveIntensity = m.dead ? 0.06 : 0.3 + rage * 0.55;
+    // 段階が上の個体（晶脈の育った個体）は、晶脈の光が強い。設定図は無く、見分けるための仮の表現
+    const grown = Math.max(0, (c.rankOrder ?? 1) - 1) * 0.22;
+    this.glowMat.emissiveIntensity = m.dead ? 0.06 : 0.3 + grown + rage * 0.55;
 
     // ================= 体全体の速さと向きの変化（見た目用） =================
     if (!this.started) {

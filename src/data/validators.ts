@@ -3,9 +3,14 @@
 // 問題は黙って直さず、すべて errors に積んで呼び出し側へ返す。
 
 import {
+  ARMOR_SLOTS,
   FINISH_STATES,
   SCHEMA_VERSION,
+  recipeFrom,
+  recipeResult,
   type ActionDef,
+  type ArmorDef,
+  type ArmorSlot,
   type Content,
   type ContentIndex,
   type CurveDef,
@@ -18,6 +23,7 @@ import {
   type MonsterDef,
   type PlayerTuning,
   type QuestDef,
+  type RankDef,
   type RecipeDef,
   type ShapeTrackDef,
   type WeaponDef,
@@ -195,6 +201,13 @@ export function crossCheck(c: Content, errors: string[]): void {
   for (const q of c.quests.values()) {
     if (!c.maps.has(q.mapId)) errors.push(`quest ${q.id}: map ${q.mapId} が無い`);
     if (!c.monsters.has(q.targetMonsterId)) errors.push(`quest ${q.id}: monster ${q.targetMonsterId} が無い`);
+    if (!c.ranks.has(q.rankId)) errors.push(`quest ${q.id}: 段階 ${String(q.rankId)} が無い`);
+    for (const need of q.requires ?? []) {
+      const other = c.quests.get(need);
+      if (!other || need === q.id) errors.push(`quest ${q.id}: requires の依頼 ${need} が不正`);
+      // 先に達成する依頼は、同じか下の段階（上の段階を条件にすると、どこからも入れなくなる）
+      else if ((c.ranks.get(other.rankId)?.order ?? 0) > (c.ranks.get(q.rankId)?.order ?? 0)) errors.push(`quest ${q.id}: requires の依頼 ${need} の段階が上`);
+    }
     if (!(q.timeLimitTicks > 0) || !(q.maxFaints > 0)) errors.push(`quest ${q.id}: 制限が不正`);
     if (q.monsterAttackScale !== undefined && !(q.monsterAttackScale > 0 && q.monsterAttackScale <= 3)) errors.push(`quest ${q.id}: monsterAttackScale が不正`);
     if (q.kind !== 'slay' && q.kind !== 'hunt') errors.push(`quest ${q.id}: kind "${String(q.kind)}" は未定義`);
@@ -242,7 +255,12 @@ export function crossCheck(c: Content, errors: string[]): void {
   for (const m of c.monsters.values()) {
     const l = m.lootId ? c.loot.get(m.lootId) : undefined;
     if (m.lootId && !l) errors.push(`monster ${m.id}: lootId ${m.lootId} が無い`);
-    for (const k of [...Object.keys(l?.severed ?? {}), ...Object.keys(l?.breaks ?? {})]) if (!m.parts.some((p) => p.id === k)) errors.push(`monster ${m.id}: loot の部位 ${k} が無い`);
+    const tables = [l, ...Object.entries(m.lootByRank ?? {}).map(([rankId, lootId]) => {
+      if (!c.ranks.has(rankId)) errors.push(`monster ${m.id}: lootByRank の段階 ${rankId} が無い`);
+      if (!c.loot.has(lootId)) errors.push(`monster ${m.id}: lootByRank の ${lootId} が無い`);
+      return c.loot.get(lootId);
+    })];
+    for (const t of tables) for (const k of [...Object.keys(t?.severed ?? {}), ...Object.keys(t?.breaks ?? {})]) if (!m.parts.some((p) => p.id === k)) errors.push(`monster ${m.id}: loot ${t!.id} の部位 ${k} が無い`);
     if (m.captureAllowed && !(m.capture && m.capture.hpRatio > 0 && m.capture.hpRatio < 1 && isInt(m.capture.tranqNeeded) && m.capture.tranqNeeded > 0 && m.capture.tranqDecayTicks > 0)) errors.push(`monster ${m.id}: capture が不正`);
   }
   for (const a of c.actions.values()) {
@@ -267,21 +285,38 @@ export function crossCheck(c: Content, errors: string[]): void {
   }
   // 最初から持つ武器が 1 つはあること
   if (![...c.weapons.values()].some((w) => w.starter)) errors.push('weapons: starter の武器が 1 つも無い');
-  // 工房: 元と結果の武器があり、同じ系統で、素材はどこかで手に入ること（手に入らない素材を要求しない）
+  validateRanks(c, errors);
+  validateArmor(c, errors);
+  // 工房: 元と結果の武器（防具）があり、同じ系統（部位）で、素材はどこかで手に入ること（手に入らない素材を要求しない）
   const obtainable = obtainableMaterials(c);
   const results = new Set<string>();
+  const sources = new Set<string>();
   for (const r of c.recipes.values()) {
     const w = `recipe ${r.id}`;
-    if (r.kind !== 'upgrade') errors.push(`${w}: kind "${String(r.kind)}" は未定義`);
-    const from = c.weapons.get(r.fromWeaponId);
-    const to = c.weapons.get(r.resultWeaponId);
-    if (!from) errors.push(`${w}: 元の武器 ${r.fromWeaponId} が無い`);
-    if (!to) errors.push(`${w}: 結果の武器 ${r.resultWeaponId} が無い`);
-    if (from && to && from.family !== to.family) errors.push(`${w}: 元と結果の系統が違う`);
-    if (r.fromWeaponId === r.resultWeaponId) errors.push(`${w}: 元と結果が同じ`);
-    if (to?.starter) errors.push(`${w}: 結果の武器が最初から持つ武器になっている`);
-    if (results.has(r.resultWeaponId)) errors.push(`${w}: 結果の武器 ${r.resultWeaponId} を作るレシピが重複`);
-    results.add(r.resultWeaponId);
+    if (r.kind === 'upgrade') {
+      const from = c.weapons.get(r.fromWeaponId);
+      const to = c.weapons.get(r.resultWeaponId);
+      if (!from) errors.push(`${w}: 元の武器 ${r.fromWeaponId} が無い`);
+      if (!to) errors.push(`${w}: 結果の武器 ${r.resultWeaponId} が無い`);
+      if (from && to && from.family !== to.family) errors.push(`${w}: 元と結果の系統が違う`);
+      if (to?.starter) errors.push(`${w}: 結果の武器が最初から持つ武器になっている`);
+      if (from && to && !(to.attack > from.attack)) errors.push(`${w}: 強化しても攻撃力が上がらない`);
+    } else if (r.kind === 'armor_upgrade') {
+      const from = c.armor.get(r.fromArmorId);
+      const to = c.armor.get(r.resultArmorId);
+      if (!from) errors.push(`${w}: 元の防具 ${r.fromArmorId} が無い`);
+      if (!to) errors.push(`${w}: 結果の防具 ${r.resultArmorId} が無い`);
+      if (from && to && from.slot !== to.slot) errors.push(`${w}: 元と結果の部位が違う`);
+      if (to?.starter) errors.push(`${w}: 結果の防具が最初から持つ防具になっている`);
+      if (from && to && !(to.defense > from.defense)) errors.push(`${w}: 強化しても防御力が上がらない`);
+    } else errors.push(`${w}: kind "${String((r as { kind: unknown }).kind)}" は未定義`);
+    const fromId = recipeFrom(r), resultId = recipeResult(r);
+    if (fromId === resultId) errors.push(`${w}: 元と結果が同じ`);
+    if (results.has(resultId)) errors.push(`${w}: 結果 ${resultId} を作るレシピが重複`);
+    results.add(resultId);
+    // 1 つの武器・防具から進める先は 1 つ（派生はまだ無い。工房の画面は「次の強化」を 1 つだけ出す）
+    if (sources.has(fromId)) errors.push(`${w}: 元 ${fromId} から進めるレシピが重複`);
+    sources.add(fromId);
     if (!(r.cost && isInt(r.cost.money) && r.cost.money >= 0 && Array.isArray(r.cost.items))) {
       errors.push(`${w}: cost が不正`);
       continue;
@@ -319,18 +354,77 @@ export function validateEdge(e: EdgeRules | undefined, errors: string[]): void {
   if (!(e.bounce && e.bounce.wearScale >= 1 && isInt(e.bounce.recoilTicks) && e.bounce.recoilTicks > 0 && e.bounce.pushback >= 0)) errors.push('edge.bounce が不正');
 }
 
-/** いまの依頼で手に入る素材（依頼の報酬と、その依頼の標的の剥ぎ取り・捕獲・部位）。 */
+/** その依頼の標的から出る素材の表（段階ごとの表があればそれ、無ければモンスターの lootId）。 */
+export function lootForQuest(c: Content, q: QuestDef): LootDef | undefined {
+  const m = c.monsters.get(q.targetMonsterId);
+  const id = m?.lootByRank?.[q.rankId] ?? m?.lootId;
+  return id ? c.loot.get(id) : undefined;
+}
+
+/** 1 つの依頼で手に入る素材（依頼の報酬と、標的の剥ぎ取り・捕獲・部位）。 */
+export function questMaterials(c: Content, q: QuestDef): Set<string> {
+  const out = new Set<string>();
+  for (const s of q.rewards?.items ?? []) out.add(s.itemId);
+  const m = c.monsters.get(q.targetMonsterId);
+  const l = lootForQuest(c, q);
+  if (!l) return out;
+  const rolls: (LootRoll | undefined)[] = [l.carve, m?.captureAllowed && q.kind === 'hunt' ? l.capture : undefined, ...Object.values(l.severed ?? {}), ...Object.values(l.breaks ?? {})];
+  for (const r of rolls) for (const e of r?.table ?? []) out.add(e.itemId);
+  return out;
+}
+
+/** いまの依頼のどれかで手に入る素材。 */
 export function obtainableMaterials(c: Content): Set<string> {
   const out = new Set<string>();
+  for (const q of c.quests.values()) for (const id of questMaterials(c, q)) out.add(id);
+  return out;
+}
+
+/** 素材ごとの、手に入るいちばん下の段階（order）。どの依頼からも出ない素材は入らない。 */
+export function materialRanks(c: Content): Map<string, number> {
+  const out = new Map<string, number>();
   for (const q of c.quests.values()) {
-    for (const s of q.rewards?.items ?? []) out.add(s.itemId);
-    const m = c.monsters.get(q.targetMonsterId);
-    const l = m?.lootId ? c.loot.get(m.lootId) : undefined;
-    if (!l) continue;
-    const rolls: (LootRoll | undefined)[] = [l.carve, m?.captureAllowed && q.kind === 'hunt' ? l.capture : undefined, ...Object.values(l.severed ?? {}), ...Object.values(l.breaks ?? {})];
-    for (const r of rolls) for (const e of r?.table ?? []) out.add(e.itemId);
+    const order = c.ranks.get(q.rankId)?.order;
+    if (order === undefined) continue;
+    for (const id of questMaterials(c, q)) out.set(id, Math.min(out.get(id) ?? Infinity, order));
   }
   return out;
+}
+
+/** 段階: order は 1 から続き番号、倍率は正の数で、上の段階ほど弱くならない。段階ごとに、受けられる依頼が 1 つはある。 */
+function validateRanks(c: Content, errors: string[]): void {
+  const ranks = [...c.ranks.values()].sort((a, b) => a.order - b.order);
+  if (ranks.length === 0) errors.push('ranks: 段階が 1 つも無い');
+  ranks.forEach((r, i) => {
+    const w = `rank ${r.id}`;
+    if (r.order !== i + 1) errors.push(`${w}: order は 1 から続き番号にする`);
+    if (typeof r.name !== 'string' || r.name === '') errors.push(`${w}: name が無い`);
+    const m = r.monster;
+    if (!(m && [m.hpScale, m.partScale, m.attackScale, m.cooldownScale].every((v) => isNum(v) && v > 0 && v <= 10))) {
+      errors.push(`${w}: monster の倍率が不正`);
+      return;
+    }
+    const prev = ranks[i - 1]?.monster;
+    if (prev && !(m.hpScale >= prev.hpScale && m.partScale >= prev.partScale && m.attackScale >= prev.attackScale && m.cooldownScale <= prev.cooldownScale)) errors.push(`${w}: 下の段階より弱くなっている`);
+    if (![...c.quests.values()].some((q) => q.rankId === r.id)) errors.push(`${w}: この段階の依頼が無い`);
+  });
+}
+
+/** 防具: 部位は決まった 5 つ、防御力は 0 以上、どの部位にも最初から持つ防具がちょうど 1 つ。 */
+function validateArmor(c: Content, errors: string[]): void {
+  if (!(isNum(c.armorRules.base) && c.armorRules.base > 0)) errors.push('armor: defense.base が不正');
+  for (const s of ARMOR_SLOTS) if (typeof c.armorRules.slotNames?.[s] !== 'string' || c.armorRules.slotNames[s] === '') errors.push(`armor: 部位 ${s} の名前が無い`);
+  for (const a of c.armor.values()) {
+    const w = `armor ${a.id}`;
+    if (!ARMOR_SLOTS.includes(a.slot)) errors.push(`${w}: slot "${String(a.slot)}" は未定義`);
+    if (typeof a.name !== 'string' || a.name === '') errors.push(`${w}: name が無い`);
+    if (!(isInt(a.defense) && a.defense >= 0 && a.defense <= 9999)) errors.push(`${w}: defense が不正`);
+    if (c.weapons.has(a.id) || c.materials.has(a.id) || c.items.has(a.id)) errors.push(`${w}: id がほかの種類と重複`);
+  }
+  for (const s of ARMOR_SLOTS) {
+    const n = [...c.armor.values()].filter((a) => a.slot === s && a.starter).length;
+    if (n !== 1) errors.push(`armor: 部位 ${s} の、最初から持つ防具が ${n} 個（1 個にする）`);
+  }
 }
 
 function putUnique<T>(map: Map<string, T>, id: string, value: T, kind: string, errors: string[]): void {
@@ -357,6 +451,9 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     materials: new Map(),
     loot: new Map(),
     recipes: new Map(),
+    ranks: new Map(),
+    armor: new Map(),
+    armorRules: { base: 1, slotNames: { head: '', chest: '', arms: '', waist: '', legs: '' } },
     edge: { max: 0, stages: [], bounce: { wearScale: 1, recoilTicks: 1, pushback: 0 } },
     player: (await get(index.files.player)) as PlayerTuning,
   };
@@ -411,6 +508,13 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
   const recipes = (await get(index.files.recipes)) as { schemaVersion: number; recipes: RecipeDef[] };
   checkVersion(index.files.recipes, recipes.schemaVersion, errors);
   for (const r of recipes.recipes ?? []) putUnique(content.recipes, r.id, r, 'recipe', errors);
+  const ranks = (await get(index.files.ranks)) as { schemaVersion: number; ranks: RankDef[] };
+  checkVersion(index.files.ranks, ranks.schemaVersion, errors);
+  for (const r of ranks.ranks ?? []) putUnique(content.ranks, r.id, r, 'rank', errors);
+  const armor = (await get(index.files.armor)) as { schemaVersion: number; defense: { base: number }; slots: { id: ArmorSlot; name: string }[]; armor: ArmorDef[] };
+  checkVersion(index.files.armor, armor.schemaVersion, errors);
+  content.armorRules = { base: armor.defense?.base ?? 0, slotNames: Object.fromEntries((armor.slots ?? []).map((s) => [s.id, s.name])) as Record<ArmorSlot, string> };
+  for (const a of armor.armor ?? []) putUnique(content.armor, a.id, a, 'armor', errors);
   crossCheck(content, errors);
   if (errors.length > 0) throw new ContentError(errors);
   return content;

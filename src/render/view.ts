@@ -418,7 +418,7 @@ export class GameView {
       this.monsterRig.root.rotation.y = m.prevYaw + angleDiff(m.prevYaw, m.yaw) * alpha;
       this.monsterFx.px = pos.x;
       this.monsterFx.pz = pos.z;
-      this.monsterRig.update(m, { alpha, dt, time: this.time, content, lookAt: pos, fx: this.monsterFx });
+      this.monsterRig.update(m, { alpha, dt, time: this.time, content, rankOrder: sim.rank?.order, lookAt: pos, fx: this.monsterFx });
       this.monsterShadow.position.set(mp.x, sim.world.groundHeight(mp.x, mp.z) + 0.03, mp.z);
     }
     this.syncHazards(sim);

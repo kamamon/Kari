@@ -2,11 +2,12 @@
 // ここは DOM・Three.js・Math.random・現在時刻に触れない。同じ seed と同じ入力列なら同じ結果になる。
 import { DEG, angleDiff, forwardOf, toWorld, yawOf, type V3 } from '../core/math';
 import { SeededRng } from '../core/seededRng';
-import type { Content, DamageType, HazardDef, HitWindowDef, ItemDef, ItemStack, LootRoll, QuestDef, ShootDef } from '../data/schemas';
+import type { Content, DamageType, HazardDef, HitWindowDef, ItemDef, ItemStack, LootDef, LootRoll, QuestDef, RankDef, ShootDef } from '../data/schemas';
 import { inWindow, type ActionRun } from './action';
 import { HitLedger, computeDamage, edgeStage, sweepCapsule, type WorldShape } from './combat';
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
+import { defenseScale, scaleMonsterDef, totalDefense } from './rank';
 import { applyDamageToMonster, createMonster, monsterBlockers, monsterShapes, stepMonster, type MonsterState } from './monster';
 import { createPlayer, familyOf, playerHurtCapsule, resolveIncomingHit, stepPlayer, weaponOf, type PlayerState, type SimCtx } from './player';
 import { trackSegment } from './tracks';
@@ -20,6 +21,8 @@ export interface SimOptions {
   monsterAttacks: boolean;
   /** 依頼。指定すると、マップ・標的・制限時間・力尽き回数は依頼の定義から決まる。 */
   questId?: string | null;
+  /** 身に着けている防具の ID（部位ごとに 1 つ）。無ければ防御力 0。 */
+  armorIds?: readonly string[];
 }
 
 /** 落下物など、位置が固定された判定。warn が 0 になった後、active の間だけ当たる。 */
@@ -153,6 +156,11 @@ export class Simulation implements SimCtx {
   questModifier = 1;
   /** 依頼ごとの、モンスターの攻撃・落石のダメージ倍率 */
   monsterAttackScale = 1;
+  /** 防具の防御力の合計と、それで受けるダメージへ掛かる倍率（1 以下） */
+  defense = 0;
+  defenseScale = 1;
+  /** 依頼の段階（訓練場では null） */
+  rank: RankDef | null = null;
   hazards: Hazard[] = [];
   private nextHazard = 1;
   hunt: HuntState | null = null;
@@ -175,17 +183,25 @@ export class Simulation implements SimCtx {
     this.rng = new SeededRng(options.seed);
     // 支給品: 依頼なら依頼の支給品、訓練場なら訓練用（研磨石）
     this.player = createPlayer(content, map.spawn, options.weaponId, quest ? quest.supplies ?? [] : content.player.trainingSupplies ?? []);
+    this.defense = totalDefense(content, options.armorIds ?? []);
+    this.defenseScale = defenseScale(content, this.defense);
+    if (quest) {
+      this.rank = content.ranks.get(quest.rankId) ?? null;
+      if (!this.rank) throw new Error(`rank ${quest.rankId} が無い`);
+    }
     const monsterId = quest ? quest.targetMonsterId : options.monsterId;
     if (monsterId) {
-      const def = content.monsters.get(monsterId);
-      if (!def) throw new Error(`monster ${monsterId} が無い`);
+      const base = content.monsters.get(monsterId);
+      if (!base) throw new Error(`monster ${monsterId} が無い`);
+      // 段階が上の依頼では、強い個体（体力・部位・間隔を段階の倍率で変えた定義）が出る
+      const def = this.rank ? scaleMonsterDef(base, this.rank) : base;
       const m = createMonster(def, quest ? quest.monsterSpawn : map.monsterSpawn, 'monster#1');
       m.aiEnabled = quest ? true : options.monsterAttacks;
       this.monsters.push(m);
     }
     if (quest) {
       this.hunt = { quest, phase: 'active', reason: null, ticks: 0, faints: 0, endTick: 0, returnTicks: 0, carves: {}, loot: [], closed: false, closeTick: 0, rewards: null };
-      this.monsterAttackScale = quest.monsterAttackScale ?? 1;
+      this.monsterAttackScale = (quest.monsterAttackScale ?? 1) * (this.rank?.monster.attackScale ?? 1);
     }
   }
 
@@ -248,7 +264,7 @@ export class Simulation implements SimCtx {
       h.active--;
       if (h.hit || this.hunt?.phase === 'success' || this.hunt?.phase === 'failed') continue;
       if (Math.hypot(p.pos.x - h.x, p.pos.z - h.z) > h.radius + this.content.player.radius * 0.5) continue;
-      const outcome = resolveIncomingHit(p, { attackerPos: { x: h.x, y: 0, z: h.z }, baseDamage: h.baseDamage * this.monsterAttackScale, guardable: false, guardCost: 0, reaction: h.reaction }, this);
+      const outcome = resolveIncomingHit(p, { attackerPos: { x: h.x, y: 0, z: h.z }, baseDamage: h.baseDamage * this.monsterAttackScale * this.defenseScale, guardable: false, guardCost: 0, reaction: h.reaction }, this);
       if (outcome !== 'evaded' && outcome !== 'ignored') h.hit = true;
     }
     this.hazards = this.hazards.filter((h) => h.warn > 0 || h.active > 0);
@@ -399,10 +415,16 @@ export class Simulation implements SimCtx {
     return null;
   }
 
+  /** その個体から出る素材の表（段階ごとの表があればそれ、無ければモンスターの lootId）。 */
+  private lootOf(m: MonsterState): LootDef | undefined {
+    const id = (this.rank && m.def.lootByRank?.[this.rank.id]) ?? m.def.lootId;
+    return id ? this.content.loot.get(id) : undefined;
+  }
+
   carve(source: string): void {
     const h = this.hunt;
     const m = this.monsters[0];
-    const loot = m?.def.lootId ? this.content.loot.get(m.def.lootId) : undefined;
+    const loot = m ? this.lootOf(m) : undefined;
     if (!h || h.closed || !loot || !((h.carves[source] ?? 0) > 0)) return;
     const table = source === 'body' ? loot.carve : loot.severed?.[source];
     if (!table) return;
@@ -458,7 +480,7 @@ export class Simulation implements SimCtx {
       this.emit({ type: 'hunt_end', phase, reason });
       if (phase === 'failed') return this.closeHunt(h);
       const m = this.monsters[0];
-      const loot = m?.def.lootId ? this.content.loot.get(m.def.lootId) : undefined;
+      const loot = m ? this.lootOf(m) : undefined;
       if (m && loot) {
         // 壊した部位の追加は、達成した時点で確定する
         m.def.parts.forEach((d, i) => {
@@ -730,7 +752,7 @@ export class Simulation implements SimCtx {
           p,
           {
             attackerPos: m.pos,
-            baseDamage: (hw.baseDamage ?? 0) * this.monsterAttackScale * (m.enraged && m.def.rage ? m.def.rage.damageScale : 1),
+            baseDamage: (hw.baseDamage ?? 0) * this.monsterAttackScale * this.defenseScale * (m.enraged && m.def.rage ? m.def.rage.damageScale : 1),
             guardable: hw.guardable ?? true,
             guardCost: hw.guardCost ?? 20,
             reaction: hw.reaction ?? 'flinch',

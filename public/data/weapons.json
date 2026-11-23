@@ -272,6 +272,36 @@
       "assetId": "model.weapon.heavy_blade.002"
     },
     {
+      "id": "weapon.heavy_blade.003",
+      "family": "heavy_blade",
+      "name": "脈殻の断岳剣",
+      "attack": 106,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.heavy_blade.003"
+    },
+    {
+      "id": "weapon.heavy_blade.004",
+      "family": "heavy_blade",
+      "name": "晶殻の断岳剣",
+      "attack": 122,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.heavy_blade.004"
+    },
+    {
+      "id": "weapon.heavy_blade.005",
+      "family": "heavy_blade",
+      "name": "輝殻の断岳剣",
+      "attack": 140,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.heavy_blade.005"
+    },
+    {
       "id": "weapon.guard_blade.001",
       "family": "guard_blade",
       "name": "里鍛ちの護刃",
@@ -291,6 +321,36 @@
       "affinity": 0,
       "sharpnessModifier": 1.0,
       "assetId": "model.weapon.guard_blade.002"
+    },
+    {
+      "id": "weapon.guard_blade.003",
+      "family": "guard_blade",
+      "name": "脈殻の護刃",
+      "attack": 87,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.guard_blade.003"
+    },
+    {
+      "id": "weapon.guard_blade.004",
+      "family": "guard_blade",
+      "name": "晶殻の護刃",
+      "attack": 100,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.guard_blade.004"
+    },
+    {
+      "id": "weapon.guard_blade.005",
+      "family": "guard_blade",
+      "name": "輝殻の護刃",
+      "attack": 115,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.guard_blade.005"
     },
     {
       "id": "weapon.war_maul.001",
@@ -314,6 +374,36 @@
       "assetId": "model.weapon.war_maul.002"
     },
     {
+      "id": "weapon.war_maul.003",
+      "family": "war_maul",
+      "name": "脈殻の大槌",
+      "attack": 114,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.war_maul.003"
+    },
+    {
+      "id": "weapon.war_maul.004",
+      "family": "war_maul",
+      "name": "晶殻の大槌",
+      "attack": 131,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.war_maul.004"
+    },
+    {
+      "id": "weapon.war_maul.005",
+      "family": "war_maul",
+      "name": "輝殻の大槌",
+      "attack": 150,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.war_maul.005"
+    },
+    {
       "id": "weapon.twin_blades.001",
       "family": "twin_blades",
       "name": "里鍛ちの双剣",
@@ -333,6 +423,36 @@
       "affinity": 0,
       "sharpnessModifier": 1.0,
       "assetId": "model.weapon.twin_blades.002"
+    },
+    {
+      "id": "weapon.twin_blades.003",
+      "family": "twin_blades",
+      "name": "脈殻の双剣",
+      "attack": 79,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.twin_blades.003"
+    },
+    {
+      "id": "weapon.twin_blades.004",
+      "family": "twin_blades",
+      "name": "晶殻の双剣",
+      "attack": 91,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.twin_blades.004"
+    },
+    {
+      "id": "weapon.twin_blades.005",
+      "family": "twin_blades",
+      "name": "輝殻の双剣",
+      "attack": 105,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.twin_blades.005"
     },
     {
       "id": "weapon.long_blade.001",
@@ -356,6 +476,36 @@
       "assetId": "model.weapon.long_blade.002"
     },
     {
+      "id": "weapon.long_blade.003",
+      "family": "long_blade",
+      "name": "脈殻の太刀",
+      "attack": 101,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_blade.003"
+    },
+    {
+      "id": "weapon.long_blade.004",
+      "family": "long_blade",
+      "name": "晶殻の太刀",
+      "attack": 116,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_blade.004"
+    },
+    {
+      "id": "weapon.long_blade.005",
+      "family": "long_blade",
+      "name": "輝殻の太刀",
+      "attack": 133,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_blade.005"
+    },
+    {
       "id": "weapon.long_lance.001",
       "family": "long_lance",
       "name": "里鍛ちの長尖槍",
@@ -377,6 +527,36 @@
       "assetId": "model.weapon.long_lance.002"
     },
     {
+      "id": "weapon.long_lance.003",
+      "family": "long_lance",
+      "name": "脈殻の長尖槍",
+      "attack": 95,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_lance.003"
+    },
+    {
+      "id": "weapon.long_lance.004",
+      "family": "long_lance",
+      "name": "晶殻の長尖槍",
+      "attack": 110,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_lance.004"
+    },
+    {
+      "id": "weapon.long_lance.005",
+      "family": "long_lance",
+      "name": "輝殻の長尖槍",
+      "attack": 126,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_lance.005"
+    },
+    {
       "id": "weapon.ring_bow.001",
       "family": "ring_bow",
       "name": "里鍛ちの環弓",
@@ -396,6 +576,36 @@
       "affinity": 0,
       "sharpnessModifier": 1.0,
       "assetId": "model.weapon.ring_bow.002"
+    },
+    {
+      "id": "weapon.ring_bow.003",
+      "family": "ring_bow",
+      "name": "脈殻の環弓",
+      "attack": 93,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.ring_bow.003"
+    },
+    {
+      "id": "weapon.ring_bow.004",
+      "family": "ring_bow",
+      "name": "晶殻の環弓",
+      "attack": 106,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.ring_bow.004"
+    },
+    {
+      "id": "weapon.ring_bow.005",
+      "family": "ring_bow",
+      "name": "輝殻の環弓",
+      "attack": 122,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.ring_bow.005"
     }
   ]
 }

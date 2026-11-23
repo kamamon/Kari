@@ -36,21 +36,26 @@ const WEAPON_BUILDERS: Record<string, () => WeaponModel> = {
   ring_bow: () => buildBow(false),
 };
 /** 左手に持つもの: 盾、または双剣のもう 1 本 */
-/** 系統の既定の形ではなく、武器ごとの形があるもの（モデルの ID → 作り方）。 */
-const MODEL_BUILDERS: Record<string, () => WeaponModel> = {
-  'model.weapon.heavy_blade.002': () => buildHeavyBlade('shell'),
-  // 岩殻の〜（強化後）: 元の形に、岩の板を足す（shellPlates.ts。設定図が無い間の仮の見た目）
-  'model.weapon.guard_blade.002': () => withShell(buildGuardBladeSword(), 'model.weapon.guard_blade.002'),
-  'model.weapon.war_maul.002': () => withShell(buildWarMaul(), 'model.weapon.war_maul.002'),
-  'model.weapon.twin_blades.002': () => withShell(buildTwinBlade(), 'model.weapon.twin_blades.002'),
-  'model.weapon.long_blade.002': () => withShell(buildLongBlade(), 'model.weapon.long_blade.002'),
-  'model.weapon.long_lance.002': () => withShell(buildLance(), 'model.weapon.long_lance.002'),
-  'model.weapon.ring_bow.002': () => withShell(buildBow(false), 'model.weapon.ring_bow.002'),
-};
+/**
+ * 系統の既定の形ではなく、武器ごとの形があるもの（モデルの ID → 作り方）。
+ * 強化後（.002 岩殻 〜 .005 輝殻）: 元の形に、岩の板を足す（shellPlates.ts。設定図が無い間の仮の見た目。段で色が変わる）。
+ */
+const MODEL_BUILDERS: Record<string, () => WeaponModel> = {};
 /** 左手に持つ物にも、武器ごとの形があるもの（手に持つ武器のモデルの ID → 作り方）。双剣の左の剣 */
-const OFFHAND_MODEL_BUILDERS: Record<string, () => WeaponModel> = {
-  'model.weapon.twin_blades.002': () => withShell(buildTwinBlade(), 'model.weapon.twin_blades.002'),
+const OFFHAND_MODEL_BUILDERS: Record<string, () => WeaponModel> = {};
+const SHELL_BASES: Record<string, () => WeaponModel> = {
+  guard_blade: buildGuardBladeSword,
+  war_maul: buildWarMaul,
+  twin_blades: buildTwinBlade,
+  long_blade: buildLongBlade,
+  long_lance: buildLance,
+  ring_bow: () => buildBow(false),
 };
+for (const tier of [2, 3, 4, 5]) {
+  MODEL_BUILDERS[`model.weapon.heavy_blade.00${tier}`] = () => buildHeavyBlade('shell', tier);
+  for (const [fam, build] of Object.entries(SHELL_BASES)) MODEL_BUILDERS[`model.weapon.${fam}.00${tier}`] = () => withShell(build(), `model.weapon.${fam}.00${tier}`);
+  OFFHAND_MODEL_BUILDERS[`model.weapon.twin_blades.00${tier}`] = () => withShell(buildTwinBlade(), `model.weapon.twin_blades.00${tier}`);
+}
 const SHIELD_BUILDERS = { shield_small: buildGuardBladeShield, shield_great: buildGreatShield, blade_left: buildTwinBlade } as const;
 export type ShieldKind = keyof typeof SHIELD_BUILDERS;
 

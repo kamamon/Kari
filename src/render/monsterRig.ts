@@ -11,6 +11,8 @@ export interface MonsterRigCtx {
   dt: number;
   time: number;
   content: Content;
+  /** 依頼の段階（1 = 初級 … 4 = 極級）。上の段階の個体は、晶脈が強く光る（見た目だけ）。無ければ 1。 */
+  rankOrder?: number;
   /** 目で追う相手（狩人）の位置。無ければ正面を向く。 */
   lookAt?: { x: number; y: number; z: number };
   /** 見た目の側から出す効果（足音・土ぼこり）。戦闘の計算には関わらない。 */

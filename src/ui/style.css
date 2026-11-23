@@ -245,6 +245,10 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 .base-lead { margin: 0 0 10px; color: var(--ink-dim); font-size: 0.85rem; }
 .base-choice { display: block; width: 100%; text-align: left; margin: 0 0 10px; padding: 12px 14px; background: #2a332d; border: 1px solid var(--line); border-left: 4px solid var(--bronze); border-radius: 3px; cursor: pointer; }
 .base-choice b { display: block; font-size: 1.05rem; margin-bottom: 4px; }
+.base-choice.locked { opacity: 0.55; border-left-color: var(--line); cursor: default; padding: 8px 14px; }
+.base-choice.locked b { font-size: 0.95rem; margin-bottom: 2px; }
+#base .base-armor-note { margin: -4px 0 10px; font-size: 12px; line-height: 1.5; opacity: 0.85; }
+.forge-head { margin: 12px 0 0; padding-bottom: 2px; font-size: 13px; font-weight: 700; color: var(--bronze); border-bottom: 1px solid var(--line); }
 .base-choice span { display: block; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.5; }
 .base-note { font-size: 0.72rem; color: var(--ink-dim); line-height: 1.6; margin: 8px 0 0; }
 .base-hint { font-size: 0.8rem; line-height: 1.6; margin: 8px 0 0; padding: 8px 10px; border-left: 3px solid var(--bronze); background: rgba(184, 148, 96, 0.12); }

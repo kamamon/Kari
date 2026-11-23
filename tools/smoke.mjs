@@ -84,6 +84,16 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('#boot-start');
   check('起動すると拠点の画面が出て、一時停止している', await until(page, () => window.__vh && !document.getElementById('base').hidden && window.__vh.sim.tick === 0));
   await page.screenshot({ path: `${OUT}02_base.png` });
+  check('拠点: 依頼は段階の順に 4 件（初級・中級・上級・極級）。最初に受けられるのは初級だけで、ほかは押せない', await page.evaluate(() => {
+    const qs = [...document.querySelectorAll('.base-choice[data-quest]')];
+    return qs.map((b) => b.dataset.rank).join() === 'rank.1,rank.2,rank.3,rank.4' && qs.map((b) => b.disabled).join() === 'false,true,true,true'
+      && /【初級】依頼「岩場の足音」/.test(qs[0].textContent) && /【中級】/.test(qs[1].textContent) && /「岩場の足音」を達成すると受けられます/.test(qs[1].textContent)
+      && /防具: 防御力 0/.test(document.querySelector('.base-armor-note').textContent);
+  }), await page.evaluate(() => document.querySelector('.base-choice[data-quest="quest.basin.r2.001"]')?.textContent ?? ''));
+  check('まだ受けられない依頼は、呼び出しても始まらない', await page.evaluate(() => {
+    window.__vh.startHunt('quest.basin.r4.001');
+    return !document.getElementById('base').hidden && !window.__vh.sim.hunt;
+  }));
   await page.locator('.base-choice').last().click();
   check('訓練場を選ぶと simulation が進む', await until(page, () => window.__vh.sim.tick > 10));
   await page.screenshot({ path: `${OUT}02_start.png` });
@@ -452,6 +462,25 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.screenshot({ path: `${OUT}62_base_inventory.png` });
 
   // ---- 保存（IndexedDB）: 読み込み直し、二重取り、失敗、取り込み、強化、別のタブ ----
+  check('初級を達成したので、中級の依頼が受けられる（上級・極級はまだ）', await page.evaluate(() => {
+    const qs = [...document.querySelectorAll('.base-choice[data-quest]')];
+    return qs.map((b) => b.disabled).join() === 'false,false,true,true' && /達成 2 回/.test(qs[0].textContent) && /「脈打つ岩殻」を達成すると/.test(qs[2].textContent);
+  }));
+  await page.click('.base-choice[data-quest="quest.basin.r2.001"]');
+  check('中級の依頼: HUD に【中級】と出て、個体の体力は 2430（初級 1800）、与えるダメージは 1.3 倍、出る素材は中級の表', await until(page, () => {
+    const v = window.__vh, m = v.sim.monsters[0];
+    return v.sim.hunt?.phase === 'active' && v.sim.tick > 5 && m.hp === 2430 && m.def.hp === 2430 && v.sim.monsterAttackScale === 1.3 && v.sim.rank.id === 'rank.2'
+      && /【中級】脈打つ岩殻/.test(document.querySelector('.goal')?.textContent ?? '');
+  }), await page.evaluate(() => `hp ${window.__vh.sim.monsters[0]?.hp} scale ${window.__vh.sim.monsterAttackScale}`));
+  await page.screenshot({ path: `${OUT}74_hunt_rank2.png` });
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('#menu:not([hidden])');
+  await page.click('.menu-head .tab:nth-child(1)');
+  check('一時停止の画面にも段階が出る', /【中級】脈打つ岩殻/.test(await page.textContent('#menu')));
+  await page.evaluate(() => [...document.querySelectorAll('.menu-body button')].find((b) => /リタイア/.test(b.textContent)).click());
+  await until(page, () => !document.getElementById('result').hidden, 8000);
+  await page.evaluate(() => [...document.querySelectorAll('#result button')].find((b) => /拠点/.test(b.textContent)).click());
+  await until(page, () => !document.getElementById('base').hidden);
   const boot = async (pg) => {
     await pg.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
     await pg.click('#boot-start');
@@ -460,7 +489,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const saved = (pg) => pg.evaluate(() => JSON.parse(JSON.stringify(window.__vh.save.doc)));
   const before = await saved(page);
   check('保存の場所は IndexedDB（ゲーム固有の名前）で、2 回の報酬が revision 2 として入っている',
-    (await page.evaluate(() => window.__vh.save.mode)) === 'persistent' && before.revision === 2 && before.settledRuns.length === 2 && before.schemaVersion === 1
+    (await page.evaluate(() => window.__vh.save.mode)) === 'persistent' && before.revision === 2 && before.settledRuns.length === 2 && before.schemaVersion === 2 && before.armor.length === 5
       && (await page.evaluate(async () => (await indexedDB.databases()).some((d) => d.name === 'veilbound-hunters:prod:save'))),
     `通貨 ${before.money} / 素材 ${JSON.stringify(before.items)} / 達成 ${JSON.stringify(before.progress.questClears)}`);
   await page.reload();
@@ -494,7 +523,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('#base-data > summary');
   const exported = await page.evaluate(() => window.__vh.save.exportText());
   const rich = JSON.parse(exported);
-  check('書き出した内容に、目印・版・持ち物が入っている', rich.format === 'veilbound-hunters-save' && rich.save.schemaVersion === 1 && rich.save.money === 1250);
+  check('書き出した内容に、目印・版・持ち物が入っている', rich.format === 'veilbound-hunters-save' && rich.save.schemaVersion === 2 && rich.save.money === 1250);
   await page.fill('.data-paste', exported.slice(0, 80));
   await page.click('text=貼り付けた内容を確かめる');
   check('途中で切れた内容は取り込まない（理由が出る）', await until(page, () => /取り込めません/.test(document.querySelector('.base-message').textContent), 4000) && (await saved(page)).revision === 3);
@@ -524,7 +553,9 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     const d = window.__vh.save.doc;
     return d.money === 1130 && d.items['mat.galdros.shell_shard'] === 1 && !('mat.galdros.hard_bone' in d.items) && !('mat.galdros.bronze_vein' in d.items)
       && d.weapons.includes('weapon.heavy_blade.002') && !d.weapons.includes('weapon.heavy_blade.001') && d.equippedWeaponId === 'weapon.heavy_blade.002' && d.revision === 5
-      && /岩殻の断岳剣に強化しました/.test(document.querySelector('.base-message').textContent) && /強化済み/.test(document.querySelector('.forge-recipe').textContent);
+      && /岩殻の断岳剣に強化しました/.test(document.querySelector('.base-message').textContent)
+      // 工房には、次の段（脈殻。中級の個体の素材が要る）が出る
+      && /岩殻の断岳剣 → 脈殻の断岳剣/.test(document.querySelector('.forge-recipe').textContent) && /脈岩殻 0 \/ 3（中級から）/.test(document.querySelector('.forge-recipe').textContent);
   }, 6000));
   check('後ろのハンターが、岩殻の断岳剣（岩の板を足した形）を持つ', await until(page, () => window.__vh.sim.player.weaponId === 'weapon.heavy_blade.002' && window.__vh.view.hunter.modelKey === 'model.weapon.heavy_blade.002', 6000));
   await page.screenshot({ path: `${OUT}66_base_forged.png` });
@@ -575,12 +606,12 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('#base-data button.go');
   check('実機の保存データ（v0.7.0）を取り込める。太刀を装備した状態になる', await until(page, () => window.__vh.save.doc.money === 1200 && window.__vh.weaponId === 'weapon.long_blade.001' && window.__vh.sim.player.weaponId === 'weapon.long_blade.001', 8000));
   await page.click('#base-forge > summary');
-  check('工房: いま装備している太刀がいちばん上に出て、強化できる（岩殻片 7 / 3、青銅晶脈 2 / 2）。断岳剣は硬骨が足りない', await page.evaluate(() => {
+  check('工房: 武器 7 と防具 5 の「次の強化」が並ぶ。いま装備している太刀がいちばん上で、強化できる（岩殻片 7 / 3、青銅晶脈 2 / 2）。断岳剣は硬骨が足りない', await page.evaluate(() => {
     const boxes = [...document.querySelectorAll('.forge-recipe')];
     const first = boxes[0]?.textContent ?? '';
     const heavy = boxes.find((b) => b.dataset.recipe === 'recipe.heavy_blade.002');
-    return boxes.length === 7 && /里鍛ちの太刀 → 岩殻の太刀/.test(first) && /攻撃力 76 → 87/.test(first) && /岩殻片 7 \/ 3/.test(first) && /青銅晶脈 2 \/ 2/.test(first) && !boxes[0].querySelector('button.go').disabled
-      && /不足 硬骨 1 \/ 2|硬骨 1 \/ 2/.test(heavy.textContent) && heavy.querySelector('button.go').disabled && /強化できます: 2/.test(document.querySelector('#base-forge > summary').textContent); // 太刀と双剣（どちらも青銅晶脈 2 を使うので、作れるのは片方）
+    return boxes.length === 12 && /里鍛ちの太刀 → 岩殻の太刀/.test(first) && /攻撃力 76 → 87/.test(first) && /岩殻片 7 \/ 3/.test(first) && /青銅晶脈 2 \/ 2/.test(first) && !boxes[0].querySelector('button.go').disabled
+      && /不足 硬骨 1 \/ 2|硬骨 1 \/ 2/.test(heavy.textContent) && heavy.querySelector('button.go').disabled && /強化できます: 4/.test(document.querySelector('#base-forge > summary').textContent); // 武器は太刀と双剣、防具は頭と腰（どちらも青銅晶脈 2 を使うので、作れるのは片方）
   }), await page.evaluate(() => document.querySelector('.forge-recipe')?.textContent ?? ''));
   await page.screenshot({ path: `${OUT}72_forge_seven.png` });
   await page.click('.forge-recipe button.go');
@@ -621,10 +652,64 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
-  check('読み込み直しても、7 つとも岩殻の〜のまま。工房は「強化済み」が 7 つ', await page.evaluate(() => {
+  check('読み込み直しても、7 つとも岩殻の〜のまま。工房には、次の段（脈殻の〜）が 7 つ出る', await page.evaluate(() => {
     document.querySelector('#base-forge').open = true;
     const d = window.__vh.save.doc;
-    return d.weapons.every((w) => w.endsWith('.002')) && d.equippedWeaponId === 'weapon.heavy_blade.002' && [...document.querySelectorAll('.forge-recipe')].filter((b) => /強化済み/.test(b.textContent)).length === 7 && document.querySelectorAll('.base-weapon').length === 7;
+    return d.weapons.every((w) => w.endsWith('.002')) && d.equippedWeaponId === 'weapon.heavy_blade.002' && [...document.querySelectorAll('.forge-recipe')].filter((b) => /岩殻の.+ → 脈殻の/.test(b.textContent)).length === 7 && document.querySelectorAll('.base-weapon').length === 7;
+  }));
+  await ctx.close();
+}
+
+// ---- 保存: 版 1（防具が入る前）のデータが端末にある時 ----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false);
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  // まず 1 回書き込んで置き場所を作り、そこへ v0.7.0 の実機のデータ（版 1）をそのまま置く
+  await page.evaluate(() => window.__vh.save.settle({ runId: 'smoke-make-db', questId: 'quest.basin.003', money: 1, items: [] }));
+  const v1 = JSON.parse(readFileSync(new URL('../tests/fixtures/save-v1-device-0.7.0.json', import.meta.url), 'utf8')).save;
+  await page.evaluate((d) => new Promise((resolve, reject) => {
+    const req = indexedDB.open('veilbound-hunters:prod:save');
+    req.onsuccess = () => {
+      const tx = req.result.transaction('slots', 'readwrite');
+      tx.objectStore('slots').put(d);
+      tx.oncomplete = () => { req.result.close(); resolve(true); };
+      tx.onabort = () => reject(tx.error);
+    };
+    req.onerror = () => reject(req.error);
+  }), v1);
+  await page.reload();
+  await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  check('版 1 のデータ（v0.7.0 の実機）を開くと、版 2 へ直して保存する。持ち物・武器・進行はそのまま、里の装束が配られ、元のデータは控えに残る', await page.evaluate(async (orig) => {
+    const s = window.__vh.save, d = s.doc;
+    const bs = await s.backups();
+    return s.mode === 'persistent' && d.schemaVersion === 2 && d.money === 1200 && d.items['mat.galdros.shell_shard'] === 7 && d.equippedWeaponId === 'weapon.long_blade.001' && d.weapons.length === 7
+      && d.armor.join() === 'armor.head.001,armor.chest.001,armor.arms.001,armor.waist.001,armor.legs.001' && d.progress.questClears['quest.basin.003'] === 2 && d.revision === 4
+      && bs.some((b) => b.reason === 'migrate' && JSON.stringify(b.doc) === JSON.stringify(orig)) && /新しい形へ直しました/.test(document.querySelector('.base-banner')?.textContent ?? '');
+  }, v1), await page.evaluate(() => `${window.__vh.save.mode} v${window.__vh.save.doc.schemaVersion} r${window.__vh.save.doc.revision} ${window.__vh.save.notice}`));
+  check('初級を達成済みなので、中級の依頼が受けられる', await page.evaluate(() => [...document.querySelectorAll('.base-choice[data-quest]')].map((b) => b.disabled).join() === 'false,false,true,true'));
+  // 防具: 岩殻の兜（岩殻片 2 + 硬骨 1 + 80 通貨）
+  await page.click('#base-forge > summary');
+  await page.screenshot({ path: `${OUT}75_forge_armor.png`, fullPage: false });
+  await page.click('.forge-recipe[data-recipe="recipe.armor.head.002"] button.go');
+  await page.click('.forge-confirm button.go');
+  check('防具の強化: 里の頭巾 → 岩殻の兜。岩殻片 2・硬骨 1・80 通貨が減り、防御力が 0 → 6 になる', await until(page, () => {
+    const d = window.__vh.save.doc;
+    return d.armor.includes('armor.head.002') && !d.armor.includes('armor.head.001') && d.money === 1120 && d.items['mat.galdros.shell_shard'] === 5 && !('mat.galdros.hard_bone' in d.items)
+      && /防具: 防御力 6（岩殻の兜・里の上衣/.test(document.querySelector('.base-armor-note').textContent) && /岩殻の兜に強化しました/.test(document.querySelector('.base-message').textContent)
+      && /岩殻の兜 → 脈殻の兜/.test(document.querySelector('.forge-recipe[data-recipe="recipe.armor.head.003"]')?.textContent ?? '');
+  }, 8000), await page.evaluate(() => document.querySelector('.base-armor-note').textContent));
+  await page.locator('.base-choice').last().click();
+  check('訓練場でも依頼でも、その防御力で受けるダメージが減る（防御力 6 → 100/106 倍）', await until(page, () => window.__vh.sim.tick > 5 && window.__vh.sim.defense === 6 && Math.abs(window.__vh.sim.defenseScale - 100 / 106) < 1e-9));
+  await page.reload();
+  await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  check('読み込み直しても、岩殻の兜のまま（控えは増えない）', await page.evaluate(async () => {
+    const s = window.__vh.save;
+    return s.doc.armor.includes('armor.head.002') && s.doc.schemaVersion === 2 && s.notice === null && (await s.backups()).filter((b) => b.reason === 'migrate').length === 1;
   }));
   await ctx.close();
 }
@@ -654,7 +739,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   check('最初は何も書き込まない（保存するものが無い間は、端末に何も置かない）', (await stored(page)) === null && (await page.evaluate(() => window.__vh.save.doc.revision)) === 0);
-  const future = { slotId: 'main', schemaVersion: 2, revision: 40, updatedAt: '2027-01-01T00:00:00.000Z', money: 9999, newThing: { a: [1, 2, 3] } };
+  const future = { slotId: 'main', schemaVersion: 3, revision: 40, updatedAt: '2027-01-01T00:00:00.000Z', money: 9999, newThing: { a: [1, 2, 3] } };
   await seed(page, future);
   await page.reload();
   await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
@@ -973,6 +1058,17 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
       && [['guardSword', 'guard_blade'], ['lance', 'long_lance'], ['warMaul', 'war_maul'], ['twinBladeR', 'twin_blades'], ['twinBladeL', 'twin_blades'], ['longBlade', 'long_blade'], ['bow', 'ring_bow']].every(([k, fam]) => rack[k]?.group?.name === `model.weapon.${fam}.002`);
   }, 15000));
   await page.screenshot({ path: `${OUT}73_viewer_tier2.png` });
+  for (const t of [3, 4, 5]) {
+    await page.goto(`http://localhost:${PORT}${BASE}viewer.html?subject=weapons&tier=${t}`);
+    const ok = await until(page, (tier) => {
+      const rack = window.__viewer?.rack;
+      return !!rack && ['guardSword', 'heavyBladeShell', 'lance', 'warMaul', 'twinBladeR', 'twinBladeL', 'longBlade', 'bow'].every((k) => rack[k]?.group?.name?.endsWith(`.00${tier}`));
+    }, 15000, t);
+    if (t === 5) check('ビューア: ?tier=3〜5 で、脈殻・晶殻・輝殻の形（色の違う板）が並ぶ', ok);
+    else if (!ok) check(`ビューア: ?tier=${t} が並ばない`, false);
+    await page.waitForTimeout(400);
+    await page.screenshot({ path: `${OUT}76_viewer_tier${t}.png` });
+  }
   await page.goto(`http://localhost:${PORT}${BASE}viewer.html?tier=2&stance=idle&family=long_blade`);
   check('ビューア: ?tier=2 で、ハンターも強化後の形（岩殻の太刀）を持つ', await until(page, () => window.__viewer?.hunter?.modelKey === 'model.weapon.long_blade.002', 15000));
   await page.goto(`http://localhost:${PORT}${BASE}viewer.html?glb=assets/models/ref_cube_1m.glb`);

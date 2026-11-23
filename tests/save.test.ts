@@ -2,9 +2,9 @@
 // 「別のタブ」は、同じ置き場所を共有する 2 つの管理役で表す。
 import { readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
-import type { Content } from '../src/data/schemas';
-import { obtainableMaterials } from '../src/data/validators';
-import { MAX_SETTLED_RUNS, SAVE_SCHEMA_VERSION, SLOT_ID, checkCraft, newSave, parseImport, playWeaponId, readSave, unknownIds, usableWeapons, validateSave, type SaveDoc } from '../src/save/profile';
+import { ARMOR_SLOTS, recipeResult, type ArmorRecipeDef, type Content, type QuestDef, type WeaponRecipeDef } from '../src/data/schemas';
+import { materialRanks, obtainableMaterials } from '../src/data/validators';
+import { MAX_SETTLED_RUNS, SAVE_SCHEMA_VERSION, SLOT_ID, checkCraft, defenseOf, newSave, parseImport, playWeaponId, questUnlocked, readSave, unknownIds, usableWeapons, validateSave, wornArmor, type SaveDoc } from '../src/save/profile';
 import { KEEP_BACKUPS, MemoryBackend } from '../src/save/saveDb';
 import { SaveManager, type SaveEnv } from '../src/save/saveManager';
 import { loadContent } from './helpers';
@@ -163,63 +163,158 @@ describe('強化（岩殻の断岳剣）', () => {
   });
 });
 
-describe('強化（7 武器すべて）', () => {
+describe('武器の強化（7 武器 × 5 段）', () => {
   const FORE = 'mat.galdros.foreleg_plate';
+  const weaponRecipes = (): WeaponRecipeDef[] => [...content.recipes.values()].filter((r): r is WeaponRecipeDef => r.kind === 'upgrade');
+  /** 武器 ID の末尾（.001〜.005）= 段 */
+  const tier = (id: string): number => Number(id.slice(-1));
 
-  it('どの武器種にも強化が 1 つずつあり、最初の武器から同じ武器種の武器へ変わる', () => {
-    const byFamily = new Map<string, number>();
-    for (const r of content.recipes.values()) {
-      const from = content.weapons.get(r.fromWeaponId)!, to = content.weapons.get(r.resultWeaponId)!;
-      expect(from.starter, r.id).toBe(true);
-      expect(to.starter ?? false, r.id).toBe(false);
-      expect(to.family, r.id).toBe(from.family);
-      byFamily.set(from.family, (byFamily.get(from.family) ?? 0) + 1);
+  it('どの武器種も、里鍛ち → 岩殻 → 脈殻 → 晶殻 → 輝殻 の 1 本道（各段のレシピが 1 つずつ）', () => {
+    expect(weaponRecipes()).toHaveLength(7 * 4);
+    for (const fam of content.families.keys()) {
+      const chain = weaponRecipes().filter((r) => content.weapons.get(r.fromWeaponId)!.family === fam);
+      expect(chain.map((r) => `${tier(r.fromWeaponId)}>${tier(r.resultWeaponId)}`).sort(), fam).toEqual(['1>2', '2>3', '3>4', '4>5']);
+      for (const r of chain) expect(content.weapons.get(r.resultWeaponId)!.family, r.id).toBe(fam);
+      expect(content.weapons.get(chain.find((r) => tier(r.fromWeaponId) === 1)!.fromWeaponId)!.starter, fam).toBe(true);
     }
-    expect([...byFamily.keys()].sort()).toEqual([...content.families.keys()].sort());
-    expect([...byFamily.values()]).toEqual([1, 1, 1, 1, 1, 1, 1]);
+    expect([...content.weapons.values()].filter((w) => w.starter)).toHaveLength(7);
   });
 
-  it('強化後の攻撃力は元の 1.15 倍（端数は 0.5 以内）。ほかの値は変わらない', () => {
-    for (const r of content.recipes.values()) {
+  it('攻撃力は 1 段ごとに 1.15 倍（里鍛ち × 1.15^段。端数は 0.5 以内）。ほかの値は変わらない', () => {
+    for (const r of weaponRecipes()) {
       const from = content.weapons.get(r.fromWeaponId)!, to = content.weapons.get(r.resultWeaponId)!;
+      const base = content.weapons.get(`${r.fromWeaponId.slice(0, -1)}1`)!;
       expect(to.attack, r.id).toBeGreaterThan(from.attack);
-      expect(Math.abs(to.attack - from.attack * 1.15), r.id).toBeLessThanOrEqual(0.5);
+      expect(Math.abs(to.attack - base.attack * 1.15 ** (tier(to.id) - 1)), r.id).toBeLessThanOrEqual(0.5);
       expect({ element: to.element, affinity: to.affinity, sharpnessModifier: to.sharpnessModifier }, r.id).toEqual({ element: from.element, affinity: from.affinity, sharpnessModifier: from.sharpnessModifier });
     }
   });
 
-  it('それぞれ、書いてある素材と通貨がちょうどあれば強化でき、使い切る。1 つでも欠けるとできない', async () => {
-    for (const r of content.recipes.values()) {
-      const exact: [string, number][] = r.cost.items.map((s) => [s.itemId, s.count]);
-      const m = await open(new MemoryBackend());
-      await m.settle(rewards('run-1', r.cost.money, exact));
-      expect(await m.craft(r.id), r.id).toEqual({ ok: true });
-      expect(m.doc.money, r.id).toBe(0);
-      expect(m.doc.items, r.id).toEqual({});
-      expect(m.doc.weapons, r.id).toContain(r.resultWeaponId);
-      expect(m.doc.weapons, r.id).not.toContain(r.fromWeaponId);
-      expect(m.doc.weapons, r.id).toHaveLength(7);
-
-      const short: [string, number][] = exact.map(([id, n], i) => [id, i === 0 ? n - 1 : n]);
-      const m2 = await open(new MemoryBackend());
-      await m2.settle(rewards('run-1', r.cost.money, short.filter(([, n]) => n > 0)));
-      expect(await m2.craft(r.id), r.id).toMatchObject({ ok: false, reason: 'rule' });
-      expect(m2.doc.weapons, r.id).toContain(r.fromWeaponId);
+  it('各段の強化には、その段階の個体からしか出ない素材が要る（2 段目 = 初級、3 段目 = 中級、4 段目 = 上級、5 段目 = 極級）', () => {
+    const rankOf = materialRanks(content);
+    for (const r of [...content.recipes.values()]) {
+      const need = Math.max(...r.cost.items.map((s) => rankOf.get(s.itemId) ?? 99));
+      expect(need, r.id).toBe(tier(recipeResult(r)) - 1);
     }
   });
 
-  it('7 つ全部を強化すると、持っている武器は 7 つのまま、全部が強化後になる', async () => {
+  it('それぞれ、書いてある素材と通貨がちょうどあれば強化でき、使い切る。1 つでも欠けるとできない。段は飛ばせない', async () => {
+    for (const fam of content.families.keys()) {
+      const m = await open(new MemoryBackend());
+      const chain = weaponRecipes().filter((r) => content.weapons.get(r.fromWeaponId)!.family === fam).sort((x, y) => tier(x.fromWeaponId) - tier(y.fromWeaponId));
+      // 2 段目を作る前に、3 段目は作れない（元になる武器を持っていない）
+      await m.settle(rewards(`run-skip`, chain[1]!.cost.money, chain[1]!.cost.items.map((s) => [s.itemId, s.count])));
+      expect(await m.craft(chain[1]!.id), chain[1]!.id).toMatchObject({ ok: false, reason: 'rule', message: '元になる武器を持っていません' });
+      const m2 = await open(new MemoryBackend());
+      let n = 0;
+      for (const r of chain) {
+        const exact: [string, number][] = r.cost.items.map((s) => [s.itemId, s.count]);
+        // 1 つ欠けた状態ではできない
+        const short = exact.map(([id, k], i): [string, number] => [id, i === 0 ? k - 1 : k]).filter(([, k]) => k > 0);
+        await m2.settle(rewards(`run-${n++}`, r.cost.money, short));
+        expect(await m2.craft(r.id), r.id).toMatchObject({ ok: false, reason: 'rule' });
+        expect(m2.doc.weapons, r.id).toContain(r.fromWeaponId);
+        // 欠けていた 1 個を足すと、できて、使い切る
+        await m2.settle(rewards(`run-${n++}`, 0, [[exact[0]![0], 1]]));
+        expect(await m2.craft(r.id), r.id).toEqual({ ok: true });
+        expect(m2.doc.items, r.id).toEqual({});
+        expect(m2.doc.weapons, r.id).toContain(r.resultWeaponId);
+        expect(m2.doc.weapons, r.id).not.toContain(r.fromWeaponId);
+        expect(m2.doc.weapons, r.id).toHaveLength(7);
+        m2.doc.money > 0 && expect.fail(`${r.id}: 通貨が残った`);
+      }
+    }
+  });
+
+  it('2 段目を 7 つ全部作ると、持っている武器は 7 つのまま、全部が岩殻の〜になる', async () => {
     const b = new MemoryBackend();
     const m = await open(b);
     await m.settle(rewards('run-1', 120 * 7, [[SHELL, 18], [BONE, 10], [VEIN, 6], [FORE, 3]]));
-    for (const r of content.recipes.values()) expect(await m.craft(r.id), r.id).toEqual({ ok: true });
+    const second = weaponRecipes().filter((r) => tier(r.resultWeaponId) === 2);
+    for (const r of second) expect(await m.craft(r.id), r.id).toEqual({ ok: true });
     expect(m.doc.money).toBe(0);
     expect(m.doc.items).toEqual({});
-    expect([...m.doc.weapons].sort()).toEqual([...content.recipes.values()].map((r) => r.resultWeaponId).sort());
+    expect([...m.doc.weapons].sort()).toEqual(second.map((r) => r.resultWeaponId).sort());
     // 読み込み直しても、最初の武器が配り直されることはない
     const again = await open(b);
     expect(again.doc).toEqual(m.doc);
     expect(usableWeapons(again.doc, content)).toHaveLength(7);
+  });
+});
+
+describe('防具（5 部位 × 5 段）', () => {
+  const armorRecipes = (): ArmorRecipeDef[] => [...content.recipes.values()].filter((r): r is ArmorRecipeDef => r.kind === 'armor_upgrade');
+  const tier = (id: string): number => Number(id.slice(-1));
+
+  it('新しいデータは、里の装束（5 部位）を持っていて、防御力は 0', async () => {
+    const m = await open(new MemoryBackend());
+    expect(m.doc.armor).toEqual(['armor.head.001', 'armor.chest.001', 'armor.arms.001', 'armor.waist.001', 'armor.legs.001']);
+    expect(wornArmor(m.doc, content).map((a) => a.slot)).toEqual([...ARMOR_SLOTS]);
+    expect(defenseOf(m.doc, content)).toBe(0);
+  });
+
+  it('どの部位も 5 段の 1 本道で、防御力は段ごとに上がる（1 部位 0 / 6 / 13 / 21 / 30）', () => {
+    expect(armorRecipes()).toHaveLength(5 * 4);
+    for (const slot of ARMOR_SLOTS) {
+      const pieces = [...content.armor.values()].filter((a) => a.slot === slot).sort((x, y) => tier(x.id) - tier(y.id));
+      expect(pieces.map((a) => a.defense), slot).toEqual([0, 6, 13, 21, 30]);
+      const chain = armorRecipes().filter((r) => content.armor.get(r.fromArmorId)!.slot === slot);
+      expect(chain.map((r) => `${tier(r.fromArmorId)}>${tier(r.resultArmorId)}`).sort(), slot).toEqual(['1>2', '2>3', '3>4', '4>5']);
+    }
+  });
+
+  it('強化すると、その部位の防具が入れ替わり、防御力の合計が上がる。素材と通貨が減る', async () => {
+    const b = new MemoryBackend();
+    const m = await open(b);
+    await m.settle(rewards('run-1', 200, [[SHELL, 5], [BONE, 3]]));
+    expect(await m.craft('recipe.armor.head.002')).toEqual({ ok: true }); // 岩殻片 2 + 硬骨 1 + 80
+    expect(await m.craft('recipe.armor.chest.002')).toEqual({ ok: true }); // 岩殻片 3 + 硬骨 2 + 80
+    expect(m.doc.armor).toEqual(['armor.head.002', 'armor.chest.002', 'armor.arms.001', 'armor.waist.001', 'armor.legs.001']);
+    expect(defenseOf(m.doc, content)).toBe(12);
+    expect(m.doc.money).toBe(40);
+    expect(m.doc.items).toEqual({});
+    // 武器と装備は変わらない
+    expect(m.doc.weapons).toHaveLength(7);
+    expect(m.doc.equippedWeaponId).toBe('weapon.heavy_blade.001');
+    // 足りなければ何も変わらない / 2 回は作れない
+    expect(await m.craft('recipe.armor.arms.002')).toMatchObject({ ok: false, reason: 'rule' });
+    expect(await m.craft('recipe.armor.head.002')).toMatchObject({ ok: false, reason: 'rule' });
+    const again = await open(b);
+    expect(again.doc).toEqual(m.doc);
+  });
+
+  it('5 部位を同じ段で揃えた時の防御力の合計は 0 / 30 / 65 / 105 / 150', () => {
+    for (const [t, total] of [[1, 0], [2, 30], [3, 65], [4, 105], [5, 150]] as const) {
+      const doc = { ...newSave(content, { now: 'x', appVersion: 'x', contentVersion: 'x' }), armor: ARMOR_SLOTS.map((s) => `armor.${s}.00${t}`) };
+      expect(defenseOf(doc, content), `段 ${t}`).toBe(total);
+    }
+  });
+
+  it('この版に無い防具は、消さずに持ち続ける。数えるのは、この版にある防具だけ', async () => {
+    const b = new MemoryBackend();
+    b.seed(SLOT_ID, { ...newSave(content, { now: 'x', appVersion: 'x', contentVersion: 'x' }), revision: 1, armor: ['armor.head.002', 'armor.head.099', 'armor.chest.001'] });
+    const m = await open(b);
+    expect(unknownIds(m.doc, content).armor).toEqual(['armor.head.099']);
+    expect(defenseOf(m.doc, content)).toBe(6);
+    // 持っていない部位（腕・腰・脚）には、里の装束が配られる。頭と胴には配られない
+    expect(m.doc.armor).toEqual(['armor.head.002', 'armor.head.099', 'armor.chest.001', 'armor.arms.001', 'armor.waist.001', 'armor.legs.001']);
+    await m.settle(rewards('run-1'));
+    expect((b.peek(SLOT_ID) as SaveDoc).armor).toContain('armor.head.099');
+  });
+});
+
+describe('段階の解禁', () => {
+  it('上の段階の依頼は、1 つ下の段階の依頼を達成すると受けられる', async () => {
+    const m = await open(new MemoryBackend());
+    const q = (id: string): QuestDef => content.quests.get(id)!;
+    const open4 = (): boolean[] => ['quest.basin.003', 'quest.basin.r2.001', 'quest.basin.r3.001', 'quest.basin.r4.001'].map((id) => questUnlocked(m.doc, q(id)));
+    expect(open4()).toEqual([true, false, false, false]);
+    await m.settle(rewards('run-1'));
+    expect(open4()).toEqual([true, true, false, false]);
+    await m.settle({ ...rewards('run-2'), questId: 'quest.basin.r2.001' });
+    expect(open4()).toEqual([true, true, true, false]);
+    await m.settle({ ...rewards('run-3'), questId: 'quest.basin.r3.001' });
+    expect(open4()).toEqual([true, true, true, true]);
   });
 });
 
@@ -288,7 +383,7 @@ describe('この版に無い ID・新しい版・壊れたデータ', () => {
     await withUnknown(b);
     const m = await open(b);
     expect(m.notice).toBeNull();
-    expect(unknownIds(m.doc, content)).toEqual({ items: ['mat.future.star_core'], weapons: ['weapon.future_axe.009'] });
+    expect(unknownIds(m.doc, content)).toEqual({ items: ['mat.future.star_core'], weapons: ['weapon.future_axe.009'], armor: [] });
     expect(playWeaponId(m.doc, content)).toBe('weapon.heavy_blade.001');
     expect(m.doc.equippedWeaponId).toBe('weapon.future_axe.009'); // 保存データは書き換えていない
     await m.settle(rewards('run-2'));
@@ -423,10 +518,12 @@ describe('実機で書き出したデータ（tests/fixtures/save-v1-device-0.7.
     const r = parseImport(text);
     expect(r.kind).toBe('ok');
     if (r.kind !== 'ok') return;
-    expect(r.migratedFrom).toBeNull();
+    // 版 1（防具が入る前）のデータ。読む時に版 2 へ直る（防具の一覧が空で足される）
+    expect(r.migratedFrom).toBe(1);
     expect(validateSave(r.doc)).toEqual([]);
-    expect(unknownIds(r.doc, content)).toEqual({ items: [], weapons: [] });
-    expect(r.doc).toMatchObject({ schemaVersion: 1, revision: 3, money: 1200, equippedWeaponId: 'weapon.long_blade.001', progress: { questClears: { 'quest.basin.003': 2 } } });
+    expect(r.doc.armor).toEqual([]);
+    expect(unknownIds(r.doc, content)).toEqual({ items: [], weapons: [], armor: [] });
+    expect(r.doc).toMatchObject({ schemaVersion: 2, revision: 3, money: 1200, equippedWeaponId: 'weapon.long_blade.001', progress: { questClears: { 'quest.basin.003': 2 } } });
     expect(r.doc.settledRuns).toHaveLength(2);
     expect(playWeaponId(r.doc, content)).toBe('weapon.long_blade.001');
     expect(usableWeapons(r.doc, content)).toHaveLength(7);
@@ -444,17 +541,52 @@ describe('実機で書き出したデータ（tests/fixtures/save-v1-device-0.7.
     expect(c.money).toEqual({ have: 1200, need: 120 });
   });
 
-  it('この持ち物で強化できるのは太刀と双剣。太刀を強化すると、装備が岩殻の太刀になり、青銅晶脈が無くなって双剣はできなくなる', async () => {
+  it('版 1 のデータを取り込むと、持ち物・武器・進行はそのままで、里の装束（5 部位）が配られる。初級を達成済みなので中級が受けられる', async () => {
+    const m = await open(new MemoryBackend());
+    expect(await m.importText(text)).toEqual({ ok: true });
+    expect(m.doc).toMatchObject({ schemaVersion: 2, money: 1200, equippedWeaponId: 'weapon.long_blade.001', items: { [SHELL]: 7, [VEIN]: 2, [BONE]: 1 } });
+    expect(m.doc.weapons).toHaveLength(7);
+    expect(m.doc.armor).toEqual(['armor.head.001', 'armor.chest.001', 'armor.arms.001', 'armor.waist.001', 'armor.legs.001']);
+    expect(defenseOf(m.doc, content)).toBe(0);
+    expect(questUnlocked(m.doc, content.quests.get('quest.basin.r2.001')!)).toBe(true);
+    expect(questUnlocked(m.doc, content.quests.get('quest.basin.r3.001')!)).toBe(false);
+  });
+
+  it('端末に版 1 のデータがある時: 開くと版 2 へ直して書き込み、元の版 1 は 1 文字も変えずに控えへ残す', async () => {
+    const b = new MemoryBackend();
+    const v1 = (JSON.parse(text) as { save: Record<string, unknown> }).save;
+    b.seed(SLOT_ID, v1);
+    const m = await open(b);
+    expect(m.notice).toBe('保存データを新しい形へ直しました（元のデータは控えに残してあります）。');
+    expect(m.unreadable).toBeNull();
+    const stored = b.peek(SLOT_ID) as SaveDoc;
+    expect(stored).toMatchObject({ schemaVersion: 2, money: 1200, revision: 4, equippedWeaponId: 'weapon.long_blade.001', items: { [SHELL]: 7, [VEIN]: 2, [BONE]: 1 } });
+    expect(stored.armor).toHaveLength(5);
+    expect(stored.settledRuns).toHaveLength(2);
+    const backups = await m.backups();
+    expect(backups).toHaveLength(1);
+    expect(backups[0]!.reason).toBe('migrate');
+    expect(backups[0]!.doc).toEqual(v1);
+    // その後の強化も、ふつうに保存される
+    expect(await m.craft('recipe.armor.head.002')).toEqual({ ok: true });
+    expect(b.peek(SLOT_ID)).toMatchObject({ schemaVersion: 2, money: 1120, revision: 5 });
+    // 開き直しても同じ（2 度目は直さない）
+    const again = await open(b);
+    expect(again.doc).toEqual(m.doc);
+    expect(await again.backups()).toHaveLength(1);
+  });
+
+  it('この持ち物で強化できる武器は太刀と双剣、防具は頭と腰。太刀を強化すると、装備が岩殻の太刀になり、青銅晶脈が無くなる', async () => {
     const m = await open(new MemoryBackend());
     await m.importText(text);
     const can = (): string[] => [...content.recipes.values()].filter((r) => checkCraft(m.doc, r).ok).map((r) => r.id).sort();
-    expect(can()).toEqual(['recipe.long_blade.002', 'recipe.twin_blades.002']);
+    expect(can()).toEqual(['recipe.armor.head.002', 'recipe.armor.waist.002', 'recipe.long_blade.002', 'recipe.twin_blades.002']);
     expect(await m.craft('recipe.long_blade.002')).toEqual({ ok: true });
     expect(m.doc.equippedWeaponId).toBe('weapon.long_blade.002');
     expect(playWeaponId(m.doc, content)).toBe('weapon.long_blade.002');
     expect(m.doc.money).toBe(1080);
     expect(m.doc.items).toEqual({ [SHELL]: 4, [BONE]: 1 });
     expect(m.doc.settledRuns).toHaveLength(2);
-    expect(can()).toEqual([]);
+    expect(can()).toEqual(['recipe.armor.head.002']); // 腰は青銅晶脈が要る
   });
 });

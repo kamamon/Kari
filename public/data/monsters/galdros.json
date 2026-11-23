@@ -10,6 +10,7 @@
   "moveSpeed": 2.6,
   "captureAllowed": true,
   "lootId": "loot.galdros",
+  "lootByRank": {"rank.2": "loot.galdros.r2", "rank.3": "loot.galdros.r3", "rank.4": "loot.galdros.r4"},
   "capture": {"hpRatio": 0.25, "tranqNeeded": 2, "tranqDecayTicks": 900},
   "respawnTicks": null,
   "breakStaggerTicks": 80,

@@ -234,12 +234,60 @@ export interface EdgeRules {
  * 工房で作るもの。kind: upgrade は、持っている武器（fromWeaponId）を素材と通貨で別の武器に変える。
  * 元の武器は無くなる。必要な数の確認・減算・武器の入れ替えは、保存の 1 回の書き込みの中で行う（src/save/profile.ts）。
  */
-export interface RecipeDef {
+export type RecipeDef = WeaponRecipeDef | ArmorRecipeDef;
+
+/** 武器の強化: 持っている武器（fromWeaponId）を、素材と通貨で別の武器（resultWeaponId）に変える。 */
+export interface WeaponRecipeDef {
   id: string;
   kind: 'upgrade';
   fromWeaponId: string;
   resultWeaponId: string;
   cost: { money: number; items: ItemStack[] };
+}
+
+/** 防具の強化: 持っている防具（fromArmorId）を、同じ部位の別の防具（resultArmorId）に変える。 */
+export interface ArmorRecipeDef {
+  id: string;
+  kind: 'armor_upgrade';
+  fromArmorId: string;
+  resultArmorId: string;
+  cost: { money: number; items: ItemStack[] };
+}
+
+/** レシピの元と結果の ID（武器でも防具でも） */
+export const recipeFrom = (r: RecipeDef): string => (r.kind === 'upgrade' ? r.fromWeaponId : r.fromArmorId);
+export const recipeResult = (r: RecipeDef): string => (r.kind === 'upgrade' ? r.resultWeaponId : r.resultArmorId);
+
+/** 防具の部位（並び順は表示の順） */
+export const ARMOR_SLOTS = ['head', 'chest', 'arms', 'waist', 'legs'] as const;
+export type ArmorSlot = (typeof ARMOR_SLOTS)[number];
+
+export interface ArmorDef {
+  id: string;
+  slot: ArmorSlot;
+  name: string;
+  /** 防御力。身に着けている 5 部位の合計で、受けるダメージが減る */
+  defense: number;
+  /** 最初から持っている防具（新しい保存データへ配る） */
+  starter?: boolean;
+}
+
+/** 防具の決まり。受けるダメージ = 元のダメージ × base / (base + 防御力の合計) */
+export interface ArmorRules {
+  base: number;
+  slotNames: Record<ArmorSlot, string>;
+}
+
+/**
+ * 段階（依頼と、そこに出る個体の強さの区分）。order は 1 から続き番号。
+ * monster は、モンスターの元の定義へ掛ける倍率（すべて 1 なら元のまま）:
+ * hpScale = 体力と怒りの必要量 / partScale = 部位の耐久・怯み・切断の必要量 / attackScale = 与えるダメージ / cooldownScale = 技と技の間隔。
+ */
+export interface RankDef {
+  id: string;
+  order: number;
+  name: string;
+  monster: { hpScale: number; partScale: number; attackScale: number; cooldownScale: number };
 }
 
 /** 部位の当たり形状。b が無ければ球、あればカプセル。モンスターのローカル座標。 */
@@ -312,6 +360,8 @@ export interface MonsterDef {
   turnDegPerSec: number;
   captureAllowed: boolean;
   lootId: string | null;
+  /** 段階ごとの素材の表（段階の id → loot の id）。書いていない段階は lootId を使う。 */
+  lootByRank?: Record<string, string>;
   /**
    * 捕獲の条件（captureAllowed の時に使う）。体力が hp × hpRatio 以下で「弱った」状態になり、
    * その間に罠にかかっていて、鎮静玉が tranqNeeded 個たまっていると捕獲が成立する。
@@ -386,6 +436,10 @@ export interface QuestDef {
   summary: string;
   mapId: string;
   targetMonsterId: string;
+  /** 段階（ranks.json の id）。標的の強さと、出る素材が決まる。 */
+  rankId: string;
+  /** 受けるために、先に 1 回は達成しておく依頼（無ければ最初から受けられる）。 */
+  requires?: string[];
   monsterSpawn: { x: number; z: number; yaw: number };
   timeLimitTicks: number;
   maxFaints: number;
@@ -458,6 +512,8 @@ export interface ContentIndex {
     items: string;
     loot: string;
     recipes: string;
+    ranks: string;
+    armor: string;
     player: string;
   };
 }
@@ -478,6 +534,9 @@ export interface Content {
   materials: Map<string, MaterialDef>;
   loot: Map<string, LootDef>;
   recipes: Map<string, RecipeDef>;
+  ranks: Map<string, RankDef>;
+  armor: Map<string, ArmorDef>;
+  armorRules: ArmorRules;
   player: PlayerTuning;
 }
 

@@ -6,9 +6,10 @@
 // - 報酬の受け取りと強化は、必要な確認・減算・加算・処理済みの記録を 1 回の書き込みで確定する。
 // - 知らない ID（この版に無い素材や武器）は捨てずに持ち続ける。
 // - 新しい版が書いたデータ（schemaVersion がこの版より大きい）は、読まないし上書きもしない。
-import type { Content, ItemStack, RecipeDef } from '../data/schemas';
+import { ARMOR_SLOTS, recipeFrom, recipeResult, type ArmorDef, type Content, type ItemStack, type QuestDef, type RecipeDef } from '../data/schemas';
 
-export const SAVE_SCHEMA_VERSION = 1;
+/** 版 2（v0.9.0）: 防具（armor）を足した。 */
+export const SAVE_SCHEMA_VERSION = 2;
 export const SLOT_ID = 'main';
 /** 書き出したファイルの目印 */
 export const EXPORT_FORMAT = 'veilbound-hunters-save';
@@ -34,6 +35,11 @@ export interface SaveDoc {
   /** 持っている武器の ID。この版に無い ID も、そのまま持つ */
   weapons: string[];
   equippedWeaponId: string;
+  /**
+   * 持っている防具の ID。この版に無い ID も、そのまま持つ。
+   * 身に着けるのは、部位ごとに、持っている中で防御力がいちばん高いもの（強化は入れ替えなので、いまは部位ごとに 1 つ）。
+   */
+  armor: string[];
   progress: {
     /** 依頼ごとの達成回数 */
     questClears: Record<string, number>;
@@ -68,6 +74,11 @@ export function starterWeapons(content: Content): string[] {
   return [...content.weapons.values()].filter((w) => w.starter).map((w) => w.id);
 }
 
+/** 最初から持つ防具（部位の順） */
+export function starterArmor(content: Content): string[] {
+  return ARMOR_SLOTS.flatMap((slot) => [...content.armor.values()].filter((a) => a.slot === slot && a.starter).map((a) => a.id));
+}
+
 /** 新しい保存データ。まだ 1 度も書き込んでいない状態（revision 0）。 */
 export function newSave(content: Content, stamp: SaveStamp): SaveDoc {
   const weapons = starterWeapons(content);
@@ -82,6 +93,7 @@ export function newSave(content: Content, stamp: SaveStamp): SaveDoc {
     items: {},
     weapons,
     equippedWeaponId: weapons[0] ?? '',
+    armor: starterArmor(content),
     progress: { questClears: {} },
     settledRuns: [],
   };
@@ -101,6 +113,8 @@ export function validateSave(raw: unknown): string[] {
   if (!Array.isArray(raw.weapons) || raw.weapons.some((w) => typeof w !== 'string' || w === '')) e.push('武器の一覧が不正です');
   else if (new Set(raw.weapons).size !== raw.weapons.length) e.push('同じ武器が 2 つ入っています');
   if (typeof raw.equippedWeaponId !== 'string') e.push('装備している武器がありません');
+  if (!Array.isArray(raw.armor) || raw.armor.some((a) => typeof a !== 'string' || a === '')) e.push('防具の一覧が不正です');
+  else if (new Set(raw.armor).size !== raw.armor.length) e.push('同じ防具が 2 つ入っています');
   if (!isObj(raw.progress) || !isObj(raw.progress.questClears)) e.push('進行の記録がありません');
   else for (const [id, n] of Object.entries(raw.progress.questClears)) if (!isCount(n)) e.push(`依頼 ${id} の達成回数が不正です`);
   if (!Array.isArray(raw.settledRuns) || raw.settledRuns.some((r) => typeof r !== 'string')) e.push('処理済みの依頼の記録が不正です');
@@ -109,9 +123,12 @@ export function validateSave(raw: unknown): string[] {
 
 /**
  * 古い版 → 次の版 への変換（キーは変換前の schemaVersion）。
- * いまは版 1 が最初なので空。構造を変える時は、ここへ 1 段ずつ足す（版を飛ばして変換しない）。
+ * 構造を変える時は、ここへ 1 段ずつ足す（版を飛ばして変換しない）。
+ * 1 → 2（v0.9.0）: 防具の一覧を足す。中身は空で、最初の防具は grantStarters が配る（収録データを見て決めるため）。
  */
-const MIGRATIONS: Record<number, (doc: Record<string, unknown>) => Record<string, unknown>> = {};
+const MIGRATIONS: Record<number, (doc: Record<string, unknown>) => Record<string, unknown>> = {
+  1: (doc) => ({ ...doc, armor: Array.isArray(doc.armor) ? doc.armor : [] }),
+};
 
 export type ReadResult =
   | { kind: 'ok'; doc: SaveDoc; migratedFrom: number | null }
@@ -148,9 +165,9 @@ export const cloneSave = (doc: SaveDoc): SaveDoc => structuredCloneJson(doc);
 // ---- 変える処理。どれも元の doc は変えず、新しい doc を返す。変える所が無ければ null。 ----
 
 /**
- * 最初から持つ武器を配る。その系統の武器を 1 つも持っていない時だけ配る
+ * 最初から持つ武器と防具を配る。その系統の武器（その部位の防具）を 1 つも持っていない時だけ配る
  * （強化して元の武器が無くなった系統へ、もう一度配らない）。
- * 収録データに武器の系統が増えた時に、古い保存データでも使えるようにするためのもの。
+ * 収録データに武器の系統が増えた時や、防具が入る前の保存データでも、使えるようにするためのもの。
  */
 export function grantStarters(doc: SaveDoc, content: Content): SaveDoc | null {
   const families = new Set<string>();
@@ -164,9 +181,16 @@ export function grantStarters(doc: SaveDoc, content: Content): SaveDoc | null {
     add.push(w.id);
     families.add(w.family);
   }
-  if (add.length === 0) return null;
+  const slots = new Set<string>();
+  for (const id of doc.armor) {
+    const a = content.armor.get(id);
+    if (a) slots.add(a.slot);
+  }
+  const addArmor = starterArmor(content).filter((id) => !slots.has(content.armor.get(id)!.slot) && !doc.armor.includes(id));
+  if (add.length === 0 && addArmor.length === 0) return null;
   const next = cloneSave(doc);
   next.weapons.push(...add);
+  next.armor.push(...addArmor);
   return next;
 }
 
@@ -194,9 +218,9 @@ export function settleRun(doc: SaveDoc, r: RunRewards): SaveDoc | null {
 
 export interface CraftCheck {
   ok: boolean;
-  /** 元の武器を持っているか */
+  /** 元の武器（防具）を持っているか */
   ownsBase: boolean;
-  /** すでに結果の武器を持っているか */
+  /** すでに結果の武器（防具）を持っているか */
   ownsResult: boolean;
   money: { have: number; need: number };
   items: { itemId: string; have: number; need: number }[];
@@ -205,20 +229,21 @@ export interface CraftCheck {
 /** 強化できるか（画面の表示用。実際の確認は craft が書き込みの中でもう一度行う）。 */
 export function checkCraft(doc: SaveDoc, recipe: RecipeDef): CraftCheck {
   const items = recipe.cost.items.map((s) => ({ itemId: s.itemId, have: doc.items[s.itemId] ?? 0, need: s.count }));
-  const ownsBase = doc.weapons.includes(recipe.fromWeaponId);
-  const ownsResult = doc.weapons.includes(recipe.resultWeaponId);
+  const owned = recipe.kind === 'upgrade' ? doc.weapons : doc.armor;
+  const ownsBase = owned.includes(recipeFrom(recipe));
+  const ownsResult = owned.includes(recipeResult(recipe));
   const money = { have: doc.money, need: recipe.cost.money };
   return { ok: ownsBase && !ownsResult && money.have >= money.need && items.every((i) => i.have >= i.need), ownsBase, ownsResult, money, items };
 }
 
 /**
- * 強化: 素材と通貨を減らし、元の武器を結果の武器に入れ替える。元の武器を装備していたら、装備も入れ替える。
+ * 強化: 素材と通貨を減らし、元の武器（防具）を結果のものに入れ替える。元の武器を装備していたら、装備も入れ替える。
  * 足りない・持っていない時は RuleError を投げる（何も変えない）。
  */
 export function craft(doc: SaveDoc, recipe: RecipeDef): SaveDoc {
   const c = checkCraft(doc, recipe);
   if (c.ownsResult) throw new RuleError('already_owned', 'すでに持っています');
-  if (!c.ownsBase) throw new RuleError('not_owned', '元になる武器を持っていません');
+  if (!c.ownsBase) throw new RuleError('not_owned', recipe.kind === 'upgrade' ? '元になる武器を持っていません' : '元になる防具を持っていません');
   if (!c.ok) throw new RuleError('insufficient', '素材か通貨が足りません');
   const next = cloneSave(doc);
   next.money -= recipe.cost.money;
@@ -227,8 +252,10 @@ export function craft(doc: SaveDoc, recipe: RecipeDef): SaveDoc {
     if (left > 0) next.items[s.itemId] = left;
     else delete next.items[s.itemId];
   }
-  next.weapons = next.weapons.map((w) => (w === recipe.fromWeaponId ? recipe.resultWeaponId : w));
-  if (next.equippedWeaponId === recipe.fromWeaponId) next.equippedWeaponId = recipe.resultWeaponId;
+  if (recipe.kind === 'upgrade') {
+    next.weapons = next.weapons.map((w) => (w === recipe.fromWeaponId ? recipe.resultWeaponId : w));
+    if (next.equippedWeaponId === recipe.fromWeaponId) next.equippedWeaponId = recipe.resultWeaponId;
+  } else next.armor = next.armor.map((a) => (a === recipe.fromArmorId ? recipe.resultArmorId : a));
   return next;
 }
 
@@ -255,11 +282,39 @@ export function playWeaponId(doc: SaveDoc, content: Content): string {
   return usable[0] ?? starterWeapons(content)[0] ?? [...content.weapons.keys()][0]!;
 }
 
+/**
+ * 身に着けている防具（部位の順）。部位ごとに、持っていてこの版で使える中で、防御力がいちばん高いもの。
+ * その部位の防具を 1 つも持っていなければ、その部位は入らない。
+ */
+export function wornArmor(doc: SaveDoc, content: Content): ArmorDef[] {
+  const out: ArmorDef[] = [];
+  for (const slot of ARMOR_SLOTS) {
+    let best: ArmorDef | null = null;
+    for (const id of doc.armor) {
+      const a = content.armor.get(id);
+      if (a && a.slot === slot && (!best || a.defense > best.defense)) best = a;
+    }
+    if (best) out.push(best);
+  }
+  return out;
+}
+
+/** 防御力の合計（身に着けている防具） */
+export function defenseOf(doc: SaveDoc, content: Content): number {
+  return wornArmor(doc, content).reduce((n, a) => n + a.defense, 0);
+}
+
+/** その依頼を受けられるか（先に達成しておく依頼を、すべて 1 回は達成している）。 */
+export function questUnlocked(doc: SaveDoc, quest: QuestDef): boolean {
+  return (quest.requires ?? []).every((id) => (doc.progress.questClears[id] ?? 0) > 0);
+}
+
 /** この版に無い ID（捨てずに持っているもの）。 */
-export function unknownIds(doc: SaveDoc, content: Content): { items: string[]; weapons: string[] } {
+export function unknownIds(doc: SaveDoc, content: Content): { items: string[]; weapons: string[]; armor: string[] } {
   return {
     items: Object.keys(doc.items).filter((id) => !content.materials.has(id) && !content.items.has(id)),
     weapons: doc.weapons.filter((id) => !content.weapons.has(id)),
+    armor: doc.armor.filter((id) => !content.armor.has(id)),
   };
 }
 

@@ -248,7 +248,7 @@ export class Hud {
     const h = sim.hunt;
     const sec = h ? Math.ceil(Math.max(0, h.quest.timeLimitTicks - h.ticks) / 60) : Math.floor(sim.tick / 60);
     this.set('time', sec, () => (this.time.textContent = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`));
-    const goal = h ? `${h.quest.name}: ${sim.monsters[0]?.def.name ?? ''}の${h.quest.kind === 'hunt' ? '狩猟' : '討伐'}` : '訓練: 標的で動作を確かめる';
+    const goal = h ? `【${sim.rank?.name ?? ''}】${h.quest.name}: ${sim.monsters[0]?.def.name ?? ''}の${h.quest.kind === 'hunt' ? '狩猟' : '討伐'}` : '訓練: 標的で動作を確かめる';
     this.set('goal', goal, () => (this.goal.textContent = goal));
     const faints = h ? `力尽き ${h.faints} / ${h.quest.maxFaints}` : '';
     this.set('faints', faints, () => (this.faints.textContent = faints));

@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "note": "依頼。rankId は段階（ranks.json）で、標的の強さと出る素材が決まる。requires は、先に 1 回は達成しておく依頼（上の段階は、下の段階を達成すると受けられる）。4 件とも同じ狩場の同じ標的で、段階だけが違う。報酬の額は机上の値。",
   "quests": [
     {
       "id": "quest.basin.003",
@@ -8,12 +9,61 @@
       "summary": "風礫盆地に現れた岩殻獣ガルドロスを狩る。討伐でも捕獲でも達成になる。",
       "mapId": "map.basin.training",
       "targetMonsterId": "monster.galdros",
+      "rankId": "rank.1",
       "monsterSpawn": {"x": 4, "z": 15, "yaw": 2.6},
       "timeLimitTicks": 54000,
       "maxFaints": 3,
       "returnTicks": 3600,
-      "supplies": [{"itemId": "item.heal_tonic", "count": 5}, {"itemId": "item.bind_trap", "count": 1}, {"itemId": "item.calm_orb", "count": 3}, { "itemId": "item.whetstone", "count": 3 }],
+      "supplies": [{"itemId": "item.heal_tonic", "count": 5}, {"itemId": "item.bind_trap", "count": 1}, {"itemId": "item.calm_orb", "count": 3}, {"itemId": "item.whetstone", "count": 3}],
       "rewards": {"money": 600, "items": [{"itemId": "mat.galdros.shell_shard", "count": 1}]}
+    },
+    {
+      "id": "quest.basin.r2.001",
+      "name": "脈打つ岩殻",
+      "kind": "hunt",
+      "summary": "晶脈の育った岩殻獣ガルドロスが、風礫盆地に居着いた。体力も一撃も、初級の個体より重い。",
+      "mapId": "map.basin.training",
+      "targetMonsterId": "monster.galdros",
+      "rankId": "rank.2",
+      "requires": ["quest.basin.003"],
+      "monsterSpawn": {"x": 4, "z": 15, "yaw": 2.6},
+      "timeLimitTicks": 54000,
+      "maxFaints": 3,
+      "returnTicks": 3600,
+      "supplies": [{"itemId": "item.heal_tonic", "count": 5}, {"itemId": "item.bind_trap", "count": 1}, {"itemId": "item.calm_orb", "count": 3}, {"itemId": "item.whetstone", "count": 3}],
+      "rewards": {"money": 1100, "items": [{"itemId": "mat.galdros.veined_shell", "count": 1}]}
+    },
+    {
+      "id": "quest.basin.r3.001",
+      "name": "晶の背",
+      "kind": "hunt",
+      "summary": "背の岩殻に晶が走る、年を経たガルドロス。攻めの間隔が短く、防具が無いと長くはもたない。",
+      "mapId": "map.basin.training",
+      "targetMonsterId": "monster.galdros",
+      "rankId": "rank.3",
+      "requires": ["quest.basin.r2.001"],
+      "monsterSpawn": {"x": 4, "z": 15, "yaw": 2.6},
+      "timeLimitTicks": 54000,
+      "maxFaints": 3,
+      "returnTicks": 3600,
+      "supplies": [{"itemId": "item.heal_tonic", "count": 5}, {"itemId": "item.bind_trap", "count": 1}, {"itemId": "item.calm_orb", "count": 3}, {"itemId": "item.whetstone", "count": 3}],
+      "rewards": {"money": 1800, "items": [{"itemId": "mat.galdros.crystal_shell", "count": 1}]}
+    },
+    {
+      "id": "quest.basin.r4.001",
+      "name": "輝く岩山",
+      "kind": "hunt",
+      "summary": "晶脈が芯まで育ち、岩殻が光を帯びた個体。風礫盆地で確かめられた中で、いちばん強い。",
+      "mapId": "map.basin.training",
+      "targetMonsterId": "monster.galdros",
+      "rankId": "rank.4",
+      "requires": ["quest.basin.r3.001"],
+      "monsterSpawn": {"x": 4, "z": 15, "yaw": 2.6},
+      "timeLimitTicks": 54000,
+      "maxFaints": 3,
+      "returnTicks": 3600,
+      "supplies": [{"itemId": "item.heal_tonic", "count": 5}, {"itemId": "item.bind_trap", "count": 1}, {"itemId": "item.calm_orb", "count": 3}, {"itemId": "item.whetstone", "count": 3}],
+      "rewards": {"money": 2800, "items": [{"itemId": "mat.galdros.radiant_shell", "count": 1}]}
     }
   ]
 }

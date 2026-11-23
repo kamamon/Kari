@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.8.0",
+  "contentVersion": "0.9.0",
   "files": {
     "actions": [
       "actions/player_common.json",
@@ -40,6 +40,8 @@
     "quests": "quests.json",
     "items": "items.json",
     "loot": "loot.json",
-    "recipes": "recipes.json"
+    "recipes": "recipes.json",
+    "ranks": "ranks.json",
+    "armor": "armor.json"
   }
 }

@@ -3,6 +3,7 @@
 // 原点は握り位置、+Y が刃先、X が厚み、Z が刃幅（-Z が刃、+Z が峰）。単位 m。
 // 当たり判定（握りから 0.30〜1.75m、半径 0.20m）は変えていない。刃は 0.33〜1.795m、幅 0.33m。
 import { BoxGeometry, Group, Mesh, MeshLambertMaterial } from 'three';
+import { shellMaterials } from './shellPlates';
 import { addSingleEdgeSword, ArtMesh, type ArtStatus, type SwordDims } from './artMesh';
 import { WEAPON_SHEETS } from './weaponSheets';
 
@@ -46,19 +47,19 @@ const SHELL_PLATES: [y: number, h: number, out: number, tilt: number][] = [
  * 断岳剣の仮モデル。variant を 'shell' にすると、峰に岩の板と青銅色の留め帯を足した「岩殻の断岳剣」になる
  * （設定図が無いので、単色の箱を足しただけの仮の形。当たり判定は同じ）。
  */
-export function buildHeavyBlade(variant: 'base' | 'shell' = 'base'): WeaponModel {
+export function buildHeavyBlade(variant: 'base' | 'shell' = 'base', tier = 2): WeaponModel {
   const m = new ArtMesh(WEAPON_SHEETS.dangaku);
   addSingleEdgeSword(m, DIMS);
   const art: ArtStatus[] = [];
   const group = new Group();
-  group.name = variant === 'shell' ? 'model.weapon.heavy_blade.002' : 'model.weapon.heavy_blade.001';
+  group.name = variant === 'shell' ? `model.weapon.heavy_blade.00${tier}` : 'model.weapon.heavy_blade.001';
   group.add(m.build('heavy_blade_body', art));
   let triangles = m.triangles;
   if (variant === 'shell') {
-    const rock = new MeshLambertMaterial({ color: 0xa69c8b });
-    const rockDark = new MeshLambertMaterial({ color: 0x7c7466 });
-    const bronze = new MeshLambertMaterial({ color: 0xb08a4e });
-    SHELL_PLATES.forEach(([y, h, out, tilt], i) => {
+    // 段（2 = 岩殻 … 5 = 輝殻）で板の色が変わる。色の表は shellPlates.ts
+    const { rock, rockDark, band: bronze, scale } = shellMaterials(tier);
+    SHELL_PLATES.forEach(([y, h0, out, tilt], i) => {
+      const h = h0 * scale;
       // 峰（+Z）へかぶせる岩の板。刃の厚みより少し厚く、峰から外へ張り出す
       const plate = new Mesh(new BoxGeometry(0.062, h, 0.11 + out), i % 2 ? rockDark : rock);
       plate.position.set(0, y, DIMS.zSpine - 0.055 + (0.11 + out) / 2);
