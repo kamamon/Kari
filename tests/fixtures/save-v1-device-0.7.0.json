@@ -1,0 +1,37 @@
+{
+  "format": "veilbound-hunters-save",
+  "exportedAt": "2026-11-23T22:16:41.295Z",
+  "save": {
+    "slotId": "main",
+    "schemaVersion": 1,
+    "contentVersion": "0.7.0",
+    "appVersion": "0.7.0",
+    "revision": 3,
+    "updatedAt": "2026-11-23T22:16:26.352Z",
+    "money": 1200,
+    "items": {
+      "mat.galdros.shell_shard": 7,
+      "mat.galdros.bronze_vein": 2,
+      "mat.galdros.hard_bone": 1
+    },
+    "weapons": [
+      "weapon.heavy_blade.001",
+      "weapon.guard_blade.001",
+      "weapon.war_maul.001",
+      "weapon.twin_blades.001",
+      "weapon.long_blade.001",
+      "weapon.long_lance.001",
+      "weapon.ring_bow.001"
+    ],
+    "equippedWeaponId": "weapon.long_blade.001",
+    "progress": {
+      "questClears": {
+        "quest.basin.003": 2
+      }
+    },
+    "settledRuns": [
+      "run-5127bcf2-7faa-41e3-81ea-bc922535f339",
+      "run-5f73fcdd-4fe3-45aa-a699-d4b836a8abb0"
+    ]
+  }
+}

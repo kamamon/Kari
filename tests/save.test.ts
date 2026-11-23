@@ -1,5 +1,6 @@
 // 保存（里の持ち物・装備・進行）。置き場所はメモリの代用品で、IndexedDB そのものは操作検査（npm run smoke）で確かめる。
 // 「別のタブ」は、同じ置き場所を共有する 2 つの管理役で表す。
+import { readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { Content } from '../src/data/schemas';
 import { obtainableMaterials } from '../src/data/validators';
@@ -350,5 +351,36 @@ describe('書き出し・取り込み・控え', () => {
     expect(m.notice).toContain('保存できません');
     expect(await m.settle(rewards('run-1'))).toEqual({ ok: true });
     expect(m.doc.money).toBe(600);
+  });
+});
+
+describe('実機で書き出したデータ（tests/fixtures/save-v1-device-0.7.0.json）', () => {
+  // 利用者の端末で、v0.7.0 の「ファイルに書き出す」から出たもの（2026-11-24）。依頼を 2 回達成し、太刀を装備した状態。
+  // 保存の構造を変える時は、このファイルが読めなくならないこと（読めなくするなら、変換を足すこと）を、ここで確かめる。
+  const text = readFileSync(new URL('./fixtures/save-v1-device-0.7.0.json', import.meta.url), 'utf8');
+
+  it('検証を通り、知らない ID は無い。中身は、依頼 2 回分の報酬と太刀の装備', () => {
+    const r = parseImport(text);
+    expect(r.kind).toBe('ok');
+    if (r.kind !== 'ok') return;
+    expect(r.migratedFrom).toBeNull();
+    expect(validateSave(r.doc)).toEqual([]);
+    expect(unknownIds(r.doc, content)).toEqual({ items: [], weapons: [] });
+    expect(r.doc).toMatchObject({ schemaVersion: 1, revision: 3, money: 1200, equippedWeaponId: 'weapon.long_blade.001', progress: { questClears: { 'quest.basin.003': 2 } } });
+    expect(r.doc.settledRuns).toHaveLength(2);
+    expect(playWeaponId(r.doc, content)).toBe('weapon.long_blade.001');
+    expect(usableWeapons(r.doc, content)).toHaveLength(7);
+  });
+
+  it('取り込める。取り込んだ後、同じ依頼の報酬は 2 度入らない。強化は硬骨が 1 つ足りない', async () => {
+    const m = await open(new MemoryBackend());
+    expect(await m.importText(text)).toEqual({ ok: true });
+    expect(m.doc.money).toBe(1200);
+    await m.settle(rewards(m.doc.settledRuns[0]!));
+    expect(m.doc.money).toBe(1200);
+    const c = checkCraft(m.doc, content.recipes.get(RECIPE)!);
+    expect(c.ok).toBe(false);
+    expect(c.items.filter((i) => i.have < i.need)).toEqual([{ itemId: BONE, have: 1, need: 2 }]);
+    expect(c.money).toEqual({ have: 1200, need: 120 });
   });
 });
