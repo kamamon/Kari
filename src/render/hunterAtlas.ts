@@ -8,7 +8,7 @@ export const HUNTER_ATLAS: { size: number; rects: Record<string, readonly [numbe
     torso: [1174, 8, 2014, 754],
     armL: [8, 826, 357, 1456],
     armR: [373, 826, 722, 1456],
-    head: [738, 826, 2040, 1404],
+    head: [738, 826, 2040, 1441],
     skirt: [8, 1472, 1088, 1754],
     footL: [1104, 1472, 1415, 1729],
     footR: [1431, 1472, 1742, 1729],

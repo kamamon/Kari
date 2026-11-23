@@ -31,6 +31,14 @@ SOLE = 1362.0
 WRAP_BODY = 0.35
 # 明るさの倍率（ゲームの照明の下で、設定図の見え方に近づける）
 GAIN = 1.12
+# 頭の輪の寸法（高さ、半幅、前、後ろ）。src/render/hunterBody.ts の headShape と同じ値（真上の図を写すのに使う）
+HEAD_SHAPE = np.array([
+    [1.565, 0.046, 0.08, 0.06], [1.578, 0.049, 0.083, 0.062], [1.592, 0.053, 0.085, 0.066], [1.606, 0.058, 0.086, 0.074], [1.62, 0.064, 0.085, 0.083], [1.632, 0.071, 0.083, 0.089],
+    [1.644, 0.074, 0.081, 0.094], [1.656, 0.078, 0.084, 0.094], [1.668, 0.079, 0.092, 0.092], [1.68, 0.078, 0.097, 0.091], [1.695, 0.075, 0.098, 0.085], [1.71, 0.068, 0.094, 0.076],
+    [1.725, 0.052, 0.085, 0.06], [1.738, 0.034, 0.066, 0.041], [1.747, 0.015, 0.036, 0.022], [1.7505, 0.005, 0.012, 0.008],
+], np.float32)
+# 真上の図: 髪の範囲の中心（px）と縮尺（px/m）。髪の端より内側だけを使う（端まで使うと、額の肌を拾う）。
+TOP_CX, TOP_CY, TOP_SCALE = 628.0, 577.0, 3200.0
 
 
 def load(name):
@@ -118,6 +126,8 @@ def bake(debug=False):
     F, Bk = load('hunter_base_front_v1.png'), load('hunter_base_back_v1.png')
     FF, FL, FB = load('hunter_face_front_v1.png'), load('hunter_face_left_v1.png'), load('hunter_face_back_v1.png')
     SL, SR = load('hunter_base_left_v1.png'), load('hunter_base_right_v1.png')
+    FR, FT = load('hunter_face_right_v1.png'), load('hunter_face_top_v1.png')
+    TL, TR = load('hunter_base_tpose_left_v1.png'), load('hunter_base_tpose_right_v1.png')
     row = lambda y: SOLE - y / MM
     lin = lambda t, t0, r0, t1, r1: r0 + (r1 - r0) * (t - t0) / (t1 - t0)
     mirror = lambda im, pts: [(t, 2 * im['cx'] - x, y) for (t, x, y) in pts]
@@ -135,17 +145,20 @@ def bake(debug=False):
             # 真横の図: あごの高さでは、首の後ろで立つえり（フード）まで人物の区間に入ってしまい、
             # ほおへ髪やえりの色が写る。軸を顔の側（x=560）へ寄せ、耳の高さより下では後ろをえり足までに限る。
             side_cap = lambda t: 190 + (440 - 190) * sstep(1.6, 1.66, t)
-            return [(FF, 'front', vertical(650, head(40, 710)), narrow(115, 340)), (FL, 'side', vertical(560, head(50, 700)), side_cap), (FB, 'back', vertical(632, head(40, 705)), narrow(115, 340))]
+            # 右半分は右真横の図（左真横を反転して 12px ずらした位置に重なる）。てっぺんは真上の図（'top'）。
+            return [(FF, 'front', vertical(650, head(40, 710)), narrow(115, 340)), (FL, 'side', vertical(560, head(50, 700)), side_cap),
+                    (FR, 'sideR', vertical(705, head(38, 688)), side_cap), (FB, 'back', vertical(632, head(40, 705)), narrow(115, 340)), (FT, 'top', None, None)]
         if kind == 'torso':
             # 首（高さ 1.5m より上）は、えりや髪を拾わないよう、首の幅だけを写す
             cap = lambda t: 34 + (112 - 34) * sstep(1.5, 1.46, t)
-            return [(F, 'front', vertical(F['cx'], row), cap), (Bk, 'back', vertical(Bk['cx'], row), cap)]
+            # 胴の横は、腕を水平に上げた真横の図から（肩より下だけ。上は腕とこぶしが重なる）
+            return [(F, 'front', vertical(F['cx'], row), cap), (TL, 'side', vertical(520, row), 130), (TR, 'sideR', vertical(545, row), 130), (Bk, 'back', vertical(Bk['cx'], row), cap)]
         if kind == 'mantle':
             r = lambda t: lin(t, 1.53, 226, 1.335, 392)
             return [(F, 'front', vertical(F['cx'], r), 260), (Bk, 'back', vertical(Bk['cx'], r), 260)]
         if kind == 'skirt':
             r = lambda t: lin(t, 1.07, 572, 0.77, 800)
-            return [(F, 'front', vertical(F['cx'], r), 172), (Bk, 'back', vertical(Bk['cx'], r), 172)]
+            return [(F, 'front', vertical(F['cx'], r), 172), (TL, 'side', vertical(520, r), 130), (TR, 'sideR', vertical(545, r), 130), (Bk, 'back', vertical(Bk['cx'], r), 172)]
         left = kind.endswith('L')
         if kind.startswith('foot'):
             # 足は、真横の図の長靴を写す（左足は左真横、右足は右真横）。かかと → つま先が絵の横、甲 → 靴底が絵の縦。
@@ -182,41 +195,69 @@ def bake(debug=False):
         a = -np.pi / 2 + 2 * np.pi * u  # 0 = +X（人物の左）、π/2 = 前、π = 右、-π/2 = 後ろ
         phi = np.abs((a - np.pi / 2 + np.pi) % (2 * np.pi) - np.pi)  # 真正面からの角度
         srcs = body(c['kind'])
-        three = len(srcs) == 3
+        facings = [q[1] for q in srcs]
+        split = 'side' in facings and 'sideR' in facings  # 左半分と右半分で、別の真横の図を使う
+        # 横の絵が使える度合い（高さごと）。胴は肩より下だけ。横の絵が無い区画は 0。
+        if 'side' in facings or 'sideR' in facings:
+            avail = sstep(1.31, 1.26, t) if c['kind'] == 'torso' else np.ones_like(t)
+        else:
+            avail = np.zeros_like(t)
+        top_w = sstep(1.702, 1.732, t) if 'top' in facings else np.zeros_like(t)
+        deg = np.radians
+        w2f, w3f = 1 - sstep(deg(80), deg(100), phi), 1 - sstep(deg(54), deg(72), phi)
+        w2b, w3b = sstep(deg(80), deg(100), phi), sstep(deg(112), deg(132), phi)
+        w3s = sstep(deg(54), deg(72), phi) * (1 - sstep(deg(112), deg(132), phi))
+        A, P = avail[:, None], top_w[:, None]
+        wrapv = ((1 - avail) * WRAP_BODY)[:, None]
         acc = np.zeros((len(ys), len(xs), 3), np.float32)
         wsum = np.zeros((len(ys), len(xs)), np.float32)
         for im, facing, axis, cap in srcs:
-            if facing == 'front':
-                # 頭と脚（横の絵がある所）: 正面の絵を、ほおの手前（54 度）まで使う。目や口が、横の絵と二重に出ないようにする。
-                w = 1 - sstep(np.radians(54 if three else 80), np.radians(72 if three else 100), phi)
-                fo = (1 + np.cos(a)) / 2
-                fl = 1 - np.clip(((a + 2 * np.pi) % (2 * np.pi)) / np.pi, 0, 1)
-            elif facing == 'back':
-                w = sstep(np.radians(112 if three else 80), np.radians(132 if three else 100), phi)
-                fo = (1 - np.cos(a)) / 2
-                fl = np.clip((2 * np.pi - ((a + 2 * np.pi) % (2 * np.pi))) / np.pi, 0, 1)
-            elif facing == 'wrap':
-                w = np.ones_like(a)
-                fo = (1 + np.sin(a)) / 2  # 筒のいちばん上が、絵の上端
-                fl = fo
+            if facing == 'top':
+                # 真上の図: 鼻先が絵の下、人物の左が絵の右。頭の輪（幅・前・後ろ）を、絵の髪の範囲へ合わせる。
+                rx, fr, bk = (np.interp(t, HEAD_SHAPE[:, 0], HEAD_SHAPE[:, k]) for k in (1, 2, 3))
+                X = rx[:, None] * np.cos(a)[None, :]
+                Z = np.where(np.sin(a)[None, :] >= 0, fr[:, None], bk[:, None]) * np.sin(a)[None, :]
+                mx = (TOP_CX + X * TOP_SCALE).astype(np.float32)
+                my = (TOP_CY + Z * TOP_SCALE).astype(np.float32)
+                W = P * np.ones_like(a)[None, :]
             else:
-                w = (sstep(np.radians(54), np.radians(72), phi)) * (1 - sstep(np.radians(112), np.radians(132), phi))
-                # 左真横の図は前が絵の左、右真横の図は前が絵の右
-                fo = (1 - np.sin(a)) / 2 if facing == 'side' else (1 + np.sin(a)) / 2
-                fl = fo
-            if not (w > 0).any():
+                if facing == 'front':
+                    # 横の絵がある所: 正面の絵を、ほおの手前（54 度）まで使う。目や口が、横の絵と二重に出ないようにする。
+                    W = (1 - A) * w2f[None, :] + A * w3f[None, :]
+                    fo = (1 + np.cos(a)) / 2
+                    fl = 1 - np.clip(((a + 2 * np.pi) % (2 * np.pi)) / np.pi, 0, 1)
+                elif facing == 'back':
+                    W = (1 - A) * w2b[None, :] + A * w3b[None, :]
+                    fo = (1 - np.cos(a)) / 2
+                    fl = np.clip((2 * np.pi - ((a + 2 * np.pi) % (2 * np.pi))) / np.pi, 0, 1)
+                elif facing == 'wrap':
+                    W = np.ones((len(t), len(a)), np.float32)
+                    fo = (1 + np.sin(a)) / 2  # 筒のいちばん上が、絵の上端
+                    fl = fo
+                else:
+                    W = A * w3s[None, :]
+                    if split:
+                        W = W * ((np.cos(a) >= 0) if facing == 'side' else (np.cos(a) < 0))[None, :]
+                    # 左真横の図は前が絵の左、右真横の図は前が絵の右
+                    fo = (1 - np.sin(a)) / 2 if facing == 'side' else (1 + np.sin(a)) / 2
+                    fl = fo
+                W = W * (1 - P)
+                if not (W > 0).any():
+                    continue
+                f = (fo[None, :] * (1 - wrapv) + fl[None, :] * wrapv).astype(np.float32)
+                cx, cy, nx, ny = axis(t)
+                lo, hi = edges(im['mask'], cx, cy, nx, ny, cap(t) if callable(cap) else cap, 7 if facing == 'wrap' else 3)
+                sx = lo[:, None] + (hi - lo)[:, None] * f
+                mx = (cx[:, None] + nx[:, None] * sx).astype(np.float32)
+                my = (cy[:, None] + ny[:, None] * sx).astype(np.float32)
+            if not (W > 0).any():
                 continue
-            wrap = 0.0 if three else WRAP_BODY
-            f = (fo * (1 - wrap) + fl * wrap).astype(np.float32)
-            cx, cy, nx, ny = axis(t)
-            lo, hi = edges(im['mask'], cx, cy, nx, ny, cap(t) if callable(cap) else cap, 7 if facing == 'wrap' else 3)
-            sx = lo[:, None] + (hi - lo)[:, None] * f[None, :]
-            mx = (cx[:, None] + nx[:, None] * sx).astype(np.float32)
-            my = (cy[:, None] + ny[:, None] * sx).astype(np.float32)
             tex = cv2.remap(im['img'], mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
-            acc += tex * w[None, :, None]
-            wsum += w[None, :]
+            acc += tex * W[..., None]
+            wsum += W
         acc /= np.maximum(wsum, 1e-4)[..., None]
+        if c['kind'].startswith('foot'):
+            acc *= 0.84  # 設定図の長靴の甲は、上からの光で明るく描かれている。ゲームでも上から光が当たるので、二重に明るくならないよう抑える
         out[ys[0]:ys[-1] + 1, xs[0]:xs[-1] + 1] = acc
         filled[ys[0]:ys[-1] + 1, xs[0]:xs[-1] + 1] = True
     out *= GAIN

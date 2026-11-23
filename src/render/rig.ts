@@ -3,11 +3,9 @@
 // 骨と socket の名前・向きは docs/animation-contract.md と揃える。
 //   root → pelvis → spine → chest → neck → head / 腕 / 脚、socket_hand_r / socket_hand_l / socket_back / socket_hip
 // 単位 m、Y 上、+Z 前。身長 1.75m。右手側は -X。
-import {
-  Bone, BoxGeometry, CylinderGeometry, DataTexture, DoubleSide, ExtrudeGeometry, Group, Matrix4, Mesh, MeshLambertMaterial, Object3D, Quaternion, SRGBColorSpace, Shape, Skeleton,
-  SkinnedMesh, SphereGeometry, TextureLoader, Vector3,
-} from 'three';
+import { Bone, DataTexture, DoubleSide, Group, Matrix4, MeshLambertMaterial, Object3D, Quaternion, SRGBColorSpace, Skeleton, SkinnedMesh, TextureLoader, Vector3 } from 'three';
 import { assetUrl } from '../core/assets';
+import { buildHeavyBlade } from './heavyBlade';
 import { HUNTER_ATLAS } from './hunterAtlas';
 import { REST, buildHunterBody } from './hunterBody';
 import { JOINTS, type BodyPose, type JointName } from './poses';
@@ -20,51 +18,6 @@ const UPPER_ARM = REST.upperArm;
 const FOREARM = REST.forearm;
 const HAND = 0.04;
 const TUMBLE_PIVOT = 0.55;
-
-const mat = (color: number, emissive = 0): MeshLambertMaterial => new MeshLambertMaterial({ color, emissive, flatShading: true });
-
-export const HUNTER_COLORS = { cloth: 0xd9d0b4, leather: 0x6b5a44, skin: 0xcaa687, bronze: 0xb08d57, dark: 0x2f3a33, iron: 0x70766f };
-
-function box(w: number, h: number, d: number, m: MeshLambertMaterial, x = 0, y = 0, z = 0): Mesh {
-  const mesh = new Mesh(new BoxGeometry(w, h, d), m);
-  mesh.position.set(x, y, z);
-  mesh.castShadow = true;
-  return mesh;
-}
-
-/** 関節から -Y 方向へ伸びる手足。 */
-function limb(rTop: number, rBottom: number, len: number, m: MeshLambertMaterial): Mesh {
-  const mesh = new Mesh(new CylinderGeometry(rTop, rBottom, len, 7), m);
-  mesh.position.y = -len / 2;
-  mesh.castShadow = true;
-  return mesh;
-}
-
-/** 断岳剣の仮モデル。原点は握り位置、+Y が刃先、X が厚み、Z が刃幅。 */
-export function buildHeavyBlade(): Group {
-  const g = new Group();
-  g.name = 'model.weapon.heavy_blade.001';
-  const bronze = mat(HUNTER_COLORS.bronze);
-  const iron = mat(HUNTER_COLORS.iron);
-  const grip = new Mesh(new CylinderGeometry(0.026, 0.03, 0.42, 6), mat(HUNTER_COLORS.leather));
-  grip.position.y = 0.07;
-  g.add(grip, box(0.06, 0.06, 0.07, bronze, 0, -0.16, 0), box(0.07, 0.07, 0.36, bronze, 0, 0.3, 0));
-  // 片側だけ厚い、削り出しの板のような刃
-  const s = new Shape();
-  s.moveTo(-0.1, 0.33);
-  s.lineTo(-0.125, 1.38);
-  s.lineTo(-0.02, 1.77);
-  s.lineTo(0.15, 1.34);
-  s.lineTo(0.135, 0.33);
-  s.closePath();
-  const geo = new ExtrudeGeometry(s, { depth: 0.045, bevelEnabled: false });
-  geo.translate(0, 0, -0.0225);
-  geo.rotateY(Math.PI / 2);
-  const blade = new Mesh(geo, iron);
-  blade.castShadow = true;
-  g.add(blade, box(0.055, 0.95, 0.05, bronze, 0, 0.84, 0.105));
-  return g;
-}
 
 export class HunterRig {
   readonly root = new Group();
@@ -83,6 +36,9 @@ export class HunterRig {
   artLoaded = false;
   artFailed = false;
   bodyTriangles = 0;
+  /** 断岳剣の絵の読み込み状態と、面の数（検査用） */
+  weaponArt = { loaded: false, failed: false };
+  weaponTriangles = 0;
   // 計算用の使い回し
   private v1 = new Vector3();
   private v2 = new Vector3();
@@ -177,7 +133,10 @@ export class HunterRig {
     // 手の socket: 刃は前腕の前方やや上へ向く
     this.orient(this.sockets.hand_r, new Vector3(0, 0.35, 1), new Vector3(1, 0, 0));
 
-    this.weapon = buildHeavyBlade();
+    const blade = buildHeavyBlade();
+    this.weapon = blade.group;
+    this.weaponArt = blade.art;
+    this.weaponTriangles = blade.triangles;
     this.weapon.matrixAutoUpdate = false;
     this.root.add(this.weapon);
   }
