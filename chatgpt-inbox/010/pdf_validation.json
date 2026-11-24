@@ -1,0 +1,980 @@
+{
+  "pdf": "VEILBOUND_HUNTERS_rocks_cliffs_44_v1.pdf",
+  "page_count": 51,
+  "artworks": 44,
+  "bytes": 11649883,
+  "sha256": "bd4811ef36c8e8c8085849c7549b2e08e621304c571003b959a41aff00ce023e",
+  "all_pages_rendered": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "title_filename_image_checks": [
+    {
+      "id": "R-01",
+      "page": 6,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-02",
+      "page": 7,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-03",
+      "page": 8,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-04",
+      "page": 9,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-05",
+      "page": 10,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-06",
+      "page": 11,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-07",
+      "page": 12,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-08",
+      "page": 13,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-09",
+      "page": 14,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-10",
+      "page": 15,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-11",
+      "page": 16,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-12",
+      "page": 17,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-13",
+      "page": 18,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-14",
+      "page": 19,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-15",
+      "page": 20,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-16",
+      "page": 21,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-17",
+      "page": 22,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-18",
+      "page": 23,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-19",
+      "page": 24,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "R-20",
+      "page": 25,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-01",
+      "page": 26,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-02",
+      "page": 27,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-03",
+      "page": 28,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-04",
+      "page": 29,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-05",
+      "page": 30,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-06",
+      "page": 31,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-07",
+      "page": 32,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-08",
+      "page": 33,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-09",
+      "page": 34,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-10",
+      "page": 35,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-11",
+      "page": 36,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-12",
+      "page": 37,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-13",
+      "page": 38,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-14",
+      "page": 39,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-15",
+      "page": 40,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-16",
+      "page": 41,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-17",
+      "page": 42,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-18",
+      "page": 43,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-19",
+      "page": 44,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "C-20",
+      "page": 45,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "T-01",
+      "page": 46,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "T-02",
+      "page": 47,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "T-03",
+      "page": 48,
+      "name_filename_id_match": true,
+      "image_matches": true
+    },
+    {
+      "id": "T-04",
+      "page": 49,
+      "name_filename_id_match": true,
+      "image_matches": true
+    }
+  ],
+  "outside_page_text": [],
+  "internal_links": 44,
+  "bookmarks": 55,
+  "font_method": "Embedded Noto Sans CJK JP regular/bold; retain_gids=True",
+  "image_processing": "PDF-only JPEG quality88; transparent pixels composited onto paper; original PNGs unchanged",
+  "visual_review": {
+    "status": "passed",
+    "reviewed_layout_pages": [
+      1,
+      3,
+      6,
+      37,
+      46,
+      51
+    ],
+    "final_revised_pages_reviewed": [
+      37,
+      43,
+      44,
+      45,
+      46,
+      51
+    ],
+    "poppler_reviewed_pages": [
+      43
+    ],
+    "checks": [
+      "Japanese titles and numeric captions render correctly",
+      "Full images are shown without clipping",
+      "Names, IDs and filenames are correctly paired",
+      "Technical differences and pending acceptance are visible",
+      "Table of contents and notes fit within margins"
+    ],
+    "notes": "Reviewed stable cover/index/rock layouts before the final five cliff substitutions, then reviewed the revised cliff examples and final limitations. All 51 final pages render; all 44 source PNG hashes, embedded image hashes and title/filename/ID mappings pass."
+  },
+  "mapping": [
+    {
+      "id": "R-01",
+      "name": "小石の群れ",
+      "filename": "rock_r01_v1.png",
+      "page": 6,
+      "source_sha256": "f95b67b1df7178bbdbf6aec0b61c3f63e20fde922fe33d1103022b229b008220",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 343,
+      "embedded_jpeg_sha256": "87c3a3cb149f446ca6ae54189592575a43371d17c97cc08325d867126ad91379",
+      "pdf_image_xref": 293
+    },
+    {
+      "id": "R-02",
+      "name": "平たい石",
+      "filename": "rock_r02_v1.png",
+      "page": 7,
+      "source_sha256": "8f6a166a55debff6280684d0f70bf9374999e1265e6a196a653271a36b21a05e",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 371,
+      "embedded_jpeg_sha256": "1766258d727727f0f61fc4c804005de28c20cd9756447afee23e4642fc019aba",
+      "pdf_image_xref": 311
+    },
+    {
+      "id": "R-03",
+      "name": "角ばった石",
+      "filename": "rock_r03_v1.png",
+      "page": 8,
+      "source_sha256": "6fa365df5537f361f1eb58de80c2f21fd8c56b12ceb427cd2c4a1ea7385df876",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 399,
+      "embedded_jpeg_sha256": "a1cc8d93ce6cfe78ef9399a905f5dfcbb55cebc7fb9dc3178a3c00270f1be3a5",
+      "pdf_image_xref": 323
+    },
+    {
+      "id": "R-04",
+      "name": "苔むした丸い石",
+      "filename": "rock_r04_v1.png",
+      "page": 9,
+      "source_sha256": "a0b57b79fff20cd5845a73e385b3b80744aa2a9b54d36c6b212808f434896a4d",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 427,
+      "embedded_jpeg_sha256": "56f8e9a34d4bdf5c15f0d5810dfe20cbf842418a75c9f3d59fa23685eba3b121",
+      "pdf_image_xref": 335
+    },
+    {
+      "id": "R-05",
+      "name": "丸みのある岩",
+      "filename": "rock_r05_v1.png",
+      "page": 10,
+      "source_sha256": "e6fd4110c09255110024ee738c9e9054961a1e379f385caf89ae469a8f8554e6",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 455,
+      "embedded_jpeg_sha256": "936dbe08cd89c7c87bba1d46986b51a721385b045d90d43d066895c6771f6c9a",
+      "pdf_image_xref": 347
+    },
+    {
+      "id": "R-06",
+      "name": "角ばった岩",
+      "filename": "rock_r06_v1.png",
+      "page": 11,
+      "source_sha256": "941801d6879f3fcd8b345649f15482a5715dd7cc2c89653c18c146dda9e92e71",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 483,
+      "embedded_jpeg_sha256": "708cdcbe66d8e2cfc10f55f329d1a357082807e284248180cf065daac3ddf4e4",
+      "pdf_image_xref": 359
+    },
+    {
+      "id": "R-07",
+      "name": "平たい岩盤",
+      "filename": "rock_r07_v1.png",
+      "page": 12,
+      "source_sha256": "b55f95d0edd30a4f958415488d7efd25d954ce618a92fbd5a9e432a20abd8c6a",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 511,
+      "embedded_jpeg_sha256": "a44e593baad30cdf54b0d882aa0c89634a54d5a48e369fa16bcd1c40c63c5d74",
+      "pdf_image_xref": 371
+    },
+    {
+      "id": "R-08",
+      "name": "地層の筋のある岩",
+      "filename": "rock_r08_v1.png",
+      "page": 13,
+      "source_sha256": "4ce45cfcb5d39d550f0092407177d0b2d978aab35a4a9b69c3078cac540091c9",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 539,
+      "embedded_jpeg_sha256": "2eb9a69fd94f60810d41940838d3fd77281217a307b477814cb7e6bc0d8cda23",
+      "pdf_image_xref": 383
+    },
+    {
+      "id": "R-09",
+      "name": "割れて2つの岩",
+      "filename": "rock_r09_v1.png",
+      "page": 14,
+      "source_sha256": "ff17e34cd94278d11b942bacd9d7f515564685f0b2a454ee0d337aecfc2061aa",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 567,
+      "embedded_jpeg_sha256": "e0917e43ac69f9a835842ed51be9cc5af4768df38e1bf337d663da99dab1ab21",
+      "pdf_image_xref": 395
+    },
+    {
+      "id": "R-10",
+      "name": "傾いた板の岩",
+      "filename": "rock_r10_v1.png",
+      "page": 15,
+      "source_sha256": "cadd778ec3a3918ee52c0710b5b4d49bad9a28fefd7939e97bf57f134759afd1",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 595,
+      "embedded_jpeg_sha256": "2e361501f0969d129ee282f6d5570a424172ea17404339ed24922c68db0ea8c1",
+      "pdf_image_xref": 407
+    },
+    {
+      "id": "R-11",
+      "name": "苔と草の岩",
+      "filename": "rock_r11_v1.png",
+      "page": 16,
+      "source_sha256": "e156766dfb94ac8052b1fa75be990b9643c623dcbe7d42d60f2dccb7a55cf663",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 623,
+      "embedded_jpeg_sha256": "39fe66c33d3f0bb5559c7ec6da4a420ab550749d8967939ea4a9a67c88c23950",
+      "pdf_image_xref": 419
+    },
+    {
+      "id": "R-12",
+      "name": "晶脈の岩",
+      "filename": "rock_r12_v1.png",
+      "page": 17,
+      "source_sha256": "e16349562cd3426656f560267b8c41b7a5e9841dba6c58f4850eba1ee7bc93bc",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 651,
+      "embedded_jpeg_sha256": "e21a381442a825ccc2957f599b41a3cd7db80b8206d22a915da717a29c2bf06f",
+      "pdf_image_xref": 431
+    },
+    {
+      "id": "R-13",
+      "name": "大きな岩の頭",
+      "filename": "rock_r13_v1.png",
+      "page": 18,
+      "source_sha256": "0446e956d166c51b1947e534e0d4060724a69c479a34390f232edf03fe58036a",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 679,
+      "embedded_jpeg_sha256": "8b9c0db2187c5c370ee9cc96d2f8bdfc22f65597fe5f88dc61e75579992de1e8",
+      "pdf_image_xref": 442
+    },
+    {
+      "id": "R-14",
+      "name": "割れ目のある大岩",
+      "filename": "rock_r14_v1.png",
+      "page": 19,
+      "source_sha256": "3a68067e8fd105a72fb381d87c62b71dea71196109fb8704e7838e3302bc301c",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 707,
+      "embedded_jpeg_sha256": "7456c84378a02e6281bfcaebcd7c7a0c1e43c7321339e72dd97dd5b9c0bd6e35",
+      "pdf_image_xref": 453
+    },
+    {
+      "id": "R-15",
+      "name": "2つ並んだ大岩",
+      "filename": "rock_r15_v1.png",
+      "page": 20,
+      "source_sha256": "67878cc0e6242c939b622d945eaaa44b228b5074b02648506aeda96ab39a0a40",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 735,
+      "embedded_jpeg_sha256": "526779f24ba2da622887c42b430facc206224adc92ceeb324eb971f864d0ebc8",
+      "pdf_image_xref": 464
+    },
+    {
+      "id": "R-16",
+      "name": "立ち岩",
+      "filename": "rock_r16_v1.png",
+      "page": 21,
+      "source_sha256": "f71528df595609c30bcce8627d9b89b438ebf8631a77ad293401c11eede148ea",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 763,
+      "embedded_jpeg_sha256": "3a1d19578e6d0871a0af3103a3735b25e91b82a723c1b7401e1bb149622e582f",
+      "pdf_image_xref": 475
+    },
+    {
+      "id": "R-17",
+      "name": "岩盤の露頭",
+      "filename": "rock_r17_v1.png",
+      "page": 22,
+      "source_sha256": "8b5e7ce2b5df2127cb1ae8353876bbf08994bf5341f1f9cebb8b2ae58074372c",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 791,
+      "embedded_jpeg_sha256": "3d2cd1b9b1ee631abbeb152efa4204af7d0ed694da9b80f9d9775b953e2c1a29",
+      "pdf_image_xref": 486
+    },
+    {
+      "id": "R-18",
+      "name": "落ちてきた大岩",
+      "filename": "rock_r18_v1.png",
+      "page": 23,
+      "source_sha256": "a12bb7efc658420e3150ee2c8bf78fac4d5ad1e1974d740e0bf5f5f2c90635d4",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 819,
+      "embedded_jpeg_sha256": "163434bec5af3d653e3f8811fff4b53cbcbb5e27c4657c1efe7c30cca9f8b8d7",
+      "pdf_image_xref": 498
+    },
+    {
+      "id": "R-19",
+      "name": "苔むした大岩",
+      "filename": "rock_r19_v1.png",
+      "page": 24,
+      "source_sha256": "a2b19f41b689daa0f1a35c33c3f15f588806722587750adab6bb2884252aeafa",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 847,
+      "embedded_jpeg_sha256": "12673cb5c248d1a02db25ce91483674d0c51578720dabdc994d87c183d90f5f3",
+      "pdf_image_xref": 510
+    },
+    {
+      "id": "R-20",
+      "name": "晶脈の大岩",
+      "filename": "rock_r20_v1.png",
+      "page": 25,
+      "source_sha256": "8e61cdddea33acec03499db614429e6ee96978bd63bcef77b8c7d538f831e0c7",
+      "source_size": [
+        2172,
+        724
+      ],
+      "image_xref": 875,
+      "embedded_jpeg_sha256": "ee717d3f118d401cc8ec8b56399e3eb448969f8b0f959d9807e9ec5fd5b113ce",
+      "pdf_image_xref": 522
+    },
+    {
+      "id": "C-01",
+      "name": "地層の段の崖",
+      "filename": "cliff_c01_v1.png",
+      "page": 26,
+      "source_sha256": "ce185c62bb16c965d7473ca72b1524b0ccf56b8f7e9825bca1010d2601649e50",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 27,
+      "embedded_jpeg_sha256": "68b0f4126305e4f71fd9b0ccd02ab29827cffea74cc5f8889b78abdf74836ed7",
+      "pdf_image_xref": 26
+    },
+    {
+      "id": "C-02",
+      "name": "地層の段の高い崖",
+      "filename": "cliff_c02_v1.png",
+      "page": 27,
+      "source_sha256": "2073165093ebe142e2037475a142a8195f59097708c64b0a54dea1bc4e1fd239",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 924,
+      "embedded_jpeg_sha256": "525dc7a36cab0baedac0a2470d9b6763c6e77e4cc27dd3fb276273250998fab4",
+      "pdf_image_xref": 548
+    },
+    {
+      "id": "C-03",
+      "name": "斜めの地層の崖",
+      "filename": "cliff_c03_v1.png",
+      "page": 28,
+      "source_sha256": "82ed7b800932bd8cf25bd59d2c1090138e421f271f7b08d9e4c315db5e6014de",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 949,
+      "embedded_jpeg_sha256": "88b551696aaf0b8e7ae083d9fa47ee1deabb1f083d9f50a8d324a5a7f6f97233",
+      "pdf_image_xref": 560
+    },
+    {
+      "id": "C-04",
+      "name": "低い地層の崖",
+      "filename": "cliff_c04_v1.png",
+      "page": 29,
+      "source_sha256": "ab2f467468f5cbc9642d4a0a467158f2463b71c961f07f1e1a4ec583720de422",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 974,
+      "embedded_jpeg_sha256": "e9f4bfd9aac55c52840e51dffc233207d4622c4ca6fbe99fd586c7f02f958ea8",
+      "pdf_image_xref": 571
+    },
+    {
+      "id": "C-05",
+      "name": "柱の割れ目の崖",
+      "filename": "cliff_c05_v1.png",
+      "page": 30,
+      "source_sha256": "6fcbfdd9d8274dd93d0fdefc92e3ec3a790758bb22998a640776627ff286af65",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 999,
+      "embedded_jpeg_sha256": "1dd212c4b4a25b1d698f50928631d9b1307626073397b08358688b2fdd907dd8",
+      "pdf_image_xref": 581
+    },
+    {
+      "id": "C-06",
+      "name": "崩れかけの柱の崖",
+      "filename": "cliff_c06_v1.png",
+      "page": 31,
+      "source_sha256": "306ab233a7f03b91a283346ec349c00b3e6374b50709de677be550ac9b644802",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 1024,
+      "embedded_jpeg_sha256": "e43823b6be361505af46e533ff27f359b4ba3a8ac4214a8bdfcb0d9d6d62ff73",
+      "pdf_image_xref": 592
+    },
+    {
+      "id": "C-07",
+      "name": "丸く削られた崖",
+      "filename": "cliff_c07_v1.png",
+      "page": 32,
+      "source_sha256": "6f6306dc27a28bba8b3d81251a11b45304b8a37b06ec1174c273d410c6ee031e",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 1049,
+      "embedded_jpeg_sha256": "689c2309bc2caa71198ec09975c6b76f8313afbd1f2cf5df7a86c53d44e0dcaa",
+      "pdf_image_xref": 602
+    },
+    {
+      "id": "C-08",
+      "name": "えぐれの深い崖",
+      "filename": "cliff_c08_v1.png",
+      "page": 33,
+      "source_sha256": "11d8b2c9cb64bf0d52f97eff14e8e0bd4d9f081bd658988cf464f027c42235ec",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 1074,
+      "embedded_jpeg_sha256": "a918d198d0147abe4024b110d3a5b9f74e768295b835016494d509146fd36526",
+      "pdf_image_xref": 613
+    },
+    {
+      "id": "C-09",
+      "name": "縦の溝の崖",
+      "filename": "cliff_c09_v1.png",
+      "page": 34,
+      "source_sha256": "9b06ec74c32f040f9af164466a10b2f48e601b8badadcd5ba79794aa57fded14",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 1099,
+      "embedded_jpeg_sha256": "bbe0fa3439c5928a6a1599b1f01e740f5a2d0f15641b85672e4160c5189ea532",
+      "pdf_image_xref": 623
+    },
+    {
+      "id": "C-10",
+      "name": "大きな割れ目の崖",
+      "filename": "cliff_c10_v1.png",
+      "page": 35,
+      "source_sha256": "0068441e3e37364411494543820f5d1b8dd691c261975f4bf894ea01bafe6fee",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 1124,
+      "embedded_jpeg_sha256": "0ff8bf72bed8628d9bbaa6df2fcfe7494690a7cca8650004e9505e1094845fdd",
+      "pdf_image_xref": 631
+    },
+    {
+      "id": "C-11",
+      "name": "苔の崖",
+      "filename": "cliff_c11_v1.png",
+      "page": 36,
+      "source_sha256": "e97fb9476a67cf953373dade92821eaf0211a2acc6e18fe075bafb42befb2e15",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 1149,
+      "embedded_jpeg_sha256": "8d85c2d02f69ca7b99c1aad329cd8e640732852d6649b3e6d64b323441bad8eb",
+      "pdf_image_xref": 640
+    },
+    {
+      "id": "C-12",
+      "name": "草の乗った土手",
+      "filename": "cliff_c12_v1.png",
+      "page": 37,
+      "source_sha256": "161a5b37dda2d2085fecee80ccce99353385b167dd1da3e5dc86f84b1ac2c55c",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 1174,
+      "embedded_jpeg_sha256": "100a3b0fed09b4fbfb43288cc63e8f0365010ac6f876f43a0f4563b5ca44d56f",
+      "pdf_image_xref": 650
+    },
+    {
+      "id": "C-13",
+      "name": "晶脈の崖",
+      "filename": "cliff_c13_v1.png",
+      "page": 38,
+      "source_sha256": "1afbb2a4a199e7742f3e9f09dd56846f33a2cbfcf3e52a977f7ed6d91b73cc48",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 1199,
+      "embedded_jpeg_sha256": "45117236760d6ebbfd433a43630d9c08c13172ea7313b3ffe0a6cdf98eaeaec7",
+      "pdf_image_xref": 663
+    },
+    {
+      "id": "C-14",
+      "name": "晶の露頭の崖",
+      "filename": "cliff_c14_v1.png",
+      "page": 39,
+      "source_sha256": "f2808f5989bfa1c86e3cf069f7289688fb3dcb511eaa9bbc0802841f4a571379",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 1224,
+      "embedded_jpeg_sha256": "a3573d9a6358d07a2414ee9f9c7cd0346122b5885b402a1163222f448173baea",
+      "pdf_image_xref": 673
+    },
+    {
+      "id": "C-15",
+      "name": "崩れた崖",
+      "filename": "cliff_c15_v1.png",
+      "page": 40,
+      "source_sha256": "fddfb9fc919d1f880005bc7f892dc5e6d54253e67678c297aa78e981fe135af3",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 1249,
+      "embedded_jpeg_sha256": "48cfaf9d1b8928d2a059fb1807e9d362d5b9d5822fd20d735e35dfe3cf499627",
+      "pdf_image_xref": 684
+    },
+    {
+      "id": "C-16",
+      "name": "岩の塔のある崖",
+      "filename": "cliff_c16_v1.png",
+      "page": 41,
+      "source_sha256": "5353a3e70493be9a2b71d01b19b977041a3431a28f8a5ca9cecfbd72e019b28a",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 1274,
+      "embedded_jpeg_sha256": "46c890ee1a38b9c252fd59bf8b3fb0abb808a8f3bb62bcaf3048e967b16c561d",
+      "pdf_image_xref": 694
+    },
+    {
+      "id": "C-17",
+      "name": "段々の崖",
+      "filename": "cliff_c17_v1.png",
+      "page": 42,
+      "source_sha256": "4c7f23d5cb6753c029c9373deaa3bff05f55dc065f888b1b61b02fb0c3a47492",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 1299,
+      "embedded_jpeg_sha256": "33c04833cb2d0b51d77b2f01b77c467e78e8979fe746622b2c6bd34515e1ad42",
+      "pdf_image_xref": 705
+    },
+    {
+      "id": "C-18",
+      "name": "なだらかな岩の斜面",
+      "filename": "cliff_c18_v1.png",
+      "page": 43,
+      "source_sha256": "8015ae0caee0c4538c82e4102913354445da0536fb73a6b0b541f1383bbe4224",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 1324,
+      "embedded_jpeg_sha256": "5bc61e3c4e09fc87613f6e9cf9862de8fd65018a7a48aa25e0c872b76c70df18",
+      "pdf_image_xref": 714
+    },
+    {
+      "id": "C-19",
+      "name": "出口の左側の終わり",
+      "filename": "cliff_c19_v1.png",
+      "page": 44,
+      "source_sha256": "3e82b3ee8af90d0b78d90bb71d82ea42d3643cc5f4bd91df54b4a3bfaaab4cdd",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 1349,
+      "embedded_jpeg_sha256": "fb6c3dacd02e5710d3a6f1f917e8c90611e12f76e71ff2c9d69b02f8ffc147d8",
+      "pdf_image_xref": 725
+    },
+    {
+      "id": "C-20",
+      "name": "出口の右側の終わり",
+      "filename": "cliff_c20_v1.png",
+      "page": 45,
+      "source_sha256": "99846e4fd2d6f38d24151d66b464a6947390c5903221e5348c9eba4f381f4d16",
+      "source_size": [
+        2048,
+        768
+      ],
+      "image_xref": 1374,
+      "embedded_jpeg_sha256": "047460b952692be628c528f775f7d7cdbe2d705b419b9215a7b5cc1d6703a2f9",
+      "pdf_image_xref": 737
+    },
+    {
+      "id": "T-01",
+      "name": "灰褐色の岩",
+      "filename": "tex_rock_t01_v2.png",
+      "page": 46,
+      "source_sha256": "db20e7389e2d9a5c8db0b97f2c0e51fec70f36f352b9c8b82cc129cf88a4c0c2",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "image_xref": 1399,
+      "embedded_jpeg_sha256": "1caf60f447d0cd200deb8e93d9ebc798a428a7537c544eb051a289659c6109c2",
+      "pdf_image_xref": 751
+    },
+    {
+      "id": "T-02",
+      "name": "地層の岩",
+      "filename": "tex_rock_t02_v2.png",
+      "page": 47,
+      "source_sha256": "b644120d60b3639ead89958734ca911bffc3f60bb6a52761d6aba41f937c23aa",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "image_xref": 1425,
+      "embedded_jpeg_sha256": "b3aa321815d5b2321db49cbff173d227b6081f6ff94a323230e2463341ccab18",
+      "pdf_image_xref": 770
+    },
+    {
+      "id": "T-03",
+      "name": "晶脈の暗い岩",
+      "filename": "tex_rock_t03_v2.png",
+      "page": 48,
+      "source_sha256": "7e4adce1de96fffb69c7df13042d95ed9edc65a7f7de91b3a8e9860ae3f559e4",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "image_xref": 1451,
+      "embedded_jpeg_sha256": "e2cff4f74fb6d7220e560690d2ed5329d668db65baaa7a0cff41509ad33b9319",
+      "pdf_image_xref": 780
+    },
+    {
+      "id": "T-04",
+      "name": "苔の多い岩",
+      "filename": "tex_rock_t04_v2.png",
+      "page": 49,
+      "source_sha256": "a197117aaff04534635e1aace6ef6ddc87035c2c3b91e472db9ab0cd0caeff65",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "image_xref": 1477,
+      "embedded_jpeg_sha256": "22b79c6154eb35949256ba929fc41cebdccc358723d79a5c7a2994696b6a9d21",
+      "pdf_image_xref": 790
+    }
+  ],
+  "source_png_sha256_unchanged_after_pdf": true
+}

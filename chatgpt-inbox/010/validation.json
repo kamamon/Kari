@@ -1,0 +1,3569 @@
+{
+  "source_commit": "b832291c24cdc7ca56445d5d87b426de21ed77bf",
+  "request": "docs/chatgpt-request-10.txt",
+  "png_counts": {
+    "rocks": 20,
+    "cliffs": 20,
+    "tiles": 4
+  },
+  "png_count": 44,
+  "png_bytes": 78088828,
+  "png_decode_failures": 0,
+  "duplicate_sha256": 0,
+  "image_pixels_modified_by_this_script": false,
+  "measurement_convention": {
+    "body_alpha_threshold": 128,
+    "rock_scale": "Actual image cell width / S=2m, M=4m, L=8m. Equal scale in all views. No per-view fitting.",
+    "rock_dimensions": "front bbox width, top bbox height (depth), front bbox height including small contact trim; actual body extent, not requested target dimensions.",
+    "rock_consistency_percent": "absolute difference divided by the mean of the pair, times 100",
+    "cliff_scale": "Actual image width / 24m, ground at 704/768 of actual height. Edges are first/last image columns.",
+    "cliff_middle": "84% of image width between the 8% edge bands; empty exit columns have zero height.",
+    "luminance": "Rec.709 weighted RGB values on 0–255 encoded channels; population standard deviation on alpha>=128 body pixels.",
+    "alpha_note": "A thresholded silhouette can pass while low-alpha noise fails exact transparent-background rules. Both are reported."
+  },
+  "npm_ci": "success; Node.js v24.22.3; npm ci --no-audit --no-fund",
+  "production_acceptance": "pending; not all requested numeric constraints pass",
+  "records": [
+    {
+      "filename": "rock_r01_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 827708,
+      "sha256": "f95b67b1df7178bbdbf6aec0b61c3f63e20fde922fe33d1103022b229b008220",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.805,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        84,
+        161,
+        2091,
+        595
+      ],
+      "body_luminance_mean_rec709": 98.5253,
+      "body_luminance_std_rec709": 31.0316,
+      "id": "R-01",
+      "name": "小石の群れ",
+      "group": "rocks",
+      "size": "S",
+      "tags": [
+        "pebbles"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 2,
+        "pixels_per_meter": 362.0
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            84,
+            433,
+            703,
+            595
+          ],
+          "width_m": 1.7099,
+          "height_m": 0.4475,
+          "horizontal_center_error_percent_of_cell": 4.3508,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 420.0663,
+          "bottom_delta_from_ground_normalized_px": 36.0663,
+          "body_pixels_below_soil_allowance": 23578,
+          "any_alpha_pixels_below_soil_allowance": 25440
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            142,
+            431,
+            621,
+            595
+          ],
+          "width_m": 1.3232,
+          "height_m": 0.453,
+          "horizontal_center_error_percent_of_cell": 2.6934,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 420.0663,
+          "bottom_delta_from_ground_normalized_px": 36.0663,
+          "body_pixels_below_soil_allowance": 17935,
+          "any_alpha_pixels_below_soil_allowance": 19541
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            52,
+            161,
+            643,
+            573
+          ],
+          "width_m": 1.6326,
+          "height_m": 1.1381,
+          "horizontal_center_error_percent_of_cell": -2.0028,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 1.7099,
+        "depth": 1.1381,
+        "height": 0.4475
+      },
+      "requested_dimensions_m": {
+        "width": 1.4,
+        "depth": 1,
+        "height": 0.3
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 22.1357,
+        "depth": 13.81,
+        "height": 49.1667
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 4.6253,
+        "right_width_vs_top_depth_percent": 15.0408,
+        "front_vs_right_height_percent": 1.2215
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": false,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r02_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 573908,
+      "sha256": "8f6a166a55debff6280684d0f70bf9374999e1265e6a196a653271a36b21a05e",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.8648,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        133,
+        171,
+        2048,
+        553
+      ],
+      "body_luminance_mean_rec709": 97.8461,
+      "body_luminance_std_rec709": 28.2565,
+      "id": "R-02",
+      "name": "平たい石",
+      "group": "rocks",
+      "size": "S",
+      "tags": [
+        "flat",
+        "cracked"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 2,
+        "pixels_per_meter": 362.0
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            133,
+            484,
+            591,
+            553
+          ],
+          "width_m": 1.2652,
+          "height_m": 0.1906,
+          "horizontal_center_error_percent_of_cell": 0.0,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 390.3646,
+          "bottom_delta_from_ground_normalized_px": 6.3646,
+          "body_pixels_below_soil_allowance": 0,
+          "any_alpha_pixels_below_soil_allowance": 3678
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            181,
+            484,
+            545,
+            553
+          ],
+          "width_m": 1.0055,
+          "height_m": 0.1906,
+          "horizontal_center_error_percent_of_cell": 0.1381,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 390.3646,
+          "bottom_delta_from_ground_normalized_px": 6.3646,
+          "body_pixels_below_soil_allowance": 0,
+          "any_alpha_pixels_below_soil_allowance": 2713
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            126,
+            171,
+            600,
+            535
+          ],
+          "width_m": 1.3094,
+          "height_m": 1.0055,
+          "horizontal_center_error_percent_of_cell": 0.1381,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 1.2652,
+        "depth": 1.0055,
+        "height": 0.1906
+      },
+      "requested_dimensions_m": {
+        "width": 1.2,
+        "depth": 0.9,
+        "height": 0.2
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 5.4333,
+        "depth": 11.7222,
+        "height": -4.7
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 3.4335,
+        "right_width_vs_top_depth_percent": 0.0,
+        "front_vs_right_height_percent": 0.0
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": true,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": true,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r03_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 616567,
+      "sha256": "6fa365df5537f361f1eb58de80c2f21fd8c56b12ceb427cd2c4a1ea7385df876",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.8522,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        162,
+        185,
+        1996,
+        580
+      ],
+      "body_luminance_mean_rec709": 93.626,
+      "body_luminance_std_rec709": 28.431,
+      "id": "R-03",
+      "name": "角ばった石",
+      "group": "rocks",
+      "size": "S",
+      "tags": [
+        "cracked"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 2,
+        "pixels_per_meter": 362.0
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            162,
+            382,
+            576,
+            580
+          ],
+          "width_m": 1.1436,
+          "height_m": 0.547,
+          "horizontal_center_error_percent_of_cell": 0.9669,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 409.4586,
+          "bottom_delta_from_ground_normalized_px": 25.4586,
+          "body_pixels_below_soil_allowance": 9794,
+          "any_alpha_pixels_below_soil_allowance": 11502
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            197,
+            382,
+            538,
+            579
+          ],
+          "width_m": 0.942,
+          "height_m": 0.5442,
+          "horizontal_center_error_percent_of_cell": 0.7597,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 408.7514,
+          "bottom_delta_from_ground_normalized_px": 24.7514,
+          "body_pixels_below_soil_allowance": 8087,
+          "any_alpha_pixels_below_soil_allowance": 10258
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            170,
+            185,
+            548,
+            505
+          ],
+          "width_m": 1.0442,
+          "height_m": 0.884,
+          "horizontal_center_error_percent_of_cell": -0.4144,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 1.1436,
+        "depth": 0.884,
+        "height": 0.547
+      },
+      "requested_dimensions_m": {
+        "width": 0.9,
+        "depth": 0.8,
+        "height": 0.5
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 27.0667,
+        "depth": 10.5,
+        "height": 9.4
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 9.0868,
+        "right_width_vs_top_depth_percent": 6.3527,
+        "front_vs_right_height_percent": 0.5132
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": false,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r04_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 853511,
+      "sha256": "a0b57b79fff20cd5845a73e385b3b80744aa2a9b54d36c6b212808f434896a4d",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.7119,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        155,
+        167,
+        2013,
+        587
+      ],
+      "body_luminance_mean_rec709": 87.1533,
+      "body_luminance_std_rec709": 26.3005,
+      "id": "R-04",
+      "name": "苔むした丸い石",
+      "group": "rocks",
+      "size": "S",
+      "tags": [
+        "moss"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 2,
+        "pixels_per_meter": 362.0
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            155,
+            427,
+            569,
+            587
+          ],
+          "width_m": 1.1436,
+          "height_m": 0.442,
+          "horizontal_center_error_percent_of_cell": 0.0,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 414.4088,
+          "bottom_delta_from_ground_normalized_px": 30.4088,
+          "body_pixels_below_soil_allowance": 12950,
+          "any_alpha_pixels_below_soil_allowance": 24338
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            154,
+            428,
+            570,
+            587
+          ],
+          "width_m": 1.1492,
+          "height_m": 0.4392,
+          "horizontal_center_error_percent_of_cell": 0.0,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 414.4088,
+          "bottom_delta_from_ground_normalized_px": 30.4088,
+          "body_pixels_below_soil_allowance": 13096,
+          "any_alpha_pixels_below_soil_allowance": 23729
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            160,
+            167,
+            565,
+            534
+          ],
+          "width_m": 1.1188,
+          "height_m": 1.0138,
+          "horizontal_center_error_percent_of_cell": 0.0691,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 1.1436,
+        "depth": 1.0138,
+        "height": 0.442
+      },
+      "requested_dimensions_m": {
+        "width": 1,
+        "depth": 0.9,
+        "height": 0.4
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 14.36,
+        "depth": 12.6444,
+        "height": 10.5
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 2.1924,
+        "right_width_vs_top_depth_percent": 12.5196,
+        "front_vs_right_height_percent": 0.6355
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": false,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r05_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 786669,
+      "sha256": "e6fd4110c09255110024ee738c9e9054961a1e379f385caf89ae469a8f8554e6",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.8082,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        103,
+        164,
+        2048,
+        576
+      ],
+      "body_luminance_mean_rec709": 92.2822,
+      "body_luminance_std_rec709": 25.4036,
+      "id": "R-05",
+      "name": "丸みのある岩",
+      "group": "rocks",
+      "size": "M",
+      "tags": [],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 4,
+        "pixels_per_meter": 181.0
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            103,
+            395,
+            635,
+            576
+          ],
+          "width_m": 2.9392,
+          "height_m": 1.0,
+          "horizontal_center_error_percent_of_cell": 0.9669,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 406.6298,
+          "bottom_delta_from_ground_normalized_px": 22.6298,
+          "body_pixels_below_soil_allowance": 10912,
+          "any_alpha_pixels_below_soil_allowance": 13242
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            160,
+            395,
+            571,
+            576
+          ],
+          "width_m": 2.2707,
+          "height_m": 1.0,
+          "horizontal_center_error_percent_of_cell": 0.4834,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 406.6298,
+          "bottom_delta_from_ground_normalized_px": 22.6298,
+          "body_pixels_below_soil_allowance": 8535,
+          "any_alpha_pixels_below_soil_allowance": 10637
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            107,
+            164,
+            600,
+            575
+          ],
+          "width_m": 2.7238,
+          "height_m": 2.2707,
+          "horizontal_center_error_percent_of_cell": -1.174,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 2.9392,
+        "depth": 2.2707,
+        "height": 1.0
+      },
+      "requested_dimensions_m": {
+        "width": 2.4,
+        "depth": 2,
+        "height": 1
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 22.4667,
+        "depth": 13.535,
+        "height": 0.0
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 7.6073,
+        "right_width_vs_top_depth_percent": 0.0,
+        "front_vs_right_height_percent": 0.0
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": true,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r06_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 820326,
+      "sha256": "941801d6879f3fcd8b345649f15482a5715dd7cc2c89653c18c146dda9e92e71",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.7923,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        137,
+        193,
+        2015,
+        586
+      ],
+      "body_luminance_mean_rec709": 96.7398,
+      "body_luminance_std_rec709": 28.4735,
+      "id": "R-06",
+      "name": "角ばった岩",
+      "group": "rocks",
+      "size": "M",
+      "tags": [
+        "cracked"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 4,
+        "pixels_per_meter": 181.0
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            137,
+            328,
+            619,
+            586
+          ],
+          "width_m": 2.663,
+          "height_m": 1.4254,
+          "horizontal_center_error_percent_of_cell": 2.2099,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 413.7017,
+          "bottom_delta_from_ground_normalized_px": 29.7017,
+          "body_pixels_below_soil_allowance": 14695,
+          "any_alpha_pixels_below_soil_allowance": 19883
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            175,
+            328,
+            561,
+            586
+          ],
+          "width_m": 2.1326,
+          "height_m": 1.4254,
+          "horizontal_center_error_percent_of_cell": 0.8287,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 413.7017,
+          "bottom_delta_from_ground_normalized_px": 29.7017,
+          "body_pixels_below_soil_allowance": 11776,
+          "any_alpha_pixels_below_soil_allowance": 15961
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            131,
+            193,
+            567,
+            560
+          ],
+          "width_m": 2.4088,
+          "height_m": 2.0276,
+          "horizontal_center_error_percent_of_cell": -1.7956,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 2.663,
+        "depth": 2.0276,
+        "height": 1.4254
+      },
+      "requested_dimensions_m": {
+        "width": 2.2,
+        "depth": 1.8,
+        "height": 1.4
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 21.0455,
+        "depth": 12.6444,
+        "height": 1.8143
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 10.0241,
+        "right_width_vs_top_depth_percent": 5.0478,
+        "front_vs_right_height_percent": 0.0
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": false,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r07_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 855098,
+      "sha256": "b55f95d0edd30a4f958415488d7efd25d954ce618a92fbd5a9e432a20abd8c6a",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.779,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        34,
+        94,
+        2118,
+        569
+      ],
+      "body_luminance_mean_rec709": 95.9237,
+      "body_luminance_std_rec709": 26.1864,
+      "id": "R-07",
+      "name": "平たい岩盤",
+      "group": "rocks",
+      "size": "M",
+      "tags": [
+        "flat",
+        "cracked"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 4,
+        "pixels_per_meter": 181.0
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            34,
+            480,
+            698,
+            569
+          ],
+          "width_m": 3.6685,
+          "height_m": 0.4917,
+          "horizontal_center_error_percent_of_cell": 0.5525,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 401.6796,
+          "bottom_delta_from_ground_normalized_px": 17.6796,
+          "body_pixels_below_soil_allowance": 9207,
+          "any_alpha_pixels_below_soil_allowance": 16396
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            115,
+            475,
+            627,
+            569
+          ],
+          "width_m": 2.8287,
+          "height_m": 0.5193,
+          "horizontal_center_error_percent_of_cell": 1.2431,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 401.6796,
+          "bottom_delta_from_ground_normalized_px": 17.6796,
+          "body_pixels_below_soil_allowance": 7107,
+          "any_alpha_pixels_below_soil_allowance": 12205
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            40,
+            94,
+            670,
+            538
+          ],
+          "width_m": 3.4807,
+          "height_m": 2.453,
+          "horizontal_center_error_percent_of_cell": -0.9669,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 3.6685,
+        "depth": 2.453,
+        "height": 0.4917
+      },
+      "requested_dimensions_m": {
+        "width": 3.4,
+        "depth": 2.6,
+        "height": 0.5
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 7.8971,
+        "depth": -5.6538,
+        "height": -1.66
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 5.2537,
+        "right_width_vs_top_depth_percent": 14.2265,
+        "front_vs_right_height_percent": 5.4599
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": false,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r08_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 964704,
+      "sha256": "4ce45cfcb5d39d550f0092407177d0b2d978aab35a4a9b69c3078cac540091c9",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.7582,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        112,
+        171,
+        2067,
+        583
+      ],
+      "body_luminance_mean_rec709": 92.1384,
+      "body_luminance_std_rec709": 31.9068,
+      "id": "R-08",
+      "name": "地層の筋のある岩",
+      "group": "rocks",
+      "size": "M",
+      "tags": [
+        "strata"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 4,
+        "pixels_per_meter": 181.0
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            112,
+            349,
+            649,
+            583
+          ],
+          "width_m": 2.9669,
+          "height_m": 1.2928,
+          "horizontal_center_error_percent_of_cell": 2.5552,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 411.5801,
+          "bottom_delta_from_ground_normalized_px": 27.5801,
+          "body_pixels_below_soil_allowance": 14555,
+          "any_alpha_pixels_below_soil_allowance": 20116
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            151,
+            348,
+            597,
+            583
+          ],
+          "width_m": 2.4641,
+          "height_m": 1.2983,
+          "horizontal_center_error_percent_of_cell": 1.6575,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 411.5801,
+          "bottom_delta_from_ground_normalized_px": 27.5801,
+          "body_pixels_below_soil_allowance": 11987,
+          "any_alpha_pixels_below_soil_allowance": 16750
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            102,
+            171,
+            619,
+            582
+          ],
+          "width_m": 2.8564,
+          "height_m": 2.2707,
+          "horizontal_center_error_percent_of_cell": -0.2072,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 2.9669,
+        "depth": 2.2707,
+        "height": 1.2928
+      },
+      "requested_dimensions_m": {
+        "width": 2.6,
+        "depth": 2,
+        "height": 1.3
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 14.1115,
+        "depth": 13.535,
+        "height": -0.5538
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 3.7951,
+        "right_width_vs_top_depth_percent": 8.1693,
+        "front_vs_right_height_percent": 0.4245
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": false,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r09_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 955428,
+      "sha256": "ff17e34cd94278d11b942bacd9d7f515564685f0b2a454ee0d337aecfc2061aa",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.7655,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        76,
+        191,
+        2090,
+        578
+      ],
+      "body_luminance_mean_rec709": 97.1058,
+      "body_luminance_std_rec709": 30.1095,
+      "id": "R-09",
+      "name": "割れて2つの岩",
+      "group": "rocks",
+      "size": "M",
+      "tags": [
+        "cracked"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 4,
+        "pixels_per_meter": 181.0
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            76,
+            357,
+            654,
+            578
+          ],
+          "width_m": 3.1934,
+          "height_m": 1.221,
+          "horizontal_center_error_percent_of_cell": 0.4144,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 408.0442,
+          "bottom_delta_from_ground_normalized_px": 24.0442,
+          "body_pixels_below_soil_allowance": 13228,
+          "any_alpha_pixels_below_soil_allowance": 15428
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            166,
+            356,
+            560,
+            578
+          ],
+          "width_m": 2.1768,
+          "height_m": 1.2265,
+          "horizontal_center_error_percent_of_cell": 0.1381,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 408.0442,
+          "bottom_delta_from_ground_normalized_px": 24.0442,
+          "body_pixels_below_soil_allowance": 8953,
+          "any_alpha_pixels_below_soil_allowance": 11135
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            86,
+            191,
+            642,
+            578
+          ],
+          "width_m": 3.0718,
+          "height_m": 2.1381,
+          "horizontal_center_error_percent_of_cell": 0.2762,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 3.1934,
+        "depth": 2.1381,
+        "height": 1.221
+      },
+      "requested_dimensions_m": {
+        "width": 3,
+        "depth": 2,
+        "height": 1.2
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 6.4467,
+        "depth": 6.905,
+        "height": 1.75
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 3.8818,
+        "right_width_vs_top_depth_percent": 1.7938,
+        "front_vs_right_height_percent": 0.4494
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": true,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r10_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 624877,
+      "sha256": "cadd778ec3a3918ee52c0710b5b4d49bad9a28fefd7939e97bf57f134759afd1",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.8606,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        119,
+        290,
+        2053,
+        594
+      ],
+      "body_luminance_mean_rec709": 93.5701,
+      "body_luminance_std_rec709": 33.0067,
+      "id": "R-10",
+      "name": "傾いた板の岩",
+      "group": "rocks",
+      "size": "M",
+      "tags": [
+        "tall",
+        "flat"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 4,
+        "pixels_per_meter": 181.0
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            119,
+            291,
+            623,
+            594
+          ],
+          "width_m": 2.7845,
+          "height_m": 1.674,
+          "horizontal_center_error_percent_of_cell": 1.2431,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 419.3591,
+          "bottom_delta_from_ground_normalized_px": 35.3591,
+          "body_pixels_below_soil_allowance": 19177,
+          "any_alpha_pixels_below_soil_allowance": 20784
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            255,
+            290,
+            494,
+            594
+          ],
+          "width_m": 1.3204,
+          "height_m": 1.6796,
+          "horizontal_center_error_percent_of_cell": 1.7265,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 419.3591,
+          "bottom_delta_from_ground_normalized_px": 35.3591,
+          "body_pixels_below_soil_allowance": 7191,
+          "any_alpha_pixels_below_soil_allowance": 8302
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            132,
+            322,
+            605,
+            520
+          ],
+          "width_m": 2.6133,
+          "height_m": 1.0939,
+          "horizontal_center_error_percent_of_cell": 0.8978,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 2.7845,
+        "depth": 1.0939,
+        "height": 1.674
+      },
+      "requested_dimensions_m": {
+        "width": 2.4,
+        "depth": 1,
+        "height": 1.6
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 16.0208,
+        "depth": 9.39,
+        "height": 4.625
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 6.3433,
+        "right_width_vs_top_depth_percent": 18.7632,
+        "front_vs_right_height_percent": 0.334
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": false,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r11_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 871307,
+      "sha256": "e156766dfb94ac8052b1fa75be990b9643c623dcbe7d42d60f2dccb7a55cf663",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.7864,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        98,
+        135,
+        2056,
+        575
+      ],
+      "body_luminance_mean_rec709": 93.2292,
+      "body_luminance_std_rec709": 27.5382,
+      "id": "R-11",
+      "name": "苔と草の岩",
+      "group": "rocks",
+      "size": "M",
+      "tags": [
+        "moss",
+        "grass"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 4,
+        "pixels_per_meter": 181.0
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            98,
+            391,
+            629,
+            575
+          ],
+          "width_m": 2.9337,
+          "height_m": 1.0166,
+          "horizontal_center_error_percent_of_cell": 0.2072,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 405.9227,
+          "bottom_delta_from_ground_normalized_px": 21.9227,
+          "body_pixels_below_soil_allowance": 10419,
+          "any_alpha_pixels_below_soil_allowance": 13135
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            136,
+            384,
+            585,
+            575
+          ],
+          "width_m": 2.4807,
+          "height_m": 1.0552,
+          "horizontal_center_error_percent_of_cell": -0.2072,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 405.9227,
+          "bottom_delta_from_ground_normalized_px": 21.9227,
+          "body_pixels_below_soil_allowance": 8850,
+          "any_alpha_pixels_below_soil_allowance": 11434
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            103,
+            135,
+            608,
+            547
+          ],
+          "width_m": 2.7901,
+          "height_m": 2.2762,
+          "horizontal_center_error_percent_of_cell": -0.8978,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 2.9337,
+        "depth": 2.2762,
+        "height": 1.0166
+      },
+      "requested_dimensions_m": {
+        "width": 2.6,
+        "depth": 2.2,
+        "height": 1
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 12.8346,
+        "depth": 3.4636,
+        "height": 1.66
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 5.0176,
+        "right_width_vs_top_depth_percent": 8.598,
+        "front_vs_right_height_percent": 3.7262
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": false,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r12_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 819841,
+      "sha256": "e16349562cd3426656f560267b8c41b7a5e9841dba6c58f4850eba1ee7bc93bc",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.8147,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        108,
+        179,
+        2046,
+        575
+      ],
+      "body_luminance_mean_rec709": 93.4095,
+      "body_luminance_std_rec709": 30.5042,
+      "id": "R-12",
+      "name": "晶脈の岩",
+      "group": "rocks",
+      "size": "M",
+      "tags": [
+        "vein"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 4,
+        "pixels_per_meter": 181.0
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            108,
+            359,
+            628,
+            575
+          ],
+          "width_m": 2.8729,
+          "height_m": 1.1934,
+          "horizontal_center_error_percent_of_cell": 0.8287,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 405.9227,
+          "bottom_delta_from_ground_normalized_px": 21.9227,
+          "body_pixels_below_soil_allowance": 10365,
+          "any_alpha_pixels_below_soil_allowance": 11954
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            156,
+            359,
+            583,
+            575
+          ],
+          "width_m": 2.3591,
+          "height_m": 1.1934,
+          "horizontal_center_error_percent_of_cell": 1.0359,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 405.9227,
+          "bottom_delta_from_ground_normalized_px": 21.9227,
+          "body_pixels_below_soil_allowance": 8475,
+          "any_alpha_pixels_below_soil_allowance": 10074
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            118,
+            179,
+            598,
+            543
+          ],
+          "width_m": 2.6519,
+          "height_m": 2.011,
+          "horizontal_center_error_percent_of_cell": -0.5525,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 2.8729,
+        "depth": 2.011,
+        "height": 1.1934
+      },
+      "requested_dimensions_m": {
+        "width": 2.2,
+        "depth": 1.8,
+        "height": 1.2
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 30.5864,
+        "depth": 11.7222,
+        "height": -0.55
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 8.0003,
+        "right_width_vs_top_depth_percent": 15.931,
+        "front_vs_right_height_percent": 0.0
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": false,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r13_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 1015012,
+      "sha256": "0446e956d166c51b1947e534e0d4060724a69c479a34390f232edf03fe58036a",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.7554,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        48,
+        106,
+        2081,
+        580
+      ],
+      "body_luminance_mean_rec709": 98.3371,
+      "body_luminance_std_rec709": 28.6466,
+      "id": "R-13",
+      "name": "大きな岩の頭",
+      "group": "rocks",
+      "size": "L",
+      "tags": [],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 8,
+        "pixels_per_meter": 90.5
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            48,
+            388,
+            688,
+            580
+          ],
+          "width_m": 7.0718,
+          "height_m": 2.1215,
+          "horizontal_center_error_percent_of_cell": 0.8287,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 409.4586,
+          "bottom_delta_from_ground_normalized_px": 25.4586,
+          "body_pixels_below_soil_allowance": 15634,
+          "any_alpha_pixels_below_soil_allowance": 17257
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            117,
+            388,
+            650,
+            580
+          ],
+          "width_m": 5.8895,
+          "height_m": 2.1215,
+          "horizontal_center_error_percent_of_cell": 2.9696,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 409.4586,
+          "bottom_delta_from_ground_normalized_px": 25.4586,
+          "body_pixels_below_soil_allowance": 13085,
+          "any_alpha_pixels_below_soil_allowance": 14570
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            79,
+            106,
+            633,
+            570
+          ],
+          "width_m": 6.1215,
+          "height_m": 5.1271,
+          "horizontal_center_error_percent_of_cell": -0.8287,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 7.0718,
+        "depth": 5.1271,
+        "height": 2.1215
+      },
+      "requested_dimensions_m": {
+        "width": 6,
+        "depth": 5,
+        "height": 2.4
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 17.8633,
+        "depth": 2.542,
+        "height": -11.6042
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 14.4058,
+        "right_width_vs_top_depth_percent": 13.8409,
+        "front_vs_right_height_percent": 0.0
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": false,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r14_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 1165929,
+      "sha256": "3a68067e8fd105a72fb381d87c62b71dea71196109fb8704e7838e3302bc301c",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.7023,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        64,
+        140,
+        2073,
+        583
+      ],
+      "body_luminance_mean_rec709": 93.2831,
+      "body_luminance_std_rec709": 27.9766,
+      "id": "R-14",
+      "name": "割れ目のある大岩",
+      "group": "rocks",
+      "size": "L",
+      "tags": [
+        "cracked"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 8,
+        "pixels_per_meter": 90.5
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            64,
+            306,
+            666,
+            583
+          ],
+          "width_m": 6.6519,
+          "height_m": 3.0608,
+          "horizontal_center_error_percent_of_cell": 0.4144,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 411.5801,
+          "bottom_delta_from_ground_normalized_px": 27.5801,
+          "body_pixels_below_soil_allowance": 16613,
+          "any_alpha_pixels_below_soil_allowance": 20733
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            106,
+            308,
+            659,
+            583
+          ],
+          "width_m": 6.1105,
+          "height_m": 3.0387,
+          "horizontal_center_error_percent_of_cell": 2.8315,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 411.5801,
+          "bottom_delta_from_ground_normalized_px": 27.5801,
+          "body_pixels_below_soil_allowance": 15276,
+          "any_alpha_pixels_below_soil_allowance": 20083
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            79,
+            140,
+            625,
+            582
+          ],
+          "width_m": 6.0331,
+          "height_m": 4.884,
+          "horizontal_center_error_percent_of_cell": -1.3812,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 6.6519,
+        "depth": 4.884,
+        "height": 3.0608
+      },
+      "requested_dimensions_m": {
+        "width": 5.5,
+        "depth": 4.5,
+        "height": 3
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 20.9436,
+        "depth": 8.5333,
+        "height": 2.0267
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 9.7564,
+        "right_width_vs_top_depth_percent": 22.3112,
+        "front_vs_right_height_percent": 0.7246
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": false,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r15_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 996612,
+      "sha256": "67878cc0e6242c939b622d945eaaa44b228b5074b02648506aeda96ab39a0a40",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.753,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        52,
+        188,
+        2121,
+        574
+      ],
+      "body_luminance_mean_rec709": 98.2337,
+      "body_luminance_std_rec709": 28.0228,
+      "id": "R-15",
+      "name": "2つ並んだ大岩",
+      "group": "rocks",
+      "size": "L",
+      "tags": [
+        "cracked"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 8,
+        "pixels_per_meter": 90.5
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            52,
+            312,
+            669,
+            574
+          ],
+          "width_m": 6.8177,
+          "height_m": 2.895,
+          "horizontal_center_error_percent_of_cell": -0.2072,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 405.2155,
+          "bottom_delta_from_ground_normalized_px": 21.2155,
+          "body_pixels_below_soil_allowance": 11178,
+          "any_alpha_pixels_below_soil_allowance": 16227
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            171,
+            316,
+            555,
+            574
+          ],
+          "width_m": 4.2431,
+          "height_m": 2.8508,
+          "horizontal_center_error_percent_of_cell": 0.1381,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 405.2155,
+          "bottom_delta_from_ground_normalized_px": 21.2155,
+          "body_pixels_below_soil_allowance": 6989,
+          "any_alpha_pixels_below_soil_allowance": 10858
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            48,
+            188,
+            673,
+            574
+          ],
+          "width_m": 6.9061,
+          "height_m": 4.2652,
+          "horizontal_center_error_percent_of_cell": -0.2072,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 6.8177,
+        "depth": 4.2652,
+        "height": 2.895
+      },
+      "requested_dimensions_m": {
+        "width": 6.5,
+        "depth": 4,
+        "height": 2.8
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 4.8877,
+        "depth": 6.63,
+        "height": 3.3929
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 1.2883,
+        "right_width_vs_top_depth_percent": 0.5195,
+        "front_vs_right_height_percent": 1.5385
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": true,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r16_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 456916,
+      "sha256": "f71528df595609c30bcce8627d9b89b438ebf8631a77ad293401c11eede148ea",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.8905,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        255,
+        156,
+        1907,
+        569
+      ],
+      "body_luminance_mean_rec709": 87.062,
+      "body_luminance_std_rec709": 23.6218,
+      "id": "R-16",
+      "name": "立ち岩",
+      "group": "rocks",
+      "size": "L",
+      "tags": [
+        "tall"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 8,
+        "pixels_per_meter": 90.5
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            255,
+            156,
+            486,
+            569
+          ],
+          "width_m": 2.5525,
+          "height_m": 4.5635,
+          "horizontal_center_error_percent_of_cell": 1.174,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 401.6796,
+          "bottom_delta_from_ground_normalized_px": 17.6796,
+          "body_pixels_below_soil_allowance": 3207,
+          "any_alpha_pixels_below_soil_allowance": 7038
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            280,
+            156,
+            476,
+            569
+          ],
+          "width_m": 2.1657,
+          "height_m": 4.5635,
+          "horizontal_center_error_percent_of_cell": 2.2099,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 401.6796,
+          "bottom_delta_from_ground_normalized_px": 17.6796,
+          "body_pixels_below_soil_allowance": 2719,
+          "any_alpha_pixels_below_soil_allowance": 6084
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            246,
+            246,
+            459,
+            456
+          ],
+          "width_m": 2.3536,
+          "height_m": 2.3204,
+          "horizontal_center_error_percent_of_cell": -1.3122,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 2.5525,
+        "depth": 2.3204,
+        "height": 4.5635
+      },
+      "requested_dimensions_m": {
+        "width": 2.2,
+        "depth": 2,
+        "height": 4.5
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 16.0227,
+        "depth": 16.02,
+        "height": 1.4111
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 8.1083,
+        "right_width_vs_top_depth_percent": 6.8969,
+        "front_vs_right_height_percent": 0.0
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": false,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r17_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 788009,
+      "sha256": "8b5e7ce2b5df2127cb1ae8353876bbf08994bf5341f1f9cebb8b2ae58074372c",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.809,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        35,
+        129,
+        2129,
+        547
+      ],
+      "body_luminance_mean_rec709": 98.6553,
+      "body_luminance_std_rec709": 25.5706,
+      "id": "R-17",
+      "name": "岩盤の露頭",
+      "group": "rocks",
+      "size": "L",
+      "tags": [
+        "flat",
+        "strata"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 8,
+        "pixels_per_meter": 90.5
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            35,
+            471,
+            696,
+            546
+          ],
+          "width_m": 7.3039,
+          "height_m": 0.8287,
+          "horizontal_center_error_percent_of_cell": 0.4834,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 385.4144,
+          "bottom_delta_from_ground_normalized_px": 1.4144,
+          "body_pixels_below_soil_allowance": 0,
+          "any_alpha_pixels_below_soil_allowance": 604
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            118,
+            473,
+            616,
+            546
+          ],
+          "width_m": 5.5028,
+          "height_m": 0.8066,
+          "horizontal_center_error_percent_of_cell": 0.6906,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 385.4144,
+          "bottom_delta_from_ground_normalized_px": 1.4144,
+          "body_pixels_below_soil_allowance": 0,
+          "any_alpha_pixels_below_soil_allowance": 92
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            40,
+            129,
+            681,
+            547
+          ],
+          "width_m": 7.0829,
+          "height_m": 4.6188,
+          "horizontal_center_error_percent_of_cell": -0.2072,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 7.3039,
+        "depth": 4.6188,
+        "height": 0.8287
+      },
+      "requested_dimensions_m": {
+        "width": 7,
+        "depth": 5,
+        "height": 0.6
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 4.3414,
+        "depth": -7.624,
+        "height": 38.1167
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 3.0723,
+        "right_width_vs_top_depth_percent": 17.4676,
+        "front_vs_right_height_percent": 2.7029
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": false,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": true,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r18_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 1083791,
+      "sha256": "a12bb7efc658420e3150ee2c8bf78fac4d5ad1e1974d740e0bf5f5f2c90635d4",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.7242,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        98,
+        160,
+        2064,
+        579
+      ],
+      "body_luminance_mean_rec709": 92.2527,
+      "body_luminance_std_rec709": 27.2736,
+      "id": "R-18",
+      "name": "落ちてきた大岩",
+      "group": "rocks",
+      "size": "L",
+      "tags": [
+        "cracked"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 8,
+        "pixels_per_meter": 90.5
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            98,
+            292,
+            656,
+            579
+          ],
+          "width_m": 6.1657,
+          "height_m": 3.1713,
+          "horizontal_center_error_percent_of_cell": 2.0718,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 408.7514,
+          "bottom_delta_from_ground_normalized_px": 24.7514,
+          "body_pixels_below_soil_allowance": 13221,
+          "any_alpha_pixels_below_soil_allowance": 14983
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            145,
+            293,
+            609,
+            579
+          ],
+          "width_m": 5.1271,
+          "height_m": 3.1602,
+          "horizontal_center_error_percent_of_cell": 2.0718,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 408.7514,
+          "bottom_delta_from_ground_normalized_px": 24.7514,
+          "body_pixels_below_soil_allowance": 11002,
+          "any_alpha_pixels_below_soil_allowance": 13056
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            97,
+            160,
+            616,
+            579
+          ],
+          "width_m": 5.7348,
+          "height_m": 4.6298,
+          "horizontal_center_error_percent_of_cell": -0.7597,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 6.1657,
+        "depth": 4.6298,
+        "height": 3.1713
+      },
+      "requested_dimensions_m": {
+        "width": 5,
+        "depth": 4,
+        "height": 3.2
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 23.314,
+        "depth": 15.745,
+        "height": -0.8969
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 7.2417,
+        "right_width_vs_top_depth_percent": 10.1938,
+        "front_vs_right_height_percent": 0.3506
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": false,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r19_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 1126030,
+      "sha256": "a2b19f41b689daa0f1a35c33c3f15f588806722587750adab6bb2884252aeafa",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.7227,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        78,
+        97,
+        2091,
+        567
+      ],
+      "body_luminance_mean_rec709": 86.4511,
+      "body_luminance_std_rec709": 24.8136,
+      "id": "R-19",
+      "name": "苔むした大岩",
+      "group": "rocks",
+      "size": "L",
+      "tags": [
+        "moss"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 8,
+        "pixels_per_meter": 90.5
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            78,
+            326,
+            671,
+            567
+          ],
+          "width_m": 6.5525,
+          "height_m": 2.663,
+          "horizontal_center_error_percent_of_cell": 1.7265,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 400.2652,
+          "bottom_delta_from_ground_normalized_px": 16.2652,
+          "body_pixels_below_soil_allowance": 7095,
+          "any_alpha_pixels_below_soil_allowance": 13079
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            122,
+            325,
+            609,
+            567
+          ],
+          "width_m": 5.3812,
+          "height_m": 2.674,
+          "horizontal_center_error_percent_of_cell": 0.4834,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 400.2652,
+          "bottom_delta_from_ground_normalized_px": 16.2652,
+          "body_pixels_below_soil_allowance": 5801,
+          "any_alpha_pixels_below_soil_allowance": 10502
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            86,
+            97,
+            643,
+            567
+          ],
+          "width_m": 6.1547,
+          "height_m": 5.1934,
+          "horizontal_center_error_percent_of_cell": 0.3453,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 6.5525,
+        "depth": 5.1934,
+        "height": 2.663
+      },
+      "requested_dimensions_m": {
+        "width": 5.5,
+        "depth": 4.5,
+        "height": 2.6
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 19.1364,
+        "depth": 15.4089,
+        "height": 2.4231
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 6.261,
+        "right_width_vs_top_depth_percent": 3.5519,
+        "front_vs_right_height_percent": 0.4122
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": true,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": true,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "rock_r20_v1.png",
+      "width_px": 2172,
+      "height_px": 724,
+      "mode": "RGBA",
+      "bytes": 1093570,
+      "sha256": "8e61cdddea33acec03499db614429e6ee96978bd63bcef77b8c7d538f831e0c7",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "alpha_zero_fraction": 0.7449,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        123,
+        150,
+        2047,
+        571
+      ],
+      "body_luminance_mean_rec709": 92.5618,
+      "body_luminance_std_rec709": 33.3033,
+      "id": "R-20",
+      "name": "晶脈の大岩",
+      "group": "rocks",
+      "size": "L",
+      "tags": [
+        "vein",
+        "crystal"
+      ],
+      "measurement_scale": {
+        "cell_width_px": 724,
+        "cell_span_m": 8,
+        "pixels_per_meter": 90.5
+      },
+      "views": {
+        "front": {
+          "bbox_exclusive_px_in_cell": [
+            123,
+            312,
+            695,
+            571
+          ],
+          "width_m": 6.3204,
+          "height_m": 2.8619,
+          "horizontal_center_error_percent_of_cell": 6.4917,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 403.0939,
+          "bottom_delta_from_ground_normalized_px": 19.0939,
+          "body_pixels_below_soil_allowance": 9107,
+          "any_alpha_pixels_below_soil_allowance": 13755
+        },
+        "right": {
+          "bbox_exclusive_px_in_cell": [
+            141,
+            312,
+            604,
+            571
+          ],
+          "width_m": 5.116,
+          "height_m": 2.8619,
+          "horizontal_center_error_percent_of_cell": 1.4503,
+          "touches_cell_border": false,
+          "body_bottom_y_normalized_to_512": 403.0939,
+          "bottom_delta_from_ground_normalized_px": 19.0939,
+          "body_pixels_below_soil_allowance": 7344,
+          "any_alpha_pixels_below_soil_allowance": 10467
+        },
+        "top": {
+          "bbox_exclusive_px_in_cell": [
+            79,
+            150,
+            599,
+            568
+          ],
+          "width_m": 5.7459,
+          "height_m": 4.6188,
+          "horizontal_center_error_percent_of_cell": -3.1768,
+          "touches_cell_border": false
+        }
+      },
+      "measured_dimensions_m": {
+        "width": 6.3204,
+        "depth": 4.6188,
+        "height": 2.8619
+      },
+      "requested_dimensions_m": {
+        "width": 5,
+        "depth": 4,
+        "height": 3
+      },
+      "difference_from_requested_dimensions_percent": {
+        "width": 26.408,
+        "depth": 15.47,
+        "height": -4.6033
+      },
+      "three_view_difference_percent": {
+        "front_vs_top_width_percent": 9.5224,
+        "right_width_vs_top_depth_percent": 10.2149,
+        "front_vs_right_height_percent": 0.0
+      },
+      "acceptance": {
+        "requested_canvas_1536x512": false,
+        "three_views_within_8_percent": false,
+        "front_and_right_ground_within_8px_soil_after_uniform_normalization": false,
+        "all_view_horizontal_centers_within_6_percent": false,
+        "luminance_at_least_18": true,
+        "original_png_ready_for_direct_geometry_import": false
+      }
+    },
+    {
+      "filename": "cliff_c01_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 2266102,
+      "sha256": "ce185c62bb16c965d7473ca72b1524b0ccf56b8f7e9825bca1010d2601649e50",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.445,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        231,
+        2048,
+        715
+      ],
+      "body_luminance_mean_rec709": 101.5039,
+      "body_luminance_std_rec709": 24.2922,
+      "id": "C-01",
+      "name": "地層の段の崖",
+      "group": "cliffs",
+      "tags": [
+        "strata",
+        "pebbles"
+      ],
+      "measured_edge_heights_m": [
+        4.5469,
+        4.5469
+      ],
+      "requested_edge_heights_m": [
+        4.5,
+        4.5
+      ],
+      "edge_error_m": [
+        0.0469,
+        0.0469
+      ],
+      "measured_middle_crest_height_range_m": [
+        4.1133,
+        5.543
+      ],
+      "body_bottom_y": 714,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 60,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c02_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 2762871,
+      "sha256": "2073165093ebe142e2037475a142a8195f59097708c64b0a54dea1bc4e1fd239",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.3205,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        58,
+        2048,
+        712
+      ],
+      "body_luminance_mean_rec709": 94.1082,
+      "body_luminance_std_rec709": 29.089,
+      "id": "C-02",
+      "name": "地層の段の高い崖",
+      "group": "cliffs",
+      "tags": [
+        "strata",
+        "tall"
+      ],
+      "measured_edge_heights_m": [
+        4.4883,
+        4.4883
+      ],
+      "requested_edge_heights_m": [
+        4.5,
+        4.5
+      ],
+      "edge_error_m": [
+        0.0117,
+        0.0117
+      ],
+      "measured_middle_crest_height_range_m": [
+        4.207,
+        7.5703
+      ],
+      "body_bottom_y": 711,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 67,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c03_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 2371559,
+      "sha256": "82ed7b800932bd8cf25bd59d2c1090138e421f271f7b08d9e4c315db5e6014de",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.4296,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        226,
+        2048,
+        713
+      ],
+      "body_luminance_mean_rec709": 94.5067,
+      "body_luminance_std_rec709": 28.093,
+      "id": "C-03",
+      "name": "斜めの地層の崖",
+      "group": "cliffs",
+      "tags": [
+        "strata"
+      ],
+      "measured_edge_heights_m": [
+        4.5469,
+        4.5234
+      ],
+      "requested_edge_heights_m": [
+        4.5,
+        4.5
+      ],
+      "edge_error_m": [
+        0.0469,
+        0.0234
+      ],
+      "measured_middle_crest_height_range_m": [
+        4.1133,
+        5.6016
+      ],
+      "body_bottom_y": 712,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 1317,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c04_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 1940466,
+      "sha256": "ab2f467468f5cbc9642d4a0a467158f2463b71c961f07f1e1a4ec583720de422",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.6021,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        368,
+        2048,
+        713
+      ],
+      "body_luminance_mean_rec709": 101.6188,
+      "body_luminance_std_rec709": 29.1446,
+      "id": "C-04",
+      "name": "低い地層の崖",
+      "group": "cliffs",
+      "tags": [
+        "strata",
+        "flat"
+      ],
+      "measured_edge_heights_m": [
+        3.1523,
+        3.1523
+      ],
+      "requested_edge_heights_m": [
+        3,
+        3
+      ],
+      "edge_error_m": [
+        0.1523,
+        0.1523
+      ],
+      "measured_middle_crest_height_range_m": [
+        2.6953,
+        3.9375
+      ],
+      "body_bottom_y": 712,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 1001,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c05_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 2723042,
+      "sha256": "6fcbfdd9d8274dd93d0fdefc92e3ec3a790758bb22998a640776627ff286af65",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.3668,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        136,
+        2048,
+        713
+      ],
+      "body_luminance_mean_rec709": 89.9234,
+      "body_luminance_std_rec709": 26.6484,
+      "id": "C-05",
+      "name": "柱の割れ目の崖",
+      "group": "cliffs",
+      "tags": [
+        "columns"
+      ],
+      "measured_edge_heights_m": [
+        4.5352,
+        4.5234
+      ],
+      "requested_edge_heights_m": [
+        4.5,
+        4.5
+      ],
+      "edge_error_m": [
+        0.0352,
+        0.0234
+      ],
+      "measured_middle_crest_height_range_m": [
+        4.3359,
+        6.6562
+      ],
+      "body_bottom_y": 712,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 1859,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c06_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 2495663,
+      "sha256": "306ab233a7f03b91a283346ec349c00b3e6374b50709de677be550ac9b644802",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.4316,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        203,
+        2048,
+        716
+      ],
+      "body_luminance_mean_rec709": 98.4596,
+      "body_luminance_std_rec709": 28.0767,
+      "id": "C-06",
+      "name": "崩れかけの柱の崖",
+      "group": "cliffs",
+      "tags": [
+        "columns",
+        "rubble"
+      ],
+      "measured_edge_heights_m": [
+        4.5234,
+        4.5234
+      ],
+      "requested_edge_heights_m": [
+        4.5,
+        4.5
+      ],
+      "edge_error_m": [
+        0.0234,
+        0.0234
+      ],
+      "measured_middle_crest_height_range_m": [
+        4.0312,
+        5.8711
+      ],
+      "body_bottom_y": 715,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 533,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c07_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 2286555,
+      "sha256": "6f6306dc27a28bba8b3d81251a11b45304b8a37b06ec1174c273d410c6ee031e",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.4505,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        215,
+        2048,
+        719
+      ],
+      "body_luminance_mean_rec709": 96.0336,
+      "body_luminance_std_rec709": 27.937,
+      "id": "C-07",
+      "name": "丸く削られた崖",
+      "group": "cliffs",
+      "tags": [
+        "overhang"
+      ],
+      "measured_edge_heights_m": [
+        4.3359,
+        4.3359
+      ],
+      "requested_edge_heights_m": [
+        4.5,
+        4.5
+      ],
+      "edge_error_m": [
+        0.1641,
+        0.1641
+      ],
+      "measured_middle_crest_height_range_m": [
+        3.9258,
+        5.7305
+      ],
+      "body_bottom_y": 718,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 78,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c08_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 2569413,
+      "sha256": "11d8b2c9cb64bf0d52f97eff14e8e0bd4d9f081bd658988cf464f027c42235ec",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.3883,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        145,
+        2048,
+        714
+      ],
+      "body_luminance_mean_rec709": 79.935,
+      "body_luminance_std_rec709": 30.6614,
+      "id": "C-08",
+      "name": "えぐれの深い崖",
+      "group": "cliffs",
+      "tags": [
+        "overhang"
+      ],
+      "measured_edge_heights_m": [
+        4.5352,
+        4.5234
+      ],
+      "requested_edge_heights_m": [
+        4.5,
+        4.5
+      ],
+      "edge_error_m": [
+        0.0352,
+        0.0234
+      ],
+      "measured_middle_crest_height_range_m": [
+        4.2305,
+        6.5508
+      ],
+      "body_bottom_y": 713,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 2691,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c09_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 2585387,
+      "sha256": "9b06ec74c32f040f9af164466a10b2f48e601b8badadcd5ba79794aa57fded14",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.4169,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        214,
+        2048,
+        715
+      ],
+      "body_luminance_mean_rec709": 92.5512,
+      "body_luminance_std_rec709": 27.9265,
+      "id": "C-09",
+      "name": "縦の溝の崖",
+      "group": "cliffs",
+      "tags": [
+        "cracked"
+      ],
+      "measured_edge_heights_m": [
+        4.5234,
+        4.5234
+      ],
+      "requested_edge_heights_m": [
+        4.5,
+        4.5
+      ],
+      "edge_error_m": [
+        0.0234,
+        0.0234
+      ],
+      "measured_middle_crest_height_range_m": [
+        4.3242,
+        5.7422
+      ],
+      "body_bottom_y": 714,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 1615,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c10_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 2531924,
+      "sha256": "0068441e3e37364411494543820f5d1b8dd691c261975f4bf894ea01bafe6fee",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.3837,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        139,
+        2048,
+        713
+      ],
+      "body_luminance_mean_rec709": 90.2837,
+      "body_luminance_std_rec709": 27.5059,
+      "id": "C-10",
+      "name": "大きな割れ目の崖",
+      "group": "cliffs",
+      "tags": [
+        "cracked"
+      ],
+      "measured_edge_heights_m": [
+        4.5703,
+        4.5469
+      ],
+      "requested_edge_heights_m": [
+        4.5,
+        4.5
+      ],
+      "edge_error_m": [
+        0.0703,
+        0.0469
+      ],
+      "measured_middle_crest_height_range_m": [
+        4.1133,
+        6.6211
+      ],
+      "body_bottom_y": 712,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 1494,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c11_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 2373626,
+      "sha256": "e97fb9476a67cf953373dade92821eaf0211a2acc6e18fe075bafb42befb2e15",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.445,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        231,
+        2048,
+        713
+      ],
+      "body_luminance_mean_rec709": 95.0003,
+      "body_luminance_std_rec709": 26.0639,
+      "id": "C-11",
+      "name": "苔の崖",
+      "group": "cliffs",
+      "tags": [
+        "moss",
+        "grass"
+      ],
+      "measured_edge_heights_m": [
+        4.5469,
+        4.5352
+      ],
+      "requested_edge_heights_m": [
+        4.5,
+        4.5
+      ],
+      "edge_error_m": [
+        0.0469,
+        0.0352
+      ],
+      "measured_middle_crest_height_range_m": [
+        3.9609,
+        5.543
+      ],
+      "body_bottom_y": 712,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 832,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c12_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 1976487,
+      "sha256": "161a5b37dda2d2085fecee80ccce99353385b167dd1da3e5dc86f84b1ac2c55c",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.2729,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        465,
+        2048,
+        724
+      ],
+      "body_luminance_mean_rec709": 97.6602,
+      "body_luminance_std_rec709": 25.4927,
+      "id": "C-12",
+      "name": "草の乗った土手",
+      "group": "cliffs",
+      "tags": [
+        "grass",
+        "flat"
+      ],
+      "measured_edge_heights_m": [
+        2.8008,
+        2.8008
+      ],
+      "requested_edge_heights_m": [
+        3,
+        3
+      ],
+      "edge_error_m": [
+        0.1992,
+        0.1992
+      ],
+      "measured_middle_crest_height_range_m": [
+        2.3203,
+        2.8008
+      ],
+      "body_bottom_y": 723,
+      "pixels_below_allowed_y720_at_alpha128": 4104,
+      "pixels_below_allowed_y720_at_any_alpha": 20859,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": false,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c13_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 2615054,
+      "sha256": "1afbb2a4a199e7742f3e9f09dd56846f33a2cbfcf3e52a977f7ed6d91b73cc48",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.4306,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        216,
+        2048,
+        714
+      ],
+      "body_luminance_mean_rec709": 92.1344,
+      "body_luminance_std_rec709": 27.2386,
+      "id": "C-13",
+      "name": "晶脈の崖",
+      "group": "cliffs",
+      "tags": [
+        "vein"
+      ],
+      "measured_edge_heights_m": [
+        4.5117,
+        4.5234
+      ],
+      "requested_edge_heights_m": [
+        4.5,
+        4.5
+      ],
+      "edge_error_m": [
+        0.0117,
+        0.0234
+      ],
+      "measured_middle_crest_height_range_m": [
+        4.0898,
+        5.7188
+      ],
+      "body_bottom_y": 713,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 448,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c14_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 2510598,
+      "sha256": "f2808f5989bfa1c86e3cf069f7289688fb3dcb511eaa9bbc0802841f4a571379",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.403,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        121,
+        2048,
+        718
+      ],
+      "body_luminance_mean_rec709": 90.5636,
+      "body_luminance_std_rec709": 25.0024,
+      "id": "C-14",
+      "name": "晶の露頭の崖",
+      "group": "cliffs",
+      "tags": [
+        "crystal"
+      ],
+      "measured_edge_heights_m": [
+        4.5117,
+        4.5
+      ],
+      "requested_edge_heights_m": [
+        4.5,
+        4.5
+      ],
+      "edge_error_m": [
+        0.0117,
+        0.0
+      ],
+      "measured_middle_crest_height_range_m": [
+        3.8203,
+        6.832
+      ],
+      "body_bottom_y": 717,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 1342,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c15_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 2498835,
+      "sha256": "fddfb9fc919d1f880005bc7f892dc5e6d54253e67678c297aa78e981fe135af3",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.4481,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        231,
+        2048,
+        714
+      ],
+      "body_luminance_mean_rec709": 95.3995,
+      "body_luminance_std_rec709": 29.4728,
+      "id": "C-15",
+      "name": "崩れた崖",
+      "group": "cliffs",
+      "tags": [
+        "rubble",
+        "cracked"
+      ],
+      "measured_edge_heights_m": [
+        4.5,
+        4.5
+      ],
+      "requested_edge_heights_m": [
+        4.5,
+        4.5
+      ],
+      "edge_error_m": [
+        0.0,
+        0.0
+      ],
+      "measured_middle_crest_height_range_m": [
+        3.7617,
+        5.543
+      ],
+      "body_bottom_y": 713,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 2084,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c16_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 2292374,
+      "sha256": "5353a3e70493be9a2b71d01b19b977041a3431a28f8a5ca9cecfbd72e019b28a",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.4214,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        17,
+        2048,
+        712
+      ],
+      "body_luminance_mean_rec709": 107.8771,
+      "body_luminance_std_rec709": 24.5347,
+      "id": "C-16",
+      "name": "岩の塔のある崖",
+      "group": "cliffs",
+      "tags": [
+        "tall"
+      ],
+      "measured_edge_heights_m": [
+        4.4883,
+        4.4648
+      ],
+      "requested_edge_heights_m": [
+        4.5,
+        4.5
+      ],
+      "edge_error_m": [
+        0.0117,
+        0.0352
+      ],
+      "measured_middle_crest_height_range_m": [
+        3.7383,
+        8.0508
+      ],
+      "body_bottom_y": 711,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 42,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c17_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 2435983,
+      "sha256": "4c7f23d5cb6753c029c9373deaa3bff05f55dc065f888b1b61b02fb0c3a47492",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.4412,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        205,
+        2048,
+        716
+      ],
+      "body_luminance_mean_rec709": 93.2162,
+      "body_luminance_std_rec709": 28.3528,
+      "id": "C-17",
+      "name": "段々の崖",
+      "group": "cliffs",
+      "tags": [
+        "strata",
+        "pebbles",
+        "grass"
+      ],
+      "measured_edge_heights_m": [
+        4.4648,
+        4.4648
+      ],
+      "requested_edge_heights_m": [
+        4.5,
+        4.5
+      ],
+      "edge_error_m": [
+        0.0352,
+        0.0352
+      ],
+      "measured_middle_crest_height_range_m": [
+        3.9258,
+        5.8477
+      ],
+      "body_bottom_y": 715,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 1107,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c18_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 1959802,
+      "sha256": "8015ae0caee0c4538c82e4102913354445da0536fb73a6b0b541f1383bbe4224",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.5806,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        351,
+        2048,
+        714
+      ],
+      "body_luminance_mean_rec709": 105.3626,
+      "body_luminance_std_rec709": 27.8445,
+      "id": "C-18",
+      "name": "なだらかな岩の斜面",
+      "group": "cliffs",
+      "tags": [
+        "flat"
+      ],
+      "measured_edge_heights_m": [
+        2.9062,
+        2.918
+      ],
+      "requested_edge_heights_m": [
+        3,
+        3
+      ],
+      "edge_error_m": [
+        0.0938,
+        0.082
+      ],
+      "measured_middle_crest_height_range_m": [
+        2.9062,
+        4.1367
+      ],
+      "body_bottom_y": 713,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 800,
+      "exit_strip": null,
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c19_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 1532850,
+      "sha256": "3e82b3ee8af90d0b78d90bb71d82ea42d3643cc5f4bd91df54b4a3bfaaab4cdd",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.7364,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        313,
+        1445,
+        714
+      ],
+      "body_luminance_mean_rec709": 99.351,
+      "body_luminance_std_rec709": 28.9735,
+      "id": "C-19",
+      "name": "出口の左側の終わり",
+      "group": "cliffs",
+      "tags": [
+        "exit_left",
+        "rubble"
+      ],
+      "measured_edge_heights_m": [
+        4.5703,
+        0.0
+      ],
+      "requested_edge_heights_m": [
+        4.5,
+        0
+      ],
+      "edge_error_m": [
+        0.0703,
+        0.0
+      ],
+      "measured_middle_crest_height_range_m": [
+        -0.0938,
+        4.5352
+      ],
+      "body_bottom_y": 713,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 227,
+      "exit_strip": {
+        "side": "right",
+        "width_px": 512,
+        "maximum_alpha": 1,
+        "nonzero_alpha_pixels": 16,
+        "body_pixels_at_alpha128": 0,
+        "strictly_transparent": false
+      },
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": true,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "cliff_c20_v1.png",
+      "width_px": 2048,
+      "height_px": 768,
+      "mode": "RGBA",
+      "bytes": 1654477,
+      "sha256": "99846e4fd2d6f38d24151d66b464a6947390c5903221e5348c9eba4f381f4d16",
+      "has_alpha_channel": true,
+      "alpha_range": [
+        0,
+        254
+      ],
+      "alpha_zero_fraction": 0.7159,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        523,
+        307,
+        2048,
+        711
+      ],
+      "body_luminance_mean_rec709": 107.4642,
+      "body_luminance_std_rec709": 36.7832,
+      "id": "C-20",
+      "name": "出口の右側の終わり",
+      "group": "cliffs",
+      "tags": [
+        "exit_right",
+        "rubble"
+      ],
+      "measured_edge_heights_m": [
+        0.0,
+        4.5234
+      ],
+      "requested_edge_heights_m": [
+        0,
+        4.5
+      ],
+      "edge_error_m": [
+        0.0,
+        0.0234
+      ],
+      "measured_middle_crest_height_range_m": [
+        -0.0586,
+        4.6523
+      ],
+      "body_bottom_y": 710,
+      "pixels_below_allowed_y720_at_alpha128": 0,
+      "pixels_below_allowed_y720_at_any_alpha": 5,
+      "exit_strip": {
+        "side": "left",
+        "width_px": 512,
+        "maximum_alpha": 1,
+        "nonzero_alpha_pixels": 2,
+        "body_pixels_at_alpha128": 0,
+        "strictly_transparent": false
+      },
+      "acceptance": {
+        "requested_canvas_2048x768": true,
+        "edge_heights_within_0_3m": true,
+        "body_within_ground_soil_allowance_at_alpha128": true,
+        "strict_transparency_below_soil_allowance": false,
+        "luminance_at_least_18": true,
+        "luminance_target_20_to_35": false,
+        "all_pair_connector_visual_compatibility_verified": false,
+        "depth_map_provided": false
+      }
+    },
+    {
+      "filename": "tex_rock_t01_v2.png",
+      "width_px": 1254,
+      "height_px": 1254,
+      "mode": "RGB",
+      "bytes": 3922197,
+      "sha256": "db20e7389e2d9a5c8db0b97f2c0e51fec70f36f352b9c8b82cc129cf88a4c0c2",
+      "has_alpha_channel": false,
+      "alpha_range": [
+        255,
+        255
+      ],
+      "alpha_zero_fraction": 0.0,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "body_luminance_mean_rec709": 99.1601,
+      "body_luminance_std_rec709": 32.1151,
+      "id": "T-01",
+      "name": "灰褐色の岩",
+      "group": "tiles",
+      "tags": [
+        "cracked"
+      ],
+      "seam_mean_absolute_difference_ratio_to_internal": {
+        "left_right": 1.8581,
+        "top_bottom": 1.596
+      },
+      "acceptance": {
+        "requested_canvas_1024x1024": false,
+        "luminance_std_20_to_35": true,
+        "seamless_repeat_verified": false
+      }
+    },
+    {
+      "filename": "tex_rock_t02_v2.png",
+      "width_px": 1254,
+      "height_px": 1254,
+      "mode": "RGB",
+      "bytes": 3232369,
+      "sha256": "b644120d60b3639ead89958734ca911bffc3f60bb6a52761d6aba41f937c23aa",
+      "has_alpha_channel": false,
+      "alpha_range": [
+        255,
+        255
+      ],
+      "alpha_zero_fraction": 0.0,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "body_luminance_mean_rec709": 102.347,
+      "body_luminance_std_rec709": 21.2646,
+      "id": "T-02",
+      "name": "地層の岩",
+      "group": "tiles",
+      "tags": [
+        "strata"
+      ],
+      "seam_mean_absolute_difference_ratio_to_internal": {
+        "left_right": 2.0599,
+        "top_bottom": 1.6136
+      },
+      "acceptance": {
+        "requested_canvas_1024x1024": false,
+        "luminance_std_20_to_35": true,
+        "seamless_repeat_verified": false
+      }
+    },
+    {
+      "filename": "tex_rock_t03_v2.png",
+      "width_px": 1254,
+      "height_px": 1254,
+      "mode": "RGB",
+      "bytes": 3546928,
+      "sha256": "7e4adce1de96fffb69c7df13042d95ed9edc65a7f7de91b3a8e9860ae3f559e4",
+      "has_alpha_channel": false,
+      "alpha_range": [
+        255,
+        255
+      ],
+      "alpha_zero_fraction": 0.0,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "body_luminance_mean_rec709": 92.2288,
+      "body_luminance_std_rec709": 20.3474,
+      "id": "T-03",
+      "name": "晶脈の暗い岩",
+      "group": "tiles",
+      "tags": [
+        "vein",
+        "cracked"
+      ],
+      "seam_mean_absolute_difference_ratio_to_internal": {
+        "left_right": 1.4744,
+        "top_bottom": 1.3928
+      },
+      "acceptance": {
+        "requested_canvas_1024x1024": false,
+        "luminance_std_20_to_35": true,
+        "seamless_repeat_verified": false
+      }
+    },
+    {
+      "filename": "tex_rock_t04_v2.png",
+      "width_px": 1254,
+      "height_px": 1254,
+      "mode": "RGB",
+      "bytes": 3708453,
+      "sha256": "a197117aaff04534635e1aace6ef6ddc87035c2c3b91e472db9ab0cd0caeff65",
+      "has_alpha_channel": false,
+      "alpha_range": [
+        255,
+        255
+      ],
+      "alpha_zero_fraction": 0.0,
+      "alpha_body_threshold": 128,
+      "body_bbox_exclusive_px": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "body_luminance_mean_rec709": 99.9404,
+      "body_luminance_std_rec709": 25.6633,
+      "id": "T-04",
+      "name": "苔の多い岩",
+      "group": "tiles",
+      "tags": [
+        "moss",
+        "cracked"
+      ],
+      "seam_mean_absolute_difference_ratio_to_internal": {
+        "left_right": 1.6577,
+        "top_bottom": 1.6486
+      },
+      "acceptance": {
+        "requested_canvas_1024x1024": false,
+        "luminance_std_20_to_35": true,
+        "seamless_repeat_verified": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "request": 10,
+  "source_commit": "b832291c24cdc7ca56445d5d87b426de21ed77bf",
+  "generator": "built-in image_gen",
+  "tiles": [
+    {
+      "id": "T-01",
+      "name": "灰褐色の岩",
+      "file": "tex_rock_t01_v2.png",
+      "tags": [
+        "cracked"
+      ],
+      "detail": "Uniform field of gray-brown weathered rock with a distributed network of varied small cracks, shallow pits, tiny pale lichen speckles. No single dominant fissure, no focal rock, no borders.",
+      "filename": "tex_rock_t01_v2.png",
+      "prompt": "Edit only the provided original gray-brown rock tile for VEILBOUND HUNTERS. Preserve the existing pattern scale, stone colors, scattered lichen, overall even illumination, full-surface layout and lack of a focal object. Increase fine local crevice and pit contrast enough for luminance standard deviation about 27 on 0-255 scale; current source was measured at 19.8. Make recesses modestly darker and chipped rough raised edges modestly lighter, without any top-to-bottom or side lighting gradient. Repair the opposite outer edges so the texture repeats seamlessly both horizontally and vertically, with no bright border, visible joining line or big dominant crack. Return exactly 1024 by 1024 pixels if possible. Front-on material texture only. No direction of sunlight, no cast shadows, text, frame, new subject, sky, plants, terrain or glow. This is a technical refinement of this same texture, not a new composition.",
+      "source_image": "/workspace/scratch/f5ec33877ad1/generated_images/exec-76828627-345a-46b5-bdfa-817ad174d8c6.png",
+      "references": [
+        "/workspace/scratch/f5ec33877ad1/generated_images/exec-6761fcfb-711a-4b78-a03a-6f0426375cff.png"
+      ],
+      "status": "generated_reference; exact-size and seamless acceptance pending",
+      "measurement": {
+        "width_px": 1254,
+        "height_px": 1254,
+        "mode": "RGB",
+        "luminance_mean": 99.1601,
+        "luminance_std": 32.1151,
+        "lr_seam_mae_ratio": 1.9341,
+        "tb_seam_mae_ratio": 1.6353,
+        "opposite_edges_exact_match": false
+      },
+      "acceptance": {
+        "requested_size_match": false,
+        "luminance_20_to_35": true,
+        "seamless_verified": false
+      },
+      "sha256": "db20e7389e2d9a5c8db0b97f2c0e51fec70f36f352b9c8b82cc129cf88a4c0c2",
+      "bytes": 3922197,
+      "initial_prompt": "Use case: stylized-concept. Asset type: production rock color texture for original game VEILBOUND HUNTERS. Create one EXACTLY 1024 by 1024 pixel square texture intended to repeat seamlessly left/right AND top/bottom, one tile represents 3 meters of rock. Full image is surface material, not a rock object, not a landscape, no transparency.\nReference 1 is the approved palette and world only. Reference 2 is the prior failed too-flat texture: retain its broad palette but explicitly increase local crevice detail and contrast, do not imitate its clay-like smoothness.\nUniform field of gray-brown weathered rock with a distributed network of varied small cracks, shallow pits, tiny pale lichen speckles. No single dominant fissure, no focal rock, no borders.\nFront-on orthographic flat material capture, near-photographic detailed weathered natural rock created originally. Diffuse overcast nondirectional illumination, no directional highlights or shadows and no broad lighting gradient. Macro brightness is even across all four edges. Keep visible material light #8B8D82, darker stone #6E7268; tiny deep crevices #3E413A; edge planes modestly pale. Target perceptual luminance standard deviation around 28 on a 0-255 scale (required20-35), abundant dark small cavities distributed everywhere and brighter rough ledges. Strong enough fine contrast for game surfaces, no dramatic sunlight. All opposite edges must wrap continuously with matching small-scale structures, no border or vignette. No large unique feature, text, marks, symbols, frame, watermark, people, animals, mountains, ground, sky, fog, snow, ocean or lava. No specular flash or glowing crystal, no artistic sketch outlines.",
+      "initial_source_image": "/workspace/scratch/f5ec33877ad1/generated_images/exec-6761fcfb-711a-4b78-a03a-6f0426375cff.png",
+      "refinement_note": "Initial luma standard deviation 19.8054 was below minimum20; refined version selected after measurement.",
+      "visual_repeat_review": {
+        "layout": "2x2 repeat preview rendered in a separate QA PDF; source PNG unchanged",
+        "result": "Tiling seams and repeated rock patterns remain visible. Seamless acceptance failed/pending cleanup.",
+        "original_png_edited_by_code": false
+      }
+    },
+    {
+      "id": "T-02",
+      "name": "地層の岩",
+      "file": "tex_rock_t02_v2.png",
+      "tags": [
+        "strata"
+      ],
+      "detail": "Subtle horizontal thin sedimentary layers with irregular 5 to 20 centimeter beds at a 3 meter tile scale, many narrow layers crossing the width. Rough eroded fine grooves with darker crevices, small chips; no single dominant stripe.",
+      "filename": "tex_rock_t02_v2.png",
+      "prompt": "Use case: stylized-concept. Asset type: production rock color texture for original game VEILBOUND HUNTERS. Create one EXACTLY 1024 by 1024 pixel square texture intended to repeat seamlessly left/right AND top/bottom, one tile represents 3 meters of rock. Full image is surface material, not a rock object, not a landscape, no transparency.\nReference 1 is the approved palette and world only. Reference 2 is the prior failed too-flat texture: retain its broad palette but explicitly increase local crevice detail and contrast, do not imitate its clay-like smoothness.\nSubtle horizontal thin sedimentary layers with irregular 5 to 20 centimeter beds at a 3 meter tile scale, many narrow layers crossing the width. Rough eroded fine grooves with darker crevices, small chips; no single dominant stripe.\nFront-on orthographic flat material capture, near-photographic detailed weathered natural rock created originally. Diffuse overcast nondirectional illumination, no directional highlights or shadows and no broad lighting gradient. Macro brightness is even across all four edges. Keep visible material light #8B8D82, darker stone #6E7268; tiny deep crevices #3E413A; edge planes modestly pale. Target perceptual luminance standard deviation around 28 on a 0-255 scale (required20-35), abundant dark small cavities distributed everywhere and brighter rough ledges. Strong enough fine contrast for game surfaces, no dramatic sunlight. All opposite edges must wrap continuously with matching small-scale structures, no border or vignette. No large unique feature, text, marks, symbols, frame, watermark, people, animals, mountains, ground, sky, fog, snow, ocean or lava. No specular flash or glowing crystal, no artistic sketch outlines.",
+      "source_image": "/workspace/scratch/f5ec33877ad1/generated_images/exec-1458053c-0303-46cb-8477-3b3337a8a934.png",
+      "references": [
+        "/workspace/scratch/f5ec33877ad1/Kari-request10/art-source/board/style_board_v2.png",
+        "/workspace/scratch/f5ec33877ad1/Kari-request10/art-source/env/tex_rock_basin_v1.png"
+      ],
+      "status": "generated_reference; exact-size and seamless acceptance pending",
+      "measurement": {
+        "width_px": 1254,
+        "height_px": 1254,
+        "mode": "RGB",
+        "luminance_mean": 102.347,
+        "luminance_std": 21.2646,
+        "lr_seam_mae_ratio": 2.1719,
+        "tb_seam_mae_ratio": 1.6595,
+        "opposite_edges_exact_match": false
+      },
+      "acceptance": {
+        "requested_size_match": false,
+        "luminance_20_to_35": true,
+        "seamless_verified": false
+      },
+      "sha256": "b644120d60b3639ead89958734ca911bffc3f60bb6a52761d6aba41f937c23aa",
+      "bytes": 3232369,
+      "visual_repeat_review": {
+        "layout": "2x2 repeat preview rendered in a separate QA PDF; source PNG unchanged",
+        "result": "Tiling seams and repeated rock patterns remain visible. Seamless acceptance failed/pending cleanup.",
+        "original_png_edited_by_code": false,
+        "additional_note": "Fine strata are partly diagonal rather than perfectly horizontal; the requested 5–20 cm bed scale has not been measured."
+      }
+    },
+    {
+      "id": "T-03",
+      "name": "晶脈の暗い岩",
+      "file": "tex_rock_t03_v2.png",
+      "tags": [
+        "vein",
+        "cracked"
+      ],
+      "detail": "Dark gray-brown mineral rock crossed at scattered places by fine weathered bronze mineral seams, muted bronze #B08D57 to #C9A86A. Narrow broken mineral veins distributed through the surface, never glowing. Dark matrix with definite pits and cracks.",
+      "filename": "tex_rock_t03_v2.png",
+      "prompt": "Use case: stylized-concept. Asset type: production rock color texture for original game VEILBOUND HUNTERS. Create one EXACTLY 1024 by 1024 pixel square texture intended to repeat seamlessly left/right AND top/bottom, one tile represents 3 meters of rock. Full image is surface material, not a rock object, not a landscape, no transparency.\nReference 1 is the approved palette and world only. Reference 2 is the prior failed too-flat texture: retain its broad palette but explicitly increase local crevice detail and contrast, do not imitate its clay-like smoothness.\nDark gray-brown mineral rock crossed at scattered places by fine weathered bronze mineral seams, muted bronze #B08D57 to #C9A86A. Narrow broken mineral veins distributed through the surface, never glowing. Dark matrix with definite pits and cracks.\nFront-on orthographic flat material capture, near-photographic detailed weathered natural rock created originally. Diffuse overcast nondirectional illumination, no directional highlights or shadows and no broad lighting gradient. Macro brightness is even across all four edges. Keep visible material light #8B8D82, darker stone #6E7268; tiny deep crevices #3E413A; edge planes modestly pale. Target perceptual luminance standard deviation around 28 on a 0-255 scale (required20-35), abundant dark small cavities distributed everywhere and brighter rough ledges. Strong enough fine contrast for game surfaces, no dramatic sunlight. All opposite edges must wrap continuously with matching small-scale structures, no border or vignette. No large unique feature, text, marks, symbols, frame, watermark, people, animals, mountains, ground, sky, fog, snow, ocean or lava. No specular flash or glowing crystal, no artistic sketch outlines.",
+      "source_image": "/workspace/scratch/f5ec33877ad1/generated_images/exec-3a8120e3-93ab-4863-b6a0-f96dab01ec4a.png",
+      "references": [
+        "/workspace/scratch/f5ec33877ad1/Kari-request10/art-source/board/style_board_v2.png",
+        "/workspace/scratch/f5ec33877ad1/Kari-request10/art-source/env/tex_rock_basin_v1.png"
+      ],
+      "status": "generated_reference; exact-size and seamless acceptance pending",
+      "measurement": {
+        "width_px": 1254,
+        "height_px": 1254,
+        "mode": "RGB",
+        "luminance_mean": 92.2288,
+        "luminance_std": 20.3474,
+        "lr_seam_mae_ratio": 1.563,
+        "tb_seam_mae_ratio": 1.4722,
+        "opposite_edges_exact_match": false
+      },
+      "acceptance": {
+        "requested_size_match": false,
+        "luminance_20_to_35": true,
+        "seamless_verified": false
+      },
+      "sha256": "7e4adce1de96fffb69c7df13042d95ed9edc65a7f7de91b3a8e9860ae3f559e4",
+      "bytes": 3546928,
+      "visual_repeat_review": {
+        "layout": "2x2 repeat preview rendered in a separate QA PDF; source PNG unchanged",
+        "result": "Tiling seams and repeated rock patterns remain visible. Seamless acceptance failed/pending cleanup.",
+        "original_png_edited_by_code": false
+      }
+    },
+    {
+      "id": "T-04",
+      "name": "苔の多い岩",
+      "file": "tex_rock_t04_v2.png",
+      "tags": [
+        "moss",
+        "cracked"
+      ],
+      "detail": "Gray-brown weathered stone with patches of subdued gray-green moss #6F8562 held in small recessed cracks and damp pits. Moss covers around 20 to 30 percent, leaving raised rock surfaces clear. Tiny lichen marks, no blades of grass sticking up, no plant subjects.",
+      "filename": "tex_rock_t04_v2.png",
+      "prompt": "Use case: stylized-concept. Asset type: production rock color texture for original game VEILBOUND HUNTERS. Create one EXACTLY 1024 by 1024 pixel square texture intended to repeat seamlessly left/right AND top/bottom, one tile represents 3 meters of rock. Full image is surface material, not a rock object, not a landscape, no transparency.\nReference 1 is the approved palette and world only. Reference 2 is the prior failed too-flat texture: retain its broad palette but explicitly increase local crevice detail and contrast, do not imitate its clay-like smoothness.\nGray-brown weathered stone with patches of subdued gray-green moss #6F8562 held in small recessed cracks and damp pits. Moss covers around 20 to 30 percent, leaving raised rock surfaces clear. Tiny lichen marks, no blades of grass sticking up, no plant subjects.\nFront-on orthographic flat material capture, near-photographic detailed weathered natural rock created originally. Diffuse overcast nondirectional illumination, no directional highlights or shadows and no broad lighting gradient. Macro brightness is even across all four edges. Keep visible material light #8B8D82, darker stone #6E7268; tiny deep crevices #3E413A; edge planes modestly pale. Target perceptual luminance standard deviation around 28 on a 0-255 scale (required20-35), abundant dark small cavities distributed everywhere and brighter rough ledges. Strong enough fine contrast for game surfaces, no dramatic sunlight. All opposite edges must wrap continuously with matching small-scale structures, no border or vignette. No large unique feature, text, marks, symbols, frame, watermark, people, animals, mountains, ground, sky, fog, snow, ocean or lava. No specular flash or glowing crystal, no artistic sketch outlines.",
+      "source_image": "/workspace/scratch/f5ec33877ad1/generated_images/exec-64abaf2c-9a76-4946-a35f-69b7671a69b3.png",
+      "references": [
+        "/workspace/scratch/f5ec33877ad1/Kari-request10/art-source/board/style_board_v2.png",
+        "/workspace/scratch/f5ec33877ad1/Kari-request10/art-source/env/tex_rock_basin_v1.png"
+      ],
+      "status": "generated_reference; exact-size and seamless acceptance pending",
+      "measurement": {
+        "width_px": 1254,
+        "height_px": 1254,
+        "mode": "RGB",
+        "luminance_mean": 99.9404,
+        "luminance_std": 25.6633,
+        "lr_seam_mae_ratio": 1.7782,
+        "tb_seam_mae_ratio": 1.7421,
+        "opposite_edges_exact_match": false
+      },
+      "acceptance": {
+        "requested_size_match": false,
+        "luminance_20_to_35": true,
+        "seamless_verified": false
+      },
+      "sha256": "a197117aaff04534635e1aace6ef6ddc87035c2c3b91e472db9ab0cd0caeff65",
+      "bytes": 3708453,
+      "visual_repeat_review": {
+        "layout": "2x2 repeat preview rendered in a separate QA PDF; source PNG unchanged",
+        "result": "Tiling seams and repeated rock patterns remain visible. Seamless acceptance failed/pending cleanup.",
+        "original_png_edited_by_code": false
+      }
+    }
+  ]
+}
