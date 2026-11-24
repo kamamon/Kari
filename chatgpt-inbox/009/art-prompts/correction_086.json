@@ -1,0 +1,39 @@
+{
+  "no": 86,
+  "id": "monster.towalsem",
+  "name": "トワルセム",
+  "reason": "Authoritative ecology.territory specifies short-limbed terrestrial movement; moves includes 四肢を強く踏む. Initial concept was legless.",
+  "preserved": [
+    "long smooth torso",
+    "three rear cold-fluid sacs before the tail",
+    "small head shield",
+    "tail-tip supporting armor",
+    "palette and painting style",
+    "full-body framing"
+  ],
+  "final_file": "art/monster_086_towalsem_concept_v1.png",
+  "original_generation_source": "/workspace/scratch/b1fa555057db/generated_images/exec-18fa8c8c-4e12-4f9f-bfb3-89f10d85aae0.png",
+  "edits": [
+    {
+      "prompt": "Edit the supplied creature concept painting of Towalsem. Make ONLY a necessary anatomical correction while preserving its identity, finely painted natural-history style, muted slate-gray palette, pale warm plain background, full-body landscape composition, smooth long serpent-like torso, small smooth head shield, THREE translucent teardrop cold-fluid sacs under the REAR body just before the tail, and small supporting armor at the tail tip. This terrestrial long-bodied animal MUST have EXACTLY FOUR VERY SHORT WALKING LIMBS, two forelimbs and two hindlimbs. Add two matching pairs of small rounded stubby legs growing naturally from the underside of the torso: a forelimb pair behind the neck, and a hindlimb pair far back but before the three rear sacs. Their length is only a small fraction of body thickness; rounded little terrestrial feet with short blunt toes, no fins or wings, no enormous dinosaur legs. Adjust the existing open curved pose and raise the belly only slightly so that ALL FOUR feet are separately visible and can be clearly counted: left forefoot, right forefoot, left hindfoot, right hindfoot. Stagger far feet laterally beyond the body contour instead of hiding them. Each pair has two feet on opposite sides of the same anatomical station. Exactly four walking limbs total, no extra feet or loose detached limbs, no walking limbs on the narrow tail or head. Keep the three sacs fully visible and distinct, hanging under the rear body, not the throat; no extra sacs. Maintain smooth back without decorative spines or large ice armor. Preserve the full tail and head with margins, right-facing head. No text, numbers, frames, humans, scenery, additional animals, or props. Deliver a 1536x1024 landscape concept image.",
+      "source": "/workspace/scratch/b1fa555057db/generated_images/exec-204785be-1554-4ace-8451-a8dad4fc2501.png",
+      "assessment": "Five short feet, one surplus foreground foot; intermediate only, never used as delivery file."
+    },
+    {
+      "prompt": "Make a very precise local anatomy correction to the supplied image. It currently has FIVE little feet. REMOVE ONLY the extra foot at approximate image coordinates x=545,y=820 (35% of image width, 80% of image height), the LEFTMOST little foot of the THREE feet along the foreground/lower body. Replace this one leg and foot cleanly with continuous smooth belly skin and the same ground/background, matching existing anatomy and paint. Keep the TWO foreground right feet near x=930,y=850 and x=1030,y=830 as the foreleg pair. Keep the TWO background upper-left feet near x=460,y=490 and x=690,y=420 as the hindleg pair. The final must have EXACTLY FOUR feet: those four named positions, two forelimbs and two hindlimbs. Do not remove any other foot. Do not add feet elsewhere. Do not change the three translucent rear sacs, smooth serpentine body, head, tongue, tail tip armor, pose, color, background, rendering style, dimensions, or framing. Only remove the one surplus center-left foreground leg. No text or markings.",
+      "source": "/workspace/scratch/b1fa555057db/generated_images/exec-9c12da51-fd25-41f7-b445-d58e1cd9a240.png",
+      "assessment": "Accepted: exactly four visible short walking limbs, two forefeet in the lower right and two hindfeet under the upper-left body; three rear sacs remain distinct."
+    }
+  ],
+  "qa": {
+    "visible_limbs": 4,
+    "visible_sacs": 3,
+    "all_appendages_in_frame": true,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "originals_preserved": true
+  },
+  "modeling_note": "Use two bilateral pairs attached to the same fore and hind anatomical stations. The curved pose offsets their projected image positions; do not copy screen-space offsets as longitudinal joint offsets."
+}
