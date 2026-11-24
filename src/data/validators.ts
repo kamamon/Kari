@@ -636,7 +636,7 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     fields: new Map(),
     shop: { schemaVersion: 0, holdMax: 0, goods: [], sell: [] },
     hub: { schemaVersion: 0, id: '', name: '', mapId: '', facilities: [] },
-    bestiary: { schemaVersion: 0, plan: {}, frames: [], species: [] },
+    bestiary: { schemaVersion: 0, plan: {}, frames: [], fields: [], species: [] },
     quests: new Map(),
     items: new Map(),
     materials: new Map(),
@@ -723,7 +723,13 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
   checkVersion(index.files.bestiary, content.bestiary.schemaVersion, errors);
   // 登録簿: 段階の低い順と、遊べるモンスターの一覧を渡して検査する
   const rankIds = [...content.ranks.values()].sort((a, b) => a.order - b.order).map((r) => r.id);
-  for (const e of validateBestiary(content.bestiary, { ranks: rankIds, playable: new Set(content.monsters.keys()) })) errors.push(`bestiary: ${e}`);
+  for (const e of validateBestiary(content.bestiary, { ranks: rankIds, playable: new Set(content.monsters.keys()), fieldIds: new Set(content.fields.keys()) })) errors.push(`bestiary: ${e}`);
+  // 歩ける狩場は、どれも、登録簿の狩場の案とつながっている（名前も同じ）
+  for (const fd of content.fields.values()) {
+    const plan = (content.bestiary.fields ?? []).find((f) => f.fieldId === fd.id);
+    if (!plan) errors.push(`field ${fd.id}: 登録簿（bestiary）の狩場の案に、fieldId が無い`);
+    else if (plan.name !== fd.name) errors.push(`field ${fd.id}: 名前「${fd.name}」が、登録簿の狩場の案「${plan.name}」と違う`);
+  }
   // 依頼の標的は、登録簿にあること（訓練用の標的は除く）
   for (const q of content.quests.values()) if (!content.bestiary.species.some((s) => s.id === q.targetMonsterId)) errors.push(`quest ${q.id}: 標的 ${q.targetMonsterId} が、登録簿（bestiary）に無い`);
   if (errors.length > 0) throw new ContentError(errors);

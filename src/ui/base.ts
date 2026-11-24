@@ -135,7 +135,8 @@ export class BaseScreen {
     // モンスター図鑑（依頼板で見る。登録簿 bestiary.json を、段階ごとに並べる）。開いた時に 1 度だけ組む
     this.bestiary = sec(el('details', 'base-section'), 'quest');
     this.bestiary.id = 'base-bestiary';
-    this.bestiary.appendChild(el('summary', undefined, `モンスター図鑑（${content.bestiary.species.length} 種）`));
+    const juveniles = content.bestiary.species.filter((x) => x.class === 'juvenile').length;
+    this.bestiary.appendChild(el('summary', undefined, `モンスター図鑑（${content.bestiary.species.length - juveniles} 種${juveniles ? `・幼体 ${juveniles} 種` : ''}）`));
     this.bestiary.addEventListener('toggle', () => {
       if (this.bestiary.open && this.bestiary.childElementCount === 1) this.bestiary.appendChild(this.renderBestiary());
     });
@@ -339,7 +340,7 @@ export class BaseScreen {
     const ranks = [...c.ranks.values()].sort((x, y) => x.order - y.order);
     const frameName = new Map(b.frames.map((f) => [f.id, f.name]));
     const byId = new Map(b.species.map((s) => [s.id, s]));
-    box.appendChild(el('p', 'bestiary-note', '遊べるのは「実装済み」の種だけです。ほかは、これから作る計画です（数は、その段階から新しく登場する種）。'));
+    box.appendChild(el('p', 'bestiary-note', '遊べるのは「実装済み」の種だけです。ほかは、これから作る計画です（数は、その段階から新しく登場する種）。属性・弱点・狩場は、どれも案です。'));
     for (const count of bestiaryCounts(b, ranks.map((r) => r.id))) {
       const rank = c.ranks.get(count.rank)!;
       const head = el('h4', undefined, `${rank.name}から　${count.have} / ${count.plan} 種${count.juveniles ? `　幼体 ${count.juveniles}` : ''}`);
@@ -355,32 +356,57 @@ export class BaseScreen {
         const sum = el('summary');
         sum.append(el('span', 'no', String(s.no).padStart(2, '0')), el('b', undefined, `${s.title} ${s.name}`), el('span', 'tags', `${kind}／${frameName.get(s.frame) ?? s.frame}／${s.habitat}／${elem}`), el('span', 'state', STATE_NAMES[s.state]));
         d.appendChild(sum);
-        const rows: [string, string][] = [['外見の核', s.look]];
-        if (s.organ) rows.push(['器官', s.organ]);
-        rows.push(['技', s.moves.join('、')]);
-        if (s.baseId) rows.push(['もとの種', byId.has(s.baseId) ? `${byId.get(s.baseId)!.title} ${byId.get(s.baseId)!.name}` : s.baseId]);
-        if (s.pack) rows.push(['群れ', `${s.pack[0]}〜${s.pack[1]} 体`]);
-        if (s.weak.length || s.resist.length) rows.push(['弱点 / 強い', `${s.weak.map((e) => ELEMENT_NAMES[e]).join('・') || '—'} / ${s.resist.map((e) => ELEMENT_NAMES[e]).join('・') || '—'}`]);
-        if (s.ecology) for (const k of ECOLOGY_KEYS) rows.push([ECOLOGY_NAMES[k], s.ecology[k]]);
-        else rows.push(['生態', 'まだ書かれていません。']);
-        const dl = el('dl');
-        for (const [k, v] of rows) dl.append(el('dt', undefined, k), el('dd', undefined, v));
-        d.appendChild(dl);
-        // 原画（設定画）は、開いた時に読む。ゲームの中の体がまだ無い種は、そう書く
-        if (s.art) {
-          const art = s.art;
-          d.addEventListener('toggle', () => {
-            if (!d.open || d.querySelector('figure')) return;
+        // 中身は、開いた時に 1 度だけ組む（種が多いので、最初から全部は作らない）
+        const art = s.art;
+        d.addEventListener('toggle', () => {
+          if (!d.open || d.querySelector('dl')) return;
+          const nameOf = (id: string): string => (byId.has(id) ? `${byId.get(id)!.title} ${byId.get(id)!.name}` : id);
+          const rows: [string, string][] = [['外見の核', s.look]];
+          if (s.organ) rows.push(['器官', s.organ]);
+          rows.push(['技', s.moves.join('、')]);
+          rows.push(['全長', `${s.size} m`]);
+          if (s.baseId) rows.push(['もとの種', nameOf(s.baseId)]);
+          if (s.pack) rows.push(['群れ', `${s.pack[0]}〜${s.pack[1]} 体`]);
+          if (s.pairs?.length) rows.push(['一緒に出る相手', s.pairs.map(nameOf).join('、')]);
+          if (s.weak.length || s.resist.length) rows.push(['弱点 / 強い', `${s.weak.map((e) => ELEMENT_NAMES[e]).join('・') || '—'} / ${s.resist.map((e) => ELEMENT_NAMES[e]).join('・') || '—'}`]);
+          if (s.parts.length) rows.push(['壊せる部位', s.parts.join('、')]);
+          if (s.materials.length) rows.push(['素材', s.materials.join('、')]);
+          if (s.ecology) for (const k of ECOLOGY_KEYS) rows.push([ECOLOGY_NAMES[k], s.ecology[k]]);
+          else rows.push(['生態', 'まだ書かれていません。']);
+          const dl = el('dl');
+          for (const [k, v] of rows) dl.append(el('dt', undefined, k), el('dd', undefined, v));
+          // 原画（設定画）。ゲームの中の体がまだ無い種は、そう書く
+          if (art) {
             const fig = el('figure', 'bestiary-art');
             const img = document.createElement('img');
             img.alt = `${s.title} ${s.name} の原画`;
             img.src = assetUrl(`assets/bestiary/${art.replace(/\.png$/, '.webp')}`);
             fig.append(img, el('figcaption', undefined, s.state === 'implemented' ? '原画（設定画）' : '原画（設定画）。ゲームの中の体と動きは、まだありません。'));
-            d.insertBefore(fig, dl);
-          });
-        }
+            d.appendChild(fig);
+          } else if (s.state === 'planned') d.appendChild(el('p', 'bestiary-note', '案だけです（絵も、ゲームの中の体も、まだありません）。'));
+          d.appendChild(dl);
+        });
         box.appendChild(d);
       }
+    }
+    // 狩場の案（種の「狩場」に出てくる名前の一覧。歩けるのは、fieldId が付いたものだけ）
+    const fields = b.fields ?? [];
+    const walkable = fields.filter((f) => f.fieldId).length;
+    const fh = el('h4', undefined, `狩場の案　${fields.length}（歩けるのは ${walkable}）`);
+    fh.dataset.fields = String(fields.length);
+    box.appendChild(fh);
+    for (const f of fields) {
+      const d = el('details', `bestiary-item bestiary-field ${f.fieldId ? 'implemented' : 'planned'}`);
+      d.dataset.field = f.name;
+      const here = b.species.filter((x) => x.habitat === f.name);
+      const sum = el('summary');
+      sum.append(el('b', undefined, f.name), el('span', 'tags', f.terrain), el('span', 'state', f.fieldId ? '歩ける' : '案'));
+      d.appendChild(sum);
+      const dl = el('dl');
+      if (f.mood) dl.append(el('dt', undefined, '天気・光・音'), el('dd', undefined, f.mood));
+      dl.append(el('dt', undefined, 'ここに出る種'), el('dd', undefined, here.map((x) => `${x.title} ${x.name}`).join('、') || '—'));
+      d.appendChild(dl);
+      box.appendChild(d);
     }
     return box;
   }

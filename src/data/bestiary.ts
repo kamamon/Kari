@@ -111,11 +111,29 @@ export interface FrameDef {
   built: boolean;
 }
 
+/**
+ * 狩場の案（v0.15.0）。種の habitat は、ここにある名前を使う。
+ * 名前で持つ（恒久 ID は、歩ける狩場を作る時に付ける）。歩ける狩場（public/data/fields/）がある時は、fieldId でつなぐ。
+ */
+export interface FieldPlan {
+  name: string;
+  /** 地形をひとことで */
+  terrain: string;
+  /** 天気・光・音 */
+  mood?: string;
+  /** 歩ける狩場の id（public/data/fields/ にあるものだけ）。無ければ、まだ案だけ */
+  fieldId?: string;
+  /** 案の出どころ */
+  source?: string;
+}
+
 export interface BestiaryDef {
   schemaVersion: number;
   /** 段階ごとの、新しく登場する種の数の目標（幼体は数えない） */
   plan: Record<string, number>;
   frames: FrameDef[];
+  /** 狩場の案。種の habitat に使える名前の一覧 */
+  fields: FieldPlan[];
   species: SpeciesDef[];
 }
 
@@ -128,6 +146,20 @@ export interface BestiaryEnv {
   ranks: readonly string[];
   /** 遊べるモンスターの id（public/data/monsters/）。渡した時だけ、「実装済み」と書かれた種が本当にあるかを見る */
   playable?: ReadonlySet<string>;
+  /** 歩ける狩場の id（public/data/fields/）。渡した時だけ、狩場の案の fieldId が本当にあるかを見る */
+  fieldIds?: ReadonlySet<string>;
+}
+
+/** 狩場の案 1 つの検査（登録簿と、受け取る案の両方に使う）。 */
+function fieldErrors(f: Partial<FieldPlan> | null | undefined, env: BestiaryEnv): string[] {
+  if (!f || typeof f !== 'object' || !isStr(f.name)) return ['狩場（fields）に、name の無いものがある'];
+  const w = `狩場「${f.name}」`;
+  const e: string[] = [];
+  if (f.name.startsWith('（')) e.push(`${w}: 見本の例が入っている（返す JSON から外す）`);
+  if (!isStr(f.terrain)) e.push(`${w}: terrain（地形）が無い`);
+  if (f.mood !== undefined && !isStr(f.mood)) e.push(`${w}: mood が不正`);
+  if (f.fieldId !== undefined && (!/^field\.[a-z0-9_]+$/.test(String(f.fieldId)) || (env.fieldIds && !env.fieldIds.has(f.fieldId)))) e.push(`${w}: fieldId "${String(f.fieldId)}" の歩ける狩場が無い`);
+  return e;
 }
 
 /**
@@ -141,6 +173,16 @@ export function validateBestiary(b: BestiaryDef, env: BestiaryEnv, strict: (s: S
   if (frames.size !== (b.frames ?? []).length) errors.push('frames: id が重複');
   for (const f of b.frames ?? []) if (!/^frame\.[a-z0-9_]+$/.test(f.id) || !isStr(f.name) || !isStr(f.note)) errors.push(`frame ${f.id}: id / name / note が不正`);
   for (const [rank, n] of Object.entries(b.plan ?? {})) if (rankOrder(rank) < 0 || !Number.isInteger(n) || n < 0) errors.push(`plan: ${rank} が不正`);
+  // 狩場の案
+  if (!Array.isArray(b.fields)) errors.push('fields（狩場の一覧）が無い');
+  const fieldNames = new Set<string>();
+  for (const f of Array.isArray(b.fields) ? b.fields : []) {
+    errors.push(...fieldErrors(f, env));
+    if (isStr(f?.name)) {
+      if (fieldNames.has(f.name)) errors.push(`狩場「${f.name}」: 同じ名前の狩場がある`);
+      fieldNames.add(f.name);
+    }
+  }
   const byId = new Map<string, SpeciesDef>();
   const names = new Set<string>(), nos = new Set<number>();
   for (const s of b.species ?? []) {
@@ -161,6 +203,7 @@ export function validateBestiary(b: BestiaryDef, env: BestiaryEnv, strict: (s: S
     if (!frames.has(s.frame)) errors.push(`${w}: frame "${String(s.frame)}" が無い`);
     if (!(typeof s.size === 'number' && s.size > 0 && s.size < 400)) errors.push(`${w}: size（全長 m）が不正`);
     if (!isStr(s.habitat)) errors.push(`${w}: habitat が無い`);
+    else if (!fieldNames.has(s.habitat)) errors.push(`${w}: habitat「${s.habitat}」が、狩場の一覧（fields）に無い（新しい狩場は、fields に name と terrain を書く）`);
     if (!isStr(s.look)) errors.push(`${w}: look が無い`);
     if (!isList(s.moves, 1, 8)) errors.push(`${w}: moves は 1〜8 個`);
     if (!isStr(s.source)) errors.push(`${w}: source が無い`);
@@ -245,6 +288,9 @@ export interface MergeResult {
   bestiary: BestiaryDef;
   added: string[];
   updated: string[];
+  /** 足した狩場・書き換えた狩場（名前）。無ければ空 */
+  addedFields?: string[];
+  updatedFields?: string[];
   /** 取り込まなかった理由（1 つでもあれば、bestiary は元のまま） */
   errors: string[];
 }
@@ -253,9 +299,10 @@ export interface MergeResult {
  * ChatGPT の案を、登録簿へ足す。
  * - 同じ id の種は、案の内容で上書きする（遊べる種の state と、原画の印は、元のものを残す）。
  * - no が無い・重なる種には、空いている番号を付ける。
+ * - 狩場の案（fields）は、名前で足す。同じ名前があれば、地形と雰囲気を書き換える（歩ける狩場とのつながり fieldId は残す）。
  * - 足した後の登録簿ぜんたいを検査し、1 つでも決まりに合わなければ、何も変えない。
  */
-export function mergeBestiary(base: BestiaryDef, incoming: { species?: unknown; frames?: unknown }, env: BestiaryEnv, source: string): MergeResult {
+export function mergeBestiary(base: BestiaryDef, incoming: { species?: unknown; frames?: unknown; fields?: unknown }, env: BestiaryEnv, source: string): MergeResult {
   const fail = (errors: string[]): MergeResult => ({ bestiary: base, added: [], updated: [], errors });
   if (!Array.isArray(incoming.species) || incoming.species.length === 0) return fail(['species（種の一覧）が無い']);
   const next: BestiaryDef = JSON.parse(JSON.stringify(base)) as BestiaryDef;
@@ -263,6 +310,36 @@ export function mergeBestiary(base: BestiaryDef, incoming: { species?: unknown; 
   for (const f of Array.isArray(incoming.frames) ? (incoming.frames as Partial<FrameDef>[]) : []) {
     if (!f || !isStr(f.id) || next.frames.some((x) => x.id === f.id)) continue;
     next.frames.push({ id: f.id, name: String(f.name ?? ''), note: String(f.note ?? ''), built: false });
+  }
+  // 狩場の案（あれば足す。v0.15.0。それまでは、検査を通るのに、黙って捨てていた）
+  const addedFields: string[] = [], updatedFields: string[] = [];
+  if (incoming.fields !== undefined) {
+    if (!Array.isArray(incoming.fields)) return fail(['fields は、狩場の一覧（配列）にする']);
+    const fieldProblems: string[] = [];
+    const seen = new Set<string>();
+    for (const raw of incoming.fields as Partial<FieldPlan>[]) {
+      const errs = fieldErrors(raw, env);
+      if (errs.length > 0) {
+        fieldProblems.push(...errs);
+        continue;
+      }
+      const name = raw.name!;
+      if (seen.has(name)) fieldProblems.push(`狩場「${name}」: 案の中に、同じ名前が 2 つある`);
+      seen.add(name);
+      const at = next.fields.findIndex((x) => x.name === name);
+      const plan: FieldPlan = { name, terrain: raw.terrain!, ...(isStr(raw.mood) ? { mood: raw.mood } : {}) };
+      if (at >= 0) {
+        // 歩ける狩場とのつながりは、案では変えない
+        const old = next.fields[at]!;
+        const same = old.terrain === plan.terrain && (old.mood ?? '') === (plan.mood ?? '');
+        next.fields[at] = { ...plan, ...(old.fieldId !== undefined ? { fieldId: old.fieldId } : {}), source: same ? old.source ?? source : source };
+        if (!same) updatedFields.push(name);
+      } else {
+        next.fields.push({ ...plan, source });
+        addedFields.push(name);
+      }
+    }
+    if (fieldProblems.length > 0) return fail(fieldProblems);
   }
   const known = new Map(next.species.map((s, i) => [s.id, i]));
   const added: string[] = [], updated: string[] = [];
@@ -304,5 +381,5 @@ export function mergeBestiary(base: BestiaryDef, incoming: { species?: unknown; 
   const errors = validateBestiary(next, env, (s) => touched.has(s.id));
   if (errors.length > 0) return fail(errors);
   next.species.sort((a, b) => a.no - b.no);
-  return { bestiary: next, added, updated, errors: [] };
+  return { bestiary: next, added, updated, addedFields, updatedFields, errors: [] };
 }

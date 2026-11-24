@@ -1389,25 +1389,41 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await until(page, () => !document.getElementById('base').hidden);
   h = await hubState();
   check('里: 「一覧」で、すべての欄が出る（依頼・武器・工房・商店）', h.section === 'all' && h.title === '灯継ぎの里' && h.quests !== 'none' && h.forge !== 'none' && h.shop !== 'none' && h.weapons !== 'none', JSON.stringify(h));
-  // 図鑑（v0.13.0）: 登録簿の 13 種が、段階ごとに並ぶ。原画のある種は、開くと原画が出る
+  // 図鑑（v0.13.0。v0.15.0 で、ChatGPT の案 86 種と、狩場の案 20 を取り込んだ）: 段階ごとに並ぶ。開くと、原画・生態・もとの種・群れ・相手が出る
   const zukan = await page.evaluate(async () => {
     const d = document.getElementById('base-bestiary');
     d.open = true;
     d.dispatchEvent(new Event('toggle'));
-    const second = d.querySelector('[data-species="monster.selvark"]');
-    second.open = true;
-    second.dispatchEvent(new Event('toggle'));
+    const openItem = (sel) => {
+      const e = d.querySelector(sel);
+      e.open = true;
+      e.dispatchEvent(new Event('toggle'));
+      return e;
+    };
+    const second = openItem('[data-species="monster.selvark"]');
     const img = second.querySelector('img');
     if (img && !img.complete) await new Promise((r) => { img.onload = r; img.onerror = r; });
+    const rare = openItem('[data-species="monster.ryuzelka"]'), juv = openItem('[data-species="monster.kordopil"]'), huge = openItem('[data-species="monster.nemboraf"]');
+    const field = d.querySelector('[data-field="燠脈台地"]'), basin = d.querySelector('[data-field="風礫盆地"]');
+    const labels = (e) => [...e.querySelectorAll('dt')].map((x) => x.textContent).join();
     return {
       shown: getComputedStyle(d).display !== 'none', summary: d.querySelector('summary').textContent, n: d.querySelectorAll('[data-species]').length,
-      heads: [...d.querySelectorAll('h4[data-rank]')].map((x) => x.textContent.replace(/\s+/g, ' ')), done: [...d.querySelectorAll('.bestiary-item.implemented')].map((x) => x.dataset.species).join(),
-      art: d.querySelectorAll('.bestiary-item.art').length, img: img ? img.naturalWidth : 0, cap: second.querySelector('figcaption')?.textContent ?? '', eco: /まだ書かれていません/.test(second.querySelector('dl').textContent),
+      heads: [...d.querySelectorAll('h4[data-rank]')].map((x) => x.textContent.replace(/\s+/g, ' ')), done: [...d.querySelectorAll('[data-species].implemented')].map((x) => x.dataset.species).join(),
+      art: d.querySelectorAll('[data-species].art').length, planned: d.querySelectorAll('[data-species].planned').length, lazy: d.querySelectorAll('[data-species] dl').length,
+      img: img ? img.naturalWidth : 0, cap: second.querySelector('figcaption')?.textContent ?? '', eco: labels(second),
+      rare: rare.textContent.replace(/\s+/g, ' ').slice(0, 400), rareLabels: labels(rare), juv: juv.querySelector('dl').textContent, hugeTags: huge.querySelector('.tags').textContent, hugeNote: huge.querySelector('p.bestiary-note')?.textContent ?? '',
+      fields: d.querySelectorAll('[data-field]').length, walkable: [...d.querySelectorAll('.bestiary-field.implemented')].map((x) => x.dataset.field).join(), fieldHead: d.querySelector('h4[data-fields]').textContent.replace(/\s+/g, ' '),
+      fieldText: field.textContent.replace(/\s+/g, ' ').slice(0, 300), fieldState: field.querySelector('.state').textContent, basinState: basin.querySelector('.state').textContent,
     };
   });
-  check('図鑑: 依頼の欄に、13 種が段階ごとに並ぶ（初級 13 / 13、中級 0 / 20、上級 0 / 25、極級 0 / 20）。遊べるのはガルドロスだけ',
-    zukan.shown && zukan.summary === 'モンスター図鑑（13 種）' && zukan.n === 13 && zukan.heads.join('|') === '初級から 13 / 13 種|中級から 0 / 20 種|上級から 0 / 25 種|極級から 0 / 20 種' && zukan.done === 'monster.galdros' && zukan.art === 12, JSON.stringify(zukan));
-  check('図鑑: 原画のある種を開くと、原画が出る。体と動きがまだ無いこと、生態がまだ書かれていないことが分かる', zukan.img === 720 && /まだありません/.test(zukan.cap) && zukan.eco, JSON.stringify(zukan));
+  check('図鑑: 依頼の欄に、86 種（78 種と幼体 8 種）が段階ごとに並ぶ（初級 13 / 13、中級 20 / 20、上級 25 / 25、極級 20 / 20）。遊べるのはガルドロスだけで、原画あり 12、案 73',
+    zukan.shown && zukan.summary === 'モンスター図鑑（78 種・幼体 8 種）' && zukan.n === 86 && zukan.heads.join('|') === '初級から 13 / 13 種 幼体 8|中級から 20 / 20 種|上級から 25 / 25 種|極級から 20 / 20 種' && zukan.done === 'monster.galdros' && zukan.art === 12 && zukan.planned === 73 && zukan.lazy === 4, JSON.stringify({ ...zukan, rare: '', juv: '', fieldText: '' }));
+  check('図鑑: 原画のある種を開くと、原画と、生態 8 項目が出る。体と動きがまだ無いことが分かる', zukan.img === 720 && /まだありません/.test(zukan.cap) && /食べ物,行動と気性,なわばり,1 日の動き,巣と眠り,ほかとの関わり,幼体,痕跡$/.test(zukan.eco), JSON.stringify({ img: zukan.img, cap: zukan.cap, eco: zukan.eco }));
+  check('図鑑: 希少種には、もとの種と、一緒に出る相手が出る。幼体には、群れの数が出る。超大型は、案だけと分かる',
+    /上級|大型・希少種/.test(zukan.rare) && /もとの種/.test(zukan.rareLabels) && /一緒に出る相手/.test(zukan.rareLabels) && /帆角獣 セルヴァルク/.test(zukan.rare) && /裂扇獣 グラセドン/.test(zukan.rare) && /群れ3〜5 体/.test(zukan.juv) && /岩殻獣 ガルドロス/.test(zukan.juv) && /^超大型／巨躯／沈根沢地／水・睡眠$/.test(zukan.hugeTags) && /案だけです/.test(zukan.hugeNote),
+    JSON.stringify({ rare: zukan.rare, rareLabels: zukan.rareLabels, juv: zukan.juv.slice(0, 120), hugeTags: zukan.hugeTags, hugeNote: zukan.hugeNote }));
+  check('図鑑: 狩場の案が 20 並ぶ（歩けるのは風礫盆地だけ）。開くと、地形と、そこに出る種が出る',
+    zukan.fields === 20 && zukan.walkable === '風礫盆地' && zukan.fieldHead === '狩場の案 20（歩けるのは 1）' && zukan.basinState === '歩ける' && /燠脈台地/.test(zukan.fieldText) && /熾炉獣 エンバルグ/.test(zukan.fieldText) && zukan.fieldState === '案', JSON.stringify({ fields: zukan.fields, walkable: zukan.walkable, head: zukan.fieldHead, state: zukan.fieldState, text: zukan.fieldText }));
   await page.evaluate(() => document.getElementById('base-bestiary').scrollIntoView({ block: 'start' }));
   await page.screenshot({ path: `${OUT}99_bestiary.png` });
   // 依頼へ: 買った回復液を、支給品に足して持っていく
