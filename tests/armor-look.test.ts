@@ -1,10 +1,11 @@
-// 防具の見た目（src/render/hunterArmor.ts、v0.10.0）。依頼 7 の設定図と、依頼文の「動きのための決まり」を、形の数値で確かめる。
+// 防具の見た目（src/render/hunterArmor.ts、v0.10.0。兜の設定図 v2 と、段ごとの違い（設定図 B）は v0.12.1）。
+// 依頼 7 の設定図と、依頼文の「動きのための決まり」を、形の数値で確かめる。
 // 座標: m、Y 上、+Z 前、+X が本人の左。静止姿勢（腕は真下）。
 import { describe, expect, it } from 'vitest';
 import { Vector3 } from 'three';
 import { ARMOR_SLOTS, type ArmorSlot } from '../src/data/schemas';
 import { REST } from '../src/render/bodySolve';
-import { armorLookKey, armorTierOf, buildHunterArmor, type ArmorLook } from '../src/render/hunterArmor';
+import { ARMOR_TIERS, armorLookKey, armorTierOf, buildHunterArmor, type ArmorLook } from '../src/render/hunterArmor';
 import type { Geo } from '../src/render/procGeo';
 import { loadContent } from './helpers';
 
@@ -81,6 +82,72 @@ describe('防具の見た目: ガルドロスの偏り（左が大きい）', ()
   });
 });
 
+describe('防具の見た目: 段ごとの違い（設定図 B。岩の色は変えず、筋と晶が増える）', () => {
+  const tris = (slot: ArmorSlot, tier: number): number => {
+    const b = buildHunterArmor(only(slot, tier))!;
+    return b.rock.triangles + b.rim.triangles;
+  };
+
+  it('段の表: 縁は上ほど太く、筋は脈殻から、晶は晶殻から。大きさは少しずつ', () => {
+    expect([2, 3, 4, 5].map((t) => ARMOR_TIERS[t]!.veins)).toEqual([0, 2, 2, 3]);
+    expect([2, 3, 4, 5].map((t) => ARMOR_TIERS[t]!.grown)).toEqual([0, 0, 1, 2]);
+    for (const t of [3, 4, 5]) {
+      expect(ARMOR_TIERS[t]!.scale).toBeGreaterThan(ARMOR_TIERS[t - 1]!.scale);
+      expect(ARMOR_TIERS[t]!.bevel).toBeGreaterThanOrEqual(ARMOR_TIERS[t - 1]!.bevel);
+    }
+    expect(ARMOR_TIERS[5]!.scale).toBeLessThanOrEqual(1.12);
+  });
+
+  it('岩の板の形（三角形の数）は、どの段も同じ。変わるのは、縁の側（筋と晶）だけ', () => {
+    for (const slot of ARMOR_SLOTS) {
+      const rock = [2, 3, 4, 5].map((t) => buildHunterArmor(only(slot, t))!.rock.triangles);
+      expect(new Set(rock).size, slot).toBe(1);
+    }
+  });
+
+  it('脈殻から、体の板に晶脈の筋が走る（兜の板には走らせない）', () => {
+    for (const slot of ['chest', 'arms', 'waist', 'legs'] as const) expect(tris(slot, 3), slot).toBeGreaterThan(tris(slot, 2));
+    expect(tris('head', 3)).toBe(tris('head', 2));
+    // 輝殻は、筋が 1 本多い
+    expect(tris('legs', 5)).toBeGreaterThan(tris('legs', 4));
+    expect(tris('legs', 4)).toBe(tris('legs', 3));
+  });
+
+  it('晶殻から、左の肩・左胸・左の腰に晶が育つ。左の籠手は輝殻だけ。脛と兜には育たない', () => {
+    expect(tris('chest', 4)).toBeGreaterThan(tris('chest', 3));
+    expect(tris('waist', 4)).toBeGreaterThan(tris('waist', 3));
+    expect(tris('arms', 4)).toBe(tris('arms', 3));
+    expect(tris('arms', 5)).toBeGreaterThan(tris('arms', 4));
+    expect(tris('head', 5)).toBe(tris('head', 2));
+  });
+
+  it('晶は左側だけ（右側の縁の点の数は、脈殻と晶殻で同じ）', () => {
+    for (const slot of ['chest', 'waist'] as const) {
+      const right = (t: number): number => points(buildHunterArmor(only(slot, t))!.rim).filter((p) => p.x < -0.03).length;
+      expect(right(4), slot).toBe(right(3));
+      const left = (t: number): number => points(buildHunterArmor(only(slot, t))!.rim).filter((p) => p.x > 0.03).length;
+      expect(left(4), slot).toBeGreaterThan(left(3));
+    }
+  });
+
+  it('左胸の晶は、板の下の外寄りで、板より前へ出る（同じ場所の右胸より前に、縁の点がある）', () => {
+    // 胸の板の、下の外寄り（胴の丸みで、板の中央より奥にある場所）
+    const front = (t: number, side: 1 | -1): number => Math.max(...points(buildHunterArmor(only('chest', t))!.rim).filter((p) => p.x * side > 0.09 && p.x * side < 0.145 && p.y > 1.29 && p.y < 1.37 && p.z > 0).map((p) => p.z));
+    // 左は、脈殻より 8mm 以上前へ出る。右は、ほとんど変わらない（大きさが 2% 違うだけ）
+    expect(front(4, 1)).toBeGreaterThan(front(3, 1) + 0.008);
+    expect(Math.abs(front(4, -1) - front(3, -1))).toBeLessThan(0.004);
+  });
+
+  it('どの部位を着ているかで、ほかの部位の形は変わらない（一式の頂点は、部位ごとの頂点を合わせたもの）', () => {
+    for (const t of [2, 5]) {
+      const whole = all(full(t)).length;
+      expect(ARMOR_SLOTS.reduce((n, s) => n + all(only(s, t)).length, 0), `段 ${t}`).toBe(whole);
+      const chestAlone = box(all(only('chest', t))), chestWithAll = box(all(full(t)).filter((p) => p.y > 1.26 && p.y < 1.56 && Math.abs(p.x) > 0.02));
+      expect(chestWithAll.maxX).toBeCloseTo(chestAlone.maxX, 6);
+    }
+  });
+});
+
 describe('防具の見た目: 動くための決まり（依頼 7 の 3 章）', () => {
   it('兜は、頭のてっぺんから 6cm まで', () => {
     expect(box(all(only('head'))).maxY).toBeLessThanOrEqual(REST.top + 0.06);
@@ -98,8 +165,30 @@ describe('防具の見た目: 動くための決まり（依頼 7 の 3 章）',
     expect(ps.filter((p) => p.z > 0.07 && p.y < 1.62)).toHaveLength(0);
   });
 
+  it('兜（設定図 v2）: 帯が交わるてっぺんに、小さな平たい岩が乗る。うなじの板は、額の帯のすぐ下から下がる（すき間が無い）', () => {
+    const b = buildHunterArmor(only('head'))!;
+    const rock = points(b.rock);
+    // てっぺんの岩: 鉢（1.785m まで）より上で、頭の真上の小さな範囲
+    const tab = rock.filter((p) => p.y > 1.787);
+    expect(tab.length).toBeGreaterThan(0);
+    for (const p of tab) expect(Math.hypot(p.x, p.z)).toBeLessThan(0.03);
+    // うなじの板の上の縁は、額の帯（下の縁 1.657m）に届く
+    const nape = rock.filter((p) => p.z < -0.1 && Math.abs(p.x) < 0.07 && p.y < 1.665);
+    expect(Math.max(...nape.map((p) => p.y))).toBeGreaterThan(1.652);
+  });
+
+  it('兜（設定図 v2）: 額の帯に、鋲が 12 個並ぶ（帯より外へ出る小さな粒）', () => {
+    const rim = points(buildHunterArmor(only('head'))!.rim);
+    // 額の帯の高さで、帯の面（鉢の半径 + 5mm）より 2mm 以上外にある点 = 鋲の先
+    const studs = rim.filter((p) => p.y > 1.662 && p.y < 1.685 && Math.hypot(p.x / (0.097 + 0.005), (p.z - 0.002) / ((p.z > 0.002 ? 0.114 : 0.112) + 0.005)) > 1.045);
+    // 1 個の鋲は、先の 1 点を 5 枚の三角形が共有する（平らな面なので、頂点は 5 つ）
+    expect(studs.length).toBe(12 * 5);
+    // 前後左右（帯が交わる所）には置かない
+    for (const p of studs) expect(Math.min(Math.abs(p.x), Math.abs(p.z - 0.002))).toBeGreaterThan(0.02);
+  });
+
   it('頬当ては、左の方が大きい', () => {
-    const cheeks = all(only('head')).filter((p) => Math.abs(p.x) > 0.08 && p.y < 1.655 && p.z > -0.03);
+    const cheeks = all(only('head')).filter((p) => Math.abs(p.x) > 0.08 && p.y < 1.655 && p.z > -0.06);
     const l = box(cheeks.filter((p) => p.x > 0)), r = box(cheeks.filter((p) => p.x < 0));
     expect(l.maxY - l.minY).toBeGreaterThan(r.maxY - r.minY + 0.015);
     expect(l.maxZ - l.minZ).toBeGreaterThan(r.maxZ - r.minZ + 0.01);
@@ -109,8 +198,8 @@ describe('防具の見た目: 動くための決まり（依頼 7 の 3 章）',
     for (const t of [2, 5]) {
       const b = box(all(only('chest', t)).filter((p) => Math.abs(p.x) > 0.17));
       expect(Math.max(b.maxX, -b.minX), `段 ${t}`).toBeLessThanOrEqual(REST.shoulderX + 0.12);
-      // 晶殻・輝殻で左肩に生える短い晶は、板より上へ出る（設定図は未受領。仮）
-      if (t === 2) expect(b.maxY).toBeLessThanOrEqual(REST.shoulderY + 0.08);
+      // 晶殻・輝殻で左肩に育つ晶も、この中に収める（腕を真上へ振り上げるため）
+      expect(b.maxY, `段 ${t}`).toBeLessThanOrEqual(REST.shoulderY + 0.08);
     }
   });
 
