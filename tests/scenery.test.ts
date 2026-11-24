@@ -8,7 +8,8 @@ import { describe, expect, it } from 'vitest';
 import { SeededRng } from '../src/core/seededRng';
 import { FOG_COLOR, SUN_DIR } from '../src/render/arena';
 import { ENV_FAR, ENV_TILES, WIND, swayInWind } from '../src/render/envArt';
-import { ROCK_REACH, boulderGeometry, cavityOf, cliffGeometry } from '../src/render/rockGeo';
+import { ROCK_REACH, boulderGeometry, cavityOf, cliffGeometry, ledgeGeometry } from '../src/render/rockGeo';
+import { AreaShape } from '../src/game/areaShape';
 import { SKY_LOOKS, SkyDome } from '../src/render/sky';
 
 const ROOT = join(__dirname, '..');
@@ -176,5 +177,79 @@ describe('草の揺れと、岩の絵の濃淡', () => {
       const m = measure[t.file]!;
       expect(m.contrastAfter!, t.file).toBeGreaterThan(m.contrastBefore! * 1.35);
     }
+  });
+});
+
+describe('自然な形のエリアの岩壁・埋まった岩・岩の棚（v0.20.0）', () => {
+  const field = JSON.parse(readFileSync(join(ROOT, 'public/data/fields/basin.json'), 'utf8')) as {
+    areas: { id: string; bounds: { minX: number; maxX: number; minZ: number; maxZ: number }; shape: [number, number][]; exits: { x: number; z: number }[] }[];
+  };
+
+  it('岩壁は外周に沿い、歩ける範囲へ入り込まない（狭い谷・広い原・巣）。出口の前は開く', () => {
+    for (const id of ['a1', 'a2', 'a5', 'a10']) {
+      const a = field.areas.find((x) => x.id === id)!;
+      const s = new AreaShape(a.shape);
+      const g = cliffGeometry(new SeededRng(5), { bounds: a.bounds, shape: s.points(), gates: a.exits, height: [5, 5.5], moss: 0.6, veins: 0.3 }, ENV_TILES.rock.tile);
+      const pos = g.getAttribute('position');
+      let gateTop = -Infinity, wallTop = -Infinity;
+      for (let i = 0; i < pos.count; i++) {
+        const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+        expect(s.signedDistance(x, z), `${id} 頂点 ${i}`).toBeLessThan(0.01);
+        const dGate = Math.min(...a.exits.map((e) => Math.hypot(x - e.x, z - e.z)));
+        if (dGate < 4) gateTop = Math.max(gateTop, y);
+        if (dGate > 14) wallTop = Math.max(wallTop, y);
+      }
+      expect(gateTop, id).toBeLessThan(0.3);
+      expect(wallTop, id).toBeGreaterThan(5);
+      sane(g, `${id} の岩壁`);
+    }
+  });
+
+  it('埋まった岩: いちばん太い所が地面の高さにあり（当たりの半径の 1.06 倍）、上ほど細い。高さは 0〜1 で、地面の下は浅い', () => {
+    for (let seed = 1; seed <= 10; seed++) {
+      const g = boulderGeometry(new SeededRng(seed), { detail: 3, rough: 0.5, moss: 0.6, strata: 0.7, cuts: 4, bury: 0.35 + (seed % 5) * 0.05 });
+      const pos = g.getAttribute('position');
+      let top = -Infinity, low = Infinity, base = 0, upper = 0;
+      for (let i = 0; i < pos.count; i++) {
+        const y = pos.getY(i), r = Math.hypot(pos.getX(i), pos.getZ(i));
+        top = Math.max(top, y);
+        low = Math.min(low, y);
+        if (y >= -0.02 && y <= 0.2) base = Math.max(base, r);
+        if (y >= 0.6) upper = Math.max(upper, r);
+      }
+      expect(top, `seed ${seed}`).toBeCloseTo(1, 5);
+      expect(low, `seed ${seed}`).toBeGreaterThan(-0.15);
+      expect(base, `seed ${seed}`).toBeCloseTo(ROCK_REACH, 5);
+      expect(upper, `seed ${seed}`).toBeLessThan(base * 0.95);
+      sane(g, `埋まった岩 ${seed}`);
+    }
+  });
+
+  it('岩の棚: 上の面は高さ h で上を向き、横の面は外を向く。見た目は、当たりの四角から 0.25m までしかはみ出さない', () => {
+    const p = { minX: -6, maxX: 8, minZ: 2, maxZ: 12, h: 0.3 };
+    const g = ledgeGeometry(new SeededRng(4), p, 6, 3);
+    const pos = g.getAttribute('position'), nor = g.getAttribute('normal');
+    const [top, side] = g.groups;
+    expect(top!.materialIndex).toBe(0);
+    expect(side!.materialIndex).toBe(1);
+    const idx = g.getIndex()!;
+    const cx = (p.minX + p.maxX) / 2, cz = (p.minZ + p.maxZ) / 2;
+    for (let k = top!.start; k < top!.start + top!.count; k++) {
+      const i = idx.getX(k);
+      expect(pos.getY(i)).toBeCloseTo(p.h, 6);
+      expect(nor.getY(i)).toBeGreaterThan(0.5);
+    }
+    let outward = 0, total = 0;
+    for (let k = side!.start; k < side!.start + side!.count; k++) {
+      const i = idx.getX(k);
+      const x = pos.getX(i), z = pos.getZ(i);
+      expect(x).toBeGreaterThan(p.minX - 0.25 - 0.16);
+      expect(x).toBeLessThan(p.maxX + 0.25 + 0.16);
+      expect(z).toBeGreaterThan(p.minZ - 0.25 - 0.16);
+      expect(z).toBeLessThan(p.maxZ + 0.25 + 0.16);
+      total++;
+      if (nor.getX(i) * (x - cx) + nor.getZ(i) * (z - cz) > 0) outward++;
+    }
+    expect(outward / total).toBeGreaterThan(0.95);
   });
 });

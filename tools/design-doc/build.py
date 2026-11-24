@@ -66,7 +66,8 @@ field, shop, items_doc, hub = data('fields/basin.json'), data('shop.json'), data
 KIND = {'camp': '野営地', 'path': '通り道', 'hunt': '狩場', 'nest': '巣'}
 area_by = {a['id']: a for a in field['areas']}
 route = field['routes']['monster.galdros']
-area_rows = [[str(a['no']), a['name'], KIND[a['kind']], f"{round(a['bounds']['maxX'] - a['bounds']['minX'])}×{round(a['bounds']['maxZ'] - a['bounds']['minZ'])}m",
+SIZE = {'narrow': '狭い', 'medium': '中', 'wide': '広い'}
+area_rows = [[str(a['no']), a['name'], KIND[a['kind']], f"{SIZE.get(a.get('size'), '')} {round(a['bounds']['maxX'] - a['bounds']['minX'])}×{round(a['bounds']['maxZ'] - a['bounds']['minZ'])}m".strip(),
               '入る' if a['large'] else '—', '・'.join('野営地' if area_by[e['to']]['kind'] == 'camp' else str(area_by[e['to']]['no']) for e in a['exits'])] for a in field['areas']]
 def field_map():
     cols = max(a['grid'][0] for a in field['areas']) + 1
@@ -251,13 +252,13 @@ CH.append(chapter(9, 'D / モンスター', '世界と狩場、小型', '霧と�
     + note('太い枠と太い線 = 大型が入るエリアと、通れる出口。破線 = 人だけが通る道。ガルドロスは「巡る順」のとおりに回り、弱るとエリア 10 で眠る。')
     + table(['番号', '名前', '種類', '大きさ', '大型', 'つながる先'], area_rows, 'tight')
     + ul([f"<b>エリアの移動</b>: 出口（壁の切れ目と門柱）へ入ると、次のエリアへ移る。依頼は野営地から出発し、力尽きると野営地へ戻る。制限時間は {field['timeLimitScale']} 倍（30 分）。",
-          f"<b>大型の移動</b>: 1 つのエリアに {R['stayTicks'][0] // 60}〜{R['stayTicks'][1] // 60} 秒。技の途中でなければ、次のエリアへ歩いて出る（その間は技を出さない）。気づいていない間は、エリアの中をぶらつく。別のエリアに居る相手には気づかない。",
+          f"<b>大型の移動</b>: 1 つのエリアに {R['stayTicks'][0] // 60}〜{R['stayTicks'][1] // 60} 秒。技の途中でなければ、次のエリアへ走って出る（その間は技を出さない。速さ {R['leaveSpeed']:g}m/s、弱っていれば {R['limpLeaveSpeed']:g}m/s で、狩人の走る速さより速い）。気づいていない間は、エリアの中をぶらつく。別のエリアに居る相手には気づかない。",
           f"<b>休息</b>: 体力が {round(R['limpHpRatio'] * 100)}% 以下になると巣へ向かい、寝床で {R['sleepTicks'] // 60} 秒眠って、{round(R['sleepHealCap'] * 100)}% まで戻す。攻撃されると起きる。",
           '作り: エリアを 1 つの座標の中に 240m おきに離して置く。描くのは居るエリアだけ。大型は、誰も見ていないエリアでも同じ計算で歩く。データは <code>public/data/fields/</code>、作るのは <code>npm run field:gen</code>。'])
     + f'<h4>狩場の案 {len(bestiary["fields"])}（第 1 版の 6 つと、ChatGPT の案 14。歩けるのは 1 つ）</h4>'
     + table(['狩場', '地形', '天気・光・音', '出る種', '状態'], [
         [f['name'], f['terrain'], f.get('mood', '—'), f"{sum(1 for x in bestiary['species'] if x['habitat'] == f['name'])} 種", '<b>歩ける</b>' if f.get('fieldId') else '案'] for f in bestiary['fields']
-    ]) + ul(['いまあるのは、風礫盆地だけ（エリアの形は、四角い区画に岩と低い段を置いた仮のもの。高低差・水・狭い道は無い）。', '火の獣（13 番）の狩場は、燠脈台地（ChatGPT の案）。', '小型 6 種（コロハネ、スナコブ、ネリガニ、ハリソイ、ヒバツムリ、トバリムシ）は未着手。最初は前の 2 種。',
+    ]) + ul(['いまあるのは、風礫盆地だけ（v0.20.0 から、エリアは自然な形。狭い谷・沢と、広い原がある。形・岩・段は種から作った仮の配置。高低差・水は無い。岩と崖の設定図は ChatGPT に依頼中）。', '火の獣（13 番）の狩場は、燠脈台地（ChatGPT の案）。', '小型 6 種（コロハネ、スナコブ、ネリガニ、ハリソイ、ヒバツムリ、トバリムシ）は未着手。最初は前の 2 種。',
              '世界の決まり: 大地を巡る晶脈が、獣の体に独特な器官を育てる。<b>晶脈の育った個体ほど強い</b>（段階と素材の名前は、ここから付けている）。基本の色は、灰緑・青銅・生成り。'])))
 
 CH.append(chapter(10, 'E / 制作計画', '開発段階のいま', '第 1 版 31 章の段階に、いまの位置を書き込んだ。',

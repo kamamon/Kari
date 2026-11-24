@@ -2,14 +2,15 @@
 // 立体は、箱・板・多面体の簡単な形。その面に、景色の絵（依頼 8。src/render/envArt.ts）を貼る（v0.13.0、docs/spec.md の 21 章）。
 // フィールドでは、エリアごとに 1 つの Group を作る（setupSky で空と光を 1 回だけ用意し、buildAreaGroup をエリアの数だけ呼ぶ）。
 import {
-  BoxGeometry, CircleGeometry, Color, ConeGeometry, CylinderGeometry, DirectionalLight, Float32BufferAttribute, FogExp2, Group, HemisphereLight, IcosahedronGeometry,
+  CircleGeometry, Color, ConeGeometry, CylinderGeometry, DirectionalLight, Float32BufferAttribute, FogExp2, Group, HemisphereLight, IcosahedronGeometry,
   InstancedMesh, Matrix4, Mesh, MeshBasicMaterial, MeshLambertMaterial, Object3D, PlaneGeometry, Quaternion, Scene, Vector3,
 } from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { SeededRng } from '../core/seededRng';
 import type { MapDef } from '../data/schemas';
 import { ENV_SPRITES, ENV_TILES, SpriteField, boxUv, buildBackdrop, tileMaterial, type EnvPlace, type EnvTile } from './envArt';
-import { boulderGeometry, cliffGeometry } from './rockGeo';
+import { AreaShape, type Pt } from '../game/areaShape';
+import { boulderGeometry, cliffGeometry, ledgeGeometry, polyPath } from './rockGeo';
 import { SKY_LOOKS, SkyDome } from './sky';
 
 export const FOG_COLOR = 0xaebcab;
@@ -33,6 +34,8 @@ export interface Arena {
 /** 1 つのエリアの見た目に要るもの（形は MapDef / FieldAreaDef と同じ）。 */
 export interface AreaLook {
   bounds: { minX: number; maxX: number; minZ: number; maxZ: number };
+  /** 歩ける範囲の外周（v0.20.0。自然な形のエリア）。あれば、岩壁・草・崩れた岩は、これに沿う。無ければ bounds の四角 */
+  shape?: Pt[];
   rocks: { x: number; z: number; r: number; h: number }[];
   platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number }[];
   /** 天幕を置く場所（無ければ置かない） */
@@ -137,6 +140,10 @@ export function buildAreaGroup(map: AreaLook): Group {
 
   const look = KIND_LOOK[map.kind ?? 'hunt'];
   const noise = patchNoise(map.seed ?? 9001);
+  // 自然な形のエリア（v0.20.0）: 内か外か・縁までの距離・外向きを、外周から測る
+  const outline = map.shape && map.shape.length >= 3 ? new AreaShape(map.shape) : null;
+  const inside = (x: number, z: number, margin: number): boolean =>
+    outline ? outline.signedDistance(x, z) >= margin : x >= b.minX + margin && x <= b.maxX - margin && z >= b.minZ + margin && z <= b.maxZ - margin;
 
   // 地面: 絵を、1 枚 = 6m 四方で敷き詰める。同じ絵の並びが目立たないよう、頂点の色で、ゆるい濃淡と色むらを足す
   const gw = w + GROUND_MARGIN * 2, gd = d + GROUND_MARGIN * 2;
@@ -167,7 +174,6 @@ export function buildAreaGroup(map: AreaLook): Group {
 
   const rockDark = tileMaterial('rock', 0xd2d6ce, { flat: true, gain: ROCK_GAIN });
   const bronze = new MeshLambertMaterial({ color: 0xb08d57, emissive: 0x2a1d08, flatShading: true });
-  const stepMat = tileMaterial('rock', 0xf2efe6, { flat: true, gain: ROCK_GAIN });
   const stepTop = tileMaterial(look.ground, 0xffffff, { gain: GROUND_GAIN * 0.95 });
   // 岩と岩壁（v0.19.0）: なめらかな凹凸と、頂点の色（苔・陰・晶脈）。色の分だけ暗くなるので、少し持ち上げる
   const boulderMat = tileMaterial('rock', 0xffffff, { vertexColors: true, gain: ROCK_GAIN * 1.12, bump: ROCK_BUMP });
@@ -175,12 +181,13 @@ export function buildAreaGroup(map: AreaLook): Group {
   const cliffMat = tileMaterial('rock', 0xf4f1ea, { vertexColors: true, gain: ROCK_GAIN * 1.15, bump: ROCK_BUMP });
   const moss = map.kind === 'nest' ? 0.15 : map.kind === 'path' ? 0.35 : map.kind === 'village' ? 0.5 : 0.65;
 
-  // 岩（円柱として衝突する。見た目は、半径と高さに合わせた、凹凸のある岩）。晶脈の走る岩には、青銅色の筋
+  // 岩（円柱として衝突する。見た目は、半径と高さに合わせた、凹凸のある岩）。晶脈の走る岩には、青銅色の筋。
+  // v0.20.0: 地面に埋まった岩（地面の下に大きな体があって、上だけが出ている）。いちばん太い所が地面の高さ
   for (const r of map.drawRocks === false ? [] : map.rocks) {
     const veined = rng.next() < 0.45;
-    const m = new Mesh(boulderGeometry(rng, { detail: 3, rough: 0.4 + rng.next() * 0.2, moss, vein: veined, strata: rng.next() < 0.6 ? 0.6 + rng.next() * 0.4 : 0, cuts: 3 + Math.floor(rng.next() * 4) }), veined ? veinBoulderMat : boulderMat);
-    m.scale.set(r.r, r.h * 0.86, r.r);
-    m.position.set(r.x, -0.05, r.z);
+    const m = new Mesh(boulderGeometry(rng, { detail: 3, rough: 0.4 + rng.next() * 0.2, moss, vein: veined, strata: rng.next() < 0.6 ? 0.6 + rng.next() * 0.4 : 0, cuts: 3 + Math.floor(rng.next() * 4), bury: 0.35 + rng.next() * 0.25 }), veined ? veinBoulderMat : boulderMat);
+    m.scale.set(r.r, r.h * 0.92, r.r);
+    m.position.set(r.x, -0.03, r.z);
     m.rotation.y = rng.next() * 6.28;
     m.castShadow = true;
     m.receiveShadow = true;
@@ -188,41 +195,48 @@ export function buildAreaGroup(map: AreaLook): Group {
     group.add(m);
   }
 
-  // 段差（横は岩肌、上は、その場所の地面）
+  // 段差（v0.20.0: 角の丸い岩の棚。上は、その場所の地面。横は岩肌で、下ほど外へ広がって地面に入る）
   for (const p of map.platforms) {
-    const box = new Mesh(new BoxGeometry(p.maxX - p.minX, p.h, p.maxZ - p.minZ), [stepMat, stepMat, stepTop, stepMat, stepMat, stepMat]);
-    box.position.set((p.minX + p.maxX) / 2, p.h / 2, (p.minZ + p.maxZ) / 2);
-    box.castShadow = true;
-    box.receiveShadow = true;
-    boxUv(box, ENV_TILES.rock.tile, ENV_TILES[look.ground].tile);
-    group.add(box);
+    const ledge = new Mesh(ledgeGeometry(rng, p, ENV_TILES[look.ground].tile, ENV_TILES.rock.tile), [stepTop, boulderMat]);
+    ledge.castShadow = true;
+    ledge.receiveShadow = true;
+    group.add(ledge);
   }
 
   // 外周の岩壁（v0.19.0）: 四角のすぐ外に立つ、切り立った 1 枚の岩の面。高さと面の凹凸は雑音で変える。出入口の所は開ける
   // （見た目のみ。衝突は外周で止まり、出口は simulation が扱う）
   const wallH = map.wallHeight ?? [5, 5.5];
-  const cliff = new Mesh(cliffGeometry(rng, { bounds: b, gates, height: wallH, moss, veins: map.kind === 'village' ? 0 : map.kind === 'nest' ? 0.7 : 0.3 }, ENV_TILES.rock.tile), cliffMat);
+  const cliff = new Mesh(cliffGeometry(rng, { bounds: b, shape: outline?.points(), gates, height: wallH, moss, veins: map.kind === 'village' ? 0 : map.kind === 'nest' ? 0.7 : 0.3 }, ENV_TILES.rock.tile), cliffMat);
   cliff.castShadow = true;
   cliff.receiveShadow = true;
   group.add(cliff);
   // 岩壁の根元の崩れた岩（歩ける範囲の外）と、大きな岩のまわりの小石（足首より低い）
-  addRubble(group, rng, b, gates, map.drawRocks === false ? [] : map.rocks, boulderMat, moss, map.kind === 'village' ? 0.35 : 1);
+  addRubble(group, rng, b, outline, gates, map.drawRocks === false ? [] : map.rocks, boulderMat, moss, map.kind === 'village' ? 0.35 : 1);
 
   // 出口の目印: 踏み跡（明るい地面）と、両脇の門柱。柱の頭は青銅色
   const trail = tileMaterial('gravel', map.kind === 'path' ? 0xdcd6c8 : 0xffffff, { gain: GROUND_GAIN });
+  /** 出口の外向き（自然な形なら、いちばん近い縁の外向き。四角なら、近い辺の外向き） */
+  const outward = (g: { x: number; z: number }): [number, number] => {
+    if (outline) {
+      const o = outline.outwardAt(g.x, g.z);
+      return [o.x, o.z];
+    }
+    const ox = Math.abs(g.x - b.minX) < 5 ? -1 : Math.abs(g.x - b.maxX) < 5 ? 1 : 0;
+    return [ox, ox !== 0 ? 0 : g.z < cz ? -1 : 1];
+  };
   for (const g of gates) {
     if (!g.marker) continue;
-    // 外向き（エリアの中心から出口へ）
-    const ox = Math.abs(g.x - b.minX) < 5 ? -1 : Math.abs(g.x - b.maxX) < 5 ? 1 : 0;
-    const oz = ox !== 0 ? 0 : g.z < cz ? -1 : 1;
-    const path = new Mesh(new PlaneGeometry(ox !== 0 ? 16 : 5.4, ox !== 0 ? 5.4 : 16), trail);
+    const [ox, oz] = outward(g);
+    // 踏み跡: 出口から内へ、外向きに沿った細長い帯
+    const path = new Mesh(new PlaneGeometry(5.4, 16), trail);
     path.rotation.x = -Math.PI / 2;
-    path.position.set(g.x + ox * 2, 0.015, g.z + oz * 2);
+    path.rotation.z = Math.atan2(ox, oz) + Math.PI;
+    path.position.set(g.x - ox * 3, 0.015, g.z - oz * 3);
     path.receiveShadow = true;
     boxUv(path, ENV_TILES.gravel.tile);
     group.add(path);
     for (const s of [-1, 1]) {
-      const px = g.x + ox * 2.3 + (ox !== 0 ? 0 : s * 3.1), pz = g.z + oz * 2.3 + (ox !== 0 ? s * 3.1 : 0);
+      const px = g.x + ox * 2.3 - oz * s * 3.1, pz = g.z + oz * 2.3 + ox * s * 3.1;
       const post = new Mesh(new CylinderGeometry(0.42, 0.6, 3.4, 6), rockDark);
       post.position.set(px, 1.7, pz);
       post.castShadow = true;
@@ -237,11 +251,21 @@ export function buildAreaGroup(map: AreaLook): Group {
   // 巣: 壁ぎわに、晶の柱が立つ
   if (map.kind === 'nest') {
     const crystal = new MeshLambertMaterial({ color: 0xc9a86a, emissive: 0x5a3c12, flatShading: true });
+    const rim = outline ? polyPath(outline.points(), 0, 1) : null;
     for (let i = 0; i < 26; i++) {
-      const side = i % 4;
-      const t = rng.next();
-      const x = side < 2 ? b.minX + t * w : side === 2 ? b.minX + 0.6 + rng.next() * 2.2 : b.maxX - 0.6 - rng.next() * 2.2;
-      const z = side === 0 ? b.minZ + 0.6 + rng.next() * 2.2 : side === 1 ? b.maxZ - 0.6 - rng.next() * 2.2 : b.minZ + t * d;
+      let x: number, z: number;
+      if (rim) {
+        // 外周の内側 0.6〜2.8m
+        const q = rim[Math.floor(rng.next() * rim.length)]!;
+        const inn = 0.6 + rng.next() * 2.2;
+        x = q.x - q.nx * inn;
+        z = q.z - q.nz * inn;
+      } else {
+        const side = i % 4;
+        const t = rng.next();
+        x = side < 2 ? b.minX + t * w : side === 2 ? b.minX + 0.6 + rng.next() * 2.2 : b.maxX - 0.6 - rng.next() * 2.2;
+        z = side === 0 ? b.minZ + 0.6 + rng.next() * 2.2 : side === 1 ? b.maxZ - 0.6 - rng.next() * 2.2 : b.minZ + t * d;
+      }
       if (gates.some((g) => Math.hypot(g.x - x, g.z - z) < 7)) continue;
       const h = 1.4 + rng.next() * 3.2;
       const c = new Mesh(new ConeGeometry(0.28 + rng.next() * 0.3, h, 5), crystal);
@@ -256,11 +280,19 @@ export function buildAreaGroup(map: AreaLook): Group {
 
   // 草と小物: 切り抜きの絵を貼った板を立てる（種類ごとに 1 回の描画）。濃淡に合わせて、かたまって生える
   const clear = map.clear ?? [];
+  // 埋まった岩（v0.20.0）は、根元まで草が生える（岩の半径の 0.85 倍まで寄る。地面との境が、草に隠れる）
   const blocked = (x: number, z: number): boolean =>
-    map.rocks.some((r) => Math.hypot(x - r.x, z - r.z) < r.r + 0.35) ||
+    !inside(x, z, 0.3) ||
+    map.rocks.some((r) => Math.hypot(x - r.x, z - r.z) < (map.drawRocks === false ? r.r + 0.35 : r.r * 0.85)) ||
     map.platforms.some((p) => x > p.minX - 0.3 && x < p.maxX + 0.3 && z > p.minZ - 0.3 && z < p.maxZ + 0.3) ||
     clear.some((c) => Math.hypot(x - c.x, z - c.z) < c.r) ||
-    gates.some((g) => g.marker === true && Math.abs(x - g.x) < 3.2 + (Math.abs(g.x - cx) > w / 2 - 6 ? 7 : 0) && Math.abs(z - g.z) < 3.2 + (Math.abs(g.z - cz) > d / 2 - 6 ? 7 : 0)) ||
+    gates.some((g) => {
+      if (g.marker !== true) return false;
+      // 踏み跡の帯（出口から内へ 11m、幅 6.4m）
+      const [ox, oz] = outward(g);
+      const along = -((x - g.x) * ox + (z - g.z) * oz), side = Math.abs((x - g.x) * oz - (z - g.z) * ox);
+      return along > -3 && along < 11 && side < 3.2;
+    }) ||
     (map.camp != null && Math.hypot(x - map.camp.x, z - map.camp.z) < map.camp.r);
   /** 濃い所（clump = 1）か、どこでも（clump = 0）か。置けなければ null */
   const spot = (clump: number) => (): { x: number; z: number } | null => {
@@ -273,7 +305,8 @@ export function buildAreaGroup(map: AreaLook): Group {
     }
     return null;
   };
-  const area = w * d;
+  // 数は、歩ける広さから（自然な形のエリアは、囲む四角より狭い）
+  const area = outline ? outline.area() : w * d;
   const count = (perM2: number, max: number): number => Math.min(max, Math.round(perM2 * area));
   const field = new SpriteField(group, rng);
   const G = ENV_SPRITES.grass, P = ENV_SPRITES.props;
@@ -294,22 +327,26 @@ export function buildAreaGroup(map: AreaLook): Group {
  * 崩れた岩（v0.19.0）: 形の違う 3 つの小さな岩を、InstancedMesh で並べる（描画は 3 回）。
  * 岩壁の根元（歩ける範囲の外、0.3〜1.6m）には 0.4〜1.3m の岩、大きな岩のまわりには 0.12〜0.3m の小石（歩ける範囲の中。足首より低い）。
  */
-function addRubble(group: Group, rng: SeededRng, b: AreaLook['bounds'], gates: { x: number; z: number }[], rocks: AreaLook['rocks'], mat: MeshLambertMaterial, moss: number, amount: number): void {
+function addRubble(group: Group, rng: SeededRng, b: AreaLook['bounds'], outline: AreaShape | null, gates: { x: number; z: number }[], rocks: AreaLook['rocks'], mat: MeshLambertMaterial, moss: number, amount: number): void {
   const geos = [0, 1, 2].map(() => {
-    const m = new Mesh(boulderGeometry(rng, { detail: 2, rough: 0.45, moss, strata: 0, cuts: 3 }));
+    const m = new Mesh(boulderGeometry(rng, { detail: 2, rough: 0.45, moss, strata: 0, cuts: 3, bury: 0.4 }));
     boxUv(m, ENV_TILES.rock.tile * 0.4);
     return m.geometry;
   });
   const lists: { x: number; z: number; s: number; h: number; yaw: number }[][] = [[], [], []];
   const w = b.maxX - b.minX, d = b.maxZ - b.minZ;
   const nearGate = (x: number, z: number): boolean => gates.some((g) => Math.hypot(g.x - x, g.z - z) < 9);
-  // 岩壁の根元: 周りの長さ 4m ごとに 1 つくらい
-  const perim = 2 * (w + d);
+  // 岩壁の根元: 周りの長さ 4m ごとに 1 つくらい（自然な形なら、外周に沿って）
+  const rim = outline ? polyPath(outline.points(), 0, 1) : null;
+  const perim = rim ? rim.length : 2 * (w + d);
   const n1 = Math.round((perim / 4) * amount);
   for (let i = 0; i < n1; i++) {
     const t = rng.next() * perim;
     let x: number, z: number, nx: number, nz: number;
-    if (t < w) [x, z, nx, nz] = [b.minX + t, b.minZ, 0, -1];
+    if (rim) {
+      const q = rim[Math.min(rim.length - 1, Math.floor(t))]!;
+      [x, z, nx, nz] = [q.x, q.z, q.nx, q.nz];
+    } else if (t < w) [x, z, nx, nz] = [b.minX + t, b.minZ, 0, -1];
     else if (t < w + d) [x, z, nx, nz] = [b.maxX, b.minZ + (t - w), 1, 0];
     else if (t < 2 * w + d) [x, z, nx, nz] = [b.maxX - (t - w - d), b.maxZ, 0, 1];
     else [x, z, nx, nz] = [b.minX, b.maxZ - (t - 2 * w - d), -1, 0];
@@ -325,7 +362,7 @@ function addRubble(group: Group, rng: SeededRng, b: AreaLook['bounds'], gates: {
       const a = rng.next() * 6.28;
       const dist = r.r + 0.2 + rng.next() * 1.4;
       const x = r.x + Math.cos(a) * dist, z = r.z + Math.sin(a) * dist;
-      if (x < b.minX + 0.3 || x > b.maxX - 0.3 || z < b.minZ + 0.3 || z > b.maxZ - 0.3 || nearGate(x, z)) continue;
+      if ((outline ? outline.signedDistance(x, z) < 0.3 : x < b.minX + 0.3 || x > b.maxX - 0.3 || z < b.minZ + 0.3 || z > b.maxZ - 0.3) || nearGate(x, z)) continue;
       const s = 0.12 + rng.next() * 0.18;
       lists[(i + 1) % 3]!.push({ x, z, s, h: s * (0.5 + rng.next() * 0.5), yaw: rng.next() * 6.28 });
     }

@@ -17,7 +17,7 @@ import type { FieldAreaDef, FieldExit, HerdDef } from '../data/schemas';
 import type { MonsterState } from './monster';
 import type { PlayerState, SimCtx } from './player';
 import { headingTo, nextHop, wakeMonster } from './roam';
-import type { AreaGeom, Circle } from './world';
+import type { AreaGeom, Circle, World } from './world';
 
 export type HerdMood = 'graze' | 'rest' | 'alert' | 'flee' | 'fight' | 'regroup' | 'hide' | 'travel';
 
@@ -227,18 +227,20 @@ function parentFighting(g: HerdGroup, here: AreaGeom, ctx: SimCtx): MonsterState
 }
 
 /** 中心を、エリアの縁と岩から離す */
-function settle(pt: { x: number; z: number }, area: AreaGeom, pad: number): { x: number; z: number } {
+function settle(pt: { x: number; z: number }, area: AreaGeom, pad: number, world: World): { x: number; z: number } {
   const b = area.bounds;
   const inset = Math.min(pad, (b.maxX - b.minX) / 3, (b.maxZ - b.minZ) / 3);
-  let x = clamp(pt.x, b.minX + inset, b.maxX - inset), z = clamp(pt.z, b.minZ + inset, b.maxZ - inset);
+  // 自然な形のエリアでは、外周の縁から内側へ（四角のエリアは、これまでどおり軸ごとに）
+  const keep = (x: number, z: number): { x: number; z: number } =>
+    world.geo(area) ? world.clampPoint(area, x, z, inset) : { x: clamp(x, b.minX + inset, b.maxX - inset), z: clamp(z, b.minZ + inset, b.maxZ - inset) };
+  let { x, z } = keep(pt.x, pt.z);
   for (const r of area.rocks) {
     const dx = x - r.x, dz = z - r.z;
     const d = Math.hypot(dx, dz);
     const need = r.r + 2.5;
     if (d < need) {
       const ux = d > 1e-6 ? dx / d : 1, uz = d > 1e-6 ? dz / d : 0;
-      x = clamp(r.x + ux * need, b.minX + inset, b.maxX - inset);
-      z = clamp(r.z + uz * need, b.minZ + inset, b.maxZ - inset);
+      ({ x, z } = keep(r.x + ux * need, r.z + uz * need));
     }
   }
   return { x, z };
@@ -259,7 +261,7 @@ export function stepHerdGroup(g: HerdGroup, ctx: SimCtx): void {
     // 逃げ終えて止まっている間は、居る所を新しい居場所にする（静まった後、逃げる前の場所へは戻らない）
     if (!g.travel && !alive.some((m) => m.herd!.mood === 'flee' || m.herd!.mood === 'fight')) {
       const area = ctx.world.areaAt(alive[0]!.pos.x, alive[0]!.pos.z);
-      g.anchor = settle(herdCenter(g, area, ctx), area, 6);
+      g.anchor = settle(herdCenter(g, area, ctx), area, 6, ctx.world);
     }
     return;
   }
@@ -341,7 +343,7 @@ export function stepHerdGroup(g: HerdGroup, ctx: SimCtx): void {
       const r = DRIFT_DIST[0] + g.rng.next() * (DRIFT_DIST[1] - DRIFT_DIST[0]);
       next = { x: g.anchor.x + Math.cos(a) * r, z: g.anchor.z + Math.sin(a) * r };
     }
-    g.anchor = settle(next, area, 6);
+    g.anchor = settle(next, area, 6, ctx.world);
   }
 }
 
@@ -352,7 +354,7 @@ function planTravel(g: HerdGroup, from: string, dest: string, ctx: SimCtx): Herd
   if (!via) return null;
   const to = ctx.field.areas.find((a) => a.id === via.to)!;
   const inward = forwardOf(via.arrive.yaw);
-  return { via, to: via.to, dest, arrival: settle({ x: via.arrive.x + inward.x * 8, z: via.arrive.z + inward.z * 8 }, to, 6), ticks: 0 };
+  return { via, to: via.to, dest, arrival: settle({ x: via.arrive.x + inward.x * 8, z: via.arrive.z + inward.z * 8 }, to, 6, ctx.world), ticks: 0 };
 }
 
 /** 出口の先へ着く（仲間どうしが重ならないように、横へずらす） */
@@ -409,10 +411,14 @@ function fleeGoal(m: MonsterState, player: PlayerState, ctx: SimCtx): { x: numbe
       az /= k;
     }
   }
-  const b = ctx.world.areaAt(m.pos.x, m.pos.z).bounds;
+  const area = ctx.world.areaAt(m.pos.x, m.pos.z);
+  const b = area.bounds;
   const inset = m.def.bodyRadius + 1.5;
   const L = 12;
-  const at = (ux: number, uz: number): { x: number; z: number } => ({ x: clamp(m.pos.x + ux * L, b.minX + inset, b.maxX - inset), z: clamp(m.pos.z + uz * L, b.minZ + inset, b.maxZ - inset) });
+  // 自然な形のエリアでは、外周の縁から内側へ寄せる（四角のエリアは、これまでどおり軸ごとに）
+  const shaped = !!ctx.world.geo(area);
+  const at = (ux: number, uz: number): { x: number; z: number } =>
+    shaped ? ctx.world.clampPoint(area, m.pos.x + ux * L, m.pos.z + uz * L, inset) : { x: clamp(m.pos.x + ux * L, b.minX + inset, b.maxX - inset), z: clamp(m.pos.z + uz * L, b.minZ + inset, b.maxZ - inset) };
   let goal = at(ax, az);
   if (Math.hypot(goal.x - m.pos.x, goal.z - m.pos.z) < 4) {
     // 壁際: 左右のうち、狩人から遠くなる方へ、壁に沿って
@@ -448,13 +454,13 @@ function hideSpot(m: MonsterState, parent: MonsterState, ctx: SimCtx): { x: numb
   if (!best || bd > 30) {
     const dx = c.x - parent.pos.x, dz = c.z - parent.pos.z;
     const d = Math.hypot(dx, dz) || 1;
-    return settle({ x: parent.pos.x + (dx / d) * 20 - (dz / d) * side, z: parent.pos.z + (dz / d) * 20 + (dx / d) * side }, area, 3);
+    return settle({ x: parent.pos.x + (dx / d) * 20 - (dz / d) * side, z: parent.pos.z + (dz / d) * 20 + (dx / d) * side }, area, 3, ctx.world);
   }
   const dx = best.x - parent.pos.x, dz = best.z - parent.pos.z;
   const d = Math.hypot(dx, dz) || 1;
   const ux = dx / d, uz = dz / d;
   const out = best.r + m.def.bodyRadius + 1.2;
-  return settle({ x: best.x + ux * out - uz * side, z: best.z + uz * out + ux * side }, area, 2);
+  return settle({ x: best.x + ux * out - uz * side, z: best.z + uz * out + ux * side }, area, 2, ctx.world);
 }
 
 /** 自分の居場所の中心（別のエリアへ移る途中で、もう着いていれば、着いた先の中心） */

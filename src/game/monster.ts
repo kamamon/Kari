@@ -159,11 +159,15 @@ const isSevered = (m: MonsterState, partId: string): boolean => {
 };
 
 function clearAhead(m: MonsterState, dist: number, ctx: SimCtx): boolean {
-  const b = ctx.world.areaAt(m.pos.x, m.pos.z).bounds;
+  const area = ctx.world.areaAt(m.pos.x, m.pos.z);
   const f = forwardOf(m.yaw);
   const x = m.pos.x + f.x * dist;
   const z = m.pos.z + f.z * dist;
   const r = m.def.bodyRadius;
+  // 自然な形のエリア: 行き先が、外周から体の半径より内側で、そこまでの間も外周に遮られない
+  const g = ctx.world.geo(area);
+  if (g) return g.shape.signedDistance(x, z) > r && g.shape.clear(m.pos.x, m.pos.z, x, z, r * 0.8);
+  const b = area.bounds;
   return x > b.minX + r && x < b.maxX - r && z > b.minZ + r && z < b.maxZ - r;
 }
 

@@ -92,6 +92,12 @@ export interface BoulderOptions {
   strata?: number;
   /** 割れた平らな面の数（風化した岩の、角の立った面。0 で丸いまま） */
   cuts?: number;
+  /**
+   * 埋まり方（v0.20.0。0〜0.6）。渡すと、地面の下に大きな岩があって、上の部分だけが出ている形にする:
+   * 球の中ほど（下からこの割合の高さ）で地面に切り、いちばん太い所が地面の高さに来て、横の面は外へ広がりながら地面に入る。
+   * 高さは 0〜1（置く時に、岩の高さを掛ける）。渡さなければ、これまでの、地面に少し埋めた岩（v0.19.0）。
+   */
+  bury?: number;
 }
 
 /**
@@ -139,15 +145,31 @@ export function boulderGeometry(rng: SeededRng, o: BoulderOptions = {}): BufferG
     let { x, y, z } = p;
     // 地層: 横の段（少し傾けて）
     if (o.strata) y += o.strata * 0.035 * Math.sin((y + x * tilt) * 17 + big * 4);
+    if (o.bury !== undefined) {
+      // 埋まった岩: 地面の高さ（cut）より下は、地面のすぐ下へ寄せる（地面との境に、すき間を作らない）
+      const cut = -1 + 2 * o.bury;
+      if (y > 0.7) y = 0.7 + (y - 0.7) * 0.8;
+      if (y < cut) y = cut + (y - cut) * 0.12;
+      pos.setXYZ(i, x, y - cut, z);
+      continue;
+    }
     // 上を少し平らに、根元は地面の下で平たく
     if (y > 0.55) y = 0.55 + (y - 0.55) * 0.75;
     if (y < -0.25) y = -0.25 + (y + 0.25) * 0.25;
     pos.setXYZ(i, x, (y + 0.25) / 1.1, z);
   }
+  if (o.bury !== undefined) {
+    // 高さを 0〜1 にそろえる
+    let top = 0;
+    for (let i = 0; i < pos.count; i++) top = Math.max(top, pos.getY(i));
+    for (let i = 0; i < pos.count; i++) pos.setY(i, pos.getY(i) / Math.max(0.05, top));
+  }
+  // 根元の広がり（埋まった岩は、地面の高さのあたり。それ以外は、高さ 0〜0.45）
+  const [lo, hi] = o.bury !== undefined ? [-0.02, 0.2] : [0, 0.45];
   let reach = 0;
   for (let i = 0; i < pos.count; i++) {
     const y = pos.getY(i);
-    if (y >= 0 && y <= 0.45) reach = Math.max(reach, Math.hypot(pos.getX(i), pos.getZ(i)));
+    if (y >= lo && y <= hi) reach = Math.max(reach, Math.hypot(pos.getX(i), pos.getZ(i)));
   }
   if (reach > 0) {
     const k = ROCK_REACH / reach;
@@ -163,7 +185,7 @@ export function boulderGeometry(rng: SeededRng, o: BoulderOptions = {}): BufferG
   for (let i = 0; i < pos.count; i++) {
     p.fromBufferAttribute(pos, i);
     const ny = nor.getY(i);
-    const ao = 0.52 + 0.48 * smooth(-0.05, 0.45, p.y);
+    const ao = o.bury !== undefined ? 0.5 + 0.5 * smooth(0, 0.3, p.y) : 0.52 + 0.48 * smooth(-0.05, 0.45, p.y);
     // 大きさ 1 の岩で、くぼみ 0.02 ほどがはっきり暗くなる
     const dark = (1 - Math.min(0.3, Math.max(0, crev[i]!) * 0.8)) * Math.min(1.12, Math.max(0.55, 1 - cav[i]! * 9));
     const tone = 0.86 + 0.28 * fbm3(n, p.x * 5 + 3, p.y * 5, p.z * 5, 2);
@@ -183,6 +205,13 @@ export function boulderGeometry(rng: SeededRng, o: BoulderOptions = {}): BufferG
       gC = gC * (1 - v) + VEIN[1] * v * 0.8;
       b = b * (1 - v) + VEIN[2] * v * 0.8;
     }
+    if (o.bury !== undefined) {
+      // 埋まった岩の根元: 土がはね、湿って暗く、茶色い
+      const soil = 1 - smooth(0, 0.14, p.y);
+      r *= 1 - 0.22 * soil;
+      gC *= 1 - 0.28 * soil;
+      b *= 1 - 0.4 * soil;
+    }
     col[i * 3] = r;
     col[i * 3 + 1] = gC;
     col[i * 3 + 2] = b;
@@ -191,9 +220,92 @@ export function boulderGeometry(rng: SeededRng, o: BoulderOptions = {}): BufferG
   return g;
 }
 
+/**
+ * 段差（v0.20.0）: 四角い箱ではなく、角の丸い、岩の棚。上は平らで（歩く所）、横は岩肌で、下ほど外へ広がって地面に入る。
+ * 当たりは、これまでどおり四角（p）。見た目は、四角の内側に収まる（角だけ、当たりより内側）。
+ * 2 つの材料を使う: 0 = 上の面（地面の絵）、1 = 横の面（岩。頂点の色あり）。
+ */
+export function ledgeGeometry(rng: SeededRng, p: { minX: number; maxX: number; minZ: number; maxZ: number; h: number }, groundTile: number, rockTile: number): BufferGeometry {
+  const n = valueNoise3(Math.floor(rng.next() * 1e9));
+  const w = p.maxX - p.minX, d = p.maxZ - p.minZ;
+  const cx = (p.minX + p.maxX) / 2, cz = (p.minZ + p.maxZ) / 2;
+  const rc = Math.min(1.6, 0.3 * Math.min(w, d));
+  // 外周: 角の丸い四角を 0.5m おきに（面積が正の向き）
+  const ring: { x: number; z: number; nx: number; nz: number }[] = [];
+  const hx = w / 2 - rc, hz = d / 2 - rc;
+  const segs: [number, number, number][] = [[hx, -hz, -Math.PI / 2], [hx, hz, 0], [-hx, hz, Math.PI / 2], [-hx, -hz, Math.PI]];
+  const straight: [number, number, number, number][] = [[-hx, -hz - rc, hx, -hz - rc], [hx + rc, -hz, hx + rc, hz], [hx, hz + rc, -hx, hz + rc], [-hx - rc, hz, -hx - rc, -hz]];
+  for (let k = 0; k < 4; k++) {
+    const [x0, z0, x1, z1] = straight[k]!;
+    const len = Math.hypot(x1 - x0, z1 - z0);
+    const cnt = Math.max(1, Math.round(len / 0.5));
+    const nx = k === 1 ? 1 : k === 3 ? -1 : 0, nz = k === 0 ? -1 : k === 2 ? 1 : 0;
+    for (let i = 0; i < cnt; i++) ring.push({ x: x0 + ((x1 - x0) * i) / cnt, z: z0 + ((z1 - z0) * i) / cnt, nx, nz });
+    const [ax, az, a0] = segs[k]!;
+    const arcN = Math.max(2, Math.round((rc * Math.PI) / 2 / 0.5));
+    for (let j = 0; j < arcN; j++) {
+      const a = a0 + (j / arcN) * (Math.PI / 2);
+      ring.push({ x: ax + Math.cos(a) * rc, z: az + Math.sin(a) * rc, nx: Math.cos(a), nz: Math.sin(a) });
+    }
+  }
+  const R = ring.length;
+  // 横の面の段: [外への距離, 高さ]（上の角は少し丸く、下ほど外へ）
+  const prof: [number, number][] = [[-0.14, p.h], [-0.03, p.h - 0.06], [0.04, p.h * 0.55], [0.12, 0.02], [0.22, -0.2]];
+  const pos: number[] = [], uv: number[] = [], col: number[] = [], idx: number[] = [];
+  // 上の面（扇）: 中心 + 上の縁
+  pos.push(cx, p.h, cz);
+  uv.push(cx / groundTile, -cz / groundTile);
+  col.push(1, 1, 1);
+  for (const q of ring) {
+    const x = cx + q.x + q.nx * prof[0]![0], z = cz + q.z + q.nz * prof[0]![0];
+    pos.push(x, p.h, z);
+    uv.push(x / groundTile, -z / groundTile);
+    col.push(1, 1, 1);
+  }
+  for (let i = 0; i < R; i++) idx.push(0, 1 + ((i + 1) % R), 1 + i);
+  const topCount = idx.length;
+  // 横の面
+  const base = pos.length / 3;
+  let s = 0;
+  for (let i = 0; i < R; i++) {
+    const q = ring[i]!;
+    if (i > 0) s += Math.hypot(q.x - ring[i - 1]!.x, q.z - ring[i - 1]!.z);
+    const bump = fbm3(n, q.x * 0.9 + cx, 0, q.z * 0.9 + cz, 3) - 0.5;
+    for (let k = 0; k < prof.length; k++) {
+      const [o0, y] = prof[k]!;
+      const out = o0 + (k >= 2 ? bump * 0.3 : 0);
+      const x = cx + q.x + q.nx * out, z = cz + q.z + q.nz * out;
+      pos.push(x, y, z);
+      uv.push(s / rockTile, y / rockTile);
+      const shade = (0.42 + 0.3 * smooth(-0.1, p.h, y)) * (0.85 + 0.3 * fbm3(n, x * 2, y * 2, z * 2, 2));
+      col.push(shade * 1.02, shade, shade * 0.95);
+    }
+  }
+  const P = prof.length;
+  for (let i = 0; i < R; i++) {
+    const i2 = (i + 1) % R;
+    for (let k = 0; k < P - 1; k++) {
+      const a = base + i * P + k, b = base + i2 * P + k, c = base + i * P + k + 1, e = base + i2 * P + k + 1;
+      // 段は上から下へ並ぶので、この向きで、外から見て表になる
+      idx.push(a, b, c, b, e, c);
+    }
+  }
+  const g = new BufferGeometry();
+  g.setAttribute('position', new Float32BufferAttribute(pos, 3));
+  g.setAttribute('uv', new Float32BufferAttribute(uv, 2));
+  g.setAttribute('color', new Float32BufferAttribute(col, 3));
+  g.setIndex(idx);
+  g.addGroup(0, topCount, 0);
+  g.addGroup(topCount, idx.length - topCount, 1);
+  g.computeVertexNormals();
+  return g;
+}
+
 export interface CliffOptions {
-  /** 歩ける範囲（この四角のすぐ外に、岩壁の内側の面が立つ） */
+  /** 歩ける範囲（この四角のすぐ外に、岩壁の内側の面が立つ）。shape があれば、そちらに沿う */
   bounds: { minX: number; maxX: number; minZ: number; maxZ: number };
+  /** 歩ける範囲の外周（v0.20.0。自然な形のエリア）。[x, z] の点の列（面積が正の向き = x → z の向きに回る） */
+  shape?: readonly (readonly [number, number])[];
   /** 開ける所（出口）。この点から 4.5m の内は壁が無く、9m までになだらかに高くなる */
   gates: { x: number; z: number }[];
   /** 高さ [いちばん低い所, ばらつきの幅]（m） */
@@ -214,9 +326,60 @@ export function cliffGeometry(rng: SeededRng, o: CliffOptions, tile: number): Bu
   const n = valueNoise3(seed);
   const b = o.bounds;
   const e = 0.5;
-  // 道: 四角の外 e m。角は、角の点を中心にした半径 e の弧
-  const path: { x: number; z: number; nx: number; nz: number }[] = [];
   const step = 0.9;
+  // 道: 外周の外 e m（自然な形なら、外周に沿って。四角なら、四角の外で、角は半径 e の弧）
+  const path: { x: number; z: number; nx: number; nz: number; reach: number }[] = o.shape ? polyPath(o.shape, e, step) : [];
+  if (!o.shape) rectPath(b, e, step, path);
+  return cliffFromPath(path, rng, n, o, tile);
+}
+
+/**
+ * 外周（面積が正の向きの多角形）に沿った道。step m おきの点と、外向きの向き、背を外へ伸ばせる長さ（reach）。
+ * 外周が内側へ入り込む所（外から見てくぼんだ所）では、外向きの線が外で交わるので、背を、交わる手前までに縮める。
+ */
+export function polyPath(shape: readonly (readonly [number, number])[], e: number, step: number): { x: number; z: number; nx: number; nz: number; reach: number }[] {
+  // 間隔をそろえる
+  const src = shape.map((p) => [p[0], p[1]] as [number, number]);
+  let L = 0;
+  const cum = [0];
+  for (let i = 0; i < src.length; i++) {
+    const a = src[i]!, c = src[(i + 1) % src.length]!;
+    L += Math.hypot(c[0] - a[0], c[1] - a[1]);
+    cum.push(L);
+  }
+  const cnt = Math.max(12, Math.round(L / step));
+  const pts: [number, number][] = [];
+  let k = 0;
+  for (let i = 0; i < cnt; i++) {
+    const s = (i / cnt) * L;
+    while (cum[k + 1]! < s) k++;
+    const a = src[k]!, c = src[(k + 1) % src.length]!;
+    const t = (s - cum[k]!) / Math.max(1e-9, cum[k + 1]! - cum[k]!);
+    pts.push([a[0] + (c[0] - a[0]) * t, a[1] + (c[1] - a[1]) * t]);
+  }
+  // 外向き（面積が正の向きでは、進む向きを右へ 90 度）。前後 2 つの点で、ならす
+  const N = pts.length;
+  const out = pts.map((_, i) => {
+    const a = pts[(i - 2 + N) % N]!, c = pts[(i + 2) % N]!;
+    const dx = c[0] - a[0], dz = c[1] - a[1];
+    const l = Math.hypot(dx, dz) || 1;
+    return [dz / l, -dx / l] as [number, number];
+  });
+  // 曲がり（向きの変わり / 長さ）。外向きの線が近づく所（外周が内へ曲がる所）は、半径の 0.85 倍までしか背を伸ばさない
+  const reach = pts.map((_, i) => {
+    const a = out[(i - 3 + N) % N]!, c = out[(i + 3) % N]!;
+    const turn = Math.atan2(a[0] * c[1] - a[1] * c[0], a[0] * c[0] + a[1] * c[1]);
+    // 外向きが、進む向き（右回り）に回れば、外から見てくぼんだ所
+    const kappa = -turn / (6 * step);
+    return kappa > 1e-3 ? Math.min(MAX_REACH, 0.85 / kappa) : MAX_REACH;
+  });
+  return pts.map((p, i) => ({ x: p[0] + out[i]![0] * e, z: p[1] + out[i]![1] * e, nx: out[i]![0], nz: out[i]![1], reach: reach[i]! }));
+}
+
+/** 背を外へ伸ばす、いちばん長い距離（断面の最後の点） */
+const MAX_REACH = 9.5;
+
+function rectPath(b: CliffOptions['bounds'], e: number, step: number, path: { x: number; z: number; nx: number; nz: number; reach: number }[]): void {
   const corners: [number, number, number][] = [[b.maxX, b.minZ, -Math.PI / 2], [b.maxX, b.maxZ, 0], [b.minX, b.maxZ, Math.PI / 2], [b.minX, b.minZ, Math.PI]];
   const edges: [number, number, number, number, number, number][] = [
     // 始点 x, z → 終点 x, z、外向き nx, nz
@@ -231,16 +394,20 @@ export function cliffGeometry(rng: SeededRng, o: CliffOptions, tile: number): Bu
     const cnt = Math.max(1, Math.round(len / step));
     for (let i = 0; i < cnt; i++) {
       const t = i / cnt;
-      path.push({ x: x0 + (x1 - x0) * t, z: z0 + (z1 - z0) * t, nx, nz });
+      path.push({ x: x0 + (x1 - x0) * t, z: z0 + (z1 - z0) * t, nx, nz, reach: MAX_REACH });
     }
     // 角の弧（次の辺へ）
     const [cx, cz, a0] = corners[k]!;
     for (let j = 0; j < 4; j++) {
       const a = a0 + ((j + 0.5) / 4) * (Math.PI / 2);
       const nx2 = Math.cos(a), nz2 = Math.sin(a);
-      path.push({ x: cx + nx2 * e, z: cz + nz2 * e, nx: nx2, nz: nz2 });
+      path.push({ x: cx + nx2 * e, z: cz + nz2 * e, nx: nx2, nz: nz2, reach: MAX_REACH });
     }
   }
+}
+
+/** 道に沿って、断面を並べた岩壁 */
+function cliffFromPath(path: { x: number; z: number; nx: number; nz: number; reach: number }[], rng: SeededRng, n: (x: number, y: number, z: number) => number, o: CliffOptions, tile: number): BufferGeometry {
   // 断面: [外への距離, 高さの割合]（内側の面を細かく → 上の縁 → 背）
   const prof: [number, number][] = [[0.05, -0.08], [0.12, 0.08], [0.2, 0.2], [0.3, 0.32], [0.42, 0.44], [0.56, 0.56], [0.72, 0.68], [0.9, 0.8], [1.15, 0.9], [1.5, 0.97], [2.1, 1.0], [3.4, 1.02], [5.8, 0.8], [9.5, 0.34]];
   const rows = prof.length;
@@ -279,6 +446,8 @@ export function cliffGeometry(rng: SeededRng, o: CliffOptions, tile: number): Bu
       const bump = fbm3(n, s / 3.2, y0 / 3.2, k * 0.7, 3) - 0.5;
       const bumpFine = fbm3(n, s * 1.1 + 13, y0 * 1.1, k, 2) - 0.5;
       let d = d0 * (0.6 + 0.4 * open);
+      // 外周が内へ曲がる所では、背を縮める（外向きの線が交わって、面が折り返さないように）
+      if (k >= face && q.reach < MAX_REACH) d = Math.min(d, 1.5 + (d - 1.5) * Math.max(0, (q.reach - 1.5) / (MAX_REACH - 1.5)));
       let rec = 0;
       if (k >= 1 && k < face) {
         // 地層の段: 層の下ほど奥へ、上ほど手前へ（段の上の面ができる）

@@ -431,9 +431,12 @@ describe('フィールドの群れ', () => {
     applyDamageToMonster(kid, kid.def.parts.findIndex((p) => p.id === 'body'), 5, 'blunt', sim);
     herdHurt(kid, sim);
     expect(parent.aware).toBe(true);
-    // 狩人は離れた所に（幼体が狩人から逃げないように）
-    place(sim, c.x - 40, c.z, 0);
-    sim.areaId = sim.monsterArea(kid)!.id;
+    // 狩人は、同じエリアの離れた所に（幼体が狩人から逃げないように。エリアは自然な形なので、いちばん遠い道しるべ）
+    const here = sim.monsterArea(kid)!;
+    const far = here.nav!.reduce((a, p) => (Math.hypot(p[0] - c.x, p[1] - c.z) > Math.hypot(a[0] - c.x, a[1] - c.z) ? p : a));
+    expect(Math.hypot(far[0] - c.x, far[1] - c.z)).toBeGreaterThan(25);
+    place(sim, far[0], far[1], 0);
+    sim.areaId = here.id;
     run(sim, 60 * 12);
     const hiding = g.members.filter((m) => !m.dead && m.herd!.mood === 'hide');
     expect(hiding.length, moods(g.members).join()).toBeGreaterThan(0);

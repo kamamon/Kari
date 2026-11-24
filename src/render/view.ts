@@ -209,7 +209,7 @@ export class GameView {
     let g = this.areaGroups.get(area.id);
     if (!g) {
       g = buildAreaGroup({
-        bounds: area.bounds, rocks: area.rocks, platforms: area.platforms, kind: area.kind, seed: 9001 + area.no * 131,
+        bounds: area.bounds, shape: area.shape, rocks: area.rocks, platforms: area.platforms, kind: area.kind, seed: 9001 + area.no * 131,
         camp: area.kind === 'camp' ? field.camp : null,
         gates: area.exits.map((e) => ({ x: e.x, z: e.z, marker: true })),
       });

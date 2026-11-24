@@ -68,14 +68,17 @@ export function wakeMonster(m: MonsterState, ctx: SimCtx, byHit: boolean): void 
 
 /**
  * (tx, tz) へ向かう時の向き。まっすぐ行くと岩に当たるなら、いちばん手前の岩の脇を目指す。
- * 脇がエリアの外になる側は選ばない。
+ * 脇がエリアの外になる側は選ばない。自然な形のエリアで、外周に遮られて見えない時は、道しるべを伝う（v0.20.0）。
  */
 export function headingTo(m: MonsterState, tx: number, tz: number, ctx: SimCtx): number {
+  const area = ctx.world.areaAt(m.pos.x, m.pos.z);
+  const aim = ctx.world.steerTo(area, m.pos.x, m.pos.z, tx, tz, m.def.bodyRadius + 0.3, m);
+  tx = aim.x;
+  tz = aim.z;
   const dx = tx - m.pos.x, dz = tz - m.pos.z;
   const dist = Math.hypot(dx, dz);
   if (dist < 1e-6) return m.yaw;
   const ux = dx / dist, uz = dz / dist;
-  const area = ctx.world.areaAt(m.pos.x, m.pos.z);
   let near: { t: number; lat: number; x: number; z: number; clear: number } | null = null;
   for (const c of area.rocks) {
     const rx = c.x - m.pos.x, rz = c.z - m.pos.z;
@@ -87,11 +90,10 @@ export function headingTo(m: MonsterState, tx: number, tz: number, ctx: SimCtx):
     if (!near || t < near.t) near = { t, lat, x: c.x, z: c.z, clear };
   }
   if (!near) return yawOf(dx, dz);
-  const b = area.bounds;
   const pad = m.def.bodyRadius + 0.2;
   const side = (s: number): { x: number; z: number; ok: boolean } => {
     const x = near!.x - uz * s * (near!.clear + 0.8), z = near!.z + ux * s * (near!.clear + 0.8);
-    return { x, z, ok: x >= b.minX + pad && x <= b.maxX - pad && z >= b.minZ + pad && z <= b.maxZ - pad };
+    return { x, z, ok: ctx.world.inArea(area, x, z, pad) };
   };
   // 岩が進む向きの左にあれば右へ、右にあれば左へ
   let w = side(near.lat >= 0 ? -1 : 1);
@@ -111,9 +113,13 @@ function wander(m: MonsterState, ctx: SimCtx): void {
       r.idle--;
       return;
     }
-    const b = ctx.world.areaAt(m.pos.x, m.pos.z).bounds;
+    const area = ctx.world.areaAt(m.pos.x, m.pos.z);
+    const b = area.bounds;
     const inset = Math.min(R.wanderInset, (b.maxX - b.minX) / 3, (b.maxZ - b.minZ) / 3);
-    r.wander = { x: b.minX + inset + ctx.rng.next() * (b.maxX - b.minX - inset * 2), z: b.minZ + inset + ctx.rng.next() * (b.maxZ - b.minZ - inset * 2) };
+    // 自然な形のエリアでは、外周から離れた所を、乱数で選ぶ（四角のエリアは、これまでどおり）
+    r.wander = ctx.world.geo(area)
+      ? ctx.world.randomPoint(area, ctx.rng, Math.max(m.def.bodyRadius + 2, Math.min(R.wanderInset, 6)))
+      : { x: b.minX + inset + ctx.rng.next() * (b.maxX - b.minX - inset * 2), z: b.minZ + inset + ctx.rng.next() * (b.maxZ - b.minZ - inset * 2) };
   }
   const dx = r.wander.x - m.pos.x, dz = r.wander.z - m.pos.z;
   const want = headingTo(m, r.wander.x, r.wander.z, ctx);
@@ -137,8 +143,8 @@ function wander(m: MonsterState, ctx: SimCtx): void {
 
 /** 巣の寝床（エリアの中央）へ、弱った足取りで歩く。着いたら true。 */
 function walkToBed(m: MonsterState, ctx: SimCtx): boolean {
-  const b = ctx.world.areaAt(m.pos.x, m.pos.z).bounds;
-  const bx = (b.minX + b.maxX) / 2, bz = (b.minZ + b.maxZ) / 2;
+  const bed = ctx.world.centerOf(ctx.world.areaAt(m.pos.x, m.pos.z));
+  const bx = bed.x, bz = bed.z;
   if (Math.hypot(bx - m.pos.x, bz - m.pos.z) <= m.def.bodyRadius + 1) return true;
   const want = headingTo(m, bx, bz, ctx);
   m.yaw = turnToward(m.yaw, want, (m.def.turnDegPerSec * DEG) / 60);
@@ -248,12 +254,14 @@ export function stepRoam(m: MonsterState, playerHere: boolean, ctx: SimCtx): boo
     ctx.emit({ type: 'monster_move', target: m.id, areaId: r.areaId });
     return true;
   }
+  // 出ていく時は、狩人が走っても追いつけない速さで（v0.20.0。出ていく間は攻撃してこないので、追いつかれると一方的に斬られる）。
+  // 向きを変えるのも速く、少し曲がりながら走り出す
   const want = headingTo(m, via.x, via.z, ctx);
-  m.yaw = turnToward(m.yaw, want, (m.def.turnDegPerSec * DEG) / 60);
-  if (Math.abs(angleDiff(m.yaw, want)) < 70 * DEG) {
-    const step = ((m.def.moveSpeed ?? 3) * (r.limping ? R.limpSpeedScale : R.walkSpeedScale)) / 60;
-    const f = forwardOf(m.yaw);
-    ctx.world.move(m.pos, m.def.bodyRadius, f.x * step, f.z * step);
-  }
+  m.yaw = turnToward(m.yaw, want, (m.def.turnDegPerSec * R.leaveTurnScale * DEG) / 60);
+  // 大きく向きを変える間も止まらず、弧を描いて走り出す（その場で向きを変えている間に、追いつかれないように）
+  const k = Math.abs(angleDiff(m.yaw, want)) < 100 * DEG ? 1 : 0.6;
+  const step = ((r.limping ? R.limpLeaveSpeed : R.leaveSpeed) * k) / 60;
+  const f = forwardOf(m.yaw);
+  ctx.world.move(m.pos, m.def.bodyRadius, f.x * step, f.z * step);
   return true;
 }

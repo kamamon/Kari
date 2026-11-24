@@ -1216,7 +1216,9 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.keyboard.up('KeyW');
   await page.keyboard.up('ShiftLeft');
   f = await hudField();
-  check('フィールド: 出口へ近づくと「この先」の案内が出て、入るとエリア 1 へ移る（名前が出て、現在地の印が移る）', hint && /この先: エリア 1（礫の坂）/.test(hintText) && moved && f.here === '1' && /^エリア 1 礫の坂/.test(f.where) && /エリア 1礫の坂/.test(f.banner) && Math.abs(f.x + 18) < 3, `${hintText} / ${JSON.stringify(f)}`);
+  // 着く場所は、データの arrive（v0.20.0 から、エリアは自然な形で、出口の位置はデータで決まる）
+  const arrive1 = await page.evaluate(() => window.__vh.sim.field.areas.find((a) => a.id === 'camp').exits.find((e) => e.to === 'a1').arrive);
+  check('フィールド: 出口へ近づくと「この先」の案内が出て、入るとエリア 1 へ移る（名前が出て、現在地の印が移る）', hint && /この先: エリア 1（礫の坂）/.test(hintText) && moved && f.here === '1' && /^エリア 1 礫の坂/.test(f.where) && /エリア 1礫の坂/.test(f.banner) && Math.abs(f.x - arrive1.x) < 3, `${hintText} / ${JSON.stringify(f)}`);
   await page.waitForTimeout(400);
   await page.screenshot({ path: `${OUT}82_field_area1.png` });
   // エリア 3 へ（出口の上へ置く）。同じエリアに入ると、標的が見える
@@ -1290,6 +1292,64 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const fainted = await until(page, () => window.__vh.sim.hunt.faints >= 1 && window.__vh.sim.areaId === 'camp' && window.__vh.sim.player.mode !== 'dead', 60000);
   f = await hudField();
   check('フィールド: 力尽きると野営地へ戻り、標的は巣に残る', fainted && f.here === '営' && f.target === 'a10', JSON.stringify(f));
+  await ctx.close();
+}
+
+// ---- 自然な形のエリアと、出ていく大型の速さ（v0.20.0）----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  await page.evaluate(() => window.__vh.startHunt('quest.basin.003'));
+  await until(page, () => window.__vh.sim.tick > 5 && !!window.__vh.sim.field);
+  const shapes = await page.evaluate(() => window.__vh.sim.field.areas.map((a) => ({ id: a.id, n: a.shape?.length ?? 0, size: a.size })));
+  check('自然な形のエリア（v0.20.0）: どのエリアも、外周が曲がった線（点が 40 以上）。狭い谷・沢と、広い原がある', shapes.every((s) => s.n >= 40) && shapes.filter((s) => s.size === 'narrow').length >= 3 && shapes.filter((s) => s.size === 'wide').length === 3, JSON.stringify(shapes));
+  // 狭い沢（エリア 5）へ移り、壁へ向かって 3 秒歩く。外周の外へは出ない。岩壁は外周に沿う
+  await page.evaluate(() => {
+    const v = window.__vh, s = v.sim, a = s.field.areas.find((x) => x.id === 'a5');
+    s.player.pos = { x: a.center.x, y: 0, z: a.center.z };
+    s.player.prevPos = { ...s.player.pos };
+    s.areaId = 'a5';
+    for (const m of s.monsters) { m.pos = { x: 9999, y: 0, z: 9999 }; m.prevPos = { ...m.pos }; }
+    // いちばん近い壁の方を向く（前へ歩くと、壁に当たる）
+    const o = s.world.geo(s.world.areaAt(a.center.x, a.center.z)).shape.outwardAt(a.center.x, a.center.z);
+    const yaw = Math.atan2(o.x, o.z);
+    s.player.yaw = yaw;
+    s.player.prevYaw = yaw;
+    v.view.cam.snap(yaw);
+  });
+  await page.keyboard.down('KeyW');
+  await page.waitForTimeout(3000);
+  await page.keyboard.up('KeyW');
+  await page.waitForTimeout(400);
+  const wall = await page.evaluate(() => {
+    const v = window.__vh, s = v.sim, p = s.player, a = s.world.areaAt(p.pos.x, p.pos.z);
+    return { area: s.areaId, inside: s.world.inArea(a, p.pos.x, p.pos.z, 0.2), wall: +s.world.wallDistance(a, p.pos.x, p.pos.z).toFixed(2), camWall: +s.world.wallDistance(a, v.view.cam.camera.position.x, v.view.cam.camera.position.z).toFixed(2), stats: v.view.stats() };
+  });
+  check('自然な形のエリア（v0.20.0）: 狭い沢で壁へ歩いても、外周の外へ出ない（縁で止まる）。カメラも外周の内', wall.area === 'a5' && wall.inside && wall.wall < 1.5 && wall.camWall > 0 && wall.stats.calls <= 100, JSON.stringify(wall));
+  await page.screenshot({ path: `${OUT}9y_terrain_gully.png` });
+  // 大型を、出ていかせる（居る時間を終わらせる）。走り出して 0.5 秒後からの 0.75 秒で、速さを測る
+  const leave = await page.evaluate(() => new Promise((resolve) => {
+    const s = window.__vh.sim, m = s.monsters[0];
+    const a = s.field.areas.find((x) => x.id === m.roam.areaId);
+    m.pos = { x: a.center.x, y: 0, z: a.center.z };
+    m.prevPos = { ...m.pos };
+    m.roam.state = 'stay';
+    m.roam.ticks = 1;
+    const t0 = performance.now();
+    let start = null, began = -1;
+    const poll = () => {
+      if (m.roam.state === 'leave') {
+        if (began < 0) began = s.tick;
+        if (!start && s.tick - began >= 30) start = { tick: s.tick, x: m.pos.x, z: m.pos.z };
+        else if (start && s.tick - start.tick >= 45) return resolve({ speed: +(Math.hypot(m.pos.x - start.x, m.pos.z - start.z) / ((s.tick - start.tick) / 60)).toFixed(2), from: a.id });
+      } else if (began >= 0) return resolve({ speed: -1, from: a.id });
+      if (performance.now() - t0 > 20000) return resolve({ speed: -2, state: m.roam.state });
+      setTimeout(poll, 30);
+    };
+    poll();
+  }));
+  check('出ていく大型（v0.20.0）: 狩人の走る速さ（6.4m/s）の 1.15 倍より速く走って、出口へ向かう', leave.speed > 6.4 * 1.15, JSON.stringify(leave));
   await ctx.close();
 }
 

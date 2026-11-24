@@ -5,6 +5,7 @@ import type { Content, FieldDef } from '../src/data/schemas';
 import { FIELD_AREA_GAP, validateField } from '../src/data/validators';
 import type { SimEvent } from '../src/game/events';
 import { areaLabel, areaOf, questTimeLimitTicks } from '../src/game/field';
+import { AreaShape } from '../src/game/areaShape';
 import { applyDamageToMonster } from '../src/game/monster';
 import { resolveIncomingHit } from '../src/game/player';
 import { headingTo, nextHop } from '../src/game/roam';
@@ -62,12 +63,15 @@ describe('フィールドのデータ（風礫盆地）', () => {
     expect(content.monsters.get('monster.galdros')!.discover!.range).toBeLessThan(FIELD_AREA_GAP / 2);
   });
 
-  it('エリア 3 は、これまでの狩場と同じ形・同じ位置', () => {
+  it('エリア 3 は、これまでの狩場と同じ位置の岩と出口を持つ（外周は自然な形。v0.20.0）', () => {
     const legacy = content.maps.get(field.legacyMapId)!;
     const a3 = areaOf(field, field.legacyAreaId)!;
-    expect(a3.bounds).toEqual(legacy.bounds);
     expect(a3.rocks).toEqual(legacy.rocks);
-    expect(a3.platforms).toEqual(legacy.platforms);
+    // 出口は、これまでの外周（±40 / ±30）の 2m 内側
+    expect(a3.exits.map((e) => [e.x, e.z])).toEqual([[0, -28], [-38, 0], [38, 0], [0, 28]]);
+    const s = new AreaShape(a3.shape!);
+    for (const p of [legacy.spawn, legacy.monsterSpawn]) expect(s.signedDistance(p.x, p.z)).toBeGreaterThan(3);
+    for (const r of a3.rocks) expect(s.signedDistance(r.x, r.z)).toBeGreaterThan(r.r + 2);
   });
 
   it('検査は、壊れたデータを見つける（戻る出口が無い・着く場所が出口の上・大型が通れない巡り方）', () => {
@@ -361,9 +365,9 @@ describe('弱ると巣で眠る', () => {
     // 3 → 途中のエリア → 10
     expect(path.length).toBe(2);
     expect(m.roam!.limping).toBe(true);
-    // 入口ではなく、寝床（巣の中央）まで歩いてから眠る
-    const b = areaOf(field, 'a10')!.bounds;
-    expect(Math.hypot(m.pos.x - (b.minX + b.maxX) / 2, m.pos.z - (b.minZ + b.maxZ) / 2)).toBeLessThanOrEqual(m.def.bodyRadius + 1.01);
+    // 入口ではなく、寝床（巣の中心）まで歩いてから眠る
+    const c = areaOf(field, 'a10')!.center!;
+    expect(Math.hypot(m.pos.x - c.x, m.pos.z - c.z)).toBeLessThanOrEqual(m.def.bodyRadius + 1.01);
   });
 
   it('眠っている間に体力が戻る（上限は 40%）。眠り終えると起きて、また巡る', () => {

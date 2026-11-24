@@ -263,7 +263,8 @@ export class Simulation implements SimCtx {
         m.roam = createRoam(field, base.id, this);
         const area = m.roam && field.areas.find((a) => a.id === m.roam!.areaId);
         if (area && area.id !== field.legacyAreaId) {
-          m.pos = { x: (area.bounds.minX + area.bounds.maxX) / 2, y: 0, z: (area.bounds.minZ + area.bounds.maxZ) / 2 };
+          const c = this.world.centerOf(area);
+          m.pos = { x: c.x, y: 0, z: c.z };
           m.prevPos = { ...m.pos };
         }
       }
@@ -304,6 +305,8 @@ export class Simulation implements SimCtx {
         const area = field.areas.find((a) => a.id === fh.areas[0]);
         if (!area) continue;
         const g = this.spawnHerd(base, need.get(base.id) ?? 0, fh.areas, area.id, (rng) => {
+          // 自然な形のエリアでは、外周から 8m 以上離れた所（四角のエリアは、これまでどおり真ん中の 4 割の中）
+          if (this.world.geo(area)) return this.world.randomPoint(area, rng, 8);
           const b = area.bounds;
           return { x: b.minX + (b.maxX - b.minX) * (0.3 + 0.4 * rng.next()), z: b.minZ + (b.maxZ - b.minZ) * (0.3 + 0.4 * rng.next()) };
         });
@@ -318,8 +321,9 @@ export class Simulation implements SimCtx {
       const base = c.monsters.get(t.monsterId);
       if (!base?.herd) throw new Error(`monster ${t.monsterId} は群れで暮らさない（群れの依頼の標的にできない）`);
       const at = field ? (() => {
-        const a = field.areas.find((x) => x.id === field.legacyAreaId)!.bounds;
-        return { x: (a.minX + a.maxX) / 2 + k * 9, z: (a.minZ + a.maxZ) / 2 };
+        const a = field.areas.find((x) => x.id === field.legacyAreaId)!;
+        const c = this.world.centerOf(a);
+        return this.world.clampPoint(a, c.x + k * 9, c.z, 6);
       })() : { x: spawn.x + k * 9, z: spawn.z };
       this.spawnHerd(base, left, [], field ? field.legacyAreaId : '', () => at);
       need.set(t.monsterId, 0);

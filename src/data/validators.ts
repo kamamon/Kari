@@ -2,6 +2,7 @@
 // ブラウザ（fetch）と Node のテスト（fs）の両方から同じ関数を使う。
 // 問題は黙って直さず、すべて errors に積んで呼び出し側へ返す。
 
+import { AreaShape, NavGraph } from '../game/areaShape';
 import { validateBestiary, type BestiaryDef } from './bestiary';
 import {
   ARMOR_SLOTS,
@@ -540,7 +541,21 @@ export function validateField(c: Content, f: FieldDef, errors: string[]): void {
     errors.push(`${w}: エリアが無い`);
     return;
   }
-  const inside = (a: FieldDef['areas'][number], x: number, z: number, margin: number): boolean => x >= a.bounds.minX + margin && x <= a.bounds.maxX - margin && z >= a.bounds.minZ + margin && z <= a.bounds.maxZ - margin;
+  // 自然な形のエリア（v0.20.0）は、外周の多角形で、内か外かを見る
+  const shapes = new Map<string, AreaShape>();
+  for (const a of areas.values()) {
+    if (!a.shape) continue;
+    if (!(Array.isArray(a.shape) && a.shape.length >= 12 && a.shape.every((p) => Array.isArray(p) && p.length === 2 && isNum(p[0]) && isNum(p[1])))) {
+      errors.push(`${w} area ${a.id}: shape が不正（[x, z] の点を 12 個以上）`);
+      continue;
+    }
+    shapes.set(a.id, new AreaShape(a.shape));
+  }
+  const inside = (a: FieldDef['areas'][number], x: number, z: number, margin: number): boolean => {
+    const s = shapes.get(a.id);
+    if (s) return s.signedDistance(x, z) >= margin;
+    return x >= a.bounds.minX + margin && x <= a.bounds.maxX - margin && z >= a.bounds.minZ + margin && z <= a.bounds.maxZ - margin;
+  };
   const list = [...areas.values()];
   const nos = new Set<number>();
   for (const a of list) {
@@ -555,8 +570,25 @@ export function validateField(c: Content, f: FieldDef, errors: string[]): void {
     nos.add(a.no);
     if (!['camp', 'hunt', 'path', 'nest'].includes(a.kind)) errors.push(`${wa}: kind "${String(a.kind)}" は未定義`);
     if (!isNum(a.stepUp)) errors.push(`${wa}: stepUp が無い`);
-    for (const p of a.platforms ?? []) if (!(p.maxX > p.minX) || !(p.maxZ > p.minZ) || !isNum(p.h)) errors.push(`${wa}: platform が不正`);
-    for (const r of a.rocks ?? []) if (!(isNum(r.x) && isNum(r.z) && r.r > 0 && inside(a, r.x, r.z, 0))) errors.push(`${wa}: rock が不正（エリアの外）`);
+    for (const p of a.platforms ?? []) {
+      if (!(p.maxX > p.minX) || !(p.maxZ > p.minZ) || !isNum(p.h)) errors.push(`${wa}: platform が不正`);
+      else if (shapes.has(a.id) && ![[p.minX, p.minZ], [p.maxX, p.minZ], [p.minX, p.maxZ], [p.maxX, p.maxZ]].every(([x, z]) => inside(a, x!, z!, 0.5))) errors.push(`${wa}: platform が外周からはみ出す`);
+    }
+    // 岩は、まるごと外周の中（自然な形のエリア）。四角のエリアは、中心が中
+    for (const r of a.rocks ?? []) if (!(isNum(r.x) && isNum(r.z) && r.r > 0 && inside(a, r.x, r.z, shapes.has(a.id) ? r.r : 0))) errors.push(`${wa}: rock が不正（エリアの外）`);
+    const sh = shapes.get(a.id);
+    if (sh) {
+      // 外周を囲む四角 = bounds
+      if (Math.abs(sh.minX - b.minX) > 0.05 || Math.abs(sh.maxX - b.maxX) > 0.05 || Math.abs(sh.minZ - b.minZ) > 0.05 || Math.abs(sh.maxZ - b.maxZ) > 0.05) errors.push(`${wa}: bounds が、shape を囲む四角と違う`);
+      if (!(a.center && isNum(a.center.x) && isNum(a.center.z) && inside(a, a.center.x, a.center.z, 3))) errors.push(`${wa}: center が無いか、外周に近すぎる（3m より内側に）`);
+      if (!(Array.isArray(a.nav) && a.nav.length > 0 && a.nav.every((p) => Array.isArray(p) && p.length === 2 && inside(a, p[0]!, p[1]!, 1.5)))) errors.push(`${wa}: nav（道しるべ）が無いか、外周に近すぎる`);
+      else {
+        // どの道しるべの間も、いちばん大きな大型（体の半径 1.5m）が通れる道でつながる
+        const g = new NavGraph(sh, a.nav, 1.8);
+        for (let i = 1; i < a.nav.length; i++) if (!g.connected(0, i)) errors.push(`${wa}: nav ${i} が、道しるべ 0 とつながらない`);
+      }
+      if (a.size !== undefined && !['narrow', 'medium', 'wide'].includes(a.size)) errors.push(`${wa}: size "${String(a.size)}" は未定義`);
+    }
     for (const o of list) {
       if (o === a || o.id < a.id || !o.bounds) continue;
       const dx = Math.max(o.bounds.minX - b.maxX, b.minX - o.bounds.maxX, 0), dz = Math.max(o.bounds.minZ - b.maxZ, b.minZ - o.bounds.maxZ, 0);
@@ -609,19 +641,28 @@ export function validateField(c: Content, f: FieldDef, errors: string[]): void {
     if (startArea.kind !== 'camp' || startArea.large) errors.push(`${w}: 出発するエリアは、大型が入れない野営地にする`);
     if (!(f.camp && isNum(f.camp.x) && isNum(f.camp.z) && inside(startArea, f.camp.x, f.camp.z, 0))) errors.push(`${w}: camp が野営地の外`);
   }
-  // これまでの狩場と同じ形のエリア
+  // これまでの狩場にあたるエリア: 岩はこれまでと同じ位置。依頼の出発地点とモンスターの出る所が、中にある
+  // （v0.20.0 から、外周は自然な形。段差は、ほかのエリアと同じように作る）
   const legacy = c.maps.get(f.legacyMapId);
   const la = areas.get(f.legacyAreaId);
   if (!legacy || !la) errors.push(`${w}: legacyMapId / legacyAreaId が不正`);
-  else if (JSON.stringify(la.bounds) !== JSON.stringify(legacy.bounds) || JSON.stringify(la.rocks) !== JSON.stringify(legacy.rocks) || JSON.stringify(la.platforms) !== JSON.stringify(legacy.platforms) || la.stepUp !== legacy.stepUp) {
-    errors.push(`${w}: area ${la.id} の形が、${legacy.id} と違う`);
+  else {
+    if (JSON.stringify(la.rocks) !== JSON.stringify(legacy.rocks) || la.stepUp !== legacy.stepUp) errors.push(`${w}: area ${la.id} の岩が、${legacy.id} と違う`);
+    for (const [label, p] of [['spawn', legacy.spawn], ['monsterSpawn', legacy.monsterSpawn]] as const) {
+      if (!inside(la, p.x, p.z, 3)) errors.push(`${w}: area ${la.id} の中に、${legacy.id} の ${label} が無い`);
+    }
   }
   if (!(isNum(f.timeLimitScale) && f.timeLimitScale >= 1 && f.timeLimitScale <= 10)) errors.push(`${w}: timeLimitScale が不正`);
   // 巡り方
   const R = f.roam;
   if (!(R && Array.isArray(R.stayTicks) && isInt(R.stayTicks[0]) && isInt(R.stayTicks[1]) && R.stayTicks[0] > 0 && R.stayTicks[1] >= R.stayTicks[0])) errors.push(`${w}: roam.stayTicks が不正`);
   else {
-    if (!(R.walkSpeedScale > 0 && R.limpSpeedScale > 0 && R.wanderSpeedScale > 0)) errors.push(`${w}: roam の速さが不正`);
+    if (!(R.limpSpeedScale > 0 && R.wanderSpeedScale > 0)) errors.push(`${w}: roam の速さが不正`);
+    // 出ていく大型に、狩人が追いつけない（追いつくと、攻撃してこない相手を一方的に斬れてしまう）
+    const run = c.player.sprintSpeed;
+    if (!(isNum(R.leaveSpeed) && R.leaveSpeed > run * 1.15)) errors.push(`${w}: roam.leaveSpeed（${R.leaveSpeed}）は、狩人の走る速さ ${run} の 1.15 倍より速くする`);
+    if (!(isNum(R.limpLeaveSpeed) && R.limpLeaveSpeed > run * 1.05 && R.limpLeaveSpeed <= R.leaveSpeed)) errors.push(`${w}: roam.limpLeaveSpeed（${R.limpLeaveSpeed}）は、狩人の走る速さ ${run} の 1.05 倍より速く、leaveSpeed 以下にする`);
+    if (!(isNum(R.leaveTurnScale) && R.leaveTurnScale >= 1 && R.leaveTurnScale <= 5)) errors.push(`${w}: roam.leaveTurnScale は 1〜5`);
     if (!(R.limpHpRatio > 0 && R.limpHpRatio < 1 && R.sleepHealCap > R.limpHpRatio && R.sleepHealCap <= 1 && R.sleepHealPerSec >= 0)) errors.push(`${w}: roam の体力の割合が不正（眠って戻る上限は、弱る割合より上にする）`);
     if (!(isInt(R.sleepTicks) && R.sleepTicks > 0 && isInt(R.wakeStayTicks) && R.wakeStayTicks > 0)) errors.push(`${w}: roam の時間が不正`);
     if (!(Array.isArray(R.wanderIdleTicks) && isInt(R.wanderIdleTicks[0]) && isInt(R.wanderIdleTicks[1]) && R.wanderIdleTicks[0] > 0 && R.wanderIdleTicks[1] >= R.wanderIdleTicks[0] && R.wanderInset >= 0)) errors.push(`${w}: roam のぶらつきが不正`);

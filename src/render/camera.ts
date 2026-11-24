@@ -70,13 +70,13 @@ export class FollowCamera {
     const steps = 14;
     // 視線がある場所のエリア（フィールドでは、エリアごとに外周と岩が違う）
     const area = world.areaAt(this.pivot.x, this.pivot.z);
-    const b = area.bounds;
     for (let i = 1; i <= steps; i++) {
       const d = (this.distance * i) / steps;
       const x = this.pivot.x + dir.x * d;
       const y = this.pivot.y + dir.y * d;
       const z = this.pivot.z + dir.z * d;
-      let hit = x < b.minX + 0.4 || x > b.maxX - 0.4 || z < b.minZ + 0.4 || z > b.maxZ - 0.4 || y < world.groundHeight(x, z) + 0.25;
+      // 外周（四角か、自然な形。v0.20.0）の 0.4m 手前で止める
+      let hit = world.wallDistance(area, x, z) < 0.4 || y < world.groundHeight(x, z) + 0.25;
       if (!hit) {
         for (const r of area.rocks) {
           if (y < r.h && Math.hypot(x - r.x, z - r.z) < r.r + 0.3) {

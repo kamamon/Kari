@@ -477,7 +477,19 @@ export interface FieldAreaDef {
   large: boolean;
   /** 地図の上のマス（列、行。行は北が大きい） */
   grid: [number, number];
+  /** 外周を囲む四角（shape の点の、いちばん外） */
   bounds: { minX: number; maxX: number; minZ: number; maxZ: number };
+  /**
+   * 歩ける範囲の外周（v0.20.0。自然な形。docs/spec.md の 18.4）。[x, z] の点の列（1.6m ほどおき）。
+   * 当たり（src/game/world.ts）と、岩壁の形（src/render/arena.ts）の正本。
+   */
+  shape?: [number, number][];
+  /** 道しるべ（v0.20.0）。外周に遮られて目当てが見えない時に、ここを伝って歩く（どの 2 点も、道でつながる） */
+  nav?: [number, number][];
+  /** エリアの中心（必ず歩ける所。大型が出てくる所・寝床・群れの目安） */
+  center?: { x: number; z: number };
+  /** エリアの広さの種類（v0.20.0）: narrow = 狭い谷・沢、wide = 広くて戦いやすい原、medium = その間 */
+  size?: 'narrow' | 'medium' | 'wide';
   stepUp: number;
   rocks: { x: number; z: number; r: number; h: number }[];
   platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number }[];
@@ -487,7 +499,15 @@ export interface FieldAreaDef {
 /** 大型の移動と休息の決まり（src/game/roam.ts）。 */
 export interface RoamRules {
   stayTicks: [number, number];
-  walkSpeedScale: number;
+  /**
+   * 次のエリアへ出ていく時の速さ（m/s。v0.20.0）。狩人が走っても追いつけない速さにする（狩人の走る速さ sprintSpeed の
+   * 1.15 倍より速い。弱って巣へ向かう時は limpLeaveSpeed で、1.05 倍より速い）。出ていく間は、攻撃してこないので。
+   * 向きを変える速さは、ふだんの leaveTurnScale 倍。
+   */
+  leaveSpeed: number;
+  limpLeaveSpeed: number;
+  leaveTurnScale: number;
+  /** 巣の中で、寝床まで歩く速さ（moveSpeed に掛ける。気づいていない時だけ） */
   limpSpeedScale: number;
   limpHpRatio: number;
   sleepTicks: number;
