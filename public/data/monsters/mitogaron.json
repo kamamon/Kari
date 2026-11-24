@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "monster.mitogaron",
+  "name": "鉤輪蟲の幼体 ミトガロン",
+  "rigFamily": "crust_many",
+  "assetId": "model.monster.mitogaron",
+  "hp": 280,
+  "bodyRadius": 0.5,
+  "turnDegPerSec": 110,
+  "moveSpeed": 2.0,
+  "captureAllowed": false,
+  "lootId": "loot.mitogaron",
+  "respawnTicks": null,
+  "breakStaggerTicks": 50,
+  "collision": [{"z": 0.75, "r": 0.42}, {"z": -0.75, "r": 0.42}],
+  "approach": {"stopDist": 1.5, "faceDeg": 60},
+  "discover": null,
+  "parentId": "monster.tengaro",
+  "herd": {"size": [3, 6], "spacing": 2.6, "alertRange": 16, "fleeRange": 8, "fleeSpeedScale": 1.8, "fleeTicks": 480, "fightChance": 0.45, "fightTicks": [300, 480], "scatter": false},
+  "parts": [
+    {"id": "head", "name": "柔らかい頭甲", "hitzone": {"cut": 0.8, "blunt": 0.8, "shot": 0.75}, "brokenHitzone": {"cut": 0.9, "blunt": 0.9, "shot": 0.85}, "elementZone": 0.25, "breakDurability": 60, "material": "shell", "flinch": {"threshold": 35, "growth": 20, "ticks": 40}, "shapes": [{"a": [0.0, 0.386, 1.099], "b": [0.0, 0.181, 1.362], "r": 0.3}]},
+    {"id": "hooks", "name": "外側の幼鉤", "hitzone": {"cut": 0.6, "blunt": 0.7, "shot": 0.6}, "brokenHitzone": {"cut": 0.7, "blunt": 0.8, "shot": 0.7}, "elementZone": 0.25, "breakDurability": 70, "material": "shell", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.207, 0.946, -0.795], "b": [0.207, 1.198, 0.409], "r": 0.24}, {"a": [-0.207, 0.946, -0.795], "b": [-0.207, 1.198, 0.409], "r": 0.24}]},
+    {"id": "tail", "name": "尾節", "hitzone": {"cut": 0.85, "blunt": 0.8, "shot": 0.8}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.0, 0.276, -1.244], "b": [0.0, 0.008, -0.981], "r": 0.3}]},
+    {"id": "body", "name": "体節", "hitzone": {"cut": 0.7, "blunt": 0.75, "shot": 0.7}, "elementZone": 0.25, "breakDurability": null, "material": "shell", "flinch": {"threshold": 60, "growth": 30, "ticks": 90, "topple": true}, "shapes": [{"a": [0.0, 0.717, -1.058], "b": [0.0, 1.127, -0.412], "r": 0.34}, {"a": [0.0, 1.127, -0.412], "b": [0.0, 1.198, 0.409], "r": 0.34}, {"a": [0.0, 1.198, 0.409], "b": [0.0, 0.639, 1.001], "r": 0.34}]}
+  ],
+  "ai": {
+    "aggroRange": 30,
+    "cooldownTicks": [45, 90],
+    "choices": [
+      {"actionId": "monster.mitogaron.curl_bump", "minDist": 0, "maxDist": 2.6, "maxAngleDeg": 35, "weight": 3},
+      {"actionId": "monster.mitogaron.hook_scrape_l", "minDist": 0, "maxDist": 2.6, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "left"},
+      {"actionId": "monster.mitogaron.hook_scrape_r", "minDist": 0, "maxDist": 2.6, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "right"},
+      {"actionId": "monster.mitogaron.para_drip", "minDist": 1, "maxDist": 6, "maxAngleDeg": 180, "weight": 2, "cooldownTicks": 300}
+    ]
+  }
+}

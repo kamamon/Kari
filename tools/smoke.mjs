@@ -90,11 +90,11 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('#boot-start');
   check('起動すると拠点の画面が出て、一時停止している', await until(page, () => window.__vh && !document.getElementById('base').hidden && window.__vh.sim.tick === 0));
   await page.screenshot({ path: `${OUT}02_base.png` });
-  check('拠点: 依頼は段階の順に 15 件（ガルドロスの 4 段階と、初級の 11 種）。最初に受けられるのは初級だけで、ほかは押せない', await page.evaluate(() => {
+  check('拠点: 依頼は段階の順に 24 件（ガルドロスの 4 段階、初級の 11 種、初級の群れの依頼 9 件）。最初に受けられるのは初級だけで、ほかは押せない', await page.evaluate(() => {
     const all = [...document.querySelectorAll('.base-choice[data-quest]')];
     const qs = all.filter((b) => b.dataset.quest.startsWith('quest.basin.'));
     return qs.map((b) => b.dataset.rank).join() === 'rank.1,rank.2,rank.3,rank.4' && qs.map((b) => b.disabled).join() === 'false,true,true,true'
-      && all.length === 15 && all.map((b) => b.dataset.rank).join() === [...Array(12).fill('rank.1'), 'rank.2', 'rank.3', 'rank.4'].join() && all.slice(0, 12).every((b) => !b.disabled)
+      && all.length === 24 && all.map((b) => b.dataset.rank).join() === [...Array(21).fill('rank.1'), 'rank.2', 'rank.3', 'rank.4'].join() && all.slice(0, 21).every((b) => !b.disabled)
       && /【初級】依頼「岩場の足音」/.test(qs[0].textContent) && /【中級】/.test(qs[1].textContent) && /「岩場の足音」を達成すると受けられます/.test(qs[1].textContent)
       && /^防御力の合計 0（受けるダメージ ×1\.00）$/.test(document.querySelector('.base-armor-note').textContent) && document.querySelectorAll('.base-armor-row').length === 5;
   }), await page.evaluate(() => document.querySelector('.base-choice[data-quest="quest.basin.r2.001"]')?.textContent ?? ''));
@@ -1463,8 +1463,8 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
       fieldText: field.textContent.replace(/\s+/g, ' ').slice(0, 300), fieldState: field.querySelector('.state').textContent, basinState: basin.querySelector('.state').textContent,
     };
   });
-  check('図鑑: 依頼の欄に、86 種（78 種と幼体 8 種）が段階ごとに並ぶ（初級 13 / 13、中級 20 / 20、上級 25 / 25、極級 20 / 20）。遊べるのは、はじめの 12 種で、原画あり 1、案 73',
-    zukan.shown && zukan.summary === 'モンスター図鑑（78 種・幼体 8 種）' && zukan.n === 86 && zukan.heads.join('|') === '初級から 13 / 13 種 幼体 8|中級から 20 / 20 種|上級から 25 / 25 種|極級から 20 / 20 種' && zukan.done.split(',').length === 12 && zukan.done.startsWith('monster.galdros,monster.selvark') && zukan.art === 1 && zukan.planned === 73 && zukan.lazy === 5, JSON.stringify({ ...zukan, rare: '', juv: '', fieldText: '' }));
+  check('図鑑: 依頼の欄に、86 種（78 種と幼体 8 種）が段階ごとに並ぶ（初級 13 / 13、中級 20 / 20、上級 25 / 25、極級 20 / 20）。遊べるのは、はじめの 12 種と幼体 8 種で、原画あり 1、案 65',
+    zukan.shown && zukan.summary === 'モンスター図鑑（78 種・幼体 8 種）' && zukan.n === 86 && zukan.heads.join('|') === '初級から 13 / 13 種 幼体 8|中級から 20 / 20 種|上級から 25 / 25 種|極級から 20 / 20 種' && zukan.done.split(',').length === 20 && zukan.done.startsWith('monster.galdros,monster.selvark') && zukan.done.endsWith('monster.yurtepica,monster.hinasalv') && zukan.art === 1 && zukan.planned === 65 && zukan.lazy === 5, JSON.stringify({ ...zukan, rare: '', juv: '', fieldText: '' }));
   check('図鑑: 原画のある種を開くと、原画と、生態 8 項目が出る。体と動きがまだ無いことが分かる。遊べる種には「仮の形」と出る', zukan.img === 720 && /まだありません/.test(zukan.cap) && /食べ物,行動と気性,なわばり,1 日の動き,巣と眠り,ほかとの関わり,幼体,痕跡$/.test(zukan.eco) && /仮の形/.test(zukan.selCap), JSON.stringify({ img: zukan.img, cap: zukan.cap, selCap: zukan.selCap, eco: zukan.eco }));
   check('図鑑: 希少種には、もとの種と、一緒に出る相手が出る。幼体には、群れの数が出る。超大型は、案だけと分かる',
     /上級|大型・希少種/.test(zukan.rare) && /もとの種/.test(zukan.rareLabels) && /一緒に出る相手/.test(zukan.rareLabels) && /帆角獣 セルヴァルク/.test(zukan.rare) && /裂扇獣 グラセドン/.test(zukan.rare) && /群れ3〜5 体/.test(zukan.juv) && /岩殻獣 ガルドロス/.test(zukan.juv) && /^超大型／巨躯／沈根沢地／水・睡眠$/.test(zukan.hugeTags) && /案だけです/.test(zukan.hugeNote),
@@ -1598,6 +1598,100 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   }, 4000), await page.evaluate(() => document.getElementById('hud-ailments').textContent));
   await page.screenshot({ path: `${OUT}9y_status_sleep.png` });
   await ctx.close();
+}
+
+// ---- 幼体 8 種と群れ（v0.18.0）: 群れの依頼が始まり、群れが食む・気づいて逃げる。倒すと残りが減り、頭数で達成。フィールドに群れが住む ----
+{
+  const KEYS = ['kordopil', 'palseit', 'numaporon', 'chilumicana', 'kohalgis', 'mitogaron', 'yurtepica', 'hinasalv'];
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false);
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  check('群れの依頼: 拠点に、幼体の群れの依頼 9 件が見出しの下に並び、最初から受けられる', await page.evaluate((keys) => {
+    const head = [...document.querySelectorAll('#base .forge-head')].some((h) => /幼体の群れの依頼/.test(h.textContent));
+    const ok = keys.every((k) => {
+      const b = document.querySelector(`.base-choice[data-quest="quest.${k}.pack1"]`);
+      return b && !b.disabled && /頭|羽|体/.test(b.textContent) && /の討伐/.test(b.textContent);
+    });
+    return head && ok && !!document.querySelector('.base-choice[data-quest="quest.basin_young.r1"]');
+  }, KEYS));
+  const rows = [];
+  for (const key of KEYS) {
+    await page.evaluate((k) => window.__vh.startHunt(`quest.${k}.pack1`), key);
+    await until(page, () => window.__vh.sim.tick > 5);
+    // 狩人は離れて立つ（群れは静か）。群れの体が全部、絵を貼って出る
+    await page.evaluate(() => {
+      const s = window.__vh.sim, p = s.player, ms = s.herds[0].members;
+      const c = { x: ms.reduce((t, m) => t + m.pos.x, 0) / ms.length, z: ms.reduce((t, m) => t + m.pos.z, 0) / ms.length };
+      p.pos = { x: c.x - 28, y: 0, z: c.z - 10 };
+      p.prevPos = { ...p.pos };
+      p.yaw = Math.atan2(c.x - p.pos.x, c.z - p.pos.z);
+      window.__vh.view.cam.snap(p.yaw);
+    });
+    const ready = await until(page, () => {
+      const v = window.__vh, ms = v.sim.herds[0].members;
+      return ms.every((m) => v.view.rigs.get(m.id)?.rig.info?.().textured === true && v.view.rigs.get(m.id).rig.root.visible);
+    }, 20000);
+    await page.waitForTimeout(400);
+    await page.screenshot({ path: `${OUT}9z_herd_${key}.png` });
+    const info = await page.evaluate(() => ({ n: window.__vh.sim.herds[0].members.length, calm: window.__vh.sim.herds[0].members.every((m) => ['graze', 'rest', 'regroup'].includes(m.herd.mood)), goal: document.querySelector('.hud-quest .goal')?.textContent ?? '', ...window.__vh.view.stats() }));
+    // 近づくと、群れが逃げ出す
+    await page.evaluate(() => {
+      const s = window.__vh.sim, p = s.player, ms = s.herds[0].members;
+      const c = { x: ms.reduce((t, m) => t + m.pos.x, 0) / ms.length, z: ms.reduce((t, m) => t + m.pos.z, 0) / ms.length };
+      p.pos = { x: c.x - 5, y: 0, z: c.z - 2 };
+      p.prevPos = { ...p.pos };
+    });
+    const fled = await until(page, () => window.__vh.sim.herds[0].members.filter((m) => m.herd.mood === 'flee').length >= 2, 6000);
+    rows.push({ key, ready, fled, ...info });
+    await page.evaluate(() => window.__vh.toBase());
+    await until(page, () => !document.getElementById('base').hidden, 8000);
+  }
+  check('群れの依頼: 8 種とも、群れ（依頼の頭数以上）が絵を貼った体で出て、遠くでは静かに食む。目標に「あと」の数が出る', rows.every((r) => r.ready && r.calm && /あと \d/.test(r.goal)), JSON.stringify(rows.map((r) => `${r.key}:${r.ready ? '' : '×体'}${r.calm ? '' : '×静'}${r.n}頭 ${r.goal.slice(-12)}`)));
+  check('群れの依頼: 近づくと、群れが逃げ出す', rows.every((r) => r.fled), JSON.stringify(rows.filter((r) => !r.fled).map((r) => r.key)));
+  check('群れの依頼: 群れが居ても、描画量は目標内（100 draw calls / 20万 tri）', rows.every((r) => r.calls <= 100 && r.triangles <= 200000), JSON.stringify(rows.map((r) => `${r.key}:${r.calls}/${Math.round(r.triangles / 1000)}k`)));
+  // 倒すと残りが減り、頭数で達成。倒した幼体は、狩りの途中でも剥ぎ取れる
+  await page.evaluate(() => window.__vh.startHunt('quest.kordopil.pack1'));
+  await until(page, () => window.__vh.sim.tick > 5);
+  // 倒すのは、シミュレーションの外から（体力を 0 にして倒れた印と出来事を出す。applyDamageToMonster と同じ結果）
+  await page.evaluate(() => { const s = window.__vh.sim, m = s.herds[0].members[0]; m.dead = true; m.deadTicks = 0; m.hp = 0; s.emit({ type: 'monster_dead', target: m.id }); });
+  check('群れの依頼: 1 頭倒すと、目標の残りが減って知らせが出る', await until(page, () => /あと 2/.test(document.querySelector('.hud-quest .goal')?.textContent ?? '') && [...document.querySelectorAll('.toast')].some((t) => /コルドピルを討伐（あと 2 頭）/.test(t.textContent)), 5000), await page.evaluate(() => document.querySelector('.hud-quest .goal')?.textContent));
+  await page.evaluate(() => { const s = window.__vh.sim, m = s.herds[0].members[0]; s.player.drawn = false; s.player.pos = { x: m.pos.x, y: 0, z: m.pos.z - m.def.bodyRadius - 0.7 }; s.player.prevPos = { ...s.player.pos }; });
+  check('群れの依頼: 倒した幼体の近くで納刀していると、攻撃ボタンが「剥ぎ取り」になる', await until(page, () => window.__vh.sim.carveTarget()?.startsWith('body:') === true, 4000));
+  await page.evaluate(() => { const s = window.__vh.sim; for (const m of s.herds[0].members.slice(1, 3)) { m.dead = true; m.hp = 0; s.emit({ type: 'monster_dead', target: m.id }); } });
+  check('群れの依頼: 頭数を倒すと達成になる', await until(page, () => window.__vh.sim.hunt?.phase === 'success', 5000));
+  await page.screenshot({ path: `${OUT}9z_herd_clear.png` });
+  // フィールド: 大型の依頼でも、盆地の群れが住みかに居て、そのエリアへ入ると見える
+  await page.evaluate(() => window.__vh.toBase());
+  await until(page, () => !document.getElementById('base').hidden, 8000);
+  await ctx.close();
+  const f = await open({ width: 1280, height: 720 }, false, '?hub=menu');
+  await f.page.click('#boot-start');
+  await until(f.page, () => window.__vh && !document.getElementById('base').hidden);
+  await f.page.evaluate(() => window.__vh.startHunt('quest.basin.003'));
+  await until(f.page, () => window.__vh.sim.tick > 5 && !!window.__vh.sim.field);
+  const herdInfo = await f.page.evaluate(() => window.__vh.sim.herds.map((g) => `${g.monsterId.split('.')[1]}@${window.__vh.sim.herdArea(g)?.id}`));
+  check('フィールドの群れ: ガルドロスの依頼で、コルドピルとパルセイトの群れが住みかに居る', herdInfo.length >= 4 && herdInfo.some((x) => x.startsWith('kordopil@a1')), JSON.stringify(herdInfo));
+  await f.page.evaluate(() => {
+    const s = window.__vh.sim, g = s.herds.find((x) => s.herdArea(x)?.id === 'a1'), ms = g.members;
+    const c = { x: ms.reduce((t, m) => t + m.pos.x, 0) / ms.length, z: ms.reduce((t, m) => t + m.pos.z, 0) / ms.length };
+    const p = s.player;
+    p.pos = { x: c.x - 16, y: 0, z: c.z - 4 };
+    p.prevPos = { ...p.pos };
+    p.yaw = Math.atan2(c.x - p.pos.x, c.z - p.pos.z);
+    s.areaId = 'a1';
+  });
+  check('フィールドの群れ: 群れの居るエリアへ入ると、群れの体が見える（別のエリアの群れは見えない）', await until(f.page, () => {
+    const v = window.__vh, s = v.sim;
+    return s.herds.every((g) => g.members.every((m) => {
+      const r = v.view.rigs.get(m.id);
+      const here = s.herdArea(g)?.id === 'a1';
+      return here ? !!r && r.rig.root.visible : !r || !r.rig.root.visible;
+    }));
+  }, 8000));
+  await f.page.evaluate(() => window.__vh.view.cam.snap(window.__vh.sim.player.yaw));
+  await f.page.waitForTimeout(600);
+  await f.page.screenshot({ path: `${OUT}9z_herd_field.png` });
+  await f.ctx.close();
 }
 
 check('コンソールエラー・404 なし', errors.length === 0, errors.slice(0, 5).join(' | '));

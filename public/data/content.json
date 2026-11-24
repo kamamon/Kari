@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.17.0",
+  "contentVersion": "0.18.0",
   "files": {
     "actions": [
       "actions/player_common.json",
@@ -24,7 +24,15 @@
       "actions/verito.json",
       "actions/razmer.json",
       "actions/kirisave.json",
-      "actions/velgait.json"
+      "actions/velgait.json",
+      "actions/kordopil.json",
+      "actions/palseit.json",
+      "actions/numaporon.json",
+      "actions/chilumicana.json",
+      "actions/kohalgis.json",
+      "actions/mitogaron.json",
+      "actions/yurtepica.json",
+      "actions/hinasalv.json"
     ],
     "tracks": [
       "tracks/heavy_blade.json",
@@ -47,7 +55,15 @@
       "tracks/verito.json",
       "tracks/razmer.json",
       "tracks/kirisave.json",
-      "tracks/velgait.json"
+      "tracks/velgait.json",
+      "tracks/kordopil.json",
+      "tracks/palseit.json",
+      "tracks/numaporon.json",
+      "tracks/chilumicana.json",
+      "tracks/kohalgis.json",
+      "tracks/mitogaron.json",
+      "tracks/yurtepica.json",
+      "tracks/hinasalv.json"
     ],
     "curves": [
       "curves.json",
@@ -67,7 +83,15 @@
       "monsters/verito.json",
       "monsters/razmer.json",
       "monsters/kirisave.json",
-      "monsters/velgait.json"
+      "monsters/velgait.json",
+      "monsters/kordopil.json",
+      "monsters/palseit.json",
+      "monsters/numaporon.json",
+      "monsters/chilumicana.json",
+      "monsters/kohalgis.json",
+      "monsters/mitogaron.json",
+      "monsters/yurtepica.json",
+      "monsters/hinasalv.json"
     ],
     "maps": [
       "maps/basin_training.json",
@@ -79,7 +103,8 @@
     "player": "player.json",
     "quests": [
       "quests.json",
-      "quests_creatures.json"
+      "quests_creatures.json",
+      "quests_herds.json"
     ],
     "items": [
       "items.json",

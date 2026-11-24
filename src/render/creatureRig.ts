@@ -1,16 +1,19 @@
-// 大型 11 種（登録簿の 02〜12）の仮モデル（v0.17.0。D-078）。設計図（src/render/creaturePlans.ts）から、骨の通った 1 枚の面を作り、
+// 大型 11 種（登録簿の 02〜12）と幼体 8 種（14〜21。v0.18.0）の仮モデル（v0.17.0。D-078）。設計図（src/render/creaturePlans.ts）から、骨の通った 1 枚の面を作り、
 // 原画を真横から貼る。動きはすべて描画側の計算で、戦闘の判定には影響しない（判定は技データの軌道が持つ）。
+//   - 同じ種の体（面の形）は 1 回だけ作って、群れの仲間で使い回す（骨は 1 頭ずつ）。部位が壊れた個体だけ、面を写して暗くする。
+//   - 幼体は、親の絵を淡くして貼る（plan.look）。群れの気分（src/game/herd.ts）で、頭を下げて食む・顔を上げて見る・伏せる。
 //   - 背骨・脚は「筒」。輪ごとに、近い 2 本の骨へ重みを分けて、関節でなめらかに曲がる。
 //   - 角膜・翼・帆・嚢などは、骨を 1 本持つ「板・塊」。技の値（src/render/creatureMoves.ts）で開く・ふくらむ。
 //   - 歩く: 進んだ距離で足の周期を進める（足を地面に固定する解き方は無い。滑って見えることがある）。
 //   - 怯み・転倒・眠り・罠・死は、体の高さ・傾き・脚の折り方で表す。
 // 形・色・動きは、原画 1 枚から作った仮素材。正式モデル（GLB）が来たら置き換える。
 import {
-  Bone, BufferGeometry, Color, Euler, Float32BufferAttribute, Group, MeshStandardMaterial, SRGBColorSpace, ShapeUtils, Skeleton, SkinnedMesh, TextureLoader, Uint16BufferAttribute, Vector2, Vector3,
+  Bone, BufferGeometry, Color, Euler, Float32BufferAttribute, Group, MeshStandardMaterial, SRGBColorSpace, ShapeUtils, Skeleton, SkinnedMesh, type Texture, TextureLoader, Uint16BufferAttribute, Vector2, Vector3,
 } from 'three';
 import { assetUrl } from '../core/assets';
 import { angleDiff, smoothstep } from '../core/math';
 import { renderTick } from '../game/action';
+import { isGrazing, isWatching } from '../game/herd';
 import { isWeak, type MonsterState } from '../game/monster';
 import { sampleCurve } from '../game/tracks';
 import { CREATURE_ART, type CreatureArt } from './creatureArt';
@@ -607,9 +610,40 @@ function blendInto(a: FullPose, b: Pose, w: number): void {
   }
 }
 
+/** 貼る絵は、同じ絵を 1 回だけ読む（親と幼体・群れの仲間で使い回す） */
+const ART_CACHE = new Map<string, { tex: Texture | null; wait: ((t: Texture) => void)[] }>();
+function loadArt(file: string, done: (t: Texture) => void): void {
+  let e = ART_CACHE.get(file);
+  if (e?.tex) return done(e.tex);
+  if (e) {
+    e.wait.push(done);
+    return;
+  }
+  e = { tex: null, wait: [done] };
+  ART_CACHE.set(file, e);
+  const entry = e;
+  new TextureLoader().load(assetUrl(file), (tex) => {
+    tex.colorSpace = SRGBColorSpace;
+    tex.anisotropy = 4;
+    entry.tex = tex;
+    for (const w of entry.wait.splice(0)) w(tex);
+  });
+}
+
+/** 種ごとに 1 つだけ作る体（面の形と骨の並び）。群れの仲間で使い回す */
+const BODY_CACHE = new Map<CreaturePlan, { body: CreatureBody; main: BufferGeometry; glow: BufferGeometry | null }>();
+
 export class CreatureRig implements MonsterRig {
   readonly root = new Group();
   private readonly body: CreatureBody;
+  /** この個体の骨（体の骨の並びと同じ番号） */
+  private readonly bones: BoneRec[];
+  /** 面を、同じ種の仲間と分け合っている（部位が壊れたら、写してから暗くする） */
+  private sharedGeo = true;
+  /** 淡くする光（幼体）。叩かれた時の光に足す */
+  private readonly pale: [number, number, number] = [0, 0, 0];
+  private graze = 0;
+  private watch = 0;
   private readonly mesh: SkinnedMesh;
   private readonly glowMesh: SkinnedMesh | null = null;
   private readonly mat: MeshStandardMaterial;
@@ -635,37 +669,57 @@ export class CreatureRig implements MonsterRig {
 
   constructor(readonly plan: CreaturePlan, private readonly partIds: readonly string[]) {
     const art = CREATURE_ART[plan.key]!;
-    this.body = new CreatureBody(plan, art);
-    const avg = new Color(art.average[0], art.average[1], art.average[2]);
+    let shared = BODY_CACHE.get(plan);
+    if (!shared) {
+      const body = new CreatureBody(plan, art);
+      shared = { body, main: body.main.build(), glow: body.glow.count > 0 ? body.glow.build() : null };
+      BODY_CACHE.set(plan, shared);
+    }
+    this.body = shared.body;
+    // 骨は 1 頭ずつ（体の骨と同じ並び・同じ親子）
+    const src = this.body.bones;
+    this.bones = src.map((r) => ({ ...r, bone: new Bone() }));
+    src.forEach((r, i) => {
+      const b = this.bones[i]!.bone;
+      b.position.copy(r.rest);
+      const pi = src.findIndex((x) => x.bone === r.bone.parent);
+      if (pi >= 0) this.bones[pi]!.bone.add(b);
+    });
+    const look = plan.look;
+    const tint = look?.tint ?? [1, 1, 1];
+    const avg = new Color(art.average[0] * tint[0], art.average[1] * tint[1], art.average[2] * tint[2]);
     this.mat = new MeshStandardMaterial({ color: avg, vertexColors: true, roughness: 0.82, metalness: 0.02 });
-    const skeleton = new Skeleton(this.body.bones.map((b) => b.bone));
-    this.mesh = new SkinnedMesh(this.body.main.build(), this.mat);
-    this.mesh.add(this.body.bones[0]!.bone);
+    if (look) {
+      const k = look.pale * 0.45;
+      this.pale = [0.86 * k, 0.86 * k, 0.82 * k];
+      this.mat.emissive.setRGB(...this.pale);
+    }
+    const skeleton = new Skeleton(this.bones.map((b) => b.bone));
+    this.mesh = new SkinnedMesh(shared.main, this.mat);
+    this.mesh.add(this.bones[0]!.bone);
     this.mesh.bind(skeleton);
     this.mesh.castShadow = true;
     this.mesh.frustumCulled = false;
     this.root.add(this.mesh);
-    if (this.body.glow.count > 0) {
+    if (shared.glow) {
       const gc = plan.glowColor ?? [0.9, 0.95, 0.5];
       this.glowMat = new MeshStandardMaterial({ color: new Color(gc[0] * 0.55, gc[1] * 0.55, gc[2] * 0.55), emissive: new Color(gc[0], gc[1], gc[2]), emissiveIntensity: 0.3, roughness: 0.4 });
-      this.glowMesh = new SkinnedMesh(this.body.glow.build(), this.glowMat);
+      this.glowMesh = new SkinnedMesh(shared.glow, this.glowMat);
       this.glowMesh.bind(skeleton, this.mesh.bindMatrix);
       this.glowMesh.frustumCulled = false;
       this.root.add(this.glowMesh);
     }
     // 原画の絵（読み込めたら、平均の色から絵へ替える）
-    new TextureLoader().load(assetUrl(art.file), (tex) => {
-      tex.colorSpace = SRGBColorSpace;
-      tex.anisotropy = 4;
+    loadArt(art.file, (tex) => {
       this.mat.map = tex;
-      this.mat.color.set(1, 1, 1);
+      this.mat.color.setRGB(tint[0], tint[1], tint[2]);
       this.mat.needsUpdate = true;
     });
   }
 
   /** 検査用: 骨の数・頂点の数・絵が貼られたか */
   info(): { bones: number; verts: number; glow: number; textured: boolean; height: number } {
-    return { bones: this.body.bones.length, verts: this.body.main.count, glow: this.body.glow.count, textured: !!this.mat.map, height: this.body.height };
+    return { bones: this.bones.length, verts: this.body.main.count, glow: this.body.glow.count, textured: !!this.mat.map, height: this.body.height };
   }
 
   hitFlash(): void {
@@ -712,7 +766,8 @@ export class CreatureRig implements MonsterRig {
     // ---- いつもの動き: 呼吸・尾の揺れ・狩人を目で追う ----
     const enraged = m.enraged && !m.dead;
     const weak = isWeak(m);
-    const breathRate = enraged ? 3.2 : weak ? 3.6 : m.aware ? 1.8 : 1.2;
+    const herd = m.herd;
+    const breathRate = enraged ? 3.2 : weak || (herd && herd.tired > 0) ? 3.6 : herd ? (herd.mood === 'flee' ? 3 : 1.4) : m.aware ? 1.8 : 1.2;
     const br = Math.sin(time * breathRate);
     P.pitch += br * 0.012;
     P.yH += br * 0.006;
@@ -722,7 +777,7 @@ export class CreatureRig implements MonsterRig {
     P.glow += enraged ? 0.45 + 0.25 * Math.sin(time * 6) : 0.1 + 0.06 * Math.sin(time * 1.6);
     if (enraged) { P.crest += 0.25; P.wing += 0.15; P.sail += 0.2; }
     let lookTarget = 0, lookUpTarget = 0;
-    if (c.lookAt && !m.dead && !m.asleep && !m.captured && m.aware) {
+    if (c.lookAt && !m.dead && !m.asleep && !m.captured && m.aware && (!herd || isWatching(m))) {
       const head = this.body.spinePts[this.body.spinePts.length - 1]!;
       const hx = px + Math.sin(yaw) * head.z, hz = pz + Math.cos(yaw) * head.z;
       lookTarget = clamp(angleDiff(yaw, Math.atan2(c.lookAt.x - hx, c.lookAt.z - hz)), -0.8, 0.8) * (m.action ? 0.3 : 1);
@@ -736,6 +791,29 @@ export class CreatureRig implements MonsterRig {
     P.headYaw += this.look * 0.5;
     P.neckPitch += this.lookUp * 0.4;
     P.headPitch += this.lookUp * 0.4;
+
+    // ---- 群れ（幼体）: 立ち止まって頭を下げて食む / 顔を上げて見る（v0.18.0）----
+    if (herd) {
+      const gk = 1 - Math.exp(-dt * 3);
+      this.graze += ((isGrazing(m) && !m.dead && !m.action ? 1 : 0) - this.graze) * gk;
+      this.watch += ((isWatching(m) && !m.dead ? 1 : 0) - this.watch) * (1 - Math.exp(-dt * 6));
+      if (this.graze > 0.01) {
+        // 首の長い体ほど、首を深く下ろす（首の骨の数で）。鳥は体ごと前へ傾ける
+        const nib = 0.5 + 0.5 * Math.sin(time * 5.3 + this.partIds.length);
+        const necks = plan.roles.split('').filter((r) => r === 'n').length;
+        const neck = -Math.min(1.5, 0.5 + 0.38 * necks);
+        blendInto(P, { neckPitch: neck, headPitch: -0.35 - 0.12 * nib, jaw: 0.3 * nib, pitch: plan.frame === 'biped' ? -0.3 : -0.06, yH: -0.02, legs: { F: [0.12, 0.05] } }, this.graze);
+      }
+      if (this.watch > 0.01) {
+        P.neckPitch += 0.25 * this.watch;
+        P.headPitch += 0.08 * this.watch;
+        P.crest += 0.4 * this.watch;
+        P.wing += 0.12 * this.watch;
+        P.sail += 0.3 * this.watch;
+        P.glow += 0.3 * this.watch;
+        P.tailPitch += 0.15 * this.watch;
+      }
+    }
 
     // ---- 技 ----
     let und = plan.frame === 'serpent' ? 0.12 * Math.min(1, gaitAmt) : 0;
@@ -780,7 +858,7 @@ export class CreatureRig implements MonsterRig {
     if (scurry) this.phase += dt * 3.5 * scurry;
 
     // ---- 状態: 怯み・転倒・罠・眠り・死 ----
-    const resting = (m.asleep || m.captured) && !m.dead;
+    const resting = (m.asleep || m.captured || herd?.mood === 'rest') && !m.dead;
     this.rest = resting ? Math.min(1, this.rest + dt * 0.8) : Math.max(0, this.rest - dt * 1.5);
     if (this.rest > 0) {
       const w = smoothstep(this.rest);
@@ -833,7 +911,7 @@ export class CreatureRig implements MonsterRig {
 
     // 光・叩かれた時の光
     this.flash = Math.max(0, this.flash - dt * 6);
-    this.mat.emissive.setRGB(this.flash * 0.55, this.flash * 0.45, this.flash * 0.3);
+    this.mat.emissive.setRGB(this.pale[0] + this.flash * 0.55, this.pale[1] + this.flash * 0.45, this.pale[2] + this.flash * 0.3);
     if (this.glowMat) this.glowMat.emissiveIntensity = m.dead ? 0.05 : clamp(0.2 + P.glow * 1.4, 0, 2.2);
 
     // 足音（歩いた距離ごと）
@@ -842,7 +920,8 @@ export class CreatureRig implements MonsterRig {
       const stepLen = Math.max(0.6, plan.stride * 0.5);
       if (this.stepAcc > stepLen) {
         this.stepAcc = 0;
-        const heavy = plan.frame === 'quad' && H > 1.5 ? 0.9 : 0.5;
+        // 小さな体（幼体）は軽い足音
+        const heavy = plan.frame === 'quad' && H > 1.5 ? 0.9 : H < 0.7 ? 0.15 : 0.5;
         c.fx.footfall(px, 0, pz, heavy);
       }
     }
@@ -850,6 +929,12 @@ export class CreatureRig implements MonsterRig {
 
   private breakPart(id: string): void {
     this.broken.add(id);
+    if (this.sharedGeo) {
+      // 仲間と分け合っている面を、この個体だけ写してから暗くする
+      this.sharedGeo = false;
+      this.mesh.geometry = this.mesh.geometry.clone();
+      if (this.glowMesh) this.glowMesh.geometry = this.glowMesh.geometry.clone();
+    }
     for (const r of this.body.parts.get(id) ?? []) {
       const geo = (r.buf === 'main' ? this.mesh : this.glowMesh)?.geometry;
       if (!geo) continue;
@@ -858,7 +943,7 @@ export class CreatureRig implements MonsterRig {
       col.needsUpdate = true;
       for (const b of r.own) {
         this.brokenBones.add(b);
-        this.body.bones[b]!.bone.scale.setScalar(0.82);
+        this.bones[b]!.bone.scale.setScalar(0.82);
       }
     }
   }
@@ -872,7 +957,7 @@ export class CreatureRig implements MonsterRig {
     const body = this.body;
     const plan = this.plan;
     const root = plan.root;
-    const bones = body.bones;
+    const bones = this.bones;
     // 背骨: 役ごとに数える
     const spine = bones.filter((b) => b.kind === 'spine');
     const headSideBody = spine.filter((b) => b.role === 'b' && b.index > root);

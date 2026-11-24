@@ -2,9 +2,11 @@
 // 技は開始時に一度だけ抽選し、攻撃中に毎 tick 選び直さない。旋回は turning.untilTick まで。
 // 本体 HP・部位の耐久・切断の蓄積・怯みの蓄積・怒りは、それぞれ別の値として持つ。
 import { DEG, angleDiff, forwardOf, fromArr, toWorld, turnToward, v3, yawOf, type V3 } from '../core/math';
+import type { SeededRng } from '../core/seededRng';
 import type { DamageType, MonsterAiChoice, MonsterDef } from '../data/schemas';
 import { newRun, type ActionRun } from './action';
 import { shapeToWorld, type WorldShape } from './combat';
+import { stepHerdMember, type HerdMember } from './herd';
 import type { PlayerState, SimCtx } from './player';
 import { stepRoam, wakeMonster, type RoamState } from './roam';
 import { sampleCurve } from './tracks';
@@ -25,6 +27,8 @@ export interface MonsterState {
   roam: RoamState | null;
   /** 巣で眠っている（攻撃されると起きる） */
   asleep: boolean;
+  /** 群れの 1 頭（幼体。v0.18.0）。群れで暮らさなければ null */
+  herd: HerdMember | null;
   id: string;
   def: MonsterDef;
   pos: V3;
@@ -120,6 +124,7 @@ export function createMonster(def: MonsterDef, spawn: { x: number; z: number; ya
     captured: false,
     roam: null,
     asleep: false,
+    herd: null,
     spawn,
   };
 }
@@ -127,6 +132,7 @@ export function createMonster(def: MonsterDef, spawn: { x: number; z: number; ya
 export function resetMonster(m: MonsterState): void {
   const fresh = createMonster(m.def, m.spawn, m.id);
   fresh.aiEnabled = m.aiEnabled;
+  fresh.herd = m.herd;
   Object.assign(m, fresh);
 }
 
@@ -161,6 +167,9 @@ function clearAhead(m: MonsterState, dist: number, ctx: SimCtx): boolean {
   return x > b.minX + r && x < b.maxX - r && z > b.minZ + r && z < b.maxZ - r;
 }
 
+/** その個体の乱数。群れの幼体は、群れの乱数を使う（シミュレーションの乱数の並びを変えない） */
+const rngOf = (m: MonsterState, ctx: SimCtx): SeededRng => m.herd?.group.rng ?? ctx.rng;
+
 function chooseAction(m: MonsterState, player: PlayerState, ctx: SimCtx): MonsterAiChoice | null {
   const dx = player.pos.x - m.pos.x;
   const dz = player.pos.z - m.pos.z;
@@ -184,7 +193,7 @@ function chooseAction(m: MonsterState, player: PlayerState, ctx: SimCtx): Monste
     if (others.length > 0) cands = others;
   }
   const total = cands.reduce((s, c) => s + c.weight, 0);
-  let r = ctx.rng.next() * total;
+  let r = rngOf(m, ctx).next() * total;
   for (const c of cands) {
     r -= c.weight;
     if (r <= 0) return c;
@@ -245,6 +254,9 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
     m.action = null;
     return;
   }
+
+  // 群れの幼体: ふだんは群れの動き。反撃する間（fight）と技の途中だけ、下のふつうの技の選び方へ進む
+  if (m.herd && stepHerdMember(m, player, ctx)) return;
 
   // 別のエリアに居る相手には、気づかないし、向かっていかない（エリアが 1 つの狩場では、いつも同じエリア）
   const sameArea = ctx.world.areaAt(player.pos.x, player.pos.z) === ctx.world.areaAt(m.pos.x, m.pos.z);
@@ -324,7 +336,7 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   if (run.tick >= adef.durationTicks) {
     m.action = null;
     const [lo, hi] = def.ai.cooldownTicks;
-    m.cooldown = Math.round((lo + ctx.rng.int(hi - lo + 1)) * (rage ? rage.cooldownScale : 1));
+    m.cooldown = Math.round((lo + rngOf(m, ctx).int(hi - lo + 1)) * (rage ? rage.cooldownScale : 1));
   }
 }
 

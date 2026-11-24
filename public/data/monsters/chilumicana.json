@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "monster.chilumicana",
+  "name": "燐尾鳥の幼体 チルミカナ",
+  "rigFamily": "biped_wing",
+  "assetId": "model.monster.chilumicana",
+  "hp": 170,
+  "bodyRadius": 0.4,
+  "turnDegPerSec": 180,
+  "moveSpeed": 3.0,
+  "captureAllowed": false,
+  "lootId": "loot.chilumicana",
+  "respawnTicks": null,
+  "breakStaggerTicks": 50,
+  "collision": [{"z": 0.0, "r": 0.4}],
+  "approach": {"stopDist": 1.3, "faceDeg": 60},
+  "discover": null,
+  "parentId": "monster.lumisca",
+  "herd": {"size": [3, 5], "spacing": 2.0, "alertRange": 22, "fleeRange": 12, "fleeSpeedScale": 1.6, "fleeTicks": 360, "fightChance": 0.2, "fightTicks": [180, 300], "scatter": false},
+  "parts": [
+    {"id": "nodes", "name": "尾の幼燐節", "hitzone": {"cut": 0.8, "blunt": 0.75, "shot": 0.85}, "brokenHitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.95}, "elementZone": 0.25, "breakDurability": 40, "material": "shell", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.0, 0.862, -0.529], "b": [0.0, 0.781, -0.935], "r": 0.24}]},
+    {"id": "wing", "name": "翼端の薄甲", "hitzone": {"cut": 0.8, "blunt": 0.75, "shot": 0.85}, "brokenHitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.95}, "elementZone": 0.25, "breakDurability": 40, "material": "shell", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.256, 0.984, 0.163], "b": [0.279, 0.74, -0.325], "r": 0.22}, {"a": [-0.256, 0.984, 0.163], "b": [-0.279, 0.74, -0.325], "r": 0.22}]},
+    {"id": "head", "name": "頭", "hitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.85}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "flinch": {"threshold": 30, "growth": 18, "ticks": 40}, "shapes": [{"a": [0.0, 1.163, 0.456], "b": [0.0, 1.114, 0.618], "r": 0.24}]},
+    {"id": "body", "name": "胴", "hitzone": {"cut": 0.75, "blunt": 0.75, "shot": 0.7}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.0, 0.87, -0.325], "b": [0.0, 0.903, 0.374], "r": 0.36}]},
+    {"id": "legs", "name": "脚", "hitzone": {"cut": 0.7, "blunt": 0.7, "shot": 0.65}, "elementZone": 0.25, "breakDurability": null, "material": "shell", "flinch": {"threshold": 50, "growth": 25, "ticks": 80, "topple": true}, "shapes": [{"a": [0.139, 0.578, 0.0], "b": [0.139, 0.073, 0.081], "r": 0.14}, {"a": [-0.139, 0.578, 0.0], "b": [-0.139, 0.073, 0.081], "r": 0.14}]}
+  ],
+  "ai": {
+    "aggroRange": 30,
+    "cooldownTicks": [35, 75],
+    "choices": [
+      {"actionId": "monster.chilumicana.tail_jab", "minDist": 0, "maxDist": 3.0, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 100, "cooldownTicks": 180},
+      {"actionId": "monster.chilumicana.kick", "minDist": 0, "maxDist": 2.0, "maxAngleDeg": 40, "weight": 3},
+      {"actionId": "monster.chilumicana.glide_back", "minDist": 0, "maxDist": 1.8, "maxAngleDeg": 70, "weight": 2, "cooldownTicks": 300}
+    ]
+  }
+}

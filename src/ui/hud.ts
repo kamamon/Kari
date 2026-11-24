@@ -11,6 +11,7 @@ import { familyOf, isInvulnerable } from '../game/player';
 import type { Simulation } from '../game/sim';
 import type { InputHub } from '../input/hub';
 import type { GameView } from '../render/view';
+import { counterOf, questGoal, shortName } from './targets';
 
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls: string, parent: HTMLElement, text = ''): HTMLElementTagNameMap[K] {
   const e = document.createElement(tag);
@@ -242,13 +243,14 @@ export class Hud {
   }
 
   onEvents(events: readonly SimEvent[], sim: Simulation, view: GameView): void {
+    const byId = (id: string) => sim.monsters.find((m) => m.id === id);
     for (const e of events) {
       switch (e.type) {
         case 'hit':
           if (this.verify) {
             const s = view.project(e.pos);
             if (s.visible) {
-              const part = sim.monsters[0]?.def.parts[e.partIndex];
+              const part = byId(e.target)?.def.parts[e.partIndex];
               const d = el('div', part && part.hitzone.cut >= 0.6 ? 'dmg weak' : 'dmg', this.dmgLayer, String(e.damage));
               d.style.left = `${s.x}px`;
               d.style.top = `${s.y}px`;
@@ -267,13 +269,19 @@ export class Hud {
           break;
         }
         case 'part_break': {
-          const name = sim.monsters[0]?.def.parts[e.partIndex]?.name ?? e.partId;
-          this.toast(`部位破壊: ${name}`);
+          const m = byId(e.target);
+          const name = m?.def.parts[e.partIndex]?.name ?? e.partId;
+          this.toast(m?.herd ? `${shortName(m.def.name)}の${name}を壊した` : `部位破壊: ${name}`);
           break;
         }
-        case 'monster_dead':
-          this.toast(sim.hunt ? '討伐した' : '標的を倒した（しばらくすると復帰）');
+        case 'monster_dead': {
+          // 群れの依頼の標的は、残りの数を App が知らせる
+          const m = byId(e.target);
+          if (m?.herd) {
+            if (!sim.targets.some((t) => t.monsterId === m.def.id && sim.pack)) this.toast(`${shortName(m.def.name)}を倒した（剥ぎ取れる）`);
+          } else this.toast(sim.hunt ? '討伐した' : '標的を倒した（しばらくすると復帰）');
           break;
+        }
         case 'area_change':
           this.showArea(sim);
           break;
@@ -296,7 +304,7 @@ export class Hud {
           this.toast('尾を切断');
           break;
         case 'monster_stagger':
-          if (e.kind === 'topple') this.toast('転倒');
+          if (e.kind === 'topple' && !byId(e.target)?.herd) this.toast('転倒');
           break;
         case 'monster_aware':
           this.toast('気付かれた');
@@ -392,7 +400,10 @@ export class Hud {
     const h = sim.hunt;
     const sec = h ? Math.ceil(Math.max(0, h.timeLimitTicks - h.ticks) / 60) : this.inHub ? -1 : Math.floor(sim.tick / 60);
     this.set('time', sec, () => (this.time.textContent = sec < 0 ? '' : `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`));
-    const goal = this.inHub ? sim.content.hub.name : h ? `【${sim.rank?.name ?? ''}】${h.quest.name}: ${sim.monsters[0]?.def.name ?? ''}の${h.quest.kind === 'hunt' ? '狩猟' : '討伐'}` : '訓練: 標的で動作を確かめる';
+    // 群れの依頼は、種ごとの残りの数も出す（v0.18.0）
+    const left = sim.pack ? sim.targets.map((t) => Math.max(0, t.count - sim.slain(t.monsterId))) : [];
+    const rest = sim.pack && h?.phase === 'active' ? `（あと ${sim.targets.map((t, i) => (sim.targets.length > 1 ? `${shortName(sim.content.monsters.get(t.monsterId)?.name ?? '')} ` : '') + `${left[i]} ${counterOf(t.monsterId)}`).join('・')}）` : '';
+    const goal = this.inHub ? sim.content.hub.name : h ? `【${sim.rank?.name ?? ''}】${h.quest.name}: ${questGoal(sim.content, h.quest, true)}${rest}` : '訓練: 標的で動作を確かめる';
     this.set('goal', goal, () => (this.goal.textContent = goal));
     const faints = h ? `力尽き ${h.faints} / ${h.quest.maxFaints}` : '';
     this.set('faints', faints, () => (this.faints.textContent = faints));
@@ -400,18 +411,21 @@ export class Hud {
     const field = sim.field;
     this.set('field', field ? field.id : '', () => this.buildMap(sim));
     const here = sim.area();
-    const tm = sim.monsters[0];
+    // 標的: 1 体の標的か、群れの依頼では、まだ倒していない標的のうち、同じエリアに居るもの（居なければ、最初の 1 頭）
+    const live = sim.livingTargets();
+    const tm = sim.pack ? live.find((m) => sim.monsterArea(m)?.id === sim.areaId) ?? live[0] : sim.main ?? sim.monsters[0];
     const ta = tm ? sim.monsterArea(tm) : null;
-    const tState = !tm || tm.dead ? 'dead' : tm.asleep ? 'sleep' : tm.roam?.state === 'leave' ? 'leave' : '';
+    const tState = !tm || tm.dead ? 'dead' : tm.asleep ? 'sleep' : tm.roam?.state === 'leave' || tm.herd?.mood === 'travel' ? 'leave' : '';
+    const targetAreas = new Set(sim.pack ? live.map((m) => sim.monsterArea(m)?.id ?? '') : ta && tState !== 'dead' ? [ta.id] : []);
     const where = field && here ? `${areaLabel(here)}${here.kind === 'camp' ? '' : ` ${here.name}`}${ta && tState !== 'dead' ? `　標的: ${areaLabel(ta)}${tState === 'sleep' ? '（眠り）' : tState === 'leave' ? '（移動中）' : ''}` : ''}` : '';
     this.set('where', where, () => {
       this.where.textContent = where;
       this.where.hidden = where === '';
     });
-    this.set('mapmark', field ? `${sim.areaId}|${ta && tState !== 'dead' ? ta.id : ''}|${tState}` : '', () => {
+    this.set('mapmark', field ? `${sim.areaId}|${[...targetAreas].join(',')}|${tState}` : '', () => {
       for (const [id, cell] of this.mapCells) {
         cell.classList.toggle('here', id === sim.areaId);
-        cell.classList.toggle('target', !!ta && tState !== 'dead' && id === ta.id);
+        cell.classList.toggle('target', targetAreas.has(id));
         cell.classList.toggle('asleep', !!ta && id === ta.id && tState === 'sleep');
       }
     });
@@ -447,7 +461,7 @@ export class Hud {
     // 達成後: 剥ぎ取りの残りと、帰還までの時間
     let wrap = '';
     if (h && h.phase === 'success' && !h.closed) {
-      const left = Object.values(h.carves).reduce((a, b) => a + b, 0);
+      const left = sim.carvesLeft();
       const s2 = Math.ceil(h.returnTicks / 60);
       const head = h.reason === 'capture' ? '捕獲成功' : left > 0 ? `剥ぎ取り 残り ${left} 回${sim.carveTarget() ? '（攻撃ボタン）' : '（近づく）'}` : '剥ぎ取り完了';
       wrap = `${head}　帰還まで ${Math.floor(s2 / 60)}:${String(s2 % 60).padStart(2, '0')}`;
@@ -458,7 +472,8 @@ export class Hud {
     });
 
     if (!this.verify) return;
-    const m = sim.monsters[0];
+    // 検証表示: 1 体の標的（群れの依頼では、ロックしている・いちばん近い標的）
+    const m = view.lockTarget(sim) ?? sim.main ?? sim.monsters[0];
     if (m) {
       const r = m.hp / m.def.hp;
       this.set('ehp', Math.round(r * 300), () => (this.enemyBar.style.transform = `scaleX(${r})`));

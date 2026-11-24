@@ -48,7 +48,7 @@ const FIRST_13: [string, string, string, string | null][] = [
 ];
 
 describe('登録簿のデータ', () => {
-  it('86 種（成体 78・幼体 8）が入っていて、どの種も、生態 8 項目・器官・部位・素材までそろっている。遊べるのは、はじめの 12 種（v0.17.0）', () => {
+  it('86 種（成体 78・幼体 8）が入っていて、どの種も、生態 8 項目・器官・部位・素材までそろっている。遊べるのは、はじめの 12 種と幼体 8 種（v0.18.0）', () => {
     const b = content.bestiary;
     expect(validateBestiary(b, env)).toEqual([]);
     // 受け取る案と同じ厳しさで、全部の種を見ても、合わない所が無い
@@ -56,9 +56,9 @@ describe('登録簿のデータ', () => {
     expect(b.species.length).toBe(86);
     expect(b.species.filter((s) => s.class !== 'juvenile').length).toBe(78);
     expect(b.species.filter((s) => s.class === 'juvenile').length).toBe(8);
-    expect(b.species.filter((s) => s.state === 'implemented').map((s) => s.no)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+    expect(b.species.filter((s) => s.state === 'implemented').map((s) => s.no)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21]);
     expect(b.species.filter((s) => s.state === 'art').map((s) => s.id)).toEqual(['monster.embarg']);
-    expect(b.species.filter((s) => s.state === 'planned').length).toBe(73);
+    expect(b.species.filter((s) => s.state === 'planned').length).toBe(65);
     expect(b.species.map((s) => s.no)).toEqual(Array.from({ length: 86 }, (_, i) => i + 1));
   });
 

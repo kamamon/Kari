@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "monster.hinasalv",
+  "name": "氷帆蛇の幼体 ヒナサルヴ",
+  "rigFamily": "long",
+  "assetId": "model.monster.hinasalv",
+  "hp": 300,
+  "bodyRadius": 0.42,
+  "turnDegPerSec": 120,
+  "moveSpeed": 2.8,
+  "captureAllowed": false,
+  "lootId": "loot.hinasalv",
+  "respawnTicks": null,
+  "breakStaggerTicks": 50,
+  "collision": [{"z": 0.6, "r": 0.42}, {"z": -0.6, "r": 0.4}],
+  "approach": {"stopDist": 1.6, "faceDeg": 55},
+  "discover": null,
+  "parentId": "monster.kirisave",
+  "herd": {"size": [2, 4], "spacing": 3.0, "alertRange": 20, "fleeRange": 10, "fleeSpeedScale": 1.6, "fleeTicks": 420, "fightChance": 0.4, "fightTicks": [240, 420], "scatter": false},
+  "parts": [
+    {"id": "head", "name": "頭の幼冷晶板", "hitzone": {"cut": 0.85, "blunt": 0.85, "shot": 0.8}, "brokenHitzone": {"cut": 0.95, "blunt": 0.95, "shot": 0.9}, "elementZone": 0.25, "breakDurability": 60, "material": "shell", "flinch": {"threshold": 35, "growth": 20, "ticks": 40}, "shapes": [{"a": [0.0, 0.501, 1.462], "b": [0.0, 0.501, 1.765], "r": 0.24}]},
+    {"id": "sails", "name": "左右交互の小帆板", "hitzone": {"cut": 0.65, "blunt": 0.75, "shot": 0.6}, "brokenHitzone": {"cut": 0.75, "blunt": 0.85, "shot": 0.7}, "elementZone": 0.25, "breakDurability": 70, "material": "shell", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.0, 0.449, 0.94], "b": [0.0, 0.277, -0.627], "r": 0.3}]},
+    {"id": "tail", "name": "尾", "hitzone": {"cut": 0.85, "blunt": 0.8, "shot": 0.8}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.0, 0.222, -0.705], "b": [0.0, 0.242, -1.316], "r": 0.2}]},
+    {"id": "body", "name": "胴", "hitzone": {"cut": 0.75, "blunt": 0.75, "shot": 0.7}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "flinch": {"threshold": 60, "growth": 30, "ticks": 90, "topple": true}, "shapes": [{"a": [0.0, 0.222, -0.627], "b": [0.0, 0.407, 1.253], "r": 0.3}]}
+  ],
+  "ai": {
+    "aggroRange": 30,
+    "cooldownTicks": [45, 85],
+    "choices": [
+      {"actionId": "monster.hinasalv.ice_scatter", "minDist": 1, "maxDist": 7, "maxAngleDeg": 60, "weight": 2.5, "cooldownTicks": 260},
+      {"actionId": "monster.hinasalv.slide", "minDist": 2, "maxDist": 9, "maxAngleDeg": 25, "weight": 2, "cooldownTicks": 260, "clearAhead": 5},
+      {"actionId": "monster.hinasalv.tail_flick_l", "minDist": 0, "maxDist": 2.8, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "left"},
+      {"actionId": "monster.hinasalv.tail_flick_r", "minDist": 0, "maxDist": 2.8, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "right"}
+    ]
+  }
+}

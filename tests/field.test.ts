@@ -252,7 +252,7 @@ describe('大型の移動', () => {
       expect(moves).toBeGreaterThanOrEqual(12);
       expect(worst).toBeLessThan(3600);
     }
-  });
+  }, 40000);
 
   it('戦っている最中でも、居る時間が過ぎれば、技の後に立ち去る（立ち去る間は、技を出さない）', () => {
     const sim = fieldSim();

@@ -27,8 +27,8 @@ export interface RoamState {
 /** 出口へ歩き出してから、これだけ経っても着かなければ、そのまま次のエリアへ移る（何かに引っかかって、いつまでも動けないことを避ける） */
 const LEAVE_TIMEOUT_TICKS = 5400;
 
-/** from から to へ、大型が通れる出口だけを使って行く時の、最初の出口。行けなければ null。 */
-export function nextHop(field: FieldDef, from: string, to: string): FieldExit | null {
+/** from から to へ、大型が通れる出口だけ（largeOnly が false なら、どの出口でも）を使って行く時の、最初の出口。行けなければ null。 */
+export function nextHop(field: FieldDef, from: string, to: string, largeOnly = true): FieldExit | null {
   if (from === to) return null;
   const areas = new Map(field.areas.map((a) => [a.id, a]));
   const first = new Map<string, FieldExit>();
@@ -37,7 +37,7 @@ export function nextHop(field: FieldDef, from: string, to: string): FieldExit | 
   while (queue.length > 0) {
     const id = queue.shift()!;
     for (const e of areas.get(id)?.exits ?? []) {
-      if (!e.large || seen.has(e.to)) continue;
+      if ((largeOnly && !e.large) || seen.has(e.to)) continue;
       seen.add(e.to);
       first.set(e.to, id === from ? e : first.get(id)!);
       if (e.to === to) return first.get(to)!;

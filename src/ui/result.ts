@@ -1,6 +1,7 @@
 // 依頼の結果。simulation が確定した結果（成否・素材・報酬）を表示するだけで、ここでは何も決めない。
 // 持ち物への加算は App が依頼 1 回につき一度だけ行う（結果画面を何度開いても増えない）。
 import type { Simulation } from '../game/sim';
+import { counterOf, shortName } from './targets';
 
 export interface ResultHost {
   toBase(): void;
@@ -87,7 +88,7 @@ export class ResultScreen {
   show(sim: Simulation, save: RewardSaveState): void {
     this.setSaveState(save);
     const h = sim.hunt!;
-    const m = sim.monsters[0];
+    const m = sim.main;
     this.root.classList.toggle('failed', h.phase === 'failed');
     this.title.textContent = h.phase === 'success' ? '依頼達成' : '依頼失敗';
     const sec = Math.floor(h.ticks / 60);
@@ -103,7 +104,9 @@ export class ResultScreen {
       ['結果', REASON[h.reason ?? ''] ?? ''],
       ['かかった時間', `${Math.floor(sec / 60)} 分 ${sec % 60} 秒`],
       ['力尽きた回数', `${h.faints} / ${h.quest.maxFaints}`],
-      ['部位', parts.length ? parts.join('、') : 'なし'],
+      ...(sim.pack
+        ? [['討伐', sim.targets.map((t) => `${shortName(sim.content.monsters.get(t.monsterId)?.name ?? '')} ${sim.slain(t.monsterId)} ${counterOf(t.monsterId)}（目標 ${t.count}）`).join('　')] as [string, string]]
+        : [['部位', parts.length ? parts.join('、') : 'なし'] as [string, string]]),
       ['与えたダメージ', `${sim.totalDamage}（${sim.hitCount} 回命中）`],
     ];
     this.body.textContent = '';
@@ -124,6 +127,8 @@ export class ResultScreen {
       const label = (src: string): string => {
         if (SOURCE[src]) return SOURCE[src]!;
         const [kind, partId] = src.split(':');
+        // 倒した幼体の剥ぎ取り（carve:<種の id>）
+        if (kind === 'carve') return `${shortName(sim.content.monsters.get(partId ?? '')?.name ?? partId ?? '')}の剥ぎ取り`;
         const part = m?.def.parts.find((d) => d.id === partId)?.name ?? partId ?? '';
         return kind === 'break' ? `${part}の破壊` : `${part}の剥ぎ取り`;
       };

@@ -1,11 +1,11 @@
 // 描画のまとめ役。simulation の状態を読んで、仮モデル・カメラ・エフェクト・検証表示を更新する。
 // ここから simulation へ値を書き戻すことはしない（描画補間や骨の姿勢を計算の正本にしない）。
-import { CylinderGeometry, DoubleSide, Group, IcosahedronGeometry, Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshStandardMaterial, RingGeometry, Scene, Vector3, WebGLRenderer } from 'three';
+import { CylinderGeometry, DoubleSide, Group, IcosahedronGeometry, Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshStandardMaterial, RingGeometry, Scene, Vector3, WebGLRenderer, type Object3D } from 'three';
 import { angleDiff, fromArr, lerpV, norm, smoothstep, toWorld, type V3 } from '../core/math';
 import type { Content, MonsterDef } from '../data/schemas';
 import { inWindow, renderTick } from '../game/action';
 import type { SimEvent } from '../game/events';
-import { monsterBlockers, monsterShapes } from '../game/monster';
+import { monsterBlockers, monsterShapes, type MonsterState } from '../game/monster';
 import { familyOf, isGuarding, playerHurtCapsule } from '../game/player';
 import type { Simulation } from '../game/sim';
 import { sampleTrack, trackSegment } from '../game/tracks';
@@ -91,7 +91,10 @@ export class GameView {
   readonly hunter = new HunterRig();
   /** 飛んでいる矢の形（使い回す） */
   private arrows: Group[] = [];
-  readonly monsterRig: MonsterRig | null = null;
+  /** モンスターの見た目（個体の id → 体と影）。群れの幼体は、居るエリアへ入った時に作る（v0.18.0） */
+  private rigs = new Map<string, { rig: MonsterRig; shadow: Object3D }>();
+  /** 1 体の標的（依頼の標的・訓練の標的。群れの依頼では、最初の 1 頭）の見た目 */
+  monsterRig: MonsterRig | null = null;
   private hazardViews = new Map<number, { group: Group; ring: Mesh; rock: Mesh; look: HazardLook }>();
   /** 飛び道具の見た目（v0.17.0）: 種類ごとの材質。岩は従来どおり */
   private hazardBall = new IcosahedronGeometry(1, 1);
@@ -109,7 +112,6 @@ export class GameView {
   private rings: GroundRings;
   private debug: DebugDraw;
   private playerShadow = blobShadow(0.45);
-  private monsterShadow = blobShadow(1.7);
   private phase = 0;
   private time = 0;
   /** 見た目の側から鳴らす音（モンスターの足音など）。App が音声へつなぐ。 */
@@ -144,6 +146,8 @@ export class GameView {
   lockLost = false;
   /** ロック中の、照準の位置（ワールド座標。無ければ null） */
   lockPoint: Vector3 | null = null;
+  /** ロックしている個体（群れの依頼で、倒れたら次の近い標的へ移る。v0.18.0） */
+  lockId: string | null = null;
   /** 技データが指す clip のうち、仮アニメーションに無いもの。黙って代用せず検証表示へ出す。 */
   readonly missingClips = new Set<string>();
 
@@ -167,15 +171,8 @@ export class GameView {
       this.arena = { group, ...setupSky(this.scene, settings.shadows, 'village') };
     } else this.arena = buildArena(this.scene, sim.world.map, settings.shadows);
     this.scene.add(this.hunter.root, this.playerShadow);
-    const m = sim.monsters[0];
-    if (m) {
-      const ids = m.def.parts.map((p) => p.id);
-      // 大型 11 種（v0.17.0）は、設計図から作る仮モデル。ガルドロスは専用の仮モデル、訓練の標的は岩偶
-      const plan = CREATURE_PLANS[m.def.id];
-      this.monsterRig = plan ? new CreatureRig(plan, ids) : m.def.id === 'monster.galdros' ? new GaldrosRig(ids) : new DummyRig(ids);
-      this.monsterShadow.scale.setScalar(plan ? Math.max(1, m.def.bodyRadius * 1.1) : m.def.id === 'monster.galdros' ? 1.45 : 1);
-      this.scene.add(this.monsterRig.root, this.monsterShadow, ...(this.monsterRig.extras ?? []));
-    }
+    const m = sim.main ?? sim.monsters[0];
+    if (m) this.monsterRig = this.rigOf(m).rig;
     this.trail = new BladeTrail(this.scene);
     this.sparks = new Particles(this.scene, 260, 0.11, true, 9, 1.2);
     this.dust = new Particles(this.scene, 200, 0.55, false, -0.6, 2.2);
@@ -210,6 +207,29 @@ export class GameView {
     return true;
   }
 
+  /**
+   * その個体の見た目（無ければ作る）。大型 11 種と幼体 8 種は設計図から作る仮モデル（幼体は群れの仲間で面を分け合う）、
+   * ガルドロスは専用の仮モデル、訓練の標的は岩偶。
+   */
+  private rigOf(m: MonsterState): { rig: MonsterRig; shadow: Object3D } {
+    const had = this.rigs.get(m.id);
+    if (had) return had;
+    const ids = m.def.parts.map((p) => p.id);
+    const plan = CREATURE_PLANS[m.def.id];
+    const rig: MonsterRig = plan ? new CreatureRig(plan, ids) : m.def.id === 'monster.galdros' ? new GaldrosRig(ids) : new DummyRig(ids);
+    const shadow = blobShadow(1.7);
+    shadow.scale.setScalar(plan ? Math.max(m.herd ? 0.3 : 1, m.def.bodyRadius * 1.1) : m.def.id === 'monster.galdros' ? 1.45 : 1);
+    this.scene.add(rig.root, shadow, ...(rig.extras ?? []));
+    const e = { rig, shadow };
+    this.rigs.set(m.id, e);
+    return e;
+  }
+
+  /** 見えている（同じエリアに居る）モンスター。フィールドでなければ、全部 */
+  private shown(sim: Simulation, m: MonsterState): boolean {
+    return !sim.field || sim.monsterArea(m)?.id === sim.areaId;
+  }
+
   applySettings(s: Settings): void {
     this.settings = s;
     this.resize();
@@ -232,8 +252,11 @@ export class GameView {
   }
 
   handleEvents(events: readonly SimEvent[], sim: Simulation): void {
-    const m = sim.monsters[0];
+    const byId = (id: string): MonsterState | undefined => sim.monsters.find((x) => x.id === id);
     for (const e of events) {
+      // その出来事の主のモンスター（無ければ 1 体の標的）
+      const m = ('target' in e && typeof e.target === 'string' ? byId(e.target) : 'actor' in e ? byId(e.actor) : undefined) ?? sim.main ?? sim.monsters[0];
+      const rig = m ? this.rigs.get(m.id)?.rig : undefined;
       switch (e.type) {
         case 'action_event':
           if (e.actor === sim.player.id && e.kind === 'trail_on') this.trail.active = true;
@@ -257,8 +280,8 @@ export class GameView {
           const c = MATERIAL_SPARK[e.material] ?? [1, 1, 1];
           this.sparks.emit(10 + e.chargeLevel * 6, e.pos, 4.5 + e.chargeLevel, 1.6, 0.34, c);
           this.dust.emit(3, e.pos, 1.2, 0.4, 0.5, [0.6, 0.6, 0.55], 0.6);
-          this.monsterRig?.hitFlash(e.partIndex);
-          this.monsterRig?.hitReact?.(e.partIndex, e.pos.x, e.pos.z, 0.8 + e.chargeLevel * 0.3);
+          rig?.hitFlash(e.partIndex);
+          rig?.hitReact?.(e.partIndex, e.pos.x, e.pos.z, 0.8 + e.chargeLevel * 0.3);
           this.cam.addShake(0.22 + e.chargeLevel * 0.12);
           // 弾かれた: 白い火花を足す（刃が通っていないことが分かるように）
           if (e.bounced) {
@@ -277,7 +300,7 @@ export class GameView {
           }
           break;
         case 'part_sever':
-          this.monsterRig?.placeSevered?.(e.pos.x, e.pos.y, e.pos.z, e.yaw);
+          rig?.placeSevered?.(e.pos.x, e.pos.y, e.pos.z, e.yaw);
           this.sparks.emit(36, { x: e.pos.x, y: 0.9, z: e.pos.z }, 6, 3, 0.7, [1, 0.8, 0.45]);
           this.dust.emit(12, { x: e.pos.x, y: 0.4, z: e.pos.z }, 2.4, 1.2, 0.9, [0.55, 0.52, 0.48]);
           this.cam.addShake(0.55);
@@ -317,7 +340,14 @@ export class GameView {
         }
         case 'monster_dead':
         case 'monster_respawn':
-          if (m) this.dust.emit(26, { x: m.pos.x, y: 0.6, z: m.pos.z }, 3.2, 1.2, 1.1, [0.6, 0.62, 0.55], 0.6);
+          if (m) {
+            const k = m.herd ? 0.4 : 1;
+            this.dust.emit(Math.round(26 * k), { x: m.pos.x, y: 0.6 * k, z: m.pos.z }, 3.2 * k, 1.2, 1.1, [0.6, 0.62, 0.55], 0.6);
+          }
+          break;
+        case 'herd_alarm':
+          // 群れが騒いだ: 足元に小さな土ぼこり（逃げ出す時は多め）
+          this.dust.emit(e.flee ? 8 : 3, { x: e.pos.x, y: 0.2, z: e.pos.z }, 1.4, 0.6, 0.6, [0.62, 0.6, 0.54], 0.4);
           break;
         // ---- 道具・捕獲・剥ぎ取り（見た目は仮）----
         case 'item_effect':
@@ -516,21 +546,21 @@ export class GameView {
     this.trail.update(dt, this.tmpA.set(base.x, base.y, base.z), new Vector3(tip.x, tip.y, tip.z));
 
     // ---- モンスター ----
-    const m = sim.monsters[0];
-    // フィールド: 別のエリアに居る大型は見せない（霧の向こうで、もともと見えない距離）
-    const monsterHere = !sim.field || !m || sim.monsterArea(m)?.id === sim.areaId;
-    if (this.monsterRig) {
-      this.monsterRig.root.visible = monsterHere;
-      this.monsterShadow.visible = monsterHere;
-    }
-    if (m && this.monsterRig) {
+    // フィールド: 別のエリアに居るモンスターは見せない（霧の向こうで、もともと見えない距離）。群れの幼体の体は、見える時に作る
+    this.monsterFx.px = pos.x;
+    this.monsterFx.pz = pos.z;
+    for (const m of sim.monsters) {
+      const here = this.shown(sim, m);
+      const e = here ? this.rigOf(m) : this.rigs.get(m.id);
+      if (!e) continue;
+      e.rig.root.visible = here;
+      e.shadow.visible = here && !m.dead;
+      if (!here) continue;
       const mp = lerpV(m.prevPos, m.pos, alpha);
-      this.monsterRig.root.position.set(mp.x, mp.y, mp.z);
-      this.monsterRig.root.rotation.y = m.prevYaw + angleDiff(m.prevYaw, m.yaw) * alpha;
-      this.monsterFx.px = pos.x;
-      this.monsterFx.pz = pos.z;
-      this.monsterRig.update(m, { alpha, dt, time: this.time, content, rankOrder: sim.rank?.order, lookAt: pos, fx: this.monsterFx });
-      this.monsterShadow.position.set(mp.x, sim.world.groundHeight(mp.x, mp.z) + 0.03, mp.z);
+      e.rig.root.position.set(mp.x, mp.y, mp.z);
+      e.rig.root.rotation.y = m.prevYaw + angleDiff(m.prevYaw, m.yaw) * alpha;
+      e.rig.update(m, { alpha, dt, time: this.time, content, rankOrder: sim.rank?.order, lookAt: pos, fx: this.monsterFx });
+      e.shadow.position.set(mp.x, sim.world.groundHeight(mp.x, mp.z) + 0.03, mp.z);
     }
     this.syncHazards(sim);
     this.syncTraps(sim);
@@ -546,6 +576,7 @@ export class GameView {
       this.lockOn = false;
       this.lockLost = true;
     }
+    if (!this.lockOn) this.lockId = null;
     this.cam.look(this.lockPoint ? 0 : look.x * sens, look.y * sens, this.settings.invertX, this.settings.invertY);
     const shake = this.settings.shake === 'off' ? 0 : this.settings.shake === 'weak' ? 0.5 : 1;
     this.cam.update(dt, { x: pos.x, y: this.renderY, z: pos.z }, sim.world, shake, this.lockPoint);
@@ -564,19 +595,42 @@ export class GameView {
    * 位置は、部位の当たり形状の真ん中（モンスターの座標で決まった値）を、描画の位置と向きへ置いたもの。
    */
   lockTargetPoint(sim: Simulation, alpha = 1): Vector3 | null {
-    const m = sim.monsters[0];
-    if (!m || m.dead || m.captured) return null;
-    if (sim.field && sim.monsterArea(m)?.id !== sim.areaId) return null;
+    const m = this.lockTarget(sim);
+    if (this.lockOn) this.lockId = m?.id ?? null;
+    if (!m) return null;
     const x = m.prevPos.x + (m.pos.x - m.prevPos.x) * alpha, z = m.prevPos.z + (m.pos.z - m.prevPos.z) * alpha;
-    const p = sim.player.pos;
-    if (Math.hypot(x - p.x, z - p.z) > 70) return null;
     const c = lockCenter(m.def);
     const yaw = m.prevYaw + angleDiff(m.prevYaw, m.yaw) * alpha;
     const cs = Math.cos(yaw), sn = Math.sin(yaw);
     return this.tmpLock.set(x + c.x * cs + c.z * sn, m.pos.y + c.y, z - c.x * sn + c.z * cs);
   }
 
-  /** 罠: 置いた場所に輪と芯を出す。作動前は暗く、作動可能で青銅色に脈打ち、捕らえている間は明るくちらつく。 */
+  /**
+   * ロックできる相手。1 体の標的の依頼では、その標的。群れの依頼では、ロック中の相手が倒れていなければその相手、
+   * 倒れたら（または初めは）同じエリアの、いちばん近いまだ倒していない標的。倒れた・捕獲された・別のエリア・70m より遠い相手は選ばない。
+   */
+  lockTarget(sim: Simulation): MonsterState | null {
+    const p = sim.player.pos;
+    const ok = (m: MonsterState | null | undefined): m is MonsterState => !!m && !m.dead && !m.captured && this.shown(sim, m) && Math.hypot(m.pos.x - p.x, m.pos.z - p.z) <= 70;
+    if (!sim.pack) {
+      const m = sim.main ?? sim.monsters[0];
+      return ok(m) ? m : null;
+    }
+    const cur = this.lockOn && this.lockId ? sim.monsters.find((x) => x.id === this.lockId) : undefined;
+    if (ok(cur) && sim.livingTargets().includes(cur)) return cur;
+    let best: MonsterState | null = null;
+    let bd = Infinity;
+    for (const m of sim.livingTargets()) {
+      if (!ok(m)) continue;
+      const d = Math.hypot(m.pos.x - p.x, m.pos.z - p.z);
+      if (d < bd) {
+        bd = d;
+        best = m;
+      }
+    }
+    return best;
+  }
+
   /** 飛んでいる矢を、simulation の位置へ置く（向きは進む向き）。 */
   private syncArrows(sim: Simulation, alpha: number): void {
     const list = sim.projectiles;

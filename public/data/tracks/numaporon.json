@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "note": "泥冠獣の幼体 ヌマポロンの攻撃の判定の形（tools/gen-monsters.py の出力。手で編集しない）。",
+  "tracks": [
+    {"id": "numaporon_belly_slide", "radius": 0.5, "from": 0, "to": 0.9, "keys": [{"t": 30, "grip": [0.0, 0.35, 0.9], "dir": [0.0, 0.0, 1.0]}, {"t": 50, "grip": [0.0, 0.35, 0.9], "dir": [0.0, 0.0, 1.0]}]},
+    {"id": "numaporon_mud_push_l", "radius": 0.45, "from": 0, "to": 1.4, "keys": [{"t": 28, "grip": [0.55, 0.45, 0.7], "dir": [0.0, 0.0, -1.0]}, {"t": 36, "grip": [0.7, 0.4, 0.7], "dir": [0.0, 0.0, -1.0]}]},
+    {"id": "numaporon_mud_push_r", "radius": 0.45, "from": 0, "to": 1.4, "keys": [{"t": 28, "grip": [-0.55, 0.45, 0.7], "dir": [0.0, 0.0, -1.0]}, {"t": 36, "grip": [-0.7, 0.4, 0.7], "dir": [0.0, 0.0, -1.0]}]}
+  ]
+}

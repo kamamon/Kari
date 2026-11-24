@@ -55,6 +55,9 @@ export type SimEvent =
   | { type: 'monster_sleep'; target: string; areaId: string }
   | { type: 'monster_wake'; target: string; byHit: boolean }
   | { type: 'monster_lost'; target: string }
+  /** 群れ（幼体）: 狩人に気づいた・逃げ出した（騒ぎごとに、段階が上がった時だけ）/ 別のエリアへ移り終えた */
+  | { type: 'herd_alarm'; herdId: number; target: string; flee: boolean; pos: V3 }
+  | { type: 'herd_move'; herdId: number; from: string; to: string }
   | { type: 'player_hurt'; damage: number; reaction: 'flinch' | 'knockdown'; pos: V3 }
   /** 状態異常が付いた（on）・消えた。sleep / para / stun は動けない間、poison は体力が減っていく間 */
   | { type: 'status'; kind: StatusKind; on: boolean }

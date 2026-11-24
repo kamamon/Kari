@@ -49,20 +49,21 @@ describe('段階のデータ', () => {
     expect(ranks[0]!.monster).toEqual({ hpScale: 1, partScale: 1, attackScale: 1, cooldownScale: 1 });
   });
 
-  it('ガルドロスの依頼は段階ごとに 1 件。上の段階は、1 つ下の依頼の達成が条件。ほかの 11 種は初級 1 件ずつで、最初から受けられる（v0.17.0）', () => {
+  it('ガルドロスの依頼は段階ごとに 1 件。上の段階は、1 つ下の依頼の達成が条件。ほかの 11 種は初級 1 件ずつ、群れの依頼は 9 件で、最初から受けられる（v0.18.0）', () => {
     expect(QUESTS.map((id) => content.quests.get(id)!.rankId)).toEqual(['rank.1', 'rank.2', 'rank.3', 'rank.4']);
     expect(QUESTS.map((id) => content.quests.get(id)!.requires ?? [])).toEqual([[], ['quest.basin.003'], ['quest.basin.r2.001'], ['quest.basin.r3.001']]);
     const others = [...content.quests.values()].filter((q) => q.targetMonsterId !== 'monster.galdros');
-    expect(others).toHaveLength(11);
+    expect(others.filter((q) => !q.targets)).toHaveLength(11);
+    expect(others.filter((q) => q.targets)).toHaveLength(9);
     for (const q of others) expect([q.rankId, q.requires ?? []]).toEqual(['rank.1', []]);
-    expect(content.quests.size).toBe(15);
+    expect(content.quests.size).toBe(24);
   });
 
   it('段階ごとに、その段階からしか出ない素材が 2 つずつある。初級の 4 種は初級から出る', () => {
     const rankOf = materialRanks(content);
-    // ガルドロスの素材（ほかの 11 種は初級だけ。素材は 4 つずつ）
+    // ガルドロスの素材（ほかの 11 種は初級だけ。素材は 4 つずつ。幼体 8 種は初級だけで、2〜3 つずつ）
     const from = (order: number): string[] => [...rankOf].filter(([id, o]) => o === order && id.startsWith('mat.galdros.')).map(([id]) => content.materials.get(id)!.name).sort();
-    expect([...rankOf].filter(([id, o]) => !id.startsWith('mat.galdros.') && o === 1)).toHaveLength(44);
+    expect([...rankOf].filter(([id, o]) => !id.startsWith('mat.galdros.') && o === 1)).toHaveLength(44 + 23);
     expect(from(1)).toEqual(['前脚甲', '岩殻片', '硬骨', '青銅晶脈'].sort());
     expect(from(2)).toEqual(['尾端晶', '脈岩殻'].sort());
     expect(from(3)).toEqual(['晶岩殻', '青銅晶塊'].sort());

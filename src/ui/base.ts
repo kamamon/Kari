@@ -13,6 +13,7 @@ import type { FacilityKind } from '../data/schemas';
 import { checkBuy, checkCraft, defenseOf, ownedArmor, parseImport, questUnlocked, unknownIds, usableWeapons, wornArmor } from '../save/profile';
 import type { SaveManager, SaveResult } from '../save/saveManager';
 import { canFullscreen, fullscreenHint, toggleFullscreen } from './fullscreen';
+import { questGoal } from './targets';
 
 export interface BaseHost {
   startTraining(): void;
@@ -483,8 +484,13 @@ export class BaseScreen {
       return b;
     };
     const order = (rankId: string): number => c.ranks.get(rankId)?.order ?? 0;
-    const quests = [...c.quests.values()].sort((x, y) => order(x.rankId) - order(y.rankId));
+    // 段階の順。同じ段階では、1 体の標的の依頼 → 群れの依頼（v0.18.0）
+    const quests = [...c.quests.values()].sort((x, y) => order(x.rankId) - order(y.rankId) || (x.targets ? 1 : 0) - (y.targets ? 1 : 0));
+    let group = '';
     for (const q of quests) {
+      const g = `${q.rankId}|${q.targets ? 'pack' : 'one'}`;
+      if (q.targets && g !== group) this.questBox.appendChild(el('p', 'forge-head', `【${c.ranks.get(q.rankId)?.name ?? ''}】幼体の群れの依頼（決まった頭数を討伐する）`));
+      group = g;
       const rank = c.ranks.get(q.rankId)?.name ?? '';
       const clears = doc.progress.questClears[q.id] ?? 0;
       const title = `【${rank}】依頼「${q.name}」${clears > 0 ? `　達成 ${clears} 回` : ''}`;
@@ -494,11 +500,9 @@ export class BaseScreen {
         b = choice(title, [`${need.join('と')}を達成すると受けられます。`], null);
         b.classList.add('locked');
       } else {
-        const target = c.monsters.get(q.targetMonsterId)?.name ?? '';
-        const goal = q.kind === 'hunt' ? '狩猟（討伐か捕獲）' : '討伐';
         const field = this.host.fieldHunts ? fieldOf(c, q) : null;
-        const lines = [q.summary, `目標: ${target}の${goal}　制限 ${Math.round(questTimeLimitTicks(c, q, this.host.fieldHunts) / 3600)} 分　力尽き ${q.maxFaints} 回で失敗`];
-        if (field) lines.push(`狩場: ${field.name}（野営地から出発。エリア ${field.areas.filter((a) => a.kind !== 'camp').length} か所。標的はエリアを移動する）`);
+        const lines = [q.summary, `目標: ${questGoal(c, q)}　制限 ${Math.round(questTimeLimitTicks(c, q, this.host.fieldHunts) / 3600)} 分　力尽き ${q.maxFaints} 回で失敗`];
+        if (field) lines.push(`狩場: ${field.name}（野営地から出発。エリア ${field.areas.filter((a) => a.kind !== 'camp').length} か所。${q.targets ? '群れは、住みかのエリアを移ることがある' : '標的はエリアを移動する'}）`);
         if (q.supplies?.length) lines.push(`支給品: ${q.supplies.map((s) => `${c.items.get(s.itemId)?.name ?? s.itemId} ×${s.count}`).join('　')}`);
         if (q.rewards) lines.push(`報酬: ${q.rewards.money} 通貨 + 素材`);
         b = choice(title, lines, () => this.host.startHunt(q.id));

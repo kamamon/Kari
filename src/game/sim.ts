@@ -3,7 +3,7 @@
 import { DEG, angleDiff, forwardOf, toWorld, yawOf, type V3 } from '../core/math';
 import { SeededRng } from '../core/seededRng';
 import { STATUS_KINDS } from '../data/schemas';
-import type { Content, DamageType, FieldAreaDef, FieldDef, HazardDef, HazardLook, HitWindowDef, ItemDef, ItemStack, LootDef, LootRoll, QuestDef, RankDef, ShootDef, StatusHit } from '../data/schemas';
+import type { Content, DamageType, FieldAreaDef, FieldDef, HazardDef, HazardLook, HitWindowDef, ItemDef, ItemStack, LootDef, LootRoll, MonsterDef, QuestDef, QuestTarget, RankDef, ShootDef, StatusHit } from '../data/schemas';
 import { inWindow, type ActionRun } from './action';
 import { HitLedger, computeDamage, edgeStage, sweepCapsule, type WorldShape } from './combat';
 import type { SimEvent } from './events';
@@ -11,6 +11,7 @@ import { Btn, type InputFrame } from './inputFrame';
 import { defenseScale, scaleMonsterDef, totalDefense } from './rank';
 import { applyDamageToMonster, createMonster, monsterBlockers, monsterShapes, stepMonster, type MonsterState } from './monster';
 import { questTimeLimitTicks } from './field';
+import { addMember, createHerdGroup, herdArea, herdHurt, livingMembers, slotOf, stepHerdGroup, type HerdGroup } from './herd';
 import { createRoam } from './roam';
 import { createPlayer, familyOf, playerHurtCapsule, resolveIncomingHit, stepPlayer, weaponOf, type PlayerState, type SimCtx } from './player';
 import { trackSegment } from './tracks';
@@ -94,7 +95,7 @@ export interface HuntState {
   timeLimitTicks: number;
   endTick: number;
   returnTicks: number;
-  /** 剥ぎ取りの残り回数。'body'（本体）と、切り落とした部位の id */
+  /** 剥ぎ取りの残り回数。'body'（1 体の標的の本体）と、切り落とした部位の id と、倒した幼体の 'body:<個体の id>' */
   carves: Record<string, number>;
   loot: LootGain[];
   closed: boolean;
@@ -196,6 +197,14 @@ export class Simulation implements SimCtx {
   severedAt: Record<string, { x: number; z: number }> = {};
   projectiles: Projectile[] = [];
   private nextProjectile = 1;
+  /** 群れ（幼体。v0.18.0）。群れの依頼の標的と、フィールドに住む群れ */
+  herds: HerdGroup[] = [];
+  /** 依頼の標的（種ごとの頭数）。1 体の大型の依頼なら [{ 標的, 1 }]。訓練場・里では空 */
+  readonly targets: QuestTarget[] = [];
+  /** 群れの依頼（標的を、決まった頭数だけ討伐する）か */
+  readonly pack: boolean = false;
+  /** 1 体の標的（大型の依頼の標的、訓練場の標的）。群れの依頼では null */
+  main: MonsterState | null = null;
 
   constructor(content: Content, options: SimOptions) {
     this.content = content;
@@ -239,7 +248,9 @@ export class Simulation implements SimCtx {
       this.rank = content.ranks.get(quest.rankId) ?? null;
       if (!this.rank) throw new Error(`rank ${quest.rankId} が無い`);
     }
-    const monsterId = quest ? quest.targetMonsterId : options.monsterId;
+    this.targets = quest ? quest.targets?.map((t) => ({ ...t })) ?? [{ monsterId: quest.targetMonsterId, count: 1 }] : [];
+    this.pack = !!quest?.targets;
+    const monsterId = quest ? (this.pack ? null : quest.targetMonsterId) : options.monsterId;
     if (monsterId) {
       const base = content.monsters.get(monsterId);
       if (!base) throw new Error(`monster ${monsterId} が無い`);
@@ -257,7 +268,9 @@ export class Simulation implements SimCtx {
         }
       }
       this.monsters.push(m);
+      this.main = m;
     }
+    this.spawnHerds(quest, field ?? null, quest ? quest.monsterSpawn : map.monsterSpawn);
     if (quest) {
       this.hunt = { quest, phase: 'active', reason: null, ticks: 0, faints: 0, timeLimitTicks: questTimeLimitTicks(content, quest, !!field), endTick: 0, returnTicks: 0, carves: {}, loot: [], closed: false, closeTick: 0, rewards: null };
       this.monsterAttackScale = (quest.monsterAttackScale ?? 1) * (this.rank?.monster.attackScale ?? 1);
@@ -268,7 +281,150 @@ export class Simulation implements SimCtx {
     if (ev.type === 'player_hurt' || ev.type === 'guard' || ev.type === 'guard_break') this.damageTaken += ev.damage;
     if (ev.type === 'player_dead' && this.hunt?.phase === 'active') this.hunt.faints++;
     if (ev.type === 'part_sever') this.severedAt[ev.partId] = { x: ev.pos.x, z: ev.pos.z };
+    if (ev.type === 'monster_dead') this.onMonsterDead(ev.target);
     this.events.push(ev);
+  }
+
+  // ---- 群れ（幼体。v0.18.0）----
+
+  /**
+   * 群れを出す。群れの依頼では、標的の種の群れ（標的の頭数より少なくならない）。
+   * フィールドでは、狩場に住む群れ（native の群れと、親か自分が標的の群れ）を、住みかの最初のエリアへ。
+   */
+  private spawnHerds(quest: QuestDef | undefined, field: FieldDef | null, spawn: { x: number; z: number; yaw: number }): void {
+    const c = this.content;
+    const need = new Map(this.pack ? this.targets.map((t) => [t.monsterId, t.count]) : []);
+    const targetIds = new Set(this.targets.map((t) => t.monsterId));
+    if (field) {
+      for (const fh of field.herds ?? []) {
+        const base = c.monsters.get(fh.monsterId);
+        if (!base?.herd) continue;
+        const active = fh.native || targetIds.has(base.id) || (!!base.parentId && targetIds.has(base.parentId));
+        if (!active) continue;
+        const area = field.areas.find((a) => a.id === fh.areas[0]);
+        if (!area) continue;
+        const g = this.spawnHerd(base, need.get(base.id) ?? 0, fh.areas, area.id, (rng) => {
+          const b = area.bounds;
+          return { x: b.minX + (b.maxX - b.minX) * (0.3 + 0.4 * rng.next()), z: b.minZ + (b.maxZ - b.minZ) * (0.3 + 0.4 * rng.next()) };
+        });
+        need.set(base.id, Math.max(0, (need.get(base.id) ?? 0) - g.members.length));
+      }
+    }
+    // 群れの依頼で、まだ足りない標的（フィールドに住みかの無い種・1 つの狩場）: 依頼の位置へ
+    let k = 0;
+    for (const t of this.targets) {
+      const left = need.get(t.monsterId) ?? 0;
+      if (!this.pack || left <= 0) continue;
+      const base = c.monsters.get(t.monsterId);
+      if (!base?.herd) throw new Error(`monster ${t.monsterId} は群れで暮らさない（群れの依頼の標的にできない）`);
+      const at = field ? (() => {
+        const a = field.areas.find((x) => x.id === field.legacyAreaId)!.bounds;
+        return { x: (a.minX + a.maxX) / 2 + k * 9, z: (a.minZ + a.maxZ) / 2 };
+      })() : { x: spawn.x + k * 9, z: spawn.z };
+      this.spawnHerd(base, left, [], field ? field.legacyAreaId : '', () => at);
+      need.set(t.monsterId, 0);
+      k++;
+    }
+    for (const g of this.herds) {
+      const base = c.monsters.get(g.monsterId)!;
+      g.parent = this.monsters.find((m) => !m.herd && m.def.id === base.parentId) ?? null;
+    }
+  }
+
+  /** 群れを 1 つ出す。頭数は、登録簿の範囲から引く（atLeast より少なくしない）。乱数は群れごと（シミュレーションの乱数を使わない）。 */
+  private spawnHerd(base: MonsterDef, atLeast: number, areas: string[], areaId: string, place: (rng: SeededRng) => { x: number; z: number }): HerdGroup {
+    const H = base.herd!;
+    const index = this.herds.length;
+    const rng = new SeededRng((this.options.seed + Math.imul(index + 1, 0x9e3779b9)) >>> 0);
+    const size = Math.max(atLeast, H.size[0] + rng.int(H.size[1] - H.size[0] + 1));
+    const p0 = place(rng);
+    const area = this.world.areaAt(p0.x, p0.z);
+    // 中心は、岩と縁から離す
+    const probe = { x: p0.x, y: 0, z: p0.z };
+    this.world.move(probe, H.spacing * 2, 0, 0);
+    const at = { x: probe.x, z: probe.z };
+    const def = this.rank ? scaleMonsterDef(base, this.rank) : base;
+    const g = createHerdGroup(index + 1, base.id, H, areas, areaId, at, rng);
+    for (let i = 0; i < size; i++) {
+      const s = slotOf(i, H.spacing);
+      const m = createMonster(def, { x: at.x, z: at.z, yaw: rng.next() * Math.PI * 2 }, `herd${index + 1}#${i + 1}`);
+      this.world.move(m.pos, def.bodyRadius, s.x, s.z);
+      if (this.world.areaAt(m.pos.x, m.pos.z) !== area) m.pos = { x: at.x, y: 0, z: at.z };
+      m.pos.y = this.world.groundHeight(m.pos.x, m.pos.z);
+      m.prevPos = { ...m.pos };
+      m.spawn = { x: m.pos.x, z: m.pos.z, yaw: m.yaw };
+      addMember(g, m);
+      this.monsters.push(m);
+    }
+    this.herds.push(g);
+    return g;
+  }
+
+  /** 倒れた幼体は、その場で 1 回剥ぎ取れる（狩りの途中でも。失敗・帰還の後は無し） */
+  private onMonsterDead(id: string): void {
+    const h = this.hunt;
+    const m = this.monsters.find((x) => x.id === id);
+    if (!h || h.closed || h.phase === 'failed' || !m?.herd) return;
+    const loot = this.lootOf(m);
+    if (loot) h.carves[`body:${m.id}`] = loot.carve.count;
+  }
+
+  /** 倒した数（種ごと。群れの依頼の標的を数える） */
+  slain(monsterId: string): number {
+    let n = 0;
+    for (const m of this.monsters) if (m.dead && m.def.id === monsterId) n++;
+    return n;
+  }
+
+  /** 剥ぎ取りの残り（標的のぶんだけ。周りに居た幼体のぶんは、帰還を早めるかの判断に数えない） */
+  carvesLeft(): number {
+    const h = this.hunt;
+    if (!h) return 0;
+    let n = 0;
+    for (const [k, v] of Object.entries(h.carves)) {
+      if (!k.startsWith('body:')) {
+        n += v;
+        continue;
+      }
+      const m = this.monsters.find((x) => x.id === k.slice(5));
+      if (m && this.targets.some((t) => t.monsterId === m.def.id)) n += v;
+    }
+    return n;
+  }
+
+  /** 幼体どうし・幼体と大型が重ならないように、幼体を押し出す（大型は動かさない。大型の動きは、群れが居ても変わらない）。 */
+  private separateHerds(): void {
+    if (this.herds.length === 0) return;
+    const list = this.monsters;
+    for (let i = 0; i < list.length; i++) {
+      const a = list[i]!;
+      if (!a.herd || a.dead || a.captured) continue;
+      for (let j = 0; j < list.length; j++) {
+        const b = list[j]!;
+        if (i === j || (b.herd && j < i) || b.dead || b.captured) continue;
+        // 遠い相手は見ない（大型の体の長さを入れても 8m に届かない）
+        if (Math.abs(a.pos.x - b.pos.x) > 8 || Math.abs(a.pos.z - b.pos.z) > 8) continue;
+        if (!b.herd) {
+          for (const c of monsterBlockers(b)) {
+            const dx = a.pos.x - c.x, dz = a.pos.z - c.z;
+            const d = Math.hypot(dx, dz);
+            const need = c.r + a.def.bodyRadius;
+            if (d >= need) continue;
+            const ux = d > 1e-6 ? dx / d : 1, uz = d > 1e-6 ? dz / d : 0;
+            this.world.move(a.pos, a.def.bodyRadius, ux * (need - d), uz * (need - d));
+          }
+          continue;
+        }
+        const dx = a.pos.x - b.pos.x, dz = a.pos.z - b.pos.z;
+        const d = Math.hypot(dx, dz);
+        const need = a.def.bodyRadius + b.def.bodyRadius;
+        if (d >= need) continue;
+        const ux = d > 1e-6 ? dx / d : 1, uz = d > 1e-6 ? dz / d : 0;
+        const push = (need - d) / 2;
+        this.world.move(a.pos, a.def.bodyRadius, ux * push, uz * push);
+        this.world.move(b.pos, b.def.bodyRadius, -ux * push, -uz * push);
+      }
+    }
   }
 
   newInstanceId(): number {
@@ -375,7 +531,7 @@ export class Simulation implements SimCtx {
     let best: MonsterState | null = null;
     let bestDist = Infinity;
     for (const m of this.monsters) {
-      if (m.dead || m.captured) continue;
+      if (m.dead || m.captured || m.herd) continue;
       const dx = m.pos.x - p.pos.x, dz = m.pos.z - p.pos.z;
       const dist = Math.max(0, Math.hypot(dx, dz) - m.def.bodyRadius);
       if (dist > q.range || dist >= bestDist) continue;
@@ -407,7 +563,8 @@ export class Simulation implements SimCtx {
         this.emit({ type: 'trap_armed', id: t.id, x: t.x, z: t.z });
       }
       for (const m of this.monsters) {
-        if (m.dead || m.captured || m.trapTicks > 0) continue;
+        // 罠は大型だけが踏む（幼体は軽くて作動しない）
+        if (m.dead || m.captured || m.trapTicks > 0 || m.herd) continue;
         if (Math.hypot(m.pos.x - t.x, m.pos.z - t.z) > t.radius + TRAP_REACH) continue;
         // 2 回目からは慣れて、止まる時間が 6 割ずつになる
         m.trapTicks = Math.max(60, Math.round(t.holdTicks * Math.pow(0.6, m.trapCount)));
@@ -462,16 +619,35 @@ export class Simulation implements SimCtx {
     return r.table[r.table.length - 1]!.itemId;
   }
 
+  /**
+   * いま剥ぎ取れる対象。達成した後: 1 体の標的の本体 → 切り落とした部位 → 倒した幼体（いちばん近いもの）。
+   * 狩りの途中は、倒した幼体だけ（納刀している時。抜刀中の攻撃ボタンは、攻撃のまま）。
+   */
   carveTarget(): string | null {
     const h = this.hunt;
-    const m = this.monsters[0];
-    if (!h || h.phase !== 'success' || h.closed || !m) return null;
+    if (!h || h.closed || h.phase === 'failed') return null;
     const p = this.player;
-    if ((h.carves.body ?? 0) > 0 && Math.hypot(p.pos.x - m.pos.x, p.pos.z - m.pos.z) <= m.def.bodyRadius + CARVE_REACH) return 'body';
-    for (const [partId, at] of Object.entries(this.severedAt)) {
-      if ((h.carves[partId] ?? 0) > 0 && Math.hypot(p.pos.x - at.x, p.pos.z - at.z) <= CARVE_PIECE_REACH) return partId;
+    const m = this.main;
+    if (h.phase === 'success' && m) {
+      if ((h.carves.body ?? 0) > 0 && Math.hypot(p.pos.x - m.pos.x, p.pos.z - m.pos.z) <= m.def.bodyRadius + CARVE_REACH) return 'body';
+      for (const [partId, at] of Object.entries(this.severedAt)) {
+        if ((h.carves[partId] ?? 0) > 0 && Math.hypot(p.pos.x - at.x, p.pos.z - at.z) <= CARVE_PIECE_REACH) return partId;
+      }
     }
-    return null;
+    if (h.phase !== 'success' && p.drawn) return null;
+    let best: string | null = null;
+    let bd = Infinity;
+    for (const x of this.monsters) {
+      if (!x.dead || !x.herd) continue;
+      const key = `body:${x.id}`;
+      if (!((h.carves[key] ?? 0) > 0)) continue;
+      const d = Math.hypot(p.pos.x - x.pos.x, p.pos.z - x.pos.z) - x.def.bodyRadius;
+      if (d <= CARVE_REACH && d < bd) {
+        bd = d;
+        best = key;
+      }
+    }
+    return best;
   }
 
   /** その個体から出る素材の表（段階ごとの表があればそれ、無ければモンスターの lootId）。 */
@@ -482,16 +658,18 @@ export class Simulation implements SimCtx {
 
   carve(source: string): void {
     const h = this.hunt;
-    const m = this.monsters[0];
+    if (!h || h.closed || !((h.carves[source] ?? 0) > 0)) return;
+    const juvenile = source.startsWith('body:') ? this.monsters.find((x) => x.id === source.slice(5)) : undefined;
+    const m = juvenile ?? this.main;
     const loot = m ? this.lootOf(m) : undefined;
-    if (!h || h.closed || !loot || !((h.carves[source] ?? 0) > 0)) return;
-    const table = source === 'body' ? loot.carve : loot.severed?.[source];
+    if (!loot) return;
+    const table = juvenile || source === 'body' ? loot.carve : loot.severed?.[source];
     if (!table) return;
     h.carves[source]!--;
     let total = 0;
     for (const e of table.table) total += e.weight;
     const itemId = this.pick(table, total);
-    const tag = source === 'body' ? 'carve' : `severed:${source}`;
+    const tag = juvenile ? `carve:${juvenile.def.id}` : source === 'body' ? 'carve' : `severed:${source}`;
     h.loot.push({ itemId, source: tag });
     this.emit({ type: 'carve', itemId, source: tag, pos: { ...this.player.pos } });
   }
@@ -525,7 +703,7 @@ export class Simulation implements SimCtx {
     if (h.phase === 'success') {
       // 帰還: 時間切れ / リタイアのボタン（達成後は「帰還する」）/ 剥ぎ取りを使い切った少し後
       h.returnTicks--;
-      const left = Object.values(h.carves).reduce((a, b) => a + b, 0);
+      const left = this.carvesLeft();
       if (left === 0 && !this.player.carving && h.returnTicks > CLOSE_AFTER_LAST_CARVE) h.returnTicks = CLOSE_AFTER_LAST_CARVE;
       if (h.returnTicks <= 0 || input.pressed & Btn.Retire) this.closeHunt(h);
       return;
@@ -538,7 +716,7 @@ export class Simulation implements SimCtx {
       for (const m of this.monsters) m.aiEnabled = false;
       this.emit({ type: 'hunt_end', phase, reason });
       if (phase === 'failed') return this.closeHunt(h);
-      const m = this.monsters[0];
+      const m = this.main;
       const loot = m ? this.lootOf(m) : undefined;
       if (m && loot) {
         // 壊した部位の追加は、達成した時点で確定する
@@ -557,8 +735,8 @@ export class Simulation implements SimCtx {
       }
       h.returnTicks = reason === 'capture' ? CAPTURE_RETURN_TICKS : h.quest.returnTicks ?? 3600;
     };
-    if (this.monsters[0]?.dead) end('success', 'slay');
-    else if (this.monsters[0]?.captured) end('success', 'capture');
+    if (this.pack ? this.targets.every((t) => this.slain(t.monsterId) >= t.count) : this.main?.dead) end('success', 'slay');
+    else if (!this.pack && this.main?.captured) end('success', 'capture');
     else if (input.pressed & Btn.Retire) end('failed', 'retire');
     else if (h.faints >= h.quest.maxFaints) end('failed', 'faints');
     else if (h.ticks >= h.timeLimitTicks) end('failed', 'time');
@@ -575,7 +753,9 @@ export class Simulation implements SimCtx {
     this.tick++;
     stepPlayer(this.player, input, this);
     if (this.field) this.stepExits();
+    for (const g of this.herds) stepHerdGroup(g, this);
     for (const m of this.monsters) stepMonster(m, this.player, this);
+    this.separateHerds();
     // 歩いてきた大型に重なったら押し出す（プレイヤーが動いていなくても胴を抜けない）
     if (this.player.mode !== 'dead') this.world.move(this.player.pos, this.content.player.radius, 0, 0, this.blockers());
     this.resolvePlayerAttacks();
@@ -616,9 +796,29 @@ export class Simulation implements SimCtx {
     return this.field?.areas.find((a) => a.id === this.areaId) ?? null;
   }
 
-  /** 大型が居るエリア（フィールドでなければ null）。 */
+  /** モンスターが居るエリア（フィールドでなければ null）。大型は巡り方のエリア、幼体は居る位置のエリア。 */
   monsterArea(m: MonsterState): FieldAreaDef | null {
-    return (m.roam && this.field?.areas.find((a) => a.id === m.roam!.areaId)) ?? null;
+    if (!this.field) return null;
+    if (m.roam) return this.field.areas.find((a) => a.id === m.roam!.areaId) ?? null;
+    if (!m.herd) return null;
+    const at = this.world.areaAt(m.pos.x, m.pos.z);
+    return this.field.areas.find((a) => a === at) ?? null;
+  }
+
+  /** 群れが居るエリア（生きている仲間の多いエリア。フィールドでなければ null）。 */
+  herdArea(g: HerdGroup): FieldAreaDef | null {
+    return herdArea(g, this.field?.areas, this);
+  }
+
+  /** まだ倒していない標的（群れの依頼。種ごとに、生きている個体） */
+  livingTargets(): MonsterState[] {
+    if (!this.pack) return this.main && !this.main.dead && !this.main.captured ? [this.main] : [];
+    const out: MonsterState[] = [];
+    for (const t of this.targets) {
+      if (this.slain(t.monsterId) >= t.count) continue;
+      for (const g of this.herds) if (g.monsterId === t.monsterId) out.push(...livingMembers(g));
+    }
+    return out;
   }
 
   /** 出口に入ったら、行き先のエリアへ移る。力尽きて野営地へ戻った時も、居るエリアを合わせる。 */
@@ -781,6 +981,7 @@ export class Simulation implements SimCtx {
       bounced,
     });
     applyDamageToMonster(m, partIndex, damage, h.damageType, this);
+    if (m.herd) herdHurt(m, this);
     if (famEdge && stage) {
       // 当てるたびに減る。弾かれた時は余分に減る
       p.edge = Math.max(0, p.edge - famEdge.wearPerMotion * (h.wearMotion ?? 0) * (bounced ? E.bounce.wearScale : 1));
@@ -930,6 +1131,11 @@ export class Simulation implements SimCtx {
     if (this.hunt) {
       const h = this.hunt;
       parts.push(h.phase, h.reason ?? '-', h.ticks, h.faints, h.returnTicks, h.closed ? 1 : 0, h.loot.map((g) => `${g.itemId}@${g.source}`).join(','), Object.entries(h.carves).map(([k, v]) => `${k}=${v}`).join(','));
+    }
+    for (const g of this.herds) parts.push(g.rng.state, g.anchor.x, g.anchor.z, g.restTicks, g.restIn, g.driftIn, g.travelIn, g.travel ? `${g.travel.to}:${g.travel.ticks}` : '-', g.areaId, g.quiet);
+    for (const m of this.monsters) {
+      const hm = m.herd;
+      if (hm) parts.push(hm.mood, hm.ticks, hm.alarm, hm.idle, hm.tired, hm.stuck, hm.goal ? `${hm.goal.x},${hm.goal.z}` : '-');
     }
     if (this.field) {
       parts.push(this.areaId);

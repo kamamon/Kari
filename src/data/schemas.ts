@@ -407,6 +407,39 @@ export interface MonsterDef {
     cooldownTicks: [number, number];
     choices: MonsterAiChoice[];
   };
+  /** 幼体の親（成体のモンスターの id。v0.18.0）。同じエリアで子が攻撃されると、親が気づく */
+  parentId?: string;
+  /** 群れで暮らす（幼体。v0.18.0。src/game/herd.ts）。あると、ふだんは群れの動きをして、追い詰められた時と攻撃された時だけ技を出す */
+  herd?: HerdDef;
+}
+
+/**
+ * 群れの決まり（種ごと。v0.18.0、docs/spec.md の 23 章）。距離は m、時間は tick。
+ * 気づく → 顔を上げて見る（alert）→ 近づかれると逃げる（flee）。攻撃されると、fightChance で向き直って反撃する。
+ */
+export interface HerdDef {
+  /** 1 つの群れの頭数（登録簿の pack） */
+  size: [number, number];
+  /** 群れの中で、隣と空ける間 */
+  spacing: number;
+  /** 狩人に気づいて、顔を上げる距離 / 逃げ出す距離 */
+  alertRange: number;
+  fleeRange: number;
+  /** 逃げる速さ（moveSpeed に掛ける）と、走り続けられる時間（過ぎると、息を整えるまで止まる） */
+  fleeSpeedScale: number;
+  fleeTicks: number;
+  /** 攻撃された時に、向き直って反撃する確率（0〜1）と、反撃を続ける時間 */
+  fightChance: number;
+  fightTicks: [number, number];
+  /** 逃げる時に、ばらばらの向きへ散る（甲殻の幼体）。false なら、群れの真ん中へ寄りながら逃げる */
+  scatter: boolean;
+}
+
+/** 狩場に住む群れ（v0.18.0）。areas の順に、ときどき移り住む。native でない群れは、親か自分が依頼の標的の時だけ出る */
+export interface FieldHerdDef {
+  monsterId: string;
+  areas: string[];
+  native: boolean;
 }
 
 export interface MapDef {
@@ -486,6 +519,8 @@ export interface FieldDef {
   timeLimitScale: number;
   roam: RoamRules;
   routes: Record<string, { start: string; roam: string[]; nest: string }>;
+  /** 群れ（幼体）の住みか（v0.18.0）。無ければ群れは居ない */
+  herds?: FieldHerdDef[];
   areas: FieldAreaDef[];
 }
 
@@ -574,6 +609,11 @@ export interface QuestDef {
   summary: string;
   mapId: string;
   targetMonsterId: string;
+  /**
+   * 群れの依頼（v0.18.0）: 種ごとに、討伐する頭数。全部そろうと達成（捕獲は無い。kind は slay）。
+   * 無ければ、これまでどおり targetMonsterId を 1 体。あれば targetMonsterId は 1 つ目の種と同じにする。
+   */
+  targets?: QuestTarget[];
   /** 段階（ranks.json の id）。標的の強さと、出る素材が決まる。 */
   rankId: string;
   /** フィールド（エリアに分かれた狩場）。あれば、野営地から出発し、標的はエリアを移動する。mapId は、その中の「これまでの狩場」にあたるエリア */
@@ -591,6 +631,11 @@ export interface QuestDef {
   supplies?: ItemStack[];
   /** 達成した時の報酬（失敗・リタイアでは出ない） */
   rewards?: { money: number; items: ItemStack[] };
+}
+
+export interface QuestTarget {
+  monsterId: string;
+  count: number;
 }
 
 export interface ItemStack {

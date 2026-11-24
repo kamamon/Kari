@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""大型 11 種（登録簿の 02〜12）の原画を、体へ横から貼る絵へ直す（npm run monsters:art）。
+"""大型 11 種（登録簿の 02〜12）の原画と、ガルドロスの設定図の右側面を、体へ横から貼る絵へ直す（npm run monsters:art）。
 
   art-source/monster/concepts/monster_NN_<key>_concept_v2.png
     →  public/assets/textures/monsters/<key>_side_v1.webp   （ゲームが読む絵）
@@ -31,7 +31,15 @@ MEASURE = os.path.join(SRC, 'side_v1.measure.json')
 
 # 番号と ID（登録簿の art の名前と同じ）
 SPECIES = [(2, 'selvark'), (3, 'numeradon'), (4, 'bornakel'), (5, 'ashreia'), (6, 'lumisca'), (7, 'orglass'),
-           (8, 'tengaro'), (9, 'verito'), (10, 'razmer'), (11, 'kirisave'), (12, 'velgait')]
+           (8, 'tengaro'), (9, 'verito'), (10, 'razmer'), (11, 'kirisave'), (12, 'velgait'),
+           # ガルドロスの設定図の右側面（幼体コルドピルの体に貼る。v0.18.0。遊べるガルドロス自身は専用の仮モデル）
+           (1, 'galdros')]
+
+
+def source_of(no, key):
+    if key == 'galdros':
+        return os.path.join(ROOT, 'art-source', 'monster', 'galdros', 'galdros_right_v1.png')
+    return os.path.join(SRC, f'monster_{no:02d}_{key}_concept_v2.png')
 MAX_W = 1024
 MARGIN = 16
 
@@ -62,7 +70,7 @@ def main():
     report = {}
     ts = []
     for no, key in SPECIES:
-        src = os.path.join(SRC, f'monster_{no:02d}_{key}_concept_v2.png')
+        src = source_of(no, key)
         rgb = np.asarray(Image.open(src).convert('RGB')).astype(np.float32)
         h, w = rgb.shape[:2]
         fg, filled, solid, bg = silhouette(rgb)

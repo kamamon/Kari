@@ -339,5 +339,36 @@
       0.337,
       0.281
     ]
+  },
+  "galdros": {
+    "source": "art-source/monster/galdros/galdros_right_v1.png",
+    "image": [
+      1672,
+      941
+    ],
+    "background": "#e4dad7",
+    "bbox": [
+      44,
+      131,
+      1616,
+      796
+    ],
+    "crop": [
+      28,
+      115,
+      1632,
+      812
+    ],
+    "out": [
+      1024,
+      445
+    ],
+    "bytes": 45404,
+    "share": 0.387,
+    "average": [
+      0.463,
+      0.397,
+      0.332
+    ]
   }
 }

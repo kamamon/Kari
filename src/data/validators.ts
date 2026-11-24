@@ -150,6 +150,17 @@ function validateMonster(m: MonsterDef, errors: string[]): void {
     }
   }
   if (!isObj(m.ai) || !Array.isArray(m.ai.choices)) errors.push(`${w}: ai が不正`);
+  const H = m.herd;
+  if (H !== undefined) {
+    const range = (v: unknown): boolean => Array.isArray(v) && v.length === 2 && isInt(v[0]) && isInt(v[1]) && v[0] >= 1 && v[1] >= v[0];
+    if (!range(H.size) || H.size[1] > 12) errors.push(`${w}: herd.size が不正（1〜12 頭）`);
+    if (!(H.spacing > 0 && H.fleeRange > 0 && H.alertRange > H.fleeRange)) errors.push(`${w}: herd の距離が不正（気づく距離は、逃げ出す距離より遠くする）`);
+    if (!(H.fleeSpeedScale > 0 && isInt(H.fleeTicks) && H.fleeTicks > 0)) errors.push(`${w}: herd の逃げ方が不正`);
+    if (!(H.fightChance >= 0 && H.fightChance <= 1 && range(H.fightTicks))) errors.push(`${w}: herd の反撃が不正`);
+    if (typeof H.scatter !== 'boolean') errors.push(`${w}: herd.scatter が不正`);
+    if (m.captureAllowed) errors.push(`${w}: 群れの幼体は捕獲できない（captureAllowed: false）`);
+    if (!(m.moveSpeed && m.moveSpeed > 0)) errors.push(`${w}: 群れの幼体には moveSpeed が要る`);
+  }
 }
 
 function validateMap(m: MapDef, errors: string[]): void {
@@ -209,8 +220,23 @@ export function crossCheck(c: Content, errors: string[]): void {
       if (!fd) errors.push(`quest ${q.id}: field ${q.fieldId} が無い`);
       else {
         if (fd.legacyMapId !== q.mapId) errors.push(`quest ${q.id}: field ${q.fieldId} の「これまでの狩場」が mapId と違う`);
-        if (!fd.routes[q.targetMonsterId]) errors.push(`quest ${q.id}: field ${q.fieldId} に、標的 ${q.targetMonsterId} の巡り方が無い`);
+        if (!q.targets && !fd.routes[q.targetMonsterId]) errors.push(`quest ${q.id}: field ${q.fieldId} に、標的 ${q.targetMonsterId} の巡り方が無い`);
       }
+    }
+    if (q.targets !== undefined) {
+      // 群れの依頼: 種ごとの頭数。どれも群れで暮らす種で、討伐だけ
+      if (!Array.isArray(q.targets) || q.targets.length === 0) errors.push(`quest ${q.id}: targets が空`);
+      else if (q.targets[0]!.monsterId !== q.targetMonsterId) errors.push(`quest ${q.id}: targetMonsterId は targets の 1 つ目と同じにする`);
+      const seen = new Set<string>();
+      for (const t of q.targets ?? []) {
+        const tm = c.monsters.get(t.monsterId);
+        if (!tm) errors.push(`quest ${q.id}: 標的 ${t.monsterId} が無い`);
+        else if (!tm.herd) errors.push(`quest ${q.id}: 標的 ${t.monsterId} は群れで暮らさない`);
+        if (!(isInt(t.count) && t.count >= 1 && t.count <= 12)) errors.push(`quest ${q.id}: 標的 ${t.monsterId} の頭数が不正（1〜12）`);
+        if (seen.has(t.monsterId)) errors.push(`quest ${q.id}: 標的 ${t.monsterId} が重複`);
+        seen.add(t.monsterId);
+      }
+      if (q.kind !== 'slay') errors.push(`quest ${q.id}: 群れの依頼は討伐だけ（kind: slay）`);
     }
     if (!c.monsters.has(q.targetMonsterId)) errors.push(`quest ${q.id}: monster ${q.targetMonsterId} が無い`);
     if (!c.ranks.has(q.rankId)) errors.push(`quest ${q.id}: 段階 ${String(q.rankId)} が無い`);
@@ -366,22 +392,24 @@ export function validateEdge(e: EdgeRules | undefined, errors: string[]): void {
   if (!(e.bounce && e.bounce.wearScale >= 1 && isInt(e.bounce.recoilTicks) && e.bounce.recoilTicks > 0 && e.bounce.pushback >= 0)) errors.push('edge.bounce が不正');
 }
 
-/** その依頼の標的から出る素材の表（段階ごとの表があればそれ、無ければモンスターの lootId）。 */
-export function lootForQuest(c: Content, q: QuestDef): LootDef | undefined {
-  const m = c.monsters.get(q.targetMonsterId);
+/** その依頼の標的から出る素材の表（段階ごとの表があればそれ、無ければモンスターの lootId）。monsterId で、群れの依頼の 2 つ目以降の標的も引ける。 */
+export function lootForQuest(c: Content, q: QuestDef, monsterId = q.targetMonsterId): LootDef | undefined {
+  const m = c.monsters.get(monsterId);
   const id = m?.lootByRank?.[q.rankId] ?? m?.lootId;
   return id ? c.loot.get(id) : undefined;
 }
 
-/** 1 つの依頼で手に入る素材（依頼の報酬と、標的の剥ぎ取り・捕獲・部位）。 */
+/** 1 つの依頼で手に入る素材（依頼の報酬と、標的の剥ぎ取り・捕獲・部位。群れの依頼は、標的の種ごとの剥ぎ取り）。 */
 export function questMaterials(c: Content, q: QuestDef): Set<string> {
   const out = new Set<string>();
   for (const s of q.rewards?.items ?? []) out.add(s.itemId);
-  const m = c.monsters.get(q.targetMonsterId);
-  const l = lootForQuest(c, q);
-  if (!l) return out;
-  const rolls: (LootRoll | undefined)[] = [l.carve, m?.captureAllowed && q.kind === 'hunt' ? l.capture : undefined, ...Object.values(l.severed ?? {}), ...Object.values(l.breaks ?? {})];
-  for (const r of rolls) for (const e of r?.table ?? []) out.add(e.itemId);
+  for (const t of q.targets ?? [{ monsterId: q.targetMonsterId, count: 1 }]) {
+    const m = c.monsters.get(t.monsterId);
+    const l = lootForQuest(c, q, t.monsterId);
+    if (!l) continue;
+    const rolls: (LootRoll | undefined)[] = [l.carve, m?.captureAllowed && q.kind === 'hunt' ? l.capture : undefined, ...Object.values(l.severed ?? {}), ...Object.values(l.breaks ?? {})];
+    for (const r of rolls) for (const e of r?.table ?? []) out.add(e.itemId);
+  }
   return out;
 }
 
@@ -611,6 +639,25 @@ export function validateField(c: Content, f: FieldDef, errors: string[]): void {
     const seen = reach(route.start, true);
     for (const id of ids) if (!seen.has(id)) errors.push(`${wr}: area ${id} へ、大型が通れる出口だけでは行けない`);
     if (areas.get(route.nest)?.kind !== 'nest') errors.push(`${wr}: nest が巣（kind: nest）でない`);
+  }
+  // 群れの住みか（v0.18.0）: 群れで暮らす種で、野営地ではなく、住みかどうしは歩いて行ける
+  for (const [i, hd] of (f.herds ?? []).entries()) {
+    const wh = `${w} herds[${i}] ${hd.monsterId}`;
+    const m = c.monsters.get(hd.monsterId);
+    if (!m) errors.push(`${wh}: monster が無い`);
+    else if (!m.herd) errors.push(`${wh}: 群れで暮らさない種`);
+    if (!Array.isArray(hd.areas) || hd.areas.length === 0) {
+      errors.push(`${wh}: areas が空`);
+      continue;
+    }
+    if (typeof hd.native !== 'boolean') errors.push(`${wh}: native が無い`);
+    for (const id of hd.areas) {
+      const a = areas.get(id);
+      if (!a) errors.push(`${wh}: area ${id} が無い`);
+      else if (a.kind === 'camp') errors.push(`${wh}: 野営地には住まない`);
+    }
+    const seen = reach(hd.areas[0]!, false);
+    for (const id of hd.areas) if (areas.has(id) && !seen.has(id)) errors.push(`${wh}: area ${id} へ歩いて行けない`);
   }
 }
 

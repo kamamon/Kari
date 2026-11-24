@@ -12,7 +12,7 @@ TypeScript + Vite + Three.js。入力、simulation、render、data、save、UI �
 - src/game/ は DOM・Three.js・現在時刻に触れない（Node のテストと将来のサーバーで同じコードを動かす）。
 - src/render/ は simulation の状態を読むだけで、値を書き戻さない。
 - 狩場は、エリアに分かれたフィールド（public/data/fields/、docs/spec.md の 18 章。v0.11.0）。エリアは 1 つの座標の中に離して置く。`SimOptions.field` を渡さなければ、これまでの 1 つの狩場で動く（アプリでは `?hunt=arena`）。
-- モンスターの計画は、登録簿（public/data/bestiary.json、決まりは src/data/bestiary.ts、docs/spec.md の 20 章。v0.13.0）。段階ごとの数は 初級 13 / 中級 20 / 上級 25 / 極級 20。v0.15.0 で、ChatGPT の案を取り込んで 86 種（成体 78・幼体 8）と、狩場の案 20 になった。ChatGPT の案（JSON）は `npm run bestiary:import` で足す（手で写さない）。**登録簿は計画で、遊べるのは 12 種**（ガルドロスと、v0.17.0 の 02〜12 の 11 種）。遊べる定義は monsters/*.json が別に持つ。02〜12 の定義・技・依頼・素材・見た目の設計図は `npm run monsters:gen`（tools/gen-monsters.py）の出力で、手で編集しない（docs/spec.md の 22 章）。種の ID は変えない（表示名だけを変える）。
+- モンスターの計画は、登録簿（public/data/bestiary.json、決まりは src/data/bestiary.ts、docs/spec.md の 20 章。v0.13.0）。段階ごとの数は 初級 13 / 中級 20 / 上級 25 / 極級 20。v0.15.0 で、ChatGPT の案を取り込んで 86 種（成体 78・幼体 8）と、狩場の案 20 になった。ChatGPT の案（JSON）は `npm run bestiary:import` で足す（手で写さない）。**登録簿は計画で、遊べるのは 20 種**（ガルドロスと、v0.17.0 の 02〜12 の 11 種と、v0.18.0 の幼体 14〜21 の 8 種）。遊べる定義は monsters/*.json が別に持つ。02〜12 と幼体の定義・技・依頼（群れの依頼は quests_herds.json）・素材・見た目の設計図は `npm run monsters:gen`（tools/gen-monsters.py）の出力で、手で編集しない（docs/spec.md の 22 章・23 章）。幼体は群れで暮らす（src/game/herd.ts。群れの乱数は群れごとで、幼体は大型を押さない）。種の ID は変えない（表示名だけを変える）。
 - 景色は、簡単な立体に絵を貼る（src/render/envArt.ts、docs/spec.md の 21 章。v0.13.0）。絵の原本は art-source/env/、ゲームが読む public/assets/textures/env/ は `npm run env:art` の出力（手で編集しない）。形と当たりの正本は、これまでどおりマップデータ。
 - 拠点は、歩ける里（public/data/hub.json、docs/spec.md の 19 章。v0.12.0）。施設の前で画面を開く。`?hub=menu` で、これまでの一覧の拠点になる。ブラウザ検査（tools/smoke.mjs）のこれまでの項目は `?hunt=arena&hub=menu` で走る。
 
@@ -48,5 +48,5 @@ main へ push すると Actions（Build and publish）が gh-pages（配信元�
 - `npm run bestiary:import -- <ファイル>` ChatGPT のモンスターの案（JSON。種と、狩場の案）を登録簿へ足す（`--dry` で書かずに試す。`--check` でいまの数。`--out <ファイル>` で別のファイルへ書く。決まりに合わなければ、何も変えずに止まる）
 - `npm run bestiary:thumbs` 図鑑に出す原画の小さな絵 public/assets/bestiary/ を作り直す（Python が必要）
 - `npm run env:art` 景色の絵を、ゲームが読む形 public/assets/textures/env/ へ直す（Python が必要。出力は手で編集しない）
-- `npm run monsters:gen` 大型 11 種（登録簿の 02〜12）の体・技・依頼・素材・見た目の設計図を作り直す（Python が必要。出力は手で編集しない。形は原画の px で tools/gen-monsters.py に書く）
-- `npm run monsters:art` 大型 11 種の原画から、体へ横から貼る絵 public/assets/textures/monsters/ と src/render/creatureArt.ts を作り直す（Python が必要）
+- `npm run monsters:gen` 大型 11 種（登録簿の 02〜12）と幼体 8 種（14〜21）の体・技・依頼・素材・見た目の設計図を作り直す（Python が必要。出力は手で編集しない。形は原画の px で tools/gen-monsters.py に書く）
+- `npm run monsters:art` 大型 11 種の原画とガルドロスの設定図（右側面）から、体へ横から貼る絵 public/assets/textures/monsters/ と src/render/creatureArt.ts を作り直す（Python が必要）

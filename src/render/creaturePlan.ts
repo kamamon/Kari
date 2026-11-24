@@ -1,4 +1,4 @@
-// 大型モンスター（登録簿の 02〜12）の仮モデルの設計図の型（v0.17.0）。中身は tools/gen-monsters.py が src/render/creaturePlans.ts に書く。
+// 大型モンスター（登録簿の 02〜12）と幼体（14〜21。v0.18.0）の仮モデルの設計図の型（v0.17.0）。key は貼る絵（src/render/creatureArt.ts）の名前で、幼体は親の絵を使う。中身は tools/gen-monsters.py が src/render/creaturePlans.ts に書く。
 // 座標は、原画（art-source/monster/concepts/）の px。原画は真横から見た右側面（頭が右）なので、
 //   z（前）= (px - origin.x) × scale、 y（上）= (origin.y - py) × scale、 x（左）は m で別に持つ（右側面 = -x）。
 // 体の面は、骨の通った 1 枚の面（SkinnedMesh）。色は、原画を横から貼る（src/render/creatureArt.ts の切り出し位置で uv を決める）。
@@ -95,5 +95,7 @@ export interface CreaturePlan {
   lift: number;
   /** 光る物の色 */
   glowColor?: [number, number, number];
+  /** 幼体（v0.18.0）: 親の絵に掛ける色（1 より大きいと明るい）と、淡さ（白へ寄せる割合） */
+  look?: { tint: [number, number, number]; pale: number };
   moves: Record<string, MovePlan>;
 }

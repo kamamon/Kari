@@ -13,6 +13,7 @@ import { GamepadInput } from './input/gamepad';
 import { InputHub } from './input/hub';
 import { KeyboardMouse } from './input/keyboard';
 import { TouchControls } from './input/touch';
+import { CREATURE_PLANS } from './render/creaturePlans';
 import { envArtStatus } from './render/envArt';
 import { GameView } from './render/view';
 import { defenseOf, playWeaponId, pouchOf, questUnlocked, wornArmor, type RunRewards } from './save/profile';
@@ -21,6 +22,7 @@ import type { SettingsStore } from './save/settings';
 import { BaseScreen, type BaseHost, type BaseSection } from './ui/base';
 import { Hud } from './ui/hud';
 import { Menu, type MenuHost } from './ui/menus';
+import { counterOf, shortName } from './ui/targets';
 import { ResultScreen, type ResultHost } from './ui/result';
 
 const DEFAULT_SEED = 20261122;
@@ -305,10 +307,9 @@ export class App implements MenuHost, BaseHost, ResultHost {
 
   private resetCamera(): void {
     const p = this.sim.player;
-    const m = this.sim.monsters[0];
-    // 標的が別のエリアに居る時は、標的の方ではなく、背中側へ
-    const here = !this.sim.field || (m && this.sim.monsterArea(m)?.id === this.sim.areaId);
-    if (this.store.value.targetAssist && m && !m.dead && here) this.view.cam.resetBehind(yawOf(m.pos.x - p.pos.x, m.pos.z - p.pos.z));
+    // 標的（群れの依頼では、いちばん近い標的）の方へ。同じエリアに居ない時は、背中側へ
+    const m = this.view.lockTarget(this.sim);
+    if (this.store.value.targetAssist && m) this.view.cam.resetBehind(yawOf(m.pos.x - p.pos.x, m.pos.z - p.pos.z));
     else this.view.cam.resetBehind(p.yaw);
   }
 
@@ -637,15 +638,23 @@ export class App implements MenuHost, BaseHost, ResultHost {
         console.warn(`[audio] 未定義の音 id: ${id}`);
       }
     };
+    // 群れの幼体の音は小さく（v0.18.0）
+    const small = (id: string): number => (this.sim.monsters.find((m) => m.id === id)?.herd ? 0.55 : 1);
     for (const e of events) {
       switch (e.type) {
         case 'area_change':
           play('ui');
           break;
         case 'action_event':
-          if (e.kind === 'sound') play(e.id);
-          else if (e.kind === 'vfx' && e.id === 'ground_slam') play('ground_slam');
+          if (e.kind === 'sound') play(e.id, small(e.actor));
+          else if (e.kind === 'vfx' && e.id === 'ground_slam') play('ground_slam', small(e.actor));
           break;
+        case 'herd_alarm': {
+          // 群れが気づいた・逃げ出した: 体つきに合った短い鳴き声
+          const frame = CREATURE_PLANS[this.sim.herds.find((g) => g.id === e.herdId)?.monsterId ?? '']?.frame;
+          play(HERD_CRY[frame ?? 'quad'] ?? 'beast_cry', e.flee ? 0.4 : 0.25);
+          break;
+        }
         case 'hit':
           // 空振りは振り音だけ。命中した時にだけ、部位の材質に応じた命中音を鳴らす。
           play(`hit_${e.material}`, 1 + e.chargeLevel * 0.2);
@@ -692,9 +701,19 @@ export class App implements MenuHost, BaseHost, ResultHost {
         case 'charge_level':
           play(`charge_${e.level}`);
           break;
-        case 'monster_dead':
-          play('monster_dead');
+        case 'monster_dead': {
+          const m = this.sim.monsters.find((x) => x.id === e.target);
+          play('monster_dead', m?.herd ? 0.5 : 1);
+          // 群れの依頼: 標的を倒したら、残りの数を知らせる
+          const t = m && this.sim.pack && this.sim.hunt?.phase === 'active' ? this.sim.targets.find((x) => x.monsterId === m.def.id) : undefined;
+          if (m && t) {
+            const left = Math.max(0, t.count - this.sim.slain(t.monsterId));
+            const name = shortName(m.def.name);
+            const unit = counterOf(m.def.id);
+            this.hud.toast(left > 0 ? `${name}を討伐（あと ${left} ${unit}）` : `${name}を ${t.count} ${unit}討伐`);
+          }
           break;
+        }
         case 'stamina_empty':
           play('no_stamina');
           break;
@@ -726,6 +745,9 @@ export class App implements MenuHost, BaseHost, ResultHost {
     }
   }
 }
+
+/** 群れが騒いだ時の鳴き声（体つきごと。専用の声はまだ無く、成体の声を小さく流用） */
+const HERD_CRY: Record<string, string> = { quad: 'beast_cry', biped: 'bird_screech', crab: 'shell_clack', bug: 'insect_buzz', arch: 'hiss', serpent: 'hiss' };
 
 /** 依頼 1 回ごとの識別子。戦闘の計算には使わない（報酬を 1 度だけ確定するための目印）。 */
 function makeRunId(): string {

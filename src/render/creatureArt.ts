@@ -20,4 +20,5 @@ export const CREATURE_ART: Record<string, CreatureArt> = {
   razmer: { file: 'assets/textures/monsters/razmer_side_v1.webp', crop: [12, 251, 1756, 739], bbox: [28, 267, 1740, 723], average: [0.455, 0.353, 0.251] },
   kirisave: { file: 'assets/textures/monsters/kirisave_side_v1.webp', crop: [12, 231, 1767, 650], bbox: [28, 247, 1751, 634], average: [0.470, 0.542, 0.583] },
   velgait: { file: 'assets/textures/monsters/velgait_side_v1.webp', crop: [15, 1, 1456, 1009], bbox: [31, 17, 1440, 993], average: [0.396, 0.337, 0.281] },
+  galdros: { file: 'assets/textures/monsters/galdros_side_v1.webp', crop: [28, 115, 1632, 812], bbox: [44, 131, 1616, 796], average: [0.463, 0.397, 0.332] },
 };

@@ -127,12 +127,21 @@ field = dict(
     # 大型 11 種（v0.17.0）は、本来の狩場が無いので、ここを借りる（巡り方は tools/gen-monsters.py の route と同じ）
     routes={'monster.galdros': dict(start='a3', roam=['a3', 'a7', 'a4', 'a2'], nest='a10'),
             'monster.selvark': dict(start='a2', roam=['a2', 'a4', 'a3'], nest='a10'), 'monster.numeradon': dict(start='a4', roam=['a4', 'a7', 'a3'], nest='a10'), 'monster.bornakel': dict(start='a7', roam=['a7', 'a4', 'a2'], nest='a10'), 'monster.ashreia': dict(start='a6', roam=['a6', 'a9', 'a3'], nest='a10'), 'monster.lumisca': dict(start='a9', roam=['a9', 'a6', 'a3'], nest='a10'), 'monster.orglass': dict(start='a3', roam=['a3', 'a6', 'a9'], nest='a10'), 'monster.tengaro': dict(start='a7', roam=['a7', 'a3', 'a6'], nest='a10'), 'monster.verito': dict(start='a4', roam=['a4', 'a2', 'a3'], nest='a10'), 'monster.razmer': dict(start='a2', roam=['a2', 'a3', 'a7'], nest='a10'), 'monster.kirisave': dict(start='a6', roam=['a6', 'a3', 'a2'], nest='a10'), 'monster.velgait': dict(start='a9', roam=['a9', 'a6', 'a7'], nest='a10')},
+    # 幼体の群れの住みか（v0.18.0。docs/spec.md の 23 章）。areas の順に、ときどき移り住む。
+    # native = この狩場に住む群れ（いつも居る）。そうでない群れは、親か自分が依頼の標的の時だけ出る（本来の狩場が、まだ無い種）。
+    # 大型が入れない通り道（1・5・8）にも住む（小さな体の逃げ場）。
+    herds=[dict(monsterId='monster.kordopil', areas=['a1', 'a2'], native=True), dict(monsterId='monster.kordopil', areas=['a7', 'a4'], native=True),
+           dict(monsterId='monster.palseit', areas=['a5', 'a6'], native=True), dict(monsterId='monster.palseit', areas=['a4', 'a2'], native=True),
+           dict(monsterId='monster.numaporon', areas=['a7', 'a4'], native=False), dict(monsterId='monster.chilumicana', areas=['a9', 'a6'], native=False),
+           dict(monsterId='monster.kohalgis', areas=['a6', 'a9'], native=False), dict(monsterId='monster.mitogaron', areas=['a7', 'a3'], native=False),
+           dict(monsterId='monster.yurtepica', areas=['a8', 'a5'], native=False), dict(monsterId='monster.hinasalv', areas=['a6', 'a3'], native=False)],
     areas=[areas[a[0]] for a in AREAS],
 )
 def dump(o): return json.dumps(o, ensure_ascii=False)
 out = ['{']
 for k in ('schemaVersion', 'id', 'name', 'note', 'legacyMapId', 'legacyAreaId', 'start', 'camp', 'timeLimitScale', 'roam', 'routes'):
     out.append(f'  {json.dumps(k)}: {dump(field[k])},')
+out.append('  "herds": [\n    ' + ',\n    '.join(dump(h) for h in field['herds']) + '\n  ],')
 out.append('  "areas": [')
 for i, a in enumerate(field['areas']):
     out.append('    {')

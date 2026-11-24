@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "note": "燐尾鳥の幼体 チルミカナの攻撃の判定の形（tools/gen-monsters.py の出力。手で編集しない）。",
+  "tracks": [
+    {"id": "chilumicana_tail_jab", "radius": 0.38, "from": 0, "to": 1.1, "keys": [{"t": 36, "grip": [0.0, 0.55, -0.7], "dir": [0.0, -0.287, -0.958]}, {"t": 42, "grip": [0.0, 0.45, -0.8], "dir": [0.0, -0.371, -0.928]}]},
+    {"id": "chilumicana_kick", "radius": 0.34, "from": 0, "to": 0.9, "keys": [{"t": 24, "grip": [0.1, 0.6, 0.25], "dir": [0.0, -0.1, 0.995]}, {"t": 30, "grip": [0.1, 0.5, 0.35], "dir": [0.0, -0.148, 0.989]}]},
+    {"id": "chilumicana_glide_back", "radius": 0.55, "from": 0, "to": 0.9, "keys": [{"t": 26, "grip": [0.0, 0.6, 0.3], "dir": [0.0, 0.0, 1.0]}, {"t": 34, "grip": [0.0, 0.6, 0.3], "dir": [0.0, 0.0, 1.0]}]}
+  ]
+}

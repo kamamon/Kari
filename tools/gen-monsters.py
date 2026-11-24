@@ -772,6 +772,472 @@ SPECIES.append(dict(
 ))
 
 
+# =============================================================================================
+# 幼体 8 種（登録簿の 14〜21。v0.18.0、docs/spec.md の 23 章）
+#   体: 親の原画の形を、尾を縮め・頭を大きく・飾りを小さくして、幼体の大きさ（登録簿の全長の 0.68 倍）にしたもの。
+#       絵は親の原画をそのまま貼り、淡い色にする（幼体の原画は、まだ取り込んでいない）。
+#   コルドピル（ガルドロスの幼体）だけは、ガルドロスの設定図（右側面）から形を書く。
+#   技は登録簿の「構え→攻撃」3 つ。群れの決まり（herd）を持ち、捕獲はできない。
+# =============================================================================================
+import copy
+
+JUV_RATIO = 0.68
+
+
+class Juv:
+    """幼体の座標: 親の原画の px を、尾を縮めて（と、輪の体は低くして）から、幼体の大きさの m へ。"""
+
+    def __init__(self, key, art, psp, pplan, size, *, tail_k=0.7, squash=1.0, head=1.25, neck=1.1, belly=1.0, legs_r=1.0, extra_k=0.55, eye_k=1.3,
+                 drop=None, add_legs=(), add_extras=(), tint=(1.12, 1.1, 1.06), pale=0.1):
+        self.key, self.art, self.psp = key, art, psp
+        roles = pplan['roles']
+        ib = next(i for i, c in enumerate(roles) if c in 'ba')
+        self.b0 = pplan['spine'][ib][:2]
+        self.tail_k, self.squash, self.gy = tail_k, squash, psp.gy
+        xs = [self.tx(p[0], p[1])[0] for p in pplan['spine']]
+        self.span = max(xs) - min(xs)
+        self.s = size * JUV_RATIO / self.span
+        self.ratio = self.s / psp.s
+        self.ox = round(self.tx(*pplan['spine'][pplan['root']][:2])[0])
+        self.plan = self._plan(pplan, head, neck, belly, legs_r, extra_k, eye_k, drop or (lambda e: False), add_legs, add_extras)
+        self.plan['look'] = {'tint': [r3(c) for c in tint], 'pale': pale}
+
+    def tx(self, px, py):
+        bx, by = self.b0
+        if px < bx and self.tail_k != 1:
+            px, py = bx + (px - bx) * self.tail_k, by + (py - by) * self.tail_k
+        if self.squash != 1:
+            py = self.gy - (self.gy - py) * self.squash
+        return px, py
+
+    def m(self, px, py, x=0.0):
+        """親の原画の px と、親の大きさの横の位置 x (m) → 幼体の座標 [x, y, z] (m)"""
+        tx_, ty_ = self.tx(px, py)
+        return [r3(x * self.ratio), r3((self.gy - ty_) * self.s), r3((tx_ - self.ox) * self.s)]
+
+    def L(self, meters_parent):
+        return r3(meters_parent * self.ratio)
+
+    def spine_m(self, i):
+        """幼体の背骨の点 i の中心 [x, y, z] (m)"""
+        p = self.plan['spine'][i]
+        return [0.0, r3((self.gy - p[1]) * self.s), r3((p[0] - self.ox) * self.s)]
+
+    def _plan(self, P, head, neck, belly, legs_r, extra_k, eye_k, drop, add_legs, add_extras):
+        p = copy.deepcopy({k: v for k, v in P.items() if k != 'moves'})
+        roles = p['roles']
+        ih = roles.rindex('h') if 'h' in roles else len(roles) - 2
+        spine = []
+        for i, q in enumerate(p['spine']):
+            x, y = self.tx(q[0], q[1])
+            k = head if i >= ih else neck if roles[i] == 'n' else 1.0
+            dn = belly if roles[i] == 'b' else 1.0
+            spine.append([round(x), round(y), round(q[2] * k), round(q[3] * k * dn), round(q[4] * k)])
+        p['spine'] = spine
+        legs = []
+        for L in [copy.deepcopy(l) for l in p['legs']] + [copy.deepcopy(l) for l in add_legs]:
+            L['pts'] = [[*[round(v) for v in self.tx(a, b)], r3(xm * self.ratio)] for a, b, xm in L['pts']]
+            L['r'] = [round(r * legs_r) for r in L['r']]
+            legs.append(L)
+        p['legs'] = legs
+        sp_xy = [(q[0], q[1]) for q in spine]
+        extras = []
+        for e0 in list(p['extras']) + [copy.deepcopy(e) for e in add_extras]:
+            if drop(e0):
+                continue
+            e = copy.deepcopy(e0)
+            k = e.pop('jk', None)
+            eye = e['kind'] == 'blob' and e.get('shade', 1) <= 0.3 and e['r'][0] <= 30
+            if k is None:
+                k = eye_k if eye else extra_k
+            T = lambda q: self.tx(q[0], q[1])
+            if 'own' in e:
+                e['own'] = dict(e['own'])
+                e['own']['at'] = [round(v) for v in T(e['own']['at'])]
+            # 支点: 目・体に沿った物は自分の中心、own の骨は付け根、円すいは根元、ほかは近い背骨の点
+            if eye or e.get('bone') == 'chain':
+                pv = T(e['c'])
+            elif 'own' in e:
+                pv = e['own']['at']
+            elif e['kind'] in ('cone', 'funnel'):
+                pv = T(e['a'])
+            else:
+                c = e['c'] if 'c' in e else [sum(q[0] for q in e['pts']) / len(e['pts']), sum(q[1] for q in e['pts']) / len(e['pts'])]
+                cc = T(c)
+                pv = min(sp_xy, key=lambda q: (q[0] - cc[0]) ** 2 + (q[1] - cc[1]) ** 2)
+            S = lambda q: [round(pv[0] + (T(q)[0] - pv[0]) * k), round(pv[1] + (T(q)[1] - pv[1]) * k)]
+            if 'c' in e:
+                e['c'] = S(e['c'])
+            if 'pts' in e:
+                e['pts'] = [S(q) for q in e['pts']]
+            if 'a' in e:
+                e['a'] = S(e['a'])
+            if 'b' in e:
+                e['b'] = S(e['b'])
+            if e['kind'] == 'blob':
+                e['r'] = [round(e['r'][0] * k), round(e['r'][1] * k), r3(e['r'][2] * self.ratio * k)]
+            for key in ('ra', 'rb', 'ring', 'tube'):
+                if key in e:
+                    e[key] = max(2, round(e[key] * k))
+            for key in ('x', 'thick', 'bx'):
+                if key in e:
+                    e[key] = r3(e[key] * self.ratio)
+            extras.append(e)
+        p['extras'] = extras
+        p['stride'] = r3(p['stride'] * self.ratio * 1.15)
+        p['lift'] = r3(p['lift'] * self.ratio * 1.2)
+        p['key'] = self.art
+        p['scale'] = self.s
+        p['origin'] = [self.ox, self.gy]
+        return p
+
+
+def jpart(pid, name, mat, hz, shapes, *, dur=None, flinch=(45, 25, 40, False)):
+    """幼体の部位: 怯みやすく、柔らかい。破壊できる部位は、壊すと少し長く怯む（素材は出ない）。"""
+    return part(pid, name, mat, hz, shapes, dur=dur, broken=tuple(r3(min(1.0, v + 0.1)) for v in hz) if dur else None, elem=0.25, flinch=flinch)
+
+
+def herd(size, spacing, alert, flee, speed, run, fight, fticks, scatter=False):
+    return {'size': list(size), 'spacing': spacing, 'alertRange': alert, 'fleeRange': flee, 'fleeSpeedScale': speed, 'fleeTicks': run,
+            'fightChance': fight, 'fightTicks': list(fticks), 'scatter': scatter}
+
+
+BY_KEY = {spec['sp'].key: spec for spec in SPECIES}
+
+# ガルドロス（成体）の形を、設定図の右側面（art-source/monster/galdros/galdros_right_v1.png。1672×941、地面 y=790）の px で書く。
+# 遊べるガルドロスは専用の仮モデル（src/render/galdrosRig.ts）なので、この形は幼体コルドピルの元にだけ使う。
+GALDROS_SP = Sp('galdros', 0.003693, (930, 790))
+GALDROS_PLAN = dict(
+    spine=[[50, 625, 30, 30, 34], [170, 600, 62, 60, 66], [300, 575, 52, 50, 56], [430, 545, 70, 70, 75], [560, 500, 150, 120, 170], [740, 450, 260, 160, 300],
+           [930, 430, 290, 180, 320], [1110, 430, 270, 170, 300], [1270, 410, 170, 120, 170], [1370, 370, 120, 100, 110], [1470, 330, 120, 115, 110],
+           [1570, 345, 75, 70, 70], [1615, 365, 25, 25, 28]],
+    roles='-tttbbbbnnh--', root=6,
+    legs=[
+        dict(group='F', attach=7, pts=[[1150, 520, 1.0], [1200, 640, 1.05], [1250, 735, 1.08], [1270, 785, 1.1]], r=[130, 95, 80, 70], mirror=True, phase=0.0, foot=[180, 50]),
+        dict(group='H', attach=5, pts=[[700, 530, 1.0], [650, 640, 1.05], [640, 735, 1.08], [650, 785, 1.1]], r=[150, 100, 85, 72], mirror=True, phase=0.5, foot=[190, 50]),
+    ],
+    extras=[
+        dict(kind='blob', bone='spine:10', c=[1440, 222], r=[120, 28, 0.42], part='crown', jk=0.5),
+        dict(kind='blob', bone='spine:1', c=[160, 600], r=[110, 72, 0.3], part='tail_tip', jk=0.45),
+        dict(kind='blob', bone='spine:10', c=[1500, 322], r=[12, 10, 0.035], mirror=True, x=0.33, shade=0.25),
+    ],
+    stride=1.6, lift=0.2,
+)
+
+JUVENILES = []
+
+# ---- 14 コルドピル（ガルドロスの幼体。四足重獣）----
+J = Juv('kordopil', 'galdros', GALDROS_SP, GALDROS_PLAN, 3.2, tail_k=0.5, head=1.3, belly=1.12, legs_r=1.08, eye_k=1.5,
+        add_extras=[dict(kind='sheet', bone='spine:6', x=0.62, tilt=0.5, thick=0.07, part='plate', jk=0.85,
+                         pts=[[790, 300], [880, 205], [1050, 190], [1130, 250], [1090, 330], [880, 340]])],
+        tint=(1.1, 1.08, 1.04), pale=0.12)
+JUVENILES.append(dict(
+    J=J, no=14, name='岩殻獣の幼体 コルドピル', parent='galdros', frame='quad', rig='quadruped_heavy',
+    stats=dict(hp=260, bodyRadius=0.55, turn=150, moveSpeed=2.4, approach=(1.4, 60), collision=[(0.0, 0.55)], cooldown=(40, 80)),
+    herd=herd((3, 5), 2.4, 20, 10, 1.75, 420, 0.35, (240, 420)),
+    parts=lambda J: [
+        jpart('crown', '薄い頭冠', 'rock', (0.7, 0.85, 0.65), [(J.m(1380, 250), J.m(1520, 240), 0.3)], dur=60),
+        jpart('plate', '左背の幼岩板', 'rock', (0.55, 0.7, 0.5), [(J.m(820, 230, 0.6), J.m(1100, 240, 0.6), 0.34)], dur=80),
+        jpart('head', '頭', 'hide', (0.9, 0.85, 0.85), [(J.m(1380, 360), J.m(1610, 360), 0.3)], flinch=(35, 20, 40, False)),
+        jpart('body', '胴', 'hide', (0.75, 0.75, 0.7), [(J.m(560, 470), J.m(1200, 420), 0.5)]),
+        jpart('legs', '脚', 'hide', (0.7, 0.7, 0.65), [(J.m(1150, 560, 1.0), J.m(1260, 770, 1.1), 0.16), (J.m(1150, 560, -1.0), J.m(1260, 770, -1.1), 0.16),
+                                                     (J.m(690, 560, 1.0), J.m(650, 770, 1.1), 0.17), (J.m(690, 560, -1.0), J.m(650, 770, -1.1), 0.17)], flinch=(60, 30, 90, True)),
+    ],
+    moves=lambda J: [
+        move('push_slam', 70, 30, 36, 'stomp_front', turn=(20, 120), slamTrack='kordopil_push_slam',
+             tracks=[track('kordopil_push_slam', 0.42, 0.9, [(0, [0, 0.9, 0.8], [0, -0.2, 1]), (30, [0, 0.9, 0.8], [0, -0.2, 1]), (33, [0, 0.8, 0.95], [0, -1, 0.25]), (36, [0, 0.75, 1.0], [0, -1, 0.15])])],
+             hits=[hit('paw', 30, 36, 'kordopil_push_slam', 10, 'flinch', cost=15)],
+             sounds=[(4, 'galdros_warn'), (28, 'galdros_swing')], vfx=[(34, 'ground_slam')], ai=ai(0, 2.4, 45, 3)),
+        move('dash', 80, 24, 42, 'lunge', curve=(3.0, 22, 42), turn=(18, 140),
+             tracks=[track('kordopil_dash', 0.42, 0.8, [(24, [0, 0.45, 0.95], [0, 0, 1]), (42, [0, 0.45, 0.95], [0, 0, 1])])],
+             hits=[hit('head', 24, 42, 'kordopil_dash', 12, 'knockdown', cost=20)],
+             sounds=[(4, 'galdros_warn'), (24, 'galdros_charge')], ai=ai(2, 8, 30, 2.5, cd=200, clear=3)),
+        move('dirt_kick', 80, 32, 42, 'paw', turn=(20, 100),
+             tracks=[track('kordopil_dirt_kick', 0.6, 1.4, [(32, [0, 0.35, -0.8], [0, 0, -1]), (42, [0, 0.35, -0.8], [0, 0.1, -1])])],
+             hits=[hit('dirt', 32, 42, 'kordopil_dirt_kick', 6, 'flinch', cost=10)],
+             sounds=[(30, 'galdros_swing')], vfx=[(34, 'mud_splash')], ai=ai(0, 3.2, 180, 2.5, minA=100, cd=180)),
+    ],
+    mats=[('juv_shell', '幼岩殻片', 12), ('soft_bed', '柔らかい晶床', 18), ('tail_grain', '丸尾晶粒', 22)],
+    quest=('岩殻の子ら', 3, '風礫盆地の草の斜面を、ガルドロスの幼体コルドピルの群れが掘り返している。増えすぎた群れから 3 頭を間引く。外側の個体から先に逃げる。'),
+))
+
+# ---- 15 パルセイト（セルヴァルクの幼体。四足軽獣）----
+P_ = BY_KEY['selvark']
+J = Juv('palseit', 'selvark', P_['sp'], P_['plan'], 2.4, tail_k=0.6, head=1.35, legs_r=0.9, extra_k=0.4, eye_k=1.6, tint=(1.12, 1.1, 1.06))
+JUVENILES.append(dict(
+    J=J, no=15, name='帆角獣の幼体 パルセイト', parent='selvark', frame='quad', rig='quadruped_light',
+    stats=dict(hp=170, bodyRadius=0.4, turn=200, moveSpeed=3.4, approach=(1.3, 60), collision=[(0.0, 0.4)], cooldown=(35, 70)),
+    herd=herd((4, 6), 2.0, 24, 13, 1.5, 360, 0.15, (180, 300)),
+    parts=lambda J: [
+        jpart('crest_l', '左の幼角膜', 'hide', (0.8, 0.75, 0.8), [(J.m(1150, 330, 0.3), J.m(900, 360, 0.4), 0.22)], dur=40),
+        jpart('crest_r', '右の幼角膜', 'hide', (0.8, 0.75, 0.8), [(J.m(1150, 330, -0.3), J.m(900, 360, -0.4), 0.22)], dur=40),
+        jpart('head', '頭', 'hide', (0.9, 0.85, 0.85), [(J.m(1190, 320), J.m(1305, 352), 0.24)], flinch=(30, 18, 40, False)),
+        jpart('body', '胴', 'hide', (0.75, 0.75, 0.7), [(J.m(600, 525), J.m(1090, 480), 0.36)]),
+        jpart('legs', '脚', 'hide', (0.7, 0.7, 0.65), [(J.m(1050, 610, 0.3), J.m(1150, 925, 0.3), 0.14), (J.m(1050, 610, -0.3), J.m(1150, 925, -0.3), 0.14),
+                                                     (J.m(600, 600, 0.3), J.m(600, 925, 0.3), 0.15), (J.m(600, 600, -0.3), J.m(600, 925, -0.3), 0.15)], flinch=(50, 25, 80, True)),
+    ],
+    moves=lambda J: [
+        *[move(f'side_kick_{"l" if sd > 0 else "r"}', 64, 24, 32, 'hop_side', side=sd, curve=(1.2, 18, 34), dirDeg=90 * sd,
+               tracks=[track(f'palseit_side_kick_{"l" if sd > 0 else "r"}', 0.36, 0.9, [(24, [0.25 * sd, 0.45, 0.45], [0.2 * sd, -0.1, -1]), (32, [0.6 * sd, 0.4, 0.45], [0.2 * sd, -0.1, -1])])],
+               hits=[hit('kick', 24, 32, f'palseit_side_kick_{"l" if sd > 0 else "r"}', 8, 'flinch', cost=12)],
+               sounds=[(22, 'galdros_swing')], ai=ai(0, 2.4, 140, 2.5, minA=35, side='left' if sd > 0 else 'right')) for sd in (1, -1)],
+        move('puff', 80, 36, 44, 'gust', turn=(26, 120),
+             tracks=[track('palseit_puff', 0.7, 2.0, [(36, [0, 0.5, 0.5], [0, -0.2, 1]), (44, [0, 0.45, 0.5], [0, -0.25, 1])])],
+             hits=[hit('wind', 36, 44, 'palseit_puff', 5, 'flinch', cost=10)],
+             sounds=[(4, 'beast_cry'), (34, 'gust')], vfx=[(36, 'gust')], ai=ai(1, 4.5, 35, 2, cd=240)),
+        move('hop_back', 70, 20, 28, 'hop_back', curve=(-2.6, 18, 40),
+             tracks=[track('palseit_hop_back', 0.42, 0.8, [(20, [0, 0.4, 0.5], [0, 0.4, 1]), (28, [0, 0.6, 0.4], [0, 1, 0.3])])],
+             hits=[hit('fore', 20, 28, 'palseit_hop_back', 6, 'flinch', cost=10)],
+             sounds=[(18, 'gust')], ai=ai(0, 1.8, 70, 2, cd=300)),
+    ],
+    mats=[('juv_membrane', '幼帆膜', 12), ('thin_tendon', '細弾性腱', 18)],
+    quest=('跳ねる小角', 4, 'セルヴァルクの幼体パルセイトの小群が、盆地の草地を跳ね回っている。4 頭を討伐する。危険を見つけた個体から跳ねて逃げるので、壁際へ追い込む。'),
+))
+
+# ---- 16 ヌマポロン（ヌメラドンの幼体。四足重獣）----
+P_ = BY_KEY['numeradon']
+J = Juv('numaporon', 'numeradon', P_['sp'], P_['plan'], 3.0, tail_k=0.65, head=1.3, belly=1.1, legs_r=0.95, extra_k=0.5, eye_k=1.5,
+        drop=lambda e: e.get('part') == 'sacs', tint=(1.12, 1.1, 1.08))
+JUVENILES.append(dict(
+    J=J, no=16, name='泥冠獣の幼体 ヌマポロン', parent='numeradon', frame='quad', rig='quadruped_heavy',
+    stats=dict(hp=240, bodyRadius=0.55, turn=130, moveSpeed=2.2, approach=(1.5, 60), collision=[(0.0, 0.55)], cooldown=(45, 85)),
+    herd=herd((3, 6), 2.4, 16, 8, 1.6, 480, 0.5, (300, 480)),
+    parts=lambda J: [
+        jpart('dish', '薄い泥皿', 'rock', (0.7, 0.85, 0.65), [(J.m(1000, 300), J.m(1400, 300), 0.3)], dur=60),
+        jpart('fin', '尾の幼ひれ', 'hide', (0.85, 0.8, 0.8), [(J.m(330, 560), J.m(60, 700), 0.24)], dur=40),
+        jpart('head', '頭', 'hide', (0.9, 0.85, 0.85), [(J.m(1250, 440), J.m(1490, 430), 0.3)], flinch=(35, 20, 40, False)),
+        jpart('body', '胴', 'hide', (0.75, 0.75, 0.7), [(J.m(400, 500), J.m(1100, 450), 0.5)]),
+        jpart('legs', '脚', 'hide', (0.7, 0.7, 0.65), [(J.m(1000, 660, 1.05), J.m(1010, 850, 1.05), 0.2), (J.m(1000, 660, -1.05), J.m(1010, 850, -1.05), 0.2),
+                                                     (J.m(380, 660, 1.05), J.m(385, 840, 1.05), 0.2), (J.m(380, 660, -1.05), J.m(385, 840, -1.05), 0.2)], flinch=(60, 30, 90, True)),
+    ],
+    moves=lambda J: [
+        move('mud_spit', 80, 38, 42, 'spit', turn=(34, 100),
+             hazards=[hazard(40, 1, 0.6, 1.0, 34, 8, 8, 'flinch', [0, 0.6, 1.0], 'mud', peak=2.2)],
+             sounds=[(4, 'galdros_warn'), (38, 'splash')], ai=ai(3, 10, 40, 2.5, cd=240)),
+        move('belly_slide', 90, 30, 50, 'slide', curve=(3.6, 30, 50),
+             tracks=[track('numaporon_belly_slide', 0.5, 0.9, [(30, [0, 0.35, 0.9], [0, 0, 1]), (50, [0, 0.35, 0.9], [0, 0, 1])])],
+             hits=[hit('belly', 30, 50, 'numaporon_belly_slide', 10, 'knockdown', cost=18)],
+             sounds=[(4, 'galdros_warn'), (30, 'galdros_charge')], ai=ai(2, 7, 25, 2, cd=300, clear=4)),
+        *[move(f'mud_push_{"l" if sd > 0 else "r"}', 70, 28, 36, 'shoulder', side=sd, curve=(0.9, 26, 38), dirDeg=90 * sd,
+               tracks=[track(f'numaporon_mud_push_{"l" if sd > 0 else "r"}', 0.45, 1.4, [(28, [0.55 * sd, 0.45, 0.7], [0, 0, -1]), (36, [0.7 * sd, 0.4, 0.7], [0, 0, -1])])],
+               hits=[hit('shoulder', 28, 36, f'numaporon_mud_push_{"l" if sd > 0 else "r"}', 8, 'flinch', cost=14)],
+               sounds=[(26, 'splash')], vfx=[(30, 'mud_splash')], ai=ai(0, 2.6, 135, 2.5, minA=40, side='left' if sd > 0 else 'right')) for sd in (1, -1)],
+    ],
+    mats=[('juv_mud_crystal', '幼泥晶', 12), ('thin_hide', '薄耐水皮', 16), ('juv_crown', '幼冠甲', 22)],
+    quest=('泥皿の子', 3, 'ヌメラドンの幼体ヌマポロンの群れが、盆地の水場を泥で埋めている。3 頭を討伐する。小粒の泥吐きと、短い腹滑りに注意。'),
+))
+
+# ---- 17 チルミカナ（ルミスカの幼体。二足翼獣）----
+P_ = BY_KEY['lumisca']
+_nodes = [e for e in P_['plan']['extras'] if e.get('part') == 'nodes']
+_keep = {id(_nodes[1]), id(_nodes[3])}
+J = Juv('chilumicana', 'lumisca', P_['sp'], P_['plan'], 2.5, tail_k=0.5, head=1.35, extra_k=0.6, eye_k=1.6,
+        drop=lambda e: e.get('part') == 'nodes' and id(e) not in _keep, tint=(1.14, 1.12, 1.08), pale=0.12)
+JUVENILES.append(dict(
+    J=J, no=17, name='燐尾鳥の幼体 チルミカナ', parent='lumisca', frame='biped', rig='biped_wing',
+    stats=dict(hp=170, bodyRadius=0.4, turn=180, moveSpeed=3.0, approach=(1.3, 60), collision=[(0.0, 0.4)], cooldown=(35, 75)),
+    herd=herd((3, 5), 2.0, 22, 12, 1.6, 360, 0.2, (180, 300)),
+    parts=lambda J: [
+        jpart('nodes', '尾の幼燐節', 'shell', (0.8, 0.75, 0.85), [(J.m(700, 420), J.m(200, 520), 0.24)], dur=40),
+        jpart('wing', '翼端の薄甲', 'shell', (0.8, 0.75, 0.85), [(J.m(1200, 330, 0.55), J.m(900, 480, 0.6), 0.22), (J.m(1200, 330, -0.55), J.m(900, 480, -0.6), 0.22)], dur=40),
+        jpart('head', '頭', 'hide', (0.9, 0.85, 0.85), [(J.m(1380, 220), J.m(1480, 250), 0.24)], flinch=(30, 18, 40, False)),
+        jpart('body', '胴', 'hide', (0.75, 0.75, 0.7), [(J.m(900, 400), J.m(1330, 380), 0.36)]),
+        jpart('legs', '脚', 'shell', (0.7, 0.7, 0.65), [(J.m(1100, 580, 0.3), J.m(1150, 890, 0.3), 0.14), (J.m(1100, 580, -0.3), J.m(1150, 890, -0.3), 0.14)], flinch=(50, 25, 80, True)),
+    ],
+    moves=lambda J: [
+        move('tail_jab', 80, 36, 42, 'spark_tail',
+             tracks=[track('chilumicana_tail_jab', 0.38, 1.1, [(36, [0, 0.55, -0.7], [0, -0.3, -1]), (42, [0, 0.45, -0.8], [0, -0.4, -1])])],
+             hits=[hit('tail', 36, 42, 'chilumicana_tail_jab', 7, 'flinch', cost=12)],
+             sounds=[(6, 'zap'), (34, 'zap')], ai=ai(0, 3.0, 180, 2.5, minA=100, cd=180)),
+        move('kick', 64, 24, 30, 'kick_front', side=1, curve=(0.5, 20, 30), turn=(16, 140),
+             tracks=[track('chilumicana_kick', 0.34, 0.9, [(24, [0.1, 0.6, 0.25], [0, -0.1, 1]), (30, [0.1, 0.5, 0.35], [0, -0.15, 1])])],
+             hits=[hit('kick', 24, 30, 'chilumicana_kick', 8, 'flinch', cost=12)],
+             sounds=[(22, 'galdros_swing')], ai=ai(0, 2.0, 40, 3)),
+        move('glide_back', 80, 26, 34, 'glide', curve=(-3.0, 22, 48),
+             tracks=[track('chilumicana_glide_back', 0.55, 0.9, [(26, [0, 0.6, 0.3], [0, 0, 1]), (34, [0, 0.6, 0.3], [0, 0, 1])])],
+             hits=[hit('wing', 26, 34, 'chilumicana_glide_back', 5, 'flinch', cost=8)],
+             sounds=[(22, 'gust')], ai=ai(0, 1.8, 70, 2, cd=300)),
+    ],
+    mats=[('juv_node', '幼燐節', 14), ('pale_hide', '淡光皮', 12), ('small_film', '小放電膜', 20)],
+    quest=('灯る尾の子', 3, 'ルミスカの幼体チルミカナの群れが、盆地の礫原で尾を光らせている。3 羽を討伐する。追われると、翼で低く滑ってから走る。'),
+))
+
+# ---- 18 コハルギス（オルグラスの幼体。六脚甲殻）----
+P_ = BY_KEY['orglass']
+_small_claw_r = [
+    dict(kind='blob', bone='leg:clawR:2', c=[1320, 345], r=[85, 65, 0.2], x=-0.75, part='claw', jk=1.0),
+    dict(kind='cone', bone='own:finger_R', own=dict(name='finger_R', at=[1360, 320], parent='leg:clawR:2'), a=[1360, 320], b=[1470, 295], ra=30, rb=5, x=-0.75, ch='finger', jk=1.0),
+]
+J = Juv('kohalgis', 'orglass', P_['sp'], P_['plan'], 2.6, tail_k=1.0, head=1.25, legs_r=1.0, extra_k=0.75, eye_k=1.4,
+        drop=lambda e: (e['kind'] == 'sheet' and e.get('part') == 'plates') or e.get('part') == 'claw_r' or (e.get('ch') == 'finger' and e.get('x', 0) < 0),
+        add_extras=_small_claw_r, tint=(1.16, 1.15, 1.12), pale=0.16)
+# 右の鋏の腕を、左と同じ小鋏の長さに
+for L in J.plan['legs']:
+    if L['group'] == 'clawR':
+        L['pts'] = [[1000, 430, -0.34], [1150, 400, -0.48], [1250, 380, -0.51]]
+        L['r'] = [35, 32, 30]
+        L['pts'] = [[*[round(v) for v in J.tx(a, b)], xm] for a, b, xm in L['pts']]
+        L['attach'] = 5
+JUVENILES.append(dict(
+    J=J, no=18, name='硝殻蟹の幼体 コハルギス', parent='orglass', frame='crab', rig='crust_six',
+    stats=dict(hp=200, bodyRadius=0.5, turn=170, moveSpeed=2.8, approach=(1.3, 60), collision=[(0.0, 0.5)], cooldown=(40, 80)),
+    herd=herd((4, 7), 1.9, 18, 9, 1.7, 300, 0.3, (240, 360), scatter=True),
+    parts=lambda J: [
+        jpart('shell', '乳白の背殻', 'shell', (0.55, 0.65, 0.5), [(J.m(200, 360), J.m(950, 320), 0.36)], dur=70),
+        jpart('claw', '右の幼鋏', 'shell', (0.7, 0.75, 0.7), [(J.m(1150, 400, -0.7), J.m(1420, 320, -0.75), 0.18), (J.m(1150, 400, 0.7), J.m(1420, 320, 0.75), 0.18)], dur=40),
+        jpart('head', '頭', 'hide', (0.9, 0.85, 0.85), [(J.m(1000, 410), J.m(1120, 400), 0.22)], flinch=(30, 18, 40, False)),
+        jpart('body', '胴', 'hide', (0.75, 0.75, 0.7), [(J.m(250, 520), J.m(950, 480), 0.36)]),
+        jpart('legs', '脚', 'shell', (0.7, 0.7, 0.65), [(J.m(560, 600, 1.35), J.m(410, 940, 1.7), 0.14), (J.m(560, 600, -1.35), J.m(410, 940, -1.7), 0.14),
+                                                       (J.m(760, 600, 1.25), J.m(840, 940, 1.6), 0.14), (J.m(760, 600, -1.25), J.m(840, 940, -1.6), 0.14)], flinch=(60, 30, 90, True)),
+    ],
+    moves=lambda J: [
+        move('pinch', 70, 28, 36, 'claw_fan', turn=(22, 120),
+             tracks=[track('kohalgis_pinch', 0.34, 1.0, [(28, [0, 0.4, 0.55], [-1, 0, 0.5]), (32, [0, 0.4, 0.55], [0, 0, 1]), (36, [0, 0.4, 0.55], [1, 0, 0.5])])],
+             hits=[hit('claws', 28, 36, 'kohalgis_pinch', 8, 'flinch', kind='cut', cost=12)],
+             sounds=[(4, 'shell_clack'), (26, 'galdros_swing'), (34, 'shell_clack')], ai=ai(0, 2.2, 50, 3)),
+        *[move(f'side_hop_{"l" if sd > 0 else "r"}', 64, 22, 38, 'dash_side', side=sd, curve=(2.2, 22, 38), dirDeg=90 * sd,
+               tracks=[track(f'kohalgis_side_hop_{"l" if sd > 0 else "r"}', 0.5, 1.0, [(22, [0.5 * sd, 0.35, -0.5], [0, 0, 1]), (38, [0.5 * sd, 0.35, -0.5], [0, 0, 1])])],
+               hits=[hit('body', 22, 38, f'kohalgis_side_hop_{"l" if sd > 0 else "r"}', 7, 'flinch', cost=12)],
+               sounds=[(4, 'shell_clack'), (22, 'galdros_charge')], ai=ai(1, 5, 135, 2.5, minA=45, side='left' if sd > 0 else 'right', cd=200)) for sd in (1, -1)],
+        move('sand_scrape', 80, 32, 44, 'paw',
+             tracks=[track('kohalgis_sand_scrape', 0.55, 1.4, [(32, [0, 0.25, 0.7], [0, 0, 1]), (44, [0, 0.25, 0.7], [0, 0.1, 1])])],
+             hits=[hit('sand', 32, 44, 'kohalgis_sand_scrape', 5, 'flinch', cost=8)],
+             sounds=[(30, 'galdros_swing')], vfx=[(34, 'mud_splash')], ai=ai(1, 3.6, 35, 2, cd=220)),
+    ],
+    mats=[('juv_glass', '幼硝殻', 12), ('small_claw', '小鋏芯', 18), ('thin_gland', '成形腺の薄膜', 24)],
+    quest=('乳白の殻', 4, 'オルグラスの幼体コハルギスが、盆地の岩の割れ目に集まっている。4 体を討伐する。逃げる時は、ばらばらの割れ目へ散る。'),
+))
+
+# ---- 19 ミトガロン（テンガロの幼体。輪の虫）----
+P_ = BY_KEY['tengaro']
+J = Juv('mitogaron', 'tengaro', P_['sp'], P_['plan'], 3.8, tail_k=1.0, squash=0.72, head=1.25, extra_k=0.5, eye_k=1.5, tint=(1.12, 1.1, 1.08))
+JUVENILES.append(dict(
+    J=J, no=19, name='鉤輪蟲の幼体 ミトガロン', parent='tengaro', frame='arch', rig='crust_many',
+    stats=dict(hp=280, bodyRadius=0.5, turn=110, moveSpeed=2.0, approach=(1.5, 60), collision=[(0.75, 0.42), (-0.75, 0.42)], cooldown=(45, 90)),
+    herd=herd((3, 6), 2.6, 16, 8, 1.8, 480, 0.45, (300, 480)),
+    parts=lambda J: [
+        jpart('head', '柔らかい頭甲', 'shell', (0.8, 0.8, 0.75), [(J.m(1250, 720), J.m(1370, 850), 0.3)], dur=60, flinch=(35, 20, 40, False)),
+        jpart('hooks', '外側の幼鉤', 'shell', (0.6, 0.7, 0.6), [(J.m(385, 365, 0.35), J.m(935, 205, 0.35), 0.24), (J.m(385, 365, -0.35), J.m(935, 205, -0.35), 0.24)], dur=70),
+        jpart('tail', '尾節', 'hide', (0.85, 0.8, 0.8), [(J.m(180, 790), J.m(300, 960), 0.3)]),
+        jpart('body', '体節', 'shell', (0.7, 0.75, 0.7), [(J.m(265, 510), J.m(560, 250), 0.34), (J.m(560, 250), J.m(935, 205), 0.34), (J.m(935, 205), J.m(1205, 560), 0.34)], flinch=(60, 30, 90, True)),
+    ],
+    moves=lambda J: [
+        move('curl_bump', 80, 34, 42, 'arch_drop', curve=(1.0, 30, 42), turn=(26, 90),
+             tracks=[track('mitogaron_curl_bump', 0.5, 0.9, [(34, [0, 0.55, 1.0], [0, -0.3, 1]), (42, [0, 0.45, 1.1], [0, -0.35, 1])])],
+             hits=[hit('bump', 34, 42, 'mitogaron_curl_bump', 9, 'knockdown', cost=16)],
+             sounds=[(4, 'insect_buzz'), (32, 'galdros_swing')], ai=ai(0, 2.6, 35, 3)),
+        *[move(f'hook_scrape_{"l" if sd > 0 else "r"}', 70, 28, 36, 'hook_sweep', side=sd,
+               tracks=[track(f'mitogaron_hook_scrape_{"l" if sd > 0 else "r"}', 0.42, 1.6, [(28, [0.3 * sd, 0.55, -0.9], [0, 0, 1]), (36, [1.0 * sd, 0.55, -0.9], [0, 0, 1])])],
+               hits=[hit('hooks', 28, 36, f'mitogaron_hook_scrape_{"l" if sd > 0 else "r"}', 7, 'flinch', kind='cut', cost=12)],
+               sounds=[(4, 'hiss'), (26, 'galdros_swing')], ai=ai(0, 2.6, 140, 2.5, minA=40, side='left' if sd > 0 else 'right')) for sd in (1, -1)],
+        move('para_drip', 80, 34, 38, 'tail_strike',
+             hazards=[hazard(36, 2, 1.4, 0.9, 30, 16, 4, 'flinch', [0, 0.8, -1.0], 'para', peak=1.8, status=('para', 40))],
+             sounds=[(4, 'hiss'), (34, 'splash')], ai=ai(1, 6, 180, 2, cd=300)),
+    ],
+    mats=[('juv_hook', '幼鉤甲', 12), ('soft_ring', '柔輪節', 16), ('thin_duct', '細痺液管', 24)],
+    quest=('丸まれない輪', 3, 'テンガロの幼体ミトガロンの群れが、盆地の倒れた岩の間を這っている。3 体を討伐する。尾節から落ちる痺液に注意。'),
+))
+
+# ---- 20 ユルテピカ（ヴェリトの幼体。多脚の虫）----
+P_ = BY_KEY['verito']
+_spinners = [e for e in P_['plan']['extras'] if e.get('part') == 'spinner']
+_keep_sp = {id(_spinners[0]), id(_spinners[3])}
+J = Juv('yurtepica', 'verito', P_['sp'], P_['plan'], 1.8, tail_k=0.75, head=1.3, extra_k=0.55, eye_k=1.5,
+        drop=lambda e: e.get('part') == 'spinner' and id(e) not in _keep_sp, tint=(1.1, 1.08, 1.1), pale=0.12)
+for e in J.plan['extras']:
+    if e.get('ch') == 'bags':
+        e['r'][1] = round(e['r'][1] * 0.55)  # 平たい羽袋
+JUVENILES.append(dict(
+    J=J, no=20, name='絹霧蟲の幼体 ユルテピカ', parent='verito', frame='bug', rig='crust_many',
+    stats=dict(hp=140, bodyRadius=0.36, turn=180, moveSpeed=2.6, approach=(1.2, 60), collision=[(0.0, 0.36)], cooldown=(35, 70)),
+    herd=herd((4, 8), 1.7, 18, 9, 1.7, 300, 0.25, (180, 300)),
+    parts=lambda J: [
+        jpart('bag', '左の幼羽袋', 'hide', (0.9, 0.85, 0.9), [(J.m(700, 330, 0.4), J.m(1200, 300, 0.4), 0.22), (J.m(700, 330, -0.4), J.m(1200, 300, -0.4), 0.22)], dur=40),
+        jpart('spinner', '尾の細紡糸管', 'hide', (0.85, 0.8, 0.8), [(J.m(420, 600), J.m(200, 610), 0.2)], dur=30),
+        jpart('head', '頭', 'hide', (0.9, 0.85, 0.85), [(J.m(1260, 575), J.m(1360, 590), 0.2)], flinch=(30, 18, 40, False)),
+        jpart('body', '胴', 'shell', (0.75, 0.75, 0.7), [(J.m(400, 605), J.m(1150, 600), 0.3)]),
+        jpart('legs', '脚', 'shell', (0.7, 0.7, 0.65), [(J.m(950, 660, 0.4), J.m(980, 940, 1.15), 0.12), (J.m(950, 660, -0.4), J.m(980, 940, -1.15), 0.12)], flinch=(50, 25, 80, True)),
+    ],
+    moves=lambda J: [
+        move('thread_flick', 80, 34, 46, 'spray_rear',
+             tracks=[track('yurtepica_thread_flick', 0.38, 1.4, [(34, [0, 0.3, -0.6], [-1, 0, -0.45]), (40, [0, 0.3, -0.6], [0, 0, -1]), (46, [0, 0.3, -0.6], [1, 0, -0.45])])],
+             hits=[hit('threads', 34, 46, 'yurtepica_thread_flick', 4, 'flinch', cost=8, status=('poison', 40))],
+             sounds=[(4, 'hiss'), (34, 'gust')], vfx=[(34, 'poison_threads')], ai=ai(0, 2.6, 180, 2.5, minA=100, cd=200)),
+        move('hop_back', 64, 20, 28, 'hop_back', curve=(-2.0, 16, 36),
+             tracks=[track('yurtepica_hop_back', 0.36, 0.7, [(20, [0, 0.3, 0.35], [0, 0.4, 1]), (28, [0, 0.45, 0.3], [0, 1, 0.3])])],
+             hits=[hit('fore', 20, 28, 'yurtepica_hop_back', 4, 'flinch', cost=8)],
+             sounds=[(18, 'insect_buzz')], ai=ai(0, 1.6, 70, 2, cd=300)),
+        move('thread_push', 70, 28, 36, 'foreleg_sweep', turn=(20, 120),
+             tracks=[track('yurtepica_thread_push', 0.32, 0.9, [(28, [0, 0.4, 0.45], [-1, 0, 0.6]), (32, [0, 0.4, 0.45], [0, 0, 1]), (36, [0, 0.4, 0.45], [1, 0, 0.6])])],
+             hits=[hit('legs', 28, 36, 'yurtepica_thread_push', 6, 'flinch', cost=10, status=('poison', 20))],
+             sounds=[(26, 'galdros_swing')], ai=ai(0, 2.0, 50, 3)),
+    ],
+    mats=[('juv_silk', '幼霧糸', 10), ('thin_bag', '薄羽袋', 16), ('weak_venom', '微毒紡液', 22)],
+    quest=('糸床の子ら', 4, 'ヴェリトの幼体ユルテピカの群れが、盆地の谷に小さな糸床を張った。4 体を討伐する。尾糸を払う毒に注意。'),
+))
+
+# ---- 21 ヒナサルヴ（キリサーヴの幼体。長胴獣）----
+P_ = BY_KEY['kirisave']
+_hina_legs = [
+    dict(group='F', attach=7, pts=[[1300, 500, 0.5], [1290, 560, 0.75], [1320, 612, 0.85]], r=[42, 34, 26], mirror=True, phase=0.0, foot=[90, 18]),
+    dict(group='H', attach=4, pts=[[700, 540, 0.5], [680, 585, 0.75], [690, 612, 0.85]], r=[42, 34, 26], mirror=True, phase=0.5, foot=[90, 18]),
+]
+J = Juv('hinasalv', 'kirisave', P_['sp'], P_['plan'], 4.6, tail_k=0.75, head=1.3, extra_k=0.4, eye_k=1.6, add_legs=_hina_legs, tint=(1.12, 1.12, 1.12), pale=0.12)
+JUVENILES.append(dict(
+    J=J, no=21, name='氷帆蛇の幼体 ヒナサルヴ', parent='kirisave', frame='serpent', rig='long',
+    stats=dict(hp=300, bodyRadius=0.42, turn=120, moveSpeed=2.8, approach=(1.6, 55), collision=[(0.6, 0.42), (-0.6, 0.4)], cooldown=(45, 85)),
+    herd=herd((2, 4), 3.0, 20, 10, 1.6, 420, 0.4, (240, 420)),
+    parts=lambda J: [
+        jpart('head', '頭の幼冷晶板', 'shell', (0.85, 0.85, 0.8), [(J.m(1600, 375), J.m(1745, 375), 0.24)], dur=60, flinch=(35, 20, 40, False)),
+        jpart('sails', '左右交互の小帆板', 'shell', (0.65, 0.75, 0.6), [(J.m(1350, 400), J.m(500, 470), 0.3)], dur=70),
+        jpart('tail', '尾', 'hide', (0.85, 0.8, 0.8), [(J.m(450, 505), J.m(60, 492), 0.2)]),
+        jpart('body', '胴', 'hide', (0.75, 0.75, 0.7), [(J.m(500, 505), J.m(1500, 420), 0.3)], flinch=(60, 30, 90, True)),
+    ],
+    moves=lambda J: [
+        move('ice_scatter', 90, 44, 48, 'shiver', turn=(36, 90),
+             hazards=[hazard(46, 3, 1.6, 0.9, 30, 8, 6, 'flinch', [0, 0.7, 0.3], 'ice', peak=1.6)],
+             sounds=[(6, 'ice_crack'), (44, 'ice_crack')], ai=ai(1, 7, 60, 2.5, cd=260)),
+        move('slide', 90, 30, 52, 'slide', curve=(4.0, 30, 52),
+             tracks=[track('hinasalv_slide', 0.45, 1.0, [(30, [0, 0.3, 1.3], [0, 0, 1]), (52, [0, 0.3, 1.3], [0, 0, 1])])],
+             hits=[hit('head', 30, 52, 'hinasalv_slide', 10, 'knockdown', cost=18)],
+             sounds=[(4, 'hiss'), (30, 'galdros_charge')], ai=ai(2, 9, 25, 2, cd=260, clear=5)),
+        *[move(f'tail_flick_{"l" if sd > 0 else "r"}', 70, 28, 38, 'sweep_body_side', side=sd,
+               tracks=[track(f'hinasalv_tail_flick_{"l" if sd > 0 else "r"}', 0.4, 1.8, [(28, [0.2 * sd, 0.35, -1.0], [0, 0, 1]), (38, [0.9 * sd, 0.35, -0.8], [0.15 * sd, 0, 1])])],
+               hits=[hit('tail', 28, 38, f'hinasalv_tail_flick_{"l" if sd > 0 else "r"}', 7, 'flinch', cost=12)],
+               sounds=[(4, 'ice_crack'), (26, 'galdros_swing')], ai=ai(0, 2.8, 140, 2.5, minA=40, side='left' if sd > 0 else 'right')) for sd in (1, -1)],
+    ],
+    mats=[('juv_sail', '幼氷帆', 14), ('small_crystal', '小冷晶', 18), ('thin_skin', '薄帆間皮', 12)],
+    quest=('小板の兄弟', 2, 'キリサーヴの幼体ヒナサルヴが、2〜4 頭で冷えた岩溝を移っている。2 頭を討伐する。背の小板が白くなったら、氷の粒が散る。'),
+))
+
+# 種をまたぐ群れの依頼（盆地に住む 2 種）
+MIXED_QUESTS = [
+    dict(id='quest.basin_young.r1', name='盆地の若い群れ', targets=[('kordopil', 2), ('palseit', 3)],
+         summary='風礫盆地に、幼体の群れが増えすぎた。コルドピル 2 頭とパルセイト 3 頭を討伐する。群れは住みかのエリアを移ることがある。', money=520),
+]
+
+
+def build_juvenile(spec):
+    J = spec['J']
+    key = J.key
+    mid = f'monster.{key}'
+    st = spec['stats']
+    actions, tracks, curves, choices, clips, plan_moves = build_moves(key, mid, spec['moves'](J))
+    mdef = {
+        'schemaVersion': 1, 'id': mid, 'name': spec['name'], 'rigFamily': spec['rig'], 'assetId': f'model.monster.{key}',
+        'hp': st['hp'], 'bodyRadius': st['bodyRadius'], 'turnDegPerSec': st['turn'], 'moveSpeed': st['moveSpeed'], 'captureAllowed': False,
+        'lootId': f'loot.{key}', 'respawnTicks': None, 'breakStaggerTicks': 50,
+        'collision': [{'z': z, 'r': r} for z, r in st['collision']],
+        'approach': {'stopDist': st['approach'][0], 'faceDeg': st['approach'][1]},
+        'discover': None,
+        'parentId': f'monster.{spec["parent"]}',
+        'herd': spec['herd'],
+        'parts': spec['parts'](J),
+        'ai': {'aggroRange': 30, 'cooldownTicks': list(st['cooldown']), 'choices': choices},
+    }
+    return mdef, actions, tracks, curves, clips, plan_moves
+
+
 # ---------------------------------------------------------------------------------------------
 # 書き出し
 # ---------------------------------------------------------------------------------------------
@@ -802,12 +1268,8 @@ def smooth_curve(cid, dur, dist, t0, t1):
     return {'id': cid, 'keys': keys}
 
 
-def build_species(spec):
-    s = spec['sp']
-    key = s.key
-    mid = f'monster.{key}'
-    st = spec['stats']
-    moves = spec['moves'](s)
+def build_moves(key, mid, moves):
+    """技の一覧から、技データ・軌道・曲線・AI の選び方・clip・見た目の動きの対応を作る。"""
     actions, tracks, curves, choices, clips, plan_moves = [], [], [], [], [], {}
     for mv in moves:
         aid = f'{mid}.{mv["name"]}'
@@ -848,6 +1310,15 @@ def build_species(spec):
         if mv['amp']:
             pm['amp'] = mv['amp']
         plan_moves[clip] = pm
+    return actions, tracks, curves, choices, clips, plan_moves
+
+
+def build_species(spec):
+    s = spec['sp']
+    key = s.key
+    mid = f'monster.{key}'
+    st = spec['stats']
+    actions, tracks, curves, choices, clips, plan_moves = build_moves(key, mid, spec['moves'](s))
     roar = f'{mid}.roar'
     mdef = {
         'schemaVersion': 1, 'id': mid, 'name': spec['name'], 'rigFamily': spec['rig'], 'assetId': f'model.monster.{key}',
@@ -1023,13 +1494,66 @@ def main():
         states[f'monster.{key}'] = f'実装済み（v0.17.0。初級の依頼 1 件。技は登録簿の 4 つ。形は原画 1 枚から作った仮の形。狩場は風礫盆地を借りている）'
         plans.append(dict(key=key, frame=spec['frame'], scale=s.s, origin=[s.ox, s.gy], **{k: v for k, v in spec['plan'].items()}, moves=plan_moves))
 
+    # ---- 幼体 8 種（v0.18.0）----
+    herd_quests = []
+    for spec in JUVENILES:
+        J = spec['J']
+        key = J.key
+        mdef, actions, tracks, curves, clips, plan_moves = build_juvenile(spec)
+        write(f'public/data/monsters/{key}.json', monster_json(mdef))
+        write(f'public/data/actions/{key}.json', list_doc({'schemaVersion': 1, 'note': f'{spec["name"]}の技（tools/gen-monsters.py の出力。手で編集しない）。数値は机上の値。'}, 'actions', actions))
+        write(f'public/data/tracks/{key}.json', list_doc({'schemaVersion': 1, 'note': f'{spec["name"]}の攻撃の判定の形（tools/gen-monsters.py の出力。手で編集しない）。'}, 'tracks', tracks))
+        actions_files.append(f'actions/{key}.json')
+        tracks_files.append(f'tracks/{key}.json')
+        monster_files.append(f'monsters/{key}.json')
+        all_curves += curves
+        mat_ids = [f'mat.{key}.{slug}' for slug, _, _ in spec['mats']]
+        for (slug, name, price), mid_ in zip(spec['mats'], mat_ids):
+            mats.append({'id': mid_, 'name': name})
+            sells.append({'itemId': mid_, 'price': price})
+        weights = [60, 40] if len(mat_ids) == 2 else [50, 32, 18]
+        loots.append({'id': f'loot.{key}', 'carve': {'count': 1, 'table': [{'itemId': i, 'weight': w} for i, w in zip(mat_ids, weights)]},
+                      'capture': {'count': 1, 'table': [{'itemId': mat_ids[0], 'weight': 1}]}, 'breaks': {}})
+        qname, count, qsum = spec['quest']
+        herd_quests.append({
+            'id': f'quest.{key}.pack1', 'name': qname, 'kind': 'slay', 'summary': qsum, 'mapId': 'map.basin.training', 'fieldId': 'field.basin',
+            'targetMonsterId': f'monster.{key}', 'targets': [{'monsterId': f'monster.{key}', 'count': count}], 'rankId': 'rank.1',
+            'monsterSpawn': {'x': 4, 'z': 15, 'yaw': 2.6}, 'timeLimitTicks': 36000, 'maxFaints': 3, 'returnTicks': 1800,
+            'supplies': [{'itemId': 'item.heal_tonic', 'count': 3}, {'itemId': 'item.whetstone', 'count': 2}],
+            'rewards': {'money': 300 + 30 * count, 'items': [{'itemId': mat_ids[0], 'count': 1}]},
+        })
+        art_tex = f'tex.monster.{J.art}.side'
+        manifest.append({'id': f'model.monster.{key}', 'name': spec['name'], 'type': 'model', 'use': f'幼体（登録簿 {spec["no"]:02d}。v0.18.0 で遊べるようにした。群れで暮らす）', 'owner': 'Claude（仮モデル・動き）',
+                         'status': 'concept', 'version': 0, 'path': None,
+                         'source': f'親の{"設定図（右側面）" if J.art == "galdros" else "原画"}の形を、尾を縮め・頭を大きく・飾りを小さくした仮の形（tools/gen-monsters.py の Juv）。幼体の原画・設定図は取り込んでいない',
+                         'terms': '本作オリジナル', 'dims': f'全長 約 {J.span * J.s:.1f}m（登録簿の全長の約 0.68 倍）。Y 上・+Z 前',
+                         'clips': clips, 'dependsOn': [art_tex],
+                         'placeholder': {'kind': 'procedural', 'source': 'src/render/creatureRig.ts', 'note': f'形は src/render/creaturePlans.ts。体つき {spec["frame"]}。親の絵を淡くして貼る。群れの気分（食む・見る・伏せる・逃げる）の姿勢は src/render/creatureRig.ts'},
+                         'verification': 'ヘッドレス Chrome の画面で、形と群れの動きを目で確かめた。実機では未確認'})
+        if J.art == 'galdros':
+            manifest.append({'id': 'tex.monster.galdros.side', 'name': 'ガルドロスの横から貼る絵（幼体コルドピル用）', 'type': 'image', 'use': '幼体コルドピルの仮モデルへ横から貼る色の絵', 'owner': 'Claude（設定図から生成）',
+                             'status': 'integrated', 'version': 1, 'path': 'assets/textures/monsters/galdros_side_v1.webp',
+                             'source': 'art-source/monster/galdros/galdros_right_v1.png（採用済みの設定図）を tools/monster-art.py で加工（背景を抜き、体の外の色を近くの体の色で埋めた）',
+                             'terms': '本作オリジナル', 'dims': '幅 1024px 以下の WebP'})
+        states[f'monster.{key}'] = f'実装済み（v0.18.0。群れの依頼 1 件。技は登録簿の 3 つ。形は親の絵から作った仮の形。狩場は風礫盆地）'
+        plans.append(dict(key=J.art, frame=spec['frame'], **{k: v for k, v in J.plan.items() if k not in ('key', 'frame')}, moves=plan_moves, monster=key))
+    for mq in MIXED_QUESTS:
+        tg = [{'monsterId': f'monster.{k}', 'count': n} for k, n in mq['targets']]
+        herd_quests.append({
+            'id': mq['id'], 'name': mq['name'], 'kind': 'slay', 'summary': mq['summary'], 'mapId': 'map.basin.training', 'fieldId': 'field.basin',
+            'targetMonsterId': tg[0]['monsterId'], 'targets': tg, 'rankId': 'rank.1', 'monsterSpawn': {'x': 4, 'z': 15, 'yaw': 2.6}, 'timeLimitTicks': 36000, 'maxFaints': 3,
+            'returnTicks': 1800, 'supplies': [{'itemId': 'item.heal_tonic', 'count': 3}, {'itemId': 'item.whetstone', 'count': 2}],
+            'rewards': {'money': mq['money'], 'items': [{'itemId': f'mat.{mq["targets"][0][0]}.{[j for j in JUVENILES if j["J"].key == mq["targets"][0][0]][0]["mats"][0][0]}', 'count': 1}]},
+        })
+    write('public/data/quests_herds.json', list_doc({'schemaVersion': 1, 'note': '幼体の群れの依頼（tools/gen-monsters.py の出力。手で編集しない）。targets の頭数を討伐すると達成。狩場は風礫盆地（群れの住みかは fields/basin.json の herds）。報酬は机上の値'}, 'quests', herd_quests))
+
     # 曲線・依頼・素材・剥ぎ取り
-    write('public/data/curves_creatures.json', list_doc({'schemaVersion': 1, 'note': '大型 11 種の技で進む距離（tools/gen-monsters.py の出力。手で編集しない）。keys は [tick, 累積距離 m]'}, 'curves', all_curves))
+    write('public/data/curves_creatures.json', list_doc({'schemaVersion': 1, 'note': '大型 11 種と幼体 8 種の技で進む距離（tools/gen-monsters.py の出力。手で編集しない）。keys は [tick, 累積距離 m]'}, 'curves', all_curves))
     write('public/data/quests_creatures.json', list_doc({'schemaVersion': 1, 'note': '大型 11 種の依頼（tools/gen-monsters.py の出力。手で編集しない）。どれも初級で、最初から受けられる。狩場は風礫盆地を借りている（本来の狩場は登録簿の habitat）。報酬は机上の値'}, 'quests', quests))
-    write('public/data/items_creatures.json', list_doc({'schemaVersion': 1, 'note': '大型 11 種の素材（登録簿の素材の名前。tools/gen-monsters.py の出力。手で編集しない）', 'items': []}, 'materials', mats))
-    write('public/data/loot_creatures.json', list_doc({'schemaVersion': 1, 'note': '大型 11 種の剥ぎ取り・捕獲・部位破壊（tools/gen-monsters.py の出力。手で編集しない）。重みは机上の値'}, 'tables', loots))
-    replace_rows('public/data/shop.json', 'sell', [f'mat.{spec["sp"].key}.' for spec in SPECIES], sells)
-    update_content_index({'actions': actions_files, 'tracks': tracks_files, 'monsters': monster_files, 'curves': ['curves_creatures.json'], 'quests': ['quests_creatures.json'],
+    write('public/data/items_creatures.json', list_doc({'schemaVersion': 1, 'note': '大型 11 種と幼体 8 種の素材（登録簿の素材の名前。tools/gen-monsters.py の出力。手で編集しない）', 'items': []}, 'materials', mats))
+    write('public/data/loot_creatures.json', list_doc({'schemaVersion': 1, 'note': '大型 11 種と幼体 8 種の剥ぎ取り・捕獲・部位破壊（tools/gen-monsters.py の出力。手で編集しない）。幼体は剥ぎ取り 1 回（捕獲はできない。capture は形だけ）。重みは机上の値'}, 'tables', loots))
+    replace_rows('public/data/shop.json', 'sell', [f'mat.{spec["sp"].key}.' for spec in SPECIES] + [f'mat.{spec["J"].key}.' for spec in JUVENILES], sells)
+    update_content_index({'actions': actions_files, 'tracks': tracks_files, 'monsters': monster_files, 'curves': ['curves_creatures.json'], 'quests': ['quests_creatures.json', 'quests_herds.json'],
                           'items': ['items_creatures.json'], 'loot': ['loot_creatures.json']})
     update_manifest(manifest)
     update_bestiary(states)
@@ -1039,10 +1563,16 @@ def main():
            "import type { CreaturePlan } from './creaturePlan';", '',
            '/** モンスターの id → 仮モデルの設計図 */', 'export const CREATURE_PLANS: Record<string, CreaturePlan> = {']
     for p in plans:
-        out.append(f"  'monster.{p['key']}': {json.dumps(p, ensure_ascii=False)},")
+        mkey = p.pop('monster', p['key'])
+        out.append(f"  'monster.{mkey}': {json.dumps(p, ensure_ascii=False)},")
     out.append('};')
     write('src/render/creaturePlans.ts', '\n'.join(out) + '\n')
-    print(f'{len(SPECIES)} 種: 技 {sum(len(sp["moves"](sp["sp"])) for sp in SPECIES)}、曲線 {len(all_curves)}、依頼 {len(quests)}、素材 {len(mats)}')
+    print(f'{len(SPECIES)} 種: 技 {sum(len(sp["moves"](sp["sp"])) for sp in SPECIES)}、依頼 {len(quests)}')
+    print(f'幼体 {len(JUVENILES)} 種: 技 {sum(len(j["moves"](j["J"])) for j in JUVENILES)}、群れの依頼 {len(herd_quests)}')
+    print(f'曲線 {len(all_curves)}、素材 {len(mats)}')
+    for j in JUVENILES:
+        J = j['J']
+        print(f'  {J.key:12s} 全長 {J.span * J.s:.2f}m  縮尺 {J.s:.5f}  親との比 {J.ratio:.3f}')
 
 
 if __name__ == '__main__':
