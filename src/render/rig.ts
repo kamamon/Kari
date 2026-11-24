@@ -120,7 +120,8 @@ export class HunterRig {
   private skeleton!: Skeleton;
   private bodyMesh!: SkinnedMesh;
   private bodyMat!: MeshLambertMaterial;
-  private mantleTris: [number, number] = [0, 0];
+  /** いま描いていない体の部分（'mantle' = 外套、'hair' = 髪の束） */
+  hiddenBody: string[] = [];
   private armorMeshes: SkinnedMesh[] = [];
   /** いま付けている防具の組み合わせ（部位の順に段を並べた文字列。'11111' = 里の装束） */
   armorKey = '11111';
@@ -182,7 +183,7 @@ export class HunterRig {
     const mesh = new SkinnedMesh(body.build(), bodyMat);
     this.bodyMesh = mesh;
     this.bodyMat = bodyMat;
-    this.mantleTris = BODY_RANGES.mantle;
+
     mesh.name = 'hunter_body';
     mesh.castShadow = true;
     mesh.frustumCulled = false;
@@ -257,15 +258,25 @@ export class HunterRig {
         this.armorTriangles += geo.triangles;
       }
     }
-    // 外套: 三角形の範囲を外して描く（体の絵の区画はそのまま。里の装束へ戻せば、また描く）
+    // 体の一部を描かない: 胴の防具を着ている間は外套、兜をかぶっている間は髪の束（体の絵の区画はそのまま。脱げば、また描く）
+    const hide: [string, [number, number]][] = [];
+    if ((look.chest ?? 1) >= 2) hide.push(['mantle', BODY_RANGES.mantle]);
+    if ((look.head ?? 1) >= 2) hide.push(['hair', BODY_RANGES.hair]);
+    const ranges = hide.filter(([, [a, b]]) => b > a).sort((x, y) => x[1][0] - y[1][0]);
+    this.hiddenBody = ranges.map(([name]) => name);
     const g = this.bodyMesh.geometry;
-    const [a, b] = this.mantleTris;
     g.clearGroups();
-    if ((look.chest ?? 1) >= 2 && b > a) {
-      g.addGroup(0, a * 3, 0);
-      g.addGroup(b * 3, (this.bodyTriangles - b) * 3, 0);
-      this.bodyMesh.material = [this.bodyMat];
-    } else this.bodyMesh.material = this.bodyMat;
+    if (ranges.length === 0) {
+      this.bodyMesh.material = this.bodyMat;
+      return;
+    }
+    let at = 0;
+    for (const [, [a, b]] of ranges) {
+      if (a > at) g.addGroup(at * 3, (a - at) * 3, 0);
+      at = b;
+    }
+    if (this.bodyTriangles > at) g.addGroup(at * 3, (this.bodyTriangles - at) * 3, 0);
+    this.bodyMesh.material = [this.bodyMat];
   }
 
   setFamily(id: string, offhand?: ShieldKind, assetId?: string): void {

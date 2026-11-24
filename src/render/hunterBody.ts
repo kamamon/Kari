@@ -33,8 +33,11 @@ function ringY(y: number, rx: number, front: number, back: number, bones: Bones,
   return { c: new Vector3(cx, y, cz), right: X, up, rx, top: front, bottom: back, b0: bones[0], b1: bones[1], w1: bones[2], part: 0 };
 }
 
-/** 外套（首まわりと肩の布）の三角形の範囲 [始め, 終わり)。buildHunterBody が書く。胴の防具を着ている時は、ここを描かない。 */
-export const BODY_RANGES: { mantle: [number, number] } = { mantle: [0, 0] };
+/**
+ * 体の一部の三角形の範囲 [始め, 終わり)。buildHunterBody が書く。防具を着ている時に、ここを描かない:
+ * mantle = 外套（首まわりと肩の布。胴の防具を着ている時）、hair = 髪の束（兜をかぶっている時。兜を突き抜けるため）。
+ */
+export const BODY_RANGES: { mantle: [number, number]; hair: [number, number] } = { mantle: [0, 0], hair: [0, 0] };
 
 /** 体の皮を組む。返した Geo の charts が、絵を貼る区画（頭・胴・外套・すそ・腕・脚・足）。 */
 export function buildHunterBody(): Geo {
@@ -117,12 +120,14 @@ export function buildHunterBody(): Geo {
     [0, 1.69, -0.098, 0, 0.3, -1, 0.05, 0.03], [0.042, 1.65, -0.092, 0.4, -0.2, -1, 0.05, 0.028], [-0.042, 1.65, -0.092, -0.4, -0.2, -1, 0.05, 0.028], [0, 1.612, -0.082, 0, -0.6, -1, 0.042, 0.026],
   ];
   // 短く先のとがった束を、毛先を少し曲げて置く（設定図の髪は、短く無造作で、毛先がはねている）
+  const hairTri = g.triangles;
   tufts.forEach(([x, y, z, dx, dy, dz, len, rad], i) => {
     const d = new Vector3(dx, dy, dz).normalize();
     // 毛先は、束ごとに左右どちらかへ流す
     const bend = new Vector3().crossVectors(d, Y).multiplyScalar(i % 2 === 0 ? 0.014 : -0.014).add(new Vector3(0, -0.006, 0));
     horn(g, new Vector3(x, y, z).addScaledVector(d, -0.008), d, len * 0.36, rad * 0.6, i % 3 === 0 ? HAIR_DARK : HAIR, B.head, 0, bend);
   });
+  BODY_RANGES.hair = [hairTri, g.triangles];
   // 耳は小さく、頭に沿わせる（張り出させない）
   for (const side of [1, -1]) blob(g, new Vector3(0.0775 * side, 1.648, -0.01), Y, 0.04, 0.006, 0.014, () => [SKIN[0] * 0.9, SKIN[1] * 0.86, SKIN[2] * 0.84], B.head, 0, 6, 4);
   blob(g, new Vector3(-0.162, 0.995, 0.09), Y, 0.125, 0.048, 0.027, (p) => (p.y > 1.03 ? [LEATHER[0] * 0.8, LEATHER[1] * 0.8, LEATHER[2] * 0.8] : LEATHER), B.pelvis, 0, 8, 5);

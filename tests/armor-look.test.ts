@@ -86,6 +86,25 @@ describe('防具の見た目: 動くための決まり（依頼 7 の 3 章）',
     expect(box(all(only('head'))).maxY).toBeLessThanOrEqual(REST.top + 0.06);
   });
 
+  it('兜は頭を包む鉢で、てっぺんと後ろ頭を覆う。顔の前（目から口）は開いていて、正面にあるのは鼻当てだけ', () => {
+    const ps = all(only('head'));
+    expect(ps.some((p) => p.y > 1.765)).toBe(true);
+    expect(ps.some((p) => p.z < -0.1 && p.y > 1.68)).toBe(true);
+    expect(ps.some((p) => p.z < -0.1 && p.y < 1.62)).toBe(true); // うなじの板
+    const face = ps.filter((p) => p.z > 0.07 && p.y > 1.585 && p.y < 1.655);
+    expect(face.length).toBeGreaterThan(0); // 鼻当て
+    for (const p of face) expect(Math.abs(p.x)).toBeLessThan(0.02);
+    // あごと口の前には何も無い
+    expect(ps.filter((p) => p.z > 0.07 && p.y < 1.62)).toHaveLength(0);
+  });
+
+  it('頬当ては、左の方が大きい', () => {
+    const cheeks = all(only('head')).filter((p) => Math.abs(p.x) > 0.08 && p.y < 1.655 && p.z > -0.03);
+    const l = box(cheeks.filter((p) => p.x > 0)), r = box(cheeks.filter((p) => p.x < 0));
+    expect(l.maxY - l.minY).toBeGreaterThan(r.maxY - r.minY + 0.015);
+    expect(l.maxZ - l.minZ).toBeGreaterThan(r.maxZ - r.minZ + 0.01);
+  });
+
   it('肩当ては、肩から外へ 12cm・上へ 8cm まで（輝殻でも）', () => {
     for (const t of [2, 5]) {
       const b = box(all(only('chest', t)).filter((p) => Math.abs(p.x) > 0.17));
