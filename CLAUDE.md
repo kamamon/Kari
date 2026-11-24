@@ -13,7 +13,7 @@ TypeScript + Vite + Three.js。入力、simulation、render、data、save、UI �
 - src/render/ は simulation の状態を読むだけで、値を書き戻さない。
 - 狩場は、エリアに分かれたフィールド（public/data/fields/、docs/spec.md の 18 章。v0.11.0）。エリアは 1 つの座標の中に離して置く。`SimOptions.field` を渡さなければ、これまでの 1 つの狩場で動く（アプリでは `?hunt=arena`）。
 - モンスターの計画は、登録簿（public/data/bestiary.json、決まりは src/data/bestiary.ts、docs/spec.md の 20 章。v0.13.0）。段階ごとの数は 初級 13 / 中級 20 / 上級 25 / 極級 20。v0.15.0 で、ChatGPT の案を取り込んで 86 種（成体 78・幼体 8）と、狩場の案 20 になった。ChatGPT の案（JSON）は `npm run bestiary:import` で足す（手で写さない）。**登録簿は計画で、遊べるのは 20 種**（ガルドロスと、v0.17.0 の 02〜12 の 11 種と、v0.18.0 の幼体 14〜21 の 8 種）。遊べる定義は monsters/*.json が別に持つ。02〜12 と幼体の定義・技・依頼（群れの依頼は quests_herds.json）・素材・見た目の設計図は `npm run monsters:gen`（tools/gen-monsters.py）の出力で、手で編集しない（docs/spec.md の 22 章・23 章）。幼体は群れで暮らす（src/game/herd.ts。群れの乱数は群れごとで、幼体は大型を押さない）。種の ID は変えない（表示名だけを変える）。
-- 景色は、簡単な立体に絵を貼る（src/render/envArt.ts、docs/spec.md の 21 章。v0.13.0）。絵の原本は art-source/env/、ゲームが読む public/assets/textures/env/ は `npm run env:art` の出力（手で編集しない）。形と当たりの正本は、これまでどおりマップデータ。
+- 景色は、簡単な立体に絵を貼る（src/render/envArt.ts、docs/spec.md の 21 章。v0.13.0）。v0.19.0 で、空は計算で描く球（src/render/sky.ts）、岩と外周の岩壁は計算で作る形（src/render/rockGeo.ts）、草は風で揺れる（描画の側だけ。当たりは変えない）。絵の原本は art-source/env/、ゲームが読む public/assets/textures/env/ は `npm run env:art` の出力（手で編集しない）。形と当たりの正本は、これまでどおりマップデータ。
 - 拠点は、歩ける里（public/data/hub.json、docs/spec.md の 19 章。v0.12.0）。施設の前で画面を開く。`?hub=menu` で、これまでの一覧の拠点になる。ブラウザ検査（tools/smoke.mjs）のこれまでの項目は `?hunt=arena&hub=menu` で走る。
 
 # ChatGPT との受け渡し

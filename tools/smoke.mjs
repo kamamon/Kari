@@ -1188,6 +1188,25 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   });
   check('景色の絵（狩場）: 頼んだ絵がすべて読めている。空と遠景の筒（絵 2 枚）が、カメラと一緒に動く。霧の色は絵の下の帯と同じ', art && sky.off < 0.01 && sky.far === 2 && sky.fog === 'aebcab', JSON.stringify(sky));
   check('景色の絵（狩場）: 草と小物の板が立っている（野営地で 150 より多い）。描画量は目標内（100 draw calls / 20万 tri）', sky.cutouts > 150 && sky.calls <= 100 && sky.triangles <= 200000, JSON.stringify(sky));
+  // 現実に近づけた景色（v0.19.0）: 空の球と雲の時刻・霧・岩の凹凸と頂点の色・草の揺れと色・ほかのエリアを前もって作る
+  const real = async () => page.evaluate(() => {
+    const v = window.__vh.view, s = v.scene.getObjectByName('sky');
+    let sway = 0, tinted = 0, rocks = 0;
+    v.scene.traverse((o) => {
+      if (!o.visible || !o.material) return;
+      if (o.isInstancedMesh && o.material.customProgramCacheKey?.() === 'sway-in-wind') {
+        sway += o.count;
+        if (o.instanceColor) tinted++;
+      }
+      if (o.isMesh && o.material.vertexColors && o.material.bumpMap && o.geometry.getAttribute('color')) rocks++;
+    });
+    const groups = [...v.areaGroups.values()];
+    return { sky: !!s && s.parent?.name === 'backdrop', time: s?.material.uniforms.uTime.value ?? -1, fogExp: v.scene.fog.isFogExp2 === true, sway, tinted, rocks, built: groups.length, shown: groups.filter((g) => g.visible).length };
+  });
+  const real1 = await real();
+  const real2 = await until(page, () => window.__vh.view.areaGroups.size >= 2, 45000).then(() => real());
+  check('景色（v0.19.0）: 空の球が遠景の中にあり、雲の時刻が進む。霧は距離の 2 乗の指数。岩と岩壁に頂点の色と凹凸。草は揺れる素材で、1 本ずつ色が違う', real1.sky && real2.time > real1.time && real1.fogExp && real1.rocks >= 1 && real1.sway > 100 && real1.tinted >= 2, JSON.stringify(real1));
+  check('景色（v0.19.0）: まだ入っていないエリアも、前もって作られる（見えるのは、居るエリアだけ）', real2.built >= 2 && real2.shown === 1, JSON.stringify(real2));
   // 前へ歩く（東の出口へ向いて始まる）。出口に入ると、エリア 1 へ移る
   await page.keyboard.down('KeyW');
   await page.keyboard.down('ShiftLeft');

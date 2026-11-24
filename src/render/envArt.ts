@@ -2,7 +2,7 @@
 // ここは「読む・貼る」だけで、形や当たりは決めない（正本はマップデータ）。
 // 絵が届くまでは、その絵の平均の色で塗る（読めなくても、画面が黒くならない）。
 import {
-  BackSide, BufferGeometry, CircleGeometry, Color, DoubleSide, Float32BufferAttribute, FrontSide, Group, InstancedMesh, Matrix4, Mesh, MeshBasicMaterial, MeshLambertMaterial,
+  BufferGeometry, Color, DoubleSide, Float32BufferAttribute, FrontSide, Group, InstancedMesh, Matrix4, Mesh, MeshBasicMaterial, MeshLambertMaterial,
   MirroredRepeatWrapping, Quaternion, RepeatWrapping, SRGBColorSpace, TextureLoader, Vector3, type Texture,
 } from 'three';
 import { assetUrl } from '../core/assets';
@@ -29,6 +29,7 @@ export const ENV_FAR = {
 } as const;
 export type EnvPlace = keyof typeof ENV_FAR;
 
+/** 遠景の絵の、上の帯の色（tools/env-art.py が合わせる色。v0.19.0 からは、この部分は透明で、空は src/render/sky.ts が描く） */
 export const SKY_COLOR = 0xc5d2cb;
 
 /**
@@ -109,8 +110,9 @@ const tmpColor = new Color();
  * 繰り返す絵を貼った素材。uv は「m ÷ tile」で作っておくこと（絵の側では繰り返しの数を持たない。同じ絵を、広さの違う面で共有するため）。
  * tint は絵に掛ける色（白でそのまま）、gain は明るさの倍率。
  * 光の当たり方の式では、上を向いた面で絵の 0.8 倍、横を向いた面で 0.5 倍ほどの明るさになるので、絵の色に近づけたい面は gain で持ち上げる。
+ * bump を渡すと、同じ絵の明るさを凹凸として使う（割れ目に陰が付く。v0.19.0。岩だけ）。
  */
-export function tileMaterial(key: EnvTile, tint = 0xffffff, opts: { flat?: boolean; vertexColors?: boolean; gain?: number } = {}): MeshLambertMaterial {
+export function tileMaterial(key: EnvTile, tint = 0xffffff, opts: { flat?: boolean; vertexColors?: boolean; gain?: number; bump?: number } = {}): MeshLambertMaterial {
   const def = ENV_TILES[key];
   const gain = opts.gain ?? 1;
   const mat = new MeshLambertMaterial({ flatShading: opts.flat ?? false, vertexColors: opts.vertexColors ?? false });
@@ -125,6 +127,10 @@ export function tileMaterial(key: EnvTile, tint = 0xffffff, opts: { flat?: boole
     },
     (t) => {
       mat.map = t;
+      if (opts.bump) {
+        mat.bumpMap = t;
+        mat.bumpScale = opts.bump;
+      }
       mat.color.set(tint).multiplyScalar(gain);
       mat.needsUpdate = true;
     },
@@ -133,10 +139,11 @@ export function tileMaterial(key: EnvTile, tint = 0xffffff, opts: { flat?: boole
 }
 
 /** 切り抜きの絵（草・小物・建物）を貼った素材。絵が届くまでは見せない。 */
-export function cutoutMaterial(file: string, gain = 1, oneSided = false): MeshLambertMaterial {
+export function cutoutMaterial(file: string, gain = 1, oneSided = false, sway = false): MeshLambertMaterial {
   const mat = new MeshLambertMaterial({ alphaTest: 0.5, side: oneSided ? FrontSide : DoubleSide });
   mat.color.setScalar(gain);
   mat.userData.uv = true;
+  if (sway) swayInWind(mat);
   mat.visible = false;
   loadEnv(
     file,
@@ -182,7 +189,8 @@ export function boxUv(mesh: Mesh, tile: number, tileTop = tile): void {
 }
 
 /**
- * 空と遠景: 大きな筒の内側に、遠景の絵を 4 枚（a・b・a の裏返し・b の裏返し）つないで貼る。上には、空の色のふた。
+ * 遠景: 大きな筒の内側に、遠景の絵を 4 枚（a・b・a の裏返し・b の裏返し）つないで貼る。
+ * 絵は空の部分が透明（v0.19.0。tools/env-art.py）で、その外側の空（src/render/sky.ts）の前に、山だけが立つ。
  * 霧は掛けない（絵の下の帯が、霧の色そのもの）。カメラと一緒に動かして、近づけないようにする（view が毎フレーム置く）。
  */
 export function buildBackdrop(place: EnvPlace): Group {
@@ -210,7 +218,7 @@ export function buildBackdrop(place: EnvPlace): Group {
     const geo = new BufferGeometry();
     geo.setAttribute('position', new Float32BufferAttribute(pos, 3));
     geo.setAttribute('uv', new Float32BufferAttribute(uv, 2));
-    const mat = new MeshBasicMaterial({ fog: false, side: DoubleSide, depthWrite: false });
+    const mat = new MeshBasicMaterial({ fog: false, side: DoubleSide, depthWrite: false, transparent: true });
     mat.visible = false;
     loadEnv(file, () => undefined, (t) => {
       mat.map = t;
@@ -222,12 +230,6 @@ export function buildBackdrop(place: EnvPlace): Group {
     mesh.frustumCulled = false;
     group.add(mesh);
   });
-  const cap = new Mesh(new CircleGeometry(R * 1.02, 24), new MeshBasicMaterial({ color: SKY_COLOR, fog: false, side: BackSide, depthWrite: false }));
-  cap.rotation.x = -Math.PI / 2;
-  cap.position.y = y0 + H - 0.5;
-  cap.renderOrder = -10;
-  cap.frustumCulled = false;
-  group.add(cap);
   group.name = 'backdrop';
   return group;
 }
@@ -242,16 +244,17 @@ export class SpriteField {
    * 1 種類を count 個、pick が返す場所へ置く（pick が null を返したら、その 1 個は置かない）。
    * scale は大きさの幅 [最小, 最大]。
    */
-  scatter(sheet: { file: string }, cell: SpriteCell, count: number, pick: () => { x: number; z: number } | null, scale: [number, number] = [0.8, 1.25]): void {
+  scatter(sheet: { file: string }, cell: SpriteCell, count: number, pick: () => { x: number; z: number } | null, scale: [number, number] = [0.8, 1.25], vary = 0): void {
     if (count <= 0) return;
     let mat = this.mats.get(sheet.file);
     if (!mat) {
-      // 板は表だけを描き、裏向きの面を別に持つ（法線を上向きにそろえて、地面と同じ明るさにするため）
-      mat = cutoutMaterial(sheet.file, SPRITE_GAIN, true);
+      // 板は表だけを描き、裏向きの面を別に持つ（法線を上向きにそろえて、地面と同じ明るさにするため）。草の絵だけ、風で揺らす
+      mat = cutoutMaterial(sheet.file, SPRITE_GAIN, true, sheet.file === ENV_SPRITES.grass.file);
       this.mats.set(sheet.file, mat);
     }
     const mesh = new InstancedMesh(crossGeometry(cell), mat, count);
     const m4 = new Matrix4(), q = new Quaternion(), up = new Vector3(0, 1, 0), at = new Vector3(), sc = new Vector3();
+    const tint = new Color();
     let n = 0;
     for (let i = 0; i < count; i++) {
       const p = pick();
@@ -259,10 +262,18 @@ export class SpriteField {
       const s = scale[0] + this.rng.next() * (scale[1] - scale[0]);
       q.setFromAxisAngle(up, this.rng.next() * 6.283);
       m4.compose(at.set(p.x, 0, p.z), q, sc.set(s, s * (0.85 + this.rng.next() * 0.3), s));
-      mesh.setMatrixAt(n++, m4);
+      mesh.setMatrixAt(n, m4);
+      // 1 本ずつ、明るさと色み（黄み・青み）を少し変える（同じ絵が並んで見えないように）
+      if (vary > 0) {
+        const lum = 1 + (this.rng.next() - 0.5) * 2 * vary;
+        const warm = (this.rng.next() - 0.5) * 2 * vary * 0.7;
+        mesh.setColorAt(n, tint.setRGB(lum * (1 + warm * 0.6), lum * (1 + warm * 0.15), lum * (1 - warm)));
+      }
+      n++;
     }
     mesh.count = n;
     mesh.instanceMatrix.needsUpdate = true;
+    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
     mesh.receiveShadow = true;
     this.group.add(mesh);
   }
@@ -270,6 +281,42 @@ export class SpriteField {
 
 /** 草と小物の明るさ（地面と同じくらいに見えるように） */
 const SPRITE_GAIN = 1.2;
+
+/** 草を揺らす風の時刻（秒）。描画の側（view）が毎フレーム進める。草の素材すべてで、同じものを使う（v0.19.0） */
+export const WIND = { value: 0 };
+/** この高さ（m）の草の先が、いちばん大きく揺れる。低い草ほど、少しだけ揺れる */
+const SWAY_H = 0.6;
+
+/**
+ * 草の板を風で揺らす（頂点の位置を、高さの 2 乗に比例して横へずらす。根元は動かない）。
+ * 風は場所によらず同じ向き（北東へ）に吹き、強さは、ゆっくり進む突風の波で変わる。草ごとの小さな揺れを足す。
+ * 板は 1 本ずつ向きを変えて置いてあるので、世界の向きの風を、板の向きへ直してからずらす。
+ */
+export function swayInWind(mat: MeshLambertMaterial): void {
+  mat.onBeforeCompile = (sh) => {
+    sh.uniforms.uWind = WIND;
+    sh.vertexShader = 'uniform float uWind;\n' + sh.vertexShader.replace(
+      '#include <begin_vertex>',
+      `#include <begin_vertex>
+      {
+        float hgt = clamp(position.y / ${SWAY_H.toFixed(2)}, 0.0, 1.0);
+        hgt *= hgt;
+        vec3 root = vec3(0.0);
+        mat3 im = mat3(1.0);
+        #ifdef USE_INSTANCING
+          root = instanceMatrix[3].xyz;
+          im = mat3(instanceMatrix);
+        #endif
+        float ph = dot(root.xz, vec2(0.21, 0.17));
+        float gust = 0.5 + 0.5 * sin(uWind * 0.5 - root.x * 0.07 - root.z * 0.05);
+        vec2 w = vec2(0.8, 0.6) * (0.03 + 0.09 * gust * gust) + vec2(sin(uWind * 2.3 + ph), cos(uWind * 1.9 + ph * 1.3)) * 0.022;
+        vec3 lw = transpose(im) * vec3(w.x, 0.0, w.y) / max(dot(im[0], im[0]), 1e-4);
+        transformed.xz += lw.xz * hgt;
+      }`,
+    );
+  };
+  mat.customProgramCacheKey = () => 'sway-in-wind';
+}
 
 const crossCache = new Map<SpriteCell, BufferGeometry>();
 

@@ -7,7 +7,14 @@
   "topAfter": "#C5D2CB",
   "bottomAfter": "#AEBCAB",
   "edgeStep": 0.0,
-  "bytes": 23732
+  "ridge": {
+   "min": 0.391,
+   "max": 0.504,
+   "edge": 0.482,
+   "alphaTop": 0.0,
+   "alphaBottom": 1.0
+  },
+  "bytes": 26682
  },
  "env_basin_far_b_v1": {
   "kind": "far",
@@ -17,7 +24,14 @@
   "topAfter": "#C5D2CB",
   "bottomAfter": "#AEBCAB",
   "edgeStep": 0.0,
-  "bytes": 29658
+  "ridge": {
+   "min": 0.41,
+   "max": 0.501,
+   "edge": 0.482,
+   "alphaTop": 0.0,
+   "alphaBottom": 1.0
+  },
+  "bytes": 31864
  },
  "env_village_far_a_v1": {
   "kind": "far",
@@ -27,7 +41,14 @@
   "topAfter": "#C5D2CB",
   "bottomAfter": "#AEBCAB",
   "edgeStep": 0.0,
-  "bytes": 29030
+  "ridge": {
+   "min": 0.458,
+   "max": 0.545,
+   "edge": 0.519,
+   "alphaTop": 0.0,
+   "alphaBottom": 1.0
+  },
+  "bytes": 31612
  },
  "env_village_far_b_v1": {
   "kind": "far",
@@ -37,7 +58,14 @@
   "topAfter": "#C5D2CB",
   "bottomAfter": "#AEBCAB",
   "edgeStep": 0.0,
-  "bytes": 32466
+  "ridge": {
+   "min": 0.459,
+   "max": 0.526,
+   "edge": 0.519,
+   "alphaTop": 0.0,
+   "alphaBottom": 1.0
+  },
+  "bytes": 30662
  },
  "tex_ground_basin_grass_v1": {
   "kind": "tile",
@@ -52,8 +80,8 @@
    1.06
   ],
   "contrastBefore": 18.38,
-  "contrastAfter": 18.47,
-  "bytes": 70328
+  "contrastAfter": 20.85,
+  "bytes": 124474
  },
  "tex_ground_basin_gravel_v1": {
   "kind": "tile",
@@ -68,8 +96,8 @@
    1.0
   ],
   "contrastBefore": 21.35,
-  "contrastAfter": 21.36,
-  "bytes": 57444
+  "contrastAfter": 22.56,
+  "bytes": 90350
  },
  "tex_ground_nest_v1": {
   "kind": "tile",
@@ -84,8 +112,8 @@
    1.06
   ],
   "contrastBefore": 8.56,
-  "contrastAfter": 8.58,
-  "bytes": 54278
+  "contrastAfter": 10.04,
+  "bytes": 91026
  },
  "tex_ground_village_earth_v1": {
   "kind": "tile",
@@ -116,8 +144,8 @@
    1.06
   ],
   "contrastBefore": 9.97,
-  "contrastAfter": 9.97,
-  "bytes": 30064
+  "contrastAfter": 17.08,
+  "bytes": 94560
  },
  "tex_ground_village_paving_v1": {
   "kind": "tile",
@@ -144,12 +172,12 @@
    2.98
   ],
   "seamAfter": [
-   3.21,
-   2.98
+   2.97,
+   2.95
   ],
   "contrastBefore": 10.24,
-  "contrastAfter": 10.24,
-  "bytes": 31410
+  "contrastAfter": 14.57,
+  "bytes": 75540
  },
  "sprite_grass_basin_v1": {
   "kind": "sprite",

@@ -11,6 +11,7 @@ import type { Simulation } from '../game/sim';
 import { sampleTrack, trackSegment } from '../game/tracks';
 import type { Settings } from '../save/settings';
 import { blobShadow, buildArena, buildAreaGroup, setupSky, type Arena } from './arena';
+import { WIND } from './envArt';
 import { buildHubGroup } from './hubScene';
 import { FollowCamera } from './camera';
 import { DebugDraw } from './debugDraw';
@@ -106,6 +107,8 @@ export class GameView {
   /** フィールド: 作ったエリアの地形（入った時に作り、居るエリアだけ見せる）と、いま見せているエリア */
   private areaGroups = new Map<string, Group>();
   private shownArea = '';
+  /** まだ入っていないエリアの地形を、前もって 1 つずつ作るまでのフレーム数（エリアを移った時に、作る間だけ止まらないように） */
+  private prebuildIn = 90;
   private trail: BladeTrail;
   private sparks: Particles;
   private dust: Particles;
@@ -192,6 +195,17 @@ export class GameView {
     if (!field || sim.areaId === this.shownArea) return false;
     const area = sim.area();
     if (!area) return false;
+    this.areaGroupOf(sim, area.id);
+    for (const [id, grp] of this.areaGroups) grp.visible = id === area.id;
+    this.shownArea = area.id;
+    return true;
+  }
+
+  /** そのエリアの地形（無ければ作って、見えない状態でシーンへ足す）。岩と岩壁は形を計算で作るので、1 つに数十 ms かかる */
+  private areaGroupOf(sim: Simulation, areaId: string): Group | null {
+    const field = sim.field;
+    const area = field?.areas.find((a) => a.id === areaId);
+    if (!field || !area) return null;
     let g = this.areaGroups.get(area.id);
     if (!g) {
       g = buildAreaGroup({
@@ -199,12 +213,25 @@ export class GameView {
         camp: area.kind === 'camp' ? field.camp : null,
         gates: area.exits.map((e) => ({ x: e.x, z: e.z, marker: true })),
       });
+      g.visible = false;
       this.areaGroups.set(area.id, g);
       this.scene.add(g);
     }
-    for (const [id, grp] of this.areaGroups) grp.visible = id === area.id;
-    this.shownArea = area.id;
-    return true;
+    return g;
+  }
+
+  /**
+   * フィールド: まだ作っていないエリアの地形を、少しずつ前もって作る（v0.19.0。20 フレームに 1 つ。いま居るエリアの隣から）。
+   * 見えない状態で足すので、画面は変わらない。
+   */
+  private prebuildAreas(sim: Simulation): void {
+    const field = sim.field;
+    if (!field || this.areaGroups.size >= field.areas.length) return;
+    if (--this.prebuildIn > 0) return;
+    this.prebuildIn = 20;
+    const here = field.areas.find((a) => a.id === sim.areaId);
+    const next = [...(here?.exits.map((e) => e.to) ?? []), ...field.areas.map((a) => a.id)].find((id) => !this.areaGroups.has(id));
+    if (next) this.areaGroupOf(sim, next);
   }
 
   /**
@@ -569,6 +596,7 @@ export class GameView {
     // ---- カメラ・光・エフェクト ----
     // フィールド: エリアが変わったら、地形を替えて、カメラを背中側へ合わせる
     if (this.showArea(sim)) this.cam.snap(p.yaw);
+    this.prebuildAreas(sim);
     const sens = this.settings.camSensitivity;
     // ロックオン: 標的の照準の位置。ロック中は、左右の視点操作を使わない（上下は使える）
     this.lockPoint = this.lockOn ? this.lockTargetPoint(sim, alpha) : null;
@@ -582,8 +610,10 @@ export class GameView {
     this.cam.update(dt, { x: pos.x, y: this.renderY, z: pos.z }, sim.world, shake, this.lockPoint);
     this.arena.sun.target.position.set(pos.x, 0, pos.z);
     this.arena.sun.position.set(pos.x - 14, 26, pos.z - 11);
-    // 空と遠景は、カメラと一緒に動かす（どこまで歩いても、近づかない）
+    // 空と遠景は、カメラと一緒に動かす（どこまで歩いても、近づかない）。雲は少しずつ流れる
     this.arena.backdrop.position.set(this.cam.camera.position.x, 0, this.cam.camera.position.z);
+    this.arena.sky?.setTime(this.time);
+    WIND.value = this.time;
     this.sparks.update(dt);
     this.dust.update(dt);
     this.rings.update(dt);

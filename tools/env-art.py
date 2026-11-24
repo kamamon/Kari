@@ -7,9 +7,15 @@
 やること（絵そのものは描き足さない。色の帯・つなぎ目・透明だけを直す）:
   A 遠景   上の帯を空の色 #C5D2CB、下の帯を霧の色 #AEBCAB に合わせる。
            左右の端 8% を、同じ場所の 2 枚で共通の「霧の縦の色」へ溶かす（どの順でつないでも段が出ない）。
+           空の部分を透明にする（v0.19.0。空はゲームの側で描く）: 雲と空は明るく（明るさ 0.75 以上）、山は暗いので、
+           列ごとに、上から見て最初に暗い所が続く行を山の稜線とし、それより上を透明にする（稜線から下へ 8px でなめらかに）。
+           稜線より上の色は、稜線のすぐ下の色で埋める（ふちに空の色が残らないように）。左右の端では、稜線の高さを 2 枚で共通の高さへ寄せる。
   B 地面   B-1・2・3・4・6 は、半分ずらした自分と混ぜて、上下左右の端がつながるようにする。
            B-5（石畳）と B-7（晶脈の岩）は形がはっきりしていて混ぜると二重に見えるので、そのまま出し、
            ゲームの側で鏡写しに繰り返す。
+           岩の 2 枚（B-6・B-7）は、元の絵の濃淡がとても弱い（明るさのばらつき 5〜6）ので、割れ目と面の濃淡を強める
+           （v0.19.0。細かな濃淡を ROCK_DETAIL の 1 つめの倍、大きな濃淡を 2 つめの倍。平均の色は変えない）。
+           狩場の地面の 3 枚（B-1・2・3）も、細かな濃淡だけを少し強める。
   C 草     透明な所の色を、近くの絵の色で埋める（縮小した時に、ふちが黒や白にならないように）。
   D 建物   無地の背景を透明にする（武器立てなど、すき間のある物を板に貼るため）。
 
@@ -34,6 +40,10 @@ FAR = {'basin': ['env_basin_far_a_v1', 'env_basin_far_b_v1'], 'village': ['env_v
 BLEND = ['tex_ground_basin_grass_v1', 'tex_ground_basin_gravel_v1', 'tex_ground_nest_v1', 'tex_ground_village_earth_v1', 'tex_rock_basin_v1']
 MIRROR = ['tex_ground_village_paving_v1', 'tex_rock_vein_v1']
 SPRITES = ['sprite_grass_basin_v1', 'sprite_props_basin_v1']
+# 岩の絵の濃淡を強める倍（細かな濃淡, 大きな濃淡）。境目は、繰り返し方（つなぐ・鏡写し）に合わせて扱う
+ROCK_DETAIL = {'tex_rock_basin_v1': (3.0, 1.8), 'tex_rock_vein_v1': (2.4, 1.5),
+               # 地面も少しだけ（強くすると、6m ごとの繰り返しが目に付く）
+               'tex_ground_basin_grass_v1': (1.7, 1.0), 'tex_ground_basin_gravel_v1': (1.5, 1.0), 'tex_ground_nest_v1': (1.5, 1.0)}
 BUILDINGS = ['bld_workshop_v1', 'bld_shop_v1', 'bld_board_v1', 'bld_chest_v1']
 
 
@@ -94,6 +104,51 @@ def far_edges(imgs):
     return [im * (1 - wgt) + edge * wgt for im in imgs]
 
 
+SKY_LUMA = 0.735  # これより暗い所が続けば、山（雲と空は 0.75〜0.84）
+SKY_FADE = 8.0
+
+
+def far_ridge(img):
+    """列ごとの、山の稜線の行（上から）。元の絵（帯を直す前）の明るさで決める。"""
+    h, w = img.shape[:2]
+    lum = ndimage.gaussian_filter((img / 255.0) @ np.array([0.299, 0.587, 0.114], dtype=np.float32), 1.5)
+    mask = ndimage.binary_opening(lum < SKY_LUMA, iterations=2)
+    run = ndimage.uniform_filter1d(mask.astype(np.float32), 12, axis=0, origin=-5)
+    cand = mask & (run > 0.6)
+    top = np.full(w, float(h * 0.62))
+    lim = int(h * 0.7)
+    for x in range(w):
+        idx = np.nonzero(cand[:lim, x])[0]
+        if len(idx):
+            top[x] = idx[0]
+    top = ndimage.median_filter(top, 9)
+    top = ndimage.minimum_filter1d(top, 5)
+    return ndimage.gaussian_filter1d(top, 1.5)
+
+
+def far_ridge_edges(tops):
+    """左右の端 8% で、稜線の高さを、同じ場所の 2 枚で共通の高さ（端の高さの平均）へ寄せる。"""
+    w = len(tops[0])
+    band = int(round(w * 0.08))
+    edge = float(np.mean([t[:8].mean() for t in tops] + [t[-8:].mean() for t in tops]))
+    x = np.arange(w, dtype=np.float32)
+    wgt = np.maximum(smooth(1 - x / band), smooth((x - (w - 1 - band)) / band))
+    return [t * (1 - wgt) + edge * wgt for t in tops], edge
+
+
+def far_cut(img, top):
+    """稜線より上を透明にする（稜線から下へ SKY_FADE px でなめらかに）。上の色は、稜線のすぐ下の色で埋める。"""
+    h, w = img.shape[:2]
+    yy = np.arange(h, dtype=np.float32)[:, None]
+    alpha = smooth((yy - top[None, :]) / SKY_FADE)
+    src = np.clip(np.ceil(top + SKY_FADE + 1), 0, h - 1).astype(int)
+    out = img.copy()
+    above = yy < (top + SKY_FADE + 1)[None, :]
+    fill = img[src, np.arange(w)]  # (w, 3)
+    out = np.where(above[..., None], fill[None, :, :], out)
+    return np.dstack([out, alpha * 255])
+
+
 # ---------- B 地面と岩 ----------
 
 def seam(img):
@@ -107,6 +162,16 @@ def vblend(a, b, w):
     """a と b を重み w で混ぜる。細かな模様の強さが弱まらないよう、ばらつきを保つ。"""
     mean = a.reshape(-1, 3).mean(axis=0)
     return mean + (w * (a - mean) + (1 - w) * (b - mean)) / np.sqrt(w * w + (1 - w) ** 2)
+
+
+def detail(img, fine, broad, wrap):
+    """濃淡を強める。ぼかした絵（大きな濃淡）と、残り（細かな濃淡）に分けて、それぞれ倍にする。平均の色は変えない。"""
+    mean = img.reshape(-1, 3).mean(axis=0)
+    low = ndimage.gaussian_filter(img, sigma=(14, 14, 0), mode='wrap' if wrap else 'reflect')
+    out = mean + (low - mean) * broad + (img - low) * fine
+    out = np.clip(out, 0, 255)
+    # 切った分だけ平均がずれるので、戻す
+    return np.clip(out + (mean - out.reshape(-1, 3).mean(axis=0)), 0, 255)
 
 
 def make_tile(img):
@@ -169,24 +234,32 @@ def main():
     total = 0
 
     for place, names in FAR.items():
-        fixed = []
+        fixed, tops = [], []
         for n in names:
-            img, t, b = far_bands(load(n))
+            src = load(n)
+            tops.append(far_ridge(src))
+            img, t, b = far_bands(src)
             report[n] = {'kind': 'far', 'place': place, 'topBefore': t, 'bottomBefore': b}
             fixed.append(img)
         fixed = far_edges(fixed)
-        for n, img in zip(names, fixed):
+        tops, edge = far_ridge_edges(tops)
+        for n, img, top in zip(names, fixed, tops):
             h = img.shape[0]
             report[n]['topAfter'] = hexof(np.median(img[:int(h * 0.06)].reshape(-1, 3), axis=0))
             report[n]['bottomAfter'] = hexof(np.median(img[h - int(h * 0.12):].reshape(-1, 3), axis=0))
             report[n]['edgeStep'] = round(float(np.abs(img[:, 0] - fixed[0][:, -1]).mean()), 2)
-            report[n]['bytes'] = save(n, img, 84)
+            rgba = far_cut(img, top)
+            report[n]['ridge'] = {'min': round(float(top.min() / h), 3), 'max': round(float(top.max() / h), 3), 'edge': round(edge / h, 3),
+                                  'alphaTop': round(float(rgba[:int(h * 0.3), :, 3].mean() / 255), 3), 'alphaBottom': round(float(rgba[int(h * 0.6):, :, 3].mean() / 255), 3)}
+            report[n]['bytes'] = save(n, rgba, 84)
             total += report[n]['bytes']
 
     for n in BLEND + MIRROR:
         img = load(n)
         before = seam(img)
         out = make_tile(img) if n in BLEND else img
+        if n in ROCK_DETAIL:
+            out = detail(out, *ROCK_DETAIL[n], wrap=n in BLEND)
         report[n] = {'kind': 'tile', 'wrap': 'repeat' if n in BLEND else 'mirror', 'mean': hexof(out.reshape(-1, 3).mean(axis=0)), 'seamBefore': before, 'seamAfter': seam(out),
                      'contrastBefore': round(float(img.std()), 2), 'contrastAfter': round(float(out.std()), 2)}
         report[n]['bytes'] = save(n, out, 82)
