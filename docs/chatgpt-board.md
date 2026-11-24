@@ -1,13 +1,14 @@
 # ChatGPT への依頼の掲示板（docs/chatgpt-board.md）
 
-更新: 2026-11-24（v0.15.0）。**Claude が書きます。** ChatGPT は、ここを読んで、上から順に進めてください（入口は、リポジトリの先頭の `AGENTS.md`）。
+更新: 2026-11-25（v0.19.0）。**Claude が書きます。** ChatGPT は、ここを読んで、上から順に進めてください（入口は、リポジトリの先頭の `AGENTS.md`）。
 利用者は、ChatGPT に「掲示板の開いている依頼を進めて」と言うだけで足ります（依頼文や添付を、手で渡さなくてよい）。
 
 ## 開いている依頼
 
 | 番号 | 頼むこと | 依頼文 | 読むもの（添付の代わり） | 返すもの | 状態 |
 | --- | --- | --- | --- | --- | --- |
-| 6 | 大槌・双剣・太刀の**設定図** 6 枚 | `docs/chatgpt-request-6.txt` | `art-source/board/style_board_v2.png`（アート基準ボード）、`art-source/weapon/`（採用済みの武器の図）、`art-source/player/`（ハンターの設定図） | `chatgpt-inbox/006/` に PNG 6 枚 | 未受領（2026-11-23 に依頼） |
+| **10** | **岩 20 種・崖 20 種の設定図**と、岩肌の絵 4 枚（岩は地面に埋まった姿。崖は、曲がった外周に沿ってつなげる正面図） | `docs/chatgpt-request-10.txt` | `art-source/board/style_board_v2.png`、`docs/chatgpt-ref/field_v019_a.jpg`・`_b.jpg`（いまの狩場）、`art-source/env/tex_rock_basin_v1.png`（濃淡が弱すぎた例） | `chatgpt-inbox/010/` に PNG 44 枚（＋できれば崖の奥行きの図 20 枚）と `patterns.json`、`README.md` | 未受領（2026-11-25 に依頼。利用者の指示「岩と崖は ChatGPT に 20 パターンずつ」） |
+| 6 | 大槌・双剣・太刀の**設定図** 6 枚 | `docs/chatgpt-request-6.txt` | `art-source/board/style_board_v2.png`（アート基準ボード）、`art-source/weapon/`（採用済みの武器の図）、`art-source/player/`（ハンターの設定図） | `chatgpt-inbox/006/` に PNG 6 枚 | Pull Request #2 で受領（2026-11-24）。**寸法が未合格**（ChatGPT の README のとおり）。取り込みは、利用者と相談してから |
 
 - モンスターの案を足す・直す時は、`docs/bestiary-template.json` の形の JSON を返してください。返す前に `npm run bestiary:import -- <ファイル> --dry` で検査できます（動かせる時）。合わない所が、全部出ます。新しい狩場の名前を使う時は、`fields` に `name` と `terrain` を書きます（v0.15.0 から、登録簿に残ります）。
 - いまの登録簿は `public/data/bestiary.json`（86 種と、狩場の案 20）。ID は、いちど決めたら変えません。
