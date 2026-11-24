@@ -3,6 +3,8 @@
 設計書の分担どおり、**画像・世界観・動きの演出設計・見た目のレビューは ChatGPT**、**コード・判定・検証・配信は Claude** が担当します。
 このファイルは ChatGPT 側の作業をまとめたものです。上から順に、そのまま貼って使えます。
 
+**2026-11-24 から、依頼はリポジトリを通します**（D-074）。いま頼んでいることは、掲示板 [chatgpt-board.md](chatgpt-board.md) にあります。ChatGPT の入口は、リポジトリの先頭の `AGENTS.md`、返事の置き場は `chatgpt-inbox/` です。利用者は、ChatGPT に「リポジトリ kamamon/Kari の AGENTS.md を読んで、掲示板の開いている依頼を進めて」と言えば足ります。このファイルは、これまでの依頼の記録と、貼って使える文です。
+
 ChatGPT へファイルごと渡したい時は、同じ内容を ChatGPT 宛てに書いた [chatgpt-requests.txt](chatgpt-requests.txt) を使ってください。
 
 ## 分担の早見表

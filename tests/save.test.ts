@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { ARMOR_SLOTS, recipeResult, type ArmorRecipeDef, type Content, type QuestDef, type WeaponRecipeDef } from '../src/data/schemas';
 import { materialRanks, obtainableMaterials } from '../src/data/validators';
-import { MAX_SETTLED_RUNS, SAVE_SCHEMA_VERSION, SLOT_ID, checkCraft, defenseOf, newSave, parseImport, playWeaponId, questUnlocked, readSave, unknownIds, usableWeapons, validateSave, wornArmor, type SaveDoc } from '../src/save/profile';
+import { MAX_SETTLED_RUNS, SAVE_SCHEMA_VERSION, SLOT_ID, checkCraft, defenseOf, equipArmor, newSave, ownedArmor, parseImport, playWeaponId, questUnlocked, readSave, unknownIds, usableWeapons, validateSave, wornArmor, type SaveDoc } from '../src/save/profile';
 import { KEEP_BACKUPS, MemoryBackend } from '../src/save/saveDb';
 import { SaveManager, type SaveEnv } from '../src/save/saveManager';
 import { loadContent } from './helpers';
@@ -285,21 +285,145 @@ describe('防具（5 部位 × 5 段）', () => {
 
   it('5 部位を同じ段で揃えた時の防御力の合計は 0 / 30 / 65 / 105 / 150', () => {
     for (const [t, total] of [[1, 0], [2, 30], [3, 65], [4, 105], [5, 150]] as const) {
-      const doc = { ...newSave(content, { now: 'x', appVersion: 'x', contentVersion: 'x' }), armor: ARMOR_SLOTS.map((s) => `armor.${s}.00${t}`) };
+      const set = ARMOR_SLOTS.map((s) => `armor.${s}.00${t}`);
+      const doc = { ...newSave(content, { now: 'x', appVersion: 'x', contentVersion: 'x' }), armor: set, equippedArmorIds: [...set] };
       expect(defenseOf(doc, content), `段 ${t}`).toBe(total);
     }
   });
 
   it('この版に無い防具は、消さずに持ち続ける。数えるのは、この版にある防具だけ', async () => {
     const b = new MemoryBackend();
-    b.seed(SLOT_ID, { ...newSave(content, { now: 'x', appVersion: 'x', contentVersion: 'x' }), revision: 1, armor: ['armor.head.002', 'armor.head.099', 'armor.chest.001'] });
+    const had = ['armor.head.002', 'armor.head.099', 'armor.chest.001'];
+    b.seed(SLOT_ID, { ...newSave(content, { now: 'x', appVersion: 'x', contentVersion: 'x' }), revision: 1, armor: had, equippedArmorIds: [...had] });
     const m = await open(b);
     expect(unknownIds(m.doc, content).armor).toEqual(['armor.head.099']);
     expect(defenseOf(m.doc, content)).toBe(6);
-    // 持っていない部位（腕・腰・脚）には、里の装束が配られる。頭と胴には配られない
+    // 持っていない部位（腕・腰・脚）には、里の装束が配られる。頭と胴には配られない。配った防具は、そのまま身に着ける
     expect(m.doc.armor).toEqual(['armor.head.002', 'armor.head.099', 'armor.chest.001', 'armor.arms.001', 'armor.waist.001', 'armor.legs.001']);
+    expect(m.doc.equippedArmorIds).toEqual(m.doc.armor);
+    expect(wornArmor(m.doc, content).map((a) => a.id)).toEqual(['armor.head.002', 'armor.chest.001', 'armor.arms.001', 'armor.waist.001', 'armor.legs.001']);
+    // この版に無い防具は、選択肢に出ない（持ってはいる）
+    expect(ownedArmor(m.doc, content).head.map((a) => a.id)).toEqual(['armor.head.002']);
     await m.settle(rewards('run-1'));
     expect((b.peek(SLOT_ID) as SaveDoc).armor).toContain('armor.head.099');
+  });
+});
+
+describe('装備箱: 防具を、部位ごとに着る・外す（v0.14.0。保存データ 版 3）', () => {
+  const STARTERS = ['armor.head.001', 'armor.chest.001', 'armor.arms.001', 'armor.waist.001', 'armor.legs.001'];
+  const worn = (doc: SaveDoc): string[] => wornArmor(doc, content).map((a) => a.id);
+
+  it('新しいデータは、里の装束 5 部位を身に着けている。選択肢は、部位ごとに 1 つ', async () => {
+    const m = await open(new MemoryBackend());
+    expect(m.doc.schemaVersion).toBe(3);
+    expect(m.doc.equippedArmorIds).toEqual(STARTERS);
+    expect(worn(m.doc)).toEqual(STARTERS);
+    const owned = ownedArmor(m.doc, content);
+    for (const slot of ARMOR_SLOTS) expect(owned[slot].map((a) => a.id), slot).toEqual([`armor.${slot}.001`]);
+  });
+
+  it('外す → その部位は何も着ていない（持ち物からは無くならない）。着る → 戻る。どちらも保存される', async () => {
+    const b = new MemoryBackend();
+    const m = await open(b);
+    await m.settle(rewards('run-1', 200, [[SHELL, 2], [BONE, 1]]));
+    expect(await m.craft('recipe.armor.head.002')).toEqual({ ok: true });
+    expect(defenseOf(m.doc, content)).toBe(6);
+    const rev = m.doc.revision;
+    expect(await m.equipArmor('head', null)).toEqual({ ok: true });
+    expect(m.doc.revision).toBe(rev + 1);
+    expect(worn(m.doc)).toEqual(STARTERS.slice(1));
+    expect(defenseOf(m.doc, content)).toBe(0);
+    expect(m.doc.armor).toContain('armor.head.002');
+    // 開き直しても、外したまま
+    expect((await open(b)).doc).toEqual(m.doc);
+    // もう一度外しても、何も書かない
+    expect(await m.equipArmor('head', null)).toEqual({ ok: true });
+    expect(m.doc.revision).toBe(rev + 1);
+    // 着る
+    expect(await m.equipArmor('head', 'armor.head.002')).toEqual({ ok: true });
+    expect(worn(m.doc)[0]).toBe('armor.head.002');
+    expect(defenseOf(m.doc, content)).toBe(6);
+    expect(m.doc.revision).toBe(rev + 2);
+    // 同じものをもう一度着ても、何も書かない
+    expect(await m.equipArmor('head', 'armor.head.002')).toEqual({ ok: true });
+    expect(m.doc.revision).toBe(rev + 2);
+    expect((b.peek(SLOT_ID) as SaveDoc).equippedArmorIds).toEqual(m.doc.equippedArmorIds);
+  });
+
+  it('外している部位の防具を強化しても、外したまま（着ていた部位は、強化した防具を着る）', async () => {
+    const m = await open(new MemoryBackend());
+    await m.settle(rewards('run-1', 400, [[SHELL, 4], [BONE, 2]]));
+    expect(await m.equipArmor('chest', null)).toEqual({ ok: true });
+    expect(await m.craft('recipe.armor.head.002')).toEqual({ ok: true });
+    expect(await m.craft('recipe.armor.chest.002')).toEqual({ ok: true });
+    expect(m.doc.armor).toEqual(['armor.head.002', 'armor.chest.002', 'armor.arms.001', 'armor.waist.001', 'armor.legs.001']);
+    expect(worn(m.doc)).toEqual(['armor.head.002', 'armor.arms.001', 'armor.waist.001', 'armor.legs.001']);
+    expect(defenseOf(m.doc, content)).toBe(6);
+    expect(await m.equipArmor('chest', 'armor.chest.002')).toEqual({ ok: true });
+    expect(defenseOf(m.doc, content)).toBe(12);
+  });
+
+  it('持っていない防具・別の部位の防具・この版に無い防具は、着られない（何も変わらない）', async () => {
+    const b = new MemoryBackend();
+    const had = [...STARTERS, 'armor.head.099'];
+    b.seed(SLOT_ID, { ...newSave(content, { now: 'x', appVersion: 'x', contentVersion: 'x' }), revision: 1, armor: had, equippedArmorIds: [...STARTERS] });
+    const m = await open(b);
+    const before = JSON.stringify(b.peek(SLOT_ID));
+    expect(await m.equipArmor('head', 'armor.head.002')).toMatchObject({ ok: false, reason: 'rule', message: 'その防具を持っていません' });
+    expect(await m.equipArmor('head', 'armor.chest.001')).toMatchObject({ ok: false, reason: 'rule', message: 'その防具は、別の部位のものです' });
+    expect(await m.equipArmor('head', 'armor.head.099')).toMatchObject({ ok: false, reason: 'rule', message: 'その防具は、この版では使えません' });
+    expect(await m.equipArmor('neck' as never, null)).toMatchObject({ ok: false, reason: 'rule' });
+    expect(JSON.stringify(b.peek(SLOT_ID))).toBe(before);
+  });
+
+  it('1 つの部位に、持っている防具が 2 つある時: 選んだ方だけを着る（もう片方の印は外れる。持ち物には残る）', () => {
+    const base = newSave(content, { now: 'x', appVersion: 'x', contentVersion: 'x' });
+    const doc: SaveDoc = { ...base, armor: [...STARTERS, 'armor.head.003'], equippedArmorIds: [...STARTERS, 'armor.head.003'] };
+    // 印が 2 つ付いている間は、防御力が高い方（版 2 から直したデータと同じ扱い）
+    expect(worn(doc)[0]).toBe('armor.head.003');
+    expect(ownedArmor(doc, content).head.map((a) => a.id)).toEqual(['armor.head.001', 'armor.head.003']);
+    const low = equipArmor(doc, content, 'head', 'armor.head.001')!;
+    expect(low.equippedArmorIds.filter((id) => id.startsWith('armor.head.'))).toEqual(['armor.head.001']);
+    expect(worn(low)[0]).toBe('armor.head.001');
+    expect(low.armor).toEqual(doc.armor);
+    expect(defenseOf(low, content)).toBe(0);
+    const high = equipArmor(low, content, 'head', 'armor.head.003')!;
+    expect(worn(high)[0]).toBe('armor.head.003');
+    expect(defenseOf(high, content)).toBe(13);
+    // 元の doc は変えない
+    expect(doc.equippedArmorIds).toHaveLength(6);
+    // この版に無い ID の印は、部位が分からないので、外さずに残す
+    const odd: SaveDoc = { ...base, armor: [...STARTERS, 'armor.head.099'], equippedArmorIds: [...STARTERS, 'armor.head.099'] };
+    expect(equipArmor(odd, content, 'head', null)!.equippedArmorIds).toEqual([...STARTERS.slice(1), 'armor.head.099']);
+  });
+
+  it('版 2 のデータ（身に着けている防具の欄が無い）を開くと、版 3 へ直る。着ているものは、直す前と同じ。元は控えへ残る', async () => {
+    const b = new MemoryBackend();
+    const { equippedArmorIds: _drop, ...rest } = newSave(content, { now: 'x', appVersion: 'x', contentVersion: 'x' });
+    void _drop;
+    const v2 = { ...rest, schemaVersion: 2, revision: 7, money: 300, armor: ['armor.head.002', 'armor.chest.003', 'armor.arms.001', 'armor.waist.001', 'armor.legs.004'] };
+    b.seed(SLOT_ID, v2);
+    const r = readSave(v2);
+    expect(r.kind === 'ok' && r.migratedFrom).toBe(2);
+    const m = await open(b);
+    expect(m.notice).toBe('保存データを新しい形へ直しました（元のデータは控えに残してあります）。');
+    expect(m.doc).toMatchObject({ schemaVersion: 3, revision: 8, money: 300 });
+    expect(m.doc.armor).toEqual(v2.armor);
+    expect(worn(m.doc)).toEqual(v2.armor);
+    expect(defenseOf(m.doc, content)).toBe(6 + 13 + 0 + 0 + 21);
+    const backups = await m.backups();
+    expect(backups).toHaveLength(1);
+    expect(backups[0]).toMatchObject({ reason: 'migrate', doc: v2 });
+    // 開き直しても同じ（2 度目は直さない）
+    expect((await open(b)).doc).toEqual(m.doc);
+  });
+
+  it('形の検証: 身に着けている防具の欄が無い・重なっている保存データは、読まない', () => {
+    const ok = { ...newSave(content, { now: 'x', appVersion: 'x', contentVersion: 'x' }), revision: 1 };
+    expect(validateSave(ok)).toEqual([]);
+    expect(validateSave({ ...ok, equippedArmorIds: undefined })).toContain('身に着けている防具の一覧が不正です');
+    expect(validateSave({ ...ok, equippedArmorIds: ['armor.head.001', 'armor.head.001'] })).toContain('同じ防具を 2 つ身に着けています');
+    expect(readSave({ ...ok, equippedArmorIds: 'x' }).kind).toBe('invalid');
   });
 });
 
@@ -518,12 +642,14 @@ describe('実機で書き出したデータ（tests/fixtures/save-v1-device-0.7.
     const r = parseImport(text);
     expect(r.kind).toBe('ok');
     if (r.kind !== 'ok') return;
-    // 版 1（防具が入る前）のデータ。読む時に版 2 へ直る（防具の一覧が空で足される）
+    // 版 1（防具が入る前）のデータ。読む時に、1 段ずつ、いまの版（3）へ直る（防具の一覧と、身に着けている防具が、空で足される）
     expect(r.migratedFrom).toBe(1);
     expect(validateSave(r.doc)).toEqual([]);
     expect(r.doc.armor).toEqual([]);
+    expect(r.doc.equippedArmorIds).toEqual([]);
     expect(unknownIds(r.doc, content)).toEqual({ items: [], weapons: [], armor: [] });
-    expect(r.doc).toMatchObject({ schemaVersion: 2, revision: 3, money: 1200, equippedWeaponId: 'weapon.long_blade.001', progress: { questClears: { 'quest.basin.003': 2 } } });
+    expect(SAVE_SCHEMA_VERSION).toBe(3);
+    expect(r.doc).toMatchObject({ schemaVersion: 3, revision: 3, money: 1200, equippedWeaponId: 'weapon.long_blade.001', progress: { questClears: { 'quest.basin.003': 2 } } });
     expect(r.doc.settledRuns).toHaveLength(2);
     expect(playWeaponId(r.doc, content)).toBe('weapon.long_blade.001');
     expect(usableWeapons(r.doc, content)).toHaveLength(7);
@@ -544,15 +670,16 @@ describe('実機で書き出したデータ（tests/fixtures/save-v1-device-0.7.
   it('版 1 のデータを取り込むと、持ち物・武器・進行はそのままで、里の装束（5 部位）が配られる。初級を達成済みなので中級が受けられる', async () => {
     const m = await open(new MemoryBackend());
     expect(await m.importText(text)).toEqual({ ok: true });
-    expect(m.doc).toMatchObject({ schemaVersion: 2, money: 1200, equippedWeaponId: 'weapon.long_blade.001', items: { [SHELL]: 7, [VEIN]: 2, [BONE]: 1 } });
+    expect(m.doc).toMatchObject({ schemaVersion: 3, money: 1200, equippedWeaponId: 'weapon.long_blade.001', items: { [SHELL]: 7, [VEIN]: 2, [BONE]: 1 } });
     expect(m.doc.weapons).toHaveLength(7);
     expect(m.doc.armor).toEqual(['armor.head.001', 'armor.chest.001', 'armor.arms.001', 'armor.waist.001', 'armor.legs.001']);
+    expect(m.doc.equippedArmorIds).toEqual(m.doc.armor);
     expect(defenseOf(m.doc, content)).toBe(0);
     expect(questUnlocked(m.doc, content.quests.get('quest.basin.r2.001')!)).toBe(true);
     expect(questUnlocked(m.doc, content.quests.get('quest.basin.r3.001')!)).toBe(false);
   });
 
-  it('端末に版 1 のデータがある時: 開くと版 2 へ直して書き込み、元の版 1 は 1 文字も変えずに控えへ残す', async () => {
+  it('端末に版 1 のデータがある時: 開くと、いまの版（3）へ直して書き込み、元の版 1 は 1 文字も変えずに控えへ残す', async () => {
     const b = new MemoryBackend();
     const v1 = (JSON.parse(text) as { save: Record<string, unknown> }).save;
     b.seed(SLOT_ID, v1);
@@ -560,8 +687,9 @@ describe('実機で書き出したデータ（tests/fixtures/save-v1-device-0.7.
     expect(m.notice).toBe('保存データを新しい形へ直しました（元のデータは控えに残してあります）。');
     expect(m.unreadable).toBeNull();
     const stored = b.peek(SLOT_ID) as SaveDoc;
-    expect(stored).toMatchObject({ schemaVersion: 2, money: 1200, revision: 4, equippedWeaponId: 'weapon.long_blade.001', items: { [SHELL]: 7, [VEIN]: 2, [BONE]: 1 } });
+    expect(stored).toMatchObject({ schemaVersion: 3, money: 1200, revision: 4, equippedWeaponId: 'weapon.long_blade.001', items: { [SHELL]: 7, [VEIN]: 2, [BONE]: 1 } });
     expect(stored.armor).toHaveLength(5);
+    expect(stored.equippedArmorIds).toEqual(stored.armor);
     expect(stored.settledRuns).toHaveLength(2);
     const backups = await m.backups();
     expect(backups).toHaveLength(1);
@@ -569,7 +697,9 @@ describe('実機で書き出したデータ（tests/fixtures/save-v1-device-0.7.
     expect(backups[0]!.doc).toEqual(v1);
     // その後の強化も、ふつうに保存される
     expect(await m.craft('recipe.armor.head.002')).toEqual({ ok: true });
-    expect(b.peek(SLOT_ID)).toMatchObject({ schemaVersion: 2, money: 1120, revision: 5 });
+    expect(b.peek(SLOT_ID)).toMatchObject({ schemaVersion: 3, money: 1120, revision: 5 });
+    // 着ていた頭巾を強化したので、強化した兜を着ている
+    expect(defenseOf(m.doc, content)).toBe(6);
     // 開き直しても同じ（2 度目は直さない）
     const again = await open(b);
     expect(again.doc).toEqual(m.doc);

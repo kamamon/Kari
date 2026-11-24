@@ -69,28 +69,28 @@ function workshop(): BufferGeometry {
   const hw = 3.1, zf = 1.7, zb = -2.9, zc = -0.6, wallH = 2.9, ridge = 4.5, ov = 0.2;
   const drop = ((ridge - wallH) / (zf - zc)) * ov;
   // 正面（入口・槌の看板・炉と金床は、図に描かれたものを、そのまま壁に貼る）
-  k.wall([-hw, zf], [hw, zf], 0, wallH, [100, 545, 755, 862]);
+  k.wall([-hw, zf], [hw, zf], 0, wallH, [106, 545, 748, 862]);
   // 屋根（前と後。後ろも、同じ屋根の図）
   const roof: Rect = [85, 368, 770, 545];
   k.quad([-hw - ov, wallH - drop, zf + ov], [hw + ov, wallH - drop, zf + ov], [hw + ov, ridge, zc], [-hw - ov, ridge, zc], roof);
   k.quad([hw + ov, wallH - drop, zb - ov], [-hw - ov, wallH - drop, zb - ov], [-hw - ov, ridge, zc], [hw + ov, ridge, zc], roof);
   // 横の壁と妻。右側面の図の、炉が描かれていない右半分（中央〜奥の柱）を、中央で折り返して使う
-  const side: Rect = [1160, 545, 1400, 862];
+  const side: Rect = [1160, 545, 1396, 862];
   for (const sx of [1, -1]) {
     const x = hw * sx;
     // 見る側から左が、右の面では前（+z）、左の面では奥
     const zl = sx > 0 ? zf : zb, zr = sx > 0 ? zb : zf;
     k.wall([x, zl], [x, zc], 0, wallH, side, true);
     k.wall([x, zc], [x, zr], 0, wallH, side);
-    k.tri([x, wallH, zl], [x, wallH, zc], [x, ridge, zc], [1400, 545], [1160, 545], [1160, 372]);
-    k.tri([x, wallH, zc], [x, wallH, zr], [x, ridge, zc], [1160, 545], [1400, 545], [1160, 372]);
+    k.tri([x, wallH, zl], [x, wallH, zc], [x, ridge, zc], [1396, 545], [1160, 545], [1160, 372]);
+    k.tri([x, wallH, zc], [x, wallH, zr], [x, ridge, zc], [1160, 545], [1396, 545], [1160, 372]);
   }
   // 後ろの壁: 同じ石積み（横の壁の半分を、左右に 1 回ずつ）
   const back: Rect = [1160, 545, 1395, 862];
   k.wall([hw, zb], [0, zb], 0, wallH, back, true);
   k.wall([0, zb], [-hw, zb], 0, wallH, back);
   // 煙突（右の奥。屋根から上を、側面の図から）
-  const ch: Rect = [1320, 272, 1410, 540];
+  const ch: Rect = [1325, 280, 1408, 540];
   k.box(2.14, 3.02, 2.8, 5.37, -2.99, -2.11, { f: ch, b: ch, r: ch, l: ch });
   return k.geometry();
 }
@@ -106,14 +106,14 @@ function shop(): BufferGeometry {
   const wallH = Y(398), ridge = Y(283);
   const drop = ((ridge - wallH) / (zf - zc)) * ov;
   // 正面（棚・品物・樽は、図のまま 1 枚）
-  k.wall([-hw, zf], [hw, zf], 0, wallH, [45, 398, 740, 798]);
-  const roof: Rect = [40, 283, 750, 398];
+  k.wall([-hw, zf], [hw, zf], 0, wallH, [51, 398, 737, 798]);
+  const roof: Rect = [40, 288, 750, 398];
   k.quad([-hw - ov, wallH - drop, zf + ov], [hw + ov, wallH - drop, zf + ov], [hw + ov, ridge, zc], [-hw - ov, ridge, zc], roof);
   k.quad([hw + ov, wallH - drop, zb - ov], [-hw - ov, wallH - drop, zb - ov], [-hw - ov, ridge, zc], [hw + ov, ridge, zc], roof);
   // 日よけ（前へ下がる 1 枚の布）と、前の柱
   const az = zf + 2.5;
   k.quad([X(55), Y(525), az], [X(730), Y(525), az], [X(730), Y(412), zf + 0.05], [X(55), Y(412), zf + 0.05], [55, 412, 730, 525]);
-  const post: Rect = [46, 540, 74, 798];
+  const post: Rect = [49, 540, 74, 798];
   for (const x of [X(60), X(722)]) k.box(x - 0.12, x + 0.12, 0, Y(522), az - 0.3, az - 0.06, { f: post, b: post, r: post, l: post });
   // 台: 図の台を、そのまま前へ 0.9m 押し出す（上の面は、台の板）
   const plank: Rect = [300, 692, 410, 796];
@@ -123,12 +123,12 @@ function shop(): BufferGeometry {
   k.box(X(625), X(700), 0, Y(655), zf, zf + 0.6, { f: crateR, r: crateR, l: crateR, t: [628, 660, 698, 722] });
   k.box(X(120), X(190), 0, Y(720), zf, zf + 0.56, { f: crateL, r: crateL, l: crateL, t: crateL });
   // 横の壁と妻（右側面の図の、小屋の部分。左は裏返し）
-  const side: Rect = [1113, 400, 1487, 798];
+  const side: Rect = [1118, 400, 1487, 798];
   for (const sx of [1, -1]) {
     const x = hw * sx;
     const zl = sx > 0 ? zf : zb, zr = sx > 0 ? zb : zf;
     k.wall([x, zl], [x, zr], 0, wallH, side, sx < 0);
-    const [ul, ur] = sx > 0 ? [1113, 1487] : [1487, 1113];
+    const [ul, ur] = sx > 0 ? [1118, 1487] : [1487, 1118];
     k.tri([x, wallH, zl], [x, wallH, zr], [x, ridge, zc], [ul, 400], [ur, 400], [1297, 283]);
   }
   // 後ろの壁: 横の板壁を、幅に合わせて
@@ -147,15 +147,14 @@ function board(): BufferGeometry {
   for (const r of [[116, 275, 172, 908], [565, 275, 622, 908]] as Rect[]) k.box(X(r[0]), X(r[2]), 0, Y(275), -0.135, 0.135, { f: r, b: r, r: sidePost, l: sidePost });
   const panel: Rect = [160, 335, 578, 720];
   k.box(X(160), X(578), Y(720), Y(335), -0.05, 0.05, { f: panel, b: panel });
-  const beam: Rect = [100, 277, 640, 300];
-  k.box(X(100), X(640), Y(300), Y(277), -0.15, 0.15, { f: beam, b: beam });
   // 屋根（前と後）と、両端の妻
-  const roof: Rect = [78, 205, 660, 285];
-  const rx = X(660), ye = Y(285), yr = Y(205), rz = 0.36;
+  // 屋根の図は、両端が斜めに切れている（透明）。そのまま貼るので、屋根の端も斜めに見える。棟の線は y = 213
+  const roof: Rect = [78, 213, 660, 285];
+  const rx = X(660), ye = Y(285), yr = Y(213), rz = 0.36;
   k.quad([-rx, ye, rz], [rx, ye, rz], [rx, yr, 0], [-rx, yr, 0], roof);
   k.quad([rx, ye, -rz], [-rx, ye, -rz], [-rx, yr, 0], [rx, yr, 0], roof);
-  k.tri([rx, ye, rz], [rx, ye, -rz], [rx, yr, 0], [1168, 272], [1315, 272], [1241, 205]);
-  k.tri([-rx, ye, -rz], [-rx, ye, rz], [-rx, yr, 0], [1168, 272], [1315, 272], [1241, 205]);
+  k.tri([rx, ye, rz], [rx, ye, -rz], [rx, yr, 0], [1170, 258], [1312, 258], [1241, 209]);
+  k.tri([-rx, ye, -rz], [-rx, ye, rz], [-rx, yr, 0], [1170, 258], [1312, 258], [1241, 209]);
   return k.geometry();
 }
 
@@ -172,14 +171,15 @@ function chest(): BufferGeometry {
     const a = corners[i]!, b = corners[(i + 1) % 4]!;
     // 前と後は正面の図、右と左は側面の図
     const sideView = i % 2 === 1;
-    const [u0, u1, ua] = sideView ? [826, 1475, 1150] : [65, 712, 390];
-    k.tri([a[0], yE, a[1]], [b[0], yE, b[1]], [0, yA, 0], [u0, 375], [u1, 375], [ua, 158]);
-    k.wall(a, b, yV, yE, sideView ? [824, 375, 1477, 440] : [62, 375, 715, 440]);
+    // 布のふちは内へたるんでいるので、三角の中だけを貼る（外の透明な所を踏まないよう、少し内側を取る）
+    const [u0, u1, ua] = sideView ? [850, 1451, 1150] : [89, 688, 390];
+    k.tri([a[0], yE, a[1]], [b[0], yE, b[1]], [0, yA, 0], [u0, 372], [u1, 372], [ua, 202]);
+    k.wall(a, b, yV, yE, sideView ? [832, 375, 1468, 439] : [70, 375, 707, 439]);
   }
-  const post: Rect = [90, 445, 142, 875];
+  const post: Rect = [91, 445, 142, 875];
   for (const [px, pz] of [[-1.5, 1.5], [1.5, 1.5], [1.5, -1.5], [-1.5, -1.5]] as Px[]) k.box(px - 0.145, px + 0.145, 0, yV + 0.25, pz - 0.145, pz + 0.145, { f: post, b: post, r: post, l: post });
   // 箱（前寄り）。上の面は、側面の板の所
-  const front: Rect = [225, 705, 545, 875], side: Rect = [975, 710, 1150, 875];
+  const front: Rect = [225, 710, 545, 872], side: Rect = [980, 710, 1149, 875];
   k.box(X(225), X(545), 0, Y(705), 0, 0.97, { f: front, b: front, r: side, l: side, t: [1010, 750, 1115, 840] });
   // 武器立て（箱の後ろ）: 正面の図の、箱より上の部分の板と、側面の図の板を、十字に組む
   const zR = -0.55;

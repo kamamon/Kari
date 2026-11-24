@@ -1,12 +1,13 @@
 ChatGPT への依頼 9：モンスターの生態と、新しいモンスター 65 種の考案
 霧境の狩人 - VEILBOUND HUNTERS
 
-（この文章を、そのまま ChatGPT に渡してください。
-  一緒に、次のファイルを添付します。
-    ・bestiary-template.json（返す時の形の見本。必ず添付）
-    ・bestiary.json（いまの登録簿。13 種）
-    ・採用したアート基準ボード（v2）
-    ・大型 12 種の原画（あれば）
+（ChatGPT へ: この依頼は、リポジトリの掲示板 docs/chatgpt-board.md に載っています。
+  添付は要りません。リポジトリの、次のファイルを読んでください。
+    ・docs/bestiary-template.json（返す時の形の見本。必ず読む）
+    ・public/data/bestiary.json（いまの登録簿。13 種）
+    ・art-source/board/style_board_v2.png（採用したアート基準ボード）
+    ・art-source/monster/concepts/（大型 12 種の原画。採用待ち）
+  リポジトリを読めない時は、利用者が、上のファイルを添付します。
 
   今回は、絵は要りません。文章とデータ（JSON）だけです。
   A → B → C → D の 4 回に分けて、1 回ごとに JSON ファイルを 1 つ返してください。
@@ -165,14 +166,21 @@ D　極級から登場する 20 種
 ============================================================
 
 ・1 回ごとに、JSON ファイルを 1 つ（bestiary_9A.json 〜 bestiary_9D.json）。
-  形は、添付の bestiary-template.json のとおり。species（と、必要なら frames・fields）だけを入れる
+  形は、docs/bestiary-template.json のとおり。species（と、必要なら frames・fields）だけを入れる
+・置き場は、リポジトリの chatgpt-inbox/009/（置き方は chatgpt-inbox/README.md。Pull Request で出す）。
+  書き込めない時は、会話の中で返す（利用者が Claude へ渡す）
+・コマンドを動かせる時は、返す前に検査する:
+    npm ci
+    npm run bestiary:import -- chatgpt-inbox/009/bestiary_9A.json --dry
+  「足す種 ○、書き換える種 ○」と一覧が出れば合格。
+  「取り込めません」と出たら、その下に、合わない所が全部並びます（--dry は、何も書き込みません）
 ・JSON は、そのまま機械で読みます。コメント、末尾のカンマ、「…」の省略は使えません
 ・id は「monster.」+ 英小文字・数字・_ 。いちど決めたら変えない。ほかの種と重ならないこと
 ・亜種・希少種・幼体は、baseId に、もとの種の id を書く
 ・見本の中の、id が monster.example_ で始まる 3 つは、返す JSON に入れない
 ・B・C・D は、前の回で自分が作った種も、もとの種（baseId）や相手（pairs）に使ってよい
 
-JSON のほかに、チャットの中で、次も教えてください：
+JSON のほかに、chatgpt-inbox/009/README.md（書き込めない時は、チャットの中）で、次も教えてください：
   ・その回の種の一覧（番号、二つ名、名前、段階、種類、骨格、狩場、属性）を、表で
   ・決まりのうち、守れなかったもの。迷って決めたこと
   ・いまの 13 種の内容を変えた時は、どこを、なぜ変えたか

@@ -4,12 +4,13 @@
 // 持ち物・装備の表示は、保存の管理役（SaveManager）が持つ「書き込みが完了した内容」だけを映す。
 // 強化・取り込みなどの結果は、書き込みが完了してから表示する（押した時点では「保存しています…」）。
 import { APP_VERSION, BUILD_ID, assetUrl } from '../core/assets';
-import { recipeFrom, type Content, type RecipeDef } from '../data/schemas';
+import { ARMOR_SLOTS, recipeFrom, type ArmorSlot, type Content, type RecipeDef } from '../data/schemas';
 import { materialRanks } from '../data/validators';
 import { fieldOf, questTimeLimitTicks } from '../game/field';
+import { defenseScale } from '../game/rank';
 import { CLASS_NAMES, ECOLOGY_KEYS, ECOLOGY_NAMES, ELEMENT_NAMES, STATE_NAMES, STATUS_NAMES, VARIANT_NAMES, bestiaryCounts } from '../data/bestiary';
 import type { FacilityKind } from '../data/schemas';
-import { checkBuy, checkCraft, defenseOf, parseImport, questUnlocked, unknownIds, usableWeapons, wornArmor } from '../save/profile';
+import { checkBuy, checkCraft, defenseOf, ownedArmor, parseImport, questUnlocked, unknownIds, usableWeapons, wornArmor } from '../save/profile';
 import type { SaveManager, SaveResult } from '../save/saveManager';
 import { canFullscreen, fullscreenHint, toggleFullscreen } from './fullscreen';
 
@@ -27,6 +28,8 @@ export interface BaseHost {
   /** いま持たせている武器の id と、持ち替え（保存が完了してから替わる） */
   weaponId: string;
   setWeapon(id: string): Promise<SaveResult>;
+  /** 防具を、部位ごとに替える・外す（null で外す。保存が完了してから替わる） */
+  setArmor(slot: ArmorSlot, id: string | null): Promise<SaveResult>;
   readonly save: SaveManager;
   /** 強化などで装備が変わったかもしれない時に、後ろに見えているハンターを作り直す */
   saveChanged(): void;
@@ -73,6 +76,7 @@ export class BaseScreen {
   private weaponRow: HTMLElement;
   private weaponNote: HTMLElement;
   private armorNote: HTMLElement;
+  private armorBox: HTMLElement;
   private questBox: HTMLElement;
   /** 素材ごとの、手に入るいちばん下の段階（工房で「どこから出るか」を添えるため） */
   private matRank: Map<string, number>;
@@ -111,10 +115,12 @@ export class BaseScreen {
 
     this.weaponRow = sec(el('div', 'base-weapons'), 'chest');
     this.weaponNote = sec(el('p', 'base-weapon-note'), 'chest');
-    card.append(sec(el('p', 'base-weapon-label', '武器'), 'chest'), this.weaponRow, this.weaponNote);
+    card.append(sec(el('p', 'base-weapon-label', '武器（持ち替え）'), 'chest'), this.weaponRow, this.weaponNote);
 
+    // 防具: 部位ごとに、持っているものから選ぶ・外す（v0.14.0）
+    this.armorBox = sec(el('div', 'base-armor'), 'chest');
     this.armorNote = sec(el('p', 'base-armor-note'), 'chest');
-    card.appendChild(this.armorNote);
+    card.append(sec(el('p', 'base-weapon-label', '防具（部位ごとに、着る・外す）'), 'chest'), this.armorBox, this.armorNote);
     this.matRank = materialRanks(content);
 
     // 依頼（段階の順）と訓練場。受けられるかどうかは進行で変わるので、中身は refresh で作る
@@ -270,8 +276,35 @@ export class BaseScreen {
     const w = c.weapons.get(current);
     const fam = w ? c.families.get(w.family) : undefined;
     this.weaponNote.textContent = w && fam ? `${w.name}（攻撃力 ${w.attack}）: ${fam.summary ?? ''}` : '';
+    // 防具（部位ごと）。いま着ているものに印。「外す」を選ぶと、その部位は里の装束の姿に戻る
     const worn = wornArmor(doc, c);
-    this.armorNote.textContent = `防具: 防御力 ${defenseOf(doc, c)}（${worn.map((x) => x.name).join('・') || 'なし'}）`;
+    const owned = ownedArmor(doc, c);
+    this.armorBox.textContent = '';
+    for (const slot of ARMOR_SLOTS) {
+      const on = worn.find((a) => a.slot === slot) ?? null;
+      const row = el('div', 'base-armor-row');
+      row.dataset.slot = slot;
+      row.dataset.worn = on?.id ?? '';
+      row.appendChild(el('span', 'slot', c.armorRules.slotNames[slot]));
+      const picks = el('div', 'base-armor-picks');
+      const pick = (label: string, sub: string, id: string | null, active: boolean): void => {
+        const b = el('button', 'base-armor-pick');
+        b.append(el('b', undefined, label), el('small', undefined, sub));
+        b.dataset.armor = id ?? '';
+        b.classList.toggle('on', active);
+        b.addEventListener('click', () => {
+          if (active) return;
+          void this.run(id === null ? '外しています' : '着替えています', () => this.host.setArmor(slot, id), '');
+        });
+        picks.appendChild(b);
+      };
+      for (const a of owned[slot]) pick(a.name, `防御 ${a.defense}`, a.id, on?.id === a.id);
+      pick('外す', '防御 0', null, on === null);
+      row.appendChild(picks);
+      this.armorBox.appendChild(row);
+    }
+    const defense = defenseOf(doc, c);
+    this.armorNote.textContent = `防御力の合計 ${defense}（受けるダメージ ×${defenseScale(c, defense).toFixed(2)}）`;
 
     this.renderQuests();
 

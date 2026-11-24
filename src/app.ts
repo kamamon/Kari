@@ -4,7 +4,7 @@ import { AudioSystem } from './core/audio';
 import { FixedClock } from './core/clock';
 import { FrameMeter, describeFrames, type FrameSummary } from './core/frameMeter';
 import { yawOf } from './core/math';
-import type { Content, FacilityDef } from './data/schemas';
+import type { ArmorSlot, Content, FacilityDef } from './data/schemas';
 import { Btn, type InputFrame } from './game/inputFrame';
 import { firstMismatch, runReplay } from './game/replay';
 import { familyOf } from './game/player';
@@ -302,6 +302,14 @@ export class App implements MenuHost, BaseHost, ResultHost {
   /** 武器を持ち替える。保存が完了してから替わる。 */
   async setWeapon(id: string): Promise<SaveResult> {
     const r = await this.save.equip(id);
+    if (r.ok) this.audio.play('ui');
+    this.saveChanged();
+    return r;
+  }
+
+  /** 防具を、部位ごとに替える・外す（null で外す）。保存が完了してから替わる。 */
+  async setArmor(slot: ArmorSlot, id: string | null): Promise<SaveResult> {
+    const r = await this.save.equipArmor(slot, id);
     if (r.ok) this.audio.play('ui');
     this.saveChanged();
     return r;

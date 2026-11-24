@@ -4,7 +4,7 @@
 // 別のタブが先に書いていた時（revision が合わない時）は、こちらの古い内容で上書きしない。
 // - 報酬の受け取りは、新しい内容を読み直して、その上へ足す（同じ依頼は 1 度だけなので安全）。
 // - 強化・装備・取り込みは、新しい内容を読み直すところまでで止め、利用者にやり直してもらう。
-import type { Content } from '../data/schemas';
+import type { ArmorSlot, Content } from '../data/schemas';
 import {
   RuleError,
   SLOT_ID,
@@ -12,6 +12,7 @@ import {
   buy,
   craft,
   equip,
+  equipArmor,
   exportText,
   grantStarters,
   newSave,
@@ -264,6 +265,11 @@ export class SaveManager {
 
   equip(weaponId: string): Promise<SaveResult> {
     return this.commit((doc) => equip(doc, weaponId));
+  }
+
+  /** 防具を、部位ごとに替える・外す（armorId が null なら外す） */
+  equipArmor(slot: ArmorSlot, armorId: string | null): Promise<SaveResult> {
+    return this.commit((doc) => equipArmor(doc, this.content, slot, armorId));
   }
 
   /** 書き出し用のテキスト（いまの保存データ）。読めないデータがある時は、それをそのまま出す。 */

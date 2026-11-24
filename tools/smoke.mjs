@@ -94,7 +94,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     const qs = [...document.querySelectorAll('.base-choice[data-quest]')];
     return qs.map((b) => b.dataset.rank).join() === 'rank.1,rank.2,rank.3,rank.4' && qs.map((b) => b.disabled).join() === 'false,true,true,true'
       && /【初級】依頼「岩場の足音」/.test(qs[0].textContent) && /【中級】/.test(qs[1].textContent) && /「岩場の足音」を達成すると受けられます/.test(qs[1].textContent)
-      && /防具: 防御力 0/.test(document.querySelector('.base-armor-note').textContent);
+      && /^防御力の合計 0（受けるダメージ ×1\.00）$/.test(document.querySelector('.base-armor-note').textContent) && document.querySelectorAll('.base-armor-row').length === 5;
   }), await page.evaluate(() => document.querySelector('.base-choice[data-quest="quest.basin.r2.001"]')?.textContent ?? ''));
   check('まだ受けられない依頼は、呼び出しても始まらない', await page.evaluate(() => {
     window.__vh.startHunt('quest.basin.r4.001');
@@ -495,7 +495,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const saved = (pg) => pg.evaluate(() => JSON.parse(JSON.stringify(window.__vh.save.doc)));
   const before = await saved(page);
   check('保存の場所は IndexedDB（ゲーム固有の名前）で、2 回の報酬が revision 2 として入っている',
-    (await page.evaluate(() => window.__vh.save.mode)) === 'persistent' && before.revision === 2 && before.settledRuns.length === 2 && before.schemaVersion === 2 && before.armor.length === 5
+    (await page.evaluate(() => window.__vh.save.mode)) === 'persistent' && before.revision === 2 && before.settledRuns.length === 2 && before.schemaVersion === 3 && before.armor.length === 5 && before.equippedArmorIds.length === 5
       && (await page.evaluate(async () => (await indexedDB.databases()).some((d) => d.name === 'veilbound-hunters:prod:save'))),
     `通貨 ${before.money} / 素材 ${JSON.stringify(before.items)} / 達成 ${JSON.stringify(before.progress.questClears)}`);
   await page.reload();
@@ -529,7 +529,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('#base-data > summary');
   const exported = await page.evaluate(() => window.__vh.save.exportText());
   const rich = JSON.parse(exported);
-  check('書き出した内容に、目印・版・持ち物が入っている', rich.format === 'veilbound-hunters-save' && rich.save.schemaVersion === 2 && rich.save.money === 1250);
+  check('書き出した内容に、目印・版・持ち物が入っている', rich.format === 'veilbound-hunters-save' && rich.save.schemaVersion === 3 && rich.save.money === 1250);
   await page.fill('.data-paste', exported.slice(0, 80));
   await page.click('text=貼り付けた内容を確かめる');
   check('途中で切れた内容は取り込まない（理由が出る）', await until(page, () => /取り込めません/.test(document.querySelector('.base-message').textContent), 4000) && (await saved(page)).revision === 3);
@@ -688,10 +688,10 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
-  check('版 1 のデータ（v0.7.0 の実機）を開くと、版 2 へ直して保存する。持ち物・武器・進行はそのまま、里の装束が配られ、元のデータは控えに残る', await page.evaluate(async (orig) => {
+  check('版 1 のデータ（v0.7.0 の実機）を開くと、いまの版（3）へ直して保存する。持ち物・武器・進行はそのまま、里の装束が配られ、元のデータは控えに残る', await page.evaluate(async (orig) => {
     const s = window.__vh.save, d = s.doc;
     const bs = await s.backups();
-    return s.mode === 'persistent' && d.schemaVersion === 2 && d.money === 1200 && d.items['mat.galdros.shell_shard'] === 7 && d.equippedWeaponId === 'weapon.long_blade.001' && d.weapons.length === 7
+    return s.mode === 'persistent' && d.schemaVersion === 3 && d.equippedArmorIds.join() === d.armor.join() && d.money === 1200 && d.items['mat.galdros.shell_shard'] === 7 && d.equippedWeaponId === 'weapon.long_blade.001' && d.weapons.length === 7
       && d.armor.join() === 'armor.head.001,armor.chest.001,armor.arms.001,armor.waist.001,armor.legs.001' && d.progress.questClears['quest.basin.003'] === 2 && d.revision === 4
       && bs.some((b) => b.reason === 'migrate' && JSON.stringify(b.doc) === JSON.stringify(orig)) && /新しい形へ直しました/.test(document.querySelector('.base-banner')?.textContent ?? '');
   }, v1), await page.evaluate(() => `${window.__vh.save.mode} v${window.__vh.save.doc.schemaVersion} r${window.__vh.save.doc.revision} ${window.__vh.save.notice}`));
@@ -704,7 +704,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   check('防具の強化: 里の頭巾 → 岩殻の兜。岩殻片 2・硬骨 1・80 通貨が減り、防御力が 0 → 6 になる', await until(page, () => {
     const d = window.__vh.save.doc;
     return d.armor.includes('armor.head.002') && !d.armor.includes('armor.head.001') && d.money === 1120 && d.items['mat.galdros.shell_shard'] === 5 && !('mat.galdros.hard_bone' in d.items)
-      && /防具: 防御力 6（岩殻の兜・里の上衣/.test(document.querySelector('.base-armor-note').textContent) && /岩殻の兜に強化しました/.test(document.querySelector('.base-message').textContent)
+      && /^防御力の合計 6（受けるダメージ ×0\.94）$/.test(document.querySelector('.base-armor-note').textContent) && document.querySelector('.base-armor-row[data-slot="head"]').dataset.worn === 'armor.head.002' && d.equippedArmorIds.includes('armor.head.002') && /岩殻の兜に強化しました/.test(document.querySelector('.base-message').textContent)
       && /岩殻の兜 → 脈殻の兜/.test(document.querySelector('.forge-recipe[data-recipe="recipe.armor.head.003"]')?.textContent ?? '');
   }, 8000), await page.evaluate(() => document.querySelector('.base-armor-note').textContent));
   check('防具の見た目: 拠点の後ろのハンターが、岩殻の兜をかぶる（頭だけ 2 段目。外套は付けたまま、兜の下の髪の束は描かない）', await until(page, () => {
@@ -721,7 +721,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   check('読み込み直しても、岩殻の兜のまま（控えは増えない）', await page.evaluate(async () => {
     const s = window.__vh.save;
-    return s.doc.armor.includes('armor.head.002') && s.doc.schemaVersion === 2 && s.notice === null && (await s.backups()).filter((b) => b.reason === 'migrate').length === 1;
+    return s.doc.armor.includes('armor.head.002') && s.doc.equippedArmorIds.includes('armor.head.002') && s.doc.schemaVersion === 3 && s.notice === null && (await s.backups()).filter((b) => b.reason === 'migrate').length === 1;
   }));
   await ctx.close();
 }
@@ -751,7 +751,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   check('最初は何も書き込まない（保存するものが無い間は、端末に何も置かない）', (await stored(page)) === null && (await page.evaluate(() => window.__vh.save.doc.revision)) === 0);
-  const future = { slotId: 'main', schemaVersion: 3, revision: 40, updatedAt: '2027-01-01T00:00:00.000Z', money: 9999, newThing: { a: [1, 2, 3] } };
+  const future = { slotId: 'main', schemaVersion: 99, revision: 40, updatedAt: '2027-01-01T00:00:00.000Z', money: 9999, newThing: { a: [1, 2, 3] } };
   await seed(page, future);
   await page.reload();
   await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
@@ -1333,8 +1333,57 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   check('里: 装備箱で持ち替えると、その場で武器が替わる（立っている場所と、開いている画面はそのまま）', before.section === 'chest' && before.weapons !== 'none' && h.weapon === 'weapon.twin_blades.001' && h.base && h.section === 'chest' && Math.abs(h.x - before.x) < 0.01 && Math.abs(h.z - before.z) < 0.01 && h.place === 'hub', JSON.stringify(h));
   await page.click('.base-weapon[data-weapon="weapon.heavy_blade.001"]');
   await until(page, () => window.__vh.sim.player.weaponId === 'weapon.heavy_blade.001', 8000);
+  // 装備箱: 防具を、部位ごとに着る・外す（v0.14.0）
+  const armorState = () => page.evaluate(() => {
+    const a = window.__vh, rows = [...document.querySelectorAll('.base-armor-row')];
+    const picks = (slot) => [...document.querySelectorAll(`.base-armor-row[data-slot="${slot}"] .base-armor-pick`)].map((b) => `${b.dataset.armor || '外す'}${b.classList.contains('on') ? '*' : ''}`).join();
+    const tall = Math.min(...[...document.querySelectorAll('.base-armor-pick')].map((b) => b.getBoundingClientRect().height));
+    return {
+      rows: rows.map((r) => `${r.dataset.slot}:${r.dataset.worn}`).join(), head: picks('head'), chest: picks('chest'), note: document.querySelector('.base-armor-note').textContent,
+      sim: a.sim.armorIds.join(), defense: a.sim.defense, worn: a.save.doc.equippedArmorIds.join(), owned: a.save.doc.armor.join(), look: a.view.hunter.armorKey,
+      section: document.getElementById('base').dataset.section, open: !document.getElementById('base').hidden, x: a.sim.player.pos.x, z: a.sim.player.pos.z,
+      shown: getComputedStyle(document.querySelector('.base-armor')).display !== 'none', tall, rev: a.save.doc.revision,
+    };
+  });
+  let ar = await armorState();
+  check('装備箱: 防具の欄に 5 部位が並ぶ。里の装束を着ていて、どの部位にも「外す」がある（ボタンは 44px 以上）',
+    ar.shown && ar.rows === 'head:armor.head.001,chest:armor.chest.001,arms:armor.arms.001,waist:armor.waist.001,legs:armor.legs.001' && ar.head === 'armor.head.001*,外す' && ar.chest === 'armor.chest.001*,外す' && ar.tall >= 44 && /^防御力の合計 0（受けるダメージ ×1\.00）$/.test(ar.note), JSON.stringify(ar));
+  // 岩殻の兜と胸当てを持たせる（書き出した形を取り込む。工房での強化は、別の項目で確かめている）
+  await page.evaluate(async () => {
+    const a = window.__vh, d = JSON.parse(JSON.stringify(a.save.doc));
+    const up = (x) => (x === 'armor.head.001' ? 'armor.head.002' : x === 'armor.chest.001' ? 'armor.chest.002' : x);
+    d.armor = d.armor.map(up);
+    d.equippedArmorIds = d.equippedArmorIds.map(up);
+    await a.save.importText(JSON.stringify(d));
+    a.saveChanged();
+  });
+  await until(page, () => window.__vh.sim.armorIds.includes('armor.head.002') && document.querySelector('.base-armor-row[data-slot="head"]')?.dataset.worn === 'armor.head.002', 8000);
+  await page.waitForTimeout(300);
+  ar = await armorState();
+  check('装備箱: 岩殻の兜と胸当てを着ている（防御力の合計 12、受けるダメージ ×0.89）。姿にも出ている', ar.head === 'armor.head.002*,外す' && ar.chest === 'armor.chest.002*,外す' && ar.defense === 12 && ar.look === '22111' && /^防御力の合計 12（受けるダメージ ×0\.89）$/.test(ar.note), JSON.stringify(ar));
+  await page.screenshot({ path: `${OUT}95b_hub_chest_armor.png` });
+  const at = { x: ar.x, z: ar.z, rev: ar.rev };
+  // 頭を外す
+  await page.click('.base-armor-row[data-slot="head"] .base-armor-pick[data-armor=""]');
+  await until(page, () => !window.__vh.sim.armorIds.includes('armor.head.002') && document.querySelector('.base-armor-row[data-slot="head"]')?.dataset.worn === '', 8000);
+  await page.waitForTimeout(300);
+  ar = await armorState();
+  check('装備箱: 頭を「外す」と、その場で兜が消え、防御力が 6 になる。持ち物には残る。立っている場所と、開いている画面はそのまま',
+    ar.head === 'armor.head.002,外す*' && ar.defense === 6 && ar.look === '12111' && ar.owned.includes('armor.head.002') && !ar.worn.includes('armor.head.') && ar.rev === at.rev + 1 && ar.open && ar.section === 'chest' && Math.abs(ar.x - at.x) < 0.01 && Math.abs(ar.z - at.z) < 0.01 && /^防御力の合計 6（/.test(ar.note), JSON.stringify(ar));
+  await page.screenshot({ path: `${OUT}95c_hub_chest_armor_off.png` });
+  // もう一度着る
+  await page.click('.base-armor-row[data-slot="head"] .base-armor-pick[data-armor="armor.head.002"]');
+  await until(page, () => window.__vh.sim.armorIds.includes('armor.head.002') && document.querySelector('.base-armor-row[data-slot="head"]')?.dataset.worn === 'armor.head.002', 8000);
+  ar = await armorState();
+  check('装備箱: もう一度選ぶと、着直す（防御力の合計 12）', ar.head === 'armor.head.002*,外す' && ar.defense === 12 && ar.look === '22111' && ar.rev === at.rev + 2, JSON.stringify(ar));
+  // 胴を外したまま、閉じる（この後の「読み込み直しても残る」で確かめる）
+  await page.click('.base-armor-row[data-slot="chest"] .base-armor-pick[data-armor=""]');
+  await until(page, () => !window.__vh.sim.armorIds.includes('armor.chest.002'), 8000);
   await page.click('.base-close');
   await until(page, () => document.getElementById('base').hidden);
+  await page.waitForTimeout(400);
+  check('装備箱: 閉じて里へ戻っても、選んだ装備のまま歩ける（兜あり・胴なし）', await page.evaluate(() => window.__vh.place === 'hub' && window.__vh.sim.armorIds.join() === 'armor.head.002,armor.arms.001,armor.waist.001,armor.legs.001' && window.__vh.view.hunter.armorKey === '21111'), await page.evaluate(() => `${window.__vh.sim.armorIds.join()} ${window.__vh.view.hunter.armorKey}`));
+  await page.screenshot({ path: `${OUT}95d_hub_walk_helm.png` });
   // 「一覧」: 歩かずに、すべての欄を開ける
   await page.click('#hud-hub-list');
   await until(page, () => !document.getElementById('base').hidden);
@@ -1369,6 +1418,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     return { tonic: s.player.items.find((x) => x.itemId === 'item.heal_tonic').count, brought: s.brought['item.heal_tonic'], area: s.areaId };
   });
   check('里: 依頼へ出ると、買った回復液が支給品に足されている（5 + 1 = 6）。野営地から始まる', pouch.tonic === 6 && pouch.brought.supplied === 5 && pouch.brought.own === 1 && pouch.area === 'camp', JSON.stringify(pouch));
+  check('里: 依頼へは、装備箱で選んだ防具で出る（兜あり・胴なし。防御力 6）', await page.evaluate(() => window.__vh.sim.defense === 6 && window.__vh.sim.armorIds.join() === 'armor.head.002,armor.arms.001,armor.waist.001,armor.legs.001' && window.__vh.view.hunter.armorKey === '21111'), await page.evaluate(() => `${window.__vh.sim.defense} ${window.__vh.sim.armorIds.join()}`));
   // 6 個とも使ったことにして、リタイアする → 自分の 1 個だけが減る
   await page.evaluate(() => (window.__vh.sim.player.items.find((x) => x.itemId === 'item.heal_tonic').count = 0));
   await page.keyboard.press('Escape');
@@ -1387,6 +1437,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await until(page, () => window.__vh && window.__vh.place === 'hub');
   h = await hubState();
   check('里: 読み込み直しても、買い物の結果が残っている（通貨 960、岩殻片 2、回復液 0）', h.money === 960 && h.shell === 2 && h.tonic === 0, JSON.stringify(h));
+  check('里: 読み込み直しても、選んだ防具が残っている（兜は着たまま、胴は外したまま。胸当ては持っている）', await page.evaluate(() => { const d = window.__vh.save.doc; return d.schemaVersion === 3 && d.armor.includes('armor.chest.002') && !d.equippedArmorIds.includes('armor.chest.002') && d.equippedArmorIds.includes('armor.head.002') && window.__vh.sim.armorIds.join() === 'armor.head.002,armor.arms.001,armor.waist.001,armor.legs.001'; }), await page.evaluate(() => JSON.stringify(window.__vh.save.doc.equippedArmorIds)));
   await ctx.close();
 }
 
