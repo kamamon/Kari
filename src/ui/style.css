@@ -65,6 +65,13 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 .bar-st { height: 8px; width: 88%; }
 .bar-st > i { background: linear-gradient(#e0c06a, #b08d3c); }
 .bar-st.low > i { background: #c96a4a; }
+/* 状態異常の札（v0.17.0） */
+.hud-ailments { display: flex; gap: 4px; min-height: 0; }
+.hud-ailments .ail { font: 600 11px/1 system-ui, sans-serif; padding: 3px 6px; border-radius: 3px; color: #fff; letter-spacing: 0.05em; }
+.ail-poison { background: #7a4a9a; }
+.ail-para { background: #b09a2a; }
+.ail-sleep { background: #4a6aa0; }
+.ail-stun { background: #a0663a; }
 .hud-blade { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-dim); text-shadow: 0 1px 2px #000; }
 .hud-blade .gauge { width: 84px; height: 6px; background: rgba(12, 16, 13, 0.7); border: 1px solid var(--line); }
 .hud-blade .edge { display: flex; align-items: center; gap: 6px; }

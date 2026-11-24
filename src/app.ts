@@ -29,6 +29,9 @@ const MAX_RECORD = 60 * 60 * 16;
 /** 結果が閉じてから結果画面を出すまでの間 */
 const RESULT_DELAY_TICKS = { success: 50, failed: 90 };
 
+/** 状態異常が付いた時の知らせ */
+const STATUS_TOAST: Record<string, string> = { poison: '毒を受けた', para: '体が痺れて動けない', sleep: '眠ってしまった', stun: '気を失った' };
+
 export class App implements MenuHost, BaseHost, ResultHost {
   private sim!: Simulation;
   private view!: GameView;
@@ -675,6 +678,13 @@ export class App implements MenuHost, BaseHost, ResultHost {
           break;
         case 'player_hurt':
           play('hurt');
+          break;
+        case 'status':
+          // 状態異常（v0.17.0）: 付いた時に音と知らせ。消えた時は、知らせだけ（毒）
+          if (e.on) {
+            play('status_on');
+            this.hud.toast(STATUS_TOAST[e.kind]);
+          } else if (e.kind === 'poison') this.hud.toast('毒が抜けた');
           break;
         case 'evade':
           play('evade');

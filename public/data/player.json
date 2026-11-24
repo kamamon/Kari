@@ -19,5 +19,13 @@
   "respawnTicks": 210,
   "critMultiplier": 1.25,
   "gravity": 22,
-  "trainingSupplies": [{ "itemId": "item.whetstone", "count": 10 }]
+  "trainingSupplies": [{ "itemId": "item.whetstone", "count": 10 }],
+  "status": {
+    "threshold": 100,
+    "decayPerSec": 4,
+    "poison": { "ticks": 900, "intervalTicks": 45, "damage": 2 },
+    "para": { "ticks": 150 },
+    "sleep": { "ticks": 540 },
+    "stun": { "ticks": 210 }
+  }
 }

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "monster.selvark",
+  "name": "帆角獣 セルヴァルク",
+  "rigFamily": "quadruped_light",
+  "assetId": "model.monster.selvark",
+  "hp": 1500,
+  "bodyRadius": 0.9,
+  "turnDegPerSec": 110,
+  "moveSpeed": 3.4,
+  "captureAllowed": true,
+  "lootId": "loot.selvark",
+  "capture": {"hpRatio": 0.25, "tranqNeeded": 2, "tranqDecayTicks": 900},
+  "respawnTicks": null,
+  "breakStaggerTicks": 80,
+  "collision": [{"z": 0.0, "r": 0.75}, {"z": 1.0, "r": 0.6}, {"z": -0.9, "r": 0.6}],
+  "approach": {"stopDist": 4.0, "faceDeg": 50},
+  "discover": {"range": 18, "fovDeg": 140, "closeRange": 6, "actionId": "monster.selvark.roar"},
+  "rage": {"threshold": 380, "durationTicks": 1800, "actionId": "monster.selvark.roar", "speedScale": 1.3, "damageScale": 1.15, "cooldownScale": 0.6},
+  "parts": [
+    {"id": "head", "name": "頭", "hitzone": {"cut": 0.75, "blunt": 0.7, "shot": 0.65}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "flinch": {"threshold": 140, "growth": 50, "ticks": 45}, "shapes": [{"a": [0.0, 2.585, 1.451], "b": [0.0, 2.399, 1.786], "r": 0.24}]},
+    {"id": "crest_l", "name": "左角膜", "hitzone": {"cut": 0.8, "blunt": 0.6, "shot": 0.75}, "brokenHitzone": {"cut": 0.9, "blunt": 0.7, "shot": 0.85}, "elementZone": 0.2, "breakDurability": 170, "material": "hide", "flinch": {"threshold": 130, "growth": 50, "ticks": 40}, "shapes": [{"a": [0.3, 2.474, 1.228], "b": [0.4, 2.288, -0.223], "r": 0.32}]},
+    {"id": "crest_r", "name": "右角膜", "hitzone": {"cut": 0.8, "blunt": 0.6, "shot": 0.75}, "brokenHitzone": {"cut": 0.9, "blunt": 0.7, "shot": 0.85}, "elementZone": 0.2, "breakDurability": 170, "material": "hide", "flinch": {"threshold": 130, "growth": 50, "ticks": 40}, "shapes": [{"a": [-0.3, 2.474, 1.228], "b": [-0.4, 2.288, -0.223], "r": 0.32}]},
+    {"id": "hindleg", "name": "後脚の腱鞘", "hitzone": {"cut": 0.6, "blunt": 0.55, "shot": 0.5}, "brokenHitzone": {"cut": 0.7, "blunt": 0.65, "shot": 0.6}, "elementZone": 0.2, "breakDurability": 200, "material": "hide", "flinch": {"threshold": 200, "growth": 70, "ticks": 120, "topple": true}, "shapes": [{"a": [0.3, 1.469, -0.818], "b": [0.3, 0.353, -0.967], "r": 0.17}, {"a": [-0.3, 1.469, -0.818], "b": [-0.3, 0.353, -0.967], "r": 0.17}]},
+    {"id": "tail", "name": "尾先", "hitzone": {"cut": 0.55, "blunt": 0.45, "shot": 0.5}, "brokenHitzone": {"cut": 0.65, "blunt": 0.55, "shot": 0.6}, "elementZone": 0.2, "breakDurability": 140, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 1.767, -1.637], "b": [0.0, 1.358, -2.641], "r": 0.13}]},
+    {"id": "body", "name": "胴", "hitzone": {"cut": 0.5, "blunt": 0.5, "shot": 0.45}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 1.748, -0.744], "b": [0.0, 1.73, 0.67], "r": 0.42}, {"a": [0.0, 1.953, 1.004], "b": [0.0, 2.511, 1.376], "r": 0.22}]},
+    {"id": "foreleg", "name": "前脚", "hitzone": {"cut": 0.5, "blunt": 0.5, "shot": 0.4}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "flinch": {"threshold": 220, "growth": 70, "ticks": 120, "topple": true}, "shapes": [{"a": [0.3, 1.432, 0.856], "b": [0.3, 0.26, 1.228], "r": 0.15}, {"a": [-0.3, 1.432, 0.856], "b": [-0.3, 0.26, 1.228], "r": 0.15}]}
+  ],
+  "ai": {
+    "aggroRange": 200,
+    "cooldownTicks": [40, 85],
+    "choices": [
+      {"actionId": "monster.selvark.hop_kick_l", "minDist": 0, "maxDist": 5.5, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 35, "side": "left"},
+      {"actionId": "monster.selvark.hop_kick_r", "minDist": 0, "maxDist": 5.5, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 35, "side": "right"},
+      {"actionId": "monster.selvark.gust", "minDist": 3, "maxDist": 11, "maxAngleDeg": 35, "weight": 2, "cooldownTicks": 360},
+      {"actionId": "monster.selvark.lunge", "minDist": 3, "maxDist": 8, "maxAngleDeg": 30, "weight": 2.5},
+      {"actionId": "monster.selvark.back_flip", "minDist": 0, "maxDist": 3.6, "maxAngleDeg": 70, "weight": 2, "cooldownTicks": 420}
+    ]
+  }
+}

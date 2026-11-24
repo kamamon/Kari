@@ -290,9 +290,10 @@ export function guardPose(blend: number, shake: number): BodyPose {
   return blendPose(a, b, smoothstep(blend));
 }
 
-export function hurtPose(kind: 'flinch' | 'knockdown' | 'break' | 'bounce', tick: number, duration: number, drawn: boolean): BodyPose {
+export function hurtPose(kind: 'flinch' | 'knockdown' | 'break' | 'bounce' | 'para' | 'sleep' | 'stun', tick: number, duration: number, drawn: boolean): BodyPose {
   const base = drawn ? STANCE : NEUTRAL;
   const basePy = drawn ? STANCE_PY : 0;
+  if (kind === 'para' || kind === 'stun' || kind === 'sleep') return statusPose(kind, base, basePy, tick, duration);
   if (kind !== 'knockdown') {
     const u = Math.min(1, tick / Math.max(1, duration));
     const k = Math.sin(Math.min(1, u * 3) * Math.PI * 0.5) * (1 - smoothstep((u - 0.4) / 0.6));
@@ -316,6 +317,53 @@ export function hurtPose(kind: 'flinch' | 'knockdown' | 'break' | 'bounce', tick
   const k1 = keys[i + 1]!;
   const u = Math.min(1, Math.max(0, (tick - k0.t) / (k1.t - k0.t)));
   return blendPose(fromKey(base, basePy, k0), fromKey(base, basePy, k1), smoothstep(u));
+}
+
+/**
+ * 状態異常で動けない間の姿勢（仮。v0.17.0）。麻痺: 体をこわばらせて小刻みに震える / 気絶: 前かがみで頭を垂れ、ゆっくりふらつく /
+ * 睡眠: 倒れて横になり、終わり際に起き上がる。
+ */
+function statusPose(kind: 'para' | 'stun' | 'sleep', base: J, basePy: number, tick: number, duration: number): BodyPose {
+  const inT = smoothstep(Math.min(1, tick / 12));
+  const outT = smoothstep(Math.min(1, (duration - tick) / 14));
+  if (kind === 'sleep') {
+    const keys: Key[] = [
+      { t: 0 },
+      { t: 18, j: HALF_TUCK, py: -0.25 },
+      { t: 40, j: LYING, tumble: -90, drop: -0.43 },
+      { t: Math.max(41, duration - 34), j: LYING, tumble: -90, drop: -0.43 },
+      { t: Math.max(42, duration - 16), j: HALF_TUCK, tumble: -30, drop: -0.25, py: -0.15 },
+      { t: Math.max(43, duration) },
+    ];
+    let i = 0;
+    while (i < keys.length - 2 && keys[i + 1]!.t <= tick) i++;
+    const k0 = keys[i]!, k1 = keys[i + 1]!;
+    const u = Math.min(1, Math.max(0, (tick - k0.t) / (k1.t - k0.t)));
+    const pose = blendPose(fromKey(base, basePy, k0), fromKey(base, basePy, k1), smoothstep(u));
+    // 寝息: 胸が少し上下する
+    pose.j.chest = [pose.j.chest[0] + Math.sin(tick * 0.09) * 2.5, pose.j.chest[1], pose.j.chest[2]];
+    return pose;
+  }
+  const a = fromKey(base, basePy, { t: 0 });
+  if (kind === 'para') {
+    const jit = (f: number, s: number): number => Math.sin(tick * f + s) * 2.2;
+    const b = fromKey(base, basePy, {
+      t: 0, py: basePy - 0.06,
+      j: { ...base, spine: [-8 + jit(2.9, 0), jit(3.3, 1), jit(2.6, 2)], chest: [-6, jit(3.1, 3), 0], head: [-12 + jit(3.7, 4), jit(2.3, 5), 0], neck: [-6, 0, 0],
+        upperArmL: [-20 + jit(3.4, 6), 0, 28], upperArmR: [-20 + jit(3.0, 7), 0, -28], forearmL: [-35, 0, 0], forearmR: [-35, 0, 0],
+        thighL: [-10, 0, 6], shinL: [18 + jit(3.6, 8), 0, 0], thighR: [8, 0, -6], shinR: [14 + jit(2.8, 9), 0, 0] },
+    });
+    return blendPose(a, b, inT * outT);
+  }
+  // 気絶
+  const sway = Math.sin(tick * 0.07) * 9, nod = Math.sin(tick * 0.11) * 6;
+  const b = fromKey(base, basePy, {
+    t: 0, py: basePy - 0.12,
+    j: { ...base, spine: [24, sway * 0.5, sway * 0.4], chest: [12, 0, sway * 0.3], neck: [20 + nod, 0, 0], head: [22 + nod, sway, sway * 0.6],
+      upperArmL: [8, 0, 10], upperArmR: [8, 0, -10], forearmL: [-20, 0, 0], forearmR: [-20, 0, 0],
+      thighL: [-28, 0, 6 + sway * 0.3], shinL: [40, 0, 0], thighR: [-18, 0, -6 + sway * 0.3], shinR: [34, 0, 0] },
+  });
+  return blendPose(a, b, inT * outT);
 }
 
 export function deadPose(ticks: number): BodyPose {

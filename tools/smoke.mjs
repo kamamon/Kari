@@ -90,9 +90,11 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('#boot-start');
   check('起動すると拠点の画面が出て、一時停止している', await until(page, () => window.__vh && !document.getElementById('base').hidden && window.__vh.sim.tick === 0));
   await page.screenshot({ path: `${OUT}02_base.png` });
-  check('拠点: 依頼は段階の順に 4 件（初級・中級・上級・極級）。最初に受けられるのは初級だけで、ほかは押せない', await page.evaluate(() => {
-    const qs = [...document.querySelectorAll('.base-choice[data-quest]')];
+  check('拠点: 依頼は段階の順に 15 件（ガルドロスの 4 段階と、初級の 11 種）。最初に受けられるのは初級だけで、ほかは押せない', await page.evaluate(() => {
+    const all = [...document.querySelectorAll('.base-choice[data-quest]')];
+    const qs = all.filter((b) => b.dataset.quest.startsWith('quest.basin.'));
     return qs.map((b) => b.dataset.rank).join() === 'rank.1,rank.2,rank.3,rank.4' && qs.map((b) => b.disabled).join() === 'false,true,true,true'
+      && all.length === 15 && all.map((b) => b.dataset.rank).join() === [...Array(12).fill('rank.1'), 'rank.2', 'rank.3', 'rank.4'].join() && all.slice(0, 12).every((b) => !b.disabled)
       && /【初級】依頼「岩場の足音」/.test(qs[0].textContent) && /【中級】/.test(qs[1].textContent) && /「岩場の足音」を達成すると受けられます/.test(qs[1].textContent)
       && /^防御力の合計 0（受けるダメージ ×1\.00）$/.test(document.querySelector('.base-armor-note').textContent) && document.querySelectorAll('.base-armor-row').length === 5;
   }), await page.evaluate(() => document.querySelector('.base-choice[data-quest="quest.basin.r2.001"]')?.textContent ?? ''));
@@ -495,7 +497,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
 
   // ---- 保存（IndexedDB）: 読み込み直し、二重取り、失敗、取り込み、強化、別のタブ ----
   check('初級を達成したので、中級の依頼が受けられる（上級・極級はまだ）', await page.evaluate(() => {
-    const qs = [...document.querySelectorAll('.base-choice[data-quest]')];
+    const qs = [...document.querySelectorAll('.base-choice[data-quest^="quest.basin."]')];
     return qs.map((b) => b.disabled).join() === 'false,false,true,true' && /達成 2 回/.test(qs[0].textContent) && /「脈打つ岩殻」を達成すると/.test(qs[2].textContent);
   }));
   await page.click('.base-choice[data-quest="quest.basin.r2.001"]');
@@ -721,7 +723,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
       && d.armor.join() === 'armor.head.001,armor.chest.001,armor.arms.001,armor.waist.001,armor.legs.001' && d.progress.questClears['quest.basin.003'] === 2 && d.revision === 4
       && bs.some((b) => b.reason === 'migrate' && JSON.stringify(b.doc) === JSON.stringify(orig)) && /新しい形へ直しました/.test(document.querySelector('.base-banner')?.textContent ?? '');
   }, v1), await page.evaluate(() => `${window.__vh.save.mode} v${window.__vh.save.doc.schemaVersion} r${window.__vh.save.doc.revision} ${window.__vh.save.notice}`));
-  check('初級を達成済みなので、中級の依頼が受けられる', await page.evaluate(() => [...document.querySelectorAll('.base-choice[data-quest]')].map((b) => b.disabled).join() === 'false,false,true,true'));
+  check('初級を達成済みなので、中級の依頼が受けられる', await page.evaluate(() => [...document.querySelectorAll('.base-choice[data-quest^="quest.basin."]')].map((b) => b.disabled).join() === 'false,false,true,true'));
   // 防具: 岩殻の兜（岩殻片 2 + 硬骨 1 + 80 通貨）
   await page.click('#base-forge > summary');
   await page.screenshot({ path: `${OUT}75_forge_armor.png`, fullPage: false });
@@ -1443,7 +1445,9 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
       e.dispatchEvent(new Event('toggle'));
       return e;
     };
-    const second = openItem('[data-species="monster.selvark"]');
+    // 原画があって、まだ体の無い種（v0.17.0 からはエンバルグだけ）。セルヴァルクは遊べる（原画から作った仮の体）
+    const second = openItem('[data-species="monster.embarg"]');
+    const selvark = openItem('[data-species="monster.selvark"]');
     const img = second.querySelector('img');
     if (img && !img.complete) await new Promise((r) => { img.onload = r; img.onerror = r; });
     const rare = openItem('[data-species="monster.ryuzelka"]'), juv = openItem('[data-species="monster.kordopil"]'), huge = openItem('[data-species="monster.nemboraf"]');
@@ -1453,15 +1457,15 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
       shown: getComputedStyle(d).display !== 'none', summary: d.querySelector('summary').textContent, n: d.querySelectorAll('[data-species]').length,
       heads: [...d.querySelectorAll('h4[data-rank]')].map((x) => x.textContent.replace(/\s+/g, ' ')), done: [...d.querySelectorAll('[data-species].implemented')].map((x) => x.dataset.species).join(),
       art: d.querySelectorAll('[data-species].art').length, planned: d.querySelectorAll('[data-species].planned').length, lazy: d.querySelectorAll('[data-species] dl').length,
-      img: img ? img.naturalWidth : 0, cap: second.querySelector('figcaption')?.textContent ?? '', eco: labels(second),
+      img: img ? img.naturalWidth : 0, cap: second.querySelector('figcaption')?.textContent ?? '', eco: labels(second), selCap: selvark.querySelector('figcaption')?.textContent ?? '',
       rare: rare.textContent.replace(/\s+/g, ' ').slice(0, 400), rareLabels: labels(rare), juv: juv.querySelector('dl').textContent, hugeTags: huge.querySelector('.tags').textContent, hugeNote: huge.querySelector('p.bestiary-note')?.textContent ?? '',
       fields: d.querySelectorAll('[data-field]').length, walkable: [...d.querySelectorAll('.bestiary-field.implemented')].map((x) => x.dataset.field).join(), fieldHead: d.querySelector('h4[data-fields]').textContent.replace(/\s+/g, ' '),
       fieldText: field.textContent.replace(/\s+/g, ' ').slice(0, 300), fieldState: field.querySelector('.state').textContent, basinState: basin.querySelector('.state').textContent,
     };
   });
-  check('図鑑: 依頼の欄に、86 種（78 種と幼体 8 種）が段階ごとに並ぶ（初級 13 / 13、中級 20 / 20、上級 25 / 25、極級 20 / 20）。遊べるのはガルドロスだけで、原画あり 12、案 73',
-    zukan.shown && zukan.summary === 'モンスター図鑑（78 種・幼体 8 種）' && zukan.n === 86 && zukan.heads.join('|') === '初級から 13 / 13 種 幼体 8|中級から 20 / 20 種|上級から 25 / 25 種|極級から 20 / 20 種' && zukan.done === 'monster.galdros' && zukan.art === 12 && zukan.planned === 73 && zukan.lazy === 4, JSON.stringify({ ...zukan, rare: '', juv: '', fieldText: '' }));
-  check('図鑑: 原画のある種を開くと、原画と、生態 8 項目が出る。体と動きがまだ無いことが分かる', zukan.img === 720 && /まだありません/.test(zukan.cap) && /食べ物,行動と気性,なわばり,1 日の動き,巣と眠り,ほかとの関わり,幼体,痕跡$/.test(zukan.eco), JSON.stringify({ img: zukan.img, cap: zukan.cap, eco: zukan.eco }));
+  check('図鑑: 依頼の欄に、86 種（78 種と幼体 8 種）が段階ごとに並ぶ（初級 13 / 13、中級 20 / 20、上級 25 / 25、極級 20 / 20）。遊べるのは、はじめの 12 種で、原画あり 1、案 73',
+    zukan.shown && zukan.summary === 'モンスター図鑑（78 種・幼体 8 種）' && zukan.n === 86 && zukan.heads.join('|') === '初級から 13 / 13 種 幼体 8|中級から 20 / 20 種|上級から 25 / 25 種|極級から 20 / 20 種' && zukan.done.split(',').length === 12 && zukan.done.startsWith('monster.galdros,monster.selvark') && zukan.art === 1 && zukan.planned === 73 && zukan.lazy === 5, JSON.stringify({ ...zukan, rare: '', juv: '', fieldText: '' }));
+  check('図鑑: 原画のある種を開くと、原画と、生態 8 項目が出る。体と動きがまだ無いことが分かる。遊べる種には「仮の形」と出る', zukan.img === 720 && /まだありません/.test(zukan.cap) && /食べ物,行動と気性,なわばり,1 日の動き,巣と眠り,ほかとの関わり,幼体,痕跡$/.test(zukan.eco) && /仮の形/.test(zukan.selCap), JSON.stringify({ img: zukan.img, cap: zukan.cap, selCap: zukan.selCap, eco: zukan.eco }));
   check('図鑑: 希少種には、もとの種と、一緒に出る相手が出る。幼体には、群れの数が出る。超大型は、案だけと分かる',
     /上級|大型・希少種/.test(zukan.rare) && /もとの種/.test(zukan.rareLabels) && /一緒に出る相手/.test(zukan.rareLabels) && /帆角獣 セルヴァルク/.test(zukan.rare) && /裂扇獣 グラセドン/.test(zukan.rare) && /群れ3〜5 体/.test(zukan.juv) && /岩殻獣 ガルドロス/.test(zukan.juv) && /^超大型／巨躯／沈根沢地／水・睡眠$/.test(zukan.hugeTags) && /案だけです/.test(zukan.hugeNote),
     JSON.stringify({ rare: zukan.rare, rareLabels: zukan.rareLabels, juv: zukan.juv.slice(0, 120), hugeTags: zukan.hugeTags, hugeNote: zukan.hugeNote }));
@@ -1528,6 +1532,71 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.screenshot({ path: `${OUT}98_hub_touch_shop.png` });
   await page.tap('.base-close');
   check('里（タッチ）: 「里へ戻る」で閉じる', await until(page, () => document.getElementById('base').hidden));
+  await ctx.close();
+}
+
+// ---- 大型 11 種（v0.17.0）: 依頼が始まり、原画を貼った体が出て、技を出す。状態異常の札 ----
+{
+  const KEYS = ['selvark', 'numeradon', 'bornakel', 'ashreia', 'lumisca', 'orglass', 'tengaro', 'verito', 'razmer', 'kirisave', 'velgait'];
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false);
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  check('大型 11 種: 拠点に、11 種の初級の依頼が並び、最初から受けられる', await page.evaluate((keys) => keys.every((k) => {
+    const b = document.querySelector(`.base-choice[data-quest="quest.${k}.r1"]`);
+    return b && !b.disabled && /【初級】/.test(b.textContent);
+  }), KEYS));
+  const rows = [];
+  for (const key of KEYS) {
+    await page.evaluate((k) => window.__vh.startHunt(`quest.${k}.r1`), key);
+    const ready = await until(page, () => window.__vh.sim.tick > 5 && window.__vh.view.monsterRig?.info?.().textured === true, 20000);
+    // 横（右側）から見る位置へ。気づかせて、動かないようにする
+    await page.evaluate(() => {
+      const v = window.__vh, m = v.sim.monsters[0], p = v.sim.player;
+      m.aware = true;
+      m.aiEnabled = false;
+      const dir = m.yaw - Math.PI / 2;
+      p.pos = { x: m.pos.x + Math.sin(dir) * 9, y: 0, z: m.pos.z + Math.cos(dir) * 9 };
+      p.prevPos = { ...p.pos };
+      p.yaw = dir + Math.PI;
+      v.view.cam.snap(p.yaw);
+    });
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: `${OUT}9${KEYS.indexOf(key) < 10 ? KEYS.indexOf(key) : 'x'}_creature_${key}.png` });
+    const info = await page.evaluate(() => ({ ...window.__vh.view.monsterRig.info(), ...window.__vh.view.stats(), name: window.__vh.sim.monsters[0].def.name }));
+    // 近くに立つと、技を出す（咆哮のほか）
+    await page.evaluate(() => {
+      const v = window.__vh, m = v.sim.monsters[0], p = v.sim.player;
+      m.aiEnabled = true;
+      m.cooldown = 0;
+      p.pos = { x: m.pos.x + Math.sin(m.yaw) * 4, y: 0, z: m.pos.z + Math.cos(m.yaw) * 4 };
+      p.prevPos = { ...p.pos };
+      window.__acts = [];
+    });
+    const acted = await until(page, () => {
+      const m = window.__vh.sim.monsters[0];
+      if (m.action && m.action.def.actionId !== m.def.discover.actionId) window.__acts.push(m.action.def.actionId);
+      return window.__acts.length > 0;
+    }, 12000);
+    rows.push({ key, ready, acted, bones: info.bones, verts: info.verts, calls: info.calls, tris: info.triangles });
+    await page.evaluate(() => window.__vh.toBase());
+    await until(page, () => !document.getElementById('base').hidden, 8000);
+  }
+  check('大型 11 種: どの依頼も始まり、標的に原画を貼った体が出る（骨 15 本以上）。描画量は目標内（100 draw calls / 20万 tri）', rows.every((r) => r.ready && r.bones >= 15 && r.calls <= 100 && r.tris <= 200000), JSON.stringify(rows.map((r) => `${r.key}:${r.ready ? '' : '×'}${r.bones}骨/${r.verts}頂点/${r.calls}calls`)));
+  check('大型 11 種: 近くに立つと、12 秒以内に技を出す', rows.every((r) => r.acted), JSON.stringify(rows.filter((r) => !r.acted).map((r) => r.key)));
+  // 状態異常の札（HUD）
+  await page.evaluate(() => window.__vh.startHunt('quest.ashreia.r1'));
+  await until(page, () => window.__vh.sim.tick > 5);
+  await page.evaluate(() => {
+    const p = window.__vh.sim.player;
+    p.mode = 'hurt';
+    p.hurt = { kind: 'sleep', tick: 0, duration: 600, dirYaw: 0 };
+    p.ailment.poisonTicks = 600;
+  });
+  check('状態異常: 眠りと毒の札が、体力の棒の下に出る', await until(page, () => {
+    const t = [...document.querySelectorAll('#hud-ailments .ail')].map((b) => b.textContent).join();
+    return t === '毒,睡眠';
+  }, 4000), await page.evaluate(() => document.getElementById('hud-ailments').textContent));
+  await page.screenshot({ path: `${OUT}9y_status_sleep.png` });
   await ctx.close();
 }
 

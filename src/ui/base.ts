@@ -381,7 +381,7 @@ export class BaseScreen {
             const img = document.createElement('img');
             img.alt = `${s.title} ${s.name} の原画`;
             img.src = assetUrl(`assets/bestiary/${art.replace(/\.png$/, '.webp')}`);
-            fig.append(img, el('figcaption', undefined, s.state === 'implemented' ? '原画（設定画）' : '原画（設定画）。ゲームの中の体と動きは、まだありません。'));
+            fig.append(img, el('figcaption', undefined, s.state === 'implemented' ? '原画（設定画）。ゲームの中の体は、この絵から作った仮の形です。' : '原画（設定画）。ゲームの中の体と動きは、まだありません。'));
             d.appendChild(fig);
           } else if (s.state === 'planned') d.appendChild(el('p', 'bestiary-note', '案だけです（絵も、ゲームの中の体も、まだありません）。'));
           d.appendChild(dl);

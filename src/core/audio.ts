@@ -10,6 +10,8 @@ export const SOUND_IDS = [
   'hurt', 'evade', 'charge_1', 'charge_2', 'charge_3', 'dummy_warn_01', 'dummy_swing_01', 'ground_slam', 'monster_dead', 'no_stamina', 'ui',
   'galdros_roar', 'galdros_warn', 'galdros_swing', 'galdros_scrape', 'galdros_charge', 'galdros_rumble', 'galdros_step', 'rock_impact', 'part_sever', 'monster_topple',
   'hunt_clear', 'hunt_fail',
+  // 大型 11 種（v0.17.0）。どれも合成音の仮素材
+  'beast_cry', 'bird_screech', 'insect_buzz', 'hiss', 'gust', 'splash', 'bell_boom', 'zap', 'ice_crack', 'mist_pop', 'shell_clack', 'status_on',
   'item_drink', 'item_heal', 'item_fail', 'trap_set', 'trap_armed', 'trap_trigger', 'orb_throw', 'tranq_hit', 'capture', 'carve', 'carve_get',
 ] as const;
 
@@ -244,6 +246,58 @@ export class AudioSystem {
       case 'monster_topple':
         this.tone('sine', 90, 30, 0.6, 0.9);
         this.noiseBurst(0.6, 'lowpass', 500, 90, 0.8);
+        break;
+      // ---- 大型 11 種（v0.17.0。合成音の仮素材）----
+      case 'beast_cry':
+        this.tone('sawtooth', 240, 150, 0.8, 0.22);
+        this.tone('sawtooth', 330, 210, 0.7, 0.12);
+        this.noiseBurst(0.7, 'bandpass', 900, 300, 0.35, 1.2);
+        break;
+      case 'bird_screech':
+        this.tone('sawtooth', 980, 640, 0.55, 0.14);
+        this.tone('square', 1460, 900, 0.4, 0.05);
+        this.noiseBurst(0.5, 'highpass', 2600, 1200, 0.25);
+        break;
+      case 'insect_buzz':
+        this.tone('sawtooth', 150, 132, 0.9, 0.18);
+        this.tone('square', 302, 270, 0.9, 0.06);
+        this.noiseBurst(0.8, 'bandpass', 900, 500, 0.25, 2);
+        break;
+      case 'hiss':
+        this.noiseBurst(0.75, 'highpass', 3400, 2000, 0.4, 0.8);
+        this.tone('sawtooth', 90, 70, 0.6, 0.12);
+        break;
+      case 'gust':
+        this.noiseBurst(0.7, 'bandpass', 300, 1400, 0.6, 0.6);
+        break;
+      case 'splash':
+        this.noiseBurst(0.45, 'lowpass', 1100, 220, 0.6 * k);
+        this.tone('sine', 220, 80, 0.3, 0.35 * k);
+        break;
+      case 'bell_boom':
+        this.tone('sine', 82, 58, 1.2, 0.55);
+        this.tone('triangle', 164, 120, 1.0, 0.18);
+        this.tone('sine', 246, 230, 0.9, 0.08);
+        break;
+      case 'zap':
+        this.tone('square', 1400, 180, 0.22, 0.12);
+        this.noiseBurst(0.25, 'highpass', 3000, 1800, 0.45);
+        break;
+      case 'ice_crack':
+        this.noiseBurst(0.3, 'highpass', 4200, 2600, 0.45, 0.6);
+        this.tone('triangle', 1700, 800, 0.25, 0.12);
+        break;
+      case 'mist_pop':
+        this.tone('sine', 320, 120, 0.4, 0.3);
+        this.noiseBurst(0.35, 'bandpass', 700, 400, 0.3);
+        break;
+      case 'shell_clack':
+        this.noiseBurst(0.12, 'bandpass', 2600, 800, 0.55, 0.5);
+        this.tone('square', 640, 420, 0.1, 0.1);
+        break;
+      case 'status_on':
+        this.tone('triangle', 620, 300, 0.4, 0.14);
+        this.tone('triangle', 465, 220, 0.5, 0.1, 0.12);
         break;
       case 'hunt_clear':
         this.tone('triangle', 523, 523, 0.18, 0.16);

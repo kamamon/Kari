@@ -2,7 +2,7 @@
 // 状態: free（移動）/ action（データ定義の行動）/ guard / hurt / dead
 import { DEG, angleDiff, forwardOf, turnToward, v3, yawOf, type V3 } from '../core/math';
 import type { SeededRng } from '../core/seededRng';
-import type { FieldDef, ActionDef, Content, GuardDef, HazardDef, ItemDef, ItemStack, ShootDef, WeaponDef, WeaponFamilyDef } from '../data/schemas';
+import { STATUS_KINDS, type FieldDef, type ActionDef, type Content, type GuardDef, type HazardDef, type ItemDef, type ItemStack, type ShootDef, type StatusHit, type StatusKind, type StatusTuning, type WeaponDef, type WeaponFamilyDef } from '../data/schemas';
 import { inWindow, newRun, type ActionRun } from './action';
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
@@ -10,6 +10,9 @@ import { sampleCurve } from './tracks';
 import type { Circle, World } from './world';
 
 export type PlayerMode = 'free' | 'action' | 'guard' | 'hurt' | 'dead';
+export type HurtKind = 'flinch' | 'knockdown' | 'bounce' | 'para' | 'sleep' | 'stun';
+/** 動けなくなる状態異常 */
+export const isDisabled = (p: PlayerState): boolean => p.mode === 'hurt' && (p.hurt?.kind === 'para' || p.hurt?.kind === 'sleep' || p.hurt?.kind === 'stun');
 export type GuardPhase = 'start' | 'hold' | 'end' | 'recoil' | 'break';
 
 export interface PlayerState {
@@ -30,8 +33,10 @@ export interface PlayerState {
   /** この tick に処理した行動の tick。命中判定はこれを見て 1 回だけ評価する。 */
   attackEval: { run: ActionRun; t: number } | null;
   guard: { phase: GuardPhase; tick: number } | null;
-  /** bounce: 攻撃が弾かれて、よろけている（被弾ではない） */
-  hurt: { kind: 'flinch' | 'knockdown' | 'bounce'; tick: number; duration: number; dirYaw: number } | null;
+  /** bounce: 攻撃が弾かれて、よろけている（被弾ではない）。para / sleep / stun: 状態異常で動けない（v0.17.0） */
+  hurt: { kind: HurtKind; tick: number; duration: number; dirYaw: number } | null;
+  /** 状態異常（v0.17.0）: 毒の残り時間と、種類ごとにためた値 */
+  ailment: { poisonTicks: number; build: Record<StatusKind, number> };
   deadTicks: number;
   invulnTicks: number;
   buffer: { main: number; sub: number; dodge: number; weapon: number; item: number; special: number };
@@ -142,6 +147,7 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
     attackEval: null,
     guard: null,
     hurt: null,
+    ailment: freshAilment(),
     deadTicks: 0,
     invulnTicks: 0,
     buffer: { main: 0, sub: 0, dodge: 0, weapon: 0, item: 0, special: 0 },
@@ -160,6 +166,58 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
 }
 
 export const weaponOf = (p: PlayerState, c: Content): WeaponDef => c.weapons.get(p.weaponId)!;
+
+const freshAilment = (): PlayerState['ailment'] => ({ poisonTicks: 0, build: { poison: 0, para: 0, sleep: 0, stun: 0 } });
+
+/** player.json に status が無い時の値 */
+export const DEFAULT_STATUS: StatusTuning = {
+  threshold: 100,
+  decayPerSec: 4,
+  poison: { ticks: 900, intervalTicks: 45, damage: 2 },
+  para: { ticks: 150 },
+  sleep: { ticks: 540 },
+  stun: { ticks: 210 },
+};
+export const statusTuning = (c: Content): StatusTuning => c.player.status ?? DEFAULT_STATUS;
+
+/**
+ * 状態異常をためる。閾値に達すると発症し、ためた値は 0 へ戻る。
+ * 毒は体力が減っていくだけ。麻痺・睡眠・気絶は、その間は動けない（いまの行動・防御・怯みは止まる）。
+ */
+export function applyStatus(p: PlayerState, s: StatusHit, ctx: SimCtx): void {
+  if (p.mode === 'dead' || s.power <= 0) return;
+  const S = statusTuning(ctx.content);
+  const b = p.ailment.build;
+  b[s.kind] = Math.min(S.threshold, b[s.kind] + s.power);
+  if (b[s.kind] < S.threshold) return;
+  b[s.kind] = 0;
+  if (s.kind === 'poison') {
+    if (p.ailment.poisonTicks <= 0) ctx.emit({ type: 'status', kind: 'poison', on: true });
+    p.ailment.poisonTicks = S.poison.ticks;
+    return;
+  }
+  p.action = null;
+  p.guard = null;
+  p.itemUse = null;
+  p.carving = null;
+  p.mode = 'hurt';
+  p.hurt = { kind: s.kind, tick: 0, duration: S[s.kind].ticks, dirYaw: p.yaw };
+  ctx.emit({ type: 'status', kind: s.kind, on: true });
+}
+
+/** 毎 tick: 毒の減り、ためた値の自然な減り */
+function stepAilment(p: PlayerState, ctx: SimCtx): void {
+  const a = p.ailment;
+  if (p.mode === 'dead') return;
+  const S = statusTuning(ctx.content);
+  const decay = S.decayPerSec / 60;
+  for (const k of STATUS_KINDS) if (a.build[k] > 0) a.build[k] = Math.max(0, a.build[k] - decay);
+  if (a.poisonTicks > 0) {
+    a.poisonTicks--;
+    if (a.poisonTicks % S.poison.intervalTicks === 0 && p.hp > 1) p.hp = Math.max(1, p.hp - S.poison.damage);
+    if (a.poisonTicks === 0) ctx.emit({ type: 'status', kind: 'poison', on: false });
+  }
+}
 export const familyOf = (p: PlayerState, c: Content): WeaponFamilyDef => c.families.get(weaponOf(p, c).family)!;
 
 export function isGuarding(p: PlayerState, g: GuardDef | null): boolean {
@@ -547,9 +605,9 @@ function stepGuard(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
 function stepHurt(p: PlayerState, ctx: SimCtx): void {
   const h = p.hurt!;
   const T = ctx.content.player;
-  // 吹き飛び距離: 怯み 0.5m / 転倒 3.2m / 弾かれ（データの pushback）。前半で進み切る。
+  // 吹き飛び距離: 怯み 0.5m / 転倒 3.2m / 弾かれ（データの pushback）。前半で進み切る。状態異常（麻痺・睡眠・気絶）は、その場で動けない。
   const travelTicks = h.kind === 'knockdown' ? 28 : h.kind === 'bounce' ? 8 : 10;
-  const total = h.kind === 'knockdown' ? 3.2 : h.kind === 'bounce' ? ctx.content.edge.bounce.pushback : 0.5;
+  const total = h.kind === 'knockdown' ? 3.2 : h.kind === 'bounce' ? ctx.content.edge.bounce.pushback : h.kind === 'flinch' ? 0.5 : 0;
   if (h.tick < travelTicks) {
     const u = h.tick / travelTicks;
     const d = (total * 2 * (1 - u)) / travelTicks;
@@ -557,6 +615,7 @@ function stepHurt(p: PlayerState, ctx: SimCtx): void {
   }
   h.tick++;
   if (h.tick >= h.duration) {
+    if (h.kind === 'para' || h.kind === 'sleep' || h.kind === 'stun') ctx.emit({ type: 'status', kind: h.kind, on: false });
     p.mode = 'free';
     p.hurt = null;
   }
@@ -578,6 +637,7 @@ export function respawnPlayer(p: PlayerState, ctx: SimCtx): void {
   p.action = null;
   p.guard = null;
   p.hurt = null;
+  p.ailment = freshAilment();
   p.deadTicks = 0;
   p.invulnTicks = 90;
   ctx.emit({ type: 'player_respawn' });
@@ -609,6 +669,7 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   }
   if (p.invulnTicks > 0) p.invulnTicks--;
   if (p.mode === 'hurt' || p.mode === 'dead' || p.mode === 'guard') p.pendingItem = false;
+  stepAilment(p, ctx);
 
   switch (p.mode) {
     case 'dead':
@@ -677,6 +738,8 @@ export interface IncomingHit {
   guardable: boolean;
   guardCost: number;
   reaction: 'flinch' | 'knockdown';
+  /** 当たった時（防御していない時）にためる状態異常 */
+  status?: StatusHit;
 }
 
 export type HitOutcome = 'ignored' | 'evaded' | 'guarded' | 'guard_break' | 'hit';
@@ -756,8 +819,11 @@ export function resolveIncomingHit(p: PlayerState, hit: IncomingHit, ctx: SimCtx
     ctx.emit({ type: 'momentum', level: 0 });
   }
   const knock = hit.reaction === 'knockdown';
+  // 眠っていた・麻痺していた時は、この攻撃で目が覚める（動けない状態は終わり、怯みか転倒になる）
+  if (p.hurt && (p.hurt.kind === 'para' || p.hurt.kind === 'sleep' || p.hurt.kind === 'stun')) ctx.emit({ type: 'status', kind: p.hurt.kind, on: false });
   p.hurt = { kind: hit.reaction, tick: 0, duration: knock ? T.knockdownTicks : T.flinchTicks, dirYaw: toAttacker + Math.PI };
   if (knock) p.invulnTicks = T.knockdownInvulnTicks;
+  if (hit.status) applyStatus(p, hit.status, ctx);
   return 'hit';
 }
 
@@ -774,7 +840,7 @@ function killPlayer(p: PlayerState, ctx: SimCtx): void {
 /** プレイヤーの被弾カプセル（ワールド座標）。 */
 export function playerHurtCapsule(p: PlayerState, c: Content): { a: V3; b: V3; r: number } {
   const T = c.player;
-  const low = p.mode === 'hurt' && p.hurt?.kind === 'knockdown';
+  const low = p.mode === 'hurt' && (p.hurt?.kind === 'knockdown' || p.hurt?.kind === 'sleep');
   const top = low ? 0.6 : T.height - T.radius;
   return { a: { x: p.pos.x, y: p.pos.y + T.radius, z: p.pos.z }, b: { x: p.pos.x, y: p.pos.y + top, z: p.pos.z }, r: T.radius };
 }

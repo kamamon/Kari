@@ -49,15 +49,20 @@ describe('段階のデータ', () => {
     expect(ranks[0]!.monster).toEqual({ hpScale: 1, partScale: 1, attackScale: 1, cooldownScale: 1 });
   });
 
-  it('依頼は段階ごとに 1 件。上の段階は、1 つ下の依頼の達成が条件', () => {
+  it('ガルドロスの依頼は段階ごとに 1 件。上の段階は、1 つ下の依頼の達成が条件。ほかの 11 種は初級 1 件ずつで、最初から受けられる（v0.17.0）', () => {
     expect(QUESTS.map((id) => content.quests.get(id)!.rankId)).toEqual(['rank.1', 'rank.2', 'rank.3', 'rank.4']);
     expect(QUESTS.map((id) => content.quests.get(id)!.requires ?? [])).toEqual([[], ['quest.basin.003'], ['quest.basin.r2.001'], ['quest.basin.r3.001']]);
-    expect(content.quests.size).toBe(4);
+    const others = [...content.quests.values()].filter((q) => q.targetMonsterId !== 'monster.galdros');
+    expect(others).toHaveLength(11);
+    for (const q of others) expect([q.rankId, q.requires ?? []]).toEqual(['rank.1', []]);
+    expect(content.quests.size).toBe(15);
   });
 
   it('段階ごとに、その段階からしか出ない素材が 2 つずつある。初級の 4 種は初級から出る', () => {
     const rankOf = materialRanks(content);
-    const from = (order: number): string[] => [...rankOf].filter(([, o]) => o === order).map(([id]) => content.materials.get(id)!.name).sort();
+    // ガルドロスの素材（ほかの 11 種は初級だけ。素材は 4 つずつ）
+    const from = (order: number): string[] => [...rankOf].filter(([id, o]) => o === order && id.startsWith('mat.galdros.')).map(([id]) => content.materials.get(id)!.name).sort();
+    expect([...rankOf].filter(([id, o]) => !id.startsWith('mat.galdros.') && o === 1)).toHaveLength(44);
     expect(from(1)).toEqual(['前脚甲', '岩殻片', '硬骨', '青銅晶脈'].sort());
     expect(from(2)).toEqual(['尾端晶', '脈岩殻'].sort());
     expect(from(3)).toEqual(['晶岩殻', '青銅晶塊'].sort());
@@ -73,7 +78,7 @@ describe('段階のデータ', () => {
       const order = content.ranks.get(q.rankId)!.order;
       const loot = lootForQuest(content, q)!;
       const plain = new Set([...loot.carve.table.map((e) => e.itemId), ...(q.rewards?.items ?? []).map((s) => s.itemId)]);
-      for (const [mat, o] of rankOf) if (o === order) expect(plain.has(mat), `${id}: ${mat}`).toBe(true);
+      for (const [mat, o] of rankOf) if (o === order && mat.startsWith('mat.galdros.')) expect(plain.has(mat), `${id}: ${mat}`).toBe(true);
       // 上の段階の素材が、下の段階の依頼に混ざっていない
       for (const mat of questMaterials(content, q)) expect(rankOf.get(mat)!, `${id}: ${mat}`).toBeLessThanOrEqual(order);
     }

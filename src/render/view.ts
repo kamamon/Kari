@@ -1,6 +1,6 @@
 // 描画のまとめ役。simulation の状態を読んで、仮モデル・カメラ・エフェクト・検証表示を更新する。
 // ここから simulation へ値を書き戻すことはしない（描画補間や骨の姿勢を計算の正本にしない）。
-import { CylinderGeometry, DoubleSide, Group, IcosahedronGeometry, Mesh, MeshBasicMaterial, MeshLambertMaterial, RingGeometry, Scene, Vector3, WebGLRenderer } from 'three';
+import { CylinderGeometry, DoubleSide, Group, IcosahedronGeometry, Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshStandardMaterial, RingGeometry, Scene, Vector3, WebGLRenderer } from 'three';
 import { angleDiff, fromArr, lerpV, norm, smoothstep, toWorld, type V3 } from '../core/math';
 import type { Content, MonsterDef } from '../data/schemas';
 import { inWindow, renderTick } from '../game/action';
@@ -16,6 +16,9 @@ import { FollowCamera } from './camera';
 import { DebugDraw } from './debugDraw';
 import { BladeTrail, GroundRings, Particles } from './effects';
 import { GaldrosRig } from './galdrosRig';
+import { CreatureRig } from './creatureRig';
+import type { HazardLook } from '../data/schemas';
+import { CREATURE_PLANS } from './creaturePlans';
 import { DummyRig, type MonsterRig } from './monsterRig';
 import { blendPose, clipPose, deadPose, emptyPose, guardPose, hurtPose, locomotionPose, type BodyPose } from './poses';
 import { HunterAnimator, applySolved, canSolve, stowOffhand, type AnimState } from './hunterAnim';
@@ -60,6 +63,27 @@ function lockCenter(def: MonsterDef): { x: number; y: number; z: number } {
   return c;
 }
 
+/** 飛び道具の種類ごとの色: 予告の輪、飛ぶ物、光、当たった時の粉と火花 */
+const HAZARD_COLORS: Record<HazardLook, { ring: number; ball: number; glow: number; dust: [number, number, number]; spark: [number, number, number] }> = {
+  rock: { ring: 0xff7a3a, ball: 0x80847a, glow: 0, dust: [0.6, 0.6, 0.55], spark: [0.9, 0.85, 0.7] },
+  mud: { ring: 0xc08040, ball: 0x5a4028, glow: 0, dust: [0.42, 0.32, 0.22], spark: [0.55, 0.42, 0.3] },
+  spark: { ring: 0xfff060, ball: 0xfff4a0, glow: 0xfff080, dust: [0.75, 0.75, 0.55], spark: [1, 0.96, 0.5] },
+  ice: { ring: 0x9fd8ff, ball: 0xcdeeff, glow: 0x3a6a88, dust: [0.82, 0.9, 0.96], spark: [0.85, 0.95, 1] },
+  mist: { ring: 0xa8e8d0, ball: 0xd8f4ea, glow: 0x5aa890, dust: [0.82, 0.92, 0.88], spark: [0.8, 1, 0.9] },
+  poison: { ring: 0xc070e0, ball: 0x8a3aa8, glow: 0x401050, dust: [0.55, 0.32, 0.62], spark: [0.75, 0.45, 0.85] },
+  para: { ring: 0xd8e040, ball: 0xb8c030, glow: 0x505810, dust: [0.75, 0.75, 0.35], spark: [0.95, 0.95, 0.45] },
+  ash: { ring: 0xc0c0b8, ball: 0x9a9a92, glow: 0, dust: [0.66, 0.66, 0.62], spark: [0.8, 0.8, 0.76] },
+};
+
+/** 大型 11 種の吹き出し（技データの vfx の id）。rear = 尾の側から後ろへ */
+const CREATURE_VFX: Record<string, { count: number; speed: number; spread: number; life: number; color: [number, number, number]; bursts?: number; rings?: number; ringColor?: number; rear?: boolean; dirY?: number; y?: number }> = {
+  gust: { count: 34, speed: 9, spread: 3.5, life: 0.7, color: [0.86, 0.88, 0.8], bursts: 2 },
+  sound_wave: { count: 18, speed: 7, spread: 2.5, life: 0.6, color: [0.85, 0.6, 0.38], rings: 3, ringColor: 0xf0b070 },
+  ash_cloud: { count: 44, speed: 4.5, spread: 5, life: 1.6, color: [0.62, 0.62, 0.6], bursts: 2, dirY: 0.05 },
+  mud_splash: { count: 30, speed: 5, spread: 4, life: 0.8, color: [0.42, 0.32, 0.22], dirY: 0.3, y: 0.4 },
+  poison_threads: { count: 34, speed: 4, spread: 4.5, life: 1.4, color: [0.62, 0.42, 0.7], rear: true, y: 0.5, dirY: 0 },
+};
+
 export class GameView {
   readonly renderer: WebGLRenderer;
   readonly scene = new Scene();
@@ -68,7 +92,10 @@ export class GameView {
   /** 飛んでいる矢の形（使い回す） */
   private arrows: Group[] = [];
   readonly monsterRig: MonsterRig | null = null;
-  private hazardViews = new Map<number, { group: Group; ring: Mesh; rock: Mesh }>();
+  private hazardViews = new Map<number, { group: Group; ring: Mesh; rock: Mesh; look: HazardLook }>();
+  /** 飛び道具の見た目（v0.17.0）: 種類ごとの材質。岩は従来どおり */
+  private hazardBall = new IcosahedronGeometry(1, 1);
+  private hazardMats = new Map<HazardLook, MeshStandardMaterial>();
   private trapViews = new Map<number, { group: Group; ring: Mesh; core: Mesh }>();
   private hazardRock = new IcosahedronGeometry(1, 0);
   private hazardRockMat = new MeshLambertMaterial({ color: 0x80847a, flatShading: true });
@@ -143,8 +170,10 @@ export class GameView {
     const m = sim.monsters[0];
     if (m) {
       const ids = m.def.parts.map((p) => p.id);
-      this.monsterRig = m.def.rigFamily === 'quadruped_heavy' ? new GaldrosRig(ids) : new DummyRig(ids);
-      this.monsterShadow.scale.setScalar(m.def.rigFamily === 'quadruped_heavy' ? 1.45 : 1);
+      // 大型 11 種（v0.17.0）は、設計図から作る仮モデル。ガルドロスは専用の仮モデル、訓練の標的は岩偶
+      const plan = CREATURE_PLANS[m.def.id];
+      this.monsterRig = plan ? new CreatureRig(plan, ids) : m.def.id === 'monster.galdros' ? new GaldrosRig(ids) : new DummyRig(ids);
+      this.monsterShadow.scale.setScalar(plan ? Math.max(1, m.def.bodyRadius * 1.1) : m.def.id === 'monster.galdros' ? 1.45 : 1);
       this.scene.add(this.monsterRig.root, this.monsterShadow, ...(this.monsterRig.extras ?? []));
     }
     this.trail = new BladeTrail(this.scene);
@@ -209,6 +238,7 @@ export class GameView {
         case 'action_event':
           if (e.actor === sim.player.id && e.kind === 'trail_on') this.trail.active = true;
           else if (e.actor === sim.player.id && e.kind === 'trail_off') this.trail.active = false;
+          else if (e.kind === 'vfx' && m && CREATURE_VFX[e.id]) this.creatureVfx(e.id, m);
           else if (e.kind === 'vfx' && e.id === 'ground_slam' && m?.action?.def.weaponTrack) {
             const tr = this.content.tracks.get(m.action.def.weaponTrack)!;
             const seg = trackSegment(tr, m.action.tick);
@@ -262,12 +292,15 @@ export class GameView {
         case 'monster_rage':
           this.cam.addShake(0.35);
           break;
-        case 'hazard_impact':
-          this.rings.spawn(e.x, 0, e.z, e.radius * 1.5, 0.45, 0xe9e2c8);
-          this.dust.emit(14, { x: e.x, y: 0.3, z: e.z }, 3, 1.4, 0.9, [0.6, 0.6, 0.55], 0.6);
-          this.sparks.emit(8, { x: e.x, y: 0.4, z: e.z }, 4, 2.5, 0.4, [0.9, 0.85, 0.7]);
-          this.cam.addShake(0.3);
+        case 'hazard_impact': {
+          const look = sim.hazards.find((h) => h.id === e.id)?.look ?? 'rock';
+          const hc = HAZARD_COLORS[look];
+          this.rings.spawn(e.x, 0, e.z, e.radius * 1.5, 0.45, hc.ring === 0xff7a3a ? 0xe9e2c8 : hc.ring);
+          this.dust.emit(look === 'mist' || look === 'poison' || look === 'para' ? 26 : 14, { x: e.x, y: 0.3, z: e.z }, look === 'mist' ? 4.5 : 3, 1.4, look === 'poison' || look === 'para' ? 1.6 : 0.9, hc.dust, 0.6);
+          this.sparks.emit(look === 'spark' ? 26 : 8, { x: e.x, y: 0.4, z: e.z }, look === 'spark' ? 6 : 4, 2.5, 0.4, hc.spark);
+          this.cam.addShake(look === 'rock' ? 0.3 : 0.18);
           break;
+        }
         case 'guard':
           this.sparks.emit(16, e.pos, 5, 1.5, 0.3, [1, 0.95, 0.7]);
           this.cam.addShake(0.3);
@@ -609,6 +642,35 @@ export class GameView {
     }
   }
 
+  private hazardMat(look: HazardLook): MeshStandardMaterial {
+    let m = this.hazardMats.get(look);
+    if (!m) {
+      const c = HAZARD_COLORS[look];
+      m = new MeshStandardMaterial({ color: c.ball, emissive: c.glow, emissiveIntensity: c.glow ? 0.8 : 0, roughness: 0.5, transparent: look === 'mist', opacity: look === 'mist' ? 0.75 : 1 });
+      this.hazardMats.set(look, m);
+    }
+    return m;
+  }
+
+  /** 大型 11 種の吹き出し（風圧・音圧・灰の幕・泥跳ね・毒糸）。頭（または尾）の前へ、向きのある粒を出す。見た目だけ */
+  private creatureVfx(id: string, m: Simulation['monsters'][number]): void {
+    const v = CREATURE_VFX[id]!;
+    const plan = CREATURE_PLANS[m.def.id];
+    const tip = plan ? plan.spine[v.rear ? 0 : plan.spine.length - 1]! : null;
+    const z = tip && plan ? (tip[0] - plan.origin[0]) * plan.scale : v.rear ? -2 : 2;
+    const y = tip && plan ? Math.max(0.4, (plan.origin[1] - tip[1]) * plan.scale) : 1.2;
+    const f = { x: Math.sin(m.yaw), z: Math.cos(m.yaw) };
+    const s = v.rear ? -1 : 1;
+    const at = { x: m.pos.x + f.x * z, y: Math.min(y, v.y ?? y), z: m.pos.z + f.z * z };
+    const dir = { x: f.x * s, y: v.dirY ?? -0.05, z: f.z * s };
+    for (let k = 0; k < (v.bursts ?? 1); k++) {
+      const o = { x: at.x + dir.x * k * 1.2, y: at.y, z: at.z + dir.z * k * 1.2 };
+      this.dust.emitDir(v.count, o, dir, v.speed, v.spread, v.life, v.color, 0.4);
+    }
+    if (v.rings) for (let k = 1; k <= v.rings; k++) this.rings.spawn(at.x + dir.x * k * 2.2, 0, at.z + dir.z * k * 2.2, 1.6 + k * 0.6, 0.5 + k * 0.1, v.ringColor ?? 0xe9e2c8);
+    this.cam.addShake(0.15);
+  }
+
   /** 落下物: 落ちる場所に輪を出し、岩を予告時間ちょうどで地面へ届かせる。 */
   private syncHazards(sim: Simulation): void {
     const seen = new Set<number>();
@@ -622,12 +684,17 @@ export class GameView {
         ring.position.y = 0.06;
         const disc = new Mesh(new CylinderGeometry(1, 1, 0.02, 24), new MeshBasicMaterial({ color: 0xff7a3a, transparent: true, opacity: 0.16, depthWrite: false, fog: false }));
         disc.position.y = 0.04;
-        const rock = new Mesh(this.hazardRock, this.hazardRockMat);
-        rock.castShadow = true;
+        const look = h.look ?? 'rock';
+        const rock = look === 'rock' ? new Mesh(this.hazardRock, this.hazardRockMat) : new Mesh(this.hazardBall, this.hazardMat(look));
+        rock.castShadow = look !== 'spark' && look !== 'mist';
+        rock.visible = look !== 'spark';
+        const rc = HAZARD_COLORS[look];
+        (ring.material as MeshBasicMaterial).color.setHex(rc.ring);
+        (disc.material as MeshBasicMaterial).color.setHex(rc.ring);
         group.add(ring, disc, rock);
         group.position.set(h.x, sim.world.groundHeight(h.x, h.z), h.z);
         this.scene.add(group);
-        v = { group, ring, rock };
+        v = { group, ring, rock, look };
         this.hazardViews.set(h.id, v);
         // 岩が打ち上がった場所に、土ぼこり
         if (h.from) this.dust.emit(5, { x: h.from.x, y: h.from.y + 0.2, z: h.from.z }, 4, 2.6, 0.8, [0.6, 0.58, 0.5], 0.7);
@@ -642,8 +709,17 @@ export class GameView {
       } else {
         v.rock.position.y = 0.5 + 15 * u * u;
       }
-      v.rock.scale.set(0.55, 0.75 / Math.max(0.5, h.radius) * h.radius, 0.55);
-      v.rock.rotation.set(this.time * 3 + h.id, this.time * 2, 0);
+      if (v.look === 'rock') {
+        v.rock.scale.set(0.55, 0.75 / Math.max(0.5, h.radius) * h.radius, 0.55);
+        v.rock.rotation.set(this.time * 3 + h.id, this.time * 2, 0);
+      } else {
+        // 泥玉・氷片・霧の球・毒の滴: 落ちる場所の大きさに合わせず、決まった大きさ（入れ物は半径で拡大されている）
+        const size = v.look === 'mist' ? 0.55 + 0.08 * Math.sin(this.time * 9) : v.look === 'ice' ? 0.35 : 0.3;
+        v.rock.scale.set(size / h.radius, (v.look === 'ice' ? size * 1.8 : size), size / h.radius);
+        v.rock.rotation.set(this.time * 4 + h.id, this.time * 3, 0);
+        // 雷: 予告の間、輪の上に小さな火花
+        if (v.look === 'spark' && Math.random() < 0.25) this.sparks.emit(2, { x: h.x + (Math.random() - 0.5) * h.radius, y: 0.15, z: h.z + (Math.random() - 0.5) * h.radius }, 2.5, 1.5, 0.25, [1, 0.95, 0.45]);
+      }
     }
     for (const [id, v] of this.hazardViews) {
       if (seen.has(id)) continue;

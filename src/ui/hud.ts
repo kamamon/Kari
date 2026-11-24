@@ -27,6 +27,8 @@ export interface FrameStats {
   frames: FrameSummary;
 }
 
+const AILMENT_NAMES: Record<string, string> = { poison: '毒', para: '麻痺', sleep: '睡眠', stun: '気絶' };
+
 export class Hud {
   readonly root: HTMLElement;
   private hp: HTMLElement;
@@ -61,6 +63,7 @@ export class Hud {
   private toasts: HTMLElement;
   /** ロックオンの照準（v0.16.0） */
   private lockMark: HTMLElement;
+  private ailments: HTMLElement;
   private item: HTMLElement;
   private momentum: HTMLElement;
   private wrap: HTMLElement;
@@ -79,6 +82,9 @@ export class Hud {
     this.hp = el('i', '', hpBar);
     this.stBar = el('div', 'bar bar-st', bars);
     this.st = el('i', '', this.stBar);
+    // 状態異常（v0.17.0）: 付いている間だけ、名前の札を出す
+    this.ailments = el('div', 'hud-ailments', bars);
+    this.ailments.id = 'hud-ailments';
     const blade = el('div', 'hud-blade', bars);
     // 刃の状態: 名前（刃 / 打面 / 穂先）、残りの棒、段階の名前。刃の状態の無い武器（環弓）では棒を隠す
     this.edgeBox = el('div', 'edge', blade);
@@ -355,6 +361,15 @@ export class Hud {
     const st = p.stamina / T.maxStamina;
     this.set('st', Math.round(st * 200), () => (this.st.style.transform = `scaleX(${st})`));
     this.set('stlow', p.exhausted || p.stamina < 25 ? 1 : 0, () => this.stBar.classList.toggle('low', p.exhausted || p.stamina < 25));
+    const disabled = p.mode === 'hurt' && p.hurt && (p.hurt.kind === 'para' || p.hurt.kind === 'sleep' || p.hurt.kind === 'stun') ? p.hurt.kind : '';
+    const tags = [p.ailment.poisonTicks > 0 ? 'poison' : '', disabled].filter(Boolean).join(' ');
+    this.set('ailments', tags, () => {
+      this.ailments.textContent = '';
+      for (const k of tags ? tags.split(' ') : []) {
+        const b = el('b', `ail ail-${k}`, this.ailments, AILMENT_NAMES[k] ?? k);
+        b.dataset.kind = k;
+      }
+    });
     const lv = p.action?.chargeLevel ?? 0;
     this.set('charge', lv, () => this.pips.forEach((b, i) => b.classList.toggle('on', i < lv)));
     // 刃の状態

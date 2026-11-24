@@ -7,6 +7,17 @@ export const SCHEMA_VERSION = 1;
 export type Triple = [number, number, number];
 export type DamageType = 'cut' | 'blunt' | 'shot';
 
+/** 狩人の状態異常（v0.17.0。docs/spec.md 22 章）。para = 麻痺、stun = 気絶。 */
+export type StatusKind = 'poison' | 'para' | 'sleep' | 'stun';
+export const STATUS_KINDS: readonly StatusKind[] = ['poison', 'para', 'sleep', 'stun'];
+/** 敵の攻撃が狩人へためる状態異常。power が閾値（player.json の status.threshold）に達すると発症する。 */
+export interface StatusHit {
+  kind: StatusKind;
+  power: number;
+}
+/** 飛び道具・地面の判定の見た目（計算には関わらない）。省くと岩。 */
+export type HazardLook = 'rock' | 'mud' | 'spark' | 'ice' | 'mist' | 'poison' | 'para' | 'ash';
+
 export interface PhaseDef {
   id: string;
   from: number;
@@ -34,6 +45,8 @@ export interface HitWindowDef {
   guardable?: boolean;
   guardCost?: number;
   reaction?: 'flinch' | 'knockdown';
+  /** 当たった時にためる状態異常（防御した時はためない） */
+  status?: StatusHit;
 }
 
 export interface CancelWindowDef {
@@ -76,7 +89,8 @@ export interface ActionDef {
   tickRate: number;
   durationTicks: number;
   phases: PhaseDef[];
-  rootMotion: { mode: 'controller' | 'none'; curveId?: string };
+  /** dirDeg: 進む向き（体の正面からの角度。+90 = 左（+X）、-90 = 右、180 = 後ろ）。省くと正面（v0.17.0） */
+  rootMotion: { mode: 'controller' | 'none'; curveId?: string; dirDeg?: number };
   turning?: { untilTick: number; maxDegreesPerSecond: number };
   hitWindows: HitWindowDef[];
   cancelWindows: CancelWindowDef[];
@@ -350,6 +364,10 @@ export interface HazardDef {
   peak?: number;
   /** around（省略時）= 狙った位置のまわりへ散らす / line = 打ち上げた場所から狙った位置へ、一列に並べる */
   pattern?: 'around' | 'line';
+  /** 当たった時にためる状態異常 */
+  status?: StatusHit;
+  /** 見た目（岩・泥・雷・氷・霧・毒・痺液・灰）。省くと岩 */
+  look?: HazardLook;
 }
 
 export interface MonsterDef {
@@ -529,6 +547,22 @@ export interface PlayerTuning {
   gravity: number;
   /** 訓練場（依頼ではない時）に持たせる道具。省くと無し */
   trainingSupplies?: ItemStack[];
+  /** 状態異常（v0.17.0）。省くと src/game/player.ts の既定値 */
+  status?: StatusTuning;
+}
+
+/**
+ * 状態異常の決まり。攻撃ごとの power をため、threshold で発症する（ためた値は 0 へ戻る）。ためた値は毎秒 decayPerSec ずつ減る。
+ * poison: ticks の間、intervalTicks ごとに damage 減る（体力は 1 より下がらない）。para / sleep / stun: ticks の間、動けない。
+ * 眠っている間に攻撃を受けると起きる（その攻撃の怯み・転倒になる）。
+ */
+export interface StatusTuning {
+  threshold: number;
+  decayPerSec: number;
+  poison: { ticks: number; intervalTicks: number; damage: number };
+  para: { ticks: number };
+  sleep: { ticks: number };
+  stun: { ticks: number };
 }
 
 /** 依頼。M2 前半は大型 1 体の討伐だけ。 */
@@ -610,14 +644,15 @@ export interface ContentIndex {
   files: {
     actions: string[];
     tracks: string[];
-    curves: string;
+    /** curves・quests・items・loot は、1 つか、並べた複数のファイル（v0.17.0。モンスターの生成器の出力を別のファイルに分けるため） */
+    curves: string | string[];
     weapons: string;
     monsters: string[];
     maps: string[];
     fields: string[];
-    quests: string;
-    items: string;
-    loot: string;
+    quests: string | string[];
+    items: string | string[];
+    loot: string | string[];
     recipes: string;
     ranks: string;
     shop: string;

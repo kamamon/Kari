@@ -1,5 +1,6 @@
 // simulation から描画・音・UI へ伝える出来事。simulation は「何が起きたか」だけを出し、演出は受け取った側が決める。
 import type { V3 } from '../core/math';
+import type { StatusKind } from '../data/schemas';
 
 export type SimEvent =
   | { type: 'action_start'; actor: string; actionId: string; instanceId: number }
@@ -55,6 +56,8 @@ export type SimEvent =
   | { type: 'monster_wake'; target: string; byHit: boolean }
   | { type: 'monster_lost'; target: string }
   | { type: 'player_hurt'; damage: number; reaction: 'flinch' | 'knockdown'; pos: V3 }
+  /** 状態異常が付いた（on）・消えた。sleep / para / stun は動けない間、poison は体力が減っていく間 */
+  | { type: 'status'; kind: StatusKind; on: boolean }
   | { type: 'guard'; damage: number; pos: V3 }
   | { type: 'parry'; kind: 'parry' | 'counter'; pos: V3 }
   | { type: 'momentum'; level: number }

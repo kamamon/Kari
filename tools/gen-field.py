@@ -124,7 +124,9 @@ field = dict(
     timeLimitScale=2,
     roam=dict(note='大型の移動と休息。stayTicks の間エリアに居て、次のエリアへ歩いて出る。体力が limpHpRatio 以下になると、巣（nest）へ向かい、sleepTicks の間眠って、体力を sleepHealCap まで戻す。攻撃されると起きる。机上の値',
               stayTicks=[5400, 9000], walkSpeedScale=1.25, limpSpeedScale=0.7, limpHpRatio=0.25, sleepTicks=3600, sleepHealPerSec=0.004, sleepHealCap=0.4, wakeStayTicks=1800, wanderSpeedScale=0.55, wanderIdleTicks=[240, 540], wanderInset=10, loseSightTicks=600),
-    routes={'monster.galdros': dict(start='a3', roam=['a3', 'a7', 'a4', 'a2'], nest='a10')},
+    # 大型 11 種（v0.17.0）は、本来の狩場が無いので、ここを借りる（巡り方は tools/gen-monsters.py の route と同じ）
+    routes={'monster.galdros': dict(start='a3', roam=['a3', 'a7', 'a4', 'a2'], nest='a10'),
+            'monster.selvark': dict(start='a2', roam=['a2', 'a4', 'a3'], nest='a10'), 'monster.numeradon': dict(start='a4', roam=['a4', 'a7', 'a3'], nest='a10'), 'monster.bornakel': dict(start='a7', roam=['a7', 'a4', 'a2'], nest='a10'), 'monster.ashreia': dict(start='a6', roam=['a6', 'a9', 'a3'], nest='a10'), 'monster.lumisca': dict(start='a9', roam=['a9', 'a6', 'a3'], nest='a10'), 'monster.orglass': dict(start='a3', roam=['a3', 'a6', 'a9'], nest='a10'), 'monster.tengaro': dict(start='a7', roam=['a7', 'a3', 'a6'], nest='a10'), 'monster.verito': dict(start='a4', roam=['a4', 'a2', 'a3'], nest='a10'), 'monster.razmer': dict(start='a2', roam=['a2', 'a3', 'a7'], nest='a10'), 'monster.kirisave': dict(start='a6', roam=['a6', 'a3', 'a2'], nest='a10'), 'monster.velgait': dict(start='a9', roam=['a9', 'a6', 'a7'], nest='a10')},
     areas=[areas[a[0]] for a in AREAS],
 )
 def dump(o): return json.dumps(o, ensure_ascii=False)

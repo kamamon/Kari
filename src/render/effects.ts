@@ -101,6 +101,20 @@ export class Particles {
     }
   }
 
+  /** 向きのある吹き出し（風圧・音圧・灰の幕など）。dir の向きへ speed で、spread の幅で散らす */
+  emitDir(n: number, at: { x: number; y: number; z: number }, dir: { x: number; y: number; z: number }, speed: number, spread: number, life: number, color: [number, number, number], jitter = 0): void {
+    for (let k = 0; k < n; k++) {
+      const i = this.next;
+      this.next = (this.next + 1) % this.count;
+      const s = speed * (0.6 + Math.random() * 0.6);
+      const j = (): number => (Math.random() - 0.5) * 2 * jitter;
+      this.pos.set([at.x + j(), at.y + j() * 0.5, at.z + j()], i * 3);
+      this.vel.set([dir.x * s + (Math.random() - 0.5) * spread, dir.y * s + (Math.random() - 0.3) * spread * 0.5, dir.z * s + (Math.random() - 0.5) * spread], i * 3);
+      this.base.set(color, i * 3);
+      this.life[i] = this.max[i] = life * (0.6 + Math.random() * 0.7);
+    }
+  }
+
   update(dt: number): void {
     const drag = Math.max(0, 1 - this.drag * dt);
     for (let i = 0; i < this.count; i++) {

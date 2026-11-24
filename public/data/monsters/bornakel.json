@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "monster.bornakel",
+  "name": "鐘嚢獣 ボルナケル",
+  "rigFamily": "quadruped_heavy",
+  "assetId": "model.monster.bornakel",
+  "hp": 2000,
+  "bodyRadius": 1.4,
+  "turnDegPerSec": 55,
+  "moveSpeed": 2.2,
+  "captureAllowed": true,
+  "lootId": "loot.bornakel",
+  "capture": {"hpRatio": 0.25, "tranqNeeded": 2, "tranqDecayTicks": 900},
+  "respawnTicks": null,
+  "breakStaggerTicks": 80,
+  "collision": [{"z": 0.2, "r": 1.3}, {"z": 1.6, "r": 1.0}, {"z": -1.4, "r": 1.0}],
+  "approach": {"stopDist": 4.2, "faceDeg": 50},
+  "discover": {"range": 15, "fovDeg": 120, "closeRange": 6, "actionId": "monster.bornakel.roar"},
+  "rage": {"threshold": 500, "durationTicks": 2100, "actionId": "monster.bornakel.roar", "speedScale": 1.25, "damageScale": 1.2, "cooldownScale": 0.6},
+  "parts": [
+    {"id": "head", "name": "頭鐘", "hitzone": {"cut": 0.6, "blunt": 0.7, "shot": 0.55}, "brokenHitzone": {"cut": 0.7, "blunt": 0.8, "shot": 0.65}, "elementZone": 0.2, "breakDurability": 230, "material": "rock", "flinch": {"threshold": 170, "growth": 60, "ticks": 50}, "shapes": [{"a": [0.0, 2.44, 2.32], "b": [0.0, 2.22, 3.28], "r": 0.55}]},
+    {"id": "sac_chest", "name": "胸の共鳴嚢", "hitzone": {"cut": 0.85, "blunt": 0.8, "shot": 0.8}, "brokenHitzone": {"cut": 0.95, "blunt": 0.9, "shot": 0.9}, "elementZone": 0.2, "breakDurability": 190, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 1.36, 2.0], "r": 0.55}]},
+    {"id": "sac_l", "name": "左肩の共鳴嚢", "hitzone": {"cut": 0.85, "blunt": 0.8, "shot": 0.8}, "brokenHitzone": {"cut": 0.95, "blunt": 0.9, "shot": 0.9}, "elementZone": 0.2, "breakDurability": 190, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.35, 2.98, 0.12], "r": 0.55}]},
+    {"id": "sac_r", "name": "右肩の共鳴嚢", "hitzone": {"cut": 0.85, "blunt": 0.8, "shot": 0.8}, "brokenHitzone": {"cut": 0.95, "blunt": 0.9, "shot": 0.9}, "elementZone": 0.2, "breakDurability": 190, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [-0.35, 2.78, 1.2], "r": 0.62}]},
+    {"id": "body", "name": "胴", "hitzone": {"cut": 0.45, "blunt": 0.5, "shot": 0.4}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 1.82, -1.2], "b": [0.0, 1.92, 1.6], "r": 0.85}]},
+    {"id": "foreleg", "name": "前脚", "hitzone": {"cut": 0.45, "blunt": 0.5, "shot": 0.4}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "flinch": {"threshold": 230, "growth": 80, "ticks": 130, "topple": true}, "shapes": [{"a": [0.9, 1.24, 1.28], "b": [0.9, 0.2, 1.3], "r": 0.44}, {"a": [-0.9, 1.24, 1.28], "b": [-0.9, 0.2, 1.3], "r": 0.44}]},
+    {"id": "hindleg", "name": "後脚", "hitzone": {"cut": 0.45, "blunt": 0.5, "shot": 0.4}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "flinch": {"threshold": 230, "growth": 80, "ticks": 130, "topple": true}, "shapes": [{"a": [0.9, 1.24, -1.32], "b": [0.9, 0.2, -1.32], "r": 0.42}, {"a": [-0.9, 1.24, -1.32], "b": [-0.9, 0.2, -1.32], "r": 0.42}]},
+    {"id": "tail", "name": "尾", "hitzone": {"cut": 0.55, "blunt": 0.5, "shot": 0.5}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 1.72, -1.48], "b": [0.0, 1.4, -2.36], "r": 0.22}]}
+  ],
+  "ai": {
+    "aggroRange": 200,
+    "cooldownTicks": [55, 105],
+    "choices": [
+      {"actionId": "monster.bornakel.sound_blast", "minDist": 3, "maxDist": 11, "maxAngleDeg": 35, "weight": 2.5, "cooldownTicks": 300},
+      {"actionId": "monster.bornakel.sac_slam", "minDist": 0, "maxDist": 7, "maxAngleDeg": 50, "weight": 2.5},
+      {"actionId": "monster.bornakel.bell_slam", "minDist": 0, "maxDist": 5, "maxAngleDeg": 35, "weight": 2.5},
+      {"actionId": "monster.bornakel.shiver_step", "minDist": 2, "maxDist": 6, "maxAngleDeg": 40, "weight": 2}
+    ]
+  }
+}

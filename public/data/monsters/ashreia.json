@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "monster.ashreia",
+  "name": "灰帷鳥 アシュレイア",
+  "rigFamily": "biped_wing",
+  "assetId": "model.monster.ashreia",
+  "hp": 1450,
+  "bodyRadius": 0.8,
+  "turnDegPerSec": 100,
+  "moveSpeed": 3.0,
+  "captureAllowed": true,
+  "lootId": "loot.ashreia",
+  "capture": {"hpRatio": 0.25, "tranqNeeded": 2, "tranqDecayTicks": 900},
+  "respawnTicks": null,
+  "breakStaggerTicks": 80,
+  "collision": [{"z": 0.0, "r": 0.8}, {"z": -1.0, "r": 0.6}],
+  "approach": {"stopDist": 3.8, "faceDeg": 50},
+  "discover": {"range": 16, "fovDeg": 140, "closeRange": 6, "actionId": "monster.ashreia.roar"},
+  "rage": {"threshold": 400, "durationTicks": 1800, "actionId": "monster.ashreia.roar", "speedScale": 1.3, "damageScale": 1.15, "cooldownScale": 0.6},
+  "parts": [
+    {"id": "crest", "name": "頭の冠羽", "hitzone": {"cut": 0.8, "blunt": 0.7, "shot": 0.75}, "brokenHitzone": {"cut": 0.9, "blunt": 0.8, "shot": 0.85}, "elementZone": 0.2, "breakDurability": 150, "material": "hide", "flinch": {"threshold": 120, "growth": 50, "ticks": 45}, "shapes": [{"a": [0.0, 3.194, 0.544], "b": [0.0, 3.013, 1.416], "r": 0.3}]},
+    {"id": "tuft_l", "name": "左の灰粉房", "hitzone": {"cut": 0.75, "blunt": 0.7, "shot": 0.7}, "brokenHitzone": {"cut": 0.85, "blunt": 0.8, "shot": 0.8}, "elementZone": 0.2, "breakDurability": 170, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.56, 1.706, -0.363], "b": [0.56, 1.706, 0.218], "r": 0.28}]},
+    {"id": "tuft_r", "name": "右の灰粉房", "hitzone": {"cut": 0.75, "blunt": 0.7, "shot": 0.7}, "brokenHitzone": {"cut": 0.85, "blunt": 0.8, "shot": 0.8}, "elementZone": 0.2, "breakDurability": 170, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [-0.56, 1.706, -0.363], "b": [-0.56, 1.706, 0.218], "r": 0.28}]},
+    {"id": "tail", "name": "尾羽", "hitzone": {"cut": 0.6, "blunt": 0.5, "shot": 0.6}, "brokenHitzone": {"cut": 0.7, "blunt": 0.6, "shot": 0.7}, "elementZone": 0.2, "breakDurability": 160, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 1.851, -1.016], "b": [0.0, 1.125, -2.723], "r": 0.28}]},
+    {"id": "body", "name": "胴", "hitzone": {"cut": 0.5, "blunt": 0.5, "shot": 0.45}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 1.888, -0.799], "b": [0.0, 2.069, 0.581], "r": 0.7}, {"a": [0.0, 2.396, 0.653], "b": [0.0, 3.086, 0.726], "r": 0.2}]},
+    {"id": "legs", "name": "脚", "hitzone": {"cut": 0.45, "blunt": 0.5, "shot": 0.4}, "elementZone": 0.2, "breakDurability": null, "material": "shell", "flinch": {"threshold": 190, "growth": 70, "ticks": 120, "topple": true}, "shapes": [{"a": [0.3, 1.27, -0.218], "b": [0.3, 0.218, -0.145], "r": 0.15}, {"a": [-0.3, 1.27, -0.218], "b": [-0.3, 0.218, -0.145], "r": 0.15}]}
+  ],
+  "ai": {
+    "aggroRange": 200,
+    "cooldownTicks": [45, 95],
+    "choices": [
+      {"actionId": "monster.ashreia.ash_curtain", "minDist": 2, "maxDist": 8, "maxAngleDeg": 40, "weight": 2.5, "cooldownTicks": 360},
+      {"actionId": "monster.ashreia.beak_thrust", "minDist": 0, "maxDist": 4.8, "maxAngleDeg": 30, "weight": 3},
+      {"actionId": "monster.ashreia.glide", "minDist": 6, "maxDist": 15, "maxAngleDeg": 25, "weight": 2, "cooldownTicks": 420, "clearAhead": 9},
+      {"actionId": "monster.ashreia.wing_sweep_l", "minDist": 0, "maxDist": 5, "maxAngleDeg": 150, "weight": 2.5, "minAngleDeg": 40, "side": "left"},
+      {"actionId": "monster.ashreia.wing_sweep_r", "minDist": 0, "maxDist": 5, "maxAngleDeg": 150, "weight": 2.5, "minAngleDeg": 40, "side": "right"}
+    ]
+  }
+}

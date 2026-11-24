@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "monster.orglass",
+  "name": "硝殻蟹 オルグラス",
+  "rigFamily": "crust_six",
+  "assetId": "model.monster.orglass",
+  "hp": 1900,
+  "bodyRadius": 1.4,
+  "turnDegPerSec": 70,
+  "moveSpeed": 2.4,
+  "captureAllowed": true,
+  "lootId": "loot.orglass",
+  "capture": {"hpRatio": 0.25, "tranqNeeded": 2, "tranqDecayTicks": 900},
+  "respawnTicks": null,
+  "breakStaggerTicks": 80,
+  "collision": [{"z": 0.0, "r": 1.5}, {"z": 1.4, "r": 1.0}],
+  "approach": {"stopDist": 4.0, "faceDeg": 50},
+  "discover": {"range": 14, "fovDeg": 120, "closeRange": 6, "actionId": "monster.orglass.roar"},
+  "rage": {"threshold": 480, "durationTicks": 2100, "actionId": "monster.orglass.roar", "speedScale": 1.25, "damageScale": 1.2, "cooldownScale": 0.6},
+  "parts": [
+    {"id": "claw_r", "name": "右大鋏", "hitzone": {"cut": 0.45, "blunt": 0.55, "shot": 0.4}, "brokenHitzone": {"cut": 0.6, "blunt": 0.7, "shot": 0.55}, "elementZone": 0.2, "breakDurability": 260, "material": "shell", "flinch": {"threshold": 200, "growth": 70, "ticks": 60}, "shapes": [{"a": [-1.15, 1.156, 0.917], "b": [-1.15, 1.046, 2.752], "r": 0.6}]},
+    {"id": "claw_l", "name": "左小鋏", "hitzone": {"cut": 0.6, "blunt": 0.65, "shot": 0.55}, "brokenHitzone": {"cut": 0.7, "blunt": 0.75, "shot": 0.65}, "elementZone": 0.2, "breakDurability": 160, "material": "shell", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.7, 2.074, 1.651], "b": [0.75, 2.367, 2.642], "r": 0.3}]},
+    {"id": "plates", "name": "背の硝殻板", "hitzone": {"cut": 0.35, "blunt": 0.45, "shot": 0.35}, "brokenHitzone": {"cut": 0.55, "blunt": 0.65, "shot": 0.5}, "elementZone": 0.2, "breakDurability": 300, "material": "shell", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 2.22, -1.835], "b": [0.0, 2.441, 0.917], "r": 0.7}]},
+    {"id": "greave", "name": "前脚の甲", "hitzone": {"cut": 0.5, "blunt": 0.55, "shot": 0.45}, "brokenHitzone": {"cut": 0.6, "blunt": 0.65, "shot": 0.55}, "elementZone": 0.2, "breakDurability": 200, "material": "shell", "flinch": {"threshold": 220, "growth": 80, "ticks": 130, "topple": true}, "shapes": [{"a": [1.25, 1.34, 0.22], "b": [1.6, 0.092, 0.514], "r": 0.22}, {"a": [-1.25, 1.34, 0.22], "b": [-1.6, 0.092, 0.514], "r": 0.22}]},
+    {"id": "head", "name": "頭", "hitzone": {"cut": 0.75, "blunt": 0.7, "shot": 0.7}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "flinch": {"threshold": 140, "growth": 50, "ticks": 45}, "shapes": [{"a": [0.0, 2.037, 1.101], "b": [0.0, 2.074, 1.505], "r": 0.32}]},
+    {"id": "body", "name": "胴", "hitzone": {"cut": 0.55, "blunt": 0.55, "shot": 0.5}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 1.633, -1.651], "b": [0.0, 1.78, 0.917], "r": 0.65}]},
+    {"id": "legs", "name": "脚", "hitzone": {"cut": 0.45, "blunt": 0.5, "shot": 0.4}, "elementZone": 0.2, "breakDurability": null, "material": "shell", "flinch": {"threshold": 240, "growth": 80, "ticks": 130, "topple": true}, "shapes": [{"a": [1.35, 1.34, -0.514], "b": [1.7, 0.092, -1.064], "r": 0.2}, {"a": [-1.35, 1.34, -0.514], "b": [-1.7, 0.092, -1.064], "r": 0.2}, {"a": [1.25, 1.34, -1.358], "b": [1.55, 0.239, -2.239], "r": 0.2}, {"a": [-1.25, 1.34, -1.358], "b": [-1.55, 0.239, -2.239], "r": 0.2}]}
+  ],
+  "ai": {
+    "aggroRange": 200,
+    "cooldownTicks": [50, 100],
+    "choices": [
+      {"actionId": "monster.orglass.pinch", "minDist": 0, "maxDist": 5, "maxAngleDeg": 40, "weight": 3},
+      {"actionId": "monster.orglass.dash_l", "minDist": 2, "maxDist": 9, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 45, "side": "left", "cooldownTicks": 240},
+      {"actionId": "monster.orglass.dash_r", "minDist": 2, "maxDist": 9, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 45, "side": "right", "cooldownTicks": 240},
+      {"actionId": "monster.orglass.fan_pinch", "minDist": 0, "maxDist": 5, "maxAngleDeg": 60, "weight": 2.5},
+      {"actionId": "monster.orglass.shell_swing", "minDist": 0, "maxDist": 3.6, "maxAngleDeg": 180, "weight": 2, "cooldownTicks": 300}
+    ]
+  }
+}

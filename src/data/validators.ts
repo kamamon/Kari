@@ -664,10 +664,13 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
       putUnique(content.tracks, t.id, t, 'track', errors);
     }
   }
-  const curves = (await get(index.files.curves)) as { curves: CurveDef[] };
-  for (const c of curves.curves ?? []) {
-    validateCurve(c, errors);
-    putUnique(content.curves, c.id, c, 'curve', errors);
+  const many = (f: string | string[]): string[] => (Array.isArray(f) ? f : [f]);
+  for (const f of many(index.files.curves)) {
+    const curves = (await get(f)) as { curves: CurveDef[] };
+    for (const c of curves.curves ?? []) {
+      validateCurve(c, errors);
+      putUnique(content.curves, c.id, c, 'curve', errors);
+    }
   }
   const weapons = (await get(index.files.weapons)) as { families: WeaponFamilyDef[]; weapons: WeaponDef[]; edge: EdgeRules };
   content.edge = weapons.edge;
@@ -689,18 +692,24 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     checkVersion(f, fd.schemaVersion, errors);
     putUnique(content.fields, fd.id, fd, 'field', errors);
   }
-  const quests = (await get(index.files.quests)) as { quests: QuestDef[] };
-  for (const q of quests.quests ?? []) putUnique(content.quests, q.id, q, 'quest', errors);
-  const items = (await get(index.files.items)) as { schemaVersion: number; items: ItemDef[]; materials: MaterialDef[] };
-  checkVersion(index.files.items, items.schemaVersion, errors);
-  for (const it of items.items ?? []) putUnique(content.items, it.id, it, 'item', errors);
-  for (const m of items.materials ?? []) {
-    if (content.items.has(m.id)) errors.push(`material id "${m.id}" が道具と重複`);
-    putUnique(content.materials, m.id, m, 'material', errors);
+  for (const f of many(index.files.quests)) {
+    const quests = (await get(f)) as { quests: QuestDef[] };
+    for (const q of quests.quests ?? []) putUnique(content.quests, q.id, q, 'quest', errors);
   }
-  const loot = (await get(index.files.loot)) as { schemaVersion: number; tables: LootDef[] };
-  checkVersion(index.files.loot, loot.schemaVersion, errors);
-  for (const l of loot.tables ?? []) putUnique(content.loot, l.id, l, 'loot', errors);
+  for (const f of many(index.files.items)) {
+    const items = (await get(f)) as { schemaVersion: number; items: ItemDef[]; materials: MaterialDef[] };
+    checkVersion(f, items.schemaVersion, errors);
+    for (const it of items.items ?? []) putUnique(content.items, it.id, it, 'item', errors);
+    for (const m of items.materials ?? []) {
+      if (content.items.has(m.id)) errors.push(`material id "${m.id}" が道具と重複`);
+      putUnique(content.materials, m.id, m, 'material', errors);
+    }
+  }
+  for (const f of many(index.files.loot)) {
+    const loot = (await get(f)) as { schemaVersion: number; tables: LootDef[] };
+    checkVersion(f, loot.schemaVersion, errors);
+    for (const l of loot.tables ?? []) putUnique(content.loot, l.id, l, 'loot', errors);
+  }
   const recipes = (await get(index.files.recipes)) as { schemaVersion: number; recipes: RecipeDef[] };
   checkVersion(index.files.recipes, recipes.schemaVersion, errors);
   for (const r of recipes.recipes ?? []) putUnique(content.recipes, r.id, r, 'recipe', errors);

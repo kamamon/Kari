@@ -307,7 +307,8 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
     const curve = ctx.content.curves.get(adef.rootMotion.curveId)!;
     const d = sampleCurve(curve, t + 1) - sampleCurve(curve, t);
     if (d !== 0) {
-      const f = forwardOf(m.yaw);
+      // dirDeg: 横・斜め・後ろへ跳ぶ技（v0.17.0）。体の向きは変えない
+      const f = forwardOf(m.yaw + (adef.rootMotion.dirDeg ?? 0) * DEG);
       ctx.world.move(m.pos, def.bodyRadius, f.x * d, f.z * d);
     }
   }

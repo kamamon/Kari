@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.16.0",
+  "contentVersion": "0.17.0",
   "files": {
     "actions": [
       "actions/player_common.json",
@@ -13,7 +13,18 @@
       "actions/ring_bow.json",
       "actions/training_dummy.json",
       "actions/galdros.json",
-      "actions/galdros_ext.json"
+      "actions/galdros_ext.json",
+      "actions/selvark.json",
+      "actions/numeradon.json",
+      "actions/bornakel.json",
+      "actions/ashreia.json",
+      "actions/lumisca.json",
+      "actions/orglass.json",
+      "actions/tengaro.json",
+      "actions/verito.json",
+      "actions/razmer.json",
+      "actions/kirisave.json",
+      "actions/velgait.json"
     ],
     "tracks": [
       "tracks/heavy_blade.json",
@@ -25,13 +36,38 @@
       "tracks/ring_bow.json",
       "tracks/training_dummy.json",
       "tracks/galdros.json",
-      "tracks/galdros_ext.json"
+      "tracks/galdros_ext.json",
+      "tracks/selvark.json",
+      "tracks/numeradon.json",
+      "tracks/bornakel.json",
+      "tracks/ashreia.json",
+      "tracks/lumisca.json",
+      "tracks/orglass.json",
+      "tracks/tengaro.json",
+      "tracks/verito.json",
+      "tracks/razmer.json",
+      "tracks/kirisave.json",
+      "tracks/velgait.json"
     ],
-    "curves": "curves.json",
+    "curves": [
+      "curves.json",
+      "curves_creatures.json"
+    ],
     "weapons": "weapons.json",
     "monsters": [
       "monsters/training_dummy.json",
-      "monsters/galdros.json"
+      "monsters/galdros.json",
+      "monsters/selvark.json",
+      "monsters/numeradon.json",
+      "monsters/bornakel.json",
+      "monsters/ashreia.json",
+      "monsters/lumisca.json",
+      "monsters/orglass.json",
+      "monsters/tengaro.json",
+      "monsters/verito.json",
+      "monsters/razmer.json",
+      "monsters/kirisave.json",
+      "monsters/velgait.json"
     ],
     "maps": [
       "maps/basin_training.json",
@@ -41,9 +77,18 @@
       "fields/basin.json"
     ],
     "player": "player.json",
-    "quests": "quests.json",
-    "items": "items.json",
-    "loot": "loot.json",
+    "quests": [
+      "quests.json",
+      "quests_creatures.json"
+    ],
+    "items": [
+      "items.json",
+      "items_creatures.json"
+    ],
+    "loot": [
+      "loot.json",
+      "loot_creatures.json"
+    ],
     "recipes": "recipes.json",
     "ranks": "ranks.json",
     "armor": "armor.json",

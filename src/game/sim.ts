@@ -2,7 +2,8 @@
 // ここは DOM・Three.js・Math.random・現在時刻に触れない。同じ seed と同じ入力列なら同じ結果になる。
 import { DEG, angleDiff, forwardOf, toWorld, yawOf, type V3 } from '../core/math';
 import { SeededRng } from '../core/seededRng';
-import type { Content, DamageType, FieldAreaDef, FieldDef, HazardDef, HitWindowDef, ItemDef, ItemStack, LootDef, LootRoll, QuestDef, RankDef, ShootDef } from '../data/schemas';
+import { STATUS_KINDS } from '../data/schemas';
+import type { Content, DamageType, FieldAreaDef, FieldDef, HazardDef, HazardLook, HitWindowDef, ItemDef, ItemStack, LootDef, LootRoll, QuestDef, RankDef, ShootDef, StatusHit } from '../data/schemas';
 import { inWindow, type ActionRun } from './action';
 import { HitLedger, computeDamage, edgeStage, sweepCapsule, type WorldShape } from './combat';
 import type { SimEvent } from './events';
@@ -52,6 +53,9 @@ export interface Hazard {
   /** 岩が打ち上がった場所（見た目用。ここから弧を描いて (x, z) へ落ちる）。null は真上から。 */
   from: V3 | null;
   peak: number;
+  /** 当たった時にためる状態異常と、見た目の種類（v0.17.0） */
+  status: StatusHit | null;
+  look: HazardLook;
 }
 
 export type HuntReason = 'slay' | 'capture' | 'time' | 'faints' | 'retire';
@@ -300,7 +304,7 @@ export class Simulation implements SimCtx {
       }
       const h: Hazard = {
         id: this.nextHazard++, x, z, radius: def.radius, warn: def.warnTicks, warnTotal: def.warnTicks, active: def.activeTicks, baseDamage: def.baseDamage, reaction: def.reaction, hit: false,
-        from: origin ? { x: origin.x, y: origin.y, z: origin.z } : null, peak: def.peak ?? 6,
+        from: origin ? { x: origin.x, y: origin.y, z: origin.z } : null, peak: def.peak ?? 6, status: def.status ?? null, look: def.look ?? 'rock',
       };
       this.hazards.push(h);
       this.emit({ type: 'hazard_warn', id: h.id, x, z, radius: h.radius, warnTicks: h.warn });
@@ -319,7 +323,7 @@ export class Simulation implements SimCtx {
       h.active--;
       if (h.hit || this.hunt?.phase === 'success' || this.hunt?.phase === 'failed') continue;
       if (Math.hypot(p.pos.x - h.x, p.pos.z - h.z) > h.radius + this.content.player.radius * 0.5) continue;
-      const outcome = resolveIncomingHit(p, { attackerPos: { x: h.x, y: 0, z: h.z }, baseDamage: h.baseDamage * this.monsterAttackScale * this.defenseScale, guardable: false, guardCost: 0, reaction: h.reaction }, this);
+      const outcome = resolveIncomingHit(p, { attackerPos: { x: h.x, y: 0, z: h.z }, baseDamage: h.baseDamage * this.monsterAttackScale * this.defenseScale, guardable: false, guardCost: 0, reaction: h.reaction, status: h.status ?? undefined }, this);
       if (outcome !== 'evaded' && outcome !== 'ignored') h.hit = true;
     }
     this.hazards = this.hazards.filter((h) => h.warn > 0 || h.active > 0);
@@ -872,6 +876,7 @@ export class Simulation implements SimCtx {
             guardable: hw.guardable ?? true,
             guardCost: hw.guardCost ?? 20,
             reaction: hw.reaction ?? 'flinch',
+            status: hw.status,
           },
           this,
         );
@@ -906,6 +911,7 @@ export class Simulation implements SimCtx {
       act(p.action),
       p.guard ? `${p.guard.phase}:${p.guard.tick}` : '-',
       p.hurt ? `${p.hurt.kind}:${p.hurt.tick}` : '-',
+      `${p.ailment.poisonTicks}:${STATUS_KINDS.map((k) => p.ailment.build[k].toFixed(3)).join(',')}`,
       this.rng.state,
       this.totalDamage,
       this.hitCount,

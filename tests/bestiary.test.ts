@@ -48,7 +48,7 @@ const FIRST_13: [string, string, string, string | null][] = [
 ];
 
 describe('登録簿のデータ', () => {
-  it('86 種（成体 78・幼体 8）が入っていて、どの種も、生態 8 項目・器官・部位・素材までそろっている。遊べるのはガルドロスだけ', () => {
+  it('86 種（成体 78・幼体 8）が入っていて、どの種も、生態 8 項目・器官・部位・素材までそろっている。遊べるのは、はじめの 12 種（v0.17.0）', () => {
     const b = content.bestiary;
     expect(validateBestiary(b, env)).toEqual([]);
     // 受け取る案と同じ厳しさで、全部の種を見ても、合わない所が無い
@@ -56,8 +56,8 @@ describe('登録簿のデータ', () => {
     expect(b.species.length).toBe(86);
     expect(b.species.filter((s) => s.class !== 'juvenile').length).toBe(78);
     expect(b.species.filter((s) => s.class === 'juvenile').length).toBe(8);
-    expect(b.species.filter((s) => s.state === 'implemented').map((s) => s.id)).toEqual(['monster.galdros']);
-    expect(b.species.filter((s) => s.state === 'art').length).toBe(12);
+    expect(b.species.filter((s) => s.state === 'implemented').map((s) => s.no)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+    expect(b.species.filter((s) => s.state === 'art').map((s) => s.id)).toEqual(['monster.embarg']);
     expect(b.species.filter((s) => s.state === 'planned').length).toBe(73);
     expect(b.species.map((s) => s.no)).toEqual(Array.from({ length: 86 }, (_, i) => i + 1));
   });
@@ -121,7 +121,8 @@ describe('登録簿のデータ', () => {
 
   it('「実装済み」と書いた種が、遊べるデータに無ければ、検査で分かる', () => {
     const b = base();
-    b.species[1]!.state = 'implemented';
+    const embarg = b.species.find((s) => s.id === 'monster.embarg')!;
+    embarg.state = 'implemented';
     expect(validateBestiary(b, env).join('\n')).toContain('public/data/monsters/ に無い');
   });
 });
@@ -150,15 +151,15 @@ describe('案の取り込み', () => {
   });
 
   it('いまある種の書き直し（生態を足す）は、番号・状態・原画の印を残して、上書きする', () => {
-    const inc = { species: [{ ...clone(content.bestiary.species[1]!), organ: '帆のように開く角膜', moves: ['横跳び', '風圧', '角膜の突き'], parts: ['頭', '角膜'], gear: '帆膜・弾性腱 / 回避', state: 'implemented' as const, art: 'x.png',
+    const inc = { species: [{ ...clone(content.bestiary.species[1]!), organ: '帆のように開く角膜', moves: ['横跳び', '風圧', '角膜の突き'], parts: ['頭', '角膜'], gear: '帆膜・弾性腱 / 回避', state: 'planned' as const, art: 'x.png',
       ecology: { diet: 'a。', behavior: 'b。', territory: 'c。', rhythm: 'd。', nest: 'e。', relations: 'f。', juvenile: 'g。', signs: 'h。' } }] };
     const r = mergeBestiary(base(), inc, env, 'chatgpt:test');
     expect(r.errors).toEqual([]);
     expect(r.updated).toEqual(['monster.selvark']);
     const s = r.bestiary.species.find((x) => x.id === 'monster.selvark')!;
     expect(s.ecology!.diet).toBe('a。');
-    // 案の側で「実装済み」「原画」と書いてあっても、事実は変えない
-    expect([s.no, s.state, s.art]).toEqual([2, 'art', 'monster_02_selvark_concept_v2.png']);
+    // 案の側で「案」「原画」と書いてあっても、事実（v0.17.0 で実装済み）は変えない
+    expect([s.no, s.state, s.art]).toEqual([2, 'implemented', 'monster_02_selvark_concept_v2.png']);
   });
 
   it('生態・器官・部位・素材が欠けた案は、断る（どの種の、何が無いかを言う）', () => {
