@@ -110,6 +110,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
       if (a === 'menu') this.menu.open ? this.closeMenu() : this.openMenu();
       else if (a === 'verify') store.set({ verify: !store.value.verify });
       else if (a === 'camReset' && !this.paused) this.resetCamera();
+      else if (a === 'lockOn' && !this.paused) this.toggleLock();
       else if (a === 'return' && !this.paused) this.returnNow();
       else if (a === 'interact' && !this.paused && this.place === 'hub' && this.nearFacility) this.openFacility(this.nearFacility.kind);
       else if (a === 'hubList' && !this.paused && this.place === 'hub') this.openFacility('all');
@@ -282,6 +283,21 @@ export class App implements MenuHost, BaseHost, ResultHost {
     this.hub.releaseAll();
     this.clock.reset();
     this.lastTs = 0;
+  }
+
+  /** ロックオンを入・切する（v0.16.0）。里では使わない。ロックできる相手が居なければ、知らせるだけ。 */
+  toggleLock(): void {
+    if (this.place === 'hub') return;
+    if (this.view.lockOn) {
+      this.view.lockOn = false;
+      this.hud.toast('ロックオンを外した');
+      return;
+    }
+    if (!this.view.lockTargetPoint(this.sim)) {
+      this.hud.toast('ロックオンできる相手がいない');
+      return;
+    }
+    this.view.lockOn = true;
   }
 
   private resetCamera(): void {
@@ -597,6 +613,15 @@ export class App implements MenuHost, BaseHost, ResultHost {
       }
     }
     this.view.update(this.sim, alpha, paused ? 0 : dt, paused ? { x: 0, y: 0 } : this.hub.consumeLook(), this.store.value.verify);
+    // ロックオン: 照準と、ボタンの印。標的が見えなくなって外れた時は、知らせる
+    if (this.view.lockLost) {
+      this.view.lockLost = false;
+      this.hud.toast('ロックオンが外れた');
+    }
+    const lockAt = this.view.lockPoint ? this.view.project(this.view.lockPoint) : null;
+    this.hud.setLock(lockAt && lockAt.visible ? lockAt : null);
+    this.touch.setLatched('lock', this.view.lockOn);
+    this.touch.setHidden(['lock'], this.place === 'hub');
     this.view.render();
     this.hud.setFacility(this.place === 'hub' && !paused ? this.nearFacility : null, this.place === 'hub');
     this.hud.update(this.sim, this.view, { fps: this.fps, droppedTicks: this.clock.droppedTicks, frames: this.meterSummary }, dt);

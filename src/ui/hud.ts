@@ -59,6 +59,8 @@ export class Hud {
   private verifyBox: HTMLElement;
   private verifyBtn: HTMLButtonElement;
   private toasts: HTMLElement;
+  /** ロックオンの照準（v0.16.0） */
+  private lockMark: HTMLElement;
   private item: HTMLElement;
   private momentum: HTMLElement;
   private wrap: HTMLElement;
@@ -124,6 +126,10 @@ export class Hud {
     back.addEventListener('click', () => hub.ui('return'));
     this.exitHint = el('div', 'hud-exit', this.root);
     this.exitHint.hidden = true;
+    this.lockMark = el('div', 'hud-lock', this.root);
+    this.lockMark.id = 'hud-lock';
+    for (const c of ['tl', 'tr', 'bl', 'br']) el('i', c, this.lockMark);
+    this.lockMark.hidden = true;
     this.facilityBtn = el('button', 'hud-facility', this.root);
     this.facilityBtn.id = 'hud-facility';
     this.facilityBtn.hidden = true;
@@ -141,6 +147,16 @@ export class Hud {
     this.verifyBtn.classList.toggle('on', on);
     this.enemy.hidden = !on;
     this.verifyBox.hidden = !on;
+  }
+
+  /** ロックオンの照準を、画面のこの位置（CSS px）へ出す。null なら隠す。 */
+  setLock(p: { x: number; y: number } | null): void {
+    if (!p) {
+      if (!this.lockMark.hidden) this.lockMark.hidden = true;
+      return;
+    }
+    this.lockMark.hidden = false;
+    this.lockMark.style.transform = `translate(${Math.round(p.x)}px, ${Math.round(p.y)}px)`;
   }
 
   toast(text: string): void {

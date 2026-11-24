@@ -26,7 +26,9 @@ export function longBlade() {
     grip: BACK.grip, dir: BACK.dir, edge: BACK.edge, on: [0], grab: [0],
   }));
 
-  curve('w_back_050', [[0, 0], [10, 0], [26, -0.5], [44, -0.5]]);
+  // 下がり斬り: 斬りながら 2.0m 跳び退く（v0.16.0。利用者の指示で 0.5m から広げた）。前半ほど速く下がる
+  // 体の速さは人の範囲（秒速 6m まで）に収めるため、0.5 秒（30 tick）かけて下がる
+  curve('w_back_200', [[0, 0], [8, 0], [11, -0.06], [15, -0.29], [19, -0.64], [23, -1.0], [27, -1.36], [31, -1.72], [35, -1.94], [38, -2.0], [50, -2.0]]);
   curve('w_step_040b', [[0, 0], [16, 0], [32, 0.4], [70, 0.4]]);
 
   /** 振りかぶり（上段）の形: 両手を額の上へ、刃は頭の後ろへ寝かせる */
@@ -76,18 +78,20 @@ export function longBlade() {
   trackOf('lb_thrust', B, thrust);
 
   // ---- 下がり斬り ----
-  // 右から左へ胸の高さを払いながら、左足・右足と半歩ずつ下がる。
+  // 右から左へ胸の高さを払いながら、後ろへ大きく跳び退く（2.0m。v0.16.0）。沈んで蹴り、両足が浮いて、低く着地する。
   const back = motion('lb_back_01', {
-    dur: 44, from: idle, root: 'w_back_050',
+    dur: 50, from: idle, root: 'w_back_200',
     keys: [
-      { t: 7, hip: [0, -0.05, 0], hipR: [3, -14, 0], spine: [3, -6, 0], chest: [1, -10, 0], gripA: [-0.28, 1.34, 0.16], dirA: [-0.72, 0.4, 0.57], edgeA: [0.6, 0, 0.8] },
-      { t: 10, hip: [0, -0.06, 0], hipR: [4, -6, 0], spine: [4, -3, 0], chest: [2, -5, 0], gripA: [-0.22, 1.32, 0.34], dirA: [-0.55, 0.2, 0.81], edgeA: [0.8, 0, 0.55] },
-      { t: 13, hip: [0, -0.06, -0.02], hipR: [4, 6, 0], spine: [4, 2, 0], chest: [2, 4, 0], gripA: [-0.04, 1.28, 0.46], dirA: [0.1, 0.1, 0.99], edgeA: [1, 0, -0.1] },
-      { t: 16, hip: [0, -0.05, -0.04], hipR: [3, 18, 0], spine: [3, 6, 0], chest: [1, 12, 0], gripA: [0.16, 1.24, 0.36], dirA: [0.72, 0.05, 0.69], edgeA: [0.7, 0, -0.72] },
-      { t: 21, hipR: [3, 20, 0], spine: [3, 6, 0], chest: [1, 13, 0], gripA: [0.18, 1.22, 0.32], dirA: [0.78, 0.05, 0.62], edgeA: [0.7, 0, -0.72] },
-      { t: 32, gripA: [0.06, 1.14, 0.34], dirA: [0.35, 0.4, 0.85], edgeA: [0.5, -0.6, -0.3] },
+      { t: 7, hip: [0, -0.07, 0.01], hipR: [3, -14, 0], spine: [3, -6, 0], chest: [1, -10, 0], gripA: [-0.28, 1.34, 0.16], dirA: [-0.72, 0.4, 0.57], edgeA: [0.6, 0, 0.8] },
+      { t: 10, hip: [0, -0.05, 0], hipR: [4, -6, 0], spine: [4, -3, 0], chest: [2, -5, 0], gripA: [-0.22, 1.32, 0.34], dirA: [-0.55, 0.2, 0.81], edgeA: [0.8, 0, 0.55] },
+      { t: 13, hip: [0, -0.03, -0.02], hipR: [4, 6, 0], spine: [4, 2, 0], chest: [2, 4, 0], gripA: [-0.04, 1.28, 0.46], dirA: [0.1, 0.1, 0.99], edgeA: [1, 0, -0.1] },
+      { t: 16, hip: [0, -0.03, -0.04], hipR: [3, 18, 0], spine: [3, 6, 0], chest: [1, 12, 0], gripA: [0.16, 1.24, 0.36], dirA: [0.72, 0.05, 0.69], edgeA: [0.7, 0, -0.72] },
+      { t: 24, hip: [0, -0.03, -0.04], hipR: [3, 20, 0], spine: [3, 6, 0], chest: [1, 13, 0], gripA: [0.18, 1.22, 0.32], dirA: [0.78, 0.05, 0.62], edgeA: [0.7, 0, -0.72] },
+      { t: 38, hip: [0, -0.09, -0.02], hipR: [4, 18, 0], spine: [5, 6, 0], chest: [3, 12, 0], gripA: [0.16, 1.14, 0.34], dirA: [0.7, 0.1, 0.7], edgeA: [0.7, 0, -0.72] },
+      { t: 44, hip: [0, -0.05, 0], gripA: [0.06, 1.14, 0.34], dirA: [0.35, 0.4, 0.85], edgeA: [0.5, -0.6, -0.3] },
     ],
-    feet: { L: [[7, 15, 0.12, -0.47, 32, 0.05]], R: [[15, 25, -0.1, 0.17, -4, 0.05]] },
+    // 両足とも 8〜38 の間に浮く（跳び退き）。左足を後ろへ引いて着く
+    feet: { L: [[8, 37, 0.12, -0.42, 32, 0.24]], R: [[9, 38, -0.1, 0.16, -4, 0.2]] },
   });
   trackOf('lb_back', B, back);
 
@@ -166,7 +170,7 @@ export function longBlade() {
   action('kesa', { clip: 'lb_kesa_01', dur: 34, active: [12, 18], track: 'lb_kesa', hits: cut('lb_kesa', 0.4), curve: 'w_step_030', turn: [8, 300], sound: [11, 'hb_swing_02'], cancels: [[20, 34, ['lb_rise', 'lb_back', 'lb_helm', 'roll']]] });
   action('rise', { clip: 'lb_rise_01', dur: 32, active: [9, 15], track: 'lb_rise', hits: cut('lb_rise', 0.38), curve: 'w_step_015', turn: [6, 300], sound: [8, 'hb_swing_02'], cancels: [[18, 32, ['lb_thrust', 'lb_back', 'lb_helm', 'roll']]] });
   action('thrust', { clip: 'lb_thrust_01', dur: 38, active: [12, 17], track: 'lb_thrust', hits: cut('lb_thrust', 0.5, { hitstop: 4 }), curve: 'w_step_030', turn: [8, 300], sound: [11, 'hb_swing_02'], cancels: [[24, 38, ['lb_back', 'lb_helm', 'roll']]] });
-  action('back_cut', { clip: 'lb_back_01', dur: 44, active: [10, 16], track: 'lb_back', hits: cut('lb_back', 0.42), curve: 'w_back_050', turn: [8, 300], sound: [9, 'hb_swing_02'], cancels: [[30, 44, ['lb_kesa', 'lb_helm', 'roll']]] });
+  action('back_cut', { clip: 'lb_back_01', dur: 50, active: [10, 16], track: 'lb_back', hits: cut('lb_back', 0.42), curve: 'w_back_200', turn: [8, 300], sound: [9, 'hb_swing_02'], cancels: [[38, 50, ['lb_kesa', 'lb_helm', 'roll']]] });
   action('helm', { clip: 'lb_helm_01', dur: 70, active: [30, 36], track: 'lb_helm', hits: cut('lb_helm', 1.15, { hitstop: 7 }), curve: 'w_step_040b', turn: [24, 150], sound: [29, 'hb_swing_01'], cancels: [[54, 70, ['roll']]] });
   action('draw_cut', { clip: 'lb_draw_cut_01', dur: 60, active: [30, 36], track: 'lb_draw_cut', hits: cut('lb_draw_cut', 0.48), curve: 'w_step_060', turn: [20, 180], sound: [29, 'hb_swing_02'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }], cancels: [[44, 60, ['lb_rise', 'lb_back', 'roll']]] });
   action('draw', { clip: 'lb_draw_01', dur: 38, track: 'lb_draw', sound: [4, 'hb_draw_01'] });

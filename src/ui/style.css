@@ -289,6 +289,14 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 .hud-map .cell.here { border-color: var(--bronze); box-shadow: 0 0 0 1.5px var(--bronze); color: #fff; }
 #hud .hud-exit { position: absolute; left: 50%; top: 36%; transform: translateX(-50%); padding: 3px 12px; border-radius: 10px; background: rgba(20, 26, 22, 0.6); border: 1px solid var(--line); font-size: 12px; font-weight: 700; white-space: nowrap; pointer-events: none; }
 #hud .hud-exit[hidden], #hud .hud-area-banner[hidden] { display: none; }
+/* ロックオンの照準（v0.16.0）: 標的の真ん中に、四隅の鉤 */
+#hud .hud-lock { position: absolute; left: -22px; top: -22px; width: 44px; height: 44px; pointer-events: none; will-change: transform; }
+#hud .hud-lock[hidden] { display: none; }
+#hud .hud-lock i { position: absolute; width: 12px; height: 12px; border: 2px solid #e2b866; filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.7)); }
+#hud .hud-lock .tl { left: 0; top: 0; border-right: 0; border-bottom: 0; }
+#hud .hud-lock .tr { right: 0; top: 0; border-left: 0; border-bottom: 0; }
+#hud .hud-lock .bl { left: 0; bottom: 0; border-right: 0; border-top: 0; }
+#hud .hud-lock .br { right: 0; bottom: 0; border-left: 0; border-top: 0; }
 #hud .hud-area-banner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 15vh; gap: 2px; pointer-events: none; opacity: 0; text-shadow: 0 1px 3px #000; }
 #hud .hud-area-banner span { font-size: 13px; letter-spacing: 0.2em; color: var(--bronze); font-weight: 700; }
 #hud .hud-area-banner b { font-size: 26px; letter-spacing: 0.18em; }

@@ -24,6 +24,8 @@ export const TOUCH_BUTTONS: ButtonSpec[] = [
   { name: 'weapon', label: '抜刀', x: 24, y: 196, s: 54, btn: Btn.Weapon },
   { name: 'sprint', label: '疾走', x: 204, y: 22, s: 54 },
   { name: 'camreset', label: '正面', x: 200, y: 104, s: 48 },
+  // ロックオン（v0.16.0）: 押すたびに入・切。入っている間は明るく光る
+  { name: 'lock', label: 'ロック', x: 196, y: 160, s: 48 },
   // 道具: 画面の下・中央。中央が「使う」、左右が切り替え（依頼で道具を持っている時だけ出る）
   { name: 'item', label: '道具', x: 0, y: 10, s: 62, btn: Btn.Item, center: true },
   { name: 'itemprev', label: '◀', x: -62, y: 16, s: 42, btn: Btn.ItemPrev, center: true },
@@ -101,6 +103,12 @@ export class TouchControls {
       const el = this.els.get(name);
       if (el && el.hidden !== hidden) el.hidden = hidden;
     }
+  }
+
+  /** 押して入・切するボタン（ロック）の、入っている印。 */
+  setLatched(name: string, on: boolean): void {
+    const el = this.els.get(name);
+    if (el && el.classList.contains('latched') !== on) el.classList.toggle('latched', on);
   }
 
   /** 武器の状態に合わせてボタンの表示名を変える。 */
@@ -195,6 +203,7 @@ export class TouchControls {
       if (spec.btn) this.hub.setButton('touch', spec.btn, true);
       else if (name === 'sprint') this.setSprintLatch(!this.sprintLatch);
       else if (name === 'camreset') this.hub.ui('camReset');
+      else if (name === 'lock') this.hub.ui('lockOn');
       return;
     }
     const hasStick = [...this.owners.values()].some((o) => o.kind === 'stick');

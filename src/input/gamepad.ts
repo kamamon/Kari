@@ -65,6 +65,8 @@ export class GamepadInput {
       return down && !was;
     };
     if (edge(11)) this.hub.ui('camReset');
+    // 右トリガー: ロックオンの切り替え
+    if (edge(7)) this.hub.ui('lockOn');
     if (edge(9)) this.hub.ui('menu');
   }
 }

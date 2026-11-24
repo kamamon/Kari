@@ -67,6 +67,10 @@ export class KeyboardMouse {
       if (isDown && !e.repeat) this.hub.ui('camReset');
       return;
     }
+    if (e.code === 'KeyT') {
+      if (isDown && !e.repeat) this.hub.ui('lockOn');
+      return;
+    }
     const btn = KEY_BTN[e.code];
     const isMove = e.code === 'KeyW' || e.code === 'KeyA' || e.code === 'KeyS' || e.code === 'KeyD';
     const isArrow = e.code.startsWith('Arrow');

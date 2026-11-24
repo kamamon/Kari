@@ -2,7 +2,7 @@
 // ここから simulation へ値を書き戻すことはしない（描画補間や骨の姿勢を計算の正本にしない）。
 import { CylinderGeometry, DoubleSide, Group, IcosahedronGeometry, Mesh, MeshBasicMaterial, MeshLambertMaterial, RingGeometry, Scene, Vector3, WebGLRenderer } from 'three';
 import { angleDiff, fromArr, lerpV, norm, smoothstep, toWorld, type V3 } from '../core/math';
-import type { Content } from '../data/schemas';
+import type { Content, MonsterDef } from '../data/schemas';
 import { inWindow, renderTick } from '../game/action';
 import type { SimEvent } from '../game/events';
 import { monsterBlockers, monsterShapes } from '../game/monster';
@@ -38,6 +38,27 @@ const PART_COLORS: Record<string, [number, number, number]> = {
 const WHET_CLIP = 'common_item_whet_01';
 const WHET_HOLD = { grip: { x: -0.2, y: 0.74, z: 0.28 }, dir: norm({ x: 0.9, y: -0.08, z: 0.42 }), normal: [0, 1, 0] as [number, number, number] };
 const MATERIAL_SPARK: Record<string, [number, number, number]> = { rock: [1, 0.8, 0.45], shell: [0.9, 0.85, 0.6], hide: [0.95, 0.9, 0.8] };
+
+/** ロックオンの照準を置く所（モンスターの座標。部位の当たり形状の端の平均）。種ごとに 1 回だけ求める */
+const lockCenters = new WeakMap<MonsterDef, { x: number; y: number; z: number }>();
+function lockCenter(def: MonsterDef): { x: number; y: number; z: number } {
+  let c = lockCenters.get(def);
+  if (c) return c;
+  let x = 0, y = 0, z = 0, n = 0;
+  for (const part of def.parts) {
+    for (const s of part.shapes) {
+      for (const q of s.b ? [s.a, s.b] : [s.a]) {
+        x += q[0];
+        y += q[1];
+        z += q[2];
+        n++;
+      }
+    }
+  }
+  c = n > 0 ? { x: x / n, y: y / n, z: z / n } : { x: 0, y: 1, z: 0 };
+  lockCenters.set(def, c);
+  return c;
+}
 
 export class GameView {
   readonly renderer: WebGLRenderer;
@@ -90,6 +111,12 @@ export class GameView {
   private anim = new HunterAnimator();
   private tmpA = new Vector3();
   private tmpB = new Vector3();
+  private tmpLock = new Vector3();
+  /** ロックオン（v0.16.0）。App が入・切する。標的が倒れた・別のエリアへ移った時は、ここで切り、lockLost を立てる */
+  lockOn = false;
+  lockLost = false;
+  /** ロック中の、照準の位置（ワールド座標。無ければ null） */
+  lockPoint: Vector3 | null = null;
   /** 技データが指す clip のうち、仮アニメーションに無いもの。黙って代用せず検証表示へ出す。 */
   readonly missingClips = new Set<string>();
 
@@ -480,9 +507,15 @@ export class GameView {
     // フィールド: エリアが変わったら、地形を替えて、カメラを背中側へ合わせる
     if (this.showArea(sim)) this.cam.snap(p.yaw);
     const sens = this.settings.camSensitivity;
-    this.cam.look(look.x * sens, look.y * sens, this.settings.invertX, this.settings.invertY);
+    // ロックオン: 標的の照準の位置。ロック中は、左右の視点操作を使わない（上下は使える）
+    this.lockPoint = this.lockOn ? this.lockTargetPoint(sim, alpha) : null;
+    if (this.lockOn && !this.lockPoint) {
+      this.lockOn = false;
+      this.lockLost = true;
+    }
+    this.cam.look(this.lockPoint ? 0 : look.x * sens, look.y * sens, this.settings.invertX, this.settings.invertY);
     const shake = this.settings.shake === 'off' ? 0 : this.settings.shake === 'weak' ? 0.5 : 1;
-    this.cam.update(dt, { x: pos.x, y: this.renderY, z: pos.z }, sim.world, shake);
+    this.cam.update(dt, { x: pos.x, y: this.renderY, z: pos.z }, sim.world, shake, this.lockPoint);
     this.arena.sun.target.position.set(pos.x, 0, pos.z);
     this.arena.sun.position.set(pos.x - 14, 26, pos.z - 11);
     // 空と遠景は、カメラと一緒に動かす（どこまで歩いても、近づかない）
@@ -491,6 +524,23 @@ export class GameView {
     this.dust.update(dt);
     this.rings.update(dt);
     this.drawDebug(sim, alpha, verify);
+  }
+
+  /**
+   * ロックオンできる標的の、照準の位置（無ければ null）。標的が居ない・倒れた・捕獲された・別のエリアに居る・70m より遠い時は null。
+   * 位置は、部位の当たり形状の真ん中（モンスターの座標で決まった値）を、描画の位置と向きへ置いたもの。
+   */
+  lockTargetPoint(sim: Simulation, alpha = 1): Vector3 | null {
+    const m = sim.monsters[0];
+    if (!m || m.dead || m.captured) return null;
+    if (sim.field && sim.monsterArea(m)?.id !== sim.areaId) return null;
+    const x = m.prevPos.x + (m.pos.x - m.prevPos.x) * alpha, z = m.prevPos.z + (m.pos.z - m.prevPos.z) * alpha;
+    const p = sim.player.pos;
+    if (Math.hypot(x - p.x, z - p.z) > 70) return null;
+    const c = lockCenter(m.def);
+    const yaw = m.prevYaw + angleDiff(m.prevYaw, m.yaw) * alpha;
+    const cs = Math.cos(yaw), sn = Math.sin(yaw);
+    return this.tmpLock.set(x + c.x * cs + c.z * sn, m.pos.y + c.y, z - c.x * sn + c.z * cs);
   }
 
   /** 罠: 置いた場所に輪と芯を出す。作動前は暗く、作動可能で青銅色に脈打ち、捕らえている間は明るくちらつく。 */

@@ -27,6 +27,7 @@ const CONTROLS_HTML = `
 <tr><th>行動</th><th>タッチ</th><th>PC</th><th>ゲームパッド</th></tr>
 <tr><td>移動 / 疾走</td><td>左スティック / 疾走</td><td>WASD / Shift</td><td>左スティック / LB</td></tr>
 <tr><td>視点 / 正面復帰</td><td>空いた所をドラッグ / 正面</td><td>中ボタンドラッグ・矢印 / F</td><td>右スティック / 押込み</td></tr>
+<tr><td>ロックオン（入・切）</td><td>ロック</td><td>T</td><td>RT</td></tr>
 <tr><td>主攻撃 / 副攻撃</td><td>斬る / 薙ぐ</td><td>左クリック / 右クリック</td><td>X(□) / Y(△)</td></tr>
 <tr><td>回避 / 防御</td><td>回避 / 防御</td><td>Space / Ctrl または C</td><td>A(×) / RB</td></tr>
 <tr><td>抜刀・納刀</td><td>抜刀</td><td>R</td><td>B(○)</td></tr>

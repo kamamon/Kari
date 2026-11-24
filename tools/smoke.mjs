@@ -297,6 +297,28 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   check('近づくと気付かれて咆哮する', await until(page, () => window.__vh.sim.monsters[0].aware, 60000));
   await page.keyboard.up('ShiftLeft');
   await page.keyboard.up('KeyW');
+  // ロックオン（v0.16.0）: T で入る。カメラが標的の方を向き続け、標的に照準が出る。もう一度 T で外れる
+  await page.keyboard.press('KeyT');
+  const lockAim = () => page.evaluate(() => {
+    const a = window.__vh, v = a.view, s = a.sim, m = s.monsters[0], p = s.player;
+    const want = Math.atan2(m.pos.x - p.pos.x, m.pos.z - p.pos.z);
+    const off = Math.abs(((v.cam.yaw - want + Math.PI * 3) % (Math.PI * 2)) - Math.PI);
+    return { lock: v.lockOn, off, mark: !document.getElementById('hud-lock').hidden };
+  });
+  check('ロックオン: T で入り、カメラが標的の方を向き、標的に照準が出る', await until(page, () => {
+    const a = window.__vh, v = a.view, s = a.sim, m = s.monsters[0], p = s.player;
+    const want = Math.atan2(m.pos.x - p.pos.x, m.pos.z - p.pos.z);
+    return v.lockOn && Math.abs(((v.cam.yaw - want + Math.PI * 3) % (Math.PI * 2)) - Math.PI) < 0.06 && !document.getElementById('hud-lock').hidden;
+  }, 5000), JSON.stringify(await lockAim()));
+  // 横へ動いても、向きを追い続ける
+  await page.evaluate(() => { const p = window.__vh.sim.player; p.pos = { x: p.pos.x + 5, y: 0, z: p.pos.z }; p.prevPos = { ...p.pos }; });
+  check('ロックオン: 横へ動いても、カメラが標的を追い続ける', await until(page, () => {
+    const a = window.__vh, v = a.view, s = a.sim, m = s.monsters[0], p = s.player;
+    const want = Math.atan2(m.pos.x - p.pos.x, m.pos.z - p.pos.z);
+    return v.lockOn && Math.abs(((v.cam.yaw - want + Math.PI * 3) % (Math.PI * 2)) - Math.PI) < 0.06;
+  }, 5000), JSON.stringify(await lockAim()));
+  await page.keyboard.press('KeyT');
+  check('ロックオン: もう一度 T で外れ、照準が消える', await until(page, () => !window.__vh.view.lockOn && document.getElementById('hud-lock').hidden), JSON.stringify(await lockAim()));
   await page.waitForTimeout(500);
   await page.keyboard.press('F3');
   await page.screenshot({ path: `${OUT}52_hunt_roar.png` });
@@ -365,8 +387,12 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     p.guard = null;
     v.view.cam.snap(p.yaw);
   });
+  await page.keyboard.press('KeyT');
+  await until(page, () => window.__vh.view.lockOn, 3000);
   await click(page);
   check('討伐すると狩猟が成功で終わる', await until(page, () => window.__vh.sim.hunt.phase === 'success', 20000));
+  check('ロックオン: 標的を倒すと外れ、「ロックオンが外れた」と出る', await until(page, () => !window.__vh.view.lockOn && document.getElementById('hud-lock').hidden && /ロックオンが外れた/.test(document.getElementById('toasts').textContent), 5000),
+    await page.evaluate(() => `lock ${window.__vh.view.lockOn} / ${document.getElementById('toasts').textContent}`));
   // ---- 剥ぎ取りと帰還 ----
   check('討伐後は結果をすぐ出さず、剥ぎ取りの案内（残り 3 回）が出る', await until(page, () => !document.querySelector('.hud-wrap').hidden && /剥ぎ取り 残り 3 回/.test(document.querySelector('.hud-wrap').textContent) && document.getElementById('result').hidden, 8000));
   await until(page, () => window.__vh.sim.player.mode === 'free', 8000);
@@ -811,6 +837,23 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.waitForTimeout(200);
   const starts1 = await page.evaluate(() => window.__vh.recorded.filter((f) => f.pressed & 1).length);
   check('タッチ: 同じボタンへ 2 本指でも二重発火しない', starts1 - starts0 === 1, `押下 ${starts1 - starts0} 回`);
+  await idle(page);
+
+  // ロックオン（v0.16.0）: 「ロック」ボタンで入・切。入っている間はボタンが点く。ほかのボタンと重ならない
+  const lockBtn = await page.evaluate(() => {
+    const r = document.querySelector('.tbtn-lock').getBoundingClientRect();
+    const others = [...document.querySelectorAll('#touch .tbtn')].filter((b) => b.dataset.name !== 'lock' && !b.hidden && getComputedStyle(b).display !== 'none').map((b) => b.getBoundingClientRect());
+    const hit = others.some((q) => !(q.right <= r.left || q.left >= r.right || q.bottom <= r.top || q.top >= r.bottom));
+    return { x: r.x + r.width / 2, y: r.y + r.height / 2, w: r.width, hit };
+  });
+  check('タッチ: 「ロック」ボタンが出ていて、44px 以上で、ほかのボタンと重ならない', lockBtn.w >= 44 && !lockBtn.hit, JSON.stringify(lockBtn));
+  await touch('touchStart', [{ x: lockBtn.x, y: lockBtn.y, id: 1 }]);
+  await touch('touchEnd', []);
+  check('タッチ: 「ロック」を押すとロックオンが入り、ボタンが点く', await until(page, () => window.__vh.view.lockOn && document.querySelector('.tbtn-lock').classList.contains('latched'), 3000));
+  await page.screenshot({ path: `${OUT}22_touch_lock.png` });
+  await touch('touchStart', [{ x: lockBtn.x, y: lockBtn.y, id: 1 }]);
+  await touch('touchEnd', []);
+  check('タッチ: もう一度押すと外れ、ボタンが消灯する', await until(page, () => !window.__vh.view.lockOn && !document.querySelector('.tbtn-lock').classList.contains('latched'), 3000));
   await idle(page);
 
   // HUD のボタンはタッチ操作の層に隠れず押せる
@@ -1464,7 +1507,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await until(page, () => window.__vh && window.__vh.place === 'hub' && window.__vh.sim.tick > 10);
   const vis = () => page.evaluate(() => Object.fromEntries([...document.querySelectorAll('#touch .tbtn')].map((b) => [b.dataset.name, !b.hidden && getComputedStyle(b).display !== 'none' ? b.textContent : null])));
   let v = await vis();
-  check('里（タッチ）: 武器を使うボタン（抜刀・薙ぐ・道具）は出ない。主ボタンは「—」', v.weapon === null && v.sub === null && v.item === null && v.main === '—' && v.dodge !== null, JSON.stringify(v));
+  check('里（タッチ）: 武器を使うボタン（抜刀・薙ぐ・道具・ロック）は出ない。主ボタンは「—」', v.weapon === null && v.sub === null && v.item === null && v.lock === null && v.main === '—' && v.dodge !== null, JSON.stringify(v));
   await page.evaluate(() => {
     const a = window.__vh, f = a.content.hub.facilities.find((x) => x.id === 'shop'), p = a.sim.player;
     p.pos = { x: f.x, y: 0, z: f.z };

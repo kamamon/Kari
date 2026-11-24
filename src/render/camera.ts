@@ -1,7 +1,7 @@
 // 背面追従の三人称カメラ（手動操作が標準）。上下角と距離に範囲を設け、壁や岩に当たったら手前へ寄せる。
 // 正面復帰は少しずつ回し、急に 180 度回らない。
 import { PerspectiveCamera, Vector3 } from 'three';
-import { angleDiff, clamp, turnToward } from '../core/math';
+import { angleDiff, clamp, turnToward, yawOf } from '../core/math';
 import type { World } from '../game/world';
 
 export class FollowCamera {
@@ -41,7 +41,21 @@ export class FollowCamera {
     this.resetTo = null;
   }
 
-  update(dt: number, target: { x: number; y: number; z: number }, world: World, shakeScale: number): void {
+  /**
+   * lock: ロックオンしている標的の位置（無ければ null）。ロック中は、狩人の後ろから標的を見る向きへ、毎フレーム回し続ける。
+   * すぐ近く（水平 2m 以内）では、向きが急に裏返らないよう、回さない。
+   */
+  update(dt: number, target: { x: number; y: number; z: number }, world: World, shakeScale: number, lock: { x: number; y: number; z: number } | null = null): void {
+    if (lock) {
+      const dx = lock.x - target.x, dz = lock.z - target.z;
+      if (Math.hypot(dx, dz) > 2) {
+        const want = yawOf(dx, dz);
+        const off = Math.abs(angleDiff(this.yaw, want));
+        // 大きくずれている時ほど速く回す（ずれが小さい時は、ゆっくり合わせる）
+        this.yaw = turnToward(this.yaw, want, (2.5 + 7 * Math.min(1, off)) * dt);
+      }
+      this.resetTo = null;
+    }
     if (this.resetTo !== null) {
       this.yaw = turnToward(this.yaw, this.resetTo, 7 * dt);
       this.pitch += (0.3 - this.pitch) * Math.min(1, dt * 6);

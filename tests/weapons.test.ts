@@ -222,13 +222,21 @@ describe('太刀', () => {
     expect(hits(evs).length).toBeGreaterThanOrEqual(3);
   });
 
-  it('下がり斬りは、当てながら後ろへ下がる', () => {
+  it('下がり斬りは、当てながら後ろへ 2m 跳び退く（v0.16.0。0.5m から広げた）', () => {
     const sim = mk('long_blade');
     placeInFrontOfHead(sim, 1.2);
     const z0 = sim.player.pos.z;
-    const h = hits(run(sim, 50, (i) => (i === 0 ? press(Btn.Sub) : frame())));
-    expect(h).toHaveLength(1);
-    expect(sim.player.pos.z).toBeLessThan(z0 - 0.4);
+    const evs = run(sim, 60, (i) => (i === 0 ? press(Btn.Sub) : frame()));
+    expect(hits(evs)).toHaveLength(1);
+    expect(starts(evs)[0]).toBe('player.long_blade.back_cut');
+    expect(z0 - sim.player.pos.z).toBeGreaterThan(1.95);
+    expect(z0 - sim.player.pos.z).toBeLessThan(2.05);
+    // 跳び退きの間（8〜38 tick）は、秒速 6m を超えない（人の動きの範囲。tests/human-motion.test.ts と同じ上限）
+    const curve = content.curves.get('w_back_200')!;
+    for (let i = 1; i < curve.keys.length; i++) {
+      const [t0, d0] = curve.keys[i - 1]!, [t1, d1] = curve.keys[i]!;
+      expect((Math.abs(d1 - d0) / (t1 - t0)) * 60).toBeLessThanOrEqual(6);
+    }
   });
 
   it('兜割りは遅いが、袈裟より大きく削る', () => {
