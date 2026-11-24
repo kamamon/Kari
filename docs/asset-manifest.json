@@ -65,6 +65,15 @@
       "verification": "仮素材: 壁・岩・高い段差を抜けないこと、0.3m の段を登れることを自動検査で確認。"
     },
     {
+      "id": "env.basin.field", "name": "風礫盆地（野営地 + 10 エリア）", "type": "env", "use": "v0.11.0 からの狩場。エリアに分かれたフィールド（docs/spec.md 18 章）",
+      "owner": "ChatGPT（環境原画）→ Blender → Claude", "status": "planned", "version": 0, "path": null,
+      "source": "未制作。エリアごとの環境原画は、まだ依頼していない", "terms": "本作オリジナル",
+      "dims": "エリア 11 個（36×28m 〜 88×66m）。寸法・出口・衝突は public/data/fields/basin.json が正本（tools/gen-field.py が作る）", "tris": "仮: エリア 1 つで約 1.2 万（居るエリアだけ描く）", "bones": "なし",
+      "clips": [], "dependsOn": ["art.env.basin.overview"],
+      "placeholder": { "kind": "procedural", "source": "src/render/arena.ts", "note": "エリアごとに、地面・岩・段差・外周の岩壁・出口の門柱と踏み跡・遠景をコードで生成。岩と段の位置は種から置いた仮の配置で、設定図は無い。巣だけ晶の柱が立つ。" },
+      "verification": "仮素材: 出口でエリアが移ること、外へ出られないこと、大型がエリアを巡って巣で眠ることを自動検査とブラウザの操作検査で確認。画面は野営地・エリア 1・3・10 を見た。"
+    },
+    {
       "id": "model.ref.cube_1m", "name": "基準 GLB（1m 立方体と +Z 矢印）", "type": "model", "use": "素材ビューアで単位・軸を照合する物差し。GLB 読み込み経路の確認用",
       "owner": "Claude", "status": "integrated", "version": 1, "path": "assets/models/ref_cube_1m.glb",
       "source": "tools/make-ref-glb.mjs で生成", "terms": "本作オリジナル",

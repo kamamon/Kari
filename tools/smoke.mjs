@@ -32,7 +32,13 @@ const check = (name, ok, detail = '') => {
   if (!ok) failed = true;
 };
 
-async function open(viewport, touch) {
+/**
+ * これまでの検査は、エリアに分ける前の 1 つの狩場（?hunt=arena）で行う（位置を決め打ちした確認が多いため）。
+ * フィールド（エリアに分かれた狩場）の確認は、最後のまとまりで、何も付けないアドレスで行う。
+ */
+const ARENA = '?hunt=arena';
+
+async function open(viewport, touch, query = ARENA) {
   const ctx = await browser.newContext({ viewport, hasTouch: touch, isMobile: touch, deviceScaleFactor: touch ? 2 : 1 });
   const page = await ctx.newPage();
   await page.addInitScript(() => {
@@ -48,7 +54,7 @@ async function open(viewport, touch) {
   page.on('response', (r) => {
     if (r.status() >= 400) errors.push(`${r.status()} ${r.url()}`);
   });
-  await page.goto(`http://localhost:${PORT}${BASE}`);
+  await page.goto(`http://localhost:${PORT}${BASE}${query}`);
   await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
   return { ctx, page };
 }
@@ -578,7 +584,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
 
   // 別のタブ: 同じ保存データを 2 つのタブで開く。新しい方が書いた後、古い方から書こうとしても上書きしない
   const page2 = await ctx.newPage();
-  await page2.goto(`http://localhost:${PORT}${BASE}`);
+  await page2.goto(`http://localhost:${PORT}${BASE}${ARENA}`);
   await boot(page2);
   await page2.click('.base-weapon[data-weapon="weapon.twin_blades.001"]');
   check('別のタブ: 2 つ目のタブで双剣に持ち替えて保存', await until(page2, () => window.__vh.save.doc.equippedWeaponId === 'weapon.twin_blades.001' && window.__vh.save.doc.revision === 6, 6000));
@@ -936,7 +942,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     ['68_galdros_damaged', '?subject=galdros&yaw=2.4&damaged=1'],
   ];
   // ---- 断岳剣以外の 6 系統: 拠点で持ち替えて、訓練場で主攻撃を当てる ----
-  await page.goto(`http://localhost:${PORT}${BASE}`);
+  await page.goto(`http://localhost:${PORT}${BASE}${ARENA}`);
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   await page.screenshot({ path: `${OUT}weapon_select.png` });
@@ -1095,6 +1101,120 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const glb = await page.textContent('#panel pre');
   check('ビューア: 基準 GLB を読み、1m 立方体と +Z 矢印の寸法が合う', /幅 1\.000 \/ 高さ 1\.000 \/ 奥行 2\.000/.test(glb) && /前端 z=1\.500/.test(glb), glb.split('\n')[1]);
   await page.screenshot({ path: `${OUT}38_viewer_glb.png` });
+  await ctx.close();
+}
+
+// ---- フィールド（エリアに分かれた狩場。v0.11.0）: 野営地から出発し、出口でエリアを移る。標的はエリアを巡り、弱ると巣で眠る ----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false, '');
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  check('フィールド: 拠点の依頼に、狩場の名前と、長くした制限時間（30 分）が出る', await page.evaluate(() => {
+    const t = document.querySelector('.base-choice[data-quest="quest.basin.003"]').textContent;
+    return window.__vh.fieldHunts === true && /制限 30 分/.test(t) && /狩場: 風礫盆地（野営地から出発。エリア 10 か所/.test(t);
+  }), await page.evaluate(() => document.querySelector('.base-choice[data-quest="quest.basin.003"]').textContent));
+  await page.screenshot({ path: `${OUT}80_field_base.png` });
+  await page.click('.base-choice[data-quest="quest.basin.003"]');
+  await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+  const hudField = () => page.evaluate(() => {
+    const s = window.__vh.sim, m = s.monsters[0];
+    const cells = [...document.querySelectorAll('.hud-map .cell')];
+    return {
+      area: s.areaId, x: s.player.pos.x, z: s.player.pos.z, target: s.monsterArea(m)?.id ?? '', roam: m.roam?.state ?? '', asleep: m.asleep,
+      where: document.querySelector('.hud-quest .where').textContent, cells: cells.length,
+      here: cells.filter((c) => c.classList.contains('here')).map((c) => c.textContent).join(), mark: cells.filter((c) => c.classList.contains('target')).map((c) => c.textContent).join(),
+      sleepMark: cells.filter((c) => c.classList.contains('asleep')).map((c) => c.textContent).join(),
+      rigVisible: window.__vh.view.monsterRig.root.visible, exit: document.querySelector('.hud-exit').hidden ? '' : document.querySelector('.hud-exit').textContent,
+      banner: document.querySelector('.hud-area-banner').textContent, limit: s.hunt.timeLimitTicks,
+    };
+  });
+  let f = await hudField();
+  check('フィールド: 野営地から始まる。標的はエリア 3 に居て、地図に現在地（営）と標的（3）の印が出る', f.area === 'camp' && f.target === 'a3' && f.cells === 11 && f.here === '営' && f.mark === '3' && /^野営地　標的: エリア 3/.test(f.where) && f.limit === 108000, JSON.stringify(f));
+  check('フィールド: 別のエリアに居る標的は描かない', f.rigVisible === false);
+  await page.screenshot({ path: `${OUT}81_field_camp.png` });
+  // 前へ歩く（東の出口へ向いて始まる）。出口に入ると、エリア 1 へ移る
+  await page.keyboard.down('KeyW');
+  await page.keyboard.down('ShiftLeft');
+  const hint = await until(page, () => !document.querySelector('.hud-exit').hidden, 15000);
+  const hintText = await page.evaluate(() => document.querySelector('.hud-exit').textContent);
+  const moved = await until(page, () => window.__vh.sim.areaId === 'a1', 20000);
+  await page.keyboard.up('KeyW');
+  await page.keyboard.up('ShiftLeft');
+  f = await hudField();
+  check('フィールド: 出口へ近づくと「この先」の案内が出て、入るとエリア 1 へ移る（名前が出て、現在地の印が移る）', hint && /この先: エリア 1（礫の坂）/.test(hintText) && moved && f.here === '1' && /^エリア 1 礫の坂/.test(f.where) && /エリア 1礫の坂/.test(f.banner) && Math.abs(f.x + 18) < 3, `${hintText} / ${JSON.stringify(f)}`);
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: `${OUT}82_field_area1.png` });
+  // エリア 3 へ（出口の上へ置く）。同じエリアに入ると、標的が見える
+  await page.evaluate(() => {
+    const s = window.__vh.sim;
+    const e = s.area().exits.find((x) => x.to === 'a3');
+    s.player.pos = { x: e.x, y: 0, z: e.z };
+    s.player.prevPos = { ...s.player.pos };
+  });
+  await until(page, () => window.__vh.sim.areaId === 'a3');
+  await page.waitForTimeout(300);
+  f = await hudField();
+  check('フィールド: エリア 3 に入ると、標的が描かれる（着く場所は、これまでの狩場の出発地点）', f.area === 'a3' && f.rigVisible === true && Math.abs(f.x) < 0.5 && Math.abs(f.z + 20) < 1.5 && f.here === '3', JSON.stringify(f));
+  await page.screenshot({ path: `${OUT}83_field_area3.png` });
+  // 標的の移動と休息: 弱らせて、巣で眠るまで simulation を先へ進める（検査用。画面の時間は待たない）
+  const slept = await page.evaluate(() => {
+    const s = window.__vh.sim, m = s.monsters[0];
+    m.hp = Math.round(m.def.hp * 0.2);
+    const idle = { moveX: 0, moveZ: 0, held: 0, pressed: 0, released: 0 };
+    const seen = [];
+    for (let i = 0; i < 60 * 60 * 5 && !m.asleep; i++) {
+      s.step(idle);
+      for (const e of s.drainEvents()) if (e.type === 'monster_move' || e.type === 'monster_sleep' || e.type === 'monster_leave') seen.push(`${e.type}:${e.areaId ?? e.to}`);
+    }
+    return { asleep: m.asleep, area: s.monsterArea(m)?.id, seen };
+  });
+  await page.waitForTimeout(300);
+  f = await hudField();
+  check('フィールド: 弱った標的は、エリアを渡って巣（エリア 10）へ行き、眠る。地図と文字に出る', slept.asleep && slept.area === 'a10' && slept.seen[0]?.startsWith('monster_leave') && slept.seen.at(-1) === 'monster_sleep:a10' && f.mark === '10' && f.sleepMark === '10' && /標的: エリア 10（眠り）/.test(f.where) && f.rigVisible === false, `${slept.seen.join(' ')} / ${f.where}`);
+  // 巣へ行って、眠っている標的を見る → 攻撃すると起きる
+  await page.evaluate(() => {
+    const s = window.__vh.sim, m = s.monsters[0];
+    const e = s.field.areas.find((a) => a.id === 'a6').exits.find((x) => x.to === 'a10');
+    s.player.pos = { x: e.x, y: 0, z: e.z };
+    s.player.prevPos = { ...s.player.pos };
+    void m;
+  });
+  await until(page, () => window.__vh.sim.areaId === 'a10');
+  await page.evaluate(() => {
+    const s = window.__vh.sim, m = s.monsters[0];
+    s.player.pos = { x: m.pos.x - 6, y: 0, z: m.pos.z - 5 };
+    s.player.prevPos = { ...s.player.pos };
+    s.player.yaw = Math.atan2(6, 5);
+    window.__vh.view.cam.snap(s.player.yaw);
+  });
+  await page.waitForTimeout(1200);
+  f = await hudField();
+  check('フィールド: 巣では、眠っている標的が描かれる（気づかれていない）', f.area === 'a10' && f.rigVisible === true && f.asleep === true && await page.evaluate(() => window.__vh.sim.monsters[0].aware === false), JSON.stringify(f));
+  await page.screenshot({ path: `${OUT}84_field_nest_sleep.png` });
+  const woke = await page.evaluate(() => {
+    const s = window.__vh.sim, m = s.monsters[0];
+    // 頭の正面へ寄って、抜刀して斬る代わりに、当たり判定を通さず、ダメージの入口を直接呼ぶ検査は自動テストにある。ここでは実際に斬る
+    s.player.pos = { x: m.pos.x + Math.sin(m.yaw) * 3.4, y: 0, z: m.pos.z + Math.cos(m.yaw) * 3.4 };
+    s.player.prevPos = { ...s.player.pos };
+    s.player.yaw = m.yaw + Math.PI;
+    window.__vh.view.cam.snap(s.player.yaw);
+    return { hp: m.hp };
+  });
+  await page.waitForTimeout(200);
+  await click(page);
+  await idle(page);
+  await click(page);
+  const awake = await until(page, () => window.__vh.sim.monsters[0].asleep === false && window.__vh.sim.monsters[0].aware === true, 8000);
+  check('フィールド: 眠っている標的を斬ると、起きて気づく', awake && await page.evaluate((hp) => window.__vh.sim.monsters[0].hp < hp, woke.hp), JSON.stringify(await hudField()));
+  await page.screenshot({ path: `${OUT}85_field_nest_wake.png` });
+  // 力尽きると、野営地へ戻る
+  await page.evaluate(() => {
+    const s = window.__vh.sim;
+    s.player.hp = 1;
+  });
+  const fainted = await until(page, () => window.__vh.sim.hunt.faints >= 1 && window.__vh.sim.areaId === 'camp' && window.__vh.sim.player.mode !== 'dead', 60000);
+  f = await hudField();
+  check('フィールド: 力尽きると野営地へ戻り、標的は巣に残る', fainted && f.here === '営' && f.target === 'a10', JSON.stringify(f));
   await ctx.close();
 }
 

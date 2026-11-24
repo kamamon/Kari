@@ -6,6 +6,7 @@ import type { DamageType, MonsterAiChoice, MonsterDef } from '../data/schemas';
 import { newRun, type ActionRun } from './action';
 import { shapeToWorld, type WorldShape } from './combat';
 import type { PlayerState, SimCtx } from './player';
+import { stepRoam, wakeMonster, type RoamState } from './roam';
 import { sampleCurve } from './tracks';
 
 export type StaggerKind = 'break' | 'flinch' | 'topple' | 'sever';
@@ -20,6 +21,10 @@ export interface MonsterPartState {
 }
 
 export interface MonsterState {
+  /** フィールドでの移動と休息（フィールドでなければ null） */
+  roam: RoamState | null;
+  /** 巣で眠っている（攻撃されると起きる） */
+  asleep: boolean;
   id: string;
   def: MonsterDef;
   pos: V3;
@@ -113,6 +118,8 @@ export function createMonster(def: MonsterDef, spawn: { x: number; z: number; ya
     tranq: 0,
     tranqTicks: 0,
     captured: false,
+    roam: null,
+    asleep: false,
     spawn,
   };
 }
@@ -146,7 +153,7 @@ const isSevered = (m: MonsterState, partId: string): boolean => {
 };
 
 function clearAhead(m: MonsterState, dist: number, ctx: SimCtx): boolean {
-  const b = ctx.world.map.bounds;
+  const b = ctx.world.areaAt(m.pos.x, m.pos.z).bounds;
   const f = forwardOf(m.yaw);
   const x = m.pos.x + f.x * dist;
   const z = m.pos.z + f.z * dist;
@@ -239,6 +246,11 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
     return;
   }
 
+  // 別のエリアに居る相手には、気づかないし、向かっていかない（エリアが 1 つの狩場では、いつも同じエリア）
+  const sameArea = ctx.world.areaAt(player.pos.x, player.pos.z) === ctx.world.areaAt(m.pos.x, m.pos.z);
+  // フィールド: エリアを移る・巣で眠る（その間は、気づく・技を選ぶ、をしない）
+  if (m.roam && stepRoam(m, sameArea, ctx)) return;
+
   const dx = player.pos.x - m.pos.x;
   const dz = player.pos.z - m.pos.z;
   const dist = Math.hypot(dx, dz);
@@ -249,14 +261,14 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   // 発見: 視界に入るか、すぐ近くまで寄られたら気付く
   if (!m.aware) {
     const d = def.discover!;
-    if (m.aiEnabled && player.mode !== 'dead' && (dist <= d.closeRange || (dist <= d.range && ang <= d.fovDeg / 2))) {
+    if (m.aiEnabled && sameArea && player.mode !== 'dead' && (dist <= d.closeRange || (dist <= d.range && ang <= d.fovDeg / 2))) {
       m.aware = true;
       ctx.emit({ type: 'monster_aware', target: m.id });
       begin(m, d.actionId, ctx);
     } else return;
   }
 
-  const active = m.aiEnabled && player.mode !== 'dead' && dist <= def.ai.aggroRange;
+  const active = m.aiEnabled && sameArea && player.mode !== 'dead' && dist <= def.ai.aggroRange;
 
   if (!m.action) {
     if (m.pendingRoar && def.rage) {
@@ -364,6 +376,7 @@ export function applyDamageToMonster(m: MonsterState, partIndex: number, damage:
 
   if (m.hp <= 0) {
     m.dead = true;
+    m.asleep = false;
     m.deadTicks = 0;
     m.action = null;
     m.staggerTicks = 0;
@@ -374,6 +387,9 @@ export function applyDamageToMonster(m: MonsterState, partIndex: number, damage:
     return;
   }
   emitChanges();
+
+  // 眠っていたら起きる
+  if (m.asleep) wakeMonster(m, ctx, true);
 
   // 攻撃されたら気付く
   if (!m.aware && m.def.discover) {

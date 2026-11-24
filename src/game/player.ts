@@ -2,7 +2,7 @@
 // 状態: free（移動）/ action（データ定義の行動）/ guard / hurt / dead
 import { DEG, angleDiff, forwardOf, turnToward, v3, yawOf, type V3 } from '../core/math';
 import type { SeededRng } from '../core/seededRng';
-import type { ActionDef, Content, GuardDef, HazardDef, ItemDef, ItemStack, ShootDef, WeaponDef, WeaponFamilyDef } from '../data/schemas';
+import type { FieldDef, ActionDef, Content, GuardDef, HazardDef, ItemDef, ItemStack, ShootDef, WeaponDef, WeaponFamilyDef } from '../data/schemas';
 import { inWindow, newRun, type ActionRun } from './action';
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
@@ -58,6 +58,8 @@ export interface PlayerState {
 export interface SimCtx {
   content: Content;
   world: World;
+  /** フィールド（エリアに分かれた狩場）。そうでなければ null */
+  field: FieldDef | null;
   rng: SeededRng;
   tick: number;
   emit(ev: SimEvent): void;
@@ -562,7 +564,7 @@ function stepHurt(p: PlayerState, ctx: SimCtx): void {
 
 export function respawnPlayer(p: PlayerState, ctx: SimCtx): void {
   const T = ctx.content.player;
-  const s = ctx.world.map.spawn;
+  const s = ctx.world.spawn;
   p.pos = v3(s.x, 0, s.z);
   p.prevPos = { ...p.pos };
   p.yaw = s.yaw;

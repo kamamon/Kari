@@ -2,13 +2,15 @@
 // ここは DOM・Three.js・Math.random・現在時刻に触れない。同じ seed と同じ入力列なら同じ結果になる。
 import { DEG, angleDiff, forwardOf, toWorld, yawOf, type V3 } from '../core/math';
 import { SeededRng } from '../core/seededRng';
-import type { Content, DamageType, HazardDef, HitWindowDef, ItemDef, ItemStack, LootDef, LootRoll, QuestDef, RankDef, ShootDef } from '../data/schemas';
+import type { Content, DamageType, FieldAreaDef, FieldDef, HazardDef, HitWindowDef, ItemDef, ItemStack, LootDef, LootRoll, QuestDef, RankDef, ShootDef } from '../data/schemas';
 import { inWindow, type ActionRun } from './action';
 import { HitLedger, computeDamage, edgeStage, sweepCapsule, type WorldShape } from './combat';
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
 import { defenseScale, scaleMonsterDef, totalDefense } from './rank';
 import { applyDamageToMonster, createMonster, monsterBlockers, monsterShapes, stepMonster, type MonsterState } from './monster';
+import { questTimeLimitTicks } from './field';
+import { createRoam } from './roam';
 import { createPlayer, familyOf, playerHurtCapsule, resolveIncomingHit, stepPlayer, weaponOf, type PlayerState, type SimCtx } from './player';
 import { trackSegment } from './tracks';
 import { World, type Circle } from './world';
@@ -23,6 +25,11 @@ export interface SimOptions {
   questId?: string | null;
   /** 身に着けている防具の ID（部位ごとに 1 つ）。無ければ防御力 0。 */
   armorIds?: readonly string[];
+  /**
+   * フィールド（エリアに分かれた狩場）で狩る。依頼に fieldId がある時だけ効く。野営地から出発し、標的はエリアを巡る。
+   * 指定しなければ、これまでどおり 1 つの狩場（依頼の mapId）で始まる。
+   */
+  field?: boolean;
 }
 
 /** 落下物など、位置が固定された判定。warn が 0 になった後、active の間だけ当たる。 */
@@ -74,6 +81,8 @@ export interface HuntState {
   reason: HuntReason | null;
   ticks: number;
   faints: number;
+  /** 制限時間（フィールドで狩る時は、依頼の値より長い） */
+  timeLimitTicks: number;
   endTick: number;
   returnTicks: number;
   /** 剥ぎ取りの残り回数。'body'（本体）と、切り落とした部位の id */
@@ -139,6 +148,10 @@ const AIM_RANGE = 28;
 export class Simulation implements SimCtx {
   readonly content: Content;
   readonly world: World;
+  /** フィールド（エリアに分かれた狩場）。そうでなければ null */
+  readonly field: FieldDef | null = null;
+  /** プレイヤーが居るエリアの id（フィールドでなければ ''） */
+  areaId = '';
   readonly rng: SeededRng;
   readonly options: SimOptions;
   tick = 0;
@@ -181,10 +194,18 @@ export class Simulation implements SimCtx {
     const map = content.maps.get(quest ? quest.mapId : options.mapId);
     if (!map) throw new Error(`map ${options.mapId} が無い`);
     if (!content.weapons.has(options.weaponId)) throw new Error(`weapon ${options.weaponId} が無い`);
-    this.world = new World(map);
+    const field = options.field && quest?.fieldId ? content.fields.get(quest.fieldId) : undefined;
+    if (options.field && quest?.fieldId && !field) throw new Error(`field ${quest.fieldId} が無い`);
+    this.world = new World(map, field?.areas);
     this.rng = new SeededRng(options.seed);
+    if (field) {
+      this.field = field;
+      this.areaId = field.start.areaId;
+      // 力尽きた後は、野営地へ戻る
+      this.world.spawn = field.start;
+    }
     // 支給品: 依頼なら依頼の支給品、訓練場なら訓練用（研磨石）
-    this.player = createPlayer(content, map.spawn, options.weaponId, quest ? quest.supplies ?? [] : content.player.trainingSupplies ?? []);
+    this.player = createPlayer(content, this.world.spawn, options.weaponId, quest ? quest.supplies ?? [] : content.player.trainingSupplies ?? []);
     this.armorIds = [...(options.armorIds ?? [])];
     this.defense = totalDefense(content, this.armorIds);
     this.defenseScale = defenseScale(content, this.defense);
@@ -200,10 +221,19 @@ export class Simulation implements SimCtx {
       const def = this.rank ? scaleMonsterDef(base, this.rank) : base;
       const m = createMonster(def, quest ? quest.monsterSpawn : map.monsterSpawn, 'monster#1');
       m.aiEnabled = quest ? true : options.monsterAttacks;
+      if (field) {
+        // 最初に居るエリア。「これまでの狩場」にあたるエリアなら依頼の位置、そうでなければエリアの中央
+        m.roam = createRoam(field, base.id, this);
+        const area = m.roam && field.areas.find((a) => a.id === m.roam!.areaId);
+        if (area && area.id !== field.legacyAreaId) {
+          m.pos = { x: (area.bounds.minX + area.bounds.maxX) / 2, y: 0, z: (area.bounds.minZ + area.bounds.maxZ) / 2 };
+          m.prevPos = { ...m.pos };
+        }
+      }
       this.monsters.push(m);
     }
     if (quest) {
-      this.hunt = { quest, phase: 'active', reason: null, ticks: 0, faints: 0, endTick: 0, returnTicks: 0, carves: {}, loot: [], closed: false, closeTick: 0, rewards: null };
+      this.hunt = { quest, phase: 'active', reason: null, ticks: 0, faints: 0, timeLimitTicks: questTimeLimitTicks(content, quest, !!field), endTick: 0, returnTicks: 0, carves: {}, loot: [], closed: false, closeTick: 0, rewards: null };
       this.monsterAttackScale = (quest.monsterAttackScale ?? 1) * (this.rank?.monster.attackScale ?? 1);
     }
   }
@@ -505,7 +535,7 @@ export class Simulation implements SimCtx {
     else if (this.monsters[0]?.captured) end('success', 'capture');
     else if (input.pressed & Btn.Retire) end('failed', 'retire');
     else if (h.faints >= h.quest.maxFaints) end('failed', 'faints');
-    else if (h.ticks >= h.quest.timeLimitTicks) end('failed', 'time');
+    else if (h.ticks >= h.timeLimitTicks) end('failed', 'time');
   }
 
   /** たまった出来事を取り出す（描画・音・UI が毎フレーム呼ぶ）。 */
@@ -518,6 +548,7 @@ export class Simulation implements SimCtx {
   step(input: InputFrame): void {
     this.tick++;
     stepPlayer(this.player, input, this);
+    if (this.field) this.stepExits();
     for (const m of this.monsters) stepMonster(m, this.player, this);
     // 歩いてきた大型に重なったら押し出す（プレイヤーが動いていなくても胴を抜けない）
     if (this.player.mode !== 'dead') this.world.move(this.player.pos, this.content.player.radius, 0, 0, this.blockers());
@@ -533,6 +564,49 @@ export class Simulation implements SimCtx {
     if (this.player.attackEval) active.add(this.player.attackEval.run.instanceId);
     for (const m of this.monsters) if (m.action) active.add(m.action.instanceId);
     this.ledger.prune(active);
+  }
+
+  // ---- フィールド ----
+
+  /** プレイヤーが居るエリア（フィールドでなければ null）。 */
+  area(): FieldAreaDef | null {
+    return this.field?.areas.find((a) => a.id === this.areaId) ?? null;
+  }
+
+  /** 大型が居るエリア（フィールドでなければ null）。 */
+  monsterArea(m: MonsterState): FieldAreaDef | null {
+    return (m.roam && this.field?.areas.find((a) => a.id === m.roam!.areaId)) ?? null;
+  }
+
+  /** 出口に入ったら、行き先のエリアへ移る。力尽きて野営地へ戻った時も、居るエリアを合わせる。 */
+  private stepExits(): void {
+    const field = this.field!;
+    const p = this.player;
+    const here = this.area()!;
+    const b = here.bounds;
+    if (p.pos.x < b.minX - 1 || p.pos.x > b.maxX + 1 || p.pos.z < b.minZ - 1 || p.pos.z > b.maxZ + 1) {
+      // 出口を通らずに別のエリアに居る（力尽きて野営地へ戻った）
+      const now = field.areas.find((a) => p.pos.x >= a.bounds.minX && p.pos.x <= a.bounds.maxX && p.pos.z >= a.bounds.minZ && p.pos.z <= a.bounds.maxZ);
+      if (now && now.id !== this.areaId) {
+        const from = this.areaId;
+        this.areaId = now.id;
+        this.emit({ type: 'area_change', from, to: now.id });
+      }
+      return;
+    }
+    if (p.mode === 'dead') return;
+    for (const e of here.exits) {
+      if (Math.hypot(p.pos.x - e.x, p.pos.z - e.z) > e.r) continue;
+      p.pos = { x: e.arrive.x, y: 0, z: e.arrive.z };
+      p.pos.y = this.world.groundHeight(p.pos.x, p.pos.z);
+      p.prevPos = { ...p.pos };
+      p.yaw = e.arrive.yaw;
+      p.prevYaw = p.yaw;
+      const from = this.areaId;
+      this.areaId = e.to;
+      this.emit({ type: 'area_change', from, to: e.to });
+      return;
+    }
   }
 
   /** hitWindow の武器カプセルを「この tick の始点 → 終点」で返す（ワールド座標）。 */
@@ -811,6 +885,10 @@ export class Simulation implements SimCtx {
     if (this.hunt) {
       const h = this.hunt;
       parts.push(h.phase, h.reason ?? '-', h.ticks, h.faints, h.returnTicks, h.closed ? 1 : 0, h.loot.map((g) => `${g.itemId}@${g.source}`).join(','), Object.entries(h.carves).map(([k, v]) => `${k}=${v}`).join(','));
+    }
+    if (this.field) {
+      parts.push(this.areaId);
+      for (const m of this.monsters) if (m.roam) parts.push(m.roam.areaId, m.roam.state, m.roam.ticks, m.roam.routeIndex, m.roam.limping ? 1 : 0, m.roam.idle, m.roam.wander ? `${m.roam.wander.x},${m.roam.wander.z}` : '-', m.asleep ? 1 : 0);
     }
     return parts.join('|');
   }

@@ -47,6 +47,13 @@ export type SimEvent =
   | { type: 'carve'; itemId: string; source: string; pos: V3 }
   | { type: 'monster_dead'; target: string }
   | { type: 'monster_respawn'; target: string }
+  /** フィールド: プレイヤーがエリアを移った / 大型が出口へ歩き出した・別のエリアに着いた・巣で眠った・起きた */
+  | { type: 'area_change'; from: string; to: string }
+  | { type: 'monster_leave'; target: string; from: string; to: string }
+  | { type: 'monster_move'; target: string; areaId: string }
+  | { type: 'monster_sleep'; target: string; areaId: string }
+  | { type: 'monster_wake'; target: string; byHit: boolean }
+  | { type: 'monster_lost'; target: string }
   | { type: 'player_hurt'; damage: number; reaction: 'flinch' | 'knockdown'; pos: V3 }
   | { type: 'guard'; damage: number; pos: V3 }
   | { type: 'parry'; kind: 'parry' | 'counter'; pos: V3 }

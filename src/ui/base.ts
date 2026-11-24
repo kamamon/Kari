@@ -6,6 +6,7 @@
 import { APP_VERSION, BUILD_ID } from '../core/assets';
 import { recipeFrom, type Content, type RecipeDef } from '../data/schemas';
 import { materialRanks } from '../data/validators';
+import { fieldOf, questTimeLimitTicks } from '../game/field';
 import { checkCraft, defenseOf, parseImport, questUnlocked, unknownIds, usableWeapons, wornArmor } from '../save/profile';
 import type { SaveManager, SaveResult } from '../save/saveManager';
 import { canFullscreen, fullscreenHint, toggleFullscreen } from './fullscreen';
@@ -13,6 +14,8 @@ import { canFullscreen, fullscreenHint, toggleFullscreen } from './fullscreen';
 export interface BaseHost {
   startTraining(): void;
   startHunt(questId: string): void;
+  /** 依頼を、フィールド（エリアに分かれた狩場）で始めるか */
+  readonly fieldHunts: boolean;
   /** いま持たせている武器の id と、持ち替え（保存が完了してから替わる） */
   weaponId: string;
   setWeapon(id: string): Promise<SaveResult>;
@@ -256,7 +259,9 @@ export class BaseScreen {
       } else {
         const target = c.monsters.get(q.targetMonsterId)?.name ?? '';
         const goal = q.kind === 'hunt' ? '狩猟（討伐か捕獲）' : '討伐';
-        const lines = [q.summary, `目標: ${target}の${goal}　制限 ${Math.round(q.timeLimitTicks / 3600)} 分　力尽き ${q.maxFaints} 回で失敗`];
+        const field = this.host.fieldHunts ? fieldOf(c, q) : null;
+        const lines = [q.summary, `目標: ${target}の${goal}　制限 ${Math.round(questTimeLimitTicks(c, q, this.host.fieldHunts) / 3600)} 分　力尽き ${q.maxFaints} 回で失敗`];
+        if (field) lines.push(`狩場: ${field.name}（野営地から出発。エリア ${field.areas.filter((a) => a.kind !== 'camp').length} か所。標的はエリアを移動する）`);
         if (q.supplies?.length) lines.push(`支給品: ${q.supplies.map((s) => `${c.items.get(s.itemId)?.name ?? s.itemId} ×${s.count}`).join('　')}`);
         if (q.rewards) lines.push(`報酬: ${q.rewards.money} 通貨 + 素材`);
         b = choice(title, lines, () => this.host.startHunt(q.id));

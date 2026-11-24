@@ -1,5 +1,6 @@
-// 戦闘区画の仮の見た目。地形の形と寸法はマップデータ（public/data/maps）が正本で、ここはそれを描くだけ。
+// 戦闘区画の仮の見た目。地形の形と寸法はマップデータ（public/data/maps と public/data/fields）が正本で、ここはそれを描くだけ。
 // 灰緑の草と岩、青銅色の鉱脈、霧。正式な環境素材が来たら差し替える。
+// フィールドでは、エリアごとに 1 つの Group を作る（setupSky で空と光を 1 回だけ用意し、buildAreaGroup をエリアの数だけ呼ぶ）。
 import {
   BoxGeometry, CanvasTexture, CircleGeometry, Color, ConeGeometry, CylinderGeometry, DirectionalLight, Fog, Group, HemisphereLight, IcosahedronGeometry,
   InstancedMesh, Matrix4, Mesh, MeshBasicMaterial, MeshLambertMaterial, Object3D, PlaneGeometry, Quaternion, RepeatWrapping, SRGBColorSpace, Scene, Vector3,
@@ -10,8 +11,17 @@ import type { MapDef } from '../data/schemas';
 
 export const FOG_COLOR = 0xaebcab;
 
+let groundCanvas: HTMLCanvasElement | null = null;
+
 function groundTexture(): CanvasTexture {
+  if (groundCanvas) {
+    const t = new CanvasTexture(groundCanvas);
+    t.wrapS = t.wrapT = RepeatWrapping;
+    t.colorSpace = SRGBColorSpace;
+    return t;
+  }
   const c = document.createElement('canvas');
+  groundCanvas = c;
   c.width = c.height = 256;
   const g = c.getContext('2d')!;
   g.fillStyle = '#7f8f72';
@@ -43,12 +53,32 @@ export interface Arena {
   sun: DirectionalLight;
 }
 
+/** 1 つのエリアの見た目に要るもの（形は MapDef / FieldAreaDef と同じ）。 */
+export interface AreaLook {
+  bounds: { minX: number; maxX: number; minZ: number; maxZ: number };
+  rocks: { x: number; z: number; r: number; h: number }[];
+  platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number }[];
+  /** 天幕を置く場所（無ければ置かない） */
+  camp?: { x: number; z: number; r: number } | null;
+  /** 外周の岩壁を開ける場所。marker が付いたものは、出口の目印（門柱と踏み跡）も置く */
+  gates?: { x: number; z: number; marker?: boolean }[];
+  /** 種類。path は地面が乾いた色、nest は晶の柱が立つ */
+  kind?: 'camp' | 'hunt' | 'path' | 'nest';
+  /** 草や岩壁の散らし方の種（エリアごとに変える） */
+  seed?: number;
+}
+
+/** これまでの狩場（エリアが 1 つ）: 空と光を用意して、狩場を描く。 */
 export function buildArena(scene: Scene, map: MapDef, shadows: boolean): Arena {
-  const group = new Group();
-  const rng = new SeededRng(9001);
-  const b = map.bounds;
-  const w = b.maxX - b.minX;
-  const d = b.maxZ - b.minZ;
+  const sun = setupSky(scene, shadows);
+  // キャンプ側の出入口だけ開ける（見た目のみ。衝突は外周で止まる）
+  const group = buildAreaGroup({ bounds: map.bounds, rocks: map.rocks, platforms: map.platforms, camp: map.camp, gates: [{ x: map.camp.x, z: map.bounds.minZ }] });
+  scene.add(group);
+  return { group, sun };
+}
+
+/** 空の色・霧・光。シーンに 1 回だけ。 */
+export function setupSky(scene: Scene, shadows: boolean): DirectionalLight {
   scene.background = new Color(FOG_COLOR);
   scene.fog = new Fog(FOG_COLOR, 38, 150);
 
@@ -68,11 +98,26 @@ export function buildArena(scene: Scene, map: MapDef, shadows: boolean): Arena {
     sun.shadow.bias = -0.0008;
   }
   scene.add(hemi, sun, sun.target);
+  return sun;
+}
+
+const GROUND_TINT = { camp: 0xffffff, hunt: 0xffffff, path: 0xe9dcc6, nest: 0xd6e0e2 } as const;
+
+/** エリア 1 つぶんの地形（地面・岩・段差・外周の岩壁・遠くの山・草）。シーンへは呼んだ側が足す。 */
+export function buildAreaGroup(map: AreaLook): Group {
+  const group = new Group();
+  const rng = new SeededRng(map.seed ?? 9001);
+  const b = map.bounds;
+  const w = b.maxX - b.minX;
+  const d = b.maxZ - b.minZ;
+  const cx = (b.minX + b.maxX) / 2, cz = (b.minZ + b.maxZ) / 2;
+  const gates = map.gates ?? [];
 
   const tex = groundTexture();
   tex.repeat.set((w + 60) / 6, (d + 60) / 6);
-  const ground = new Mesh(new PlaneGeometry(w + 60, d + 60), new MeshLambertMaterial({ map: tex }));
+  const ground = new Mesh(new PlaneGeometry(w + 60, d + 60), new MeshLambertMaterial({ map: tex, color: GROUND_TINT[map.kind ?? 'hunt'] }));
   ground.rotation.x = -Math.PI / 2;
+  ground.position.set(cx, 0, cz);
   ground.receiveShadow = true;
   group.add(ground);
 
@@ -123,15 +168,39 @@ export function buildArena(scene: Scene, map: MapDef, shadows: boolean): Arena {
     m.rotation.set((rng.next() - 0.5) * 0.12, (rng.next() - 0.5) * 0.25, (rng.next() - 0.5) * 0.12);
     group.add(m);
   };
+  // 出入口の所だけ、壁を開ける（見た目のみ。衝突は外周で止まり、出口は simulation が扱う）
+  const open = (x: number, z: number, alongX: boolean): boolean => gates.some((g) => (alongX ? Math.abs(g.z - z) < 5 && Math.abs(g.x - x) < 4 : Math.abs(g.x - x) < 5 && Math.abs(g.z - z) < 4));
   const seg = 5;
   for (let x = b.minX; x < b.maxX; x += seg) {
-    const gate = Math.abs(x + seg / 2 - map.camp.x) < 4; // キャンプ側の出入口だけ開ける（見た目のみ。衝突は外周で止まる）
-    if (!gate) wall(x + seg / 2, b.minZ - 2.2, seg + 1.2, 4.5);
-    wall(x + seg / 2, b.maxZ + 2.2, seg + 1.2, 4.5);
+    if (!open(x + seg / 2, b.minZ, true)) wall(x + seg / 2, b.minZ - 2.2, seg + 1.2, 4.5);
+    if (!open(x + seg / 2, b.maxZ, true)) wall(x + seg / 2, b.maxZ + 2.2, seg + 1.2, 4.5);
   }
   for (let z = b.minZ; z < b.maxZ; z += seg) {
-    wall(b.minX - 2.2, z + seg / 2, 4.5, seg + 1.2);
-    wall(b.maxX + 2.2, z + seg / 2, 4.5, seg + 1.2);
+    if (!open(b.minX, z + seg / 2, false)) wall(b.minX - 2.2, z + seg / 2, 4.5, seg + 1.2);
+    if (!open(b.maxX, z + seg / 2, false)) wall(b.maxX + 2.2, z + seg / 2, 4.5, seg + 1.2);
+  }
+
+  // 出口の目印: 踏み跡（明るい地面）と、両脇の門柱。柱の頭は青銅色
+  const trail = new MeshLambertMaterial({ color: 0xa79f84 });
+  for (const g of gates) {
+    if (!g.marker) continue;
+    // 外向き（エリアの中心から出口へ）
+    const ox = Math.abs(g.x - b.minX) < 5 ? -1 : Math.abs(g.x - b.maxX) < 5 ? 1 : 0;
+    const oz = ox !== 0 ? 0 : g.z < cz ? -1 : 1;
+    const path = new Mesh(new PlaneGeometry(ox !== 0 ? 16 : 5.4, ox !== 0 ? 5.4 : 16), trail);
+    path.rotation.x = -Math.PI / 2;
+    path.position.set(g.x + ox * 2, 0.015, g.z + oz * 2);
+    path.receiveShadow = true;
+    group.add(path);
+    for (const s of [-1, 1]) {
+      const px = g.x + ox * 2.3 + (ox !== 0 ? 0 : s * 3.1), pz = g.z + oz * 2.3 + (ox !== 0 ? s * 3.1 : 0);
+      const post = new Mesh(new CylinderGeometry(0.42, 0.6, 3.4, 6), rockDark);
+      post.position.set(px, 1.7, pz);
+      post.castShadow = true;
+      const cap = new Mesh(new ConeGeometry(0.5, 0.7, 6), bronze);
+      cap.position.set(px, 3.75, pz);
+      group.add(post, cap);
+    }
   }
 
   // 遠景の山
@@ -141,27 +210,30 @@ export function buildArena(scene: Scene, map: MapDef, shadows: boolean): Arena {
     const r = 105 + rng.next() * 25;
     const h = 22 + rng.next() * 30;
     const m = new Mesh(new ConeGeometry(18 + rng.next() * 16, h, 5), far);
-    m.position.set(Math.cos(a) * r, h / 2 - 2, Math.sin(a) * r);
+    m.position.set(cx + Math.cos(a) * r, h / 2 - 2, cz + Math.sin(a) * r);
     m.rotation.y = rng.next() * 6;
     group.add(m);
   }
 
+  // 巣: 壁ぎわに、晶の柱が立つ
+  if (map.kind === 'nest') {
+    const crystal = new MeshLambertMaterial({ color: 0xc9a86a, emissive: 0x5a3c12, flatShading: true });
+    for (let i = 0; i < 26; i++) {
+      const side = i % 4;
+      const t = rng.next();
+      const x = side < 2 ? b.minX + t * w : side === 2 ? b.minX + 0.6 + rng.next() * 2.2 : b.maxX - 0.6 - rng.next() * 2.2;
+      const z = side === 0 ? b.minZ + 0.6 + rng.next() * 2.2 : side === 1 ? b.maxZ - 0.6 - rng.next() * 2.2 : b.minZ + t * d;
+      if (gates.some((g) => Math.hypot(g.x - x, g.z - z) < 7)) continue;
+      const h = 1.4 + rng.next() * 3.2;
+      const c = new Mesh(new ConeGeometry(0.28 + rng.next() * 0.3, h, 5), crystal);
+      c.position.set(x, h / 2 - 0.1, z);
+      c.rotation.set((rng.next() - 0.5) * 0.5, rng.next() * 6, (rng.next() - 0.5) * 0.5);
+      group.add(c);
+    }
+  }
+
   // キャンプ: 天幕と灯
-  const camp = new Group();
-  camp.position.set(map.camp.x, 0, map.camp.z);
-  const tent = new Mesh(new ConeGeometry(2.1, 2.6, 4), new MeshLambertMaterial({ color: 0xd4c9a8, flatShading: true }));
-  tent.position.set(-3.2, 1.3, -0.4);
-  tent.rotation.y = Math.PI / 4;
-  tent.castShadow = true;
-  const post = new Mesh(new CylinderGeometry(0.06, 0.08, 2.2, 6), rockDark);
-  post.position.set(2.4, 1.1, 0.2);
-  const lamp = new Mesh(new IcosahedronGeometry(0.2, 0), new MeshBasicMaterial({ color: 0xffd98a }));
-  lamp.position.set(2.4, 2.3, 0.2);
-  const mat = new Mesh(new CircleGeometry(map.camp.r, 20), new MeshLambertMaterial({ color: 0x8c8468 }));
-  mat.rotation.x = -Math.PI / 2;
-  mat.position.y = 0.02;
-  camp.add(tent, post, lamp, mat);
-  group.add(camp);
+  if (map.camp) addCamp(group, map.camp, rockDark);
 
   // 草と小石（1 回の描画にまとめる）
   const blocked = (x: number, z: number): boolean => map.rocks.some((r) => Math.hypot(x - r.x, z - r.z) < r.r + 0.3) || map.platforms.some((p) => x > p.minX - 0.3 && x < p.maxX + 0.3 && z > p.minZ - 0.3 && z < p.maxZ + 0.3);
@@ -193,8 +265,26 @@ export function buildArena(scene: Scene, map: MapDef, shadows: boolean): Arena {
   group.add(tufts, stones);
 
   mergeStatic(group);
-  scene.add(group);
-  return { group, sun };
+  return group;
+}
+
+function addCamp(group: Group, at: { x: number; z: number; r: number }, rockDark: MeshLambertMaterial): void {
+  const camp = new Group();
+  camp.position.set(at.x, 0, at.z);
+
+  const tent = new Mesh(new ConeGeometry(2.1, 2.6, 4), new MeshLambertMaterial({ color: 0xd4c9a8, flatShading: true }));
+  tent.position.set(-3.2, 1.3, -0.4);
+  tent.rotation.y = Math.PI / 4;
+  tent.castShadow = true;
+  const post = new Mesh(new CylinderGeometry(0.06, 0.08, 2.2, 6), rockDark);
+  post.position.set(2.4, 1.1, 0.2);
+  const lamp = new Mesh(new IcosahedronGeometry(0.2, 0), new MeshBasicMaterial({ color: 0xffd98a }));
+  lamp.position.set(2.4, 2.3, 0.2);
+  const mat = new Mesh(new CircleGeometry(at.r, 20), new MeshLambertMaterial({ color: 0x8c8468 }));
+  mat.rotation.x = -Math.PI / 2;
+  mat.position.y = 0.02;
+  camp.add(tent, post, lamp, mat);
+  group.add(camp);
 }
 
 /**

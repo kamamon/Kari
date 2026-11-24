@@ -10,7 +10,7 @@ import { familyOf, isGuarding, playerHurtCapsule } from '../game/player';
 import type { Simulation } from '../game/sim';
 import { sampleTrack, trackSegment } from '../game/tracks';
 import type { Settings } from '../save/settings';
-import { blobShadow, buildArena, type Arena } from './arena';
+import { blobShadow, buildArena, buildAreaGroup, setupSky, type Arena } from './arena';
 import { FollowCamera } from './camera';
 import { DebugDraw } from './debugDraw';
 import { BladeTrail, GroundRings, Particles } from './effects';
@@ -51,6 +51,9 @@ export class GameView {
   private hazardRock = new IcosahedronGeometry(1, 0);
   private hazardRockMat = new MeshLambertMaterial({ color: 0x80847a, flatShading: true });
   private arena: Arena;
+  /** フィールド: 作ったエリアの地形（入った時に作り、居るエリアだけ見せる）と、いま見せているエリア */
+  private areaGroups = new Map<string, Group>();
+  private shownArea = '';
   private trail: BladeTrail;
   private sparks: Particles;
   private dust: Particles;
@@ -98,7 +101,11 @@ export class GameView {
     this.renderer = new WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
     this.renderer.shadowMap.enabled = settings.shadows;
     this.cam = new FollowCamera(1);
-    this.arena = buildArena(this.scene, sim.world.map, settings.shadows);
+    if (sim.field) {
+      // フィールド: 空と光は 1 回だけ。地形は、居るエリアのぶんを showArea が作る
+      this.arena = { group: new Group(), sun: setupSky(this.scene, settings.shadows) };
+      this.showArea(sim);
+    } else this.arena = buildArena(this.scene, sim.world.map, settings.shadows);
     this.scene.add(this.hunter.root, this.playerShadow);
     const m = sim.monsters[0];
     if (m) {
@@ -115,6 +122,30 @@ export class GameView {
     this.cam.snap(sim.player.yaw);
     this.renderY = sim.player.pos.y;
     this.resize();
+  }
+
+  /**
+   * フィールド: プレイヤーが居るエリアの地形を見せる（初めて入るエリアは、ここで作る）。エリアが変わったら true。
+   * ほかのエリアは 150m 以上離れていて霧の向こうなので、見せない。
+   */
+  private showArea(sim: Simulation): boolean {
+    const field = sim.field;
+    if (!field || sim.areaId === this.shownArea) return false;
+    const area = sim.area();
+    if (!area) return false;
+    let g = this.areaGroups.get(area.id);
+    if (!g) {
+      g = buildAreaGroup({
+        bounds: area.bounds, rocks: area.rocks, platforms: area.platforms, kind: area.kind, seed: 9001 + area.no * 131,
+        camp: area.kind === 'camp' ? field.camp : null,
+        gates: area.exits.map((e) => ({ x: e.x, z: e.z, marker: true })),
+      });
+      this.areaGroups.set(area.id, g);
+      this.scene.add(g);
+    }
+    for (const [id, grp] of this.areaGroups) grp.visible = id === area.id;
+    this.shownArea = area.id;
+    return true;
   }
 
   applySettings(s: Settings): void {
@@ -420,6 +451,12 @@ export class GameView {
 
     // ---- モンスター ----
     const m = sim.monsters[0];
+    // フィールド: 別のエリアに居る大型は見せない（霧の向こうで、もともと見えない距離）
+    const monsterHere = !sim.field || !m || sim.monsterArea(m)?.id === sim.areaId;
+    if (this.monsterRig) {
+      this.monsterRig.root.visible = monsterHere;
+      this.monsterShadow.visible = monsterHere;
+    }
     if (m && this.monsterRig) {
       const mp = lerpV(m.prevPos, m.pos, alpha);
       this.monsterRig.root.position.set(mp.x, mp.y, mp.z);
@@ -434,6 +471,8 @@ export class GameView {
     this.syncArrows(sim, alpha);
 
     // ---- カメラ・光・エフェクト ----
+    // フィールド: エリアが変わったら、地形を替えて、カメラを背中側へ合わせる
+    if (this.showArea(sim)) this.cam.snap(p.yaw);
     const sens = this.settings.camSensitivity;
     this.cam.look(look.x * sens, look.y * sens, this.settings.invertX, this.settings.invertY);
     const shake = this.settings.shake === 'off' ? 0 : this.settings.shake === 'weak' ? 0.5 : 1;

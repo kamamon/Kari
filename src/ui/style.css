@@ -259,3 +259,29 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 .result-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px; }
 .result-actions button { padding: 10px 20px; background: var(--bronze); color: #1b1710; border: 0; font-weight: 800; border-radius: 3px; cursor: pointer; }
 .result-actions button.sub { background: #2a332d; color: var(--ink); border: 1px solid var(--line); }
+
+/* ---- フィールド: いま居るエリア・小さな地図・出口の案内・エリアの名前 ---- */
+.hud-quest .where { color: var(--ink); }
+.hud-quest .where[hidden] { display: none; }
+.hud-map { position: relative; margin: 4px 0 0 auto; }
+.hud-map[hidden] { display: none; }
+.hud-map .link { position: absolute; background: rgba(232, 226, 205, 0.55); }
+.hud-map .link.thin { background: rgba(232, 226, 205, 0.28); }
+.hud-map .cell {
+  position: absolute; width: 20px; height: 14px; box-sizing: border-box; border: 1px solid rgba(232, 226, 205, 0.45); border-radius: 2px;
+  background: rgba(20, 26, 22, 0.78); color: var(--ink-dim); font-size: 10px; font-weight: 700; line-height: 12px; text-align: center; text-shadow: none;
+}
+.hud-map .cell.path { border-style: dashed; }
+.hud-map .cell.camp { color: #d4c9a8; }
+.hud-map .cell.nest { border-color: rgba(201, 168, 106, 0.8); }
+.hud-map .cell.target { background: #8a3a2c; border-color: #e0906f; color: #fff; }
+.hud-map .cell.target.asleep { background: #4a5a7a; border-color: #9fb4dc; }
+.hud-map .cell.here { border-color: var(--bronze); box-shadow: 0 0 0 1.5px var(--bronze); color: #fff; }
+#hud .hud-exit { position: absolute; left: 50%; top: 36%; transform: translateX(-50%); padding: 3px 12px; border-radius: 10px; background: rgba(20, 26, 22, 0.6); border: 1px solid var(--line); font-size: 12px; font-weight: 700; white-space: nowrap; pointer-events: none; }
+#hud .hud-exit[hidden], #hud .hud-area-banner[hidden] { display: none; }
+#hud .hud-area-banner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 15vh; gap: 2px; pointer-events: none; opacity: 0; text-shadow: 0 1px 3px #000; }
+#hud .hud-area-banner span { font-size: 13px; letter-spacing: 0.2em; color: var(--bronze); font-weight: 700; }
+#hud .hud-area-banner b { font-size: 26px; letter-spacing: 0.18em; }
+#hud .hud-area-banner.show { animation: area-banner 1.9s forwards; }
+@keyframes area-banner { 0% { opacity: 1; background: rgba(8, 11, 9, 0.9); } 16% { opacity: 1; background: rgba(8, 11, 9, 0); } 78% { opacity: 1; background: rgba(8, 11, 9, 0); } 100% { opacity: 0; background: rgba(8, 11, 9, 0); } }
+@media (prefers-reduced-motion: reduce) { #hud .hud-area-banner.show { animation-duration: 1.2s; } }

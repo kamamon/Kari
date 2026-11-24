@@ -54,7 +54,9 @@ export class FollowCamera {
     // 視線が壁・岩・地面に当たる手前までカメラを寄せる
     let allowed = this.distance;
     const steps = 14;
-    const b = world.map.bounds;
+    // 視線がある場所のエリア（フィールドでは、エリアごとに外周と岩が違う）
+    const area = world.areaAt(this.pivot.x, this.pivot.z);
+    const b = area.bounds;
     for (let i = 1; i <= steps; i++) {
       const d = (this.distance * i) / steps;
       const x = this.pivot.x + dir.x * d;
@@ -62,7 +64,7 @@ export class FollowCamera {
       const z = this.pivot.z + dir.z * d;
       let hit = x < b.minX + 0.4 || x > b.maxX - 0.4 || z < b.minZ + 0.4 || z > b.maxZ - 0.4 || y < world.groundHeight(x, z) + 0.25;
       if (!hit) {
-        for (const r of world.map.rocks) {
+        for (const r of area.rocks) {
           if (y < r.h && Math.hypot(x - r.x, z - r.z) < r.r + 0.3) {
             hit = true;
             break;

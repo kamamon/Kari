@@ -4,6 +4,7 @@ import { APP_VERSION, BUILD_ID } from '../core/assets';
 import type { FrameSummary } from '../core/frameMeter';
 import { phaseAt } from '../game/action';
 import { edgeStage } from '../game/combat';
+import { areaLabel, areaOf } from '../game/field';
 import type { SimEvent } from '../game/events';
 import { familyOf, isInvulnerable } from '../game/player';
 import type { Simulation } from '../game/sim';
@@ -39,6 +40,12 @@ export class Hud {
   private time: HTMLElement;
   private goal: HTMLElement;
   private faints: HTMLElement;
+  /** フィールド: いま居るエリアと標的の居るエリア（文字）、小さな地図、出口の案内、エリアを移った時の名前 */
+  private where: HTMLElement;
+  private map: HTMLElement;
+  private mapCells = new Map<string, HTMLElement>();
+  private exitHint: HTMLElement;
+  private banner: HTMLElement;
   private enemy: HTMLElement;
   private enemyBar: HTMLElement;
   private enemyParts: HTMLElement;
@@ -77,6 +84,9 @@ export class Hud {
     this.time = el('div', 'time', quest, '00:00');
     this.goal = el('div', 'goal', quest, '');
     this.faints = el('div', 'goal', quest, '');
+    this.where = el('div', 'goal where', quest, '');
+    this.map = el('div', 'hud-map', quest);
+    this.map.hidden = true;
     this.verifyBtn = el('button', 'hud-btn', tr, '検証');
     this.verifyBtn.addEventListener('click', () => hub.ui('verify'));
     const menuBtn = el('button', 'hud-btn', tr, '☰');
@@ -100,6 +110,10 @@ export class Hud {
     const back = el('button', '', this.wrap, '帰還する');
     back.id = 'hud-return';
     back.addEventListener('click', () => hub.ui('return'));
+    this.exitHint = el('div', 'hud-exit', this.root);
+    this.exitHint.hidden = true;
+    this.banner = el('div', 'hud-area-banner', this.root);
+    this.banner.hidden = true;
     this.dmgLayer = el('div', '', this.root);
     this.setVerify(false);
   }
@@ -115,6 +129,56 @@ export class Hud {
     const t = el('div', 'toast', this.toasts, text);
     while (this.toasts.childElementCount > 3) this.toasts.firstElementChild?.remove();
     setTimeout(() => t.remove(), 1700);
+  }
+
+  /** フィールドの小さな地図を作り直す（マス目に、エリアの番号と、つながりの線）。 */
+  private buildMap(sim: Simulation): void {
+    this.map.textContent = '';
+    this.mapCells.clear();
+    const field = sim.field;
+    this.map.hidden = !field;
+    if (!field) return;
+    const CW = 27, CH = 19, BW = 20, BH = 14;
+    const cols = Math.max(...field.areas.map((a) => a.grid[0])) + 1;
+    const rows = Math.max(...field.areas.map((a) => a.grid[1])) + 1;
+    this.map.style.width = `${(cols - 1) * CW + BW}px`;
+    this.map.style.height = `${(rows - 1) * CH + BH}px`;
+    const at = (g: [number, number]): { x: number; y: number } => ({ x: g[0] * CW, y: (rows - 1 - g[1]) * CH });
+    for (const a of field.areas) {
+      const p = at(a.grid);
+      for (const e of a.exits) {
+        const to = areaOf(field, e.to);
+        if (!to || to.id < a.id) continue;
+        const q = at(to.grid);
+        const line = el('i', e.large ? 'link' : 'link thin', this.map);
+        const x0 = Math.min(p.x, q.x) + BW / 2, y0 = Math.min(p.y, q.y) + BH / 2;
+        line.style.left = `${x0}px`;
+        line.style.top = `${y0}px`;
+        line.style.width = `${Math.max(1, Math.abs(p.x - q.x))}px`;
+        line.style.height = `${Math.max(1, Math.abs(p.y - q.y))}px`;
+      }
+    }
+    for (const a of field.areas) {
+      const p = at(a.grid);
+      const cell = el('b', `cell ${a.kind}`, this.map, a.kind === 'camp' ? '営' : String(a.no));
+      cell.style.left = `${p.x}px`;
+      cell.style.top = `${p.y}px`;
+      this.mapCells.set(a.id, cell);
+    }
+  }
+
+  /** エリアを移った時: 画面を一瞬暗くして、エリアの番号と名前を出す。 */
+  private showArea(sim: Simulation): void {
+    const a = sim.area();
+    if (!a) return;
+    this.banner.textContent = '';
+    el('span', '', this.banner, a.kind === 'camp' ? sim.field!.name : areaLabel(a));
+    el('b', '', this.banner, a.name);
+    this.banner.hidden = false;
+    // 同じ動きを、もう一度最初から
+    this.banner.classList.remove('show');
+    void this.banner.offsetWidth;
+    this.banner.classList.add('show');
   }
 
   private set(key: string, value: string | number, apply: () => void): void {
@@ -156,6 +220,24 @@ export class Hud {
         }
         case 'monster_dead':
           this.toast(sim.hunt ? '討伐した' : '標的を倒した（しばらくすると復帰）');
+          break;
+        case 'area_change':
+          this.showArea(sim);
+          break;
+        case 'monster_leave':
+          // 目の前で歩き出した時だけ知らせる
+          if (e.from === sim.areaId) this.toast('標的が移動を始めた');
+          break;
+        case 'monster_move': {
+          const a = sim.field && areaOf(sim.field, e.areaId);
+          if (a) this.toast(e.areaId === sim.areaId ? '標的が現れた' : `標的が${areaLabel(a)}へ移った`);
+          break;
+        }
+        case 'monster_sleep':
+          this.toast('標的が巣で眠った');
+          break;
+        case 'monster_wake':
+          if (e.byHit) this.toast('標的が目を覚ました');
           break;
         case 'part_sever':
           this.toast('尾を切断');
@@ -246,12 +328,49 @@ export class Hud {
     }
     // 依頼中は残り時間、訓練は経過時間
     const h = sim.hunt;
-    const sec = h ? Math.ceil(Math.max(0, h.quest.timeLimitTicks - h.ticks) / 60) : Math.floor(sim.tick / 60);
+    const sec = h ? Math.ceil(Math.max(0, h.timeLimitTicks - h.ticks) / 60) : Math.floor(sim.tick / 60);
     this.set('time', sec, () => (this.time.textContent = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`));
     const goal = h ? `【${sim.rank?.name ?? ''}】${h.quest.name}: ${sim.monsters[0]?.def.name ?? ''}の${h.quest.kind === 'hunt' ? '狩猟' : '討伐'}` : '訓練: 標的で動作を確かめる';
     this.set('goal', goal, () => (this.goal.textContent = goal));
     const faints = h ? `力尽き ${h.faints} / ${h.quest.maxFaints}` : '';
     this.set('faints', faints, () => (this.faints.textContent = faints));
+    // フィールド: いま居るエリア、標的の居るエリア、地図、近くの出口
+    const field = sim.field;
+    this.set('field', field ? field.id : '', () => this.buildMap(sim));
+    const here = sim.area();
+    const tm = sim.monsters[0];
+    const ta = tm ? sim.monsterArea(tm) : null;
+    const tState = !tm || tm.dead ? 'dead' : tm.asleep ? 'sleep' : tm.roam?.state === 'leave' ? 'leave' : '';
+    const where = field && here ? `${areaLabel(here)}${here.kind === 'camp' ? '' : ` ${here.name}`}${ta && tState !== 'dead' ? `　標的: ${areaLabel(ta)}${tState === 'sleep' ? '（眠り）' : tState === 'leave' ? '（移動中）' : ''}` : ''}` : '';
+    this.set('where', where, () => {
+      this.where.textContent = where;
+      this.where.hidden = where === '';
+    });
+    this.set('mapmark', field ? `${sim.areaId}|${ta && tState !== 'dead' ? ta.id : ''}|${tState}` : '', () => {
+      for (const [id, cell] of this.mapCells) {
+        cell.classList.toggle('here', id === sim.areaId);
+        cell.classList.toggle('target', !!ta && tState !== 'dead' && id === ta.id);
+        cell.classList.toggle('asleep', !!ta && id === ta.id && tState === 'sleep');
+      }
+    });
+    let exitText = '';
+    if (field && here && p.mode !== 'dead') {
+      // 近くて、そちらを向いている出口だけ（着いた直後に、背中側の出口を案内しない）
+      let best = 10;
+      const fx = Math.sin(p.yaw), fz = Math.cos(p.yaw);
+      for (const e of here.exits) {
+        const d = Math.hypot(e.x - p.pos.x, e.z - p.pos.z);
+        const to = areaOf(field, e.to);
+        if (d < best && to && (d < 0.5 || ((e.x - p.pos.x) * fx + (e.z - p.pos.z) * fz) / d > 0.3)) {
+          best = d;
+          exitText = `この先: ${areaLabel(to)}${to.kind === 'camp' ? '' : `（${to.name}）`}`;
+        }
+      }
+    }
+    this.set('exit', exitText, () => {
+      this.exitHint.textContent = exitText;
+      this.exitHint.hidden = exitText === '';
+    });
     // 道具
     const stack = p.items[p.itemIndex];
     const itemText = stack ? `${sim.content.items.get(stack.itemId)?.name ?? ''} ×${stack.count}` : '';

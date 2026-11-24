@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.10.1",
+  "contentVersion": "0.11.0",
   "files": {
     "actions": [
       "actions/player_common.json",
@@ -35,6 +35,9 @@
     ],
     "maps": [
       "maps/basin_training.json"
+    ],
+    "fields": [
+      "fields/basin.json"
     ],
     "player": "player.json",
     "quests": "quests.json",

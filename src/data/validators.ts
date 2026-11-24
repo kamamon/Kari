@@ -15,6 +15,7 @@ import {
   type ContentIndex,
   type CurveDef,
   type EdgeRules,
+  type FieldDef,
   type ItemDef,
   type LootDef,
   type LootRoll,
@@ -200,6 +201,14 @@ export function crossCheck(c: Content, errors: string[]): void {
   }
   for (const q of c.quests.values()) {
     if (!c.maps.has(q.mapId)) errors.push(`quest ${q.id}: map ${q.mapId} が無い`);
+    if (q.fieldId !== undefined) {
+      const fd = c.fields.get(q.fieldId);
+      if (!fd) errors.push(`quest ${q.id}: field ${q.fieldId} が無い`);
+      else {
+        if (fd.legacyMapId !== q.mapId) errors.push(`quest ${q.id}: field ${q.fieldId} の「これまでの狩場」が mapId と違う`);
+        if (!fd.routes[q.targetMonsterId]) errors.push(`quest ${q.id}: field ${q.fieldId} に、標的 ${q.targetMonsterId} の巡り方が無い`);
+      }
+    }
     if (!c.monsters.has(q.targetMonsterId)) errors.push(`quest ${q.id}: monster ${q.targetMonsterId} が無い`);
     if (!c.ranks.has(q.rankId)) errors.push(`quest ${q.id}: 段階 ${String(q.rankId)} が無い`);
     for (const need of q.requires ?? []) {
@@ -427,6 +436,127 @@ function validateArmor(c: Content, errors: string[]): void {
   }
 }
 
+/** エリアどうしを、これだけ離す（別のエリアの相手に、気づいたり攻撃が届いたりしないための距離）。 */
+export const FIELD_AREA_GAP = 120;
+
+/**
+ * フィールド: エリアは重ならず離れている / 出口は往復で対になり、着く場所は行き先の中で、どの出口にも触れない /
+ * どのエリアへも野営地から歩いて行ける / 大型の巡り方は、大型が通れる出口だけでつながっている / 「これまでの狩場」と同じ形のエリアがある。
+ */
+export function validateField(c: Content, f: FieldDef, errors: string[]): void {
+  const w = `field ${f.id}`;
+  if (typeof f.name !== 'string' || f.name === '') errors.push(`${w}: name が無い`);
+  const areas = new Map<string, FieldDef['areas'][number]>();
+  for (const a of f.areas ?? []) {
+    if (areas.has(a.id)) errors.push(`${w}: area ${a.id} が重複`);
+    areas.set(a.id, a);
+  }
+  if (areas.size === 0) {
+    errors.push(`${w}: エリアが無い`);
+    return;
+  }
+  const inside = (a: FieldDef['areas'][number], x: number, z: number, margin: number): boolean => x >= a.bounds.minX + margin && x <= a.bounds.maxX - margin && z >= a.bounds.minZ + margin && z <= a.bounds.maxZ - margin;
+  const list = [...areas.values()];
+  const nos = new Set<number>();
+  for (const a of list) {
+    const wa = `${w} area ${a.id}`;
+    const b = a.bounds;
+    if (!b || !(b.maxX > b.minX) || !(b.maxZ > b.minZ)) {
+      errors.push(`${wa}: bounds が不正`);
+      continue;
+    }
+    if (typeof a.name !== 'string' || a.name === '') errors.push(`${wa}: name が無い`);
+    if (!isInt(a.no) || a.no < 0 || nos.has(a.no)) errors.push(`${wa}: no が不正か重複`);
+    nos.add(a.no);
+    if (!['camp', 'hunt', 'path', 'nest'].includes(a.kind)) errors.push(`${wa}: kind "${String(a.kind)}" は未定義`);
+    if (!isNum(a.stepUp)) errors.push(`${wa}: stepUp が無い`);
+    for (const p of a.platforms ?? []) if (!(p.maxX > p.minX) || !(p.maxZ > p.minZ) || !isNum(p.h)) errors.push(`${wa}: platform が不正`);
+    for (const r of a.rocks ?? []) if (!(isNum(r.x) && isNum(r.z) && r.r > 0 && inside(a, r.x, r.z, 0))) errors.push(`${wa}: rock が不正（エリアの外）`);
+    for (const o of list) {
+      if (o === a || o.id < a.id || !o.bounds) continue;
+      const dx = Math.max(o.bounds.minX - b.maxX, b.minX - o.bounds.maxX, 0), dz = Math.max(o.bounds.minZ - b.maxZ, b.minZ - o.bounds.maxZ, 0);
+      if (Math.hypot(dx, dz) < FIELD_AREA_GAP) errors.push(`${wa}: area ${o.id} と近すぎる（${FIELD_AREA_GAP}m 以上離す）`);
+    }
+    const tos = new Set<string>();
+    for (const e of a.exits ?? []) {
+      const we = `${wa} exit→${e.to}`;
+      const to = areas.get(e.to);
+      if (!to || e.to === a.id) {
+        errors.push(`${we}: 行き先が無い`);
+        continue;
+      }
+      if (tos.has(e.to)) errors.push(`${we}: 同じ行き先の出口が 2 つある`);
+      tos.add(e.to);
+      if (!(e.r > 0) || !inside(a, e.x, e.z, 0)) errors.push(`${we}: 出口がエリアの外`);
+      else if ((a.rocks ?? []).some((r) => Math.hypot(r.x - e.x, r.z - e.z) <= r.r + e.r + 1)) errors.push(`${we}: 出口が岩でふさがっている`);
+      const back = to.exits?.find((x) => x.to === a.id);
+      if (!back) errors.push(`${we}: 戻る出口が無い`);
+      else if (!!back.large !== !!e.large) errors.push(`${we}: 戻る出口と large が違う`);
+      if (e.large && !(a.large && to.large)) errors.push(`${we}: 大型が入れないエリアにつながっている`);
+      if (e.large && !e.arriveLarge) errors.push(`${we}: arriveLarge が無い`);
+      for (const [label, p] of [['arrive', e.arrive], ['arriveLarge', e.arriveLarge]] as const) {
+        if (!p) continue;
+        if (!(isNum(p.x) && isNum(p.z) && isNum(p.yaw)) || !inside(to, p.x, p.z, 1)) errors.push(`${we}: ${label} が行き先の外`);
+        // 着いた場所が出口に触れていると、行ったり来たりを繰り返す
+        else if ((to.exits ?? []).some((x) => Math.hypot(x.x - p.x, x.z - p.z) <= x.r + 1.5)) errors.push(`${we}: ${label} が行き先の出口に近すぎる`);
+        else if ((to.rocks ?? []).some((r) => Math.hypot(r.x - p.x, r.z - p.z) <= r.r + (label === 'arrive' ? 1 : 3))) errors.push(`${we}: ${label} が岩と重なる`);
+      }
+    }
+  }
+  // 歩いて行けること
+  const reach = (from: string, largeOnly: boolean): Set<string> => {
+    const seen = new Set([from]);
+    const queue = [from];
+    while (queue.length > 0) {
+      for (const e of areas.get(queue.shift()!)?.exits ?? []) {
+        if ((largeOnly && !e.large) || seen.has(e.to) || !areas.has(e.to)) continue;
+        seen.add(e.to);
+        queue.push(e.to);
+      }
+    }
+    return seen;
+  };
+  const startArea = areas.get(f.start?.areaId);
+  if (!startArea || !inside(startArea, f.start.x, f.start.z, 1)) errors.push(`${w}: start が不正`);
+  else {
+    const seen = reach(startArea.id, false);
+    for (const a of list) if (!seen.has(a.id)) errors.push(`${w}: area ${a.id} へ、出発するエリアから行けない`);
+    if (startArea.kind !== 'camp' || startArea.large) errors.push(`${w}: 出発するエリアは、大型が入れない野営地にする`);
+    if (!(f.camp && isNum(f.camp.x) && isNum(f.camp.z) && inside(startArea, f.camp.x, f.camp.z, 0))) errors.push(`${w}: camp が野営地の外`);
+  }
+  // これまでの狩場と同じ形のエリア
+  const legacy = c.maps.get(f.legacyMapId);
+  const la = areas.get(f.legacyAreaId);
+  if (!legacy || !la) errors.push(`${w}: legacyMapId / legacyAreaId が不正`);
+  else if (JSON.stringify(la.bounds) !== JSON.stringify(legacy.bounds) || JSON.stringify(la.rocks) !== JSON.stringify(legacy.rocks) || JSON.stringify(la.platforms) !== JSON.stringify(legacy.platforms) || la.stepUp !== legacy.stepUp) {
+    errors.push(`${w}: area ${la.id} の形が、${legacy.id} と違う`);
+  }
+  if (!(isNum(f.timeLimitScale) && f.timeLimitScale >= 1 && f.timeLimitScale <= 10)) errors.push(`${w}: timeLimitScale が不正`);
+  // 巡り方
+  const R = f.roam;
+  if (!(R && Array.isArray(R.stayTicks) && isInt(R.stayTicks[0]) && isInt(R.stayTicks[1]) && R.stayTicks[0] > 0 && R.stayTicks[1] >= R.stayTicks[0])) errors.push(`${w}: roam.stayTicks が不正`);
+  else {
+    if (!(R.walkSpeedScale > 0 && R.limpSpeedScale > 0 && R.wanderSpeedScale > 0)) errors.push(`${w}: roam の速さが不正`);
+    if (!(R.limpHpRatio > 0 && R.limpHpRatio < 1 && R.sleepHealCap > R.limpHpRatio && R.sleepHealCap <= 1 && R.sleepHealPerSec >= 0)) errors.push(`${w}: roam の体力の割合が不正（眠って戻る上限は、弱る割合より上にする）`);
+    if (!(isInt(R.sleepTicks) && R.sleepTicks > 0 && isInt(R.wakeStayTicks) && R.wakeStayTicks > 0)) errors.push(`${w}: roam の時間が不正`);
+    if (!(Array.isArray(R.wanderIdleTicks) && isInt(R.wanderIdleTicks[0]) && isInt(R.wanderIdleTicks[1]) && R.wanderIdleTicks[0] > 0 && R.wanderIdleTicks[1] >= R.wanderIdleTicks[0] && R.wanderInset >= 0)) errors.push(`${w}: roam のぶらつきが不正`);
+    if (!(isInt(R.loseSightTicks) && R.loseSightTicks > 0)) errors.push(`${w}: roam.loseSightTicks が不正`);
+  }
+  for (const [mid, route] of Object.entries(f.routes ?? {})) {
+    const wr = `${w} route ${mid}`;
+    if (!c.monsters.has(mid)) errors.push(`${wr}: monster が無い`);
+    const ids = [route.start, route.nest, ...(route.roam ?? [])];
+    if (!(Array.isArray(route.roam) && route.roam.length >= 2 && route.roam.includes(route.start))) errors.push(`${wr}: roam は 2 つ以上で、start を含める`);
+    if (ids.some((id) => !areas.get(id)?.large)) {
+      errors.push(`${wr}: 大型が入れないエリアがある`);
+      continue;
+    }
+    const seen = reach(route.start, true);
+    for (const id of ids) if (!seen.has(id)) errors.push(`${wr}: area ${id} へ、大型が通れる出口だけでは行けない`);
+    if (areas.get(route.nest)?.kind !== 'nest') errors.push(`${wr}: nest が巣（kind: nest）でない`);
+  }
+}
+
 function putUnique<T>(map: Map<string, T>, id: string, value: T, kind: string, errors: string[]): void {
   if (map.has(id)) errors.push(`${kind} id "${id}" が重複`);
   map.set(id, value);
@@ -446,6 +576,7 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     weapons: new Map(),
     monsters: new Map(),
     maps: new Map(),
+    fields: new Map(),
     quests: new Map(),
     items: new Map(),
     materials: new Map(),
@@ -493,6 +624,11 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     validateMap(m, errors);
     putUnique(content.maps, m.id, m, 'map', errors);
   }
+  for (const f of index.files.fields ?? []) {
+    const fd = (await get(f)) as FieldDef;
+    checkVersion(f, fd.schemaVersion, errors);
+    putUnique(content.fields, fd.id, fd, 'field', errors);
+  }
   const quests = (await get(index.files.quests)) as { quests: QuestDef[] };
   for (const q of quests.quests ?? []) putUnique(content.quests, q.id, q, 'quest', errors);
   const items = (await get(index.files.items)) as { schemaVersion: number; items: ItemDef[]; materials: MaterialDef[] };
@@ -516,6 +652,7 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
   content.armorRules = { base: armor.defense?.base ?? 0, slotNames: Object.fromEntries((armor.slots ?? []).map((s) => [s.id, s.name])) as Record<ArmorSlot, string> };
   for (const a of armor.armor ?? []) putUnique(content.armor, a.id, a, 'armor', errors);
   crossCheck(content, errors);
+  for (const fd of content.fields.values()) validateField(content, fd, errors);
   if (errors.length > 0) throw new ContentError(errors);
   return content;
 }

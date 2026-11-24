@@ -11,6 +11,7 @@ TypeScript + Vite + Three.js。入力、simulation、render、data、save、UI �
 
 - src/game/ は DOM・Three.js・現在時刻に触れない（Node のテストと将来のサーバーで同じコードを動かす）。
 - src/render/ は simulation の状態を読むだけで、値を書き戻さない。
+- 狩場は、エリアに分かれたフィールド（public/data/fields/、docs/spec.md の 18 章。v0.11.0）。エリアは 1 つの座標の中に離して置く。`SimOptions.field` を渡さなければ、これまでの 1 つの狩場で動く（アプリでは `?hunt=arena`）。
 
 # Contracts
 恒久 ID と表示名を分離する。モデルは m、Y-up、+Z forward。移動は controller を正本とする。clip、骨、socket を勝手に推測で置換しない。攻撃は startup、active、recovery、cancel、hitWindow をデータで管理する。ヒットは attackInstanceId + hitWindow.id + targetEntityId で重複防止する。
@@ -32,4 +33,5 @@ main へ push すると Actions（Build and publish）が gh-pages（配信元�
 - `npm run smoke` 本番ビルドをヘッドレス Chrome で操作する検査（Chrome が必要。`npm run build` の後に実行）
 - `npm run check` typecheck + test + build
 - `npm run publish:pages` 本番ビルドを gh-pages ブランチへ置く（コミット済みの状態で実行）
+- `npm run field:gen` フィールド（エリアに分かれた狩場）のデータ public/data/fields/ を作り直す（Python が必要。出力は手で編集しない）
 - `npm run design:doc` 制作計画・実装指示書 第 2 版の PDF を作り直す（Python と Chrome が必要）

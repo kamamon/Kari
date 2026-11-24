@@ -403,6 +403,73 @@ export interface MapDef {
   platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number }[];
 }
 
+/** フィールドの出口。入ると、行き先のエリアの arrive へ移る。large が付いた出口は、大型モンスターも通る（arriveLarge へ出る）。 */
+export interface FieldExit {
+  to: string;
+  x: number;
+  z: number;
+  r: number;
+  arrive: { x: number; z: number; yaw: number };
+  large?: boolean;
+  arriveLarge?: { x: number; z: number; yaw: number };
+}
+
+/** フィールドのエリア。形（bounds・岩・段差）は MapDef と同じ決まり。座標は、フィールド全体で 1 つの空間。 */
+export interface FieldAreaDef {
+  id: string;
+  /** 画面に出す番号（0 = 野営地） */
+  no: number;
+  name: string;
+  kind: 'camp' | 'hunt' | 'path' | 'nest';
+  /** 大型モンスターが入れる */
+  large: boolean;
+  /** 地図の上のマス（列、行。行は北が大きい） */
+  grid: [number, number];
+  bounds: { minX: number; maxX: number; minZ: number; maxZ: number };
+  stepUp: number;
+  rocks: { x: number; z: number; r: number; h: number }[];
+  platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number }[];
+  exits: FieldExit[];
+}
+
+/** 大型の移動と休息の決まり（src/game/roam.ts）。 */
+export interface RoamRules {
+  stayTicks: [number, number];
+  walkSpeedScale: number;
+  limpSpeedScale: number;
+  limpHpRatio: number;
+  sleepTicks: number;
+  /** 眠っている間に 1 秒で戻る体力（最大体力に対する割合）と、戻る上限 */
+  sleepHealPerSec: number;
+  sleepHealCap: number;
+  wakeStayTicks: number;
+  /** 気づいていない間のぶらつき: 速さ（歩く速さに掛ける）、立ち止まる時間、エリアの縁から離す距離 */
+  wanderSpeedScale: number;
+  wanderIdleTicks: [number, number];
+  wanderInset: number;
+  /** 気づいた相手が別のエリアへ行ってから、見失うまでの時間 */
+  loseSightTicks: number;
+}
+
+/**
+ * フィールド = エリアに分かれた狩場（D-066）。野営地から出発し、出口でエリアを移る。大型は routes のとおりに巡り、弱ると nest で眠る。
+ * legacyMapId / legacyAreaId: エリアに分ける前の狩場（MapDef）と、それにあたるエリア。形と位置が同じであること。
+ */
+export interface FieldDef {
+  schemaVersion: number;
+  id: string;
+  name: string;
+  legacyMapId: string;
+  legacyAreaId: string;
+  start: { areaId: string; x: number; z: number; yaw: number };
+  camp: { x: number; z: number; r: number };
+  /** フィールドで狩る時に、依頼の制限時間へ掛ける倍率（歩いて探す・標的が移動する、のぶん） */
+  timeLimitScale: number;
+  roam: RoamRules;
+  routes: Record<string, { start: string; roam: string[]; nest: string }>;
+  areas: FieldAreaDef[];
+}
+
 /** プレイヤーの初期調整値（設計書 p.09）。本作独自の値で、実機の手触りを見て調整する。 */
 export interface PlayerTuning {
   schemaVersion: number;
@@ -440,6 +507,8 @@ export interface QuestDef {
   targetMonsterId: string;
   /** 段階（ranks.json の id）。標的の強さと、出る素材が決まる。 */
   rankId: string;
+  /** フィールド（エリアに分かれた狩場）。あれば、野営地から出発し、標的はエリアを移動する。mapId は、その中の「これまでの狩場」にあたるエリア */
+  fieldId?: string;
   /** 受けるために、先に 1 回は達成しておく依頼（無ければ最初から受けられる）。 */
   requires?: string[];
   monsterSpawn: { x: number; z: number; yaw: number };
@@ -510,6 +579,7 @@ export interface ContentIndex {
     weapons: string;
     monsters: string[];
     maps: string[];
+    fields: string[];
     quests: string;
     items: string;
     loot: string;
@@ -536,6 +606,7 @@ export interface Content {
   materials: Map<string, MaterialDef>;
   loot: Map<string, LootDef>;
   recipes: Map<string, RecipeDef>;
+  fields: Map<string, FieldDef>;
   ranks: Map<string, RankDef>;
   armor: Map<string, ArmorDef>;
   armorRules: ArmorRules;

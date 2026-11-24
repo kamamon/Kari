@@ -128,6 +128,12 @@ export class App implements MenuHost, BaseHost, ResultHost {
     window.addEventListener('pagehide', () => this.releaseInputs());
   }
 
+  /**
+   * 依頼を、フィールド（エリアに分かれた狩場）で始めるか。ふだんは true。
+   * アドレスに ?hunt=arena を付けると、エリアに分ける前の 1 つの狩場で始まる（検査と、見比べ用）。
+   */
+  readonly fieldHunts = new URLSearchParams(location.search).get('hunt') !== 'arena';
+
   private options(questId: string | null): SimOptions {
     return {
       seed: DEFAULT_SEED,
@@ -137,6 +143,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
       monsterAttacks: this.store.value.dummyAttacks,
       questId,
       armorIds: wornArmor(this.save.doc, this.content).map((a) => a.id),
+      field: this.fieldHunts,
     };
   }
 
@@ -245,7 +252,9 @@ export class App implements MenuHost, BaseHost, ResultHost {
   private resetCamera(): void {
     const p = this.sim.player;
     const m = this.sim.monsters[0];
-    if (this.store.value.targetAssist && m && !m.dead) this.view.cam.resetBehind(yawOf(m.pos.x - p.pos.x, m.pos.z - p.pos.z));
+    // 標的が別のエリアに居る時は、標的の方ではなく、背中側へ
+    const here = !this.sim.field || (m && this.sim.monsterArea(m)?.id === this.sim.areaId);
+    if (this.store.value.targetAssist && m && !m.dead && here) this.view.cam.resetBehind(yawOf(m.pos.x - p.pos.x, m.pos.z - p.pos.z));
     else this.view.cam.resetBehind(p.yaw);
   }
 
@@ -337,7 +346,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
   sessionInfo(): { hunt: boolean; done: boolean; title: string; lines: string[] } {
     const h = this.sim.hunt;
     if (!h) return { hunt: false, done: false, title: '訓練場', lines: ['動かない標的で、操作と技を確かめる場所です。'] };
-    const left = Math.ceil(Math.max(0, h.quest.timeLimitTicks - h.ticks) / 60);
+    const left = Math.ceil(Math.max(0, h.timeLimitTicks - h.ticks) / 60);
     return {
       hunt: true,
       done: h.phase === 'success',
@@ -482,6 +491,9 @@ export class App implements MenuHost, BaseHost, ResultHost {
     };
     for (const e of events) {
       switch (e.type) {
+        case 'area_change':
+          play('ui');
+          break;
         case 'action_event':
           if (e.kind === 'sound') play(e.id);
           else if (e.kind === 'vfx' && e.id === 'ground_slam') play('ground_slam');

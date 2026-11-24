@@ -929,7 +929,9 @@ export class GaldrosRig implements MonsterRig {
     const enraged = m.enraged && !m.dead;
     // 弱っている合図は、捕獲の条件と同じ値（モンスターのデータの capture.hpRatio）を使う
     const weak = isWeak(m);
-    this.capT = m.captured ? this.capT + c.dt : 0;
+    // 眠る姿勢: 捕獲された時と、巣で眠っている時（フィールド）。起きた時は、すばやく立ち上がる
+    const resting = m.captured || (m.asleep && !m.dead);
+    this.capT = resting ? this.capT + c.dt : m.dead ? 0 : Math.max(0, Math.min(this.capT, 1.4) - c.dt * 3.2);
     // 怒り: 晶脈と目が赤く脈打つ
     const rage = enraged ? 0.6 + 0.4 * Math.sin(time * 7) : 0;
     this.glowMat.emissive.setRGB(1 + rage * 2.2, 1 - rage * 0.45, 1 - rage * 0.75);
@@ -962,7 +964,7 @@ export class GaldrosRig implements MonsterRig {
     const slamTarget = this.v5;
 
     // ---- 呼吸・まばたき・基本の構え ----
-    const breathRate = m.dead ? 0 : m.captured ? 0.9 : enraged ? 3.4 : weak ? 3.9 : m.aware ? 1.9 : 1.3;
+    const breathRate = m.dead ? 0 : resting ? 0.9 : enraged ? 3.4 : weak ? 3.9 : m.aware ? 1.9 : 1.3;
     this.breathPhase += breathRate * dt;
     const breath = Math.sin(this.breathPhase);
     P.breath = (enraged || weak ? 0.045 : 0.03) * breath;
@@ -994,7 +996,7 @@ export class GaldrosRig implements MonsterRig {
     }
 
     // ---- しぐさ（技も怯みも無く、ほぼ止まっている間だけ） ----
-    const calm = !m.action && m.staggerTicks <= 0 && !m.dead && !m.captured && m.trapTicks <= 0 && speed < 0.45 && Math.abs(this.yawVel) < 0.25;
+    const calm = !m.action && m.staggerTicks <= 0 && !m.dead && !resting && m.trapTicks <= 0 && speed < 0.45 && Math.abs(this.yawVel) < 0.25;
     const fid = this.fid;
     if (!calm) {
       fid.kind = '';
@@ -1312,7 +1314,7 @@ export class GaldrosRig implements MonsterRig {
     }
 
     // ---- 罠にかかっている間: 足を取られて体が沈み、もがく（怯みの動きはこの上に重なる）----
-    if (!m.dead && !m.captured && m.trapTicks > 0) {
+    if (!m.dead && !resting && m.trapTicks > 0) {
       const s1 = Math.sin(time * 8.5), s2 = Math.sin(time * 6.1 + 1.3);
       P.y += -0.16 + 0.03 * s1;
       P.roll += 0.06 * s2;
@@ -1324,7 +1326,7 @@ export class GaldrosRig implements MonsterRig {
       P.look = 0.2;
     }
     // ---- 捕獲・死亡・転倒・怯み ----
-    if (m.captured) {
+    if (resting || this.capT > 0) {
       // 眠る: 腹ばいに沈み、首を下ろして目を閉じる。ゆっくり息をする。
       const e1 = smoothstep(this.capT / 1.4), e2 = smoothstep((this.capT - 0.8) / 1.6);
       P.y = -0.34 * e1;
