@@ -4,6 +4,7 @@
 # Source of truth
 作業前に docs/spec.md、docs/animation-contract.md、docs/asset-manifest.json、docs/handoff.md を確認する。採用済み仕様を変更するときは理由と影響を docs/decisions.md へ記録する。
 元の設計書は docs/source/VEILBOUND_HUNTERS_design_v1.0.pdf（49 ページ）。
+第 2 版は docs/source/VEILBOUND_HUNTERS_design_v2.0.pdf（20 ページ、2026-11-24。段階 4 つ・武器と防具の 5 段・属性・大型 13 種の図鑑・これからの順番。変わっていない章は v1.0 を参照）。本文は tools/design-doc/ にあり、`npm run design:doc` で作り直す（数値は public/data から読む）。
 
 # Architecture
 TypeScript + Vite + Three.js。入力、simulation、render、data、save、UI を分離する。60Hz 固定 tick を戦闘の基準にする。描画 dt、描画補間、Math.random を戦闘判定の正本にしない。ゲーム内の AI API 呼出しを必須にしない。
@@ -31,3 +32,4 @@ main へ push すると Actions（Build and publish）が gh-pages（配信元�
 - `npm run smoke` 本番ビルドをヘッドレス Chrome で操作する検査（Chrome が必要。`npm run build` の後に実行）
 - `npm run check` typecheck + test + build
 - `npm run publish:pages` 本番ビルドを gh-pages ブランチへ置く（コミット済みの状態で実行）
+- `npm run design:doc` 制作計画・実装指示書 第 2 版の PDF を作り直す（Python と Chrome が必要）

@@ -16,6 +16,7 @@
     "assets:validate": "vitest run tests/content.test.ts",
     "smoke": "node tools/smoke.mjs",
     "check": "npm run typecheck && npm run test && npm run build",
+    "design:doc": "python3 tools/design-doc/build.py tools/out/design-v2.html docs/design-v2/monsters && node tools/design-doc/pdf.mjs tools/out/design-v2.html docs/source/VEILBOUND_HUNTERS_design_v2.0.pdf",
     "publish:pages": "bash tools/publish-pages.sh"
   },
   "dependencies": {

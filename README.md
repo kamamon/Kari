@@ -11,6 +11,8 @@
 - ChatGPT の追加制作計画 v1（2026-11-23）: 原本は [docs/source/chatgpt-plan-v1/](docs/source/chatgpt-plan-v1/)。いまの実装との突き合わせと採否は [docs/plan-review-v1.md](docs/plan-review-v1.md)。次の目標は「受注 → 狩猟 → 報酬 → 帰還 → 強化 1 件 → 再読込後の復元」
 - 武器種は 7 系統（大剣・短剣と盾・ランス・弓・大槌・双剣・太刀）: [docs/weapons.md](docs/weapons.md)。拠点の画面で持ち替えられる（強さは仮）。v0.5.0 で大鎌（旋鎌）をやめ、大槌・双剣・太刀を足した。**この 3 つは設定図がまだ無く、見た目は単色の仮の形**。断岳剣以外の 6 系統の体の動きは、人にできる動きとして組んである（足が地面に付いたまま踏み込む・腰から回す・盾は腕に固定）。形の一覧は [素材ビューアの「武器」](https://kamamon.github.io/Kari/viewer.html?subject=weapons)
 
+設計書: 第 1 版 [docs/source/VEILBOUND_HUNTERS_design_v1.0.pdf](docs/source/VEILBOUND_HUNTERS_design_v1.0.pdf)、第 2 版 [docs/source/VEILBOUND_HUNTERS_design_v2.0.pdf](docs/source/VEILBOUND_HUNTERS_design_v2.0.pdf)（2026-11-24。いまの実装と決定を反映）。
+
 ## いまの段階: v0.10.1（M2: ガルドロスを狩って帰る + 武器 7 系統 + 保存 + 段階 4 つ・武器の強化 5 段・防具 + 刃の状態と研磨石）
 
 設計書の開発段階 M0（基盤）・M1（戦闘）と、M2（狩猟）の前半まで。**見た目・動き・音はすべて仮素材**です。
