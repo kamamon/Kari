@@ -1132,6 +1132,17 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   check('フィールド: 野営地から始まる。標的はエリア 3 に居て、地図に現在地（営）と標的（3）の印が出る', f.area === 'camp' && f.target === 'a3' && f.cells === 11 && f.here === '営' && f.mark === '3' && /^野営地　標的: エリア 3/.test(f.where) && f.limit === 108000, JSON.stringify(f));
   check('フィールド: 別のエリアに居る標的は描かない', f.rigVisible === false);
   await page.screenshot({ path: `${OUT}81_field_camp.png` });
+  // 景色の絵（依頼 8。v0.13.0）: 空と遠景・地面・岩・草
+  const art = await until(page, () => { const a = window.__vh.envArt(); return a.asked >= 8 && a.loaded === a.asked && a.failed === 0; }, 15000);
+  await page.waitForTimeout(300);
+  const sky = await page.evaluate(() => {
+    const v = window.__vh.view, b = v.scene.getObjectByName('backdrop'), c = v.cam.camera.position;
+    let cutouts = 0;
+    v.scene.traverse((o) => { if (o.isInstancedMesh && o.visible && o.material.alphaTest > 0 && o.material.map && o.material.visible) cutouts += o.count; });
+    return { art: window.__vh.envArt(), off: Math.abs(b.position.x - c.x) + Math.abs(b.position.z - c.z), far: b.children.filter((m) => m.material.map && m.material.visible).length, fog: v.scene.fog.color.getHexString(), cutouts, ...v.stats() };
+  });
+  check('景色の絵（狩場）: 頼んだ絵がすべて読めている。空と遠景の筒（絵 2 枚）が、カメラと一緒に動く。霧の色は絵の下の帯と同じ', art && sky.off < 0.01 && sky.far === 2 && sky.fog === 'aebcab', JSON.stringify(sky));
+  check('景色の絵（狩場）: 草と小物の板が立っている（野営地で 150 より多い）。描画量は目標内（100 draw calls / 20万 tri）', sky.cutouts > 150 && sky.calls <= 100 && sky.triangles <= 200000, JSON.stringify(sky));
   // 前へ歩く（東の出口へ向いて始まる）。出口に入ると、エリア 1 へ移る
   await page.keyboard.down('KeyW');
   await page.keyboard.down('ShiftLeft');
@@ -1237,6 +1248,17 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   });
   let h = await hubState();
   check('里: 標的は居ない。道具は持たない。「一覧」のボタンが出ている', h.monsters === 0 && h.items === 0 && h.list && h.prompt === '', JSON.stringify(h));
+  // 景色の絵（依頼 8。v0.13.0）: 里の遠景・土と石畳・建物 4 つ
+  const hubArt = await until(page, () => { const a = window.__vh.envArt(); return a.asked >= 13 && a.loaded === a.asked && a.failed === 0; }, 15000);
+  await page.waitForTimeout(300);
+  const hubLook = await page.evaluate(() => {
+    const v = window.__vh.view;
+    const files = [];
+    v.scene.traverse((o) => { if (o.isMesh && !o.isInstancedMesh && o.material.alphaTest > 0 && o.material.map && o.material.visible) files.push(String(o.material.map.image?.src ?? '').split('/').pop()); });
+    return { art: window.__vh.envArt(), buildings: files.sort(), far: v.scene.getObjectByName('backdrop').children.filter((m) => m.material.map && m.material.visible).length, ...v.stats() };
+  });
+  check('景色の絵（里）: 頼んだ絵がすべて読めている。建物 4 つ（工房・商店・依頼板・装備箱）に、それぞれの図が貼られている', hubArt && hubLook.far === 2 && hubLook.buildings.join() === 'bld_board_v1.webp,bld_chest_v1.webp,bld_shop_v1.webp,bld_workshop_v1.webp', JSON.stringify(hubLook));
+  check('景色の絵（里）: 描画量は目標内（100 draw calls / 20万 tri）', hubLook.calls <= 100 && hubLook.triangles <= 200000, JSON.stringify(hubLook));
   await page.screenshot({ path: `${OUT}90_hub_start.png` });
   // 攻撃のボタンを押しても、武器を抜かない
   await click(page);
@@ -1318,6 +1340,27 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await until(page, () => !document.getElementById('base').hidden);
   h = await hubState();
   check('里: 「一覧」で、すべての欄が出る（依頼・武器・工房・商店）', h.section === 'all' && h.title === '灯継ぎの里' && h.quests !== 'none' && h.forge !== 'none' && h.shop !== 'none' && h.weapons !== 'none', JSON.stringify(h));
+  // 図鑑（v0.13.0）: 登録簿の 13 種が、段階ごとに並ぶ。原画のある種は、開くと原画が出る
+  const zukan = await page.evaluate(async () => {
+    const d = document.getElementById('base-bestiary');
+    d.open = true;
+    d.dispatchEvent(new Event('toggle'));
+    const second = d.querySelector('[data-species="monster.selvark"]');
+    second.open = true;
+    second.dispatchEvent(new Event('toggle'));
+    const img = second.querySelector('img');
+    if (img && !img.complete) await new Promise((r) => { img.onload = r; img.onerror = r; });
+    return {
+      shown: getComputedStyle(d).display !== 'none', summary: d.querySelector('summary').textContent, n: d.querySelectorAll('[data-species]').length,
+      heads: [...d.querySelectorAll('h4[data-rank]')].map((x) => x.textContent.replace(/\s+/g, ' ')), done: [...d.querySelectorAll('.bestiary-item.implemented')].map((x) => x.dataset.species).join(),
+      art: d.querySelectorAll('.bestiary-item.art').length, img: img ? img.naturalWidth : 0, cap: second.querySelector('figcaption')?.textContent ?? '', eco: /まだ書かれていません/.test(second.querySelector('dl').textContent),
+    };
+  });
+  check('図鑑: 依頼の欄に、13 種が段階ごとに並ぶ（初級 13 / 13、中級 0 / 20、上級 0 / 25、極級 0 / 20）。遊べるのはガルドロスだけ',
+    zukan.shown && zukan.summary === 'モンスター図鑑（13 種）' && zukan.n === 13 && zukan.heads.join('|') === '初級から 13 / 13 種|中級から 0 / 20 種|上級から 0 / 25 種|極級から 0 / 20 種' && zukan.done === 'monster.galdros' && zukan.art === 12, JSON.stringify(zukan));
+  check('図鑑: 原画のある種を開くと、原画が出る。体と動きがまだ無いこと、生態がまだ書かれていないことが分かる', zukan.img === 720 && /まだありません/.test(zukan.cap) && zukan.eco, JSON.stringify(zukan));
+  await page.evaluate(() => document.getElementById('base-bestiary').scrollIntoView({ block: 'start' }));
+  await page.screenshot({ path: `${OUT}99_bestiary.png` });
   // 依頼へ: 買った回復液を、支給品に足して持っていく
   await page.click('.base-choice[data-quest="quest.basin.003"]');
   await until(page, () => window.__vh.place === 'hunt' && window.__vh.sim.tick > 5 && document.getElementById('base').hidden);

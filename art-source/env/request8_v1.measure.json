@@ -1,0 +1,246 @@
+{
+ "env_basin_far_a_v1": {
+  "kind": "far",
+  "place": "basin",
+  "topBefore": "#BCC9C4",
+  "bottomBefore": "#AAB8A9",
+  "topAfter": "#C5D2CB",
+  "bottomAfter": "#AEBCAB",
+  "edgeStep": 0.0,
+  "bytes": 23732
+ },
+ "env_basin_far_b_v1": {
+  "kind": "far",
+  "place": "basin",
+  "topBefore": "#BCC9C6",
+  "bottomBefore": "#ACB9AA",
+  "topAfter": "#C5D2CB",
+  "bottomAfter": "#AEBCAB",
+  "edgeStep": 0.0,
+  "bytes": 29658
+ },
+ "env_village_far_a_v1": {
+  "kind": "far",
+  "place": "village",
+  "topBefore": "#BECBC6",
+  "bottomBefore": "#ABB7A8",
+  "topAfter": "#C5D2CB",
+  "bottomAfter": "#AEBCAB",
+  "edgeStep": 0.0,
+  "bytes": 29030
+ },
+ "env_village_far_b_v1": {
+  "kind": "far",
+  "place": "village",
+  "topBefore": "#BDCAC4",
+  "bottomBefore": "#ACB8A9",
+  "topAfter": "#C5D2CB",
+  "bottomAfter": "#AEBCAB",
+  "edgeStep": 0.0,
+  "bytes": 32466
+ },
+ "tex_ground_basin_grass_v1": {
+  "kind": "tile",
+  "wrap": "repeat",
+  "mean": "#6D764F",
+  "seamBefore": [
+   2.43,
+   1.95
+  ],
+  "seamAfter": [
+   1.03,
+   1.06
+  ],
+  "contrastBefore": 18.38,
+  "contrastAfter": 18.47,
+  "bytes": 70328
+ },
+ "tex_ground_basin_gravel_v1": {
+  "kind": "tile",
+  "wrap": "repeat",
+  "mean": "#9F8E6F",
+  "seamBefore": [
+   2.5,
+   1.85
+  ],
+  "seamAfter": [
+   0.99,
+   1.0
+  ],
+  "contrastBefore": 21.35,
+  "contrastAfter": 21.36,
+  "bytes": 57444
+ },
+ "tex_ground_nest_v1": {
+  "kind": "tile",
+  "wrap": "repeat",
+  "mean": "#6D6B5E",
+  "seamBefore": [
+   2.45,
+   1.72
+  ],
+  "seamAfter": [
+   1.17,
+   1.06
+  ],
+  "contrastBefore": 8.56,
+  "contrastAfter": 8.58,
+  "bytes": 54278
+ },
+ "tex_ground_village_earth_v1": {
+  "kind": "tile",
+  "wrap": "repeat",
+  "mean": "#A8977D",
+  "seamBefore": [
+   2.51,
+   1.69
+  ],
+  "seamAfter": [
+   0.97,
+   0.99
+  ],
+  "contrastBefore": 18.0,
+  "contrastAfter": 18.05,
+  "bytes": 21492
+ },
+ "tex_rock_basin_v1": {
+  "kind": "tile",
+  "wrap": "repeat",
+  "mean": "#837C6F",
+  "seamBefore": [
+   2.74,
+   2.29
+  ],
+  "seamAfter": [
+   1.18,
+   1.06
+  ],
+  "contrastBefore": 9.97,
+  "contrastAfter": 9.97,
+  "bytes": 30064
+ },
+ "tex_ground_village_paving_v1": {
+  "kind": "tile",
+  "wrap": "mirror",
+  "mean": "#867E6E",
+  "seamBefore": [
+   1.84,
+   1.71
+  ],
+  "seamAfter": [
+   1.84,
+   1.71
+  ],
+  "contrastBefore": 13.88,
+  "contrastAfter": 13.88,
+  "bytes": 88742
+ },
+ "tex_rock_vein_v1": {
+  "kind": "tile",
+  "wrap": "mirror",
+  "mean": "#867D71",
+  "seamBefore": [
+   3.21,
+   2.98
+  ],
+  "seamAfter": [
+   3.21,
+   2.98
+  ],
+  "contrastBefore": 10.24,
+  "contrastAfter": 10.24,
+  "bytes": 31410
+ },
+ "sprite_grass_basin_v1": {
+  "kind": "sprite",
+  "cells": [
+   {
+    "x0": 88,
+    "x1": 444,
+    "y0": 302,
+    "y1": 508,
+    "rootX": 260
+   },
+   {
+    "x0": 546,
+    "x1": 976,
+    "y0": 70,
+    "y1": 508,
+    "rootX": 763
+   },
+   {
+    "x0": 64,
+    "x1": 451,
+    "y0": 732,
+    "y1": 1009,
+    "rootX": 246
+   },
+   {
+    "x0": 553,
+    "x1": 958,
+    "y0": 887,
+    "y1": 1009,
+    "rootX": 775
+   }
+  ],
+  "bytes": 143964
+ },
+ "sprite_props_basin_v1": {
+  "kind": "sprite",
+  "cells": [
+   {
+    "x0": 95,
+    "x1": 413,
+    "y0": 367,
+    "y1": 512,
+    "rootX": 262
+   },
+   {
+    "x0": 533,
+    "x1": 996,
+    "y0": 277,
+    "y1": 510,
+    "rootX": 777
+   },
+   {
+    "x0": 86,
+    "x1": 429,
+    "y0": 802,
+    "y1": 987,
+    "rootX": 246
+   },
+   {
+    "x0": 532,
+    "x1": 981,
+    "y0": 822,
+    "y1": 986,
+    "rootX": 687
+   }
+  ],
+  "bytes": 110076
+ },
+ "bld_workshop_v1": {
+  "kind": "building",
+  "background": "#E6E2DB",
+  "transparentShare": 0.649,
+  "bytes": 85850
+ },
+ "bld_shop_v1": {
+  "kind": "building",
+  "background": "#E4E0D9",
+  "transparentShare": 0.619,
+  "bytes": 98040
+ },
+ "bld_board_v1": {
+  "kind": "building",
+  "background": "#E9E6E3",
+  "transparentShare": 0.801,
+  "bytes": 59268
+ },
+ "bld_chest_v1": {
+  "kind": "building",
+  "background": "#E7E3DC",
+  "transparentShare": 0.706,
+  "bytes": 69446
+ }
+}

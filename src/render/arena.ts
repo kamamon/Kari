@@ -1,56 +1,22 @@
-// 戦闘区画の仮の見た目。地形の形と寸法はマップデータ（public/data/maps と public/data/fields）が正本で、ここはそれを描くだけ。
-// 灰緑の草と岩、青銅色の鉱脈、霧。正式な環境素材が来たら差し替える。
+// 戦闘区画の見た目。地形の形と寸法はマップデータ（public/data/maps と public/data/fields）が正本で、ここはそれを描くだけ。
+// 立体は、箱・板・多面体の簡単な形。その面に、景色の絵（依頼 8。src/render/envArt.ts）を貼る（v0.13.0、docs/spec.md の 21 章）。
 // フィールドでは、エリアごとに 1 つの Group を作る（setupSky で空と光を 1 回だけ用意し、buildAreaGroup をエリアの数だけ呼ぶ）。
 import {
-  BoxGeometry, CanvasTexture, CircleGeometry, Color, ConeGeometry, CylinderGeometry, DirectionalLight, Fog, Group, HemisphereLight, IcosahedronGeometry,
-  InstancedMesh, Matrix4, Mesh, MeshBasicMaterial, MeshLambertMaterial, Object3D, PlaneGeometry, Quaternion, RepeatWrapping, SRGBColorSpace, Scene, Vector3,
+  BoxGeometry, CircleGeometry, Color, ConeGeometry, CylinderGeometry, DirectionalLight, Float32BufferAttribute, Fog, Group, HemisphereLight, IcosahedronGeometry,
+  InstancedMesh, Mesh, MeshBasicMaterial, MeshLambertMaterial, Object3D, PlaneGeometry, Scene,
 } from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { SeededRng } from '../core/seededRng';
 import type { MapDef } from '../data/schemas';
+import { ENV_SPRITES, ENV_TILES, SpriteField, boxUv, buildBackdrop, tileMaterial, type EnvPlace, type EnvTile } from './envArt';
 
 export const FOG_COLOR = 0xaebcab;
-
-let groundCanvas: HTMLCanvasElement | null = null;
-
-function groundTexture(): CanvasTexture {
-  if (groundCanvas) {
-    const t = new CanvasTexture(groundCanvas);
-    t.wrapS = t.wrapT = RepeatWrapping;
-    t.colorSpace = SRGBColorSpace;
-    return t;
-  }
-  const c = document.createElement('canvas');
-  groundCanvas = c;
-  c.width = c.height = 256;
-  const g = c.getContext('2d')!;
-  g.fillStyle = '#7f8f72';
-  g.fillRect(0, 0, 256, 256);
-  const rng = new SeededRng(4242);
-  // 草むらの濃淡と小石。移動した時に地面が流れて見えるよう、細かな模様を入れる。
-  for (let i = 0; i < 900; i++) {
-    const x = rng.next() * 256;
-    const y = rng.next() * 256;
-    const r = 2 + rng.next() * 9;
-    const tone = rng.next();
-    g.fillStyle = tone < 0.45 ? 'rgba(98,116,88,0.35)' : tone < 0.8 ? 'rgba(146,160,126,0.3)' : 'rgba(120,118,104,0.35)';
-    g.beginPath();
-    g.ellipse(x, y, r, r * (0.5 + rng.next() * 0.6), rng.next() * 3, 0, Math.PI * 2);
-    g.fill();
-  }
-  for (let i = 0; i < 260; i++) {
-    g.fillStyle = rng.next() < 0.5 ? 'rgba(60,72,58,0.5)' : 'rgba(190,186,160,0.45)';
-    g.fillRect(rng.next() * 256, rng.next() * 256, 1.5, 1.5 + rng.next() * 3);
-  }
-  const t = new CanvasTexture(c);
-  t.wrapS = t.wrapT = RepeatWrapping;
-  t.colorSpace = SRGBColorSpace;
-  return t;
-}
 
 export interface Arena {
   group: Group;
   sun: DirectionalLight;
+  /** 空と遠景（カメラと一緒に動かす） */
+  backdrop: Group;
 }
 
 /** 1 つのエリアの見た目に要るもの（形は MapDef / FieldAreaDef と同じ）。 */
@@ -62,27 +28,33 @@ export interface AreaLook {
   camp?: { x: number; z: number; r: number } | null;
   /** 外周の岩壁を開ける場所。marker が付いたものは、出口の目印（門柱と踏み跡）も置く */
   gates?: { x: number; z: number; marker?: boolean }[];
-  /** 種類。path は地面が乾いた色、nest は晶の柱が立つ */
-  kind?: 'camp' | 'hunt' | 'path' | 'nest';
+  /** 種類。地面の絵と、草の生え方が変わる。nest は晶の柱が立つ。village は里（踏み固めた土） */
+  kind?: 'camp' | 'hunt' | 'path' | 'nest' | 'village';
   /** 草や岩壁の散らし方の種（エリアごとに変える） */
   seed?: number;
   /** false なら、rocks を岩として描かない（里の建物の当たりに使う時。草をよける場所としては使う） */
   drawRocks?: boolean;
+  /** 草や小物を置かない円（広場など） */
+  clear?: { x: number; z: number; r: number }[];
+  /** 外周の岩壁の高さ [いちばん低い所, ばらつきの幅]（m）。無ければ [4, 4.5]。里は低くして、遠くの景色を見せる */
+  wallHeight?: [number, number];
 }
 
 /** これまでの狩場（エリアが 1 つ）: 空と光を用意して、狩場を描く。 */
 export function buildArena(scene: Scene, map: MapDef, shadows: boolean): Arena {
-  const sun = setupSky(scene, shadows);
+  const sky = setupSky(scene, shadows, 'basin');
   // キャンプ側の出入口だけ開ける（見た目のみ。衝突は外周で止まる）
   const group = buildAreaGroup({ bounds: map.bounds, rocks: map.rocks, platforms: map.platforms, camp: map.camp, gates: [{ x: map.camp.x, z: map.bounds.minZ }] });
   scene.add(group);
-  return { group, sun };
+  return { group, ...sky };
 }
 
-/** 空の色・霧・光。シーンに 1 回だけ。 */
-export function setupSky(scene: Scene, shadows: boolean): DirectionalLight {
+/** 空と遠景（貼った絵）・霧・光。シーンに 1 回だけ。place で、遠景の絵を選ぶ（狩場か、里か）。 */
+export function setupSky(scene: Scene, shadows: boolean, place: EnvPlace): { sun: DirectionalLight; backdrop: Group } {
   scene.background = new Color(FOG_COLOR);
   scene.fog = new Fog(FOG_COLOR, 38, 150);
+  const backdrop = buildBackdrop(place);
+  scene.add(backdrop);
 
   const hemi = new HemisphereLight(0xe6efe2, 0x56624f, 1.15);
   const sun = new DirectionalLight(0xfff0d2, 1.9);
@@ -100,10 +72,40 @@ export function setupSky(scene: Scene, shadows: boolean): DirectionalLight {
     sun.shadow.bias = -0.0008;
   }
   scene.add(hemi, sun, sun.target);
-  return sun;
+  return { sun, backdrop };
 }
 
-const GROUND_TINT = { camp: 0xffffff, hunt: 0xffffff, path: 0xe9dcc6, nest: 0xd6e0e2 } as const;
+/** 種類ごとの、地面の絵と、1 m² あたりの草・小物の数。 */
+const KIND_LOOK: Record<NonNullable<AreaLook['kind']>, { ground: EnvTile; short: number; tall: number; dry: number; flower: number; stones: number; bush: number; crystal: number; branch: number }> = {
+  camp: { ground: 'grass', short: 0.15, tall: 0.05, dry: 0.03, flower: 0.03, stones: 0.008, bush: 0.006, crystal: 0, branch: 0.003 },
+  hunt: { ground: 'grass', short: 0.17, tall: 0.065, dry: 0.04, flower: 0.03, stones: 0.01, bush: 0.007, crystal: 0.0012, branch: 0.004 },
+  path: { ground: 'gravel', short: 0.035, tall: 0.01, dry: 0.07, flower: 0.006, stones: 0.028, bush: 0.004, crystal: 0.0012, branch: 0.008 },
+  nest: { ground: 'nest', short: 0, tall: 0, dry: 0.012, flower: 0, stones: 0.024, bush: 0, crystal: 0.02, branch: 0.004 },
+  village: { ground: 'earth', short: 0.07, tall: 0.018, dry: 0.02, flower: 0.03, stones: 0.008, bush: 0.008, crystal: 0, branch: 0 },
+};
+/** 地面を、歩ける範囲の外へ広げる幅（m）。端が霧の向こうになるように。 */
+const GROUND_MARGIN = 130;
+/** 絵の明るさの倍率（envArt.tileMaterial の gain）。地面は、色むらで暗くなるぶんも持ち上げる。 */
+const GROUND_GAIN = 1.25;
+const ROCK_GAIN = 1.5;
+
+/** なめらかな濃淡（0〜1）。地面の色むらと、草のかたまり方に使う。 */
+function patchNoise(seed: number): (x: number, z: number) => number {
+  const hash = (ix: number, iz: number): number => {
+    let h = (Math.imul(ix, 374761393) + Math.imul(iz, 668265263) + Math.imul(seed, 144665)) | 0;
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+  };
+  const layer = (x: number, z: number, size: number): number => {
+    const fx = x / size, fz = z / size;
+    const ix = Math.floor(fx), iz = Math.floor(fz);
+    const tx = fx - ix, tz = fz - iz;
+    const sx = tx * tx * (3 - 2 * tx), sz = tz * tz * (3 - 2 * tz);
+    const a = hash(ix, iz), b = hash(ix + 1, iz), c = hash(ix, iz + 1), d = hash(ix + 1, iz + 1);
+    return a + (b - a) * sx + (c - a) * sz + (a - b - c + d) * sx * sz;
+  };
+  return (x, z) => layer(x, z, 11) * 0.6 + layer(x + 40, z - 17, 27) * 0.4;
+}
 
 /** エリア 1 つぶんの地形（地面・岩・段差・外周の岩壁・遠くの山・草）。シーンへは呼んだ側が足す。 */
 export function buildAreaGroup(map: AreaLook): Group {
@@ -115,36 +117,62 @@ export function buildAreaGroup(map: AreaLook): Group {
   const cx = (b.minX + b.maxX) / 2, cz = (b.minZ + b.maxZ) / 2;
   const gates = map.gates ?? [];
 
-  const tex = groundTexture();
-  tex.repeat.set((w + 60) / 6, (d + 60) / 6);
-  const ground = new Mesh(new PlaneGeometry(w + 60, d + 60), new MeshLambertMaterial({ map: tex, color: GROUND_TINT[map.kind ?? 'hunt'] }));
-  ground.rotation.x = -Math.PI / 2;
-  ground.position.set(cx, 0, cz);
+  const look = KIND_LOOK[map.kind ?? 'hunt'];
+  const noise = patchNoise(map.seed ?? 9001);
+
+  // 地面: 絵を、1 枚 = 6m 四方で敷き詰める。同じ絵の並びが目立たないよう、頂点の色で、ゆるい濃淡と色むらを足す
+  const gw = w + GROUND_MARGIN * 2, gd = d + GROUND_MARGIN * 2;
+  const groundGeo = new PlaneGeometry(gw, gd, Math.ceil(gw / 5), Math.ceil(gd / 5));
+  groundGeo.rotateX(-Math.PI / 2);
+  groundGeo.translate(cx, 0, cz);
+  {
+    const pos = groundGeo.getAttribute('position');
+    const tile = ENV_TILES[look.ground].tile;
+    const uv = new Float32Array(pos.count * 2), col = new Float32Array(pos.count * 3);
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i), z = pos.getZ(i);
+      uv[i * 2] = x / tile;
+      uv[i * 2 + 1] = -z / tile;
+      const shade = 1 - 0.2 * noise(x, z);
+      const warm = (noise(x + 91, z + 53) - 0.5) * 0.14;
+      col[i * 3] = shade * (1 + warm);
+      col[i * 3 + 1] = shade;
+      col[i * 3 + 2] = shade * (1 - warm);
+    }
+    groundGeo.setAttribute('uv', new Float32BufferAttribute(uv, 2));
+    groundGeo.setAttribute('color', new Float32BufferAttribute(col, 3));
+  }
+  const ground = new Mesh(groundGeo, tileMaterial(look.ground, 0xffffff, { vertexColors: true, gain: GROUND_GAIN }));
   ground.receiveShadow = true;
+  ground.userData.noMerge = true;
   group.add(ground);
 
-  const rockMat = new MeshLambertMaterial({ color: 0x8b8d82, flatShading: true });
-  const rockDark = new MeshLambertMaterial({ color: 0x6e7268, flatShading: true });
+  const rockMat = tileMaterial('rock', 0xffffff, { flat: true, gain: ROCK_GAIN });
+  const rockDark = tileMaterial('rock', 0xd2d6ce, { flat: true, gain: ROCK_GAIN });
+  const veinMat = tileMaterial('vein', 0xfff6e6, { flat: true, gain: ROCK_GAIN });
   const bronze = new MeshLambertMaterial({ color: 0xb08d57, emissive: 0x2a1d08, flatShading: true });
-  const stepMat = new MeshLambertMaterial({ color: 0x9b9c8c, flatShading: true });
-  const stepTop = new MeshLambertMaterial({ color: 0x8d9a7c, flatShading: true });
+  const stepMat = tileMaterial('rock', 0xf2efe6, { flat: true, gain: ROCK_GAIN });
+  const stepTop = tileMaterial(look.ground, 0xffffff, { gain: GROUND_GAIN * 0.95 });
 
-  // 岩（円柱として衝突する。見た目は半径に合わせた多面体）
+  // 岩（円柱として衝突する。見た目は半径に合わせた多面体）。晶脈の走る岩には、青銅色の筋も付ける
   for (const r of map.drawRocks === false ? [] : map.rocks) {
-    const m = new Mesh(new IcosahedronGeometry(1, 1), rng.next() < 0.5 ? rockMat : rockDark);
+    const veined = rng.next() < 0.45;
+    const m = new Mesh(new IcosahedronGeometry(1, 1), veined ? veinMat : rng.next() < 0.5 ? rockMat : rockDark);
     m.scale.set(r.r * 1.04, r.h * 0.62, r.r * 1.04);
     m.position.set(r.x, r.h * 0.45, r.z);
     m.rotation.y = rng.next() * 6.28;
     m.castShadow = true;
     m.receiveShadow = true;
+    boxUv(m, ENV_TILES.rock.tile);
     group.add(m);
-    const cap = new Mesh(new IcosahedronGeometry(1, 0), rockMat);
+    const cap = new Mesh(new IcosahedronGeometry(1, 0), veined ? veinMat : rockMat);
     cap.scale.set(r.r * 0.6, r.h * 0.35, r.r * 0.6);
     cap.position.set(r.x + (rng.next() - 0.5) * r.r * 0.5, r.h * 0.8, r.z + (rng.next() - 0.5) * r.r * 0.5);
     cap.rotation.set(rng.next(), rng.next() * 6, rng.next());
     cap.castShadow = true;
+    boxUv(cap, ENV_TILES.rock.tile);
     group.add(cap);
-    if (rng.next() < 0.6) {
+    if (veined) {
       const vein = new Mesh(new BoxGeometry(0.12, r.h * 0.7, 0.3), bronze);
       const a = rng.next() * 6.28;
       vein.position.set(r.x + Math.cos(a) * r.r * 0.93, r.h * 0.4, r.z + Math.sin(a) * r.r * 0.93);
@@ -153,22 +181,33 @@ export function buildAreaGroup(map: AreaLook): Group {
     }
   }
 
-  // 段差
+  // 段差（横は岩肌、上は、その場所の地面）
   for (const p of map.platforms) {
     const box = new Mesh(new BoxGeometry(p.maxX - p.minX, p.h, p.maxZ - p.minZ), [stepMat, stepMat, stepTop, stepMat, stepMat, stepMat]);
     box.position.set((p.minX + p.maxX) / 2, p.h / 2, (p.minZ + p.maxZ) / 2);
     box.castShadow = true;
     box.receiveShadow = true;
+    boxUv(box, ENV_TILES.rock.tile, ENV_TILES[look.ground].tile);
     group.add(box);
   }
 
   // 外周の岩壁
+  const wallH = map.wallHeight ?? [4, 4.5];
   const wall = (x: number, z: number, sx: number, sz: number): void => {
-    const h = 4 + rng.next() * 4.5;
+    const h = wallH[0] + rng.next() * wallH[1];
     const m = new Mesh(new BoxGeometry(sx, h, sz), rng.next() < 0.5 ? rockMat : rockDark);
     m.position.set(x, h / 2 - 0.3, z);
     m.rotation.set((rng.next() - 0.5) * 0.12, (rng.next() - 0.5) * 0.25, (rng.next() - 0.5) * 0.12);
+    boxUv(m, ENV_TILES.rock.tile);
     group.add(m);
+    // 壁の上に、岩のかたまりを載せる（平らな上端を崩す）
+    const top = new Mesh(new IcosahedronGeometry(1, 1), rng.next() < 0.35 ? veinMat : rng.next() < 0.5 ? rockMat : rockDark);
+    const tall = 1.2 + rng.next() * 1.6;
+    top.scale.set(sx * (0.42 + rng.next() * 0.16), tall, sz * (0.42 + rng.next() * 0.16));
+    top.position.set(x + (rng.next() - 0.5) * 0.8, h - 0.5 + tall * 0.25, z + (rng.next() - 0.5) * 0.8);
+    top.rotation.set((rng.next() - 0.5) * 0.5, rng.next() * 6.28, (rng.next() - 0.5) * 0.5);
+    boxUv(top, ENV_TILES.rock.tile);
+    group.add(top);
   };
   // 出入口の所だけ、壁を開ける（見た目のみ。衝突は外周で止まり、出口は simulation が扱う）
   const open = (x: number, z: number, alongX: boolean): boolean => gates.some((g) => (alongX ? Math.abs(g.z - z) < 5 && Math.abs(g.x - x) < 4 : Math.abs(g.x - x) < 5 && Math.abs(g.z - z) < 4));
@@ -183,7 +222,7 @@ export function buildAreaGroup(map: AreaLook): Group {
   }
 
   // 出口の目印: 踏み跡（明るい地面）と、両脇の門柱。柱の頭は青銅色
-  const trail = new MeshLambertMaterial({ color: 0xa79f84 });
+  const trail = tileMaterial('gravel', map.kind === 'path' ? 0xdcd6c8 : 0xffffff, { gain: GROUND_GAIN });
   for (const g of gates) {
     if (!g.marker) continue;
     // 外向き（エリアの中心から出口へ）
@@ -193,6 +232,7 @@ export function buildAreaGroup(map: AreaLook): Group {
     path.rotation.x = -Math.PI / 2;
     path.position.set(g.x + ox * 2, 0.015, g.z + oz * 2);
     path.receiveShadow = true;
+    boxUv(path, ENV_TILES.gravel.tile);
     group.add(path);
     for (const s of [-1, 1]) {
       const px = g.x + ox * 2.3 + (ox !== 0 ? 0 : s * 3.1), pz = g.z + oz * 2.3 + (ox !== 0 ? s * 3.1 : 0);
@@ -205,17 +245,7 @@ export function buildAreaGroup(map: AreaLook): Group {
     }
   }
 
-  // 遠景の山
-  const far = new MeshBasicMaterial({ color: 0x93a595, fog: true });
-  for (let i = 0; i < 16; i++) {
-    const a = (i / 16) * Math.PI * 2 + rng.next() * 0.2;
-    const r = 105 + rng.next() * 25;
-    const h = 22 + rng.next() * 30;
-    const m = new Mesh(new ConeGeometry(18 + rng.next() * 16, h, 5), far);
-    m.position.set(cx + Math.cos(a) * r, h / 2 - 2, cz + Math.sin(a) * r);
-    m.rotation.y = rng.next() * 6;
-    group.add(m);
-  }
+  // 遠くの山は、空と一緒に貼った絵（setupSky の backdrop）。ここでは作らない
 
   // 巣: 壁ぎわに、晶の柱が立つ
   if (map.kind === 'nest') {
@@ -237,34 +267,37 @@ export function buildAreaGroup(map: AreaLook): Group {
   // キャンプ: 天幕と灯
   if (map.camp) addCamp(group, map.camp, rockDark);
 
-  // 草と小石（1 回の描画にまとめる）
-  const blocked = (x: number, z: number): boolean => map.rocks.some((r) => Math.hypot(x - r.x, z - r.z) < r.r + 0.3) || map.platforms.some((p) => x > p.minX - 0.3 && x < p.maxX + 0.3 && z > p.minZ - 0.3 && z < p.maxZ + 0.3);
-  const tuftGeo = new ConeGeometry(0.09, 0.3, 4);
-  tuftGeo.translate(0, 0.15, 0);
-  const tufts = new InstancedMesh(tuftGeo, new MeshLambertMaterial({ color: 0x6f8562, flatShading: true }), 1400);
-  const stones = new InstancedMesh(new IcosahedronGeometry(0.16, 0), rockMat, 220);
-  const m4 = new Matrix4();
-  const q = new Quaternion();
-  const up = new Vector3(0, 1, 0);
-  const place = (mesh: InstancedMesh, count: number, minS: number, maxS: number, tilt: number): void => {
-    let n = 0;
-    let guard = 0;
-    while (n < count && guard++ < count * 6) {
-      const x = b.minX + rng.next() * w;
-      const z = b.minZ + rng.next() * d;
+  // 草と小物: 切り抜きの絵を貼った板を立てる（種類ごとに 1 回の描画）。濃淡に合わせて、かたまって生える
+  const clear = map.clear ?? [];
+  const blocked = (x: number, z: number): boolean =>
+    map.rocks.some((r) => Math.hypot(x - r.x, z - r.z) < r.r + 0.35) ||
+    map.platforms.some((p) => x > p.minX - 0.3 && x < p.maxX + 0.3 && z > p.minZ - 0.3 && z < p.maxZ + 0.3) ||
+    clear.some((c) => Math.hypot(x - c.x, z - c.z) < c.r) ||
+    gates.some((g) => g.marker === true && Math.abs(x - g.x) < 3.2 + (Math.abs(g.x - cx) > w / 2 - 6 ? 7 : 0) && Math.abs(z - g.z) < 3.2 + (Math.abs(g.z - cz) > d / 2 - 6 ? 7 : 0)) ||
+    (map.camp != null && Math.hypot(x - map.camp.x, z - map.camp.z) < map.camp.r);
+  /** 濃い所（clump = 1）か、どこでも（clump = 0）か。置けなければ null */
+  const spot = (clump: number) => (): { x: number; z: number } | null => {
+    for (let tries = 0; tries < 8; tries++) {
+      const x = b.minX + 0.4 + rng.next() * (w - 0.8);
+      const z = b.minZ + 0.4 + rng.next() * (d - 0.8);
       if (blocked(x, z)) continue;
-      const s = minS + rng.next() * (maxS - minS);
-      q.setFromAxisAngle(up, rng.next() * 6.28);
-      if (tilt) q.multiply(new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0), (rng.next() - 0.5) * tilt));
-      m4.compose(new Vector3(x, 0, z), q, new Vector3(s, s * (0.6 + rng.next() * 0.7), s));
-      mesh.setMatrixAt(n++, m4);
+      if (clump > 0 && rng.next() > 1 - clump + clump * Math.min(1, noise(x, z) * 1.7)) continue;
+      return { x, z };
     }
-    mesh.count = n;
-    mesh.instanceMatrix.needsUpdate = true;
+    return null;
   };
-  place(tufts, 1400, 0.5, 1.15, 0.6);
-  place(stones, 220, 0.4, 1.3, 2);
-  group.add(tufts, stones);
+  const area = w * d;
+  const count = (perM2: number, max: number): number => Math.min(max, Math.round(perM2 * area));
+  const field = new SpriteField(group, rng);
+  const G = ENV_SPRITES.grass, P = ENV_SPRITES.props;
+  field.scatter(G, G.cells.short, count(look.short, 1300), spot(0.75));
+  field.scatter(G, G.cells.tall, count(look.tall, 520), spot(0.9));
+  field.scatter(G, G.cells.dry, count(look.dry, 520), spot(0.5));
+  field.scatter(G, G.cells.flower, count(look.flower, 260), spot(0.8));
+  field.scatter(P, P.cells.stones, count(look.stones, 220), spot(0));
+  field.scatter(P, P.cells.bush, count(look.bush, 70), spot(0.4), [0.8, 1.5]);
+  field.scatter(P, P.cells.crystal, count(look.crystal, 120), spot(0), [0.7, 1.6]);
+  field.scatter(P, P.cells.branch, count(look.branch, 60), spot(0), [0.8, 1.4]);
 
   mergeStatic(group);
   return group;
@@ -291,16 +324,16 @@ function addCamp(group: Group, at: { x: number; z: number; r: number }, rockDark
 
 /**
  * 動かない地形を、同じ素材ごとに 1 つのメッシュへまとめる（描画回数を減らす）。
- * 素材を 1 つだけ持つ通常のメッシュが対象。地面・段差（複数素材）・InstancedMesh はそのまま残す。
+ * 素材を 1 つだけ持つ通常のメッシュが対象。地面（userData.noMerge）・段差（複数素材）・InstancedMesh はそのまま残す。
  */
 export function mergeStatic(group: Group): void {
   group.updateMatrixWorld(true);
   const buckets = new Map<MeshLambertMaterial | MeshBasicMaterial, Mesh[]>();
   group.traverse((o) => {
     const m = o as Mesh;
-    if (!m.isMesh || (m as unknown as InstancedMesh).isInstancedMesh || Array.isArray(m.material)) return;
+    if (!m.isMesh || (m as unknown as InstancedMesh).isInstancedMesh || Array.isArray(m.material) || m.userData.noMerge === true) return;
     const mat = m.material as MeshLambertMaterial | MeshBasicMaterial;
-    if ((mat as MeshLambertMaterial).map || mat.transparent) return;
+    if (mat.transparent) return;
     const list = buckets.get(mat) ?? [];
     list.push(m);
     buckets.set(mat, list);
@@ -310,8 +343,9 @@ export function mergeStatic(group: Group): void {
     const geos = meshes.map((m) => {
       const g = m.geometry.index ? m.geometry.toNonIndexed() : m.geometry.clone();
       g.applyMatrix4(m.matrixWorld);
-      // 属性を position / normal だけに揃える（形状ごとに uv の有無が違うとまとめられない）
-      for (const name of Object.keys(g.attributes)) if (name !== 'position' && name !== 'normal') g.deleteAttribute(name);
+      // 属性を position / normal だけに揃える（形状ごとに uv の有無が違うとまとめられない）。絵を貼る素材（userData.uv）は、uv も残す
+      const keepUv = mat.userData.uv === true;
+      for (const name of Object.keys(g.attributes)) if (name !== 'position' && name !== 'normal' && !(keepUv && name === 'uv')) g.deleteAttribute(name);
       return g;
     });
     const merged = mergeGeometries(geos, false);

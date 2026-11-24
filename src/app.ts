@@ -13,6 +13,7 @@ import { GamepadInput } from './input/gamepad';
 import { InputHub } from './input/hub';
 import { KeyboardMouse } from './input/keyboard';
 import { TouchControls } from './input/touch';
+import { envArtStatus } from './render/envArt';
 import { GameView } from './render/view';
 import { defenseOf, playWeaponId, pouchOf, questUnlocked, wornArmor, type RunRewards } from './save/profile';
 import type { SaveManager, SaveResult } from './save/saveManager';
@@ -466,6 +467,11 @@ export class App implements MenuHost, BaseHost, ResultHost {
     this.meter.reset();
     this.meterSummary = this.meter.summary();
     this.meterSkip = true;
+  }
+
+  /** 景色の絵（依頼 8）を、いくつ頼んで、いくつ読めたか（検査用）。 */
+  envArt(): { loaded: number; asked: number; failed: number } {
+    return envArtStatus();
   }
 
   audioState(): string {

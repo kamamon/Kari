@@ -1,3 +1,4 @@
+import type { BestiaryDef } from './bestiary';
 // データ定義の型。public/data/*.json はすべてこの形で書き、読み込み時に validators.ts で検証する。
 // 「恒久ID」と「表示名」を分ける。名前を変えても id は変えない。
 
@@ -621,6 +622,7 @@ export interface ContentIndex {
     ranks: string;
     shop: string;
     hub: string;
+    bestiary: string;
     armor: string;
     player: string;
   };
@@ -645,6 +647,8 @@ export interface Content {
   fields: Map<string, FieldDef>;
   shop: ShopDef;
   hub: HubDef;
+  /** モンスターの登録簿（図鑑と、これからの登場の計画） */
+  bestiary: BestiaryDef;
   ranks: Map<string, RankDef>;
   armor: Map<string, ArmorDef>;
   armorRules: ArmorRules;

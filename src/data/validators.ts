@@ -2,6 +2,7 @@
 // ブラウザ（fetch）と Node のテスト（fs）の両方から同じ関数を使う。
 // 問題は黙って直さず、すべて errors に積んで呼び出し側へ返す。
 
+import { validateBestiary, type BestiaryDef } from './bestiary';
 import {
   ARMOR_SLOTS,
   FINISH_STATES,
@@ -635,6 +636,7 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     fields: new Map(),
     shop: { schemaVersion: 0, holdMax: 0, goods: [], sell: [] },
     hub: { schemaVersion: 0, id: '', name: '', mapId: '', facilities: [] },
+    bestiary: { schemaVersion: 0, plan: {}, frames: [], species: [] },
     quests: new Map(),
     items: new Map(),
     materials: new Map(),
@@ -717,6 +719,13 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
   for (const fd of content.fields.values()) validateField(content, fd, errors);
   validateShop(content, errors);
   validateHub(content, errors);
+  content.bestiary = (await get(index.files.bestiary)) as BestiaryDef;
+  checkVersion(index.files.bestiary, content.bestiary.schemaVersion, errors);
+  // 登録簿: 段階の低い順と、遊べるモンスターの一覧を渡して検査する
+  const rankIds = [...content.ranks.values()].sort((a, b) => a.order - b.order).map((r) => r.id);
+  for (const e of validateBestiary(content.bestiary, { ranks: rankIds, playable: new Set(content.monsters.keys()) })) errors.push(`bestiary: ${e}`);
+  // 依頼の標的は、登録簿にあること（訓練用の標的は除く）
+  for (const q of content.quests.values()) if (!content.bestiary.species.some((s) => s.id === q.targetMonsterId)) errors.push(`quest ${q.id}: 標的 ${q.targetMonsterId} が、登録簿（bestiary）に無い`);
   if (errors.length > 0) throw new ContentError(errors);
   return content;
 }

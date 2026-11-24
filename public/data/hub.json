@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "hub.village",
   "name": "灯継ぎの里",
-  "note": "拠点（v0.12.0、docs/spec.md 19 章）。里を歩いて、施設の前（x, z から半径 r）で主ボタンを押すと、その施設の画面が開く。建物の当たり（円柱）は maps/hub_village.json の rocks で、並びは facilities と同じ順（工房・商店・依頼板・装備箱）+ 広場の灯。建物の形は src/render/hubScene.ts がコードで作る仮のもの。位置はすべて机上の値。",
+  "note": "拠点（v0.12.0、docs/spec.md 19 章）。里を歩いて、施設の前（x, z から半径 r）で主ボタンを押すと、その施設の画面が開く。建物の当たり（円柱）は maps/hub_village.json の rocks で、並びは facilities と同じ順（工房・商店・依頼板・装備箱）+ 広場の灯。建物は、src/render/hubScene.ts が、簡単な立体に、正面と右側面の図（依頼 8 の D）を貼って作る（v0.13.0、docs/spec.md 21 章）。位置はすべて机上の値。",
   "mapId": "map.hub.village",
   "facilities": [
     {"id": "workshop", "kind": "workshop", "name": "工房", "action": "工房に入る", "summary": "武器と防具を強化する", "x": -14, "z": 4.6, "r": 3.2, "building": {"x": -14, "z": 9.5, "yaw": 3.1416}},

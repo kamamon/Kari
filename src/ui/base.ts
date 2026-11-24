@@ -3,10 +3,11 @@
 //
 // 持ち物・装備の表示は、保存の管理役（SaveManager）が持つ「書き込みが完了した内容」だけを映す。
 // 強化・取り込みなどの結果は、書き込みが完了してから表示する（押した時点では「保存しています…」）。
-import { APP_VERSION, BUILD_ID } from '../core/assets';
+import { APP_VERSION, BUILD_ID, assetUrl } from '../core/assets';
 import { recipeFrom, type Content, type RecipeDef } from '../data/schemas';
 import { materialRanks } from '../data/validators';
 import { fieldOf, questTimeLimitTicks } from '../game/field';
+import { CLASS_NAMES, ECOLOGY_KEYS, ECOLOGY_NAMES, ELEMENT_NAMES, STATE_NAMES, STATUS_NAMES, VARIANT_NAMES, bestiaryCounts } from '../data/bestiary';
 import type { FacilityKind } from '../data/schemas';
 import { checkBuy, checkCraft, defenseOf, parseImport, questUnlocked, unknownIds, usableWeapons, wornArmor } from '../save/profile';
 import type { SaveManager, SaveResult } from '../save/saveManager';
@@ -66,6 +67,7 @@ export class BaseScreen {
   private lead: HTMLElement;
   private shop: HTMLDetailsElement;
   private shopBody: HTMLElement;
+  private bestiary: HTMLDetailsElement;
   private closeBtn: HTMLButtonElement;
   private banners: HTMLElement;
   private weaponRow: HTMLElement;
@@ -123,6 +125,15 @@ export class BaseScreen {
     this.inv = el('div', 'base-inv');
     this.inv.dataset.sec = 'chest workshop shop';
     card.appendChild(this.inv);
+
+    // モンスター図鑑（依頼板で見る。登録簿 bestiary.json を、段階ごとに並べる）。開いた時に 1 度だけ組む
+    this.bestiary = sec(el('details', 'base-section'), 'quest');
+    this.bestiary.id = 'base-bestiary';
+    this.bestiary.appendChild(el('summary', undefined, `モンスター図鑑（${content.bestiary.species.length} 種）`));
+    this.bestiary.addEventListener('toggle', () => {
+      if (this.bestiary.open && this.bestiary.childElementCount === 1) this.bestiary.appendChild(this.renderBestiary());
+    });
+    card.appendChild(this.bestiary);
 
     this.shop = sec(el('details', 'base-section'), 'shop');
     this.shop.id = 'base-shop';
@@ -282,6 +293,63 @@ export class BaseScreen {
     this.renderShop();
     this.renderForge();
     if (this.data.open) this.renderData();
+  }
+
+  /**
+   * モンスター図鑑。登録簿（public/data/bestiary.json）を、はじめて登場する段階ごとに並べる。
+   * 遊べるのは「実装済み」の種だけ。ほかは、これから作る計画（原画あり / 案）。
+   */
+  private renderBestiary(): HTMLElement {
+    const c = this.content;
+    const b = c.bestiary;
+    const box = el('div', 'bestiary');
+    const ranks = [...c.ranks.values()].sort((x, y) => x.order - y.order);
+    const frameName = new Map(b.frames.map((f) => [f.id, f.name]));
+    const byId = new Map(b.species.map((s) => [s.id, s]));
+    box.appendChild(el('p', 'bestiary-note', '遊べるのは「実装済み」の種だけです。ほかは、これから作る計画です（数は、その段階から新しく登場する種）。'));
+    for (const count of bestiaryCounts(b, ranks.map((r) => r.id))) {
+      const rank = c.ranks.get(count.rank)!;
+      const head = el('h4', undefined, `${rank.name}から　${count.have} / ${count.plan} 種${count.juveniles ? `　幼体 ${count.juveniles}` : ''}`);
+      head.dataset.rank = rank.id;
+      box.appendChild(head);
+      const here = b.species.filter((s) => s.rank === rank.id);
+      if (here.length === 0) box.appendChild(el('p', 'bestiary-note', 'まだ登録がありません。'));
+      for (const s of here) {
+        const d = el('details', `bestiary-item ${s.state}`);
+        d.dataset.species = s.id;
+        const kind = `${CLASS_NAMES[s.class]}${s.variant !== 'base' ? `・${VARIANT_NAMES[s.variant]}` : ''}`;
+        const elem = [...s.elements.map((e) => ELEMENT_NAMES[e]), ...s.statuses.map((x) => STATUS_NAMES[x])].join('・');
+        const sum = el('summary');
+        sum.append(el('span', 'no', String(s.no).padStart(2, '0')), el('b', undefined, `${s.title} ${s.name}`), el('span', 'tags', `${kind}／${frameName.get(s.frame) ?? s.frame}／${s.habitat}／${elem}`), el('span', 'state', STATE_NAMES[s.state]));
+        d.appendChild(sum);
+        const rows: [string, string][] = [['外見の核', s.look]];
+        if (s.organ) rows.push(['器官', s.organ]);
+        rows.push(['技', s.moves.join('、')]);
+        if (s.baseId) rows.push(['もとの種', byId.has(s.baseId) ? `${byId.get(s.baseId)!.title} ${byId.get(s.baseId)!.name}` : s.baseId]);
+        if (s.pack) rows.push(['群れ', `${s.pack[0]}〜${s.pack[1]} 体`]);
+        if (s.weak.length || s.resist.length) rows.push(['弱点 / 強い', `${s.weak.map((e) => ELEMENT_NAMES[e]).join('・') || '—'} / ${s.resist.map((e) => ELEMENT_NAMES[e]).join('・') || '—'}`]);
+        if (s.ecology) for (const k of ECOLOGY_KEYS) rows.push([ECOLOGY_NAMES[k], s.ecology[k]]);
+        else rows.push(['生態', 'まだ書かれていません。']);
+        const dl = el('dl');
+        for (const [k, v] of rows) dl.append(el('dt', undefined, k), el('dd', undefined, v));
+        d.appendChild(dl);
+        // 原画（設定画）は、開いた時に読む。ゲームの中の体がまだ無い種は、そう書く
+        if (s.art) {
+          const art = s.art;
+          d.addEventListener('toggle', () => {
+            if (!d.open || d.querySelector('figure')) return;
+            const fig = el('figure', 'bestiary-art');
+            const img = document.createElement('img');
+            img.alt = `${s.title} ${s.name} の原画`;
+            img.src = assetUrl(`assets/bestiary/${art.replace(/\.png$/, '.webp')}`);
+            fig.append(img, el('figcaption', undefined, s.state === 'implemented' ? '原画（設定画）' : '原画（設定画）。ゲームの中の体と動きは、まだありません。'));
+            d.insertBefore(fig, dl);
+          });
+        }
+        box.appendChild(d);
+      }
+    }
+    return box;
   }
 
   /**

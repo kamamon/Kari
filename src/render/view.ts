@@ -104,13 +104,13 @@ export class GameView {
     this.cam = new FollowCamera(1);
     if (sim.field) {
       // フィールド: 空と光は 1 回だけ。地形は、居るエリアのぶんを showArea が作る
-      this.arena = { group: new Group(), sun: setupSky(this.scene, settings.shadows) };
+      this.arena = { group: new Group(), ...setupSky(this.scene, settings.shadows, 'basin') };
       this.showArea(sim);
     } else if (sim.world.map.id === content.hub.mapId) {
       // 拠点（里）: 建物と広場
       const group = buildHubGroup(content.hub, sim.world.map);
       this.scene.add(group);
-      this.arena = { group, sun: setupSky(this.scene, settings.shadows) };
+      this.arena = { group, ...setupSky(this.scene, settings.shadows, 'village') };
     } else this.arena = buildArena(this.scene, sim.world.map, settings.shadows);
     this.scene.add(this.hunter.root, this.playerShadow);
     const m = sim.monsters[0];
@@ -485,6 +485,8 @@ export class GameView {
     this.cam.update(dt, { x: pos.x, y: this.renderY, z: pos.z }, sim.world, shake);
     this.arena.sun.target.position.set(pos.x, 0, pos.z);
     this.arena.sun.position.set(pos.x - 14, 26, pos.z - 11);
+    // 空と遠景は、カメラと一緒に動かす（どこまで歩いても、近づかない）
+    this.arena.backdrop.position.set(this.cam.camera.position.x, 0, this.cam.camera.position.z);
     this.sparks.update(dt);
     this.dust.update(dt);
     this.rings.update(dt);

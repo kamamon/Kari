@@ -4,7 +4,7 @@
 # Source of truth
 作業前に docs/spec.md、docs/animation-contract.md、docs/asset-manifest.json、docs/handoff.md を確認する。採用済み仕様を変更するときは理由と影響を docs/decisions.md へ記録する。
 元の設計書は docs/source/VEILBOUND_HUNTERS_design_v1.0.pdf（49 ページ）。
-第 2 版は docs/source/VEILBOUND_HUNTERS_design_v2.0.pdf（21 ページ、2026-11-24。段階 4 つ・武器と防具の 5 段・属性・大型 13 種の図鑑・狩場は約 20 × エリア約 10・里と商店・これからの順番。変わっていない章は v1.0 を参照）。本文は tools/design-doc/ にあり、`npm run design:doc` で作り直す（数値は public/data から読む）。
+第 2 版は docs/source/VEILBOUND_HUNTERS_design_v2.0.pdf（2026-11-24。段階 4 つ・武器と防具の 5 段・属性・モンスターの登録簿と大型 13 種の図鑑・狩場は約 20 × エリア約 10・里と商店・これからの順番。変わっていない章は v1.0 を参照）。本文は tools/design-doc/ にあり、`npm run design:doc` で作り直す（数値とモンスターは public/data から読む）。
 
 # Architecture
 TypeScript + Vite + Three.js。入力、simulation、render、data、save、UI を分離する。60Hz 固定 tick を戦闘の基準にする。描画 dt、描画補間、Math.random を戦闘判定の正本にしない。ゲーム内の AI API 呼出しを必須にしない。
@@ -12,6 +12,8 @@ TypeScript + Vite + Three.js。入力、simulation、render、data、save、UI �
 - src/game/ は DOM・Three.js・現在時刻に触れない（Node のテストと将来のサーバーで同じコードを動かす）。
 - src/render/ は simulation の状態を読むだけで、値を書き戻さない。
 - 狩場は、エリアに分かれたフィールド（public/data/fields/、docs/spec.md の 18 章。v0.11.0）。エリアは 1 つの座標の中に離して置く。`SimOptions.field` を渡さなければ、これまでの 1 つの狩場で動く（アプリでは `?hunt=arena`）。
+- モンスターの計画は、登録簿（public/data/bestiary.json、決まりは src/data/bestiary.ts、docs/spec.md の 20 章。v0.13.0）。段階ごとの数は 初級 13 / 中級 20 / 上級 25 / 極級 20。ChatGPT の案（依頼 9 の JSON）は `npm run bestiary:import` で足す（手で写さない）。登録簿は計画で、遊べる定義は monsters/*.json が別に持つ。
+- 景色は、簡単な立体に絵を貼る（src/render/envArt.ts、docs/spec.md の 21 章。v0.13.0）。絵の原本は art-source/env/、ゲームが読む public/assets/textures/env/ は `npm run env:art` の出力（手で編集しない）。形と当たりの正本は、これまでどおりマップデータ。
 - 拠点は、歩ける里（public/data/hub.json、docs/spec.md の 19 章。v0.12.0）。施設の前で画面を開く。`?hub=menu` で、これまでの一覧の拠点になる。ブラウザ検査（tools/smoke.mjs）のこれまでの項目は `?hunt=arena&hub=menu` で走る。
 
 # Contracts
@@ -36,3 +38,6 @@ main へ push すると Actions（Build and publish）が gh-pages（配信元�
 - `npm run publish:pages` 本番ビルドを gh-pages ブランチへ置く（コミット済みの状態で実行）
 - `npm run field:gen` フィールド（エリアに分かれた狩場）のデータ public/data/fields/ を作り直す（Python が必要。出力は手で編集しない）
 - `npm run design:doc` 制作計画・実装指示書 第 2 版の PDF を作り直す（Python と Chrome が必要）
+- `npm run bestiary:import -- <ファイル>` ChatGPT のモンスターの案（JSON）を登録簿へ足す（`--dry` で書かずに試す。`--check` でいまの数。決まりに合わなければ、何も変えずに止まる）
+- `npm run bestiary:thumbs` 図鑑に出す原画の小さな絵 public/assets/bestiary/ を作り直す（Python が必要）
+- `npm run env:art` 景色の絵を、ゲームが読む形 public/assets/textures/env/ へ直す（Python が必要。出力は手で編集しない）

@@ -1,0 +1,36 @@
+ChatGPT の返事を、そのまま保存した形を模したもの（前後に文章が付いていても読める）。
+
+{
+  "frames": [
+    {"id": "frame.test_hopper", "name": "跳脚獣", "note": "後ろ脚で跳ねて移る。着地の前に影が出る"}
+  ],
+  "fields": [
+    {"name": "試しの原", "terrain": "検査用", "mood": "検査用"}
+  ],
+  "species": [
+    {
+      "id": "monster.test_base", "title": "試跳獣", "name": "テストホップ", "class": "large", "variant": "base", "rank": "rank.2", "frame": "frame.test_hopper", "size": 7.5,
+      "habitat": "試しの原", "elements": ["wind"], "statuses": [], "weak": ["fire"], "resist": ["ice"],
+      "look": "長い後ろ脚と、畳んだ尾の扇", "organ": "尾の扇", "moves": ["跳びかかり", "尾の扇の風", "着地の衝撃"], "parts": ["頭", "尾"], "materials": ["扇膜", "跳腱"],
+      "gear": "扇膜・跳腱 / 回避", "armorLook": "後ろへ流れる輪郭",
+      "ecology": {"diet": "草の根を掘る。", "behavior": "群れない。臆病。", "territory": "開けたエリア。", "rhythm": "朝と夕に動く。", "nest": "岩かげで眠る。", "relations": "ガルドロスを避ける。", "juvenile": "尾の扇が無い。", "signs": "掘り返した土。"},
+      "pairs": ["monster.galdros"]
+    },
+    {
+      "id": "monster.test_galdros_sub", "title": "氷殻獣", "name": "ガルドロス凍種", "class": "large", "variant": "subspecies", "baseId": "monster.galdros", "rank": "rank.2", "frame": "frame.quad_heavy", "size": 9.0,
+      "habitat": "氷帆峡谷", "elements": ["ice"], "statuses": [], "weak": ["fire"], "resist": ["water"],
+      "look": "岩殻のすき間が、青白い氷で埋まっている", "organ": "氷をためる背の殻", "moves": ["叩きつけ", "氷片飛ばし", "滑る突進"], "parts": ["頭", "背の殻", "尾"], "materials": ["氷殻片", "凍晶脈"],
+      "gear": "氷殻・凍晶 / 防御と氷", "armorLook": "低く厚い輪郭。青白い縁",
+      "ecology": {"diet": "氷の下の鉱脈をなめる。", "behavior": "動きは遅い。", "territory": "谷の底。", "rhythm": "昼に動く。", "nest": "氷のくぼみ。", "relations": "キリサーヴと水場を分ける。", "juvenile": "殻が白い。", "signs": "削れた氷。"}
+    },
+    {
+      "id": "monster.test_galdros_child", "title": "岩殻仔", "name": "ガルドロスの幼体", "class": "juvenile", "variant": "base", "baseId": "monster.galdros", "rank": "rank.1", "frame": "frame.quad_heavy", "size": 3.0,
+      "habitat": "風礫盆地", "elements": ["none"], "statuses": [], "weak": ["fire"], "resist": [],
+      "look": "殻が薄く、晶脈がまだ光らない", "organ": "育っていない尾の晶", "moves": ["体当たり", "群れで囲む", "親を呼ぶ声"], "parts": ["頭", "背"], "materials": ["薄殻片", "幼骨"],
+      "gear": "薄殻 / 軽い防具", "pack": [3, 5],
+      "ecology": {"diet": "親の食べ残しの鉱脈。", "behavior": "群れで動く。", "territory": "巣の近く。", "rhythm": "昼に遊ぶ。", "nest": "親の巣。", "relations": "親に守られる。", "juvenile": "2 年で殻が厚くなる。", "signs": "小さな足跡の列。"}
+    }
+  ]
+}
+
+以上です。

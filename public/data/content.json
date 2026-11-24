@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.12.2",
+  "contentVersion": "0.13.0",
   "files": {
     "actions": [
       "actions/player_common.json",
@@ -48,6 +48,7 @@
     "ranks": "ranks.json",
     "armor": "armor.json",
     "shop": "shop.json",
-    "hub": "hub.json"
+    "hub": "hub.json",
+    "bestiary": "bestiary.json"
   }
 }

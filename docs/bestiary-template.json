@@ -1,0 +1,108 @@
+{
+  "_読み方": "ChatGPT へ: これは、モンスターの案を返す時の形の見本です。返す JSON には species（と、必要なら frames・fields）だけを入れてください。_ で始まる項目と、id が monster.example_ で始まる 3 つの例は、返す JSON に入れないでください。コメント、末尾のカンマは使えません。",
+  "_決まった言葉": {
+    "class": {"large": "大型（全長 5〜24m）", "huge": "超大型（全長 25m 以上。中級から）", "juvenile": "幼体（大型の子。群れで出る）"},
+    "variant": {"base": "原種", "subspecies": "亜種（中級から）", "rare": "希少種（上級から）"},
+    "rank": {"rank.1": "初級", "rank.2": "中級", "rank.3": "上級", "rank.4": "極級"},
+    "elements": {"none": "無属性", "fire": "火", "thunder": "雷", "ice": "氷", "water": "水", "wind": "風", "mist": "霧"},
+    "statuses": {"poison": "毒", "paralysis": "麻痺", "sleep": "睡眠", "stun": "気絶"},
+    "frame": {
+      "frame.quad_heavy": "四足重獣（重い四足。叩きつけと突進）",
+      "frame.quad_light": "四足軽獣（細い四足。横跳びと飛びかかり）",
+      "frame.biped_wing": "二足翼獣（二足で立つ鳥・竜。飛び続けない）",
+      "frame.crust_six": "六脚甲殻（横に歩く。大きな鋏と硬い殻）",
+      "frame.crust_many": "多脚甲殻（節の多い虫。丸まる・転がる・跳ねる）",
+      "frame.long": "長胴獣（長い胴で這う。薙ぎ払いと巻き込み）",
+      "frame.colossus": "巨躯（超大型。ゆっくり動く。部位ごとに場所を変えて戦う）"
+    }
+  },
+  "frames": [
+    {"id": "frame.example_new", "name": "（新しい骨格を足す時だけ。3 つまで）", "note": "どんな体で、どう動くか。なぜ、いまの 7 つでは表せないか"}
+  ],
+  "fields": [
+    {"name": "（新しい狩場の名前を使った時だけ）", "terrain": "地形をひとことで", "mood": "天気・光・音"}
+  ],
+  "species": [
+    {
+      "id": "monster.example_base",
+      "title": "二つ名（漢字 2〜3 字 + 獣・鳥・蟹・蟲・蛇 など）",
+      "name": "カタカナの名前",
+      "class": "large",
+      "variant": "base",
+      "rank": "rank.2",
+      "frame": "frame.quad_light",
+      "size": 7.5,
+      "habitat": "狩場の名前",
+      "elements": ["wind"],
+      "statuses": [],
+      "weak": ["fire"],
+      "resist": ["ice"],
+      "look": "外見の核。ひと目で見分ける形（40 字まで）",
+      "organ": "その種にしか無い器官（技と素材のもとになる）",
+      "moves": ["技の種を 3〜8 個", "短い言葉で", "予備動作が読めるもの"],
+      "parts": ["壊せる部位を 2〜6 個", "頭", "尾"],
+      "materials": ["素材の名前を 2〜6 個", "〇〇皮"],
+      "gear": "素材から作る装備の向き（例: 帆膜・弾性腱 / 回避）",
+      "armorLook": "防具へ写す個性（輪郭・色・左右や前後の偏り）",
+      "ecology": {
+        "diet": "食べ物と、その取り方（1〜3 文）",
+        "behavior": "ふだんの行動と気性",
+        "territory": "なわばりと、狩場の中で好む場所",
+        "rhythm": "1 日の動き。いつ動き、いつ休むか。霧や天気での違い",
+        "nest": "巣と、眠り方",
+        "relations": "ほかのモンスター・里の人との関わり",
+        "juvenile": "子の姿と、群れ方。親との違い",
+        "signs": "狩人が見つける痕跡（足跡、食べ跡、抜け殻 など）"
+      },
+      "pairs": ["monster.galdros"]
+    },
+    {
+      "id": "monster.example_subspecies",
+      "title": "亜種の二つ名",
+      "name": "もとの種の名前 + 亜種と分かる呼び名",
+      "class": "large",
+      "variant": "subspecies",
+      "baseId": "monster.galdros",
+      "rank": "rank.2",
+      "frame": "frame.quad_heavy",
+      "size": 9.0,
+      "habitat": "もとの種と違う狩場",
+      "elements": ["ice"],
+      "statuses": [],
+      "weak": ["fire"],
+      "resist": ["water"],
+      "look": "もとの種と、どこが違って見えるか",
+      "organ": "変わった器官",
+      "moves": ["もとの種の技", "亜種だけの技", "もう 1 つ"],
+      "parts": ["頭", "尾"],
+      "materials": ["素材 1", "素材 2"],
+      "gear": "装備の向き",
+      "armorLook": "防具へ写す個性",
+      "ecology": {"diet": "…", "behavior": "…", "territory": "…", "rhythm": "…", "nest": "…", "relations": "…", "juvenile": "…", "signs": "…"}
+    },
+    {
+      "id": "monster.example_juvenile",
+      "title": "幼体の呼び名",
+      "name": "もとの種の名前の幼体",
+      "class": "juvenile",
+      "variant": "base",
+      "baseId": "monster.galdros",
+      "rank": "rank.1",
+      "frame": "frame.quad_heavy",
+      "size": 3.0,
+      "habitat": "もとの種と同じ狩場",
+      "elements": ["none"],
+      "statuses": [],
+      "weak": ["fire"],
+      "resist": [],
+      "look": "親と違う所（殻がまだ薄い、色が淡い など）",
+      "organ": "まだ育っていない器官",
+      "moves": ["親より少ない技", "群れでの動き", "逃げ方"],
+      "parts": ["頭", "背"],
+      "materials": ["幼体だけの素材", "素材 2"],
+      "gear": "装備の向き",
+      "pack": [3, 5],
+      "ecology": {"diet": "…", "behavior": "…", "territory": "…", "rhythm": "…", "nest": "…", "relations": "…", "juvenile": "（幼体そのものなので、育ち方を書く）", "signs": "…"}
+    }
+  ]
+}

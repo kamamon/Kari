@@ -310,3 +310,22 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 #hud .hud-facility { position: absolute; left: 50%; bottom: calc(var(--sab) + 26px); transform: translateX(-50%); pointer-events: auto; display: grid; gap: 1px; justify-items: center; min-width: 190px; padding: 9px 18px; border-radius: 12px; border: 1px solid var(--bronze); background: rgba(176, 141, 87, 0.92); color: #1b1710; font: inherit; font-weight: 800; font-size: 15px; }
 #hud .hud-facility span { font-size: 11px; font-weight: 600; opacity: 0.85; }
 #hud .hud-facility[hidden] { display: none; }
+
+/* ---- モンスター図鑑（登録簿を、段階ごとに並べる）---- */
+#base .bestiary-note { margin: 4px 0 6px; font-size: 12px; line-height: 1.5; opacity: 0.8; }
+#base .bestiary h4 { margin: 12px 0 4px; font-size: 13px; color: var(--bronze); }
+#base .bestiary-item { border-top: 1px solid rgba(232, 226, 205, 0.14); }
+#base .bestiary-item summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; padding: 8px 0; cursor: pointer; list-style: none; }
+#base .bestiary-item summary::-webkit-details-marker { display: none; }
+#base .bestiary-item .no { font-size: 11px; opacity: 0.6; font-variant-numeric: tabular-nums; }
+#base .bestiary-item b { font-size: 14px; }
+#base .bestiary-item .tags { flex: 1 1 100%; order: 3; font-size: 11.5px; opacity: 0.75; }
+#base .bestiary-item .state { margin-left: auto; padding: 1px 8px; border-radius: 9px; border: 1px solid rgba(232, 226, 205, 0.3); font-size: 11px; white-space: nowrap; }
+#base .bestiary-item.implemented .state { border-color: var(--bronze); background: rgba(176, 141, 87, 0.3); font-weight: 700; }
+#base .bestiary-item.planned b { opacity: 0.8; }
+#base .bestiary-item dl { margin: 0 0 10px; display: grid; grid-template-columns: max-content 1fr; gap: 3px 10px; font-size: 12.5px; line-height: 1.5; }
+#base .bestiary-item dt { opacity: 0.65; white-space: nowrap; }
+#base .bestiary-item dd { margin: 0; }
+#base .bestiary-art { margin: 0 0 8px; }
+#base .bestiary-art img { display: block; width: 100%; max-width: 560px; height: auto; border-radius: 6px; border: 1px solid rgba(232, 226, 205, 0.18); background: rgba(232, 226, 205, 0.06); }
+#base .bestiary-art figcaption { margin-top: 3px; font-size: 11px; opacity: 0.65; }

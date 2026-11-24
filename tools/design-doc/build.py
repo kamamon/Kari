@@ -2,13 +2,26 @@
 # その後、tools/design-doc/pdf.mjs で PDF にする。数値は public/data から読む（文書とゲームの数値を食い違わせない）。
 import base64, io, json, os, sys
 sys.path.insert(0, os.path.dirname(__file__))
-from content import MONSTERS
 from monsters import DRAW
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 def data(name): return json.load(open(os.path.join(ROOT, 'public', 'data', name), encoding='utf8'))
 ranks, weapons, armor, quests, content = data('ranks.json')['ranks'], data('weapons.json'), data('armor.json'), data('quests.json')['quests'], data('content.json')
 VERSION = json.load(open(os.path.join(ROOT, 'package.json'), encoding='utf8'))['version']
+
+# モンスターの正本は、登録簿（public/data/bestiary.json、docs/spec.md の 20 章）。この資料の表と図鑑は、そこから作る
+bestiary = data('bestiary.json')
+FRAME = {f['id']: f for f in bestiary['frames']}
+ELEM = {'none': '無属性', 'fire': '火', 'thunder': '雷', 'ice': '氷', 'water': '水', 'wind': '風', 'mist': '霧'}
+STATUS = {'poison': '毒', 'paralysis': '麻痺', 'sleep': '睡眠', 'stun': '気絶'}
+# 下描き（tools/design-doc/monsters.py）は、登録簿より前の綴りの名前で持っている
+SKETCH = {'selvark': 'servalk', 'lumisca': 'lumiska', 'tengaro': 'tengalo', 'verito': 'velito', 'razmer': 'razmel', 'kirisave': 'kirisarv'}
+def _elem(s):
+    if s.get('elementNote'): return s['elementNote']
+    return '・'.join([ELEM[e] for e in s['elements']] + [STATUS[x] for x in s['statuses']])
+MONSTERS = [dict(id=s['id'].split('.')[1], title=s['title'], name=s['name'], frame=FRAME[s['frame']]['name'], field=s['habitat'], state=s.get('stateNote') or s['state'],
+                 look=s['look'], act='、'.join(s['moves']), elem=_elem(s), gear=s['gear'], armor=s.get('armorLook', '—'), art=s.get('art'), no=s['no'])
+            for s in sorted(bestiary['species'], key=lambda s: s['no']) if s['class'] != 'juvenile']
 
 def table(head, rows, cls=''):
     h = ''.join(f'<th>{c}</th>' for c in head)
@@ -82,9 +95,19 @@ base = armor['defense']['base']
 armor_rows = [[TIERS[i], d, d * 5, f"×{base / (base + d * 5):.2f}"] for i, d in enumerate(defs)]
 
 # ---------- 図鑑 ----------
+def concept_img(m):
+    from PIL import Image
+    im = Image.open(os.path.join(ROOT, 'art-source', 'monster', 'concepts', m['art'])).convert('RGB')
+    im.thumbnail((760, 760))
+    buf = io.BytesIO(); im.save(buf, 'JPEG', quality=78)
+    return f'<img alt="{m["title"]} {m["name"]} の原画" src="data:image/jpeg;base64,' + base64.b64encode(buf.getvalue()).decode() + '">'
+
 def card(i, m):
-    art = galdros_img() if m['id'] == 'galdros' else DRAW[m['id']]()
-    cap = '採用済みの設定図（ChatGPT、依頼 2）' if m['id'] == 'galdros' else 'Claude の下描き（設定図ではない。絵の依頼の出発点）'
+    sketch = SKETCH.get(m['id'], m['id'])
+    if m['id'] == 'galdros': art, cap = galdros_img(), '採用済みの設定図（ChatGPT、依頼 2）'
+    elif m['art']: art, cap = concept_img(m), 'ChatGPT の原画（2026-11-24 受領。採用待ち。4 方向の設定図と、ゲームの中の体は、まだ無い）'
+    elif sketch in DRAW: art, cap = DRAW[sketch](), 'Claude の下描き（設定図ではない。絵の依頼の出発点）'
+    else: art, cap = '', '絵は、まだ無い'
     rows = [('骨格 / 狩場', f"{m['frame']} / {m['field']}"), ('外見の核', m['look']), ('行動の核', m['act']), ('属性', m['elem']), ('素材と装備', m['gear']), ('防具へ写す個性', m['armor']), ('状態', m['state'])]
     t = ''.join(f'<tr><th>{k}</th><td>{v}</td></tr>' for k, v in rows)
     return f'<div class="card"><div class="art">{art}<div class="cap">{cap}</div></div><div class="info"><h3><span class="no">{i:02d}</span><small>{m["title"]}</small> {m["name"]}</h3><table class="kv">{t}</table></div></div>'
@@ -97,7 +120,8 @@ CH.append(chapter(1, 'A / この版について', 'この版について', '第 
         '<b>変わっていない章は、書き写していない。</b> 画像・3D・モーション・音の作り方（第 1 版 18〜24 章）、ブラウザとデータの決まり（25〜29 章）などは、第 1 版をそのまま使う。対応は 15 章の表。',
         '<b>数値はすべて机上の初期値。</b> 人が遊んで確かめたものは無い。表の数値は、ゲームのデータ（<code>public/data/*.json</code>）から読んで載せている。',
         '<b>「候補」「案」と書いたものは、まだ決まっていない。</b> 14 章にまとめた。',
-        '<b>絵</b>: 大型 13 種の側面図を入れた。ガルドロスは採用済みの設定図。ほかの 12 種は、第 1 版の言葉から Claude がコードで描いた下描きで、設定図ではない。'])
+        '<b>絵</b>: 大型 13 種の絵を入れた。ガルドロスは採用済みの設定図。ほかの 12 種は、ChatGPT の原画（2026-11-24 受領。<b>採用待ち</b>）で、4 方向の設定図と、ゲームの中の体は、まだ無い。',
+        '<b>モンスターは、登録簿から</b>: 8 章の表と図鑑は、ゲームの登録簿（<code>public/data/bestiary.json</code>）から作っている。これから ChatGPT が考える種（中級 20・上級 25・極級 20）も、同じ登録簿へ足す。'])
     + table(['第 1 版から変わったこと', '第 1 版', 'この版'], [
         ['段階', '初級 → 上級 → 極級（3 つ）', '初級 → 中級 → 上級 → 極級（4 つ）'],
         ['武器', '5 系統から始め、11 系統へ', '7 系統（断岳剣・護刃・大槌・双剣・太刀・長尖槍・環弓）。旋鎌はやめた。横には増やさない'],
@@ -176,8 +200,21 @@ CH.append(chapter(7, 'C / 遊びの骨格', '属性・状態異常・複合属�
              '属性ごとの持ち主は、8 章の表の「候補」。入れないと決めたもの: 音・光・晶・灰・糸（役目が重なる。後から足せる）。',
              'いまのデータとの差: 部位の属性係数が 1 つの数（どの属性にも同じ）、武器の属性は「なし」だけ、防具に耐性が無い、状態異常の仕組みが無い。']))) 
 
-CH.append(chapter(8, 'D / モンスター', '大型 13 種の一覧', '5 つの骨格（四足重獣・四足軽獣・二足翼獣・甲殻・長胴獣）を使い回し、個体ごとの器官で見分ける。',
-    monster_index + note('属性の「候補」は、Claude が第 1 版の言葉から割り当てた案で、利用者はまだ決めていない。決まっているのは、ガルドロスの性質と、「火の持ち主を 1 種足す」ことだけ。捕獲は 10 種に対応し、終盤の 2 種は捕獲不可（第 1 版の初期案）。各大型の素材は 6 種を標準の枠とし、段階ごとに 2 種ずつ増える（4 章）。')
+PLAN = bestiary['plan']
+def _count(rank, pred): return sum(1 for s in bestiary['species'] if s['rank'] == rank and pred(s))
+plan_rows = [[r['name'], PLAN.get(r['id'], 0), _count(r['id'], lambda s: s['class'] != 'juvenile'), _count(r['id'], lambda s: s['state'] == 'implemented'), what]
+             for r, what in zip(sorted(ranks, key=lambda r: r['order']), ['いまの大型 13 種（原種）', '超大型・亜種など 約 20', '希少種・2 体が同時に出る狩りなど 約 25', 'さらに強い種 約 20'])]
+frame_rows = [[f['name'], f['note'], '<b>ある</b>（ガルドロス）' if f['built'] else 'まだ無い'] for f in bestiary['frames']]
+CH.append(chapter(8, 'D / モンスター', 'モンスターの登録簿と、大型 13 種', f'モンスターは ChatGPT が考え、登録簿（図鑑）へ足していく。{len(bestiary["frames"])} つの骨格を使い回し、個体ごとの器官で見分ける。',
+    '<h4>段階ごとの数（利用者の指示。D-071）</h4>'
+    + table(['段階', 'その段階から新しく出る数', '登録ずみ', '遊べる', '中身'], plan_rows, 'narrow')
+    + ul(['<b>登録簿</b>: <code>public/data/bestiary.json</code>。1 種ごとに、分類（大型・超大型・幼体）、変種（原種・亜種・希少種）、段階、骨格、全長、狩場、属性、弱点、外見の核、器官、技の核、部位、素材、<b>生態 8 項目</b>（食べ物・行動・縄張り・一日と季節・巣・ほかの生き物との関係・幼体・痕跡）を持つ。ゲームの中の「モンスター図鑑」（依頼の欄）に、そのまま出る。',
+          '<b>ChatGPT の案の入れ方</b>: 依頼 9（<code>docs/chatgpt-request-9.txt</code>）の形の JSON を返してもらい、<code>npm run bestiary:import -- ＜ファイル＞</code> で足す。決まり（名前の重なり、段階と変種の組、属性、全長、生態の 8 項目など）に合わないものは、<b>1 つも入れずに</b>、合わない所を全部並べて止まる。',
+          '<b>亜種・希少種・幼体は、もとの種を指す</b>（同じ骨格）。亜種は中級から、希少種は上級から。幼体は、もとの種の 0.7 倍より小さく、群れの数（2〜8 体）を持つ。',
+          '<b>まだ遊べないもの</b>: 登録簿は計画で、遊べるのはガルドロスだけ。<b>2 体が同時に出る狩り、幼体を何体も狩る依頼、超大型との戦いは、仕組みがまだ無い</b>（登録簿に、組と群れの数を書けるだけ）。'])
+    + '<h4>骨格</h4>' + table(['骨格', 'どんな体・動き', '体と動きの土台'], frame_rows, 'tight')
+    + '<h4>大型 13 種（初級から出る）</h4>' + monster_index
+    + note('属性の「候補」は、Claude が第 1 版の言葉から割り当てた案で、利用者はまだ決めていない。決まっているのは、ガルドロスの性質と、「火の持ち主を 1 種足す」ことだけ。捕獲は 10 種に対応し、終盤の 2 種は捕獲不可（第 1 版の初期案）。各大型の素材は 6 種を標準の枠とし、段階ごとに 2 種ずつ増える（4 章）。生態は、依頼 9 で ChatGPT に書いてもらう（まだ無い）。')
     + ''.join(card(i, m) for i, m in enumerate(MONSTERS, 1))))
 
 CH.append(chapter(9, 'D / モンスター', '世界と狩場、小型', '霧と晶脈の辺境を、灯継ぎの里から少しずつ開く。<b>狩場は約 20、1 つの狩場にエリアが約 10</b>（利用者の指示。第 1 版 14 章の「6 フィールド・エリア 3〜5」を置き換える。D-066）。',
@@ -200,16 +237,16 @@ CH.append(chapter(10, 'E / 制作計画', '開発段階のいま', '第 1 版 31
     table(['段階', '作るもの', 'いま'], [
         ['M0 基盤', 'リポジトリ、横画面、移動、カメラ、地形、音の開始', '<b>済</b>'], ['M1 戦闘', '断岳剣、標的、回避、防御、被弾、判定の表示', '<b>済</b>'],
         ['M2 狩猟', 'ガルドロス、討伐と捕獲、素材、帰還', '<b>済</b>（技は 23 種）'],
-        ['M3 MVP', '護刃、小型 2、工房、5 依頼、保存、仮素材の置き換え', '<b>一部</b>: 保存、工房、依頼 4 件、武器 7 系統、<b>里を歩く拠点と商店</b>。<b>残り</b>: 小型 2、採取、NPC、仮素材の置き換え'],
+        ['M3 MVP', '護刃、小型 2、工房、5 依頼、保存、仮素材の置き換え', '<b>一部</b>: 保存、工房、依頼 4 件、武器 7 系統、<b>里を歩く拠点と商店</b>、<b>景色の絵（空と遠景・地面・岩・草・里の建物）</b>。<b>残り</b>: 小型 2、採取、NPC、仮素材の置き換え'],
         ['M4 素材の品質', '正式モデル、骨、動作、音、UI、性能', '未着手（ハンターとガルドロスは、設定図から組んだ仮モデル）'],
         ['M5 拡張', '大型 13 種、<b>約 20 の狩場（各 約 10 エリア）</b>、装備、段階 4 つ、80 依頼', '<b>先取りして入れた</b>: 段階 4 つ、武器と防具の 5 段、<b>フィールドの仕組みと 1 つ目の狩場</b>。大型は未着手'],
-        ['M6 ソロ完成', '同行、生活施設、図鑑、全難度の調整', '未着手'], ['M7 協力完成', '別サーバー、2 人 → 4 人、同期、復帰', '未着手'],
+        ['M6 ソロ完成', '同行、生活施設、図鑑、全難度の調整', '<b>先取りして入れた</b>: 図鑑（登録簿の表示）。ほかは未着手'], ['M7 協力完成', '別サーバー、2 人 → 4 人、同期、復帰', '未着手'],
     ]) + note('見積もり方は第 1 版のまま: 段階ごとに「遊べる成果物」を決め、動く版をタグで残す。大型は「骨格の代表 + 個体差 + 技 + 報酬」で積む。数日で大作が完成する予定は置かない。')))
 
 CH.append(chapter(11, 'E / 制作計画', 'これからの順番（案）', '利用者が順番を決める。指定が無ければ、上から。',
     table(['', 'すること', '終わりの条件', '要るもの'], [
         ['1', '<b>遊んで数値を直す</b>: フィールド（追いかける長さ、眠りの戻り方、30 分の制限）、商店の値段、段階の倍率、防具、素材の出方、費用', '利用者が、里で買い物をして、初級と中級を 1 回ずつ狩り、長さ・痛さ・素材と通貨の集まり方の感想を返す', '利用者の感想。実機の計測（後回しでよい）'],
-        ['2', '<b>景色に絵を貼る</b>: 空と遠景（筒の内側）、地面と岩（繰り返して敷く）、草（切り抜きの板）、里の建物（正面と横の図）', '里と狩場が、単色の箱ではなく、景色に見える', 'ChatGPT: 依頼 8（17 枚）。防具の兜と段ごとの違いは v0.12.1 で済'],
+        ['2', '<b>モンスターの案を受け取る</b>: 13 種の生態と幼体（9A）、中級 20（9B）、上級 25（9C）、極級 20（9D）を、登録簿へ足す', '図鑑に、段階ごとの数がそろい、どの種にも生態が書いてある', 'ChatGPT: 依頼 9（JSON 4 つ。A → D の順）。景色の絵（依頼 8）は v0.13.0 で貼った'],
         ['3', '<b>属性の土台</b>: 属性ごとの係数と耐性、弱点の印、状態異常の枠。ガルドロスに「弱点は火・雷に強い」', '属性つきの武器を 1 本仮に置き、弱点・耐性・無属性で与えるダメージが変わることをテストで確かめる', 'なし（データとコード）'],
         ['4', '<b>2 体目の大型</b>: セルヴァルク（同じ狩場・風）か、火の獣（属性の手応えが大きい）', '設定図 → 骨格 → 技 → 素材 → 武器と防具（5 段）まで、ガルドロスと同じ深さ', 'ChatGPT: 設定図 4 方向。利用者: どちらにするか'],
         ['5', '<b>狩場を増やす</b>: 2 つ目の狩場（2 体目の大型と一緒に）。エリアに高低差・水・狭い道。足跡などの痕跡', '2 つの狩場で、地形と戦い方が違うと分かる', 'ChatGPT: 狩場の環境原画。利用者: 残りの狩場の名前と並び'],
@@ -234,7 +271,7 @@ CH.append(chapter(12, 'F / 実装指示', 'Claude へ: 守る決まり', 'リポ
 CH.append(chapter(13, 'F / 実装指示', 'Claude へ: モンスターを 1 体足す手順', 'ガルドロスで通した道を、同じ順で通す。',
     table(['', 'すること', '置き場所'], [
         ['1', '設定図（4 方向）を受け取り、依頼の条件と照合して登録する', '<code>art-source/monster/&lt;名前&gt;/</code>、素材台帳'],
-        ['2', '骨格を決める（5 つの骨格群のどれか。関節・接地・体長の違いを書く）', '<code>docs/animation-contract.md</code>'],
+        ['2', '骨格を決める（登録簿の 7 つの骨格のどれか。関節・接地・体長の違いを書く）。登録簿の state を進める（planned → art → implemented）', '<code>public/data/bestiary.json</code>、<code>docs/animation-contract.md</code>'],
         ['3', '定義: 体力、部位（肉質・耐久・怯み・切断）、怒り、捕獲、<b>属性ごとの係数と、弱点・耐性の印</b>', '<code>public/data/monsters/&lt;名前&gt;.json</code>'],
         ['4', '技: 予告 → 攻撃 → 隙。当たりの形と時間をデータで。まず 6〜8 種、最終的に 20〜50 種（D-053）', '<code>public/data/actions/</code>'],
         ['5', '見た目: 設定図の輪郭を測って形を作り、図を貼る。動きは技のデータと同じ時間で', '<code>src/render/</code>'],
@@ -289,7 +326,9 @@ CH.append(chapter(15, 'G / 残り', 'まだ決まっていないこと', '利用
         ['属性ごとの持ち主', '8 章の表の「候補」', 'モンスターの設定図、武器の系列'],
         ['複合属性の名前', '灼雷・凍嵐・霧氷', '上級・極級の武器'],
         ['段階と防具の数値', '4 章・6 章の表（机上の値）', '遊んだ感想で直す'],
-        ['景色の絵', '貼って見せる方針（D-069）。絵は依頼 8 で頼んでいる。貼る仕組みは、絵が届いてから', '11 章の 2'],
+        ['大型 12 種の原画を採用するか', 'ChatGPT の原画（2026-11-24 受領）は「採用待ち」。採用した種から、4 方向の設定図を頼む', '8 章の図鑑、11 章の 4'],
+        ['2 体が同時に出る狩り・幼体の依頼・超大型', '登録簿に、組と群れの数を書けるだけ。仕組みは、まだ無い（幼体の依頼は、利用者: 後で作る）', '8 章、11 章の 4 より後'],
+        ['景色の絵の直し', '貼った（v0.13.0、D-072）。外周の岩壁は箱のまま、里の建物の当たりは円のまま。遊んだ感想で直す', '9 章'],
         ['採取と採掘、実機の計測', '利用者: 後でよい', '11 章の 1・5'],
     ]) + '<h4>第 1 版との対応</h4>' + table(['第 1 版の章', 'この版では'], [
         ['01〜03 方針・使い方・分担', '生きている。分担は 2 章に要約'], ['04〜05 遊びの分解・規模', '生きている。段階は 3 つ → 4 つ（4 章）'],
@@ -348,7 +387,7 @@ cover = f'''<div class="cover"><div class="tag">PROJECT DESIGN / 02 — CONCEPT 
 <div class="strip">{strip}</div>
 <p>2026 年 11 月 24 日 | Version 2.0 | ゲームの版 v{VERSION}</p>
 <p>第 1 版（v1.0、11 月 22 日）からの作り直し。いま動いているものと、決まったことを正本にした。</p>
-<p>数値はすべて机上の初期値。「候補」「案」は未決定。大型の絵は、ガルドロスを除き、Claude の下描き。</p></div>'''
+<p>数値はすべて机上の初期値。「候補」「案」は未決定。大型の絵は、ガルドロスを除き、ChatGPT の原画（採用待ち）。</p></div>'''
 html = f'<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>霧境の狩人 制作計画・実装指示書 第 2 版</title><style>{CSS}</style></head><body>{cover}{"".join(CH)}</body></html>'
 open(sys.argv[1], 'w', encoding='utf8').write(html)
 # 絵を 1 体ずつのファイルにも書き出す（絵の依頼に添える）
