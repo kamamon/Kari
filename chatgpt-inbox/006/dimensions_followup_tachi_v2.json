@@ -1,0 +1,122 @@
+{
+  "request": "006",
+  "version": 2,
+  "units": "cm",
+  "method": "平均RGB<185で輪郭を抽出し、端を含む全高1335pxを指定全長147cmへ換算。部品境界は輪郭の行幅と目視で確認。刃長は画像上の鉛直投影長、反りは下部柄軸x541から最上先端x560までの変位。明るい縁や斜めの刃先には数px程度の測定差があり得る。ゲーム美術の比率比較であり、実物製作用の図面ではない。",
+  "files": {
+    "weapon_tachi_front_v2.png": {
+      "canvas_px": [
+        1086,
+        1448
+      ],
+      "foreground_bbox_inclusive_px": [
+        498,
+        56,
+        578,
+        1390
+      ],
+      "foreground_height_px": 1335,
+      "sha256": "4e772fcecaafff787211833165728ba920f1594480f35981301c129a1d61b0e8"
+    },
+    "weapon_tachi_side_v2.png": {
+      "canvas_px": [
+        1086,
+        1448
+      ],
+      "foreground_bbox_inclusive_px": [
+        522,
+        57,
+        563,
+        1391
+      ],
+      "foreground_height_px": 1335,
+      "sha256": "16d4cfb763fa71c5793a6890f40f923bed7c01d7541465e562c1d0c743da44df"
+    }
+  },
+  "C": {
+    "target": {
+      "total": 147,
+      "blade": 112,
+      "hilt": 33,
+      "guard_allowance": 2,
+      "blade_width": 3.2,
+      "spine_thickness": 0.7,
+      "guard_width": 8,
+      "tip_right_displacement": 4
+    },
+    "measured_front": {
+      "total_normalized": 147,
+      "blade": 108.57,
+      "hilt": 34.47,
+      "guard_allowance": 3.96,
+      "blade_width": 3.85,
+      "guard_width": 8.81,
+      "tip_right_displacement": 2.09
+    },
+    "measured_side": {
+      "total_normalized": 147,
+      "blade": 108.13,
+      "hilt": 34.24,
+      "guard_allowance": 4.62,
+      "spine_thickness": 1.21
+    },
+    "delta_front": {
+      "blade": -3.43,
+      "hilt": 1.47,
+      "guard_allowance": 1.96,
+      "blade_width": 0.65,
+      "guard_width": 0.81,
+      "tip_right_displacement": -1.91
+    },
+    "delta_side": {
+      "blade": -3.87,
+      "hilt": 1.24,
+      "guard_allowance": 2.62,
+      "spine_thickness": 0.51
+    },
+    "pixel_evidence": {
+      "front_tip_y": 56,
+      "front_bottom_y": 1390,
+      "side_tip_y": 57,
+      "side_bottom_y": 1391,
+      "front_guard_top_y": 1042,
+      "side_guard_top_y": 1039,
+      "front_hilt_top_y": 1078,
+      "side_hilt_top_y": 1081,
+      "front_blade_width_at_y1000": 35,
+      "front_guard_max_width": 80,
+      "side_spine_width_at_y500": 11,
+      "front_hilt_axis_x": 541,
+      "front_hilt_axis_basis": "下部柄y1300の輪郭x523..558の中心540.5を丸めた基準",
+      "front_uppermost_tip_x": 560,
+      "front_blade_center_x_at_y500": 527,
+      "front_blade_center_x_at_y1000": 534,
+      "front_guard_max_width_row": 1049
+    },
+    "alignment": {
+      "full_height_difference_px": 0,
+      "side_top_offset_px": 1,
+      "side_bottom_offset_px": 1,
+      "side_guard_top_offset_px": -3,
+      "side_hilt_top_offset_px": 3
+    },
+    "acceptance": "2PNGは1086x1448、同じ全高で正面と真横がそろった。反り、刃と柄の長さ、峰厚等に残差があり、指定寸法への全面合格とはしない。",
+    "contour_note": "先端は柄軸より右にあるが、中央の刃幅中心は柄軸の左へ入る。原画の曲率を精密な単純曲線として複写せず、依頼書の右への緩い反りを3Dで構成して照合する。",
+    "correction_status": {
+      "process": "C1の刃・柄の割合と右への反りを再補正するimage_gen編集",
+      "result": "moderation_blocked",
+      "category": "violence",
+      "request_id": "1f3da655-6ee1-42d4-aacb-9d3d30e167d1",
+      "handling": "再試行・他サービスへの迂回をせず、生成済みC1を保持。そのC1を基準にC2を生成。"
+    },
+    "claude_action": "全長147cm、刃112cm、柄33cm、鍔口金2cm、刃幅3.2cm、峰厚0.7cm、鍔幅8cm、先端右変位4cmを3Dの基準にする。原画は材質・外観資料であり、無補正の寸法図として取り込まない。"
+  },
+  "unverified": [
+    "正式採用",
+    "3Dモデルとの照合",
+    "実ゲーム表示",
+    "当たり判定",
+    "iPhone実機"
+  ],
+  "overall": "太刀2枚の提出と寸法の合否を区別。原画の生成は完了したが、数値の未達が残る。"
+}
