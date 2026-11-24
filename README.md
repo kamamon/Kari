@@ -13,7 +13,7 @@
 
 設計書: 第 1 版 [docs/source/VEILBOUND_HUNTERS_design_v1.0.pdf](docs/source/VEILBOUND_HUNTERS_design_v1.0.pdf)、第 2 版 [docs/source/VEILBOUND_HUNTERS_design_v2.0.pdf](docs/source/VEILBOUND_HUNTERS_design_v2.0.pdf)（2026-11-24。いまの実装と決定を反映）。
 
-## いまの段階: v0.12.1（M2: ガルドロスを狩って帰る + 里を歩く拠点と商店 + フィールド（野営地 + 10 エリア）+ 武器 7 系統 + 保存 + 段階 4 つ・武器の強化 5 段・防具 + 刃の状態と研磨石）
+## いまの段階: v0.12.2（M2: ガルドロスを狩って帰る + 里を歩く拠点と商店 + フィールド（野営地 + 10 エリア）+ 武器 7 系統 + 保存 + 段階 4 つ・武器の強化 5 段・防具 + 刃の状態と研磨石）
 
 設計書の開発段階 M0（基盤）・M1（戦闘）と、M2（狩猟）の前半まで。**見た目・動き・音はすべて仮素材**です。
 

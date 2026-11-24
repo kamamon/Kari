@@ -71,13 +71,17 @@ interface PlateSpec {
 }
 
 /**
- * 兜の鉢の断面（高さ、左右・前・後ろの半径）。頭を 2cm ほど離れて包む丸い鉢で、頭のてっぺん 1.75m から 3.5cm ほど上まで。
- * 下の縁（額の帯）は眉の上。顔（目・口・あご）は開く。設定図 v2 の鉢は、前の版（上が広く平ら）より丸い。
+ * 兜の鉢の断面（高さ、左右・前・後ろの半径）。**頭の輪郭（hunterBody の HEAD_SHAPE）から 6〜9mm だけ外**の、頭に沿う丸い鉢。
+ * 利用者の指摘（2026-11-24）「顔とヘルメットの幅が合って無さすぎる。幅大きすぎ」: 前の版は、頭から 2cm 離していた
+ * （額で幅 20cm。顔は幅 13cm なので、鉢だけが大きく見えた）。額の幅は 17cm（帯を入れて 18cm）にした。
+ * 下の縁（額の帯）は眉の上。顔（目・口・あご）は開く。頭のてっぺん 1.75m から 2.3cm 上まで。
  */
-const HELM_SHAPE: [number, number, number, number][] = [
-  [1.666, 0.097, 0.114, 0.112], [1.7, 0.096, 0.112, 0.11], [1.732, 0.087, 0.101, 0.099], [1.758, 0.07, 0.081, 0.079], [1.775, 0.047, 0.054, 0.053], [1.785, 0.022, 0.025, 0.025],
+export const HELM_SHAPE: readonly (readonly [number, number, number, number])[] = [
+  [1.666, 0.085, 0.103, 0.099], [1.698, 0.082, 0.105, 0.093], [1.726, 0.069, 0.097, 0.078], [1.748, 0.052, 0.078, 0.06], [1.764, 0.032, 0.05, 0.038], [1.773, 0.015, 0.022, 0.018],
 ];
-const HELM_Z = 0.002;
+export const HELM_Z = 0.002;
+/** 額の帯が、鉢の面から出る量 */
+export const HELM_BAND_LIFT = 0.004;
 
 /**
  * 兜の鉢（設定図 v2: armor_galdros_t2_*_v2.png）。利用者の指示（2026-11-24）「頭装備がダサい。中世の兜のようなイメージ」。
@@ -92,7 +96,7 @@ function helmDome(rock: Geo, rim: Geo, rockCol: RGB, rimCol: RGB, band: number):
   loft(rock, HELM_SHAPE.map(([y, rx, f, b]) => ring(y, rx, f, b)), { seg: 16, color: (p) => { const k = 0.86 + 0.14 * sstep(1.66, 1.76, p.y); return [rockCol[0] * k, rockCol[1] * k, rockCol[2] * k]; }, capEnd: rockCol });
   // 額の帯（鉢の下の縁をひと回り）と、鋲
   const [y0, rx0, f0, b0] = HELM_SHAPE[0]!;
-  const lift = 0.005;
+  const lift = HELM_BAND_LIFT;
   loft(rim, [ring(y0 - 0.009, rx0, f0, b0, lift), ring(y0 + 0.012 + band, rx0, f0, b0, lift)], { seg: 16, color: () => rimCol, capStart: rimCol, capEnd: rimCol });
   const stud = shade(rimCol, 1.22);
   const RIVETS = 12;
@@ -102,7 +106,7 @@ function helmDome(rock: Geo, rim: Geo, rockCol: RGB, rimCol: RGB, band: number):
     const cs = Math.cos(th), sn = Math.sin(th);
     const out = new Vector3(cs / (rx0 + lift), 0, sn / ((sn >= 0 ? f0 : b0) + lift)).normalize();
     const at = new Vector3((rx0 + lift) * cs, y0 + 0.004 + band * 0.5, HELM_Z + ((sn >= 0 ? f0 : b0) + lift) * sn);
-    crystal(rim, at.addScaledVector(out, -0.002), out, 0.008, 0.0055, stud, B.head, 0, 20 + k);
+    crystal(rim, at.addScaledVector(out, -0.002), out, 0.0075, 0.005, stud, B.head, 0, 20 + k);
   }
   // 鉢をまたぐ帯: 前 → てっぺん → 後ろ、左 → てっぺん → 右
   const top = HELM_SHAPE[HELM_SHAPE.length - 1]![0];
@@ -117,12 +121,12 @@ function helmDome(rock: Geo, rim: Geo, rockCol: RGB, rimCol: RGB, band: number):
       const t = new Vector3().subVectors(path[Math.min(path.length - 1, i + 1)]!, path[Math.max(0, i - 1)]!).normalize();
       const n = new Vector3().crossVectors(t, wide).normalize();
       if (n.dot(new Vector3(c.x, c.y - 1.66, c.z - HELM_Z)) < 0) n.negate();
-      return { c: c.clone(), right: wide, up: n, rx: band, top: 0.006, bottom: 0.002, b0: B.head, b1: B.head, w1: 0, part: 0 };
+      return { c: c.clone(), right: wide, up: n, rx: band, top: 0.005, bottom: 0.002, b0: B.head, b1: B.head, w1: 0, part: 0 };
     });
     loft(rim, rings, { seg: 6, color: () => rimCol, capStart: rimCol, capEnd: rimCol });
   }
   // てっぺんの小さな平たい岩（ガルドロスの頭頂。帯が交わる所に乗る）
-  plate(rock, { surface: (u, v) => new Vector3(u * 0.019, top + 0.004, HELM_Z + v * 0.015), inside: new Vector3(0, 1.7, HELM_Z), w: 0.038, d: 0.03, thickness: 0.008, skirt: 0.005, bevel: 0.005, seed: 97, bone: B.head, part: 0, rock: rockCol, points: 6, square: 0.55 }, { geo: rim, color: rimCol });
+  plate(rock, { surface: (u, v) => new Vector3(u * 0.015, top + 0.004, HELM_Z + v * 0.012), inside: new Vector3(0, 1.7, HELM_Z), w: 0.03, d: 0.024, thickness: 0.008, skirt: 0.005, bevel: 0.005, seed: 97, bone: B.head, part: 0, rock: rockCol, points: 6, square: 0.55 }, { geo: rim, color: rimCol });
   // 鼻当て: 額の帯から、鼻筋へ下ろす短い棒
   const nasal = [[1.672, f0 + 0.004], [1.652, f0 - 0.004], [1.634, f0 - 0.009]].map(([y, z]): Ring => ({ c: new Vector3(0, y!, HELM_Z + z!), right: X, up: Z, rx: Math.min(0.012, band), top: 0.005, bottom: 0.003, b0: B.head, b1: B.head, w1: 0, part: 0 }));
   loft(rim, nasal, { seg: 6, color: () => rimCol, capStart: rimCol, capEnd: rimCol });
@@ -131,12 +135,13 @@ function helmDome(rock: Geo, rim: Geo, rockCol: RGB, rimCol: RGB, band: number):
 /** 部位ごとの板。左（+X）が大きい: ガルドロスの岩殻の偏り（左肩は大 1 枚、右肩は中 1 枚 + 小 1 枚。籠手と腰の板も左が大きい）。 */
 const PLATES: Record<ArmorSlot, PlateSpec[]> = {
   // 兜（設定図 v2）: 鉢は helmDome。ここは、額の帯から下がる板。顔（目・口・あご）は開ける。
+  // どの板も、頭の輪郭に沿わせる（頬当ては、あごへ向かって内へ傾ける。頭は、額で幅 15.8cm、あごの角で 10cm）。
   head: [
-    // 頬当て: 耳を覆って、あごの角まで。左が大きい（左は耳の真横、右は耳の前に細く）
-    { bone: B.head, c: [0.093, 1.612, -0.004], u: [0, 0, 0.039], v: [0, 0.05, 0], bendU: 0.01, inside: [0, 1.61, 0], thickness: 0.014, points: 8, plain: true },
-    { bone: B.head, c: [-0.092, 1.624, 0.012], u: [0, 0, 0.028], v: [0, 0.04, 0], bendU: 0.008, inside: [0, 1.62, 0.01], thickness: 0.014, points: 7, plain: true },
-    // うなじの板: 額の帯のすぐ下から下がる（すき間を空けない）。下の縁が、少し後ろへ開く
-    { bone: B.head, c: [0, 1.618, -0.107], u: [0.066, 0, 0], v: [0, 0.042, 0.014], bendU: 0.03, inside: [0, 1.62, 0], thickness: 0.014, points: 8, plain: true },
+    // 頬当て: 耳のあたりを覆って、あごの角まで。左が大きい（左は耳の真横、右は耳の前寄りに細く）
+    { bone: B.head, c: [0.0715, 1.612, -0.004], u: [0, 0, 0.037], v: [0.013, 0.05, 0], bendU: 0.008, inside: [0, 1.61, 0], thickness: 0.01, skirt: 0.008, points: 8, plain: true },
+    { bone: B.head, c: [-0.0745, 1.624, 0.01], u: [0, 0, 0.027], v: [-0.0095, 0.04, 0], bendU: 0.006, inside: [0, 1.62, 0.01], thickness: 0.01, skirt: 0.008, points: 7, plain: true },
+    // うなじの板: 額の帯のすぐ下から下がる（すき間を空けない）。下の縁が、少しだけ後ろへ開く
+    { bone: B.head, c: [0, 1.618, -0.1], u: [0.056, 0, 0], v: [0, 0.042, 0.004], bendU: 0.022, inside: [0, 1.62, 0], thickness: 0.01, skirt: 0.008, points: 8, plain: true },
   ],
   // 胸当て: 胸の前に 2 枚、背の上半分に 2 枚（背中の中央は空ける: 武器を背負う）。肩当ては胴の部品
   chest: [

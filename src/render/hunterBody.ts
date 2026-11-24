@@ -35,9 +35,19 @@ function ringY(y: number, rx: number, front: number, back: number, bones: Bones,
 
 /**
  * 体の一部の三角形の範囲 [始め, 終わり)。buildHunterBody が書く。防具を着ている時に、ここを描かない:
- * mantle = 外套（首まわりと肩の布。胴の防具を着ている時）、hair = 髪の束（兜をかぶっている時。兜を突き抜けるため）。
+ * mantle = 外套（首まわりと肩の布。胴の防具を着ている時）、hair = 髪の束と耳（兜をかぶっている時。兜を突き抜けるため）。
  */
 export const BODY_RANGES: { mantle: [number, number]; hair: [number, number] } = { mantle: [0, 0], hair: [0, 0] };
+
+/**
+ * 頭の断面（高さ、左右の半分の幅、前、後ろ。m。中心は x = 0, z = 0）。あご先 1.565 〜 てっぺん 1.75。
+ * 兜は、この輪郭に合わせて作る（src/render/hunterArmor.ts。頭より大きくしすぎない）。
+ */
+export const HEAD_SHAPE: readonly (readonly [number, number, number, number])[] = [
+  [1.565, 0.046, 0.08, 0.06], [1.578, 0.049, 0.083, 0.062], [1.592, 0.053, 0.085, 0.066], [1.606, 0.058, 0.086, 0.074], [1.62, 0.064, 0.085, 0.083], [1.632, 0.071, 0.083, 0.089],
+  [1.644, 0.074, 0.081, 0.094], [1.656, 0.078, 0.084, 0.094], [1.668, 0.079, 0.092, 0.092], [1.68, 0.078, 0.097, 0.091], [1.695, 0.075, 0.098, 0.085], [1.71, 0.068, 0.094, 0.076],
+  [1.725, 0.052, 0.085, 0.06], [1.738, 0.034, 0.066, 0.041], [1.747, 0.015, 0.036, 0.022], [1.7505, 0.005, 0.012, 0.008],
+];
 
 /** 体の皮を組む。返した Geo の charts が、絵を貼る区画（頭・胴・外套・すそ・腕・脚・足）。 */
 export function buildHunterBody(): Geo {
@@ -50,11 +60,7 @@ export function buildHunterBody(): Geo {
   // ---- 頭: あご先 1.565 〜 てっぺん 1.75。前が顔、後ろが後頭部。髪のふくらみは輪郭に含める。----
   // 各高さの前後の奥行きは、設定図（左真横の図）の横顔の輪郭を測った値。左右の幅は正面の図から。
   // 鼻は断面の輪に乗らない（幅が狭い）ので、正面だけ細く盛り上げて、横顔の鼻先の位置に合わせる。
-  const headShape: [number, number, number, number][] = [
-    [1.565, 0.046, 0.08, 0.06], [1.578, 0.049, 0.083, 0.062], [1.592, 0.053, 0.085, 0.066], [1.606, 0.058, 0.086, 0.074], [1.62, 0.064, 0.085, 0.083], [1.632, 0.071, 0.083, 0.089],
-    [1.644, 0.074, 0.081, 0.094], [1.656, 0.078, 0.084, 0.094], [1.668, 0.079, 0.092, 0.092], [1.68, 0.078, 0.097, 0.091], [1.695, 0.075, 0.098, 0.085], [1.71, 0.068, 0.094, 0.076],
-    [1.725, 0.052, 0.085, 0.06], [1.738, 0.034, 0.066, 0.041], [1.747, 0.015, 0.036, 0.022], [1.7505, 0.005, 0.012, 0.008],
-  ];
+  const headShape = HEAD_SHAPE;
   tube('head', [ringY(1.552, 0.042, 0.05, 0.048, [B.neck, B.head, 0.6]), ...headShape.map(([y, rx, f, bk]) => ringY(y, rx, f, bk, head))], (r) => r.c.y, {
     seg: 20, density: 2.6, capEnd: HAIR,
     bulge: (r, a) => {
@@ -127,9 +133,10 @@ export function buildHunterBody(): Geo {
     const bend = new Vector3().crossVectors(d, Y).multiplyScalar(i % 2 === 0 ? 0.014 : -0.014).add(new Vector3(0, -0.006, 0));
     horn(g, new Vector3(x, y, z).addScaledVector(d, -0.008), d, len * 0.36, rad * 0.6, i % 3 === 0 ? HAIR_DARK : HAIR, B.head, 0, bend);
   });
-  BODY_RANGES.hair = [hairTri, g.triangles];
   // 耳は小さく、頭に沿わせる（張り出させない）
   for (const side of [1, -1]) blob(g, new Vector3(0.0775 * side, 1.648, -0.01), Y, 0.04, 0.006, 0.014, () => [SKIN[0] * 0.9, SKIN[1] * 0.86, SKIN[2] * 0.84], B.head, 0, 6, 4);
+  // 兜をかぶっている間は、髪の束と耳を描かない（耳は頭から 1.3cm 出ていて、頭に沿う頬当てを突き抜けるため）
+  BODY_RANGES.hair = [hairTri, g.triangles];
   blob(g, new Vector3(-0.162, 0.995, 0.09), Y, 0.125, 0.048, 0.027, (p) => (p.y > 1.03 ? [LEATHER[0] * 0.8, LEATHER[1] * 0.8, LEATHER[2] * 0.8] : LEATHER), B.pelvis, 0, 8, 5);
 
   for (const side of [1, -1] as const) {

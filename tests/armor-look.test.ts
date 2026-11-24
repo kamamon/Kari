@@ -5,7 +5,8 @@ import { describe, expect, it } from 'vitest';
 import { Vector3 } from 'three';
 import { ARMOR_SLOTS, type ArmorSlot } from '../src/data/schemas';
 import { REST } from '../src/render/bodySolve';
-import { ARMOR_TIERS, armorLookKey, armorTierOf, buildHunterArmor, type ArmorLook } from '../src/render/hunterArmor';
+import { ARMOR_TIERS, HELM_BAND_LIFT, HELM_SHAPE, HELM_Z, armorLookKey, armorTierOf, buildHunterArmor, type ArmorLook } from '../src/render/hunterArmor';
+import { HEAD_SHAPE } from '../src/render/hunterBody';
 import type { Geo } from '../src/render/procGeo';
 import { loadContent } from './helpers';
 
@@ -165,30 +166,66 @@ describe('防具の見た目: 動くための決まり（依頼 7 の 3 章）',
     expect(ps.filter((p) => p.z > 0.07 && p.y < 1.62)).toHaveLength(0);
   });
 
+  it('兜は、頭の輪郭に沿う（頭より 4mm 以上外で、離れすぎない。利用者の指摘「幅大きすぎ」）', () => {
+    // 頭の輪郭（高さごとの、左右・前・後ろの半径）を、鉢の輪の高さで補間する
+    const headAt = (y: number): [number, number, number] => {
+      const i = HEAD_SHAPE.findIndex((r) => r[0] >= y);
+      if (i < 0) return [0, 0, 0];
+      const a = HEAD_SHAPE[Math.max(0, i - 1)]!, b = HEAD_SHAPE[i]!;
+      const t = b[0] === a[0] ? 0 : (y - a[0]) / (b[0] - a[0]);
+      return [a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t];
+    };
+    for (const [y, rx, f, b] of HELM_SHAPE) {
+      if (y > 1.7505) continue; // 頭のてっぺんより上は、頭が無い
+      const [hx, hf, hb] = headAt(y);
+      for (const [helm, head, label] of [[rx, hx, '左右'], [f, hf, '前'], [b, hb, '後ろ']] as const) {
+        expect(helm - head, `高さ ${y} ${label}`).toBeGreaterThanOrEqual(0.004);
+        // 頭がすぼまる所（1.73m より上）は、丸い鉢が頭から離れる。そこより下は、2cm 以内
+        if (y <= 1.73) expect(helm - head, `高さ ${y} ${label}`).toBeLessThanOrEqual(0.02);
+      }
+    }
+    // 額の幅: 頭 15.8cm に対して、鉢 17cm（前の版は 19.4cm）
+    const widest = Math.max(...HEAD_SHAPE.map((r) => r[1]));
+    expect(HELM_SHAPE[0]![1] - widest).toBeLessThanOrEqual(0.008);
+    // 兜ぜんたい（頬当て・鋲を含む）でも、頭の幅から 2cm 以内
+    const ps = all(only('head'));
+    expect(Math.max(...ps.map((p) => Math.abs(p.x)))).toBeLessThanOrEqual(widest + 0.02);
+    // 頬当ては、あごへ向かって内へ傾く（下の縁は、上の縁より 1.2cm 以上、頭の中心に近い）
+    for (const side of [1, -1]) {
+      const cheek = ps.filter((p) => p.x * side > 0.045 && p.y < 1.655 && p.z > -0.06);
+      const upper = Math.max(...cheek.filter((p) => p.y > 1.64).map((p) => p.x * side));
+      const lower = Math.max(...cheek.filter((p) => p.y < 1.6).map((p) => p.x * side));
+      expect(upper - lower, side > 0 ? '左' : '右').toBeGreaterThan(0.012);
+    }
+  });
+
   it('兜（設定図 v2）: 帯が交わるてっぺんに、小さな平たい岩が乗る。うなじの板は、額の帯のすぐ下から下がる（すき間が無い）', () => {
     const b = buildHunterArmor(only('head'))!;
     const rock = points(b.rock);
-    // てっぺんの岩: 鉢（1.785m まで）より上で、頭の真上の小さな範囲
-    const tab = rock.filter((p) => p.y > 1.787);
+    // てっぺんの岩: 鉢のてっぺんより上で、頭の真上の小さな範囲
+    const domeTop = HELM_SHAPE[HELM_SHAPE.length - 1]![0];
+    const tab = rock.filter((p) => p.y > domeTop + 0.003);
     expect(tab.length).toBeGreaterThan(0);
     for (const p of tab) expect(Math.hypot(p.x, p.z)).toBeLessThan(0.03);
     // うなじの板の上の縁は、額の帯（下の縁 1.657m）に届く
-    const nape = rock.filter((p) => p.z < -0.1 && Math.abs(p.x) < 0.07 && p.y < 1.665);
+    const nape = rock.filter((p) => p.z < -0.085 && Math.abs(p.x) < 0.06 && p.y < 1.662);
     expect(Math.max(...nape.map((p) => p.y))).toBeGreaterThan(1.652);
   });
 
   it('兜（設定図 v2）: 額の帯に、鋲が 12 個並ぶ（帯より外へ出る小さな粒）', () => {
     const rim = points(buildHunterArmor(only('head'))!.rim);
-    // 額の帯の高さで、帯の面（鉢の半径 + 5mm）より 2mm 以上外にある点 = 鋲の先
-    const studs = rim.filter((p) => p.y > 1.662 && p.y < 1.685 && Math.hypot(p.x / (0.097 + 0.005), (p.z - 0.002) / ((p.z > 0.002 ? 0.114 : 0.112) + 0.005)) > 1.045);
+    // 額の帯の高さで、帯の面（鉢の半径 + 帯の厚み）より外にある点 = 鋲の先
+    const [, rx0, f0, b0] = HELM_SHAPE[0]!;
+    // （顔の中央の鼻当ては除く）
+    const studs = rim.filter((p) => Math.abs(p.x) > 0.015 && p.y > 1.662 && p.y < 1.685 && Math.hypot(p.x / (rx0 + HELM_BAND_LIFT), (p.z - HELM_Z) / ((p.z > HELM_Z ? f0 : b0) + HELM_BAND_LIFT)) > 1.045);
     // 1 個の鋲は、先の 1 点を 5 枚の三角形が共有する（平らな面なので、頂点は 5 つ）
     expect(studs.length).toBe(12 * 5);
     // 前後左右（帯が交わる所）には置かない
-    for (const p of studs) expect(Math.min(Math.abs(p.x), Math.abs(p.z - 0.002))).toBeGreaterThan(0.02);
+    for (const p of studs) expect(Math.min(Math.abs(p.x), Math.abs(p.z - HELM_Z))).toBeGreaterThan(0.018);
   });
 
   it('頬当ては、左の方が大きい', () => {
-    const cheeks = all(only('head')).filter((p) => Math.abs(p.x) > 0.08 && p.y < 1.655 && p.z > -0.06);
+    const cheeks = all(only('head')).filter((p) => Math.abs(p.x) > 0.045 && p.y < 1.655 && p.z > -0.06);
     const l = box(cheeks.filter((p) => p.x > 0)), r = box(cheeks.filter((p) => p.x < 0));
     expect(l.maxY - l.minY).toBeGreaterThan(r.maxY - r.minY + 0.015);
     expect(l.maxZ - l.minZ).toBeGreaterThan(r.maxZ - r.minZ + 0.01);
