@@ -1,0 +1,287 @@
+{
+  "schema_version": 1,
+  "created_date": "2026-11-25",
+  "generator": "built-in image_gen",
+  "status": "新規制作提案・採用待ち",
+  "scope": "5部位の近接構造資料と岩殻段階の武器派生案。3Dモデル・アニメーション・ゲーム実装ではない。",
+  "base_commit": "b62f1e6607061bc6afa8895cef3192923915c0a9",
+  "source_documents": [
+    "docs/chatgpt-request-7.txt",
+    "docs/chatgpt-request-7b.txt",
+    "docs/chatgpt-requests.md（COPY13）",
+    "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv（NP-021）",
+    "art-source/armor/galdros/armor_galdros_t2_v2.md",
+    "art-source/weapon/weapon_dangaku_v1.md",
+    "art-source/weapon/weapon_request5_v1.md"
+  ],
+  "items": [
+    {
+      "filename": "ref_armor_galdros_head_v1.png",
+      "name": "岩殻の兜・近接構造案",
+      "kind": "armor_reference",
+      "source": [
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_back_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_left_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_right_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "採用済み兜を基礎にした近接派生案。あごひも、鼻当て、左頬当ての大きさ、大きな岩面を補った。",
+        "未検証:頭への装着時寸法、頬当てと顔の干渉、接合メッシュ。"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: detailed component concept art for the original VEILBOUND HUNTERS game.\nReference images 1 and 2 are the approved front and left-side Galdros tier-2 armor; image 3 is the world style reference. Derive a clean close-up of ONLY its single helmet, unworn, for a 3D artist. Do not reproduce the person or the full outfit.\nSubject: a low close-fitting domed helmet formed from a few broad gray-brown stone plates, thin muted bronze edging, a riveted bronze forehead band, two bands crossing across the dome, a small flat rock surface at the top, short nose guard, one large left cheek plate and a noticeably smaller right cheek plate, and a short nape plate. Add a practical brown leather chin strap with buckle beneath the opening. The opening must leave eyes, mouth and chin unobstructed if worn. Use large quiet stone faces with a few chips, not a fine polygon mesh or mosaic. No horns, feathers, tall crest, glow or gold plating. Keep the source's low thick silhouette and bronze-to-stone ratio.\nComposition: one helmet only, close up, front three-quarter view looking slightly toward the helmet's larger LEFT cheek plate; the asymmetric cheeks and hollow face opening should be legible. Entire helmet and chin strap visible with 10 percent margin. Square image, 1536x1536 if possible. Soft even studio lighting, pale warm gray flat plain background; no floor shadow, no mannequin, no human head, no hands, no labels, no text, no border. Semi-realistic painted production illustration with readable structure, leather backing and simple fastenings. This is an original game armor concept, not a historical replica.",
+      "original_generated_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-c49abe25-daad-46d2-9dbd-cb7203ed7049.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB",
+      "sha256": "deee3addd019b6a4611aa21795aceed503a1ed1676cbaf12162f44f8710f6c31",
+      "bytes": 1946236,
+      "input_image_paths": [
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_left_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "visual_review": "生成時の全9画像を目視。全体がフレーム内に収まり、文字・枠・人物なし。防具の左右差、武器の刃向きと岩板数を確認。",
+      "acceptance": "新規案。採用・寸法合格・3D実装済みとは扱わない。"
+    },
+    {
+      "filename": "ref_armor_galdros_torso_v1.png",
+      "name": "岩殻の胴当て・近接構造案",
+      "kind": "armor_reference",
+      "source": [
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_back_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_left_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_right_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "胸2枚、本人左肩1枚・右肩2枚、腹の柔軟部を維持。新規の裏地端と襟内側は構造補完案。",
+        "未検証:胴へ装着時寸法、肩上げ範囲、背面板の完全な前後整合。"
+      ],
+      "prompt": "Use case: stylized-concept. Derive a detailed production reference of only the TORSO ARMOR ASSEMBLY from the supplied original-game Galdros tier-2 armor front/back photographs of concept art. These are shape and material references, not a request to reproduce a person. The world style board is reference 3.\nOne assembled unworn upper-body cuirass with shoulders attached, frontal view, slightly elevated enough to reveal collar opening. Preserve exactly two broad gray-brown stone chest plates, separated by a narrow central leather join; thin muted bronze edges, worn brown leather backing and simple rivets. Anatomical left shoulder is on the RIGHT side of this front image and has ONE large low rock plate. Anatomical right shoulder is on image LEFT and has ONE medium rock plate with ONE small plate overlapping beneath it. Keep the asymmetry and low silhouette. The back has two flat plates, no projection on the central spine. The abdominal portion remains flexible cream thick cloth and brown leather straps, not a full rigid breastplate. No cape, no head, no arms, no gloves, no waist armor, no weapons, no mannequin, no body parts.\nMake open collar and armholes structurally clear, with the leather harness's buckles readable. Large gray-brown stone faces with modest chips, no glowing veins crossing the plates because this is the basic rock-shell tier. Low sheen, moderate detail, broad readable shapes. Square close-up image, soft even light, pale warm-gray plain backdrop, no cast shadow, no text, no labels, no diagrams, no border. Whole assembly with 10 percent empty margin. This is one original armor-component concept asset for later 3D modeling.",
+      "original_generated_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-af11bbf2-1b1c-4f25-8a46-44fde7baa284.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB",
+      "sha256": "bad7251ca0c7c38bc82d232394f7b87d6592c8924677f623c596ed09c53b4c45",
+      "bytes": 2171924,
+      "input_image_paths": [
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_back_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "visual_review": "生成時の全9画像を目視。全体がフレーム内に収まり、文字・枠・人物なし。防具の左右差、武器の刃向きと岩板数を確認。",
+      "acceptance": "新規案。採用・寸法合格・3D実装済みとは扱わない。"
+    },
+    {
+      "filename": "ref_armor_galdros_arms_v1.png",
+      "name": "岩殻の籠手・左右近接構造案",
+      "kind": "armor_reference",
+      "source": [
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_back_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_left_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_right_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "本人左の大きな籠手を画面右に配置し、本人右の小さな籠手を画面左へ。肘側・手首側が開いた構造。",
+        "革の裏面と2本の留め帯は構造を読みやすくする補完案。左右の正確な寸法比・手との干渉は未検証。"
+      ],
+      "prompt": "Use case: stylized-concept. Derive a detailed component production illustration of the PAIR OF FOREARM BRACERS from original Galdros tier-2 armor reference images. Images 1 and 2 are approved front/back armor sources; 3 is the world style board. Do not redesign the armor or include a person.\nShow exactly two empty leather forearm cuffs side by side at the same scale, outside faces turned toward viewer in mild three-quarter view. The wearer's LEFT bracer is the larger long broad gray-brown stone plate; place it on image RIGHT to match the front armor source. The wearer's RIGHT bracer is the smaller short narrow gray-brown stone plate on image LEFT. Each has a thin muted bronze perimeter, brown worn leather lining under the plate, and two short leather straps with simple bronze fasteners. Leave the inner elbow and wrist openings free: these are open-ended cuffs, no elbow plate, no hand plate, no fingers, no gloves, no hands or arms inside. Stone should have large quiet planes and a few chips, no luminous veins because this is basic rock-shell tier.\nSame materials and detailing level as supplied source. Show the leather thickness and practical fastening loops, with no detached extra parts. Soft even studio lighting, square image, pale warm-gray plain background, no floor or cast shadow, no text, no labels, no borders, no ruler. Both bracers completely visible with 10 percent margin and a clear gap between them. One armor component pair, production concept not a 3D deliverable.",
+      "original_generated_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-616957a7-fe16-4658-b942-2e3b7865f309.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB",
+      "sha256": "591b4f8a461ea52ea5fc1c6adff9c3c3345bfaf3f217adb7a8747497ae6bac44",
+      "bytes": 1838261,
+      "input_image_paths": [
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_back_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "visual_review": "生成時の全9画像を目視。全体がフレーム内に収まり、文字・枠・人物なし。防具の左右差、武器の刃向きと岩板数を確認。",
+      "acceptance": "新規案。採用・寸法合格・3D実装済みとは扱わない。"
+    },
+    {
+      "filename": "ref_armor_galdros_waist_v1.png",
+      "name": "岩殻の腰当て・前後構造案",
+      "kind": "armor_reference",
+      "source": [
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_back_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_left_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_right_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "左半分が正面、右半分が背面。同じ腰装備の2方向を1画像にして右小袋と中央後ろの固定晶を示した。前面開口と本人左の大きな板を維持。",
+        "完全な正投影・2方向の厳密な縮尺一致ではない。裏地や取付帯の補完を含む。"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: equipment modeling reference for original VEILBOUND HUNTERS.\nExtract and clarify only the Galdros tier-2 WAIST ARMOR from the approved front and back outfit images supplied as images 1 and 2, and match the world materials in image 3. One image showing the same unworn waist-belt assembly in TWO clean orthographic views, front on the LEFT half, back on the RIGHT half, equal scale and aligned belt height, no text. This is a front/back component study of a single equipment piece, not alternative designs.\nKeep a broad brown leather belt, dull bronze buckle and rivets, two hanging gray-brown stone thigh plates with narrow bronze edges. Wearer's LEFT thigh plate is clearly larger and longer, wearer's RIGHT is smaller. In the front view left thigh plate is on image-right of that assembly. Back view reverses screen position correctly. Retain exactly one practical leather pouch on the wearer's RIGHT side. Preserve wide central front opening for movement. Each stone plate ends around mid-thigh, no knee cover. Rear of belt has exactly ONE small squat faceted bronze-amber crystal firmly mounted at center, not dangling. No bright glowing veins or long fabric panels. No new spikes or chain.\nViews must show practical short leather attachments and the inside belt opening without a person/mannequin. Keep the same gray-brown rock faces and muted bronze, cream and worn leather aesthetic. Wide landscape image, evenly lit, pale warm-gray flat background, no cast shadow, text, labels, rulers, frames, weapons, human body or mannequin. All edges visible with generous margin and a clear gap between views.",
+      "original_generated_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-03b2725d-e090-45a1-8dc7-9694ac16d929.png",
+      "width": 1774,
+      "height": 887,
+      "mode": "RGB",
+      "sha256": "af8fa4be3f36c13913f1c007e8422f96ff6345443322883b6bebc44121c70120",
+      "bytes": 1928942,
+      "input_image_paths": [
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_back_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "visual_review": "生成時の全9画像を目視。全体がフレーム内に収まり、文字・枠・人物なし。防具の左右差、武器の刃向きと岩板数を確認。",
+      "acceptance": "新規案。採用・寸法合格・3D実装済みとは扱わない。"
+    },
+    {
+      "filename": "ref_armor_galdros_legs_v1.png",
+      "name": "岩殻の脛当て・左右近接構造案",
+      "kind": "armor_reference",
+      "source": [
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_back_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_left_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_right_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "膝と足首を越えない、左右1対の脛当て。片側を回して内張りと留め帯を示した。元の長靴は対象外で変更しない。",
+        "未検証:長靴への装着寸法、しゃがみ時干渉、裏面の厳密な形。"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: detailed original game armor component reference.\nThe supplied first two images are approved Galdros tier-2 armor front/back. Derive a close detailed view of only its pair of SHIN GUARDS; use image 3 as world-style material reference. Show exactly two complete unworn lower-leg guard assemblies side by side at identical scale in a slight three-quarter view. Each guard is a single broad elongated gray-brown rock slab, angular rounded outline, thin dull bronze edge, worn brown leather backing. The stone face sits on the front of the shin, ends BELOW the knee and ABOVE the moving ankle. The cuffs must remain open at knee and ankle ends. Two simple short leather straps with bronze buckles wrap the upper and lower guard. Do not include boots, knees, feet, legs, a body, gloves or additional armor. The approved boots remain separate and unchanged.\nOne guard can be rotated just enough to show leather interior and both fasteners while the other shows the stone face. Both match the source shape, neither is longer or spikier. Surface stone uses broad quiet planes and small chips; no strong glowing veins because this is the basic rock-shell tier. Use readable structure, natural thickness, muted bronze, soft even lighting. Square image with pale warm-gray plain backdrop, no floor shadow, no text, no labels, no dimension arrows, no border. Entire pair visible with 10 percent margins. Keep practical movement gaps and no tall ornament.",
+      "original_generated_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-a3478037-1c58-4434-80fe-f1ae2fc8824a.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB",
+      "sha256": "5e4dcfc1074250ed939198ed595f69488aabd8b57afbef89d5257418d502d6d1",
+      "bytes": 2126662,
+      "input_image_paths": [
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_back_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "visual_review": "生成時の全9画像を目視。全体がフレーム内に収まり、文字・枠・人物なし。防具の左右差、武器の刃向きと岩板数を確認。",
+      "acceptance": "新規案。採用・寸法合格・3D実装済みとは扱わない。"
+    },
+    {
+      "filename": "weapon_dangaku_galdros_t2_front_v1.png",
+      "name": "岩殻の断岳剣・正面案",
+      "kind": "weapon_reference",
+      "source": [
+        "art-source/weapon/weapon_dangaku_front_v1.png",
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "採用里鍛ちの断岳剣の正面を維持し、峰側へ不均等な岩殻板3枚を足した新規の岩殻段階案。刃・鍔・握りの高さを保持する意図。",
+        "全長1.95m等の既存数値を変更する意図はない。画像の輪郭から無補正で当たり判定を作らない。"
+      ],
+      "prompt": "Use case: precise-object-edit. Turn image 1, the approved upright original-game Dangaku greatsword reference, into its FIRST ROCK-SHELL UPGRADE using the Galdros stone-and-bronze material in images 2 and 3. Keep the weapon's exact upright placement, original blade outline and slanted point, handle length, guard width and height, leather grip, and pommel. Preserve the full object and original proportions. No person and no scene.\nChange only the surface construction of the broad upper weapon: retain the continuous plain forged-iron core and exposed straight pale iron cutting strip along image-left, and add THREE large flush protective gray-brown rock plates along the blunt spine half on image-right. The three plates have unequal lengths and subtly irregular stone shapes, thin dull bronze edges, and practical bronze fasteners. Keep them inside the original silhouette except a very shallow protective overlap; do not make the blade wider or add teeth. Their stone is the same large quiet faces and modest chips as the approved armor, no golden glowing veins across it. Carry the subtle asymmetry of Galdros's shell without random gems. Keep the bronze guard and grip unobstructed, with the two original attachment rivets near the base recognizable.\nOne weapon, whole length, straight vertical, cutting edge on image-left, front face orthographic with almost no perspective. Plain pale warm gray background, even neutral light, no cast shadow, no text, labels, scale lines, border or watermark. Portrait canvas with at least the source image's resolution and 5–8 percent top/bottom margins. This is an original game prop concept for later 3D production, not a blueprint for a real weapon.",
+      "original_generated_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-3fc0682f-8f49-48fe-ab28-1abfa42dc139.png",
+      "width": 1086,
+      "height": 1448,
+      "mode": "RGB",
+      "sha256": "d52a1407dfe6ecf78d22dfe9150979c07cae86bb2b28dbcfc0cc5423bab18047",
+      "bytes": 1343115,
+      "input_image_paths": [
+        "art-source/weapon/weapon_dangaku_front_v1.png",
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "visual_review": "生成時の全9画像を目視。全体がフレーム内に収まり、文字・枠・人物なし。防具の左右差、武器の刃向きと岩板数を確認。",
+      "acceptance": "新規案。採用・寸法合格・3D実装済みとは扱わない。"
+    },
+    {
+      "filename": "weapon_gojin_galdros_t2_sword_front_v1.png",
+      "name": "岩殻の護刃・剣正面案",
+      "kind": "weapon_reference",
+      "source": [
+        "art-source/weapon/weapon_gojin_sword_front_v1.png",
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "里鍛ちの護刃・剣の細い片刃を保ち、峰側に細い岩殻帯2区間を青銅留めで追加した新規案。",
+        "2区間の岩殻は独立した板というより連続する細帯に見える。全長1.00m等の既存数値が正本で、画像寸法は未測定。"
+      ],
+      "prompt": "Use case: precise-object-edit. Derive the basic ROCK-SHELL UPGRADE of the original short Gojin sword in image 1, using the Galdros armor material references in images 2 and 3. Image 1 is the target. Preserve its exact silhouette, length-to-width, front camera, position, slanted point, handle, guard and pommel. Keep the narrow one-handed character: do not broaden it to a greatsword.\nAdd TWO thin flush gray-brown shell plates to the blunt spine half of the blade, image-right, held by small dull-bronze collars and fasteners. Plates stay close to the existing iron core and inside its silhouette, with a tiny shallow protective lip only. The left cutting edge remains an uninterrupted visible strip of plain worn iron. Keep the original two-rivet bronze attachment at the blade base, four-rivet small guard, diagonal brown leather wrap and bronze pommel. The gray rock has large quiet chipped faces and thin bronze edging matching the approved Galdros basic-tier armor, without glowing veins, horns, red gems, decorative emblems or spikes.\nOne single complete sword, vertical with tip up, front orthographic broad-face view. Pale warm-gray plain background, soft neutral even light, no person, hands, sheath, floor, cast shadow, text, border or measurements. Portrait canvas at least source resolution; full length visible with top/bottom margins. This is an original fictional game prop concept, not a real fabrication drawing.",
+      "original_generated_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-0eec26b1-ed38-4626-9e9a-91d0ebecb763.png",
+      "width": 1086,
+      "height": 1448,
+      "mode": "RGB",
+      "sha256": "f75d83710974f6b0e0719b99e9d425f75c8cd00d4f5d073da713950b26e251d0",
+      "bytes": 1588297,
+      "input_image_paths": [
+        "art-source/weapon/weapon_gojin_sword_front_v1.png",
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "visual_review": "生成時の全9画像を目視。全体がフレーム内に収まり、文字・枠・人物なし。防具の左右差、武器の刃向きと岩板数を確認。",
+      "acceptance": "新規案。採用・寸法合格・3D実装済みとは扱わない。"
+    },
+    {
+      "filename": "weapon_dangaku_galdros_t2_back_v1.png",
+      "name": "岩殻の断岳剣・裏面案",
+      "kind": "weapon_reference",
+      "source": [
+        "art-source/weapon/weapon_dangaku_front_v1.png",
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "前面の岩板3枚に対応する留め金を背面に見せた構造案。刃は画面右、峰は画面左。前面の鏡写しではなく、岩板を載せない鉄芯の裏面。",
+        "3本の留め金の高さは見本であり、正面の個々の鋲との厳密な貫通位置は未検証。握り巻きの左右と板の厚みも3Dで確定が必要。"
+      ],
+      "prompt": "Use case: precise-object-edit. Image 1 is the just-created original Galdros rock-shell Dangaku greatsword FRONT concept. Render the REVERSE FACE of this EXACT same prop, rotated 180 degrees about its vertical long axis. Keep the entire overall width, length, top/bottom positions, blade-to-grip ratio, guard and handle lengths, material colors, pommel, and scale identical. It remains straight upright, with point up. The single iron cutting edge must now run on image-RIGHT and the blunt spine on image-LEFT; the diagonally cut tip must reverse direction accordingly. This is a viewpoint change, not a second design.\nPhysical construction: the THREE rock plates in the reference are mounted on the front face only. On this reverse face show mostly the flat dark forged-iron blade core. Along the blunt spine-side margin show three small bronze retaining tabs with two recessed rivet ends each, aligned to the upper, middle and lower front plates. The visible slim stone edge can peek just past the left spine. Do not draw a second full set of large rock plates on the reverse and do not add new decoration. Grip remains the same diagonal dark-brown leather, bronze guard with four rivets, and bronze pommel.\nOne full-length orthographic back-view prop, portrait composition matching source, plain pale warm-gray background and soft flat neutral light, no cast shadow, no person, no hands, no text, borders or measurement lines. Preserve actual shape and structure while changing the visible side.",
+      "original_generated_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-35bf09e7-5295-49e0-b7f1-e91b9a998190.png",
+      "width": 1086,
+      "height": 1448,
+      "mode": "RGB",
+      "sha256": "34cbdb5110623de0a37c56018945f836374a5e0e9be7b3d2ace4b054cb50238f",
+      "bytes": 1693585,
+      "input_image_paths": [
+        "chatgpt-inbox/010/equipment/weapon_dangaku_galdros_t2_front_v1.png"
+      ],
+      "visual_review": "生成時の全9画像を目視。全体がフレーム内に収まり、文字・枠・人物なし。防具の左右差、武器の刃向きと岩板数を確認。",
+      "acceptance": "新規案。採用・寸法合格・3D実装済みとは扱わない。"
+    },
+    {
+      "filename": "weapon_gojin_galdros_t2_shield_front_v1.png",
+      "name": "岩殻の護刃・盾表案",
+      "kind": "weapon_reference",
+      "source": [
+        "art-source/weapon/weapon_gojin_shield_front_v1.png",
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "里鍛ちの盾の十角輪郭・外周鉄枠・中央補強を維持する意図で、画面右1大板・左2小板の岩殻を加えた新規案。",
+        "高さ0.60m・幅0.47mの元図寸法を勝手に変更しない。厚み、重さ、盾裏の取っ手と革帯への影響は未検証。"
+      ],
+      "prompt": "Use case: precise-object-edit. Image 1 is the approved original Gojin small shield FRONT. Convert only its surface construction into a basic Galdros ROCK-SHELL UPGRADE, with material and asymmetry from the approved armor in image 2 and the game style in image 3. Keep exactly the original ten-sided outline, height-to-width ratio, flat top with clipped corners, narrowed faceted bottom, iron perimeter frame, bronze perimeter rivets and central vertical iron reinforcement. Keep the underlying wooden shield construction visible in narrow gaps.\nAdd exactly THREE broad low gray-brown rock-shell plates within the perimeter: ONE large irregular plate covering most of the image-right half, and TWO smaller plates arranged one above the other on the image-left half. These overlay the wooden face and are fixed with practical small dull-bronze tabs. The center iron brace stays readable between plates. Each plate has thin muted bronze edging, large quiet stone planes with a few chips, no glowing veins. Do not add a boss, huge crystal, spikes, animal face, emblem, new rim silhouette, or dangling parts.\nOne original fictional shield only, upright FRONT orthographic view, full object within generous margin. Same source camera, same size and location on portrait canvas. Plain pale warm-gray background, soft neutral even light, no cast shadow, no person, hands, lettering, text, border, dimensions or watermark. Treat as production concept art, preserve utility and compactness.",
+      "original_generated_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-4d68d15f-506c-482e-9409-073381bb2ad1.png",
+      "width": 1086,
+      "height": 1448,
+      "mode": "RGB",
+      "sha256": "fa86489f097cf18d5a10b0050b91a3c6df999df68b62c41fcdbbf118c9264569",
+      "bytes": 2009183,
+      "input_image_paths": [
+        "art-source/weapon/weapon_gojin_shield_front_v1.png",
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "visual_review": "生成時の全9画像を目視。全体がフレーム内に収まり、文字・枠・人物なし。防具の左右差、武器の刃向きと岩板数を確認。",
+      "acceptance": "新規案。採用・寸法合格・3D実装済みとは扱わない。"
+    }
+  ],
+  "limitations": [
+    "近接原画5枚は部位ごとの完全な四方向図ではない。腰のみ前後2ビューを1画像へ収録。",
+    "防具の裏地・留め具・襟内側を読みやすく補完したため、既存原画の忠実な拡大コピーではない。",
+    "兜は依頼7bを優先し、鼻当て・あごひも・左頬当て・大きな岩面を補完。採用済み全身図との差として扱う。",
+    "武器は元の里鍛ちの全長・刃幅・握りを保持する意図で描いた派生案。ピクセル計測による一致検査は未実施。",
+    "断岳剣の裏面の留め金位置は提案で、正面の各鋲との貫通位置は確定していない。",
+    "実機の視認性、UV、メッシュ、骨、装着干渉、重量、当たり判定は未確認。"
+  ]
+}

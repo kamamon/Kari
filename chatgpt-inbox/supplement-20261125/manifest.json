@@ -1,0 +1,1211 @@
+{
+  "schemaVersion": 1,
+  "title": "霧境の狩人 追加原画53点",
+  "date": "2026-11-25",
+  "reference_commit": "b62f1e6607061bc6afa8895cef3192923915c0a9",
+  "status": "generated proposals; not accepted or integrated",
+  "generator": "built-in image_gen",
+  "counts": {
+    "icons": 14,
+    "equipment": 9,
+    "characters-props": 10,
+    "fields": 20
+  },
+  "assets": [
+    {
+      "group": "icons",
+      "file": "icons/icon_mat_galdros_shell_v1.png",
+      "name": "岩殻片",
+      "id": "mat.galdros.shell_shard",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "391e1eb567bd7735384aad9e62ba029dd1bcb0507d5d818912111a962c228878",
+      "bytes": 1340655,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "clear_pixel_fraction": 0.6405333872596527,
+        "main_body_bbox_at_128": [
+          106,
+          199,
+          1141,
+          1050
+        ],
+        "outer_border_max": 1
+      }
+    },
+    {
+      "group": "icons",
+      "file": "icons/icon_item_heal_v1.png",
+      "name": "回復液",
+      "id": "item.heal_tonic",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "d475a0fcfdb6e3bba68e0fd869e581b3ef7290be9ed963b30d68ac3c1c48f765",
+      "bytes": 1155903,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "clear_pixel_fraction": 0.6500436243573993,
+        "main_body_bbox_at_128": [
+          259,
+          107,
+          992,
+          1146
+        ],
+        "outer_border_max": 1
+      }
+    },
+    {
+      "group": "icons",
+      "file": "icons/icon_item_whetstone_v1.png",
+      "name": "研磨石",
+      "id": "item.whetstone",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "6770683707ecb6db3663a7e221a81710e973145597c44f9a1adc77017a68dd9d",
+      "bytes": 1157977,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "clear_pixel_fraction": 0.6667035502341471,
+        "main_body_bbox_at_128": [
+          95,
+          261,
+          1163,
+          1089
+        ],
+        "outer_border_max": 1
+      }
+    },
+    {
+      "group": "icons",
+      "file": "icons/icon_mat_bone_v1.png",
+      "name": "硬骨",
+      "id": "mat.galdros.hard_bone",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "59a4cc2e67a629d44e9376e8340239f76af85fa88517cf3a564b779160f84357",
+      "bytes": 887299,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "clear_pixel_fraction": 0.7834095169778876,
+        "main_body_bbox_at_128": [
+          123,
+          143,
+          1130,
+          1111
+        ],
+        "outer_border_max": 1
+      }
+    },
+    {
+      "group": "icons",
+      "file": "icons/icon_mat_vein_v1.png",
+      "name": "青銅晶脈",
+      "id": "mat.galdros.bronze_vein",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "ddcae6e54e6a06088e941d7416cab55081428cc61bdef3ae4d54b9f9300b8559",
+      "bytes": 1276081,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "clear_pixel_fraction": 0.6515444039997049,
+        "main_body_bbox_at_128": [
+          196,
+          181,
+          1088,
+          1080
+        ],
+        "outer_border_max": 1
+      }
+    },
+    {
+      "group": "icons",
+      "file": "icons/icon_mat_foreplate_v1.png",
+      "name": "前脚甲",
+      "id": "mat.galdros.foreleg_plate",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "a34fe27879be886f564be7de71b8dab6061063b30755d7530682e8cf1b2c9641",
+      "bytes": 1109632,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "clear_pixel_fraction": 0.6967382207875786,
+        "main_body_bbox_at_128": [
+          179,
+          219,
+          1075,
+          1005
+        ],
+        "outer_border_max": 1
+      }
+    },
+    {
+      "group": "icons",
+      "file": "icons/icon_item_bind_trap_v1.png",
+      "name": "拘束罠",
+      "id": "item.bind_trap",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "e5135adb6de2fb17278a5618b44ff7c9c1bc7e7188bb012cbfdd9d2e3177aa03",
+      "bytes": 1595549,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "clear_pixel_fraction": 0.5863253537642861,
+        "main_body_bbox_at_128": [
+          95,
+          199,
+          1157,
+          1066
+        ],
+        "outer_border_max": 1
+      }
+    },
+    {
+      "group": "icons",
+      "file": "icons/icon_item_calm_orb_v1.png",
+      "name": "鎮静玉",
+      "id": "item.calm_orb",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "baf1e020badb5b4b28d537ad145c6a4cd3bdd21332ed8bea22193d3201c082c5",
+      "bytes": 1074147,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "clear_pixel_fraction": 0.7113326668854244,
+        "main_body_bbox_at_128": [
+          259,
+          152,
+          980,
+          1063
+        ],
+        "outer_border_max": 1
+      }
+    },
+    {
+      "group": "icons",
+      "file": "icons/icon_mat_galdros_veined_shell_v1.png",
+      "name": "脈岩殻",
+      "id": "mat.galdros.veined_shell",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "32dc5e78cd0646a0a0bdc2aa1e53d845e899fdad5078182bda1739c497477930",
+      "bytes": 1349781,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "clear_pixel_fraction": 0.6498127840988581,
+        "main_body_bbox_at_128": [
+          77,
+          223,
+          1165,
+          998
+        ],
+        "outer_border_max": 1
+      }
+    },
+    {
+      "group": "icons",
+      "file": "icons/icon_mat_tail_v1.png",
+      "name": "尾端晶",
+      "id": "mat.galdros.tail_crystal",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "e65250381b5b75fb0a14add2307472e8279b478fef81736e1a6cfef0a644e41b",
+      "bytes": 928019,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "clear_pixel_fraction": 0.7256205978190365,
+        "main_body_bbox_at_128": [
+          175,
+          232,
+          1055,
+          980
+        ],
+        "outer_border_max": 1
+      }
+    },
+    {
+      "group": "icons",
+      "file": "icons/icon_mat_galdros_crystal_shell_v1.png",
+      "name": "晶岩殻",
+      "id": "mat.galdros.crystal_shell",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "481623271b29f428fe54a6f6617ed8d8ab88c8d394b46e025ca585483b07cf5d",
+      "bytes": 1203492,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "clear_pixel_fraction": 0.6630342711934251,
+        "main_body_bbox_at_128": [
+          156,
+          223,
+          1127,
+          1034
+        ],
+        "outer_border_max": 1
+      }
+    },
+    {
+      "group": "icons",
+      "file": "icons/icon_mat_galdros_bronze_lump_v1.png",
+      "name": "青銅晶塊",
+      "id": "mat.galdros.bronze_lump",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "07875a766c38e5757d576ddaa4194a72c49bd18ce678ae1f1058b954d9748648",
+      "bytes": 1312075,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "clear_pixel_fraction": 0.6246740891666603,
+        "main_body_bbox_at_128": [
+          110,
+          255,
+          1136,
+          1051
+        ],
+        "outer_border_max": 1
+      }
+    },
+    {
+      "group": "icons",
+      "file": "icons/icon_mat_galdros_radiant_shell_v1.png",
+      "name": "輝岩殻",
+      "id": "mat.galdros.radiant_shell",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "ce10b2fd2062eb2694d553c37532007afb6e0384d979afaa00fbf137e3ec2c94",
+      "bytes": 1264193,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "clear_pixel_fraction": 0.6585179419478084,
+        "main_body_bbox_at_128": [
+          133,
+          230,
+          1123,
+          1025
+        ],
+        "outer_border_max": 1
+      }
+    },
+    {
+      "group": "icons",
+      "file": "icons/icon_mat_core_v1.png",
+      "name": "脈動晶芯",
+      "id": "mat.galdros.pulse_core",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "72698d6d57d12844558da18fa7e2480f1030c56836307db88f3c1a623f99fc55",
+      "bytes": 1099612,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "clear_pixel_fraction": 0.6614883409771347,
+        "main_body_bbox_at_128": [
+          202,
+          225,
+          1077,
+          1047
+        ],
+        "outer_border_max": 1
+      }
+    },
+    {
+      "group": "equipment",
+      "file": "equipment/ref_armor_galdros_head_v1.png",
+      "name": "岩殻の兜・近接構造案",
+      "id": null,
+      "kind": "armor_reference",
+      "source": [
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_back_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_left_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_right_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "採用済み兜を基礎にした近接派生案。あごひも、鼻当て、左頬当ての大きさ、大きな岩面を補った。",
+        "未検証:頭への装着時寸法、頬当てと顔の干渉、接合メッシュ。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "deee3addd019b6a4611aa21795aceed503a1ed1676cbaf12162f44f8710f6c31",
+      "bytes": 1946236,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB"
+    },
+    {
+      "group": "equipment",
+      "file": "equipment/ref_armor_galdros_torso_v1.png",
+      "name": "岩殻の胴当て・近接構造案",
+      "id": null,
+      "kind": "armor_reference",
+      "source": [
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_back_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_left_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_right_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "胸2枚、本人左肩1枚・右肩2枚、腹の柔軟部を維持。新規の裏地端と襟内側は構造補完案。",
+        "未検証:胴へ装着時寸法、肩上げ範囲、背面板の完全な前後整合。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "bad7251ca0c7c38bc82d232394f7b87d6592c8924677f623c596ed09c53b4c45",
+      "bytes": 2171924,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB"
+    },
+    {
+      "group": "equipment",
+      "file": "equipment/ref_armor_galdros_arms_v1.png",
+      "name": "岩殻の籠手・左右近接構造案",
+      "id": null,
+      "kind": "armor_reference",
+      "source": [
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_back_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_left_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_right_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "本人左の大きな籠手を画面右に配置し、本人右の小さな籠手を画面左へ。肘側・手首側が開いた構造。",
+        "革の裏面と2本の留め帯は構造を読みやすくする補完案。左右の正確な寸法比・手との干渉は未検証。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "591b4f8a461ea52ea5fc1c6adff9c3c3345bfaf3f217adb7a8747497ae6bac44",
+      "bytes": 1838261,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB"
+    },
+    {
+      "group": "equipment",
+      "file": "equipment/ref_armor_galdros_waist_v1.png",
+      "name": "岩殻の腰当て・前後構造案",
+      "id": null,
+      "kind": "armor_reference",
+      "source": [
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_back_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_left_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_right_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "左半分が正面、右半分が背面。同じ腰装備の2方向を1画像にして右小袋と中央後ろの固定晶を示した。前面開口と本人左の大きな板を維持。",
+        "完全な正投影・2方向の厳密な縮尺一致ではない。裏地や取付帯の補完を含む。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "af8fa4be3f36c13913f1c007e8422f96ff6345443322883b6bebc44121c70120",
+      "bytes": 1928942,
+      "width": 1774,
+      "height": 887,
+      "mode": "RGB"
+    },
+    {
+      "group": "equipment",
+      "file": "equipment/ref_armor_galdros_legs_v1.png",
+      "name": "岩殻の脛当て・左右近接構造案",
+      "id": null,
+      "kind": "armor_reference",
+      "source": [
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_back_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_left_v2.png",
+        "art-source/armor/galdros/armor_galdros_t2_right_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "膝と足首を越えない、左右1対の脛当て。片側を回して内張りと留め帯を示した。元の長靴は対象外で変更しない。",
+        "未検証:長靴への装着寸法、しゃがみ時干渉、裏面の厳密な形。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "5e4dcfc1074250ed939198ed595f69488aabd8b57afbef89d5257418d502d6d1",
+      "bytes": 2126662,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB"
+    },
+    {
+      "group": "equipment",
+      "file": "equipment/weapon_dangaku_galdros_t2_front_v1.png",
+      "name": "岩殻の断岳剣・正面案",
+      "id": null,
+      "kind": "weapon_reference",
+      "source": [
+        "art-source/weapon/weapon_dangaku_front_v1.png",
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "採用里鍛ちの断岳剣の正面を維持し、峰側へ不均等な岩殻板3枚を足した新規の岩殻段階案。刃・鍔・握りの高さを保持する意図。",
+        "全長1.95m等の既存数値を変更する意図はない。画像の輪郭から無補正で当たり判定を作らない。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "d52a1407dfe6ecf78d22dfe9150979c07cae86bb2b28dbcfc0cc5423bab18047",
+      "bytes": 1343115,
+      "width": 1086,
+      "height": 1448,
+      "mode": "RGB"
+    },
+    {
+      "group": "equipment",
+      "file": "equipment/weapon_gojin_galdros_t2_sword_front_v1.png",
+      "name": "岩殻の護刃・剣正面案",
+      "id": null,
+      "kind": "weapon_reference",
+      "source": [
+        "art-source/weapon/weapon_gojin_sword_front_v1.png",
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "里鍛ちの護刃・剣の細い片刃を保ち、峰側に細い岩殻帯2区間を青銅留めで追加した新規案。",
+        "2区間の岩殻は独立した板というより連続する細帯に見える。全長1.00m等の既存数値が正本で、画像寸法は未測定。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "f75d83710974f6b0e0719b99e9d425f75c8cd00d4f5d073da713950b26e251d0",
+      "bytes": 1588297,
+      "width": 1086,
+      "height": 1448,
+      "mode": "RGB"
+    },
+    {
+      "group": "equipment",
+      "file": "equipment/weapon_dangaku_galdros_t2_back_v1.png",
+      "name": "岩殻の断岳剣・裏面案",
+      "id": null,
+      "kind": "weapon_reference",
+      "source": [
+        "art-source/weapon/weapon_dangaku_front_v1.png",
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "前面の岩板3枚に対応する留め金を背面に見せた構造案。刃は画面右、峰は画面左。前面の鏡写しではなく、岩板を載せない鉄芯の裏面。",
+        "3本の留め金の高さは見本であり、正面の個々の鋲との厳密な貫通位置は未検証。握り巻きの左右と板の厚みも3Dで確定が必要。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "34cbdb5110623de0a37c56018945f836374a5e0e9be7b3d2ace4b054cb50238f",
+      "bytes": 1693585,
+      "width": 1086,
+      "height": 1448,
+      "mode": "RGB"
+    },
+    {
+      "group": "equipment",
+      "file": "equipment/weapon_gojin_galdros_t2_shield_front_v1.png",
+      "name": "岩殻の護刃・盾表案",
+      "id": null,
+      "kind": "weapon_reference",
+      "source": [
+        "art-source/weapon/weapon_gojin_shield_front_v1.png",
+        "art-source/armor/galdros/armor_galdros_t2_front_v2.png",
+        "art-source/board/style_board_v2.png"
+      ],
+      "spec_notes": [
+        "里鍛ちの盾の十角輪郭・外周鉄枠・中央補強を維持する意図で、画面右1大板・左2小板の岩殻を加えた新規案。",
+        "高さ0.60m・幅0.47mの元図寸法を勝手に変更しない。厚み、重さ、盾裏の取っ手と革帯への影響は未検証。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "fa86489f097cf18d5a10b0050b91a3c6df999df68b62c41fcdbbf118c9264569",
+      "bytes": 2009183,
+      "width": 1086,
+      "height": 1448,
+      "mode": "RGB"
+    },
+    {
+      "group": "characters-props",
+      "file": "characters-props/ref_npc_smith_front_v1.png",
+      "name": "鍛冶担当・正面",
+      "id": null,
+      "kind": "npc-reference",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv:NP-048",
+      "spec_notes": [
+        "壮年男性、灰髪混じり、革の前掛け、生成りの作業着を新規提案。固有名は付けていない。",
+        "指定ポーズと素材の目視確認済み。背景にごく弱い明暗あり。",
+        "身長・接地座標・NPCモデルと骨格は未確定。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "32f522c04167202ceda7d262a8650e4d93aebcfc2b6b2d8d8accbb133603c036",
+      "bytes": 1928366,
+      "width": 1086,
+      "height": 1448,
+      "mode": "RGB"
+    },
+    {
+      "group": "characters-props",
+      "file": "characters-props/ref_npc_smith_back_v1.png",
+      "name": "鍛冶担当・背面",
+      "id": null,
+      "kind": "npc-reference",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-048",
+      "spec_notes": [
+        "正面と同一人物。背面の交差革帯・腰接続を補完。右腰袋は画面右。",
+        "正面との服・髪・右腰袋の一致を目視。",
+        "厳密な尺度一致・継ぎ目位置・3D衣装の可動は未検証。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "38780663173576f93947fff2766355713f918b4e0f17257f646838f9ddd9b518",
+      "bytes": 1919558,
+      "width": 1086,
+      "height": 1448,
+      "mode": "RGB"
+    },
+    {
+      "group": "characters-props",
+      "file": "characters-props/ref_npc_merchant_front_v1.png",
+      "name": "道具担当・正面",
+      "id": null,
+      "kind": "npc-reference",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-048",
+      "spec_notes": [
+        "壮年女性、短い灰髪混じりの髪、灰緑の作業ベスト、短い革前掛け、左腰の2小袋を新規提案。固有名なし。",
+        "全身・手足・空の両手・衣類材質を目視。",
+        "NPCの背丈・ゲームでの配置・会話等は未確定。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "700d8346473dd5f69f5f6baa61198d4fc645d9a202a4e302adeac0b081202e33",
+      "bytes": 1749287,
+      "width": 1086,
+      "height": 1448,
+      "mode": "RGB"
+    },
+    {
+      "group": "characters-props",
+      "file": "characters-props/ref_npc_merchant_back_v1.png",
+      "name": "道具担当・背面",
+      "id": null,
+      "kind": "npc-reference",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-048",
+      "spec_notes": [
+        "正面と同一人物。左腰の2小袋は画面左、作業ベストの背面縫い合わせと腰前掛けの後ろ開きを補完。",
+        "髪・衣類・左腰の小袋位置を目視。",
+        "パッチ布・縫い目の完全一致、厳密な前後尺度・3Dへの適合は未検証。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "4b08078126b9043467f2c10b95c9878e49f872a8855b4009907db209d5306fba",
+      "bytes": 1886618,
+      "width": 1086,
+      "height": 1448,
+      "mode": "RGB"
+    },
+    {
+      "group": "characters-props",
+      "file": "characters-props/ref_fureki_prop_herb_v1.png",
+      "name": "風礫盆地・採集草の部材参照",
+      "id": null,
+      "kind": "prop-reference",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-026",
+      "spec_notes": [
+        "既存の背景草と区別する、幅広い灰緑の葉と短い白蕾の株を提案。既存草atlasの再生成ではない。",
+        "単体の根元・葉・蕾を目視。薄い無地背景。",
+        "実在薬草の効能を示すものではない。ゲーム内採集と正式item IDは未実装。",
+        "1024pxを生成目標としたが返却原本は1254×1254。画像加工せず原寸保持。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "67c328db7c44afec98b97a6017a9711223b468f813cd7e53cc3166a0250d6b3b",
+      "bytes": 1756863,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB"
+    },
+    {
+      "group": "characters-props",
+      "file": "characters-props/ref_fureki_prop_ore_v1.png",
+      "name": "風礫盆地・青銅晶脈の採掘露頭",
+      "id": null,
+      "kind": "prop-reference",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-026",
+      "spec_notes": [
+        "既存の灰褐色岩と青銅晶を1つの低い採掘露頭として構成。晶は先鋭化せず短い塊。",
+        "単一の低い岩塊、晶脈と結晶塊の接続を目視。",
+        "左右余白が狭めだが輪郭の切れは見られない。寸法・衝突・採掘機構は未確定。",
+        "1024pxを生成目標としたが返却原本は1254×1254。画像加工せず原寸保持。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "0d340ecf36af202476ea20ac940917373f8d3da815fa730ef35d980cac9809e5",
+      "bytes": 1750606,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB"
+    },
+    {
+      "group": "characters-props",
+      "file": "characters-props/ref_village_tent_v1.png",
+      "name": "休憩テントの部材参照",
+      "id": null,
+      "kind": "prop-reference",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-025",
+      "spec_notes": [
+        "生成りの厚布、灰緑の裾、木骨、革・縄・青銅金具、灯で既存の里とキャンプに合わせた。",
+        "入口・側面・支柱・縄・木杭・灯の全体が入ることを目視。",
+        "支柱配置は依頼の2本より複雑な新規提案。正投影ではなく斜めの形状資料。3D化時に構造・寸法・接地・衝突を別途固定する。",
+        "薄い床影がある。テクスチャとして直接貼る画像ではない。",
+        "1024pxを生成目標としたが返却原本は1254×1254。画像加工せず原寸保持。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "eb75e8f61acc44b3da3b7745977ae8c4bd73a1e7c3482dd29d90d0f397f905d0",
+      "bytes": 1779425,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB"
+    },
+    {
+      "group": "characters-props",
+      "file": "characters-props/tex_shared_leather_basecolor_v1.png",
+      "name": "共通材質・使い込んだ革の色タイル",
+      "id": null,
+      "kind": "basecolor-proposal",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-032",
+      "spec_notes": [
+        "岩と布を邪魔しない暗い灰褐色の革。縫い目や金具なし、共通UV素材の色原画。",
+        "面全体が革、文字や金具なしを目視。",
+        "シームレスは生成時の意図に留まる。反復2×2の目視検査・境界補正・UVへの適用は未実施。PBRの法線・粗さマップではない。",
+        "境界の画素差を測定済み（validation.json）。対向端は画素一致していない。これだけで視覚的継ぎ目の合否は決めず、シームレス未検証として返す。",
+        "1024pxを生成目標としたが返却原本は1254×1254。画像加工せず原寸保持。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "ac218b9af9fc6d84552ed8c7857cf6b953bd2e21124ded9426851ee768abb82d",
+      "bytes": 2905484,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB"
+    },
+    {
+      "group": "characters-props",
+      "file": "characters-props/tex_shared_wood_basecolor_v1.png",
+      "name": "共通材質・木の色タイル",
+      "id": null,
+      "kind": "basecolor-proposal",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-032",
+      "spec_notes": [
+        "里の梁・箱・柄に合う灰褐色の木肌。縦の木目を主体に、板の継ぎ目や鋲を含めない。",
+        "面全体が木肌、縦木目、文字や金具なしを目視。",
+        "シームレスは生成時の意図に留まる。反復2×2の目視検査・境界補正・UVへの適用は未実施。PBRの法線・粗さマップではない。",
+        "境界の画素差を測定済み（validation.json）。対向端は画素一致していない。これだけで視覚的継ぎ目の合否は決めず、シームレス未検証として返す。",
+        "1024pxを生成目標としたが返却原本は1254×1254。画像加工せず原寸保持。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "f09f3cf5de15b1a47251e612ff26f17b90f00f28ccb7109daf5c0002eb9b9ce4",
+      "bytes": 2945585,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB"
+    },
+    {
+      "group": "characters-props",
+      "file": "characters-props/tex_shared_iron_basecolor_v1.png",
+      "name": "共通材質・使い込んだ鉄の色タイル",
+      "id": null,
+      "kind": "basecolor-proposal",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-032",
+      "spec_notes": [
+        "灰色の使い込んだ鍛鉄。大きな反射や錆色の塊を抑え、共通部材の色原画として提案。",
+        "面全体が鉄肌、文字・金具・輪郭なしを目視。",
+        "シームレスは生成時の意図に留まる。反復2×2の目視検査・境界補正・UVへの適用は未実施。PBRのmetallic・法線・粗さマップではない。",
+        "境界の画素差を測定済み（validation.json）。対向端は画素一致していない。これだけで視覚的継ぎ目の合否は決めず、シームレス未検証として返す。",
+        "1024pxを生成目標としたが返却原本は1254×1254。画像加工せず原寸保持。"
+      ],
+      "terrain": null,
+      "mood": null,
+      "sha256": "f856a8d036361ee43d5bb55701ea079f038e9f0d5bc558960b98f7c97ceb2b96",
+      "bytes": 2583562,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_01_overview_v1.png",
+      "name": "風礫盆地",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "灰緑の草と岩原。見通しがよく、最初の練習に向く。",
+      "mood": "冷たく湿った曇り昼、灰緑の霧。",
+      "sha256": "d02f91721118c3ed2f879eae29f8a9f64a5247690e6996a89053282c202ba6c9",
+      "bytes": 2936165,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_02_overview_v1.png",
+      "name": "根絡み湿原",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "浅い沼、網目状の根、乾いた小島。足場を選ぶ。",
+      "mood": "湿った曇り昼、浅い霧。",
+      "sha256": "b1d1599b3af1f9a96cea1738eb212cf4ee6aa69142facbd91fdc1f6e69b76176",
+      "bytes": 3063406,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_03_overview_v1.png",
+      "name": "硝砂海岸",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "白砂、硝子層、低い海食洞。壁際の位置取り。",
+      "mood": "寒冷な曇りの昼、淡い海霧。",
+      "sha256": "de5c0c5bf2ec70a2b4121accefab988ceb00985cad43bb13d53d8a765e2d8dff",
+      "bytes": 2793781,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_04_overview_v1.png",
+      "name": "灰鐘鉱山",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "採掘路と広い坑口。狭い所から誘い出して戦う。",
+      "mood": "灰色の湿った曇り昼。",
+      "sha256": "932f4431746f91b663cd6ea7b2a949872a26bc4d8c1a1d9969f637bae095cb31",
+      "bytes": 2892539,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_05_overview_v1.png",
+      "name": "氷帆峡谷",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "断崖、薄い氷板、滑走の跡。長い攻撃の線を読む。",
+      "mood": "寒冷な曇天、青灰の拡散光と低い霧。",
+      "sha256": "4f7752cdd0aac1c3e304c39180975da19b174944339bc2dea0cb932a6ca7a409",
+      "bytes": 2935449,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_06_overview_v1.png",
+      "name": "霧灯樹海",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "環状の大樹、点在する光。予告を見失わない。",
+      "mood": "灰緑の薄い昼霧と点々の琥珀光。",
+      "sha256": "2f036d5934094f552be60a8db2978e30a884bc4c609e328003b1a032f29476a8",
+      "bytes": 2919518,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_07_overview_v1.png",
+      "name": "燠脈台地",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "温い晶脈の割れ目と冷えた草の段が交互に続く、低く開けた岩台地。",
+      "mood": "冷たい霧と細雨の昼。割れ目の琥珀色だけが鈍く見え、排気と風の低い音が響く。",
+      "sha256": "270572b28a4d1803df204a9785865cda62bf6b5294803e7db3fa7346ed5d4ec5",
+      "bytes": 2786999,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_08_overview_v1.png",
+      "name": "雨裂断崖",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "雨水が刻んだ断崖と、地上で往来できる広い三段の岩棚。",
+      "mood": "細い雨と低い雲が続き、崖の切れ目だけで風が鳴る。",
+      "sha256": "7d2106fc1b37d51c39a84d90e0a0c71033ca2da0e9fbec5fe61c3dc3ad99fc99",
+      "bytes": 2737647,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_09_overview_v1.png",
+      "name": "銅苔段丘",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "銅色の晶脈を含む湧水が、苔の厚い低い段丘をつなぐ。",
+      "mood": "曇天の淡い光に濡れた苔が鈍く光り、水滴の音が近い。",
+      "sha256": "4f43b1e5089d2633b8e01d7aba0590e46963f0fd57e32bdafed340445624378c",
+      "bytes": 2813015,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_10_overview_v1.png",
+      "name": "枯響河床",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "増水時だけ流れが戻る幅広い礫河床と、浅い残り淵。",
+      "mood": "灰黄の湿った礫に薄霧が流れ、足音が岩壁へ短く返る。",
+      "sha256": "fd4bfe7efb5d985f6ff19a2daedb62d033d5cdea1578128011566baac4dc36d9",
+      "bytes": 3088415,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_11_overview_v1.png",
+      "name": "鉛雲高地",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "地表近くまで雲が下りる草の高地と、霜の残る浅い窪み。",
+      "mood": "光は鈍い灰色で、強風の合間だけ滴と草擦れが聞こえる。",
+      "sha256": "fbde2a0aca5da859b03b57ea0ffa6cb2176216c7f9663b5d093eceb3846a2132",
+      "bytes": 2697629,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_12_overview_v1.png",
+      "name": "沈根沢地",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "沈んだ根の網と膝下の浅瀬を、乾いた根丘が隔てる沢地。",
+      "mood": "低い霧に樹冠が沈み、濁水の泡と朽木の軋みが響く。",
+      "sha256": "86c68ff6e024dbeb265ca23c4aaa7f93a4361669cb2fa97f636602c7b66ac640",
+      "bytes": 2813836,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_13_overview_v1.png",
+      "name": "玻璃裂原",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "鈍い硝質の板岩が割れた平原で、広い裸地と低い晶脈の畝が交互に続く。",
+      "mood": "冷たい曇天と低い霧の下で、薄板が触れる乾いた音がする。",
+      "sha256": "2d7fc283e3a3b485949438a343f1afa097e4106fceeda85d743fa3f44a2cb511",
+      "bytes": 2624111,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_14_overview_v1.png",
+      "name": "灰繭窪地",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "灰色の菌糸が根を包む浅い窪地で、乾いた根棚と湿った小盆地がつながる。",
+      "mood": "弱い拡散光が差し、細かな胞子が見えるほど静かで湿っている。",
+      "sha256": "cb46c0deeaad2bcdaa15f4b5a465bed4df326ac7f88845bc8d1ac6013974644c",
+      "bytes": 3046714,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_15_overview_v1.png",
+      "name": "冷銅洞庭",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "天井の抜けた冷たい鉱洞が連なる地形で、銅色の露頭と平たい洞床がある。",
+      "mood": "外光が淡く入り、冷えた滴の音が低く反響する。",
+      "sha256": "0a14b6cf67de7e3a453746acf4fe92e028a3c8e23deea4443f9fee1fac5e650b",
+      "bytes": 2691573,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_16_overview_v1.png",
+      "name": "響礫回廊",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "礫の通路と戦える広い岩盆が交互に連なり、側壁に低い棚状の岩が張り出す。",
+      "mood": "霧を含む風が通り、礫の転がる音が方向ごとに遅れて聞こえる。",
+      "sha256": "45484e72207231f4c59f429cf142b4d0595034237839a07cde3d484508ad3ffd",
+      "bytes": 2933108,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_17_overview_v1.png",
+      "name": "重霧環谷",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "環状の低い尾根に囲まれ、浅い水滴場と開けた岩棚が交互にある霧の谷。",
+      "mood": "曇天の灰緑の霧。尾根では風音、谷底では葉から落ちる水滴が聞こえる。",
+      "sha256": "2e4555271fc944c770e4051f7aec298476a4ef71425843ebc8563529acec11d9",
+      "bytes": 2898110,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_18_overview_v1.png",
+      "name": "伏熱石原",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "地中の温い晶脈と、根の残る冷たい縁が接する広い礫原。",
+      "mood": "冷たい小雨と低い蒸気。裂け目の琥珀色だけが鈍く光り、石の収縮音がする。",
+      "sha256": "16d2c4388de3357f4ae3e6d31a69aa560a5b5d3b760dc99fbc74af78d2f504d7",
+      "bytes": 2952665,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_19_overview_v1.png",
+      "name": "錆星高原",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "点状の青銅鉱床と鉱物藻を載せた低い岩棚が続く、起伏の緩い高原。",
+      "mood": "灰青の曇り空と細い霧。金属質の小石が風で触れ合う乾いた音が混じる。",
+      "sha256": "542bf989f46b8cd6f9ca705f5ab63f6c84f38cfb8ee2b73c57946c701200eaef",
+      "bytes": 2699444,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    },
+    {
+      "group": "fields",
+      "file": "fields/field_20_overview_v1.png",
+      "name": "深帷樹洞",
+      "id": null,
+      "kind": "field_reference",
+      "source": "public/data/bestiary.json.fields",
+      "spec_notes": [],
+      "terrain": "倒れた巨木と根棚が地上に大きな幹洞を作り、浅い流れと乾いた木屑床が並ぶ森林。",
+      "mood": "灰緑の薄暗い昼光。霧滴が幹を伝い、湿った木の軋みがゆっくり響く。",
+      "sha256": "4e5fb86d148b55af393b50fda1ed4e5ea4ee7955a975dd0203bd20f4aafce540",
+      "bytes": 2994302,
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB"
+    }
+  ]
+}

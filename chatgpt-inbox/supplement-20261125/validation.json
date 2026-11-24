@@ -1,0 +1,29 @@
+{
+  "png_count": 53,
+  "png_bytes": 111924400,
+  "decode_failures": 0,
+  "duplicate_sha256": 0,
+  "icon_ids_matched": 14,
+  "icon_expected": 14,
+  "field_names_and_terrain_matched": 20,
+  "scope": "PNG decode, dimensions, alpha metrics, hashes, source label correspondence",
+  "icons_requested_size": [
+    1024,
+    1024
+  ],
+  "icons_actual_size": [
+    [
+      1254,
+      1254
+    ]
+  ],
+  "icons_alpha_strictly_clean": false,
+  "game_integration_verified": false,
+  "iphone_verified": false,
+  "source_pngs_modified": false,
+  "npm_ci": {
+    "node": "v24.22.3",
+    "command": "npm ci --no-audit --no-fund",
+    "result": "success"
+  }
+}

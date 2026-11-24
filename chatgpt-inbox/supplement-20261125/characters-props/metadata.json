@@ -1,0 +1,350 @@
+{
+  "schemaVersion": 1,
+  "request": "010",
+  "batch": "characters-props",
+  "date": "2026-11-25",
+  "generator": "built-in image_gen",
+  "count": 10,
+  "global_notes": [
+    "画像10枚は生成原本をそのままコピー保存。リサイズ・切抜き・色変換なし。",
+    "NPCは2名の新規外見案で固有名なし。既存ミナギを再生成していない。正式採用・3D化・ゲーム反映は未実施。",
+    "小物3枚は薄い無地背景の3D制作資料で、alpha透過スプライトではない。",
+    "texture3枚はシームレスを意図した色原画。境界補正・2×2目視・UV・実機検査は未実施で、シームレス合格とは扱わない。",
+    "AGENTS.mdの変更範囲に従い、このサブフォルダ以外を変更していない。"
+  ],
+  "assets": [
+    {
+      "filename": "ref_npc_smith_front_v1.png",
+      "name": "鍛冶担当・正面",
+      "kind": "npc-reference",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv:NP-048",
+      "additional_sources": [],
+      "spec_notes": [
+        "壮年男性、灰髪混じり、革の前掛け、生成りの作業着を新規提案。固有名は付けていない。",
+        "指定ポーズと素材の目視確認済み。背景にごく弱い明暗あり。",
+        "身長・接地座標・NPCモデルと骨格は未確定。"
+      ],
+      "approval_status": "proposal-awaiting-approval",
+      "generation_tool": "built-in image_gen",
+      "prompt": "Use case: stylized-concept. Asset type: full-body character production reference for the original game VEILBOUND HUNTERS. Input images are STYLE references only: image 1 is the approved world art board; image 2 is the existing receptionist, not the requested person. Create one NEW village blacksmith NPC, FRONT VIEW, a sturdy mature adult man with short dark hair flecked with grey, square practical face, calm attentive expression. Same semi-realistic painted 3D-friendly visual language and human proportions as the references. Thick unbleached work shirt with sleeves rolled to elbows, faded grey-green sturdy trousers, simple dark brown knee-length split leather work apron, crossed straps implied around shoulders, antique bronze rivets and a small plain belt buckle, plain heavy leather work boots, short leather cuff protection, no jewelry. A small flat utility pouch at his own right hip; empty hands. Natural near-A-pose with hands apart from thighs, palms angled inward, feet slightly apart; entire body from crown to soles, no crop. FRONT orthographic camera, no foreshortening, same camera height as torso. Portrait canvas, ideally 1536x2048, crown at 6% from top and soles at 94%. Uniform light warm grey background. Soft uniform studio light, no cast ground shadow. One person only. No tools, weapon, props in hands, text, diagram, borders, logos, symbols or watermark. This is a new unapproved visual proposal, not an existing named character.",
+      "referenced_image_paths": [
+        "art-source/board/style_board_v2.png",
+        "art-source/npc/minagi_full_v1.png"
+      ],
+      "new_canonical_ids_created": false,
+      "source_image_modified": false,
+      "verification": {
+        "filename": "ref_npc_smith_front_v1.png",
+        "size_bytes": 1928366,
+        "sha256": "32f522c04167202ceda7d262a8650e4d93aebcfc2b6b2d8d8accbb133603c036",
+        "width": 1086,
+        "height": 1448,
+        "format": "PNG",
+        "mode": "RGB",
+        "alpha_present": false
+      }
+    },
+    {
+      "filename": "ref_npc_smith_back_v1.png",
+      "name": "鍛冶担当・背面",
+      "kind": "npc-reference",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-048",
+      "additional_sources": [],
+      "spec_notes": [
+        "正面と同一人物。背面の交差革帯・腰接続を補完。右腰袋は画面右。",
+        "正面との服・髪・右腰袋の一致を目視。",
+        "厳密な尺度一致・継ぎ目位置・3D衣装の可動は未検証。"
+      ],
+      "approval_status": "proposal-awaiting-approval",
+      "generation_tool": "built-in image_gen",
+      "prompt": "Use case: identity-preserve. Asset type: full-body BACK orthographic character production reference. Use the attached front view as the exact character, outfit, proportions and scale reference. Depict this same original mature male village blacksmith turned exactly 180 degrees, back directly facing camera; head straight forward away from camera, no face/profile showing. Preserve his short dark-and-grey hair shape, wide sturdy build, rolled unbleached work shirt sleeves, grey-green trousers, dark brown leather boots and wrist cuffs. Reveal the rear construction of the SAME dark brown leather apron: two shoulder straps crossing high between shoulder blades and connecting to the waist belt; exposed cloth shirt across back beneath straps, apron lower side panels visible around hips but no new rear cape or coat. Keep the small utility pouch at his OWN RIGHT hip, which now appears on IMAGE RIGHT. Maintain same natural near-A-pose, hand sizes, boot sizes, total height and foot separation as reference. Uniform warm light-grey empty background, no shadows, no ground, soft uniform illumination. Single whole person from crown to soles, exact FRONT image portrait ratio and 6% top / 94% bottom framing, no zoom. No new tools, no weapon, no text, no dimension lines, no layout panel, no logos. Preserve all visible seams, fasteners and materials while rotating the character; do not redesign.",
+      "referenced_image_paths": [
+        "chatgpt-inbox/010/characters-props/ref_npc_smith_front_v1.png"
+      ],
+      "new_canonical_ids_created": false,
+      "source_image_modified": false,
+      "verification": {
+        "filename": "ref_npc_smith_back_v1.png",
+        "size_bytes": 1919558,
+        "sha256": "38780663173576f93947fff2766355713f918b4e0f17257f646838f9ddd9b518",
+        "width": 1086,
+        "height": 1448,
+        "format": "PNG",
+        "mode": "RGB",
+        "alpha_present": false
+      }
+    },
+    {
+      "filename": "ref_npc_merchant_front_v1.png",
+      "name": "道具担当・正面",
+      "kind": "npc-reference",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-048",
+      "additional_sources": [],
+      "spec_notes": [
+        "壮年女性、短い灰髪混じりの髪、灰緑の作業ベスト、短い革前掛け、左腰の2小袋を新規提案。固有名なし。",
+        "全身・手足・空の両手・衣類材質を目視。",
+        "NPCの背丈・ゲームでの配置・会話等は未確定。"
+      ],
+      "approval_status": "proposal-awaiting-approval",
+      "generation_tool": "built-in image_gen",
+      "prompt": "Use case: stylized-concept. Asset type: original game NPC full-body FRONT orthographic production reference for VEILBOUND HUNTERS. Attached world board and receptionist are STYLE references only, do not duplicate the receptionist. Create a NEW village supply merchant, mature adult woman around 55, sturdy practical build, kind but observant face, short dark brown hair lightly silvered at the temples, neatly kept above the collar. Natural realistic human proportions, same semi-realistic painted 3D-friendly finish as the references. She wears a sturdy grey-green sleeveless hip-length shop vest with plain bronze toggles over an unbleached long-sleeved thick cotton shirt, cuffs rolled once; a short brown leather utility apron ending above the knees, two compact closed inventory pouches attached to her OWN LEFT hip, plain dark brown trousers and sturdy laced leather ankle boots. A plain brown waist belt with a small bronze buckle. All fabric and leather slightly worn but carefully repaired; no decorative jewelry or insignia. FRONT VIEW, straight natural near-A-pose, empty hands apart from thighs, feet slightly apart, relaxed shoulders. One single person fully visible from crown to soles, portrait canvas ideally 1086x1448 or larger, crown at 5% and soles at 95%, uniform warm pale grey background, soft even lighting, no cast shadow or floor line. No object held, no text, logos, borders, measurement marks, weapons, bags on shoulders, other characters or scenery. New appearance proposal; no given name.",
+      "referenced_image_paths": [
+        "art-source/board/style_board_v2.png",
+        "art-source/npc/minagi_full_v1.png"
+      ],
+      "new_canonical_ids_created": false,
+      "source_image_modified": false,
+      "verification": {
+        "filename": "ref_npc_merchant_front_v1.png",
+        "size_bytes": 1749287,
+        "sha256": "700d8346473dd5f69f5f6baa61198d4fc645d9a202a4e302adeac0b081202e33",
+        "width": 1086,
+        "height": 1448,
+        "format": "PNG",
+        "mode": "RGB",
+        "alpha_present": false
+      }
+    },
+    {
+      "filename": "ref_npc_merchant_back_v1.png",
+      "name": "道具担当・背面",
+      "kind": "npc-reference",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-048",
+      "additional_sources": [],
+      "spec_notes": [
+        "正面と同一人物。左腰の2小袋は画面左、作業ベストの背面縫い合わせと腰前掛けの後ろ開きを補完。",
+        "髪・衣類・左腰の小袋位置を目視。",
+        "パッチ布・縫い目の完全一致、厳密な前後尺度・3Dへの適合は未検証。"
+      ],
+      "approval_status": "proposal-awaiting-approval",
+      "generation_tool": "built-in image_gen",
+      "prompt": "Use case: identity-preserve. Asset type: full-body BACK orthographic character production reference. The attached image is the exact front view of the NEW village supplies merchant. Turn this same mature woman exactly 180 degrees so her BACK faces the camera directly. Maintain identical short dark-and-grey hair, body proportions, clothing, pose and image scale. Show back of her grey-green sleeveless hip-length vest, a simple center-back seam and no new emblem or backpack; maintain the same offwhite shirt, rolled sleeves, brown trousers, ankle boots, and short brown leather utility apron wrapping only around hips and thighs, back center opening showing trousers. Her two closed leather supply pouches remain at her OWN LEFT hip, so in the back view they are on IMAGE LEFT. Maintain existing slightly asymmetric patched cloth as a working garment, not decorative armor. Natural near-A-pose with hands separated from body, fingers relaxed, exact front-view stance, foot separation and crown-to-sole height. Complete body, no crop, portrait canvas same as reference. Uniform pale warm grey background with soft even studio light, no ground shadow. Single figure only. No face/profile, no text, logos, symbols, tools, weapons, additional props, dimensions or borders. This is the rear of the same person and clothes, not a new design.",
+      "referenced_image_paths": [
+        "chatgpt-inbox/010/characters-props/ref_npc_merchant_front_v1.png"
+      ],
+      "new_canonical_ids_created": false,
+      "source_image_modified": false,
+      "verification": {
+        "filename": "ref_npc_merchant_back_v1.png",
+        "size_bytes": 1886618,
+        "sha256": "4b08078126b9043467f2c10b95c9878e49f872a8855b4009907db209d5306fba",
+        "width": 1086,
+        "height": 1448,
+        "format": "PNG",
+        "mode": "RGB",
+        "alpha_present": false
+      }
+    },
+    {
+      "filename": "ref_fureki_prop_herb_v1.png",
+      "name": "風礫盆地・採集草の部材参照",
+      "kind": "prop-reference",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-026",
+      "additional_sources": [],
+      "spec_notes": [
+        "既存の背景草と区別する、幅広い灰緑の葉と短い白蕾の株を提案。既存草atlasの再生成ではない。",
+        "単体の根元・葉・蕾を目視。薄い無地背景。",
+        "実在薬草の効能を示すものではない。ゲーム内採集と正式item IDは未実装。",
+        "1024pxを生成目標としたが返却原本は1254×1254。画像加工せず原寸保持。"
+      ],
+      "approval_status": "proposal-awaiting-approval",
+      "generation_tool": "built-in image_gen",
+      "prompt": "Use case: stylized-concept. Asset type: single isolated gatherable herb prop reference for 3D production in original game VEILBOUND HUNTERS. The attached approved board is a visual-material reference only. Create ONE distinctive low medicinal herb plant clump for the grey-green rocky basin, not ordinary thin grass. A grounded compact rosette of broad slightly curled sage-grey green leaves with thick readable central veins, a few short cream-white budding stems, pale leathery leaf undersides and a small dark root crown. Mature height roughly 25 cm, broad robust silhouette visible at gameplay distance. The root crown and a very small connected soil plug are visible; no pot. Semi-realistic high-quality painted concept, muted natural palette matching board, believable botanical growth and restrained detail. Three-quarter view slightly from above, centered, entire single plant visible with 12% margin, square 1024x1024 composition, plain pale warm grey backdrop, soft even neutral studio illumination, no dramatic ground shadow. This is a close prop construction reference, not a landscape, icon sheet or sprite atlas. No extra plants, terrain scene, bottle, tools, people, monster, text, labels, numbers, frame or watermark. Shape is a new design proposal for the planned harvest point; do not imply a real medicinal plant.",
+      "referenced_image_paths": [
+        "art-source/board/style_board_v2.png"
+      ],
+      "new_canonical_ids_created": false,
+      "source_image_modified": false,
+      "verification": {
+        "filename": "ref_fureki_prop_herb_v1.png",
+        "size_bytes": 1756863,
+        "sha256": "67c328db7c44afec98b97a6017a9711223b468f813cd7e53cc3166a0250d6b3b",
+        "width": 1254,
+        "height": 1254,
+        "format": "PNG",
+        "mode": "RGB",
+        "alpha_present": false
+      }
+    },
+    {
+      "filename": "ref_fureki_prop_ore_v1.png",
+      "name": "風礫盆地・青銅晶脈の採掘露頭",
+      "kind": "prop-reference",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-026",
+      "additional_sources": [],
+      "spec_notes": [
+        "既存の灰褐色岩と青銅晶を1つの低い採掘露頭として構成。晶は先鋭化せず短い塊。",
+        "単一の低い岩塊、晶脈と結晶塊の接続を目視。",
+        "左右余白が狭めだが輪郭の切れは見られない。寸法・衝突・採掘機構は未確定。",
+        "1024pxを生成目標としたが返却原本は1254×1254。画像加工せず原寸保持。"
+      ],
+      "approval_status": "proposal-awaiting-approval",
+      "generation_tool": "built-in image_gen",
+      "prompt": "Use case: stylized-concept. Asset type: ONE mining outcrop production reference for the original game VEILBOUND HUNTERS, based on attached approved world art style. Create a low, wide, grounded grey-brown fractured rock outcrop approximately knee-to-waist high. Large readable layered stone faces, a few chipped edges and shallow weathering, muted grey-green lichen in protected creases. A SINGLE thick bronze-colored mineral vein crosses the outcrop and becomes a small cluster of squat blunt angular bronze-amber crystal nodes integrated into one side, like the low stone plates and bronze edges in the reference world. The vein is material inside rock, not a metal fitting. Crystals are short, thick, irregular faceted lumps, NOT long sharp spikes or gems. A clear accessible face where a miner could work, realistic heavy weight and broad base. Show one complete connected prop only, no surrounding terrain or loose collectible pieces. Three-quarter view slightly above, semi-realistic painted production concept, whole object centered in square 1024x1024 composition with generous margin. Uniform pale warm grey background; soft even light, no dramatic shadow. No people, monster, pickaxe, text, symbols, labels, UI, borders, diagram or multiple views. Do not create seamless texture or an atlas: this image describes the whole 3D prop's form.",
+      "referenced_image_paths": [
+        "art-source/board/style_board_v2.png"
+      ],
+      "new_canonical_ids_created": false,
+      "source_image_modified": false,
+      "verification": {
+        "filename": "ref_fureki_prop_ore_v1.png",
+        "size_bytes": 1750606,
+        "sha256": "0d340ecf36af202476ea20ac940917373f8d3da815fa730ef35d980cac9809e5",
+        "width": 1254,
+        "height": 1254,
+        "format": "PNG",
+        "mode": "RGB",
+        "alpha_present": false
+      }
+    },
+    {
+      "filename": "ref_village_tent_v1.png",
+      "name": "休憩テントの部材参照",
+      "kind": "prop-reference",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-025",
+      "additional_sources": [
+        "art-source/board/style_board_v1.md",
+        "docs/spec.md#18"
+      ],
+      "spec_notes": [
+        "生成りの厚布、灰緑の裾、木骨、革・縄・青銅金具、灯で既存の里とキャンプに合わせた。",
+        "入口・側面・支柱・縄・木杭・灯の全体が入ることを目視。",
+        "支柱配置は依頼の2本より複雑な新規提案。正投影ではなく斜めの形状資料。3D化時に構造・寸法・接地・衝突を別途固定する。",
+        "薄い床影がある。テクスチャとして直接貼る画像ではない。",
+        "1024pxを生成目標としたが返却原本は1254×1254。画像加工せず原寸保持。"
+      ],
+      "approval_status": "proposal-awaiting-approval",
+      "generation_tool": "built-in image_gen",
+      "prompt": "Use case: stylized-concept. Asset type: ONE rest tent assembly production reference for 3D environment art in original game VEILBOUND HUNTERS. Attached approved world board is the style and construction reference, especially its humble canvas village and camp. Create a sturdy small frontier rest tent, one complete connected assembly: simple timber ridge frame with two upright poles, heavy unbleached warm-ivory canvas pitched in a low triangular roof, grey-green reinforced lower canvas hems and leather corner ties, coarse natural guy ropes with wooden ground pegs. Front flap neatly tied open, revealing a dark simple empty shelter interior. One small bronze-and-glass amber lantern hangs from a hook on the front timber pole as in the world board. Exposed practical wooden joints and a few plain bronze fasteners. No elaborate decorative shape. Three-quarter eye-level view shows front opening and one full side, all structural pieces and ropes fully visible with margin. Canvas and wood match approved materials. Semi-realistic painted production concept, isolated on uniform pale warm grey background; soft even diffuse lighting, no landscape, no platform or large ground shadow. Square 1024x1024 composition, object centered. No people, animals, furniture, crates, weapons, text, logos, signs, dimensional labels, border, diagram, or extra tents. Construction proportions are a visual proposal, not a dimensioned engineering plan.",
+      "referenced_image_paths": [
+        "art-source/board/style_board_v2.png"
+      ],
+      "new_canonical_ids_created": false,
+      "source_image_modified": false,
+      "verification": {
+        "filename": "ref_village_tent_v1.png",
+        "size_bytes": 1779425,
+        "sha256": "eb75e8f61acc44b3da3b7745977ae8c4bd73a1e7c3482dd29d90d0f397f905d0",
+        "width": 1254,
+        "height": 1254,
+        "format": "PNG",
+        "mode": "RGB",
+        "alpha_present": false
+      }
+    },
+    {
+      "filename": "tex_shared_leather_basecolor_v1.png",
+      "name": "共通材質・使い込んだ革の色タイル",
+      "kind": "basecolor-proposal",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-032",
+      "additional_sources": [],
+      "spec_notes": [
+        "岩と布を邪魔しない暗い灰褐色の革。縫い目や金具なし、共通UV素材の色原画。",
+        "面全体が革、文字や金具なしを目視。",
+        "シームレスは生成時の意図に留まる。反復2×2の目視検査・境界補正・UVへの適用は未実施。PBRの法線・粗さマップではない。",
+        "境界の画素差を測定済み（validation.json）。対向端は画素一致していない。これだけで視覚的継ぎ目の合否は決めず、シームレス未検証として返す。",
+        "1024pxを生成目標としたが返却原本は1254×1254。画像加工せず原寸保持。"
+      ],
+      "approval_status": "proposal-awaiting-approval",
+      "generation_tool": "built-in image_gen",
+      "prompt": "Use case: stylized-concept. Asset type: reusable LEATHER BASE-COLOR texture tile for semi-realistic original frontier game VEILBOUND HUNTERS. Create an EXACTLY SQUARE image, 1024 x 1024 pixels if available, filled edge-to-edge with one continuous flat surface of worn dark umber brown leather, muted warm brown with a faint grey cast. Fine irregular natural hide grain and restrained tiny surface scuffs, medium-scale mottling almost uniform. It should feel like the practical leather belts and work aprons of a grey-green, bronze and unbleached-cloth frontier village. Strict straight-on orthographic surface view, no perspective. Completely flat diffuse illumination: no directional lighting, no bright sheen, no cast shadows, no ambient occlusion, no vignette, no gradient from center to edges. Seamless tiling intent: left edge continues into right edge and top into bottom; uniform pattern density. No object silhouette, borders, seams, stitching, holes, buckles, straps, folds, patches, large cracks, text, logos or watermark. NOT a photograph of a sample swatch lying on a background. The entire canvas IS the continuous material surface. Color only, not a normal map or roughness map. Original texture.",
+      "referenced_image_paths": [],
+      "new_canonical_ids_created": false,
+      "source_image_modified": false,
+      "verification": {
+        "filename": "tex_shared_leather_basecolor_v1.png",
+        "size_bytes": 2905484,
+        "sha256": "ac218b9af9fc6d84552ed8c7857cf6b953bd2e21124ded9426851ee768abb82d",
+        "width": 1254,
+        "height": 1254,
+        "format": "PNG",
+        "mode": "RGB",
+        "alpha_present": false,
+        "edge_measurements": {
+          "left_right_rgb_mae_0_255": 5.4856,
+          "top_bottom_rgb_mae_0_255": 5.0667,
+          "horizontal_adjacent_rgb_mae_0_255": 3.8615,
+          "vertical_adjacent_rgb_mae_0_255": 5.1794,
+          "opposite_edges_pixel_identical": false
+        },
+        "seamless_verified": false
+      }
+    },
+    {
+      "filename": "tex_shared_wood_basecolor_v1.png",
+      "name": "共通材質・木の色タイル",
+      "kind": "basecolor-proposal",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-032",
+      "additional_sources": [],
+      "spec_notes": [
+        "里の梁・箱・柄に合う灰褐色の木肌。縦の木目を主体に、板の継ぎ目や鋲を含めない。",
+        "面全体が木肌、縦木目、文字や金具なしを目視。",
+        "シームレスは生成時の意図に留まる。反復2×2の目視検査・境界補正・UVへの適用は未実施。PBRの法線・粗さマップではない。",
+        "境界の画素差を測定済み（validation.json）。対向端は画素一致していない。これだけで視覚的継ぎ目の合否は決めず、シームレス未検証として返す。",
+        "1024pxを生成目標としたが返却原本は1254×1254。画像加工せず原寸保持。"
+      ],
+      "approval_status": "proposal-awaiting-approval",
+      "generation_tool": "built-in image_gen",
+      "prompt": "Use case: stylized-concept. Asset type: reusable WOOD BASE-COLOR texture tile for the original semi-realistic frontier game VEILBOUND HUNTERS. Make a precisely square 1024x1024 image if available. Fill the ENTIRE canvas edge-to-edge with one continuous surface of weathered practical timber, muted grey-brown oak-like hardwood with faded warm tan grain. Straight mostly vertical grain, subtle restrained fine grain irregularity, a few tiny filled natural knots but no prominent distinct knot or swirl, light worn marks. This is the wood color material used on humble village beams, boxes, tool handles, and tent poles in a grey-green/bronze/cream frontier world. The surface is a close flat orthographic color scan: no perspective, no thickness, no plank edge, no sample background. Flat diffuse lighting, absolutely no directional highlight, cast shadow, dark side gradient, ambient occlusion, or vignette. Intended to tile seamlessly left-to-right and top-to-bottom with uniform density and color. One continuous wood surface, NOT multiple boards. No seams between planks, nails, metal, screws, carvings, chips at an edge, text, logos, labels, frames, or scenery. Color only, not normal or roughness map. Subtle realistic handworked material, suitable for 3D texturing, not an abstract pattern.",
+      "referenced_image_paths": [],
+      "new_canonical_ids_created": false,
+      "source_image_modified": false,
+      "verification": {
+        "filename": "tex_shared_wood_basecolor_v1.png",
+        "size_bytes": 2945585,
+        "sha256": "f09f3cf5de15b1a47251e612ff26f17b90f00f28ccb7109daf5c0002eb9b9ce4",
+        "width": 1254,
+        "height": 1254,
+        "format": "PNG",
+        "mode": "RGB",
+        "alpha_present": false,
+        "edge_measurements": {
+          "left_right_rgb_mae_0_255": 8.2525,
+          "top_bottom_rgb_mae_0_255": 6.7831,
+          "horizontal_adjacent_rgb_mae_0_255": 7.6044,
+          "vertical_adjacent_rgb_mae_0_255": 4.0417,
+          "opposite_edges_pixel_identical": false
+        },
+        "seamless_verified": false
+      }
+    },
+    {
+      "filename": "tex_shared_iron_basecolor_v1.png",
+      "name": "共通材質・使い込んだ鉄の色タイル",
+      "kind": "basecolor-proposal",
+      "source": "docs/source/chatgpt-plan-v1/VEILBOUND_HUNTERS_asset_backlog_v1.csv#NP-032",
+      "additional_sources": [],
+      "spec_notes": [
+        "灰色の使い込んだ鍛鉄。大きな反射や錆色の塊を抑え、共通部材の色原画として提案。",
+        "面全体が鉄肌、文字・金具・輪郭なしを目視。",
+        "シームレスは生成時の意図に留まる。反復2×2の目視検査・境界補正・UVへの適用は未実施。PBRのmetallic・法線・粗さマップではない。",
+        "境界の画素差を測定済み（validation.json）。対向端は画素一致していない。これだけで視覚的継ぎ目の合否は決めず、シームレス未検証として返す。",
+        "1024pxを生成目標としたが返却原本は1254×1254。画像加工せず原寸保持。"
+      ],
+      "approval_status": "proposal-awaiting-approval",
+      "generation_tool": "built-in image_gen",
+      "prompt": "Use case: stylized-concept. Asset type: reusable WORN IRON BASE-COLOR texture tile for the original semi-realistic frontier game VEILBOUND HUNTERS. Square 1024x1024 pixels if available, entire canvas covered edge-to-edge by one continuous flat surface of dark weathered forged iron. Restrained neutral dark slate-grey with a very slight warm brown patina, tiny shallow forging marks and subtle scattered scratches, small faint oxidation freckles, practical maintained iron rather than orange rust. Keep large-scale color even and contrast modest. Completely orthographic straight-on material scan. FLAT DIFFUSE ALBEDO appearance: no bright reflective specular streaks, no directional light, no glossy glare, no ambient occlusion, no cast shadows, no radial gradient or dark vignette. Intended seamless tiling horizontally and vertically, compatible texture pattern and color on opposite edges. No sample swatch boundary, object outline, plank or panel divisions, cracks, bolts, holes, seams, rivets, hammer, weapons, symbols, text, logos, borders, extra background or watermark. This is a color texture for later 3D material work, not a metallic/roughness/normal map. Fine realistic surface detail with no large repeated motif.",
+      "referenced_image_paths": [],
+      "new_canonical_ids_created": false,
+      "source_image_modified": false,
+      "verification": {
+        "filename": "tex_shared_iron_basecolor_v1.png",
+        "size_bytes": 2583562,
+        "sha256": "f856a8d036361ee43d5bb55701ea079f038e9f0d5bc558960b98f7c97ceb2b96",
+        "width": 1254,
+        "height": 1254,
+        "format": "PNG",
+        "mode": "RGB",
+        "alpha_present": false,
+        "edge_measurements": {
+          "left_right_rgb_mae_0_255": 4.6393,
+          "top_bottom_rgb_mae_0_255": 4.7725,
+          "horizontal_adjacent_rgb_mae_0_255": 2.976,
+          "vertical_adjacent_rgb_mae_0_255": 3.8015,
+          "opposite_edges_pixel_identical": false
+        },
+        "seamless_verified": false
+      }
+    }
+  ]
+}

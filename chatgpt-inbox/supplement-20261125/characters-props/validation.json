@@ -1,0 +1,145 @@
+{
+  "image_count": 10,
+  "files": [
+    {
+      "filename": "ref_npc_smith_front_v1.png",
+      "size_bytes": 1928366,
+      "sha256": "32f522c04167202ceda7d262a8650e4d93aebcfc2b6b2d8d8accbb133603c036",
+      "width": 1086,
+      "height": 1448,
+      "format": "PNG",
+      "mode": "RGB",
+      "alpha_present": false
+    },
+    {
+      "filename": "ref_npc_smith_back_v1.png",
+      "size_bytes": 1919558,
+      "sha256": "38780663173576f93947fff2766355713f918b4e0f17257f646838f9ddd9b518",
+      "width": 1086,
+      "height": 1448,
+      "format": "PNG",
+      "mode": "RGB",
+      "alpha_present": false
+    },
+    {
+      "filename": "ref_npc_merchant_front_v1.png",
+      "size_bytes": 1749287,
+      "sha256": "700d8346473dd5f69f5f6baa61198d4fc645d9a202a4e302adeac0b081202e33",
+      "width": 1086,
+      "height": 1448,
+      "format": "PNG",
+      "mode": "RGB",
+      "alpha_present": false
+    },
+    {
+      "filename": "ref_npc_merchant_back_v1.png",
+      "size_bytes": 1886618,
+      "sha256": "4b08078126b9043467f2c10b95c9878e49f872a8855b4009907db209d5306fba",
+      "width": 1086,
+      "height": 1448,
+      "format": "PNG",
+      "mode": "RGB",
+      "alpha_present": false
+    },
+    {
+      "filename": "ref_fureki_prop_herb_v1.png",
+      "size_bytes": 1756863,
+      "sha256": "67c328db7c44afec98b97a6017a9711223b468f813cd7e53cc3166a0250d6b3b",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGB",
+      "alpha_present": false
+    },
+    {
+      "filename": "ref_fureki_prop_ore_v1.png",
+      "size_bytes": 1750606,
+      "sha256": "0d340ecf36af202476ea20ac940917373f8d3da815fa730ef35d980cac9809e5",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGB",
+      "alpha_present": false
+    },
+    {
+      "filename": "ref_village_tent_v1.png",
+      "size_bytes": 1779425,
+      "sha256": "eb75e8f61acc44b3da3b7745977ae8c4bd73a1e7c3482dd29d90d0f397f905d0",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGB",
+      "alpha_present": false
+    },
+    {
+      "filename": "tex_shared_leather_basecolor_v1.png",
+      "size_bytes": 2905484,
+      "sha256": "ac218b9af9fc6d84552ed8c7857cf6b953bd2e21124ded9426851ee768abb82d",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGB",
+      "alpha_present": false,
+      "edge_measurements": {
+        "left_right_rgb_mae_0_255": 5.4856,
+        "top_bottom_rgb_mae_0_255": 5.0667,
+        "horizontal_adjacent_rgb_mae_0_255": 3.8615,
+        "vertical_adjacent_rgb_mae_0_255": 5.1794,
+        "opposite_edges_pixel_identical": false
+      },
+      "seamless_verified": false
+    },
+    {
+      "filename": "tex_shared_wood_basecolor_v1.png",
+      "size_bytes": 2945585,
+      "sha256": "f09f3cf5de15b1a47251e612ff26f17b90f00f28ccb7109daf5c0002eb9b9ce4",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGB",
+      "alpha_present": false,
+      "edge_measurements": {
+        "left_right_rgb_mae_0_255": 8.2525,
+        "top_bottom_rgb_mae_0_255": 6.7831,
+        "horizontal_adjacent_rgb_mae_0_255": 7.6044,
+        "vertical_adjacent_rgb_mae_0_255": 4.0417,
+        "opposite_edges_pixel_identical": false
+      },
+      "seamless_verified": false
+    },
+    {
+      "filename": "tex_shared_iron_basecolor_v1.png",
+      "size_bytes": 2583562,
+      "sha256": "f856a8d036361ee43d5bb55701ea079f038e9f0d5bc558960b98f7c97ceb2b96",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGB",
+      "alpha_present": false,
+      "edge_measurements": {
+        "left_right_rgb_mae_0_255": 4.6393,
+        "top_bottom_rgb_mae_0_255": 4.7725,
+        "horizontal_adjacent_rgb_mae_0_255": 2.976,
+        "vertical_adjacent_rgb_mae_0_255": 3.8015,
+        "opposite_edges_pixel_identical": false
+      },
+      "seamless_verified": false
+    }
+  ],
+  "images_modified": false,
+  "checks": [
+    "PNG decode",
+    "dimensions",
+    "mode/alpha",
+    "SHA256",
+    "raw texture edge measurements"
+  ],
+  "not_checked": [
+    "2x2 tiling visual inspection",
+    "UV application",
+    "3D mesh",
+    "human rig",
+    "iPhone Safari rendering"
+  ],
+  "sha256_unique": true
+}
