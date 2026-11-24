@@ -159,6 +159,8 @@ export class Simulation implements SimCtx {
   /** 防具の防御力の合計と、それで受けるダメージへ掛かる倍率（1 以下） */
   defense = 0;
   defenseScale = 1;
+  /** 身に着けている防具の ID（設定のまま。見た目が読む） */
+  armorIds: readonly string[] = [];
   /** 依頼の段階（訓練場では null） */
   rank: RankDef | null = null;
   hazards: Hazard[] = [];
@@ -183,7 +185,8 @@ export class Simulation implements SimCtx {
     this.rng = new SeededRng(options.seed);
     // 支給品: 依頼なら依頼の支給品、訓練場なら訓練用（研磨石）
     this.player = createPlayer(content, map.spawn, options.weaponId, quest ? quest.supplies ?? [] : content.player.trainingSupplies ?? []);
-    this.defense = totalDefense(content, options.armorIds ?? []);
+    this.armorIds = [...(options.armorIds ?? [])];
+    this.defense = totalDefense(content, this.armorIds);
     this.defenseScale = defenseScale(content, this.defense);
     if (quest) {
       this.rank = content.ranks.get(quest.rankId) ?? null;

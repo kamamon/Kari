@@ -265,7 +265,8 @@ export class App implements MenuHost, BaseHost, ResultHost {
 
   /** 保存データが変わった後（持ち替え・強化・取り込み・別のタブの内容の読み直し）: 拠点の後ろに見えているハンターを、いまの装備で作り直す */
   saveChanged(): void {
-    if (!this.base.open || this.sim.player.weaponId === this.weaponId) return;
+    const worn = wornArmor(this.save.doc, this.content).map((a) => a.id).join();
+    if (!this.base.open || (this.sim.player.weaponId === this.weaponId && this.sim.armorIds.join() === worn)) return;
     this.createSession(null);
     this.setOverlay('base');
   }

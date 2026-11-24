@@ -107,7 +107,7 @@ describe('素材台帳（docs/asset-manifest.json）', () => {
   });
 
   it('ゲームが参照する assetId は台帳にあり、ファイルか仮素材のどちらかを持つ', () => {
-    const used = [...[...content.weapons.values()].map((w) => w.assetId), ...[...content.monsters.values()].map((m) => m.assetId)];
+    const used = [...[...content.weapons.values()].map((w) => w.assetId), ...[...content.monsters.values()].map((m) => m.assetId), ...new Set([...content.armor.values()].flatMap((a) => (a.assetId ? [a.assetId] : [])))];
     for (const id of used) {
       const a = assets.find((x) => x.id === id);
       expect(a, `台帳に無い: ${id}`).toBeDefined();

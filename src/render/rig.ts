@@ -12,7 +12,8 @@ import { buildGreatShield, buildLance } from './lance';
 import { buildLongBlade, buildTwinBlade, buildWarMaul } from './provisionalWeapons';
 import { withShell } from './shellPlates';
 import { HUNTER_ATLAS } from './hunterAtlas';
-import { REST, buildHunterBody } from './hunterBody';
+import { armorLookKey, buildHunterArmor, type ArmorLook } from './hunterArmor';
+import { BODY_RANGES, REST, buildHunterBody } from './hunterBody';
 import { JOINTS, type BodyPose, type JointName } from './poses';
 import { packCharts, type AtlasChart } from './procGeo';
 
@@ -116,6 +117,15 @@ export class HunterRig {
   private m1 = new Matrix4();
   private m2 = new Matrix4();
 
+  private skeleton!: Skeleton;
+  private bodyMesh!: SkinnedMesh;
+  private bodyMat!: MeshLambertMaterial;
+  private mantleTris: [number, number] = [0, 0];
+  private armorMeshes: SkinnedMesh[] = [];
+  /** いま付けている防具の組み合わせ（部位の順に段を並べた文字列。'11111' = 里の装束） */
+  armorKey = '11111';
+  armorTriangles = 0;
+
   constructor() {
     this.root.name = 'root';
     const j = (name: JointName, parent: Object3D, x: number, y: number, z: number): Object3D => {
@@ -168,7 +178,11 @@ export class HunterRig {
     this.materials.push(bodyMat);
     this.root.updateMatrixWorld(true);
     const skeleton = new Skeleton(JOINTS.map((n) => this.joints[n] as Bone));
+    this.skeleton = skeleton;
     const mesh = new SkinnedMesh(body.build(), bodyMat);
+    this.bodyMesh = mesh;
+    this.bodyMat = bodyMat;
+    this.mantleTris = BODY_RANGES.mantle;
     mesh.name = 'hunter_body';
     mesh.castShadow = true;
     mesh.frustumCulled = false;
@@ -213,6 +227,47 @@ export class HunterRig {
   }
 
   /** 手に持つ武器（と左腕の盾）を、武器系統のものへ差し替える。 */
+  /**
+   * 着ている防具の見た目を付け替える（部位 → 段。hunterArmor.ts）。同じ組み合わせなら何もしない。
+   * 板は、体と同じ骨に付く別のメッシュ。胴の防具を着ている間は、里の外套（首まわりと肩の布）を描かない（設定図は外套なし）。
+   */
+  setArmor(look: ArmorLook): void {
+    const key = armorLookKey(look);
+    if (key === this.armorKey) return;
+    this.armorKey = key;
+    for (const m of this.armorMeshes) {
+      this.root.remove(m);
+      m.geometry.dispose();
+      (m.material as MeshLambertMaterial).dispose();
+    }
+    this.armorMeshes = [];
+    this.armorTriangles = 0;
+    const built = buildHunterArmor(look);
+    if (built) {
+      const rockMat = new MeshLambertMaterial({ vertexColors: true, side: DoubleSide });
+      const rimMat = new MeshLambertMaterial({ vertexColors: true, side: DoubleSide, emissive: 0xd9a441, emissiveIntensity: built.glow });
+      for (const [geo, mat, name] of [[built.rock, rockMat, 'hunter_armor'], [built.rim, rimMat, 'hunter_armor_rim']] as const) {
+        const m = new SkinnedMesh(geo.build(), mat);
+        m.name = name;
+        m.castShadow = true;
+        m.frustumCulled = false;
+        this.root.add(m);
+        m.bind(this.skeleton, new Matrix4());
+        this.armorMeshes.push(m);
+        this.armorTriangles += geo.triangles;
+      }
+    }
+    // 外套: 三角形の範囲を外して描く（体の絵の区画はそのまま。里の装束へ戻せば、また描く）
+    const g = this.bodyMesh.geometry;
+    const [a, b] = this.mantleTris;
+    g.clearGroups();
+    if ((look.chest ?? 1) >= 2 && b > a) {
+      g.addGroup(0, a * 3, 0);
+      g.addGroup(b * 3, (this.bodyTriangles - b) * 3, 0);
+      this.bodyMesh.material = [this.bodyMat];
+    } else this.bodyMesh.material = this.bodyMat;
+  }
+
   setFamily(id: string, offhand?: ShieldKind, assetId?: string): void {
     const modelKey = assetId && MODEL_BUILDERS[assetId] ? assetId : id;
     if (id === this.familyId && modelKey === this.modelKey) return;

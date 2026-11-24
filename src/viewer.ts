@@ -24,6 +24,7 @@ import { DummyRig, type MonsterRig } from './render/monsterRig';
 import { CLIPS, JOINTS, clipPose, emptyPose, locomotionPose } from './render/poses';
 import { buildGreatShield, buildLance } from './render/lance';
 import { HunterRig } from './render/rig';
+import type { ArmorLook } from './render/hunterArmor';
 import { applySolved, canSolve, solveState, stowOffhand, type AnimState } from './render/hunterAnim';
 import type { Solved } from './render/bodySolve';
 import { WEAPON_STANCES } from './render/weaponClipSpecs';
@@ -90,6 +91,10 @@ const stand = (key: string, model: WeaponModel, x: number, y: number, turn: numb
 const tierParam = Number(new URLSearchParams(location.search).get('tier'));
 const tier = [2, 3, 4, 5].includes(tierParam) ? tierParam : 0;
 const up = (base: WeaponModel, fam: string): WeaponModel => (tier ? withShell(base, `model.weapon.${fam}.00${tier}`) : base);
+// URL に ?armor=2〜5 を付けると、ハンターが防具（2 岩殻・3 脈殻・4 晶殻・5 輝殻）を着る。?armorSlots=head,chest で部位を絞れる
+const armorParam = Number(new URLSearchParams(location.search).get('armor'));
+const armorSlots = (new URLSearchParams(location.search).get('armorSlots') ?? 'head,chest,arms,waist,legs').split(',');
+const armorLook: ArmorLook = [2, 3, 4, 5].includes(armorParam) ? Object.fromEntries(armorSlots.map((s) => [s, armorParam])) : {};
 /** ?tier= を付けた時、ハンターにも強化後の形を持たせる */
 const held = (fam: string): string | undefined => (tier ? `model.weapon.${fam}.00${tier}` : undefined);
 stand('guardShield', buildGuardBladeShield(), -3.0, 0.3, 0);
@@ -374,6 +379,7 @@ function frame(ts: number): void {
   if (state.subject === 'hunter') {
     // 技の id（player.<系統>.<技>）から武器系統を決め、その武器と盾を持たせる。共通の技は断岳剣で見せる。
     const fam = content.families.get(a?.actionId.split('.')[1] ?? '') ?? content.families.get('heavy_blade')!;
+    hunter.setArmor(armorLook);
     hunter.setFamily(fam.id, fam.offhand, held(fam.id));
     let missing = false;
     const st: AnimState | null = a ? { kind: 'action', clip: a.clip, t, dirAngle: 0, chargeTicks: 0, freeMove: false } : state.stance !== 'none' ? (state.stance === 'guard' ? { kind: 'guard', blend: 1, shake: 0 } : { kind: 'idle' }) : null;

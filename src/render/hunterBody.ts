@@ -33,6 +33,9 @@ function ringY(y: number, rx: number, front: number, back: number, bones: Bones,
   return { c: new Vector3(cx, y, cz), right: X, up, rx, top: front, bottom: back, b0: bones[0], b1: bones[1], w1: bones[2], part: 0 };
 }
 
+/** 外套（首まわりと肩の布）の三角形の範囲 [始め, 終わり)。buildHunterBody が書く。胴の防具を着ている時は、ここを描かない。 */
+export const BODY_RANGES: { mantle: [number, number] } = { mantle: [0, 0] };
+
 /** 体の皮を組む。返した Geo の charts が、絵を貼る区画（頭・胴・外套・すそ・腕・脚・足）。 */
 export function buildHunterBody(): Geo {
   const g = new Geo();
@@ -70,6 +73,7 @@ export function buildHunterBody(): Geo {
   // ---- 外套（首まわりのたるみと、肩を覆う短い布）: 胸の骨に付く。上下は開いている。----
   const chest: Bones = [B.chest, B.chest, 0];
   const mantleStart = g.count;
+  const mantleTri = g.triangles;
   tube(
     'mantle',
     [
@@ -85,6 +89,7 @@ export function buildHunterBody(): Geo {
     // すそは波打たせる（房飾りのある布の端）
     { seg: 20, exponent: 2.2, bulge: (_r, a, i) => (i === 5 ? 0.05 * Math.sin(a * 9 + 1) + 0.03 * Math.sin(a * 4) : i === 4 ? 0.02 * Math.sin(a * 9 + 1) : 0) },
   );
+  BODY_RANGES.mantle = [mantleTri, g.triangles];
   // 肩にかかる布は、腕を上げると一緒に持ち上がる（上腕の骨の影響を外側ほど強く足す）
   for (let i = mantleStart; i < g.count; i++) {
     const p = g.positionOf(i);

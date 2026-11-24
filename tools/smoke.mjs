@@ -701,7 +701,13 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
       && /防具: 防御力 6（岩殻の兜・里の上衣/.test(document.querySelector('.base-armor-note').textContent) && /岩殻の兜に強化しました/.test(document.querySelector('.base-message').textContent)
       && /岩殻の兜 → 脈殻の兜/.test(document.querySelector('.forge-recipe[data-recipe="recipe.armor.head.003"]')?.textContent ?? '');
   }, 8000), await page.evaluate(() => document.querySelector('.base-armor-note').textContent));
+  check('防具の見た目: 拠点の後ろのハンターが、岩殻の兜をかぶる（頭だけ 2 段目。外套は付けたまま）', await until(page, () => {
+    const h = window.__vh.view.hunter;
+    return h.armorKey === '21111' && h.armorTriangles > 0 && !Array.isArray(h.bodyMesh.material);
+  }, 8000), await page.evaluate(() => window.__vh.view.hunter.armorKey));
   await page.locator('.base-choice').last().click();
+  check('訓練場でも、岩殻の兜をかぶっている', await until(page, () => window.__vh.sim.tick > 5 && window.__vh.view.hunter.armorKey === '21111' && window.__vh.sim.armorIds.includes('armor.head.002')));
+  await page.screenshot({ path: `${OUT}78_training_helm.png` });
   check('訓練場でも依頼でも、その防御力で受けるダメージが減る（防御力 6 → 100/106 倍）', await until(page, () => window.__vh.sim.tick > 5 && window.__vh.sim.defense === 6 && Math.abs(window.__vh.sim.defenseScale - 100 / 106) < 1e-9));
   await page.reload();
   await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
@@ -1069,6 +1075,18 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     await page.waitForTimeout(400);
     await page.screenshot({ path: `${OUT}76_viewer_tier${t}.png` });
   }
+  await page.goto(`http://localhost:${PORT}${BASE}viewer.html?armor=2&bones=0&shapes=0&yaw=0.4`);
+  check('ビューア: ?armor=2 で、ハンターが岩殻の防具一式を着る（板のメッシュが付き、里の外套は描かない）', await until(page, () => {
+    const h = window.__viewer?.hunter;
+    return !!h && h.armorKey === '22222' && h.armorTriangles > 500 && Array.isArray(h.bodyMesh.material) && h.bodyMesh.geometry.groups.length === 2;
+  }, 15000));
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: `${OUT}77_viewer_armor.png` });
+  await page.goto(`http://localhost:${PORT}${BASE}viewer.html?armor=3&armorSlots=head,legs`);
+  check('ビューア: 部位を絞ると、その部位だけ付く（胴が里の装束なら、外套は描く）', await until(page, () => {
+    const h = window.__viewer?.hunter;
+    return !!h && h.armorKey === '31113' && h.armorTriangles > 0 && !Array.isArray(h.bodyMesh.material) && h.bodyMesh.geometry.groups.length === 0;
+  }, 15000));
   await page.goto(`http://localhost:${PORT}${BASE}viewer.html?tier=2&stance=idle&family=long_blade`);
   check('ビューア: ?tier=2 で、ハンターも強化後の形（岩殻の太刀）を持つ', await until(page, () => window.__viewer?.hunter?.modelKey === 'model.weapon.long_blade.002', 15000));
   await page.goto(`http://localhost:${PORT}${BASE}viewer.html?glb=assets/models/ref_cube_1m.glb`);

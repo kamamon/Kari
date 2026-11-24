@@ -523,6 +523,8 @@ export interface PlateOpts {
   /** 輪郭の角の数と、四角さ（小さいほど四角に近い） */
   points?: number;
   square?: number;
+  /** 縁の面取りの幅 (m)。無ければ 0.035（ガルドロスの岩殻）。小さな板（防具）は細くする */
+  bevel?: number;
 }
 /**
  * なめらかな岩板（設定図の背殻・肩・腰の板）。体の面に沿って反った薄い板で、輪郭は角のある多角形、
@@ -560,7 +562,7 @@ export function plate(g: Geo, o: PlateOpts, rim: { geo: Geo; color: RGB }): void
   };
   // 上面: 中心から縁の手前（0.9）まで。なめらかな法線で、厚みに少しむらを付ける
   // 面取りの幅は板の大きさによらず一定（約 3.5cm）: 輪郭から内側へ、実寸で同じだけ入った所までが上面
-  const BEVEL = 0.035;
+  const BEVEL = o.bevel ?? 0.035;
   const fu = Math.max(0.6, 1 - BEVEL / (o.w / 2)), fv = Math.max(0.6, 1 - BEVEL / (o.d / 2));
   const F = [0.3, 0.58, 0.82, 1];
   const top = (u: number, v: number): number => {

@@ -270,6 +270,8 @@ export interface ArmorDef {
   defense: number;
   /** 最初から持っている防具（新しい保存データへ配る） */
   starter?: boolean;
+  /** 見た目（素材台帳の id）。同じ式・同じ段の 5 部位は、同じ id を持つ。無ければ、着ても姿は変わらない（里の装束） */
+  assetId?: string;
 }
 
 /** 防具の決まり。受けるダメージ = 元のダメージ × base / (base + 防御力の合計) */

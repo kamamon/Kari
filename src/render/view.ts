@@ -21,6 +21,7 @@ import { HunterAnimator, applySolved, canSolve, stowOffhand, type AnimState } fr
 import type { Solved } from './bodySolve';
 import { WEAPON_STANCES } from './weaponClipSpecs';
 import { buildArrow } from './bow';
+import { armorTierOf, type ArmorLook } from './hunterArmor';
 import { HunterRig, type HandsSpec } from './rig';
 
 type WeaponPlace = { mode: 'back' } | { mode: 'hand' } | { mode: 'track'; grip: V3; dir: V3; normal: readonly number[] };
@@ -269,6 +270,13 @@ export class GameView {
     let pose: BodyPose;
     let weapon: WeaponPlace = p.drawn ? { mode: 'hand' } : { mode: 'back' };
     this.hunter.setFamily(fam.id, fam.offhand, sim.content.weapons.get(p.weaponId)?.assetId);
+    // 着ている防具（部位 → 段）。同じ組み合わせの間は、何もしない
+    const armorLook: ArmorLook = {};
+    for (const id of sim.armorIds) {
+      const a = sim.content.armor.get(id);
+      if (a) armorLook[a.slot] = armorTierOf(a.assetId);
+    }
+    this.hunter.setArmor(armorLook);
     // 盾（左腕）の位置: 構えていない時の位置から、防御の位置へどれだけ寄せるか。行動が軌道を持つ時はそれに従う。
     let shieldU = 0;
     let shieldAt: V3 | null = null;
