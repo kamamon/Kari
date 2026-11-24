@@ -4,7 +4,7 @@ import { AudioSystem } from './core/audio';
 import { FixedClock } from './core/clock';
 import { FrameMeter, describeFrames, type FrameSummary } from './core/frameMeter';
 import { yawOf } from './core/math';
-import type { Content } from './data/schemas';
+import type { Content, FacilityDef } from './data/schemas';
 import { Btn, type InputFrame } from './game/inputFrame';
 import { firstMismatch, runReplay } from './game/replay';
 import { familyOf } from './game/player';
@@ -14,10 +14,10 @@ import { InputHub } from './input/hub';
 import { KeyboardMouse } from './input/keyboard';
 import { TouchControls } from './input/touch';
 import { GameView } from './render/view';
-import { defenseOf, playWeaponId, questUnlocked, wornArmor, type RunRewards } from './save/profile';
+import { defenseOf, playWeaponId, pouchOf, questUnlocked, wornArmor, type RunRewards } from './save/profile';
 import type { SaveManager, SaveResult } from './save/saveManager';
 import type { SettingsStore } from './save/settings';
-import { BaseScreen, type BaseHost } from './ui/base';
+import { BaseScreen, type BaseHost, type BaseSection } from './ui/base';
 import { Hud } from './ui/hud';
 import { Menu, type MenuHost } from './ui/menus';
 import { ResultScreen, type ResultHost } from './ui/result';
@@ -95,9 +95,14 @@ export class App implements MenuHost, BaseHost, ResultHost {
     this.rotate.innerHTML = '<div><span class="icon">📱</span><p><b>横向きにしてください</b><br>このゲームは横画面で遊びます。<br>縦持ちの間は一時停止します。</p></div>';
     ui.appendChild(this.rotate);
 
-    this.createSession(null);
+    if (this.hubWalk) {
+      this.createSession(null, true);
+      this.setOverlay(null);
+    } else {
+      this.createSession(null);
+      this.setOverlay('base');
+    }
     this.hud.setVerify(store.value.verify);
-    this.setOverlay('base');
 
     this.hub.onUi((a) => {
       if (this.base.open || this.result.open) return;
@@ -105,6 +110,8 @@ export class App implements MenuHost, BaseHost, ResultHost {
       else if (a === 'verify') store.set({ verify: !store.value.verify });
       else if (a === 'camReset' && !this.paused) this.resetCamera();
       else if (a === 'return' && !this.paused) this.returnNow();
+      else if (a === 'interact' && !this.paused && this.place === 'hub' && this.nearFacility) this.openFacility(this.nearFacility.kind);
+      else if (a === 'hubList' && !this.paused && this.place === 'hub') this.openFacility('all');
     });
     store.onChange((s) => {
       this.audio.applySettings(s);
@@ -134,14 +141,26 @@ export class App implements MenuHost, BaseHost, ResultHost {
    */
   readonly fieldHunts = new URLSearchParams(location.search).get('hunt') !== 'arena';
 
-  private options(questId: string | null): SimOptions {
+  /**
+   * 拠点を、里を歩く形にするか。ふだんは true。
+   * アドレスに ?hub=menu を付けると、これまでの一覧の画面（起動してすぐ、すべての欄が出る）になる（検査と、見比べ用）。
+   */
+  readonly hubWalk = new URLSearchParams(location.search).get('hub') !== 'menu';
+  /** いま居る場所: hub = 里を歩いている / training = 訓練場 / hunt = 依頼 */
+  place: 'hub' | 'training' | 'hunt' = 'training';
+  /** 里で、いま前に立っている施設（無ければ null） */
+  nearFacility: FacilityDef | null = null;
+
+  private options(questId: string | null, hub = false): SimOptions {
     return {
       seed: DEFAULT_SEED,
-      mapId: 'map.basin.training',
+      mapId: hub ? this.content.hub.mapId : 'map.basin.training',
       weaponId: this.weaponId,
-      monsterId: 'monster.training_dummy',
-      monsterAttacks: this.store.value.dummyAttacks,
+      monsterId: hub ? null : 'monster.training_dummy',
+      monsterAttacks: hub ? false : this.store.value.dummyAttacks,
       questId,
+      // 依頼へは、持っている道具を、持ち出せる数まで持っていく
+      pouch: questId ? pouchOf(this.save.doc, this.content) : [],
       armorIds: wornArmor(this.save.doc, this.content).map((a) => a.id),
       field: this.fieldHunts,
     };
@@ -158,17 +177,26 @@ export class App implements MenuHost, BaseHost, ResultHost {
   /** いまの依頼の識別子。出発のたびに新しくなる。報酬は、この識別子につき 1 度だけ持ち物へ入る（保存データに記録する） */
   private runId = '';
   /** いまの依頼の報酬の保存の状態（結果の画面に出す） */
-  private settleState: { runId: string; state: 'saving' | 'saved' | 'failed'; message: string } | null = null;
+  private settleState: { runId: string; state: 'saving' | 'saved' | 'failed'; message: string; spentOnly?: boolean } | null = null;
   /** 保存に失敗して、まだ持ち物へ入っていない報酬 */
   private unsaved: RunRewards[] = [];
 
-  /** 依頼が閉じた時に、報酬を保存へ送る。同じ依頼では 1 度だけ送る（保存の側でも runId で 1 度だけにしている）。 */
-  private settleRewards(): void {
-    const h = this.sim.hunt;
-    if (!h || !h.closed || !h.rewards || h.phase !== 'success' || this.runId === '') return;
-    if (this.settleState?.runId === this.runId) return;
-    const rewards: RunRewards = { runId: this.runId, questId: h.quest.id, money: h.rewards.money, items: h.rewards.items.map((s) => ({ ...s })) };
-    this.settleState = { runId: this.runId, state: 'saving', message: '' };
+  /**
+   * 依頼が終わった時に、結果を保存へ送る。同じ依頼では 1 度だけ送る（保存の側でも runId で 1 度だけにしている）。
+   * 達成: 報酬を入れ、使った自分の道具を減らす。失敗・途中で帰る（leaving）: 使った自分の道具だけを減らす（使っていなければ、何も送らない）。
+   */
+  private settleRewards(leaving = false): void {
+    const h = this.sim?.hunt;
+    if (!h || this.runId === '' || this.settleState?.runId === this.runId) return;
+    const success = h.closed && h.phase === 'success' && !!h.rewards;
+    // 達成した後、剥ぎ取りの途中で帰る場合は、報酬がまだ決まっていない（ここでは送らない）
+    if (!success && (h.phase === 'success' || !(h.phase === 'failed' || leaving))) return;
+    const spent = this.sim.spentOwn();
+    if (!success && spent.length === 0) return;
+    const rewards: RunRewards = success
+      ? { runId: this.runId, questId: h.quest.id, money: h.rewards!.money, items: h.rewards!.items.map((s) => ({ ...s })), spent }
+      : { runId: this.runId, questId: h.quest.id, money: 0, items: [], spent, cleared: false };
+    this.settleState = { runId: this.runId, state: 'saving', message: '', spentOnly: !success };
     void this.saveRewards(rewards);
   }
 
@@ -177,7 +205,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
     if (res.ok) this.unsaved = this.unsaved.filter((u) => u.runId !== r.runId);
     else if (!this.unsaved.some((u) => u.runId === r.runId)) this.unsaved.push(r);
     if (this.settleState?.runId === r.runId) {
-      this.settleState = { runId: r.runId, state: res.ok ? 'saved' : 'failed', message: res.ok ? '' : res.message };
+      this.settleState = { ...this.settleState, state: res.ok ? 'saved' : 'failed', message: res.ok ? '' : res.message };
       this.result.setSaveState(this.rewardSaveState());
     }
     return res;
@@ -187,6 +215,8 @@ export class App implements MenuHost, BaseHost, ResultHost {
   rewardSaveState(): { state: 'none' | 'saving' | 'saved' | 'failed'; text: string } {
     const st = this.settleState;
     if (!st || st.runId !== this.runId) return { state: 'none', text: '' };
+    // 失敗した依頼: 使った自分の道具を減らすだけ
+    if (st.spentOnly) return st.state === 'saving' ? { state: 'saving', text: '使った道具を記録しています…' } : st.state === 'failed' ? { state: 'failed', text: `${st.message} 使った道具は、まだ持ち物から減っていません。` } : { state: 'saved', text: '使った自分の道具を、持ち物から減らしました。' };
     if (st.state === 'saving') return { state: 'saving', text: '報酬を保存しています…' };
     if (st.state === 'failed') return { state: 'failed', text: `${st.message} 報酬は、まだ持ち物に入っていません。` };
     return {
@@ -215,10 +245,14 @@ export class App implements MenuHost, BaseHost, ResultHost {
     if (h && h.phase === 'success' && !h.closed) this.hub.pulse(Btn.Retire);
   }
 
-  private createSession(questId: string | null): void {
+  private createSession(questId: string | null, hub = false): void {
+    // 依頼の途中で別の場所へ移る時は、使った自分の道具を先に精算する
+    this.settleRewards(true);
     this.questId = questId;
+    this.place = questId ? 'hunt' : hub ? 'hub' : 'training';
+    this.nearFacility = null;
     this.runId = questId ? makeRunId() : '';
-    this.sim = new Simulation(this.content, this.options(questId));
+    this.sim = new Simulation(this.content, this.options(questId, hub));
     this.view?.dispose();
     this.view = new GameView(this.canvas, this.content, this.sim, this.store.value);
     this.view.onSound = (id, k) => void this.audio.play(id, k);
@@ -228,8 +262,8 @@ export class App implements MenuHost, BaseHost, ResultHost {
   }
 
   /** 拠点・結果の画面を出す / 消す。出ている間は操作ボタンを隠して一時停止する。 */
-  private setOverlay(which: 'base' | 'result' | null): void {
-    this.base.setOpen(which === 'base');
+  private setOverlay(which: 'base' | 'result' | null, section: BaseSection = 'all'): void {
+    this.base.setOpen(which === 'base', section);
     if (which === 'result') this.result.show(this.sim, this.rewardSaveState());
     else this.result.hide();
     const playing = which === null;
@@ -276,8 +310,45 @@ export class App implements MenuHost, BaseHost, ResultHost {
   saveChanged(): void {
     const worn = wornArmor(this.save.doc, this.content).map((a) => a.id).join();
     if (!this.base.open || (this.sim.player.weaponId === this.weaponId && this.sim.armorIds.join() === worn)) return;
+    if (this.place === 'hub') {
+      // 里: 立っている場所と、開いている施設の画面は、そのまま
+      const old = this.sim.player;
+      const at = { pos: { ...old.pos }, yaw: old.yaw };
+      const section = this.base.section;
+      this.createSession(null, true);
+      const p = this.sim.player;
+      p.pos = { ...at.pos };
+      p.prevPos = { ...at.pos };
+      p.yaw = at.yaw;
+      p.prevYaw = at.yaw;
+      this.view.cam.snap(at.yaw);
+      this.setOverlay('base', section);
+      return;
+    }
     this.createSession(null);
     this.setOverlay('base');
+  }
+
+  // ---- 里（歩く拠点）----
+  /** 施設の画面を開く（all = すべての欄の一覧）。開いている間は、一時停止する。 */
+  openFacility(section: BaseSection): void {
+    this.setOverlay('base', section);
+    this.audio.play('ui');
+  }
+
+  /** 施設の画面を閉じて、里へ戻る（歩く拠点の時だけ）。 */
+  closeFacility(): void {
+    if (!this.hubWalk || this.place !== 'hub') return;
+    this.setOverlay(null);
+    this.audio.play('ui');
+  }
+
+  buy(itemId: string, count: number): Promise<SaveResult> {
+    return this.save.buy(itemId, count);
+  }
+
+  sell(itemId: string, count: number): Promise<SaveResult> {
+    return this.save.sell(itemId, count);
   }
 
   startTraining(): void {
@@ -295,7 +366,13 @@ export class App implements MenuHost, BaseHost, ResultHost {
     this.audio.play('ui');
   }
 
+  /** 拠点へ戻る。歩く拠点では里に立ち、一覧の拠点では画面を開く。 */
   toBase(): void {
+    if (this.hubWalk) {
+      this.createSession(null, true);
+      this.setOverlay(null);
+      return;
+    }
     this.createSession(null);
     this.setOverlay('base');
   }
@@ -339,12 +416,14 @@ export class App implements MenuHost, BaseHost, ResultHost {
   }
 
   restartTraining(): void {
+    if (this.place !== 'training') return;
     this.createSession(null);
     this.hud.toast('訓練をやり直しました');
   }
 
   sessionInfo(): { hunt: boolean; done: boolean; title: string; lines: string[] } {
     const h = this.sim.hunt;
+    if (this.place === 'hub') return { hunt: false, done: false, title: this.content.hub.name, lines: ['施設の前に立つと、入るボタンが出ます。右上の「一覧」からは、歩かずに開けます。'] };
     if (!h) return { hunt: false, done: false, title: '訓練場', lines: ['動かない標的で、操作と技を確かめる場所です。'] };
     const left = Math.ceil(Math.max(0, h.timeLimitTicks - h.ticks) / 60);
     return {
@@ -440,15 +519,38 @@ export class App implements MenuHost, BaseHost, ResultHost {
     if (dt > 0) this.fps += (1 / dt - this.fps) * 0.08;
 
     let alpha = 1;
+    let interact = false;
     if (!paused) {
       this.gamepad.update(dt);
       this.keyboard.update(dt);
       const n = this.clock.advance(dt);
       for (let i = 0; i < n; i++) {
         const input = this.hub.sample(this.view.cam.yaw);
+        if (this.place === 'hub') {
+          // 里: 歩く・走る・回避だけ。主ボタンは「施設へ入る」
+          if (input.pressed & Btn.Main) interact = true;
+          const keep = Btn.Dodge | Btn.Sprint;
+          input.held &= keep;
+          input.pressed &= keep;
+          input.released &= keep;
+        }
         if (this.recorded.length < MAX_RECORD) this.recorded.push(input);
         else this.recordOverflow = true;
         this.sim.step(input);
+      }
+      if (this.place === 'hub') {
+        const p = this.sim.player.pos;
+        let near: FacilityDef | null = null;
+        let best = Infinity;
+        for (const f of this.content.hub.facilities) {
+          const d = Math.hypot(f.x - p.x, f.z - p.z);
+          if (d <= f.r && d < best) {
+            best = d;
+            near = f;
+          }
+        }
+        this.nearFacility = near;
+        if (interact && near) this.openFacility(near.kind);
       }
       alpha = this.clock.alpha;
       const events = this.sim.drainEvents();
@@ -459,12 +561,15 @@ export class App implements MenuHost, BaseHost, ResultHost {
       }
       const pl = this.sim.player;
       const stack = pl.items[pl.itemIndex];
-      this.touch.setHidden(['item', 'itemprev', 'itemnext'], pl.items.length === 0);
+      const inHub = this.place === 'hub';
+      this.touch.setHidden(['item', 'itemprev', 'itemnext'], inHub || pl.items.length === 0);
       const labels = familyOf(pl, this.content).labels;
-      this.touch.setHidden(['special'], !labels?.special);
+      this.touch.setHidden(['special'], inHub || !labels?.special);
+      // 里では、武器を使うボタンを出さない
+      this.touch.setHidden(['weapon', 'sub'], inHub);
       this.touch.setLabels({
         weapon: pl.drawn ? '納刀' : '抜刀',
-        main: this.sim.carveTarget() ? '剥ぎ取り' : labels?.main ?? '斬る',
+        main: inHub ? (this.nearFacility ? '入る' : '—') : this.sim.carveTarget() ? '剥ぎ取り' : labels?.main ?? '斬る',
         sub: labels?.sub ?? '薙ぐ',
         special: labels?.special ?? '',
         dodge: (pl.drawn && labels?.dodge) || '回避',
@@ -479,6 +584,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
     }
     this.view.update(this.sim, alpha, paused ? 0 : dt, paused ? { x: 0, y: 0 } : this.hub.consumeLook(), this.store.value.verify);
     this.view.render();
+    this.hud.setFacility(this.place === 'hub' && !paused ? this.nearFacility : null, this.place === 'hub');
     this.hud.update(this.sim, this.view, { fps: this.fps, droppedTicks: this.clock.droppedTicks, frames: this.meterSummary }, dt);
   };
 

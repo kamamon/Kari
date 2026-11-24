@@ -16,6 +16,7 @@ import {
   type CurveDef,
   type EdgeRules,
   type FieldDef,
+  type HubDef,
   type ItemDef,
   type LootDef,
   type LootRoll,
@@ -27,6 +28,7 @@ import {
   type RankDef,
   type RecipeDef,
   type ShapeTrackDef,
+  type ShopDef,
   type WeaponDef,
   type WeaponFamilyDef,
 } from './schemas';
@@ -436,6 +438,60 @@ function validateArmor(c: Content, errors: string[]): void {
   }
 }
 
+/** 商店: 売るのは道具、買い取るのは素材。値段は 1 以上。同じものを 2 度並べない。 */
+export function validateShop(c: Content, errors: string[]): void {
+  const s = c.shop;
+  if (!(isInt(s.holdMax) && s.holdMax > 0)) errors.push('shop: holdMax が不正');
+  const seen = new Set<string>();
+  for (const g of s.goods ?? []) {
+    const it = c.items.get(g.itemId);
+    if (!it) errors.push(`shop: 道具 ${g.itemId} が無い`);
+    else if (it.carryMax > s.holdMax) errors.push(`shop: 道具 ${g.itemId} は、持っておける数より多く持ち出せる`);
+    if (!(isInt(g.price) && g.price > 0)) errors.push(`shop: ${g.itemId} の値段が不正`);
+    if (seen.has(g.itemId)) errors.push(`shop: ${g.itemId} が重複`);
+    seen.add(g.itemId);
+  }
+  if ((s.goods ?? []).length === 0) errors.push('shop: 売り物が無い');
+  for (const g of s.sell ?? []) {
+    if (!c.materials.has(g.itemId)) errors.push(`shop: 素材 ${g.itemId} が無い`);
+    if (!(isInt(g.price) && g.price > 0)) errors.push(`shop: ${g.itemId} の買い取り値が不正`);
+    if (seen.has(g.itemId)) errors.push(`shop: ${g.itemId} が重複`);
+    seen.add(g.itemId);
+  }
+}
+
+/** 拠点: 施設は 4 種類が 1 つずつ。施設の前に立てる（外周の中で、建物の当たりの外）。出発地点から、どの施設の前へも重ならずに立てる。 */
+export function validateHub(c: Content, errors: string[]): void {
+  const h = c.hub;
+  const map = c.maps.get(h.mapId);
+  if (!map) {
+    errors.push(`hub: map ${h.mapId} が無い`);
+    return;
+  }
+  if (typeof h.name !== 'string' || h.name === '') errors.push('hub: name が無い');
+  const pr = c.player.radius;
+  const free = (x: number, z: number): boolean =>
+    x >= map.bounds.minX + pr && x <= map.bounds.maxX - pr && z >= map.bounds.minZ + pr && z <= map.bounds.maxZ - pr && map.rocks.every((r) => Math.hypot(r.x - x, r.z - z) >= r.r + pr);
+  if (!free(map.spawn.x, map.spawn.z)) errors.push('hub: 出発地点が、建物か外周に重なる');
+  const ids = new Set<string>();
+  for (const kind of ['quest', 'workshop', 'shop', 'chest'] as const) {
+    const n = (h.facilities ?? []).filter((f) => f.kind === kind).length;
+    if (n !== 1) errors.push(`hub: 施設 ${kind} が ${n} 個（1 個にする）`);
+  }
+  for (const f of h.facilities ?? []) {
+    const w = `hub facility ${f.id}`;
+    if (ids.has(f.id)) errors.push(`${w}: id が重複`);
+    ids.add(f.id);
+    if ([f.name, f.action, f.summary].some((t) => typeof t !== 'string' || t === '')) errors.push(`${w}: name / action / summary が無い`);
+    if (!(isNum(f.x) && isNum(f.z) && f.r > 0)) errors.push(`${w}: 位置が不正`);
+    else if (!free(f.x, f.z)) errors.push(`${w}: 施設の前に立てない（建物か外周に重なる）`);
+    else if (Math.hypot(f.x - map.spawn.x, f.z - map.spawn.z) <= f.r) errors.push(`${w}: 出発地点が、施設の前に重なる`);
+    if (!(f.building && isNum(f.building.x) && isNum(f.building.z) && isNum(f.building.yaw))) errors.push(`${w}: building が不正`);
+    else if (!map.rocks.some((r) => Math.hypot(r.x - f.building.x, r.z - f.building.z) < 0.01)) errors.push(`${w}: 建物の当たり（map の rocks）が無い`);
+    for (const o of h.facilities) if (o !== f && o.id < f.id && Math.hypot(o.x - f.x, o.z - f.z) < o.r + f.r) errors.push(`${w}: 施設 ${o.id} の前と重なる`);
+  }
+}
+
 /** エリアどうしを、これだけ離す（別のエリアの相手に、気づいたり攻撃が届いたりしないための距離）。 */
 export const FIELD_AREA_GAP = 120;
 
@@ -577,6 +633,8 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     monsters: new Map(),
     maps: new Map(),
     fields: new Map(),
+    shop: { schemaVersion: 0, holdMax: 0, goods: [], sell: [] },
+    hub: { schemaVersion: 0, id: '', name: '', mapId: '', facilities: [] },
     quests: new Map(),
     items: new Map(),
     materials: new Map(),
@@ -651,8 +709,14 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
   checkVersion(index.files.armor, armor.schemaVersion, errors);
   content.armorRules = { base: armor.defense?.base ?? 0, slotNames: Object.fromEntries((armor.slots ?? []).map((s) => [s.id, s.name])) as Record<ArmorSlot, string> };
   for (const a of armor.armor ?? []) putUnique(content.armor, a.id, a, 'armor', errors);
+  content.shop = (await get(index.files.shop)) as ShopDef;
+  checkVersion(index.files.shop, content.shop.schemaVersion, errors);
+  content.hub = (await get(index.files.hub)) as HubDef;
+  checkVersion(index.files.hub, content.hub.schemaVersion, errors);
   crossCheck(content, errors);
   for (const fd of content.fields.values()) validateField(content, fd, errors);
+  validateShop(content, errors);
+  validateHub(content, errors);
   if (errors.length > 0) throw new ContentError(errors);
   return content;
 }

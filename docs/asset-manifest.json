@@ -74,6 +74,15 @@
       "verification": "仮素材: 出口でエリアが移ること、外へ出られないこと、大型がエリアを巡って巣で眠ることを自動検査とブラウザの操作検査で確認。画面は野営地・エリア 1・3・10 を見た。"
     },
     {
+      "id": "env.hub.village", "name": "灯継ぎの里（拠点）", "type": "env", "use": "v0.12.0 からの拠点。歩いて、工房・商店・依頼板・装備箱を使う（docs/spec.md 19 章）",
+      "owner": "ChatGPT（里の原画）→ Blender → Claude", "status": "planned", "version": 0, "path": null,
+      "source": "未制作。里の原画は、まだ依頼していない", "terms": "本作オリジナル",
+      "dims": "48m × 34m。施設の位置は public/data/hub.json、当たりは public/data/maps/hub_village.json が正本", "tris": "仮: 約 2.5 万（草・小石のインスタンス含む）", "bones": "なし",
+      "clips": [], "dependsOn": [],
+      "placeholder": { "kind": "procedural", "source": "src/render/hubScene.ts", "note": "石の小屋（工房）・木の屋台（商店）・貼り紙の板（依頼板）・天幕と箱（装備箱）・広場と灯を、箱と柱と屋根で組んだ仮の形。人は居ない。" },
+      "verification": "仮素材: 出発地点からどの施設の前へも歩けること、建物に入り込まないことを自動検査で確認。里の全景と、4 つの施設の前を画面で見た（PC と横向きスマホ相当）。"
+    },
+    {
       "id": "model.ref.cube_1m", "name": "基準 GLB（1m 立方体と +Z 矢印）", "type": "model", "use": "素材ビューアで単位・軸を照合する物差し。GLB 読み込み経路の確認用",
       "owner": "Claude", "status": "integrated", "version": 1, "path": "assets/models/ref_cube_1m.glb",
       "source": "tools/make-ref-glb.mjs で生成", "terms": "本作オリジナル",

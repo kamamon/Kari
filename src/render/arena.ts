@@ -66,6 +66,8 @@ export interface AreaLook {
   kind?: 'camp' | 'hunt' | 'path' | 'nest';
   /** 草や岩壁の散らし方の種（エリアごとに変える） */
   seed?: number;
+  /** false なら、rocks を岩として描かない（里の建物の当たりに使う時。草をよける場所としては使う） */
+  drawRocks?: boolean;
 }
 
 /** これまでの狩場（エリアが 1 つ）: 空と光を用意して、狩場を描く。 */
@@ -128,7 +130,7 @@ export function buildAreaGroup(map: AreaLook): Group {
   const stepTop = new MeshLambertMaterial({ color: 0x8d9a7c, flatShading: true });
 
   // 岩（円柱として衝突する。見た目は半径に合わせた多面体）
-  for (const r of map.rocks) {
+  for (const r of map.drawRocks === false ? [] : map.rocks) {
     const m = new Mesh(new IcosahedronGeometry(1, 1), rng.next() < 0.5 ? rockMat : rockDark);
     m.scale.set(r.r * 1.04, r.h * 0.62, r.r * 1.04);
     m.position.set(r.x, r.h * 0.45, r.z);
@@ -291,7 +293,7 @@ function addCamp(group: Group, at: { x: number; z: number; r: number }, rockDark
  * 動かない地形を、同じ素材ごとに 1 つのメッシュへまとめる（描画回数を減らす）。
  * 素材を 1 つだけ持つ通常のメッシュが対象。地面・段差（複数素材）・InstancedMesh はそのまま残す。
  */
-function mergeStatic(group: Group): void {
+export function mergeStatic(group: Group): void {
   group.updateMatrixWorld(true);
   const buckets = new Map<MeshLambertMaterial | MeshBasicMaterial, Mesh[]>();
   group.traverse((o) => {

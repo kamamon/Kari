@@ -30,6 +30,11 @@ export interface SimOptions {
    * 指定しなければ、これまでどおり 1 つの狩場（依頼の mapId）で始まる。
    */
   field?: boolean;
+  /**
+   * 狩りへ持っていく、自分の道具（商店で買ったもの）。依頼の時だけ効く。支給品に足して持つ（合わせて carryMax まで）。
+   * 使う時は、支給品のぶんから先に減る。自分のぶんを何個使ったかは spentOwn() で分かる。
+   */
+  pouch?: readonly ItemStack[];
 }
 
 /** 落下物など、位置が固定された判定。warn が 0 になった後、active の間だけ当たる。 */
@@ -152,6 +157,8 @@ export class Simulation implements SimCtx {
   readonly field: FieldDef | null = null;
   /** プレイヤーが居るエリアの id（フィールドでなければ ''） */
   areaId = '';
+  /** 出発した時の道具の内訳（道具ごとの、支給品の数と、自分で持ってきた数） */
+  readonly brought: Record<string, { supplied: number; own: number }> = {};
   readonly rng: SeededRng;
   readonly options: SimOptions;
   tick = 0;
@@ -204,8 +211,23 @@ export class Simulation implements SimCtx {
       // 力尽きた後は、野営地へ戻る
       this.world.spawn = field.start;
     }
-    // 支給品: 依頼なら依頼の支給品、訓練場なら訓練用（研磨石）
-    this.player = createPlayer(content, this.world.spawn, options.weaponId, quest ? quest.supplies ?? [] : content.player.trainingSupplies ?? []);
+    // 支給品: 依頼なら依頼の支給品、訓練場なら訓練用（研磨石）。依頼では、自分の道具を足す（合わせて carryMax まで。残りは里に置いていく）
+    // 里（拠点）では、道具を持たない
+    const supplies = quest ? quest.supplies ?? [] : map.id === content.hub.mapId ? [] : content.player.trainingSupplies ?? [];
+    const carry: ItemStack[] = supplies.map((s) => ({ ...s }));
+    for (const s of supplies) this.brought[s.itemId] = { supplied: s.count, own: 0 };
+    for (const own of quest ? options.pouch ?? [] : []) {
+      const it = content.items.get(own.itemId);
+      if (!it || !(own.count > 0)) continue;
+      const b = (this.brought[own.itemId] ??= { supplied: 0, own: 0 });
+      const add = Math.max(0, Math.min(Math.floor(own.count), it.carryMax - b.supplied - b.own));
+      if (add === 0) continue;
+      b.own += add;
+      const stack = carry.find((x) => x.itemId === own.itemId);
+      if (stack) stack.count += add;
+      else carry.push({ itemId: own.itemId, count: add });
+    }
+    this.player = createPlayer(content, this.world.spawn, options.weaponId, carry);
     this.armorIds = [...(options.armorIds ?? [])];
     this.defense = totalDefense(content, this.armorIds);
     this.defenseScale = defenseScale(content, this.defense);
@@ -564,6 +586,23 @@ export class Simulation implements SimCtx {
     if (this.player.attackEval) active.add(this.player.attackEval.run.instanceId);
     for (const m of this.monsters) if (m.action) active.add(m.action.instanceId);
     this.ledger.prune(active);
+  }
+
+  /**
+   * 自分で持ってきた道具のうち、使った数（支給品のぶんから先に使ったことにする）。
+   * 狩りが終わった時に、これを持ち物から減らす。持ってこなかった道具（環弓の研磨石など）は入らない。
+   */
+  spentOwn(): ItemStack[] {
+    const out: ItemStack[] = [];
+    for (const [itemId, b] of Object.entries(this.brought)) {
+      if (b.own <= 0) continue;
+      const stack = this.player.items.find((s) => s.itemId === itemId);
+      if (!stack) continue;
+      const used = b.supplied + b.own - stack.count;
+      const own = Math.min(b.own, Math.max(0, used - b.supplied));
+      if (own > 0) out.push({ itemId, count: own });
+    }
+    return out;
   }
 
   // ---- フィールド ----

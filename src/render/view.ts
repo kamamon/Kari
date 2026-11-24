@@ -11,6 +11,7 @@ import type { Simulation } from '../game/sim';
 import { sampleTrack, trackSegment } from '../game/tracks';
 import type { Settings } from '../save/settings';
 import { blobShadow, buildArena, buildAreaGroup, setupSky, type Arena } from './arena';
+import { buildHubGroup } from './hubScene';
 import { FollowCamera } from './camera';
 import { DebugDraw } from './debugDraw';
 import { BladeTrail, GroundRings, Particles } from './effects';
@@ -105,6 +106,11 @@ export class GameView {
       // フィールド: 空と光は 1 回だけ。地形は、居るエリアのぶんを showArea が作る
       this.arena = { group: new Group(), sun: setupSky(this.scene, settings.shadows) };
       this.showArea(sim);
+    } else if (sim.world.map.id === content.hub.mapId) {
+      // 拠点（里）: 建物と広場
+      const group = buildHubGroup(content.hub, sim.world.map);
+      this.scene.add(group);
+      this.arena = { group, sun: setupSky(this.scene, settings.shadows) };
     } else this.arena = buildArena(this.scene, sim.world.map, settings.shadows);
     this.scene.add(this.hunter.root, this.playerShadow);
     const m = sim.monsters[0];

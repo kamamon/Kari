@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.11.0",
+  "contentVersion": "0.12.0",
   "files": {
     "actions": [
       "actions/player_common.json",
@@ -34,7 +34,8 @@
       "monsters/galdros.json"
     ],
     "maps": [
-      "maps/basin_training.json"
+      "maps/basin_training.json",
+      "maps/hub_village.json"
     ],
     "fields": [
       "fields/basin.json"
@@ -45,6 +46,8 @@
     "loot": "loot.json",
     "recipes": "recipes.json",
     "ranks": "ranks.json",
-    "armor": "armor.json"
+    "armor": "armor.json",
+    "shop": "shop.json",
+    "hub": "hub.json"
   }
 }

@@ -2,6 +2,7 @@
 // 敵の HP は通常は表示せず、検証表示を入れた時だけ出す。
 import { APP_VERSION, BUILD_ID } from '../core/assets';
 import type { FrameSummary } from '../core/frameMeter';
+import type { FacilityDef } from '../data/schemas';
 import { phaseAt } from '../game/action';
 import { edgeStage } from '../game/combat';
 import { areaLabel, areaOf } from '../game/field';
@@ -46,6 +47,12 @@ export class Hud {
   private mapCells = new Map<string, HTMLElement>();
   private exitHint: HTMLElement;
   private banner: HTMLElement;
+  /** 里: 前に立っている施設へ入るボタンと、施設の一覧を開くボタン */
+  private facilityBtn: HTMLButtonElement;
+  private facilityName: HTMLElement;
+  private facilitySub: HTMLElement;
+  private listBtn: HTMLButtonElement;
+  private inHub = false;
   private enemy: HTMLElement;
   private enemyBar: HTMLElement;
   private enemyParts: HTMLElement;
@@ -92,6 +99,11 @@ export class Hud {
     const menuBtn = el('button', 'hud-btn', tr, '☰');
     menuBtn.setAttribute('aria-label', 'メニュー');
     menuBtn.addEventListener('click', () => hub.ui('menu'));
+    // 里: 施設の一覧（検証・メニューの後ろに置く。ボタンの並びの番号を変えないため）
+    this.listBtn = el('button', 'hud-btn', tr, '一覧');
+    this.listBtn.id = 'hud-hub-list';
+    this.listBtn.hidden = true;
+    this.listBtn.addEventListener('click', () => hub.ui('hubList'));
 
     this.enemy = el('div', 'enemy-hp', this.root);
     this.enemyBar = el('i', '', el('div', 'bar', this.enemy));
@@ -112,6 +124,12 @@ export class Hud {
     back.addEventListener('click', () => hub.ui('return'));
     this.exitHint = el('div', 'hud-exit', this.root);
     this.exitHint.hidden = true;
+    this.facilityBtn = el('button', 'hud-facility', this.root);
+    this.facilityBtn.id = 'hud-facility';
+    this.facilityBtn.hidden = true;
+    this.facilityName = el('b', '', this.facilityBtn);
+    this.facilitySub = el('span', '', this.facilityBtn);
+    this.facilityBtn.addEventListener('click', () => hub.ui('interact'));
     this.banner = el('div', 'hud-area-banner', this.root);
     this.banner.hidden = true;
     this.dmgLayer = el('div', '', this.root);
@@ -129,6 +147,19 @@ export class Hud {
     const t = el('div', 'toast', this.toasts, text);
     while (this.toasts.childElementCount > 3) this.toasts.firstElementChild?.remove();
     setTimeout(() => t.remove(), 1700);
+  }
+
+  /** 里: 前に立っている施設（無ければ null）と、里に居るかどうか。施設があれば、入るボタンを出す。 */
+  setFacility(f: FacilityDef | null, inHub: boolean): void {
+    this.inHub = inHub;
+    this.set('hublist', inHub ? 1 : 0, () => (this.listBtn.hidden = !inHub));
+    this.set('facility', f ? f.id : '', () => {
+      this.facilityBtn.hidden = !f;
+      if (f) {
+        this.facilityName.textContent = f.action;
+        this.facilitySub.textContent = f.summary;
+      }
+    });
   }
 
   /** フィールドの小さな地図を作り直す（マス目に、エリアの番号と、つながりの線）。 */
@@ -328,9 +359,9 @@ export class Hud {
     }
     // 依頼中は残り時間、訓練は経過時間
     const h = sim.hunt;
-    const sec = h ? Math.ceil(Math.max(0, h.timeLimitTicks - h.ticks) / 60) : Math.floor(sim.tick / 60);
-    this.set('time', sec, () => (this.time.textContent = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`));
-    const goal = h ? `【${sim.rank?.name ?? ''}】${h.quest.name}: ${sim.monsters[0]?.def.name ?? ''}の${h.quest.kind === 'hunt' ? '狩猟' : '討伐'}` : '訓練: 標的で動作を確かめる';
+    const sec = h ? Math.ceil(Math.max(0, h.timeLimitTicks - h.ticks) / 60) : this.inHub ? -1 : Math.floor(sim.tick / 60);
+    this.set('time', sec, () => (this.time.textContent = sec < 0 ? '' : `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`));
+    const goal = this.inHub ? sim.content.hub.name : h ? `【${sim.rank?.name ?? ''}】${h.quest.name}: ${sim.monsters[0]?.def.name ?? ''}の${h.quest.kind === 'hunt' ? '狩猟' : '討伐'}` : '訓練: 標的で動作を確かめる';
     this.set('goal', goal, () => (this.goal.textContent = goal));
     const faints = h ? `力尽き ${h.faints} / ${h.quest.maxFaints}` : '';
     this.set('faints', faints, () => (this.faints.textContent = faints));

@@ -470,6 +470,40 @@ export interface FieldDef {
   areas: FieldAreaDef[];
 }
 
+/** 里の商店（public/data/shop.json）。goods = 売っている道具、sell = 素材の買い取り値。 */
+export interface ShopDef {
+  schemaVersion: number;
+  /** 1 つの道具を持っておける数 */
+  holdMax: number;
+  goods: { itemId: string; price: number }[];
+  sell: { itemId: string; price: number }[];
+}
+
+export type FacilityKind = 'quest' | 'workshop' | 'shop' | 'chest';
+
+/** 拠点の施設。(x, z) から半径 r の中で主ボタンを押すと、kind の画面が開く。building は建物の位置と向き（見た目用）。 */
+export interface FacilityDef {
+  id: string;
+  kind: FacilityKind;
+  name: string;
+  /** ボタンに出す言葉（「工房に入る」） */
+  action: string;
+  summary: string;
+  x: number;
+  z: number;
+  r: number;
+  building: { x: number; z: number; yaw: number };
+}
+
+/** 拠点（public/data/hub.json）。里を歩く場所（mapId）と、施設の並び。 */
+export interface HubDef {
+  schemaVersion: number;
+  id: string;
+  name: string;
+  mapId: string;
+  facilities: FacilityDef[];
+}
+
 /** プレイヤーの初期調整値（設計書 p.09）。本作独自の値で、実機の手触りを見て調整する。 */
 export interface PlayerTuning {
   schemaVersion: number;
@@ -585,6 +619,8 @@ export interface ContentIndex {
     loot: string;
     recipes: string;
     ranks: string;
+    shop: string;
+    hub: string;
     armor: string;
     player: string;
   };
@@ -607,6 +643,8 @@ export interface Content {
   loot: Map<string, LootDef>;
   recipes: Map<string, RecipeDef>;
   fields: Map<string, FieldDef>;
+  shop: ShopDef;
+  hub: HubDef;
   ranks: Map<string, RankDef>;
   armor: Map<string, ArmorDef>;
   armorRules: ArmorRules;

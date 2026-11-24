@@ -9,6 +9,7 @@ import {
   RuleError,
   SLOT_ID,
   cloneSave,
+  buy,
   craft,
   equip,
   exportText,
@@ -16,6 +17,7 @@ import {
   newSave,
   parseImport,
   readSave,
+  sell,
   settleRun,
   type ReadResult,
   type RunRewards,
@@ -249,6 +251,15 @@ export class SaveManager {
     const recipe = this.content.recipes.get(recipeId);
     if (!recipe) return Promise.resolve({ ok: false, reason: 'rule', message: 'その強化はありません。' });
     return this.commit((doc) => craft(doc, recipe));
+  }
+
+  /** 商店で道具を買う / 素材を売る（通貨と持ち物を、1 回の書き込みで変える） */
+  buy(itemId: string, count: number): Promise<SaveResult> {
+    return this.commit((doc) => buy(doc, this.content.shop, itemId, count));
+  }
+
+  sell(itemId: string, count: number): Promise<SaveResult> {
+    return this.commit((doc) => sell(doc, this.content.shop, itemId, count));
   }
 
   equip(weaponId: string): Promise<SaveResult> {

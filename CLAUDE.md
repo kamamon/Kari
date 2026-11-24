@@ -4,7 +4,7 @@
 # Source of truth
 作業前に docs/spec.md、docs/animation-contract.md、docs/asset-manifest.json、docs/handoff.md を確認する。採用済み仕様を変更するときは理由と影響を docs/decisions.md へ記録する。
 元の設計書は docs/source/VEILBOUND_HUNTERS_design_v1.0.pdf（49 ページ）。
-第 2 版は docs/source/VEILBOUND_HUNTERS_design_v2.0.pdf（20 ページ、2026-11-24。段階 4 つ・武器と防具の 5 段・属性・大型 13 種の図鑑・これからの順番。変わっていない章は v1.0 を参照）。本文は tools/design-doc/ にあり、`npm run design:doc` で作り直す（数値は public/data から読む）。
+第 2 版は docs/source/VEILBOUND_HUNTERS_design_v2.0.pdf（21 ページ、2026-11-24。段階 4 つ・武器と防具の 5 段・属性・大型 13 種の図鑑・狩場は約 20 × エリア約 10・里と商店・これからの順番。変わっていない章は v1.0 を参照）。本文は tools/design-doc/ にあり、`npm run design:doc` で作り直す（数値は public/data から読む）。
 
 # Architecture
 TypeScript + Vite + Three.js。入力、simulation、render、data、save、UI を分離する。60Hz 固定 tick を戦闘の基準にする。描画 dt、描画補間、Math.random を戦闘判定の正本にしない。ゲーム内の AI API 呼出しを必須にしない。
@@ -12,13 +12,14 @@ TypeScript + Vite + Three.js。入力、simulation、render、data、save、UI �
 - src/game/ は DOM・Three.js・現在時刻に触れない（Node のテストと将来のサーバーで同じコードを動かす）。
 - src/render/ は simulation の状態を読むだけで、値を書き戻さない。
 - 狩場は、エリアに分かれたフィールド（public/data/fields/、docs/spec.md の 18 章。v0.11.0）。エリアは 1 つの座標の中に離して置く。`SimOptions.field` を渡さなければ、これまでの 1 つの狩場で動く（アプリでは `?hunt=arena`）。
+- 拠点は、歩ける里（public/data/hub.json、docs/spec.md の 19 章。v0.12.0）。施設の前で画面を開く。`?hub=menu` で、これまでの一覧の拠点になる。ブラウザ検査（tools/smoke.mjs）のこれまでの項目は `?hunt=arena&hub=menu` で走る。
 
 # Contracts
 恒久 ID と表示名を分離する。モデルは m、Y-up、+Z forward。移動は controller を正本とする。clip、骨、socket を勝手に推測で置換しない。攻撃は startup、active、recovery、cancel、hitWindow をデータで管理する。ヒットは attackInstanceId + hitWindow.id + targetEntityId で重複防止する。
 
 # Save
 ゲーム固有の DB 名、schemaVersion、revision を持つ。報酬・生産は原子的に確定する。保存成功は transaction 完了後に表示する。旧版や未知 ID のデータを黙って消さない。JSON バックアップを提供する。
-（v0.6.0 で実装した。持ち物・装備・進行は IndexedDB の `veilbound-hunters:prod:save`、コードは `src/save/`、決まりは docs/spec.md の 15 章。v0.9.0 で防具を足して schemaVersion 2 にした（版 1 は開いた時に直し、元は控えへ）。操作設定は別で、localStorage の `veilbound-hunters:prod:settings`。）
+（v0.6.0 で実装した。持ち物・装備・進行は IndexedDB の `veilbound-hunters:prod:save`、コードは `src/save/`、決まりは docs/spec.md の 15 章。v0.9.0 で防具を足して schemaVersion 2 にした（版 1 は開いた時に直し、元は控えへ）。v0.12.0 の商店（買う・売る・使った道具の精算）は、版 2 のまま（道具は items に入る）。操作設定は別で、localStorage の `veilbound-hunters:prod:settings`。）
 
 # Browser
 PC と横向き iPhone/iPad Safari を対象とする。複数指、safe area、回転、音声開始、非表示からの復帰を扱う。素材パスは Vite BASE_URL から解決する。通常の Safari タブで操作できることを優先する。

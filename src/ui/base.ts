@@ -7,7 +7,8 @@ import { APP_VERSION, BUILD_ID } from '../core/assets';
 import { recipeFrom, type Content, type RecipeDef } from '../data/schemas';
 import { materialRanks } from '../data/validators';
 import { fieldOf, questTimeLimitTicks } from '../game/field';
-import { checkCraft, defenseOf, parseImport, questUnlocked, unknownIds, usableWeapons, wornArmor } from '../save/profile';
+import type { FacilityKind } from '../data/schemas';
+import { checkBuy, checkCraft, defenseOf, parseImport, questUnlocked, unknownIds, usableWeapons, wornArmor } from '../save/profile';
 import type { SaveManager, SaveResult } from '../save/saveManager';
 import { canFullscreen, fullscreenHint, toggleFullscreen } from './fullscreen';
 
@@ -16,6 +17,12 @@ export interface BaseHost {
   startHunt(questId: string): void;
   /** 依頼を、フィールド（エリアに分かれた狩場）で始めるか */
   readonly fieldHunts: boolean;
+  /** 里を歩く拠点か（歩く拠点では、施設ごとに画面を開き、「里へ戻る」で閉じる） */
+  readonly hubWalk: boolean;
+  closeFacility(): void;
+  /** 商店: 道具を買う / 素材を売る（保存が完了してから変わる） */
+  buy(itemId: string, count: number): Promise<SaveResult>;
+  sell(itemId: string, count: number): Promise<SaveResult>;
   /** いま持たせている武器の id と、持ち替え（保存が完了してから替わる） */
   weaponId: string;
   setWeapon(id: string): Promise<SaveResult>;
@@ -49,8 +56,17 @@ const BACKUP_REASON: Record<string, string> = {
   reset: '読めなかったデータ',
 };
 
+/** 拠点の画面に出す範囲。all = すべて（一覧）。ほかは、施設 1 つぶん */
+export type BaseSection = 'all' | FacilityKind;
+
 export class BaseScreen {
   readonly root: HTMLElement;
+  section: BaseSection = 'all';
+  private title: HTMLElement;
+  private lead: HTMLElement;
+  private shop: HTMLDetailsElement;
+  private shopBody: HTMLElement;
+  private closeBtn: HTMLButtonElement;
   private banners: HTMLElement;
   private weaponRow: HTMLElement;
   private weaponNote: HTMLElement;
@@ -80,34 +96,49 @@ export class BaseScreen {
     root.id = 'base';
     root.hidden = true;
     const card = el('div', 'base-card');
-    card.append(el('h2', undefined, '灯継ぎの里'));
+    this.title = el('h2', undefined, content.hub.name);
+    card.append(this.title);
     this.banners = el('div', 'base-banners');
-    card.append(this.banners, el('p', 'base-lead', '行き先を選んでください。'));
+    this.lead = el('p', 'base-lead', '行き先を選んでください。');
+    card.append(this.banners, this.lead);
+    // 施設ごとの画面では、その施設のものだけを出す（data-sec と、root の data-section を CSS で突き合わせる）
+    const sec = <T extends HTMLElement>(e: T, s: FacilityKind): T => {
+      e.dataset.sec = s;
+      return e;
+    };
 
-    card.append(el('p', 'base-weapon-label', '武器'));
-    this.weaponRow = el('div', 'base-weapons');
-    this.weaponNote = el('p', 'base-weapon-note');
-    card.append(this.weaponRow, this.weaponNote);
+    this.weaponRow = sec(el('div', 'base-weapons'), 'chest');
+    this.weaponNote = sec(el('p', 'base-weapon-note'), 'chest');
+    card.append(sec(el('p', 'base-weapon-label', '武器'), 'chest'), this.weaponRow, this.weaponNote);
 
-    this.armorNote = el('p', 'base-armor-note');
+    this.armorNote = sec(el('p', 'base-armor-note'), 'chest');
     card.appendChild(this.armorNote);
     this.matRank = materialRanks(content);
 
     // 依頼（段階の順）と訓練場。受けられるかどうかは進行で変わるので、中身は refresh で作る
-    this.questBox = el('div', 'base-quests');
+    this.questBox = sec(el('div', 'base-quests'), 'quest');
     card.appendChild(this.questBox);
 
+    // 持ち物は、装備箱・工房・商店のどれでも見える
     this.inv = el('div', 'base-inv');
+    this.inv.dataset.sec = 'chest workshop shop';
     card.appendChild(this.inv);
 
-    this.forge = el('details', 'base-section');
+    this.shop = sec(el('details', 'base-section'), 'shop');
+    this.shop.id = 'base-shop';
+    this.shop.appendChild(el('summary', undefined, '商店'));
+    this.shopBody = el('div');
+    this.shop.appendChild(this.shopBody);
+    card.appendChild(this.shop);
+
+    this.forge = sec(el('details', 'base-section'), 'workshop');
     this.forge.id = 'base-forge';
     this.forge.appendChild(el('summary', undefined, '工房'));
     this.forgeBody = el('div');
     this.forge.appendChild(this.forgeBody);
     card.appendChild(this.forge);
 
-    this.data = el('details', 'base-section');
+    this.data = sec(el('details', 'base-section'), 'chest');
     this.data.id = 'base-data';
     this.data.appendChild(el('summary', undefined, 'データ（書き出し・取り込み）'));
     this.dataBody = el('div');
@@ -121,7 +152,13 @@ export class BaseScreen {
     this.message.setAttribute('role', 'status');
     card.appendChild(this.message);
 
-    card.appendChild(el('p', 'base-note', `v${APP_VERSION} (${BUILD_ID}) ／ 見た目・動き・音は仮素材。防具の見た目・里を歩く画面・道具の補充は、これから追加します。`));
+    // 歩く拠点: 画面を閉じて、里へ戻る
+    this.closeBtn = el('button', 'base-close', '里へ戻る');
+    this.closeBtn.addEventListener('click', () => host.closeFacility());
+    this.closeBtn.hidden = !host.hubWalk;
+    card.appendChild(this.closeBtn);
+
+    card.appendChild(el('p', 'base-note', `v${APP_VERSION} (${BUILD_ID}) ／ 見た目・動き・音は仮素材。里の建物は仮の形です。`));
     // 画面を広く使う方法: 全画面にできる端末はボタン、iPhone は「ホーム画面に追加」の案内
     if (canFullscreen() && window.matchMedia('(pointer: coarse)').matches) {
       const fs = el('button', 'base-fs', '全画面にする');
@@ -144,9 +181,21 @@ export class BaseScreen {
     return !this.root.hidden;
   }
 
-  setOpen(open: boolean): void {
+  /** 開く / 閉じる。section で、出す範囲を決める（施設の画面では、その施設の欄を開いた状態にする）。 */
+  setOpen(open: boolean, section: BaseSection = 'all'): void {
+    const fresh = this.root.hidden || section !== this.section;
     this.root.hidden = !open;
-    if (open) this.refresh();
+    if (!open) return;
+    this.section = section;
+    this.root.dataset.section = section;
+    const f = this.content.hub.facilities.find((x) => x.kind === section);
+    this.title.textContent = f ? f.name : this.content.hub.name;
+    this.lead.textContent = f ? `${f.summary}。` : '行き先を選んでください。';
+    if (section === 'workshop') this.forge.open = true;
+    if (section === 'shop') this.shop.open = true;
+    // 開き直した時だけ、前の操作の結果を消す（強化の直後に作り直す時は、残す）
+    if (fresh) this.say('');
+    this.refresh();
   }
 
   private say(text: string, bad = false): void {
@@ -220,6 +269,9 @@ export class BaseScreen {
     const known = Object.entries(doc.items).filter(([id, n]) => n > 0 && c.materials.has(id));
     const items = known.map(([id, n]) => `${c.materials.get(id)!.name} ×${n}`);
     this.inv.appendChild(el('p', undefined, `持ち物: 通貨 ${doc.money}　${items.length ? items.join('　') : '素材はまだ無い'}`));
+    // 道具（商店で買ったもの。狩りへ、持ち出せる数まで持っていく）
+    const tools = [...c.items.values()].filter((it) => (doc.items[it.id] ?? 0) > 0).map((it) => `${it.name} ×${doc.items[it.id]}`);
+    if (tools.length) this.inv.appendChild(el('p', 'base-tools', `道具: ${tools.join('　')}`));
     const unk = unknownIds(doc, c);
     if (unk.items.length + unk.weapons.length + unk.armor.length > 0) {
       this.inv.appendChild(el('p', 'base-unknown', `この版では使えないもの（消さずに持っています）: ${[...unk.items.map((id) => `${id} ×${doc.items[id]}`), ...unk.weapons, ...unk.armor].join('　')}`));
@@ -227,8 +279,66 @@ export class BaseScreen {
     const state = save.mode === 'persistent' ? (doc.revision > 0 ? `この端末に保存済み（${when(doc.updatedAt)}）` : 'まだ保存するものがありません') : '保存されません（ページを閉じると最初に戻ります）';
     this.inv.appendChild(el('p', 'base-save-state', state));
 
+    this.renderShop();
     this.renderForge();
     if (this.data.open) this.renderData();
+  }
+
+  /**
+   * 商店。道具を買う（通貨 → 道具）、素材を売る（素材 → 通貨）。どちらも、保存が完了してから表示が変わる。
+   * 買った道具は、狩りへ出る時に、支給品に足して持っていく（合わせて「持ち出せる数」まで）。使ったぶんだけ減る。
+   */
+  private renderShop(): void {
+    const c = this.content;
+    const doc = this.host.save.doc;
+    const shop = c.shop;
+    this.shopBody.textContent = '';
+    this.shopBody.appendChild(el('p', 'shop-money', `通貨 ${doc.money}`));
+    this.shopBody.appendChild(el('p', 'shop-note', '買った道具は、依頼の支給品に足して持っていきます（道具ごとに、持ち出せる数まで）。支給品から先に使い、自分の道具は、使ったぶんだけ減ります。'));
+    const row = (name: string, sub: string, buttons: HTMLButtonElement[]): HTMLElement => {
+      const r = el('div', 'shop-row');
+      const t = el('div', 'shop-text');
+      t.append(el('b', undefined, name), el('span', undefined, sub));
+      const bs = el('div', 'shop-buttons');
+      bs.append(...buttons);
+      r.append(t, bs);
+      return r;
+    };
+    this.shopBody.appendChild(el('h4', undefined, '買う'));
+    for (const g of shop.goods) {
+      const it = c.items.get(g.itemId)!;
+      const have = doc.items[g.itemId] ?? 0;
+      const buttons = [1, 5].map((n) => {
+        const b = el('button', 'shop-buy', `買う ×${n}`);
+        b.dataset.item = g.itemId;
+        b.dataset.count = String(n);
+        b.disabled = !checkBuy(doc, shop, g.itemId, n).ok;
+        b.addEventListener('click', () => void this.run('買っています', () => this.host.buy(g.itemId, n), `${it.name}を ${n} 個買いました。`));
+        return b;
+      });
+      const r = row(`${it.name}　${g.price} 通貨`, `${it.summary ?? ''}　持っている数 ${have}（狩りへ持ち出せるのは ${it.carryMax} 個まで）`, buttons);
+      r.dataset.item = g.itemId;
+      this.shopBody.appendChild(r);
+    }
+    this.shopBody.appendChild(el('h4', undefined, '売る'));
+    const owned = shop.sell.filter((g) => (doc.items[g.itemId] ?? 0) > 0);
+    if (owned.length === 0) this.shopBody.appendChild(el('p', 'shop-note', '売れる素材を持っていません。'));
+    for (const g of owned) {
+      const name = c.materials.get(g.itemId)?.name ?? g.itemId;
+      const have = doc.items[g.itemId] ?? 0;
+      const buttons = [1, 5].map((n) => {
+        const b = el('button', 'shop-sell', `売る ×${n}`);
+        b.dataset.item = g.itemId;
+        b.dataset.count = String(n);
+        b.disabled = have < n;
+        b.addEventListener('click', () => void this.run('売っています', () => this.host.sell(g.itemId, n), `${name}を ${n} 個売りました（+${g.price * n} 通貨）。`));
+        return b;
+      });
+      const r = row(`${name}　${g.price} 通貨`, `持っている数 ${have}`, buttons);
+      r.dataset.item = g.itemId;
+      this.shopBody.appendChild(r);
+    }
+    this.shopBody.appendChild(el('p', 'shop-note', '売った素材は戻りません。強化に使う素材は、工房で数を確かめてから。'));
   }
 
   /** 依頼の並び（段階の順）と訓練場。まだ受けられない依頼は、押せない 1 行にする。 */

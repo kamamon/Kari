@@ -6,7 +6,7 @@
 // - 報酬の受け取りと強化は、必要な確認・減算・加算・処理済みの記録を 1 回の書き込みで確定する。
 // - 知らない ID（この版に無い素材や武器）は捨てずに持ち続ける。
 // - 新しい版が書いたデータ（schemaVersion がこの版より大きい）は、読まないし上書きもしない。
-import { ARMOR_SLOTS, recipeFrom, recipeResult, type ArmorDef, type Content, type ItemStack, type QuestDef, type RecipeDef } from '../data/schemas';
+import { ARMOR_SLOTS, recipeFrom, recipeResult, type ArmorDef, type Content, type ItemStack, type QuestDef, type RecipeDef, type ShopDef } from '../data/schemas';
 
 /** 版 2（v0.9.0）: 防具（armor）を足した。 */
 export const SAVE_SCHEMA_VERSION = 2;
@@ -58,7 +58,7 @@ export interface SaveStamp {
 /** 決まりに合わない操作（素材が足りない、持っていない武器、など）。書き込みはしない。 */
 export class RuleError extends Error {
   constructor(
-    readonly code: 'insufficient' | 'not_owned' | 'already_owned' | 'unknown',
+    readonly code: 'insufficient' | 'not_owned' | 'already_owned' | 'unknown' | 'not_sold' | 'not_bought' | 'bad_count' | 'full',
     message: string,
   ) {
     super(message);
@@ -199,18 +199,33 @@ export interface RunRewards {
   questId: string;
   money: number;
   items: readonly ItemStack[];
+  /** 狩りで使った、自分の道具（支給品のぶんは入れない）。持ち物から減らす */
+  spent?: readonly ItemStack[];
+  /** 達成したか。false（失敗・途中で帰った）なら、達成回数は増やさず、使った道具だけを減らす。無ければ達成 */
+  cleared?: boolean;
 }
 
-/** 依頼の報酬を持ち物へ入れる。同じ runId は 1 度だけ（2 度目は null = 何も変えない）。 */
+/**
+ * 依頼の結果を持ち物へ入れる: 報酬を足し、使った自分の道具を減らし、達成なら達成回数を増やす。
+ * 同じ runId は 1 度だけ（2 度目は null = 何も変えない）。報酬も使った道具も無い失敗は、何も書かない（null）。
+ */
 export function settleRun(doc: SaveDoc, r: RunRewards): SaveDoc | null {
   if (doc.settledRuns.includes(r.runId)) return null;
+  const cleared = r.cleared !== false;
+  const spent = (r.spent ?? []).filter((s) => s.count > 0 && (doc.items[s.itemId] ?? 0) > 0);
+  if (!cleared && spent.length === 0) return null;
   const next = cloneSave(doc);
+  for (const s of spent) {
+    const left = (next.items[s.itemId] ?? 0) - Math.floor(s.count);
+    if (left > 0) next.items[s.itemId] = left;
+    else delete next.items[s.itemId];
+  }
   next.money = Math.min(MAX_COUNT, next.money + Math.max(0, Math.floor(r.money)));
   for (const s of r.items) {
     if (!(s.count > 0)) continue;
     next.items[s.itemId] = Math.min(MAX_COUNT, (next.items[s.itemId] ?? 0) + Math.floor(s.count));
   }
-  next.progress.questClears[r.questId] = Math.min(MAX_COUNT, (next.progress.questClears[r.questId] ?? 0) + 1);
+  if (cleared) next.progress.questClears[r.questId] = Math.min(MAX_COUNT, (next.progress.questClears[r.questId] ?? 0) + 1);
   next.settledRuns.push(r.runId);
   if (next.settledRuns.length > MAX_SETTLED_RUNS) next.settledRuns.splice(0, next.settledRuns.length - MAX_SETTLED_RUNS);
   return next;
@@ -257,6 +272,68 @@ export function craft(doc: SaveDoc, recipe: RecipeDef): SaveDoc {
     if (next.equippedWeaponId === recipe.fromWeaponId) next.equippedWeaponId = recipe.resultWeaponId;
   } else next.armor = next.armor.map((a) => (a === recipe.fromArmorId ? recipe.resultArmorId : a));
   return next;
+}
+
+// ---- 商店 ----
+
+export interface BuyCheck {
+  ok: boolean;
+  /** 売っているか */
+  sold: boolean;
+  price: number;
+  have: number;
+  /** あと何個持てるか（holdMax まで） */
+  room: number;
+  money: number;
+}
+
+/** 買えるか（画面の表示用。実際の確認は buy が書き込みの中でもう一度行う）。 */
+export function checkBuy(doc: SaveDoc, shop: ShopDef, itemId: string, count: number): BuyCheck {
+  const g = shop.goods.find((x) => x.itemId === itemId);
+  const have = doc.items[itemId] ?? 0;
+  const room = Math.max(0, shop.holdMax - have);
+  const price = g ? g.price * count : 0;
+  return { ok: !!g && Number.isInteger(count) && count > 0 && count <= room && doc.money >= price, sold: !!g, price, have, room, money: doc.money };
+}
+
+/** 道具を買う: 通貨を減らし、道具を足す。売っていない・足りない・持てない時は RuleError（何も変えない）。 */
+export function buy(doc: SaveDoc, shop: ShopDef, itemId: string, count: number): SaveDoc {
+  const c = checkBuy(doc, shop, itemId, count);
+  if (!c.sold) throw new RuleError('not_sold', 'その道具は売っていません');
+  if (!(Number.isInteger(count) && count > 0)) throw new RuleError('bad_count', '数が正しくありません');
+  if (count > c.room) throw new RuleError('full', `これ以上は持てません（${shop.holdMax} 個まで）`);
+  if (c.money < c.price) throw new RuleError('insufficient', '通貨が足りません');
+  const next = cloneSave(doc);
+  next.money -= c.price;
+  next.items[itemId] = c.have + count;
+  return next;
+}
+
+/** 素材を売る: 素材を減らし、通貨を足す。買い取っていない・持っていない時は RuleError。 */
+export function sell(doc: SaveDoc, shop: ShopDef, itemId: string, count: number): SaveDoc {
+  const g = shop.sell.find((x) => x.itemId === itemId);
+  if (!g) throw new RuleError('not_bought', 'その素材は買い取っていません');
+  const have = doc.items[itemId] ?? 0;
+  if (!(Number.isInteger(count) && count > 0)) throw new RuleError('bad_count', '数が正しくありません');
+  if (have < count) throw new RuleError('insufficient', '素材が足りません');
+  const next = cloneSave(doc);
+  if (have - count > 0) next.items[itemId] = have - count;
+  else delete next.items[itemId];
+  next.money = Math.min(MAX_COUNT, next.money + g.price * count);
+  return next;
+}
+
+/**
+ * 狩りへ持っていく、自分の道具。売っている道具のうち持っているものを、持ち出せる数（carryMax）まで。
+ * 支給品と合わせて carryMax を超えるぶんは、simulation の側で里に残す。
+ */
+export function pouchOf(doc: SaveDoc, content: Content): ItemStack[] {
+  const out: ItemStack[] = [];
+  for (const it of content.items.values()) {
+    const have = doc.items[it.id] ?? 0;
+    if (have > 0) out.push({ itemId: it.id, count: Math.min(have, it.carryMax) });
+  }
+  return out;
 }
 
 /** 装備を替える。持っていない武器は RuleError。同じ武器なら null。 */

@@ -33,10 +33,10 @@ const check = (name, ok, detail = '') => {
 };
 
 /**
- * これまでの検査は、エリアに分ける前の 1 つの狩場（?hunt=arena）で行う（位置を決め打ちした確認が多いため）。
- * フィールド（エリアに分かれた狩場）の確認は、最後のまとまりで、何も付けないアドレスで行う。
+ * これまでの検査は、エリアに分ける前の 1 つの狩場（?hunt=arena）と、一覧の拠点（?hub=menu）で行う（位置や画面を決め打ちした確認が多いため）。
+ * フィールド（エリアに分かれた狩場）は ?hub=menu だけを付けて、里を歩く拠点は何も付けないアドレスで、最後のまとまりで確かめる。
  */
-const ARENA = '?hunt=arena';
+const ARENA = '?hunt=arena&hub=menu';
 
 async function open(viewport, touch, query = ARENA) {
   const ctx = await browser.newContext({ viewport, hasTouch: touch, isMobile: touch, deviceScaleFactor: touch ? 2 : 1 });
@@ -1106,7 +1106,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
 
 // ---- フィールド（エリアに分かれた狩場。v0.11.0）: 野営地から出発し、出口でエリアを移る。標的はエリアを巡り、弱ると巣で眠る ----
 {
-  const { ctx, page } = await open({ width: 1280, height: 720 }, false, '');
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   check('フィールド: 拠点の依頼に、狩場の名前と、長くした制限時間（30 分）が出る', await page.evaluate(() => {
@@ -1215,6 +1215,166 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const fainted = await until(page, () => window.__vh.sim.hunt.faints >= 1 && window.__vh.sim.areaId === 'camp' && window.__vh.sim.player.mode !== 'dead', 60000);
   f = await hudField();
   check('フィールド: 力尽きると野営地へ戻り、標的は巣に残る', fainted && f.here === '営' && f.target === 'a10', JSON.stringify(f));
+  await ctx.close();
+}
+
+// ---- 里を歩く拠点・商店・持ち込みの道具（v0.12.0。何も付けないアドレス）----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false, '');
+  await page.click('#boot-start');
+  check('里: 起動すると、里に立っている（一覧の画面は出ない。時間が進む）', await until(page, () => window.__vh && window.__vh.place === 'hub' && document.getElementById('base').hidden && window.__vh.sim.tick > 10 && window.__vh.sim.world.map.id === 'map.hub.village'));
+  const hubState = () => page.evaluate(() => {
+    const a = window.__vh, p = a.sim.player;
+    const disp = (sel) => { const e = document.querySelector(sel); return e ? getComputedStyle(e).display : 'none'; };
+    return {
+      place: a.place, x: p.pos.x, z: p.pos.z, near: a.nearFacility?.id ?? '', drawn: p.drawn, items: p.items.length, monsters: a.sim.monsters.length,
+      base: !document.getElementById('base').hidden, section: document.getElementById('base').dataset.section ?? '', title: document.querySelector('#base h2').textContent,
+      prompt: document.getElementById('hud-facility').hidden ? '' : document.getElementById('hud-facility').textContent,
+      list: !document.getElementById('hud-hub-list').hidden,
+      quests: disp('.base-quests'), forge: disp('#base-forge'), shop: disp('#base-shop'), weapons: disp('.base-weapons'), close: disp('.base-close'),
+      money: a.save.doc.money, tonic: a.save.doc.items['item.heal_tonic'] ?? 0, shell: a.save.doc.items['mat.galdros.shell_shard'] ?? 0, weapon: p.weaponId,
+    };
+  });
+  let h = await hubState();
+  check('里: 標的は居ない。道具は持たない。「一覧」のボタンが出ている', h.monsters === 0 && h.items === 0 && h.list && h.prompt === '', JSON.stringify(h));
+  await page.screenshot({ path: `${OUT}90_hub_start.png` });
+  // 攻撃のボタンを押しても、武器を抜かない
+  await click(page);
+  await page.waitForTimeout(300);
+  h = await hubState();
+  check('里: 施設の前でなければ、主ボタンを押しても何も起きない（武器を抜かない）', !h.drawn && !h.base, JSON.stringify(h));
+  // 前へ歩くと、依頼板の前に着く
+  await page.keyboard.down('KeyW');
+  await page.keyboard.down('ShiftLeft');
+  const atBoard = await until(page, () => window.__vh.nearFacility?.id === 'board', 20000);
+  await page.keyboard.up('KeyW');
+  await page.keyboard.up('ShiftLeft');
+  await page.waitForTimeout(200);
+  h = await hubState();
+  check('里: 前へ歩くと依頼板の前に着き、「依頼を見る」のボタンが出る', atBoard && /依頼を見る/.test(h.prompt), JSON.stringify(h));
+  await page.screenshot({ path: `${OUT}91_hub_board.png` });
+  await click(page);
+  await until(page, () => !document.getElementById('base').hidden);
+  h = await hubState();
+  check('里: 主ボタンで依頼板の画面が開く（依頼の欄だけ。工房・商店・武器の欄は出ない。「里へ戻る」がある）', h.base && h.section === 'quest' && h.title === '依頼板' && h.quests !== 'none' && h.forge === 'none' && h.shop === 'none' && h.weapons === 'none' && h.close !== 'none', JSON.stringify(h));
+  const tickBefore = await page.evaluate(() => window.__vh.sim.tick);
+  await page.waitForTimeout(300);
+  check('里: 画面が開いている間は、一時停止する', await page.evaluate((t) => window.__vh.sim.tick === t, tickBefore));
+  await page.screenshot({ path: `${OUT}92_hub_board_panel.png` });
+  await page.click('.base-close');
+  check('里: 「里へ戻る」で閉じて、また歩ける', await until(page, () => document.getElementById('base').hidden && window.__vh.sim.tick > 0) && await until(page, (t) => window.__vh.sim.tick > t, 5000, tickBefore));
+  // 商店: 通貨が無いと買えない → 報酬をもらって、買う・売る
+  const put = (id) => page.evaluate((id) => {
+    const a = window.__vh, f = a.content.hub.facilities.find((x) => x.id === id), p = a.sim.player;
+    p.pos = { x: f.x, y: 0, z: f.z };
+    p.prevPos = { ...p.pos };
+    p.yaw = Math.atan2(f.building.x - f.x, f.building.z - f.z);
+    p.prevYaw = p.yaw;
+    a.view.cam.snap(p.yaw);
+  }, id);
+  await put('shop');
+  await until(page, () => window.__vh.nearFacility?.id === 'shop');
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: `${OUT}93_hub_shop.png` });
+  await page.click('#hud-facility');
+  await until(page, () => !document.getElementById('base').hidden);
+  h = await hubState();
+  check('里: 商店の前のボタンを押すと、商店の画面が開く。通貨が無い間は、買うボタンが押せない', h.section === 'shop' && h.title === '商店' && h.shop !== 'none' && h.quests === 'none' && await page.evaluate(() => [...document.querySelectorAll('.shop-buy')].length === 8 && [...document.querySelectorAll('.shop-buy')].every((b) => b.disabled) && /売れる素材を持っていません/.test(document.getElementById('base-shop').textContent)), JSON.stringify(h));
+  await page.evaluate(() => window.__vh.save.settle({ runId: 'smoke-hub-seed', questId: 'quest.basin.003', money: 1000, items: [{ itemId: 'mat.galdros.shell_shard', count: 3 }] }));
+  await until(page, () => window.__vh.save.doc.money === 1000 && !document.querySelector('.shop-buy[data-item="item.heal_tonic"][data-count="1"]').disabled);
+  await page.click('.shop-buy[data-item="item.heal_tonic"][data-count="1"]');
+  const bought = await until(page, () => window.__vh.save.doc.money === 940 && window.__vh.save.doc.items['item.heal_tonic'] === 1 && /回復液を 1 個買いました/.test(document.querySelector('.base-message').textContent), 8000);
+  check('里: 回復液を 1 個買うと、通貨が 60 減って道具が増える（保存が完了してから表示が変わる）', bought && await page.evaluate(() => /通貨 940/.test(document.querySelector('.shop-money').textContent) && /持っている数 1/.test(document.querySelector('.shop-row[data-item="item.heal_tonic"]').textContent) && /道具: 回復液 ×1/.test(document.querySelector('.base-inv').textContent)), JSON.stringify(await hubState()));
+  await page.click('.shop-sell[data-item="mat.galdros.shell_shard"][data-count="1"]');
+  check('里: 岩殻片を 1 個売ると、通貨が 20 増えて素材が減る', await until(page, () => window.__vh.save.doc.money === 960 && window.__vh.save.doc.items['mat.galdros.shell_shard'] === 2, 8000), JSON.stringify(await hubState()));
+  await page.screenshot({ path: `${OUT}94_hub_shop_panel.png` });
+  await page.click('.base-close');
+  // 工房
+  await put('workshop');
+  await until(page, () => window.__vh.nearFacility?.id === 'workshop');
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: `${OUT}95_hub_workshop.png` });
+  await page.click('#hud-facility');
+  await until(page, () => !document.getElementById('base').hidden);
+  h = await hubState();
+  check('里: 工房の画面は、強化の欄が開いた状態で出る', h.section === 'workshop' && h.title === '工房' && h.forge !== 'none' && h.shop === 'none' && await page.evaluate(() => document.getElementById('base-forge').open), JSON.stringify(h));
+  await page.click('.base-close');
+  // 装備箱: 持ち替えても、立っている場所と開いている画面は変わらない
+  await put('chest');
+  await until(page, () => window.__vh.nearFacility?.id === 'chest');
+  await page.click('#hud-facility');
+  await until(page, () => !document.getElementById('base').hidden);
+  const before = await hubState();
+  await page.click('.base-weapon[data-weapon="weapon.twin_blades.001"]');
+  await until(page, () => window.__vh.sim.player.weaponId === 'weapon.twin_blades.001', 8000);
+  h = await hubState();
+  check('里: 装備箱で持ち替えると、その場で武器が替わる（立っている場所と、開いている画面はそのまま）', before.section === 'chest' && before.weapons !== 'none' && h.weapon === 'weapon.twin_blades.001' && h.base && h.section === 'chest' && Math.abs(h.x - before.x) < 0.01 && Math.abs(h.z - before.z) < 0.01 && h.place === 'hub', JSON.stringify(h));
+  await page.click('.base-weapon[data-weapon="weapon.heavy_blade.001"]');
+  await until(page, () => window.__vh.sim.player.weaponId === 'weapon.heavy_blade.001', 8000);
+  await page.click('.base-close');
+  await until(page, () => document.getElementById('base').hidden);
+  // 「一覧」: 歩かずに、すべての欄を開ける
+  await page.click('#hud-hub-list');
+  await until(page, () => !document.getElementById('base').hidden);
+  h = await hubState();
+  check('里: 「一覧」で、すべての欄が出る（依頼・武器・工房・商店）', h.section === 'all' && h.title === '灯継ぎの里' && h.quests !== 'none' && h.forge !== 'none' && h.shop !== 'none' && h.weapons !== 'none', JSON.stringify(h));
+  // 依頼へ: 買った回復液を、支給品に足して持っていく
+  await page.click('.base-choice[data-quest="quest.basin.003"]');
+  await until(page, () => window.__vh.place === 'hunt' && window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+  const pouch = await page.evaluate(() => {
+    const s = window.__vh.sim;
+    return { tonic: s.player.items.find((x) => x.itemId === 'item.heal_tonic').count, brought: s.brought['item.heal_tonic'], area: s.areaId };
+  });
+  check('里: 依頼へ出ると、買った回復液が支給品に足されている（5 + 1 = 6）。野営地から始まる', pouch.tonic === 6 && pouch.brought.supplied === 5 && pouch.brought.own === 1 && pouch.area === 'camp', JSON.stringify(pouch));
+  // 6 個とも使ったことにして、リタイアする → 自分の 1 個だけが減る
+  await page.evaluate(() => (window.__vh.sim.player.items.find((x) => x.itemId === 'item.heal_tonic').count = 0));
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('.menu-body button');
+  await page.click('.menu-body button');
+  const settled = await until(page, () => !document.getElementById('result').hidden && window.__vh.save.doc.items['item.heal_tonic'] === undefined, 15000);
+  check('里: 失敗（リタイア）しても、使った自分の道具は減る（1 個）。達成回数と通貨は変わらない', settled && await page.evaluate(() => window.__vh.save.doc.money === 960 && window.__vh.save.doc.progress.questClears['quest.basin.003'] === 1 && /使った自分の道具を、持ち物から減らしました/.test(document.getElementById('result').textContent)), await page.evaluate(() => document.getElementById('result').textContent.slice(0, 200)));
+  await page.screenshot({ path: `${OUT}96_hub_result.png` });
+  // 結果から拠点へ → 里に立つ
+  await page.evaluate(() => window.__vh.toBase());
+  check('里: 結果の画面から拠点へ戻ると、里に立っている', await until(page, () => window.__vh.place === 'hub' && document.getElementById('base').hidden && document.getElementById('result').hidden && window.__vh.sim.world.map.id === 'map.hub.village'));
+  // 読み込み直しても、通貨と持ち物が残る
+  await page.reload();
+  await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && window.__vh.place === 'hub');
+  h = await hubState();
+  check('里: 読み込み直しても、買い物の結果が残っている（通貨 960、岩殻片 2、回復液 0）', h.money === 960 && h.shell === 2 && h.tonic === 0, JSON.stringify(h));
+  await ctx.close();
+}
+
+// ---- 里（横向きスマホ相当・タッチ）----
+{
+  const { ctx, page } = await open({ width: 844, height: 390 }, true, '');
+  await page.tap('#boot-start');
+  await until(page, () => window.__vh && window.__vh.place === 'hub' && window.__vh.sim.tick > 10);
+  const vis = () => page.evaluate(() => Object.fromEntries([...document.querySelectorAll('#touch .tbtn')].map((b) => [b.dataset.name, !b.hidden && getComputedStyle(b).display !== 'none' ? b.textContent : null])));
+  let v = await vis();
+  check('里（タッチ）: 武器を使うボタン（抜刀・薙ぐ・道具）は出ない。主ボタンは「—」', v.weapon === null && v.sub === null && v.item === null && v.main === '—' && v.dodge !== null, JSON.stringify(v));
+  await page.evaluate(() => {
+    const a = window.__vh, f = a.content.hub.facilities.find((x) => x.id === 'shop'), p = a.sim.player;
+    p.pos = { x: f.x, y: 0, z: f.z };
+    p.prevPos = { ...p.pos };
+  });
+  await until(page, () => window.__vh.nearFacility?.id === 'shop');
+  await page.waitForTimeout(300);
+  v = await vis();
+  const box = await page.evaluate(() => {
+    const r = document.getElementById('hud-facility').getBoundingClientRect();
+    const hit = [...document.querySelectorAll('#touch .tbtn')].filter((b) => !b.hidden && getComputedStyle(b).display !== 'none').map((b) => b.getBoundingClientRect()).some((q) => !(q.right < r.left || q.left > r.right || q.bottom < r.top || q.top > r.bottom));
+    return { w: r.width, h: r.height, hit };
+  });
+  check('里（タッチ）: 施設の前では、主ボタンが「入る」になり、入るボタンが出る（44px 以上で、操作ボタンと重ならない）', v.main === '入る' && box.h >= 44 && box.w >= 150 && !box.hit, JSON.stringify({ v: v.main, box }));
+  await page.screenshot({ path: `${OUT}97_hub_touch.png` });
+  await page.tap('#hud-facility');
+  check('里（タッチ）: 入るボタンを指で押すと、商店の画面が開く', await until(page, () => !document.getElementById('base').hidden && document.getElementById('base').dataset.section === 'shop'));
+  await page.screenshot({ path: `${OUT}98_hub_touch_shop.png` });
+  await page.tap('.base-close');
+  check('里（タッチ）: 「里へ戻る」で閉じる', await until(page, () => document.getElementById('base').hidden));
   await ctx.close();
 }
 

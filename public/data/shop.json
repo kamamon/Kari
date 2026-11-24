@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "note": "里の商店（v0.12.0、docs/spec.md 19 章）。goods = 売っている道具と値段（通貨）。holdMax = 1 つの道具を持っておける数。sell = 素材の買い取り値（ここに無い素材は売れない）。値段はすべて机上の値。",
+  "holdMax": 99,
+  "goods": [
+    {"itemId": "item.heal_tonic", "price": 60},
+    {"itemId": "item.whetstone", "price": 40},
+    {"itemId": "item.calm_orb", "price": 150},
+    {"itemId": "item.bind_trap", "price": 300}
+  ],
+  "sell": [
+    {"itemId": "mat.galdros.shell_shard", "price": 20},
+    {"itemId": "mat.galdros.hard_bone", "price": 25},
+    {"itemId": "mat.galdros.bronze_vein", "price": 35},
+    {"itemId": "mat.galdros.foreleg_plate", "price": 40},
+    {"itemId": "mat.galdros.veined_shell", "price": 70},
+    {"itemId": "mat.galdros.tail_crystal", "price": 90},
+    {"itemId": "mat.galdros.crystal_shell", "price": 140},
+    {"itemId": "mat.galdros.bronze_lump", "price": 180},
+    {"itemId": "mat.galdros.radiant_shell", "price": 280},
+    {"itemId": "mat.galdros.pulse_core", "price": 360}
+  ]
+}

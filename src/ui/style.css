@@ -285,3 +285,28 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 #hud .hud-area-banner.show { animation: area-banner 1.9s forwards; }
 @keyframes area-banner { 0% { opacity: 1; background: rgba(8, 11, 9, 0.9); } 16% { opacity: 1; background: rgba(8, 11, 9, 0); } 78% { opacity: 1; background: rgba(8, 11, 9, 0); } 100% { opacity: 0; background: rgba(8, 11, 9, 0); } }
 @media (prefers-reduced-motion: reduce) { #hud .hud-area-banner.show { animation-duration: 1.2s; } }
+
+/* ---- 拠点: 施設ごとの画面（data-section が all 以外の時、その施設の欄だけを出す）と、商店 ---- */
+#base[data-section="quest"] [data-sec]:not([data-sec~="quest"]),
+#base[data-section="workshop"] [data-sec]:not([data-sec~="workshop"]),
+#base[data-section="shop"] [data-sec]:not([data-sec~="shop"]),
+#base[data-section="chest"] [data-sec]:not([data-sec~="chest"]) { display: none; }
+/* 施設の画面では、欄の見出し（開閉）を出さない（上に施設の名前が出ている） */
+#base[data-section="shop"] #base-shop > summary, #base[data-section="workshop"] #base-forge > summary { display: none; }
+#base .base-close { display: block; width: 100%; margin: 10px 0 4px; padding: 11px; border-radius: 9px; border: 1px solid var(--bronze); background: rgba(176, 141, 87, 0.28); color: inherit; font: inherit; font-weight: 700; }
+#base .base-close[hidden] { display: none; }
+#base .base-tools { margin: 2px 0 0; font-size: 0.85rem; }
+#base .shop-money { margin: 6px 0 2px; font-weight: 700; color: var(--bronze); }
+#base .shop-note { margin: 2px 0 6px; font-size: 12px; line-height: 1.5; opacity: 0.8; }
+#base #base-shop h4 { margin: 10px 0 4px; font-size: 13px; color: var(--bronze); }
+#base .shop-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-top: 1px solid rgba(232, 226, 205, 0.14); }
+#base .shop-text { flex: 1 1 auto; min-width: 0; display: grid; gap: 1px; }
+#base .shop-text b { font-size: 14px; }
+#base .shop-text span { font-size: 12px; line-height: 1.45; opacity: 0.8; }
+#base .shop-buttons { display: flex; gap: 6px; flex: 0 0 auto; }
+#base .shop-buttons button { min-width: 64px; min-height: 40px; padding: 6px 8px; border-radius: 9px; border: 1px solid rgba(232, 226, 205, 0.28); background: rgba(232, 226, 205, 0.06); color: inherit; font: inherit; font-size: 13px; font-weight: 700; }
+#base .shop-buttons button:disabled { opacity: 0.35; }
+/* 里を歩いている時: 施設の前で出るボタンと、一覧を開くボタン */
+#hud .hud-facility { position: absolute; left: 50%; bottom: calc(var(--sab) + 26px); transform: translateX(-50%); pointer-events: auto; display: grid; gap: 1px; justify-items: center; min-width: 190px; padding: 9px 18px; border-radius: 12px; border: 1px solid var(--bronze); background: rgba(176, 141, 87, 0.92); color: #1b1710; font: inherit; font-weight: 800; font-size: 15px; }
+#hud .hud-facility span { font-size: 11px; font-weight: 600; opacity: 0.85; }
+#hud .hud-facility[hidden] { display: none; }

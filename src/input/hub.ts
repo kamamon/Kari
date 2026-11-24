@@ -3,7 +3,8 @@
 import { Btn, type InputFrame } from '../game/inputFrame';
 
 export type Device = 'touch' | 'keyboard' | 'gamepad';
-export type UiAction = 'menu' | 'camReset' | 'verify' | 'return';
+/** interact = 里で、前に立っている施設へ入る / hubList = 里の施設の一覧を開く */
+export type UiAction = 'menu' | 'camReset' | 'verify' | 'return' | 'interact' | 'hubList';
 
 export { Btn };
 
