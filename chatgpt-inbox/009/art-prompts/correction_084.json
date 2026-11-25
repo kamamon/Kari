@@ -1,0 +1,20 @@
+{
+  "no": 84,
+  "id": "monster.enagrio",
+  "name": "エナグリオ",
+  "reason": "Source prompt erroneously said no legs or only inconspicuous rudiments; moves, nest and signs explicitly require four short terrestrial limbs. Add two forelegs and two hindlegs while retaining three neck collars and long slim body/tail.",
+  "prompt": "Use case: precise local anatomical correction to this exact original VEILBOUND HUNTERS monster Enagrio concept painting. Preserve the existing narrow head facing right, exactly THREE tall upright neck-collar rings with mineral-grit interiors, the very long slender smooth serpentine torso, its low broad S/U curve, and the complete fine tapering tail with its small tip plate. Keep the palette, organic scales, painting style, pale warm plain background, lighting, and landscape 1536x1024 canvas. Change ONLY the missing locomotor limbs: ADD EXACTLY FOUR SHORT BUT CLEARLY VISIBLE LAND-WALKING LEGS arranged as TWO ANATOMICAL PAIRS, one left and one right foreleg immediately BEHIND the neck collars, and one left and one right hindleg toward the rear of the torso BEFORE the long tapering tail starts. These are living reptile legs, muscular at the attachment, short bent elbows/knees and small splayed clawed feet contacting the ground, about the thickness/length of the animal's torso diameter. Both the near and far feet of each pair must be visible and separated in silhouette, with the far-side feet slightly staggered. Four legs TOTAL, not four legs along the near side, no extra limbs along the tail, no fins, no wing, no tiny vestigial bumps. Add the legs so the long belly still stays very low to the ground and this remains a long-bodied crawling reptile rather than a stocky lizard. Keep all THREE neck collars fully visible. The tail remains long and thin and uncropped. No text or new scenery. IMPORTANT: the biological design explicitly specifies four-foot stopping, rising on short limbs, and four-foot tracks; this animal is NOT legless.",
+  "referenced_image_paths": [
+    "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_084_enagrio_concept_v1.png"
+  ],
+  "original_generated_png": "/workspace/scratch/b1fa555057db/generated_images/exec-f2ddd206-f925-4380-aff8-03fa5376509e.png",
+  "corrected_generated_png": "/workspace/scratch/b1fa555057db/generated_images/exec-762dd46a-81c6-4640-903f-0aabbbfe016e.png",
+  "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_084_enagrio_concept_v1.png",
+  "size": [
+    1536,
+    1024
+  ],
+  "sha256": "fd7991295c653fede1e51ee77a55380393ba776786bbb18f2f8aaf8d14507ecd",
+  "generation_mode": "built-in image_gen local edit",
+  "review": "Visually checked: exactly four short ground-walking limbs, two forelegs immediately behind the collars and two hindlegs before the tapering tail; all four feet visibly separated. Three tall neck collars, long slim torso, S/U curve, full fine tail and tail-tip plate preserved."
+}

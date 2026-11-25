@@ -1,0 +1,362 @@
+[
+  {
+    "no": 33,
+    "id": "monster.tosamurie",
+    "name": "トサムリエ",
+    "filename": "monster_033_tosamurie_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThis is a new original species. Its special organ must be part of the body, not a prop or costume.\nSpecies: 枝鉤獣 トサムリエ (do not put this name into the image).\nA lean four-legged forest browser with slender shoulders, a short tail and a pair of exceptionally long natural hooks curving backward and downward from its FORELEG ELBOWS. Thin wind-fanning membranes span the inner bends of those hooks. The unique silhouette is two low hanging reverse-elbow hooks, not head horns or wings. Grey-green thick skin and sparse bronze-colored bony veins. A poised grounded stance with all four legs readable.\nGround-truth anatomical notes: 細い肩から下がる二本の長い逆肘鉤と、短い尾 / 前肘の逆鉤の内側に送風膜が張り、畳んだ肘を開くと狭い空気の刃を押し出す。鉤は枝を引き下ろす採食器官でもある。 / Breakable structures: 右逆肘鉤, 左逆肘鉤, 肩の送風膜, 尾根皮.",
+    "referenced_image_paths": [],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Full-body framing corrected after cropped ear in first candidate; reviewed final silhouette, four legs and paired elbow hooks.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_033_tosamurie_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-07ce2f18-7eff-45e9-afd8-3a56f41d0b71.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "revision_note": "Precise crop correction: zoom out 18%, keep exact design."
+  },
+  {
+    "no": 34,
+    "id": "monster.pukrenoa",
+    "name": "プクレノア",
+    "filename": "monster_034_pukrenoa_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThis is a new original species. Its special organ must be part of the body, not a prop or costume.\nSpecies: 沈匙獣 プクレノア (do not put this name into the image).\nA low heavy four-legged wetland beast with an extremely long SPOON-SHAPED LOWER JAW held just above the ground, narrow filtering teeth, paired soft muted grey-purple cheek pouches, and a conspicuously round rump higher than its shoulders. The jaw is a biological scoop, not a metal spoon. Grey-brown wrinkled hide, low head, short powerful feet, short tail. Keep the high rump and very low forward scoop strongly visible in silhouette.\nGround-truth anatomical notes: 地面すれすれの長い匙顎と、肩より高い丸い尻 / 匙形の下顎に細かい濾歯と霧嚢があり、泥の栄養分を集めた後の水を細霧にして戻す。食べた有毒菌の成分は、顎の側袋に分けて蓄える。 / Breakable structures: 匙顎の先端, 右頬袋, 左頬袋, 後腰甲.",
+    "referenced_image_paths": [],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: full body, frame anatomy and defining organ consistent; no text or crop.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_034_pukrenoa_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-663f4316-9e39-4ae5-b16f-9cb1da8cc1d8.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  },
+  {
+    "no": 35,
+    "id": "monster.kesalpina",
+    "name": "ケサルピナ",
+    "filename": "monster_035_kesalpina_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThis is a new original species. Its special organ must be part of the body, not a prop or costume.\nSpecies: 庇頬鳥 ケサルピナ (do not put this name into the image).\nA tall grounded TWO-LEGGED bird with short wings, a long FLAT tail sweeping near the ground, and one long flat natural eave-like CHEEK PLATE ONLY ON ITS LEFT CHEEK. Show that left cheek plate projecting sideways with a brush-textured spore pouch beneath it. The right cheek stays small, asymmetric. Grey-green and undyed ivory feathers, dark legs, organic horn plate. Neither a helmet nor human clothing. Both feet grounded, short wings at rest.\nGround-truth anatomical notes: 左だけ長い板状の頬庇と、地面を掃く扁平な尾 / 左頬庇の裏に刷毛状の嚢があり、餌の菌胞子を細かく篩い分ける。頬庇を開いて短い翼で扇ぐと、睡眠成分を含む粉が片側だけへ流れる。 / Breakable structures: 左頬庇, 頬の刷毛嚢, 右翼端, 扁平尾.",
+    "referenced_image_paths": [],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: full body, frame anatomy and defining organ consistent; no text or crop.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_035_kesalpina_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-c73f7a9e-0954-4f8a-8b65-d0f1d61ea976.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  },
+  {
+    "no": 36,
+    "id": "monster.riptaum",
+    "name": "リプタウム",
+    "filename": "monster_036_riptaum_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThis is a new original species. Its special organ must be part of the body, not a prop or costume.\nSpecies: 氷畝蟹 リプタウム (do not put this name into the image).\nA broad low crustacean with exactly SIX walking legs (three per side), plus two matching shallow SCOOP CLAWS of equal width. Its back carapace has TWO low PARALLEL raised RIDGES rather than a tall spiked shell. Dull blue-grey shell and thin frost in the two separated cooling grooves. Both claws should be equally sized, the two ridges distinct, no giant asymmetric claw. A slight front-left angle makes both ridges and six legs readable.\nGround-truth anatomical notes: 二列の低い畝殻と、左右同じ幅の掬い鋏 / 二列の畝殻に冷晶を含む溝が通り、掬った水を薄い氷の層にする。左右の溝は別々に閉じるため、攻撃に使う側だけが白く曇る。 / Breakable structures: 右畝殻, 左畝殻, 右掬い鋏, 左掬い鋏.",
+    "referenced_image_paths": [],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: equal scoop claws, two low cooling ridges, six-leg body layout, full frame.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_036_riptaum_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-c4493d80-d9a2-4e47-b819-6e7179f4666d.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  },
+  {
+    "no": 37,
+    "id": "monster.serinodam",
+    "name": "セリノダム",
+    "filename": "monster_037_serinodam_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThis is a new original species. Its special organ must be part of the body, not a prop or costume.\nSpecies: 灯櫂蟲 セリノダム (do not put this name into the image).\nA long very low segmented arthropod. Only its REARMOST THREE body segments carry wide horizontal PADDLE LEGS, one pair per segment. The front half has ordinary small walking legs and a small armored head. Subtle amber electrical membrane points within the six rear paddles; grey-green chitin, sparse bronze mineral veins. This is a grounded wetland crawler, not a flying insect, fish, or mechanical vehicle. Show all three rear paddle pairs clearly separated.\nGround-truth anatomical notes: 後ろ三節だけに横長の櫂脚が張り出す低い体 / 後ろ三節の櫂脚に蓄電膜があり、湿った地面を擦ると節ごとに弱い琥珀色が灯る。全てを同時に放たず、先に灯った脚から地面へ電気を渡す。 / Breakable structures: 右の前櫂脚, 左の後櫂脚, 蓄電尾節, 頭甲.",
+    "referenced_image_paths": [],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: low many-legged body, wide paddles restricted to rear three segments, full frame.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_037_serinodam_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-af9e40d5-2383-4dae-a46e-678cb4a4d45c.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  },
+  {
+    "no": 38,
+    "id": "monster.nufraken",
+    "name": "ヌフラケン",
+    "filename": "monster_038_nufraken_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThis is a new original species. Its special organ must be part of the body, not a prop or costume.\nSpecies: 冷壺蛇 ヌフラケン (do not put this name into the image).\nAn elongated terrestrial serpent-like beast whose distinctive shape is ONE rounded POT-SHAPED SWELLING immediately BEHIND its neck, followed by a long slender body and very long thin tapering tail. The cooling pot is a living ribbed organ with pale inner membranes, not a literal ceramic object. Dull slate-blue scales, modest frost along rib folds, small alert head raised slightly. Short vestigial limbs may support its land-crawling stance, no large fins or wings. Entire long tail in frame.\nGround-truth anatomical notes: 首の後ろだけに膨らむ壺腹と、長く細い尾 / 首の後ろの冷壺に、冷晶を含む襞と湿気を集める内膜が重なる。壺腹を縮める前に首が高くなり、溜めた冷たい水粒を細い帯へ吐く。 / Breakable structures: 冷壺の前襞, 冷壺の後襞, 上顎, 尾端.",
+    "referenced_image_paths": [],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: single ribbed cooling pot behind neck, thin full-length tail, grounded short limbs, no cropping.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_038_nufraken_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-8b27d5fc-4869-48d1-9c58-11387673e3e2.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  },
+  {
+    "no": 39,
+    "id": "monster.akaunel",
+    "name": "アカウネル",
+    "filename": "monster_039_akaunel_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThis is a new original species. Its special organ must be part of the body, not a prop or costume.\nSpecies: 灼襟鳥 アカウネル (do not put this name into the image).\nA compact grounded TWO-LEGGED bird with a SHORT neck surrounded by a low SQUARE natural collar of four broad horn-feather plates, and short SPOON-SHAPED wings. Charcoal-grey feathers, only the INNER edge of the low square collar shows a subdued dark copper-red warmth. The collar grows organically from the neck, not armor, manufactured metal, or a costume. Strong short legs, resting spoon wings, no long neck crest and no flames obscuring anatomy.\nGround-truth anatomical notes: 短い首を囲う低い四角襟と、匙形の短い翼 / 首の四角襟の下に、晶粉を含む熱脂を分泌する羽鞘が並ぶ。襟の一辺を持ち上げてから、その方向だけへ熱い粉を吐く。 / Breakable structures: 前襟板, 右襟板, 左匙翼, 嘴先.",
+    "referenced_image_paths": [],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: short-neck bird with low four-sided collar and spoon wings; both feet and full body visible.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_039_akaunel_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-3ce71bee-3da1-49b9-addd-5a2a37a53e53.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  },
+  {
+    "no": 40,
+    "id": "monster.tsumarobek",
+    "name": "ツマロベク",
+    "filename": "monster_040_tsumarobek_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThis is a new original species. Its special organ must be part of the body, not a prop or costume.\nSpecies: 脈鼓獣 ツマロベク (do not put this name into the image).\nA heavy low four-legged beast with a notably FLAT BACK and ONE large drum-shaped natural breast-belly plate hanging low from its chest. A fine amber piezoelectric membrane rims that single broad round chest plate. Grey-brown thick hide, small shoulders, sturdy forelegs, no tall back armor or spikes. Make the low chest drum and horizontal back the unmistakable silhouette. Slight front-left view reveals the front surface of the chest plate while the whole body remains right-facing.\nGround-truth anatomical notes: 胸から低く下がる一枚の太鼓腹甲と、平らな背 / 胸腹の太鼓状の甲内に圧電膜が張り、前脚で地面を押すと電荷がたまる。腹甲を下ろす直前に膜が琥珀色に脈打ち、接地した方向だけへ放電する。 / Breakable structures: 腹鼓甲, 圧電膜の縁, 左前脚甲, 尾根骨.",
+    "referenced_image_paths": [],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: large low chest drum with amber rim, flat back, four full legs and full tail, no crop.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_040_tsumarobek_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-d87a7810-4712-4125-81f6-65ab8ef4fc20.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  },
+  {
+    "no": 41,
+    "id": "monster.furemsad",
+    "name": "フレムサド",
+    "filename": "monster_041_furemsad_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThis is a new original species. Its special organ must be part of the body, not a prop or costume.\nSpecies: 霧鰭蛇 フレムサド (do not put this name into the image).\nA long low land-crawling serpent beast with ONE broad horizontal FIN only beneath its THROAT, and a straight thick BLUNT ROD-SHAPED TAIL with a rounded bony end. Dull grey-blue hide, understated bone brow over the upper jaw, tiny mist pores on the throat fin. No sharp tail tip, no extra back sails, no wings. It can crawl and brace on shore; little or no displayed mist, keep the throat fin and blunt tail fully clear.\nGround-truth anatomical notes: 喉の下だけに広がる一枚の横鰭と、棒状の鈍い尾 / 喉の横鰭に細かな分霧孔が並び、吐いた水を地面近くの二本の霧帯へ分ける。尾端の厚い骨は貝を割る器官で、叩く前に高く持ち上がる。 / Breakable structures: 喉鰭の左端, 喉鰭の右端, 上顎殻, 鈍尾骨.",
+    "referenced_image_paths": [],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: broad single throat fin, blunt club-ended rod tail, long low body and four short legs, no crop.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_041_furemsad_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-7614e804-0a03-4513-8ca6-34a9213972a7.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  },
+  {
+    "no": 42,
+    "id": "monster.grasedon",
+    "name": "グラセドン",
+    "filename": "monster_042_grasedon_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThe supplied reference image is the ORIGINAL PARENT SPECIES. Create the rare/subspecies animal described here, preserving its body lineage while changing only the specified evolved organ and silhouette.\nSpecies: 裂扇獣 グラセドン (do not put this name into the image).\nRare adult variant of the reference Galdros. Preserve its low heavy FOUR-LEGGED body, blunt beaklike face, thick wrinkled grey-brown skin, a small breakable ROCK CROWN on the head, a few LARGE rock armor slabs, and mineral-crystal tail club. Crucial change: ONLY THE LEFT BACK ROCK PLATES split into a tall VERTICAL FAN of broad separated slabs. The right side remains low ordinary rock armor. Subtle warm amber heat in the gaps, bronze mineral edges, restrained small scales. Make the unilateral left fan very clear, no lava, flame jet, or spikes everywhere.\nGround-truth anatomical notes: 左背の岩板だけが縦の扇に裂けた低い四足 / 長年の晶脈摂取で左背の岩板にだけ育つ裂扇炉。隙間の共生菌が鉱物を酸化して蓄熱し、開いた板の間へ熱い砂を通す。 / Breakable structures: 頭の岩冠, 左背の裂扇, 右前脚甲, 尾端晶.",
+    "referenced_image_paths": [
+      "/workspace/scratch/b1fa555057db/repos/Kari-coordination/art-source/monster/galdros/galdros_left_v1.png"
+    ],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: parent Galdros lineage, unilateral separated broad fan slabs, small rock crown, crystal tail and four complete legs; far back side partly occluded in 3/4 view.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_042_grasedon_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-216a883a-1a18-42b5-939f-c54ce386ac0e.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  },
+  {
+    "no": 43,
+    "id": "monster.ryuzelka",
+    "name": "リュゼルカ",
+    "filename": "monster_043_ryuzelka_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThe supplied reference image is the ORIGINAL PARENT SPECIES. Create the rare/subspecies animal described here, preserving its body lineage while changing only the specified evolved organ and silhouette.\nSpecies: 双帆角獣 リュゼルカ (do not put this name into the image).\nRare adult variant of reference Selvark, keeping its lean FOUR-LEGGED body, high slender hindlimbs, long narrow tail and horn-supported head membrane. Crucial change: its head sail is divided into TWO separate HORIZONTAL sail-horn membranes vertically OFFSET into an upper and lower tier, not many random wings. The upper tier catches wind; faint frost edges and a pale cooling gland line the lower tier. Muted grey-blue translucent membranes with natural bronze-colored horn supports. Grounded stance, no flying wings, all four legs visible.\nGround-truth anatomical notes: 二枚の横帆角が上下にずれ、後肢が高い四足 / 原種の分割角膜が上下二層へ分かれた双帆冷腺。上層で風を受け、下層の揮発液で冷やした微細な氷粒を狭い扇へ流す。 / Breakable structures: 上帆角, 下帆冷腺, 左後脚腱, 尾.",
+    "referenced_image_paths": [
+      "/workspace/scratch/b1fa555057db/repos/Kari-coordination/art-source/monster/concepts/monster_02_selvark_concept_v2.png"
+    ],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: two main vertically offset sail tiers, frosted lower membrane, lean four-legged Selvark lineage and full narrow tail; all features inside frame.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_043_ryuzelka_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-6c50e500-b211-41f7-8277-45ead3308471.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  },
+  {
+    "no": 44,
+    "id": "monster.mordine",
+    "name": "モルディネ",
+    "filename": "monster_044_mordine_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThe supplied reference image is the ORIGINAL PARENT SPECIES. Create the rare/subspecies animal described here, preserving its body lineage while changing only the specified evolved organ and silhouette.\nSpecies: 蓮冠獣 モルディネ (do not put this name into the image).\nRare adult variant of reference Numeradon. Keep the heavy squat FOUR-LEGGED mud-dwelling body, short sturdy legs, broad belly and short thick tail. Crucial change: the wide mud-catching crown on its head now consists of THREE stacked shallow circular basin plates, like three organic lotus trays. The HEAD alone is exceptionally wide; body retains normal proportions. Small natural cheek water ducts, dull grey-green hide, wet silt in the stacked basins. No literal lotus flower, no human hat, all three crown tiers clearly readable.\nGround-truth anatomical notes: 泥皿が三段に重なり、頭だけ横へ広い四足 / ヌメラドンの泥受け皿が三段に重なった蓮冠槽。各槽の水を別々の頬管へ送り、順番の異なる低い水弾を吐く。 / Breakable structures: 最上段の冠, 右頬管, 左前脚甲, 尾.",
+    "referenced_image_paths": [
+      "/workspace/scratch/b1fa555057db/repos/Kari-coordination/art-source/monster/concepts/monster_03_numeradon_concept_v2.png"
+    ],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: three clearly distinct stacked shallow mud basins, wide head and cheek ducts, four heavy legs, short tail, full frame.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_044_mordine_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-3049661b-813b-47b1-aebe-b31be5322031.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  },
+  {
+    "no": 45,
+    "id": "monster.doberken",
+    "name": "ドベルケン",
+    "filename": "monster_045_doberken_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThe supplied reference image is the ORIGINAL PARENT SPECIES. Create the rare/subspecies animal described here, preserving its body lineage while changing only the specified evolved organ and silhouette.\nSpecies: 重鐘嚢獣 ドベルケン (do not put this name into the image).\nRare adult variant of reference Bornakel, preserving its massive FOUR-LEGGED body, trumpet/bell-shaped biological head and three main resonant skin sacs. Crucial change: the LEFT resonance sac hangs in TWO visibly nested layered lobes, an outer sac and inner membrane; the head inclines slightly toward its RIGHT to counterbalance. Other sacs stay simpler. Grey-brown hide with dim amber mineral membrane veins, not bright orange. Let the viewer see the doubled left sac clearly. Entire head rim, feet and tail visible.\nGround-truth anatomical notes: 左の鐘嚢だけ二重に垂れ、頭が右へ傾く四足 / 左の共鳴嚢の中へ育った重鐘導膜。鉱物を含む二枚の膜を擦って帯電させ、鐘音の前に縁が琥珀色に瞬く。 / Breakable structures: 鐘頭, 左の外嚢, 左の内膜, 右前脚.",
+    "referenced_image_paths": [
+      "/workspace/scratch/b1fa555057db/repos/Kari-coordination/art-source/monster/concepts/monster_04_bornakel_concept_v2.png"
+    ],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: doubled nested left sac, simple other sacs, tilted trumpet head, four heavy legs and complete tail; organic amber membranes.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_045_doberken_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-1a7b44c5-54c8-4543-8b2a-c87804e09eba.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  },
+  {
+    "no": 46,
+    "id": "monster.shilhatora",
+    "name": "シルハトラ",
+    "filename": "monster_046_shilhatora_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThe supplied reference image is the ORIGINAL PARENT SPECIES. Create the rare/subspecies animal described here, preserving its body lineage while changing only the specified evolved organ and silhouette.\nSpecies: 枝燐鳥 シルハトラ (do not put this name into the image).\nRare adult variant of reference Lumisca. Preserve its slim upright TWO-LEGGED terrestrial bird body, short non-flight wings, small swept crest, and segmented glowing tail. Crucial change: the tail clearly splits into THREE separate long articulated BRANCHES, each bearing small amber light nodules. The short wings spread LOW sideways just enough to make the fan-control membranes readable. Grey-blue/grey-green feathers and natural bronze edges, restrained glow. All three tail branches must remain distinguishable, not a single thick tail or a feather fan.\nGround-truth anatomical notes: 尾節が三枝に分かれ、短い翼を低く横へ張る鳥 / ルミスカの尾節が枝分かれした枝燐導条。三本を別々に帯電させ、翼の送風で短い放電路を順に変える。 / Breakable structures: 中央の枝尾, 右の枝尾, 左翼膜, 嘴.",
+    "referenced_image_paths": [
+      "/workspace/scratch/b1fa555057db/repos/Kari-coordination/art-source/monster/concepts/monster_06_lumisca_concept_v2.png"
+    ],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: exactly three separate nodulated tail branches, short low-spread wings, two full legs, swept crest, full frame.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_046_shilhatora_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-07738753-ed3c-4dee-8a15-c07a2f6f110e.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  },
+  {
+    "no": 47,
+    "id": "monster.kuzanerio",
+    "name": "クザネリオ",
+    "filename": "monster_047_kuzanerio_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThe supplied reference image is the ORIGINAL PARENT SPECIES. Create the rare/subspecies animal described here, preserving its body lineage while changing only the specified evolved organ and silhouette.\nSpecies: 逆硝殻蟹 クザネリオ (do not put this name into the image).\nRare adult variant of reference Orglass. Preserve its low wide crustacean body, exactly SIX walking legs plus two claws, and broad translucent glasslike mineral carapace plates. Crucial changes: the plate on the creature's RIGHT curves OUTWARD as a large reversed translucent shell lip, and ONLY its LEFT claw is long and held LOW. The right claw stays shorter. Dull icy grey-blue glass-chitin, slight frost inside the outward-curving plate. Use a gentle front-left angle to show the low left claw and the outward right shell. No extra appendages or literal metal armor.\nGround-truth anatomical notes: 右の透明殻が外へ反り、左鋏だけが低く長い蟹 / 脱皮のずれで殻の一層が外向きに育った逆硝冷板。板の内側の冷却液が海霧を凍らせ、鋏で押すと氷片が前へ滑る。 / Breakable structures: 右の反り殻, 左の長鋏, 右の鋏, 前脚甲.",
+    "referenced_image_paths": [
+      "/workspace/scratch/b1fa555057db/repos/Kari-coordination/art-source/monster/concepts/monster_07_orglass_concept_v2.png"
+    ],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: six walking legs plus two unequal claws, low long left claw, frosted outward-curving glass shell, no crop. Far-side shell boundary partly overlapped by near plates.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_047_kuzanerio_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-c89f72e6-8544-4a8e-bc0f-fa4ac52cad4e.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  },
+  {
+    "no": 48,
+    "id": "monster.fesrami",
+    "name": "フェスラミ",
+    "filename": "monster_048_fesrami_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThe supplied reference image is the ORIGINAL PARENT SPECIES. Create the rare/subspecies animal described here, preserving its body lineage while changing only the specified evolved organ and silhouette.\nSpecies: 結絹蟲 フェスラミ (do not put this name into the image).\nRare adult variant of reference Verito, preserving its soft segmented many-legged crawling body, delicate antennae, translucent biological wing-sacs, and silk tail. Crucial changes: the LEFT AND RIGHT wing-sacs JOIN above the CHEST in ONE raised rounded KNOT organ, and the tail silk separates into THREE distinct bundles. Pale muted grey-purple membranes, subtle organic veins, soft chitin. The sacs are inflated organs, not flight wings. Several walking legs clearly support it on the ground. No human knot, ribbon, bow, clothing, or decorative jewel.\nGround-truth anatomical notes: 左右の羽袋が胸上で結ばれ、糸尾が三房に割れる蟲 / 左右の羽袋が一つの結節でつながった結絹胞。毒を含む細い霧糸を三本ずつ吐き、結び目の膨らみで射出順が分かる。 / Breakable structures: 胸の結節, 右羽袋, 左羽袋, 三房糸尾.",
+    "referenced_image_paths": [
+      "/workspace/scratch/b1fa555057db/repos/Kari-coordination/art-source/monster/concepts/monster_09_verito_concept_v2.png"
+    ],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: two inflated sacs joined at one organic chest knot, three separate silk-tail bundles, many walking legs, intact antennae and full frame.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_048_fesrami_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-6df4576d-9ee8-406f-bec8-fa74912813e4.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  },
+  {
+    "no": 49,
+    "id": "monster.elmejika",
+    "name": "エルメジカ",
+    "filename": "monster_049_elmejika_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThe supplied reference image is the ORIGINAL PARENT SPECIES. Create the rare/subspecies animal described here, preserving its body lineage while changing only the specified evolved organ and silhouette.\nSpecies: 霜灯獣 エルメジカ (do not put this name into the image).\nRare adult variant of reference Velgait. Preserve its lean FOUR-LEGGED body, long tail, natural circular head crown, and SIX luminous nodules. Crucial changes: the circular crown has ONE clear gap at the REAR, and the six nodules protrude laterally in TWO ROWS OF THREE, three on each side. Small pale cooling glands beneath those nodules and tiny frost tips, muted dark grey-green hide and faint grey-blue mineral edges. Side lighting keeps the open crown and all six nodules readable; no additional lights, no neon, no antler forest.\nGround-truth anatomical notes: 環冠が後ろへ割れ、六灯節が左右へ張り出す四足 / 六つの灯節の下に育つ霜灯滴腺。少量の冷却液を霧粒へ混ぜ、灯節の明滅後に足元の一部だけを凍らせる。 / Breakable structures: 後ろの割れ冠, 右灯節列, 左灯節列, 尾.",
+    "referenced_image_paths": [
+      "/workspace/scratch/b1fa555057db/repos/Kari-coordination/art-source/monster/concepts/monster_12_velgait_concept_v2.png"
+    ],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: six large luminous nodules arranged as two rows of three with small cooling glands beneath, open ring crown, lean four-legged body and full long tail. Crown gap reads at the upper arc in this view; rearward orientation needs 3D clarification.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_049_elmejika_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-45e5d8f5-faeb-4994-b7e7-fa4204309902.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  },
+  {
+    "no": 50,
+    "id": "monster.azelnoto",
+    "name": "アゼルノト",
+    "filename": "monster_050_azelnoto_concept_v1.png",
+    "prompt": "Use case: stylized-concept. Asset type: original monster concept painting for VEILBOUND HUNTERS. Produce one complete creature only, no text, no numbers, no labels, no frames, no humans, no equipment, no ground scenery. Full body right-facing, predominantly left-side view with a slight front angle only where needed to reveal both sides; keep all appendages and tail inside the canvas with 7–10% margin. Wide 3:2 composition, target 1536x1024. Pale plain warm off-white background. Detailed hand-painted natural-history game concept with realistic organic material texture, subtle brush finish, soft even studio daylight. Grounded plausible weight, muted grey-green/grey-brown/slate-blue/bronze/amber palette, no saturated primary colors, no magical particles, no machinery, no armor worn by the animal. Bronze refers to natural mineral color, not manufactured fittings. Do not copy a famous existing game monster.\nThe supplied reference image is the ORIGINAL PARENT SPECIES. Create the rare/subspecies animal described here, preserving its body lineage while changing only the specified evolved organ and silhouette.\nSpecies: 潮環蛇 アゼルノト (do not put this name into the image).\nWater-adapted variant of reference Razmer. Preserve its very long low land-crawling body and TWO PAIRS of short limbs, plus the repeated bony rings. Crucial change: the thin bony ring plates project mainly DOWNWARD and OUTWARD on the BELLY side, while the back remains comparatively FLAT. Soft grey-blue water bladders lie along the lower ring edges and partly conceal the short legs. Entire long tail visible, natural ivory-grey bone and blue-grey hide. No tall all-around hoop armor like the parent, no fish-only body, no water scene.\nGround-truth anatomical notes: 薄い骨環が腹側だけ張り出し、短肢が埋もれる長胴 / 骨環の腹側に発達した潮環水枕。浅瀬で水を含んで膨らみ、腹を順に押すと低い水筋が進む。 / Breakable structures: 頭環, 腹の水枕, 尾環, 左前肢.",
+    "referenced_image_paths": [
+      "/workspace/scratch/b1fa555057db/repos/Kari-coordination/art-source/monster/concepts/monster_10_razmer_concept_v2.png"
+    ],
+    "transparent_background": false,
+    "status": "generated",
+    "generation_mode": "built-in image_gen",
+    "review": "Visually checked: long low body, flat dorsal profile, repeated belly-projecting bone rings and water bladders, two pairs of short limbs, full tail and frame.",
+    "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_050_azelnoto_concept_v1.png",
+    "source_file": "/workspace/scratch/b1fa555057db/generated_images/exec-42a55783-bc40-4f2a-9ab7-24ff0636ac82.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "framing_instruction": "Entire creature within 80% of canvas, no cropping."
+  }
+]

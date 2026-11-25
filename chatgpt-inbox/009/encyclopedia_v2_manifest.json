@@ -1,0 +1,809 @@
+{
+  "title": "霧境の狩人 モンスター図鑑 第2版",
+  "date": "2026-11-24",
+  "version": "v0.16.0",
+  "sourceCommit": "e006b3500184e82b321ff8e64797e900113523a0",
+  "sourceRegistry": "public/data/bestiary.json",
+  "sourceRegistrySHA256": "ad6069a894c84b5917d55f9dcdfab2af4393ffe96fa28d286e671e8edb0c9539",
+  "pdf": "VEILBOUND_HUNTERS_monster_encyclopedia_v2.pdf",
+  "pdfSHA256": "c4bb6779e362556611930f399fc8a75fdfbe265cec0887a5e552633bc6d274bb",
+  "bytes": 11963997,
+  "pages": 183,
+  "species": 86,
+  "adults": 78,
+  "juveniles": 8,
+  "habitats": 20,
+  "playableHabitatCount": 1,
+  "implementedSpeciesCount": 1,
+  "existingArt": 13,
+  "newConceptsFromPreviousPR": 73,
+  "newImagesGenerated": 0,
+  "uniqueEmbeddedSpeciesImages": 86,
+  "ecologyFields": 688,
+  "checkedTextValues": 2504,
+  "textMismatches": [],
+  "bodyFontMinimumPt": 10.5,
+  "captionLabelMinimumPt": 10.5,
+  "outlineEntries": 179,
+  "internalLinks": 268,
+  "renderedPages": 183,
+  "layoutBoundsViolations": 0,
+  "originalImagesUnchanged": true,
+  "artAdoptionUnchanged": true,
+  "gameDataUnchanged": true,
+  "previews": [
+    "encyclopedia_v2_cover.jpg",
+    "encyclopedia_v2_galdros.jpg",
+    "encyclopedia_v2_galdros_ecology.jpg",
+    "encyclopedia_v2_kordopil.jpg",
+    "encyclopedia_v2_final_species.jpg"
+  ],
+  "speciesPages": [
+    {
+      "no": 1,
+      "id": "monster.galdros",
+      "name": "ガルドロス",
+      "artPage": 11,
+      "ecologyPage": 12,
+      "artSHA256": "fd932c6cf9496ccf7cd244c411a4a4f27d4fc21d742610c91662f5eb91d9d8a7"
+    },
+    {
+      "no": 2,
+      "id": "monster.selvark",
+      "name": "セルヴァルク",
+      "artPage": 13,
+      "ecologyPage": 14,
+      "artSHA256": "9a94cb0795244ddfc1743efe9e665e577e9de0711eff652eb0abf70148a503cf"
+    },
+    {
+      "no": 3,
+      "id": "monster.numeradon",
+      "name": "ヌメラドン",
+      "artPage": 15,
+      "ecologyPage": 16,
+      "artSHA256": "0179044a16a2481fb56a275cef884033db080c13e32266ac6397a20ec0ad9ad0"
+    },
+    {
+      "no": 4,
+      "id": "monster.bornakel",
+      "name": "ボルナケル",
+      "artPage": 17,
+      "ecologyPage": 18,
+      "artSHA256": "be27c6320c9d941e4088804bd926559a55eeb7a0400693a0f999d2933cca3678"
+    },
+    {
+      "no": 5,
+      "id": "monster.ashreia",
+      "name": "アシュレイア",
+      "artPage": 19,
+      "ecologyPage": 20,
+      "artSHA256": "0ac01b5c92a79a5b6b9a58bb3f6fdd55f0187294ee80996df56fd1277061178d"
+    },
+    {
+      "no": 6,
+      "id": "monster.lumisca",
+      "name": "ルミスカ",
+      "artPage": 21,
+      "ecologyPage": 22,
+      "artSHA256": "48ba1cbb5805b01c724c8c946050ccb567dd711e43d5998a13773c0d10708fea"
+    },
+    {
+      "no": 7,
+      "id": "monster.orglass",
+      "name": "オルグラス",
+      "artPage": 23,
+      "ecologyPage": 24,
+      "artSHA256": "3859ab0f7aae190819aed209b271bc6c35cb91c4e007c32db6a3cf92f81f3fa0"
+    },
+    {
+      "no": 8,
+      "id": "monster.tengaro",
+      "name": "テンガロ",
+      "artPage": 25,
+      "ecologyPage": 26,
+      "artSHA256": "970c667644e9bae887efe0a26992bff9ae3bb732ce21fd2315e76d4858ec6c38"
+    },
+    {
+      "no": 9,
+      "id": "monster.verito",
+      "name": "ヴェリト",
+      "artPage": 27,
+      "ecologyPage": 28,
+      "artSHA256": "001a11c3684fc2e1470b68c9345313f2383186857b87457dc9fb6534eaae4fce"
+    },
+    {
+      "no": 10,
+      "id": "monster.razmer",
+      "name": "ラズメル",
+      "artPage": 29,
+      "ecologyPage": 30,
+      "artSHA256": "0e620eb3a4b164efcb2c7cb0576b5f19c64437705e0cd183019125f49ecbf94f"
+    },
+    {
+      "no": 11,
+      "id": "monster.kirisave",
+      "name": "キリサーヴ",
+      "artPage": 31,
+      "ecologyPage": 32,
+      "artSHA256": "bd0166018215a7fc46746e0181d94944bca57333ff27bee04e6ee2a50b0771f8"
+    },
+    {
+      "no": 12,
+      "id": "monster.velgait",
+      "name": "ヴェルガイト",
+      "artPage": 33,
+      "ecologyPage": 34,
+      "artSHA256": "300e18fd22d352cbb2598a224d2a327fdea274e5877b7f5c12bf626dd2686ed0"
+    },
+    {
+      "no": 13,
+      "id": "monster.embarg",
+      "name": "エンバルグ",
+      "artPage": 35,
+      "ecologyPage": 36,
+      "artSHA256": "4fe399ecbc0e8b2a85a24915f809fcc6c795c53886b9781fca59932640775614"
+    },
+    {
+      "no": 14,
+      "id": "monster.kordopil",
+      "name": "コルドピル",
+      "artPage": 37,
+      "ecologyPage": 38,
+      "artSHA256": "fdd63187098060f18e5da9f437e73dae5c569f17083ce5c5fd49b36570c7c790"
+    },
+    {
+      "no": 15,
+      "id": "monster.palseit",
+      "name": "パルセイト",
+      "artPage": 39,
+      "ecologyPage": 40,
+      "artSHA256": "ff9af1a38ec7194edc6d3c31804d5cab2ca3514dfc3f9560eb3b4e6e5c3ad593"
+    },
+    {
+      "no": 16,
+      "id": "monster.numaporon",
+      "name": "ヌマポロン",
+      "artPage": 41,
+      "ecologyPage": 42,
+      "artSHA256": "d598415d2c352c7a7f93391c5b65934efc2936b3bfcf920e3c556d068060671e"
+    },
+    {
+      "no": 17,
+      "id": "monster.chilumicana",
+      "name": "チルミカナ",
+      "artPage": 43,
+      "ecologyPage": 44,
+      "artSHA256": "2590ad5e9d9e8a27eb2312344ddb202410698029f48453f6d8d858db0e68e643"
+    },
+    {
+      "no": 18,
+      "id": "monster.kohalgis",
+      "name": "コハルギス",
+      "artPage": 45,
+      "ecologyPage": 46,
+      "artSHA256": "07ffd5904feb206459b259f654d63d9d3519cd1b20d7b2e270391085c4cc3019"
+    },
+    {
+      "no": 19,
+      "id": "monster.mitogaron",
+      "name": "ミトガロン",
+      "artPage": 47,
+      "ecologyPage": 48,
+      "artSHA256": "82ba82f4acecb6bf233bd74529953a72ee5ef1f4c0f1d1b412bf8e2f98373133"
+    },
+    {
+      "no": 20,
+      "id": "monster.yurtepica",
+      "name": "ユルテピカ",
+      "artPage": 49,
+      "ecologyPage": 50,
+      "artSHA256": "6a67b0ea8393fd1af723d6d218ba6ed25f006c1b642615dcfb4455ec2ea59432"
+    },
+    {
+      "no": 21,
+      "id": "monster.hinasalv",
+      "name": "ヒナサルヴ",
+      "artPage": 51,
+      "ecologyPage": 52,
+      "artSHA256": "cf84c7b9281a11953734c24047aaf6de492623ef73d0ef35d8578f37be1baf0f"
+    },
+    {
+      "no": 22,
+      "id": "monster.hasdren",
+      "name": "ハスドレン",
+      "artPage": 53,
+      "ecologyPage": 54,
+      "artSHA256": "152359f5fd0160f483f4151da5505a0099bc4e04949a29f5d7327290137fa045"
+    },
+    {
+      "no": 23,
+      "id": "monster.ivselam",
+      "name": "イヴセラム",
+      "artPage": 55,
+      "ecologyPage": 56,
+      "artSHA256": "f186bbbc051f5addaea436ce5df83b3d7fb1640bb31ef7f9b4e3e28cb7d7ae54"
+    },
+    {
+      "no": 24,
+      "id": "monster.domelkano",
+      "name": "ドメルカノ",
+      "artPage": 57,
+      "ecologyPage": 58,
+      "artSHA256": "7728addad3ed637b3071ba364c92e55dd9a922b8e2a238380bff37dc89bfea7e"
+    },
+    {
+      "no": 25,
+      "id": "monster.holnebas",
+      "name": "ホルネバス",
+      "artPage": 59,
+      "ecologyPage": 60,
+      "artSHA256": "d1e9a1e86a21e907f094e247844eb4e853eec245c9451e85d870c65fb2537724"
+    },
+    {
+      "no": 26,
+      "id": "monster.miltasea",
+      "name": "ミルタセア",
+      "artPage": 61,
+      "ecologyPage": 62,
+      "artSHA256": "e3301d349356dde4c4ef8b07e6304ed97fd932a2f9da34f16f3238a3b61b5bde"
+    },
+    {
+      "no": 27,
+      "id": "monster.talgrina",
+      "name": "タルグリナ",
+      "artPage": 63,
+      "ecologyPage": 64,
+      "artSHA256": "3aa2bb16173687788b4948f6dfc9eeebb592f3063c55fa25cc70f63cc93c4217"
+    },
+    {
+      "no": 28,
+      "id": "monster.zanetolka",
+      "name": "ザネトルカ",
+      "artPage": 65,
+      "ecologyPage": 66,
+      "artSHA256": "103ae102123ffdfdded7c6c1b27f5f30989ee1306f750d23f02c40019b6733c4"
+    },
+    {
+      "no": 29,
+      "id": "monster.ulnaset",
+      "name": "ウルナセト",
+      "artPage": 67,
+      "ecologyPage": 68,
+      "artSHA256": "523e2963b5f6e7b3c0ea1f398bb73beb8bbf48f715a280d745d52bbef5717f7f"
+    },
+    {
+      "no": 30,
+      "id": "monster.nemboraf",
+      "name": "ネムボラフ",
+      "artPage": 69,
+      "ecologyPage": 70,
+      "artSHA256": "56fab850587578c19d508b7ad04b8e58e6bcfb9a591e4f38e4f689ba0a72c2ef"
+    },
+    {
+      "no": 31,
+      "id": "monster.borazeln",
+      "name": "ボラゼルン",
+      "artPage": 71,
+      "ecologyPage": 72,
+      "artSHA256": "65310aa983dd2e82a1f15880fdddc486a1983ff6be22c35ed1e43357ae63f603"
+    },
+    {
+      "no": 32,
+      "id": "monster.kudrimal",
+      "name": "クドリマル",
+      "artPage": 73,
+      "ecologyPage": 74,
+      "artSHA256": "6481551cafd1ebee15acf5c5ad81e72a9f9d34c12c6b49d8e81dc4bf7a1885ed"
+    },
+    {
+      "no": 33,
+      "id": "monster.tosamurie",
+      "name": "トサムリエ",
+      "artPage": 75,
+      "ecologyPage": 76,
+      "artSHA256": "15de2f6b67f1fc102a92b35b0133728aee4e75a6ab2ed117de74911a1d53d8de"
+    },
+    {
+      "no": 34,
+      "id": "monster.pukrenoa",
+      "name": "プクレノア",
+      "artPage": 77,
+      "ecologyPage": 78,
+      "artSHA256": "c747bb3eaf8d8891ebaa474da89bbc327f000b4909fc6d5c63efe11adb6f51ef"
+    },
+    {
+      "no": 35,
+      "id": "monster.kesalpina",
+      "name": "ケサルピナ",
+      "artPage": 79,
+      "ecologyPage": 80,
+      "artSHA256": "b3380a1124d5a5d0a608baa6c75ba76beac5b9a0fdf8d78a1455e85f8ade5492"
+    },
+    {
+      "no": 36,
+      "id": "monster.riptaum",
+      "name": "リプタウム",
+      "artPage": 81,
+      "ecologyPage": 82,
+      "artSHA256": "8a0f7e987f9caa435203b181d3e31bce6ad5a070cb432bacde310f3d6ae085e5"
+    },
+    {
+      "no": 37,
+      "id": "monster.serinodam",
+      "name": "セリノダム",
+      "artPage": 83,
+      "ecologyPage": 84,
+      "artSHA256": "375fb4d98539703d7f6456bb656212601a75f0ccc9a69f98f591518c3698dad6"
+    },
+    {
+      "no": 38,
+      "id": "monster.nufraken",
+      "name": "ヌフラケン",
+      "artPage": 85,
+      "ecologyPage": 86,
+      "artSHA256": "3fb42974d0db56b9839cdb8c3097314994a92856b036ee899c511771bd7dc272"
+    },
+    {
+      "no": 39,
+      "id": "monster.akaunel",
+      "name": "アカウネル",
+      "artPage": 87,
+      "ecologyPage": 88,
+      "artSHA256": "f2638b902649fb598c47a7053328b9f3eb61985bcd868030e210a1da20bd7df0"
+    },
+    {
+      "no": 40,
+      "id": "monster.tsumarobek",
+      "name": "ツマロベク",
+      "artPage": 89,
+      "ecologyPage": 90,
+      "artSHA256": "82711f372d406737dcf9caa8f31ef3e629b2e3ae1777aa15d66addc5a7d1dd5d"
+    },
+    {
+      "no": 41,
+      "id": "monster.furemsad",
+      "name": "フレムサド",
+      "artPage": 91,
+      "ecologyPage": 92,
+      "artSHA256": "f121af2c24f47177d2e53bb5961bce8f95d0d9d9a77ef80296f253ca6670c79c"
+    },
+    {
+      "no": 42,
+      "id": "monster.grasedon",
+      "name": "グラセドン",
+      "artPage": 93,
+      "ecologyPage": 94,
+      "artSHA256": "2233f14ff90d8ef207f56c5bbb7dcc2e12ca15ff0168a03ffba4a37bae5a2e33"
+    },
+    {
+      "no": 43,
+      "id": "monster.ryuzelka",
+      "name": "リュゼルカ",
+      "artPage": 95,
+      "ecologyPage": 96,
+      "artSHA256": "5e53859a56ad35c6ed450cc073452c27967a303e146dd523795900c0ae82a17f"
+    },
+    {
+      "no": 44,
+      "id": "monster.mordine",
+      "name": "モルディネ",
+      "artPage": 97,
+      "ecologyPage": 98,
+      "artSHA256": "8c44d204eddab2b11a47ed670d390d9fdef8f865e8ca54156a0503ac006a8035"
+    },
+    {
+      "no": 45,
+      "id": "monster.doberken",
+      "name": "ドベルケン",
+      "artPage": 99,
+      "ecologyPage": 100,
+      "artSHA256": "06a4d70678ac650d34ba69dcf4db76b536dfc5f47bf689de2fb59a6452389214"
+    },
+    {
+      "no": 46,
+      "id": "monster.shilhatora",
+      "name": "シルハトラ",
+      "artPage": 101,
+      "ecologyPage": 102,
+      "artSHA256": "086cc6a7a4688e01287f13e5be04b3632100261d89fb681c9a63abbfcd406a85"
+    },
+    {
+      "no": 47,
+      "id": "monster.kuzanerio",
+      "name": "クザネリオ",
+      "artPage": 103,
+      "ecologyPage": 104,
+      "artSHA256": "b0882e01ee2f028bb9ab799aac78fafbc5e1d8e4ee9119b356be344b4508d77c"
+    },
+    {
+      "no": 48,
+      "id": "monster.fesrami",
+      "name": "フェスラミ",
+      "artPage": 105,
+      "ecologyPage": 106,
+      "artSHA256": "4333886f27efecaedc3b9a54727755eb66e47cd7eb46e5ba14279b2c2709bfc8"
+    },
+    {
+      "no": 49,
+      "id": "monster.elmejika",
+      "name": "エルメジカ",
+      "artPage": 107,
+      "ecologyPage": 108,
+      "artSHA256": "fd30d8f03163885629b5d16651291528b5bb76ff4cef4ee43a33ea8411139cee"
+    },
+    {
+      "no": 50,
+      "id": "monster.azelnoto",
+      "name": "アゼルノト",
+      "artPage": 109,
+      "ecologyPage": 110,
+      "artSHA256": "b65fe92ca3a9fcbb7708d48431bd53ed2cab16886edc40db2281ad7827938cf6"
+    },
+    {
+      "no": 51,
+      "id": "monster.bezrakio",
+      "name": "ベズラキオ",
+      "artPage": 111,
+      "ecologyPage": 112,
+      "artSHA256": "a84d75207eb44daab99e0b7263546df69ac5f550eea115a359ad35305404ebad"
+    },
+    {
+      "no": 52,
+      "id": "monster.murzenato",
+      "name": "ムルゼナト",
+      "artPage": 113,
+      "ecologyPage": 114,
+      "artSHA256": "7900ed74c3926333e731cc4ad7420b518c72d58dc73d40cdcea173930c123211"
+    },
+    {
+      "no": 53,
+      "id": "monster.hauremika",
+      "name": "ハウレミカ",
+      "artPage": 115,
+      "ecologyPage": 116,
+      "artSHA256": "2fe3cf618a40d4e7bafa9fd4642dc90f31586fa12de9c4cedd665dce06036a63"
+    },
+    {
+      "no": 54,
+      "id": "monster.zedbanil",
+      "name": "ゼドバニル",
+      "artPage": 117,
+      "ecologyPage": 118,
+      "artSHA256": "e5ff665067e565825f997fccea430d5abac4ae13a1e8cf703cb865fb010b3855"
+    },
+    {
+      "no": 55,
+      "id": "monster.oldasem",
+      "name": "オルダセム",
+      "artPage": 119,
+      "ecologyPage": 120,
+      "artSHA256": "71cb7b76d6cb8dd73cb9ad47d58378d2ae10460e4e6841251834be2831a41ee5"
+    },
+    {
+      "no": 56,
+      "id": "monster.nuolvan",
+      "name": "ヌオルヴァン",
+      "artPage": 121,
+      "ecologyPage": 122,
+      "artSHA256": "6b88fee7ff0b5a20b6b55fa14019e1cdd9b1e638b257587611ad92082e0a1d56"
+    },
+    {
+      "no": 57,
+      "id": "monster.tarhegna",
+      "name": "テムソギア",
+      "artPage": 123,
+      "ecologyPage": 124,
+      "artSHA256": "af99c6bfee00e48554ee318ebf29580fdede75d8d6c17a5d3b9e8d2037e52053"
+    },
+    {
+      "no": 58,
+      "id": "monster.porgamis",
+      "name": "ポルガミス",
+      "artPage": 125,
+      "ecologyPage": 126,
+      "artSHA256": "5eec73c403fa0fb3036e858c266ff42238bf4a1af1aa9d7446d9203bbfc50ac2"
+    },
+    {
+      "no": 59,
+      "id": "monster.yarlshena",
+      "name": "ヤルシェナ",
+      "artPage": 127,
+      "ecologyPage": 128,
+      "artSHA256": "4f71b1c082d75bd4a982a860ec56878bace5f49a62f5e9bfe84bd07fbaea9dcf"
+    },
+    {
+      "no": 60,
+      "id": "monster.pizelta",
+      "name": "ピゼルタ",
+      "artPage": 129,
+      "ecologyPage": 130,
+      "artSHA256": "98710b8067431334cd28a4b54e9456b0f9909a8631003ea4ecfdb2537b1e3b87"
+    },
+    {
+      "no": 61,
+      "id": "monster.damorikus",
+      "name": "ダモリクス",
+      "artPage": 131,
+      "ecologyPage": 132,
+      "artSHA256": "ac5bcfe58fbe7a0dac8b4974bbab3b4b8f0e92f15c9b6d9fd0ba7ed67a66be20"
+    },
+    {
+      "no": 62,
+      "id": "monster.isarnem",
+      "name": "イサルネム",
+      "artPage": 133,
+      "ecologyPage": 134,
+      "artSHA256": "7fb8ea518b2fd7556bd03934df6916e2337f4c3d74dfcafaef7024098f844ca4"
+    },
+    {
+      "no": 63,
+      "id": "monster.regsanio",
+      "name": "レグサニオ",
+      "artPage": 135,
+      "ecologyPage": 136,
+      "artSHA256": "2a69e2161b0cb483907ef803f19c0d7660f227b0acbc6edb9eb096de931b9fb3"
+    },
+    {
+      "no": 64,
+      "id": "monster.rupenias",
+      "name": "ルペニアス",
+      "artPage": 137,
+      "ecologyPage": 138,
+      "artSHA256": "ee376147793d3935d9bf6aba5da4404f4d09a082ba42fae7c37c968ef042f6f0"
+    },
+    {
+      "no": 65,
+      "id": "monster.sograpin",
+      "name": "ソグラピン",
+      "artPage": 139,
+      "ecologyPage": 140,
+      "artSHA256": "814953706844659ffdb06229e622ca1887796d9cfb967429964e64068fbce5bd"
+    },
+    {
+      "no": 66,
+      "id": "monster.makuejira",
+      "name": "マクエジラ",
+      "artPage": 141,
+      "ecologyPage": 142,
+      "artSHA256": "b416e3d3d62d3056b080389689b97c726bf8ba56afde74a0104e658bdf6f6f95"
+    },
+    {
+      "no": 67,
+      "id": "monster.gumesald",
+      "name": "グメサルド",
+      "artPage": 143,
+      "ecologyPage": 144,
+      "artSHA256": "3c457e4b6f2e66a5291c624603da0f83cb721dc495338e7566585effdf84b30a"
+    },
+    {
+      "no": 68,
+      "id": "monster.nericaus",
+      "name": "ネリカウス",
+      "artPage": 145,
+      "ecologyPage": 146,
+      "artSHA256": "279ee54c71acf9a0a10407de7bfd49908987a39de2d507d3d81f393d26aa5087"
+    },
+    {
+      "no": 69,
+      "id": "monster.voltena",
+      "name": "ヴォルテナ",
+      "artPage": 147,
+      "ecologyPage": 148,
+      "artSHA256": "2cb192373f862a904dac43ec3e3c61b07a36b74099d1f7e6444add36616ebc65"
+    },
+    {
+      "no": 70,
+      "id": "monster.kitolnam",
+      "name": "キトルナム",
+      "artPage": 149,
+      "ecologyPage": 150,
+      "artSHA256": "294a1aff081f52c7163d8991434424dd87c4d443117b51a2ed432f6c5a183e40"
+    },
+    {
+      "no": 71,
+      "id": "monster.segranio",
+      "name": "セオルミド",
+      "artPage": 151,
+      "ecologyPage": 152,
+      "artSHA256": "48c3e1ecff9cf656efb7521442fa7fe2126f0e1e09bf9f70bc41b1c5b55e1602"
+    },
+    {
+      "no": 72,
+      "id": "monster.dekoranze",
+      "name": "デコランゼ",
+      "artPage": 153,
+      "ecologyPage": 154,
+      "artSHA256": "7e99222b83e249f37a3f0966d05e4cc948fd487fcf3699d294bf9c45ff672033"
+    },
+    {
+      "no": 73,
+      "id": "monster.fusaldom",
+      "name": "フサルドム",
+      "artPage": 155,
+      "ecologyPage": 156,
+      "artSHA256": "c491f6a48e9aca73dfd5c3e0f554ba173dcfed5878d52b07c3865142cb63996c"
+    },
+    {
+      "no": 74,
+      "id": "monster.rimposera",
+      "name": "リムポセラ",
+      "artPage": 157,
+      "ecologyPage": 158,
+      "artSHA256": "84a1cf48acffa4d52aa27317342bd3a60e9ee5bcf1528912af5cc797bcf0396e"
+    },
+    {
+      "no": 75,
+      "id": "monster.dalhoina",
+      "name": "ダルホイナ",
+      "artPage": 159,
+      "ecologyPage": 160,
+      "artSHA256": "fbfe17eeb615183e6e79a33e778e771856479b2251267fe5b39e921217312c75"
+    },
+    {
+      "no": 76,
+      "id": "monster.zonikebal",
+      "name": "ゾニケバル",
+      "artPage": 161,
+      "ecologyPage": 162,
+      "artSHA256": "d0eadaf23e75c7bf08ff631edac4274aeb1a656315e314f40aa59d9591952a1c"
+    },
+    {
+      "no": 77,
+      "id": "monster.ludopanea",
+      "name": "ルドパネア",
+      "artPage": 163,
+      "ecologyPage": 164,
+      "artSHA256": "ab76ae1acec6d7f3cae38700004e8a89c04cf2fb7dc3b71c4d9191490b55ba21"
+    },
+    {
+      "no": 78,
+      "id": "monster.salpinoc",
+      "name": "サルピノク",
+      "artPage": 165,
+      "ecologyPage": 166,
+      "artSHA256": "589aaf6b1c093b66fe1e34625eb317066cbde378f212e4eec08d5cf0163ad87d"
+    },
+    {
+      "no": 79,
+      "id": "monster.hemzario",
+      "name": "ヘムザリオ",
+      "artPage": 167,
+      "ecologyPage": 168,
+      "artSHA256": "59112519e18cfe21fba6b7e46d95584ab4fbc2d43de3b9a7616dae313f2d1047"
+    },
+    {
+      "no": 80,
+      "id": "monster.pasnelim",
+      "name": "パスネリム",
+      "artPage": 169,
+      "ecologyPage": 170,
+      "artSHA256": "6d42d1c5421a3b038088316dc690c3c71bbd160abc11a6f7b4d81d1a8cdf324c"
+    },
+    {
+      "no": 81,
+      "id": "monster.zaclatom",
+      "name": "ザクラトム",
+      "artPage": 171,
+      "ecologyPage": 172,
+      "artSHA256": "4108a14639eb4fc5b2b5177374facbcee4851061420339eeb622a31bd649e772"
+    },
+    {
+      "no": 82,
+      "id": "monster.izoflane",
+      "name": "イゾフラネ",
+      "artPage": 173,
+      "ecologyPage": 174,
+      "artSHA256": "db33541ba6e45edaee601b341ad07a287899c19cf585a8fc3a479ebbcd4878d1"
+    },
+    {
+      "no": 83,
+      "id": "monster.queribas",
+      "name": "クェリバス",
+      "artPage": 175,
+      "ecologyPage": 176,
+      "artSHA256": "7937ed38200ebffbf6dfceb7381eff4fb5dc1c9bebcfc80f03a882e9507e01f0"
+    },
+    {
+      "no": 84,
+      "id": "monster.enagrio",
+      "name": "エナグリオ",
+      "artPage": 177,
+      "ecologyPage": 178,
+      "artSHA256": "fd7991295c653fede1e51ee77a55380393ba776786bbb18f2f8aaf8d14507ecd"
+    },
+    {
+      "no": 85,
+      "id": "monster.nucbarea",
+      "name": "ヌクバレア",
+      "artPage": 179,
+      "ecologyPage": 180,
+      "artSHA256": "9cc07876daa037de35205fc0e3ab400eae25dce6442a67404f5ce7f6bb1c6370"
+    },
+    {
+      "no": 86,
+      "id": "monster.towalsem",
+      "name": "トワルセム",
+      "artPage": 181,
+      "ecologyPage": 182,
+      "artSHA256": "071670c3f096861c99e38c34f2d741a600864ea6c5d8818ca5bc4cbaf039bdcd"
+    }
+  ],
+  "visualReview": {
+    "status": "passed",
+    "renderedPages": 183,
+    "contactSheetsReviewed": 8,
+    "enlargedPagesReviewed": [
+      1,
+      3,
+      5,
+      6,
+      10,
+      11,
+      12,
+      37,
+      144,
+      178,
+      181
+    ],
+    "renderers": [
+      "PyMuPDF",
+      "Poppler"
+    ],
+    "notes": [
+      "全183ページを一覧で確認。代表ページを拡大して字形・画像・配置を確認。",
+      "索引見出し・頁列・数字の途中改行を修正し、独立レビューでも解消確認。",
+      "PDF内JPEGの品質82→79への変更後、代表画像ページを再確認。本文・文字配置・画像寸法は旧版と同一。"
+    ]
+  },
+  "limitations": [
+    "原画85種は採用待ち。全86種が遊べるという意味ではない。",
+    "3Dモデル・動作・当たり判定・実機表示は今回未検証。",
+    "属性・弱点等の多くは候補値で、攻略の確定情報ではない。"
+  ],
+  "pdfImageEncoding": {
+    "format": "JPEG",
+    "maxWidth": 1280,
+    "maxHeight": 960,
+    "quality": 79,
+    "chromaSubsampling": 2,
+    "optimize": true
+  },
+  "independentReview": {
+    "pdfSHA256": "c4bb6779e362556611930f399fc8a75fdfbe265cec0887a5e552633bc6d274bb",
+    "speciesChecked": 86,
+    "ecologyFieldsChecked": 688,
+    "checkedSourceValues": 3361,
+    "sourceValueMismatches": 0,
+    "imageIdentityMatches": 86,
+    "speciesIndexLinks": 86,
+    "outlineEntries": 179,
+    "textBoundaryIssues": 0,
+    "replacementCharacterIssues": 0,
+    "status": "passed",
+    "baselinePDFSHA256": "5048dfa266bff979158e590550503a667c6160950d53f694cdfe32d1fe09c140",
+    "validationTransfer": "既存3361値の検査は、全183ページの抽出本文と文字配置の完全一致を独立確認して新SHAへ引き継いだ。"
+  },
+  "transportCompressionVerification": {
+    "oldSHA256": "5048dfa266bff979158e590550503a667c6160950d53f694cdfe32d1fe09c140",
+    "newSHA256": "c4bb6779e362556611930f399fc8a75fdfbe265cec0887a5e552633bc6d274bb",
+    "oldBytes": 12851922,
+    "newBytes": 11963997,
+    "pages": 183,
+    "pageTextDifferences": [],
+    "textLayoutDifferences": [],
+    "linkDifferences": [],
+    "outlineIdentical": true,
+    "outlineCount": 179,
+    "internalLinks": 268,
+    "pageImageCountDifferences": [],
+    "uniqueEmbeddedImages": 86,
+    "speciesImageComparisons": 86,
+    "maxPixelMeanAbsoluteError": 2.034736469323955,
+    "minImagePSNR": 37.622241114716445,
+    "renderedComparisonPages": [
+      11,
+      123,
+      181
+    ]
+  }
+}

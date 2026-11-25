@@ -1,0 +1,19 @@
+{
+  "no": 31,
+  "id": "monster.borazeln",
+  "name": "ボラゼルン",
+  "reason": "Original had five visible legs, including an extra small far-side leg beneath the central abdomen. Remove only this extra leg to match the four-legged frame.",
+  "prompt": "Use case: precise local concept-art correction. Edit this exact Borazeln monster painting, preserving the same individual, original design, pose, facing, camera, lighting, textures, pale background, 1536x1024 landscape framing and silhouette. REMOVE ONLY THE EXTRA FIFTH LEG: the small grey far-side leg directly under the middle of the belly, centered about x=550 and y=790 in the 1536x1024 image, between the left-middle foreground hind leg and the large right-middle foreground front leg. Replace that extra leg with matching plain pale background and a faint matching ground contact shadow; preserve the natural continuous underside of the abdomen above it. The final animal must have EXACTLY FOUR legs, retaining unchanged the leftmost rear leg, the left-middle large hind leg, the right-middle large foreleg, and the rightmost far foreleg. Do not remove any of these four remaining legs. Keep exactly THREE large horizontal rib-canopy shelves on the front half, the tapered rear torso, the head, all toes, the tail and their current silhouettes unchanged. No additional limbs, no new elements, no text, no crop, no redesign.",
+  "referenced_image_paths": [
+    "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_031_borazeln_concept_v1.png"
+  ],
+  "original_generated_png": "/workspace/scratch/b1fa555057db/generated_images/exec-888bb6bf-ff1f-4d04-af9f-b986f6acf2c8.png",
+  "corrected_generated_png": "/workspace/scratch/b1fa555057db/generated_images/exec-56326527-732f-42b0-abdb-3a9886a75622.png",
+  "file": "/workspace/scratch/b1fa555057db/repos/Kari-monster-art/chatgpt-inbox/009/art/monster_031_borazeln_concept_v1.png",
+  "size": [
+    1536,
+    1024
+  ],
+  "generation_mode": "built-in image_gen local edit",
+  "review": "Visually checked after edit: exactly four legs remain; extra central far-side leg removed. Three front-half rib shelves, head, tail, pose and full composition retained."
+}
