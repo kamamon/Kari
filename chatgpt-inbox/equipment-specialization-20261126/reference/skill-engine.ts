@@ -139,13 +139,19 @@ export interface EventProof {
   hostileContact?: boolean; evadedByDodgeFrames?: boolean; unguarded?: boolean;
   hpDamage?: number; survived?: boolean; explicitSheatheCompleted?: boolean;
   maintenanceConsumed?: number; family?: string; chargeLevel?: number;
+  inflictedStatus?: 'poison' | 'para' | 'sleep' | 'stun';
 }
 export function canonicalEvent(e: SkillEvent, proof: EventProof = {}): SkillEvent | null {
   if (e.event === 'dodge' && !(proof.hostileContact && proof.evadedByDodgeFrames)) return null;
   if (e.event === 'damage_taken' && !(proof.hostileContact && proof.unguarded && (proof.hpDamage ?? 0) > 0 && proof.survived)) return null;
   if (e.event === 'sheathe' && !proof.explicitSheatheCompleted) return null;
   if (e.event === 'charge_release' && !((proof.chargeLevel ?? 0) >= 1)) return null;
-  if (e.event === 'item_used' && !((proof.maintenanceConsumed ?? 0) >= 1 && proof.family && proof.family !== 'ring_bow')) return null;
+  if (e.event === 'item_used' && !((proof.maintenanceConsumed ?? 0) >= 1 && proof.family && ['heavy_blade', 'guard_blade', 'war_maul', 'twin_blades', 'long_blade', 'long_lance'].includes(proof.family))) return null;
+  if (e.event === 'status_inflicted') {
+    if (!proof.inflictedStatus) return null;
+    const stateTags = {poison: 'poisoned', para: 'paralyzed', sleep: 'asleep', stun: 'stunned'};
+    return {...copy(e), tags: [...e.tags.filter(t => !Object.values(stateTags).includes(t)), stateTags[proof.inflictedStatus]]};
+  }
   return copy(e);
 }
 

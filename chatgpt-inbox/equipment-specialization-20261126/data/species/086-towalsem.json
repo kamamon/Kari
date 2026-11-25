@@ -1,0 +1,203 @@
+{
+  "no": 86,
+  "speciesId": "monster.towalsem",
+  "name": "トワルセム",
+  "nativeRank": 4,
+  "identity": {
+    "role": "三滴を次の氷の一手へ順に通す装備",
+    "ecologyBasis": "尾の手前に三つ並ぶ冷滴嚢。鉱泉の水を冷却液と混ぜて滴として保ち、嚢を絞る順に小さな氷塊へして落とす。",
+    "combatLoop": "同じ弱点へ三つの別行動を丁寧に通し、次の氷攻撃と軽い回避で距離を整える。",
+    "strength": "氷量1.82倍、会心20、消費0.92倍。次行動の氷+10/16%、回避消費-10/16%。",
+    "weakness": "基礎攻撃0.80倍、防御0.76倍、刃容量0.88倍、消耗1.22倍、火耐性-30。被弾・対象変更で三滴が崩れる。",
+    "recommendedFamilies": [
+      "long_blade",
+      "ring_bow",
+      "twin_blades"
+    ],
+    "avoidUse": "不利な運用: 多段技一回だけで三行動を満たす運用"
+  },
+  "stats": {
+    "rawScale": 0.8,
+    "affinity": 20,
+    "elementScale": 1.82,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.88,
+    "edgeWearScale": 1.22,
+    "staminaCostScale": 0.92,
+    "defenseScale": 0.76,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 0.98,
+      "war_maul": 0.98,
+      "twin_blades": 1.02,
+      "long_blade": 1.04,
+      "long_lance": 0.98,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.14,
+      "chest": 0.24,
+      "arms": 0.16,
+      "waist": 0.3,
+      "legs": 0.16
+    },
+    "setResistances": {
+      "fire": -30,
+      "thunder": 0,
+      "ice": 20,
+      "water": 0,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "element_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "冷滴の退き芯",
+    "trigger": {
+      "event": "dodge",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 60,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 600,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "rawPct",
+        "values": [
+          4,
+          4
+        ]
+      }
+    ],
+    "explanation": "回避後もスタミナ60%以上を保つと、次の別行動へ冷滴の芯を渡す。 回避入力ではなく、回避無敵中に敵攻撃の接触を避けた成功だけを数える。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 次の有効な別行動の命中で消費し、その行動の多段命中には同じ効果を使う。 持続180tick、発動時から再使用600tick。",
+    "id": "weapon_trait.towalsem"
+  },
+  "signature": {
+    "name": "三滴の順通し",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "weakspot"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 3,
+    "windowTicks": 300,
+    "cooldownTicks": 900,
+    "durationTicks": 300,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          10,
+          16
+        ]
+      },
+      {
+        "stat": "dodgeCostPct",
+        "values": [
+          -10,
+          -16
+        ]
+      }
+    ],
+    "explanation": "300tick内に同じ対象の弱点へ3行動を命中させて冷滴を揃える。次の別行動へ氷を渡し、消費されるまで回避の負担も軽くする。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 次の有効な別行動の命中で消費し、その行動の多段命中には同じ効果を使う。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続300tick、発動時から再使用900tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.towalsem"
+  },
+  "appearance": {
+    "silhouette": "滑らかな背と細い灰青の胴。三つの短い雫を後腰だけへ並べ、肩と頭を平らに保つ。",
+    "palette": [
+      "灰青",
+      "白灰",
+      "鈍い青銅"
+    ],
+    "organTranslation": [
+      "三つの冷滴嚢→後腰の短い三滴",
+      "滴を絞る順序→三滴を左から順に読む間隔",
+      "滑らかな背→継ぎ目を抑えた薄い背甲"
+    ],
+    "armorParts": {
+      "head": "滑甲を低くまとめる小兜、氷角を付けない",
+      "chest": "背面を滑らかな一枚面に見せる薄胴",
+      "arms": "細い腕甲に短い水路線、氷板は載せない",
+      "waist": "後腰だけ三つの短い雫を同間隔に並べる",
+      "legs": "支持尾骨を細い縦線へ分けた脛当て"
+    },
+    "weaponShapes": {
+      "heavy_blade": "三滴の小室を刃元の峰へ並べる細幅大剣",
+      "guard_blade": "三点鍔の剣と、下縁に短い三滴を刻む硬盾",
+      "war_maul": "槌頭側面に三つの小室、前後は硬く閉じた打面",
+      "twin_blades": "同長二短剣の峰に三点ずつの冷溝、滴を長く垂らさない",
+      "long_blade": "三つの低い滴室を鍔元へ寄せた細い太刀",
+      "long_lance": "直槍の刃元に三点の低い室、盾の下縁へ短い三滴",
+      "ring_bow": "三つの小室は握りの後ろへ、小照準環と一本の直線弦を空ける"
+    },
+    "gradeEvolution": {
+      "4": "背は灰青の滑らかな面にし、腰の後ろだけ三つの短い雫形を下げる。肩や頭には大きな氷板を付けない。 極級完成形のみ。三つの雫を後腰へ限定し、肩や頭へ大きな氷板を増やさない。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "滑らかな背",
+      "secondaryForm": "短い三滴",
+      "dominantRegion": "後腰のみ",
+      "asymmetry": "三滴は中央に等間隔、肩は平ら",
+      "repeatCount": "後腰の雫3",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "後腰の三つの雫の根元",
+      "inactive": "三つとも灰青",
+      "active": "三つの小点が左から順に白く曇る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "多段技一回だけで三行動を満たす運用",
+      "肩や兜へ大きい氷板を追加する形",
+      "三滴を胸前や左右の肩へ移す形"
+    ]
+  }
+}

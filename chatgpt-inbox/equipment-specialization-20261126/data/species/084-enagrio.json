@@ -1,0 +1,207 @@
+{
+  "no": 84,
+  "speciesId": "monster.enagrio",
+  "name": "エナグリオ",
+  "nativeRank": 4,
+  "identity": {
+    "role": "三環で直線を揃える雷装備",
+    "ecologyBasis": "喉を囲む三段の礫環と、その内側の蓄電砂嚢。食物を擦り潰す鉱物粒へ電荷を移し、襟の開く段から狭い方向へ吐き出す。",
+    "combatLoop": "刺突か射撃を同じ相手へ三行動通し、次の別行動へ雷と部位補正を集中する。",
+    "strength": "雷量1.75倍、会心15。次行動の雷+12/16%・部位+12/18%。",
+    "weakness": "基礎攻撃0.84倍、防御0.81倍、回避・ガード等の消費1.08倍、水耐性-30。対象変更で三環の準備を失う。",
+    "recommendedFamilies": [
+      "long_lance",
+      "ring_bow",
+      "guard_blade"
+    ],
+    "avoidUse": "不利な運用: 対象を替えながら三行動の準備を貯める運用"
+  },
+  "stats": {
+    "rawScale": 0.84,
+    "affinity": 15,
+    "elementScale": 1.75,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.9,
+    "edgeWearScale": 1.14,
+    "staminaCostScale": 1.08,
+    "defenseScale": 0.81,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 1.02,
+      "war_maul": 0.98,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 1.04,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.28,
+      "chest": 0.22,
+      "arms": 0.16,
+      "waist": 0.16,
+      "legs": 0.18
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 20,
+      "ice": 0,
+      "water": -30,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "element_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "礫粒の初芯",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "weakspot",
+        "unbroken"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 660,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "affinityPoints",
+        "values": [
+          4,
+          4
+        ]
+      }
+    ],
+    "explanation": "未破壊の弱点へ当て、同じ対象の次の攻撃へ細い会心補正を得る。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続240tick、発動時から再使用660tick。",
+    "id": "weapon_trait.enagrio"
+  },
+  "signature": {
+    "name": "三環の直芯合わせ",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [],
+      "tagsAny": [
+        "thrust",
+        "projectile"
+      ],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 3,
+    "windowTicks": 300,
+    "cooldownTicks": 720,
+    "durationTicks": 240,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "partPct",
+        "values": [
+          12,
+          18
+        ]
+      }
+    ],
+    "explanation": "300tick内に同じ対象へ刺突または射撃を異なる3行動で通す。三環が揃った後の別行動へ、雷と部位破壊を集中する。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 次の有効な別行動の命中で消費し、その行動の多段命中には同じ効果を使う。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続240tick、発動時から再使用720tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.enagrio"
+  },
+  "appearance": {
+    "silhouette": "首の後ろだけ三段の礫環を高め、胴腰を滑らかに絞る。粒は襟の内側へ隠す。",
+    "palette": [
+      "灰褐",
+      "青銅",
+      "暗灰"
+    ],
+    "organTranslation": [
+      "三段礫環→首後ろの三段襟",
+      "蓄電砂嚢→襟内側の小さい礫室",
+      "細い胴尾→継ぎ目の少ない細胴"
+    ],
+    "armorParts": {
+      "head": "三段襟を頭後ろへ積み額は低い板",
+      "chest": "滑らかな灰褐の細胴、胸面に粒を散らさない",
+      "arms": "小さい細尾片を前腕の外へ一枚",
+      "waist": "環骨留め一つの細い腰帯",
+      "legs": "短い脛甲の内側へ礫室を収める"
+    },
+    "weaponShapes": {
+      "heavy_blade": "三段環の短い支えを刃元へ集めた細幅大剣",
+      "guard_blade": "三段の低い鍔の剣と、襟段を写す硬い縦盾",
+      "war_maul": "側面に三段環、前後の打面を硬く閉じる槌",
+      "twin_blades": "同長二短剣の刃元へ三つの低い支え",
+      "long_blade": "三段鍔からまっすぐ伸びる細い峰の太刀",
+      "long_lance": "三つの低環で刃元を支える直槍と三段襟の独立盾",
+      "ring_bow": "三つの低い留めを細い弓身へ、小照準環と一本の直線弦"
+    },
+    "gradeEvolution": {
+      "4": "灰褐色の三段襟を首の後ろだけ高くし、胴と腰は滑らかに絞る。襟の内側へ青銅色の礫粒を置く。 極級完成形のみ。青銅色の礫粒を襟の内側に収め、体表へ散りばめない。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "三段の後襟",
+      "secondaryForm": "滑らかな胴腰",
+      "dominantRegion": "首の後ろ",
+      "asymmetry": "後ろだけ高く前襟は低い",
+      "repeatCount": "礫環3",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "三段襟の内縁",
+      "inactive": "内側に青銅色の粒",
+      "active": "三段へ一粒ずつ小さい点が上がる",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "対象を替えながら三行動の準備を貯める運用",
+      "礫粒を身体全体へ散りばめる形",
+      "三段襟を頭上の三輪へ浮かせる表現"
+    ]
+  }
+}

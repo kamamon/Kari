@@ -134,6 +134,10 @@ test('Adapter rejects dodge-input farming, invulnerable revival, chip, DoT, leth
   const item = event(2, 'item', {event: 'item_used'});
   assert.equal(canonicalEvent(item, {maintenanceConsumed: 1, family: 'ring_bow'}), null);
   assert.ok(canonicalEvent(item, {maintenanceConsumed: 1, family: 'long_blade'}));
+  assert.equal(canonicalEvent(item, {maintenanceConsumed: 1, family: 'unknown'}), null);
+  const status = event(2, 'status', {event: 'status_inflicted', tags: ['head', 'poisoned', 'asleep']});
+  assert.equal(canonicalEvent(status), null);
+  assert.deepEqual(canonicalEvent(status, {inflictedStatus: 'para'})!.tags, ['head', 'paralyzed']);
   assert.equal(canonicalEvent(event(3, 's', {event: 'sheathe'})), null);
   assert.equal(canonicalEvent(event(4, 'c', {event: 'charge_release'}), {chargeLevel: 0}), null);
 });

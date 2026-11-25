@@ -2,6 +2,7 @@
 """Deterministic proposal expansion; writes only inside this inbox package. No runtime import."""
 import collections
 import copy
+import functools
 import hashlib
 import json
 import math
@@ -11,6 +12,7 @@ import subprocess
 PACKAGE = pathlib.Path(__file__).resolve().parents[1]
 ROOT = PACKAGE.parents[1]
 SOURCE = ROOT / 'docs/source/chatgpt-equipment-20261125/data/all-equipment.json'
+SOURCE_COMMIT = '8adc7fe4fa584aa87c5a27286c8512de93a9b5a7'
 FAMILIES = ['heavy_blade', 'guard_blade', 'war_maul', 'twin_blades', 'long_blade', 'long_lance', 'ring_bow']
 FAMILY_NAMES = ['断岳剣', '護刃', '大槌', '双剣', '太刀', '長尖槍', '環弓']
 SLOTS = ['head', 'chest', 'arms', 'waist', 'legs']
@@ -21,8 +23,18 @@ EVENTS = ['hit', 'guard', 'parry', 'dodge', 'charge_release', 'sheathe', 'draw',
 TAGS = sorted(ACTION_TAGS | {'weakspot', 'head', 'broken', 'unbroken', 'rear', 'poisoned', 'paralyzed', 'asleep', 'stunned'})
 FINISHERS = dict(zip(FAMILIES, ['side_sweep', 'thrust', 'swing', 'flurry', 'helm', 'thrust3', 'spread']))
 
+@functools.lru_cache(maxsize=None)
+def source_bytes(relative_path):
+    result = subprocess.run(['git', '-C', str(ROOT), 'show', f'{SOURCE_COMMIT}:{relative_path}'], capture_output=True)
+    if result.returncode:
+        raise RuntimeError(f'Pinned source {SOURCE_COMMIT} unavailable. Run git fetch origin main, then retry. Path: {relative_path}')
+    return result.stdout
+
 def read(path):
-    return json.loads(pathlib.Path(path).read_text())
+    path = pathlib.Path(path).resolve()
+    if ROOT in path.parents and PACKAGE not in path.parents:
+        return json.loads(source_bytes(path.relative_to(ROOT).as_posix()))
+    return json.loads(path.read_text())
 
 def write(path, data, compact=False):
     target = PACKAGE / path
@@ -250,8 +262,8 @@ def main():
     source_paths = ['docs/source/chatgpt-equipment-20261125/data/all-equipment.json', 'public/data/bestiary.json',
                     'public/data/weapons.json', 'public/data/armor.json', 'public/data/equipment_series.json', 'public/data/recipes.json',
                     'public/data/items.json', 'public/data/items_creatures.json', 'public/data/skills.json', 'src/game/gear.ts', 'src/game/sim.ts']
-    write('analysis/source-manifest.json', {'sourceCommit': subprocess.check_output(['git', '-C', str(ROOT), 'rev-parse', 'HEAD'], text=True).strip(),
-        'version': read(ROOT / 'package.json')['version'], 'files': [{'path': p, 'sha256': hashlib.sha256((ROOT/p).read_bytes()).hexdigest()} for p in source_paths],
+    write('analysis/source-manifest.json', {'sourceCommit': SOURCE_COMMIT,
+        'version': read(ROOT / 'package.json')['version'], 'files': [{'path': p, 'sha256': hashlib.sha256(source_bytes(p)).hexdigest()} for p in source_paths],
         'counts': counts, 'oldUnpublishedTree': '31efccb0db89ce14f489f5cb37062e8c93687081', 'byteIdenticalRecovery': False})
     write('analysis/static-balance-index.json', [{'no': b['no'], 'name': b['name'], 'rawScale': b['stats']['rawScale'], 'affinity': b['stats']['affinity'],
         'expectedRawBeforeMotion': round(b['stats']['rawScale']*(1+b['stats']['affinity']/400), 4),
