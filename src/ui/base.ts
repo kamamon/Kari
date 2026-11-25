@@ -874,8 +874,8 @@ export class BaseScreen {
     const ul = el('ul', 'forge-cost');
     for (const i of chk.items) {
       const text = chk.state === 'claimed'
-        ? `${name(i.itemId)} ${i.need}個を納品済み（現在の所持 ${i.have}個）`
-        : `${name(i.itemId)} ${i.need}個を渡す（所持 ${i.have}個。${i.after < i.keep ? `保護分を含めてあと ${i.keep - i.after}個必要` : `納品後 ${i.after}個`}。${i.keep}個以上残します）`;
+        ? `${name(i.itemId)} ${i.need} 個を納品済み（いまの所持 ${i.have} 個）`
+        : `${name(i.itemId)} ${i.need} 個を渡す（所持 ${i.have} 個。${i.after < i.keep ? `残す分を含めて、あと ${i.keep - i.after} 個要る` : `納品の後 ${i.after} 個`}。${i.keep} 個は残す）`;
       ul.appendChild(withIcon(el('li', chk.state === 'short' && i.after < i.keep ? 'short' : undefined), i.itemId, text));
     }
     box.appendChild(ul);
@@ -884,7 +884,7 @@ export class BaseScreen {
       const need = d.requires.filter((id) => !(doc.progress.questClears[id] ?? 0)).map((id) => `「${c.quests.get(id)?.name ?? id}」`);
       box.appendChild(el('p', 'reception-locked-note', `${need.join('と')}を達成すると受けられます。`));
     } else if (chk.state === 'ready' && this.confirming === d.id) {
-      const p = el('p', 'forge-confirm', `${chk.items.map((i) => `${name(i.itemId)} ${i.need}個（残り ${i.after}個）`).join('、')}を渡して、${d.money}通貨を受け取ります。元には戻せません。`);
+      const p = el('p', 'forge-confirm', `${chk.items.map((i) => `${name(i.itemId)} ${i.need} 個（残り ${i.after} 個）`).join('、')}を渡して、${d.money} 通貨を受け取ります。元には戻せません。`);
       const yes = el('button', 'go', 'この内容で納品する');
       yes.type = 'button';
       yes.disabled = this.busy;

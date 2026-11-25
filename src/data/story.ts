@@ -53,6 +53,11 @@ export interface StoryChapter {
   place: string;
   /** 狩場の名前（登録簿の fields。景色の原画を出すため） */
   field?: string;
+  /**
+   * 章の場面の絵（src/ui/artIndex.ts の STORY_ART の名前。v0.39.0。ChatGPT の #13）。章の一覧で、狩場の景色の代わりに出す。
+   * まだ遊べない章にも置ける（章の予告の絵。会話は無い）
+   */
+  art?: string;
   goal: string;
   /** 本筋の標的（表示名。まだ遊べない章の予告にも使う） */
   targets: string[];
@@ -203,6 +208,7 @@ export function validateStory(story: StoryDef, questIds: ReadonlySet<string>, po
     if (ids.has(ch.id)) errors.push(`${w}: id が重複`);
     ids.add(ch.id);
     if (!ch.title || !ch.place || !ch.goal) errors.push(`${w}: title / place / goal が無い`);
+    if (ch.art !== undefined && art && !art.has(ch.art)) errors.push(`${w}: 章の場面の絵 ${ch.art} が無い`);
     ref(w, ch.openScene);
     ref(w, ch.reportScene);
     for (const st of ch.steps ?? []) {

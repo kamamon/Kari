@@ -1161,12 +1161,82 @@
    ],
    "bytes": 194078
   },
+  "story/thumb/event_story_arrival_board_v1": {
+   "px": [
+    480,
+    270
+   ],
+   "bytes": 30132
+  },
   "story/event_story_first_delivery_v1": {
    "px": [
     1280,
     720
    ],
    "bytes": 200234
+  },
+  "story/thumb/event_story_first_delivery_v1": {
+   "px": [
+    480,
+    270
+   ],
+   "bytes": 31180
+  },
+  "story/event_story_old_records_v1": {
+   "px": [
+    1280,
+    720
+   ],
+   "bytes": 110594
+  },
+  "story/thumb/event_story_old_records_v1": {
+   "px": [
+    480,
+    270
+   ],
+   "bytes": 18184
+  },
+  "story/event_story_limited_lights_v1": {
+   "px": [
+    1280,
+    720
+   ],
+   "bytes": 175872
+  },
+  "story/thumb/event_story_limited_lights_v1": {
+   "px": [
+    480,
+    270
+   ],
+   "bytes": 26772
+  },
+  "story/event_story_homecoming_v1": {
+   "px": [
+    1280,
+    720
+   ],
+   "bytes": 212136
+  },
+  "story/thumb/event_story_homecoming_v1": {
+   "px": [
+    480,
+    270
+   ],
+   "bytes": 32814
+  },
+  "story/event_thunder_first_sighting_v1": {
+   "px": [
+    1280,
+    720
+   ],
+   "bytes": 139572
+  },
+  "story/thumb/event_thunder_first_sighting_v1": {
+   "px": [
+    480,
+    270
+   ],
+   "bytes": 23748
   }
  },
  "props": [
@@ -1225,6 +1295,34 @@
   },
   {
    "file": "event_story_first_delivery_v1",
+   "px": [
+    1672,
+    941
+   ]
+  },
+  {
+   "file": "event_story_old_records_v1",
+   "px": [
+    1672,
+    941
+   ]
+  },
+  {
+   "file": "event_story_limited_lights_v1",
+   "px": [
+    1672,
+    941
+   ]
+  },
+  {
+   "file": "event_story_homecoming_v1",
+   "px": [
+    1672,
+    941
+   ]
+  },
+  {
+   "file": "event_thunder_first_sighting_v1",
    "px": [
     1672,
     941

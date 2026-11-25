@@ -1,0 +1,1246 @@
+{
+  "schemaId": "kari.flagship-story-quest-proposals",
+  "schemaVersion": 1,
+  "status": "proposal-not-runtime",
+  "title": "帰り道の灯――雷が帰る峰：追加依頼と既存主線対応",
+  "createdDateJST": "2026-11-26",
+  "baselineCommit": "0925487b686473e1a4d7e45fdc63449ef3a7d2ec",
+  "baselineVersion": "0.34.0",
+  "usage": "設計専用台帳。runtime QuestDef / story.json / bestiary import の入力ではない。正式ID解決・依存確認・コード実装・試遊を行うまで公開しない。",
+  "canonicalStoryId": "story.homeward_lights",
+  "legacyMainQuestCount": 14,
+  "newMandatoryHuntCount": 1,
+  "plannedMandatoryHuntCount": 15,
+  "additionalQuestCount": 7,
+  "idPolicy": {
+    "proposalIds": "proposal.* は本提出内の設計識別子。ゲームの正本IDとして登録済みではない。",
+    "suggestedRuntimeIds": "quest.story.thunder.* / quest.story.thunder_return は未登録の候補。採用時に登録担当が重複を確認する。",
+    "actor": "monster.orzelion は看板制作側の提案を参照。生物定義・モデル・技・素材の正本をこのファイルで再定義しない。"
+  },
+  "globalPolicies": [
+    "既存 story.homeward_lights と ch0〜ch9、ST01〜ST14のIDと意味を維持。追加決戦をch8の後、ch9の前へ置く。",
+    "ST01/ST02は順不同。主線15本だけで結末に到達でき、追加任意6本を前提にしない。",
+    "TQ04を一度限り狩猟、TQ06を反復自由狩猟と分ける。会話・スキップ・再閲覧を主線進行の条件にしない。",
+    "原種オルゼリオンの提案rank.2と、TQ04/TQ06の極級個体調整案rank.4を分離。主生息地は鉛雲高地のまま。",
+    "看板は雷属性。麻痺は別の状態異常。テンガロの属性none・麻痺の痺液管を雷器官と書き換えない。",
+    "星・時間・報酬・素材数は未試遊の初期提案。採集の星は危険/動線に照らし再評価し、級から自動生成しない。",
+    "正式登録されていない素材・狩場・器官・技能の稼働IDを捏造しない。画像・台詞を実装完了の根拠にしない。",
+    "雷雲を作る原因や全生態系を操る存在としてオルゼリオンを扱わない。狩猟成功で作業区間を確保し、補修は作業班が行う。",
+    "必要な補修資材・証拠は希少素材抽選や特定部位破壊に依存しない。任意納品は予備品で、本筋の資材不足を生じさせない。",
+    "時間は最終フィールド分数を正本とし、fieldTimeLimitTicks採用時は倍率を二重に掛けない。",
+    "新しい受付は既存自由依頼と昇級経路を再ロックしない。ST14達成から追加決戦へ進む際に別ルートの周回を要求しない。",
+    "鳴天の背は鉛雲高地内の新小区域案。重霧環谷からの予定輸送路の接続を別途設計し、二地域を同一の水道として直結させない。",
+    "TQ07は中級初対峙の任意枠。ST08以後に提案し、主線14+1本の構成を変えない。天鳴晶の抽選入手は本筋の条件にしない。"
+  ],
+  "capabilityVocabularyNote": "requiresCapabilities は現行エンジンのフラグ名ではなく、採用前にClaudeが確認する制作要件ラベル。",
+  "existingMainQuestMap": [
+    {
+      "legacyStoryNo": "ST01",
+      "chapterId": "ch1",
+      "questId": "quest.basin.003",
+      "title": "岩場の足音",
+      "actorId": "monster.galdros",
+      "fieldName": "風礫盆地",
+      "stars": 2,
+      "combatRankProposal": "rank.1",
+      "timeLimitMinutes": 30,
+      "requiresAllQuestClears": [],
+      "reusedRuntime": true,
+      "readiness": "implemented",
+      "policy": "ID・標的・前提の意味を維持。ST01/ST02は順不同。追加任意依頼を前提へ足さない。",
+      "newNarrativeRole": "既存の通行・補給・水路調査の成果を維持し、必要な雷の観測結果を帰還報告に重ねる。"
+    },
+    {
+      "legacyStoryNo": "ST02",
+      "chapterId": "ch1",
+      "questId": "quest.selvark.r1",
+      "title": "帆角の風",
+      "actorId": "monster.selvark",
+      "fieldName": "風礫盆地",
+      "stars": 2,
+      "combatRankProposal": "rank.1",
+      "timeLimitMinutes": 30,
+      "requiresAllQuestClears": [],
+      "reusedRuntime": true,
+      "readiness": "implemented",
+      "policy": "ID・標的・前提の意味を維持。ST01/ST02は順不同。追加任意依頼を前提へ足さない。",
+      "newNarrativeRole": "既存の通行・補給・水路調査の成果を維持し、必要な雷の観測結果を帰還報告に重ねる。"
+    },
+    {
+      "legacyStoryNo": "ST03",
+      "chapterId": "ch2",
+      "questId": "quest.story.st03",
+      "title": "根の向こうの水路",
+      "actorId": "monster.numeradon",
+      "fieldName": "根絡み湿原",
+      "stars": 2,
+      "combatRankProposal": "rank.1",
+      "timeLimitMinutes": 30,
+      "requiresAllQuestClears": [
+        "quest.basin.003",
+        "quest.selvark.r1"
+      ],
+      "reusedRuntime": false,
+      "readiness": "legacy-proposal-not-runtime",
+      "policy": "ID・標的・前提の意味を維持。ST01/ST02は順不同。追加任意依頼を前提へ足さない。",
+      "newNarrativeRole": "既存の通行・補給・水路調査の成果を維持し、必要な雷の観測結果を帰還報告に重ねる。"
+    },
+    {
+      "legacyStoryNo": "ST04",
+      "chapterId": "ch2",
+      "questId": "quest.story.st04",
+      "title": "縄を渡す朝",
+      "actorId": "monster.verito",
+      "fieldName": "根絡み湿原",
+      "stars": 2,
+      "combatRankProposal": "rank.1",
+      "timeLimitMinutes": 30,
+      "requiresAllQuestClears": [
+        "quest.story.st03"
+      ],
+      "reusedRuntime": false,
+      "readiness": "legacy-proposal-not-runtime",
+      "policy": "ID・標的・前提の意味を維持。ST01/ST02は順不同。追加任意依頼を前提へ足さない。",
+      "newNarrativeRole": "既存の通行・補給・水路調査の成果を維持し、必要な雷の観測結果を帰還報告に重ねる。"
+    },
+    {
+      "legacyStoryNo": "ST05",
+      "chapterId": "ch3",
+      "questId": "quest.story.st05",
+      "title": "網場をひらく",
+      "actorId": "monster.orglass",
+      "fieldName": "硝砂海岸",
+      "stars": 3,
+      "combatRankProposal": "rank.2",
+      "timeLimitMinutes": 35,
+      "requiresAllQuestClears": [
+        "quest.story.st04"
+      ],
+      "reusedRuntime": false,
+      "readiness": "legacy-proposal-not-runtime",
+      "policy": "ID・標的・前提の意味を維持。ST01/ST02は順不同。追加任意依頼を前提へ足さない。",
+      "newNarrativeRole": "既存の通行・補給・水路調査の成果を維持し、必要な雷の観測結果を帰還報告に重ねる。"
+    },
+    {
+      "legacyStoryNo": "ST06",
+      "chapterId": "ch3",
+      "questId": "quest.story.st06",
+      "title": "浜に並ぶ灯",
+      "actorId": "monster.lumisca",
+      "fieldName": "硝砂海岸",
+      "stars": 3,
+      "combatRankProposal": "rank.2",
+      "timeLimitMinutes": 35,
+      "requiresAllQuestClears": [
+        "quest.story.st05"
+      ],
+      "reusedRuntime": false,
+      "readiness": "legacy-proposal-not-runtime",
+      "policy": "ID・標的・前提の意味を維持。ST01/ST02は順不同。追加任意依頼を前提へ足さない。",
+      "newNarrativeRole": "既存の通行・補給・水路調査の成果を維持し、必要な雷の観測結果を帰還報告に重ねる。"
+    },
+    {
+      "legacyStoryNo": "ST07",
+      "chapterId": "ch4",
+      "questId": "quest.story.st07",
+      "title": "音の届かない坑口",
+      "actorId": "monster.bornakel",
+      "fieldName": "灰鐘鉱山",
+      "stars": 4,
+      "combatRankProposal": "rank.2",
+      "timeLimitMinutes": 35,
+      "requiresAllQuestClears": [
+        "quest.story.st06"
+      ],
+      "reusedRuntime": false,
+      "readiness": "legacy-proposal-not-runtime",
+      "policy": "ID・標的・前提の意味を維持。ST01/ST02は順不同。追加任意依頼を前提へ足さない。",
+      "newNarrativeRole": "既存の通行・補給・水路調査の成果を維持し、必要な雷の観測結果を帰還報告に重ねる。"
+    },
+    {
+      "legacyStoryNo": "ST08",
+      "chapterId": "ch4",
+      "questId": "quest.story.st08",
+      "title": "灰の下の分かれ道",
+      "actorId": "monster.ashreia",
+      "fieldName": "灰鐘鉱山",
+      "stars": 4,
+      "combatRankProposal": "rank.2",
+      "timeLimitMinutes": 35,
+      "requiresAllQuestClears": [
+        "quest.story.st07"
+      ],
+      "reusedRuntime": false,
+      "readiness": "legacy-proposal-not-runtime",
+      "policy": "ID・標的・前提の意味を維持。ST01/ST02は順不同。追加任意依頼を前提へ足さない。",
+      "newNarrativeRole": "既存の通行・補給・水路調査の成果を維持し、必要な雷の観測結果を帰還報告に重ねる。"
+    },
+    {
+      "legacyStoryNo": "ST09",
+      "chapterId": "ch5",
+      "questId": "quest.story.st09",
+      "title": "氷の線を読む",
+      "actorId": "monster.kirisave",
+      "fieldName": "氷帆峡谷",
+      "stars": 5,
+      "combatRankProposal": "rank.3",
+      "timeLimitMinutes": 40,
+      "requiresAllQuestClears": [
+        "quest.story.st08"
+      ],
+      "reusedRuntime": false,
+      "readiness": "legacy-proposal-not-runtime",
+      "policy": "ID・標的・前提の意味を維持。ST01/ST02は順不同。追加任意依頼を前提へ足さない。",
+      "newNarrativeRole": "既存の通行・補給・水路調査の成果を維持し、必要な雷の観測結果を帰還報告に重ねる。"
+    },
+    {
+      "legacyStoryNo": "ST10",
+      "chapterId": "ch5",
+      "questId": "quest.story.st10",
+      "title": "石段の続く先",
+      "actorId": "monster.razmer",
+      "fieldName": "氷帆峡谷",
+      "stars": 5,
+      "combatRankProposal": "rank.3",
+      "timeLimitMinutes": 40,
+      "requiresAllQuestClears": [
+        "quest.story.st09"
+      ],
+      "reusedRuntime": false,
+      "readiness": "legacy-proposal-not-runtime",
+      "policy": "ID・標的・前提の意味を維持。ST01/ST02は順不同。追加任意依頼を前提へ足さない。",
+      "newNarrativeRole": "既存の通行・補給・水路調査の成果を維持し、必要な雷の観測結果を帰還報告に重ねる。"
+    },
+    {
+      "legacyStoryNo": "ST11",
+      "chapterId": "ch6",
+      "questId": "quest.story.st11",
+      "title": "樹皮の向こう",
+      "actorId": "monster.tengaro",
+      "fieldName": "霧灯樹海",
+      "stars": 5,
+      "combatRankProposal": "rank.3",
+      "timeLimitMinutes": 40,
+      "requiresAllQuestClears": [
+        "quest.story.st10"
+      ],
+      "reusedRuntime": false,
+      "readiness": "legacy-proposal-not-runtime",
+      "policy": "ID・標的・前提の意味を維持。ST01/ST02は順不同。追加任意依頼を前提へ足さない。",
+      "newNarrativeRole": "既存の通行・補給・水路調査の成果を維持し、必要な雷の観測結果を帰還報告に重ねる。"
+    },
+    {
+      "legacyStoryNo": "ST12",
+      "chapterId": "ch6",
+      "questId": "quest.story.st12",
+      "title": "人の灯、獣の灯",
+      "actorId": "monster.velgait",
+      "fieldName": "霧灯樹海",
+      "stars": 6,
+      "combatRankProposal": "rank.3",
+      "timeLimitMinutes": 40,
+      "requiresAllQuestClears": [
+        "quest.story.st11"
+      ],
+      "reusedRuntime": false,
+      "readiness": "legacy-proposal-not-runtime",
+      "policy": "ID・標的・前提の意味を維持。ST01/ST02は順不同。追加任意依頼を前提へ足さない。",
+      "newNarrativeRole": "既存の通行・補給・水路調査の成果を維持し、必要な雷の観測結果を帰還報告に重ねる。"
+    },
+    {
+      "legacyStoryNo": "ST13",
+      "chapterId": "ch7",
+      "questId": "quest.story.st13",
+      "title": "帰路に立つ裂扇",
+      "actorId": "monster.grasedon",
+      "fieldName": "風礫盆地",
+      "stars": 6,
+      "combatRankProposal": "rank.3",
+      "timeLimitMinutes": 40,
+      "requiresAllQuestClears": [
+        "quest.story.st12"
+      ],
+      "reusedRuntime": false,
+      "readiness": "legacy-proposal-not-runtime",
+      "policy": "ID・標的・前提の意味を維持。ST01/ST02は順不同。追加任意依頼を前提へ足さない。",
+      "newNarrativeRole": "既存の通行・補給・水路調査の成果を維持し、必要な雷の観測結果を帰還報告に重ねる。"
+    },
+    {
+      "legacyStoryNo": "ST14",
+      "chapterId": "ch8",
+      "questId": "quest.story.st14",
+      "title": "帰り道の灯",
+      "actorId": "monster.segranio",
+      "fieldName": "重霧環谷",
+      "stars": 8,
+      "combatRankProposal": "rank.4",
+      "timeLimitMinutes": 45,
+      "requiresAllQuestClears": [
+        "quest.story.st13"
+      ],
+      "reusedRuntime": false,
+      "readiness": "legacy-proposal-not-runtime",
+      "policy": "ID・標的・前提の意味を維持。ST01/ST02は順不同。追加任意依頼を前提へ足さない。",
+      "newNarrativeRole": "下流の分流口へ作業班が入るための安全確保。オルゼリオンの代役・災害の黒幕にしない。"
+    }
+  ],
+  "additionalQuestProposals": [
+    {
+      "code": "TQ01",
+      "id": "proposal.quest.thunder.tq01",
+      "suggestedRuntimeId": "quest.story.thunder.tq01",
+      "title": "雨のあとに残るもの",
+      "chapterId": "ch2",
+      "mandatory": false,
+      "receptionGrade": {
+        "rankId": "rank.1",
+        "name": "初級"
+      },
+      "stars": 2,
+      "boardLane": "free",
+      "client": "ミナギ（受付と記録）",
+      "shortRequest": "根絡み湿原の安全区間から、雨上がりの堆積片を四つ集めてください。泥の筋が増えた場所と乾いた場所を比べます。光った欠片だけで雷のせいと決めず、採った場所も添えて。数が揃ったら野営地の箱へ。",
+      "fieldProposal": {
+        "existingCatalogFieldName": "根絡み湿原",
+        "runtimeFieldId": null,
+        "areaDescription": "ST03の後に点検班が区画した、獣を出さない岸辺と水路脇。マップ未実装。"
+      },
+      "dependencies": {
+        "existingRuntimeQuestIds": [],
+        "pendingLegacyQuestIds": [
+          "quest.story.st03"
+        ],
+        "pendingNewQuestIds": [],
+        "requiresAllQuestClears": [
+          "quest.story.st03"
+        ],
+        "requiresContentReady": true,
+        "gradePolicy": "新規依頼にだけ適用。受付の級は表示と新規受注先を示す。既存自由・昇級ルートを再ロックしない。主線到達とは別の周回を追加要求しない。",
+        "pendingContent": [
+          "根絡み湿原の実行フィールド",
+          "安全な採取点と納品箱",
+          "提案素材IDの正本登録"
+        ]
+      },
+      "objective": {
+        "mode": "collect-and-deliver",
+        "supportedRuntimeKindCandidate": "gather",
+        "text": "今回の出発で湿原の堆積片を4個採集し、野営地へまとめて納品する。",
+        "requiredItems": [
+          {
+            "proposalMaterialId": "proposal.material.wetland_sediment",
+            "displayName": "湿原の堆積片",
+            "count": 4
+          }
+        ],
+        "guaranteedSupply": {
+          "nodeCount": 5,
+          "yieldPerNode": 2,
+          "total": 10,
+          "required": 4,
+          "reachableReserve": 6,
+          "notes": "全5点を到達可能な安全区間へ配置。各点1回、エリア往復で復活しない。抽選なし。"
+        },
+        "success": [
+          "当該run由来の必要品4個がある",
+          "野営地の納品箱で一括納品が成立",
+          "結果を保存できた後に報酬と達成数を確定"
+        ],
+        "failure": [
+          "制限時間到達",
+          "力尽き3回（獣の出ない版でも共通規則。事故の追加はしない）",
+          "リタイア"
+        ],
+        "combatRole": "モンスターを出さない。討伐や捕獲で納品が成功したことにしない。"
+      },
+      "maxFaints": 3,
+      "time": {
+        "mode": "field",
+        "timeLimitMinutes": 20,
+        "proposedFieldTimeLimitTicks": 72000,
+        "targetClearMinutes": [
+          5,
+          8
+        ],
+        "tickRate": 60,
+        "arenaTimeLimitTicks": null,
+        "clockPolicy": "操作可能な出発から納品または狩猟成功まで。読み込み・強制会話・実際のポーズ・非表示による停止・成功後の帰還待ちは除外。",
+        "measured": false
+      },
+      "guaranteedEvidence": {
+        "id": "proposal.evidence.wetland_comparison",
+        "text": "湿り方の違う二か所の採取位置を比べる追加記録。欠片の光沢だけでは原因を断定できない。",
+        "delivery": "成功保存後、任意記録へ追記。報酬アイテムの抽選と切り離す。",
+        "mandatoryInformationFallback": "本筋で必要な水の偏りはST03/ST04の帰還報告で必ず提示。未受注でも次章へ進める。"
+      },
+      "rewards": {
+        "currency": 450,
+        "guaranteedItems": [],
+        "randomLootRequiredForStory": false,
+        "oneTime": false,
+        "balanceStatus": "未試遊の提案値。追加装備系列の採用後に経済検証。",
+        "claimIdProposal": null
+      },
+      "replayReset": {
+        "repeatable": true,
+        "reset": "採取点と今回の採集袋は新run開始時のみ初期化。納品済み4個を返さず、余剰だけ帰還報酬へ移す。",
+        "narrative": "再受注は別地点の比較採取として短い中立報告。物語進行を巻き戻さない。"
+      },
+      "requiresCapabilities": [
+        "content.wetland_field",
+        "gather.deterministic_nodes",
+        "gather.run_local_inventory",
+        "gather.atomic_delivery",
+        "save.success_before_story"
+      ],
+      "readiness": "proposal-waiting-for-field-materials-and-quest",
+      "fallbackPresentation": "未準備なら受注一覧に出さず、必要な情報はST03/ST04帰還時の会話で示す。盆地へ地名だけ置換しない。"
+    },
+    {
+      "code": "TQ02",
+      "id": "proposal.quest.thunder.tq02",
+      "suggestedRuntimeId": "quest.story.thunder.tq02",
+      "title": "鳴らない欠片",
+      "chapterId": "ch4",
+      "mandatory": false,
+      "receptionGrade": {
+        "rankId": "rank.2",
+        "name": "中級"
+      },
+      "stars": 4,
+      "boardLane": "free",
+      "client": "ロクハ（工房の職人）",
+      "shortRequest": "古い分流路の留め材を調べたい。灰鐘鉱山の点検済み区画から、層になった鈍色鉱片を三つ頼む。叩いた音が似ていても、薄く割れる向きは違う。採掘具で取り出し、番号を付けた袋ごと野営地へ。里で昔の部品と見比べる。",
+      "fieldProposal": {
+        "existingCatalogFieldName": "灰鐘鉱山",
+        "runtimeFieldId": null,
+        "areaDescription": "ST08後の点検済み露頭。細い坑道へ飛竜を入れない。大型・幼体なし。"
+      },
+      "dependencies": {
+        "existingRuntimeQuestIds": [],
+        "pendingLegacyQuestIds": [
+          "quest.story.st08"
+        ],
+        "pendingNewQuestIds": [],
+        "requiresAllQuestClears": [
+          "quest.story.st08"
+        ],
+        "requiresContentReady": true,
+        "gradePolicy": "新規依頼にだけ適用。受付の級は表示と新規受注先を示す。既存自由・昇級ルートを再ロックしない。主線到達とは別の周回を追加要求しない。",
+        "pendingContent": [
+          "灰鐘鉱山の実行フィールド",
+          "安全な採掘点",
+          "提案鉱片と採掘表示の登録"
+        ]
+      },
+      "objective": {
+        "mode": "mine-and-deliver",
+        "supportedRuntimeKindCandidate": "gather",
+        "text": "今回の出発で鈍色鉱片を3個採掘し、野営地へ一括納品する。",
+        "requiredItems": [
+          {
+            "proposalMaterialId": "proposal.material.dull_lamellar_ore",
+            "displayName": "鈍色鉱片",
+            "count": 3
+          }
+        ],
+        "guaranteedSupply": {
+          "nodeCount": 5,
+          "yieldPerNode": 1,
+          "total": 5,
+          "required": 3,
+          "reachableReserve": 2,
+          "notes": "採取点は確定供給。採掘具は貸与し、所有・購入を条件にしない。"
+        },
+        "success": [
+          "当該runの採掘品3個を納品箱へ渡す",
+          "納品成功結果の保存が完了する"
+        ],
+        "failure": [
+          "制限時間到達",
+          "力尽き3回",
+          "リタイア"
+        ],
+        "combatRole": "敵なしの採掘。雷耐性や麻痺解除アイテムを持つ前提で星を下げない。",
+        "narrativeAfterSuccess": [
+          "比較記録を読み返せるようにする。会話の開始・完走は納品成功の要件ではない。"
+        ]
+      },
+      "maxFaints": 3,
+      "time": {
+        "mode": "field",
+        "timeLimitMinutes": 25,
+        "proposedFieldTimeLimitTicks": 90000,
+        "targetClearMinutes": [
+          7,
+          11
+        ],
+        "tickRate": 60,
+        "arenaTimeLimitTicks": null,
+        "clockPolicy": "操作可能な出発から納品または狩猟成功まで。読み込み・強制会話・実際のポーズ・非表示による停止・成功後の帰還待ちは除外。",
+        "measured": false
+      },
+      "guaranteedEvidence": {
+        "id": "proposal.evidence.fitting_comparison",
+        "text": "古い部品と自然鉱片では層と加工痕が違う。設備の経緯と観測された現象を分ける補助記録。",
+        "delivery": "素材の抽選ではなく固定の帰還記録。",
+        "mandatoryInformationFallback": "分流路を閉じた経緯・必要な補修方針はST08の必須報告で示す。この採掘を謎解きの鍵や最終戦前提にしない。"
+      },
+      "rewards": {
+        "currency": 1000,
+        "guaranteedItems": [],
+        "randomLootRequiredForStory": false,
+        "oneTime": false,
+        "balanceStatus": "未試遊の提案値。追加装備系列の採用後に経済検証。",
+        "claimIdProposal": null
+      },
+      "replayReset": {
+        "repeatable": true,
+        "reset": "新runで採掘点を初期化。必要3個を消費し、採掘余剰だけを持ち帰る。",
+        "narrative": "二回目以降は加工比較用の追加試料。最初の発見を毎回演じない。"
+      },
+      "requiresCapabilities": [
+        "content.mine_field",
+        "gather.deterministic_nodes",
+        "gather.mining_presentation",
+        "gather.atomic_delivery",
+        "save.success_before_story"
+      ],
+      "readiness": "proposal-waiting-for-field-materials-and-quest",
+      "fallbackPresentation": "未準備なら採掘依頼を公開せず、既存ST08報告の記録板と部品原画で必要情報を提示する。"
+    },
+    {
+      "code": "TQ03",
+      "id": "proposal.quest.thunder.tq03",
+      "suggestedRuntimeId": "quest.story.thunder.tq03",
+      "title": "次の道のための荷",
+      "chapterId": "ch7",
+      "mandatory": false,
+      "receptionGrade": {
+        "rankId": "rank.3",
+        "name": "上級"
+      },
+      "stars": 5,
+      "boardLane": "free",
+      "client": "イサネ（荷を運ぶ商い手）",
+      "shortRequest": "次の見回りに持っていく交換部品を、里でまとめています。陶製の継ぎ筒を二つ、補修用の留め具を三つ、在庫から分けてもらえますか。急ぎの補修分は確保できています。これは、その後に道を点検する人の予備です。",
+      "fieldProposal": {
+        "existingCatalogFieldName": null,
+        "runtimeFieldId": null,
+        "areaDescription": "灯継ぎの里の上級受付・納品窓口。実行フィールドへ出発しない。"
+      },
+      "dependencies": {
+        "existingRuntimeQuestIds": [],
+        "pendingLegacyQuestIds": [
+          "quest.story.st13"
+        ],
+        "pendingNewQuestIds": [],
+        "requiresAllQuestClears": [
+          "quest.story.st13"
+        ],
+        "requiresContentReady": true,
+        "gradePolicy": "新規依頼にだけ適用。受付の級は表示と新規受注先を示す。既存自由・昇級ルートを再ロックしない。主線到達とは別の周回を追加要求しない。",
+        "pendingContent": [
+          "里納品用の素材正本",
+          "在庫と購入経路",
+          "級別受付への納品表示接続"
+        ]
+      },
+      "objective": {
+        "mode": "hub-inventory-delivery",
+        "supportedRuntimeKindCandidate": null,
+        "supportedRuntimeRouteCandidate": "DeliveryDef",
+        "text": "里の在庫から陶製の継ぎ筒2個と補修用の留め具3個をまとめて渡す。",
+        "requiredItems": [
+          {
+            "proposalMaterialId": "proposal.material.ceramic_sleeve",
+            "displayName": "陶製の継ぎ筒",
+            "count": 2,
+            "keepCountProposal": 0
+          },
+          {
+            "proposalMaterialId": "proposal.material.repair_fastener",
+            "displayName": "補修用の留め具",
+            "count": 3,
+            "keepCountProposal": 0
+          }
+        ],
+        "guaranteedSupply": {
+          "method": "提案素材を採用する場合、ST13達成後の商店で固定価格・在庫切れなしの購入経路を用意する。任意採集の成否や希少素材抽選には依存させない。",
+          "priceProposal": [
+            {
+              "proposalMaterialId": "proposal.material.ceramic_sleeve",
+              "unitPrice": 120
+            },
+            {
+              "proposalMaterialId": "proposal.material.repair_fastener",
+              "unitPrice": 60
+            }
+          ],
+          "costForRequiredQuantity": 420,
+          "notes": "値段と入手経路は未実装案。工房の必須支給・現在装備の強化用材料を無断で転用しない。"
+        },
+        "success": [
+          "必要在庫・保護残数・報酬容量・未受領を確認",
+          "確認画面に渡す数と残る数を表示",
+          "素材減算・通貨加算・達成数・claimsを一回の保存で確定"
+        ],
+        "failure": [],
+        "refusalConditions": [
+          "在庫不足",
+          "保護残数不足",
+          "報酬容量不足",
+          "すでに納品済み",
+          "保存競合または保存失敗"
+        ],
+        "combatRole": "なし。timeLimitTicks=0や仮の標的を使わない。"
+      },
+      "maxFaints": null,
+      "time": {
+        "mode": "hub-transaction",
+        "timeLimitMinutes": null,
+        "proposedFieldTimeLimitTicks": null,
+        "targetClearMinutes": [
+          1,
+          3
+        ],
+        "tickRate": null,
+        "arenaTimeLimitTicks": null,
+        "clockPolicy": "里の在庫納品は出発しない。制限時間・狩猟時計・力尽き回数を設定しない。",
+        "measured": false
+      },
+      "guaranteedEvidence": {
+        "id": "proposal.evidence.spare_supplies",
+        "text": "各地の道を後から点検するため、予備品の棚が一つ増えたという任意記録。",
+        "delivery": "成功保存後の納品記録。里の外観変更は演出候補で、未実装なら文章のみ。",
+        "mandatoryInformationFallback": "本筋の補修品と作業班はすでに里で確保。TQ03を行わなくてもST14・TQ04・終章へ進める。"
+      },
+      "rewards": {
+        "currency": 500,
+        "guaranteedItems": [],
+        "randomLootRequiredForStory": false,
+        "oneTime": true,
+        "balanceStatus": "未試遊の提案値。追加装備系列の採用後に経済検証。",
+        "claimIdProposal": "proposal.quest.thunder.tq03",
+        "claimIdRuntimeCandidate": "quest.story.thunder.tq03",
+        "claimMappingNote": "現行DeliveryDefでは納品idをclaimsとquestClearsの共通キーにする。別のclaim専用IDへ分離しない。"
+      },
+      "replayReset": {
+        "repeatable": false,
+        "reset": "claimsで永続的に一度だけ。別の狩りを300件以上終えても再受領にしない。",
+        "narrative": "納品後は記録のみ再閲覧可能。会話の再閲覧で在庫を再消費しない。"
+      },
+      "requiresCapabilities": [
+        "content.proposal_materials_resolved",
+        "shop.guaranteed_stock",
+        "delivery.atomic_inventory_claim",
+        "save.revision_conflict_check",
+        "ui.grade_reception"
+      ],
+      "readiness": "proposal-waiting-for-materials-shop-and-reception",
+      "fallbackPresentation": "未準備なら納品依頼を出さず、イサネの補給の話だけを任意会話で表示。最終戦の解禁条件は増やさない。"
+    },
+    {
+      "code": "TQ04",
+      "id": "proposal.quest.thunder_return",
+      "suggestedRuntimeId": "quest.story.thunder_return",
+      "title": "雷が帰る峰",
+      "chapterId": "proposal.chapter.thunder_return",
+      "suggestedRuntimeChapterId": "ch_thunder_return",
+      "mandatory": true,
+      "receptionGrade": {
+        "rankId": "rank.4",
+        "name": "極級"
+      },
+      "stars": 8,
+      "boardLane": "main",
+      "client": "ミナギ（受付と記録）／高地の点検班",
+      "shortRequest": "重霧環谷を通る帰路は確保できました。次は、鉛雲高地の鳴天の背でオルゼリオンへ対処し、点検班が入る時間をつくってください。胸が二度ふくらみ、翼の二条が光ったら正面を空けて。帰還後、人の通る時間と獣に譲る岩棚を記録します。",
+      "fieldProposal": {
+        "existingCatalogFieldName": "鉛雲高地",
+        "runtimeFieldId": null,
+        "newSubareaProposalId": "proposal.area.thunder_back",
+        "newSubareaName": "鳴天の背",
+        "areaDescription": "鉛雲高地内に提案する、オルゼリオンが徒歩でも戻れる広い休息棚と点検路の小区域。重霧環谷との往来は予定輸送路でつなぎ、同一水道の上流下流として直結させない。広さ・高低差・地形は未設計。",
+        "transportRole": "重霧環谷の安全な帰路に対し、高地は補修部材と荷を定期的に通す残る往路・点検路。両区間を整えて臨時輸送から日常運用へ戻るという新地理案。"
+      },
+      "dependencies": {
+        "existingRuntimeQuestIds": [],
+        "pendingLegacyQuestIds": [
+          "quest.story.st14"
+        ],
+        "pendingNewQuestIds": [],
+        "requiresAllQuestClears": [
+          "quest.story.st14"
+        ],
+        "requiresContentReady": true,
+        "gradePolicy": "新規依頼にだけ適用。受付の級は表示と新規受注先を示す。既存自由・昇級ルートを再ロックしない。主線到達とは別の周回を追加要求しない。",
+        "pendingContent": [
+          "ST03〜ST14の主線と本来の地域",
+          "鳴天の背の地理・実行マップ",
+          "オルゼリオンの正本登録・モデル・戦闘",
+          "極級物語個体の能力・素材表",
+          "捕獲を選ぶ場合は捕獲全経路",
+          "戦後報告・高地の点検完了と終章の接続"
+        ]
+      },
+      "actor": {
+        "proposedActorId": "monster.orzelion",
+        "registrationStatus": "別作業で制作中・参照基点mainには未登録",
+        "speciesRankFromMonsterProposal": "rank.2",
+        "combatRankForThisQuestProposal": "rank.4",
+        "instanceRole": "本物語の極級個体として別調整する案。原種の登録ランク・主生息地・サイズを上書きしない。",
+        "count": 1,
+        "identity": "決戦前の高地点検で継続確認された対象個体。序盤の遠い目撃や痕跡との同一性は未確定。任意中級TQ07の対象、クリア後TQ06の対象とは別個体。"
+      },
+      "objective": {
+        "mode": "single-large-hunt-proposal",
+        "preferredRuntimeKindCandidate": "hunt",
+        "capturePolicy": "捕獲の条件・罠と鎮静・拘束時間・報酬・帰還後の収容説明・UI・試験まで揃った場合だけhuntとして公開。雷属性だから既存罠が効くと推定しない。",
+        "supportedSlayFallback": {
+          "runtimeKindCandidate": "slay",
+          "objectiveText": "オルゼリオン1頭の討伐",
+          "requiredTextChanges": "受注目標と短依頼文の「狩猟」を「討伐」に揃え、捕獲支給と捕獲案内を出さない。両表現を同時公開しない。",
+          "storyEquivalent": true
+        },
+        "text": "オルゼリオン1頭の狩猟（捕獲未対応版では討伐に統一）。",
+        "success": [
+          "公開時に採用した討伐、または対応済み捕獲の条件を満たす",
+          "狩猟成功結果の保存が完了する"
+        ],
+        "failure": [
+          "制限時間到達",
+          "力尽き3回",
+          "リタイア"
+        ],
+        "notSuccessConditions": [
+          "所定時間だけ耐える",
+          "カットシーンを最後まで見る",
+          "特定部位の破壊",
+          "希少素材入手",
+          "天候が晴れる",
+          "水路設備の未実装操作"
+        ],
+        "combatRole": "通常の単体狩猟。強制敗北・装置を起動するQTE・無予告の画面全域雷撃を追加しない。",
+        "narrativeAfterSuccess": [
+          "保存済み達成から高地の点検路確保を記録し、終章を解禁する",
+          "作業班が高地の通行路と休息棚を確認し、運用を見直す帰還報告を表示できるようにする"
+        ],
+        "reportPlaybackPolicy": "帰還報告の開始・完走・スキップ・閲覧済みは成功判定の要件ではない。表示に失敗しても保存済みの成功を失わず、記録から読み返せる。"
+      },
+      "maxFaints": 3,
+      "time": {
+        "mode": "field",
+        "timeLimitMinutes": 45,
+        "proposedFieldTimeLimitTicks": 162000,
+        "targetClearMinutes": [
+          18,
+          25
+        ],
+        "tickRate": 60,
+        "arenaTimeLimitTicks": null,
+        "clockPolicy": "操作可能な出発から納品または狩猟成功まで。読み込み・強制会話・実際のポーズ・非表示による停止・成功後の帰還待ちは除外。",
+        "measured": false
+      },
+      "guaranteedEvidence": {
+        "id": "proposal.evidence.upper_route_secured",
+        "text": "鉛雲高地の点検路を確保し、作業班が人の通行路と獣の休息棚を照合した。雷雲は残り、安全に通る時間と譲る場所が定まる。重霧環谷の分流路とは同一水道でつながると断定しない。",
+        "delivery": "狩猟成功の固定帰還報告。討伐／捕獲どちらでも同じ内容。",
+        "mandatoryInformationFallback": "必要な手掛かりはST01〜ST14の必須帰還報告で揃う。TQ01〜TQ03の実施・希少素材・部位破壊に依存しない。"
+      },
+      "rewards": {
+        "currency": 2800,
+        "guaranteedItems": [
+          {
+            "proposalMaterialId": "proposal.material.orzelion_storm_scale",
+            "displayName": "鳴天竜の蒼甲",
+            "count": 3,
+            "source": "固定クエスト報酬案。制作側の標準素材ラベルを参照し、正式IDと数量は登録担当が調整。破壊不要。",
+            "materialTierResolutionRequired": "rank.4"
+          }
+        ],
+        "randomLootRequiredForStory": false,
+        "oneTime": false,
+        "balanceStatus": "未試遊の提案値。追加装備系列の採用後に経済検証。",
+        "claimIdProposal": null
+      },
+      "supplyProposal": {
+        "everyDeparture": [
+          {
+            "existingItemId": "item.heal_tonic",
+            "count": 5
+          },
+          {
+            "existingItemId": "item.whetstone",
+            "count": 3
+          }
+        ],
+        "captureAdditionsOnlyWhenSupported": [
+          {
+            "existingItemId": "item.bind_trap",
+            "count": 1
+          },
+          {
+            "existingItemId": "item.calm_orb",
+            "count": 3
+          }
+        ],
+        "note": "既存の道具IDは存在するが、オルゼリオンへの捕獲効果は未確認。専用の罠を要するなら正式仕様完成まで討伐版とする。"
+      },
+      "replayReset": {
+        "repeatable": false,
+        "reset": "失敗とリタイアは同じ依頼を再受注可。成功保存後は物語の一度限りの遭遇を閉じ、反復素材集めはTQ06へ案内。",
+        "narrative": "台本と映像は記録から再閲覧。決戦個体を毎回復活させず、設備の状態も巻き戻さない。",
+        "claimStrategy": "現行エンジンに一度限り狩猟の受付制御はないため、初成功済み受注禁止を追加する必要がある。結果精算はrunIdとquestClearsを利用し、映像閲覧をclaimsに流用しない。"
+      },
+      "requiresCapabilities": [
+        "content.orzelion_registered",
+        "combat.orzelion_ground_and_flight",
+        "combat.orzelion_rank4_instance",
+        "content.thunder_back_geography_and_map",
+        "quest.single_clear_acceptance",
+        "story.explicit_scene_unlocks",
+        "story.conditional_epilogue",
+        "save.success_before_story",
+        "ui.grade_reception",
+        "capture.complete_pipeline_if_hunt"
+      ],
+      "readiness": "proposal-blocked-until-actor-map-combat-story-ready",
+      "fallbackPresentation": "依存が未完成なら受注させず制作計画として保持。序盤への非戦闘の予兆や帰還会話は別途採用可能。画像だけで飛行・雷戦闘完成とは扱わない。"
+    },
+    {
+      "code": "TQ05",
+      "id": "proposal.quest.thunder.tq05",
+      "suggestedRuntimeId": "quest.story.thunder.tq05",
+      "title": "峰を測り直す日",
+      "chapterId": "ch9",
+      "mandatory": false,
+      "receptionGrade": {
+        "rankId": "rank.4",
+        "name": "極級"
+      },
+      "stars": 7,
+      "boardLane": "free",
+      "client": "セナキ（道の補修と見回りの古参）",
+      "shortRequest": "新しい通行記録は、書いた日で終わりじゃない。鳴天の背の点検済みの棚を回り、位置を記した土の見本を四つ持ち帰ってくれ。獣の休む棚には近づかなくていい。今回は静かな時間を選んだ。戻ったら、前の雨の後と比べよう。",
+      "fieldProposal": {
+        "existingCatalogFieldName": "鉛雲高地",
+        "runtimeFieldId": null,
+        "newSubareaProposalId": "proposal.area.thunder_back",
+        "newSubareaName": "鳴天の背",
+        "areaDescription": "鉛雲高地の鳴天の背で、決戦後に区画した安全な巡回採集ルート。主生息地を移さない。"
+      },
+      "dependencies": {
+        "existingRuntimeQuestIds": [],
+        "pendingLegacyQuestIds": [],
+        "pendingNewQuestIds": [
+          "quest.story.thunder_return"
+        ],
+        "requiresAllQuestClears": [
+          "quest.story.thunder_return"
+        ],
+        "requiresContentReady": true,
+        "gradePolicy": "新規依頼にだけ適用。受付の級は表示と新規受注先を示す。既存自由・昇級ルートを再ロックしない。主線到達とは別の周回を追加要求しない。",
+        "pendingContent": [
+          "鳴天の背の決戦後安全区間",
+          "点検用の採取点と素材",
+          "保存済み最終戦に基づく終章表示"
+        ]
+      },
+      "objective": {
+        "mode": "collect-and-deliver",
+        "supportedRuntimeKindCandidate": "gather",
+        "text": "今回の出発で峰の土見本を4個集め、野営地の箱へまとめて納品する。",
+        "requiredItems": [
+          {
+            "proposalMaterialId": "proposal.material.ridge_soil_sample",
+            "displayName": "峰の土見本",
+            "count": 4
+          }
+        ],
+        "guaranteedSupply": {
+          "nodeCount": 6,
+          "yieldPerNode": 1,
+          "total": 6,
+          "required": 4,
+          "reachableReserve": 2,
+          "notes": "採取地点は順不同、全点徒歩到達可。敵を配置しない。落下やランダム落雷を難度調整のために加えない。"
+        },
+        "success": [
+          "当該runの必要量を野営地で納品",
+          "成功保存後に巡回記録を追加"
+        ],
+        "failure": [
+          "制限時間到達",
+          "力尽き3回",
+          "リタイア"
+        ],
+        "combatRole": "敵なしの巡回採集。★7は極級向けの地形移動量を含む暫定掲示値で、戦闘の難しさを意味しない。移動試遊で再評価。"
+      },
+      "maxFaints": 3,
+      "time": {
+        "mode": "field",
+        "timeLimitMinutes": 25,
+        "proposedFieldTimeLimitTicks": 90000,
+        "targetClearMinutes": [
+          8,
+          12
+        ],
+        "tickRate": 60,
+        "arenaTimeLimitTicks": null,
+        "clockPolicy": "操作可能な出発から納品または狩猟成功まで。読み込み・強制会話・実際のポーズ・非表示による停止・成功後の帰還待ちは除外。",
+        "measured": false
+      },
+      "guaranteedEvidence": {
+        "id": "proposal.evidence.ridge_monitoring",
+        "text": "通行路と獣の休息路を分けても点検は続く。前回から変わった所・変わらない所を残す。",
+        "delivery": "初回は任意後日談、二回目以降は追加調査の中立記録。",
+        "mandatoryInformationFallback": "終章と物語完了はTQ04成功で成立。TQ05を完了しなくてもエンディングや自由狩猟を止めない。"
+      },
+      "rewards": {
+        "currency": 1300,
+        "guaranteedItems": [],
+        "randomLootRequiredForStory": false,
+        "oneTime": false,
+        "balanceStatus": "未試遊の提案値。追加装備系列の採用後に経済検証。",
+        "claimIdProposal": null
+      },
+      "replayReset": {
+        "repeatable": true,
+        "reset": "採取点は新runのみ再設置。必要量消費・余剰のみ帰還を維持。",
+        "narrative": "新しい日付の調査として扱い、世界の修復状態を初期化しない。"
+      },
+      "requiresCapabilities": [
+        "content.thunder_back_poststory_route",
+        "gather.deterministic_nodes",
+        "gather.atomic_delivery",
+        "save.success_before_story",
+        "ui.grade_reception"
+      ],
+      "readiness": "proposal-waiting-for-poststory-route-and-gather-content",
+      "fallbackPresentation": "未準備なら終章のセナキの短い後日談のみ。試料を採ったという虚偽の成功記録や報酬は与えない。"
+    },
+    {
+      "code": "TQ06",
+      "id": "proposal.quest.thunder.tq06",
+      "suggestedRuntimeId": "quest.story.thunder.tq06",
+      "title": "空の道、次の記録",
+      "chapterId": "ch9",
+      "mandatory": false,
+      "receptionGrade": {
+        "rankId": "rank.4",
+        "name": "極級"
+      },
+      "stars": 8,
+      "boardLane": "free",
+      "client": "ミナギ（受付と記録）",
+      "shortRequest": "鉛雲高地の鳴天の背を、別のオルゼリオンが巡回しています。新しい休み場と点検路が重なるため、一頭への対処をお願いします。前に確保した道が壊れたわけではありません。二冠と翼の予兆を確かめ、今回の個体の動きを帰還後に記録してください。",
+      "fieldProposal": {
+        "existingCatalogFieldName": "鉛雲高地",
+        "runtimeFieldId": null,
+        "newSubareaProposalId": "proposal.area.thunder_back",
+        "newSubareaName": "鳴天の背",
+        "areaDescription": "鉛雲高地の鳴天の背を使う別個体・別時日の通常狩猟。重霧環谷の補修結果を巻き戻さない。"
+      },
+      "dependencies": {
+        "existingRuntimeQuestIds": [],
+        "pendingLegacyQuestIds": [],
+        "pendingNewQuestIds": [
+          "quest.story.thunder_return"
+        ],
+        "requiresAllQuestClears": [
+          "quest.story.thunder_return"
+        ],
+        "requiresContentReady": true,
+        "gradePolicy": "新規依頼にだけ適用。受付の級は表示と新規受注先を示す。既存自由・昇級ルートを再ロックしない。主線到達とは別の周回を追加要求しない。",
+        "pendingContent": [
+          "オルゼリオンの反復狩猟用個体・素材報酬表",
+          "TQ04後の地理とフィールド状態",
+          "別個体を示す依頼文と中立報告"
+        ]
+      },
+      "actor": {
+        "proposedActorId": "monster.orzelion",
+        "registrationStatus": "正本登録待ち",
+        "speciesRankFromMonsterProposal": "rank.2",
+        "combatRankForThisQuestProposal": "rank.4",
+        "instanceRole": "極級の自由狩猟個体案。数値はTQ04の試遊後に調整。",
+        "count": 1,
+        "identity": "決戦個体とは別個体。再受注のたび別時日の巡回個体として扱う。"
+      },
+      "objective": {
+        "mode": "single-large-hunt-proposal",
+        "preferredRuntimeKindCandidate": "hunt",
+        "capturePolicy": "TQ04で採用した捕獲可否と同一。報酬表・UIも一致させる。",
+        "supportedSlayFallback": {
+          "runtimeKindCandidate": "slay",
+          "objectiveText": "別個体のオルゼリオン1頭の討伐",
+          "requiredTextChanges": "受注目標・短依頼文・支給品を討伐へ統一。捕獲案内を残さない。",
+          "storyEquivalent": true
+        },
+        "text": "別個体のオルゼリオン1頭の狩猟（捕獲未対応版では討伐に統一）。",
+        "success": [
+          "採用した単体狩猟の条件を満たす",
+          "結果保存後に通貨と戦利品を付与"
+        ],
+        "failure": [
+          "制限時間到達",
+          "力尽き3回",
+          "リタイア"
+        ],
+        "combatRole": "自由な素材集めと戦闘習熟。TQ04の初登場ムービー・世界改修イベントは再実行しない。"
+      },
+      "maxFaints": 3,
+      "time": {
+        "mode": "field",
+        "timeLimitMinutes": 45,
+        "proposedFieldTimeLimitTicks": 162000,
+        "targetClearMinutes": [
+          18,
+          25
+        ],
+        "tickRate": 60,
+        "arenaTimeLimitTicks": null,
+        "clockPolicy": "操作可能な出発から納品または狩猟成功まで。読み込み・強制会話・実際のポーズ・非表示による停止・成功後の帰還待ちは除外。",
+        "measured": false
+      },
+      "guaranteedEvidence": {
+        "id": "proposal.evidence.orzelion_repeat_record",
+        "text": "各runの通常狩猟記録。初回決戦や真相発見をもう一度起こさない。",
+        "delivery": "帰還記録。必須場面や設備状態の変更はなし。",
+        "mandatoryInformationFallback": "TQ04後の任意依頼。主線の達成扱いを代用しない。"
+      },
+      "rewards": {
+        "currency": 2800,
+        "guaranteedItems": [
+          {
+            "proposalMaterialId": "proposal.material.orzelion_storm_scale",
+            "displayName": "鳴天竜の蒼甲",
+            "count": 3,
+            "source": "固定報酬案。部位報酬・希少素材はモンスター素材表で別途調整。",
+            "materialTierResolutionRequired": "rank.4"
+          }
+        ],
+        "randomLootRequiredForStory": false,
+        "oneTime": false,
+        "balanceStatus": "未試遊の提案値。追加装備系列の採用後に経済検証。",
+        "claimIdProposal": null
+      },
+      "supplyProposal": {
+        "everyDeparture": [
+          {
+            "existingItemId": "item.heal_tonic",
+            "count": 5
+          },
+          {
+            "existingItemId": "item.whetstone",
+            "count": 3
+          }
+        ],
+        "captureAdditionsOnlyWhenSupported": [
+          {
+            "existingItemId": "item.bind_trap",
+            "count": 1
+          },
+          {
+            "existingItemId": "item.calm_orb",
+            "count": 3
+          }
+        ],
+        "note": "捕獲非対応なら捕獲用追加支給を省く。"
+      },
+      "replayReset": {
+        "repeatable": true,
+        "reset": "毎runの戦闘個体・体力・部位・支給品のみ初期化。主線クリア・claims・補修済み状態は保持。",
+        "narrative": "別個体という受注説明と中立報告。決戦個体が生還した/蘇ったと断定しない。"
+      },
+      "requiresCapabilities": [
+        "content.orzelion_registered",
+        "combat.orzelion_rank4_instance",
+        "content.thunder_back_poststory_route",
+        "loot.orzelion_rank4",
+        "save.success_before_story",
+        "capture.complete_pipeline_if_hunt"
+      ],
+      "readiness": "proposal-waiting-for-final-hunt-and-repeat-table",
+      "fallbackPresentation": "TQ04を正常に公開・検証した後にのみ追加。未準備なら最終戦を無理に反復受注可能へ戻さない。"
+    },
+    {
+      "code": "TQ07",
+      "id": "proposal.quest.thunder.tq07",
+      "suggestedRuntimeId": "quest.story.thunder.tq07",
+      "title": "雲より先に、翼が鳴る",
+      "chapterId": "ch4",
+      "placement": "ST08後の章間任意依頼。第5章へ進むための必須条件ではない。",
+      "mandatory": false,
+      "receptionGrade": {
+        "rankId": "rank.2",
+        "name": "中級"
+      },
+      "stars": 4,
+      "boardLane": "free",
+      "client": "セナキ（道の補修と見回りの古参）",
+      "shortRequest": "鉛雲高地へ向かう荷道で、三本趾と翼手首の跡が見つかった。岩棚を休み場にするオルゼリオンだ。一頭を狩猟して、点検に入る時間をつくってほしい。冠角を高く見せたら警告だ。胸と翼の動きを見て、放電の終わりを待とう。雲が晴れることまでは、この仕事の成果に数えない。",
+      "fieldProposal": {
+        "existingCatalogFieldName": "鉛雲高地",
+        "runtimeFieldId": null,
+        "newSubareaProposalId": "proposal.area.thunder_back",
+        "newSubareaName": "鳴天の背",
+        "areaDescription": "鉛雲高地の広い草棚と休息棚。中級初対峙用に公平な地上戦ができる区画を別途調整。TQ04の決戦個体とは別。"
+      },
+      "dependencies": {
+        "existingRuntimeQuestIds": [],
+        "pendingLegacyQuestIds": [
+          "quest.story.st08"
+        ],
+        "pendingNewQuestIds": [],
+        "requiresAllQuestClears": [
+          "quest.story.st08"
+        ],
+        "requiresContentReady": true,
+        "gradePolicy": "新規中級任意依頼の受注先のみ指定。ST09以降とTQ04の解禁条件には加えない。",
+        "pendingContent": [
+          "鉛雲高地の実行フィールド",
+          "オルゼリオンの正本登録・モデル・中級戦闘",
+          "主線と混同しない個体識別と帰還報告",
+          "捕獲を採用する場合の全経路"
+        ]
+      },
+      "actor": {
+        "proposedActorId": "monster.orzelion",
+        "registrationStatus": "別作業で制作中・参照基点mainには未登録",
+        "speciesRankFromMonsterProposal": "rank.2",
+        "combatRankForThisQuestProposal": "rank.2",
+        "instanceRole": "看板制作側の中級終盤の初対峙案に対応する任意個体。TQ04の極級物語個体へ昇格させたことにはしない。",
+        "count": 1,
+        "identity": "TQ04と異なる個体。ここで討伐しても決戦の同一個体が復活したことにならない。"
+      },
+      "objective": {
+        "mode": "single-large-hunt-proposal",
+        "preferredRuntimeKindCandidate": "hunt",
+        "capturePolicy": "捕獲全経路を実装・検証した場合にのみhunt。未対応なら討伐版を採用。",
+        "supportedSlayFallback": {
+          "runtimeKindCandidate": "slay",
+          "objectiveText": "中級個体のオルゼリオン1頭の討伐",
+          "requiredTextChanges": "受注目標・短依頼文・支給品を討伐へ統一する。",
+          "storyEquivalent": true
+        },
+        "text": "中級個体のオルゼリオン1頭の狩猟（捕獲未対応版では討伐に統一）。",
+        "success": [
+          "採用した狩猟条件を満たす",
+          "結果保存後に点検区間の確保を記録"
+        ],
+        "failure": [
+          "制限時間到達",
+          "力尽き3回",
+          "リタイア"
+        ],
+        "combatRole": "中級で地上技・蓄電・接地放電・冷却の順を学べる任意狩猟。TQ04の極級調整を流用せず、予兆と反撃時間を維持。"
+      },
+      "maxFaints": 3,
+      "time": {
+        "mode": "field",
+        "timeLimitMinutes": 35,
+        "proposedFieldTimeLimitTicks": 126000,
+        "targetClearMinutes": [
+          12,
+          16
+        ],
+        "tickRate": 60,
+        "arenaTimeLimitTicks": null,
+        "clockPolicy": "操作可能な出発から目標達成まで。初登場演出・会話・読み込み・実際のポーズ・成功後の帰還待ちは除外。",
+        "measured": false
+      },
+      "guaranteedEvidence": {
+        "id": "proposal.evidence.orzelion_midgrade",
+        "text": "翼の板鳴り・胸の二度の膨らみ・二条の光・地上での冷却が、身を守る判断につながる追加観察記録。",
+        "delivery": "成功保存後の任意帰還報告。",
+        "mandatoryInformationFallback": "未受注でもオルゼリオンの基本予兆はTQ04の必須出発前説明と初回の地上戦で学べる。主線の原因解明や装備支給をここに限定しない。"
+      },
+      "rewards": {
+        "currency": 1100,
+        "guaranteedItems": [
+          {
+            "proposalMaterialId": "proposal.material.orzelion_storm_scale",
+            "displayName": "鳴天竜の蒼甲",
+            "count": 1,
+            "source": "中級の標準素材を保証する案。正式段階IDと数量は登録担当が決める。極級素材を先に出さない。",
+            "materialTierResolutionRequired": "rank.2"
+          }
+        ],
+        "randomLootRequiredForStory": false,
+        "oneTime": false,
+        "balanceStatus": "未試遊の提案値。中級の素材・装備性能と一緒に検証。",
+        "claimIdProposal": null
+      },
+      "supplyProposal": {
+        "everyDeparture": [
+          {
+            "existingItemId": "item.heal_tonic",
+            "count": 5
+          },
+          {
+            "existingItemId": "item.whetstone",
+            "count": 3
+          }
+        ],
+        "captureAdditionsOnlyWhenSupported": [
+          {
+            "existingItemId": "item.bind_trap",
+            "count": 1
+          },
+          {
+            "existingItemId": "item.calm_orb",
+            "count": 3
+          }
+        ],
+        "note": "看板への罠・鎮静の対応は未確認。"
+      },
+      "replayReset": {
+        "repeatable": true,
+        "reset": "毎runの個体と戦利品だけ初期化。極級主線や世界の補修状態を戻さない。",
+        "narrative": "初回のみ初対峙演出、再戦は別時日の通常狩猟として短く報告。初対峙演出を見なくても成功可能。"
+      },
+      "requiresCapabilities": [
+        "content.cloud_highland_field",
+        "content.orzelion_registered",
+        "combat.orzelion_rank2_instance",
+        "save.success_before_story",
+        "ui.grade_reception",
+        "capture.complete_pipeline_if_hunt"
+      ],
+      "readiness": "proposal-waiting-for-midgrade-actor-field-and-combat",
+      "fallbackPresentation": "未準備なら受注不可の計画として保持。中級の初対峙をTQ04への必須前提や強制敗北戦に変えない。"
+    }
+  ],
+  "sources": [
+    {
+      "path": "public/data/story.json",
+      "role": "実装済み序章・第1章と未来章の予告"
+    },
+    {
+      "path": "src/data/story.ts",
+      "role": "場面解禁と検証の現在仕様"
+    },
+    {
+      "path": "src/save/profile.ts",
+      "role": "保存版5、questClears、claims、runId"
+    },
+    {
+      "path": "src/game/field.ts",
+      "role": "最終フィールド時間の計算"
+    },
+    {
+      "path": "docs/source/chatgpt-quest-design-20261125/story_quest_map_v1.json",
+      "role": "既存主線14本の提案正本"
+    },
+    {
+      "path": "docs/source/chatgpt-quest-design-20261125/campaign_support_v1.json",
+      "role": "本筋の装備支給案"
+    },
+    {
+      "path": "chatgpt-inbox/user-20261126-thunder-wyverns/orzelion_design_v1.md",
+      "role": "並行制作中の看板設定。参照基点mainにはない。生物と素材の登録担当が正本を確定する。"
+    }
+  ]
+}

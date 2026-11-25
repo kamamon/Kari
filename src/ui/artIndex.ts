@@ -35,6 +35,10 @@ export const PORTRAITS: Readonly<Record<string, string>> = {
 export const STORY_ART: readonly string[] = [
   'event_story_arrival_board_v1',
   'event_story_first_delivery_v1',
+  'event_story_old_records_v1',
+  'event_story_limited_lights_v1',
+  'event_story_homecoming_v1',
+  'event_thunder_first_sighting_v1',
 ];
 
 /** 狩場の名前（登録簿の fields）→ 景色の原画（public/assets/fields/<名前>.webp。640 × 427） */

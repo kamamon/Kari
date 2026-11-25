@@ -82,8 +82,10 @@ PORTRAITS = {
 }
 PORTRAIT_PX = 256
 # 物語の場面の絵（#13）: 名前 → 原画。会話の窓の後ろに出す。遊べる場面（序章・第 1 章）で使う絵だけを作る。
-# 残りの 3 枚（old_records = 第 4 章、limited_lights = 第 7 章、homecoming = 終章）は art-source/story/ に置いたまま。章ができたら足す
-STORY_ART = ['event_story_arrival_board_v1', 'event_story_first_delivery_v1']
+# v0.39.0: 残りの 3 枚（old_records = 第 4 章、limited_lights = 第 7 章、homecoming = 終章）も、章の一覧の章の絵として出す（会話の場面は、章ができてから）
+THUMB_W, THUMB_H = 480, 270
+# v0.39.0: 看板の物語（ChatGPT の #18）の最初の目撃 1 枚も、追加決戦章の章の絵に（残りの 3 枚は art-source/story/ に置いたまま。章ができたら）
+STORY_ART = ['event_story_arrival_board_v1', 'event_story_first_delivery_v1', 'event_story_old_records_v1', 'event_story_limited_lights_v1', 'event_story_homecoming_v1', 'event_thunder_first_sighting_v1']
 STORY_W, STORY_H = 1280, 720
 # 採取点の板（v0.27.0。狩らない依頼）: 名前 → (原画, 高さ m。仮の値)。切り抜き方は人と同じ
 PROPS = {
@@ -307,6 +309,11 @@ def main():
         b = save_webp(np.asarray(out), os.path.join(PUB, 'story', name + '.webp'), q=80)
         measure['story'].append({'file': name, 'px': list(im.size)})
         measure['outputs'][f'story/{name}'] = {'px': [STORY_W, STORY_H], 'bytes': b}
+        # 章の一覧の小さな絵（v0.39.0。一覧を開いた時に、大きな絵を 5 枚読まないように）
+        os.makedirs(os.path.join(PUB, 'story', 'thumb'), exist_ok=True)
+        th = im.resize((THUMB_W, THUMB_H), Image.LANCZOS)
+        b = save_webp(np.asarray(th), os.path.join(PUB, 'story', 'thumb', name + '.webp'), q=78)
+        measure['outputs'][f'story/thumb/{name}'] = {'px': [THUMB_W, THUMB_H], 'bytes': b}
 
     # ---- 書き出し ----
     ts = ['// tools/supplement-art.py の出力（npm run supplement:art）。手で編集しない。', '',

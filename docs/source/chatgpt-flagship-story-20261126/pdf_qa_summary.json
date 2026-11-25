@@ -1,0 +1,46 @@
+{
+  "pages": 22,
+  "bytes": 10906890,
+  "original_bytes": 24691320,
+  "compression": {
+    "optimize_images": true,
+    "jpeg_quality": 88,
+    "dpi": 180
+  },
+  "text_exact_match_with_reviewed_original": true,
+  "font_sizes_pt": [
+    11.0,
+    11.2,
+    11.5,
+    13.0,
+    14.0,
+    16.0,
+    17.0,
+    23.0,
+    24.0,
+    25.0,
+    34.0
+  ],
+  "outside_page_text": [],
+  "absolute_workspace_links": [],
+  "final_representative_renders": [
+    1,
+    3,
+    13,
+    14,
+    15,
+    22
+  ],
+  "original_full_page_contact_sheet": "contact_sheet_all.png",
+  "source_art_sha256": {
+    "art/event_thunder_first_sighting_v1.png": "4c33be44028bad9cd52d6f6ba8b8d035011ed3f3d387c5af2325cb4ce290605f",
+    "art/event_thunder_final_ridge_v1.png": "1478792e75cc1c013041b1f6e52400e44e913b2043bd40ff5b011f5eb80821a8",
+    "art/ref_thunder_field_station_v1.png": "be593ab78b6e17a7ab3e833519700f59c372f70d118178935cd45e8111262e3e",
+    "art/event_thunder_homecoming_v1.png": "34b647d693ff0afe454ef9b1e8191ffa315226a079cd115174b50e58a9d45339"
+  },
+  "files": {
+    "Kari_Flagship_Story_Design_v2.pdf": "380323eb5b3d55b42982f00514910c633e1bd68e0f61aa2446a3e0d283f9ee72",
+    "review_book.html": "073a3d676df2411430681f1d84a9c6c82bdfcacf871eab126bc0af50442fa10e",
+    "build_review_book.py": "37b5f3b0f8d5582271793a5a598b389ecf19603ecb7dbc457335730056c7a670"
+  }
+}

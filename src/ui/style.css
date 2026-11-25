@@ -615,8 +615,9 @@ body.looks-open #rotate { display: none !important; }
 .reception-story-fold .base-story { margin: 0; padding: 10px 12px; border: 0; border-radius: 0; }
 .reception-extras .bestiary { padding: 0 12px 12px; }
 #base[data-section="quest"] .reception-extras { flex: 0 0 auto; margin: 0; }
-#base[data-section="quest"] .base-card:has(.reception-extras details[open]) .base-quests { display: none; }
-#base[data-section="quest"] .reception-extras:has(details[open]) { flex: 1 1 auto; min-height: 0; overflow-y: auto; align-content: flex-start; }
+/* 物語・図鑑を開いている間は一覧を隠す。見るのは、すぐ下の折りたたみだけ（中の種や記録の折りたたみが開いたまま残っていても、一覧を隠さない。v0.38.0） */
+#base[data-section="quest"] .base-card:has(.reception-extras > details[open]) .base-quests { display: none; }
+#base[data-section="quest"] .reception-extras:has(> details[open]) { flex: 1 1 auto; min-height: 0; overflow-y: auto; align-content: flex-start; }
 
 .reception-directory-title { margin: 14px 0 4px; color: #d2b88c; font-size: 17px; }
 .reception-directory-note { margin: 4px 0 12px; color: #c6c9bb; font-size: 13px; line-height: 1.7; }

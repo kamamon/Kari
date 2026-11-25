@@ -36,6 +36,11 @@ export function portraitUrl(who: string): string | null {
 }
 
 /** 物語の場面の絵（v0.29.0）。無ければ null */
+/** 章の一覧の小さな絵（public/assets/story/thumb/<名前>.webp。480 × 270。v0.39.0） */
+export function storyThumbUrl(name: string): string | null {
+  return STORY_ART.includes(name) ? assetUrl(`assets/story/thumb/${name}.webp`) : null;
+}
+
 export function storyArtUrl(name: string): string | null {
   return STORY_ART.includes(name) ? assetUrl(`assets/story/${name}.webp`) : null;
 }

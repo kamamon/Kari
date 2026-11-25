@@ -59,7 +59,7 @@ main へ push すると Actions（Build and publish）が gh-pages（配信元�
 - `npm run bestiary:thumbs` 図鑑に出す原画の小さな絵 public/assets/bestiary/ を作り直す（Python が必要）
 - `npm run env:art` 景色の絵を、ゲームが読む形 public/assets/textures/env/ へ直す（Python が必要。出力は手で編集しない）
 - `npm run equipment:gen` ChatGPT の全装備四級版（#15）の設計の JSON から、いまの計算で働く系列の装備と作るレシピ public/data/equipment_series.json と、技能 public/data/skills.json を作り直す（Python が必要。出力は手で編集しない。入れる系列は tools/gen-equipment.py の SERIES。素材が手に入らない・複合の型・働かない技能の系列は止まる）
-- `npm run supplement:art` ChatGPT の追加原画（Pull Request #5）・物語の原画（#13。表情・人物・場面）と受付ミナギの設定図から、アイコン（public/assets/icons/）・里の人の板（textures/npc/）・会話の顔（portraits/）・狩場の景色（fields/）・物語の場面の絵（story/。遊べる場面で使う絵だけ）と、src/ui/artIndex.ts・src/render/npcArt.ts を作り直す（Python が必要。出力は手で編集しない）
+- `npm run supplement:art` ChatGPT の追加原画（Pull Request #5）・物語の原画（#13。表情・人物・場面）と受付ミナギの設定図から、アイコン（public/assets/icons/）・里の人の板（textures/npc/）・会話の顔（portraits/）・狩場の景色（fields/）・物語の場面の絵（story/。遊べる場面で使う絵と、v0.39.0 から章の一覧の章の絵。一覧は story/thumb/ の小さな絵）と、src/ui/artIndex.ts・src/render/npcArt.ts を作り直す（Python が必要。出力は手で編集しない）
 - `npm run rocks:art` 岩と崖の設定図（依頼 10。art-source/env/rocks・cliffs・tiles）から、岩と崖の図集・岩肌（public/assets/textures/env/）と形の値（src/render/rockArtData.ts）を作り直す（Python が必要。出力は手で編集しない。受け入れの確認で測った値は art-source/env/request10_v1.measure.json）
 - `npm run monsters:gen` 大型 11 種（登録簿の 02〜12）と幼体 8 種（14〜21）の体・技・依頼・素材・見た目の設計図を作り直す（Python が必要。出力は手で編集しない。形は原画の px で tools/gen-monsters.py に、技の動きは tools/monster_moves.py に書く。最後に monsters:bake が走る）
 - `npm run monsters:bake` 技の動きから、体の部位に付けた判定の軌道（public/data/tracks/）を作り直す（monsters:gen の中でも走る）

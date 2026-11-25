@@ -44,6 +44,7 @@
       "no": 0,
       "title": "序章「あなたの帰る場所」",
       "place": "灯継ぎの里",
+      "art": "event_story_arrival_board_v1",
       "goal": "里の仕事と、帰る場所を知る",
       "targets": [],
       "playable": true,
@@ -54,6 +55,7 @@
       "no": 1,
       "title": "第1章「獣の道、人の道」",
       "place": "風礫盆地",
+      "art": "event_story_first_delivery_v1",
       "field": "風礫盆地",
       "goal": "止まっていた補給を通す",
       "targets": [
@@ -110,6 +112,7 @@
       "no": 4,
       "title": "第4章「閉じられた分かれ道」",
       "place": "灰鐘鉱山",
+      "art": "event_story_old_records_v1",
       "field": "灰鐘鉱山",
       "goal": "古い作業路を調べ、設備の経緯を知る",
       "targets": [
@@ -149,6 +152,7 @@
       "no": 7,
       "title": "第7章「灯を減らす夜」",
       "place": "風礫盆地・灯継ぎの里",
+      "art": "event_story_limited_lights_v1",
       "field": "風礫盆地",
       "goal": "里の暮らしをつなぎ、小さな区間の補修を成功させる",
       "targets": [
@@ -169,10 +173,24 @@
       "playable": false
     },
     {
-      "id": "ch9",
+      "id": "ch_thunder_return",
       "no": 9,
+      "title": "追加決戦章「雷が帰る峰」",
+      "place": "鉛雲高地",
+      "field": "鉛雲高地",
+      "art": "event_thunder_first_sighting_v1",
+      "goal": "帰ってきた雷の飛竜と、高地の点検路の重なりに向き合う",
+      "targets": [
+        "オルゼリオン"
+      ],
+      "playable": false
+    },
+    {
+      "id": "ch9",
+      "no": 10,
       "title": "終章「新しい通行記録」",
       "place": "灯継ぎの里",
+      "art": "event_story_homecoming_v1",
       "goal": "新しい道の運用を始め、次の仕事へ戻る",
       "targets": [],
       "playable": false

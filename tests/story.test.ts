@@ -1,6 +1,8 @@
 // 物語「帰り道の灯」（v0.23.0。ChatGPT のストーリー設計 v1 の S0: 序章と第 1 章）。
 // 受入条件（docs/source/chatgpt-story-20261125/implementation_handoff_v1.md の 9 章）のうち、S0 に当たるものを、データと計算で確かめる。
 // 会話の窓・依頼板の欄・帰還の後に開くことは、ブラウザ検査（tools/smoke.mjs）で見る。
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { lineFace, lineText, scenesUnlocked, storyView, validateStory, type StoryDef } from '../src/data/story';
 import { PORTRAITS, STORY_ART } from '../src/ui/artIndex';
@@ -19,7 +21,7 @@ describe('物語のデータ', () => {
     expect(validateStory(c.story, new Set(c.quests.keys()), new Set(Object.keys(PORTRAITS)), new Set(STORY_ART))).toEqual([]);
     expect(Object.values(c.story.speakers).filter((s) => s.portrait).map((s) => s.name).sort()).toEqual(['イサネ', 'セナキ', 'ミナギ', 'ロクハ'].sort());
     // 序章・8 章・終章。遊べるのは序章と第 1 章だけ（第 1 章は、いまある 2 つの依頼）
-    expect(c.story.chapters.map((x) => x.no)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    expect(c.story.chapters.map((x) => x.no)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]); // v0.39.0: 9 は追加決戦章（ChatGPT の #18）、終章は 10
     expect(c.story.chapters.filter((x) => x.playable).map((x) => x.id)).toEqual(['ch0', 'ch1']);
     expect(c.story.chapters[1]!.steps!.map((s) => s.questId)).toEqual([GALDROS, SELVARK]);
     // 場面は台本の 4 つ（SC00〜SC03）。どの台詞も短い（1 発言 60 文字まで。iPhone の 2〜3 行）
@@ -63,6 +65,23 @@ describe('物語のデータ', () => {
     expect(e).toMatch(/表情 relief の顔の絵 portrait_nothing が無い/);
   });
 
+  it('章の場面の絵（v0.39.0。#13 の残り 3 枚と #18 の 1 枚）: 序章・第 1 章・第 4 章・第 7 章・追加決戦章・終章の章の一覧に、場面の絵。まだ遊べない章も絵だけ（会話の場面は無い）。無い絵は検査が見つける', async () => {
+    const c = await loadContent();
+    expect(Object.fromEntries(c.story.chapters.filter((ch) => ch.art).map((ch) => [ch.id, ch.art]))).toEqual({
+      ch0: 'event_story_arrival_board_v1', ch1: 'event_story_first_delivery_v1', ch4: 'event_story_old_records_v1', ch7: 'event_story_limited_lights_v1', ch9: 'event_story_homecoming_v1',
+      ch_thunder_return: 'event_thunder_first_sighting_v1',
+    });
+    // 看板の物語（ChatGPT の #18）の追加決戦章は、第 8 章と終章の間に、まだ遊べない章として入る（狩りも場面も無い）
+    expect(c.story.chapters.map((ch) => ch.id).slice(-3)).toEqual(['ch8', 'ch_thunder_return', 'ch9']);
+    expect(c.story.chapters.find((ch) => ch.id === 'ch_thunder_return')).toMatchObject({ playable: false, targets: ['オルゼリオン'] });
+    for (const ch of c.story.chapters) if (ch.art) expect(STORY_ART, ch.id).toContain(ch.art);
+    for (const ch of c.story.chapters.filter((x) => !x.playable)) expect(ch.openScene ?? ch.reportScene ?? ch.steps?.length ?? null, ch.id).toBeNull();
+    for (const name of STORY_ART) for (const dir of ['', 'thumb/']) expect(existsSync(resolve(__dirname, '..', 'public/assets/story', `${dir}${name}.webp`)), `${dir}${name}`).toBe(true);
+    const bad = JSON.parse(JSON.stringify(c.story)) as StoryDef;
+    bad.chapters[4]!.art = 'event_nothing';
+    expect(validateStory(bad, new Set(c.quests.keys()), new Set(Object.keys(PORTRAITS)), new Set(STORY_ART)).join('\n')).toMatch(/chapter ch4: 章の場面の絵 event_nothing が無い/);
+  });
+
   it('検査は、まだ無い依頼を遊べる章に入れること・まだ遊べない章に狩りを入れること・使わない場面を見つける', async () => {
     const c = await loadContent();
     const bad = JSON.parse(JSON.stringify(c.story)) as StoryDef;
@@ -82,7 +101,7 @@ describe('進み方（保存データの達成回数から。保存の形は変�
     const v = storyView(c.story, {});
     expect(v.readable).toEqual(['sc00', 'sc01']);
     expect(v.next?.step.questId).toBe(GALDROS);
-    expect(v.chapters.map((x) => x.status)).toEqual(['open', 'current', 'unplayable', 'unplayable', 'unplayable', 'unplayable', 'unplayable', 'unplayable', 'unplayable', 'unplayable']);
+    expect(v.chapters.map((x) => x.status)).toEqual(['open', 'current', 'unplayable', 'unplayable', 'unplayable', 'unplayable', 'unplayable', 'unplayable', 'unplayable', 'unplayable', 'unplayable']);
   });
 
   it('ガルドロスの後: 最初の帰還が読め、次は「帆角の風」。両方の後: 第 1 章の報告が読め、次の狩りは無い（まだ遊べない章の知らせ）', async () => {

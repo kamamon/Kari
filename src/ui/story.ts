@@ -2,7 +2,7 @@
 // 会話は、安全な場所（里・拠点）でだけ開く。読み返しても、報酬・進み方・選んだ返事は変わらない（何も保存しない）。
 import type { Content } from '../data/schemas';
 import { lineFace, lineText, storyView, type StoryLine, type StoryOutcome, type StoryScene } from '../data/story';
-import { fieldArtUrl, portraitUrl, storyArtUrl } from './icons';
+import { fieldArtUrl, portraitUrl, storyArtUrl, storyThumbUrl } from './icons';
 
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string): HTMLElementTagNameMap[K] => {
   const e = document.createElement(tag);
@@ -221,7 +221,8 @@ export function renderStoryPanel(box: HTMLElement, content: Content, clears: Rea
     for (const ch of view.chapters) {
       const card = el('div', `story-chapter ${ch.status}`);
       card.dataset.chapter = ch.def.id;
-      const art = ch.def.field ? fieldArtUrl(ch.def.field) : null;
+      // 章の場面の絵（v0.39.0。#13）があれば、それを出す。無ければ狩場の景色
+      const art = (ch.def.art ? storyThumbUrl(ch.def.art) : null) ?? (ch.def.field ? fieldArtUrl(ch.def.field) : null);
       if (art) {
         const img = document.createElement('img');
         img.alt = '';
