@@ -1,0 +1,501 @@
+{
+  "artifactType": "nonhunt-resource-design-proposal",
+  "schemaVersion": 2,
+  "baselineCommit": "4851d57ecc24c8fd127508b084999cec5d0e975f",
+  "status": "all 28 new definitions are not implemented; externalReferences refer to existing materials",
+  "resources": [
+    {
+      "id": "mat.gather.flatnagi_leaf",
+      "name": "ヒラナギの葉",
+      "unit": "枚",
+      "fieldName": "風礫盆地",
+      "description": "灰緑の平たい葉を重ね、乾いた礫の間に根を張る草。採集するのは外側の葉。",
+      "proposedUse": "里の薬房で使う回復液の原料候補。調合レシピは別途設計する。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.001",
+        "quest.delivery.001"
+      ]
+    },
+    {
+      "id": "mat.gather.dewbreak_fruit",
+      "name": "ツユワリの実",
+      "unit": "個",
+      "fieldName": "風礫盆地",
+      "description": "薄い殻の内側に粘りのある果肉を持つ、低い草の実。",
+      "proposedUse": "野営用の保存食と、乾燥試験用の食材。食事効果は未設計。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.002"
+      ]
+    },
+    {
+      "id": "mat.gather.threadbind_fiber",
+      "name": "スジユイの繊維",
+      "unit": "束",
+      "fieldName": "風礫盆地",
+      "description": "低い岩の隙間を這うつるから取れる、縦に裂けにくい細い繊維。",
+      "proposedUse": "荷紐と採集袋の補修材。装備強化素材へ自動置換しない。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.003"
+      ]
+    },
+    {
+      "id": "mat.gather.floatbloom_moss",
+      "name": "ウキハナ苔",
+      "unit": "個",
+      "fieldName": "根絡み湿原",
+      "description": "浅瀬の根に丸い房を作り、上面だけ乾いている苔。",
+      "proposedUse": "水汲み道具の濾過層の試験材。飲料水をそのまま浄化できる効果は持たせない。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.004",
+        "quest.delivery.002"
+      ]
+    },
+    {
+      "id": "mat.gather.rootmesh_bundle",
+      "name": "ネアミ根",
+      "unit": "束",
+      "fieldName": "根絡み湿原",
+      "description": "乾いた根丘の表面に広がる、薄く網状に分かれた草根。",
+      "proposedUse": "荷籠の底敷きと苗床の保水材。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.005"
+      ]
+    },
+    {
+      "id": "mat.gather.saltbox_fruit",
+      "name": "シオハコの実",
+      "unit": "個",
+      "fieldName": "硝砂海岸",
+      "description": "白砂の端に生える低木の角張った実。表皮の溝へ潮の結晶が付く。",
+      "proposedUse": "炊事係の保存食試作と、海辺の食料備蓄。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.006"
+      ]
+    },
+    {
+      "id": "mat.gather.shoreseam_algae",
+      "name": "ハマトジ藻",
+      "unit": "束",
+      "fieldName": "硝砂海岸",
+      "description": "干上がった潮溜まりの岩へ帯状に付く、厚い灰緑の藻。",
+      "proposedUse": "容器の継ぎ目に使う糊の原料候補。加工レシピは別途設計する。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.007"
+      ]
+    },
+    {
+      "id": "mat.gather.layergill_mushroom",
+      "name": "カサネヒダ茸",
+      "unit": "個",
+      "fieldName": "灰鐘鉱山",
+      "description": "広い坑口の朽木に育ち、傘の下へ二段の短いひだを持つ菌。",
+      "proposedUse": "坑口で働く作業班向けの食料。回復効果などは未設計。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.008",
+        "quest.delivery.003"
+      ]
+    },
+    {
+      "id": "mat.gather.goldedge_mycelium",
+      "name": "キベリ菌糸",
+      "unit": "束",
+      "fieldName": "灰鐘鉱山",
+      "description": "乾いた坑口の倒木を包む、縁だけ黄褐色の太い菌糸。",
+      "proposedUse": "乾燥させる灯具の芯材。燃料としての持続時間は未設計。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.009"
+      ]
+    },
+    {
+      "id": "mat.gather.whiteline_moss",
+      "name": "シロスジ苔",
+      "unit": "個",
+      "fieldName": "氷帆峡谷",
+      "description": "風裏の岩に密着し、表面に短い白筋を持つ低い苔。",
+      "proposedUse": "野営用敷布の詰め物と乾燥比較の試験材。寒さを無効化する装備ではない。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.010"
+      ]
+    },
+    {
+      "id": "mat.gather.slimlight_resin",
+      "name": "ホソアカリ樹脂",
+      "unit": "個",
+      "fieldName": "霧灯樹海",
+      "description": "大樹の低い根元に固まり、細い線だけ鈍く光を返す樹脂。",
+      "proposedUse": "道標の灯具の保護剤と曇り止め試験。自発光素材としては扱わない。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.011",
+        "quest.delivery.004"
+      ]
+    },
+    {
+      "id": "mat.gather.ringdew_grass",
+      "name": "ワツユ草",
+      "unit": "束",
+      "fieldName": "重霧環谷",
+      "description": "低い尾根の水滴場に育ち、葉の縁に水滴が環状に並ぶ草。",
+      "proposedUse": "補修後の湿り方を比べる観測試料と、苗床の保水材。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.012"
+      ]
+    },
+    {
+      "id": "mat.ore.basin_iron",
+      "name": "風礫鉄鉱",
+      "unit": "個",
+      "fieldName": "風礫盆地",
+      "description": "盆地の浅い岩層に混じる、鈍い赤褐色の天然鉱石。獣の殻や体内晶ではない。",
+      "proposedUse": "鍛冶場の補修金具と基礎工具を作る原料候補。装備レシピへの採用は別途設計する。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.001"
+      ]
+    },
+    {
+      "id": "mat.ore.grit_whetstone",
+      "name": "礫目砥石原石",
+      "unit": "個",
+      "fieldName": "風礫盆地",
+      "description": "細かな硬い粒が均一に並ぶ、灰緑色の天然砥石原石。",
+      "proposedUse": "研磨石を作る新しい加工レシピの原料候補。現行の研磨石を採掘済みとして配らない。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.002",
+        "quest.delivery.001"
+      ]
+    },
+    {
+      "id": "mat.ore.layered_ashstone",
+      "name": "層灰石",
+      "unit": "個",
+      "fieldName": "風礫盆地",
+      "description": "薄い灰色の層で割れやすい天然石。石片を選別して補修用の詰め材にする。",
+      "proposedUse": "雨樋の台座や補修金具の隙間を埋める石材。施設補修の納品素材候補。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.003"
+      ]
+    },
+    {
+      "id": "mat.ore.rootbank_clay",
+      "name": "根際陶土",
+      "unit": "袋",
+      "fieldName": "根絡み湿原",
+      "description": "水没しない根際の地層にある、細かい粒の灰白色の天然陶土。",
+      "proposedUse": "水桶の受け皿や貯水容器の補修に使う焼き物の原料候補。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.004",
+        "quest.delivery.002"
+      ]
+    },
+    {
+      "id": "mat.ore.wetbank_tuff",
+      "name": "湿縁凝灰石",
+      "unit": "個",
+      "fieldName": "根絡み湿原",
+      "description": "浅い岸の露出層にある、細かな空隙を含んだ灰褐色の天然石。",
+      "proposedUse": "排水口の裏込めや乾いた足場の補修に使う石材候補。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.005"
+      ]
+    },
+    {
+      "id": "mat.ore.white_silica_sand",
+      "name": "白硝砂",
+      "unit": "袋",
+      "fieldName": "硝砂海岸",
+      "description": "海岸の乾いた上段へ固く積もる、白い硝質の粒を含んだ天然鉱砂。",
+      "proposedUse": "灯りを覆う窓材や保存瓶を作る新しい加工工程の原料候補。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.006"
+      ]
+    },
+    {
+      "id": "mat.ore.tide_copper_ore",
+      "name": "潮青鉱石",
+      "unit": "個",
+      "fieldName": "硝砂海岸",
+      "description": "低い海食洞の乾いた岩床に露出する、青緑色の天然銅鉱石。ガルドロスの体内素材「青銅晶脈」とは別物。",
+      "proposedUse": "漁網の重りや留め具を鋳造する原料候補。自然鉱物から身体素材を生成する交換には使わない。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.007"
+      ]
+    },
+    {
+      "id": "mat.ore.bell_mine_firestone",
+      "name": "灰鐘耐火石",
+      "unit": "個",
+      "fieldName": "灰鐘鉱山",
+      "description": "広い坑口の地層から取れる、熱で割れにくい灰白色の天然石。",
+      "proposedUse": "鍛冶炉の内壁や炊事場のかまどを補修する石材候補。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.008",
+        "quest.delivery.003"
+      ]
+    },
+    {
+      "id": "mat.ore.dull_crystal_mica",
+      "name": "鈍晶雲母",
+      "unit": "枚",
+      "fieldName": "灰鐘鉱山",
+      "description": "露天跡の岩層から薄い板状に剥がれる、鈍い光沢の天然鉱物。",
+      "proposedUse": "坑口の反射標識を補修する薄板の原料候補。生物の共鳴膜や羽とは別素材。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.009"
+      ]
+    },
+    {
+      "id": "mat.ore.icebank_hardstone",
+      "name": "氷縁硬石",
+      "unit": "個",
+      "fieldName": "氷帆峡谷",
+      "description": "氷に接する地上の岩棚で採れる、砕くと角が残る灰青色の天然硬石。",
+      "proposedUse": "凍りやすい通路の滑り止めへ加工する石材候補。冷晶などの生物素材とは別物。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.010"
+      ]
+    },
+    {
+      "id": "mat.ore.root_crystal_darkstone",
+      "name": "根晶黒石",
+      "unit": "個",
+      "fieldName": "霧灯樹海",
+      "description": "大樹の根際に出る天然晶脈の、黒く緻密な外縁部分。灯節などの生物器官ではない。",
+      "proposedUse": "里の灯台座を湿気から離して据える石材候補。採掘時に発光装備の所持を要求しない。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.011",
+        "quest.delivery.004"
+      ]
+    },
+    {
+      "id": "mat.ore.ring_vein_densestone",
+      "name": "環脈緻密石",
+      "unit": "個",
+      "fieldName": "重霧環谷",
+      "description": "低い環状尾根に露出する、水を吸いにくい緻密な天然石。セオルミドの環冠片とは異なる。",
+      "proposedUse": "分流路の継ぎ目と点検口を補修する石材候補。物語の結末を変更する必須素材にはしない。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.012"
+      ]
+    },
+    {
+      "id": "cargo.delivery.repair_stake_crate",
+      "name": "補修杭箱",
+      "unit": "箱",
+      "isImplemented": false,
+      "category": "loaned_cargo",
+      "ordinaryInventoryAllowed": false,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.delivery.005"
+      ],
+      "fieldName": "風礫盆地",
+      "description": "涸れ沢の通行目印と補修区画の杭材を運ぶ。",
+      "proposedUse": "受取所で貸与され、指定の納品先に渡す。倉庫へは入らない。"
+    },
+    {
+      "id": "cargo.delivery.tide_gauge_crate",
+      "name": "潮見器箱",
+      "unit": "箱",
+      "isImplemented": false,
+      "category": "loaned_cargo",
+      "ordinaryInventoryAllowed": false,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.delivery.006"
+      ],
+      "fieldName": "硝砂海岸",
+      "description": "潮の高さを測る器具を観測所へ運ぶ。",
+      "proposedUse": "受取所で貸与され、指定の納品先に渡す。倉庫へは入らない。"
+    },
+    {
+      "id": "cargo.delivery.warm_cloth_crate",
+      "name": "防寒布箱",
+      "unit": "箱",
+      "isImplemented": false,
+      "category": "loaned_cargo",
+      "ordinaryInventoryAllowed": false,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.delivery.007"
+      ],
+      "fieldName": "氷帆峡谷",
+      "description": "番小屋の休憩者と交代要員が使う防寒布を補給する。",
+      "proposedUse": "受取所で貸与され、指定の納品先に渡す。倉庫へは入らない。"
+    },
+    {
+      "id": "cargo.delivery.channel_repair_crate",
+      "name": "補修資材箱",
+      "unit": "箱",
+      "isImplemented": false,
+      "category": "loaned_cargo",
+      "ordinaryInventoryAllowed": false,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.delivery.008"
+      ],
+      "fieldName": "重霧環谷",
+      "description": "分流路の補修後の点検に使う資材を、作業所へ運ぶ。",
+      "proposedUse": "受取所で貸与され、指定の納品先に渡す。倉庫へは入らない。"
+    }
+  ],
+  "externalReferences": [
+    {
+      "id": "mat.galdros.shell_shard",
+      "name": "岩殻片",
+      "unit": "個",
+      "isImplemented": true,
+      "source": "public/data/items.json"
+    }
+  ]
+}
