@@ -814,6 +814,20 @@
    ],
    "bytes": 15568
   },
+  "textures/props/prop_herb_v1": {
+   "px": [
+    501,
+    384
+   ],
+   "bytes": 44926
+  },
+  "textures/props/prop_ore_v1": {
+   "px": [
+    807,
+    384
+   ],
+   "bytes": 62184
+  },
   "fields/field_01_overview_v1": {
    "px": [
     640,
@@ -954,5 +968,51 @@
    ],
    "bytes": 53852
   }
- }
+ },
+ "props": [
+  {
+   "id": "herb",
+   "src": "env/props/ref_fureki_prop_herb_v1",
+   "px": [
+    1254,
+    1254
+   ],
+   "bgLab": [
+    84.52,
+    2.4,
+    3.09
+   ],
+   "borderDeltaE99": 1.09,
+   "bbox": [
+    56,
+    118,
+    1188,
+    987
+   ],
+   "floorShadowPx": 295,
+   "holesCleared": 0
+  },
+  {
+   "id": "ore",
+   "src": "env/props/ref_fureki_prop_ore_v1",
+   "px": [
+    1254,
+    1254
+   ],
+   "bgLab": [
+    85.31,
+    2.57,
+    3.57
+   ],
+   "borderDeltaE99": 1.09,
+   "bbox": [
+    19,
+    334,
+    1235,
+    911
+   ],
+   "floorShadowPx": 1689,
+   "holesCleared": 0
+  }
+ ]
 }

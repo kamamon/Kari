@@ -17,6 +17,10 @@
     {"id": "mat.galdros.crystal_shell", "name": "晶岩殻"},
     {"id": "mat.galdros.bronze_lump", "name": "青銅晶塊"},
     {"id": "mat.galdros.radiant_shell", "name": "輝岩殻"},
-    {"id": "mat.galdros.pulse_core", "name": "脈動晶芯"}
+    {"id": "mat.galdros.pulse_core", "name": "脈動晶芯"},
+    {"id": "mat.gather.flatnagi_leaf", "name": "ヒラナギの葉", "unit": "枚"},
+    {"id": "mat.gather.dewbreak_fruit", "name": "ツユワリの実", "unit": "個"},
+    {"id": "mat.ore.basin_iron", "name": "風礫鉄鉱", "unit": "個"},
+    {"id": "mat.ore.grit_whetstone", "name": "礫目砥石原石", "unit": "個"}
   ]
 }

@@ -98,7 +98,9 @@ describe('フィールドのデータ（風礫盆地）', () => {
     for (const q of content.quests.values()) {
       expect(q.fieldId).toBe('field.basin');
       expect(questTimeLimitTicks(content, q, false)).toBe(q.timeLimitTicks);
-      if (explicit[q.id]) expect(questTimeLimitTicks(content, q, true)).toBe(explicit[q.id]! * 3600);
+      // 狩らない依頼（v0.27.0）は、フィールドで 15 分（tests/errand.test.ts）
+      if (q.kind === 'gather') expect(questTimeLimitTicks(content, q, true)).toBe(15 * 3600);
+      else if (explicit[q.id]) expect(questTimeLimitTicks(content, q, true)).toBe(explicit[q.id]! * 3600);
       else {
         expect(q.fieldTimeLimitTicks).toBeUndefined();
         expect(questTimeLimitTicks(content, q, true)).toBe(q.timeLimitTicks * 2);
@@ -144,7 +146,7 @@ describe('出発と、エリアの移動', () => {
     expect(sim.player.pos).toMatchObject({ x: field.start.x, z: field.start.z });
     const m = sim.monsters[0]!;
     expect(sim.monsterArea(m)!.id).toBe('a3');
-    const spawn = content.quests.get(Q)!.monsterSpawn;
+    const spawn = content.quests.get(Q)!.monsterSpawn!;
     expect(m.pos).toMatchObject({ x: spawn.x, z: spawn.z });
     expect(m.aware).toBe(false);
   });

@@ -2,7 +2,7 @@
 // ここは DOM・Three.js・Math.random・現在時刻に触れない。同じ seed と同じ入力列なら同じ結果になる。
 import { DEG, angleDiff, forwardOf, toWorld, yawOf, type V3 } from '../core/math';
 import { SeededRng } from '../core/seededRng';
-import { STATUS_KINDS } from '../data/schemas';
+import { STATUS_KINDS, questTargets } from '../data/schemas';
 import type { Content, DamageType, FieldAreaDef, FieldDef, HazardDef, HazardLook, HitWindowDef, ItemDef, ItemStack, LootDef, LootRoll, MonsterDef, QuestDef, QuestTarget, RankDef, ShootDef, StatusHit } from '../data/schemas';
 import { inWindow, type ActionRun } from './action';
 import { HitLedger, computeDamage, edgeStage, sweepCapsule, type WorldShape } from './combat';
@@ -16,6 +16,7 @@ import { createRoam } from './roam';
 import { createPlayer, familyOf, playerHurtCapsule, resolveIncomingHit, stepPlayer, weaponOf, type PlayerState, type SimCtx } from './player';
 import { trackSegment } from './tracks';
 import { World, type Circle } from './world';
+import { DELIVER_ACTION, DEPOT_RADIUS, DEPOT_REACH, MINE_NODE_RADIUS, NODE_REACH, bagHasRoom, createErrand, errandReady, errandSurplus, nodeAction, type ErrandState, type ErrandTarget } from './errand';
 
 export interface SimOptions {
   seed: number;
@@ -59,7 +60,7 @@ export interface Hazard {
   look: HazardLook;
 }
 
-export type HuntReason = 'slay' | 'capture' | 'time' | 'faints' | 'retire';
+export type HuntReason = 'slay' | 'capture' | 'time' | 'faints' | 'retire' | 'deliver';
 
 /** 仕掛けた罠。arming → armed（大型が踏むと作動）→ holding（止めている間）。 */
 export interface Trap {
@@ -205,6 +206,8 @@ export class Simulation implements SimCtx {
   readonly pack: boolean = false;
   /** 1 体の標的（大型の依頼の標的、訓練場の標的）。群れの依頼では null */
   main: MonsterState | null = null;
+  /** 狩らない依頼（採集・採掘・現地の納品。v0.27.0）の、採った採取点と採集袋。狩りの依頼・訓練場では null */
+  errand: ErrandState | null = null;
 
   constructor(content: Content, options: SimOptions) {
     this.content = content;
@@ -216,6 +219,8 @@ export class Simulation implements SimCtx {
     if (!content.weapons.has(options.weaponId)) throw new Error(`weapon ${options.weaponId} が無い`);
     const field = options.field && quest?.fieldId ? content.fields.get(quest.fieldId) : undefined;
     if (options.field && quest?.fieldId && !field) throw new Error(`field ${quest.fieldId} が無い`);
+    // 狩らない依頼は、採取点がフィールドの座標にあるので、フィールドでだけ遊べる
+    if (quest?.kind === 'gather' && !field) throw new Error(`quest ${quest.id}: 狩らない依頼は、フィールドでだけ遊べる`);
     this.world = new World(map, field?.areas);
     this.rng = new SeededRng(options.seed);
     if (field) {
@@ -248,15 +253,15 @@ export class Simulation implements SimCtx {
       this.rank = content.ranks.get(quest.rankId) ?? null;
       if (!this.rank) throw new Error(`rank ${quest.rankId} が無い`);
     }
-    this.targets = quest ? quest.targets?.map((t) => ({ ...t })) ?? [{ monsterId: quest.targetMonsterId, count: 1 }] : [];
+    this.targets = quest ? questTargets(quest).map((t) => ({ ...t })) : [];
     this.pack = !!quest?.targets;
-    const monsterId = quest ? (this.pack ? null : quest.targetMonsterId) : options.monsterId;
+    const monsterId = quest ? (this.pack ? null : quest.targetMonsterId ?? null) : options.monsterId;
     if (monsterId) {
       const base = content.monsters.get(monsterId);
       if (!base) throw new Error(`monster ${monsterId} が無い`);
       // 段階が上の依頼では、強い個体（体力・部位・間隔を段階の倍率で変えた定義）が出る
       const def = this.rank ? scaleMonsterDef(base, this.rank) : base;
-      const m = createMonster(def, quest ? quest.monsterSpawn : map.monsterSpawn, 'monster#1');
+      const m = createMonster(def, quest?.monsterSpawn ?? map.monsterSpawn, 'monster#1');
       m.aiEnabled = quest ? true : options.monsterAttacks;
       if (field) {
         // 最初に居るエリア。「これまでの狩場」にあたるエリアなら依頼の位置、そうでなければエリアの中央
@@ -271,7 +276,9 @@ export class Simulation implements SimCtx {
       this.monsters.push(m);
       this.main = m;
     }
-    this.spawnHerds(quest, field ?? null, quest ? quest.monsterSpawn : map.monsterSpawn);
+    // 狩らない依頼（v0.27.0）: 大型も幼体も出さない（encounters: none）。採取点と採集袋を用意する
+    if (quest?.gather) this.errand = createErrand(quest.gather);
+    else this.spawnHerds(quest, field ?? null, quest?.monsterSpawn ?? map.monsterSpawn);
     if (quest) {
       this.hunt = { quest, phase: 'active', reason: null, ticks: 0, faints: 0, timeLimitTicks: questTimeLimitTicks(content, quest, !!field), endTick: 0, returnTicks: 0, carves: {}, loot: [], closed: false, closeTick: 0, rewards: null };
       this.monsterAttackScale = (quest.monsterAttackScale ?? 1) * (this.rank?.monster.attackScale ?? 1);
@@ -438,6 +445,12 @@ export class Simulation implements SimCtx {
   blockers(): Circle[] {
     const out: Circle[] = [];
     for (const m of this.monsters) if (!m.dead) out.push(...monsterBlockers(m));
+    // 狩らない依頼: 納品箱と、採掘の採取点（岩の露頭）は通り抜けない（居るエリアのものだけ）
+    const e = this.errand;
+    if (e) {
+      if (e.def.depot.areaId === this.areaId) out.push({ x: e.def.depot.x, z: e.def.depot.z, r: DEPOT_RADIUS });
+      for (const n of e.def.nodes) if (n.kind === 'mine' && n.areaId === this.areaId) out.push({ x: n.x, z: n.z, r: MINE_NODE_RADIUS });
+    }
     return out;
   }
 
@@ -654,6 +667,51 @@ export class Simulation implements SimCtx {
     return best;
   }
 
+  // ---- 狩らない依頼（採集・採掘・現地の納品。v0.27.0、docs/spec.md の 27 章）----
+
+  /**
+   * いま攻撃ボタンでできること（納刀している時だけ。抜刀中の攻撃ボタンは、攻撃のまま）。
+   * 納品箱のそばで、要る数がそろっていれば「納品」。そうでなければ、届くうちでいちばん近い、まだ採っていない採取点（採集袋に入る時だけ）。
+   */
+  errandTarget(): ErrandTarget | null {
+    const e = this.errand;
+    const h = this.hunt;
+    if (!e || !h || h.phase !== 'active' || h.closed) return null;
+    const p = this.player;
+    if (p.drawn || p.mode === 'dead') return null;
+    const d = e.def.depot;
+    if (d.areaId === this.areaId && Math.hypot(p.pos.x - d.x, p.pos.z - d.z) <= DEPOT_REACH && errandReady(e)) return { kind: 'deliver', actionId: DELIVER_ACTION };
+    let best: ErrandTarget | null = null;
+    let bd = Infinity;
+    for (const n of e.def.nodes) {
+      if (n.areaId !== this.areaId || e.used.includes(n.id) || !bagHasRoom(e, n)) continue;
+      const dist = Math.hypot(p.pos.x - n.x, p.pos.z - n.z);
+      if (dist <= NODE_REACH && dist < bd) {
+        bd = dist;
+        best = { kind: 'node', nodeId: n.id, actionId: nodeAction(n) };
+      }
+    }
+    return best;
+  }
+
+  /** 採る・納める行動が、品の入る tick まで進んだ時に 1 度だけ呼ばれる。その時点で、もう 1 度確かめる */
+  errandDo(t: ErrandTarget): void {
+    const e = this.errand;
+    const h = this.hunt;
+    if (!e || !h || h.phase !== 'active' || h.closed) return;
+    if (t.kind === 'deliver') {
+      if (!errandReady(e) || e.delivered) return;
+      e.delivered = true;
+      this.emit({ type: 'errand_deliver', pos: { ...this.player.pos } });
+      return;
+    }
+    const n = e.def.nodes.find((x) => x.id === t.nodeId);
+    if (!n || e.used.includes(n.id) || !bagHasRoom(e, n)) return;
+    e.used.push(n.id);
+    e.bag[n.itemId] = (e.bag[n.itemId] ?? 0) + e.def.yieldPerNode;
+    this.emit({ type: 'errand_gather', nodeId: n.id, itemId: n.itemId, count: e.def.yieldPerNode, total: e.bag[n.itemId]!, kind: n.kind, pos: { x: n.x, y: 0, z: n.z } });
+  }
+
   /** その個体から出る素材の表（段階ごとの表があればそれ、無ければモンスターの lootId）。 */
   private lootOf(m: MonsterState): LootDef | undefined {
     const id = (this.rank && m.def.lootByRank?.[this.rank.id]) ?? m.def.lootId;
@@ -708,7 +766,8 @@ export class Simulation implements SimCtx {
       // 帰還: 時間切れ / リタイアのボタン（達成後は「帰還する」）/ 剥ぎ取りを使い切った少し後
       h.returnTicks--;
       const left = this.carvesLeft();
-      if (left === 0 && !this.player.carving && h.returnTicks > CLOSE_AFTER_LAST_CARVE) h.returnTicks = CLOSE_AFTER_LAST_CARVE;
+      // 狩らない依頼は、剥ぎ取りが無いので、帰還の表示（5 秒）をそのまま見せる
+      if (!this.errand && left === 0 && !this.player.carving && h.returnTicks > CLOSE_AFTER_LAST_CARVE) h.returnTicks = CLOSE_AFTER_LAST_CARVE;
       if (h.returnTicks <= 0 || input.pressed & Btn.Retire) this.closeHunt(h);
       return;
     }
@@ -720,6 +779,8 @@ export class Simulation implements SimCtx {
       for (const m of this.monsters) m.aiEnabled = false;
       this.emit({ type: 'hunt_end', phase, reason });
       if (phase === 'failed') return this.closeHunt(h);
+      // 狩らない依頼: 納品で使った数を除いた、余りだけを持ち帰る（使った数を、報酬へ戻さない）
+      if (this.errand) for (const s of errandSurplus(this.errand)) for (let i = 0; i < s.count; i++) h.loot.push({ itemId: s.itemId, source: 'gather' });
       const m = this.main;
       const loot = m ? this.lootOf(m) : undefined;
       if (m && loot) {
@@ -739,6 +800,14 @@ export class Simulation implements SimCtx {
       }
       h.returnTicks = reason === 'capture' ? CAPTURE_RETURN_TICKS : h.quest.returnTicks ?? 3600;
     };
+    if (this.errand) {
+      // 狩らない依頼: 同じ tick に 3 回目の力尽き・時間切れが決まったら、納品は成り立たない（終わり方は 1 つだけ）
+      if (input.pressed & Btn.Retire) end('failed', 'retire');
+      else if (h.faints >= h.quest.maxFaints) end('failed', 'faints');
+      else if (h.ticks >= h.timeLimitTicks) end('failed', 'time');
+      else if (this.errand.delivered) end('success', 'deliver');
+      return;
+    }
     if (this.pack ? this.targets.every((t) => this.slain(t.monsterId) >= t.count) : this.main?.dead) end('success', 'slay');
     else if (!this.pack && this.main?.captured) end('success', 'capture');
     else if (input.pressed & Btn.Retire) end('failed', 'retire');
@@ -1131,6 +1200,7 @@ export class Simulation implements SimCtx {
     for (const m of this.monsters) parts.push(m.trapTicks, m.trapCount, m.tranq, m.tranqTicks, m.captured ? 1 : 0);
     for (const t of this.traps) parts.push(t.x, t.z, t.state, t.arm, t.life);
     parts.push(p.momentum, p.momentumTicks);
+    if (this.errand) parts.push(this.errand.used.join(','), Object.entries(this.errand.bag).map(([k, v]) => `${k}=${v}`).join(','), this.errand.delivered ? 1 : 0, p.errandOp ? `${p.errandOp.target.kind}:${p.errandOp.done ? 1 : 0}` : '-');
     for (const a of this.projectiles) parts.push(a.pos.x, a.pos.y, a.pos.z, a.life);
     if (this.hunt) {
       const h = this.hunt;

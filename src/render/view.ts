@@ -14,6 +14,7 @@ import { blobShadow, buildArena, buildAreaGroup, setupSky, type Arena } from './
 import { WIND } from './envArt';
 import { buildHubGroup } from './hubScene';
 import { buildNpcSprites, updateNpcSprites } from './npcSprites';
+import { buildErrandProps, updateErrandProps, type ErrandProps } from './errandProps';
 import { FollowCamera } from './camera';
 import { DebugDraw } from './debugDraw';
 import { BladeTrail, GroundRings, Particles } from './effects';
@@ -133,6 +134,8 @@ export class GameView {
   private areaGroups = new Map<string, Group>();
   /** 里に立つ人の板（拠点の時だけ） */
   private npcs: Group | null = null;
+  /** 狩らない依頼（v0.27.0）の採取点と納品箱 */
+  private errandProps: ErrandProps | null = null;
   private shownArea = '';
   /** まだ入っていないエリアの地形を、前もって 1 つずつ作るまでのフレーム数（エリアを移った時に、作る間だけ止まらないように） */
   private prebuildIn = 90;
@@ -206,6 +209,10 @@ export class GameView {
       this.arena = { group, ...setupSky(this.scene, settings.shadows, 'village') };
     } else this.arena = buildArena(this.scene, sim.world.map, settings.shadows);
     this.scene.add(this.hunter.root, this.playerShadow);
+    if (sim.errand) {
+      this.errandProps = buildErrandProps(sim.errand.def);
+      this.scene.add(this.errandProps.group);
+    }
     const m = sim.main ?? sim.monsters[0];
     if (m) this.monsterRig = this.rigOf(m).rig;
     this.trail = new BladeTrail(this.scene);
@@ -652,7 +659,10 @@ export class GameView {
     this.arena.sun.position.set(pos.x - 14, 26, pos.z - 11);
     // 空と遠景は、カメラと一緒に動かす（どこまで歩いても、近づかない）。雲は少しずつ流れる
     this.arena.backdrop.position.set(this.cam.camera.position.x, 0, this.cam.camera.position.z);
+    // 採掘（v0.27.0）の間だけ、右手に採掘道具
+    this.hunter.tool.visible = p.mode === 'action' && p.action?.def.clip === 'common_mine_01';
     if (this.npcs) updateNpcSprites(this.npcs, this.cam.camera.position);
+    if (this.errandProps && sim.errand) updateErrandProps(this.errandProps, sim.errand, sim.areaId, sim.hunt?.phase === 'active', this.cam.camera.position, this.time);
     this.arena.sky?.setTime(this.time);
     WIND.value = this.time;
     this.sparks.update(dt);

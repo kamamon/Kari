@@ -3,7 +3,7 @@
 // 骨と socket の名前・向きは docs/animation-contract.md と揃える。
 //   root → pelvis → spine → chest → neck → head / 腕 / 脚、socket_hand_r / socket_hand_l / socket_back / socket_hip
 // 単位 m、Y 上、+Z 前。身長 1.75m。右手側は -X。
-import { Bone, BufferAttribute, BufferGeometry, DataTexture, DoubleSide, Group, Line, LineBasicMaterial, Matrix4, MeshLambertMaterial, Object3D, Quaternion, SRGBColorSpace, Skeleton, SkinnedMesh, TextureLoader, Vector3 } from 'three';
+import { Bone, BoxGeometry, BufferAttribute, BufferGeometry, ConeGeometry, CylinderGeometry, DataTexture, DoubleSide, Group, Line, LineBasicMaterial, Matrix4, Mesh, MeshLambertMaterial, Object3D, Quaternion, SRGBColorSpace, Skeleton, SkinnedMesh, TextureLoader, Vector3 } from 'three';
 import { assetUrl } from '../core/assets';
 import { BOW_STRING, buildArrow, buildBow } from './bow';
 import { buildGuardBladeShield, buildGuardBladeSword } from './guardBlade';
@@ -82,6 +82,8 @@ export class HunterRig {
   readonly sockets = { hand_r: new Object3D(), hand_l: new Object3D(), back: new Object3D(), hip: new Object3D() };
   /** 手に持つ武器の入れ物（中身は武器系統ごとに差し替える）と、左腕の盾の入れ物 */
   readonly weapon = new Group();
+  /** 採掘の時だけ右手に持つ、借りた採掘道具（v0.27.0。狩らない依頼。見た目だけ） */
+  readonly tool = new Group();
   readonly shield = new Group();
   familyId = '';
   /** いま手に持たせている形（武器ごとの形があればモデルの ID、無ければ系統の ID） */
@@ -215,6 +217,22 @@ export class HunterRig {
     // 手の socket: 刃は前腕の前方やや上へ向く
     this.orient(this.sockets.hand_r, new Vector3(0, 0.35, 1), new Vector3(1, 0, 0));
     this.orient(this.sockets.hand_l, new Vector3(0, 0.35, 1), new Vector3(1, 0, 0));
+    // 採掘道具（つるはし）: 柄は socket の +Y、頭は振る向き（socket の +Z / -Z）へ。ふだんは見せない
+    {
+      const wood = new MeshLambertMaterial({ color: 0x7a5a3a });
+      const iron = new MeshLambertMaterial({ color: 0x55585c });
+      const handle = new Mesh(new CylinderGeometry(0.016, 0.019, 0.62, 6), wood);
+      handle.position.y = 0.2;
+      const head = new Mesh(new BoxGeometry(0.035, 0.045, 0.3), iron);
+      head.position.y = 0.48;
+      const tip = new Mesh(new ConeGeometry(0.024, 0.1, 5), iron);
+      tip.rotation.x = Math.PI / 2;
+      tip.position.set(0, 0.48, 0.2);
+      this.tool.add(handle, head, tip);
+      this.tool.visible = false;
+      this.tool.name = 'tool_pick';
+      this.sockets.hand_r.add(this.tool);
+    }
 
     // 腰の socket: 短い剣を納める（握りが左腰の前寄り、刃は後ろ下へ）。右手が届く位置にしてある。
     // 位置と向きは、抜刀・納刀の動き（tools/weapons/guard_blade.mjs の HILT・SHEATH）と同じ値。

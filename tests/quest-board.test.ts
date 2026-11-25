@@ -29,7 +29,8 @@ const errorsOf = (fn: (b: QuestBoardDef) => void): string[] => {
 
 describe('依頼の掲示（星・分類・依頼人・話・目安の時間）', () => {
   it('24 件の依頼のどれにも掲示があり、読み込みの時に依頼へ付く。星と依頼人は設計（current_quest_overrides_v1.json）のまま', () => {
-    expect(content.quests.size).toBe(24);
+    expect([...content.quests.values()].filter((q) => q.kind !== 'gather')).toHaveLength(24);
+    expect([...content.quests.values()].every((q) => !!q.board)).toBe(true);
     const design = JSON.parse(readFileSync('docs/source/chatgpt-quest-design-20261125/current_quest_overrides_v1.json', 'utf8')) as {
       questDesigns: { questId: string; stars: number; client: string; requestText: string; targetClearMinutes: [number, number]; effectiveTimeLimitMinutes: number }[];
     };
@@ -54,7 +55,7 @@ describe('依頼の掲示（星・分類・依頼人・話・目安の時間）'
     const steps = content.story.chapters.flatMap((c) => c.steps ?? []).map((s) => s.questId);
     expect(steps.every((id) => lane(id) === 'main')).toBe(true);
     for (const q of content.quests.values()) {
-      if (q.rankId !== 'rank.1') continue;
+      if (q.rankId !== 'rank.1' || q.kind === 'gather') continue;
       if (q.targets) expect([1, 2]).toContain(q.board!.stars);
       else expect(q.board!.stars).toBe(2);
     }

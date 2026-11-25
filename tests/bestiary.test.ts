@@ -117,7 +117,8 @@ describe('登録簿のデータ', () => {
   });
 
   it('依頼の標的は、どれも登録簿にある。骨格は 7 つで、体を作ってあるのは四足重獣だけ', () => {
-    for (const q of content.quests.values()) expect(content.bestiary.species.some((s) => s.id === q.targetMonsterId), q.id).toBe(true);
+    // 狩らない依頼（v0.27.0）には標的が無い
+    for (const q of content.quests.values()) if (q.kind !== 'gather') expect(content.bestiary.species.some((s) => s.id === q.targetMonsterId), q.id).toBe(true);
     expect(content.bestiary.frames.map((f) => f.id)).toEqual(['frame.quad_heavy', 'frame.quad_light', 'frame.biped_wing', 'frame.crust_six', 'frame.crust_many', 'frame.long', 'frame.colossus']);
     expect(content.bestiary.frames.filter((f) => f.built).map((f) => f.name)).toEqual(['四足重獣']);
   });

@@ -83,6 +83,51 @@
     },
     {
       "schemaVersion": 1,
+      "actionId": "player.common.gather",
+      "clip": "common_gather_01",
+      "tickRate": 60, "durationTicks": 90,
+      "phases": [
+        {"id":"startup", "from":0, "to":72},
+        {"id":"recovery", "from":72, "to":90}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [{"from":6, "to":72, "into":["roll"]}],
+      "events": [{"tick":30, "type":"sound", "id":"carve"}, {"tick":72, "type":"sound", "id":"carve_get"}],
+      "onFinish": "sheathed_idle"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.common.mine",
+      "clip": "common_mine_01",
+      "tickRate": 60, "durationTicks": 150,
+      "phases": [
+        {"id":"startup", "from":0, "to":126},
+        {"id":"recovery", "from":126, "to":150}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [{"from":6, "to":126, "into":["roll"]}],
+      "events": [{"tick":42, "type":"sound", "id":"hit_rock"}, {"tick":76, "type":"sound", "id":"hit_rock"}, {"tick":110, "type":"sound", "id":"hit_rock"}, {"tick":126, "type":"sound", "id":"carve_get"}],
+      "onFinish": "sheathed_idle"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.common.deliver",
+      "clip": "common_deliver_01",
+      "tickRate": 60, "durationTicks": 48,
+      "phases": [
+        {"id":"startup", "from":0, "to":30},
+        {"id":"recovery", "from":30, "to":48}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [{"tick":30, "type":"sound", "id":"carve_get"}],
+      "onFinish": "sheathed_idle"
+    },
+    {
+      "schemaVersion": 1,
       "actionId": "player.item.whet",
       "clip": "common_item_whet_01",
       "tickRate": 60, "durationTicks": 120,

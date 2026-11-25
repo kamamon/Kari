@@ -205,6 +205,50 @@ export const CLIPS: Record<string, Clip> = {
       { t: 100 },
     ],
   },
+  // 採集（v0.27.0。狩らない依頼）: 片ひざを突き、右手で草を探って摘み、左の腰の袋へ入れる。72 tick で品が入る（6〜72 は回避で止められる）
+  common_gather_01: {
+    base: NEUTRAL, basePy: 0,
+    keys: [
+      { t: 0 },
+      { t: 14, j: { spine: [30, 0, 0], chest: [14, 0, 0], head: [14, 0, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-62, 0, -8], forearmR: [-30, 0, 0], upperArmL: [-40, 0, 12], forearmL: [-50, 0, 0] }, py: -0.43 },
+      { t: 28, j: { spine: [26, 0, 0], chest: [12, -6, 0], head: [16, 0, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-38, 0, -12], forearmR: [-72, 0, 0], upperArmL: [-40, 0, 12], forearmL: [-50, 0, 0] }, py: -0.43 },
+      { t: 42, j: { spine: [32, 0, 0], chest: [18, 8, 0], head: [18, 6, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-66, 0, -4], forearmR: [-24, 0, 0], upperArmL: [-40, 0, 12], forearmL: [-50, 0, 0] }, py: -0.44 },
+      { t: 56, j: { spine: [26, 0, 0], chest: [12, -6, 0], head: [16, 0, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-36, 0, -12], forearmR: [-76, 0, 0], upperArmL: [-40, 0, 12], forearmL: [-50, 0, 0] }, py: -0.43 },
+      { t: 72, j: { spine: [18, 0, 0], chest: [8, -12, 0], head: [10, -8, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-22, 0, -18], forearmR: [-92, 0, 0], upperArmL: [-18, 0, 14], forearmL: [-34, 0, 0] }, py: -0.42 },
+      { t: 84, j: { spine: [10, 0, 0], thighL: [-30, 0, 4], shinL: [40, 0, 0], thighR: [-8, 0, -4], shinR: [30, 0, 0] }, py: -0.12 },
+      { t: 90 },
+    ],
+  },
+  // 採掘（v0.27.0）: 足を開いて構え、借りた採掘道具を 3 回振り下ろし（42・76・110）、しゃがんで鉱石を拾う。126 tick で品が入る（6〜126 は回避で止められる）
+  common_mine_01: {
+    base: NEUTRAL, basePy: 0,
+    keys: [
+      { t: 0 },
+      { t: 12, j: { spine: [12, 0, 0], thighL: [-22, 0, 8], shinL: [26, 0, 0], thighR: [10, 0, -8], shinR: [22, 0, 0], upperArmR: [-42, 0, -10], forearmR: [-52, 0, 0], upperArmL: [-42, 0, 10], forearmL: [-52, 0, 0] }, py: -0.06 },
+      { t: 30, j: { spine: [-4, 0, 0], chest: [-6, 0, 0], head: [-8, 0, 0], thighL: [-22, 0, 8], shinL: [26, 0, 0], thighR: [10, 0, -8], shinR: [22, 0, 0], upperArmR: [-150, 0, -8], forearmR: [-40, 0, 0], upperArmL: [-140, 0, 8], forearmL: [-42, 0, 0] }, py: -0.04 },
+      { t: 42, j: { spine: [34, 0, 0], chest: [16, 0, 0], head: [10, 0, 0], thighL: [-30, 0, 8], shinL: [36, 0, 0], thighR: [6, 0, -8], shinR: [30, 0, 0], upperArmR: [-52, 0, -8], forearmR: [-12, 0, 0], upperArmL: [-48, 0, 8], forearmL: [-14, 0, 0] }, py: -0.12 },
+      { t: 50, j: { spine: [30, 0, 0], chest: [14, 0, 0], head: [10, 0, 0], thighL: [-30, 0, 8], shinL: [36, 0, 0], thighR: [6, 0, -8], shinR: [30, 0, 0], upperArmR: [-58, 0, -8], forearmR: [-18, 0, 0], upperArmL: [-54, 0, 8], forearmL: [-20, 0, 0] }, py: -0.11 },
+      { t: 64, j: { spine: [-4, 0, 0], chest: [-6, 0, 0], head: [-8, 0, 0], thighL: [-22, 0, 8], shinL: [26, 0, 0], thighR: [10, 0, -8], shinR: [22, 0, 0], upperArmR: [-150, 0, -8], forearmR: [-40, 0, 0], upperArmL: [-140, 0, 8], forearmL: [-42, 0, 0] }, py: -0.04 },
+      { t: 76, j: { spine: [34, 0, 0], chest: [16, 0, 0], head: [10, 0, 0], thighL: [-30, 0, 8], shinL: [36, 0, 0], thighR: [6, 0, -8], shinR: [30, 0, 0], upperArmR: [-52, 0, -8], forearmR: [-12, 0, 0], upperArmL: [-48, 0, 8], forearmL: [-14, 0, 0] }, py: -0.12 },
+      { t: 84, j: { spine: [30, 0, 0], chest: [14, 0, 0], head: [10, 0, 0], thighL: [-30, 0, 8], shinL: [36, 0, 0], thighR: [6, 0, -8], shinR: [30, 0, 0], upperArmR: [-58, 0, -8], forearmR: [-18, 0, 0], upperArmL: [-54, 0, 8], forearmL: [-20, 0, 0] }, py: -0.11 },
+      { t: 98, j: { spine: [-4, 0, 0], chest: [-6, 0, 0], head: [-8, 0, 0], thighL: [-22, 0, 8], shinL: [26, 0, 0], thighR: [10, 0, -8], shinR: [22, 0, 0], upperArmR: [-150, 0, -8], forearmR: [-40, 0, 0], upperArmL: [-140, 0, 8], forearmL: [-42, 0, 0] }, py: -0.04 },
+      { t: 110, j: { spine: [34, 0, 0], chest: [16, 0, 0], head: [10, 0, 0], thighL: [-30, 0, 8], shinL: [36, 0, 0], thighR: [6, 0, -8], shinR: [30, 0, 0], upperArmR: [-52, 0, -8], forearmR: [-12, 0, 0], upperArmL: [-48, 0, 8], forearmL: [-14, 0, 0] }, py: -0.12 },
+      { t: 126, j: { spine: [30, 0, 0], chest: [14, 0, 0], head: [14, 0, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-70, 0, -6], forearmR: [-28, 0, 0], upperArmL: [-58, 0, 10], forearmL: [-34, 0, 0] }, py: -0.43 },
+      { t: 140, j: { spine: [10, 0, 0], thighL: [-30, 0, 4], shinL: [40, 0, 0], thighR: [-8, 0, -4], shinR: [30, 0, 0], upperArmR: [-30, 0, -10], forearmR: [-60, 0, 0] }, py: -0.12 },
+      { t: 150 },
+    ],
+  },
+  // 納品（v0.27.0）: 前へかがんで、両手で納品箱へ入れる。30 tick で納まる
+  common_deliver_01: {
+    base: NEUTRAL, basePy: 0,
+    keys: [
+      { t: 0 },
+      { t: 14, j: { spine: [36, 0, 0], chest: [10, 0, 0], head: [10, 0, 0], thighL: [-36, 0, 4], shinL: [44, 0, 0], thighR: [-36, 0, -4], shinR: [44, 0, 0], upperArmR: [-76, 0, -6], forearmR: [-24, 0, 0], upperArmL: [-76, 0, 6], forearmL: [-24, 0, 0] }, py: -0.18 },
+      { t: 30, j: { spine: [44, 0, 0], chest: [12, 0, 0], head: [12, 0, 0], thighL: [-40, 0, 4], shinL: [50, 0, 0], thighR: [-40, 0, -4], shinR: [50, 0, 0], upperArmR: [-64, 0, -6], forearmR: [-12, 0, 0], upperArmL: [-64, 0, 6], forearmL: [-12, 0, 0] }, py: -0.22 },
+      { t: 42, j: { spine: [10, 0, 0], thighL: [-10, 0, 2], shinL: [12, 0, 0], thighR: [-10, 0, -2], shinR: [12, 0, 0] }, py: -0.04 },
+      { t: 48 },
+    ],
+  },
   common_roll_01: {
     base: NEUTRAL, basePy: 0,
     keys: [

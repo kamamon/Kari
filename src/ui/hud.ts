@@ -9,6 +9,7 @@ import { areaLabel, areaOf } from '../game/field';
 import type { SimEvent } from '../game/events';
 import { familyOf, isInvulnerable } from '../game/player';
 import type { Simulation } from '../game/sim';
+import { DEPOT_REACH, NODE_REACH, errandProgress, errandReady, openNodes } from '../game/errand';
 import type { InputHub } from '../input/hub';
 import type { GameView } from '../render/view';
 import { counterOf, questGoal, shortName } from './targets';
@@ -70,6 +71,8 @@ export class Hud {
   private momentum: HTMLElement;
   private wrap: HTMLElement;
   private wrapText: HTMLElement;
+  /** 達成後の「帰還する」。狩らない依頼の案内（狩りの途中）では隠す */
+  private wrapBack!: HTMLElement;
   private dmgLayer: HTMLElement;
   private last: Record<string, string | number> = {};
   private lagHp = 1;
@@ -131,6 +134,7 @@ export class Hud {
     this.wrapText = el('span', '', this.wrap);
     const back = el('button', '', this.wrap, '帰還する');
     back.id = 'hud-return';
+    this.wrapBack = back;
     back.addEventListener('click', () => hub.ui('return'));
     this.exitHint = el('div', 'hud-exit', this.root);
     this.exitHint.hidden = true;
@@ -354,6 +358,15 @@ export class Hud {
         case 'carve':
           this.toast(`${sim.content.materials.get(e.itemId)?.name ?? e.itemId} を手に入れた`);
           break;
+        // 狩らない依頼（v0.27.0）
+        case 'errand_gather': {
+          const need = sim.errand?.def.needs.find((x) => x.itemId === e.itemId)?.count ?? 0;
+          this.toast(`${sim.content.materials.get(e.itemId)?.name ?? e.itemId} ×${e.count}（${e.total} / ${need}）`);
+          break;
+        }
+        case 'errand_deliver':
+          this.toast('納品箱へ納めた');
+          break;
         default:
           break;
       }
@@ -404,7 +417,10 @@ export class Hud {
     // 群れの依頼は、種ごとの残りの数も出す（v0.18.0）
     const left = sim.pack ? sim.targets.map((t) => Math.max(0, t.count - sim.slain(t.monsterId))) : [];
     const rest = sim.pack && h?.phase === 'active' ? `（あと ${sim.targets.map((t, i) => (sim.targets.length > 1 ? `${shortName(sim.content.monsters.get(t.monsterId)?.name ?? '')} ` : '') + `${left[i]} ${counterOf(t.monsterId)}`).join('・')}）` : '';
-    const goal = this.inHub ? sim.content.hub.name : h ? `【${sim.rank?.name ?? ''}】${h.quest.name}: ${questGoal(sim.content, h.quest, true)}${rest}` : '訓練: 標的で動作を確かめる';
+    // 狩らない依頼（v0.27.0）: 目標は、採った数 / 要る数（この出発で採ったものだけ）
+    const er = sim.errand;
+    const errandGoal = er ? (errandReady(er) && h?.phase === 'active' ? 'そろった。野営地の納品箱へ' : errandProgress(er).map((x) => `${sim.content.materials.get(x.itemId)?.name ?? x.itemId} ${x.have} / ${x.need}`).join('・')) : '';
+    const goal = this.inHub ? sim.content.hub.name : h ? `【${sim.rank?.name ?? ''}】${h.quest.name}: ${er ? errandGoal : `${questGoal(sim.content, h.quest, true)}${rest}`}` : '訓練: 標的で動作を確かめる';
     this.set('goal', goal, () => (this.goal.textContent = goal));
     const faints = h ? `力尽き ${h.faints} / ${h.quest.maxFaints}` : '';
     this.set('faints', faints, () => (this.faints.textContent = faints));
@@ -417,8 +433,21 @@ export class Hud {
     const tm = sim.pack ? live.find((m) => sim.monsterArea(m)?.id === sim.areaId) ?? live[0] : sim.main ?? sim.monsters[0];
     const ta = tm ? sim.monsterArea(tm) : null;
     const tState = !tm || tm.dead ? 'dead' : tm.asleep ? 'sleep' : tm.roam?.state === 'leave' || tm.herd?.mood === 'travel' ? 'leave' : '';
-    const targetAreas = new Set(sim.pack ? live.map((m) => sim.monsterArea(m)?.id ?? '') : ta && tState !== 'dead' ? [ta.id] : []);
-    const where = field && here ? `${areaLabel(here)}${here.kind === 'camp' ? '' : ` ${here.name}`}${ta && tState !== 'dead' ? `　標的: ${areaLabel(ta)}${tState === 'sleep' ? '（眠り）' : tState === 'leave' ? '（移動中）' : ''}` : ''}` : '';
+    let targetAreas = new Set(sim.pack ? live.map((m) => sim.monsterArea(m)?.id ?? '') : ta && tState !== 'dead' ? [ta.id] : []);
+    let errandWhere = '';
+    if (er && field && h?.phase === 'active') {
+      // 採取点の残るエリア（エリア単位で地図に出す。正確な点は、近づくと見える）。そろったら、納品箱の野営地
+      if (errandReady(er)) {
+        targetAreas = new Set([er.def.depot.areaId]);
+        errandWhere = '　納品: 野営地';
+      } else {
+        const left = new Map<string, number>();
+        for (const n of openNodes(er, null)) left.set(n.areaId, (left.get(n.areaId) ?? 0) + 1);
+        targetAreas = new Set(left.keys());
+        errandWhere = left.size ? `　採取点: ${[...left].map(([id, n]) => `${areaLabel(areaOf(field, id)!)} ${n}`).join('・')}` : '';
+      }
+    }
+    const where = field && here ? `${areaLabel(here)}${here.kind === 'camp' ? '' : ` ${here.name}`}${er ? errandWhere : ta && tState !== 'dead' ? `　標的: ${areaLabel(ta)}${tState === 'sleep' ? '（眠り）' : tState === 'leave' ? '（移動中）' : ''}` : ''}` : '';
     this.set('where', where, () => {
       this.where.textContent = where;
       this.where.hidden = where === '';
@@ -462,15 +491,21 @@ export class Hud {
     });
     // 達成後: 剥ぎ取りの残りと、帰還までの時間
     let wrap = '';
-    if (h && h.phase === 'success' && !h.closed) {
+    if (er && h && h.phase === 'active') wrap = errandHint(sim);
+    if (er && h && h.phase === 'success' && !h.closed) {
+      const s2 = Math.ceil(h.returnTicks / 60);
+      wrap = `納品完了　帰還まで ${Math.floor(s2 / 60)}:${String(s2 % 60).padStart(2, '0')}`;
+    } else if (h && h.phase === 'success' && !h.closed) {
       const left = sim.carvesLeft();
       const s2 = Math.ceil(h.returnTicks / 60);
       const head = h.reason === 'capture' ? '捕獲成功' : left > 0 ? `剥ぎ取り 残り ${left} 回${sim.carveTarget() ? '（攻撃ボタン）' : '（近づく）'}` : '剥ぎ取り完了';
       wrap = `${head}　帰還まで ${Math.floor(s2 / 60)}:${String(s2 % 60).padStart(2, '0')}`;
     }
-    this.set('wrap', wrap, () => {
+    const showBack = !!h && h.phase === 'success';
+    this.set('wrap', `${wrap}|${showBack}`, () => {
       this.wrapText.textContent = wrap;
       this.wrap.hidden = wrap === '';
+      this.wrapBack.hidden = !showBack;
     });
 
     if (!this.verify) return;
@@ -518,3 +553,34 @@ export class Hud {
     this.set('verify', text, () => (this.verifyBox.textContent = text));
   }
 }
+
+/**
+ * 狩らない依頼の案内（v0.27.0）。攻撃ボタンでできること、納刀していない時、そろった時、納品箱で足りない時。
+ * 表示だけ（simulation の値を読むだけ）。
+ */
+function errandHint(sim: Simulation): string {
+  const er = sim.errand;
+  if (!er) return '';
+  const p = sim.player;
+  const name = (id: string): string => sim.content.materials.get(id)?.name ?? id;
+  // 採る・納める途中
+  const op = p.errandOp;
+  if (op && p.mode === 'action') {
+    if (op.target.kind === 'deliver') return '納めています';
+    const n = er.def.nodes.find((x) => op.target.kind === 'node' && x.id === op.target.nodeId);
+    return `${n?.kind === 'mine' ? '採掘' : '採集'}しています（回避で止める）`;
+  }
+  const t = sim.errandTarget();
+  if (t?.kind === 'deliver') return '攻撃ボタンで 納品（全部を 1 度に）';
+  if (t?.kind === 'node') {
+    const n = er.def.nodes.find((x) => x.id === t.nodeId)!;
+    return `攻撃ボタンで ${n.kind === 'mine' ? '採掘' : '採集'}（${name(n.itemId)}）`;
+  }
+  const nearNode = openNodes(er, sim.areaId).some((n) => Math.hypot(p.pos.x - n.x, p.pos.z - n.z) <= NODE_REACH);
+  const d = er.def.depot;
+  const nearDepot = d.areaId === sim.areaId && Math.hypot(p.pos.x - d.x, p.pos.z - d.z) <= DEPOT_REACH;
+  if ((nearNode || (nearDepot && errandReady(er))) && p.drawn) return '納刀すると、攻撃ボタンで採る・納める';
+  if (nearDepot && !errandReady(er)) return `まだ足りない（${errandProgress(er).filter((x) => x.have < x.need).map((x) => `${name(x.itemId)} あと ${x.need - x.have}`).join('・')}）`;
+  return '';
+}
+

@@ -6,3 +6,7 @@ export interface NpcSide { file: string; aspect: number; foot: number; head: num
 export interface NpcArt { height: number; front: NpcSide; back?: NpcSide }
 
 export const NPC_ART: Readonly<Record<string, NpcArt>> = {"minagi": {"height": 1.64, "front": {"file": "npc_minagi_front_v1", "aspect": 0.2953, "foot": 0.0021, "head": 0.0029}}, "smith": {"height": 1.78, "front": {"file": "npc_smith_front_v1", "aspect": 0.4156, "foot": 0.0022, "head": 0.0029}, "back": {"file": "npc_smith_back_v1", "aspect": 0.4203, "foot": 0.0022, "head": 0.0029}}, "merchant": {"height": 1.66, "front": {"file": "npc_merchant_front_v1", "aspect": 0.3641, "foot": 0.0021, "head": 0.0028}, "back": {"file": "npc_merchant_back_v1", "aspect": 0.3781, "foot": 0.0021, "head": 0.0028}}};
+
+/** 採取点の板の絵（v0.27.0。public/assets/textures/props/<file>.webp）。height は高さ（m。仮の値）、ほかは人の板と同じ */
+export interface PropArt extends NpcSide { height: number }
+export const PROP_ART: Readonly<Record<'herb' | 'ore', PropArt>> = {"herb": {"file": "prop_herb_v1", "height": 0.85, "aspect": 1.3047, "foot": 0.0034, "head": 0.0046}, "ore": {"file": "prop_ore_v1", "height": 0.7, "aspect": 2.1016, "foot": 0.0051, "head": 0.0068}};

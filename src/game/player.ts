@@ -8,6 +8,7 @@ import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
 import { sampleCurve } from './tracks';
 import type { Circle, World } from './world';
+import type { ErrandTarget } from './errand';
 
 export type PlayerMode = 'free' | 'action' | 'guard' | 'hurt' | 'dead';
 export type HurtKind = 'flinch' | 'knockdown' | 'bounce' | 'para' | 'sleep' | 'stun';
@@ -54,6 +55,8 @@ export interface PlayerState {
   pendingItem: boolean;
   /** 剥ぎ取りの途中（source は剥ぎ取る対象） */
   carving: { source: string; instanceId: number; done: boolean } | null;
+  /** 採る・納める途中（狩らない依頼。v0.27.0）。品が入る tick より前に止まると、何も起きない */
+  errandOp: { target: ErrandTarget; instanceId: number; done: boolean } | null;
   sprinting: boolean;
   /** 見た目用の現在速度 (m/s) */
   moveSpeed: number;
@@ -81,6 +84,10 @@ export interface SimCtx {
   carveTarget(): string | null;
   /** 剥ぎ取り 1 回分を確定する */
   carve(source: string): void;
+  /** 狩らない依頼で、いま攻撃ボタンでできること（採る・納める）。無ければ null */
+  errandTarget(): ErrandTarget | null;
+  /** 採る・納める行動が、品の入る tick まで進んだ */
+  errandDo(t: ErrandTarget): void;
   /** 矢を放つ（環弓）。向きと狙いは、この時点のプレイヤーと敵の位置から決める。 */
   spawnProjectiles(spec: ShootDef, run: ActionRun): void;
 }
@@ -159,6 +166,7 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
     itemUse: null,
     pendingItem: false,
     carving: null,
+    errandOp: null,
     sprinting: false,
     moveSpeed: 0,
     weaponId,
@@ -458,6 +466,16 @@ function stepFree(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
       p.carving = { source, instanceId: run.instanceId, done: false };
       return stepAction(p, inp, ctx, 1);
     }
+    // 狩らない依頼（v0.27.0）: 納刀して採取点・納品箱のそばで、攻撃ボタン（道具ボタンは、道具を使うまま）
+    const target = p.buffer.main > 0 ? ctx.errandTarget() : null;
+    if (target) {
+      p.buffer.main = 0;
+      p.buffer.item = 0;
+      p.pendingItem = false;
+      const run = startAction(p, target.actionId, ctx);
+      p.errandOp = { target, instanceId: run.instanceId, done: false };
+      return stepAction(p, inp, ctx, 1);
+    }
   }
   // 研磨石: 抜刀して、手に持った武器を研ぐ。納刀中に押したら、使えることを確かめてから、抜いて続けて使う。
   const whet = selectedItem(p, ctx)?.kind === 'whet';
@@ -710,6 +728,16 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
       ctx.carve(cv.source);
     }
     if (!p.action || p.action.instanceId !== cv.instanceId) p.carving = null;
+  }
+  // 採る・納める: 剥ぎ取りと同じく、recovery の始まりまで進んだ時にだけ、1 度だけ
+  const eo = p.errandOp;
+  if (eo) {
+    const at = ev && ev.run.instanceId === eo.instanceId ? ev.run.def.phases.find((ph) => ph.id === 'recovery')?.from ?? 0 : 0;
+    if (!eo.done && ev && ev.run.instanceId === eo.instanceId && ev.t >= at) {
+      eo.done = true;
+      ctx.errandDo(eo.target);
+    }
+    if (!p.action || p.action.instanceId !== eo.instanceId) p.errandOp = null;
   }
 
   // 勢い（双剣）: 振っていない時間が続くと消える

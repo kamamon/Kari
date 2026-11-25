@@ -674,15 +674,19 @@ export interface StatusTuning {
   stun: { ticks: number };
 }
 
-/** 依頼。M2 前半は大型 1 体の討伐だけ。 */
+/** 依頼。狩り（slay・hunt）と、狩らない依頼（gather。v0.27.0: 採集・採掘・現地の納品）。 */
 export interface QuestDef {
   id: string;
   name: string;
-  /** slay: 討伐だけで達成（捕獲はできない）。hunt: 討伐でも捕獲でも達成。 */
-  kind: 'slay' | 'hunt';
+  /**
+   * slay: 討伐だけで達成（捕獲はできない）。hunt: 討伐でも捕獲でも達成。
+   * gather（v0.27.0）: この出発で採った素材を、野営地の納品箱へ届けて達成（モンスターの標的は無い。倒しても達成にならない）。
+   */
+  kind: 'slay' | 'hunt' | 'gather';
   summary: string;
   mapId: string;
-  targetMonsterId: string;
+  /** 狩りの標的（slay・hunt では要る。gather には無い。ダミーの標的を置かない） */
+  targetMonsterId?: string;
   /**
    * 群れの依頼（v0.18.0）: 種ごとに、討伐する頭数。全部そろうと達成（捕獲は無い。kind は slay）。
    * 無ければ、これまでどおり targetMonsterId を 1 体。あれば targetMonsterId は 1 つ目の種と同じにする。
@@ -694,7 +698,10 @@ export interface QuestDef {
   fieldId?: string;
   /** 受けるために、先に 1 回は達成しておく依頼（無ければ最初から受けられる）。 */
   requires?: string[];
-  monsterSpawn: { x: number; z: number; yaw: number };
+  /** 標的の出る位置（slay・hunt では要る。gather には無い） */
+  monsterSpawn?: { x: number; z: number; yaw: number };
+  /** 狩らない依頼の中身（kind: gather の時だけ。v0.27.0、docs/spec.md の 27 章） */
+  gather?: GatherDef;
   /** 制限時間（1 つの狩場 `?hunt=arena` の値。フィールドでは、狩場の timeLimitScale を掛ける。fieldTimeLimitTicks があれば、そちら） */
   timeLimitTicks: number;
   /**
@@ -718,6 +725,43 @@ export interface QuestDef {
 export interface QuestTarget {
   monsterId: string;
   count: number;
+}
+
+/** 依頼の標的（種ごとの頭数）。群れの依頼は targets、1 体の標的の依頼は [標的, 1]、狩らない依頼（gather）は空 */
+export function questTargets(q: Pick<QuestDef, 'targets' | 'targetMonsterId'>): QuestTarget[] {
+  if (q.targets) return q.targets;
+  return q.targetMonsterId ? [{ monsterId: q.targetMonsterId, count: 1 }] : [];
+}
+
+/** 採取点（v0.27.0）。1 か所で 1 度だけ、yieldPerNode 個を確実に採れる（抽選しない）。採った状態は、エリアを出入りしても戻らない */
+export interface GatherNodeDef {
+  /** 依頼の中で重ならない id */
+  id: string;
+  /** gather: 採集（草・実。1.5 秒）/ mine: 採掘（鉱石。2.5 秒） */
+  kind: 'gather' | 'mine';
+  itemId: string;
+  areaId: string;
+  x: number;
+  z: number;
+}
+
+/** 採集袋（v0.27.0）: 入る種類と、1 種類の数（この出発で採ったものだけを入れる袋。里の持ち物とは別） */
+export const GATHER_BAG = { kinds: 8, perItem: 20 } as const;
+
+/**
+ * 狩らない依頼（採集・採掘・現地の納品。v0.27.0、ChatGPT のクエスト設計 #9 の G・M・D01）。
+ * 数えるのは、この出発で採取点から採った品だけ（里の倉庫・支給品は数えない）。全部そろってから、野営地の納品箱で 1 度に渡す。
+ */
+export interface GatherDef {
+  /** 納品に要る数（素材ごと） */
+  needs: ItemStack[];
+  /** 1 か所で採れる数 */
+  yieldPerNode: number;
+  nodes: GatherNodeDef[];
+  /** 野営地の納品箱 */
+  depot: { areaId: string; x: number; z: number };
+  /** 大型・幼体を出すか。いまは 'none'（出さない）だけ */
+  encounters: 'none';
 }
 
 /** 依頼の分類（v0.26.0）。main: 物語の主線 / free: 自由 / promotion: 段階を上げる確認 / challenge: 任意の挑戦 */
@@ -821,6 +865,8 @@ export interface ItemDef {
 export interface MaterialDef {
   id: string;
   name: string;
+  /** 数え方（v0.27.0。採集の素材の「枚」「個」など。無ければ「個」） */
+  unit?: string;
 }
 
 export interface LootRoll {

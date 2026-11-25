@@ -30,7 +30,7 @@ export type SimEvent =
   | { type: 'monster_rage'; target: string; on: boolean }
   | { type: 'hazard_warn'; id: number; x: number; z: number; radius: number; warnTicks: number }
   | { type: 'hazard_impact'; id: number; x: number; z: number; radius: number }
-  | { type: 'hunt_end'; phase: 'success' | 'failed'; reason: 'slay' | 'capture' | 'time' | 'faints' | 'retire' }
+  | { type: 'hunt_end'; phase: 'success' | 'failed'; reason: 'slay' | 'capture' | 'time' | 'faints' | 'retire' | 'deliver' }
   /** 結果が閉じた（報酬が確定した）。これ以後は何も変わらない。 */
   | { type: 'hunt_close' }
   /** 道具を使い始めた / 効果が出た（ok が false なら効果なし。amount は回復量など）/ 使えなかった */
@@ -46,6 +46,10 @@ export type SimEvent =
   | { type: 'monster_captured'; target: string }
   /** 剥ぎ取り 1 回分。source は carve（本体）か severed:<部位 id> */
   | { type: 'carve'; itemId: string; source: string; pos: V3 }
+  /** 狩らない依頼（v0.27.0）: 採取点から採った（total は、この出発で採った合計） */
+  | { type: 'errand_gather'; nodeId: string; itemId: string; count: number; total: number; kind: 'gather' | 'mine'; pos: V3 }
+  /** 狩らない依頼: 納品箱へ納めた（達成は、この tick の終わりに決まる） */
+  | { type: 'errand_deliver'; pos: V3 }
   | { type: 'monster_dead'; target: string }
   | { type: 'monster_respawn'; target: string }
   /** フィールド: プレイヤーがエリアを移った / 大型が出口へ歩き出した・別のエリアに着いた・巣で眠った・起きた */

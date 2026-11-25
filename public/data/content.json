@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.26.0",
+  "contentVersion": "0.27.0",
   "files": {
     "actions": [
       "actions/player_common.json",
@@ -104,7 +104,8 @@
     "quests": [
       "quests.json",
       "quests_creatures.json",
-      "quests_herds.json"
+      "quests_herds.json",
+      "quests_errands.json"
     ],
     "items": [
       "items.json",

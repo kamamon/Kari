@@ -5,12 +5,14 @@
   art-source/npc/ref_npc_*_v1.png           鍛冶（ロクハ）と商店（イサネ）の正面・背面（RGB。無地の背景）
   art-source/npc/minagi_full_v1.png         受付ミナギの全身（依頼 3）。minagi_bust_v1.png は会話の顔
   art-source/fields/field_NN_overview_v1.png 登録簿の狩場 20 の景色の原画（1536 × 1024）
+  art-source/env/props/ref_fureki_prop_*_v1.png  採集草と採掘の露頭（RGB。無地の背景。v0.27.0 から、狩らない依頼の採取点）
     → public/assets/icons/<名前>.webp            256 四方。透明の所の薄い残り（alpha 1〜15）を 0 に、外の余白を 1 割に
       public/assets/textures/npc/<名前>.webp      人の切り抜き（高さ 640px）。里に立てる板に貼る
       public/assets/portraits/<名前>.webp         会話の窓に出す、頭と肩の切り抜き（256 四方）
       public/assets/fields/<名前>.webp            狩場の景色（640 × 427）。図鑑と物語の欄に出す
       src/ui/artIndex.ts                          アイコン・顔・狩場の絵の名前（素材の id から）
-      src/render/npcArt.ts                        人の板の大きさ（絵の縦横の比・足の位置・背丈）
+      src/render/npcArt.ts                        人の板の大きさ（絵の縦横の比・足の位置・背丈）と、採取点の板の大きさ（PROP_ART）
+      public/assets/textures/props/<名前>.webp    採取点の切り抜き（高さ 384px。v0.27.0）
       art-source/supplement_v1.measure.json       受け入れの確認で測った値
 
 直すこと（絵は描き足さない）:
@@ -67,6 +69,12 @@ PORTRAITS = {
     'merchant': 'npc/ref_npc_merchant_front_v1',
 }
 PORTRAIT_PX = 256
+# 採取点の板（v0.27.0。狩らない依頼）: 名前 → (原画, 高さ m。仮の値)。切り抜き方は人と同じ
+PROPS = {
+    'herb': ('env/props/ref_fureki_prop_herb_v1', 0.85),
+    'ore': ('env/props/ref_fureki_prop_ore_v1', 0.7),
+}
+PROP_H = 384
 
 FIELD_W, FIELD_H = 640, 427
 
@@ -222,6 +230,25 @@ def main():
         measure['portraits'].append({'id': key, 'src': src, 'cropPx': [X0, top, s]})
         measure['outputs'][f'portraits/{name}'] = {'px': [PORTRAIT_PX, PORTRAIT_PX], 'bytes': b}
 
+    # ---- 採取点（v0.27.0）----
+    measure['props'] = []
+    prop_meta = {}
+    for key, (src, height) in PROPS.items():
+        rgb, alpha, m = cutout(os.path.join(ART, src + '.png'))
+        x0, y0, x1, y1 = m['bbox']
+        cx = (x0 + x1) / 2
+        half = max(cx - x0, x1 - cx) + 6
+        X0, X1 = int(max(0, cx - half)), int(min(rgb.shape[1], cx + half))
+        Y0, Y1 = max(0, y0 - 4), min(rgb.shape[0], y1 + 3)
+        img = Image.fromarray(to_u8(rgb, alpha)[Y0:Y1, X0:X1])
+        sc = PROP_H / img.size[1]
+        img = img.resize((max(1, int(round(img.size[0] * sc))), PROP_H), Image.LANCZOS)
+        name = f'prop_{key}_v1'
+        b = save_webp(np.asarray(img), os.path.join(PUB, 'textures', 'props', name + '.webp'), q=86)
+        prop_meta[key] = {'file': name, 'height': height, 'aspect': round(img.size[0] / img.size[1], 4), 'foot': round((Y1 - y1) / (Y1 - Y0), 4), 'head': round((y0 - Y0) / (Y1 - Y0), 4)}
+        measure['props'].append({'id': key, 'src': src, **m})
+        measure['outputs'][f'textures/props/{name}'] = {'px': list(img.size), 'bytes': b}
+
     # ---- 狩場の景色 ----
     gen = json.load(open(os.path.join(ROOT, 'docs', 'source', 'chatgpt-supplement-20261125', 'fields', 'fields_generation.json'), encoding='utf-8'))
     names = {r['filename'].replace('.png', ''): r['name'] for r in gen['records']}
@@ -259,13 +286,16 @@ def main():
           'export interface NpcSide { file: string; aspect: number; foot: number; head: number }',
           '/** height は背丈（m。仮の値）。back が無い人は、いつも正面を向ける */',
           'export interface NpcArt { height: number; front: NpcSide; back?: NpcSide }', '',
-          'export const NPC_ART: Readonly<Record<string, NpcArt>> = ' + json.dumps(npc_meta, ensure_ascii=False) + ';', '']
+          'export const NPC_ART: Readonly<Record<string, NpcArt>> = ' + json.dumps(npc_meta, ensure_ascii=False) + ';', '',
+          '/** 採取点の板の絵（v0.27.0。public/assets/textures/props/<file>.webp）。height は高さ（m。仮の値）、ほかは人の板と同じ */',
+          'export interface PropArt extends NpcSide { height: number }',
+          'export const PROP_ART: Readonly<Record<\'herb\' | \'ore\', PropArt>> = ' + json.dumps(prop_meta, ensure_ascii=False) + ';', '']
     with open(os.path.join(ROOT, 'src', 'render', 'npcArt.ts'), 'w', encoding='utf-8') as f:
         f.write('\n'.join(ts))
     with open(MEASURE, 'w', encoding='utf-8') as f:
         json.dump(measure, f, ensure_ascii=False, indent=1)
     total = sum(v['bytes'] for v in measure['outputs'].values())
-    print(f"アイコン {len(measure['icons'])}、人 {sum(1 for _ in measure['npcs'])} 枚、顔 {len(measure['portraits'])}、狩場 {len(measure['fields'])}。合わせて {total / 1e6:.2f}MB")
+    print(f"アイコン {len(measure['icons'])}、人 {sum(1 for _ in measure['npcs'])} 枚、顔 {len(measure['portraits'])}、採取点 {len(measure['props'])}、狩場 {len(measure['fields'])}。合わせて {total / 1e6:.2f}MB")
 
 
 if __name__ == '__main__':

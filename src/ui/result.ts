@@ -4,6 +4,7 @@ import type { Simulation } from '../game/sim';
 import { counterOf, shortName } from './targets';
 import { withIcon } from './icons';
 import { starLabel } from '../data/questBoard';
+import { errandProgress } from '../game/errand';
 
 export interface ResultHost {
   toBase(): void;
@@ -20,6 +21,7 @@ export interface RewardSaveState {
 
 const REASON: Record<string, string> = {
   slay: '討伐に成功しました。',
+  deliver: '納品しました。',
   capture: '捕獲に成功しました。',
   time: '制限時間を過ぎました。',
   faints: '力尽きた回数が上限に達しました。',
@@ -106,10 +108,12 @@ export class ResultScreen {
       ['結果', REASON[h.reason ?? ''] ?? ''],
       ['かかった時間', `${Math.floor(sec / 60)} 分 ${sec % 60} 秒`],
       ['力尽きた回数', `${h.faints} / ${h.quest.maxFaints}`],
-      ...(sim.pack
-        ? [['討伐', sim.targets.map((t) => `${shortName(sim.content.monsters.get(t.monsterId)?.name ?? '')} ${sim.slain(t.monsterId)} ${counterOf(t.monsterId)}（目標 ${t.count}）`).join('　')] as [string, string]]
-        : [['部位', parts.length ? parts.join('、') : 'なし'] as [string, string]]),
-      ['与えたダメージ', `${sim.totalDamage}（${sim.hitCount} 回命中）`],
+      ...(sim.errand
+        ? [['採ったもの', errandProgress(sim.errand).map((p) => `${sim.content.materials.get(p.itemId)?.name ?? p.itemId} ${p.have}（要る数 ${p.need}）`).join('　')] as [string, string]]
+        : sim.pack
+          ? [['討伐', sim.targets.map((t) => `${shortName(sim.content.monsters.get(t.monsterId)?.name ?? '')} ${sim.slain(t.monsterId)} ${counterOf(t.monsterId)}（目標 ${t.count}）`).join('　')] as [string, string]]
+          : [['部位', parts.length ? parts.join('、') : 'なし'] as [string, string]]),
+      ...(sim.errand ? [] : [['与えたダメージ', `${sim.totalDamage}（${sim.hitCount} 回命中）`] as [string, string]]),
     ];
     this.body.textContent = '';
     const table = document.createElement('table');
@@ -125,7 +129,7 @@ export class ResultScreen {
     this.body.append(table);
     const rw = h.rewards;
     if (h.phase === 'success' && rw) {
-      const SOURCE: Record<string, string> = { carve: '剥ぎ取り', capture: '捕獲', quest: '依頼の報酬' };
+      const SOURCE: Record<string, string> = { carve: '剥ぎ取り', capture: '捕獲', quest: '依頼の報酬', gather: '納品の余り（持ち帰り）' };
       const label = (src: string): string => {
         if (SOURCE[src]) return SOURCE[src]!;
         const [kind, partId] = src.split(':');

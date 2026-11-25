@@ -10,6 +10,8 @@ import { validateBoard, validateDeliveries, validateSupport } from './questBoard
 import {
   ARMOR_SLOTS,
   FINISH_STATES,
+  GATHER_BAG,
+  questTargets,
   SCHEMA_VERSION,
   recipeFrom,
   recipeResult,
@@ -228,7 +230,7 @@ export function crossCheck(c: Content, errors: string[]): void {
       if (!fd) errors.push(`quest ${q.id}: field ${q.fieldId} が無い`);
       else {
         if (fd.legacyMapId !== q.mapId) errors.push(`quest ${q.id}: field ${q.fieldId} の「これまでの狩場」が mapId と違う`);
-        if (!q.targets && !fd.routes[q.targetMonsterId]) errors.push(`quest ${q.id}: field ${q.fieldId} に、標的 ${q.targetMonsterId} の巡り方が無い`);
+        if (!q.targets && q.targetMonsterId && !fd.routes[q.targetMonsterId]) errors.push(`quest ${q.id}: field ${q.fieldId} に、標的 ${q.targetMonsterId} の巡り方が無い`);
       }
     }
     if (q.targets !== undefined) {
@@ -246,7 +248,15 @@ export function crossCheck(c: Content, errors: string[]): void {
       }
       if (q.kind !== 'slay') errors.push(`quest ${q.id}: 群れの依頼は討伐だけ（kind: slay）`);
     }
-    if (!c.monsters.has(q.targetMonsterId)) errors.push(`quest ${q.id}: monster ${q.targetMonsterId} が無い`);
+    if (q.kind === 'gather') {
+      // 狩らない依頼（v0.27.0）: 標的は無い（ダミーの標的・空の targets で表さない）。中身は validateGather
+      if (q.targetMonsterId !== undefined || q.targets !== undefined || q.monsterSpawn !== undefined) errors.push(`quest ${q.id}: 狩らない依頼に、標的・出る位置を書かない`);
+      errors.push(...validateGather(c, q));
+    } else {
+      if (q.gather !== undefined) errors.push(`quest ${q.id}: 狩りの依頼に gather を書かない`);
+      if (!q.targetMonsterId || !c.monsters.has(q.targetMonsterId)) errors.push(`quest ${q.id}: monster ${String(q.targetMonsterId)} が無い`);
+      if (!q.monsterSpawn || !isNum(q.monsterSpawn.x) || !isNum(q.monsterSpawn.z)) errors.push(`quest ${q.id}: monsterSpawn が無い`);
+    }
     if (!c.ranks.has(q.rankId)) errors.push(`quest ${q.id}: 段階 ${String(q.rankId)} が無い`);
     for (const need of q.requires ?? []) {
       const other = c.quests.get(need);
@@ -258,7 +268,7 @@ export function crossCheck(c: Content, errors: string[]): void {
     // フィールドの時間（v0.26.0）: フィールドの依頼だけ。正の整数で、1 つの狩場の時間より短くしない
     if (q.fieldTimeLimitTicks !== undefined && !(q.fieldId && isInt(q.fieldTimeLimitTicks) && q.fieldTimeLimitTicks >= q.timeLimitTicks)) errors.push(`quest ${q.id}: fieldTimeLimitTicks が不正（フィールドの依頼だけ、timeLimitTicks 以上の整数）`);
     if (q.monsterAttackScale !== undefined && !(q.monsterAttackScale > 0 && q.monsterAttackScale <= 3)) errors.push(`quest ${q.id}: monsterAttackScale が不正`);
-    if (q.kind !== 'slay' && q.kind !== 'hunt') errors.push(`quest ${q.id}: kind "${String(q.kind)}" は未定義`);
+    if (q.kind !== 'slay' && q.kind !== 'hunt' && q.kind !== 'gather') errors.push(`quest ${q.id}: kind "${String(q.kind)}" は未定義`);
     if (q.returnTicks !== undefined && !(isInt(q.returnTicks) && q.returnTicks >= 0)) errors.push(`quest ${q.id}: returnTicks が不正`);
     for (const s of q.supplies ?? []) {
       const it = c.items.get(s.itemId);
@@ -402,8 +412,73 @@ export function validateEdge(e: EdgeRules | undefined, errors: string[]): void {
   if (!(e.bounce && e.bounce.wearScale >= 1 && isInt(e.bounce.recoilTicks) && e.bounce.recoilTicks > 0 && e.bounce.pushback >= 0)) errors.push('edge.bounce が不正');
 }
 
+/** 採取点・納品箱が、エリアの外周から離す距離・岩から離す距離・出口から離す距離（m）。歩いて届き、出入りを塞がない */
+export const GATHER_EDGE_MARGIN = 1.6;
+export const GATHER_ROCK_MARGIN = 1.2;
+export const GATHER_EXIT_MARGIN = 4;
+
+/**
+ * 狩らない依頼の検査（v0.27.0）。フィールドの依頼で、要る数より 2 個以上多く採れる（抽選も、採取点の戻りも待たない）。
+ * 採れる全部が採集袋に入る（袋が満ちて採れない、が起きない）。採取点と納品箱は、エリアの中で、外周・岩・出口から離れている。
+ */
+export function validateGather(c: Content, q: QuestDef): string[] {
+  const e: string[] = [];
+  const w = `quest ${q.id}`;
+  const g = q.gather;
+  if (!g) return [`${w}: gather が無い`];
+  const fd = q.fieldId ? c.fields.get(q.fieldId) : undefined;
+  if (!fd) return [`${w}: 狩らない依頼は、フィールドの依頼にする（fieldId）`];
+  if (q.fieldTimeLimitTicks === undefined) e.push(`${w}: フィールドの時間（fieldTimeLimitTicks）を書く`);
+  if (g.encounters !== 'none') e.push(`${w}: encounters "${String(g.encounters)}" は未定義（いまは none だけ）`);
+  if (!(isInt(g.yieldPerNode) && g.yieldPerNode >= 1 && g.yieldPerNode <= 5)) e.push(`${w}: yieldPerNode が不正`);
+  if (!Array.isArray(g.needs) || g.needs.length === 0) e.push(`${w}: 要る素材が無い`);
+  const need = new Map<string, number>();
+  for (const s of g.needs ?? []) {
+    if (!c.materials.has(s.itemId)) e.push(`${w}: 要る素材 ${s.itemId} が無い`);
+    if (need.has(s.itemId)) e.push(`${w}: 要る素材 ${s.itemId} が 2 行ある`);
+    if (!(isInt(s.count) && s.count > 0)) e.push(`${w}: 要る素材 ${s.itemId} の数が不正`);
+    need.set(s.itemId, s.count);
+  }
+  const supply = new Map<string, number>();
+  const ids = new Set<string>();
+  const place = (label: string, areaId: string, x: number, z: number, campOnly = false): void => {
+    const area = fd.areas.find((a) => a.id === areaId);
+    if (!area) return void e.push(`${w}: ${label} のエリア ${areaId} が無い`);
+    if (campOnly && area.kind !== 'camp') e.push(`${w}: ${label} は野営地に置く`);
+    if (!isNum(x) || !isNum(z)) return void e.push(`${w}: ${label} の位置が不正`);
+    const shape = area.shape ? new AreaShape(area.shape) : null;
+    if (!shape || shape.signedDistance(x, z) < GATHER_EDGE_MARGIN) e.push(`${w}: ${label} がエリア ${areaId} の外か、外周に近すぎる`);
+    for (const r of area.rocks) if (Math.hypot(x - r.x, z - r.z) < r.r + GATHER_ROCK_MARGIN) e.push(`${w}: ${label} が岩に近すぎる`);
+    for (const x2 of area.exits) if (Math.hypot(x - x2.x, z - x2.z) < x2.r + GATHER_EXIT_MARGIN) e.push(`${w}: ${label} が出口に近すぎる`);
+  };
+  for (const n of g.nodes ?? []) {
+    if (!isStr(n.id) || ids.has(n.id)) e.push(`${w}: 採取点の id ${String(n.id)} が空か重複`);
+    ids.add(n.id);
+    if (n.kind !== 'gather' && n.kind !== 'mine') e.push(`${w}: 採取点 ${n.id} の kind が不正`);
+    if (!need.has(n.itemId)) e.push(`${w}: 採取点 ${n.id} の素材 ${n.itemId} は、要る素材に無い`);
+    supply.set(n.itemId, (supply.get(n.itemId) ?? 0) + (g.yieldPerNode ?? 0));
+    place(`採取点 ${n.id}`, n.areaId, n.x, n.z);
+  }
+  for (const [id, n] of need) {
+    const got = supply.get(id) ?? 0;
+    if (got < n + 2) e.push(`${w}: ${id} は ${got} 個しか採れない（要る ${n} + 予備 2 以上）`);
+    if (got > GATHER_BAG.perItem) e.push(`${w}: ${id} が採集袋に入りきらない（${got} > ${GATHER_BAG.perItem}）`);
+  }
+  if (need.size > GATHER_BAG.kinds) e.push(`${w}: 素材の種類が採集袋に入りきらない`);
+  if (!g.depot) e.push(`${w}: 納品箱が無い`);
+  else place('納品箱', g.depot.areaId, g.depot.x, g.depot.z, true);
+  // 採取点どうし・納品箱は離す（どれを採るか、迷わない）
+  const pts = [...(g.nodes ?? []).map((n) => ({ id: n.id, a: n.areaId, x: n.x, z: n.z })), ...(g.depot ? [{ id: '納品箱', a: g.depot.areaId, x: g.depot.x, z: g.depot.z }] : [])];
+  for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+    const a = pts[i]!, b = pts[j]!;
+    if (a.a === b.a && Math.hypot(a.x - b.x, a.z - b.z) < 4) e.push(`${w}: ${a.id} と ${b.id} が近すぎる（4m 未満）`);
+  }
+  return e;
+}
+
 /** その依頼の標的から出る素材の表（段階ごとの表があればそれ、無ければモンスターの lootId）。monsterId で、群れの依頼の 2 つ目以降の標的も引ける。 */
 export function lootForQuest(c: Content, q: QuestDef, monsterId = q.targetMonsterId): LootDef | undefined {
+  if (!monsterId) return undefined;
   const m = c.monsters.get(monsterId);
   const id = m?.lootByRank?.[q.rankId] ?? m?.lootId;
   return id ? c.loot.get(id) : undefined;
@@ -413,7 +488,9 @@ export function lootForQuest(c: Content, q: QuestDef, monsterId = q.targetMonste
 export function questMaterials(c: Content, q: QuestDef): Set<string> {
   const out = new Set<string>();
   for (const s of q.rewards?.items ?? []) out.add(s.itemId);
-  for (const t of q.targets ?? [{ monsterId: q.targetMonsterId, count: 1 }]) {
+  // 狩らない依頼（v0.27.0）: 採取点の素材（納品の余りを持ち帰る）
+  for (const n of q.gather?.nodes ?? []) out.add(n.itemId);
+  for (const t of questTargets(q)) {
     const m = c.monsters.get(t.monsterId);
     const l = lootForQuest(c, q, t.monsterId);
     if (!l) continue;
@@ -869,7 +946,7 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     else if (plan.name !== fd.name) errors.push(`field ${fd.id}: 名前「${fd.name}」が、登録簿の狩場の案「${plan.name}」と違う`);
   }
   // 依頼の標的は、登録簿にあること（訓練用の標的は除く）
-  for (const q of content.quests.values()) if (!content.bestiary.species.some((s) => s.id === q.targetMonsterId)) errors.push(`quest ${q.id}: 標的 ${q.targetMonsterId} が、登録簿（bestiary）に無い`);
+  for (const q of content.quests.values()) if (q.targetMonsterId && !content.bestiary.species.some((s) => s.id === q.targetMonsterId)) errors.push(`quest ${q.id}: 標的 ${q.targetMonsterId} が、登録簿（bestiary）に無い`);
   // 物語（v0.23.0）: 遊べる章の狩りは、いまある依頼だけ。場面は、どれもどこかの章から使う。狩場の名前は登録簿の狩場の案
   content.story = (await get(index.files.story)) as StoryDef;
   checkVersion(index.files.story, content.story.schemaVersion, errors);

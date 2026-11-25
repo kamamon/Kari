@@ -1937,7 +1937,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     const t = (id) => document.querySelector(`.base-choice[data-quest="${id}"]`)?.textContent ?? '';
     return { n: document.querySelectorAll('.base-choice[data-quest][data-stars]').length, letters: document.querySelectorAll('.quest-letter[data-quest]').length, rec: document.querySelector('.quest-recommend')?.textContent ?? '', st01: t('quest.basin.003'), r4: t('quest.basin.r4.001'), deliv: document.querySelector('.base-delivery')?.dataset.state, pack: document.querySelector('.forge-support')?.dataset.state, last: [...document.querySelectorAll('.base-choice')].pop().textContent };
   });
-  check('依頼の掲示: 24 件に星と依頼人の話（開いて読む）。主線・昇級確認の札。制限と目安の時間。おすすめの順。里の納品と工房の支給は、まだ', board.n === 24 && board.letters === 24 && /^★2【初級】依頼「岩場の足音」　主線/.test(board.st01) && /依頼人: 受付ミナギ/.test(board.st01) && /制限 30 分（目安 8〜12 分）/.test(board.st01)
+  check('依頼の掲示: 29 件（狩り 24・狩らない 5）に星と依頼人の話（開いて読む）。主線・昇級確認の札。制限と目安の時間。おすすめの順。里の納品と工房の支給は、まだ', board.n === 29 && board.letters === 29 && /^★2【初級】依頼「岩場の足音」　主線/.test(board.st01) && /依頼人: 受付ミナギ/.test(board.st01) && /制限 30 分（目安 8〜12 分）/.test(board.st01)
     && /^★8【極級】依頼「輝く岩山」　昇級確認/.test(board.r4) && /おすすめ/.test(board.rec) && board.deliv === 'locked' && board.pack === 'locked' && /^訓練場/.test(board.last), JSON.stringify(board).slice(0, 300));
   await page.evaluate(() => { const d = document.querySelector('.quest-letter[data-quest="quest.basin.003"]'); d.open = true; d.scrollIntoView(); });
   check('依頼人の話を開くと、星の列（★★☆☆☆☆☆☆ 2 / 8）と話が出る。押しても出発しない', await page.evaluate(() => {
@@ -1987,6 +1987,79 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await until(page, () => window.__vh.sim.hunt && window.__vh.sim.tick > 5);
   const info = await page.evaluate(() => ({ s: window.__vh.sessionInfo(), t: window.__vh.sim.hunt.timeLimitTicks }));
   check('狩りの中: 一時停止の題に星、時計は 35 分（126000 tick）、依頼人の話を読み返せる', /^★4【中級】脈打つ岩殻/.test(info.s.title) && info.t === 126000 && info.s.lines.some((l) => /^依頼人（盆地の巡回係）: /.test(l)), JSON.stringify(info).slice(0, 160));
+  await ctx.close();
+}
+
+// ---- 狩らない依頼（採集・採掘・現地の納品。v0.27.0。ChatGPT のクエスト設計 #9。横向きスマホ相当） ----
+{
+  const { ctx, page } = await open({ width: 844, height: 390 }, true, '?hub=menu');
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  const list = await page.evaluate(() => {
+    const qs = [...document.querySelectorAll('.base-choice[data-quest]')];
+    const er = qs.filter((b) => /^quest\.(gather|mine|delivery)\./.test(b.dataset.quest));
+    const heads = [...document.querySelectorAll('.forge-head')].map((h) => h.textContent);
+    return { n: qs.length, er: er.map((b) => b.querySelector('b').textContent), afterHerds: qs.indexOf(er[0]) === 24, head: heads.some((t) => /採集・採掘・現地の納品/.test(t)), g1: er[0]?.textContent ?? '' };
+  });
+  check('狩らない依頼: 群れの依頼の後に 5 件（採集 2・採掘 2・現地の納品 1）。★1・制限 15 分・獣は出ない', list.n === 29 && list.er.length === 5 && list.afterHerds && list.head && /^★1　採集「薬房へ、最初の六枚」/.test(list.er[0]) && /^★1　現地の納品「薬房と工具棚の小包」/.test(list.er[4])
+    && /ヒラナギの葉 6 枚を採集して、野営地の納品箱へ届ける/.test(list.g1) && /制限 15 分（目安 4〜6 分）/.test(list.g1) && /大型・幼体は出ない/.test(list.g1), JSON.stringify(list).slice(0, 300));
+  await page.click('.base-choice[data-quest="quest.gather.001"]');
+  await until(page, () => window.__vh.sim.errand && window.__vh.sim.tick > 5);
+  check('出発すると、野営地から。大型も幼体も出ない。HUD の目標は「ヒラナギの葉 0 / 6」、地図には採取点のあるエリア', await page.evaluate(() => {
+    const s = window.__vh.sim;
+    return s.areaId === 'camp' && s.monsters.length === 0 && s.herds.length === 0 && /ヒラナギの葉 0 \/ 6/.test(document.querySelector('.hud-goal')?.textContent ?? document.getElementById('hud')?.textContent ?? '')
+      && /採取点: 野営地 4/.test(document.getElementById('hud').textContent) && s.hunt.timeLimitTicks === 54000;
+  }), await page.evaluate(() => document.getElementById('hud').textContent.slice(0, 200)));
+  const gatherAt = async (i) => {
+    await page.evaluate((k) => {
+      const s = window.__vh.sim, n = s.errand.def.nodes[k], p = s.player;
+      s.areaId = n.areaId; p.pos = { x: n.x - 1.2, y: 0, z: n.z }; p.prevPos = { ...p.pos }; p.yaw = Math.PI / 2; p.drawn = false;
+    }, i);
+    await until(page, () => document.querySelector('.tbtn-main')?.textContent === '採集', 3000);
+  };
+  await gatherAt(0);
+  const near = await page.evaluate(() => ({ main: document.querySelector('.tbtn-main')?.textContent ?? '', wrap: document.querySelector('.hud-wrap')?.textContent ?? '', back: document.getElementById('hud-return').hidden }));
+  check('採取点のそば（納刀）: 攻撃ボタンが「採集」、案内に「攻撃ボタンで 採集」（帰還するのボタンは出ない）', near.main === '採集' && /攻撃ボタンで 採集（ヒラナギの葉）/.test(near.wrap) && near.back, JSON.stringify(near));
+  await page.screenshot({ path: `${OUT}9z_errand_node.png` });
+  await page.evaluate(() => window.__vh.hub.pulse(1));
+  check('攻撃ボタンで採集: 1.5 秒で 2 枚入り、採取点の印が消える', await until(page, () => (window.__vh.sim.errand.bag['mat.gather.flatnagi_leaf'] ?? 0) === 2 && window.__vh.sim.errand.used.length === 1, 8000));
+  for (let i = 1; i < 4; i++) {
+    await gatherAt(i);
+    await page.evaluate(() => window.__vh.hub.pulse(1));
+    await until(page, (k) => window.__vh.sim.errand.used.length === k + 1, 8000, i);
+  }
+  check('4 か所で 8 枚。「そろった。野営地の納品箱へ」', await until(page, () => window.__vh.sim.errand.bag['mat.gather.flatnagi_leaf'] === 8 && /そろった。野営地の納品箱へ/.test(document.getElementById('hud').textContent), 5000));
+  await page.evaluate(() => {
+    const s = window.__vh.sim, d = s.errand.def.depot, p = s.player;
+    p.pos = { x: d.x - 1.5, y: 0, z: d.z }; p.prevPos = { ...p.pos }; p.yaw = Math.PI / 2;
+    window.__vh.view.cam.snap(p.yaw);
+  });
+  check('納品箱のそば: 攻撃ボタンが「納品」', await until(page, () => document.querySelector('.tbtn-main')?.textContent === '納品', 3000));
+  await page.screenshot({ path: `${OUT}9z_errand_depot.png` });
+  await page.evaluate(() => window.__vh.hub.pulse(1));
+  check('納品すると達成（時計が止まる）。5 秒の帰還の後に結果: 納品しました・採ったもの 8（要る数 6）・余り 2 枚・240 通貨', await until(page, () => {
+    const h = window.__vh.sim.hunt;
+    const t = document.getElementById('result').textContent;
+    return h.phase === 'success' && h.reason === 'deliver' && !document.getElementById('result').hidden && /納品しました/.test(t) && /ヒラナギの葉 8（要る数 6）/.test(t) && /240 通貨/.test(t) && /納品の余り/.test(t);
+  }, 20000), await page.evaluate(() => document.getElementById('result').textContent.slice(0, 200)));
+  check('保存: 余りの 2 枚と通貨と達成回数（納品した 6 枚は入らない）', await until(page, () => {
+    const d = window.__vh.save.doc;
+    return d.items['mat.gather.flatnagi_leaf'] === 2 && d.progress.questClears['quest.gather.001'] === 1 && d.money === 240;
+  }, 8000));
+  await page.screenshot({ path: `${OUT}9z_errand_result.png` });
+  // 採掘: 道具を持って、3 回振る
+  await page.evaluate(() => window.__vh.toBase());
+  await until(page, () => !document.getElementById('base').hidden);
+  await page.evaluate(() => window.__vh.startHunt('quest.mine.001'));
+  await until(page, () => window.__vh.sim.errand && window.__vh.sim.tick > 5);
+  await page.evaluate(() => {
+    const s = window.__vh.sim, n = s.errand.def.nodes[0], p = s.player;
+    s.areaId = n.areaId; p.pos = { x: n.x - 1.3, y: 0, z: n.z }; p.prevPos = { ...p.pos }; p.yaw = Math.PI / 2; p.drawn = false;
+  });
+  check('採掘: 礫の坂の鉱床で、攻撃ボタンが「採掘」', await until(page, () => document.querySelector('.tbtn-main')?.textContent === '採掘', 5000));
+  await page.evaluate(() => window.__vh.hub.pulse(1));
+  check('採掘の間だけ、右手に採掘道具。2.5 秒で風礫鉄鉱 2 個', await until(page, () => window.__vh.sim.player.action?.def.actionId === 'player.common.mine' && window.__vh.view.hunter.tool.visible, 3000)
+    && await until(page, () => window.__vh.sim.errand.bag['mat.ore.basin_iron'] === 2 && !window.__vh.view.hunter.tool.visible, 8000));
   await ctx.close();
 }
 

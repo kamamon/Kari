@@ -446,6 +446,8 @@ export class App implements MenuHost, BaseHost, ResultHost {
   startHunt(questId: string): void {
     const quest = this.content.quests.get(questId);
     if (!quest || !questUnlocked(this.save.doc, quest)) return;
+    // 狩らない依頼（v0.27.0）は、フィールドでだけ遊べる（1 つの狩場 ?hunt=arena では始めない）
+    if (quest.kind === 'gather' && !this.fieldHunts) return;
     this.createSession(questId);
     this.setOverlay(null);
     this.audio.play('ui');
@@ -661,7 +663,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
       this.touch.setHidden(['weapon', 'sub'], inHub);
       this.touch.setLabels({
         weapon: pl.drawn ? '納刀' : '抜刀',
-        main: inHub ? (this.nearFacility ? '入る' : '—') : this.sim.carveTarget() ? '剥ぎ取り' : labels?.main ?? '斬る',
+        main: inHub ? (this.nearFacility ? '入る' : '—') : this.sim.carveTarget() ? '剥ぎ取り' : errandLabel(this.sim) ?? labels?.main ?? '斬る',
         sub: labels?.sub ?? '薙ぐ',
         special: labels?.special ?? '',
         dodge: (pl.drawn && labels?.dodge) || '回避',
@@ -814,3 +816,12 @@ function makeRunId(): string {
   if (c && typeof c.randomUUID === 'function') return `run-${c.randomUUID()}`;
   return `run-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
 }
+
+/** 狩らない依頼（v0.27.0）: 攻撃ボタンの名前（採集・採掘・納品）。できることが無ければ null */
+function errandLabel(sim: Simulation): string | null {
+  const t = sim.errandTarget();
+  if (!t) return null;
+  if (t.kind === 'deliver') return '納品';
+  return sim.errand?.def.nodes.find((n) => n.id === t.nodeId)?.kind === 'mine' ? '採掘' : '採集';
+}
+

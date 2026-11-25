@@ -75,6 +75,9 @@ pelvis 高さ 0.92 / 肩幅 0.37（肩の関節は左右 0.185）/ 上腕 0.29�
 | common_item_whet_01 | player.item.whet | 120 tick | 片ひざを突いて、ひざの前に渡した武器を研ぐ。96 tick で研ぎ上がる。武器の位置と腕は、描画の側が構えから渡した位置へ動かして手を合わせる（データの軌道は持たない） |
 | common_item_throw_01 | player.item.throw_orb | 46 tick | 右手で前へ投げる。22 tick で手を離れる |
 | common_carve_01 | player.common.carve | 100 tick | 片ひざを突いて剥ぎ取る。80 tick で素材が手に入る |
+| common_gather_01 | player.common.gather | 90 tick | 狩らない依頼（v0.27.0）の採集。片ひざで摘み、腰の袋へ。72 tick で品が入る。6〜72 tick は回避で止められる |
+| common_mine_01 | player.common.mine | 150 tick | 採掘（v0.27.0）。右手に採掘道具（つるはし。見た目だけ）を持ち、3 回振り下ろし（42・76・110）、しゃがんで拾う。126 tick で品が入る。6〜126 tick は回避で止められる |
+| common_deliver_01 | player.common.deliver | 48 tick | 納品（v0.27.0）。かがんで、両手で納品箱へ入れる。30 tick で納まる |
 | dummy_slam_01 | monster.training_dummy.slam | 130 tick | 訓練標的専用 |
 
 いま手続き生成で代用していて、正式素材では clip が必要なもの（台帳の `clipsPlanned`）:

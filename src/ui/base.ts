@@ -554,17 +554,20 @@ export class BaseScreen {
     };
     if (c.board.recommend.text) this.questBox.appendChild(el('p', 'quest-recommend', c.board.recommend.text));
     const order = (rankId: string): number => c.ranks.get(rankId)?.order ?? 0;
-    // 段階の順。同じ段階では、1 体の標的の依頼 → 群れの依頼（v0.18.0）
-    const quests = [...c.quests.values()].sort((x, y) => order(x.rankId) - order(y.rankId) || (x.targets ? 1 : 0) - (y.targets ? 1 : 0));
+    // 段階の順。同じ段階では、1 体の標的の依頼 → 群れの依頼（v0.18.0）。狩らない依頼（v0.27.0）は、その後にまとめる（フィールドで遊ぶ時だけ）
+    const hunts = [...c.quests.values()].filter((q) => q.kind !== 'gather').sort((x, y) => order(x.rankId) - order(y.rankId) || (x.targets ? 1 : 0) - (y.targets ? 1 : 0));
+    const errands = this.host.fieldHunts ? [...c.quests.values()].filter((q) => q.kind === 'gather') : [];
     let group = '';
-    for (const q of quests) {
-      const g = `${q.rankId}|${q.targets ? 'pack' : 'one'}`;
+    for (const q of [...hunts, ...errands]) {
+      const g = q.kind === 'gather' ? 'gather' : `${q.rankId}|${q.targets ? 'pack' : 'one'}`;
       if (q.targets && g !== group) this.questBox.appendChild(el('p', 'forge-head', `【${c.ranks.get(q.rankId)?.name ?? ''}】幼体の群れの依頼（決まった頭数を討伐する）`));
+      if (q.kind === 'gather' && g !== group) this.questBox.appendChild(el('p', 'forge-head', '採集・採掘・現地の納品（狩らない依頼。獣は出ない。この出発で採ったものを、野営地の納品箱へ）'));
       group = g;
       const rank = c.ranks.get(q.rankId)?.name ?? '';
       const clears = doc.progress.questClears[q.id] ?? 0;
       const lane = q.board && q.board.lane !== 'free' ? QUEST_LANE_NAMES[q.board.lane] : '';
-      const title = `${starLabel(q)}【${rank}】依頼「${q.name}」${lane ? `　${lane}` : ''}${clears > 0 ? `　達成 ${clears} 回` : ''}`;
+      const kindName = q.gather ? errandKindName(q) : `【${rank}】依頼`;
+      const title = `${starLabel(q)}${q.gather ? '　' : ''}${kindName}「${q.name}」${lane ? `　${lane}` : ''}${clears > 0 ? `　達成 ${clears} 回` : ''}`;
       let b: HTMLButtonElement;
       if (!questUnlocked(doc, q)) {
         const need = (q.requires ?? []).filter((id) => !(doc.progress.questClears[id] ?? 0)).map((id) => `「${c.quests.get(id)?.name ?? id}」`);
@@ -576,9 +579,12 @@ export class BaseScreen {
         const aim = q.board ? `（目安 ${q.board.clearMinutes[0]}〜${q.board.clearMinutes[1]} 分）` : '';
         const lines = [q.summary, `目標: ${questGoal(c, q)}　制限 ${limit}${aim}　力尽き ${q.maxFaints} 回で失敗`];
         if (q.board) lines.unshift(`依頼人: ${q.board.client}`);
-        if (field) lines.push(`狩場: ${field.name}（野営地から出発。エリア ${field.areas.filter((a) => a.kind !== 'camp').length} か所。${q.targets ? '群れは、住みかのエリアを移ることがある' : '標的はエリアを移動する'}）`);
+        if (field && q.gather) {
+          const areas = [...new Set(q.gather.nodes.map((n) => n.areaId))].map((id) => field.areas.find((a) => a.id === id)!).map((a) => (a.kind === 'camp' ? a.name : `エリア ${a.no} ${a.name}`));
+          lines.push(`狩場: ${field.name}（野営地から出発。採取点は ${areas.join('・')}。大型・幼体は出ない）`);
+        } else if (field) lines.push(`狩場: ${field.name}（野営地から出発。エリア ${field.areas.filter((a) => a.kind !== 'camp').length} か所。${q.targets ? '群れは、住みかのエリアを移ることがある' : '標的はエリアを移動する'}）`);
         if (q.supplies?.length) lines.push(`支給品: ${q.supplies.map((s) => `${c.items.get(s.itemId)?.name ?? s.itemId} ×${s.count}`).join('　')}`);
-        if (q.rewards) lines.push(`報酬: ${q.rewards.money} 通貨 + 素材`);
+        if (q.rewards) lines.push(`報酬: ${q.rewards.money} 通貨 + ${q.gather ? '納品で余った素材' : '素材'}`);
         b = choice(title, lines, () => this.host.startHunt(q.id));
       }
       b.dataset.quest = q.id;
@@ -882,3 +888,10 @@ export class BaseScreen {
     this.renderData();
   }
 }
+
+/** 狩らない依頼の呼び方（v0.27.0）: 採取点がどれも採集なら「採集」、どれも採掘なら「採掘」、混ざっていれば「現地の納品」 */
+function errandKindName(q: { gather?: { nodes: { kind: string }[] } }): string {
+  const kinds = new Set((q.gather?.nodes ?? []).map((n) => n.kind));
+  return kinds.size > 1 ? '現地の納品' : kinds.has('mine') ? '採掘' : '採集';
+}
+
