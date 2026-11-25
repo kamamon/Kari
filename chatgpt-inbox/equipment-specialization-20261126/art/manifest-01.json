@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "status": "regenerated-after-workspace-loss",
+  "coverage": "No001–004、初登場級の成人用防具五部位と代表武器2系統ずつの比較原画。",
+  "specificationPriority": "原画と異なる数・位置・形状はdata/speciesの仕様を優先し、制作差分を修正する。",
+  "boards": [
+    {
+      "board": 1,
+      "file": "art/board-01.png",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-59722e82-78dd-4b70-917c-c63b21f1f3a1.png",
+      "sha256": "d95f3fcb4b94a9fc8ddd008f6c845c0ef0aa869ea914c0370839af6c605be9dd",
+      "bytes": 2846834,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "generator": "built-in image_gen",
+      "pixelEditsAfterGeneration": false,
+      "species": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "representativeFamilies": {
+        "1": [
+          "heavy_blade",
+          "long_lance"
+        ],
+        "2": [
+          "twin_blades",
+          "ring_bow"
+        ],
+        "3": [
+          "guard_blade",
+          "long_blade"
+        ],
+        "4": [
+          "war_maul",
+          "guard_blade"
+        ]
+      },
+      "prompts": [
+        "art/prompts/board-01.txt"
+      ],
+      "review": {
+        "status": "visually-reviewed-with-production-notes",
+        "fiveArmorRegionsInFrame": true,
+        "adultProportions": true,
+        "twoRepresentativeWeaponFamiliesPerPanel": true,
+        "allPropsInsideFrame": true,
+        "observations": "001 左の大岩板と断岳剣／長尖槍、002 細身の帆膜と双剣二本／一本弦・小環の環弓、003 浅い頭皿と前腰皿・護刃／太刀、004 肩二嚢と胸一嚢・閉じた両打面の大槌／護刃を確認。4成人の頭・胴・腕・腰・両足が枠内。盾はそれぞれ独立して描かれている。",
+        "limitations": [
+          "001 左腰の後ろに置く尾端晶は正面寄りの図では確認できない。背面図で腰後ろの低い一塊を示す。",
+          "002 肩膜は仕様の畳んだ帆より開いて見える。モデルでは二枚を背肩へ沿わせ、飛行翼に見える張り出しを抑える。",
+          "003 腹の皮の細かい重なりは3層より多く見える。主層をJSON通り3層とし、追加の線は皺として扱う。",
+          "004 三嚢の体積と硬い支持縁は見えるが、肩を上げた際の首・腕との干渉はリグで検査する。"
+        ],
+        "notVerified": [
+          "背面・側面の正投影と実寸",
+          "共通リグの最大可動域と装備の当たり",
+          "全7系統・全級の専用画像",
+          "正式3Dモデル・実機表示・ゲーム内技能演出"
+        ]
+      }
+    }
+  ]
+}

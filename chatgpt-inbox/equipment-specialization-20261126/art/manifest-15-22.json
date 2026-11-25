@@ -1,0 +1,547 @@
+{
+  "schemaVersion": 1,
+  "purpose": "再構築した装備の静的比較原画。全級・全7武器を描いた画像でも、完成3Dでもない。",
+  "status": "regenerated-after-workspace-loss",
+  "boards": [
+    {
+      "board": 15,
+      "file": "art/board-15.png",
+      "prompt": "art/prompts/board-15.txt",
+      "sourceGeneratedPath": "/workspace/scratch/6ed5147653b6/generated_images/exec-9713cd06-b83e-4198-b4bc-b0c407432a1a.png",
+      "sha256": "3744509650665165706a7b0e769a6b97205d1c1cd518b459325bbb8ca70ec913",
+      "bytes": 2892789,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "mode": "RGB",
+      "numbers": [
+        57,
+        58,
+        59,
+        60
+      ],
+      "species": [
+        {
+          "no": 57,
+          "speciesId": "monster.tarhegna",
+          "label": "057 TARHEGNA",
+          "representativeFamilies": [
+            "heavy_blade",
+            "war_maul"
+          ]
+        },
+        {
+          "no": 58,
+          "speciesId": "monster.porgamis",
+          "label": "058 PORGAMIS",
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ]
+        },
+        {
+          "no": 59,
+          "speciesId": "monster.yarlshena",
+          "label": "059 YARLSHENA",
+          "representativeFamilies": [
+            "twin_blades",
+            "ring_bow"
+          ]
+        },
+        {
+          "no": 60,
+          "speciesId": "monster.pizelta",
+          "label": "060 PIZELTA",
+          "representativeFamilies": [
+            "guard_blade",
+            "heavy_blade"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "reviewed-with-production-notes",
+        "observations": "57の低い背弧、58の平肩と短籠手、59の鞍襟と細腕、60の三葉足甲を確認。4成人の5部位、全端点、8系統の代表群、59の二短剣と弦のある弓を確認。",
+        "limitations": [
+          "初登場級の系列比較原画。全級・全7武器の個別画像ではない。",
+          "背面・側面の正投影、実寸、握り位置、可動域、衝突形状の最終確定は制作工程。",
+          "細い溝・小櫛・房の厳密な数と位置はJSON仕様を正とし、3D制作時に照合する。",
+          "57は背の上縁帯と三弧の分離、58の下額櫛の五本、60の接地幅を3Dで再確認する。",
+          "58の長尖槍は比較配置の縮尺。ゲームの既存有効長へ合わせ、図の短い配置寸法を採用しない。"
+        ]
+      }
+    },
+    {
+      "board": 16,
+      "file": "art/board-16.png",
+      "prompt": "art/prompts/board-16.txt",
+      "sourceGeneratedPath": "/workspace/scratch/6ed5147653b6/generated_images/exec-aaf437cd-a825-4049-9fd0-759e6e30cb64.png",
+      "sha256": "02c509004fb1a110ef811f23386610cff42d1fa89c645eb04be9024d84a300cd",
+      "bytes": 2800181,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "mode": "RGB",
+      "numbers": [
+        61,
+        62,
+        63,
+        64
+      ],
+      "species": [
+        {
+          "no": 61,
+          "speciesId": "monster.damorikus",
+          "label": "061 DAMORIKUS",
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ]
+        },
+        {
+          "no": 62,
+          "speciesId": "monster.isarnem",
+          "label": "062 ISARNEM",
+          "representativeFamilies": [
+            "long_blade",
+            "heavy_blade"
+          ]
+        },
+        {
+          "no": 63,
+          "speciesId": "monster.regsanio",
+          "label": "063 REGSANIO",
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ]
+        },
+        {
+          "no": 64,
+          "speciesId": "monster.rupenias",
+          "label": "064 RUPENIAS",
+          "representativeFamilies": [
+            "heavy_blade",
+            "long_blade"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "reviewed-with-production-notes",
+        "observations": "61の左丸甲と右細甲、62の三蓋帽と片胸熱室、63の左肩一枚盤、64の左前袋と右後袋を確認。4成人の全5部位と各2代表系統が収まる。",
+        "limitations": [
+          "初登場級の系列比較原画。全級・全7武器の個別画像ではない。",
+          "背面・側面の正投影、実寸、握り位置、可動域、衝突形状の最終確定は制作工程。",
+          "細い溝・小櫛・房の厳密な数と位置はJSON仕様を正とし、3D制作時に照合する。",
+          "62の肩・前腕板は原画でやや多層。制作時はJSONの短い薄板へ整理し、熱室の発光は表面4%以内に限定する。",
+          "61の壺籠手は側面深さ、63の盤裏二列背骨は別方向図で確認する。"
+        ]
+      }
+    },
+    {
+      "board": 17,
+      "file": "art/board-17.png",
+      "prompt": "art/prompts/board-17.txt",
+      "sourceGeneratedPath": "/workspace/scratch/6ed5147653b6/generated_images/exec-a30a2ef6-6e03-402b-a185-a0866bfc4371.png",
+      "sha256": "23ba54508b6eae4fcf898086e1a917c90b6bc28af5796bc64a621202418a3214",
+      "bytes": 2342490,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "mode": "RGB",
+      "numbers": [
+        65,
+        66,
+        67,
+        68
+      ],
+      "species": [
+        {
+          "no": 65,
+          "speciesId": "monster.sograpin",
+          "label": "065 SOGRAPIN",
+          "representativeFamilies": [
+            "long_blade",
+            "twin_blades"
+          ]
+        },
+        {
+          "no": 66,
+          "speciesId": "monster.makuejira",
+          "label": "066 MAKUEJIRA",
+          "representativeFamilies": [
+            "ring_bow",
+            "heavy_blade"
+          ]
+        },
+        {
+          "no": 67,
+          "speciesId": "monster.gumesald",
+          "label": "067 GUMESALD",
+          "representativeFamilies": [
+            "heavy_blade",
+            "guard_blade"
+          ]
+        },
+        {
+          "no": 68,
+          "speciesId": "monster.nericaus",
+          "label": "068 NERICAUS",
+          "representativeFamilies": [
+            "ring_bow",
+            "twin_blades"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "reviewed-with-production-notes",
+        "observations": "65の踵と四角い足溝、66の梯胸、67の左大板、68の右後腰の開口輪を確認。68の輪は初稿の左寄りを画像編集で右後腰へ修正済み。全身と8代表群の端点は画内。",
+        "limitations": [
+          "初登場級の系列比較原画。全級・全7武器の個別画像ではない。",
+          "背面・側面の正投影、実寸、握り位置、可動域、衝突形状の最終確定は制作工程。",
+          "細い溝・小櫛・房の厳密な数と位置はJSON仕様を正とし、3D制作時に照合する。",
+          "65の後踵の曲がり、66の梯胸五段と喉室の分離は側面設計で確認する。",
+          "68の輪の開口は帯際にあり小さい。3Dでは開口と下半分のみの点灯を明確にする。"
+        ]
+      },
+      "revisionPrompts": [
+        "art/prompts/board-17-edit-01.txt"
+      ],
+      "supersededGeneratedPath": "/workspace/scratch/6ed5147653b6/generated_images/exec-95c6e366-08d8-4392-b7bd-c6e5ae3bf7bc.png"
+    },
+    {
+      "board": 18,
+      "file": "art/board-18.png",
+      "prompt": "art/prompts/board-18.txt",
+      "sourceGeneratedPath": "/workspace/scratch/6ed5147653b6/generated_images/exec-1f0f968f-6095-40af-923f-e05efcfb6d28.png",
+      "sha256": "230b871202d9bb3fec345eec9d6d4ae2e8a41974bd2ee7f98e385b8d3173cd3a",
+      "bytes": 2724821,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "mode": "RGB",
+      "numbers": [
+        69,
+        70,
+        71,
+        72
+      ],
+      "species": [
+        {
+          "no": 69,
+          "speciesId": "monster.voltena",
+          "label": "069 VOLTENA",
+          "representativeFamilies": [
+            "twin_blades",
+            "guard_blade"
+          ]
+        },
+        {
+          "no": 70,
+          "speciesId": "monster.kitolnam",
+          "label": "070 KITOLNAM",
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ]
+        },
+        {
+          "no": 71,
+          "speciesId": "monster.segranio",
+          "label": "071 SEGRANIO",
+          "representativeFamilies": [
+            "long_lance",
+            "ring_bow"
+          ]
+        },
+        {
+          "no": 72,
+          "speciesId": "monster.dekoranze",
+          "label": "072 DEKORANZE",
+          "representativeFamilies": [
+            "heavy_blade",
+            "guard_blade"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "reviewed-with-production-notes",
+        "observations": "69の左肩三層帷と右細腕、70の左右ずれた低折板、71の大小斜環と細胴、72の右厚腰と左細脚を確認。71ラベルは恒久IDどおりSEGRANIO。全身・8代表系統が画内。",
+        "limitations": [
+          "初登場級の系列比較原画。全級・全7武器の個別画像ではない。",
+          "背面・側面の正投影、実寸、握り位置、可動域、衝突形状の最終確定は制作工程。",
+          "細い溝・小櫛・房の厳密な数と位置はJSON仕様を正とし、3D制作時に照合する。",
+          "70の背中央の空きと後腰滴は前面図で隠れるため、制作時に背面仕様を必ず参照する。",
+          "71の胸下の小灯は側面寄りに見える。最終モデルではJSONどおり左胸下へ固定する。"
+        ]
+      }
+    },
+    {
+      "board": 19,
+      "file": "art/board-19.png",
+      "prompt": "art/prompts/board-19.txt",
+      "sourceGeneratedPath": "/workspace/scratch/6ed5147653b6/generated_images/exec-0e403565-079f-487d-b5f9-3d117ece2f65.png",
+      "sha256": "f4f65575574428d2fc3a5a7a56c23c0833e128fee0b252675a88d1aab5731ff4",
+      "bytes": 2867731,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "mode": "RGB",
+      "numbers": [
+        73,
+        74,
+        75,
+        76
+      ],
+      "species": [
+        {
+          "no": 73,
+          "speciesId": "monster.fusaldom",
+          "label": "073 FUSALDOM",
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ]
+        },
+        {
+          "no": 74,
+          "speciesId": "monster.rimposera",
+          "label": "074 RIMPOSERA",
+          "representativeFamilies": [
+            "guard_blade",
+            "heavy_blade"
+          ]
+        },
+        {
+          "no": 75,
+          "speciesId": "monster.dalhoina",
+          "label": "075 DALHOINA",
+          "representativeFamilies": [
+            "heavy_blade",
+            "war_maul"
+          ]
+        },
+        {
+          "no": 76,
+          "speciesId": "monster.zonikebal",
+          "label": "076 ZONIKEBAL",
+          "representativeFamilies": [
+            "war_maul",
+            "heavy_blade"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "reviewed-with-production-notes",
+        "observations": "73の水平広肩と細腰、74の短い四室腰袋と平背、75の後襟三梁、76の縦二胸板と右琥珀/左青銅の縁を確認。74は護刃と断岳剣を描き環弓なし。4成人と8代表群の端点は画内。",
+        "limitations": [
+          "初登場級の系列比較原画。全級・全7武器の個別画像ではない。",
+          "背面・側面の正投影、実寸、握り位置、可動域、衝突形状の最終確定は制作工程。",
+          "細い溝・小櫛・房の厳密な数と位置はJSON仕様を正とし、3D制作時に照合する。",
+          "74の後ろ側の袋は前面から一部隠れる。背面モデルで腰四隅に四室あることを確認する。",
+          "73の肩板の上腕干渉、76の二板間の開閉余白はリグ工程で調整する。"
+        ]
+      }
+    },
+    {
+      "board": 20,
+      "file": "art/board-20.png",
+      "prompt": "art/prompts/board-20.txt",
+      "sourceGeneratedPath": "/workspace/scratch/6ed5147653b6/generated_images/exec-69256679-bfdc-4e7c-98fd-28ad247821cd.png",
+      "sha256": "4758f03ba34efcae3ebb353a7fc45e359a9532827dd0d85b9097ea7c0a320370",
+      "bytes": 2310877,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "mode": "RGB",
+      "numbers": [
+        77,
+        78,
+        79,
+        80
+      ],
+      "species": [
+        {
+          "no": 77,
+          "speciesId": "monster.ludopanea",
+          "label": "077 LUDOPANEA",
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ]
+        },
+        {
+          "no": 78,
+          "speciesId": "monster.salpinoc",
+          "label": "078 SALPINOC",
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ]
+        },
+        {
+          "no": 79,
+          "speciesId": "monster.hemzario",
+          "label": "079 HEMZARIO",
+          "representativeFamilies": [
+            "war_maul",
+            "guard_blade"
+          ]
+        },
+        {
+          "no": 80,
+          "speciesId": "monster.pasnelim",
+          "label": "080 PASNELIM",
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "reviewed-with-production-notes",
+        "observations": "77の二枚短孔板と裏板付き盾、78の高い左肩と重い右籠手、79の低い三節額、80の前腰の四枚帆を確認。80は背面初稿を前面姿勢へ修正し、後ろの長い肩飾りを除いた。77の胸主孔も二孔へ整理。4成人と8代表群が画内。",
+        "limitations": [
+          "初登場級の系列比較原画。全級・全7武器の個別画像ではない。",
+          "背面・側面の正投影、実寸、握り位置、可動域、衝突形状の最終確定は制作工程。",
+          "細い溝・小櫛・房の厳密な数と位置はJSON仕様を正とし、3D制作時に照合する。",
+          "77の胸板上端には小留め孔のような点も残る。主孔は2/板とし、JSONどおり最終メッシュの孔数を固定する。",
+          "78の右籠手は原画では手の甲近くまで延びる。3Dでは手首より手前へ端を戻し、全指と手首の可動を確保する。"
+        ]
+      },
+      "revisionPrompts": [
+        "art/prompts/board-20-edit-01.txt",
+        "art/prompts/board-20-edit-02.txt"
+      ],
+      "supersededGeneratedPaths": [
+        "/workspace/scratch/6ed5147653b6/generated_images/exec-af2701a2-b949-4a6b-9f05-05adb99970b2.png",
+        "/workspace/scratch/6ed5147653b6/generated_images/exec-1e618d11-8a80-41cc-890b-ef699e1c3e5b.png"
+      ]
+    },
+    {
+      "board": 21,
+      "file": "art/board-21.png",
+      "prompt": "art/prompts/board-21.txt",
+      "sourceGeneratedPath": "/workspace/scratch/6ed5147653b6/generated_images/exec-4af8dd8a-4fcd-4c6f-81b0-a900cb7c0a8c.png",
+      "sha256": "0819b34e4786d594bdc360c9e09e1820515c8dba095334cc5259fd7a758dcd8e",
+      "bytes": 2320055,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "mode": "RGB",
+      "numbers": [
+        81,
+        82,
+        83,
+        84
+      ],
+      "species": [
+        {
+          "no": 81,
+          "speciesId": "monster.zaclatom",
+          "label": "081 ZACLATOM",
+          "representativeFamilies": [
+            "long_blade",
+            "ring_bow"
+          ]
+        },
+        {
+          "no": 82,
+          "speciesId": "monster.izoflane",
+          "label": "082 IZOFLANE",
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ]
+        },
+        {
+          "no": 83,
+          "speciesId": "monster.queribas",
+          "label": "083 QUERIBAS",
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ]
+        },
+        {
+          "no": 84,
+          "speciesId": "monster.enagrio",
+          "label": "084 ENAGRIO",
+          "representativeFamilies": [
+            "long_lance",
+            "ring_bow"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "reviewed-with-production-notes",
+        "observations": "81の左三角襟と内側の熱筋、82のずれた二皿と右長脛、83の左額三櫛と左前腕三櫛、84の後襟三段を確認。83の前腕は初稿の余分な一櫛を限定編集で除去済み。4成人と8代表群は画内。",
+        "limitations": [
+          "初登場級の系列比較原画。全級・全7武器の個別画像ではない。",
+          "背面・側面の正投影、実寸、握り位置、可動域、衝突形状の最終確定は制作工程。",
+          "細い溝・小櫛・房の厳密な数と位置はJSON仕様を正とし、3D制作時に照合する。",
+          "82の皿は甲板寄りに見えるため、最終モデルでは薄い凹面と二皿のずれを確保する。",
+          "84の襟内側の礫粒はこの縮尺では省略気味。三段襟の内側にのみ配置する。"
+        ]
+      },
+      "revisionPrompts": [
+        "art/prompts/board-21-edit-01.txt"
+      ],
+      "supersededGeneratedPath": "/workspace/scratch/6ed5147653b6/generated_images/exec-70cc1a56-95c5-40ab-8edc-5a636be2acdf.png"
+    },
+    {
+      "board": 22,
+      "file": "art/board-22.png",
+      "prompt": "art/prompts/board-22.txt",
+      "sourceGeneratedPath": "/workspace/scratch/6ed5147653b6/generated_images/exec-44b2750b-8125-4da2-831e-fda832deb10b.png",
+      "sha256": "a272eb1047393799ce0720496dd5a9084d9b397a6a6f706edc2a6d6bdaa53d23",
+      "bytes": 2715670,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "numbers": [
+        85,
+        86
+      ],
+      "species": [
+        {
+          "no": 85,
+          "speciesId": "monster.nucbarea",
+          "label": "085 NUCBAREA",
+          "representativeFamilies": [
+            "guard_blade",
+            "twin_blades"
+          ]
+        },
+        {
+          "no": 86,
+          "speciesId": "monster.towalsem",
+          "label": "086 TOWALSEM",
+          "representativeFamilies": [
+            "long_blade",
+            "ring_bow"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "reviewed-with-production-notes",
+        "observations": "85の後腰だけの短扇と短い二房、左右同寸の腕、86の滑らかな背と後腰だけの三滴を確認。86は三滴が隠れない背面寄り姿勢。2成人の全5部位と4代表系統、弦・小環・矢を確認。",
+        "limitations": [
+          "初登場級の系列比較原画。全級・全7武器の個別画像ではない。",
+          "背面・側面の正投影、実寸、握り位置、可動域、衝突形状の最終確定は制作工程。",
+          "細い溝・小櫛・房の厳密な数と位置はJSON仕様を正とし、3D制作時に照合する。",
+          "85の短い二房はこの背面寄り図では襟後ろに見える。襟に付く短房として扱い、口元への干渉を制作時に確認する。",
+          "86の弓の滴飾りは握り近くで、手指と弦の通過域から外す。"
+        ]
+      }
+    }
+  ]
+}

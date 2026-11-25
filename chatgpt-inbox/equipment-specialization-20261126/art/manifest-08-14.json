@@ -1,0 +1,447 @@
+{
+  "scope": "No029–056の初登場級の比較原画。全級・全7武器の個別画像ではない。成人防具5部位と代表武器2系統ずつ。3Dモデル・正投影図・可動域合格資料ではない。",
+  "generation": "built-in image_gen; unmodified source PNG copied at original dimensions",
+  "boards": [
+    {
+      "board": 8,
+      "file": "art/board-08.png",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-c18e333b-2433-457c-9954-8cdfb9c0c9a2.png",
+      "sha256": "1889c8391d5fd7d4c84cd7d27c18042d3e158083882bfcb95e968d18a1da6bc9",
+      "sizeBytes": 2936606,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "mode": "RGB",
+      "promptFile": "art/prompts/board-08.txt",
+      "species": [
+        {
+          "no": 29,
+          "speciesId": "monster.ulnaset",
+          "name": "ウルナセト",
+          "families": [
+            "long_lance",
+            "guard_blade"
+          ]
+        },
+        {
+          "no": 30,
+          "speciesId": "monster.nemboraf",
+          "name": "ネムボラフ",
+          "families": [
+            "guard_blade",
+            "long_lance"
+          ]
+        },
+        {
+          "no": 31,
+          "speciesId": "monster.borazeln",
+          "name": "ボラゼルン",
+          "families": [
+            "heavy_blade",
+            "war_maul"
+          ]
+        },
+        {
+          "no": 32,
+          "speciesId": "monster.kudrimal",
+          "name": "クドリマル",
+          "families": [
+            "long_lance",
+            "twin_blades"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "reviewed-with-production-notes",
+        "observations": "成人4体の頭から靴、5領域、各2武器系統と独立盾を確認。29の樋・30の腹三層と箱脛・31の前庇・32の右棚の差を確認。文字029–032とLatin名が一致。",
+        "limitations": [
+          "No29の交互3樋と後腰板は背面図で再確認が必要。",
+          "No32の棚は副甲を含めると枚数が曖昧。主棚4枚と右前腕1枚をモデリング時に分離して数える。",
+          "No30の盾濾膜窓は硬い裏板を持つ図として読めるが断面は未提示。",
+          "初登場級の比較原画のみ。全7武器・全級の造形はJSON定義を正とする。",
+          "背面・正投影・実寸・共通リグ可動域・衝突は未検証。"
+        ]
+      }
+    },
+    {
+      "board": 9,
+      "file": "art/board-09.png",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-d8a125f5-8573-41f9-b7c2-e000107d2c45.png",
+      "sha256": "8efddea1aa833b018ae08c81c6ac9f32bd8fafc63251a3b0aa5772c1a503e14e",
+      "sizeBytes": 2956891,
+      "dimensions": [
+        1752,
+        897
+      ],
+      "mode": "RGB",
+      "promptFile": "art/prompts/board-09.txt",
+      "species": [
+        {
+          "no": 33,
+          "speciesId": "monster.tosamurie",
+          "name": "トサムリエ",
+          "families": [
+            "twin_blades",
+            "long_blade"
+          ]
+        },
+        {
+          "no": 34,
+          "speciesId": "monster.pukrenoa",
+          "name": "プクレノア",
+          "families": [
+            "twin_blades",
+            "long_blade"
+          ]
+        },
+        {
+          "no": 35,
+          "speciesId": "monster.kesalpina",
+          "name": "ケサルピナ",
+          "families": [
+            "twin_blades",
+            "long_blade"
+          ]
+        },
+        {
+          "no": 36,
+          "speciesId": "monster.riptaum",
+          "name": "リプタウム",
+          "families": [
+            "guard_blade",
+            "long_lance"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "reviewed-with-production-notes",
+        "observations": "成人4体の5部位と2系統ずつ（33双剣/太刀、34双剣/太刀、35双剣/太刀、36護刃/長尖槍）を確認。33の下向き肘鉤、35の左庇、36の左右同幅の二列が見分けられる。文字033–036一致。",
+        "limitations": [
+          "No34の高い後腰丸甲は正面寄りの姿勢で隠れるため背面設定が必要。",
+          "No35の刷毛房の覆いが省略気味。制作時は短い閉じた房としてJSONを優先する。",
+          "No33の膜が枝状に見える部分は支持骨と柔膜の境界を3Dで整理する。",
+          "初登場級の比較原画のみ。全7武器・全級の造形はJSON定義を正とする。",
+          "背面・正投影・実寸・共通リグ可動域・衝突は未検証。"
+        ]
+      }
+    },
+    {
+      "board": 10,
+      "file": "art/board-10.png",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-150a6b97-e1ce-47d9-b1e0-580387f802a7.png",
+      "sha256": "0bda1d75543788a15b78f0643d8891ca25648cda5d15d67f47b095a9337ddd12",
+      "sizeBytes": 2883474,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "mode": "RGB",
+      "promptFile": "art/prompts/board-10.txt",
+      "species": [
+        {
+          "no": 37,
+          "speciesId": "monster.serinodam",
+          "name": "セリノダム",
+          "families": [
+            "twin_blades",
+            "long_blade"
+          ]
+        },
+        {
+          "no": 38,
+          "speciesId": "monster.nufraken",
+          "name": "ヌフラケン",
+          "families": [
+            "ring_bow",
+            "heavy_blade"
+          ]
+        },
+        {
+          "no": 39,
+          "speciesId": "monster.akaunel",
+          "name": "アカウネル",
+          "families": [
+            "guard_blade",
+            "long_lance"
+          ]
+        },
+        {
+          "no": 40,
+          "speciesId": "monster.tsumarobek",
+          "name": "ツマロベク",
+          "families": [
+            "war_maul",
+            "guard_blade"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "reviewed-with-production-notes",
+        "observations": "成人4体の5部位、37双剣/太刀、38環弓/断岳剣、39護刃/長尖槍、40大槌/護刃を確認。38の首後ろ一壺、39の四角襟、40の下胸単円が明確。38の一本弦・小環・矢と全盾の独立を確認。文字037–040一致。",
+        "limitations": [
+          "No37の後腰三櫂は側面から見えるが左右全数と後面を別図で確認する。",
+          "No38の壺は丸い背襟として確認できるが後ろ中央の配置は背面設定で詰める。",
+          "No39の小さい匙肩は図で簡略化されている。",
+          "初登場級の比較原画のみ。全7武器・全級の造形はJSON定義を正とする。",
+          "背面・正投影・実寸・共通リグ可動域・衝突は未検証。"
+        ]
+      }
+    },
+    {
+      "board": 11,
+      "file": "art/board-11.png",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-d261c4ac-cb7b-4527-80b4-47de6cbdeac9.png",
+      "sha256": "db83d0b946c2ee22151d0890efa8838f477b4f9360c54f96dc5b0b87c6b2ef70",
+      "sizeBytes": 2436403,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "mode": "RGB",
+      "promptFile": "art/prompts/board-11.txt",
+      "species": [
+        {
+          "no": 41,
+          "speciesId": "monster.furemsad",
+          "name": "フレムサド",
+          "families": [
+            "war_maul",
+            "guard_blade"
+          ]
+        },
+        {
+          "no": 42,
+          "speciesId": "monster.grasedon",
+          "name": "グラセドン",
+          "families": [
+            "heavy_blade",
+            "war_maul"
+          ]
+        },
+        {
+          "no": 43,
+          "speciesId": "monster.ryuzelka",
+          "name": "リュゼルカ",
+          "families": [
+            "ring_bow",
+            "twin_blades"
+          ]
+        },
+        {
+          "no": 44,
+          "speciesId": "monster.mordine",
+          "name": "モルディネ",
+          "families": [
+            "long_blade",
+            "twin_blades"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "reviewed-with-production-notes",
+        "observations": "成人4体の5領域と41大槌/護刃、42断岳剣/大槌、43環弓/双剣、44太刀/双剣を確認。No41を修正し後腰の骨と単一喉襟を背面斜めから示した。42左裂扇、43上下にずれる肩帆、44三段冠と右胸管が見分けられる。文字041–044一致。",
+        "limitations": [
+          "No41は後腰位置の確認を優先した背面斜め姿勢で、胸前の形はJSONと初回プロンプトを参照。骨下縁は制作時に丸く鈍らせる。",
+          "No43の弓弦は淡く、制作時は上下端を結ぶ一本の直線弦を明示する。",
+          "No44の冠の段差は三主皿と頭頂小留めを区別し、四段冠にしない。",
+          "初登場級の比較原画のみ。全7武器・全級の造形はJSON定義を正とする。",
+          "背面・正投影・実寸・共通リグ可動域・衝突は未検証。"
+        ]
+      },
+      "revisions": [
+        {
+          "promptFile": "art/prompts/board-11-revision-01.txt",
+          "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-8a5c0f6a-75f6-4a58-81e6-e2f16dd7d76a.png",
+          "reason": "No41の丸骨を前腰から後腰へ移し、喉襟を一枚へ整理。"
+        }
+      ]
+    },
+    {
+      "board": 12,
+      "file": "art/board-12.png",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-9916c509-428e-49cc-a2e9-a10925deb025.png",
+      "sha256": "428ecb899bb7614006fe256ad8f680cf24f6468e7e90efa04667018747e4507f",
+      "sizeBytes": 2949394,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "mode": "RGB",
+      "promptFile": "art/prompts/board-12.txt",
+      "species": [
+        {
+          "no": 45,
+          "speciesId": "monster.doberken",
+          "name": "ドベルケン",
+          "families": [
+            "war_maul",
+            "guard_blade"
+          ]
+        },
+        {
+          "no": 46,
+          "speciesId": "monster.shilhatora",
+          "name": "シルハトラ",
+          "families": [
+            "twin_blades",
+            "long_blade"
+          ]
+        },
+        {
+          "no": 47,
+          "speciesId": "monster.kuzanerio",
+          "name": "クザネリオ",
+          "families": [
+            "guard_blade",
+            "long_lance"
+          ]
+        },
+        {
+          "no": 48,
+          "speciesId": "monster.fesrami",
+          "name": "フェスラミ",
+          "families": [
+            "twin_blades",
+            "long_blade"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "reviewed-with-production-notes",
+        "observations": "成人4体の5領域と各2系統を確認。45大槌/護刃と左大小2殻、46双剣/太刀と短い枝節、47護刃/長尖槍と右外反り板・左籠手の手首止まり、48双剣/太刀と胸上の1結節を確認。47の指が開き独立盾も明確。文字045–048一致。",
+        "limitations": [
+          "No46の後腰三枝の全数は側面からの重なりがあるため背面設定で確認する。",
+          "No48の糸房が前寄りにも描かれる。3Dでは後腰の短い三房だけとし、前の余分な房を省く。",
+          "No47の板は図で不透明寄り。右肩の限定した透過だけを材質で調整する。",
+          "初登場級の比較原画のみ。全7武器・全級の造形はJSON定義を正とする。",
+          "背面・正投影・実寸・共通リグ可動域・衝突は未検証。"
+        ]
+      }
+    },
+    {
+      "board": 13,
+      "file": "art/board-13.png",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-d6e06d5a-117d-41f1-9917-9792c819a575.png",
+      "sha256": "383c197697c55a50d5f5dbcdc87b4d9ca0a103ceb86957aa3c12881b8213908d",
+      "sizeBytes": 3061629,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "mode": "RGB",
+      "promptFile": "art/prompts/board-13.txt",
+      "species": [
+        {
+          "no": 49,
+          "speciesId": "monster.elmejika",
+          "name": "エルメジカ",
+          "families": [
+            "ring_bow",
+            "long_blade"
+          ]
+        },
+        {
+          "no": 50,
+          "speciesId": "monster.azelnoto",
+          "name": "アゼルノト",
+          "families": [
+            "long_lance",
+            "guard_blade"
+          ]
+        },
+        {
+          "no": 51,
+          "speciesId": "monster.bezrakio",
+          "name": "ベズラキオ",
+          "families": [
+            "heavy_blade",
+            "war_maul"
+          ]
+        },
+        {
+          "no": 52,
+          "speciesId": "monster.murzenato",
+          "name": "ムルゼナト",
+          "families": [
+            "guard_blade",
+            "long_lance"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "reviewed-with-production-notes",
+        "observations": "成人4体の5領域と各2系統（49環弓/太刀、50長尖槍/護刃、51断岳剣/大槌、52護刃/長尖槍）を確認。49肩6節・一本弦小環矢、50腹側半環、51後傾帆と下胸嚢、52腰の低い水平節が見分けられる。文字049–052一致。",
+        "limitations": [
+          "No49の環冠の後ろ開口は背面図で確認する。",
+          "No51の帆は肩から外へ大きく見えるため、3DではJSONどおり三枚を背へ低く伏せ、腕との離隔を確認する。",
+          "No52の内向き鉤は裾の下面を別図で確認する。",
+          "初登場級の比較原画のみ。全7武器・全級の造形はJSON定義を正とする。",
+          "背面・正投影・実寸・共通リグ可動域・衝突は未検証。"
+        ]
+      }
+    },
+    {
+      "board": 14,
+      "file": "art/board-14.png",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-3c3288da-88d8-4c02-8f55-32cf7168577d.png",
+      "sha256": "2335906c112f917c2811a6d2d775b07a5abf750d0e9055db2b4c606e8a687d5e",
+      "sizeBytes": 2988747,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "mode": "RGB",
+      "promptFile": "art/prompts/board-14.txt",
+      "species": [
+        {
+          "no": 53,
+          "speciesId": "monster.hauremika",
+          "name": "ハウレミカ",
+          "families": [
+            "twin_blades",
+            "guard_blade"
+          ]
+        },
+        {
+          "no": 54,
+          "speciesId": "monster.zedbanil",
+          "name": "ゼドバニル",
+          "families": [
+            "guard_blade",
+            "heavy_blade"
+          ]
+        },
+        {
+          "no": 55,
+          "speciesId": "monster.oldasem",
+          "name": "オルダセム",
+          "families": [
+            "heavy_blade",
+            "guard_blade"
+          ]
+        },
+        {
+          "no": 56,
+          "speciesId": "monster.nuolvan",
+          "name": "ヌオルヴァン",
+          "families": [
+            "guard_blade",
+            "long_lance"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "reviewed-with-production-notes",
+        "observations": "成人4体の5領域と53双剣/護刃、54護刃/断岳剣、55断岳剣/護刃、56護刃/長尖槍を確認。53は左の短い帷と細い右腕、54左右二胸板、55左の岩棚、56胸の短い三房と左右二水室で区別できる。文字053–056一致。53は環弓を含まない。",
+        "limitations": [
+          "No55は主棚3枚と腰の支持板が重なる。制作時は主棚3に固定し、左腕の可動域と棚下の空間を確認する。",
+          "No53の頭防具は襟主体で頭頂が露出する。頭覆いの境界は別図で整理する。",
+          "No54の導管は図で連続して見えるため3Dでは肘前後で分離し、内肘を空ける。",
+          "初登場級の比較原画のみ。全7武器・全級の造形はJSON定義を正とする。",
+          "背面・正投影・実寸・共通リグ可動域・衝突は未検証。"
+        ]
+      }
+    }
+  ]
+}

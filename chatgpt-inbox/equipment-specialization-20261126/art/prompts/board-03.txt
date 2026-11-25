@@ -1,0 +1,39 @@
+Use case: stylized-concept. Create a beautiful production comparison concept sheet for the original grounded fantasy hunting game VEILBOUND HUNTERS. This is static fantasy costume and prop art, no combat or construction diagram. Wide landscape canvas, FOUR equally sized vertical panels in one row, soft parchment neutral backdrop, studio diffuse lighting, natural leather/bone/organic shell/aged bronze materials, restrained earth colors and tiny dim amber accents. Detailed painterly 3D game concept quality. Nothing resembling famous copyrighted armor.
+Each panel contains ONE full-body ADULT gender-neutral mannequin wearing five-region armor (helmet, chest, arms, waist, legs), head and both feet fully inside frame; and exactly TWO representative weapon-family prop groups beside it, arranged cleanly with breathing room. For twin_blades group show two matched short swords. For guard_blade show a short sword AND a separate shield. For long_lance show one long straight lance AND separate shield. Bow must have ONE straight taut bowstring between tips and ONE small aiming ring near grip, slender flexible bow limbs. All props are separate from mannequin and anatomically coherent. Hard closed hammer striking faces. Functional hand grips visible, fingers clear, shoulders/elbows/knees free, no extra limbs. Weapons stay their canonical shapes and lengths.
+Do not overfill panels with extra props. Adult-sized clothing also when source is juvenile. Literal panel labels at top only: three-digit number and LATIN ID provided below. A small title VEILBOUND HUNTERS at top. No Japanese paragraphs or stats. All silhouette, material color, organ placement, asymmetric side and counts below are intentional. Never mirror left/right. Left means the wearer's anatomical left. Do not put full bright magic over the figure. Show the native-rank concept, not four tiers. Render clear material differentiation, clean edges, readable silhouettes at small size.
+
+PANEL 1: label '009 VERITO'. rear three-quarter angle with the helmet profile visible, so the distinctive back organs are clearly visible.
+Silhouette: 背上部に二つの柔らかな羽袋、胸下は細い糸布。肩幅を袋だけで作り、腰と足は絞る。
+Palette: 淡い紫灰, 生成り糸, 灰茶
+Five regions: {"head": "浅い糸編みの鉢と目上の細い縁。触角は短い", "chest": "肩甲骨上に二つの丸袋。胸は縦糸を交差させた薄布", "arms": "前腕外側に糸の細巻き。手首と指に房を垂らさない", "waist": "腰後ろに二本の短い糸縁、前腰に袋を置かない", "legs": "細い糸布の脛巻き。裾を靴へ引きずらない"}
+Important count: 主羽袋2、尾糸縁2
+twin_blades PROP GROUP: 峰に一本ずつ毒糸溝を持つ二短刃。刃先に糸を張らない
+long_blade PROP GROUP: 低い峰溝に糸を通す連続曲刃。鞘口に二つの短房
+Avoid: 大きな蝶の翼にしない / 糸を長い触手や刃間の線として張らない / 毒色を全身の蛍光緑にしない
+
+PANEL 2: label '010 RAZMER'. rear three-quarter angle with the helmet profile visible, so the distinctive back organs are clearly visible.
+Silhouette: 胸と腰に二つの太い白骨半環。環の前中央は切り、細い革の縦軸でつないだ開放的な樽形。
+Palette: 骨白, 暗い革, くすんだ青銅
+Five regions: {"head": "低い白骨の半環帽。額中央を切り欠く", "chest": "胸を左右から囲う半環一組。前中央は暗革を見せる", "arms": "前腕外に骨環の短い弧二枚。内側は閉じない", "waist": "腰の半環を胸より低く広く置き、股間は空ける", "legs": "白骨の細い縦桟と小半環。膝に輪を掛けない"}
+Important count: 主要半環2
+long_lance PROP GROUP: 長い白骨の直芯と、胸腰を模す二半環の大盾
+heavy_blade PROP GROUP: 太い骨芯の片刃、刃元を二つの半環で囲む
+Avoid: 巨大な首輪や手錠状の閉環にしない / 骨環を関節に食い込ませない / 人骨の意匠へ置き換えない
+
+PANEL 3: label '011 KIRISAVE'. rear three-quarter angle with the helmet profile visible, so the distinctive back organs are clearly visible.
+Silhouette: 左肩、右背、左腰に三枚の薄い氷帆を交互配置。片側の翼にせず、斜めに折れた細い輪郭。
+Palette: 薄い青灰, 半透明氷, 灰緑革
+Five regions: {"head": "低い氷片の額板。後頭部の小片は寝かせる", "chest": "左肩と右肩甲骨へ薄板一枚ずつ、胸は灰緑の革", "arms": "右前腕に短い薄板、左は細い冷晶管の筋", "waist": "左腰に最後の薄帆。右腰と前面を空ける", "legs": "脛外に低い半透明片。膝上へ尖りを出さない"}
+Important count: 主氷帆3
+twin_blades PROP GROUP: 峰の板を左右互い違いに置く二短刃
+ring_bow PROP GROUP: 細い弓身の根元へ三枚の低い氷片。直線弦一本と小環
+Avoid: 全身を氷柱の棘で覆わない / 左右対称の大翼へ揃えない / 半透明板を刃の判定外へ伸ばさない
+
+PANEL 4: label '012 VELGAIT'. rear three-quarter angle with the helmet profile visible, so the distinctive back organs are clearly visible.
+Silhouette: 後頭部の低い半環と、背中一列の六灯だけが明るい細い靭皮装。胸腹は暗く大面を作らない。
+Palette: 暗い灰緑, 鈍い琥珀, 灰青
+Five regions: {"head": "後頭部に寝かせた半環。顔側は細い革額当て", "chest": "背中央の六つの小灯室、胸は細い交差革帯", "arms": "外腕の細い凝霧筋だけ。手首に灯室を追加しない", "waist": "背の第六灯を腰上で止め、裾は短い暗革二枚", "legs": "暗革の細い脛巻き、足先を軽くする"}
+Important count: 背灯6、後頭半環1
+ring_bow PROP GROUP: 弓の握り周辺だけ六小窓。小照準環一つと直線弦
+long_blade PROP GROUP: 峰の六窓を小さく沈めた連続曲刃
+Avoid: 頭上の浮遊輪や天使の輪にしない / 背の灯を六つ以外へ増やさない / 長い尾や霧の常時大雲を付けない

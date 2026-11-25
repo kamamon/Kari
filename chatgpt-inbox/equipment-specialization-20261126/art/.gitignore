@@ -1,0 +1,2 @@
+# Original PNGs are reconstructed byte-for-byte from packed/*.part to keep API writes bounded.
+board-*.png

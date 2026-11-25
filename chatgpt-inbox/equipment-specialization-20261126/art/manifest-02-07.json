@@ -1,0 +1,362 @@
+{
+  "schemaVersion": 1,
+  "status": "2026-11-26の再構築で新規生成した比較原画。失われた前回画像と同一とはしない。",
+  "coverage": "No005–028、各4種×6枚。各種の初登場級、成人用防具五部位と代表武器2系統。全7系統・全等級の画像ではない。",
+  "specificationPriority": "数・位置・寸法・形状が原画と異なる場合は data/species の明記仕様を優先し、下記具体差分を直してから正式モデルを作る。",
+  "boards": [
+    {
+      "board": 2,
+      "file": "art/board-02.png",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-3715a22a-5d80-4caa-9f96-f3d75db08caa.png",
+      "sha256": "41ba4ec708134e7ab6b2a4f79a3398ff9bdad4a3a259dcb26d6557a53b16b60f",
+      "bytes": 2976014,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "generator": "built-in image_gen",
+      "pixelEditsAfterGeneration": false,
+      "species": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "representativeFamilies": {
+        "5": [
+          "long_blade",
+          "ring_bow"
+        ],
+        "6": [
+          "ring_bow",
+          "twin_blades"
+        ],
+        "7": [
+          "guard_blade",
+          "long_lance"
+        ],
+        "8": [
+          "twin_blades",
+          "long_blade"
+        ]
+      },
+      "prompts": [
+        "art/prompts/board-02.txt"
+      ],
+      "review": {
+        "status": "visually-reviewed-with-production-notes",
+        "fiveArmorRegionsInFrame": true,
+        "adultProportions": true,
+        "twoRepresentativeWeaponFamiliesPerPanel": true,
+        "allPropsInsideFrame": true,
+        "observations": "005 灰帷・細襟と太刀／環弓、006 背の大→小の燐節列と環弓／双剣、007 右大籠手と護刃／長尖槍の独立盾、008 右肩→左腰の節列と双剣／太刀を確認。4成人の頭・手・腰・両足が枠内。両環弓の一本弦と小環を確認。",
+        "limitations": [
+          "005 原画の帷は細かい羽状の段が多く見える。モデルでは仕様の主帷二層に整理し、腰より下へ垂らさない。",
+          "008 頭・腕の鉤は原画で大きめ。JSONの短く寝た鉤に縮め、肩上げで頭に当たらない寸法はリグで検査する。"
+        ],
+        "notVerified": [
+          "背面／側面が見えない部位の立体構造",
+          "共通リグの最大可動域と装備の当たり",
+          "全7系統・各級の専用画像",
+          "正式3Dモデル・実機表示・ゲーム内技能演出"
+        ]
+      }
+    },
+    {
+      "board": 3,
+      "file": "art/board-03.png",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-c7b7f30a-8f67-4ace-8bcf-d2bd19bdd0d5.png",
+      "sha256": "3ad50bb9837fe88993809b02c4cecdeb32d6691b0d25e522ff923543ab404205",
+      "bytes": 2313653,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "generator": "built-in image_gen",
+      "pixelEditsAfterGeneration": false,
+      "species": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "representativeFamilies": {
+        "9": [
+          "twin_blades",
+          "long_blade"
+        ],
+        "10": [
+          "long_lance",
+          "heavy_blade"
+        ],
+        "11": [
+          "twin_blades",
+          "ring_bow"
+        ],
+        "12": [
+          "ring_bow",
+          "long_blade"
+        ]
+      },
+      "prompts": [
+        "art/prompts/board-03-revision-01.txt",
+        "art/prompts/board-03.txt"
+      ],
+      "review": {
+        "status": "visually-reviewed-with-production-notes",
+        "fiveArmorRegionsInFrame": true,
+        "adultProportions": true,
+        "twoRepresentativeWeaponFamiliesPerPanel": true,
+        "allPropsInsideFrame": true,
+        "observations": "009 背上の二袋と短い二糸、010 胸腰の二つの開いた骨環、011 交互の低い氷帆、012 後頭の寝た環と背の六灯を確認。012は初稿5灯から6灯へ画像編集し再確認。武器は各2系統、双剣は二本、槍盾は別、環弓は一本弦と小環。",
+        "limitations": [
+          "011 氷板の左右交互配置は斜め後面で一部重なる。正式な三面図では左肩・右背・左腰を個別に示す。",
+          "012 原画の環弓の小窓は5点に見える。モデルはJSONの6小窓にする。背の主灯6点は修正済み。"
+        ],
+        "notVerified": [
+          "背面／側面が見えない部位の立体構造",
+          "共通リグの最大可動域と装備の当たり",
+          "全7系統・各級の専用画像",
+          "正式3Dモデル・実機表示・ゲーム内技能演出"
+        ]
+      }
+    },
+    {
+      "board": 4,
+      "file": "art/board-04.png",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-eefb0542-cb0e-4d2d-85dc-0ac36decb483.png",
+      "sha256": "c8fae887d51489f69bd096f21d66cc0ac778935d8b1d91b78a698a6f8fa34d83",
+      "bytes": 2883319,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "generator": "built-in image_gen",
+      "pixelEditsAfterGeneration": false,
+      "species": [
+        13,
+        14,
+        15,
+        16
+      ],
+      "representativeFamilies": {
+        "13": [
+          "heavy_blade",
+          "war_maul"
+        ],
+        "14": [
+          "heavy_blade",
+          "guard_blade"
+        ],
+        "15": [
+          "guard_blade",
+          "ring_bow"
+        ],
+        "16": [
+          "guard_blade",
+          "long_lance"
+        ]
+      },
+      "prompts": [
+        "art/prompts/board-04.txt"
+      ],
+      "review": {
+        "status": "visually-reviewed-with-production-notes",
+        "fiveArmorRegionsInFrame": true,
+        "adultProportions": true,
+        "twoRepresentativeWeaponFamiliesPerPanel": true,
+        "allPropsInsideFrame": true,
+        "observations": "013 胸前の閉じた炉殻・黒灰と赤銅、大剣と硬い両打面の大槌。014 小さい丸岩板と成人生成り服、015 閉じた幼耳膜と細い成人脚、016 前腰の一皿と横耐水皮を確認。幼体3種は成人用で成体の大器官を持たない。護刃・長尖槍は独立盾付き。",
+        "limitations": [
+          "013 背の低い三弁は正面寄りの姿勢で全数を確認できない。背面図が必要。",
+          "014 左肩の小板三枚の一部は重なり、正面で全ての境界は見えない。モデルで三枚を個別ノードにする。",
+          "015 弓弦の線が薄い。実装では一本の直線弦を独立メッシュで用意し、握りから離す。"
+        ],
+        "notVerified": [
+          "背面／側面が見えない部位の立体構造",
+          "共通リグの最大可動域と装備の当たり",
+          "全7系統・各級の専用画像",
+          "正式3Dモデル・実機表示・ゲーム内技能演出"
+        ]
+      }
+    },
+    {
+      "board": 5,
+      "file": "art/board-05.png",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-94bef015-7c99-4f92-b06d-cecfb86396c3.png",
+      "sha256": "967d0683b4528c9eeaf161c9690848fecda3e0115c24845d153032e205fc3120",
+      "bytes": 2348121,
+      "dimensions": [
+        1672,
+        941
+      ],
+      "generator": "built-in image_gen",
+      "pixelEditsAfterGeneration": false,
+      "species": [
+        17,
+        18,
+        19,
+        20
+      ],
+      "representativeFamilies": {
+        "17": [
+          "ring_bow",
+          "twin_blades"
+        ],
+        "18": [
+          "guard_blade",
+          "long_lance"
+        ],
+        "19": [
+          "twin_blades",
+          "long_blade"
+        ],
+        "20": [
+          "twin_blades",
+          "guard_blade"
+        ]
+      },
+      "prompts": [
+        "art/prompts/board-05-revision-01.txt",
+        "art/prompts/board-05.txt"
+      ],
+      "review": {
+        "status": "visually-reviewed-with-production-notes",
+        "fiveArmorRegionsInFrame": true,
+        "adultProportions": true,
+        "twoRepresentativeWeaponFamiliesPerPanel": true,
+        "allPropsInsideFrame": true,
+        "observations": "017 背下部の二灯、018 左右ほぼ同寸の乳白板、019 閉じない半円と小さい丸鉤、020 背上の平たい一面と二糸縁を確認。019初稿の大きい巻き鉤を丸い小突起へ編集済み。4体とも成人、五部位が枠内。双剣は二本、護刃・槍は盾を別に描写。",
+        "limitations": [
+          "018 盾の硝板は光の表現で半透明に見える。仕様は乳白の不透明寄り一枚板で、成体の透明板にしない。",
+          "020 平たい羽袋が羽状に重なって見える。モデルでは一つの平たい袋の面に小じわを付け、飛行翼や独立羽の束にしない。"
+        ],
+        "notVerified": [
+          "背面／側面が見えない部位の立体構造",
+          "共通リグの最大可動域と装備の当たり",
+          "全7系統・各級の専用画像",
+          "正式3Dモデル・実機表示・ゲーム内技能演出"
+        ]
+      }
+    },
+    {
+      "board": 6,
+      "file": "art/board-06.png",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-92952efa-12a2-4031-8659-ad280dda16f7.png",
+      "sha256": "d1bc5546eefc566b2ed1b0b10e0f095d56125410f60d6390ddb92d6b4b7a1d49",
+      "bytes": 2524435,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "generator": "built-in image_gen",
+      "pixelEditsAfterGeneration": false,
+      "species": [
+        21,
+        22,
+        23,
+        24
+      ],
+      "representativeFamilies": {
+        "21": [
+          "ring_bow",
+          "long_lance"
+        ],
+        "22": [
+          "long_lance",
+          "guard_blade"
+        ],
+        "23": [
+          "twin_blades",
+          "long_blade"
+        ],
+        "24": [
+          "war_maul",
+          "heavy_blade"
+        ]
+      },
+      "prompts": [
+        "art/prompts/board-06-revision-01.txt",
+        "art/prompts/board-06.txt"
+      ],
+      "review": {
+        "status": "visually-reviewed-with-production-notes",
+        "fiveArmorRegionsInFrame": true,
+        "adultProportions": true,
+        "twoRepresentativeWeaponFamiliesPerPanel": true,
+        "allPropsInsideFrame": true,
+        "observations": "021 背の丸小板を初稿3枚から交互4枚へ、環弓の小晶を3から4へ編集済み。022 右腰の一槽、023 左肩の一霜扇、024 後高二段兜と胸三段を確認。各2系統、槍盾・双剣・硬い打面・一本の弦を確認。",
+        "limitations": [
+          "023 半円扇の内部が三本より細かい筋で描かれている。主支持骨をJSONの三本にし、残りは表面模様にする。",
+          "024 兜の後ろ縁高さは側面図で再検査が必要。原画から見たまま高さを決めない。"
+        ],
+        "notVerified": [
+          "背面／側面が見えない部位の立体構造",
+          "共通リグの最大可動域と装備の当たり",
+          "全7系統・各級の専用画像",
+          "正式3Dモデル・実機表示・ゲーム内技能演出"
+        ]
+      }
+    },
+    {
+      "board": 7,
+      "file": "art/board-07.png",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-a8491142-72fc-420b-8db0-3f8b47ccf66b.png",
+      "sha256": "d937f0a3b574b70442b5b9915e6c29f57249ba399388b117d7c711ffe57006a6",
+      "bytes": 2489987,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "generator": "built-in image_gen",
+      "pixelEditsAfterGeneration": false,
+      "species": [
+        25,
+        26,
+        27,
+        28
+      ],
+      "representativeFamilies": {
+        "25": [
+          "war_maul",
+          "ring_bow"
+        ],
+        "26": [
+          "long_blade",
+          "ring_bow"
+        ],
+        "27": [
+          "long_lance",
+          "guard_blade"
+        ],
+        "28": [
+          "twin_blades",
+          "long_blade"
+        ]
+      },
+      "prompts": [
+        "art/prompts/board-07-revision-01.txt",
+        "art/prompts/board-07.txt"
+      ],
+      "review": {
+        "status": "visually-reviewed-with-production-notes",
+        "fiveArmorRegionsInFrame": true,
+        "adultProportions": true,
+        "twoRepresentativeWeaponFamiliesPerPanel": true,
+        "allPropsInsideFrame": true,
+        "observations": "025 右肩の室を初稿4開口から3つの閉じた丸室へ修正。026 腰後ろの三露珠、027 左前腕の三段、028 腰後ろの三段を確認。両環弓は直線一本弦・小環一つ、護刃／槍は独立盾。全身と全小物の先端が枠内。",
+        "limitations": [
+          "025 模型化では三室を斜めに少し前へ向けるが、閉じた先端を維持し長い筒にしない。",
+          "026 太刀の小珠が刃面側へ寄って描かれている。JSON通り鞘口後ろの低い留めへ戻し、刃と手の接触を避ける。",
+          "028 腕の鉤は大きめに描かれている。仕様の短い下向き鉤に縮小し、手首の可動域を空ける。"
+        ],
+        "notVerified": [
+          "背面／側面が見えない部位の立体構造",
+          "共通リグの最大可動域と装備の当たり",
+          "全7系統・各級の専用画像",
+          "正式3Dモデル・実機表示・ゲーム内技能演出"
+        ]
+      }
+    }
+  ]
+}

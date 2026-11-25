@@ -1,0 +1,39 @@
+Use case: stylized-concept. Create a beautiful production comparison concept sheet for the original grounded fantasy hunting game VEILBOUND HUNTERS. This is static fantasy costume and prop art, no combat or construction diagram. Wide landscape canvas, FOUR equally sized vertical panels in one row, soft parchment neutral backdrop, studio diffuse lighting, natural leather/bone/organic shell/aged bronze materials, restrained earth colors and tiny dim amber accents. Detailed painterly 3D game concept quality. Nothing resembling famous copyrighted armor.
+Each panel contains ONE full-body ADULT gender-neutral mannequin wearing five-region armor (helmet, chest, arms, waist, legs), head and both feet fully inside frame; and exactly TWO representative weapon-family prop groups beside it, arranged cleanly with breathing room. For twin_blades group show two matched short swords. For guard_blade show a short sword AND a separate shield. For long_lance show one long straight lance AND separate shield. Bow must have ONE straight taut bowstring between tips and ONE small aiming ring near grip, slender flexible bow limbs. All props are separate from mannequin and anatomically coherent. Hard closed hammer striking faces. Functional hand grips visible, fingers clear, shoulders/elbows/knees free, no extra limbs. Weapons stay their canonical shapes and lengths.
+Do not overfill panels with extra props. Adult-sized clothing also when source is juvenile. Literal panel labels at top only: three-digit number and LATIN ID provided below. A small title VEILBOUND HUNTERS at top. No Japanese paragraphs or stats. All silhouette, material color, organ placement, asymmetric side and counts below are intentional. Never mirror left/right. Left means the wearer's anatomical left. Do not put full bright magic over the figure. Show the native-rank concept, not four tiers. Render clear material differentiation, clean edges, readable silhouettes at small size.
+
+PANEL 1: label '005 ASHREIA'. rear three-quarter angle with the helmet profile visible, so the distinctive back organs are clearly visible.
+Silhouette: 低い顔開き兜から細い立襟へつながる縦長の軸。背だけ短い灰の帷を二層垂らし、前脚は軽く見せる。
+Palette: 灰白, 淡い灰紫, 焦げ茶の革
+Five regions: {"head": "頭へ沿う細い灰羽鉢。目と口は開け、後頭部だけ小羽", "chest": "首前は低く切る細襟。背の帷二層は腰より上で止める", "arms": "短い灰羽を外前腕へ三枚重ね、手首は布だけ", "waist": "前腰は細い帯、後ろだけ帷の切れ端を短く二枚", "legs": "膝上を覆わない細い脚布。足首へ粉袋を付けない"}
+Important count: 主帷2、外腕羽3枚ずつ
+long_blade PROP GROUP: 鞘口と鍔の後ろにだけ灰帷を折る細い曲刀
+ring_bow PROP GROUP: 弓身の根元へ短い灰羽束。照準小環と直線弦一本
+Avoid: 長い裾や顔を隠す深いフードにしない / 背に大きな飛行翼を付けない / 眠り粉の常時大煙幕を出さない
+
+PANEL 2: label '006 LUMISCA'. rear three-quarter angle with the helmet profile visible, so the distinctive back organs are clearly visible.
+Silhouette: 前面は細い青灰革、背骨の下へ太さの違う燐節を五つ連ねる。長い尾そのものは付けない。
+Palette: 青灰, 琥珀の点光, 濃茶
+Five regions: {"head": "短い目庇と小さな後頭節一つ。角を上へ伸ばさない", "chest": "背中央に大から小へ五節。胸は二本の細い帯だけ", "arms": "外前腕へ薄い燐板を一枚。指と手首を開く", "waist": "背下端の第五節を腰帯へ接続し、尾を垂らさない", "legs": "脛外側に細い腱帯。節を脚まで繰り返さない"}
+Important count: 主要燐節5
+ring_bow PROP GROUP: 上側弓身の根元へ五つの小節。細い小環と直線弦
+twin_blades PROP GROUP: 二本とも峰に二小節、鍔の共通意匠に一小節
+Avoid: 全身を青い稲妻で覆わない / 長い尾状の装飾を追加しない / 節を等間隔同寸の機械電池にしない
+
+PANEL 3: label '007 ORGLASS'. front three-quarter angle.
+Silhouette: 右前腕の大きな三角硝板と、右肩から左腰へ下がる斜めの板列。左腕と腹の革面は広く見せる。
+Palette: 灰緑の半透明, 鈍い青銅, 灰茶
+Five regions: {"head": "低い角付き硝額板一枚。顔中央は開ける", "chest": "右肩から左腹へ三枚の透けた板を斜めに継ぐ", "arms": "右前腕だけ大鋏の閉じた三角面。左は細い硝筋", "waist": "左腰へ薄い板一枚、右腰は道具帯で軽くする", "legs": "膝外側と脛に小さな菱形板。関節を囲まない"}
+Important count: 胸硝板3、主籠手1
+guard_blade PROP GROUP: 硝殻の細い刺突刃と、右上が高い三角盾
+long_lance PROP GROUP: 硝鋏芯のまっすぐな槍穂と、斜め三枚の硬板盾
+Avoid: 右籠手を実物の巨大な鋏へしない / 全身を宝石で覆わない / 透明板を顔全面に被せない
+
+PANEL 4: label '008 TENGARO'. front three-quarter angle.
+Silhouette: 右肩から左腰へ一周未満の螺旋節甲。短い外鉤が一方向へ寝て、胴の前に大きい空隙を残す。
+Palette: 赤褐色, 鈍青銅, 黒茶
+Five regions: {"head": "低い半環の額当て、鉤は後ろ向きに二つだけ", "chest": "胸前を開けた三節の螺旋板、右肩を起点に左腰へ", "arms": "右前腕の外に二節、左は一節。内肘を空ける", "waist": "左腰の最後の三節だけ厚くし、短鉤を下へ寝かせる", "legs": "脛へ開いた半環を二枚ずつ。膝を締め付けない"}
+Important count: 主節6、外鉤は各節1つ
+twin_blades PROP GROUP: 短い外鉤を峰側へ一つずつ持つ二本の連続刃
+long_blade PROP GROUP: 三節の筋を峰に沈めた曲刀。返し鉤を刃先へ出さない
+Avoid: 閉じた巨大な車輪を背負わせない / 鉤を長い牙や角へ成長させない / 全身を同じ環甲で覆わない

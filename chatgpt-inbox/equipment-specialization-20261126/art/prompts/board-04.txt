@@ -1,0 +1,42 @@
+Use case: stylized-concept. Create a beautiful production comparison concept sheet for the original grounded fantasy hunting game VEILBOUND HUNTERS. This is static fantasy costume and prop art, no combat or construction diagram. Wide landscape canvas, FOUR equally sized vertical panels in one row, soft parchment neutral backdrop, studio diffuse lighting, natural leather/bone/organic shell/aged bronze materials, restrained earth colors and tiny dim amber accents. Detailed painterly 3D game concept quality. Nothing resembling famous copyrighted armor.
+Each panel contains ONE full-body ADULT gender-neutral mannequin wearing five-region armor (helmet, chest, arms, waist, legs), head and both feet fully inside frame; and exactly TWO representative weapon-family prop groups beside it, arranged cleanly with breathing room. For twin_blades group show two matched short swords. For guard_blade show a short sword AND a separate shield. For long_lance show one long straight lance AND separate shield. Bow must have ONE straight taut bowstring between tips and ONE small aiming ring near grip, slender flexible bow limbs. All props are separate from mannequin and anatomically coherent. Hard closed hammer striking faces. Functional hand grips visible, fingers clear, shoulders/elbows/knees free, no extra limbs. Weapons stay their canonical shapes and lengths.
+Do not overfill panels with extra props. Adult-sized clothing also when source is juvenile. Literal panel labels at top only: three-digit number and LATIN ID provided below. A small title VEILBOUND HUNTERS at top. No Japanese paragraphs or stats. All silhouette, material color, organ placement, asymmetric side and counts below are intentional. Never mirror left/right. Left means the wearer's anatomical left. Do not put full bright magic over the figure. Show the native-rank concept, not four tiers. Render clear material differentiation, clean edges, readable silhouettes at small size.
+
+PANEL 1: label '013 EMBARG'. front three-quarter angle.
+Silhouette: 黒い胸腹の一枚炉殻が前に張り、背の三枚弁は低く伏せる。腕脚は節を細くして炉だけを重くする。
+Palette: 黒灰, 鈍い赤銅, 暗い琥珀
+Five regions: {"head": "額の黒い低殻、顔周辺の熱筋は細い二本", "chest": "胸腹に一つの大炉殻。中央を閉じ、縁だけ赤銅の隙間", "arms": "前腕外に黒殻一枚。内肘の冷たい革を広く残す", "waist": "前腰に短い炉縁を二分、背腰に大型排気筒を置かない", "legs": "黒い脛殻を前だけ。膝と足首は灰革"}
+Important count: 主炉1、背弁3
+heavy_blade PROP GROUP: 黒い大刃の刃元内側に炉筋、峰の低い弁三つ
+war_maul PROP GROUP: 閉じた黒殻の硬打頭、側面に低い三弁
+Avoid: 前面を開いた火口や砲口にしない / 背へ長い煙突を立てない / 全身の黒殻を赤い溶岩へ変えない
+
+PANEL 2: label '014 KORDOPIL'. front three-quarter angle.
+Silhouette: 成人用の生成り胴着に、左肩だけ丸い幼岩板を三枚寄せる。親の巨大な左岩塊は作らず、小点の軽い輪郭。
+Palette: 淡い灰褐, 青銅の点, 生成り
+Five regions: {"head": "薄い一枚の丸い幼冠板を額へ。顔と側頭部を開く", "chest": "左肩に小板三枚、胸は生成りの革紐だけ", "arms": "左腕に小さな丸板二枚、右は補修用の細帯", "waist": "腰後ろの尾端晶は丸粒一つ。左腰に巨板を置かない", "legs": "脛に丸い小板一枚ずつ、靴は柔らかい革"}
+Important count: 左肩板3、尾粒1
+heavy_blade PROP GROUP: 刃元へ丸い補修板三枚を留めた細身の岩刃
+guard_blade PROP GROUP: 薄い岩短刃と、小板三枚を生成り裏板に置く軽盾
+Avoid: ガルドロス装の縮小版にしない / 尖った成体冠や大尾晶を付けない / 幼体用の小さい人体比例にしない
+These are ADULT wearable proportions made from small juvenile organs. Keep organs immature and small, not a child mannequin and not a miniaturized adult monster armor.
+
+PANEL 3: label '015 PALSEIT'. front three-quarter angle.
+Silhouette: 成人の軽い生成り服に、肩後ろの閉じた小耳膜を二枚だけ。長い脚の線を見せ、翼や大帆の量は持たない。
+Palette: 淡い灰緑, 生成り, 灰茶
+Five regions: {"head": "小さな耳膜を後頭部の左右へ寝かせる", "chest": "薄い灰緑の胸帯と、肩後ろの小さな閉じ膜二枚", "arms": "外腕は細腱の巻き帯。肘を覆う板はない", "waist": "腰前の細い生成り帯、後ろの膜裾は短く二切れ", "legs": "長い外脚帯と軽い革靴。膝裏を開く"}
+Important count: 小耳膜2
+guard_blade PROP GROUP: 細い短刃と、閉じ膜を硬い小盾へ二枚貼る
+ring_bow PROP GROUP: 握り横の小耳膜二片。細い弓身、小環と直線弦
+Avoid: セルヴァルクの大帆を小型化して載せない / 小児の体格にしない / 背中を翼やマントで覆わない
+These are ADULT wearable proportions made from small juvenile organs. Keep organs immature and small, not a child mannequin and not a miniaturized adult monster armor.
+
+PANEL 4: label '016 NUMAPORON'. front three-quarter angle.
+Silhouette: 浅い丸皿を前腰一か所に置き、腹の生成り皮が見える成人の作業軽装。肩は低く、前腰だけ丸い。
+Palette: 淡い泥褐, 生成り皮, 灰緑
+Five regions: {"head": "額へ幼冠甲の短い横板。浅皿を頭全体にしない", "chest": "生成り耐水皮を腹へ横重ねし、胸上は細帯", "arms": "小水嚢の覆いを前腕外に一枚ずつ", "waist": "前腰へ低い丸皿一つ。腿側の縁は切り欠く", "legs": "灰緑の短い脛巻きと防水革靴"}
+Important count: 主皿1、幼嚢覆い2
+guard_blade PROP GROUP: 幼冠甲の短刃と、浅い丸皿の軽い硬盾
+long_lance PROP GROUP: 小皿状の留めを持つ直槍と、低い丸盾
+Avoid: 成体の前重装をそのまま縮小しない / 丸皿を頭肩脚へ大量反復しない / 小児服の比率にしない
+These are ADULT wearable proportions made from small juvenile organs. Keep organs immature and small, not a child mannequin and not a miniaturized adult monster armor.
