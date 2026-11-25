@@ -1,0 +1,1440 @@
+diff --git a/public/data/deliveries.json b/public/data/deliveries.json
+--- a/public/data/deliveries.json
++++ b/public/data/deliveries.json
+@@ -18,7 +18,8 @@
+           "keep": 14
+         }
+       ],
+-      "money": 250
++      "money": 250,
++      "rankId": "rank.1"
+     }
+   ]
+ }
+diff --git a/public/data/hub.json b/public/data/hub.json
+--- a/public/data/hub.json
++++ b/public/data/hub.json
+@@ -2,13 +2,16 @@
+   "schemaVersion": 1,
+   "id": "hub.village",
+   "name": "灯継ぎの里",
+-  "note": "拠点（v0.12.0、docs/spec.md 19 章）。里を歩いて、施設の前（x, z から半径 r）で主ボタンを押すと、その施設の画面が開く。建物の当たり（円柱）は maps/hub_village.json の rocks で、並びは facilities と同じ順（工房・商店・依頼板・装備箱）+ 広場の灯。建物は、src/render/hubScene.ts が、簡単な立体に、正面と右側面の図（依頼 8 の D）を貼って作る（v0.13.0、docs/spec.md 21 章）。位置はすべて机上の値。v0.31.0（ChatGPT の里の設計 #11 の P0）: 工房とロクハは、広場より 3m 低い「炉の段」（maps/hub_village.json の platforms。西の階段と踊り場で下りる）。施設の前は、同じ段にいる時だけ開く（src/game/hub.ts）。",
++  "note": "拠点（v0.12.0、docs/spec.md 19 章）。里を歩いて、施設の前（x, z から半径 r）で主ボタンを押すと、その施設の画面が開く。建物の当たり（円柱）は maps/hub_village.json の rocks で、並びは facilities と同じ順（工房・商店・初級受付・装備箱・中級受付・上級受付・極級受付）+ 広場の灯。建物は、src/render/hubScene.ts が、簡単な立体に、正面と右側面の図（依頼 8 の D）を貼って作る（v0.13.0、docs/spec.md 21 章）。位置はすべて机上の値。v0.31.0（ChatGPT の里の設計 #11 の P0）: 工房とロクハは、広場より 3m 低い「炉の段」（maps/hub_village.json の platforms。西の階段と踊り場で下りる）。施設の前は、同じ段にいる時だけ開く（src/game/hub.ts）。 級別受付の提案: 既存 board の位置とミナギを保持し、現行の高さ0mの床に中級・上級・極級の受付を置く。questRankId は一覧の振り分けだけに使い、各依頼の requires は変えない。",
+   "mapId": "map.hub.village",
+   "facilities": [
+     {"id": "workshop", "kind": "workshop", "name": "工房", "action": "工房に入る", "summary": "武器と防具を強化する", "x": -29.1, "z": 10, "r": 3.2, "building": {"x": -34, "z": 10, "yaw": 1.5708}},
+     {"id": "shop", "kind": "shop", "name": "商店", "action": "商店に入る", "summary": "道具を買う。素材を売る", "x": 14, "z": 4.6, "r": 3.2, "building": {"x": 14, "z": 9.5, "yaw": 3.1416}},
+-    {"id": "board", "kind": "quest", "name": "依頼板", "action": "依頼を見る", "summary": "依頼を受けて狩りへ出る。訓練場へ行く", "x": 0, "z": 10.4, "r": 3.0, "building": {"x": 0, "z": 13.2, "yaw": 3.1416}},
+-    {"id": "chest", "kind": "chest", "name": "装備箱", "action": "装備箱を開ける", "summary": "武器と防具を替える。持ち物とデータ", "x": -15.2, "z": -5, "r": 3.0, "building": {"x": -18.5, "z": -5, "yaw": 1.5708}}
++    {"id": "board", "kind": "quest", "name": "初級受付・広場の依頼板", "action": "初級の依頼を見る", "summary": "初級の狩猟・採集・採掘・納品。訓練と物語の案内", "x": 0, "z": 10.4, "r": 3.0, "building": {"x": 0, "z": 13.2, "yaw": 3.1416}, "questRankId": "rank.1"},
++    {"id": "chest", "kind": "chest", "name": "装備箱", "action": "装備箱を開ける", "summary": "武器と防具を替える。持ち物とデータ", "x": -15.2, "z": -5, "r": 3.0, "building": {"x": -18.5, "z": -5, "yaw": 1.5708}},
++    {"id": "board.r2", "kind": "quest", "questRankId": "rank.2", "name": "中級受付・西の依頼所", "action": "中級の依頼を見る", "summary": "中級の依頼を星ごとに見る。受注条件も確認できる", "x": -10, "z": 10.4, "r": 3, "building": {"x": -10, "z": 13.2, "yaw": 3.1416}},
++    {"id": "board.r3", "kind": "quest", "questRankId": "rank.3", "name": "上級受付・東の調査所", "action": "上級の依頼を見る", "summary": "上級の依頼を星ごとに見る。受注条件も確認できる", "x": 14, "z": -6, "r": 3, "building": {"x": 18, "z": -6, "yaw": -1.5708}},
++    {"id": "board.r4", "kind": "quest", "questRankId": "rank.4", "name": "極級受付・帰路の詰所", "action": "極級の依頼を見る", "summary": "極級の依頼を星ごとに見る。受注条件も確認できる", "x": -8, "z": -5, "r": 3, "building": {"x": -8, "z": -9, "yaw": 0}}
+   ],
+   "npcs": [
+     {"id": "npc.minagi", "name": "ミナギ", "facility": "board", "art": "minagi", "x": 2.6, "z": 11.4, "yaw": -2.8966},
+diff --git a/public/data/maps/hub_village.json b/public/data/maps/hub_village.json
+--- a/public/data/maps/hub_village.json
++++ b/public/data/maps/hub_village.json
+@@ -13,6 +13,9 @@
+     {"x": 14, "z": 9.5, "r": 3.6, "h": 3.6},
+     {"x": 0, "z": 13.2, "r": 1.5, "h": 2.6},
+     {"x": -18.5, "z": -5, "r": 2.2, "h": 2.4},
++    {"x": -10, "z": 13.2, "r": 1.5, "h": 2.6},
++    {"x": 18, "z": -6, "r": 1.5, "h": 2.6},
++    {"x": -8, "z": -9, "r": 1.5, "h": 2.6},
+     {"x": -6, "z": 1.5, "r": 0.6, "h": 3.0},
+     {"x": 2.6, "z": 11.4, "r": 0.35, "h": 1.7},
+     {"x": -30.5, "z": 12.6, "r": 0.35, "h": -1.2, "y": -3},
+diff --git a/src/app.ts b/src/app.ts
+--- a/src/app.ts
++++ b/src/app.ts
+@@ -60,6 +60,7 @@
+   private looks: AppearanceEditor;
+   private looksYaw = 0;
+   private looksFrom: BaseSection = 'chest';
++  private looksFacilityId: string | undefined;
+   /** 狩人に渡した外見の元（保存の外見か下見）と、渡した描画（作り直したら、もう 1 度渡す） */
+   private lookSrc: unknown = null;
+   private lookView: GameView | null = null;
+@@ -136,7 +137,7 @@
+       else if (a === 'camReset' && !this.paused) this.resetCamera();
+       else if (a === 'lockOn' && !this.paused) this.toggleLock();
+       else if (a === 'return' && !this.paused) this.returnNow();
+-      else if (a === 'interact' && !this.paused && this.place === 'hub' && this.nearFacility) this.openFacility(this.nearFacility.kind);
++      else if (a === 'interact' && !this.paused && this.place === 'hub' && this.nearFacility) this.openFacility(this.nearFacility.kind, this.nearFacility.id);
+       else if (a === 'hubList' && !this.paused && this.place === 'hub') this.openFacility('all');
+     });
+     store.onChange((s) => {
+@@ -337,8 +338,8 @@
+   }
+ 
+   /** 拠点・結果の画面を出す / 消す。出ている間は操作ボタンを隠して一時停止する。 */
+-  private setOverlay(which: 'base' | 'result' | null, section: BaseSection = 'all'): void {
+-    this.base.setOpen(which === 'base', section);
++  private setOverlay(which: 'base' | 'result' | null, section: BaseSection = 'all', facilityId?: string): void {
++    this.base.setOpen(which === 'base', section, facilityId);
+     if (which === 'result') this.result.show(this.sim, this.rewardSaveState());
+     else this.result.hide();
+     const playing = which === null;
+@@ -412,6 +413,7 @@
+       const old = this.sim.player;
+       const at = { pos: { ...old.pos }, yaw: old.yaw };
+       const section = this.base.section;
++      const facilityId = this.base.facilityId ?? undefined;
+       this.createSession(null, true);
+       const p = this.sim.player;
+       p.pos = { ...at.pos };
+@@ -419,7 +421,7 @@
+       p.yaw = at.yaw;
+       p.prevYaw = at.yaw;
+       this.view.cam.snap(at.yaw);
+-      this.setOverlay('base', section);
++      this.setOverlay('base', section, facilityId);
+       return;
+     }
+     this.createSession(null);
+@@ -440,6 +442,7 @@
+   openLooks(): void {
+     if (this.place === 'hunt' || this.looks.open) return;
+     this.looksFrom = this.base.section;
++    this.looksFacilityId = this.base.facilityId ?? undefined;
+     this.looksYaw = this.view.cam.yaw;
+     this.base.setOpen(false);
+     this.looks.openEditor();
+@@ -449,7 +452,7 @@
+   /** 見た目を変える画面を閉じた: 元の施設の画面へ戻る */
+   looksClosed(saved: boolean): void {
+     this.lookSrc = null;
+-    this.base.setOpen(true, this.looksFrom);
++    this.base.setOpen(true, this.looksFrom, this.looksFacilityId);
+     if (saved) {
+       this.base.notify('見た目を保存しました。');
+       this.audio.play('ui');
+@@ -463,8 +466,8 @@
+ 
+   // ---- 里（歩く拠点）----
+   /** 施設の画面を開く（all = すべての欄の一覧）。開いている間は、一時停止する。 */
+-  openFacility(section: BaseSection): void {
+-    this.setOverlay('base', section);
++  openFacility(section: BaseSection, facilityId?: string): void {
++    this.setOverlay('base', section, facilityId);
+     this.audio.play('ui');
+   }
+ 
+@@ -683,7 +686,7 @@
+         // 施設の前で、同じ段にいる時だけ（v0.31.0。src/game/hub.ts）
+         const near = nearestFacility(this.content.hub.facilities, this.sim.world, this.sim.player.pos);
+         this.nearFacility = near;
+-        if (interact && near) this.openFacility(near.kind);
++        if (interact && near) this.openFacility(near.kind, near.id);
+       }
+       alpha = this.clock.alpha;
+       const events = this.sim.drainEvents();
+diff --git a/src/data/questBoard.ts b/src/data/questBoard.ts
+--- a/src/data/questBoard.ts
++++ b/src/data/questBoard.ts
+@@ -65,7 +65,7 @@
+ }
+ 
+ /** 里の納品の検査 */
+-export function validateDeliveries(doc: DeliveriesDef, content: Pick<Content, 'quests' | 'materials'>, supportIds: ReadonlySet<string>): string[] {
++export function validateDeliveries(doc: DeliveriesDef, content: Pick<Content, 'quests' | 'materials' | 'ranks'>, supportIds: ReadonlySet<string>): string[] {
+   const e: string[] = [];
+   if (!doc || !Array.isArray(doc.deliveries)) return ['deliveries が無い'];
+   const seen = new Set<string>();
+@@ -76,6 +76,8 @@
+     if (content.quests.has(d.id) || supportIds.has(d.id)) e.push(`${w}: 依頼か支給の id と同じ`);
+     if (!text(d.name, 40) || !text(d.client, 30) || !text(d.text, BOARD_TEXT_MAX)) e.push(`${w}: 名前・依頼人・話が不正`);
+     if (!(isInt(d.stars) && d.stars >= STAR_MIN && d.stars <= STAR_MAX)) e.push(`${w}: 星は ${STAR_MIN}〜${STAR_MAX} の整数`);
++    const rankId = d.rankId ?? 'rank.1';
++    if (!content.ranks.has(rankId)) e.push(`${w}: 受付の級 ${String(rankId)} が無い`);
+     for (const id of d.requires ?? []) if (!content.quests.has(id)) e.push(`${w}: 条件の依頼 ${id} が無い`);
+     if (!Array.isArray(d.items) || d.items.length === 0) e.push(`${w}: 渡す素材が無い`);
+     const ids = new Set<string>();
+diff --git a/src/data/schemas.ts b/src/data/schemas.ts
+--- a/src/data/schemas.ts
++++ b/src/data/schemas.ts
+@@ -711,6 +711,8 @@
+ export interface FacilityDef {
+   id: string;
+   kind: FacilityKind;
++  /** 級別の依頼受付に必須の rank の id。ほかの施設では指定しない。全級の受付を hub データと同時に適用する。 */
++  questRankId?: string;
+   name: string;
+   /** ボタンに出す言葉（「工房に入る」） */
+   action: string;
+@@ -977,6 +979,8 @@
+   name: string;
+   client: string;
+   stars: number;
++  /** 受け付ける級。星から求めない。省略した旧データは、恒久 ID rank.1（初級）の受付に出す。受注条件は requires のまま。 */
++  rankId?: string;
+   text: string;
+   /** 受けられる条件: どれも 1 回は達成している依頼 */
+   requires: string[];
+diff --git a/src/data/validators.ts b/src/data/validators.ts
+--- a/src/data/validators.ts
++++ b/src/data/validators.ts
+@@ -654,7 +654,7 @@
+   }
+ }
+ 
+-/** 拠点: 施設は 4 種類が 1 つずつ。施設の前に立てる（外周の中で、建物の当たりの外）。出発地点から、どの施設の前へも重ならずに立てる。 */
++/** 拠点: 依頼受付は全級に 1 つずつ、ほかの施設は種類ごとに 1 つ。施設の前は外周・建物の当たりの外。 */
+ export function validateHub(c: Content, errors: string[]): void {
+   const h = c.hub;
+   const map = c.maps.get(h.mapId);
+@@ -668,14 +668,25 @@
+     x >= map.bounds.minX + pr && x <= map.bounds.maxX - pr && z >= map.bounds.minZ + pr && z <= map.bounds.maxZ - pr && map.rocks.every((r) => Math.hypot(r.x - x, r.z - z) >= r.r + pr);
+   if (!free(map.spawn.x, map.spawn.z)) errors.push('hub: 出発地点が、建物か外周に重なる');
+   const ids = new Set<string>();
+-  for (const kind of ['quest', 'workshop', 'shop', 'chest'] as const) {
++  for (const kind of ['workshop', 'shop', 'chest'] as const) {
+     const n = (h.facilities ?? []).filter((f) => f.kind === kind).length;
+     if (n !== 1) errors.push(`hub: 施設 ${kind} が ${n} 個（1 個にする）`);
+   }
++  const receptions = (h.facilities ?? []).filter((f) => f.kind === 'quest');
++  const coveredRanks = new Set<string>();
++  for (const f of receptions) {
++    if (f.questRankId === undefined || !c.ranks.has(f.questRankId)) {
++      errors.push(`hub facility ${f.id}: 受付の級 ${String(f.questRankId)} が無い`);
++    } else if (coveredRanks.has(f.questRankId)) {
++      errors.push(`hub: 級 ${f.questRankId} の受付が重複`);
++    } else coveredRanks.add(f.questRankId);
++  }
++  for (const rankId of c.ranks.keys()) if (!coveredRanks.has(rankId)) errors.push(`hub: 級 ${rankId} の受付が無い`);
+   for (const f of h.facilities ?? []) {
+     const w = `hub facility ${f.id}`;
+     if (ids.has(f.id)) errors.push(`${w}: id が重複`);
+     ids.add(f.id);
++    if (f.kind !== 'quest' && f.questRankId !== undefined) errors.push(`${w}: 依頼受付以外に questRankId を指定できない`);
+     if ([f.name, f.action, f.summary].some((t) => typeof t !== 'string' || t === '')) errors.push(`${w}: name / action / summary が無い`);
+     if (!(isNum(f.x) && isNum(f.z) && f.r > 0)) errors.push(`${w}: 位置が不正`);
+     else if (!free(f.x, f.z)) errors.push(`${w}: 施設の前に立てない（建物か外周に重なる）`);
+diff --git a/src/render/hubScene.ts b/src/render/hubScene.ts
+--- a/src/render/hubScene.ts
++++ b/src/render/hubScene.ts
+@@ -2,7 +2,7 @@
+ // 建物は、箱・屋根・板の簡単な立体に、正面と右側面の図（依頼 8 の D、art-source/env/bld_*_v1.png）を貼ったもの（v0.13.0）。
+ // 図の中の場所は px（1536 × 1024、左上が原点）で書く。立体の大きさは、依頼書の m の値（図の比率は、ほぼ合わせてあるが、製図ではない）。
+ import {
+-  BufferGeometry, CircleGeometry, CylinderGeometry, DoubleSide, Float32BufferAttribute, Group, IcosahedronGeometry, Mesh, MeshBasicMaterial, MeshLambertMaterial, RingGeometry,
++  BufferGeometry, CanvasTexture, CircleGeometry, CylinderGeometry, DoubleSide, Float32BufferAttribute, Group, IcosahedronGeometry, Mesh, MeshBasicMaterial, MeshLambertMaterial, PlaneGeometry, RingGeometry, SRGBColorSpace,
+ } from 'three';
+ import type { FacilityDef, HubDef, MapDef } from '../data/schemas';
+ import { groundAt } from '../game/world';
+@@ -200,6 +200,39 @@
+ /** 広場（石畳）の中心と半径。草は生やさない。 */
+ const PLAZA = { x: 0, z: 1, r: 9.5 };
+ 
++/** 級は文字でも見分けられる。既存の依頼板に札だけを重ね、受付の役割を遠目にも示す。 */
++function receptionSign(f: FacilityDef): Mesh | null {
++  if (f.kind !== 'quest' || !f.questRankId || typeof document === 'undefined') return null;
++  const canvas = document.createElement('canvas');
++  canvas.width = 640;
++  canvas.height = 192;
++  const ctx = canvas.getContext('2d');
++  if (!ctx) return null;
++  const accents: Record<string, string> = { 'rank.1': '#8fb598', 'rank.2': '#91bac7', 'rank.3': '#d5b66d', 'rank.4': '#c1a6cf' };
++  ctx.fillStyle = '#1b2a22';
++  ctx.fillRect(0, 0, 640, 192);
++  ctx.strokeStyle = '#b89460';
++  ctx.lineWidth = 5;
++  ctx.strokeRect(4, 4, 632, 184);
++  ctx.fillStyle = accents[f.questRankId] ?? '#b89460';
++  ctx.fillRect(12, 12, 12, 168);
++  ctx.textAlign = 'center';
++  ctx.textBaseline = 'middle';
++  ctx.fillStyle = '#f0ead9';
++  ctx.font = 'bold 62px "Noto Sans CJK JP", sans-serif';
++  ctx.fillText(f.name.split('・')[0]!, 332, 72, 570);
++  ctx.fillStyle = '#c8c8b8';
++  ctx.font = '32px "Noto Sans CJK JP", sans-serif';
++  ctx.fillText(f.name.split('・').slice(1).join('・'), 332, 145, 570);
++  const texture = new CanvasTexture(canvas);
++  texture.colorSpace = SRGBColorSpace;
++  const mat = new MeshBasicMaterial({ map: texture, toneMapped: false });
++  const sign = new Mesh(new PlaneGeometry(2.5, 0.75), mat);
++  sign.userData.noMerge = true;
++  sign.name = `reception-sign:${f.id}`;
++  return sign;
++}
++
+ /**
+  * 里の地形と建物。施設の前（立つ場所）には、青銅色の輪を置く。
+  * 外周の岩壁・草は、狩場と同じ作り（buildAreaGroup）。地面は踏み固めた土、広場は石畳。
+@@ -226,6 +259,13 @@
+     b.position.set(f.building.x, groundAt(map.platforms, f.building.x, f.building.z), f.building.z);
+     b.rotation.y = f.building.yaw;
+     g.add(b);
++    const sign = receptionSign(f);
++    if (sign) {
++      const yaw = f.building.yaw;
++      sign.position.set(f.building.x + Math.sin(yaw) * 0.08, b.position.y + 2.25, f.building.z + Math.cos(yaw) * 0.08);
++      sign.rotation.y = yaw;
++      g.add(sign);
++    }
+     const ring = new Mesh(new RingGeometry(f.r * 0.5 - 0.09, f.r * 0.5, 28), M.ring);
+     ring.rotation.x = -Math.PI / 2;
+     ring.position.set(f.x, groundAt(map.platforms, f.x, f.z) + 0.03, f.z);
+diff --git a/src/ui/base.ts b/src/ui/base.ts
+--- a/src/ui/base.ts
++++ b/src/ui/base.ts
+@@ -1,11 +1,11 @@
+ // 拠点（仮）。武器を選び、依頼か訓練場へ出る。持ち物を確かめ、工房で強化し、データを書き出す / 取り込む。
+-// 里を歩く・受付・道具箱は、これから作る。
++// 受付は級ごとの実施設とつなぎ、星ごとの短い一覧から詳細へ進む。
+ //
+ // 持ち物・装備の表示は、保存の管理役（SaveManager）が持つ「書き込みが完了した内容」だけを映す。
+ // 強化・取り込みなどの結果は、書き込みが完了してから表示する（押した時点では「保存しています…」）。
+ import { APP_VERSION, BUILD_ID, assetUrl } from '../core/assets';
+-import { ARMOR_SLOTS, QUEST_LANE_NAMES, recipeFrom, recipeResult, type ArmorSlot, type Content, type RecipeDef } from '../data/schemas';
+-import { minutesText, starLabel, starRow } from '../data/questBoard';
++import { ARMOR_SLOTS, QUEST_LANE_NAMES, recipeFrom, recipeResult, type ArmorSlot, type Content, type DeliveryDef, type RecipeDef } from '../data/schemas';
++import { minutesText, starRow } from '../data/questBoard';
+ import { materialRanks } from '../data/validators';
+ import { fieldOf, questTimeLimitTicks } from '../game/field';
+ import { defenseScale } from '../game/rank';
+@@ -17,6 +17,7 @@
+ import { questGoal } from './targets';
+ import { fieldArtUrl, withIcon } from './icons';
+ import { renderStoryPanel } from './story';
++import { receptionGroups, questActivity, QUEST_ACTIVITY_LABELS, questIconStrip, deliveryIconStrip, deliveryReceptionRank, type ReceptionEntry } from './questReception';
+ import { DRAFT_KIND_NAMES, changedKinds, describeKind, draftOf, editableAppearance, emptyDraft } from '../data/appearance';
+ import { computeGear } from '../game/gear';
+ import { armorStat, gearSummary, weaponShortName, weaponStat } from './gearText';
+@@ -82,9 +83,25 @@
+   return head + (cls === 'juvenile' ? 'ゲームの中の体は、まだ親の原画から作った仮の形です。' : 'ゲームの中の体は、この絵から作った仮の形です。');
+ }
+ 
++interface ReceptionViewState {
++  stars: number | null;
++  selected: string | null;
++  listScroll: number;
++  detailScroll: number;
++}
++
+ export class BaseScreen {
+   readonly root: HTMLElement;
+   section: BaseSection = 'all';
++  /** 実際に開いている施設。Appの画面復帰でもこのIDを引き継ぐ。 */
++  facilityId: string | null = null;
++  private receptionStates = new Map<string, ReceptionViewState>();
++  private questScroller: HTMLElement | null = null;
++  private questScrollContext: { key: string; detail: boolean } | null = null;
++  private receptionNotice = '';
++  private storyFold: HTMLDetailsElement;
++  private questExtras: HTMLElement;
++  private trainingBtn: HTMLButtonElement;
+   private title: HTMLElement;
+   private lead: HTMLElement;
+   private shop: HTMLDetailsElement;
+@@ -127,11 +144,14 @@
+     root.id = 'base';
+     root.hidden = true;
+     const card = el('div', 'base-card');
++    const header = el('header', 'base-heading');
++    const headingText = el('div', 'base-heading-text');
+     this.title = el('h2', undefined, content.hub.name);
+-    card.append(this.title);
+     this.banners = el('div', 'base-banners');
+     this.lead = el('p', 'base-lead', '行き先を選んでください。');
+-    card.append(this.banners, this.lead);
++    headingText.append(this.title, this.lead);
++    header.appendChild(headingText);
++    card.append(header, this.banners);
+     // 施設ごとの画面では、その施設のものだけを出す（data-sec と、root の data-section を CSS で突き合わせる）
+     const sec = <T extends HTMLElement>(e: T, s: FacilityKind): T => {
+       e.dataset.sec = s;
+@@ -157,12 +177,16 @@
+     card.append(sec(el('p', 'base-weapon-label', '防具（部位ごとに、着る・外す）'), 'chest'), this.armorBox, this.armorNote, this.gearNote);
+     this.matRank = materialRanks(content);
+ 
+-    // 物語「帰り道の灯」（v0.23.0）: いまの章・次の狩り・読み返せる記録・章の一覧。中身は refresh で作る
+-    this.storyBox = sec(el('div', 'base-story'), 'quest');
+-    card.appendChild(this.storyBox);
+-    // 依頼（段階の順）と訓練場。受けられるかどうかは進行で変わるので、中身は refresh で作る
++    // 一覧を先に見せ、物語・図鑑・訓練は小さな導線へまとめる。
+     this.questBox = sec(el('div', 'base-quests'), 'quest');
+     card.appendChild(this.questBox);
++    this.questExtras = sec(el('div', 'reception-extras'), 'quest');
++    this.storyFold = el('details', 'reception-story-fold');
++    this.storyFold.appendChild(el('summary', undefined, '物語・帰還記録'));
++    this.storyBox = el('div', 'base-story');
++    this.storyFold.appendChild(this.storyBox);
++    this.questExtras.appendChild(this.storyFold);
++    card.appendChild(this.questExtras);
+ 
+     // 持ち物は、装備箱・工房・商店のどれでも見える
+     this.inv = el('div', 'base-inv');
+@@ -172,12 +196,21 @@
+     // モンスター図鑑（依頼板で見る。登録簿 bestiary.json を、段階ごとに並べる）。開いた時に 1 度だけ組む
+     this.bestiary = sec(el('details', 'base-section'), 'quest');
+     this.bestiary.id = 'base-bestiary';
+-    const juveniles = content.bestiary.species.filter((x) => x.class === 'juvenile').length;
+-    this.bestiary.appendChild(el('summary', undefined, `モンスター図鑑（${content.bestiary.species.length - juveniles} 種${juveniles ? `・幼体 ${juveniles} 種` : ''}）`));
++    this.bestiary.appendChild(el('summary', undefined, `図鑑 ${content.bestiary.species.length}種`));
++    this.storyFold.addEventListener('toggle', () => {
++      if (this.storyFold.open) this.bestiary.open = false;
++      if (!this.storyFold.open && !this.bestiary.open) this.restoreReceptionScroll();
++    });
+     this.bestiary.addEventListener('toggle', () => {
++      if (this.bestiary.open) this.storyFold.open = false;
+       if (this.bestiary.open && this.bestiary.childElementCount === 1) this.bestiary.appendChild(this.renderBestiary());
++      if (!this.storyFold.open && !this.bestiary.open) this.restoreReceptionScroll();
+     });
+-    card.appendChild(this.bestiary);
++    this.questExtras.appendChild(this.bestiary);
++    this.trainingBtn = el('button', 'reception-training', '訓練場');
++    this.trainingBtn.type = 'button';
++    this.trainingBtn.addEventListener('click', () => { if (!this.busy) this.host.startTraining(); });
++    this.questExtras.appendChild(this.trainingBtn);
+ 
+     this.shop = sec(el('details', 'base-section'), 'shop');
+     this.shop.id = 'base-shop';
+@@ -209,9 +242,12 @@
+ 
+     // 歩く拠点: 画面を閉じて、里へ戻る
+     this.closeBtn = el('button', 'base-close', '里へ戻る');
+-    this.closeBtn.addEventListener('click', () => host.closeFacility());
++    this.closeBtn.addEventListener('click', () => {
++      if (host.hubWalk) host.closeFacility();
++      else this.setOpen(true, 'all');
++    });
+     this.closeBtn.hidden = !host.hubWalk;
+-    card.appendChild(this.closeBtn);
++    header.appendChild(this.closeBtn);
+ 
+     card.appendChild(el('p', 'base-note', `v${APP_VERSION} (${BUILD_ID}) ／ 見た目・動き・音は仮素材。里の建物は仮の形です。`));
+     // 画面を広く使う方法: 全画面にできる端末はボタン、iPhone は「ホーム画面に追加」の案内
+@@ -236,20 +272,34 @@
+     return !this.root.hidden;
+   }
+ 
+-  /** 開く / 閉じる。section で、出す範囲を決める（施設の画面では、その施設の欄を開いた状態にする）。 */
+-  setOpen(open: boolean, section: BaseSection = 'all'): void {
+-    const fresh = this.root.hidden || section !== this.section;
++  /** 実施設IDも引き継いで開く。閉じても受付ごとの閲覧位置は残す。 */
++  setOpen(open: boolean, section: BaseSection = 'all', facilityId?: string): void {
++    this.rememberReceptionScroll();
++    this.questScroller = null;
++    this.questScrollContext = null;
+     this.root.hidden = !open;
+     if (!open) return;
++    const f = facilityId
++      ? this.content.hub.facilities.find((x) => x.id === facilityId && x.kind === section)
++      : section === 'quest' ? undefined : this.content.hub.facilities.find((x) => x.kind === section);
++    const fresh = section !== this.section || (f?.id ?? null) !== this.facilityId;
+     this.section = section;
++    this.facilityId = f?.id ?? null;
+     this.root.dataset.section = section;
+-    const f = this.content.hub.facilities.find((x) => x.kind === section);
+-    this.title.textContent = f ? f.name : this.content.hub.name;
+-    this.lead.textContent = f ? `${f.summary}。` : '行き先を選んでください。';
++    this.root.dataset.facility = this.facilityId ?? '';
++    this.title.textContent = f ? f.name : section === 'quest' ? '依頼の受付案内' : this.content.hub.name;
++    this.lead.textContent = f?.kind === 'quest' ? '星を選び、依頼の内容を確認してください。' : f ? `${f.summary}。` : '行き先を選んでください。';
++    this.closeBtn.hidden = !this.host.hubWalk && section === 'all';
++    this.closeBtn.textContent = this.host.hubWalk ? '里へ戻る' : '拠点の一覧へ';
+     if (section === 'workshop') this.forge.open = true;
+     if (section === 'shop') this.shop.open = true;
+-    // 開き直した時だけ、前の操作の結果を消す（強化の直後に作り直す時は、残す）
+-    if (fresh) this.say('');
++    if (fresh) {
++      this.say('');
++      this.receptionNotice = '';
++      this.confirming = null;
++      this.storyFold.open = false;
++      this.bestiary.open = false;
++    }
+     this.refresh();
+   }
+ 
+@@ -300,7 +350,7 @@
+       this.banners.appendChild(p);
+     }
+ 
+-    if ([...c.recipes.values()].some((r) => checkCraft(doc, r, craftRankOpen(doc, c, r)).ok)) this.banners.appendChild(el('p', 'base-banner', '強化できる装備があります（下の「工房」）。'));
++    if (this.section !== 'quest' && [...c.recipes.values()].some((r) => checkCraft(doc, r, craftRankOpen(doc, c, r)).ok)) this.banners.appendChild(el('p', 'base-banner', '強化できる装備があります（下の「工房」）。'));
+ 
+     // 武器（持っていて、この版で使えるもの）
+     this.weaponRow.textContent = '';
+@@ -366,20 +416,21 @@
+     this.gearNote.append(el('span', 'skills', `技能: ${sum.skills || 'なし'}`), el('span', 'resist', `耐性: ${sum.resist || 'なし'}`));
+ 
+     this.renderQuests();
+-    renderStoryPanel(this.storyBox, c, doc.progress.questClears, {
+-      openStory: (ids) => this.host.openStory(ids),
+-      startHunt: (id) => this.host.startHunt(id),
+-      questUnlocked: (id) => {
+-        const q = c.quests.get(id);
+-        return !!q && questUnlocked(doc, q);
+-      },
+-    });
+-    // 工房からの支給（v0.26.0）: 受け取れる時だけ、物語の欄にも知らせる（受け取るのは工房）
+-    for (const pack of c.support.packs) {
+-      if (supportState(doc, pack) !== 'ready') continue;
+-      const p = el('p', 'story-support', `${pack.name}を受け取れます（工房で。1 度だけ）。`);
+-      p.dataset.pack = pack.id;
+-      this.storyBox.appendChild(p);
++    if (!this.storyFold.hidden) {
++      renderStoryPanel(this.storyBox, c, doc.progress.questClears, {
++        openStory: (ids) => this.host.openStory(ids),
++        startHunt: (id) => this.openStoryQuest(id),
++        questUnlocked: (id) => {
++          const q = c.quests.get(id);
++          return !!q && questUnlocked(doc, q);
++        },
++      });
++      for (const pack of c.support.packs) {
++        if (supportState(doc, pack) !== 'ready') continue;
++        const p = el('p', 'story-support', `${pack.name}を受け取れます（工房で。1 度だけ）。`);
++        p.dataset.pack = pack.id;
++        this.storyBox.appendChild(p);
++      }
+     }
+ 
+     // 持ち物
+@@ -565,134 +616,286 @@
+     this.shopBody.appendChild(el('p', 'shop-note', '売った素材は戻りません。強化に使う素材は、工房で数を確かめてから。'));
+   }
+ 
+-  /**
+-   * 依頼の並び（段階の順）と、里の納品と、訓練場。まだ受けられない依頼は、押せない 1 行にする。
+-   * v0.26.0: 見出しに星（★1〜8）と分類（主線・昇級確認）、依頼人、制限時間と目安の時間。依頼人の話は、ボタンの下の「依頼人の話」を開いて読む。
+-   */
+-  private renderQuests(): void {
++  /** いま開いている実施設から級を取る。星から級は計算しない。 */
++  private receptionRank(): string | null {
++    const desks = this.content.hub.facilities.filter((f) => f.kind === 'quest');
++    const desk = desks.find((f) => f.id === this.facilityId);
++    if (!desk) return null;
++    return desk.questRankId ?? null;
++  }
++
++  private rememberReceptionScroll(): void {
++    if (!this.questScroller || !this.questScrollContext || this.questScroller.getClientRects().length === 0) return;
++    const state = this.receptionStates.get(this.questScrollContext.key);
++    if (state) state[this.questScrollContext.detail ? 'detailScroll' : 'listScroll'] = this.questScroller.scrollTop;
++  }
++
++  /** 物語・図鑑を閉じて一覧が見える時だけ、保存していた位置へ戻す。 */
++  private restoreReceptionScroll(): void {
++    if (!this.questScroller || !this.questScrollContext || this.questScroller.getClientRects().length === 0) return;
++    const state = this.receptionStates.get(this.questScrollContext.key);
++    if (state) this.questScroller.scrollTop = state[this.questScrollContext.detail ? 'detailScroll' : 'listScroll'];
++  }
++
++  /** 物語の入口も、即出発ではなく該当の受付・星・詳細へつなぐ。 */
++  private openStoryQuest(id: string): void {
++    const q = this.content.quests.get(id);
++    if (!q) return;
++    const desk = this.content.hub.facilities.find((f) => f.kind === 'quest' && f.questRankId === q.rankId);
++    if (!desk) { this.say('この依頼の受付が見つかりません。', true); return; }
++    if (this.host.hubWalk && (this.section !== 'quest' || this.facilityId !== desk.id)) {
++      this.receptionNotice = `「${q.name}」は「${desk.name}」で受けられます。里へ戻って、その受付へ向かってください。`;
++      this.renderQuests();
++      this.questBox.scrollIntoView({ block: 'nearest' });
++      return;
++    }
++    if (!this.host.hubWalk && this.facilityId !== desk.id) this.setOpen(true, 'quest', desk.id);
++    const groups = receptionGroups(this.content, q.rankId, this.host.fieldHunts);
++    const group = groups.find((g) => g.entries.some((e) => e.id === id));
++    if (!group) { this.say('この遊び方では、この依頼へ出発できません。', true); return; }
++    this.rememberReceptionScroll();
++    const state = this.receptionStates.get(desk.id) ?? { stars: group.stars, selected: null, listScroll: 0, detailScroll: 0 };
++    state.stars = group.stars;
++    state.selected = id;
++    state.detailScroll = 0;
++    this.receptionStates.set(desk.id, state);
++    this.storyFold.open = false;
++    this.renderQuests('detail-back', false);
++  }
++
++  /** 級の受付 → 星 → 短い一覧 → 詳細。依頼の解禁・報酬・保存は既存の判定を使う。 */
++  private renderQuests(focusKey?: string, remember = true): void {
+     const c = this.content;
+     const doc = this.host.save.doc;
++    if (remember) this.rememberReceptionScroll();
++    const oldFocus = document.activeElement instanceof HTMLElement ? document.activeElement.dataset.receptionFocus : undefined;
+     this.questBox.textContent = '';
+-    const choice = (title: string, lines: string[], onClick: (() => void) | null): HTMLButtonElement => {
+-      const b = el('button', 'base-choice');
+-      b.appendChild(el('b', undefined, title));
+-      for (const line of lines) b.appendChild(el('span', undefined, line));
+-      if (onClick) b.addEventListener('click', onClick);
+-      else b.disabled = true;
+-      this.questBox.appendChild(b);
+-      return b;
+-    };
+-    // 依頼人の話（開いた時だけ読む。押しても出発しない）
+-    const letter = (id: string, stars: number, lane: string, client: string, text: string): void => {
+-      const d = el('details', 'quest-letter');
+-      d.dataset.quest = id;
+-      d.appendChild(el('summary', undefined, `依頼人の話（${client}）`));
+-      d.appendChild(el('p', 'quest-stars', `${starRow(stars)}${lane ? `　${lane}` : ''}`));
+-      d.appendChild(el('p', 'quest-text', text));
+-      this.questBox.appendChild(d);
+-    };
+-    if (c.board.recommend.text) this.questBox.appendChild(el('p', 'quest-recommend', c.board.recommend.text));
+-    const order = (rankId: string): number => c.ranks.get(rankId)?.order ?? 0;
+-    // 段階の順。同じ段階では、1 体の標的の依頼 → 群れの依頼（v0.18.0）。狩らない依頼（v0.27.0）は、その後にまとめる（フィールドで遊ぶ時だけ）
+-    const hunts = [...c.quests.values()].filter((q) => q.kind !== 'gather').sort((x, y) => order(x.rankId) - order(y.rankId) || (x.targets ? 1 : 0) - (y.targets ? 1 : 0));
+-    const errands = this.host.fieldHunts ? [...c.quests.values()].filter((q) => q.kind === 'gather') : [];
+-    let group = '';
+-    for (const q of [...hunts, ...errands]) {
+-      const g = q.kind === 'gather' ? 'gather' : `${q.rankId}|${q.targets ? 'pack' : 'one'}`;
+-      if (q.targets && g !== group) this.questBox.appendChild(el('p', 'forge-head', `【${c.ranks.get(q.rankId)?.name ?? ''}】幼体の群れの依頼（決まった頭数を討伐する）`));
+-      if (q.kind === 'gather' && g !== group) this.questBox.appendChild(el('p', 'forge-head', '採集・採掘・現地の納品（狩らない依頼。獣は出ない。この出発で採ったものを、野営地の納品箱へ）'));
+-      group = g;
+-      const rank = c.ranks.get(q.rankId)?.name ?? '';
+-      const clears = doc.progress.questClears[q.id] ?? 0;
+-      const lane = q.board && q.board.lane !== 'free' ? QUEST_LANE_NAMES[q.board.lane] : '';
+-      const kindName = q.gather ? errandKindName(q) : `【${rank}】依頼`;
+-      const title = `${starLabel(q)}${q.gather ? '　' : ''}${kindName}「${q.name}」${lane ? `　${lane}` : ''}${clears > 0 ? `　達成 ${clears} 回` : ''}`;
+-      let b: HTMLButtonElement;
+-      if (!questUnlocked(doc, q)) {
+-        const need = (q.requires ?? []).filter((id) => !(doc.progress.questClears[id] ?? 0)).map((id) => `「${c.quests.get(id)?.name ?? id}」`);
+-        b = choice(title, [`${need.join('と')}を達成すると受けられます。`], null);
+-        b.classList.add('locked');
+-      } else {
+-        const field = this.host.fieldHunts ? fieldOf(c, q) : null;
+-        const limit = minutesText(questTimeLimitTicks(c, q, this.host.fieldHunts));
+-        const aim = q.board ? `（目安 ${q.board.clearMinutes[0]}〜${q.board.clearMinutes[1]} 分）` : '';
+-        const lines = [q.summary, `目標: ${questGoal(c, q)}　制限 ${limit}${aim}　力尽き ${q.maxFaints} 回で失敗`];
+-        if (q.board) lines.unshift(`依頼人: ${q.board.client}`);
+-        if (field && q.gather) {
+-          const areas = [...new Set(q.gather.nodes.map((n) => n.areaId))].map((id) => field.areas.find((a) => a.id === id)!).map((a) => (a.kind === 'camp' ? a.name : `エリア ${a.no} ${a.name}`));
+-          lines.push(`狩場: ${field.name}（野営地から出発。採取点は ${areas.join('・')}。大型・幼体は出ない）`);
+-        } else if (field) lines.push(`狩場: ${field.name}（野営地から出発。エリア ${field.areas.filter((a) => a.kind !== 'camp').length} か所。${q.targets ? '群れは、住みかのエリアを移ることがある' : '標的はエリアを移動する'}）`);
+-        if (q.supplies?.length) lines.push(`支給品: ${q.supplies.map((s) => `${c.items.get(s.itemId)?.name ?? s.itemId} ×${s.count}`).join('　')}`);
+-        if (q.rewards) lines.push(`報酬: ${q.rewards.money} 通貨 + ${q.gather ? '納品で余った素材' : '素材'}`);
+-        b = choice(title, lines, () => this.host.startHunt(q.id));
++    this.questScroller = null;
++    this.questScrollContext = null;
++    const rankId = this.section === 'quest' ? this.receptionRank() : null;
++    const firstRank = [...c.ranks.values()].sort((a, b) => a.order - b.order)[0]?.id;
++    this.storyFold.hidden = this.section === 'quest' && rankId !== firstRank;
++    this.trainingBtn.hidden = this.section === 'quest' && rankId !== firstRank;
++    this.root.dataset.reception = rankId ? 'counter' : 'directory';
++
++    if (this.receptionNotice) this.questBox.appendChild(el('p', 'reception-notice', this.receptionNotice));
++    if (!rankId || !this.facilityId) {
++      this.questBox.appendChild(el('h3', 'reception-directory-title', '級ごとの受付'));
++      this.questBox.appendChild(el('p', 'reception-directory-note', this.host.hubWalk ? '里にある、それぞれの受付で依頼を選べます。看板に級の名前が付いています。' : '受付を選ぶと、その級の依頼を星ごとに確認できます。'));
++      const desks = el('div', 'reception-directory');
++      for (const f of c.hub.facilities.filter((x) => x.kind === 'quest')) {
++        const id = f.questRankId;
++        if (!id) continue;
++        const groups = receptionGroups(c, id, this.host.fieldHunts);
++        const count = groups.reduce((n, g) => n + g.entries.length, 0);
++        const b = this.host.hubWalk ? el('article', 'reception-desk') : el('button', 'reception-desk');
++        b.dataset.reception = f.id;
++        b.append(el('b', undefined, f.name), el('span', undefined, groups.map((g) => `${g.stars === null ? '星未設定' : `★${g.stars}`} ${g.entries.length}件`).join(' ／ ')), el('small', undefined, `${count}件・${f.summary}`));
++        if (b instanceof HTMLButtonElement) {
++          b.type = 'button';
++          b.addEventListener('click', () => this.setOpen(true, 'quest', f.id));
++        }
++        desks.appendChild(b);
+       }
+-      b.dataset.quest = q.id;
+-      b.dataset.rank = q.rankId;
+-      if (q.board) {
+-        b.dataset.stars = String(q.board.stars);
+-        b.dataset.lane = q.board.lane;
+-        letter(q.id, q.board.stars, lane, q.board.client, q.board.text);
++      this.questBox.appendChild(desks);
++      return;
++    }
++
++    const groups = receptionGroups(c, rankId, this.host.fieldHunts);
++    const key = this.facilityId;
++    let state = this.receptionStates.get(key);
++    if (!state) {
++      const ready = groups.find((g) => g.entries.some((e) => e.kind === 'quest' ? questUnlocked(doc, e.quest) && !(doc.progress.questClears[e.id] ?? 0) : checkDelivery(doc, e.delivery).ok));
++      state = { stars: (ready ?? groups[0])?.stars ?? null, selected: null, listScroll: 0, detailScroll: 0 };
++      this.receptionStates.set(key, state);
++    }
++    if (!groups.some((g) => g.stars === state!.stars)) state.stars = groups[0]?.stars ?? null;
++    const group = groups.find((g) => g.stars === state!.stars);
++    if (state.selected && !group?.entries.some((e) => e.id === state!.selected)) state.selected = null;
++    const current = state;
++    const tabs = el('div', 'reception-stars');
++    tabs.setAttribute('role', 'group');
++    tabs.setAttribute('aria-label', '星ごとの依頼');
++    for (const g of groups) {
++      const label = g.stars === null ? '星未設定' : `★${g.stars}`;
++      const b = el('button', 'reception-star');
++      b.type = 'button';
++      b.dataset.stars = String(g.stars);
++      b.dataset.receptionFocus = `star-${g.stars}`;
++      b.setAttribute('aria-pressed', String(g.stars === current.stars));
++      b.setAttribute('aria-label', `${label}、${g.entries.length}件`);
++      b.append(el('b', undefined, label), el('span', undefined, `${g.entries.length}件`));
++      b.addEventListener('click', () => {
++        if (current.stars === g.stars && !current.selected) return;
++        this.rememberReceptionScroll();
++        current.stars = g.stars;
++        current.selected = null;
++        current.listScroll = 0;
++        current.detailScroll = 0;
++        this.confirming = null;
++        this.receptionNotice = '';
++        this.renderQuests(`star-${g.stars}`, false);
++      });
++      tabs.appendChild(b);
++    }
++    this.questBox.appendChild(tabs);
++    const picked = group?.entries.find((e) => e.id === current.selected);
++    const pane = el('div', picked ? 'reception-scroll reception-detail' : 'reception-scroll reception-list');
++    this.questScroller = pane;
++    this.questScrollContext = { key, detail: !!picked };
++    pane.addEventListener('scroll', () => this.rememberReceptionScroll(), { passive: true });
++    if (picked) {
++      const back = el('button', 'reception-back', '‹ 星の一覧へ戻る');
++      back.type = 'button';
++      back.dataset.receptionFocus = 'detail-back';
++      back.addEventListener('click', () => {
++        this.rememberReceptionScroll();
++        current.selected = null;
++        this.confirming = null;
++        this.renderQuests(`row-${picked.id}`, false);
++      });
++      this.questBox.appendChild(back);
++      this.renderReceptionDetail(pane, picked);
++    } else {
++      const count = el('p', 'reception-count', `${current.stars === null ? '星未設定' : `★${current.stars}`} の依頼　${group?.entries.length ?? 0}件`);
++      count.setAttribute('role', 'status');
++      this.questBox.appendChild(count);
++      for (const entry of group?.entries ?? []) {
++        const q = entry.kind === 'quest' ? entry.quest : null;
++        const d = entry.kind === 'delivery' ? entry.delivery : null;
++        const locked = q ? !questUnlocked(doc, q) : checkDelivery(doc, d!).state === 'locked';
++        const done = q ? (doc.progress.questClears[q.id] ?? 0) > 0 : checkDelivery(doc, d!).state === 'claimed';
++        const b = el('button', `reception-row${locked ? ' locked' : ''}`);
++        b.type = 'button';
++        b.dataset.quest = entry.id;
++        b.dataset.rank = rankId;
++        b.dataset.stars = String(entry.stars);
++        b.dataset.receptionFocus = `row-${entry.id}`;
++        const title = q?.name ?? d!.name;
++        b.setAttribute('aria-label', `${title}、${q ? questGoal(c, q, true) : '里の素材納品'}、${locked ? '未解放、条件を見る' : done ? '達成済み、詳細を見る' : '詳細を見る'}`);
++        b.appendChild(q ? questIconStrip(c, q) : deliveryIconStrip());
++        const text = el('span', 'reception-row-text');
++        text.appendChild(el('b', 'reception-row-name', title));
++        const kind = q ? QUEST_ACTIVITY_LABELS[questActivity(q)] : '里納品';
++        const time = q ? minutesText(questTimeLimitTicks(c, q, this.host.fieldHunts)) : '制限なし';
++        text.appendChild(el('span', 'reception-row-meta', `${kind}　${time}　報酬 ${q?.rewards?.money ?? d?.money ?? 0}`));
++        if (q?.board && q.board.lane !== 'free') text.appendChild(el('small', 'reception-lane', QUEST_LANE_NAMES[q.board.lane]));
++        b.appendChild(text);
++        b.appendChild(el('span', `reception-row-state${done ? ' done' : ''}`, locked ? '未解放' : done ? '済' : d && !checkDelivery(doc, d).ok ? '素材不足' : '›'));
++        b.addEventListener('click', () => {
++          this.rememberReceptionScroll();
++          current.selected = entry.id;
++          current.detailScroll = 0;
++          this.confirming = null;
++          this.receptionNotice = '';
++          this.renderQuests('detail-back', false);
++        });
++        pane.appendChild(b);
+       }
+-    }
+-    this.renderDeliveries();
+-    choice('訓練場', ['動かない標的で、操作と技を確かめる。'], () => this.host.startTraining());
+-  }
+-
+-  /**
+-   * 里の納品（v0.26.0）: 狩りに出ず、倉庫の素材を受付で渡す。1 つの保存で 1 度だけ。
+-   * 渡す前に「渡す数・残る数・報酬・1 度だけ」を出して、もう 1 度押してもらう。保存が完了してから「渡した」にする。
+-   */
+-  private renderDeliveries(): void {
++      if (!group?.entries.length) pane.appendChild(el('p', 'reception-empty', 'この受付の依頼は、まだありません。'));
++    }
++    this.questBox.appendChild(pane);
++    this.restoreReceptionScroll();
++    const focus = focusKey ?? oldFocus;
++    if (focus) this.questBox.querySelectorAll<HTMLButtonElement>('[data-reception-focus]').forEach((b) => { if (b.dataset.receptionFocus === focus) b.focus({ preventScroll: true }); });
++  }
++
++  private renderReceptionDetail(pane: HTMLElement, entry: ReceptionEntry): void {
+     const c = this.content;
+     const doc = this.host.save.doc;
+-    if (c.deliveries.size === 0) return;
+-    this.questBox.appendChild(el('p', 'forge-head', '里の納品（狩りに出ない。倉庫の素材を受付で渡す。1 度だけ）'));
++    const title = entry.kind === 'quest' ? entry.quest.name : entry.delivery.name;
++    pane.appendChild(el('h3', 'reception-detail-title', title));
++    pane.appendChild(entry.kind === 'quest' ? questIconStrip(c, entry.quest) : deliveryIconStrip());
++    if (entry.kind === 'delivery') { this.renderDeliveryDetail(pane, entry.delivery); return; }
++    const q = entry.quest;
++    const field = this.host.fieldHunts ? fieldOf(c, q) : null;
++    const limit = minutesText(questTimeLimitTicks(c, q, this.host.fieldHunts));
++    const facts = el('dl', 'reception-facts');
++    const fact = (label: string, value: string): void => { facts.append(el('dt', undefined, label), el('dd', undefined, value)); };
++    fact('目標', questGoal(c, q));
++    fact('難度', `${entry.stars === null ? '星未設定' : starRow(entry.stars)} ／ ${c.ranks.get(q.rankId)?.name ?? q.rankId}`);
++    fact('制限時間', `${limit} ／ 力尽き ${q.maxFaints}回で失敗`);
++    if (q.board) fact('クリアの目安', `${q.board.clearMinutes[0]}〜${q.board.clearMinutes[1]}分`);
++    if (field) fact('狩場', field.name);
++    if (q.rewards) fact('報酬', `${q.rewards.money} 通貨 ＋ ${q.gather ? '納品で余った素材' : '素材'}`);
++    if (q.supplies?.length) fact('支給品', q.supplies.map((s) => `${c.items.get(s.itemId)?.name ?? s.itemId} ×${s.count}`).join('、'));
++    pane.appendChild(facts);
++    if (q.gather && field) {
++      const areas = [...new Set(q.gather.nodes.map((n) => n.areaId))].map((id) => field.areas.find((a) => a.id === id)).filter((a) => !!a).map((a) => a.kind === 'camp' ? a.name : `エリア${a.no} ${a.name}`);
++      pane.appendChild(el('p', 'reception-detail-note', `採取点: ${areas.join('・')}。この出発で採った品を野営地の納品箱へ。大型・幼体は出ません。`));
++    }
++    pane.appendChild(el('p', 'reception-summary', q.summary));
++    if (q.board) {
++      pane.appendChild(el('h4', 'reception-client', `依頼人: ${q.board.client}`));
++      pane.appendChild(el('p', 'reception-letter', q.board.text));
++    }
++    const unlocked = questUnlocked(doc, q);
++    if (!unlocked) {
++      const need = (q.requires ?? []).filter((id) => !(doc.progress.questClears[id] ?? 0)).map((id) => `「${c.quests.get(id)?.name ?? id}」`);
++      pane.appendChild(el('p', 'reception-locked-note', `${need.join('と')}を達成すると受けられます。`));
++    }
++    const go = el('button', 'reception-depart', unlocked ? '受注して出発' : '解放条件を満たしていません');
++    go.type = 'button';
++    go.dataset.quest = q.id;
++    go.dataset.receptionFocus = `depart-${q.id}`;
++    go.disabled = !unlocked || this.busy;
++    go.addEventListener('click', () => {
++      if (this.busy || this.receptionRank() !== q.rankId || !questUnlocked(this.host.save.doc, q)) return;
++      this.rememberReceptionScroll();
++      this.host.startHunt(q.id);
++    });
++    pane.appendChild(go);
++  }
++
++  /** 里の納品は詳細から確認する。保存処理は従来どおり在庫と残す数を再検査する。 */
++  private renderDeliveryDetail(pane: HTMLElement, d: DeliveryDef): void {
++    const c = this.content;
++    const doc = this.host.save.doc;
++    const chk = checkDelivery(doc, d);
+     const name = (id: string): string => c.materials.get(id)?.name ?? id;
+-    for (const d of c.deliveries.values()) {
+-      const chk = checkDelivery(doc, d);
+-      const box = el('div', `base-delivery ${chk.state}`);
+-      box.dataset.delivery = d.id;
+-      box.dataset.state = chk.state;
+-      box.appendChild(el('b', undefined, `★${d.stars}　里の納品「${d.name}」${chk.state === 'claimed' ? '　納品済み' : ''}`));
+-      box.appendChild(el('span', undefined, `依頼人: ${d.client}　報酬: ${d.money} 通貨（1 度だけ）　制限なし・出発なし`));
+-      const ul = el('ul', 'forge-cost');
+-      for (const i of chk.items) {
+-        const li = withIcon(el('li', chk.state === 'short' && i.after < i.keep ? 'short' : undefined), i.itemId, `${name(i.itemId)} ${i.need} 個を渡す（持っている数 ${i.have}。渡した後も ${i.keep} 個は残す）`);
+-        ul.appendChild(li);
+-      }
+-      box.appendChild(ul);
+-      const letterBox = el('details', 'quest-letter');
+-      letterBox.appendChild(el('summary', undefined, `依頼人の話（${d.client}）`));
+-      letterBox.appendChild(el('p', 'quest-text', d.text));
+-      box.appendChild(letterBox);
+-      if (chk.state === 'locked') {
+-        const need = d.requires.filter((id) => !(doc.progress.questClears[id] ?? 0)).map((id) => `「${c.quests.get(id)?.name ?? id}」`);
+-        box.appendChild(el('p', 'base-note', `${need.join('と')}を達成すると受けられます。`));
+-      } else if (chk.state === 'ready' && this.confirming === d.id) {
+-        const p = el('p', 'forge-confirm', `${chk.items.map((i) => `${name(i.itemId)} ${i.need} 個（残り ${i.after} 個）`).join('、')}を渡して、${d.money} 通貨を受け取ります。元には戻せません。`);
+-        const yes = el('button', 'go', '渡す');
+-        yes.addEventListener('click', () => {
+-          this.confirming = null;
+-          void this.run('渡しています', () => this.host.save.deliver(d.id), `「${d.name}」を納品しました（+${d.money} 通貨）。`);
+-        });
+-        const no = el('button', undefined, 'やめる');
+-        no.addEventListener('click', () => {
+-          this.confirming = null;
+-          this.refresh();
+-        });
+-        p.append(yes, no);
+-        box.appendChild(p);
+-      } else if (chk.state !== 'claimed') {
+-        const b = el('button', 'go', chk.ok ? '納品する' : '素材が足りません（残す数を含めて）');
+-        b.disabled = !chk.ok;
+-        b.addEventListener('click', () => {
+-          this.confirming = d.id;
+-          this.refresh();
+-        });
+-        box.appendChild(b);
+-      }
+-      this.questBox.appendChild(box);
+-    }
++    const box = el('div', `base-delivery ${chk.state}`);
++    box.dataset.delivery = d.id;
++    box.dataset.state = chk.state;
++    box.appendChild(el('b', undefined, `★${d.stars}　里の納品${chk.state === 'claimed' ? '・納品済み' : ''}`));
++    box.appendChild(el('span', undefined, `報酬 ${d.money} 通貨・一度限り・制限なし・出発なし`));
++    const ul = el('ul', 'forge-cost');
++    for (const i of chk.items) {
++      const text = chk.state === 'claimed'
++        ? `${name(i.itemId)} ${i.need}個を納品済み（現在の所持 ${i.have}個）`
++        : `${name(i.itemId)} ${i.need}個を渡す（所持 ${i.have}個。${i.after < i.keep ? `保護分を含めてあと ${i.keep - i.after}個必要` : `納品後 ${i.after}個`}。${i.keep}個以上残します）`;
++      ul.appendChild(withIcon(el('li', chk.state === 'short' && i.after < i.keep ? 'short' : undefined), i.itemId, text));
++    }
++    box.appendChild(ul);
++    box.append(el('h4', 'reception-client', `依頼人: ${d.client}`), el('p', 'reception-letter', d.text));
++    if (chk.state === 'locked') {
++      const need = d.requires.filter((id) => !(doc.progress.questClears[id] ?? 0)).map((id) => `「${c.quests.get(id)?.name ?? id}」`);
++      box.appendChild(el('p', 'reception-locked-note', `${need.join('と')}を達成すると受けられます。`));
++    } else if (chk.state === 'ready' && this.confirming === d.id) {
++      const p = el('p', 'forge-confirm', `${chk.items.map((i) => `${name(i.itemId)} ${i.need}個（残り ${i.after}個）`).join('、')}を渡して、${d.money}通貨を受け取ります。元には戻せません。`);
++      const yes = el('button', 'go', 'この内容で納品する');
++      yes.type = 'button';
++      yes.disabled = this.busy;
++      yes.dataset.receptionFocus = 'delivery-confirm';
++      yes.addEventListener('click', () => {
++        if (this.busy || this.receptionRank() !== deliveryReceptionRank(d)) return;
++        this.confirming = null;
++        void this.run('渡しています', () => this.host.save.deliver(d.id), `「${d.name}」を納品しました（+${d.money} 通貨）。`);
++      });
++      const no = el('button', undefined, 'やめる');
++      no.type = 'button';
++      no.dataset.receptionFocus = 'delivery-cancel';
++      no.addEventListener('click', () => { this.confirming = null; this.renderQuests('delivery-open'); });
++      p.append(yes, no);
++      box.appendChild(p);
++    } else if (chk.state !== 'claimed') {
++      const b = el('button', 'go', chk.ok ? '納品する数を確認' : '素材が足りません（残す数を含めて）');
++      b.type = 'button';
++      b.dataset.receptionFocus = 'delivery-open';
++      b.disabled = !chk.ok || this.busy;
++      b.addEventListener('click', () => { this.confirming = d.id; this.renderQuests('delivery-confirm'); });
++      box.appendChild(b);
++    }
++    pane.appendChild(box);
+   }
+ 
+   /**
+@@ -1015,9 +1218,3 @@
+   }
+ }
+ 
+-/** 狩らない依頼の呼び方（v0.27.0）: 採取点がどれも採集なら「採集」、どれも採掘なら「採掘」、混ざっていれば「現地の納品」 */
+-function errandKindName(q: { gather?: { nodes: { kind: string }[] } }): string {
+-  const kinds = new Set((q.gather?.nodes ?? []).map((n) => n.kind));
+-  return kinds.size > 1 ? '現地の納品' : kinds.has('mine') ? '採掘' : '採集';
+-}
+-
+diff --git a/src/ui/questReception.ts b/src/ui/questReception.ts
+new file mode 100644
+--- /dev/null
++++ b/src/ui/questReception.ts
+@@ -0,0 +1,169 @@
++// 級ごとの受付・星ごとの一覧と、小さな標的画像。表示だけを扱い、解禁条件と保存は変えない。
++import { assetUrl } from '../core/assets';
++import { questTargets, type Content, type DeliveryDef, type QuestDef } from '../data/schemas';
++import { shortName } from './targets';
++
++export type ReceptionEntry =
++  | { kind: 'quest'; id: string; rankId: string; stars: number | null; quest: QuestDef }
++  | { kind: 'delivery'; id: string; rankId: string; stars: number | null; delivery: DeliveryDef };
++
++export interface ReceptionStarGroup {
++  /** 掲示が欠けた場合も仕事を消さず、null を末尾の「星未設定」へ出す。 */
++  stars: number | null;
++  entries: ReceptionEntry[];
++}
++
++export type QuestActivity = 'hunt' | 'slay' | 'gather' | 'mining' | 'field_delivery';
++
++export const QUEST_ACTIVITY_LABELS: Readonly<Record<QuestActivity, string>> = {
++  hunt: '狩猟', slay: '討伐', gather: '採集', mining: '採掘', field_delivery: '現地納品',
++};
++
++const validStars = (value: number | undefined): number | null =>
++  value !== undefined && Number.isInteger(value) && value >= 1 && value <= 8 ? value : null;
++
++/** 既存の里納品は初級。将来 rankId を持った納品は、指定された受付へ置く。 */
++export const deliveryReceptionRank = (delivery: DeliveryDef & { rankId?: string }): string =>
++  delivery.rankId ?? 'rank.1';
++
++/**
++ * 受付の級は rankId、グループの星は掲示から取る。星から級を推定しない。
++ * ロック済み・達成済みの依頼も返すので、呼び出し側で条件や達成表示を付ける。
++ * ?hunt=arena では従来どおり採取依頼を除く。里納品には出発が無いため残す。
++ * 入力 Map や配列は変更しない。同じ星の中では元データの順を保つ。
++ */
++export function receptionGroups(
++  content: Pick<Content, 'quests' | 'deliveries' | 'board'>,
++  rankId: string,
++  fieldHunts = true,
++): ReceptionStarGroup[] {
++  const boardById = new Map(content.board.quests.map((board) => [board.questId, board]));
++  const groups = new Map<number | null, ReceptionEntry[]>();
++  const add = (entry: ReceptionEntry): void => {
++    const list = groups.get(entry.stars);
++    if (list) list.push(entry);
++    else groups.set(entry.stars, [entry]);
++  };
++  for (const quest of content.quests.values()) {
++    if (quest.rankId !== rankId || (!fieldHunts && quest.kind === 'gather')) continue;
++    const stars = validStars(quest.board?.stars ?? boardById.get(quest.id)?.stars);
++    add({ kind: 'quest', id: quest.id, rankId: quest.rankId, stars, quest });
++  }
++  for (const delivery of content.deliveries.values()) {
++    const receptionRank = deliveryReceptionRank(delivery);
++    if (receptionRank !== rankId) continue;
++    add({ kind: 'delivery', id: delivery.id, rankId: receptionRank, stars: validStars(delivery.stars), delivery });
++  }
++  return [...groups].sort(([a], [b]) => (a ?? Infinity) - (b ?? Infinity))
++    .map(([stars, entries]) => ({ stars, entries }));
++}
++
++/** ファイル名やIDの接頭辞に依存せず、採取点と必要素材から種類を決める。 */
++export function questActivity(quest: QuestDef): QuestActivity {
++  if (quest.kind !== 'gather') return quest.kind;
++  const gather = quest.gather;
++  if (!gather || gather.nodes.length === 0 || gather.needs.length !== 1) return 'field_delivery';
++  if (gather.nodes.every((node) => node.kind === 'mine')) return 'mining';
++  if (gather.nodes.every((node) => node.kind === 'gather')) return 'gather';
++  return 'field_delivery';
++}
++
++type MonsterContent = Pick<Content, 'bestiary' | 'monsters'>;
++
++/** 図鑑と同じ既存原画の小画像。親の絵へ置き換えず、指定した種の art だけを見る。 */
++export function monsterQuestImageUrl(content: Pick<Content, 'bestiary'>, monsterId: string): string | null {
++  const art = content.bestiary.species.find((species) => species.id === monsterId)?.art;
++  const file = art?.split('/').pop();
++  if (!file || !/\.png$/i.test(file)) return null;
++  return assetUrl(`assets/bestiary/${file.replace(/\.png$/i, '.webp')}`);
++}
++
++/** 画像や登録簿が無い時も、実装済みの名前、最後は恒久IDを表示する。 */
++const monsterName = (content: MonsterContent, monsterId: string): string =>
++  content.bestiary.species.find((species) => species.id === monsterId)?.name
++  ?? (content.monsters.get(monsterId) ? shortName(content.monsters.get(monsterId)!.name) : monsterId);
++
++function categoryIcon(label: string, glyph: string, kind: string): HTMLSpanElement {
++  const root = document.createElement('span');
++  root.className = 'quest-mini-icons quest-category-icons';
++  root.dataset.activity = kind;
++  const picture = document.createElement('span');
++  picture.className = 'quest-mini-picture quest-category-glyph';
++  picture.setAttribute('aria-hidden', 'true');
++  picture.textContent = glyph;
++  const text = document.createElement('span');
++  text.className = 'quest-mini-label';
++  text.textContent = label;
++  root.append(picture, text);
++  return root;
++}
++
++/**
++ * 小画像と名前・頭数。画像は飾りなので alt は空。文字と頭数は読み込み成否にかかわらず残る。
++ * 複数種はそれぞれの絵と個体数を出し、「合計5頭」などにまとめない。
++ * 色・大きさ・object-fit: contain はCSSの quest-mini-* に任せる。
++ */
++export function questIconStrip(content: MonsterContent, quest: QuestDef): HTMLSpanElement {
++  const activity = questActivity(quest);
++  if (activity === 'gather') return categoryIcon('採集', '🌿', activity);
++  if (activity === 'mining') return categoryIcon('採掘', '⛏', activity);
++  if (activity === 'field_delivery') return categoryIcon('現地納品', '📦', activity);
++
++  const root = document.createElement('span');
++  root.className = 'quest-mini-icons';
++  root.dataset.activity = activity;
++  const targets = questTargets(quest);
++  for (const target of targets) {
++    const name = monsterName(content, target.monsterId);
++    const tile = document.createElement('span');
++    tile.className = 'quest-mini-target';
++    tile.dataset.monster = target.monsterId;
++    tile.dataset.count = String(target.count);
++
++    const picture = document.createElement('span');
++    picture.className = 'quest-mini-picture';
++    picture.setAttribute('aria-hidden', 'true');
++    const fallback = document.createElement('span');
++    fallback.className = 'quest-mini-fallback';
++    fallback.textContent = name;
++    picture.appendChild(fallback);
++    const url = monsterQuestImageUrl(content, target.monsterId);
++    if (url) {
++      const img = document.createElement('img');
++      img.className = 'quest-mini-image';
++      img.alt = '';
++      img.width = 56;
++      img.height = 48;
++      img.loading = 'lazy';
++      img.decoding = 'async';
++      img.dataset.monster = target.monsterId;
++      img.addEventListener('error', () => {
++        img.remove();
++        fallback.hidden = false;
++        tile.classList.add('image-missing');
++      }, { once: true });
++      fallback.hidden = true;
++      img.src = url;
++      picture.appendChild(img);
++    } else tile.classList.add('image-missing');
++
++    const label = document.createElement('span');
++    label.className = 'quest-mini-label';
++    label.textContent = `${name} ×${target.count}`;
++    tile.append(picture, label);
++    root.appendChild(tile);
++  }
++  // 不正な標的データを別種の絵で隠さない。ロード時の検査とは別に、UIも空白にしない。
++  if (targets.length === 0) {
++    const missing = document.createElement('span');
++    missing.className = 'quest-mini-label';
++    missing.textContent = '標的未設定';
++    root.appendChild(missing);
++  }
++  return root;
++}
++
++/** 里の倉庫から渡す仕事。モンスターの狩猟と混同しないよう別の文を出す。 */
++export function deliveryIconStrip(): HTMLSpanElement {
++  return categoryIcon('里で納品', '📦', 'warehouse');
++}
+diff --git a/src/ui/style.css b/src/ui/style.css
+--- a/src/ui/style.css
++++ b/src/ui/style.css
+@@ -527,3 +527,134 @@
+ .forge-series .forge-recipe.owned { opacity: 0.7; }
+ .forge-owned { margin-left: 10px; font-size: 12px; color: #8fb58a; }
+ .forge-make button { min-height: 44px; }
++
++/* ---- 級別受付 / 星別一覧（受付IDで絞り、詳細からだけ出発する）---- */
++.base-heading { display: flex; align-items: flex-start; gap: 12px; }
++.base-heading-text { flex: 1 1 auto; min-width: 0; }
++#base .base-heading .base-close { flex: 0 0 auto; width: auto; min-height: 44px; margin: 0; padding: 8px 12px; font-size: 13px; }
++#base[data-section="quest"] .base-card { width: min(100%, 64rem); height: 100%; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; background: #18221d; }
++#base[data-section="quest"] .base-heading { flex: 0 0 auto; }
++#base[data-section="quest"] .base-heading h2 { margin: 0 0 2px; font-size: 18px; line-height: 1.35; letter-spacing: .04em; }
++#base[data-section="quest"] .base-lead { margin: 0; font-size: 12px; line-height: 1.4; }
++#base[data-section="quest"] .base-banners { flex: 0 0 auto; max-height: 64px; overflow-y: auto; }
++#base[data-section="quest"] .base-banners:empty { display: none; }
++#base[data-section="quest"] .base-banners .base-banner { margin: 0; padding: 5px 8px; font-size: 12px; }
++#base[data-section="quest"] .base-quests { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 6px; overflow: hidden; }
++#base[data-section="quest"] .base-message { flex: 0 0 auto; margin: 0; font-size: 12px; line-height: 1.5; }
++#base[data-section="quest"] .base-message:empty { display: none; }
++#base[data-section="quest"] .base-card > .base-note,
++#base[data-section="quest"] .base-card > .base-hint,
++#base[data-section="quest"] .base-card > .base-fs { display: none; }
++
++.reception-stars { display: flex; flex: 0 0 auto; flex-wrap: wrap; gap: 6px; padding-bottom: 2px; border-bottom: 1px solid var(--line); }
++.reception-star { display: flex; align-items: center; gap: 10px; min-height: 44px; min-width: 96px; padding: 6px 14px; border: 1px solid var(--line); border-radius: 5px; background: #222e27; color: var(--ink); cursor: pointer; }
++.reception-star b { font-size: 17px; letter-spacing: .04em; }
++.reception-star span { font-size: 12px; }
++.reception-star[aria-pressed="true"] { background: #c6a46c; border-color: #d9bf91; color: #1b211b; }
++.reception-star[aria-pressed="false"] b { color: #d8bc8d; }
++.reception-count { flex: 0 0 auto; margin: 0; padding: 1px 2px; font-size: 12px; color: var(--ink-dim); line-height: 1.4; }
++.reception-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; scrollbar-gutter: stable; }
++.reception-list { display: flex; flex-direction: column; gap: 5px; padding: 0 3px 3px 0; }
++.reception-row { display: grid; grid-template-columns: minmax(170px, 24%) minmax(0, 1fr) auto; align-items: center; gap: 12px; flex: 0 0 auto; width: 100%; min-height: 76px; padding: 8px 12px; border: 1px solid #405146; border-radius: 5px; background: #25322b; color: var(--ink); text-align: left; cursor: pointer; }
++.reception-row:hover { border-color: var(--bronze); background: #2c3b31; }
++.reception-row:focus-visible, .reception-star:focus-visible, .reception-back:focus-visible, .reception-depart:focus-visible, .reception-desk:focus-visible, .reception-training:focus-visible { outline: 3px solid #e5ca98; outline-offset: -3px; }
++.reception-row.locked { background: #202a24; border-color: #3a453e; }
++.reception-row.locked .reception-row-name { color: #ccc8b8; }
++.reception-row-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; overflow-wrap: anywhere; }
++.reception-row-name { font-size: 15px; line-height: 1.4; }
++.reception-row-meta { color: #cbcbbd; font-size: 12px; line-height: 1.5; }
++.reception-lane { align-self: flex-start; padding: 1px 5px; border: 1px solid #7b7555; border-radius: 3px; font-size: 11px; color: #dfc18c; line-height: 1.5; }
++.reception-row-state { min-width: 24px; max-width: 4em; color: #d4c3a3; font-size: 12px; text-align: center; line-height: 1.4; }
++.reception-row-state.done { color: #b2d1a5; }
++.quest-mini-icons { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-width: 0; }
++.quest-mini-target { display: grid; grid-template-columns: 56px minmax(0, 1fr); align-items: center; gap: 7px; min-width: 0; }
++.quest-mini-picture { display: grid; place-items: center; position: relative; flex: 0 0 56px; width: 56px; height: 48px; overflow: hidden; border: 1px solid #a99f85; border-radius: 5px; background: #eee9db; color: #29372f; }
++.quest-mini-image { display: block; width: 56px; height: 48px; object-fit: contain; }
++.quest-mini-fallback { padding: 3px; font-size: 9px; line-height: 1.25; text-align: center; overflow-wrap: anywhere; }
++.quest-mini-label { font-size: 11px; line-height: 1.4; color: #ddd9c9; overflow-wrap: anywhere; }
++.quest-category-glyph { font-size: 25px; background: #dce5ce; border-color: #a0ad91; }
++.quest-category-icons { gap: 8px; }
++.reception-row .quest-mini-target:has(+ .quest-mini-target), .reception-row .quest-mini-target + .quest-mini-target { grid-template-columns: 44px minmax(0, 1fr); }
++.reception-row .quest-mini-target:has(+ .quest-mini-target) .quest-mini-picture,
++.reception-row .quest-mini-target + .quest-mini-target .quest-mini-picture { width: 44px; height: 38px; }
++.reception-row .quest-mini-target:has(+ .quest-mini-target) img,
++.reception-row .quest-mini-target + .quest-mini-target img { width: 44px; height: 38px; }
++.reception-empty { margin: 12px; color: var(--ink-dim); }
++
++.reception-back { flex: 0 0 auto; align-self: flex-start; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 4px; background: #26362c; color: var(--ink); cursor: pointer; font-size: 13px; }
++.reception-detail { padding: 4px 12px 12px 2px; }
++.reception-detail-title { margin: 0 0 10px; font-size: 20px; line-height: 1.45; color: #e7d6b5; overflow-wrap: anywhere; }
++.reception-detail > .quest-mini-icons { margin-bottom: 12px; }
++.reception-detail .quest-mini-label { font-size: 13px; }
++.reception-facts { display: grid; grid-template-columns: 7em minmax(0, 1fr); margin: 8px 0 14px; font-size: 13px; line-height: 1.7; }
++.reception-facts dt, .reception-facts dd { margin: 0; padding: 5px 7px; border-bottom: 1px solid #394b3e; }
++.reception-facts dt { color: #b9c2b0; }
++.reception-facts dd { overflow-wrap: anywhere; }
++.reception-detail-note, .reception-summary, .reception-letter { font-size: 14px; line-height: 1.8; margin: 8px 0 12px; overflow-wrap: anywhere; }
++.reception-client { margin: 14px 0 4px; color: #d2b88c; font-size: 13px; line-height: 1.5; }
++.reception-letter { padding: 10px 14px; background: #202e26; border-left: 3px solid #9d8159; }
++.reception-locked-note, .reception-notice { margin: 6px 0; padding: 8px 10px; border-left: 3px solid #c1a36c; color: #e4d8c1; background: #34372a; font-size: 13px; line-height: 1.6; }
++.reception-notice { flex: 0 0 auto; max-height: 80px; overflow-y: auto; }
++.reception-depart { display: block; width: 100%; min-height: 48px; margin: 14px 0 2px; padding: 10px 16px; border: 1px solid #d0b88d; border-radius: 5px; background: #c4a16b; color: #162018; font-weight: 800; cursor: pointer; }
++.reception-depart:disabled { border-color: var(--line); background: #2a332d; color: #b8bbaf; cursor: default; }
++.reception-detail .base-delivery { margin: 8px 0 0; }
++.reception-detail .base-delivery.locked, .reception-detail .base-delivery.claimed { opacity: 1; }
++.reception-detail .base-delivery > .forge-cost { display: block; margin: 10px 0; }
++.reception-detail .base-delivery .forge-cost li { margin-bottom: 6px; line-height: 1.7; }
++.reception-detail .base-delivery > .reception-letter { color: var(--ink); }
++.reception-detail .base-delivery button { min-height: 44px; }
++
++.reception-extras { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px; margin-top: 6px; }
++.reception-extras > details, .reception-training { flex: 1 1 120px; min-width: 0; margin: 0; border: 1px solid #445748; border-radius: 4px; background: #212d25; }
++.reception-extras > details > summary { display: flex; align-items: center; min-height: 44px; padding: 8px 10px; font-size: 12px; line-height: 1.4; color: #d3d8c7; cursor: pointer; list-style: none; }
++.reception-extras > details > summary::-webkit-details-marker { display: none; }
++.reception-extras > details > summary::before { content: '▸'; flex: 0 0 auto; margin-right: 6px; color: #d1b17b; }
++.reception-extras > details[open] > summary::before { content: '▾'; }
++.reception-extras > details[open] { flex-basis: 100%; order: -1; }
++.reception-training { min-height: 44px; padding: 8px 10px; font-size: 12px; color: #d3d8c7; cursor: pointer; }
++.reception-story-fold .base-story { margin: 0; padding: 10px 12px; border: 0; border-radius: 0; }
++.reception-extras .bestiary { padding: 0 12px 12px; }
++#base[data-section="quest"] .reception-extras { flex: 0 0 auto; margin: 0; }
++#base[data-section="quest"] .base-card:has(.reception-extras details[open]) .base-quests { display: none; }
++#base[data-section="quest"] .reception-extras:has(details[open]) { flex: 1 1 auto; min-height: 0; overflow-y: auto; align-content: flex-start; }
++
++.reception-directory-title { margin: 14px 0 4px; color: #d2b88c; font-size: 17px; }
++.reception-directory-note { margin: 4px 0 12px; color: #c6c9bb; font-size: 13px; line-height: 1.7; }
++.reception-directory { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
++.reception-desk { display: flex; flex-direction: column; gap: 5px; min-height: 88px; padding: 12px; border: 1px solid #53624d; border-left: 4px solid #a98a59; border-radius: 4px; background: #26342b; color: var(--ink); text-align: left; }
++button.reception-desk { cursor: pointer; }
++.reception-desk b { font-size: 14px; line-height: 1.5; }
++.reception-desk span { color: #dbc294; font-size: 12px; line-height: 1.5; }
++.reception-desk small { color: #bdc5b5; font-size: 12px; line-height: 1.6; }
++#base[data-section="quest"][data-reception="directory"] .base-quests { overflow-y: auto; }
++
++@media (max-width: 620px) {
++  #base[data-section="quest"] .base-card { padding: 10px; }
++  #base[data-section="quest"] .base-heading h2 { font-size: 16px; }
++  .base-heading { gap: 8px; }
++  #base .base-heading .base-close { padding: 8px; font-size: 12px; }
++  .reception-row { grid-template-columns: 94px minmax(0, 1fr) auto; gap: 8px; padding: 7px 8px; }
++  .reception-row .quest-mini-target { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 94px; }
++  .reception-row .quest-mini-icons { justify-content: center; gap: 5px; }
++  .reception-row .quest-mini-label { font-size: 11px; text-align: center; }
++  .reception-row .quest-category-icons { flex-direction: column; gap: 2px; }
++  .reception-row .quest-mini-target:has(+ .quest-mini-target), .reception-row .quest-mini-target + .quest-mini-target { width: 44px; }
++  .reception-row .quest-mini-target:has(+ .quest-mini-target) .quest-mini-label,
++  .reception-row .quest-mini-target + .quest-mini-target .quest-mini-label { overflow-wrap: anywhere; font-size: 10px; }
++  .reception-row-name { font-size: 14px; }
++  .reception-row-meta { font-size: 11px; }
++  .reception-row-state { font-size: 11px; }
++  .reception-extras > details, .reception-training { flex-basis: 85px; }
++  .reception-extras > details > summary { padding: 8px 6px; font-size: 11px; }
++  .reception-facts { grid-template-columns: 6.5em minmax(0, 1fr); font-size: 12px; }
++  .reception-detail-title { font-size: 18px; }
++  .reception-directory { grid-template-columns: 1fr; }
++}
++@media (max-height: 430px) {
++  #base[data-section="quest"] { padding-top: calc(var(--sat) + 5px); padding-bottom: calc(var(--sab) + 5px); }
++  #base[data-section="quest"] .base-card { gap: 4px; padding-top: 8px; padding-bottom: 6px; }
++  #base[data-section="quest"] .base-lead { display: none; }
++  #base[data-section="quest"] .base-heading { align-items: center; }
++  #base[data-section="quest"] .base-banners { max-height: 44px; }
++  .reception-row { min-height: 68px; padding-top: 6px; padding-bottom: 6px; }
++}
+diff --git a/tests/quest-reception.test.ts b/tests/quest-reception.test.ts
+new file mode 100644
+--- /dev/null
++++ b/tests/quest-reception.test.ts
+@@ -0,0 +1,207 @@
++// 級別受付の受け入れ検査。v0.34.0の39件を保持し、移動・標的画像・データ誤りの境界を確かめる。
++// DOMの折り畳み・画像error・納品確認はブラウザで別途確認する。
++import { existsSync } from 'node:fs';
++import { beforeAll, describe, expect, it } from 'vitest';
++import { validateDeliveries } from '../src/data/questBoard';
++import { questTargets, type Content, type QuestDef } from '../src/data/schemas';
++import { validateHub } from '../src/data/validators';
++import { nearestFacility } from '../src/game/hub';
++import { Simulation } from '../src/game/sim';
++import { monsterQuestImageUrl, questActivity, receptionGroups } from '../src/ui/questReception';
++import { baseOptions, frame, loadContent } from './helpers';
++
++let content: Content;
++beforeAll(async () => { content = await loadContent(); });
++
++const RANKS = ['rank.1', 'rank.2', 'rank.3', 'rank.4'];
++const DELIVERY = 'quest.delivery.009';
++const idsAt = (c: Content, rank: string, field = true): string[] =>
++  receptionGroups(c, rank, field).flatMap((group) => group.entries.map((entry) => entry.id));
++
++/** 位置を代入せず、入力だけで目的地まで歩く。900 tickで着かなければ不通。 */
++function walkTo(sim: Simulation, x: number, z: number): boolean {
++  for (let i = 0; i < 900; i++) {
++    const dx = x - sim.player.pos.x, dz = z - sim.player.pos.z;
++    const distance = Math.hypot(dx, dz);
++    if (distance < 0.3) return true;
++    sim.step(frame({ moveX: dx / distance, moveZ: dz / distance }));
++  }
++  return false;
++}
++
++describe('級ごとの受付と、星ごとの依頼', () => {
++  it('現在の39件が4受付へ一度ずつ届き、初級12+15件、他級2+2件になる。ロック中の仕事も消えない', () => {
++    const groups = RANKS.map((rank) => receptionGroups(content, rank));
++    const actual = groups.flatMap((list) => list.flatMap((group) => group.entries.map((entry) => entry.id)));
++    const expected = [...content.quests.keys(), ...content.deliveries.keys()];
++    expect(expected).toHaveLength(39);
++    expect(actual).toHaveLength(39);
++    expect(new Set(actual).size).toBe(39);
++    expect([...actual].sort()).toEqual([...expected].sort());
++    expect(groups.map((list) => list.map((group) => [group.stars, group.entries.length]))).toEqual([
++      [[1, 12], [2, 15]], [[3, 2], [4, 2]], [[5, 2], [6, 2]], [[7, 2], [8, 2]],
++    ]);
++    for (let i = 0; i < RANKS.length; i++) {
++      for (const group of groups[i]!) {
++        expect(group.entries.every((entry) => entry.rankId === RANKS[i])).toBe(true);
++      }
++    }
++    expect(idsAt(content, 'rank.4')).toContain('quest.basin.r4.001');
++    expect(idsAt(content, 'rank.1')).toContain(DELIVERY);
++    expect(RANKS.slice(1).flatMap((rank) => idsAt(content, rank))).not.toContain(DELIVERY);
++  });
++
++  it('arenaではフィールド専用の採取5件だけを除き、里納品D09と全狩猟を残す', () => {
++    const fieldIds = RANKS.flatMap((rank) => idsAt(content, rank));
++    const arenaIds = RANKS.flatMap((rank) => idsAt(content, rank, false));
++    const excluded = fieldIds.filter((id) => !arenaIds.includes(id)).sort();
++    expect(excluded).toEqual([
++      'quest.delivery.001', 'quest.gather.001', 'quest.gather.002', 'quest.mine.001', 'quest.mine.002',
++    ]);
++    expect(arenaIds).toHaveLength(34);
++    expect(arenaIds).toContain(DELIVERY);
++    expect(arenaIds.filter((id) => content.quests.get(id)?.kind !== 'gather')).toHaveLength(34);
++  });
++
++  it('上級の星が1でも上級に留まり、掲示が欠けても星未設定の末尾に残る。入力データは変わらない', () => {
++    const original = content.quests.get('quest.basin.r3.001')!;
++    const unusual = { ...original, board: { ...original.board!, stars: 1 } };
++    const changed: Content = { ...content, quests: new Map(content.quests) };
++    changed.quests.set(unusual.id, unusual);
++    expect(receptionGroups(changed, 'rank.3')[0]!.stars).toBe(1);
++    expect(receptionGroups(changed, 'rank.3')[0]!.entries.map((entry) => entry.id)).toEqual([original.id]);
++    expect(idsAt(changed, 'rank.1')).not.toContain(original.id);
++    expect(original.board!.stars).toBe(6);
++
++    const unposted: Content = {
++      ...content,
++      quests: new Map(content.quests),
++      board: { ...content.board, quests: content.board.quests.filter((board) => board.questId !== original.id) },
++    };
++    unposted.quests.set(original.id, { ...original, board: undefined });
++    const groups = receptionGroups(unposted, 'rank.3');
++    expect(groups.at(-1)!.stars).toBeNull();
++    expect(groups.at(-1)!.entries.map((entry) => entry.id)).toEqual([original.id]);
++    expect(groups.flatMap((group) => group.entries)).toHaveLength(4);
++    expect(content.quests.get(original.id)).toBe(original);
++    expect(content.board.quests.some((board) => board.questId === original.id)).toBe(true);
++  });
++});
++
++describe('対象の小画像と、非狩猟の区別', () => {
++  it('現行20標的種のURLが実在する図鑑WebPを指し、幼体8種は親の絵で代用しない', () => {
++    const targetIds = new Set([...content.quests.values()].flatMap((quest) => questTargets(quest).map((target) => target.monsterId)));
++    expect(targetIds.size).toBe(20);
++    const juvenileIds: string[] = [];
++    for (const id of targetIds) {
++      const species = content.bestiary.species.find((entry) => entry.id === id)!;
++      const url = monsterQuestImageUrl(content, id);
++      expect(url, id).not.toBeNull();
++      expect(url!.startsWith(import.meta.env.BASE_URL), id).toBe(true);
++      const path = url!.slice(import.meta.env.BASE_URL.length);
++      expect(path, id).toMatch(/^assets\/bestiary\/[^/]+\.webp$/);
++      expect(existsSync(new URL(`../public/${path}`, import.meta.url)), `${id}: ${path}`).toBe(true);
++      expect(path.split('/').at(-1), id).toBe(species.art!.split('/').at(-1)!.replace(/\.png$/, '.webp'));
++      if (species.class === 'juvenile') {
++        juvenileIds.push(id);
++        expect(species.baseId, id).toBeDefined();
++        expect(url, id).not.toBe(monsterQuestImageUrl(content, species.baseId!));
++      }
++    }
++    expect(juvenileIds).toHaveLength(8);
++    expect(monsterQuestImageUrl(content, 'monster.kordopil')).toContain('monster_014_kordopil_concept_v1.webp');
++    expect(monsterQuestImageUrl(content, 'monster.palseit')).toContain('monster_015_palseit_concept_v1.webp');
++    expect(monsterQuestImageUrl(content, 'monster.unknown')).toBeNull();
++    const withoutArt: Content = { ...content, bestiary: { ...content.bestiary, species: content.bestiary.species.map((species) => species.id === 'monster.kordopil' ? { ...species, art: undefined } : species) } };
++    expect(monsterQuestImageUrl(withoutArt, 'monster.kordopil')).toBeNull();
++  });
++
++  it('混成群れの標的2種と頭数を保持し、上位個体でも種の画像を変えない', () => {
++    const original = content.quests.get('quest.basin_young.r1')!;
++    const entry = receptionGroups(content, 'rank.1').flatMap((group) => group.entries).find((row) => row.id === original.id)!;
++    expect(entry.kind).toBe('quest');
++    if (entry.kind !== 'quest') throw new Error('混成群れが里納品へ変わった');
++    expect(entry.quest).toBe(original);
++    expect(questTargets(entry.quest)).toEqual([
++      { monsterId: 'monster.kordopil', count: 2 }, { monsterId: 'monster.palseit', count: 3 },
++    ]);
++    expect(questTargets(entry.quest).map((target) => monsterQuestImageUrl(content, target.monsterId))).toEqual([
++      monsterQuestImageUrl(content, 'monster.kordopil'), monsterQuestImageUrl(content, 'monster.palseit'),
++    ]);
++    for (const id of ['quest.basin.003', 'quest.basin.r2.001', 'quest.basin.r3.001', 'quest.basin.r4.001']) {
++      expect(questTargets(content.quests.get(id)!)).toEqual([{ monsterId: 'monster.galdros', count: 1 }]);
++    }
++  });
++
++  it('採取内容で葉・採掘・箱を区別し、IDを変えても種類を取り違えない', () => {
++    const expected: [string, string][] = [
++      ['quest.gather.001', 'gather'], ['quest.gather.002', 'gather'],
++      ['quest.mine.001', 'mining'], ['quest.mine.002', 'mining'], ['quest.delivery.001', 'field_delivery'],
++    ];
++    for (const [id, activity] of expected) {
++      const quest: QuestDef = { ...content.quests.get(id)!, id: 'quest.renamed' };
++      expect(questActivity(quest), id).toBe(activity);
++      expect(questTargets(quest), id).toEqual([]);
++    }
++  });
++});
++
++describe('級別の受付へ実際に到達でき、壊れた割当は読み込みで拒否する', () => {
++  it('出発地点から4受付へ安全な道を歩いて到達し、近接対象もその受付になる。建物追加後も広場の灯の位置を保つ', () => {
++    const routes: [string, [number, number][]][] = [
++      ['board', [[0, 0]]],
++      ['board.r2', [[-12, -3], [-12, 7]]],
++      ['board.r3', [[8, -6]]],
++      ['board.r4', [[0, -3]]],
++    ];
++    for (const [id, waypoints] of routes) {
++      const sim = new Simulation(content, baseOptions({ mapId: content.hub.mapId, monsterId: null }));
++      const facility = content.hub.facilities.find((entry) => entry.id === id)!;
++      expect(facility, id).toBeDefined();
++      for (const [x, z] of [...waypoints, [facility.x, facility.z] as [number, number]]) {
++        expect(walkTo(sim, x, z), `${id}: ${x}, ${z}`).toBe(true);
++      }
++      expect(nearestFacility(content.hub.facilities, sim.world, sim.player.pos)?.id, id).toBe(id);
++      expect(sim.player.pos.y, id).toBe(0);
++      expect(nearestFacility(content.hub.facilities, sim.world, { ...sim.player.pos, y: 3 }), id).toBeNull();
++    }
++    const map = content.maps.get(content.hub.mapId)!;
++    expect(map.rocks[content.hub.facilities.length]).toMatchObject({ x: -6, z: 1.5, r: 0.6, h: 3 });
++  });
++
++  it('受付の級が重複・欠落・不明・未指定ならエラー。旧式の受付1か所を全級と黙認しない', () => {
++    const errorsFor = (edit: (hub: Content['hub']) => void): string[] => {
++      const changed: Content = { ...content, hub: structuredClone(content.hub) };
++      edit(changed.hub);
++      const errors: string[] = [];
++      validateHub(changed, errors);
++      return errors;
++    };
++    const valid: string[] = [];
++    validateHub(content, valid);
++    expect(valid).toEqual([]);
++    expect(errorsFor((hub) => { hub.facilities.find((facility) => facility.id === 'board.r2')!.questRankId = 'rank.1'; }).join('\n')).toContain('rank.1 の受付が重複');
++    expect(errorsFor((hub) => { hub.facilities = hub.facilities.filter((facility) => facility.id !== 'board.r3'); }).join('\n')).toContain('rank.3 の受付が無い');
++    expect(errorsFor((hub) => { hub.facilities.find((facility) => facility.id === 'board.r2')!.questRankId = 'rank.unknown'; }).join('\n')).toContain('受付の級 rank.unknown が無い');
++    expect(errorsFor((hub) => { delete hub.facilities.find((facility) => facility.id === 'board.r2')!.questRankId; }).join('\n')).toContain('受付の級 undefined が無い');
++    const legacy = errorsFor((hub) => {
++      hub.facilities = hub.facilities.filter((facility) => facility.kind !== 'quest' || facility.id === 'board');
++      delete hub.facilities.find((facility) => facility.id === 'board')!.questRankId;
++    });
++    for (const rank of RANKS) expect(legacy.join('\n')).toContain(`${rank} の受付が無い`);
++  });
++
++  it('里納品の級省略は初級、明示した級はその受付。不明な級は納品データ検査で拒否する', () => {
++    const original = content.deliveries.get(DELIVERY)!;
++    const supportIds = new Set(content.support.packs.map((pack) => pack.id));
++    const implicit = { ...original };
++    delete implicit.rankId;
++    expect(validateDeliveries({ schemaVersion: 1, deliveries: [implicit] }, content, supportIds)).toEqual([]);
++    const moved: Content = { ...content, deliveries: new Map([[DELIVERY, { ...original, rankId: 'rank.3' }]]) };
++    expect(idsAt(moved, 'rank.1')).not.toContain(DELIVERY);
++    expect(idsAt(moved, 'rank.3')).toContain(DELIVERY);
++    const broken = { ...original, rankId: 'rank.unknown' };
++    expect(validateDeliveries({ schemaVersion: 1, deliveries: [broken] }, content, supportIds).join('\n')).toContain('受付の級 rank.unknown が無い');
++    expect(content.deliveries.get(DELIVERY)).toBe(original);
++  });
++});

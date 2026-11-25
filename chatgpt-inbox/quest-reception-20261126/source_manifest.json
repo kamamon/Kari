@@ -1,0 +1,117 @@
+{
+  "baselineCommit": "0925487b686473e1a4d7e45fdc63449ef3a7d2ec",
+  "baselineVersion": "0.34.0",
+  "date": "2026-11-26",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "33afce8aae68dad1a428fa8516c0e34f64738f3aea2644a9842c56066818e245",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/AGENTS.md"
+    },
+    {
+      "path": "docs/chatgpt-board.md",
+      "sha256": "4a9ed7e302428680f9ebef9d9ccb5eaba0605e67231e0d6f77d539c3ea74276d",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/docs/chatgpt-board.md"
+    },
+    {
+      "path": "src/ui/base.ts",
+      "sha256": "20eba8bee69d10882cfdbf33a3e35ba471bcc3183875916b53eb6539c911c05c",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/src/ui/base.ts"
+    },
+    {
+      "path": "src/ui/style.css",
+      "sha256": "3e505877112854d8255a4995498cfa9cc254acfb5167d1f71e6f7abfb0553f6d",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/src/ui/style.css"
+    },
+    {
+      "path": "src/ui/story.ts",
+      "sha256": "63b9e2a4142a079af2d8f344c7ebd6bd83a365317ae372959f701dcece6aaa9a",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/src/ui/story.ts"
+    },
+    {
+      "path": "src/ui/icons.ts",
+      "sha256": "ccf85d018d157d485a4c6784e85ad0a2ed3dc92e8c335d9e30398be1cf076884",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/src/ui/icons.ts"
+    },
+    {
+      "path": "src/ui/targets.ts",
+      "sha256": "74a951995458f2505053e3eb57dbf231d815acaf435b5ea5b15469fea6b24bc6",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/src/ui/targets.ts"
+    },
+    {
+      "path": "src/app.ts",
+      "sha256": "8ab932cc6528c34efe27527227dcfcb8f842963d88aa4c8a038357d74e005511",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/src/app.ts"
+    },
+    {
+      "path": "src/render/hubScene.ts",
+      "sha256": "594a72cb9c60f82bdd13794e9e0940921410aa23b185ee0540f0c0e2e97befc7",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/src/render/hubScene.ts"
+    },
+    {
+      "path": "src/game/hub.ts",
+      "sha256": "cbdefce391a8f9e09d530718cd5dd29f711db8b68eab42c7a67c25c88ca5b758",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/src/game/hub.ts"
+    },
+    {
+      "path": "src/data/schemas.ts",
+      "sha256": "36d049e1b17a947790bcf531c1b197dac3a6a3e60f0942a3229ce819dc0f28c1",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/src/data/schemas.ts"
+    },
+    {
+      "path": "src/data/validators.ts",
+      "sha256": "05247062a9f517d285e52408f7a4bd9964823347930f32969642e60e1a289ef1",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/src/data/validators.ts"
+    },
+    {
+      "path": "src/data/questBoard.ts",
+      "sha256": "a42ce35efa9002c031a442ff538827df941631e554a90a3e68b82f471f2d11b6",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/src/data/questBoard.ts"
+    },
+    {
+      "path": "src/save/profile.ts",
+      "sha256": "2e06e18ec414655b00374bd3ca76af445d24a67476bdc61345d4652330d0010e",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/src/save/profile.ts"
+    },
+    {
+      "path": "public/data/hub.json",
+      "sha256": "461a30ad24cd16bea5c447b3375c9b08da1c385497cea66699ec70981303612a",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/public/data/hub.json"
+    },
+    {
+      "path": "public/data/maps/hub_village.json",
+      "sha256": "4e7d4b06371f34c4138a2118fcebe47a5d947221f397a6588f1e28047980bdc8",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/public/data/maps/hub_village.json"
+    },
+    {
+      "path": "public/data/ranks.json",
+      "sha256": "1103bf618ccd84e8a002a31754b8baf0fac6cba793d05da8d7aaf2f5b9bfda83",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/public/data/ranks.json"
+    },
+    {
+      "path": "public/data/quest_board.json",
+      "sha256": "19ec27bbdf4440a0bf6446d0627aaf7a4643707298819530cac9687ef735decc",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/public/data/quest_board.json"
+    },
+    {
+      "path": "public/data/deliveries.json",
+      "sha256": "4acaa9fbca2d777dc6d3ffb082da2b0d78426c60184fa3268bef04ea555af26c",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/public/data/deliveries.json"
+    },
+    {
+      "path": "public/data/quests.json",
+      "sha256": "21f36a3c22ecc4e5494f7f6f9ecfe5d3f7c31115123cce1d4b7104faf78c183c",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/public/data/quests.json"
+    },
+    {
+      "path": "public/data/quests_creatures.json",
+      "sha256": "60c526194f4239ffc0ae0ab65071f4a678d25d506fe49ef1ed683c7796a7c5a1",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/public/data/quests_creatures.json"
+    },
+    {
+      "path": "public/data/quests_herds.json",
+      "sha256": "2ac7b25f8652ebdec4f45f3632ccb87547bd10717ec4d81290384d525129b089",
+      "url": "https://github.com/kamamon/Kari/blob/0925487b686473e1a4d7e45fdc63449ef3a7d2ec/public/data/quests_herds.json"
+    }
+  ]
+}
