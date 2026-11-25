@@ -56,8 +56,14 @@ describe('幼体 8 種のデータ', () => {
       expect(m.captureAllowed).toBe(false);
       expect(m.discover).toBeNull();
       // 素材は登録簿の名前
-      const mats = [...content.materials.keys()].filter((k) => k.startsWith(`mat.${key}.`));
+      // 上の級の素材（v0.34.0。コルドピル・パルセイト。名前は「幼岩殻片［中級］」）は除いて比べる
+      const mats = [...content.materials.keys()].filter((k) => k.startsWith(`mat.${key}.`) && !/\.r\d$/.test(k));
       expect(mats.map((k) => content.materials.get(k)!.name).sort()).toEqual([...sp.materials].sort());
+      const upper = [...content.materials.keys()].filter((k) => k.startsWith(`mat.${key}.`) && /\.r\d$/.test(k));
+      if (key === 'kordopil' || key === 'palseit') {
+        expect(upper).toHaveLength(6);
+        for (const k of upper) expect(content.materials.get(k)!.name).toMatch(/［(中級|上級|極級)］$/);
+      } else expect(upper).toEqual([]);
       const loot = content.loot.get(m.lootId!)!;
       expect(loot.carve.count).toBe(1);
       expect(loot.carve.table.map((t) => t.itemId).sort()).toEqual(mats.sort());

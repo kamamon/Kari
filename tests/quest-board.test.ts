@@ -28,8 +28,9 @@ const errorsOf = (fn: (b: QuestBoardDef) => void): string[] => {
 };
 
 describe('依頼の掲示（星・分類・依頼人・話・目安の時間）', () => {
-  it('24 件の依頼のどれにも掲示があり、読み込みの時に依頼へ付く。星と依頼人は設計（current_quest_overrides_v1.json）のまま', () => {
-    expect([...content.quests.values()].filter((q) => q.kind !== 'gather')).toHaveLength(24);
+  it('狩りの依頼のどれにも掲示があり、読み込みの時に依頼へ付く。設計の 24 件は、星と依頼人が設計（current_quest_overrides_v1.json）のまま', () => {
+    // 設計の 24 件と、v0.34.0 の上の級 9 件（文は Claude が書いた。下の「上の級」の検査）
+    expect([...content.quests.values()].filter((q) => q.kind !== 'gather')).toHaveLength(33);
     expect([...content.quests.values()].every((q) => !!q.board)).toBe(true);
     const design = JSON.parse(readFileSync('docs/source/chatgpt-quest-design-20261125/current_quest_overrides_v1.json', 'utf8')) as {
       questDesigns: { questId: string; stars: number; client: string; requestText: string; targetClearMinutes: [number, number]; effectiveTimeLimitMinutes: number }[];
@@ -44,6 +45,18 @@ describe('依頼の掲示（星・分類・依頼人・話・目安の時間）'
       expect(q.board!.text.length).toBeLessThanOrEqual(BOARD_TEXT_MAX);
     }
     expect(validateBoard(content.board, content)).toEqual([]);
+  });
+
+  it('上の級（v0.34.0）: セルヴァルクは星 4・6・8、群れは 3・5・7。どれも自由。目安の時間は級とともに長くなる', () => {
+    const b = (id: string) => content.quests.get(id)!.board!;
+    expect(['quest.selvark.r2', 'quest.selvark.r3', 'quest.selvark.r4'].map((id) => b(id).stars)).toEqual([4, 6, 8]);
+    for (const sp of ['kordopil', 'palseit']) {
+      const ids = [2, 3, 4].map((r) => `quest.${sp}.pack.r${r}`);
+      expect(ids.map((id) => b(id).stars)).toEqual([3, 5, 7]);
+      const mins = ids.map((id) => b(id).clearMinutes[1]);
+      expect(mins[0]! <= mins[1]! && mins[1]! <= mins[2]!).toBe(true);
+    }
+    for (const id of ['quest.selvark.r2', 'quest.selvark.r3', 'quest.selvark.r4', 'quest.kordopil.pack.r2', 'quest.palseit.pack.r4']) expect(b(id).lane).toBe('free');
   });
 
   it('分類: 物語の第 1 章の 2 件は主線、ガルドロスの中級〜極級は昇級確認、ほかは自由。初級の大型は星 2、群れは 1〜2', () => {

@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { Content, RecipeDef } from '../src/data/schemas';
-import { crossCheck } from '../src/data/validators';
+import { crossCheck, questMaterials } from '../src/data/validators';
 import { Simulation } from '../src/game/sim';
 import { checkCraft, craft, craftRankOpen, newSave, RuleError, type SaveDoc } from '../src/save/profile';
 import { MemoryBackend } from '../src/save/saveDb';
@@ -35,7 +35,8 @@ interface Design {
     skill: { id: string; points: number; parameters: { element?: string; status?: string } } | null;
     runtimeExists: boolean;
   }[];
-  recipes: { resultId: string; seriesId?: string; rank: number; kind: string; money: number; ingredients: { materialId: string; count: number }[] }[];
+  recipes: { resultId: string; seriesId?: string; rank: number; kind: string; fromId: string | null; consumesPrevious: boolean; money: number; ingredients: { materialId: string; name: string; count: number }[] }[];
+  materials: { id: string; name: string; rankOrder: number }[];
 }
 const design = (): Design => JSON.parse(readFileSync(root('docs/source/chatgpt-equipment-20261125/data/all-equipment.json'), 'utf8')) as Design;
 // 遊べる 20 種のうち、ガルドロスの他（登録簿の順）
@@ -65,8 +66,8 @@ const STAMP = { now: '2026-11-25T00:00:00.000Z', appVersion: 'test', contentVers
 describe('系列の装備のデータ（#15 の初級・19 系列）', () => {
   it('19 系列 × 武器 7・防具 5 = 228 点と、作るレシピ 228。数値・属性・状態異常・耐性・技能・素材・費用は設計のまま、恒久 ID に付け直した', () => {
     const d = design();
-    const weapons = [...content.weapons.values()].filter((w) => w.series);
-    const armor = [...content.armor.values()].filter((a) => a.series);
+    const weapons = [...content.weapons.values()].filter((w) => w.series && w.rankId === 'rank.1');
+    const armor = [...content.armor.values()].filter((a) => a.series && a.rankId === 'rank.1');
     expect(weapons).toHaveLength(133);
     expect(armor).toHaveLength(95);
     expect(crafts()).toHaveLength(228);
@@ -103,7 +104,57 @@ describe('系列の装備のデータ（#15 の初級・19 系列）', () => {
     // ガルドロスの 35 武器・25 防具・48 強化は、そのまま
     expect([...content.weapons.values()].filter((w) => !w.series)).toHaveLength(35);
     expect([...content.armor.values()].filter((a) => !a.series)).toHaveLength(25);
-    expect([...content.recipes.values()].filter((r) => r.kind === 'upgrade' || r.kind === 'armor_upgrade')).toHaveLength(48);
+    expect([...content.recipes.values()].filter((r) => (r.kind === 'upgrade' && !content.weapons.get(r.resultWeaponId)!.series) || (r.kind === 'armor_upgrade' && !content.armor.get(r.resultArmorId)!.series))).toHaveLength(48);
+  });
+
+  it('中級〜極級（v0.34.0）: 帆角・幼岩・幼帆の 3 系列 × 3 級 × 武器 7・防具 5 = 108 点と、1 つ下の級からの強化 108。数値・素材の名前と数・費用は設計のまま', () => {
+    const d = design();
+    const ranked = ['selvark', 'kordopil', 'palseit'];
+    const upgrades = [...content.recipes.values()].filter((r) => (r.kind === 'upgrade' && content.weapons.get(r.resultWeaponId)?.series) || (r.kind === 'armor_upgrade' && content.armor.get(r.resultArmorId)?.series));
+    expect(upgrades).toHaveLength(108);
+    expect([...content.weapons.values()].filter((w) => w.series && w.rankId !== 'rank.1')).toHaveLength(63);
+    expect([...content.armor.values()].filter((a) => a.series && a.rankId !== 'rank.1')).toHaveLength(45);
+    const dname = new Map(d.materials.map((m) => [m.id, m.name]));
+    for (const sp of ranked) {
+      const sid = `series.${sp}`;
+      for (const rank of [2, 3, 4]) {
+        for (const w of d.weaponCandidates.filter((x) => x.seriesId === sid && x.rank === rank)) {
+          const g = content.weapons.get(`weapon.${w.family}.${sp}.r${rank}`)!;
+          expect({ name: g.name, attack: g.attack, affinity: g.affinity, rankId: g.rankId, value: g.element.value }).toEqual({ name: w.name, attack: w.attack, affinity: w.affinity, rankId: `rank.${rank}`, value: w.elementValue });
+          const r = d.recipes.find((x) => x.resultId === w.id && x.kind === 'upgrade')!;
+          expect(r.consumesPrevious).toBe(true);
+          const mine = upgrades.find((x) => x.kind === 'upgrade' && x.resultWeaponId === g.id) as Extract<RecipeDef, { kind: 'upgrade' }>;
+          expect(mine.fromWeaponId).toBe(`weapon.${w.family}.${sp}.r${rank - 1}`);
+          expect(mine.cost.money).toBe(r.money);
+          // 素材は、設計の名前のまま（「帆膜［中級］」）、同じ数
+          expect(mine.cost.items.map((s) => [content.materials.get(s.itemId)!.name, s.count])).toEqual(r.ingredients.map((i) => [dname.get(i.materialId) ?? i.name, i.count]));
+        }
+        for (const a of d.armorCandidates.filter((x) => x.seriesId === sid && x.rank === rank)) {
+          const g = content.armor.get(`armor.${a.slot}.${sp}.r${rank}`)!;
+          expect({ name: g.name, defense: g.defense, resist: g.resist, skill: g.skill }).toEqual({ name: a.name, defense: a.defense, resist: undefined, skill: undefined, ...traitsOf(a) });
+          const mine = upgrades.find((x) => x.kind === 'armor_upgrade' && x.resultArmorId === g.id) as Extract<RecipeDef, { kind: 'armor_upgrade' }>;
+          expect(mine.fromArmorId).toBe(`armor.${a.slot}.${sp}.r${rank - 1}`);
+        }
+      }
+    }
+    // ほかの 16 系列は初級だけ（設計の上の級の狩場が、まだ無い）
+    expect([...content.weapons.values()].filter((w) => w.series && w.rankId !== 'rank.1' && !ranked.some((sp) => w.series === `series.${sp}`))).toEqual([]);
+  });
+
+  it('中級の強化: 帆角の断岳剣【初級】を持っていて、中級の素材がそろうと【中級】になる（元は無くなる）。素材は中級のセルヴァルクの依頼で手に入る', () => {
+    const r = content.recipes.get('recipe.upgrade.weapon.selvark.heavy_blade.r2')!;
+    expect(r.kind).toBe('upgrade');
+    const doc: SaveDoc = { ...newSave(content, STAMP), weapons: [...newSave(content, STAMP).weapons, 'weapon.heavy_blade.selvark.r1'], money: r.cost.money, items: Object.fromEntries(r.cost.items.map((s) => [s.itemId, s.count])) };
+    // 中級は、岩場の足音を達成するまで開かない
+    expect(craftRankOpen(doc, content, r)).toBe(false);
+    const cleared: SaveDoc = { ...doc, progress: { ...doc.progress, questClears: { ...doc.progress.questClears, 'quest.basin.003': 1 } } };
+    expect(craftRankOpen(cleared, content, r)).toBe(true);
+    const next = craft(cleared, r);
+    expect(next.weapons).toContain('weapon.heavy_blade.selvark.r2');
+    expect(next.weapons).not.toContain('weapon.heavy_blade.selvark.r1');
+    expect(next.money).toBe(0);
+    const q = content.quests.get('quest.selvark.r2')!;
+    for (const s of r.cost.items) expect(questMaterials(content, q).has(s.itemId), s.itemId).toBe(true);
   });
 
   it('これまでの防具（岩殻〜輝殻）に、設計の耐性（火 -2・雷 +3）と技能が付く。名前・防御力・見た目・里の服は、そのまま', () => {
@@ -228,5 +279,33 @@ describe('作った武器で狩る', () => {
       seen.add(sim.recentHits[0]!.damage);
     }
     expect([...seen].sort((a, b) => a - b)).toEqual([63, critTo]);
+  });
+});
+
+describe('上の級の依頼（v0.34.0）', () => {
+  it('中級のセルヴァルク: 中級の倍率で出て、剥ぎ取り・報酬は中級の素材だけ。中級の群れの幼体も、中級の素材を落とす', () => {
+    const r2 = content.ranks.get('rank.2')!;
+    const sim = new Simulation(content, baseOptions({ questId: 'quest.selvark.r2' }));
+    const m = sim.monsters[0]!;
+    expect(m.def.hp).toBe(Math.round(content.monsters.get('monster.selvark')!.hp * r2.monster.hpScale));
+    expect(sim.monsterAttackScale).toBe(r2.monster.attackScale);
+    m.hp = 0;
+    m.dead = true;
+    for (let i = 0; i < 30 && sim.hunt!.phase === 'active'; i++) sim.step(frame());
+    expect(sim.hunt!.phase).toBe('success');
+    for (let i = 0; i < 3; i++) sim.carve('body');
+    const r2mats = new Set([...content.materials.keys()].filter((k) => k.startsWith('mat.selvark.') && k.endsWith('.r2')));
+    expect(sim.hunt!.loot.length).toBeGreaterThan(0);
+    for (const l of sim.hunt!.loot) expect(r2mats.has(l.itemId), l.itemId).toBe(true);
+    // 群れ: 中級の依頼の幼体は、中級の倍率と中級の表
+    const pack = new Simulation(content, baseOptions({ questId: 'quest.palseit.pack.r2' }));
+    const j = pack.monsters.find((x) => x.herd)!;
+    expect(j.def.hp).toBe(Math.round(content.monsters.get('monster.palseit')!.hp * r2.monster.hpScale));
+    j.hp = 0;
+    j.dead = true;
+    pack.hunt!.carves[`body:${j.id}`] = 1;
+    pack.carve(`body:${j.id}`);
+    expect(pack.hunt!.loot.map((l) => l.itemId)).toHaveLength(1);
+    expect(pack.hunt!.loot[0]!.itemId).toMatch(/^mat\.palseit\.[a-z_]+\.r2$/);
   });
 });

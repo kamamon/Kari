@@ -271,7 +271,7 @@ export interface CraftCheck {
   ok: boolean;
   /** 元の武器（防具）を持っているか（作るレシピは元が無いので、いつも true） */
   ownsBase: boolean;
-  /** 結果の級が開いているか（v0.32.0。作るレシピだけ。craftRankOpen） */
+  /** 結果の級が開いているか（v0.32.0。系列の装備だけ。craftRankOpen） */
   rankOpen: boolean;
   /** すでに結果の武器（防具）を持っているか */
   ownsResult: boolean;
@@ -280,12 +280,12 @@ export interface CraftCheck {
 }
 
 /**
- * 作るレシピ（craft・armor_craft。v0.32.0）の結果の級が、もう開いているか: その級の依頼が 1 つは受けられる。
- * 強化のレシピと、級の無い結果は、いつも開いている（ChatGPT の全装備四級版 #15 の「未登場の級の装備は作れない」）。
+ * 系列の装備（v0.32.0 の作る・v0.34.0 の強化）の結果の級が、もう開いているか: その級の依頼が 1 つは受けられる。
+ * 級の無い結果（ガルドロスの段の道。素材が上の段階の個体からしか出ない）は、いつも開いている（ChatGPT の全装備四級版 #15 の「未登場の級の装備は作れない」）。
  */
 export function craftRankOpen(doc: SaveDoc, content: Content, recipe: RecipeDef): boolean {
-  if (recipe.kind !== 'craft' && recipe.kind !== 'armor_craft') return true;
-  const rankId = recipe.kind === 'craft' ? content.weapons.get(recipe.resultWeaponId)?.rankId : content.armor.get(recipe.resultArmorId)?.rankId;
+  const result = recipeResult(recipe);
+  const rankId = recipeIsWeapon(recipe) ? content.weapons.get(result)?.rankId : content.armor.get(result)?.rankId;
   if (!rankId) return true;
   return [...content.quests.values()].some((q) => q.rankId === rankId && questUnlocked(doc, q));
 }

@@ -48,8 +48,12 @@ describe('大型 11 種のデータ', () => {
       expect(q.targetMonsterId).toBe(id);
       expect(q.rankId).toBe('rank.1');
       expect(q.requires ?? []).toEqual([]);
-      const mats = [...content.materials.keys()].filter((k) => k.startsWith(`mat.${key}.`));
+      // 上の級の素材（v0.34.0。セルヴァルクの「帆膜［中級］」など。名前は #15 の設計）は除いて数える
+      const mats = [...content.materials.keys()].filter((k) => k.startsWith(`mat.${key}.`) && !/\.r\d$/.test(k));
       expect(mats, key).toHaveLength(4);
+      const upper = [...content.materials.keys()].filter((k) => k.startsWith(`mat.${key}.`) && /\.r\d$/.test(k));
+      expect(upper, key).toHaveLength(key === 'selvark' ? 9 : 0);
+      if (key === 'selvark') expect(Object.keys(m!.lootByRank ?? {}).sort()).toEqual(['rank.2', 'rank.3', 'rank.4']);
       const loot = content.loot.get(m!.lootId!)!;
       expect(loot.carve.table.map((t) => t.itemId).sort()).toEqual([...mats].sort());
       for (const r of loot.carve.table) expect(content.materials.has(r.itemId)).toBe(true);

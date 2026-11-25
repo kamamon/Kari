@@ -45,6 +45,11 @@ describe('防具の見た目: 何を着ると、何が付くか', () => {
   it('データの防具は、2 段目から上が見た目の ID を持ち、段が読める。里の装束には無い', async () => {
     const content = await loadContent();
     for (const a of content.armor.values()) {
+      // 系列の装備（v0.32.0〜）は、まだ見た目が無い（里の服のまま。仮）
+      if (a.series) {
+        expect(a.assetId, a.id).toBeUndefined();
+        continue;
+      }
       const tier = Number(a.id.slice(-1));
       expect(a.assetId, a.id).toBe(tier === 1 ? undefined : `model.armor.galdros.t${tier}`);
       expect(armorTierOf(a.assetId), a.id).toBe(tier);

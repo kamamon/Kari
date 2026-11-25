@@ -300,7 +300,7 @@ export class BaseScreen {
       this.banners.appendChild(p);
     }
 
-    if ([...c.recipes.values()].some((r) => checkCraft(doc, r).ok)) this.banners.appendChild(el('p', 'base-banner', '強化できる装備があります（下の「工房」）。'));
+    if ([...c.recipes.values()].some((r) => checkCraft(doc, r, craftRankOpen(doc, c, r)).ok)) this.banners.appendChild(el('p', 'base-banner', '強化できる装備があります（下の「工房」）。'));
 
     // 武器（持っていて、この版で使えるもの）
     this.weaponRow.textContent = '';
@@ -734,14 +734,17 @@ export class BaseScreen {
       return r ? `（${r.name}から）` : '';
     };
     const nameOf = (id: string): string => c.weapons.get(id)?.name ?? c.armor.get(id)?.name ?? id;
-    const statOf = (id: string): string => (c.weapons.has(id) ? `攻撃力 ${c.weapons.get(id)!.attack}` : `防御力 ${c.armor.get(id)?.defense ?? 0}`);
+    // 強化の前後の性能（武器は属性・状態異常・会心も。v0.34.0）
+    const statOf = (id: string): string => (c.weapons.has(id) ? weaponStat(c, c.weapons.get(id)!) : `防御力 ${c.armor.get(id)?.defense ?? 0}`);
     const section = (title: string, kind: RecipeDef['kind'], ownedIds: string[]): void => {
       this.forgeBody.appendChild(el('p', 'forge-head', title));
       const next = [...c.recipes.values()].filter((r) => r.kind === kind && checkCraft(doc, r).ownsBase);
-      const sortKey = (r: RecipeDef): number => (recipeFrom(r) === equipped ? 0 : checkCraft(doc, r).ok ? 1 : 2);
+      // 系列の装備の強化（v0.34.0）は、結果の級が開くまでできない（ガルドロスの段の道は、いつも開いている）
+      const chkOf = (r: RecipeDef) => checkCraft(doc, r, craftRankOpen(doc, c, r));
+      const sortKey = (r: RecipeDef): number => (recipeFrom(r) === equipped ? 0 : chkOf(r).ok ? 1 : 2);
       next.sort((x, y) => sortKey(x) - sortKey(y));
       for (const r of next) {
-        const chk = checkCraft(doc, r);
+        const chk = chkOf(r);
         if (chk.ownsResult) continue;
         const from = recipeFrom(r)!;
         const to = recipeResult(r);
@@ -774,7 +777,7 @@ export class BaseScreen {
           p.append(yes, no);
           box.appendChild(p);
         } else {
-          const b = el('button', 'go', chk.ok ? '強化する' : '素材か通貨が足りません');
+          const b = el('button', 'go', !chk.rankOpen ? 'まだ強化できない級です' : chk.ok ? '強化する' : '素材か通貨が足りません');
           b.disabled = !chk.ok;
           b.addEventListener('click', () => {
             this.confirming = r.id;

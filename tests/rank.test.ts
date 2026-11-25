@@ -49,17 +49,23 @@ describe('段階のデータ', () => {
     expect(ranks[0]!.monster).toEqual({ hpScale: 1, partScale: 1, attackScale: 1, cooldownScale: 1 });
   });
 
-  it('ガルドロスの依頼は段階ごとに 1 件。上の段階は、1 つ下の依頼の達成が条件。ほかの 11 種は初級 1 件ずつ、群れの依頼は 9 件で、最初から受けられる（v0.18.0）', () => {
+  it('ガルドロスの依頼は段階ごとに 1 件。上の段階は、1 つ下の依頼の達成が条件。ほかの 11 種は初級 1 件ずつ、群れの依頼は 9 件で、最初から受けられる（v0.18.0）。セルヴァルク・コルドピル・パルセイトは中級〜極級も（v0.34.0。ガルドロスの段の道で開く）', () => {
     expect(QUESTS.map((id) => content.quests.get(id)!.rankId)).toEqual(['rank.1', 'rank.2', 'rank.3', 'rank.4']);
     expect(QUESTS.map((id) => content.quests.get(id)!.requires ?? [])).toEqual([[], ['quest.basin.003'], ['quest.basin.r2.001'], ['quest.basin.r3.001']]);
     const others = [...content.quests.values()].filter((q) => q.kind !== 'gather' && q.targetMonsterId !== 'monster.galdros');
-    expect(others.filter((q) => !q.targets)).toHaveLength(11);
-    expect(others.filter((q) => q.targets)).toHaveLength(9);
-    for (const q of others) expect([q.rankId, q.requires ?? []]).toEqual(['rank.1', []]);
-    // 狩りの依頼 24 件と、狩らない依頼 5 件（v0.27.0。初級・最初から受けられる）
+    const first = others.filter((q) => q.rankId === 'rank.1');
+    expect(first.filter((q) => !q.targets)).toHaveLength(11);
+    expect(first.filter((q) => q.targets)).toHaveLength(9);
+    for (const q of first) expect(q.requires ?? []).toEqual([]);
+    // 上の級（v0.34.0）: 3 種 × 中級〜極級。級を開く依頼は、ガルドロスの 1 つ下の段の依頼
+    const upper = others.filter((q) => q.rankId !== 'rank.1');
+    expect(upper.map((q) => q.id).sort()).toEqual(['quest.kordopil.pack.r2', 'quest.kordopil.pack.r3', 'quest.kordopil.pack.r4', 'quest.palseit.pack.r2', 'quest.palseit.pack.r3', 'quest.palseit.pack.r4', 'quest.selvark.r2', 'quest.selvark.r3', 'quest.selvark.r4']);
+    const gate: Record<string, string> = { 'rank.2': 'quest.basin.003', 'rank.3': 'quest.basin.r2.001', 'rank.4': 'quest.basin.r3.001' };
+    for (const q of upper) expect(q.requires, q.id).toEqual([gate[q.rankId]]);
+    // 狩りの依頼 33 件と、狩らない依頼 5 件（v0.27.0。初級・最初から受けられる）
     const errands = [...content.quests.values()].filter((q) => q.kind === 'gather');
     for (const q of errands) expect([q.rankId, q.requires ?? []]).toEqual(['rank.1', []]);
-    expect([content.quests.size, errands.length]).toEqual([29, 5]);
+    expect([content.quests.size, errands.length]).toEqual([38, 5]);
   });
 
   it('段階ごとに、その段階からしか出ない素材が 2 つずつある。初級の 4 種は初級から出る', () => {

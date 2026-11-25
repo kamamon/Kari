@@ -94,7 +94,8 @@ describe('フィールドのデータ（風礫盆地）', () => {
 
   it('依頼はどれも、この狩場を使う。制限時間は、フィールドで狩る時だけ 2 倍（フィールドの時間を持つ依頼は、その値。v0.26.0）', () => {
     // ChatGPT のクエスト設計 #9: ガルドロスの中級・上級・極級だけ、フィールドで 35 / 40 / 45 分。1 つの狩場（arena）は 15 分のまま
-    const explicit: Record<string, number> = { 'quest.basin.r2.001': 35, 'quest.basin.r3.001': 40, 'quest.basin.r4.001': 45 };
+    // v0.34.0: セルヴァルクの中級〜極級も、ガルドロスと同じ 35 / 40 / 45 分
+    const explicit: Record<string, number> = { 'quest.basin.r2.001': 35, 'quest.basin.r3.001': 40, 'quest.basin.r4.001': 45, 'quest.selvark.r2': 35, 'quest.selvark.r3': 40, 'quest.selvark.r4': 45 };
     for (const q of content.quests.values()) {
       expect(q.fieldId).toBe('field.basin');
       expect(questTimeLimitTicks(content, q, false)).toBe(q.timeLimitTicks);

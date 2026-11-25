@@ -20,6 +20,7 @@
   "discover": null,
   "parentId": "monster.selvark",
   "herd": {"size": [4, 6], "spacing": 2.0, "alertRange": 24, "fleeRange": 13, "fleeSpeedScale": 1.5, "fleeTicks": 360, "fightChance": 0.15, "fightTicks": [180, 300], "scatter": false},
+  "lootByRank": {"rank.2": "loot.palseit.r2", "rank.3": "loot.palseit.r3", "rank.4": "loot.palseit.r4"},
   "parts": [
     {"id": "crest_l", "name": "左の幼角膜", "hitzone": {"cut": 0.8, "blunt": 0.75, "shot": 0.8}, "brokenHitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.9}, "elementZone": 0.25, "breakDurability": 40, "material": "hide", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.126, 1.043, 0.549], "b": [0.169, 0.996, 0.157], "r": 0.22}]},
     {"id": "crest_r", "name": "右の幼角膜", "hitzone": {"cut": 0.8, "blunt": 0.75, "shot": 0.8}, "brokenHitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.9}, "elementZone": 0.25, "breakDurability": 40, "material": "hide", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [-0.126, 1.043, 0.549], "b": [-0.169, 0.996, 0.157], "r": 0.22}]},

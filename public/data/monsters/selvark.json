@@ -20,6 +20,7 @@
   "approach": {"stopDist": 4.0, "faceDeg": 50},
   "discover": {"range": 18, "fovDeg": 140, "closeRange": 6, "actionId": "monster.selvark.roar"},
   "rage": {"threshold": 380, "durationTicks": 1800, "actionId": "monster.selvark.roar", "speedScale": 1.3, "damageScale": 1.15, "cooldownScale": 0.6},
+  "lootByRank": {"rank.2": "loot.selvark.r2", "rank.3": "loot.selvark.r3", "rank.4": "loot.selvark.r4"},
   "parts": [
     {"id": "head", "name": "頭", "hitzone": {"cut": 0.75, "blunt": 0.7, "shot": 0.65}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "head": true, "flinch": {"threshold": 140, "growth": 50, "ticks": 45}, "shapes": [{"a": [0.0, 2.585, 1.451], "b": [0.0, 2.399, 1.786], "r": 0.24}]},
     {"id": "crest_l", "name": "左角膜", "hitzone": {"cut": 0.8, "blunt": 0.6, "shot": 0.75}, "brokenHitzone": {"cut": 0.9, "blunt": 0.7, "shot": 0.85}, "elementZone": 0.2, "breakDurability": 170, "material": "hide", "flinch": {"threshold": 130, "growth": 50, "ticks": 40}, "shapes": [{"a": [0.3, 2.474, 1.228], "b": [0.4, 2.288, -0.223], "r": 0.32}]},

@@ -2,7 +2,7 @@
 // 「別のタブ」は、同じ置き場所を共有する 2 つの管理役で表す。
 import { readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { ARMOR_SLOTS, recipeResult, type ArmorRecipeDef, type Content, type QuestDef, type WeaponRecipeDef } from '../src/data/schemas';
+import { ARMOR_SLOTS, recipeIsWeapon, recipeResult, type ArmorRecipeDef, type Content, type QuestDef, type WeaponRecipeDef } from '../src/data/schemas';
 import { materialRanks, obtainableMaterials } from '../src/data/validators';
 import { legacyAppearance } from '../src/data/appearance';
 import { MAX_SETTLED_RUNS, SAVE_SCHEMA_VERSION, SLOT_ID, checkCraft, defenseOf, equipArmor, newSave, ownedArmor, parseImport, playWeaponId, questUnlocked, readSave, unknownIds, usableWeapons, validateSave, wornArmor, type SaveDoc } from '../src/save/profile';
@@ -166,7 +166,8 @@ describe('強化（岩殻の断岳剣）', () => {
 
 describe('武器の強化（7 武器 × 5 段）', () => {
   const FORE = 'mat.galdros.foreleg_plate';
-  const weaponRecipes = (): WeaponRecipeDef[] => [...content.recipes.values()].filter((r): r is WeaponRecipeDef => r.kind === 'upgrade');
+  // ガルドロスの段の道（里鍛ち → 輝殻）。系列の装備の強化（v0.34.0。tests/equipment.test.ts）は除く
+  const weaponRecipes = (): WeaponRecipeDef[] => [...content.recipes.values()].filter((r): r is WeaponRecipeDef => r.kind === 'upgrade' && !content.weapons.get(r.resultWeaponId)?.series);
   /** 武器 ID の末尾（.001〜.005）= 段 */
   const tier = (id: string): number => Number(id.slice(-1));
 
@@ -195,9 +196,9 @@ describe('武器の強化（7 武器 × 5 段）', () => {
     const rankOf = materialRanks(content);
     for (const r of [...content.recipes.values()]) {
       const need = Math.max(...r.cost.items.map((s) => rankOf.get(s.itemId) ?? 99));
-      // 作るレシピ（v0.32.0。系列の装備）は、結果の級の素材
-      if (r.kind === 'craft' || r.kind === 'armor_craft') {
-        const item = r.kind === 'craft' ? content.weapons.get(r.resultWeaponId)! : content.armor.get(r.resultArmorId)!;
+      // 系列の装備（v0.32.0 の作る・v0.34.0 の強化）は、結果の級の素材
+      const item = recipeIsWeapon(r) ? content.weapons.get(r.resultWeaponId)! : content.armor.get(r.resultArmorId)!;
+      if (item.series) {
         expect(need, r.id).toBe(content.ranks.get(item.rankId!)!.order);
         continue;
       }
@@ -250,7 +251,7 @@ describe('武器の強化（7 武器 × 5 段）', () => {
 });
 
 describe('防具（5 部位 × 5 段）', () => {
-  const armorRecipes = (): ArmorRecipeDef[] => [...content.recipes.values()].filter((r): r is ArmorRecipeDef => r.kind === 'armor_upgrade');
+  const armorRecipes = (): ArmorRecipeDef[] => [...content.recipes.values()].filter((r): r is ArmorRecipeDef => r.kind === 'armor_upgrade' && !content.armor.get(r.resultArmorId)?.series);
   const tier = (id: string): number => Number(id.slice(-1));
 
   it('新しいデータは、里の装束（5 部位）を持っていて、防御力は 0', async () => {

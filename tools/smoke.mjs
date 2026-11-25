@@ -90,11 +90,11 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('#boot-start');
   check('起動すると拠点の画面が出て、一時停止している', await until(page, () => window.__vh && !document.getElementById('base').hidden && window.__vh.sim.tick === 0));
   await page.screenshot({ path: `${OUT}02_base.png` });
-  check('拠点: 依頼は段階の順に 24 件（ガルドロスの 4 段階、初級の 11 種、初級の群れの依頼 9 件）。最初に受けられるのは初級だけで、ほかは押せない', await page.evaluate(() => {
+  check('拠点: 依頼は段階の順に 33 件（ガルドロスの 4 段階、初級の 11 種、初級の群れの依頼 9 件、v0.34.0 のセルヴァルク・コルドピル・パルセイトの中級〜極級 9 件）。最初に受けられるのは初級だけで、ほかは押せない', await page.evaluate(() => {
     const all = [...document.querySelectorAll('.base-choice[data-quest]')];
     const qs = all.filter((b) => b.dataset.quest.startsWith('quest.basin.'));
     return qs.map((b) => b.dataset.rank).join() === 'rank.1,rank.2,rank.3,rank.4' && qs.map((b) => b.disabled).join() === 'false,true,true,true'
-      && all.length === 24 && all.map((b) => b.dataset.rank).join() === [...Array(21).fill('rank.1'), 'rank.2', 'rank.3', 'rank.4'].join() && all.slice(0, 21).every((b) => !b.disabled)
+      && all.length === 33 && all.map((b) => b.dataset.rank).join() === [...Array(21).fill('rank.1'), ...Array(4).fill('rank.2'), ...Array(4).fill('rank.3'), ...Array(4).fill('rank.4')].join() && all.slice(0, 21).every((b) => !b.disabled) && all.slice(21).every((b) => b.disabled)
       && /【初級】依頼「岩場の足音」/.test(qs[0].textContent) && /【中級】/.test(qs[1].textContent) && /「岩場の足音」を達成すると受けられます/.test(qs[1].textContent)
       && /^防御力の合計 0（受けるダメージ ×1\.00）$/.test(document.querySelector('.base-armor-note').textContent) && document.querySelectorAll('.base-armor-row').length === 5;
   }), await page.evaluate(() => document.querySelector('.base-choice[data-quest="quest.basin.r2.001"]')?.textContent ?? ''));
@@ -496,9 +496,11 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.screenshot({ path: `${OUT}62_base_inventory.png` });
 
   // ---- 保存（IndexedDB）: 読み込み直し、二重取り、失敗、取り込み、強化、別のタブ ----
-  check('初級を達成したので、中級の依頼が受けられる（上級・極級はまだ）', await page.evaluate(() => {
+  check('初級を達成したので、中級の依頼が受けられる（上級・極級はまだ）。セルヴァルクと群れの中級も、同じ時に開く（v0.34.0）', await page.evaluate(() => {
     const qs = [...document.querySelectorAll('.base-choice[data-quest^="quest.basin."]')];
-    return qs.map((b) => b.disabled).join() === 'false,false,true,true' && /達成 2 回/.test(qs[0].textContent) && /「脈打つ岩殻」を達成すると/.test(qs[2].textContent);
+    const dis = (id) => document.querySelector(`.base-choice[data-quest="${id}"]`)?.disabled;
+    return qs.map((b) => b.disabled).join() === 'false,false,true,true' && /達成 2 回/.test(qs[0].textContent) && /「脈打つ岩殻」を達成すると/.test(qs[2].textContent)
+      && dis('quest.selvark.r2') === false && dis('quest.kordopil.pack.r2') === false && dis('quest.palseit.pack.r2') === false && dis('quest.selvark.r3') === true && dis('quest.palseit.pack.r4') === true;
   }));
   await page.click('.base-choice[data-quest="quest.basin.r2.001"]');
   check('中級の依頼: HUD に【中級】と出て、個体の体力は 2430（初級 1800）、与えるダメージは 1.3 倍、出る素材は中級の表', await until(page, () => {
@@ -2043,7 +2045,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     const t = (id) => document.querySelector(`.base-choice[data-quest="${id}"]`)?.textContent ?? '';
     return { n: document.querySelectorAll('.base-choice[data-quest][data-stars]').length, letters: document.querySelectorAll('.quest-letter[data-quest]').length, rec: document.querySelector('.quest-recommend')?.textContent ?? '', st01: t('quest.basin.003'), r4: t('quest.basin.r4.001'), deliv: document.querySelector('.base-delivery')?.dataset.state, pack: document.querySelector('.forge-support')?.dataset.state, last: [...document.querySelectorAll('.base-choice')].pop().textContent };
   });
-  check('依頼の掲示: 29 件（狩り 24・狩らない 5）に星と依頼人の話（開いて読む）。主線・昇級確認の札。制限と目安の時間。おすすめの順。里の納品と工房の支給は、まだ', board.n === 29 && board.letters === 29 && /^★2【初級】依頼「岩場の足音」　主線/.test(board.st01) && /依頼人: 受付ミナギ/.test(board.st01) && /制限 30 分（目安 8〜12 分）/.test(board.st01)
+  check('依頼の掲示: 38 件（狩り 33・狩らない 5）に星と依頼人の話（開いて読む）。主線・昇級確認の札。制限と目安の時間。おすすめの順。里の納品と工房の支給は、まだ', board.n === 38 && board.letters === 38 && /^★2【初級】依頼「岩場の足音」　主線/.test(board.st01) && /依頼人: 受付ミナギ/.test(board.st01) && /制限 30 分（目安 8〜12 分）/.test(board.st01)
     && /^★8【極級】依頼「輝く岩山」　昇級確認/.test(board.r4) && /おすすめ/.test(board.rec) && board.deliv === 'locked' && board.pack === 'locked' && /^訓練場/.test(board.last), JSON.stringify(board).slice(0, 300));
   await page.evaluate(() => { const d = document.querySelector('.quest-letter[data-quest="quest.basin.003"]'); d.open = true; d.scrollIntoView(); });
   check('依頼人の話を開くと、星の列（★★☆☆☆☆☆☆ 2 / 8）と話が出る。押しても出発しない', await page.evaluate(() => {
@@ -2105,9 +2107,9 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     const qs = [...document.querySelectorAll('.base-choice[data-quest]')];
     const er = qs.filter((b) => /^quest\.(gather|mine|delivery)\./.test(b.dataset.quest));
     const heads = [...document.querySelectorAll('.forge-head')].map((h) => h.textContent);
-    return { n: qs.length, er: er.map((b) => b.querySelector('b').textContent), afterHerds: qs.indexOf(er[0]) === 24, head: heads.some((t) => /採集・採掘・現地の納品/.test(t)), g1: er[0]?.textContent ?? '' };
+    return { n: qs.length, er: er.map((b) => b.querySelector('b').textContent), afterHerds: qs.indexOf(er[0]) === 33, head: heads.some((t) => /採集・採掘・現地の納品/.test(t)), g1: er[0]?.textContent ?? '' };
   });
-  check('狩らない依頼: 群れの依頼の後に 5 件（採集 2・採掘 2・現地の納品 1）。★1・制限 15 分・獣は出ない', list.n === 29 && list.er.length === 5 && list.afterHerds && list.head && /^★1　採集「薬房へ、最初の六枚」/.test(list.er[0]) && /^★1　現地の納品「薬房と工具棚の小包」/.test(list.er[4])
+  check('狩らない依頼: 群れの依頼の後に 5 件（採集 2・採掘 2・現地の納品 1）。★1・制限 15 分・獣は出ない', list.n === 38 && list.er.length === 5 && list.afterHerds && list.head && /^★1　採集「薬房へ、最初の六枚」/.test(list.er[0]) && /^★1　現地の納品「薬房と工具棚の小包」/.test(list.er[4])
     && /ヒラナギの葉 6 枚を採集して、野営地の納品箱へ届ける/.test(list.g1) && /制限 15 分（目安 4〜6 分）/.test(list.g1) && /大型・幼体は出ない/.test(list.g1), JSON.stringify(list).slice(0, 300));
   await page.click('.base-choice[data-quest="quest.gather.001"]');
   await until(page, () => window.__vh.sim.errand && window.__vh.sim.tick > 5);

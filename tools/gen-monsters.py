@@ -35,6 +35,58 @@ DATA = os.path.join(ROOT, 'public', 'data')
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from monster_lib import A, K, ai, both, hazard, hit, move, r3, track, unit  # noqa: E402
 import monster_moves as MV  # noqa: E402
+import design15 as D15  # noqa: E402
+
+# ---- 上の級（中級〜極級。v0.34.0。D-116）----
+# ChatGPT の全装備四級版（#15）の設計が、上の級の狩場を「風礫盆地」とした種（D15.RANK_SPECIES）だけ。素材の名前は設計のまま、
+# 恒久 ID は「級 1 の同じ役の素材 + .r<級>」（tools/design15.py）。ほかの種は、設計の狩場ができてから（盆地で代わりにしない）
+RANK_GATE = {2: 'quest.basin.003', 3: 'quest.basin.r2.001', 4: 'quest.basin.r3.001'}  # 級を開く依頼（ガルドロスの段の道と同じ）
+RANK_MONEY = {2: 1100 / 600, 3: 1800 / 600, 4: 2800 / 600}  # 報酬の比（ガルドロスの段の報酬の比）
+RANK_PRICE = {2: 3.5, 3: 7, 4: 14}  # 売値の比（ガルドロスの段の素材の比）
+RANK_FIELD_TICKS = {2: 126000, 3: 144000, 4: 162000}  # 大型の依頼のフィールドの制限時間（ガルドロスと同じ 35 / 40 / 45 分）
+# 依頼の名前とあらまし（掲示の話・依頼人・星・目安の時間は public/data/quest_board.json）。文は Claude が書いた
+RANK_TEXT = {
+    ('selvark', 2): ('張り詰めた帆角', '晶脈の新芽が育った盆地の段丘に、帆膜の厚いセルヴァルクが現れた。初級の個体より体力があり、一撃が重く、休む間も短い。横跳びの蹴りに気をつけて一頭を狩る。'),
+    ('selvark', 3): ('風を裂く帆', '強い風の日に、帆角を大きく広げたセルヴァルクが荷道を何度も横切っている。跳ぶ前に片脚を畳む構えを見て、横へ抜ける。一頭を狩る。'),
+    ('selvark', 4): ('盆地を渡る大帆', '帆膜が硬く育ちきったセルヴァルクが、盆地の風の通り道を縄張りにした。攻めの間隔が短い相手。大きな技を避けた後に攻める。一頭を狩る。'),
+    ('kordopil', 2): ('固まり始めた子ら', '岩冠が固まり始めたコルドピルの群れが、補修したばかりの道を掘り返している。3 頭を討伐する。初級の群れより体が硬い。'),
+    ('kordopil', 3): ('晶を帯びた子ら', '背に晶粒を帯びたコルドピルの群れが、運搬路の土を崩している。3 頭を討伐する。反撃も重いので、囲まれないように。'),
+    ('kordopil', 4): ('親に並ぶ子ら', '親の岩殻に近いほど育ったコルドピルの群れが、里へ続く道のそばに居着いた。3 頭を討伐する。'),
+    ('palseit', 2): ('跳ね回る小帆', '帆膜が張ってきたパルセイトの群れが、荷置き場を跳ね回っている。4 頭を討伐する。初級の群れより体力がある。'),
+    ('palseit', 3): ('風に乗る小角', '風に乗って遠くまで跳ぶパルセイトの群れが、盆地の草地に広がった。4 頭を討伐する。止まる場所を見て、短い攻撃で。'),
+    ('palseit', 4): ('群れで跳ぶ幼帆', '親に近い大きさのパルセイトの群れが、運搬路の脇に住みついた。4 頭を討伐する。'),
+}
+
+
+def round_to(v, step):
+    return int(v / step + 0.5) * step
+
+
+def rank_tables(key, loot, rmats):
+    """級 1 の剥ぎ取り・捕獲・部位の表から、上の級の表を作る。同じ役の上の級の素材へ置き換え、
+    役の無い素材（帆角軟骨・丸尾晶粒）は、その級の主の素材へ寄せる（重みは足す）"""
+    out = []
+    for r in D15.RANKS:
+        mp = {m['baseId']: m['id'] for m in rmats if m['rank'] == r}
+        main = next(m['id'] for m in rmats if m['rank'] == r and m['role'] == 'main')
+
+        def conv(roll):
+            t = {}
+            for e in roll['table']:
+                i = mp.get(e['itemId'], main)
+                t[i] = t.get(i, 0) + e['weight']
+            return {'count': roll['count'], 'table': [{'itemId': i, 'weight': w} for i, w in t.items()]}
+        tb = {'id': f'loot.{key}.r{r}', 'carve': conv(loot['carve']), 'capture': conv(loot['capture']), 'breaks': {k: conv(v) for k, v in loot['breaks'].items()}}
+        out.append(tb)
+    return out
+
+
+def rank_materials(key, base_prices):
+    """上の級の素材（名前は設計のまま）と売値（級 1 の同じ役の素材の売値 × 比。5 で丸める）"""
+    rm = D15.rank_materials(key)
+    mats = [{'id': m['id'], 'name': m['name']} for m in rm]
+    sells = [{'itemId': m['id'], 'price': round_to(base_prices[m['baseId']] * RANK_PRICE[m['rank']], 5)} for m in rm]
+    return rm, mats, sells
 
 
 class Sp:
@@ -1423,6 +1475,8 @@ def main():
         s = spec['sp']
         key = s.key
         mdef, actions, tracks, curves, clips, plan_moves = build_species(spec)
+        if key in D15.RANK_SPECIES:
+            mdef = {**{k: v for k, v in mdef.items() if k not in ('parts', 'ai')}, 'lootByRank': {f'rank.{r}': f'loot.{key}.r{r}' for r in D15.RANKS}, 'parts': mdef['parts'], 'ai': mdef['ai']}
         write(f'public/data/monsters/{key}.json', monster_json(mdef))
         write(f'public/data/actions/{key}.json', list_doc({'schemaVersion': 1, 'note': f'{spec["name"]}の技（tools/gen-monsters.py の出力。手で編集しない）。数値は机上の値。'}, 'actions', actions))
         write(f'public/data/tracks/{key}.json', list_doc({'schemaVersion': 1, 'note': f'{spec["name"]}の攻撃の判定の形（tools/gen-monsters.py の出力。手で編集しない）。'}, 'tracks', tracks))
@@ -1449,6 +1503,21 @@ def main():
             'supplies': [{'itemId': 'item.heal_tonic', 'count': 5}, {'itemId': 'item.bind_trap', 'count': 1}, {'itemId': 'item.calm_orb', 'count': 3}, {'itemId': 'item.whetstone', 'count': 3}],
             'rewards': {'money': 600, 'items': [{'itemId': mat_ids[0], 'count': 1}]},
         })
+        if key in D15.RANK_SPECIES:
+            rm, rmats, rsells = rank_materials(key, {mid_: price for (slug, name, price), mid_ in zip(spec['mats'], mat_ids)})
+            mats += rmats
+            sells += rsells
+            loots += rank_tables(key, loot, rm)
+            for r in D15.RANKS:
+                rname, rsum = RANK_TEXT[(key, r)]
+                main = next(m['id'] for m in rm if m['rank'] == r and m['role'] == 'main')
+                quests.append({
+                    'id': f'quest.{key}.r{r}', 'name': rname, 'kind': 'hunt', 'summary': rsum, 'mapId': 'map.basin.training', 'fieldId': 'field.basin',
+                    'targetMonsterId': f'monster.{key}', 'rankId': f'rank.{r}', 'requires': [RANK_GATE[r]], 'monsterSpawn': {'x': 4, 'z': 15, 'yaw': 2.6},
+                    'timeLimitTicks': 54000, 'fieldTimeLimitTicks': RANK_FIELD_TICKS[r], 'maxFaints': 3, 'returnTicks': 3600,
+                    'supplies': [{'itemId': 'item.heal_tonic', 'count': 5}, {'itemId': 'item.bind_trap', 'count': 1}, {'itemId': 'item.calm_orb', 'count': 3}, {'itemId': 'item.whetstone', 'count': 3}],
+                    'rewards': {'money': round_to(600 * RANK_MONEY[r], 10), 'items': [{'itemId': main, 'count': 1}]},
+                })
         # 素材台帳
         manifest.append({'id': f'model.monster.{key}', 'name': spec['name'], 'type': 'model', 'use': f'大型モンスター（登録簿 {spec["no"]:02d}。v0.17.0 で遊べるようにした）', 'owner': 'ChatGPT（原画）→ Claude（仮モデル・動き）',
                          'status': 'concept', 'version': 0, 'path': None, 'source': f'原画 1 枚（art-source/monster/concepts/monster_{spec["no"]:02d}_{key}_concept_v2.png。採用待ち）を横から貼った仮の形。設定図（4 方向）・正式モデルは無い',
@@ -1460,7 +1529,9 @@ def main():
                          'path': f'assets/textures/monsters/{key}_side_v1.webp', 'source': f'art-source/monster/concepts/monster_{spec["no"]:02d}_{key}_concept_v2.png を tools/monster-art.py で加工（背景を抜き、体の外の色を近くの体の色で埋めた）',
                          'terms': '本作オリジナル（ChatGPT の原画からの二次加工。原画は採用待ち）', 'dims': '幅 1024px 以下の WebP'})
         manifest.append(skin_entry(key, spec['name'], f'art-source/monster/concepts/monster_{spec["no"]:02d}_{key}_concept_v2.png', '本作オリジナル（ChatGPT の原画からの二次加工。原画は採用待ち）'))
-        states[f'monster.{key}'] = f'実装済み（v0.17.0。技と動きは v0.21.0 で {len(actions)} に。登録簿の 4 つ・咆哮・威嚇・退き・種に固有の技。初級の依頼 1 件。形は原画 1 枚から作った仮の形。狩場は風礫盆地を借りている）'
+        states[f'monster.{key}'] = (f'実装済み（v0.17.0。技と動きは v0.21.0 で {len(actions)} に。登録簿の 4 つ・咆哮・威嚇・退き・種に固有の技。'
+                                    + ('初級〜極級の依頼 4 件（中級から先は v0.34.0）。' if key in D15.RANK_SPECIES else '初級の依頼 1 件。')
+                                    + ('形は原画 1 枚から作った仮の形。狩場は風礫盆地）' if key in D15.RANK_SPECIES else '形は原画 1 枚から作った仮の形。狩場は風礫盆地を借りている）'))
         plans.append(dict(key=key, frame=spec['frame'], scale=s.s, origin=[s.ox, s.gy], **{k: v for k, v in spec['plan'].items()}, moves=plan_moves,
                           **({'idle': spec['idle']} if spec.get('idle') else {})))
 
@@ -1470,6 +1541,8 @@ def main():
         J = spec['J']
         key = J.key
         mdef, actions, tracks, curves, clips, plan_moves = build_juvenile(spec)
+        if key in D15.RANK_SPECIES:
+            mdef = {**{k: v for k, v in mdef.items() if k not in ('parts', 'ai')}, 'lootByRank': {f'rank.{r}': f'loot.{key}.r{r}' for r in D15.RANKS}, 'parts': mdef['parts'], 'ai': mdef['ai']}
         write(f'public/data/monsters/{key}.json', monster_json(mdef))
         write(f'public/data/actions/{key}.json', list_doc({'schemaVersion': 1, 'note': f'{spec["name"]}の技（tools/gen-monsters.py の出力。手で編集しない）。数値は机上の値。'}, 'actions', actions))
         write(f'public/data/tracks/{key}.json', list_doc({'schemaVersion': 1, 'note': f'{spec["name"]}の攻撃の判定の形（tools/gen-monsters.py の出力。手で編集しない）。'}, 'tracks', tracks))
@@ -1482,8 +1555,9 @@ def main():
             mats.append({'id': mid_, 'name': name})
             sells.append({'itemId': mid_, 'price': price})
         weights = [60, 40] if len(mat_ids) == 2 else [50, 32, 18]
-        loots.append({'id': f'loot.{key}', 'carve': {'count': 1, 'table': [{'itemId': i, 'weight': w} for i, w in zip(mat_ids, weights)]},
-                      'capture': {'count': 1, 'table': [{'itemId': mat_ids[0], 'weight': 1}]}, 'breaks': {}})
+        jloot = {'id': f'loot.{key}', 'carve': {'count': 1, 'table': [{'itemId': i, 'weight': w} for i, w in zip(mat_ids, weights)]},
+                 'capture': {'count': 1, 'table': [{'itemId': mat_ids[0], 'weight': 1}]}, 'breaks': {}}
+        loots.append(jloot)
         qname, count, qsum = spec['quest']
         herd_quests.append({
             'id': f'quest.{key}.pack1', 'name': qname, 'kind': 'slay', 'summary': qsum, 'mapId': 'map.basin.training', 'fieldId': 'field.basin',
@@ -1492,6 +1566,21 @@ def main():
             'supplies': [{'itemId': 'item.heal_tonic', 'count': 3}, {'itemId': 'item.whetstone', 'count': 2}],
             'rewards': {'money': 300 + 30 * count, 'items': [{'itemId': mat_ids[0], 'count': 1}]},
         })
+        if key in D15.RANK_SPECIES:
+            rm, rmats, rsells = rank_materials(key, {mid_: price for (slug, name, price), mid_ in zip(spec['mats'], mat_ids)})
+            mats += rmats
+            sells += rsells
+            loots += rank_tables(key, jloot, rm)
+            for r in D15.RANKS:
+                rname, rsum = RANK_TEXT[(key, r)]
+                main = next(m['id'] for m in rm if m['rank'] == r and m['role'] == 'main')
+                herd_quests.append({
+                    'id': f'quest.{key}.pack.r{r}', 'name': rname, 'kind': 'slay', 'summary': rsum, 'mapId': 'map.basin.training', 'fieldId': 'field.basin',
+                    'targetMonsterId': f'monster.{key}', 'targets': [{'monsterId': f'monster.{key}', 'count': count}], 'rankId': f'rank.{r}', 'requires': [RANK_GATE[r]],
+                    'monsterSpawn': {'x': 4, 'z': 15, 'yaw': 2.6}, 'timeLimitTicks': 36000, 'maxFaints': 3, 'returnTicks': 1800,
+                    'supplies': [{'itemId': 'item.heal_tonic', 'count': 3}, {'itemId': 'item.whetstone', 'count': 2}],
+                    'rewards': {'money': round_to((300 + 30 * count) * RANK_MONEY[r], 10), 'items': [{'itemId': main, 'count': 1}]},
+                })
         art_tex = f'tex.monster.{J.art}.side'
         manifest.append({'id': f'model.monster.{key}', 'name': spec['name'], 'type': 'model', 'use': f'幼体（登録簿 {spec["no"]:02d}。v0.18.0 で遊べるようにした。群れで暮らす）', 'owner': 'Claude（仮モデル・動き）',
                          'status': 'concept', 'version': 0, 'path': None,
@@ -1506,7 +1595,8 @@ def main():
                              'source': 'art-source/monster/galdros/galdros_right_v1.png（採用済みの設定図）を tools/monster-art.py で加工（背景を抜き、体の外の色を近くの体の色で埋めた）',
                              'terms': '本作オリジナル', 'dims': '幅 1024px 以下の WebP'})
             manifest.append(skin_entry('galdros', 'ガルドロス', 'art-source/monster/galdros/galdros_right_v1.png（採用済みの設定図）', '本作オリジナル'))
-        states[f'monster.{key}'] = (f'実装済み（v0.18.0。技と動きは v0.21.0 で {len(actions)} に。登録簿の 3 つ・威嚇・子に固有の技。群れの依頼 1 件。形は親の絵から作った仮の形。狩場は風礫盆地）'
+        states[f'monster.{key}'] = (f'実装済み（v0.18.0。技と動きは v0.21.0 で {len(actions)} に。登録簿の 3 つ・威嚇・子に固有の技。'
+                                    + ('群れの依頼は初級〜極級の 4 件（中級から先は v0.34.0）' if key in D15.RANK_SPECIES else '群れの依頼 1 件') + '。形は親の絵から作った仮の形。狩場は風礫盆地）'
                                     '。幼体自身の原画案（ChatGPT、2026-11-25 受領。採用待ち）を図鑑に出す（体はまだ親の絵から）')
         plans.append(dict(key=J.art, frame=spec['frame'], **{k: v for k, v in J.plan.items() if k not in ('key', 'frame')}, moves=plan_moves, monster=key,
                           **({'idle': spec['idle']} if spec.get('idle') else {})))
@@ -1518,11 +1608,11 @@ def main():
             'returnTicks': 1800, 'supplies': [{'itemId': 'item.heal_tonic', 'count': 3}, {'itemId': 'item.whetstone', 'count': 2}],
             'rewards': {'money': mq['money'], 'items': [{'itemId': f'mat.{mq["targets"][0][0]}.{[j for j in JUVENILES if j["J"].key == mq["targets"][0][0]][0]["mats"][0][0]}', 'count': 1}]},
         })
-    write('public/data/quests_herds.json', list_doc({'schemaVersion': 1, 'note': '幼体の群れの依頼（tools/gen-monsters.py の出力。手で編集しない）。targets の頭数を討伐すると達成。狩場は風礫盆地（群れの住みかは fields/basin.json の herds）。報酬は机上の値'}, 'quests', herd_quests))
+    write('public/data/quests_herds.json', list_doc({'schemaVersion': 1, 'note': '幼体の群れの依頼（tools/gen-monsters.py の出力。手で編集しない）。targets の頭数を討伐すると達成。狩場は風礫盆地（群れの住みかは fields/basin.json の herds）。コルドピルとパルセイトは中級〜極級も（v0.34.0。級はガルドロスの段の道で開く）。報酬は机上の値'}, 'quests', herd_quests))
 
     # 曲線・依頼・素材・剥ぎ取り
     write('public/data/curves_creatures.json', list_doc({'schemaVersion': 1, 'note': '大型 11 種と幼体 8 種の技で進む距離（tools/gen-monsters.py の出力。手で編集しない）。keys は [tick, 累積距離 m]'}, 'curves', all_curves))
-    write('public/data/quests_creatures.json', list_doc({'schemaVersion': 1, 'note': '大型 11 種の依頼（tools/gen-monsters.py の出力。手で編集しない）。どれも初級で、最初から受けられる。狩場は風礫盆地を借りている（本来の狩場は登録簿の habitat）。報酬は机上の値'}, 'quests', quests))
+    write('public/data/quests_creatures.json', list_doc({'schemaVersion': 1, 'note': '大型 11 種の依頼（tools/gen-monsters.py の出力。手で編集しない）。初級は最初から受けられる。狩場は風礫盆地を借りている（本来の狩場は登録簿の habitat）。セルヴァルクは中級〜極級も（v0.34.0。設計 #15 の上の級の狩場が風礫盆地の種。級はガルドロスの段の道で開く）。報酬は机上の値'}, 'quests', quests))
     write('public/data/items_creatures.json', list_doc({'schemaVersion': 1, 'note': '大型 11 種と幼体 8 種の素材（登録簿の素材の名前。tools/gen-monsters.py の出力。手で編集しない）', 'items': []}, 'materials', mats))
     write('public/data/loot_creatures.json', list_doc({'schemaVersion': 1, 'note': '大型 11 種と幼体 8 種の剥ぎ取り・捕獲・部位破壊（tools/gen-monsters.py の出力。手で編集しない）。幼体は剥ぎ取り 1 回（捕獲はできない。capture は形だけ）。重みは机上の値'}, 'tables', loots))
     replace_rows('public/data/shop.json', 'sell', [f'mat.{spec["sp"].key}.' for spec in SPECIES] + [f'mat.{spec["J"].key}.' for spec in JUVENILES], sells)
