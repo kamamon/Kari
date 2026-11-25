@@ -118,7 +118,7 @@ def main():
         if t['event']=='charge_release': check(set(t['tagsAll']+t['tagsAny'])<={'charge'},ident+' release has unresolvable target/hit tags','mechanics')
     for label, rows in [('weapons',weapons),('armor',armor),('recipes',recipes),('materials',materials),('mechanics',mechanics),('appearance',appearances)]:
         check(len(rows)==len({x['id'] for x in rows}),label+' duplicate ids','uniqueness')
-    all_items={x['id']:x for x in weapons+armor}; mat_ids={m['id'] for m in materials}
+    all_items={x['id']:x for x in weapons+armor}; materials_by_id={m['id']:m for m in materials}; mat_ids=set(materials_by_id)
     runtime_extra=read(ROOT/'public/data/equipment_series.json')
     runtime_weapons=read(ROOT/'public/data/weapons.json')['weapons']+runtime_extra['weapons']
     runtime_armor=read(ROOT/'public/data/armor.json')['armor']+runtime_extra['armor']
@@ -132,6 +132,15 @@ def main():
         check(item_id in all_items,item_id+' missing runtime item','preservation')
         old=runtime_by_result[item_id];new=output_by_result[item_id]
         check(new['sourceRecord']==old,item_id+' runtime recipe changed','preservation')
+        # Check the values a consumer actually uses, not only the preserved source snapshot.
+        expected_recipe={
+            'id':old['id'], 'kind':old['kind'],
+            'fromId':old.get('fromWeaponId',old.get('fromArmorId')),
+            'money':old['cost']['money'],
+            'ingredients':[{'materialId':x['itemId'],'count':x['count']} for x in old['cost']['items']],
+        }
+        for field,value in expected_recipe.items():
+            check(new.get(field)==value,item_id+' runtime recipe output changed: '+field,'preservation')
     for item in weapons+armor:
         if item['seriesId'].startswith('series.'):
             check(item['runtimeExists']==(item['id'] in runtime_ids),item['id']+' stale runtime flag','honesty')
@@ -156,8 +165,13 @@ def main():
         for ing in r['ingredients']:
             check(ing['materialId'] in mat_ids,r['id']+' missing material '+ing['materialId'],'recipes')
             check(isinstance(ing['count'],int) and ing['count']>0,r['id']+' material count','recipes')
-            if r['nonHuntMaterialsOnly']:
-                check(next(m for m in materials if m['id']==ing['materialId'])['acquisition']!='monster',r['id']+' hunt ingredient','recipes')
+            material=materials_by_id.get(ing['materialId'])
+            if material is not None:
+                material_rank=material.get('rankOrder')
+                if material_rank is not None:
+                    check(material_rank<=r['rank'],r['id']+' material grade exceeds recipe rank: '+ing['materialId'],'recipes')
+                if r['nonHuntMaterialsOnly']:
+                    check(material['acquisition']!='monster',r['id']+' hunt ingredient','recipes')
         if r['fromId']:
             check(r['fromId'] in all_items or r['fromId'] in runtime_ids,r['id']+' missing predecessor','recipes')
             if r['fromId'] in all_items:
