@@ -1,0 +1,455 @@
+{
+  "kind": "recovered_design_data_validation",
+  "registry_commit": "1e078bfce1e68f287ae577cf41d2fe5bafb94afa",
+  "registry_version": "0.26.0",
+  "registry_path": "public/data/bestiary.json",
+  "registry_sha256": "ce6e3c3e869e14d55342de8fb202628f94421c99f6b64664c5a18167b95c46eb",
+  "node_table": {
+    "count": 79,
+    "unique_names": true,
+    "single_root": [
+      "root"
+    ],
+    "parents_valid": true,
+    "acyclic": true,
+    "all_nodes_reach_root": true,
+    "legacy_nodes": 53,
+    "legacy_indices": {
+      "first": 0,
+      "last": 52,
+      "all_0_to_52_present_once": true
+    },
+    "proposal_nodes": 26,
+    "tail_nodes": 8,
+    "plate_nodes": 15,
+    "coordinate_precision_m": 0.001,
+    "full_precision_recovered": false,
+    "runtime_compatible": false,
+    "sockets_reconstructed": false,
+    "source_pages": [
+      35,
+      36,
+      37
+    ]
+  },
+  "roster": {
+    "count": 86,
+    "unique_ids": true,
+    "id_name_number_match_pdf_and_registry": true,
+    "frame_matches_pdf_candidate_category": true,
+    "id_name_frame_state_organ_look_parts_match_current_registry": true,
+    "pdf_state_counts": {
+      "implemented": 20,
+      "art": 1,
+      "planned": 65
+    },
+    "current_state_counts": {
+      "implemented": 20,
+      "art": 66
+    },
+    "state_changed_since_pdf_count": 65,
+    "state_changes": [
+      {
+        "id": "monster.hasdren",
+        "no": 22,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.ivselam",
+        "no": 23,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.domelkano",
+        "no": 24,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.holnebas",
+        "no": 25,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.miltasea",
+        "no": 26,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.talgrina",
+        "no": 27,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.zanetolka",
+        "no": 28,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.ulnaset",
+        "no": 29,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.nemboraf",
+        "no": 30,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.borazeln",
+        "no": 31,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.kudrimal",
+        "no": 32,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.tosamurie",
+        "no": 33,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.pukrenoa",
+        "no": 34,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.kesalpina",
+        "no": 35,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.riptaum",
+        "no": 36,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.serinodam",
+        "no": 37,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.nufraken",
+        "no": 38,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.akaunel",
+        "no": 39,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.tsumarobek",
+        "no": 40,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.furemsad",
+        "no": 41,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.grasedon",
+        "no": 42,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.ryuzelka",
+        "no": 43,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.mordine",
+        "no": 44,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.doberken",
+        "no": 45,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.shilhatora",
+        "no": 46,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.kuzanerio",
+        "no": 47,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.fesrami",
+        "no": 48,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.elmejika",
+        "no": 49,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.azelnoto",
+        "no": 50,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.bezrakio",
+        "no": 51,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.murzenato",
+        "no": 52,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.hauremika",
+        "no": 53,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.zedbanil",
+        "no": 54,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.oldasem",
+        "no": 55,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.nuolvan",
+        "no": 56,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.tarhegna",
+        "no": 57,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.porgamis",
+        "no": 58,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.yarlshena",
+        "no": 59,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.pizelta",
+        "no": 60,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.damorikus",
+        "no": 61,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.isarnem",
+        "no": 62,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.regsanio",
+        "no": 63,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.rupenias",
+        "no": 64,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.sograpin",
+        "no": 65,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.makuejira",
+        "no": 66,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.gumesald",
+        "no": 67,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.nericaus",
+        "no": 68,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.voltena",
+        "no": 69,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.kitolnam",
+        "no": 70,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.segranio",
+        "no": 71,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.dekoranze",
+        "no": 72,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.fusaldom",
+        "no": 73,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.rimposera",
+        "no": 74,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.dalhoina",
+        "no": 75,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.zonikebal",
+        "no": 76,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.ludopanea",
+        "no": 77,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.salpinoc",
+        "no": 78,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.hemzario",
+        "no": 79,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.pasnelim",
+        "no": 80,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.zaclatom",
+        "no": 81,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.izoflane",
+        "no": 82,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.queribas",
+        "no": 83,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.enagrio",
+        "no": 84,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.nucbarea",
+        "no": 85,
+        "pdf_state": "planned",
+        "current_state": "art"
+      },
+      {
+        "id": "monster.towalsem",
+        "no": 86,
+        "pdf_state": "planned",
+        "current_state": "art"
+      }
+    ],
+    "note": "stateは最新登録簿を正本とし、PDFの旧状態は別列へ保持。artは原画がある状態であり採用済みを意味しない。"
+  },
+  "outputs": {
+    "rig": "galdros_rig_blueprint_recovered_v3.json",
+    "matrix": "monster_production_matrix_v3.csv"
+  },
+  "limitations": [
+    "Original JSON/CSV byte sequences were not recovered.",
+    "The original socket definitions are not present in the printed node table and were not inferred.",
+    "Printed pivot coordinates do not establish a bind pose or local transform.",
+    "No GLB, weights, animations, runtime rendering or device performance is validated by these checks."
+  ]
+}

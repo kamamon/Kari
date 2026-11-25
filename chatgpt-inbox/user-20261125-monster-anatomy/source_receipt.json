@@ -1,0 +1,14 @@
+{
+  "file_name": "Kari_Monster_Anatomy_Design_v2.pdf",
+  "sha256": "8048bab494116d51cd624b89fd971601e0d978ffe605e5edf99b8562ed881ce2",
+  "size_bytes": 4092429,
+  "pages": 43,
+  "original_design_source_commit": "4851d57ecc24c8fd127508b084999cec5d0e975f",
+  "current_audit_commit": "1e078bfce1e68f287ae577cf41d2fe5bafb94afa",
+  "recovered_from": "verified durable PDF delivered to the user",
+  "notes": [
+    "Original PDF kept unchanged; text, tables and embedded diagrams recovered.",
+    "Current roster fields come from v0.26.0; previous PDF state is retained separately.",
+    "Recovered node coordinates have printed precision 0.001 m."
+  ]
+}
