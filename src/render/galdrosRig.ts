@@ -12,7 +12,7 @@
 //   - 前脚叩きの脚も、判定と同じ軌道データに従う。
 //   - 叩かれた部位に応じて、体・頭・尾がのけぞる。部位破壊で岩板が砕けて飛ぶ。
 // コードで作った形であり、正式モデル（GLB）が来るまでの仮素材であることは変わらない。
-import { Bone, DataTexture, Euler, Group, Matrix4, Mesh, MeshStandardMaterial, Quaternion, RepeatWrapping, SRGBColorSpace, Skeleton, SkinnedMesh, TextureLoader, Vector3, type BufferGeometry, type Texture } from 'three';
+import { Bone, DataTexture, Euler, Float32BufferAttribute, Group, Matrix4, Mesh, MeshStandardMaterial, Quaternion, RepeatWrapping, SRGBColorSpace, Skeleton, SkinnedMesh, TextureLoader, Vector3, type BufferGeometry, type Texture } from 'three';
 import { assetUrl } from '../core/assets';
 import { smoothstep } from '../core/math';
 import { renderTick } from '../game/action';
@@ -21,13 +21,14 @@ import { sampleTrack } from '../game/tracks';
 import type { MonsterRig, MonsterRigCtx } from './monsterRig';
 import { isWeak } from '../game/monster';
 import { GALDROS_AO } from './galdrosAo';
-import { GALDROS_BONES, GALDROS_LEGS, GALDROS_LIDS, GALDROS_PLATES, GALDROS_TAIL, buildBoneTree, galdrosBone } from './galdrosBones';
+import { GALDROS_BONES, GALDROS_EYES, GALDROS_LEGS, GALDROS_LEG_EXTRAS, GALDROS_LIDS, GALDROS_NEW_BONE_REST, GALDROS_PLATES, GALDROS_RIBS, GALDROS_SCAPULAE, GALDROS_TAIL, buildBoneTree, galdrosBone } from './galdrosBones';
 import { GALDROS_ATLAS } from './galdrosAtlas';
 import { Geo, blob, crystal, fbm, hash3, hex, horn, loft, makeHideTextures, makeRockTextures, mix, packCharts, plate, shade, slab, sstep, type AtlasChart, type RGB, type Ring, type SlabOpts } from './procGeo';
 
 // ---- 骨の番号（名前 → 番号の表から引く。v0.30.0。番号の足し算はしない: 尾・脚・岩板・まぶたは、表の並びの配列で引く） ----
 const ROOT = galdrosBone('root'), BODY = galdrosBone('body'), LUMBAR = galdrosBone('lumbar'), PELVIS = galdrosBone('pelvis'), THORAX = galdrosBone('thorax'), CHEST = galdrosBone('chest');
-const RIBS = galdrosBone('ribs_l'), NECK1 = galdrosBone('neck_01'), NECK2 = galdrosBone('neck_02'), HEAD = galdrosBone('head'), JAW = galdrosBone('jaw'), TONGUE = galdrosBone('tongue_01');
+const RIBS_L = GALDROS_RIBS[0]!, RIBS_R = GALDROS_RIBS[1]!, NECK1 = galdrosBone('neck_01'), NECK2 = galdrosBone('neck_02'), HEAD = galdrosBone('head'), JAW = galdrosBone('jaw'), TONGUE = galdrosBone('tongue_01');
+const TONGUE2 = galdrosBone('tongue_02');
 const TAIL_N = GALDROS_TAIL.length, PLATE_N = GALDROS_PLATES.length;
 const BODY_Y = 1.25;
 /** 尾の関節の位置 (z)。CUT 番目（-2.5）が切断面。 */
@@ -150,6 +151,15 @@ function spineBones(z: number, afterCut: boolean): [number, number, number] {
 }
 
 const gauss = (x: number, c: number, w: number): number => Math.exp(-((x - c) * (x - c)) / (2 * w * w));
+/**
+ * ひじ・ひざの補正形状（v0.36.0。#12 の M2「関節の内側の潰れの補正」）: 上と下の節を半分ずつ混ぜる関節の輪は、
+ * 曲げると、曲げる向きの太さが cos(曲げ / 2) 倍に細る（骨の重みの線形な混ぜ方の性質）。補正形状はその分を、輪の中心から外へ押し戻す。
+ * 形は基準の姿勢から BEND_REF だけ曲げた時の量で作り、強さは曲げの量から決める（ちょうど打ち消す強さ）。
+ */
+const BEND_REF = 1.2;
+/** 気絶の首のふらつきが、ひと回りする tick（戦闘の判定の表 states.stun の長さと同じ。v0.36.0） */
+export const STUN_LOOP = 164;
+const bendFix = (delta: number): number => 1 / Math.cos(Math.min(Math.abs(delta), 2.6) / 2) - 1;
 const clamp = (v: number, lo: number, hi: number): number => Math.min(hi, Math.max(lo, v));
 const wrapPi = (a: number): number => Math.atan2(Math.sin(a), Math.cos(a));
 const X = new Vector3(1, 0, 0), Y = new Vector3(0, 1, 0), Z = new Vector3(0, 0, 1);
@@ -192,6 +202,20 @@ interface Leg {
   cur: Vector3;
   fresh: boolean;
   stance: boolean;
+  /** v0.36.0: 接地している足の向き（ワールドの yaw）。体が向きを変えても、踏み直すまで足は向きを保つ（趾が地面を滑らない） */
+  plantYaw: number;
+  /** 踏み出した時の足の向き（踏み出しの間に、体の向きへ寄せる） */
+  fromYaw: number;
+  /** 着地で趾が開く量（1 で開き切り、減っていく） */
+  splay: number;
+  /** ねじれの骨・趾の骨（GALDROS_LEG_EXTRAS） */
+  twist: Bone;
+  digits: Bone[];
+  spur: Bone | null;
+  /** 下の節の基準の向き（ねじれの軸。骨の空間） */
+  axisL: Vector3;
+  /** 趾の並びの中での位置（-1 内 〜 1 外） */
+  digitSide: number[];
 }
 
 /** 減衰するばね（のけぞり・揺れ戻し用）。 */
@@ -289,6 +313,10 @@ export class GaldrosRig implements MonsterRig {
   readonly extras: Group[] = [];
   private bones: Bone[] = [];
   private legs: Leg[] = [];
+  /** 皮（hide）のメッシュ。ひじ・ひざの補正形状の強さを毎回書く */
+  private hideMesh!: SkinnedMesh;
+  /** 部位の追従を測る皮の頂点の範囲（胴・あご・脚・足・付け根のふくらみ。歯・爪・目・まぶた・舌は入れない） */
+  private skinPool: [number, number][] = [];
   private capMesh: SkinnedMesh;
   private domeMesh: SkinnedMesh;
   private domeRimMesh: SkinnedMesh;
@@ -348,6 +376,13 @@ export class GaldrosRig implements MonsterRig {
   private puffed = false;
   private seed = 1;
   private pose: Pose = resetPose({} as Pose);
+  /** v0.36.0: 眼の向き（頭の空間の回転）と、肩甲の基準の位置（親の空間） */
+  private eyeQ = [new Quaternion(), new Quaternion()];
+  private scapRest: Vector3[] = [];
+  /** 眼の中心（頭の骨の空間） */
+  private eyeLocal: Vector3[] = [];
+  private eyeTmp = [new Vector3(), new Vector3()];
+  private eyeTmpQ = [new Quaternion(), new Quaternion()];
   // 計算用の使い回し
   private v1 = new Vector3();
   private v2 = new Vector3();
@@ -387,7 +422,7 @@ export class GaldrosRig implements MonsterRig {
     def(PELVIS, 0, BODY_Y, -0.95);
     def(THORAX, 0, BODY_Y, 0.35);
     def(CHEST, 0, BODY_Y, 0.95);
-    def(RIBS, 0, 1.2, 0.15);
+    def(RIBS_L, 0, 1.2, 0.15);
     def(NECK1, 0, 1.34, 1.4);
     def(NECK2, 0, 1.5, 1.63);
     def(HEAD, 0, 1.6, 1.82);
@@ -417,6 +452,8 @@ export class GaldrosRig implements MonsterRig {
       def(L.foot, ankle.x, ankle.y, ankle.z);
       def(L.toe, ankle.x, 0.07, ankle.z + 0.24);
     });
+    // v0.36.0 で足した 26 本（#12 の M2）: 設計の表の位置
+    for (const [name, at] of Object.entries(GALDROS_NEW_BONE_REST)) def(galdrosBone(name), at[0], at[1], at[2]);
 
     // 岩板: 1 枚ずつ骨を持つ（揺れる・砕ける）。背殻 6 枚、頭 2 枚、肩 3 枚、腰 2 枚、前脚の甲 2 枚。
     const plates: PlateDef[] = [];
@@ -461,6 +498,8 @@ export class GaldrosRig implements MonsterRig {
     }));
     this.root.add(this.bones[ROOT]!);
     this.root.updateMatrixWorld(true);
+    this.scapRest = GALDROS_SCAPULAE.map((b) => this.bones[b]!.position.clone());
+    this.eyeLocal = EYES.map((e) => e.clone().sub(rest[HEAD]!));
     const skeleton = new Skeleton(this.bones);
     legSpecs.forEach((s, i) => {
       const r = legRest[i]!;
@@ -473,11 +512,22 @@ export class GaldrosRig implements MonsterRig {
         restDown: new Vector3().subVectors(r.ankle, r.hip).normalize(),
         l1: s.l1, l2: s.l2, front: s.front, side: s.side,
         plant: new Vector3(), from: new Vector3(), t: 1, dur: 0.3, cur: new Vector3(), fresh: true, stance: true,
+        plantYaw: 0, fromYaw: 0, splay: 0,
+        twist: this.bones[GALDROS_LEG_EXTRAS[i]!.twist]!, digits: GALDROS_LEG_EXTRAS[i]!.digits.map((b) => this.bones[b]!),
+        spur: GALDROS_LEG_EXTRAS[i]!.spur === null ? null : this.bones[GALDROS_LEG_EXTRAS[i]!.spur!]!,
+        axisL: new Vector3().subVectors(r.ankle, r.joint).normalize(),
+        digitSide: GALDROS_LEG_EXTRAS[i]!.digits.map((b) => {
+          // 足首からの横の位置を、外向きを + にして -1〜1 へ
+          const x = GALDROS_NEW_BONE_REST[GALDROS_BONES[b]!.name]![0];
+          return clamp(((x - r.ankle.x) * s.side) / 0.36, -1, 1);
+        }),
       });
     });
 
     // ================= 形 =================
     const hide = new Geo(), rock = new Geo(), cap = new Geo(), dome = new Geo(), domeRim = new Geo(), core = new Geo(), glow = new Geo();
+    /** ひじ・ひざの補正形状（脚ごと。頂点の番号 → 基準の位置からのずれ） */
+    const bendShapes: Map<number, Vector3>[] = [];
 
     // ---- 胴・首・頭（上あご）・尾: 尾先から鼻先まで 1 本の皮 ----
     const cutZ = TAIL_Z[CUT]!;
@@ -514,7 +564,15 @@ export class GaldrosRig implements MonsterRig {
       // 絵を貼る区画: 尾先 / 尾の付け根側 / 胴 / 首と頭。切断面（flesh）には貼らない。
       atlas: { kinds: ['tailTip', 'tailBase', 'body', 'head'], t: (r) => (r as SRing).z, plain: (r) => !!(r as SRing).flesh, breakBefore: (r) => !!(r as SRing).brk, density: [1, 1, 0.8, 1.5] },
       // 呼吸でふくらむのは、岩板に覆われていない脇腹と腹
-      third: { bone: RIBS, weight: (r, a) => 0.6 * sstep(-1.05, -0.5, (r as SRing).z) * sstep(1.15, 0.6, (r as SRing).z) * sstep(0.75, 0.1, Math.sin(a)) },
+      third: { bone: RIBS_L, weight: (r, a) => 0.6 * sstep(-1.05, -0.5, (r as SRing).z) * sstep(1.15, 0.6, (r as SRing).z) * sstep(0.75, 0.1, Math.sin(a)) },
+      // 胸郭は左右の骨に分ける（v0.36.0）: 腹の真ん中（|x| < 0.12）で 2 本を混ぜる。左右が同じに動けば、v0.35.0 までと同じ形
+      skin: (_r, _a, p, _i, d) => {
+        const k = d.findIndex(([b]) => b === RIBS_L);
+        const side = sstep(-0.12, 0.12, p.x);
+        if (k < 0 || side >= 1) return null;
+        const w = d[k]![1];
+        return [...d.filter((_, j) => j !== k), [RIBS_L, w * side], [RIBS_R, w * (1 - side)]];
+      },
       bulge: (r, a) => {
         const z = (r as SRing).z;
         const side = Math.abs(Math.cos(a)), upness = Math.sin(a), dTop = Math.abs(a - Math.PI / 2);
@@ -551,14 +609,22 @@ export class GaldrosRig implements MonsterRig {
 
     // ---- 下あご・舌・歯 ----
     const jawRings: Ring[] = JAW_PROFILE.map(([z, cy, rx, top, bottom]) => ({ c: new Vector3(0, cy, z), right: X, up: Y, rx, top, bottom, b0: JAW, b1: JAW, w1: 0, part: part.head }));
+    const pool = (from: number): void => {
+      this.skinPool.push([from, hide.count]);
+    };
+    pool(0);
+    const jawBase = hide.count;
     loft(hide, jawRings, { seg: 16, exponent: 2.3, noise: 0.012, uRepeat: 2, capStart: MOUTH, capEnd: HORN_DARK, atlas: { kinds: ['jaw'], t: (r) => r.c.z }, color: (_p, n) => mix(WHITE, over(MOUTH), sstep(0.75, 0.95, n.y)) });
+    pool(jawBase);
     const tongue: Ring[] = [];
     for (let i = 0; i <= 7; i++) {
       const t = i / 7;
       const z = 1.9 + 0.52 * t;
       const j = profileAt(JAW_PROFILE, z);
       const w = Math.max(0.03, 0.2 * Math.sin(Math.PI * (0.25 + 0.72 * t)));
-      tongue.push({ c: new Vector3(0, j.cy + j.top + 0.015, z), right: X, up: Y, rx: w, top: 0.05, bottom: 0.03, b0: JAW, b1: TONGUE, w1: sstep(0.2, 0.7, t), part: part.head });
+      // 先の 3 つの輪は、舌の先の骨（tongue_02。v0.36.0）へ移る
+      const tip = i >= 5;
+      tongue.push({ c: new Vector3(0, j.cy + j.top + 0.015, z), right: X, up: Y, rx: w, top: 0.05, bottom: 0.03, b0: tip ? TONGUE : JAW, b1: tip ? TONGUE2 : TONGUE, w1: tip ? sstep(0.62, 0.95, t) : sstep(0.2, 0.7, t), part: part.head });
     }
     loft(hide, tongue, { seg: 10, uRepeat: 1, capStart: TONGUE_C, capEnd: TONGUE_C, color: (p) => shade(TONGUE_C, 0.85 + 0.3 * fbm(p.x * 14, p.y * 14, p.z * 14, 2)) });
     // 歯: 上あごは下向き、下あごは上向き。口を閉じている間は隠れ、開くと見える（設定図は口を閉じた姿で、歯は見えない）
@@ -578,9 +644,11 @@ export class GaldrosRig implements MonsterRig {
     // 目: 暗い縁、琥珀がかった茶色の虹彩、丸い瞳、小さな光の点、上下のまぶた
     EYES.forEach((e, i) => {
       const out = EYE_OUT[i]!, axis = LID_AXIS[i]!;
-      blob(hide, e.clone().addScaledVector(out, -0.012), out, 0.13, 0.078, 0.066, () => IRIS_RIM, HEAD, part.head, 10, 5);
-      blob(glow, e.clone().addScaledVector(out, 0.012), out, 0.11, 0.058, 0.052, () => IRIS, HEAD, part.head, 10, 5);
-      blob(hide, e.clone().addScaledVector(out, 0.052), out, 0.036, 0.027, 0.027, () => BLACK, HEAD, part.head, 8, 4);
+      // 眼球（縁・虹彩・瞳）は眼の骨（v0.36.0）で、まぶたと別に動く。光の点は頭に付けたまま（瞳が光の下で動いて見える）
+      const eye = GALDROS_EYES[i]!;
+      blob(hide, e.clone().addScaledVector(out, -0.012), out, 0.13, 0.078, 0.066, () => IRIS_RIM, eye, part.head, 10, 5);
+      blob(glow, e.clone().addScaledVector(out, 0.012), out, 0.11, 0.058, 0.052, () => IRIS, eye, part.head, 10, 5);
+      blob(hide, e.clone().addScaledVector(out, 0.052), out, 0.036, 0.027, 0.027, () => BLACK, eye, part.head, 8, 4);
       blob(glow, e.clone().addScaledVector(out, 0.066).add(new Vector3(0, 0.02, 0)).addScaledVector(axis, 0.014), out, 0.012, 0.009, 0.009, () => GLINT, HEAD, part.head, 5, 3);
       const lidColor = (p: Vector3): RGB => shade(SKIN_PLAIN, 0.8 + 0.25 * fbm(p.x * 30, p.y * 30, p.z * 30, 2));
       // 上まぶた（骨で下りる）と、下まぶた（動かない）
@@ -592,8 +660,24 @@ export class GaldrosRig implements MonsterRig {
     legSpecs.forEach((s, i) => {
       const r = legRest[i]!;
       const L = GALDROS_LEGS[i]!;
+      const E = GALDROS_LEG_EXTRAS[i]!;
       const pid = s.front ? part.foreleg : part.hindleg;
       const k = s.front ? 1 : 0.95;
+      // 趾の骨（前脚 4 本・後脚 3 群）の x。足の先の皮は x で近い 2 本に分け、爪は近い 1 本に付ける（v0.36.0）
+      const digitX = E.digits.map((b) => GALDROS_NEW_BONE_REST[GALDROS_BONES[b]!.name]![0]);
+      const order = digitX.map((x, j) => [x, j] as const).sort((a, b) => a[0] - b[0]);
+      const digitSkin = (x: number, w: number): [number, number][] => {
+        if (x <= order[0]![0]) return [[E.digits[order[0]![1]]!, w]];
+        for (let j = 0; j + 1 < order.length; j++) {
+          const [x0, a] = order[j]!, [x1, b] = order[j + 1]!;
+          if (x <= x1) {
+            const f = sstep(x0, x1, x);
+            return [[E.digits[a]!, w * (1 - f)], [E.digits[b]!, w * f]];
+          }
+        }
+        return [[E.digits[order[order.length - 1]![1]]!, w]];
+      };
+      const nearestDigit = (x: number): number => E.digits[order.reduce((best, o) => (Math.abs(o[0] - x) < Math.abs(best[0] - x) ? o : best))[1]]!;
       // [付け根からの割合(0=付け根,1=関節,2=足首), 半径]
       const prof: [number, number][] = [[-0.12, 0.52], [0.12, 0.53], [0.4, 0.5], [0.75, 0.46], [1.0, 0.44], [1.25, 0.43], [1.6, 0.41], [1.85, 0.41], [2.0, 0.42]];
       const lr: Ring[] = prof.map(([u, rad]) => {
@@ -612,12 +696,35 @@ export class GaldrosRig implements MonsterRig {
         const thick = u < 1 ? 1.14 : 1.04;
         return { c: cpos, right, up, rx: rad * k, top: rad * k * thick, bottom: rad * k * thick, b0, b1, w1, part: pid };
       });
+      const legBase = hide.count;
+      // 脚の皮と足（次の loft まで）は、部位の追従を測る皮に入れる
       loft(hide, lr, {
         seg: 14, exponent: 2.2, noise: 0.022, noiseFreq: 2.6, uRepeat: 2,
+        // 下の節の先の半分は、ねじれの骨（v0.36.0）へ移る: 手首・足首のねじれが、ひじ・ひざから足首まで少しずつ配られる
+        skin: (_r, _a, _p, idx) => {
+          const u = prof[idx]![0];
+          if (u < 1.3) return null;
+          const wf = 0.6 * sstep(1.8, 2.1, u);
+          const wt = sstep(1.3, 1.95, u) * (1 - wf);
+          return [[L.lower, 1 - wt - wf], [E.twist, wt], [L.foot, wf]];
+        },
         bulge: (_r, a, idx) => 0.05 * Math.sin(idx * 2.1 + i) + (idx === 4 ? 0.08 * Math.max(0, Math.sin(a) * (s.front ? -1 : 1)) : 0) + (idx === 6 ? -0.04 : 0),
         atlas: { kinds: [`leg${i}`], t: (_r, idx) => prof[idx]![0], meta: { front: s.front ? 1 : 0 } },
         color: () => WHITE,
       });
+      // ひじ・ひざの輪（u = 1、上と下の節が半分ずつ）の補正形状: 曲げる面の中の、関節からのずれを 1 / cos(BEND_REF / 2) 倍へ戻す量
+      {
+        const ring = prof.findIndex(([u]) => u === 1);
+        const axisH = new Vector3().crossVectors(new Vector3().subVectors(r.joint, r.hip), new Vector3().subVectors(r.ankle, r.joint)).normalize();
+        const shape = new Map<number, Vector3>();
+        for (let k = 0; k <= 14; k++) {
+          const vi = legBase + ring * 15 + k;
+          const off = hide.positionOf(vi).sub(r.joint);
+          off.addScaledVector(axisH, -off.dot(axisH));
+          shape.set(vi, off.multiplyScalar(bendFix(BEND_REF)));
+        }
+        bendShapes.push(shape);
+      }
       // 足: 平たく広い。かかと側は足首の骨、前半分は指の骨に付く（踏み切りで指が反る）。
       const fx = r.ankle.x, fz = r.ankle.z;
       const foot: Ring[] = [];
@@ -626,17 +733,26 @@ export class GaldrosRig implements MonsterRig {
       }
       loft(hide, foot, {
         seg: 16, exponent: 2.6, noise: 0.012, uRepeat: 2, capStart: DARK, capEnd: DARK,
+        // 足の先（爪の付け根より前）は、趾の骨（v0.36.0）へ移る。x で近い 2 本を混ぜる（後脚は内・中・外の 3 群）
+        skin: (rr, _a, p, _idx, d) => {
+          const wd = sstep(0.3, 0.5, rr.c.z - fz);
+          if (wd <= 0) return null;
+          const wToe = d.find(([b]) => b === L.toe)?.[1] ?? 0;
+          return [...d.filter(([b]) => b !== L.toe), [L.toe, wToe * (1 - wd)], ...digitSkin(p.x, wToe * wd)];
+        },
         // 指の間のくぼみ（4 本指）
         bulge: (_r, a, idx) => (idx >= 5 ? -0.1 * Math.pow(Math.abs(Math.sin(Math.cos(a) * 3.3)), 6) * sstep(-0.2, 0.5, Math.sin(a)) : 0),
         atlas: { kinds: [`foot${i}`], t: (rr) => rr.c.z - fz, meta: { front: s.front ? 1 : 0 } },
         // 足の裏は暗く
         color: (_p, n) => shade(WHITE, 1 - 0.55 * sstep(-0.35, -0.8, n.y)),
       });
+      pool(legBase);
+      // 爪 4 本: どれも、x で近い趾の骨に付く（前脚は 1 本ずつ。後脚は内・中・中・外）
       for (const cx of [-0.36, -0.12, 0.12, 0.36]) {
-        horn(hide, new Vector3(fx + cx * k, 0.13, fz + 0.5 - Math.abs(cx) * 0.3), new Vector3(cx * 0.5, -0.1, 1), 0.27, 0.115, HORN, L.toe, pid, new Vector3(0, -0.1, 0));
+        horn(hide, new Vector3(fx + cx * k, 0.13, fz + 0.5 - Math.abs(cx) * 0.3), new Vector3(cx * 0.5, -0.1, 1), 0.27, 0.115, HORN, nearestDigit(fx + cx * k), pid, new Vector3(0, -0.1, 0));
       }
-      // かかとのけづめ
-      horn(hide, new Vector3(fx - s.side * 0.1, 0.24, fz - 0.36), new Vector3(-s.side * 0.2, 0.25, -1), 0.2, 0.07, HORN_DARK, L.foot, pid, new Vector3(0, -0.06, 0));
+      // かかとのけづめ（前脚は、けづめの骨 digit_05）
+      horn(hide, new Vector3(fx - s.side * 0.1, 0.24, fz - 0.36), new Vector3(-s.side * 0.2, 0.25, -1), 0.2, 0.07, HORN_DARK, E.spur ?? L.foot, pid, new Vector3(0, -0.06, 0));
       // 肩・腰の筋肉のふくらみ（脚が動いても付け根に隙間が出ない）
       const lump: Ring[] = [];
       const lc = new Vector3(s.hip[0] * 0.93, s.hip[1] - 0.02, s.hip[2]);
@@ -645,7 +761,11 @@ export class GaldrosRig implements MonsterRig {
         const rr = Math.max(0.02, Math.sin(Math.PI * (0.06 + 0.88 * t)));
         lump.push({ c: lc.clone().add(new Vector3(0, 0, -0.56 + 1.12 * t)), right: X, up: Y, rx: 0.42 * rr, top: 0.52 * rr, bottom: 0.5 * rr, b0: s.front ? CHEST : PELVIS, b1: L.upper, w1: 0.35, part: pid });
       }
-      loft(hide, lump, { seg: 12, noise: 0.02, uRepeat: 2, atlas: { kinds: [`lump${i}`], t: (rr) => rr.c.z, density: [0.6], meta: { front: s.front ? 1 : 0, cy: lc.y, top: 0.52, bottom: 0.5 } }, color: () => WHITE });
+      // 前脚の付け根のふくらみは、肩甲（v0.36.0）にも付く（胸 0.35・肩甲 0.3・上腕 0.35。肩甲が動かなければ v0.35.0 と同じ形）
+      const scap = s.front ? GALDROS_SCAPULAE[i]! : null;
+      const lumpBase = hide.count;
+      loft(hide, lump, { seg: 12, noise: 0.02, uRepeat: 2, skin: scap === null ? undefined : () => [[CHEST, 0.35], [scap, 0.3], [L.upper, 0.35]], atlas: { kinds: [`lump${i}`], t: (rr) => rr.c.z, density: [0.6], meta: { front: s.front ? 1 : 0, cy: lc.y, top: 0.52, bottom: 0.5 } }, color: () => WHITE });
+      pool(lumpBase);
     });
 
     // ---- 岩板（1 枚ずつ骨に付く） ----
@@ -743,7 +863,19 @@ export class GaldrosRig implements MonsterRig {
       this.root.add(mesh);
       return mesh;
     };
-    skin(hide, hideMat, 'hide');
+    this.hideMesh = skin(hide, hideMat, 'hide');
+    {
+      // ひじ・ひざの補正形状を、皮のメッシュの形の変化（morph target）として付ける（頂点の数・並びは変えない。焼いた陰と絵の区画はそのまま）
+      const geo = this.hideMesh.geometry;
+      const n = geo.getAttribute('position').count;
+      geo.morphAttributes.position = bendShapes.map((shape) => {
+        const arr = new Float32Array(n * 3);
+        for (const [vi, d] of shape) arr.set([d.x, d.y, d.z], vi * 3);
+        return new Float32BufferAttribute(arr, 3);
+      });
+      geo.morphTargetsRelative = true;
+      this.hideMesh.updateMorphTargets();
+    }
     skin(rock, rockMat, 'rock');
     this.capMesh = skin(cap, rockMat, 'cap');
     this.domeMesh = skin(dome, rockMat, 'dome');
@@ -817,6 +949,54 @@ export class GaldrosRig implements MonsterRig {
       this.debrisGeo.push(plain(g));
     }
     this.extras.push(this.debrisGroup);
+  }
+
+  /**
+   * 焼き付け用（v0.36.0。#12 の M3「部位の追従」）: 体の座標の点 p に、いちばん近い皮（胴・あご・脚・足・付け根のふくらみ）の頂点の重み（骨と重み）。
+   * 部位の形の端を、見える皮と同じに動かすために使う（npm run monsters:bake。一般の種の CreatureRig.skinOf と同じ決まり）。
+   * accept を渡すと、その頂点の骨の並びが合う頂点だけから選ぶ（頭の形は頭の皮から、など。体の中の点が、別の部位の皮を拾わないように）
+   */
+  skinOf(p: Vector3, accept?: (bones: readonly number[]) => boolean): { bones: number[]; w: number[] } {
+    const geo = this.hideMesh.geometry;
+    const pos = geo.getAttribute('position'), si = geo.getAttribute('skinIndex'), sw = geo.getAttribute('skinWeight');
+    let best = -1, bd = Infinity;
+    const list: number[] = [];
+    for (const [from, to] of this.skinPool) {
+      for (let i = from; i < to; i++) {
+        if (accept) {
+          list.length = 0;
+          for (let k = 0; k < 4; k++) if (sw.getComponent(i, k) > 0) list.push(si.getComponent(i, k));
+          if (!accept(list)) continue;
+        }
+        const d = (pos.getX(i) - p.x) ** 2 + (pos.getY(i) - p.y) ** 2 + (pos.getZ(i) - p.z) ** 2;
+        if (d < bd) {
+          bd = d;
+          best = i;
+        }
+      }
+    }
+    if (best < 0) throw new Error(`部位の追従: 点 ${p.toArray().join(',')} に合う皮の頂点が無い`);
+    const bones: number[] = [], w: number[] = [];
+    for (let k = 0; k < 4; k++) {
+      const wk = sw.getComponent(best, k);
+      if (wk > 0) {
+        bones.push(si.getComponent(best, k));
+        w.push(wk);
+      }
+    }
+    return { bones, w };
+  }
+
+  /** 焼き付け用（v0.36.0）: 形を作った時の点 p を、重み s で骨に乗せた、いまの位置（ワールド。体が原点・向き 0 なら体の座標） */
+  skinned(p: Vector3, s: { bones: number[]; w: number[] }): Vector3 {
+    this.root.updateMatrixWorld(true);
+    const inv = this.hideMesh.skeleton.boneInverses;
+    const out = new Vector3(), m = new Matrix4(), v = new Vector3();
+    s.bones.forEach((bi, k) => {
+      m.multiplyMatrices(this.bones[bi]!.matrixWorld, inv[bi]!);
+      out.addScaledVector(v.copy(p).applyMatrix4(m), s.w[k]!);
+    });
+    return out;
   }
 
   hitFlash(partIndex: number): void {
@@ -910,6 +1090,44 @@ export class GaldrosRig implements MonsterRig {
     c.fx.puff(p.x, p.y, p.z, amount);
   }
 
+  /**
+   * 怯み（転倒）が始まってからの秒。戦闘の状態の経過 tick（全体 − 残り。その tick を数え終えた後の値）から、
+   * 技の renderTick と同じ数え方で、前の tick から alpha の分だけ進める（alpha = 1 で経過 tick ちょうど）
+   */
+  private staggerSec(m: MonsterState, alpha: number): number {
+    return Math.max(0, m.staggerTotal - m.staggerTicks - 1 + Math.min(1, Math.max(0, alpha))) / 60;
+  }
+
+  /**
+   * 眼（v0.36.0。#12 の M2）: まぶたと別に、狩人を目で追う（頭の向きの残りの分だけ。眼の回る量は 0.32 まで）。
+   * 追わない時は、ゆっくり辺りを見る（気付いていない）・上へ回る（眠る）・ふらつく（倒れている）。死んだら止まる。
+   * 乱数は使わない（まばたき・しぐさの乱数の並びを変えないため。時刻の区切りの hash で決める）。
+   */
+  private aimEyes(m: MonsterState, c: MonsterRigCtx, P: Pose, time: number, dt: number, resting: boolean): void {
+    if (m.dead) return;
+    const head = this.bones[HEAD]!;
+    const track = !!c.lookAt && m.aware && !resting && P.look > 0;
+    let target: Vector3 | null = null;
+    // 計算用の値は眼だけのもの（this.v1〜v5 は、打ち付ける脚の足先などを持ち越しているので使わない）
+    const [tv, dir] = this.eyeTmp;
+    const [q, qi] = this.eyeTmpQ;
+    if (track) target = head.worldToLocal(tv!.set(c.lookAt!.x, c.lookAt!.y + 1.1, c.lookAt!.z));
+    const slot = Math.floor(time / 1.9);
+    const wYaw = resting ? 0 : P.look > 0 || !m.aware ? (hash3(slot, 5, 13) - 0.5) * 0.45 : 0.3 * Math.sin(time * 1.7);
+    const wPitch = resting ? -0.2 : P.look > 0 || !m.aware ? (hash3(slot, 7, 29) - 0.5) * 0.16 + (m.aware ? 0 : 0.12) : 0.12 * Math.sin(time * 1.1 + 1);
+    const MAX = 0.32;
+    for (let i = 0; i < 2; i++) {
+      const out = EYE_OUT[i]!;
+      if (target) dir!.copy(target).sub(this.eyeLocal[i]!).normalize();
+      else dir!.copy(out).applyAxisAngle(Y, wYaw).applyAxisAngle(LID_AXIS[i]!, wPitch).normalize();
+      q!.setFromUnitVectors(out, dir!);
+      const ang = 2 * Math.acos(clamp(q!.w, -1, 1));
+      if (ang > MAX) q!.copy(qi!.identity().slerp(q!, MAX / ang));
+      this.eyeQ[i]!.slerp(q!, 1 - Math.exp(-dt * 22));
+      this.bones[GALDROS_EYES[i]!]!.quaternion.copy(this.eyeQ[i]!);
+    }
+  }
+
   update(m: MonsterState, c: MonsterRigCtx): void {
     const B = this.bones;
     const dt = Math.min(0.05, Math.max(0, c.dt));
@@ -973,6 +1191,8 @@ export class GaldrosRig implements MonsterRig {
     // ================= 姿勢の量を層ごとに足す =================
     const P = resetPose(this.pose);
     let slamLeg = -1, pawLeg = -1, pawT = 0, pawAmp = 1, limp = 0, tailYaw = 0, tailPitch = 0, tailDriveTarget = 0, kick = 0;
+    /** 倒れた脚がもがく動きの時刻（転倒の間は、怯みの経過時間。v0.36.0） */
+    let kickTime = time;
     const slamTarget = this.v5;
 
     // ---- 呼吸・まばたき・基本の構え ----
@@ -1374,16 +1594,19 @@ export class GaldrosRig implements MonsterRig {
     } else if (m.staggerTicks > 0 && m.staggerTotal > 0) {
       const u = 1 - m.staggerTicks / m.staggerTotal;
       if (m.staggerKind === 'topple') {
-        // 横倒しになってもがき、最後に体を起こす
+        // 横倒しになってもがき、最後に体を起こす。倒れる向き（右 = −X 側が下）と、もがく動きの時刻は、戦闘の状態（怯みの経過 tick）だけで決まる
+        // （v0.36.0。#12 の M3: 部位の判定の表を同じ状態から作る。描画の時計・前のフレームでは決めない）
         const k = smoothstep(u / 0.12) * (1 - smoothstep((u - 0.82) / 0.18));
-        const struggle = Math.sin(time * 5.5);
+        const st = this.staggerSec(m, c.alpha);
+        const struggle = Math.sin(st * 5.5);
+        kickTime = st;
         P.roll += 1.12 * k + 0.07 * k * struggle;
         P.y += 0.12 * k;
         P.x += -0.4 * k;
-        P.yaw += 0.05 * k * Math.sin(time * 3.1);
-        P.neckPitch += -0.25 * k + 0.2 * k * Math.sin(time * 4.2);
+        P.yaw += 0.05 * k * Math.sin(st * 3.1);
+        P.neckPitch += -0.25 * k + 0.2 * k * Math.sin(st * 4.2);
         P.headRoll += -0.35 * k;
-        P.neckYaw += 0.3 * k * Math.sin(time * 2.6);
+        P.neckYaw += 0.3 * k * Math.sin(st * 2.6);
         P.jaw += 0.38 * k + 0.1 * k * struggle;
         P.tongue += 0.5 * k;
         P.tailWag = 5;
@@ -1425,7 +1648,8 @@ export class GaldrosRig implements MonsterRig {
       P.x += -0.4 * k;
       P.neckPitch += -0.25 * k;
       P.headRoll += -0.35 * k;
-      P.neckYaw += 0.3 * k * Math.sin(time * 2.3);
+      // 首のふらつきは、気絶の残りの tick で決める（v0.36.0。戦闘の判定の表と同じ。STUN_LOOP tick でひと回り）
+      P.neckYaw += 0.3 * k * Math.sin((2 * Math.PI * ail.stun) / STUN_LOOP);
       P.jaw += 0.3 * k;
       P.tongue += 0.4 * k;
       P.lid = Math.max(P.lid, 0.6 * k);
@@ -1503,7 +1727,9 @@ export class GaldrosRig implements MonsterRig {
     B[CHEST]!.rotation.set(P.archF * 0.5, fYaw * 0.5, 0);
     B[LUMBAR]!.rotation.set(P.archR * 0.5, rYaw * 0.5, 0);
     B[PELVIS]!.rotation.set(P.archR * 0.5, rYaw * 0.5, 0);
-    B[RIBS]!.scale.set(1 + P.breath, 1 + P.breath * 0.6, 1 + P.breath * 0.15);
+    // 胸郭: 左右の骨（v0.36.0）。横倒しの時は、上になった側が大きく息をし、下の側は押されて小さい（立っている時は左右同じで v0.35.0 と同じ）
+    const lean = clamp(P.roll / 1.12, -1, 1);
+    for (const [b, h] of [[RIBS_L, 1 + 0.5 * lean], [RIBS_R, 1 - 0.5 * lean]] as const) B[b]!.scale.set(1 + P.breath * h, 1 + P.breath * 0.6 * h, 1 + P.breath * 0.15 * h);
     // 首と頭: 胸の左右の揺れを打ち消して、頭は狙った向きを保つ
     const neckYaw = P.neckYaw + this.lookYaw * 0.6 - chestSwing * 0.7;
     const neckPitch = P.neckPitch + this.lookPitch * 0.5 - P.archF * 0.5;
@@ -1515,6 +1741,8 @@ export class GaldrosRig implements MonsterRig {
     B[TONGUE]!.position.z = 0.36 + 0.1 * P.tongue;
     this.lid += (P.lid - this.lid) * (1 - Math.exp(-dt * 30));
     for (let i = 0; i < 2; i++) B[GALDROS_LIDS[i]!]!.quaternion.setFromAxisAngle(LID_AXIS[i]!, 0.95 * this.lid);
+    // 舌の先（v0.36.0）: 舌を出している間だけ、先が反って揺れる
+    B[TONGUE2]!.rotation.set(-0.5 * P.tongue * (0.7 + 0.3 * Math.sin(time * 19 + 0.7)), 0.2 * P.tongue * Math.sin(time * 13), 0);
     // 岩板の揺れ
     const rat = Math.min(1.5, this.rattle);
     for (let i = 0; i < PLATE_N; i++) {
@@ -1554,6 +1782,8 @@ export class GaldrosRig implements MonsterRig {
 
     // ================= 脚: 足首の置き場所を決めてから、ひじ・ひざを解く =================
     this.root.updateMatrixWorld(true);
+    // 眼（v0.36.0）: 頭の向きが決まった後に、まぶたと別に向ける
+    this.aimEyes(m, c, P, time, dt, resting);
     const rootQ = this.root.quaternion;
     const bodyQ = body.getWorldQuaternion(this.q5);
     // 先読みは 0.3m まで（突進の速さでそのまま掛けると足が体の前へ飛び出す）
@@ -1575,10 +1805,11 @@ export class GaldrosRig implements MonsterRig {
       if (l.fresh || !this.started) {
         l.plant.copy(home);
         l.t = 1;
+        l.plantYaw = yaw;
       }
       if (limp > 0.5) {
         // 倒れている: 脚は体に付いて投げ出される。転倒中は交互に蹴ってもがく。
-        const k1 = Math.sin(time * 6.2 + i * 1.9), k2 = Math.sin(time * 4.3 + i * 2.7);
+        const k1 = Math.sin(kickTime * 6.2 + i * 1.9), k2 = Math.sin(kickTime * 4.3 + i * 2.7);
         const len = (l.l1 + l.l2) * (0.72 + 0.16 * kick * k1);
         target.copy(l.restDown).applyQuaternion(bodyQ).multiplyScalar(len).add(hipW);
         target.addScaledVector(this.v4.set(0, 0, 1).applyQuaternion(bodyQ), (l.front ? 0.18 : -0.18) + 0.3 * kick * k2);
@@ -1601,7 +1832,10 @@ export class GaldrosRig implements MonsterRig {
         // 掻いた土が後ろへ飛ぶ
         if (s < -0.92 && cs < 0 && pawAmp > 0.4) c.fx?.puff(target.x, ground + 0.15, target.z, 1);
       } else {
-        if (this.wasLimp) l.plant.copy(home);
+        if (this.wasLimp) {
+          l.plant.copy(home);
+          l.plantYaw = yaw;
+        }
         const err = Math.hypot(l.plant.x - home.x, l.plant.z - home.z);
         if (l.t >= 1) {
           const stretched = hipW.distanceTo(this.v4.set(l.plant.x, ground + ANKLE_H, l.plant.z)) > (l.l1 + l.l2) * 0.985;
@@ -1609,9 +1843,12 @@ export class GaldrosRig implements MonsterRig {
           const mate = 3 - i;
           const othersUp = airborne.some((up, j) => up && j !== i && j !== mate);
           const threshold = (l.front ? 0.16 : 0.2) + (speed < 0.3 ? 0.1 : 0);
-          if (err > 2.2) l.plant.copy(home);
-          else if (stretched || (err > threshold && !othersUp)) {
+          if (err > 2.2) {
+            l.plant.copy(home);
+            l.plantYaw = yaw;
+          } else if (stretched || (err > threshold && !othersUp)) {
             l.from.copy(l.plant);
+            l.fromYaw = l.plantYaw;
             l.dur = Math.max(0.11, 0.3 - speed * 0.04) * (dragging ? 1.5 : 1);
             l.t = 0;
             airborne[i] = true;
@@ -1652,6 +1889,8 @@ export class GaldrosRig implements MonsterRig {
         }
       }
       if (landed) {
+        l.plantYaw = yaw;
+        l.splay = 1;
         c.fx?.footfall(l.plant.x, ground, l.plant.z, clamp(0.45 + speed * 0.09, 0.4, 1.4));
         this.rattle = Math.max(this.rattle, 0.22 + gallop * 0.4);
       }
@@ -1671,10 +1910,51 @@ export class GaldrosRig implements MonsterRig {
       const qL = this.q3.setFromUnitVectors(_a.copy(l.restL).applyQuaternion(qU).normalize(), dirL).multiply(qU);
       l.lower.quaternion.copy(qU).invert().multiply(qL);
       // 足の裏: 接地中は地面に平行。倒れている時は脚に付いていく。踏み切りでは、かかとが上がって指が反る。
-      const qF = loose ? this.q4.copy(qL) : this.q4.copy(rootQ).multiply(_q.setFromAxisAngle(X, footPitch));
+      // 足の向き（v0.36.0）: 接地している間は、体が向きを変えても踏み直すまで向きを保ち（趾が地面を滑らない）、踏み出しの間に体の向きへ寄せる。
+      // 打ち付ける脚・地面を掻く脚・駆け足・倒れている時は、体の向きのまま（v0.35.0 と同じ）
+      let footYaw = yaw;
+      if (!loose && i !== slamLeg && i !== pawLeg && gallop <= 0.5) {
+        const lag = wrapPi(yaw - l.plantYaw);
+        if (Math.abs(lag) > 0.6) l.plantYaw = yaw - Math.sign(lag) * 0.6;
+        footYaw = l.t >= 1 ? l.plantYaw : l.fromYaw + wrapPi(yaw - l.fromYaw) * smoothstep(l.t);
+      } else l.plantYaw = yaw;
+      const qF = loose ? this.q4.copy(qL) : this.q4.copy(rootQ).multiply(_q.setFromAxisAngle(Y, wrapPi(footYaw - yaw))).multiply(_q.setFromAxisAngle(X, footPitch));
       l.foot.quaternion.copy(qL).invert().multiply(qF);
       l.toe.rotation.x = loose ? 0.25 * Math.sin(time * 7 + i) * kick : -Math.max(0, footPitch) * 0.85;
+      // ねじれの骨（v0.36.0）: 足のねじれ（下の節の軸まわりの回転）の半分。ひじ・ひざから足首までの皮に、ねじれを配る
+      const qr = l.foot.quaternion, ax = l.axisL;
+      l.twist.quaternion.setFromAxisAngle(ax, 0.5 * wrapPi(2 * Math.atan2(qr.x * ax.x + qr.y * ax.y + qr.z * ax.z, qr.w)));
+      // 趾（v0.36.0）: 踏み出しの間は曲げて縮め、着地で開いて戻る。打ち付ける脚は爪を立てて開く。倒れている・眠る時は力なく曲がる
+      const swingK = l.t < 1 ? Math.sin(Math.PI * l.t) : 0;
+      l.splay *= Math.exp(-dt * 5);
+      let curl = 0.32 * swingK, spread = 0.07 * l.splay;
+      if (gallop > 0) curl += (0.3 * Math.max(0, -Math.sin(this.runPhase + [0, 0.7, 3.3, 4.0][i]!)) - curl) * gallop;
+      if (loose) {
+        curl = 0.35 + 0.15 * Math.sin(kickTime * 5 + i * 1.7) * kick;
+        spread = 0;
+      } else if (i === slamLeg) {
+        curl = -0.28;
+        spread = 0.12;
+      } else if (resting) curl = Math.max(curl, 0.22);
+      l.digits.forEach((d, j) => d.rotation.set(curl, l.digitSide[j]! * spread * l.side, 0));
+      l.spur?.rotation.set(0.25 * swingK, 0, 0);
     });
+    // ひじ・ひざの補正形状の強さ（v0.36.0）: 下の節の、上の節に対する回転の量から（基準の姿勢で 0）
+    const infl = this.hideMesh.morphTargetInfluences!;
+    this.legs.forEach((l, i) => {
+      const delta = 2 * Math.acos(Math.min(1, Math.abs(l.lower.quaternion.w)));
+      infl[i] = bendFix(delta) / bendFix(BEND_REF);
+    });
+    // 肩甲（v0.36.0）: 上腕の前後の振りの 3 割で傾き、前後に少し滑る。開けば外へ傾く（肩のふくらみだけを曲げる枝の骨。脚の付け根の位置は変えない）
+    for (let i = 0; i < 2; i++) {
+      const l = this.legs[i]!;
+      const d = this.v1.copy(l.restU).applyQuaternion(l.upper.quaternion);
+      const swing = Math.atan2(d.z, -d.y) - Math.atan2(l.restU.z, -l.restU.y);
+      const abd = (Math.asin(clamp(d.x, -1, 1)) - Math.asin(clamp(l.restU.x, -1, 1))) * l.side;
+      const sc = B[GALDROS_SCAPULAE[i]!]!;
+      sc.rotation.set(-0.3 * swing, 0, 0.25 * abd * l.side);
+      sc.position.copy(this.scapRest[i]!).add(this.v2.set(0, -0.03 * Math.abs(swing), 0.07 * swing));
+    }
     this.wasLimp = limp > 0.5;
     this.started = true;
   }

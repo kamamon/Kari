@@ -537,8 +537,10 @@ export interface MonsterDef {
  */
 export interface FollowShapeDef {
   part: string;
-  /** 部位の shapes の何番目か */
+  /** 部位の shapes の何番目か（after が true なら、切断の後の sever.shapesAfter の何番目か） */
   i: number;
+  /** v0.36.0: 切断した後に残る形（sever.shapesAfter）の動き。残った骨だけで動く */
+  after?: boolean;
   d: number[][];
 }
 export interface FollowSetDef {
@@ -553,12 +555,26 @@ export interface FollowDef {
   actions: Record<string, FollowSetDef>;
   /** 技以外の、決まった姿勢（sleep = 眠っている・捕獲された） */
   poses?: Record<string, FollowSetDef>;
+  /**
+   * v0.36.0（#12 の M3）: 技以外の、時間で動く状態。ticks は表を作った時の長さで、鍵は技と同じ（step ごと + 最後の tick）。
+   * topple = 転倒、flinch = 転倒でない怯み（怯み・部位破壊・切断。経過の割合で引く）、stun = 気絶（残りの tick を ticks で割った余りで引く、繰り返しの表）
+   */
+  states?: Partial<Record<FollowStateId, FollowStateDef>>;
 }
-/** 読み込んだ後の形: [部位の番号][形の番号] → ずれの列（cm。鍵ごとに 6 つ）か null */
+export type FollowStateId = 'topple' | 'flinch' | 'stun';
+export interface FollowStateDef extends FollowSetDef {
+  ticks: number;
+}
+/**
+ * 読み込んだ後の形: [部位の番号][形の番号] → ずれの列（cm。鍵ごとに 6 つ）か null。
+ * 切断のある部位は、形の番号の後ろに、切断の後の形（shapesAfter）の番号が続く（shapes.length + i。v0.36.0）
+ */
 export interface FollowTable {
   step: number;
   actions: Map<string, (Int16Array | null)[][]>;
   sleep: (Int16Array | null)[][] | null;
+  /** v0.36.0: 転倒・怯み・気絶（ticks は表の長さ） */
+  states: Partial<Record<FollowStateId, { ticks: number; grid: (Int16Array | null)[][] }>>;
 }
 
 /**

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.35.0",
+  "contentVersion": "0.36.0",
   "files": {
     "actions": [
       "actions/player_common.json",
@@ -150,7 +150,8 @@
       "follow/kohalgis.json",
       "follow/mitogaron.json",
       "follow/yurtepica.json",
-      "follow/hinasalv.json"
+      "follow/hinasalv.json",
+      "follow/galdros.json"
     ]
   }
 }

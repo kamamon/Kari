@@ -70,6 +70,11 @@ const MONSTER_IDS = { dummy: 'monster.training_dummy', galdros: 'monster.galdros
 type MonsterKey = keyof typeof MONSTER_IDS;
 const monsters = {} as Record<MonsterKey, { m: MonsterState; rig: MonsterRig }>;
 let damaged = false;
+/**
+ * 確認用（v0.36.0）: 技以外の姿勢を見る。?pose=topple|flinch|sleep|stun|dead と ?tick=（転倒・怯み・死の経過 tick）。
+ * 戦闘の状態（怯みの種類・残り・全体、睡眠、気絶、死）を置いて、ゲームと同じ update を通す。部位の形（追従）も同じ状態から出る。
+ */
+let posePreview: { kind: 'topple' | 'flinch' | 'sleep' | 'stun' | 'dead'; tick: number } | null = null;
 const socketAxes: AxesHelper[] = [];
 for (const s of Object.values(hunter.sockets)) {
   const a = new AxesHelper(0.14);
@@ -451,6 +456,18 @@ function frame(ts: number): void {
       m.parts[i]!.broken = damaged && d.breakDurability !== null;
       m.parts[i]!.severed = damaged && !!d.sever;
     });
+    if (posePreview) {
+      const k = posePreview.kind, at = state.playing ? Math.floor(time * 60) : posePreview.tick;
+      const total = k === 'topple' ? 190 : 46;
+      m.action = null;
+      m.asleep = k === 'sleep';
+      m.ailments.ticks.stun = k === 'stun' ? 100 : 0;
+      m.dead = k === 'dead';
+      m.deadTicks = at;
+      m.staggerKind = k === 'topple' || k === 'flinch' ? k : null;
+      m.staggerTotal = m.staggerKind ? total : 0;
+      m.staggerTicks = m.staggerKind ? Math.max(1, total - (at % total)) : 0;
+    }
     rig.update(m, { alpha: t - Math.floor(t), dt, time, content });
     if (state.shapes) {
       for (const sh of monsterShapes(m)) debug.capsule(sh.a, sh.b, sh.r, [0.5, 0.8, 1]);
@@ -539,6 +556,11 @@ async function main(): Promise<void> {
     if (!q.has('yaw')) state.camYaw = 0;
   }
   if (q.has('damaged')) damaged = true;
+  const pz = q.get('pose');
+  if (pz === 'topple' || pz === 'flinch' || pz === 'sleep' || pz === 'stun' || pz === 'dead') {
+    setSubject('galdros');
+    posePreview = { kind: pz, tick: Number(q.get('tick') ?? 0) };
+  }
   // 確認用の静止画のための指定: 距離、見上げ・見下ろしの角度、注目する高さと前後
   if (q.has('dist')) state.camDist = Number(q.get('dist'));
   if (q.has('pitch')) state.camPitch = Number(q.get('pitch'));

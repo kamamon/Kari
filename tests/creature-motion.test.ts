@@ -16,6 +16,7 @@ import { CREATURE_PLANS } from '../src/render/creaturePlans';
 import { sampleMove, type Pose } from '../src/render/creatureMoves';
 import { CreatureRig } from '../src/render/creatureRig';
 import type { BindPlan } from '../src/render/creaturePlan';
+import { GALDROS_ID, bakeGaldrosFollow } from './galdrosFollow';
 import { loadContent } from './helpers';
 
 let content: Content;
@@ -164,8 +165,10 @@ function writeFollow(docs: Map<string, FollowDef>): void {
     const f = `follow/${id.split('.')[1]}.json`;
     files.push(f);
     const rows = (o: Record<string, FollowSetDef>): string[] => Object.entries(o).map(([k, v], i, all) => `  ${JSON.stringify(k)}: ${JSON.stringify(v)}${i < all.length - 1 ? ',' : ''}`);
+    // 転倒・怯み・気絶の表（v0.36.0。いまはガルドロスだけ）
+    const states = d.states && Object.keys(d.states).length ? [' "states": {', ...rows(d.states as Record<string, FollowSetDef>), ' }'] : [];
     const text = ['{', ` "schemaVersion": ${d.schemaVersion},`, ` "monsterId": ${JSON.stringify(d.monsterId)},`, ` "step": ${d.step},`, ` "note": ${JSON.stringify(d.note)},`,
-      ' "actions": {', ...rows(d.actions), ' },', ' "poses": {', ...rows(d.poses ?? {}), ' }', '}', ''].join('\n');
+      ' "actions": {', ...rows(d.actions), ' },', ' "poses": {', ...rows(d.poses ?? {}), states.length ? ' },' : ' }', ...states, '}', ''].join('\n');
     mkdirSync(resolve(ROOT, 'public/data/follow'), { recursive: true });
     writeFileSync(resolve(ROOT, 'public/data', f), text);
   }
@@ -182,6 +185,8 @@ describe('攻撃を受ける部位の追従（v0.25.0）', () => {
     if (BAKE) {
       const docs = bakeFollow();
       expect(docs.size).toBe(Object.keys(CREATURE_PLANS).length);
+      // ガルドロスの表（v0.36.0。#12 の M3。専用の描画の骨から作る: tests/galdrosFollow.ts）
+      docs.set(GALDROS_ID, bakeGaldrosFollow(content));
       writeFollow(docs);
       return;
     }

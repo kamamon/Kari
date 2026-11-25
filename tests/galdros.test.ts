@@ -222,7 +222,12 @@ describe('部位・切断・怯み・怒り', () => {
     const ev = sim.drainEvents();
     expect(ev.filter((e) => e.type === 'part_sever')).toHaveLength(1);
     expect(m.staggerKind).toBe('sever');
-    // -Z 向きなので、尾はワールドの +Z 側へ伸びる。切断後は 0.8m 短い（判定の先端が z -2.9 → -2.1）。
+    // 切断の怯みの間も、残った尾の形は残った骨で動く（v0.36.0。追従の表の after。切った先の骨には乗らない）
+    const during = reach();
+    expect(Math.abs(before - 0.8 - during)).toBeLessThan(0.3);
+    // 怯みが終わった姿で比べる: -Z 向きなので、尾はワールドの +Z 側へ伸びる。切断後は 0.8m 短い（判定の先端が z -2.9 → -2.1）。
+    m.staggerTicks = 0;
+    m.staggerKind = null;
     expect(before - reach()).toBeCloseTo(0.8, 5);
     // 2 回は切れない
     applyDamageToMonster(m, tail, 500, 'cut', sim);

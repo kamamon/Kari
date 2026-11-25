@@ -1108,6 +1108,23 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.waitForTimeout(200);
   const text = await page.textContent('#panel');
   check('ビューア: 仮リグの全高が 1.75m', /全高 1\.7[45]\dm/.test(text), (text.match(/全高 [\d.]+m/) ?? [''])[0]);
+  // v0.36.0（#12 の M2・M3）: ガルドロスの転倒の姿勢を、ビューアで戦闘と同じ状態から描く。骨 79 本・ひじ・ひざの補正形状が効いていて、部位の形も倒れている
+  await page.goto(`http://localhost:${PORT}${BASE}viewer.html?pose=topple&tick=90&yaw=-0.4&dist=8&pitch=0.35`);
+  await page.waitForFunction(() => window.__viewer, null, { timeout: 15000 });
+  const topple = await until(page, () => {
+    const g = window.__viewer?.monsters?.galdros;
+    if (!g) return false;
+    const hide = g.rig.root.children.find((o) => o.name === 'hide');
+    const infl = hide?.morphTargetInfluences ?? [];
+    return g.m.staggerKind === 'topple' && g.rig.bones.length === 79 && infl.length === 4 && infl.some((v) => v > 0.05) && g.rig.root.children.length > 0;
+  }, 8000);
+  const toppleInfo = await page.evaluate(() => {
+    const g = window.__viewer.monsters.galdros;
+    const hide = g.rig.root.children.find((o) => o.name === 'hide');
+    return { bones: g.rig.bones.length, infl: (hide?.morphTargetInfluences ?? []).map((v) => v.toFixed(2)).join(' '), kind: g.m.staggerKind };
+  });
+  await page.screenshot({ path: `${OUT}galdros_topple_follow.png` });
+  check('ビューア: ガルドロスの転倒（?pose=topple）を描け、骨 79 本・ひじ・ひざの補正形状 4 つが効いている', topple, `骨 ${toppleInfo.bones} / 補正 ${toppleInfo.infl} / ${toppleInfo.kind}`);
   // 武器の一覧: 設定図から組んだ仮モデルは、絵がすべて読み込める（v0.24.0 から、大槌・双剣・太刀も依頼 6 の設定図から。大槌は正面と真横の 2 枚）
   const rackOk = await until(page, () => {
     const rack = window.__viewer?.rack;

@@ -281,6 +281,29 @@ export class Geo {
     this.si[o + 2] = bone;
     this.sw[o + 2] = w;
   }
+  /**
+   * 頂点 i の骨の影響を、まとめて決め直す（v0.36.0）。同じ骨は足し合わせ、重みの大きい 4 本までを残して、合計を 1 にする。
+   * 重みが全部 0 なら何もしない。
+   */
+  setSkin(i: number, inf: readonly (readonly [number, number])[]): void {
+    const sum = new Map<number, number>();
+    for (const [b, w] of inf) if (w > 0) sum.set(b, (sum.get(b) ?? 0) + w);
+    const list = [...sum.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0]).slice(0, 4);
+    const total = list.reduce((t, [, w]) => t + w, 0);
+    if (total <= 0) return;
+    const o = i * 4;
+    for (let k = 0; k < 4; k++) {
+      const e = list[k];
+      this.si[o + k] = e ? e[0] : 0;
+      this.sw[o + k] = e ? e[1] / total : 0;
+    }
+  }
+  /** 頂点 i の骨の影響（[骨, 重み] の列。重み 0 は入れない） */
+  skinOf(i: number): [number, number][] {
+    const out: [number, number][] = [];
+    for (let k = 0; k < 4; k++) if (this.sw[i * 4 + k]! > 0) out.push([this.si[i * 4 + k]!, this.sw[i * 4 + k]!]);
+    return out;
+  }
   positionOf(i: number): Vector3 {
     return new Vector3(this.pos[i * 3]!, this.pos[i * 3 + 1]!, this.pos[i * 3 + 2]!);
   }
@@ -325,6 +348,11 @@ export interface Ring {
 export interface LoftOpts {
   /** 3 本目の骨と、その重み（頂点ごと）。 */
   third?: { bone: number; weight: (ring: Ring, a: number, p: Vector3) => number };
+  /**
+   * 頂点ごとの骨の影響を、まとめて決め直す（v0.36.0。[骨, 重み] の列。4 本まで。null は輪の重みのまま）。
+   * ふたの頂点にも使う（a は角度、ふたの真ん中は NaN）。third より後に効く。
+   */
+  skin?: (ring: Ring, a: number, p: Vector3, index: number, def: readonly (readonly [number, number])[]) => readonly (readonly [number, number])[] | null;
   seg: number;
   /** 断面の角ばり。2 で楕円、大きいほど四角に近い */
   exponent?: number;
@@ -401,7 +429,11 @@ export function loft(g: Geo, rings: Ring[], o: LoftOpts): void {
       if (n.lengthSq() < 1e-12) n.copy(out);
       n.normalize();
       if (n.dot(out) < 0) n.negate();
-      g.vert(p, n, o.color(p, n, r, A[kk]!), (k / seg) * uRep, vAcc, r.b0, r.b1, r.w1, r.part, o.third?.bone ?? 0, o.third ? o.third.weight(r, A[kk]!, p) : 0);
+      const vi = g.vert(p, n, o.color(p, n, r, A[kk]!), (k / seg) * uRep, vAcc, r.b0, r.b1, r.w1, r.part, o.third?.bone ?? 0, o.third ? o.third.weight(r, A[kk]!, p) : 0);
+      if (o.skin) {
+        const sk = o.skin(r, A[kk]!, p, i, g.skinOf(vi));
+        if (sk) g.setSkin(vi, sk);
+      }
     }
   }
   const w = seg + 1;
@@ -465,8 +497,16 @@ export function loft(g: Geo, rings: Ring[], o: LoftOpts): void {
     const other = rings[start ? 1 : rings.length - 2]!;
     if (axis.dot(new Vector3().subVectors(r.c, other.c)) < 0) axis.negate();
     const center = g.vert(r.c, axis, color, 0.5, 0.5, r.b0, r.b1, r.w1, r.part);
+    const reskin = (vi: number, a: number, p: Vector3): void => {
+      const sk = o.skin?.(r, a, p, ri, g.skinOf(vi));
+      if (sk) g.setSkin(vi, sk);
+    };
+    reskin(center, Number.NaN, r.c);
     const ringIdx: number[] = [];
-    for (let k = 0; k < seg; k++) ringIdx.push(g.vert(P[ri]![k]!, axis, color, 0.5 + 0.5 * Math.cos(A[k]!), 0.5 + 0.5 * Math.sin(A[k]!), r.b0, r.b1, r.w1, r.part));
+    for (let k = 0; k < seg; k++) {
+      ringIdx.push(g.vert(P[ri]![k]!, axis, color, 0.5 + 0.5 * Math.cos(A[k]!), 0.5 + 0.5 * Math.sin(A[k]!), r.b0, r.b1, r.w1, r.part));
+      reskin(ringIdx[k]!, A[k]!, P[ri]![k]!);
+    }
     const fa = new Vector3().crossVectors(new Vector3().subVectors(P[ri]![0]!, r.c), new Vector3().subVectors(P[ri]![1]!, r.c));
     const ccw = fa.dot(axis) > 0;
     for (let k = 0; k < seg; k++) {

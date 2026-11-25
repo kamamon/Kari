@@ -1,9 +1,11 @@
-// ガルドロスの骨の名前の表（v0.30.0。ChatGPT のモンスターの解剖 #12 の M1「骨と部位の対応」）。
+// ガルドロスの骨の名前の表（v0.30.0。ChatGPT のモンスターの解剖 #12 の M1「骨と部位の対応」。v0.36.0 で M2 の 26 本を足した）。
 //
-// 骨の番号（Skeleton の並び = 皮と岩板の重みの番号）は、v0.29.0 までと同じ 0〜52。
+// 骨の番号（Skeleton の並び = 皮と岩板の重みの番号）は、0〜52 が v0.29.0 までと同じ。53〜78 は v0.36.0 で足した骨（#12 の M2）。
 // 番号を直接書かず、足し算（「脚の先頭 + 4 × i」など）もしない。どの参照も、この表の名前 → 番号を通る。
 // 名前は #12 の設計の 79 ノードの名前（docs/source/chatgpt-monster-anatomy-20261125/galdros_rig_blueprint_recovered_v3.json）。
-// 設計の残り 26 ノード（肩甲・前腕と下腿のねじれ・趾・右の胸郭・眼・舌の先）は、まだ骨にしない（M2。名前を足しただけでは完成にしない）。
+// 足した 26 本（肩甲・右の胸郭・舌の先・眼・前腕と下腿のねじれ・前脚の 5 趾・後脚の 3 群）は、どれも皮か爪を曲げる骨で、
+// 動きは描画の側が、いまの 53 本の姿勢から決める（いまの 53 本の動きは変えない。決まりは docs/spec.md の 22.6、D-118）。
+// 設計との違い: 肩甲は上腕の親にしない（上腕の付け根の位置が、判定の軌道データの肩と合わなくなるため。上腕の振りに付いて行く枝の骨）。
 // socket（武器や効果を付ける点）は、いまのガルドロスには無い（#12 でも 12 の socket の定義は復旧できていない。正式モデル化の入口で決める）。
 //
 // 描画の側だけのデータ（simulation は読まない）。
@@ -18,7 +20,7 @@ export interface GaldrosBoneDef {
   /** 親の骨の名前（根は null） */
   readonly parent: string | null;
   readonly kind: GaldrosBoneKind;
-  /** 設計では、まだ骨の無いノード（追加案）が親の時の、その名前。いまは parent に付いている */
+  /** 設計の親と、いまの親が違う時の、設計の親の名前（上腕: 設計は肩甲。いまは胸に付く。D-118） */
   readonly designParent?: string;
   /** 役目 */
   readonly role: string;
@@ -50,7 +52,7 @@ export const GALDROS_BONES: readonly GaldrosBoneDef[] = [
   { name: 'pelvis', parent: 'lumbar', kind: 'deform', role: '骨盤（後脚と尾の付け根）' },
   { name: 'thorax', parent: 'body', kind: 'deform', role: '背骨の胸の側' },
   { name: 'chest', parent: 'thorax', kind: 'deform', role: '胸（前脚と首の付け根）' },
-  { name: 'ribs_l', parent: 'body', kind: 'deform', role: '胸郭（呼吸でふくらむ脇腹と腹。いまは左右とも。右の ribs_r は M2）' },
+  { name: 'ribs_l', parent: 'body', kind: 'deform', role: '胸郭の左（呼吸でふくらむ左の脇腹と腹。腹の真ん中で右と混ぜる）' },
   { name: 'neck_01', parent: 'chest', kind: 'deform', role: '首の付け根' },
   { name: 'neck_02', parent: 'neck_01', kind: 'deform', role: '首の先' },
   { name: 'head', parent: 'neck_02', kind: 'deform', role: '頭（上あご・角・目）' },
@@ -75,6 +77,23 @@ export const GALDROS_BONES: readonly GaldrosBoneDef[] = [
   plate('plate_hip_r', 'pelvis', '腰（右）'),
   plate('plate_forearm_l', 'fore_lower_l', '前脚の外側の甲（左）'),
   plate('plate_forearm_r', 'fore_lower_r', '前脚の外側の甲（右）'),
+  // ---- v0.36.0（#12 の M2）で足した 26 本。並びは設計の表の並び ----
+  ...(['l', 'r'] as const).map((s): GaldrosBoneDef => ({ name: `scapula_${s}`, parent: 'chest', kind: 'deform', role: `肩甲（${s === 'l' ? '左' : '右'}。上腕の振りに付いて滑る。肩のふくらみを曲げる）` })),
+  { name: 'ribs_r', parent: 'body', kind: 'deform', role: '胸郭の右（呼吸でふくらむ右の脇腹と腹）' },
+  { name: 'tongue_02', parent: 'tongue_01', kind: 'deform', role: '舌の先（反る・巻く）' },
+  ...(['l', 'r'] as const).map((s): GaldrosBoneDef => ({ name: `eye_${s}`, parent: 'head', kind: 'deform', role: `眼（${s === 'l' ? '左' : '右'}。まぶたと別に、狩人を目で追う）` })),
+  ...(['l', 'r'] as const).flatMap((s): GaldrosBoneDef[] => [
+    { name: `fore_lower_twist_${s}`, parent: `fore_lower_${s}`, kind: 'deform', role: '前腕のねじれ（手首のねじれの半分を、前腕の先の皮へ配る。脚の関節を解く鎖には入らない枝）' },
+    ...[1, 2, 3, 4].map((n): GaldrosBoneDef => ({ name: `digit_0${n}_${s}`, parent: `palm_${s}`, kind: 'deform', role: `前脚の趾 ${n}（${n === 1 ? '内側' : n === 4 ? '外側' : '中'}。爪 1 本と、足の先の皮）` })),
+    { name: `digit_05_${s}`, parent: `wrist_${s}`, kind: 'deform', role: '前脚のけづめ' },
+  ]),
+  ...(['l', 'r'] as const).flatMap((s): GaldrosBoneDef[] => [
+    { name: `hind_lower_twist_${s}`, parent: `hind_lower_${s}`, kind: 'deform', role: '下腿のねじれ（足首のねじれの半分を、下腿の先の皮へ配る。枝の骨）' },
+    ...(['inner', 'middle', 'outer'] as const).map((g): GaldrosBoneDef => ({
+      name: `toes_${g}_${s}`, parent: `metatarsus_${s}`, kind: 'deform',
+      role: `後脚の趾の${g === 'inner' ? '内' : g === 'middle' ? '中' : '外'}の群（足の先の皮の範囲。爪は 4 本のまま、近い群に付く）`,
+    })),
+  ]),
 ];
 
 /** 名前 → 骨の番号 */
@@ -105,14 +124,42 @@ export const GALDROS_PLATES: readonly number[] = [
 /** 上まぶた（左・右） */
 export const GALDROS_LIDS: readonly number[] = [galdrosBone('lid_l'), galdrosBone('lid_r')];
 
-/** 設計の 79 ノードのうち、まだ骨にしていない 26（M2 で、関節の軸・可動域・重み・補正と一緒に足す） */
-export const GALDROS_PLANNED_NODES: readonly string[] = [
-  'scapula_l', 'scapula_r', 'ribs_r', 'tongue_02', 'eye_l', 'eye_r',
-  'fore_lower_twist_l', 'digit_01_l', 'digit_02_l', 'digit_03_l', 'digit_04_l', 'digit_05_l',
-  'fore_lower_twist_r', 'digit_01_r', 'digit_02_r', 'digit_03_r', 'digit_04_r', 'digit_05_r',
-  'hind_lower_twist_l', 'toes_inner_l', 'toes_middle_l', 'toes_outer_l',
-  'hind_lower_twist_r', 'toes_inner_r', 'toes_middle_r', 'toes_outer_r',
-];
+/** v0.29.0 までの骨の数（0〜52。この並びと動きは変えない） */
+export const GALDROS_LEGACY_BONES = 53;
+/** 胸郭（左・右） */
+export const GALDROS_RIBS: readonly number[] = [galdrosBone('ribs_l'), galdrosBone('ribs_r')];
+/** 眼（左・右） */
+export const GALDROS_EYES: readonly number[] = [galdrosBone('eye_l'), galdrosBone('eye_r')];
+/** 肩甲（前左・前右） */
+export const GALDROS_SCAPULAE: readonly number[] = [galdrosBone('scapula_l'), galdrosBone('scapula_r')];
+/**
+ * 脚ごとの、ねじれの骨と、趾の骨（GALDROS_LEGS と同じ並び: 前左・前右・後左・後右）。
+ * digits は前脚が 4 本の前向きの趾（内 → 外）、後脚が 3 群（内・中・外）。spur は前脚のけづめ（後脚は無い）。
+ */
+export const GALDROS_LEG_EXTRAS: readonly { twist: number; digits: readonly number[]; spur: number | null }[] = [
+  ['fore', 'l'], ['fore', 'r'], ['hind', 'l'], ['hind', 'r'],
+].map(([k, s]) => k === 'fore'
+  ? { twist: galdrosBone(`fore_lower_twist_${s}`), digits: [1, 2, 3, 4].map((n) => galdrosBone(`digit_0${n}_${s}`)), spur: galdrosBone(`digit_05_${s}`) }
+  : { twist: galdrosBone(`hind_lower_twist_${s}`), digits: ['inner', 'middle', 'outer'].map((g) => galdrosBone(`toes_${g}_${s}`)), spur: null });
+
+/**
+ * v0.36.0 で足した骨の基準の位置（体の空間、m）。#12 の設計の表（galdros_rig_blueprint_recovered_v3.json。小数第 3 位）の値。
+ * 前脚の趾は 4 本の爪の付け根の後ろ、けづめは手首のけづめの付け根、後脚の 3 群は足の先の内・中・外。ねじれは下の節の真ん中。
+ */
+export const GALDROS_NEW_BONE_REST: Readonly<Record<string, readonly [number, number, number]>> = (() => {
+  const half: Record<string, [number, number, number]> = {
+    scapula: [0.78, 1.7, 0.82], eye: [0.375, 1.735, 2.2],
+    fore_lower_twist: [1.116, 0.496, 0.994],
+    digit_01: [0.74, 0.11, 1.446], digit_02: [0.98, 0.11, 1.482], digit_03: [1.22, 0.11, 1.482], digit_04: [1.46, 0.11, 1.446], digit_05: [1.0, 0.24, 0.82],
+    hind_lower_twist: [1.059, 0.495, -0.834], toes_inner: [0.77, 0.1, -0.66], toes_middle: [1.04, 0.1, -0.62], toes_outer: [1.31, 0.1, -0.66],
+  };
+  const out: Record<string, readonly [number, number, number]> = { ribs_r: [0, 1.2, 0.15], tongue_02: [0, 1.44, 2.3] };
+  for (const [k, [x, y, z]] of Object.entries(half)) {
+    out[`${k}_l`] = [x, y, z];
+    out[`${k}_r`] = [-x, y, z];
+  }
+  return out;
+})();
 
 export interface BoneRest {
   /** 骨の名前（Bone.name に付ける） */

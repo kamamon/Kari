@@ -1,7 +1,7 @@
 // モンスターの状態と行動選択（訓練標的とガルドロスで共通）。
 // 技は開始時に一度だけ抽選し、攻撃中に毎 tick 選び直さない。旋回は turning.untilTick まで。
 // 本体 HP・部位の耐久・切断の蓄積・怯みの蓄積・怒りは、それぞれ別の値として持つ。
-import { followShape } from './follow';
+import { followShape, staggerFollowTick } from './follow';
 import { DEG, angleDiff, forwardOf, fromArr, toWorld, turnToward, v3, yawOf, type V3 } from '../core/math';
 import type { SeededRng } from '../core/seededRng';
 import type { DamageType, MonsterAiChoice, MonsterDef } from '../data/schemas';
@@ -144,22 +144,36 @@ export function resetMonster(m: MonsterState): void {
 /** 部位の当たり形状（ワールド座標）。並び順が「同時接触の固定優先順」になる。切断済みの部位は短い形状へ替わる。 */
 export function monsterShapes(m: MonsterState): WorldShape[] {
   const out: WorldShape[] = [];
-  // 部位の追従（v0.25.0。src/game/follow.ts）: 技の間と、眠っている間は、表のとおりに形を動かす
+  // 部位の追従（v0.25.0。src/game/follow.ts）: 技の間と、眠っている間は、表のとおりに形を動かす。
+  // v0.36.0（#12 の M3）: 転倒・怯み（部位破壊・切断を含む）・気絶の間も、戦闘の状態（経過・残りの tick）から引く。切断の後は、残った形の表
   const fol = m.def.follow;
   let grid: (Int16Array | null)[][] | null = null;
   let tick = 0, dur = 1;
   if (fol && !m.dead) {
+    const st = fol.states;
     if (m.action) {
       grid = fol.actions.get(m.action.def.actionId) ?? null;
       tick = m.action.tick;
       dur = m.action.def.durationTicks;
+    } else if (m.staggerTicks > 0 && m.staggerKind) {
+      const s = m.staggerKind === 'topple' ? st.topple : st.flinch;
+      if (s) {
+        grid = s.grid;
+        dur = s.ticks;
+        tick = staggerFollowTick(m.staggerTotal - m.staggerTicks, m.staggerTotal, s.ticks);
+      }
     } else if ((m.asleep || m.captured || m.ailments.ticks.sleep > 0) && fol.sleep) grid = fol.sleep;
+    else if (m.ailments.ticks.stun > 0 && st.stun) {
+      grid = st.stun.grid;
+      dur = st.stun.ticks;
+      tick = m.ailments.ticks.stun % st.stun.ticks;
+    }
   }
   m.def.parts.forEach((part, i) => {
     const severed = m.parts[i]!.severed && part.sever;
     const shapes = severed ? part.sever!.shapesAfter : part.shapes;
     shapes.forEach((s, j) => {
-      const d = !severed && grid ? grid[i]?.[j] : null;
+      const d = grid ? grid[i]?.[severed ? part.shapes.length + j : j] : null;
       out.push(shapeToWorld(d ? followShape(s, d, tick, dur, fol!.step) : s, i, m.pos, m.yaw));
     });
   });
