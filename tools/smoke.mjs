@@ -1105,13 +1105,13 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.waitForTimeout(200);
   const text = await page.textContent('#panel');
   check('ビューア: 仮リグの全高が 1.75m', /全高 1\.7[45]\dm/.test(text), (text.match(/全高 [\d.]+m/) ?? [''])[0]);
-  // 武器の一覧: 設定図から組んだ仮モデル（護刃・断岳剣・長尖槍・環弓）は絵がすべて読み込める。大槌・双剣・太刀は絵の無い仮の形
+  // 武器の一覧: 設定図から組んだ仮モデルは、絵がすべて読み込める（v0.24.0 から、大槌・双剣・太刀も依頼 6 の設定図から。大槌は正面と真横の 2 枚）
   const rackOk = await until(page, () => {
     const rack = window.__viewer?.rack;
-    return !!rack && ['guardShield', 'guardSword', 'heavyBlade', 'heavyBladeShell', 'lance', 'greatShield', 'bow', 'arrow', 'quiver'].every((k) => rack[k] && rack[k].triangles > 50 && rack[k].art.length > 0 && rack[k].art.every((a) => a.loaded && !a.failed))
-      && ['warMaul', 'twinBladeR', 'twinBladeL', 'longBlade'].every((k) => rack[k] && rack[k].triangles > 20 && rack[k].art.length === 0);
+    return !!rack && ['guardShield', 'guardSword', 'heavyBlade', 'heavyBladeShell', 'lance', 'greatShield', 'bow', 'arrow', 'quiver', 'warMaul', 'twinBladeR', 'twinBladeL', 'longBlade'].every((k) => rack[k] && rack[k].triangles > 50 && rack[k].art.length > 0 && rack[k].art.every((a) => a.loaded && !a.failed))
+      && rack.warMaul.art.length === 2;
   }, 15000);
-  check('ビューア: 7 武器の 13 点（護刃の剣・盾、断岳剣と岩殻の断岳剣、長尖槍の槍・大盾、環弓・矢・矢筒は形と絵。大槌・双剣 2 本・太刀は絵の無い仮の形）を読み込める', rackOk);
+  check('ビューア: 7 武器の 13 点（護刃の剣・盾、断岳剣と岩殻の断岳剣、長尖槍の槍・大盾、環弓・矢・矢筒、大槌・双剣 2 本・太刀）の形と絵を読み込める', rackOk);
   // 強化後（岩殻の〜）の形: ?tier=2 で並ぶ
   await page.goto(`http://localhost:${PORT}${BASE}viewer.html?subject=weapons&tier=2`);
   check('ビューア: ?tier=2 で、強化後（岩殻の〜）の形が 7 武器ぶん並ぶ', await until(page, () => {
@@ -1576,7 +1576,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     };
   });
   check('図鑑: 依頼の欄に、86 種（78 種と幼体 8 種）が段階ごとに並ぶ（初級 13 / 13、中級 20 / 20、上級 25 / 25、極級 20 / 20）。遊べるのは、はじめの 12 種と幼体 8 種で、原画あり 66、案 0（v0.24.0 で原画案 73 枚を受け取った）',
-    zukan.shown && zukan.summary === 'モンスター図鑑（78 種・幼体 8 種）' && zukan.n === 86 && zukan.heads.join('|') === '初級から 13 / 13 種 幼体 8|中級から 20 / 20 種|上級から 25 / 25 種|極級から 20 / 20 種' && zukan.done.split(',').length === 20 && zukan.done.startsWith('monster.galdros,monster.selvark') && zukan.done.endsWith('monster.yurtepica,monster.hinasalv') && zukan.art === 66 && zukan.planned === 0 && zukan.lazy === 6, JSON.stringify({ ...zukan, rare: '', juv: '', fieldText: '' }));
+    zukan.shown && zukan.summary === 'モンスター図鑑（78 種・幼体 8 種）' && zukan.n === 86 && zukan.heads.join('|') === '初級から 13 / 13 種 幼体 8|中級から 20 / 20 種|上級から 25 / 25 種|極級から 20 / 20 種' && zukan.done.split(',').length === 20 && zukan.done.startsWith('monster.galdros,monster.selvark') && zukan.done.endsWith('monster.yurtepica,monster.hinasalv') && zukan.art === 66 && zukan.planned === 0 && zukan.lazy === 5, JSON.stringify({ ...zukan, rare: '', juv: '', fieldText: '' }));
   check('図鑑: 原画のある種を開くと、原画と、生態 8 項目が出る。体と動きがまだ無いことが分かる。遊べる種には「仮の形」と出る', zukan.img === 720 && /まだありません/.test(zukan.cap) && /食べ物,行動と気性,なわばり,1 日の動き,巣と眠り,ほかとの関わり,幼体,痕跡$/.test(zukan.eco) && /仮の形/.test(zukan.selCap), JSON.stringify({ img: zukan.img, cap: zukan.cap, selCap: zukan.selCap, eco: zukan.eco }));
   check('図鑑: 希少種には、もとの種と、一緒に出る相手が出る。幼体には、群れの数と、幼体自身の原画案（体はまだ親の絵から）が出る。超大型は、原画案だけで体が無いと分かる。ガルドロスは採用した設定図',
     /上級|大型・希少種/.test(zukan.rare) && /もとの種/.test(zukan.rareLabels) && /一緒に出る相手/.test(zukan.rareLabels) && /帆角獣 セルヴァルク/.test(zukan.rare) && /裂扇獣 グラセドン/.test(zukan.rare) && /群れ3〜5 体/.test(zukan.juv) && /岩殻獣 ガルドロス/.test(zukan.juv) && /^超大型／巨躯／沈根沢地／水・睡眠$/.test(zukan.hugeTags) && /原画案.*まだありません/.test(zukan.hugeCap) && zukan.hugeState === '原画あり'
