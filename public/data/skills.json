@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "note": "tools/gen-equipment.py（npm run equipment:gen）の出力。手で編集しない。ChatGPT の全装備四級版（#15）の rules.skills のうち、いまの計算で働く技能（docs/spec.md の 30 章）。Lv は防具の点の合計（1 部位 1 点、3 まで）。values は Lv 1〜3 の値",
+  "source": "docs/source/chatgpt-equipment-20261125/data/all-equipment.json",
+  "skills": [
+    {"id": "guard_economy", "name": "受け支え", "values": [8, 14, 20], "unit": "%", "effect": "ガード時のスタミナ消費を軽減。削りダメージや防御範囲は変えない。"},
+    {"id": "edge_keep", "name": "刃持ち", "values": [5, 9, 13], "unit": "%", "effect": "刃・打面の消耗を軽減。弓には効果なし。"},
+    {"id": "dodge_economy", "name": "身軽", "values": [5, 9, 13], "unit": "%", "effect": "回避スタミナ消費を軽減。無敵時間・移動距離は変えない。"},
+    {"id": "stamina_recovery", "name": "息継ぎ", "values": [4, 7, 10], "unit": "%", "effect": "自然スタミナ回復速度を増す。回復開始までの遅延は変えない。"},
+    {"id": "part_damage", "name": "砕き", "values": [5, 9, 13], "unit": "%", "effect": "破壊・切断専用の蓄積を増す。HP、通常怯み、気絶は増やさない。"},
+    {"id": "element_tuning", "name": "属性調律", "values": [4, 7, 10], "unit": "%", "effect": "属性部分だけを増す。"},
+    {"id": "status_tuning", "name": "状態調律", "values": [4, 7, 10], "unit": "%", "effect": "毒・麻痺・睡眠の蓄積を増す。気絶は対象外。"},
+    {"id": "weak_crit", "name": "急所観察", "values": [4, 7, 10], "unit": "会心ポイント", "effect": "物理肉質0.55以上の命中に加算。会心は物理部分のみ、合計上限60%。"},
+    {"id": "stun_tuning", "name": "響打", "values": [4, 7, 10], "unit": "%", "effect": "気絶判定のある打撃技が頭部へ命中した時だけ蓄積を増す。"},
+    {"id": "item_efficiency", "name": "道具整備", "values": [5, 9, 13], "unit": "%", "effect": "許可した整備用アイテムの使用時間だけを短縮。回復量や無敵時間は増やさない。"},
+    {"id": "status_resistance", "name": "個別状態耐性", "values": [20, 35, 50], "unit": "%", "effect": "指定した状態異常の必要蓄積を増す。対象status必須。"},
+    {"id": "element_resistance", "name": "個別属性耐性", "values": [3, 6, 9], "unit": "耐性ポイント", "effect": "指定した属性の防具耐性へ加算。対象element必須。"}
+  ]
+}

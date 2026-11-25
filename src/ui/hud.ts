@@ -13,6 +13,10 @@ import { DEPOT_REACH, NODE_REACH, errandProgress, errandReady, openNodes } from 
 import type { InputHub } from '../input/hub';
 import type { GameView } from '../render/view';
 import { counterOf, questGoal, shortName } from './targets';
+import type { StatusKind } from '../data/schemas';
+
+/** モンスターに状態異常が付いた時の知らせ（v0.33.0） */
+const AILMENT_ON: Record<StatusKind, string> = { poison: 'が毒になった', para: 'が麻痺した', sleep: 'が眠った', stun: 'が気絶した' };
 import { withIcon } from './icons';
 
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls: string, parent: HTMLElement, text = ''): HTMLElementTagNameMap[K] {
@@ -313,6 +317,26 @@ export class Hud {
           break;
         case 'monster_aware':
           this.toast('気付かれた');
+          break;
+        case 'monster_ailment': {
+          // 状態異常（v0.33.0）: 付いた時と、眠りから覚めた時、毒が抜けた時
+          const m = byId(e.target);
+          const who = m?.herd ? shortName(m.def.name) : '標的';
+          if (e.on) this.toast(`${who}${AILMENT_ON[e.kind]}`);
+          else if (e.woke) this.toast(`${who}が目を覚ました`);
+          else if (e.kind === 'poison') this.toast(`${who}の毒が抜けた`);
+          break;
+        }
+        case 'ailment_damage':
+          if (this.verify) {
+            const s = view.project(e.pos);
+            if (s.visible) {
+              const d = el('div', 'dmg poison', this.dmgLayer, String(e.damage));
+              d.style.left = `${s.x}px`;
+              d.style.top = `${s.y}px`;
+              setTimeout(() => d.remove(), 820);
+            }
+          }
           break;
         case 'monster_rage':
           this.toast(e.on ? '怒り状態' : '怒りが収まった');

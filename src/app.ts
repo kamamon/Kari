@@ -792,6 +792,10 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
         case 'player_hurt':
           play('hurt');
           break;
+        case 'monster_ailment':
+          // モンスターの状態異常（v0.33.0）: 付いた時に音（知らせは HUD）
+          if (e.on) play('status_on', small(e.target));
+          break;
         case 'status':
           // 状態異常（v0.17.0）: 付いた時に音と知らせ。消えた時は、知らせだけ（毒）
           if (e.on) {

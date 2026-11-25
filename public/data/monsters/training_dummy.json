@@ -15,7 +15,7 @@
     {
       "id": "head", "name": "頭",
       "hitzone": {"cut": 0.70, "blunt": 0.80, "shot": 0.60}, "elementZone": 0.20,
-      "breakDurability": 150, "material": "rock",
+      "breakDurability": 150, "material": "rock", "head": true,
       "shapes": [{"a": [0, 1.25, 1.75], "r": 0.50}]
     },
     {

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.32.0",
+  "contentVersion": "0.33.0",
   "files": {
     "actions": [
       "actions/player_common.json",
@@ -126,6 +126,8 @@
     "support": "support.json",
     "deliveries": "deliveries.json",
     "appearance": "appearance.json",
+    "elements": "elements.json",
+    "skills": "skills.json",
     "equipment": [
       "equipment_series.json"
     ],

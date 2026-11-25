@@ -297,6 +297,8 @@ export class GaldrosRig implements MonsterRig {
   private flashUniform = { value: new Float32Array(8) };
   /** 捕獲されてからの時間（眠る姿勢へ移る） */
   private capT = 0;
+  /** 気絶で倒れている重み（v0.33.0。0〜1） */
+  private stunW = 0;
   /** 焼いた陰が、いまの形（頂点の数）と合っていて、すべて掛けられたか */
   aoApplied = true;
   /** 皮の絵を貼る区画（書き出しと検査用） */
@@ -939,8 +941,8 @@ export class GaldrosRig implements MonsterRig {
     const enraged = m.enraged && !m.dead;
     // 弱っている合図は、捕獲の条件と同じ値（モンスターのデータの capture.hpRatio）を使う
     const weak = isWeak(m);
-    // 眠る姿勢: 捕獲された時と、巣で眠っている時（フィールド）。起きた時は、すばやく立ち上がる
-    const resting = m.captured || (m.asleep && !m.dead);
+    // 眠る姿勢: 捕獲された時と、巣で眠っている時（フィールド）と、状態異常の睡眠（v0.33.0）。起きた時は、すばやく立ち上がる
+    const resting = m.captured || ((m.asleep || m.ailments.ticks.sleep > 0) && !m.dead);
     this.capT = resting ? this.capT + c.dt : m.dead ? 0 : Math.max(0, Math.min(this.capT, 1.4) - c.dt * 3.2);
     // 怒り: 晶脈と目が赤く脈打つ
     const rage = enraged ? 0.6 + 0.4 * Math.sin(time * 7) : 0;
@@ -1006,7 +1008,7 @@ export class GaldrosRig implements MonsterRig {
     }
 
     // ---- しぐさ（技も怯みも無く、ほぼ止まっている間だけ） ----
-    const calm = !m.action && m.staggerTicks <= 0 && !m.dead && !resting && m.trapTicks <= 0 && speed < 0.45 && Math.abs(this.yawVel) < 0.25;
+    const calm = !m.action && m.staggerTicks <= 0 && !m.dead && !resting && m.trapTicks <= 0 && m.ailments.ticks.para <= 0 && m.ailments.ticks.stun <= 0 && speed < 0.45 && Math.abs(this.yawVel) < 0.25;
     const fid = this.fid;
     if (!calm) {
       fid.kind = '';
@@ -1402,6 +1404,34 @@ export class GaldrosRig implements MonsterRig {
         P.rattle = Math.max(P.rattle, k);
         P.look = 0.3;
       }
+    }
+    // ---- 状態異常（v0.33.0）: 麻痺は固まって細かく震える。気絶は横倒しになって、首がふらつく（睡眠は上の「眠る」）----
+    const ail = m.ailments.ticks;
+    if (!m.dead && !resting && ail.para > 0) {
+      P.roll += 0.04 * Math.sin(time * 47);
+      P.pitch += 0.02 * Math.sin(time * 41 + 1);
+      P.neckYaw += 0.1 * Math.sin(time * 39 + 2);
+      P.jaw += 0.35;
+      P.jitter += 0.04;
+      P.tailWag = 0;
+      P.look = 0;
+    }
+    const stunT = !m.dead && !resting && ail.stun > 0 ? 1 : 0;
+    this.stunW += (stunT - this.stunW) * (1 - Math.exp(-dt * (stunT ? 6 : 3)));
+    if (this.stunW > 0.001) {
+      const k = smoothstep(this.stunW);
+      P.roll += 1.12 * k;
+      P.y += 0.12 * k;
+      P.x += -0.4 * k;
+      P.neckPitch += -0.25 * k;
+      P.headRoll += -0.35 * k;
+      P.neckYaw += 0.3 * k * Math.sin(time * 2.3);
+      P.jaw += 0.3 * k;
+      P.tongue += 0.4 * k;
+      P.lid = Math.max(P.lid, 0.6 * k);
+      P.tailWag = 0;
+      P.look = 0;
+      limp = Math.max(limp, k);
     }
 
     // ---- 歩きに合わせた体の揺れ（足の上げ下げと前後から求める） ----

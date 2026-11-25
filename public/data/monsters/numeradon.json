@@ -9,6 +9,9 @@
   "turnDegPerSec": 50,
   "moveSpeed": 2.0,
   "captureAllowed": true,
+  "element": "water",
+  "weak": ["thunder"],
+  "resist": ["water"],
   "lootId": "loot.numeradon",
   "capture": {"hpRatio": 0.25, "tranqNeeded": 2, "tranqDecayTicks": 900},
   "respawnTicks": null,
@@ -18,7 +21,7 @@
   "discover": {"range": 15, "fovDeg": 120, "closeRange": 6, "actionId": "monster.numeradon.roar"},
   "rage": {"threshold": 500, "durationTicks": 2100, "actionId": "monster.numeradon.roar", "speedScale": 1.25, "damageScale": 1.2, "cooldownScale": 0.6},
   "parts": [
-    {"id": "head", "name": "頭", "hitzone": {"cut": 0.7, "blunt": 0.75, "shot": 0.6}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "flinch": {"threshold": 170, "growth": 60, "ticks": 50}, "shapes": [{"a": [0.0, 1.822, 2.277], "b": [0.0, 1.863, 3.271], "r": 0.5}]},
+    {"id": "head", "name": "頭", "hitzone": {"cut": 0.7, "blunt": 0.75, "shot": 0.6}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "head": true, "flinch": {"threshold": 170, "growth": 60, "ticks": 50}, "shapes": [{"a": [0.0, 1.822, 2.277], "b": [0.0, 1.863, 3.271], "r": 0.5}]},
     {"id": "dish", "name": "頭頂の泥皿", "hitzone": {"cut": 0.55, "blunt": 0.7, "shot": 0.5}, "brokenHitzone": {"cut": 0.7, "blunt": 0.85, "shot": 0.65}, "elementZone": 0.2, "breakDurability": 240, "material": "rock", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 2.65, 1.035], "b": [0.0, 2.525, 3.105], "r": 0.45}]},
     {"id": "sacs", "name": "左右の水圧嚢", "hitzone": {"cut": 0.8, "blunt": 0.7, "shot": 0.75}, "brokenHitzone": {"cut": 0.9, "blunt": 0.8, "shot": 0.85}, "elementZone": 0.2, "breakDurability": 200, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.62, 1.822, 1.987], "b": [0.62, 1.822, 2.567], "r": 0.32}, {"a": [-0.62, 1.822, 1.987], "b": [-0.62, 1.822, 2.567], "r": 0.32}]},
     {"id": "foreclaw", "name": "前脚の泥掻き爪", "hitzone": {"cut": 0.5, "blunt": 0.55, "shot": 0.45}, "brokenHitzone": {"cut": 0.6, "blunt": 0.65, "shot": 0.55}, "elementZone": 0.2, "breakDurability": 230, "material": "shell", "flinch": {"threshold": 240, "growth": 80, "ticks": 130, "topple": true}, "shapes": [{"a": [1.05, 0.911, 1.242], "b": [1.05, 0.124, 1.283], "r": 0.42}, {"a": [-1.05, 0.911, 1.242], "b": [-1.05, 0.124, 1.283], "r": 0.42}]},

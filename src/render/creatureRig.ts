@@ -948,6 +948,8 @@ export class CreatureRig implements MonsterRig {
   /** 肌の細かな模様の絵（読み込めるまで null。シェーダーの uniform と同じもの） */
   private skinUniform: { value: Texture | null };
   private toppleSide = 1;
+  /** 気絶で倒れている重み（v0.33.0。0〜1） */
+  private stunW = 0;
   private stepAcc = 0;
   /** 種ごとの構えの重み（v0.21.0） */
   private unaware = 0;
@@ -1324,7 +1326,9 @@ export class CreatureRig implements MonsterRig {
     const enraged = m.enraged && !m.dead;
     const weak = isWeak(m);
     const herd = m.herd;
-    const resting = (m.asleep || m.captured || herd?.mood === 'rest') && !m.dead;
+    // 状態異常の睡眠（v0.33.0）も、巣の眠りと同じ姿勢
+    const slept = m.ailments.ticks.sleep > 0;
+    const resting = (m.asleep || m.captured || herd?.mood === 'rest' || slept) && !m.dead;
     const breathRate = enraged ? 3.2 : weak || (herd && herd.tired > 0) ? 3.6 : herd ? (herd.mood === 'flee' ? 3 : 1.4) : m.aware ? 1.8 : 1.2;
     const br = Math.sin(time * breathRate + this.seed);
     P.pitch += br * 0.012;
@@ -1334,7 +1338,7 @@ export class CreatureRig implements MonsterRig {
     P.tailYaw += Math.sin(time * 0.8 + this.seed) * 0.1;
     P.glow += enraged ? 0.45 + 0.25 * Math.sin(time * 6) : 0.1 + 0.06 * Math.sin(time * 1.6 + this.seed);
     let lookTarget = 0, lookUpTarget = 0;
-    if (c.lookAt && !m.dead && !m.asleep && !m.captured && m.aware && (!herd || isWatching(m))) {
+    if (c.lookAt && !m.dead && !m.asleep && !slept && !m.captured && m.aware && m.ailments.ticks.stun <= 0 && (!herd || isWatching(m))) {
       const head = this.body.spinePts[this.body.spinePts.length - 1]!;
       const hx = px + Math.sin(yaw) * head.z, hz = pz + Math.cos(yaw) * head.z;
       lookTarget = clamp(angleDiff(yaw, Math.atan2(c.lookAt.x - hx, c.lookAt.z - hz)), -0.8, 0.8) * (m.action ? 0.3 : 1);
@@ -1350,7 +1354,8 @@ export class CreatureRig implements MonsterRig {
     P.headPitch += this.lookUp * 0.4;
 
     // ---- 種ごとの構え（v0.21.0）: 気付く前は餌を探し、気付くと身構える。弱ると頭と尾が下がり、怒ると飾りを立てる ----
-    const free = !m.action && !m.dead && !resting && m.staggerTicks <= 0;
+    // 麻痺・気絶（v0.33.0）の間も、しぐさや草を食むような動きはしない
+    const free = !m.action && !m.dead && !resting && m.staggerTicks <= 0 && m.ailments.ticks.para <= 0 && m.ailments.ticks.stun <= 0;
     this.unaware += ((free && !m.aware && !herd ? 1 : 0) - this.unaware) * k2;
     this.alertW += ((free && m.aware && !herd ? 1 - this.runW : 0) - this.alertW) * k2;
     this.weakW += ((weak && !m.dead ? 1 : 0) - this.weakW) * k2;
@@ -1485,6 +1490,30 @@ export class CreatureRig implements MonsterRig {
       P.pitch += Math.sin(time * 0.9) * 0.01 * w;
       lieW = w;
       lieSteady = this.rest >= 1 && m.trapTicks <= 0;
+    }
+    // 状態異常（v0.33.0）: 麻痺は固まって細かく震える。気絶は横へ倒れて、首がふらつく（睡眠は上の「眠る」）
+    const ail = m.ailments.ticks;
+    if (!m.dead && ail.para > 0) {
+      P.roll += Math.sin(time * 47) * 0.05;
+      P.pitch += Math.sin(time * 41 + 1) * 0.03;
+      P.neckYaw += Math.sin(time * 39 + 2) * 0.12;
+      P.headPitch += Math.sin(time * 43) * 0.08;
+      P.jaw += 0.35;
+      P.tailWave += 0.15;
+    }
+    const stunT = !m.dead && ail.stun > 0 ? 1 : 0;
+    if (stunT > 0 && this.stunW < 0.02) this.toppleSide = this.lat >= 0 ? 1 : -1;
+    this.stunW += (stunT - this.stunW) * (1 - Math.exp(-dt * (stunT ? 6 : 3)));
+    if (this.stunW > 0.001) {
+      const w = smoothstep(this.stunW);
+      const lie = this.fitLie('topple', idle?.topple ?? { roll: 1.25, yH: -0.42, neckPitch: -0.2, tailPitch: -0.2, legs: { '*': [0, 0.4, 0.3] } }, H);
+      const tp: Pose = {};
+      addScaled(tp, lie, 1, this.toppleSide);
+      blendInto(P, tp, w);
+      lieW = Math.max(lieW, w);
+      P.neckYaw += Math.sin(time * 2.3 + this.seed) * 0.3 * w;
+      P.headPitch += Math.sin(time * 1.7) * 0.15 * w;
+      P.jaw += 0.25 * w;
     }
     if (m.trapTicks > 0 && !m.dead) {
       this.phase += dt * 2.5;

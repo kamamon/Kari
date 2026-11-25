@@ -2,7 +2,8 @@
 // 状態: free（移動）/ action（データ定義の行動）/ guard / hurt / dead
 import { DEG, angleDiff, forwardOf, turnToward, v3, yawOf, type V3 } from '../core/math';
 import type { SeededRng } from '../core/seededRng';
-import { STATUS_KINDS, type FieldDef, type ActionDef, type Content, type GuardDef, type HazardDef, type ItemDef, type ItemStack, type ShootDef, type StatusHit, type StatusKind, type StatusTuning, type WeaponDef, type WeaponFamilyDef } from '../data/schemas';
+import type { GearEffects } from './gear';
+import { STATUS_KINDS, type FieldDef, type ActionDef, type Content, type GuardDef, type HazardDef, type ItemDef, type ItemStack, type MonsterDef, type ShootDef, type StatusHit, type StatusKind, type StatusTuning, type WeaponDef, type WeaponFamilyDef } from '../data/schemas';
 import { inWindow, newRun, type ActionRun } from './action';
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
@@ -65,6 +66,8 @@ export interface PlayerState {
 
 export interface SimCtx {
   content: Content;
+  /** 装備の効き目（v0.33.0。防具の技能と耐性。src/game/gear.ts）。狩りの間は変わらない */
+  gear: GearEffects;
   world: World;
   /** フィールド（エリアに分かれた狩場）。そうでなければ null */
   field: FieldDef | null;
@@ -74,8 +77,8 @@ export interface SimCtx {
   newInstanceId(): number;
   /** プレイヤーが通り抜けられない円（生きている大型の胴体など） */
   blockers(): Circle[];
-  /** 落下物などを出す。位置は target を基準にこの時点で固定する。 */
-  spawnHazards(def: HazardDef, target: V3, origin?: V3): void;
+  /** 落下物などを出す。位置は target を基準にこの時点で固定する。owner は出した種（属性を持つ種なら、属性の分がハンターの耐性で変わる。v0.33.0） */
+  spawnHazards(def: HazardDef, target: V3, origin?: V3, owner?: MonsterDef): void;
   /** いまこの道具を使い始められるか（罠は狩猟中に 1 つまで、など） */
   canUseItem(item: ItemDef): boolean;
   /** 道具の効果を出す。効果が出なかった時は false を返し、道具は減らない。 */
@@ -123,6 +126,8 @@ function tryUseItem(p: PlayerState, ctx: SimCtx, keepDrawn = false): boolean {
   const item = selectedItem(p, ctx)!;
   const run = startAction(p, item.useActionId, ctx);
   run.keepDrawn = keepDrawn;
+  // 防具の技能「道具整備」（v0.33.0）: 整備の道具（研磨石）を使う時間だけが短くなる（効き目は変えない）
+  if (item.maintenance && ctx.gear.itemTime < 1) run.speed = ctx.gear.itemTime;
   p.itemUse = { itemId: item.id, instanceId: run.instanceId, done: false };
   ctx.emit({ type: 'item_use', itemId: item.id, pos: { ...p.pos } });
   return true;
@@ -196,8 +201,10 @@ export function applyStatus(p: PlayerState, s: StatusHit, ctx: SimCtx): void {
   if (p.mode === 'dead' || s.power <= 0) return;
   const S = statusTuning(ctx.content);
   const b = p.ailment.build;
-  b[s.kind] = Math.min(S.threshold, b[s.kind] + s.power);
-  if (b[s.kind] < S.threshold) return;
+  // 防具の技能「個別状態耐性」（v0.33.0）: 発症までにためる量が増える
+  const thr = S.threshold * ctx.gear.statusResist[s.kind];
+  b[s.kind] = Math.min(thr, b[s.kind] + s.power);
+  if (b[s.kind] < thr) return;
   b[s.kind] = 0;
   if (s.kind === 'poison') {
     if (p.ailment.poisonTicks <= 0) ctx.emit({ type: 'status', kind: 'poison', on: true });
@@ -255,6 +262,18 @@ function spendStamina(p: PlayerState, amount: number, ctx: SimCtx): void {
   p.staminaDelay = ctx.content.player.staminaRegenDelayTicks;
 }
 
+/** 回避の行動か（共通の転がる回避と、武器ごとの回避。長尖槍の跳びなど） */
+function isDodgeAction(p: PlayerState, actionId: string, ctx: SimCtx): boolean {
+  return actionId === ctx.content.player.rollActionId || actionId === familyOf(p, ctx.content).actions.dodge;
+}
+
+/** 行動のスタミナの消費。回避は、防具の技能「身軽」で減る（v0.33.0。無敵の区間・動く距離は変えない） */
+export function staminaCostOf(p: PlayerState, def: ActionDef, ctx: SimCtx): number {
+  const c = def.staminaCost ?? 0;
+  if (c <= 0) return 0;
+  return isDodgeAction(p, def.actionId, ctx) ? c * ctx.gear.dodgeStamina : c;
+}
+
 export function startAction(p: PlayerState, actionId: string, ctx: SimCtx): ActionRun {
   const def = ctx.content.actions.get(actionId)!;
   const run = newRun(def, ctx.newInstanceId(), p.yaw);
@@ -262,7 +281,8 @@ export function startAction(p: PlayerState, actionId: string, ctx: SimCtx): Acti
   p.action = run;
   p.guard = null;
   p.hurt = null;
-  if (def.staminaCost) spendStamina(p, def.staminaCost, ctx);
+  const cost = staminaCostOf(p, def, ctx);
+  if (cost > 0) spendStamina(p, cost, ctx);
   // 勢い（双剣）: 始めた時の段階で、この行動の速さと威力が決まる。大技は段階をすべて使う。
   const M = familyOf(p, ctx.content).momentum;
   if (M && def.momentum) {
@@ -283,7 +303,7 @@ function tryStartRoll(p: PlayerState, inp: InputFrame, ctx: SimCtx): boolean {
   // 回避の行動は武器ごと（長尖槍は短い跳び）。無ければ共通の転がる回避。
   const dodgeId = familyOf(p, ctx.content).actions.dodge ?? T.rollActionId;
   const def = ctx.content.actions.get(p.drawn ? dodgeId : T.rollActionId)!;
-  if (p.stamina < (def.staminaCost ?? 0)) {
+  if (p.stamina < staminaCostOf(p, def, ctx)) {
     ctx.emit({ type: 'stamina_empty' });
     return false;
   }
@@ -314,7 +334,7 @@ function tryCancelInto(p: PlayerState, name: string, inp: InputFrame, ctx: SimCt
   const key = fam.cancelButtons?.[name] ?? (actionId === fam.actions.main ? 'main' : actionId === fam.actions.sub ? 'sub' : null);
   if (!key || p.buffer[key] <= 0) return false;
   const def = ctx.content.actions.get(actionId);
-  if (def?.staminaCost && p.stamina < def.staminaCost) return false;
+  if (def && p.stamina < staminaCostOf(p, def, ctx)) return false;
   consume(p, key);
   startAction(p, actionId, ctx);
   return true;
@@ -570,7 +590,7 @@ function stepGuard(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     for (const [key, id] of [['main', fam.actions.guardMain], ['sub', fam.actions.guardSub]] as const) {
       if (!id || p.buffer[key] <= 0) continue;
       const def = ctx.content.actions.get(id)!;
-      if (p.stamina < (def.staminaCost ?? 0)) continue;
+      if (p.stamina < staminaCostOf(p, def, ctx)) continue;
       consume(p, key);
       startAction(p, id, ctx);
       return stepAction(p, inp, ctx, 1);
@@ -755,7 +775,7 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   // スタミナ: 消費が終わってから待ち時間を置いて回復
   if (p.mode !== 'dead' && !p.sprinting) {
     if (p.staminaDelay > 0) p.staminaDelay--;
-    else if (p.stamina < T.maxStamina) p.stamina = Math.min(T.maxStamina, p.stamina + T.staminaRegenPerSec / 60);
+    else if (p.stamina < T.maxStamina) p.stamina = Math.min(T.maxStamina, p.stamina + (T.staminaRegenPerSec * ctx.gear.staminaRegen) / 60);
   }
   if (p.exhausted && p.stamina >= T.sprintRestartStamina) p.exhausted = false;
 }
@@ -809,8 +829,10 @@ export function resolveIncomingHit(p: PlayerState, hit: IncomingHit, ctx: SimCtx
         return 'guarded';
       }
     }
-    if (p.stamina >= hit.guardCost) {
-      spendStamina(p, hit.guardCost, ctx);
+    // 防具の技能「受け支え」（v0.33.0）: 受けた時のスタミナの消費が減る（削り・防げる向きは変えない）
+    const guardCost = hit.guardCost * ctx.gear.guardStamina;
+    if (p.stamina >= guardCost) {
+      spendStamina(p, guardCost, ctx);
       const chip = Math.floor(hit.baseDamage * G.chipScale);
       p.hp = Math.max(0, p.hp - chip);
       // 行動の最中に受けた時は、その行動を続ける（後退しない）

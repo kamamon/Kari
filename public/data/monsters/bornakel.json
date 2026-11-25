@@ -9,6 +9,8 @@
   "turnDegPerSec": 55,
   "moveSpeed": 2.2,
   "captureAllowed": true,
+  "weak": ["ice"],
+  "resist": ["wind"],
   "lootId": "loot.bornakel",
   "capture": {"hpRatio": 0.25, "tranqNeeded": 2, "tranqDecayTicks": 900},
   "respawnTicks": null,
@@ -18,7 +20,7 @@
   "discover": {"range": 15, "fovDeg": 120, "closeRange": 6, "actionId": "monster.bornakel.roar"},
   "rage": {"threshold": 500, "durationTicks": 2100, "actionId": "monster.bornakel.roar", "speedScale": 1.25, "damageScale": 1.2, "cooldownScale": 0.6},
   "parts": [
-    {"id": "head", "name": "頭鐘", "hitzone": {"cut": 0.6, "blunt": 0.7, "shot": 0.55}, "brokenHitzone": {"cut": 0.7, "blunt": 0.8, "shot": 0.65}, "elementZone": 0.2, "breakDurability": 230, "material": "rock", "flinch": {"threshold": 170, "growth": 60, "ticks": 50}, "shapes": [{"a": [0.0, 2.44, 2.32], "b": [0.0, 2.22, 3.28], "r": 0.55}]},
+    {"id": "head", "name": "頭鐘", "hitzone": {"cut": 0.6, "blunt": 0.7, "shot": 0.55}, "brokenHitzone": {"cut": 0.7, "blunt": 0.8, "shot": 0.65}, "elementZone": 0.2, "breakDurability": 230, "material": "rock", "head": true, "flinch": {"threshold": 170, "growth": 60, "ticks": 50}, "shapes": [{"a": [0.0, 2.44, 2.32], "b": [0.0, 2.22, 3.28], "r": 0.55}]},
     {"id": "sac_chest", "name": "胸の共鳴嚢", "hitzone": {"cut": 0.85, "blunt": 0.8, "shot": 0.8}, "brokenHitzone": {"cut": 0.95, "blunt": 0.9, "shot": 0.9}, "elementZone": 0.2, "breakDurability": 190, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 1.36, 2.0], "r": 0.55}]},
     {"id": "sac_l", "name": "左肩の共鳴嚢", "hitzone": {"cut": 0.85, "blunt": 0.8, "shot": 0.8}, "brokenHitzone": {"cut": 0.95, "blunt": 0.9, "shot": 0.9}, "elementZone": 0.2, "breakDurability": 190, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.35, 2.98, 0.12], "r": 0.55}]},
     {"id": "sac_r", "name": "右肩の共鳴嚢", "hitzone": {"cut": 0.85, "blunt": 0.8, "shot": 0.8}, "brokenHitzone": {"cut": 0.95, "blunt": 0.9, "shot": 0.9}, "elementZone": 0.2, "breakDurability": 190, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [-0.35, 2.78, 1.2], "r": 0.62}]},

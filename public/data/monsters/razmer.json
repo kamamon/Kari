@@ -9,6 +9,8 @@
   "turnDegPerSec": 60,
   "moveSpeed": 2.6,
   "captureAllowed": true,
+  "weak": ["water"],
+  "resist": ["ice"],
   "lootId": "loot.razmer",
   "capture": {"hpRatio": 0.25, "tranqNeeded": 2, "tranqDecayTicks": 900},
   "respawnTicks": null,
@@ -18,7 +20,7 @@
   "discover": {"range": 15, "fovDeg": 120, "closeRange": 6, "actionId": "monster.razmer.roar"},
   "rage": {"threshold": 480, "durationTicks": 2100, "actionId": "monster.razmer.roar", "speedScale": 1.25, "damageScale": 1.25, "cooldownScale": 0.6},
   "parts": [
-    {"id": "head", "name": "頭骨", "hitzone": {"cut": 0.6, "blunt": 0.65, "shot": 0.55}, "brokenHitzone": {"cut": 0.7, "blunt": 0.75, "shot": 0.65}, "elementZone": 0.2, "breakDurability": 220, "material": "rock", "flinch": {"threshold": 160, "growth": 60, "ticks": 50}, "shapes": [{"a": [0.0, 1.526, 3.339], "b": [0.0, 1.526, 4.031], "r": 0.32}]},
+    {"id": "head", "name": "頭骨", "hitzone": {"cut": 0.6, "blunt": 0.65, "shot": 0.55}, "brokenHitzone": {"cut": 0.7, "blunt": 0.75, "shot": 0.65}, "elementZone": 0.2, "breakDurability": 220, "material": "rock", "head": true, "flinch": {"threshold": 160, "growth": 60, "ticks": 50}, "shapes": [{"a": [0.0, 1.526, 3.339], "b": [0.0, 1.526, 4.031], "r": 0.32}]},
     {"id": "ring_f", "name": "前の骨環", "hitzone": {"cut": 0.45, "blunt": 0.6, "shot": 0.45}, "brokenHitzone": {"cut": 0.6, "blunt": 0.75, "shot": 0.6}, "elementZone": 0.2, "breakDurability": 260, "material": "rock", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 1.24, 1.431], "b": [0.0, 1.336, 2.48], "r": 0.85}]},
     {"id": "ring_b", "name": "後ろの骨環", "hitzone": {"cut": 0.45, "blunt": 0.6, "shot": 0.45}, "brokenHitzone": {"cut": 0.6, "blunt": 0.75, "shot": 0.6}, "elementZone": 0.2, "breakDurability": 260, "material": "rock", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 1.24, -1.192], "b": [0.0, 1.216, -0.095], "r": 0.85}]},
     {"id": "tail_ring", "name": "尾端環", "hitzone": {"cut": 0.55, "blunt": 0.6, "shot": 0.5}, "brokenHitzone": {"cut": 0.65, "blunt": 0.7, "shot": 0.6}, "elementZone": 0.2, "breakDurability": 170, "material": "rock", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 0.797, -2.862], "b": [0.0, 0.763, -4.102], "r": 0.2}]},

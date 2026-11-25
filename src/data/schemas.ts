@@ -11,6 +11,9 @@ export type DamageType = 'cut' | 'blunt' | 'shot';
 /** 狩人の状態異常（v0.17.0。docs/spec.md 22 章）。para = 麻痺、stun = 気絶。 */
 export type StatusKind = 'poison' | 'para' | 'sleep' | 'stun';
 export const STATUS_KINDS: readonly StatusKind[] = ['poison', 'para', 'sleep', 'stun'];
+/** 属性（v0.33.0。docs/elements.md の決まり: 火・雷・氷・水・風・霧） */
+export type ElementId = 'fire' | 'thunder' | 'ice' | 'water' | 'wind' | 'mist';
+export const ELEMENT_IDS: readonly ElementId[] = ['fire', 'thunder', 'ice', 'water', 'wind', 'mist'];
 /** 敵の攻撃が狩人へためる状態異常。power が閾値（player.json の status.threshold）に達すると発症する。 */
 export interface StatusHit {
   kind: StatusKind;
@@ -33,7 +36,11 @@ export interface HitWindowDef {
   shapeTrack: string;
   damageType: DamageType;
   damageCoefficient: number;
-  elementCoefficient?: number;
+  /**
+   * 当てる物（v0.33.0）。shield = 盾で打つ（護刃の盾打ち）。武器の属性・状態異常は、武器そのもので当てた時だけ乗る（盾には乗らない）。
+   * 省くと武器。属性・状態異常の係数は、その命中の最後の係数（溜め・勢い・矢の距離を掛けた後）を使う（設計 #15。前の elementCoefficient は無くした）
+   */
+  contact?: 'shield';
   maxHitsPerTarget: number;
   hitstopTicks: number;
   /**
@@ -219,7 +226,12 @@ export interface WeaponDef {
   family: string;
   name: string;
   attack: number;
-  element: { type: string; value: number };
+  /**
+   * 属性。type は 'none'・属性の id（単属性）・'compound'（複合。elements に 2 つ）。value は属性値（v0.33.0 から働く）。
+   */
+  element: { type: string; value: number; elements?: ElementId[] };
+  /** 状態異常（v0.33.0）: 武器の接触の命中で、モンスターへためる。potency は基礎の蓄積（1 命中、技の係数 1 あたり） */
+  status?: { kind: StatusKind; potency: number };
   affinity: number;
   sharpnessModifier: number;
   assetId: string;
@@ -312,6 +324,70 @@ export interface ArmorDef {
   /** 系列と級（v0.32.0。WeaponDef と同じ） */
   series?: string;
   rankId?: string;
+  /** 属性の耐性（v0.33.0。1 部位の値。5 部位と技能を足して -30〜30） */
+  resist?: Partial<Record<ElementId, number>>;
+  /** 技能（v0.33.0。1 部位 1 点。element・status は、耐性の技能の対象） */
+  skill?: ArmorSkill;
+}
+
+/** 防具の技能（v0.33.0。ChatGPT の全装備四級版 #15 の 16 技能。public/data/skills.json） */
+export interface ArmorSkill {
+  id: string;
+  points: number;
+  element?: ElementId;
+  status?: StatusKind;
+}
+
+/** 技能の決まり（public/data/skills.json。npm run equipment:gen が設計の rules から作る） */
+export interface SkillDef {
+  id: string;
+  name: string;
+  /** Lv1〜3 の値 */
+  values: [number, number, number];
+  unit: string;
+  effect: string;
+}
+
+/**
+ * 属性と状態異常の決まり（public/data/elements.json。v0.33.0。docs/elements.md・ChatGPT の全装備四級版 #15 の rules）。
+ * 部位の属性係数 = 部位の elementZone × （弱点 weak / 耐性 resist / ほか 1）。弱点と耐性はモンスターの登録簿の weak・resist。
+ */
+export interface ElementRules {
+  elements: { id: ElementId; name: string }[];
+  /** 部位の elementZone に掛ける倍率 */
+  zone: { weak: number; resist: number };
+  /** 複合: 2 つの属性のどちらも相手の弱点でない時の倍率 */
+  compoundNonWeak: number;
+  /** モンスターの攻撃のうち、属性の分（登録簿の elements が none でない種）。狩人の耐性で減る */
+  monsterElementShare: number;
+  /** 狩人の属性の耐性の範囲 */
+  resistRange: [number, number];
+  /** 会心率の上限（%） */
+  critCap: number;
+  /** 急所観察の、物理の部位係数の下限 */
+  weakCritHitzone: number;
+  /** モンスターの状態異常 */
+  ailment: MonsterAilmentRules;
+}
+
+export interface MonsterAilmentRules {
+  /** 初めの閾値と、発症するたびの伸び（毒・麻痺・睡眠 / 気絶） */
+  threshold: number;
+  growth: number;
+  stunGrowth: number;
+  /** 最後にためてから減り始めるまで（tick）と、1 秒あたりの減り */
+  decayDelayTicks: number;
+  decayPerSec: number;
+  /** 動けない状態の長さ（tick） */
+  para: { ticks: number };
+  sleep: { ticks: number; wakeScale: number };
+  stun: { ticks: number };
+  /** 毒: 最大体力のこの割合（切り捨て）を、ticks の間に hits 回に分けて減らす */
+  poison: { hpRatio: number; ticks: number; hits: number };
+  /** 動けない状態の後、ほかの動けない状態のゲージを閾値の手前に抑える時間（tick） */
+  lockGraceTicks: number;
+  /** 打撃の命中が頭へ当たった時の気絶の蓄積（技の係数 1 あたり。Claude が決めた仮の値） */
+  stunPerMotion: number;
 }
 
 /** 防具の決まり。受けるダメージ = 元のダメージ × base / (base + 防御力の合計) */
@@ -346,6 +422,8 @@ export interface MonsterPartDef {
   elementZone: number;
   breakDurability: number | null;
   material: 'rock' | 'hide' | 'shell';
+  /** 頭（v0.33.0）。気絶は、打撃が頭の部位に当たった時だけたまる（部位の並びの先頭を頭と決めない） */
+  head?: boolean;
   shapes: HurtShapeDef[];
   /** 破壊後の肉質（無ければ破壊前と同じ） */
   brokenHitzone?: Record<DamageType, number>;
@@ -405,6 +483,14 @@ export interface MonsterDef {
   bodyRadius: number;
   turnDegPerSec: number;
   captureAllowed: boolean;
+  /**
+   * 属性の印（v0.33.0。登録簿の elements・weak・resist と同じ。docs/spec.md の 30 章）。
+   * element: 技の属性（無属性は省く）。攻撃の elements.json の monsterElementShare が、この属性になる（ハンターの耐性で変わる）。
+   * weak / resist: 部位の属性の係数（elementZone）を、弱点の属性は zone.weak 倍、耐性の属性は zone.resist 倍にする。
+   */
+  element?: ElementId;
+  weak?: ElementId[];
+  resist?: ElementId[];
   lootId: string | null;
   /** 段階ごとの素材の表（段階の id → loot の id）。書いていない段階は lootId を使う。 */
   lootByRank?: Record<string, string>;
@@ -925,6 +1011,8 @@ export interface ItemDef {
   trap?: { armTicks: number; radius: number; holdTicks: number; lifeTicks: number };
   /** 正面 ±halfAngleDeg、range 以内の大型に当たる */
   tranq?: { range: number; halfAngleDeg: number };
+  /** 整備の道具（v0.33.0）。防具の技能「道具整備」で、使う時間が短くなる（研磨石） */
+  maintenance?: boolean;
 }
 
 export interface MaterialDef {
@@ -984,6 +1072,10 @@ export interface ContentIndex {
     appearance: string;
     /** 系列の装備（v0.32.0。武器・防具・作るレシピ。npm run equipment:gen の出力） */
     equipment?: string[];
+    /** 属性と状態異常の決まり（v0.33.0） */
+    elements: string;
+    /** 防具の技能（v0.33.0。npm run equipment:gen の出力） */
+    skills: string;
     support: string;
     deliveries: string;
   };
@@ -991,6 +1083,10 @@ export interface ContentIndex {
 
 export interface Content {
   contentVersion: string;
+  /** 属性と状態異常の決まり（v0.33.0） */
+  elements: ElementRules;
+  /** 防具の技能（v0.33.0） */
+  skills: Map<string, SkillDef>;
   actions: Map<string, ActionDef>;
   curves: Map<string, CurveDef>;
   tracks: Map<string, ShapeTrackDef>;

@@ -1,5 +1,6 @@
-// 系列の装備（v0.32.0。ChatGPT の全装備四級版 #15 の最初の一切れ。docs/spec.md の 29 章、D-113）。
+// 系列の装備（v0.32.0。ChatGPT の全装備四級版 #15 の最初の一切れ。docs/spec.md の 29 章、D-113）。v0.33.0 で 19 系列（属性・状態異常も）
 // - 生成した public/data/equipment_series.json が、設計のデータ（docs/source/chatgpt-equipment-20261125/data/all-equipment.json）の値のまま
+//   （属性・状態異常・防具の耐性と技能も。これまでの防具 岩殻〜輝殻 の耐性と技能 armorTraits も）
 // - 工房の「作る」: 素材と通貨を 1 回の書き込みで減らし、持ち物へ足す（装備は替えない）。2 度は作れない。足りなければ何も変えない
 // - 級が開いていない物は作れない。素材が、その級より上でしか手に入らないレシピは、検査が見つける
 // - 作った武器で狩ると、その攻撃力と会心で当たる
@@ -22,38 +23,67 @@ beforeAll(async () => {
 
 interface Design {
   series: { id: string; sourceSpeciesId: string; weaponProfile: string; elements: string[]; status: string | null }[];
-  weaponCandidates: { id: string; seriesId: string; family: string; rank: number; name: string; attack: number; affinity: number; elementValue: number; statusPotency: number }[];
-  armorCandidates: { id: string; seriesId: string; slot: string; rank: number; name: string; defense: number }[];
+  weaponCandidates: { id: string; seriesId: string; family: string; rank: number; name: string; attack: number; affinity: number; elements: string[]; elementValue: number; status: string | null; statusPotency: number }[];
+  armorCandidates: {
+    id: string;
+    seriesId: string;
+    slot: string;
+    rank: number;
+    name: string;
+    defense: number;
+    resistances: Record<string, number>;
+    skill: { id: string; points: number; parameters: { element?: string; status?: string } } | null;
+    runtimeExists: boolean;
+  }[];
   recipes: { resultId: string; seriesId?: string; rank: number; kind: string; money: number; ingredients: { materialId: string; count: number }[] }[];
 }
 const design = (): Design => JSON.parse(readFileSync(root('docs/source/chatgpt-equipment-20261125/data/all-equipment.json'), 'utf8')) as Design;
-const SERIES = ['series.bornakel', 'series.orglass', 'series.razmer', 'series.kordopil', 'series.kohalgis'];
+// 遊べる 20 種のうち、ガルドロスの他（登録簿の順）
+const SERIES = [
+  'series.selvark', 'series.numeradon', 'series.bornakel', 'series.ashreia', 'series.lumisca', 'series.orglass', 'series.tengaro', 'series.verito', 'series.razmer', 'series.kirisave', 'series.velgait',
+  'series.kordopil', 'series.palseit', 'series.numaporon', 'series.chilumicana', 'series.kohalgis', 'series.mitogaron', 'series.yurtepica', 'series.hinasalv',
+];
+const STATUS_ID: Record<string, string> = { poison: 'poison', paralysis: 'para', sleep: 'sleep' };
+/** 設計の防具の耐性（0 でないもの）と技能を、ゲームの形に */
+const traitsOf = (a: Design['armorCandidates'][number]): { resist?: Record<string, number>; skill?: Record<string, unknown> } => {
+  const resist = Object.fromEntries(Object.entries(a.resistances).filter(([, v]) => v !== 0));
+  const out: { resist?: Record<string, number>; skill?: Record<string, unknown> } = {};
+  if (Object.keys(resist).length) out.resist = resist;
+  if (a.skill) {
+    const sk: Record<string, unknown> = { id: a.skill.id, points: a.skill.points };
+    if (a.skill.parameters.element) sk.element = a.skill.parameters.element;
+    if (a.skill.parameters.status) sk.status = STATUS_ID[a.skill.parameters.status];
+    out.skill = sk;
+  }
+  return out;
+};
 const crafts = (): RecipeDef[] => [...content.recipes.values()].filter((r) => r.kind === 'craft' || r.kind === 'armor_craft');
 let clock = 0;
 const env: SaveEnv = { now: () => `2026-11-25T00:00:${String(clock++ % 60).padStart(2, '0')}.000Z`, appVersion: 'test' };
 const STAMP = { now: '2026-11-25T00:00:00.000Z', appVersion: 'test', contentVersion: 'test' };
 
-describe('系列の装備のデータ（#15 の初級・5 系列）', () => {
-  it('5 系列 × 武器 7・防具 5 = 60 点と、作るレシピ 60。数値・素材・費用は設計のまま、恒久 ID に付け直した', () => {
+describe('系列の装備のデータ（#15 の初級・19 系列）', () => {
+  it('19 系列 × 武器 7・防具 5 = 228 点と、作るレシピ 228。数値・属性・状態異常・耐性・技能・素材・費用は設計のまま、恒久 ID に付け直した', () => {
     const d = design();
     const weapons = [...content.weapons.values()].filter((w) => w.series);
     const armor = [...content.armor.values()].filter((a) => a.series);
-    expect(weapons).toHaveLength(35);
-    expect(armor).toHaveLength(25);
-    expect(crafts()).toHaveLength(60);
+    expect(weapons).toHaveLength(133);
+    expect(armor).toHaveLength(95);
+    expect(crafts()).toHaveLength(228);
     expect(new Set(weapons.map((w) => w.series))).toEqual(new Set(SERIES));
+    const profiles: Record<string, number> = {};
     for (const sid of SERIES) {
       const s = d.series.find((x) => x.id === sid)!;
-      // 入れるのは、いまの計算で働く系列だけ（無属性・会心。属性と状態異常は無い）
-      expect(['raw', 'precision']).toContain(s.weaponProfile);
-      expect(s.elements).toEqual([]);
-      expect(s.status).toBeNull();
+      // 初級に複合は無い（上級・極級だけ）
+      expect(['raw', 'precision', 'single', 'status']).toContain(s.weaponProfile);
+      profiles[s.weaponProfile] = (profiles[s.weaponProfile] ?? 0) + 1;
       const sp = s.sourceSpeciesId.split('.')[1];
       for (const w of d.weaponCandidates.filter((x) => x.seriesId === sid && x.rank === 1)) {
         const g = content.weapons.get(`weapon.${w.family}.${sp}.r1`)!;
         expect(g, w.id).toBeDefined();
-        expect({ name: g.name, attack: g.attack, affinity: g.affinity, family: g.family, element: g.element.value, rankId: g.rankId }).toEqual({ name: w.name, attack: w.attack, affinity: w.affinity, family: w.family, element: 0, rankId: 'rank.1' });
-        expect(w.elementValue + w.statusPotency).toBe(0);
+        const element = w.elements.length ? { type: w.elements[0], value: w.elementValue } : { type: 'none', value: 0 };
+        const status = w.status ? { kind: STATUS_ID[w.status], potency: w.statusPotency } : undefined;
+        expect({ name: g.name, attack: g.attack, affinity: g.affinity, family: g.family, element: g.element, status: g.status, rankId: g.rankId }).toEqual({ name: w.name, attack: w.attack, affinity: w.affinity, family: w.family, element, status, rankId: 'rank.1' });
         // 形は、その武器種の里の武器（仮）
         expect(g.assetId).toBe(`model.weapon.${w.family}.001`);
         const r = d.recipes.find((x) => x.resultId === w.id && x.kind === 'craft')!;
@@ -63,15 +93,37 @@ describe('系列の装備のデータ（#15 の初級・5 系列）', () => {
       for (const a of d.armorCandidates.filter((x) => x.seriesId === sid && x.rank === 1)) {
         const g = content.armor.get(`armor.${a.slot}.${sp}.r1`)!;
         expect({ name: g.name, defense: g.defense, slot: g.slot, assetId: g.assetId }).toEqual({ name: a.name, defense: a.defense, slot: a.slot, assetId: undefined });
+        expect({ resist: g.resist, skill: g.skill }).toEqual({ resist: undefined, skill: undefined, ...traitsOf(a) });
         const r = d.recipes.find((x) => x.resultId === a.id && x.kind === 'craft')!;
         const mine = crafts().find((x) => x.kind === 'armor_craft' && x.resultArmorId === g.id)!;
         expect(mine.cost).toEqual({ money: r.money, items: r.ingredients.map((i) => ({ itemId: i.materialId, count: i.count })) });
       }
     }
+    expect(profiles).toEqual({ raw: 2, precision: 3, single: 9, status: 5 });
     // ガルドロスの 35 武器・25 防具・48 強化は、そのまま
     expect([...content.weapons.values()].filter((w) => !w.series)).toHaveLength(35);
     expect([...content.armor.values()].filter((a) => !a.series)).toHaveLength(25);
     expect([...content.recipes.values()].filter((r) => r.kind === 'upgrade' || r.kind === 'armor_upgrade')).toHaveLength(48);
+  });
+
+  it('これまでの防具（岩殻〜輝殻）に、設計の耐性（火 -2・雷 +3）と技能が付く。名前・防御力・見た目・里の服は、そのまま', () => {
+    const d = design();
+    const old = JSON.parse(readFileSync(root('public/data/armor.json'), 'utf8')) as { armor: { id: string; name: string; defense: number; assetId?: string }[] };
+    const tiers: Record<number, string> = { 1: '002', 2: '003', 3: '004', 4: '005' };
+    let n = 0;
+    for (const a of d.armorCandidates.filter((x) => x.seriesId === 'series.galdros' && x.rank <= 4)) {
+      const id = `armor.${a.slot}.${tiers[a.rank]}`;
+      const g = content.armor.get(id)!;
+      const o = old.armor.find((x) => x.id === id)!;
+      expect(a.runtimeExists).toBe(true);
+      expect({ name: g.name, defense: g.defense, assetId: g.assetId }).toEqual({ name: o.name, defense: o.defense, assetId: o.assetId });
+      expect({ resist: g.resist, skill: g.skill }).toEqual(traitsOf(a));
+      expect(g.resist).toEqual({ fire: -2, thunder: 3 });
+      n++;
+    }
+    expect(n).toBe(20);
+    // 里の服（.001）には付けない
+    for (const slot of ['head', 'chest', 'arms', 'waist', 'legs']) expect(content.armor.get(`armor.${slot}.001`)!.skill).toBeUndefined();
   });
 
   it('検査: 素材が結果の級より上の依頼でしか手に入らない・結果が無い・級が無い、を見つける', () => {

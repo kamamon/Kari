@@ -1,6 +1,6 @@
 // simulation から描画・音・UI へ伝える出来事。simulation は「何が起きたか」だけを出し、演出は受け取った側が決める。
 import type { V3 } from '../core/math';
-import type { StatusKind } from '../data/schemas';
+import type { ElementId, StatusKind } from '../data/schemas';
 
 export type SimEvent =
   | { type: 'action_start'; actor: string; actionId: string; instanceId: number }
@@ -22,6 +22,8 @@ export type SimEvent =
       tick: number;
       /** 刃が通らず、弾かれた（ダメージは入る。振った側は少しの間よろける） */
       bounced: boolean;
+      /** 武器の属性が乗った（v0.33.0。見た目用。複合は 1 つ目の属性） */
+      element?: ElementId;
     }
   | { type: 'part_break'; target: string; partId: string; partIndex: number }
   | { type: 'part_sever'; target: string; partId: string; partIndex: number; pos: V3; yaw: number }
@@ -51,6 +53,13 @@ export type SimEvent =
   /** 狩らない依頼: 納品箱へ納めた（達成は、この tick の終わりに決まる） */
   | { type: 'errand_deliver'; pos: V3 }
   | { type: 'monster_dead'; target: string }
+  /**
+   * モンスターの状態異常（v0.33.0）: 付いた（on）・消えた。poison は体力が減っていく間、para / sleep / stun は動けない間。
+   * sleep が命中で覚めた時は woke。pos は付いた時の頭の辺り（見た目用）
+   */
+  | { type: 'monster_ailment'; target: string; kind: StatusKind; on: boolean; woke?: boolean; pos?: V3 }
+  /** 毒のダメージ（v0.33.0）。部位に当たらない（怯み・破壊・怒りには関わらない） */
+  | { type: 'ailment_damage'; target: string; kind: StatusKind; damage: number; pos: V3 }
   | { type: 'monster_respawn'; target: string }
   /** フィールド: プレイヤーがエリアを移った / 大型が出口へ歩き出した・別のエリアに着いた・巣で眠った・起きた */
   | { type: 'area_change'; from: string; to: string }

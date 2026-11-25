@@ -18,6 +18,8 @@ import { questGoal } from './targets';
 import { fieldArtUrl, withIcon } from './icons';
 import { renderStoryPanel } from './story';
 import { DRAFT_KIND_NAMES, changedKinds, describeKind, draftOf, editableAppearance, emptyDraft } from '../data/appearance';
+import { computeGear } from '../game/gear';
+import { armorStat, gearSummary, weaponShortName, weaponStat } from './gearText';
 
 export interface BaseHost {
   startTraining(): void;
@@ -93,6 +95,8 @@ export class BaseScreen {
   private weaponRow: HTMLElement;
   private weaponNote: HTMLElement;
   private armorNote: HTMLElement;
+  /** 身に着けている装備の技能と耐性（v0.33.0） */
+  private gearNote: HTMLElement;
   private armorBox: HTMLElement;
   /** 見た目の欄の説明（いまの外見の種類） */
   private looksNote!: HTMLElement;
@@ -149,7 +153,8 @@ export class BaseScreen {
     // 防具: 部位ごとに、持っているものから選ぶ・外す（v0.14.0）
     this.armorBox = sec(el('div', 'base-armor'), 'chest');
     this.armorNote = sec(el('p', 'base-armor-note'), 'chest');
-    card.append(sec(el('p', 'base-weapon-label', '防具（部位ごとに、着る・外す）'), 'chest'), this.armorBox, this.armorNote);
+    this.gearNote = sec(el('p', 'base-gear-note'), 'chest');
+    card.append(sec(el('p', 'base-weapon-label', '防具（部位ごとに、着る・外す）'), 'chest'), this.armorBox, this.armorNote, this.gearNote);
     this.matRank = materialRanks(content);
 
     // 物語「帰り道の灯」（v0.23.0）: いまの章・次の狩り・読み返せる記録・章の一覧。中身は refresh で作る
@@ -302,7 +307,9 @@ export class BaseScreen {
     const current = this.host.weaponId;
     for (const id of usableWeapons(doc, c)) {
       const w = c.weapons.get(id)!;
+      // 武器種の名前と、系列の短い名前（同じ武器種を、作った物と並べても見分けられるように。v0.33.0）
       const b = el('button', 'base-weapon', c.families.get(w.family)?.name ?? w.name);
+      b.appendChild(el('small', undefined, weaponShortName(c, w)));
       b.dataset.weapon = id;
       b.classList.toggle('on', id === current);
       b.addEventListener('click', () => {
@@ -313,7 +320,7 @@ export class BaseScreen {
     }
     const w = c.weapons.get(current);
     const fam = w ? c.families.get(w.family) : undefined;
-    this.weaponNote.textContent = w && fam ? `${w.name}（攻撃力 ${w.attack}）: ${fam.summary ?? ''}` : '';
+    this.weaponNote.textContent = w && fam ? `${w.name}（${weaponStat(c, w)}）: ${fam.summary ?? ''}` : '';
     // 防具（部位ごと）。いま着ているものに印。「外す」を選ぶと、その部位は里の装束の姿に戻る
     const worn = wornArmor(doc, c);
     const owned = ownedArmor(doc, c);
@@ -336,7 +343,7 @@ export class BaseScreen {
         });
         picks.appendChild(b);
       };
-      for (const a of owned[slot]) pick(a.name, `防御 ${a.defense}`, a.id, on?.id === a.id);
+      for (const a of owned[slot]) pick(a.name, armorStat(c, a), a.id, on?.id === a.id);
       pick('外す', '防御 0', null, on === null);
       row.appendChild(picks);
       this.armorBox.appendChild(row);
@@ -352,6 +359,11 @@ export class BaseScreen {
         : 'いまは基準ハンター A の姿。体型・肌・髪の色を、費用なしで、いつでも変えられます。';
     const defense = defenseOf(doc, c);
     this.armorNote.textContent = `防御力の合計 ${defense}（受けるダメージ ×${defenseScale(c, defense).toFixed(2)}）`;
+    // 技能と耐性（v0.33.0）: 身に着けている防具の点から（1 部位 1 点、Lv 3 まで）
+    const gear = w ? computeGear(c, w, worn.map((a) => a.id)) : null;
+    const sum = gear ? gearSummary(c, gear) : { skills: '', resist: '' };
+    this.gearNote.textContent = '';
+    this.gearNote.append(el('span', 'skills', `技能: ${sum.skills || 'なし'}`), el('span', 'resist', `耐性: ${sum.resist || 'なし'}`));
 
     this.renderQuests();
     renderStoryPanel(this.storyBox, c, doc.progress.questClears, {
@@ -817,7 +829,7 @@ export class BaseScreen {
         const row = el('div', 'forge-recipe');
         row.dataset.recipe = r.id;
         row.appendChild(el('b', undefined, nameOf(to)));
-        row.appendChild(el('span', 'forge-stat', w ? `攻撃力 ${w.attack}${w.affinity ? `・会心 ${w.affinity}%` : ''}` : `防御力 ${a?.defense ?? 0}`));
+        row.appendChild(el('span', 'forge-stat', w ? weaponStat(c, w) : a ? armorStat(c, a, '防御力') : ''));
         if (chk.ownsResult) {
           have++;
           row.classList.add('owned');

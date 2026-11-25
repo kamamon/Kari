@@ -9,6 +9,8 @@
   "turnDegPerSec": 180,
   "moveSpeed": 2.6,
   "captureAllowed": false,
+  "weak": ["fire"],
+  "resist": ["water"],
   "lootId": "loot.yurtepica",
   "respawnTicks": null,
   "breakStaggerTicks": 50,
@@ -20,7 +22,7 @@
   "parts": [
     {"id": "bag", "name": "左の幼羽袋", "hitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.9}, "brokenHitzone": {"cut": 1.0, "blunt": 0.95, "shot": 1.0}, "elementZone": 0.25, "breakDurability": 40, "material": "hide", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.169, 0.759, -0.256], "b": [0.169, 0.896, 0.342], "r": 0.22}, {"a": [-0.169, 0.759, -0.256], "b": [-0.169, 0.896, 0.342], "r": 0.22}]},
     {"id": "spinner", "name": "尾の細紡糸管", "hitzone": {"cut": 0.85, "blunt": 0.8, "shot": 0.8}, "brokenHitzone": {"cut": 0.95, "blunt": 0.9, "shot": 0.9}, "elementZone": 0.25, "breakDurability": 30, "material": "hide", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.0, 0.482, -0.544], "b": [0.0, 0.472, -0.769], "r": 0.2}]},
-    {"id": "head", "name": "頭", "hitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.85}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "flinch": {"threshold": 30, "growth": 18, "ticks": 40}, "shapes": [{"a": [0.0, 0.52, 0.424], "b": [0.0, 0.499, 0.561], "r": 0.2}]},
+    {"id": "head", "name": "頭", "hitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.85}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "head": true, "flinch": {"threshold": 30, "growth": 18, "ticks": 40}, "shapes": [{"a": [0.0, 0.52, 0.424], "b": [0.0, 0.499, 0.561], "r": 0.2}]},
     {"id": "body", "name": "胴", "hitzone": {"cut": 0.75, "blunt": 0.75, "shot": 0.7}, "elementZone": 0.25, "breakDurability": null, "material": "shell", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.0, 0.477, -0.564], "b": [0.0, 0.485, 0.274], "r": 0.3}]},
     {"id": "legs", "name": "脚", "hitzone": {"cut": 0.7, "blunt": 0.7, "shot": 0.65}, "elementZone": 0.25, "breakDurability": null, "material": "shell", "flinch": {"threshold": 50, "growth": 25, "ticks": 80, "topple": true}, "shapes": [{"a": [0.169, 0.403, 0.0], "b": [0.485, 0.021, 0.041], "r": 0.12}, {"a": [-0.169, 0.403, 0.0], "b": [-0.485, 0.021, 0.041], "r": 0.12}]}
   ],

@@ -9,6 +9,9 @@
   "turnDegPerSec": 200,
   "moveSpeed": 3.4,
   "captureAllowed": false,
+  "element": "wind",
+  "weak": ["ice"],
+  "resist": ["wind"],
   "lootId": "loot.palseit",
   "respawnTicks": null,
   "breakStaggerTicks": 50,
@@ -20,7 +23,7 @@
   "parts": [
     {"id": "crest_l", "name": "左の幼角膜", "hitzone": {"cut": 0.8, "blunt": 0.75, "shot": 0.8}, "brokenHitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.9}, "elementZone": 0.25, "breakDurability": 40, "material": "hide", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.126, 1.043, 0.549], "b": [0.169, 0.996, 0.157], "r": 0.22}]},
     {"id": "crest_r", "name": "右の幼角膜", "hitzone": {"cut": 0.8, "blunt": 0.75, "shot": 0.8}, "brokenHitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.9}, "elementZone": 0.25, "breakDurability": 40, "material": "hide", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [-0.126, 1.043, 0.549], "b": [-0.169, 0.996, 0.157], "r": 0.22}]},
-    {"id": "head", "name": "頭", "hitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.85}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "flinch": {"threshold": 30, "growth": 18, "ticks": 40}, "shapes": [{"a": [0.0, 1.058, 0.611], "b": [0.0, 1.008, 0.792], "r": 0.24}]},
+    {"id": "head", "name": "頭", "hitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.85}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "head": true, "flinch": {"threshold": 30, "growth": 18, "ticks": 40}, "shapes": [{"a": [0.0, 1.058, 0.611], "b": [0.0, 1.008, 0.792], "r": 0.24}]},
     {"id": "body", "name": "胴", "hitzone": {"cut": 0.75, "blunt": 0.75, "shot": 0.7}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.0, 0.737, -0.314], "b": [0.0, 0.807, 0.455], "r": 0.36}]},
     {"id": "legs", "name": "脚", "hitzone": {"cut": 0.7, "blunt": 0.7, "shot": 0.65}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "flinch": {"threshold": 50, "growth": 25, "ticks": 80, "topple": true}, "shapes": [{"a": [0.126, 0.604, 0.392], "b": [0.126, 0.11, 0.549], "r": 0.14}, {"a": [-0.126, 0.604, 0.392], "b": [-0.126, 0.11, 0.549], "r": 0.14}, {"a": [0.126, 0.619, -0.314], "b": [0.126, 0.11, -0.314], "r": 0.15}, {"a": [-0.126, 0.619, -0.314], "b": [-0.126, 0.11, -0.314], "r": 0.15}]}
   ],

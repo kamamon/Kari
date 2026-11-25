@@ -9,6 +9,9 @@
   "turnDegPerSec": 180,
   "moveSpeed": 3.0,
   "captureAllowed": false,
+  "element": "thunder",
+  "weak": ["ice"],
+  "resist": ["thunder"],
   "lootId": "loot.chilumicana",
   "respawnTicks": null,
   "breakStaggerTicks": 50,
@@ -20,7 +23,7 @@
   "parts": [
     {"id": "nodes", "name": "尾の幼燐節", "hitzone": {"cut": 0.8, "blunt": 0.75, "shot": 0.85}, "brokenHitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.95}, "elementZone": 0.25, "breakDurability": 40, "material": "shell", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.0, 0.862, -0.529], "b": [0.0, 0.781, -0.935], "r": 0.24}]},
     {"id": "wing", "name": "翼端の薄甲", "hitzone": {"cut": 0.8, "blunt": 0.75, "shot": 0.85}, "brokenHitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.95}, "elementZone": 0.25, "breakDurability": 40, "material": "shell", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.256, 0.984, 0.163], "b": [0.279, 0.74, -0.325], "r": 0.22}, {"a": [-0.256, 0.984, 0.163], "b": [-0.279, 0.74, -0.325], "r": 0.22}]},
-    {"id": "head", "name": "頭", "hitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.85}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "flinch": {"threshold": 30, "growth": 18, "ticks": 40}, "shapes": [{"a": [0.0, 1.163, 0.456], "b": [0.0, 1.114, 0.618], "r": 0.24}]},
+    {"id": "head", "name": "頭", "hitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.85}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "head": true, "flinch": {"threshold": 30, "growth": 18, "ticks": 40}, "shapes": [{"a": [0.0, 1.163, 0.456], "b": [0.0, 1.114, 0.618], "r": 0.24}]},
     {"id": "body", "name": "胴", "hitzone": {"cut": 0.75, "blunt": 0.75, "shot": 0.7}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.0, 0.87, -0.325], "b": [0.0, 0.903, 0.374], "r": 0.36}]},
     {"id": "legs", "name": "脚", "hitzone": {"cut": 0.7, "blunt": 0.7, "shot": 0.65}, "elementZone": 0.25, "breakDurability": null, "material": "shell", "flinch": {"threshold": 50, "growth": 25, "ticks": 80, "topple": true}, "shapes": [{"a": [0.139, 0.578, 0.0], "b": [0.139, 0.073, 0.081], "r": 0.14}, {"a": [-0.139, 0.578, 0.0], "b": [-0.139, 0.073, 0.081], "r": 0.14}]}
   ],

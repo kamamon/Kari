@@ -10,7 +10,9 @@ import { validateStory, type StoryDef } from './story';
 import { validateBoard, validateDeliveries, validateSupport } from './questBoard';
 import {
   ARMOR_SLOTS,
+  ELEMENT_IDS,
   FINISH_STATES,
+  STATUS_KINDS,
   GATHER_BAG,
   questTargets,
   SCHEMA_VERSION,
@@ -19,6 +21,8 @@ import {
   type ActionDef,
   type AppearanceCatalog,
   type ArmorDef,
+  type ElementRules,
+  type SkillDef,
   type ArmorSlot,
   type Content,
   type ContentIndex,
@@ -90,6 +94,7 @@ export function validateAction(a: ActionDef, errors: string[]): void {
     if (!isNum(h.damageCoefficient) || h.damageCoefficient < 0) errors.push(`${w}: hitWindow ${h.id} の damageCoefficient が不正`);
     if (!isInt(h.maxHitsPerTarget) || h.maxHitsPerTarget < 1) errors.push(`${w}: hitWindow ${h.id} の maxHitsPerTarget が不正`);
     if (!isInt(h.hitstopTicks) || h.hitstopTicks < 0) errors.push(`${w}: hitWindow ${h.id} の hitstopTicks が不正`);
+    if (h.contact !== undefined && h.contact !== 'shield') errors.push(`${w}: hitWindow ${h.id} の contact が不正（shield だけ）`);
     if (!['cut', 'blunt', 'shot'].includes(h.damageType)) errors.push(`${w}: hitWindow ${h.id} の damageType が不正`);
   }
   for (const c of a.cancelWindows ?? []) {
@@ -162,6 +167,13 @@ function validateMonster(m: MonsterDef, errors: string[]): void {
     }
   }
   if (!isObj(m.ai) || !Array.isArray(m.ai.choices)) errors.push(`${w}: ai が不正`);
+  // 属性の印と頭（v0.33.0）
+  const els = new Set<string>(ELEMENT_IDS);
+  if (m.element !== undefined && !els.has(m.element)) errors.push(`${w}: element が不正`);
+  for (const k of ['weak', 'resist'] as const) if (m[k] !== undefined && !(Array.isArray(m[k]) && m[k].every((e) => els.has(e)))) errors.push(`${w}: ${k} が不正`);
+  if ((m.weak ?? []).some((e) => (m.resist ?? []).includes(e))) errors.push(`${w}: 同じ属性が、弱点と耐性の両方にある`);
+  const heads = (m.parts ?? []).filter((p) => p.head === true).length;
+  if (heads !== 1) errors.push(`${w}: 頭の部位（head: true）が ${heads} 個（1 個にする。気絶はここにたまる）`);
   const H = m.herd;
   if (H !== undefined) {
     const range = (v: unknown): boolean => Array.isArray(v) && v.length === 2 && isInt(v[0]) && isInt(v[1]) && v[0] >= 1 && v[1] >= v[0];
@@ -291,6 +303,7 @@ export function crossCheck(c: Content, errors: string[]): void {
     if (!a) errors.push(`${w}: useActionId ${it.useActionId} が無い`);
     else if (!(isInt(it.effectTick) && it.effectTick >= 0 && it.effectTick < a.durationTicks)) errors.push(`${w}: effectTick が行動の長さの外`);
     if (!(isInt(it.carryMax) && it.carryMax > 0)) errors.push(`${w}: carryMax が不正`);
+    if (it.maintenance !== undefined && typeof it.maintenance !== 'boolean') errors.push(`${w}: maintenance が不正`);
     if (it.kind === 'heal') {
       if (!(isNum(it.heal) && it.heal > 0)) errors.push(`${w}: heal が不正`);
     } else if (it.kind === 'trap') {
@@ -409,6 +422,49 @@ export function crossCheck(c: Content, errors: string[]): void {
       if (seen.has(s.itemId)) errors.push(`${w}: 素材 ${s.itemId} が重複`);
       seen.add(s.itemId);
     }
+  }
+}
+
+/** 属性と状態異常の決まり（v0.33.0）。値の範囲だけを確かめる */
+export function validateElementRules(e: ElementRules | undefined, errors: string[]): void {
+  const w = 'elements';
+  if (!e || !Array.isArray(e.elements)) {
+    errors.push(`${w}: 決まりが無い`);
+    return;
+  }
+  const ids = e.elements.map((x) => x.id).sort().join();
+  if (ids !== [...ELEMENT_IDS].sort().join()) errors.push(`${w}: 属性は ${ELEMENT_IDS.join('・')} の 6 つ`);
+  if (!(e.zone?.weak > 1 && e.zone.resist > 0 && e.zone.resist < 1)) errors.push(`${w}: zone（弱点 > 1、0 < 耐性 < 1）が不正`);
+  if (!(e.compoundNonWeak > 0 && e.compoundNonWeak <= 1)) errors.push(`${w}: compoundNonWeak が不正`);
+  if (!(e.monsterElementShare >= 0 && e.monsterElementShare < 1)) errors.push(`${w}: monsterElementShare が不正`);
+  if (!(Array.isArray(e.resistRange) && e.resistRange[0] < 0 && e.resistRange[1] > 0)) errors.push(`${w}: resistRange が不正`);
+  if (!(e.critCap > 0 && e.critCap <= 100)) errors.push(`${w}: critCap が不正`);
+  const a = e.ailment;
+  if (!(a && a.threshold > 0 && a.growth >= 1 && a.stunGrowth >= 1 && isInt(a.decayDelayTicks) && a.decayPerSec >= 0 && isInt(a.para?.ticks) && isInt(a.sleep?.ticks) && a.sleep.wakeScale >= 1
+    && isInt(a.stun?.ticks) && a.poison?.hpRatio > 0 && isInt(a.poison.ticks) && isInt(a.poison.hits) && a.poison.hits > 0 && isInt(a.lockGraceTicks) && a.stunPerMotion >= 0)) errors.push(`${w}: ailment が不正`);
+}
+
+/** 武器の属性・状態異常と、防具の耐性・技能（v0.33.0）が、決まりの中の名前と値か */
+export function validateGear(c: Content, errors: string[]): void {
+  const els = new Set<string>(ELEMENT_IDS);
+  for (const wp of c.weapons.values()) {
+    const w = `weapon ${wp.id}`;
+    const e = wp.element;
+    if (e.type === 'compound') {
+      if (!(e.elements?.length === 2 && e.elements.every((x) => els.has(x)) && e.elements[0] !== e.elements[1])) errors.push(`${w}: 複合の属性は、違う 2 つ`);
+    } else if (e.type !== 'none' && !els.has(e.type)) errors.push(`${w}: 属性 ${e.type} が無い`);
+    if (e.type === 'none' ? e.value !== 0 : !(e.value > 0)) errors.push(`${w}: 属性値が不正`);
+    if (wp.status && !(STATUS_KINDS.includes(wp.status.kind) && wp.status.potency > 0)) errors.push(`${w}: 状態異常が不正`);
+  }
+  for (const a of c.armor.values()) {
+    const w = `armor ${a.id}`;
+    for (const [k, v] of Object.entries(a.resist ?? {})) if (!els.has(k) || !Number.isFinite(v)) errors.push(`${w}: 耐性 ${k} が不正`);
+    const sk = a.skill;
+    if (!sk) continue;
+    if (!c.skills.has(sk.id)) errors.push(`${w}: 技能 ${sk.id} が無い`);
+    if (!(isInt(sk.points) && sk.points > 0)) errors.push(`${w}: 技能の点が不正`);
+    if (sk.id === 'element_resistance' && !(sk.element && els.has(sk.element))) errors.push(`${w}: 個別属性耐性に属性が無い`);
+    if (sk.id === 'status_resistance' && !(sk.status && STATUS_KINDS.includes(sk.status))) errors.push(`${w}: 個別状態耐性に状態異常が無い`);
   }
 }
 
@@ -859,6 +915,8 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
   checkVersion('content.json', index.schemaVersion, errors);
   const content: Content = {
     contentVersion: index.contentVersion,
+    elements: (await get(index.files.elements)) as ElementRules,
+    skills: new Map(),
     actions: new Map(),
     curves: new Map(),
     tracks: new Map(),
@@ -887,6 +945,10 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     player: (await get(index.files.player)) as PlayerTuning,
   };
   checkVersion(index.files.player, content.player.schemaVersion, errors);
+  validateElementRules(content.elements, errors);
+  const skills = (await get(index.files.skills)) as { schemaVersion: number; skills: SkillDef[] };
+  checkVersion(index.files.skills, skills.schemaVersion, errors);
+  for (const sk of skills.skills ?? []) putUnique(content.skills, sk.id, sk, 'skill', errors);
 
   for (const f of index.files.actions) {
     const doc = (await get(f)) as { actions: ActionDef[] };
@@ -972,12 +1034,19 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
   for (const a of armor.armor ?? []) putUnique(content.armor, a.id, a, 'armor', errors);
   // 系列の装備（v0.32.0。武器・防具・作るレシピ。npm run equipment:gen の出力）
   for (const f of index.files.equipment ?? []) {
-    const eq = (await get(f)) as { schemaVersion: number; weapons?: WeaponDef[]; armor?: ArmorDef[]; recipes?: RecipeDef[] };
+    const eq = (await get(f)) as { schemaVersion: number; weapons?: WeaponDef[]; armor?: ArmorDef[]; recipes?: RecipeDef[]; armorTraits?: Record<string, Pick<ArmorDef, 'resist' | 'skill'>> };
     checkVersion(f, eq.schemaVersion, errors);
     for (const w of eq.weapons ?? []) putUnique(content.weapons, w.id, w, 'weapon', errors);
     for (const a of eq.armor ?? []) putUnique(content.armor, a.id, a, 'armor', errors);
     for (const r of eq.recipes ?? []) putUnique(content.recipes, r.id, r, 'recipe', errors);
+    // これまでの防具（ガルドロスの岩殻〜輝殻）の耐性と技能（v0.33.0。設計の proposedAdditions。armor.json は変えない）
+    for (const [id, t] of Object.entries(eq.armorTraits ?? {})) {
+      const a = content.armor.get(id);
+      if (!a) errors.push(`${f}: armorTraits の防具 ${id} が無い`);
+      else content.armor.set(id, { ...a, ...t });
+    }
   }
+  validateGear(content, errors);
   content.shop = (await get(index.files.shop)) as ShopDef;
   checkVersion(index.files.shop, content.shop.schemaVersion, errors);
   content.hub = (await get(index.files.hub)) as HubDef;
@@ -996,6 +1065,16 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     const plan = (content.bestiary.fields ?? []).find((f) => f.fieldId === fd.id);
     if (!plan) errors.push(`field ${fd.id}: 登録簿（bestiary）の狩場の案に、fieldId が無い`);
     else if (plan.name !== fd.name) errors.push(`field ${fd.id}: 名前「${fd.name}」が、登録簿の狩場の案「${plan.name}」と違う`);
+  }
+  // 属性の印（v0.33.0）: 遊べるモンスターの技の属性・弱点・耐性は、登録簿と同じ（登録簿に無い訓練用の標的は除く）
+  const sameSet = (a: readonly string[] | undefined, b: readonly string[]): boolean => [...(a ?? [])].sort().join() === [...b].sort().join();
+  for (const m of content.monsters.values()) {
+    const s = content.bestiary.species.find((x) => x.id === m.id);
+    if (!s) continue;
+    const own = s.elements.filter((e) => e !== 'none');
+    if (own.length > 1 || (m.element ?? null) !== (own[0] ?? null) || !sameSet(m.weak, s.weak) || !sameSet(m.resist, s.resist)) {
+      errors.push(`monster ${m.id}: 属性の印（element・weak・resist）が、登録簿と違う`);
+    }
   }
   // 依頼の標的は、登録簿にあること（訓練用の標的は除く）
   for (const q of content.quests.values()) if (q.targetMonsterId && !content.bestiary.species.some((s) => s.id === q.targetMonsterId)) errors.push(`quest ${q.id}: 標的 ${q.targetMonsterId} が、登録簿（bestiary）に無い`);

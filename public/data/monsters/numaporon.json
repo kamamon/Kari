@@ -9,6 +9,9 @@
   "turnDegPerSec": 130,
   "moveSpeed": 2.2,
   "captureAllowed": false,
+  "element": "water",
+  "weak": ["thunder"],
+  "resist": ["water"],
   "lootId": "loot.numaporon",
   "respawnTicks": null,
   "breakStaggerTicks": 50,
@@ -20,7 +23,7 @@
   "parts": [
     {"id": "dish", "name": "薄い泥皿", "hitzone": {"cut": 0.7, "blunt": 0.85, "shot": 0.65}, "brokenHitzone": {"cut": 0.8, "blunt": 0.95, "shot": 0.75}, "elementZone": 0.25, "breakDurability": 60, "material": "rock", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.0, 0.867, 0.374], "b": [0.0, 0.867, 0.971], "r": 0.3}]},
     {"id": "fin", "name": "尾の幼ひれ", "hitzone": {"cut": 0.85, "blunt": 0.8, "shot": 0.8}, "brokenHitzone": {"cut": 0.95, "blunt": 0.9, "shot": 0.9}, "elementZone": 0.25, "breakDurability": 40, "material": "hide", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.0, 0.478, -0.628], "b": [0.0, 0.355, -0.89], "r": 0.24}]},
-    {"id": "head", "name": "頭", "hitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.85}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "flinch": {"threshold": 35, "growth": 20, "ticks": 40}, "shapes": [{"a": [0.0, 0.658, 0.747], "b": [0.0, 0.673, 1.106], "r": 0.3}]},
+    {"id": "head", "name": "頭", "hitzone": {"cut": 0.9, "blunt": 0.85, "shot": 0.85}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "head": true, "flinch": {"threshold": 35, "growth": 20, "ticks": 40}, "shapes": [{"a": [0.0, 0.658, 0.747], "b": [0.0, 0.673, 1.106], "r": 0.3}]},
     {"id": "body", "name": "胴", "hitzone": {"cut": 0.75, "blunt": 0.75, "shot": 0.7}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "flinch": {"threshold": 45, "growth": 25, "ticks": 40}, "shapes": [{"a": [0.0, 0.568, -0.523], "b": [0.0, 0.643, 0.523], "r": 0.5}]},
     {"id": "legs", "name": "脚", "hitzone": {"cut": 0.7, "blunt": 0.7, "shot": 0.65}, "elementZone": 0.25, "breakDurability": null, "material": "hide", "flinch": {"threshold": 60, "growth": 30, "ticks": 90, "topple": true}, "shapes": [{"a": [0.379, 0.329, 0.374], "b": [0.379, 0.045, 0.389], "r": 0.2}, {"a": [-0.379, 0.329, 0.374], "b": [-0.379, 0.045, 0.389], "r": 0.2}, {"a": [0.379, 0.329, -0.553], "b": [0.379, 0.06, -0.545], "r": 0.2}, {"a": [-0.379, 0.329, -0.553], "b": [-0.379, 0.06, -0.545], "r": 0.2}]}
   ],

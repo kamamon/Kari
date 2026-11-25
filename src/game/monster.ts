@@ -6,6 +6,7 @@ import { DEG, angleDiff, forwardOf, fromArr, toWorld, turnToward, v3, yawOf, typ
 import type { SeededRng } from '../core/seededRng';
 import type { DamageType, MonsterAiChoice, MonsterDef } from '../data/schemas';
 import { newRun, type ActionRun } from './action';
+import { activeControl, ailmentRules, clearAilments, freshAilments, stepAilments, type MonsterAilments } from './ailment';
 import { shapeToWorld, type WorldShape } from './combat';
 import { stepHerdMember, type HerdMember } from './herd';
 import type { PlayerState, SimCtx } from './player';
@@ -68,6 +69,8 @@ export interface MonsterState {
   tranqTicks: number;
   /** 捕獲された（終端。以後は動かず、ダメージも受けない） */
   captured: boolean;
+  /** 状態異常（v0.33.0。毒・麻痺・睡眠・気絶のためた量と、効いている残り。src/game/ailment.ts） */
+  ailments: MonsterAilments;
 }
 
 /** 弱っているか（体力が捕獲できる割合以下）。見た目の合図と捕獲の条件が同じ値を使う。 */
@@ -127,6 +130,7 @@ export function createMonster(def: MonsterDef, spawn: { x: number; z: number; ya
     asleep: false,
     herd: null,
     spawn,
+    ailments: freshAilments(),
   };
 }
 
@@ -149,7 +153,7 @@ export function monsterShapes(m: MonsterState): WorldShape[] {
       grid = fol.actions.get(m.action.def.actionId) ?? null;
       tick = m.action.tick;
       dur = m.action.def.durationTicks;
-    } else if ((m.asleep || m.captured) && fol.sleep) grid = fol.sleep;
+    } else if ((m.asleep || m.captured || m.ailments.ticks.sleep > 0) && fol.sleep) grid = fol.sleep;
   }
   m.def.parts.forEach((part, i) => {
     const severed = m.parts[i]!.severed && part.sever;
@@ -260,6 +264,15 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   if (m.captured) return;
   if (m.tranqTicks > 0 && --m.tranqTicks === 0) m.tranq = 0;
 
+  // 状態異常（v0.33.0）: 効き目の残り・毒・猶予・ためた量の減り。毒で倒れることもある
+  const at = stepAilments(m.ailments, ailmentRules(ctx.content));
+  for (const k of at.ended) ctx.emit({ type: 'monster_ailment', target: m.id, kind: k, on: false });
+  if (at.poison > 0) {
+    ctx.emit({ type: 'ailment_damage', target: m.id, kind: 'poison', damage: at.poison, pos: { x: m.pos.x, y: m.pos.y + 1.2, z: m.pos.z } });
+    applyStatusDamage(m, at.poison, ctx);
+    if (m.dead) return;
+  }
+
   if (m.staggerTicks > 0) {
     m.staggerTicks--;
     if (m.staggerTicks === 0) {
@@ -271,6 +284,11 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   }
   if (m.trapTicks > 0) {
     m.trapTicks--;
+    m.action = null;
+    return;
+  }
+  // 麻痺・睡眠・気絶（v0.33.0）: 効いている間は動かない（技も止まる）
+  if (activeControl(m.ailments) !== null) {
     m.action = null;
     return;
   }
@@ -345,7 +363,7 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
     }
   }
   for (const hz of adef.hazards ?? []) {
-    if (hz.tick === t) ctx.spawnHazards(hz, player.pos, hz.origin ? toWorld(fromArr(hz.origin), m.pos, m.yaw) : undefined);
+    if (hz.tick === t) ctx.spawnHazards(hz, player.pos, hz.origin ? toWorld(fromArr(hz.origin), m.pos, m.yaw) : undefined, def);
   }
   for (const ev of adef.events) {
     if (ev.tick === t) ctx.emit({ type: 'action_event', actor: m.id, kind: ev.type, id: ev.id, pos: { ...m.pos } });
@@ -374,7 +392,34 @@ function stagger(m: MonsterState, kind: StaggerKind, ticks: number, partIndex: n
  * ダメージを適用する。死亡（終端状態）を先に確定し、その後に破壊・切断・怯み・怒りを見る。
  * 切断の蓄積は切断属性（cut）のダメージだけ。
  */
-export function applyDamageToMonster(m: MonsterState, partIndex: number, damage: number, type: DamageType, ctx: SimCtx): void {
+/** 倒れた: 終端の状態を先に決める（動き・怯み・怒り・状態異常を止める） */
+function markDead(m: MonsterState): void {
+  m.dead = true;
+  m.asleep = false;
+  m.deadTicks = 0;
+  m.action = null;
+  m.staggerTicks = 0;
+  m.staggerKind = null;
+  if (m.enraged) m.enraged = false;
+  clearAilments(m.ailments);
+}
+
+/**
+ * 毒など、部位に当たらないダメージ（v0.33.0）。体力だけを減らす（部位・怯み・怒り・目覚め・気づきには関わらない）。
+ */
+export function applyStatusDamage(m: MonsterState, damage: number, ctx: SimCtx): void {
+  if (m.dead || m.captured || damage <= 0) return;
+  m.hp = Math.max(0, m.hp - damage);
+  if (m.hp <= 0) {
+    markDead(m);
+    ctx.emit({ type: 'monster_dead', target: m.id });
+  }
+}
+
+/**
+ * 部位へのダメージ。partScale は部位破壊・切断のための蓄積だけに掛ける（防具の技能「砕き」。v0.33.0。体力・怯み・怒りは damage のまま）。
+ */
+export function applyDamageToMonster(m: MonsterState, partIndex: number, damage: number, type: DamageType, ctx: SimCtx, partScale = 1): void {
   if (m.dead || m.captured || damage <= 0) return;
   m.hp = Math.max(0, m.hp - damage);
   const part = m.parts[partIndex]!;
@@ -382,7 +427,7 @@ export function applyDamageToMonster(m: MonsterState, partIndex: number, damage:
 
   let broke = false;
   if (def.breakDurability !== null && !part.broken) {
-    part.durability -= damage;
+    part.durability -= damage * partScale;
     if (part.durability <= 0) {
       part.durability = 0;
       part.broken = true;
@@ -391,7 +436,7 @@ export function applyDamageToMonster(m: MonsterState, partIndex: number, damage:
   }
   let severed = false;
   if (def.sever && !part.severed && type === 'cut') {
-    part.severAcc += damage;
+    part.severAcc += damage * partScale;
     if (part.severAcc >= def.sever.threshold) {
       part.severed = true;
       severed = true;
@@ -408,13 +453,7 @@ export function applyDamageToMonster(m: MonsterState, partIndex: number, damage:
   };
 
   if (m.hp <= 0) {
-    m.dead = true;
-    m.asleep = false;
-    m.deadTicks = 0;
-    m.action = null;
-    m.staggerTicks = 0;
-    m.staggerKind = null;
-    if (m.enraged) m.enraged = false;
+    markDead(m);
     emitChanges();
     ctx.emit({ type: 'monster_dead', target: m.id });
     return;

@@ -9,6 +9,9 @@
   "turnDegPerSec": 105,
   "moveSpeed": 3.3,
   "captureAllowed": true,
+  "element": "mist",
+  "weak": ["wind"],
+  "resist": ["mist"],
   "lootId": "loot.velgait",
   "capture": {"hpRatio": 0.25, "tranqNeeded": 2, "tranqDecayTicks": 900},
   "respawnTicks": null,
@@ -22,7 +25,7 @@
     {"id": "lamps_f", "name": "前の灯節二つ", "hitzone": {"cut": 0.75, "blunt": 0.7, "shot": 0.75}, "brokenHitzone": {"cut": 0.85, "blunt": 0.8, "shot": 0.85}, "elementZone": 0.2, "breakDurability": 150, "material": "shell", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 2.44, 0.637], "b": [0.0, 2.478, 0.93], "r": 0.2}]},
     {"id": "lamps_b", "name": "後ろの灯節二つ", "hitzone": {"cut": 0.75, "blunt": 0.7, "shot": 0.75}, "brokenHitzone": {"cut": 0.85, "blunt": 0.8, "shot": 0.85}, "elementZone": 0.2, "breakDurability": 150, "material": "shell", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 2.49, -0.718], "b": [0.0, 2.49, -0.355], "r": 0.2}]},
     {"id": "tail", "name": "尾の導霧皮", "hitzone": {"cut": 0.6, "blunt": 0.5, "shot": 0.55}, "brokenHitzone": {"cut": 0.7, "blunt": 0.6, "shot": 0.65}, "elementZone": 0.2, "breakDurability": 150, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 1.486, -1.853], "b": [0.0, 1.123, -2.829], "r": 0.12}, {"a": [0.0, 1.123, -2.829], "b": [0.0, 1.895, -2.934], "r": 0.1}]},
-    {"id": "head", "name": "頭", "hitzone": {"cut": 0.75, "blunt": 0.7, "shot": 0.65}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "flinch": {"threshold": 140, "growth": 50, "ticks": 45}, "shapes": [{"a": [0.0, 2.633, 1.583], "b": [0.0, 2.478, 2.046], "r": 0.24}]},
+    {"id": "head", "name": "頭", "hitzone": {"cut": 0.75, "blunt": 0.7, "shot": 0.65}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "head": true, "flinch": {"threshold": 140, "growth": 50, "ticks": 45}, "shapes": [{"a": [0.0, 2.633, 1.583], "b": [0.0, 2.478, 2.046], "r": 0.24}]},
     {"id": "body", "name": "胴", "hitzone": {"cut": 0.5, "blunt": 0.5, "shot": 0.45}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 1.938, -1.004], "b": [0.0, 1.957, 0.965], "r": 0.42}, {"a": [0.0, 2.247, 1.351], "b": [0.0, 2.594, 1.583], "r": 0.2}]},
     {"id": "legs", "name": "脚", "hitzone": {"cut": 0.45, "blunt": 0.45, "shot": 0.4}, "elementZone": 0.2, "breakDurability": null, "material": "hide", "flinch": {"threshold": 210, "growth": 70, "ticks": 120, "topple": true}, "shapes": [{"a": [0.3, 1.513, 1.081], "b": [0.3, 0.181, 1.563], "r": 0.14}, {"a": [-0.3, 1.513, 1.081], "b": [-0.3, 0.181, 1.563], "r": 0.14}, {"a": [0.3, 1.59, -1.081], "b": [0.3, 0.124, -0.83], "r": 0.15}, {"a": [-0.3, 1.59, -1.081], "b": [-0.3, 0.124, -0.83], "r": 0.15}]}
   ],

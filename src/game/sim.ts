@@ -3,12 +3,14 @@
 import { DEG, angleDiff, forwardOf, toWorld, yawOf, type V3 } from '../core/math';
 import { SeededRng } from '../core/seededRng';
 import { STATUS_KINDS, questTargets } from '../data/schemas';
-import type { Content, DamageType, FieldAreaDef, FieldDef, HazardDef, HazardLook, HitWindowDef, ItemDef, ItemStack, LootDef, LootRoll, MonsterDef, QuestDef, QuestTarget, RankDef, ShootDef, StatusHit } from '../data/schemas';
+import type { Content, DamageType, ElementId, StatusKind, FieldAreaDef, FieldDef, HazardDef, HazardLook, HitWindowDef, ItemDef, ItemStack, LootDef, LootRoll, MonsterDef, QuestDef, QuestTarget, RankDef, ShootDef, StatusHit } from '../data/schemas';
 import { inWindow, type ActionRun } from './action';
 import { HitLedger, computeDamage, edgeStage, sweepCapsule, type WorldShape } from './combat';
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
 import { defenseScale, scaleMonsterDef, totalDefense } from './rank';
+import { computeGear, critChance, incomingElementScale, weaponElementZone, type GearEffects } from './gear';
+import { addAilment, ailmentAmount, ailmentRules, activeControl, clearAilments, startPoison, wakeFromSleep } from './ailment';
 import { applyDamageToMonster, createMonster, monsterBlockers, monsterShapes, stepMonster, type MonsterState } from './monster';
 import { questTimeLimitTicks } from './field';
 import { addMember, createHerdGroup, herdArea, herdHurt, livingMembers, slotOf, stepHerdGroup, type HerdGroup } from './herd';
@@ -58,6 +60,8 @@ export interface Hazard {
   /** 当たった時にためる状態異常と、見た目の種類（v0.17.0） */
   status: StatusHit | null;
   look: HazardLook;
+  /** 出した種の技の属性（v0.33.0。monsterElementShare の分が、この属性になる）。無属性・持ち主の無いものは null */
+  element: ElementId | null;
 }
 
 export type HuntReason = 'slay' | 'capture' | 'time' | 'faints' | 'retire' | 'deliver';
@@ -187,6 +191,8 @@ export class Simulation implements SimCtx {
   defenseScale = 1;
   /** 身に着けている防具の ID（設定のまま。見た目が読む） */
   armorIds: readonly string[] = [];
+  /** 装備の効き目（v0.33.0。防具の技能と耐性。src/game/gear.ts） */
+  gear: GearEffects;
   /** 依頼の段階（訓練場では null） */
   rank: RankDef | null = null;
   hazards: Hazard[] = [];
@@ -249,6 +255,7 @@ export class Simulation implements SimCtx {
     this.armorIds = [...(options.armorIds ?? [])];
     this.defense = totalDefense(content, this.armorIds);
     this.defenseScale = defenseScale(content, this.defense);
+    this.gear = computeGear(content, content.weapons.get(options.weaponId)!, this.armorIds);
     if (quest) {
       this.rank = content.ranks.get(quest.rankId) ?? null;
       if (!this.rank) throw new Error(`rank ${quest.rankId} が無い`);
@@ -454,7 +461,7 @@ export class Simulation implements SimCtx {
     return out;
   }
 
-  spawnHazards(def: HazardDef, target: V3, origin?: V3): void {
+  spawnHazards(def: HazardDef, target: V3, origin?: V3, owner?: MonsterDef): void {
     // 打ち上げた場所から狙った位置へ向かう向き（一列に並べる時に使う）
     const ox = origin?.x ?? target.x, oz = origin?.z ?? target.z;
     const dist = Math.hypot(target.x - ox, target.z - oz);
@@ -478,6 +485,7 @@ export class Simulation implements SimCtx {
       const h: Hazard = {
         id: this.nextHazard++, x, z, radius: def.radius, warn: def.warnTicks, warnTotal: def.warnTicks, active: def.activeTicks, baseDamage: def.baseDamage, reaction: def.reaction, hit: false,
         from: origin ? { x: origin.x, y: origin.y, z: origin.z } : null, peak: def.peak ?? 6, status: def.status ?? null, look: def.look ?? 'rock',
+        element: owner?.element ?? null,
       };
       this.hazards.push(h);
       this.emit({ type: 'hazard_warn', id: h.id, x, z, radius: h.radius, warnTicks: h.warn });
@@ -496,7 +504,9 @@ export class Simulation implements SimCtx {
       h.active--;
       if (h.hit || this.hunt?.phase === 'success' || this.hunt?.phase === 'failed') continue;
       if (Math.hypot(p.pos.x - h.x, p.pos.z - h.z) > h.radius + this.content.player.radius * 0.5) continue;
-      const outcome = resolveIncomingHit(p, { attackerPos: { x: h.x, y: 0, z: h.z }, baseDamage: h.baseDamage * this.monsterAttackScale * this.defenseScale, guardable: false, guardCost: 0, reaction: h.reaction, status: h.status ?? undefined }, this);
+      // 属性を持つ種の飛ばすもの（v0.33.0）: 属性の分は、ハンターの耐性で変わる。怒りは掛けない（これまでどおり）
+      const elem = h.element ? incomingElementScale(this.content, { element: h.element } as MonsterDef, this.gear) : 1;
+      const outcome = resolveIncomingHit(p, { attackerPos: { x: h.x, y: 0, z: h.z }, baseDamage: h.baseDamage * elem * this.monsterAttackScale * this.defenseScale, guardable: false, guardCost: 0, reaction: h.reaction, status: h.status ?? undefined }, this);
       if (outcome !== 'evaded' && outcome !== 'ignored') h.hit = true;
     }
     this.hazards = this.hazards.filter((h) => h.warn > 0 || h.active > 0);
@@ -612,6 +622,7 @@ export class Simulation implements SimCtx {
       m.captured = true;
       m.action = null;
       m.attackEval = null;
+      clearAilments(m.ailments);
       m.staggerTicks = 0;
       m.staggerKind = null;
       m.enraged = false;
@@ -974,7 +985,7 @@ export class Simulation implements SimCtx {
     const hitstop = hw.hitstopTicks + (charge ? charge.hitstopBonus[run.chargeLevel] ?? 0 : 0);
     run.hitstop = hitstop;
     // 刃の減り方は、溜めや勢いの倍率を掛ける前の、技そのものの係数で決める
-    const bounced = this.dealPlayerDamage(m, partIndex, point, { actionId: run.def.actionId, windowId: hw.id, actionTick: t, motion: hw.damageCoefficient * scale, elementMotion: hw.elementCoefficient ?? 1, damageType: hw.damageType, hitstop, chargeLevel: run.chargeLevel, wearMotion: hw.damageCoefficient });
+    const bounced = this.dealPlayerDamage(m, partIndex, point, { actionId: run.def.actionId, windowId: hw.id, actionTick: t, motion: hw.damageCoefficient * scale, damageType: hw.damageType, hitstop, chargeLevel: run.chargeLevel, wearMotion: hw.damageCoefficient, contact: hw.contact });
     if (M && mo?.gain && !run.momentumGained) {
       run.momentumGained = true;
       const p = this.player;
@@ -1003,34 +1014,58 @@ export class Simulation implements SimCtx {
     m: MonsterState,
     partIndex: number,
     point: V3,
-    h: { actionId: string; windowId: string; actionTick: number; motion: number; elementMotion: number; damageType: DamageType; hitstop: number; chargeLevel: number; /** 武器で直接当てた時の、技の係数（刃の減り方に使う）。矢は省く */ wearMotion?: number },
+    h: {
+      actionId: string;
+      windowId: string;
+      actionTick: number;
+      /** 命中の最後の係数（溜め・勢い・矢の距離を掛けた後）。物理にも、属性・状態異常・気絶にも、これを 1 回だけ使う（v0.33.0） */
+      motion: number;
+      damageType: DamageType;
+      hitstop: number;
+      chargeLevel: number;
+      /** 武器で直接当てた時の、技の係数（刃の減り方に使う）。矢は省く */
+      wearMotion?: number;
+      /** 盾で打った（v0.33.0）。武器の属性・状態異常は乗らない */
+      contact?: 'shield';
+    },
   ): boolean {
     const p = this.player;
-    const weapon = weaponOf(p, this.content);
+    const C = this.content;
+    const weapon = weaponOf(p, C);
     const part = m.def.parts[partIndex]!;
+    const g = this.gear;
+    const R = ailmentRules(C);
     // 刃の状態: 武器で直接当てた時だけ（矢には無い）。段階で刃補正が変わり、硬い部位では弾かれる
-    const E = this.content.edge;
-    const famEdge = h.wearMotion !== undefined ? familyOf(p, this.content).edge : undefined;
+    const E = C.edge;
+    const famEdge = h.wearMotion !== undefined ? familyOf(p, C).edge : undefined;
     const stage = famEdge ? edgeStage(E, p.edge) : null;
     const hitzone = (m.parts[partIndex]!.broken && part.brokenHitzone ? part.brokenHitzone : part.hitzone)[h.damageType];
     const bounced = !!stage && hitzone < stage.bounceBelow;
     // 会心は seed 付き乱数。1 命中につき必ず 1 回引き、乱数列を入力だけで決まるようにする。
+    // 会心率は武器の会心 + 急所観察（物理の肉質が境目以上の時）。上限は critCap（v0.33.0）
     const roll = this.rng.next() * 100;
-    const T = this.content.player;
+    const T = C.player;
+    const chance = critChance(C, weapon, g, hitzone);
     let crit = 0;
-    if (weapon.affinity > 0 && roll < weapon.affinity) crit = 1;
-    else if (weapon.affinity < 0 && roll < -weapon.affinity) crit = -1;
+    if (chance > 0 && roll < chance) crit = 1;
+    else if (chance < 0 && roll < -chance) crit = -1;
+    // 武器の属性は、武器そのもので当てた時だけ（盾には乗らない）。部位の係数は属性ごと（弱点・耐性。複合は大きい方、弱点でなければ半分）
+    const weaponHit = h.contact !== 'shield';
+    const elementZone = weaponHit ? weaponElementZone(C, weapon, m.def, part) : 0;
+    // 状態異常の睡眠: 覚ます最初の命中だけ wakeScale 倍（v0.33.0）
+    const woke = !m.dead && wakeFromSleep(m.ailments, R);
     const damage = computeDamage({
       attack: weapon.attack,
       motion: h.motion,
       sharpness: weapon.sharpnessModifier * (stage?.damageScale ?? 1),
       hitzone,
       crit: crit > 0 ? T.critMultiplier : crit < 0 ? 0.75 : 1,
-      element: weapon.element.value,
-      elementMotion: h.elementMotion,
-      elementZone: part.elementZone,
-      questModifier: this.questModifier,
+      element: elementZone > 0 ? weapon.element.value * g.element : 0,
+      elementMotion: h.motion,
+      elementZone,
+      questModifier: this.questModifier * (woke ? R.sleep.wakeScale : 1),
     });
+    if (woke) this.emit({ type: 'monster_ailment', target: m.id, kind: 'sleep', on: false, woke: true });
     m.hitstop = h.hitstop;
     this.totalDamage += damage;
     this.hitCount++;
@@ -1052,16 +1087,34 @@ export class Simulation implements SimCtx {
       chargeLevel: h.chargeLevel,
       tick: this.tick,
       bounced,
+      ...(elementZone > 0 ? { element: (weapon.element.type === 'compound' ? weapon.element.elements![0] : weapon.element.type) as ElementId } : {}),
     });
-    applyDamageToMonster(m, partIndex, damage, h.damageType, this);
+    applyDamageToMonster(m, partIndex, damage, h.damageType, this, g.partDamage);
     if (m.herd) herdHurt(m, this);
+    // 状態異常（v0.33.0）: 武器の毒・麻痺・睡眠は、武器そのもので当てた時だけ。気絶は、打撃が頭に当たった時だけ
+    if (!m.dead && !m.captured) {
+      if (weaponHit && weapon.status) this.storeAilment(m, weapon.status.kind, ailmentAmount(weapon.status.potency, h.motion, g.status), point);
+      if (h.damageType === 'blunt' && part.head) this.storeAilment(m, 'stun', ailmentAmount(R.stunPerMotion, h.motion, g.stun), point);
+    }
     if (famEdge && stage) {
-      // 当てるたびに減る。弾かれた時は余分に減る
-      p.edge = Math.max(0, p.edge - famEdge.wearPerMotion * (h.wearMotion ?? 0) * (bounced ? E.bounce.wearScale : 1));
+      // 当てるたびに減る。弾かれた時は余分に減る。防具の技能「刃持ち」で減り方が小さくなる（v0.33.0）
+      p.edge = Math.max(0, p.edge - famEdge.wearPerMotion * (h.wearMotion ?? 0) * (bounced ? E.bounce.wearScale : 1) * g.edgeWear);
       const now = edgeStage(E, p.edge);
       if (now.id !== stage.id) this.emit({ type: 'edge', stage: now.id, value: p.edge });
     }
     return bounced;
+  }
+
+  /** 状態異常をためる（v0.33.0）。発症したら、効き目を始めて知らせる（硬直は、いまの技を止める） */
+  private storeAilment(m: MonsterState, kind: StatusKind, amount: number, pos: V3): void {
+    const R = ailmentRules(this.content);
+    if (addAilment(m.ailments, R, kind, amount) !== 'triggered') return;
+    if (kind === 'poison') startPoison(m.ailments, R, m.def.hp);
+    else {
+      m.action = null;
+      m.attackEval = null;
+    }
+    this.emit({ type: 'monster_ailment', target: m.id, kind, on: true, pos: { ...pos } });
   }
 
   /**
@@ -1115,7 +1168,7 @@ export class Simulation implements SimCtx {
         const hit = sweepCapsule(a.pos, a.pos, next, next, ARROW_RADIUS, monsterShapes(m));
         if (!hit) continue;
         const dist = a.travelled + Math.hypot(hit.point.x - a.pos.x, hit.point.y - a.pos.y, hit.point.z - a.pos.z);
-        this.dealPlayerDamage(m, hit.partIndex, hit.point, { actionId: a.actionId, windowId: 'arrow', actionTick: 0, motion: a.coefficient * arrowDistanceScale(dist), elementMotion: 1, damageType: 'shot', hitstop: 2, chargeLevel: a.level });
+        this.dealPlayerDamage(m, hit.partIndex, hit.point, { actionId: a.actionId, windowId: 'arrow', actionTick: 0, motion: a.coefficient * arrowDistanceScale(dist), damageType: 'shot', hitstop: 2, chargeLevel: a.level });
         done = true;
         break;
       }
@@ -1132,7 +1185,7 @@ export class Simulation implements SimCtx {
     const p = this.player;
     for (const m of this.monsters) {
       const ev = m.attackEval;
-      if (!ev || m.dead || m.captured || m.trapTicks > 0) continue;
+      if (!ev || m.dead || m.captured || m.trapTicks > 0 || activeControl(m.ailments) !== null) continue;
       const { run, t } = ev;
       for (const hw of run.def.hitWindows) {
         if (!inWindow(t, hw)) continue;
@@ -1146,7 +1199,8 @@ export class Simulation implements SimCtx {
           p,
           {
             attackerPos: m.pos,
-            baseDamage: (hw.baseDamage ?? 0) * this.monsterAttackScale * this.defenseScale * (m.enraged && m.def.rage ? m.def.rage.damageScale : 1),
+            // (物理 + 属性 × (1 - 耐性/100)) × 防御 × 段階 × 怒り を、小数のまま渡す（切り捨ては resolveIncomingHit で 1 回だけ。v0.33.0）
+            baseDamage: (hw.baseDamage ?? 0) * incomingElementScale(this.content, m.def, this.gear) * this.monsterAttackScale * this.defenseScale * (m.enraged && m.def.rage ? m.def.rage.damageScale : 1),
             guardable: hw.guardable ?? true,
             guardCost: hw.guardCost ?? 20,
             reaction: hw.reaction ?? 'flinch',
@@ -1198,6 +1252,10 @@ export class Simulation implements SimCtx {
     for (const h of this.hazards) parts.push(h.x, h.z, h.warn, h.active, h.hit ? 1 : 0);
     parts.push(p.itemIndex, p.items.map((s) => s.count).join(','), p.itemUse ? `${p.itemUse.itemId}:${p.itemUse.done ? 1 : 0}` : '-', p.pendingItem ? 1 : 0, p.carving ? p.carving.source : '-');
     for (const m of this.monsters) parts.push(m.trapTicks, m.trapCount, m.tranq, m.tranqTicks, m.captured ? 1 : 0);
+    for (const m of this.monsters) {
+      const a = m.ailments;
+      parts.push(STATUS_KINDS.map((k) => `${a.gauge[k]}/${a.count[k]}/${a.idle[k]}/${a.ticks[k]}`).join(','), a.poisonTotal, a.poisonDone, a.grace);
+    }
     for (const t of this.traps) parts.push(t.x, t.z, t.state, t.arm, t.life);
     parts.push(p.momentum, p.momentumTicks);
     if (this.errand) parts.push(this.errand.used.join(','), Object.entries(this.errand.bag).map(([k, v]) => `${k}=${v}`).join(','), this.errand.delivered ? 1 : 0, p.errandOp ? `${p.errandOp.target.kind}:${p.errandOp.done ? 1 : 0}` : '-');

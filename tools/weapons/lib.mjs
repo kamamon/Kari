@@ -136,7 +136,7 @@ export function family(id, hands, shape) {
       : [{ id: 'startup', from: 0, to: a0 }, { id: 'recovery', from: a0, to: o.dur }];
     const hitWindows = (o.hits ?? []).map((h) => ({
       id: h.id, from: h.from ?? a0, to: h.to ?? a1, shapeTrack: h.track, damageType: h.type ?? 'cut', damageCoefficient: h.coef,
-      maxHitsPerTarget: 1, hitstopTicks: h.hitstop ?? 3, ...(h.group ? { group: h.group } : {}),
+      maxHitsPerTarget: 1, hitstopTicks: h.hitstop ?? 3, ...(h.group ? { group: h.group } : {}), ...(h.contact ? { contact: h.contact } : {}),
     }));
     const events = [...(o.events ?? [])];
     if (o.sound) events.push({ tick: o.sound[0], type: 'sound', id: o.sound[1] });

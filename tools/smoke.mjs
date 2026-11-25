@@ -1537,16 +1537,23 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     const box = document.querySelector('.forge-series[data-series="series.bornakel"]');
     box.open = true;
     const b = document.querySelector(`.forge-recipe[data-recipe="${id}"] button.go`);
-    return { summary: document.querySelector('#base-forge summary').textContent, series: document.querySelectorAll('.forge-series').length, head: box.querySelector('summary').textContent, button: b?.textContent ?? '', enabled: b ? !b.disabled : false, weapon: window.__vh.save.doc.equippedWeaponId, rev: window.__vh.save.doc.revision };
+    // 属性・状態異常・防具の技能と耐性（v0.33.0）も、性能の欄に出る
+    const stat = (r) => document.querySelector(`.forge-recipe[data-recipe="${r}"] .forge-stat`)?.textContent ?? '';
+    return {
+      summary: document.querySelector('#base-forge summary').textContent, series: document.querySelectorAll('.forge-series').length, head: box.querySelector('summary').textContent, button: b?.textContent ?? '', enabled: b ? !b.disabled : false, weapon: window.__vh.save.doc.equippedWeaponId, rev: window.__vh.save.doc.revision,
+      wind: stat('recipe.craft.weapon.selvark.heavy_blade.r1'), poison: stat('recipe.craft.weapon.verito.heavy_blade.r1'), mud: stat('recipe.craft.armor.numeradon.head.r1'),
+    };
   }, CRAFT);
   await page.click(`.forge-recipe[data-recipe="${CRAFT}"] button.go`);
   await until(page, () => !!document.querySelector('.forge-confirm button.go'), 3000);
   await page.click('.forge-confirm button.go');
   const made = await until(page, (w) => window.__vh.save.doc.weapons.includes(w) && /を作りました/.test(document.querySelector('.base-message')?.textContent ?? ''), 8000, MADE);
   const makeAfter = await page.evaluate((w) => ({ msg: document.querySelector('.base-message').textContent, weapon: window.__vh.save.doc.equippedWeaponId, rev: window.__vh.save.doc.revision, owned: !!document.querySelector('.forge-series[data-series="series.bornakel"] .forge-recipe.owned'), has: window.__vh.save.doc.weapons.includes(w) }), MADE);
-  check('工房で作る（v0.32.0）: 系列 5 つの欄に「作る」が出て、素材をそろえると作れる。作ると持ち物に入り、装備は替わらない（保存の書き込みは 1 回）',
-    makeBefore.series === 5 && /作れます/.test(makeBefore.summary) && makeBefore.button === '作る' && makeBefore.enabled && made && makeAfter.has && makeAfter.owned && makeAfter.weapon === makeBefore.weapon && makeAfter.rev === makeBefore.rev + 1,
+  check('工房で作る（v0.32.0）: 系列 19 の欄に「作る」が出て、素材をそろえると作れる。作ると持ち物に入り、装備は替わらない（保存の書き込みは 1 回）',
+    makeBefore.series === 19 && /作れます/.test(makeBefore.summary) && makeBefore.button === '作る' && makeBefore.enabled && made && makeAfter.has && makeAfter.owned && makeAfter.weapon === makeBefore.weapon && makeAfter.rev === makeBefore.rev + 1,
     JSON.stringify({ makeBefore, makeAfter }));
+  check('工房で作る（v0.33.0）: 属性・状態異常の武器と、防具の技能・耐性が、性能の欄に出る（帆角の断岳剣 風 26・絹霧の断岳剣 毒 9.2・泥冠の頭 個別属性耐性（水））',
+    makeBefore.wind === '攻撃力 85・風 26' && makeBefore.poison === '攻撃力 86・毒 9.2' && makeBefore.mud === '防御力 6・個別属性耐性（水）・雷 -2 水 +3', JSON.stringify(makeBefore));
   await page.click('.base-close');
   await put('chest');
   await until(page, () => window.__vh.nearFacility?.id === 'chest');
@@ -1577,7 +1584,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     const picks = (slot) => [...document.querySelectorAll(`.base-armor-row[data-slot="${slot}"] .base-armor-pick`)].map((b) => `${b.dataset.armor || '外す'}${b.classList.contains('on') ? '*' : ''}`).join();
     const tall = Math.min(...[...document.querySelectorAll('.base-armor-pick')].map((b) => b.getBoundingClientRect().height));
     return {
-      rows: rows.map((r) => `${r.dataset.slot}:${r.dataset.worn}`).join(), head: picks('head'), chest: picks('chest'), note: document.querySelector('.base-armor-note').textContent,
+      rows: rows.map((r) => `${r.dataset.slot}:${r.dataset.worn}`).join(), head: picks('head'), chest: picks('chest'), note: document.querySelector('.base-armor-note').textContent, gear: document.querySelector('.base-gear-note').textContent,
       sim: a.sim.armorIds.join(), defense: a.sim.defense, worn: a.save.doc.equippedArmorIds.join(), owned: a.save.doc.armor.join(), look: a.view.hunter.armorKey,
       section: document.getElementById('base').dataset.section, open: !document.getElementById('base').hidden, x: a.sim.player.pos.x, z: a.sim.player.pos.z,
       shown: getComputedStyle(document.querySelector('.base-armor')).display !== 'none', tall, rev: a.save.doc.revision,
@@ -1599,6 +1606,8 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.waitForTimeout(300);
   ar = await armorState();
   check('装備箱: 岩殻の兜と胸当てを着ている（防御力の合計 12、受けるダメージ ×0.89）。姿にも出ている', ar.head === 'armor.head.002*,外す' && ar.chest === 'armor.chest.002*,外す' && ar.defense === 12 && ar.look === '22111' && /^防御力の合計 12（受けるダメージ ×0\.89）$/.test(ar.note), JSON.stringify(ar));
+  check('装備箱（v0.33.0）: 岩殻の兜と胸当ての技能（受け支え Lv1・刃持ち Lv1）と耐性（火 -4・雷 +6）が出る。sim も同じ値',
+    ar.gear === '技能: 受け支え Lv1（防御のスタミナ -8%）・刃持ち Lv1（刃の減り -5%）耐性: 火 -4・雷 +6' && await page.evaluate(() => window.__vh.sim.gear.resist.fire === -4 && window.__vh.sim.gear.resist.thunder === 6 && Math.abs(window.__vh.sim.gear.guardStamina - 0.92) < 1e-9), JSON.stringify(ar));
   await page.screenshot({ path: `${OUT}95b_hub_chest_armor.png` });
   const at = { x: ar.x, z: ar.z, rev: ar.rev };
   // 頭を外す

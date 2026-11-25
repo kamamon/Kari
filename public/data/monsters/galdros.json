@@ -9,6 +9,8 @@
   "turnDegPerSec": 65,
   "moveSpeed": 2.6,
   "captureAllowed": true,
+  "weak": ["fire"],
+  "resist": ["thunder"],
   "lootId": "loot.galdros",
   "lootByRank": {"rank.2": "loot.galdros.r2", "rank.3": "loot.galdros.r3", "rank.4": "loot.galdros.r4"},
   "capture": {"hpRatio": 0.25, "tranqNeeded": 2, "tranqDecayTicks": 900},
@@ -22,7 +24,7 @@
     {
       "id": "head", "name": "頭",
       "hitzone": {"cut": 0.65, "blunt": 0.75, "shot": 0.55}, "brokenHitzone": {"cut": 0.75, "blunt": 0.85, "shot": 0.65},
-      "elementZone": 0.20, "breakDurability": 220, "material": "rock",
+      "elementZone": 0.20, "breakDurability": 220, "material": "rock", "head": true,
       "flinch": {"threshold": 180, "growth": 60, "ticks": 50},
       "shapes": [{"a": [0, 1.66, 2.0], "r": 0.5}, {"a": [0, 1.52, 2.36], "r": 0.3}]
     },

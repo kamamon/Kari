@@ -2,7 +2,7 @@
 // ここから simulation へ値を書き戻すことはしない（描画補間や骨の姿勢を計算の正本にしない）。
 import { CylinderGeometry, DoubleSide, Group, IcosahedronGeometry, Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshStandardMaterial, RingGeometry, Scene, Vector3, WebGLRenderer, type Object3D } from 'three';
 import { angleDiff, fromArr, lerpV, norm, smoothstep, toWorld, type V3 } from '../core/math';
-import type { Content, MonsterDef } from '../data/schemas';
+import { STATUS_KINDS, type Content, type ElementId, type MonsterDef, type StatusKind } from '../data/schemas';
 import { inWindow, renderTick } from '../game/action';
 import type { SimEvent } from '../game/events';
 import { monsterBlockers, monsterShapes, type MonsterState } from '../game/monster';
@@ -46,6 +46,17 @@ const PART_COLORS: Record<string, [number, number, number]> = {
 const WHET_CLIP = 'common_item_whet_01';
 const WHET_HOLD = { grip: { x: -0.2, y: 0.74, z: 0.28 }, dir: norm({ x: 0.9, y: -0.08, z: 0.42 }), normal: [0, 1, 0] as [number, number, number] };
 const MATERIAL_SPARK: Record<string, [number, number, number]> = { rock: [1, 0.8, 0.45], shell: [0.9, 0.85, 0.6], hide: [0.95, 0.9, 0.8] };
+/** 武器の属性が乗った命中の火花の色（v0.33.0。見た目だけ） */
+const ELEMENT_SPARK: Record<ElementId, [number, number, number]> = {
+  fire: [1, 0.5, 0.2],
+  thunder: [1, 0.95, 0.4],
+  ice: [0.72, 0.92, 1],
+  water: [0.4, 0.68, 1],
+  wind: [0.78, 1, 0.78],
+  mist: [0.78, 0.95, 0.9],
+};
+/** モンスターの状態異常の粉の色（v0.33.0）: 毒は紫の泡、麻痺は黄色の火花、睡眠は淡い青、気絶は頭の上の星 */
+const AILMENT_FX: Record<StatusKind, [number, number, number]> = { poison: [0.62, 0.36, 0.72], para: [1, 0.92, 0.35], sleep: [0.72, 0.82, 1], stun: [1, 0.95, 0.62] };
 
 /** ロックオンの照準を置く所（モンスターの座標。部位の当たり形状の端の平均）。種ごとに 1 回だけ求める */
 const lockCenters = new WeakMap<MonsterDef, { x: number; y: number; z: number }>();
@@ -383,6 +394,8 @@ export class GameView {
           const c = MATERIAL_SPARK[e.material] ?? [1, 1, 1];
           this.sparks.emit(10 + e.chargeLevel * 6, e.pos, 4.5 + e.chargeLevel, 1.6, 0.34, c);
           this.dust.emit(3, e.pos, 1.2, 0.4, 0.5, [0.6, 0.6, 0.55], 0.6);
+          // 武器の属性が乗った: その色の火花を足す（v0.33.0）
+          if (e.element) this.sparks.emit(8, e.pos, 3.5, 1.8, 0.4, ELEMENT_SPARK[e.element]);
           rig?.hitFlash(e.partIndex);
           rig?.hitReact?.(e.partIndex, e.pos.x, e.pos.z, 0.8 + e.chargeLevel * 0.3);
           this.cam.addShake(0.22 + e.chargeLevel * 0.12);
@@ -417,6 +430,16 @@ export class GameView {
         case 'monster_aware':
         case 'monster_rage':
           this.cam.addShake(0.35);
+          break;
+        case 'monster_ailment':
+          // 状態異常が付いた・覚めた（v0.33.0）: その色の粉をまとめて出す
+          if (m && (e.on || e.woke)) {
+            const at = e.pos ?? this.ailmentPoint(m);
+            const col = AILMENT_FX[e.kind];
+            if (e.kind === 'para' || e.kind === 'stun') this.sparks.emit(22, at, 4, 1.5, 0.5, col);
+            else this.dust.emit(e.woke ? 8 : 20, at, 2, 0.8, 1.2, col, 0.6);
+            if (e.on && e.kind === 'stun') this.cam.addShake(0.3);
+          }
           break;
         case 'hazard_impact': {
           const look = sim.hazards.find((h) => h.id === e.id)?.look ?? 'rock';
@@ -714,10 +737,43 @@ export class GameView {
     if (this.errandProps && sim.errand) updateErrandProps(this.errandProps, sim.errand, sim.areaId, sim.hunt?.phase === 'active', this.cam.camera.position, this.time);
     this.arena.sky?.setTime(this.time);
     WIND.value = this.time;
+    this.ailmentFx(sim, dt);
     this.sparks.update(dt);
     this.dust.update(dt);
     this.rings.update(dt);
     this.drawDebug(sim, alpha, verify);
+  }
+
+  /** 状態異常の粉の出る位置: 頭の部位（無ければ体の真ん中の辺り） */
+  private ailmentPoint(m: MonsterState): V3 {
+    const head = m.def.parts.find((p) => p.head) ?? m.def.parts[0]!;
+    const sh = head.shapes[0]!;
+    const a = toWorld(fromArr(sh.a), m.pos, m.yaw);
+    return { x: a.x, y: m.pos.y + Math.max(0.6, fromArr(sh.a).y + sh.r), z: a.z };
+  }
+
+  /** 効いている間の状態異常（v0.33.0）: 毒の泡・麻痺の火花・眠りの淡い粉・気絶の星を、少しずつ出す（見た目だけ） */
+  private ailmentTimer = 0;
+  private ailmentFx(sim: Simulation, dt: number): void {
+    this.ailmentTimer += dt;
+    if (this.ailmentTimer < 0.16) return;
+    this.ailmentTimer = 0;
+    for (const m of sim.monsters) {
+      if (m.dead || m.captured || !this.shown(sim, m)) continue;
+      const t = m.ailments.ticks;
+      if (!STATUS_KINDS.some((k) => t[k] > 0)) continue;
+      const at = this.ailmentPoint(m);
+      const k = m.herd ? 0.5 : 1;
+      if (t.poison > 0) this.dust.emit(Math.max(1, Math.round(2 * k)), { x: m.pos.x + (Math.random() - 0.5) * m.def.bodyRadius, y: m.pos.y + 0.9 * k + Math.random() * 0.6, z: m.pos.z + (Math.random() - 0.5) * m.def.bodyRadius }, 0.4, 0.9, 1.1, AILMENT_FX.poison, 0.3);
+      if (t.para > 0) this.sparks.emit(Math.max(1, Math.round(3 * k)), { x: at.x + (Math.random() - 0.5), y: at.y - 0.3, z: at.z + (Math.random() - 0.5) }, 3, 1, 0.25, AILMENT_FX.para);
+      if (t.sleep > 0) this.dust.emit(1, { x: at.x, y: at.y + 0.3, z: at.z }, 0.25, 0.7, 1.6, AILMENT_FX.sleep, 0.2);
+      if (t.stun > 0) {
+        const a = this.time * 4;
+        const r = 0.45 * k + 0.2;
+        this.sparks.emit(1, { x: at.x + Math.cos(a) * r, y: at.y + 0.35, z: at.z + Math.sin(a) * r }, 0.3, 0.2, 0.45, AILMENT_FX.stun);
+        this.sparks.emit(1, { x: at.x - Math.cos(a) * r, y: at.y + 0.35, z: at.z - Math.sin(a) * r }, 0.3, 0.2, 0.45, AILMENT_FX.stun);
+      }
+    }
   }
 
   /**

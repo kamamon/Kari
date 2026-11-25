@@ -9,6 +9,9 @@
   "turnDegPerSec": 105,
   "moveSpeed": 3.4,
   "captureAllowed": true,
+  "element": "thunder",
+  "weak": ["ice"],
+  "resist": ["thunder"],
   "lootId": "loot.lumisca",
   "capture": {"hpRatio": 0.25, "tranqNeeded": 2, "tranqDecayTicks": 900},
   "respawnTicks": null,
@@ -18,7 +21,7 @@
   "discover": {"range": 17, "fovDeg": 140, "closeRange": 6, "actionId": "monster.lumisca.roar"},
   "rage": {"threshold": 400, "durationTicks": 1800, "actionId": "monster.lumisca.roar", "speedScale": 1.3, "damageScale": 1.15, "cooldownScale": 0.6},
   "parts": [
-    {"id": "head", "name": "頭の額板", "hitzone": {"cut": 0.75, "blunt": 0.75, "shot": 0.65}, "brokenHitzone": {"cut": 0.85, "blunt": 0.85, "shot": 0.75}, "elementZone": 0.2, "breakDurability": 150, "material": "shell", "flinch": {"threshold": 130, "growth": 50, "ticks": 45}, "shapes": [{"a": [0.0, 2.643, 1.05], "b": [0.0, 2.397, 1.33], "r": 0.28}]},
+    {"id": "head", "name": "頭の額板", "hitzone": {"cut": 0.75, "blunt": 0.75, "shot": 0.65}, "brokenHitzone": {"cut": 0.85, "blunt": 0.85, "shot": 0.75}, "elementZone": 0.2, "breakDurability": 150, "material": "shell", "head": true, "flinch": {"threshold": 130, "growth": 50, "ticks": 45}, "shapes": [{"a": [0.0, 2.643, 1.05], "b": [0.0, 2.397, 1.33], "r": 0.28}]},
     {"id": "wing", "name": "左翼の縁", "hitzone": {"cut": 0.7, "blunt": 0.6, "shot": 0.7}, "brokenHitzone": {"cut": 0.8, "blunt": 0.7, "shot": 0.8}, "elementZone": 0.2, "breakDurability": 160, "material": "hide", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.55, 2.118, 0.35], "b": [0.6, 1.522, -0.875], "r": 0.3}]},
     {"id": "nodes", "name": "尾の燐節", "hitzone": {"cut": 0.7, "blunt": 0.65, "shot": 0.75}, "brokenHitzone": {"cut": 0.8, "blunt": 0.75, "shot": 0.85}, "elementZone": 0.2, "breakDurability": 200, "material": "shell", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 2.328, -0.35], "b": [0.0, 1.627, -2.1], "r": 0.3}]},
     {"id": "tail_tip", "name": "尾先の放電板", "hitzone": {"cut": 0.65, "blunt": 0.6, "shot": 0.7}, "brokenHitzone": {"cut": 0.75, "blunt": 0.7, "shot": 0.8}, "elementZone": 0.2, "breakDurability": 150, "material": "shell", "flinch": {"threshold": 160, "growth": 60, "ticks": 45}, "shapes": [{"a": [0.0, 1.54, -2.38], "b": [0.0, 1.242, -3.71], "r": 0.2}]},

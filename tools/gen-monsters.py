@@ -50,13 +50,16 @@ class Sp:
         return px * self.s
 
 
-def part(pid, name, mat, hz, shapes, *, broken=None, elem=0.2, dur=None, flinch=(160, 60, 45, False)):
+def part(pid, name, mat, hz, shapes, *, broken=None, elem=0.2, dur=None, flinch=(160, 60, 45, False), head=None):
+    """部位。head: 気絶がたまる頭（v0.33.0）。省くと、id が head の部位"""
     p = {'id': pid, 'name': name, 'hitzone': {'cut': hz[0], 'blunt': hz[1], 'shot': hz[2]}}
     if broken:
         p['brokenHitzone'] = {'cut': broken[0], 'blunt': broken[1], 'shot': broken[2]}
     p['elementZone'] = elem
     p['breakDurability'] = dur
     p['material'] = mat
+    if (pid == 'head') if head is None else head:
+        p['head'] = True
     fl = {'threshold': flinch[0], 'growth': flinch[1], 'ticks': flinch[2]}
     if flinch[3]:
         fl['topple'] = True
@@ -206,7 +209,7 @@ SPECIES.append(dict(
     stats=dict(hp=1450, bodyRadius=0.8, turn=100, moveSpeed=3.0, approach=(3.8, 50), collision=[(0.0, 0.8), (-1.0, 0.6)],
                discover=(16, 140, 6), rage=(400, 1800, 1.3, 1.15, 0.6), cooldown=(45, 95)),
     parts=lambda s: [
-        part('crest', '頭の冠羽', 'hide', (0.8, 0.7, 0.75), [(s.m(1050, 110), s.m(1290, 160), 0.3)], broken=(0.9, 0.8, 0.85), dur=150, flinch=(120, 50, 45, False)),
+        part('crest', '頭の冠羽', 'hide', (0.8, 0.7, 0.75), [(s.m(1050, 110), s.m(1290, 160), 0.3)], broken=(0.9, 0.8, 0.85), dur=150, flinch=(120, 50, 45, False), head=True),
         part('tuft_l', '左の灰粉房', 'hide', (0.75, 0.7, 0.7), [(s.m(800, 520, 0.56), s.m(960, 520, 0.56), 0.28)], broken=(0.85, 0.8, 0.8), dur=170),
         part('tuft_r', '右の灰粉房', 'hide', (0.75, 0.7, 0.7), [(s.m(800, 520, -0.56), s.m(960, 520, -0.56), 0.28)], broken=(0.85, 0.8, 0.8), dur=170),
         part('tail', '尾羽', 'hide', (0.6, 0.5, 0.6), [(s.m(620, 480), s.m(150, 680), 0.28)], broken=(0.7, 0.6, 0.7), dur=160),
@@ -671,9 +674,9 @@ def skin_entry(key, name, source, terms):
             'source': f'{source} の体の奥の正方形を tools/monster-art.py で加工（ゆるい濃淡を除き、端をつないだ。平均 0.5 = 倍率 1）', 'terms': terms, 'dims': '256 × 256 の WebP'}
 
 
-def jpart(pid, name, mat, hz, shapes, *, dur=None, flinch=(45, 25, 40, False)):
+def jpart(pid, name, mat, hz, shapes, *, dur=None, flinch=(45, 25, 40, False), head=None):
     """幼体の部位: 怯みやすく、柔らかい。破壊できる部位は、壊すと少し長く怯む（素材は出ない）。"""
-    return part(pid, name, mat, hz, shapes, dur=dur, broken=tuple(r3(min(1.0, v + 0.1)) for v in hz) if dur else None, elem=0.25, flinch=flinch)
+    return part(pid, name, mat, hz, shapes, dur=dur, broken=tuple(r3(min(1.0, v + 0.1)) for v in hz) if dur else None, elem=0.25, flinch=flinch, head=head)
 
 
 def herd(size, spacing, alert, flee, speed, run, fight, fticks, scatter=False):
@@ -1113,6 +1116,7 @@ def build_juvenile(spec):
     mdef = {
         'schemaVersion': 1, 'id': mid, 'name': spec['name'], 'rigFamily': spec['rig'], 'assetId': f'model.monster.{key}',
         'hp': st['hp'], 'bodyRadius': st['bodyRadius'], 'turnDegPerSec': st['turn'], 'moveSpeed': st['moveSpeed'], 'captureAllowed': False,
+        **marks(mid),
         'lootId': f'loot.{key}', 'respawnTicks': None, 'breakStaggerTicks': 50,
         'collision': [{'z': z, 'r': r} for z, r in st['collision']],
         'approach': {'stopDist': st['approach'][0], 'faceDeg': st['approach'][1]},
@@ -1247,6 +1251,27 @@ def build_moves(key, mid, moves, frame=None):
     return actions, tracks, curves, choices, clips, plan_moves
 
 
+ELEMENTS = {'fire', 'thunder', 'ice', 'water', 'wind', 'mist'}
+_BESTIARY = None
+
+
+def marks(mid):
+    """属性の印（v0.33.0）: 技の属性・弱点・耐性。登録簿（bestiary.json）の elements・weak・resist を写す（検査が同じか確かめる）"""
+    global _BESTIARY
+    if _BESTIARY is None:
+        with open(os.path.join(DATA, 'bestiary.json'), encoding='utf-8') as f:
+            _BESTIARY = {s['id']: s for s in json.load(f)['species']}
+    b = _BESTIARY[mid]
+    els = [e for e in b.get('elements', []) if e != 'none']
+    assert len(els) <= 1 and all(e in ELEMENTS for e in els + b['weak'] + b['resist']), mid
+    out = {}
+    if els:
+        out['element'] = els[0]
+    out['weak'] = b['weak']
+    out['resist'] = b['resist']
+    return out
+
+
 def build_species(spec):
     s = spec['sp']
     key = s.key
@@ -1257,6 +1282,7 @@ def build_species(spec):
     mdef = {
         'schemaVersion': 1, 'id': mid, 'name': spec['name'], 'rigFamily': spec['rig'], 'assetId': f'model.monster.{key}',
         'hp': st['hp'], 'bodyRadius': st['bodyRadius'], 'turnDegPerSec': st['turn'], 'moveSpeed': st['moveSpeed'], 'captureAllowed': True,
+        **marks(mid),
         'lootId': f'loot.{key}', 'capture': {'hpRatio': 0.25, 'tranqNeeded': 2, 'tranqDecayTicks': 900}, 'respawnTicks': None, 'breakStaggerTicks': 80,
         'collision': [{'z': z, 'r': r} for z, r in st['collision']],
         'approach': {'stopDist': st['approach'][0], 'faceDeg': st['approach'][1]},
@@ -1381,7 +1407,7 @@ def update_content_index(add):
             if f not in cur:
                 cur.append(f)
         idx['files'][k] = cur
-    text = json.dumps(idx, ensure_ascii=False, indent=2)
+    text = json.dumps(idx, ensure_ascii=False, indent=2) + '\n'
     open(full, 'w', encoding='utf-8').write(text)
 
 
