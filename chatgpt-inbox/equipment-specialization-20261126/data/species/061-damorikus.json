@@ -1,0 +1,202 @@
+{
+  "no": 61,
+  "speciesId": "monster.damorikus",
+  "name": "ダモリクス",
+  "nativeRank": 3,
+  "identity": {
+    "role": "片側を受けて毒を返す盾装備",
+    "ecologyBasis": "左鋏の内側へ育った縁壺濾腔。水と小さな獲物を集め、縁の毒腺から分泌した液を濾腔の一部へためて狭く吐く。",
+    "combatLoop": "受け流しで壺の縁を開き、別行動の刺突へ毒を集中する。毒が入った相手の部位を崩す。",
+    "strength": "毒量1.45倍、防御1.07倍、受け流し後の毒+12/16%。",
+    "weakness": "基礎攻撃0.90倍、回避・ガード等の消費1.12倍、雷耐性-25。返しの準備中は被ダメージ+6/10%。",
+    "recommendedFamilies": [
+      "guard_blade",
+      "long_lance"
+    ],
+    "avoidUse": "不利な運用: 盾を使わず正面で打ち合い続ける運用"
+  },
+  "stats": {
+    "rawScale": 0.9,
+    "affinity": -5,
+    "elementScale": 0,
+    "statusScale": 1.45,
+    "edgeCapacityScale": 1.12,
+    "edgeWearScale": 1.12,
+    "staminaCostScale": 1.12,
+    "defenseScale": 1.07,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 1.04,
+      "war_maul": 0.98,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 1.02,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.13,
+      "chest": 0.25,
+      "arms": 0.3,
+      "waist": 0.17,
+      "legs": 0.15
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": -25,
+      "ice": 0,
+      "water": 20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "part_damage",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "壺縁の濾し傷",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "poisoned"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 780,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          8,
+          8
+        ]
+      }
+    ],
+    "explanation": "毒状態の相手に当てると、同じ対象を崩す部位補正だけを得る。HPダメージは増えない。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続300tick、発動時から再使用780tick。",
+    "id": "weapon_trait.damorikus"
+  },
+  "signature": {
+    "name": "縁壺の一滴返し",
+    "trigger": {
+      "event": "parry",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 660,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          6,
+          10
+        ]
+      }
+    ],
+    "explanation": "護刃の受け流し、または長尖槍の受け流し反撃を成功させて毒を一撃へ濃縮。壺を開く間は被弾に弱い。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 次の有効な別行動の命中で消費し、その行動の多段命中には同じ効果を使う。 持続180tick、発動時から再使用660tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.damorikus"
+  },
+  "appearance": {
+    "silhouette": "左前腕だけ深い壺の丸甲、右側は細い線。短い背甲と前へ開いた腹の空隙で左右差を見せる。",
+    "palette": [
+      "灰褐",
+      "灰緑",
+      "青銅"
+    ],
+    "organTranslation": [
+      "縁壺濾腔→左籠手の深い側面室",
+      "毒腺→壺内縁の二重濾過溝",
+      "短い後甲→肩甲骨で終わる短背板"
+    ],
+    "armorParts": {
+      "head": "壺縁を低く割った兜、目の左右を広く開ける",
+      "chest": "胸から脇へ二本の短溝、背は肩甲骨下で止める",
+      "arms": "左前腕外に深い壺甲、右は細い一条縁。左の内面と手首を空ける",
+      "waist": "腹前を空ける短い甲、濾腺容器は左腰の内側へ収める",
+      "legs": "細い蟹脚甲を脛の前へ、踵の後ろを軽くする"
+    },
+    "weaponShapes": {
+      "heavy_blade": "刃元に壺縁の厚い半弧、先へ細く抜ける大剣",
+      "guard_blade": "壺の閉じた底を盾面へ、剣は右鋏を写す細刃",
+      "war_maul": "硬い壺底を前後の打面にし、側面の浅い濾室だけを露出",
+      "twin_blades": "左鋏の弧と右鋏の直線を峰の装飾で対比、刃長は揃える二剣",
+      "long_blade": "太刀の鍔元だけに壺縁の短い返し、刀身を中空にしない",
+      "long_lance": "濾溝を持つ細い直槍と、中央に壺底の丸いふくらみを持つ独立盾",
+      "ring_bow": "壺縁を小照準環へ縮め、上下の弓身は細い骨芯、弦は一本の直線"
+    },
+    "gradeEvolution": {
+      "3": "左腕に深い壺状の丸い甲、右腕に細い青銅の縁を置く。背は短く切り、灰褐色の胴へ水を流す細い溝を入れる。 初登場級の形。武器は同じ器官の輪郭を用途に合わせて切り分ける。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。",
+      "4": "極級は壺縁の内周へ交換できる濾板を追加する。左腕の深さは増やさず、毒溝を二つの短区間に分ける。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "深い丸室",
+      "secondaryForm": "短い背板",
+      "dominantRegion": "左前腕",
+      "asymmetry": "左だけ厚い、右は細い線",
+      "repeatCount": "左の濾溝2、背板1",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "左籠手の内縁",
+      "inactive": "灰褐の二重溝",
+      "active": "内縁の細い紫線が一周だけ巡る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "盾を使わず正面で打ち合い続ける運用",
+      "左籠手が手首や拳を飲み込む形",
+      "背へ巨大な蟹殻を追加する形"
+    ]
+  }
+}

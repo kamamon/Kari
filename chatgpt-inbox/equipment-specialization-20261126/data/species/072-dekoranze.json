@@ -1,0 +1,204 @@
+{
+  "no": 72,
+  "speciesId": "monster.dekoranze",
+  "name": "デコランゼ",
+  "nativeRank": 4,
+  "identity": {
+    "role": "重い右畝で低余力を受ける火重装",
+    "ecologyBasis": "右腹の厚い畝に分かれた蓄熱発酵室。根を分解して得る熱を鉱物層へ保ち、膨らんだ畝から狭い方向へ熱気を逃がす。",
+    "combatLoop": "通常ガード後の余力が少ない時に右畝を閉じ、受ける痛みを下げる。逃げる前に余力を回復する。",
+    "strength": "基礎攻撃1.12倍、防御1.10倍、刃容量1.30倍。技能中は被ダメージ-8/12%。",
+    "weakness": "会心-15、火量0.95倍、回避・ガード等の消費1.20倍。技能中は回避消費+15/20%、水耐性-25。",
+    "recommendedFamilies": [
+      "heavy_blade",
+      "guard_blade",
+      "long_lance"
+    ],
+    "avoidUse": "不利な運用: 技能中に回避を連打して脱出する運用"
+  },
+  "stats": {
+    "rawScale": 1.12,
+    "affinity": -15,
+    "elementScale": 0.95,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.3,
+    "edgeWearScale": 1.08,
+    "staminaCostScale": 1.2,
+    "defenseScale": 1.1,
+    "familyBias": {
+      "heavy_blade": 1.04,
+      "guard_blade": 1.02,
+      "war_maul": 0.98,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 1.02,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.12,
+      "chest": 0.26,
+      "arms": 0.18,
+      "waist": 0.28,
+      "legs": 0.16
+    },
+    "setResistances": {
+      "fire": 20,
+      "thunder": 0,
+      "ice": 0,
+      "water": -25,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_resistance",
+      "parameters": {
+        "element": "fire"
+      }
+    },
+    "arms": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_resistance",
+      "parameters": {
+        "element": "fire"
+      }
+    },
+    "legs": {
+      "id": "guard_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "腹畝の余熱",
+    "trigger": {
+      "event": "damage_taken",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 900,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "直接の敵攻撃でガードせずHPを失い生存した時、残った熱を属性へ回す。削り・毒・自傷・致死では発動しない。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 持続300tick、発動時から再使用900tick。",
+    "id": "weapon_trait.dekoranze"
+  },
+  "signature": {
+    "name": "右畝の閉じ溜め",
+    "trigger": {
+      "event": "guard",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 50,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 40
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 1020,
+    "durationTicks": 420,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          -8,
+          -12
+        ]
+      },
+      {
+        "stat": "dodgeCostPct",
+        "values": [
+          15,
+          20
+        ]
+      }
+    ],
+    "explanation": "通常ガード後のHPが50%以上、スタミナ40%以下なら畝を閉じる。重さの代償で回避はさらに重くなる。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 持続420tick、発動時から再使用1020tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.dekoranze"
+  },
+  "appearance": {
+    "silhouette": "右腰だけ厚い畝皮を段で垂らし、左脚を細く見せる。低い襟と重い腹の水平線。",
+    "palette": [
+      "灰黒",
+      "灰褐",
+      "鈍い琥珀"
+    ],
+    "organTranslation": [
+      "蓄熱発酵室→右腹から腰への三つの畝",
+      "鉱物熱層→畝の内側だけの琥珀筋",
+      "遅い方向転換→低い重心の板割り"
+    ],
+    "armorParts": {
+      "head": "額は低い横板、首後ろを盛らない",
+      "chest": "灰黒の厚い腹甲を右へ寄せる",
+      "arms": "腕は短い厚皮、肘の前後を空ける",
+      "waist": "右腰へ三段の厚い畝、左腰は細い帯",
+      "legs": "右脛は短く厚い甲、左は細い縦板"
+    },
+    "weaponShapes": {
+      "heavy_blade": "三段の厚畝を峰側へ集めた重剣",
+      "guard_blade": "短い厚刃と、右下へ厚みを寄せた閉じた盾",
+      "war_maul": "重い三段畝を側面へ持つ硬い箱槌",
+      "twin_blades": "同長二刃の峰へ三つの低い畝、刃先は軽く保つ",
+      "long_blade": "刀身下半分の峰だけ厚い畝留めの太刀",
+      "long_lance": "太い刃元と細い直先端の槍、右下が厚い独立盾",
+      "ring_bow": "畝板を握りの側へ低く収め、細い弓身と小環、一本の直線弦"
+    },
+    "gradeEvolution": {
+      "4": "灰黒の厚皮を右腰へ段状に垂らし、左脚は細い甲で軽くする。低い襟と腹側の鈍い琥珀色で巨体を写す。 極級完成形のみ。巨体由来の厚みを右腰と腹へ集中し、左右すべてを重くしない。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "厚い畝皮",
+      "secondaryForm": "細い左脚",
+      "dominantRegion": "右腹と右腰",
+      "asymmetry": "右が重い、左は細い",
+      "repeatCount": "右畝3",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "右腰の畝の内側",
+      "inactive": "鈍い灰黒の皺",
+      "active": "畝の奥だけに低い琥珀線が灯る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "技能中に回避を連打して脱出する運用",
+      "左右の腰を同じ厚さにする形",
+      "背へ炎の冠を増やす形"
+    ]
+  }
+}

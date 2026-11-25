@@ -1,0 +1,203 @@
+{
+  "no": 79,
+  "speciesId": "monster.hemzario",
+  "name": "ヘムザリオ",
+  "nativeRank": 4,
+  "identity": {
+    "role": "三節の額で頭を見届ける打撃装備",
+    "ecologyBasis": "筋で繋がった三節の連額甲と、その下の蓄電粘膜。額甲を順番に開いて電荷を表へ移し、開いた節の正面へ短い痺電を出す。",
+    "combatLoop": "同じ頭を異なる三行動で狙い、会心と気絶蓄積が上がる時間に硬い打撃を通す。",
+    "strength": "会心10、雷量1.10倍。頭狙いを続けると会心+8/12・気絶+10/15%。",
+    "weakness": "基礎攻撃0.96倍、防御0.91倍、刃容量0.82倍、消耗1.25倍、水耐性-25。気絶補正は有効な打撃頭部命中だけ。",
+    "recommendedFamilies": [
+      "war_maul",
+      "guard_blade"
+    ],
+    "avoidUse": "不利な運用: 打撃を持たない系統で気絶補正を主力にする運用"
+  },
+  "stats": {
+    "rawScale": 0.96,
+    "affinity": 10,
+    "elementScale": 1.1,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.82,
+    "edgeWearScale": 1.25,
+    "staminaCostScale": 1.04,
+    "defenseScale": 0.91,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 1.02,
+      "war_maul": 1.04,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 0.98,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.3,
+      "chest": 0.22,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.12
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 20,
+      "ice": 0,
+      "water": -25,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "stun_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "stun_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "額縁の割り筋",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "head"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 600,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          8,
+          8
+        ]
+      }
+    ],
+    "explanation": "頭部へ命中して、同じ対象の部位破壊へ短い補正を得る。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続240tick、発動時から再使用600tick。",
+    "id": "weapon_trait.hemzario"
+  },
+  "signature": {
+    "name": "連額の三節見届け",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "head"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 3,
+    "windowTicks": 420,
+    "cooldownTicks": 840,
+    "durationTicks": 360,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "affinityPoints",
+        "values": [
+          8,
+          12
+        ]
+      },
+      {
+        "stat": "stunPct",
+        "values": [
+          10,
+          15
+        ]
+      }
+    ],
+    "explanation": "420tick内に同じ頭へ3行動を当てて三節の額を開く。気絶補正は大槌や護刃の打撃など既存の気絶判定を持つ命中にだけ使う。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続360tick、発動時から再使用840tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.hemzario"
+  },
+  "appearance": {
+    "silhouette": "三節の低い額甲を左右へ短く張り、胸と脚は細くする。後腰だけ短い折甲。",
+    "palette": [
+      "灰褐",
+      "灰黒",
+      "青銅"
+    ],
+    "organTranslation": [
+      "連額甲→三節に分かれた低い額",
+      "蓄電粘膜→額内縁の青銅線",
+      "閉じ直す動き→節間の柔らかな暗い隙間"
+    ],
+    "armorParts": {
+      "head": "三節額を左右へ低く張り、顔前を空ける",
+      "chest": "胸中央を細い縦甲にし額の幅を強調",
+      "arms": "前腕外に三節の浅い折れ、拳を軽くする",
+      "waist": "後腰へ短く折れた一枚甲、前腰は細い帯",
+      "legs": "細い脛甲と短い足甲"
+    },
+    "weaponShapes": {
+      "heavy_blade": "三節額を峰の刃元へ低く重ねた大剣",
+      "guard_blade": "三節鍔の剣と、額の横線を写した硬盾",
+      "war_maul": "三つの低い側節と閉じた硬い両打面を持つ槌",
+      "twin_blades": "同長二刃の峰へ三節の低い段差",
+      "long_blade": "額の内縁を細い鍔と峰溝へ写す太刀",
+      "long_lance": "三節の刃元から伸びる直槍と低い横額盾",
+      "ring_bow": "握り近くに三節の低い留め、小環と一本の直線弦"
+    },
+    "gradeEvolution": {
+      "4": "灰褐色の三節額を兜の左右へ低く張り、後ろ腰には短く折れた甲を置く。額の内縁だけ青銅色を見せる。 極級完成形のみ。額の内縁の青銅だけを強調し、三節を高い角へ変えない。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "三節の額",
+      "secondaryForm": "短い折腰",
+      "dominantRegion": "額",
+      "asymmetry": "額甲は左右へ低く、後腰は中央",
+      "repeatCount": "額の連続節3",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "額甲の内縁",
+      "inactive": "鈍い青銅の細線",
+      "active": "三節が順に点き、外面は暗いまま",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "打撃を持たない系統で気絶補正を主力にする運用",
+      "額を高い三本角へ変える形",
+      "気絶補正を物理ダメージへ二重加算すること"
+    ]
+  }
+}

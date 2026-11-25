@@ -1,0 +1,202 @@
+{
+  "no": 75,
+  "speciesId": "monster.dalhoina",
+  "name": "ダルホイナ",
+  "nativeRank": 4,
+  "identity": {
+    "role": "三梁へ溜めを通す部位崩し装備",
+    "ecologyBasis": "背の前半を横に渡る三本の中空梁骨と、その下の圧気嚢。梁の隙間をずらして空気の出口を作り、片側ずつ短い風圧を放つ。",
+    "combatLoop": "三つの異なる溜め行動を解放し、圧気が揃う短時間に部位破壊と息継ぎを得る。",
+    "strength": "基礎攻撃1.02倍、風量1.22倍。技能で部位+18/25%とスタミナ回復+12/18%。",
+    "weakness": "会心-10、回避・ガード・溜め維持等の消費1.16倍、氷耐性-25。溜めのない武器では固有技能を起動できない。",
+    "recommendedFamilies": [
+      "heavy_blade",
+      "war_maul",
+      "ring_bow"
+    ],
+    "avoidUse": "不利な運用: 溜め不能の武器で固有技能を主力にする運用"
+  },
+  "stats": {
+    "rawScale": 1.02,
+    "affinity": -10,
+    "elementScale": 1.22,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.12,
+    "edgeWearScale": 1.08,
+    "staminaCostScale": 1.16,
+    "defenseScale": 0.95,
+    "familyBias": {
+      "heavy_blade": 1.04,
+      "guard_blade": 0.98,
+      "war_maul": 1.02,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 0.98,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.26,
+      "chest": 0.26,
+      "arms": 0.18,
+      "waist": 0.12,
+      "legs": 0.18
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 0,
+      "ice": -25,
+      "water": 0,
+      "wind": 20,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "part_damage",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "梁端の締め圧",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "finisher"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 540,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "rawPct",
+        "values": [
+          4,
+          4
+        ]
+      }
+    ],
+    "explanation": "締めの命中後、次の別行動へ梁端の圧を渡す。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 次の有効な別行動の命中で消費し、その行動の多段命中には同じ効果を使う。 持続180tick、発動時から再使用540tick。",
+    "id": "weapon_trait.dalhoina"
+  },
+  "signature": {
+    "name": "三梁の吸気揃え",
+    "trigger": {
+      "event": "charge_release",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 3,
+    "windowTicks": 600,
+    "cooldownTicks": 900,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          18,
+          25
+        ]
+      },
+      {
+        "stat": "staminaRecoveryPct",
+        "values": [
+          12,
+          18
+        ]
+      }
+    ],
+    "explanation": "600tick内に1段階以上の溜めを異なる3行動で解放する。溜め中の各tickは回数に含めない。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 持続300tick、発動時から再使用900tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.dalhoina"
+  },
+  "appearance": {
+    "silhouette": "首の後ろに横長の三本中空梁を低く重ね、後腰を短く切る。穴は梁端だけに見せる。",
+    "palette": [
+      "灰緑",
+      "灰褐",
+      "鈍い青銅"
+    ],
+    "organTranslation": [
+      "中空梁骨→低い襟後ろの三本梁",
+      "圧気嚢→梁下の薄い柔皮室",
+      "左右の出口→梁端の小さい開口"
+    ],
+    "armorParts": {
+      "head": "小兜の後ろ襟へ三本の横梁",
+      "chest": "胸は薄い灰緑皮、梁下の浅い圧室を見せる",
+      "arms": "前腕に一本の細い梁縁、肘は露出",
+      "waist": "後腰を短く切り、長い裾を持たない",
+      "legs": "脛は細い直線甲、踵も小さい"
+    },
+    "weaponShapes": {
+      "heavy_blade": "三本梁を峰へ低く束ねた大剣、切先は一本",
+      "guard_blade": "三段鍔の剣と、硬い裏板上へ三梁を置く盾",
+      "war_maul": "三つの梁端を側面に見せる硬い両打面槌",
+      "twin_blades": "二短剣の峰へ三本の低い稜を同じ位置に配置",
+      "long_blade": "刀身の刃元へ三梁の細い留めを置く太刀",
+      "long_lance": "直槍の刃元を三稜で支え、独立盾へ低い三梁",
+      "ring_bow": "握り近くの三つの留めと小環、上下弓身は細く一本の直線弦"
+    },
+    "gradeEvolution": {
+      "4": "灰緑の低い襟に横長の三本骨を重ね、後ろ腰を短くする。穴の縁だけ鈍い青銅色を見せる。 極級完成形のみ。三本の横骨と中空の開口を低く見せ、巨大な肩梁は付けない。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "三本の横梁",
+      "secondaryForm": "短い後腰",
+      "dominantRegion": "襟の後ろ",
+      "asymmetry": "左右の梁端は同形",
+      "repeatCount": "横梁3",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "三本梁の端穴",
+      "inactive": "暗い穴の青銅縁",
+      "active": "穴の内縁に三つの白点が順に灯る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "溜め不能の武器で固有技能を主力にする運用",
+      "梁を六本以上に増やす形",
+      "盾面全体を貫通する大穴"
+    ]
+  }
+}

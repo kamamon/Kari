@@ -1,0 +1,203 @@
+{
+  "no": 60,
+  "speciesId": "monster.pizelta",
+  "name": "ピゼルタ",
+  "nativeRank": 3,
+  "identity": {
+    "role": "受け止めて氷を置く低姿勢装備",
+    "ecologyBasis": "前へ三葉に開く扇趾冷床。趾の下面へ冷却液を薄く流し、踏みしめた地点だけを凍らせて足掛かりにする。",
+    "combatLoop": "余力を残してガードし、次の別行動の氷攻撃を置く。追いかける前に姿勢を戻す。",
+    "strength": "氷量1.52倍、防御1.00倍。高スタミナの受けから氷補正10/15%。",
+    "weakness": "基礎攻撃0.87倍、消耗1.18倍、火耐性-25。技能中の回避消費+8/12%。",
+    "recommendedFamilies": [
+      "guard_blade",
+      "heavy_blade",
+      "long_lance"
+    ],
+    "avoidUse": "不利な運用: 回避を連打しながら冷床の利点を使う運用"
+  },
+  "stats": {
+    "rawScale": 0.87,
+    "affinity": 0,
+    "elementScale": 1.52,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.05,
+    "edgeWearScale": 1.18,
+    "staminaCostScale": 1.06,
+    "defenseScale": 1.0,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 1.04,
+      "war_maul": 0.98,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 1.02,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.12,
+      "chest": 0.23,
+      "arms": 0.17,
+      "waist": 0.18,
+      "legs": 0.3
+    },
+    "setResistances": {
+      "fire": -25,
+      "thunder": 0,
+      "ice": 15,
+      "water": 0,
+      "wind": 15,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "part_damage",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "扇趾の踏み返し",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "finisher"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 540,
+    "durationTicks": 180,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "dodgeCostPct",
+        "values": [
+          -6,
+          -6
+        ]
+      }
+    ],
+    "explanation": "締めの攻撃を当てた後だけ、次の踏み替えを軽くする。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 持続180tick、発動時から再使用540tick。",
+    "id": "weapon_trait.pizelta"
+  },
+  "signature": {
+    "name": "三葉冷床",
+    "trigger": {
+      "event": "guard",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 65,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 900,
+    "durationTicks": 360,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          10,
+          15
+        ]
+      },
+      {
+        "stat": "dodgeCostPct",
+        "values": [
+          8,
+          12
+        ]
+      }
+    ],
+    "explanation": "ガード解決後にもスタミナ65%以上を残すと冷床を定着。氷を強める代わりに足を離す回避が重くなる。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 持続360tick、発動時から再使用900tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.pizelta"
+  },
+  "appearance": {
+    "silhouette": "頭・肩を小さくまとめ、三葉に分かれる足先と短い腰布へ輪郭を集中する。",
+    "palette": [
+      "灰青",
+      "淡灰",
+      "鈍い青銅"
+    ],
+    "organTranslation": [
+      "扇趾冷床→靴の甲上へ低く重なる三葉板",
+      "冷却液溝→脛から足先へ続く細い内溝",
+      "短翼→腰の短布にだけ残る筋"
+    ],
+    "armorParts": {
+      "head": "額に低い三葉片、後頭部は丸い小鉢",
+      "chest": "淡灰の短い胸板と狭い肩袖、腹の柔皮を見せる",
+      "arms": "手首手前で終わる短い冷床管、拳は覆い切らない",
+      "waist": "左右の短布へ翼筋を横に走らせ、後ろへ伸ばさない",
+      "legs": "靴上の三葉板を重ねて横へ低く見せ、接地幅は既存靴内に収める"
+    },
+    "weaponShapes": {
+      "heavy_blade": "三葉の段差を刃元へ寄せた幅広大剣、刃先は一続き",
+      "guard_blade": "低い三葉鍔の剣と、三枚が中央で重なる硬い扇盾",
+      "war_maul": "三葉板を側面に積んだ短い槌頭、前後は閉じた打面",
+      "twin_blades": "三葉形の低い鍔を対にした短剣二本",
+      "long_blade": "足跡の四角い冷溝を峰へ連続させる細身太刀",
+      "long_lance": "三葉の刃元を持つ直槍と、下縁が三段の独立盾",
+      "ring_bow": "靴甲の薄い筋を弓身へ移し、小環の下に冷溝を一筋、弦は一本の直線"
+    },
+    "gradeEvolution": {
+      "3": "足先に横へ広がる灰青の三葉板を置き、肩と首は短くまとめる。胴は淡い灰色で、翼膜の筋を腰の短い布へ写す。 初登場級の形。武器は同じ器官の輪郭を用途に合わせて切り分ける。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。",
+      "4": "極級では三葉板の接合を二重の低い稜へ変え、足先の横幅は据え置く。冷床の細溝が脛から足先へ連続する。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "低い三葉",
+      "secondaryForm": "短い羽皮",
+      "dominantRegion": "足先",
+      "asymmetry": "左右同形、片足を前に見せる構え",
+      "repeatCount": "各足先3葉",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "脛から足先の溝",
+      "inactive": "灰青の溝に白点1つ",
+      "active": "足先の三葉へ白点が順に届く",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "回避を連打しながら冷床の利点を使う運用",
+      "歩幅を変える大きな横張りの靴",
+      "大きい翼肩や長い首飾り"
+    ]
+  }
+}

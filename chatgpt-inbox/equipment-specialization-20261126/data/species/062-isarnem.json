@@ -1,0 +1,203 @@
+{
+  "no": 62,
+  "speciesId": "monster.isarnem",
+  "name": "イサルネム",
+  "nativeRank": 3,
+  "identity": {
+    "role": "蓋を開ける一手を選ぶ火力装備",
+    "ecologyBasis": "頭上の帽殻に分かれた温胞房。上房で眠り胞子を育て、左右の熱房では少量の樹脂を酸化させ、蓋を開く順で胞子と熱粒を送り分ける。",
+    "combatLoop": "納刀で熱を逃がし、抜刀後の別行動へ火を載せる。蓋を開いたまま乱打せず研ぐ。",
+    "strength": "火量1.72倍、抜刀後の火+10/16%。",
+    "weakness": "基礎攻撃0.82倍、防御0.86倍、刃容量0.76倍。技能中は消耗+12/18%、水耐性-30。",
+    "recommendedFamilies": [
+      "long_blade",
+      "heavy_blade",
+      "twin_blades"
+    ],
+    "avoidUse": "不利な運用: 発動中の消耗を無視して長時間乱打する運用"
+  },
+  "stats": {
+    "rawScale": 0.82,
+    "affinity": 10,
+    "elementScale": 1.72,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.76,
+    "edgeWearScale": 1.25,
+    "staminaCostScale": 1.06,
+    "defenseScale": 0.86,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 0.98,
+      "war_maul": 0.98,
+      "twin_blades": 1.02,
+      "long_blade": 1.04,
+      "long_lance": 0.98,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.24,
+      "chest": 0.25,
+      "arms": 0.16,
+      "waist": 0.17,
+      "legs": 0.18
+    },
+    "setResistances": {
+      "fire": 20,
+      "thunder": 0,
+      "ice": 0,
+      "water": -30,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "edge_keep",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "edge_keep",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "element_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "帽房の熱粒",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "head"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 300,
+    "cooldownTicks": 540,
+    "durationTicks": 180,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "同じ頭部へ異なる2行動を当て、熱粒を逃さず次の火攻撃へ送る。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続180tick、発動時から再使用540tick。",
+    "id": "weapon_trait.isarnem"
+  },
+  "signature": {
+    "name": "三蓋の開炉",
+    "trigger": {
+      "event": "draw",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 70,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 660,
+    "durationTicks": 240,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          10,
+          16
+        ]
+      },
+      {
+        "stat": "edgeWearPct",
+        "values": [
+          12,
+          18
+        ]
+      }
+    ],
+    "explanation": "抜刀完了時にスタミナ70%以上なら帽房を開く。抜刀攻撃そのものには乗らず、次の別行動へ火をまとめる。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 次の有効な別行動の命中で消費し、その行動の多段命中には同じ効果を使う。 持続240tick、発動時から再使用660tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.isarnem"
+  },
+  "appearance": {
+    "silhouette": "三枚の帽殻を額上で横にずらし、背から腰へ細い節を一本だけ通す。片胸の小室が火の中心。",
+    "palette": [
+      "灰褐",
+      "琥珀",
+      "青銅"
+    ],
+    "organTranslation": [
+      "温胞房→片胸の小さな熱室",
+      "帽殻の三蓋→兜のずらした三枚帽",
+      "細節腹→背から腰へ続く一条の節"
+    ],
+    "armorParts": {
+      "head": "三枚の低い帽を前後にずらし、顔前と耳側は空ける",
+      "chest": "右胸だけ小さな琥珀室、左胸は平たい灰褐板",
+      "arms": "腕外側へ薄い帽縁を二枚、肘内側は柔皮",
+      "waist": "背の細節を腰帯へ接ぎ、左右の腰甲は小さく切る",
+      "legs": "膝下を細い節脛にし、靴先を丸く短くする"
+    },
+    "weaponShapes": {
+      "heavy_blade": "三蓋の段差を峰の刃元へ重ね、前端は一枚の火刃",
+      "guard_blade": "帽縁を鍔へ写す剣と、三枚がずれた硬い低盾",
+      "war_maul": "帽殻を横へ積む硬い槌頭、琥珀室は側面の小窓だけ",
+      "twin_blades": "三枚の帽縁を各刃の峰に小さく配した二短剣",
+      "long_blade": "薄い帽の段差を鞘口と鍔へまとめ、刀身は細い連続刃",
+      "long_lance": "三つの浅い節輪を刃元に置いた直槍と、小熱室付き独立盾",
+      "ring_bow": "三枚の低い薄片を握り上の小環周囲だけへ、弓身は細く一本の直線弦"
+    },
+    "gradeEvolution": {
+      "3": "灰褐色の低い帽殻を兜へ三枚ずらし、背から腰は細い節でつなぐ。小さな琥珀色の熱房を片胸にだけ置く。 初登場級の形。武器は同じ器官の輪郭を用途に合わせて切り分ける。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。",
+      "4": "極級で帽殻の縁に狭い放熱孔を増やす。火を噴く装飾は付けず、片胸の琥珀色の範囲を保つ。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "三枚のずれた低帽",
+      "secondaryForm": "細い背節",
+      "dominantRegion": "額と片胸",
+      "asymmetry": "熱室は右胸だけ",
+      "repeatCount": "帽殻3、熱室1",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "右胸の熱室内縁",
+      "inactive": "暗い琥珀点が一つ",
+      "active": "三枚の蓋の縁に細い琥珀筋が順に点く",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "発動中の消耗を無視して長時間乱打する運用",
+      "全身を炎で覆う発光表現",
+      "帽殻を高い冠や大きい笠にする形"
+    ]
+  }
+}

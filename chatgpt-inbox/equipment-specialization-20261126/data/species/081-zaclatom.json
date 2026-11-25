@@ -1,0 +1,202 @@
+{
+  "no": 81,
+  "speciesId": "monster.zaclatom",
+  "name": "ザクラトム",
+  "nativeRank": 4,
+  "identity": {
+    "role": "三角喉を開いて火の一手を差す装備",
+    "ecologyBasis": "左喉の三角形の炉喉嚢。食べた脂と鉱物性の分泌膜を別室に蓄え、喉を伸ばした時だけ短い熱息へ変える。",
+    "combatLoop": "HPを守って抜刀し、その次の別行動へ火を集中する。短い準備中は受ける痛みが増す。",
+    "strength": "火量1.78倍、会心25。HP80%以上の抜刀で次行動の火+12/16%。",
+    "weakness": "基礎攻撃0.83倍、防御0.80倍、刃容量0.80倍、消耗1.25倍、水耐性-30。技能中の被ダメージ+10/15%。",
+    "recommendedFamilies": [
+      "long_blade",
+      "ring_bow",
+      "heavy_blade"
+    ],
+    "avoidUse": "不利な運用: HPを削られたまま抜刀反復で発動を狙う運用"
+  },
+  "stats": {
+    "rawScale": 0.83,
+    "affinity": 25,
+    "elementScale": 1.78,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.8,
+    "edgeWearScale": 1.25,
+    "staminaCostScale": 1.04,
+    "defenseScale": 0.8,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 0.98,
+      "war_maul": 0.98,
+      "twin_blades": 0.98,
+      "long_blade": 1.04,
+      "long_lance": 0.98,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.22,
+      "chest": 0.26,
+      "arms": 0.16,
+      "waist": 0.22,
+      "legs": 0.14
+    },
+    "setResistances": {
+      "fire": 20,
+      "thunder": 0,
+      "ice": 0,
+      "water": -30,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "weak_crit",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "weak_crit",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "element_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "短尾の回り込み",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "rear"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 540,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "rawPct",
+        "values": [
+          4,
+          4
+        ]
+      }
+    ],
+    "explanation": "背側から命中させた後、次の別行動の物理へ短い補正を得る。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 次の有効な別行動の命中で消費し、その行動の多段命中には同じ効果を使う。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続180tick、発動時から再使用540tick。",
+    "id": "weapon_trait.zaclatom"
+  },
+  "signature": {
+    "name": "左炉喉の一息",
+    "trigger": {
+      "event": "draw",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 80,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 600,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          10,
+          15
+        ]
+      }
+    ],
+    "explanation": "抜刀完了時にHP80%以上なら左喉を開く。抜刀攻撃自身を除く次の別行動へ火を渡すが、喉を開いた間は被弾に弱い。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 次の有効な別行動の命中で消費し、その行動の多段命中には同じ効果を使う。 持続180tick、発動時から再使用600tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.zaclatom"
+  },
+  "appearance": {
+    "silhouette": "左襟だけ細長い三角を立て、灰褐の胴を細くする。短い扇板を後腰へ広げる。",
+    "palette": [
+      "灰褐",
+      "琥珀",
+      "青銅"
+    ],
+    "organTranslation": [
+      "三角炉喉嚢→左襟の縦三角",
+      "別室の脂膜→三角の内側だけの二条熱筋",
+      "短い幅広尾→後腰の短い扇板"
+    ],
+    "armorParts": {
+      "head": "小兜の左頬を低い三角襟へつなぐ",
+      "chest": "細い灰褐胸甲、熱筋は左襟の内だけ",
+      "arms": "灰翼腱を縦に張る薄い腕甲",
+      "waist": "後腰に短い扇板、腿裏へ長く下げない",
+      "legs": "小さな扇片を膝脛へ低く分ける"
+    },
+    "weaponShapes": {
+      "heavy_blade": "三角喉の形を刃元の峰へ寄せた細幅大剣",
+      "guard_blade": "小三角鍔の剣と左上だけ三角縁の硬盾",
+      "war_maul": "槌頭側面に小三角室、前後の打面は硬く閉じる",
+      "twin_blades": "同長二刃の峰へ細い三角溝を刻む",
+      "long_blade": "刃元の低い三角鍔から伸びる細長い太刀",
+      "long_lance": "三角形の小刃元から直槍を伸ばし独立盾の左縁へ短い三角",
+      "ring_bow": "握り周りに小三角室、細い弓身・小環・一本の直線弦"
+    },
+    "gradeEvolution": {
+      "4": "灰褐色の細い胴へ左側だけ三角の襟を立て、後ろ腰を短い扇板で広げる。熱筋は襟の内側へ抑える。 極級完成形のみ。三角形は左襟と握り周辺へ限定し、炎の大型装飾を付けない。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "左だけの縦三角",
+      "secondaryForm": "短い扇腰",
+      "dominantRegion": "左襟と後腰",
+      "asymmetry": "三角は左側のみ",
+      "repeatCount": "主三角1、内側熱筋2",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "左襟の内側",
+      "inactive": "暗い二条の熱筋",
+      "active": "襟の内側だけ琥珀の二線が短く点く",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "HPを削られたまま抜刀反復で発動を狙う運用",
+      "右襟にも同寸の三角を増やす形",
+      "炎の翼や全面の赤熱表現"
+    ]
+  }
+}

@@ -1,0 +1,203 @@
+{
+  "no": 65,
+  "speciesId": "monster.sograpin",
+  "name": "ソグラピン",
+  "nativeRank": 3,
+  "identity": {
+    "role": "追い詰められた足を立て直す氷装備",
+    "ecologyBasis": "後踵の裏に並ぶ刻氷蹄板。細い溝へ冷却液を流して足元だけを固め、固まった小さな板を踏み弾いて進路を作る。",
+    "combatLoop": "HP半分以下で敵の接触を回避し、軽い回避と氷補正を使って位置を戻す。回復そのものは発生しない。",
+    "strength": "氷量1.38倍、会心20、回避等の消費0.90倍。窮地の回避消費-15/20%。",
+    "weakness": "基礎攻撃0.89倍、防御0.83倍、雷耐性-30。HP50%を越えると固有技能を新たに起動できない。",
+    "recommendedFamilies": [
+      "long_blade",
+      "twin_blades",
+      "ring_bow"
+    ],
+    "avoidUse": "不利な運用: 低HPのまま被弾を受けて技能を維持する運用"
+  },
+  "stats": {
+    "rawScale": 0.89,
+    "affinity": 20,
+    "elementScale": 1.38,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.16,
+    "edgeWearScale": 0.95,
+    "staminaCostScale": 0.9,
+    "defenseScale": 0.83,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 0.98,
+      "war_maul": 0.98,
+      "twin_blades": 1.02,
+      "long_blade": 1.04,
+      "long_lance": 0.98,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.12,
+      "chest": 0.18,
+      "arms": 0.14,
+      "waist": 0.26,
+      "legs": 0.3
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": -30,
+      "ice": 15,
+      "water": 0,
+      "wind": 15,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "dodge_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "踵溝の返り氷",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "rear"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 720,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "背側から当てた後の氷攻撃を強め、踵を向けた退路をなぞる。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続300tick、発動時から再使用720tick。",
+    "id": "weapon_trait.sograpin"
+  },
+  "signature": {
+    "name": "刻蹄の窮地踏み替え",
+    "trigger": {
+      "event": "dodge",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 50,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 900,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "dodgeCostPct",
+        "values": [
+          -15,
+          -20
+        ]
+      },
+      {
+        "stat": "elementPct",
+        "values": [
+          8,
+          12
+        ]
+      }
+    ],
+    "explanation": "HP50%以下で敵の接触を回避した時だけ足元を整える。無敵時間やHP回復は増やさない。 回避入力ではなく、回避無敵中に敵攻撃の接触を避けた成功だけを数える。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 持続300tick、発動時から再使用900tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.sograpin"
+  },
+  "appearance": {
+    "silhouette": "肩を絞り、厚い腰から後踵へ低く曲がる線を落とす。四角い溝を足先へ集める。",
+    "palette": [
+      "灰青",
+      "淡灰",
+      "青銅"
+    ],
+    "organTranslation": [
+      "刻氷蹄板→既存靴の内に収まる後曲がり踵甲",
+      "冷却溝→四角い刻みを足甲へ配列",
+      "後脚の力→腰だけ厚い灰青の板"
+    ],
+    "armorParts": {
+      "head": "額を平たく切る小さな蹄冠",
+      "chest": "胸は薄い縦皮、肩を狭く保つ",
+      "arms": "短い籠手に四角い浅溝を二本",
+      "waist": "腰後ろへ低い厚板を積み、腿前を空ける",
+      "legs": "踵甲を後ろへ低く曲げ、足先に四角い刻みを並べる"
+    },
+    "weaponShapes": {
+      "heavy_blade": "踵の低い反りを峰へ、刃先はまっすぐに収める大剣",
+      "guard_blade": "四角溝の剣と、下縁だけ低く反る硬盾",
+      "war_maul": "踵板を束ねた四角い硬頭、打面は平ら",
+      "twin_blades": "同じ低反りを持つ二短剣、溝は峰側のみ",
+      "long_blade": "後踵線を写す浅い反りの太刀",
+      "long_lance": "四角溝の直槍と、下方へ重心を置いた独立盾",
+      "ring_bow": "踵の低い曲線を上下の細い弓身へ、小環と一本の直線弦"
+    },
+    "gradeEvolution": {
+      "3": "後ろへ低く曲がる踵板を脚に写し、四角い溝を足先へ刻む。肩を細く、灰青の腰だけを厚くして後脚の強さを示す。 初登場級の形。武器は同じ器官の輪郭を用途に合わせて切り分ける。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。",
+      "4": "極級では刻印の溝を二筋にして冷却経路を分ける。踵の突出を増やさず、四角い打面の縁だけを厚くする。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "低く曲がる踵",
+      "secondaryForm": "四角い溝",
+      "dominantRegion": "腰と足先",
+      "asymmetry": "肩は対称、後腰へ重さを集める",
+      "repeatCount": "各足甲の刻み4",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "踵から足先の刻み",
+      "inactive": "暗い灰青の四角",
+      "active": "四角溝の内側だけ白く曇る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "低HPのまま被弾を受けて技能を維持する運用",
+      "踵が接地外形を越えて突き出す靴",
+      "肩や頭へ大きな氷柱を増やす形"
+    ]
+  }
+}

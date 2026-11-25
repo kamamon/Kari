@@ -1,0 +1,204 @@
+{
+  "no": 83,
+  "speciesId": "monster.queribas",
+  "name": "クェリバス",
+  "nativeRank": 4,
+  "identity": {
+    "role": "櫛を戻す前に麻痺を刻む装備",
+    "ecologyBasis": "左の櫛棘の根元にある冷痺管。薄い冷却液で棘表面を固め、棘先にだけ痺れ液をにじませて獲物を引き留める。",
+    "combatLoop": "同じ相手へ斬撃を三行動通し、短い時間に麻痺を稼いで離れる。櫛を開いた連撃は消耗が増える。",
+    "strength": "麻痺量1.60倍、会心20。三斬撃後の麻痺+12/16%。",
+    "weakness": "基礎攻撃0.80倍、防御0.78倍、刃容量0.75倍、消耗1.40倍、火耐性-30。技能中さらに消耗+18/25%。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "long_blade",
+      "guard_blade"
+    ],
+    "avoidUse": "不利な運用: 消耗を無視して麻痺中も同じ連打を続ける運用"
+  },
+  "stats": {
+    "rawScale": 0.8,
+    "affinity": 20,
+    "elementScale": 0,
+    "statusScale": 1.6,
+    "edgeCapacityScale": 0.75,
+    "edgeWearScale": 1.4,
+    "staminaCostScale": 0.94,
+    "defenseScale": 0.78,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 1.02,
+      "war_maul": 0.98,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 0.98,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.22,
+      "chest": 0.22,
+      "arms": 0.28,
+      "waist": 0.14,
+      "legs": 0.14
+    },
+    "setResistances": {
+      "fire": -30,
+      "thunder": 0,
+      "ice": 20,
+      "water": 0,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "edge_keep",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "edge_keep",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "status_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "冷櫛の留め傷",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "paralyzed"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 720,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          8,
+          8
+        ]
+      }
+    ],
+    "explanation": "麻痺中の対象へ命中させ、その対象の部位破壊へ短い補正を得る。麻痺を自動で延長しない。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続240tick、発動時から再使用720tick。",
+    "id": "weapon_trait.queribas"
+  },
+  "signature": {
+    "name": "左櫛の三筋開き",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "slash"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 3,
+    "windowTicks": 240,
+    "cooldownTicks": 660,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "edgeWearPct",
+        "values": [
+          18,
+          25
+        ]
+      }
+    ],
+    "explanation": "240tick内に同じ対象へ3行動の斬撃を通して櫛を開く。一行動の多段斬撃は一回。開いている間は消耗が増す。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続240tick、発動時から再使用660tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.queribas"
+  },
+  "appearance": {
+    "silhouette": "前半身の左側だけ短い櫛、背腰は平面。琥珀は櫛先の点だけで灰青の面を保つ。",
+    "palette": [
+      "灰青",
+      "暗灰",
+      "琥珀の点"
+    ],
+    "organTranslation": [
+      "左の櫛棘→左額と左前腕の短櫛",
+      "冷痺管→櫛根元の短い内溝",
+      "平たい後半節→平らな背と腰"
+    ],
+    "armorParts": {
+      "head": "左額だけ三つの短櫛、右額は平ら",
+      "chest": "胸は灰青の平節甲、背を滑らかに閉じる",
+      "arms": "左前腕外に短櫛三つ、右は平甲。両手首を空ける",
+      "waist": "短い平節帯で腰を囲み棘を増やさない",
+      "legs": "脛に小さな平甲、脚へ櫛を移さない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "刃元左側の峰に低い三櫛、切先は一枚の連続刃",
+      "guard_blade": "短い櫛鍔の剣と左上だけ三櫛を低く飾る硬盾",
+      "war_maul": "側面に三櫛の小突起、前後は閉じた硬い打面",
+      "twin_blades": "同長二剣の峰に短い三櫛、刃先の線を途切れさせない",
+      "long_blade": "左側の刃元へ低い三櫛を置き鞘と干渉させない太刀",
+      "long_lance": "小三櫛の刃元を持つ直槍と、左上だけ櫛縁の独立盾",
+      "ring_bow": "櫛飾りを握り左側の小片へ限定、小環と一本の直線弦を空ける"
+    },
+    "gradeEvolution": {
+      "4": "灰青の前半身の左側だけに短い櫛を並べ、背と腰は平らにする。棘先の琥珀色は点で抑える。 極級完成形のみ。短い櫛は前半身左側だけ、琥珀色は棘先の点にとどめる。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "短い左櫛",
+      "secondaryForm": "平らな後半身",
+      "dominantRegion": "左額と左前腕",
+      "asymmetry": "左前だけ櫛、背と右は平面",
+      "repeatCount": "額櫛3、前腕櫛3",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "左櫛の先端",
+      "inactive": "琥珀色の小点",
+      "active": "棘先だけ六つの小点が順に灯る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "消耗を無視して麻痺中も同じ連打を続ける運用",
+      "背や右肩まで櫛を増やす形",
+      "櫛を長くして武器判定や防具外形を広げる形"
+    ]
+  }
+}

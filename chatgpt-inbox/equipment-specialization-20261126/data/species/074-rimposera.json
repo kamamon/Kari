@@ -1,0 +1,200 @@
+{
+  "no": 74,
+  "speciesId": "monster.rimposera",
+  "name": "リムポセラ",
+  "nativeRank": 4,
+  "identity": {
+    "role": "整備で四室を満たす水装備",
+    "ecologyBasis": "腹下の折り畳み皮に囲まれた四室の汐函嚢。海水を濾して水を蓄え、食べた潮藻由来の眠り成分を一室ずつ混ぜて吐き出す。",
+    "combatLoop": "砥石を実際に一個消費して四室を整え、水攻撃を続ける。消耗の速さを整備間隔へ組み込む。",
+    "strength": "水量1.76倍、防御0.98倍。整備後の水+12/16%。",
+    "weakness": "基礎攻撃0.84倍、刃容量0.70倍、消耗1.35倍、雷耐性-25。技能中の被ダメージ+8/12%。環弓では砥石条件を満たせない。",
+    "recommendedFamilies": [
+      "guard_blade",
+      "heavy_blade",
+      "long_blade"
+    ],
+    "avoidUse": "不利な運用: 環弓装備で整備型の防具技能を主力にする運用"
+  },
+  "stats": {
+    "rawScale": 0.84,
+    "affinity": 0,
+    "elementScale": 1.76,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.7,
+    "edgeWearScale": 1.35,
+    "staminaCostScale": 1.1,
+    "defenseScale": 0.98,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 1.04,
+      "war_maul": 0.98,
+      "twin_blades": 0.98,
+      "long_blade": 1.02,
+      "long_lance": 0.98,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.12,
+      "chest": 0.24,
+      "arms": 0.18,
+      "waist": 0.3,
+      "legs": 0.16
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": -25,
+      "ice": 0,
+      "water": 20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "item_efficiency",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "edge_keep",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "item_efficiency",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "四室の汐巡り",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 4,
+    "windowTicks": 360,
+    "cooldownTicks": 840,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "同じ対象へ異なる4行動を当て、四室の水を順に巡らせる。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続300tick、発動時から再使用840tick。",
+    "id": "weapon_trait.rimposera"
+  },
+  "signature": {
+    "name": "汐函の整備充填",
+    "trigger": {
+      "event": "item_used",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 1200,
+    "durationTicks": 480,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          8,
+          12
+        ]
+      }
+    ],
+    "explanation": "整備アイテムを実際に1個以上消費して成功した時だけ発動。現行の対象は砥石。回復薬・睡眠道具・使用開始では発動しない。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 持続480tick、発動時から再使用1200tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.rimposera"
+  },
+  "appearance": {
+    "silhouette": "平たい背と小さな頭、腰の四隅だけ短い生成り袋。四室の留め以外を鈍い灰褐へ抑える。",
+    "palette": [
+      "灰褐",
+      "生成り",
+      "青銅"
+    ],
+    "organTranslation": [
+      "四室汐函嚢→腰の四隅の短袋",
+      "折り畳み皮→袋の四角い低い襞",
+      "濾水口→袋留めの小さな青銅窓"
+    ],
+    "armorParts": {
+      "head": "平たい背板につながる低い兜",
+      "chest": "前後とも平たい板、腹前は柔皮を残す",
+      "arms": "前腕に小さい四角留め、手首へ袋を付けない",
+      "waist": "四隅に短い四角袋、腿の動きに沿って離す",
+      "legs": "細い脛甲と生成りの短い足首巻き"
+    },
+    "weaponShapes": {
+      "heavy_blade": "四室を刃元の小側室へまとめた平大剣",
+      "guard_blade": "低い四角鍔の剣と、四隅に小室を持つ硬盾",
+      "war_maul": "四室は槌頭の側面へ、前後は硬く閉じた打面",
+      "twin_blades": "二短剣へ二室ずつを刃元側だけ配る",
+      "long_blade": "細い太刀の鍔元へ四つの短い濾溝",
+      "long_lance": "直槍の基部に四室留め、盾の四隅へ短い袋縁",
+      "ring_bow": "四室の小窓を握り側面へ置く外見案、小環と一本の直線弦。防具技能は弓では起動しない"
+    },
+    "gradeEvolution": {
+      "4": "灰褐色の平たい背板と、腰の四隅へ短く下がる生成りの袋を写す。袋の留め部だけ青銅色にする。 極級完成形のみ。四隅の袋は短く固定し、膝や武器の軌道へ垂らさない。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "四角い短袋",
+      "secondaryForm": "平たい背板",
+      "dominantRegion": "腰の四隅",
+      "asymmetry": "四隅は同寸、背を平らに保つ",
+      "repeatCount": "腰袋4",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "腰の四つの留め",
+      "inactive": "生成りの襞に暗い窓",
+      "active": "四つの小窓が順に灰青へ変わる",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "環弓装備で整備型の防具技能を主力にする運用",
+      "回復薬を四室充填の条件へ読み替えること",
+      "腰袋を腹の大袋一つへ合体する形"
+    ]
+  }
+}

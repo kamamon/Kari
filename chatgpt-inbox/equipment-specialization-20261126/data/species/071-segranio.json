@@ -1,0 +1,203 @@
+{
+  "no": 71,
+  "speciesId": "monster.segranio",
+  "name": "セオルミド",
+  "nativeRank": 4,
+  "identity": {
+    "role": "二つの環で同じ部位を測る穿ち装備",
+    "ecologyBasis": "古いヴェルガイトに生じる副環冠と二室整霧嚢。大小の環のどちらを開口側にするかで、霧滴と圧縮空気を異なる高さへ送り分ける。",
+    "combatLoop": "刺突か射撃を同じ対象へ二行動通し、物理を少し落として部位へ風霧を送り込む。",
+    "strength": "風霧量1.58倍、発動時の部位補正+16/25%。HPと部位ゲージを分離して崩しを狙う。",
+    "weakness": "基礎攻撃0.85倍、防御0.81倍、雷耐性-30。技能中の物理-5/8%、HPだけを急いで削る用途に弱い。",
+    "recommendedFamilies": [
+      "long_lance",
+      "ring_bow",
+      "guard_blade"
+    ],
+    "avoidUse": "不利な運用: 物理HPダメージだけを優先する運用"
+  },
+  "stats": {
+    "rawScale": 0.85,
+    "affinity": 10,
+    "elementScale": 1.58,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.02,
+    "edgeWearScale": 1.1,
+    "staminaCostScale": 1.04,
+    "defenseScale": 0.81,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 1.02,
+      "war_maul": 0.98,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 1.04,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.24,
+      "chest": 0.22,
+      "arms": 0.16,
+      "waist": 0.18,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": -30,
+      "ice": 0,
+      "water": 0,
+      "wind": 15,
+      "mist": 15
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "part_damage",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "副環の吹き直し",
+    "trigger": {
+      "event": "part_break",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 900,
+    "durationTicks": 360,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "部位を壊した時に副環で気流を整え、後の属性攻撃へ渡す。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 持続360tick、発動時から再使用900tick。",
+    "id": "weapon_trait.segranio"
+  },
+  "signature": {
+    "name": "大小環の高低合わせ",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [],
+      "tagsAny": [
+        "thrust",
+        "projectile"
+      ],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 180,
+    "cooldownTicks": 840,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          16,
+          25
+        ]
+      },
+      {
+        "stat": "rawPct",
+        "values": [
+          -5,
+          -8
+        ]
+      }
+    ],
+    "explanation": "180tick内に同じ対象へ刺突または射撃を2行動命中させる。高低を揃える間は物理を落とし、部位破壊へ寄せる。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続300tick、発動時から再使用840tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.segranio"
+  },
+  "appearance": {
+    "silhouette": "大小二つの斜環を襟の後ろへ低く重ね、胸下の小灯を一方へ偏らせた細身。",
+    "palette": [
+      "灰緑",
+      "青銅",
+      "琥珀"
+    ],
+    "organTranslation": [
+      "副環冠→襟後ろの大小二斜環",
+      "二室整霧嚢→胸下の二つの小区画",
+      "高さの送り分け→環の傾きと小灯の低位置"
+    ],
+    "armorParts": {
+      "head": "額は細い帯、後ろ襟に大小二環を傾ける",
+      "chest": "細い灰緑の胴、左胸下に小さな琥珀室",
+      "arms": "前腕は細い管甲、左右の長さを揃える",
+      "waist": "低い二室留めの細腰帯、裾は短く",
+      "legs": "脛に細い二条溝を並べる"
+    },
+    "weaponShapes": {
+      "heavy_blade": "大小環の一部を刃元に重ねた細幅大剣",
+      "guard_blade": "二段鍔の剣と、大小斜環を閉じた盾面へ刻む",
+      "war_maul": "側面に大小の二室、前後は閉じた硬い打面",
+      "twin_blades": "同長二刃へ大小の低い環飾りを分ける",
+      "long_blade": "大小の斜環鍔から一本の細刃を伸ばす太刀",
+      "long_lance": "細い直槍に大小二つの低い支え、独立盾の環は装飾のみ",
+      "ring_bow": "小照準環の後ろにさらに小さい環縁を置き、視線と一本の直線弦を空ける"
+    },
+    "gradeEvolution": {
+      "4": "灰緑の細い防具に大小二つの斜環を襟の後ろへ置き、琥珀色の小灯を胸下へ偏らせる。 極級完成形のみ。大小環は襟の後ろ、灯点は胸下に限定し、全身へ発光を広げない。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "大小の斜環",
+      "secondaryForm": "細い二室",
+      "dominantRegion": "襟の後ろ",
+      "asymmetry": "胸下の小灯は左寄り",
+      "repeatCount": "環2、胸下室2",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "襟の大小環の内縁",
+      "inactive": "灰緑の二環",
+      "active": "大環から小環へ低い白点が移る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "物理HPダメージだけを優先する運用",
+      "大小環を同じ大きさの円盤にする形",
+      "二室を新しい霧噴射攻撃として実装すること"
+    ]
+  }
+}

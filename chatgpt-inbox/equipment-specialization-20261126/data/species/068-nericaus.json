@@ -1,0 +1,203 @@
+{
+  "no": 68,
+  "speciesId": "monster.nericaus",
+  "name": "ネリカウス",
+  "nativeRank": 4,
+  "identity": {
+    "role": "尾輪の三拍で弱点へ雷風を刺す軽装",
+    "ecologyBasis": "高原の鉱物藻を食べ続けたルミスカに育つ環燐器。湾曲した燐板で尾の空気流を絞り、点灯した節から短い放電を重ねる。",
+    "combatLoop": "敵の接触を三度回避して輪の下半分を灯し、弱点へ別行動を集中する。",
+    "strength": "雷風量1.70倍、会心25。回避継続で会心+8/12・属性+10/16%。",
+    "weakness": "基礎攻撃0.80倍、防御0.76倍、消耗1.22倍、氷耐性-30。被弾で三拍が崩れる。",
+    "recommendedFamilies": [
+      "ring_bow",
+      "twin_blades",
+      "long_blade"
+    ],
+    "avoidUse": "不利な運用: 回避回数を稼ぐため正面で被弾を許す運用"
+  },
+  "stats": {
+    "rawScale": 0.8,
+    "affinity": 25,
+    "elementScale": 1.7,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.8,
+    "edgeWearScale": 1.22,
+    "staminaCostScale": 0.92,
+    "defenseScale": 0.76,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 0.98,
+      "war_maul": 0.98,
+      "twin_blades": 1.02,
+      "long_blade": 1.02,
+      "long_lance": 0.98,
+      "ring_bow": 1.04
+    },
+    "slotWeights": {
+      "head": 0.14,
+      "chest": 0.18,
+      "arms": 0.16,
+      "waist": 0.3,
+      "legs": 0.22
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 15,
+      "ice": -30,
+      "water": 0,
+      "wind": 15,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "weak_crit",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "weak_crit",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "環燐の照点",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "projectile",
+        "weakspot"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 300,
+    "cooldownTicks": 600,
+    "durationTicks": 180,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "弱点へ異なる2射撃行動を通し、輪の開口を狙いに合わせる。近接系は適合定義で締めの命中へ置き換える。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続180tick、発動時から再使用600tick。",
+    "id": "weapon_trait.nericaus"
+  },
+  "signature": {
+    "name": "環燐の三拍灯",
+    "trigger": {
+      "event": "dodge",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 3,
+    "windowTicks": 420,
+    "cooldownTicks": 720,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "affinityPoints",
+        "values": [
+          8,
+          12
+        ]
+      },
+      {
+        "stat": "elementPct",
+        "values": [
+          10,
+          16
+        ]
+      }
+    ],
+    "explanation": "420tick内に敵の接触を3回回避すると、輪の下半分が灯る。回避回数は攻撃一回ごとではなく行動ごとに数える。 回避入力ではなく、回避無敵中に敵攻撃の接触を避けた成功だけを数える。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 持続240tick、発動時から再使用720tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.nericaus"
+  },
+  "appearance": {
+    "silhouette": "細い灰青の身体に、右後腰だけ開いた輪。上半分を暗く、下半分へ灯りを偏らせる。",
+    "palette": [
+      "灰青",
+      "青銅",
+      "琥珀"
+    ],
+    "organTranslation": [
+      "環燐器→右後腰の開いた一輪",
+      "尾の絞り流→腰輪の下半分だけの細溝",
+      "燐板→細い脛と腕の低い弧板"
+    ],
+    "armorParts": {
+      "head": "細い額弧、頭に輪を載せない",
+      "chest": "細身の灰青胸甲に縦の空隙",
+      "arms": "肘外に小さい弧板、前腕を長く露出",
+      "waist": "右後腰へ開口輪を傾け、腿の軌道を空ける",
+      "legs": "低い弧板を脛の外へ一枚ずつ"
+    },
+    "weaponShapes": {
+      "heavy_blade": "開口輪の弧を刃元の峰へ残す細幅大剣",
+      "guard_blade": "細剣と右下に開口弧を飾る閉じた盾面",
+      "war_maul": "輪は槌頭側面の低い弧、前後の打面は硬く閉じる",
+      "twin_blades": "同長二刃の峰に半輪ずつを低く添える",
+      "long_blade": "開口弧を小さい鍔へ写す細身太刀",
+      "long_lance": "まっすぐな芯の刃元に弧、盾下側に低い輪縁",
+      "ring_bow": "腰輪は小照準環の形へ縮小し、細い上下弓身と一本の直線弦"
+    },
+    "gradeEvolution": {
+      "4": "灰青の細身を保ち、右腰の後ろだけに開いた青銅色の輪を置く。灯りは輪の下半分へ偏らせる。 極級完成形のみ。開いた輪の空隙と、下半分に偏る灯点を固定する。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "開口輪",
+      "secondaryForm": "細い弧板",
+      "dominantRegion": "右後腰",
+      "asymmetry": "右後腰だけ輪、左腰は平ら",
+      "repeatCount": "開いた輪1",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "右後腰の輪の下半分",
+      "inactive": "上半分も下半分も鈍い青銅",
+      "active": "下半分だけ三点が順に灯り、上半分は暗い",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "回避回数を稼ぐため正面で被弾を許す運用",
+      "閉じた円盤や左右対称の二輪",
+      "輪の全周を強く発光させる表現"
+    ]
+  }
+}

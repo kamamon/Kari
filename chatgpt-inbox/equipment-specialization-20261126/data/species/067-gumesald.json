@@ -1,0 +1,200 @@
+{
+  "no": 67,
+  "speciesId": "monster.gumesald",
+  "name": "グメサルド",
+  "nativeRank": 4,
+  "identity": {
+    "role": "熔継板を閉じて受ける複合重装",
+    "ecologyBasis": "長年の鉱物摂取で背板・頭冠・胸甲の継ぎ目に育つ熔継晶床。擦れで熱と電荷を蓄え、開いた板の側へ熱した鉱粉や電荷を放つ。尾端晶へ通じる導晶管も持ち、尾の放電は晶が灯ってから起こる。",
+    "combatLoop": "三度の通常ガードで板を閉じ合わせ、軽減を得た時間に火雷の別行動を通す。",
+    "strength": "基礎攻撃1.11倍、防御1.10倍。技能で被ダメージ-8/12%、火雷の属性+8/12%。",
+    "weakness": "会心-20、消耗1.40倍、回避・ガード等の消費1.20倍、水耐性-25。受けるだけでスタミナが尽きる。",
+    "recommendedFamilies": [
+      "heavy_blade",
+      "guard_blade",
+      "long_lance"
+    ],
+    "avoidUse": "不利な運用: スタミナを空にしてガードを継続する運用"
+  },
+  "stats": {
+    "rawScale": 1.11,
+    "affinity": -20,
+    "elementScale": 1.28,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.2,
+    "edgeWearScale": 1.4,
+    "staminaCostScale": 1.2,
+    "defenseScale": 1.1,
+    "familyBias": {
+      "heavy_blade": 1.04,
+      "guard_blade": 1.02,
+      "war_maul": 0.98,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 1.02,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.18,
+      "chest": 0.3,
+      "arms": 0.22,
+      "waist": 0.18,
+      "legs": 0.12
+    },
+    "setResistances": {
+      "fire": 15,
+      "thunder": 15,
+      "ice": 0,
+      "water": -25,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "guard_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "熔継の芯打ち",
+    "trigger": {
+      "event": "charge_release",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 600,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "rawPct",
+        "values": [
+          4,
+          4
+        ]
+      }
+    ],
+    "explanation": "溜め解放で継ぎ目を締め、次の別行動の物理だけを強める。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 次の有効な別行動の命中で消費し、その行動の多段命中には同じ効果を使う。 持続180tick、発動時から再使用600tick。",
+    "id": "weapon_trait.gumesald"
+  },
+  "signature": {
+    "name": "熔継三板の閉合",
+    "trigger": {
+      "event": "guard",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 3,
+    "windowTicks": 480,
+    "cooldownTicks": 960,
+    "durationTicks": 360,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          -8,
+          -12
+        ]
+      },
+      {
+        "stat": "elementPct",
+        "values": [
+          8,
+          12
+        ]
+      }
+    ],
+    "explanation": "480tick内に通常ガードを3回成功させて大板を閉合。属性を持つ武器だけが属性補正を受ける。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 持続360tick、発動時から再使用960tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.gumesald"
+  },
+  "appearance": {
+    "silhouette": "左肩から左腰へ灰黒の大板を段で渡し、低い横割れ冠へつなぐ。光は継ぎ目に限る。",
+    "palette": [
+      "灰黒",
+      "青銅",
+      "琥珀"
+    ],
+    "organTranslation": [
+      "熔継晶床→大板の接合線だけの琥珀と青銅",
+      "左成長板→左肩から腰へ落ちる段",
+      "導晶管→腰の内側へ収めた短い尾端芯"
+    ],
+    "armorParts": {
+      "head": "横へ割れた低い冠、顔前は厚くしない",
+      "chest": "左胸へ大板一枚、右胸を小板に分ける",
+      "arms": "左前腕を大板で包み右は分割甲",
+      "waist": "左腰へ二段板、尾端芯は後腰の内側",
+      "legs": "脛甲は低い幅広板、膝裏と足首を露出"
+    },
+    "weaponShapes": {
+      "heavy_blade": "熔継大板を峰へ重ねる重剣、刃縁は一本",
+      "guard_blade": "継ぎ目の短剣と、左上へ厚さを寄せた独立盾",
+      "war_maul": "晶芯を内蔵する閉じた両打面、側面だけ継ぎ目が見える",
+      "twin_blades": "灰黒二短剣の峰に火と雷の細い接合線",
+      "long_blade": "低い継ぎ板を刃元へまとめた重い太刀",
+      "long_lance": "厚い刃元から細く伸びる直槍と段板大盾",
+      "ring_bow": "大板を小片へ分け握り近くへ配置、しなる弓身・小環・一本の直線弦"
+    },
+    "gradeEvolution": {
+      "4": "灰黒の段状大板を左肩から腰へ渡し、板の継ぎ目だけ青銅と琥珀にする。兜の冠は低く横へ割る。 極級完成形のみ。継ぎ目の青銅と琥珀を細線に限定し、次級の大型化や金色化を作らない。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "段状の大板",
+      "secondaryForm": "細い継ぎ目",
+      "dominantRegion": "左肩から左腰",
+      "asymmetry": "左は大板、右は小分割",
+      "repeatCount": "左の主板3、冠の割れ1",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "左胸と腰の継ぎ目",
+      "inactive": "暗い灰黒面",
+      "active": "継ぎ目だけ琥珀と青銅が交互に点く",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "スタミナを空にしてガードを継続する運用",
+      "全身の金色化や全面発光",
+      "右肩を左と同じ大きさにする形"
+    ]
+  }
+}

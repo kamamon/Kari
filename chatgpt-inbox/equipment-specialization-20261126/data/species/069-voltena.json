@@ -1,0 +1,204 @@
+{
+  "no": 69,
+  "speciesId": "monster.voltena",
+  "name": "ヴォルテナ",
+  "nativeRank": 4,
+  "identity": {
+    "role": "未破壊部位へ三層の露を通す装備",
+    "ecologyBasis": "古いヴェリトの左羽袋に分かれて育つ三層貯露房。水分と毒糸液を層ごとに保ち、低い水糸と薄い霧滴を別の向きへ押し出す。",
+    "combatLoop": "同じ対象の未破壊部位を三行動で探り、露が巡った間だけ消耗を抑えて水霧攻撃を続ける。部位IDまでは固定しない。",
+    "strength": "水霧量1.80倍、発動中は消耗-12/20%。",
+    "weakness": "基礎攻撃0.78倍、刃容量0.72倍、通常消耗1.32倍、火耐性-25。技能中の被ダメージ+8/12%。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "guard_blade",
+      "long_blade"
+    ],
+    "avoidUse": "不利な運用: すでに破壊した部位だけを殴って起動を狙う運用"
+  },
+  "stats": {
+    "rawScale": 0.78,
+    "affinity": 15,
+    "elementScale": 1.8,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.72,
+    "edgeWearScale": 1.32,
+    "staminaCostScale": 1.02,
+    "defenseScale": 0.9,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 1.02,
+      "war_maul": 0.98,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 0.98,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.14,
+      "chest": 0.32,
+      "arms": 0.22,
+      "waist": 0.16,
+      "legs": 0.16
+    },
+    "setResistances": {
+      "fire": -25,
+      "thunder": 0,
+      "ice": 0,
+      "water": 15,
+      "wind": 0,
+      "mist": 15
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "edge_keep",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "edge_keep",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "帷露の未破り",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "unbroken"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 300,
+    "cooldownTicks": 660,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "同じ未破壊の対象へ2行動を通し、次の水霧攻撃を保つ。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続240tick、発動時から再使用660tick。",
+    "id": "weapon_trait.voltena"
+  },
+  "signature": {
+    "name": "左帷の三層通露",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "unbroken"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 3,
+    "windowTicks": 360,
+    "cooldownTicks": 1080,
+    "durationTicks": 480,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "edgeWearPct",
+        "values": [
+          -12,
+          -20
+        ]
+      },
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          8,
+          12
+        ]
+      }
+    ],
+    "explanation": "未破壊部位を同じ対象へ3行動当てて三層を濡らす。露膜が刃を守る一方、身体側の防護は開く。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続480tick、発動時から再使用1080tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.voltena"
+  },
+  "appearance": {
+    "silhouette": "左肩から短い帷を三層だけ重ね、右腕を細く露出。下端の滴形で三枚を数えられる。",
+    "palette": [
+      "灰紫",
+      "生成り",
+      "青銅"
+    ],
+    "organTranslation": [
+      "三層貯露房→左肩の三枚短帷",
+      "水糸と霧滴→上下で分かれる細い縁筋",
+      "右側から動く脚→右腕と右腰の露出"
+    ],
+    "armorParts": {
+      "head": "左額だけ短い帷縁、顔を覆わない",
+      "chest": "左肩から胸へ三層の短帷、右胸は細い皮帯",
+      "arms": "左腕は滴縁の短甲、右は薄い籠手のみ",
+      "waist": "左の帷は腰上で止め、右腰は小袋一つ",
+      "legs": "両脚は細い脛板、帷を腿へ垂らさない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "三層の帷を峰の三段薄板へ写し刃面は一枚",
+      "guard_blade": "三層の低い鍔の剣と、硬い裏板上に短帷を重ねる盾",
+      "war_maul": "側面に三段の滴室、前後は閉じた硬い打面",
+      "twin_blades": "一方の峰に水糸、他方に霧滴の三段を写す二短剣",
+      "long_blade": "三枚の低い留めを刃元へ重ねた細長い太刀",
+      "long_lance": "三層縁を刃元に収める直槍と三段帷の独立盾",
+      "ring_bow": "握り上の三つの薄片と小環、弓身を細く保ち一本の直線弦"
+    },
+    "gradeEvolution": {
+      "4": "灰紫の短い帷を左肩から三段に重ね、右腕は細く露出させる。縁に鈍い青銅の滴形を付ける。 極級完成形のみ。三層は左肩側へ集め、全身を長い布で覆わない。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "三層の短帷",
+      "secondaryForm": "滴形の縁",
+      "dominantRegion": "左肩",
+      "asymmetry": "左に三層、右は露出",
+      "repeatCount": "左の帷3、各層の代表滴1",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "左帷の三枚の縁",
+      "inactive": "鈍い青銅の滴形",
+      "active": "上層から下層へ三つの白滴が巡る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "すでに破壊した部位だけを殴って起動を狙う運用",
+      "三層を四層以上へ増やす形",
+      "両肩を同じ厚い帷で覆う形"
+    ]
+  }
+}

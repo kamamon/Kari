@@ -1,0 +1,203 @@
+{
+  "no": 63,
+  "speciesId": "monster.regsanio",
+  "name": "レグサニオ",
+  "nativeRank": 3,
+  "identity": {
+    "role": "左盤を守りながら雷を整える盾装備",
+    "ecologyBasis": "左首に偏る片盤電鰭。円盤状の発電膜と、周縁の麻痺粘液腺を分けて持ち、盤を反らすと湿った地面へ短い放電を流す。",
+    "combatLoop": "二度の受けで盤の電位を揃え、維持時間に小さな雷攻撃を続ける。途中の被弾で整流が切れる。",
+    "strength": "雷量1.65倍、技能中はガード消費-12/20%と雷+8/12%。",
+    "weakness": "基礎攻撃0.81倍、防御0.90倍、消耗1.22倍、氷耐性-25。回避主体では固有技能を作動できない。",
+    "recommendedFamilies": [
+      "guard_blade",
+      "long_lance",
+      "heavy_blade"
+    ],
+    "avoidUse": "不利な運用: ガード不能系統で固有技能を主力にする運用"
+  },
+  "stats": {
+    "rawScale": 0.81,
+    "affinity": 5,
+    "elementScale": 1.65,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.92,
+    "edgeWearScale": 1.22,
+    "staminaCostScale": 1.08,
+    "defenseScale": 0.9,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 1.04,
+      "war_maul": 0.98,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 1.02,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.3,
+      "arms": 0.2,
+      "waist": 0.18,
+      "legs": 0.16
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 15,
+      "ice": -25,
+      "water": 15,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "part_damage",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "盤縁の導雷",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "weakspot"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 3,
+    "windowTicks": 360,
+    "cooldownTicks": 600,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "同じ対象の弱点へ3行動を通して盤縁の雷を整える。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続240tick、発動時から再使用600tick。",
+    "id": "weapon_trait.regsanio"
+  },
+  "signature": {
+    "name": "片盤の二度受け",
+    "trigger": {
+      "event": "guard",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 360,
+    "cooldownTicks": 960,
+    "durationTicks": 420,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "guardCostPct",
+        "values": [
+          -12,
+          -20
+        ]
+      },
+      {
+        "stat": "elementPct",
+        "values": [
+          8,
+          12
+        ]
+      }
+    ],
+    "explanation": "360tick内の通常ガード2回で整流を始める。受け流しは回数に含めない。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 持続420tick、発動時から再使用960tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.regsanio"
+  },
+  "appearance": {
+    "silhouette": "左肩の薄い円盤を斜め前へ傾け、右肩を細くする。腰を長く見せる二列の低い背骨。",
+    "palette": [
+      "灰青",
+      "暗灰",
+      "鈍い青銅"
+    ],
+    "organTranslation": [
+      "片盤電鰭→左肩だけの一枚盤",
+      "周縁腺→盤裏の細い環状溝",
+      "背骨→腰へ下る二列の低稜"
+    ],
+    "armorParts": {
+      "head": "左頬を薄い半弧で包む小兜",
+      "chest": "左鎖骨に斜盤、胸中央は細い縦皮",
+      "arms": "左前腕は盤裏の環溝、右は一条の細甲",
+      "waist": "背の二列を長い腰帯まで通し左右甲を小さくする",
+      "legs": "脛外に細い骨線、足首を大きく露出"
+    },
+    "weaponShapes": {
+      "heavy_blade": "盤の一弧を峰へ残し直刃へ削ぐ片刃大剣",
+      "guard_blade": "細い雷溝の剣と、一枚斜盤の独立盾",
+      "war_maul": "薄い盤を側飾りに持つ閉じた硬い両打面槌",
+      "twin_blades": "同長二刃の片方に環溝、もう片方に直溝",
+      "long_blade": "低い盤鍔と長い一条の峰を持つ太刀",
+      "long_lance": "直槍の刃元に半環、盾は薄い円盤を偏心配置",
+      "ring_bow": "握り上の小照準環だけ盤縁を写し、細い弓身と一本の直線弦"
+    },
+    "gradeEvolution": {
+      "3": "左肩に丸く薄い灰青の盤を一枚置き、右肩を細く保つ。背には低い骨の二列だけを走らせ、腰を長く見せる。 初登場級の形。武器は同じ器官の輪郭を用途に合わせて切り分ける。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。",
+      "4": "極級は左盤の内側に細い電膜を二重で張り、外径は固定。背の二列骨の間隔を保ち、首周りへ増やさない。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "薄い斜盤",
+      "secondaryForm": "低い二列骨",
+      "dominantRegion": "左肩",
+      "asymmetry": "左肩だけ円盤、右は細い",
+      "repeatCount": "盤1、背稜2",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "左肩盤の裏側",
+      "inactive": "灰青の細環が暗い",
+      "active": "盤裏の環だけに青銅の点が巡る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "ガード不能系統で固有技能を主力にする運用",
+      "左右二枚の同寸円盤",
+      "背骨を大きい棘へ膨らませる形"
+    ]
+  }
+}
