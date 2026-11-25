@@ -32,7 +32,7 @@ export function combine(...sources: Effects[]): Effects {
     if (!(key in CAPS) || !Number.isFinite(value)) throw new Error(`Invalid effect ${key}`);
     const stat = key as Stat; result[stat] = (result[stat] ?? 0) + value;
   }
-  for (const key of Object.keys(result) as Stat[]) result[key] = clamp(result[key]!, ...CAPS[key]);
+  for (const key of Object.keys(result) as Stat[]) result[key] = clamp(result[key]!, CAPS[key][0], CAPS[key][1]);
   return result;
 }
 function subset(source: Effects, attack: boolean): Effects {
@@ -195,7 +195,7 @@ export function damageTerms(raw: number, element: number, status: number, stun: 
   const crit = rng < Math.abs(a) / 100 ? (a >= 0 ? 1.25 : 0.75) : 1;
   const r = raw * (1 + (effects.rawPct ?? 0) / 100) * crit;
   const el = element * (1 + (effects.elementPct ?? 0) / 100);
-  return {hp: r + el, part: r * (1 + (effects.partPct ?? 0) / 100),
+  return {hp: r + el, part: (r + el) * (1 + (effects.partPct ?? 0) / 100),
     status: status * (1 + (effects.statusPct ?? 0) / 100),
     stun: bluntHead ? stun * (1 + (effects.stunPct ?? 0) / 100) : 0, crit};
 }
