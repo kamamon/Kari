@@ -261,7 +261,8 @@ def main():
     write('analysis/id-map.json', {'equipment': id_map, 'materials': material_map}, compact=True)
     source_paths = ['docs/source/chatgpt-equipment-20261125/data/all-equipment.json', 'public/data/bestiary.json',
                     'public/data/weapons.json', 'public/data/armor.json', 'public/data/equipment_series.json', 'public/data/recipes.json',
-                    'public/data/items.json', 'public/data/items_creatures.json', 'public/data/skills.json', 'src/game/gear.ts', 'src/game/sim.ts']
+                    'public/data/items.json', 'public/data/items_creatures.json', 'public/data/skills.json', 'package.json',
+                    'src/game/gear.ts', 'src/game/sim.ts', 'src/game/monster.ts'] + [f'public/data/actions/{f}.json' for f in FAMILIES]
     write('analysis/source-manifest.json', {'sourceCommit': SOURCE_COMMIT,
         'version': read(ROOT / 'package.json')['version'], 'files': [{'path': p, 'sha256': hashlib.sha256(source_bytes(p)).hexdigest()} for p in source_paths],
         'counts': counts, 'oldUnpublishedTree': '31efccb0db89ce14f489f5cb37062e8c93687081', 'byteIdenticalRecovery': False})
