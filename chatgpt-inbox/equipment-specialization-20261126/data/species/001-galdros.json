@@ -1,0 +1,201 @@
+{
+  "no": 1,
+  "speciesId": "monster.galdros",
+  "name": "ガルドロス",
+  "nativeRank": 1,
+  "identity": {
+    "role": "受けて殻を割る左重装",
+    "ecologyBasis": "普段は決まった採食場所をゆっくり巡る。進路を塞がれると頭冠を低くして警告し、距離を取れば追い過ぎない。",
+    "combatLoop": "正面をガードし、次の別行動で同じ部位を割る。横回避の連打を捨てて位置を先に取る。",
+    "strength": "基礎物理1.14倍と防御1.10倍。受け止めた直後の部位破壊に集中。",
+    "weakness": "会心-15、戦闘スタミナ消費1.18倍、刃消耗1.18倍。固有発動中は回避消費+10/+15%。",
+    "recommendedFamilies": [
+      "heavy_blade",
+      "long_lance",
+      "guard_blade"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。会心-15、戦闘スタミナ消費1.18倍、刃消耗1.18倍。固有発動中は回避消費+10/+15%。"
+  },
+  "stats": {
+    "rawScale": 1.14,
+    "affinity": -15,
+    "elementScale": 0,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.1,
+    "edgeWearScale": 1.18,
+    "staminaCostScale": 1.18,
+    "defenseScale": 1.1,
+    "familyBias": {
+      "heavy_blade": 1.04,
+      "guard_blade": 1.02,
+      "war_maul": 1.0,
+      "twin_blades": 1.0,
+      "long_blade": 1.0,
+      "long_lance": 1.02,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.3,
+      "arms": 0.24,
+      "waist": 0.14,
+      "legs": 0.16
+    },
+    "setResistances": {
+      "fire": -25,
+      "thunder": 20,
+      "ice": 0,
+      "water": 0,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "edge_keep",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "edge_keep",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "guard_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.galdros",
+    "name": "晶床の荷重",
+    "trigger": {
+      "event": "charge_release",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 240,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "rawPct",
+        "values": [
+          4,
+          4
+        ]
+      }
+    ],
+    "explanation": "溜め解放で晶脈を整え、次の別行動を重くする。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.galdros",
+    "name": "左殻の踏み支え",
+    "trigger": {
+      "event": "guard",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 720,
+    "durationTicks": 360,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          18,
+          25
+        ]
+      },
+      {
+        "stat": "dodgeCostPct",
+        "values": [
+          10,
+          15
+        ]
+      }
+    ],
+    "explanation": "通常ガード成立で左殻を支点にし、6秒間の部位攻撃を強める。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "左肩・左前腕・左腰に三つの大岩塊を置く、低い片流れの城壁形。右半身は革地を広く見せる。",
+    "armorParts": {
+      "head": "額に沿う平岩冠。左頬だけ段差を付け、目口を開ける",
+      "chest": "胸を斜めに横切る一枚岩。左肩の棚を高く右肩を薄く",
+      "arms": "左前腕の上面を岩塊、右は細い二枚板。手首を切る",
+      "waist": "左腰の低い岩棚と腰後ろの短い尾端晶。前腰を空ける",
+      "legs": "脛の外側だけ厚い楔形。膝を跨がず足首で分離"
+    },
+    "weaponShapes": {
+      "heavy_blade": "左側に厚い岩殻を抱く斜め断面の大剣。先端は斜めに切り落とす",
+      "guard_blade": "細い岩刃と左寄りの巨板を一枚使う台形盾。盾裏は革帯",
+      "war_maul": "横長の閉じた岩頭。左側面だけ晶脈が深い両打面",
+      "twin_blades": "二本とも直線的な短い岩楔。左右の重さは同じで面割りだけ反転",
+      "long_blade": "低い岩片を連ねた連続曲刃。峰に一本だけ沈んだ晶筋",
+      "long_lance": "平たい尾端晶の槍穂と、左に厚い三層岩盾",
+      "ring_bow": "硬骨弓の握り外側だけ岩片を二枚。小照準環一つと直線弦一本"
+    },
+    "production": {
+      "primaryForm": "斜めに重なる扁平な岩塊",
+      "secondaryForm": "細い革帯と沈んだ晶筋",
+      "dominantRegion": "左肩・左前腕・左腰",
+      "asymmetry": "左大、右小。正面の体軸は傾けない",
+      "repeatCount": "主岩塊3、尾端晶1",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "大岩塊三つの面を粗く残し、晶筋は一本だけ。",
+      "2": "三つの主塊を維持し二重の革留め。浅い晶筋を二本へ。",
+      "3": "左肩と左腰の内面へ小さな琥珀晶面。輪郭を増幅しない。",
+      "4": "三本の沈んだ晶筋と左前腕の晶面。右半身の革面は残す。"
+    },
+    "skillCue": {
+      "location": "左肩の岩板内縁",
+      "inactive": "灰色の沈んだ筋",
+      "active": "受け止めると内側二筋だけ琥珀が灯る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "右肩も同じ大岩塊にしない",
+      "王冠状の角・長い尾・全身金色を足さない",
+      "装飾岩を刃の有効長へ突き出さない"
+    ],
+    "palette": [
+      "灰褐色",
+      "鈍い青銅",
+      "琥珀の細い縁"
+    ],
+    "organTranslation": [
+      "背と頭に鉱物を析出させる皮下の晶脈床。左背面の成長が速く、尾端では塊になって打撃を重くする。",
+      "左の成長の速さを三か所の重量配分へ置換。右は関節を支える細帯にする。",
+      "晶脈を受けてから割る技能の溜まりとして、殻の外周でなく内側の細筋へ表す。"
+    ]
+  }
+}

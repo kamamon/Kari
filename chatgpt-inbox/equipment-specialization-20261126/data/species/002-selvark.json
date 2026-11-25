@@ -1,0 +1,201 @@
+{
+  "no": 2,
+  "speciesId": "monster.selvark",
+  "name": "セルヴァルク",
+  "nativeRank": 1,
+  "identity": {
+    "role": "息切れ際に風を拾う回避軽装",
+    "ecologyBasis": "用心深く、まず横跳びで間合いを外す。角膜を大きく開く威嚇を無視されると、短い突きを繰り返す。",
+    "combatLoop": "スタミナが減った局面で敵の攻撃を回避し、呼吸を戻して短い属性攻撃へ移る。",
+    "strength": "風倍率1.70、戦闘スタミナ消費0.90倍。回避成功後の回復速度に特化。",
+    "weakness": "基礎物理0.85倍、防御0.77倍、刃容量0.80倍。発動中の被ダメージ+8/+12%。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "long_blade",
+      "ring_bow"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.85倍、防御0.77倍、刃容量0.80倍。発動中の被ダメージ+8/+12%。"
+  },
+  "stats": {
+    "rawScale": 0.85,
+    "affinity": 10,
+    "elementScale": 1.7,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.8,
+    "edgeWearScale": 1.1,
+    "staminaCostScale": 0.9,
+    "defenseScale": 0.77,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.0,
+      "war_maul": 1.0,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 0.96,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 0,
+      "ice": -20,
+      "water": 0,
+      "wind": 15,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.selvark",
+    "name": "折帆の返し風",
+    "trigger": {
+      "event": "dodge",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 420,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "接触回避で畳んだ帆を返し、次の風属性命中だけを強める。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。 回避入力ではなく、敵の攻撃との接触を回避無敵で抜けた成功時だけ判定。"
+  },
+  "signature": {
+    "id": "signature.selvark",
+    "name": "風下の息継ぎ",
+    "trigger": {
+      "event": "dodge",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 45
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 660,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "staminaRecoveryPct",
+        "values": [
+          12,
+          18
+        ]
+      },
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          8,
+          12
+        ]
+      }
+    ],
+    "explanation": "残スタミナ45%以下の回避成功で呼吸が戻るが、帆が開く間は守りが薄い。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。 回避入力ではなく、敵の攻撃との接触を回避無敵で抜けた成功時だけ判定。"
+  },
+  "appearance": {
+    "silhouette": "背の中央から後ろ肩へ流れる二枚の畳み帆。胴は細く、脚と前面の余白で軽さを出す。",
+    "armorParts": {
+      "head": "細い角膜筋を額に一本。後頭部の小さな二折りを寝かせる",
+      "chest": "胸は灰緑の薄革。背肩の二枚帆を体へ沿わせる",
+      "arms": "前腕外側に細い膜骨を一条、掌側は革",
+      "waist": "腰側面に後方へ折れる短い帆裾。中央後ろは空ける",
+      "legs": "細い後脚腱を模した二重の外帯。膝裏と足首を見せる"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰だけ三折りの帆骨を沿わせた薄い片刃大剣",
+      "guard_blade": "小さな斜め帆刃と、薄膜を硬い骨枠に張った閉じた楕円盾",
+      "war_maul": "閉じた骨打面の間に畳み膜を挟む細い鼓形大槌",
+      "twin_blades": "帆の折り筋を峰に一本ずつ持つ後流れの短刃二本",
+      "long_blade": "細く連続する曲刃の根元だけ二折り膜骨",
+      "long_lance": "二枚の細い帆骨で挟む直槍と、硬い骨裏板を持つ畳み帆盾",
+      "ring_bow": "細い弓身に後ろへ寝た膜筋。握り上の小環と直線弦一本"
+    },
+    "production": {
+      "primaryForm": "細い後流れの二折り",
+      "secondaryForm": "露出した灰緑革と腱帯",
+      "dominantRegion": "背肩",
+      "asymmetry": "前面は左右均等、背の流れだけ後方へ偏る",
+      "repeatCount": "畳み帆2、外脚帯2",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "二枚帆を完全に畳み、乾いた膜筋を一本だけ見せる。",
+      "2": "折り目へ細い骨縁。背で交差させず二枚を分ける。",
+      "3": "膜の内側だけ淡い象牙の筋。薄さと細い脚を保つ。",
+      "4": "二段の折りを明瞭化。大型の翼へ拡張せず腰裾は短いまま。"
+    },
+    "skillCue": {
+      "location": "背肩の折り筋",
+      "inactive": "閉じた灰緑の筋",
+      "active": "成功時に内側の二筋だけ淡く明るむ",
+      "maxLitSurfacePercent": 3
+    },
+    "avoid": [
+      "飛行できそうな横長翼にしない",
+      "大きなマント・肩の板鎧で胴を太らせない",
+      "弓を巨大な輪や円盤にしない"
+    ],
+    "palette": [
+      "灰緑",
+      "乾いた象牙",
+      "鈍青銅"
+    ],
+    "organTranslation": [
+      "頭の分割角膜を支える弾性軟骨と、鼻先の整流孔。角膜の開閉で短い空気の押し出しを前方や斜め前へ整流する。",
+      "分割角膜を飛行翼にせず、肩の後ろに畳む短い布骨として移す。",
+      "低スタミナで開く余裕の少なさを、回復と受けの弱さを同時に持つ技能へ結ぶ。"
+    ]
+  }
+}
