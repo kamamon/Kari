@@ -1,0 +1,376 @@
+{
+  "generated_count": 24,
+  "reference_count": 6,
+  "date_jst": "2026-11-25",
+  "records": [
+    {
+      "sequence": 1,
+      "id": "ref_npc_minagi_back_v1",
+      "file": "assets/ref_npc_minagi_back_v1.png",
+      "title": "ミナギ／背面",
+      "tool": "image_gen.imagegen",
+      "use_case": "stylized-concept",
+      "transparent_background": false,
+      "prompt": "Make one BACK full-body turnaround view of the EXACT SAME young woman MINAGI in the attached full-body reference. Turn her 180 degrees, rear of head faces camera and face does not look back. Preserve her body proportions, dark-brown hair tied low at the nape, gray-green woven short work jacket with ochre topstitch seams, off-white shirt and rolled cuffs, plain dark brown trousers, brown lace-up ankle boots, same belt and same material colors. Her elbows stay softly bent as she holds the same wooden record board in front of her abdomen; from behind the board is naturally hidden by her torso, do NOT attach it to her back or add a second board. Arms and hands anatomically plausible, no new bags, armor or jewelry. Plausible restrained back seams on the same jacket, length and silhouette matched. Near orthographic rear view, full figure and soles visible, similar scale and portrait 3:4 canvas. Same pale warm-gray plain background, soft neutral studio light and small contact shadow, clean detailed semi-realistic production art. Only ONE person and one rear view, no lettering, logos, labels, inset images, frames or watermark.",
+      "reference_inputs": [
+        "assets/reference_minagi_full_v1.png"
+      ],
+      "status": "既存原画に基づく背面提案",
+      "usage": "人物モデルの背面設計、SC00–15"
+    },
+    {
+      "sequence": 2,
+      "id": "ref_npc_senaki_front_v1",
+      "file": "assets/ref_npc_senaki_front_v1.png",
+      "title": "セナキ／正面",
+      "tool": "image_gen.imagegen",
+      "use_case": "stylized-concept",
+      "transparent_background": false,
+      "prompt": "Create one original game character reference image for VEILBOUND HUNTERS, story \"The Lights on the Way Home\". Use the attached adopted style board only for the grounded semi-realistic fantasy rendering, material language, muted moss gray-green, unbleached linen, weathered wood and restrained bronze palette. Do NOT reproduce its young hunter or monsters. Design SENAKI, a veteran road keeper and waterway repairer, an original man around 65: lean but sturdy, weather-worn warm tan skin, elongated face, short brushed-back silver-gray hair, clean-shaven, dark brown calm observant eyes, quiet practical competence. A short asymmetrical gray-green rain capelet ending just above elbows, weathered gray-brown sleeveless work vest with two simple bronze fasteners and visibly hand-sewn repairs, open-collar off-white linen shirt with sleeves rolled below elbows, plain dark umber narrow work trousers, worn calf-height brown leather boots. One small closed tool pouch on HIS LEFT hip and a compact coil of plain rope attached at HIS RIGHT hip; no large weapons or backpack. Empty relaxed hands, fingers separated and anatomically clear. FRONT full body, almost orthographic long-lens view, upright relaxed standing, arms slightly away from body, both soles completely visible, 5 percent breathing room at head and feet. One person only. Plain warm pale-gray studio background with subtle contact shadow. Premium clear production concept art with realistic anatomy, tactile woven cloth and worn stitching, restrained painterly finish, consistent with the reference. Portrait 3:4 composition. No lettering, names, captions, frame, logo, watermark, diagram, extra views, fantasy glow, modern gadgets or jewelry.",
+      "reference_inputs": [
+        "https://github.com/kamamon/Kari/blob/4851d57ecc24c8fd127508b084999cec5d0e975f/art-source/board/style_board_v2.png"
+      ],
+      "status": "新規人物案",
+      "usage": "全編の人物基準、SC03–15"
+    },
+    {
+      "sequence": 3,
+      "id": "ref_npc_senaki_back_v1",
+      "file": "assets/ref_npc_senaki_back_v1.png",
+      "title": "セナキ／背面",
+      "tool": "image_gen.imagegen",
+      "use_case": "stylized-concept",
+      "transparent_background": false,
+      "prompt": "Create a BACK full-body view of the EXACT SAME elderly road keeper SENAKI in the attached character reference. Rotate him 180 degrees, no face looking back. Preserve age, lean proportions, short silver-gray hair, short patched moss-gray rain cape with a lowered hood, patched gray-brown vest under it, off-white rolled sleeves, dark umber trousers, calf-high brown boots, every major clothing layer and scale. The pouch remains on HIS LEFT HIP (image left in back view), the rope coil on HIS RIGHT HIP (image right in back view); do not mirror these. Empty hands relaxed, palms partly toward thighs; five anatomically clear fingers each. Reveal simple plausible back seams and fastening continuations, no backpack, new armor, weapons or decorative symbols. Match the same neutral studio lighting, tactile semi-realistic production art, pale warm-gray plain background and subtle ground contact shadow. Full body from hair to soles, same character size and portrait 3:4 composition, enough margin at top and bottom. ONE rear view only, no front view, no inset, no letters, labels, logo, watermark or borders. This is a character turnaround continuation, not a new character.",
+      "reference_inputs": [
+        "assets/ref_npc_senaki_front_v1.png"
+      ],
+      "status": "新規人物案",
+      "usage": "人物モデルの背面設計、SC03–15"
+    },
+    {
+      "sequence": 4,
+      "id": "portrait_minagi_focus_v1",
+      "file": "assets/portrait_minagi_focus_v1.png",
+      "title": "ミナギ／集中",
+      "tool": "image_gen.imagegen",
+      "use_case": "identity-preserve",
+      "transparent_background": true,
+      "prompt": "Create ONE dialogue portrait cutout, chest-up, front-facing near symmetrical, head upright and eyes at camera level, portrait 3:4 canvas. Keep the exact reference person's face identity, age, hair, skin tone and clothing materials. Hair top around 8 percent down, eyes at 34 percent down, entire head and both shoulder tops visible, leave breathing room at both sides; lower crop at mid-chest. Soft neutral frontal light, tactile semi-realistic fantasy production art. Actual RGBA TRANSPARENT background with clean cutout edges, no opaque background, no painted checkerboard. No hands, held props, texts, name labels, speech bubble, logo, watermark, frame or second view. This is MINAGI, the SAME young adult woman in the attached portrait. Preserve her exact brown eyes, softly angular face, short loose strands and low tied dark-brown hair, gray-green short work jacket with ochre seams, off-white standing-collar shirt and exactly TWO short horizontal leather closure tabs with bronze studs. A slightly concentrated, decisive expression: brows subtly drawn together, attentive gaze, relaxed closed lips. She is making a practical decision, not afraid, angry or sad. Keep face age and anatomy the same. Do not beautify, exaggerate eyes or add makeup. Do not change the clothing closures.",
+      "reference_inputs": [
+        "assets/reference_minagi_bust_v1.png"
+      ],
+      "status": "既存原画に基づく表情案",
+      "usage": "会話立ち絵：SC03、06、08–11、14"
+    },
+    {
+      "sequence": 5,
+      "id": "portrait_minagi_relief_v1",
+      "file": "assets/portrait_minagi_relief_v1.png",
+      "title": "ミナギ／安堵",
+      "tool": "image_gen.imagegen",
+      "use_case": "identity-preserve",
+      "transparent_background": true,
+      "prompt": "Edit the attached transparent dialogue portrait. Preserve the EXACT SAME person, head silhouette and hair strands, apparent age, face proportions, costume seams and fasteners, lighting, colors, scale, position and framing. Keep the original 3:4 canvas and true RGBA transparent background. This is an expression variant for a game dialogue system, so change ONLY the facial expression described next; do not add hands or props, do not move the camera or shoulders. MINAGI: gently ease her eyebrows and eyelids, add a small warm CLOSED-LIP smile and relaxed cheeks, conveying 'welcome back, everyone returned safely'. Not a broad grin, no teeth, no tears. Preserve the low dark-brown tied hair, gray-green jacket and exactly two bronze-studded leather tabs. No text, labels, frame, watermark, painted background or checkerboard.",
+      "reference_inputs": [
+        "assets/portrait_minagi_focus_v1.png"
+      ],
+      "status": "既存原画に基づく表情案",
+      "usage": "会話立ち絵：SC02、15、通常帰還"
+    },
+    {
+      "sequence": 6,
+      "id": "portrait_rokuha_neutral_v1",
+      "file": "assets/portrait_rokuha_neutral_v1.png",
+      "title": "ロクハ／平静",
+      "tool": "image_gen.imagegen",
+      "use_case": "identity-preserve",
+      "transparent_background": true,
+      "prompt": "Create ONE dialogue portrait cutout, chest-up, front-facing near symmetrical, head upright and eyes at camera level, portrait 3:4 canvas. Keep the exact reference person's face identity, age, hair, skin tone and clothing materials. Hair top around 8 percent down, eyes at 34 percent down, entire head and both shoulder tops visible, leave breathing room at both sides; lower crop at mid-chest. Soft neutral frontal light, tactile semi-realistic fantasy production art. Actual RGBA TRANSPARENT background with clean cutout edges, no opaque background, no painted checkerboard. No hands, held props, texts, name labels, speech bubble, logo, watermark, frame or second view. This is ROKUHA, the EXACT SAME middle-aged male smith in the supplied full-body drawing. Preserve his broad angular face, thick eyebrows, short dark brown hair with gray strands brushed back, clean-shaven cheeks, practical neutral expression and strong neck. Preserve the heavy off-white shirt with open small standing collar, rolled sleeves, dark brown worn leather bib apron, two vertical apron shoulder straps with simple bronze rectangular buckles and round bronze rivets. No headwear, weapon, glowing forge or soot overlay. Camera closer for dialogue, same adult person and costume, quiet matter-of-fact closed mouth.",
+      "reference_inputs": [
+        "assets/reference_rokuha_front_v1.png"
+      ],
+      "status": "PR #5職人原画の継続案",
+      "usage": "会話立ち絵：SC02、04、07、12、14"
+    },
+    {
+      "sequence": 7,
+      "id": "portrait_rokuha_thinking_v1",
+      "file": "assets/portrait_rokuha_thinking_v1.png",
+      "title": "ロクハ／思案",
+      "tool": "image_gen.imagegen",
+      "use_case": "identity-preserve",
+      "transparent_background": true,
+      "prompt": "Edit the attached transparent dialogue portrait. Preserve the EXACT SAME person, head silhouette and hair strands, apparent age, face proportions, costume seams and fasteners, lighting, colors, scale, position and framing. Keep the original 3:4 canvas and true RGBA transparent background. This is an expression variant for a game dialogue system, so change ONLY the facial expression described next; do not add hands or props, do not move the camera or shoulders. ROKUHA: slight concentration in the brow, eyes glance just a little downward and to his left without turning the head, lips gently pressed in thought. A practical craftsman reconsidering how a broken water channel should be repaired. No anger, sadness or exaggerated frown. Preserve dark-and-gray swept hair, clean-shaven strong angular face, off-white shirt and leather bib apron. No text, labels, frame, watermark, painted background or checkerboard.",
+      "reference_inputs": [
+        "assets/portrait_rokuha_neutral_v1.png"
+      ],
+      "status": "PR #5職人原画の継続案",
+      "usage": "会話立ち絵：SC05、09、13"
+    },
+    {
+      "sequence": 8,
+      "id": "portrait_isane_neutral_v1",
+      "file": "assets/portrait_isane_neutral_v1.png",
+      "title": "イサネ／平静",
+      "tool": "image_gen.imagegen",
+      "use_case": "identity-preserve",
+      "transparent_background": true,
+      "prompt": "Create ONE dialogue portrait cutout, chest-up, front-facing near symmetrical, head upright and eyes at camera level, portrait 3:4 canvas. Keep the exact reference person's face identity, age, hair, skin tone and clothing materials. Hair top around 8 percent down, eyes at 34 percent down, entire head and both shoulder tops visible, leave breathing room at both sides; lower crop at mid-chest. Soft neutral frontal light, tactile semi-realistic fantasy production art. Actual RGBA TRANSPARENT background with clean cutout edges, no opaque background, no painted checkerboard. No hands, held props, texts, name labels, speech bubble, logo, watermark, frame or second view. This is ISANE, the EXACT SAME mature woman around 55 in the supplied full-body drawing. Preserve her strong facial features, warm natural skin with age lines, dark brown eyes, short wavy dark-brown-and-gray hair above collar, no jewelry. Preserve sleeveless gray-green woven vest with ochre seams and patched shoulders, heavy unbleached linen long-sleeved shirt, simple bronze-studded horizontal leather closure tabs; exactly three tabs on the full vest, show as many as naturally fall in this chest crop. Calm businesslike expression with relaxed closed lips, attentive and practical. Do not turn her into a young woman. No changes to face structure, hairstyle or costume.",
+      "reference_inputs": [
+        "assets/reference_isane_front_v1.png"
+      ],
+      "status": "PR #5商い手原画の継続案",
+      "usage": "会話立ち絵：SC01、05、06、11、14"
+    },
+    {
+      "sequence": 9,
+      "id": "portrait_isane_relief_v1",
+      "file": "assets/portrait_isane_relief_v1.png",
+      "title": "イサネ／安堵",
+      "tool": "image_gen.imagegen",
+      "use_case": "identity-preserve",
+      "transparent_background": true,
+      "prompt": "Edit the attached transparent dialogue portrait. Preserve the EXACT SAME person, head silhouette and hair strands, apparent age, face proportions, costume seams and fasteners, lighting, colors, scale, position and framing. Keep the original 3:4 canvas and true RGBA transparent background. This is an expression variant for a game dialogue system, so change ONLY the facial expression described next; do not add hands or props, do not move the camera or shoulders. ISANE: soften her eyes and eyebrows, lift both corners of her mouth into a restrained warm CLOSED-LIP smile with natural smile lines. Relief that the supplies and the people have reached home. Keep her a mature woman around 55, preserve every age line and short dark-gray wavy hair, vest patches and three leather closure tabs. No broad comic grin, teeth, tears or rejuvenation. No text, labels, frame, watermark, painted background or checkerboard.",
+      "reference_inputs": [
+        "assets/portrait_isane_neutral_v1.png"
+      ],
+      "status": "PR #5商い手原画の継続案",
+      "usage": "会話立ち絵：SC02、06、15"
+    },
+    {
+      "sequence": 10,
+      "id": "portrait_senaki_neutral_v1",
+      "file": "assets/portrait_senaki_neutral_v1.png",
+      "title": "セナキ／平静",
+      "tool": "image_gen.imagegen",
+      "use_case": "identity-preserve",
+      "transparent_background": true,
+      "prompt": "Make ONE dialogue portrait cutout of the EXACT SAME SENAKI from the attached full-body character. Preserve his face identity, apparent age around 65, weather-worn tan skin, short swept-back silver-gray hair, clean-shaven elongated face, dark brown eyes, moss-gray patched short cape with lowered hood, bronze leather clasp, open cream linen shirt and gray-brown vest. Front-facing near-symmetrical chest-up portrait, eyes at camera level, head upright, calm observant neutral mouth, gentle practical seriousness. Entire hair silhouette and both shoulders completely inside the image with clear side margin; lower crop across lower chest. Use portrait 3:4 canvas, head top around 8 percent down, eyes about 34 percent down, shoulder breadth about 80 percent of width. Match the source's soft neutral front lighting and crisp semi-realistic painterly material detail. True RGBA TRANSPARENT background, clean cutout hair edges, no ground shadow, no white/beige rectangle or checkerboard baked into pixels. No hands, equipment held in front, captions, labels, frames, UI, logo, watermark, additional views or extra person. Preserve clothes and face, change only framing for dialogue.",
+      "reference_inputs": [
+        "assets/ref_npc_senaki_front_v1.png"
+      ],
+      "status": "新規人物案",
+      "usage": "会話立ち絵：SC03–05、09–15"
+    },
+    {
+      "sequence": 11,
+      "id": "portrait_senaki_reflective_v1",
+      "file": "assets/portrait_senaki_reflective_v1.png",
+      "title": "セナキ／回想",
+      "tool": "image_gen.imagegen",
+      "use_case": "identity-preserve",
+      "transparent_background": true,
+      "prompt": "Edit the attached transparent SENAKI dialogue portrait into a restrained reflective expression. Preserve the EXACT SAME elderly man, short silver-gray hairstyle, head silhouette, weather-worn elongated face, skin and age lines, clothes, cape patches, clasp, light, crop, camera, scale and position. Change ONLY the facial expression: gaze slightly lowered but face still upright, inner brows softened with mild regret, lips relaxed and closed, quiet acceptance of responsibility for an old decision. He is thoughtful and capable, not weeping, despairing, angry or villainous. Preserve all hair and clothing outside the face. Same portrait 3:4 canvas and actual RGBA transparent background, clean hair edges. No hands, prop, tears, text, labels, frame, watermark, opaque background or painted checkerboard.",
+      "reference_inputs": [
+        "assets/portrait_senaki_neutral_v1.png"
+      ],
+      "status": "新規人物の表情差分",
+      "usage": "会話立ち絵：SC07、08"
+    },
+    {
+      "sequence": 12,
+      "id": "prop_story_record_board_v1",
+      "file": "assets/prop_story_record_board_v1.png",
+      "title": "通行の記録板",
+      "tool": "image_gen.imagegen",
+      "use_case": "stylized-concept",
+      "transparent_background": true,
+      "prompt": "Create ONE isolated prop reference of the EXACT wooden record board held by the woman in the attached image. Remove the person entirely and show only the board. Preserve its warm worn medium-brown wood grain, landscape rectangular shape with softly rounded corners, shallow thickness, and small patinated BRONZE top-center clip with round raised stud and two rivets. Front-facing with only very slight three-quarter perspective so the entire broad writing surface remains readable; reveal a little thickness along the right and bottom edge. Plain bare wooden face, absolutely blank with NO handwriting, symbols, printed text or labels. No paper, extra tools, hands, decorative carvings or additional boards. Premium semi-realistic practical fantasy game prop, soft neutral lighting, fine wood and metal texture, no magical glow. Square canvas, board centered and filling about 78 percent of width, generous transparent margin, no part cropped. Actual RGBA transparent background, no background rectangle, ground, shadow plane, lettering, watermark or border.",
+      "reference_inputs": [
+        "assets/reference_minagi_full_v1.png"
+      ],
+      "status": "物語用小物案",
+      "usage": "受付、記録照合、終幕：SC00、03、07、08、14、15"
+    },
+    {
+      "sequence": 13,
+      "id": "prop_story_route_lamp_on_v1",
+      "file": "assets/prop_story_route_lamp_on_v1.png",
+      "title": "道の灯／点灯",
+      "tool": "image_gen.imagegen",
+      "use_case": "stylized-concept",
+      "transparent_background": true,
+      "prompt": "Create ONE isolated route-marker lamp prop for the same grounded low-tech fantasy world as the attached style board. Borrow the practical village lantern material language from its lower-left panel. A sturdy weathered square wooden roadside post with a small short side bracket, bronze reinforcement bands and visible simple bolts; from the bracket hangs one compact rectangular bronze-cage lantern by a real loop and hook. Four slightly amber glass panes, vented bronze top, small protected oil wick inside, warm modest lit flame. The lantern is mechanically supported by the bracket, not floating. Include the entire post down to its lightly tapered bottom; no earth pedestal. The lamp's warm light is confined mostly within the glass, with just a delicate soft glow, not a magic beacon. Fine worn wood grain, dull bronze, tactile semi-realistic production concept art, match gray-green/earthy world palette, neutral soft lighting outside the small flame. Slight three-quarter front view, one object centered, portrait 3:4 composition with ample clear margin and no cropped parts. Actual RGBA transparent background, no opaque gradient, checkerboard, ground or drop shadow. No person, monster, additional lamps, symbols, lettering, UI, logo or watermark. Ordinary human route guidance, no modern electrical hardware.",
+      "reference_inputs": [
+        "https://github.com/kamamon/Kari/blob/4851d57ecc24c8fd127508b084999cec5d0e975f/art-source/board/style_board_v2.png"
+      ],
+      "status": "物語用小物案",
+      "usage": "序章、第7・8章、終章"
+    },
+    {
+      "sequence": 14,
+      "id": "prop_story_route_lamp_off_v1",
+      "file": "assets/prop_story_route_lamp_off_v1.png",
+      "title": "道の灯／消灯",
+      "tool": "image_gen.imagegen",
+      "use_case": "stylized-concept",
+      "transparent_background": true,
+      "prompt": "Edit ONLY the lighting state of the attached isolated roadside lantern and wooden post: EXTINGUISH the little oil flame and remove the warm emitted light from inside the glass. The same wick remains as an unlit dark short wick; glass becomes neutral lightly amber transparent smoky glass, still readable under the SAME neutral studio light. Preserve pixel composition as closely as possible: exact post and lantern silhouette, bronze bands and bolt counts, woodgrain, hook, cage, panes, camera, framing, proportions and positions. Do not bend or redesign the post or change its size. No smoke, no broken glass, no weather change or new objects. Keep the original portrait 3:4 canvas and actual RGBA transparent background, clean alpha edges, no background or checkerboard, no text, labels, logo or watermark. Return a single OFF state only, not a comparison sheet.",
+      "reference_inputs": [
+        "assets/prop_story_route_lamp_on_v1.png"
+      ],
+      "status": "同一小物の状態差分",
+      "usage": "第7章：SC11、閉鎖する道の演出"
+    },
+    {
+      "sequence": 15,
+      "id": "prop_story_supply_cart_v1",
+      "file": "assets/prop_story_supply_cart_v1.png",
+      "title": "里へ戻る荷車",
+      "tool": "image_gen.imagegen",
+      "use_case": "stylized-concept",
+      "transparent_background": true,
+      "prompt": "Create ONE isolated fully loaded small TWO-WHEELED HANDCART for the grounded semi-realistic hunting-fantasy village in the attached style board. Practical weathered oak plank bed, exactly two sturdy wooden spoked wheels on one axle with dull iron tire rims and restrained bronze brackets, two continuous parallel timber pulling shafts extending toward the lower left foreground, simple real joinery. Cargo neatly secured by hemp rope: three small closed wooden crates, two rolled unbleached cloth bundles, and one padded wicker basket of sealed plain ceramic medicine jars. Cargo should sit inside and on the cart with believable weight and lashings, not float. Small blank wooden tag on one crate; absolutely no writing or symbols. Eye-level slightly elevated three-quarter view showing the near wheel and the far wheel's visible portion, bed, both shafts and all cargo without cropping. Wide landscape 4:3 composition, whole cart with generous transparent margin. Tactile woven cloth, leather straps, worn wood, matte bronze, restrained warm gray and moss palette, source-matched production concept art. Actual RGBA transparent background, no ground, background rectangle, drop shadow or checkerboard. No people, beasts, modern rubber tires, magical cargo, weapons, lettering, labels, logos or watermark.",
+      "reference_inputs": [
+        "https://github.com/kamamon/Kari/blob/4851d57ecc24c8fd127508b084999cec5d0e975f/art-source/board/style_board_v2.png"
+      ],
+      "status": "物語用小物案",
+      "usage": "第1・3・7章、終章：SC02、06、15"
+    },
+    {
+      "sequence": 16,
+      "id": "prop_story_closed_route_sign_v1",
+      "file": "assets/prop_story_closed_route_sign_v1.png",
+      "title": "道を閉じる横木と札",
+      "tool": "image_gen.imagegen",
+      "use_case": "stylized-concept",
+      "transparent_background": true,
+      "prompt": "Create ONE portable wooden PATH-CLOSURE BARRIER in the same low-tech fantasy construction style as the attached wooden lantern post. Do not reproduce the lamp. Two stout short upright weathered square timber posts, removable horizontal timber crossbeam seated into simple bronze brackets between them, two thinner diagonal wooden struts forming a physical X below the beam. A broad rectangular blank wooden notice plaque hangs at the center by two short rope loops, its entire FRONT face visible and absolutely blank for later UI text. Brass/bronze corner straps, simple practical repairable fastenings, muted weathered gray-brown wood, restrained bronze patina, no paint. Slight three-quarter front view, both post bottoms and all struts clearly visible, ONE complete barrier with empty space through its structure. Landscape 4:3 canvas, centered with generous transparent margin, no cropped poles or beam ends. Crisp tactile semi-realistic game prop art and soft neutral light like the reference. Actual RGBA transparent background. No ground or heavy shadow, person, lamp, additional barricades, magic, lettering, painted symbols, arrows, UI, captions, logo or watermark. This should read as a closed path by physical shape, with a usable blank sign face.",
+      "reference_inputs": [
+        "assets/prop_story_route_lamp_on_v1.png"
+      ],
+      "status": "物語用小物案",
+      "usage": "第4・7章、終章：SC07、11、15"
+    },
+    {
+      "sequence": 17,
+      "id": "ref_story_diversion_old_v1",
+      "file": "assets/ref_story_diversion_old_v1.png",
+      "title": "旧い分流口／補修前",
+      "tool": "image_gen.imagegen",
+      "use_case": "stylized-concept",
+      "transparent_background": false,
+      "prompt": "Create ONE isolated environment prop concept of an OLD CLOSED WATER DIVERSION structure in the grounded hunting-fantasy style of the reference board. A compact low masonry Y junction, on a small irregular earth-and-stone base, shown from elevated three-quarter front. One shallow stone-lined channel arrives from rear center and branches toward front left and front right around a low stone divider. Left branch remains an open water path with a little clear shallow water. The RIGHT branch is closed by a few heavy weathered horizontal timber stop-boards sitting in vertical stone grooves, held by simple dull bronze retaining brackets and an accessible wooden cross beam. The closed right branch has settled silt, old leaves and small reeds, evidence of long upkeep and a past flood closure, not sabotage or destruction. All three channels have clear continuous wall boundaries and sensible junction. No tall tower, giant dam, rotating wheel, gears, pipes or magical control. Detailed tactile worn gray stone, earth, moss, patched wood and patinated bronze with restrained light and no painted labels. Landscape 4:3 composition, entire small base inside frame, warm pale-gray plain studio-like background and soft contact shadow. This is a clear single object-design concept, NOT a top-down engineering diagram. No people, monsters, text, arrows, map, symbols, UI, logo, watermark or comparison panels.",
+      "reference_inputs": [
+        "https://github.com/kamamon/Kari/blob/4851d57ecc24c8fd127508b084999cec5d0e975f/art-source/board/style_board_v2.png"
+      ],
+      "status": "設備の造形原画・構造案",
+      "usage": "第4・7・8章：分流設備の外見設計"
+    },
+    {
+      "sequence": 18,
+      "id": "ref_story_diversion_repaired_v1",
+      "file": "assets/ref_story_diversion_repaired_v1.png",
+      "title": "分流口／補修後",
+      "tool": "image_gen.imagegen",
+      "use_case": "stylized-concept",
+      "transparent_background": false,
+      "prompt": "Edit the attached OLD water-diversion structure into its REPAIRED and partially reopened state, keeping the SAME object, elevated three-quarter camera, terrain footprint, background, lighting, left channel and central stone divider. Preserve the old upper crossbeam, posts and major stone walls so before/after remains instantly recognizable. On the right branch ONLY: remove accumulated silt, dry leaves and tall reeds from the channel bed; replace the rotten stop-boards with three shorter clean but hand-worked medium-brown timber boards in simple bronze removable retainers. Raise the LOWER edge of the stop-board assembly just enough to leave a visible low opening below, so a modest shallow flow passes into the right branch. Create a clear small OPEN OUTLET at the front-right edge of the stone channel (remove the short downstream blocking lip there), with water visibly leaving through that outlet; do not end the branch as a sealed basin. The much larger left channel still flows. Show a cautious limited reopening, not flooding or a fountain. New metal is dull bronze and retains visible removable pins, no wheels, gears, valves, modern pipes or magic. Same landscape 4:3 image, whole small terrain base inside frame, warm pale-gray plain background, clear tactile semi-realistic production art. No people, extra equipment piles, arrows, diagrams, lettering, labels, comparison panels, logo or watermark.",
+      "reference_inputs": [
+        "assets/ref_story_diversion_old_v1.png"
+      ],
+      "status": "設備の造形原画・構造案",
+      "usage": "第7・8章、終章：SC13、15"
+    },
+    {
+      "sequence": 19,
+      "id": "prop_story_replaceable_parts_v1",
+      "file": "assets/prop_story_replaceable_parts_v1.png",
+      "title": "交換する板と留め具",
+      "tool": "image_gen.imagegen",
+      "use_case": "stylized-concept",
+      "transparent_background": true,
+      "prompt": "Create ONE compact portable repair-material bundle for the same water-diversion structure in the reference. Show only the loose replacement parts, NOT the channel or terrain. Three short hand-hewn medium-brown wooden stop-boards stacked offset with their cut ends visible, a few matching dull bronze U-shaped retainers and removable ring-headed pins resting neatly on unbleached folded cloth beside the boards, one small coil of hemp rope, and a simple wooden mallet partly tucked into a rolled leather tool wrap. Everything arranged as one coherent work parcel, practical plausible scale, not an exploded engineering diagram or a grid of separate objects. Same woodgrain, bronze tone, restrained moss-gray palette and tactile semi-realistic art as the reference. Elevated three-quarter view, landscape 4:3 composition, complete parcel inside generous clear margins. Actual RGBA transparent background, clean alpha edges, no table, terrain, background, shadow plane or checkerboard. No human, magic, modern tools, writing, labels, measurement markings, numerals, logos, watermark or border.",
+      "reference_inputs": [
+        "assets/ref_story_diversion_repaired_v1.png"
+      ],
+      "status": "物語用小物案",
+      "usage": "第7・8章、終章：SC13–15"
+    },
+    {
+      "sequence": 20,
+      "id": "event_story_arrival_board_v1",
+      "file": "assets/event_story_arrival_board_v1.png",
+      "title": "里への到着と帰還受付",
+      "tool": "image_gen.imagegen",
+      "use_case": "stylized-concept",
+      "transparent_background": false,
+      "prompt": "Create ONE wide 16:9 narrative game background for arrival at TOMOTSUGI village in VEILBOUND HUNTERS. Reference 1's lower-left village panel is the adopted architectural/material style; reference 2 is the exact practical route-lantern design to place naturally at the reception area. Eye-height camera from the open stone-and-packed-earth entry square. At mid-left a welcoming small wooden reception counter under a weathered unbleached linen canopy, sturdy timber posts with restrained bronze fittings, a large wood notice board with several absolutely BLANK wooden slips, no text or gibberish. Behind it, low timber-and-stone houses on mossy terraces. The road gently FORKS beyond the square: one broad left branch curves around the slope into distant fog and a narrower right branch climbs beside a stone wall. Both routes currently open. Place one reference-style lamp at the counter; it is small in the scene, not a huge foreground object. Quiet overcast morning, distant gray-green crags and layered soft fog, warm subtle lamp light, lived-in but orderly practical hunting village. Foreground lower third mostly clear path, and quiet space on both sides for later character portraits. No characters, cart, animals or monsters. Tactile semi-realistic painterly production environment, detailed wood/linen/stone, restrained lighting matching reference, no high-fantasy towers or dramatic spectacle. Full-bleed landscape 16:9, no collage, panel divisions, frames, UI, text, labels, symbols, title or watermark.",
+      "reference_inputs": [
+        "https://github.com/kamamon/Kari/blob/4851d57ecc24c8fd127508b084999cec5d0e975f/art-source/board/style_board_v2.png",
+        "assets/prop_story_route_lamp_on_v1.png"
+      ],
+      "status": "2Dイベント背景・情景原画",
+      "usage": "序章：SC00、通常の受付"
+    },
+    {
+      "sequence": 21,
+      "id": "event_story_first_delivery_v1",
+      "file": "assets/event_story_first_delivery_v1.png",
+      "title": "最初の荷が届く",
+      "tool": "image_gen.imagegen",
+      "use_case": "stylized-concept",
+      "transparent_background": false,
+      "prompt": "Create a narrative background scene using the SAME village square and architectural identity as reference 1 and the EXACT SAME loaded two-wheel handcart as reference 2. A first delivery has just reached the village in soft overcast morning light. Place the cart at rest in the left-center foreground beside the canopy reception/shop, with shafts pointing toward lower-left, three closed crates, two rolled linen bundles and wicker basket of sealed ceramic medicine jars visibly matching the prop. Both wheels rest on the ground with plausible size and perspective; cart occupies about one third of frame width, not a gigantic foreground object. Preserve the square's stone paving, timber canopy, notice board, terraced houses, right-hand stairs and curving road into mist. Camera at same eye height, slightly closer but recognizable, no new building style. Quiet unoccupied space across lower-right for dialogue portrait overlay. All notice slips and cargo tags completely blank. Tactile semi-realistic painterly production environment, subdued gray-green and bronze, clear practical lighting, gentle feeling of useful work completed. Full-bleed landscape 16:9, ONE continuous scene. No people, animals, monsters, confetti, UI, text, fake writing, title, border, logo or watermark.",
+      "reference_inputs": [
+        "assets/event_story_arrival_board_v1.png",
+        "assets/prop_story_supply_cart_v1.png"
+      ],
+      "status": "2Dイベント背景・情景原画",
+      "usage": "第1章：SC02"
+    },
+    {
+      "sequence": 22,
+      "id": "event_story_old_records_v1",
+      "file": "assets/event_story_old_records_v1.png",
+      "title": "古い作業記録を読み直す机",
+      "tool": "image_gen.imagegen",
+      "use_case": "stylized-concept",
+      "transparent_background": false,
+      "prompt": "Create ONE wide 16:9 narrative still-life background inside a practical village workshop, for a scene where old flood-closure records are reconsidered. On a heavy weathered wooden worktable, place the EXACT current wooden record board with rounded corners and its little top-center bronze clip from reference 1, lying flat at a readable angle on the right half. On the left half, two older thinner gray-brown wooden record slats and a folded worn linen wrapping with aged dull bronze retaining pins and an old bracket, showing age and careful preservation. All board and slat faces must be completely BLANK with natural worn woodgrain only, no writing, erased scribbles, runes, maps, arrows, dates or fake text; the game will overlay records later. A plain ceramic cup and a small tied cord at rear edge, no excessive clutter. Close slightly elevated camera, all important record surfaces and objects inside frame, dark soft workshop background at top, lower edge quiet clear tabletop for dialogue UI. Cool soft daylight from a side window, gentle warm fill, restrained earthy gray-green and bronze palette, tactile cloth/wood/metal, premium semi-realistic production art consistent with reference 2. No people, hands, weapons, magical artifacts, modern stationery, parchment maps, dramatic glowing letters, borders, UI, logo or watermark. Full-bleed horizontal 16:9 scene.",
+      "reference_inputs": [
+        "assets/prop_story_record_board_v1.png",
+        "https://github.com/kamamon/Kari/blob/4851d57ecc24c8fd127508b084999cec5d0e975f/art-source/board/style_board_v2.png"
+      ],
+      "status": "2Dイベント背景・静物原画",
+      "usage": "第4章：SC07、08"
+    },
+    {
+      "sequence": 23,
+      "id": "event_story_limited_lights_v1",
+      "file": "assets/event_story_limited_lights_v1.png",
+      "title": "灯を減らす夜",
+      "tool": "image_gen.imagegen",
+      "use_case": "stylized-concept",
+      "transparent_background": false,
+      "prompt": "Transform the SAME village-square scene in reference 1 into quiet BLUE-HOUR EARLY NIGHT, retaining the identical camera, canopy, houses, stone walls, stairs, forks and distant mountains. Use references 2 and 3 for the SAME lamp in ON and OFF states, and reference 4 for the exact wooden closure barrier. Keep the main winding road LEFT of the stairs OPEN, marked by a few modest warm lit lanterns that recede along it. Place the reference wooden barrier ACROSS the entrance to the RIGHT-HAND STAIR route, with its blank central plaque facing viewer; put one clearly UNLIT reference lamp beside that closure. Other unnecessary roadside lamps are dark. The village reception still has one small warm light. Cool gray-blue ambient sky should be bright enough to see wooden braces, stone edges and the closed route distinctly; calm planned route management, not horror, evacuation or disaster. Thin layered fog remains in distance without concealing layout. Preserve readable empty foreground for dialogue portraits. Tactile semi-realistic fantasy production art, restrained amber against cool gray-green, no supernatural glow. Wide full-bleed 16:9, no people, cart, fire, monsters, lettering, painted arrows, fake writing, UI, labels, border, logo or watermark.",
+      "reference_inputs": [
+        "assets/event_story_arrival_board_v1.png",
+        "assets/prop_story_route_lamp_on_v1.png",
+        "assets/prop_story_route_lamp_off_v1.png",
+        "assets/prop_story_closed_route_sign_v1.png"
+      ],
+      "status": "2Dイベント背景・情景原画",
+      "usage": "第7章：SC11"
+    },
+    {
+      "sequence": 24,
+      "id": "event_story_homecoming_v1",
+      "file": "assets/event_story_homecoming_v1.png",
+      "title": "新しい道からの帰還",
+      "tool": "image_gen.imagegen",
+      "use_case": "stylized-concept",
+      "transparent_background": false,
+      "prompt": "Create the closing narrative scene of 'The Lights on the Way Home' in the SAME village from reference 1. Use the exact loaded two-wheel handcart and recognizable crates, two linen rolls and medicine-jar basket from reference 2, the closure barrier of reference 3 and practical lantern of reference 4. Eye-height wide view, same reception canopy on the left, stone terraces and right stairs, same curving main road. Late afternoon after repairs, gentle warm natural light reaches the reception while gray-green mist still lies between distant cliffs. The returned cart has just been set down on the main road in the middle foreground near the reception, shafts toward the left-front, sensible small-cart scale (about one third image width), wheels firmly grounded. A short newly repaired low timber footbridge/roadway section is visible farther along the left-curving route, subtly showing an improved longer path, no giant architecture. The unused stair route remains marked by the blank wooden closure barrier at the right, not a magically vanished danger. Two very small unnamed adult village workers in plain practical work clothes, distant back views along the road bend, each less than five percent frame height, no discernible faces, no named hero or fixed player gender. Leave clear lower foreground and side space for later dialogue portrait overlays. Mood of a dependable homecoming and work continuing, quiet rather than triumphal spectacle. All signs and tags blank, no letters, maps, celebration flags or symbols. Tactile semi-realistic painterly game production art, original grounded fantasy, wide full-bleed 16:9. No monsters, magical sky beams, UI, titles, borders, logos or watermark.",
+      "reference_inputs": [
+        "assets/event_story_arrival_board_v1.png",
+        "assets/prop_story_supply_cart_v1.png",
+        "assets/prop_story_closed_route_sign_v1.png",
+        "assets/prop_story_route_lamp_on_v1.png"
+      ],
+      "status": "2Dイベント背景・情景原画",
+      "usage": "終章：SC15"
+    }
+  ]
+}
