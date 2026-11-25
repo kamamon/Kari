@@ -1,0 +1,38 @@
+{
+  "mode": "built-in image_gen",
+  "no": 73,
+  "seriesId": "series.fusaldom",
+  "prompt": "Use case: stylized-concept. Create ONE professional ORIGINAL hunting-equipment family concept sheet for VEILBOUND HUNTERS. Landscape 3:2, warm ivory background, no scenery, no watermark, restrained realistic hand-painted materials, aged bronze fittings and dark leather. Reference image 1 is the approved art direction. Reference image 2 is the source creature; derive materials and asymmetry but do NOT draw a creature or turn the human into that creature.\nCOMPOSITION: LEFT 30 percent: one complete adult neutral human mannequin wearing all five armor regions, head to boots fully visible, relaxed upright stance, empty hands, front three-quarter view. Practical closed clothing, MANDATORY LOW HELMET fully covering the crown and forehead, NO visible hair and no bare head, readable joints. Never omit head armor. RIGHT 70 percent: exactly SEVEN cleanly separated weapon groups in two rows, each complete with generous gaps, no cropping. Top row 01-04; bottom row 05-07. Only text is small labels 01,02,03,04,05,06,07 below corresponding groups. Each group keeps its recognizable form:\n01 enormous broad single-edge slab greatsword; 02 compact SINGLE-EDGE sword AND a separate shield; 03 long-handled heavy blunt maul with a CLOSED HARD BONE impact face, NOT a drum; 04 TWO matching short blades; 05 long slim curved single-edge sword; 06 straight long lance AND a separate tall shield; 07 bow with an actual string, small separate aiming ring, AND one arrow. No firearms, scythes, axes, duplicate groups, magical floating parts. Armor mannequin holds none of these.\nSOURCE SERIES 073: フサルドム / 氷礁獣. Native grade: 4. This sheet shows ONLY this native-grade design. Palette: 灰青 / 白灰 / 青銅.\nArmor silhouette: 肩だけ水平に広い灰青の大板を張り、腰と後ろ脚は細くまとめる。左右の板の高さを少し変える。\nArmor five regions: head: 水平の低い氷礁冠を持つ兜; chest: 肩だけに高さの違う横広の二枚甲; arms: 肩甲は腕を上げる隙間を残し前腕は小さい; waist: 礁間靭膜の短い腰帯; legs: 巨踏骨の膝甲と細い脛当て\nDistinct weapons: 01 氷礁大甲を低い二段の峰にする厚剣; 02 冷尾甲の片刃と水平礁板の盾; 03 巨踏骨を平打面にし氷礁甲を外周へ巻く槌; 04 礁板の薄縁を同じ短刃へ削る双剣; 05 礁間の浅い凹みを峰へ写す太刀; 06 巨踏骨を芯にする直槍と二段の氷礁盾; 07 左右高さの違う礁骨を均衡する厚さへ調整した弓\nPreserve the specifically stated anatomical LEFT and RIGHT of the WEARER. Keep shoulder and waist protrusions restrained for movement. Helmets, both hands, boots, blade tips, bowstring, shields and spear point fully inside the canvas. Original visual language, avoid any recognizable existing franchise designs. Clear fabrication joints, few broad forms, no dense filigree. This is concept art, not a precise orthographic production drawing.\nThe style board is ONLY a rendering style reference. Do not reuse the stone armor, bare-headed man or stone weapon material from it. The creature materials and the species-specific armor silhouette dominate this sheet.\nFRAMING: put every object entirely within the inner 85 percent of the canvas with at least 80 pixels empty margin on every outer edge. Scale down the largest sword, spear and human as needed. Every blade tip and every boot must be visible with clear empty space around it; never touch or crop at the canvas boundary.",
+  "referenceRoles": [
+    "approved style board",
+    "source creature material and silhouette reference"
+  ],
+  "referencePaths": [
+    "art-source/board/style_board_v2.png",
+    "art-source/monster/concepts/monster_073_fusaldom_concept_v1.png"
+  ],
+  "output": "art/monsters/equipment_073_fusaldom_v1.png",
+  "transparent_background": false,
+  "finalSourcePath": "exec-664fc63a-ad82-48f4-9ec9-58bc3c092c23.png",
+  "review": {
+    "generated": true,
+    "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+    "notVerified": [
+      "正投影",
+      "寸法",
+      "背面",
+      "共通リグ干渉",
+      "ゲーム内描画"
+    ],
+    "revision": 1,
+    "sevenWeaponGroupsVisible": true,
+    "fiveArmorRegionsVisible": true,
+    "clippingObserved": false,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "sha256": "92cb1ac571addd2d4e3811348caa1f2c0a3274e05bf3aa70798b8e4162f0ebed",
+    "notes": "全7武器群・防具5部位を視認。肩に水平の氷礁板、低い兜と細い下肢を確認。槌の硬い閉鎖打面、双剣2本、剣盾2群、弓弦・矢・照準環あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80px未達。肩板の左右高低差は小さく、可動時の干渉と正確な高さは別図で要確認。"
+  }
+}

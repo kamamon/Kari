@@ -1,0 +1,21 @@
+{
+  "sourceCommit": "1e078bfce1e68f287ae577cf41d2fe5bafb94afa",
+  "pdfPages": 200,
+  "expectedPages": 200,
+  "pageCountMatches": true,
+  "missingNames": [],
+  "missingArt": [],
+  "footerOverlaps": [],
+  "pdfBytes": 27878891,
+  "htmlBytes": 36340721,
+  "tocLinks": 95,
+  "tocTargetsCorrect": true,
+  "imageEncoding": "Original pixel dimensions, JPEG quality91 4:4:4 for document embedding. Original PNG art retained.",
+  "draft": false,
+  "visualReview": "completed",
+  "generatedFiles": [
+    "Kari_All_Equipment_v2.pdf",
+    "Kari_All_Equipment_v2.html"
+  ],
+  "visualReviewDetails": "All 200 pages rasterized. Complete draft layout reviewed in 10 contact sheets; final changed artwork ranges and full-size TOC pages re-inspected. Remaining page content and layout unchanged. Final 95 named TOC destinations, 95 painted series images, names, bounds and replacement glyph count checked."
+}

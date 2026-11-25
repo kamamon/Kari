@@ -1,0 +1,46 @@
+{
+  "validationType": "public-viewing PDF image compression",
+  "sourceFile": "Kari_All_Equipment_v2_repaired.pdf",
+  "sourceBytes": 28227351,
+  "sourceSha256": "dee6da5a0951824126d22902397caecfc28612130f05b1caa61adc28284ed6f0",
+  "publishedFile": "Kari_All_Equipment_v2.pdf",
+  "publishedBytes": 12047197,
+  "publishedSha256": "ae231cec0f826c649769541268d5c3719843f9a23f7aae82d83014d217a91d3c",
+  "pages": 200,
+  "links": 102,
+  "seriesArtworkCount": 95,
+  "embeddedImagesIncludingCover": 96,
+  "imageEncoding": {
+    "format": "JPEG",
+    "quality": 65,
+    "chromaSubsampling": "4:2:0",
+    "resampled": false
+  },
+  "checks": {
+    "pageCountUnchanged": true,
+    "metadataUnchanged": true,
+    "outlineUnchanged": true,
+    "pageDimensionsUnchanged": true,
+    "pageContentStreamsUnchanged": true,
+    "textAndWordPositionsUnchanged": true,
+    "linksUnchanged": true,
+    "imageDimensionsAndPlacementUnchanged": true
+  },
+  "passed": true,
+  "originalPngsModified": false,
+  "reason": "The connector transport could not send the 27.9 MB original PDF in one request.",
+  "limits": [
+    "Embedded JPEGs are recompressed with loss; high-resolution original PNGs are provided separately."
+  ],
+  "visualReview": {
+    "pages": [
+      11,
+      12,
+      181,
+      199
+    ],
+    "passed": true,
+    "scope": "Four selected pages reviewed. The structural comparisons cover all 200 pages.",
+    "contactSheet": "analysis/pdf-publication-contact.jpg"
+  }
+}

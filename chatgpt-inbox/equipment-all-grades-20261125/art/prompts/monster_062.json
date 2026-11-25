@@ -1,0 +1,38 @@
+{
+  "mode": "built-in image_gen",
+  "no": 62,
+  "seriesId": "series.isarnem",
+  "prompt": "Use case: stylized-concept. Create ONE professional ORIGINAL hunting-equipment family concept sheet for VEILBOUND HUNTERS. Landscape 3:2, warm ivory background, no scenery, no watermark, restrained realistic hand-painted materials, aged bronze fittings and dark leather. Reference image 1 is the approved art direction. Reference image 2 is the source creature; derive materials and asymmetry but do NOT draw a creature or turn the human into that creature.\nCOMPOSITION: LEFT 30 percent: one complete adult neutral human mannequin wearing all five armor regions, head to boots fully visible, relaxed upright stance, empty hands, front three-quarter view. Practical closed clothing, MANDATORY LOW HELMET fully covering the crown and forehead, NO visible hair and no bare head, readable joints. Never omit head armor. RIGHT 70 percent: exactly SEVEN cleanly separated weapon groups in two rows, each complete with generous gaps, no cropping. Top row 01-04; bottom row 05-07. Only text is small labels 01,02,03,04,05,06,07 below corresponding groups. Each group keeps its recognizable form:\n01 enormous broad single-edge slab greatsword; 02 compact SINGLE-EDGE sword AND a separate shield; 03 long-handled heavy blunt maul with a CLOSED HARD BONE impact face, NOT a drum; 04 TWO matching short blades; 05 long slim curved single-edge sword; 06 straight long lance AND a separate tall shield; 07 bow with an actual string, small separate aiming ring, AND one arrow. No firearms, scythes, axes, duplicate groups, magical floating parts. Armor mannequin holds none of these.\nSOURCE SERIES 062: イサルネム / 節帽蟲. Native grade: 3. This sheet shows ONLY this native-grade design. Palette: 灰褐 / 琥珀 / 青銅.\nArmor silhouette: 灰褐色の低い帽殻を兜へ三枚ずらし、背から腰は細い節でつなぐ。小さな琥珀色の熱房を片胸にだけ置く。\nArmor five regions: head: 低い帽殻を三枚ずらした兜; chest: 片胸だけに小さな熱房を収めた灰褐色の胸衣; arms: 細い多節の外側だけを覆う腕甲; waist: 背から腰へ細い節を連ねる短い帯; legs: 膝裏を開けた細節の脛甲\nDistinct weapons: 01 三枚の帽殻を峰側へ段違いに置く斜先剣; 02 帽殻の片刃と三層の低い丸盾; 03 熱房を内包し外面を硬質殻で閉じた槌; 04 短い細節刃二本、熱房は握りの先端へ配置; 05 三枚の低い帽殻を峰の根元へ重ねた太刀; 06 細節芯を通した槍と三枚の小さな縦盾; 07 帽殻の薄い弧を上下へ分けた弓身、熱房は握り内側\nPreserve the specifically stated anatomical LEFT and RIGHT of the WEARER. Keep shoulder and waist protrusions restrained for movement. Helmets, both hands, boots, blade tips, bowstring, shields and spear point fully inside the canvas. Original visual language, avoid any recognizable existing franchise designs. Clear fabrication joints, few broad forms, no dense filigree. This is concept art, not a precise orthographic production drawing.\nThe style board is ONLY a rendering style reference. Do not reuse the stone armor, bare-headed man or stone weapon material from it. The creature materials and the species-specific armor silhouette dominate this sheet.\nFRAMING: put every object entirely within the inner 85 percent of the canvas with at least 80 pixels empty margin on every outer edge. Scale down the largest sword, spear and human as needed. Every blade tip and every boot must be visible with clear empty space around it; never touch or crop at the canvas boundary.",
+  "referenceRoles": [
+    "approved style board",
+    "source creature material and silhouette reference"
+  ],
+  "referencePaths": [
+    "art-source/board/style_board_v2.png",
+    "art-source/monster/concepts/monster_062_isarnem_concept_v1.png"
+  ],
+  "output": "art/monsters/equipment_062_isarnem_v1.png",
+  "transparent_background": false,
+  "finalSourcePath": "exec-eef7da0f-975f-420a-af65-2d984d53502e.png",
+  "review": {
+    "generated": true,
+    "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+    "notVerified": [
+      "正投影",
+      "寸法",
+      "背面",
+      "共通リグ干渉",
+      "ゲーム内描画"
+    ],
+    "revision": 1,
+    "sevenWeaponGroupsVisible": true,
+    "fiveArmorRegionsVisible": true,
+    "clippingObserved": false,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "sha256": "c9d50881090693f86fa7e275c1833b4edbb03f255f8a5fa2c8901c146ef45c42",
+    "notes": "全7武器群と5防具部位、三枚帽殻と片胸の小熱房を確認。双剣2本、両盾、弓弦と矢が分離。剣/槍/靴の先端に欠損なし。兜が深めなので視野と寸法は設定図で調整。"
+  }
+}

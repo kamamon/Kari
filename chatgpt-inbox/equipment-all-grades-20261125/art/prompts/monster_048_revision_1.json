@@ -1,0 +1,15 @@
+{
+  "seriesNo": 48,
+  "purpose": "長刀と断岳剣の刃へ掛かる絹巻きを峰側だけへ修正",
+  "generator": "built-in image_gen",
+  "referencePaths": [
+    "chatgpt-inbox/equipment-all-grades-20261125/art/monsters/equipment_048_fesrami_v1.png"
+  ],
+  "prompt": "Edit the supplied equipment concept sheet with one functional correction. Preserve the adult mannequin, all five armor regions, all seven numbered weapon groups, both swords in group 04, the two separate shields, the bow string and separate arrow, all poses, palette, textures and positions. In group 05, the slender long curved single-edged sword has three white silk cords wrapped all the way across its blade. REMOVE all silk that crosses the blade face or sharpened cutting edge. Keep that sharpened edge and its silver bevel uninterrupted from guard to tip. Retain the silk material only as three tiny bindings attached to small mounting tabs along the NON-CUTTING SPINE on the back of that sword; they must not wrap around the whole blade or cover the edge. Maintain the exact blade silhouette, length, curvature, grip and gray-lilac organic material. Also apply this same correction to the broad greatblade in group 01 wherever its white silk cords cross the sharpened silver cutting edge: keep all silk bindings only on the non-cutting back, with an uninterrupted exposed cutting edge. No dangling silk, no extra weapon, no change to the armor or the other five weapon groups. Same warm ivory background, semi-real hand-painted concept art, only numeric labels 01 to 07. Keep all weapon tips and feet fully inside the frame.",
+  "outcome": {
+    "status": "input_rejected",
+    "category": "violence",
+    "requestId": "499d47f7-077c-4c67-864a-92d7706b8d1a",
+    "followUp": "monster_048_revision_2.json: 形状・性能の変更を求めず、白い装飾帯の配置だけに限定した編集"
+  }
+}

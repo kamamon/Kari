@@ -1,0 +1,1591 @@
+[
+  {
+    "id": "gathering.woven_grass",
+    "sourceSpeciesId": null,
+    "no": 87,
+    "name": "編草",
+    "seriesName": "編草",
+    "nativeRank": 1,
+    "category": "gather",
+    "armorClass": "light",
+    "weaponProfile": "raw",
+    "elements": [
+      "none"
+    ],
+    "status": null,
+    "primarySkill": "gather_haste",
+    "secondarySkill": "dodge_economy",
+    "skillParameters": {},
+    "palette": [
+      "灰緑",
+      "生成り",
+      "鈍い青銅"
+    ],
+    "silhouette": "短い草繊維の積層片を横へ編む。胸の斜め編目と低い丸帽を共通の目印にする。",
+    "armorParts": {
+      "head": "小さな丸い繊維帽。額だけ薄い金属帯、首の後ろへ短い覆い。",
+      "chest": "斜め編みを二重にした短い胴衣。胸中央へ縦の留め帯。",
+      "arms": "肘を空けた編み籠手。甲に三本の繊維リブ、手のひらは開ける。",
+      "waist": "左右に短い採集袋。長い草房を下げず、膝を越えない。",
+      "legs": "脛の外側だけ繊維板。足首は革紐で独立して締める。"
+    },
+    "weapons": {
+      "heavy_blade": {
+        "shape": "幅広く厚い片刃。薄い採掘鉄の刃と繊維積層の芯を芯に、峰から鍔へ斜め編みの緊締帯を沿わせる。刃先は斜めに切り、握りを直線にする。",
+        "material": "薄い採掘鉄の刃と繊維積層の芯",
+        "gradeEvolution": {
+          "1": "単層の幅広い編片と露出した縫い糸。",
+          "2": "編片を二層へ。胸と盾の縦帯を増し、腰袋は同じ大きさ。",
+          "3": "細い繊維を密に交差させ、刃の基部へ三本の緊締帯。",
+          "4": "編目を細かくし、肩・脛だけ薄い積層板。外側の灰緑は維持。"
+        }
+      },
+      "guard_blade": {
+        "shape": "短い片刃剣と独立した小盾。剣の峰と盾の外縁へ斜め編みの緊締帯。盾は裏側の横握りを備え、剣と一体化しない。",
+        "material": "薄い採掘鉄の刃と繊維積層の芯",
+        "gradeEvolution": {
+          "1": "単層の幅広い編片と露出した縫い糸。",
+          "2": "編片を二層へ。胸と盾の縦帯を増し、腰袋は同じ大きさ。",
+          "3": "細い繊維を密に交差させ、刃の基部へ三本の緊締帯。",
+          "4": "編目を細かくし、肩・脛だけ薄い積層板。外側の灰緑は維持。"
+        }
+      },
+      "war_maul": {
+        "shape": "柄の先に閉じた二つの硬い打面。薄い採掘鉄の刃と繊維積層の芯の重い芯を斜め編みの緊締帯で囲う。太鼓膜・斧刃・開いた籠にはしない。",
+        "material": "薄い採掘鉄の刃と繊維積層の芯",
+        "gradeEvolution": {
+          "1": "単層の幅広い編片と露出した縫い糸。",
+          "2": "編片を二層へ。胸と盾の縦帯を増し、腰袋は同じ大きさ。",
+          "3": "細い繊維を密に交差させ、刃の基部へ三本の緊締帯。",
+          "4": "編目を細かくし、肩・脛だけ薄い積層板。外側の灰緑は維持。"
+        }
+      },
+      "twin_blades": {
+        "shape": "同形の短い片刃を二本。斜め編みの緊締帯を両方の背へ小さく付け、片方を盾や長剣にしない。",
+        "material": "薄い採掘鉄の刃と繊維積層の芯",
+        "gradeEvolution": {
+          "1": "単層の幅広い編片と露出した縫い糸。",
+          "2": "編片を二層へ。胸と盾の縦帯を増し、腰袋は同じ大きさ。",
+          "3": "細い繊維を密に交差させ、刃の基部へ三本の緊締帯。",
+          "4": "編目を細かくし、肩・脛だけ薄い積層板。外側の灰緑は維持。"
+        }
+      },
+      "long_blade": {
+        "shape": "細く浅く反った片刃。斜め編みの緊締帯は峰に低く沿わせ、長い切刃を連続させる。柄は両手を離して置ける長さ。",
+        "material": "薄い採掘鉄の刃と繊維積層の芯",
+        "gradeEvolution": {
+          "1": "単層の幅広い編片と露出した縫い糸。",
+          "2": "編片を二層へ。胸と盾の縦帯を増し、腰袋は同じ大きさ。",
+          "3": "細い繊維を密に交差させ、刃の基部へ三本の緊締帯。",
+          "4": "編目を細かくし、肩・脛だけ薄い積層板。外側の灰緑は維持。"
+        }
+      },
+      "long_lance": {
+        "shape": "直線の長槍と独立した縦長の大盾。槍先は細い穂、盾面は斜め編みの緊締帯を縦に並べる。槍を大剣や薙刀にしない。",
+        "material": "薄い採掘鉄の刃と繊維積層の芯",
+        "gradeEvolution": {
+          "1": "単層の幅広い編片と露出した縫い糸。",
+          "2": "編片を二層へ。胸と盾の縦帯を増し、腰袋は同じ大きさ。",
+          "3": "細い繊維を密に交差させ、刃の基部へ三本の緊締帯。",
+          "4": "編目を細かくし、肩・脛だけ薄い積層板。外側の灰緑は維持。"
+        }
+      },
+      "ring_bow": {
+        "shape": "細い弓身、一本の弦、小さな照準環、別に一本の矢。斜め編みの緊締帯を弓身へ低く沿わせる。円盤や環状の近接刃にはしない。",
+        "material": "薄い採掘鉄の刃と繊維積層の芯",
+        "gradeEvolution": {
+          "1": "単層の幅広い編片と露出した縫い糸。",
+          "2": "編片を二層へ。胸と盾の縦帯を増し、腰袋は同じ大きさ。",
+          "3": "細い繊維を密に交差させ、刃の基部へ三本の緊締帯。",
+          "4": "編目を細かくし、肩・脛だけ薄い積層板。外側の灰緑は維持。"
+        }
+      }
+    },
+    "gradeAppearance": {
+      "1": "単層の幅広い編片と露出した縫い糸。",
+      "2": "編片を二層へ。胸と盾の縦帯を増し、腰袋は同じ大きさ。",
+      "3": "細い繊維を密に交差させ、刃の基部へ三本の緊締帯。",
+      "4": "編目を細かくし、肩・脛だけ薄い積層板。外側の灰緑は維持。"
+    },
+    "mainMaterial": "スジユイの繊維",
+    "supportMaterial": "スジユイの繊維",
+    "organMaterial": "風礫鉄鉱",
+    "materialChain": [
+      {
+        "rank": 1,
+        "id": "mat.gather.threadbind_fiber",
+        "name": "スジユイの繊維",
+        "fieldName": "風礫盆地",
+        "existingProposal": true,
+        "method": "採集",
+        "isImplemented": false
+      },
+      {
+        "rank": 2,
+        "id": "mat.equip.gather.strong_thread_fiber",
+        "name": "強スジユイ繊維",
+        "fieldName": "根絡み湿原",
+        "existingProposal": false,
+        "method": "採集",
+        "isImplemented": false
+      },
+      {
+        "rank": 3,
+        "id": "mat.equip.gather.long_thread_fiber",
+        "name": "長スジユイ繊維",
+        "fieldName": "霧灯樹海",
+        "existingProposal": false,
+        "method": "採集",
+        "isImplemented": false
+      },
+      {
+        "rank": 4,
+        "id": "mat.equip.gather.tight_thread_fiber",
+        "name": "緻密スジユイ繊維",
+        "fieldName": "重霧環谷",
+        "existingProposal": false,
+        "method": "採集",
+        "isImplemented": false
+      }
+    ],
+    "rawRatio": 0.89,
+    "affinity": 0,
+    "defenseFactor": 0.9,
+    "artFile": "art/gathering/equipment_G01_woven_grass_v2.png",
+    "artPromptFile": "art/prompts/gathering_G01.json",
+    "artReview": {
+      "status": "reviewed",
+      "coverage": [
+        "5 armor slots",
+        "7 weapon groups",
+        "2 shields",
+        "twin blades pair",
+        "bow string/ring/arrow",
+        "complete blade/spear tips and boots"
+      ],
+      "limitations": [
+        "初級の比較原画。高級は形状仕様で定義、正投影・3Dは未制作。"
+      ],
+      "revision": "v1の断岳剣先端切れをv2で修正。四辺へ余白を追加。",
+      "sha256": "7d64ed811572a43a385d29f9e084439657506b1e93f44c56dbb2df20c0b926bf"
+    },
+    "availabilityNote": "材料は採集・採掘・虫取りのみ。級と狩場の解放は通常の進行に従う。高級素材点・虫取り・加工は未実装。"
+  },
+  {
+    "id": "gathering.rootwood",
+    "sourceSpeciesId": null,
+    "no": 88,
+    "name": "根編",
+    "seriesName": "根編",
+    "nativeRank": 1,
+    "category": "gather",
+    "armorClass": "medium",
+    "weaponProfile": "raw",
+    "elements": [
+      "none"
+    ],
+    "status": null,
+    "primarySkill": "gather_haste",
+    "secondarySkill": "stamina_recovery",
+    "skillParameters": {},
+    "palette": [
+      "灰褐色",
+      "苔緑",
+      "革の焦茶"
+    ],
+    "silhouette": "年輪の線を見せた細い積木板。太い根をそのまま肩へ載せず、曲げ木で体に沿わせる。",
+    "armorParts": {
+      "head": "額の低い曲木輪へ短い頭頂板を二枚。顔は開ける。",
+      "chest": "左右三枚ずつの曲木胸板。腹は柔らかい根繊維でつなぐ。",
+      "arms": "前腕外側に弓状の木片二本。肘と手首の間に余白。",
+      "waist": "腰骨に沿う小板と、後ろの短い道具留め。",
+      "legs": "細い木の脛当てを二枚分割し、膝は独立した丸板。"
+    },
+    "weapons": {
+      "heavy_blade": {
+        "shape": "幅広く厚い片刃。採掘鉄の刃を持つ根材の積層芯を芯に、峰から鍔へ曲げ木の浅いアーチを沿わせる。刃先は斜めに切り、握りを直線にする。",
+        "material": "採掘鉄の刃を持つ根材の積層芯",
+        "gradeEvolution": {
+          "1": "細い曲木板と根紐。刃先だけ採掘鉄。",
+          "2": "根材を交互に積み、盾に内向きの浅いアーチ。",
+          "3": "芯の年輪が細かくなり、柄と腰板の継ぎ目へ短い補強片。",
+          "4": "少ない枚数の高密度材へ置換。枝角や樹冠を増やさず、厚みを抑える。"
+        }
+      },
+      "guard_blade": {
+        "shape": "短い片刃剣と独立した小盾。剣の峰と盾の外縁へ曲げ木の浅いアーチ。盾は裏側の横握りを備え、剣と一体化しない。",
+        "material": "採掘鉄の刃を持つ根材の積層芯",
+        "gradeEvolution": {
+          "1": "細い曲木板と根紐。刃先だけ採掘鉄。",
+          "2": "根材を交互に積み、盾に内向きの浅いアーチ。",
+          "3": "芯の年輪が細かくなり、柄と腰板の継ぎ目へ短い補強片。",
+          "4": "少ない枚数の高密度材へ置換。枝角や樹冠を増やさず、厚みを抑える。"
+        }
+      },
+      "war_maul": {
+        "shape": "柄の先に閉じた二つの硬い打面。採掘鉄の刃を持つ根材の積層芯の重い芯を曲げ木の浅いアーチで囲う。太鼓膜・斧刃・開いた籠にはしない。",
+        "material": "採掘鉄の刃を持つ根材の積層芯",
+        "gradeEvolution": {
+          "1": "細い曲木板と根紐。刃先だけ採掘鉄。",
+          "2": "根材を交互に積み、盾に内向きの浅いアーチ。",
+          "3": "芯の年輪が細かくなり、柄と腰板の継ぎ目へ短い補強片。",
+          "4": "少ない枚数の高密度材へ置換。枝角や樹冠を増やさず、厚みを抑える。"
+        }
+      },
+      "twin_blades": {
+        "shape": "同形の短い片刃を二本。曲げ木の浅いアーチを両方の背へ小さく付け、片方を盾や長剣にしない。",
+        "material": "採掘鉄の刃を持つ根材の積層芯",
+        "gradeEvolution": {
+          "1": "細い曲木板と根紐。刃先だけ採掘鉄。",
+          "2": "根材を交互に積み、盾に内向きの浅いアーチ。",
+          "3": "芯の年輪が細かくなり、柄と腰板の継ぎ目へ短い補強片。",
+          "4": "少ない枚数の高密度材へ置換。枝角や樹冠を増やさず、厚みを抑える。"
+        }
+      },
+      "long_blade": {
+        "shape": "細く浅く反った片刃。曲げ木の浅いアーチは峰に低く沿わせ、長い切刃を連続させる。柄は両手を離して置ける長さ。",
+        "material": "採掘鉄の刃を持つ根材の積層芯",
+        "gradeEvolution": {
+          "1": "細い曲木板と根紐。刃先だけ採掘鉄。",
+          "2": "根材を交互に積み、盾に内向きの浅いアーチ。",
+          "3": "芯の年輪が細かくなり、柄と腰板の継ぎ目へ短い補強片。",
+          "4": "少ない枚数の高密度材へ置換。枝角や樹冠を増やさず、厚みを抑える。"
+        }
+      },
+      "long_lance": {
+        "shape": "直線の長槍と独立した縦長の大盾。槍先は細い穂、盾面は曲げ木の浅いアーチを縦に並べる。槍を大剣や薙刀にしない。",
+        "material": "採掘鉄の刃を持つ根材の積層芯",
+        "gradeEvolution": {
+          "1": "細い曲木板と根紐。刃先だけ採掘鉄。",
+          "2": "根材を交互に積み、盾に内向きの浅いアーチ。",
+          "3": "芯の年輪が細かくなり、柄と腰板の継ぎ目へ短い補強片。",
+          "4": "少ない枚数の高密度材へ置換。枝角や樹冠を増やさず、厚みを抑える。"
+        }
+      },
+      "ring_bow": {
+        "shape": "細い弓身、一本の弦、小さな照準環、別に一本の矢。曲げ木の浅いアーチを弓身へ低く沿わせる。円盤や環状の近接刃にはしない。",
+        "material": "採掘鉄の刃を持つ根材の積層芯",
+        "gradeEvolution": {
+          "1": "細い曲木板と根紐。刃先だけ採掘鉄。",
+          "2": "根材を交互に積み、盾に内向きの浅いアーチ。",
+          "3": "芯の年輪が細かくなり、柄と腰板の継ぎ目へ短い補強片。",
+          "4": "少ない枚数の高密度材へ置換。枝角や樹冠を増やさず、厚みを抑える。"
+        }
+      }
+    },
+    "gradeAppearance": {
+      "1": "細い曲木板と根紐。刃先だけ採掘鉄。",
+      "2": "根材を交互に積み、盾に内向きの浅いアーチ。",
+      "3": "芯の年輪が細かくなり、柄と腰板の継ぎ目へ短い補強片。",
+      "4": "少ない枚数の高密度材へ置換。枝角や樹冠を増やさず、厚みを抑える。"
+    },
+    "mainMaterial": "風礫の硬枝",
+    "supportMaterial": "スジユイの繊維",
+    "organMaterial": "風礫鉄鉱",
+    "materialChain": [
+      {
+        "rank": 1,
+        "id": "mat.equip.gather.basin_hardwood",
+        "name": "風礫の硬枝",
+        "fieldName": "風礫盆地",
+        "existingProposal": false,
+        "method": "採集",
+        "isImplemented": false
+      },
+      {
+        "rank": 2,
+        "id": "mat.gather.rootmesh_bundle",
+        "name": "ネアミ根",
+        "fieldName": "根絡み湿原",
+        "existingProposal": true,
+        "method": "採集",
+        "isImplemented": false
+      },
+      {
+        "rank": 3,
+        "id": "mat.equip.gather.pressed_rootwood",
+        "name": "圧密根材",
+        "fieldName": "霧灯樹海",
+        "existingProposal": false,
+        "method": "採集",
+        "isImplemented": false
+      },
+      {
+        "rank": 4,
+        "id": "mat.equip.gather.annual_corewood",
+        "name": "年輪芯材",
+        "fieldName": "重霧環谷",
+        "existingProposal": false,
+        "method": "採集",
+        "isImplemented": false
+      }
+    ],
+    "rawRatio": 0.92,
+    "affinity": 0,
+    "defenseFactor": 0.9,
+    "artFile": "art/gathering/equipment_G02_rootwood_v1.png",
+    "artPromptFile": "art/prompts/gathering_G02.json",
+    "artReview": {
+      "status": "reviewed",
+      "coverage": [
+        "5 armor slots",
+        "7 weapon groups",
+        "2 shields",
+        "twin blades pair",
+        "bow string/ring/arrow",
+        "complete tips and boots"
+      ],
+      "limitations": [
+        "初級の系列比較原画。8%余白・厳密縮尺・正投影の合格を意味しない。"
+      ],
+      "dimensions": [
+        1671,
+        941
+      ],
+      "sha256": "5f32f8b39baa978e812ff99fa3e4339939e45611b0fee3ba0b07f16347e004bb"
+    },
+    "availabilityNote": "材料は採集・採掘・虫取りのみ。級と狩場の解放は通常の進行に従う。高級素材点・虫取り・加工は未実装。"
+  },
+  {
+    "id": "gathering.resin",
+    "sourceSpeciesId": null,
+    "no": 89,
+    "name": "樹脂継",
+    "seriesName": "樹脂継",
+    "nativeRank": 1,
+    "category": "gather",
+    "armorClass": "medium",
+    "weaponProfile": "raw",
+    "elements": [
+      "none"
+    ],
+    "status": null,
+    "primarySkill": "gather_sense",
+    "secondarySkill": "item_efficiency",
+    "skillParameters": {},
+    "palette": [
+      "鈍い琥珀",
+      "暗い灰緑",
+      "褐色の革"
+    ],
+    "silhouette": "琥珀色の樹脂で継いだ小さな硬化板。透明感は薄い縁にだけ残し、全面を光らせない。",
+    "armorParts": {
+      "head": "低い額帯と短い頭頂覆い。樹脂窓は眉の上だけ。",
+      "chest": "革芯へ薄い樹脂継ぎの四角板。胸骨中央に縦の補修筋。",
+      "arms": "手首手前で終わる小板。腕の内側は布にして曲げる。",
+      "waist": "短い補修具入れ二つと、腰の左右へ小さな硬化片。",
+      "legs": "脛の前面に細い樹脂継ぎ。足首へ透明板を巻かない。"
+    },
+    "weapons": {
+      "heavy_blade": {
+        "shape": "幅広く厚い片刃。樹脂で固定した採掘鉄と積層木の芯を芯に、峰から鍔へ細い琥珀の継ぎ目を沿わせる。刃先は斜めに切り、握りを直線にする。",
+        "material": "樹脂で固定した採掘鉄と積層木の芯",
+        "gradeEvolution": {
+          "1": "不透明に近い小板と太い継ぎ目。",
+          "2": "藻由来の接着層を挟み、盾の板を段違いに継ぐ。",
+          "3": "ホソアカリ樹脂の反射線を継ぎ目だけへ。自発光させない。",
+          "4": "薄い澄継層で段差を減らす。琥珀は縁だけで、巨大な透明結晶にしない。"
+        }
+      },
+      "guard_blade": {
+        "shape": "短い片刃剣と独立した小盾。剣の峰と盾の外縁へ細い琥珀の継ぎ目。盾は裏側の横握りを備え、剣と一体化しない。",
+        "material": "樹脂で固定した採掘鉄と積層木の芯",
+        "gradeEvolution": {
+          "1": "不透明に近い小板と太い継ぎ目。",
+          "2": "藻由来の接着層を挟み、盾の板を段違いに継ぐ。",
+          "3": "ホソアカリ樹脂の反射線を継ぎ目だけへ。自発光させない。",
+          "4": "薄い澄継層で段差を減らす。琥珀は縁だけで、巨大な透明結晶にしない。"
+        }
+      },
+      "war_maul": {
+        "shape": "柄の先に閉じた二つの硬い打面。樹脂で固定した採掘鉄と積層木の芯の重い芯を細い琥珀の継ぎ目で囲う。太鼓膜・斧刃・開いた籠にはしない。",
+        "material": "樹脂で固定した採掘鉄と積層木の芯",
+        "gradeEvolution": {
+          "1": "不透明に近い小板と太い継ぎ目。",
+          "2": "藻由来の接着層を挟み、盾の板を段違いに継ぐ。",
+          "3": "ホソアカリ樹脂の反射線を継ぎ目だけへ。自発光させない。",
+          "4": "薄い澄継層で段差を減らす。琥珀は縁だけで、巨大な透明結晶にしない。"
+        }
+      },
+      "twin_blades": {
+        "shape": "同形の短い片刃を二本。細い琥珀の継ぎ目を両方の背へ小さく付け、片方を盾や長剣にしない。",
+        "material": "樹脂で固定した採掘鉄と積層木の芯",
+        "gradeEvolution": {
+          "1": "不透明に近い小板と太い継ぎ目。",
+          "2": "藻由来の接着層を挟み、盾の板を段違いに継ぐ。",
+          "3": "ホソアカリ樹脂の反射線を継ぎ目だけへ。自発光させない。",
+          "4": "薄い澄継層で段差を減らす。琥珀は縁だけで、巨大な透明結晶にしない。"
+        }
+      },
+      "long_blade": {
+        "shape": "細く浅く反った片刃。細い琥珀の継ぎ目は峰に低く沿わせ、長い切刃を連続させる。柄は両手を離して置ける長さ。",
+        "material": "樹脂で固定した採掘鉄と積層木の芯",
+        "gradeEvolution": {
+          "1": "不透明に近い小板と太い継ぎ目。",
+          "2": "藻由来の接着層を挟み、盾の板を段違いに継ぐ。",
+          "3": "ホソアカリ樹脂の反射線を継ぎ目だけへ。自発光させない。",
+          "4": "薄い澄継層で段差を減らす。琥珀は縁だけで、巨大な透明結晶にしない。"
+        }
+      },
+      "long_lance": {
+        "shape": "直線の長槍と独立した縦長の大盾。槍先は細い穂、盾面は細い琥珀の継ぎ目を縦に並べる。槍を大剣や薙刀にしない。",
+        "material": "樹脂で固定した採掘鉄と積層木の芯",
+        "gradeEvolution": {
+          "1": "不透明に近い小板と太い継ぎ目。",
+          "2": "藻由来の接着層を挟み、盾の板を段違いに継ぐ。",
+          "3": "ホソアカリ樹脂の反射線を継ぎ目だけへ。自発光させない。",
+          "4": "薄い澄継層で段差を減らす。琥珀は縁だけで、巨大な透明結晶にしない。"
+        }
+      },
+      "ring_bow": {
+        "shape": "細い弓身、一本の弦、小さな照準環、別に一本の矢。細い琥珀の継ぎ目を弓身へ低く沿わせる。円盤や環状の近接刃にはしない。",
+        "material": "樹脂で固定した採掘鉄と積層木の芯",
+        "gradeEvolution": {
+          "1": "不透明に近い小板と太い継ぎ目。",
+          "2": "藻由来の接着層を挟み、盾の板を段違いに継ぐ。",
+          "3": "ホソアカリ樹脂の反射線を継ぎ目だけへ。自発光させない。",
+          "4": "薄い澄継層で段差を減らす。琥珀は縁だけで、巨大な透明結晶にしない。"
+        }
+      }
+    },
+    "gradeAppearance": {
+      "1": "不透明に近い小板と太い継ぎ目。",
+      "2": "藻由来の接着層を挟み、盾の板を段違いに継ぐ。",
+      "3": "ホソアカリ樹脂の反射線を継ぎ目だけへ。自発光させない。",
+      "4": "薄い澄継層で段差を減らす。琥珀は縁だけで、巨大な透明結晶にしない。"
+    },
+    "mainMaterial": "礫根樹脂",
+    "supportMaterial": "スジユイの繊維",
+    "organMaterial": "風礫鉄鉱",
+    "materialChain": [
+      {
+        "rank": 1,
+        "id": "mat.equip.gather.gritroot_resin",
+        "name": "礫根樹脂",
+        "fieldName": "風礫盆地",
+        "existingProposal": false,
+        "method": "採集",
+        "isImplemented": false
+      },
+      {
+        "rank": 2,
+        "id": "mat.gather.shoreseam_algae",
+        "name": "ハマトジ藻",
+        "fieldName": "硝砂海岸",
+        "existingProposal": true,
+        "method": "採集",
+        "isImplemented": false
+      },
+      {
+        "rank": 3,
+        "id": "mat.gather.slimlight_resin",
+        "name": "ホソアカリ樹脂",
+        "fieldName": "霧灯樹海",
+        "existingProposal": true,
+        "method": "採集",
+        "isImplemented": false
+      },
+      {
+        "rank": 4,
+        "id": "mat.equip.gather.clearbond_resin",
+        "name": "澄継樹脂",
+        "fieldName": "重霧環谷",
+        "existingProposal": false,
+        "method": "採集",
+        "isImplemented": false
+      }
+    ],
+    "rawRatio": 0.91,
+    "affinity": 0,
+    "defenseFactor": 0.9,
+    "artFile": "art/gathering/equipment_G03_resin_v1.png",
+    "artPromptFile": "art/prompts/gathering_G03.json",
+    "artReview": {
+      "status": "reviewed",
+      "coverage": [
+        "5 armor slots",
+        "7 weapon groups",
+        "2 shields",
+        "twin blades pair",
+        "bow string/ring/arrow",
+        "complete blade/spear tips and boots"
+      ],
+      "limitations": [
+        "初級の比較原画。高級は形状仕様で定義、正投影・3Dは未制作。",
+        "指定した8%余白は厳密には達していないが、全装備の先端・足元は画面内。"
+      ],
+      "sourceGeneratedFile": "exec-d19fec74-0192-4565-b695-751f7b2482ac.png",
+      "dimensions": [
+        1671,
+        941
+      ],
+      "sha256": "82a2b85f3573169fb367bb7106a4e65bca4ec184f56e76abf194ac8d3b23c5ad"
+    },
+    "availabilityNote": "材料は採集・採掘・虫取りのみ。級と狩場の解放は通常の進行に従う。高級素材点・虫取り・加工は未実装。"
+  },
+  {
+    "id": "gathering.forged_iron",
+    "sourceSpeciesId": null,
+    "no": 90,
+    "name": "風礫鍛鉄",
+    "seriesName": "風礫鍛鉄",
+    "nativeRank": 1,
+    "category": "mining",
+    "armorClass": "heavy",
+    "weaponProfile": "raw",
+    "elements": [
+      "none"
+    ],
+    "status": null,
+    "primarySkill": "mining_haste",
+    "secondarySkill": "guard_economy",
+    "skillParameters": {},
+    "palette": [
+      "鈍い鉄灰",
+      "赤褐色",
+      "革の濃茶"
+    ],
+    "silhouette": "鍛造痕を少し残した単純な鉄板。低い兜、丸い留め鋲、中央に一本の折り筋。",
+    "armorParts": {
+      "head": "低い鉢形の兜に短い頬当て。巨大な角や冠なし。",
+      "chest": "胸を覆う一枚の浅い折り板。腹は横二枚の小板。",
+      "arms": "前腕を半周だけ覆う鉄の籠手。指と肘は自由。",
+      "waist": "腰の前後へ分かれた短い鉄板。側面は革の継ぎ。",
+      "legs": "膝の独立板と二分割した脛当て。靴底は可撓性のある層。"
+    },
+    "weapons": {
+      "heavy_blade": {
+        "shape": "幅広く厚い片刃。精錬した天然鉄と木柄を芯に、峰から鍔へ中央の浅い折り筋と丸鋲を沿わせる。刃先は斜めに切り、握りを直線にする。",
+        "material": "精錬した天然鉄と木柄",
+        "gradeEvolution": {
+          "1": "幅広い鉄面と少ない留め鋲。",
+          "2": "銅合金の留め具を加える。鉄そのものを青銅晶脈へ置換しない。",
+          "3": "折り返した鉄の層を刃の基部と盾の折り筋に見せる。",
+          "4": "黒条材を芯へ入れ、刃先だけ明るい鉄色。金色の全身鎧にしない。"
+        }
+      },
+      "guard_blade": {
+        "shape": "短い片刃剣と独立した小盾。剣の峰と盾の外縁へ中央の浅い折り筋と丸鋲。盾は裏側の横握りを備え、剣と一体化しない。",
+        "material": "精錬した天然鉄と木柄",
+        "gradeEvolution": {
+          "1": "幅広い鉄面と少ない留め鋲。",
+          "2": "銅合金の留め具を加える。鉄そのものを青銅晶脈へ置換しない。",
+          "3": "折り返した鉄の層を刃の基部と盾の折り筋に見せる。",
+          "4": "黒条材を芯へ入れ、刃先だけ明るい鉄色。金色の全身鎧にしない。"
+        }
+      },
+      "war_maul": {
+        "shape": "柄の先に閉じた二つの硬い打面。精錬した天然鉄と木柄の重い芯を中央の浅い折り筋と丸鋲で囲う。太鼓膜・斧刃・開いた籠にはしない。",
+        "material": "精錬した天然鉄と木柄",
+        "gradeEvolution": {
+          "1": "幅広い鉄面と少ない留め鋲。",
+          "2": "銅合金の留め具を加える。鉄そのものを青銅晶脈へ置換しない。",
+          "3": "折り返した鉄の層を刃の基部と盾の折り筋に見せる。",
+          "4": "黒条材を芯へ入れ、刃先だけ明るい鉄色。金色の全身鎧にしない。"
+        }
+      },
+      "twin_blades": {
+        "shape": "同形の短い片刃を二本。中央の浅い折り筋と丸鋲を両方の背へ小さく付け、片方を盾や長剣にしない。",
+        "material": "精錬した天然鉄と木柄",
+        "gradeEvolution": {
+          "1": "幅広い鉄面と少ない留め鋲。",
+          "2": "銅合金の留め具を加える。鉄そのものを青銅晶脈へ置換しない。",
+          "3": "折り返した鉄の層を刃の基部と盾の折り筋に見せる。",
+          "4": "黒条材を芯へ入れ、刃先だけ明るい鉄色。金色の全身鎧にしない。"
+        }
+      },
+      "long_blade": {
+        "shape": "細く浅く反った片刃。中央の浅い折り筋と丸鋲は峰に低く沿わせ、長い切刃を連続させる。柄は両手を離して置ける長さ。",
+        "material": "精錬した天然鉄と木柄",
+        "gradeEvolution": {
+          "1": "幅広い鉄面と少ない留め鋲。",
+          "2": "銅合金の留め具を加える。鉄そのものを青銅晶脈へ置換しない。",
+          "3": "折り返した鉄の層を刃の基部と盾の折り筋に見せる。",
+          "4": "黒条材を芯へ入れ、刃先だけ明るい鉄色。金色の全身鎧にしない。"
+        }
+      },
+      "long_lance": {
+        "shape": "直線の長槍と独立した縦長の大盾。槍先は細い穂、盾面は中央の浅い折り筋と丸鋲を縦に並べる。槍を大剣や薙刀にしない。",
+        "material": "精錬した天然鉄と木柄",
+        "gradeEvolution": {
+          "1": "幅広い鉄面と少ない留め鋲。",
+          "2": "銅合金の留め具を加える。鉄そのものを青銅晶脈へ置換しない。",
+          "3": "折り返した鉄の層を刃の基部と盾の折り筋に見せる。",
+          "4": "黒条材を芯へ入れ、刃先だけ明るい鉄色。金色の全身鎧にしない。"
+        }
+      },
+      "ring_bow": {
+        "shape": "細い弓身、一本の弦、小さな照準環、別に一本の矢。中央の浅い折り筋と丸鋲を弓身へ低く沿わせる。円盤や環状の近接刃にはしない。",
+        "material": "精錬した天然鉄と木柄",
+        "gradeEvolution": {
+          "1": "幅広い鉄面と少ない留め鋲。",
+          "2": "銅合金の留め具を加える。鉄そのものを青銅晶脈へ置換しない。",
+          "3": "折り返した鉄の層を刃の基部と盾の折り筋に見せる。",
+          "4": "黒条材を芯へ入れ、刃先だけ明るい鉄色。金色の全身鎧にしない。"
+        }
+      }
+    },
+    "gradeAppearance": {
+      "1": "幅広い鉄面と少ない留め鋲。",
+      "2": "銅合金の留め具を加える。鉄そのものを青銅晶脈へ置換しない。",
+      "3": "折り返した鉄の層を刃の基部と盾の折り筋に見せる。",
+      "4": "黒条材を芯へ入れ、刃先だけ明るい鉄色。金色の全身鎧にしない。"
+    },
+    "mainMaterial": "風礫鉄鉱",
+    "supportMaterial": "スジユイの繊維",
+    "organMaterial": "風礫鉄鉱",
+    "materialChain": [
+      {
+        "rank": 1,
+        "id": "mat.ore.basin_iron",
+        "name": "風礫鉄鉱",
+        "fieldName": "風礫盆地",
+        "existingProposal": true,
+        "method": "採掘",
+        "isImplemented": false
+      },
+      {
+        "rank": 2,
+        "id": "mat.ore.tide_copper_ore",
+        "name": "潮青鉱石",
+        "fieldName": "硝砂海岸",
+        "existingProposal": true,
+        "method": "採掘",
+        "isImplemented": false
+      },
+      {
+        "rank": 3,
+        "id": "mat.equip.ore.layerforge_iron",
+        "name": "層鍛鉄鉱",
+        "fieldName": "灰鐘鉱山",
+        "existingProposal": false,
+        "method": "採掘",
+        "isImplemented": false
+      },
+      {
+        "rank": 4,
+        "id": "mat.equip.ore.blackstripe_iron",
+        "name": "黒条鉄鉱",
+        "fieldName": "重霧環谷",
+        "existingProposal": false,
+        "method": "採掘",
+        "isImplemented": false
+      }
+    ],
+    "rawRatio": 0.95,
+    "affinity": 0,
+    "defenseFactor": 0.9,
+    "artFile": "art/gathering/equipment_G04_forged_iron_v1.png",
+    "artPromptFile": "art/prompts/gathering_G04.json",
+    "artReview": {
+      "status": "reviewed",
+      "coverage": [
+        "5 armor slots",
+        "7 weapon groups",
+        "2 shields",
+        "twin blades pair",
+        "bow string/ring/arrow",
+        "complete blade/spear tips and boots"
+      ],
+      "limitations": [
+        "初級の比較原画。高級は形状仕様で定義、正投影・3Dは未制作。",
+        "全装備の先端・足元は画面内。指定余白の厳密な寸法と背面の構造は未検証。"
+      ],
+      "sourceGeneratedFile": "exec-9a877e49-520b-42fb-a6c6-af3bf36d62b5.png",
+      "dimensions": [
+        1670,
+        942
+      ],
+      "sha256": "a3a0eecce2d2884c6aae98eb96eb79f82fddba865a8862de5591994f8dfe1e6e",
+      "notes": "初回生成は画像が返ったが出力ファイルが得られず、同一プロンプトで再生成した2回目を収録。"
+    },
+    "availabilityNote": "材料は採集・採掘・虫取りのみ。級と狩場の解放は通常の進行に従う。高級素材点・虫取り・加工は未実装。"
+  },
+  {
+    "id": "gathering.mica",
+    "sourceSpeciesId": null,
+    "no": 91,
+    "name": "薄晶",
+    "seriesName": "薄晶",
+    "nativeRank": 1,
+    "category": "mining",
+    "armorClass": "medium",
+    "weaponProfile": "precision",
+    "elements": [
+      "none"
+    ],
+    "status": null,
+    "primarySkill": "mining_haste",
+    "secondarySkill": "edge_keep",
+    "skillParameters": {},
+    "palette": [
+      "灰白",
+      "鈍い銀緑",
+      "青銅の細縁"
+    ],
+    "silhouette": "薄い雲母板を重ねた落ち着いた光沢。板の端を短くそろえ、鋭い突起を体外へ出さない。",
+    "armorParts": {
+      "head": "頭に沿う低い層状兜。額の薄板は三枚、目を塞がない。",
+      "chest": "胸の左右へ平行な薄板。中央の留め帯で反りを止める。",
+      "arms": "前腕の外側だけ、短い板を三段に重ねる。",
+      "waist": "短い層板を腰へ左右三枚ずつ。後ろは道具用の平たい帯。",
+      "legs": "脛に縦の薄板二列。膝と足首には積層を持ち込まない。"
+    },
+    "weapons": {
+      "heavy_blade": {
+        "shape": "幅広く厚い片刃。天然雲母の化粧板と細い金属芯を芯に、峰から鍔へそろった薄い層の断面を沿わせる。刃先は斜めに切り、握りを直線にする。",
+        "material": "天然雲母の化粧板と細い金属芯",
+        "gradeEvolution": {
+          "1": "灰白の短い薄板と縁の金属。",
+          "2": "白硝砂で作った薄い保護層を板の間へ。",
+          "3": "雲母の縦筋を刃の峰と弓の外側へそろえる。",
+          "4": "積層の枚数を増やして一枚を薄くする。大きな水晶の棘は付けない。"
+        }
+      },
+      "guard_blade": {
+        "shape": "短い片刃剣と独立した小盾。剣の峰と盾の外縁へそろった薄い層の断面。盾は裏側の横握りを備え、剣と一体化しない。",
+        "material": "天然雲母の化粧板と細い金属芯",
+        "gradeEvolution": {
+          "1": "灰白の短い薄板と縁の金属。",
+          "2": "白硝砂で作った薄い保護層を板の間へ。",
+          "3": "雲母の縦筋を刃の峰と弓の外側へそろえる。",
+          "4": "積層の枚数を増やして一枚を薄くする。大きな水晶の棘は付けない。"
+        }
+      },
+      "war_maul": {
+        "shape": "柄の先に閉じた二つの硬い打面。天然雲母の化粧板と細い金属芯の重い芯をそろった薄い層の断面で囲う。太鼓膜・斧刃・開いた籠にはしない。",
+        "material": "天然雲母の化粧板と細い金属芯",
+        "gradeEvolution": {
+          "1": "灰白の短い薄板と縁の金属。",
+          "2": "白硝砂で作った薄い保護層を板の間へ。",
+          "3": "雲母の縦筋を刃の峰と弓の外側へそろえる。",
+          "4": "積層の枚数を増やして一枚を薄くする。大きな水晶の棘は付けない。"
+        }
+      },
+      "twin_blades": {
+        "shape": "同形の短い片刃を二本。そろった薄い層の断面を両方の背へ小さく付け、片方を盾や長剣にしない。",
+        "material": "天然雲母の化粧板と細い金属芯",
+        "gradeEvolution": {
+          "1": "灰白の短い薄板と縁の金属。",
+          "2": "白硝砂で作った薄い保護層を板の間へ。",
+          "3": "雲母の縦筋を刃の峰と弓の外側へそろえる。",
+          "4": "積層の枚数を増やして一枚を薄くする。大きな水晶の棘は付けない。"
+        }
+      },
+      "long_blade": {
+        "shape": "細く浅く反った片刃。そろった薄い層の断面は峰に低く沿わせ、長い切刃を連続させる。柄は両手を離して置ける長さ。",
+        "material": "天然雲母の化粧板と細い金属芯",
+        "gradeEvolution": {
+          "1": "灰白の短い薄板と縁の金属。",
+          "2": "白硝砂で作った薄い保護層を板の間へ。",
+          "3": "雲母の縦筋を刃の峰と弓の外側へそろえる。",
+          "4": "積層の枚数を増やして一枚を薄くする。大きな水晶の棘は付けない。"
+        }
+      },
+      "long_lance": {
+        "shape": "直線の長槍と独立した縦長の大盾。槍先は細い穂、盾面はそろった薄い層の断面を縦に並べる。槍を大剣や薙刀にしない。",
+        "material": "天然雲母の化粧板と細い金属芯",
+        "gradeEvolution": {
+          "1": "灰白の短い薄板と縁の金属。",
+          "2": "白硝砂で作った薄い保護層を板の間へ。",
+          "3": "雲母の縦筋を刃の峰と弓の外側へそろえる。",
+          "4": "積層の枚数を増やして一枚を薄くする。大きな水晶の棘は付けない。"
+        }
+      },
+      "ring_bow": {
+        "shape": "細い弓身、一本の弦、小さな照準環、別に一本の矢。そろった薄い層の断面を弓身へ低く沿わせる。円盤や環状の近接刃にはしない。",
+        "material": "天然雲母の化粧板と細い金属芯",
+        "gradeEvolution": {
+          "1": "灰白の短い薄板と縁の金属。",
+          "2": "白硝砂で作った薄い保護層を板の間へ。",
+          "3": "雲母の縦筋を刃の峰と弓の外側へそろえる。",
+          "4": "積層の枚数を増やして一枚を薄くする。大きな水晶の棘は付けない。"
+        }
+      }
+    },
+    "gradeAppearance": {
+      "1": "灰白の短い薄板と縁の金属。",
+      "2": "白硝砂で作った薄い保護層を板の間へ。",
+      "3": "雲母の縦筋を刃の峰と弓の外側へそろえる。",
+      "4": "積層の枚数を増やして一枚を薄くする。大きな水晶の棘は付けない。"
+    },
+    "mainMaterial": "薄層雲母",
+    "supportMaterial": "スジユイの繊維",
+    "organMaterial": "風礫鉄鉱",
+    "materialChain": [
+      {
+        "rank": 1,
+        "id": "mat.equip.ore.thinlayer_mica",
+        "name": "薄層雲母",
+        "fieldName": "風礫盆地",
+        "existingProposal": false,
+        "method": "採掘",
+        "isImplemented": false
+      },
+      {
+        "rank": 2,
+        "id": "mat.ore.white_silica_sand",
+        "name": "白硝砂",
+        "fieldName": "硝砂海岸",
+        "existingProposal": true,
+        "method": "採掘",
+        "isImplemented": false
+      },
+      {
+        "rank": 3,
+        "id": "mat.ore.dull_crystal_mica",
+        "name": "鈍晶雲母",
+        "fieldName": "灰鐘鉱山",
+        "existingProposal": true,
+        "method": "採掘",
+        "isImplemented": false
+      },
+      {
+        "rank": 4,
+        "id": "mat.equip.ore.clear_layer_mica",
+        "name": "透層雲母",
+        "fieldName": "重霧環谷",
+        "existingProposal": false,
+        "method": "採掘",
+        "isImplemented": false
+      }
+    ],
+    "rawRatio": 0.9,
+    "affinity": 15,
+    "defenseFactor": 0.9,
+    "artFile": "art/gathering/equipment_G05_mica_v1.png",
+    "artPromptFile": "art/prompts/gathering_G05.json",
+    "artReview": {
+      "status": "reviewed",
+      "coverage": [
+        "5 armor slots",
+        "7 weapon groups",
+        "2 shields",
+        "twin blades pair",
+        "bow string/ring/arrow",
+        "complete blade/spear tips and boots"
+      ],
+      "limitations": [
+        "初級の比較原画。高級は形状仕様で定義、正投影・3Dは未制作。",
+        "全装備の先端・足元は画面内。指定余白の厳密な寸法と背面の構造は未検証。"
+      ],
+      "sourceGeneratedFile": "exec-63bbfa7b-3e33-46be-87df-dec293cf0810.png",
+      "dimensions": [
+        1670,
+        941
+      ],
+      "sha256": "166ff9457053d2bdd99882f0c2b6536f8ddfb1e472f0d6a2e4b81c303efd0ac4"
+    },
+    "availabilityNote": "材料は採集・採掘・虫取りのみ。級と狩場の解放は通常の進行に従う。高級素材点・虫取り・加工は未実装。"
+  },
+  {
+    "id": "gathering.densestone",
+    "sourceSpeciesId": null,
+    "no": 92,
+    "name": "積岩",
+    "seriesName": "積岩",
+    "nativeRank": 1,
+    "category": "mining",
+    "armorClass": "heavy",
+    "weaponProfile": "raw",
+    "elements": [
+      "none"
+    ],
+    "status": null,
+    "primarySkill": "mining_haste",
+    "secondarySkill": "stamina_recovery",
+    "skillParameters": {},
+    "palette": [
+      "灰青",
+      "灰褐",
+      "黒い革"
+    ],
+    "silhouette": "選別した小さな天然石を、低く広い面へ敷き詰める。生物の岩殻と違い左右を対称にする。",
+    "armorParts": {
+      "head": "低い半球の石片帽。中央に短い一枚板、顔は開ける。",
+      "chest": "左右対称の小石板を三段に配列。腹は露出した革の継ぎ。",
+      "arms": "前腕上面だけ小さな矩形石片。肘側へ大塊を置かない。",
+      "waist": "短い矩形板を前後二枚ずつ。側面は紐の間隔を空ける。",
+      "legs": "縦二列の石片を脛へ。膝は丸い独立した一枚。"
+    },
+    "weapons": {
+      "heavy_blade": {
+        "shape": "幅広く厚い片刃。天然石の補強板と採掘鉄の刃を芯に、峰から鍔へ左右対称に敷いた矩形の石片を沿わせる。刃先は斜めに切り、握りを直線にする。",
+        "material": "天然石の補強板と採掘鉄の刃",
+        "gradeEvolution": {
+          "1": "荒い小板を規則的に並べる。",
+          "2": "空隙の少ない石を面に使い、板同士の段差を減らす。",
+          "3": "灰青の硬石を打面と刃の峰へ。氷属性や冷気は付けない。",
+          "4": "緻密石を薄く切り、同じ輪郭で継ぎ目を細くする。生物の環冠片とは区別。"
+        }
+      },
+      "guard_blade": {
+        "shape": "短い片刃剣と独立した小盾。剣の峰と盾の外縁へ左右対称に敷いた矩形の石片。盾は裏側の横握りを備え、剣と一体化しない。",
+        "material": "天然石の補強板と採掘鉄の刃",
+        "gradeEvolution": {
+          "1": "荒い小板を規則的に並べる。",
+          "2": "空隙の少ない石を面に使い、板同士の段差を減らす。",
+          "3": "灰青の硬石を打面と刃の峰へ。氷属性や冷気は付けない。",
+          "4": "緻密石を薄く切り、同じ輪郭で継ぎ目を細くする。生物の環冠片とは区別。"
+        }
+      },
+      "war_maul": {
+        "shape": "柄の先に閉じた二つの硬い打面。天然石の補強板と採掘鉄の刃の重い芯を左右対称に敷いた矩形の石片で囲う。太鼓膜・斧刃・開いた籠にはしない。",
+        "material": "天然石の補強板と採掘鉄の刃",
+        "gradeEvolution": {
+          "1": "荒い小板を規則的に並べる。",
+          "2": "空隙の少ない石を面に使い、板同士の段差を減らす。",
+          "3": "灰青の硬石を打面と刃の峰へ。氷属性や冷気は付けない。",
+          "4": "緻密石を薄く切り、同じ輪郭で継ぎ目を細くする。生物の環冠片とは区別。"
+        }
+      },
+      "twin_blades": {
+        "shape": "同形の短い片刃を二本。左右対称に敷いた矩形の石片を両方の背へ小さく付け、片方を盾や長剣にしない。",
+        "material": "天然石の補強板と採掘鉄の刃",
+        "gradeEvolution": {
+          "1": "荒い小板を規則的に並べる。",
+          "2": "空隙の少ない石を面に使い、板同士の段差を減らす。",
+          "3": "灰青の硬石を打面と刃の峰へ。氷属性や冷気は付けない。",
+          "4": "緻密石を薄く切り、同じ輪郭で継ぎ目を細くする。生物の環冠片とは区別。"
+        }
+      },
+      "long_blade": {
+        "shape": "細く浅く反った片刃。左右対称に敷いた矩形の石片は峰に低く沿わせ、長い切刃を連続させる。柄は両手を離して置ける長さ。",
+        "material": "天然石の補強板と採掘鉄の刃",
+        "gradeEvolution": {
+          "1": "荒い小板を規則的に並べる。",
+          "2": "空隙の少ない石を面に使い、板同士の段差を減らす。",
+          "3": "灰青の硬石を打面と刃の峰へ。氷属性や冷気は付けない。",
+          "4": "緻密石を薄く切り、同じ輪郭で継ぎ目を細くする。生物の環冠片とは区別。"
+        }
+      },
+      "long_lance": {
+        "shape": "直線の長槍と独立した縦長の大盾。槍先は細い穂、盾面は左右対称に敷いた矩形の石片を縦に並べる。槍を大剣や薙刀にしない。",
+        "material": "天然石の補強板と採掘鉄の刃",
+        "gradeEvolution": {
+          "1": "荒い小板を規則的に並べる。",
+          "2": "空隙の少ない石を面に使い、板同士の段差を減らす。",
+          "3": "灰青の硬石を打面と刃の峰へ。氷属性や冷気は付けない。",
+          "4": "緻密石を薄く切り、同じ輪郭で継ぎ目を細くする。生物の環冠片とは区別。"
+        }
+      },
+      "ring_bow": {
+        "shape": "細い弓身、一本の弦、小さな照準環、別に一本の矢。左右対称に敷いた矩形の石片を弓身へ低く沿わせる。円盤や環状の近接刃にはしない。",
+        "material": "天然石の補強板と採掘鉄の刃",
+        "gradeEvolution": {
+          "1": "荒い小板を規則的に並べる。",
+          "2": "空隙の少ない石を面に使い、板同士の段差を減らす。",
+          "3": "灰青の硬石を打面と刃の峰へ。氷属性や冷気は付けない。",
+          "4": "緻密石を薄く切り、同じ輪郭で継ぎ目を細くする。生物の環冠片とは区別。"
+        }
+      }
+    },
+    "gradeAppearance": {
+      "1": "荒い小板を規則的に並べる。",
+      "2": "空隙の少ない石を面に使い、板同士の段差を減らす。",
+      "3": "灰青の硬石を打面と刃の峰へ。氷属性や冷気は付けない。",
+      "4": "緻密石を薄く切り、同じ輪郭で継ぎ目を細くする。生物の環冠片とは区別。"
+    },
+    "mainMaterial": "層灰石",
+    "supportMaterial": "スジユイの繊維",
+    "organMaterial": "風礫鉄鉱",
+    "materialChain": [
+      {
+        "rank": 1,
+        "id": "mat.ore.layered_ashstone",
+        "name": "層灰石",
+        "fieldName": "風礫盆地",
+        "existingProposal": true,
+        "method": "採掘",
+        "isImplemented": false
+      },
+      {
+        "rank": 2,
+        "id": "mat.ore.wetbank_tuff",
+        "name": "湿縁凝灰石",
+        "fieldName": "根絡み湿原",
+        "existingProposal": true,
+        "method": "採掘",
+        "isImplemented": false
+      },
+      {
+        "rank": 3,
+        "id": "mat.ore.icebank_hardstone",
+        "name": "氷縁硬石",
+        "fieldName": "氷帆峡谷",
+        "existingProposal": true,
+        "method": "採掘",
+        "isImplemented": false
+      },
+      {
+        "rank": 4,
+        "id": "mat.ore.ring_vein_densestone",
+        "name": "環脈緻密石",
+        "fieldName": "重霧環谷",
+        "existingProposal": true,
+        "method": "採掘",
+        "isImplemented": false
+      }
+    ],
+    "rawRatio": 0.94,
+    "affinity": 0,
+    "defenseFactor": 0.9,
+    "artFile": "art/gathering/equipment_G06_densestone_v1.png",
+    "artPromptFile": "art/prompts/gathering_G06.json",
+    "artReview": {
+      "status": "reviewed",
+      "coverage": [
+        "5 armor slots",
+        "7 weapon groups",
+        "2 shields",
+        "twin blades pair",
+        "bow string/ring/arrow",
+        "complete blade/spear tips and boots"
+      ],
+      "limitations": [
+        "初級の比較原画。高級は形状仕様で定義、正投影・3Dは未制作。",
+        "全装備の先端・足元は画面内。指定余白の厳密な寸法と背面の構造は未検証。"
+      ],
+      "sourceGeneratedFile": "exec-6dcd15bb-9dc8-4937-948e-5b4653e78bb5.png",
+      "dimensions": [
+        1670,
+        941
+      ],
+      "sha256": "6ebcafb1b37cd613eb34f3ed788daab6d7ba6d65f50f4573910eec83e0f50dd7"
+    },
+    "availabilityNote": "材料は採集・採掘・虫取りのみ。級と狩場の解放は通常の進行に従う。高級素材点・虫取り・加工は未実装。"
+  },
+  {
+    "id": "gathering.ring_beetle",
+    "sourceSpeciesId": null,
+    "no": 93,
+    "name": "縫甲",
+    "seriesName": "縫甲",
+    "nativeRank": 1,
+    "category": "insect",
+    "armorClass": "medium",
+    "weaponProfile": "raw",
+    "elements": [
+      "none"
+    ],
+    "status": null,
+    "primarySkill": "insect_haste",
+    "secondarySkill": "guard_economy",
+    "skillParameters": {},
+    "palette": [
+      "暗い青緑",
+      "琥珀褐",
+      "生成り"
+    ],
+    "silhouette": "小型甲虫の翅鞘を多数縫い合わせる。人の胴ほど巨大な虫の殻一枚にはしない。",
+    "armorParts": {
+      "head": "丸い小甲を縫い合わせた低い帽。額に短い二重縁。",
+      "chest": "小さな翅鞘を左右三列へ。胸中央の縫合線を目印にする。",
+      "arms": "前腕に小甲の斜め配列。手首で止める。",
+      "waist": "腰へ三段の小甲を短く重ねる。虫取り袋は左右に一つずつ。",
+      "legs": "脛の外側に細い甲列。膝は柔らかい布で分離。"
+    },
+    "weapons": {
+      "heavy_blade": {
+        "shape": "幅広く厚い片刃。虫の小甲を被覆した天然鉄と木の芯を芯に、峰から鍔へ小さな翅鞘の縫合列を沿わせる。刃先は斜めに切り、握りを直線にする。",
+        "material": "虫の小甲を被覆した天然鉄と木の芯",
+        "gradeEvolution": {
+          "1": "薄い小甲を麻紐で一列ずつ縫う。",
+          "2": "二重縁の甲を肩と盾に重ねる。",
+          "3": "小甲を細い金属枠へはめ、留め点を減らす。",
+          "4": "密な甲列を大きさのそろった面へ。兜に昆虫の長角や触角は生やさない。"
+        }
+      },
+      "guard_blade": {
+        "shape": "短い片刃剣と独立した小盾。剣の峰と盾の外縁へ小さな翅鞘の縫合列。盾は裏側の横握りを備え、剣と一体化しない。",
+        "material": "虫の小甲を被覆した天然鉄と木の芯",
+        "gradeEvolution": {
+          "1": "薄い小甲を麻紐で一列ずつ縫う。",
+          "2": "二重縁の甲を肩と盾に重ねる。",
+          "3": "小甲を細い金属枠へはめ、留め点を減らす。",
+          "4": "密な甲列を大きさのそろった面へ。兜に昆虫の長角や触角は生やさない。"
+        }
+      },
+      "war_maul": {
+        "shape": "柄の先に閉じた二つの硬い打面。虫の小甲を被覆した天然鉄と木の芯の重い芯を小さな翅鞘の縫合列で囲う。太鼓膜・斧刃・開いた籠にはしない。",
+        "material": "虫の小甲を被覆した天然鉄と木の芯",
+        "gradeEvolution": {
+          "1": "薄い小甲を麻紐で一列ずつ縫う。",
+          "2": "二重縁の甲を肩と盾に重ねる。",
+          "3": "小甲を細い金属枠へはめ、留め点を減らす。",
+          "4": "密な甲列を大きさのそろった面へ。兜に昆虫の長角や触角は生やさない。"
+        }
+      },
+      "twin_blades": {
+        "shape": "同形の短い片刃を二本。小さな翅鞘の縫合列を両方の背へ小さく付け、片方を盾や長剣にしない。",
+        "material": "虫の小甲を被覆した天然鉄と木の芯",
+        "gradeEvolution": {
+          "1": "薄い小甲を麻紐で一列ずつ縫う。",
+          "2": "二重縁の甲を肩と盾に重ねる。",
+          "3": "小甲を細い金属枠へはめ、留め点を減らす。",
+          "4": "密な甲列を大きさのそろった面へ。兜に昆虫の長角や触角は生やさない。"
+        }
+      },
+      "long_blade": {
+        "shape": "細く浅く反った片刃。小さな翅鞘の縫合列は峰に低く沿わせ、長い切刃を連続させる。柄は両手を離して置ける長さ。",
+        "material": "虫の小甲を被覆した天然鉄と木の芯",
+        "gradeEvolution": {
+          "1": "薄い小甲を麻紐で一列ずつ縫う。",
+          "2": "二重縁の甲を肩と盾に重ねる。",
+          "3": "小甲を細い金属枠へはめ、留め点を減らす。",
+          "4": "密な甲列を大きさのそろった面へ。兜に昆虫の長角や触角は生やさない。"
+        }
+      },
+      "long_lance": {
+        "shape": "直線の長槍と独立した縦長の大盾。槍先は細い穂、盾面は小さな翅鞘の縫合列を縦に並べる。槍を大剣や薙刀にしない。",
+        "material": "虫の小甲を被覆した天然鉄と木の芯",
+        "gradeEvolution": {
+          "1": "薄い小甲を麻紐で一列ずつ縫う。",
+          "2": "二重縁の甲を肩と盾に重ねる。",
+          "3": "小甲を細い金属枠へはめ、留め点を減らす。",
+          "4": "密な甲列を大きさのそろった面へ。兜に昆虫の長角や触角は生やさない。"
+        }
+      },
+      "ring_bow": {
+        "shape": "細い弓身、一本の弦、小さな照準環、別に一本の矢。小さな翅鞘の縫合列を弓身へ低く沿わせる。円盤や環状の近接刃にはしない。",
+        "material": "虫の小甲を被覆した天然鉄と木の芯",
+        "gradeEvolution": {
+          "1": "薄い小甲を麻紐で一列ずつ縫う。",
+          "2": "二重縁の甲を肩と盾に重ねる。",
+          "3": "小甲を細い金属枠へはめ、留め点を減らす。",
+          "4": "密な甲列を大きさのそろった面へ。兜に昆虫の長角や触角は生やさない。"
+        }
+      }
+    },
+    "gradeAppearance": {
+      "1": "薄い小甲を麻紐で一列ずつ縫う。",
+      "2": "二重縁の甲を肩と盾に重ねる。",
+      "3": "小甲を細い金属枠へはめ、留め点を減らす。",
+      "4": "密な甲列を大きさのそろった面へ。兜に昆虫の長角や触角は生やさない。"
+    },
+    "mainMaterial": "ハザマ甲虫の翅鞘",
+    "supportMaterial": "スジユイの繊維",
+    "organMaterial": "風礫鉄鉱",
+    "materialChain": [
+      {
+        "rank": 1,
+        "id": "mat.equip.insect.gap_beetle_shell",
+        "name": "ハザマ甲虫の翅鞘",
+        "fieldName": "風礫盆地",
+        "existingProposal": false,
+        "method": "虫取り",
+        "isImplemented": false
+      },
+      {
+        "rank": 2,
+        "id": "mat.equip.insect.copper_ring_shell",
+        "name": "銅輪甲虫の翅鞘",
+        "fieldName": "硝砂海岸",
+        "existingProposal": false,
+        "method": "虫取り",
+        "isImplemented": false
+      },
+      {
+        "rank": 3,
+        "id": "mat.equip.insect.black_seam_shell",
+        "name": "黒継甲虫の翅鞘",
+        "fieldName": "灰鐘鉱山",
+        "existingProposal": false,
+        "method": "虫取り",
+        "isImplemented": false
+      },
+      {
+        "rank": 4,
+        "id": "mat.equip.insect.great_ring_shell",
+        "name": "環甲大虫の翅鞘",
+        "fieldName": "重霧環谷",
+        "existingProposal": false,
+        "method": "虫取り",
+        "isImplemented": false
+      }
+    ],
+    "rawRatio": 0.92,
+    "affinity": 0,
+    "defenseFactor": 0.9,
+    "artFile": "art/gathering/equipment_G07_ring_beetle_v1.png",
+    "artPromptFile": "art/prompts/gathering_G07.json",
+    "artReview": {
+      "status": "reviewed",
+      "coverage": [
+        "5 armor slots",
+        "7 weapon groups",
+        "2 shields",
+        "twin blades pair",
+        "bow string/ring/arrow",
+        "complete blade/spear tips and boots"
+      ],
+      "limitations": [
+        "初級の比較原画。高級は形状仕様で定義、正投影・3Dは未制作。",
+        "全装備の先端・足元は画面内。指定余白の厳密な寸法と背面の構造は未検証。"
+      ],
+      "sourceGeneratedFile": "exec-ceb1ebf7-12cd-461a-afcb-a47fffe6ee4d.png",
+      "dimensions": [
+        1670,
+        941
+      ],
+      "sha256": "c39835c43b8818b02826e872a7f824bf88acee612dd4825fbc097c37c43f4291"
+    },
+    "availabilityNote": "材料は採集・採掘・虫取りのみ。級と狩場の解放は通常の進行に従う。高級素材点・虫取り・加工は未実装。"
+  },
+  {
+    "id": "gathering.silk_moth",
+    "sourceSpeciesId": null,
+    "no": 94,
+    "name": "繭紡",
+    "seriesName": "繭紡",
+    "nativeRank": 1,
+    "category": "insect",
+    "armorClass": "light",
+    "weaponProfile": "precision",
+    "elements": [
+      "none"
+    ],
+    "status": null,
+    "primarySkill": "insect_haste",
+    "secondarySkill": "stamina_recovery",
+    "skillParameters": {},
+    "palette": [
+      "灰白",
+      "淡い灰緑",
+      "褐色の糸"
+    ],
+    "silhouette": "密な繭糸の短い布と、折り畳んだ薄膜。肩から巨大な蝶の羽を開かない。",
+    "armorParts": {
+      "head": "短い繭布の頭巾に低い額板。顔の周りを厚く巻かない。",
+      "chest": "斜めの繭糸束を胸へ二筋。胴の裾は腰で止める。",
+      "arms": "薄い布籠手の上へ糸束三本。手の甲と指を空ける。",
+      "waist": "短い巻き布と二つの網袋。長い帯を垂らさない。",
+      "legs": "脛を覆う繭布と、小さな足の甲板。足首の折り目を残す。"
+    },
+    "weapons": {
+      "heavy_blade": {
+        "shape": "幅広く厚い片刃。繭糸で緊締した細い金属と積層木を芯に、峰から鍔へ細かい交差巻きと短い繭布を沿わせる。刃先は斜めに切り、握りを直線にする。",
+        "material": "繭糸で緊締した細い金属と積層木",
+        "gradeEvolution": {
+          "1": "太い繭糸の束と平織り。",
+          "2": "撚りを細かくし、武器柄を交差巻き。",
+          "3": "二層の布の間へ短い硬化繊維を入れる。",
+          "4": "表面を細かい綾織りにし、縁の糸だけ淡く反射。身体や武器を発光させない。"
+        }
+      },
+      "guard_blade": {
+        "shape": "短い片刃剣と独立した小盾。剣の峰と盾の外縁へ細かい交差巻きと短い繭布。盾は裏側の横握りを備え、剣と一体化しない。",
+        "material": "繭糸で緊締した細い金属と積層木",
+        "gradeEvolution": {
+          "1": "太い繭糸の束と平織り。",
+          "2": "撚りを細かくし、武器柄を交差巻き。",
+          "3": "二層の布の間へ短い硬化繊維を入れる。",
+          "4": "表面を細かい綾織りにし、縁の糸だけ淡く反射。身体や武器を発光させない。"
+        }
+      },
+      "war_maul": {
+        "shape": "柄の先に閉じた二つの硬い打面。繭糸で緊締した細い金属と積層木の重い芯を細かい交差巻きと短い繭布で囲う。太鼓膜・斧刃・開いた籠にはしない。",
+        "material": "繭糸で緊締した細い金属と積層木",
+        "gradeEvolution": {
+          "1": "太い繭糸の束と平織り。",
+          "2": "撚りを細かくし、武器柄を交差巻き。",
+          "3": "二層の布の間へ短い硬化繊維を入れる。",
+          "4": "表面を細かい綾織りにし、縁の糸だけ淡く反射。身体や武器を発光させない。"
+        }
+      },
+      "twin_blades": {
+        "shape": "同形の短い片刃を二本。細かい交差巻きと短い繭布を両方の背へ小さく付け、片方を盾や長剣にしない。",
+        "material": "繭糸で緊締した細い金属と積層木",
+        "gradeEvolution": {
+          "1": "太い繭糸の束と平織り。",
+          "2": "撚りを細かくし、武器柄を交差巻き。",
+          "3": "二層の布の間へ短い硬化繊維を入れる。",
+          "4": "表面を細かい綾織りにし、縁の糸だけ淡く反射。身体や武器を発光させない。"
+        }
+      },
+      "long_blade": {
+        "shape": "細く浅く反った片刃。細かい交差巻きと短い繭布は峰に低く沿わせ、長い切刃を連続させる。柄は両手を離して置ける長さ。",
+        "material": "繭糸で緊締した細い金属と積層木",
+        "gradeEvolution": {
+          "1": "太い繭糸の束と平織り。",
+          "2": "撚りを細かくし、武器柄を交差巻き。",
+          "3": "二層の布の間へ短い硬化繊維を入れる。",
+          "4": "表面を細かい綾織りにし、縁の糸だけ淡く反射。身体や武器を発光させない。"
+        }
+      },
+      "long_lance": {
+        "shape": "直線の長槍と独立した縦長の大盾。槍先は細い穂、盾面は細かい交差巻きと短い繭布を縦に並べる。槍を大剣や薙刀にしない。",
+        "material": "繭糸で緊締した細い金属と積層木",
+        "gradeEvolution": {
+          "1": "太い繭糸の束と平織り。",
+          "2": "撚りを細かくし、武器柄を交差巻き。",
+          "3": "二層の布の間へ短い硬化繊維を入れる。",
+          "4": "表面を細かい綾織りにし、縁の糸だけ淡く反射。身体や武器を発光させない。"
+        }
+      },
+      "ring_bow": {
+        "shape": "細い弓身、一本の弦、小さな照準環、別に一本の矢。細かい交差巻きと短い繭布を弓身へ低く沿わせる。円盤や環状の近接刃にはしない。",
+        "material": "繭糸で緊締した細い金属と積層木",
+        "gradeEvolution": {
+          "1": "太い繭糸の束と平織り。",
+          "2": "撚りを細かくし、武器柄を交差巻き。",
+          "3": "二層の布の間へ短い硬化繊維を入れる。",
+          "4": "表面を細かい綾織りにし、縁の糸だけ淡く反射。身体や武器を発光させない。"
+        }
+      }
+    },
+    "gradeAppearance": {
+      "1": "太い繭糸の束と平織り。",
+      "2": "撚りを細かくし、武器柄を交差巻き。",
+      "3": "二層の布の間へ短い硬化繊維を入れる。",
+      "4": "表面を細かい綾織りにし、縁の糸だけ淡く反射。身体や武器を発光させない。"
+    },
+    "mainMaterial": "スジハリ糸蛾の繭糸",
+    "supportMaterial": "スジユイの繊維",
+    "organMaterial": "風礫鉄鉱",
+    "materialChain": [
+      {
+        "rank": 1,
+        "id": "mat.equip.insect.thread_moth_silk",
+        "name": "スジハリ糸蛾の繭糸",
+        "fieldName": "風礫盆地",
+        "existingProposal": false,
+        "method": "虫取り",
+        "isImplemented": false
+      },
+      {
+        "rank": 2,
+        "id": "mat.equip.insect.wetedge_moth_silk",
+        "name": "湿縁糸蛾の繭糸",
+        "fieldName": "根絡み湿原",
+        "existingProposal": false,
+        "method": "虫取り",
+        "isImplemented": false
+      },
+      {
+        "rank": 3,
+        "id": "mat.equip.insect.frostcotton_silk",
+        "name": "霜綿糸蛾の繭糸",
+        "fieldName": "氷帆峡谷",
+        "existingProposal": false,
+        "method": "虫取り",
+        "isImplemented": false
+      },
+      {
+        "rank": 4,
+        "id": "mat.equip.insect.ringweave_silk",
+        "name": "環織糸蛾の繭糸",
+        "fieldName": "重霧環谷",
+        "existingProposal": false,
+        "method": "虫取り",
+        "isImplemented": false
+      }
+    ],
+    "rawRatio": 0.88,
+    "affinity": 15,
+    "defenseFactor": 0.9,
+    "artFile": "art/gathering/equipment_G08_silk_moth_v1.png",
+    "artPromptFile": "art/prompts/gathering_G08.json",
+    "artReview": {
+      "status": "reviewed",
+      "coverage": [
+        "5 armor slots",
+        "7 weapon groups",
+        "2 shields",
+        "twin blades pair",
+        "bow string/ring/arrow",
+        "complete blade/spear tips and boots"
+      ],
+      "limitations": [
+        "初級の比較原画。高級は形状仕様で定義、正投影・3Dは未制作。",
+        "全装備の先端・足元は画面内。指定余白の厳密な寸法と背面の構造は未検証。"
+      ],
+      "sourceGeneratedFile": "exec-5e3ce2d6-9f7e-4221-90bc-e5e8a62e3ce2.png",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "sha256": "2efa5857db2834cd14deb18b66855c9d5d947584ad95b2ae427a3a2eae47d1b7",
+      "notes": "太刀の繭糸巻きは峰側を意図する。切刃との境界と固定断面は個別設定図で確定する。"
+    },
+    "availabilityNote": "材料は採集・採掘・虫取りのみ。級と狩場の解放は通常の進行に従う。高級素材点・虫取り・加工は未実装。"
+  },
+  {
+    "id": "gathering.lantern_firefly",
+    "sourceSpeciesId": null,
+    "no": 95,
+    "name": "灯鞘",
+    "seriesName": "灯鞘",
+    "nativeRank": 1,
+    "category": "insect",
+    "armorClass": "light",
+    "weaponProfile": "raw",
+    "elements": [
+      "none"
+    ],
+    "status": null,
+    "primarySkill": "gather_sense",
+    "secondarySkill": "insect_haste",
+    "skillParameters": {},
+    "palette": [
+      "暗い灰緑",
+      "琥珀の小灯",
+      "黒褐"
+    ],
+    "silhouette": "細い虫の翅鞘と小さな灯嚢を保護枠へ収める。照明は道具と背面の小点に限定する。",
+    "armorParts": {
+      "head": "低い灰緑の帽に、小さな保護枠を額の片側へ。目の前に灯を置かない。",
+      "chest": "薄い胴衣に短い甲片。背面上部へ二つの小さな灯嚢ケース。",
+      "arms": "前腕に小甲の細列。右手首手前に小さい採集灯。",
+      "waist": "腰の後ろへ一つの保護灯。正面は平たい道具帯。",
+      "legs": "脛は暗い薄板。靴底・膝を光らせない。"
+    },
+    "weapons": {
+      "heavy_blade": {
+        "shape": "幅広く厚い片刃。小甲を被覆した細い金属芯と木材を芯に、峰から鍔へ保護枠に入れた小さな琥珀灯を沿わせる。刃先は斜めに切り、握りを直線にする。",
+        "material": "小甲を被覆した細い金属芯と木材",
+        "gradeEvolution": {
+          "1": "鈍い灯嚢一つを道具帯へ。",
+          "2": "灯嚢を保護ケースへ入れ、背面に二つへ分散。",
+          "3": "外へ漏れる光を絞り、弓の照準と柄の目印に小点。",
+          "4": "同じ数の灯を安定させる。光は索敵・採取補助の表現で、雷や霧属性ダメージにはしない。"
+        }
+      },
+      "guard_blade": {
+        "shape": "短い片刃剣と独立した小盾。剣の峰と盾の外縁へ保護枠に入れた小さな琥珀灯。盾は裏側の横握りを備え、剣と一体化しない。",
+        "material": "小甲を被覆した細い金属芯と木材",
+        "gradeEvolution": {
+          "1": "鈍い灯嚢一つを道具帯へ。",
+          "2": "灯嚢を保護ケースへ入れ、背面に二つへ分散。",
+          "3": "外へ漏れる光を絞り、弓の照準と柄の目印に小点。",
+          "4": "同じ数の灯を安定させる。光は索敵・採取補助の表現で、雷や霧属性ダメージにはしない。"
+        }
+      },
+      "war_maul": {
+        "shape": "柄の先に閉じた二つの硬い打面。小甲を被覆した細い金属芯と木材の重い芯を保護枠に入れた小さな琥珀灯で囲う。太鼓膜・斧刃・開いた籠にはしない。",
+        "material": "小甲を被覆した細い金属芯と木材",
+        "gradeEvolution": {
+          "1": "鈍い灯嚢一つを道具帯へ。",
+          "2": "灯嚢を保護ケースへ入れ、背面に二つへ分散。",
+          "3": "外へ漏れる光を絞り、弓の照準と柄の目印に小点。",
+          "4": "同じ数の灯を安定させる。光は索敵・採取補助の表現で、雷や霧属性ダメージにはしない。"
+        }
+      },
+      "twin_blades": {
+        "shape": "同形の短い片刃を二本。保護枠に入れた小さな琥珀灯を両方の背へ小さく付け、片方を盾や長剣にしない。",
+        "material": "小甲を被覆した細い金属芯と木材",
+        "gradeEvolution": {
+          "1": "鈍い灯嚢一つを道具帯へ。",
+          "2": "灯嚢を保護ケースへ入れ、背面に二つへ分散。",
+          "3": "外へ漏れる光を絞り、弓の照準と柄の目印に小点。",
+          "4": "同じ数の灯を安定させる。光は索敵・採取補助の表現で、雷や霧属性ダメージにはしない。"
+        }
+      },
+      "long_blade": {
+        "shape": "細く浅く反った片刃。保護枠に入れた小さな琥珀灯は峰に低く沿わせ、長い切刃を連続させる。柄は両手を離して置ける長さ。",
+        "material": "小甲を被覆した細い金属芯と木材",
+        "gradeEvolution": {
+          "1": "鈍い灯嚢一つを道具帯へ。",
+          "2": "灯嚢を保護ケースへ入れ、背面に二つへ分散。",
+          "3": "外へ漏れる光を絞り、弓の照準と柄の目印に小点。",
+          "4": "同じ数の灯を安定させる。光は索敵・採取補助の表現で、雷や霧属性ダメージにはしない。"
+        }
+      },
+      "long_lance": {
+        "shape": "直線の長槍と独立した縦長の大盾。槍先は細い穂、盾面は保護枠に入れた小さな琥珀灯を縦に並べる。槍を大剣や薙刀にしない。",
+        "material": "小甲を被覆した細い金属芯と木材",
+        "gradeEvolution": {
+          "1": "鈍い灯嚢一つを道具帯へ。",
+          "2": "灯嚢を保護ケースへ入れ、背面に二つへ分散。",
+          "3": "外へ漏れる光を絞り、弓の照準と柄の目印に小点。",
+          "4": "同じ数の灯を安定させる。光は索敵・採取補助の表現で、雷や霧属性ダメージにはしない。"
+        }
+      },
+      "ring_bow": {
+        "shape": "細い弓身、一本の弦、小さな照準環、別に一本の矢。保護枠に入れた小さな琥珀灯を弓身へ低く沿わせる。円盤や環状の近接刃にはしない。",
+        "material": "小甲を被覆した細い金属芯と木材",
+        "gradeEvolution": {
+          "1": "鈍い灯嚢一つを道具帯へ。",
+          "2": "灯嚢を保護ケースへ入れ、背面に二つへ分散。",
+          "3": "外へ漏れる光を絞り、弓の照準と柄の目印に小点。",
+          "4": "同じ数の灯を安定させる。光は索敵・採取補助の表現で、雷や霧属性ダメージにはしない。"
+        }
+      }
+    },
+    "gradeAppearance": {
+      "1": "鈍い灯嚢一つを道具帯へ。",
+      "2": "灯嚢を保護ケースへ入れ、背面に二つへ分散。",
+      "3": "外へ漏れる光を絞り、弓の照準と柄の目印に小点。",
+      "4": "同じ数の灯を安定させる。光は索敵・採取補助の表現で、雷や霧属性ダメージにはしない。"
+    },
+    "mainMaterial": "ヒカリモチ蛍の灯嚢",
+    "supportMaterial": "スジユイの繊維",
+    "organMaterial": "風礫鉄鉱",
+    "materialChain": [
+      {
+        "rank": 1,
+        "id": "mat.equip.insect.holding_light_sac",
+        "name": "ヒカリモチ蛍の灯嚢",
+        "fieldName": "風礫盆地",
+        "existingProposal": false,
+        "method": "虫取り",
+        "isImplemented": false
+      },
+      {
+        "rank": 2,
+        "id": "mat.equip.insect.dew_light_sac",
+        "name": "露灯蛍の灯嚢",
+        "fieldName": "根絡み湿原",
+        "existingProposal": false,
+        "method": "虫取り",
+        "isImplemented": false
+      },
+      {
+        "rank": 3,
+        "id": "mat.equip.insect.mist_light_sac",
+        "name": "霧灯蛍の灯嚢",
+        "fieldName": "霧灯樹海",
+        "existingProposal": false,
+        "method": "虫取り",
+        "isImplemented": false
+      },
+      {
+        "rank": 4,
+        "id": "mat.equip.insect.ring_light_sac",
+        "name": "環灯蛍の灯嚢",
+        "fieldName": "重霧環谷",
+        "existingProposal": false,
+        "method": "虫取り",
+        "isImplemented": false
+      }
+    ],
+    "rawRatio": 0.9,
+    "affinity": 0,
+    "defenseFactor": 0.9,
+    "artFile": "art/gathering/equipment_G09_lantern_firefly_v1.png",
+    "artPromptFile": "art/prompts/gathering_G09.json",
+    "artReview": {
+      "status": "reviewed",
+      "coverage": [
+        "5 armor slots",
+        "7 weapon groups",
+        "2 shields",
+        "twin blades pair",
+        "bow string/ring/arrow",
+        "complete blade/spear tips and boots"
+      ],
+      "limitations": [
+        "初級の比較原画。高級は形状仕様で定義、正投影・3Dは未制作。",
+        "全装備の先端・足元は画面内。指定余白の厳密な寸法と背面の構造は未検証。"
+      ],
+      "sourceGeneratedFile": "exec-583fd941-8892-4571-a053-2848c5fe075e.png",
+      "dimensions": [
+        1670,
+        941
+      ],
+      "sha256": "97dab336b8a8bf8f6d0620db3770d0cb7c4be9133040f32d9b86408932126943",
+      "notes": "灯嚢は小さな保護鞘に固定。発光は意匠であり、雷・霧属性や独立した照明効果は付与しない。"
+    },
+    "availabilityNote": "材料は採集・採掘・虫取りのみ。級と狩場の解放は通常の進行に従う。高級素材点・虫取り・加工は未実装。"
+  }
+]

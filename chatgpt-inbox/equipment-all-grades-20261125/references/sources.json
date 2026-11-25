@@ -1,0 +1,95 @@
+{
+  "sourceCommit": "1e078bfce1e68f287ae577cf41d2fe5bafb94afa",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/AGENTS.md",
+      "sha256": "33afce8aae68dad1a428fa8516c0e34f64738f3aea2644a9842c56066818e245"
+    },
+    {
+      "path": "docs/chatgpt-board.md",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/docs/chatgpt-board.md",
+      "sha256": "c808a6f1298cb8799c5662b30fa4ef53acae849761564e91eeca2271fede4a36"
+    },
+    {
+      "path": "public/data/bestiary.json",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/bestiary.json",
+      "sha256": "ce6e3c3e869e14d55342de8fb202628f94421c99f6b64664c5a18167b95c46eb"
+    },
+    {
+      "path": "public/data/ranks.json",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/ranks.json",
+      "sha256": "1103bf618ccd84e8a002a31754b8baf0fac6cba793d05da8d7aaf2f5b9bfda83"
+    },
+    {
+      "path": "public/data/weapons.json",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/weapons.json",
+      "sha256": "9dc926df758f90edabb5d565a51e9868ba4f26a075823c520785d911d124b78a"
+    },
+    {
+      "path": "public/data/armor.json",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/armor.json",
+      "sha256": "535e9ea4bf8bef96d05ca9fe86b625d201a72428cae77da9a4c3eed4a396ce6b"
+    },
+    {
+      "path": "public/data/recipes.json",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/recipes.json",
+      "sha256": "5b4b442f29a11bd2c4371c43076aca66e59811646c9a9f1e262f530a5bde464d"
+    },
+    {
+      "path": "public/data/items.json",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/items.json",
+      "sha256": "2ad7ab63948bc9ca83953d0d8d57236e5779701cc84ff1d1c2c93b215298514e"
+    },
+    {
+      "path": "public/data/items_creatures.json",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/items_creatures.json",
+      "sha256": "a03c16073e15cbd8e6e684a2a381ba7d75657d85060bbd567d3db575e6bb6430"
+    },
+    {
+      "path": "public/data/quests.json",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/quests.json",
+      "sha256": "21f36a3c22ecc4e5494f7f6f9ecfe5d3f7c31115123cce1d4b7104faf78c183c"
+    },
+    {
+      "path": "public/data/quests_creatures.json",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/quests_creatures.json",
+      "sha256": "d4a0ca4224861c127a7aac2f9c41982391c5481913152c5d0fc363f78fbb53c0"
+    },
+    {
+      "path": "public/data/quests_herds.json",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/quests_herds.json",
+      "sha256": "abfae54a6293d338dc395c8ded85e53013b6686ae13606cc9795ba85e271c1dd"
+    },
+    {
+      "path": "docs/elements.md",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/docs/elements.md",
+      "sha256": "fc269987416c53d43410195407cbb99ed5569d7bcea0c4a984dcf211e8a7f22d"
+    },
+    {
+      "path": "src/game/combat.ts",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/src/game/combat.ts",
+      "sha256": "dcdafad066edc6185844596c181a4e47b2ad25c21755e41cb5deb33ab4e9bca1"
+    },
+    {
+      "path": "src/game/player.ts",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/src/game/player.ts",
+      "sha256": "f81030ea68a12b7796f567a5334dd24c6ac1bebfec1e6302b8cd6fc92d8744aa"
+    },
+    {
+      "path": "src/save/profile.ts",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/src/save/profile.ts",
+      "sha256": "72acae9f293db111092289ea23e5542a16e383365e5c97bd046b3e199c3d4b91"
+    },
+    {
+      "path": "src/render/hunterArmor.ts",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/src/render/hunterArmor.ts",
+      "sha256": "e135e7f3de46934e6d6a8a0dacc340962d59a53c2fd1c6937f2f569c9146a642"
+    },
+    {
+      "path": "docs/source/chatgpt-quest-design-20261125/resources_v2.json",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/docs/source/chatgpt-quest-design-20261125/resources_v2.json",
+      "sha256": "7a08d9c9d888711d7031f88de0265ee88f98247ef67fe6527a1b5366efd81772"
+    }
+  ]
+}

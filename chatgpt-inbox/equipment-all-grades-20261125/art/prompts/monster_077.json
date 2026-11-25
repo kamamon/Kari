@@ -1,0 +1,38 @@
+{
+  "mode": "built-in image_gen",
+  "no": 77,
+  "seriesId": "series.ludopanea",
+  "prompt": "Use case: stylized-concept. Create ONE professional ORIGINAL hunting-equipment family concept sheet for VEILBOUND HUNTERS. Landscape 3:2, warm ivory background, no scenery, no watermark, restrained realistic hand-painted materials, aged bronze fittings and dark leather. Reference image 1 is the approved art direction. Reference image 2 is the source creature; derive materials and asymmetry but do NOT draw a creature or turn the human into that creature.\nCOMPOSITION: LEFT 30 percent: one complete adult neutral human mannequin wearing all five armor regions, head to boots fully visible, relaxed upright stance, empty hands, front three-quarter view. Practical closed clothing, MANDATORY LOW HELMET fully covering the crown and forehead, NO visible hair and no bare head, readable joints. Never omit head armor. RIGHT 70 percent: exactly SEVEN cleanly separated weapon groups in two rows, each complete with generous gaps, no cropping. Top row 01-04; bottom row 05-07. Only text is small labels 01,02,03,04,05,06,07 below corresponding groups. Each group keeps its recognizable form:\n01 enormous broad single-edge slab greatsword; 02 compact SINGLE-EDGE sword AND a separate shield; 03 long-handled heavy blunt maul with a CLOSED HARD BONE impact face, NOT a drum; 04 TWO matching short blades; 05 long slim curved single-edge sword; 06 straight long lance AND a separate tall shield; 07 bow with an actual string, small separate aiming ring, AND one arrow. No firearms, scythes, axes, duplicate groups, magical floating parts. Armor mannequin holds none of these.\nSOURCE SERIES 077: ルドパネア / 孔顎獣. Native grade: 4. This sheet shows ONLY this native-grade design. Palette: 灰青 / 淡灰 / 暗い青銅.\nArmor silhouette: 灰青の穴あき短板を顎から胸へ二枚垂らし、後ろ腰を少し高くする。孔の縁は暗い青銅色にする。\nArmor five regions: head: 顎下へ二枚の穴あき短板を垂らす低い兜; chest: 孔顎帆を胸上へ短く重ねた灰青胴; arms: 孔を肘外の小板だけへ置く軽い腕甲; waist: 後ろを少し高くする淡水靭皮の腰帯; legs: 細脚腱を編んだ細い脛当て\nDistinct weapons: 01 孔のある帆を峰の根元へ寄せた大剣; 02 短い孔顎片刃と二枚の穴あき盾; 03 氷孔骨を硬質の平面へ閉じた軽槌; 04 孔の縁を内側に残す短い双刃; 05 細脚腱の筋に沿う細長い曲刀; 06 氷孔骨の直槍と二枚の孔帆盾; 07 氷孔骨を上下へ分けた細弓、孔は弓身の根元のみ\nPreserve the specifically stated anatomical LEFT and RIGHT of the WEARER. Keep shoulder and waist protrusions restrained for movement. Helmets, both hands, boots, blade tips, bowstring, shields and spear point fully inside the canvas. Original visual language, avoid any recognizable existing franchise designs. Clear fabrication joints, few broad forms, no dense filigree. This is concept art, not a precise orthographic production drawing.\nThe style board is ONLY a rendering style reference. Do not reuse the stone armor, bare-headed man or stone weapon material from it. The creature materials and the species-specific armor silhouette dominate this sheet.\nFRAMING: put every object entirely within the inner 85 percent of the canvas with at least 80 pixels empty margin on every outer edge. Scale down the largest sword, spear and human as needed. Every blade tip and every boot must be visible with clear empty space around it; never touch or crop at the canvas boundary.",
+  "referenceRoles": [
+    "approved style board",
+    "source creature material and silhouette reference"
+  ],
+  "referencePaths": [
+    "art-source/board/style_board_v2.png",
+    "art-source/monster/concepts/monster_077_ludopanea_concept_v1.png"
+  ],
+  "output": "art/monsters/equipment_077_ludopanea_v1.png",
+  "transparent_background": false,
+  "finalSourcePath": "exec-edfa2b09-277d-4d18-8687-9ab9b4146cd0.png",
+  "review": {
+    "generated": true,
+    "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+    "notVerified": [
+      "正投影",
+      "寸法",
+      "背面",
+      "共通リグ干渉",
+      "ゲーム内描画"
+    ],
+    "revision": 1,
+    "sevenWeaponGroupsVisible": true,
+    "fiveArmorRegionsVisible": true,
+    "clippingObserved": false,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "sha256": "0fbfec54c815f78c3e2698eed633ac203cddec30ecf84c7aa6a2975e51208788",
+    "notes": "全7武器群・防具5部位を視認。顎から胸上へ短く下がる2枚の有孔板、暗青銅の孔縁、細い脛を確認。両盾と弓根元の孔、槌の閉じた硬質面、弓弦・矢・照準環あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80px未達。後腰の高さと孔周辺の厚さは背面・断面図で要確認。"
+  }
+}

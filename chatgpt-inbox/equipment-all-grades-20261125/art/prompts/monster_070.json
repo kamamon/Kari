@@ -1,0 +1,39 @@
+{
+  "mode": "built-in image_gen",
+  "no": 70,
+  "seriesId": "series.kitolnam",
+  "prompt": "Use case: stylized-concept. Create ONE professional ORIGINAL hunting-equipment family concept sheet for VEILBOUND HUNTERS. Landscape 3:2, warm ivory background, no scenery, no watermark, restrained realistic hand-painted materials, aged bronze fittings and dark leather. Reference image 1 is the approved art direction. Reference image 2 is the source creature; derive materials and asymmetry but do NOT draw a creature or turn the human into that creature.\nCOMPOSITION: LEFT 30 percent: one complete adult neutral human mannequin wearing all five armor regions, head to boots fully visible, relaxed upright stance, empty hands, front three-quarter view. Practical closed clothing, MANDATORY LOW HELMET fully covering the crown and forehead, NO visible hair and no bare head, readable joints. Never omit head armor. RIGHT 70 percent: exactly SEVEN cleanly separated weapon groups in two rows, each complete with generous gaps, no cropping. Top row 01-04; bottom row 05-07. Only text is small labels 01,02,03,04,05,06,07 below corresponding groups. Each group keeps its recognizable form:\n01 enormous broad single-edge slab greatsword; 02 compact SINGLE-EDGE sword AND a separate shield; 03 long-handled heavy blunt maul with a CLOSED HARD BONE impact face, NOT a drum; 04 TWO matching short blades; 05 long slim curved single-edge sword; 06 straight long lance AND a separate tall shield; 07 bow with an actual string, small separate aiming ring, AND one arrow. No firearms, scythes, axes, duplicate groups, magical floating parts. Armor mannequin holds none of these.\nSOURCE SERIES 070: キトルナム / 重氷蛇. Native grade: 4. This sheet shows ONLY this native-grade design. Palette: 灰青 / 白灰 / 青銅.\nArmor silhouette: 灰青の低い折板を左右ずらして肩へ重ね、背中の中央を空ける。後ろの腰だけに短い霧滴形を下げる。\nArmor five regions: head: 短い折氷帆を左右ずらした低い兜; chest: 背中中央を空けて折板を両脇に沿わせる; arms: 肩の低い折板と手首を空ける短い籠手; waist: 後腰だけに短い霧滴形を三つ置く; legs: 関節をまたがない折帆の脛甲\nDistinct weapons: 01 内側に折れた氷帆を峰へ低く重ねる大剣; 02 ずれた二枚の片刃と屋根形の薄盾; 03 重冷晶を角丸の折板で閉じた槌; 04 折帆の先端を低く曲げた同形双刃; 05 交互に低い折帆を置いた細い曲刀; 06 冷霧管を穂元へ収める直槍と片屋根形盾; 07 内側へ折れた二つの弓身と中央の細い骨芯\nPreserve the specifically stated anatomical LEFT and RIGHT of the WEARER. Keep shoulder and waist protrusions restrained for movement. Helmets, both hands, boots, blade tips, bowstring, shields and spear point fully inside the canvas. Original visual language, avoid any recognizable existing franchise designs. Clear fabrication joints, few broad forms, no dense filigree. This is concept art, not a precise orthographic production drawing.\nThe style board is ONLY a rendering style reference. Do not reuse the stone armor, bare-headed man or stone weapon material from it. The creature materials and the species-specific armor silhouette dominate this sheet.\nFRAMING: put every object entirely within the inner 85 percent of the canvas with at least 80 pixels empty margin on every outer edge. Scale down the largest sword, spear and human as needed. Every blade tip and every boot must be visible with clear empty space around it; never touch or crop at the canvas boundary.",
+  "referenceRoles": [
+    "approved style board",
+    "source creature material and silhouette reference"
+  ],
+  "referencePaths": [
+    "art-source/board/style_board_v2.png",
+    "art-source/monster/concepts/monster_070_kitolnam_concept_v1.png"
+  ],
+  "output": "art/monsters/equipment_070_kitolnam_v2.png",
+  "transparent_background": false,
+  "revisionPrompt": "Remove ONLY the three long pointed ice-drop pendants hanging from the FRONT of the human waist belt. Restore ordinary plain ivory/brown layered cloth beneath that front belt. The design places three short drops at the REAR waist, which need not be visible from this front three-quarter angle. Do not put any drops or long crystals on the front, shoulders, or head. Keep the helmet, armor, all seven numbered weapon groups, proportions, colors and entire layout unchanged.",
+  "finalSourcePath": "exec-ef64be60-aeee-47b3-bdc0-f083d3083d67.png",
+  "review": {
+    "generated": true,
+    "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+    "notVerified": [
+      "正投影",
+      "寸法",
+      "背面",
+      "共通リグ干渉",
+      "ゲーム内描画"
+    ],
+    "revision": 2,
+    "sevenWeaponGroupsVisible": true,
+    "fiveArmorRegionsVisible": true,
+    "clippingObserved": false,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "sha256": "fe7ea92f2b5e46405103cf8242e87601297309d4e232249efbc20fec04f4a2c3",
+    "notes": "全7武器群・防具5部位を視認。剣先、槍先、弓端、足先の欠損なし。前腰の誤った3本の氷滴を除去し、素布へ修正済み。後腰の短い3滴はこの角度では見えず背面図で要確認。余白80pxは断岳剣上端で未達だが切れなし。"
+  }
+}

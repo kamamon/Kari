@@ -1,0 +1,38 @@
+{
+  "mode": "built-in image_gen",
+  "no": 86,
+  "seriesId": "series.towalsem",
+  "prompt": "Use case: stylized-concept. Create ONE professional ORIGINAL hunting-equipment family concept sheet for VEILBOUND HUNTERS. Landscape 3:2, warm ivory background, no scenery, no watermark, restrained realistic hand-painted materials, aged bronze fittings and dark leather. Reference image 1 is the approved art direction. Reference image 2 is the source creature; derive materials and asymmetry but do NOT draw a creature or turn the human into that creature.\nCOMPOSITION: LEFT 30 percent: one complete adult neutral human mannequin wearing all five armor regions, head to boots fully visible, relaxed upright stance, empty hands, front three-quarter view. Practical closed clothing, MANDATORY LOW HELMET fully covering the crown and forehead, NO visible hair and no bare head, readable joints. Never omit head armor. RIGHT 70 percent: exactly SEVEN cleanly separated weapon groups in two rows, each complete with generous gaps, no cropping. Top row 01-04; bottom row 05-07. Only text is small labels 01,02,03,04,05,06,07 below corresponding groups. Each group keeps its recognizable form:\n01 enormous broad single-edge slab greatsword; 02 compact SINGLE-EDGE sword AND a separate shield; 03 long-handled heavy blunt maul with a CLOSED HARD BONE impact face, NOT a drum; 04 TWO matching short blades; 05 long slim curved single-edge sword; 06 straight long lance AND a separate tall shield; 07 bow with an actual string, small separate aiming ring, AND one arrow. No firearms, scythes, axes, duplicate groups, magical floating parts. Armor mannequin holds none of these.\nSOURCE SERIES 086: トワルセム / 冷滴蛇. Native grade: 4. This sheet shows ONLY this native-grade design. Palette: 灰青 / 白灰 / 鈍い青銅.\nArmor silhouette: 背は灰青の滑らかな面にし、腰の後ろだけ三つの短い雫形を下げる。肩や頭には大きな氷板を付けない。\nArmor five regions: head: 滑甲を低くまとめた灰青の兜; chest: 背を滑らかな一枚面に見せる薄胴; arms: 大きい氷板を付けない細い腕甲; waist: 後腰だけに三つの短い雫形を並べる; legs: 支持尾骨を縦に分けた細い脛当て\nDistinct weapons: 01 小さな雫冷晶を峰の溝へ分散した薄い大剣; 02 滑甲の片刃と三つの小滴を内側へ収める盾; 03 支持尾骨で冷晶を閉じた丸い硬質槌; 04 三つの晶粒を柄元に分けた短い双刃; 05 滑背皮の筋を峰へ写す細い氷刀; 06 支持尾骨の直槍と滑らかな細盾; 07 支持尾骨の細い弓身、握り下に短い三滴容器\nPreserve the specifically stated anatomical LEFT and RIGHT of the WEARER. Keep shoulder and waist protrusions restrained for movement. Helmets, both hands, boots, blade tips, bowstring, shields and spear point fully inside the canvas. Original visual language, avoid any recognizable existing franchise designs. Clear fabrication joints, few broad forms, no dense filigree. This is concept art, not a precise orthographic production drawing.\nThe style board is ONLY a rendering style reference. Do not reuse the stone armor, bare-headed man or stone weapon material from it. The creature materials and the species-specific armor silhouette dominate this sheet.\nFRAMING: put every object entirely within the inner 85 percent of the canvas with at least 80 pixels empty margin on every outer edge. Scale down the largest sword, spear and human as needed. Every blade tip and every boot must be visible with clear empty space around it; never touch or crop at the canvas boundary.\nCRITICAL 086 BODY RULE: smooth low gray-blue armor, NEVER tall ice plates, crystals or spikes on the head or shoulders. The helmet is low and smooth. Exactly three SHORT icy drops are attached ONLY to the REAR waist belt, behind the body. The front waist must have plain leather and cloth with NO ice drops, NO icicles and NO dangling crystals. From the required FRONT three-quarter view those rear three drops may be naturally hidden; do not move them into view at the front or side. Rear placement takes priority over visibility. The back silhouette remains smooth.",
+  "referenceRoles": [
+    "approved style board",
+    "source creature material and silhouette reference"
+  ],
+  "referencePaths": [
+    "art-source/board/style_board_v2.png",
+    "art-source/monster/concepts/monster_086_towalsem_concept_v1.png"
+  ],
+  "output": "art/monsters/equipment_086_towalsem_v1.png",
+  "transparent_background": false,
+  "finalSourcePath": "exec-d099e106-6b74-4ddc-a318-e6bee399dc61.png",
+  "review": {
+    "generated": true,
+    "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+    "notVerified": [
+      "正投影",
+      "寸法",
+      "背面",
+      "共通リグ干渉",
+      "ゲーム内描画"
+    ],
+    "revision": 1,
+    "sevenWeaponGroupsVisible": true,
+    "fiveArmorRegionsVisible": true,
+    "clippingObserved": false,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "sha256": "96359ad014c81c7563b73e28536f90c60e0f5f21e2e981d7dececaccbf347645",
+    "notes": "全7武器群・防具5部位を視認。低く滑らかな兜、小さい肩甲、氷滴のない前腰を確認。後腰専用3滴はこの前方角度で隠れており背面図で要確認。護刃盾の内部3滴、双剣根元の小晶粒、弓握り下の短い3滴容器、弓弦・矢・照準環あり。槌は丸い閉鎖硬質面。頭肩に大きい氷板や棘なし。剣先、槍先、足先の欠損なし。断岳剣上端の余白80pxは未達。"
+  }
+}

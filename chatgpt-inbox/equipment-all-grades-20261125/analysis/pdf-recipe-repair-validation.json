@@ -1,0 +1,25 @@
+{
+  "validationType": "Galdros page 12 missing-rank recipe display repair",
+  "originalFile": "Kari_All_Equipment_v2.pdf",
+  "originalSha256": "82c10ea23e26f7fed957a05e19887cc19ee7eb57a1c341ae26cec72be79b2487",
+  "repairedFile": "Kari_All_Equipment_v2_repaired.pdf",
+  "repairedSha256": "dee6da5a0951824126d22902397caecfc28612130f05b1caa61adc28284ed6f0",
+  "repairedPage": 12,
+  "previouslyMissingRecipeRanks": [
+    "上級",
+    "極級"
+  ],
+  "change": "Compact material labels render all four ranks without dropping the upper two rows.",
+  "equipmentDataChanged": false,
+  "recipeGradeRowsChecked": 250,
+  "galdrosRecipesChecked": 48,
+  "checks": {
+    "pageCount200": true,
+    "other199PageContentStreamsUnchanged": true,
+    "other199PageTextAndPositionsUnchanged": true,
+    "allLinksUnchanged": true,
+    "all250RecipeGradeRowsPresent": true,
+    "galdros48RecipeQuantitiesPresent": true
+  },
+  "passed": true
+}

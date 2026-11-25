@@ -1,0 +1,688 @@
+{
+  "scope": "No.059–079 final native-rank representative concept sheets",
+  "metadataSeriesCount": 28,
+  "completedSheets": 21,
+  "reassignedArtNumbers": [
+    80,
+    81,
+    82,
+    83
+  ],
+  "checks": "All 21 PNGs decode, final source paths exist, unique hashes match JSON, prompt outputs/reviews match, reviewed seven weapon groups/five armor regions/no cropping flags true. Review limitations remain recorded per sheet.",
+  "errors": [],
+  "files": [
+    {
+      "no": 59,
+      "name": "ヤルシェナ",
+      "artFile": "art/monsters/equipment_059_yarlshena_v3.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "dcf4a4d228d3b2110999c495ee35021ea1689f1f6c8bb896612dd7b040cbd511",
+      "bytes": 1828485,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 3,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "notes": "v1の兜欠落をv2で修正し、最終拡大確認で発見した01断岳剣先の上端見切れをv3で修正。全体を内側へ縮小配置し、01〜07全武器群、独立した両盾、双剣2本、弓弦・矢・照準環、兜から足まで5防具部位を視認。全先端がキャンバス内に入り欠損なし。鞍膜の取付構造と素材断面は追加設定図で確認。",
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "dcf4a4d228d3b2110999c495ee35021ea1689f1f6c8bb896612dd7b040cbd511"
+      }
+    },
+    {
+      "no": 60,
+      "name": "ピゼルタ",
+      "artFile": "art/monsters/equipment_060_pizelta_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "9f731d30a3245877c54fa3c7d3035281110de347b85a5e6f33bf81c9da54add8",
+      "bytes": 2011390,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "9f731d30a3245877c54fa3c7d3035281110de347b85a5e6f33bf81c9da54add8",
+        "notes": "01〜07全群、護刃/槍の別盾、弓弦と矢、兜から扇趾の脚までを確認。先端の欠損なし。余白80pxは一部で未達だが切れなし。三葉板と低い肩の方向が読める。"
+      }
+    },
+    {
+      "no": 61,
+      "name": "ダモリクス",
+      "artFile": "art/monsters/equipment_061_damorikus_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "02d159f01e521000565dbe3c5b5202010b1eba5533f1c3506e1b9cfa84caf0b7",
+      "bytes": 2070604,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "02d159f01e521000565dbe3c5b5202010b1eba5533f1c3506e1b9cfa84caf0b7",
+        "notes": "全7武器群・両盾・弓弦と矢、全身5部位を視認。左の壺甲と細い右側が識別可能。剣先・槍先・靴に欠損なし。壺甲は肩寄りの表現であり前腕への詳細配置と盾内部は追加設定図で確認。"
+      }
+    },
+    {
+      "no": 62,
+      "name": "イサルネム",
+      "artFile": "art/monsters/equipment_062_isarnem_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "c9d50881090693f86fa7e275c1833b4edbb03f255f8a5fa2c8901c146ef45c42",
+      "bytes": 1960199,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "c9d50881090693f86fa7e275c1833b4edbb03f255f8a5fa2c8901c146ef45c42",
+        "notes": "全7武器群と5防具部位、三枚帽殻と片胸の小熱房を確認。双剣2本、両盾、弓弦と矢が分離。剣/槍/靴の先端に欠損なし。兜が深めなので視野と寸法は設定図で調整。"
+      }
+    },
+    {
+      "no": 63,
+      "name": "レグサニオ",
+      "artFile": "art/monsters/equipment_063_regsanio_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "af66e6c4bc2a669ffb0b6a5b148a2ad05296a25e19d9f0435189ad88f913c0a6",
+      "bytes": 2034799,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "af66e6c4bc2a669ffb0b6a5b148a2ad05296a25e19d9f0435189ad88f913c0a6",
+        "notes": "7武器群と5防具部位、左肩の盤と細い右肩、両盾、弓弦を確認。全先端と足先に欠損なし。背側二列骨と円盤の厚さは追加設定図で確認。"
+      }
+    },
+    {
+      "no": 64,
+      "name": "ルペニアス",
+      "artFile": "art/monsters/equipment_064_rupenias_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "409884e6293e554b304708e576434b2405974222e5f293bf933622112dba025b",
+      "bytes": 2053346,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "409884e6293e554b304708e576434b2405974222e5f293bf933622112dba025b",
+        "notes": "7武器群と5防具部位、胸側/背側へずれた二つの袋を確認。槌の硬い閉鎖打面、両盾、弓弦と矢、全先端の欠損なし。袋の前後距離と肩の可動は共通リグで確認。"
+      }
+    },
+    {
+      "no": 65,
+      "name": "ソグラピン",
+      "artFile": "art/monsters/equipment_065_sograpin_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "d84bb846e505b2dfdb5bc95e990d3e4d883873e70af61f936d1661c9c25adb22",
+      "bytes": 2014246,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "d84bb846e505b2dfdb5bc95e990d3e4d883873e70af61f936d1661c9c25adb22",
+        "notes": "7武器群と5部位、四角い刻印/槌打面/脚先の溝を視認。両盾、弓弦と矢があり先端欠損なし。踵の後方突出と足裏は追加設定図で確認。"
+      }
+    },
+    {
+      "no": 66,
+      "name": "マクエジラ",
+      "artFile": "art/monsters/equipment_066_makuejira_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "0f83ca468d8d429a86c18dfde30b600590f12e4a1e029e6cb90bd8ab2205781d",
+      "bytes": 1997848,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "0f83ca468d8d429a86c18dfde30b600590f12e4a1e029e6cb90bd8ab2205781d",
+        "notes": "7群と5部位、梯胸骨と下折れ肩先、両盾、双剣2本、弓弦/矢を確認。先端欠損なし。槌の打面と骨の中空断面は追加設定図で確認。"
+      }
+    },
+    {
+      "no": 67,
+      "name": "グメサルド",
+      "artFile": "art/monsters/equipment_067_gumesald_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "7aa1206d43e7bf77ab51fffc132f0325d0981ee208b645871108593be3847677",
+      "bytes": 2047778,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "7aa1206d43e7bf77ab51fffc132f0325d0981ee208b645871108593be3847677",
+        "notes": "7群と5部位、左肩から腰の段橋甲と継ぎ目だけの琥珀線を確認。両盾、弓弦と矢、全先端に欠損なし。兜視野・肩突出量・胸の重なりは共通リグと正投影で確認。"
+      }
+    },
+    {
+      "no": 68,
+      "name": "ネリカウス",
+      "artFile": "art/monsters/equipment_068_nericaus_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "c92b3972254a8283c9d7dbaf901b566f785cd30610b69477df1dcd38d85dc122",
+      "bytes": 1943552,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "c92b3972254a8283c9d7dbaf901b566f785cd30610b69477df1dcd38d85dc122",
+        "notes": "7武器群と5部位、右腰の開いた輪と下半分の灯点を視認。両盾、双剣2本、弓弦/矢に欠損なし。輪の後腰への正確な取付位置、前面灯点の範囲は背面設定図で調整。"
+      }
+    },
+    {
+      "no": 69,
+      "name": "ヴォルテナ",
+      "artFile": "art/monsters/equipment_069_voltena_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "e9b5b1efef3515e20c25fa62ed86a06c49b538f73dbcf96f710f825b17747bcd",
+      "bytes": 1976689,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "e9b5b1efef3515e20c25fa62ed86a06c49b538f73dbcf96f710f825b17747bcd",
+        "notes": "7群と5部位、左肩の三段灰紫帷と細い右腕を確認。両盾、双剣2本、弓弦と矢、全先端に欠損なし。布の層厚・滴金具の揺れ・背面は追加確認。"
+      }
+    },
+    {
+      "no": 70,
+      "name": "キトルナム",
+      "artFile": "art/monsters/equipment_070_kitolnam_v2.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "fe7ea92f2b5e46405103cf8242e87601297309d4e232249efbc20fec04f4a2c3",
+      "bytes": 1939617,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 2,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "fe7ea92f2b5e46405103cf8242e87601297309d4e232249efbc20fec04f4a2c3",
+        "notes": "全7武器群・防具5部位を視認。剣先、槍先、弓端、足先の欠損なし。前腰の誤った3本の氷滴を除去し、素布へ修正済み。後腰の短い3滴はこの角度では見えず背面図で要確認。余白80pxは断岳剣上端で未達だが切れなし。"
+      }
+    },
+    {
+      "no": 71,
+      "name": "セオルミド",
+      "artFile": "art/monsters/equipment_071_segranio_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "aaa124cdd6d441c83a7bb53edf28bee647bf795033704ed44547f5505b723223",
+      "bytes": 1931031,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "aaa124cdd6d441c83a7bb53edf28bee647bf795033704ed44547f5505b723223",
+        "notes": "全7武器群・防具5部位を視認。低い兜、襟後方の大小2環、胸下の琥珀灯を確認。弓弦・矢・独立照準環あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80pxは未達。後部2環の留め具は背面図で確認を要する。"
+      }
+    },
+    {
+      "no": 72,
+      "name": "デコランゼ",
+      "artFile": "art/monsters/equipment_072_dekoranze_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "8b6706c4aecd9170e5a732bdede50dd395d8052024e62d5ace4fbef952ff266e",
+      "bytes": 2119804,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "8b6706c4aecd9170e5a732bdede50dd395d8052024e62d5ace4fbef952ff266e",
+        "notes": "全7武器群・防具5部位を視認。装着者の右腰と右脛の段畝を厚く、左脚を細くした非対称を確認。槌は閉じた平打面。弓弦・矢・照準環あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80pxは未達。厚皮の屈曲断面と熱筋の裏面配置は別図で要確認。"
+      }
+    },
+    {
+      "no": 73,
+      "name": "フサルドム",
+      "artFile": "art/monsters/equipment_073_fusaldom_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "92cb1ac571addd2d4e3811348caa1f2c0a3274e05bf3aa70798b8e4162f0ebed",
+      "bytes": 2061782,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "92cb1ac571addd2d4e3811348caa1f2c0a3274e05bf3aa70798b8e4162f0ebed",
+        "notes": "全7武器群・防具5部位を視認。肩に水平の氷礁板、低い兜と細い下肢を確認。槌の硬い閉鎖打面、双剣2本、剣盾2群、弓弦・矢・照準環あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80px未達。肩板の左右高低差は小さく、可動時の干渉と正確な高さは別図で要確認。"
+      }
+    },
+    {
+      "no": 74,
+      "name": "リムポセラ",
+      "artFile": "art/monsters/equipment_074_rimposera_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "0a4e84b263c0e6a37b7f54916e7afa5589f71290780431bf87612ec62a49841c",
+      "bytes": 2058390,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "0a4e84b263c0e6a37b7f54916e7afa5589f71290780431bf87612ec62a49841c",
+        "notes": "全7武器群・防具5部位を視認。低い濾水兜、四室の腹甲、腰の生成り袋、弓握りの小容器を確認。前側2袋を視認し、後側2袋と平たい背板は背面図で要確認。槌は閉じた四室形の打面。剣先、槍先、足先に欠損なし。断岳剣上端の余白80pxは未達。"
+      }
+    },
+    {
+      "no": 75,
+      "name": "ダルホイナ",
+      "artFile": "art/monsters/equipment_075_dalhoina_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "5c2cd4106b12bf72e79c9189ad68b39acd3498bd8dcc6e155247c1a9da649de8",
+      "bytes": 2016722,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "5c2cd4106b12bf72e79c9189ad68b39acd3498bd8dcc6e155247c1a9da649de8",
+        "notes": "全7武器群・防具5部位を視認。胸の横長三梁、兜・籠手の中空孔、槌の閉じた硬骨面を確認。太刀は切先を下に置いた配置で全体が入っている。弓は三梁腱の弦が複数線で表現され、照準環と矢が独立。剣先、槍先、足先の欠損なし。断岳剣上端の余白80pxは未達。背腰の短さと肩可動域は別図で要確認。"
+      }
+    },
+    {
+      "no": 76,
+      "name": "ゾニケバル",
+      "artFile": "art/monsters/equipment_076_zonikebal_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "fad97b2fe6c91dce1d2901ada82e15a886a9896da63ac932782b49f90f8b9729",
+      "bytes": 2045311,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "fad97b2fe6c91dce1d2901ada82e15a886a9896da63ac932782b49f90f8b9729",
+        "notes": "全7武器群・防具5部位を視認。胸の縦2枚、装着者右側の琥珀縁と左側の青銅縁、高い肩と低い腰を確認。槌は硬い閉鎖面。長尖槍の穂元熱電部と弓握りの内側灯、弓弦・矢・照準環あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80px未達。背面接地尾板と肩干渉は別図で要確認。"
+      }
+    },
+    {
+      "no": 77,
+      "name": "ルドパネア",
+      "artFile": "art/monsters/equipment_077_ludopanea_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "0fbfec54c815f78c3e2698eed633ac203cddec30ecf84c7aa6a2975e51208788",
+      "bytes": 1982406,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "0fbfec54c815f78c3e2698eed633ac203cddec30ecf84c7aa6a2975e51208788",
+        "notes": "全7武器群・防具5部位を視認。顎から胸上へ短く下がる2枚の有孔板、暗青銅の孔縁、細い脛を確認。両盾と弓根元の孔、槌の閉じた硬質面、弓弦・矢・照準環あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80px未達。後腰の高さと孔周辺の厚さは背面・断面図で要確認。"
+      }
+    },
+    {
+      "no": 78,
+      "name": "サルピノク",
+      "artFile": "art/monsters/equipment_078_salpinoc_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "1565595b36fe11557aa7098fbabb27f167a0f808630a886d10101698060cedb0",
+      "bytes": 2062222,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "1565595b36fe11557aa7098fbabb27f167a0f808630a886d10101698060cedb0",
+        "notes": "全7武器群・防具5部位を視認。装着者左肩の高い縦板と右籠手の厚い甲、自由な手指を確認。灰紫の短い溝と腰の小容器、弓握りの圧露管あり。槌は閉じた鋏芯形の硬質面。剣先、槍先、足先の欠損なし。断岳剣上端の余白80px未達。縦肩板の横方向可動と右手首の干渉は別図で要確認。"
+      }
+    },
+    {
+      "no": 79,
+      "name": "ヘムザリオ",
+      "artFile": "art/monsters/equipment_079_hemzario_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "a9390c007033e1ddaee317e729cb4d340c4b22f9a265f9ebbb5e8e735cb65e87",
+      "bytes": 2028650,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "a9390c007033e1ddaee317e729cb4d340c4b22f9a265f9ebbb5e8e735cb65e87",
+        "notes": "全7武器群・防具5部位を視認。兜の低い三節額、胴の三段甲、太刀の低い峰節を確認。槌は連額甲を閉じた硬質面。弓弦・矢・照準環あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80px未達。後腰の折れ甲は背面図で確認を要する。"
+      }
+    }
+  ],
+  "additionalCompletedReport": "references/art-review-084-086.json"
+}

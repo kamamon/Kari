@@ -1,0 +1,45 @@
+{
+  "mode": "built-in image_gen",
+  "no": 85,
+  "seriesId": "series.nucbarea",
+  "prompt": "Use case: stylized-concept. Create ONE professional ORIGINAL hunting-equipment family concept sheet for VEILBOUND HUNTERS. Landscape 3:2, warm ivory background, no scenery, no watermark, restrained realistic hand-painted materials, aged bronze fittings and dark leather. Reference image 1 is the approved art direction. Reference image 2 is the source creature; derive materials and asymmetry but do NOT draw a creature or turn the human into that creature.\nCOMPOSITION: LEFT 30 percent: one complete adult neutral human mannequin wearing all five armor regions, head to boots fully visible, relaxed upright stance, empty hands, front three-quarter view. Practical closed clothing, MANDATORY LOW HELMET fully covering the crown and forehead, NO visible hair and no bare head, readable joints. Never omit head armor. RIGHT 70 percent: exactly SEVEN cleanly separated weapon groups in two rows, each complete with generous gaps, no cropping. Top row 01-04; bottom row 05-07. Only text is small labels 01,02,03,04,05,06,07 below corresponding groups. Each group keeps its recognizable form:\n01 enormous broad single-edge slab greatsword; 02 compact SINGLE-EDGE sword AND a separate shield; 03 long-handled heavy blunt maul with a CLOSED HARD BONE impact face, NOT a drum; 04 TWO matching short blades; 05 long slim curved single-edge sword; 06 straight long lance AND a separate tall shield; 07 bow with an actual string, small separate aiming ring, AND one arrow. No firearms, scythes, axes, duplicate groups, magical floating parts. Armor mannequin holds none of these.\nSOURCE SERIES 085: ヌクバレア / 霧扁蟹. Native grade: 4. This sheet shows ONLY this native-grade design. Palette: 灰紫 / 灰褐 / 青銅.\nArmor silhouette: 灰紫の扇形板を腰の後ろだけ広げ、襟から二本の短い房を下げる。腕は左右同じ大きさにまとめる。\nArmor five regions: head: 低い扁甲と襟から下がる短い二本房; chest: 灰紫の胸甲は中央を平らにする; arms: 左右を同じ大きさの湿鋏芯籠手; waist: 後腰だけに扇形の広い霧扁甲を置く; legs: 扇尾縁を脛へ分割した細い脚甲\nDistinct weapons: 01 幅のある扇甲を峰の根元へ使う板剣; 02 湿鋏の短い片刃と横幅の広い扁甲盾; 03 濾霧鰓膜を内包して打面を硬い殻で閉じる槌; 04 湿鋏芯の同寸二本、毒房は柄の先へ収める; 05 扇尾縁を薄く連ねた曲刀; 06 湿鋏芯を直線に継いだ槍と扇甲の盾; 07 扇尾縁を上下へ分けた弓身、短い二本房は握りの下\nPreserve the specifically stated anatomical LEFT and RIGHT of the WEARER. Keep shoulder and waist protrusions restrained for movement. Helmets, both hands, boots, blade tips, bowstring, shields and spear point fully inside the canvas. Original visual language, avoid any recognizable existing franchise designs. Clear fabrication joints, few broad forms, no dense filigree. This is concept art, not a precise orthographic production drawing.\nThe style board is ONLY a rendering style reference. Do not reuse the stone armor, bare-headed man or stone weapon material from it. The creature materials and the species-specific armor silhouette dominate this sheet.\nFRAMING: put every object entirely within the inner 85 percent of the canvas with at least 80 pixels empty margin on every outer edge. Scale down the largest sword, spear and human as needed. Every blade tip and every boot must be visible with clear empty space around it; never touch or crop at the canvas boundary.",
+  "referenceRoles": [
+    "approved style board",
+    "source creature material and silhouette reference"
+  ],
+  "referencePaths": [
+    "art-source/board/style_board_v2.png",
+    "art-source/monster/concepts/monster_085_nucbarea_concept_v1.png"
+  ],
+  "output": "art/monsters/equipment_085_nucbarea_v2.png",
+  "transparent_background": false,
+  "revisions": [
+    {
+      "revision": 2,
+      "reason": "後腰専用の扇甲が右前腰へ出たため位置を修正",
+      "prompt": "Edit this equipment sheet ONLY to correct the human waist armor. Remove the broad scalloped purple fan plates hanging from the FRONT SIDE of the human right hip, visible on the viewer-left directly below the brown utility pouch. Replace those fan plates with simple flat dark gray-brown cloth and leather layers continuing the existing skirt. This armor has its broad fan plate only on the REAR lower waist, which is hidden from this front three-quarter view; do not put a fan plate on the front or sides. Preserve the two short collar tassels, the two bow tassels, the low helmet, all seven numbered weapon groups and every other part of the armor and image exactly. No new objects or text. Keep all tips and boots in the canvas."
+    }
+  ],
+  "finalSourcePath": "exec-1ec0c805-76a4-4fcc-bf10-7ba1ee91d691.png",
+  "review": {
+    "generated": true,
+    "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+    "notVerified": [
+      "正投影",
+      "寸法",
+      "背面",
+      "共通リグ干渉",
+      "ゲーム内描画"
+    ],
+    "revision": 2,
+    "sevenWeaponGroupsVisible": true,
+    "fiveArmorRegionsVisible": true,
+    "clippingObserved": false,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "sha256": "3c2974a93196e69744ef37c0fd7d4cb6ac8c0e4158ceae77d4fa0b2e4aa3f914",
+    "notes": "全7武器群・防具5部位を視認。v1で前腰へ出た扇甲をv2で除去し布革へ置換、後腰専用の設定に合わせた。襟の短い2房、左右同じ大きさの籠手、弓握り下の2房を確認。双剣柄先の小毒房、両盾、弓弦・矢・独立照準環、槌の閉鎖硬質面あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80px未達。後腰の扇甲はこの角度では見えず、背面図で要確認。"
+  }
+}

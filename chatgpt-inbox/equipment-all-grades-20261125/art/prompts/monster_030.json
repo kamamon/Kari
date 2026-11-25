@@ -1,0 +1,25 @@
+{
+  "generator": "built-in image_gen",
+  "useCase": "stylized-concept",
+  "scope": "native-rank equipment family concept sheet",
+  "seriesId": "series.nemboraf",
+  "speciesId": "monster.nemboraf",
+  "nativeRank": 2,
+  "prompt": "Use case: stylized-concept. Create a NEW original hunting-game EQUIPMENT FAMILY concept art sheet, landscape 3:2, high detail. Reference 1 supplies approved restrained semi-real art direction; reference 2 supplies ONLY this creature's materials and distinctive anatomy. Do NOT show the creature itself. Warm ivory plain background, soft studio contact shadows, graphite-fine edges, matte leather, bone and restrained bronze joinery. No logos, no fantasy brand references, no Japanese text.\nCOMPOSITION: exactly ONE adult neutral mannequin wearing a COMPLETE FIVE-PIECE armor set, full body head to boots, standing at left 30% of sheet, empty relaxed hands, front three-quarter view with both shoulders readable. Helmet, chest armor, separate forearm gauntlets, waist armor, greaves all present. Practical low helmet, protected torso, no exposed midriff, no high heels, no cape. No anatomy deformities. At right 70%, exactly SEVEN clearly separated weapon GROUPS on a clean TWO ROW grid: top groups 01,02,03,04; bottom groups 05,06,07. Give all long weapons enough space; nothing clipped, overlapping, floating into adjacent groups or held by mannequin. Small plain labels 01 through 07 are the ONLY text.\nGROUP TYPES (all seven mandatory): 01 thick broad single-edged greatblade with two-hand grip. 02 short SINGLE-EDGED sword AND separate shield. 03 long-handled maul with HARD CLOSED bone/stone faces, never a skin drum. 04 exactly TWO matching short twin blades. 05 ONE slender long curved single-edged blade. 06 ONE long STRAIGHT pointed lance AND separate broad shield. 07 ONE slender functional bow with a visible continuous string, small aiming ring near grip, AND ONE arrow. Bow is NOT a ring-shaped weapon.\nSERIES: ネムボラフ / 泥層. Native rank 2. Palette: 灰緑, 泥褐, 鈍い青銅.\nArmor silhouette: 灰緑の横に広い胴と、腹に短く重なる濾膜の段。脚甲は太く、腰の後ろだけ泥扇骨を平らに広げる。\nArmor parts: {\"head\": \"柱脚甲を薄く削った平らな兜。目と顎を開け、左右へ短い濾膜縁を付ける。\", \"chest\": \"横幅を低く広げた胸板の腹側に三段の短い濾膜を重ね、みぞおちを曲げられるよう分割する。\", \"arms\": \"肘の内側を空けた柱状の籠手。平らな甲面を前腕外側だけに置く。\", \"waist\": \"後ろ腰に泥扇骨の薄い横扇を置き、前側は柔らかな広背皮の帯にする。\", \"legs\": \"柱脚甲を縦に割った太めの脛当て。膝と足首を別部品にして靴の曲がりを残す。\"}\nExact weapon material/shape directions, in group order: [\"三段の横濾膜を刃の背側へ埋めた幅広い平刃。両手で握る長い柄と幅広い片刃。刃先・刃面を明確にし、厚さだけで重量感を出す。\", \"浅い水受け溝のある片刃と、横長の柱脚甲盾。短い片刃剣と独立した盾の一組。盾には背面の握りと前腕帯を備える。\", \"濾膜を側面へ収め、硬い柱脚甲で両打面を閉じた低い角槌。長柄と閉じた硬い二つの打面。膜や嚢を打面として露出しない。\", \"濾し孔のある短い幅広刃を同形二本。同じ長さ・同じ輪郭の短い片刃二本。手首を塞ぐ鉤や長い飾り紐を付けない。\", \"泥扇骨を低い峰へ使い、先端だけ細く絞る長い片刃。細い長刀と緩い反り、握りの余長。刃を片側へ限定し、峰を低く保つ。\", \"柱脚甲で芯を覆う真っ直ぐな槍と、三段横板の大盾。真っ直ぐな長槍と独立した大盾の一組。穂先を小さく、握りと前腕の空間を残す。\", \"泥扇骨を左右同じ曲率の弓身に割り、濾膜は握りの小さな保護板へ使う。細い上下対称の弓身、一本の弦、握りのすぐ上の小さい照準環、矢一本。環を巨大化しない。\"]\nUse material-derived structural forms, not giant animal heads as helmets. Keep decorated projections low and joints free. Keep weapons functional, blade edges distinct from the spine, no repeated generic swords. This is a native-rank family concept board, NOT an orthographic diagram or a battle scene. Never add large glow halos, particle effects, monsters, extra people, extra weapons or unrelated scenery.",
+  "referenceRoles": [
+    "approved art direction",
+    "creature material/anatomy only"
+  ],
+  "referencePaths": [
+    "art-source/board/style_board_v2.png",
+    "art-source/monster/concepts/monster_030_nemboraf_concept_v1.png"
+  ],
+  "target": "art/monsters/equipment_030_nemboraf_v1.png",
+  "revisions": [
+    {
+      "version": 2,
+      "record": "art/prompts/monster_030_revision_v2.json",
+      "output": "art/monsters/equipment_030_nemboraf_v2.png"
+    }
+  ]
+}

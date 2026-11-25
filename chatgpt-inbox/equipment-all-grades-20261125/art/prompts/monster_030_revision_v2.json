@@ -1,0 +1,8 @@
+{
+  "generator": "image_gen.imagegen",
+  "mode": "edit",
+  "reference": "art/monsters/equipment_030_nemboraf_v1.png",
+  "prompt": "Edit this existing equipment concept board only. Preserve the exact original character armor, all material colors, the layered mud-shell shapes, all seven weapon groups, both shields, the twin-blade pair, the actual bow with string and ring and its separate arrow. Remove the Japanese title at the top left, the 'Native rank 2' text, the Japanese palette labels and three color swatches at top right, and the long horizontal rule across the top. Replace those removed marks with the same uninterrupted warm ivory background. Retain only the small numerals 01 through 07 beside the weapon groups. Uniformly shrink the complete artwork composition about 10 percent and center it to give full clearance around every object, particularly the large sword tip and the boots; all existing tips must remain intact. Preserve the original landscape 3:2 aspect ratio. Do not invent or remove armor or weapons, do not redesign the metalwork or change the person, do not add any new text, logos, labels or measurements. This is a conservative cleanup of the reference sheet.",
+  "output": "art/monsters/equipment_030_nemboraf_v2.png",
+  "reason": "Remove undesired title, rank text, palette swatches and horizontal rule; increase margins without changing equipment."
+}

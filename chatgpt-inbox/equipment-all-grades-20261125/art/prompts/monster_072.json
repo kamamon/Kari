@@ -1,0 +1,38 @@
+{
+  "mode": "built-in image_gen",
+  "no": 72,
+  "seriesId": "series.dekoranze",
+  "prompt": "Use case: stylized-concept. Create ONE professional ORIGINAL hunting-equipment family concept sheet for VEILBOUND HUNTERS. Landscape 3:2, warm ivory background, no scenery, no watermark, restrained realistic hand-painted materials, aged bronze fittings and dark leather. Reference image 1 is the approved art direction. Reference image 2 is the source creature; derive materials and asymmetry but do NOT draw a creature or turn the human into that creature.\nCOMPOSITION: LEFT 30 percent: one complete adult neutral human mannequin wearing all five armor regions, head to boots fully visible, relaxed upright stance, empty hands, front three-quarter view. Practical closed clothing, MANDATORY LOW HELMET fully covering the crown and forehead, NO visible hair and no bare head, readable joints. Never omit head armor. RIGHT 70 percent: exactly SEVEN cleanly separated weapon groups in two rows, each complete with generous gaps, no cropping. Top row 01-04; bottom row 05-07. Only text is small labels 01,02,03,04,05,06,07 below corresponding groups. Each group keeps its recognizable form:\n01 enormous broad single-edge slab greatsword; 02 compact SINGLE-EDGE sword AND a separate shield; 03 long-handled heavy blunt maul with a CLOSED HARD BONE impact face, NOT a drum; 04 TWO matching short blades; 05 long slim curved single-edge sword; 06 straight long lance AND a separate tall shield; 07 bow with an actual string, small separate aiming ring, AND one arrow. No firearms, scythes, axes, duplicate groups, magical floating parts. Armor mannequin holds none of these.\nSOURCE SERIES 072: デコランゼ / 炉畝獣. Native grade: 4. This sheet shows ONLY this native-grade design. Palette: 灰黒 / 灰褐 / 鈍い琥珀.\nArmor silhouette: 灰黒の厚皮を右腰へ段状に垂らし、左脚は細い甲で軽くする。低い襟と腹側の鈍い琥珀色で巨体を写す。\nArmor five regions: head: 低い襟に収まる厚皮の兜; chest: 腹側へ鈍い琥珀の畝筋を持つ灰黒の胴; arms: 巨脚甲の短い前腕板で手首を空ける; waist: 右腰に厚皮を段状に垂らし左を短くする; legs: 右脛を厚く、左脚は細い甲で軽くする\nDistinct weapons: 01 炉畝厚皮を柄元の緩衝にした重い斜先剣; 02 畝間膜の片刃と段畝の厚盾; 03 発酵炉芯を内包した巨脚甲の平打面槌; 04 畝の硬い縁を短い二本の刃へ分ける; 05 押尾板を細く切り出した重めの曲刀; 06 畝間腱を束ねた槍と右下がりの大盾; 07 炉畝の芯骨を上下に分けた太い弓身、熱筋は握り裏\nPreserve the specifically stated anatomical LEFT and RIGHT of the WEARER. Keep shoulder and waist protrusions restrained for movement. Helmets, both hands, boots, blade tips, bowstring, shields and spear point fully inside the canvas. Original visual language, avoid any recognizable existing franchise designs. Clear fabrication joints, few broad forms, no dense filigree. This is concept art, not a precise orthographic production drawing.\nThe style board is ONLY a rendering style reference. Do not reuse the stone armor, bare-headed man or stone weapon material from it. The creature materials and the species-specific armor silhouette dominate this sheet.\nFRAMING: put every object entirely within the inner 85 percent of the canvas with at least 80 pixels empty margin on every outer edge. Scale down the largest sword, spear and human as needed. Every blade tip and every boot must be visible with clear empty space around it; never touch or crop at the canvas boundary.",
+  "referenceRoles": [
+    "approved style board",
+    "source creature material and silhouette reference"
+  ],
+  "referencePaths": [
+    "art-source/board/style_board_v2.png",
+    "art-source/monster/concepts/monster_072_dekoranze_concept_v1.png"
+  ],
+  "output": "art/monsters/equipment_072_dekoranze_v1.png",
+  "transparent_background": false,
+  "finalSourcePath": "exec-bf14fefb-f425-4aaf-a3f3-d729865d8ded.png",
+  "review": {
+    "generated": true,
+    "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+    "notVerified": [
+      "正投影",
+      "寸法",
+      "背面",
+      "共通リグ干渉",
+      "ゲーム内描画"
+    ],
+    "revision": 1,
+    "sevenWeaponGroupsVisible": true,
+    "fiveArmorRegionsVisible": true,
+    "clippingObserved": false,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "sha256": "8b6706c4aecd9170e5a732bdede50dd395d8052024e62d5ace4fbef952ff266e",
+    "notes": "全7武器群・防具5部位を視認。装着者の右腰と右脛の段畝を厚く、左脚を細くした非対称を確認。槌は閉じた平打面。弓弦・矢・照準環あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80pxは未達。厚皮の屈曲断面と熱筋の裏面配置は別図で要確認。"
+  }
+}

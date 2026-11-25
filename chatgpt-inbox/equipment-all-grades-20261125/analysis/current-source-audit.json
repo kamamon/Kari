@@ -1,0 +1,4543 @@
+{
+  "sourceCommit": "1e078bfce1e68f287ae577cf41d2fe5bafb94afa",
+  "sourceVersion": "0.26.0",
+  "auditedDateJst": "2026-11-25",
+  "scope": "Read-only audit for all-monster and gathered equipment design; not runtime content",
+  "ranks": [
+    {
+      "id": "rank.1",
+      "order": 1,
+      "name": "初級",
+      "monster": {
+        "hpScale": 1,
+        "partScale": 1,
+        "attackScale": 1,
+        "cooldownScale": 1
+      },
+      "equipmentTier": 2,
+      "baseFamilyName": "岩殻"
+    },
+    {
+      "id": "rank.2",
+      "order": 2,
+      "name": "中級",
+      "monster": {
+        "hpScale": 1.35,
+        "partScale": 1.35,
+        "attackScale": 1.3,
+        "cooldownScale": 0.9
+      },
+      "equipmentTier": 3,
+      "baseFamilyName": "脈殻"
+    },
+    {
+      "id": "rank.3",
+      "order": 3,
+      "name": "上級",
+      "monster": {
+        "hpScale": 1.8,
+        "partScale": 1.8,
+        "attackScale": 1.65,
+        "cooldownScale": 0.8
+      },
+      "equipmentTier": 4,
+      "baseFamilyName": "晶殻"
+    },
+    {
+      "id": "rank.4",
+      "order": 4,
+      "name": "極級",
+      "monster": {
+        "hpScale": 2.4,
+        "partScale": 2.4,
+        "attackScale": 2.05,
+        "cooldownScale": 0.7
+      },
+      "equipmentTier": 5,
+      "baseFamilyName": "輝殻"
+    }
+  ],
+  "starterTier": {
+    "tier": 1,
+    "name": "里鍛ち／里装束",
+    "grade": null
+  },
+  "counts": {
+    "species": 86,
+    "nativeByRank": {
+      "初級": 21,
+      "中級": 20,
+      "上級": 25,
+      "極級": 20
+    },
+    "class": {
+      "large": 68,
+      "juvenile": 8,
+      "huge": 10
+    },
+    "state": {
+      "implemented": 20,
+      "art": 66
+    },
+    "cumulativeSeriesIfRespectingNativeGrade": [
+      21,
+      41,
+      66,
+      86
+    ],
+    "seriesGradeCombinations": 214,
+    "weaponCandidatesIfSevenEach": 1498,
+    "armorCandidatesIfFiveEach": 1070,
+    "currentWeapons": 35,
+    "currentArmorPieces": 25,
+    "currentRecipes": 48,
+    "currentHuntOrSlayQuests": 24,
+    "currentMaterials": 77,
+    "existingProposedGatherMaterials": 12,
+    "existingProposedOreMaterials": 12,
+    "existingProposedInsectMaterials": 0
+  },
+  "species": [
+    {
+      "no": 1,
+      "id": "monster.galdros",
+      "name": "ガルドロス",
+      "title": "岩殻獣",
+      "rank": "rank.1",
+      "class": "large",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "none"
+      ],
+      "statuses": [],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "thunder"
+      ],
+      "materials": [
+        "岩殻片",
+        "硬骨",
+        "青銅晶脈",
+        "前脚甲",
+        "脈岩殻",
+        "尾端晶"
+      ],
+      "habitat": "風礫盆地"
+    },
+    {
+      "no": 2,
+      "id": "monster.selvark",
+      "name": "セルヴァルク",
+      "title": "帆角獣",
+      "rank": "rank.1",
+      "class": "large",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "wind"
+      ],
+      "statuses": [],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "wind"
+      ],
+      "materials": [
+        "帆膜",
+        "弾性腱",
+        "帆角軟骨",
+        "整流鼻甲"
+      ],
+      "habitat": "風礫盆地"
+    },
+    {
+      "no": 3,
+      "id": "monster.numeradon",
+      "name": "ヌメラドン",
+      "title": "泥冠獣",
+      "rank": "rank.1",
+      "class": "large",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "water"
+      ],
+      "statuses": [],
+      "weak": [
+        "thunder"
+      ],
+      "resist": [
+        "water"
+      ],
+      "materials": [
+        "泥晶",
+        "耐水皮",
+        "泥冠片",
+        "水圧嚢膜"
+      ],
+      "habitat": "根絡み湿原"
+    },
+    {
+      "no": 4,
+      "id": "monster.bornakel",
+      "name": "ボルナケル",
+      "title": "鐘嚢獣",
+      "rank": "rank.1",
+      "class": "large",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "none"
+      ],
+      "statuses": [
+        "stun"
+      ],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "wind"
+      ],
+      "materials": [
+        "響嚢",
+        "硬皮",
+        "鐘頭骨",
+        "共鳴弁"
+      ],
+      "habitat": "灰鐘鉱山"
+    },
+    {
+      "no": 5,
+      "id": "monster.ashreia",
+      "name": "アシュレイア",
+      "title": "灰帷鳥",
+      "rank": "rank.1",
+      "class": "large",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "none"
+      ],
+      "statuses": [
+        "sleep"
+      ],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "mist"
+      ],
+      "materials": [
+        "灰羽",
+        "帷膜",
+        "眠灰粉",
+        "灰粉房膜"
+      ],
+      "habitat": "灰鐘鉱山"
+    },
+    {
+      "no": 6,
+      "id": "monster.lumisca",
+      "name": "ルミスカ",
+      "title": "燐尾鳥",
+      "rank": "rank.1",
+      "class": "large",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "thunder"
+      ],
+      "statuses": [],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "thunder"
+      ],
+      "materials": [
+        "燐節",
+        "光皮",
+        "蓄電薄膜",
+        "放電尾板"
+      ],
+      "habitat": "硝砂海岸"
+    },
+    {
+      "no": 7,
+      "id": "monster.orglass",
+      "name": "オルグラス",
+      "title": "硝殻蟹",
+      "rank": "rank.1",
+      "class": "large",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "none"
+      ],
+      "statuses": [],
+      "weak": [
+        "thunder"
+      ],
+      "resist": [
+        "water"
+      ],
+      "materials": [
+        "硝殻",
+        "鋏芯",
+        "成形腺膜",
+        "硝脚甲"
+      ],
+      "habitat": "硝砂海岸"
+    },
+    {
+      "no": 8,
+      "id": "monster.tengaro",
+      "name": "テンガロ",
+      "title": "鉤輪蟲",
+      "rank": "rank.1",
+      "class": "large",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "none"
+      ],
+      "statuses": [
+        "paralysis"
+      ],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "thunder"
+      ],
+      "materials": [
+        "鉤甲",
+        "輪節",
+        "輪留め腱",
+        "痺液管"
+      ],
+      "habitat": "霧灯樹海"
+    },
+    {
+      "no": 9,
+      "id": "monster.verito",
+      "name": "ヴェリト",
+      "title": "絹霧蟲",
+      "rank": "rank.1",
+      "class": "large",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "none"
+      ],
+      "statuses": [
+        "poison"
+      ],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "water"
+      ],
+      "materials": [
+        "霧糸",
+        "羽袋",
+        "毒紡液",
+        "糸櫛甲"
+      ],
+      "habitat": "根絡み湿原"
+    },
+    {
+      "no": 10,
+      "id": "monster.razmer",
+      "name": "ラズメル",
+      "title": "環骨蛇",
+      "rank": "rank.1",
+      "class": "large",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "none"
+      ],
+      "statuses": [],
+      "weak": [
+        "water"
+      ],
+      "resist": [
+        "ice"
+      ],
+      "materials": [
+        "環骨",
+        "振動腺",
+        "環間靭帯",
+        "尾端骨"
+      ],
+      "habitat": "氷帆峡谷"
+    },
+    {
+      "no": 11,
+      "id": "monster.kirisave",
+      "name": "キリサーヴ",
+      "title": "氷帆蛇",
+      "rank": "rank.1",
+      "class": "large",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "ice"
+      ],
+      "statuses": [],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "ice"
+      ],
+      "materials": [
+        "氷帆",
+        "冷晶",
+        "冷晶管",
+        "帆間皮"
+      ],
+      "habitat": "氷帆峡谷"
+    },
+    {
+      "no": 12,
+      "id": "monster.velgait",
+      "name": "ヴェルガイト",
+      "title": "霧灯獣",
+      "rank": "rank.1",
+      "class": "large",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "mist"
+      ],
+      "statuses": [],
+      "weak": [
+        "wind"
+      ],
+      "resist": [
+        "mist"
+      ],
+      "materials": [
+        "霧灯晶",
+        "靭皮",
+        "環冠片",
+        "凝霧孔膜"
+      ],
+      "habitat": "霧灯樹海"
+    },
+    {
+      "no": 13,
+      "id": "monster.embarg",
+      "name": "エンバルグ",
+      "title": "熾炉獣",
+      "rank": "rank.1",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "fire"
+      ],
+      "statuses": [],
+      "weak": [
+        "water"
+      ],
+      "resist": [
+        "ice"
+      ],
+      "materials": [
+        "熾殻",
+        "炉芯",
+        "排気弁甲",
+        "蓄熱膜"
+      ],
+      "habitat": "燠脈台地"
+    },
+    {
+      "no": 14,
+      "id": "monster.kordopil",
+      "name": "コルドピル",
+      "title": "幼岩殻獣",
+      "rank": "rank.1",
+      "class": "juvenile",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "none"
+      ],
+      "statuses": [],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "thunder"
+      ],
+      "materials": [
+        "幼岩殻片",
+        "柔らかい晶床",
+        "丸尾晶粒"
+      ],
+      "habitat": "風礫盆地"
+    },
+    {
+      "no": 15,
+      "id": "monster.palseit",
+      "name": "パルセイト",
+      "title": "幼帆角獣",
+      "rank": "rank.1",
+      "class": "juvenile",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "wind"
+      ],
+      "statuses": [],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "wind"
+      ],
+      "materials": [
+        "幼帆膜",
+        "細弾性腱"
+      ],
+      "habitat": "風礫盆地"
+    },
+    {
+      "no": 16,
+      "id": "monster.numaporon",
+      "name": "ヌマポロン",
+      "title": "幼泥冠獣",
+      "rank": "rank.1",
+      "class": "juvenile",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "water"
+      ],
+      "statuses": [],
+      "weak": [
+        "thunder"
+      ],
+      "resist": [
+        "water"
+      ],
+      "materials": [
+        "幼泥晶",
+        "薄耐水皮",
+        "幼冠甲"
+      ],
+      "habitat": "根絡み湿原"
+    },
+    {
+      "no": 17,
+      "id": "monster.chilumicana",
+      "name": "チルミカナ",
+      "title": "幼燐尾鳥",
+      "rank": "rank.1",
+      "class": "juvenile",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "thunder"
+      ],
+      "statuses": [],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "thunder"
+      ],
+      "materials": [
+        "幼燐節",
+        "淡光皮",
+        "小放電膜"
+      ],
+      "habitat": "硝砂海岸"
+    },
+    {
+      "no": 18,
+      "id": "monster.kohalgis",
+      "name": "コハルギス",
+      "title": "幼硝殻蟹",
+      "rank": "rank.1",
+      "class": "juvenile",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "none"
+      ],
+      "statuses": [],
+      "weak": [
+        "thunder"
+      ],
+      "resist": [
+        "water"
+      ],
+      "materials": [
+        "幼硝殻",
+        "小鋏芯",
+        "成形腺の薄膜"
+      ],
+      "habitat": "硝砂海岸"
+    },
+    {
+      "no": 19,
+      "id": "monster.mitogaron",
+      "name": "ミトガロン",
+      "title": "幼鉤輪蟲",
+      "rank": "rank.1",
+      "class": "juvenile",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "none"
+      ],
+      "statuses": [
+        "paralysis"
+      ],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "thunder"
+      ],
+      "materials": [
+        "幼鉤甲",
+        "柔輪節",
+        "細痺液管"
+      ],
+      "habitat": "霧灯樹海"
+    },
+    {
+      "no": 20,
+      "id": "monster.yurtepica",
+      "name": "ユルテピカ",
+      "title": "幼絹霧蟲",
+      "rank": "rank.1",
+      "class": "juvenile",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "none"
+      ],
+      "statuses": [
+        "poison"
+      ],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "water"
+      ],
+      "materials": [
+        "幼霧糸",
+        "薄羽袋",
+        "微毒紡液"
+      ],
+      "habitat": "根絡み湿原"
+    },
+    {
+      "no": 21,
+      "id": "monster.hinasalv",
+      "name": "ヒナサルヴ",
+      "title": "幼氷帆蛇",
+      "rank": "rank.1",
+      "class": "juvenile",
+      "variant": "base",
+      "state": "implemented",
+      "elements": [
+        "ice"
+      ],
+      "statuses": [],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "ice"
+      ],
+      "materials": [
+        "幼氷帆",
+        "小冷晶",
+        "薄帆間皮"
+      ],
+      "habitat": "氷帆峡谷"
+    },
+    {
+      "no": 22,
+      "id": "monster.hasdren",
+      "name": "ハスドレン",
+      "title": "銅苔獣",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "subspecies",
+      "state": "art",
+      "elements": [
+        "water"
+      ],
+      "statuses": [
+        "poison"
+      ],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "water",
+        "thunder"
+      ],
+      "materials": [
+        "銅苔槽殻",
+        "含水苔膜",
+        "毒苔嚢",
+        "槽尾晶"
+      ],
+      "habitat": "銅苔段丘"
+    },
+    {
+      "no": 23,
+      "id": "monster.ivselam",
+      "name": "イヴセラム",
+      "title": "霜扇獣",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "subspecies",
+      "state": "art",
+      "elements": [
+        "ice"
+      ],
+      "statuses": [],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "ice",
+        "wind"
+      ],
+      "materials": [
+        "霜扇膜",
+        "冷層角片",
+        "折背皮",
+        "跳霜腱"
+      ],
+      "habitat": "氷帆峡谷"
+    },
+    {
+      "no": 24,
+      "id": "monster.domelkano",
+      "name": "ドメルカノ",
+      "title": "熱皿獣",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "subspecies",
+      "state": "art",
+      "elements": [
+        "fire"
+      ],
+      "statuses": [],
+      "weak": [
+        "water"
+      ],
+      "resist": [
+        "fire",
+        "ice"
+      ],
+      "materials": [
+        "二重熱皿",
+        "発酵泥嚢",
+        "耐熱腹皮",
+        "赤銅皿縁"
+      ],
+      "habitat": "燠脈台地"
+    },
+    {
+      "no": 25,
+      "id": "monster.holnebas",
+      "name": "ホルネバス",
+      "title": "風鐘獣",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "subspecies",
+      "state": "art",
+      "elements": [
+        "wind"
+      ],
+      "statuses": [
+        "stun"
+      ],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "wind"
+      ],
+      "materials": [
+        "長風管",
+        "風鐘膜",
+        "響殻片",
+        "締風筋"
+      ],
+      "habitat": "雨裂断崖"
+    },
+    {
+      "no": 26,
+      "id": "monster.miltasea",
+      "name": "ミルタセア",
+      "title": "霧珠鳥",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "subspecies",
+      "state": "art",
+      "elements": [
+        "mist"
+      ],
+      "statuses": [
+        "sleep"
+      ],
+      "weak": [
+        "wind"
+      ],
+      "resist": [
+        "mist",
+        "water"
+      ],
+      "materials": [
+        "露珠腺",
+        "睡霧脂",
+        "灰珠尾皮",
+        "細首羽"
+      ],
+      "habitat": "鉛雲高地"
+    },
+    {
+      "no": 27,
+      "id": "monster.talgrina",
+      "name": "タルグリナ",
+      "title": "鳴鋏蟹",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "subspecies",
+      "state": "art",
+      "elements": [
+        "thunder"
+      ],
+      "statuses": [
+        "paralysis"
+      ],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "thunder"
+      ],
+      "materials": [
+        "三段鳴鋏",
+        "擦晶板",
+        "帯電内膜",
+        "片流殻"
+      ],
+      "habitat": "枯響河床"
+    },
+    {
+      "no": 28,
+      "id": "monster.zanetolka",
+      "name": "ザネトルカ",
+      "title": "砂輪蟲",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "subspecies",
+      "state": "art",
+      "elements": [
+        "none"
+      ],
+      "statuses": [
+        "poison"
+      ],
+      "weak": [
+        "water"
+      ],
+      "resist": [
+        "wind"
+      ],
+      "materials": [
+        "砂裾甲",
+        "毒脂砂嚢",
+        "低輪節",
+        "磨耗鉤"
+      ],
+      "habitat": "枯響河床"
+    },
+    {
+      "no": 29,
+      "id": "monster.ulnaset",
+      "name": "ウルナセト",
+      "title": "雨帆蛇",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "subspecies",
+      "state": "art",
+      "elements": [
+        "water"
+      ],
+      "statuses": [],
+      "weak": [
+        "thunder"
+      ],
+      "resist": [
+        "water",
+        "ice"
+      ],
+      "materials": [
+        "樋帆膜",
+        "雨節水嚢",
+        "耐流蛇皮",
+        "平尾板"
+      ],
+      "habitat": "雨裂断崖"
+    },
+    {
+      "no": 30,
+      "id": "monster.nemboraf",
+      "name": "ネムボラフ",
+      "title": "泥層獣",
+      "rank": "rank.2",
+      "class": "huge",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "water"
+      ],
+      "statuses": [
+        "sleep"
+      ],
+      "weak": [
+        "fire",
+        "thunder"
+      ],
+      "resist": [
+        "water",
+        "mist"
+      ],
+      "materials": [
+        "泥層濾膜",
+        "柱脚甲",
+        "睡泡濃液",
+        "広背皮",
+        "泥扇骨"
+      ],
+      "habitat": "沈根沢地"
+    },
+    {
+      "no": 31,
+      "id": "monster.borazeln",
+      "name": "ボラゼルン",
+      "title": "段稜獣",
+      "rank": "rank.2",
+      "class": "huge",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "none"
+      ],
+      "statuses": [
+        "stun"
+      ],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "thunder",
+        "wind"
+      ],
+      "materials": [
+        "段稜大骨",
+        "肋棚殻",
+        "振動腹板",
+        "苔擦り皮",
+        "重尾骨"
+      ],
+      "habitat": "銅苔段丘"
+    },
+    {
+      "no": 32,
+      "id": "monster.kudrimal",
+      "name": "クドリマル",
+      "title": "煙棚獣",
+      "rank": "rank.2",
+      "class": "huge",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "fire"
+      ],
+      "statuses": [],
+      "weak": [
+        "water",
+        "wind"
+      ],
+      "resist": [
+        "fire",
+        "ice"
+      ],
+      "materials": [
+        "煙棚膜",
+        "樹脂熱嚢",
+        "冷却喉襞",
+        "灰銅腹殻",
+        "長尾腱"
+      ],
+      "habitat": "燠脈台地"
+    },
+    {
+      "no": 33,
+      "id": "monster.tosamurie",
+      "name": "トサムリエ",
+      "title": "枝鉤獣",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "wind"
+      ],
+      "statuses": [],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "wind",
+        "water"
+      ],
+      "materials": [
+        "逆肘鉤",
+        "送風薄膜",
+        "枝引き腱",
+        "灰緑短毛皮"
+      ],
+      "habitat": "霧灯樹海"
+    },
+    {
+      "no": 34,
+      "id": "monster.pukrenoa",
+      "name": "プクレノア",
+      "title": "沈匙獣",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "mist"
+      ],
+      "statuses": [
+        "poison"
+      ],
+      "weak": [
+        "wind",
+        "fire"
+      ],
+      "resist": [
+        "mist",
+        "water"
+      ],
+      "materials": [
+        "沈匙顎骨",
+        "細霧嚢",
+        "菌毒脂",
+        "湿潤臀皮"
+      ],
+      "habitat": "沈根沢地"
+    },
+    {
+      "no": 35,
+      "id": "monster.kesalpina",
+      "name": "ケサルピナ",
+      "title": "庇頬鳥",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "wind"
+      ],
+      "statuses": [
+        "sleep"
+      ],
+      "weak": [
+        "thunder"
+      ],
+      "resist": [
+        "wind",
+        "ice"
+      ],
+      "materials": [
+        "片庇頬板",
+        "睡粉刷毛",
+        "扁尾羽",
+        "風押し翼膜"
+      ],
+      "habitat": "鉛雲高地"
+    },
+    {
+      "no": 36,
+      "id": "monster.riptaum",
+      "name": "リプタウム",
+      "title": "氷畝蟹",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "ice"
+      ],
+      "statuses": [],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "ice",
+        "water"
+      ],
+      "materials": [
+        "冷導畝殻",
+        "薄氷分泌膜",
+        "掬鋏骨",
+        "青灰脚殻"
+      ],
+      "habitat": "氷帆峡谷"
+    },
+    {
+      "no": 37,
+      "id": "monster.serinodam",
+      "name": "セリノダム",
+      "title": "灯櫂蟲",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "thunder"
+      ],
+      "statuses": [
+        "paralysis"
+      ],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "thunder",
+        "water"
+      ],
+      "materials": [
+        "灯櫂膜",
+        "蓄電節芯",
+        "薄泥甲",
+        "櫂引き腱"
+      ],
+      "habitat": "根絡み湿原"
+    },
+    {
+      "no": 38,
+      "id": "monster.nufraken",
+      "name": "ヌフラケン",
+      "title": "冷壺蛇",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "ice"
+      ],
+      "statuses": [],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "ice",
+        "mist"
+      ],
+      "materials": [
+        "冷壺襞",
+        "霧集め内膜",
+        "青灰蛇鱗",
+        "細尾腱"
+      ],
+      "habitat": "鉛雲高地"
+    },
+    {
+      "no": 39,
+      "id": "monster.akaunel",
+      "name": "アカウネル",
+      "title": "灼襟鳥",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "fire"
+      ],
+      "statuses": [],
+      "weak": [
+        "water"
+      ],
+      "resist": [
+        "fire",
+        "ice"
+      ],
+      "materials": [
+        "四角灼襟",
+        "熱脂羽鞘",
+        "灰匙翼骨",
+        "煤寄せ羽"
+      ],
+      "habitat": "灰鐘鉱山"
+    },
+    {
+      "no": 40,
+      "id": "monster.tsumarobek",
+      "name": "ツマロベク",
+      "title": "脈鼓獣",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "thunder"
+      ],
+      "statuses": [
+        "paralysis"
+      ],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "thunder",
+        "mist"
+      ],
+      "materials": [
+        "脈鼓甲",
+        "圧電腹膜",
+        "導晶脚甲",
+        "平背皮"
+      ],
+      "habitat": "灰鐘鉱山"
+    },
+    {
+      "no": 41,
+      "id": "monster.furemsad",
+      "name": "フレムサド",
+      "title": "霧鰭蛇",
+      "rank": "rank.2",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "mist"
+      ],
+      "statuses": [
+        "stun"
+      ],
+      "weak": [
+        "wind",
+        "thunder"
+      ],
+      "resist": [
+        "mist",
+        "water"
+      ],
+      "materials": [
+        "分霧鰭膜",
+        "潮濾し腺",
+        "鈍尾骨",
+        "砂擦り蛇皮"
+      ],
+      "habitat": "硝砂海岸"
+    },
+    {
+      "no": 42,
+      "id": "monster.grasedon",
+      "name": "グラセドン",
+      "title": "裂扇獣",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "rare",
+      "state": "art",
+      "elements": [
+        "fire"
+      ],
+      "statuses": [],
+      "weak": [
+        "water"
+      ],
+      "resist": [
+        "fire",
+        "thunder"
+      ],
+      "materials": [
+        "裂扇殻",
+        "蓄熱砂嚢",
+        "赤銅脈芯",
+        "裂扇獣の重腱"
+      ],
+      "habitat": "風礫盆地"
+    },
+    {
+      "no": 43,
+      "id": "monster.ryuzelka",
+      "name": "リュゼルカ",
+      "title": "双帆角獣",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "rare",
+      "state": "art",
+      "elements": [
+        "wind",
+        "ice"
+      ],
+      "statuses": [],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "ice",
+        "water"
+      ],
+      "materials": [
+        "双帆膜",
+        "冷露腺",
+        "帆角獣の跳腱",
+        "灰青角片"
+      ],
+      "habitat": "風礫盆地"
+    },
+    {
+      "no": 44,
+      "id": "monster.mordine",
+      "name": "モルディネ",
+      "title": "蓮冠獣",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "rare",
+      "state": "art",
+      "elements": [
+        "water"
+      ],
+      "statuses": [],
+      "weak": [
+        "thunder"
+      ],
+      "resist": [
+        "water",
+        "fire"
+      ],
+      "materials": [
+        "蓮冠泥甲",
+        "三槽水嚢",
+        "耐圧頬管",
+        "灰緑の厚皮"
+      ],
+      "habitat": "根絡み湿原"
+    },
+    {
+      "no": 45,
+      "id": "monster.doberken",
+      "name": "ドベルケン",
+      "title": "重鐘嚢獣",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "rare",
+      "state": "art",
+      "elements": [
+        "thunder"
+      ],
+      "statuses": [
+        "stun"
+      ],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "thunder"
+      ],
+      "materials": [
+        "重鐘嚢",
+        "導電響膜",
+        "灰鐘獣の厚皮",
+        "琥珀音石"
+      ],
+      "habitat": "灰鐘鉱山"
+    },
+    {
+      "no": 46,
+      "id": "monster.shilhatora",
+      "name": "シルハトラ",
+      "title": "枝燐鳥",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "rare",
+      "state": "art",
+      "elements": [
+        "thunder",
+        "wind"
+      ],
+      "statuses": [],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "thunder",
+        "wind"
+      ],
+      "materials": [
+        "枝燐節",
+        "導風翼膜",
+        "燐尾鳥の蹴腱",
+        "三叉燐芯"
+      ],
+      "habitat": "硝砂海岸"
+    },
+    {
+      "no": 47,
+      "id": "monster.kuzanerio",
+      "name": "クザネリオ",
+      "title": "逆硝殻蟹",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "rare",
+      "state": "art",
+      "elements": [
+        "ice"
+      ],
+      "statuses": [],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "ice",
+        "water"
+      ],
+      "materials": [
+        "逆硝板",
+        "冷板液",
+        "長鋏芯",
+        "灰硝脚甲"
+      ],
+      "habitat": "硝砂海岸"
+    },
+    {
+      "no": 48,
+      "id": "monster.fesrami",
+      "name": "フェスラミ",
+      "title": "結絹蟲",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "rare",
+      "state": "art",
+      "elements": [
+        "mist"
+      ],
+      "statuses": [
+        "poison"
+      ],
+      "weak": [
+        "wind"
+      ],
+      "resist": [
+        "water"
+      ],
+      "materials": [
+        "結絹糸",
+        "結節毒嚢",
+        "淡紫の羽袋",
+        "霧糸蟲の軟甲"
+      ],
+      "habitat": "根絡み湿原"
+    },
+    {
+      "no": 49,
+      "id": "monster.elmejika",
+      "name": "エルメジカ",
+      "title": "霜灯獣",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "rare",
+      "state": "art",
+      "elements": [
+        "mist",
+        "ice"
+      ],
+      "statuses": [],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "ice",
+        "water"
+      ],
+      "materials": [
+        "霜灯晶",
+        "霜滴腺",
+        "灰緑の靭皮",
+        "割冠芯"
+      ],
+      "habitat": "霧灯樹海"
+    },
+    {
+      "no": 50,
+      "id": "monster.azelnoto",
+      "name": "アゼルノト",
+      "title": "潮環蛇",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "subspecies",
+      "state": "art",
+      "elements": [
+        "water"
+      ],
+      "statuses": [],
+      "weak": [
+        "thunder"
+      ],
+      "resist": [
+        "water",
+        "fire"
+      ],
+      "materials": [
+        "潮環骨",
+        "水枕膜",
+        "青灰の蛇皮",
+        "潮環蛇の短肢骨"
+      ],
+      "habitat": "枯響河床"
+    },
+    {
+      "no": 51,
+      "id": "monster.bezrakio",
+      "name": "ベズラキオ",
+      "title": "蒸帆蛇",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "subspecies",
+      "state": "art",
+      "elements": [
+        "fire"
+      ],
+      "statuses": [],
+      "weak": [
+        "water"
+      ],
+      "resist": [
+        "fire",
+        "ice"
+      ],
+      "materials": [
+        "蒸帆板",
+        "熱樹脂嚢",
+        "灰銅の長皮",
+        "伏帆腱"
+      ],
+      "habitat": "燠脈台地"
+    },
+    {
+      "no": 52,
+      "id": "monster.murzenato",
+      "name": "ムルゼナト",
+      "title": "泥鉤蟲",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "subspecies",
+      "state": "art",
+      "elements": [
+        "water"
+      ],
+      "statuses": [
+        "paralysis"
+      ],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "water"
+      ],
+      "materials": [
+        "泥鉤甲",
+        "鉤底腺",
+        "粘水膜",
+        "灰褐輪節"
+      ],
+      "habitat": "沈根沢地"
+    },
+    {
+      "no": 53,
+      "id": "monster.hauremika",
+      "name": "ハウレミカ",
+      "title": "苔帷鳥",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "subspecies",
+      "state": "art",
+      "elements": [
+        "mist"
+      ],
+      "statuses": [
+        "sleep"
+      ],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "water"
+      ],
+      "materials": [
+        "苔帷羽",
+        "濾霧嚢",
+        "灰繭眠粉",
+        "細翼骨"
+      ],
+      "habitat": "灰繭窪地"
+    },
+    {
+      "no": 54,
+      "id": "monster.zedbanil",
+      "name": "ゼドバニル",
+      "title": "銅炉獣",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "subspecies",
+      "state": "art",
+      "elements": [
+        "thunder"
+      ],
+      "statuses": [],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "thunder",
+        "ice"
+      ],
+      "materials": [
+        "銅炉板",
+        "二層導膜",
+        "導管腱",
+        "冷銅の厚殻"
+      ],
+      "habitat": "冷銅洞庭"
+    },
+    {
+      "no": 55,
+      "id": "monster.oldasem",
+      "name": "オルダセム",
+      "title": "棚巌獣",
+      "rank": "rank.3",
+      "class": "huge",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "wind"
+      ],
+      "statuses": [],
+      "weak": [
+        "thunder"
+      ],
+      "resist": [
+        "wind",
+        "ice"
+      ],
+      "materials": [
+        "棚巌甲",
+        "連室風嚢",
+        "太い棚肋骨",
+        "礫押し牙",
+        "巨躯の支持腱"
+      ],
+      "habitat": "響礫回廊"
+    },
+    {
+      "no": 56,
+      "id": "monster.nuolvan",
+      "name": "ヌオルヴァン",
+      "title": "濾沼獣",
+      "rank": "rank.3",
+      "class": "huge",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "water"
+      ],
+      "statuses": [],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "water",
+        "fire"
+      ],
+      "materials": [
+        "濾沼ひげ",
+        "押水室膜",
+        "泥褐の腹皮",
+        "太根甲",
+        "巨躯の水腱"
+      ],
+      "habitat": "沈根沢地"
+    },
+    {
+      "no": 57,
+      "id": "monster.tarhegna",
+      "name": "テムソギア",
+      "title": "籠晶獣",
+      "rank": "rank.3",
+      "class": "huge",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "fire"
+      ],
+      "statuses": [],
+      "weak": [
+        "water"
+      ],
+      "resist": [
+        "fire",
+        "thunder"
+      ],
+      "materials": [
+        "籠晶肋",
+        "熱交換嚢",
+        "鈍琥珀の晶髄",
+        "巨躯の厚殻",
+        "籠晶獣の支持腱"
+      ],
+      "habitat": "玻璃裂原"
+    },
+    {
+      "no": 58,
+      "id": "monster.porgamis",
+      "name": "ポルガミス",
+      "title": "箒顎獣",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "none"
+      ],
+      "statuses": [
+        "stun"
+      ],
+      "weak": [
+        "water"
+      ],
+      "resist": [
+        "wind"
+      ],
+      "materials": [
+        "箒顎板",
+        "弾梳腱",
+        "灰褐の平皮",
+        "額の硬甲"
+      ],
+      "habitat": "風礫盆地"
+    },
+    {
+      "no": 59,
+      "id": "monster.yarlshena",
+      "name": "ヤルシェナ",
+      "title": "鞍頬獣",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "wind"
+      ],
+      "statuses": [
+        "paralysis"
+      ],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "wind"
+      ],
+      "materials": [
+        "鞍頬膜",
+        "麻痺微滴腺",
+        "灰緑の細皮",
+        "高脚腱"
+      ],
+      "habitat": "霧灯樹海"
+    },
+    {
+      "no": 60,
+      "id": "monster.pizelta",
+      "name": "ピゼルタ",
+      "title": "扇趾鳥",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "ice"
+      ],
+      "statuses": [],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "ice",
+        "wind"
+      ],
+      "materials": [
+        "扇趾板",
+        "冷床腺",
+        "灰青の短羽",
+        "踏氷腱"
+      ],
+      "habitat": "氷帆峡谷"
+    },
+    {
+      "no": 61,
+      "id": "monster.damorikus",
+      "name": "ダモリクス",
+      "title": "縁壺蟹",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "water"
+      ],
+      "statuses": [
+        "poison"
+      ],
+      "weak": [
+        "thunder"
+      ],
+      "resist": [
+        "water"
+      ],
+      "materials": [
+        "縁壺甲",
+        "毒濾腺",
+        "細鋏芯",
+        "水継膜"
+      ],
+      "habitat": "枯響河床"
+    },
+    {
+      "no": 62,
+      "id": "monster.isarnem",
+      "name": "イサルネム",
+      "title": "節帽蟲",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "fire"
+      ],
+      "statuses": [
+        "sleep"
+      ],
+      "weak": [
+        "water"
+      ],
+      "resist": [
+        "fire"
+      ],
+      "materials": [
+        "温胞帽殻",
+        "眠り胞子嚢",
+        "樹脂熱房",
+        "細節腱"
+      ],
+      "habitat": "灰繭窪地"
+    },
+    {
+      "no": 63,
+      "id": "monster.regsanio",
+      "name": "レグサニオ",
+      "title": "片盤蛇",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "thunder"
+      ],
+      "statuses": [
+        "paralysis"
+      ],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "thunder",
+        "water"
+      ],
+      "materials": [
+        "片盤電膜",
+        "麻痺縁腺",
+        "低稜骨",
+        "灰青蛇皮"
+      ],
+      "habitat": "冷銅洞庭"
+    },
+    {
+      "no": 64,
+      "id": "monster.rupenias",
+      "name": "ルペニアス",
+      "title": "袋肩獣",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "mist"
+      ],
+      "statuses": [
+        "sleep"
+      ],
+      "weak": [
+        "wind"
+      ],
+      "resist": [
+        "water"
+      ],
+      "materials": [
+        "袋肩膜",
+        "発酵眠液",
+        "灰緑の厚皮",
+        "ずれ肩腱"
+      ],
+      "habitat": "響礫回廊"
+    },
+    {
+      "no": 65,
+      "id": "monster.sograpin",
+      "name": "ソグラピン",
+      "title": "刻踵獣",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "ice"
+      ],
+      "statuses": [
+        "stun"
+      ],
+      "weak": [
+        "thunder"
+      ],
+      "resist": [
+        "ice",
+        "wind"
+      ],
+      "materials": [
+        "刻氷蹄板",
+        "細溝冷腺",
+        "灰青の軽皮",
+        "屈踵腱"
+      ],
+      "habitat": "玻璃裂原"
+    },
+    {
+      "no": 66,
+      "id": "monster.makuejira",
+      "name": "マクエジラ",
+      "title": "梯胸鳥",
+      "rank": "rank.3",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "wind"
+      ],
+      "statuses": [
+        "poison"
+      ],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "wind"
+      ],
+      "materials": [
+        "梯胸骨",
+        "毒風腺",
+        "折翼膜",
+        "灰紫の喉皮"
+      ],
+      "habitat": "雨裂断崖"
+    },
+    {
+      "no": 67,
+      "id": "monster.gumesald",
+      "name": "グメサルド",
+      "title": "熔継獣",
+      "rank": "rank.4",
+      "class": "large",
+      "variant": "rare",
+      "state": "art",
+      "elements": [
+        "fire",
+        "thunder"
+      ],
+      "statuses": [
+        "stun"
+      ],
+      "weak": [
+        "water"
+      ],
+      "resist": [
+        "fire",
+        "thunder"
+      ],
+      "materials": [
+        "熔継岩殻",
+        "段橋甲",
+        "熔継晶芯",
+        "蓄雷床膜",
+        "灼尾晶"
+      ],
+      "habitat": "伏熱石原"
+    },
+    {
+      "no": 68,
+      "id": "monster.nericaus",
+      "name": "ネリカウス",
+      "title": "環燐鳥",
+      "rank": "rank.4",
+      "class": "large",
+      "variant": "rare",
+      "state": "art",
+      "elements": [
+        "thunder",
+        "wind"
+      ],
+      "statuses": [
+        "paralysis"
+      ],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "thunder",
+        "wind"
+      ],
+      "materials": [
+        "環燐板",
+        "痺燐薄膜",
+        "高原光皮",
+        "整流尾嚢",
+        "環尾腱"
+      ],
+      "habitat": "錆星高原"
+    },
+    {
+      "no": 69,
+      "id": "monster.voltena",
+      "name": "ヴォルテナ",
+      "title": "重帷蟲",
+      "rank": "rank.4",
+      "class": "large",
+      "variant": "rare",
+      "state": "art",
+      "elements": [
+        "water",
+        "mist"
+      ],
+      "statuses": [
+        "poison"
+      ],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "water",
+        "mist"
+      ],
+      "materials": [
+        "重帷膜",
+        "三層貯露嚢",
+        "重霧糸",
+        "濃毒紡液",
+        "帷櫛甲"
+      ],
+      "habitat": "深帷樹洞"
+    },
+    {
+      "no": 70,
+      "id": "monster.kitolnam",
+      "name": "キトルナム",
+      "title": "重氷蛇",
+      "rank": "rank.4",
+      "class": "large",
+      "variant": "rare",
+      "state": "art",
+      "elements": [
+        "ice",
+        "mist"
+      ],
+      "statuses": [
+        "sleep"
+      ],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "ice",
+        "mist"
+      ],
+      "materials": [
+        "折氷帆",
+        "重冷晶",
+        "冷霧管",
+        "眠霜滴",
+        "折帆靭皮"
+      ],
+      "habitat": "冷銅洞庭"
+    },
+    {
+      "no": 71,
+      "id": "monster.segranio",
+      "name": "セオルミド",
+      "title": "双環獣",
+      "rank": "rank.4",
+      "class": "large",
+      "variant": "rare",
+      "state": "art",
+      "elements": [
+        "wind",
+        "mist"
+      ],
+      "statuses": [],
+      "weak": [
+        "thunder"
+      ],
+      "resist": [
+        "wind",
+        "mist"
+      ],
+      "materials": [
+        "双環冠片",
+        "二室整霧嚢",
+        "重灯晶",
+        "斜環靭皮",
+        "導風腱"
+      ],
+      "habitat": "重霧環谷"
+    },
+    {
+      "no": 72,
+      "id": "monster.dekoranze",
+      "name": "デコランゼ",
+      "title": "炉畝獣",
+      "rank": "rank.4",
+      "class": "huge",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "fire"
+      ],
+      "statuses": [],
+      "weak": [
+        "water"
+      ],
+      "resist": [
+        "fire"
+      ],
+      "materials": [
+        "炉畝厚皮",
+        "畝間蓄熱膜",
+        "発酵炉芯",
+        "巨脚甲",
+        "押尾板",
+        "熾脈塩"
+      ],
+      "habitat": "伏熱石原"
+    },
+    {
+      "no": 73,
+      "id": "monster.fusaldom",
+      "name": "フサルドム",
+      "title": "氷礁獣",
+      "rank": "rank.4",
+      "class": "huge",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "ice"
+      ],
+      "statuses": [
+        "stun"
+      ],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "ice"
+      ],
+      "materials": [
+        "氷礁大甲",
+        "肩冷腺",
+        "礁間靭膜",
+        "巨踏骨",
+        "冷尾甲"
+      ],
+      "habitat": "氷帆峡谷"
+    },
+    {
+      "no": 74,
+      "id": "monster.rimposera",
+      "name": "リムポセラ",
+      "title": "汐函獣",
+      "rank": "rank.4",
+      "class": "huge",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "water"
+      ],
+      "statuses": [
+        "sleep"
+      ],
+      "weak": [
+        "thunder"
+      ],
+      "resist": [
+        "water"
+      ],
+      "materials": [
+        "汐函厚膜",
+        "濾水甲",
+        "眠潮藻塊",
+        "四室水芯",
+        "汐尾板"
+      ],
+      "habitat": "硝砂海岸"
+    },
+    {
+      "no": 75,
+      "id": "monster.dalhoina",
+      "name": "ダルホイナ",
+      "title": "風梁獣",
+      "rank": "rank.4",
+      "class": "huge",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "wind"
+      ],
+      "statuses": [],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "wind"
+      ],
+      "materials": [
+        "中空梁骨",
+        "三梁腱",
+        "巨圧気嚢",
+        "風削厚皮",
+        "尾根板"
+      ],
+      "habitat": "雨裂断崖"
+    },
+    {
+      "no": 76,
+      "id": "monster.zonikebal",
+      "name": "ゾニケバル",
+      "title": "砕脈獣",
+      "rank": "rank.4",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "fire",
+        "thunder"
+      ],
+      "statuses": [
+        "stun"
+      ],
+      "weak": [
+        "water"
+      ],
+      "resist": [
+        "fire",
+        "thunder"
+      ],
+      "materials": [
+        "砕脈縦板",
+        "熱電筋床",
+        "高前脚甲",
+        "砕骨牙",
+        "接地尾板"
+      ],
+      "habitat": "錆星高原"
+    },
+    {
+      "no": 77,
+      "id": "monster.ludopanea",
+      "name": "ルドパネア",
+      "title": "孔顎獣",
+      "rank": "rank.4",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "water",
+        "ice"
+      ],
+      "statuses": [],
+      "weak": [
+        "thunder"
+      ],
+      "resist": [
+        "water",
+        "ice"
+      ],
+      "materials": [
+        "孔顎帆",
+        "分孔冷水嚢",
+        "細脚腱",
+        "氷孔骨",
+        "淡水靭皮"
+      ],
+      "habitat": "冷銅洞庭"
+    },
+    {
+      "no": 78,
+      "id": "monster.salpinoc",
+      "name": "サルピノク",
+      "title": "帷鋏蟹",
+      "rank": "rank.4",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "wind",
+        "mist"
+      ],
+      "statuses": [
+        "poison"
+      ],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "wind",
+        "mist"
+      ],
+      "materials": [
+        "帷鋏甲",
+        "圧露嚢",
+        "毒溝鋏芯",
+        "六脚靭膜",
+        "霧帷縁"
+      ],
+      "habitat": "重霧環谷"
+    },
+    {
+      "no": 79,
+      "id": "monster.hemzario",
+      "name": "ヘムザリオ",
+      "title": "連額獣",
+      "rank": "rank.4",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "thunder"
+      ],
+      "statuses": [
+        "paralysis"
+      ],
+      "weak": [
+        "water"
+      ],
+      "resist": [
+        "thunder"
+      ],
+      "materials": [
+        "連額甲",
+        "連額靭帯",
+        "痺電粘膜",
+        "折尾骨",
+        "鉱山厚皮"
+      ],
+      "habitat": "灰鐘鉱山"
+    },
+    {
+      "no": 80,
+      "id": "monster.pasnelim",
+      "name": "パスネリム",
+      "title": "逆穂獣",
+      "rank": "rank.4",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "wind"
+      ],
+      "statuses": [
+        "sleep"
+      ],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "wind"
+      ],
+      "materials": [
+        "逆穂帆",
+        "散眠嚢",
+        "長首靭皮",
+        "高地腱",
+        "眠苦葉塊"
+      ],
+      "habitat": "鉛雲高地"
+    },
+    {
+      "no": 81,
+      "id": "monster.zaclatom",
+      "name": "ザクラトム",
+      "title": "炉喉鳥",
+      "rank": "rank.4",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "fire"
+      ],
+      "statuses": [],
+      "weak": [
+        "water"
+      ],
+      "resist": [
+        "fire"
+      ],
+      "materials": [
+        "炉喉膜",
+        "三角喉甲",
+        "熱息脂晶",
+        "広尾板",
+        "灰翼腱"
+      ],
+      "habitat": "燠脈台地"
+    },
+    {
+      "no": 82,
+      "id": "monster.izoflane",
+      "name": "イゾフラネ",
+      "title": "湧皿鳥",
+      "rank": "rank.4",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "water"
+      ],
+      "statuses": [],
+      "weak": [
+        "ice"
+      ],
+      "resist": [
+        "water"
+      ],
+      "materials": [
+        "湧皿翼甲",
+        "薄水嚢",
+        "長足甲",
+        "掬嘴片",
+        "河床羽皮"
+      ],
+      "habitat": "枯響河床"
+    },
+    {
+      "no": 83,
+      "id": "monster.queribas",
+      "name": "クェリバス",
+      "title": "氷櫛蟲",
+      "rank": "rank.4",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "ice"
+      ],
+      "statuses": [
+        "paralysis"
+      ],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "ice"
+      ],
+      "materials": [
+        "氷櫛棘",
+        "冷痺管",
+        "平節甲",
+        "咬甲牙",
+        "痺滴晶"
+      ],
+      "habitat": "玻璃裂原"
+    },
+    {
+      "no": 84,
+      "id": "monster.enagrio",
+      "name": "エナグリオ",
+      "title": "礫環蛇",
+      "rank": "rank.4",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "thunder"
+      ],
+      "statuses": [],
+      "weak": [
+        "water"
+      ],
+      "resist": [
+        "thunder"
+      ],
+      "materials": [
+        "礫環骨",
+        "蓄電砂嚢",
+        "雷砂粒",
+        "滑胴靭皮",
+        "細尾板"
+      ],
+      "habitat": "響礫回廊"
+    },
+    {
+      "no": 85,
+      "id": "monster.nucbarea",
+      "name": "ヌクバレア",
+      "title": "霧扁蟹",
+      "rank": "rank.4",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "mist"
+      ],
+      "statuses": [
+        "poison"
+      ],
+      "weak": [
+        "wind"
+      ],
+      "resist": [
+        "mist"
+      ],
+      "materials": [
+        "霧扁甲",
+        "濾霧鰓膜",
+        "毒口房",
+        "湿鋏芯",
+        "扇尾縁"
+      ],
+      "habitat": "深帷樹洞"
+    },
+    {
+      "no": 86,
+      "id": "monster.towalsem",
+      "name": "トワルセム",
+      "title": "冷滴蛇",
+      "rank": "rank.4",
+      "class": "large",
+      "variant": "base",
+      "state": "art",
+      "elements": [
+        "ice"
+      ],
+      "statuses": [],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "ice"
+      ],
+      "materials": [
+        "冷滴嚢",
+        "雫冷晶",
+        "滑背皮",
+        "支持尾骨",
+        "氷滴膜"
+      ],
+      "habitat": "氷帆峡谷"
+    }
+  ],
+  "implementedMaterialIds": [
+    {
+      "id": "mat.galdros.shell_shard",
+      "name": "岩殻片",
+      "source": "public/data/items.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.galdros.hard_bone",
+      "name": "硬骨",
+      "source": "public/data/items.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.galdros.bronze_vein",
+      "name": "青銅晶脈",
+      "source": "public/data/items.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.galdros.foreleg_plate",
+      "name": "前脚甲",
+      "source": "public/data/items.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.galdros.veined_shell",
+      "name": "脈岩殻",
+      "source": "public/data/items.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.2"
+    },
+    {
+      "id": "mat.galdros.tail_crystal",
+      "name": "尾端晶",
+      "source": "public/data/items.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.2"
+    },
+    {
+      "id": "mat.galdros.crystal_shell",
+      "name": "晶岩殻",
+      "source": "public/data/items.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.3"
+    },
+    {
+      "id": "mat.galdros.bronze_lump",
+      "name": "青銅晶塊",
+      "source": "public/data/items.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.3"
+    },
+    {
+      "id": "mat.galdros.radiant_shell",
+      "name": "輝岩殻",
+      "source": "public/data/items.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.4"
+    },
+    {
+      "id": "mat.galdros.pulse_core",
+      "name": "脈動晶芯",
+      "source": "public/data/items.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.4"
+    },
+    {
+      "id": "mat.selvark.sail_membrane",
+      "name": "帆膜",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.selvark.elastic_tendon",
+      "name": "弾性腱",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.selvark.sail_cartilage",
+      "name": "帆角軟骨",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.selvark.flow_concha",
+      "name": "整流鼻甲",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.numeradon.mud_crystal",
+      "name": "泥晶",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.numeradon.waterproof_hide",
+      "name": "耐水皮",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.numeradon.mud_crown",
+      "name": "泥冠片",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.numeradon.pressure_sac",
+      "name": "水圧嚢膜",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.bornakel.echo_sac",
+      "name": "響嚢",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.bornakel.hard_hide",
+      "name": "硬皮",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.bornakel.bell_skull",
+      "name": "鐘頭骨",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.bornakel.resonance_valve",
+      "name": "共鳴弁",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.ashreia.ash_feather",
+      "name": "灰羽",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.ashreia.veil_membrane",
+      "name": "帷膜",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.ashreia.sleep_powder",
+      "name": "眠灰粉",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.ashreia.powder_sac",
+      "name": "灰粉房膜",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.lumisca.phos_node",
+      "name": "燐節",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.lumisca.light_hide",
+      "name": "光皮",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.lumisca.storage_film",
+      "name": "蓄電薄膜",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.lumisca.discharge_plate",
+      "name": "放電尾板",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.orglass.glass_shell",
+      "name": "硝殻",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.orglass.claw_core",
+      "name": "鋏芯",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.orglass.forming_gland",
+      "name": "成形腺膜",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.orglass.glass_greave",
+      "name": "硝脚甲",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.tengaro.hook_shell",
+      "name": "鉤甲",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.tengaro.ring_segment",
+      "name": "輪節",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.tengaro.lock_tendon",
+      "name": "輪留め腱",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.tengaro.venom_duct",
+      "name": "痺液管",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.verito.mist_silk",
+      "name": "霧糸",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.verito.wing_bag",
+      "name": "羽袋",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.verito.venom_fluid",
+      "name": "毒紡液",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.verito.comb_shell",
+      "name": "糸櫛甲",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.razmer.ring_bone",
+      "name": "環骨",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.razmer.vibration_gland",
+      "name": "振動腺",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.razmer.ring_ligament",
+      "name": "環間靭帯",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.razmer.tail_bone",
+      "name": "尾端骨",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.kirisave.ice_sail",
+      "name": "氷帆",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.kirisave.cold_crystal",
+      "name": "冷晶",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.kirisave.crystal_duct",
+      "name": "冷晶管",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.kirisave.sail_skin",
+      "name": "帆間皮",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.velgait.mist_lamp",
+      "name": "霧灯晶",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.velgait.tough_hide",
+      "name": "靭皮",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.velgait.crown_shard",
+      "name": "環冠片",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.velgait.mist_pore",
+      "name": "凝霧孔膜",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.kordopil.juv_shell",
+      "name": "幼岩殻片",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.kordopil.soft_bed",
+      "name": "柔らかい晶床",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.kordopil.tail_grain",
+      "name": "丸尾晶粒",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.palseit.juv_membrane",
+      "name": "幼帆膜",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.palseit.thin_tendon",
+      "name": "細弾性腱",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.numaporon.juv_mud_crystal",
+      "name": "幼泥晶",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.numaporon.thin_hide",
+      "name": "薄耐水皮",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.numaporon.juv_crown",
+      "name": "幼冠甲",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.chilumicana.juv_node",
+      "name": "幼燐節",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.chilumicana.pale_hide",
+      "name": "淡光皮",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.chilumicana.small_film",
+      "name": "小放電膜",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.kohalgis.juv_glass",
+      "name": "幼硝殻",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.kohalgis.small_claw",
+      "name": "小鋏芯",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.kohalgis.thin_gland",
+      "name": "成形腺の薄膜",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.mitogaron.juv_hook",
+      "name": "幼鉤甲",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.mitogaron.soft_ring",
+      "name": "柔輪節",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.mitogaron.thin_duct",
+      "name": "細痺液管",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.yurtepica.juv_silk",
+      "name": "幼霧糸",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.yurtepica.thin_bag",
+      "name": "薄羽袋",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.yurtepica.weak_venom",
+      "name": "微毒紡液",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.hinasalv.juv_sail",
+      "name": "幼氷帆",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.hinasalv.small_crystal",
+      "name": "小冷晶",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    },
+    {
+      "id": "mat.hinasalv.thin_skin",
+      "name": "薄帆間皮",
+      "source": "public/data/items_creatures.json",
+      "isImplemented": true,
+      "earliestRankId": "rank.1"
+    }
+  ],
+  "proposedNonHuntMaterials": [
+    {
+      "id": "mat.gather.flatnagi_leaf",
+      "name": "ヒラナギの葉",
+      "unit": "枚",
+      "fieldName": "風礫盆地",
+      "description": "灰緑の平たい葉を重ね、乾いた礫の間に根を張る草。採集するのは外側の葉。",
+      "proposedUse": "里の薬房で使う回復液の原料候補。調合レシピは別途設計する。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.001",
+        "quest.delivery.001"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.gather.001",
+          "requires": [],
+          "unlockStoryId": null,
+          "fieldId": "field.basin",
+          "fieldName": "風礫盆地",
+          "stars": 1,
+          "runtimeContentExists": false
+        },
+        {
+          "id": "quest.delivery.001",
+          "requires": [],
+          "unlockStoryId": null,
+          "fieldId": "field.basin",
+          "fieldName": "風礫盆地",
+          "stars": 1,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.gather.dewbreak_fruit",
+      "name": "ツユワリの実",
+      "unit": "個",
+      "fieldName": "風礫盆地",
+      "description": "薄い殻の内側に粘りのある果肉を持つ、低い草の実。",
+      "proposedUse": "野営用の保存食と、乾燥試験用の食材。食事効果は未設計。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.002"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.gather.002",
+          "requires": [],
+          "unlockStoryId": null,
+          "fieldId": "field.basin",
+          "fieldName": "風礫盆地",
+          "stars": 1,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.gather.threadbind_fiber",
+      "name": "スジユイの繊維",
+      "unit": "束",
+      "fieldName": "風礫盆地",
+      "description": "低い岩の隙間を這うつるから取れる、縦に裂けにくい細い繊維。",
+      "proposedUse": "荷紐と採集袋の補修材。装備強化素材へ自動置換しない。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.003"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.gather.003",
+          "requires": [
+            "quest.selvark.r1"
+          ],
+          "unlockStoryId": "ST02",
+          "fieldId": "field.basin",
+          "fieldName": "風礫盆地",
+          "stars": 2,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.gather.floatbloom_moss",
+      "name": "ウキハナ苔",
+      "unit": "個",
+      "fieldName": "根絡み湿原",
+      "description": "浅瀬の根に丸い房を作り、上面だけ乾いている苔。",
+      "proposedUse": "水汲み道具の濾過層の試験材。飲料水をそのまま浄化できる効果は持たせない。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.004",
+        "quest.delivery.002"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.gather.004",
+          "requires": [
+            "quest.story.st04"
+          ],
+          "unlockStoryId": "ST04",
+          "fieldId": null,
+          "fieldName": "根絡み湿原",
+          "stars": 2,
+          "runtimeContentExists": false
+        },
+        {
+          "id": "quest.delivery.002",
+          "requires": [
+            "quest.story.st04"
+          ],
+          "unlockStoryId": "ST04",
+          "fieldId": null,
+          "fieldName": "根絡み湿原",
+          "stars": 2,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.gather.rootmesh_bundle",
+      "name": "ネアミ根",
+      "unit": "束",
+      "fieldName": "根絡み湿原",
+      "description": "乾いた根丘の表面に広がる、薄く網状に分かれた草根。",
+      "proposedUse": "荷籠の底敷きと苗床の保水材。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.005"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.gather.005",
+          "requires": [
+            "quest.story.st04"
+          ],
+          "unlockStoryId": "ST04",
+          "fieldId": null,
+          "fieldName": "根絡み湿原",
+          "stars": 2,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.gather.saltbox_fruit",
+      "name": "シオハコの実",
+      "unit": "個",
+      "fieldName": "硝砂海岸",
+      "description": "白砂の端に生える低木の角張った実。表皮の溝へ潮の結晶が付く。",
+      "proposedUse": "炊事係の保存食試作と、海辺の食料備蓄。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.006"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.gather.006",
+          "requires": [
+            "quest.story.st06"
+          ],
+          "unlockStoryId": "ST06",
+          "fieldId": null,
+          "fieldName": "硝砂海岸",
+          "stars": 2,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.gather.shoreseam_algae",
+      "name": "ハマトジ藻",
+      "unit": "束",
+      "fieldName": "硝砂海岸",
+      "description": "干上がった潮溜まりの岩へ帯状に付く、厚い灰緑の藻。",
+      "proposedUse": "容器の継ぎ目に使う糊の原料候補。加工レシピは別途設計する。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.007"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.gather.007",
+          "requires": [
+            "quest.story.st06"
+          ],
+          "unlockStoryId": "ST06",
+          "fieldId": null,
+          "fieldName": "硝砂海岸",
+          "stars": 2,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.gather.layergill_mushroom",
+      "name": "カサネヒダ茸",
+      "unit": "個",
+      "fieldName": "灰鐘鉱山",
+      "description": "広い坑口の朽木に育ち、傘の下へ二段の短いひだを持つ菌。",
+      "proposedUse": "坑口で働く作業班向けの食料。回復効果などは未設計。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.008",
+        "quest.delivery.003"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.gather.008",
+          "requires": [
+            "quest.story.st08"
+          ],
+          "unlockStoryId": "ST08",
+          "fieldId": null,
+          "fieldName": "灰鐘鉱山",
+          "stars": 2,
+          "runtimeContentExists": false
+        },
+        {
+          "id": "quest.delivery.003",
+          "requires": [
+            "quest.story.st08"
+          ],
+          "unlockStoryId": "ST08",
+          "fieldId": null,
+          "fieldName": "灰鐘鉱山",
+          "stars": 2,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.gather.goldedge_mycelium",
+      "name": "キベリ菌糸",
+      "unit": "束",
+      "fieldName": "灰鐘鉱山",
+      "description": "乾いた坑口の倒木を包む、縁だけ黄褐色の太い菌糸。",
+      "proposedUse": "乾燥させる灯具の芯材。燃料としての持続時間は未設計。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.009"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.gather.009",
+          "requires": [
+            "quest.story.st08"
+          ],
+          "unlockStoryId": "ST08",
+          "fieldId": null,
+          "fieldName": "灰鐘鉱山",
+          "stars": 3,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.gather.whiteline_moss",
+      "name": "シロスジ苔",
+      "unit": "個",
+      "fieldName": "氷帆峡谷",
+      "description": "風裏の岩に密着し、表面に短い白筋を持つ低い苔。",
+      "proposedUse": "野営用敷布の詰め物と乾燥比較の試験材。寒さを無効化する装備ではない。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.010"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.gather.010",
+          "requires": [
+            "quest.story.st10"
+          ],
+          "unlockStoryId": "ST10",
+          "fieldId": null,
+          "fieldName": "氷帆峡谷",
+          "stars": 3,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.gather.slimlight_resin",
+      "name": "ホソアカリ樹脂",
+      "unit": "個",
+      "fieldName": "霧灯樹海",
+      "description": "大樹の低い根元に固まり、細い線だけ鈍く光を返す樹脂。",
+      "proposedUse": "道標の灯具の保護剤と曇り止め試験。自発光素材としては扱わない。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.011",
+        "quest.delivery.004"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.gather.011",
+          "requires": [
+            "quest.story.st12"
+          ],
+          "unlockStoryId": "ST12",
+          "fieldId": null,
+          "fieldName": "霧灯樹海",
+          "stars": 3,
+          "runtimeContentExists": false
+        },
+        {
+          "id": "quest.delivery.004",
+          "requires": [
+            "quest.story.st12"
+          ],
+          "unlockStoryId": "ST12",
+          "fieldId": null,
+          "fieldName": "霧灯樹海",
+          "stars": 3,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.gather.ringdew_grass",
+      "name": "ワツユ草",
+      "unit": "束",
+      "fieldName": "重霧環谷",
+      "description": "低い尾根の水滴場に育ち、葉の縁に水滴が環状に並ぶ草。",
+      "proposedUse": "補修後の湿り方を比べる観測試料と、苗床の保水材。",
+      "isImplemented": false,
+      "category": "gather",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.gather.012"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.gather.012",
+          "requires": [
+            "quest.story.st14"
+          ],
+          "unlockStoryId": "ST14",
+          "fieldId": null,
+          "fieldName": "重霧環谷",
+          "stars": 4,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.ore.basin_iron",
+      "name": "風礫鉄鉱",
+      "unit": "個",
+      "fieldName": "風礫盆地",
+      "description": "盆地の浅い岩層に混じる、鈍い赤褐色の天然鉱石。獣の殻や体内晶ではない。",
+      "proposedUse": "鍛冶場の補修金具と基礎工具を作る原料候補。装備レシピへの採用は別途設計する。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.001"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.mine.001",
+          "requires": [],
+          "unlockStoryId": null,
+          "fieldId": "field.basin",
+          "fieldName": "風礫盆地",
+          "stars": 1,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.ore.grit_whetstone",
+      "name": "礫目砥石原石",
+      "unit": "個",
+      "fieldName": "風礫盆地",
+      "description": "細かな硬い粒が均一に並ぶ、灰緑色の天然砥石原石。",
+      "proposedUse": "研磨石を作る新しい加工レシピの原料候補。現行の研磨石を採掘済みとして配らない。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.002",
+        "quest.delivery.001"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.mine.002",
+          "requires": [],
+          "unlockStoryId": null,
+          "fieldId": "field.basin",
+          "fieldName": "風礫盆地",
+          "stars": 1,
+          "runtimeContentExists": false
+        },
+        {
+          "id": "quest.delivery.001",
+          "requires": [],
+          "unlockStoryId": null,
+          "fieldId": "field.basin",
+          "fieldName": "風礫盆地",
+          "stars": 1,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.ore.layered_ashstone",
+      "name": "層灰石",
+      "unit": "個",
+      "fieldName": "風礫盆地",
+      "description": "薄い灰色の層で割れやすい天然石。石片を選別して補修用の詰め材にする。",
+      "proposedUse": "雨樋の台座や補修金具の隙間を埋める石材。施設補修の納品素材候補。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.003"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.mine.003",
+          "requires": [
+            "quest.selvark.r1"
+          ],
+          "unlockStoryId": "ST02",
+          "fieldId": "field.basin",
+          "fieldName": "風礫盆地",
+          "stars": 2,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.ore.rootbank_clay",
+      "name": "根際陶土",
+      "unit": "袋",
+      "fieldName": "根絡み湿原",
+      "description": "水没しない根際の地層にある、細かい粒の灰白色の天然陶土。",
+      "proposedUse": "水桶の受け皿や貯水容器の補修に使う焼き物の原料候補。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.004",
+        "quest.delivery.002"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.mine.004",
+          "requires": [
+            "quest.story.st04"
+          ],
+          "unlockStoryId": "ST04",
+          "fieldId": null,
+          "fieldName": "根絡み湿原",
+          "stars": 1,
+          "runtimeContentExists": false
+        },
+        {
+          "id": "quest.delivery.002",
+          "requires": [
+            "quest.story.st04"
+          ],
+          "unlockStoryId": "ST04",
+          "fieldId": null,
+          "fieldName": "根絡み湿原",
+          "stars": 2,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.ore.wetbank_tuff",
+      "name": "湿縁凝灰石",
+      "unit": "個",
+      "fieldName": "根絡み湿原",
+      "description": "浅い岸の露出層にある、細かな空隙を含んだ灰褐色の天然石。",
+      "proposedUse": "排水口の裏込めや乾いた足場の補修に使う石材候補。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.005"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.mine.005",
+          "requires": [
+            "quest.story.st04"
+          ],
+          "unlockStoryId": "ST04",
+          "fieldId": null,
+          "fieldName": "根絡み湿原",
+          "stars": 2,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.ore.white_silica_sand",
+      "name": "白硝砂",
+      "unit": "袋",
+      "fieldName": "硝砂海岸",
+      "description": "海岸の乾いた上段へ固く積もる、白い硝質の粒を含んだ天然鉱砂。",
+      "proposedUse": "灯りを覆う窓材や保存瓶を作る新しい加工工程の原料候補。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.006"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.mine.006",
+          "requires": [
+            "quest.story.st06"
+          ],
+          "unlockStoryId": "ST06",
+          "fieldId": null,
+          "fieldName": "硝砂海岸",
+          "stars": 1,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.ore.tide_copper_ore",
+      "name": "潮青鉱石",
+      "unit": "個",
+      "fieldName": "硝砂海岸",
+      "description": "低い海食洞の乾いた岩床に露出する、青緑色の天然銅鉱石。ガルドロスの体内素材「青銅晶脈」とは別物。",
+      "proposedUse": "漁網の重りや留め具を鋳造する原料候補。自然鉱物から身体素材を生成する交換には使わない。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.007"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.mine.007",
+          "requires": [
+            "quest.story.st06"
+          ],
+          "unlockStoryId": "ST06",
+          "fieldId": null,
+          "fieldName": "硝砂海岸",
+          "stars": 2,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.ore.bell_mine_firestone",
+      "name": "灰鐘耐火石",
+      "unit": "個",
+      "fieldName": "灰鐘鉱山",
+      "description": "広い坑口の地層から取れる、熱で割れにくい灰白色の天然石。",
+      "proposedUse": "鍛冶炉の内壁や炊事場のかまどを補修する石材候補。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.008",
+        "quest.delivery.003"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.mine.008",
+          "requires": [
+            "quest.story.st08"
+          ],
+          "unlockStoryId": "ST08",
+          "fieldId": null,
+          "fieldName": "灰鐘鉱山",
+          "stars": 2,
+          "runtimeContentExists": false
+        },
+        {
+          "id": "quest.delivery.003",
+          "requires": [
+            "quest.story.st08"
+          ],
+          "unlockStoryId": "ST08",
+          "fieldId": null,
+          "fieldName": "灰鐘鉱山",
+          "stars": 2,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.ore.dull_crystal_mica",
+      "name": "鈍晶雲母",
+      "unit": "枚",
+      "fieldName": "灰鐘鉱山",
+      "description": "露天跡の岩層から薄い板状に剥がれる、鈍い光沢の天然鉱物。",
+      "proposedUse": "坑口の反射標識を補修する薄板の原料候補。生物の共鳴膜や羽とは別素材。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.009"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.mine.009",
+          "requires": [
+            "quest.story.st08"
+          ],
+          "unlockStoryId": "ST08",
+          "fieldId": null,
+          "fieldName": "灰鐘鉱山",
+          "stars": 3,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.ore.icebank_hardstone",
+      "name": "氷縁硬石",
+      "unit": "個",
+      "fieldName": "氷帆峡谷",
+      "description": "氷に接する地上の岩棚で採れる、砕くと角が残る灰青色の天然硬石。",
+      "proposedUse": "凍りやすい通路の滑り止めへ加工する石材候補。冷晶などの生物素材とは別物。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.010"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.mine.010",
+          "requires": [
+            "quest.story.st10"
+          ],
+          "unlockStoryId": "ST10",
+          "fieldId": null,
+          "fieldName": "氷帆峡谷",
+          "stars": 3,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.ore.root_crystal_darkstone",
+      "name": "根晶黒石",
+      "unit": "個",
+      "fieldName": "霧灯樹海",
+      "description": "大樹の根際に出る天然晶脈の、黒く緻密な外縁部分。灯節などの生物器官ではない。",
+      "proposedUse": "里の灯台座を湿気から離して据える石材候補。採掘時に発光装備の所持を要求しない。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.011",
+        "quest.delivery.004"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.mine.011",
+          "requires": [
+            "quest.story.st12"
+          ],
+          "unlockStoryId": "ST12",
+          "fieldId": null,
+          "fieldName": "霧灯樹海",
+          "stars": 3,
+          "runtimeContentExists": false
+        },
+        {
+          "id": "quest.delivery.004",
+          "requires": [
+            "quest.story.st12"
+          ],
+          "unlockStoryId": "ST12",
+          "fieldId": null,
+          "fieldName": "霧灯樹海",
+          "stars": 3,
+          "runtimeContentExists": false
+        }
+      ]
+    },
+    {
+      "id": "mat.ore.ring_vein_densestone",
+      "name": "環脈緻密石",
+      "unit": "個",
+      "fieldName": "重霧環谷",
+      "description": "低い環状尾根に露出する、水を吸いにくい緻密な天然石。セオルミドの環冠片とは異なる。",
+      "proposedUse": "分流路の継ぎ目と点検口を補修する石材候補。物語の結末を変更する必須素材にはしない。",
+      "isImplemented": false,
+      "category": "mineral",
+      "ordinaryInventoryAllowed": true,
+      "shopPurchaseEnabled": false,
+      "shopSaleEnabled": false,
+      "recipeImplemented": false,
+      "sourceQuestIds": [
+        "quest.mine.012"
+      ],
+      "rankId": null,
+      "rankNote": "Source does not assign a rank; quest stars must not be used as rank.",
+      "acquisitionQuests": [
+        {
+          "id": "quest.mine.012",
+          "requires": [
+            "quest.story.st14"
+          ],
+          "unlockStoryId": "ST14",
+          "fieldId": null,
+          "fieldName": "重霧環谷",
+          "stars": 4,
+          "runtimeContentExists": false
+        }
+      ]
+    }
+  ],
+  "existingQuestAccess": [
+    {
+      "id": "quest.basin.003",
+      "name": "岩場の足音",
+      "kind": "hunt",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.galdros",
+      "requires": []
+    },
+    {
+      "id": "quest.basin.r2.001",
+      "name": "脈打つ岩殻",
+      "kind": "hunt",
+      "rankId": "rank.2",
+      "targetMonsterId": "monster.galdros",
+      "requires": [
+        "quest.basin.003"
+      ]
+    },
+    {
+      "id": "quest.basin.r3.001",
+      "name": "晶の背",
+      "kind": "hunt",
+      "rankId": "rank.3",
+      "targetMonsterId": "monster.galdros",
+      "requires": [
+        "quest.basin.r2.001"
+      ]
+    },
+    {
+      "id": "quest.basin.r4.001",
+      "name": "輝く岩山",
+      "kind": "hunt",
+      "rankId": "rank.4",
+      "targetMonsterId": "monster.galdros",
+      "requires": [
+        "quest.basin.r3.001"
+      ]
+    },
+    {
+      "id": "quest.selvark.r1",
+      "name": "帆角の風",
+      "kind": "hunt",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.selvark",
+      "requires": []
+    },
+    {
+      "id": "quest.numeradon.r1",
+      "name": "泥皿の主",
+      "kind": "hunt",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.numeradon",
+      "requires": []
+    },
+    {
+      "id": "quest.bornakel.r1",
+      "name": "鐘の鳴る谷",
+      "kind": "hunt",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.bornakel",
+      "requires": []
+    },
+    {
+      "id": "quest.ashreia.r1",
+      "name": "灰の帷",
+      "kind": "hunt",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.ashreia",
+      "requires": []
+    },
+    {
+      "id": "quest.lumisca.r1",
+      "name": "燐尾の光",
+      "kind": "hunt",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.lumisca",
+      "requires": []
+    },
+    {
+      "id": "quest.orglass.r1",
+      "name": "硝殻の鋏",
+      "kind": "hunt",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.orglass",
+      "requires": []
+    },
+    {
+      "id": "quest.tengaro.r1",
+      "name": "輪になる蟲",
+      "kind": "hunt",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.tengaro",
+      "requires": []
+    },
+    {
+      "id": "quest.verito.r1",
+      "name": "霧糸の巣",
+      "kind": "hunt",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.verito",
+      "requires": []
+    },
+    {
+      "id": "quest.razmer.r1",
+      "name": "骨環の這い跡",
+      "kind": "hunt",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.razmer",
+      "requires": []
+    },
+    {
+      "id": "quest.kirisave.r1",
+      "name": "氷帆の列",
+      "kind": "hunt",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.kirisave",
+      "requires": []
+    },
+    {
+      "id": "quest.velgait.r1",
+      "name": "霧灯の夜",
+      "kind": "hunt",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.velgait",
+      "requires": []
+    },
+    {
+      "id": "quest.kordopil.pack1",
+      "name": "岩殻の子ら",
+      "kind": "slay",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.kordopil",
+      "requires": []
+    },
+    {
+      "id": "quest.palseit.pack1",
+      "name": "跳ねる小角",
+      "kind": "slay",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.palseit",
+      "requires": []
+    },
+    {
+      "id": "quest.numaporon.pack1",
+      "name": "泥皿の子",
+      "kind": "slay",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.numaporon",
+      "requires": []
+    },
+    {
+      "id": "quest.chilumicana.pack1",
+      "name": "灯る尾の子",
+      "kind": "slay",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.chilumicana",
+      "requires": []
+    },
+    {
+      "id": "quest.kohalgis.pack1",
+      "name": "乳白の殻",
+      "kind": "slay",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.kohalgis",
+      "requires": []
+    },
+    {
+      "id": "quest.mitogaron.pack1",
+      "name": "丸まれない輪",
+      "kind": "slay",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.mitogaron",
+      "requires": []
+    },
+    {
+      "id": "quest.yurtepica.pack1",
+      "name": "糸床の子ら",
+      "kind": "slay",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.yurtepica",
+      "requires": []
+    },
+    {
+      "id": "quest.hinasalv.pack1",
+      "name": "小板の兄弟",
+      "kind": "slay",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.hinasalv",
+      "requires": []
+    },
+    {
+      "id": "quest.basin_young.r1",
+      "name": "盆地の若い群れ",
+      "kind": "slay",
+      "rankId": "rank.1",
+      "targetMonsterId": "monster.kordopil",
+      "requires": []
+    }
+  ],
+  "weaponBaseByFamily": [
+    {
+      "family": "heavy_blade",
+      "entries": [
+        {
+          "id": "weapon.heavy_blade.001",
+          "name": "里鍛ちの断岳剣",
+          "attack": 80
+        },
+        {
+          "id": "weapon.heavy_blade.002",
+          "name": "岩殻の断岳剣",
+          "attack": 92
+        },
+        {
+          "id": "weapon.heavy_blade.003",
+          "name": "脈殻の断岳剣",
+          "attack": 106
+        },
+        {
+          "id": "weapon.heavy_blade.004",
+          "name": "晶殻の断岳剣",
+          "attack": 122
+        },
+        {
+          "id": "weapon.heavy_blade.005",
+          "name": "輝殻の断岳剣",
+          "attack": 140
+        }
+      ]
+    },
+    {
+      "family": "guard_blade",
+      "entries": [
+        {
+          "id": "weapon.guard_blade.001",
+          "name": "里鍛ちの護刃",
+          "attack": 66
+        },
+        {
+          "id": "weapon.guard_blade.002",
+          "name": "岩殻の護刃",
+          "attack": 76
+        },
+        {
+          "id": "weapon.guard_blade.003",
+          "name": "脈殻の護刃",
+          "attack": 87
+        },
+        {
+          "id": "weapon.guard_blade.004",
+          "name": "晶殻の護刃",
+          "attack": 100
+        },
+        {
+          "id": "weapon.guard_blade.005",
+          "name": "輝殻の護刃",
+          "attack": 115
+        }
+      ]
+    },
+    {
+      "family": "war_maul",
+      "entries": [
+        {
+          "id": "weapon.war_maul.001",
+          "name": "里鍛ちの大槌",
+          "attack": 86
+        },
+        {
+          "id": "weapon.war_maul.002",
+          "name": "岩殻の大槌",
+          "attack": 99
+        },
+        {
+          "id": "weapon.war_maul.003",
+          "name": "脈殻の大槌",
+          "attack": 114
+        },
+        {
+          "id": "weapon.war_maul.004",
+          "name": "晶殻の大槌",
+          "attack": 131
+        },
+        {
+          "id": "weapon.war_maul.005",
+          "name": "輝殻の大槌",
+          "attack": 150
+        }
+      ]
+    },
+    {
+      "family": "twin_blades",
+      "entries": [
+        {
+          "id": "weapon.twin_blades.001",
+          "name": "里鍛ちの双剣",
+          "attack": 60
+        },
+        {
+          "id": "weapon.twin_blades.002",
+          "name": "岩殻の双剣",
+          "attack": 69
+        },
+        {
+          "id": "weapon.twin_blades.003",
+          "name": "脈殻の双剣",
+          "attack": 79
+        },
+        {
+          "id": "weapon.twin_blades.004",
+          "name": "晶殻の双剣",
+          "attack": 91
+        },
+        {
+          "id": "weapon.twin_blades.005",
+          "name": "輝殻の双剣",
+          "attack": 105
+        }
+      ]
+    },
+    {
+      "family": "long_blade",
+      "entries": [
+        {
+          "id": "weapon.long_blade.001",
+          "name": "里鍛ちの太刀",
+          "attack": 76
+        },
+        {
+          "id": "weapon.long_blade.002",
+          "name": "岩殻の太刀",
+          "attack": 87
+        },
+        {
+          "id": "weapon.long_blade.003",
+          "name": "脈殻の太刀",
+          "attack": 101
+        },
+        {
+          "id": "weapon.long_blade.004",
+          "name": "晶殻の太刀",
+          "attack": 116
+        },
+        {
+          "id": "weapon.long_blade.005",
+          "name": "輝殻の太刀",
+          "attack": 133
+        }
+      ]
+    },
+    {
+      "family": "long_lance",
+      "entries": [
+        {
+          "id": "weapon.long_lance.001",
+          "name": "里鍛ちの長尖槍",
+          "attack": 72
+        },
+        {
+          "id": "weapon.long_lance.002",
+          "name": "岩殻の長尖槍",
+          "attack": 83
+        },
+        {
+          "id": "weapon.long_lance.003",
+          "name": "脈殻の長尖槍",
+          "attack": 95
+        },
+        {
+          "id": "weapon.long_lance.004",
+          "name": "晶殻の長尖槍",
+          "attack": 110
+        },
+        {
+          "id": "weapon.long_lance.005",
+          "name": "輝殻の長尖槍",
+          "attack": 126
+        }
+      ]
+    },
+    {
+      "family": "ring_bow",
+      "entries": [
+        {
+          "id": "weapon.ring_bow.001",
+          "name": "里鍛ちの環弓",
+          "attack": 70
+        },
+        {
+          "id": "weapon.ring_bow.002",
+          "name": "岩殻の環弓",
+          "attack": 80
+        },
+        {
+          "id": "weapon.ring_bow.003",
+          "name": "脈殻の環弓",
+          "attack": 93
+        },
+        {
+          "id": "weapon.ring_bow.004",
+          "name": "晶殻の環弓",
+          "attack": 106
+        },
+        {
+          "id": "weapon.ring_bow.005",
+          "name": "輝殻の環弓",
+          "attack": 122
+        }
+      ]
+    }
+  ],
+  "currentDefenseByTier": [
+    0,
+    6,
+    13,
+    21,
+    30
+  ],
+  "currentFullSetDefenseByTier": [
+    0,
+    30,
+    65,
+    105,
+    150
+  ],
+  "runtimeStatus": {
+    "gathering": false,
+    "mining": false,
+    "insectCatching": false,
+    "alternativeMaterialRecipes": false,
+    "directCrafting": false,
+    "parallelUpgradeBranches": false,
+    "saveSchema": 4,
+    "fieldCount": 1,
+    "fieldId": "field.basin",
+    "bestiaryFieldProposals": 20,
+    "monsterGradeLootExceptGaldros": "Only first-grade material tables implemented; higher-grade materials require design and implementation."
+  },
+  "rulesForNewDesign": [
+    "Do not conflate four ranks with five equipment tiers.",
+    "Do not infer rank from quest star count.",
+    "Respect species native first rank when determining craft availability, or flag lower-rank versions as explicit new design.",
+    "All 86 includes eight juveniles; earlier no-full-set policy must be revisited for this explicit request.",
+    "Gathering/mining/insect materials do not currently exist in runtime inventory. New IDs must remain proposals.",
+    "Reuse exact resource proposal IDs where intended, but adopting them for equipment recipes is a new design decision.",
+    "Never treat loaned cargo as crafting inventory.",
+    "Natural ore must remain distinct from monster biological crystals and shells.",
+    "Retain existing permanent monster IDs even where displayed name changed.",
+    "Preserve existing weapon/armor IDs and 48 linear recipe chain."
+  ],
+  "importantNames": [
+    {
+      "id": "monster.tarhegna",
+      "no": 57,
+      "name": "テムソギア"
+    },
+    {
+      "id": "monster.segranio",
+      "no": 71,
+      "name": "セオルミド"
+    }
+  ],
+  "sources": [
+    {
+      "path": "AGENTS.md",
+      "gitBlobSha": "04d71953ccb540436215c37f2afe7dce1d779dbd",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/AGENTS.md"
+    },
+    {
+      "path": "docs/chatgpt-board.md",
+      "gitBlobSha": "036391d66fee77df4489dd3b4ebc0b6ba729580b",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/docs/chatgpt-board.md"
+    },
+    {
+      "path": "docs/spec.md",
+      "gitBlobSha": "01d4a59e45fc515bb434a9438b7f650740ffb6f2",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/docs/spec.md"
+    },
+    {
+      "path": "public/data/content.json",
+      "gitBlobSha": "f399b3ee2c401dbe7bfaf122f067c5b30adc2f38",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/content.json"
+    },
+    {
+      "path": "public/data/ranks.json",
+      "gitBlobSha": "33578f573c0028e9b6c2b6ca99f201acf23f18d0",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/ranks.json"
+    },
+    {
+      "path": "public/data/bestiary.json",
+      "gitBlobSha": "c1f5a5d61b30d86d6938aebbc09c81a0ece3422b",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/bestiary.json"
+    },
+    {
+      "path": "public/data/weapons.json",
+      "gitBlobSha": "8ea12d8a4239cfa856e201ca21327213ddae8362",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/weapons.json"
+    },
+    {
+      "path": "public/data/armor.json",
+      "gitBlobSha": "782178b1932c843683e05720138d26de02ff74ef",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/armor.json"
+    },
+    {
+      "path": "public/data/items.json",
+      "gitBlobSha": "b4d6623377f289d6cdb2e976e1ff4874587d113b",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/items.json"
+    },
+    {
+      "path": "public/data/items_creatures.json",
+      "gitBlobSha": "424fd72e21b0bd8576afe46bdcba03dcdf9a8fe8",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/items_creatures.json"
+    },
+    {
+      "path": "public/data/recipes.json",
+      "gitBlobSha": "d923ff4cb324155582ddb22f03776650a6e89e52",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/recipes.json"
+    },
+    {
+      "path": "public/data/loot.json",
+      "gitBlobSha": "0760fa77e88ac4e5a0de88cf5db85a530c271b76",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/loot.json"
+    },
+    {
+      "path": "public/data/quests.json",
+      "gitBlobSha": "8d62000fa72a6366b5c19cdcb67744b035504fe0",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/quests.json"
+    },
+    {
+      "path": "public/data/quests_creatures.json",
+      "gitBlobSha": "4e6f7b8f50fe62eb817cd71a01652d84642add56",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/quests_creatures.json"
+    },
+    {
+      "path": "public/data/quests_herds.json",
+      "gitBlobSha": "1c4ae679aa3bbd191725a438fc509c8f3b8339a9",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/public/data/quests_herds.json"
+    },
+    {
+      "path": "src/save/profile.ts",
+      "gitBlobSha": "2211d164949f4eb39486c4b156ebab85fa43b760",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/src/save/profile.ts"
+    },
+    {
+      "path": "src/game/rank.ts",
+      "gitBlobSha": "1eaaba5d13b5dfa340ce5752700617f3386021b6",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/src/game/rank.ts"
+    },
+    {
+      "path": "docs/source/chatgpt-quest-design-20261125/resources_v2.json",
+      "gitBlobSha": "f25c0abd4766541de9ac61437da04ffb611d9622",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/docs/source/chatgpt-quest-design-20261125/resources_v2.json"
+    },
+    {
+      "path": "docs/source/chatgpt-quest-design-20261125/nonhunt_catalog_v2.json",
+      "gitBlobSha": "fa5d77f19343052af68b3cb80dc9c6496210e56c",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/docs/source/chatgpt-quest-design-20261125/nonhunt_catalog_v2.json"
+    },
+    {
+      "path": "docs/source/chatgpt-quest-design-20261125/progression_v1.json",
+      "gitBlobSha": "08b76638c6be2d029de432c5cc28d21fbb3b8cdc",
+      "url": "https://github.com/kamamon/Kari/blob/1e078bfce1e68f287ae577cf41d2fe5bafb94afa/docs/source/chatgpt-quest-design-20261125/progression_v1.json"
+    }
+  ]
+}

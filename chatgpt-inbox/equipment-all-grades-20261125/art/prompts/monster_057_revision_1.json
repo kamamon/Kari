@@ -1,0 +1,7 @@
+{
+  "seriesNo": 57,
+  "purpose": "護刃盾の三弧間の薄甲欠落を修正",
+  "generator": "built-in image_gen",
+  "referencePaths": ["chatgpt-inbox/equipment-all-grades-20261125/art/monsters/equipment_057_tarhegna_v1.png"],
+  "prompt": "Edit the supplied finished equipment concept sheet with one precise correction. Preserve the adult mannequin, all five armor regions, the seven numbered weapon groups, both swords in group 04, the lance and its separate large shield in group 06, the bow string and separate arrow in group 07, all material textures, colors, silhouettes, pose, layout, and numeral labels 01 to 07. In group 02, the small shield currently has four large white openings between its three curved bronze ribs. FILL ALL those openings with thin solid opaque gray-brown scale plates, matching the panel material of the large shield in group 06. The small shield must have a continuous protective face with no background visible through it; the three raised curved bronze ribs remain visible on top. The hollow arcs on the mannequin's BACK remain OPEN and unchanged. Do not close the back arcs. Do not alter any weapon blade, handle, armor limb, or other object. No additional text or labels. Keep every weapon tip and the mannequin's feet fully inside the frame. Same warm ivory background and semi-real hand-painted production concept rendering."
+}

@@ -1,0 +1,104 @@
+{
+  "scope": "No.084–086 final native-rank representative concept sheets",
+  "completedSheets": 3,
+  "checks": "All 3 PNGs decode, final source paths exist, unique hashes match JSON, prompt outputs/reviews match, reviewed seven weapon groups/five armor regions/no cropping flags true. Review limitations remain recorded per sheet.",
+  "errors": [],
+  "files": [
+    {
+      "no": 84,
+      "name": "エナグリオ",
+      "artFile": "art/monsters/equipment_084_enagrio_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "897cf3e4dcd46866c2d3d4b3961fc41a46463514ddee30933932bc5f00f3a135",
+      "bytes": 2053412,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "897cf3e4dcd46866c2d3d4b3961fc41a46463514ddee30933932bc5f00f3a135",
+        "notes": "全7武器群・防具5部位を視認。低い兜、首後ろの段襟と内側の青銅礫粒、滑らかな胴、環留めの腰帯を確認。断岳剣・槍・弓握りに三段環、両盾、双剣2本、弓弦・矢・独立照準環あり。槌の両端は硬骨で閉鎖。剣先、槍先、足先の欠損なし。断岳剣上端の余白80pxは未達。襟の後側三段の連続と背面厚さは追加図で要確認。"
+      }
+    },
+    {
+      "no": 85,
+      "name": "ヌクバレア",
+      "artFile": "art/monsters/equipment_085_nucbarea_v2.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "3c2974a93196e69744ef37c0fd7d4cb6ac8c0e4158ceae77d4fa0b2e4aa3f914",
+      "bytes": 1950448,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 2,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "3c2974a93196e69744ef37c0fd7d4cb6ac8c0e4158ceae77d4fa0b2e4aa3f914",
+        "notes": "全7武器群・防具5部位を視認。v1で前腰へ出た扇甲をv2で除去し布革へ置換、後腰専用の設定に合わせた。襟の短い2房、左右同じ大きさの籠手、弓握り下の2房を確認。双剣柄先の小毒房、両盾、弓弦・矢・独立照準環、槌の閉鎖硬質面あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80px未達。後腰の扇甲はこの角度では見えず、背面図で要確認。"
+      }
+    },
+    {
+      "no": 86,
+      "name": "トワルセム",
+      "artFile": "art/monsters/equipment_086_towalsem_v1.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "96359ad014c81c7563b73e28536f90c60e0f5f21e2e981d7dececaccbf347645",
+      "bytes": 2045904,
+      "review": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "96359ad014c81c7563b73e28536f90c60e0f5f21e2e981d7dececaccbf347645",
+        "notes": "全7武器群・防具5部位を視認。低く滑らかな兜、小さい肩甲、氷滴のない前腰を確認。後腰専用3滴はこの前方角度で隠れており背面図で要確認。護刃盾の内部3滴、双剣根元の小晶粒、弓握り下の短い3滴容器、弓弦・矢・照準環あり。槌は丸い閉鎖硬質面。頭肩に大きい氷板や棘なし。剣先、槍先、足先の欠損なし。断岳剣上端の余白80pxは未達。"
+      }
+    }
+  ]
+}

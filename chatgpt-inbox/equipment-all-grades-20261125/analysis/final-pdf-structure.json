@@ -1,0 +1,25 @@
+{
+  "finalPdfSha256": "82c10ea23e26f7fed957a05e19887cc19ee7eb57a1c341ae26cec72be79b2487",
+  "pages": 200,
+  "textChangesSinceReviewedDraft": [
+    3,
+    4,
+    119,
+    121,
+    123,
+    125,
+    169,
+    171,
+    173,
+    175,
+    177,
+    179,
+    181
+  ],
+  "textChangesReason": "Restored last TOC rows and removed image-production placeholders on newly completed series pages. Equipment statistics unchanged.",
+  "seriesArtPagesWithExactlyOnePaintedImage": 95,
+  "tocLinks": 95,
+  "tocTargetsCorrect": true,
+  "replacementGlyphs": 0,
+  "numericalFingerprint": "ca07ce58c52d7ec618a3e2f873da6fad88901b300561b63eb3627ea2aa337a4f"
+}

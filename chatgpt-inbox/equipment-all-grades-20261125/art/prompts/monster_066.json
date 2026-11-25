@@ -1,0 +1,38 @@
+{
+  "mode": "built-in image_gen",
+  "no": 66,
+  "seriesId": "series.makuejira",
+  "prompt": "Use case: stylized-concept. Create ONE professional ORIGINAL hunting-equipment family concept sheet for VEILBOUND HUNTERS. Landscape 3:2, warm ivory background, no scenery, no watermark, restrained realistic hand-painted materials, aged bronze fittings and dark leather. Reference image 1 is the approved art direction. Reference image 2 is the source creature; derive materials and asymmetry but do NOT draw a creature or turn the human into that creature.\nCOMPOSITION: LEFT 30 percent: one complete adult neutral human mannequin wearing all five armor regions, head to boots fully visible, relaxed upright stance, empty hands, front three-quarter view. Practical closed clothing, MANDATORY LOW HELMET fully covering the crown and forehead, NO visible hair and no bare head, readable joints. Never omit head armor. RIGHT 70 percent: exactly SEVEN cleanly separated weapon groups in two rows, each complete with generous gaps, no cropping. Top row 01-04; bottom row 05-07. Only text is small labels 01,02,03,04,05,06,07 below corresponding groups. Each group keeps its recognizable form:\n01 enormous broad single-edge slab greatsword; 02 compact SINGLE-EDGE sword AND a separate shield; 03 long-handled heavy blunt maul with a CLOSED HARD BONE impact face, NOT a drum; 04 TWO matching short blades; 05 long slim curved single-edge sword; 06 straight long lance AND a separate tall shield; 07 bow with an actual string, small separate aiming ring, AND one arrow. No firearms, scythes, axes, duplicate groups, magical floating parts. Armor mannequin holds none of these.\nSOURCE SERIES 066: マクエジラ / 梯胸鳥. Native grade: 3. This sheet shows ONLY this native-grade design. Palette: 灰褐 / くすんだ灰紫 / 青銅.\nArmor silhouette: 灰褐色の胸に横向きの骨縁を段状に並べ、肩先だけ下へ折る。喉元にくすんだ紫を小さく置き、脚は細く長く見せる。\nArmor five regions: head: 喉の灰紫を狭く見せる低い兜; chest: 横骨の段を胸へ梯子状に並べる; arms: 肩先だけ下へ折れ、肘から先は細い腕甲; waist: 折翼膜を短い二枚の腰布へ分ける; legs: 縦筋を強調した細い脚甲\nDistinct weapons: 01 梯胸骨を刃背へ横断させた板剣; 02 横骨の片刃鍔と三段骨縁の薄盾; 03 梯子骨を束ね打面を閉じた四角い槌; 04 下へ折れる翼端を短い双刃に写す; 05 梯胸骨の横節を峰へ低く並べた曲刀; 06 中空の胸骨を芯にした直槍と段骨の盾; 07 梯胸骨を薄い弓身へ分け、折翼膜を握りの内側に張る\nPreserve the specifically stated anatomical LEFT and RIGHT of the WEARER. Keep shoulder and waist protrusions restrained for movement. Helmets, both hands, boots, blade tips, bowstring, shields and spear point fully inside the canvas. Original visual language, avoid any recognizable existing franchise designs. Clear fabrication joints, few broad forms, no dense filigree. This is concept art, not a precise orthographic production drawing.\nThe style board is ONLY a rendering style reference. Do not reuse the stone armor, bare-headed man or stone weapon material from it. The creature materials and the species-specific armor silhouette dominate this sheet.\nFRAMING: put every object entirely within the inner 85 percent of the canvas with at least 80 pixels empty margin on every outer edge. Scale down the largest sword, spear and human as needed. Every blade tip and every boot must be visible with clear empty space around it; never touch or crop at the canvas boundary.",
+  "referenceRoles": [
+    "approved style board",
+    "source creature material and silhouette reference"
+  ],
+  "referencePaths": [
+    "art-source/board/style_board_v2.png",
+    "art-source/monster/concepts/monster_066_makuejira_concept_v1.png"
+  ],
+  "output": "art/monsters/equipment_066_makuejira_v1.png",
+  "transparent_background": false,
+  "finalSourcePath": "exec-93630f93-2029-4a54-b3a6-b2439131a06b.png",
+  "review": {
+    "generated": true,
+    "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+    "notVerified": [
+      "正投影",
+      "寸法",
+      "背面",
+      "共通リグ干渉",
+      "ゲーム内描画"
+    ],
+    "revision": 1,
+    "sevenWeaponGroupsVisible": true,
+    "fiveArmorRegionsVisible": true,
+    "clippingObserved": false,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "sha256": "0f83ca468d8d429a86c18dfde30b600590f12e4a1e029e6cb90bd8ab2205781d",
+    "notes": "7群と5部位、梯胸骨と下折れ肩先、両盾、双剣2本、弓弦/矢を確認。先端欠損なし。槌の打面と骨の中空断面は追加設定図で確認。"
+  }
+}

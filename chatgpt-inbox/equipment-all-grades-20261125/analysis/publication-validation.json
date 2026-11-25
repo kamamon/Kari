@@ -1,0 +1,248 @@
+{
+  "validationType": "publication-copy metadata normalization, numeric and PNG identity, PDF display repair and image compression verification",
+  "date": "2026-11-25",
+  "sourceCommit": "1e078bfce1e68f287ae577cf41d2fe5bafb94afa",
+  "reviewedRuntimeCommit": "3987f38387fc337c5b1f354f99c1208864837fda",
+  "reviewedRuntimeVersion": "0.28.0",
+  "publicationStage": "authorized-public-pr-submission-package",
+  "externalWritePerformedByThisCheck": false,
+  "runtimeImported": false,
+  "passed": true,
+  "allEquipment": {
+    "path": "data/all-equipment.json",
+    "originalAuditPath": "analysis/independent-audit.json",
+    "originalAuditSha256Preserved": "3400cd265223f8ae8c21469fbcda0c5d0a475bdfd6bb950f98a416692b768021",
+    "originalFinalJsonSha256": "3400cd265223f8ae8c21469fbcda0c5d0a475bdfd6bb950f98a416692b768021",
+    "publishedJsonSha256": "ac307b1be1c27a018b34493a64857dd2099744b73804d7b9dc965a7c8e6e850f",
+    "publishedJsonBytes": 7823254,
+    "originalNumericFingerprintWithoutArt": "ca07ce58c52d7ec618a3e2f873da6fad88901b300561b63eb3627ea2aa337a4f",
+    "publishedNumericFingerprintWithoutArt": "ca07ce58c52d7ec618a3e2f873da6fad88901b300561b63eb3627ea2aa337a4f",
+    "matchesIndependentAuditFingerprint": true,
+    "coreSectionsByteEquivalentAfterJsonParsing": [
+      "counts",
+      "rankVariants",
+      "weaponCandidates",
+      "armorCandidates",
+      "recipes",
+      "materials",
+      "rules"
+    ],
+    "onlyArtProvenancePathStringsChanged": true,
+    "sourceCommitAndImplementationSnapshotPreserved": true,
+    "gzipMatchesPublishedJson": true,
+    "gzipSha256": "5a082d6306b4078a5817cf1c61817fcf09ee86b5267dffb86bbbce93c28c20c8"
+  },
+  "artwork": {
+    "primaryImages": 95,
+    "primaryBytes": 185100511,
+    "historyImages": 6,
+    "allPngBytesUnchanged": true,
+    "primaryManifestHashesMatch": true
+  },
+  "pdf": {
+    "path": "Kari_All_Equipment_v2.pdf",
+    "edition": "public-viewing PDF after page-12 recipe display repair and embedded-image compression",
+    "bytes": 12047197,
+    "sha256": "ae231cec0f826c649769541268d5c3719843f9a23f7aae82d83014d217a91d3c",
+    "gitSha": "de2fcec2c5426bd77baabb7cfd1d2bb14068262b",
+    "pages": 200,
+    "links": 102,
+    "unchangedFromReviewedFinal": false,
+    "equipmentDataChanged": false,
+    "originalReviewedPdf": {
+      "bytes": 27878891,
+      "sha256": "82c10ea23e26f7fed957a05e19887cc19ee7eb57a1c341ae26cec72be79b2487",
+      "recordStatus": "historical original, before page-12 display repair and image compression",
+      "audit": "analysis/book-validation.json"
+    },
+    "displayRepair": {
+      "validationReport": "analysis/pdf-recipe-repair-validation.json",
+      "reproductionTool": "tools/repair_catalog_recipe_page.py",
+      "repairedPage": 12,
+      "previouslyMissingRecipeRanks": [
+        "上級",
+        "極級"
+      ],
+      "change": "Compact material labels and table padding restore all four recipe-rank rows on page 12; equipment JSON is unchanged.",
+      "recipeGradeRowsChecked": 250,
+      "galdrosRecipesChecked": 48,
+      "checks": {
+        "pageCount200": true,
+        "other199PageContentStreamsUnchanged": true,
+        "other199PageTextAndPositionsUnchanged": true,
+        "allLinksUnchanged": true,
+        "all250RecipeGradeRowsPresent": true,
+        "galdros48RecipeQuantitiesPresent": true
+      },
+      "passed": true
+    },
+    "repairedIntermediatePdf": {
+      "bytes": 28227351,
+      "sha256": "dee6da5a0951824126d22902397caecfc28612130f05b1caa61adc28284ed6f0",
+      "recordStatus": "intermediate before image compression"
+    },
+    "imageCompression": {
+      "validationReport": "analysis/pdf-publication-validation.json",
+      "reproductionTool": "tools/optimize_public_pdf.py",
+      "reason": "The connector transport could not send the 27.9 MB original PDF in one request.",
+      "seriesArtworkCount": 95,
+      "embeddedImagesIncludingCover": 96,
+      "imageEncoding": {
+        "format": "JPEG",
+        "quality": 65,
+        "chromaSubsampling": "4:2:0",
+        "resampled": false
+      },
+      "comparisonBase": "repaired intermediate PDF; all 200 pages",
+      "checks": {
+        "pageCountUnchanged": true,
+        "metadataUnchanged": true,
+        "outlineUnchanged": true,
+        "pageDimensionsUnchanged": true,
+        "pageContentStreamsUnchanged": true,
+        "textAndWordPositionsUnchanged": true,
+        "linksUnchanged": true,
+        "imageDimensionsAndPlacementUnchanged": true
+      },
+      "passed": true
+    },
+    "visualReview": {
+      "pages": [
+        11,
+        12,
+        181,
+        199
+      ],
+      "passed": true,
+      "scope": "Four selected pages reviewed. The structural comparisons cover all 200 pages.",
+      "contactSheet": "analysis/pdf-publication-contact.jpg"
+    },
+    "originalPngsModified": false,
+    "limits": [
+      "Embedded JPEGs are recompressed with loss; high-resolution original PNGs are provided separately."
+    ]
+  },
+  "runtimeBaselineFiles": [
+    {
+      "path": "public/data/weapons.json",
+      "identical": true,
+      "sha256": "9dc926df758f90edabb5d565a51e9868ba4f26a075823c520785d911d124b78a"
+    },
+    {
+      "path": "public/data/armor.json",
+      "identical": true,
+      "sha256": "535e9ea4bf8bef96d05ca9fe86b625d201a72428cae77da9a4c3eed4a396ce6b"
+    },
+    {
+      "path": "public/data/recipes.json",
+      "identical": true,
+      "sha256": "5b4b442f29a11bd2c4371c43076aca66e59811646c9a9f1e262f530a5bde464d"
+    }
+  ],
+  "pathNormalization": {
+    "filesChanged": 67,
+    "pathStringOccurrencesChanged": 444,
+    "changedFiles": {
+      "analysis/book-validation.json": 2,
+      "art/prompts/monster_001.json": 1,
+      "art/prompts/monster_002.json": 1,
+      "art/prompts/monster_003.json": 1,
+      "art/prompts/monster_004.json": 1,
+      "art/prompts/monster_005.json": 1,
+      "art/prompts/monster_006.json": 1,
+      "art/prompts/monster_007.json": 1,
+      "art/prompts/monster_008.json": 1,
+      "art/prompts/monster_009.json": 1,
+      "art/prompts/monster_010.json": 1,
+      "art/prompts/monster_011.json": 1,
+      "art/prompts/monster_012.json": 1,
+      "art/prompts/monster_013.json": 1,
+      "art/prompts/monster_014.json": 1,
+      "art/prompts/monster_015.json": 1,
+      "art/prompts/monster_016.json": 1,
+      "art/prompts/monster_017.json": 1,
+      "art/prompts/monster_018.json": 1,
+      "art/prompts/monster_019.json": 1,
+      "art/prompts/monster_020.json": 1,
+      "art/prompts/monster_021.json": 1,
+      "art/prompts/monster_022.json": 1,
+      "art/prompts/monster_023.json": 1,
+      "art/prompts/monster_024.json": 1,
+      "art/prompts/monster_025.json": 1,
+      "art/prompts/monster_026.json": 1,
+      "art/prompts/monster_027.json": 1,
+      "art/prompts/monster_028.json": 1,
+      "art/prompts/monster_029.json": 1,
+      "art/prompts/monster_059.json": 3,
+      "art/prompts/monster_060.json": 3,
+      "art/prompts/monster_061.json": 3,
+      "art/prompts/monster_062.json": 3,
+      "art/prompts/monster_063.json": 3,
+      "art/prompts/monster_064.json": 3,
+      "art/prompts/monster_065.json": 3,
+      "art/prompts/monster_066.json": 3,
+      "art/prompts/monster_067.json": 3,
+      "art/prompts/monster_068.json": 3,
+      "art/prompts/monster_069.json": 3,
+      "art/prompts/monster_070.json": 3,
+      "art/prompts/monster_071.json": 3,
+      "art/prompts/monster_072.json": 3,
+      "art/prompts/monster_073.json": 3,
+      "art/prompts/monster_074.json": 3,
+      "art/prompts/monster_075.json": 3,
+      "art/prompts/monster_076.json": 3,
+      "art/prompts/monster_077.json": 3,
+      "art/prompts/monster_078.json": 3,
+      "art/prompts/monster_079.json": 3,
+      "art/prompts/monster_080.json": 2,
+      "art/prompts/monster_081.json": 2,
+      "art/prompts/monster_082.json": 2,
+      "art/prompts/monster_083.json": 2,
+      "art/prompts/monster_084.json": 3,
+      "art/prompts/monster_085.json": 3,
+      "art/prompts/monster_086.json": 3,
+      "data/all-equipment.json": 80,
+      "data/art-030-revision.json": 1,
+      "data/art-080-086-review.json": 12,
+      "data/art-manifest.json": 80,
+      "data/gathering-series.json": 7,
+      "data/series-001-029.json": 29,
+      "data/series-030-058.json": 32,
+      "data/series-059-086.json": 12,
+      "data/series-catalog.json": 80
+    },
+    "rules": [
+      "Repository source references become repository-relative paths.",
+      "Generated image provenance retains the source basename only.",
+      "Historical output paths retain the output basename."
+    ],
+    "repositorySourceReferenceFilesResolved": 29,
+    "remainingTemporaryAbsolutePathFiles": [],
+    "privateLibraryLinkFiles": []
+  },
+  "historicalAudits": {
+    "independentAuditRetainedByteForByte": true,
+    "originalAuditSha256IsHistorical": true,
+    "snapshotStatusExplainedBy": "PUBLICATION_NOTES.md",
+    "bookValidationIsHistorical": true,
+    "bookValidationPath": "analysis/book-validation.json",
+    "finalPdfStructureIsHistorical": true,
+    "finalPdfStructurePath": "analysis/final-pdf-structure.json",
+    "originalReviewedPdfSha256": "82c10ea23e26f7fed957a05e19887cc19ee7eb57a1c341ae26cec72be79b2487",
+    "historicalPdfAuditLimitation": "The original audit preceded discovery of the missing upper-rank recipe rows on page 12. Published-PDF validation is provided by the two superseding reports.",
+    "supersedingPdfReports": [
+      "analysis/pdf-recipe-repair-validation.json",
+      "analysis/pdf-publication-validation.json"
+    ]
+  },
+  "limits": [
+    "No new game implementation, playtest, balance test or iPhone verification.",
+    "This record covers the prepared package; publication and merge outcomes are reported by the pull request.",
+    "Published PDF embedded images use lossy JPEG quality 65 and 4:2:0; original PNGs remain unchanged.",
+    "Published-PDF visual review covers pages 11, 12, 181 and 199. Structural comparisons cover all 200 pages."
+  ],
+  "checksumManifest": "SHA256SUMS",
+  "checksumManifestExcludesItself": true,
+  "checksumFileCount": 254,
+  "publicationPackageFileCount": 255
+}

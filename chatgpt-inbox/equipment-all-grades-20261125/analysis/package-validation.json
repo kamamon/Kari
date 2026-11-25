@@ -1,0 +1,26 @@
+{
+  "complete": true,
+  "sourceCommit": "1e078bfce1e68f287ae577cf41d2fe5bafb94afa",
+  "series": 95,
+  "seriesRanks": 250,
+  "equipment": 3000,
+  "recipes": 3000,
+  "primaryConceptImages": 95,
+  "catalogPages": 200,
+  "separateHigherRankImages": false,
+  "runtimeImported": false,
+  "externalRepositoryPublished": false,
+  "externalRepositoryPublishedRecordedAt": "original-generation-delivery-before-explicit-publication-authorization",
+  "externalRepositoryPublishedNote": "初版作成時の記録。公開共有の明示承認を受けた今回の提出状態は publicRepositorySubmission を参照する。",
+  "publicRepositorySubmission": {
+    "status": "authorized-public-pr-submission-package",
+    "userAuthorized": true,
+    "repository": "kamamon/Kari",
+    "path": "chatgpt-inbox/equipment-all-grades-20261125",
+    "sourceCommit": "1e078bfce1e68f287ae577cf41d2fe5bafb94afa",
+    "reviewedRuntimeCommit": "3987f38387fc337c5b1f354f99c1208864837fda",
+    "publicationNotes": "PUBLICATION_NOTES.md",
+    "validation": "analysis/publication-validation.json",
+    "note": "公開ブランチ・PRへ提出するための版。push・PR作成・mainへのマージの完了を示す値ではない。"
+  }
+}

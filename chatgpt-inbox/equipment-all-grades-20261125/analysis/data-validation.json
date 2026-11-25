@@ -1,0 +1,130 @@
+{
+  "sourceCommit": "1e078bfce1e68f287ae577cf41d2fe5bafb94afa",
+  "checks": [
+    {
+      "name": "86 original species IDs preserved",
+      "passed": true
+    },
+    {
+      "name": "9 non-hunt series, 3 per acquisition group",
+      "passed": true
+    },
+    {
+      "name": "250 series-rank variants",
+      "passed": true
+    },
+    {
+      "name": "1750 weapons and 1250 armor",
+      "passed": true
+    },
+    {
+      "name": "3000 unique equipment IDs",
+      "passed": true
+    },
+    {
+      "name": "3000 complete unique recipes",
+      "passed": true
+    },
+    {
+      "name": "no equipment below source native rank",
+      "passed": true
+    },
+    {
+      "name": "rank-wise monster coverage 21 41 66 86",
+      "passed": true
+    },
+    {
+      "name": "all seven weapon types and all five slots per variant",
+      "passed": true
+    },
+    {
+      "name": "five slot defenses exactly sum to declared total",
+      "passed": true
+    },
+    {
+      "name": "skill budget five with typed resistance parameters",
+      "passed": true
+    },
+    {
+      "name": "compound only high ranks and exactly two elements",
+      "passed": true
+    },
+    {
+      "name": "one elemental or one status output; no all-weapon stun",
+      "passed": true
+    },
+    {
+      "name": "nonhunt recipes contain no monster or loaned-cargo inputs",
+      "passed": true
+    },
+    {
+      "name": "all recipe inputs resolved with positive counts",
+      "passed": true
+    },
+    {
+      "name": "same material has one combined recipe entry",
+      "passed": true
+    },
+    {
+      "name": "parents resolve and no sideways branches",
+      "passed": true
+    },
+    {
+      "name": "native direct crafts and same-series sequential upgrades",
+      "passed": true
+    },
+    {
+      "name": "all 48 existing recipes identical to source",
+      "passed": true
+    },
+    {
+      "name": "existing 28 ranked weapons and 20 armor base fields identical",
+      "passed": true
+    },
+    {
+      "name": "full shape and grade descriptions",
+      "passed": true
+    },
+    {
+      "name": "candidate file explicitly non-importable",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "scope": "Static design consistency. No runtime implementation or playtest.",
+  "counts": {
+    "series": 95,
+    "monsterSeries": 86,
+    "nonhuntSeries": 9,
+    "seriesRanks": 250,
+    "weapons": 1750,
+    "armor": 1250,
+    "recipes": 3000,
+    "byRank": {
+      "1": {
+        "monsterSeries": 21,
+        "nonhuntSeries": 9,
+        "weapons": 210,
+        "armor": 150
+      },
+      "2": {
+        "monsterSeries": 41,
+        "nonhuntSeries": 9,
+        "weapons": 350,
+        "armor": 250
+      },
+      "3": {
+        "monsterSeries": 66,
+        "nonhuntSeries": 9,
+        "weapons": 525,
+        "armor": 375
+      },
+      "4": {
+        "monsterSeries": 86,
+        "nonhuntSeries": 9,
+        "weapons": 665,
+        "armor": 475
+      }
+    }
+  }
+}
