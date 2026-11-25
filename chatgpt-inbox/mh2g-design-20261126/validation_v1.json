@@ -1,0 +1,530 @@
+{
+  "document_type": "design_validation_report",
+  "date": "2026-11-26",
+  "baseline_commit": "0925487b686473e1a4d7e45fdc63449ef3a7d2ec",
+  "validation_scope": "Design documents, structured design data, graph/reference consistency, dependency installation. Not runtime gameplay validation.",
+  "summary": {
+    "fields": 20,
+    "area_programs": 201,
+    "topologies": 8,
+    "concept_outlines": 13,
+    "requirements": 35,
+    "checks": 95,
+    "passed": 95
+  },
+  "checks": [
+    {
+      "name": "hunter_graph:basin_existing",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "large_graph:basin_existing",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "unique_edges:basin_existing",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "nest_large:basin_existing",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "hunter_graph:wetland_double_loop",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "large_graph:wetland_double_loop",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "unique_edges:wetland_double_loop",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "nest_large:wetland_double_loop",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "hunter_graph:coast_cave_loop",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "large_graph:coast_cave_loop",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "unique_edges:coast_cave_loop",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "nest_large:coast_cave_loop",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "hunter_graph:mine_chambers",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "large_graph:mine_chambers",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "unique_edges:mine_chambers",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "nest_large:mine_chambers",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "hunter_graph:ridge_return",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "large_graph:ridge_return",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "unique_edges:ridge_return",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "nest_large:ridge_return",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "hunter_graph:forest_root_loops",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "large_graph:forest_root_loops",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "unique_edges:forest_root_loops",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "nest_large:forest_root_loops",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "hunter_graph:cavern_daylight",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "large_graph:cavern_daylight",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "unique_edges:cavern_daylight",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "nest_large:cavern_daylight",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "hunter_graph:river_braid",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "large_graph:river_braid",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "unique_edges:river_braid",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "nest_large:river_braid",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "canonical_20_fields",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "runtime_ids_not_pretended",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_01",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_02",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_02",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_03",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_03",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_04",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_04",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_05",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_05",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_06",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_06",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_07",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_07",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_08",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_08",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_09",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_09",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_10",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_10",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_11",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_11",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_12",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_12",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_13",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_13",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_14",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_14",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_15",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_15",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_16",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_16",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_17",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_17",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_18",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_18",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_19",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_19",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "area_program:field_design_20",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "inspection_route:field_design_20",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "basin_14_edges_8_large_exact",
+      "passed": true,
+      "details": {
+        "edges": 14,
+        "large_edges": 8
+      }
+    },
+    {
+      "name": "basin_anchor_and_bounds_exact",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "concept_polygon:oval",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "concept_polygon:kidney",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "concept_polygon:dogleg",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "concept_polygon:s_channel",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "concept_polygon:twin_lobes",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "concept_polygon:fan",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "concept_polygon:pocket",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "concept_polygon:long_floor",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "concept_polygon:wedge",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "concept_polygon:offset_clearing",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "concept_polygon:terrace",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "concept_polygon:cave_basin",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "concept_polygon:three_way",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "unique_35_requirements",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "requirement_dependency_dag",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "baseline_change_paths_exist",
+      "passed": true,
+      "details": []
+    },
+    {
+      "name": "source_pdf_media_not_runtime",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "local_markdown_links",
+      "passed": true,
+      "details": []
+    },
+    {
+      "name": "npm_ci",
+      "passed": true,
+      "details": {
+        "command": "npm ci --no-audit --no-fund --fetch-retries=0 --fetch-timeout=20000",
+        "exit_code": 0,
+        "packages_added": 50
+      }
+    },
+    {
+      "name": "connection_inspection_scope_explicit",
+      "passed": true,
+      "details": "Inspection routes cover nodes; all hunter/large edges require separate bidirectional clearance checks at runtime."
+    }
+  ],
+  "visual_evidence": {
+    "rechecked_video_frames": [
+      40,
+      43,
+      100,
+      101,
+      106,
+      108,
+      110.5
+    ],
+    "video_sha256": "539144888c362a46a5314729f436c79b7a86ca5137cfd611d3e514c7b8065ee9",
+    "still_images": 1,
+    "official_guide_rendered_spreads": 2
+  },
+  "not_performed": [
+    "game source modification",
+    "runtime field generation",
+    "npm run typecheck/test/build/smoke for this design-only change",
+    "browser/iPhone playtest",
+    "original PSP frame/physics/map coordinate measurements",
+    "re-execution of PR16/17 implementation tests"
+  ],
+  "review_fixes": [
+    "basic ammunition infinite-reserve exception separated from carried ammunition",
+    "support surface query includes feet Y, previous support and movement mode",
+    "climb/flight/drop owns height until landing",
+    "offscreen logic survives render resource release",
+    "P1 retreat/sleep dependency split from P2 juvenile temperament",
+    "PR16 three-temperament and PR17 four-reception proposals connected",
+    "area-visiting inspection routes distinguished from all-edge bidirectional clearance verification"
+  ]
+}
