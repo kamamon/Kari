@@ -411,3 +411,8 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
   .story-body { min-height: 72px; }
   .story-text { font-size: 15px; line-height: 1.5; }
 }
+/* 開け閉めできる見出しの印（flex にすると、ふつうの印が消えるため） */
+.base-story summary { list-style: none; }
+.base-story summary::-webkit-details-marker { display: none; }
+.base-story summary::before { content: '▸'; margin-right: 6px; color: var(--bronze); }
+.base-story details[open] > summary::before { content: '▾'; }

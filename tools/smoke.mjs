@@ -161,8 +161,8 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await idle(page);
   const s5 = await state(page);
   const last = await page.evaluate(() => window.__vh.sim.recentHits.at(-1));
-  // 段階 2 は 92、離すのが遅れて段階 3 に入ると 117（通常の縦斬りは 56）
-  check('溜め斬り（段階 2 以上）が命中し、威力が上がる', s5.hits === 4 && (last.damage === 92 || last.damage === 117), `damage ${last?.damage} part ${last?.partId}`);
+  // 段階 2 は 123、離すのが遅れて段階 3 に入ると 164（通常の縦斬りは 58）。v0.23.0 の係数（縦斬り 1.05、溜め ×2.1 / ×2.8。D-092）
+  check('溜め斬り（段階 2 以上）が命中し、威力が上がる', s5.hits === 4 && (last.damage === 123 || last.damage === 164), `damage ${last?.damage} part ${last?.partId}`);
 
   // 防御: 標的の攻撃を再開して正面で受ける
   await page.evaluate(() => {
@@ -1017,7 +1017,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await toHead(null);
   await page.mouse.move(640, 360);
   await click(page);
-  check('縦斬りを 1 回当てると、刃が 1.6 減る', await until(page, () => window.__vh.sim.hitCount === 1 && Math.abs(window.__vh.sim.player.edge - 98.4) < 1e-6, 8000));
+  check('縦斬りを 1 回当てると、刃が 1.68 減る（v0.23.0 の係数 1.05 × 1.6）', await until(page, () => window.__vh.sim.hitCount === 1 && Math.abs(window.__vh.sim.player.edge - 98.32) < 1e-6, 8000));
   await until(page, () => window.__vh.sim.player.mode === 'free', 8000);
   // 並まで減った状態で、硬い部位（頭を一時的に硬くする）を斬る → 弾かれる
   await toHead(50);
@@ -1026,7 +1026,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   check('刃が「並」の時に硬い部位を斬ると、弾かれてよろける（棒は黄色、「弾かれた」と出る）', await until(page, () => {
     const p = window.__vh.sim.player;
     const e = document.querySelector('.hud-blade .edge');
-    return p.hurt?.kind === 'bounce' && Math.abs(p.edge - 46.8) < 1e-6 && e.dataset.stage === 'worn' && e.querySelector('.stage').textContent === '並' && /弾かれた/.test(document.getElementById('toasts').textContent);
+    return p.hurt?.kind === 'bounce' && Math.abs(p.edge - 46.64) < 1e-6 && e.dataset.stage === 'worn' && e.querySelector('.stage').textContent === '並' && /弾かれた/.test(document.getElementById('toasts').textContent);
   }, 8000));
   await page.screenshot({ path: `${OUT}70_edge_bounce.png` });
   await page.evaluate(() => (window.__vh.sim.content.monsters.get('monster.training_dummy').parts[0].hitzone.cut = 0.7));
@@ -1405,8 +1405,8 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const hubLook = await page.evaluate(() => {
     const v = window.__vh.view;
     const files = [];
-    // 建物の図（切り抜き）。外周の崖の面（v0.22.0。崖の図集を切り抜く）は除く
-    v.scene.traverse((o) => { if (o.isMesh && !o.isInstancedMesh && !o.userData.cliffArt && o.material.alphaTest > 0 && o.material.map && o.material.visible) files.push(String(o.material.map.image?.src ?? '').split('/').pop()); });
+    // 建物の図（切り抜き）。外周の崖の面（v0.22.0。崖の図集を切り抜く）と、里の人の板（v0.23.0）は除く
+    v.scene.traverse((o) => { if (o.isMesh && !o.isInstancedMesh && !o.userData.cliffArt && !o.userData.npc && o.material.alphaTest > 0 && o.material.map && o.material.visible) files.push(String(o.material.map.image?.src ?? '').split('/').pop()); });
     return { art: window.__vh.envArt(), buildings: files.sort(), far: v.scene.getObjectByName('backdrop').children.filter((m) => m.material.map && m.material.visible).length, ...v.stats() };
   });
   check('景色の絵（里）: 頼んだ絵がすべて読めている。建物 4 つ（工房・商店・依頼板・装備箱）に、それぞれの図が貼られている', hubArt && hubLook.far === 2 && hubLook.buildings.join() === 'bld_board_v1.webp,bld_chest_v1.webp,bld_shop_v1.webp,bld_workshop_v1.webp', JSON.stringify(hubLook));
@@ -1640,9 +1640,11 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('.story-record[data-scene="sc02"]');
   const opened = await until(page, () => !document.getElementById('story').hidden && document.getElementById('story').dataset.scene === 'sc02' && document.querySelector('.story-face img').naturalWidth === 256, 8000);
   await page.screenshot({ path: `${OUT}98_story_dialog.png` });
+  // 台詞を 1 つずつ読み、まとめ（記録）が出たら止める（最後の「閉じる」は、下で押す）
   const said = [];
-  for (let i = 0; i < 6 && !(await page.evaluate(() => document.getElementById('story').hidden)); i++) {
+  for (let i = 0; i < 8; i++) {
     said.push(await page.evaluate(() => `${document.querySelector('.story-who').textContent}|${document.querySelector('.story-text').textContent}`));
+    if (said.at(-1).startsWith('記録|')) break;
     await page.click('.story-buttons button');
   }
   check('物語: 記録を開くと会話の窓が出る（顔の絵・名前・台詞）。読み返す時の報告は、討伐・捕獲の分かれない言葉。最後にまとめが出る',
@@ -1670,7 +1672,10 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await until(page, () => !document.getElementById('base').hidden);
   sp = await panel();
   check('物語: 第 1 章を済ませると、次の狩りは無く、「まだ遊べません」と出る。帰還記録は 4 つ', sp.step === '' && /次の地域の物語は、まだ遊べません/.test(sp.end) && sp.rec === '帰還記録を読む（4）', JSON.stringify(sp));
+  // 景色の絵は、見える所へ来た時に読む（loading = lazy）。第 2 章の札を見える所へ送ってから待つ
   await page.evaluate(() => { document.querySelector('.story-chapters').open = true; });
+  await until(page, () => document.querySelectorAll('.story-chapter').length === 10, 5000);
+  await page.evaluate(() => document.querySelector('.story-chapter[data-chapter="ch2"]').scrollIntoView({ block: 'center' }));
   const chapters = await until(page, () => document.querySelectorAll('.story-chapter').length === 10 && document.querySelector('.story-chapter[data-chapter="ch2"] img')?.naturalWidth === 640, 8000);
   check('物語: 章の一覧は 10（序章・8 章・終章）。第 1 章は「済み」、第 2 章から先は「まだ遊べません」。狩場の景色の原画が出る', chapters && await page.evaluate(() => document.querySelector('.story-chapter[data-chapter="ch1"] .state').textContent === '済み' && document.querySelector('.story-chapter[data-chapter="ch8"] .state').textContent === 'まだ遊べません'), await page.evaluate(() => [...document.querySelectorAll('.story-chapter .state')].map((x) => x.textContent).join(',')));
   await page.screenshot({ path: `${OUT}98_story_chapters.png` });

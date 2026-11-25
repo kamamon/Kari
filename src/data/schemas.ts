@@ -572,7 +572,7 @@ export interface FacilityDef {
 
 /**
  * 里に立つ人（v0.23.0）。見た目は絵の板（art は src/render/npcArt.ts の名前）。当たりは、map の rocks に同じ位置の円を置く。
- * yaw は向いている方（正面）。名前の表示名は仮（物語の人物。docs/story.md）。
+ * yaw は向いている方（正面）。名前の表示名は仮（物語の人物。docs/spec.md の 24 章）。
  */
 export interface HubNpcDef {
   id: string;
