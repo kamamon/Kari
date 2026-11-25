@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "note": "工房からの支給（v0.26.0。ChatGPT のクエスト設計 v1 の campaign_support_v1.json、Pull Request #9。原本は docs/source/chatgpt-quest-design-20261125/）。物語の依頼を達成すると、1 つの保存で 1 度だけ受け取れる強化の材料（通貨は付かない）。数は「どれか 1 つの武器の系統と、防具 5 部位を、次の段へ強化できる量」= 7 武器の素材ごとの最大 + 防具 5 部位の合計（recipes.json から測って、設計の値と一致を確かめた）。3〜5 段目の支給（物語の ST04・ST08・ST13 の後）は、その依頼ができてから足す。",
+  "packs": [
+    {
+      "id": "story.support.tier2",
+      "name": "工房からの支給（2 段目・岩殻）",
+      "tier": 2,
+      "requires": [
+        "quest.basin.003",
+        "quest.selvark.r1"
+      ],
+      "items": [
+        {
+          "itemId": "mat.galdros.bronze_vein",
+          "count": 3
+        },
+        {
+          "itemId": "mat.galdros.foreleg_plate",
+          "count": 4
+        },
+        {
+          "itemId": "mat.galdros.hard_bone",
+          "count": 6
+        },
+        {
+          "itemId": "mat.galdros.shell_shard",
+          "count": 14
+        }
+      ],
+      "text": "盆地の荷が通るようになった礼に、工房の在庫から 1 度だけ分ける材料。どれか 1 つの武器と、防具 5 部位を、2 段目（岩殻）へ強化できる量。持っている装備は替わらない（工房で強化する）。"
+    }
+  ]
+}

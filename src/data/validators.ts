@@ -6,6 +6,7 @@ import { buildFollowTable } from '../game/follow';
 import { AreaShape, NavGraph } from '../game/areaShape';
 import { validateBestiary, type BestiaryDef } from './bestiary';
 import { validateStory, type StoryDef } from './story';
+import { validateBoard, validateDeliveries, validateSupport } from './questBoard';
 import {
   ARMOR_SLOTS,
   FINISH_STATES,
@@ -18,6 +19,7 @@ import {
   type Content,
   type ContentIndex,
   type CurveDef,
+  type DeliveriesDef,
   type EdgeRules,
   type FieldDef,
   type HubDef,
@@ -29,11 +31,13 @@ import {
   type FollowDef,
   type MonsterDef,
   type PlayerTuning,
+  type QuestBoardDef,
   type QuestDef,
   type RankDef,
   type RecipeDef,
   type ShapeTrackDef,
   type ShopDef,
+  type SupportDef,
   type WeaponDef,
   type WeaponFamilyDef,
 } from './schemas';
@@ -251,6 +255,8 @@ export function crossCheck(c: Content, errors: string[]): void {
       else if ((c.ranks.get(other.rankId)?.order ?? 0) > (c.ranks.get(q.rankId)?.order ?? 0)) errors.push(`quest ${q.id}: requires の依頼 ${need} の段階が上`);
     }
     if (!(q.timeLimitTicks > 0) || !(q.maxFaints > 0)) errors.push(`quest ${q.id}: 制限が不正`);
+    // フィールドの時間（v0.26.0）: フィールドの依頼だけ。正の整数で、1 つの狩場の時間より短くしない
+    if (q.fieldTimeLimitTicks !== undefined && !(q.fieldId && isInt(q.fieldTimeLimitTicks) && q.fieldTimeLimitTicks >= q.timeLimitTicks)) errors.push(`quest ${q.id}: fieldTimeLimitTicks が不正（フィールドの依頼だけ、timeLimitTicks 以上の整数）`);
     if (q.monsterAttackScale !== undefined && !(q.monsterAttackScale > 0 && q.monsterAttackScale <= 3)) errors.push(`quest ${q.id}: monsterAttackScale が不正`);
     if (q.kind !== 'slay' && q.kind !== 'hunt') errors.push(`quest ${q.id}: kind "${String(q.kind)}" は未定義`);
     if (q.returnTicks !== undefined && !(isInt(q.returnTicks) && q.returnTicks >= 0)) errors.push(`quest ${q.id}: returnTicks が不正`);
@@ -745,6 +751,9 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     hub: { schemaVersion: 0, id: '', name: '', mapId: '', facilities: [] },
     bestiary: { schemaVersion: 0, plan: {}, frames: [], fields: [], species: [] },
     story: { schemaVersion: 0, id: '', title: '', note: '', speakers: {}, chapters: [], scenes: [], common: { unplayable: '' } },
+    board: { schemaVersion: 0, recommend: { text: '', questIds: [] }, quests: [] },
+    support: { schemaVersion: 0, packs: [] },
+    deliveries: new Map(),
     quests: new Map(),
     items: new Map(),
     materials: new Map(),
@@ -866,6 +875,21 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
   checkVersion(index.files.story, content.story.schemaVersion, errors);
   for (const e of validateStory(content.story, new Set(content.quests.keys()))) errors.push(`story: ${e}`);
   for (const ch of content.story.chapters ?? []) if (ch.field && !(content.bestiary.fields ?? []).some((f) => f.name === ch.field)) errors.push(`story: chapter ${ch.id}: 狩場 ${ch.field} が登録簿に無い`);
+  // 依頼の掲示・工房からの支給・里の納品（v0.26.0、docs/spec.md の 25 章）。掲示は、読み込みの時に依頼へ付ける
+  content.board = (await get(index.files.board)) as QuestBoardDef;
+  checkVersion(index.files.board, content.board.schemaVersion, errors);
+  errors.push(...validateBoard(content.board, content));
+  for (const b of content.board.quests ?? []) {
+    const q = content.quests.get(b.questId);
+    if (q && !q.board) q.board = b;
+  }
+  content.support = (await get(index.files.support)) as SupportDef;
+  checkVersion(index.files.support, content.support.schemaVersion, errors);
+  errors.push(...validateSupport(content.support, content));
+  const deliveries = (await get(index.files.deliveries)) as DeliveriesDef;
+  checkVersion(index.files.deliveries, deliveries.schemaVersion, errors);
+  errors.push(...validateDeliveries(deliveries, content, new Set((content.support.packs ?? []).map((p) => p.id))));
+  for (const d of deliveries.deliveries ?? []) putUnique(content.deliveries, d.id, d, 'delivery', errors);
   if (errors.length > 0) throw new ContentError(errors);
   return content;
 }

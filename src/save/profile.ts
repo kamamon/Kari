@@ -6,10 +6,13 @@
 // - 報酬の受け取りと強化は、必要な確認・減算・加算・処理済みの記録を 1 回の書き込みで確定する。
 // - 知らない ID（この版に無い素材や武器）は捨てずに持ち続ける。
 // - 新しい版が書いたデータ（schemaVersion がこの版より大きい）は、読まないし上書きもしない。
-import { ARMOR_SLOTS, recipeFrom, recipeResult, type ArmorDef, type ArmorSlot, type Content, type ItemStack, type QuestDef, type RecipeDef, type ShopDef } from '../data/schemas';
+import { ARMOR_SLOTS, recipeFrom, recipeResult, type ArmorDef, type ArmorSlot, type Content, type DeliveryDef, type ItemStack, type QuestDef, type RecipeDef, type ShopDef, type SupportPackDef } from '../data/schemas';
 
-/** 版 2（v0.9.0）: 防具（armor）を足した。版 3（v0.14.0）: 身に着けている防具（equippedArmorIds）を足した。 */
-export const SAVE_SCHEMA_VERSION = 3;
+/**
+ * 版 2（v0.9.0）: 防具（armor）を足した。版 3（v0.14.0）: 身に着けている防具（equippedArmorIds）を足した。
+ * 版 4（v0.26.0）: 1 度だけの受け取りの記録（claims。工房からの支給・里の納品）を足した。
+ */
+export const SAVE_SCHEMA_VERSION = 4;
 export const SLOT_ID = 'main';
 /** 書き出したファイルの目印 */
 export const EXPORT_FORMAT = 'veilbound-hunters-save';
@@ -49,6 +52,11 @@ export interface SaveDoc {
   };
   /** 報酬を確定した依頼の runId（古い順） */
   settledRuns: string[];
+  /**
+   * 1 度だけ受け取るものの記録（v0.26.0。工房からの支給の id、里の納品の id）。古いものから捨てない（settledRuns とは別）。
+   * この版に無い id も、そのまま持つ。
+   */
+  claims: string[];
 }
 
 /** 保存する時に付ける情報（時刻は保存する側が渡す） */
@@ -61,7 +69,7 @@ export interface SaveStamp {
 /** 決まりに合わない操作（素材が足りない、持っていない武器、など）。書き込みはしない。 */
 export class RuleError extends Error {
   constructor(
-    readonly code: 'insufficient' | 'not_owned' | 'already_owned' | 'unknown' | 'not_sold' | 'not_bought' | 'bad_count' | 'full',
+    readonly code: 'insufficient' | 'not_owned' | 'already_owned' | 'unknown' | 'not_sold' | 'not_bought' | 'bad_count' | 'full' | 'claimed' | 'locked',
     message: string,
   ) {
     super(message);
@@ -100,6 +108,7 @@ export function newSave(content: Content, stamp: SaveStamp): SaveDoc {
     equippedArmorIds: starterArmor(content),
     progress: { questClears: {} },
     settledRuns: [],
+    claims: [],
   };
 }
 
@@ -124,6 +133,8 @@ export function validateSave(raw: unknown): string[] {
   if (!isObj(raw.progress) || !isObj(raw.progress.questClears)) e.push('進行の記録がありません');
   else for (const [id, n] of Object.entries(raw.progress.questClears)) if (!isCount(n)) e.push(`依頼 ${id} の達成回数が不正です`);
   if (!Array.isArray(raw.settledRuns) || raw.settledRuns.some((r) => typeof r !== 'string')) e.push('処理済みの依頼の記録が不正です');
+  if (!Array.isArray(raw.claims) || raw.claims.some((r) => typeof r !== 'string' || r === '')) e.push('受け取りの記録が不正です');
+  else if (new Set(raw.claims).size !== raw.claims.length) e.push('同じ受け取りの記録が 2 つ入っています');
   return e;
 }
 
@@ -133,10 +144,13 @@ export function validateSave(raw: unknown): string[] {
  * 1 → 2（v0.9.0）: 防具の一覧を足す。中身は空で、最初の防具は grantStarters が配る（収録データを見て決めるため）。
  * 2 → 3（v0.14.0）: 身に着けている防具を足す。版 2 は「持っている中で、部位ごとに防御力がいちばん高いものを着る」だったので、
  *   持っている防具をすべて「身に着けている」にする（読む側が、部位ごとに高い方を選ぶ。着ているものは、直す前と変わらない）。
+ * 3 → 4（v0.26.0）: 受け取りの記録（claims）を足す。版 3 までは受け取るものが無かったので、空（まだ何も受け取っていない）。
+ *   受け取れるかは、保存してある達成回数で決まる（古いデータでも、条件を満たしていれば、そのまま受け取れる）。
  */
 const MIGRATIONS: Record<number, (doc: Record<string, unknown>) => Record<string, unknown>> = {
   1: (doc) => ({ ...doc, armor: Array.isArray(doc.armor) ? doc.armor : [] }),
   2: (doc) => ({ ...doc, equippedArmorIds: Array.isArray(doc.equippedArmorIds) ? doc.equippedArmorIds : Array.isArray(doc.armor) ? [...(doc.armor as unknown[])] : [] }),
+  3: (doc) => ({ ...doc, claims: Array.isArray(doc.claims) ? doc.claims : [] }),
 };
 
 export type ReadResult =
@@ -379,6 +393,73 @@ export function equipArmor(doc: SaveDoc, content: Content, slot: ArmorSlot, armo
   if (sameSet) return null;
   const next = cloneSave(doc);
   next.equippedArmorIds = nextIds;
+  return next;
+}
+
+// ---- 1 度だけ受け取るもの（v0.26.0。工房からの支給・里の納品。docs/spec.md の 25 章） ----
+
+/** 条件の依頼を、どれも 1 回は達成しているか */
+const clearedAll = (doc: SaveDoc, ids: readonly string[]): boolean => ids.every((id) => (doc.progress.questClears[id] ?? 0) > 0);
+
+/** 工房からの支給の状態。claimed: 受け取った / ready: 受け取れる / locked: まだ条件の依頼が残っている */
+export type SupportState = 'claimed' | 'ready' | 'locked';
+
+export function supportState(doc: SaveDoc, pack: SupportPackDef): SupportState {
+  if (doc.claims.includes(pack.id)) return 'claimed';
+  return clearedAll(doc, pack.requires) ? 'ready' : 'locked';
+}
+
+/**
+ * 工房からの支給を受け取る: 材料を足し、受け取った記録を残す（1 回の書き込みで両方）。
+ * 受け取った後・条件が足りない・持てる数を超える時は RuleError（何も変えない）。
+ */
+export function claimSupport(doc: SaveDoc, pack: SupportPackDef): SaveDoc {
+  const st = supportState(doc, pack);
+  if (st === 'claimed') throw new RuleError('claimed', 'もう受け取っています');
+  if (st === 'locked') throw new RuleError('locked', 'まだ受け取れません（条件の依頼が残っています）');
+  if (pack.items.some((s) => (doc.items[s.itemId] ?? 0) + s.count > MAX_COUNT)) throw new RuleError('full', 'これ以上は持てません');
+  const next = cloneSave(doc);
+  for (const s of pack.items) next.items[s.itemId] = (next.items[s.itemId] ?? 0) + s.count;
+  next.claims.push(pack.id);
+  return next;
+}
+
+export interface DeliveryCheck {
+  ok: boolean;
+  /** claimed: 渡した / locked: 条件の依頼が残っている / short: 素材が足りない（残す数を含めて） / ready: 渡せる */
+  state: 'claimed' | 'locked' | 'short' | 'ready';
+  items: { itemId: string; need: number; keep: number; have: number; after: number }[];
+  money: number;
+}
+
+/** 里の納品ができるか（画面の表示用。実際の確認は deliver が書き込みの中でもう一度行う）。 */
+export function checkDelivery(doc: SaveDoc, d: DeliveryDef): DeliveryCheck {
+  const items = d.items.map((s) => {
+    const have = doc.items[s.itemId] ?? 0;
+    return { itemId: s.itemId, need: s.count, keep: s.keep, have, after: have - s.count };
+  });
+  const state: DeliveryCheck['state'] = doc.claims.includes(d.id) ? 'claimed' : !clearedAll(doc, d.requires) ? 'locked' : items.every((i) => i.after >= i.keep) ? 'ready' : 'short';
+  return { ok: state === 'ready', state, items, money: d.money };
+}
+
+/**
+ * 里の納品: 素材を減らし、通貨と達成回数を足し、受け取った記録を残す（1 回の書き込みで全部）。
+ * 渡した後・条件が足りない・素材が足りない（残す数を割る）・通貨が上限を超える時は RuleError（何も変えない）。
+ */
+export function deliver(doc: SaveDoc, d: DeliveryDef): SaveDoc {
+  const c = checkDelivery(doc, d);
+  if (c.state === 'claimed') throw new RuleError('claimed', 'もう渡しています（1 度だけの依頼です）');
+  if (c.state === 'locked') throw new RuleError('locked', 'まだ受けられません（条件の依頼が残っています）');
+  if (c.state === 'short') throw new RuleError('insufficient', '素材が足りません（渡した後に残す数を含めて）');
+  if (doc.money + d.money > MAX_COUNT) throw new RuleError('full', '通貨がこれ以上持てません');
+  const next = cloneSave(doc);
+  for (const i of c.items) {
+    if (i.after > 0) next.items[i.itemId] = i.after;
+    else delete next.items[i.itemId];
+  }
+  next.money += d.money;
+  next.progress.questClears[d.id] = Math.min(MAX_COUNT, (next.progress.questClears[d.id] ?? 0) + 1);
+  next.claims.push(d.id);
   return next;
 }
 

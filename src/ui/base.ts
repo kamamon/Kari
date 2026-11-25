@@ -4,13 +4,14 @@
 // 持ち物・装備の表示は、保存の管理役（SaveManager）が持つ「書き込みが完了した内容」だけを映す。
 // 強化・取り込みなどの結果は、書き込みが完了してから表示する（押した時点では「保存しています…」）。
 import { APP_VERSION, BUILD_ID, assetUrl } from '../core/assets';
-import { ARMOR_SLOTS, recipeFrom, type ArmorSlot, type Content, type RecipeDef } from '../data/schemas';
+import { ARMOR_SLOTS, QUEST_LANE_NAMES, recipeFrom, type ArmorSlot, type Content, type RecipeDef } from '../data/schemas';
+import { minutesText, starLabel, starRow } from '../data/questBoard';
 import { materialRanks } from '../data/validators';
 import { fieldOf, questTimeLimitTicks } from '../game/field';
 import { defenseScale } from '../game/rank';
 import { CLASS_NAMES, ECOLOGY_KEYS, ECOLOGY_NAMES, ELEMENT_NAMES, STATE_NAMES, STATUS_NAMES, VARIANT_NAMES, bestiaryCounts } from '../data/bestiary';
 import type { FacilityKind } from '../data/schemas';
-import { checkBuy, checkCraft, defenseOf, ownedArmor, parseImport, questUnlocked, unknownIds, usableWeapons, wornArmor } from '../save/profile';
+import { checkBuy, checkCraft, checkDelivery, defenseOf, ownedArmor, parseImport, questUnlocked, supportState, unknownIds, usableWeapons, wornArmor } from '../save/profile';
 import type { SaveManager, SaveResult } from '../save/saveManager';
 import { canFullscreen, fullscreenHint, toggleFullscreen } from './fullscreen';
 import { questGoal } from './targets';
@@ -334,6 +335,13 @@ export class BaseScreen {
         return !!q && questUnlocked(doc, q);
       },
     });
+    // 工房からの支給（v0.26.0）: 受け取れる時だけ、物語の欄にも知らせる（受け取るのは工房）
+    for (const pack of c.support.packs) {
+      if (supportState(doc, pack) !== 'ready') continue;
+      const p = el('p', 'story-support', `${pack.name}を受け取れます（工房で。1 度だけ）。`);
+      p.dataset.pack = pack.id;
+      this.storyBox.appendChild(p);
+    }
 
     // 持ち物
     this.inv.textContent = '';
@@ -518,7 +526,10 @@ export class BaseScreen {
     this.shopBody.appendChild(el('p', 'shop-note', '売った素材は戻りません。強化に使う素材は、工房で数を確かめてから。'));
   }
 
-  /** 依頼の並び（段階の順）と訓練場。まだ受けられない依頼は、押せない 1 行にする。 */
+  /**
+   * 依頼の並び（段階の順）と、里の納品と、訓練場。まだ受けられない依頼は、押せない 1 行にする。
+   * v0.26.0: 見出しに星（★1〜8）と分類（主線・昇級確認）、依頼人、制限時間と目安の時間。依頼人の話は、ボタンの下の「依頼人の話」を開いて読む。
+   */
   private renderQuests(): void {
     const c = this.content;
     const doc = this.host.save.doc;
@@ -532,6 +543,16 @@ export class BaseScreen {
       this.questBox.appendChild(b);
       return b;
     };
+    // 依頼人の話（開いた時だけ読む。押しても出発しない）
+    const letter = (id: string, stars: number, lane: string, client: string, text: string): void => {
+      const d = el('details', 'quest-letter');
+      d.dataset.quest = id;
+      d.appendChild(el('summary', undefined, `依頼人の話（${client}）`));
+      d.appendChild(el('p', 'quest-stars', `${starRow(stars)}${lane ? `　${lane}` : ''}`));
+      d.appendChild(el('p', 'quest-text', text));
+      this.questBox.appendChild(d);
+    };
+    if (c.board.recommend.text) this.questBox.appendChild(el('p', 'quest-recommend', c.board.recommend.text));
     const order = (rankId: string): number => c.ranks.get(rankId)?.order ?? 0;
     // 段階の順。同じ段階では、1 体の標的の依頼 → 群れの依頼（v0.18.0）
     const quests = [...c.quests.values()].sort((x, y) => order(x.rankId) - order(y.rankId) || (x.targets ? 1 : 0) - (y.targets ? 1 : 0));
@@ -542,7 +563,8 @@ export class BaseScreen {
       group = g;
       const rank = c.ranks.get(q.rankId)?.name ?? '';
       const clears = doc.progress.questClears[q.id] ?? 0;
-      const title = `【${rank}】依頼「${q.name}」${clears > 0 ? `　達成 ${clears} 回` : ''}`;
+      const lane = q.board && q.board.lane !== 'free' ? QUEST_LANE_NAMES[q.board.lane] : '';
+      const title = `${starLabel(q)}【${rank}】依頼「${q.name}」${lane ? `　${lane}` : ''}${clears > 0 ? `　達成 ${clears} 回` : ''}`;
       let b: HTMLButtonElement;
       if (!questUnlocked(doc, q)) {
         const need = (q.requires ?? []).filter((id) => !(doc.progress.questClears[id] ?? 0)).map((id) => `「${c.quests.get(id)?.name ?? id}」`);
@@ -550,7 +572,10 @@ export class BaseScreen {
         b.classList.add('locked');
       } else {
         const field = this.host.fieldHunts ? fieldOf(c, q) : null;
-        const lines = [q.summary, `目標: ${questGoal(c, q)}　制限 ${Math.round(questTimeLimitTicks(c, q, this.host.fieldHunts) / 3600)} 分　力尽き ${q.maxFaints} 回で失敗`];
+        const limit = minutesText(questTimeLimitTicks(c, q, this.host.fieldHunts));
+        const aim = q.board ? `（目安 ${q.board.clearMinutes[0]}〜${q.board.clearMinutes[1]} 分）` : '';
+        const lines = [q.summary, `目標: ${questGoal(c, q)}　制限 ${limit}${aim}　力尽き ${q.maxFaints} 回で失敗`];
+        if (q.board) lines.unshift(`依頼人: ${q.board.client}`);
         if (field) lines.push(`狩場: ${field.name}（野営地から出発。エリア ${field.areas.filter((a) => a.kind !== 'camp').length} か所。${q.targets ? '群れは、住みかのエリアを移ることがある' : '標的はエリアを移動する'}）`);
         if (q.supplies?.length) lines.push(`支給品: ${q.supplies.map((s) => `${c.items.get(s.itemId)?.name ?? s.itemId} ×${s.count}`).join('　')}`);
         if (q.rewards) lines.push(`報酬: ${q.rewards.money} 通貨 + 素材`);
@@ -558,8 +583,71 @@ export class BaseScreen {
       }
       b.dataset.quest = q.id;
       b.dataset.rank = q.rankId;
+      if (q.board) {
+        b.dataset.stars = String(q.board.stars);
+        b.dataset.lane = q.board.lane;
+        letter(q.id, q.board.stars, lane, q.board.client, q.board.text);
+      }
     }
+    this.renderDeliveries();
     choice('訓練場', ['動かない標的で、操作と技を確かめる。'], () => this.host.startTraining());
+  }
+
+  /**
+   * 里の納品（v0.26.0）: 狩りに出ず、倉庫の素材を受付で渡す。1 つの保存で 1 度だけ。
+   * 渡す前に「渡す数・残る数・報酬・1 度だけ」を出して、もう 1 度押してもらう。保存が完了してから「渡した」にする。
+   */
+  private renderDeliveries(): void {
+    const c = this.content;
+    const doc = this.host.save.doc;
+    if (c.deliveries.size === 0) return;
+    this.questBox.appendChild(el('p', 'forge-head', '里の納品（狩りに出ない。倉庫の素材を受付で渡す。1 度だけ）'));
+    const name = (id: string): string => c.materials.get(id)?.name ?? id;
+    for (const d of c.deliveries.values()) {
+      const chk = checkDelivery(doc, d);
+      const box = el('div', `base-delivery ${chk.state}`);
+      box.dataset.delivery = d.id;
+      box.dataset.state = chk.state;
+      box.appendChild(el('b', undefined, `★${d.stars}　里の納品「${d.name}」${chk.state === 'claimed' ? '　納品済み' : ''}`));
+      box.appendChild(el('span', undefined, `依頼人: ${d.client}　報酬: ${d.money} 通貨（1 度だけ）　制限なし・出発なし`));
+      const ul = el('ul', 'forge-cost');
+      for (const i of chk.items) {
+        const li = withIcon(el('li', chk.state === 'short' && i.after < i.keep ? 'short' : undefined), i.itemId, `${name(i.itemId)} ${i.need} 個を渡す（持っている数 ${i.have}。渡した後も ${i.keep} 個は残す）`);
+        ul.appendChild(li);
+      }
+      box.appendChild(ul);
+      const letterBox = el('details', 'quest-letter');
+      letterBox.appendChild(el('summary', undefined, `依頼人の話（${d.client}）`));
+      letterBox.appendChild(el('p', 'quest-text', d.text));
+      box.appendChild(letterBox);
+      if (chk.state === 'locked') {
+        const need = d.requires.filter((id) => !(doc.progress.questClears[id] ?? 0)).map((id) => `「${c.quests.get(id)?.name ?? id}」`);
+        box.appendChild(el('p', 'base-note', `${need.join('と')}を達成すると受けられます。`));
+      } else if (chk.state === 'ready' && this.confirming === d.id) {
+        const p = el('p', 'forge-confirm', `${chk.items.map((i) => `${name(i.itemId)} ${i.need} 個（残り ${i.after} 個）`).join('、')}を渡して、${d.money} 通貨を受け取ります。元には戻せません。`);
+        const yes = el('button', 'go', '渡す');
+        yes.addEventListener('click', () => {
+          this.confirming = null;
+          void this.run('渡しています', () => this.host.save.deliver(d.id), `「${d.name}」を納品しました（+${d.money} 通貨）。`);
+        });
+        const no = el('button', undefined, 'やめる');
+        no.addEventListener('click', () => {
+          this.confirming = null;
+          this.refresh();
+        });
+        p.append(yes, no);
+        box.appendChild(p);
+      } else if (chk.state !== 'claimed') {
+        const b = el('button', 'go', chk.ok ? '納品する' : '素材が足りません（残す数を含めて）');
+        b.disabled = !chk.ok;
+        b.addEventListener('click', () => {
+          this.confirming = d.id;
+          this.refresh();
+        });
+        box.appendChild(b);
+      }
+      this.questBox.appendChild(box);
+    }
   }
 
   /**
@@ -571,6 +659,29 @@ export class BaseScreen {
     const doc = this.host.save.doc;
     this.forgeBody.textContent = '';
     let ready = 0;
+    let packs = 0;
+    // 工房からの支給（v0.26.0）: 物語の依頼の後に、1 度だけ受け取れる材料。受け取るだけ（装備は替わらない）
+    for (const pack of c.support.packs) {
+      const st = supportState(doc, pack);
+      const box = el('div', `forge-support ${st}`);
+      box.dataset.pack = pack.id;
+      box.dataset.state = st;
+      box.appendChild(el('b', undefined, `${pack.name}${st === 'claimed' ? '　受け取り済み' : ''}`));
+      box.appendChild(el('span', 'forge-support-text', pack.text));
+      const ul = el('ul', 'forge-cost');
+      for (const s of pack.items) ul.appendChild(withIcon(el('li'), s.itemId, `${c.materials.get(s.itemId)?.name ?? s.itemId} ×${s.count}`));
+      box.appendChild(ul);
+      if (st === 'locked') {
+        const need = pack.requires.filter((id) => !(doc.progress.questClears[id] ?? 0)).map((id) => `「${c.quests.get(id)?.name ?? id}」`);
+        box.appendChild(el('p', 'base-note', `${need.join('と')}を達成すると受け取れます。`));
+      } else if (st === 'ready') {
+        const b = el('button', 'go', '受け取る');
+        b.addEventListener('click', () => void this.run('受け取っています', () => this.host.save.claimSupport(pack.id), `${pack.name}を受け取りました。`));
+        box.appendChild(b);
+        packs++;
+      }
+      this.forgeBody.appendChild(box);
+    }
     const equipped = this.host.weaponId;
     const rankName = (itemId: string): string => {
       const order = this.matRank.get(itemId) ?? 1;
@@ -635,7 +746,8 @@ export class BaseScreen {
     };
     section('武器', 'upgrade', doc.weapons);
     section('防具', 'armor_upgrade', doc.armor);
-    this.forge.querySelector('summary')!.textContent = ready > 0 ? `工房（強化できます: ${ready}）` : '工房';
+    const notes = [ready > 0 ? `強化できます: ${ready}` : '', packs > 0 ? '支給を受け取れます' : ''].filter(Boolean);
+    this.forge.querySelector('summary')!.textContent = notes.length ? `工房（${notes.join('・')}）` : '工房';
   }
 
   private renderData(): void {

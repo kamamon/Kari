@@ -10,7 +10,9 @@ import {
   SLOT_ID,
   cloneSave,
   buy,
+  claimSupport,
   craft,
+  deliver,
   equip,
   equipArmor,
   exportText,
@@ -261,6 +263,20 @@ export class SaveManager {
 
   sell(itemId: string, count: number): Promise<SaveResult> {
     return this.commit((doc) => sell(doc, this.content.shop, itemId, count));
+  }
+
+  /** 工房からの支給を受け取る（v0.26.0。材料と受け取りの記録を、1 回の書き込みで） */
+  claimSupport(packId: string): Promise<SaveResult> {
+    const pack = this.content.support.packs.find((p) => p.id === packId);
+    if (!pack) return Promise.resolve({ ok: false, reason: 'rule', message: 'その支給はありません。' });
+    return this.commit((doc) => claimSupport(doc, pack));
+  }
+
+  /** 里の納品（v0.26.0。素材の減算・報酬・達成回数・受け取りの記録を、1 回の書き込みで） */
+  deliver(deliveryId: string): Promise<SaveResult> {
+    const d = this.content.deliveries.get(deliveryId);
+    if (!d) return Promise.resolve({ ok: false, reason: 'rule', message: 'その納品の依頼はありません。' });
+    return this.commit((doc) => deliver(doc, d));
   }
 
   equip(weaponId: string): Promise<SaveResult> {

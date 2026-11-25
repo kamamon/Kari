@@ -92,14 +92,25 @@ describe('フィールドのデータ（風礫盆地）', () => {
     expect(broken((f) => void (f.areas.find((a) => a.id === 'a9')!.bounds.minX = 300)).join('\n')).toContain('近すぎる');
   });
 
-  it('依頼はどれも、この狩場を使う。制限時間は、フィールドで狩る時だけ 2 倍', () => {
+  it('依頼はどれも、この狩場を使う。制限時間は、フィールドで狩る時だけ 2 倍（フィールドの時間を持つ依頼は、その値。v0.26.0）', () => {
+    // ChatGPT のクエスト設計 #9: ガルドロスの中級・上級・極級だけ、フィールドで 35 / 40 / 45 分。1 つの狩場（arena）は 15 分のまま
+    const explicit: Record<string, number> = { 'quest.basin.r2.001': 35, 'quest.basin.r3.001': 40, 'quest.basin.r4.001': 45 };
     for (const q of content.quests.values()) {
       expect(q.fieldId).toBe('field.basin');
       expect(questTimeLimitTicks(content, q, false)).toBe(q.timeLimitTicks);
-      expect(questTimeLimitTicks(content, q, true)).toBe(q.timeLimitTicks * 2);
+      if (explicit[q.id]) expect(questTimeLimitTicks(content, q, true)).toBe(explicit[q.id]! * 3600);
+      else {
+        expect(q.fieldTimeLimitTicks).toBeUndefined();
+        expect(questTimeLimitTicks(content, q, true)).toBe(q.timeLimitTicks * 2);
+      }
     }
+    expect(Object.keys(explicit).every((id) => content.quests.get(id)!.timeLimitTicks === 54000)).toBe(true);
     expect(fieldSim().hunt!.timeLimitTicks).toBe(108000);
     expect(new Simulation(content, baseOptions({ questId: Q })).hunt!.timeLimitTicks).toBe(54000);
+    // simulation も同じ値を使う（受注の画面と、狩りの中の時計がずれない）
+    const r4 = 'quest.basin.r4.001';
+    expect(fieldSim({ questId: r4 }).hunt!.timeLimitTicks).toBe(162000);
+    expect(new Simulation(content, baseOptions({ questId: r4 })).hunt!.timeLimitTicks).toBe(54000);
   });
 
   it('エリアの呼び名: 野営地は名前、ほかは番号', () => {

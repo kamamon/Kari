@@ -8,10 +8,12 @@ export function fieldOf(content: Content, quest: QuestDef): FieldDef | null {
 
 /**
  * 依頼の制限時間。フィールドで狩る時は、歩いて探す時間と、標的が移動する・眠る時間のぶん、長くする（timeLimitScale）。
- * useField: フィールドで狩るか（1 つの狩場で狩る時は、依頼の値のまま）。
+ * 依頼にフィールドの時間（fieldTimeLimitTicks。v0.26.0）があれば、倍率を掛けずに、そのまま使う。
+ * useField: フィールドで狩るか（1 つの狩場で狩る時は、依頼の値のまま）。受注の画面と simulation は、どちらもこれを使う。
  */
-export function questTimeLimitTicks(content: Content, quest: QuestDef, useField: boolean): number {
-  const field = useField ? fieldOf(content, quest) : null;
+export function questTimeLimitTicks(content: Pick<Content, 'fields'>, quest: QuestDef, useField: boolean): number {
+  const field = useField ? fieldOf(content as Content, quest) : null;
+  if (field && quest.fieldTimeLimitTicks !== undefined) return quest.fieldTimeLimitTicks;
   return Math.round(quest.timeLimitTicks * (field?.timeLimitScale ?? 1));
 }
 

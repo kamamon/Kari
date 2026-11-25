@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.25.0",
+  "contentVersion": "0.26.0",
   "files": {
     "actions": [
       "actions/player_common.json",
@@ -121,6 +121,9 @@
     "hub": "hub.json",
     "bestiary": "bestiary.json",
     "story": "story.json",
+    "board": "quest_board.json",
+    "support": "support.json",
+    "deliveries": "deliveries.json",
     "follow": [
       "follow/selvark.json",
       "follow/numeradon.json",

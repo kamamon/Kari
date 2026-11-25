@@ -3,6 +3,7 @@
 import type { Simulation } from '../game/sim';
 import { counterOf, shortName } from './targets';
 import { withIcon } from './icons';
+import { starLabel } from '../data/questBoard';
 
 export interface ResultHost {
   toBase(): void;
@@ -101,7 +102,7 @@ export class ResultScreen {
       });
     }
     const rows: [string, string][] = [
-      ['依頼', `${sim.rank ? `【${sim.rank.name}】` : ''}${h.quest.name}`],
+      ['依頼', `${starLabel(h.quest)}${sim.rank ? `【${sim.rank.name}】` : ''}${h.quest.name}`],
       ['結果', REASON[h.reason ?? ''] ?? ''],
       ['かかった時間', `${Math.floor(sec / 60)} 分 ${sec % 60} 秒`],
       ['力尽きた回数', `${h.faints} / ${h.quest.maxFaints}`],

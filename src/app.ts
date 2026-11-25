@@ -5,6 +5,7 @@ import { FixedClock } from './core/clock';
 import { FrameMeter, describeFrames, type FrameSummary } from './core/frameMeter';
 import { yawOf } from './core/math';
 import type { ArmorSlot, Content, FacilityDef } from './data/schemas';
+import { starLabel } from './data/questBoard';
 import { Btn, type InputFrame } from './game/inputFrame';
 import { firstMismatch, runReplay } from './game/replay';
 import { familyOf } from './game/player';
@@ -514,8 +515,9 @@ export class App implements MenuHost, BaseHost, ResultHost {
     return {
       hunt: true,
       done: h.phase === 'success',
-      title: `【${this.sim.rank?.name ?? ''}】${h.quest.name}`,
-      lines: [h.quest.summary, `残り ${Math.floor(left / 60)} 分 ${left % 60} 秒　力尽き ${h.faints} / ${h.quest.maxFaints}`],
+      title: `${starLabel(h.quest)}【${this.sim.rank?.name ?? ''}】${h.quest.name}`,
+      // 依頼人の話（v0.26.0）: 狩りの途中でも、ヒントを読み返せるように
+      lines: [h.quest.summary, `残り ${Math.floor(left / 60)} 分 ${left % 60} 秒　力尽き ${h.faints} / ${h.quest.maxFaints}`, ...(h.quest.board ? [`依頼人（${h.quest.board.client}）: ${h.quest.board.text}`] : [])],
     };
   }
 

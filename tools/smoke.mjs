@@ -523,7 +523,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const saved = (pg) => pg.evaluate(() => JSON.parse(JSON.stringify(window.__vh.save.doc)));
   const before = await saved(page);
   check('保存の場所は IndexedDB（ゲーム固有の名前）で、2 回の報酬が revision 2 として入っている',
-    (await page.evaluate(() => window.__vh.save.mode)) === 'persistent' && before.revision === 2 && before.settledRuns.length === 2 && before.schemaVersion === 3 && before.armor.length === 5 && before.equippedArmorIds.length === 5
+    (await page.evaluate(() => window.__vh.save.mode)) === 'persistent' && before.revision === 2 && before.settledRuns.length === 2 && before.schemaVersion === 4 && before.claims.length === 0 && before.armor.length === 5 && before.equippedArmorIds.length === 5
       && (await page.evaluate(async () => (await indexedDB.databases()).some((d) => d.name === 'veilbound-hunters:prod:save'))),
     `通貨 ${before.money} / 素材 ${JSON.stringify(before.items)} / 達成 ${JSON.stringify(before.progress.questClears)}`);
   await page.reload();
@@ -557,7 +557,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('#base-data > summary');
   const exported = await page.evaluate(() => window.__vh.save.exportText());
   const rich = JSON.parse(exported);
-  check('書き出した内容に、目印・版・持ち物が入っている', rich.format === 'veilbound-hunters-save' && rich.save.schemaVersion === 3 && rich.save.money === 1250);
+  check('書き出した内容に、目印・版・持ち物が入っている', rich.format === 'veilbound-hunters-save' && rich.save.schemaVersion === 4 && rich.save.money === 1250);
   await page.fill('.data-paste', exported.slice(0, 80));
   await page.click('text=貼り付けた内容を確かめる');
   check('途中で切れた内容は取り込まない（理由が出る）', await until(page, () => /取り込めません/.test(document.querySelector('.base-message').textContent), 4000) && (await saved(page)).revision === 3);
@@ -718,10 +718,10 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
-  check('版 1 のデータ（v0.7.0 の実機）を開くと、いまの版（3）へ直して保存する。持ち物・武器・進行はそのまま、里の装束が配られ、元のデータは控えに残る', await page.evaluate(async (orig) => {
+  check('版 1 のデータ（v0.7.0 の実機）を開くと、いまの版（4）へ直して保存する。持ち物・武器・進行はそのまま、里の装束が配られ、元のデータは控えに残る', await page.evaluate(async (orig) => {
     const s = window.__vh.save, d = s.doc;
     const bs = await s.backups();
-    return s.mode === 'persistent' && d.schemaVersion === 3 && d.equippedArmorIds.join() === d.armor.join() && d.money === 1200 && d.items['mat.galdros.shell_shard'] === 7 && d.equippedWeaponId === 'weapon.long_blade.001' && d.weapons.length === 7
+    return s.mode === 'persistent' && d.schemaVersion === 4 && d.claims.length === 0 && d.equippedArmorIds.join() === d.armor.join() && d.money === 1200 && d.items['mat.galdros.shell_shard'] === 7 && d.equippedWeaponId === 'weapon.long_blade.001' && d.weapons.length === 7
       && d.armor.join() === 'armor.head.001,armor.chest.001,armor.arms.001,armor.waist.001,armor.legs.001' && d.progress.questClears['quest.basin.003'] === 2 && d.revision === 4
       && bs.some((b) => b.reason === 'migrate' && JSON.stringify(b.doc) === JSON.stringify(orig)) && /新しい形へ直しました/.test(document.querySelector('.base-banner')?.textContent ?? '');
   }, v1), await page.evaluate(() => `${window.__vh.save.mode} v${window.__vh.save.doc.schemaVersion} r${window.__vh.save.doc.revision} ${window.__vh.save.notice}`));
@@ -751,7 +751,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   check('読み込み直しても、岩殻の兜のまま（控えは増えない）', await page.evaluate(async () => {
     const s = window.__vh.save;
-    return s.doc.armor.includes('armor.head.002') && s.doc.equippedArmorIds.includes('armor.head.002') && s.doc.schemaVersion === 3 && s.notice === null && (await s.backups()).filter((b) => b.reason === 'migrate').length === 1;
+    return s.doc.armor.includes('armor.head.002') && s.doc.equippedArmorIds.includes('armor.head.002') && s.doc.schemaVersion === 4 && s.notice === null && (await s.backups()).filter((b) => b.reason === 'migrate').length === 1;
   }));
   await ctx.close();
 }
@@ -1617,7 +1617,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await until(page, () => window.__vh && window.__vh.place === 'hub');
   h = await hubState();
   check('里: 読み込み直しても、買い物の結果が残っている（通貨 960、岩殻片 2、回復液 0）', h.money === 960 && h.shell === 2 && h.tonic === 0, JSON.stringify(h));
-  check('里: 読み込み直しても、選んだ防具が残っている（兜は着たまま、胴は外したまま。胸当ては持っている）', await page.evaluate(() => { const d = window.__vh.save.doc; return d.schemaVersion === 3 && d.armor.includes('armor.chest.002') && !d.equippedArmorIds.includes('armor.chest.002') && d.equippedArmorIds.includes('armor.head.002') && window.__vh.sim.armorIds.join() === 'armor.head.002,armor.arms.001,armor.waist.001,armor.legs.001'; }), await page.evaluate(() => JSON.stringify(window.__vh.save.doc.equippedArmorIds)));
+  check('里: 読み込み直しても、選んだ防具が残っている（兜は着たまま、胴は外したまま。胸当ては持っている）', await page.evaluate(() => { const d = window.__vh.save.doc; return d.schemaVersion === 4 && d.armor.includes('armor.chest.002') && !d.equippedArmorIds.includes('armor.chest.002') && d.equippedArmorIds.includes('armor.head.002') && window.__vh.sim.armorIds.join() === 'armor.head.002,armor.arms.001,armor.waist.001,armor.legs.001'; }), await page.evaluate(() => JSON.stringify(window.__vh.save.doc.equippedArmorIds)));
 
   // ---- 里の人と、物語「帰り道の灯」（v0.23.0。ChatGPT の Pull Request #5・#7）----
   const npcs = await until(page, () => {
@@ -1926,6 +1926,68 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await f.page.waitForTimeout(600);
   await f.page.screenshot({ path: `${OUT}9z_herd_field.png` });
   await f.ctx.close();
+}
+
+// ---- 依頼の掲示・工房からの支給・里の納品（v0.26.0。ChatGPT のクエスト設計 #9。横向きスマホ相当） ----
+{
+  const { ctx, page } = await open({ width: 844, height: 390 }, true, '?hub=menu');
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  const board = await page.evaluate(() => {
+    const t = (id) => document.querySelector(`.base-choice[data-quest="${id}"]`)?.textContent ?? '';
+    return { n: document.querySelectorAll('.base-choice[data-quest][data-stars]').length, letters: document.querySelectorAll('.quest-letter[data-quest]').length, rec: document.querySelector('.quest-recommend')?.textContent ?? '', st01: t('quest.basin.003'), r4: t('quest.basin.r4.001'), deliv: document.querySelector('.base-delivery')?.dataset.state, pack: document.querySelector('.forge-support')?.dataset.state, last: [...document.querySelectorAll('.base-choice')].pop().textContent };
+  });
+  check('依頼の掲示: 24 件に星と依頼人の話（開いて読む）。主線・昇級確認の札。制限と目安の時間。おすすめの順。里の納品と工房の支給は、まだ', board.n === 24 && board.letters === 24 && /^★2【初級】依頼「岩場の足音」　主線/.test(board.st01) && /依頼人: 受付ミナギ/.test(board.st01) && /制限 30 分（目安 8〜12 分）/.test(board.st01)
+    && /^★8【極級】依頼「輝く岩山」　昇級確認/.test(board.r4) && /おすすめ/.test(board.rec) && board.deliv === 'locked' && board.pack === 'locked' && /^訓練場/.test(board.last), JSON.stringify(board).slice(0, 300));
+  await page.evaluate(() => { const d = document.querySelector('.quest-letter[data-quest="quest.basin.003"]'); d.open = true; d.scrollIntoView(); });
+  check('依頼人の話を開くと、星の列（★★☆☆☆☆☆☆ 2 / 8）と話が出る。押しても出発しない', await page.evaluate(() => {
+    const d = document.querySelector('.quest-letter[data-quest="quest.basin.003"]');
+    return d.open && /★★☆☆☆☆☆☆ 2 \/ 8　主線/.test(d.querySelector('.quest-stars').textContent) && d.querySelector('.quest-text').textContent.length > 100 && !document.getElementById('base').hidden && !window.__vh.sim.hunt;
+  }));
+  await page.screenshot({ path: `${OUT}9z_quest_board.png` });
+  // 第 1 章の 2 件を達成した保存データにする（保存の管理役から。岩殻片 2）
+  await page.evaluate(async () => {
+    const s = window.__vh.save;
+    await s.settle({ runId: 'smoke-st01', questId: 'quest.basin.003', money: 600, items: [{ itemId: 'mat.galdros.shell_shard', count: 2 }] });
+    await s.settle({ runId: 'smoke-st02', questId: 'quest.selvark.r1', money: 600, items: [] });
+  });
+  check('第 1 章の後: 工房の支給を受け取れる（工房の見出しと物語の欄に知らせ）。中級は制限 35 分（フィールドの時間）。納品は素材が足りない', await until(page, () => {
+    const r2 = document.querySelector('.base-choice[data-quest="quest.basin.r2.001"]')?.textContent ?? '';
+    return document.querySelector('.forge-support')?.dataset.state === 'ready' && /支給を受け取れます/.test(document.querySelector('#base-forge summary')?.textContent ?? '') && !!document.querySelector('.story-support')
+      && /制限 35 分（目安 12〜16 分）/.test(r2) && document.querySelector('.base-delivery')?.dataset.state === 'short';
+  }, 8000));
+  await page.evaluate(() => { document.getElementById('base-forge').open = true; document.querySelector('.forge-support').scrollIntoView(); });
+  await page.screenshot({ path: `${OUT}9z_support.png` });
+  await page.locator('.forge-support button.go').tap();
+  check('支給を受け取ると、材料が入り（岩殻片 2 → 16 など）、受け取り済みになる。2 度は押せない', await until(page, () => {
+    const d = window.__vh.save.doc;
+    return document.querySelector('.forge-support')?.dataset.state === 'claimed' && !document.querySelector('.forge-support button') && d.claims.join() === 'story.support.tier2' && d.items['mat.galdros.shell_shard'] === 16 && d.items['mat.galdros.hard_bone'] === 6;
+  }, 8000));
+  check('岩殻片が 16 個になったので、里の納品「余った岩殻片を修繕に」ができる', await page.evaluate(() => document.querySelector('.base-delivery')?.dataset.state === 'ready'));
+  await page.evaluate(() => document.querySelector('.base-delivery').scrollIntoView());
+  await page.locator('.base-delivery button.go').tap();
+  const confirmText = await page.evaluate(() => document.querySelector('.base-delivery .forge-confirm')?.textContent ?? '');
+  check('納品する → 渡す数・残り・報酬・元に戻せないことを出して、もう 1 度押してもらう（まだ減らない）', /岩殻片 2 個（残り 14 個）を渡して、250 通貨を受け取ります。元には戻せません/.test(confirmText) && (await page.evaluate(() => window.__vh.save.doc.items['mat.galdros.shell_shard'])) === 16, confirmText);
+  await page.screenshot({ path: `${OUT}9z_delivery.png` });
+  const money0 = await page.evaluate(() => window.__vh.save.doc.money);
+  await page.locator('.base-delivery .forge-confirm button.go').tap();
+  check('渡すと、岩殻片 14・通貨 +250・達成 1 回・納品済み（1 度だけ）', await until(page, (m0) => {
+    const d = window.__vh.save.doc;
+    return document.querySelector('.base-delivery')?.dataset.state === 'claimed' && d.money === m0 + 250 && d.items['mat.galdros.shell_shard'] === 14 && d.progress.questClears['quest.delivery.009'] === 1 && d.claims.includes('quest.delivery.009');
+  }, 8000, money0));
+  await page.reload();
+  await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  check('読み込み直しても、受け取りの記録が残る（保存の版 4）。支給も納品も、もう受けられない', await page.evaluate(() => {
+    const d = window.__vh.save.doc;
+    return d.schemaVersion === 4 && d.claims.length === 2 && document.querySelector('.base-delivery')?.dataset.state === 'claimed' && document.querySelector('.forge-support')?.dataset.state === 'claimed';
+  }));
+  await page.evaluate(() => window.__vh.startHunt('quest.basin.r2.001'));
+  await until(page, () => window.__vh.sim.hunt && window.__vh.sim.tick > 5);
+  const info = await page.evaluate(() => ({ s: window.__vh.sessionInfo(), t: window.__vh.sim.hunt.timeLimitTicks }));
+  check('狩りの中: 一時停止の題に星、時計は 35 分（126000 tick）、依頼人の話を読み返せる', /^★4【中級】脈打つ岩殻/.test(info.s.title) && info.t === 126000 && info.s.lines.some((l) => /^依頼人（盆地の巡回係）: /.test(l)), JSON.stringify(info).slice(0, 160));
+  await ctx.close();
 }
 
 check('コンソールエラー・404 なし', errors.length === 0, errors.slice(0, 5).join(' | '));

@@ -695,8 +695,16 @@ export interface QuestDef {
   /** 受けるために、先に 1 回は達成しておく依頼（無ければ最初から受けられる）。 */
   requires?: string[];
   monsterSpawn: { x: number; z: number; yaw: number };
+  /** 制限時間（1 つの狩場 `?hunt=arena` の値。フィールドでは、狩場の timeLimitScale を掛ける。fieldTimeLimitTicks があれば、そちら） */
   timeLimitTicks: number;
+  /**
+   * フィールドで狩る時の制限時間（最終の値。v0.26.0、ChatGPT のクエスト設計 #9 の「明示した狩場の時間」）。
+   * あれば、狩場の倍率を掛けずに、そのまま使う。無ければ timeLimitTicks × timeLimitScale（これまでどおり）。
+   */
+  fieldTimeLimitTicks?: number;
   maxFaints: number;
+  /** 依頼の掲示（v0.26.0。public/data/quest_board.json。読み込みの時に付ける。JSON には書かない） */
+  board?: QuestBoardEntry;
   /** この依頼でモンスターの攻撃・落石が与えるダメージの倍率（省略時 1）。 */
   monsterAttackScale?: number;
   /** 達成してから拠点へ戻るまでの時間（剥ぎ取りに使える時間）。省略時 3600。 */
@@ -710,6 +718,82 @@ export interface QuestDef {
 export interface QuestTarget {
   monsterId: string;
   count: number;
+}
+
+/** 依頼の分類（v0.26.0）。main: 物語の主線 / free: 自由 / promotion: 段階を上げる確認 / challenge: 任意の挑戦 */
+export type QuestLane = 'main' | 'free' | 'promotion' | 'challenge';
+export const QUEST_LANES: readonly QuestLane[] = ['main', 'free', 'promotion', 'challenge'];
+export const QUEST_LANE_NAMES: Record<QuestLane, string> = { main: '主線', free: '自由', promotion: '昇級確認', challenge: '挑戦' };
+
+/**
+ * 依頼の掲示（public/data/quest_board.json。v0.26.0、ChatGPT のクエスト設計 #9）。依頼ごとの、星・分類・依頼人・依頼人の話・目安の時間。
+ * 生成した依頼（quests_creatures.json・quests_herds.json）も、文はここに書く（生成器を走らせ直しても消えない）。
+ */
+export interface QuestBoardEntry {
+  questId: string;
+  /** 難しさ 1〜8（適正な装備の狩人にとって。段階 rankId や個体の強さは、星から変えない） */
+  stars: number;
+  lane: QuestLane;
+  client: string;
+  /** 依頼人の話（受注の画面に出す） */
+  text: string;
+  /** 出発から達成までの目安（分）。[短い, 長い]。試遊の前の案で、制限時間とは別 */
+  clearMinutes: [number, number];
+}
+
+export interface QuestBoardDef {
+  schemaVersion: number;
+  note?: string;
+  /** はじめての人へのおすすめの順（表示だけ。依頼の受けられる条件は変えない） */
+  recommend: { text: string; questIds: string[] };
+  quests: QuestBoardEntry[];
+}
+
+/** 工房からの支給（public/data/support.json。v0.26.0）。物語の依頼を達成すると、1 つの保存で 1 度だけ受け取れる材料 */
+export interface SupportPackDef {
+  /** 受け取った記録（保存の claims）に残す ID。変えない */
+  id: string;
+  name: string;
+  /** 強化の何段目に使う材料か（表示用） */
+  tier: number;
+  /** 受け取れる条件: どれも 1 回は達成している依頼 */
+  requires: string[];
+  items: ItemStack[];
+  text: string;
+}
+
+export interface SupportDef {
+  schemaVersion: number;
+  note?: string;
+  packs: SupportPackDef[];
+}
+
+/** 里の納品で渡す素材。keep は「渡した後も残す数」（それより少なくなるなら、渡せない） */
+export interface DeliveryItem {
+  itemId: string;
+  count: number;
+  keep: number;
+}
+
+/** 里の納品（public/data/deliveries.json。v0.26.0）。狩りに出ず、倉庫の素材を受付で渡す。1 つの保存で 1 度だけ */
+export interface DeliveryDef {
+  /** 受け取った記録（保存の claims）と、達成回数に使う ID。変えない */
+  id: string;
+  name: string;
+  client: string;
+  stars: number;
+  text: string;
+  /** 受けられる条件: どれも 1 回は達成している依頼 */
+  requires: string[];
+  items: DeliveryItem[];
+  /** 渡した時の報酬（通貨） */
+  money: number;
+}
+
+export interface DeliveriesDef {
+  schemaVersion: number;
+  note?: string;
+  deliveries: DeliveryDef[];
 }
 
 export interface ItemStack {
@@ -783,6 +867,10 @@ export interface ContentIndex {
     story: string;
     /** 攻撃を受ける部位の追従（v0.25.0。npm run monsters:bake の出力） */
     follow?: string[];
+    /** 依頼の掲示・工房からの支給・里の納品（v0.26.0） */
+    board: string;
+    support: string;
+    deliveries: string;
   };
 }
 
@@ -809,6 +897,12 @@ export interface Content {
   bestiary: BestiaryDef;
   /** 物語（v0.23.0。序章と第 1 章だけ遊べる） */
   story: StoryDef;
+  /** 依頼の掲示（v0.26.0。依頼ごとの文は、各 QuestDef の board にも付ける） */
+  board: QuestBoardDef;
+  /** 工房からの支給（v0.26.0） */
+  support: SupportDef;
+  /** 里の納品（v0.26.0） */
+  deliveries: Map<string, DeliveryDef>;
   ranks: Map<string, RankDef>;
   armor: Map<string, ArmorDef>;
   armorRules: ArmorRules;
