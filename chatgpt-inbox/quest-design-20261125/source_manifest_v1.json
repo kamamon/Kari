@@ -1,0 +1,98 @@
+{
+  "baselineCommit": "9a5443ab1ac813512deac03422ee996f57f8a900",
+  "baselineVersion": "0.21.0",
+  "sources": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "33afce8aae68dad1a428fa8516c0e34f64738f3aea2644a9842c56066818e245",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/AGENTS.md"
+    },
+    {
+      "path": "package.json",
+      "sha256": "06a80d448a0bbf3be9c44df84f39446be4d2af03955bb9da36438aeb2f652b0e",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/package.json"
+    },
+    {
+      "path": "public/data/bestiary.json",
+      "sha256": "39877cb3356507519796c6b56e3cff7a29941c7aaa13677bcaa044c76f78687f",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/public/data/bestiary.json"
+    },
+    {
+      "path": "public/data/quests.json",
+      "sha256": "f487ff084853ba3bef0ae93f09f005ecd0a676d4aaa894a7059efcd474b8a6b5",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/public/data/quests.json"
+    },
+    {
+      "path": "public/data/quests_creatures.json",
+      "sha256": "d4a0ca4224861c127a7aac2f9c41982391c5481913152c5d0fc363f78fbb53c0",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/public/data/quests_creatures.json"
+    },
+    {
+      "path": "public/data/quests_herds.json",
+      "sha256": "abfae54a6293d338dc395c8ded85e53013b6686ae13606cc9795ba85e271c1dd",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/public/data/quests_herds.json"
+    },
+    {
+      "path": "public/data/items.json",
+      "sha256": "2ad7ab63948bc9ca83953d0d8d57236e5779701cc84ff1d1c2c93b215298514e",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/public/data/items.json"
+    },
+    {
+      "path": "public/data/ranks.json",
+      "sha256": "1103bf618ccd84e8a002a31754b8baf0fac6cba793d05da8d7aaf2f5b9bfda83",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/public/data/ranks.json"
+    },
+    {
+      "path": "public/data/recipes.json",
+      "sha256": "5b4b442f29a11bd2c4371c43076aca66e59811646c9a9f1e262f530a5bde464d",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/public/data/recipes.json"
+    },
+    {
+      "path": "public/data/fields/basin.json",
+      "sha256": "8848ee838a3227bb31099e689e5cc99caf0fde36014500906ea4f075984a1875",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/public/data/fields/basin.json"
+    },
+    {
+      "path": "src/data/schemas.ts",
+      "sha256": "21801afc17a63527d4998bde45eda5d0895de374e9f0faa391f0774c14766d7a",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/src/data/schemas.ts"
+    },
+    {
+      "path": "src/data/validators.ts",
+      "sha256": "871c3bf09a8bd1d19239637cf24af3fbc31448d9fed8a829919997bc21926882",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/src/data/validators.ts"
+    },
+    {
+      "path": "src/game/field.ts",
+      "sha256": "8bfb27fd9709e43cfbd49d4fc185aaf7105a06fe8a59dbf10945412cad1e9569",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/src/game/field.ts"
+    },
+    {
+      "path": "src/game/sim.ts",
+      "sha256": "6ed85f2452e6d107da4d481e1eac564fef6397f31dfaa4d29d9f344518689043",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/src/game/sim.ts"
+    },
+    {
+      "path": "src/save/profile.ts",
+      "sha256": "2334738ac86098080b38e41a8a4b2fb5bd1bfb4319741d1eca7f499a8fc152c3",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/src/save/profile.ts"
+    },
+    {
+      "path": "src/ui/base.ts",
+      "sha256": "4e65d685c26d501afc8791f9b7d9c2efbd295825806b840866dd03263fc65e44",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/src/ui/base.ts"
+    },
+    {
+      "path": "tools/gen-monsters.py",
+      "sha256": "152dbef675342bb505301ef8917bb80acf5af8139c8888fa9606832b0bb94dee",
+      "url": "https://github.com/kamamon/Kari/blob/9a5443ab1ac813512deac03422ee996f57f8a900/tools/gen-monsters.py"
+    }
+  ],
+  "otherProposals": [
+    {
+      "url": "https://github.com/kamamon/Kari/pull/7",
+      "status": "unmerged-story-proposal",
+      "usedFor": "ST01..ST14の順序・題名・対象・狩場"
+    }
+  ]
+}

@@ -1,0 +1,3616 @@
+{
+  "artifactType": "nonhunt-quest-design-proposal",
+  "schemaVersion": 2,
+  "baselineCommit": "4851d57ecc24c8fd127508b084999cec5d0e975f",
+  "baselineVersion": "0.22.0",
+  "createdDateJst": "2026-11-25",
+  "priorDesignCommit": "abb51087934a98b32e2630d775c7c06723b9b420",
+  "counts": {
+    "additionalQuests": 36,
+    "gather": 12,
+    "mining": 12,
+    "delivery": 12,
+    "fieldQuests": 32,
+    "warehouseQuests": 4,
+    "totalWithV1": 138
+  },
+  "policies": {
+    "status": "design-proposal-not-runtime-import",
+    "naturalResourceCount": 24,
+    "loanedCargoTypes": 4,
+    "bag": {
+      "distinctSlots": 8,
+      "perResourceMax": 20,
+      "fullBehavior": "reject_before_spending_node",
+      "preownedMaterialsAllowed": false,
+      "discardDuringQuest": false
+    },
+    "node": {
+      "guaranteedYieldPerUse": 2,
+      "usesPerNode": 1,
+      "minimumSparePerRequiredResource": 2,
+      "respawnWithinRun": false,
+      "gatherActionSeconds": 1.5,
+      "miningActionSeconds": 2.5,
+      "toolsBreak": false,
+      "equipmentWeaponRestricted": false
+    },
+    "failure": {
+      "fieldMaxFaints": 3,
+      "collectedResources": "discard_this_run_only",
+      "preownedMaterials": "preserve",
+      "ownedConsumables": "deduct_actually_used",
+      "rewardMoney": 0
+    },
+    "delivery": {
+      "collectionPartialDeposit": false,
+      "transportPartialDeposit": "within_run_only",
+      "confirmationRequired": true,
+      "timerStops": "last_required_delivery",
+      "postSuccessCollection": false
+    },
+    "warehouse": {
+      "limitedPerSave": true,
+      "permanentClaimUsesQuestId": true,
+      "claimMustNotExpireWithSettledRunHistory": true,
+      "recheckStockInTransaction": true,
+      "recheckReserveFloor": true,
+      "rewardOverflow": "reject_entire_trade_before_debit",
+      "timeLimit": null,
+      "maxFaints": null
+    },
+    "readiness": "all proposed quests remain disabled until objectives, interactions, resource/cargo data, field and save paths are implemented",
+    "storyPolicy": "optional_only_do_not_relock_existing_24_or_change_story_14"
+  },
+  "quests": [
+    {
+      "questId": "quest.gather.001",
+      "recordLabel": "G01",
+      "category": "gather",
+      "title": "薬房へ、最初の六枚",
+      "client": "薬房の調合係",
+      "fieldName": "風礫盆地",
+      "stars": 1,
+      "requestText": "薬房で葉を乾かす棚が空きました。風礫盆地の野営地から見える草場で、ヒラナギの葉を六枚集めてください。外側の平たい葉が目印です。今回は獣のいない区間を選んであります。集め終えたら野営地の納品箱へ。葉の仕分けと調合は私たちが行いますので、まずは道と採集の手順を覚えてください。",
+      "objectiveText": "ヒラナギの葉6枚を採集し、野営地の納品箱へ届ける。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.flatnagi_leaf",
+          "count": 6,
+          "resourceName": "ヒラナギの葉",
+          "unit": "枚"
+        }
+      ],
+      "targetClearMinutes": [
+        4,
+        6
+      ],
+      "effectiveTimeLimitMinutes": 15,
+      "rewardMoney": 240,
+      "difficultyReasons": [
+        "一つの草場で採集から納品までの操作を覚える。",
+        "採集点は野営地から見える位置に置き、戦闘と時間切れの圧迫を避ける。"
+      ],
+      "routeHint": "野営地から見通しのよい草場を一周し、同じ広い道で納品箱へ戻る。",
+      "safetyHint": "大型・幼体の出現なし。崖際や狭い岩間を経路に含めない。",
+      "encounterPolicy": "none",
+      "nodePlan": [
+        {
+          "resourceId": "mat.gather.flatnagi_leaf",
+          "nodeCount": 4,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "里の薬房で使う回復液の原料候補。調合レシピは別途設計する。",
+      "unlockStoryId": null,
+      "subtype": "gather",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [],
+      "fieldId": "field.basin",
+      "effectiveTimeLimitTicks": 54000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "gather_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        40.0,
+        60.0
+      ],
+      "spawnLargeMonsters": false,
+      "spawnJuveniles": false
+    },
+    {
+      "questId": "quest.gather.002",
+      "recordLabel": "G02",
+      "category": "gather",
+      "title": "炊事場の空いた籠",
+      "client": "野営地の炊事係",
+      "fieldName": "風礫盆地",
+      "stars": 1,
+      "requestText": "干し物の籠に余裕ができたので、盆地のツユワリの実を八個お願いできますか。低い草の間に、薄い殻の実がまとまって付いています。野営地の近くで揃うよう採集場所を確かめました。獣を追う仕事ではありません。採った実は食べずに、戻って納品箱へ入れてください。乾燥の具合はこちらで比べます。",
+      "objectiveText": "ツユワリの実8個を採集し、野営地の納品箱へ届ける。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.dewbreak_fruit",
+          "count": 8,
+          "resourceName": "ツユワリの実",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        4,
+        7
+      ],
+      "effectiveTimeLimitMinutes": 15,
+      "rewardMoney": 280,
+      "difficultyReasons": [
+        "近接する二つの採集場所を順に回る練習。",
+        "敵を置かず、必要数と採集済み表示の読み取りに集中させる。"
+      ],
+      "routeHint": "野営地脇の二つの低い草場を回り、中央の広場を通って戻る。",
+      "safetyHint": "大型・幼体の出現なし。草場の境界から納品箱の案内を確認できる。",
+      "encounterPolicy": "none",
+      "nodePlan": [
+        {
+          "resourceId": "mat.gather.dewbreak_fruit",
+          "nodeCount": 5,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "野営用の保存食と、乾燥試験用の食材。食事効果は未設計。",
+      "unlockStoryId": null,
+      "subtype": "gather",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [],
+      "fieldId": "field.basin",
+      "effectiveTimeLimitTicks": 54000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "gather_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        40.0,
+        70.0
+      ],
+      "spawnLargeMonsters": false,
+      "spawnJuveniles": false
+    },
+    {
+      "questId": "quest.gather.003",
+      "recordLabel": "G03",
+      "category": "gather",
+      "title": "荷紐を結び直すために",
+      "client": "荷車の整備係",
+      "fieldName": "風礫盆地",
+      "stars": 2,
+      "requestText": "荷車の紐が岩に擦れて、細いところから切れ始めています。盆地の低い岩に伸びるスジユイから、繊維を六束集めてください。岩の外周を回れば、獣の通り道へ踏み込まず採れます。大きな足音が近づいたら広い草場で待って構いません。束を野営地の納品箱へ届ければ、編み直す作業はこちらで引き受けます。",
+      "objectiveText": "スジユイの繊維6束を採集し、野営地の納品箱へ届ける。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.threadbind_fiber",
+          "count": 6,
+          "resourceName": "スジユイの繊維",
+          "unit": "束"
+        }
+      ],
+      "targetClearMinutes": [
+        6,
+        9
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "rewardMoney": 380,
+      "difficultyReasons": [
+        "離れた岩棚を順に巡り、採集経路を選ぶ。",
+        "大型の通過を待つか草場へ迂回する判断が入る。"
+      ],
+      "routeHint": "野営地から低い岩の外周を時計回りに回り、草場側の迂回路で戻る。",
+      "safetyHint": "採集点から広い草場へ退避できる分岐を設ける。大型の排除は不要。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.gather.threadbind_fiber",
+          "nodeCount": 4,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "荷紐と採集袋の補修材。装備強化素材へ自動置換しない。",
+      "unlockStoryId": "ST02",
+      "subtype": "gather",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.selvark.r1"
+      ],
+      "fieldId": "field.basin",
+      "effectiveTimeLimitTicks": 72000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "gather_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        42.22,
+        63.33
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.gather.004",
+      "recordLabel": "G04",
+      "category": "gather",
+      "title": "水汲み道具の新しい芯",
+      "client": "水場の管理係",
+      "fieldName": "根絡み湿原",
+      "stars": 2,
+      "requestText": "水汲み道具の中へ敷く層を、何種類か比べたいと思っています。根絡み湿原の浅瀬で、ウキハナ苔を六個集めてください。根の上に丸く付いた房が目印です。深い場所へ入る必要はありません。乾いた小島をつないで回り、野営地の納品箱へ届けてください。濾した水の検査まで、こちらで責任を持って行います。",
+      "objectiveText": "ウキハナ苔6個を採集し、野営地の納品箱へ届ける。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.floatbloom_moss",
+          "count": 6,
+          "resourceName": "ウキハナ苔",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        6,
+        9
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "rewardMoney": 380,
+      "difficultyReasons": [
+        "根と小島のつながりを見て進路を決める。",
+        "戻る経路を覚えたうえで、浅瀬の採集場所を二つ回る。"
+      ],
+      "routeHint": "野営地から浅瀬の根と乾いた小島を交互にたどり、外周の乾いた道で帰る。",
+      "safetyHint": "採集点は浅瀬だけ。大型が来た場合は小島側から迂回できる幅を残す。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.gather.floatbloom_moss",
+          "nodeCount": 4,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "水汲み道具の濾過層の試験材。飲料水をそのまま浄化できる効果は持たせない。",
+      "unlockStoryId": "ST04",
+      "subtype": "gather",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st04"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 72000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "gather_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        42.22,
+        63.33
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.gather.005",
+      "recordLabel": "G05",
+      "category": "gather",
+      "title": "濡れた籠にも底敷きを",
+      "client": "湿原の運び手",
+      "fieldName": "根絡み湿原",
+      "stars": 2,
+      "requestText": "湿原を渡るたびに荷籠の底が濡れ、布が擦れてしまいます。乾いた根丘に生えるネアミ根を八束、底敷きの試作に使わせてください。表面に網のように広がる根を採るので、大きな木を倒す必要はありません。獣が根丘を横切る間は隣の乾いた道へ回り、採った束を野営地の納品箱へ届けてください。",
+      "objectiveText": "ネアミ根8束を採集し、野営地の納品箱へ届ける。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.rootmesh_bundle",
+          "count": 8,
+          "resourceName": "ネアミ根",
+          "unit": "束"
+        }
+      ],
+      "targetClearMinutes": [
+        7,
+        10
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "rewardMoney": 440,
+      "difficultyReasons": [
+        "三つの根丘を回るため、短い採集依頼より移動量が増える。",
+        "獣の進路と自分の帰路を見比べて迂回する。"
+      ],
+      "routeHint": "野営地から三つの根丘をつなぎ、最後の丘から外周へ抜けて帰る。",
+      "safetyHint": "大型の巡回路とは別に、全ての根丘を結ぶ歩行経路を残す。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.gather.rootmesh_bundle",
+          "nodeCount": 5,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "荷籠の底敷きと苗床の保水材。",
+      "unlockStoryId": "ST04",
+      "subtype": "gather",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st04"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 72000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "gather_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        44.0,
+        62.86
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.gather.006",
+      "recordLabel": "G06",
+      "category": "gather",
+      "title": "潮の実を里の食卓へ",
+      "client": "里の炊事係",
+      "fieldName": "硝砂海岸",
+      "stars": 2,
+      "requestText": "海辺の食材を使って、運びやすい保存食を試したいのです。硝砂海岸の白砂の端で、シオハコの実を八個集めてください。角張った実の溝に潮の粒が残っています。波打ち際より一段上の低木で足ります。獣が砂地へ出てきたら岩の内側を回り、野営地の納品箱まで届けてください。味付けは里で確かめます。",
+      "objectiveText": "シオハコの実8個を採集し、野営地の納品箱へ届ける。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.saltbox_fruit",
+          "count": 8,
+          "resourceName": "シオハコの実",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        6,
+        10
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "rewardMoney": 420,
+      "difficultyReasons": [
+        "白砂と岩陰の二つの経路から安全な方を選ぶ。",
+        "採集点が横に広がり、必要数を確認しながら往復する。"
+      ],
+      "routeHint": "野営地から白砂の上段にある低木を巡り、低い岩の内側を通って帰る。",
+      "safetyHint": "入水と高所移動を要求しない。砂地を避ける帰路を常時確保する。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.gather.saltbox_fruit",
+          "nodeCount": 5,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "炊事係の保存食試作と、海辺の食料備蓄。",
+      "unlockStoryId": "ST06",
+      "subtype": "gather",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st06"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 72000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "gather_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        42.0,
+        70.0
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.gather.007",
+      "recordLabel": "G07",
+      "category": "gather",
+      "title": "桶の継ぎ目を閉じたい",
+      "client": "海辺の桶職人",
+      "fieldName": "硝砂海岸",
+      "stars": 2,
+      "requestText": "水桶の継ぎ目へ詰める糊を、海岸の藻から試しています。硝砂海岸の乾いた潮溜まりで、ハマトジ藻を六束集めてください。岩に帯のように付いた厚い部分が目印です。低い海食洞の奥へ進む必要はありません。足音が響いたら広い砂地へ退き、束を野営地の納品箱へ。糊を煮る仕事は私たちに任せてください。",
+      "objectiveText": "ハマトジ藻6束を採集し、野営地の納品箱へ届ける。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.shoreseam_algae",
+          "count": 6,
+          "resourceName": "ハマトジ藻",
+          "unit": "束"
+        }
+      ],
+      "targetClearMinutes": [
+        6,
+        9
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "rewardMoney": 400,
+      "difficultyReasons": [
+        "低い岩で視界が切れる場所から、次の出口を見つける。",
+        "大型の音を聞いて広い場所へ戻る判断を練習する。"
+      ],
+      "routeHint": "野営地から地表の潮溜まりを回り、海食洞の外を通って戻る。",
+      "safetyHint": "洞内へ入らず全数を確保できる。各潮溜まりに砂地側の出口を設ける。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.gather.shoreseam_algae",
+          "nodeCount": 4,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "容器の継ぎ目に使う糊の原料候補。加工レシピは別途設計する。",
+      "unlockStoryId": "ST06",
+      "subtype": "gather",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st06"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 72000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "gather_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        44.44,
+        66.67
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.gather.008",
+      "recordLabel": "G08",
+      "category": "gather",
+      "title": "坑口の昼餉を集めよう",
+      "client": "鉱山の炊事係",
+      "fieldName": "灰鐘鉱山",
+      "stars": 2,
+      "requestText": "坑口の補修班へ、温かい昼餉を用意したいと思っています。灰鐘鉱山の朽木に育つカサネヒダ茸を八個集めてください。傘の下へ短いひだが二段あるものが目印です。広い坑口の周囲で揃いますから、細い坑道へは入らなくて構いません。獣が朽木へ寄ったら別の株を回り、野営地の納品箱へ届けてください。",
+      "objectiveText": "カサネヒダ茸8個を採集し、野営地の納品箱へ届ける。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.layergill_mushroom",
+          "count": 8,
+          "resourceName": "カサネヒダ茸",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        6,
+        10
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "rewardMoney": 420,
+      "difficultyReasons": [
+        "朽木ごとに採集済みかを確かめながら回る。",
+        "大型が一つの株へ近づいても別の株へ切り替えられる。"
+      ],
+      "routeHint": "野営地と広い坑口の間にある朽木を巡り、露天の道で往復する。",
+      "safetyHint": "細坑を経由させず、同じ素材の予備採集点を露天側にも置く。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.gather.layergill_mushroom",
+          "nodeCount": 5,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "坑口で働く作業班向けの食料。回復効果などは未設計。",
+      "unlockStoryId": "ST08",
+      "subtype": "gather",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st08"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 72000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "gather_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        42.0,
+        70.0
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.gather.009",
+      "recordLabel": "G09",
+      "category": "gather",
+      "title": "坑道灯の芯を編む",
+      "client": "鉱山の灯具係",
+      "fieldName": "灰鐘鉱山",
+      "stars": 3,
+      "requestText": "坑道灯の芯がほつれ、火を整える回数が増えています。灰鐘鉱山の乾いた倒木から、キベリ菌糸を六束集めてください。縁が黄褐色で、太くまとまった部分を使います。採集場所は露天跡を挟んで離れています。獣の通過を待つ時は広い坑口側へ退き、帰りは野営地の納品箱へ。乾燥と編み込みは里で行います。",
+      "objectiveText": "キベリ菌糸6束を採集し、野営地の納品箱へ届ける。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.goldedge_mycelium",
+          "count": 6,
+          "resourceName": "キベリ菌糸",
+          "unit": "束"
+        }
+      ],
+      "targetClearMinutes": [
+        8,
+        12
+      ],
+      "effectiveTimeLimitMinutes": 25,
+      "rewardMoney": 560,
+      "difficultyReasons": [
+        "二つの採集域が離れ、帰路を含む経路の選択が必要。",
+        "大型が露天跡を通る時は、通過待ちと外周の迂回を使い分ける。"
+      ],
+      "routeHint": "野営地から坑口脇の倒木、露天跡の反対側の倒木へ進み、外周で戻る。",
+      "safetyHint": "露天跡を横切らず往復できる長めの経路を設け、通過待ちの広場を確保する。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.gather.goldedge_mycelium",
+          "nodeCount": 4,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "乾燥させる灯具の芯材。燃料としての持続時間は未設計。",
+      "unlockStoryId": "ST08",
+      "subtype": "gather",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st08"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 90000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "gather_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        46.67,
+        70.0
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.gather.010",
+      "recordLabel": "G10",
+      "category": "gather",
+      "title": "風裏の苔を敷布に",
+      "client": "野営具の仕立て係",
+      "fieldName": "氷帆峡谷",
+      "stars": 3,
+      "requestText": "峡谷の野営具へ詰める素材を比べています。氷帆峡谷の風裏の岩から、シロスジ苔を六個集めてください。表面の短い白筋が目印です。薄い氷板を渡る近道は使わず、地面の続いた岩棚を回ってください。獣の滑った跡を横切る時は先を見渡して。採集後は野営地の納品箱へ届け、乾燥試験はこちらに任せてください。",
+      "objectiveText": "シロスジ苔6個を採集し、野営地の納品箱へ届ける。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.whiteline_moss",
+          "count": 6,
+          "resourceName": "シロスジ苔",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        8,
+        12
+      ],
+      "effectiveTimeLimitMinutes": 25,
+      "rewardMoney": 560,
+      "difficultyReasons": [
+        "風裏の採集点へ回り込むため、直線で進めない。",
+        "獣の長い移動線と交差する前に、安全な分岐を選ぶ。"
+      ],
+      "routeHint": "野営地から地面につながる低い岩棚を二段巡り、同じ幅広い道で戻る。",
+      "safetyHint": "薄氷の横断・崖登り・飛び降りを必須にしない。滑走路を避ける分岐を置く。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.gather.whiteline_moss",
+          "nodeCount": 4,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "野営用敷布の詰め物と乾燥比較の試験材。寒さを無効化する装備ではない。",
+      "unlockStoryId": "ST10",
+      "subtype": "gather",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st10"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 90000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "gather_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        46.67,
+        70.0
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.gather.011",
+      "recordLabel": "G11",
+      "category": "gather",
+      "title": "道標の灯を曇らせない",
+      "client": "樹海の道標係",
+      "fieldName": "霧灯樹海",
+      "stars": 3,
+      "requestText": "樹海の道標は、雨粒と汚れで灯の覆いが曇りがちです。霧灯樹海の大樹の根元から、ホソアカリ樹脂を四個集めてください。細い筋だけ光を返す固まりを使います。木へ登らずに採れる高さで十分です。獣の気配がしたら大樹の反対側へ回り、帰路の目印を確かめながら野営地の納品箱へ届けてください。",
+      "objectiveText": "ホソアカリ樹脂4個を採集し、野営地の納品箱へ届ける。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.slimlight_resin",
+          "count": 4,
+          "resourceName": "ホソアカリ樹脂",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        9,
+        12
+      ],
+      "effectiveTimeLimitMinutes": 25,
+      "rewardMoney": 600,
+      "difficultyReasons": [
+        "大樹に遮られた帰路を道標で確かめる必要がある。",
+        "採集数は少ないが、巡回する大型との距離を保って二つの区域を往復する。"
+      ],
+      "routeHint": "野営地から二本の環状大樹を半周ずつ回り、道標のある道で帰る。",
+      "safetyHint": "樹木の左右どちらからでも通れる幅を確保し、登攀や隠された細道を要求しない。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.gather.slimlight_resin",
+          "nodeCount": 3,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "道標の灯具の保護剤と曇り止め試験。自発光素材としては扱わない。",
+      "unlockStoryId": "ST12",
+      "subtype": "gather",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st12"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 90000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "gather_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        50.0,
+        66.67
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.gather.012",
+      "recordLabel": "G12",
+      "category": "gather",
+      "title": "環谷に残る水の輪",
+      "client": "分流路の観測係",
+      "fieldName": "重霧環谷",
+      "stars": 4,
+      "requestText": "補修後の水の集まり方を、谷のいくつかの地点で比べます。重霧環谷で、葉の縁へ水滴が輪になるワツユ草を六束集めてください。低い尾根の両側にある群落を回ってもらいます。濃い霧の中で獣を追う必要はありません。開けた岩棚で道標と足音を確かめ、試料は野営地の納品箱へ。採った場所の整理はこちらで行います。",
+      "objectiveText": "ワツユ草6束を採集し、野営地の納品箱へ届ける。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.ringdew_grass",
+          "count": 6,
+          "resourceName": "ワツユ草",
+          "unit": "束"
+        }
+      ],
+      "targetClearMinutes": [
+        10,
+        15
+      ],
+      "effectiveTimeLimitMinutes": 30,
+      "rewardMoney": 780,
+      "difficultyReasons": [
+        "尾根を挟む二つの区域を往復し、霧の中でも帰路を判断する。",
+        "長い移動中に大型の通過を複数回避ける想定で、観察と経路選択が続く。"
+      ],
+      "routeHint": "野営地から低い尾根の手前側と奥側の群落を巡り、開けた岩棚をつないで帰る。",
+      "safetyHint": "霧の中でも次の道標へ進める地上経路を用意し、大型の巡回と分離する迂回路を置く。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.gather.ringdew_grass",
+          "nodeCount": 4,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "補修後の湿り方を比べる観測試料と、苗床の保水材。",
+      "unlockStoryId": "ST14",
+      "subtype": "gather",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st14"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 108000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "gather_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        52.0,
+        78.0
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.mine.001",
+      "recordLabel": "M01",
+      "category": "mining",
+      "title": "炉の火をつなぐ石",
+      "client": "里の鍛冶係",
+      "fieldName": "風礫盆地",
+      "stars": 1,
+      "requestText": "里の鍛冶場で、荷車の留め金を打つ鉄が足りません。野営地に近い礫の坂で、赤褐色の筋が見える風礫鉄鉱を六個採ってください。道具は貸し出します。今回は獣のいない採掘区画です。光る鉱床を順に調べ、数が揃ったら野営地の納品箱へ。刃ではなく、採掘道具を使う練習にしましょう。",
+      "objectiveText": "風礫鉄鉱6個を採掘し、野営地の納品箱へ届ける",
+      "requirements": [
+        {
+          "resourceId": "mat.ore.basin_iron",
+          "count": 6,
+          "resourceName": "風礫鉄鉱",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        4,
+        7
+      ],
+      "effectiveTimeLimitMinutes": 15,
+      "rewardMoney": 280,
+      "difficultyReasons": [
+        "採掘操作と納品箱への帰路を覚える入門依頼。",
+        "戦闘と複雑な分岐を除き、対象の見分けと必要数の確認だけを求める。"
+      ],
+      "routeHint": "野営地から礫の坂の手前に設ける専用採掘区画を巡り、同じ納品箱へ戻る。",
+      "safetyHint": "この入門依頼では大型・幼体とも出現させない。足元の案内だけで全鉱床へ届くようにする。",
+      "encounterPolicy": "none",
+      "nodePlan": [
+        {
+          "resourceId": "mat.ore.basin_iron",
+          "nodeCount": 4,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "鍛冶場の補修金具と基礎工具を作る原料候補。装備レシピへの採用は別途設計する。",
+      "unlockStoryId": null,
+      "subtype": "mining",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [],
+      "fieldId": "field.basin",
+      "effectiveTimeLimitTicks": 54000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "mine_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        40.0,
+        70.0
+      ],
+      "spawnLargeMonsters": false,
+      "spawnJuveniles": false
+    },
+    {
+      "questId": "quest.mine.002",
+      "recordLabel": "M02",
+      "category": "mining",
+      "title": "刃を整えるざら石",
+      "client": "工具の整備係",
+      "fieldName": "風礫盆地",
+      "stars": 1,
+      "requestText": "補修道具を研ぐ石が、片側だけ薄くなってしまいました。盆地の涸れ沢で、細かな粒の揃った礫目砥石原石を六個お願いします。硬い大岩ではなく、低い岩棚に印を付けてあります。採掘道具で取り出し、野営地の納品箱へ届けてください。砥石に仕上げる作業は、こちらで引き受けます。",
+      "objectiveText": "礫目砥石原石6個を採掘し、野営地の納品箱へ届ける",
+      "requirements": [
+        {
+          "resourceId": "mat.ore.grit_whetstone",
+          "count": 6,
+          "resourceName": "礫目砥石原石",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        5,
+        7
+      ],
+      "effectiveTimeLimitMinutes": 15,
+      "rewardMoney": 300,
+      "difficultyReasons": [
+        "行きと帰りの目印を覚える短い往復。",
+        "採掘地点は低い位置へ揃え、回避や装備の強さを問わない。"
+      ],
+      "routeHint": "涸れ沢へ続く徒歩道と低い岩棚の鉱床を往復する。登攀が必要な壁面には置かない。",
+      "safetyHint": "安全な採掘区画として敵を配置しない。操作に失敗しても鉱床の残量は減らさない。",
+      "encounterPolicy": "none",
+      "nodePlan": [
+        {
+          "resourceId": "mat.ore.grit_whetstone",
+          "nodeCount": 4,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "研磨石を作る新しい加工レシピの原料候補。現行の研磨石を採掘済みとして配らない。",
+      "unlockStoryId": null,
+      "subtype": "mining",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [],
+      "fieldId": "field.basin",
+      "effectiveTimeLimitTicks": 54000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "mine_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        42.86,
+        60.0
+      ],
+      "spawnLargeMonsters": false,
+      "spawnJuveniles": false
+    },
+    {
+      "questId": "quest.mine.003",
+      "recordLabel": "M03",
+      "category": "mining",
+      "title": "雨樋を留める灰石",
+      "client": "道の補修係",
+      "fieldName": "風礫盆地",
+      "stars": 2,
+      "requestText": "野営地の雨樋を留め直すため、隙間へ挟める層灰石が八個必要です。晶脈の露頭にある灰色の層を、印の付いた場所から採ってください。大きな獣が通る土の帯は横切らず、外側の岩棚を回れば別の鉱床へ進めます。数が揃ったら野営地の納品箱へ。獣を倒す必要はありません。",
+      "objectiveText": "層灰石8個を採掘し、野営地の納品箱へ届ける",
+      "requirements": [
+        {
+          "resourceId": "mat.ore.layered_ashstone",
+          "count": 8,
+          "resourceName": "層灰石",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        6,
+        9
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "rewardMoney": 380,
+      "difficultyReasons": [
+        "採掘を続けるか、別の岩棚へ移るかを判断する。",
+        "必要量は確定供給し、抽選や鉱床の復活待ちで難しくしない。"
+      ],
+      "routeHint": "晶脈の露頭の外周側に鉱床を分散し、獣の巡回線を通らない地上の迂回路でつなぐ。",
+      "safetyHint": "採掘中に危険が近づいたら中断し、別の確定鉱床へ移る。敵を倒さず必要量を集められる配置にする。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.ore.layered_ashstone",
+          "nodeCount": 5,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "雨樋の台座や補修金具の隙間を埋める石材。施設補修の納品素材候補。",
+      "unlockStoryId": "ST02",
+      "subtype": "mining",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.selvark.r1"
+      ],
+      "fieldId": "field.basin",
+      "effectiveTimeLimitTicks": 72000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "mine_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        42.22,
+        63.33
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.mine.004",
+      "recordLabel": "M04",
+      "category": "mining",
+      "title": "水桶の底を固める土",
+      "client": "水場の管理係",
+      "fieldName": "根絡み湿原",
+      "stars": 1,
+      "requestText": "運搬用の水桶に敷く受け皿を焼き直します。湿原の乾いた根際から、根際陶土を八袋採ってください。採土用の道具と袋は用意してあります。浅瀬へ降りなくても届く場所に印を付けました。根を傷つけず、指定の地層だけを掘って野営地の納品箱へ。焼き上げは里で行います。",
+      "objectiveText": "根際陶土8袋を採掘し、野営地の納品箱へ届ける",
+      "requirements": [
+        {
+          "resourceId": "mat.ore.rootbank_clay",
+          "count": 8,
+          "resourceName": "根際陶土",
+          "unit": "袋"
+        }
+      ],
+      "targetClearMinutes": [
+        5,
+        7
+      ],
+      "effectiveTimeLimitMinutes": 15,
+      "rewardMoney": 300,
+      "difficultyReasons": [
+        "湿原の安全な足場を確認する短い採掘依頼。",
+        "地域が後に開いても、作業自体が安全なため星1とする。"
+      ],
+      "routeHint": "野営地近くの乾いた根丘に採土点を設け、地上の短い環状路で巡る。",
+      "safetyHint": "この依頼の採土区画は敵なし。水泳・深水への進入・木の根の破壊を必要としない。",
+      "encounterPolicy": "none",
+      "nodePlan": [
+        {
+          "resourceId": "mat.ore.rootbank_clay",
+          "nodeCount": 5,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "水桶の受け皿や貯水容器の補修に使う焼き物の原料候補。",
+      "unlockStoryId": "ST04",
+      "subtype": "mining",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st04"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 54000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "mine_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        42.86,
+        60.0
+      ],
+      "spawnLargeMonsters": false,
+      "spawnJuveniles": false
+    },
+    {
+      "questId": "quest.mine.005",
+      "recordLabel": "M05",
+      "category": "mining",
+      "title": "泥の下の締め石",
+      "client": "排水路の補修係",
+      "fieldName": "根絡み湿原",
+      "stars": 2,
+      "requestText": "排水口の裏側で、泥を押さえる石が崩れています。岸の露出層にある湿縁凝灰石を六個、野営地の納品箱へ届けてください。乾いた小島をつなぐ道から掘れます。ヌメラドンが腹を引いた広い跡へは近づかず、根丘の側へ回りましょう。水路へ潜ったり、獣を狩ったりする仕事ではありません。",
+      "objectiveText": "湿縁凝灰石6個を採掘し、野営地の納品箱へ届ける",
+      "requirements": [
+        {
+          "resourceId": "mat.ore.wetbank_tuff",
+          "count": 6,
+          "resourceName": "湿縁凝灰石",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        6,
+        9
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "rewardMoney": 400,
+      "difficultyReasons": [
+        "乾いた足場と獣の通り道を見分けて進む。",
+        "危険な岸に固執せず、別の採掘点へ切り替える判断を求める。"
+      ],
+      "routeHint": "乾いた小島側に確定鉱床を設け、根丘側の迂回路と岸沿いの帰路を残す。",
+      "safetyHint": "浅瀬を横断しなくても全必要量へ到達できるようにする。ヌメラドンの巡回を避けて移れる枝道を設ける。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.ore.wetbank_tuff",
+          "nodeCount": 4,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "排水口の裏込めや乾いた足場の補修に使う石材候補。",
+      "unlockStoryId": "ST04",
+      "subtype": "mining",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st04"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 72000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "mine_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        44.44,
+        66.67
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.mine.006",
+      "recordLabel": "M06",
+      "category": "mining",
+      "title": "灯窓に入れる白い砂",
+      "client": "灯りの修繕係",
+      "fieldName": "硝砂海岸",
+      "stars": 1,
+      "requestText": "里の灯りを覆う窓が曇り、新しい板を焼く支度をしています。硝砂海岸の上段に固まった白硝砂を八袋お願いします。潮の届かない採掘印を調べ、白い粒を袋へ入れて野営地の納品箱へ届けてください。海へ入る必要はありません。今回は採掘区画を確保してあるので、粒の違いを落ち着いて見てください。",
+      "objectiveText": "白硝砂8袋を採掘し、野営地の納品箱へ届ける",
+      "requirements": [
+        {
+          "resourceId": "mat.ore.white_silica_sand",
+          "count": 8,
+          "resourceName": "白硝砂",
+          "unit": "袋"
+        }
+      ],
+      "targetClearMinutes": [
+        5,
+        7
+      ],
+      "effectiveTimeLimitMinutes": 15,
+      "rewardMoney": 320,
+      "difficultyReasons": [
+        "鉱砂の採掘と帰還を覚える安全な作業。",
+        "海岸という場所の印象だけで星を増やさず、短い徒歩経路を採用する。"
+      ],
+      "routeHint": "海岸上段の乾いた鉱砂層を巡る。干潮を待たず、常時歩ける経路のみ使う。",
+      "safetyHint": "敵のいない上段を使用する。潮汐による時間待ちや、水中への採掘点配置を行わない。",
+      "encounterPolicy": "none",
+      "nodePlan": [
+        {
+          "resourceId": "mat.ore.white_silica_sand",
+          "nodeCount": 5,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "灯りを覆う窓材や保存瓶を作る新しい加工工程の原料候補。",
+      "unlockStoryId": "ST06",
+      "subtype": "mining",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st06"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 54000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "mine_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        45.71,
+        64.0
+      ],
+      "spawnLargeMonsters": false,
+      "spawnJuveniles": false
+    },
+    {
+      "questId": "quest.mine.007",
+      "recordLabel": "M07",
+      "category": "mining",
+      "title": "網重りの青い石",
+      "client": "漁具の手入れ係",
+      "fieldName": "硝砂海岸",
+      "stars": 2,
+      "requestText": "破れた漁網を直すついでに、重りも打ち直したいのです。海食洞の乾いた岩床で、青緑の潮青鉱石を四個採り、野営地の納品箱へ届けてください。これは岩から取れる鉱石で、獣の殻に育つ晶とは別のものです。鋏を広げたオルグラスの正面を避け、洞の外側の道へ戻りながら集めてください。",
+      "objectiveText": "潮青鉱石4個を採掘し、野営地の納品箱へ届ける",
+      "requirements": [
+        {
+          "resourceId": "mat.ore.tide_copper_ore",
+          "count": 4,
+          "resourceName": "潮青鉱石",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        7,
+        10
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "rewardMoney": 440,
+      "difficultyReasons": [
+        "壁際で採掘を続けず、退避口を確保する位置取りが必要。",
+        "必要数を少なくし、洞内での採掘と外周の回避に時間を配分する。"
+      ],
+      "routeHint": "低い海食洞の乾いた入口側と外の岩床に鉱床を分け、入口を塞がれても外周の代替点へ回れるようにする。",
+      "safetyHint": "洞の奥へ追い込まれない二方向の退避路を確保。オルグラスの討伐は達成条件に含めない。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.ore.tide_copper_ore",
+          "nodeCount": 3,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "漁網の重りや留め具を鋳造する原料候補。自然鉱物から身体素材を生成する交換には使わない。",
+      "unlockStoryId": "ST06",
+      "subtype": "mining",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st06"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 72000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "mine_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        44.0,
+        62.86
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.mine.008",
+      "recordLabel": "M08",
+      "category": "mining",
+      "title": "炉壁の白い継ぎ目",
+      "client": "炉の補修係",
+      "fieldName": "灰鐘鉱山",
+      "stars": 2,
+      "requestText": "鍛冶炉の内壁に細い隙間ができ、火を弱めて使っています。灰鐘鉱山の広い坑口で、灰鐘耐火石を八個採って野営地の納品箱へ運んでください。細い坑道へ入る必要はありません。ボルナケルが嚢を膨らませたら正面の作業を止め、開けた露天側へ回りましょう。炉を直すためにも無事の帰還を。",
+      "objectiveText": "灰鐘耐火石8個を採掘し、野営地の納品箱へ届ける",
+      "requirements": [
+        {
+          "resourceId": "mat.ore.bell_mine_firestone",
+          "count": 8,
+          "resourceName": "灰鐘耐火石",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        7,
+        10
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "rewardMoney": 460,
+      "difficultyReasons": [
+        "採掘中も広い退避先を確認する必要がある。",
+        "8個の採掘と往復を求めるが、狭い坑道の強制通過や戦闘は課さない。"
+      ],
+      "routeHint": "広い坑口と露天跡の低い壁面に採掘点を置き、細坑を使わずに一周できる導線にする。",
+      "safetyHint": "音圧の予兆が見える距離を残し、露天側へ退ける。獣を攻撃しないと解除されない通路は設けない。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.ore.bell_mine_firestone",
+          "nodeCount": 5,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "鍛冶炉の内壁や炊事場のかまどを補修する石材候補。",
+      "unlockStoryId": "ST08",
+      "subtype": "mining",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st08"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 72000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "mine_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        46.0,
+        65.71
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.mine.009",
+      "recordLabel": "M09",
+      "category": "mining",
+      "title": "坑口へ返す鈍い光",
+      "client": "鉱道の案内係",
+      "fieldName": "灰鐘鉱山",
+      "stars": 3,
+      "requestText": "坑口の曲がり角で、帰り道を示す反射板が剥がれています。露天跡に出る鈍晶雲母を六枚、採掘道具で外して野営地の納品箱へ届けてください。二つの岩棚を回る仕事です。アシュレイアが帷羽を広げたら、その下を抜けず広場側へ。薄板を落とさない特別な操作は要りません。袋へ収めれば十分です。",
+      "objectiveText": "鈍晶雲母6枚を採掘し、野営地の納品箱へ届ける",
+      "requirements": [
+        {
+          "resourceId": "mat.ore.dull_crystal_mica",
+          "count": 6,
+          "resourceName": "鈍晶雲母",
+          "unit": "枚"
+        }
+      ],
+      "targetClearMinutes": [
+        8,
+        12
+      ],
+      "effectiveTimeLimitMinutes": 25,
+      "rewardMoney": 580,
+      "difficultyReasons": [
+        "複数の岩棚を巡る距離と、採掘時の危険回避が重なる。",
+        "板の破損抽選や持ち運びの操作難度を追加せず、経路判断を中心にする。"
+      ],
+      "routeHint": "地上の歩道で結ばれた二つの低い岩棚を巡る。各棚から広場へ戻る別経路を用意する。",
+      "safetyHint": "睡眠灰の近くで採掘を続けない。常時通行可能な迂回路で必要量を確保し、時間帯による出現待ちは行わない。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.ore.dull_crystal_mica",
+          "nodeCount": 4,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "坑口の反射標識を補修する薄板の原料候補。生物の共鳴膜や羽とは別素材。",
+      "unlockStoryId": "ST08",
+      "subtype": "mining",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st08"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 90000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "mine_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        48.33,
+        72.5
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.mine.010",
+      "recordLabel": "M10",
+      "category": "mining",
+      "title": "滑らない帰り道",
+      "client": "峡谷の通路係",
+      "fieldName": "氷帆峡谷",
+      "stars": 3,
+      "requestText": "峡谷を戻る足元へ、角のある砕石を敷きたいのです。地上から続く岩棚で氷縁硬石を六個採り、野営地の納品箱へ届けてください。薄い氷板の上へは渡らず、砂利の縁を回って採掘印へ向かいます。キリサーヴが帆を立てたら、その正面に長く留まらないで。石を砕いて敷く作業は私たちが行います。",
+      "objectiveText": "氷縁硬石6個を採掘し、野営地の納品箱へ届ける",
+      "requirements": [
+        {
+          "resourceId": "mat.ore.icebank_hardstone",
+          "count": 6,
+          "resourceName": "氷縁硬石",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        8,
+        12
+      ],
+      "effectiveTimeLimitMinutes": 25,
+      "rewardMoney": 620,
+      "difficultyReasons": [
+        "採掘点へ向かう足場の選択と、長い攻撃線から離れる判断が必要。",
+        "星は危険回避と距離を根拠にし、鉱石の希少さだけでは上げない。"
+      ],
+      "routeHint": "砂利の縁と地面につながる幅広い岩棚を往復する。跳躍・登攀・薄氷の通過は必須にしない。",
+      "safetyHint": "長い滑走線を外せる横道を各採掘区画に用意する。敵を倒さなくても通れる経路を維持する。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.ore.icebank_hardstone",
+          "nodeCount": 4,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "凍りやすい通路の滑り止めへ加工する石材候補。冷晶などの生物素材とは別物。",
+      "unlockStoryId": "ST10",
+      "subtype": "mining",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st10"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 90000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "mine_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        51.67,
+        77.5
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.mine.011",
+      "recordLabel": "M11",
+      "category": "mining",
+      "title": "灯台座の暗い粒",
+      "client": "樹海の灯り係",
+      "fieldName": "霧灯樹海",
+      "stars": 3,
+      "requestText": "樹海の入口に据えた灯りが、湿った土へ傾き始めました。根際の晶脈から根晶黒石を八個採り、野営地の納品箱へお願いします。木の根を切る必要はなく、外へ出た石の部分に印があります。ヴェルガイトが頭冠を向けたら採掘を止め、開けた道へ。獣の灯節を集める依頼ではありません。",
+      "objectiveText": "根晶黒石8個を採掘し、野営地の納品箱へ届ける",
+      "requirements": [
+        {
+          "resourceId": "mat.ore.root_crystal_darkstone",
+          "count": 8,
+          "resourceName": "根晶黒石",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        9,
+        12
+      ],
+      "effectiveTimeLimitMinutes": 25,
+      "rewardMoney": 640,
+      "difficultyReasons": [
+        "霧の中で複数の採掘点と帰路を見失わずに巡る。",
+        "採掘中の予兆確認も必要だが、灯りの色だけに頼る探索にはしない。"
+      ],
+      "routeHint": "環状の大樹の外側から、地上に露出した晶脈を巡る。形の異なる案内標と開けた帰路を連続させる。",
+      "safetyHint": "モンスターの灯りと案内標を色だけで区別しない。霧球が膨らむ前に離れられる広さを採掘点に確保する。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.ore.root_crystal_darkstone",
+          "nodeCount": 5,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "里の灯台座を湿気から離して据える石材候補。採掘時に発光装備の所持を要求しない。",
+      "unlockStoryId": "ST12",
+      "subtype": "mining",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st12"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 90000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "mine_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        53.33,
+        71.11
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.mine.012",
+      "recordLabel": "M12",
+      "category": "mining",
+      "title": "補修の継ぎ目へ",
+      "client": "環谷の補修係",
+      "fieldName": "重霧環谷",
+      "stars": 4,
+      "requestText": "分流路の補修を続けるため、水を吸いにくい環脈緻密石が八個必要です。谷底を横断せず、低い尾根の外側にある採掘印を回り、野営地の納品箱へ届けてください。霧の中で環冠が向いたら作業を止め、広い岩棚へ退きましょう。獣の討伐は不要です。帰路の目印を確かめながら、無理のない順でお願いします。",
+      "objectiveText": "環脈緻密石8個を採掘し、野営地の納品箱へ届ける",
+      "requirements": [
+        {
+          "resourceId": "mat.ore.ring_vein_densestone",
+          "count": 8,
+          "resourceName": "環脈緻密石",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        10,
+        15
+      ],
+      "effectiveTimeLimitMinutes": 30,
+      "rewardMoney": 780,
+      "difficultyReasons": [
+        "長い外周経路と視界の変化の中で、採掘と帰路の管理を続ける。",
+        "危険な短縮路を選ばなくても達成できる余裕を30分の制限に確保する。"
+      ],
+      "routeHint": "低い尾根の外周に採掘点を分散し、複数の見通しのよい岩棚を経由して帰る。谷底の直線短縮路は任意とする。",
+      "safetyHint": "巡回線を避ける外周路で全量を確保できることを必須にする。終盤地域でも専用耐性品・崖登り・討伐を要求しない。",
+      "encounterPolicy": "avoid_large",
+      "nodePlan": [
+        {
+          "resourceId": "mat.ore.ring_vein_densestone",
+          "nodeCount": 5,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "intendedUse": "分流路の継ぎ目と点検口を補修する石材候補。物語の結末を変更する必須素材にはしない。",
+      "unlockStoryId": "ST14",
+      "subtype": "mining",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "requires": [
+        "quest.story.st14"
+      ],
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 108000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "mine_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "野営地の納品箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        52.0,
+        78.0
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.delivery.001",
+      "recordLabel": "D01",
+      "category": "delivery",
+      "subtype": "field_collection",
+      "title": "薬房と工具棚の小包",
+      "client": "野営地の補給係",
+      "fieldName": "風礫盆地",
+      "stars": 1,
+      "requestText": "薬房と工具棚へ、小さな補給をまとめて届けたいのです。この出発でヒラナギの葉を四枚と、礫目砥石原石を四個集めてください。野営地に近い草場から涸れ沢へ回る、安全な区間を選びました。里の在庫を持ち出す必要はありません。両方揃ったら野営地の納品箱へ、一度に渡してください。仕分けはこちらで行います。",
+      "objectiveText": "この出発でヒラナギの葉4枚と礫目砥石原石4個を集め、野営地の納品箱へ一括納品する。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.flatnagi_leaf",
+          "count": 4,
+          "resourceName": "ヒラナギの葉",
+          "unit": "枚"
+        },
+        {
+          "resourceId": "mat.ore.grit_whetstone",
+          "count": 4,
+          "resourceName": "礫目砥石原石",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        5,
+        7
+      ],
+      "effectiveTimeLimitMinutes": 15,
+      "rewardMoney": 300,
+      "difficultyReasons": [
+        "安全な往復で採集と採掘を一度ずつ使い分ける。",
+        "素材が二種類でも区画を近くにまとめ、敵を配置しない。"
+      ],
+      "routeHint": "野営地近くの草場から礫の坂を通って涸れ沢の低い鉱床へ進み、同じ道で戻る。",
+      "safetyHint": "大型・幼体なし。どちらの素材も一つの往復経路で揃える。",
+      "encounterPolicy": "none",
+      "unlockStoryId": null,
+      "requires": [],
+      "intendedUse": "薬房の原料と工具を研ぐ原石をまとめて補給する。",
+      "nodePlan": [
+        {
+          "resourceId": "mat.gather.flatnagi_leaf",
+          "nodeCount": 3,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        },
+        {
+          "resourceId": "mat.ore.grit_whetstone",
+          "nodeCount": 3,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "depositPoint": "野営地の納品箱",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "fieldId": "field.basin",
+      "effectiveTimeLimitTicks": 54000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "collect_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        42.86,
+        60.0
+      ],
+      "spawnLargeMonsters": false,
+      "spawnJuveniles": false
+    },
+    {
+      "questId": "quest.delivery.002",
+      "recordLabel": "D02",
+      "category": "delivery",
+      "subtype": "field_collection",
+      "title": "水場の道具を一式そろえる",
+      "client": "水場の管理係",
+      "fieldName": "根絡み湿原",
+      "stars": 2,
+      "requestText": "水汲み道具の濾過層と受け皿を、一緒に試す準備をしています。根絡み湿原でウキハナ苔を六個、根際陶土を四袋集めてください。苔は浅瀬の根、土は乾いた根丘の際にあります。この出発で採った分を両方揃え、野営地の納品箱へまとめて届けてください。獣が近づいたら小島側へ。道具を組む作業はこちらで進めます。",
+      "objectiveText": "この出発でウキハナ苔6個と根際陶土4袋を集め、野営地の納品箱へ一括納品する。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.floatbloom_moss",
+          "count": 6,
+          "resourceName": "ウキハナ苔",
+          "unit": "個"
+        },
+        {
+          "resourceId": "mat.ore.rootbank_clay",
+          "count": 4,
+          "resourceName": "根際陶土",
+          "unit": "袋"
+        }
+      ],
+      "targetClearMinutes": [
+        7,
+        10
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "rewardMoney": 440,
+      "difficultyReasons": [
+        "浅瀬と根丘の二つの採集場所をつなぐ経路を選ぶ。",
+        "素材ごとの不足数を確かめながら、大型の通過を避けて戻る。"
+      ],
+      "routeHint": "乾いた小島から浅瀬の根へ寄り、根丘の陶土を採って外周から野営地へ戻る。",
+      "safetyHint": "土を採るために水中へ入らせない。全採集点と帰路に大型を避ける分岐を残す。",
+      "encounterPolicy": "avoid_large",
+      "unlockStoryId": "ST04",
+      "requires": [
+        "quest.story.st04"
+      ],
+      "intendedUse": "濾過層の比較と受け皿の焼成を同じ試作作業として進める。",
+      "nodePlan": [
+        {
+          "resourceId": "mat.gather.floatbloom_moss",
+          "nodeCount": 4,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        },
+        {
+          "resourceId": "mat.ore.rootbank_clay",
+          "nodeCount": 3,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "depositPoint": "野営地の納品箱",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 72000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "collect_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        44.0,
+        62.86
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.delivery.003",
+      "recordLabel": "D03",
+      "category": "delivery",
+      "subtype": "field_collection",
+      "title": "坑口のかまどと昼餉",
+      "client": "鉱山の炊事係",
+      "fieldName": "灰鐘鉱山",
+      "stars": 2,
+      "requestText": "坑口の炊事場で、かまどを直す班と食事を作る班が待っています。カサネヒダ茸を四個、灰鐘耐火石を六個、この出発で集めてください。茸のある朽木と採掘場所は、広い坑口の周囲にあります。細い坑道へは入らず、獣が通る間は露天側へ回って構いません。両方揃ったら野営地の納品箱へまとめてお願いします。",
+      "objectiveText": "この出発でカサネヒダ茸4個と灰鐘耐火石6個を集め、野営地の納品箱へ一括納品する。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.layergill_mushroom",
+          "count": 4,
+          "resourceName": "カサネヒダ茸",
+          "unit": "個"
+        },
+        {
+          "resourceId": "mat.ore.bell_mine_firestone",
+          "count": 6,
+          "resourceName": "灰鐘耐火石",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        7,
+        10
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "rewardMoney": 480,
+      "difficultyReasons": [
+        "食材と石材を一つの周回で集め、必要数を別々に管理する。",
+        "広い坑口を中心に経路を短くし、狭い坑道での危険は加えない。"
+      ],
+      "routeHint": "野営地から坑口手前の朽木、露天側の低い石層へ回り、広い道を通って帰る。",
+      "safetyHint": "細坑・崩落・破損抽選を必須にしない。獣の巡回を待たずに迂回できる。",
+      "encounterPolicy": "avoid_large",
+      "unlockStoryId": "ST08",
+      "requires": [
+        "quest.story.st08"
+      ],
+      "intendedUse": "作業班の食事と、かまど内壁の補修材を同時に補給する。",
+      "nodePlan": [
+        {
+          "resourceId": "mat.gather.layergill_mushroom",
+          "nodeCount": 3,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        },
+        {
+          "resourceId": "mat.ore.bell_mine_firestone",
+          "nodeCount": 4,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "depositPoint": "野営地の納品箱",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 72000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "collect_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        48.0,
+        68.57
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.delivery.004",
+      "recordLabel": "D04",
+      "category": "delivery",
+      "subtype": "field_collection",
+      "title": "樹海の灯を立て直す",
+      "client": "樹海の道標係",
+      "fieldName": "霧灯樹海",
+      "stars": 3,
+      "requestText": "樹海の灯りを据え直し、覆いの曇りも調べたいと思っています。この出発でホソアカリ樹脂を四個、根晶黒石を四個集めてください。どちらも大樹の低い根元にあり、登る必要はありません。獣が頭を向けたら開けた道へ回り、帰路の道標を確認してください。両方を野営地の納品箱へ届ければ、据え付けはこちらで行います。",
+      "objectiveText": "この出発でホソアカリ樹脂4個と根晶黒石4個を集め、野営地の納品箱へ一括納品する。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.slimlight_resin",
+          "count": 4,
+          "resourceName": "ホソアカリ樹脂",
+          "unit": "個"
+        },
+        {
+          "resourceId": "mat.ore.root_crystal_darkstone",
+          "count": 4,
+          "resourceName": "根晶黒石",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": [
+        9,
+        12
+      ],
+      "effectiveTimeLimitMinutes": 25,
+      "rewardMoney": 620,
+      "difficultyReasons": [
+        "大樹の左右を回り、二種類の採集場所と帰路を見分ける。",
+        "霧の中で大型との距離を保ちながら、一周する経路を選ぶ。"
+      ],
+      "routeHint": "環状大樹の樹脂と外側の露頭を順に巡り、道標の連なる開けた道で帰る。",
+      "safetyHint": "根を切る・木に登る・大型を倒す工程は不要。どちらの採集場所にも迂回路を置く。",
+      "encounterPolicy": "avoid_large",
+      "unlockStoryId": "ST12",
+      "requires": [
+        "quest.story.st12"
+      ],
+      "intendedUse": "灯りの台座を湿った土から離し、覆いの保護剤を試す。",
+      "nodePlan": [
+        {
+          "resourceId": "mat.gather.slimlight_resin",
+          "nodeCount": 3,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        },
+        {
+          "resourceId": "mat.ore.root_crystal_darkstone",
+          "nodeCount": 3,
+          "guaranteedYieldPerNode": 2,
+          "chargesPerNode": 1
+        }
+      ],
+      "depositPoint": "野営地の納品箱",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 90000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "collect_and_deliver",
+      "itemProvenance": "current_run_nodes",
+      "completionTrigger": "all_requirements_deposited_together",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "今回の採取点から得た品のみ。所持在庫・支給品・別runは不可。",
+      "rewardsNote": "成功時に固定通貨。採集品は必要量を消費し、余剰だけ持ち帰る。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "resource_nodes",
+        "gather_interaction",
+        "run_resource_bag",
+        "camp_delivery_box",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        51.67,
+        68.89
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.delivery.005",
+      "recordLabel": "D05",
+      "category": "delivery",
+      "subtype": "cargo_transport",
+      "title": "涸れ沢へ、一本目の杭",
+      "client": "道の補修係",
+      "fieldName": "風礫盆地",
+      "stars": 1,
+      "requestText": "涸れ沢の縁へ目印の杭を立てるため、野営地で用意した補修杭箱を一つ運んでください。礫の坂を通り、涸れ沢の新しい補修箱へ納める仕事です。今回は獣のいない道を選んであります。荷を持つと少し歩みが遅くなりますが、途中で置いて休んでも構いません。自分の材料は不要です。到着後の杭打ちは私たちが行います。",
+      "objectiveText": "野営地で貸与された補修杭箱1箱を、礫の坂経由で涸れ沢の補修箱へ運び納品する。",
+      "requirements": [
+        {
+          "resourceId": "cargo.delivery.repair_stake_crate",
+          "count": 1,
+          "resourceName": "補修杭箱",
+          "unit": "箱"
+        }
+      ],
+      "targetClearMinutes": [
+        5,
+        7
+      ],
+      "effectiveTimeLimitMinutes": 15,
+      "rewardMoney": 340,
+      "difficultyReasons": [
+        "敵のいない地上経路で、荷を持つ・置く・届ける操作を覚える。",
+        "一箱だけの片道輸送で、運搬中の速度変化を確かめる。"
+      ],
+      "routeHint": "野営地（camp）→礫の坂（a1）→涸れ沢（a5）の新設補修箱。",
+      "safetyHint": "大型・幼体なし。段差から落ちない幅を確保し、荷を置く場所を道沿いに用意する。",
+      "encounterPolicy": "none",
+      "unlockStoryId": null,
+      "requires": [],
+      "intendedUse": "涸れ沢の通行目印と補修区画の杭材を運ぶ。",
+      "cargoSource": "野営地の資材受取所",
+      "cargoDestination": "涸れ沢の新設補修箱",
+      "transportRounds": 1,
+      "cargoSourceAreaId": "camp",
+      "cargoDestinationAreaId": "a5",
+      "cargoPolicy": {
+        "maxCarried": 1,
+        "moveSpeedScale": 0.85,
+        "dodgeAllowed": true,
+        "attackDropsCargo": true,
+        "hitDropsCargo": true,
+        "breakable": false,
+        "unreachableReset": "元の受取所へ戻し旧個体を無効化する。",
+        "partialDelivery": "箱ごとの納品をrun内で記録。3回力尽き・時間切れ時は全体失敗で進行と報酬なし。",
+        "inventoryPolicy": "貸与貨物のみ。所持素材を使わない。",
+        "completion": "必要な全箱の目的地での納品を確認した時点で目標達成。帰還待ちは計時外。"
+      },
+      "transportRoundsMeaning": "運搬回数。最終箱を目的地へ納めた時点で目標達成。2回なら途中で受取所へ戻るのは1回。",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "fieldId": "field.basin",
+      "effectiveTimeLimitTicks": 54000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "loaned_cargo_delivery",
+      "itemProvenance": "loaned_cargo",
+      "completionTrigger": "all_cargo_accepted",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "涸れ沢の新設補修箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "貸与されたrun専用の箱のみを数える。",
+      "rewardsNote": "全箱の受領で固定通貨。貸与貨物は持ち帰れない。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "loaned_cargo_state",
+        "pickup_drop_deliver",
+        "unreachable_recovery",
+        "explicit_field_timer",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        48.57,
+        68.0
+      ],
+      "cargoUnits": [
+        {
+          "unitIndex": 1,
+          "resourceId": "cargo.delivery.repair_stake_crate"
+        }
+      ],
+      "spawnLargeMonsters": false,
+      "spawnJuveniles": false
+    },
+    {
+      "questId": "quest.delivery.006",
+      "recordLabel": "D06",
+      "category": "delivery",
+      "subtype": "cargo_transport",
+      "title": "潮の高さを測る箱",
+      "client": "海岸の観測係",
+      "fieldName": "硝砂海岸",
+      "stars": 2,
+      "requestText": "海辺の水の高さを記録するため、潮見器を運びます。野営地の受取所で貸し出す箱を一つ、白砂の上段にある観測所へ届けてください。波打ち際の近道は使わず、岩の内側を通れます。獣が近づいたら荷を置いて避けて構いません。箱は壊れない作りです。観測所の受取箱へ納めれば、組み立てと測定は私たちが行います。",
+      "objectiveText": "野営地で貸与された潮見器箱1箱を、白砂の上段の観測所受取箱へ運び納品する。",
+      "requirements": [
+        {
+          "resourceId": "cargo.delivery.tide_gauge_crate",
+          "count": 1,
+          "resourceName": "潮見器箱",
+          "unit": "箱"
+        }
+      ],
+      "targetClearMinutes": [
+        6,
+        10
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "rewardMoney": 440,
+      "difficultyReasons": [
+        "荷を持ったまま進める広い経路と、待避場所を選ぶ。",
+        "大型の巡回を避けて一箱を届けるが、戦闘と入水は要求しない。"
+      ],
+      "routeHint": "野営地の受取所から低い岩の内側を進み、白砂の上段の観測所へ向かう。",
+      "safetyHint": "入水・跳躍が必要な運搬経路を作らない。大型との接触時も荷物を壊さない。",
+      "encounterPolicy": "avoid_large",
+      "unlockStoryId": "ST06",
+      "requires": [
+        "quest.story.st06"
+      ],
+      "intendedUse": "潮の高さを測る器具を観測所へ運ぶ。",
+      "cargoSource": "野営地の器具受取所",
+      "cargoDestination": "白砂の上段の観測所受取箱",
+      "transportRounds": 1,
+      "cargoSourceAreaId": null,
+      "cargoDestinationAreaId": null,
+      "cargoPolicy": {
+        "maxCarried": 1,
+        "moveSpeedScale": 0.85,
+        "dodgeAllowed": true,
+        "attackDropsCargo": true,
+        "hitDropsCargo": true,
+        "breakable": false,
+        "unreachableReset": "元の受取所へ戻し旧個体を無効化する。",
+        "partialDelivery": "箱ごとの納品をrun内で記録。3回力尽き・時間切れ時は全体失敗で進行と報酬なし。",
+        "inventoryPolicy": "貸与貨物のみ。所持素材を使わない。",
+        "completion": "必要な全箱の目的地での納品を確認した時点で目標達成。帰還待ちは計時外。"
+      },
+      "transportRoundsMeaning": "運搬回数。最終箱を目的地へ納めた時点で目標達成。2回なら途中で受取所へ戻るのは1回。",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 72000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "loaned_cargo_delivery",
+      "itemProvenance": "loaned_cargo",
+      "completionTrigger": "all_cargo_accepted",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "白砂の上段の観測所受取箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "貸与されたrun専用の箱のみを数える。",
+      "rewardsNote": "全箱の受領で固定通貨。貸与貨物は持ち帰れない。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "loaned_cargo_state",
+        "pickup_drop_deliver",
+        "unreachable_recovery",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        44.0,
+        73.33
+      ],
+      "cargoUnits": [
+        {
+          "unitIndex": 1,
+          "resourceId": "cargo.delivery.tide_gauge_crate"
+        }
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.delivery.007",
+      "recordLabel": "D07",
+      "category": "delivery",
+      "subtype": "cargo_transport",
+      "title": "峡谷の番小屋へ二箱",
+      "client": "峡谷の野営係",
+      "fieldName": "氷帆峡谷",
+      "stars": 3,
+      "requestText": "峡谷の番小屋へ、防寒布を二箱届けたいのです。野営地の受取所から一箱ずつ運び、番小屋の受取箱へ納めてください。二回運びますが、薄い氷板を渡らず地面の続く道で往来できます。獣が進路へ出たら、荷を置いて広い岩棚へ。途中で納めた箱も数えておきますので、最後の一箱まで無理のない順でお願いします。",
+      "objectiveText": "野営地で貸与された防寒布箱2箱を、1箱ずつ2回に分けて峡谷の番小屋受取箱へ運び納品する。",
+      "requirements": [
+        {
+          "resourceId": "cargo.delivery.warm_cloth_crate",
+          "count": 2,
+          "resourceName": "防寒布箱",
+          "unit": "箱"
+        }
+      ],
+      "targetClearMinutes": [
+        8,
+        12
+      ],
+      "effectiveTimeLimitMinutes": 25,
+      "rewardMoney": 600,
+      "difficultyReasons": [
+        "二回の運搬で経路を覚え、獣の巡回の変化へ対応する。",
+        "荷を置いて回避し、同じ箱を拾い直す判断を含む。"
+      ],
+      "routeHint": "野営地の受取所と地上の幅広い岩棚に設けた番小屋を一箱ずつ二回運ぶ。",
+      "safetyHint": "薄氷横断・崖登り・飛び降りを必須にしない。番小屋と受取所の周囲は荷を扱える安全区画にする。",
+      "encounterPolicy": "avoid_large",
+      "unlockStoryId": "ST10",
+      "requires": [
+        "quest.story.st10"
+      ],
+      "intendedUse": "番小屋の休憩者と交代要員が使う防寒布を補給する。",
+      "cargoSource": "野営地の布箱受取所",
+      "cargoDestination": "峡谷の番小屋受取箱",
+      "transportRounds": 2,
+      "cargoSourceAreaId": null,
+      "cargoDestinationAreaId": null,
+      "cargoPolicy": {
+        "maxCarried": 1,
+        "moveSpeedScale": 0.85,
+        "dodgeAllowed": true,
+        "attackDropsCargo": true,
+        "hitDropsCargo": true,
+        "breakable": false,
+        "unreachableReset": "元の受取所へ戻し旧個体を無効化する。",
+        "partialDelivery": "箱ごとの納品をrun内で記録。3回力尽き・時間切れ時は全体失敗で進行と報酬なし。",
+        "inventoryPolicy": "貸与貨物のみ。所持素材を使わない。",
+        "completion": "必要な全箱の目的地での納品を確認した時点で目標達成。帰還待ちは計時外。"
+      },
+      "transportRoundsMeaning": "運搬回数。最終箱を目的地へ納めた時点で目標達成。2回なら途中で受取所へ戻るのは1回。",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 90000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "loaned_cargo_delivery",
+      "itemProvenance": "loaned_cargo",
+      "completionTrigger": "all_cargo_accepted",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "峡谷の番小屋受取箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "貸与されたrun専用の箱のみを数える。",
+      "rewardsNote": "全箱の受領で固定通貨。貸与貨物は持ち帰れない。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "loaned_cargo_state",
+        "pickup_drop_deliver",
+        "unreachable_recovery",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        50.0,
+        75.0
+      ],
+      "cargoUnits": [
+        {
+          "unitIndex": 1,
+          "resourceId": "cargo.delivery.warm_cloth_crate"
+        },
+        {
+          "unitIndex": 2,
+          "resourceId": "cargo.delivery.warm_cloth_crate"
+        }
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.delivery.008",
+      "recordLabel": "D08",
+      "category": "delivery",
+      "subtype": "cargo_transport",
+      "title": "環谷の点検口へ",
+      "client": "環谷の補修係",
+      "fieldName": "重霧環谷",
+      "stars": 4,
+      "requestText": "補修後の点検を続けるため、谷の作業所へ資材を二箱送ります。野営地の受取所から一箱ずつ、尾根の外側にある補修所へ運んでください。霧の中で谷底へ急ぐより、開けた岩棚をつなぐ道が確かです。獣の気配が近い時は箱を置き、距離を取って構いません。受取箱に二箱が揃えば、点検と補修はこちらで引き受けます。",
+      "objectiveText": "野営地で貸与された補修資材箱2箱を、1箱ずつ2回に分けて尾根外側の補修所受取箱へ運び納品する。",
+      "requirements": [
+        {
+          "resourceId": "cargo.delivery.channel_repair_crate",
+          "count": 2,
+          "resourceName": "補修資材箱",
+          "unit": "箱"
+        }
+      ],
+      "targetClearMinutes": [
+        10,
+        15
+      ],
+      "effectiveTimeLimitMinutes": 30,
+      "rewardMoney": 800,
+      "difficultyReasons": [
+        "霧の中の二回の運搬で道標と大型の進路を継続して確認する。",
+        "安全な外周路を選び、荷を置く場所と再開する時機を判断する。"
+      ],
+      "routeHint": "野営地から低い尾根の外側を通り、開けた岩棚の補修所まで一箱ずつ二回運ぶ。",
+      "safetyHint": "谷底の短縮路は使わなくても間に合うようにする。受取所と補修所を大型の待ち伏せ地点にしない。",
+      "encounterPolicy": "avoid_large",
+      "unlockStoryId": "ST14",
+      "requires": [
+        "quest.story.st14"
+      ],
+      "intendedUse": "分流路の補修後の点検に使う資材を、作業所へ運ぶ。",
+      "cargoSource": "野営地の補修資材受取所",
+      "cargoDestination": "尾根外側の補修所受取箱",
+      "transportRounds": 2,
+      "cargoSourceAreaId": null,
+      "cargoDestinationAreaId": null,
+      "cargoPolicy": {
+        "maxCarried": 1,
+        "moveSpeedScale": 0.85,
+        "dodgeAllowed": true,
+        "attackDropsCargo": true,
+        "hitDropsCargo": true,
+        "breakable": false,
+        "unreachableReset": "元の受取所へ戻し旧個体を無効化する。",
+        "partialDelivery": "箱ごとの納品をrun内で記録。3回力尽き・時間切れ時は全体失敗で進行と報酬なし。",
+        "inventoryPolicy": "貸与貨物のみ。所持素材を使わない。",
+        "completion": "必要な全箱の目的地での納品を確認した時点で目標達成。帰還待ちは計時外。"
+      },
+      "transportRoundsMeaning": "運搬回数。最終箱を目的地へ納めた時点で目標達成。2回なら途中で受取所へ戻るのは1回。",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "fieldId": null,
+      "effectiveTimeLimitTicks": 108000,
+      "maxFaints": 3,
+      "repeatPolicy": "repeatable",
+      "claimId": null,
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "loaned_cargo_delivery",
+      "itemProvenance": "loaned_cargo",
+      "completionTrigger": "all_cargo_accepted",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewardItems": [],
+      "depositPoint": "尾根外側の補修所受取箱",
+      "returnDelaySeconds": 5,
+      "preownedMaterialsConsumed": false,
+      "allowOwnedItemUse": true,
+      "ownedConsumablesOnFailure": "deduct_only_actually_used_as_existing_game",
+      "itemOriginNote": "貸与されたrun専用の箱のみを数える。",
+      "rewardsNote": "全箱の受領で固定通貨。貸与貨物は持ち帰れない。",
+      "supplyNote": "回復液3・研磨石1。貸与道具と貨物は通常道具欄へ入れない。未使用支給品は持ち帰らない。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "loaned_cargo_state",
+        "pickup_drop_deliver",
+        "unreachable_recovery",
+        "explicit_field_timer",
+        "native_field_implementation",
+        "encounter_configuration",
+        "reachable_routes"
+      ],
+      "fixedMoneyPerTargetMinute": [
+        53.33,
+        80.0
+      ],
+      "cargoUnits": [
+        {
+          "unitIndex": 1,
+          "resourceId": "cargo.delivery.channel_repair_crate"
+        },
+        {
+          "unitIndex": 2,
+          "resourceId": "cargo.delivery.channel_repair_crate"
+        }
+      ],
+      "spawnLargeMonsters": "scenario_specific",
+      "spawnJuveniles": "off_by_default",
+      "encounterBalanceNote": "星から敵rankを自動設定しない。最大1頭の巡回大型と、待たずに通れる迂回路を別途設計・試遊する。"
+    },
+    {
+      "questId": "quest.delivery.009",
+      "recordLabel": "D09",
+      "category": "delivery",
+      "subtype": "warehouse",
+      "title": "余った岩殻片を修繕に",
+      "client": "道具の修繕係",
+      "fieldName": "里",
+      "stars": 1,
+      "requestText": "里の道具を直すため、倉庫に余った岩殻片があれば二個だけ分けてください。今回は里の受付納品台で渡す仕事で、新しく狩りへ出る必要はありません。ご自身の強化用として、納品後も十四個は残せる時だけお願いします。在庫が足りなければ、そのまま保管して構いません。一度きりの募集です。受け取り前に残る数も一緒に確かめます。",
+      "objectiveText": "里の倉庫から岩殻片2個を受付納品台へ一括納品する。納品後に14個以上残す。",
+      "requirements": [
+        {
+          "resourceId": "mat.galdros.shell_shard",
+          "count": 2,
+          "reserveFloor": 14,
+          "resourceName": "岩殻片",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": null,
+      "effectiveTimeLimitMinutes": null,
+      "rewardMoney": 250,
+      "difficultyReasons": [
+        "里で在庫と残数を確認して渡すため、戦闘と移動の難度はない。",
+        "素材の入手難度は初級として別欄に表示し、手続きの星へ混ぜない。"
+      ],
+      "routeHint": "里の倉庫の在庫表示を確認し、受付納品台で内容を見て一括納品する。",
+      "safetyHint": "強化用の岩殻片14個を残せない場合は一切消費しない。納品は任意で一度限り。",
+      "encounterPolicy": "none",
+      "unlockStoryId": null,
+      "requires": [
+        "quest.basin.003"
+      ],
+      "intendedUse": "里の道具の当て板など、少量の修繕材として使う。",
+      "targetTransactionSeconds": [
+        15,
+        30
+      ],
+      "maxFaints": null,
+      "repeatPolicy": "once_per_save",
+      "depositPoint": "里の受付納品台",
+      "materialAcquisitionDifficulty": "初級",
+      "transactionNote": "15〜30秒は在庫確認と納品操作の目安。素材を入手する時間は含まない。",
+      "failurePolicy": "不足時・残数保護に抵触する時は消費せず、報酬と達成記録も付けない。",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "fieldId": null,
+      "effectiveTimeLimitTicks": null,
+      "claimId": "quest.delivery.009",
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "warehouse_delivery",
+      "itemProvenance": "warehouse",
+      "completionTrigger": "atomic_warehouse_trade",
+      "supplies": [],
+      "rewardItems": [],
+      "returnDelaySeconds": 0,
+      "preownedMaterialsConsumed": true,
+      "allowOwnedItemUse": false,
+      "ownedConsumablesOnFailure": "not_applicable",
+      "itemOriginNote": "在庫・残数保護・受領済みを同一保存内で再検証。",
+      "rewardsNote": "一度限りの通貨報酬。素材入手時間は手続き秒数と別。",
+      "supplyNote": "出発せず支給なし。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "warehouse_delivery_ui",
+        "stock_reserve_check",
+        "permanent_claim"
+      ],
+      "spawnLargeMonsters": false,
+      "spawnJuveniles": false
+    },
+    {
+      "questId": "quest.delivery.010",
+      "recordLabel": "D10",
+      "category": "delivery",
+      "subtype": "warehouse",
+      "title": "手当て棚の備蓄",
+      "client": "薬房の備蓄係",
+      "fieldName": "里",
+      "stars": 1,
+      "requestText": "薬房の棚を整えるため、倉庫のヒラナギの葉を四枚とウキハナ苔を二個、分けてもらえますか。今回は里の受付納品台で、両方をまとめて渡す仕事です。ご自身の分として葉二枚と苔二個が残る場合だけで構いません。数が足りなければ何も受け取りません。募集は一度限りです。調合と試験はこちらで行い、備蓄を確かめます。",
+      "objectiveText": "里の倉庫からヒラナギの葉4枚とウキハナ苔2個を受付納品台へ一括納品する。納品後に葉2枚・苔2個以上を残す。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.flatnagi_leaf",
+          "count": 4,
+          "reserveFloor": 2,
+          "resourceName": "ヒラナギの葉",
+          "unit": "枚"
+        },
+        {
+          "resourceId": "mat.gather.floatbloom_moss",
+          "count": 2,
+          "reserveFloor": 2,
+          "resourceName": "ウキハナ苔",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": null,
+      "effectiveTimeLimitMinutes": null,
+      "rewardMoney": 320,
+      "difficultyReasons": [
+        "保有する二種類の数と納品後の残数を確認する手続き。",
+        "素材を探す時間と入手難度は別に扱い、制限時間を設けない。"
+      ],
+      "routeHint": "里の倉庫で二種類の残数を確認し、受付納品台へまとめて渡す。",
+      "safetyHint": "どちらか一種類でも保護残数を下回る場合は両方とも消費しない。",
+      "encounterPolicy": "none",
+      "unlockStoryId": "ST04",
+      "requires": [
+        "quest.story.st04"
+      ],
+      "intendedUse": "薬房の原料備蓄と濾過層の試料を少量補充する。",
+      "targetTransactionSeconds": [
+        15,
+        30
+      ],
+      "maxFaints": null,
+      "repeatPolicy": "once_per_save",
+      "depositPoint": "里の受付納品台",
+      "materialAcquisitionDifficulty": "初級",
+      "transactionNote": "15〜30秒は在庫確認と納品操作の目安。素材を入手する時間は含まない。",
+      "failurePolicy": "不足時・残数保護に抵触する時は消費せず、報酬と達成記録も付けない。",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "fieldId": null,
+      "effectiveTimeLimitTicks": null,
+      "claimId": "quest.delivery.010",
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "warehouse_delivery",
+      "itemProvenance": "warehouse",
+      "completionTrigger": "atomic_warehouse_trade",
+      "supplies": [],
+      "rewardItems": [],
+      "returnDelaySeconds": 0,
+      "preownedMaterialsConsumed": true,
+      "allowOwnedItemUse": false,
+      "ownedConsumablesOnFailure": "not_applicable",
+      "itemOriginNote": "在庫・残数保護・受領済みを同一保存内で再検証。",
+      "rewardsNote": "一度限りの通貨報酬。素材入手時間は手続き秒数と別。",
+      "supplyNote": "出発せず支給なし。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "warehouse_delivery_ui",
+        "stock_reserve_check",
+        "permanent_claim"
+      ],
+      "spawnLargeMonsters": false,
+      "spawnJuveniles": false
+    },
+    {
+      "questId": "quest.delivery.011",
+      "recordLabel": "D11",
+      "category": "delivery",
+      "subtype": "warehouse",
+      "title": "工房の二つの備え",
+      "client": "工具の整備係",
+      "fieldName": "里",
+      "stars": 1,
+      "requestText": "研磨棚の砥石と、乾燥炉の内張りを補充します。倉庫の礫目砥石原石を四個、灰鐘耐火石を二個、里の受付納品台へまとめて渡してください。今回は現地へ採りに行く仕事ではありません。どちらの素材も二個ずつ残せる時だけお願いします。一度きりの募集なので、必要な強化や別の仕事を優先して構いません。加工はこちらで行います。",
+      "objectiveText": "里の倉庫から礫目砥石原石4個と灰鐘耐火石2個を受付納品台へ一括納品する。各素材を2個以上残す。",
+      "requirements": [
+        {
+          "resourceId": "mat.ore.grit_whetstone",
+          "count": 4,
+          "reserveFloor": 2,
+          "resourceName": "礫目砥石原石",
+          "unit": "個"
+        },
+        {
+          "resourceId": "mat.ore.bell_mine_firestone",
+          "count": 2,
+          "reserveFloor": 2,
+          "resourceName": "灰鐘耐火石",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": null,
+      "effectiveTimeLimitMinutes": null,
+      "rewardMoney": 420,
+      "difficultyReasons": [
+        "二種類の保有数を確認して渡すだけで、出発や戦闘を伴わない。",
+        "採掘地域に由来する入手難度は中級と別表示する。"
+      ],
+      "routeHint": "里の倉庫で原石と耐火石を確認し、受付納品台でまとめて渡す。",
+      "safetyHint": "保護残数を下回る納品を許可しない。原石の採掘と砥石への加工は別の行為として扱う。",
+      "encounterPolicy": "none",
+      "unlockStoryId": "ST08",
+      "requires": [
+        "quest.story.st08"
+      ],
+      "intendedUse": "礫目砥石原石は研磨材に、灰鐘耐火石は砥石を乾かす炉の補修に使う。",
+      "targetTransactionSeconds": [
+        15,
+        30
+      ],
+      "maxFaints": null,
+      "repeatPolicy": "once_per_save",
+      "depositPoint": "里の受付納品台",
+      "materialAcquisitionDifficulty": "中級",
+      "transactionNote": "15〜30秒は在庫確認と納品操作の目安。素材を入手する時間は含まない。",
+      "failurePolicy": "不足時・残数保護に抵触する時は消費せず、報酬と達成記録も付けない。",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "fieldId": null,
+      "effectiveTimeLimitTicks": null,
+      "claimId": "quest.delivery.011",
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "warehouse_delivery",
+      "itemProvenance": "warehouse",
+      "completionTrigger": "atomic_warehouse_trade",
+      "supplies": [],
+      "rewardItems": [],
+      "returnDelaySeconds": 0,
+      "preownedMaterialsConsumed": true,
+      "allowOwnedItemUse": false,
+      "ownedConsumablesOnFailure": "not_applicable",
+      "itemOriginNote": "在庫・残数保護・受領済みを同一保存内で再検証。",
+      "rewardsNote": "一度限りの通貨報酬。素材入手時間は手続き秒数と別。",
+      "supplyNote": "出発せず支給なし。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "warehouse_delivery_ui",
+        "stock_reserve_check",
+        "permanent_claim"
+      ],
+      "spawnLargeMonsters": false,
+      "spawnJuveniles": false
+    },
+    {
+      "questId": "quest.delivery.012",
+      "recordLabel": "D12",
+      "category": "delivery",
+      "subtype": "warehouse",
+      "title": "帰路の灯を保つ",
+      "client": "道標の保守係",
+      "fieldName": "里",
+      "stars": 1,
+      "requestText": "帰路の灯を長く保つため、里で保守用の材料を集めています。倉庫のホソアカリ樹脂を三個、環脈緻密石を三個、受付納品台へまとめて渡してもらえますか。樹脂は覆いの保護に、石は台座の継ぎ目に使います。ご自身の分を各二個残せる時だけで十分です。一度限りの募集で、新たな出発は不要です。取り付けはこちらで行います。",
+      "objectiveText": "里の倉庫からホソアカリ樹脂3個と環脈緻密石3個を受付納品台へ一括納品する。各素材を2個以上残す。",
+      "requirements": [
+        {
+          "resourceId": "mat.gather.slimlight_resin",
+          "count": 3,
+          "reserveFloor": 2,
+          "resourceName": "ホソアカリ樹脂",
+          "unit": "個"
+        },
+        {
+          "resourceId": "mat.ore.ring_vein_densestone",
+          "count": 3,
+          "reserveFloor": 2,
+          "resourceName": "環脈緻密石",
+          "unit": "個"
+        }
+      ],
+      "targetClearMinutes": null,
+      "effectiveTimeLimitMinutes": null,
+      "rewardMoney": 650,
+      "difficultyReasons": [
+        "里での確認と受け渡しだけを行うため、手続きは星1。",
+        "終盤地域で素材を得る難しさは極級として別欄に表示する。"
+      ],
+      "routeHint": "里の倉庫の樹脂と石の残数を確認し、受付納品台で一度に渡す。",
+      "safetyHint": "素材不足や保護残数未満では何も引かない。物語のクリアと通行をこの納品へ依存させない。",
+      "encounterPolicy": "none",
+      "unlockStoryId": "ST14",
+      "requires": [
+        "quest.story.st14"
+      ],
+      "intendedUse": "帰路の灯具の覆いと台座を、定期的に保守するための材料。",
+      "targetTransactionSeconds": [
+        15,
+        30
+      ],
+      "maxFaints": null,
+      "repeatPolicy": "once_per_save",
+      "depositPoint": "里の受付納品台",
+      "materialAcquisitionDifficulty": "極級",
+      "transactionNote": "15〜30秒は在庫確認と納品操作の目安。素材を入手する時間は含まない。",
+      "failurePolicy": "不足時・残数保護に抵触する時は消費せず、報酬と達成記録も付けない。",
+      "availableAfterDesignMerge": false,
+      "runtimeContentExists": false,
+      "fieldId": null,
+      "effectiveTimeLimitTicks": null,
+      "claimId": "quest.delivery.012",
+      "successRequiresMonsterKill": false,
+      "killOrCaptureCanComplete": false,
+      "objectiveType": "warehouse_delivery",
+      "itemProvenance": "warehouse",
+      "completionTrigger": "atomic_warehouse_trade",
+      "supplies": [],
+      "rewardItems": [],
+      "returnDelaySeconds": 0,
+      "preownedMaterialsConsumed": true,
+      "allowOwnedItemUse": false,
+      "ownedConsumablesOnFailure": "not_applicable",
+      "itemOriginNote": "在庫・残数保護・受領済みを同一保存内で再検証。",
+      "rewardsNote": "一度限りの通貨報酬。素材入手時間は手続き秒数と別。",
+      "supplyNote": "出発せず支給なし。",
+      "featureRequirements": [
+        "non_hunt_objective_type",
+        "objective_aware_success",
+        "quest_ui",
+        "atomic_result_save",
+        "warehouse_delivery_ui",
+        "stock_reserve_check",
+        "permanent_claim"
+      ],
+      "spawnLargeMonsters": false,
+      "spawnJuveniles": false
+    }
+  ]
+}

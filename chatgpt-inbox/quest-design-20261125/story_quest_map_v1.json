@@ -1,0 +1,805 @@
+{
+  "artifactType": "story-quest-design-proposal",
+  "schemaVersion": 1,
+  "baselineCommit": "9a5443ab1ac813512deac03422ee996f57f8a900",
+  "storySource": "https://github.com/kamamon/Kari/pull/7",
+  "storyQuests": [
+    {
+      "storyId": "ST01",
+      "questId": "quest.basin.003",
+      "reuseExisting": true,
+      "title": "岩場の足音",
+      "client": "受付ミナギ",
+      "requestText": "薬と布を積んだ荷車が、風礫盆地の岩場で止まっています。幅広い足跡と、左側だけ深く擦れた跡が続く先にガルドロスがいます。人を餌にする獣ではありませんが、荷車では警告の突進を避けられません。一頭を狩猟し、通行を再開できる区間を確保してください。頭を下げて地面を掻いたら、正面を空けて。",
+      "speciesId": "monster.galdros",
+      "speciesName": "ガルドロス",
+      "speciesRank": "rank.1",
+      "fieldName": "風礫盆地",
+      "objectiveKind": "hunt",
+      "objectiveText": "ガルドロス1頭の狩猟",
+      "objectiveCondition": "討伐または捕獲で達成。物語の成果は同じ。",
+      "stars": 2,
+      "combatRankProposal": "rank.1",
+      "combatRankNote": "既存クエストのrankIdを維持する。",
+      "targetClearMinutes": [
+        8,
+        12
+      ],
+      "timeLimitMinutes": 30,
+      "prerequisites": [],
+      "prerequisitesMeaning": "この案の新規物語依頼の受注条件。ST01/02は既存自由依頼のため順不同で達成可能。",
+      "readiness": "existing_quest_story_overlay_needed",
+      "implementationRequirements": [
+        "物語依頼の出発前説明、帰還報告、記録表示を実装し、保存成功後だけ物語進行を確定する。",
+        "既存クエストID・既存受注条件・既存クリア回数を維持し、既達成なら再狩猟を要求しない。"
+      ],
+      "storyOutcome": "薬と布の運搬が再開し、現在の危険区間と湿りの帯が記録される。",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "captureSupplyAdditionsIfImplemented": [],
+      "campaignSupportRequired": false
+    },
+    {
+      "storyId": "ST02",
+      "questId": "quest.selvark.r1",
+      "reuseExisting": true,
+      "title": "帆角の風",
+      "client": "穀物の運び手",
+      "requestText": "穀物の積み替え場所へセルヴァルクが寄り、荷をまとめる作業が止まっています。ガルドロスの掘り跡に出た新芽を食べ、そのまま荷道を横切るようです。一頭を狩猟して、運び手が荷を運べる時間をください。角膜を開く威嚇と、片脚を畳む横跳びの前触れに注意を。通り道の湿り方も、帰還後に受付へ報告してください。",
+      "speciesId": "monster.selvark",
+      "speciesName": "セルヴァルク",
+      "speciesRank": "rank.1",
+      "fieldName": "風礫盆地",
+      "objectiveKind": "hunt",
+      "objectiveText": "セルヴァルク1頭の狩猟",
+      "objectiveCondition": "討伐または捕獲で達成。物語の成果は同じ。",
+      "stars": 2,
+      "combatRankProposal": "rank.1",
+      "combatRankNote": "既存クエストのrankIdを維持する。",
+      "targetClearMinutes": [
+        8,
+        12
+      ],
+      "timeLimitMinutes": 30,
+      "prerequisites": [],
+      "prerequisitesMeaning": "この案の新規物語依頼の受注条件。ST01/02は既存自由依頼のため順不同で達成可能。",
+      "readiness": "existing_quest_story_overlay_needed",
+      "implementationRequirements": [
+        "物語依頼の出発前説明、帰還報告、記録表示を実装し、保存成功後だけ物語進行を確定する。",
+        "既存クエストID・既存受注条件・既存クリア回数を維持し、既達成なら再狩猟を要求しない。"
+      ],
+      "storyOutcome": "穀物の運搬を再開し、二種の採食地と湿りの帯のつながりが分かる。",
+      "storyRequesterCandidate": "運び手イサネ（物語案の仮名）",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "captureSupplyAdditionsIfImplemented": [],
+      "campaignSupportRequired": false
+    },
+    {
+      "storyId": "ST03",
+      "questId": "quest.story.st03",
+      "reuseExisting": false,
+      "title": "根の向こうの水路",
+      "client": "道の見回り役",
+      "requestText": "根絡み湿原では、水の溜まる場所と乾く場所が以前と変わっている。点検班を入れたいが、水路の手前をヌメラドンが縄張りにしていて近づけない。まず一頭を狩猟して、根の向こうへ通れるようにしてほしい。頭の泥皿が後ろへ傾いたら泥玉が来る。水の偏りまで獣のせいと決めず、安全を確かめた後で調べるつもりだ。",
+      "speciesId": "monster.numeradon",
+      "speciesName": "ヌメラドン",
+      "speciesRank": "rank.1",
+      "fieldName": "根絡み湿原",
+      "objectiveKind": "hunt",
+      "objectiveText": "ヌメラドン1頭の狩猟",
+      "objectiveCondition": "討伐または捕獲で達成。物語の成果は同じ。",
+      "stars": 2,
+      "combatRankProposal": "rank.1",
+      "combatRankNote": "当該物語個体だけに対する仮提案。種登録の初出rankを変更しない。基礎値との倍率の重複を避け、目標時間に合わせて検証する。",
+      "targetClearMinutes": [
+        9,
+        13
+      ],
+      "timeLimitMinutes": 30,
+      "prerequisites": [
+        "quest.basin.003",
+        "quest.selvark.r1"
+      ],
+      "prerequisitesMeaning": "列挙IDをすべて達成し、当該章の収録内容が準備済みであること。物語会話の既読だけでは達成にしない。",
+      "readiness": "future_field_and_story",
+      "implementationRequirements": [
+        "物語依頼の出発前説明、帰還報告、記録表示を実装し、保存成功後だけ物語進行を確定する。",
+        "指定の本来の狩場を実装し、旧盆地版とは別の物語依頼を作る。未実装地域を風礫盆地へ自動置換しない。",
+        "本筋だけで適正装備へ進める章の材料支給と、支給済み記録の一回限りの保存を実装する。"
+      ],
+      "storyOutcome": "点検班が水路へ入り、水が溜まる場所と乾く場所の組を記録する。",
+      "storyRequesterCandidate": "道の見回り役セナキ（物語案の仮名）",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "captureSupplyAdditionsIfImplemented": [
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        }
+      ],
+      "suppliesPolicy": "毎出発時に基本支給を付与。捕獲を採用・実装・検証した場合だけ捕獲用追加支給も付与。未対応の罠を配らない。",
+      "campaignSupportRequired": true
+    },
+    {
+      "storyId": "ST04",
+      "questId": "quest.story.st04",
+      "reuseExisting": false,
+      "title": "縄を渡す朝",
+      "client": "補修班の縄係",
+      "requestText": "水路へ入れるようになりましたが、湿った補修縄にヴェリトの糸が混ざり、次の作業場所まで道具を運べません。ヌメラドンが掘り出した腐木の周りから、根の上へ広がったようです。一頭を狩猟して区間を確保してください。尾の管を左右へ開いたら低い毒糸の面、腹を上げたら足元の毒滴に注意を。縄の保管場所はこちらで直します。",
+      "speciesId": "monster.verito",
+      "speciesName": "ヴェリト",
+      "speciesRank": "rank.1",
+      "fieldName": "根絡み湿原",
+      "objectiveKind": "hunt",
+      "objectiveText": "ヴェリト1体の狩猟",
+      "objectiveCondition": "討伐または捕獲で達成。物語の成果は同じ。",
+      "stars": 2,
+      "combatRankProposal": "rank.1",
+      "combatRankNote": "当該物語個体だけに対する仮提案。種登録の初出rankを変更しない。基礎値との倍率の重複を避け、目標時間に合わせて検証する。",
+      "targetClearMinutes": [
+        10,
+        14
+      ],
+      "timeLimitMinutes": 30,
+      "prerequisites": [
+        "quest.story.st03"
+      ],
+      "prerequisitesMeaning": "列挙IDをすべて達成し、当該章の収録内容が準備済みであること。物語会話の既読だけでは達成にしない。",
+      "readiness": "future_field_and_story",
+      "implementationRequirements": [
+        "物語依頼の出発前説明、帰還報告、記録表示を実装し、保存成功後だけ物語進行を確定する。",
+        "指定の本来の狩場を実装し、旧盆地版とは別の物語依頼を作る。未実装地域を風礫盆地へ自動置換しない。",
+        "本筋だけで適正装備へ進める章の材料支給と、支給済み記録の一回限りの保存を実装する。"
+      ],
+      "storyOutcome": "縄と道具を運べるようになり、腐木・湿り・糸の位置が記録される。",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "captureSupplyAdditionsIfImplemented": [
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        }
+      ],
+      "suppliesPolicy": "毎出発時に基本支給を付与。捕獲を採用・実装・検証した場合だけ捕獲用追加支給も付与。未対応の罠を配らない。",
+      "campaignSupportRequired": true
+    },
+    {
+      "storyId": "ST05",
+      "questId": "quest.story.st05",
+      "reuseExisting": false,
+      "title": "網場をひらく",
+      "client": "運び手",
+      "requestText": "内陸の補修を続けるには、硝砂海岸からの荷を通したい。ところが網場の横をオルグラスが通り、網を外す人も近づけなくなっています。一頭を狩猟して作業場所を確保してください。網は獣の道から離して張り直します。右の大鋏を開く動きと、六脚を縮める横突進を見て。引き潮になっても消えない湿りの跡は、帰還後に照合しましょう。",
+      "speciesId": "monster.orglass",
+      "speciesName": "オルグラス",
+      "speciesRank": "rank.1",
+      "fieldName": "硝砂海岸",
+      "objectiveKind": "hunt",
+      "objectiveText": "オルグラス1体の狩猟",
+      "objectiveCondition": "討伐または捕獲で達成。物語の成果は同じ。",
+      "stars": 3,
+      "combatRankProposal": "rank.2",
+      "combatRankNote": "当該物語個体だけに対する仮提案。種登録の初出rankを変更しない。基礎値との倍率の重複を避け、目標時間に合わせて検証する。",
+      "targetClearMinutes": [
+        10,
+        14
+      ],
+      "timeLimitMinutes": 35,
+      "prerequisites": [
+        "quest.story.st04"
+      ],
+      "prerequisitesMeaning": "列挙IDをすべて達成し、当該章の収録内容が準備済みであること。物語会話の既読だけでは達成にしない。",
+      "readiness": "future_field_and_story",
+      "implementationRequirements": [
+        "物語依頼の出発前説明、帰還報告、記録表示を実装し、保存成功後だけ物語進行を確定する。",
+        "指定の本来の狩場を実装し、旧盆地版とは別の物語依頼を作る。未実装地域を風礫盆地へ自動置換しない。",
+        "この物語個体の戦闘ランクと素材テーブルを新たに調整する。既存初級自由依頼や全体rank定義を上書きしない。",
+        "本筋だけで適正装備へ進める章の材料支給と、支給済み記録の一回限りの保存を実装する。"
+      ],
+      "storyOutcome": "干し網の移設が進み、潮だけでは変わらない湿りが記録される。",
+      "storyRequesterCandidate": "運び手イサネ（物語案の仮名）",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "captureSupplyAdditionsIfImplemented": [
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        }
+      ],
+      "suppliesPolicy": "毎出発時に基本支給を付与。捕獲を採用・実装・検証した場合だけ捕獲用追加支給も付与。未対応の罠を配らない。",
+      "campaignSupportRequired": true
+    },
+    {
+      "storyId": "ST06",
+      "questId": "quest.story.st06",
+      "reuseExisting": false,
+      "title": "浜に並ぶ灯",
+      "client": "浜の荷扱い係",
+      "requestText": "夕方の浜で光が並ぶので合図だと思ったら、荷扱い場のそばを歩くルミスカの尾でした。餌のある場所と荷を降ろす場所が重なり、人を入れられません。一羽を狩猟して、荷を運び出す時間を確保してください。尾節が順に光り始めたら、放電が走る正面から外れて。光が見えた位置は記録しますが、人の合図を真似ていると決めつけないようにします。",
+      "speciesId": "monster.lumisca",
+      "speciesName": "ルミスカ",
+      "speciesRank": "rank.1",
+      "fieldName": "硝砂海岸",
+      "objectiveKind": "hunt",
+      "objectiveText": "ルミスカ1羽の狩猟",
+      "objectiveCondition": "討伐または捕獲で達成。物語の成果は同じ。",
+      "stars": 3,
+      "combatRankProposal": "rank.2",
+      "combatRankNote": "当該物語個体だけに対する仮提案。種登録の初出rankを変更しない。基礎値との倍率の重複を避け、目標時間に合わせて検証する。",
+      "targetClearMinutes": [
+        11,
+        15
+      ],
+      "timeLimitMinutes": 35,
+      "prerequisites": [
+        "quest.story.st05"
+      ],
+      "prerequisitesMeaning": "列挙IDをすべて達成し、当該章の収録内容が準備済みであること。物語会話の既読だけでは達成にしない。",
+      "readiness": "future_field_and_story",
+      "implementationRequirements": [
+        "物語依頼の出発前説明、帰還報告、記録表示を実装し、保存成功後だけ物語進行を確定する。",
+        "指定の本来の狩場を実装し、旧盆地版とは別の物語依頼を作る。未実装地域を風礫盆地へ自動置換しない。",
+        "この物語個体の戦闘ランクと素材テーブルを新たに調整する。既存初級自由依頼や全体rank定義を上書きしない。",
+        "本筋だけで適正装備へ進める章の材料支給と、支給済み記録の一回限りの保存を実装する。"
+      ],
+      "storyOutcome": "浜の荷扱いが再開し、尾の光と仲間への位置情報の関係が記録される。",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "captureSupplyAdditionsIfImplemented": [
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        }
+      ],
+      "suppliesPolicy": "毎出発時に基本支給を付与。捕獲を採用・実装・検証した場合だけ捕獲用追加支給も付与。未対応の罠を配らない。",
+      "campaignSupportRequired": true
+    },
+    {
+      "storyId": "ST07",
+      "questId": "quest.story.st07",
+      "reuseExisting": false,
+      "title": "音の届かない坑口",
+      "client": "道の見回り役",
+      "requestText": "灰鐘鉱山の古い点検路に、分流路の作業記録が残っている。だが、採掘音に警戒したボルナケルが坑口の前から離れない。一頭を狩猟し、調査に入れる時間を作ってほしい。三つの嚢がふくらんだら、前方へ音圧が来る。こちらでも採掘の時刻と音を見直す。静かになれば水の偏りまで直るかどうかは、別に確かめなければならない。",
+      "speciesId": "monster.bornakel",
+      "speciesName": "ボルナケル",
+      "speciesRank": "rank.1",
+      "fieldName": "灰鐘鉱山",
+      "objectiveKind": "hunt",
+      "objectiveText": "ボルナケル1頭の狩猟",
+      "objectiveCondition": "討伐または捕獲で達成。物語の成果は同じ。",
+      "stars": 4,
+      "combatRankProposal": "rank.2",
+      "combatRankNote": "当該物語個体だけに対する仮提案。種登録の初出rankを変更しない。基礎値との倍率の重複を避け、目標時間に合わせて検証する。",
+      "targetClearMinutes": [
+        12,
+        16
+      ],
+      "timeLimitMinutes": 35,
+      "prerequisites": [
+        "quest.story.st06"
+      ],
+      "prerequisitesMeaning": "列挙IDをすべて達成し、当該章の収録内容が準備済みであること。物語会話の既読だけでは達成にしない。",
+      "readiness": "future_field_and_story",
+      "implementationRequirements": [
+        "物語依頼の出発前説明、帰還報告、記録表示を実装し、保存成功後だけ物語進行を確定する。",
+        "指定の本来の狩場を実装し、旧盆地版とは別の物語依頼を作る。未実装地域を風礫盆地へ自動置換しない。",
+        "この物語個体の戦闘ランクと素材テーブルを新たに調整する。既存初級自由依頼や全体rank定義を上書きしない。",
+        "本筋だけで適正装備へ進める章の材料支給と、支給済み記録の一回限りの保存を実装する。"
+      ],
+      "storyOutcome": "古い点検路へ入り、採掘音への反応と湧水の問題を分けて記録する。",
+      "storyRequesterCandidate": "道の見回り役セナキ（物語案の仮名）",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "captureSupplyAdditionsIfImplemented": [
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        }
+      ],
+      "suppliesPolicy": "毎出発時に基本支給を付与。捕獲を採用・実装・検証した場合だけ捕獲用追加支給も付与。未対応の罠を配らない。",
+      "campaignSupportRequired": true
+    },
+    {
+      "storyId": "ST08",
+      "questId": "quest.story.st08",
+      "reuseExisting": false,
+      "title": "灰の下の分かれ道",
+      "client": "受付ミナギ",
+      "requestText": "古い点検路の奥で、アシュレイアが菌床のある作業区間に留まっています。分流路を閉じた当時の記録を確かめたいのですが、舞う灰の中へ人を入れることはできません。一羽を狩猟して、調査場所を確保してください。帷羽を持ち上げたら睡眠灰幕の前触れです。記録は帰還後に一緒に読み、当時の判断と今の状況を分けて考えます。",
+      "speciesId": "monster.ashreia",
+      "speciesName": "アシュレイア",
+      "speciesRank": "rank.1",
+      "fieldName": "灰鐘鉱山",
+      "objectiveKind": "hunt",
+      "objectiveText": "アシュレイア1羽の狩猟",
+      "objectiveCondition": "討伐または捕獲で達成。物語の成果は同じ。",
+      "stars": 4,
+      "combatRankProposal": "rank.2",
+      "combatRankNote": "当該物語個体だけに対する仮提案。種登録の初出rankを変更しない。基礎値との倍率の重複を避け、目標時間に合わせて検証する。",
+      "targetClearMinutes": [
+        12,
+        16
+      ],
+      "timeLimitMinutes": 35,
+      "prerequisites": [
+        "quest.story.st07"
+      ],
+      "prerequisitesMeaning": "列挙IDをすべて達成し、当該章の収録内容が準備済みであること。物語会話の既読だけでは達成にしない。",
+      "readiness": "future_field_and_story",
+      "implementationRequirements": [
+        "物語依頼の出発前説明、帰還報告、記録表示を実装し、保存成功後だけ物語進行を確定する。",
+        "指定の本来の狩場を実装し、旧盆地版とは別の物語依頼を作る。未実装地域を風礫盆地へ自動置換しない。",
+        "この物語個体の戦闘ランクと素材テーブルを新たに調整する。既存初級自由依頼や全体rank定義を上書きしない。",
+        "本筋だけで適正装備へ進める章の材料支給と、支給済み記録の一回限りの保存を実装する。"
+      ],
+      "storyOutcome": "奥の作業区間を確保し、分流路閉鎖の記録と当時の水害対策を知る。",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "captureSupplyAdditionsIfImplemented": [
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        }
+      ],
+      "suppliesPolicy": "毎出発時に基本支給を付与。捕獲を採用・実装・検証した場合だけ捕獲用追加支給も付与。未対応の罠を配らない。",
+      "campaignSupportRequired": true
+    },
+    {
+      "storyId": "ST09",
+      "questId": "quest.story.st09",
+      "reuseExisting": false,
+      "title": "氷の線を読む",
+      "client": "峡谷の点検班",
+      "requestText": "氷帆峡谷の運搬路に、去年とは違う位置で凍った滑走跡が残っています。上流の湧水を調べたいのですが、長い岩棚を使うキリサーヴと作業区間が重なりました。一頭を狩猟し、観測の足場を確保してください。氷帆が順に立ったら、前へ伸びる氷片の列に注意を。古い氷と今の湧水の比較は点検班が行い、帰還後に報告します。",
+      "speciesId": "monster.kirisave",
+      "speciesName": "キリサーヴ",
+      "speciesRank": "rank.1",
+      "fieldName": "氷帆峡谷",
+      "objectiveKind": "hunt",
+      "objectiveText": "キリサーヴ1頭の狩猟",
+      "objectiveCondition": "討伐または捕獲で達成。物語の成果は同じ。",
+      "stars": 5,
+      "combatRankProposal": "rank.3",
+      "combatRankNote": "当該物語個体だけに対する仮提案。種登録の初出rankを変更しない。基礎値との倍率の重複を避け、目標時間に合わせて検証する。",
+      "targetClearMinutes": [
+        13,
+        18
+      ],
+      "timeLimitMinutes": 40,
+      "prerequisites": [
+        "quest.story.st08"
+      ],
+      "prerequisitesMeaning": "列挙IDをすべて達成し、当該章の収録内容が準備済みであること。物語会話の既読だけでは達成にしない。",
+      "readiness": "future_field_and_story",
+      "implementationRequirements": [
+        "物語依頼の出発前説明、帰還報告、記録表示を実装し、保存成功後だけ物語進行を確定する。",
+        "指定の本来の狩場を実装し、旧盆地版とは別の物語依頼を作る。未実装地域を風礫盆地へ自動置換しない。",
+        "この物語個体の戦闘ランクと素材テーブルを新たに調整する。既存初級自由依頼や全体rank定義を上書きしない。",
+        "本筋だけで適正装備へ進める章の材料支給と、支給済み記録の一回限りの保存を実装する。"
+      ],
+      "storyOutcome": "上流観測の足場が確保され、過去と現在の湧水位置の違いが分かる。",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "captureSupplyAdditionsIfImplemented": [
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        }
+      ],
+      "suppliesPolicy": "毎出発時に基本支給を付与。捕獲を採用・実装・検証した場合だけ捕獲用追加支給も付与。未対応の罠を配らない。",
+      "campaignSupportRequired": true
+    },
+    {
+      "storyId": "ST10",
+      "questId": "quest.story.st10",
+      "reuseExisting": false,
+      "title": "石段の続く先",
+      "client": "道の見回り役",
+      "requestText": "上流の観測は進んだが、戻る石段にラズメルの骨環が擦れた跡が増えている。鉱物を舐める場所を結ぶ道が、点検隊の帰路と重なったようだ。一頭を狩猟して、安全に下れる区間を確保してほしい。前半身を反対へ曲げてから長い胴を払うので、曲げ始めだけを見て近寄らないこと。持ち帰った記録は、里側の変化と並べて確かめる。",
+      "speciesId": "monster.razmer",
+      "speciesName": "ラズメル",
+      "speciesRank": "rank.1",
+      "fieldName": "氷帆峡谷",
+      "objectiveKind": "hunt",
+      "objectiveText": "ラズメル1頭の狩猟",
+      "objectiveCondition": "討伐または捕獲で達成。物語の成果は同じ。",
+      "stars": 5,
+      "combatRankProposal": "rank.3",
+      "combatRankNote": "当該物語個体だけに対する仮提案。種登録の初出rankを変更しない。基礎値との倍率の重複を避け、目標時間に合わせて検証する。",
+      "targetClearMinutes": [
+        13,
+        18
+      ],
+      "timeLimitMinutes": 40,
+      "prerequisites": [
+        "quest.story.st09"
+      ],
+      "prerequisitesMeaning": "列挙IDをすべて達成し、当該章の収録内容が準備済みであること。物語会話の既読だけでは達成にしない。",
+      "readiness": "future_field_and_story",
+      "implementationRequirements": [
+        "物語依頼の出発前説明、帰還報告、記録表示を実装し、保存成功後だけ物語進行を確定する。",
+        "指定の本来の狩場を実装し、旧盆地版とは別の物語依頼を作る。未実装地域を風礫盆地へ自動置換しない。",
+        "この物語個体の戦闘ランクと素材テーブルを新たに調整する。既存初級自由依頼や全体rank定義を上書きしない。",
+        "本筋だけで適正装備へ進める章の材料支給と、支給済み記録の一回限りの保存を実装する。"
+      ],
+      "storyOutcome": "点検隊の帰路が通り、自然の変化が上流側にも及ぶことを確認する。",
+      "storyRequesterCandidate": "道の見回り役セナキ（物語案の仮名）",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "captureSupplyAdditionsIfImplemented": [
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        }
+      ],
+      "suppliesPolicy": "毎出発時に基本支給を付与。捕獲を採用・実装・検証した場合だけ捕獲用追加支給も付与。未対応の罠を配らない。",
+      "campaignSupportRequired": true
+    },
+    {
+      "storyId": "ST11",
+      "questId": "quest.story.st11",
+      "reuseExisting": false,
+      "title": "樹皮の向こう",
+      "client": "工房職人",
+      "requestText": "霧灯樹海の観測路へ木材を運びたいのだが、倒木帯を巡るテンガロが置場のそばまで来ている。地面へ置いた材に、等間隔の鉤穴が増えた。一体を狩猟して道を確保してくれ。体が輪に閉じたら斜めの転がり、尾節を引いたら地面の痺液を警戒してほしい。材はこちらで地面から離す。剥がれた樹皮の内側も、報告で確かめよう。",
+      "speciesId": "monster.tengaro",
+      "speciesName": "テンガロ",
+      "speciesRank": "rank.1",
+      "fieldName": "霧灯樹海",
+      "objectiveKind": "hunt",
+      "objectiveText": "テンガロ1体の狩猟",
+      "objectiveCondition": "討伐または捕獲で達成。物語の成果は同じ。",
+      "stars": 5,
+      "combatRankProposal": "rank.3",
+      "combatRankNote": "当該物語個体だけに対する仮提案。種登録の初出rankを変更しない。基礎値との倍率の重複を避け、目標時間に合わせて検証する。",
+      "targetClearMinutes": [
+        14,
+        19
+      ],
+      "timeLimitMinutes": 40,
+      "prerequisites": [
+        "quest.story.st10"
+      ],
+      "prerequisitesMeaning": "列挙IDをすべて達成し、当該章の収録内容が準備済みであること。物語会話の既読だけでは達成にしない。",
+      "readiness": "future_field_and_story",
+      "implementationRequirements": [
+        "物語依頼の出発前説明、帰還報告、記録表示を実装し、保存成功後だけ物語進行を確定する。",
+        "指定の本来の狩場を実装し、旧盆地版とは別の物語依頼を作る。未実装地域を風礫盆地へ自動置換しない。",
+        "この物語個体の戦闘ランクと素材テーブルを新たに調整する。既存初級自由依頼や全体rank定義を上書きしない。",
+        "本筋だけで適正装備へ進める章の材料支給と、支給済み記録の一回限りの保存を実装する。"
+      ],
+      "storyOutcome": "林の観測路が確保され、菌床とヴェルガイトの採食の関係が分かる。",
+      "storyRequesterCandidate": "工房職人ロクハ（物語案の仮名）",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "captureSupplyAdditionsIfImplemented": [
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        }
+      ],
+      "suppliesPolicy": "毎出発時に基本支給を付与。捕獲を採用・実装・検証した場合だけ捕獲用追加支給も付与。未対応の罠を配らない。",
+      "campaignSupportRequired": true
+    },
+    {
+      "storyId": "ST12",
+      "questId": "quest.story.st12",
+      "reuseExisting": false,
+      "title": "人の灯、獣の灯",
+      "client": "受付ミナギ",
+      "requestText": "人の灯に似た光が、霧灯樹海の点検場所を巡っています。見回りの記録では、環冠と六つの灯節を持つヴェルガイトでした。一頭を狩猟して、点検地点と帰路を確保してください。頭冠が傾いて灯節がともった後、霧球は遅れて弾けます。すぐ攻め返さず、球の位置を見て。帰還後、谷側で見つかった別の擦れ跡と記録を比較します。",
+      "speciesId": "monster.velgait",
+      "speciesName": "ヴェルガイト",
+      "speciesRank": "rank.1",
+      "fieldName": "霧灯樹海",
+      "objectiveKind": "hunt",
+      "objectiveText": "ヴェルガイト1頭の狩猟",
+      "objectiveCondition": "討伐または捕獲で達成。物語の成果は同じ。",
+      "stars": 6,
+      "combatRankProposal": "rank.3",
+      "combatRankNote": "当該物語個体だけに対する仮提案。種登録の初出rankを変更しない。基礎値との倍率の重複を避け、目標時間に合わせて検証する。",
+      "targetClearMinutes": [
+        15,
+        20
+      ],
+      "timeLimitMinutes": 40,
+      "prerequisites": [
+        "quest.story.st11"
+      ],
+      "prerequisitesMeaning": "列挙IDをすべて達成し、当該章の収録内容が準備済みであること。物語会話の既読だけでは達成にしない。",
+      "readiness": "future_field_and_story",
+      "implementationRequirements": [
+        "物語依頼の出発前説明、帰還報告、記録表示を実装し、保存成功後だけ物語進行を確定する。",
+        "指定の本来の狩場を実装し、旧盆地版とは別の物語依頼を作る。未実装地域を風礫盆地へ自動置換しない。",
+        "この物語個体の戦闘ランクと素材テーブルを新たに調整する。既存初級自由依頼や全体rank定義を上書きしない。",
+        "本筋だけで適正装備へ進める章の材料支給と、支給済み記録の一回限りの保存を実装する。"
+      ],
+      "storyOutcome": "点検地点と帰路を確保し、環冠・六灯の記録を二環の目撃と比較する。",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "captureSupplyAdditionsIfImplemented": [
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        }
+      ],
+      "suppliesPolicy": "毎出発時に基本支給を付与。捕獲を採用・実装・検証した場合だけ捕獲用追加支給も付与。未対応の罠を配らない。",
+      "campaignSupportRequired": true
+    },
+    {
+      "storyId": "ST13",
+      "questId": "quest.story.st13",
+      "reuseExisting": false,
+      "title": "帰路に立つ裂扇",
+      "client": "受付ミナギ",
+      "requestText": "盆地の短い分流区間で、補修を試す準備が整いました。ただ、その入口には左背の裂扇炉が成熟したグラセドンがいます。里に伝わる記録よりも体が大きく、長く生きた獣です。一頭を狩猟して、作業班が入れる時間を作ってください。左背が開いたら片側へ熱砂が来ます。扇板の震えにも注意を。狩猟後は短い区間から試し、結果を見て次を決めます。",
+      "speciesId": "monster.grasedon",
+      "speciesName": "グラセドン",
+      "speciesRank": "rank.3",
+      "fieldName": "風礫盆地",
+      "objectiveKind": "hunt",
+      "objectiveText": "グラセドン1頭の狩猟",
+      "objectiveCondition": "討伐で達成。捕獲は実装・採用した場合に同等の達成方法として追加する。",
+      "stars": 6,
+      "combatRankProposal": "rank.3",
+      "combatRankNote": "当該物語個体だけに対する仮提案。種登録の初出rankを変更しない。基礎値との倍率の重複を避け、目標時間に合わせて検証する。",
+      "targetClearMinutes": [
+        16,
+        22
+      ],
+      "timeLimitMinutes": 40,
+      "prerequisites": [
+        "quest.story.st12"
+      ],
+      "prerequisitesMeaning": "列挙IDをすべて達成し、当該章の収録内容が準備済みであること。物語会話の既読だけでは達成にしない。",
+      "readiness": "future_species_and_story",
+      "implementationRequirements": [
+        "物語依頼の出発前説明、帰還報告、記録表示を実装し、保存成功後だけ物語進行を確定する。",
+        "対象種の体・技・AI・部位・報酬・勝敗判定を実装する。登録簿への登録だけで受注可能にしない。",
+        "この物語個体の戦闘ランクと素材テーブルを新たに調整する。既存初級自由依頼や全体rank定義を上書きしない。",
+        "元定義に対象ランク相当の強さが含まれる場合、rank倍率を二重に掛けないよう基準を明示する。",
+        "捕獲は罠・鎮静・成功・精算まで実装して採用した場合だけ選択肢を表示する。未対応なら討伐で同じ物語成果へ進む。",
+        "本筋だけで適正装備へ進める章の材料支給と、支給済み記録の一回限りの保存を実装する。"
+      ],
+      "storyOutcome": "小区間の補修が行われ、時間経過後の報告で湿りの偏りが局所的に和らぐ。",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "captureSupplyAdditionsIfImplemented": [
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        }
+      ],
+      "suppliesPolicy": "毎出発時に基本支給を付与。捕獲を採用・実装・検証した場合だけ捕獲用追加支給も付与。未対応の罠を配らない。",
+      "campaignSupportRequired": true
+    },
+    {
+      "storyId": "ST14",
+      "questId": "quest.story.st14",
+      "reuseExisting": false,
+      "title": "帰り道の灯",
+      "client": "受付ミナギ",
+      "requestText": "重霧環谷の補修口と、双環獣セオルミドの巡回路が重なっています。小区間の試行結果を踏まえ、今回はここを確保します。一頭を狩猟して作業班の入口を開いてください。大小の環が順に向いたら、低い霧弾の後に風弾が来ます。一撃を避けても、すぐには踏み込まないで。安全確認と補修は私たちが引き受けます。帰還の報告を待っています。",
+      "speciesId": "monster.segranio",
+      "speciesName": "セオルミド",
+      "speciesRank": "rank.4",
+      "fieldName": "重霧環谷",
+      "objectiveKind": "hunt",
+      "objectiveText": "セオルミド1頭の狩猟",
+      "objectiveCondition": "討伐で達成。捕獲は実装・採用した場合に同等の達成方法として追加する。",
+      "stars": 8,
+      "combatRankProposal": "rank.4",
+      "combatRankNote": "当該物語個体だけに対する仮提案。種登録の初出rankを変更しない。基礎値との倍率の重複を避け、目標時間に合わせて検証する。",
+      "targetClearMinutes": [
+        18,
+        25
+      ],
+      "timeLimitMinutes": 45,
+      "prerequisites": [
+        "quest.story.st13"
+      ],
+      "prerequisitesMeaning": "列挙IDをすべて達成し、当該章の収録内容が準備済みであること。物語会話の既読だけでは達成にしない。",
+      "readiness": "future_species_and_story",
+      "implementationRequirements": [
+        "物語依頼の出発前説明、帰還報告、記録表示を実装し、保存成功後だけ物語進行を確定する。",
+        "対象種の体・技・AI・部位・報酬・勝敗判定を実装する。登録簿への登録だけで受注可能にしない。",
+        "指定狩場を実装する。",
+        "この物語個体の戦闘ランクと素材テーブルを新たに調整する。既存初級自由依頼や全体rank定義を上書きしない。",
+        "元定義に対象ランク相当の強さが含まれる場合、rank倍率を二重に掛けないよう基準を明示する。",
+        "捕獲は罠・鎮静・成功・精算まで実装して採用した場合だけ選択肢を表示する。未対応なら討伐で同じ物語成果へ進む。",
+        "二段攻撃の予告を画面・音・身体動作で区別し、色だけに頼らない。狩猟成功と補修演出の完了を別段階で扱う。",
+        "本筋だけで適正装備へ進める章の材料支給と、支給済み記録の一回限りの保存を実装する。"
+      ],
+      "storyOutcome": "作業区間の安全確保後に分流路の段階補修と確認を行い、新しい通行記録へ進む。",
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "captureSupplyAdditionsIfImplemented": [
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        }
+      ],
+      "suppliesPolicy": "毎出発時に基本支給を付与。捕獲を採用・実装・検証した場合だけ捕獲用追加支給も付与。未対応の罠を配らない。",
+      "campaignSupportRequired": true
+    }
+  ]
+}

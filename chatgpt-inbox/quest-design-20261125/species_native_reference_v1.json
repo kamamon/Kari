@@ -1,0 +1,2422 @@
+{
+  "artifactType": "native-habitat-quest-copy-reference",
+  "status": "reference-only-not-extra-quests",
+  "baselineCommit": "9a5443ab1ac813512deac03422ee996f57f8a900",
+  "note": "86件の生息地別原稿。既存20件はcurrent_quest_overrides_v1.jsonの盆地用原稿を優先。この86件を102件へ追加しない。",
+  "speciesQuests": [
+    {
+      "proposalId": "Q001",
+      "speciesId": "monster.galdros",
+      "speciesName": "ガルドロス",
+      "speciesRank": "rank.1",
+      "questId": "quest.basin.003",
+      "title": "岩場の足音",
+      "client": "受付ミナギ",
+      "requestText": "里へ続く荷道で、岩板の剥がれた跡と、左だけ深い擦り傷が見つかりました。ガルドロスの巡回路と荷車の道が重なっています。通行の再開に向けて一頭を狩猟してください。前脚を高く上げたら正面を空け、頭を下げて地面を掻いたら突進に備えてください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ガルドロス 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 2,
+      "targetClearMinutes": [
+        8,
+        12
+      ],
+      "timeLimitMinutes": 30,
+      "proposedFieldName": "風礫盆地",
+      "difficultyReasons": [
+        "見やすい予備動作から接近・離脱・部位攻撃を学ぶ初の大型狩猟。"
+      ],
+      "readiness": "current_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。"
+      ]
+    },
+    {
+      "proposalId": "Q002",
+      "speciesId": "monster.selvark",
+      "speciesName": "セルヴァルク",
+      "speciesRank": "rank.1",
+      "questId": "quest.selvark.r1",
+      "title": "帆角の風",
+      "client": "草地の荷運び",
+      "requestText": "朝の荷道に角膜の欠片が落ち、蹄跡が左右へ飛んでいました。セルヴァルクが草の段丘から道へ出るため、荷を運べません。一頭の狩猟をお願いします。角膜が大きく開いた時は風の来る正面を外し、片脚を畳んだ時には横跳びの行き先をよく見てください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "セルヴァルク 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 2,
+      "targetClearMinutes": [
+        8,
+        11
+      ],
+      "timeLimitMinutes": 30,
+      "proposedFieldName": "風礫盆地",
+      "difficultyReasons": [
+        "横移動と風圧を読む入門。攻撃範囲を見て一撃ずつ差し込む。"
+      ],
+      "readiness": "current_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。"
+      ]
+    },
+    {
+      "proposalId": "Q003",
+      "speciesId": "monster.numeradon",
+      "speciesName": "ヌメラドン",
+      "speciesRank": "rank.1",
+      "questId": "quest.numeradon.r1",
+      "title": "泥皿の主",
+      "client": "湿原の水路番",
+      "requestText": "根絡み湿原の浅い水路が、半円に盛り上がった泥で塞がりました。腹を引いた跡が岸へ続いており、ヌメラドンが根を掘る場所を変えたようです。水路の修繕に先立ち一頭を狩猟してください。頭皿が後ろへ傾いたら泥玉、腹を持ち上げたら滑り込みに備えましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ヌメラドン 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 2,
+      "targetClearMinutes": [
+        8,
+        12
+      ],
+      "timeLimitMinutes": 30,
+      "proposedFieldName": "根絡み湿原",
+      "difficultyReasons": [
+        "泥玉と腹滑りの異なる予兆を識別する。足元の位置取りが中心。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "種と既存依頼は実装済みだが、現行は風礫盆地を借りる。本原稿は本来の狩場の実装後用。現行依頼IDを保ち、狩場・文言を同時に切り替える。"
+      ]
+    },
+    {
+      "proposalId": "Q004",
+      "speciesId": "monster.bornakel",
+      "speciesName": "ボルナケル",
+      "speciesRank": "rank.1",
+      "questId": "quest.bornakel.r1",
+      "title": "鐘の鳴る谷",
+      "client": "鉱山の坑口番",
+      "requestText": "灰鐘鉱山の坑口に、丸い打痕が三つずつ増えています。ボルナケルが菌床を探して壁を叩き、荷の受け渡し場まで歩き出しました。作業を再開するため一頭の狩猟を頼みます。三つの嚢が膨らんでも攻め急がず、音圧の向く前方から離れてください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ボルナケル 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 2,
+      "targetClearMinutes": [
+        9,
+        12
+      ],
+      "timeLimitMinutes": 30,
+      "proposedFieldName": "灰鐘鉱山",
+      "difficultyReasons": [
+        "音圧と気絶の危険を初めて学ぶ。予兆中の欲張りを抑える課題。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "種と既存依頼は実装済みだが、現行は風礫盆地を借りる。本原稿は本来の狩場の実装後用。現行依頼IDを保ち、狩場・文言を同時に切り替える。"
+      ]
+    },
+    {
+      "proposalId": "Q005",
+      "speciesId": "monster.ashreia",
+      "speciesName": "アシュレイア",
+      "speciesRank": "rank.1",
+      "questId": "quest.ashreia.r1",
+      "title": "灰の帷",
+      "client": "鉱山の運搬係",
+      "requestText": "灰鐘鉱山の露天跡に、翼で引いた二筋の灰が続いています。アシュレイアが積み荷のそばで菌を啄み、通りかかった者が眠り込んでしまいました。一頭を狩猟し、通路を使えるようにしてください。帷羽を持ち上げたら睡眠灰の前兆です。追いかけるより横へ離れましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "アシュレイア 1羽を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 2,
+      "targetClearMinutes": [
+        9,
+        12
+      ],
+      "timeLimitMinutes": 30,
+      "proposedFieldName": "灰鐘鉱山",
+      "difficultyReasons": [
+        "睡眠灰の回避を学ぶ初級。低い滑走と灰幕の区別が必要。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "種と既存依頼は実装済みだが、現行は風礫盆地を借りる。本原稿は本来の狩場の実装後用。現行依頼IDを保ち、狩場・文言を同時に切り替える。"
+      ]
+    },
+    {
+      "proposalId": "Q006",
+      "speciesId": "monster.lumisca",
+      "speciesName": "ルミスカ",
+      "speciesRank": "rank.1",
+      "questId": "quest.lumisca.r1",
+      "title": "燐尾の光",
+      "client": "海岸の拾い手",
+      "requestText": "硝砂海岸の拾い場で、小さな焦げ点が等間隔に並ぶようになりました。ルミスカが潮溜まりを巡り、足場へ出るたび尾を光らせています。採集を再開できるよう一頭を狩猟してください。尾節が順に灯ったら地面を走る放電の合図です。列の正面に立ち続けないでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ルミスカ 1羽を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 2,
+      "targetClearMinutes": [
+        8,
+        12
+      ],
+      "timeLimitMinutes": 30,
+      "proposedFieldName": "硝砂海岸",
+      "difficultyReasons": [
+        "発光順序から直線放電を読む。横への回避を学ぶ初級。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "種と既存依頼は実装済みだが、現行は風礫盆地を借りる。本原稿は本来の狩場の実装後用。現行依頼IDを保ち、狩場・文言を同時に切り替える。"
+      ]
+    },
+    {
+      "proposalId": "Q007",
+      "speciesId": "monster.orglass",
+      "speciesName": "オルグラス",
+      "speciesRank": "rank.1",
+      "questId": "quest.orglass.r1",
+      "title": "硝殻の鋏",
+      "client": "海岸の道直し",
+      "requestText": "平たい岩床に、六本の脚跡と太い鋏の擦り線が残っています。オルグラスが貝を割る場所を道の上へ移し、修繕の道具を置けません。一頭の狩猟をお願いします。大きな右鋏だけを見ていると横突進を受けます。脚が縮んだ時には、体の左右にも間合いを取りましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "オルグラス 1体を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 2,
+      "targetClearMinutes": [
+        9,
+        12
+      ],
+      "timeLimitMinutes": 30,
+      "proposedFieldName": "硝砂海岸",
+      "difficultyReasons": [
+        "左右非対称の鋏と横突進を読み、正面以外の危険も知る。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "種と既存依頼は実装済みだが、現行は風礫盆地を借りる。本原稿は本来の狩場の実装後用。現行依頼IDを保ち、狩場・文言を同時に切り替える。"
+      ]
+    },
+    {
+      "proposalId": "Q008",
+      "speciesId": "monster.tengaro",
+      "speciesName": "テンガロ",
+      "speciesRank": "rank.1",
+      "questId": "quest.tengaro.r1",
+      "title": "輪になる蟲",
+      "client": "樹海の伐り手",
+      "requestText": "霧灯樹海の倒木に鉤穴が並び、運び道へ斜めの擦れ帯が続いています。テンガロが腐木を探して通るため、木材を引き出せません。一頭を狩猟してください。体を輪に閉じ始めたら転がる向きを確かめて道を空け、尾節を引いた時は痺液の落ちる地面へ近づかないように。",
+      "objectiveKind": "hunt",
+      "objectiveText": "テンガロ 1体を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 2,
+      "targetClearMinutes": [
+        9,
+        12
+      ],
+      "timeLimitMinutes": 30,
+      "proposedFieldName": "霧灯樹海",
+      "difficultyReasons": [
+        "転がりの進路と麻痺液を避ける初級。直線追走を控える。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "種と既存依頼は実装済みだが、現行は風礫盆地を借りる。本原稿は本来の狩場の実装後用。現行依頼IDを保ち、狩場・文言を同時に切り替える。"
+      ]
+    },
+    {
+      "proposalId": "Q009",
+      "speciesId": "monster.verito",
+      "speciesName": "ヴェリト",
+      "speciesRank": "rank.1",
+      "questId": "quest.verito.r1",
+      "title": "霧糸の巣",
+      "client": "湿原の薬草採り",
+      "requestText": "根絡み湿原の足場に、二筋ずつの糸と丸く乾いた毒滴が増えました。ヴェリトの食べ場が薬草の採集路と重なっています。根棚を安全に渡れるよう一頭を狩猟してください。尾管が左右に開けば毒糸の前兆です。腹を上げた時には、足元への毒滴にも目を向けましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ヴェリト 1体を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 2,
+      "targetClearMinutes": [
+        9,
+        12
+      ],
+      "timeLimitMinutes": 30,
+      "proposedFieldName": "根絡み湿原",
+      "difficultyReasons": [
+        "毒糸と足元の滴を読む初級。攻撃中も地面を確認する。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "種と既存依頼は実装済みだが、現行は風礫盆地を借りる。本原稿は本来の狩場の実装後用。現行依頼IDを保ち、狩場・文言を同時に切り替える。"
+      ]
+    },
+    {
+      "proposalId": "Q010",
+      "speciesId": "monster.razmer",
+      "speciesName": "ラズメル",
+      "speciesRank": "rank.1",
+      "questId": "quest.razmer.r1",
+      "title": "骨環の這い跡",
+      "client": "峡谷の案内人",
+      "requestText": "氷帆峡谷の岩棚に、横線の重なる太い溝が現れました。ラズメルが根を探して道を広げ、旅の一行を通せない状態です。一頭の狩猟をお願いします。前半身を横へ曲げる動きは胴払いの構え。頭だけを追わず、長い体と退く場所を一緒に見てください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ラズメル 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 2,
+      "targetClearMinutes": [
+        9,
+        12
+      ],
+      "timeLimitMinutes": 30,
+      "proposedFieldName": "氷帆峡谷",
+      "difficultyReasons": [
+        "長い胴の範囲を理解する初級。頭の外でも胴払いが届く。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "種と既存依頼は実装済みだが、現行は風礫盆地を借りる。本原稿は本来の狩場の実装後用。現行依頼IDを保ち、狩場・文言を同時に切り替える。"
+      ]
+    },
+    {
+      "proposalId": "Q011",
+      "speciesId": "monster.kirisave",
+      "speciesName": "キリサーヴ",
+      "speciesRank": "rank.1",
+      "questId": "quest.kirisave.r1",
+      "title": "氷帆の列",
+      "client": "峡谷の水汲み",
+      "requestText": "鉱泉へ続く道に、氷片が交互に刺さった滑り溝が見つかりました。キリサーヴが浅い水路を往復し、水汲みの足場へ出ています。一頭を狩猟して通行を確保してください。氷帆が順に立ったら前方への氷片列が来ます。帆の変化を見て、列を横切る位置から退きましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "キリサーヴ 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 2,
+      "targetClearMinutes": [
+        9,
+        12
+      ],
+      "timeLimitMinutes": 30,
+      "proposedFieldName": "氷帆峡谷",
+      "difficultyReasons": [
+        "連続する氷片の範囲を読む初級。滑走との予兆差を学ぶ。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "種と既存依頼は実装済みだが、現行は風礫盆地を借りる。本原稿は本来の狩場の実装後用。現行依頼IDを保ち、狩場・文言を同時に切り替える。"
+      ]
+    },
+    {
+      "proposalId": "Q012",
+      "speciesId": "monster.velgait",
+      "speciesName": "ヴェルガイト",
+      "speciesRank": "rank.1",
+      "questId": "quest.velgait.r1",
+      "title": "霧灯の夜",
+      "client": "樹海の道標守り",
+      "requestText": "霧灯樹海の道標のそばに、丸い冠の擦り跡と濡れた落葉が残っています。ヴェルガイトが晶脈の根際を巡るようになり、道の見回りが止まりました。一頭の狩猟をお願いします。頭冠の灯が点いても霧球はすぐには弾けません。置かれた球を見失わず、遅い破裂を待ってください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ヴェルガイト 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 2,
+      "targetClearMinutes": [
+        9,
+        12
+      ],
+      "timeLimitMinutes": 30,
+      "proposedFieldName": "霧灯樹海",
+      "difficultyReasons": [
+        "遅れて発動する霧球を覚える初級。予兆終了後も油断しない。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "種と既存依頼は実装済みだが、現行は風礫盆地を借りる。本原稿は本来の狩場の実装後用。現行依頼IDを保ち、狩場・文言を同時に切り替える。"
+      ]
+    },
+    {
+      "proposalId": "Q013",
+      "speciesId": "monster.embarg",
+      "speciesName": "エンバルグ",
+      "speciesRank": "rank.1",
+      "questId": "quest.design.embarg.first",
+      "title": "冷える道、熾る胸",
+      "client": "台地の巡路番",
+      "requestText": "燠脈台地の冷えた草道で、青銅色の弁片と熱で乾いた土が見つかりました。エンバルグが温い割れ目から道へ通うため、巡回ができません。一頭の狩猟を依頼します。胸炉が明るく膨らんだ時は熱息の構えです。背の弁が片側だけ開いた時も、その側へ潜り込まないでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "エンバルグ 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 2,
+      "targetClearMinutes": [
+        9,
+        12
+      ],
+      "timeLimitMinutes": 30,
+      "proposedFieldName": "燠脈台地",
+      "difficultyReasons": [
+        "胸炉と左右の排熱を見分ける入門。初級相応の火力へ調整が必要。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q014",
+      "speciesId": "monster.kordopil",
+      "speciesName": "コルドピル",
+      "speciesRank": "rank.1",
+      "questId": "quest.kordopil.pack1",
+      "title": "岩殻の子ら",
+      "client": "盆地の畑番",
+      "requestText": "畑へ続く草の斜面が浅く掘り返され、白い背板の欠片が点々と残っています。コルドピルの群れが根を食べる場所を広げたようです。被害の出た区画で三頭を討伐してください。小さくても前脚を上げた後の押し叩きには注意を。指定数を終えたら、残る群れを追う必要はありません。",
+      "objectiveKind": "slay",
+      "objectiveText": "コルドピル 3頭を討伐する",
+      "count": 3,
+      "stars": 1,
+      "targetClearMinutes": [
+        4,
+        6
+      ],
+      "timeLimitMinutes": 20,
+      "proposedFieldName": "風礫盆地",
+      "difficultyReasons": [
+        "近距離の予兆と指定頭数の確認を学ぶ群れ入門。"
+      ],
+      "readiness": "current_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "幼体の捕獲は要求しない。既存の討伐頭数と恒久クエストIDを維持する。"
+      ]
+    },
+    {
+      "proposalId": "Q015",
+      "speciesId": "monster.palseit",
+      "speciesName": "パルセイト",
+      "speciesRank": "rank.1",
+      "questId": "quest.palseit.pack1",
+      "title": "跳ねる小角",
+      "client": "草道の見回り",
+      "requestText": "盆地の低い草道に、蛇行する蹄跡と小さな角膜の擦れが増えました。パルセイトが荷道の草まで食べに来て、人のそばでも跳び回っています。対象の群れから四頭を討伐してください。片足で地面を掻けば横蹴りの合図です。逃げた一頭だけを追って群れの中へ入らないように。",
+      "objectiveKind": "slay",
+      "objectiveText": "パルセイト 4頭を討伐する",
+      "count": 4,
+      "stars": 1,
+      "targetClearMinutes": [
+        5,
+        7
+      ],
+      "timeLimitMinutes": 20,
+      "proposedFieldName": "風礫盆地",
+      "difficultyReasons": [
+        "移動する小標的と群れの位置を確認する初級練習。"
+      ],
+      "readiness": "current_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "幼体の捕獲は要求しない。既存の討伐頭数と恒久クエストIDを維持する。"
+      ]
+    },
+    {
+      "proposalId": "Q016",
+      "speciesId": "monster.numaporon",
+      "speciesName": "ヌマポロン",
+      "speciesRank": "rank.1",
+      "questId": "quest.numaporon.pack1",
+      "title": "泥皿の子",
+      "client": "浅水路の世話役",
+      "requestText": "根絡み湿原の小さな水路で、短い腹の擦れと浅い泥皿跡が重なっています。ヌマポロンの群れが根を掘り、泥を寄せてしまいました。修繕する区画で三頭を討伐してください。小皿を傾けたら泥吐き、腹が浮いたら滑り込みです。泥の中でもこの二つの姿勢を見分けてください。",
+      "objectiveKind": "slay",
+      "objectiveText": "ヌマポロン 3頭を討伐する",
+      "count": 3,
+      "stars": 1,
+      "targetClearMinutes": [
+        5,
+        7
+      ],
+      "timeLimitMinutes": 20,
+      "proposedFieldName": "根絡み湿原",
+      "difficultyReasons": [
+        "短い射撃と突進の予兆を、少数の群れで学ぶ。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "種と既存依頼は実装済みだが、現行は風礫盆地を借りる。本原稿は本来の狩場の実装後用。現行依頼IDを保ち、狩場・文言を同時に切り替える。",
+        "幼体の捕獲は要求しない。既存の討伐頭数と恒久クエストIDを維持する。"
+      ]
+    },
+    {
+      "proposalId": "Q017",
+      "speciesId": "monster.chilumicana",
+      "speciesName": "チルミカナ",
+      "speciesRank": "rank.1",
+      "questId": "quest.chilumicana.pack1",
+      "title": "灯る尾の子",
+      "client": "浜の貝拾い",
+      "requestText": "硝砂海岸の内側の潮溜まりに、二点ずつの薄い焦げ跡が見つかりました。チルミカナが作業場へ集まり、足元で尾を突き出してきます。通路に居着いた三羽の討伐をお願いします。尾の二節が灯った時は近距離の尾突きの前兆。低く跳び退いた後も、向きを確かめて近づいてください。",
+      "objectiveKind": "slay",
+      "objectiveText": "チルミカナ 3羽を討伐する",
+      "count": 3,
+      "stars": 1,
+      "targetClearMinutes": [
+        5,
+        7
+      ],
+      "timeLimitMinutes": 20,
+      "proposedFieldName": "硝砂海岸",
+      "difficultyReasons": [
+        "小標的の発光と短い離脱を読む。成体の放電とは区別する。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "種と既存依頼は実装済みだが、現行は風礫盆地を借りる。本原稿は本来の狩場の実装後用。現行依頼IDを保ち、狩場・文言を同時に切り替える。",
+        "幼体の捕獲は要求しない。既存の討伐頭数と恒久クエストIDを維持する。"
+      ]
+    },
+    {
+      "proposalId": "Q018",
+      "speciesId": "monster.kohalgis",
+      "speciesName": "コハルギス",
+      "speciesRank": "rank.1",
+      "questId": "quest.kohalgis.pack1",
+      "title": "乳白の殻",
+      "client": "浜の船具係",
+      "requestText": "浜へ下ろす船具の置き場に、小さな乳白色の脱皮殻が積もっています。コハルギスの群れが岩の割れ目と荷置き場を行き来しているようです。硝砂海岸の対象区画で四体を討伐してください。六脚を畳んだら横跳びに備えましょう。鋏を上げた個体には正面から手数を重ねないように。",
+      "objectiveKind": "slay",
+      "objectiveText": "コハルギス 4体を討伐する",
+      "count": 4,
+      "stars": 1,
+      "targetClearMinutes": [
+        5,
+        7
+      ],
+      "timeLimitMinutes": 20,
+      "proposedFieldName": "硝砂海岸",
+      "difficultyReasons": [
+        "横へ逃げる群れを追い、挟みの予兆を学ぶ。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "種と既存依頼は実装済みだが、現行は風礫盆地を借りる。本原稿は本来の狩場の実装後用。現行依頼IDを保ち、狩場・文言を同時に切り替える。",
+        "幼体の捕獲は要求しない。既存の討伐頭数と恒久クエストIDを維持する。"
+      ]
+    },
+    {
+      "proposalId": "Q019",
+      "speciesId": "monster.mitogaron",
+      "speciesName": "ミトガロン",
+      "speciesRank": "rank.1",
+      "questId": "quest.mitogaron.pack1",
+      "title": "丸まれない輪",
+      "client": "樹海の木道番",
+      "requestText": "霧灯樹海の木道脇に、閉じきらない半円の擦れと浅い鉤穴が続いています。ミトガロンが腐った木材へ集まり、修繕の足場に痺液を落とします。作業区画で三体を討伐してください。尾節を上げたらすぐ下へ近づかず、滴の落ちた場所を避けて一体ずつ間合いを取りましょう。",
+      "objectiveKind": "slay",
+      "objectiveText": "ミトガロン 3体を討伐する",
+      "count": 3,
+      "stars": 2,
+      "targetClearMinutes": [
+        6,
+        8
+      ],
+      "timeLimitMinutes": 20,
+      "proposedFieldName": "霧灯樹海",
+      "difficultyReasons": [
+        "群れの近距離攻撃に麻痺液が重なるため、幼体入門より一段高くする。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "種と既存依頼は実装済みだが、現行は風礫盆地を借りる。本原稿は本来の狩場の実装後用。現行依頼IDを保ち、狩場・文言を同時に切り替える。",
+        "幼体の捕獲は要求しない。既存の討伐頭数と恒久クエストIDを維持する。"
+      ]
+    },
+    {
+      "proposalId": "Q020",
+      "speciesId": "monster.yurtepica",
+      "speciesName": "ユルテピカ",
+      "speciesRank": "rank.1",
+      "questId": "quest.yurtepica.pack1",
+      "title": "糸床の子ら",
+      "client": "湿原の橋直し",
+      "requestText": "根絡み湿原の低い根橋に、米粒ほどの乾いた毒滴と二筋の糸が増えました。ユルテピカの小さな糸床が作業の足元へ広がっています。橋際の群れから四体を討伐してください。尾糸を引き上げたら毒糸払いの構えです。数を急いで囲まれず、動いている個体の尾も確認しましょう。",
+      "objectiveKind": "slay",
+      "objectiveText": "ユルテピカ 4体を討伐する",
+      "count": 4,
+      "stars": 2,
+      "targetClearMinutes": [
+        6,
+        8
+      ],
+      "timeLimitMinutes": 20,
+      "proposedFieldName": "根絡み湿原",
+      "difficultyReasons": [
+        "四体の毒糸が重なる危険を評価し、群れ入門より一段高くする。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "種と既存依頼は実装済みだが、現行は風礫盆地を借りる。本原稿は本来の狩場の実装後用。現行依頼IDを保ち、狩場・文言を同時に切り替える。",
+        "幼体の捕獲は要求しない。既存の討伐頭数と恒久クエストIDを維持する。"
+      ]
+    },
+    {
+      "proposalId": "Q021",
+      "speciesId": "monster.hinasalv",
+      "speciesName": "ヒナサルヴ",
+      "speciesRank": "rank.1",
+      "questId": "quest.hinasalv.pack1",
+      "title": "小板の兄弟",
+      "client": "峡谷の道直し",
+      "requestText": "氷帆峡谷の浅い溝に、細い滑り跡と丸い氷粒が交互に残っています。ヒナサルヴが道の補修場を通り、近づくたび氷を散らすそうです。対象の二頭を討伐してください。背の小板が震え始めたら氷粒の前兆です。滑りの止まる位置を確かめ、二頭を同時に追い詰めないでください。",
+      "objectiveKind": "slay",
+      "objectiveText": "ヒナサルヴ 2頭を討伐する",
+      "count": 2,
+      "stars": 1,
+      "targetClearMinutes": [
+        4,
+        6
+      ],
+      "timeLimitMinutes": 20,
+      "proposedFieldName": "氷帆峡谷",
+      "difficultyReasons": [
+        "二頭の近距離攻撃を確認する。少数で氷の予兆を学ぶ。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "種と既存依頼は実装済みだが、現行は風礫盆地を借りる。本原稿は本来の狩場の実装後用。現行依頼IDを保ち、狩場・文言を同時に切り替える。",
+        "幼体の捕獲は要求しない。既存の討伐頭数と恒久クエストIDを維持する。"
+      ]
+    },
+    {
+      "proposalId": "Q022",
+      "speciesId": "monster.hasdren",
+      "speciesName": "ハスドレン",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.hasdren.first",
+      "title": "銅苔を渡る水",
+      "client": "段丘の水路番",
+      "requestText": "銅苔段丘の湧水が細り、上流に裏返った石と銅色の膜が見つかりました。ハスドレンが苔を食べる流れを道のそばへ変えたようです。修繕の前に一頭を狩猟してください。右腰を持ち上げたら苔水が噴きます。背殻を震わせる時は右脇へ毒苔が落ちるので、攻める側にも注意を。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ハスドレン 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 4,
+      "targetClearMinutes": [
+        12,
+        16
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "銅苔段丘",
+      "difficultyReasons": [
+        "前方射撃と片側の毒地帯で立ち位置を変える判断を求める。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q023",
+      "speciesId": "monster.ivselam",
+      "speciesName": "イヴセラム",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.ivselam.first",
+      "title": "左へ掃く霜",
+      "client": "峡谷の薬草採り",
+      "requestText": "氷帆峡谷の草棚に、左側だけを掃いた扇形の霜跡が残っています。イヴセラムが薬草の採集路へ出るようになり、荷を持って通れません。一頭を狩猟して道を開けてください。左角を畳む動作は氷扇払い、後脚を深く曲げる動作は跳び蹴りの前兆です。足と角を見比べてください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "イヴセラム 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 3,
+      "targetClearMinutes": [
+        10,
+        14
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "氷帆峡谷",
+      "difficultyReasons": [
+        "左右の氷扇と跳躍を読む中級前半。単発の予兆判断を中心にする。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q024",
+      "speciesId": "monster.domelkano",
+      "speciesName": "ドメルカノ",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.domelkano.first",
+      "title": "熱泥の縁",
+      "client": "台地の道普請",
+      "requestText": "燠脈台地の休み棚に、二段の掘り跡と赤褐色の泥玉が増えました。ドメルカノが冷えた泥を集めに来るため、道普請を中断しています。一頭の狩猟を頼みます。頭皿の後縁が立ったら熱泥弾に注意を。正面を外した後も、横へ引いた首からの熱泥払いを見落とさないでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ドメルカノ 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 3,
+      "targetClearMinutes": [
+        10,
+        14
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "燠脈台地",
+      "difficultyReasons": [
+        "頭皿と首の向きで射線を読む。中級前半の方向判断を課す。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q025",
+      "speciesId": "monster.holnebas",
+      "speciesName": "ホルネバス",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.holnebas.first",
+      "title": "三つ鳴る風穴",
+      "client": "断崖の案内人",
+      "requestText": "雨裂断崖の風穴前に、右へ散った小石と丸い頭殻の打痕が残っています。ホルネバスが岩棚を巡り、案内路まで押し出してきました。一頭を狩猟してください。右の三嚢が順に開く時は、一発避けても終わりではありません。三連の噴き出しを見切ってから距離を詰めましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ホルネバス 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 4,
+      "targetClearMinutes": [
+        12,
+        16
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "雨裂断崖",
+      "difficultyReasons": [
+        "三連噴射を最後まで読む必要があり、単発回避より難しい。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q026",
+      "speciesId": "monster.miltasea",
+      "speciesName": "ミルタセア",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.miltasea.first",
+      "title": "露珠が眠る草棚",
+      "client": "高地の実採り",
+      "requestText": "鉛雲高地の実場に、三つ並ぶ濡れ跡と淡紫の膜片が落ちています。ミルタセアが低木の周りへ居着き、採り手が眠り霧を浴びました。一頭の狩猟をお願いします。尾の露珠が膨らめば後ろへ睡霧が広がります。背後なら安全だと思わず、尾の張りも確かめてください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ミルタセア 1羽を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 4,
+      "targetClearMinutes": [
+        12,
+        16
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "鉛雲高地",
+      "difficultyReasons": [
+        "後方睡霧と前方攻撃を併せ持つため、安全な側を選び直す必要がある。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q027",
+      "speciesId": "monster.talgrina",
+      "speciesName": "タルグリナ",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.talgrina.first",
+      "title": "三度鳴る左鋏",
+      "client": "河床の橋番",
+      "requestText": "枯響河床の渡り場に、三段の鋏で割られた殻と平行な擦り跡が集まっています。タルグリナが残り淵と道を行き来して、橋の点検が進みません。一頭を狩猟してください。左鋏を三度鳴らすのが帯電挟みの合図です。鋏を地面へ寄せる動作では、前方二筋の放電から退いてください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "タルグリナ 1体を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 4,
+      "targetClearMinutes": [
+        12,
+        16
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "枯響河床",
+      "difficultyReasons": [
+        "挟みと二筋放電で同じ左鋏の異なる予兆を読み分ける。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q028",
+      "speciesId": "monster.zanetolka",
+      "speciesName": "ザネトルカ",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.zanetolka.first",
+      "title": "流木に残る輪",
+      "client": "河床の木材運び",
+      "requestText": "枯響河床の流木を回収したいのですが、砂に太い転がり筋と灰黄の粒が残っています。ザネトルカが樹皮を食べながら荷道へ出ているようです。一頭を狩猟してください。後ろ三節を開けば斜めの転がり、頭を地面へ押せば毒砂の構えです。逃げ道を残しながら向きを見ましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ザネトルカ 1体を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 4,
+      "targetClearMinutes": [
+        12,
+        16
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "枯響河床",
+      "difficultyReasons": [
+        "転がりと毒砂で移動経路を制限する。方向と地面を同時に確認する。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q029",
+      "speciesId": "monster.ulnaset",
+      "speciesName": "ウルナセト",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.ulnaset.first",
+      "title": "雨を運ぶ帆",
+      "client": "断崖の水桶番",
+      "requestText": "雨裂断崖の雨受け棚に、長い濡れ筋と灰青の薄膜が増えました。ウルナセトが溜まり水を巡り、水桶を取り替える場所まで来ています。一頭を狩猟して足場を確保してください。右の樋帆が起きたら右前への水筋に備え、胴を大きく曲げた時は尾側まで間合いを広げましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ウルナセト 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 3,
+      "targetClearMinutes": [
+        10,
+        14
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "雨裂断崖",
+      "difficultyReasons": [
+        "水筋と胴払いの範囲は明瞭で、中級前半の長胴戦に向く。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q030",
+      "speciesId": "monster.nemboraf",
+      "speciesName": "ネムボラフ",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.nemboraf.first",
+      "title": "沢を塞ぐ泥層",
+      "client": "沢地の管理人",
+      "requestText": "沈根沢地の主な通路に、柱脚の大きな窪みと幾重もの泥膜が残っています。ネムボラフが浅瀬を巡る経路を変え、人の通る場所を塞いでいます。専用の狩猟区画で一頭を討伐してください。腹嚢の縁が丸まると正面の三か所へ睡泡が出ます。巨体の近くでも空いた足場を見失わないでください。",
+      "objectiveKind": "slay",
+      "objectiveText": "ネムボラフ 1頭を討伐する",
+      "count": 1,
+      "stars": 4,
+      "targetClearMinutes": [
+        18,
+        26
+      ],
+      "timeLimitMinutes": 50,
+      "proposedFieldName": "沈根沢地",
+      "difficultyReasons": [
+        "超大型の巨体と睡泡の位置確認を学ぶ。専用戦闘・討伐のみの将来案。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "超大型専用の戦闘・当たり判定・狩場・討伐処理は将来実装。捕獲は対象外。"
+      ]
+    },
+    {
+      "proposalId": "Q031",
+      "speciesId": "monster.borazeln",
+      "speciesName": "ボラゼルン",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.borazeln.first",
+      "title": "三段の庇を越えて",
+      "client": "段丘の運送組",
+      "requestText": "銅苔段丘を結ぶ緩い道に、段状の壁痕と太い根の切れ端が積もっています。ボラゼルンの採食路が運送路と重なりました。一頭を討伐し、道を使える状態へ戻してください。前の肋棚を上げたら土塊が落ちる合図。大きな体の下へ急いで入らず、棚と腹板の動きを確かめましょう。",
+      "objectiveKind": "slay",
+      "objectiveText": "ボラゼルン 1頭を討伐する",
+      "count": 1,
+      "stars": 4,
+      "targetClearMinutes": [
+        18,
+        26
+      ],
+      "timeLimitMinutes": 50,
+      "proposedFieldName": "銅苔段丘",
+      "difficultyReasons": [
+        "超大型の棚落としと地面への攻撃を読む入門。足元固定の攻撃を避ける。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "超大型専用の戦闘・当たり判定・狩場・討伐処理は将来実装。捕獲は対象外。"
+      ]
+    },
+    {
+      "proposalId": "Q032",
+      "speciesId": "monster.kudrimal",
+      "speciesName": "クドリマル",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.kudrimal.first",
+      "title": "右に乾く草",
+      "client": "台地の木材運び",
+      "requestText": "燠脈台地の枯木帯で、草が四段の高さに乾き、通り道の右側だけ熱を帯びています。クドリマルが太根を食べる場所を移したため、木材を運び出せません。一頭を討伐してください。最前の棚が開いたら右前の熱息に注意を。後ろ二棚が立つ動きでは、背後の熱泥の筋を避けましょう。",
+      "objectiveKind": "slay",
+      "objectiveText": "クドリマル 1頭を討伐する",
+      "count": 1,
+      "stars": 4,
+      "targetClearMinutes": [
+        19,
+        27
+      ],
+      "timeLimitMinutes": 50,
+      "proposedFieldName": "燠脈台地",
+      "difficultyReasons": [
+        "超大型の前後に分かれる排熱を読む。向きの把握と広い退路が必要。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "超大型専用の戦闘・当たり判定・狩場・討伐処理は将来実装。捕獲は対象外。"
+      ]
+    },
+    {
+      "proposalId": "Q033",
+      "speciesId": "monster.tosamurie",
+      "speciesName": "トサムリエ",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.tosamurie.first",
+      "title": "枝鉤の通り道",
+      "client": "樹海の枝打ち",
+      "requestText": "霧灯樹海の林縁に、二本一組の下向きの傷が続いています。トサムリエが枝を引き下ろし、人の通る道まで落葉を払い始めました。一頭の狩猟をお願いします。右肘鉤を畳んだ時は右前の風切り、両前脚を上げた時は二鉤の落下です。高く上がる鉤から目を離さないでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "トサムリエ 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 3,
+      "targetClearMinutes": [
+        10,
+        14
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "霧灯樹海",
+      "difficultyReasons": [
+        "左右の鉤と二鉤落としを区別する中級。予兆に応じた短い離脱が中心。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q034",
+      "speciesId": "monster.pukrenoa",
+      "speciesName": "プクレノア",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.pukrenoa.first",
+      "title": "匙顎が引いた溝",
+      "client": "沢地の薬草採り",
+      "requestText": "沈根沢地の採集路に、匙で引いた浅溝と淡紫の飛沫が増えています。プクレノアが根の欠片を集めるため、乾いた根丘へ渡れません。一頭を狩猟してください。匙顎を反らす動きは前方の毒霧、右頬袋が膨らむ動きは右脇の噴き出しです。霧が見えてから距離を詰めないように。",
+      "objectiveKind": "hunt",
+      "objectiveText": "プクレノア 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 4,
+      "targetClearMinutes": [
+        12,
+        16
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "沈根沢地",
+      "difficultyReasons": [
+        "毒霧の方向が複数あり、顎と頬の別々の器官を確認する必要がある。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q035",
+      "speciesId": "monster.kesalpina",
+      "speciesName": "ケサルピナ",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.kesalpina.first",
+      "title": "左頬の粉風",
+      "client": "高地の草刈り",
+      "requestText": "鉛雲高地の草場で、左側だけ倒れた道と太い尾の掃き跡が見つかりました。ケサルピナが菌を探して通り、作業者が粉風に眠らされています。一頭の狩猟を依頼します。左頬庇が開いたら、その前へ立たないでください。尾が地面から浮いた時は背後にも払いが届きます。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ケサルピナ 1羽を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 4,
+      "targetClearMinutes": [
+        12,
+        16
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "鉛雲高地",
+      "difficultyReasons": [
+        "睡粉と広い尾払いが前後を覆う。安全な側の切り替えを評価する。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q036",
+      "speciesId": "monster.riptaum",
+      "speciesName": "リプタウム",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.riptaum.first",
+      "title": "二筋の氷畝",
+      "client": "峡谷の橋直し",
+      "requestText": "氷帆峡谷の融け水の岸に、二本並ぶ氷筋と同じ幅の鋏痕が残っています。リプタウムが橋の下を採食路にして、足場へ上がってきます。一頭を狩猟してください。右畝が白く曇るのは右前への氷片列の合図です。後脚を外へ張ったら、正面へ落ちる氷塊も警戒しましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "リプタウム 1体を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 3,
+      "targetClearMinutes": [
+        10,
+        14
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "氷帆峡谷",
+      "difficultyReasons": [
+        "氷の射線と落下点を別々の予兆で判断する中級前半。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q037",
+      "speciesId": "monster.serinodam",
+      "speciesName": "セリノダム",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.serinodam.first",
+      "title": "櫂脚に灯る三点",
+      "client": "湿原の渡し守り",
+      "requestText": "根絡み湿原の渡り場に、三対の広い櫂擦れと黒くなった根先が並んでいます。セリノダムが浅瀬の餌を寄せるため、渡しの準備ができません。一頭を狩猟してください。右の櫂脚が順に灯ったら、右脇の三点へ放電します。明るくない脚へも視線を戻し、体節の叩きを見落とさないように。",
+      "objectiveKind": "hunt",
+      "objectiveText": "セリノダム 1体を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 4,
+      "targetClearMinutes": [
+        12,
+        16
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "根絡み湿原",
+      "difficultyReasons": [
+        "横三点の放電と前方打撃が重なる。器官発光と体の動きを両方読む。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q038",
+      "speciesId": "monster.nufraken",
+      "speciesName": "ヌフラケン",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.nufraken.first",
+      "title": "霜の壺腹",
+      "client": "高地の見回り",
+      "requestText": "鉛雲高地の草の窪みに、丸い腹の跡と帯状の霜が残っています。ヌフラケンが道のそばで待ち伏せし、見回りの者に噛みかかりました。一頭の狩猟をお願いします。首を高くして壺腹を締めたら氷粒の帯が来ます。腹を地面へ付ける動作では、前方の二点にも注意してください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ヌフラケン 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 3,
+      "targetClearMinutes": [
+        10,
+        14
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "鉛雲高地",
+      "difficultyReasons": [
+        "腹の膨らみと接地の違いから氷攻撃を判別する中級前半。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q039",
+      "speciesId": "monster.akaunel",
+      "speciesName": "アカウネル",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.akaunel.first",
+      "title": "四角い煤の襟",
+      "client": "鉱山の木工係",
+      "requestText": "灰鐘鉱山の朽木置き場に、匙翼で掬った灰と四角い煤跡が増えました。アカウネルが菌を啄みに通い、木工の材料へ近づけません。一頭を狩猟してください。前襟を持ち上げたら正面の火粉、右襟が赤銅色になったら右前の熱息です。襟のどこが動いたかを確かめて退きましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "アカウネル 1羽を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 3,
+      "targetClearMinutes": [
+        10,
+        14
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "灰鐘鉱山",
+      "difficultyReasons": [
+        "襟の部位と色から火攻撃の方向を読む中級。単発の差し込みを学ぶ。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q040",
+      "speciesId": "monster.tsumarobek",
+      "speciesName": "ツマロベク",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.tsumarobek.first",
+      "title": "腹甲の三拍",
+      "client": "鉱山の点検係",
+      "requestText": "灰鐘鉱山の点検路で、丸い腹甲の跡と根を切った掘り溝が見つかりました。ツマロベクが鉱床沿いを掘るため、支えの確認に入れません。一頭の狩猟を頼みます。腹甲が三度脈打ったら正面への放電です。胸下へ潜り続けず、腹甲の縁が広がる押し潰しの構えにも備えてください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ツマロベク 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 4,
+      "targetClearMinutes": [
+        12,
+        16
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "灰鐘鉱山",
+      "difficultyReasons": [
+        "前方放電と胸下の押し潰しで張り付き位置を変える必要がある。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q041",
+      "speciesId": "monster.furemsad",
+      "speciesName": "フレムサド",
+      "speciesRank": "rank.2",
+      "questId": "quest.design.furemsad.first",
+      "title": "潮溜まりの霧鰭",
+      "client": "浜の水路直し",
+      "requestText": "硝砂海岸の浅い水路に、二本の濡れ筋と強く打って割れた殻が増えています。フレムサドが餌を割る場所を移し、作業の足場を使えません。一頭を狩猟してください。喉鰭を左右へ張ったら正面二筋の霧噴きです。鈍い尾を高く立てた時は、後方一点への叩きにも気を配りましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "フレムサド 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 3,
+      "targetClearMinutes": [
+        10,
+        14
+      ],
+      "timeLimitMinutes": 35,
+      "proposedFieldName": "硝砂海岸",
+      "difficultyReasons": [
+        "二筋の前方攻撃と一点の後方攻撃を読む中級前半。位置取りが明確。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q042",
+      "speciesId": "monster.grasedon",
+      "speciesName": "グラセドン",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.grasedon.first",
+      "title": "帰路に開く裂扇",
+      "client": "受付ミナギ",
+      "requestText": "風礫盆地の荷道に、左だけ深い擦れと扇形の殻片が残っています。グラセドンが温かい露頭を巡る途中で道を使い、里への運搬が止まりました。一頭の狩猟をお願いします。左背の扇が開けば熱砂払いの構えです。扇板が震えた時は三点の熱礫も来るので、背の動きを追ってください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "グラセドン 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        15,
+        20
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "風礫盆地",
+      "difficultyReasons": [
+        "片側熱砂と三点落下の連携を読む上級後半。通常ガルドロスの回避癖だけでは通用しない。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q043",
+      "speciesId": "monster.ryuzelka",
+      "speciesName": "リュゼルカ",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.ryuzelka.first",
+      "title": "二枚帆の白い朝",
+      "client": "盆地の巡路番",
+      "requestText": "風礫盆地の北斜面で、二段の霜の弧が荷道を横切っています。リュゼルカが草芽のある場所へ移り、細長い通路で角を振るうため通れません。一頭を狩猟してください。下帆が白くなれば氷粒、上帆が横を向けば風払いの合図です。上下の帆を一つの予兆として見ないように。",
+      "objectiveKind": "hunt",
+      "objectiveText": "リュゼルカ 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        15,
+        20
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "風礫盆地",
+      "difficultyReasons": [
+        "二枚の帆が氷・風を別々に扱い、跳躍も加わるため上級後半に置く。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q044",
+      "speciesId": "monster.mordine",
+      "speciesName": "モルディネ",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.mordine.first",
+      "title": "三段冠の水路",
+      "client": "湿原の水路番",
+      "requestText": "根絡み湿原の修繕路に、冠が削った三本の溝と泥の輪が見つかりました。モルディネが塊根を掘る場所を水路へ広げています。一頭の狩猟をお願いします。冠の三段が揺れた時は、水弾が間を空けて三度来ます。最初の一発を避けた勢いで正面へ戻らないようにしてください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "モルディネ 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 5,
+      "targetClearMinutes": [
+        12,
+        17
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "根絡み湿原",
+      "difficultyReasons": [
+        "三連水弾を待つ判断が必要だが、射線と予兆を明瞭にする上級前半。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q045",
+      "speciesId": "monster.doberken",
+      "speciesName": "ドベルケン",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.doberken.first",
+      "title": "鐘の止まる一拍",
+      "client": "鉱山の坑口番",
+      "requestText": "灰鐘鉱山の分岐広場に、左だけ二重の曳き跡と琥珀色の膜が落ちています。ドベルケンが広場を食べ場にし、点検隊を入れられません。一頭を狩猟してください。三つの嚢が止まっても安全とは限りません。間を置いた震音が来るため、音が途切れた瞬間こそ正面を空けましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ドベルケン 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        15,
+        20
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "灰鐘鉱山",
+      "difficultyReasons": [
+        "二拍震音・放電・遅延震音が混在し、止まる予兆を見切る必要がある。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q046",
+      "speciesId": "monster.shilhatora",
+      "speciesName": "シルハトラ",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.shilhatora.first",
+      "title": "三つに分かれた燐",
+      "client": "海岸の荷受け",
+      "requestText": "硝砂海岸の荷受け場へ、三つに分かれた尾の擦り跡が続いています。シルハトラが潮溜まりから砂州へ出て、荷を下ろす足場に放電します。一頭の狩猟を頼みます。中央の尾が灯れば正面、枝尾ならその側の斜めへ電気が走ります。光った節の位置を見て逃げる側を選んでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "シルハトラ 1羽を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        15,
+        20
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "硝砂海岸",
+      "difficultyReasons": [
+        "三方向の発光識別と位置変更を繰り返す上級後半。射線を先読みする。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q047",
+      "speciesId": "monster.kuzanerio",
+      "speciesName": "クザネリオ",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.kuzanerio.first",
+      "title": "反り殻の氷筋",
+      "client": "海岸の橋直し",
+      "requestText": "硝砂海岸の岩棚に、低い鋏の一本線と外へ反った殻片が残っています。クザネリオが橋の取り付きに居着き、作業者へ氷を滑らせます。一頭を狩猟してください。反り殻が白くなったら前方の氷片、鋏を左右へ開いたら時間差の挟みです。一度の回避で止まらず、両鋏が閉じるまで見ましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "クザネリオ 1体を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 5,
+      "targetClearMinutes": [
+        12,
+        18
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "硝砂海岸",
+      "difficultyReasons": [
+        "氷の列と時間差挟みを導入する上級前半。明瞭な単方向予兆を維持する。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q048",
+      "speciesId": "monster.fesrami",
+      "speciesName": "フェスラミ",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.fesrami.first",
+      "title": "三本の糸の結び目",
+      "client": "湿原の薬草採り",
+      "requestText": "根絡み湿原の採集路で、三本が一点へ結ばれた糸が増えています。フェスラミが根棚の菌床を広げ、道の葉にも毒の斑点が付き始めました。一頭の狩猟をお願いします。胸の結節が膨らんだら前方の三本毒糸です。結節が二度鳴る時は二射の間が空くので、早く踏み込まないでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "フェスラミ 1体を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        15,
+        20
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "根絡み湿原",
+      "difficultyReasons": [
+        "複数毒糸と遅い二射が進入経路を制限する。攻撃後の安全確認も必要。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q049",
+      "speciesId": "monster.elmejika",
+      "speciesName": "エルメジカ",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.elmejika.first",
+      "title": "六灯の消える時",
+      "client": "樹海の道標守り",
+      "requestText": "霧灯樹海の冷たい尾根に、三点ずつ並ぶ霜粒が落ちています。エルメジカが見回り道を通り、霜霧球の残る場所へ道標を直しに行けません。一頭を狩猟してください。灯節の左右で球の出る側が変わります。六灯が暗くなる動作も攻撃の前兆なので、光が消えても近寄らないでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "エルメジカ 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        15,
+        20
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "霧灯樹海",
+      "difficultyReasons": [
+        "左右三球と消灯後の霜吐きで、発光だけを追う判断を崩す上級後半。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q050",
+      "speciesId": "monster.azelnoto",
+      "speciesName": "アゼルノト",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.azelnoto.first",
+      "title": "水枕の長い跡",
+      "client": "河床の測り手",
+      "requestText": "枯響河床の測量路に、平行な水の輪と短い肢の点跡が続いています。アゼルノトが砂利を持ち上げながら歩き、杭を打ち直す場所へ近づけません。一頭の狩猟を頼みます。前の水枕が膨らめば直線の水筋です。腹環が順に上がる動きでは、長い体の滑り出しから離れてください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "アゼルノト 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 5,
+      "targetClearMinutes": [
+        12,
+        17
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "枯響河床",
+      "difficultyReasons": [
+        "長胴と水流の距離を読む上級前半。遅延や複合状態異常は加えない。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q051",
+      "speciesId": "monster.bezrakio",
+      "speciesName": "ベズラキオ",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.bezrakio.first",
+      "title": "蒸帆の左右",
+      "client": "台地の巡路番",
+      "requestText": "燠脈台地の低木道に、板帆の短い擦り筋と琥珀色の樹脂が残っています。ベズラキオが採食に通うようになり、巡回の者が熱粒に阻まれています。一頭を狩猟してください。胸嚢が膨らめば正面の熱噴き、片帆が起きればその側の火粒です。胴の横へ移る時も帆を確かめましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ベズラキオ 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 5,
+      "targetClearMinutes": [
+        12,
+        18
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "燠脈台地",
+      "difficultyReasons": [
+        "胸と左右帆で火攻撃の方向を読む。範囲は明瞭に限定する上級前半。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q052",
+      "speciesId": "monster.murzenato",
+      "speciesName": "ムルゼナト",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.murzenato.first",
+      "title": "内向きの鉤、濁る足場",
+      "client": "沢地の根橋番",
+      "requestText": "沈根沢地の根橋の下に、二列の三日月形の穴が増えています。ムルゼナトが根の表面を削り、通路へ麻痺泥を押し出してきました。一頭の狩猟をお願いします。前節を持ち上げたら泥粒、全鉤を内へ寄せたら斜めの転がりです。泥を避けた先が転がる道にならないようにしてください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ムルゼナト 1体を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        15,
+        20
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "沈根沢地",
+      "difficultyReasons": [
+        "麻痺泥と横滑り・転がりで回避先を選ぶ上級後半。地面と進路を同時に読む。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q053",
+      "speciesId": "monster.hauremika",
+      "speciesName": "ハウレミカ",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.hauremika.first",
+      "title": "左帷の眠る棚",
+      "client": "窪地の菌採り",
+      "requestText": "灰繭窪地の根棚に、緑灰色の胞子帯が左側だけ残っています。ハウレミカが採集場所を使うようになり、かごを回収する者まで眠り霧を浴びました。一頭を狩猟してください。左帷が震えたらその前へ出ないこと。霧を避けた後も、右翼から始まる滑り蹴りを確認しましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ハウレミカ 1羽を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        15,
+        20
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "灰繭窪地",
+      "difficultyReasons": [
+        "睡眠霧と反対側への滑り蹴りが続く位置関係を読む上級後半。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q054",
+      "speciesId": "monster.zedbanil",
+      "speciesName": "ゼドバニル",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.zedbanil.first",
+      "title": "銅炉の二筋",
+      "client": "洞庭の鉱床番",
+      "requestText": "冷銅洞庭の鉱床前に、胸板で擦った二本の銅色の帯が残っています。ゼドバニルが菌塊を食べに来るため、道具を置いた場所へ戻れません。一頭の狩猟を依頼します。胸板が左右へ開けば二筋の放電、背口が閉じれば胸近くへの放電です。正面を外しても、胸下へすぐ潜らないでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ゼドバニル 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        15,
+        20
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "冷銅洞庭",
+      "difficultyReasons": [
+        "遠近で別の放電を使う。接近成功後の位置を選び直す上級後半。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q055",
+      "speciesId": "monster.oldasem",
+      "speciesName": "オルダセム",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.oldasem.first",
+      "title": "三段棚を通す道",
+      "client": "回廊の輸送組",
+      "requestText": "響礫回廊の岩壁に、左だけ三段に削れた傷が続いています。オルダセムの採食路が輸送路と重なり、迂回する荷車も通せません。一頭を討伐してください。棚が一段ずつ上がると、一段目は左前、二段目は左横へ向かう風筋が来ます。三枚が傾く時は足元の礫も順に落ちるので、巨体の下に留まらないように。",
+      "objectiveKind": "slay",
+      "objectiveText": "オルダセム 1頭を討伐する",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        20,
+        30
+      ],
+      "timeLimitMinutes": 50,
+      "proposedFieldName": "響礫回廊",
+      "difficultyReasons": [
+        "超大型の段別風筋と順次落下を読む。視野と退路管理を要求する。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "超大型専用の戦闘・当たり判定・狩場・討伐処理は将来実装。捕獲は対象外。"
+      ]
+    },
+    {
+      "proposalId": "Q056",
+      "speciesId": "monster.nuolvan",
+      "speciesName": "ヌオルヴァン",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.nuolvan.first",
+      "title": "三腹室の水音",
+      "client": "沢地の水路番",
+      "requestText": "沈根沢地の岸に、平行なひげ筋と小石だけの帯が増えました。ヌオルヴァンが根を持ち上げる場所を変え、人の渡り口へ水を吐いています。一頭を討伐してください。左右の腹孔で噴く側が変わります。三腹室が膨らんだ時は時間差の三方向水筋です。最初に避けた場所へ立ち止まらないでください。",
+      "objectiveKind": "slay",
+      "objectiveText": "ヌオルヴァン 1頭を討伐する",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        20,
+        30
+      ],
+      "timeLimitMinutes": 50,
+      "proposedFieldName": "沈根沢地",
+      "difficultyReasons": [
+        "超大型の三方向時間差攻撃を追う。腹孔の識別と移動継続が必要。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "超大型専用の戦闘・当たり判定・狩場・討伐処理は将来実装。捕獲は対象外。"
+      ]
+    },
+    {
+      "proposalId": "Q057",
+      "speciesId": "monster.tarhegna",
+      "speciesName": "テムソギア",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.tarhegna.first",
+      "title": "籠晶の影が落ちる原",
+      "client": "裂原の調査組",
+      "requestText": "玻璃裂原の調査路に、三本の弧状傷と中空の肋片が見つかりました。テムソギアが晶脈の畝を巡り、調査杭の周囲へ熱礫を落としています。一頭を討伐してください。籠肋が順に傾く動きでは三点へ落下が続きます。光る肋の側を確かめ、足元の影にも気を配って退いてください。",
+      "objectiveKind": "slay",
+      "objectiveText": "テムソギア 1頭を討伐する",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        20,
+        30
+      ],
+      "timeLimitMinutes": 50,
+      "proposedFieldName": "玻璃裂原",
+      "difficultyReasons": [
+        "超大型の左右熱粒と三点落下を読む。広い攻撃でも空白を必ず示す設計。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "超大型専用の戦闘・当たり判定・狩場・討伐処理は将来実装。捕獲は対象外。",
+        "表示名テムソギアの恒久IDはmonster.tarhegnaを維持する。"
+      ]
+    },
+    {
+      "proposalId": "Q058",
+      "speciesId": "monster.porgamis",
+      "speciesName": "ポルガミス",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.porgamis.first",
+      "title": "箒顎の掃き残し",
+      "client": "盆地の道普請",
+      "requestText": "風礫盆地の工事道が半円に掃かれ、外側へ礫が積まれています。ポルガミスが草根をふるう場所を広げ、石を運ぶ者へ弾き飛ばしました。一頭を狩猟してください。下顎を左へ撓めたら、礫は右へ飛びます。顎の振り始めだけで判断せず、飛ばされる先の空間を確かめましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ポルガミス 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 5,
+      "targetClearMinutes": [
+        12,
+        17
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "風礫盆地",
+      "difficultyReasons": [
+        "構えと飛ぶ方向が逆になる顎払いを学ぶ。状態異常に頼らない上級前半。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q059",
+      "speciesId": "monster.yarlshena",
+      "speciesName": "ヤルシェナ",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.yarlshena.first",
+      "title": "鞍頬の風下",
+      "client": "樹海の巡回係",
+      "requestText": "霧灯樹海の平場に、鞍形の頬擦りと灰白の点列が増えました。ヤルシェナが樹液を探して通り、巡回路へ微滴を吹き付けてきます。一頭の狩猟をお願いします。膨らむ頬が左右どちらかを確かめて、風の来ない側へ退いてください。風を避けた後の斜めの蹴り返しにも間合いを残しましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ヤルシェナ 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 5,
+      "targetClearMinutes": [
+        12,
+        18
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "霧灯樹海",
+      "difficultyReasons": [
+        "左右頬と蹴り返しの距離を読む上級前半。方向判断を中心に評価する。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q060",
+      "speciesId": "monster.pizelta",
+      "speciesName": "ピゼルタ",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.pizelta.first",
+      "title": "扇趾が踏む白い棚",
+      "client": "峡谷の案内人",
+      "requestText": "氷帆峡谷の岩棚に、三葉の扇形をした足跡が続いています。ピゼルタが薄氷の下を探るため、案内路へ出るたび霜を踏み散らしています。一頭を狩猟してください。片足の扇趾と両足の白い光は別の予兆です。両趾が白くなったら前方二点の霜踏みに備え、着地の前へ入らないように。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ピゼルタ 1羽を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 5,
+      "targetClearMinutes": [
+        12,
+        18
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "氷帆峡谷",
+      "difficultyReasons": [
+        "片足と両足の構えを識別する。滑走後の間合い確認も課す上級前半。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q061",
+      "speciesId": "monster.damorikus",
+      "speciesName": "ダモリクス",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.damorikus.first",
+      "title": "壺底に残る毒の輪",
+      "client": "河床の水汲み",
+      "requestText": "枯響河床の水汲み場に、左側だけ丸い押し跡と紫の輪が残っています。ダモリクスが浅い水溜まりを使い、桶を置く岸へ毒水を吐きます。一頭の狩猟を頼みます。左壺鋏を傾けたら低い毒水弾、両鋏を下げたら時間差の交差挟みです。毒を避けても正面へ急いで戻らないでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ダモリクス 1体を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        15,
+        20
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "枯響河床",
+      "difficultyReasons": [
+        "毒水の地帯と時間差挟みで回避後の位置を制限する上級後半。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q062",
+      "speciesId": "monster.isarnem",
+      "speciesName": "イサルネム",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.isarnem.first",
+      "title": "帽殻の下の二つの気配",
+      "client": "窪地の菌採り",
+      "requestText": "灰繭窪地の根棚に、灰色の胞子と琥珀色の樹脂が並んで落ちています。イサルネムが菌糸を食べる棚を広げ、採り手が道を使えません。一頭を狩猟してください。上帽を持ち上げる動きは眠り胞子、左右の帽を開く動きは熱粒です。同じ頭の動きでも、開く房を見分けましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "イサルネム 1体を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        15,
+        20
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "灰繭窪地",
+      "difficultyReasons": [
+        "睡眠と左右の熱粒を使い分ける。器官別の判断と時間差回避が必要。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q063",
+      "speciesId": "monster.regsanio",
+      "speciesName": "レグサニオ",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.regsanio.first",
+      "title": "左盤の濡れる時",
+      "client": "洞庭の点検係",
+      "requestText": "冷銅洞庭の点検路に、左だけ半円の擦り跡と灰青の膜が残っています。レグサニオが滴水場を巡り、足場へ粘液を残していました。一頭を狩猟してください。左盤が反れば放電、盤縁が濡れれば麻痺粘液の合図です。電気だけを避けて盤のすぐ脇へ留まらないように。",
+      "objectiveKind": "hunt",
+      "objectiveText": "レグサニオ 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        15,
+        20
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "冷銅洞庭",
+      "difficultyReasons": [
+        "雷と麻痺粘液が同じ器官から別の予兆で出る。状態異常の連鎖を避ける。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q064",
+      "speciesId": "monster.rupenias",
+      "speciesName": "ルペニアス",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.rupenias.first",
+      "title": "前と後ろの眠り袋",
+      "client": "回廊の荷運び",
+      "requestText": "響礫回廊の荷道に、前後へずれた丸い擦り跡と灰白の粒が見つかりました。ルペニアスが草根を探して道へ寄り、眠り霧で運搬を止めています。一頭の狩猟を頼みます。左肩は前へ、右肩は後ろへ膨らみます。袋の左右だけでなく、霧が出る前後も確かめて離れてください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ルペニアス 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        15,
+        20
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "響礫回廊",
+      "difficultyReasons": [
+        "左右非対称の前後睡眠範囲を読む。背後へ回るだけでは安全にならない。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q065",
+      "speciesId": "monster.sograpin",
+      "speciesName": "ソグラピン",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.sograpin.first",
+      "title": "刻まれた踵の道",
+      "client": "裂原の道直し",
+      "requestText": "玻璃裂原の平場に、四角い溝の付いた後足跡が続いています。ソグラピンが蹄を整える場所を作業路へ移し、晶片を蹴り飛ばしてきます。一頭を狩猟してください。両踵が白くなれば前方二点へ氷板が飛びます。頭を下げて止まる構えにも一拍遅い額突きがあるので、停止を隙と決めつけないでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ソグラピン 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 5,
+      "targetClearMinutes": [
+        13,
+        18
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "玻璃裂原",
+      "difficultyReasons": [
+        "踵の発光と遅い額突きを読む上級前半。短い待ちを見切る練習。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q066",
+      "speciesId": "monster.makuejira",
+      "speciesName": "マクエジラ",
+      "speciesRank": "rank.3",
+      "questId": "quest.design.makuejira.first",
+      "title": "梯胸の上下",
+      "client": "断崖の巡路番",
+      "requestText": "雨裂断崖の道に、梯胸骨の段状の傷と灰紫の点列が残っています。マクエジラが虫を探す岩棚を広げ、見回りの者へ毒風を吹きます。一頭を狩猟してください。胸の上段と下段では、風筋の高さが違います。胸骨が順に閉じる動作では二筋が間を空けて来るため、先に飛び込まないように。",
+      "objectiveKind": "hunt",
+      "objectiveText": "マクエジラ 1羽を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 6,
+      "targetClearMinutes": [
+        15,
+        20
+      ],
+      "timeLimitMinutes": 40,
+      "proposedFieldName": "雨裂断崖",
+      "difficultyReasons": [
+        "毒風の上下と時間差を同時に識別する。短い連撃の待ちが必要。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q067",
+      "speciesId": "monster.gumesald",
+      "speciesName": "グメサルド",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.gumesald.first",
+      "title": "熱と電を継ぐ岩殻",
+      "client": "石原の警戒隊",
+      "requestText": "伏熱石原の帰路に、焦げた小石の列と裏だけ銅色の殻片が残っています。グメサルドが冷たい縁へ出るようになり、人の退路まで塞いでいます。一頭を狩猟してください。胸の晶筋がつながれば地表放電、左右の頭冠が開けば中央の空いた熱砂です。光だけでなく、開く板の位置を見てください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "グメサルド 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 8,
+      "targetClearMinutes": [
+        18,
+        25
+      ],
+      "timeLimitMinutes": 45,
+      "proposedFieldName": "伏熱石原",
+      "difficultyReasons": [
+        "火・雷・左右二拍・空白付き射線を複合する極級最高段。予兆の識別精度を問う。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q068",
+      "speciesId": "monster.nericaus",
+      "speciesName": "ネリカウス",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.nericaus.first",
+      "title": "開いた燐輪の風",
+      "client": "高原の見回り隊",
+      "requestText": "錆星高原の尾根道に、途切れた輪の擦り跡と湾曲した薄片が落ちています。ネリカウスが藻場を巡り、通行者の足元へ痺電を走らせます。一頭の狩猟をお願いします。尾輪の下節だけが灯る動きは足元一列の電気です。喉が二度膨らむ時は二発の風弾を最後まで見切ってください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ネリカウス 1羽を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 8,
+      "targetClearMinutes": [
+        18,
+        25
+      ],
+      "timeLimitMinutes": 45,
+      "proposedFieldName": "錆星高原",
+      "difficultyReasons": [
+        "雷・風・麻痺と滑走後の追撃が混在する。発光箇所と連続数を読む極級。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q069",
+      "speciesId": "monster.voltena",
+      "speciesName": "ヴォルテナ",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.voltena.first",
+      "title": "三層の帷、濡れる帰路",
+      "client": "樹洞の調査隊",
+      "requestText": "深帷樹洞の低い根に、太い毒糸と三本の湿った曳き跡が重なっています。ヴォルテナの食べ場が調査の帰路まで広がりました。一頭を狩猟し、隊が戻る足場を確保してください。上房・下房・尾糸で攻撃が分かれます。三房が下から波打ったら、時間差で落ちる毒液を見失わないでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ヴォルテナ 1体を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 8,
+      "targetClearMinutes": [
+        18,
+        25
+      ],
+      "timeLimitMinutes": 45,
+      "proposedFieldName": "深帷樹洞",
+      "difficultyReasons": [
+        "三層器官の水・霧・毒と時間差滴下を識別する。複数範囲の管理を要求する。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q070",
+      "speciesId": "monster.kitolnam",
+      "speciesName": "キトルナム",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.kitolnam.first",
+      "title": "折帆が伏せる洞庭",
+      "client": "洞庭の警戒隊",
+      "requestText": "冷銅洞庭の鉱泉道に、内側へ倒れた薄氷と小さな眠霧滴が残っています。キトルナムが通路を巡り、点検隊が引き返せなくなりました。一頭を狩猟してください。左右の折帆と首の動きを分けて見ましょう。帆を順に伏せる時は氷塊が落ちるため、横へ退いた後も着地点を確認してください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "キトルナム 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 8,
+      "targetClearMinutes": [
+        18,
+        25
+      ],
+      "timeLimitMinutes": 45,
+      "proposedFieldName": "冷銅洞庭",
+      "difficultyReasons": [
+        "氷列・冷霧・睡眠二発・落下を読み分ける極級。回避後の足場確認が必須。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q071",
+      "speciesId": "monster.segranio",
+      "speciesName": "セオルミド",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.segranio.first",
+      "title": "二つの環が向く先",
+      "client": "受付ミナギ",
+      "requestText": "重霧環谷の帰路に、大小二つの環擦れと六点の水滴跡が見つかりました。セオルミドが斜面を巡る経路と、人の道が重なっています。一頭の狩猟をお願いします。大小の環を順に向けたら、低い霧弾の後へ遅い風弾が続きます。一つ目を避けても、二つ目の予兆から目を離さないでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "セオルミド 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 8,
+      "targetClearMinutes": [
+        18,
+        25
+      ],
+      "timeLimitMinutes": 45,
+      "proposedFieldName": "重霧環谷",
+      "difficultyReasons": [
+        "上下の弾道・左右の跳躍・遅い追撃を統合する最終候補。HPだけに頼らない。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。",
+        "表示名セオルミドの恒久IDはmonster.segranioを維持する。ストーリーPR #7の終盤候補との接続は別途設計。"
+      ]
+    },
+    {
+      "proposalId": "Q072",
+      "speciesId": "monster.dekoranze",
+      "speciesName": "デコランゼ",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.dekoranze.first",
+      "title": "右腹の熱い畝",
+      "client": "石原の輸送隊",
+      "requestText": "伏熱石原の輸送路に、右側だけ暖かい土筋と大きな根束が積もっています。デコランゼが冷却棚へ通い、長い荷列を進められません。一頭を討伐してください。腹畝が後ろから灯る時は右側三点へ熱滴が落ちます。大きな足から離れる際も、右腹の下を退路に選ばないようにしましょう。",
+      "objectiveKind": "slay",
+      "objectiveText": "デコランゼ 1頭を討伐する",
+      "count": 1,
+      "stars": 8,
+      "targetClearMinutes": [
+        23,
+        30
+      ],
+      "timeLimitMinutes": 50,
+      "proposedFieldName": "伏熱石原",
+      "difficultyReasons": [
+        "超大型の偏った排熱と重い踏み・尾を管理する。専用の広さと見通しが前提。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "超大型専用の戦闘・当たり判定・狩場・討伐処理は将来実装。捕獲は対象外。"
+      ]
+    },
+    {
+      "proposalId": "Q073",
+      "speciesId": "monster.fusaldom",
+      "speciesName": "フサルドム",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.fusaldom.first",
+      "title": "肩礁を通す谷",
+      "client": "峡谷の警戒隊",
+      "requestText": "氷帆峡谷の広い谷底へ、平たい氷塊の擦れ線が増えました。フサルドムが鉱泉と採食場を往復し、里へ戻る一行の道を塞いでいます。一頭を討伐してください。左肩礁がせり上がる時と右肩礁が白く割れる時では攻撃が違います。交互に傾く二拍の氷滑りも、最後まで見て退きましょう。",
+      "objectiveKind": "slay",
+      "objectiveText": "フサルドム 1頭を討伐する",
+      "count": 1,
+      "stars": 8,
+      "targetClearMinutes": [
+        23,
+        30
+      ],
+      "timeLimitMinutes": 50,
+      "proposedFieldName": "氷帆峡谷",
+      "difficultyReasons": [
+        "超大型の左右で異なる氷攻撃と二拍滑りを読む。足元の巨体遮蔽にも配慮する。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "超大型専用の戦闘・当たり判定・狩場・討伐処理は将来実装。捕獲は対象外。"
+      ]
+    },
+    {
+      "proposalId": "Q074",
+      "speciesId": "monster.rimposera",
+      "speciesName": "リムポセラ",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.rimposera.first",
+      "title": "四つの袋の潮待ち",
+      "client": "海岸の船出係",
+      "requestText": "硝砂海岸の干潟に、角張った四つの水跡と灰緑の藻が残っています。リムポセラが砂洲を横切るため、船具を岸へ運べません。一頭の討伐をお願いします。四袋が順に縮む時には、空白を残して水滴が落ちます。袋の順序を見て空いた場所へ移り、眠水弾の来る左側にも注意してください。",
+      "objectiveKind": "slay",
+      "objectiveText": "リムポセラ 1頭を討伐する",
+      "count": 1,
+      "stars": 8,
+      "targetClearMinutes": [
+        23,
+        30
+      ],
+      "timeLimitMinutes": 50,
+      "proposedFieldName": "硝砂海岸",
+      "difficultyReasons": [
+        "超大型の四袋・睡眠・空白付き落下を扱う。個々の袋の予兆と順番の読解が必要。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "超大型専用の戦闘・当たり判定・狩場・討伐処理は将来実装。捕獲は対象外。"
+      ]
+    },
+    {
+      "proposalId": "Q075",
+      "speciesId": "monster.dalhoina",
+      "speciesName": "ダルホイナ",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.dalhoina.first",
+      "title": "三梁の風を越える",
+      "client": "断崖の輸送隊",
+      "requestText": "雨裂断崖の頂上棚で、三つの高さの梁擦れと寝た草束が道へ続いています。ダルホイナが草の盆を巡り、輸送隊の帰路を塞ぎました。一頭を討伐してください。前・中央・後ろの梁で風の向きが変わります。三梁が前から順に開いたら、間隔のある三発の風塊に備えてください。",
+      "objectiveKind": "slay",
+      "objectiveText": "ダルホイナ 1頭を討伐する",
+      "count": 1,
+      "stars": 8,
+      "targetClearMinutes": [
+        23,
+        30
+      ],
+      "timeLimitMinutes": 50,
+      "proposedFieldName": "雨裂断崖",
+      "difficultyReasons": [
+        "超大型の前後左右の風筋と三連風塊を読む。長い連続に対する移動管理を課す。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "超大型専用の戦闘・当たり判定・狩場・討伐処理は将来実装。捕獲は対象外。"
+      ]
+    },
+    {
+      "proposalId": "Q076",
+      "speciesId": "monster.zonikebal",
+      "speciesName": "ゾニケバル",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.zonikebal.first",
+      "title": "砕板に残る火花",
+      "client": "高原の見回り隊",
+      "requestText": "錆星高原の荷道に、縦に割れた骨と銅色の粉が散っています。ゾニケバルが死肉を集める窪みを道際へ変え、見回りの者へ突進してきました。一頭を狩猟してください。右胸板の熱と左胸板の火花は別の攻撃です。板が二度触れた後は遅い熱電片が来るため、胸の前を急いで通らないように。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ゾニケバル 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 8,
+      "targetClearMinutes": [
+        18,
+        25
+      ],
+      "timeLimitMinutes": 45,
+      "proposedFieldName": "錆星高原",
+      "difficultyReasons": [
+        "火と雷を左右胸板で切り替え、遅延弾も使う。高い前半身の視認が鍵。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q077",
+      "speciesId": "monster.ludopanea",
+      "speciesName": "ルドパネア",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.ludopanea.first",
+      "title": "顎帆の孔が白む時",
+      "client": "洞庭の水路隊",
+      "requestText": "冷銅洞庭の水路に、等間隔の水滴穴と氷粒が並び始めました。ルドパネアが獲物を岸へ追う場所を移し、人の取水口へ出ています。一頭の狩猟を依頼します。左顎帆は水筋、右の白い孔は氷粒の前兆です。二枚が順に膨らむ時には、水弾の後から遅い氷弾が続くことも忘れないでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ルドパネア 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 8,
+      "targetClearMinutes": [
+        18,
+        25
+      ],
+      "timeLimitMinutes": 45,
+      "proposedFieldName": "冷銅洞庭",
+      "difficultyReasons": [
+        "水と氷の左右差・二段跳躍・遅延弾を組み合わせる。複数予兆を保つ極級。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q078",
+      "speciesId": "monster.salpinoc",
+      "speciesName": "サルピノク",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.salpinoc.first",
+      "title": "帷風の後の鋏",
+      "client": "環谷の巡回隊",
+      "requestText": "重霧環谷の根棚に、右鋏の深い線と左だけの露の輪が残っています。サルピノクが巡回路に伏せ、通る者へ毒霧を向けてきます。一頭を狩猟してください。帷甲を二度振った時は、横風の後へ遅い右鋏突きが続きます。風から逃れた直後も、右鋏の向きを確かめてから攻撃しましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "サルピノク 1体を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 8,
+      "targetClearMinutes": [
+        18,
+        25
+      ],
+      "timeLimitMinutes": 45,
+      "proposedFieldName": "重霧環谷",
+      "difficultyReasons": [
+        "風で位置を変えさせた後の遅い鋏と毒霧を読む。回避後の追撃確認を課す。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q079",
+      "speciesId": "monster.hemzario",
+      "speciesName": "ヘムザリオ",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.hemzario.first",
+      "title": "三節額の明かり",
+      "client": "鉱山の警戒隊",
+      "requestText": "灰鐘鉱山の坑口に、三つ隣接した打痕と短い焦げ筋が増えました。ヘムザリオが殻の厚い獲物を探し、作業者の道へ頭を振り込んできます。一頭の狩猟をお願いします。額甲の左・右・中央は、それぞれ別の電撃の構えです。左右へ振る二回の額払いも、一回で終わりと考えないでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ヘムザリオ 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 8,
+      "targetClearMinutes": [
+        18,
+        25
+      ],
+      "timeLimitMinutes": 45,
+      "proposedFieldName": "灰鐘鉱山",
+      "difficultyReasons": [
+        "三節の雷・麻痺と二拍頭払いを識別する。正面の短い予兆へ過度な強化を加えない。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q080",
+      "speciesId": "monster.pasnelim",
+      "speciesName": "パスネリム",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.pasnelim.first",
+      "title": "逆穂の静かな構え",
+      "client": "高地の警戒隊",
+      "requestText": "鉛雲高地の草道に、横跳びで離れた足跡と灰緑の眠粉が残っています。パスネリムが小獣を追って道へ入り、見回りが通れません。一頭を狩猟してください。四帆が前へ揃えば眠粉の気流、全帆を伏せて静止したら跳び込みの構えです。静かになった時こそ、次の飛び先をよく見ましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "パスネリム 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 8,
+      "targetClearMinutes": [
+        18,
+        25
+      ],
+      "timeLimitMinutes": 45,
+      "proposedFieldName": "鉛雲高地",
+      "difficultyReasons": [
+        "睡眠の気流と横跳び・静止後の攻撃で追い込みを崩す。予兆を待つ判断が必要。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q081",
+      "speciesId": "monster.zaclatom",
+      "speciesName": "ザクラトム",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.zaclatom.first",
+      "title": "三角喉の灯る順",
+      "client": "台地の運搬係",
+      "requestText": "燠脈台地の冷却棚に、短い扇尾の跡と琥珀色の脂晶が見つかりました。ザクラトムが死肉を引き寄せる場所を変え、荷の道へ居着いています。一頭の狩猟をお願いします。三角の喉嚢が上から灯ったら熱弾が三発、間隔を空けて来ます。最初の弾を避けてすぐ正面へ踏み込まないでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ザクラトム 1羽を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 7,
+      "targetClearMinutes": [
+        15,
+        22
+      ],
+      "timeLimitMinutes": 45,
+      "proposedFieldName": "燠脈台地",
+      "difficultyReasons": [
+        "純火系の方向と三発の間を読む極級前半。複合状態異常を重ねない。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q082",
+      "speciesId": "monster.izoflane",
+      "speciesName": "イゾフラネ",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.izoflane.first",
+      "title": "湧皿の空白",
+      "client": "河床の渡し守り",
+      "requestText": "枯響河床の渡り場に、半円の掬い跡と長い足甲の線が残っています。イゾフラネが浅瀬の獲物を岸へ寄せ、船を着ける場所へ出てきます。一頭を狩猟してください。翼皿が交互に傾く時は、空白を残した二筋の水押しです。水流だけを追わず、長い右足の構えにも間合いを残しましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "イゾフラネ 1羽を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 7,
+      "targetClearMinutes": [
+        15,
+        22
+      ],
+      "timeLimitMinutes": 45,
+      "proposedFieldName": "枯響河床",
+      "difficultyReasons": [
+        "水流の空白と長い脚の距離を読む極級前半。明確な安全域を使う。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q083",
+      "speciesId": "monster.queribas",
+      "speciesName": "クェリバス",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.queribas.first",
+      "title": "氷櫛の二度目",
+      "client": "裂原の警戒隊",
+      "requestText": "玻璃裂原の板石沿いに、左だけ長い溝と冷たい小滴が残っています。クェリバスが石の下を探し、点検路へ櫛棘を振り出してきます。一頭の狩猟をお願いします。棘先が白く濡れれば氷針、前から順に棘が上がれば痺棘の二連払いです。一度離れても、二度目が終わるまで近寄らないでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "クェリバス 1体を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 8,
+      "targetClearMinutes": [
+        18,
+        25
+      ],
+      "timeLimitMinutes": 45,
+      "proposedFieldName": "玻璃裂原",
+      "difficultyReasons": [
+        "氷針と麻痺二連に加え反対側への突進があり、回避方向と間を読む。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q084",
+      "speciesId": "monster.enagrio",
+      "speciesName": "エナグリオ",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.enagrio.first",
+      "title": "三つ跳ねる礫",
+      "client": "回廊の案内人",
+      "requestText": "響礫回廊の曲がり角に、銅色の焦げ点が付いた礫が三つずつ残っています。エナグリオが岩溝の餌を探し、通る者へ帯電礫を吐きます。一頭の狩猟を頼みます。襟の前・中央・後ろで射線が変わります。喉の砂が透けて灯ったら三粒が間を空けて跳ねるため、礫が止まる前に追わないでください。",
+      "objectiveKind": "hunt",
+      "objectiveText": "エナグリオ 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 8,
+      "targetClearMinutes": [
+        18,
+        25
+      ],
+      "timeLimitMinutes": 45,
+      "proposedFieldName": "響礫回廊",
+      "difficultyReasons": [
+        "襟別の雷射線と跳ねる時間差三弾で、弾の軌道まで確認する極級。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q085",
+      "speciesId": "monster.nucbarea",
+      "speciesName": "ヌクバレア",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.nucbarea.first",
+      "title": "後ろへ広がる扁甲",
+      "client": "樹洞の巡回隊",
+      "requestText": "深帷樹洞の木屑床に、後ろへ広い擦れと対になった毒滴が落ちています。ヌクバレアが幹洞の出口を巡り、調査隊の帰路を使わせません。一頭を狩猟してください。扁甲が持ち上がれば後方の霧、二本の口房が胸へ寄れば正面の毒霧です。前後のどちらが閉じるかを見て移動しましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "ヌクバレア 1体を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 7,
+      "targetClearMinutes": [
+        15,
+        22
+      ],
+      "timeLimitMinutes": 45,
+      "proposedFieldName": "深帷樹洞",
+      "difficultyReasons": [
+        "後方の低い霧と正面の毒霧と横進みを識別する極級前半。範囲の空白を明瞭に維持する。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    },
+    {
+      "proposalId": "Q086",
+      "speciesId": "monster.towalsem",
+      "speciesName": "トワルセム",
+      "speciesRank": "rank.4",
+      "questId": "quest.design.towalsem.first",
+      "title": "三つの雫の後ろ道",
+      "client": "峡谷の巡回隊",
+      "requestText": "氷帆峡谷の長い岩溝に、三個ずつの氷滴と銅色の小さな輪が残っています。トワルセムが浅い沢を巡り、後を通る荷運びへ氷を落としました。一頭を狩猟してください。雫嚢が前から白む時は、空白を残した三点の氷塊です。頭を追うだけでなく、尾の嚢と退く足場も一緒に見ましょう。",
+      "objectiveKind": "hunt",
+      "objectiveText": "トワルセム 1頭を狩猟する（討伐または捕獲）",
+      "count": 1,
+      "stars": 7,
+      "targetClearMinutes": [
+        15,
+        22
+      ],
+      "timeLimitMinutes": 45,
+      "proposedFieldName": "氷帆峡谷",
+      "difficultyReasons": [
+        "後方の三嚢と空白付き落下を読む極級前半。背後への追走を制御する。"
+      ],
+      "readiness": "future_content",
+      "notes": [
+        "設計案。星・目標時間・制限時間は試遊前の初期値で、既存rankIdの変更指示ではない。",
+        "未実装種の初回狩猟案。huntの捕獲可否・専用モデル・技・狩場は受入時に確認する。"
+      ]
+    }
+  ]
+}

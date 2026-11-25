@@ -1,0 +1,217 @@
+{
+  "artifactType": "campaign-material-support-proposal",
+  "schemaVersion": 1,
+  "status": "requires-new-claim-state",
+  "baselineCommit": "9a5443ab1ac813512deac03422ee996f57f8a900",
+  "recipeSource": "public/data/recipes.json",
+  "note": "本筋の各段階で工房在庫から材料を支給。クエスト24件の反復固定報酬へ混ぜない。装備設計変更時は再計算。",
+  "claimRules": [
+    "支給資格と未受領を同じ保存トランザクションで確認し、素材とclaimIdを同時保存する。",
+    "支給品の表示・再試行・同runIdの再精算で二重に付与しない。",
+    "会話既読だけでは支給しない。既存装備を変更・降格しない。",
+    "新しい装備・素材レシピへ変更した場合、1系統×7選択肢の強化経路を再照合する。"
+  ],
+  "packs": [
+    {
+      "packId": "story.support.tier2",
+      "targetEquipmentTier": 2,
+      "requiresAllQuestClears": [
+        "quest.basin.003",
+        "quest.selvark.r1"
+      ],
+      "grantOnce": true,
+      "source": "里の工房在庫",
+      "grantItems": [
+        {
+          "itemId": "mat.galdros.bronze_vein",
+          "count": 3
+        },
+        {
+          "itemId": "mat.galdros.foreleg_plate",
+          "count": 4
+        },
+        {
+          "itemId": "mat.galdros.hard_bone",
+          "count": 6
+        },
+        {
+          "itemId": "mat.galdros.shell_shard",
+          "count": 14
+        }
+      ],
+      "grantMoney": 0,
+      "costForAnyOneWeaponAndFiveArmor": 520,
+      "cumulativeUpgradeCost": 520,
+      "cumulativeStoryFixedMoney": 1200,
+      "remainingMoneyWithoutPurchases": 680,
+      "sourceRecipeIds": [
+        "recipe.heavy_blade.002",
+        "recipe.guard_blade.002",
+        "recipe.war_maul.002",
+        "recipe.twin_blades.002",
+        "recipe.long_blade.002",
+        "recipe.long_lance.002",
+        "recipe.ring_bow.002",
+        "recipe.armor.head.002",
+        "recipe.armor.chest.002",
+        "recipe.armor.arms.002",
+        "recipe.armor.waist.002",
+        "recipe.armor.legs.002"
+      ],
+      "note": "7武器の素材別最大値＋5防具の合計。1系統と一式を段階順に強化する支給であり7武器同時強化ではない。"
+    },
+    {
+      "packId": "story.support.tier3",
+      "targetEquipmentTier": 3,
+      "requiresAllQuestClears": [
+        "quest.story.st04"
+      ],
+      "grantOnce": true,
+      "source": "里の工房在庫",
+      "grantItems": [
+        {
+          "itemId": "mat.galdros.bronze_vein",
+          "count": 4
+        },
+        {
+          "itemId": "mat.galdros.foreleg_plate",
+          "count": 3
+        },
+        {
+          "itemId": "mat.galdros.hard_bone",
+          "count": 7
+        },
+        {
+          "itemId": "mat.galdros.tail_crystal",
+          "count": 3
+        },
+        {
+          "itemId": "mat.galdros.veined_shell",
+          "count": 15
+        }
+      ],
+      "grantMoney": 0,
+      "costForAnyOneWeaponAndFiveArmor": 1650,
+      "cumulativeUpgradeCost": 2170,
+      "cumulativeStoryFixedMoney": 2400,
+      "remainingMoneyWithoutPurchases": 230,
+      "sourceRecipeIds": [
+        "recipe.heavy_blade.003",
+        "recipe.guard_blade.003",
+        "recipe.war_maul.003",
+        "recipe.twin_blades.003",
+        "recipe.long_blade.003",
+        "recipe.long_lance.003",
+        "recipe.ring_bow.003",
+        "recipe.armor.head.003",
+        "recipe.armor.chest.003",
+        "recipe.armor.arms.003",
+        "recipe.armor.waist.003",
+        "recipe.armor.legs.003"
+      ],
+      "note": "7武器の素材別最大値＋5防具の合計。1系統と一式を段階順に強化する支給であり7武器同時強化ではない。"
+    },
+    {
+      "packId": "story.support.tier4",
+      "targetEquipmentTier": 4,
+      "requiresAllQuestClears": [
+        "quest.story.st08"
+      ],
+      "grantOnce": true,
+      "source": "里の工房在庫",
+      "grantItems": [
+        {
+          "itemId": "mat.galdros.bronze_lump",
+          "count": 7
+        },
+        {
+          "itemId": "mat.galdros.crystal_shell",
+          "count": 16
+        },
+        {
+          "itemId": "mat.galdros.foreleg_plate",
+          "count": 3
+        },
+        {
+          "itemId": "mat.galdros.tail_crystal",
+          "count": 2
+        },
+        {
+          "itemId": "mat.galdros.veined_shell",
+          "count": 5
+        }
+      ],
+      "grantMoney": 0,
+      "costForAnyOneWeaponAndFiveArmor": 3650,
+      "cumulativeUpgradeCost": 5820,
+      "cumulativeStoryFixedMoney": 6400,
+      "remainingMoneyWithoutPurchases": 580,
+      "sourceRecipeIds": [
+        "recipe.heavy_blade.004",
+        "recipe.guard_blade.004",
+        "recipe.war_maul.004",
+        "recipe.twin_blades.004",
+        "recipe.long_blade.004",
+        "recipe.long_lance.004",
+        "recipe.ring_bow.004",
+        "recipe.armor.head.004",
+        "recipe.armor.chest.004",
+        "recipe.armor.arms.004",
+        "recipe.armor.waist.004",
+        "recipe.armor.legs.004"
+      ],
+      "note": "7武器の素材別最大値＋5防具の合計。1系統と一式を段階順に強化する支給であり7武器同時強化ではない。"
+    },
+    {
+      "packId": "story.support.tier5",
+      "targetEquipmentTier": 5,
+      "requiresAllQuestClears": [
+        "quest.story.st13"
+      ],
+      "grantOnce": true,
+      "source": "里の工房在庫",
+      "grantItems": [
+        {
+          "itemId": "mat.galdros.bronze_lump",
+          "count": 8
+        },
+        {
+          "itemId": "mat.galdros.crystal_shell",
+          "count": 5
+        },
+        {
+          "itemId": "mat.galdros.pulse_core",
+          "count": 2
+        },
+        {
+          "itemId": "mat.galdros.radiant_shell",
+          "count": 19
+        },
+        {
+          "itemId": "mat.galdros.tail_crystal",
+          "count": 1
+        }
+      ],
+      "grantMoney": 0,
+      "costForAnyOneWeaponAndFiveArmor": 7300,
+      "cumulativeUpgradeCost": 13120,
+      "cumulativeStoryFixedMoney": 14500,
+      "remainingMoneyWithoutPurchases": 1380,
+      "sourceRecipeIds": [
+        "recipe.heavy_blade.005",
+        "recipe.guard_blade.005",
+        "recipe.war_maul.005",
+        "recipe.twin_blades.005",
+        "recipe.long_blade.005",
+        "recipe.long_lance.005",
+        "recipe.ring_bow.005",
+        "recipe.armor.head.005",
+        "recipe.armor.chest.005",
+        "recipe.armor.arms.005",
+        "recipe.armor.waist.005",
+        "recipe.armor.legs.005"
+      ],
+      "note": "7武器の素材別最大値＋5防具の合計。1系統と一式を段階順に強化する支給であり7武器同時強化ではない。"
+    }
+  ]
+}

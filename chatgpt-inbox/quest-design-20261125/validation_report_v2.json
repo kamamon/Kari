@@ -1,0 +1,56 @@
+{
+  "status": "pass",
+  "scope": "design data, source references and arithmetic only; no game test or playtest",
+  "baselineCommit": "4851d57ecc24c8fd127508b084999cec5d0e975f",
+  "additionalQuestCount": 36,
+  "combinedQuestCount": 138,
+  "countsBySubtype": {
+    "gather": 12,
+    "mining": 12,
+    "field_collection": 4,
+    "cargo_transport": 4,
+    "warehouse": 4
+  },
+  "stars": {
+    "1": 12,
+    "2": 13,
+    "3": 8,
+    "4": 3
+  },
+  "newNaturalResources": 24,
+  "loanedCargoTypes": 4,
+  "fieldQuests": 32,
+  "warehouseQuests": 4,
+  "guaranteedResourceUnitsAcrossQuestLayouts": 260,
+  "requiredResourceUnitsAcrossQuestLayouts": 196,
+  "totalAssertions": 1526,
+  "assertionCounts": {
+    "inventory": 176,
+    "readiness": 64,
+    "objective": 108,
+    "references": 242,
+    "stars": 36,
+    "copy": 158,
+    "economy": 64,
+    "quantities": 43,
+    "progression": 122,
+    "encounters": 12,
+    "time": 128,
+    "supplies": 96,
+    "collection": 120,
+    "bag": 60,
+    "cargo": 16,
+    "warehouse": 31,
+    "v1_preservation": 28,
+    "source_hashes": 22
+  },
+  "errors": [],
+  "notTested": [
+    "採取点と地形の実配置・到達可能性",
+    "実際のクリア時間と回避難度",
+    "iPhoneの操作と表示",
+    "納品・貨物・袋・保存の新実装",
+    "倉庫納品の同時更新・保存失敗",
+    "未実装地域と自然素材の見た目"
+  ]
+}

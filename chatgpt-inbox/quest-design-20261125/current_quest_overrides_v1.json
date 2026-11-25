@@ -1,0 +1,2061 @@
+{
+  "artifactType": "quest-design-proposal",
+  "schemaVersion": 1,
+  "status": "proposal-not-runtime-import",
+  "baselineVersion": "0.21.0",
+  "baselineCommit": "9a5443ab1ac813512deac03422ee996f57f8a900",
+  "note": "時間はフィールドの最終表示値。元tickの倍率二重適用を避ける。新しい表示項目はschemaとUIの実装が必要。",
+  "questDesigns": [
+    {
+      "questId": "quest.basin.003",
+      "sourceFile": "public/data/quests.json",
+      "title": "岩場の足音",
+      "client": "受付ミナギ",
+      "requestText": "薬と布を積んだ荷車が、風礫盆地の岩場で止まっています。幅広い足跡と、左側だけ深く擦れた跡が続く先にガルドロスがいます。人を餌にする獣ではありませんが、荷車では警告の突進を避けられません。一頭を狩猟し、通行を再開できる区間を確保してください。頭を下げて地面を掻いたら、正面を空けて。",
+      "stars": 2,
+      "difficultyReasons": [
+        "正面突進と尾払いの予兆を覚える初回の大型狩猟。",
+        "大きな技の後に反撃できる時間を確保する。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.galdros",
+          "speciesName": "ガルドロス",
+          "count": 1
+        }
+      ],
+      "objectiveKind": "hunt",
+      "objectiveText": "ガルドロス1頭の狩猟（討伐または捕獲）",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        8,
+        12
+      ],
+      "effectiveTimeLimitMinutes": 30,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 600,
+      "rewardItems": [
+        {
+          "itemId": "mat.galdros.shell_shard",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 54000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 30.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 108000,
+          "preserveArenaTimeLimitTicks": 54000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 54000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 15.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.basin.r2.001",
+      "sourceFile": "public/data/quests.json",
+      "title": "脈打つ岩殻",
+      "client": "盆地の巡回係",
+      "requestText": "補修を終えた道で、また大きな岩板が見つかりました。晶脈の育ったガルドロスが、荷車の通る斜面を採食路にしたようです。初級より一撃が重く、休む間も短い個体です。一頭を狩猟し、作業区間を確保してください。前脚を高く上げた時は、叩きつけを見届けてから脇へ回り込んでください。",
+      "stars": 4,
+      "difficultyReasons": [
+        "中級の攻撃力と短くなる技間隔への対応。",
+        "初級と同じ予兆を落ち着いて読む昇級確認。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.galdros",
+          "speciesName": "ガルドロス",
+          "count": 1
+        }
+      ],
+      "objectiveKind": "hunt",
+      "objectiveText": "ガルドロス1頭の狩猟（討伐または捕獲）",
+      "combatRankId": "rank.2",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        12,
+        16
+      ],
+      "effectiveTimeLimitMinutes": 35,
+      "maxFaints": 3,
+      "requires": [
+        "quest.basin.003"
+      ],
+      "rewardMoney": 1100,
+      "rewardItems": [
+        {
+          "itemId": "mat.galdros.veined_shell",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 54000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 30.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 126000,
+          "preserveArenaTimeLimitTicks": 54000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 63000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 17.5,
+          "changesArenaTime": true
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.basin.r3.001",
+      "sourceFile": "public/data/quests.json",
+      "title": "晶の背",
+      "client": "晶脈の調査班",
+      "requestText": "盆地の調査地点へ向かう道に、晶の走る背殻を持ったガルドロスが居着いています。近づいた調査員には、短い間隔で攻撃を続けました。足跡の記録は私たちが行います。一頭を狩猟して、調査を再開できるようにしてください。尾を高く上げたら周囲も見て、落石の予告が出た場所を空けてください。",
+      "stars": 6,
+      "difficultyReasons": [
+        "上級の継続した攻撃に対し、回復と反撃の区切りを選ぶ。",
+        "尾の近接攻撃と落石の位置を合わせて判断する。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.galdros",
+          "speciesName": "ガルドロス",
+          "count": 1
+        }
+      ],
+      "objectiveKind": "hunt",
+      "objectiveText": "ガルドロス1頭の狩猟（討伐または捕獲）",
+      "combatRankId": "rank.3",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        15,
+        20
+      ],
+      "effectiveTimeLimitMinutes": 40,
+      "maxFaints": 3,
+      "requires": [
+        "quest.basin.r2.001"
+      ],
+      "rewardMoney": 1800,
+      "rewardItems": [
+        {
+          "itemId": "mat.galdros.crystal_shell",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 54000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 30.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 144000,
+          "preserveArenaTimeLimitTicks": 54000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 72000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 20.0,
+          "changesArenaTime": true
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.basin.r4.001",
+      "sourceFile": "public/data/quests.json",
+      "title": "輝く岩山",
+      "client": "受付ミナギ",
+      "requestText": "風礫盆地の通行を見直したいのですが、晶脈が芯まで育ったガルドロスが作業予定地から動きません。岩殻の光だけで距離を見誤らないでください。一頭を狩猟し、里へ続く道を確保してもらえますか。これまでの個体より攻めの間隔が短い相手です。長い攻撃は大きな技を避けた後に選び、帰還を最優先に。",
+      "stars": 8,
+      "difficultyReasons": [
+        "既存の極級倍率による高い被弾リスクと短い休止。",
+        "使い慣れた武器で反撃の長さを選ぶ総合確認。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.galdros",
+          "speciesName": "ガルドロス",
+          "count": 1
+        }
+      ],
+      "objectiveKind": "hunt",
+      "objectiveText": "ガルドロス1頭の狩猟（討伐または捕獲）",
+      "combatRankId": "rank.4",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        18,
+        25
+      ],
+      "effectiveTimeLimitMinutes": 45,
+      "maxFaints": 3,
+      "requires": [
+        "quest.basin.r3.001"
+      ],
+      "rewardMoney": 2800,
+      "rewardItems": [
+        {
+          "itemId": "mat.galdros.radiant_shell",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 54000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 30.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 162000,
+          "preserveArenaTimeLimitTicks": 54000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 81000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 22.5,
+          "changesArenaTime": true
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.selvark.r1",
+      "sourceFile": "public/data/quests_creatures.json",
+      "title": "帆角の風",
+      "client": "穀物の運び手",
+      "requestText": "穀物の積み替え場所へセルヴァルクが寄り、荷をまとめる作業が止まっています。ガルドロスの掘り跡に出た新芽を食べ、そのまま荷道を横切るようです。一頭を狩猟して、運び手が荷を運べる時間をください。角膜を開く威嚇と、片脚を畳む横跳びの前触れに注意を。通り道の湿り方も、帰還後に受付へ報告してください。",
+      "stars": 2,
+      "difficultyReasons": [
+        "横跳びの着地点と角膜を開く動きを読む。",
+        "無理に追い続けず、止まる機会を選んで攻撃する。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.selvark",
+          "speciesName": "セルヴァルク",
+          "count": 1
+        }
+      ],
+      "objectiveKind": "hunt",
+      "objectiveText": "セルヴァルク1頭の狩猟（討伐または捕獲）",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        8,
+        12
+      ],
+      "effectiveTimeLimitMinutes": 30,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 600,
+      "rewardItems": [
+        {
+          "itemId": "mat.selvark.sail_membrane",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 54000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 30.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 108000,
+          "preserveArenaTimeLimitTicks": 54000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 54000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 15.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.numeradon.r1",
+      "sourceFile": "public/data/quests_creatures.json",
+      "title": "泥皿の主",
+      "client": "水場の見回り役",
+      "requestText": "根絡み湿原から来たヌメラドンが、風礫盆地の水場を泥で覆っています。水汲み場の点検に入れず、里への運搬も止まっています。作業するのは私たちなので、まず一頭を狩猟してください。頭の泥皿を傾けたら泥玉が来ます。正面に留まらず、腹滑りの進む線を外してから近づいてください。",
+      "stars": 2,
+      "difficultyReasons": [
+        "泥玉と腹滑りの直線を分けて読む。",
+        "実装済みの盆地で行うため、未実装の湿地移動ペナルティは加点しない。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.numeradon",
+          "speciesName": "ヌメラドン",
+          "count": 1
+        }
+      ],
+      "objectiveKind": "hunt",
+      "objectiveText": "ヌメラドン1頭の狩猟（討伐または捕獲）",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        9,
+        13
+      ],
+      "effectiveTimeLimitMinutes": 30,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 600,
+      "rewardItems": [
+        {
+          "itemId": "mat.numeradon.mud_crystal",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 54000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 30.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 108000,
+          "preserveArenaTimeLimitTicks": 54000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 54000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 15.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.bornakel.r1",
+      "sourceFile": "public/data/quests_creatures.json",
+      "title": "鐘の鳴る谷",
+      "client": "鉱石の運び手",
+      "requestText": "灰鐘鉱山から迷い出たボルナケルが、盆地の運搬路で低い音を響かせています。荷を近づけた仲間は音圧にふらつき、引き返しました。積み残した鉱石を回収するため、一頭を狩猟してください。三つの嚢がふくらんだら離れる合図です。音が止まるまで踏み込まず、体が緩んだところを狙ってください。",
+      "stars": 2,
+      "difficultyReasons": [
+        "嚢がふくらむ予兆と範囲攻撃から離れる判断。",
+        "気絶の危険を本文で知らせ、未実装の対策薬は要求しない。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.bornakel",
+          "speciesName": "ボルナケル",
+          "count": 1
+        }
+      ],
+      "objectiveKind": "hunt",
+      "objectiveText": "ボルナケル1頭の狩猟（討伐または捕獲）",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        9,
+        13
+      ],
+      "effectiveTimeLimitMinutes": 30,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 600,
+      "rewardItems": [
+        {
+          "itemId": "mat.bornakel.echo_sac",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 54000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 30.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 108000,
+          "preserveArenaTimeLimitTicks": 54000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 54000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 15.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.ashreia.r1",
+      "sourceFile": "public/data/quests_creatures.json",
+      "title": "灰の帷",
+      "client": "野営地の補修係",
+      "requestText": "盆地の岩陰で休んでいた仲間が、舞い降りた灰を浴びて眠り込んでしまいました。アシュレイアが補修材の置き場に居着いたようです。資材の運び出しを再開したいので、一羽を狩猟してください。帷のような羽を持ち上げたら、足元に灰が広がります。近くで打ち合わず、羽を下ろすのを待ってください。",
+      "stars": 2,
+      "difficultyReasons": [
+        "眠りの灰の予兆を見て攻撃を中断する。",
+        "状態異常の解除薬を前提にせず、避ける方向と機会で成立させる。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.ashreia",
+          "speciesName": "アシュレイア",
+          "count": 1
+        }
+      ],
+      "objectiveKind": "hunt",
+      "objectiveText": "アシュレイア1頭の狩猟（討伐または捕獲）",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        9,
+        13
+      ],
+      "effectiveTimeLimitMinutes": 30,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 600,
+      "rewardItems": [
+        {
+          "itemId": "mat.ashreia.ash_feather",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 54000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 30.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 108000,
+          "preserveArenaTimeLimitTicks": 54000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 54000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 15.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.lumisca.r1",
+      "sourceFile": "public/data/quests_creatures.json",
+      "title": "燐尾の光",
+      "client": "盆地の巡回係",
+      "requestText": "硝砂海岸から渡ってきたルミスカが、風礫盆地の運搬路を低く飛び回っています。尾の光に見とれた運び手の足元へ雷が走り、荷が置き去りになりました。回収班のために一羽を狩猟してください。尾の節が順に光ったら、光の向く線を横へ外して。飛び去る体を追うより、着地を待つ方が安全です。",
+      "stars": 2,
+      "difficultyReasons": [
+        "尾節の点灯と線状攻撃を結びつける。",
+        "低空移動中の追いすぎを抑え、着地を攻撃機会にする。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.lumisca",
+          "speciesName": "ルミスカ",
+          "count": 1
+        }
+      ],
+      "objectiveKind": "hunt",
+      "objectiveText": "ルミスカ1頭の狩猟（討伐または捕獲）",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        9,
+        13
+      ],
+      "effectiveTimeLimitMinutes": 30,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 600,
+      "rewardItems": [
+        {
+          "itemId": "mat.lumisca.phos_node",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 54000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 30.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 108000,
+          "preserveArenaTimeLimitTicks": 54000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 54000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 15.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.orglass.r1",
+      "sourceFile": "public/data/quests_creatures.json",
+      "title": "硝殻の鋏",
+      "client": "荷車の修繕係",
+      "requestText": "硝殻蟹オルグラスが盆地の岩棚へ上がり、車輪の修繕場所をふさいでいます。荷台を動かそうとしたところ、右の大鋏で材木を砕かれました。道具を運び出せるよう、一体を狩猟してください。鋏を構えた側と横へ動く向きをよく見て、壁際で挟まれないように。正面からの力比べは避けましょう。",
+      "stars": 2,
+      "difficultyReasons": [
+        "左右非対称の大鋏と横突進を読む。",
+        "広い場所への誘導を覚える初級依頼。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.orglass",
+          "speciesName": "オルグラス",
+          "count": 1
+        }
+      ],
+      "objectiveKind": "hunt",
+      "objectiveText": "オルグラス1頭の狩猟（討伐または捕獲）",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        8,
+        12
+      ],
+      "effectiveTimeLimitMinutes": 30,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 600,
+      "rewardItems": [
+        {
+          "itemId": "mat.orglass.glass_shell",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 54000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 30.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 108000,
+          "preserveArenaTimeLimitTicks": 54000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 54000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 15.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.tengaro.r1",
+      "sourceFile": "public/data/quests_creatures.json",
+      "title": "輪になる蟲",
+      "client": "見回り役",
+      "requestText": "霧灯樹海から来たテンガロが、盆地の倒れた岩の間を転がっています。通行の目印を直そうとした仲間も、痺れる液を避けて戻りました。一体を狩猟して、安全な作業時間をつくってください。体を輪に縮めたら、まっすぐ後ろへ逃げ続けず横へ。転がりがほどけて体を伸ばす時が近づく機会です。",
+      "stars": 2,
+      "difficultyReasons": [
+        "輪になる予兆と転がる軌道への横回避。",
+        "痺液と近接攻撃の範囲を見て反撃を選ぶ。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.tengaro",
+          "speciesName": "テンガロ",
+          "count": 1
+        }
+      ],
+      "objectiveKind": "hunt",
+      "objectiveText": "テンガロ1頭の狩猟（討伐または捕獲）",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        9,
+        13
+      ],
+      "effectiveTimeLimitMinutes": 30,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 600,
+      "rewardItems": [
+        {
+          "itemId": "mat.tengaro.hook_shell",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 54000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 30.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 108000,
+          "preserveArenaTimeLimitTicks": 54000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 54000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 15.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.verito.r1",
+      "sourceFile": "public/data/quests_creatures.json",
+      "title": "霧糸の巣",
+      "client": "運搬路の点検係",
+      "requestText": "盆地の谷を渡る道に、ヴェリトが新しい糸を張っています。補修用の縄を運ぼうにも、岩間から毒の滴が落ちてくるため近づけません。一体を狩猟し、点検班が入れるようにしてください。尾を向けたら糸と足元に注意を。正面の動きだけを追わず、毒の落ちた場所を空けながら間合いを取りましょう。",
+      "stars": 2,
+      "difficultyReasons": [
+        "尾の向きと地面へ残る危険を同時に確認する。",
+        "毒を受ける前の位置取りを教える。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.verito",
+          "speciesName": "ヴェリト",
+          "count": 1
+        }
+      ],
+      "objectiveKind": "hunt",
+      "objectiveText": "ヴェリト1頭の狩猟（討伐または捕獲）",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        9,
+        13
+      ],
+      "effectiveTimeLimitMinutes": 30,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 600,
+      "rewardItems": [
+        {
+          "itemId": "mat.verito.mist_silk",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 54000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 30.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 108000,
+          "preserveArenaTimeLimitTicks": 54000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 54000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 15.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.razmer.r1",
+      "sourceFile": "public/data/quests_creatures.json",
+      "title": "骨環の這い跡",
+      "client": "盆地の巡回係",
+      "requestText": "氷帆峡谷から這い出てきたラズメルが、盆地の石段の先を横切っています。細い道では長い体を避けきれず、巡回を止めています。一頭を狩猟して、往来を再開できるようにしてください。頭だけに近づくと、後から胴の薙ぎ払いが来ます。体の曲がる向きを見て、伸び切った後に攻撃してください。",
+      "stars": 2,
+      "difficultyReasons": [
+        "長い体の薙ぎ払いと直線突進を区別する。",
+        "頭だけを見ると被弾するため胴の向きを意識する。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.razmer",
+          "speciesName": "ラズメル",
+          "count": 1
+        }
+      ],
+      "objectiveKind": "hunt",
+      "objectiveText": "ラズメル1頭の狩猟（討伐または捕獲）",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        9,
+        13
+      ],
+      "effectiveTimeLimitMinutes": 30,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 600,
+      "rewardItems": [
+        {
+          "itemId": "mat.razmer.ring_bone",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 54000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 30.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 108000,
+          "preserveArenaTimeLimitTicks": 54000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 54000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 15.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.kirisave.r1",
+      "sourceFile": "public/data/quests_creatures.json",
+      "title": "氷帆の列",
+      "client": "観測道具の運び手",
+      "requestText": "峡谷から下りてきたキリサーヴが、風礫盆地で観測隊の進路をふさいでいます。道具を抱えたままでは、列になって落ちる氷の欠片を避けられません。一頭を狩猟し、運搬の時間を確保してください。背の氷帆が順に立ったら、その延長を空けて。氷の列を横へ外してから、体の脇へ近づきましょう。",
+      "stars": 2,
+      "difficultyReasons": [
+        "背の帆の順番から攻撃の線を予測する。",
+        "未実装の滑る地形を前提にした難度へは上げない。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.kirisave",
+          "speciesName": "キリサーヴ",
+          "count": 1
+        }
+      ],
+      "objectiveKind": "hunt",
+      "objectiveText": "キリサーヴ1頭の狩猟（討伐または捕獲）",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        9,
+        13
+      ],
+      "effectiveTimeLimitMinutes": 30,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 600,
+      "rewardItems": [
+        {
+          "itemId": "mat.kirisave.ice_sail",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 54000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 30.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 108000,
+          "preserveArenaTimeLimitTicks": 54000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 54000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 15.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.velgait.r1",
+      "sourceFile": "public/data/quests_creatures.json",
+      "title": "霧灯の夜",
+      "client": "受付ミナギ",
+      "requestText": "霧灯樹海から来たヴェルガイトの灯を、盆地の目印と間違える人が出ています。巡回の道と重なる場所を使っているため、一頭を狩猟して通行を確保してください。頭冠が灯ったら、霧の球は少し遅れて弾けます。最初の光だけで飛び込まず、爆ぜる場所を見届けて。帰還後に目印の直し方を相談しましょう。",
+      "stars": 2,
+      "difficultyReasons": [
+        "頭冠の灯と遅れて弾ける攻撃を読む。",
+        "他の初級より確認する時間を多く取り、目標時間を10〜14分とする。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.velgait",
+          "speciesName": "ヴェルガイト",
+          "count": 1
+        }
+      ],
+      "objectiveKind": "hunt",
+      "objectiveText": "ヴェルガイト1頭の狩猟（討伐または捕獲）",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        10,
+        14
+      ],
+      "effectiveTimeLimitMinutes": 30,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 600,
+      "rewardItems": [
+        {
+          "itemId": "mat.velgait.mist_lamp",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 54000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 30.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 108000,
+          "preserveArenaTimeLimitTicks": 54000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 54000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 15.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.kordopil.pack1",
+      "sourceFile": "public/data/quests_herds.json",
+      "title": "岩殻の子ら",
+      "client": "道の補修係",
+      "requestText": "野営地の先で、コルドピルの群れが補修用の土を掘り返しています。親の採食跡を探しているのでしょうが、このままでは道が崩れてしまいます。作業区間にいる三頭を討伐してください。外側の個体から逃げるため、一頭ずつ追う相手を決めると楽です。残り頭数は依頼の目標欄で確かめてください。",
+      "stars": 1,
+      "difficultyReasons": [
+        "少数の標的へ狙いを定める入門。",
+        "初期装備で目標を追い、攻撃後に周囲を見る練習。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.kordopil",
+          "speciesName": "コルドピル",
+          "count": 3
+        }
+      ],
+      "objectiveKind": "slay",
+      "objectiveText": "コルドピル3体の討伐",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        4,
+        6
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 390,
+      "rewardItems": [
+        {
+          "itemId": "mat.kordopil.juv_shell",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 2
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 36000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 20.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 72000,
+          "preserveArenaTimeLimitTicks": 36000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 36000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 10.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.palseit.pack1",
+      "sourceFile": "public/data/quests_herds.json",
+      "title": "跳ねる小角",
+      "client": "荷置き場の管理係",
+      "requestText": "盆地の草地を跳ねるパルセイトが、荷置き場へ入り込んでいます。荷を取りに行くたび群れが散り、運搬の準備が進みません。作業区間の四頭を討伐してください。危険に気づいた個体から跳ねて逃げます。走る相手へ長い攻撃を振り続けず、止まる場所に合わせて短い攻撃を当ててください。",
+      "stars": 1,
+      "difficultyReasons": [
+        "動く小型標的への間合い調整。",
+        "四頭を数えて達成する基本的な群れ依頼。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.palseit",
+          "speciesName": "パルセイト",
+          "count": 4
+        }
+      ],
+      "objectiveKind": "slay",
+      "objectiveText": "パルセイト4体の討伐",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        4,
+        7
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 420,
+      "rewardItems": [
+        {
+          "itemId": "mat.palseit.juv_membrane",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 2
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 36000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 20.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 72000,
+          "preserveArenaTimeLimitTicks": 36000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 36000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 10.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.numaporon.pack1",
+      "sourceFile": "public/data/quests_herds.json",
+      "title": "泥皿の子",
+      "client": "水場の見回り役",
+      "requestText": "盆地の水場の脇で、ヌマポロンの群れが浅い泥の筋を広げています。水を汲む足場へも上がってくるので、道具を置けません。水場で確認された三頭を討伐してください。小さくても正面には泥を吐きます。腹を地面につけた時は横へ回り、滑り終えた相手から落ち着いて狙ってください。",
+      "stars": 1,
+      "difficultyReasons": [
+        "小さな泥吐きと腹滑りの予兆を読む。",
+        "群れの中でも一頭ずつ安全に反撃する。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.numaporon",
+          "speciesName": "ヌマポロン",
+          "count": 3
+        }
+      ],
+      "objectiveKind": "slay",
+      "objectiveText": "ヌマポロン3体の討伐",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        4,
+        7
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 390,
+      "rewardItems": [
+        {
+          "itemId": "mat.numaporon.juv_mud_crystal",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 2
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 36000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 20.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 72000,
+          "preserveArenaTimeLimitTicks": 36000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 36000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 10.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.chilumicana.pack1",
+      "sourceFile": "public/data/quests_herds.json",
+      "title": "灯る尾の子",
+      "client": "礫原の作業係",
+      "requestText": "盆地の礫原で、チルミカナの群れが目印の周囲を走り回っています。低く滑る体にぶつかりそうで、重い荷を持って入れません。作業する範囲の三羽を討伐してください。追われると翼で滑ってから走ります。空中の相手へ無理に振らず、足が地面につく位置を見て次の一撃を選んでください。",
+      "stars": 1,
+      "difficultyReasons": [
+        "低い滑空後の着地を狙う練習。",
+        "逃げる方向に合わせ、長い攻撃を空振りしすぎない判断。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.chilumicana",
+          "speciesName": "チルミカナ",
+          "count": 3
+        }
+      ],
+      "objectiveKind": "slay",
+      "objectiveText": "チルミカナ3体の討伐",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        5,
+        7
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 390,
+      "rewardItems": [
+        {
+          "itemId": "mat.chilumicana.juv_node",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 2
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 36000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 20.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 72000,
+          "preserveArenaTimeLimitTicks": 36000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 36000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 10.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.kohalgis.pack1",
+      "sourceFile": "public/data/quests_herds.json",
+      "title": "乳白の殻",
+      "client": "岩棚の点検係",
+      "requestText": "岩棚の割れ目にコハルギスが集まり、点検に使う道具のすぐ脇へ出てきます。幼い個体ですが、作業中に手足を挟まれれば危険です。周辺の四体を討伐してください。近づくと別々の割れ目へ散るので、追う相手を一体に決めて。散った群れ全部を一度に追わず、開けた所で攻撃しましょう。",
+      "stars": 1,
+      "difficultyReasons": [
+        "分散する四体から標的を選ぶ。",
+        "狭い割れ目に追い込み続けず、攻撃できる場所を選ぶ。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.kohalgis",
+          "speciesName": "コハルギス",
+          "count": 4
+        }
+      ],
+      "objectiveKind": "slay",
+      "objectiveText": "コハルギス4体の討伐",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        4,
+        7
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 420,
+      "rewardItems": [
+        {
+          "itemId": "mat.kohalgis.juv_glass",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 2
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 36000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 20.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 72000,
+          "preserveArenaTimeLimitTicks": 36000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 36000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 10.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.mitogaron.pack1",
+      "sourceFile": "public/data/quests_herds.json",
+      "title": "丸まれない輪",
+      "client": "野営地の補修係",
+      "requestText": "倒れた岩の間にミトガロンが集まり、補修材を取り出す手元へ痺れる液を落としています。まだ輪になれない幼体でも、足を止められると危険です。作業区間の三体を討伐してください。尾節を上げた相手にはすぐ近づかず、液の落ちる位置を避けて。動かない一頭だけに気を取られないように。",
+      "stars": 2,
+      "difficultyReasons": [
+        "麻痺の危険と複数方向からの接近が重なる。",
+        "攻撃を止めて周囲を確認する判断が星1より多い。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.mitogaron",
+          "speciesName": "ミトガロン",
+          "count": 3
+        }
+      ],
+      "objectiveKind": "slay",
+      "objectiveText": "ミトガロン3体の討伐",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        6,
+        8
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 390,
+      "rewardItems": [
+        {
+          "itemId": "mat.mitogaron.juv_hook",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 2
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 36000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 20.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 72000,
+          "preserveArenaTimeLimitTicks": 36000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 36000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 10.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.yurtepica.pack1",
+      "sourceFile": "public/data/quests_herds.json",
+      "title": "糸床の子ら",
+      "client": "運搬路の点検係",
+      "requestText": "盆地の谷でユルテピカが小さな糸床を張り、縄を置く予定の場所を覆っています。近づくと尾糸を払い、毒まで飛ばしてきます。点検を進めるため、周辺の四体を討伐してください。一体を攻撃していても、隣の尾の向きに注意を。糸床へまとめて踏み込まず、外側の個体から狙ってください。",
+      "stars": 2,
+      "difficultyReasons": [
+        "毒を使う四体の向きを合わせて見る。",
+        "数と状態異常の両方がある群れとして星2。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.yurtepica",
+          "speciesName": "ユルテピカ",
+          "count": 4
+        }
+      ],
+      "objectiveKind": "slay",
+      "objectiveText": "ユルテピカ4体の討伐",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        6,
+        8
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 420,
+      "rewardItems": [
+        {
+          "itemId": "mat.yurtepica.juv_silk",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 2
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 36000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 20.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 72000,
+          "preserveArenaTimeLimitTicks": 36000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 36000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 10.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.hinasalv.pack1",
+      "sourceFile": "public/data/quests_herds.json",
+      "title": "小板の兄弟",
+      "client": "観測道具の運び手",
+      "requestText": "冷えた岩溝でヒナサルヴの小群が行き来し、観測道具を運ぶ道を横切っています。小さな背板が白くなった直後、氷の粒が散って荷を落としかけました。今回の作業区間では二頭を討伐してください。まず背板の色の変化を確かめて、粒が散った後に近づけば、落ち着いて対処できるはずです。",
+      "stars": 1,
+      "difficultyReasons": [
+        "二頭だけを相手に予兆と攻撃後の隙を覚える。",
+        "氷粒の危険を知らせ、頭数による圧力は抑える。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.hinasalv",
+          "speciesName": "ヒナサルヴ",
+          "count": 2
+        }
+      ],
+      "objectiveKind": "slay",
+      "objectiveText": "ヒナサルヴ2体の討伐",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        4,
+        6
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 360,
+      "rewardItems": [
+        {
+          "itemId": "mat.hinasalv.juv_sail",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 2
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 36000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 20.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 72000,
+          "preserveArenaTimeLimitTicks": 36000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 36000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 10.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    },
+    {
+      "questId": "quest.basin_young.r1",
+      "sourceFile": "public/data/quests_herds.json",
+      "title": "盆地の若い群れ",
+      "client": "受付ミナギ",
+      "requestText": "盆地の運搬路で、土を掘るコルドピルと跳ね回るパルセイトが同じ場所へ集まっています。荷を運び直す前に、二頭と三頭をそれぞれ討伐してください。違う動きの群れを同時に追うと、狙いを見失いがちです。まず近い相手を一頭ずつ。目標欄には種ごとの残り数が出るので、区切りごとに確かめましょう。",
+      "stars": 2,
+      "difficultyReasons": [
+        "二種の動きと残り頭数を切り替えて管理する。",
+        "五頭の仕事量を持つ混合群れ。"
+      ],
+      "targets": [
+        {
+          "speciesId": "monster.kordopil",
+          "speciesName": "コルドピル",
+          "count": 2
+        },
+        {
+          "speciesId": "monster.palseit",
+          "speciesName": "パルセイト",
+          "count": 3
+        }
+      ],
+      "objectiveKind": "slay",
+      "objectiveText": "コルドピル2体・パルセイト3体の討伐",
+      "combatRankId": "rank.1",
+      "fieldId": "field.basin",
+      "fieldName": "風礫盆地",
+      "targetClearMinutes": [
+        6,
+        8
+      ],
+      "effectiveTimeLimitMinutes": 20,
+      "maxFaints": 3,
+      "requires": [],
+      "rewardMoney": 520,
+      "rewardItems": [
+        {
+          "itemId": "mat.kordopil.juv_shell",
+          "count": 1
+        }
+      ],
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 2
+        }
+      ],
+      "baseline": {
+        "timeLimitTicks": 36000,
+        "fieldTimeLimitScale": 2,
+        "effectiveTimeLimitMinutes": 20.0
+      },
+      "runtimeTimeOptions": {
+        "chooseExactlyOne": true,
+        "preferredExplicitFieldLimit": {
+          "fieldTimeLimitTicks": 72000,
+          "preserveArenaTimeLimitTicks": 36000,
+          "requiresSchemaAndResolverChange": true
+        },
+        "legacyScaleAdapter": {
+          "timeLimitTicks": 36000,
+          "fieldTimeLimitScale": 2,
+          "resultingArenaMinutes": 10.0,
+          "changesArenaTime": false
+        }
+      },
+      "preserve": [
+        "id",
+        "kind",
+        "targetMonsterId",
+        "targets",
+        "rankId",
+        "requires",
+        "maxFaints",
+        "supplies",
+        "rewards",
+        "returnTicks"
+      ],
+      "readiness": "existing_runtime_metadata_not_implemented"
+    }
+  ]
+}

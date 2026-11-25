@@ -1,0 +1,1253 @@
+{
+  "artifactType": "design-index-not-runtime-import",
+  "counts": {
+    "priorQuests": 102,
+    "additionalQuests": 36,
+    "total": 138
+  },
+  "note": "既存v1原稿を複製せず、この索引から正本2ファイルを参照する。",
+  "quests": [
+    {
+      "questId": "quest.basin.003",
+      "recordLabel": "C01",
+      "title": "岩場の足音",
+      "category": "existing",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.basin.r2.001",
+      "recordLabel": "C02",
+      "title": "脈打つ岩殻",
+      "category": "existing",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.basin.r3.001",
+      "recordLabel": "C03",
+      "title": "晶の背",
+      "category": "existing",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.basin.r4.001",
+      "recordLabel": "C04",
+      "title": "輝く岩山",
+      "category": "existing",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.selvark.r1",
+      "recordLabel": "C05",
+      "title": "帆角の風",
+      "category": "existing",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.numeradon.r1",
+      "recordLabel": "C06",
+      "title": "泥皿の主",
+      "category": "existing",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.bornakel.r1",
+      "recordLabel": "C07",
+      "title": "鐘の鳴る谷",
+      "category": "existing",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.ashreia.r1",
+      "recordLabel": "C08",
+      "title": "灰の帷",
+      "category": "existing",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.lumisca.r1",
+      "recordLabel": "C09",
+      "title": "燐尾の光",
+      "category": "existing",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.orglass.r1",
+      "recordLabel": "C10",
+      "title": "硝殻の鋏",
+      "category": "existing",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.tengaro.r1",
+      "recordLabel": "C11",
+      "title": "輪になる蟲",
+      "category": "existing",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.verito.r1",
+      "recordLabel": "C12",
+      "title": "霧糸の巣",
+      "category": "existing",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.razmer.r1",
+      "recordLabel": "C13",
+      "title": "骨環の這い跡",
+      "category": "existing",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.kirisave.r1",
+      "recordLabel": "C14",
+      "title": "氷帆の列",
+      "category": "existing",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.velgait.r1",
+      "recordLabel": "C15",
+      "title": "霧灯の夜",
+      "category": "existing",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.kordopil.pack1",
+      "recordLabel": "C16",
+      "title": "岩殻の子ら",
+      "category": "existing",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.palseit.pack1",
+      "recordLabel": "C17",
+      "title": "跳ねる小角",
+      "category": "existing",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.numaporon.pack1",
+      "recordLabel": "C18",
+      "title": "泥皿の子",
+      "category": "existing",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.chilumicana.pack1",
+      "recordLabel": "C19",
+      "title": "灯る尾の子",
+      "category": "existing",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.kohalgis.pack1",
+      "recordLabel": "C20",
+      "title": "乳白の殻",
+      "category": "existing",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.mitogaron.pack1",
+      "recordLabel": "C21",
+      "title": "丸まれない輪",
+      "category": "existing",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.yurtepica.pack1",
+      "recordLabel": "C22",
+      "title": "糸床の子ら",
+      "category": "existing",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.hinasalv.pack1",
+      "recordLabel": "C23",
+      "title": "小板の兄弟",
+      "category": "existing",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.basin_young.r1",
+      "recordLabel": "C24",
+      "title": "盆地の若い群れ",
+      "category": "existing",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.embarg.first",
+      "recordLabel": "Q013",
+      "title": "冷える道、熾る胸",
+      "category": "future_species",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.hasdren.first",
+      "recordLabel": "Q022",
+      "title": "銅苔を渡る水",
+      "category": "future_species",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.ivselam.first",
+      "recordLabel": "Q023",
+      "title": "左へ掃く霜",
+      "category": "future_species",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.domelkano.first",
+      "recordLabel": "Q024",
+      "title": "熱泥の縁",
+      "category": "future_species",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.holnebas.first",
+      "recordLabel": "Q025",
+      "title": "三つ鳴る風穴",
+      "category": "future_species",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.miltasea.first",
+      "recordLabel": "Q026",
+      "title": "露珠が眠る草棚",
+      "category": "future_species",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.talgrina.first",
+      "recordLabel": "Q027",
+      "title": "三度鳴る左鋏",
+      "category": "future_species",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.zanetolka.first",
+      "recordLabel": "Q028",
+      "title": "流木に残る輪",
+      "category": "future_species",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.ulnaset.first",
+      "recordLabel": "Q029",
+      "title": "雨を運ぶ帆",
+      "category": "future_species",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.nemboraf.first",
+      "recordLabel": "Q030",
+      "title": "沢を塞ぐ泥層",
+      "category": "future_species",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 50,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.borazeln.first",
+      "recordLabel": "Q031",
+      "title": "三段の庇を越えて",
+      "category": "future_species",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 50,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.kudrimal.first",
+      "recordLabel": "Q032",
+      "title": "右に乾く草",
+      "category": "future_species",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 50,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.tosamurie.first",
+      "recordLabel": "Q033",
+      "title": "枝鉤の通り道",
+      "category": "future_species",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.pukrenoa.first",
+      "recordLabel": "Q034",
+      "title": "匙顎が引いた溝",
+      "category": "future_species",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.kesalpina.first",
+      "recordLabel": "Q035",
+      "title": "左頬の粉風",
+      "category": "future_species",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.riptaum.first",
+      "recordLabel": "Q036",
+      "title": "二筋の氷畝",
+      "category": "future_species",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.serinodam.first",
+      "recordLabel": "Q037",
+      "title": "櫂脚に灯る三点",
+      "category": "future_species",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.nufraken.first",
+      "recordLabel": "Q038",
+      "title": "霜の壺腹",
+      "category": "future_species",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.akaunel.first",
+      "recordLabel": "Q039",
+      "title": "四角い煤の襟",
+      "category": "future_species",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.tsumarobek.first",
+      "recordLabel": "Q040",
+      "title": "腹甲の三拍",
+      "category": "future_species",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.furemsad.first",
+      "recordLabel": "Q041",
+      "title": "潮溜まりの霧鰭",
+      "category": "future_species",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.grasedon.first",
+      "recordLabel": "Q042",
+      "title": "帰路に開く裂扇",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.ryuzelka.first",
+      "recordLabel": "Q043",
+      "title": "二枚帆の白い朝",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.mordine.first",
+      "recordLabel": "Q044",
+      "title": "三段冠の水路",
+      "category": "future_species",
+      "stars": 5,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.doberken.first",
+      "recordLabel": "Q045",
+      "title": "鐘の止まる一拍",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.shilhatora.first",
+      "recordLabel": "Q046",
+      "title": "三つに分かれた燐",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.kuzanerio.first",
+      "recordLabel": "Q047",
+      "title": "反り殻の氷筋",
+      "category": "future_species",
+      "stars": 5,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.fesrami.first",
+      "recordLabel": "Q048",
+      "title": "三本の糸の結び目",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.elmejika.first",
+      "recordLabel": "Q049",
+      "title": "六灯の消える時",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.azelnoto.first",
+      "recordLabel": "Q050",
+      "title": "水枕の長い跡",
+      "category": "future_species",
+      "stars": 5,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.bezrakio.first",
+      "recordLabel": "Q051",
+      "title": "蒸帆の左右",
+      "category": "future_species",
+      "stars": 5,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.murzenato.first",
+      "recordLabel": "Q052",
+      "title": "内向きの鉤、濁る足場",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.hauremika.first",
+      "recordLabel": "Q053",
+      "title": "左帷の眠る棚",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.zedbanil.first",
+      "recordLabel": "Q054",
+      "title": "銅炉の二筋",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.oldasem.first",
+      "recordLabel": "Q055",
+      "title": "三段棚を通す道",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 50,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.nuolvan.first",
+      "recordLabel": "Q056",
+      "title": "三腹室の水音",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 50,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.tarhegna.first",
+      "recordLabel": "Q057",
+      "title": "籠晶の影が落ちる原",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 50,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.porgamis.first",
+      "recordLabel": "Q058",
+      "title": "箒顎の掃き残し",
+      "category": "future_species",
+      "stars": 5,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.yarlshena.first",
+      "recordLabel": "Q059",
+      "title": "鞍頬の風下",
+      "category": "future_species",
+      "stars": 5,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.pizelta.first",
+      "recordLabel": "Q060",
+      "title": "扇趾が踏む白い棚",
+      "category": "future_species",
+      "stars": 5,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.damorikus.first",
+      "recordLabel": "Q061",
+      "title": "壺底に残る毒の輪",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.isarnem.first",
+      "recordLabel": "Q062",
+      "title": "帽殻の下の二つの気配",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.regsanio.first",
+      "recordLabel": "Q063",
+      "title": "左盤の濡れる時",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.rupenias.first",
+      "recordLabel": "Q064",
+      "title": "前と後ろの眠り袋",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.sograpin.first",
+      "recordLabel": "Q065",
+      "title": "刻まれた踵の道",
+      "category": "future_species",
+      "stars": 5,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.makuejira.first",
+      "recordLabel": "Q066",
+      "title": "梯胸の上下",
+      "category": "future_species",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.gumesald.first",
+      "recordLabel": "Q067",
+      "title": "熱と電を継ぐ岩殻",
+      "category": "future_species",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.nericaus.first",
+      "recordLabel": "Q068",
+      "title": "開いた燐輪の風",
+      "category": "future_species",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.voltena.first",
+      "recordLabel": "Q069",
+      "title": "三層の帷、濡れる帰路",
+      "category": "future_species",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.kitolnam.first",
+      "recordLabel": "Q070",
+      "title": "折帆が伏せる洞庭",
+      "category": "future_species",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.segranio.first",
+      "recordLabel": "Q071",
+      "title": "二つの環が向く先",
+      "category": "future_species",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.dekoranze.first",
+      "recordLabel": "Q072",
+      "title": "右腹の熱い畝",
+      "category": "future_species",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 50,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.fusaldom.first",
+      "recordLabel": "Q073",
+      "title": "肩礁を通す谷",
+      "category": "future_species",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 50,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.rimposera.first",
+      "recordLabel": "Q074",
+      "title": "四つの袋の潮待ち",
+      "category": "future_species",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 50,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.dalhoina.first",
+      "recordLabel": "Q075",
+      "title": "三梁の風を越える",
+      "category": "future_species",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 50,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.zonikebal.first",
+      "recordLabel": "Q076",
+      "title": "砕板に残る火花",
+      "category": "future_species",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.ludopanea.first",
+      "recordLabel": "Q077",
+      "title": "顎帆の孔が白む時",
+      "category": "future_species",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.salpinoc.first",
+      "recordLabel": "Q078",
+      "title": "帷風の後の鋏",
+      "category": "future_species",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.hemzario.first",
+      "recordLabel": "Q079",
+      "title": "三節額の明かり",
+      "category": "future_species",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.pasnelim.first",
+      "recordLabel": "Q080",
+      "title": "逆穂の静かな構え",
+      "category": "future_species",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.zaclatom.first",
+      "recordLabel": "Q081",
+      "title": "三角喉の灯る順",
+      "category": "future_species",
+      "stars": 7,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.izoflane.first",
+      "recordLabel": "Q082",
+      "title": "湧皿の空白",
+      "category": "future_species",
+      "stars": 7,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.queribas.first",
+      "recordLabel": "Q083",
+      "title": "氷櫛の二度目",
+      "category": "future_species",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.enagrio.first",
+      "recordLabel": "Q084",
+      "title": "三つ跳ねる礫",
+      "category": "future_species",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.nucbarea.first",
+      "recordLabel": "Q085",
+      "title": "後ろへ広がる扁甲",
+      "category": "future_species",
+      "stars": 7,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.design.towalsem.first",
+      "recordLabel": "Q086",
+      "title": "三つの雫の後ろ道",
+      "category": "future_species",
+      "stars": 7,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.story.st03",
+      "recordLabel": "ST03",
+      "title": "根の向こうの水路",
+      "category": "new_story",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.story.st04",
+      "recordLabel": "ST04",
+      "title": "縄を渡す朝",
+      "category": "new_story",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.story.st05",
+      "recordLabel": "ST05",
+      "title": "網場をひらく",
+      "category": "new_story",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.story.st06",
+      "recordLabel": "ST06",
+      "title": "浜に並ぶ灯",
+      "category": "new_story",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.story.st07",
+      "recordLabel": "ST07",
+      "title": "音の届かない坑口",
+      "category": "new_story",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.story.st08",
+      "recordLabel": "ST08",
+      "title": "灰の下の分かれ道",
+      "category": "new_story",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 35,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.story.st09",
+      "recordLabel": "ST09",
+      "title": "氷の線を読む",
+      "category": "new_story",
+      "stars": 5,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.story.st10",
+      "recordLabel": "ST10",
+      "title": "石段の続く先",
+      "category": "new_story",
+      "stars": 5,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.story.st11",
+      "recordLabel": "ST11",
+      "title": "樹皮の向こう",
+      "category": "new_story",
+      "stars": 5,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.story.st12",
+      "recordLabel": "ST12",
+      "title": "人の灯、獣の灯",
+      "category": "new_story",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.story.st13",
+      "recordLabel": "ST13",
+      "title": "帰路に立つ裂扇",
+      "category": "new_story",
+      "stars": 6,
+      "effectiveTimeLimitMinutes": 40,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.story.st14",
+      "recordLabel": "ST14",
+      "title": "帰り道の灯",
+      "category": "new_story",
+      "stars": 8,
+      "effectiveTimeLimitMinutes": 45,
+      "sourceFile": "quest_catalog_v1.json"
+    },
+    {
+      "questId": "quest.gather.001",
+      "recordLabel": "G01",
+      "title": "薬房へ、最初の六枚",
+      "category": "gather",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": 15,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.gather.002",
+      "recordLabel": "G02",
+      "title": "炊事場の空いた籠",
+      "category": "gather",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": 15,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.gather.003",
+      "recordLabel": "G03",
+      "title": "荷紐を結び直すために",
+      "category": "gather",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.gather.004",
+      "recordLabel": "G04",
+      "title": "水汲み道具の新しい芯",
+      "category": "gather",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.gather.005",
+      "recordLabel": "G05",
+      "title": "濡れた籠にも底敷きを",
+      "category": "gather",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.gather.006",
+      "recordLabel": "G06",
+      "title": "潮の実を里の食卓へ",
+      "category": "gather",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.gather.007",
+      "recordLabel": "G07",
+      "title": "桶の継ぎ目を閉じたい",
+      "category": "gather",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.gather.008",
+      "recordLabel": "G08",
+      "title": "坑口の昼餉を集めよう",
+      "category": "gather",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.gather.009",
+      "recordLabel": "G09",
+      "title": "坑道灯の芯を編む",
+      "category": "gather",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 25,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.gather.010",
+      "recordLabel": "G10",
+      "title": "風裏の苔を敷布に",
+      "category": "gather",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 25,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.gather.011",
+      "recordLabel": "G11",
+      "title": "道標の灯を曇らせない",
+      "category": "gather",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 25,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.gather.012",
+      "recordLabel": "G12",
+      "title": "環谷に残る水の輪",
+      "category": "gather",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.mine.001",
+      "recordLabel": "M01",
+      "title": "炉の火をつなぐ石",
+      "category": "mining",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": 15,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.mine.002",
+      "recordLabel": "M02",
+      "title": "刃を整えるざら石",
+      "category": "mining",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": 15,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.mine.003",
+      "recordLabel": "M03",
+      "title": "雨樋を留める灰石",
+      "category": "mining",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.mine.004",
+      "recordLabel": "M04",
+      "title": "水桶の底を固める土",
+      "category": "mining",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": 15,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.mine.005",
+      "recordLabel": "M05",
+      "title": "泥の下の締め石",
+      "category": "mining",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.mine.006",
+      "recordLabel": "M06",
+      "title": "灯窓に入れる白い砂",
+      "category": "mining",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": 15,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.mine.007",
+      "recordLabel": "M07",
+      "title": "網重りの青い石",
+      "category": "mining",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.mine.008",
+      "recordLabel": "M08",
+      "title": "炉壁の白い継ぎ目",
+      "category": "mining",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.mine.009",
+      "recordLabel": "M09",
+      "title": "坑口へ返す鈍い光",
+      "category": "mining",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 25,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.mine.010",
+      "recordLabel": "M10",
+      "title": "滑らない帰り道",
+      "category": "mining",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 25,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.mine.011",
+      "recordLabel": "M11",
+      "title": "灯台座の暗い粒",
+      "category": "mining",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 25,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.mine.012",
+      "recordLabel": "M12",
+      "title": "補修の継ぎ目へ",
+      "category": "mining",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.delivery.001",
+      "recordLabel": "D01",
+      "title": "薬房と工具棚の小包",
+      "category": "delivery",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": 15,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.delivery.002",
+      "recordLabel": "D02",
+      "title": "水場の道具を一式そろえる",
+      "category": "delivery",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.delivery.003",
+      "recordLabel": "D03",
+      "title": "坑口のかまどと昼餉",
+      "category": "delivery",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.delivery.004",
+      "recordLabel": "D04",
+      "title": "樹海の灯を立て直す",
+      "category": "delivery",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 25,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.delivery.005",
+      "recordLabel": "D05",
+      "title": "涸れ沢へ、一本目の杭",
+      "category": "delivery",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": 15,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.delivery.006",
+      "recordLabel": "D06",
+      "title": "潮の高さを測る箱",
+      "category": "delivery",
+      "stars": 2,
+      "effectiveTimeLimitMinutes": 20,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.delivery.007",
+      "recordLabel": "D07",
+      "title": "峡谷の番小屋へ二箱",
+      "category": "delivery",
+      "stars": 3,
+      "effectiveTimeLimitMinutes": 25,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.delivery.008",
+      "recordLabel": "D08",
+      "title": "環谷の点検口へ",
+      "category": "delivery",
+      "stars": 4,
+      "effectiveTimeLimitMinutes": 30,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.delivery.009",
+      "recordLabel": "D09",
+      "title": "余った岩殻片を修繕に",
+      "category": "delivery",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": null,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.delivery.010",
+      "recordLabel": "D10",
+      "title": "手当て棚の備蓄",
+      "category": "delivery",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": null,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.delivery.011",
+      "recordLabel": "D11",
+      "title": "工房の二つの備え",
+      "category": "delivery",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": null,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    },
+    {
+      "questId": "quest.delivery.012",
+      "recordLabel": "D12",
+      "title": "帰路の灯を保つ",
+      "category": "delivery",
+      "stars": 1,
+      "effectiveTimeLimitMinutes": null,
+      "sourceFile": "nonhunt_catalog_v2.json"
+    }
+  ]
+}

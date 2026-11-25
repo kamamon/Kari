@@ -1,0 +1,55 @@
+{
+  "status": "pass",
+  "scope": "reference / editorial consistency / arithmetic only; no game test or playtest",
+  "baselineCommit": "9a5443ab1ac813512deac03422ee996f57f8a900",
+  "assertionCounts": {
+    "inventory": 3,
+    "readiness": 79,
+    "stars": 188,
+    "time": 204,
+    "references": 308,
+    "copy": 102,
+    "failure": 102,
+    "supplies": 526,
+    "capture": 98,
+    "existing": 217,
+    "timer_adapter": 73,
+    "native_reference": 346,
+    "huge": 11,
+    "story": 88,
+    "progression": 499,
+    "campaign_support": 69,
+    "source_hashes": 17
+  },
+  "totalAssertions": 2930,
+  "errors": [],
+  "questCount": 102,
+  "coveredSpecies": 86,
+  "storyLinks": 14,
+  "currentTimerChanges": [
+    "quest.basin.r2.001",
+    "quest.basin.r3.001",
+    "quest.basin.r4.001"
+  ],
+  "storyTargetMinutesTotal": [
+    169,
+    234
+  ],
+  "stars": {
+    "1": 6,
+    "2": 18,
+    "3": 10,
+    "4": 15,
+    "5": 11,
+    "6": 20,
+    "7": 4,
+    "8": 18
+  },
+  "notTested": [
+    "実際の勝率・狩猟時間",
+    "iPhone表示と性能",
+    "新規schema・UI・タイマーのゲーム動作",
+    "章の支給と一回限り保存",
+    "未実装種・狩場・捕獲・複数大型"
+  ]
+}
