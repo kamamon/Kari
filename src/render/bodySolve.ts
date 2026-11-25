@@ -573,13 +573,21 @@ export function chestFrame(ctl: Ctl, footL: Foot, footR: Foot, hands: Hands): { 
   return { sc: s.frames.sc, q: s.frames.qChest };
 }
 
-/** 歩く時の足（武器を構えたまま）。phase は進んだ距離から作る（1 周 = 2 歩）。 */
+/**
+ * 歩く時の足（武器を構えたまま）。phase は進んだ距離から作る（1 周 = 2 歩）。
+ * v0.28.1: 接地の長さを、脚が届く範囲（0.62m）までにした（歩幅がそれより長い時は、両足が浮く間を作る）。構えの前後のずれ（bias）も、
+ * 着く所が体の前 0.28m・離れる所が後ろ 0.38m を超えない所まで縮める（前へ出した足で、着いた瞬間に腰が落ちない）。
+ * bob は腰の高さの足し分（m）。足の運びに合わせたなめらかな 1 つの波で、歩きは片足で立つ真ん中が高く、走りは片足の真ん中が低い。
+ */
 export function gaitFeet(phase: number, stride: number, baseL: Foot, baseR: Foot, bias = 0.35): { L: Foot; R: Foot; bob: number } {
+  const duty = clamp(0.62 / Math.max(0.01, stride), 0.3, 0.6);
+  const half = (duty * stride) / 2;
+  const center = (base: Foot): number => clamp(base[2] * bias, half - 0.38, 0.28 - half);
+  const walkish = clamp((duty - 0.45) / 0.15, 0, 1);
+  const lift = 0.09 + 0.05 * (1 - walkish);
   const one = (ph: number, base: Foot): Foot => {
     const u = ((ph / (2 * Math.PI)) % 1 + 1) % 1;
-    const half = stride * 0.3;
-    const duty = 0.6;
-    let z: number, lift = 0, heel = 0;
+    let z: number, y = 0, heel = 0;
     if (u < duty) {
       z = half - (2 * half * u) / duty;
       // かかとから着いて（つま先が上がっている）、足の裏全体へ。離れる前は、かかとが上がる。
@@ -589,10 +597,12 @@ export function gaitFeet(phase: number, stride: number, baseL: Foot, baseR: Foot
       const s = (u - duty) / (1 - duty);
       const e = s * s * (3 - 2 * s);
       z = -half + 2 * half * e;
-      lift = 0.09 * Math.sin(Math.PI * s) ** 0.8;
+      y = lift * Math.sin(Math.PI * s) ** 0.7;
       heel = 26 * (1 - s) * (1 - s) - 20 * s * s;
     }
-    return [base[0] * 0.7, lift, base[2] * bias + z, base[3] * 0.4, heel];
+    return [base[0] * 0.7, y, center(base) + z, base[3] * 0.4, heel];
   };
-  return { L: one(phase, baseL), R: one(phase + Math.PI, baseR), bob: 0.012 * Math.cos(phase * 2) };
+  const uL = ((phase / (2 * Math.PI)) % 1 + 1) % 1;
+  const wave = Math.cos(4 * Math.PI * (uL - duty / 2));
+  return { L: one(phase, baseL), R: one(phase + Math.PI, baseR), bob: -0.012 * (1 - walkish) + (0.008 * walkish - 0.012 * (1 - walkish)) * wave };
 }

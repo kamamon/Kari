@@ -69,6 +69,8 @@ export class HunterAnimator {
   private phase = 0;
   private contact = new ContactLocomotion();
   private previousRoot: RenderRoot | null = null;
+  /** 歩いている間に、足が届くように腰をさらに落とした量（m） */
+  private sag = 0;
 
   constructor(phase = 0) { this.phase = phase; }
 
@@ -79,6 +81,7 @@ export class HunterAnimator {
     this.key = '';
     this.contact.reset();
     this.previousRoot = null;
+    this.sag = 0;
   }
 
   /** 直前のフレームも、ここで解いた姿だったか */
@@ -150,6 +153,14 @@ export class HunterAnimator {
       f.fL = grounded.L; f.fR = grounded.R;
     } else this.contact.reset();
     this.last = f;
+    // 歩いている間（v0.28.1）: 足が届かずに腰を落とした分は、次のフレームでゆっくり戻す（腰が跳ね上がらない）
+    if (st.kind === 'idle' && walk > 0) {
+      this.sag = Math.max(0, this.sag - 0.3 * Math.min(dt, 0.1));
+      const solved = solveBody({ ...f.ctl, hip: [f.ctl.hip[0]!, f.ctl.hip[1]! - this.sag, f.ctl.hip[2]!] }, f.fL, f.fR, S.hands);
+      this.sag = Math.max(0, f.ctl.hip[1]! - solved.pose.py);
+      return solved;
+    }
+    this.sag = 0;
     return solveBody(f.ctl, f.fL, f.fR, S.hands);
   }
 }

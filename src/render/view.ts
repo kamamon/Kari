@@ -26,7 +26,7 @@ import { DummyRig, type MonsterRig } from './monsterRig';
 import { blendPose, clipPose, deadPose, emptyPose, guardPose, hurtPose, locomotionPose, type BodyPose } from './poses';
 import { HunterAnimator, applySolved, canSolve, playerContactFrame, playerRenderTick, stowOffhand, type AnimState } from './hunterAnim';
 import type { Solved } from './bodySolve';
-import { GroundedLocomotion } from './contactLocomotion';
+import { GroundedLocomotion, freeStride } from './contactLocomotion';
 import { groundedHeavyAttack } from './heavyBodyMotion';
 import { WEAPON_STANCES } from './weaponClipSpecs';
 import { buildArrow } from './bow';
@@ -500,8 +500,7 @@ export class GameView {
     const travel = this.lastPlayerXZ ? Math.hypot(pos.x - this.lastPlayerXZ.x, pos.z - this.lastPlayerXZ.z) : 0;
     const visualSpeed = this.lastPlayerXZ && dt > 0 && dt < 0.2 && travel < 1.2 ? Math.min(7, travel / dt) : p.moveSpeed;
     this.lastPlayerXZ = { x: pos.x, z: pos.z };
-    const stride = p.drawn ? 1.35 : 1.7 + 0.9 * Math.min(1, visualSpeed / 6.4);
-    this.phase += (visualSpeed * dt * Math.PI * 2) / stride;
+    this.phase += (visualSpeed * dt * Math.PI * 2) / freeStride(visualSpeed, p.drawn);
 
     // ---- 姿勢と武器の置き場所を決める ----
     let key: string;

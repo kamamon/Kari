@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 import { Euler, Quaternion, SkinnedMesh, Texture, TextureLoader, Vector3 } from 'three';
-import { ContactLocomotion, footContactWorld, travelGait } from '../src/render/contactLocomotion';
+import { ContactLocomotion, GroundedLocomotion, footContactWorld, freeStride, travelGait } from '../src/render/contactLocomotion';
 import { HunterAnimator, playerContactFrame, playerRenderTick, solveState } from '../src/render/hunterAnim';
 import { groundedHeavyAttack } from '../src/render/heavyBodyMotion';
 import { evalMotion, solveBody, vlen, vsub, type Foot } from '../src/render/bodySolve';
 import { WEAPON_MOTIONS, WEAPON_STANCES } from '../src/render/weaponClipSpecs';
-import { clipPose } from '../src/render/poses';
+import { clipPose, locomotionPose } from '../src/render/poses';
 import { HunterRig } from '../src/render/rig';
 import { sampleTrack } from '../src/game/tracks';
 import { checkFrame } from '../src/render/humanLimits';
@@ -135,16 +135,88 @@ describe('runtime の動作差し替え', () => {
     expect(scenarios).toBe(36);
   });
 
-  it('疾走は、脚の届く歩幅で短い空中局面を持つ', () => {
+  it('疾走は、脚の届く歩幅で短い空中局面を持つ（接地する所は体の前 0.30m・後ろ 0.45m まで。v0.28.1）', () => {
     let flight = 0, contacts = 0;
     for (let k = 0; k < 240; k++) {
       const g = travelGait(k / 240 * Math.PI * 2, 2.6, L, R, 1);
       if (g.L[1] > 0.02 && g.R[1] > 0.02) flight++;
       if (g.L[1] <= 0.004) contacts++;
-      expect(Math.max(Math.abs(g.L[2]), Math.abs(g.R[2]))).toBeLessThanOrEqual(0.417);
+      for (const f of [g.L, g.R]) if (f[1] <= 0.004) {
+        expect(f[2]).toBeLessThanOrEqual(0.30);
+        expect(f[2]).toBeGreaterThanOrEqual(-0.45);
+      }
     }
     expect(flight).toBeGreaterThan(40);
     expect(contacts / 240).toBeLessThan(0.4);
+  });
+});
+
+/** 歩いて進む間の腰の高さ（骨盤の py）を、毎フレーム記録する */
+function walkHeights(step: (dt: number, z: number) => number, speed: number, fps: number, seconds = 6): number[] {
+  const dt = 1 / fps, out: number[] = [];
+  let z = 0;
+  for (let i = 0; i < fps * seconds; i++) {
+    z += speed * dt;
+    const py = step(dt, z);
+    if (i > fps * 2) out.push(py);
+  }
+  return out;
+}
+const spread = (ys: number[]): number => Math.max(...ys) - Math.min(...ys);
+const maxStep = (ys: number[]): number => ys.reduce((m, y, i) => (i ? Math.max(m, Math.abs(y - ys[i - 1]!)) : 0), 0);
+
+describe('歩く・走る時に、体が跳ねない（v0.28.1。利用者の指摘「歩くたびにバウンドするのは不自然」）', () => {
+  it('納刀（全系統）と断岳剣の抜刀: 腰の上下は 4cm 以内のなめらかな波。足が届かずに腰が急に落ちる・跳ねることがない（30/60/120fps）', () => {
+    for (const [drawn, speeds] of [[false, [0.6, 1.2, 2, 3, 4, 5, 6.4]], [true, [1.2, 2.4]]] as const) for (const speed of speeds) for (const fps of [30, 60, 120]) {
+      const g = new GroundedLocomotion();
+      let phase = 0, drop = 0, t = 0;
+      const ys = walkHeights((dt, z) => {
+        t += dt;
+        phase += (speed * dt * Math.PI * 2) / freeStride(speed, drawn);
+        const pose = locomotionPose(drawn, speed, phase, t);
+        const out = g.frame(pose, drawn, speed, phase, dt, { x: 0, z, yaw: 0 });
+        const gait = travelGait(phase, freeStride(speed, drawn), L, R, drawn ? 0 : Math.min(1, Math.max(0, (speed - 3.5) / 2.9)));
+        if (t > 2) drop = Math.max(drop, Math.min(pose.py, gait.base) + gait.bob - out.py);
+        return out.py;
+      }, speed, fps);
+      const label = `${drawn ? '抜刀' : '納刀'} ${speed}m/s ${fps}fps`;
+      expect(spread(ys), label).toBeLessThan(0.04);
+      // なめらかな波の傾き（周期と振れ幅から）を超えて、1 フレームで大きく動かない
+      expect(maxStep(ys), label).toBeLessThan(0.45 / fps);
+      expect(drop, `${label}: 足へ届かずに落とした量`).toBeLessThan(0.004);
+    }
+  });
+
+  it('武器を構えて歩く（6 系統）: 腰の上下は 3cm 以内のなめらかな波（30/60/120fps）', async () => {
+    const content = await loadContent();
+    for (const family of Object.keys(WEAPON_STANCES)) {
+      const full = content.families.get(family)!.drawnMoveSpeed;
+      for (const speed of [full * 0.5, full]) for (const fps of [30, 60, 120]) {
+        const anim = new HunterAnimator();
+        let t = 0;
+        const ys = walkHeights((dt, z) => {
+          t += dt;
+          return anim.frame(family, { kind: 'idle' }, 'idle', dt, speed, t, { root: { x: 0, z, yaw: 0 } }).pose.py;
+        }, speed, fps);
+        const label = `${family} ${speed.toFixed(1)}m/s ${fps}fps`;
+        expect(spread(ys), label).toBeLessThan(0.03);
+        expect(maxStep(ys), label).toBeLessThan(0.45 / fps);
+      }
+    }
+  });
+
+  it('歩き（両足が着く間がある）は片足で立つ真ん中が高く、走り（両足が浮く間がある）は片足の真ん中が低い', () => {
+    const walk = travelGait(0, freeStride(1.0, false), L, R, 0);
+    const run = travelGait(0, freeStride(6.4, false), L, R, 1);
+    expect(walk.duty).toBeGreaterThan(0.55);
+    expect(run.duty).toBeLessThan(0.3);
+    const at = (stride: number, run01: number, u: number): number => {
+      const g = travelGait(u * Math.PI * 2, stride, L, R, run01);
+      return g.bob;
+    };
+    // 左足の接地の真ん中（u = duty / 2）と、そこから 1/4 周ずれた所（両足の時・空中）
+    expect(at(freeStride(1.0, false), 0, walk.duty / 2)).toBeGreaterThan(at(freeStride(1.0, false), 0, walk.duty / 2 + 0.25));
+    expect(at(freeStride(6.4, false), 1, run.duty / 2)).toBeLessThan(at(freeStride(6.4, false), 1, run.duty / 2 + 0.25));
   });
 });
 

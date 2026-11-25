@@ -27,7 +27,7 @@ import { HunterRig } from './render/rig';
 import type { ArmorLook } from './render/hunterArmor';
 import { applySolved, canSolve, solveState, stowOffhand, type AnimState } from './render/hunterAnim';
 import type { Solved } from './render/bodySolve';
-import { GroundedLocomotion } from './render/contactLocomotion';
+import { GroundedLocomotion, freeStride } from './render/contactLocomotion';
 import { groundedHeavyAttack } from './render/heavyBodyMotion';
 import { WEAPON_STANCES } from './render/weaponClipSpecs';
 import { buildLongBlade, buildTwinBlade, buildWarMaul } from './render/forgedWeapons';
@@ -417,7 +417,7 @@ function frame(ts: number): void {
       lastSolved = null;
       hunter.setString(null);
       const speed = t < 60 ? 0 : 4;
-      const phase = t / 60 * speed * Math.PI * 2 / (1.7 + 0.9 * Math.min(1, speed / 6.4));
+      const phase = t / 60 * speed * Math.PI * 2 / freeStride(speed, false);
       const pose = locomotionPose(false, speed, phase, time);
       // ビューアはその場で周期を確認する。ゲームでは状態を保持して世界接地する。
       hunter.setPose(new GroundedLocomotion().frame(pose, false, speed, phase, 0, { x: 0, z: 0, yaw: 0 }));

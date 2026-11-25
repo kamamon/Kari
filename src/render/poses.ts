@@ -323,7 +323,7 @@ export function locomotionPose(drawn: boolean, speed: number, phase: number, tim
     p.j.spine = [4 + 10 * run, 0, 0];
     p.j.chest = [breathe * 1.2, -8 * s * run, 0];
   }
-  p.py += -0.015 + 0.02 * Math.cos(phase * 2);
+  // 腰の上下は、足の運びと一緒に GroundedLocomotion が決める（v0.28.1。ここで別の波を足すと、足の届きと食い違って腰が跳ねる）
   return p;
 }
 

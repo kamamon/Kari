@@ -42,7 +42,10 @@ export class ContactLocomotion {
     const distance = Math.hypot(dx, dz);
     const directionError = distance > 0.0001 ? Math.abs(angle(root.yaw, Math.atan2(dx, dz))) : 0;
     const turnSpeed = this.root && stepDt > 0 ? Math.abs(angle(this.root.yaw, root.yaw)) / stepDt : 0;
-    const overextended = feet.some((state) => {
+    // 伸びすぎを見るのは、地面に着いていて、このフレームも着いたままの足だけ（運んでいる足・離れる足の位置は前のフレームのもので、
+    // 速く走るほど後ろに見える。v0.28.1）
+    const overextended = feet.some((state, i) => {
+      if (!state.contact || (moving && desired[i]![1] > 0.004)) return false;
       const f = local(state.at, state.lift, 0, root);
       return Math.hypot(f[0], f[2]) > 0.52;
     });
@@ -107,7 +110,9 @@ export class ContactLocomotion {
         state.lift = sw.lift * (1 - w) + 0.065 * Math.sin(Math.PI * u);
         if (u >= 1) { state.swing = null; state.contact = true; state.lift = 0; }
       }
-      let heel = state.contact ? f[4] : 0;
+      // かかとの角度は、接地中と、歩いて運んでいる足（遊脚）では、歩き方のとおり。止まる時の踏み替えだけは 0（v0.28.1。
+      // 遊脚で 0 にすると、離れた瞬間に足首が下がって脚が届かず、腰が急に落ちていた）
+      let heel = state.contact || (nominalSwing && !state.swing) ? f[4] : 0;
       if (moving && state.contact) {
         const turn = angle(state.at.yaw, target.yaw);
         if (Math.abs(turn) > 12 * DEG) {
@@ -124,20 +129,53 @@ export class ContactLocomotion {
 }
 
 const FREE_HANDS: Hands = { primary: 'R', second: 'free', wrist: [0, 180] };
-/** 接地率に歩幅を合わせる。run=1 では両足が短く浮く走りになり、歩幅だけを過大にしない。 */
-export function travelGait(phase: number, stride: number, L: Foot, R: Foot, run = 0): { L: Foot; R: Foot; bob: number } {
-  const duty = 0.6 - 0.28 * clamp(run, 0, 1), half = stride * duty * 0.5;
+
+/**
+ * 自由移動（納刀中の全系統と、断岳剣の抜刀中）の 1 周（2 歩）の長さ（m）。v0.28.1。
+ * 歩く速さでは短く、走るほど長く、歩数（1 秒あたりの周期）も少しずつ増える: 1.2m/s で約 1.1m・4m/s（ふだんの移動）で約 2.2m・6.4m/s（疾走）で約 2.9m。
+ * 位相を進める側（view.ts・viewer.ts）と、足を置く側（GroundedLocomotion）は、必ず同じ値を使う（違うと、接地した足が滑る）。
+ */
+export function freeStride(speed: number, drawn: boolean): number {
+  if (drawn) return 1.35;
+  const v = Math.max(0, speed);
+  const cycles = v <= 4 ? 0.8 + 0.25 * v : 1.8 + 0.17 * (v - 4);
+  return Math.max(0.5, v / cycles);
+}
+
+/** 接地している間に足が体に対して進める長さ（m）の上限。脚（0.835m）と腰の高さから、腰を落とさずに届く範囲 */
+const REACH_WALK = 0.64, REACH_RUN = 0.74;
+/** 着地の位置は、体の前 4 割・後ろ 6 割（後ろ足は、かかとを上げて母指球で押し出すので、遠くまで届く） */
+const FRONT_SHARE = 0.4;
+
+/**
+ * 1 周（2 歩）の足の置き方と、腰の高さ（v0.28.1 で作り直した）。
+ * - 接地の長さは、脚が届く範囲（REACH_*）まで。それより歩幅が長い時は、接地の割合（duty）を下げて、両足が浮く間を作る（走り）。
+ *   接地した足が届かずに腰が急に落ちる・跳ね上がる、を起こさない。
+ * - かかと: 着地の前からつま先を上げ、着いた後に下ろす。離れる前から上げ、浮いた後もしばらく上げたまま（つなぎ目で足首が跳ばない）。
+ * - 遊脚は、離れてすぐ高く上げてから前へ振り出す（後ろへ伸びたまま運ばない）。
+ * - 腰の高さ（m）= base + bob。base は膝を少し曲げた高さ（歩き -0.03・走り -0.055）。bob は足の運びに合わせた、なめらかな 1 つの波:
+ *   歩き = 片足で立つ真ん中が高く、両足の時が低い（±1.2cm）。走り = 空中で高く、片足の真ん中で低い（±1.6cm）。間は duty でなめらかに替える。
+ */
+export function travelGait(phase: number, stride: number, L: Foot, R: Foot, run = 0): { L: Foot; R: Foot; base: number; bob: number; duty: number } {
+  const r = clamp(run, 0, 1);
+  const duty = clamp((REACH_WALK + (REACH_RUN - REACH_WALK) * r) / Math.max(0.01, stride), 0.24, 0.62);
+  const T = duty * stride, front = T * FRONT_SHARE, back = T - front;
+  const lift = 0.085 + 0.13 * r, toeUp = -12 + 4 * r, heelMax = 30 + 14 * r;
   const one = (ph: number, base: Foot): Foot => {
     const u = ((ph / (Math.PI * 2)) % 1 + 1) % 1;
     if (u < duty) {
       const k = u / duty;
-      const heel = k < 0.18 ? -16 * (1 - k / 0.18) : k > 0.74 ? 24 * ((k - 0.74) / 0.26) : 0;
-      return [base[0], 0, half - stride * u, base[3] * 0.4, heel];
+      const heel = k < 0.22 ? toeUp * (1 - smooth(k / 0.22)) : k > 0.5 ? heelMax * smooth((k - 0.5) / 0.5) : 0;
+      return [base[0], 0, front - T * k, base[3] * 0.4, heel];
     }
     const s = (u - duty) / (1 - duty);
-    return [base[0], (0.09 + run * 0.12) * Math.sin(Math.PI * s), -half + 2 * half * smooth(s), base[3] * 0.4, 0];
+    const heel = s < 0.45 ? heelMax * (1 - smooth(s / 0.45)) : s > 0.7 ? toeUp * smooth((s - 0.7) / 0.3) : 0;
+    return [base[0], lift * Math.pow(Math.sin(Math.PI * s), 0.6), -back + T * smooth(s), base[3] * 0.4, heel];
   };
-  return { L: one(phase, L), R: one(phase + Math.PI, R), bob: 0.012 * Math.cos(phase * 2) };
+  const uL = ((phase / (Math.PI * 2)) % 1 + 1) % 1;
+  const walkish = smooth((duty - 0.45) / 0.15);
+  const wave = Math.cos(4 * Math.PI * (uL - duty / 2));
+  return { L: one(phase, L), R: one(phase + Math.PI, R), base: -(0.055 - 0.025 * walkish), bob: (0.012 * walkish - 0.016 * (1 - walkish)) * wave, duty };
 }
 /** 既存の上体を保ち、脚と骨盤だけを二本骨 IK で地面へ合わせる。 */
 export function groundLowerBody(pose: BodyPose, L: Foot, R: Foot, hipYaw = 0, hipRoll = 0): BodyPose {
@@ -158,17 +196,23 @@ export function groundLowerBody(pose: BodyPose, L: Foot, R: Foot, hipYaw = 0, hi
 /** 納刀中（全 7 系統）と断岳剣の通常歩行。武器の判定時刻には呼ばない。 */
 export class GroundedLocomotion {
   private contact = new ContactLocomotion();
-  reset(): void { this.contact.reset(); }
+  /** 前のフレームで、足が届くように腰をさらに落とした量（m）。届くようになったら、ゆっくり戻す（腰が跳ね上がらない） */
+  private sag = 0;
+  reset(): void { this.contact.reset(); this.sag = 0; }
   frame(pose: BodyPose, drawn: boolean, speed: number, phase: number, dt: number, root: RenderRoot): BodyPose {
     const L: Foot = drawn ? [0.11, 0, 0.18, 6, 0] : [0.105, 0, 0, 5, 0];
     const R: Foot = drawn ? [-0.13, 0, -0.16, -28, 0] : [-0.105, 0, 0, -5, 0];
     const moving = speed > 0.15;
-    const stride = drawn ? 1.35 : 1.7 + 0.9 * Math.min(1, speed / 6.4);
+    const stride = freeStride(speed, drawn);
     const run = drawn ? 0 : smooth((speed - 3.5) / 2.9);
-    const g = moving ? travelGait(phase, stride, L, R, run) : { L, R, bob: 0 };
+    const g = moving ? travelGait(phase, stride, L, R, run) : { L, R, base: 0, bob: 0 };
     const f = this.contact.frame(root, g.L, g.R, dt, moving);
     const w = smooth((speed - 0.15) / 1.0), yaw = 2.2 * Math.sin(phase) * w, roll = 1.1 * Math.sin(phase) * w;
-    const out = groundLowerBody(pose, f.L, f.R, yaw, roll);
+    // 腰の高さ: 膝を少し曲げた高さ（構えで既に低い時は、低い方）に、足の運びに合わせた波。前のフレームで足が届かずに落とした分は、ゆっくり戻す
+    const designed = (1 - w) * pose.py + w * (Math.min(pose.py, g.base) + g.bob);
+    this.sag = Math.max(0, this.sag - 0.3 * clamp(dt, 0, 0.1));
+    const out = groundLowerBody({ ...pose, py: designed - this.sag }, f.L, f.R, yaw, roll);
+    this.sag = Math.max(0, designed - out.py);
     // 腰と胸は逆方向へ。頭と武器の向きを大きく振らない。
     out.j.spine = [pose.j.spine[0], pose.j.spine[1] - yaw * 0.65, pose.j.spine[2] - roll * 0.65];
     return out;
