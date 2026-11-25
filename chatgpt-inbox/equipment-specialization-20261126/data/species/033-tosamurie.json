@@ -1,0 +1,206 @@
+{
+  "no": 33,
+  "speciesId": "monster.tosamurie",
+  "name": "トサムリエ",
+  "nativeRank": 2,
+  "identity": {
+    "role": "疲弊域の回避から風を返す細身装",
+    "ecologyBasis": "前肘の逆鉤の内側に送風膜が張り、畳んだ肘を開くと狭い空気の刃を押し出す。鉤は枝を引き下ろす採食器官でもある。 頭を低くして根の間を歩き、枝を折らずに引く場所を覚える。追われると斜め跳びで樹間の広い方へ逃げる。",
+    "combatLoop": "スタミナを半分以下まで使う→敵の接触を回避で避ける→風と低い回避消費で位置を変える。",
+    "strength": "同級基準の物理倍率0.88、会心率+22ポイント。既存のwind属性量を1.50倍。固有技能「逆肘の風抜け」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "物理基礎倍率0.88（同級基準比12%低い。系統補正前）、刃容量0.88倍、刃消耗1.05倍、防具一式の基準防御力0.76倍。弱点耐性は一式でfire -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "long_blade",
+      "ring_bow"
+    ],
+    "avoidUse": "回避を入力するだけで敵の接触を避けない移動。"
+  },
+  "stats": {
+    "rawScale": 0.88,
+    "affinity": 22,
+    "elementScale": 1.5,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.88,
+    "edgeWearScale": 1.05,
+    "staminaCostScale": 0.9,
+    "defenseScale": 0.76,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 0.98,
+      "war_maul": 0.98,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 0.98,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.14,
+      "chest": 0.18,
+      "arms": 0.3,
+      "waist": 0.13,
+      "legs": 0.25
+    },
+    "setResistances": {
+      "fire": -20,
+      "thunder": 0,
+      "ice": 0,
+      "water": 20,
+      "wind": 20,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "dodge_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.tosamurie",
+    "name": "逆鉤の風裏",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "rear"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "枝を引き下ろす鉤のように敵の背面へ回り、次の別行動へ風を集める。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、480tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.tosamurie",
+    "name": "逆肘の風抜け",
+    "trigger": {
+      "event": "dodge",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 50
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 720,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "dodgeCostPct",
+        "values": [
+          -12,
+          -20
+        ]
+      },
+      {
+        "stat": "elementPct",
+        "values": [
+          8,
+          12
+        ]
+      }
+    ],
+    "explanation": "残りスタミナ50%以下で接触を避けた時に膜が開く。追い回すより、敵の一撃を読んで風の懐へ戻る。 回避入力ではなく、敵の接触を回避の無敵時間で実際に避けた時だけ数える。 300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から240tick有効、720tick再使用。攻撃への補正は起点と別の次行動から有効。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "胸と腰を極端に短くし、肘の外へ折り畳んだ逆鉤と細い脛だけを長く見せる。膜は脇に小さく残し翼にはしない。",
+    "palette": [
+      "灰緑",
+      "生成り",
+      "青銅"
+    ],
+    "organTranslation": [
+      "逆肘鉤→前腕外の下向きに伏せた二つの短鉤",
+      "送風膜→脇と鉤の内側の細い張り膜",
+      "斜め跳びの脚→露出の多い足首と縦長の脛甲"
+    ],
+    "armorParts": {
+      "head": "細い頭帯と低い頬縁二本。前後の大きな冠を持たせない",
+      "chest": "胸骨に沿う細い縦板と脇の折り膜。腹の中央は暗い布で広く空ける",
+      "arms": "肘の外へ下向きの鉤を一つずつ伏せる。先端は手首より上で丸く終える",
+      "waist": "短い前腰帯と、後腰の小さな送風膜二枚。尾や長い布を足さない",
+      "legs": "細い一本稜の脛甲。足首は見える布帯と薄い靴、後ろへ棘を伸ばさない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の刃元へ短い逆鉤二本を伏せ、先を細く絞った軽い見た目の大剣",
+      "guard_blade": "低い逆鉤の鍔を持つ細剣と、折り膜の細帯を縁に収めた縦長の盾",
+      "war_maul": "鉤骨を畳んだ芯を硬い打面で両側から閉じ、側面だけ小膜を見せる",
+      "twin_blades": "下向きの短鉤を峰に沿わせた細い二本刃。刃先は前へ連続させる",
+      "long_blade": "細い湾曲刃に沿って一筋の青銅腱、刃元の小鉤は鞘へ納まる高さ",
+      "long_lance": "細い直槍の刃元に小さな逆鉤、盾は中央骨筋と両側の硬い細面で構成",
+      "ring_bow": "内側の鉤を小環の支持へ写した細い骨弓。膜は中央脇の小片だけ、弦は一本直線"
+    },
+    "gradeEvolution": {
+      "2": "灰緑の骨縁と生成りの小膜。鉤を低く伏せて肘との間の空間を残す。",
+      "3": "鉤の内側へ青銅の細筋を一つ足し、脛甲を細い二層にする。",
+      "4": "膜の折り目だけ淡く透ける。鉤の数や長さを変えず、胸の金属面を増やさない。"
+    },
+    "production": {
+      "primaryForm": "下へ伏せた一対の逆鉤",
+      "secondaryForm": "短い胸腹と細い脚",
+      "dominantRegion": "両前腕",
+      "asymmetry": "左右対称の一対鉤",
+      "repeatCount": 2,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "二つの肘鉤の内側膜",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "鉤を手首や指の先まで伸ばさない",
+      "肩へ巨大な翼膜を作らない",
+      "鉤をリーチ増加の判定にしない"
+    ]
+  }
+}

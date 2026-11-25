@@ -1,0 +1,202 @@
+{
+  "no": 40,
+  "speciesId": "monster.tsumarobek",
+  "name": "ツマロベク",
+  "nativeRank": 2,
+  "identity": {
+    "role": "生き残った被弾から短く返す腹鼓装",
+    "ecologyBasis": "胸腹の太鼓状の甲内に圧電膜が張り、前脚で地面を押すと電荷がたまる。腹甲を下ろす直前に膜が琥珀色に脈打ち、接地した方向だけへ放電する。 胸を地面へ近づけて振動を確かめ、餌のいる場所だけを掘る。腹甲の下へ入られると踏み替えて距離を作る。",
+    "combatLoop": "非ガード被弾を生存しHP55%以下→短い雷の反撃→防御窓の終了前に立て直す。故意の連続被弾で維持しない。",
+    "strength": "同級基準の物理倍率1.05、会心率-15ポイント。既存のthunder属性量を0.85倍。固有技能「腹鼓の押し返す脈」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "会心率-15ポイント、刃消耗1.15倍、回避・ガード・ため維持など元々費用を持つ戦闘行動のスタミナ消費1.18倍。弱点耐性は一式でice -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "war_maul",
+      "guard_blade"
+    ],
+    "avoidUse": "毒や削りを故意に受けて起動する運用。"
+  },
+  "stats": {
+    "rawScale": 1.05,
+    "affinity": -15,
+    "elementScale": 0.85,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.2,
+    "edgeWearScale": 1.15,
+    "staminaCostScale": 1.18,
+    "defenseScale": 1.1,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 1.02,
+      "war_maul": 1.04,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 0.98,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.13,
+      "chest": 0.35,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.16
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 20,
+      "ice": -20,
+      "water": 0,
+      "wind": 0,
+      "mist": 20
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "stun_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "part_damage",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.tsumarobek",
+    "name": "腹鼓の余韻",
+    "trigger": {
+      "event": "charge_release",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "stunPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "圧電膜の余韻を次の打撃へ残す。気絶は本来気絶値を持つ頭への打撃にのみ加算。 1段階以上ためて放った行動だけ。ため中のtickは数えない。 300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、480tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.tsumarobek",
+    "name": "腹鼓の押し返す脈",
+    "trigger": {
+      "event": "damage_taken",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 55,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 900,
+    "durationTicks": 180,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          -6,
+          -10
+        ]
+      }
+    ],
+    "explanation": "被弾後HP55%以下で生き残った時に圧電膜が反発する。短時間だけ雷と耐久を得る。発動打撃を軽減せず、連続被弾で再発動もしない。 生存する直接の非ガード被弾だけ。削り、毒、自傷、致死打撃は除く。 300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、900tick再使用。攻撃への補正は起点と別の次行動から有効。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "胸の前下へ一枚の円太鼓甲を落とし、肩と背は平らで小さい。下胸の丸面と短い太い手脚で低い重心を作る。",
+    "palette": [
+      "灰褐",
+      "琥珀",
+      "暗青銅"
+    ],
+    "organTranslation": [
+      "太鼓状の胸腹甲→下胸の一枚の丸面",
+      "圧電膜→太鼓内縁の細い琥珀線",
+      "接地前の腹下げ→低い位置に集まる装甲量"
+    ],
+    "armorParts": {
+      "head": "小さい平兜。額の短い直線だけを残し、頭に太鼓を増やさない",
+      "chest": "前下へ一枚の丸い太鼓甲。腹の屈曲線より上で止め、上胸と肩は平ら",
+      "arms": "太い短甲を前腕外へ置き、圧電線は内側の小窓に集める",
+      "waist": "短い幅広帯で太鼓の下端を支える。後腰は平らで小さい",
+      "legs": "短く太い脛甲、膝前は小さい丸板。足首は暗い柔膜で分ける"
+    },
+    "weaponShapes": {
+      "heavy_blade": "刃元の側面に薄い太鼓円を一つ置く重い平刃。円を刃先へ増やさない",
+      "guard_blade": "短い平剣と、低い位置へ一枚の円太鼓を埋め込んだ角盾",
+      "war_maul": "閉じた大きな円形打面二つと、その間の短い圧電膜。槌頭は硬く閉じる",
+      "twin_blades": "短い厚刃二本に同寸の小円鍔。前へ真っ直ぐな刃先を残す",
+      "long_blade": "長い連続刃の根元に低い円太鼓の横面だけを見せる",
+      "long_lance": "短い厚穂先と、下半分に一枚の円面を持つ重い盾",
+      "ring_bow": "中央の固定部へ小さな太鼓円。細い弓身と一本弦を保ち、小照準環とは分ける"
+    },
+    "gradeEvolution": {
+      "2": "灰褐の太鼓円を一枚、暗青銅は周囲の細縁に限る。",
+      "3": "太鼓外周へ短い押さえ片を等間隔に足す。胸の位置と肩の低さは保持。",
+      "4": "圧電膜の細線を円の下半分にだけ見せる。琥珀の面を広げず円の硬さを残す。"
+    },
+    "production": {
+      "primaryForm": "下胸の単円太鼓",
+      "secondaryForm": "平たい背",
+      "dominantRegion": "下胸と前腕",
+      "asymmetry": "左右対称の低重心",
+      "repeatCount": 1,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "胸太鼓の内縁の短い琥珀線",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "肩や兜にも大きな太鼓を置かない",
+      "腹甲を膝まで垂らさない",
+      "太鼓の中央を発射口にしない"
+    ]
+  }
+}

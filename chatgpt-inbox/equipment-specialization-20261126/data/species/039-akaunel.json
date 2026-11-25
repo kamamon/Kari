@@ -1,0 +1,206 @@
+{
+  "no": 39,
+  "speciesId": "monster.akaunel",
+  "name": "アカウネル",
+  "nativeRank": 2,
+  "identity": {
+    "role": "余力のある受けから整備へつなぐ火装",
+    "ecologyBasis": "首の四角襟の下に、晶粉を含む熱脂を分泌する羽鞘が並ぶ。襟の一辺を持ち上げてから、その方向だけへ熱い粉を吐く。 短い翼で灰を掬い、襟へ積もる粉をこまめに落とす。相手が近づくと襟の一辺を立てて先に警告する。",
+    "combatLoop": "スタミナ60%以上を残す受け→火の反撃または短い整備→襟が閉じるまでに次の位置を取る。",
+    "strength": "同級基準の物理倍率0.92、会心率+10ポイント。既存のfire属性量を1.30倍。固有技能「四角襟の灰落とし」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "物理基礎倍率0.92（同級基準比8%低い。系統補正前）、刃消耗1.25倍、回避・ガード・ため維持など元々費用を持つ戦闘行動のスタミナ消費1.12倍、防具一式の基準防御力0.93倍。弱点耐性は一式でwater -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "guard_blade",
+      "long_lance",
+      "heavy_blade"
+    ],
+    "avoidUse": "スタミナを残せない連続ガード。"
+  },
+  "stats": {
+    "rawScale": 0.92,
+    "affinity": 10,
+    "elementScale": 1.3,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.04,
+    "edgeWearScale": 1.25,
+    "staminaCostScale": 1.12,
+    "defenseScale": 0.93,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 1.04,
+      "war_maul": 0.98,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 1.02,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.29,
+      "chest": 0.25,
+      "arms": 0.18,
+      "waist": 0.14,
+      "legs": 0.14
+    },
+    "setResistances": {
+      "fire": 20,
+      "thunder": 0,
+      "ice": 20,
+      "water": -20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "guard_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.akaunel",
+    "name": "襟辺の灰選り",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "head"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "一辺だけを開く四角襟にならい、頭へ当てた後の別行動で部位を選って削る。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、480tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.akaunel",
+    "name": "四角襟の灰落とし",
+    "trigger": {
+      "event": "guard",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 60,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 720,
+    "durationTicks": 360,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          8,
+          12
+        ]
+      },
+      {
+        "stat": "itemUseTicksPct",
+        "values": [
+          -12,
+          -20
+        ]
+      }
+    ],
+    "explanation": "スタミナ60%以上を残した受けで襟の一辺を開く。余熱を攻撃へ送りつつ、整備品の使用時間だけを短くする。回復薬は短縮しない。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から360tick有効、720tick再使用。攻撃への補正は起点と別の次行動から有効。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "低い四角襟が首を囲み、四隅の角を丸く落とす。小さい匙肩と平らな胴で、四角い首の水平面を主役にする。",
+    "palette": [
+      "灰黒",
+      "鈍赤銅",
+      "煤灰"
+    ],
+    "organTranslation": [
+      "四角襟→首周囲の低い四辺枠",
+      "一辺ごとの熱粉→四辺内縁の短い窓",
+      "匙翼→肩の小さい浅皿"
+    ],
+    "armorParts": {
+      "head": "頭鉢は低い灰黒。襟の四辺が頭とは別に首下へ水平に広がる",
+      "chest": "灰黒の胸を平らにし、襟の一辺から下へ細い灰流れの筋を入れる",
+      "arms": "肩に小さい匙板、前腕は短い丸甲。襟と肩を重ねすぎない",
+      "waist": "前後同高の短い腰甲。四角を腰へ大きく反復しない",
+      "legs": "細い煤灰の脚衣と小さい脛板。丸い足甲で低く終える"
+    },
+    "weaponShapes": {
+      "heavy_blade": "刃元に低い四角枠の鍔、峰の一辺だけ赤銅の細い溝を付ける",
+      "guard_blade": "四角い低鍔の剣と、四辺を灰黒の厚縁で囲む角丸盾",
+      "war_maul": "四辺を短い熱窓で区切った角丸槌頭。両打面は閉じた煤灰面",
+      "twin_blades": "二本の小さな四角鍔と平らな細刃。小窓は刃元の内縁だけ",
+      "long_blade": "長い細刃の刃元へ四角襟を潰した低い鍔。峰の色線は短く留める",
+      "long_lance": "直槍の根元に小さな四辺枠、盾は低い四角面で角を丸める",
+      "ring_bow": "握り外側の小四角枠の上に小照準環。弓端は匙形に太らせず細く、弦は一本"
+    },
+    "gradeEvolution": {
+      "2": "四角襟の内縁だけ赤銅、外側は灰黒。匙肩を小さく保つ。",
+      "3": "四辺を独立した短い継ぎ目で分け、煤灰の胸に短い排熱筋。",
+      "4": "四隅へ小さな青銅留め、内縁は鈍い赤銅のまま。火柱や高い襟を追加しない。"
+    },
+    "production": {
+      "primaryForm": "低い四角襟",
+      "secondaryForm": "小さい匙肩",
+      "dominantRegion": "首の周囲",
+      "asymmetry": "左右対称の四辺",
+      "repeatCount": 4,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "四角襟の内側四辺",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "襟を高い壁にして顔を隠さない",
+      "四隅を長い角にしない",
+      "肩を火の翼にしない"
+    ]
+  }
+}

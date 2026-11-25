@@ -1,0 +1,205 @@
+{
+  "no": 49,
+  "speciesId": "monster.elmejika",
+  "name": "エルメジカ",
+  "nativeRank": 3,
+  "identity": {
+    "role": "弱点の三拍で霧氷と位置を維持",
+    "ecologyBasis": "六つの灯節の下に育つ霜灯滴腺。少量の冷却液を霧粒へ混ぜ、灯節の明滅後に足元の一部だけを凍らせる。 冷たい尾根で滴腺が発達したヴェルガイトの希少個体である。灯を低く保って菌木を巡り、相手の接近には左右の灯節を順番に光らせる。",
+    "combatLoop": "弱点へ三つの別行動→霧氷と回避効率→同じ敵に射線または足位置を維持する。",
+    "strength": "同級基準の物理倍率0.80、会心率+20ポイント。既存のmist/ice属性量を1.80倍。固有技能「六灯の霜筋合わせ」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "物理基礎倍率0.80（同級基準比20%低い。系統補正前）、刃容量0.92倍、刃消耗1.20倍、防具一式の基準防御力0.78倍。弱点耐性は一式でfire -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "ring_bow",
+      "long_blade",
+      "twin_blades"
+    ],
+    "avoidUse": "弱点を狙わない広いばら撒き。"
+  },
+  "stats": {
+    "rawScale": 0.8,
+    "affinity": 20,
+    "elementScale": 1.8,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.92,
+    "edgeWearScale": 1.2,
+    "staminaCostScale": 0.98,
+    "defenseScale": 0.78,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 0.98,
+      "war_maul": 0.98,
+      "twin_blades": 1.02,
+      "long_blade": 1.02,
+      "long_lance": 0.98,
+      "ring_bow": 1.04
+    },
+    "slotWeights": {
+      "head": 0.22,
+      "chest": 0.26,
+      "arms": 0.25,
+      "waist": 0.13,
+      "legs": 0.14
+    },
+    "setResistances": {
+      "fire": -20,
+      "thunder": 0,
+      "ice": 20,
+      "water": 20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "weak_crit",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "weak_crit",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "element_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.elmejika",
+    "name": "後開環の照準",
+    "trigger": {
+      "event": "draw",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "affinityPoints",
+        "values": [
+          4,
+          4
+        ]
+      }
+    ],
+    "explanation": "抜刀で後開きの環を整え、次の別行動の会心率を4ポイント上げる。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、480tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.elmejika",
+    "name": "六灯の霜筋合わせ",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "weakspot"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 3,
+    "windowTicks": 240,
+    "cooldownTicks": 720,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "dodgeCostPct",
+        "values": [
+          -10,
+          -16
+        ]
+      }
+    ],
+    "explanation": "弱点への三行動ごとに左右二点ずつ灯を揃える。霧氷と回避効率で射線や足位置を維持し、無差別な連打では灯らない。  240tick以内に異なる行動で3回。HP・スタミナ条件は行動費用確定後の残量%。発動から240tick有効、720tick再使用。攻撃への補正は起点と別の次行動から有効。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "後ろが開いた低い環冠と、両肩の合計六つの小節。胴を暗く細くして、小節の間の空白を見せる。",
+    "palette": [
+      "暗灰緑",
+      "灰青",
+      "霜白"
+    ],
+    "organTranslation": [
+      "後ろへ割れた環冠→後方を開けた低い頭環",
+      "六つの灯節→肩の左右三つずつの小節",
+      "霜灯滴腺→小節の下面の短い白い窓"
+    ],
+    "armorParts": {
+      "head": "後ろだけ開いた低い環冠。前額を小さい灰青板で閉じ、環を浮遊させない",
+      "chest": "暗灰緑の細い胸甲。両肩に各三つの小節を低く寄せる",
+      "arms": "細い前腕甲へ短い滴腺線一本。肩の六節と数が混ざる飾りを足さない",
+      "waist": "短い腰帯と小さい灰青の後板。長い灯尾を作らない",
+      "legs": "細い脛甲と霜白の小膝板。灯節を脚へ反復しない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の刃元に左右三つずつの低い小節。連続刃の先端は細く保つ",
+      "guard_blade": "後ろ開きの低鍔の剣と、上縁に合計六つの小窓を持つ盾",
+      "war_maul": "側面に左右三つずつの小節を伏せた閉じた槌頭。打面は無装飾",
+      "twin_blades": "各刃の峰に三つずつの小節を置き、二本で六節。大きな房を付けない",
+      "long_blade": "細い刃の根元へ六つの小点を二列に集める。鞘口の環は後ろで開く",
+      "long_lance": "直槍の根元に三対の小節、盾は後ろ開きの環縁と硬い中央面",
+      "ring_bow": "中央左右に三つずつの小節。主弓身は細い一対、小照準環と一本弦は節から独立"
+    },
+    "gradeEvolution": {
+      "3": "暗灰緑の細身に六節と後ろ開き環。霜白は各節の下面だけ。",
+      "4": "六節へ小さな灰青の受け座を追加。数と間隔を保ち、照明面を増やさない。"
+    },
+    "production": {
+      "primaryForm": "後ろ開きの低環",
+      "secondaryForm": "六つの小節",
+      "dominantRegion": "頭と肩",
+      "asymmetry": "左右三節ずつ",
+      "repeatCount": 6,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "肩の六節の下面の小窓",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "環冠の後ろを閉じない",
+      "灯節を七つ以上にしない",
+      "大きな発光枝角へ置き換えない"
+    ]
+  }
+}

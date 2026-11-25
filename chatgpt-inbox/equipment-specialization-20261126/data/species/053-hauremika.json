@@ -1,0 +1,201 @@
+{
+  "no": 53,
+  "speciesId": "monster.hauremika",
+  "name": "ハウレミカ",
+  "nativeRank": 3,
+  "identity": {
+    "role": "整備で湿りを揃える睡眠の苔帷装",
+    "ecologyBasis": "左翼の羽根に育つ苔帷濾房。菌の胞子を細かな水滴へ包み、短い霧の帯として振り落とすが、全身を隠すほどには広がらない。左翼の濾房から喉の小濾房へ細い管が続き、胞子液を前方の出口へ送る。 アシュレイアから菌糸の多い窪地へ分かれた亜種である。乾いた根棚を巡り、まず左の帷を上げて侵入者へ向ける。",
+    "combatLoop": "スタミナ70%以上で整備品を実消費→睡眠と刃持ちを保って攻める→被弾前に位置を変え、再使用を待つ。",
+    "strength": "同級基準の物理倍率0.80、会心率+5ポイント。既存のsleep蓄積量を1.60倍。固有技能「左帷の手入れ霧」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "物理基礎倍率0.80（同級基準比20%低い。系統補正前）、刃容量0.75倍、刃消耗1.50倍、防具一式の基準防御力0.78倍。弱点耐性は一式でfire -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "guard_blade",
+      "long_blade"
+    ],
+    "avoidUse": "環弓、および回復薬だけを使って整備技能を起動する運用。"
+  },
+  "stats": {
+    "rawScale": 0.8,
+    "affinity": 5,
+    "elementScale": 0,
+    "statusScale": 1.6,
+    "edgeCapacityScale": 0.75,
+    "edgeWearScale": 1.5,
+    "staminaCostScale": 0.96,
+    "defenseScale": 0.78,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 1.02,
+      "war_maul": 0.98,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 0.98,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.2,
+      "chest": 0.24,
+      "arms": 0.3,
+      "waist": 0.14,
+      "legs": 0.12
+    },
+    "setResistances": {
+      "fire": -20,
+      "thunder": 0,
+      "ice": 0,
+      "water": 20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "item_efficiency",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "item_efficiency",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "edge_keep",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.hauremika",
+    "name": "苔帷のたたみ房",
+    "trigger": {
+      "event": "sheathe",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 600,
+    "durationTicks": 240,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "帷を畳んで乾きを抑え、納刀後の次の別行動へ睡眠蓄積を残す。 明示した納刀行動の完了時のみ。道具・採集による暗黙の納刀は除く。 300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から240tick有効、600tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.hauremika",
+    "name": "左帷の手入れ霧",
+    "trigger": {
+      "event": "item_used",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 70,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 900,
+    "durationTicks": 420,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "edgeWearPct",
+        "values": [
+          -12,
+          -20
+        ]
+      }
+    ],
+    "explanation": "スタミナ70%以上で整備を終えると苔帷の湿りが揃う。睡眠の蓄積と刃持ちを保つ。整備できない環弓は推奨しない。 砥石など整備品が実際に1個以上消費された時。回復薬・採集・環弓の行動では発動しない。 300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から420tick有効、900tick再使用。攻撃への補正は起点と別の次行動から有効。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "左肩からだけ厚い短い苔帷が垂れ、右腕は骨の細線。長い襟を細く伸ばし、非対称の重さを左上へ集中する。",
+    "palette": [
+      "灰緑",
+      "淡菌糸色",
+      "暗骨色"
+    ],
+    "organTranslation": [
+      "左翼の苔帷濾房→左肩の短い層状帷",
+      "喉へ続く小濾房→襟左側の細い管線",
+      "菌糸を育てる羽→淡い縫い目を持つ灰緑の小片"
+    ],
+    "armorParts": {
+      "head": "後ろへ細く伸びる低い襟。左頬の小濾房を襟の内側へ沿わせる",
+      "chest": "灰緑の短い胸衣に菌糸色の縫い目。左鎖骨から襟へ細い管線",
+      "arms": "左肩から三枚の短い苔帷片を垂らす。右は細い骨縁の籠手、左右とも手首を開ける",
+      "waist": "前腰は短い二枚布。後腰に小さい眠粉槽の覆い一つ",
+      "legs": "細い脚衣へ暗骨の短甲。苔帷を脚まで延ばさず、膝裏を開ける"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の左側へ短い苔帷片三枚を伏せる。刃は暗骨の硬い連続面",
+      "guard_blade": "左片鍔に短帷を沿わせた剣と、左上のみ灰緑の濾房を持つ硬盾",
+      "war_maul": "硬い打面で閉じた槌頭の左側へ小濾房。苔を打面に使わない",
+      "twin_blades": "二本の峰に同じ三枚の短帷片。刃先へ布や苔を垂らさない",
+      "long_blade": "細い連続刃の根元へ左片帷。鞘口の短い縫い目に菌糸色を通す",
+      "long_lance": "直槍の根元へ細い濾房線、盾の左縁だけ短い帷を伏せる",
+      "ring_bow": "握り左側の小濾房に短い苔片。弓身は細く一本弦・小環を維持。外観のみで整備技能の適性は得ない"
+    },
+    "gradeEvolution": {
+      "3": "灰緑の左短帷と右の暗骨線。菌糸色は縫い目だけにする。",
+      "4": "左帷の三片の縁を短い房で区別。喉の管線を細く明示し、帷の長さを増やさない。"
+    },
+    "production": {
+      "primaryForm": "左の三短帷",
+      "secondaryForm": "右の細骨線",
+      "dominantRegion": "左肩と襟",
+      "asymmetry": "左だけ厚い帷、右は細い",
+      "repeatCount": 3,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "左肩濾房の菌糸色の縫い目",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "右肩にも同じ厚い帷を付けない",
+      "長いマントへ置き換えない",
+      "環弓が整備技能を発動できるように見せない"
+    ]
+  }
+}

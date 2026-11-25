@@ -1,0 +1,205 @@
+{
+  "no": 55,
+  "speciesId": "monster.oldasem",
+  "name": "オルダセム",
+  "nativeRank": 3,
+  "identity": {
+    "role": "無傷の部位を崩しながら受ける棚装",
+    "ecologyBasis": "左の棚肋に囲まれた連室風嚢。移動時の呼吸で空気を各室へ分け、棚の縁を持ち上げて一本ずつ低い圧縮風を出す。 温厚な採食者だが、左棚の下へ入り込む相手は強く押し返す。複数の広い岩盆を決まった順に歩き、狭い回廊では体を傾けて通る。",
+    "combatLoop": "未破壊部位へ三つの別行動→部位を削りながら受けを節約→壊れた後は次の未破壊部位へ条件を作り直す。",
+    "strength": "同級基準の物理倍率1.04、会心率-15ポイント。既存のwind属性量を1.20倍。固有技能「三棚の押し道」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "会心率-15ポイント、刃消耗1.30倍、回避・ガード・ため維持など元々費用を持つ戦闘行動のスタミナ消費1.20倍。弱点耐性は一式でthunder -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "heavy_blade",
+      "guard_blade",
+      "long_lance"
+    ],
+    "avoidUse": "破壊済み部位だけで固有技能の蓄積を作る運用。"
+  },
+  "stats": {
+    "rawScale": 1.04,
+    "affinity": -15,
+    "elementScale": 1.2,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.26,
+    "edgeWearScale": 1.3,
+    "staminaCostScale": 1.2,
+    "defenseScale": 1.1,
+    "familyBias": {
+      "heavy_blade": 1.04,
+      "guard_blade": 1.02,
+      "war_maul": 0.98,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 1.02,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.17,
+      "chest": 0.31,
+      "arms": 0.24,
+      "waist": 0.17,
+      "legs": 0.11
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": -20,
+      "ice": 20,
+      "water": 0,
+      "wind": 20,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "guard_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.oldasem",
+    "name": "棚下の押し返し",
+    "trigger": {
+      "event": "guard",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "左棚で受けた圧を別の一撃へ渡す。HPダメージではなく部位蓄積を増す。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、480tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.oldasem",
+    "name": "三棚の押し道",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "unbroken"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 3,
+    "windowTicks": 360,
+    "cooldownTicks": 720,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "guardCostPct",
+        "values": [
+          -12,
+          -20
+        ]
+      },
+      {
+        "stat": "partPct",
+        "values": [
+          14,
+          20
+        ]
+      }
+    ],
+    "explanation": "未破壊部位へ三行動を通して左棚下の道を押し開く。部位を崩す間の受けを助けるが、破壊済み部位では再準備できない。  360tick以内に異なる行動で3回。HP・スタミナ条件は行動費用確定後の残量%。発動から300tick有効、720tick再使用。攻撃への補正は起点と別の次行動から有効。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "左肩から左腰へ大きさの違う三段の岩棚。右側を低い短板だけにして、左側面の三つの水平な空隙を読み取れる形にする。",
+    "palette": [
+      "灰褐",
+      "灰緑",
+      "鈍青銅"
+    ],
+    "organTranslation": [
+      "左棚肋三枚→左肩・脇・腰の三段棚",
+      "連室風嚢→棚下の細い灰緑室三つ",
+      "広い岩盆を押す重い前脚→短い太い前腕甲"
+    ],
+    "armorParts": {
+      "head": "低い岩兜の左だけ短い庇。頭へ三つの棚を増殖しない",
+      "chest": "厚い胸板の左側に三段棚の根を置き、棚下の空隙を灰緑の細室で区切る",
+      "arms": "左肩棚の下から前腕を見せる。左前腕は厚い短甲、右は一枚の小板",
+      "waist": "左腰で三段目の棚を止め、右腰と前腰は短い革帯",
+      "legs": "太い短い脛甲。膝と足首を広く開け、上の棚と脚甲の塊を離す"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の左面へ三段の厚い棚を伏せた幅広刃。棚下に灰緑の細い空隙",
+      "guard_blade": "左片鍔の剣と、左側に三つの低い棚・右側に硬い平面を持つ盾",
+      "war_maul": "側面左に三段の棚窓、両打面は厚い閉じた岩面",
+      "twin_blades": "二本の峰に同じ低い三棚。刃は短い連続面で左右の重心を揃える",
+      "long_blade": "細い刃の根元だけ低い三段棚。先端は長い一枚面",
+      "long_lance": "厚い直槍の根元へ三棚の細い筋、盾の左側に低い三段棚",
+      "ring_bow": "握り左側へ短い三棚を置き、弓端は細い骨弓。一本弦と小環へ棚を干渉させない"
+    },
+    "gradeEvolution": {
+      "3": "灰褐の三棚を左側だけへ置き、灰緑室を細く見せる。右は短板。",
+      "4": "三棚の下の支持稜を短く二重にする。左腕が見える空隙を保持し、棚の幅や数を増やさない。"
+    },
+    "production": {
+      "primaryForm": "左側面の三棚",
+      "secondaryForm": "棚下の細い風室",
+      "dominantRegion": "左肩から左腰",
+      "asymmetry": "左のみ三棚、右を低くする",
+      "repeatCount": 3,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "左三棚の下の灰緑室",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "ボラゼルンの正面三庇と同じ形にしない",
+      "左棚で腕全体を隠さない",
+      "棚を大きな翼へ伸ばさない"
+    ]
+  }
+}

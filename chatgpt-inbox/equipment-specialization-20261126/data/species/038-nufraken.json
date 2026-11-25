@@ -1,0 +1,203 @@
+{
+  "no": 38,
+  "speciesId": "monster.nufraken",
+  "name": "ヌフラケン",
+  "nativeRank": 2,
+  "identity": {
+    "role": "納刀して冷壺を満たす氷の単発装",
+    "ecologyBasis": "首の後ろの冷壺に、冷晶を含む襞と湿気を集める内膜が重なる。壺腹を縮める前に首が高くなり、溜めた冷たい水粒を細い帯へ吐く。 長い胴を伏せて静かに進み、獲物が動くと首を持ち上げる。冷壺を傷つけられると、尾で距離を作って退く。",
+    "combatLoop": "スタミナ90%以上で納刀完了→次の別行動へ氷を集中→回復が鈍る準備時間を長引かせない。",
+    "strength": "同級基準の物理倍率0.80、会心率-10ポイント。既存のice属性量を1.85倍。固有技能「首壺の静かな充填」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "物理基礎倍率0.80（同級基準比20%低い。系統補正前）、会心率-10ポイント、刃容量0.80倍、刃消耗1.25倍、防具一式の基準防御力0.78倍。弱点耐性は一式でfire -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "ring_bow",
+      "heavy_blade",
+      "war_maul"
+    ],
+    "avoidUse": "低スタミナのまま納刀を連打する運用。"
+  },
+  "stats": {
+    "rawScale": 0.8,
+    "affinity": -10,
+    "elementScale": 1.85,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.8,
+    "edgeWearScale": 1.25,
+    "staminaCostScale": 1.0,
+    "defenseScale": 0.78,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 0.98,
+      "war_maul": 1.02,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 0.98,
+      "ring_bow": 1.04
+    },
+    "slotWeights": {
+      "head": 0.3,
+      "chest": 0.24,
+      "arms": 0.14,
+      "waist": 0.17,
+      "legs": 0.15
+    },
+    "setResistances": {
+      "fire": -20,
+      "thunder": 0,
+      "ice": 20,
+      "water": 0,
+      "wind": 0,
+      "mist": 20
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "weak_crit",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "weak_crit",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "dodge_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.nufraken",
+    "name": "冷壺の細注ぎ",
+    "trigger": {
+      "event": "charge_release",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "ためを放った後に冷壺の内膜を締め、次の別行動へ氷を渡す。 1段階以上ためて放った行動だけ。ため中のtickは数えない。 300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、480tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.nufraken",
+    "name": "首壺の静かな充填",
+    "trigger": {
+      "event": "sheathe",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 90,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 900,
+    "durationTicks": 300,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          14,
+          16
+        ]
+      },
+      {
+        "stat": "staminaRecoveryPct",
+        "values": [
+          -10,
+          -15
+        ]
+      }
+    ],
+    "explanation": "スタミナ90%以上で納刀し冷壺を満たす。次の氷の一撃を待つ間は回復速度が下がり、出入りを詰めると冷壺を満たせない。 明示した納刀行動の完了時のみ。道具・採集による暗黙の納刀は除く。 300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から300tick有効、900tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "首の後ろだけが一つの壺のように丸く膨らみ、正面の胸から脚は細い。肩の横幅ではなく背後の一点へ量を集める。",
+    "palette": [
+      "くすんだ青灰",
+      "白膜",
+      "暗革"
+    ],
+    "organTranslation": [
+      "首後ろの冷壺→後襟の丸い一壺",
+      "湿気を集める襞→壺の内縁の白い細襞",
+      "長く細い尾→腰後ろの短い一本筋へ省略"
+    ],
+    "armorParts": {
+      "head": "細い頭覆いの後ろに丸い壺襟を一つ。頭頂は平らで口は開ける",
+      "chest": "前胸は細い鱗板、後襟から背の上部だけ壺の受け座を置く",
+      "arms": "細い青灰の前腕甲に白い内膜を一筋。肩を膨らませない",
+      "waist": "細い腰帯。後ろへ一本の短い尾筋を伏せ、裾を長くしない",
+      "legs": "細い鱗甲と暗い革靴。膝を小さい別板で覆う"
+    },
+    "weaponShapes": {
+      "heavy_blade": "細長い単面刃の根元の背側へ丸い冷壺を一つ、先は細く平ら",
+      "guard_blade": "細い壺首形の鍔を持つ剣と、中央上だけ丸く膨らむ縦盾",
+      "war_maul": "一つの丸い冷壺を硬い二打面で挟んだ槌頭。内膜は側面の小窓だけ",
+      "twin_blades": "二本とも刃元の小壺を同寸で持つ。刃は細い直線で袋をぶら下げない",
+      "long_blade": "細い連続刃の根元に低い壺形の覆い。鞘口へ白い襞一筋",
+      "long_lance": "細い直槍の根元に丸い小壺、盾は上部の一壺と下部の細い硬面",
+      "ring_bow": "握りの上背側に丸い小壺を一つ。細い弓身と一本弦、小環は壺から離す"
+    },
+    "gradeEvolution": {
+      "2": "後襟の一壺を不透明な青灰にし、白膜は口の細い内縁だけ。",
+      "3": "壺の根元に短い二重帯を付ける。前胸と脚は細いまま。",
+      "4": "壺の内縁を半透明の白にする。丸さを一か所に保ち、胴へ壺を増殖させない。"
+    },
+    "production": {
+      "primaryForm": "首後ろの一壺",
+      "secondaryForm": "細い鱗の縦線",
+      "dominantRegion": "後襟",
+      "asymmetry": "左右対称、後方一点だけ大きい",
+      "repeatCount": 1,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "後襟の壺の内縁",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "肩を左右とも丸い壺にしない",
+      "壺口を武器の発射口のように大きくしない",
+      "脚を氷塊で太くしない"
+    ]
+  }
+}

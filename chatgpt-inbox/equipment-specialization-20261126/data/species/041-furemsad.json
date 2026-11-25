@@ -1,0 +1,208 @@
+{
+  "no": 41,
+  "speciesId": "monster.furemsad",
+  "name": "フレムサド",
+  "nativeRank": 2,
+  "identity": {
+    "role": "頭への打撃で殻割りと霧を両立",
+    "ecologyBasis": "喉の横鰭に細かな分霧孔が並び、吐いた水を地面近くの二本の霧帯へ分ける。尾端の厚い骨は貝を割る器官で、叩く前に高く持ち上がる。 短い肢で砂州を歩き、地面近くへ頭を下ろして獲物を探る。喉鰭を傷つける相手には尾を高く示して威嚇する。",
+    "combatLoop": "頭へ二つの打撃行動→同じ敵の頭・部位へ霧と破壊蓄積→間合いを外して次の二拍を狙う。",
+    "strength": "同級基準の物理倍率0.87、会心率+5ポイント。既存のmist属性量を1.60倍。固有技能「鰭霧と鈍尾の継ぎ目」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "物理基礎倍率0.87（同級基準比13%低い。系統補正前）、防具一式の基準防御力0.83倍。弱点耐性は一式でwind -20,thunder -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "war_maul",
+      "guard_blade"
+    ],
+    "avoidUse": "斬撃や矢だけで頭を狙う構成。"
+  },
+  "stats": {
+    "rawScale": 0.87,
+    "affinity": 5,
+    "elementScale": 1.6,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.05,
+    "edgeWearScale": 0.9,
+    "staminaCostScale": 0.96,
+    "defenseScale": 0.83,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 1.02,
+      "war_maul": 1.04,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 0.98,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.26,
+      "chest": 0.24,
+      "arms": 0.17,
+      "waist": 0.21,
+      "legs": 0.12
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": -20,
+      "ice": 0,
+      "water": 20,
+      "wind": -20,
+      "mist": 20
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "stun_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "stun_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "part_damage",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.furemsad",
+    "name": "鈍尾の分霧",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "blunt"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "殻を割る尾骨の打撃の後に、喉鰭の霧を次の別行動へ移す。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、480tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.furemsad",
+    "name": "鰭霧と鈍尾の継ぎ目",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "head",
+        "blunt"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 300,
+    "cooldownTicks": 720,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          10,
+          16
+        ]
+      },
+      {
+        "stat": "partPct",
+        "values": [
+          14,
+          20
+        ]
+      }
+    ],
+    "explanation": "同じ頭へ二つの打撃行動を当て、尾骨が割った継ぎ目へ分霧孔の霧を通す。斬撃や矢の頭命中では蓄積しない。  300tick以内に異なる行動で2回。HP・スタミナ条件は行動費用確定後の残量%。発動から240tick有効、720tick再使用。攻撃への補正は起点と別の次行動から有効。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "灰青の細身に一枚だけ横へ広い喉襟。後腰の低い丸骨が重心を締め、肩には鰭を反復しない。",
+    "palette": [
+      "灰青",
+      "骨白",
+      "砂褐"
+    ],
+    "organTranslation": [
+      "喉の一枚横鰭→首下の単一の薄い襟",
+      "分霧孔→襟下縁の左右二列の小孔",
+      "鈍い尾骨→後腰の一枚の丸骨板"
+    ],
+    "armorParts": {
+      "head": "短い灰青の頭覆い。横鰭は首下に独立させ、顔の左右へ大きな板を置かない",
+      "chest": "喉元に一枚の横鰭を低く広げる。胸の中央は細く、腹は短い灰青板",
+      "arms": "細い前腕甲の外側に分霧孔を短く二列。手首と指を出す",
+      "waist": "後腰に厚い丸骨板を低く一枚。尾は付けず、前腰は砂褐の短帯",
+      "legs": "小さい骨白の膝甲と細い脛甲。足の外へ鰭を張らない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "刃元の横幅だけ一枚鰭のように広げ、峰の後ろへ丸い骨芯を低く収める",
+      "guard_blade": "細い霧孔の剣と、上縁だけ一枚の横鰭を写す低い盾",
+      "war_maul": "鈍い尾骨の閉じた二打面。中央に小さい横鰭形の側板を一枚挟む",
+      "twin_blades": "細い刃二本の刃元へ小さい一枚鰭鍔。左右の先端長を揃える",
+      "long_blade": "細い連続刃に二列の小霧孔を刃元だけ刻み、横鍔を低くする",
+      "long_lance": "直槍の根元に薄い一枚襟、盾は鈍い骨面と短い横鰭の上縁",
+      "ring_bow": "細い弓の中央に短い一枚横鰭。小環と一本弦を守り、丸い尾骨は握り下の小覆いにする"
+    },
+    "gradeEvolution": {
+      "2": "灰青の単襟と骨白の後腰板。霧孔は小さい暗点だけ。",
+      "3": "襟の根元へ短い支持筋を足し、丸骨の外縁を一段だけ厚くする。",
+      "4": "孔の縁だけ淡い霧色。背面の丸骨は鈍い形を保ち、棘を追加しない。"
+    },
+    "production": {
+      "primaryForm": "喉の単一横鰭",
+      "secondaryForm": "後腰の丸骨",
+      "dominantRegion": "首下と後腰",
+      "asymmetry": "左右対称、前後に二つの焦点",
+      "repeatCount": 1,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "喉襟下縁の小さい二列孔",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "丸骨を前腰へ移さない",
+      "横鰭を二枚以上重ねない",
+      "尾骨を鋭い尾槍へ変えない"
+    ]
+  }
+}

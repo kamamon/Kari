@@ -1,0 +1,209 @@
+{
+  "no": 37,
+  "speciesId": "monster.serinodam",
+  "name": "セリノダム",
+  "nativeRank": 2,
+  "identity": {
+    "role": "三つの突きをつなぐ雷の循環装",
+    "ecologyBasis": "後ろ三節の櫂脚に蓄電膜があり、湿った地面を擦ると節ごとに弱い琥珀色が灯る。全てを同時に放たず、先に灯った脚から地面へ電気を渡す。 短い前脚で陸を歩き、後ろの櫂脚で泥を押して体を支える。驚くと後ろから灯りを走らせ、近づく側だけを払う。",
+    "combatLoop": "同じ敵に突き三行動→雷と回復速度を得る→スタミナを立て直しながら次の突き位置を選ぶ。",
+    "strength": "同級基準の物理倍率0.83、会心率+15ポイント。既存のthunder属性量を1.60倍。固有技能「三櫂の順送り」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "物理基礎倍率0.83（同級基準比17%低い。系統補正前）、刃容量0.90倍、刃消耗1.10倍、回避・ガード・ため維持など元々費用を持つ戦闘行動のスタミナ消費1.08倍、防具一式の基準防御力0.81倍。弱点耐性は一式でice -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "long_blade",
+      "long_lance",
+      "guard_blade"
+    ],
+    "avoidUse": "突きの無い技だけを繰り返す構成。"
+  },
+  "stats": {
+    "rawScale": 0.83,
+    "affinity": 15,
+    "elementScale": 1.6,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.9,
+    "edgeWearScale": 1.1,
+    "staminaCostScale": 1.08,
+    "defenseScale": 0.81,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 1.02,
+      "war_maul": 0.98,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 1.02,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.13,
+      "chest": 0.2,
+      "arms": 0.17,
+      "waist": 0.32,
+      "legs": 0.18
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 20,
+      "ice": -20,
+      "water": 20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.serinodam",
+    "name": "櫂節の終灯",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "finisher"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "終段で後節の灯りを受け渡し、次の別行動の雷を強める。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、480tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.serinodam",
+    "name": "三櫂の順送り",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "thrust"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 3,
+    "windowTicks": 240,
+    "cooldownTicks": 600,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "staminaRecoveryPct",
+        "values": [
+          12,
+          18
+        ]
+      }
+    ],
+    "explanation": "同じ敵へ三つの別行動の突きを通し、後ろ三節の導膜を順に満たす。突きの入力回数ではなく命中行動数で数える。  240tick以内に異なる行動で3回。HP・スタミナ条件は行動費用確定後の残量%。発動から240tick有効、600tick再使用。攻撃への補正は起点と別の次行動から有効。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "低い節板を胸へ沿わせ、腰の後ろだけに三段の横長の櫂板。前は細く短く、後腰で水平の三拍を作る。",
+    "palette": [
+      "暗灰緑",
+      "琥珀",
+      "青銅"
+    ],
+    "organTranslation": [
+      "後ろ三節の櫂脚→後腰の三段櫂板",
+      "節別の蓄電膜→各櫂根の一つずつの小窓",
+      "短い前脚→小さく薄い肩甲"
+    ],
+    "armorParts": {
+      "head": "平たい小兜。額の短い節線だけを通し、角を立てない",
+      "chest": "前胸は三枚の低い節板、背中の下部で後腰の櫂へ接続する",
+      "arms": "細い前腕甲に三つの短い節線。肩甲は小さく、横へ櫂を増やさない",
+      "waist": "後腰だけへ上から短・中・長の三枚の櫂板を低く重ねる",
+      "legs": "暗灰緑の細脚甲。踵の外側に短い櫂形の小板を一つ伏せる"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の刃元に短中長の櫂板を三枚だけ重ねる。刃先側は細い単面",
+      "guard_blade": "三節の細剣と、中央下へ三枚の櫂を低く重ねた盾",
+      "war_maul": "槌頭側面に三つの櫂形窓、左右の打面は硬い灰緑の角丸面",
+      "twin_blades": "細い二本刃の峰へ三つの短い櫂縁を伏せる。突き先は連続させる",
+      "long_blade": "峰に三節の細い青銅線を通し、刃元だけ小さな櫂鍔を付ける",
+      "long_lance": "直槍の刃元に三つの低い櫂節、盾下縁へ三段の櫂板を収める",
+      "ring_bow": "中央下へ短い櫂板三枚を重ねる。小環の位置を上に保ち、一本弦へ板を触れさせない"
+    },
+    "gradeEvolution": {
+      "2": "暗灰緑の櫂三枚と小さい琥珀点三つ。前胸は低い節だけ。",
+      "3": "各櫂の外周に青銅の短い縁を増し、根元の線を三つ独立させる。",
+      "4": "櫂の裏面に細かい膜目を見せる。点灯面を増やさず、三櫂の段差を明確にする。"
+    },
+    "production": {
+      "primaryForm": "後腰の三櫂",
+      "secondaryForm": "前側の薄い節",
+      "dominantRegion": "後腰",
+      "asymmetry": "左右対称、後ろのみ三櫂",
+      "repeatCount": 3,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "後腰三櫂の根元の琥珀点",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "胸や肩にも大きな櫂を付けない",
+      "櫂板を長い尾にしない",
+      "雷を常時全身に走らせない"
+    ]
+  }
+}
