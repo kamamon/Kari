@@ -1,5 +1,6 @@
 // 岩殻獣ガルドロスの仮モデル（3 代目）。
 // 骨 53 本: 背骨 5 節・首 2 節・頭・あご・舌・まぶた・尾 8 節・脚 4 本（付け根 / ひじ / 足首 / 指）・岩板 15 枚。
+// 骨の名前・番号・親は src/render/galdrosBones.ts の表（v0.30.0。#12 の設計のノード名）。ここでは番号を直接書かない。
 // 皮の色は設定図から焼いた絵、背殻はなめらかな殻の面を分け合う薄い板（D-039、D-040）。
 // 皮は骨で曲がる一続きの面、岩板は 1 枚ずつ骨を持ち、歩く・吠える・叩かれると揺れる。
 // 体つきと岩板の分け方は、採用した設定図（art-source/monster/galdros/）に合わせてある。
@@ -20,12 +21,14 @@ import { sampleTrack } from '../game/tracks';
 import type { MonsterRig, MonsterRigCtx } from './monsterRig';
 import { isWeak } from '../game/monster';
 import { GALDROS_AO } from './galdrosAo';
+import { GALDROS_BONES, GALDROS_LEGS, GALDROS_LIDS, GALDROS_PLATES, GALDROS_TAIL, buildBoneTree, galdrosBone } from './galdrosBones';
 import { GALDROS_ATLAS } from './galdrosAtlas';
 import { Geo, blob, crystal, fbm, hash3, hex, horn, loft, makeHideTextures, makeRockTextures, mix, packCharts, plate, shade, slab, sstep, type AtlasChart, type RGB, type Ring, type SlabOpts } from './procGeo';
 
-// ---- 骨の番号 ----
-const ROOT = 0, BODY = 1, LUMBAR = 2, PELVIS = 3, THORAX = 4, CHEST = 5, RIBS = 6, NECK1 = 7, NECK2 = 8, HEAD = 9, JAW = 10, TONGUE = 11, LID = 12, TAIL = 14, LEG = 22, PLATE = 38;
-const TAIL_N = 8, PLATE_N = 15, BONES = PLATE + PLATE_N;
+// ---- 骨の番号（名前 → 番号の表から引く。v0.30.0。番号の足し算はしない: 尾・脚・岩板・まぶたは、表の並びの配列で引く） ----
+const ROOT = galdrosBone('root'), BODY = galdrosBone('body'), LUMBAR = galdrosBone('lumbar'), PELVIS = galdrosBone('pelvis'), THORAX = galdrosBone('thorax'), CHEST = galdrosBone('chest');
+const RIBS = galdrosBone('ribs_l'), NECK1 = galdrosBone('neck_01'), NECK2 = galdrosBone('neck_02'), HEAD = galdrosBone('head'), JAW = galdrosBone('jaw'), TONGUE = galdrosBone('tongue_01');
+const TAIL_N = GALDROS_TAIL.length, PLATE_N = GALDROS_PLATES.length;
 const BODY_Y = 1.25;
 /** 尾の関節の位置 (z)。CUT 番目（-2.5）が切断面。 */
 const TAIL_Z = [-1.5, -1.68, -1.86, -2.04, -2.22, -2.42, -2.62, -2.82];
@@ -129,20 +132,21 @@ function spineBones(z: number, afterCut: boolean): [number, number, number] {
   if (z >= -0.6) return [LUMBAR, LUMBAR, 0];
   if (z >= -1.2) return [PELVIS, LUMBAR, sstep(-1.2, -0.6, z)];
   if (z >= -1.3) return [PELVIS, PELVIS, 0];
-  if (z >= TAIL_MID[0]!) return [PELVIS, TAIL, sstep(-1.3, TAIL_MID[0]!, z)];
+  if (z >= TAIL_MID[0]!) return [PELVIS, GALDROS_TAIL[0]!, sstep(-1.3, TAIL_MID[0]!, z)];
   let i = 0;
   while (i < TAIL_N - 1 && TAIL_MID[i + 1]! >= z) i++;
-  let b0 = TAIL + i, b1 = TAIL + Math.min(TAIL_N - 1, i + 1);
+  // 尾の何節目か（0 始まり）で決めてから、骨の番号を引く
+  let n0 = i, n1 = Math.min(TAIL_N - 1, i + 1);
   const w1 = i < TAIL_N - 1 ? sstep(TAIL_MID[i]!, TAIL_MID[i + 1]!, z) : 0;
   const cutZ = TAIL_Z[CUT]!;
   if (z < cutZ || (z === cutZ && afterCut)) {
-    b0 = Math.max(b0, TAIL + CUT);
-    b1 = Math.max(b1, TAIL + CUT);
+    n0 = Math.max(n0, CUT);
+    n1 = Math.max(n1, CUT);
   } else {
-    b0 = Math.min(b0, TAIL + CUT - 1);
-    b1 = Math.min(b1, TAIL + CUT - 1);
+    n0 = Math.min(n0, CUT - 1);
+    n1 = Math.min(n1, CUT - 1);
   }
-  return [b0, b1, w1];
+  return [GALDROS_TAIL[n0]!, GALDROS_TAIL[n1]!, w1];
 }
 
 const gauss = (x: number, c: number, w: number): number => Math.exp(-((x - c) * (x - c)) / (2 * w * w));
@@ -366,26 +370,29 @@ export class GaldrosRig implements MonsterRig {
     });
 
     // ================= 骨 =================
+    // 体の空間での基準の位置を、骨の番号ごとに決める。親は骨の表（galdrosBones.ts）だけが決める。
     const rest: Vector3[] = [];
-    const parent: number[] = [];
-    const def = (i: number, par: number, x: number, y: number, z: number): void => {
+    const def = (i: number, x: number, y: number, z: number): void => {
       rest[i] = new Vector3(x, y, z);
-      parent[i] = par;
     };
-    def(ROOT, -1, 0, 0, 0);
-    def(BODY, ROOT, 0, BODY_Y, 0);
-    def(LUMBAR, BODY, 0, BODY_Y, -0.35);
-    def(PELVIS, LUMBAR, 0, BODY_Y, -0.95);
-    def(THORAX, BODY, 0, BODY_Y, 0.35);
-    def(CHEST, THORAX, 0, BODY_Y, 0.95);
-    def(RIBS, BODY, 0, 1.2, 0.15);
-    def(NECK1, CHEST, 0, 1.34, 1.4);
-    def(NECK2, NECK1, 0, 1.5, 1.63);
-    def(HEAD, NECK2, 0, 1.6, 1.82);
-    def(JAW, HEAD, 0, 1.44, 1.84);
-    def(TONGUE, JAW, 0, 1.44, 2.1);
-    EYES.forEach((e, i) => def(LID + i, HEAD, e.x, e.y, e.z));
-    TAIL_Z.forEach((z, i) => def(TAIL + i, i === 0 ? PELVIS : TAIL + i - 1, 0, spineAt(z).cy, z));
+    const parentOf = (i: number): number => {
+      const p = GALDROS_BONES[i]!.parent;
+      return p === null ? -1 : galdrosBone(p);
+    };
+    def(ROOT, 0, 0, 0);
+    def(BODY, 0, BODY_Y, 0);
+    def(LUMBAR, 0, BODY_Y, -0.35);
+    def(PELVIS, 0, BODY_Y, -0.95);
+    def(THORAX, 0, BODY_Y, 0.35);
+    def(CHEST, 0, BODY_Y, 0.95);
+    def(RIBS, 0, 1.2, 0.15);
+    def(NECK1, 0, 1.34, 1.4);
+    def(NECK2, 0, 1.5, 1.63);
+    def(HEAD, 0, 1.6, 1.82);
+    def(JAW, 0, 1.44, 1.84);
+    def(TONGUE, 0, 1.44, 2.1);
+    EYES.forEach((e, i) => def(GALDROS_LIDS[i]!, e.x, e.y, e.z));
+    TAIL_Z.forEach((z, i) => def(GALDROS_TAIL[i]!, 0, spineAt(z).cy, z));
     // 脚: 前左・前右・後左・後右。左が +X。付け根の位置は判定の軌道データ（肩 y=1.5）に合わせる。
     const legSpecs: { hip: [number, number, number]; home: [number, number]; l1: number; l2: number; front: boolean; side: number }[] = [
       { hip: [1.0, 1.5, 1.05], home: [1.1, 1.18], l1: 0.76, l2: 0.7, front: true, side: 1 },
@@ -402,11 +409,11 @@ export class GaldrosRig implements MonsterRig {
       const joint = new Vector3();
       solveJoint(hip, ankle, s.l1, s.l2, pole, new Vector3(), joint);
       legRest.push({ hip, joint, ankle, pole });
-      const b = LEG + i * 4;
-      def(b, s.front ? CHEST : PELVIS, hip.x, hip.y, hip.z);
-      def(b + 1, b, joint.x, joint.y, joint.z);
-      def(b + 2, b + 1, ankle.x, ankle.y, ankle.z);
-      def(b + 3, b + 2, ankle.x, 0.07, ankle.z + 0.24);
+      const L = GALDROS_LEGS[i]!;
+      def(L.upper, hip.x, hip.y, hip.z);
+      def(L.lower, joint.x, joint.y, joint.z);
+      def(L.foot, ankle.x, ankle.y, ankle.z);
+      def(L.toe, ankle.x, 0.07, ankle.z + 0.24);
     });
 
     // 岩板: 1 枚ずつ骨を持つ（揺れる・砕ける）。背殻 6 枚、頭 2 枚、肩 3 枚、腰 2 枚、前脚の甲 2 枚。
@@ -432,31 +439,32 @@ export class GaldrosRig implements MonsterRig {
     plates.push({ group: 'fixed', parent: PELVIS, part: part.body, slab: { w: 0.95, d: 1.1, h: 0.27, seed: 34, pos: [1.1, 1.48, -1.14], rot: [-0.1, -0.1, -0.86], moss: 0.3, bendX: 0.12 } });
     plates.push({ group: 'fixed', parent: PELVIS, part: part.body, slab: { w: 0.78, d: 0.86, h: 0.23, seed: 35, pos: [-1.05, 1.5, -1.2], rot: [-0.1, 0.1, 0.86], moss: 0.75, bendX: 0.12 } });
     // 前脚の外側の甲。左が大きい。
-    plates.push({ group: 'fixed', parent: LEG + 1, part: part.foreleg, slab: { w: 0.74, d: 0.72, h: 0.16, seed: 36, pos: [1.6, 0.66, 1.22], rot: [0, 0, -Math.PI / 2 + 0.06], moss: 0.4, bendX: 0.45, points: 8 } });
-    plates.push({ group: 'fixed', parent: LEG + 5, part: part.foreleg, slab: { w: 0.56, d: 0.58, h: 0.14, seed: 37, pos: [-1.58, 0.64, 1.22], rot: [0, 0, Math.PI / 2 - 0.06], bendX: 0.45, points: 7 } });
+    plates.push({ group: 'fixed', parent: GALDROS_LEGS[0]!.lower, part: part.foreleg, slab: { w: 0.74, d: 0.72, h: 0.16, seed: 36, pos: [1.6, 0.66, 1.22], rot: [0, 0, -Math.PI / 2 + 0.06], moss: 0.4, bendX: 0.45, points: 8 } });
+    plates.push({ group: 'fixed', parent: GALDROS_LEGS[1]!.lower, part: part.foreleg, slab: { w: 0.56, d: 0.58, h: 0.14, seed: 37, pos: [-1.58, 0.64, 1.22], rot: [0, 0, Math.PI / 2 - 0.06], bendX: 0.45, points: 7 } });
+    if (plates.length !== PLATE_N) throw new Error(`岩板が ${plates.length} 枚（骨の表は ${PLATE_N}）`);
     plates.forEach((pl, i) => {
-      def(PLATE + i, pl.parent, pl.slab.pos[0], pl.slab.pos[1], pl.slab.pos[2]);
-      if (pl.group === 'cap') this.capPlates.push(PLATE + i);
-      if (pl.group === 'dome') this.domePlates.push(PLATE + i);
+      const b = GALDROS_PLATES[i]!;
+      // 板を付ける骨は、骨の表の親と同じでなければならない（形の側と表が食い違うと、板が別の骨で動く）
+      if (parentOf(b) !== pl.parent) throw new Error(`岩板 ${GALDROS_BONES[b]!.name} の親が骨の表と違う`);
+      def(b, pl.slab.pos[0], pl.slab.pos[1], pl.slab.pos[2]);
+      if (pl.group === 'cap') this.capPlates.push(b);
+      if (pl.group === 'dome') this.domePlates.push(b);
     });
 
-    for (let i = 0; i < BONES; i++) {
-      const b = new Bone();
-      const par = parent[i]!;
-      if (par >= 0) {
-        b.position.copy(rest[i]!).sub(rest[par]!);
-        this.bones[par]!.add(b);
-      }
-      this.bones.push(b);
-    }
+    // 骨を 2 段で組む（先に全部を作り、後で親へつなぐ。親が子より後ろの番号でもよい。#12 の M1）
+    this.bones = buildBoneTree(GALDROS_BONES.map((b, i) => {
+      const pos = rest[i];
+      if (!pos) throw new Error(`骨 ${b.name} の基準の位置が無い`);
+      return { name: b.name, parent: parentOf(i), pos };
+    }));
     this.root.add(this.bones[ROOT]!);
     this.root.updateMatrixWorld(true);
     const skeleton = new Skeleton(this.bones);
     legSpecs.forEach((s, i) => {
       const r = legRest[i]!;
-      const b = LEG + i * 4;
+      const L = GALDROS_LEGS[i]!;
       this.legs.push({
-        upper: this.bones[b]!, lower: this.bones[b + 1]!, foot: this.bones[b + 2]!, toe: this.bones[b + 3]!,
+        upper: this.bones[L.upper]!, lower: this.bones[L.lower]!, foot: this.bones[L.foot]!, toe: this.bones[L.toe]!,
         home: new Vector3(s.home[0], 0, s.home[1]), pole: r.pole.clone(),
         restU: new Vector3().subVectors(r.joint, r.hip).normalize(),
         restL: new Vector3().subVectors(r.ankle, r.joint).normalize(),
@@ -574,14 +582,14 @@ export class GaldrosRig implements MonsterRig {
       blob(glow, e.clone().addScaledVector(out, 0.066).add(new Vector3(0, 0.02, 0)).addScaledVector(axis, 0.014), out, 0.012, 0.009, 0.009, () => GLINT, HEAD, part.head, 5, 3);
       const lidColor = (p: Vector3): RGB => shade(SKIN_PLAIN, 0.8 + 0.25 * fbm(p.x * 30, p.y * 30, p.z * 30, 2));
       // 上まぶた（骨で下りる）と、下まぶた（動かない）
-      blob(hide, e.clone().add(new Vector3(0, 0.066, 0)).addScaledVector(out, 0.012), axis, 0.2, 0.07, 0.034, lidColor, LID + i, part.head, 8, 4);
+      blob(hide, e.clone().add(new Vector3(0, 0.066, 0)).addScaledVector(out, 0.012), axis, 0.2, 0.07, 0.034, lidColor, GALDROS_LIDS[i]!, part.head, 8, 4);
       blob(hide, e.clone().add(new Vector3(0, -0.058, 0)).addScaledVector(out, 0.008), axis, 0.18, 0.062, 0.028, lidColor, HEAD, part.head, 8, 4);
     });
 
     // ---- 脚 ----
     legSpecs.forEach((s, i) => {
       const r = legRest[i]!;
-      const b = LEG + i * 4;
+      const L = GALDROS_LEGS[i]!;
       const pid = s.front ? part.foreleg : part.hindleg;
       const k = s.front ? 1 : 0.95;
       // [付け根からの割合(0=付け根,1=関節,2=足首), 半径]
@@ -594,10 +602,10 @@ export class GaldrosRig implements MonsterRig {
         const right = new Vector3().crossVectors(dir, Z).normalize();
         const up = new Vector3().crossVectors(right, dir).normalize();
         // 関節の前後 0.3 の範囲で 2 本の骨を混ぜる
-        let b0 = b, b1 = b, w1 = 0;
-        if (u > 0.7 && u < 1.3) { b1 = b + 1; w1 = sstep(0.7, 1.3, u); }
-        else if (u >= 1.3 && u < 1.8) { b0 = b + 1; b1 = b + 1; }
-        else if (u >= 1.8) { b0 = b + 1; b1 = b + 2; w1 = sstep(1.8, 2.1, u) * 0.6; }
+        let b0 = L.upper, b1 = L.upper, w1 = 0;
+        if (u > 0.7 && u < 1.3) { b1 = L.lower; w1 = sstep(0.7, 1.3, u); }
+        else if (u >= 1.3 && u < 1.8) { b0 = L.lower; b1 = L.lower; }
+        else if (u >= 1.8) { b0 = L.lower; b1 = L.foot; w1 = sstep(1.8, 2.1, u) * 0.6; }
         // 上腕（もも）は前後に厚い
         const thick = u < 1 ? 1.14 : 1.04;
         return { c: cpos, right, up, rx: rad * k, top: rad * k * thick, bottom: rad * k * thick, b0, b1, w1, part: pid };
@@ -612,7 +620,7 @@ export class GaldrosRig implements MonsterRig {
       const fx = r.ankle.x, fz = r.ankle.z;
       const foot: Ring[] = [];
       for (const [dz, rx, top] of [[-0.44, 0.05, 0.04], [-0.38, 0.26, 0.17], [-0.28, 0.42, 0.27], [-0.04, 0.5, 0.36], [0.2, 0.52, 0.3], [0.42, 0.47, 0.21], [0.56, 0.32, 0.13], [0.63, 0.1, 0.05]] as const) {
-        foot.push({ c: new Vector3(fx, 0.085, fz + dz), right: X, up: Y, rx: rx * k, top: top * k, bottom: 0.085, b0: b + 2, b1: b + 3, w1: sstep(0.1, 0.36, dz), part: pid });
+        foot.push({ c: new Vector3(fx, 0.085, fz + dz), right: X, up: Y, rx: rx * k, top: top * k, bottom: 0.085, b0: L.foot, b1: L.toe, w1: sstep(0.1, 0.36, dz), part: pid });
       }
       loft(hide, foot, {
         seg: 16, exponent: 2.6, noise: 0.012, uRepeat: 2, capStart: DARK, capEnd: DARK,
@@ -623,17 +631,17 @@ export class GaldrosRig implements MonsterRig {
         color: (_p, n) => shade(WHITE, 1 - 0.55 * sstep(-0.35, -0.8, n.y)),
       });
       for (const cx of [-0.36, -0.12, 0.12, 0.36]) {
-        horn(hide, new Vector3(fx + cx * k, 0.13, fz + 0.5 - Math.abs(cx) * 0.3), new Vector3(cx * 0.5, -0.1, 1), 0.27, 0.115, HORN, b + 3, pid, new Vector3(0, -0.1, 0));
+        horn(hide, new Vector3(fx + cx * k, 0.13, fz + 0.5 - Math.abs(cx) * 0.3), new Vector3(cx * 0.5, -0.1, 1), 0.27, 0.115, HORN, L.toe, pid, new Vector3(0, -0.1, 0));
       }
       // かかとのけづめ
-      horn(hide, new Vector3(fx - s.side * 0.1, 0.24, fz - 0.36), new Vector3(-s.side * 0.2, 0.25, -1), 0.2, 0.07, HORN_DARK, b + 2, pid, new Vector3(0, -0.06, 0));
+      horn(hide, new Vector3(fx - s.side * 0.1, 0.24, fz - 0.36), new Vector3(-s.side * 0.2, 0.25, -1), 0.2, 0.07, HORN_DARK, L.foot, pid, new Vector3(0, -0.06, 0));
       // 肩・腰の筋肉のふくらみ（脚が動いても付け根に隙間が出ない）
       const lump: Ring[] = [];
       const lc = new Vector3(s.hip[0] * 0.93, s.hip[1] - 0.02, s.hip[2]);
       for (let j = 0; j <= 6; j++) {
         const t = j / 6;
         const rr = Math.max(0.02, Math.sin(Math.PI * (0.06 + 0.88 * t)));
-        lump.push({ c: lc.clone().add(new Vector3(0, 0, -0.56 + 1.12 * t)), right: X, up: Y, rx: 0.42 * rr, top: 0.52 * rr, bottom: 0.5 * rr, b0: s.front ? CHEST : PELVIS, b1: b, w1: 0.35, part: pid });
+        lump.push({ c: lc.clone().add(new Vector3(0, 0, -0.56 + 1.12 * t)), right: X, up: Y, rx: 0.42 * rr, top: 0.52 * rr, bottom: 0.5 * rr, b0: s.front ? CHEST : PELVIS, b1: L.upper, w1: 0.35, part: pid });
       }
       loft(hide, lump, { seg: 12, noise: 0.02, uRepeat: 2, atlas: { kinds: [`lump${i}`], t: (rr) => rr.c.z, density: [0.6], meta: { front: s.front ? 1 : 0, cy: lc.y, top: 0.52, bottom: 0.5 } }, color: () => WHITE });
     });
@@ -654,7 +662,7 @@ export class GaldrosRig implements MonsterRig {
         };
       const inside = sh ? new Vector3(0, spineAt(o.pos[2]).cy, o.pos[2]) : new Vector3(0, -1, 0).applyMatrix4(m);
       const opts = {
-        surface, inside, w: o.w, d: o.d, seed: o.seed, bone: PLATE + i, part: pl.part, rock: ROCK, moss: o.moss, mossColor: MOSS, points: o.points ?? 8,
+        surface, inside, w: o.w, d: o.d, seed: o.seed, bone: GALDROS_PLATES[i]!, part: pl.part, rock: ROCK, moss: o.moss, mossColor: MOSS, points: o.points ?? 8,
         thickness: sh ? 0.1 : Math.min(0.11, o.h * 0.42), skirt: sh ? 0.07 : o.h * 0.45, square: sh ? 0.13 : 0.5,
       };
       // 縁は光る素材へ入れるので、色は少し落とす
@@ -679,7 +687,7 @@ export class GaldrosRig implements MonsterRig {
     ];
     // 設定図の晶の塊は、尾の先を前後に長く覆う。後ろ向きの晶ほど後ろから生やす。
     const crystalBase = (c: Vector3, x: number, y: number, z: number): Vector3 => c.clone().add(new Vector3(x * 0.08, y * 0.08, 0.04 + z * 0.2));
-    tailCrystals.forEach(([x, y, z, len, rad], j) => crystal(glow, crystalBase(tip, x, y, z), new Vector3(x, y, z), len * 0.85, rad * 0.9, BRONZE, TAIL + TAIL_N - 1, part.tail, j + 1));
+    tailCrystals.forEach(([x, y, z, len, rad], j) => crystal(glow, crystalBase(tip, x, y, z), new Vector3(x, y, z), len * 0.85, rad * 0.9, BRONZE, GALDROS_TAIL[TAIL_N - 1]!, part.tail, j + 1));
 
     // ================= 素材 =================
     // 絵を貼る区画の位置を決める。焼いた絵と同じ並び（galdrosAtlas.ts）を使う。
@@ -767,6 +775,8 @@ export class GaldrosRig implements MonsterRig {
     const loader = new TextureLoader();
     const waitFor = (path: string, apply: (t: Texture) => void): Promise<boolean> =>
       new Promise((resolve) => {
+        // 画面の無い所（Node の検査）では読まない
+        if (typeof document === 'undefined') return resolve(false);
         loader.load(assetUrl(path), (t) => { t.colorSpace = SRGBColorSpace; t.anisotropy = 4; apply(t); resolve(true); }, undefined, () => resolve(false));
       });
     void Promise.all([
@@ -921,7 +931,7 @@ export class GaldrosRig implements MonsterRig {
     this.capMesh.visible = !headBroken;
     this.domeMesh.visible = this.domeRimMesh.visible = !backBroken;
     this.coreMesh.visible = backBroken;
-    B[TAIL + CUT]!.scale.setScalar(severed ? 0.0001 : 1);
+    B[GALDROS_TAIL[CUT]!]!.scale.setScalar(severed ? 0.0001 : 1);
     const flash = this.flashUniform.value;
     for (let i = 0; i < flash.length; i++) flash[i] = Math.max(0, flash[i]! - dt * 5);
     this.stepDebris(dt, ground);
@@ -1474,11 +1484,11 @@ export class GaldrosRig implements MonsterRig {
     B[TONGUE]!.rotation.set(-0.35 * P.tongue + 0.1 * P.tongue * Math.sin(time * 23), 0.15 * P.tongue * Math.sin(time * 17), 0);
     B[TONGUE]!.position.z = 0.36 + 0.1 * P.tongue;
     this.lid += (P.lid - this.lid) * (1 - Math.exp(-dt * 30));
-    for (let i = 0; i < 2; i++) B[LID + i]!.quaternion.setFromAxisAngle(LID_AXIS[i]!, 0.95 * this.lid);
+    for (let i = 0; i < 2; i++) B[GALDROS_LIDS[i]!]!.quaternion.setFromAxisAngle(LID_AXIS[i]!, 0.95 * this.lid);
     // 岩板の揺れ
     const rat = Math.min(1.5, this.rattle);
     for (let i = 0; i < PLATE_N; i++) {
-      B[PLATE + i]!.rotation.set(rat * 0.05 * Math.sin(time * 41 + i * 2.1), rat * 0.03 * Math.sin(time * 37 + i), rat * 0.055 * Math.sin(time * 45 + i * 1.3));
+      B[GALDROS_PLATES[i]!]!.rotation.set(rat * 0.05 * Math.sin(time * 41 + i * 2.1), rat * 0.03 * Math.sin(time * 37 + i), rat * 0.055 * Math.sin(time * 45 + i * 1.3));
     }
 
     // ---- 尾 ----
@@ -1492,7 +1502,7 @@ export class GaldrosRig implements MonsterRig {
     const trail = clamp(tailRate * 0.0025, -0.035, 0.035);
     let prevHeading = yaw + P.yaw + rYaw;
     for (let i = 0; i < TAIL_N; i++) {
-      const bone = B[TAIL + i]!;
+      const bone = B[GALDROS_TAIL[i]!]!;
       if (i === CUT) {
         // 切断面の関節は曲げない（曲げると、重ねてある断面の輪がずれて見える）
         bone.rotation.set(0, 0, 0);

@@ -35,6 +35,16 @@ pelvis 高さ 0.92 / 肩幅 0.37（肩の関節は左右 0.185）/ 上腕 0.29�
 
 大型の骨格（四足重 / 四足軽 / 二足翼 / 多脚 / 長胴）は、代表 1 体を作る時にこの文書へ追記する。
 
+### 2.1 ガルドロスの骨（四足重の代表。v0.30.0。ChatGPT のモンスターの解剖 #12 の M1。D-111）
+
+- 骨 53 本の **名前・番号・親** は `src/render/galdrosBones.ts` の表（`GALDROS_BONES`）だけが決める。番号は v0.29.0 までと同じ 0〜52（Skeleton の並び = 皮と岩板の重みの番号）。コードは番号を直接書かず、足し算もしない（尾・脚・岩板・まぶたは、表の並びの配列 `GALDROS_TAIL`・`GALDROS_LEGS`・`GALDROS_PLATES`・`GALDROS_LIDS`）。
+- 名前は #12 の設計の 79 ノードの名前（`docs/source/chatgpt-monster-anatomy-20261125/galdros_rig_blueprint_recovered_v3.json` の「現行 N」）: `root`・`body`・`lumbar`・`pelvis`・`thorax`・`chest`・`ribs_l`・`neck_01`・`neck_02`・`head`・`jaw`・`tongue_01`・`lid_l`/`lid_r`・`tail_01`〜`tail_08`（`tail_05` が切断面）・`fore_upper`/`fore_lower`/`wrist`/`palm`（左右）・`hind_upper`/`hind_lower`/`hock`/`metatarsus`（左右）・岩板 15（`plate_back_01_l` など）。名前は変えない（表示名ではない）。
+- `ribs_l` は、いまは左右の胸郭をまとめて動かす（右の `ribs_r` は設計の追加案。M2 で分ける）。前脚の上腕の設計の親は肩甲（`scapula_l`/`_r`。追加案）で、いまは `chest` につなぐ（表の `designParent`）。
+- 種類: `deform`（皮・岩板を曲げる。52 本）と `control`（動かすだけ。`root` の 1 本）。重みと合うことを検査する。socket は、いまのガルドロスには無い（#12 でも 12 の socket の定義は復旧できていない。正式モデル化の入口で、親の骨・体の空間の位置・向き・使う技・壊れた時の扱いを決める）。
+- 骨は 2 段で組む（`buildBoneTree`: 先に全部を作り、後で親へつなぐ。親が子より後ろの番号でもよい。親の基準の向きの逆で、子の基準を親の中の値へ直す）。
+- 設計の残り 26 ノード（肩甲・前腕と下腿のねじれ・趾・右の胸郭・眼・舌の先）は、まだ骨にしない（`GALDROS_PLANNED_NODES`）。足す時は、関節の軸・可動域・重み・補正と一緒に（名前だけを足して完成にしない）。
+- 検査（`tests/galdros-rig.test.ts`）: 表と設計の 79 ノードの対応、体の骨と表の一致、基準の位置が設計の表（小数第 3 位）と 0.6mm 以内、deform / control と重み、2 段の組み方、番号の足し算が無いこと、**待機・全部の技（23）・尾を切られた後の尾払いの姿勢が v0.29.0 と 0.1mm 以内で同じ**（記録は `tests/fixtures/galdros_pose_v029.json`。形や動きをわざと変えた時だけ `GALDROS_POSE_BAKE=1` で作り直す）。
+
 ## 3. 時間
 
 - 1 tick = 1/60 秒。区間は開始を含み、終了を含まない。`[22,30)` は 22〜29 tick の 8 tick。

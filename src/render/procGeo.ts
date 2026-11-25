@@ -1,6 +1,6 @@
 // コードで形を作るための部品（仮モデル用）: 雑音、皮と岩の模様、骨に付く形（筒・岩板・角・晶）の組み立て。
 // 見た目だけの処理で、戦闘の判定には使わない。乱数は座標から決まる値だけを使い、毎回同じ形になる。
-import { BufferGeometry, CanvasTexture, Euler, Float32BufferAttribute, Matrix4, NoColorSpace, Quaternion, RepeatWrapping, SRGBColorSpace, Uint16BufferAttribute, Vector3, type Texture } from 'three';
+import { BufferGeometry, CanvasTexture, DataTexture, Euler, Float32BufferAttribute, Matrix4, NoColorSpace, Quaternion, RepeatWrapping, SRGBColorSpace, Uint16BufferAttribute, Vector3, type Texture } from 'three';
 
 export type RGB = [number, number, number];
 
@@ -87,7 +87,10 @@ function tileCells(u: number, v: number, cells: number, seed: number): number {
 function heightToTextures(size: number, height: (u: number, v: number) => number, strength: number, dark: number): { map: Texture; normal: Texture } {
   const h = new Float32Array(size * size);
   for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) h[y * size + x] = height(x / size, y / size);
-  const mk = (): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; img: ImageData } => {
+  // 画面の無い所（Node の検査）では canvas が無いので、同じ値を DataTexture に入れる（v0.30.0）
+  const headless = typeof document === 'undefined';
+  const mk = (): { canvas: HTMLCanvasElement | null; ctx: CanvasRenderingContext2D | null; img: { data: Uint8ClampedArray } } => {
+    if (headless) return { canvas: null, ctx: null, img: { data: new Uint8ClampedArray(size * size * 4) } };
     const canvas = document.createElement('canvas');
     canvas.width = canvas.height = size;
     const ctx = canvas.getContext('2d')!;
@@ -109,10 +112,17 @@ function heightToTextures(size: number, height: (u: number, v: number) => number
       n.img.data[i + 3] = 255;
     }
   }
-  a.ctx.putImageData(a.img, 0, 0);
-  n.ctx.putImageData(n.img, 0, 0);
-  const map = new CanvasTexture(a.canvas);
-  const normal = new CanvasTexture(n.canvas);
+  const tex = (t: typeof a): Texture => {
+    if (!t.canvas || !t.ctx) {
+      const d = new DataTexture(new Uint8Array(t.img.data.buffer), size, size);
+      d.needsUpdate = true;
+      return d;
+    }
+    t.ctx.putImageData(t.img as ImageData, 0, 0);
+    return new CanvasTexture(t.canvas);
+  };
+  const map = tex(a);
+  const normal = tex(n);
   for (const t of [map, normal]) {
     t.wrapS = t.wrapT = RepeatWrapping;
     t.anisotropy = 4;
