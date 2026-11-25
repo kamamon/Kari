@@ -111,6 +111,23 @@ const CREATURE_VFX: Record<string, { count: number; speed: number; spread: numbe
   web_spray: { count: 30, speed: 7, spread: 2.0, life: 1.0, color: [0.62, 0.42, 0.7], bursts: 2, dirY: 0.05 },
 };
 
+/**
+ * 見た目を変える画面（v0.28.0）の下見。カメラを狩人の前に置き、狩人のほうを回して見せる（描く側だけ。simulation の向きは変えない）。
+ * pane は、狩人を真ん中に置く画面の範囲（画面に対する割合。cx・cy は中心、w・h は幅と高さ）。
+ */
+export interface Portrait {
+  /** カメラを置く側（下見を始めた時のカメラの向き。壁の無い側） */
+  baseYaw: number;
+  /** 狩人を回した角度（0 = 正面、π = 後ろ） */
+  spin: number;
+  focus: 'body' | 'face';
+  /** 1 = ちょうど収まる距離。小さいほど寄る */
+  zoom: number;
+  pane: { cx: number; cy: number; w: number; h: number };
+  /** 服: base = 里の装束（防具なし）/ worn = いまの装備 / helmet = いまの装備に兜（持っていなければ参考の兜 = 2 段） */
+  clothes: 'base' | 'worn' | 'helmet';
+}
+
 export class GameView {
   readonly renderer: WebGLRenderer;
   readonly scene = new Scene();
@@ -148,6 +165,9 @@ export class GameView {
   private phase = 0;
   private lastPlayerXZ: { x: number; z: number } | null = null;
   private time = 0;
+  /** 見た目を変える画面の下見（null = ふだんのカメラ） */
+  portrait: Portrait | null = null;
+  private viewOffset = false;
   /** 見た目の側から鳴らす音（モンスターの足音など）。App が音声へつなぐ。 */
   onSound: ((id: string, intensity: number) => void) | null = null;
   /** モンスターの見た目が出す効果: 足音と土ぼこり。近いほど大きく、画面も少し揺れる。 */
@@ -294,6 +314,23 @@ export class GameView {
   /** 見えている（同じエリアに居る）モンスター。フィールドでなければ、全部 */
   private shown(sim: Simulation, m: MonsterState): boolean {
     return !sim.field || sim.monsterArea(m)?.id === sim.areaId;
+  }
+
+  /** 下見のカメラ: 狩人の前（baseYaw の側）から、全身か顔が pane に収まる距離で見る。狩人は baseYaw の側を向き、spin だけ回る */
+  private placePortrait(pt: Portrait, pos: V3): void {
+    const cam = this.cam.camera;
+    const W = Math.max(1, this.canvas.clientWidth), H = Math.max(1, this.canvas.clientHeight);
+    const face = pt.focus === 'face';
+    // 顔: 頭と肩（あご 1.565 〜 頭頂 1.75 と、その下の肩まで）。全身: 足もとから頭の上まで
+    const fy = face ? 1.57 : 0.92;
+    const [th, tw] = face ? [0.64, 0.56] : [2.0, 1.2];
+    const t = 2 * Math.tan((cam.fov * Math.PI) / 360);
+    const d = Math.max(th / (t * Math.max(0.1, pt.pane.h)), tw / (t * (W / H) * Math.max(0.1, pt.pane.w))) * pt.zoom;
+    const y = this.renderY + fy;
+    cam.position.set(pos.x - Math.sin(pt.baseYaw) * d, y + (face ? 0.02 : 0.12), pos.z - Math.cos(pt.baseYaw) * d);
+    cam.lookAt(pos.x, y, pos.z);
+    cam.setViewOffset(W, H, (0.5 - pt.pane.cx) * W, (0.5 - pt.pane.cy) * H, W, H);
+    this.viewOffset = true;
   }
 
   applySettings(s: Settings): void {
@@ -451,7 +488,12 @@ export class GameView {
     const content = this.content;
     const fam = familyOf(p, content);
     const pos = lerpV(p.prevPos, p.pos, alpha);
-    const yaw = p.prevYaw + angleDiff(p.prevYaw, p.yaw) * alpha;
+    // 見た目を変える画面の下見では、狩人をカメラの方へ向けて回す。足を地面に留める計算は、向きに付いて来るよう毎フレーム初めから
+    const yaw = this.portrait ? this.portrait.baseYaw + Math.PI + this.portrait.spin : p.prevYaw + angleDiff(p.prevYaw, p.yaw) * alpha;
+    if (this.portrait) {
+      this.groundLocomotion.reset();
+      this.anim.reset();
+    }
     this.renderY += (pos.y - this.renderY) * Math.min(1, dt * 16);
     this.hunter.root.position.set(pos.x, this.renderY, pos.z);
     this.hunter.root.rotation.y = yaw;
@@ -468,10 +510,13 @@ export class GameView {
     this.hunter.setFamily(fam.id, fam.offhand, sim.content.weapons.get(p.weaponId)?.assetId);
     // 着ている防具（部位 → 段）。同じ組み合わせの間は、何もしない
     const armorLook: ArmorLook = {};
-    for (const id of sim.armorIds) {
-      const a = sim.content.armor.get(id);
-      if (a) armorLook[a.slot] = armorTierOf(a.assetId);
+    if (this.portrait?.clothes !== 'base') {
+      for (const id of sim.armorIds) {
+        const a = sim.content.armor.get(id);
+        if (a) armorLook[a.slot] = armorTierOf(a.assetId);
+      }
     }
+    if (this.portrait?.clothes === 'helmet' && (armorLook.head ?? 1) < 2) armorLook.head = 2;
     this.hunter.setArmor(armorLook);
     // 盾（左腕）の位置: 構えていない時の位置から、防御の位置へどれだけ寄せるか。行動が軌道を持つ時はそれに従う。
     let shieldU = 0;
@@ -655,6 +700,11 @@ export class GameView {
     this.cam.look(this.lockPoint ? 0 : look.x * sens, look.y * sens, this.settings.invertX, this.settings.invertY);
     const shake = this.settings.shake === 'off' ? 0 : this.settings.shake === 'weak' ? 0.5 : 1;
     this.cam.update(dt, { x: pos.x, y: this.renderY, z: pos.z }, sim.world, shake, this.lockPoint);
+    if (this.portrait) this.placePortrait(this.portrait, pos);
+    else if (this.viewOffset) {
+      this.viewOffset = false;
+      this.cam.camera.clearViewOffset();
+    }
     this.arena.sun.target.position.set(pos.x, 0, pos.z);
     this.arena.sun.position.set(pos.x - 14, 26, pos.z - 11);
     // 空と遠景は、カメラと一緒に動かす（どこまで歩いても、近づかない）。雲は少しずつ流れる

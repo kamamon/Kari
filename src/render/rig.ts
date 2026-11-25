@@ -13,11 +13,17 @@ import { buildLongBlade, buildTwinBlade, buildWarMaul } from './forgedWeapons';
 import { withShell } from './shellPlates';
 import { HUNTER_ATLAS } from './hunterAtlas';
 import { armorLookKey, buildHunterArmor, type ArmorLook } from './hunterArmor';
+import { addAppearanceShader, deformBody, setLookColors, type AppearanceUniforms } from './appearance';
+import { bodyKey, hexRgb, type ResolvedAppearance } from '../data/appearance';
 import { BODY_RANGES, REST, buildHunterBody } from './hunterBody';
 import { JOINTS, type BodyPose, type JointName } from './poses';
 import { packCharts, type AtlasChart } from './procGeo';
 
 const HUNTER_TEX = 'assets/textures/hunter/hunter_body_v1.webp';
+/** 肌と髪の印（v0.28.0。npm run hunter:masks。R = 肌、G = 髪） */
+const HUNTER_MASK = 'assets/textures/hunter/hunter_mask_v1.png';
+/** 外見の決まりが届く前の、肌と髪の印の所の A の平均の色（appearance.json の base と同じ。tests/appearance.test.ts が確かめる） */
+export const BASE_LOOK = { skin: '#C38E6E', hair: '#473628' } as const;
 
 const D2R = Math.PI / 180;
 const UPPER_ARM = REST.upperArm;
@@ -127,6 +133,17 @@ export class HunterRig {
   private armorMeshes: SkinnedMesh[] = [];
   /** いま付けている防具の組み合わせ（部位の順に段を並べた文字列。'11111' = 里の装束） */
   armorKey = '11111';
+  /** 外見（v0.28.0）: 色替えの uniform、A の体の形（作り直しの元）、いまの体型（null = A）と、その鍵 */
+  private looks!: AppearanceUniforms;
+  private bodyBase!: BufferGeometry;
+  private bodyAxes: Record<string, number> | null = null;
+  bodyShapeKey = 'A';
+  /** いま描いている肌・髪の色（検査用。null = A のまま） */
+  lookColors: { skin: [number, number, number] | null; hair: [number, number, number] | null } = { skin: null, hair: null };
+  /** いまの組み合わせの防具の形（体型で変える前）。体型が変わった時は、これを写して変える */
+  private armorBase: { geos: BufferGeometry[]; glow: number; triangles: number } | null = null;
+  /** 肌と髪の印の読み込み（検査用） */
+  maskLoaded = false;
   armorTriangles = 0;
 
   constructor() {
@@ -173,6 +190,7 @@ export class HunterRig {
     this.atlasStored = body.charts.length === Object.keys(stored).length && body.charts.every((c) => stored[c.kind]);
     const rects = this.atlasStored ? stored : packCharts(body.charts);
     for (const c of body.charts) c.rect = rects[c.kind]!;
+    this.bodyBase = body.build();
     const flat = new DataTexture(new Uint8Array([130, 104, 83, 255]), 1, 1);
     flat.colorSpace = SRGBColorSpace;
     flat.channel = 1;
@@ -182,9 +200,16 @@ export class HunterRig {
     this.root.updateMatrixWorld(true);
     const skeleton = new Skeleton(JOINTS.map((n) => this.joints[n] as Bone));
     this.skeleton = skeleton;
-    const mesh = new SkinnedMesh(body.build(), bodyMat);
+    const mesh = new SkinnedMesh(this.bodyBase.clone(), bodyMat);
     this.bodyMesh = mesh;
     this.bodyMat = bodyMat;
+    // 外見の色替え（v0.28.0）: 肌と髪の印を読み、届くまでは何も替えない
+    this.looks = addAppearanceShader(bodyMat, { skin: hexRgb(BASE_LOOK.skin), hair: hexRgb(BASE_LOOK.hair) });
+    new TextureLoader().load(assetUrl(HUNTER_MASK), (t) => {
+      t.channel = 1;
+      this.looks.appearanceMask.value = t;
+      this.maskLoaded = true;
+    });
 
     mesh.name = 'hunter_body';
     mesh.castShadow = true;
@@ -254,28 +279,10 @@ export class HunterRig {
     const key = armorLookKey(look);
     if (key === this.armorKey) return;
     this.armorKey = key;
-    for (const m of this.armorMeshes) {
-      this.root.remove(m);
-      m.geometry.dispose();
-      (m.material as MeshLambertMaterial).dispose();
-    }
-    this.armorMeshes = [];
-    this.armorTriangles = 0;
     const built = buildHunterArmor(look);
-    if (built) {
-      const rockMat = new MeshLambertMaterial({ vertexColors: true, side: DoubleSide });
-      const rimMat = new MeshLambertMaterial({ vertexColors: true, side: DoubleSide, emissive: 0xd9a441, emissiveIntensity: built.glow });
-      for (const [geo, mat, name] of [[built.rock, rockMat, 'hunter_armor'], [built.rim, rimMat, 'hunter_armor_rim']] as const) {
-        const m = new SkinnedMesh(geo.build(), mat);
-        m.name = name;
-        m.castShadow = true;
-        m.frustumCulled = false;
-        this.root.add(m);
-        m.bind(this.skeleton, new Matrix4());
-        this.armorMeshes.push(m);
-        this.armorTriangles += geo.triangles;
-      }
-    }
+    for (const g of this.armorBase?.geos ?? []) g.dispose();
+    this.armorBase = built ? { geos: [built.rock.build(), built.rim.build()], glow: built.glow, triangles: built.rock.triangles + built.rim.triangles } : null;
+    this.placeArmor();
     // 体の一部を描かない: 胴の防具を着ている間は外套、兜をかぶっている間は髪の束（体の絵の区画はそのまま。脱げば、また描く）
     const hide: [string, [number, number]][] = [];
     if ((look.chest ?? 1) >= 2) hide.push(['mantle', BODY_RANGES.mantle]);
@@ -295,6 +302,58 @@ export class HunterRig {
     }
     if (this.bodyTriangles > at) g.addGroup(at * 3, (this.bodyTriangles - at) * 3, 0);
     this.bodyMesh.material = [this.bodyMat];
+  }
+
+  /** 防具のメッシュを、作っておいた形（armorBase）から置き直す。体型が A でなければ、体の皮と同じ決まりで広げる・寄せる（v0.28.0） */
+  private placeArmor(): void {
+    for (const m of this.armorMeshes) {
+      this.root.remove(m);
+      m.geometry.dispose();
+      (m.material as MeshLambertMaterial).dispose();
+    }
+    this.armorMeshes = [];
+    this.armorTriangles = 0;
+    const base = this.armorBase;
+    if (!base) return;
+    const rockMat = new MeshLambertMaterial({ vertexColors: true, side: DoubleSide });
+    const rimMat = new MeshLambertMaterial({ vertexColors: true, side: DoubleSide, emissive: 0xd9a441, emissiveIntensity: base.glow });
+    for (const [geo, mat, name] of [[base.geos[0]!, rockMat, 'hunter_armor'], [base.geos[1]!, rimMat, 'hunter_armor_rim']] as const) {
+      const g = geo.clone();
+      if (this.bodyAxes) deformBody(g, this.bodyAxes);
+      const m = new SkinnedMesh(g, mat);
+      m.name = name;
+      m.castShadow = true;
+      m.frustumCulled = false;
+      this.root.add(m);
+      m.bind(this.skeleton, new Matrix4());
+      this.armorMeshes.push(m);
+    }
+    this.armorTriangles = base.triangles;
+  }
+
+  /**
+   * 外見（v0.28.0。docs/spec.md の 28 章）: 肌と髪の色を替え、体型が変わった時は体の皮と防具を作り直す。
+   * 骨・関節・socket・当たりは変えない。base は外見の決まり（appearance.json の base。色を替える計算の元）。
+   */
+  setLook(look: Pick<ResolvedAppearance, 'skin' | 'hair' | 'body'>, base?: { skin: string; hair: string }): void {
+    if (base) {
+      this.looks.uSkinBase.value.setRGB(...hexRgb(base.skin), 'srgb');
+      this.looks.uHairBase.value.setRGB(...hexRgb(base.hair), 'srgb');
+    }
+    this.lookColors = { skin: look.skin ? [...look.skin] : null, hair: look.hair ? [...look.hair] : null };
+    setLookColors(this.looks, look);
+    const key = bodyKey(look.body);
+    if (key === this.bodyShapeKey) return;
+    this.bodyShapeKey = key;
+    this.bodyAxes = look.body ? { ...look.body } : null;
+    const old = this.bodyMesh.geometry;
+    const g = this.bodyBase.clone();
+    if (this.bodyAxes) deformBody(g, this.bodyAxes);
+    // 描かない体の部分（外套・髪の束）の区切りを、新しい形にも写す
+    for (const gr of old.groups) g.addGroup(gr.start, gr.count, gr.materialIndex);
+    this.bodyMesh.geometry = g;
+    old.dispose();
+    this.placeArmor();
   }
 
   setFamily(id: string, offhand?: ShieldKind, assetId?: string): void {

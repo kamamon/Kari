@@ -7,12 +7,14 @@
 // - 知らない ID（この版に無い素材や武器）は捨てずに持ち続ける。
 // - 新しい版が書いたデータ（schemaVersion がこの版より大きい）は、読まないし上書きもしない。
 import { ARMOR_SLOTS, recipeFrom, recipeResult, type ArmorDef, type ArmorSlot, type Content, type DeliveryDef, type ItemStack, type QuestDef, type RecipeDef, type ShopDef, type SupportPackDef } from '../data/schemas';
+import { appearanceShapeErrors, applyDraft, changedKinds, editableAppearance, legacyAppearance, validateDraft, type AppearanceDoc, type AppearanceDraft } from '../data/appearance';
 
 /**
  * 版 2（v0.9.0）: 防具（armor）を足した。版 3（v0.14.0）: 身に着けている防具（equippedArmorIds）を足した。
  * 版 4（v0.26.0）: 1 度だけの受け取りの記録（claims。工房からの支給・里の納品）を足した。
+ * 版 5（v0.28.0）: ハンターの外見（appearance）を足した。
  */
-export const SAVE_SCHEMA_VERSION = 4;
+export const SAVE_SCHEMA_VERSION = 5;
 export const SLOT_ID = 'main';
 /** 書き出したファイルの目印 */
 export const EXPORT_FORMAT = 'veilbound-hunters-save';
@@ -57,6 +59,11 @@ export interface SaveDoc {
    * この版に無い id も、そのまま持つ。
    */
   claims: string[];
+  /**
+   * ハンターの外見（v0.28.0。src/data/appearance.ts、docs/spec.md の 28 章）。無い古いデータは基準ハンター A。
+   * 知らない欄・未知の ID も、そのまま持つ（描く時だけ A で代わりに描く）。能力には関わらない。
+   */
+  appearance: AppearanceDoc;
 }
 
 /** 保存する時に付ける情報（時刻は保存する側が渡す） */
@@ -109,6 +116,7 @@ export function newSave(content: Content, stamp: SaveStamp): SaveDoc {
     progress: { questClears: {} },
     settledRuns: [],
     claims: [],
+    appearance: legacyAppearance(),
   };
 }
 
@@ -135,6 +143,7 @@ export function validateSave(raw: unknown): string[] {
   if (!Array.isArray(raw.settledRuns) || raw.settledRuns.some((r) => typeof r !== 'string')) e.push('処理済みの依頼の記録が不正です');
   if (!Array.isArray(raw.claims) || raw.claims.some((r) => typeof r !== 'string' || r === '')) e.push('受け取りの記録が不正です');
   else if (new Set(raw.claims).size !== raw.claims.length) e.push('同じ受け取りの記録が 2 つ入っています');
+  e.push(...appearanceShapeErrors(raw.appearance));
   return e;
 }
 
@@ -146,11 +155,13 @@ export function validateSave(raw: unknown): string[] {
  *   持っている防具をすべて「身に着けている」にする（読む側が、部位ごとに高い方を選ぶ。着ているものは、直す前と変わらない）。
  * 3 → 4（v0.26.0）: 受け取りの記録（claims）を足す。版 3 までは受け取るものが無かったので、空（まだ何も受け取っていない）。
  *   受け取れるかは、保存してある達成回数で決まる（古いデータでも、条件を満たしていれば、そのまま受け取れる）。
+ * 4 → 5（v0.28.0）: 外見（appearance）を足す。版 4 までは外見が無かったので、基準ハンター A（legacy。近い色や全軸 50 へ置き換えない）。
  */
 const MIGRATIONS: Record<number, (doc: Record<string, unknown>) => Record<string, unknown>> = {
   1: (doc) => ({ ...doc, armor: Array.isArray(doc.armor) ? doc.armor : [] }),
   2: (doc) => ({ ...doc, equippedArmorIds: Array.isArray(doc.equippedArmorIds) ? doc.equippedArmorIds : Array.isArray(doc.armor) ? [...(doc.armor as unknown[])] : [] }),
   3: (doc) => ({ ...doc, claims: Array.isArray(doc.claims) ? doc.claims : [] }),
+  4: (doc) => ({ ...doc, appearance: doc.appearance !== undefined ? doc.appearance : legacyAppearance() }),
 };
 
 export type ReadResult =
@@ -460,6 +471,23 @@ export function deliver(doc: SaveDoc, d: DeliveryDef): SaveDoc {
   next.money += d.money;
   next.progress.questClears[d.id] = Math.min(MAX_COUNT, (next.progress.questClears[d.id] ?? 0) + 1);
   next.claims.push(d.id);
+  return next;
+}
+
+// ---- 外見（v0.28.0。docs/spec.md の 28 章） ----
+
+/**
+ * 外見を決める: 編集を始めた時の draft（base）と違う種類だけを、いまの保存の外見へ当てる（ほかの欄・未知の ID は残す）。
+ * 持ち物・装備・進行は変えない。変える所が無ければ null。この版で編集できない外見（将来の版など）・選べない値は RuleError。
+ */
+export function setAppearance(doc: SaveDoc, content: Pick<Content, 'appearance'>, base: AppearanceDraft, draft: AppearanceDraft): SaveDoc | null {
+  if (!editableAppearance(doc.appearance)) throw new RuleError('unknown', 'この外見は、この版では編集できません（新しい版のデータです）');
+  const errors = validateDraft(draft, content.appearance);
+  if (errors.length) throw new RuleError('bad_count', errors[0]!);
+  if (changedKinds(base, draft).length === 0) return null;
+  const next = cloneSave(doc);
+  next.appearance = applyDraft(doc.appearance, base, draft);
+  if (JSON.stringify(next.appearance) === JSON.stringify(doc.appearance)) return null;
   return next;
 }
 

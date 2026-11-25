@@ -523,7 +523,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const saved = (pg) => pg.evaluate(() => JSON.parse(JSON.stringify(window.__vh.save.doc)));
   const before = await saved(page);
   check('保存の場所は IndexedDB（ゲーム固有の名前）で、2 回の報酬が revision 2 として入っている',
-    (await page.evaluate(() => window.__vh.save.mode)) === 'persistent' && before.revision === 2 && before.settledRuns.length === 2 && before.schemaVersion === 4 && before.claims.length === 0 && before.armor.length === 5 && before.equippedArmorIds.length === 5
+    (await page.evaluate(() => window.__vh.save.mode)) === 'persistent' && before.revision === 2 && before.settledRuns.length === 2 && before.schemaVersion === 5 && before.claims.length === 0 && before.appearance.profile === 'legacy_hunter_a_v1' && before.armor.length === 5 && before.equippedArmorIds.length === 5
       && (await page.evaluate(async () => (await indexedDB.databases()).some((d) => d.name === 'veilbound-hunters:prod:save'))),
     `通貨 ${before.money} / 素材 ${JSON.stringify(before.items)} / 達成 ${JSON.stringify(before.progress.questClears)}`);
   await page.reload();
@@ -557,7 +557,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('#base-data > summary');
   const exported = await page.evaluate(() => window.__vh.save.exportText());
   const rich = JSON.parse(exported);
-  check('書き出した内容に、目印・版・持ち物が入っている', rich.format === 'veilbound-hunters-save' && rich.save.schemaVersion === 4 && rich.save.money === 1250);
+  check('書き出した内容に、目印・版・持ち物が入っている', rich.format === 'veilbound-hunters-save' && rich.save.schemaVersion === 5 && rich.save.money === 1250);
   await page.fill('.data-paste', exported.slice(0, 80));
   await page.click('text=貼り付けた内容を確かめる');
   check('途中で切れた内容は取り込まない（理由が出る）', await until(page, () => /取り込めません/.test(document.querySelector('.base-message').textContent), 4000) && (await saved(page)).revision === 3);
@@ -721,7 +721,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   check('版 1 のデータ（v0.7.0 の実機）を開くと、いまの版（4）へ直して保存する。持ち物・武器・進行はそのまま、里の装束が配られ、元のデータは控えに残る', await page.evaluate(async (orig) => {
     const s = window.__vh.save, d = s.doc;
     const bs = await s.backups();
-    return s.mode === 'persistent' && d.schemaVersion === 4 && d.claims.length === 0 && d.equippedArmorIds.join() === d.armor.join() && d.money === 1200 && d.items['mat.galdros.shell_shard'] === 7 && d.equippedWeaponId === 'weapon.long_blade.001' && d.weapons.length === 7
+    return s.mode === 'persistent' && d.schemaVersion === 5 && d.claims.length === 0 && d.appearance.profile === 'legacy_hunter_a_v1' && d.equippedArmorIds.join() === d.armor.join() && d.money === 1200 && d.items['mat.galdros.shell_shard'] === 7 && d.equippedWeaponId === 'weapon.long_blade.001' && d.weapons.length === 7
       && d.armor.join() === 'armor.head.001,armor.chest.001,armor.arms.001,armor.waist.001,armor.legs.001' && d.progress.questClears['quest.basin.003'] === 2 && d.revision === 4
       && bs.some((b) => b.reason === 'migrate' && JSON.stringify(b.doc) === JSON.stringify(orig)) && /新しい形へ直しました/.test(document.querySelector('.base-banner')?.textContent ?? '');
   }, v1), await page.evaluate(() => `${window.__vh.save.mode} v${window.__vh.save.doc.schemaVersion} r${window.__vh.save.doc.revision} ${window.__vh.save.notice}`));
@@ -751,7 +751,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   check('読み込み直しても、岩殻の兜のまま（控えは増えない）', await page.evaluate(async () => {
     const s = window.__vh.save;
-    return s.doc.armor.includes('armor.head.002') && s.doc.equippedArmorIds.includes('armor.head.002') && s.doc.schemaVersion === 4 && s.notice === null && (await s.backups()).filter((b) => b.reason === 'migrate').length === 1;
+    return s.doc.armor.includes('armor.head.002') && s.doc.equippedArmorIds.includes('armor.head.002') && s.doc.schemaVersion === 5 && s.notice === null && (await s.backups()).filter((b) => b.reason === 'migrate').length === 1;
   }));
   await ctx.close();
 }
@@ -1617,7 +1617,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await until(page, () => window.__vh && window.__vh.place === 'hub');
   h = await hubState();
   check('里: 読み込み直しても、買い物の結果が残っている（通貨 960、岩殻片 2、回復液 0）', h.money === 960 && h.shell === 2 && h.tonic === 0, JSON.stringify(h));
-  check('里: 読み込み直しても、選んだ防具が残っている（兜は着たまま、胴は外したまま。胸当ては持っている）', await page.evaluate(() => { const d = window.__vh.save.doc; return d.schemaVersion === 4 && d.armor.includes('armor.chest.002') && !d.equippedArmorIds.includes('armor.chest.002') && d.equippedArmorIds.includes('armor.head.002') && window.__vh.sim.armorIds.join() === 'armor.head.002,armor.arms.001,armor.waist.001,armor.legs.001'; }), await page.evaluate(() => JSON.stringify(window.__vh.save.doc.equippedArmorIds)));
+  check('里: 読み込み直しても、選んだ防具が残っている（兜は着たまま、胴は外したまま。胸当ては持っている）', await page.evaluate(() => { const d = window.__vh.save.doc; return d.schemaVersion === 5 && d.armor.includes('armor.chest.002') && !d.equippedArmorIds.includes('armor.chest.002') && d.equippedArmorIds.includes('armor.head.002') && window.__vh.sim.armorIds.join() === 'armor.head.002,armor.arms.001,armor.waist.001,armor.legs.001'; }), await page.evaluate(() => JSON.stringify(window.__vh.save.doc.equippedArmorIds)));
 
   // ---- 里の人と、物語「帰り道の灯」（v0.23.0。ChatGPT の Pull Request #5・#7）----
   const npcs = await until(page, () => {
@@ -1979,9 +1979,9 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
-  check('読み込み直しても、受け取りの記録が残る（保存の版 4）。支給も納品も、もう受けられない', await page.evaluate(() => {
+  check('読み込み直しても、受け取りの記録が残る（保存の版 4 からの記録）。支給も納品も、もう受けられない', await page.evaluate(() => {
     const d = window.__vh.save.doc;
-    return d.schemaVersion === 4 && d.claims.length === 2 && document.querySelector('.base-delivery')?.dataset.state === 'claimed' && document.querySelector('.forge-support')?.dataset.state === 'claimed';
+    return d.schemaVersion === 5 && d.claims.length === 2 && document.querySelector('.base-delivery')?.dataset.state === 'claimed' && document.querySelector('.forge-support')?.dataset.state === 'claimed';
   }));
   await page.evaluate(() => window.__vh.startHunt('quest.basin.r2.001'));
   await until(page, () => window.__vh.sim.hunt && window.__vh.sim.tick > 5);
@@ -2060,6 +2060,128 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.evaluate(() => window.__vh.hub.pulse(1));
   check('採掘の間だけ、右手に採掘道具。2.5 秒で風礫鉄鉱 2 個', await until(page, () => window.__vh.sim.player.action?.def.actionId === 'player.common.mine' && window.__vh.view.hunter.tool.visible, 3000)
     && await until(page, () => window.__vh.sim.errand.bag['mat.ore.basin_iron'] === 2 && !window.__vh.view.hunter.tool.visible, 8000));
+  await ctx.close();
+}
+
+// ---- 見た目を変える（v0.28.0。ChatGPT のキャラメイク設計 #10。横向きスマホ相当・縦向き・キーボード） ----
+{
+  const { ctx, page } = await open({ width: 844, height: 390 }, true, '?hub=menu');
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  const entry = await page.evaluate(() => ({ btn: document.querySelector('.base-looks-open')?.textContent ?? '', note: document.querySelector('.base-looks-note')?.textContent ?? '', ap: window.__vh.save.doc.appearance, v: window.__vh.save.doc.schemaVersion }));
+  check('見た目: 装備箱に「見た目を変える」。新しいデータは基準ハンター A（保存の版 5）', entry.btn === '見た目を変える' && /いまは基準ハンター A の姿/.test(entry.note) && entry.v === 5 && entry.ap.profile === 'legacy_hunter_a_v1' && entry.ap.dataVersion === 1, JSON.stringify(entry));
+  await page.tap('.base-looks-open');
+  await until(page, () => !document.getElementById('looks').hidden, 3000);
+  await page.waitForTimeout(300);
+  const opened = await page.evaluate(() => {
+    const v = window.__vh.view, h = v.hunter, pt = v.portrait;
+    const small = [...document.querySelectorAll('#looks .looks-bar button, #looks .looks-view button, #looks .looks-tabs button, #looks .looks-choice, #looks .looks-slider .step')].filter((b) => b.offsetParent && b.getBoundingClientRect().height < 44).length;
+    return {
+      tabs: [...document.querySelectorAll('.looks-tabs button')].map((b) => b.textContent).join(),
+      baseHidden: document.getElementById('base').hidden, portrait: !!pt, facing: pt ? Math.abs(Math.atan2(Math.sin(h.root.rotation.y - pt.baseYaw - Math.PI), Math.cos(h.root.rotation.y - pt.baseYaw - Math.PI))) < 0.01 : false,
+      mask: h.maskLoaded, small, sliders: document.querySelectorAll('.looks-slider').length, paused: window.__vh.sim.tick,
+    };
+  });
+  check('開くと、施設の画面が隠れて、見た目の画面（見本・体型・肌・髪・顔・保存）。狩人はカメラの方を向き、肌と髪の印が読めている。押せる所は 44px 以上', opened.tabs === '見本,体型,肌,髪,顔,保存' && opened.baseHidden && opened.portrait && opened.facing && opened.mask && opened.small === 0 && opened.sliders === 8, JSON.stringify(opened));
+  await page.screenshot({ path: `${OUT}9y_looks_open.png` });
+  await page.tap('.looks-choice[data-choice="B03"]');
+  await page.tap('.looks-tabs button[data-tab="skin"]');
+  await page.tap('.looks-choice[data-choice="S10"]');
+  await page.tap('.looks-tabs button[data-tab="hair"]');
+  await page.tap('.looks-choice[data-choice="C09"]');
+  const drafted = await page.evaluate(() => ({ key: window.__vh.view.hunter.bodyShapeKey, c: window.__vh.view.hunter.lookColors, undo: document.querySelector('.looks-bar [data-act="undo"]').textContent, saved: window.__vh.save.doc.appearance.profile, rev: window.__vh.save.doc.revision, face: window.__vh.view.portrait?.focus }));
+  check('体型 B03・肌 S10・髪 C09 を選ぶと、下見の狩人が替わる（髪の欄へ初めて入ると顔へ寄る）。保存はまだ A のまま', drafted.key.includes('muscleAmount:85') && !!drafted.c.skin && Math.abs(drafted.c.hair[0] - 0xc7 / 255) < 1e-6 && drafted.undo === '元に戻す（3）' && drafted.saved === 'legacy_hunter_a_v1' && drafted.rev === 0 && drafted.face === 'face', JSON.stringify(drafted));
+  await page.screenshot({ path: `${OUT}9y_looks_face.png` });
+  await page.tap('.looks-bar [data-act="undo"]');
+  const undone = await page.evaluate(() => ({ hair: window.__vh.view.hunter.lookColors.hair, redo: document.querySelector('.looks-bar [data-act="redo"]').disabled }));
+  await page.tap('.looks-bar [data-act="redo"]');
+  const redone = await page.evaluate(() => !!window.__vh.view.hunter.lookColors.hair);
+  check('元に戻すで髪の色が A に戻り、やり直すで C09 に戻る', undone.hair === null && !undone.redo && redone, JSON.stringify(undone));
+  await page.tap('.looks-tabs button[data-tab="body"]');
+  const slider = async () => page.evaluate(() => ({ v: document.querySelector('.looks-slider[data-axis="muscleAmount"] input[type="number"]').value, undo: document.querySelector('.looks-bar [data-act="undo"]').textContent, err: document.querySelector('.looks-field-error')?.textContent ?? '' }));
+  await page.tap('.looks-slider[data-axis="muscleAmount"] .step:last-of-type');
+  const plus = await slider();
+  await page.fill('.looks-slider[data-axis="muscleAmount"] input[type="number"]', '150');
+  await page.press('.looks-slider[data-axis="muscleAmount"] input[type="number"]', 'Enter');
+  await page.waitForTimeout(100);
+  const bad = await slider();
+  check('筋肉量の ＋ で 86（1 操作）。数の欄に 150 を入れると「0〜100で入力してください」で、値は 86 のまま', plus.v === '86' && plus.undo === '元に戻す（4）' && bad.v === '86' && bad.err === '0〜100で入力してください' && bad.undo === '元に戻す（4）', JSON.stringify([plus, bad]));
+  await page.tap('.looks-view button[data-view="compare"]');
+  const cmp = await page.evaluate(() => ({ key: window.__vh.view.hunter.bodyShapeKey, c: window.__vh.view.hunter.lookColors, undo: document.querySelector('.looks-bar [data-act="undo"]').textContent }));
+  await page.tap('.looks-view button[data-view="compare"]');
+  const back = await page.evaluate(() => window.__vh.view.hunter.bodyShapeKey);
+  check('比較: 編集開始時（A）を見せ、もう一度押すと現在。比較は履歴に入らない', cmp.key === 'A' && cmp.c.skin === null && cmp.c.hair === null && cmp.undo === '元に戻す（4）' && back.includes('muscleAmount:86'), JSON.stringify(cmp));
+  const ready = await page.evaluate(() => {
+    document.querySelector('.looks-tabs button[data-tab="hair"]').click();
+    const h2 = document.querySelector('.looks-choice[data-choice="H02"]');
+    document.querySelector('.looks-tabs button[data-tab="preset"]').click();
+    const p2 = document.querySelector('.looks-choice[data-choice="P02"]');
+    return { h2: !!h2 && h2.disabled && /準備中/.test(h2.textContent), p2: !!p2 && p2.disabled && /準備中/.test(p2.textContent) };
+  });
+  check('まだ作っていない髪型 H02・見本 P02 は「準備中」で押せない', ready.h2 && ready.p2, JSON.stringify(ready));
+  await page.evaluate(() => {
+    document.querySelector('.looks-tabs button[data-tab="body"]').click();
+    document.querySelector('[data-lock="body"]').click();
+    document.querySelector('.looks-tabs button[data-tab="skin"]').click();
+    document.querySelector('[data-lock="skin"]').click();
+    document.querySelector('.looks-tabs button[data-tab="hair"]').click();
+    document.querySelector('[data-lock="hairColor"]').click();
+  });
+  await page.tap('.looks-bar [data-act="random"]');
+  const locked = await page.evaluate(() => ({ msg: document.querySelector('.looks-status').textContent, undo: document.querySelector('.looks-bar [data-act="undo"]').textContent }));
+  await page.evaluate(() => document.querySelector('[data-lock="hairColor"]').click());
+  await page.tap('.looks-bar [data-act="random"]');
+  const rnd = await page.evaluate(() => ({ key: window.__vh.view.hunter.bodyShapeKey, undo: document.querySelector('.looks-bar [data-act="undo"]').textContent }));
+  check('ランダム: 全部を固定すると「固定されていない項目がありません」。髪の色だけ外すと、体型は固定したまま（1 操作）', locked.msg === '固定されていない項目がありません。' && locked.undo === '元に戻す（4）' && rnd.key.includes('muscleAmount:86') && rnd.undo === '元に戻す（5）', JSON.stringify([locked, rnd]));
+  await page.tap('.looks-bar [data-act="cancel"]');
+  const ask = await page.evaluate(() => ({ t: document.querySelector('.looks-modal-box h3')?.textContent, focus: document.activeElement?.textContent }));
+  await page.tap('.looks-modal-buttons button.go');
+  check('変えた後のキャンセル: 「編集した見た目を破棄しますか？」（編集を続けるが先）。続けると、そのまま', ask.t === '編集した見た目を破棄しますか？' && ask.focus === '編集を続ける' && await page.evaluate(() => !document.getElementById('looks').hidden && document.querySelector('.looks-modal').hidden), JSON.stringify(ask));
+  // 縦向き: 編集はできる（狩りは横向き）。「横向きにしてください」は出さない
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.waitForTimeout(400);
+  const tall = await page.evaluate(() => {
+    const st = document.querySelector('.looks-stage').getBoundingClientRect(), side = document.querySelector('.looks-side').getBoundingClientRect(), bar = document.querySelector('.looks-bar').getBoundingClientRect();
+    return { rotate: getComputedStyle(document.getElementById('rotate')).display, stacked: st.bottom <= side.top + 1 && side.bottom <= bar.top + 1, h: window.__vh.view.portrait?.pane.h ?? 0 };
+  });
+  check('縦向き: 上に下見、下に選ぶ欄と操作。「横向きにしてください」は出ない', tall.rotate === 'none' && tall.stacked && tall.h > 0.2, JSON.stringify(tall));
+  await page.screenshot({ path: `${OUT}9y_looks_portrait.png` });
+  await page.setViewportSize({ width: 844, height: 390 });
+  await page.waitForTimeout(300);
+  await page.tap('.looks-bar [data-act="confirm"]');
+  const conf = await page.evaluate(() => [...document.querySelectorAll('.looks-changes li')].map((l) => l.textContent));
+  check('確認へ: 変わる所を名前で（体型・肌・髪の色）。費用なし', conf.length === 3 && /^体型：A の体つき → 筋肉質（B03・調整あり）$/.test(conf[0]) && /^肌：A の肌 → 深いニュートラルブラウン（S10）$/.test(conf[1]) && /^髪の色：A の髪の色 → /.test(conf[2]), JSON.stringify(conf));
+  await page.tap('.looks-modal-buttons button.go');
+  check('この見た目に決定: 保存が完了してから装備箱へ戻り「見た目を保存しました。」。保存は custom（体型・肌・髪の色だけ）', await until(page, () => {
+    const a = window.__vh.save.doc.appearance;
+    return document.getElementById('looks').hidden && !document.getElementById('base').hidden && document.querySelector('.base-message').textContent === '見た目を保存しました。'
+      && a.profile === 'custom_hunter_v1' && a.body.presetId === 'B03' && a.body.axes.muscleAmount === 86 && a.skin.colorId === 'S10' && /^C\d\d$/.test(a.hair.colorId) && !('face' in a) && window.__vh.save.doc.revision === 1
+      && window.__vh.view.portrait === null && window.__vh.view.hunter.bodyShapeKey.includes('muscleAmount:86') && /いまの見た目: 体型 筋肉質/.test(document.querySelector('.base-looks-note').textContent);
+  }, 6000), await page.evaluate(() => JSON.stringify(window.__vh.save.doc.appearance)));
+  await page.reload();
+  await page.waitForSelector('#boot-start:not([hidden])');
+  await page.tap('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  await page.waitForTimeout(300);
+  check('読み込み直しても、決めた見た目で描く（体型・肌・髪）', await page.evaluate(() => {
+    const h = window.__vh.view.hunter;
+    return window.__vh.save.doc.appearance.skin.colorId === 'S10' && h.bodyShapeKey.includes('muscleAmount:86') && !!h.lookColors.skin && !!h.lookColors.hair;
+  }), await page.evaluate(() => window.__vh.view.hunter.bodyShapeKey));
+  // もう一度開いて、A 全体へ → 破棄して戻る（保存は変わらない）。キーボードの元に戻す
+  await page.tap('.base-looks-open');
+  await until(page, () => !document.getElementById('looks').hidden, 3000);
+  await page.tap('.looks-bar [data-act="legacy"]');
+  const legacyAsk = await page.evaluate(() => [...document.querySelectorAll('.looks-changes li')].length);
+  await page.tap('.looks-modal-buttons button.go');
+  const allA = await page.evaluate(() => ({ key: window.__vh.view.hunter.bodyShapeKey, c: window.__vh.view.hunter.lookColors }));
+  await page.keyboard.press('Control+z');
+  const undoKey = await page.evaluate(() => window.__vh.view.hunter.bodyShapeKey);
+  check('A全体へ: 変わる所 3 つを見せて当てる（下見は A）。Ctrl+Z で戻る', legacyAsk === 3 && allA.key === 'A' && allA.c.skin === null && allA.c.hair === null && undoKey.includes('muscleAmount:86'), JSON.stringify([legacyAsk, allA, undoKey]));
+  await page.tap('.looks-bar [data-act="legacy"]');
+  await page.tap('.looks-modal-buttons button.go');
+  await page.tap('.looks-bar [data-act="cancel"]');
+  await page.tap('.looks-modal-buttons button:not(.go)');
+  check('破棄して戻ると、装備箱へ戻り、保存した見た目のまま（保存もしない）', await until(page, () => document.getElementById('looks').hidden && !document.getElementById('base').hidden && window.__vh.save.doc.revision === 1 && window.__vh.save.doc.appearance.skin.colorId === 'S10' && window.__vh.view.hunter.bodyShapeKey.includes('muscleAmount:86'), 4000));
   await ctx.close();
 }
 

@@ -17,6 +17,7 @@ import { TouchControls } from './input/touch';
 import { CREATURE_PLANS } from './render/creaturePlans';
 import { envArtStatus } from './render/envArt';
 import { GameView } from './render/view';
+import { armorTierOf } from './render/hunterArmor';
 import { defenseOf, playWeaponId, pouchOf, questUnlocked, wornArmor, type RunRewards } from './save/profile';
 import type { SaveManager, SaveResult } from './save/saveManager';
 import type { SettingsStore } from './save/settings';
@@ -28,6 +29,8 @@ import { ResultScreen, type ResultHost } from './ui/result';
 import { iconUrl } from './ui/icons';
 import { StoryDialog, type StoryPlay } from './ui/story';
 import { scenesUnlocked, type StoryOutcome } from './data/story';
+import { AppearanceEditor, type LooksHost } from './ui/appearanceEditor';
+import { resolveAppearance, type ResolvedAppearance } from './data/appearance';
 
 const DEFAULT_SEED = 20261122;
 const MAX_RECORD = 60 * 60 * 16;
@@ -38,7 +41,7 @@ const RESULT_DELAY_TICKS = { success: 50, failed: 90 };
 /** 状態異常が付いた時の知らせ */
 const STATUS_TOAST: Record<string, string> = { poison: '毒を受けた', para: '体が痺れて動けない', sleep: '眠ってしまった', stun: '気を失った' };
 
-export class App implements MenuHost, BaseHost, ResultHost {
+export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
   private sim!: Simulation;
   private view!: GameView;
   private clock = new FixedClock(6);
@@ -52,6 +55,13 @@ export class App implements MenuHost, BaseHost, ResultHost {
   private result: ResultScreen;
   /** 物語の会話の窓（v0.23.0） */
   private story: StoryDialog;
+  /** 見た目を変える画面（v0.28.0）と、開いた時のカメラの向き（下見は、この側から狩人を見る）・戻る施設の画面 */
+  private looks: AppearanceEditor;
+  private looksYaw = 0;
+  private looksFrom: BaseSection = 'chest';
+  /** 狩人に渡した外見の元（保存の外見か下見）と、渡した描画（作り直したら、もう 1 度渡す） */
+  private lookSrc: unknown = null;
+  private lookView: GameView | null = null;
   private editBar: HTMLElement;
   private rotate: HTMLElement;
   private recorded: InputFrame[] = [];
@@ -86,6 +96,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
     this.result = new ResultScreen(ui, this);
     this.base = new BaseScreen(ui, content, this);
     this.story = new StoryDialog(ui, content);
+    this.looks = new AppearanceEditor(ui, content, this);
 
     this.editBar = document.createElement('div');
     this.editBar.className = 'edit-bar';
@@ -118,7 +129,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
     this.hud.setVerify(store.value.verify);
 
     this.hub.onUi((a) => {
-      if (this.base.open || this.result.open || this.story.open) return;
+      if (this.base.open || this.result.open || this.story.open || this.looks.open) return;
       if (a === 'menu') this.menu.open ? this.closeMenu() : this.openMenu();
       else if (a === 'verify') store.set({ verify: !store.value.verify });
       else if (a === 'camReset' && !this.paused) this.resetCamera();
@@ -414,6 +425,41 @@ export class App implements MenuHost, BaseHost, ResultHost {
     this.setOverlay('base');
   }
 
+  // ---- 見た目（v0.28.0）----
+  /** 狩人の外見を描く側へ渡す（下見か保存した外見。元が変わった時と、描画を作り直した時だけ） */
+  private syncLook(preview: ResolvedAppearance | null): void {
+    const src = preview ?? this.save.doc.appearance;
+    if (src === this.lookSrc && this.view === this.lookView) return;
+    this.lookSrc = src;
+    this.lookView = this.view;
+    this.view.hunter.setLook(preview ?? resolveAppearance(this.save.doc.appearance, this.content.appearance), this.content.appearance.base);
+  }
+
+  /** 装備箱の「見た目を変える」: 施設の画面を隠して、見た目を変える画面を開く（費用なし。狩りの途中には出さない） */
+  openLooks(): void {
+    if (this.place === 'hunt' || this.looks.open) return;
+    this.looksFrom = this.base.section;
+    this.looksYaw = this.view.cam.yaw;
+    this.base.setOpen(false);
+    this.looks.openEditor();
+    this.audio.play('ui');
+  }
+
+  /** 見た目を変える画面を閉じた: 元の施設の画面へ戻る */
+  looksClosed(saved: boolean): void {
+    this.lookSrc = null;
+    this.base.setOpen(true, this.looksFrom);
+    if (saved) {
+      this.base.notify('見た目を保存しました。');
+      this.audio.play('ui');
+    }
+  }
+
+  /** 兜をかぶっているか（見た目を変える画面の「兜で確認」） */
+  wearsHelmet(): boolean {
+    return wornArmor(this.save.doc, this.content).some((a) => a.slot === 'head' && armorTierOf(a.assetId) >= 2);
+  }
+
   // ---- 里（歩く拠点）----
   /** 施設の画面を開く（all = すべての欄の一覧）。開いている間は、一時停止する。 */
   openFacility(section: BaseSection): void {
@@ -594,7 +640,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
     const cap = this.store.value.fpsCap;
     if (cap === 30 && ts - this.lastRender < 1000 / 30 - 3) return;
     this.lastRender = ts;
-    const paused = this.menu.open || this.base.open || this.result.open || this.story.open || this.touch.editing || this.portrait.matches || document.hidden;
+    const paused = this.menu.open || this.base.open || this.result.open || this.story.open || this.looks.open || this.touch.editing || this.portrait.matches || document.hidden;
     if (paused !== this.paused) {
       this.paused = paused;
       this.releaseInputs();
@@ -677,6 +723,10 @@ export class App implements MenuHost, BaseHost, ResultHost {
         if (this.sim.tick - (h.phase === 'failed' ? h.endTick : h.closeTick) >= RESULT_DELAY_TICKS[h.phase === 'failed' ? 'failed' : 'success']) this.setOverlay('result');
       }
     }
+    // 外見（v0.28.0）: 見た目を変える画面の下見（カメラを狩人の前へ）か、保存した外見
+    const pv = this.looks.preview(this.canvas.getBoundingClientRect());
+    this.view.portrait = pv ? { baseYaw: this.looksYaw, spin: pv.spin, focus: pv.focus, zoom: pv.zoom, pane: pv.pane, clothes: pv.clothes } : null;
+    this.syncLook(pv?.look ?? null);
     this.view.update(this.sim, alpha, paused ? 0 : dt, paused ? { x: 0, y: 0 } : this.hub.consumeLook(), this.store.value.verify);
     // ロックオン: 照準と、ボタンの印。標的が見えなくなって外れた時は、知らせる
     if (this.view.lockLost) {

@@ -21,6 +21,7 @@ import {
   parseImport,
   readSave,
   sell,
+  setAppearance,
   settleRun,
   type ReadResult,
   type RunRewards,
@@ -28,6 +29,7 @@ import {
   type SaveStamp,
 } from './profile';
 import { MemoryBackend, type SaveBackend, type StoredBackup } from './saveDb';
+import type { AppearanceDraft } from '../data/appearance';
 
 /**
  * persistent: 端末に保存
@@ -277,6 +279,11 @@ export class SaveManager {
     const d = this.content.deliveries.get(deliveryId);
     if (!d) return Promise.resolve({ ok: false, reason: 'rule', message: 'その納品の依頼はありません。' });
     return this.commit((doc) => deliver(doc, d));
+  }
+
+  /** 外見を決める（v0.28.0。編集した種類だけを、いまの保存へ当てる。持ち物・装備・進行は変えない） */
+  setAppearance(base: AppearanceDraft, draft: AppearanceDraft): Promise<SaveResult> {
+    return this.commit((doc) => setAppearance(doc, this.content, base, draft));
   }
 
   equip(weaponId: string): Promise<SaveResult> {

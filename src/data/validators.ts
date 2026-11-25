@@ -16,6 +16,7 @@ import {
   recipeFrom,
   recipeResult,
   type ActionDef,
+  type AppearanceCatalog,
   type ArmorDef,
   type ArmorSlot,
   type Content,
@@ -831,6 +832,7 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     board: { schemaVersion: 0, recommend: { text: '', questIds: [] }, quests: [] },
     support: { schemaVersion: 0, packs: [] },
     deliveries: new Map(),
+    appearance: { schemaVersion: 0, profiles: { legacy: '', custom: '' }, base: { skin: '#000000', hair: '#000000' }, skinColors: [], skinTone: { min: 0, max: 0 }, hairColors: [], bodyAxes: [], bodyPresets: [], hairStyles: [], faces: [], brows: [], eyeColors: [], presets: [] },
     quests: new Map(),
     items: new Map(),
     materials: new Map(),
@@ -967,6 +969,45 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
   checkVersion(index.files.deliveries, deliveries.schemaVersion, errors);
   errors.push(...validateDeliveries(deliveries, content, new Set((content.support.packs ?? []).map((p) => p.id))));
   for (const d of deliveries.deliveries ?? []) putUnique(content.deliveries, d.id, d, 'delivery', errors);
+  // ハンターの外見の選べるもの（v0.28.0、docs/spec.md の 28 章）
+  content.appearance = (await get(index.files.appearance)) as AppearanceCatalog;
+  checkVersion(index.files.appearance, content.appearance.schemaVersion, errors);
+  errors.push(...validateAppearanceCatalog(content.appearance));
   if (errors.length > 0) throw new ContentError(errors);
   return content;
 }
+
+/** 外見の選べるものの検査（v0.28.0）: ID は種類の中で重ならない・色は #RRGGBB・体型の見本は 8 軸を 0〜100 で持つ・A（legacy）で描くものは ready */
+export function validateAppearanceCatalog(a: AppearanceCatalog): string[] {
+  const e: string[] = [];
+  const hex = /^#[0-9A-Fa-f]{6}$/;
+  if (a.profiles?.legacy !== 'legacy_hunter_a_v1' || a.profiles?.custom !== 'custom_hunter_v1') e.push('appearance: profiles が不正');
+  if (!hex.test(a.base?.skin ?? '') || !hex.test(a.base?.hair ?? '')) e.push('appearance: base の色が不正');
+  const lists: [string, { id: string; hex?: string }[], boolean][] = [
+    ['skinColors', a.skinColors, true], ['hairColors', a.hairColors, true], ['eyeColors', a.eyeColors, true],
+    ['bodyPresets', a.bodyPresets, false], ['hairStyles', a.hairStyles, false], ['faces', a.faces, false], ['brows', a.brows, false], ['presets', a.presets, false], ['bodyAxes', a.bodyAxes, false],
+  ];
+  for (const [name, list, colored] of lists) {
+    if (!Array.isArray(list) || list.length === 0) {
+      e.push(`appearance: ${name} が空`);
+      continue;
+    }
+    const ids = new Set<string>();
+    for (const x of list) {
+      if (!isStr(x.id) || ids.has(x.id)) e.push(`appearance: ${name} の id ${String(x.id)} が空か重複`);
+      ids.add(x.id);
+      if (colored && !hex.test(x.hex ?? '')) e.push(`appearance: ${name} ${x.id} の色が不正`);
+    }
+  }
+  if (!(a.skinTone && a.skinTone.min < 0 && a.skinTone.max > 0)) e.push('appearance: skinTone が不正');
+  for (const p of a.bodyPresets ?? []) for (const ax of a.bodyAxes ?? []) {
+    const v = p.axes?.[ax.id];
+    if (!(isNum(v) && v >= 0 && v <= 100)) e.push(`appearance: 体型の見本 ${p.id} の ${ax.id} が 0〜100 でない`);
+  }
+  // A（基準ハンター）で描くもの: 髪型 H01・顔 F01・眉 R01・目 E01・見本 P01 は、選べる
+  for (const [name, list, id] of [['hairStyles', a.hairStyles, 'H01'], ['faces', a.faces, 'F01'], ['brows', a.brows, 'R01'], ['presets', a.presets, 'P01']] as const) {
+    if (!(list ?? []).some((x) => x.id === id && x.ready)) e.push(`appearance: ${name} の ${id}（A）が選べない`);
+  }
+  return e;
+}
+

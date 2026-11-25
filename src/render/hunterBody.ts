@@ -15,6 +15,8 @@ const WHITE: RGB = [1, 1, 1];
 const DARK: RGB = [0.1, 0.085, 0.07];
 // 絵を貼らない部品（髪の束・耳・親指・腰袋）の色。設定図の色に合わせてある。
 const HAIR = hex(0x5a4130), HAIR_DARK = hex(0x4a3527), SKIN = hex(0xb98a6c), LEATHER = hex(0x6b4a2e);
+/** 絵を貼らない部品の印（頂点の aPart）。外見の色替えで、耳・親指は肌、髪の束は髪として替える（src/render/appearance.ts。v0.28.0） */
+export const PART_SKIN = 1, PART_HAIR = 2;
 
 type Bones = [number, number, number];
 /** 胴の高さごとの骨 */
@@ -131,10 +133,10 @@ export function buildHunterBody(): Geo {
     const d = new Vector3(dx, dy, dz).normalize();
     // 毛先は、束ごとに左右どちらかへ流す
     const bend = new Vector3().crossVectors(d, Y).multiplyScalar(i % 2 === 0 ? 0.014 : -0.014).add(new Vector3(0, -0.006, 0));
-    horn(g, new Vector3(x, y, z).addScaledVector(d, -0.008), d, len * 0.36, rad * 0.6, i % 3 === 0 ? HAIR_DARK : HAIR, B.head, 0, bend);
+    horn(g, new Vector3(x, y, z).addScaledVector(d, -0.008), d, len * 0.36, rad * 0.6, i % 3 === 0 ? HAIR_DARK : HAIR, B.head, PART_HAIR, bend);
   });
   // 耳は小さく、頭に沿わせる（張り出させない）
-  for (const side of [1, -1]) blob(g, new Vector3(0.0775 * side, 1.648, -0.01), Y, 0.04, 0.006, 0.014, () => [SKIN[0] * 0.9, SKIN[1] * 0.86, SKIN[2] * 0.84], B.head, 0, 6, 4);
+  for (const side of [1, -1]) blob(g, new Vector3(0.0775 * side, 1.648, -0.01), Y, 0.04, 0.006, 0.014, () => [SKIN[0] * 0.9, SKIN[1] * 0.86, SKIN[2] * 0.84], B.head, PART_SKIN, 6, 4);
   // 兜をかぶっている間は、髪の束と耳を描かない（耳は頭から 1.3cm 出ていて、頭に沿う頬当てを突き抜けるため）
   BODY_RANGES.hair = [hairTri, g.triangles];
   blob(g, new Vector3(-0.162, 0.995, 0.09), Y, 0.125, 0.048, 0.027, (p) => (p.y > 1.03 ? [LEATHER[0] * 0.8, LEATHER[1] * 0.8, LEATHER[2] * 0.8] : LEATHER), B.pelvis, 0, 8, 5);
@@ -152,7 +154,7 @@ export function buildHunterBody(): Geo {
     ];
     tube(`arm${S}`, arm.map(([t, rx, rz, b]) => ringY(REST.shoulderY - t, rx, rz, rz, b, sx)), (r) => REST.shoulderY - r.c.y, { seg: 12, capStart: DARK, capEnd: DARK });
     // 親指（手のひらは体の側を向き、親指は前へ出る）
-    horn(g, new Vector3(sx, REST.shoulderY - wrist - 0.03, 0.03), new Vector3(0, -0.75, 1), 0.052, 0.012, SKIN, hand, 0);
+    horn(g, new Vector3(sx, REST.shoulderY - wrist - 0.03, 0.03), new Vector3(0, -0.75, 1), 0.052, 0.012, SKIN, hand, PART_SKIN);
 
     // ---- 脚: 付け根から足首まで 1 本。t は付け根からの距離。ズボンはふくらみ、ひざから下は長靴。----
     const thigh = B[`thigh${S}`], shin = B[`shin${S}`], foot = B[`foot${S}`];

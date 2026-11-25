@@ -17,6 +17,7 @@ import { canFullscreen, fullscreenHint, toggleFullscreen } from './fullscreen';
 import { questGoal } from './targets';
 import { fieldArtUrl, withIcon } from './icons';
 import { renderStoryPanel } from './story';
+import { DRAFT_KIND_NAMES, changedKinds, describeKind, draftOf, editableAppearance, emptyDraft } from '../data/appearance';
 
 export interface BaseHost {
   startTraining(): void;
@@ -42,6 +43,8 @@ export interface BaseHost {
   retryUnsaved(): Promise<SaveResult>;
   /** 物語の場面を読む（v0.23.0。会話の窓を開く。何も保存しない） */
   openStory(sceneIds: string[]): void;
+  /** 見た目を変える画面を開く（v0.28.0。装備箱から。費用なし） */
+  openLooks(): void;
 }
 
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string): HTMLElementTagNameMap[K] => {
@@ -91,6 +94,8 @@ export class BaseScreen {
   private weaponNote: HTMLElement;
   private armorNote: HTMLElement;
   private armorBox: HTMLElement;
+  /** 見た目の欄の説明（いまの外見の種類） */
+  private looksNote!: HTMLElement;
   private questBox: HTMLElement;
   /** 物語の欄（依頼板。v0.23.0） */
   private storyBox: HTMLElement;
@@ -132,6 +137,14 @@ export class BaseScreen {
     this.weaponRow = sec(el('div', 'base-weapons'), 'chest');
     this.weaponNote = sec(el('p', 'base-weapon-note'), 'chest');
     card.append(sec(el('p', 'base-weapon-label', '武器（持ち替え）'), 'chest'), this.weaponRow, this.weaponNote);
+
+    // 見た目（v0.28.0）: 体型・肌・髪の色を変える画面を開く。費用なし・いつでも
+    const looks = sec(el('div', 'base-looks'), 'chest');
+    const looksBtn = el('button', 'base-looks-open', '見た目を変える');
+    looksBtn.addEventListener('click', () => host.openLooks());
+    this.looksNote = el('span', 'base-looks-note');
+    looks.append(looksBtn, this.looksNote);
+    card.appendChild(looks);
 
     // 防具: 部位ごとに、持っているものから選ぶ・外す（v0.14.0）
     this.armorBox = sec(el('div', 'base-armor'), 'chest');
@@ -235,6 +248,11 @@ export class BaseScreen {
     this.refresh();
   }
 
+  /** 直前の操作の結果を、画面の下に出す（ほかの画面から戻った時） */
+  notify(text: string, bad = false): void {
+    this.say(text, bad);
+  }
+
   private say(text: string, bad = false): void {
     this.message.textContent = text;
     this.message.classList.toggle('bad', bad);
@@ -323,6 +341,15 @@ export class BaseScreen {
       row.appendChild(picks);
       this.armorBox.appendChild(row);
     }
+    // 見た目（v0.28.0）: いまの外見の種類
+    const ap = doc.appearance;
+    const look = draftOf(ap);
+    const kinds = changedKinds(emptyDraft(), look);
+    this.looksNote.textContent = !editableAppearance(ap)
+      ? 'この版では編集できない、新しい版の見た目です（そのまま残します）。'
+      : kinds.length
+        ? `いまの見た目: ${kinds.map((k) => `${DRAFT_KIND_NAMES[k]} ${describeKind(k, look, c.appearance)}`).join('・')}`
+        : 'いまは基準ハンター A の姿。体型・肌・髪の色を、費用なしで、いつでも変えられます。';
     const defense = defenseOf(doc, c);
     this.armorNote.textContent = `防御力の合計 ${defense}（受けるダメージ ×${defenseScale(c, defense).toFixed(2)}）`;
 

@@ -1,0 +1,454 @@
+{
+  "schemaVersion": 1,
+  "note": "ハンターの外見（v0.28.0。ChatGPT のキャラメイク設計 #10 の appearance_catalog_v1.json から、いま描ける所だけ。原本は docs/source/chatgpt-hunter-customization-20261125/）。ready が false のもの（髪型・顔・眉・目の色の多く）は、3D の形や絵がまだ無いので選べない（画面に「準備中」）。体型の 8 軸は 0〜100 で、50 が基準ハンター A の体つき（この版の変形の決まり。src/render/appearance.ts）。肌と髪の色は、体の絵の印（public/assets/textures/hunter/hunter_mask_v1.png。npm run hunter:masks）のある所だけを替える。base は、印の所の A の平均の色（tools/hunter-masks.py が測った値）。",
+  "profiles": {
+    "legacy": "legacy_hunter_a_v1",
+    "custom": "custom_hunter_v1"
+  },
+  "base": {
+    "skin": "#C38E6E",
+    "hair": "#473628"
+  },
+  "skinColors": [
+    {
+      "id": "S01",
+      "label": "明るいニュートラル",
+      "hex": "#F1D6C1"
+    },
+    {
+      "id": "S02",
+      "label": "明るい赤みのベージュ",
+      "hex": "#E7C3A9"
+    },
+    {
+      "id": "S03",
+      "label": "明るい暖色ベージュ",
+      "hex": "#DDB396"
+    },
+    {
+      "id": "S04",
+      "label": "中明度のベージュ",
+      "hex": "#D1A084"
+    },
+    {
+      "id": "S05",
+      "label": "中明度の暖色ブラウン",
+      "hex": "#C59170"
+    },
+    {
+      "id": "S06",
+      "label": "中間のニュートラルブラウン",
+      "hex": "#B98A6C"
+    },
+    {
+      "id": "S07",
+      "label": "中深度のブラウン",
+      "hex": "#A66E50"
+    },
+    {
+      "id": "S08",
+      "label": "落ち着いたブラウン",
+      "hex": "#925C43"
+    },
+    {
+      "id": "S09",
+      "label": "深い暖色ブラウン",
+      "hex": "#7C4B36"
+    },
+    {
+      "id": "S10",
+      "label": "深いニュートラルブラウン",
+      "hex": "#683C2B"
+    },
+    {
+      "id": "S11",
+      "label": "さらに深いブラウン",
+      "hex": "#533023"
+    },
+    {
+      "id": "S12",
+      "label": "最も深いブラウン",
+      "hex": "#3E241D"
+    }
+  ],
+  "skinTone": {
+    "min": -100,
+    "max": 100
+  },
+  "hairColors": [
+    {
+      "id": "C01",
+      "label": "黒",
+      "hex": "#211C1A"
+    },
+    {
+      "id": "C02",
+      "label": "採用Aの焦げ茶",
+      "hex": "#3D2D22"
+    },
+    {
+      "id": "C03",
+      "label": "栗色",
+      "hex": "#603E2A"
+    },
+    {
+      "id": "C04",
+      "label": "暖かい茶",
+      "hex": "#805437"
+    },
+    {
+      "id": "C05",
+      "label": "灰褐色",
+      "hex": "#65584C"
+    },
+    {
+      "id": "C06",
+      "label": "赤褐色",
+      "hex": "#6C3E2D"
+    },
+    {
+      "id": "C07",
+      "label": "銅色",
+      "hex": "#A4653F"
+    },
+    {
+      "id": "C08",
+      "label": "暗い金色",
+      "hex": "#A0844D"
+    },
+    {
+      "id": "C09",
+      "label": "砂色の金髪",
+      "hex": "#C7B185"
+    },
+    {
+      "id": "C10",
+      "label": "灰色",
+      "hex": "#79756F"
+    },
+    {
+      "id": "C11",
+      "label": "銀灰",
+      "hex": "#B6B3AA"
+    },
+    {
+      "id": "C12",
+      "label": "白に近い灰",
+      "hex": "#DDD9CF"
+    }
+  ],
+  "bodyAxes": [
+    {
+      "id": "shoulderWidth",
+      "label": "肩幅"
+    },
+    {
+      "id": "torsoDepth",
+      "label": "胴の厚み"
+    },
+    {
+      "id": "chestVolume",
+      "label": "胸部の量"
+    },
+    {
+      "id": "hipWidth",
+      "label": "腰の幅"
+    },
+    {
+      "id": "abdomenVolume",
+      "label": "腹部の量"
+    },
+    {
+      "id": "limbThickness",
+      "label": "手脚の太さ"
+    },
+    {
+      "id": "muscleAmount",
+      "label": "筋肉量"
+    },
+    {
+      "id": "softness",
+      "label": "柔らかさ"
+    }
+  ],
+  "bodyPresets": [
+    {
+      "id": "B01",
+      "label": "細身",
+      "axes": {
+        "shoulderWidth": 35,
+        "torsoDepth": 30,
+        "chestVolume": 35,
+        "hipWidth": 38,
+        "abdomenVolume": 25,
+        "limbThickness": 30,
+        "muscleAmount": 30,
+        "softness": 35
+      }
+    },
+    {
+      "id": "B02",
+      "label": "標準",
+      "axes": {
+        "shoulderWidth": 50,
+        "torsoDepth": 50,
+        "chestVolume": 50,
+        "hipWidth": 50,
+        "abdomenVolume": 50,
+        "limbThickness": 50,
+        "muscleAmount": 50,
+        "softness": 50
+      }
+    },
+    {
+      "id": "B03",
+      "label": "筋肉質",
+      "axes": {
+        "shoulderWidth": 70,
+        "torsoDepth": 65,
+        "chestVolume": 65,
+        "hipWidth": 50,
+        "abdomenVolume": 35,
+        "limbThickness": 75,
+        "muscleAmount": 85,
+        "softness": 30
+      }
+    },
+    {
+      "id": "B04",
+      "label": "ふくよか",
+      "axes": {
+        "shoulderWidth": 55,
+        "torsoDepth": 75,
+        "chestVolume": 65,
+        "hipWidth": 70,
+        "abdomenVolume": 80,
+        "limbThickness": 70,
+        "muscleAmount": 40,
+        "softness": 80
+      }
+    }
+  ],
+  "hairStyles": [
+    {
+      "id": "H01",
+      "label": "Aの無造作な短髪",
+      "ready": true
+    },
+    {
+      "id": "H02",
+      "label": "直毛の短い刈り込み",
+      "ready": false
+    },
+    {
+      "id": "H03",
+      "label": "直毛の横分け短髪",
+      "ready": false
+    },
+    {
+      "id": "H04",
+      "label": "直毛の耳丈ボブ",
+      "ready": false
+    },
+    {
+      "id": "H05",
+      "label": "直毛の低い結び髪",
+      "ready": false
+    },
+    {
+      "id": "H06",
+      "label": "波状の後ろ流し短髪",
+      "ready": false
+    },
+    {
+      "id": "H07",
+      "label": "波状の耳かけ短髪",
+      "ready": false
+    },
+    {
+      "id": "H08",
+      "label": "波状の低い結び髪",
+      "ready": false
+    },
+    {
+      "id": "H09",
+      "label": "巻き毛の短髪",
+      "ready": false
+    },
+    {
+      "id": "H10",
+      "label": "巻き毛の短いボブ",
+      "ready": false
+    },
+    {
+      "id": "H11",
+      "label": "巻き毛の低い結び髪",
+      "ready": false
+    },
+    {
+      "id": "H12",
+      "label": "巻き毛の高いまとめ髪",
+      "ready": false
+    },
+    {
+      "id": "H13",
+      "label": "強いカールの短い刈り込み",
+      "ready": false
+    },
+    {
+      "id": "H14",
+      "label": "強いカールの丸い短髪",
+      "ready": false
+    },
+    {
+      "id": "H15",
+      "label": "頭に沿わせた編み髪",
+      "ready": false
+    },
+    {
+      "id": "H16",
+      "label": "短いツイストのまとめ髪",
+      "ready": false
+    }
+  ],
+  "faces": [
+    {
+      "id": "F01",
+      "label": "採用A",
+      "ready": true
+    },
+    {
+      "id": "F02",
+      "label": "自然な卵型",
+      "ready": false
+    },
+    {
+      "id": "F03",
+      "label": "頬と顎が広い形",
+      "ready": false
+    },
+    {
+      "id": "F04",
+      "label": "頬に丸みがある形",
+      "ready": false
+    },
+    {
+      "id": "F05",
+      "label": "細めの輪郭",
+      "ready": false
+    },
+    {
+      "id": "F06",
+      "label": "頬骨と柔らかな顎の組合せ",
+      "ready": false
+    }
+  ],
+  "brows": [
+    {
+      "id": "R01",
+      "label": "採用A",
+      "ready": true
+    },
+    {
+      "id": "R02",
+      "label": "細めの直線",
+      "ready": false
+    },
+    {
+      "id": "R03",
+      "label": "自然な弧",
+      "ready": false
+    },
+    {
+      "id": "R04",
+      "label": "太めの直線",
+      "ready": false
+    },
+    {
+      "id": "R05",
+      "label": "短めで幅広",
+      "ready": false
+    },
+    {
+      "id": "R06",
+      "label": "長めで緩い弧",
+      "ready": false
+    }
+  ],
+  "eyeColors": [
+    {
+      "id": "E01",
+      "label": "採用Aの茶",
+      "hex": "#6A4C35",
+      "ready": true
+    },
+    {
+      "id": "E02",
+      "label": "濃い茶",
+      "hex": "#39291F",
+      "ready": false
+    },
+    {
+      "id": "E03",
+      "label": "琥珀",
+      "hex": "#9C733A",
+      "ready": false
+    },
+    {
+      "id": "E04",
+      "label": "緑褐",
+      "hex": "#747044",
+      "ready": false
+    },
+    {
+      "id": "E05",
+      "label": "灰緑",
+      "hex": "#667465",
+      "ready": false
+    },
+    {
+      "id": "E06",
+      "label": "灰青",
+      "hex": "#667E8A",
+      "ready": false
+    },
+    {
+      "id": "E07",
+      "label": "灰",
+      "hex": "#777B79",
+      "ready": false
+    }
+  ],
+  "presets": [
+    {
+      "id": "P01",
+      "label": "基準ハンターA／男性的。採用済みの同じ人物",
+      "ready": true
+    },
+    {
+      "id": "P02",
+      "label": "女性的・標準。実務的で落ち着いた顔立ち",
+      "ready": false
+    },
+    {
+      "id": "P03",
+      "label": "男性的・筋肉質。広い頬と顎、力のある体つき",
+      "ready": false
+    },
+    {
+      "id": "P04",
+      "label": "女性的・ふくよか。頬と胴に自然な丸み",
+      "ready": false
+    },
+    {
+      "id": "P05",
+      "label": "中性的・細身。すっきりした頬と長すぎない顎",
+      "ready": false
+    },
+    {
+      "id": "P06",
+      "label": "中性的・標準。頬骨と柔らかな顎を組み合わせる",
+      "ready": false
+    }
+  ]
+}

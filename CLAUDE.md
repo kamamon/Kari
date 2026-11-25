@@ -19,6 +19,7 @@ TypeScript + Vite + Three.js。入力、simulation、render、data、save、UI �
 - 物語「帰り道の灯」（v0.23.0。ChatGPT のストーリー設計。public/data/story.json、決まりと計算は src/data/story.ts、画面は src/ui/story.ts、docs/spec.md の 24 章）。遊べるのは序章と第 1 章。進み方は保存データの依頼の達成回数から決める（保存の形は変えない）。遊べる章の狩りは、いまある依頼だけ（まだ無い狩場の章を、盆地の依頼で代わりにしない）。
 - 依頼の掲示（v0.26.0。ChatGPT のクエスト設計 #9。docs/spec.md の 26 章）: 星（1〜8）・分類・依頼人・依頼人の話・目安の時間は public/data/quest_board.json が正本（どの依頼にも 1 つ要る。生成した依頼の文もここに書く）。星から段階や強さを変えない。フィールドの制限時間は、依頼に `fieldTimeLimitTicks` があれば、その値（倍率を掛けない）。工房からの支給（support.json）と里の納品（deliveries.json）は 1 度だけで、保存の `claims` に残す。設計の残り（物語の ST03〜14、これからの種の依頼、ほかの地域の採集・採掘、貨物の輸送）は docs/source/chatgpt-quest-design-20261125/ にあり、狩場・種・機能ができてから入れる（盆地で代わりにしない）。
 - 狩らない依頼（v0.27.0。docs/spec.md の 27 章）: 採集・採掘・現地の納品は `kind: gather`（public/data/quests_errands.json。計算は src/game/errand.ts）。標的を書かない（ダミーの標的・空の targets で表さない）。この出発で採った品だけを数え、野営地の納品箱で全部を 1 度に納めて達成、持ち帰りは余りだけ。採取点の位置は validateGather が確かめる（エリアの中・岩と出口から離す・要る数 + 2 以上・採集袋に入る）。フィールドでだけ遊べる。
+- ハンターの見た目（v0.28.0。ChatGPT のキャラメイク設計 #10。docs/spec.md の 28 章）: 選べるものは public/data/appearance.json（ChatGPT のカタログから写す。足さない。`ready: false` は画面で準備中）。計算は src/data/appearance.ts、画面は src/ui/appearanceEditor.ts（装備箱から）、描くのは src/render/appearance.ts（肌と髪は体の絵の印 hunter_mask_v1.png の所だけ shader で替える。体型は骨・socket・身長を変えずに、体の皮と防具の頂点を広げる）。外見は simulation に渡さない（能力・当たりに関わらない）。印は `npm run hunter:masks` の出力（手で編集しない）。
 - ハンターの攻撃の係数は v0.23.0 で見直した（ChatGPT の提案。docs/weapons.md の 14 章、D-092）。断岳剣以外は tools/weapons/*.mjs が正本で、`node --experimental-strip-types tools/gen-weapons.mjs --strict` で作り直す（生成した JSON だけを直さない）。
 
 # ChatGPT との受け渡し
@@ -33,7 +34,7 @@ ChatGPT は、このリポジトリを読める（利用者が連携した。202
 
 # Save
 ゲーム固有の DB 名、schemaVersion、revision を持つ。報酬・生産は原子的に確定する。保存成功は transaction 完了後に表示する。旧版や未知 ID のデータを黙って消さない。JSON バックアップを提供する。
-（v0.6.0 で実装した。持ち物・装備・進行は IndexedDB の `veilbound-hunters:prod:save`、コードは `src/save/`、決まりは docs/spec.md の 15 章。v0.9.0 で防具を足して schemaVersion 2、v0.14.0 で「身に着けている防具」を足して schemaVersion 3、v0.26.0 で「1 度だけ受け取るものの記録」（claims。古いものから捨てない）を足して schemaVersion 4 にした（古い版は開いた時に 1 段ずつ直し、元は控えへ）。v0.12.0 の商店（買う・売る・使った道具の精算）は、版 2 のまま（道具は items に入る）。操作設定は別で、localStorage の `veilbound-hunters:prod:settings`。）
+（v0.6.0 で実装した。持ち物・装備・進行は IndexedDB の `veilbound-hunters:prod:save`、コードは `src/save/`、決まりは docs/spec.md の 15 章。v0.9.0 で防具を足して schemaVersion 2、v0.14.0 で「身に着けている防具」を足して schemaVersion 3、v0.26.0 で「1 度だけ受け取るものの記録」（claims。古いものから捨てない）を足して schemaVersion 4、v0.28.0 で「外見」（appearance。無い古いデータは基準ハンター A。決定では変えた種類だけを当て、知らない欄は残す）を足して schemaVersion 5 にした（古い版は開いた時に 1 段ずつ直し、元は控えへ）。v0.12.0 の商店（買う・売る・使った道具の精算）は、版 2 のまま（道具は items に入る）。操作設定は別で、localStorage の `veilbound-hunters:prod:settings`。）
 
 # Browser
 PC と横向き iPhone/iPad Safari を対象とする。複数指、safe area、回転、音声開始、非表示からの復帰を扱う。素材パスは Vite BASE_URL から解決する。通常の Safari タブで操作できることを優先する。
@@ -57,4 +58,5 @@ main へ push すると Actions（Build and publish）が gh-pages（配信元�
 - `npm run rocks:art` 岩と崖の設定図（依頼 10。art-source/env/rocks・cliffs・tiles）から、岩と崖の図集・岩肌（public/assets/textures/env/）と形の値（src/render/rockArtData.ts）を作り直す（Python が必要。出力は手で編集しない。受け入れの確認で測った値は art-source/env/request10_v1.measure.json）
 - `npm run monsters:gen` 大型 11 種（登録簿の 02〜12）と幼体 8 種（14〜21）の体・技・依頼・素材・見た目の設計図を作り直す（Python が必要。出力は手で編集しない。形は原画の px で tools/gen-monsters.py に、技の動きは tools/monster_moves.py に書く。最後に monsters:bake が走る）
 - `npm run monsters:bake` 技の動きから、体の部位に付けた判定の軌道（public/data/tracks/）を作り直す（monsters:gen の中でも走る）
+- `npm run hunter:masks` ハンターの体の絵から、肌と髪の印 public/assets/textures/hunter/hunter_mask_v1.png と測った値（art-source/player/hunter_mask_v1.measure.json）を作り直す（Python が必要。出力は手で編集しない。A の平均の色が変わったら public/data/appearance.json の base と src/render/rig.ts の BASE_LOOK も直す。検査が確かめる）
 - `npm run monsters:art` 大型 11 種の原画とガルドロスの設定図（右側面）から、体へ横から貼る絵 public/assets/textures/monsters/ と src/render/creatureArt.ts を作り直す（Python が必要）

@@ -764,6 +764,43 @@ export interface GatherDef {
   encounters: 'none';
 }
 
+/** 外見の色（v0.28.0。public/data/appearance.json）。hex は sRGB の基準色（設計の目安。照明の後の画面の色ではない） */
+export interface AppearanceColor {
+  id: string;
+  label: string;
+  hex: string;
+  /** 選べるか（無ければ選べる） */
+  ready?: boolean;
+}
+
+/** 外見の選択肢（髪型・顔・眉・全体の見本）。ready が false は、3D の形や絵が無いので選べない（準備中） */
+export interface AppearanceChoice {
+  id: string;
+  label: string;
+  ready: boolean;
+}
+
+/** ハンターの外見の選べるもの（public/data/appearance.json。v0.28.0、docs/spec.md の 28 章） */
+export interface AppearanceCatalog {
+  schemaVersion: number;
+  note?: string;
+  profiles: { legacy: string; custom: string };
+  /** 体の絵の、肌と髪の印の所の A の平均の色（色を替える計算の元） */
+  base: { skin: string; hair: string };
+  skinColors: AppearanceColor[];
+  /** 肌の赤み・黄みの範囲 */
+  skinTone: { min: number; max: number };
+  hairColors: AppearanceColor[];
+  /** 体型の 8 軸（0〜100。50 が A の体つき） */
+  bodyAxes: { id: string; label: string }[];
+  bodyPresets: { id: string; label: string; axes: Record<string, number> }[];
+  hairStyles: AppearanceChoice[];
+  faces: AppearanceChoice[];
+  brows: AppearanceChoice[];
+  eyeColors: AppearanceColor[];
+  presets: AppearanceChoice[];
+}
+
 /** 依頼の分類（v0.26.0）。main: 物語の主線 / free: 自由 / promotion: 段階を上げる確認 / challenge: 任意の挑戦 */
 export type QuestLane = 'main' | 'free' | 'promotion' | 'challenge';
 export const QUEST_LANES: readonly QuestLane[] = ['main', 'free', 'promotion', 'challenge'];
@@ -915,6 +952,8 @@ export interface ContentIndex {
     follow?: string[];
     /** 依頼の掲示・工房からの支給・里の納品（v0.26.0） */
     board: string;
+    /** ハンターの外見の選べるもの（v0.28.0） */
+    appearance: string;
     support: string;
     deliveries: string;
   };
@@ -949,6 +988,8 @@ export interface Content {
   support: SupportDef;
   /** 里の納品（v0.26.0） */
   deliveries: Map<string, DeliveryDef>;
+  /** ハンターの外見の選べるもの（v0.28.0） */
+  appearance: AppearanceCatalog;
   ranks: Map<string, RankDef>;
   armor: Map<string, ArmorDef>;
   armorRules: ArmorRules;
