@@ -266,7 +266,8 @@ describe('依頼 10 の崖の図から作る外周の崖（v0.22.0）', () => {
       const again = artCliffGeometry(o, new SeededRng(5)).face.getAttribute('position');
       expect(Array.from(again.array as Float32Array)).toEqual(Array.from(pos.array as Float32Array));
     }
-  });
+    // 11 エリアの頂点（約 6 万）を外周と比べるので重い（手元 2 秒、Actions では 5.5 秒かかって、既定の 5 秒を超えた）
+  }, 30000);
 
   it('里（低い崖）は、端の高さ 3m の図だけで、高さの倍率を掛ける', () => {
     const b = { minX: -20, maxX: 20, minZ: -15, maxZ: 15 };
