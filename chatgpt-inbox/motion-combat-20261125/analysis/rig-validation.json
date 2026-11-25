@@ -1,0 +1,459 @@
+{
+  "base_commit": "1d8e084d0d16fe77c376570f9542dd3c54fb5332",
+  "review_date_jst": "2026-11-25",
+  "method": "CPU actual HunterRig bone transforms and skinned boot vertices; TextureLoader fetch only mocked. No browser or GPU rendering.",
+  "source_sha256": {
+    "src/render/contactLocomotion.ts": "c05ae2df2cd110ec73b3d1f8ce7d8fbf68170d0aa3069e2b2d4bf5049b9651a1",
+    "src/render/heavyBodyMotion.ts": "f8bb1b0a977d56e2e687465605005b960ab670b0403f85f8ec89f8dd30e3b9da",
+    "src/render/hunterAnim.ts": "518e6a49226214c3e5cef0b485c33c72447a571de15dbc744446e01280ec8e85",
+    "src/render/view.ts": "47f7e9d0518b68d2c6ccfc84408dc13b182ce84526e2c510b64cd527f4e33a27"
+  },
+  "heavy_reach_quarter_ticks": [
+    {
+      "name": "overhead",
+      "maxMiss": 1.5550874393214584e-15,
+      "maxMissActive": 1.2228213315207787e-15,
+      "maxKneeFlex": 86.8723788340655,
+      "maxElbowFlex": 136.66031320783438,
+      "minRigidSoleY": 0.003999999999999677,
+      "samples": 289,
+      "worstTick": 20.25,
+      "worstSoleTick": 51.25
+    },
+    {
+      "name": "side_sweep",
+      "maxMiss": 5.551548787055441e-16,
+      "maxMissActive": 4.163336342344337e-16,
+      "maxKneeFlex": 92.03930625597874,
+      "maxElbowFlex": 120.06493884581457,
+      "minRigidSoleY": 0.003999999999999754,
+      "samples": 265,
+      "worstTick": 56,
+      "worstSoleTick": 4.75
+    },
+    {
+      "name": "draw_slash",
+      "maxMiss": 1.2228213315207787e-15,
+      "maxMissActive": 1.2228213315207787e-15,
+      "maxKneeFlex": 86.11817114892517,
+      "maxElbowFlex": 149.27605179714084,
+      "minRigidSoleY": 0.003999999999999643,
+      "samples": 257,
+      "worstTick": 22.5,
+      "worstSoleTick": 23
+    }
+  ],
+  "heavy_actual_boot_mesh_quarter_ticks": [
+    {
+      "name": "overhead",
+      "version": "old",
+      "minFootMeshY": -0.015726837477331668,
+      "samples": 289,
+      "footVertices": 254,
+      "worstTick": 30,
+      "worstVertex": 2442
+    },
+    {
+      "name": "overhead",
+      "version": "new",
+      "minFootMeshY": -1.8999016943022085e-10,
+      "samples": 289,
+      "footVertices": 254,
+      "worstTick": 51.25,
+      "worstVertex": 1975
+    },
+    {
+      "name": "side_sweep",
+      "version": "old",
+      "minFootMeshY": -0.01321598908538478,
+      "samples": 265,
+      "footVertices": 254,
+      "worstTick": 22,
+      "worstVertex": 2442
+    },
+    {
+      "name": "side_sweep",
+      "version": "new",
+      "minFootMeshY": -1.8999009657183485e-10,
+      "samples": 265,
+      "footVertices": 254,
+      "worstTick": 4.75,
+      "worstVertex": 1975
+    },
+    {
+      "name": "draw_slash",
+      "version": "old",
+      "minFootMeshY": -0.015726837477331668,
+      "samples": 257,
+      "footVertices": 254,
+      "worstTick": 28,
+      "worstVertex": 2442
+    },
+    {
+      "name": "draw_slash",
+      "version": "new",
+      "minFootMeshY": -1.8999020846149905e-10,
+      "samples": 257,
+      "footVertices": 254,
+      "worstTick": 23,
+      "worstVertex": 1975
+    }
+  ],
+  "runtime_turn_cases": [
+    {
+      "fam": "guard_blade",
+      "turn": 90,
+      "fps": 30,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.721958498152797e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "guard_blade",
+      "turn": 90,
+      "fps": 60,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.721958498152797e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "guard_blade",
+      "turn": 90,
+      "fps": 120,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.721958498152797e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "guard_blade",
+      "turn": 180,
+      "fps": 30,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.721958498152797e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "guard_blade",
+      "turn": 180,
+      "fps": 60,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.721958498152797e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "guard_blade",
+      "turn": 180,
+      "fps": 120,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.721958498152797e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "war_maul",
+      "turn": 90,
+      "fps": 30,
+      "maxLegShort": 0,
+      "maxHandMiss": 2.7755575615628914e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "war_maul",
+      "turn": 90,
+      "fps": 60,
+      "maxLegShort": 0,
+      "maxHandMiss": 4.163336342344337e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "war_maul",
+      "turn": 90,
+      "fps": 120,
+      "maxLegShort": 0,
+      "maxHandMiss": 4.163336342344337e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "war_maul",
+      "turn": 180,
+      "fps": 30,
+      "maxLegShort": 0,
+      "maxHandMiss": 2.7755575615628914e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "war_maul",
+      "turn": 180,
+      "fps": 60,
+      "maxLegShort": 0,
+      "maxHandMiss": 4.163336342344337e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "war_maul",
+      "turn": 180,
+      "fps": 120,
+      "maxLegShort": 0,
+      "maxHandMiss": 4.163336342344337e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "twin_blades",
+      "turn": 90,
+      "fps": 30,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.551115123125783e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "twin_blades",
+      "turn": 90,
+      "fps": 60,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.551115123125783e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "twin_blades",
+      "turn": 90,
+      "fps": 120,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.551115123125783e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "twin_blades",
+      "turn": 180,
+      "fps": 30,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.551115123125783e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "twin_blades",
+      "turn": 180,
+      "fps": 60,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.551115123125783e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "twin_blades",
+      "turn": 180,
+      "fps": 120,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.551115123125783e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "long_blade",
+      "turn": 90,
+      "fps": 30,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.551115123125783e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "long_blade",
+      "turn": 90,
+      "fps": 60,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.551115123125783e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "long_blade",
+      "turn": 90,
+      "fps": 120,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.551115123125783e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "long_blade",
+      "turn": 180,
+      "fps": 30,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.551115123125783e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "long_blade",
+      "turn": 180,
+      "fps": 60,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.551115123125783e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "long_blade",
+      "turn": 180,
+      "fps": 120,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.551115123125783e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "long_lance",
+      "turn": 90,
+      "fps": 30,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.928593550334434e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "long_lance",
+      "turn": 90,
+      "fps": 60,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.928593550334434e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "long_lance",
+      "turn": 90,
+      "fps": 120,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.928593550334434e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "long_lance",
+      "turn": 180,
+      "fps": 30,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.928593550334434e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "long_lance",
+      "turn": 180,
+      "fps": 60,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.928593550334434e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "long_lance",
+      "turn": 180,
+      "fps": 120,
+      "maxLegShort": 0,
+      "maxHandMiss": 5.928593550334434e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "ring_bow",
+      "turn": 90,
+      "fps": 30,
+      "maxLegShort": 0,
+      "maxHandMiss": 2.7755575615628914e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "ring_bow",
+      "turn": 90,
+      "fps": 60,
+      "maxLegShort": 0,
+      "maxHandMiss": 2.7755575615628914e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "ring_bow",
+      "turn": 90,
+      "fps": 120,
+      "maxLegShort": 0,
+      "maxHandMiss": 2.7755575615628914e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "ring_bow",
+      "turn": 180,
+      "fps": 30,
+      "maxLegShort": 0,
+      "maxHandMiss": 2.7755575615628914e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "ring_bow",
+      "turn": 180,
+      "fps": 60,
+      "maxLegShort": 0,
+      "maxHandMiss": 2.7755575615628914e-17,
+      "rules": {},
+      "count": 0
+    },
+    {
+      "fam": "ring_bow",
+      "turn": 180,
+      "fps": 120,
+      "maxLegShort": 0,
+      "maxHandMiss": 2.7755575615628914e-17,
+      "rules": {},
+      "count": 0
+    }
+  ],
+  "gates": {
+    "heavy_grip_tolerance_m": 0.002,
+    "heavy_knee_max_deg": 150,
+    "boot_floor_tolerance_m": -0.002,
+    "turn_leg_short_tolerance_m": 0.012,
+    "turn_joint_and_self_contact_violations": 0
+  },
+  "results": {
+    "heavy_quarter_tick_samples": 811,
+    "boot_vertices_per_frame": 254,
+    "max_heavy_hand_miss_m": 1.5550874393214584e-15,
+    "min_new_boot_vertex_y_m": -1.8999020846149905e-10,
+    "max_heavy_knee_flex_deg": 92.03930625597874,
+    "max_heavy_elbow_flex_deg": 149.27605179714084,
+    "runtime_turn_case_count": 36,
+    "runtime_turn_frames": 7560,
+    "max_turn_leg_short_m": 0,
+    "turn_violation_count": 0,
+    "verification_tests": "Final staged snapshot: same 3 independent tests passed after numerical assertions; 811 heavy quarter-tick poses and 36 runtime turn scenarios unchanged."
+  },
+  "limits": [
+    "No iPhone device or real-time human playback review",
+    "No GLB/Blender formal asset created",
+    "Sharp turns release world foot locks over 80 ms; no exact zero slip guarantee during release",
+    "Mesh floor test covers current procedural hunter boots and the three heavy blade attacks; other weapon boots, armor geometry, terrain, all common animations are not covered",
+    "Hand position gate does not verify palm orientation or finger grip",
+    "Turn joint checks omit approximate center-of-mass rule as existing gait test does; complete dynamic balance/weapon mass is not modeled",
+    "Quarter-tick finite sampling does not mathematically prove continuous trajectories at all times"
+  ],
+  "snapshot_revision": "final-motion-snapshot-after-playerRenderTick-and-bow-contact-frame",
+  "revalidation_note": "Reran the same 3 independent tests after syncing final staged hunterAnim.ts/view.ts, including render-only playerRenderTick and bow shoot contact-window changes. Heavy geometry/contact modules unchanged. All source SHA256 match staged replacements. These 3 tests validate the geometry/turn scope below; dedicated hitstop/charge/bow event assertions are in implementation/motion/tests/motion-replacement.test.ts and are reported separately."
+}

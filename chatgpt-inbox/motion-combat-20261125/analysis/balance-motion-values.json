@@ -1,0 +1,1921 @@
+{
+  "schemaVersion": 1,
+  "baseCommit": "1d8e084d0d16fe77c376570f9542dd3c54fb5332",
+  "status": "proposal; no live playtest",
+  "motionValueConvention": "MV = damageCoefficient × 100; per-hit values are rounded independently by the runtime after all multipliers",
+  "counts": {
+    "families": 7,
+    "damagingActions": 33,
+    "meleeActions": 31,
+    "projectileActions": 2,
+    "meleeHitWindows": 38
+  },
+  "rows": [
+    {
+      "family": "heavy_blade",
+      "familyName": "断岳剣",
+      "actionId": "player.heavy_blade.overhead",
+      "name": "縦斬り・溜め斬り",
+      "starterAttack": 80,
+      "durationTicks": 72,
+      "hitWindows": [
+        {
+          "id": "blade_main",
+          "from": 22,
+          "to": 30,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 1.0,
+          "newCoefficient": 1.05,
+          "hitstopTicks": 4,
+          "shapeTrack": "hb_vertical_blade_sweep"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": {
+        "holdTick": 18,
+        "button": "main",
+        "levelTicks": [
+          30,
+          60,
+          90
+        ],
+        "maxHoldTicks": 120,
+        "coefficientScale": [
+          1,
+          1.5,
+          2.1,
+          2.8
+        ],
+        "hitstopBonus": [
+          0,
+          2,
+          4,
+          6
+        ]
+      },
+      "oldCharge": {
+        "holdTick": 18,
+        "button": "main",
+        "levelTicks": [
+          30,
+          60,
+          90
+        ],
+        "maxHoldTicks": 120,
+        "coefficientScale": [
+          1.0,
+          1.3,
+          1.65,
+          2.1
+        ],
+        "hitstopBonus": [
+          0,
+          2,
+          4,
+          6
+        ]
+      },
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 58,
+          "to": 72,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 22,
+      "rootDistanceMeters": 0.35,
+      "turning": {
+        "untilTick": 10,
+        "maxDegreesPerSecond": 90
+      },
+      "bladeLengthMeters": 1.45,
+      "bladeRadiusMeters": 0.2,
+      "directEntry": true,
+      "entryNames": [
+        "main"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "狭い縦軌道と回避不能時間を一撃へ還元。最大溜めは待ち時間込みでも無溜めより報われる。"
+    },
+    {
+      "family": "heavy_blade",
+      "familyName": "断岳剣",
+      "actionId": "player.heavy_blade.side_sweep",
+      "name": "横薙ぎ",
+      "starterAttack": 80,
+      "durationTicks": 66,
+      "hitWindows": [
+        {
+          "id": "blade_main",
+          "from": 18,
+          "to": 27,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.75,
+          "newCoefficient": 0.7,
+          "hitstopTicks": 3,
+          "shapeTrack": "hb_side_blade_sweep"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 44,
+          "to": 66,
+          "into": [
+            "roll",
+            "overhead"
+          ]
+        }
+      ],
+      "firstImpactTick": 18,
+      "rootDistanceMeters": 0.25,
+      "turning": {
+        "untilTick": 8,
+        "maxDegreesPerSecond": 120
+      },
+      "bladeLengthMeters": 1.45,
+      "bladeRadiusMeters": 0.2,
+      "directEntry": true,
+      "entryNames": [
+        "sub"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "広い横方向の当てやすさを優先する始動。縦斬りへのつなぎに使う。"
+    },
+    {
+      "family": "heavy_blade",
+      "familyName": "断岳剣",
+      "actionId": "player.heavy_blade.draw_slash",
+      "name": "抜刀斬り",
+      "starterAttack": 80,
+      "durationTicks": 64,
+      "hitWindows": [
+        {
+          "id": "blade_main",
+          "from": 20,
+          "to": 28,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.9,
+          "newCoefficient": 1.0,
+          "hitstopTicks": 4,
+          "shapeTrack": "hb_draw_slash_sweep"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 50,
+          "to": 64,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 20,
+      "rootDistanceMeters": 0.45,
+      "turning": {
+        "untilTick": 8,
+        "maxDegreesPerSecond": 120
+      },
+      "bladeLengthMeters": 1.45,
+      "bladeRadiusMeters": 0.2,
+      "directEntry": true,
+      "entryNames": [
+        "drawAttack"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "納刀からの長い準備と最初の一撃の位置取りを評価。"
+    },
+    {
+      "family": "guard_blade",
+      "familyName": "護刃",
+      "actionId": "player.guard_blade.slash1",
+      "name": "斬り",
+      "starterAttack": 66,
+      "durationTicks": 26,
+      "hitWindows": [
+        {
+          "id": "blade_main",
+          "from": 8,
+          "to": 13,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.28,
+          "newCoefficient": 0.24,
+          "hitstopTicks": 2,
+          "shapeTrack": "gb_slash1"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 14,
+          "to": 26,
+          "into": [
+            "gb_slash2",
+            "gb_bash",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 8,
+      "rootDistanceMeters": 0.15,
+      "turning": {
+        "untilTick": 6,
+        "maxDegreesPerSecond": 360
+      },
+      "bladeLengthMeters": 0.75,
+      "bladeRadiusMeters": 0.11,
+      "directEntry": true,
+      "entryNames": [
+        "main"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "盾と速い回避移行を持つ安全な始動。"
+    },
+    {
+      "family": "guard_blade",
+      "familyName": "護刃",
+      "actionId": "player.guard_blade.slash2",
+      "name": "返し斬り",
+      "starterAttack": 66,
+      "durationTicks": 26,
+      "hitWindows": [
+        {
+          "id": "blade_main",
+          "from": 7,
+          "to": 12,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.3,
+          "newCoefficient": 0.3,
+          "hitstopTicks": 2,
+          "shapeTrack": "gb_slash2"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 13,
+          "to": 26,
+          "into": [
+            "gb_thrust",
+            "gb_bash",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 7,
+      "rootDistanceMeters": 0.15,
+      "turning": {
+        "untilTick": 5,
+        "maxDegreesPerSecond": 360
+      },
+      "bladeLengthMeters": 0.75,
+      "bladeRadiusMeters": 0.11,
+      "directEntry": false,
+      "entryNames": [],
+      "phaseMetadataCorrected": false,
+      "rationale": "始動より少し高い中継。"
+    },
+    {
+      "family": "guard_blade",
+      "familyName": "護刃",
+      "actionId": "player.guard_blade.thrust",
+      "name": "主連携3段目・突き",
+      "starterAttack": 66,
+      "durationTicks": 36,
+      "hitWindows": [
+        {
+          "id": "blade_main",
+          "from": 11,
+          "to": 16,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.42,
+          "newCoefficient": 0.56,
+          "hitstopTicks": 3,
+          "shapeTrack": "gb_thrust"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 23,
+          "to": 36,
+          "into": [
+            "gb_bash",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 11,
+      "rootDistanceMeters": 0.3,
+      "turning": {
+        "untilTick": 8,
+        "maxDegreesPerSecond": 360
+      },
+      "bladeLengthMeters": 0.75,
+      "bladeRadiusMeters": 0.11,
+      "directEntry": false,
+      "entryNames": [],
+      "phaseMetadataCorrected": false,
+      "rationale": "3段目まで残る判断と横に狭い突きを評価。"
+    },
+    {
+      "family": "guard_blade",
+      "familyName": "護刃",
+      "actionId": "player.guard_blade.bash",
+      "name": "盾打ち",
+      "starterAttack": 66,
+      "durationTicks": 36,
+      "hitWindows": [
+        {
+          "id": "shield",
+          "from": 11,
+          "to": 16,
+          "damageType": "blunt",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.25,
+          "newCoefficient": 0.28,
+          "hitstopTicks": 4,
+          "shapeTrack": "gb_bash_shield"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 22,
+          "to": 36,
+          "into": [
+            "gb_slash1",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 11,
+      "rootDistanceMeters": 0.4,
+      "turning": {
+        "untilTick": 8,
+        "maxDegreesPerSecond": 360
+      },
+      "bladeLengthMeters": 0.75,
+      "bladeRadiusMeters": 0.11,
+      "directEntry": true,
+      "entryNames": [
+        "sub"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "短い間合い。現状は気絶効果が無いので架空の気絶価値で減額しない。"
+    },
+    {
+      "family": "guard_blade",
+      "familyName": "護刃",
+      "actionId": "player.guard_blade.lunge",
+      "name": "踏み込み抜刀斬り",
+      "starterAttack": 66,
+      "durationTicks": 50,
+      "hitWindows": [
+        {
+          "id": "blade_main",
+          "from": 22,
+          "to": 28,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.45,
+          "newCoefficient": 0.48,
+          "hitstopTicks": 3,
+          "shapeTrack": "gb_lunge"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 35,
+          "to": 50,
+          "into": [
+            "gb_slash1",
+            "gb_bash",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 22,
+      "rootDistanceMeters": 1.2,
+      "turning": {
+        "untilTick": 12,
+        "maxDegreesPerSecond": 240
+      },
+      "bladeLengthMeters": 0.75,
+      "bladeRadiusMeters": 0.11,
+      "directEntry": true,
+      "entryNames": [
+        "drawAttack"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "22tickの始動と1.2mの位置取りを評価。"
+    },
+    {
+      "family": "war_maul",
+      "familyName": "大槌",
+      "actionId": "player.war_maul.smash",
+      "name": "叩きつけ",
+      "starterAttack": 86,
+      "durationTicks": 56,
+      "hitWindows": [
+        {
+          "id": "head",
+          "from": 22,
+          "to": 30,
+          "damageType": "blunt",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.62,
+          "newCoefficient": 0.6,
+          "hitstopTicks": 5,
+          "shapeTrack": "wm_smash"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 36,
+          "to": 56,
+          "into": [
+            "wm_swing",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 22,
+      "rootDistanceMeters": 0.3,
+      "turning": {
+        "untilTick": 12,
+        "maxDegreesPerSecond": 180
+      },
+      "bladeLengthMeters": 0.32,
+      "bladeRadiusMeters": 0.2,
+      "directEntry": true,
+      "entryNames": [
+        "main"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "コンボ始動。後続の横殴りへ威力を移す。"
+    },
+    {
+      "family": "war_maul",
+      "familyName": "大槌",
+      "actionId": "player.war_maul.swing",
+      "name": "横殴り（連携後半）",
+      "starterAttack": 86,
+      "durationTicks": 56,
+      "hitWindows": [
+        {
+          "id": "head",
+          "from": 19,
+          "to": 34,
+          "damageType": "blunt",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.58,
+          "newCoefficient": 0.76,
+          "hitstopTicks": 5,
+          "shapeTrack": "wm_swing"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 40,
+          "to": 56,
+          "into": [
+            "wm_smash",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 19,
+      "rootDistanceMeters": 0,
+      "turning": {
+        "untilTick": 14,
+        "maxDegreesPerSecond": 180
+      },
+      "bladeLengthMeters": 0.32,
+      "bladeRadiusMeters": 0.2,
+      "directEntry": false,
+      "entryNames": [],
+      "phaseMetadataCorrected": false,
+      "rationale": "叩きつけ・溜め叩き等からの派生と長い後隙を評価。再び叩きつけへ戻れる循環連携で、真の終端ではない。"
+    },
+    {
+      "family": "war_maul",
+      "familyName": "大槌",
+      "actionId": "player.war_maul.charge",
+      "name": "溜め叩き",
+      "starterAttack": 86,
+      "durationTicks": 60,
+      "hitWindows": [
+        {
+          "id": "head",
+          "from": 24,
+          "to": 32,
+          "damageType": "blunt",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.6,
+          "newCoefficient": 0.72,
+          "hitstopTicks": 6,
+          "shapeTrack": "wm_charge"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": {
+        "holdTick": 14,
+        "button": "sub",
+        "levelTicks": [
+          30,
+          60,
+          95
+        ],
+        "maxHoldTicks": 160,
+        "coefficientScale": [
+          1,
+          1.7,
+          2.55,
+          3.8
+        ],
+        "hitstopBonus": [
+          0,
+          1,
+          2,
+          4
+        ]
+      },
+      "oldCharge": {
+        "holdTick": 14,
+        "button": "sub",
+        "levelTicks": [
+          30,
+          60,
+          95
+        ],
+        "maxHoldTicks": 160,
+        "coefficientScale": [
+          1,
+          1.35,
+          1.75,
+          2.3
+        ],
+        "hitstopBonus": [
+          0,
+          1,
+          2,
+          4
+        ]
+      },
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 42,
+          "to": 60,
+          "into": [
+            "wm_swing",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 24,
+      "rootDistanceMeters": 0.3,
+      "turning": {
+        "untilTick": 14,
+        "maxDegreesPerSecond": 150
+      },
+      "bladeLengthMeters": 0.32,
+      "bladeRadiusMeters": 0.2,
+      "directEntry": true,
+      "entryNames": [
+        "sub"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "短い頭部の判定・盾無し・長い溜めを大きい一撃へ還元。気絶は未実装。"
+    },
+    {
+      "family": "war_maul",
+      "familyName": "大槌",
+      "actionId": "player.war_maul.draw_smash",
+      "name": "抜刀叩き",
+      "starterAttack": 86,
+      "durationTicks": 68,
+      "hitWindows": [
+        {
+          "id": "head",
+          "from": 36,
+          "to": 44,
+          "damageType": "blunt",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.6,
+          "newCoefficient": 0.76,
+          "hitstopTicks": 5,
+          "shapeTrack": "wm_draw_smash"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 54,
+          "to": 68,
+          "into": [
+            "wm_swing",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 36,
+      "rootDistanceMeters": 0.6,
+      "turning": {
+        "untilTick": 20,
+        "maxDegreesPerSecond": 150
+      },
+      "bladeLengthMeters": 0.32,
+      "bladeRadiusMeters": 0.2,
+      "directEntry": true,
+      "entryNames": [
+        "drawAttack"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "36tickの始動と抜刀の拘束に見合う一撃。"
+    },
+    {
+      "family": "twin_blades",
+      "familyName": "双剣",
+      "actionId": "player.twin_blades.slash1",
+      "name": "右斬り",
+      "starterAttack": 60,
+      "durationTicks": 24,
+      "hitWindows": [
+        {
+          "id": "blade_r",
+          "from": 8,
+          "to": 13,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.2,
+          "newCoefficient": 0.18,
+          "hitstopTicks": 2,
+          "shapeTrack": "tb_slash1"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": {
+        "gain": true
+      },
+      "cancelWindows": [
+        {
+          "from": 14,
+          "to": 24,
+          "into": [
+            "tb_slash2",
+            "tb_stab",
+            "tb_flurry",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 8,
+      "rootDistanceMeters": 0.15,
+      "turning": {
+        "untilTick": 6,
+        "maxDegreesPerSecond": 360
+      },
+      "bladeLengthMeters": 0.52,
+      "bladeRadiusMeters": 0.1,
+      "directEntry": true,
+      "entryNames": [
+        "main"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "素早く勢いを作る始動。"
+    },
+    {
+      "family": "twin_blades",
+      "familyName": "双剣",
+      "actionId": "player.twin_blades.slash2",
+      "name": "左斬り",
+      "starterAttack": 60,
+      "durationTicks": 24,
+      "hitWindows": [
+        {
+          "id": "blade_l",
+          "from": 7,
+          "to": 12,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.2,
+          "newCoefficient": 0.22,
+          "hitstopTicks": 2,
+          "shapeTrack": "tb_slash2_l"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": {
+        "gain": true
+      },
+      "cancelWindows": [
+        {
+          "from": 13,
+          "to": 24,
+          "into": [
+            "tb_cross",
+            "tb_stab",
+            "tb_flurry",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 7,
+      "rootDistanceMeters": 0.15,
+      "turning": {
+        "untilTick": 5,
+        "maxDegreesPerSecond": 360
+      },
+      "bladeLengthMeters": 0.52,
+      "bladeRadiusMeters": 0.1,
+      "directEntry": false,
+      "entryNames": [],
+      "phaseMetadataCorrected": false,
+      "rationale": "始動より高い中継。"
+    },
+    {
+      "family": "twin_blades",
+      "familyName": "双剣",
+      "actionId": "player.twin_blades.cross",
+      "name": "主連携3段目・交差斬り",
+      "starterAttack": 60,
+      "durationTicks": 36,
+      "hitWindows": [
+        {
+          "id": "blade_r",
+          "from": 11,
+          "to": 17,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.22,
+          "newCoefficient": 0.3,
+          "hitstopTicks": 3,
+          "shapeTrack": "tb_cross"
+        },
+        {
+          "id": "blade_l",
+          "from": 11,
+          "to": 17,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.22,
+          "newCoefficient": 0.3,
+          "hitstopTicks": 3,
+          "shapeTrack": "tb_cross_l"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": {
+        "gain": true
+      },
+      "cancelWindows": [
+        {
+          "from": 22,
+          "to": 36,
+          "into": [
+            "tb_slash1",
+            "tb_stab",
+            "tb_flurry",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 11,
+      "rootDistanceMeters": 0.3,
+      "turning": {
+        "untilTick": 8,
+        "maxDegreesPerSecond": 360
+      },
+      "bladeLengthMeters": 0.52,
+      "bladeRadiusMeters": 0.1,
+      "directEntry": false,
+      "entryNames": [],
+      "phaseMetadataCorrected": false,
+      "rationale": "左右両方を当てて初めて合計0.60。短い間合いと連携継続を評価。"
+    },
+    {
+      "family": "twin_blades",
+      "familyName": "双剣",
+      "actionId": "player.twin_blades.stab",
+      "name": "二段突き",
+      "starterAttack": 60,
+      "durationTicks": 42,
+      "hitWindows": [
+        {
+          "id": "blade_r",
+          "from": 10,
+          "to": 14,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.2,
+          "newCoefficient": 0.2,
+          "hitstopTicks": 2,
+          "shapeTrack": "tb_stab"
+        },
+        {
+          "id": "blade_l",
+          "from": 17,
+          "to": 21,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.24,
+          "newCoefficient": 0.3,
+          "hitstopTicks": 2,
+          "shapeTrack": "tb_stab_l"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": {
+        "gain": true
+      },
+      "cancelWindows": [
+        {
+          "from": 26,
+          "to": 42,
+          "into": [
+            "tb_slash1",
+            "tb_flurry",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 10,
+      "rootDistanceMeters": 0.4,
+      "turning": {
+        "untilTick": 8,
+        "maxDegreesPerSecond": 360
+      },
+      "bladeLengthMeters": 0.52,
+      "bladeRadiusMeters": 0.1,
+      "directEntry": true,
+      "entryNames": [
+        "sub"
+      ],
+      "phaseMetadataCorrected": true,
+      "rationale": "2撃目の遅い狭い判定へ威力を寄せる。"
+    },
+    {
+      "family": "twin_blades",
+      "familyName": "双剣",
+      "actionId": "player.twin_blades.flurry",
+      "name": "連ね斬り",
+      "starterAttack": 60,
+      "durationTicks": 86,
+      "hitWindows": [
+        {
+          "id": "r1",
+          "from": 10,
+          "to": 15,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.2,
+          "newCoefficient": 0.16,
+          "hitstopTicks": 2,
+          "shapeTrack": "tb_flurry"
+        },
+        {
+          "id": "l1",
+          "from": 23,
+          "to": 28,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.2,
+          "newCoefficient": 0.18,
+          "hitstopTicks": 2,
+          "shapeTrack": "tb_flurry_l"
+        },
+        {
+          "id": "r2",
+          "from": 36,
+          "to": 41,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.2,
+          "newCoefficient": 0.2,
+          "hitstopTicks": 2,
+          "shapeTrack": "tb_flurry"
+        },
+        {
+          "id": "r3",
+          "from": 56,
+          "to": 62,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.3,
+          "newCoefficient": 0.42,
+          "hitstopTicks": 4,
+          "shapeTrack": "tb_flurry"
+        },
+        {
+          "id": "l3",
+          "from": 56,
+          "to": 62,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.3,
+          "newCoefficient": 0.42,
+          "hitstopTicks": 4,
+          "shapeTrack": "tb_flurry_l"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": {
+        "spendScale": [
+          1,
+          1,
+          1.4,
+          1.9
+        ]
+      },
+      "cancelWindows": [
+        {
+          "from": 70,
+          "to": 86,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 10,
+      "rootDistanceMeters": 0,
+      "turning": {
+        "untilTick": 8,
+        "maxDegreesPerSecond": 240
+      },
+      "bladeLengthMeters": 0.52,
+      "bladeRadiusMeters": 0.1,
+      "directEntry": true,
+      "entryNames": [
+        "special"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "最後の交差2撃に合計威力の60.9%を配分。勢い消費と中断の危険を評価。"
+    },
+    {
+      "family": "twin_blades",
+      "familyName": "双剣",
+      "actionId": "player.twin_blades.draw_cross",
+      "name": "抜刀交差斬り",
+      "starterAttack": 60,
+      "durationTicks": 52,
+      "hitWindows": [
+        {
+          "id": "blade_r",
+          "from": 30,
+          "to": 36,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.22,
+          "newCoefficient": 0.27,
+          "hitstopTicks": 2,
+          "shapeTrack": "tb_draw_cross"
+        },
+        {
+          "id": "blade_l",
+          "from": 30,
+          "to": 36,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.22,
+          "newCoefficient": 0.27,
+          "hitstopTicks": 2,
+          "shapeTrack": "tb_draw_cross_l"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": {
+        "gain": true
+      },
+      "cancelWindows": [
+        {
+          "from": 42,
+          "to": 52,
+          "into": [
+            "tb_slash1",
+            "tb_stab",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 30,
+      "rootDistanceMeters": 0.6,
+      "turning": {
+        "untilTick": 20,
+        "maxDegreesPerSecond": 240
+      },
+      "bladeLengthMeters": 0.52,
+      "bladeRadiusMeters": 0.1,
+      "directEntry": true,
+      "entryNames": [
+        "drawAttack"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "両腰から抜く30tickの準備を評価。片刃だけなら半分。"
+    },
+    {
+      "family": "long_blade",
+      "familyName": "太刀",
+      "actionId": "player.long_blade.kesa",
+      "name": "袈裟斬り",
+      "starterAttack": 76,
+      "durationTicks": 34,
+      "hitWindows": [
+        {
+          "id": "blade_main",
+          "from": 12,
+          "to": 18,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.4,
+          "newCoefficient": 0.38,
+          "hitstopTicks": 3,
+          "shapeTrack": "lb_kesa"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 20,
+          "to": 34,
+          "into": [
+            "lb_rise",
+            "lb_back",
+            "lb_helm",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 12,
+      "rootDistanceMeters": 0.3,
+      "turning": {
+        "untilTick": 8,
+        "maxDegreesPerSecond": 300
+      },
+      "bladeLengthMeters": 1.05,
+      "bladeRadiusMeters": 0.12,
+      "directEntry": true,
+      "entryNames": [
+        "main"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "踏み込みのある扱いやすい始動。"
+    },
+    {
+      "family": "long_blade",
+      "familyName": "太刀",
+      "actionId": "player.long_blade.rise",
+      "name": "斬り上げ",
+      "starterAttack": 76,
+      "durationTicks": 32,
+      "hitWindows": [
+        {
+          "id": "blade_main",
+          "from": 9,
+          "to": 15,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.38,
+          "newCoefficient": 0.44,
+          "hitstopTicks": 3,
+          "shapeTrack": "lb_rise"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 18,
+          "to": 32,
+          "into": [
+            "lb_thrust",
+            "lb_back",
+            "lb_helm",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 9,
+      "rootDistanceMeters": 0.15,
+      "turning": {
+        "untilTick": 6,
+        "maxDegreesPerSecond": 300
+      },
+      "bladeLengthMeters": 1.05,
+      "bladeRadiusMeters": 0.12,
+      "directEntry": false,
+      "entryNames": [],
+      "phaseMetadataCorrected": false,
+      "rationale": "中継に少し報酬を付ける。"
+    },
+    {
+      "family": "long_blade",
+      "familyName": "太刀",
+      "actionId": "player.long_blade.thrust",
+      "name": "主連携3段目・突き",
+      "starterAttack": 76,
+      "durationTicks": 38,
+      "hitWindows": [
+        {
+          "id": "blade_main",
+          "from": 12,
+          "to": 17,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.5,
+          "newCoefficient": 0.72,
+          "hitstopTicks": 4,
+          "shapeTrack": "lb_thrust"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 24,
+          "to": 38,
+          "into": [
+            "lb_back",
+            "lb_helm",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 12,
+      "rootDistanceMeters": 0.3,
+      "turning": {
+        "untilTick": 8,
+        "maxDegreesPerSecond": 300
+      },
+      "bladeLengthMeters": 1.05,
+      "bladeRadiusMeters": 0.12,
+      "directEntry": false,
+      "entryNames": [],
+      "phaseMetadataCorrected": false,
+      "rationale": "狭い突きと3段目到達を評価。"
+    },
+    {
+      "family": "long_blade",
+      "familyName": "太刀",
+      "actionId": "player.long_blade.back_cut",
+      "name": "下がり斬り",
+      "starterAttack": 76,
+      "durationTicks": 50,
+      "hitWindows": [
+        {
+          "id": "blade_main",
+          "from": 10,
+          "to": 16,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.42,
+          "newCoefficient": 0.32,
+          "hitstopTicks": 3,
+          "shapeTrack": "lb_back"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 38,
+          "to": 50,
+          "into": [
+            "lb_kesa",
+            "lb_helm",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 10,
+      "rootDistanceMeters": -2,
+      "turning": {
+        "untilTick": 8,
+        "maxDegreesPerSecond": 300
+      },
+      "bladeLengthMeters": 1.05,
+      "bladeRadiusMeters": 0.12,
+      "directEntry": true,
+      "entryNames": [
+        "sub"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "2m離脱の安全性を持つため攻撃専用技より低い威力。無敵は追加しない。"
+    },
+    {
+      "family": "long_blade",
+      "familyName": "太刀",
+      "actionId": "player.long_blade.helm",
+      "name": "兜割り",
+      "starterAttack": 76,
+      "durationTicks": 70,
+      "hitWindows": [
+        {
+          "id": "blade_main",
+          "from": 30,
+          "to": 36,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 1.15,
+          "newCoefficient": 1.42,
+          "hitstopTicks": 7,
+          "shapeTrack": "lb_helm"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 54,
+          "to": 70,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 30,
+      "rootDistanceMeters": 0.4,
+      "turning": {
+        "untilTick": 24,
+        "maxDegreesPerSecond": 150
+      },
+      "bladeLengthMeters": 1.05,
+      "bladeRadiusMeters": 0.12,
+      "directEntry": true,
+      "entryNames": [
+        "special"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "30tickの始動・狭い縦斬り・54tickまで回避できない拘束を評価。"
+    },
+    {
+      "family": "long_blade",
+      "familyName": "太刀",
+      "actionId": "player.long_blade.draw_cut",
+      "name": "抜刀斬り",
+      "starterAttack": 76,
+      "durationTicks": 60,
+      "hitWindows": [
+        {
+          "id": "blade_main",
+          "from": 30,
+          "to": 36,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.48,
+          "newCoefficient": 0.56,
+          "hitstopTicks": 3,
+          "shapeTrack": "lb_draw_cut"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 44,
+          "to": 60,
+          "into": [
+            "lb_rise",
+            "lb_back",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 30,
+      "rootDistanceMeters": 0.6,
+      "turning": {
+        "untilTick": 20,
+        "maxDegreesPerSecond": 180
+      },
+      "bladeLengthMeters": 1.05,
+      "bladeRadiusMeters": 0.12,
+      "directEntry": true,
+      "entryNames": [
+        "drawAttack"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "30tickの抜刀準備を評価。"
+    },
+    {
+      "family": "long_lance",
+      "familyName": "長尖槍",
+      "actionId": "player.long_lance.thrust1",
+      "name": "一段突き",
+      "starterAttack": 72,
+      "durationTicks": 38,
+      "hitWindows": [
+        {
+          "id": "tip",
+          "from": 10,
+          "to": 15,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.5,
+          "newCoefficient": 0.36,
+          "hitstopTicks": 3,
+          "shapeTrack": "ll_thrust"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 18,
+          "to": 38,
+          "into": [
+            "ll_thrust2",
+            "ll_high",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 10,
+      "rootDistanceMeters": 0.15,
+      "turning": {
+        "untilTick": 8,
+        "maxDegreesPerSecond": 120
+      },
+      "bladeLengthMeters": 1.46,
+      "bladeRadiusMeters": 0.1,
+      "directEntry": true,
+      "entryNames": [
+        "main"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "長い間合い・盾への復帰を考慮した始動。"
+    },
+    {
+      "family": "long_lance",
+      "familyName": "長尖槍",
+      "actionId": "player.long_lance.thrust2",
+      "name": "二段突き",
+      "starterAttack": 72,
+      "durationTicks": 38,
+      "hitWindows": [
+        {
+          "id": "tip",
+          "from": 10,
+          "to": 15,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.5,
+          "newCoefficient": 0.42,
+          "hitstopTicks": 3,
+          "shapeTrack": "ll_thrust"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 18,
+          "to": 38,
+          "into": [
+            "ll_thrust3",
+            "ll_high",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 10,
+      "rootDistanceMeters": 0.15,
+      "turning": {
+        "untilTick": 8,
+        "maxDegreesPerSecond": 120
+      },
+      "bladeLengthMeters": 1.46,
+      "bladeRadiusMeters": 0.1,
+      "directEntry": false,
+      "entryNames": [],
+      "phaseMetadataCorrected": false,
+      "rationale": "中継。三段目へ価値を寄せる。"
+    },
+    {
+      "family": "long_lance",
+      "familyName": "長尖槍",
+      "actionId": "player.long_lance.thrust3",
+      "name": "主連携3段目・三段突き",
+      "starterAttack": 72,
+      "durationTicks": 38,
+      "hitWindows": [
+        {
+          "id": "tip",
+          "from": 10,
+          "to": 15,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.62,
+          "newCoefficient": 0.72,
+          "hitstopTicks": 3,
+          "shapeTrack": "ll_thrust"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 18,
+          "to": 38,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 10,
+      "rootDistanceMeters": 0.15,
+      "turning": {
+        "untilTick": 8,
+        "maxDegreesPerSecond": 120
+      },
+      "bladeLengthMeters": 1.46,
+      "bladeRadiusMeters": 0.1,
+      "directEntry": false,
+      "entryNames": [],
+      "phaseMetadataCorrected": false,
+      "rationale": "攻撃派生が無く、回復を最後まで払う3段目。始動→上段だけの反復より連携完遂が報われる。"
+    },
+    {
+      "family": "long_lance",
+      "familyName": "長尖槍",
+      "actionId": "player.long_lance.high",
+      "name": "上段突き",
+      "starterAttack": 72,
+      "durationTicks": 42,
+      "hitWindows": [
+        {
+          "id": "tip",
+          "from": 12,
+          "to": 17,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.55,
+          "newCoefficient": 0.38,
+          "hitstopTicks": 3,
+          "shapeTrack": "ll_high"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 22,
+          "to": 42,
+          "into": [
+            "ll_thrust1",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 12,
+      "rootDistanceMeters": 0.15,
+      "turning": {
+        "untilTick": 10,
+        "maxDegreesPerSecond": 120
+      },
+      "bladeLengthMeters": 1.46,
+      "bladeRadiusMeters": 0.1,
+      "directEntry": true,
+      "entryNames": [
+        "sub"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "高所の部位を狙う用途。始動と交互に使う最短ループの過大火力を抑える。"
+    },
+    {
+      "family": "long_lance",
+      "familyName": "長尖槍",
+      "actionId": "player.long_lance.guard_thrust",
+      "name": "構え突き",
+      "starterAttack": 72,
+      "durationTicks": 44,
+      "hitWindows": [
+        {
+          "id": "tip",
+          "from": 14,
+          "to": 19,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.36,
+          "newCoefficient": 0.3,
+          "hitstopTicks": 2,
+          "shapeTrack": "ll_guard_thrust"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 30,
+          "to": 44,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 14,
+      "rootDistanceMeters": 0,
+      "turning": null,
+      "bladeLengthMeters": 1.46,
+      "bladeRadiusMeters": 0.1,
+      "directEntry": true,
+      "entryNames": [
+        "guardMain"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "全44tickで防御可能なので安全性に代価を置く。"
+    },
+    {
+      "family": "long_lance",
+      "familyName": "長尖槍",
+      "actionId": "player.long_lance.counter_thrust",
+      "name": "受け返し突き",
+      "starterAttack": 72,
+      "durationTicks": 44,
+      "hitWindows": [
+        {
+          "id": "tip",
+          "from": 9,
+          "to": 15,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 1.6,
+          "newCoefficient": 1.55,
+          "hitstopTicks": 7,
+          "shapeTrack": "ll_counter_thrust"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 28,
+          "to": 44,
+          "into": [
+            "ll_thrust1",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 9,
+      "rootDistanceMeters": 0.3,
+      "turning": null,
+      "bladeLengthMeters": 1.46,
+      "bladeRadiusMeters": 0.1,
+      "directEntry": false,
+      "entryNames": [],
+      "phaseMetadataCorrected": false,
+      "rationale": "敵の防御可能な攻撃を正面で受ける条件とスタミナ15を評価。独立した連打技として数えない。"
+    },
+    {
+      "family": "long_lance",
+      "familyName": "長尖槍",
+      "actionId": "player.long_lance.lunge",
+      "name": "踏み込み抜刀突き",
+      "starterAttack": 72,
+      "durationTicks": 66,
+      "hitWindows": [
+        {
+          "id": "tip",
+          "from": 34,
+          "to": 46,
+          "damageType": "cut",
+          "maxHitsPerTarget": 1,
+          "oldCoefficient": 0.7,
+          "newCoefficient": 0.82,
+          "hitstopTicks": 5,
+          "shapeTrack": "ll_lunge"
+        }
+      ],
+      "shoot": [],
+      "oldShoot": [],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 52,
+          "to": 66,
+          "into": [
+            "ll_thrust1",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 34,
+      "rootDistanceMeters": 2.05,
+      "turning": {
+        "untilTick": 20,
+        "maxDegreesPerSecond": 90
+      },
+      "bladeLengthMeters": 1.46,
+      "bladeRadiusMeters": 0.1,
+      "directEntry": true,
+      "entryNames": [
+        "drawAttack"
+      ],
+      "phaseMetadataCorrected": false,
+      "rationale": "34tickの準備・長い直進の拘束を評価。"
+    },
+    {
+      "family": "ring_bow",
+      "familyName": "環弓",
+      "actionId": "player.ring_bow.shot",
+      "name": "射撃・溜め射撃",
+      "starterAttack": 70,
+      "durationTicks": 52,
+      "hitWindows": [],
+      "shoot": [
+        {
+          "tick": 18,
+          "count": 1,
+          "spreadDeg": 0,
+          "speed": [
+            26,
+            32,
+            40,
+            48
+          ],
+          "coefficient": [
+            0.22,
+            0.58,
+            1.12,
+            1.85
+          ]
+        }
+      ],
+      "oldShoot": [
+        {
+          "tick": 18,
+          "count": 1,
+          "spreadDeg": 0,
+          "speed": [
+            26,
+            32,
+            40,
+            48
+          ],
+          "coefficient": [
+            0.18,
+            0.3,
+            0.55,
+            0.9
+          ]
+        }
+      ],
+      "charge": {
+        "holdTick": 14,
+        "button": "main",
+        "levelTicks": [
+          30,
+          70,
+          120
+        ],
+        "maxHoldTicks": 240,
+        "coefficientScale": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "hitstopBonus": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "staminaPerSec": 12
+      },
+      "oldCharge": {
+        "holdTick": 14,
+        "button": "main",
+        "levelTicks": [
+          30,
+          70,
+          120
+        ],
+        "maxHoldTicks": 240,
+        "coefficientScale": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "hitstopBonus": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "staminaPerSec": 12
+      },
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 14,
+          "to": 15,
+          "into": [
+            "roll"
+          ]
+        },
+        {
+          "from": 32,
+          "to": 52,
+          "into": [
+            "rb_shot",
+            "rb_spread",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 18,
+      "rootDistanceMeters": 0,
+      "turning": {
+        "untilTick": 18,
+        "maxDegreesPerSecond": 240
+      },
+      "bladeLengthMeters": 1.5,
+      "bladeRadiusMeters": 0.05,
+      "directEntry": true,
+      "entryNames": [
+        "main",
+        "drawAttack"
+      ],
+      "phaseMetadataCorrected": true,
+      "rationale": "待ち時間とスタミナ消費込みで溜め段階に価値を持たせる。1発の係数。"
+    },
+    {
+      "family": "ring_bow",
+      "familyName": "環弓",
+      "actionId": "player.ring_bow.spread",
+      "name": "散らし撃ち",
+      "starterAttack": 70,
+      "durationTicks": 46,
+      "hitWindows": [],
+      "shoot": [
+        {
+          "tick": 16,
+          "count": 3,
+          "spreadDeg": 16,
+          "speed": [
+            30
+          ],
+          "coefficient": [
+            0.17
+          ]
+        }
+      ],
+      "oldShoot": [
+        {
+          "tick": 16,
+          "count": 3,
+          "spreadDeg": 16,
+          "speed": [
+            30
+          ],
+          "coefficient": [
+            0.22
+          ]
+        }
+      ],
+      "charge": null,
+      "oldCharge": null,
+      "momentum": null,
+      "cancelWindows": [
+        {
+          "from": 30,
+          "to": 46,
+          "into": [
+            "rb_shot",
+            "rb_spread",
+            "roll"
+          ]
+        }
+      ],
+      "firstImpactTick": 16,
+      "rootDistanceMeters": 0,
+      "turning": {
+        "untilTick": 14,
+        "maxDegreesPerSecond": 300
+      },
+      "bladeLengthMeters": 1.5,
+      "bladeRadiusMeters": 0.05,
+      "directEntry": true,
+      "entryNames": [
+        "sub"
+      ],
+      "phaseMetadataCorrected": true,
+      "rationale": "1本0.17、3本全部命中で0.51。近距離0.6倍と拡散で位置取りを分ける。"
+    }
+  ]
+}

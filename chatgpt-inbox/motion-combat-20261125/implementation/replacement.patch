@@ -1,0 +1,1143 @@
+--- a/public/data/actions/heavy_blade.json
++++ b/public/data/actions/heavy_blade.json
+@@ -16,7 +16,7 @@
+       "hitWindows": [{
+         "id":"blade_main", "from":22, "to":30,
+         "shapeTrack":"hb_vertical_blade_sweep",
+-        "damageType":"cut", "damageCoefficient":1.0,
++        "damageType":"cut", "damageCoefficient":1.05,
+         "maxHitsPerTarget":1, "hitstopTicks":4
+       }],
+       "cancelWindows": [
+@@ -32,7 +32,7 @@
+       "charge": {
+         "holdTick": 18, "button": "main",
+         "levelTicks": [30, 60, 90], "maxHoldTicks": 120,
+-        "coefficientScale": [1.0, 1.3, 1.65, 2.1],
++        "coefficientScale": [1.0, 1.5, 2.1, 2.8],
+         "hitstopBonus": [0, 2, 4, 6]
+       }
+     },
+@@ -51,7 +51,7 @@
+       "hitWindows": [{
+         "id":"blade_main", "from":18, "to":27,
+         "shapeTrack":"hb_side_blade_sweep",
+-        "damageType":"cut", "damageCoefficient":0.75,
++        "damageType":"cut", "damageCoefficient":0.7,
+         "maxHitsPerTarget":1, "hitstopTicks":3
+       }],
+       "cancelWindows": [
+@@ -80,7 +80,7 @@
+       "hitWindows": [{
+         "id":"blade_main", "from":20, "to":28,
+         "shapeTrack":"hb_draw_slash_sweep",
+-        "damageType":"cut", "damageCoefficient":0.9,
++        "damageType":"cut", "damageCoefficient":1.0,
+         "maxHitsPerTarget":1, "hitstopTicks":4
+       }],
+       "cancelWindows": [
+--- a/public/data/actions/guard_blade.json
++++ b/public/data/actions/guard_blade.json
+@@ -2,11 +2,11 @@
+   "schemaVersion": 1,
+   "note": "tools/gen-weapons.mjs の出力。手で編集しない。数値は机上の初期値。",
+   "actions": [
+-    {"schemaVersion": 1, "actionId": "player.guard_blade.slash1", "clip": "gb_slash1_01", "tickRate": 60, "durationTicks": 26, "phases": [{"id": "startup", "from": 0, "to": 8},{"id": "active", "from": 8, "to": 13},{"id": "recovery", "from": 13, "to": 26}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 6, "maxDegreesPerSecond": 360}, "hitWindows": [{"id": "blade_main", "from": 8, "to": 13, "shapeTrack": "gb_slash1", "damageType": "cut", "damageCoefficient": 0.28, "maxHitsPerTarget": 1, "hitstopTicks": 2}], "cancelWindows": [{"from": 14, "to": 26, "into": ["gb_slash2", "gb_bash", "roll"]}], "events": [{"tick": 7, "type": "sound", "id": "hb_swing_02"},{"tick": 8, "type": "trail_on", "id": "blade"},{"tick": 13, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "gb_slash1"},
++    {"schemaVersion": 1, "actionId": "player.guard_blade.slash1", "clip": "gb_slash1_01", "tickRate": 60, "durationTicks": 26, "phases": [{"id": "startup", "from": 0, "to": 8},{"id": "active", "from": 8, "to": 13},{"id": "recovery", "from": 13, "to": 26}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 6, "maxDegreesPerSecond": 360}, "hitWindows": [{"id": "blade_main", "from": 8, "to": 13, "shapeTrack": "gb_slash1", "damageType": "cut", "damageCoefficient": 0.24, "maxHitsPerTarget": 1, "hitstopTicks": 2}], "cancelWindows": [{"from": 14, "to": 26, "into": ["gb_slash2", "gb_bash", "roll"]}], "events": [{"tick": 7, "type": "sound", "id": "hb_swing_02"},{"tick": 8, "type": "trail_on", "id": "blade"},{"tick": 13, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "gb_slash1"},
+     {"schemaVersion": 1, "actionId": "player.guard_blade.slash2", "clip": "gb_slash2_01", "tickRate": 60, "durationTicks": 26, "phases": [{"id": "startup", "from": 0, "to": 7},{"id": "active", "from": 7, "to": 12},{"id": "recovery", "from": 12, "to": 26}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 5, "maxDegreesPerSecond": 360}, "hitWindows": [{"id": "blade_main", "from": 7, "to": 12, "shapeTrack": "gb_slash2", "damageType": "cut", "damageCoefficient": 0.3, "maxHitsPerTarget": 1, "hitstopTicks": 2}], "cancelWindows": [{"from": 13, "to": 26, "into": ["gb_thrust", "gb_bash", "roll"]}], "events": [{"tick": 6, "type": "sound", "id": "hb_swing_02"},{"tick": 7, "type": "trail_on", "id": "blade"},{"tick": 12, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "gb_slash2"},
+-    {"schemaVersion": 1, "actionId": "player.guard_blade.thrust", "clip": "gb_thrust_01", "tickRate": 60, "durationTicks": 36, "phases": [{"id": "startup", "from": 0, "to": 11},{"id": "active", "from": 11, "to": 16},{"id": "recovery", "from": 16, "to": 36}], "rootMotion": {"mode": "controller", "curveId": "w_step_030"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 360}, "hitWindows": [{"id": "blade_main", "from": 11, "to": 16, "shapeTrack": "gb_thrust", "damageType": "cut", "damageCoefficient": 0.42, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 23, "to": 36, "into": ["gb_bash", "roll"]}], "events": [{"tick": 10, "type": "sound", "id": "hb_swing_02"},{"tick": 11, "type": "trail_on", "id": "blade"},{"tick": 16, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "gb_thrust"},
+-    {"schemaVersion": 1, "actionId": "player.guard_blade.bash", "clip": "gb_bash_01", "tickRate": 60, "durationTicks": 36, "phases": [{"id": "startup", "from": 0, "to": 11},{"id": "active", "from": 11, "to": 16},{"id": "recovery", "from": 16, "to": 36}], "rootMotion": {"mode": "controller", "curveId": "w_step_040"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 360}, "hitWindows": [{"id": "shield", "from": 11, "to": 16, "shapeTrack": "gb_bash_shield", "damageType": "blunt", "damageCoefficient": 0.25, "maxHitsPerTarget": 1, "hitstopTicks": 4}], "cancelWindows": [{"from": 22, "to": 36, "into": ["gb_slash1", "roll"]}], "events": [{"tick": 10, "type": "sound", "id": "hb_swing_01"}], "onFinish": "drawn_idle", "weaponTrack": "gb_bash_sword", "offhandTrack": "gb_bash_shield"},
+-    {"schemaVersion": 1, "actionId": "player.guard_blade.lunge", "clip": "gb_lunge_01", "tickRate": 60, "durationTicks": 50, "phases": [{"id": "startup", "from": 0, "to": 22},{"id": "active", "from": 22, "to": 28},{"id": "recovery", "from": 28, "to": 50}], "rootMotion": {"mode": "controller", "curveId": "w_lunge_120"}, "turning": {"untilTick": 12, "maxDegreesPerSecond": 240}, "hitWindows": [{"id": "blade_main", "from": 22, "to": 28, "shapeTrack": "gb_lunge", "damageType": "cut", "damageCoefficient": 0.45, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 35, "to": 50, "into": ["gb_slash1", "gb_bash", "roll"]}], "events": [{"tick": 3, "type": "sound", "id": "hb_draw_01"},{"tick": 21, "type": "sound", "id": "hb_swing_02"},{"tick": 22, "type": "trail_on", "id": "blade"},{"tick": 28, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "gb_lunge"},
++    {"schemaVersion": 1, "actionId": "player.guard_blade.thrust", "clip": "gb_thrust_01", "tickRate": 60, "durationTicks": 36, "phases": [{"id": "startup", "from": 0, "to": 11},{"id": "active", "from": 11, "to": 16},{"id": "recovery", "from": 16, "to": 36}], "rootMotion": {"mode": "controller", "curveId": "w_step_030"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 360}, "hitWindows": [{"id": "blade_main", "from": 11, "to": 16, "shapeTrack": "gb_thrust", "damageType": "cut", "damageCoefficient": 0.56, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 23, "to": 36, "into": ["gb_bash", "roll"]}], "events": [{"tick": 10, "type": "sound", "id": "hb_swing_02"},{"tick": 11, "type": "trail_on", "id": "blade"},{"tick": 16, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "gb_thrust"},
++    {"schemaVersion": 1, "actionId": "player.guard_blade.bash", "clip": "gb_bash_01", "tickRate": 60, "durationTicks": 36, "phases": [{"id": "startup", "from": 0, "to": 11},{"id": "active", "from": 11, "to": 16},{"id": "recovery", "from": 16, "to": 36}], "rootMotion": {"mode": "controller", "curveId": "w_step_040"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 360}, "hitWindows": [{"id": "shield", "from": 11, "to": 16, "shapeTrack": "gb_bash_shield", "damageType": "blunt", "damageCoefficient": 0.28, "maxHitsPerTarget": 1, "hitstopTicks": 4}], "cancelWindows": [{"from": 22, "to": 36, "into": ["gb_slash1", "roll"]}], "events": [{"tick": 10, "type": "sound", "id": "hb_swing_01"}], "onFinish": "drawn_idle", "weaponTrack": "gb_bash_sword", "offhandTrack": "gb_bash_shield"},
++    {"schemaVersion": 1, "actionId": "player.guard_blade.lunge", "clip": "gb_lunge_01", "tickRate": 60, "durationTicks": 50, "phases": [{"id": "startup", "from": 0, "to": 22},{"id": "active", "from": 22, "to": 28},{"id": "recovery", "from": 28, "to": 50}], "rootMotion": {"mode": "controller", "curveId": "w_lunge_120"}, "turning": {"untilTick": 12, "maxDegreesPerSecond": 240}, "hitWindows": [{"id": "blade_main", "from": 22, "to": 28, "shapeTrack": "gb_lunge", "damageType": "cut", "damageCoefficient": 0.48, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 35, "to": 50, "into": ["gb_slash1", "gb_bash", "roll"]}], "events": [{"tick": 3, "type": "sound", "id": "hb_draw_01"},{"tick": 21, "type": "sound", "id": "hb_swing_02"},{"tick": 22, "type": "trail_on", "id": "blade"},{"tick": 28, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "gb_lunge"},
+     {"schemaVersion": 1, "actionId": "player.guard_blade.draw", "clip": "gb_draw_01", "tickRate": 60, "durationTicks": 26, "phases": [{"id": "startup", "from": 0, "to": 12},{"id": "recovery", "from": 12, "to": 26}], "rootMotion": {"mode": "none"}, "hitWindows": [], "cancelWindows": [], "events": [{"tick": 3, "type": "sound", "id": "hb_draw_01"}], "onFinish": "drawn_idle", "weaponTrack": "gb_draw"},
+     {"schemaVersion": 1, "actionId": "player.guard_blade.sheathe", "clip": "gb_sheathe_01", "tickRate": 60, "durationTicks": 30, "phases": [{"id": "startup", "from": 0, "to": 14},{"id": "recovery", "from": 14, "to": 30}], "rootMotion": {"mode": "none"}, "hitWindows": [], "cancelWindows": [], "events": [{"tick": 18, "type": "sound", "id": "hb_sheathe_01"}], "onFinish": "sheathed_idle", "weaponTrack": "gb_sheathe"}
+   ]
+--- a/public/data/actions/war_maul.json
++++ b/public/data/actions/war_maul.json
+@@ -2,10 +2,10 @@
+   "schemaVersion": 1,
+   "note": "tools/gen-weapons.mjs の出力。手で編集しない。数値は机上の初期値。",
+   "actions": [
+-    {"schemaVersion": 1, "actionId": "player.war_maul.smash", "clip": "wm_smash_01", "tickRate": 60, "durationTicks": 56, "phases": [{"id": "startup", "from": 0, "to": 22},{"id": "active", "from": 22, "to": 30},{"id": "recovery", "from": 30, "to": 56}], "rootMotion": {"mode": "controller", "curveId": "w_step_030b"}, "turning": {"untilTick": 12, "maxDegreesPerSecond": 180}, "hitWindows": [{"id": "head", "from": 22, "to": 30, "shapeTrack": "wm_smash", "damageType": "blunt", "damageCoefficient": 0.62, "maxHitsPerTarget": 1, "hitstopTicks": 5}], "cancelWindows": [{"from": 36, "to": 56, "into": ["wm_swing", "roll"]}], "events": [{"tick": 20, "type": "sound", "id": "hb_swing_01"},{"tick": 22, "type": "trail_on", "id": "blade"},{"tick": 30, "type": "sound", "id": "ground_slam"},{"tick": 30, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "wm_smash"},
+-    {"schemaVersion": 1, "actionId": "player.war_maul.swing", "clip": "wm_swing_01", "tickRate": 60, "durationTicks": 56, "phases": [{"id": "startup", "from": 0, "to": 19},{"id": "active", "from": 19, "to": 34},{"id": "recovery", "from": 34, "to": 56}], "rootMotion": {"mode": "none"}, "turning": {"untilTick": 14, "maxDegreesPerSecond": 180}, "hitWindows": [{"id": "head", "from": 19, "to": 34, "shapeTrack": "wm_swing", "damageType": "blunt", "damageCoefficient": 0.58, "maxHitsPerTarget": 1, "hitstopTicks": 5}], "cancelWindows": [{"from": 40, "to": 56, "into": ["wm_smash", "roll"]}], "events": [{"tick": 17, "type": "sound", "id": "hb_swing_01"},{"tick": 19, "type": "trail_on", "id": "blade"},{"tick": 34, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "wm_swing"},
+-    {"schemaVersion": 1, "actionId": "player.war_maul.charge", "clip": "wm_charge_01", "tickRate": 60, "durationTicks": 60, "phases": [{"id": "startup", "from": 0, "to": 24},{"id": "active", "from": 24, "to": 32},{"id": "recovery", "from": 32, "to": 60}], "rootMotion": {"mode": "controller", "curveId": "w_step_030b"}, "turning": {"untilTick": 14, "maxDegreesPerSecond": 150}, "hitWindows": [{"id": "head", "from": 24, "to": 32, "shapeTrack": "wm_charge", "damageType": "blunt", "damageCoefficient": 0.6, "maxHitsPerTarget": 1, "hitstopTicks": 6}], "cancelWindows": [{"from": 42, "to": 60, "into": ["wm_swing", "roll"]}], "events": [{"tick": 22, "type": "sound", "id": "hb_swing_01"},{"tick": 24, "type": "trail_on", "id": "blade"},{"tick": 32, "type": "sound", "id": "ground_slam"},{"tick": 32, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "wm_charge", "charge": {"holdTick": 14, "button": "sub", "levelTicks": [30,60,95], "maxHoldTicks": 160, "coefficientScale": [1,1.35,1.75,2.3], "hitstopBonus": [0,1,2,4]}},
+-    {"schemaVersion": 1, "actionId": "player.war_maul.draw_smash", "clip": "wm_draw_smash_01", "tickRate": 60, "durationTicks": 68, "phases": [{"id": "startup", "from": 0, "to": 36},{"id": "active", "from": 36, "to": 44},{"id": "recovery", "from": 44, "to": 68}], "rootMotion": {"mode": "controller", "curveId": "w_step_060"}, "turning": {"untilTick": 20, "maxDegreesPerSecond": 150}, "hitWindows": [{"id": "head", "from": 36, "to": 44, "shapeTrack": "wm_draw_smash", "damageType": "blunt", "damageCoefficient": 0.6, "maxHitsPerTarget": 1, "hitstopTicks": 5}], "cancelWindows": [{"from": 54, "to": 68, "into": ["wm_swing", "roll"]}], "events": [{"tick": 3, "type": "sound", "id": "hb_draw_01"},{"tick": 34, "type": "sound", "id": "hb_swing_01"},{"tick": 36, "type": "trail_on", "id": "blade"},{"tick": 44, "type": "sound", "id": "ground_slam"},{"tick": 44, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "wm_draw_smash"},
++    {"schemaVersion": 1, "actionId": "player.war_maul.smash", "clip": "wm_smash_01", "tickRate": 60, "durationTicks": 56, "phases": [{"id": "startup", "from": 0, "to": 22},{"id": "active", "from": 22, "to": 30},{"id": "recovery", "from": 30, "to": 56}], "rootMotion": {"mode": "controller", "curveId": "w_step_030b"}, "turning": {"untilTick": 12, "maxDegreesPerSecond": 180}, "hitWindows": [{"id": "head", "from": 22, "to": 30, "shapeTrack": "wm_smash", "damageType": "blunt", "damageCoefficient": 0.6, "maxHitsPerTarget": 1, "hitstopTicks": 5}], "cancelWindows": [{"from": 36, "to": 56, "into": ["wm_swing", "roll"]}], "events": [{"tick": 20, "type": "sound", "id": "hb_swing_01"},{"tick": 22, "type": "trail_on", "id": "blade"},{"tick": 30, "type": "sound", "id": "ground_slam"},{"tick": 30, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "wm_smash"},
++    {"schemaVersion": 1, "actionId": "player.war_maul.swing", "clip": "wm_swing_01", "tickRate": 60, "durationTicks": 56, "phases": [{"id": "startup", "from": 0, "to": 19},{"id": "active", "from": 19, "to": 34},{"id": "recovery", "from": 34, "to": 56}], "rootMotion": {"mode": "none"}, "turning": {"untilTick": 14, "maxDegreesPerSecond": 180}, "hitWindows": [{"id": "head", "from": 19, "to": 34, "shapeTrack": "wm_swing", "damageType": "blunt", "damageCoefficient": 0.76, "maxHitsPerTarget": 1, "hitstopTicks": 5}], "cancelWindows": [{"from": 40, "to": 56, "into": ["wm_smash", "roll"]}], "events": [{"tick": 17, "type": "sound", "id": "hb_swing_01"},{"tick": 19, "type": "trail_on", "id": "blade"},{"tick": 34, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "wm_swing"},
++    {"schemaVersion": 1, "actionId": "player.war_maul.charge", "clip": "wm_charge_01", "tickRate": 60, "durationTicks": 60, "phases": [{"id": "startup", "from": 0, "to": 24},{"id": "active", "from": 24, "to": 32},{"id": "recovery", "from": 32, "to": 60}], "rootMotion": {"mode": "controller", "curveId": "w_step_030b"}, "turning": {"untilTick": 14, "maxDegreesPerSecond": 150}, "hitWindows": [{"id": "head", "from": 24, "to": 32, "shapeTrack": "wm_charge", "damageType": "blunt", "damageCoefficient": 0.72, "maxHitsPerTarget": 1, "hitstopTicks": 6}], "cancelWindows": [{"from": 42, "to": 60, "into": ["wm_swing", "roll"]}], "events": [{"tick": 22, "type": "sound", "id": "hb_swing_01"},{"tick": 24, "type": "trail_on", "id": "blade"},{"tick": 32, "type": "sound", "id": "ground_slam"},{"tick": 32, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "wm_charge", "charge": {"holdTick": 14, "button": "sub", "levelTicks": [30,60,95], "maxHoldTicks": 160, "coefficientScale": [1,1.7,2.55,3.8], "hitstopBonus": [0,1,2,4]}},
++    {"schemaVersion": 1, "actionId": "player.war_maul.draw_smash", "clip": "wm_draw_smash_01", "tickRate": 60, "durationTicks": 68, "phases": [{"id": "startup", "from": 0, "to": 36},{"id": "active", "from": 36, "to": 44},{"id": "recovery", "from": 44, "to": 68}], "rootMotion": {"mode": "controller", "curveId": "w_step_060"}, "turning": {"untilTick": 20, "maxDegreesPerSecond": 150}, "hitWindows": [{"id": "head", "from": 36, "to": 44, "shapeTrack": "wm_draw_smash", "damageType": "blunt", "damageCoefficient": 0.76, "maxHitsPerTarget": 1, "hitstopTicks": 5}], "cancelWindows": [{"from": 54, "to": 68, "into": ["wm_swing", "roll"]}], "events": [{"tick": 3, "type": "sound", "id": "hb_draw_01"},{"tick": 34, "type": "sound", "id": "hb_swing_01"},{"tick": 36, "type": "trail_on", "id": "blade"},{"tick": 44, "type": "sound", "id": "ground_slam"},{"tick": 44, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "wm_draw_smash"},
+     {"schemaVersion": 1, "actionId": "player.war_maul.draw", "clip": "wm_draw_01", "tickRate": 60, "durationTicks": 40, "phases": [{"id": "startup", "from": 0, "to": 18},{"id": "recovery", "from": 18, "to": 40}], "rootMotion": {"mode": "none"}, "hitWindows": [], "cancelWindows": [], "events": [{"tick": 4, "type": "sound", "id": "hb_draw_01"}], "onFinish": "drawn_idle", "weaponTrack": "wm_draw"},
+     {"schemaVersion": 1, "actionId": "player.war_maul.sheathe", "clip": "wm_sheathe_01", "tickRate": 60, "durationTicks": 42, "phases": [{"id": "startup", "from": 0, "to": 19},{"id": "recovery", "from": 19, "to": 42}], "rootMotion": {"mode": "none"}, "hitWindows": [], "cancelWindows": [], "events": [{"tick": 29, "type": "sound", "id": "hb_sheathe_01"}], "onFinish": "sheathed_idle", "weaponTrack": "wm_sheathe"}
+   ]
+--- a/public/data/actions/twin_blades.json
++++ b/public/data/actions/twin_blades.json
+@@ -2,12 +2,12 @@
+   "schemaVersion": 1,
+   "note": "tools/gen-weapons.mjs の出力。手で編集しない。数値は机上の初期値。",
+   "actions": [
+-    {"schemaVersion": 1, "actionId": "player.twin_blades.slash1", "clip": "tb_slash1_01", "tickRate": 60, "durationTicks": 24, "phases": [{"id": "startup", "from": 0, "to": 8},{"id": "active", "from": 8, "to": 13},{"id": "recovery", "from": 13, "to": 24}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 6, "maxDegreesPerSecond": 360}, "hitWindows": [{"id": "blade_r", "from": 8, "to": 13, "shapeTrack": "tb_slash1", "damageType": "cut", "damageCoefficient": 0.2, "maxHitsPerTarget": 1, "hitstopTicks": 2}], "cancelWindows": [{"from": 14, "to": 24, "into": ["tb_slash2", "tb_stab", "tb_flurry", "roll"]}], "events": [{"tick": 7, "type": "sound", "id": "hb_swing_02"},{"tick": 8, "type": "trail_on", "id": "blade"},{"tick": 13, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "tb_slash1", "momentum": {"gain": true}},
+-    {"schemaVersion": 1, "actionId": "player.twin_blades.slash2", "clip": "tb_slash2_01", "tickRate": 60, "durationTicks": 24, "phases": [{"id": "startup", "from": 0, "to": 7},{"id": "active", "from": 7, "to": 12},{"id": "recovery", "from": 12, "to": 24}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 5, "maxDegreesPerSecond": 360}, "hitWindows": [{"id": "blade_l", "from": 7, "to": 12, "shapeTrack": "tb_slash2_l", "damageType": "cut", "damageCoefficient": 0.2, "maxHitsPerTarget": 1, "hitstopTicks": 2}], "cancelWindows": [{"from": 13, "to": 24, "into": ["tb_cross", "tb_stab", "tb_flurry", "roll"]}], "events": [{"tick": 6, "type": "sound", "id": "hb_swing_02"},{"tick": 7, "type": "trail_on", "id": "blade"},{"tick": 12, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "tb_slash2", "momentum": {"gain": true}},
+-    {"schemaVersion": 1, "actionId": "player.twin_blades.cross", "clip": "tb_cross_01", "tickRate": 60, "durationTicks": 36, "phases": [{"id": "startup", "from": 0, "to": 11},{"id": "active", "from": 11, "to": 17},{"id": "recovery", "from": 17, "to": 36}], "rootMotion": {"mode": "controller", "curveId": "w_step_030"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 360}, "hitWindows": [{"id": "blade_r", "from": 11, "to": 17, "shapeTrack": "tb_cross", "damageType": "cut", "damageCoefficient": 0.22, "maxHitsPerTarget": 1, "hitstopTicks": 3},{"id": "blade_l", "from": 11, "to": 17, "shapeTrack": "tb_cross_l", "damageType": "cut", "damageCoefficient": 0.22, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 22, "to": 36, "into": ["tb_slash1", "tb_stab", "tb_flurry", "roll"]}], "events": [{"tick": 10, "type": "sound", "id": "hb_swing_01"},{"tick": 11, "type": "trail_on", "id": "blade"},{"tick": 17, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "tb_cross", "momentum": {"gain": true}},
+-    {"schemaVersion": 1, "actionId": "player.twin_blades.stab", "clip": "tb_stab_01", "tickRate": 60, "durationTicks": 42, "phases": [{"id": "startup", "from": 0, "to": 10},{"id": "active", "from": 10, "to": 20},{"id": "recovery", "from": 20, "to": 42}], "rootMotion": {"mode": "controller", "curveId": "w_step_040"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 360}, "hitWindows": [{"id": "blade_r", "from": 10, "to": 14, "shapeTrack": "tb_stab", "damageType": "cut", "damageCoefficient": 0.2, "maxHitsPerTarget": 1, "hitstopTicks": 2},{"id": "blade_l", "from": 17, "to": 21, "shapeTrack": "tb_stab_l", "damageType": "cut", "damageCoefficient": 0.24, "maxHitsPerTarget": 1, "hitstopTicks": 2}], "cancelWindows": [{"from": 26, "to": 42, "into": ["tb_slash1", "tb_flurry", "roll"]}], "events": [{"tick": 9, "type": "sound", "id": "hb_swing_02"},{"tick": 10, "type": "trail_on", "id": "blade"},{"tick": 16, "type": "sound", "id": "hb_swing_02"},{"tick": 20, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "tb_stab", "momentum": {"gain": true}},
+-    {"schemaVersion": 1, "actionId": "player.twin_blades.flurry", "clip": "tb_flurry_01", "tickRate": 60, "durationTicks": 86, "phases": [{"id": "startup", "from": 0, "to": 10},{"id": "active", "from": 10, "to": 62},{"id": "recovery", "from": 62, "to": 86}], "rootMotion": {"mode": "none"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 240}, "hitWindows": [{"id": "r1", "from": 10, "to": 15, "shapeTrack": "tb_flurry", "damageType": "cut", "damageCoefficient": 0.2, "maxHitsPerTarget": 1, "hitstopTicks": 2},{"id": "l1", "from": 23, "to": 28, "shapeTrack": "tb_flurry_l", "damageType": "cut", "damageCoefficient": 0.2, "maxHitsPerTarget": 1, "hitstopTicks": 2},{"id": "r2", "from": 36, "to": 41, "shapeTrack": "tb_flurry", "damageType": "cut", "damageCoefficient": 0.2, "maxHitsPerTarget": 1, "hitstopTicks": 2},{"id": "r3", "from": 56, "to": 62, "shapeTrack": "tb_flurry", "damageType": "cut", "damageCoefficient": 0.3, "maxHitsPerTarget": 1, "hitstopTicks": 4},{"id": "l3", "from": 56, "to": 62, "shapeTrack": "tb_flurry_l", "damageType": "cut", "damageCoefficient": 0.3, "maxHitsPerTarget": 1, "hitstopTicks": 4}], "cancelWindows": [{"from": 70, "to": 86, "into": ["roll"]}], "events": [{"tick": 9, "type": "sound", "id": "hb_swing_02"},{"tick": 10, "type": "trail_on", "id": "blade"},{"tick": 22, "type": "sound", "id": "hb_swing_02"},{"tick": 35, "type": "sound", "id": "hb_swing_02"},{"tick": 55, "type": "sound", "id": "hb_swing_01"},{"tick": 62, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "tb_flurry", "momentum": {"spendScale": [1,1,1.4,1.9]}},
+-    {"schemaVersion": 1, "actionId": "player.twin_blades.draw_cross", "clip": "tb_draw_cross_01", "tickRate": 60, "durationTicks": 52, "phases": [{"id": "startup", "from": 0, "to": 30},{"id": "active", "from": 30, "to": 36},{"id": "recovery", "from": 36, "to": 52}], "rootMotion": {"mode": "controller", "curveId": "w_step_060"}, "turning": {"untilTick": 20, "maxDegreesPerSecond": 240}, "hitWindows": [{"id": "blade_r", "from": 30, "to": 36, "shapeTrack": "tb_draw_cross", "damageType": "cut", "damageCoefficient": 0.22, "maxHitsPerTarget": 1, "hitstopTicks": 2},{"id": "blade_l", "from": 30, "to": 36, "shapeTrack": "tb_draw_cross_l", "damageType": "cut", "damageCoefficient": 0.22, "maxHitsPerTarget": 1, "hitstopTicks": 2}], "cancelWindows": [{"from": 42, "to": 52, "into": ["tb_slash1", "tb_stab", "roll"]}], "events": [{"tick": 4, "type": "sound", "id": "hb_draw_01"},{"tick": 29, "type": "sound", "id": "hb_swing_01"},{"tick": 30, "type": "trail_on", "id": "blade"},{"tick": 36, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "tb_draw_cross", "momentum": {"gain": true}},
++    {"schemaVersion": 1, "actionId": "player.twin_blades.slash1", "clip": "tb_slash1_01", "tickRate": 60, "durationTicks": 24, "phases": [{"id": "startup", "from": 0, "to": 8},{"id": "active", "from": 8, "to": 13},{"id": "recovery", "from": 13, "to": 24}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 6, "maxDegreesPerSecond": 360}, "hitWindows": [{"id": "blade_r", "from": 8, "to": 13, "shapeTrack": "tb_slash1", "damageType": "cut", "damageCoefficient": 0.18, "maxHitsPerTarget": 1, "hitstopTicks": 2}], "cancelWindows": [{"from": 14, "to": 24, "into": ["tb_slash2", "tb_stab", "tb_flurry", "roll"]}], "events": [{"tick": 7, "type": "sound", "id": "hb_swing_02"},{"tick": 8, "type": "trail_on", "id": "blade"},{"tick": 13, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "tb_slash1", "momentum": {"gain": true}},
++    {"schemaVersion": 1, "actionId": "player.twin_blades.slash2", "clip": "tb_slash2_01", "tickRate": 60, "durationTicks": 24, "phases": [{"id": "startup", "from": 0, "to": 7},{"id": "active", "from": 7, "to": 12},{"id": "recovery", "from": 12, "to": 24}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 5, "maxDegreesPerSecond": 360}, "hitWindows": [{"id": "blade_l", "from": 7, "to": 12, "shapeTrack": "tb_slash2_l", "damageType": "cut", "damageCoefficient": 0.22, "maxHitsPerTarget": 1, "hitstopTicks": 2}], "cancelWindows": [{"from": 13, "to": 24, "into": ["tb_cross", "tb_stab", "tb_flurry", "roll"]}], "events": [{"tick": 6, "type": "sound", "id": "hb_swing_02"},{"tick": 7, "type": "trail_on", "id": "blade"},{"tick": 12, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "tb_slash2", "momentum": {"gain": true}},
++    {"schemaVersion": 1, "actionId": "player.twin_blades.cross", "clip": "tb_cross_01", "tickRate": 60, "durationTicks": 36, "phases": [{"id": "startup", "from": 0, "to": 11},{"id": "active", "from": 11, "to": 17},{"id": "recovery", "from": 17, "to": 36}], "rootMotion": {"mode": "controller", "curveId": "w_step_030"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 360}, "hitWindows": [{"id": "blade_r", "from": 11, "to": 17, "shapeTrack": "tb_cross", "damageType": "cut", "damageCoefficient": 0.3, "maxHitsPerTarget": 1, "hitstopTicks": 3},{"id": "blade_l", "from": 11, "to": 17, "shapeTrack": "tb_cross_l", "damageType": "cut", "damageCoefficient": 0.3, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 22, "to": 36, "into": ["tb_slash1", "tb_stab", "tb_flurry", "roll"]}], "events": [{"tick": 10, "type": "sound", "id": "hb_swing_01"},{"tick": 11, "type": "trail_on", "id": "blade"},{"tick": 17, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "tb_cross", "momentum": {"gain": true}},
++    {"schemaVersion": 1, "actionId": "player.twin_blades.stab", "clip": "tb_stab_01", "tickRate": 60, "durationTicks": 42, "phases": [{"id": "startup", "from": 0, "to": 10},{"id": "active", "from": 10, "to": 21},{"id": "recovery", "from": 21, "to": 42}], "rootMotion": {"mode": "controller", "curveId": "w_step_040"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 360}, "hitWindows": [{"id": "blade_r", "from": 10, "to": 14, "shapeTrack": "tb_stab", "damageType": "cut", "damageCoefficient": 0.2, "maxHitsPerTarget": 1, "hitstopTicks": 2},{"id": "blade_l", "from": 17, "to": 21, "shapeTrack": "tb_stab_l", "damageType": "cut", "damageCoefficient": 0.3, "maxHitsPerTarget": 1, "hitstopTicks": 2}], "cancelWindows": [{"from": 26, "to": 42, "into": ["tb_slash1", "tb_flurry", "roll"]}], "events": [{"tick": 9, "type": "sound", "id": "hb_swing_02"},{"tick": 10, "type": "trail_on", "id": "blade"},{"tick": 16, "type": "sound", "id": "hb_swing_02"},{"tick": 21, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "tb_stab", "momentum": {"gain": true}},
++    {"schemaVersion": 1, "actionId": "player.twin_blades.flurry", "clip": "tb_flurry_01", "tickRate": 60, "durationTicks": 86, "phases": [{"id": "startup", "from": 0, "to": 10},{"id": "active", "from": 10, "to": 62},{"id": "recovery", "from": 62, "to": 86}], "rootMotion": {"mode": "none"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 240}, "hitWindows": [{"id": "r1", "from": 10, "to": 15, "shapeTrack": "tb_flurry", "damageType": "cut", "damageCoefficient": 0.16, "maxHitsPerTarget": 1, "hitstopTicks": 2},{"id": "l1", "from": 23, "to": 28, "shapeTrack": "tb_flurry_l", "damageType": "cut", "damageCoefficient": 0.18, "maxHitsPerTarget": 1, "hitstopTicks": 2},{"id": "r2", "from": 36, "to": 41, "shapeTrack": "tb_flurry", "damageType": "cut", "damageCoefficient": 0.2, "maxHitsPerTarget": 1, "hitstopTicks": 2},{"id": "r3", "from": 56, "to": 62, "shapeTrack": "tb_flurry", "damageType": "cut", "damageCoefficient": 0.42, "maxHitsPerTarget": 1, "hitstopTicks": 4},{"id": "l3", "from": 56, "to": 62, "shapeTrack": "tb_flurry_l", "damageType": "cut", "damageCoefficient": 0.42, "maxHitsPerTarget": 1, "hitstopTicks": 4}], "cancelWindows": [{"from": 70, "to": 86, "into": ["roll"]}], "events": [{"tick": 9, "type": "sound", "id": "hb_swing_02"},{"tick": 10, "type": "trail_on", "id": "blade"},{"tick": 22, "type": "sound", "id": "hb_swing_02"},{"tick": 35, "type": "sound", "id": "hb_swing_02"},{"tick": 55, "type": "sound", "id": "hb_swing_01"},{"tick": 62, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "tb_flurry", "momentum": {"spendScale": [1,1,1.4,1.9]}},
++    {"schemaVersion": 1, "actionId": "player.twin_blades.draw_cross", "clip": "tb_draw_cross_01", "tickRate": 60, "durationTicks": 52, "phases": [{"id": "startup", "from": 0, "to": 30},{"id": "active", "from": 30, "to": 36},{"id": "recovery", "from": 36, "to": 52}], "rootMotion": {"mode": "controller", "curveId": "w_step_060"}, "turning": {"untilTick": 20, "maxDegreesPerSecond": 240}, "hitWindows": [{"id": "blade_r", "from": 30, "to": 36, "shapeTrack": "tb_draw_cross", "damageType": "cut", "damageCoefficient": 0.27, "maxHitsPerTarget": 1, "hitstopTicks": 2},{"id": "blade_l", "from": 30, "to": 36, "shapeTrack": "tb_draw_cross_l", "damageType": "cut", "damageCoefficient": 0.27, "maxHitsPerTarget": 1, "hitstopTicks": 2}], "cancelWindows": [{"from": 42, "to": 52, "into": ["tb_slash1", "tb_stab", "roll"]}], "events": [{"tick": 4, "type": "sound", "id": "hb_draw_01"},{"tick": 29, "type": "sound", "id": "hb_swing_01"},{"tick": 30, "type": "trail_on", "id": "blade"},{"tick": 36, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "tb_draw_cross", "momentum": {"gain": true}},
+     {"schemaVersion": 1, "actionId": "player.twin_blades.draw", "clip": "tb_draw_01", "tickRate": 60, "durationTicks": 30, "phases": [{"id": "startup", "from": 0, "to": 14},{"id": "recovery", "from": 14, "to": 30}], "rootMotion": {"mode": "none"}, "hitWindows": [], "cancelWindows": [], "events": [{"tick": 4, "type": "sound", "id": "hb_draw_01"}], "onFinish": "drawn_idle", "weaponTrack": "tb_draw"},
+     {"schemaVersion": 1, "actionId": "player.twin_blades.sheathe", "clip": "tb_sheathe_01", "tickRate": 60, "durationTicks": 34, "phases": [{"id": "startup", "from": 0, "to": 15},{"id": "recovery", "from": 15, "to": 34}], "rootMotion": {"mode": "none"}, "hitWindows": [], "cancelWindows": [], "events": [{"tick": 24, "type": "sound", "id": "hb_sheathe_01"}], "onFinish": "sheathed_idle", "weaponTrack": "tb_sheathe"}
+   ]
+--- a/public/data/actions/long_blade.json
++++ b/public/data/actions/long_blade.json
+@@ -2,12 +2,12 @@
+   "schemaVersion": 1,
+   "note": "tools/gen-weapons.mjs の出力。手で編集しない。数値は机上の初期値。",
+   "actions": [
+-    {"schemaVersion": 1, "actionId": "player.long_blade.kesa", "clip": "lb_kesa_01", "tickRate": 60, "durationTicks": 34, "phases": [{"id": "startup", "from": 0, "to": 12},{"id": "active", "from": 12, "to": 18},{"id": "recovery", "from": 18, "to": 34}], "rootMotion": {"mode": "controller", "curveId": "w_step_030"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 300}, "hitWindows": [{"id": "blade_main", "from": 12, "to": 18, "shapeTrack": "lb_kesa", "damageType": "cut", "damageCoefficient": 0.4, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 20, "to": 34, "into": ["lb_rise", "lb_back", "lb_helm", "roll"]}], "events": [{"tick": 11, "type": "sound", "id": "hb_swing_02"},{"tick": 12, "type": "trail_on", "id": "blade"},{"tick": 18, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "lb_kesa"},
+-    {"schemaVersion": 1, "actionId": "player.long_blade.rise", "clip": "lb_rise_01", "tickRate": 60, "durationTicks": 32, "phases": [{"id": "startup", "from": 0, "to": 9},{"id": "active", "from": 9, "to": 15},{"id": "recovery", "from": 15, "to": 32}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 6, "maxDegreesPerSecond": 300}, "hitWindows": [{"id": "blade_main", "from": 9, "to": 15, "shapeTrack": "lb_rise", "damageType": "cut", "damageCoefficient": 0.38, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 18, "to": 32, "into": ["lb_thrust", "lb_back", "lb_helm", "roll"]}], "events": [{"tick": 8, "type": "sound", "id": "hb_swing_02"},{"tick": 9, "type": "trail_on", "id": "blade"},{"tick": 15, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "lb_rise"},
+-    {"schemaVersion": 1, "actionId": "player.long_blade.thrust", "clip": "lb_thrust_01", "tickRate": 60, "durationTicks": 38, "phases": [{"id": "startup", "from": 0, "to": 12},{"id": "active", "from": 12, "to": 17},{"id": "recovery", "from": 17, "to": 38}], "rootMotion": {"mode": "controller", "curveId": "w_step_030"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 300}, "hitWindows": [{"id": "blade_main", "from": 12, "to": 17, "shapeTrack": "lb_thrust", "damageType": "cut", "damageCoefficient": 0.5, "maxHitsPerTarget": 1, "hitstopTicks": 4}], "cancelWindows": [{"from": 24, "to": 38, "into": ["lb_back", "lb_helm", "roll"]}], "events": [{"tick": 11, "type": "sound", "id": "hb_swing_02"},{"tick": 12, "type": "trail_on", "id": "blade"},{"tick": 17, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "lb_thrust"},
+-    {"schemaVersion": 1, "actionId": "player.long_blade.back_cut", "clip": "lb_back_01", "tickRate": 60, "durationTicks": 50, "phases": [{"id": "startup", "from": 0, "to": 10},{"id": "active", "from": 10, "to": 16},{"id": "recovery", "from": 16, "to": 50}], "rootMotion": {"mode": "controller", "curveId": "w_back_200"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 300}, "hitWindows": [{"id": "blade_main", "from": 10, "to": 16, "shapeTrack": "lb_back", "damageType": "cut", "damageCoefficient": 0.42, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 38, "to": 50, "into": ["lb_kesa", "lb_helm", "roll"]}], "events": [{"tick": 9, "type": "sound", "id": "hb_swing_02"},{"tick": 10, "type": "trail_on", "id": "blade"},{"tick": 16, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "lb_back"},
+-    {"schemaVersion": 1, "actionId": "player.long_blade.helm", "clip": "lb_helm_01", "tickRate": 60, "durationTicks": 70, "phases": [{"id": "startup", "from": 0, "to": 30},{"id": "active", "from": 30, "to": 36},{"id": "recovery", "from": 36, "to": 70}], "rootMotion": {"mode": "controller", "curveId": "w_step_040b"}, "turning": {"untilTick": 24, "maxDegreesPerSecond": 150}, "hitWindows": [{"id": "blade_main", "from": 30, "to": 36, "shapeTrack": "lb_helm", "damageType": "cut", "damageCoefficient": 1.15, "maxHitsPerTarget": 1, "hitstopTicks": 7}], "cancelWindows": [{"from": 54, "to": 70, "into": ["roll"]}], "events": [{"tick": 29, "type": "sound", "id": "hb_swing_01"},{"tick": 30, "type": "trail_on", "id": "blade"},{"tick": 36, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "lb_helm"},
+-    {"schemaVersion": 1, "actionId": "player.long_blade.draw_cut", "clip": "lb_draw_cut_01", "tickRate": 60, "durationTicks": 60, "phases": [{"id": "startup", "from": 0, "to": 30},{"id": "active", "from": 30, "to": 36},{"id": "recovery", "from": 36, "to": 60}], "rootMotion": {"mode": "controller", "curveId": "w_step_060"}, "turning": {"untilTick": 20, "maxDegreesPerSecond": 180}, "hitWindows": [{"id": "blade_main", "from": 30, "to": 36, "shapeTrack": "lb_draw_cut", "damageType": "cut", "damageCoefficient": 0.48, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 44, "to": 60, "into": ["lb_rise", "lb_back", "roll"]}], "events": [{"tick": 3, "type": "sound", "id": "hb_draw_01"},{"tick": 29, "type": "sound", "id": "hb_swing_02"},{"tick": 30, "type": "trail_on", "id": "blade"},{"tick": 36, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "lb_draw_cut"},
++    {"schemaVersion": 1, "actionId": "player.long_blade.kesa", "clip": "lb_kesa_01", "tickRate": 60, "durationTicks": 34, "phases": [{"id": "startup", "from": 0, "to": 12},{"id": "active", "from": 12, "to": 18},{"id": "recovery", "from": 18, "to": 34}], "rootMotion": {"mode": "controller", "curveId": "w_step_030"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 300}, "hitWindows": [{"id": "blade_main", "from": 12, "to": 18, "shapeTrack": "lb_kesa", "damageType": "cut", "damageCoefficient": 0.38, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 20, "to": 34, "into": ["lb_rise", "lb_back", "lb_helm", "roll"]}], "events": [{"tick": 11, "type": "sound", "id": "hb_swing_02"},{"tick": 12, "type": "trail_on", "id": "blade"},{"tick": 18, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "lb_kesa"},
++    {"schemaVersion": 1, "actionId": "player.long_blade.rise", "clip": "lb_rise_01", "tickRate": 60, "durationTicks": 32, "phases": [{"id": "startup", "from": 0, "to": 9},{"id": "active", "from": 9, "to": 15},{"id": "recovery", "from": 15, "to": 32}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 6, "maxDegreesPerSecond": 300}, "hitWindows": [{"id": "blade_main", "from": 9, "to": 15, "shapeTrack": "lb_rise", "damageType": "cut", "damageCoefficient": 0.44, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 18, "to": 32, "into": ["lb_thrust", "lb_back", "lb_helm", "roll"]}], "events": [{"tick": 8, "type": "sound", "id": "hb_swing_02"},{"tick": 9, "type": "trail_on", "id": "blade"},{"tick": 15, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "lb_rise"},
++    {"schemaVersion": 1, "actionId": "player.long_blade.thrust", "clip": "lb_thrust_01", "tickRate": 60, "durationTicks": 38, "phases": [{"id": "startup", "from": 0, "to": 12},{"id": "active", "from": 12, "to": 17},{"id": "recovery", "from": 17, "to": 38}], "rootMotion": {"mode": "controller", "curveId": "w_step_030"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 300}, "hitWindows": [{"id": "blade_main", "from": 12, "to": 17, "shapeTrack": "lb_thrust", "damageType": "cut", "damageCoefficient": 0.72, "maxHitsPerTarget": 1, "hitstopTicks": 4}], "cancelWindows": [{"from": 24, "to": 38, "into": ["lb_back", "lb_helm", "roll"]}], "events": [{"tick": 11, "type": "sound", "id": "hb_swing_02"},{"tick": 12, "type": "trail_on", "id": "blade"},{"tick": 17, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "lb_thrust"},
++    {"schemaVersion": 1, "actionId": "player.long_blade.back_cut", "clip": "lb_back_01", "tickRate": 60, "durationTicks": 50, "phases": [{"id": "startup", "from": 0, "to": 10},{"id": "active", "from": 10, "to": 16},{"id": "recovery", "from": 16, "to": 50}], "rootMotion": {"mode": "controller", "curveId": "w_back_200"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 300}, "hitWindows": [{"id": "blade_main", "from": 10, "to": 16, "shapeTrack": "lb_back", "damageType": "cut", "damageCoefficient": 0.32, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 38, "to": 50, "into": ["lb_kesa", "lb_helm", "roll"]}], "events": [{"tick": 9, "type": "sound", "id": "hb_swing_02"},{"tick": 10, "type": "trail_on", "id": "blade"},{"tick": 16, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "lb_back"},
++    {"schemaVersion": 1, "actionId": "player.long_blade.helm", "clip": "lb_helm_01", "tickRate": 60, "durationTicks": 70, "phases": [{"id": "startup", "from": 0, "to": 30},{"id": "active", "from": 30, "to": 36},{"id": "recovery", "from": 36, "to": 70}], "rootMotion": {"mode": "controller", "curveId": "w_step_040b"}, "turning": {"untilTick": 24, "maxDegreesPerSecond": 150}, "hitWindows": [{"id": "blade_main", "from": 30, "to": 36, "shapeTrack": "lb_helm", "damageType": "cut", "damageCoefficient": 1.42, "maxHitsPerTarget": 1, "hitstopTicks": 7}], "cancelWindows": [{"from": 54, "to": 70, "into": ["roll"]}], "events": [{"tick": 29, "type": "sound", "id": "hb_swing_01"},{"tick": 30, "type": "trail_on", "id": "blade"},{"tick": 36, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "lb_helm"},
++    {"schemaVersion": 1, "actionId": "player.long_blade.draw_cut", "clip": "lb_draw_cut_01", "tickRate": 60, "durationTicks": 60, "phases": [{"id": "startup", "from": 0, "to": 30},{"id": "active", "from": 30, "to": 36},{"id": "recovery", "from": 36, "to": 60}], "rootMotion": {"mode": "controller", "curveId": "w_step_060"}, "turning": {"untilTick": 20, "maxDegreesPerSecond": 180}, "hitWindows": [{"id": "blade_main", "from": 30, "to": 36, "shapeTrack": "lb_draw_cut", "damageType": "cut", "damageCoefficient": 0.56, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 44, "to": 60, "into": ["lb_rise", "lb_back", "roll"]}], "events": [{"tick": 3, "type": "sound", "id": "hb_draw_01"},{"tick": 29, "type": "sound", "id": "hb_swing_02"},{"tick": 30, "type": "trail_on", "id": "blade"},{"tick": 36, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "lb_draw_cut"},
+     {"schemaVersion": 1, "actionId": "player.long_blade.draw", "clip": "lb_draw_01", "tickRate": 60, "durationTicks": 38, "phases": [{"id": "startup", "from": 0, "to": 17},{"id": "recovery", "from": 17, "to": 38}], "rootMotion": {"mode": "none"}, "hitWindows": [], "cancelWindows": [], "events": [{"tick": 4, "type": "sound", "id": "hb_draw_01"}], "onFinish": "drawn_idle", "weaponTrack": "lb_draw"},
+     {"schemaVersion": 1, "actionId": "player.long_blade.sheathe", "clip": "lb_sheathe_01", "tickRate": 60, "durationTicks": 40, "phases": [{"id": "startup", "from": 0, "to": 18},{"id": "recovery", "from": 18, "to": 40}], "rootMotion": {"mode": "none"}, "hitWindows": [], "cancelWindows": [], "events": [{"tick": 28, "type": "sound", "id": "hb_sheathe_01"}], "onFinish": "sheathed_idle", "weaponTrack": "lb_sheathe"}
+   ]
+--- a/public/data/actions/long_lance.json
++++ b/public/data/actions/long_lance.json
+@@ -2,14 +2,14 @@
+   "schemaVersion": 1,
+   "note": "tools/gen-weapons.mjs の出力。手で編集しない。数値は机上の初期値。",
+   "actions": [
+-    {"schemaVersion": 1, "actionId": "player.long_lance.thrust1", "clip": "ll_thrust_01", "tickRate": 60, "durationTicks": 38, "phases": [{"id": "startup", "from": 0, "to": 10},{"id": "active", "from": 10, "to": 15},{"id": "recovery", "from": 15, "to": 38}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 120}, "hitWindows": [{"id": "tip", "from": 10, "to": 15, "shapeTrack": "ll_thrust", "damageType": "cut", "damageCoefficient": 0.5, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 18, "to": 38, "into": ["ll_thrust2", "ll_high", "roll"]}], "events": [{"tick": 9, "type": "sound", "id": "hb_swing_02"},{"tick": 10, "type": "trail_on", "id": "blade"},{"tick": 15, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "ll_thrust"},
+-    {"schemaVersion": 1, "actionId": "player.long_lance.thrust2", "clip": "ll_thrust_01", "tickRate": 60, "durationTicks": 38, "phases": [{"id": "startup", "from": 0, "to": 10},{"id": "active", "from": 10, "to": 15},{"id": "recovery", "from": 15, "to": 38}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 120}, "hitWindows": [{"id": "tip", "from": 10, "to": 15, "shapeTrack": "ll_thrust", "damageType": "cut", "damageCoefficient": 0.5, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 18, "to": 38, "into": ["ll_thrust3", "ll_high", "roll"]}], "events": [{"tick": 9, "type": "sound", "id": "hb_swing_02"},{"tick": 10, "type": "trail_on", "id": "blade"},{"tick": 15, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "ll_thrust"},
+-    {"schemaVersion": 1, "actionId": "player.long_lance.thrust3", "clip": "ll_thrust_01", "tickRate": 60, "durationTicks": 38, "phases": [{"id": "startup", "from": 0, "to": 10},{"id": "active", "from": 10, "to": 15},{"id": "recovery", "from": 15, "to": 38}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 120}, "hitWindows": [{"id": "tip", "from": 10, "to": 15, "shapeTrack": "ll_thrust", "damageType": "cut", "damageCoefficient": 0.62, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 18, "to": 38, "into": ["roll"]}], "events": [{"tick": 9, "type": "sound", "id": "hb_swing_02"},{"tick": 10, "type": "trail_on", "id": "blade"},{"tick": 15, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "ll_thrust"},
+-    {"schemaVersion": 1, "actionId": "player.long_lance.high", "clip": "ll_high_01", "tickRate": 60, "durationTicks": 42, "phases": [{"id": "startup", "from": 0, "to": 12},{"id": "active", "from": 12, "to": 17},{"id": "recovery", "from": 17, "to": 42}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 10, "maxDegreesPerSecond": 120}, "hitWindows": [{"id": "tip", "from": 12, "to": 17, "shapeTrack": "ll_high", "damageType": "cut", "damageCoefficient": 0.55, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 22, "to": 42, "into": ["ll_thrust1", "roll"]}], "events": [{"tick": 11, "type": "sound", "id": "hb_swing_02"},{"tick": 12, "type": "trail_on", "id": "blade"},{"tick": 17, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "ll_high"},
+-    {"schemaVersion": 1, "actionId": "player.long_lance.guard_thrust", "clip": "ll_guard_thrust_01", "tickRate": 60, "durationTicks": 44, "phases": [{"id": "startup", "from": 0, "to": 14},{"id": "active", "from": 14, "to": 19},{"id": "recovery", "from": 19, "to": 44}], "rootMotion": {"mode": "none"}, "hitWindows": [{"id": "tip", "from": 14, "to": 19, "shapeTrack": "ll_guard_thrust", "damageType": "cut", "damageCoefficient": 0.36, "maxHitsPerTarget": 1, "hitstopTicks": 2}], "cancelWindows": [{"from": 30, "to": 44, "into": ["roll"]}], "events": [{"tick": 13, "type": "sound", "id": "hb_swing_02"},{"tick": 14, "type": "trail_on", "id": "blade"},{"tick": 19, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "ll_guard_thrust", "guardWindows": [{"from": 0, "to": 44}]},
++    {"schemaVersion": 1, "actionId": "player.long_lance.thrust1", "clip": "ll_thrust_01", "tickRate": 60, "durationTicks": 38, "phases": [{"id": "startup", "from": 0, "to": 10},{"id": "active", "from": 10, "to": 15},{"id": "recovery", "from": 15, "to": 38}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 120}, "hitWindows": [{"id": "tip", "from": 10, "to": 15, "shapeTrack": "ll_thrust", "damageType": "cut", "damageCoefficient": 0.36, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 18, "to": 38, "into": ["ll_thrust2", "ll_high", "roll"]}], "events": [{"tick": 9, "type": "sound", "id": "hb_swing_02"},{"tick": 10, "type": "trail_on", "id": "blade"},{"tick": 15, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "ll_thrust"},
++    {"schemaVersion": 1, "actionId": "player.long_lance.thrust2", "clip": "ll_thrust_01", "tickRate": 60, "durationTicks": 38, "phases": [{"id": "startup", "from": 0, "to": 10},{"id": "active", "from": 10, "to": 15},{"id": "recovery", "from": 15, "to": 38}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 120}, "hitWindows": [{"id": "tip", "from": 10, "to": 15, "shapeTrack": "ll_thrust", "damageType": "cut", "damageCoefficient": 0.42, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 18, "to": 38, "into": ["ll_thrust3", "ll_high", "roll"]}], "events": [{"tick": 9, "type": "sound", "id": "hb_swing_02"},{"tick": 10, "type": "trail_on", "id": "blade"},{"tick": 15, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "ll_thrust"},
++    {"schemaVersion": 1, "actionId": "player.long_lance.thrust3", "clip": "ll_thrust_01", "tickRate": 60, "durationTicks": 38, "phases": [{"id": "startup", "from": 0, "to": 10},{"id": "active", "from": 10, "to": 15},{"id": "recovery", "from": 15, "to": 38}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 8, "maxDegreesPerSecond": 120}, "hitWindows": [{"id": "tip", "from": 10, "to": 15, "shapeTrack": "ll_thrust", "damageType": "cut", "damageCoefficient": 0.72, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 18, "to": 38, "into": ["roll"]}], "events": [{"tick": 9, "type": "sound", "id": "hb_swing_02"},{"tick": 10, "type": "trail_on", "id": "blade"},{"tick": 15, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "ll_thrust"},
++    {"schemaVersion": 1, "actionId": "player.long_lance.high", "clip": "ll_high_01", "tickRate": 60, "durationTicks": 42, "phases": [{"id": "startup", "from": 0, "to": 12},{"id": "active", "from": 12, "to": 17},{"id": "recovery", "from": 17, "to": 42}], "rootMotion": {"mode": "controller", "curveId": "w_step_015"}, "turning": {"untilTick": 10, "maxDegreesPerSecond": 120}, "hitWindows": [{"id": "tip", "from": 12, "to": 17, "shapeTrack": "ll_high", "damageType": "cut", "damageCoefficient": 0.38, "maxHitsPerTarget": 1, "hitstopTicks": 3}], "cancelWindows": [{"from": 22, "to": 42, "into": ["ll_thrust1", "roll"]}], "events": [{"tick": 11, "type": "sound", "id": "hb_swing_02"},{"tick": 12, "type": "trail_on", "id": "blade"},{"tick": 17, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "ll_high"},
++    {"schemaVersion": 1, "actionId": "player.long_lance.guard_thrust", "clip": "ll_guard_thrust_01", "tickRate": 60, "durationTicks": 44, "phases": [{"id": "startup", "from": 0, "to": 14},{"id": "active", "from": 14, "to": 19},{"id": "recovery", "from": 19, "to": 44}], "rootMotion": {"mode": "none"}, "hitWindows": [{"id": "tip", "from": 14, "to": 19, "shapeTrack": "ll_guard_thrust", "damageType": "cut", "damageCoefficient": 0.3, "maxHitsPerTarget": 1, "hitstopTicks": 2}], "cancelWindows": [{"from": 30, "to": 44, "into": ["roll"]}], "events": [{"tick": 13, "type": "sound", "id": "hb_swing_02"},{"tick": 14, "type": "trail_on", "id": "blade"},{"tick": 19, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "ll_guard_thrust", "guardWindows": [{"from": 0, "to": 44}]},
+     {"schemaVersion": 1, "actionId": "player.long_lance.counter", "clip": "ll_counter_01", "tickRate": 60, "durationTicks": 60, "phases": [{"id": "startup", "from": 0, "to": 27},{"id": "recovery", "from": 27, "to": 60}], "rootMotion": {"mode": "none"}, "hitWindows": [], "cancelWindows": [], "events": [{"tick": 2, "type": "sound", "id": "guard"}], "onFinish": "drawn_idle", "weaponTrack": "ll_counter", "staminaCost": 15, "counter": {"from": 4, "to": 50, "into": "player.long_lance.counter_thrust"}},
+-    {"schemaVersion": 1, "actionId": "player.long_lance.counter_thrust", "clip": "ll_counter_thrust_01", "tickRate": 60, "durationTicks": 44, "phases": [{"id": "startup", "from": 0, "to": 9},{"id": "active", "from": 9, "to": 15},{"id": "recovery", "from": 15, "to": 44}], "rootMotion": {"mode": "controller", "curveId": "w_step_030"}, "hitWindows": [{"id": "tip", "from": 9, "to": 15, "shapeTrack": "ll_counter_thrust", "damageType": "cut", "damageCoefficient": 1.6, "maxHitsPerTarget": 1, "hitstopTicks": 7}], "cancelWindows": [{"from": 28, "to": 44, "into": ["ll_thrust1", "roll"]}], "events": [{"tick": 8, "type": "sound", "id": "hb_swing_01"},{"tick": 9, "type": "trail_on", "id": "blade"},{"tick": 15, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "ll_counter_thrust", "invulnerable": [{"from": 0, "to": 9}]},
+-    {"schemaVersion": 1, "actionId": "player.long_lance.lunge", "clip": "ll_lunge_01", "tickRate": 60, "durationTicks": 66, "phases": [{"id": "startup", "from": 0, "to": 34},{"id": "active", "from": 34, "to": 46},{"id": "recovery", "from": 46, "to": 66}], "rootMotion": {"mode": "controller", "curveId": "w_lunge_200"}, "turning": {"untilTick": 20, "maxDegreesPerSecond": 90}, "hitWindows": [{"id": "tip", "from": 34, "to": 46, "shapeTrack": "ll_lunge", "damageType": "cut", "damageCoefficient": 0.7, "maxHitsPerTarget": 1, "hitstopTicks": 5}], "cancelWindows": [{"from": 52, "to": 66, "into": ["ll_thrust1", "roll"]}], "events": [{"tick": 4, "type": "sound", "id": "hb_draw_01"},{"tick": 32, "type": "sound", "id": "hb_swing_01"},{"tick": 34, "type": "trail_on", "id": "blade"},{"tick": 46, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "ll_lunge"},
++    {"schemaVersion": 1, "actionId": "player.long_lance.counter_thrust", "clip": "ll_counter_thrust_01", "tickRate": 60, "durationTicks": 44, "phases": [{"id": "startup", "from": 0, "to": 9},{"id": "active", "from": 9, "to": 15},{"id": "recovery", "from": 15, "to": 44}], "rootMotion": {"mode": "controller", "curveId": "w_step_030"}, "hitWindows": [{"id": "tip", "from": 9, "to": 15, "shapeTrack": "ll_counter_thrust", "damageType": "cut", "damageCoefficient": 1.55, "maxHitsPerTarget": 1, "hitstopTicks": 7}], "cancelWindows": [{"from": 28, "to": 44, "into": ["ll_thrust1", "roll"]}], "events": [{"tick": 8, "type": "sound", "id": "hb_swing_01"},{"tick": 9, "type": "trail_on", "id": "blade"},{"tick": 15, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "ll_counter_thrust", "invulnerable": [{"from": 0, "to": 9}]},
++    {"schemaVersion": 1, "actionId": "player.long_lance.lunge", "clip": "ll_lunge_01", "tickRate": 60, "durationTicks": 66, "phases": [{"id": "startup", "from": 0, "to": 34},{"id": "active", "from": 34, "to": 46},{"id": "recovery", "from": 46, "to": 66}], "rootMotion": {"mode": "controller", "curveId": "w_lunge_200"}, "turning": {"untilTick": 20, "maxDegreesPerSecond": 90}, "hitWindows": [{"id": "tip", "from": 34, "to": 46, "shapeTrack": "ll_lunge", "damageType": "cut", "damageCoefficient": 0.82, "maxHitsPerTarget": 1, "hitstopTicks": 5}], "cancelWindows": [{"from": 52, "to": 66, "into": ["ll_thrust1", "roll"]}], "events": [{"tick": 4, "type": "sound", "id": "hb_draw_01"},{"tick": 32, "type": "sound", "id": "hb_swing_01"},{"tick": 34, "type": "trail_on", "id": "blade"},{"tick": 46, "type": "trail_off", "id": "blade"}], "onFinish": "drawn_idle", "weaponTrack": "ll_lunge"},
+     {"schemaVersion": 1, "actionId": "player.long_lance.hop", "clip": "ll_hop_01", "tickRate": 60, "durationTicks": 26, "phases": [{"id": "startup", "from": 0, "to": 12},{"id": "recovery", "from": 12, "to": 26}], "rootMotion": {"mode": "controller", "curveId": "w_hop_120"}, "hitWindows": [], "cancelWindows": [{"from": 18, "to": 26, "into": ["roll"]}], "events": [{"tick": 3, "type": "sound", "id": "roll_01"}], "onFinish": "drawn_idle", "weaponTrack": "ll_hold", "staminaCost": 14, "invulnerable": [{"from": 3, "to": 11}]},
+     {"schemaVersion": 1, "actionId": "player.long_lance.draw", "clip": "ll_draw_01", "tickRate": 60, "durationTicks": 34, "phases": [{"id": "startup", "from": 0, "to": 15},{"id": "recovery", "from": 15, "to": 34}], "rootMotion": {"mode": "none"}, "hitWindows": [], "cancelWindows": [], "events": [{"tick": 5, "type": "sound", "id": "hb_draw_01"}], "onFinish": "drawn_idle", "weaponTrack": "ll_draw"},
+     {"schemaVersion": 1, "actionId": "player.long_lance.sheathe", "clip": "ll_sheathe_01", "tickRate": 60, "durationTicks": 40, "phases": [{"id": "startup", "from": 0, "to": 18},{"id": "recovery", "from": 18, "to": 40}], "rootMotion": {"mode": "none"}, "hitWindows": [], "cancelWindows": [], "events": [{"tick": 28, "type": "sound", "id": "hb_sheathe_01"}], "onFinish": "sheathed_idle", "weaponTrack": "ll_sheathe"}
+--- a/public/data/actions/ring_bow.json
++++ b/public/data/actions/ring_bow.json
+@@ -2,8 +2,8 @@
+   "schemaVersion": 1,
+   "note": "tools/gen-weapons.mjs の出力。手で編集しない。数値は机上の初期値。",
+   "actions": [
+-    {"schemaVersion": 1, "actionId": "player.ring_bow.shot", "clip": "rb_shot_01", "tickRate": 60, "durationTicks": 52, "phases": [{"id": "startup", "from": 0, "to": 14},{"id": "active", "from": 14, "to": 18},{"id": "recovery", "from": 18, "to": 52}], "rootMotion": {"mode": "none"}, "turning": {"untilTick": 18, "maxDegreesPerSecond": 240}, "hitWindows": [], "cancelWindows": [{"from": 14, "to": 15, "into": ["roll"]},{"from": 32, "to": 52, "into": ["rb_shot", "rb_spread", "roll"]}], "events": [{"tick": 3, "type": "sound", "id": "hb_draw_01"},{"tick": 18, "type": "sound", "id": "orb_throw"}], "onFinish": "drawn_idle", "weaponTrack": "rb_shot", "charge": {"holdTick": 14, "button": "main", "levelTicks": [30,70,120], "maxHoldTicks": 240, "coefficientScale": [1,1,1,1], "hitstopBonus": [0,0,0,0], "staminaPerSec": 12}, "freeMove": {"speed": 1.6, "turnDegPerSec": 240, "from": 0, "to": 18}, "shoot": [{"tick": 18, "count": 1, "spreadDeg": 0, "speed": [26,32,40,48], "coefficient": [0.18,0.3,0.55,0.9]}]},
+-    {"schemaVersion": 1, "actionId": "player.ring_bow.spread", "clip": "rb_spread_01", "tickRate": 60, "durationTicks": 46, "phases": [{"id": "startup", "from": 0, "to": 12},{"id": "active", "from": 12, "to": 16},{"id": "recovery", "from": 16, "to": 46}], "rootMotion": {"mode": "none"}, "turning": {"untilTick": 14, "maxDegreesPerSecond": 300}, "hitWindows": [], "cancelWindows": [{"from": 30, "to": 46, "into": ["rb_shot", "rb_spread", "roll"]}], "events": [{"tick": 16, "type": "sound", "id": "orb_throw"}], "onFinish": "drawn_idle", "weaponTrack": "rb_spread", "shoot": [{"tick": 16, "count": 3, "spreadDeg": 16, "speed": [30], "coefficient": [0.22]}]},
++    {"schemaVersion": 1, "actionId": "player.ring_bow.shot", "clip": "rb_shot_01", "tickRate": 60, "durationTicks": 52, "phases": [{"id": "startup", "from": 0, "to": 14},{"id": "active", "from": 14, "to": 19},{"id": "recovery", "from": 19, "to": 52}], "rootMotion": {"mode": "none"}, "turning": {"untilTick": 18, "maxDegreesPerSecond": 240}, "hitWindows": [], "cancelWindows": [{"from": 14, "to": 15, "into": ["roll"]},{"from": 32, "to": 52, "into": ["rb_shot", "rb_spread", "roll"]}], "events": [{"tick": 3, "type": "sound", "id": "hb_draw_01"},{"tick": 18, "type": "sound", "id": "orb_throw"}], "onFinish": "drawn_idle", "weaponTrack": "rb_shot", "charge": {"holdTick": 14, "button": "main", "levelTicks": [30,70,120], "maxHoldTicks": 240, "coefficientScale": [1,1,1,1], "hitstopBonus": [0,0,0,0], "staminaPerSec": 12}, "freeMove": {"speed": 1.6, "turnDegPerSec": 240, "from": 0, "to": 18}, "shoot": [{"tick": 18, "count": 1, "spreadDeg": 0, "speed": [26,32,40,48], "coefficient": [0.22,0.58,1.12,1.85]}]},
++    {"schemaVersion": 1, "actionId": "player.ring_bow.spread", "clip": "rb_spread_01", "tickRate": 60, "durationTicks": 46, "phases": [{"id": "startup", "from": 0, "to": 12},{"id": "active", "from": 12, "to": 17},{"id": "recovery", "from": 17, "to": 46}], "rootMotion": {"mode": "none"}, "turning": {"untilTick": 14, "maxDegreesPerSecond": 300}, "hitWindows": [], "cancelWindows": [{"from": 30, "to": 46, "into": ["rb_shot", "rb_spread", "roll"]}], "events": [{"tick": 16, "type": "sound", "id": "orb_throw"}], "onFinish": "drawn_idle", "weaponTrack": "rb_spread", "shoot": [{"tick": 16, "count": 3, "spreadDeg": 16, "speed": [30], "coefficient": [0.17]}]},
+     {"schemaVersion": 1, "actionId": "player.ring_bow.draw", "clip": "rb_draw_01", "tickRate": 60, "durationTicks": 28, "phases": [{"id": "startup", "from": 0, "to": 13},{"id": "recovery", "from": 13, "to": 28}], "rootMotion": {"mode": "none"}, "hitWindows": [], "cancelWindows": [], "events": [{"tick": 4, "type": "sound", "id": "hb_draw_01"}], "onFinish": "drawn_idle", "weaponTrack": "rb_draw"},
+     {"schemaVersion": 1, "actionId": "player.ring_bow.sheathe", "clip": "rb_sheathe_01", "tickRate": 60, "durationTicks": 32, "phases": [{"id": "startup", "from": 0, "to": 14},{"id": "recovery", "from": 14, "to": 32}], "rootMotion": {"mode": "none"}, "hitWindows": [], "cancelWindows": [], "events": [{"tick": 20, "type": "sound", "id": "hb_sheathe_01"}], "onFinish": "sheathed_idle", "weaponTrack": "rb_sheathe"}
+   ]
+--- a/tools/weapons/guard_blade.mjs
++++ b/tools/weapons/guard_blade.mjs
+@@ -164,11 +164,11 @@
+ 
+   // ---- 技のデータ ----
+   const cut = (t, coef, o = {}) => [{ id: 'blade_main', track: t, coef, hitstop: 2, ...o }];
+-  action('slash1', { clip: 'gb_slash1_01', dur: 26, active: [8, 13], track: 'gb_slash1', hits: cut('gb_slash1', 0.28), curve: 'w_step_015', turn: [6, 360], sound: [7, 'hb_swing_02'], cancels: [[14, 26, ['gb_slash2', 'gb_bash', 'roll']]] });
++  action('slash1', { clip: 'gb_slash1_01', dur: 26, active: [8, 13], track: 'gb_slash1', hits: cut('gb_slash1', 0.24), curve: 'w_step_015', turn: [6, 360], sound: [7, 'hb_swing_02'], cancels: [[14, 26, ['gb_slash2', 'gb_bash', 'roll']]] });
+   action('slash2', { clip: 'gb_slash2_01', dur: 26, active: [7, 12], track: 'gb_slash2', hits: cut('gb_slash2', 0.3), curve: 'w_step_015', turn: [5, 360], sound: [6, 'hb_swing_02'], cancels: [[13, 26, ['gb_thrust', 'gb_bash', 'roll']]] });
+-  action('thrust', { clip: 'gb_thrust_01', dur: 36, active: [11, 16], track: 'gb_thrust', hits: cut('gb_thrust', 0.42, { hitstop: 3 }), curve: 'w_step_030', turn: [8, 360], sound: [10, 'hb_swing_02'], cancels: [[23, 36, ['gb_bash', 'roll']]] });
+-  action('bash', { clip: 'gb_bash_01', dur: 36, active: [11, 16], track: 'gb_bash_sword', offhandTrack: 'gb_bash_shield', hits: [{ id: 'shield', track: 'gb_bash_shield', coef: 0.25, type: 'blunt', hitstop: 4 }], trail: false, curve: 'w_step_040', turn: [8, 360], sound: [10, 'hb_swing_01'], cancels: [[22, 36, ['gb_slash1', 'roll']]] });
+-  action('lunge', { clip: 'gb_lunge_01', dur: 50, active: [22, 28], track: 'gb_lunge', hits: cut('gb_lunge', 0.45, { hitstop: 3 }), curve: 'w_lunge_120', turn: [12, 240], sound: [21, 'hb_swing_02'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }], cancels: [[35, 50, ['gb_slash1', 'gb_bash', 'roll']]] });
++  action('thrust', { clip: 'gb_thrust_01', dur: 36, active: [11, 16], track: 'gb_thrust', hits: cut('gb_thrust', 0.56, { hitstop: 3 }), curve: 'w_step_030', turn: [8, 360], sound: [10, 'hb_swing_02'], cancels: [[23, 36, ['gb_bash', 'roll']]] });
++  action('bash', { clip: 'gb_bash_01', dur: 36, active: [11, 16], track: 'gb_bash_sword', offhandTrack: 'gb_bash_shield', hits: [{ id: 'shield', track: 'gb_bash_shield', coef: 0.28, type: 'blunt', hitstop: 4 }], trail: false, curve: 'w_step_040', turn: [8, 360], sound: [10, 'hb_swing_01'], cancels: [[22, 36, ['gb_slash1', 'roll']]] });
++  action('lunge', { clip: 'gb_lunge_01', dur: 50, active: [22, 28], track: 'gb_lunge', hits: cut('gb_lunge', 0.48, { hitstop: 3 }), curve: 'w_lunge_120', turn: [12, 240], sound: [21, 'hb_swing_02'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }], cancels: [[35, 50, ['gb_slash1', 'gb_bash', 'roll']]] });
+   action('draw', { clip: 'gb_draw_01', dur: 26, track: 'gb_draw', sound: [3, 'hb_draw_01'] });
+   action('sheathe', { clip: 'gb_sheathe_01', dur: 30, track: 'gb_sheathe', sound: [18, 'hb_sheathe_01'], finish: 'sheathed_idle' });
+ }
+--- a/tools/weapons/war_maul.mjs
++++ b/tools/weapons/war_maul.mjs
+@@ -148,12 +148,12 @@
+ 
+   // ---- 技のデータ ----
+   const hit = (t, coef, o = {}) => [{ id: 'head', track: t, coef, type: 'blunt', hitstop: 5, ...o }];
+-  action('smash', { clip: 'wm_smash_01', dur: 56, active: [22, 30], track: 'wm_smash', hits: hit('wm_smash', 0.62), curve: 'w_step_030b', turn: [12, 180], sound: [20, 'hb_swing_01'], events: [{ tick: 30, type: 'sound', id: 'ground_slam' }], cancels: [[36, 56, ['wm_swing', 'roll']]] });
+-  action('swing', { clip: 'wm_swing_01', dur: 56, active: [19, 34], track: 'wm_swing', hits: hit('wm_swing', 0.58), turn: [14, 180], sound: [17, 'hb_swing_01'], cancels: [[40, 56, ['wm_smash', 'roll']]] });
++  action('smash', { clip: 'wm_smash_01', dur: 56, active: [22, 30], track: 'wm_smash', hits: hit('wm_smash', 0.6), curve: 'w_step_030b', turn: [12, 180], sound: [20, 'hb_swing_01'], events: [{ tick: 30, type: 'sound', id: 'ground_slam' }], cancels: [[36, 56, ['wm_swing', 'roll']]] });
++  action('swing', { clip: 'wm_swing_01', dur: 56, active: [19, 34], track: 'wm_swing', hits: hit('wm_swing', 0.76), turn: [14, 180], sound: [17, 'hb_swing_01'], cancels: [[40, 56, ['wm_smash', 'roll']]] });
+   // 溜め叩き: 頭上で溜める。段階（0〜3）で威力が上がる。
+-  action('charge', { clip: 'wm_charge_01', dur: 60, active: [24, 32], track: 'wm_charge', hits: hit('wm_charge', 0.6, { hitstop: 6 }), curve: 'w_step_030b', turn: [14, 150], sound: [22, 'hb_swing_01'], events: [{ tick: 32, type: 'sound', id: 'ground_slam' }],
+-    charge: { holdTick: 14, button: 'sub', levelTicks: [30, 60, 95], maxHoldTicks: 160, coefficientScale: [1, 1.35, 1.75, 2.3], hitstopBonus: [0, 1, 2, 4] }, cancels: [[42, 60, ['wm_swing', 'roll']]] });
+-  action('draw_smash', { clip: 'wm_draw_smash_01', dur: 68, active: [36, 44], track: 'wm_draw_smash', hits: hit('wm_draw_smash', 0.6), curve: 'w_step_060', turn: [20, 150], sound: [34, 'hb_swing_01'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }, { tick: 44, type: 'sound', id: 'ground_slam' }], cancels: [[54, 68, ['wm_swing', 'roll']]] });
++  action('charge', { clip: 'wm_charge_01', dur: 60, active: [24, 32], track: 'wm_charge', hits: hit('wm_charge', 0.72, { hitstop: 6 }), curve: 'w_step_030b', turn: [14, 150], sound: [22, 'hb_swing_01'], events: [{ tick: 32, type: 'sound', id: 'ground_slam' }],
++    charge: { holdTick: 14, button: 'sub', levelTicks: [30, 60, 95], maxHoldTicks: 160, coefficientScale: [1, 1.7, 2.55, 3.8], hitstopBonus: [0, 1, 2, 4] }, cancels: [[42, 60, ['wm_swing', 'roll']]] });
++  action('draw_smash', { clip: 'wm_draw_smash_01', dur: 68, active: [36, 44], track: 'wm_draw_smash', hits: hit('wm_draw_smash', 0.76), curve: 'w_step_060', turn: [20, 150], sound: [34, 'hb_swing_01'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }, { tick: 44, type: 'sound', id: 'ground_slam' }], cancels: [[54, 68, ['wm_swing', 'roll']]] });
+   action('draw', { clip: 'wm_draw_01', dur: 40, track: 'wm_draw', sound: [4, 'hb_draw_01'] });
+   action('sheathe', { clip: 'wm_sheathe_01', dur: 42, track: 'wm_sheathe', sound: [29, 'hb_sheathe_01'], finish: 'sheathed_idle' });
+ }
+--- a/tools/weapons/twin_blades.mjs
++++ b/tools/weapons/twin_blades.mjs
+@@ -158,15 +158,15 @@
+   const R = (t, coef, o = {}) => ({ id: 'blade_r', track: t, coef, hitstop: 2, ...o });
+   const L = (t, coef, o = {}) => ({ id: 'blade_l', track: `${t}_l`, coef, hitstop: 2, ...o });
+   const gain = { gain: true };
+-  action('slash1', { clip: 'tb_slash1_01', dur: 24, active: [8, 13], track: 'tb_slash1', hits: [R('tb_slash1', 0.2)], curve: 'w_step_015', turn: [6, 360], momentum: gain, sound: [7, 'hb_swing_02'], cancels: [[14, 24, ['tb_slash2', 'tb_stab', 'tb_flurry', 'roll']]] });
+-  action('slash2', { clip: 'tb_slash2_01', dur: 24, active: [7, 12], track: 'tb_slash2', hits: [L('tb_slash2', 0.2)], curve: 'w_step_015', turn: [5, 360], momentum: gain, sound: [6, 'hb_swing_02'], cancels: [[13, 24, ['tb_cross', 'tb_stab', 'tb_flurry', 'roll']]] });
+-  action('cross', { clip: 'tb_cross_01', dur: 36, active: [11, 17], track: 'tb_cross', hits: [R('tb_cross', 0.22, { hitstop: 3 }), L('tb_cross', 0.22, { hitstop: 3 })], curve: 'w_step_030', turn: [8, 360], momentum: gain, sound: [10, 'hb_swing_01'], cancels: [[22, 36, ['tb_slash1', 'tb_stab', 'tb_flurry', 'roll']]] });
+-  action('stab', { clip: 'tb_stab_01', dur: 42, active: [10, 20], track: 'tb_stab', hits: [R('tb_stab', 0.2, { from: 10, to: 14 }), L('tb_stab', 0.24, { from: 17, to: 21 })], curve: 'w_step_040', turn: [8, 360], momentum: gain, sound: [9, 'hb_swing_02'], events: [{ tick: 16, type: 'sound', id: 'hb_swing_02' }], cancels: [[26, 42, ['tb_slash1', 'tb_flurry', 'roll']]] });
++  action('slash1', { clip: 'tb_slash1_01', dur: 24, active: [8, 13], track: 'tb_slash1', hits: [R('tb_slash1', 0.18)], curve: 'w_step_015', turn: [6, 360], momentum: gain, sound: [7, 'hb_swing_02'], cancels: [[14, 24, ['tb_slash2', 'tb_stab', 'tb_flurry', 'roll']]] });
++  action('slash2', { clip: 'tb_slash2_01', dur: 24, active: [7, 12], track: 'tb_slash2', hits: [L('tb_slash2', 0.22)], curve: 'w_step_015', turn: [5, 360], momentum: gain, sound: [6, 'hb_swing_02'], cancels: [[13, 24, ['tb_cross', 'tb_stab', 'tb_flurry', 'roll']]] });
++  action('cross', { clip: 'tb_cross_01', dur: 36, active: [11, 17], track: 'tb_cross', hits: [R('tb_cross', 0.3, { hitstop: 3 }), L('tb_cross', 0.3, { hitstop: 3 })], curve: 'w_step_030', turn: [8, 360], momentum: gain, sound: [10, 'hb_swing_01'], cancels: [[22, 36, ['tb_slash1', 'tb_stab', 'tb_flurry', 'roll']]] });
++  action('stab', { clip: 'tb_stab_01', dur: 42, active: [10, 21], track: 'tb_stab', hits: [R('tb_stab', 0.2, { from: 10, to: 14 }), L('tb_stab', 0.3, { from: 17, to: 21 })], curve: 'w_step_040', turn: [8, 360], momentum: gain, sound: [9, 'hb_swing_02'], events: [{ tick: 16, type: 'sound', id: 'hb_swing_02' }], cancels: [[26, 42, ['tb_slash1', 'tb_flurry', 'roll']]] });
+   // 連ね斬り: 5 回当たる。勢いをすべて使い、その段階で威力が決まる。
+   action('flurry', { clip: 'tb_flurry_01', dur: 86, active: [10, 62], track: 'tb_flurry',
+-    hits: [R('tb_flurry', 0.2, { id: 'r1', from: 10, to: 15 }), L('tb_flurry', 0.2, { id: 'l1', from: 23, to: 28 }), R('tb_flurry', 0.2, { id: 'r2', from: 36, to: 41 }), R('tb_flurry', 0.3, { id: 'r3', from: 56, to: 62, hitstop: 4 }), L('tb_flurry', 0.3, { id: 'l3', from: 56, to: 62, hitstop: 4 })],
++    hits: [R('tb_flurry', 0.16, { id: 'r1', from: 10, to: 15 }), L('tb_flurry', 0.18, { id: 'l1', from: 23, to: 28 }), R('tb_flurry', 0.2, { id: 'r2', from: 36, to: 41 }), R('tb_flurry', 0.42, { id: 'r3', from: 56, to: 62, hitstop: 4 }), L('tb_flurry', 0.42, { id: 'l3', from: 56, to: 62, hitstop: 4 })],
+     momentum: { spendScale: [1, 1, 1.4, 1.9] }, turn: [8, 240], sound: [9, 'hb_swing_02'], events: [{ tick: 22, type: 'sound', id: 'hb_swing_02' }, { tick: 35, type: 'sound', id: 'hb_swing_02' }, { tick: 55, type: 'sound', id: 'hb_swing_01' }], cancels: [[70, 86, ['roll']]] });
+-  action('draw_cross', { clip: 'tb_draw_cross_01', dur: 52, active: [30, 36], track: 'tb_draw_cross', hits: [R('tb_draw_cross', 0.22), L('tb_draw_cross', 0.22)], curve: 'w_step_060', turn: [20, 240], momentum: gain, sound: [29, 'hb_swing_01'], events: [{ tick: 4, type: 'sound', id: 'hb_draw_01' }], cancels: [[42, 52, ['tb_slash1', 'tb_stab', 'roll']]] });
++  action('draw_cross', { clip: 'tb_draw_cross_01', dur: 52, active: [30, 36], track: 'tb_draw_cross', hits: [R('tb_draw_cross', 0.27), L('tb_draw_cross', 0.27)], curve: 'w_step_060', turn: [20, 240], momentum: gain, sound: [29, 'hb_swing_01'], events: [{ tick: 4, type: 'sound', id: 'hb_draw_01' }], cancels: [[42, 52, ['tb_slash1', 'tb_stab', 'roll']]] });
+   action('draw', { clip: 'tb_draw_01', dur: 30, track: 'tb_draw', sound: [4, 'hb_draw_01'] });
+   action('sheathe', { clip: 'tb_sheathe_01', dur: 34, track: 'tb_sheathe', sound: [24, 'hb_sheathe_01'], finish: 'sheathed_idle' });
+ }
+--- a/tools/weapons/long_blade.mjs
++++ b/tools/weapons/long_blade.mjs
+@@ -167,12 +167,12 @@
+ 
+   // ---- 技のデータ ----
+   const cut = (t, coef, o = {}) => [{ id: 'blade_main', track: t, coef, hitstop: 3, ...o }];
+-  action('kesa', { clip: 'lb_kesa_01', dur: 34, active: [12, 18], track: 'lb_kesa', hits: cut('lb_kesa', 0.4), curve: 'w_step_030', turn: [8, 300], sound: [11, 'hb_swing_02'], cancels: [[20, 34, ['lb_rise', 'lb_back', 'lb_helm', 'roll']]] });
+-  action('rise', { clip: 'lb_rise_01', dur: 32, active: [9, 15], track: 'lb_rise', hits: cut('lb_rise', 0.38), curve: 'w_step_015', turn: [6, 300], sound: [8, 'hb_swing_02'], cancels: [[18, 32, ['lb_thrust', 'lb_back', 'lb_helm', 'roll']]] });
+-  action('thrust', { clip: 'lb_thrust_01', dur: 38, active: [12, 17], track: 'lb_thrust', hits: cut('lb_thrust', 0.5, { hitstop: 4 }), curve: 'w_step_030', turn: [8, 300], sound: [11, 'hb_swing_02'], cancels: [[24, 38, ['lb_back', 'lb_helm', 'roll']]] });
+-  action('back_cut', { clip: 'lb_back_01', dur: 50, active: [10, 16], track: 'lb_back', hits: cut('lb_back', 0.42), curve: 'w_back_200', turn: [8, 300], sound: [9, 'hb_swing_02'], cancels: [[38, 50, ['lb_kesa', 'lb_helm', 'roll']]] });
+-  action('helm', { clip: 'lb_helm_01', dur: 70, active: [30, 36], track: 'lb_helm', hits: cut('lb_helm', 1.15, { hitstop: 7 }), curve: 'w_step_040b', turn: [24, 150], sound: [29, 'hb_swing_01'], cancels: [[54, 70, ['roll']]] });
+-  action('draw_cut', { clip: 'lb_draw_cut_01', dur: 60, active: [30, 36], track: 'lb_draw_cut', hits: cut('lb_draw_cut', 0.48), curve: 'w_step_060', turn: [20, 180], sound: [29, 'hb_swing_02'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }], cancels: [[44, 60, ['lb_rise', 'lb_back', 'roll']]] });
++  action('kesa', { clip: 'lb_kesa_01', dur: 34, active: [12, 18], track: 'lb_kesa', hits: cut('lb_kesa', 0.38), curve: 'w_step_030', turn: [8, 300], sound: [11, 'hb_swing_02'], cancels: [[20, 34, ['lb_rise', 'lb_back', 'lb_helm', 'roll']]] });
++  action('rise', { clip: 'lb_rise_01', dur: 32, active: [9, 15], track: 'lb_rise', hits: cut('lb_rise', 0.44), curve: 'w_step_015', turn: [6, 300], sound: [8, 'hb_swing_02'], cancels: [[18, 32, ['lb_thrust', 'lb_back', 'lb_helm', 'roll']]] });
++  action('thrust', { clip: 'lb_thrust_01', dur: 38, active: [12, 17], track: 'lb_thrust', hits: cut('lb_thrust', 0.72, { hitstop: 4 }), curve: 'w_step_030', turn: [8, 300], sound: [11, 'hb_swing_02'], cancels: [[24, 38, ['lb_back', 'lb_helm', 'roll']]] });
++  action('back_cut', { clip: 'lb_back_01', dur: 50, active: [10, 16], track: 'lb_back', hits: cut('lb_back', 0.32), curve: 'w_back_200', turn: [8, 300], sound: [9, 'hb_swing_02'], cancels: [[38, 50, ['lb_kesa', 'lb_helm', 'roll']]] });
++  action('helm', { clip: 'lb_helm_01', dur: 70, active: [30, 36], track: 'lb_helm', hits: cut('lb_helm', 1.42, { hitstop: 7 }), curve: 'w_step_040b', turn: [24, 150], sound: [29, 'hb_swing_01'], cancels: [[54, 70, ['roll']]] });
++  action('draw_cut', { clip: 'lb_draw_cut_01', dur: 60, active: [30, 36], track: 'lb_draw_cut', hits: cut('lb_draw_cut', 0.56), curve: 'w_step_060', turn: [20, 180], sound: [29, 'hb_swing_02'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }], cancels: [[44, 60, ['lb_rise', 'lb_back', 'roll']]] });
+   action('draw', { clip: 'lb_draw_01', dur: 38, track: 'lb_draw', sound: [4, 'hb_draw_01'] });
+   action('sheathe', { clip: 'lb_sheathe_01', dur: 40, track: 'lb_sheathe', sound: [28, 'hb_sheathe_01'], finish: 'sheathed_idle' });
+ }
+--- a/tools/weapons/long_lance.mjs
++++ b/tools/weapons/long_lance.mjs
+@@ -172,16 +172,16 @@
+   const stab = (t, coef, o = {}) => [{ id: 'tip', track: t, coef, hitstop: 3, ...o }];
+   const chain = (name, coef, next) =>
+     action(name, { clip: 'll_thrust_01', dur: 38, active: [10, 15], track: 'll_thrust', hits: stab('ll_thrust', coef), curve: 'w_step_015', turn: [8, 120], sound: [9, 'hb_swing_02'], cancels: [[18, 38, [...next, 'roll']]] });
+-  chain('thrust1', 0.5, ['ll_thrust2', 'll_high']);
+-  chain('thrust2', 0.5, ['ll_thrust3', 'll_high']);
+-  chain('thrust3', 0.62, []);
+-  action('high', { clip: 'll_high_01', dur: 42, active: [12, 17], track: 'll_high', hits: stab('ll_high', 0.55), curve: 'w_step_015', turn: [10, 120], sound: [11, 'hb_swing_02'], cancels: [[22, 42, ['ll_thrust1', 'roll']]] });
++  chain('thrust1', 0.36, ['ll_thrust2', 'll_high']);
++  chain('thrust2', 0.42, ['ll_thrust3', 'll_high']);
++  chain('thrust3', 0.72, []);
++  action('high', { clip: 'll_high_01', dur: 42, active: [12, 17], track: 'll_high', hits: stab('ll_high', 0.38), curve: 'w_step_015', turn: [10, 120], sound: [11, 'hb_swing_02'], cancels: [[22, 42, ['ll_thrust1', 'roll']]] });
+   // 構え突き: 突いている間も防御が有効
+-  action('guard_thrust', { clip: 'll_guard_thrust_01', dur: 44, active: [14, 19], track: 'll_guard_thrust', hits: stab('ll_guard_thrust', 0.36, { hitstop: 2 }), guardWindows: [{ from: 0, to: 44 }], sound: [13, 'hb_swing_02'], cancels: [[30, 44, ['roll']]] });
++  action('guard_thrust', { clip: 'll_guard_thrust_01', dur: 44, active: [14, 19], track: 'll_guard_thrust', hits: stab('ll_guard_thrust', 0.3, { hitstop: 2 }), guardWindows: [{ from: 0, to: 44 }], sound: [13, 'hb_swing_02'], cancels: [[30, 44, ['roll']]] });
+   // 受け返し: 構えの間に正面から受けると、無傷で大きな突きを返す
+   action('counter', { clip: 'll_counter_01', dur: 60, track: 'll_counter', staminaCost: 15, counter: { from: 4, to: 50, into: 'player.long_lance.counter_thrust' }, sound: [2, 'guard'] });
+-  action('counter_thrust', { clip: 'll_counter_thrust_01', dur: 44, active: [9, 15], track: 'll_counter_thrust', hits: stab('ll_counter_thrust', 1.6, { hitstop: 7 }), curve: 'w_step_030', sound: [8, 'hb_swing_01'], invulnerable: [{ from: 0, to: 9 }], cancels: [[28, 44, ['ll_thrust1', 'roll']]] });
+-  action('lunge', { clip: 'll_lunge_01', dur: 66, active: [34, 46], track: 'll_lunge', hits: stab('ll_lunge', 0.7, { hitstop: 5 }), curve: 'w_lunge_200', turn: [20, 90], sound: [32, 'hb_swing_01'], events: [{ tick: 4, type: 'sound', id: 'hb_draw_01' }], cancels: [[52, 66, ['ll_thrust1', 'roll']]] });
++  action('counter_thrust', { clip: 'll_counter_thrust_01', dur: 44, active: [9, 15], track: 'll_counter_thrust', hits: stab('ll_counter_thrust', 1.55, { hitstop: 7 }), curve: 'w_step_030', sound: [8, 'hb_swing_01'], invulnerable: [{ from: 0, to: 9 }], cancels: [[28, 44, ['ll_thrust1', 'roll']]] });
++  action('lunge', { clip: 'll_lunge_01', dur: 66, active: [34, 46], track: 'll_lunge', hits: stab('ll_lunge', 0.82, { hitstop: 5 }), curve: 'w_lunge_200', turn: [20, 90], sound: [32, 'hb_swing_01'], events: [{ tick: 4, type: 'sound', id: 'hb_draw_01' }], cancels: [[52, 66, ['ll_thrust1', 'roll']]] });
+   // 短い跳び（回避）。続けてもう 1 回跳べる。
+   action('hop', { clip: 'll_hop_01', dur: 26, track: 'll_hold', curve: 'w_hop_120', staminaCost: 14, invulnerable: [{ from: 3, to: 11 }], sound: [3, 'roll_01'], cancels: [[18, 26, ['roll']]], dodge: true });
+   action('draw', { clip: 'll_draw_01', dur: 34, track: 'll_draw', sound: [5, 'hb_draw_01'] });
+--- a/tools/weapons/ring_bow.mjs
++++ b/tools/weapons/ring_bow.mjs
+@@ -116,12 +116,12 @@
+   // ---- 技のデータ ----
+   const after = ['rb_shot', 'rb_spread', 'roll'];
+   // 引き絞り → 放つ。溜めの段階（0〜3）で、矢の速さと威力が変わる。溜めている間はスタミナが減り、歩ける。
+-  action('shot', { clip: 'rb_shot_01', dur: 52, active: [14, 18], track: 'rb_shot',
++  action('shot', { clip: 'rb_shot_01', dur: 52, active: [14, 19], track: 'rb_shot',
+     charge: { holdTick: 14, button: 'main', levelTicks: [30, 70, 120], maxHoldTicks: 240, coefficientScale: [1, 1, 1, 1], hitstopBonus: [0, 0, 0, 0], staminaPerSec: 12 },
+-    shoot: [{ tick: 18, count: 1, spreadDeg: 0, speed: [26, 32, 40, 48], coefficient: [0.18, 0.3, 0.55, 0.9] }],
++    shoot: [{ tick: 18, count: 1, spreadDeg: 0, speed: [26, 32, 40, 48], coefficient: [0.22, 0.58, 1.12, 1.85] }],
+     freeMove: { speed: 1.6, turnDegPerSec: 240, from: 0, to: 18 }, turn: [18, 240], sound: [18, 'orb_throw'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }], cancels: [[14, 15, ['roll']], [32, 52, after]] });
+-  action('spread', { clip: 'rb_spread_01', dur: 46, active: [12, 16], track: 'rb_spread',
+-    shoot: [{ tick: 16, count: 3, spreadDeg: 16, speed: [30], coefficient: [0.22] }], turn: [14, 300], sound: [16, 'orb_throw'], cancels: [[30, 46, after]] });
++  action('spread', { clip: 'rb_spread_01', dur: 46, active: [12, 17], track: 'rb_spread',
++    shoot: [{ tick: 16, count: 3, spreadDeg: 16, speed: [30], coefficient: [0.17] }], turn: [14, 300], sound: [16, 'orb_throw'], cancels: [[30, 46, after]] });
+   action('draw', { clip: 'rb_draw_01', dur: 28, track: 'rb_draw', sound: [4, 'hb_draw_01'] });
+   action('sheathe', { clip: 'rb_sheathe_01', dur: 32, track: 'rb_sheathe', sound: [20, 'hb_sheathe_01'], finish: 'sheathed_idle' });
+ }
+--- a/tests/combat.test.ts
++++ b/tests/combat.test.ts
+@@ -37,7 +37,7 @@
+       { id: 'active', from: 22, to: 30 },
+       { id: 'recovery', from: 30, to: 72 },
+     ]);
+-    expect(a.hitWindows[0]).toMatchObject({ id: 'blade_main', from: 22, to: 30, damageCoefficient: 1.0, maxHitsPerTarget: 1, hitstopTicks: 4 });
++    expect(a.hitWindows[0]).toMatchObject({ id: 'blade_main', from: 22, to: 30, damageCoefficient: 1.05, maxHitsPerTarget: 1, hitstopTicks: 4 });
+     expect(a.cancelWindows).toEqual([{ from: 58, to: 72, into: ['roll'] }]);
+     expect(a.turning).toEqual({ untilTick: 10, maxDegreesPerSecond: 90 });
+   });
+@@ -52,9 +52,9 @@
+     expect(h.actionTick).toBeGreaterThanOrEqual(22);
+     expect(h.actionTick).toBeLessThan(30);
+     expect(h.partId).toBe('head');
+-    // 80 × 1.0 × 1.0 × 0.70 = 56
+-    expect(h.damage).toBe(56);
+-    expect(sim.monsters[0]!.hp).toBe(1200 - 56);
++    // 80 × 1.05 × 1.0 × 0.70 = 58.8 → 58
++    expect(h.damage).toBe(58);
++    expect(sim.monsters[0]!.hp).toBe(1200 - 58);
+   });
+ 
+   it('届かない距離の空振りは命中しない', () => {
+@@ -118,8 +118,8 @@
+     const levels = events.filter((e) => e.type === 'charge_level').map((e) => (e.type === 'charge_level' ? e.level : 0));
+     expect(levels).toEqual([1, 2]);
+     const h = sim.recentHits[0]!;
+-    // 80 × (1.0 × 1.65) × 0.70 = 92.4 → 92
+-    expect(h.damage).toBe(92);
++    // 80 × (1.05 × 2.1) × 0.70 = 123.48 → 123
++    expect(h.damage).toBe(123);
+     expect(h.actionTick).toBeGreaterThanOrEqual(22);
+   });
+ });
+--- a/tests/edge.test.ts
++++ b/tests/edge.test.ts
+@@ -70,13 +70,13 @@
+ });
+ 
+ describe('当てると減る', () => {
+-  it('最初は最大（鋭い）。縦斬りを 1 回当てると、係数 1.0 × 1.6 = 1.6 減る', () => {
++  it('最初は最大（鋭い）。縦斬りを 1 回当てると、係数 1.05 × 1.6 = 1.68 減る', () => {
+     const sim = sim1();
+     expect(sim.player.edge).toBe(100);
+     const ev = overhead(sim);
+     expect(of(ev, 'hit')).toHaveLength(1);
+     expect(of(ev, 'hit')[0]!.bounced).toBe(false);
+-    expect(sim.player.edge).toBeCloseTo(98.4, 6);
++    expect(sim.player.edge).toBeCloseTo(98.32, 6);
+   });
+ 
+   it('空振りでは減らない', () => {
+@@ -94,7 +94,7 @@
+     const ev = run(sim, 200, (i) => (i === 0 ? press(Btn.Main) : i < 120 ? frame({ held: Btn.Main }) : i === 120 ? frame({ released: Btn.Main }) : frame()));
+     const hit = of(ev, 'hit')[0]!;
+     expect(hit.chargeLevel).toBeGreaterThanOrEqual(1);
+-    expect(sim.player.edge).toBeCloseTo(98.4, 6);
++    expect(sim.player.edge).toBeCloseTo(98.32, 6);
+   });
+ 
+   it('段階が下がった tick に、出来事が 1 回出る', () => {
+@@ -102,7 +102,7 @@
+     sim.player.edge = 60.5;
+     const ev = overhead(sim);
+     expect(of(ev, 'edge')).toEqual([{ type: 'edge', stage: 'worn', value: sim.player.edge }]);
+-    expect(sim.player.edge).toBeCloseTo(58.9, 6);
++    expect(sim.player.edge).toBeCloseTo(58.82, 6);
+   });
+ 
+   it('0 より下へは減らない', () => {
+@@ -119,7 +119,7 @@
+     sim.player.edge = edge;
+     return of(overhead(sim), 'hit')[0]!.damage;
+   };
+-  const expected = (scale: number): number => computeDamage({ attack: 80, motion: 1, sharpness: scale, hitzone: 0.7, crit: 1, element: 0, elementMotion: 1, elementZone: 0, questModifier: 1 });
++  const expected = (scale: number): number => computeDamage({ attack: 80, motion: 1.05, sharpness: scale, hitzone: 0.7, crit: 1, element: 0, elementMotion: 1, elementZone: 0, questModifier: 1 });
+ 
+   it('鋭い = ×1.0、並 = ×0.88、鈍い = ×0.7（ダメージ式の刃補正へ掛ける）', () => {
+     expect(dmg(100)).toBe(expected(1));
+@@ -136,7 +136,7 @@
+     const ev = overhead(sim);
+     expect(of(ev, 'hit')[0]!.bounced).toBe(false);
+     expect(sim.player.mode).toBe('action');
+-    expect(sim.player.edge).toBeCloseTo(98.4, 6);
++    expect(sim.player.edge).toBeCloseTo(98.32, 6);
+   });
+ 
+   it('並の時は弾かれる: ダメージは入るが、行動が止まってよろけ、刃は 2 倍減る', () => {
+@@ -160,7 +160,7 @@
+     expect(sim.player.action).toBeNull();
+     expect(sim.player.mode).toBe('hurt');
+     expect(sim.player.hurt).toMatchObject({ kind: 'bounce', duration: content.edge.bounce.recoilTicks });
+-    expect(sim.player.edge).toBeCloseTo(50 - 1.6 * 2, 6);
++    expect(sim.player.edge).toBeCloseTo(50 - 1.68 * 2, 6);
+     // よろけの間は動けず、少し後ろへ下がる。被弾ではないので体力は減らず、無敵も付かない
+     // （押しても技は出ない。先行入力が残らないよう、押すのは前半だけ）
+     run(sim, content.edge.bounce.recoilTicks - 1, (i) => (i < 10 ? press(Btn.Main) : frame()));
+diff --git a/src/render/contactLocomotion.ts b/src/render/contactLocomotion.ts
+new file mode 100644
+--- /dev/null
++++ b/src/render/contactLocomotion.ts
+@@ -0,0 +1,176 @@
++// 描画専用。simulation の位置・yaw・攻撃軌道は変更しない。
++// 足首ではなく母指球を世界座標へ留める。停止/方向転換で届かなくなる足は、滑らせずに踏み替える。
++import { fillCtl, mixFoot, solveBody, type BodyPose, type Foot, type Hands } from './bodySolve';
++
++export interface RenderRoot { x: number; z: number; yaw: number }
++interface Point { x: number; z: number; yaw: number }
++interface Swing { from: Point; to: Point; elapsed: number; duration: number; lift: number }
++interface FootState { at: Point; lift: number; contact: boolean; swing: Swing | null }
++const BALL = 0.13, DEG = Math.PI / 180;
++const clamp = (x: number, a: number, b: number): number => Math.max(a, Math.min(b, x));
++const smooth = (x: number): number => { const t = clamp(x, 0, 1); return t * t * (3 - 2 * t); };
++const angle = (a: number, b: number): number => Math.atan2(Math.sin(b - a), Math.cos(b - a));
++
++/** 足の母指球。world-space contact の検査にも使う。 */
++export function footContactWorld(f: Foot, r: RenderRoot): Point {
++  const fy = f[3] * DEG;
++  const x = f[0] + Math.sin(fy) * BALL, z = f[2] + Math.cos(fy) * BALL;
++  const c = Math.cos(r.yaw), s = Math.sin(r.yaw);
++  return { x: r.x + x * c + z * s, z: r.z - x * s + z * c, yaw: r.yaw + fy };
++}
++function local(at: Point, lift: number, heel: number, r: RenderRoot): Foot {
++  const c = Math.cos(r.yaw), s = Math.sin(r.yaw), dx = at.x - r.x, dz = at.z - r.z;
++  const yaw = angle(r.yaw, at.yaw);
++  return [dx * c - dz * s - Math.sin(yaw) * BALL, lift, dx * s + dz * c - Math.cos(yaw) * BALL, yaw / DEG, heel];
++}
++
++export class ContactLocomotion {
++  private feet: [FootState, FootState] | null = null;
++  private root: RenderRoot | null = null;
++  private released: { from: [FootState, FootState]; age: number } | null = null;
++  reset(): void { this.feet = null; this.root = null; this.released = null; }
++
++  frame(root: RenderRoot, desiredL: Foot, desiredR: Foot, dt: number, moving: boolean): { L: Foot; R: Foot } {
++    const desired = [desiredL, desiredR] as const;
++    // エリア移動・ビューアの飛び先は補間しない。大きい dt も再入場として扱う。
++    if (!this.feet || !this.root || Math.hypot(root.x - this.root.x, root.z - this.root.z) > 1.2 || dt > 0.2) {
++      this.feet = desired.map((f) => ({ at: footContactWorld(f, root), lift: f[1], contact: f[1] <= 0.004, swing: null })) as [FootState, FootState];
++    }
++    const stepDt = clamp(dt, 0, 0.1);
++    const feet = this.feet;
++    const dx = this.root ? root.x - this.root.x : 0, dz = this.root ? root.z - this.root.z : 0;
++    const distance = Math.hypot(dx, dz);
++    const directionError = distance > 0.0001 ? Math.abs(angle(root.yaw, Math.atan2(dx, dz))) : 0;
++    const turnSpeed = this.root && stepDt > 0 ? Math.abs(angle(this.root.yaw, root.yaw)) / stepDt : 0;
++    const overextended = feet.some((state) => {
++      const f = local(state.at, state.lift, 0, root);
++      return Math.hypot(f[0], f[2]) > 0.52;
++    });
++    const release = moving && (directionError > 0.45 || turnSpeed > 2.6 || overextended);
++    if (release && !this.released) {
++      this.released = { from: feet.map((f) => ({ ...f, at: { ...f.at }, swing: null })) as [FootState, FootState], age: 0 };
++    }
++    if (this.released) {
++      // Controller は向きが追いつく前に反対方向へ動ける。足を固定したまま脚を伸ばさず、
++      // 80ms の足上げを経て安全な歩行へ戻す。この間は世界接地を保証しない。
++      const rel = this.released;
++      rel.age += stepDt;
++      const u = clamp(rel.age / 0.08, 0, 1), w = smooth(u);
++      const result = desired.map((f, i) => {
++        const old = rel.from[i]!;
++        const p = mixFoot(local(old.at, old.lift, 0, root), f, w);
++        p[1] = Math.max(p[1], 0.07 * Math.sin(Math.PI * u));
++        // 足上げ中の届き方にも上限を設ける。通常の歩行の範囲から外へ引っ張らない。
++        p[0] = i === 0 ? clamp(p[0], 0.055, 0.23) : clamp(p[0], -0.23, -0.055);
++        p[2] = clamp(p[2], -0.44, 0.44);
++        return p;
++      });
++      this.feet = result.map((f) => ({ at: footContactWorld(f, root), lift: f[1], contact: f[1] <= 0.004, swing: null })) as [FootState, FootState];
++      this.root = { ...root };
++      if (!release && u >= 1) this.released = null;
++      return { L: result[0]!, R: result[1]! };
++    }
++    const out: Foot[] = [];
++    let stepping = feet.some((f) => !!f.swing);
++    for (let i = 0; i < 2; i++) {
++      const f = desired[i]!, state = feet[i]!, target = footContactWorld(f, root);
++      const nominalSwing = moving && f[1] > 0.004;
++      if (!state.swing && nominalSwing) {
++        // 普通の遊脚は、距離から進めた歩行周期を使う。接地した側の足は動かさない。
++        state.at = target;
++        state.lift = f[1];
++        state.contact = false;
++      } else if (!state.swing && !state.contact) {
++        if (moving) {
++          state.at = target;
++          state.lift = 0;
++          state.contact = true;
++        } else if (!stepping) {
++          // 入力を離した瞬間に、空中の足を地面へ瞬間移動させない。
++          state.swing = { from: { ...state.at }, to: target, elapsed: 0, duration: 0.16, lift: state.lift };
++          stepping = true;
++        }
++      }
++      if (!state.swing && state.contact && !stepping && !nominalSwing && !moving) {
++        const error = Math.hypot(target.x - state.at.x, target.z - state.at.z);
++        if (error > 0.075 || Math.abs(angle(state.at.yaw, target.yaw)) > 24 * DEG) {
++          state.swing = { from: { ...state.at }, to: target, elapsed: 0, duration: clamp(error / 1.7, 0.16, 0.3), lift: 0 };
++          state.contact = false;
++          stepping = true;
++        }
++      }
++      if (state.swing) {
++        const sw = state.swing;
++        sw.elapsed += stepDt;
++        const u = clamp(sw.elapsed / sw.duration, 0, 1), w = smooth(u);
++        state.at = { x: sw.from.x + (sw.to.x - sw.from.x) * w, z: sw.from.z + (sw.to.z - sw.from.z) * w, yaw: sw.from.yaw + angle(sw.from.yaw, sw.to.yaw) * w };
++        state.lift = sw.lift * (1 - w) + 0.065 * Math.sin(Math.PI * u);
++        if (u >= 1) { state.swing = null; state.contact = true; state.lift = 0; }
++      }
++      let heel = state.contact ? f[4] : 0;
++      if (moving && state.contact) {
++        const turn = angle(state.at.yaw, target.yaw);
++        if (Math.abs(turn) > 12 * DEG) {
++          // 急に向きを変えた時は母指球を軸に踵を回す。世界座標の接地点は同じ。
++          state.at.yaw += clamp(turn, -8 * stepDt, 8 * stepDt);
++          heel = Math.max(heel, 18);
++        }
++      }
++      out.push(local(state.at, state.lift, heel, root));
++    }
++    this.root = { ...root };
++    return { L: out[0]!, R: out[1]! };
++  }
++}
++
++const FREE_HANDS: Hands = { primary: 'R', second: 'free', wrist: [0, 180] };
++/** 接地率に歩幅を合わせる。run=1 では両足が短く浮く走りになり、歩幅だけを過大にしない。 */
++export function travelGait(phase: number, stride: number, L: Foot, R: Foot, run = 0): { L: Foot; R: Foot; bob: number } {
++  const duty = 0.6 - 0.28 * clamp(run, 0, 1), half = stride * duty * 0.5;
++  const one = (ph: number, base: Foot): Foot => {
++    const u = ((ph / (Math.PI * 2)) % 1 + 1) % 1;
++    if (u < duty) {
++      const k = u / duty;
++      const heel = k < 0.18 ? -16 * (1 - k / 0.18) : k > 0.74 ? 24 * ((k - 0.74) / 0.26) : 0;
++      return [base[0], 0, half - stride * u, base[3] * 0.4, heel];
++    }
++    const s = (u - duty) / (1 - duty);
++    return [base[0], (0.09 + run * 0.12) * Math.sin(Math.PI * s), -half + 2 * half * smooth(s), base[3] * 0.4, 0];
++  };
++  return { L: one(phase, L), R: one(phase + Math.PI, R), bob: 0.012 * Math.cos(phase * 2) };
++}
++/** 既存の上体を保ち、脚と骨盤だけを二本骨 IK で地面へ合わせる。 */
++export function groundLowerBody(pose: BodyPose, L: Foot, R: Foot, hipYaw = 0, hipRoll = 0): BodyPose {
++  let solved = solveBody(fillCtl({ hip: [pose.px ?? 0, pose.py, pose.pz ?? 0], hipR: [0, hipYaw, hipRoll], grab: [0], on: [0] }), L, R, FREE_HANDS);
++  // 今の靴は toe 骨が無い一枚の剛体。母指球 .13m より先の .19m を地面へ埋めない。
++  // 初回で求めた骨盤は保持し、靴をつま先/踵の接触高さへ戻して膝だけを解き直す。
++  const sole = (f: Foot, heel: number): Foot => {
++    const extra = heel >= 0 ? 0.06 * Math.sin(heel * DEG) : -0.01 * Math.sin(heel * DEG);
++    return [f[0], f[1] + Math.max(0, extra) + 0.004, f[2], f[3], heel];
++  };
++  const sl = sole(L, solved.frames.heelL), sr = sole(R, solved.frames.heelR);
++  solved = solveBody(fillCtl({ hip: [solved.pose.px ?? 0, solved.pose.py, solved.pose.pz ?? 0], hipR: [0, hipYaw, hipRoll], grab: [0], on: [0] }), sl, sr, FREE_HANDS);
++  const p = { ...pose, j: { ...pose.j }, px: solved.pose.px, py: solved.pose.py, pz: solved.pose.pz, grounded: true };
++  for (const name of ['pelvis', 'thighL', 'shinL', 'footL', 'thighR', 'shinR', 'footR'] as const) p.j[name] = solved.pose.j[name];
++  return p;
++}
++
++/** 納刀中（全 7 系統）と断岳剣の通常歩行。武器の判定時刻には呼ばない。 */
++export class GroundedLocomotion {
++  private contact = new ContactLocomotion();
++  reset(): void { this.contact.reset(); }
++  frame(pose: BodyPose, drawn: boolean, speed: number, phase: number, dt: number, root: RenderRoot): BodyPose {
++    const L: Foot = drawn ? [0.11, 0, 0.18, 6, 0] : [0.105, 0, 0, 5, 0];
++    const R: Foot = drawn ? [-0.13, 0, -0.16, -28, 0] : [-0.105, 0, 0, -5, 0];
++    const moving = speed > 0.15;
++    const stride = drawn ? 1.35 : 1.7 + 0.9 * Math.min(1, speed / 6.4);
++    const run = drawn ? 0 : smooth((speed - 3.5) / 2.9);
++    const g = moving ? travelGait(phase, stride, L, R, run) : { L, R, bob: 0 };
++    const f = this.contact.frame(root, g.L, g.R, dt, moving);
++    const w = smooth((speed - 0.15) / 1.0), yaw = 2.2 * Math.sin(phase) * w, roll = 1.1 * Math.sin(phase) * w;
++    const out = groundLowerBody(pose, f.L, f.R, yaw, roll);
++    // 腰と胸は逆方向へ。頭と武器の向きを大きく振らない。
++    out.j.spine = [pose.j.spine[0], pose.j.spine[1] - yaw * 0.65, pose.j.spine[2] - roll * 0.65];
++    return out;
++  }
++}
+diff --git a/src/render/heavyBodyMotion.ts b/src/render/heavyBodyMotion.ts
+new file mode 100644
+--- /dev/null
++++ b/src/render/heavyBodyMotion.ts
+@@ -0,0 +1,67 @@
++// 断岳剣の既存の刃軌道を保ち、下半身を接地 IK へ替える。
++// 腰→胸のひねりを分担する。技の時刻・移動距離・判定窓は変更しない。
++import { fillCtl, footAt, type BodyPose, type Foot, type Motion, type Step } from './bodySolve';
++import { groundLowerBody } from './contactLocomotion';
++
++const L: Step = [0, 0, 0.11, 0.18, 6];
++const R: Step = [0, 0, -0.13, -0.16, -28];
++const clamp = (v: number, a: number, b: number): number => Math.min(b, Math.max(a, v));
++function smoothKeys(keys: readonly (readonly [number, number])[], t: number): number {
++  if (t <= keys[0]![0]) return keys[0]![1];
++  for (let i = 1; i < keys.length; i++) {
++    const a = keys[i - 1]!, b = keys[i]!;
++    if (t <= b[0]) { const u = clamp((t - a[0]) / (b[0] - a[0]), 0, 1), w = u * u * (3 - 2 * u); return a[1] + (b[1] - a[1]) * w; }
++  }
++  return keys[keys.length - 1]![1];
++}
++const HEAVY: Record<string, Motion> = {
++  hb_attack_vertical_01: {
++    dur: 72, family: 'heavy_blade', base: fillCtl({}), ch: {},
++    root: [[0, 0], [14, 0], [24, 0.33], [30, 0.35], [72, 0.35]],
++    feet: { L: [L, [12, 24, 0.11, 0.24, 6, 0.07], [54, 67, 0.11, 0.18, 6, 0.05]], R: [R, [38, 52, -0.13, -0.16, -28, 0.06]] },
++  },
++  hb_attack_side_01: {
++    dur: 66, family: 'heavy_blade', base: fillCtl({}), ch: {},
++    root: [[0, 0], [10, 0], [20, 0.25], [66, 0.25]],
++    feet: { L: [L, [8, 18, 0.12, 0.23, 6, 0.06], [52, 64, 0.11, 0.18, 6, 0.05]], R: [R, [38, 51, -0.13, -0.16, -28, 0.05]] },
++  },
++  hb_draw_slash_01: {
++    dur: 64, family: 'heavy_blade', base: fillCtl({}), ch: {},
++    root: [[0, 0], [8, 0], [22, 0.42], [28, 0.45], [64, 0.45]],
++    feet: { L: [[0, 0, 0.105, 0, 5], [7, 20, 0.11, 0.23, 6, 0.07], [50, 62, 0.11, 0.18, 6, 0.05]], R: [[0, 0, -0.105, 0, -5], [33, 48, -0.13, -0.16, -28, 0.06]] },
++  },
++};
++
++/** 母指球を動かさず、踵を上げて向きを変える。 */
++function pivot(f: Foot, degrees: number, heel: number): Foot {
++  const old = f[3] * Math.PI / 180, next = degrees * Math.PI / 180;
++  return [f[0] + (Math.sin(old) - Math.sin(next)) * 0.13, f[1], f[2] + (Math.cos(old) - Math.cos(next)) * 0.13, degrees, f[1] > 0.004 ? f[4] : Math.max(f[4], heel)];
++}
++
++export function groundedHeavyAttack(pose: BodyPose, clip: string, t: number): BodyPose {
++  const m = HEAVY[clip];
++  if (!m) return pose;
++  if (clip === 'hb_attack_side_01') {
++    // 両手を柄へ届かせるため、前脚へ重さを移しながら膝で 12cm 沈む。
++    // 足は移動させない。既存の刃軌道に腕だけを伸ばすと左手が約 9cm 届かなかった。
++    const crouch = smoothKeys([[0, 0], [8, 1], [38, 1], [54, 0], [66, 0]], t);
++    const transfer = smoothKeys([[0, 0], [16, 0], [22, 1], [38, 1], [54, 0], [66, 0]], t);
++    pose = { ...pose, py: pose.py - 0.12 * crouch, pz: (pose.pz ?? 0) + 0.08 * transfer };
++  }
++  let left = footAt(m, m.feet.L, t), right = footAt(m, m.feet.R, t);
++  const totalYaw = pose.j.spine[1] + pose.j.chest[1];
++  // 最大 92° が背骨だけへ掛かっていた薙ぎを、骨盤 44° + 背/胸 48° に分ける。
++  const hipYaw = clip === 'hb_attack_side_01'
++    ? smoothKeys([[0, 0], [8, -16], [18, -28], [22, -2], [27, 34], [34, 44], [50, 16], [66, 0]], t)
++    : clamp(totalYaw * 0.3, -12, 12);
++  if (clip === 'hb_attack_side_01') {
++    const u = smoothKeys([[0, 0], [18, 0], [34, 1], [50, 0.4], [66, 0]], t);
++    left = pivot(left, left[3] + 32 * u, 12 * Math.sin(Math.PI * u));
++    right = pivot(right, right[3] + 46 * u, 22 * Math.sin(Math.PI * u));
++  }
++  const p = groundLowerBody(pose, left, right, hipYaw);
++  const spine = pose.j.spine[1] * 0.35;
++  p.j.spine = [pose.j.spine[0], spine, pose.j.spine[2]];
++  p.j.chest = [pose.j.chest[0], totalYaw - hipYaw - spine, pose.j.chest[2]];
++  return p;
++}
+diff --git a/src/render/hunterAnim.ts b/src/render/hunterAnim.ts
+--- a/src/render/hunterAnim.ts
++++ b/src/render/hunterAnim.ts
+@@ -2,7 +2,23 @@
+ // ゲームの画面（view.ts）と素材ビューア（viewer.ts）と検査（tests/human-motion.test.ts）が、ここを使う。
+ import { evalMotion, gaitFeet, mixCtl, mixFoot, solveBody, type Ctl, type Foot, type Solved } from './bodySolve';
+ import type { HunterRig } from './rig';
++import { ContactLocomotion, type RenderRoot } from './contactLocomotion';
+ import { WEAPON_MOTIONS, WEAPON_STANCES } from './weaponClipSpecs';
++import { renderTick, type ActionRun } from '../game/action';
++import type { ActionDef } from '../data/schemas';
++
++/** run.tick は「次に処理する tick」。命中停止中は処理済みの接触姿勢を保つ。simulation は変更しない。 */
++export function playerRenderTick(run: ActionRun, alpha: number): number {
++  const holding = !!run.def.charge && run.tick === run.def.charge.holdTick && !run.released;
++  if (run.hitstop > 0 || (!run.advanced && !holding && run.tick > 0)) return Math.max(0, run.tick - 1);
++  return renderTick(run, alpha);
++}
++
++/** 射撃の発射フレームも、手/弦と projectile の対応を保つために遷移を終える。 */
++export function playerContactFrame(def: ActionDef, t: number): boolean {
++  return def.hitWindows.some((h) => t >= h.from && t < h.to)
++    || !!def.shoot?.some((s) => t >= s.tick && t < s.tick + 1);
++}
+ 
+ export type AnimState =
+   /** 技。t は技の tick（小数可）、dirAngle は回避の向き（ラジアン）、chargeTicks は溜めている tick、freeMove は技の間に歩けるか */
+@@ -32,6 +48,13 @@
+ /** 弓: 溜めるほど深く引く（引く長さに掛ける割増と、引き切るまでの tick） */
+ const CHARGE_PULL = 0.12, CHARGE_TICKS = 36;
+ 
++export interface AnimContext {
++  root?: RenderRoot;
++  /** 判定が有効な tick は、ブレンドせずに正本の軌道へ一致させる。 */
++  active?: boolean;
++  frozen?: boolean;
++}
++
+ interface Frame {
+   ctl: Ctl;
+   fL: Foot;
+@@ -44,12 +67,18 @@
+   private key = '';
+   private blendT = 1;
+   private phase = 0;
++  private contact = new ContactLocomotion();
++  private previousRoot: RenderRoot | null = null;
++
++  constructor(phase = 0) { this.phase = phase; }
+ 
+   /** 解ける状態を抜けた（被弾・納刀など）。次に入る時は、直前の姿から混ぜない。 */
+   reset(): void {
+     this.last = null;
+     this.from = null;
+     this.key = '';
++    this.contact.reset();
++    this.previousRoot = null;
+   }
+ 
+   /** 直前のフレームも、ここで解いた姿だったか */
+@@ -61,7 +90,13 @@
+    * 1 フレームぶん解く。key は状態の名前（替わった時に混ぜ始める）。moveSpeed は m/秒。
+    * 返り値の姿勢・武器・盾を、applySolved でリグへ渡す。
+    */
+-  frame(familyId: string, st: AnimState, key: string, dt: number, moveSpeed: number, time: number): Solved {
++  frame(familyId: string, st: AnimState, key: string, dt: number, moveSpeed: number, time: number, context: AnimContext = {}): Solved {
++    dt = context.frozen ? 0 : Math.max(0, dt);
++    if (context.root && this.previousRoot && dt > 0 && dt < 0.2) {
++      const distance = Math.hypot(context.root.x - this.previousRoot.x, context.root.z - this.previousRoot.z);
++      if (distance < 1.2) moveSpeed = Math.min(7, distance / dt);
++    }
++    if (context.root) this.previousRoot = { ...context.root };
+     const S = WEAPON_STANCES[familyId]!;
+     const idle = S.idle;
+     let f: Frame;
+@@ -71,7 +106,7 @@
+       const e = evalMotion(m, Math.min(st.t, m.dur), st.dirAngle);
+       f = { ctl: e.ctl, fL: e.footL, fR: e.footR };
+       if (S.hands.second === 'string' && st.chargeTicks > 0) f.ctl.pull = [(f.ctl.pull[0] ?? 0) * (1 + CHARGE_PULL * smooth(st.chargeTicks / CHARGE_TICKS))];
+-      if (st.freeMove) walk = smooth((moveSpeed - 0.1) / 0.5);
++      if (st.freeMove && !context.active) walk = smooth((moveSpeed - 0.1) / 0.5);
+     } else if (st.kind === 'guard') {
+       const g = S.guard!;
+       const u = smooth(st.blend);
+@@ -82,7 +117,7 @@
+       f = { ctl: mixCtl(idle.ctl, idle.ctl, 0), fL: idle.feet.L.slice() as Foot, fR: idle.feet.R.slice() as Foot };
+       const breathe = Math.sin(time * 1.7);
+       f.ctl.chest = [f.ctl.chest[0]! + breathe * 1.2, f.ctl.chest[1]!, f.ctl.chest[2]!];
+-      f.ctl.hip = [f.ctl.hip[0]!, f.ctl.hip[1]! + breathe * 0.004, f.ctl.hip[2]!];
++      f.ctl.hip = [f.ctl.hip[0]!, f.ctl.hip[1]! + Math.sin(time * 1.7 - 0.3) * 0.004, f.ctl.hip[2]!];
+       walk = smooth((moveSpeed - 0.1) / 0.5);
+     }
+     // 歩く: 足を交互に運ぶ。腰は進む方へ少し戻し、その分だけ背でひねり直す（胸と腕の向きは変えない）
+@@ -104,11 +139,16 @@
+       this.blendT = 0;
+     }
+     this.blendT += dt;
+-    const w = Math.min(1, this.blendT / BLEND_SEC);
++    const w = context.active ? 1 : Math.min(1, this.blendT / BLEND_SEC);
+     if (w < 1 && this.from) {
+       const u = smooth(w);
+       f = { ctl: mixCtl(this.from.ctl, f.ctl, u), fL: mixFoot(this.from.fL, f.fL, u), fR: mixFoot(this.from.fR, f.fR, u) };
+     }
++    // 足を世界座標へ留める処理は、通常歩行だけ。攻撃中の判定軌道は変えない。
++    if (context.root && st.kind === 'idle') {
++      const grounded = this.contact.frame(context.root, f.fL, f.fR, dt, walk > 0.01);
++      f.fL = grounded.L; f.fR = grounded.R;
++    } else this.contact.reset();
+     this.last = f;
+     return solveBody(f.ctl, f.fL, f.fR, S.hands);
+   }
+@@ -116,7 +156,9 @@
+ 
+ /** 混ぜずに、その場で 1 つの状態を解く（素材ビューア・検査用）。 */
+ export function solveState(familyId: string, st: AnimState, moveSpeed = 0, time = 0): Solved {
+-  return new HunterAnimator().frame(familyId, st, '', 1, moveSpeed, time);
++  // 絶対時刻から周期を決める。以前は毎回 dt=1 から始まり、全て同じ脚の位相を検査していた。
++  const phase = moveSpeed * Math.max(0, time) * Math.PI * 2 / strideOf(moveSpeed);
++  return new HunterAnimator(phase).frame(familyId, st, '', 0, moveSpeed, time);
+ }
+ 
+ /** 解いた結果を、リグへ渡す。familyId は、左手のものを持っていない時の置き場所を決めるのに使う。 */
+diff --git a/src/render/view.ts b/src/render/view.ts
+--- a/src/render/view.ts
++++ b/src/render/view.ts
+@@ -22,8 +22,10 @@
+ import { CREATURE_PLANS } from './creaturePlans';
+ import { DummyRig, type MonsterRig } from './monsterRig';
+ import { blendPose, clipPose, deadPose, emptyPose, guardPose, hurtPose, locomotionPose, type BodyPose } from './poses';
+-import { HunterAnimator, applySolved, canSolve, stowOffhand, type AnimState } from './hunterAnim';
++import { HunterAnimator, applySolved, canSolve, playerContactFrame, playerRenderTick, stowOffhand, type AnimState } from './hunterAnim';
+ import type { Solved } from './bodySolve';
++import { GroundedLocomotion } from './contactLocomotion';
++import { groundedHeavyAttack } from './heavyBodyMotion';
+ import { WEAPON_STANCES } from './weaponClipSpecs';
+ import { buildArrow } from './bow';
+ import { armorTierOf, type ArmorLook } from './hunterArmor';
+@@ -116,6 +118,7 @@
+   private debug: DebugDraw;
+   private playerShadow = blobShadow(0.45);
+   private phase = 0;
++  private lastPlayerXZ: { x: number; z: number } | null = null;
+   private time = 0;
+   /** 見た目の側から鳴らす音（モンスターの足音など）。App が音声へつなぐ。 */
+   onSound: ((id: string, intensity: number) => void) | null = null;
+@@ -141,6 +144,7 @@
+   private blendT = 1;
+   /** 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）の体を解く係 */
+   private anim = new HunterAnimator();
++  private groundLocomotion = new GroundedLocomotion();
+   private tmpA = new Vector3();
+   private tmpB = new Vector3();
+   private tmpLock = new Vector3();
+@@ -416,8 +420,11 @@
+     this.renderY += (pos.y - this.renderY) * Math.min(1, dt * 16);
+     this.hunter.root.position.set(pos.x, this.renderY, pos.z);
+     this.hunter.root.rotation.y = yaw;
+-    const stride = p.drawn ? 1.35 : 1.7 + 0.9 * Math.min(1, p.moveSpeed / 6.4);
+-    this.phase += (p.moveSpeed * dt * Math.PI * 2) / stride;
++    const travel = this.lastPlayerXZ ? Math.hypot(pos.x - this.lastPlayerXZ.x, pos.z - this.lastPlayerXZ.z) : 0;
++    const visualSpeed = this.lastPlayerXZ && dt > 0 && dt < 0.2 && travel < 1.2 ? Math.min(7, travel / dt) : p.moveSpeed;
++    this.lastPlayerXZ = { x: pos.x, z: pos.z };
++    const stride = p.drawn ? 1.35 : 1.7 + 0.9 * Math.min(1, visualSpeed / 6.4);
++    this.phase += (visualSpeed * dt * Math.PI * 2) / stride;
+ 
+     // ---- 姿勢と武器の置き場所を決める ----
+     let key: string;
+@@ -442,12 +449,13 @@
+ 
+     if (p.mode === 'action' && p.action) {
+       const run = p.action;
+-      const t = renderTick(run, alpha);
++      const t = playerRenderTick(run, alpha);
+       const fm = run.def.freeMove;
+       st = { kind: 'action', clip: run.def.clip, t, dirAngle: (run.dirIndex * Math.PI) / 2, chargeTicks: run.chargeTicks, freeMove: !!fm && t >= (fm.from ?? 0) && t < (fm.to ?? run.def.durationTicks) };
+       const cp = canSolve(fam.id, st) ? emptyPose() : clipPose(run.def.clip, t);
+       if (!cp) this.missingClips.add(run.def.clip);
+       pose = cp ?? emptyPose();
++      if (fam.id === 'heavy_blade') pose = groundedHeavyAttack(pose, run.def.clip, t);
+       pose.tumbleDir = (run.dirIndex * Math.PI) / 2;
+       key = `action:${run.instanceId}`;
+       if (run.def.weaponTrack) {
+@@ -514,7 +522,8 @@
+       pose = deadPose(p.deadTicks + alpha);
+       key = 'dead';
+     } else {
+-      pose = locomotionPose(p.drawn, p.moveSpeed, this.phase, this.time);
++      pose = locomotionPose(p.drawn, visualSpeed, this.phase, this.time);
++      if (!p.drawn || fam.id === 'heavy_blade') pose = this.groundLocomotion.frame(pose, p.drawn, visualSpeed, this.phase, dt, { x: pos.x, z: pos.z, yaw });
+       key = p.drawn ? 'free-drawn' : 'free-sheathed';
+       if (p.drawn) {
+         weapon = ready;
+@@ -522,18 +531,22 @@
+       }
+     }
+     // 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）: 体・武器・盾（双剣は左の剣）をまとめて解く（足は地面に、手は武器に付いたままになる）
+-    const continued = this.anim.continuing;
++    if (p.mode !== 'free') this.groundLocomotion.reset();
+     let solved: Solved | null = null;
+     if (st && canSolve(fam.id, st)) {
+-      solved = this.anim.frame(fam.id, st, key, dt, p.moveSpeed, this.time);
++      solved = this.anim.frame(fam.id, st, key, dt, visualSpeed, this.time, {
++        root: { x: pos.x, z: pos.z, yaw },
++        active: st.kind === 'action' && !!p.action && playerContactFrame(p.action.def, st.t),
++        frozen: !!p.action && p.action.hitstop > 0,
++      });
+       pose = solved.pose;
+     } else this.anim.reset();
+ 
+     // 状態が切り替わった瞬間は、直前の姿勢から短く混ぜる
+     if (key !== this.poseKey) {
+       this.poseKey = key;
+-      // 解いた姿どうしの切り替えは、解く側が混ぜ終えている
+-      this.blendFrom = solved && continued ? null : { ...this.lastPose, tumble: ((((this.lastPose.tumble + 180) % 360) + 360) % 360) - 180 };
++      // IK を解いた後で骨だけを混ぜると、手と武器が離れる。解く側だけでブレンドする。
++      this.blendFrom = solved ? null : { ...this.lastPose, tumble: ((((this.lastPose.tumble + 180) % 360) + 360) % 360) - 180 };
+       this.blendT = 0;
+     }
+     this.blendT += dt;
+@@ -543,8 +556,7 @@
+ 
+     if (solved) {
+       applySolved(this.hunter, solved, fam.id);
+-      // 混ぜている途中は、混ぜた姿勢を置き直す（武器と盾は解いた位置のまま）
+-      if (pose !== solved.pose) this.hunter.setPose(pose);
++      // applySolved の後で姿勢を上書きしない（握りと添え手を保つ）。
+     } else {
+       this.hunter.setPose(pose);
+       this.hunter.setString(null);
+@@ -825,7 +837,7 @@
+       const guarding = isGuarding(p, fam.guard);
+       d.capsule(cap.a, cap.b, cap.r, guarding ? [1, 1, 0.4] : [0.3, 0.9, 1]);
+       if (p.action) {
+-        const t = renderTick(p.action, alpha);
++        const t = playerRenderTick(p.action, alpha);
+         for (const hw of p.action.def.hitWindows) {
+           const tr = content.tracks.get(hw.shapeTrack)!;
+           const seg = trackSegment(tr, t);
+diff --git a/src/viewer.ts b/src/viewer.ts
+--- a/src/viewer.ts
++++ b/src/viewer.ts
+@@ -27,6 +27,8 @@
+ import type { ArmorLook } from './render/hunterArmor';
+ import { applySolved, canSolve, solveState, stowOffhand, type AnimState } from './render/hunterAnim';
+ import type { Solved } from './render/bodySolve';
++import { GroundedLocomotion } from './render/contactLocomotion';
++import { groundedHeavyAttack } from './render/heavyBodyMotion';
+ import { WEAPON_STANCES } from './render/weaponClipSpecs';
+ import { buildLongBlade, buildTwinBlade, buildWarMaul } from './render/provisionalWeapons';
+ import { withShell } from './render/shellPlates';
+@@ -393,7 +395,8 @@
+     } else if (a) {
+       lastSolved = null;
+       hunter.setString(null);
+-      const pose = clipPose(a.clip, t);
++      let pose = clipPose(a.clip, t);
++      if (pose && fam.id === 'heavy_blade') pose = groundedHeavyAttack(pose, a.clip, t);
+       missing = !pose;
+       hunter.setPose(pose ?? emptyPose());
+       if (a.weaponTrack) {
+@@ -413,7 +416,11 @@
+     } else {
+       lastSolved = null;
+       hunter.setString(null);
+-      hunter.setPose(locomotionPose(false, t < 60 ? 0 : 4, time * 9, time));
++      const speed = t < 60 ? 0 : 4;
++      const phase = t / 60 * speed * Math.PI * 2 / (1.7 + 0.9 * Math.min(1, speed / 6.4));
++      const pose = locomotionPose(false, speed, phase, time);
++      // ビューアはその場で周期を確認する。ゲームでは状態を保持して世界接地する。
++      hunter.setPose(new GroundedLocomotion().frame(pose, false, speed, phase, 0, { x: 0, z: 0, yaw: 0 }));
+       sheathWeapon(fam);
+       if (fam.offhand) stowOffhand(hunter, fam.id);
+     }
+diff --git a/tests/motion-replacement.test.ts b/tests/motion-replacement.test.ts
+new file mode 100644
+--- /dev/null
++++ b/tests/motion-replacement.test.ts
+@@ -0,0 +1,234 @@
++import { describe, expect, it, vi } from 'vitest';
++import { Euler, Quaternion, SkinnedMesh, Texture, TextureLoader, Vector3 } from 'three';
++import { ContactLocomotion, footContactWorld, travelGait } from '../src/render/contactLocomotion';
++import { HunterAnimator, playerContactFrame, playerRenderTick, solveState } from '../src/render/hunterAnim';
++import { groundedHeavyAttack } from '../src/render/heavyBodyMotion';
++import { evalMotion, solveBody, vlen, vsub, type Foot } from '../src/render/bodySolve';
++import { WEAPON_MOTIONS, WEAPON_STANCES } from '../src/render/weaponClipSpecs';
++import { clipPose } from '../src/render/poses';
++import { HunterRig } from '../src/render/rig';
++import { sampleTrack } from '../src/game/tracks';
++import { checkFrame } from '../src/render/humanLimits';
++import { Simulation } from '../src/game/sim';
++import { Btn, baseOptions, frame, hold, loadContent, placeInFrontOfHead, press } from './helpers';
++
++const near = (a: readonly number[], b: readonly number[], tolerance = 1e-8): void => {
++  expect(Math.hypot(...a.map((v, i) => v - b[i]!))).toBeLessThan(tolerance);
++};
++const L: Foot = [0.105, 0, 0, 5, 0], R: Foot = [-0.105, 0, 0, -5, 0];
++const D = Math.PI / 180;
++
++describe('runtime の動作差し替え', () => {
++  it('solveState の時刻が歩行の位相を変える（以前は time を変えても同じ脚だった）', () => {
++    for (const family of Object.keys(WEAPON_STANCES)) {
++      const a = solveState(family, { kind: 'idle' }, 2.4, 0);
++      const b = solveState(family, { kind: 'idle' }, 2.4, 0.13);
++      expect(vlen(vsub(a.frames.ankleL, b.frames.ankleL)), family).toBeGreaterThan(0.05);
++    }
++  });
++
++  it('全ての判定開始で、直前の歩行や遷移時間に関係なく正本の握り/向きに一致する', async () => {
++    const content = await loadContent();
++    let checked = 0;
++    for (const action of content.actions.values()) {
++      const m = WEAPON_MOTIONS[action.clip];
++      if (!m) continue;
++      const S = WEAPON_STANCES[m.family]!;
++      const contacts = [...action.hitWindows.map((h) => h.from), ...(action.shoot ?? []).map((s) => s.tick)];
++      for (const contact of contacts) {
++        const anim = new HunterAnimator();
++        for (let f = 0; f < 15; f++) anim.frame(m.family, { kind: 'idle' }, 'idle', 1 / 60, 2.4, f / 60);
++        const expectedFrame = evalMotion(m, contact);
++        const expected = solveBody(expectedFrame.ctl, expectedFrame.footL, expectedFrame.footR, S.hands);
++        const actual = anim.frame(m.family, { kind: 'action', clip: action.clip, t: contact, dirAngle: 0, chargeTicks: 0, freeMove: !!action.freeMove }, `a-${checked}`, 1 / 144, 2.4, 1, { active: playerContactFrame(action, contact) });
++        near(actual.weapon.grip, expected.weapon.grip);
++        near(actual.weapon.dir, expected.weapon.dir);
++        if (expected.off) { expect(actual.off).not.toBeNull(); near(actual.off!.grip, expected.off.grip); near(actual.off!.dir, expected.off.dir); }
++        checked++;
++      }
++    }
++    expect(checked).toBeGreaterThan(20);
++  });
++
++  it('実際の Simulation の命中→最終停止 tick で接触姿勢を保ち、溜め保持時刻も守る', async () => {
++    const content = await loadContent();
++    const sim = new Simulation(content, baseOptions({ weaponId: 'weapon.guard_blade.001' }));
++    placeInFrontOfHead(sim, 1.2);
++    for (let i = 0; i < 40 && !sim.recentHits.length; i++) { sim.step(i === 0 ? press(Btn.Main) : frame()); sim.drainEvents(); }
++    expect(sim.recentHits.length).toBeGreaterThan(0);
++    const run = sim.player.action!, contact = sim.recentHits[sim.recentHits.length - 1]!.actionTick;
++    const stops = run.hitstop;
++    expect(stops).toBeGreaterThan(0);
++    for (let i = 0; i <= stops; i++) {
++      for (const alpha of [0, 0.5, 0.99]) expect(playerRenderTick(run, alpha)).toBe(contact);
++      if (i < stops) sim.step(frame());
++    }
++    expect(run.hitstop).toBe(0); expect(run.advanced).toBe(false);
++    sim.step(frame());
++    expect(playerRenderTick(run, 0.5)).toBeGreaterThan(contact);
++    const charge = new Simulation(content, baseOptions());
++    placeInFrontOfHead(charge, 10);
++    for (let i = 0; i < 40; i++) {
++      charge.step(i === 0 ? press(Btn.Main) : hold(Btn.Main));
++      const r = charge.player.action;
++      if (r?.chargeTicks) for (const alpha of [0, 0.5, 0.99]) expect(playerRenderTick(r, alpha)).toBe(r.def.charge!.holdTick);
++    }
++    expect(charge.player.action!.chargeTicks).toBeGreaterThan(0);
++  });
++
++  it('接地中の母指球は、移動・方向転換・停止を通じて世界座標で滑らない', () => {
++    const lock = new ContactLocomotion();
++    let x = 0, z = 0, yaw = 0, phase = 0;
++    let previous: { at: ReturnType<typeof footContactWorld>; lift: number }[] | null = null;
++    let contacts = 0;
++    for (let i = 0; i < 300; i++) {
++      const speed = i < 160 ? 2.4 : 0, dt = 1 / 60;
++      if (i < 160) { yaw += 0.2 * dt; x += Math.sin(yaw) * speed * dt; z += Math.cos(yaw) * speed * dt; }
++      const root = { x, z, yaw };
++      phase += speed * dt * Math.PI * 2 / 1.2;
++      const g = speed ? travelGait(phase, 1.2, L, R) : { L, R };
++      const f = lock.frame(root, g.L, g.R, dt, speed > 0);
++      const now = [f.L, f.R].map((foot) => ({ at: footContactWorld(foot, root), lift: foot[1] }));
++      if (previous) for (let j = 0; j < 2; j++) {
++        if (previous[j]!.lift <= 0.004 && now[j]!.lift <= 0.004) {
++          near([now[j]!.at.x, now[j]!.at.z], [previous[j]!.at.x, previous[j]!.at.z]); contacts++;
++        }
++      }
++      previous = now;
++    }
++    expect(contacts).toBeGreaterThan(250);
++  });
++
++  it('停止したまま大きく向きを変える時は、足を上げて踏み替える', () => {
++    const lock = new ContactLocomotion();
++    lock.frame({ x: 0, z: 0, yaw: 0 }, L, R, 1 / 60, false);
++    let maxLift = 0;
++    for (let f = 0; f < 60; f++) {
++      const feet = lock.frame({ x: 0, z: 0, yaw: 0.8 }, L, R, 1 / 60, false);
++      maxLift = Math.max(maxLift, feet.L[1], feet.R[1]);
++    }
++    expect(maxLift).toBeGreaterThan(0.05);
++  });
++
++  it('90/180° の急反転でも、6 系統×30/60/120fps で脚の届きと関節範囲を保つ', async () => {
++    const content = await loadContent();
++    let scenarios = 0;
++    for (const family of Object.keys(WEAPON_STANCES)) for (const turn of [Math.PI / 2, Math.PI]) for (const fps of [30, 60, 120]) {
++      const anim = new HunterAnimator(), familyDef = content.families.get(family)!;
++      const speed = familyDef.drawnMoveSpeed, turnRate = familyDef.drawnTurnDegPerSec * D;
++      let x = 0, z = 0, yaw = 0;
++      for (let i = 0; i < fps * 3; i++) {
++        const dt = 1 / fps, want = i < fps * 0.6 ? 0 : turn;
++        const diff = Math.atan2(Math.sin(want - yaw), Math.cos(want - yaw));
++        yaw += Math.sign(diff) * Math.min(Math.abs(diff), turnRate * dt);
++        const moving = i < fps * 2.2;
++        if (moving) { x += Math.sin(want) * speed * dt; z += Math.cos(want) * speed * dt; }
++        const s = anim.frame(family, { kind: 'idle' }, 'idle', dt, moving ? speed : 0, i / fps, { root: { x, z, yaw } });
++        const label = `${family} ${turn / D}° ${fps}fps frame ${i}`;
++        expect(Math.max(s.frames.legShortL, s.frames.legShortR), label).toBeLessThan(0.012);
++        const S = WEAPON_STANCES[family]!;
++        // 単純な静的重心判定は走行・旋回の動的な釣り合いを評価できない。別の受入項目とする。
++        expect(checkFrame(s, S.hands, S.shape).filter((v) => !v.rule.startsWith('重心')), label).toEqual([]);
++      }
++      scenarios++;
++    }
++    expect(scenarios).toBe(36);
++  });
++
++  it('疾走は、脚の届く歩幅で短い空中局面を持つ', () => {
++    let flight = 0, contacts = 0;
++    for (let k = 0; k < 240; k++) {
++      const g = travelGait(k / 240 * Math.PI * 2, 2.6, L, R, 1);
++      if (g.L[1] > 0.02 && g.R[1] > 0.02) flight++;
++      if (g.L[1] <= 0.004) contacts++;
++      expect(Math.max(Math.abs(g.L[2]), Math.abs(g.R[2]))).toBeLessThanOrEqual(0.417);
++    }
++    expect(flight).toBeGreaterThan(40);
++    expect(contacts / 240).toBeLessThan(0.4);
++  });
++});
++
++describe('断岳剣の下半身と体幹', () => {
++  it('実際の靴メッシュ254頂点が、三つの攻撃の全1/4 tickで地面に埋まらない', async () => {
++    const mock = vi.spyOn(TextureLoader.prototype, 'load').mockImplementation(() => new Texture());
++    try {
++      const content = await loadContent(), rig = new HunterRig();
++      const mesh = rig.root.getObjectByName('hunter_body') as SkinnedMesh;
++      const position = mesh.geometry.getAttribute('position'), indices = mesh.geometry.getAttribute('skinIndex'), weights = mesh.geometry.getAttribute('skinWeight');
++      const footIds = mesh.skeleton.bones.flatMap((bone, i) => bone.name === 'footL' || bone.name === 'footR' ? [i] : []);
++      const vertices: number[] = [];
++      for (let i = 0; i < position.count; i++) for (let j = 0; j < 4; j++) {
++        if (footIds.includes(indices.getComponent(i, j)) && weights.getComponent(i, j) > 0.01) { vertices.push(i); break; }
++      }
++      expect(vertices.length).toBeGreaterThan(200);
++      const point = new Vector3();
++      for (const name of ['overhead', 'side_sweep', 'draw_slash']) {
++        const a = content.actions.get(`player.heavy_blade.${name}`)!;
++        for (let t = 0; t <= a.durationTicks; t += 0.25) {
++          rig.setPose(groundedHeavyAttack(clipPose(a.clip, t)!, a.clip, t));
++          rig.root.updateMatrixWorld(true); mesh.skeleton.update();
++          let lowest = Infinity;
++          for (const i of vertices) {
++            point.fromBufferAttribute(position, i); mesh.applyBoneTransform(i, point); point.applyMatrix4(mesh.matrixWorld);
++            lowest = Math.min(lowest, point.y);
++          }
++          expect(lowest, `${name} tick ${t}`).toBeGreaterThan(-0.0001);
++        }
++      }
++    } finally { mock.mockRestore(); }
++  });
++
++  it('三つの攻撃の全 1/4 tick で、実リグの左右 socket が柄へ 2mm 以内で届く', async () => {
++    // GPU を使わず、テクスチャの通信だけを置き換えて、ゲームの本物の骨格/腕 IK を通す。
++    const mock = vi.spyOn(TextureLoader.prototype, 'load').mockImplementation(() => new Texture());
++    try {
++      const content = await loadContent(), rig = new HunterRig();
++      for (const name of ['overhead', 'side_sweep', 'draw_slash']) {
++        const a = content.actions.get(`player.heavy_blade.${name}`)!;
++        const track = content.tracks.get(a.weaponTrack!)!;
++        for (let t = 0; t <= a.durationTicks; t += 0.25) {
++          rig.setPose(groundedHeavyAttack(clipPose(a.clip, t)!, a.clip, t));
++          const k = sampleTrack(track, t);
++          rig.weaponToTrack(k.grip, k.dir, track.planeNormal ?? [1, 0, 0], { two: true, along: 0.2 });
++          rig.root.updateMatrixWorld(true);
++          const right = new Vector3(k.grip.x, k.grip.y, k.grip.z);
++          const left = right.clone().addScaledVector(new Vector3(k.dir.x, k.dir.y, k.dir.z).normalize(), 0.2);
++          expect(rig.sockets.hand_r.getWorldPosition(new Vector3()).distanceTo(right), `${name} R ${t}`).toBeLessThan(0.002);
++          expect(rig.sockets.hand_l.getWorldPosition(new Vector3()).distanceTo(left), `${name} L ${t}`).toBeLessThan(0.002);
++        }
++      }
++    } finally { mock.mockRestore(); }
++  });
++
++  it('薙ぎ払いは腰へ回転を分け、胸と腰の相対 yaw が 52° に収まる', () => {
++    for (let t = 0; t <= 66; t += 0.25) {
++      const p = groundedHeavyAttack(clipPose('hb_attack_side_01', t)!, 'hb_attack_side_01', t);
++      const q = (v: readonly number[]): Quaternion => new Quaternion().setFromEuler(new Euler(v[0]! * D, v[1]! * D, v[2]! * D));
++      const relative = q(p.j.spine).multiply(q(p.j.chest));
++      const twist = new Euler().setFromQuaternion(relative, 'XYZ').y / D;
++      expect(Math.abs(twist), `tick ${t}`).toBeLessThanOrEqual(52);
++    }
++  });
++
++  it('三つの攻撃の全 tick で足の FK が地面の下へ突き抜けない', () => {
++    for (const [clip, duration] of [['hb_attack_vertical_01', 72], ['hb_attack_side_01', 66], ['hb_draw_slash_01', 64]] as const) {
++      for (let t = 0; t <= duration; t++) {
++        const p = groundedHeavyAttack(clipPose(clip, t)!, clip, t);
++        expect(p.grounded).toBe(true);
++        const q = (v: readonly number[]): Quaternion => new Quaternion().setFromEuler(new Euler(v[0]! * D, v[1]! * D, v[2]! * D));
++        const qp = q(p.j.pelvis);
++        for (const [side, sign] of [['L', 1], ['R', -1]] as const) {
++          const hip = new Vector3((p.px ?? 0), 0.92 + p.py, p.pz ?? 0).add(new Vector3(0.095 * sign, -0.04, 0).applyQuaternion(qp));
++          const qt = qp.clone().multiply(q(p.j[`thigh${side}`]));
++          const qs = qt.clone().multiply(q(p.j[`shin${side}`]));
++          const qf = qs.clone().multiply(q(p.j[`foot${side}`]));
++          const ankle = hip.add(new Vector3(0, -0.43, 0).applyQuaternion(qt)).add(new Vector3(0, -0.41, 0).applyQuaternion(qs));
++          for (const toe of [-0.075, 0.19]) {
++            const sole = ankle.clone().add(new Vector3(0, -0.044, toe).applyQuaternion(qf));
++            expect(sole.y, `${clip} ${side} tick ${t}`).toBeGreaterThanOrEqual(-0.002);
++          }
++        }
++      }
++    }
++  });
++});

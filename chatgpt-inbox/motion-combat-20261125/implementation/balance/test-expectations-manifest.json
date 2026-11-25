@@ -1,0 +1,12 @@
+[
+  {
+    "path": "tests/combat.test.ts",
+    "beforeSha256": "1bb1b67a1786ddcacbe8c36fc6ae47b6408003bb07dfe3db393b8a6f2dfd2243",
+    "afterSha256": "4a4a2d29fad5d89c2fac9aed2206bf800af4cb53b9ec97bc39772739c261eaef"
+  },
+  {
+    "path": "tests/edge.test.ts",
+    "beforeSha256": "15b44436209870cb47a305143766e1df3f73f36eaafcff7d9cc95992dd684e78",
+    "afterSha256": "c1dd6eb6caaa7fad54c50a8b19f5b0ed7ef7d776e93fac371b50aa9029d941a5"
+  }
+]

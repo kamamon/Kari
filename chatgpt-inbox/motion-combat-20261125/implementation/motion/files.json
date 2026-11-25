@@ -1,0 +1,35 @@
+{
+  "base": "1d8e084d0d16fe77c376570f9542dd3c54fb5332",
+  "files": [
+    {
+      "path": "src/render/contactLocomotion.ts",
+      "new": true,
+      "sha256": "c05ae2df2cd110ec73b3d1f8ce7d8fbf68170d0aa3069e2b2d4bf5049b9651a1"
+    },
+    {
+      "path": "src/render/heavyBodyMotion.ts",
+      "new": true,
+      "sha256": "f8bb1b0a977d56e2e687465605005b960ab670b0403f85f8ec89f8dd30e3b9da"
+    },
+    {
+      "path": "src/render/hunterAnim.ts",
+      "new": false,
+      "sha256": "518e6a49226214c3e5cef0b485c33c72447a571de15dbc744446e01280ec8e85"
+    },
+    {
+      "path": "src/render/view.ts",
+      "new": false,
+      "sha256": "47f7e9d0518b68d2c6ccfc84408dc13b182ce84526e2c510b64cd527f4e33a27"
+    },
+    {
+      "path": "src/viewer.ts",
+      "new": false,
+      "sha256": "4caef9a6078bced022e16f8573da2b84a02d700c227470a9645e1a47b73f5189"
+    },
+    {
+      "path": "tests/motion-replacement.test.ts",
+      "new": true,
+      "sha256": "72ddf2912ad5b712d0d602ae0e29c4c7667695b5500a9fdc40689527c7d858f1"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "baseCommit": "1d8e084d0d16fe77c376570f9542dd3c54fb5332",
+  "patch": "replacement.patch",
+  "patchSha256": "3ef0459f4451f835e650feaf444fb55d4e43bc4a10f21f9f155d57e47a8796fb",
+  "fileCount": 21,
+  "files": [
+    {
+      "path": "public/data/actions/heavy_blade.json",
+      "beforeSha256": "88bf3183065a6de3573127ed82cbe0255483f242566183201ab910bcdf354acd",
+      "afterSha256": "112ae3a2a4564b220314628cf0ac11c9255a93d9a6e62df5e339ae974c81e1c3"
+    },
+    {
+      "path": "public/data/actions/guard_blade.json",
+      "beforeSha256": "7be39969b2b437268089fd0119c36078d48db57085a833478454457fce353b9a",
+      "afterSha256": "e7b278539a1c075ada7cf88efbcc170ca887bb2e756588630cabf585c4082f5b"
+    },
+    {
+      "path": "public/data/actions/war_maul.json",
+      "beforeSha256": "f377bd4f597adf56e09452b431282d9fd81953b976ad612bd7766272e4ff7836",
+      "afterSha256": "cedbcde8bf4331c92c5a25cb5df830d398698572775a3c16220ce235f29ae8c5"
+    },
+    {
+      "path": "public/data/actions/twin_blades.json",
+      "beforeSha256": "9acaeb637eefce789309bb8e7f03e42e2f237ea9d89c26c4dde2caf5059ff28f",
+      "afterSha256": "a2607f28ec759c4d52f0789154c5bdbd98ad545bb56aa322f99d6f6acd2fff8d"
+    },
+    {
+      "path": "public/data/actions/long_blade.json",
+      "beforeSha256": "08ce763b95552b41a8c53420fcd682b9063643b78aa0f43edb2ee216ae548c85",
+      "afterSha256": "bf7495a907d76d72fe4a1f3ab9aeff07b2b8332645c00842de4731ca1cc398c9"
+    },
+    {
+      "path": "public/data/actions/long_lance.json",
+      "beforeSha256": "8cb4614fc5ec31f0282d0548b2aa741838eb0f590c61efe09f2c5f1908e3d5a4",
+      "afterSha256": "717a7a03e6fd2dd4081d130a02d99f3d417bb7e32f3124b6652d72e9d68e9182"
+    },
+    {
+      "path": "public/data/actions/ring_bow.json",
+      "beforeSha256": "87a372427387f8e74e9fa184c6f2addeee654f4f4a34bc72eac32620dbf7dc07",
+      "afterSha256": "3d4883856d28c34e1ff4c81fd5c25d2eb6d5dcf240c0cb98ab4269f7716046ed"
+    },
+    {
+      "path": "tools/weapons/guard_blade.mjs",
+      "beforeSha256": "1f2b19d92fa56442dfc84c74d9634aafe0b63e133c57cdee12bd0dda0f1931fa",
+      "afterSha256": "415f185d054ff2604af2eb4a7577b3800d3de490c6b2a935c66559aff7fe6c1e"
+    },
+    {
+      "path": "tools/weapons/war_maul.mjs",
+      "beforeSha256": "c50bc1e389c84fc0c49de537d23fd374522468da442337d068f991ac3d5d8d61",
+      "afterSha256": "267d932ead8f289337ff558ad0eeff7134af4dbd6f9ca79f56563341d4898b61"
+    },
+    {
+      "path": "tools/weapons/twin_blades.mjs",
+      "beforeSha256": "30ef116fe69b6aa815de6cd28b57437e7c2348a4d87f219d16fac636ee725eaa",
+      "afterSha256": "b5127678c9ccae0b3b95a36937edc997ff4146c9bb63bd58df001a0a1041ea88"
+    },
+    {
+      "path": "tools/weapons/long_blade.mjs",
+      "beforeSha256": "aef7ec4a63baafc0219617cb0c4f9f5f9c96a5f85e7f14b58ce60c808c56d1c7",
+      "afterSha256": "319dfd16d84344e513eb9a63d6b9aae5897fb3925ca30733b4e52edb7930aba5"
+    },
+    {
+      "path": "tools/weapons/long_lance.mjs",
+      "beforeSha256": "1135cc8398c5cca7204051378b0bdf1c8ccb48a2072b2f394df460fcfd7500ee",
+      "afterSha256": "b4244320029ff712b94bc522833b405df3f49506faa8e07eace33c19d78e130f"
+    },
+    {
+      "path": "tools/weapons/ring_bow.mjs",
+      "beforeSha256": "96be63c32e1b2b075529eb6c285e4d26234efb05f67042297a42e2376d4f980c",
+      "afterSha256": "8a2aa91fbd2fc8e12c5c7ca19f1143c65109bd0824ed42dc5b494f5b6ed541b0"
+    },
+    {
+      "path": "tests/combat.test.ts",
+      "beforeSha256": "1bb1b67a1786ddcacbe8c36fc6ae47b6408003bb07dfe3db393b8a6f2dfd2243",
+      "afterSha256": "4a4a2d29fad5d89c2fac9aed2206bf800af4cb53b9ec97bc39772739c261eaef"
+    },
+    {
+      "path": "tests/edge.test.ts",
+      "beforeSha256": "15b44436209870cb47a305143766e1df3f73f36eaafcff7d9cc95992dd684e78",
+      "afterSha256": "c1dd6eb6caaa7fad54c50a8b19f5b0ed7ef7d776e93fac371b50aa9029d941a5"
+    },
+    {
+      "path": "src/render/contactLocomotion.ts",
+      "beforeSha256": null,
+      "afterSha256": "c05ae2df2cd110ec73b3d1f8ce7d8fbf68170d0aa3069e2b2d4bf5049b9651a1"
+    },
+    {
+      "path": "src/render/heavyBodyMotion.ts",
+      "beforeSha256": null,
+      "afterSha256": "f8bb1b0a977d56e2e687465605005b960ab670b0403f85f8ec89f8dd30e3b9da"
+    },
+    {
+      "path": "src/render/hunterAnim.ts",
+      "beforeSha256": "2a4eb12d692ce40e454a3b4277d63a8c31f7397063a13d79da7cb6b4af5875f8",
+      "afterSha256": "518e6a49226214c3e5cef0b485c33c72447a571de15dbc744446e01280ec8e85"
+    },
+    {
+      "path": "src/render/view.ts",
+      "beforeSha256": "ed9e42649ec2eacb7762afb5c2dac59ff731caf2e55d8e91521cdd6bf689cc07",
+      "afterSha256": "47f7e9d0518b68d2c6ccfc84408dc13b182ce84526e2c510b64cd527f4e33a27"
+    },
+    {
+      "path": "src/viewer.ts",
+      "beforeSha256": "06d30db1a4b3734843b2fb9343bad5453bbadfdb8f20d1407649936c18a24c97",
+      "afterSha256": "4caef9a6078bced022e16f8573da2b84a02d700c227470a9645e1a47b73f5189"
+    },
+    {
+      "path": "tests/motion-replacement.test.ts",
+      "beforeSha256": null,
+      "afterSha256": "72ddf2912ad5b712d0d602ae0e29c4c7667695b5500a9fdc40689527c7d858f1"
+    }
+  ]
+}

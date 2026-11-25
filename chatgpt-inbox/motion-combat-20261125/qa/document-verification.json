@@ -1,0 +1,15 @@
+{
+  "pdf": "Kari_Hunter_Motion_Combat_Design.pdf",
+  "pages": 34,
+  "pdfSha256": "4030f9f26de88556d8f21cfbdd7ef0a27b2ee17013a48b11d74c3553ce38a3c7",
+  "fontsEmbedded": true,
+  "renderedPagesInspected": 34,
+  "fullSizePagesInspected": [
+    2,
+    6,
+    24
+  ],
+  "bodyMarginWarnings": [],
+  "method": "PyMuPDF full-document contact sheets plus selected full-page renders; pdffonts embedding inspection; tables checked after column-width fix",
+  "notes": "CPU technical figures only. Not browser or gameplay visual acceptance."
+}
