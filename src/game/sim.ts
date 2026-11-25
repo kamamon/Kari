@@ -1264,10 +1264,10 @@ export class Simulation implements SimCtx {
       const h = this.hunt;
       parts.push(h.phase, h.reason ?? '-', h.ticks, h.faints, h.returnTicks, h.closed ? 1 : 0, h.loot.map((g) => `${g.itemId}@${g.source}`).join(','), Object.entries(h.carves).map(([k, v]) => `${k}=${v}`).join(','));
     }
-    for (const g of this.herds) parts.push(g.rng.state, g.anchor.x, g.anchor.z, g.restTicks, g.restIn, g.driftIn, g.travelIn, g.travel ? `${g.travel.to}:${g.travel.ticks}` : '-', g.areaId, g.quiet);
+    for (const g of this.herds) parts.push(g.rng.state, g.anchor.x, g.anchor.z, g.restTicks, g.restIn, g.driftIn, g.travelIn, g.travel ? `${g.travel.to}:${g.travel.ticks}` : '-', g.areaId, g.quiet, g.temperamentSeed, g.engagedId ?? '-');
     for (const m of this.monsters) {
       const hm = m.herd;
-      if (hm) parts.push(hm.mood, hm.ticks, hm.alarm, hm.idle, hm.tired, hm.stuck, hm.goal ? `${hm.goal.x},${hm.goal.z}` : '-');
+      if (hm) parts.push(hm.mood, hm.ticks, hm.alarm, hm.idle, hm.tired, hm.stuck, hm.goal ? `${hm.goal.x},${hm.goal.z}` : '-', hm.temperament, hm.threatTicks, hm.reengageTicks, hm.retaliate ? 1 : 0, hm.attacksLeft, hm.countedActionId ?? '-', hm.fightOrigin ? `${hm.fightOrigin.x},${hm.fightOrigin.z}` : '-');
     }
     if (this.field) {
       parts.push(this.areaId);

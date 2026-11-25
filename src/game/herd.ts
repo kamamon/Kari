@@ -5,7 +5,7 @@
 //   rest    群れで伏せて休む（気づく距離が短くなる）
 //   alert   狩人に気づいて、顔を上げて見る（その場に止まる）
 //   flee    逃げる（狩人から離れる向きへ。走り続けると、息を整えるまで止まる）
-//   fight   向き直って反撃する（攻撃された時と、追い詰められた時。この間だけ技を出す）
+//   fight   向き直って戦う（性格による先制、被弾・追い詰めへの反撃。この間だけ技を出す）
 //   regroup 群れへ戻る
 //   hide    親（成体）が同じエリアで戦っている間、岩陰へ寄る
 //   travel  群れで、住みかの別のエリアへ移る（フィールドだけ）
@@ -16,10 +16,12 @@ import type { SeededRng } from '../core/seededRng';
 import type { FieldAreaDef, FieldExit, HerdDef } from '../data/schemas';
 import type { MonsterState } from './monster';
 import type { PlayerState, SimCtx } from './player';
+import { activeControl } from './ailment';
 import { headingTo, nextHop, wakeMonster } from './roam';
 import type { AreaGeom, Circle, World } from './world';
 
 export type HerdMood = 'graze' | 'rest' | 'alert' | 'flee' | 'fight' | 'regroup' | 'hide' | 'travel';
+export type HerdTemperament = 'timid' | 'cautious' | 'aggressive';
 
 export interface HerdGroup {
   id: number;
@@ -49,6 +51,10 @@ export interface HerdGroup {
   /** 親（同じ狩場に居る成体。居なければ null） */
   parent: MonsterState | null;
   rng: SeededRng;
+  /** 性格専用の種。生成時の rng.state を読むだけで、群れ・戦闘の乱数を進めない。 */
+  temperamentSeed: number;
+  /** 同時に戦う 1 頭。技の途中は、気分が逃走へ変わっても完了まで枠を保つ。 */
+  engagedId: string | null;
   members: MonsterState[];
 }
 
@@ -56,16 +62,28 @@ export interface HerdMember {
   group: HerdGroup;
   /** 群れの中の番号（自分の場所と、散る向きに使う） */
   index: number;
+  /** 個体を作った時に固定する性格（状態・被弾ごとに抽選し直さない）。 */
+  temperament: HerdTemperament;
   mood: HerdMood;
-  /** 気分ごとの時間（flee: 走った時間、fight: 残り、alert: 静かになってからの時間） */
+  /** 気分ごとの時間（flee: 走った時間、fight: 技の再生中も減る残り、alert: 静かになってからの時間） */
   ticks: number;
+  /** 顔を上げて威嚇している時間 / 再交戦までの残り。 */
+  threatTicks: number;
+  reengageTicks: number;
+  /** 被弾の反撃意思。怯み中や仲間の攻撃中は、技を開始せずここに保持する。 */
+  retaliate: boolean;
+  /** 今回の交戦で出せる残りの技と、既に数えた技の instanceId。 */
+  attacksLeft: number;
+  countedActionId: number | null;
+  /** 追跡を始めた場所。この点から離れすぎると、今の技の後で退く。 */
+  fightOrigin: { x: number; z: number } | null;
   /** 向かっている点（食べに行く場所・逃げる先・隠れる場所） */
   goal: { x: number; z: number } | null;
   /** goal へ、群れへ戻る速さで歩く */
   hurry: boolean;
   /** 立ち止まって食べる残り */
   idle: number;
-  /** 仲間の知らせを受けて、反応するまでの残り（0 = 知らせ無し）。alarmFlee なら逃げる、でなければ顔を上げる */
+  /** 仲間の知らせを受けて、反応するまでの残り。alarmFlee は強い危険の知らせで、反応は個体が決める。 */
   alarm: number;
   alarmFlee: boolean;
   /** 中心から見た自分の場所 */
@@ -110,6 +128,61 @@ const TRAVEL_TIMEOUT = 3600;
 /** 親の近くに居る時の、親との間 */
 const NEAR_PARENT = 9;
 
+// 個体差の初期案。技の強さ・攻撃窓・移動曲線は変えない。
+const RETREAT_HP_RATIO = 0.3;
+const AGGRESSIVE_WARNING = 30;
+const CAUTIOUS_WARNING = 45;
+const REENGAGE_TICKS = 180;
+const MAX_FIGHT_TICKS = 360;
+const INITIATE_RANGE = 6;
+const CHASE_FROM_START = 8;
+const LOSE_TARGET_RANGE = 10;
+
+/** 乱数列を消費しない 32bit の混ぜ合わせ。 */
+function temperamentAt(seed: number, index: number): HerdTemperament {
+  let n = (seed ^ Math.imul((index >>> 2) + 1, 0x9e3779b9)) >>> 0;
+  n = Math.imul(n ^ (n >>> 16), 0x85ebca6b);
+  n = Math.imul(n ^ (n >>> 13), 0xc2b2ae35);
+  n ^= n >>> 16;
+  // 2頭なら臆病+攻撃的、3頭なら各1、4頭なら臆病1/慎重2/攻撃的1。
+  // 最初の2枠を専用の種で入れ替え、4頭ごとに同じ構成を繰り返す。
+  const slot = index & 3;
+  if (slot >= 2) return 'cautious';
+  return (slot ^ (n & 1)) === 0 ? 'timid' : 'aggressive';
+}
+
+const mustRetreat = (m: MonsterState): boolean => m.hp <= m.def.hp * RETREAT_HP_RATIO;
+
+/** 状態異常・怯みで中断された個体は、ほかの個体の攻撃枠を塞がない。ヒットストップは技が続くので除外しない。 */
+function canContinue(m: MonsterState): boolean {
+  return !m.dead && !m.captured && m.staggerTicks <= 0 && m.trapTicks <= 0 && activeControl(m.ailments) === null;
+}
+
+function refreshEngagement(g: HerdGroup): void {
+  const owner = g.members.find((m) => m.id === g.engagedId);
+  if (owner && (!canContinue(owner) || (!owner.action && (!owner.aiEnabled || owner.herd!.mood !== 'fight')))) {
+    g.engagedId = null;
+    if (owner.herd!.mood === 'fight') setMood(owner, 'alert');
+  } else if (!owner) g.engagedId = null;
+  if (g.engagedId !== null) return;
+  // 進行中の技があれば最優先。外から始めた技や、被弾で flee になった個体も含む。
+  const active = g.members.find((m) => canContinue(m) && m.action !== null)
+    ?? g.members.find((m) => canContinue(m) && m.aiEnabled && m.herd!.mood === 'fight');
+  if (active) g.engagedId = active.id;
+}
+
+function tryFight(m: MonsterState, ctx: SimCtx): boolean {
+  const h = m.herd!;
+  if (!m.aiEnabled || !canContinue(m) || mustRetreat(m) || h.reengageTicks > 0) return false;
+  refreshEngagement(h.group);
+  if (h.group.engagedId !== null && h.group.engagedId !== m.id) return false;
+  h.group.engagedId = m.id;
+  setMood(m, 'fight');
+  h.retaliate = false;
+  raise(m, false, ctx);
+  return true;
+}
+
 const roll = (rng: SeededRng, [lo, hi]: [number, number]): number => lo + rng.int(hi - lo + 1);
 
 /** 落ち着いている気分（知らせを受けると、顔を上げる・逃げる） */
@@ -127,10 +200,11 @@ export function createHerdGroup(
   anchor: { x: number; z: number },
   rng: SeededRng,
 ): HerdGroup {
+  const temperamentSeed = rng.state;
   return {
     id, monsterId, def, areas, areaIndex: Math.max(0, areas.indexOf(areaId)), areaId, anchor: { ...anchor },
     driftIn: roll(rng, DRIFT_EVERY), restTicks: 0, restIn: roll(rng, REST_EVERY), travelIn: areas.length > 1 ? roll(rng, TRAVEL_EVERY) : 0,
-    travel: null, quiet: 0, stirred: false, alarmLevel: 0, parent: null, rng, members: [],
+    travel: null, quiet: 0, stirred: false, alarmLevel: 0, parent: null, rng, temperamentSeed, engagedId: null, members: [],
   };
 }
 
@@ -144,7 +218,11 @@ export function slotOf(i: number, spacing: number): { x: number; z: number } {
 
 export function addMember(g: HerdGroup, m: MonsterState): void {
   const index = g.members.length;
-  m.herd = { group: g, index, mood: 'graze', ticks: 0, goal: null, hurry: false, idle: roll(g.rng, GRAZE_IDLE), alarm: 0, alarmFlee: false, slot: slotOf(index, g.def.spacing), tired: 0, stuck: 0 };
+  m.herd = {
+    group: g, index, temperament: temperamentAt(g.temperamentSeed, index), mood: 'graze', ticks: 0,
+    threatTicks: 0, reengageTicks: 0, retaliate: false, attacksLeft: 0, countedActionId: null, fightOrigin: null,
+    goal: null, hurry: false, idle: roll(g.rng, GRAZE_IDLE), alarm: 0, alarmFlee: false, slot: slotOf(index, g.def.spacing), tired: 0, stuck: 0,
+  };
   g.members.push(m);
 }
 
@@ -166,12 +244,24 @@ export function herdCenter(g: HerdGroup, area?: AreaGeom, ctx?: SimCtx): { x: nu
 function setMood(m: MonsterState, mood: HerdMood): void {
   const h = m.herd!;
   if (h.mood === mood) return;
+  if (h.mood === 'fight') {
+    h.reengageTicks = Math.max(h.reengageTicks, REENGAGE_TICKS);
+    h.fightOrigin = null;
+    h.retaliate = false;
+    if (!m.action && h.group.engagedId === m.id) h.group.engagedId = null;
+  }
   h.mood = mood;
   h.ticks = 0;
+  h.threatTicks = 0;
   h.goal = null;
   h.hurry = false;
   h.stuck = 0;
-  if (mood === 'fight') h.ticks = roll(h.group.rng, h.group.def.fightTicks);
+  if (mood === 'fight') {
+    h.ticks = Math.min(MAX_FIGHT_TICKS, roll(h.group.rng, h.group.def.fightTicks));
+    h.fightOrigin = { x: m.pos.x, z: m.pos.z };
+    h.attacksLeft = h.temperament === 'aggressive' ? 2 : 1;
+    h.countedActionId = null;
+  }
   if (mood === 'graze') h.idle = roll(h.group.rng, GRAZE_IDLE) >> 1;
 }
 
@@ -203,9 +293,17 @@ export function herdHurt(m: MonsterState, ctx: SimCtx): void {
   if (!h) return;
   const g = h.group;
   if (!m.dead && !m.captured) {
-    if (h.mood === 'fight') h.ticks = Math.max(h.ticks, 60);
-    else if (m.aiEnabled && (h.tired > 0 || g.rng.next() < g.def.fightChance)) setMood(m, 'fight');
-    else setMood(m, 'flee');
+    if (mustRetreat(m)) {
+      h.retaliate = false;
+      setMood(m, h.tired > 0 ? 'alert' : 'flee');
+    } else if (h.mood !== 'fight') {
+      // fightChance は旧データとの互換性のため残すが、性格は被弾ごとに抽選しない。
+      h.retaliate = m.aiEnabled && (h.temperament !== 'timid' || h.tired > 0);
+      if (h.retaliate) {
+        if (!tryFight(m, ctx)) setMood(m, 'alert');
+      } else setMood(m, h.tired > 0 ? 'alert' : 'flee');
+    }
+    // 既に戦っている時の被弾では、期限・技数を延長しない。
   }
   raise(m, true, ctx);
   const p = g.parent;
@@ -251,6 +349,7 @@ function settle(pt: { x: number; z: number }, area: AreaGeom, pad: number, world
  * 騒ぎ（顔を上げる・逃げる・戦う・隠れる）がある間は、どれも止まる。静まったら、居る所を新しい中心にする。
  */
 export function stepHerdGroup(g: HerdGroup, ctx: SimCtx): void {
+  refreshEngagement(g);
   const alive = livingMembers(g);
   if (alive.length === 0) return;
   const disturbed = alive.some((m) => m.herd!.mood === 'alert' || m.herd!.mood === 'flee' || m.herd!.mood === 'fight' || m.herd!.alarm > 0);
@@ -481,7 +580,17 @@ export function stepHerdMember(m: MonsterState, player: PlayerState, ctx: SimCtx
   const h = m.herd!;
   const g = h.group;
   const H = g.def;
-  if (m.action) return false;
+  refreshEngagement(g);
+  if (h.reengageTicks > 0) h.reengageTicks--;
+  if (h.mood === 'fight') h.ticks--;
+  if (m.action) {
+    // 技の途中で期限が尽きても、攻撃窓を切らずにその技を完了させる。
+    if (h.mood === 'fight' && h.countedActionId !== m.action.instanceId) {
+      h.countedActionId = m.action.instanceId;
+      h.attacksLeft = Math.max(0, h.attacksLeft - 1);
+    }
+    return false;
+  }
   m.pos.y = ctx.world.groundHeight(m.pos.x, m.pos.z);
   const here = ctx.world.areaAt(m.pos.x, m.pos.z);
   const pHere = player.mode !== 'dead' && ctx.world.areaAt(player.pos.x, player.pos.z) === here;
@@ -489,14 +598,32 @@ export function stepHerdMember(m: MonsterState, player: PlayerState, ctx: SimCtx
   const sense = h.mood === 'rest' ? REST_SENSE : 1;
   const near = pHere && dist <= H.fleeRange * sense;
   const seen = pHere && dist <= H.alertRange * sense;
+  const lowHp = mustRetreat(m);
+  const close = dist <= Math.min(H.fleeRange * 0.45, m.def.bodyRadius + ctx.content.player.radius + 1.3);
   const avoid: Circle[] = player.mode === 'dead' ? [] : [{ x: player.pos.x, z: player.pos.z, r: ctx.content.player.radius }];
   if (h.tired > 0) h.tired--;
   if (h.mood !== 'fight') h.ticks++;
 
+  // 怯みなどから戻った時も、瀕死なら被弾反撃・先制より退避を優先する。
+  if (lowHp) {
+    h.retaliate = false;
+    h.threatTicks = 0;
+    if (pHere && (near || h.mood === 'fight' || h.mood === 'flee')) setMood(m, h.tired > 0 ? 'alert' : 'flee');
+  }
+
   // ---- 仲間の知らせ ----
   if (h.alarm > 0 && --h.alarm === 0) {
-    if (h.alarmFlee && pHere && h.tired === 0) setMood(m, 'flee');
-    else if (isCalm(h.mood)) setMood(m, 'alert');
+    // 逃走は命令ではなく危険情報。既に戦う/退く判断をした個体は上書きしない。
+    if (isCalm(h.mood) || h.mood === 'alert') {
+      if (h.alarmFlee && pHere && h.tired === 0 && (lowHp || h.temperament === 'timid')) setMood(m, 'flee');
+      else setMood(m, 'alert');
+    }
+  }
+
+  // 被弾した時に怯んだ、または仲間が戦っていた個体は、動けるようになってから判断する。
+  if (h.retaliate) {
+    if (!pHere || dist > LOSE_TARGET_RANGE || lowHp || !m.aiEnabled) h.retaliate = false;
+    else if (h.reengageTicks === 0) tryFight(m, ctx);
   }
 
   // ---- 気分を決める ----
@@ -508,8 +635,9 @@ export function stepHerdMember(m: MonsterState, player: PlayerState, ctx: SimCtx
     case 'travel':
     case 'hide':
       if (near && h.tired === 0) {
-        raise(m, true, ctx);
-        setMood(m, 'flee');
+        const flee = lowHp || h.temperament === 'timid';
+        raise(m, flee, ctx);
+        setMood(m, flee ? 'flee' : 'alert');
       } else if (seen && h.mood !== 'hide') {
         raise(m, false, ctx);
         setMood(m, 'alert');
@@ -517,11 +645,22 @@ export function stepHerdMember(m: MonsterState, player: PlayerState, ctx: SimCtx
       else if (!parent && h.mood === 'hide') setMood(m, 'regroup');
       break;
     case 'alert':
-      if (near && h.tired === 0) {
+      if (near && h.tired === 0 && (lowHp || h.temperament === 'timid')) {
         raise(m, true, ctx);
         setMood(m, 'flee');
-      } else if (seen) h.ticks = 0;
-      else if (h.ticks >= CALM_TICKS) setMood(m, parent ? 'hide' : 'regroup');
+      } else if (seen) {
+        h.ticks = 0;
+        if (near && !lowHp && h.tired === 0 && h.reengageTicks === 0 && h.temperament !== 'timid') {
+          const aggressive = h.temperament === 'aggressive';
+          const inReach = aggressive ? dist <= Math.min(H.fleeRange, INITIATE_RANGE) : close;
+          const warning = aggressive ? AGGRESSIVE_WARNING : CAUTIOUS_WARNING;
+          h.threatTicks = inReach ? Math.min(warning, h.threatTicks + 1) : 0;
+          if (inReach && h.threatTicks >= warning) tryFight(m, ctx);
+        } else h.threatTicks = 0;
+      } else {
+        h.threatTicks = 0;
+        if (h.ticks >= CALM_TICKS) setMood(m, parent ? 'hide' : 'regroup');
+      }
       break;
     case 'flee':
       if (!pHere || dist > H.alertRange + FLEE_MARGIN) {
@@ -531,10 +670,16 @@ export function stepHerdMember(m: MonsterState, player: PlayerState, ctx: SimCtx
         // 走り続けて息が上がった: 少しの間、その場で息を整える
         h.tired = TIRED_TICKS;
         setMood(m, 'alert');
+      } else if (!lowHp && h.tired === 0 && h.reengageTicks === 0
+        && ((h.temperament === 'aggressive' && dist <= Math.min(H.fleeRange, INITIATE_RANGE)) || (h.temperament === 'cautious' && close))) {
+        // 退いた後も追い続けられた: 個体の性格に応じて、もう一度顔を上げてから戦う。
+        setMood(m, 'alert');
       }
       break;
     case 'fight':
-      if (--h.ticks > 0 && m.aiEnabled && pHere) return false;
+      if (h.ticks > 0 && h.attacksLeft > 0 && !lowHp && m.aiEnabled && pHere && dist <= LOSE_TARGET_RANGE
+        && g.engagedId === m.id && h.fightOrigin
+        && Math.hypot(m.pos.x - h.fightOrigin.x, m.pos.z - h.fightOrigin.z) <= CHASE_FROM_START) return false;
       setMood(m, pHere && h.tired === 0 ? 'flee' : 'alert');
       break;
   }
@@ -556,7 +701,10 @@ export function stepHerdMember(m: MonsterState, player: PlayerState, ctx: SimCtx
       // 追い詰められた: 狩人が近く、ほとんど進めない
       if (dist < CORNER_DIST && moved >= 0 && moved < step * 0.3) h.stuck++;
       else h.stuck = Math.max(0, h.stuck - 1);
-      if (h.stuck >= CORNER_TICKS && m.aiEnabled) setMood(m, 'fight');
+      if (h.stuck >= CORNER_TICKS && m.aiEnabled && !lowHp && h.reengageTicks === 0) {
+        h.retaliate = true;
+        tryFight(m, ctx);
+      }
       return true;
     }
     case 'hide': {

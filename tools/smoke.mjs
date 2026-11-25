@@ -2047,20 +2047,23 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     await page.waitForTimeout(400);
     await page.screenshot({ path: `${OUT}9z_herd_${key}.png` });
     const info = await page.evaluate(() => ({ n: window.__vh.sim.herds[0].members.length, calm: window.__vh.sim.herds[0].members.every((m) => ['graze', 'rest', 'regroup'].includes(m.herd.mood)), goal: document.querySelector('.hud-quest .goal')?.textContent ?? '', ...window.__vh.view.stats() }));
-    // 近づくと、群れが逃げ出す
+    // 近づくと、群れの反応が分かれる（v0.37.0。個体の性格: 臆病は逃げ、慎重・攻撃的は顔を上げて見る・向かってくる）
     await page.evaluate(() => {
       const s = window.__vh.sim, p = s.player, ms = s.herds[0].members;
       const c = { x: ms.reduce((t, m) => t + m.pos.x, 0) / ms.length, z: ms.reduce((t, m) => t + m.pos.z, 0) / ms.length };
       p.pos = { x: c.x - 5, y: 0, z: c.z - 2 };
       p.prevPos = { ...p.pos };
     });
-    const fled = await until(page, () => window.__vh.sim.herds[0].members.filter((m) => m.herd.mood === 'flee').length >= 2, 6000);
+    const fled = await until(page, () => {
+      const ms = window.__vh.sim.herds[0].members;
+      return ms.some((m) => m.herd.mood === 'flee') && ms.some((m) => m.herd.mood === 'alert' || m.herd.mood === 'fight');
+    }, 6000);
     rows.push({ key, ready, fled, ...info });
     await page.evaluate(() => window.__vh.toBase());
     await until(page, () => !document.getElementById('base').hidden, 8000);
   }
   check('群れの依頼: 8 種とも、群れ（依頼の頭数以上）が絵を貼った体で出て、遠くでは静かに食む。目標に「あと」の数が出る', rows.every((r) => r.ready && r.calm && /あと \d/.test(r.goal)), JSON.stringify(rows.map((r) => `${r.key}:${r.ready ? '' : '×体'}${r.calm ? '' : '×静'}${r.n}頭 ${r.goal.slice(-12)}`)));
-  check('群れの依頼: 近づくと、群れが逃げ出す', rows.every((r) => r.fled), JSON.stringify(rows.filter((r) => !r.fled).map((r) => r.key)));
+  check('群れの依頼: 近づくと、臆病な個体は逃げ出し、ほかの個体は顔を上げて見る・向かってくる（個体の性格）', rows.every((r) => r.fled), JSON.stringify(rows.filter((r) => !r.fled).map((r) => r.key)));
   check('群れの依頼: 群れが居ても、描画量は目標内（100 draw calls / 20万 tri）', rows.every((r) => r.calls <= 100 && r.triangles <= 200000), JSON.stringify(rows.map((r) => `${r.key}:${r.calls}/${Math.round(r.triangles / 1000)}k`)));
   // 倒すと残りが減り、頭数で達成。倒した幼体は、狩りの途中でも剥ぎ取れる
   await page.evaluate(() => window.__vh.startHunt('quest.kordopil.pack1'));

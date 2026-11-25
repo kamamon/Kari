@@ -325,9 +325,10 @@ describe('群れの動き', () => {
     for (const m of ms) expect(dist(m.pos, center(ms))).toBeLessThan(m.herd!.group.def.spacing * 4 + 2);
   });
 
-  it('近づくと、気づいて顔を上げ、さらに近づくと逃げる。知らせで、仲間も遅れて逃げる', () => {
+  it('臆病な個体は、近づくと顔を上げ、さらに近づくと逃げる。知らせで、仲間も遅れて逃げる', () => {
     for (const key of KEYS) {
       const sim = pack(key);
+      for (const m of members(sim)) m.herd!.temperament = 'timid';
       const H = content.monsters.get(`monster.${key}`)!.herd!;
       // 気づく距離の少し内
       placeFrom(sim, H.alertRange - 1.5);
@@ -350,6 +351,7 @@ describe('群れの動き', () => {
 
   it('逃げ切ると、止まって様子を見て、やがて静まり、逃げた先を新しい居場所にする（もとの場所へは戻らない）', () => {
     const sim = pack('palseit');
+    for (const m of members(sim)) m.herd!.temperament = 'timid';
     const H = content.monsters.get('monster.palseit')!.herd!;
     const c0 = center(members(sim));
     placeFrom(sim, H.fleeRange - 2);
@@ -365,6 +367,7 @@ describe('群れの動き', () => {
 
   it('走り続けると、息が上がって止まる（その間は逃げない）', () => {
     const sim = pack('numaporon');
+    for (const m of members(sim)) m.herd!.temperament = 'timid';
     const H = content.monsters.get('monster.numaporon')!.herd!;
     const m = members(sim)[0]!;
     // 狩人が後ろから追い続ける
@@ -381,7 +384,7 @@ describe('群れの動き', () => {
     expect(m.herd!.mood).toBe('alert');
   });
 
-  it('攻撃されると、向き直って反撃するか、逃げる。反撃の間は技を出し、狩人に当たる', () => {
+  it('攻撃されると、性格に応じて反撃するか、逃げる。反撃の間は技を出し、狩人に当たる', () => {
     let fights = 0, flees = 0, hits = 0;
     for (let seed = 1; seed <= 24; seed++) {
       const sim = pack('kordopil', seed);
@@ -396,13 +399,14 @@ describe('群れの動き', () => {
       hits += only(ev, 'player_hurt').length;
     }
     expect(fights).toBeGreaterThan(2);
-    expect(flees).toBeGreaterThan(fights);
+    expect(flees).toBeGreaterThan(2);
     expect(hits).toBeGreaterThan(0);
   });
 
   it('追い詰めると（壁際で逃げられない）、向き直って反撃する', () => {
     const sim = pack('yurtepica');
     const m = members(sim)[0]!;
+    m.herd!.temperament = 'timid';
     // ほかの仲間は遠くへ
     for (const o of members(sim).slice(1)) {
       o.pos = { x: -30, y: 0, z: 20 };
