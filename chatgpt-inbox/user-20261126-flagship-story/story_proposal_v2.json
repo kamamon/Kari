@@ -1,0 +1,564 @@
+{
+  "schemaId": "kari.flagship-story-proposal",
+  "schemaVersion": 1,
+  "status": "proposal-not-runtime",
+  "createdDateJST": "2026-11-26",
+  "baseCommit": "0925487b686473e1a4d7e45fdc63449ef3a7d2ec",
+  "baseStoryId": "story.homeward_lights",
+  "baseStoryTitle": "帰り道の灯",
+  "editionSubtitle": "雷が帰る峰",
+  "runtimeReplacement": false,
+  "instructions": "このJSONをpublic/data/story.jsonへコピーしない。シーン条件、読み物章、地域・対象・クエストの完成を確認してClaudeが変換する。",
+  "preserve": {
+    "chapterIds": [
+      "ch0",
+      "ch1",
+      "ch2",
+      "ch3",
+      "ch4",
+      "ch5",
+      "ch6",
+      "ch7",
+      "ch8",
+      "ch9"
+    ],
+    "sceneIds": [
+      "sc00",
+      "sc01",
+      "sc02",
+      "sc03"
+    ],
+    "speakerKeys": [
+      "minagi",
+      "rokuha",
+      "isane",
+      "senaki"
+    ],
+    "legacyQuestIds": [
+      "quest.basin.003",
+      "quest.selvark.r1",
+      "quest.story.st03",
+      "quest.story.st04",
+      "quest.story.st05",
+      "quest.story.st06",
+      "quest.story.st07",
+      "quest.story.st08",
+      "quest.story.st09",
+      "quest.story.st10",
+      "quest.story.st11",
+      "quest.story.st12",
+      "quest.story.st13",
+      "quest.story.st14"
+    ],
+    "firstTwoQuestOrder": "either-order",
+    "saveSchemaVersionObserved": 5,
+    "noNewPlayerIdentity": "主人公の性別・名前・体型・肌・出自を固定しない"
+  },
+  "chapterOrder": [
+    "ch0",
+    "ch1",
+    "ch2",
+    "ch3",
+    "ch4",
+    "ch5",
+    "ch6",
+    "ch7",
+    "ch8",
+    "proposal.chapter.thunder_return",
+    "ch9"
+  ],
+  "chapters": [
+    {
+      "id": "ch0",
+      "runtimeChapterExists": true,
+      "title": "序章「あなたの帰る場所」",
+      "place": "灯継ぎの里",
+      "contentStatus": "implemented-core-with-proposed-inserts",
+      "requiresAllQuestClears": [],
+      "requiredQuestIds": [],
+      "canonicalExistingTargetIds": [],
+      "optionalQuestProposalIds": [],
+      "unlockConditionNote": "すべての前提が成功保存済み、かつ本来の地域・対象・受注UIが完成。会話を開くことや既読を前提にしない。"
+    },
+    {
+      "id": "ch1",
+      "runtimeChapterExists": true,
+      "title": "第1章「獣の道、人の道」",
+      "place": "風礫盆地",
+      "contentStatus": "implemented-core-with-proposed-inserts",
+      "requiresAllQuestClears": [],
+      "requiredQuestIds": [
+        "quest.basin.003",
+        "quest.selvark.r1"
+      ],
+      "canonicalExistingTargetIds": [
+        "monster.galdros",
+        "monster.selvark"
+      ],
+      "optionalQuestProposalIds": [],
+      "unlockConditionNote": "すべての前提が成功保存済み、かつ本来の地域・対象・受注UIが完成。会話を開くことや既読を前提にしない。"
+    },
+    {
+      "id": "ch2",
+      "runtimeChapterExists": true,
+      "title": "第2章「戻らない水」",
+      "place": "根絡み湿原",
+      "contentStatus": "planned-chapter-existing-teaser",
+      "requiresAllQuestClears": [
+        "quest.basin.003",
+        "quest.selvark.r1"
+      ],
+      "requiredQuestIds": [
+        "quest.story.st03",
+        "quest.story.st04"
+      ],
+      "canonicalExistingTargetIds": [
+        "monster.numeradon",
+        "monster.verito"
+      ],
+      "optionalQuestProposalIds": [
+        "proposal.quest.thunder.tq01"
+      ],
+      "unlockConditionNote": "すべての前提が成功保存済み、かつ本来の地域・対象・受注UIが完成。会話を開くことや既読を前提にしない。"
+    },
+    {
+      "id": "ch3",
+      "runtimeChapterExists": true,
+      "title": "第3章「潮待ちの浜」",
+      "place": "硝砂海岸",
+      "contentStatus": "planned-chapter-existing-teaser",
+      "requiresAllQuestClears": [
+        "quest.story.st03",
+        "quest.story.st04"
+      ],
+      "requiredQuestIds": [
+        "quest.story.st05",
+        "quest.story.st06"
+      ],
+      "canonicalExistingTargetIds": [
+        "monster.orglass",
+        "monster.lumisca"
+      ],
+      "optionalQuestProposalIds": [],
+      "unlockConditionNote": "すべての前提が成功保存済み、かつ本来の地域・対象・受注UIが完成。会話を開くことや既読を前提にしない。"
+    },
+    {
+      "id": "ch4",
+      "runtimeChapterExists": true,
+      "title": "第4章「閉じられた分かれ道」",
+      "place": "灰鐘鉱山",
+      "contentStatus": "planned-chapter-existing-teaser",
+      "requiresAllQuestClears": [
+        "quest.story.st05",
+        "quest.story.st06"
+      ],
+      "requiredQuestIds": [
+        "quest.story.st07",
+        "quest.story.st08"
+      ],
+      "canonicalExistingTargetIds": [
+        "monster.bornakel",
+        "monster.ashreia"
+      ],
+      "optionalQuestProposalIds": [
+        "proposal.quest.thunder.tq02",
+        "proposal.quest.thunder.tq07"
+      ],
+      "unlockConditionNote": "すべての前提が成功保存済み、かつ本来の地域・対象・受注UIが完成。会話を開くことや既読を前提にしない。"
+    },
+    {
+      "id": "ch5",
+      "runtimeChapterExists": true,
+      "title": "第5章「氷に残る道」",
+      "place": "氷帆峡谷",
+      "contentStatus": "planned-chapter-existing-teaser",
+      "requiresAllQuestClears": [
+        "quest.story.st07",
+        "quest.story.st08"
+      ],
+      "requiredQuestIds": [
+        "quest.story.st09",
+        "quest.story.st10"
+      ],
+      "canonicalExistingTargetIds": [
+        "monster.kirisave",
+        "monster.razmer"
+      ],
+      "optionalQuestProposalIds": [],
+      "unlockConditionNote": "すべての前提が成功保存済み、かつ本来の地域・対象・受注UIが完成。会話を開くことや既読を前提にしない。"
+    },
+    {
+      "id": "ch6",
+      "runtimeChapterExists": true,
+      "title": "第6章「灯を持つ獣」",
+      "place": "霧灯樹海",
+      "contentStatus": "planned-chapter-existing-teaser",
+      "requiresAllQuestClears": [
+        "quest.story.st09",
+        "quest.story.st10"
+      ],
+      "requiredQuestIds": [
+        "quest.story.st11",
+        "quest.story.st12"
+      ],
+      "canonicalExistingTargetIds": [
+        "monster.tengaro",
+        "monster.velgait"
+      ],
+      "optionalQuestProposalIds": [],
+      "unlockConditionNote": "すべての前提が成功保存済み、かつ本来の地域・対象・受注UIが完成。会話を開くことや既読を前提にしない。"
+    },
+    {
+      "id": "ch7",
+      "runtimeChapterExists": true,
+      "title": "第7章「灯を減らす夜」",
+      "place": "風礫盆地・灯継ぎの里",
+      "contentStatus": "planned-chapter-existing-teaser",
+      "requiresAllQuestClears": [
+        "quest.story.st11",
+        "quest.story.st12"
+      ],
+      "requiredQuestIds": [
+        "quest.story.st13"
+      ],
+      "canonicalExistingTargetIds": [
+        "monster.grasedon"
+      ],
+      "optionalQuestProposalIds": [
+        "proposal.quest.thunder.tq03"
+      ],
+      "unlockConditionNote": "すべての前提が成功保存済み、かつ本来の地域・対象・受注UIが完成。会話を開くことや既読を前提にしない。"
+    },
+    {
+      "id": "ch8",
+      "runtimeChapterExists": true,
+      "title": "第8章「二つの環、一本の道」",
+      "place": "重霧環谷",
+      "contentStatus": "planned-chapter-existing-teaser",
+      "requiresAllQuestClears": [
+        "quest.story.st13"
+      ],
+      "requiredQuestIds": [
+        "quest.story.st14"
+      ],
+      "canonicalExistingTargetIds": [
+        "monster.segranio"
+      ],
+      "optionalQuestProposalIds": [],
+      "unlockConditionNote": "すべての前提が成功保存済み、かつ本来の地域・対象・受注UIが完成。会話を開くことや既読を前提にしない。"
+    },
+    {
+      "id": "proposal.chapter.thunder_return",
+      "suggestedRuntimeId": "ch_thunder_return",
+      "runtimeChapterExists": false,
+      "title": "追加決戦章「雷が帰る峰」",
+      "place": "鉛雲高地・鳴天の背（新小区域案）",
+      "contentStatus": "proposal-not-playable",
+      "requiresAllQuestClears": [
+        "quest.story.st14"
+      ],
+      "requiredQuestIds": [
+        "quest.story.thunder_return"
+      ],
+      "canonicalExistingTargetIds": [],
+      "proposedTargetIds": [
+        "monster.orzelion"
+      ],
+      "optionalQuestProposalIds": [],
+      "role": "セオルミドで確保した帰路を利用し、高地側の点検路・休息棚の重なりに対処する。既存ST14を置き換えない。"
+    },
+    {
+      "id": "ch9",
+      "runtimeChapterExists": true,
+      "title": "終章「新しい通行記録」",
+      "place": "灯継ぎの里",
+      "contentStatus": "planned-ending-existing-teaser",
+      "requiresAllQuestClears": [
+        "quest.story.thunder_return"
+      ],
+      "requiredQuestIds": [],
+      "presentationKindProposal": "narrative-epilogue",
+      "role": "狩猟の成功保存→作業班の確認と区間補修→時間経過→荷と人の帰還。",
+      "runtimeGap": "現行validatorはno>0のplayableな空steps章を拒否。初版は最終依頼のreportSceneへ連結するか、reading章の定義を追加する。",
+      "optionalQuestProposalIds": [
+        "proposal.quest.thunder.tq05",
+        "proposal.quest.thunder.tq06"
+      ]
+    }
+  ],
+  "counts": {
+    "chapters": 11,
+    "legacyMandatoryHunts": 14,
+    "newMandatoryHunts": 1,
+    "totalMandatoryHunts": 15,
+    "newOptionalQuests": 6,
+    "newQuestProposals": 7,
+    "newWrittenScenes": 12,
+    "newGeneratedSceneConcepts": 4
+  },
+  "flagshipContract": {
+    "proposalSpeciesId": "monster.orzelion",
+    "name": "鳴天竜オルゼリオン",
+    "catalogAtBase": "absent",
+    "speciesIntroRank": "rank.2",
+    "mainHabitat": "鉛雲高地",
+    "finalQuestRankProposal": "rank.4",
+    "weaknessProposal": [
+      "ice"
+    ],
+    "resistanceProposal": [
+      "thunder"
+    ],
+    "chargeOrder": [
+      "paired_chest_sacs",
+      "two_strips_on_each_wing_leading_edge",
+      "three_plate_tail_spear"
+    ],
+    "hornRule": "後向きの硬い冠角2本。首と頭の姿勢で高く見せる。角の可動化・発電起点化をしない。",
+    "limbs": {
+      "wingForelimbs": 2,
+      "hindlimbs": 2,
+      "total": 4
+    },
+    "source": "references/orzelion_design_reference_v1.md",
+    "storyEcologyHypothesis": "長期的な湿りと休息条件の変化によって利用できる岩棚が偏り、高地の点検路と休息路が重なる。地理・因果は看板/フィールド担当と採用時に照合する。",
+    "encounterIdentityPolicy": "遠景の目撃だけで個体を特定しない。任意中級TQ07、必須極級TQ04、周回TQ06は別の作戦個体。死亡した個体の復活・急成長として描かない。"
+  },
+  "progressionContract": {
+    "authoritativeFact": "questClears[questId] > 0 after successful save",
+    "requiresOperator": "ALL",
+    "dialogueReadRequired": false,
+    "skipChangesRewards": false,
+    "rareDropRequired": false,
+    "specificWeaponRequired": false,
+    "mandatoryObservationMinigame": false,
+    "newMainQuestProposalId": "proposal.quest.thunder_return",
+    "newMainQuestSuggestedRuntimeId": "quest.story.thunder_return",
+    "readyGate": "章・シーン・クエストの前提を同じ判定へまとめる。現行unlockRulesはopen/brief無条件なので拡張が必要。",
+    "unavailablePolicy": "対応する本来のマップ・対象個体・判定・保存が完成するまで受注を無効。盆地へ置換して完成扱いにしない。",
+    "endingBaseline": "最終成功から派生する一つの帰還報告に、補修・経過・帰還を順に提示する。動画完走を新しい達成条件にしない。再読込時はその時点の記録を中立文で読める。",
+    "futureInteractiveRepair": "設備操作を後から追加するなら狩猟済みと補修段階を別保存し、補修失敗で狩猟を再要求しない。現行v5にその状態があるとは扱わない。"
+  },
+  "sceneScript": "dialogue_and_direction_v2.md",
+  "questCatalog": "quest_proposals_v2.json",
+  "assetCatalog": "asset_manifest_v2.json",
+  "implementationHandoff": "implementation_handoff_v2.md",
+  "pendingProduction": [
+    "全後半の本来のマップと主線依頼",
+    "看板の登録と正式モデル/リグ/動作",
+    "原種中級と最終極級の難易度調整",
+    "受注・シーンの共通前提判定",
+    "読み物の終章の取り扱い",
+    "シーン原画の採用/縮小/配信登録",
+    "捕獲パイプラインと結果分岐",
+    "実機での可読性/負荷/雷低減"
+  ],
+  "transportConnectionProposal": {
+    "status": "new-geography-and-operation-proposal",
+    "introducedAt": "ch3",
+    "purpose": "海岸経由の臨時輸送をつなぎながら、重霧環谷で安全な帰路、鉛雲高地で定期的に荷と補修部材を通す往路・点検路を整える。両方が揃うことで日常の運用へ戻る。",
+    "notHydrologicalConnection": true,
+    "mustValidate": "既存地形・拠点・通行の配置と照合し、全狩場共通の一本の水路にしない。"
+  },
+  "sceneContracts": [
+    {
+      "id": "proposal.scene.thunder.01",
+      "title": "同じ石に、別の跡",
+      "chapterId": "ch1",
+      "requiresAllQuestClears": [
+        "quest.basin.003"
+      ],
+      "requiresContentReady": true,
+      "readToProgress": false,
+      "suggestedProductionAssetId": "reuse.first_delivery",
+      "assetIsRuntimeRegistered": false,
+      "onSkip": "No change to progress, reward, or permanent effects. Summary remains readable.",
+      "resultVariants": "common",
+      "scriptFile": "dialogue_and_direction_v2.md",
+      "scriptHeadingPrefix": "## 2. 場面01"
+    },
+    {
+      "id": "proposal.scene.thunder.02",
+      "title": "焼けていない場所",
+      "chapterId": "ch2",
+      "requiresAllQuestClears": [
+        "quest.story.st03",
+        "quest.story.st04"
+      ],
+      "requiresContentReady": true,
+      "readToProgress": false,
+      "suggestedProductionAssetId": "reuse.arrival",
+      "assetIsRuntimeRegistered": false,
+      "onSkip": "No change to progress, reward, or permanent effects. Summary remains readable.",
+      "resultVariants": "common",
+      "scriptFile": "dialogue_and_direction_v2.md",
+      "scriptHeadingPrefix": "## 3. 場面02"
+    },
+    {
+      "id": "proposal.scene.thunder.03",
+      "title": "雲より先に、翼が鳴る",
+      "chapterId": "ch3",
+      "requiresAllQuestClears": [
+        "quest.story.st05",
+        "quest.story.st06"
+      ],
+      "requiresContentReady": true,
+      "readToProgress": false,
+      "suggestedProductionAssetId": "image.thunder.first_sighting",
+      "assetIsRuntimeRegistered": false,
+      "onSkip": "No change to progress, reward, or permanent effects. Summary remains readable.",
+      "resultVariants": "common",
+      "scriptFile": "dialogue_and_direction_v2.md",
+      "scriptHeadingPrefix": "## 4. 場面03"
+    },
+    {
+      "id": "proposal.scene.thunder.04",
+      "title": "雷より前の記録",
+      "chapterId": "ch4",
+      "requiresAllQuestClears": [
+        "quest.story.st07",
+        "quest.story.st08"
+      ],
+      "requiresContentReady": true,
+      "readToProgress": false,
+      "suggestedProductionAssetId": "reuse.old_records",
+      "assetIsRuntimeRegistered": false,
+      "onSkip": "No change to progress, reward, or permanent effects. Summary remains readable.",
+      "resultVariants": "common",
+      "scriptFile": "dialogue_and_direction_v2.md",
+      "scriptHeadingPrefix": "## 5. 場面04"
+    },
+    {
+      "id": "proposal.scene.thunder.05",
+      "title": "二つの高さ",
+      "chapterId": "ch5",
+      "requiresAllQuestClears": [
+        "quest.story.st09",
+        "quest.story.st10"
+      ],
+      "requiresContentReady": true,
+      "readToProgress": false,
+      "suggestedProductionAssetId": "image.thunder.field_station",
+      "assetIsRuntimeRegistered": false,
+      "onSkip": "No change to progress, reward, or permanent effects. Summary remains readable.",
+      "resultVariants": "common",
+      "scriptFile": "dialogue_and_direction_v2.md",
+      "scriptHeadingPrefix": "## 6. 場面05"
+    },
+    {
+      "id": "proposal.scene.thunder.06",
+      "title": "痺れる理由",
+      "chapterId": "ch6",
+      "requiresAllQuestClears": [
+        "quest.story.st11"
+      ],
+      "requiresContentReady": true,
+      "readToProgress": false,
+      "suggestedProductionAssetId": "reuse.rokuha",
+      "assetIsRuntimeRegistered": false,
+      "onSkip": "No change to progress, reward, or permanent effects. Summary remains readable.",
+      "resultVariants": "common",
+      "scriptFile": "dialogue_and_direction_v2.md",
+      "scriptHeadingPrefix": "## 7. 場面06"
+    },
+    {
+      "id": "proposal.scene.thunder.07",
+      "title": "光の通る順",
+      "chapterId": "ch6",
+      "requiresAllQuestClears": [
+        "quest.story.st11",
+        "quest.story.st12"
+      ],
+      "requiresContentReady": true,
+      "readToProgress": false,
+      "suggestedProductionAssetId": "reference.orzelion",
+      "assetIsRuntimeRegistered": false,
+      "onSkip": "No change to progress, reward, or permanent effects. Summary remains readable.",
+      "resultVariants": "common",
+      "scriptFile": "dialogue_and_direction_v2.md",
+      "scriptHeadingPrefix": "## 8. 場面07"
+    },
+    {
+      "id": "proposal.scene.thunder.08",
+      "title": "消す灯、残す道",
+      "chapterId": "ch7",
+      "requiresAllQuestClears": [
+        "quest.story.st12"
+      ],
+      "requiresContentReady": true,
+      "readToProgress": false,
+      "suggestedProductionAssetId": "reuse.limited_lights",
+      "assetIsRuntimeRegistered": false,
+      "onSkip": "No change to progress, reward, or permanent effects. Summary remains readable.",
+      "resultVariants": "common",
+      "scriptFile": "dialogue_and_direction_v2.md",
+      "scriptHeadingPrefix": "## 9. 場面08"
+    },
+    {
+      "id": "proposal.scene.thunder.09",
+      "title": "小さな区間の答え",
+      "chapterId": "ch7",
+      "requiresAllQuestClears": [
+        "quest.story.st13"
+      ],
+      "requiresContentReady": true,
+      "readToProgress": false,
+      "suggestedProductionAssetId": "image.thunder.field_station",
+      "assetIsRuntimeRegistered": false,
+      "onSkip": "No change to progress, reward, or permanent effects. Summary remains readable.",
+      "resultVariants": "common",
+      "scriptFile": "dialogue_and_direction_v2.md",
+      "scriptHeadingPrefix": "## 10. 場面09"
+    },
+    {
+      "id": "proposal.scene.thunder.10",
+      "title": "帰る道を先に",
+      "chapterId": "ch8",
+      "requiresAllQuestClears": [
+        "quest.story.st14"
+      ],
+      "requiresContentReady": true,
+      "readToProgress": false,
+      "suggestedProductionAssetId": "image.thunder.final_ridge",
+      "assetIsRuntimeRegistered": false,
+      "onSkip": "No change to progress, reward, or permanent effects. Summary remains readable.",
+      "resultVariants": "common",
+      "artUsageNote": "決戦前の構想画。谷でのセオルミド狩猟後に次の目的地を示す。TQ04成功後の獣処置を示す背景に流用しない。",
+      "scriptFile": "dialogue_and_direction_v2.md",
+      "scriptHeadingPrefix": "## 11. 場面10"
+    },
+    {
+      "id": "proposal.scene.thunder.11",
+      "title": "雷のあとにする仕事",
+      "chapterId": "proposal.chapter.thunder_return",
+      "requiresAllQuestClears": [
+        "quest.story.thunder_return"
+      ],
+      "requiresContentReady": true,
+      "readToProgress": false,
+      "suggestedProductionAssetId": "image.thunder.field_station",
+      "assetIsRuntimeRegistered": false,
+      "onSkip": "No change to progress, reward, or permanent effects. Summary remains readable.",
+      "resultVariants": "slay/capture/neutral; capture only if supported; neutral for replay",
+      "scriptFile": "dialogue_and_direction_v2.md",
+      "scriptHeadingPrefix": "## 12. 場面11"
+    },
+    {
+      "id": "proposal.scene.thunder.12",
+      "title": "あなたの帰還を書く",
+      "chapterId": "ch9",
+      "requiresAllQuestClears": [
+        "quest.story.thunder_return"
+      ],
+      "requiresContentReady": true,
+      "readToProgress": false,
+      "suggestedProductionAssetId": "image.thunder.homecoming",
+      "assetIsRuntimeRegistered": false,
+      "onSkip": "No change to progress, reward, or permanent effects. Summary remains readable.",
+      "resultVariants": "common",
+      "completionGate": "TQ04 saved success only. Repair and elapsed time are narrated, not an extra persistent gate.",
+      "scriptFile": "dialogue_and_direction_v2.md",
+      "scriptHeadingPrefix": "## 13. 場面12"
+    }
+  ]
+}

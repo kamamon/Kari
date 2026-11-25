@@ -1,0 +1,45 @@
+﻿ID,名称,分類,状態,優先度,担当,用途,参照パス,完成条件
+image.thunder.first_sighting,空を横切る初目撃,concept-image,generated-concept,P0,ChatGPT美術,ch3 / proposal.scene.thunder.03,art/event_thunder_first_sighting_v1.png,PNGが開く。基準画風と役割を目視。ゲーム背景への変換・採用は別。
+image.thunder.final_ridge,鳴天の背の決戦,concept-image,generated-concept,P0,ChatGPT美術,proposal.chapter.thunder_return,art/event_thunder_final_ridge_v1.png,PNGが開く。基準画風と役割を目視。ゲーム背景への変換・採用は別。
+image.thunder.field_station,観測所と交換部材,concept-image,generated-concept,P0,ChatGPT美術,ch4/ch7 / 美術資料,art/ref_thunder_field_station_v1.png,PNGが開く。基準画風と役割を目視。ゲーム背景への変換・採用は別。
+image.thunder.homecoming,新しい道からの帰還,concept-image,generated-concept,P0,ChatGPT美術,ch9,art/event_thunder_homecoming_v1.png,PNGが開く。基準画風と役割を目視。ゲーム背景への変換・採用は別。
+reuse.minagi_focus,ミナギ・集中,portrait,existing-reference,P0,既存素材/Claude取込,記録を照合する会話,art-source/portraits/portrait_minagi_focus_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reuse.minagi_relief,ミナギ・安堵,portrait,existing-reference,P0,既存素材/Claude取込,帰還,art-source/portraits/portrait_minagi_relief_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reuse.rokuha,ロクハ・考える,portrait,existing-reference,P0,既存素材/Claude取込,素材と補修,art-source/portraits/portrait_rokuha_thinking_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reuse.isane,イサネ・安堵,portrait,existing-reference,P0,既存素材/Claude取込,運搬の成果,art-source/portraits/portrait_isane_relief_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reuse.senaki,セナキ・省察,portrait,existing-reference,P0,既存素材/Claude取込,旧分流路の判断,art-source/portraits/portrait_senaki_reflective_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reuse.arrival,到着と記録板,scene,existing-reference,P0,既存素材/Claude取込,既存sc00/sc01/sc03,art-source/story/event_story_arrival_board_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reuse.first_delivery,最初の荷の帰還,scene,existing-reference,P0,既存素材/Claude取込,既存sc02との呼応,art-source/story/event_story_first_delivery_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reuse.old_records,古い作業記録,scene,existing-reference,P0,既存素材/Claude取込,ch4,art-source/story/event_story_old_records_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reuse.limited_lights,灯を減らす夜,scene,existing-reference,P0,既存素材/Claude取込,ch7,art-source/story/event_story_limited_lights_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reuse.record_board,木製記録板,prop-concept,existing-reference,P0,既存素材/Claude取込,通行計画,art-source/story/prop_story_record_board_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reuse.lamp_on,点灯した道灯,prop-concept,existing-reference,P0,既存素材/Claude取込,安全確認済み区間,art-source/story/prop_story_route_lamp_on_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reuse.lamp_off,消灯した道灯,prop-concept,existing-reference,P0,既存素材/Claude取込,燃料と通行の集約,art-source/story/prop_story_route_lamp_off_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reuse.cart,荷車,prop-concept,existing-reference,P0,既存素材/Claude取込,最初と最後,art-source/story/prop_story_supply_cart_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reuse.sign,閉鎖横木,prop-concept,existing-reference,P0,既存素材/Claude取込,人側の経路変更,art-source/story/prop_story_closed_route_sign_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reuse.replaceable,交換用部材,prop-concept,existing-reference,P0,既存素材/Claude取込,ロクハの人物弧,art-source/story/prop_story_replaceable_parts_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reuse.diversion_old,旧分流口,environment-concept,existing-reference,P0,既存素材/Claude取込,補修前の参照,art-source/story/ref_story_diversion_old_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reuse.diversion_repaired,補修分流口,environment-concept,existing-reference,P0,既存素材/Claude取込,補修後の参照,art-source/story/ref_story_diversion_repaired_v1.png,原本を上書きしない。runtime artIndexへの登録有無は別確認。
+reference.orzelion,オルゼリオン全身参照,character-concept,parallel-production-reference,P0,看板モンスター担当,全場面の外形,references/orzelion_concept_reference_v1.png,4肢・二冠・二条翼板・三枚尾槍。場面画で隠れた指の数は確認済みにしない。
+model.orzelion,看板のモデル・UV・PBR,model,planned-not-produced,P1,看板モンスター担当,TQ07/04/06,,4肢、地上で各近接武器が当たる部位、通常/破壊/捕獲/死亡状態。看板の正式図を優先。
+rig.orzelion,看板のリグと接地,rig,planned-not-produced,P1,看板モンスター担当,地上戦と短距離飛行,,看板案95ノード・16ソケットは制作提案。配列があるだけで動作完成にしない。
+animation.orzelion,着地・蓄電・冷却・撤退,animation,planned-not-produced,P1,看板モーション担当,戦闘と出現,,胸→翼→尾の変化と攻撃発生を同期。長時間滞空で近接攻撃を封じない。
+field.highland,鉛雲高地の実行マップ,environment,planned-not-produced,P1,フィールド担当,TQ07,,図鑑背景だけで受注を解禁しない。帰還と巣への地上経路がある。
+field.thunder_ridge,鳴天の背・戦闘岩棚,environment,planned-not-produced,P2,フィールド担当,TQ04/06,,翼開長の目安23.4mに合う床とカメラ。数値と地形は実機調整。
+field.survey_route,観測・補修路と野営地,environment,planned-not-produced,P2,フィールド担当,決戦後の作業,,戦闘床と作業者を分離。狩猟中の護衛AIを必須にしない。
+prop.trace_three,三枚尾擦り/三趾/翼手首痕,prop,planned-not-produced,P1,環境美術,ch2/5,,翼手首痕は丸い接地点。麻痺虫の鉤穴・輪跡と識別できる。
+prop.sample_tray,二条薄片と比較盆,prop,planned-not-produced,P1,環境美術,ch4,,自然脱落片。希少天鳴晶とは別。ラベルはUIで描く。
+prop.route_tags,区間別の通行札,prop,planned-not-produced,P1,拠点美術,ch7/終章,,札形・向き・文字で状態を識別。色だけに頼らない。
+prop.survey_station,観測所モジュール,prop,planned-not-produced,P2,環境美術,ch7/決戦後,,原画から部品別に起こす。模型寸法・操作範囲を定義。
+prop.repair_states,区間補修の3状態,prop,planned-not-produced,P2,環境美術,閉塞/試験/補修済み,,同じ基礎モデルから差分化。瞬時に谷全体を置換しない。
+vfx.charge,胸嚢・二条板・尾の電光,vfx,planned-not-produced,P1,VFX担当,技予告,,明滅を弱めても胸の膨張・翼姿勢が残る。画面白飛びなし。
+vfx.ground_lines,予告した方向の接地放電,vfx,planned-not-produced,P1,VFX/戦闘担当,攻撃範囲,,見た目と判定を一致。自然岩の青銅筋を常時危険床にしない。
+vfx.after_storm,残る霧と湿り,vfx,planned-not-produced,P2,環境美術,終章,,天候は局所的な演出。討伐で全世界快晴にしない。
+audio.orzelion,翼板・胸低音・放電・呼吸,audio,planned-not-produced,P1,音担当,予告/反撃窓,,視覚予告と同期。方向音だけを唯一の情報にしない。
+music.thunder,中盤/決戦/帰還のモチーフ,music,planned-not-produced,P2,音担当,物語全体,,共通主題、戦闘予告を妨げないループ。音声データ未生成。
+audio.work,札・紙・車軸・留め具,audio,planned-not-produced,P1,音担当,里の日常,,最初と最後に同じ音を使う。繰り返し音量を抑える。
+ui.records,観測カードと帰還記録,ui,planned-not-produced,P0,Claude/UI,証拠の比較,,未来の名前/絵/解決を未解禁一覧から漏らさない。
+ui.reception,級別受付・星別見出し接続,ui,planned-not-produced,P1,受付担当,7追加依頼,,共通questId、receptionGrade、starsを参照。別会話の受付設計と統合。
+ui.icon_orzelion,看板アイコン・サムネ参照,ui-art,planned-not-produced,P1,看板モンスター担当,依頼/図鑑,,並行制作の正本へ参照接続。未納品を代用画像で完成扱いにしない。
+scene.camera,出現/決戦前/帰還のカメラ,cinematic,planned-not-produced,P2,演出担当,新規場面,,スキップしても同じ初期姿勢・時計・進行。未実装なら静止画と台詞で提示。
+scene.npc_work,記録更新と補修作業の動き,cinematic,planned-not-produced,P3,人物モーション担当,四人の働き,,既存NPCリグと体型の範囲で動かす。同行戦闘AIは依存にしない。
