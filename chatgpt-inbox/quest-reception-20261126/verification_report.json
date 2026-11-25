@@ -1,0 +1,183 @@
+{
+  "baselineCommit": "0925487b686473e1a4d7e45fdc63449ef3a7d2ec",
+  "baselineVersion": "0.34.0",
+  "dateJST": "2026-11-26",
+  "scope": "proposal_in_chatgpt_inbox_only",
+  "runtimeAppliedToRepository": false,
+  "environment": {
+    "node": "24.22.3",
+    "npmInstall": "npm ci --ignore-scripts --no-audit --no-fund --offline",
+    "npmInstallResult": "passed; 50 packages"
+  },
+  "checks": {
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "passed"
+    },
+    "build": {
+      "command": "npm run build",
+      "result": "passed",
+      "warning": "minified chunk above 900 kB"
+    },
+    "targetedTests": {
+      "command": "npm run test -- tests/quest-reception.test.ts tests/quest-board.test.ts tests/hub-tiers.test.ts tests/content.test.ts",
+      "passed": 32,
+      "failed": 1,
+      "exitCode": 1,
+      "suites": [
+        {
+          "file": "tests/quest-reception.test.ts",
+          "passed": 9
+        },
+        {
+          "file": "tests/quest-board.test.ts",
+          "passed": 10
+        },
+        {
+          "file": "tests/hub-tiers.test.ts",
+          "passed": 7
+        },
+        {
+          "file": "tests/content.test.ts",
+          "passed": 6,
+          "failed": 1
+        }
+      ],
+      "failure": "素材台帳のファイル実在検査。検証用コピーにart-source/board/style_board_v2.pngを含む原画を展開していない。受付画像の20種存在検査は成功。",
+      "rawLog": "verification/targeted-tests.log"
+    },
+    "trackedAssetSourceReferences": {
+      "method": "git ls-tree -r --name-only HEAD; file or directory-prefix match",
+      "checkedReferences": 315,
+      "missingFromBaselineTree": [],
+      "limitation": "Gitのパス確認。原画を展開した既存のファイル実在テストを合格へ置き換えるものではない。"
+    },
+    "patchAppliesToBaseline": {
+      "result": "passed"
+    },
+    "runtimeSourceDirectoriesUntouched": {
+      "result": "passed"
+    },
+    "staticIntegrationReview": {
+      "facilityId": "HUD/キー操作・保存更新・外見編集からの復帰を追跡",
+      "signs": "4受付の正面・床高・既存disposeの経路を確認。実描画は未確認",
+      "fixes": [
+        "D09不足時に負の残数を表示しない",
+        "納品済みの素材行は再納品の不足表示を出さない",
+        "級未指定を最小級へ振り分けない",
+        "物語/図鑑で非表示の一覧位置を0で上書きせず、再表示時に復元"
+      ]
+    }
+  },
+  "browserVerification": {
+    "result": "not_run_successfully",
+    "localAttempt": "Playwright launch failed: /usr/bin/chromium wrapper exists but /usr/lib/chromium/chromium is absent.",
+    "cloudAttempt": "Local preview returned ERR_CONNECTION_REFUSED. Subsequent inspection was rejected by browser URL security policy. No workaround attempted.",
+    "screenshots": [],
+    "uiInteractionPassClaims": [],
+    "requiredFollowup": "manual_qa.md"
+  },
+  "notVerified": [
+    "実ブラウザでの見た目・操作",
+    "iPhone Safari実機",
+    "VoiceOver",
+    "ゲームパッド",
+    "全テストスイート",
+    "公開配信"
+  ],
+  "proposedRuntimeFiles": [
+    {
+      "path": "public/data/deliveries.json",
+      "newFile": false,
+      "beforeSha256": "4acaa9fbca2d777dc6d3ffb082da2b0d78426c60184fa3268bef04ea555af26c",
+      "afterSha256": "903a2974c0e400f73e89f3d4ef429480a3c516b7a4cde29e94f398356b807031"
+    },
+    {
+      "path": "public/data/hub.json",
+      "newFile": false,
+      "beforeSha256": "461a30ad24cd16bea5c447b3375c9b08da1c385497cea66699ec70981303612a",
+      "afterSha256": "d87ed1900e51e12e51623da6c16645f8a5e73fd02234b1693d043c74c3cd774c"
+    },
+    {
+      "path": "public/data/maps/hub_village.json",
+      "newFile": false,
+      "beforeSha256": "4e7d4b06371f34c4138a2118fcebe47a5d947221f397a6588f1e28047980bdc8",
+      "afterSha256": "a93c36558dcec2895a9a41534b27aba53ff17eecf6e6a1bcbf662c624ee843f1"
+    },
+    {
+      "path": "src/app.ts",
+      "newFile": false,
+      "beforeSha256": "8ab932cc6528c34efe27527227dcfcb8f842963d88aa4c8a038357d74e005511",
+      "afterSha256": "614221fad75161797ff920e5d17f7b40833a606b79d8b2fa89b1a5c1f276df11"
+    },
+    {
+      "path": "src/data/questBoard.ts",
+      "newFile": false,
+      "beforeSha256": "a42ce35efa9002c031a442ff538827df941631e554a90a3e68b82f471f2d11b6",
+      "afterSha256": "5d964752de6bb511c91ab763bd97f7246e176d47b0d1f656d6f2318c358738ef"
+    },
+    {
+      "path": "src/data/schemas.ts",
+      "newFile": false,
+      "beforeSha256": "36d049e1b17a947790bcf531c1b197dac3a6a3e60f0942a3229ce819dc0f28c1",
+      "afterSha256": "e06f8040c92503267b8cfd22890684c1e7d954277ab08647e7bf18ef0f184cd6"
+    },
+    {
+      "path": "src/data/validators.ts",
+      "newFile": false,
+      "beforeSha256": "05247062a9f517d285e52408f7a4bd9964823347930f32969642e60e1a289ef1",
+      "afterSha256": "210d60d802cab641a48e40cb14c925ab3d6039871da5ee91be0aa855523fd7f1"
+    },
+    {
+      "path": "src/render/hubScene.ts",
+      "newFile": false,
+      "beforeSha256": "594a72cb9c60f82bdd13794e9e0940921410aa23b185ee0540f0c0e2e97befc7",
+      "afterSha256": "6c53d408645d28de86721e4d72ddb1edcc9277c1e010774b96ff4294867ab8dc"
+    },
+    {
+      "path": "src/ui/base.ts",
+      "newFile": false,
+      "beforeSha256": "20eba8bee69d10882cfdbf33a3e35ba471bcc3183875916b53eb6539c911c05c",
+      "afterSha256": "3c36d58f67110606d6dabe2e839f935046ffb9c9d6467a1edab3e93efaef8983"
+    },
+    {
+      "path": "src/ui/questReception.ts",
+      "newFile": true,
+      "beforeSha256": null,
+      "afterSha256": "b312fb4a2ea50d1cebdbf71e13d66f97bfcc4037999569f581e32900e84afbe3"
+    },
+    {
+      "path": "src/ui/style.css",
+      "newFile": false,
+      "beforeSha256": "3e505877112854d8255a4995498cfa9cc254acfb5167d1f71e6f7abfb0553f6d",
+      "afterSha256": "99c1007dd2bb8ece245ee64f7b21643ec78ee5dabe33a211c4504aa72791cd56"
+    },
+    {
+      "path": "tests/quest-reception.test.ts",
+      "newFile": true,
+      "beforeSha256": null,
+      "afterSha256": "ec7c03229e95c6102f7614a7ad27bf306aae2c739a99981624e50421202fa7e4"
+    }
+  ],
+  "questCounts": {
+    "rank.1": {
+      "1": 12,
+      "2": 15
+    },
+    "rank.2": {
+      "3": 2,
+      "4": 2
+    },
+    "rank.3": {
+      "5": 2,
+      "6": 2
+    },
+    "rank.4": {
+      "7": 2,
+      "8": 2
+    }
+  },
+  "uniqueCurrentEntries": 39,
+  "uniqueTargetSpeciesWithExistingThumbnails": 20,
+  "patchSha256": "582dde6b3c4d58c88531a64fccddf58e933d92a0b74b7e27db4111d2a708072d"
+}

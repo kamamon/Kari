@@ -1,0 +1,682 @@
+{
+  "baseline": "0925487b686473e1a4d7e45fdc63449ef3a7d2ec",
+  "fieldQuests": 38,
+  "huntingQuests": 33,
+  "uniqueMonsterIds": 20,
+  "missingAssetPaths": [],
+  "quests": [
+    {
+      "questId": "quest.basin.003",
+      "name": "岩場の足音",
+      "rankId": "rank.1",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.galdros",
+          "name": "ガルドロス",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "galdros/galdros_left_v1.png",
+          "path": "public/assets/bestiary/galdros_left_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.basin.r2.001",
+      "name": "脈打つ岩殻",
+      "rankId": "rank.2",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.galdros",
+          "name": "ガルドロス",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "galdros/galdros_left_v1.png",
+          "path": "public/assets/bestiary/galdros_left_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.basin.r3.001",
+      "name": "晶の背",
+      "rankId": "rank.3",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.galdros",
+          "name": "ガルドロス",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "galdros/galdros_left_v1.png",
+          "path": "public/assets/bestiary/galdros_left_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.basin.r4.001",
+      "name": "輝く岩山",
+      "rankId": "rank.4",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.galdros",
+          "name": "ガルドロス",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "galdros/galdros_left_v1.png",
+          "path": "public/assets/bestiary/galdros_left_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.selvark.r1",
+      "name": "帆角の風",
+      "rankId": "rank.1",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.selvark",
+          "name": "セルヴァルク",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "monster_02_selvark_concept_v2.png",
+          "path": "public/assets/bestiary/monster_02_selvark_concept_v2.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.selvark.r2",
+      "name": "張り詰めた帆角",
+      "rankId": "rank.2",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.selvark",
+          "name": "セルヴァルク",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "monster_02_selvark_concept_v2.png",
+          "path": "public/assets/bestiary/monster_02_selvark_concept_v2.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.selvark.r3",
+      "name": "風を裂く帆",
+      "rankId": "rank.3",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.selvark",
+          "name": "セルヴァルク",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "monster_02_selvark_concept_v2.png",
+          "path": "public/assets/bestiary/monster_02_selvark_concept_v2.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.selvark.r4",
+      "name": "盆地を渡る大帆",
+      "rankId": "rank.4",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.selvark",
+          "name": "セルヴァルク",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "monster_02_selvark_concept_v2.png",
+          "path": "public/assets/bestiary/monster_02_selvark_concept_v2.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.numeradon.r1",
+      "name": "泥皿の主",
+      "rankId": "rank.1",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.numeradon",
+          "name": "ヌメラドン",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "monster_03_numeradon_concept_v2.png",
+          "path": "public/assets/bestiary/monster_03_numeradon_concept_v2.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.bornakel.r1",
+      "name": "鐘の鳴る谷",
+      "rankId": "rank.1",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.bornakel",
+          "name": "ボルナケル",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "monster_04_bornakel_concept_v2.png",
+          "path": "public/assets/bestiary/monster_04_bornakel_concept_v2.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.ashreia.r1",
+      "name": "灰の帷",
+      "rankId": "rank.1",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.ashreia",
+          "name": "アシュレイア",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "monster_05_ashreia_concept_v2.png",
+          "path": "public/assets/bestiary/monster_05_ashreia_concept_v2.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.lumisca.r1",
+      "name": "燐尾の光",
+      "rankId": "rank.1",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.lumisca",
+          "name": "ルミスカ",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "monster_06_lumisca_concept_v2.png",
+          "path": "public/assets/bestiary/monster_06_lumisca_concept_v2.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.orglass.r1",
+      "name": "硝殻の鋏",
+      "rankId": "rank.1",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.orglass",
+          "name": "オルグラス",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "monster_07_orglass_concept_v2.png",
+          "path": "public/assets/bestiary/monster_07_orglass_concept_v2.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.tengaro.r1",
+      "name": "輪になる蟲",
+      "rankId": "rank.1",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.tengaro",
+          "name": "テンガロ",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "monster_08_tengaro_concept_v2.png",
+          "path": "public/assets/bestiary/monster_08_tengaro_concept_v2.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.verito.r1",
+      "name": "霧糸の巣",
+      "rankId": "rank.1",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.verito",
+          "name": "ヴェリト",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "monster_09_verito_concept_v2.png",
+          "path": "public/assets/bestiary/monster_09_verito_concept_v2.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.razmer.r1",
+      "name": "骨環の這い跡",
+      "rankId": "rank.1",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.razmer",
+          "name": "ラズメル",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "monster_10_razmer_concept_v2.png",
+          "path": "public/assets/bestiary/monster_10_razmer_concept_v2.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.kirisave.r1",
+      "name": "氷帆の列",
+      "rankId": "rank.1",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.kirisave",
+          "name": "キリサーヴ",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "monster_11_kirisave_concept_v2.png",
+          "path": "public/assets/bestiary/monster_11_kirisave_concept_v2.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.velgait.r1",
+      "name": "霧灯の夜",
+      "rankId": "rank.1",
+      "subtype": "hunt",
+      "icons": [
+        {
+          "monsterId": "monster.velgait",
+          "name": "ヴェルガイト",
+          "class": "large",
+          "baseId": null,
+          "count": 1,
+          "sourceArt": "monster_12_velgait_concept_v2.png",
+          "path": "public/assets/bestiary/monster_12_velgait_concept_v2.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.kordopil.pack1",
+      "name": "岩殻の子ら",
+      "rankId": "rank.1",
+      "subtype": "slay",
+      "icons": [
+        {
+          "monsterId": "monster.kordopil",
+          "name": "コルドピル",
+          "class": "juvenile",
+          "baseId": "monster.galdros",
+          "count": 3,
+          "sourceArt": "monster_014_kordopil_concept_v1.png",
+          "path": "public/assets/bestiary/monster_014_kordopil_concept_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.kordopil.pack.r2",
+      "name": "固まり始めた子ら",
+      "rankId": "rank.2",
+      "subtype": "slay",
+      "icons": [
+        {
+          "monsterId": "monster.kordopil",
+          "name": "コルドピル",
+          "class": "juvenile",
+          "baseId": "monster.galdros",
+          "count": 3,
+          "sourceArt": "monster_014_kordopil_concept_v1.png",
+          "path": "public/assets/bestiary/monster_014_kordopil_concept_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.kordopil.pack.r3",
+      "name": "晶を帯びた子ら",
+      "rankId": "rank.3",
+      "subtype": "slay",
+      "icons": [
+        {
+          "monsterId": "monster.kordopil",
+          "name": "コルドピル",
+          "class": "juvenile",
+          "baseId": "monster.galdros",
+          "count": 3,
+          "sourceArt": "monster_014_kordopil_concept_v1.png",
+          "path": "public/assets/bestiary/monster_014_kordopil_concept_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.kordopil.pack.r4",
+      "name": "親に並ぶ子ら",
+      "rankId": "rank.4",
+      "subtype": "slay",
+      "icons": [
+        {
+          "monsterId": "monster.kordopil",
+          "name": "コルドピル",
+          "class": "juvenile",
+          "baseId": "monster.galdros",
+          "count": 3,
+          "sourceArt": "monster_014_kordopil_concept_v1.png",
+          "path": "public/assets/bestiary/monster_014_kordopil_concept_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.palseit.pack1",
+      "name": "跳ねる小角",
+      "rankId": "rank.1",
+      "subtype": "slay",
+      "icons": [
+        {
+          "monsterId": "monster.palseit",
+          "name": "パルセイト",
+          "class": "juvenile",
+          "baseId": "monster.selvark",
+          "count": 4,
+          "sourceArt": "monster_015_palseit_concept_v1.png",
+          "path": "public/assets/bestiary/monster_015_palseit_concept_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.palseit.pack.r2",
+      "name": "跳ね回る小帆",
+      "rankId": "rank.2",
+      "subtype": "slay",
+      "icons": [
+        {
+          "monsterId": "monster.palseit",
+          "name": "パルセイト",
+          "class": "juvenile",
+          "baseId": "monster.selvark",
+          "count": 4,
+          "sourceArt": "monster_015_palseit_concept_v1.png",
+          "path": "public/assets/bestiary/monster_015_palseit_concept_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.palseit.pack.r3",
+      "name": "風に乗る小角",
+      "rankId": "rank.3",
+      "subtype": "slay",
+      "icons": [
+        {
+          "monsterId": "monster.palseit",
+          "name": "パルセイト",
+          "class": "juvenile",
+          "baseId": "monster.selvark",
+          "count": 4,
+          "sourceArt": "monster_015_palseit_concept_v1.png",
+          "path": "public/assets/bestiary/monster_015_palseit_concept_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.palseit.pack.r4",
+      "name": "群れで跳ぶ幼帆",
+      "rankId": "rank.4",
+      "subtype": "slay",
+      "icons": [
+        {
+          "monsterId": "monster.palseit",
+          "name": "パルセイト",
+          "class": "juvenile",
+          "baseId": "monster.selvark",
+          "count": 4,
+          "sourceArt": "monster_015_palseit_concept_v1.png",
+          "path": "public/assets/bestiary/monster_015_palseit_concept_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.numaporon.pack1",
+      "name": "泥皿の子",
+      "rankId": "rank.1",
+      "subtype": "slay",
+      "icons": [
+        {
+          "monsterId": "monster.numaporon",
+          "name": "ヌマポロン",
+          "class": "juvenile",
+          "baseId": "monster.numeradon",
+          "count": 3,
+          "sourceArt": "monster_016_numaporon_concept_v1.png",
+          "path": "public/assets/bestiary/monster_016_numaporon_concept_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.chilumicana.pack1",
+      "name": "灯る尾の子",
+      "rankId": "rank.1",
+      "subtype": "slay",
+      "icons": [
+        {
+          "monsterId": "monster.chilumicana",
+          "name": "チルミカナ",
+          "class": "juvenile",
+          "baseId": "monster.lumisca",
+          "count": 3,
+          "sourceArt": "monster_017_chilumicana_concept_v1.png",
+          "path": "public/assets/bestiary/monster_017_chilumicana_concept_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.kohalgis.pack1",
+      "name": "乳白の殻",
+      "rankId": "rank.1",
+      "subtype": "slay",
+      "icons": [
+        {
+          "monsterId": "monster.kohalgis",
+          "name": "コハルギス",
+          "class": "juvenile",
+          "baseId": "monster.orglass",
+          "count": 4,
+          "sourceArt": "monster_018_kohalgis_concept_v1.png",
+          "path": "public/assets/bestiary/monster_018_kohalgis_concept_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.mitogaron.pack1",
+      "name": "丸まれない輪",
+      "rankId": "rank.1",
+      "subtype": "slay",
+      "icons": [
+        {
+          "monsterId": "monster.mitogaron",
+          "name": "ミトガロン",
+          "class": "juvenile",
+          "baseId": "monster.tengaro",
+          "count": 3,
+          "sourceArt": "monster_019_mitogaron_concept_v1.png",
+          "path": "public/assets/bestiary/monster_019_mitogaron_concept_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.yurtepica.pack1",
+      "name": "糸床の子ら",
+      "rankId": "rank.1",
+      "subtype": "slay",
+      "icons": [
+        {
+          "monsterId": "monster.yurtepica",
+          "name": "ユルテピカ",
+          "class": "juvenile",
+          "baseId": "monster.verito",
+          "count": 4,
+          "sourceArt": "monster_020_yurtepica_concept_v1.png",
+          "path": "public/assets/bestiary/monster_020_yurtepica_concept_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.hinasalv.pack1",
+      "name": "小板の兄弟",
+      "rankId": "rank.1",
+      "subtype": "slay",
+      "icons": [
+        {
+          "monsterId": "monster.hinasalv",
+          "name": "ヒナサルヴ",
+          "class": "juvenile",
+          "baseId": "monster.kirisave",
+          "count": 2,
+          "sourceArt": "monster_021_hinasalv_concept_v1.png",
+          "path": "public/assets/bestiary/monster_021_hinasalv_concept_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.basin_young.r1",
+      "name": "盆地の若い群れ",
+      "rankId": "rank.1",
+      "subtype": "slay",
+      "icons": [
+        {
+          "monsterId": "monster.kordopil",
+          "name": "コルドピル",
+          "class": "juvenile",
+          "baseId": "monster.galdros",
+          "count": 2,
+          "sourceArt": "monster_014_kordopil_concept_v1.png",
+          "path": "public/assets/bestiary/monster_014_kordopil_concept_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        },
+        {
+          "monsterId": "monster.palseit",
+          "name": "パルセイト",
+          "class": "juvenile",
+          "baseId": "monster.selvark",
+          "count": 3,
+          "sourceArt": "monster_015_palseit_concept_v1.png",
+          "path": "public/assets/bestiary/monster_015_palseit_concept_v1.webp",
+          "pathExists": true,
+          "state": "implemented"
+        }
+      ]
+    },
+    {
+      "questId": "quest.gather.001",
+      "name": "薬房へ、最初の六枚",
+      "rankId": "rank.1",
+      "subtype": "gather",
+      "icons": []
+    },
+    {
+      "questId": "quest.gather.002",
+      "name": "炊事場の空いた籠",
+      "rankId": "rank.1",
+      "subtype": "gather",
+      "icons": []
+    },
+    {
+      "questId": "quest.mine.001",
+      "name": "炉の火をつなぐ石",
+      "rankId": "rank.1",
+      "subtype": "mining",
+      "icons": []
+    },
+    {
+      "questId": "quest.mine.002",
+      "name": "刃を整えるざら石",
+      "rankId": "rank.1",
+      "subtype": "mining",
+      "icons": []
+    },
+    {
+      "questId": "quest.delivery.001",
+      "name": "薬房と工具棚の小包",
+      "rankId": "rank.1",
+      "subtype": "field_delivery",
+      "icons": []
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> veilbound-hunters@0.34.0 test
+> vitest run tests/quest-reception.test.ts tests/quest-board.test.ts tests/hub-tiers.test.ts tests/content.test.ts
+
+
+ RUN  v5.1.1 /workspace/scratch/d8230114b8ab/quest-reception-work/verification
+
+ ❯ tests/content.test.ts (7 tests | 1 failed) 562ms
+   ❯ 素材台帳（docs/asset-manifest.json） (4)
+     × id が重複せず、状態が規定の語で、ファイルが実在する 15ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/content.test.ts > 素材台帳（docs/asset-manifest.json） > id が重複せず、状態が規定の語で、ファイルが実在する
+AssertionError: art.board.style: 原本 art-source/board/style_board_v2.png が無い: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/content.test.ts:101:99
+     99|       // 存在しないファイルを素材として登録しない
+    100|       if (a.path !== null) expect(existsSync(root(`public/${a.path}`))…
+    101|       if (a.sourcePath) expect(existsSync(root(a.sourcePath)), `${a.id…
+       |                                                                                                   ^
+    102|       for (const f of a.files ?? []) expect(existsSync(root(`${a.sourc…
+    103|       if (a.path === null && !a.sourcePath) expect(['planned', 'concep…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 32 passed (33)
+   Start at  01:22:18
+   Duration  1.18s (tests 63%, transform 18%, import 17%, worker 2%)
+
