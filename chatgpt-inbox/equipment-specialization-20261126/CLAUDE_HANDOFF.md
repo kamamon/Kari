@@ -18,6 +18,7 @@
 ```bash
 npm ci
 python3 chatgpt-inbox/equipment-specialization-20261126/reference/validate_design.py
+python3 chatgpt-inbox/equipment-specialization-20261126/reference/test_validate_design.py
 ./node_modules/.bin/tsc -p chatgpt-inbox/equipment-specialization-20261126/reference/tsconfig.json
 node --experimental-strip-types --test chatgpt-inbox/equipment-specialization-20261126/reference/*.test.ts
 python3 chatgpt-inbox/equipment-specialization-20261126/reference/materialize_art.py
@@ -64,6 +65,6 @@ HUDは2/4部位の成立、残り秒、再発動待ち、現在の印と個体�
 
 ## 変更・例外・未確認
 
-前回の未公開ファイルは消失していたため、今回の86種データと22枚の絵は再制作した。旧33025項目の検査記録を今回の結果として流用していない。現在の検査は52692項目と19参照試験。新たなNo24の固有代償は、弓にも働く被ダメージ増加へ変更した。ヌメラドンは既存原本どおり水を維持し、毒は追加しない。
+前回の未公開ファイルは消失していたため、今回の86種データと22枚の絵は再制作した。旧33025項目の検査記録を今回の結果として流用していない。現在の検査は61212項目と19参照試験、検証器の回帰2件。新たなNo24の固有代償は、弓にも働く被ダメージ増加へ変更した。ヌメラドンは既存原本どおり水を維持し、毒は追加しない。
 
 画像はAGENTSのPNG要件を内容として保持しているが、Git上では小さなバイナリ部分として保存しているため、GitHubの画面でPNGを直接表示することはできない。復元後は原寸・同一SHA256のPNG。3D完成・全方向設定図・全級別画像・実機バランスは未確認。本体への統合とmain公開はClaudeの工程で、本PRは設計と参照実装の受け渡し。

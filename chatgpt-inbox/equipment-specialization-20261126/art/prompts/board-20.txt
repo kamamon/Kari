@@ -1,0 +1,42 @@
+Use case: stylized-concept. Original fantasy game VEILBOUND HUNTERS equipment comparison board, rebuilt production reference.
+Create a polished wide landscape 2:1 illustration divided into 4 equal vertical panels, warm pale parchment background, thin quiet panel separators. Heading exactly "VEILBOUND HUNTERS". Every panel contains ONE full-body ADULT hunter mannequin wearing all five armor parts, and exactly TWO representative weapon-family sets neatly displayed separately beside the mannequin. Full helmet, torso, arms, waist and both feet visible, with generous head/foot margins. No cropped props, no labels beyond the specified panel labels, no other creatures or figures. Poses quiet and readable; three-quarter view chosen to show the stated asymmetry and rear-waist details. Mannequin unisex adult proportions, plain gray faceless head, no exposed skin emphasis.
+Visual style: grounded handcrafted original hunting-fantasy costume concept, like matte leather and weathered bone with stone shell and muted bronze fittings, subtle olive/gray/blue/purple organic coloration, restrained amber accent edges, realistic material rendering with soft studio light, no glossy plastic, no cyberpunk, no ornate golden knight costume. Clear structural silhouette, no battle scene. Equipment is fictional visual prop design only. Preserve a small number of meaningful anatomy-derived volumes; do not add generic spikes, horns, wings or large capes. Tiny skill cue glows at most 4% of armor surface.
+Weapon definitions are literal: swords retain real sword silhouettes in the fictional game, mauls have closed hard faces, shields have solid rigid backing, twin swords are exactly two swords, lance is straight with its own separate shield, bow is slender with one straight string and a small aiming ring, never a circular disc or crossbow. Use TWO family sets per panel, no extra weapon families. Separate props enough to identify every silhouette.
+
+PANEL 1, label exactly "077 LUDOPANEA". Slight three-quarter front view; anatomical left/right belong to the wearer, not the viewer.
+Species-specific armor silhouette: 顎から胸へ短い孔板を二枚垂らし、後腰をわずかに上げる。孔の奥には暗い裏板が見える。
+Palette: 灰青, 淡灰, 暗い青銅
+Armor five regions: head: 顎下へ二枚の短板を下げ、顔は開く; chest: 二枚板の下に暗い硬い胸裏板; arms: 前腕外へ小さい孔縁、腕の内側は柔皮; waist: 後腰だけ少し高い短甲、前腰は低い帯; legs: 脛の小孔は凹み表現で貫通させない
+Critical shape/count constraints: 左右の孔板は小さくずれる; 主孔板2、各板の代表孔2
+Prop short sword AND its independent rigid shield: 孔縁の細剣と、穴飾りの奥に剛体裏板を持つ盾
+Prop long straight pointed lance AND its independent rigid shield: 直槍の根元に二室、独立盾の孔は裏板で塞ぐ
+Avoid visual errors: 盾へ防護の欠ける貫通穴を作る形; 孔板を長い顎垂れや翼へ伸ばす形
+
+PANEL 2, label exactly "078 SALPINOC". Slight three-quarter front view; anatomical left/right belong to the wearer, not the viewer.
+Species-specific armor silhouette: 左肩だけ縦の帷板を高くし、右籠手は下へ重く垂れる形。左右の高さが逆になる輪郭。
+Palette: 灰緑, 暗灰紫, 青銅
+Armor five regions: head: 左額を低い縦線で包む小兜; chest: 左肩だけ高い縦板、右胸は平たい皮; arms: 右前腕外に重い鋏甲、手首の手前で切り拳を空ける; waist: 左腰を薄く、右の短い甲だけ低く置く; legs: 両脛は細い同形甲、肩と腕の左右差を支える
+Critical shape/count constraints: 左は上、右は下へ体積を寄せる; 左主板1、右鋏甲1
+Prop short sword AND its independent rigid shield: 短い鋏刃と、左帷を硬い裏板で支える独立盾
+Prop long straight pointed lance AND its independent rigid shield: 右鋏線の直槍と左帷板を写す縦長盾
+Avoid visual errors: 右籠手が手首と指を覆って曲がらなくなる形; 毒溝の外見から毒蓄積を追加すること
+
+PANEL 3, label exactly "079 HEMZARIO". Slight three-quarter front view; anatomical left/right belong to the wearer, not the viewer.
+Species-specific armor silhouette: 三節の低い額甲を左右へ短く張り、胸と脚は細くする。後腰だけ短い折甲。
+Palette: 灰褐, 灰黒, 青銅
+Armor five regions: head: 三節額を左右へ低く張り、顔前を空ける; chest: 胸中央を細い縦甲にし額の幅を強調; arms: 前腕外に三節の浅い折れ、拳を軽くする; waist: 後腰へ短く折れた一枚甲、前腰は細い帯; legs: 細い脛甲と短い足甲
+Critical shape/count constraints: 額甲は左右へ低く、後腰は中央; 額の連続節3
+Prop two-faced hard striking-head maul: 三つの低い側節と閉じた硬い両打面を持つ槌
+Prop short sword AND its independent rigid shield: 三節鍔の剣と、額の横線を写した硬盾
+Avoid visual errors: 額を高い三本角へ変える形; 気絶補正を物理ダメージへ二重加算すること
+
+PANEL 4, label exactly "080 PASNELIM". Three-quarter rear-side view, showing the dominant rear/collar/waist structures without hiding both arms.
+Species-specific armor silhouette: 腰の四枚短帆を前へ向け、襟を長く低く流す。後ろに広がる量を徹底して小さくする。
+Palette: 灰緑, 生成り, 青銅
+Armor five regions: head: 頭に沿う小兜から低い長襟へつなぐ; chest: 灰緑の胴を斜め皮で細く絞る; arms: 短い腱編み籠手、肘と手首を露出; waist: 前向きの短帆を四枚、腿の前後運動を空ける; legs: 細い膝甲と軽い足首、後ろへ飾りを伸ばさない
+Critical shape/count constraints: 左右二枚ずつ、後ろは狭い; 腰帆4
+Prop TWO matched short swords, one family: 各二枚の短帆を峰へ持つ同長二短剣
+Prop slender slightly curved long sword: 四つの前向き低留めを刃元へ並べた太刀
+Avoid visual errors: 後ろへ大きく広がるマント; 睡眠粉の設定から武器へ睡眠値を追加すること
+
+Final framing: all feet and all prop endpoints inside each panel. Balanced whitespace, each species unmistakably different. No game stats, no schematic measurements, no exploding mechanisms, no real-world instructions. This is a static concept comparison, not all-grade or all-seven-family coverage.

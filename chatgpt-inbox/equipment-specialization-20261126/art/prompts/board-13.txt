@@ -1,0 +1,37 @@
+Use case: stylized-concept. Original fantasy game VEILBOUND HUNTERS. A polished horizontal equipment concept comparison board, four equally wide vertical panels, warm light parchment backdrop, restrained realism, organic carved bone and mineral shells, matte weathered leather, muted bronze, soft studio light, no battle scene. Art direction: grounded weathered earth colors, legible strong shapes, subtle painted 3D volume, carefully sculpted organic armor, no glossy science-fiction or neon. Like a museum costume and stage-prop display.
+Layout: same height full-body ADULT faceless neutral mannequins in all four panels, head to both boots fully visible with margins. Neutral three-quarter stance with relaxed arms, hands and fingers visible. Each panel contains ONE complete 5-region armor design and TWO representative fantasy prop categories neatly beside the mannequin; neither category may be omitted or merged. Prop sets separate from the body and each other. The humanoid is not carrying them. Keep shoulders, elbows, wrists, knees, ankles open and mobile. No large floating magical effects. Species traits belong to the crafted armor, NOT animal anatomy or creature heads.
+Top small title exactly VEILBOUND HUNTERS. Only additional text: the four panel labels below. No Japanese text, no stats, no extra logos or explanatory paragraphs. The left/right asymmetry specified below always means the wearer's own left/right. Do not turn any specified shoulder into its opposite. Each entire prop must fit inside its own panel, including grips, strings and shield outlines.
+
+PANEL 1, exact label "049  ELMEJIKA". Native-rank design, same adult body size as every other panel.
+Silhouette: 後ろが開いた低い環冠と、両肩の合計六つの小節。胴を暗く細くして、小節の間の空白を見せる。
+Palette: 暗灰緑, 灰青, 霜白
+Armor parts: {"head": "後ろだけ開いた低い環冠。前額を小さい灰青板で閉じ、環を浮遊させない", "chest": "暗灰緑の細い胸甲。両肩に各三つの小節を低く寄せる", "arms": "細い前腕甲へ短い滴腺線一本。肩の六節と数が混ざる飾りを足さない", "waist": "短い腰帯と小さい灰青の後板。長い灯尾を作らない", "legs": "細い脛甲と霜白の小膝板。灯節を脚へ反復しない"}
+Show these two prop categories only: a slender bow with ONE straight string, a small aiming ring, and one arrow: 中央左右に三つずつの小節。主弓身は細い一対、小照準環と一本弦は節から独立; a slender curved sword: 細い刃の根元へ六つの小点を二列に集める。鞘口の環は後ろで開く
+Preserve: 左右三節ずつ. Main repeated form: 6.
+Avoid: 環冠の後ろを閉じない; 灯節を七つ以上にしない; 大きな発光枝角へ置き換えない
+
+PANEL 2, exact label "050  AZELNOTO". Native-rank design, same adult body size as every other panel.
+Silhouette: 背を平らにし、腹側へ張る半環を腰と腿外側に集める。上半身を細く、下半身だけに浅い横の膨らみを作る。
+Palette: 灰青, 水白, 骨白
+Armor parts: {"head": "小さい灰青の頭鉢。頬に短い半環を一つずつ伏せる", "chest": "胸は細い平面、袖口だけ白い水枕膜を短く重ねる。背は平ら", "arms": "短い前腕甲に白い膜を一筋。外へ輪を張り出させない", "waist": "前腰へ二つの低い半環、太腿外側へ小さな半環を左右一つずつ置く", "legs": "脛前は細い骨白の甲。腿の半環と膝の間を空け、足首は薄い靴"}
+Show these two prop categories only: a straight long lance AND its separate hard shield: 直槍の根元に二つの低半環、盾の下縁だけ水枕の丸面; a short sword AND its separate hard shield: 小半環の鍔を持つ剣と、下半分へ二つの水枕面を収めた盾
+Preserve: 左右対称、腹側のみ膨らむ. Main repeated form: 2.
+Avoid: 背中へ大きな骨輪を張らない; 原種の氷棘を残さない; 腿の半環を膝の前へ渡さない
+
+PANEL 3, exact label "051  BEZRAKIO". Native-rank design, same adult body size as every other panel.
+Silhouette: 肩から背へ伏せた三枚の板帆が後ろへ流れ、胸下だけが暗い嚢で膨れる。全体を低く長く見せ、上へ棘を出さない。
+Palette: 灰銅, 暗灰, 鈍琥珀
+Armor parts: {"head": "後ろへ低く伏せた小さい帆板の兜。額は平らで低い", "chest": "上胸を薄い灰銅板、下胸だけ暗灰の厚い嚢形。腹の屈曲部を分ける", "arms": "肩から背の帆を前腕と分離。前腕は細い灰銅の短甲", "waist": "後腰へ三枚帆の末端を低く重ね、前腰は細い暗革帯", "legs": "滑らかな細い脛甲。足甲は丸く、尖りや帆を脚へ増やさない"}
+Show these two prop categories only: a broad fantasy greatsword: 峰の三枚板を後ろ向きに寝かせた長い平刃。刃元の下に小さな嚢覆い; a two-faced hard fantasy hammer: 槌頭の上側へ三枚の低い板帆、下側に閉じた小嚢。両打面は硬面
+Preserve: 左右対称、上薄下厚. Main repeated form: 3.
+Avoid: 帆を上へ高く立てない; 原種の氷色の棘を付けない; 胸嚢を金属の大砲口にしない
+
+PANEL 4, exact label "052  MURZENATO". Native-rank design, same adult body size as every other panel.
+Silhouette: 肩を小さくし、腰の平たい輪節を水平に広げる。鉤先は裾の内側へ巻き込み、外周を滑らかな低い段にする。
+Palette: 灰褐, 泥緑, 暗青銅
+Armor parts: {"head": "平たい節兜。後頭部の小鉤は内側へ伏せ、前へ角を出さない", "chest": "肩の小さい平胸甲。脇を短い柔膜でつなぎ、下半身の横幅と差を付ける", "arms": "低い泥鉤甲の籠手。鉤の先は甲の裏へ巻き、皮膚や内肘へ向けない", "waist": "三段の平たい輪節を腰へ水平に重ねる。裾の鉤を内部の暗い縁へ納める", "legs": "太腿外側を低い泥甲で広く覆う。膝裏と足首を開け、脛は短い"}
+Show these two prop categories only: a short sword AND its separate hard shield: 内巻きの小鍔の剣と、三段の水平節を持つ幅広い硬盾; a straight long lance AND its separate hard shield: 直槍の根元に小さい内巻き節、盾の下縁に三つの低い泥受け溝
+Preserve: 左右対称、上半身は細い. Main repeated form: 3.
+Avoid: 鉤を外へ棘のように立てない; 原種の高い肩鉤を残さない; 泥の塊を足先へ垂らさない
+
+Final composition: FOUR full adult mannequin outfits side by side, distinct silhouettes, two prop categories EACH. No repeated identical armor with color swaps. Cloth and organic shell surfaces are opaque except explicitly translucent plates. Every bow string straight and separate from the aiming ring. Every shield has a solid structural backing even if its decorative outer layers have slots. No oversized shoulder appendages or long tails. Muted art-quality concept reference, not a dimensioned engineering drawing.

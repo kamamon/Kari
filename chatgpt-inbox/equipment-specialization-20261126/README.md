@@ -78,6 +78,7 @@ Node.js 22以上を使う。指定commitを持たない浅いcloneでは先に `
 ```bash
 npm ci
 python3 chatgpt-inbox/equipment-specialization-20261126/reference/validate_design.py
+python3 chatgpt-inbox/equipment-specialization-20261126/reference/test_validate_design.py
 ./node_modules/.bin/tsc -p chatgpt-inbox/equipment-specialization-20261126/reference/tsconfig.json
 node --experimental-strip-types --test chatgpt-inbox/equipment-specialization-20261126/reference/*.test.ts
 python3 chatgpt-inbox/equipment-specialization-20261126/reference/materialize_catalog.py --output /tmp/kari-equipment-specialization.json

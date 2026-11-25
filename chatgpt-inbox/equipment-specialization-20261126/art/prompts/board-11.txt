@@ -1,0 +1,37 @@
+Use case: stylized-concept. Original fantasy game VEILBOUND HUNTERS. A polished horizontal equipment concept comparison board, four equally wide vertical panels, warm light parchment backdrop, restrained realism, organic carved bone and mineral shells, matte weathered leather, muted bronze, soft studio light, no battle scene. Art direction: grounded weathered earth colors, legible strong shapes, subtle painted 3D volume, carefully sculpted organic armor, no glossy science-fiction or neon. Like a museum costume and stage-prop display.
+Layout: same height full-body ADULT faceless neutral mannequins in all four panels, head to both boots fully visible with margins. Neutral three-quarter stance with relaxed arms, hands and fingers visible. Each panel contains ONE complete 5-region armor design and TWO representative fantasy prop categories neatly beside the mannequin; neither category may be omitted or merged. Prop sets separate from the body and each other. The humanoid is not carrying them. Keep shoulders, elbows, wrists, knees, ankles open and mobile. No large floating magical effects. Species traits belong to the crafted armor, NOT animal anatomy or creature heads.
+Top small title exactly VEILBOUND HUNTERS. Only additional text: the four panel labels below. No Japanese text, no stats, no extra logos or explanatory paragraphs. The left/right asymmetry specified below always means the wearer's own left/right. Do not turn any specified shoulder into its opposite. Each entire prop must fit inside its own panel, including grips, strings and shield outlines.
+
+PANEL 1, exact label "041  FUREMSAD". Native-rank design, same adult body size as every other panel.
+Silhouette: 灰青の細身に一枚だけ横へ広い喉襟。後腰の低い丸骨が重心を締め、肩には鰭を反復しない。
+Palette: 灰青, 骨白, 砂褐
+Armor parts: {"head": "短い灰青の頭覆い。横鰭は首下に独立させ、顔の左右へ大きな板を置かない", "chest": "喉元に一枚の横鰭を低く広げる。胸の中央は細く、腹は短い灰青板", "arms": "細い前腕甲の外側に分霧孔を短く二列。手首と指を出す", "waist": "後腰に厚い丸骨板を低く一枚。尾は付けず、前腰は砂褐の短帯", "legs": "小さい骨白の膝甲と細い脛甲。足の外へ鰭を張らない"}
+Show these two prop categories only: a two-faced hard fantasy hammer: 鈍い尾骨の閉じた二打面。中央に小さい横鰭形の側板を一枚挟む; a short sword AND its separate hard shield: 細い霧孔の剣と、上縁だけ一枚の横鰭を写す低い盾
+Preserve: 左右対称、前後に二つの焦点. Main repeated form: 1.
+Avoid: 丸骨を前腰へ移さない; 横鰭を二枚以上重ねない; 尾骨を鋭い尾槍へ変えない
+
+PANEL 2, exact label "042  GRASEDON". Native-rank design, same adult body size as every other panel.
+Silhouette: 左肩だけ縦に割れた厚い扇板が立つ。胴は低く重く、右腕は小さいまま。原種の横広い岩板との差を縦裂きの断面で出す。
+Palette: 灰褐, 青銅, 琥珀
+Armor parts: {"head": "低い岩鉢の左側に短い縦割れ二本。高い冠を足さない", "chest": "厚い灰褐の胸板と、左肩だけの三枚縦扇。右胸は低い一枚板", "arms": "左前腕に厚い割れ板二枚、右前腕は小さい滑らかな甲", "waist": "左腰だけ短い厚板。後腰の晶は小さく低く保つ", "legs": "低い重い脛甲。左外面に縦の割れ筋一本、足首は別の革靴"}
+Show these two prop categories only: a broad fantasy greatsword: 峰の左面を縦の三板に割った重い一枚刃。琥珀線は隙間の奥だけ; a two-faced hard fantasy hammer: 三つの割れ板を閉じた硬面で挟む槌頭。開口部を打面にしない
+Preserve: 左のみ大板、右は小さい面. Main repeated form: 3.
+Avoid: 原種の岩板を単に赤く塗らない; 右肩にも同じ扇を付けない; 割れ目を炎の大面積にしない
+
+PANEL 3, exact label "043  RYUZELKA". Native-rank design, same adult body size as every other panel.
+Silhouette: 肩の二つの薄帆が上下にずれ、細い胴から高く見える脚へ抜ける。頭は小さく、頭上に帆角を巨大化させない。
+Palette: 灰青, 白氷, 生成り
+Armor parts: {"head": "細い頭鉢の上に小さい二枚の低鰭。肩帆より十分小さくする", "chest": "細い胸衣と短い背板。左肩を高く右肩を低くした薄帆を一枚ずつ", "arms": "前腕は細い一本甲。肩帆から腕へ膜を渡さず、脇を開ける", "waist": "短い後腰膜を後ろへ畳む。前腰は薄い帯で脚を長く見せる", "legs": "細い長脛甲と小さい膝板。踵へ白い膜縁を短く置く"}
+Show these two prop categories only: a slender bow with ONE straight string, a small aiming ring, and one arrow: 中央の上下へ小さな帆を一枚ずつ。しなる弓端と一本弦、小照準環を帆から独立させる; TWO matching short blades: 二本の細刃の峰の帆位置を上下にずらすが、全長と重心は揃える
+Preserve: 左帆が高く、右帆が低い. Main repeated form: 2.
+Avoid: 頭の鰭を肩帆より大きくしない; 大きな鳥翼を背へ付けない; 全身を透明な氷鎧にしない
+
+PANEL 4, exact label "044  MORDINE". Native-rank design, same adult body size as every other panel.
+Silhouette: 頭だけが三段の低い丸冠で横へ広い。低い肩と小さい手脚を添え、右胸の太い頬管を一筋だけ落とす。
+Palette: 灰緑, 生成り, 泥褐
+Armor parts: {"head": "三段の浅い丸皿を重ねた兜。頭頂を高くせず、左右へ低く広げる", "chest": "右胸に三短節の太い管縁、左胸は滑らかな灰緑板。管は腹より上で止める", "arms": "丸い短甲の前腕に小さい濾膜窓一つ。冠を肩へ反復しない", "waist": "生成りの耐水布を前後に短く分け、後腰は低い泥褐甲", "legs": "低い脛甲と丸い膝板。耐水布は足首まで垂らさない"}
+Show these two prop categories only: a slender curved sword: 細い刃の根元に三層の浅い皿鍔。鞘へ収まる低い成長輪; TWO matching short blades: 二本とも同じ小さい三段鍔を持つ短刃。水管を刃元の内側へ伏せる
+Preserve: 冠は対称、管は右のみ. Main repeated form: 3.
+Avoid: 三段冠を高い王冠にしない; 原種の毒袋を残して水と毒を同時に示さない; 太い管を腕の可動域へ横切らせない
+
+Final composition: FOUR full adult mannequin outfits side by side, distinct silhouettes, two prop categories EACH. No repeated identical armor with color swaps. Cloth and organic shell surfaces are opaque except explicitly translucent plates. Every bow string straight and separate from the aiming ring. Every shield has a solid structural backing even if its decorative outer layers have slots. No oversized shoulder appendages or long tails. Muted art-quality concept reference, not a dimensioned engineering drawing.
