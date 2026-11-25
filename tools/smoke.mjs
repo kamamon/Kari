@@ -82,6 +82,37 @@ const click = async (page, button = 'left') => {
   await page.mouse.up({ button });
 };
 const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free');
+// ---- 級別の受付（v0.38.0。ChatGPT の Pull Request #17）: 受付の一覧 → 級の受付 → 星 → 依頼の行 → 詳細 → 受注して出発 ----
+/** 受付ごとに星の札を全部押して、依頼の行を集める（拠点の画面の中で。終わったら受付の一覧へ戻す。?hub=menu の時） */
+const receptionRows = (page) => page.evaluate(() => {
+  const base = window.__vh.base, out = [];
+  for (const f of window.__vh.content.hub.facilities.filter((x) => x.kind === 'quest')) {
+    base.setOpen(true, 'quest', f.id);
+    const stars = [...document.querySelectorAll('.reception-star')].map((b) => b.dataset.stars);
+    for (const st of stars) {
+      document.querySelector(`.reception-star[data-stars="${st}"]`).click();
+      for (const r of document.querySelectorAll('.reception-row')) out.push({ desk: f.id, rank: r.dataset.rank, stars: Number(r.dataset.stars), id: r.dataset.quest, locked: r.classList.contains('locked'), text: r.textContent });
+    }
+  }
+  base.setOpen(true, 'all');
+  return out;
+});
+/** 依頼の詳細を開く（?hub=menu では、その級の受付・星・詳細へ。出発はしない） */
+const showQuest = async (page, id) => {
+  await page.evaluate((q) => window.__vh.base.showQuest(q), id);
+  await until(page, (q) => !!document.querySelector(`.reception-depart[data-quest="${q}"], .base-delivery[data-delivery="${q}"]`), 5000, id);
+};
+/** 詳細の「受注して出発」を押す */
+const departQuest = async (page, id) => {
+  await showQuest(page, id);
+  await page.click(`.reception-depart[data-quest="${id}"]`);
+};
+/** 訓練場（受付の一覧と初級の受付の下にある） */
+const startTraining = async (page, tap = false) => {
+  await page.evaluate(() => window.__vh.base.setOpen(true, 'all'));
+  if (tap) await page.locator('.reception-training').tap();
+  else await page.click('.reception-training');
+};
 
 // ---- PC（キーボード・マウス） ----
 {
@@ -90,19 +121,25 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('#boot-start');
   check('起動すると拠点の画面が出て、一時停止している', await until(page, () => window.__vh && !document.getElementById('base').hidden && window.__vh.sim.tick === 0));
   await page.screenshot({ path: `${OUT}02_base.png` });
-  check('拠点: 依頼は段階の順に 33 件（ガルドロスの 4 段階、初級の 11 種、初級の群れの依頼 9 件、v0.34.0 のセルヴァルク・コルドピル・パルセイトの中級〜極級 9 件）。最初に受けられるのは初級だけで、ほかは押せない', await page.evaluate(() => {
-    const all = [...document.querySelectorAll('.base-choice[data-quest]')];
-    const qs = all.filter((b) => b.dataset.quest.startsWith('quest.basin.'));
-    return qs.map((b) => b.dataset.rank).join() === 'rank.1,rank.2,rank.3,rank.4' && qs.map((b) => b.disabled).join() === 'false,true,true,true'
-      && all.length === 33 && all.map((b) => b.dataset.rank).join() === [...Array(21).fill('rank.1'), ...Array(4).fill('rank.2'), ...Array(4).fill('rank.3'), ...Array(4).fill('rank.4')].join() && all.slice(0, 21).every((b) => !b.disabled) && all.slice(21).every((b) => b.disabled)
-      && /【初級】依頼「岩場の足音」/.test(qs[0].textContent) && /【中級】/.test(qs[1].textContent) && /「岩場の足音」を達成すると受けられます/.test(qs[1].textContent)
-      && /^防御力の合計 0（受けるダメージ ×1\.00）$/.test(document.querySelector('.base-armor-note').textContent) && document.querySelectorAll('.base-armor-row').length === 5;
-  }), await page.evaluate(() => document.querySelector('.base-choice[data-quest="quest.basin.r2.001"]')?.textContent ?? ''));
+  const desks0 = await page.evaluate(() => [...document.querySelectorAll('.reception-desk[data-reception]')].map((d) => `${d.dataset.reception}:${d.textContent}`));
+  const rows0 = await receptionRows(page);
+  const rowRank = (id) => rows0.find((r) => r.id === id);
+  check('拠点: 依頼は級ごとの受付に分かれる（v0.38.0。初級 21 件 + 里の納品 1・中級 4・上級 4・極級 4）。最初に受けられるのは初級だけで、ほかは未解放', desks0.length === 4
+    && ['rank.1', 'rank.2', 'rank.3', 'rank.4'].map((r) => rows0.filter((x) => x.rank === r).length).join() === '22,4,4,4'
+    && rows0.filter((x) => x.rank === 'rank.1' && x.id.startsWith('quest.')).every((x) => !x.locked) && rows0.filter((x) => x.rank !== 'rank.1').every((x) => x.locked)
+    && rowRank('quest.basin.003')?.rank === 'rank.1' && rowRank('quest.basin.r2.001')?.rank === 'rank.2' && rowRank('quest.basin.r4.001')?.rank === 'rank.4'
+    && await page.evaluate(() => /^防御力の合計 0（受けるダメージ ×1\.00）$/.test(document.querySelector('.base-armor-note').textContent) && document.querySelectorAll('.base-armor-row').length === 5),
+    JSON.stringify({ desks: desks0.length, n: ['rank.1', 'rank.2', 'rank.3', 'rank.4'].map((r) => rows0.filter((x) => x.rank === r).length) }));
+  await showQuest(page, 'quest.basin.r2.001');
+  check('拠点: 中級の依頼の詳細は、受けられない時も開け、条件の文が出て「受注して出発」は押せない', await page.evaluate(() => {
+    const go = document.querySelector('.reception-depart[data-quest="quest.basin.r2.001"]');
+    return !!go && go.disabled && /「岩場の足音」を達成すると受けられます/.test(document.querySelector('.reception-locked-note')?.textContent ?? '') && /中級/.test(document.querySelector('#base h2').textContent);
+  }), await page.evaluate(() => document.querySelector('.reception-detail')?.textContent?.slice(0, 160) ?? ''));
   check('まだ受けられない依頼は、呼び出しても始まらない', await page.evaluate(() => {
     window.__vh.startHunt('quest.basin.r4.001');
     return !document.getElementById('base').hidden && !window.__vh.sim.hunt;
   }));
-  await page.locator('.base-choice').last().click();
+  await startTraining(page);
   check('訓練場を選ぶと simulation が進む', await until(page, () => window.__vh.sim.tick > 10));
   await page.screenshot({ path: `${OUT}02_start.png` });
   // 技を 1 つずつ確かめる間は、標的の攻撃を止めておく（防御・被弾の確認の所で再開する）
@@ -286,7 +323,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('.menu-head .tab:nth-child(1)');
   await page.click('.menu-body button');
   check('メニューから拠点へ戻れる', await until(page, () => !document.getElementById('base').hidden));
-  await page.locator('.base-choice').first().click();
+  await departQuest(page, 'quest.basin.003');
   check('依頼を選ぶと狩猟が始まる（ガルドロスは未発見）', await until(page, () => window.__vh.sim.hunt?.phase === 'active' && window.__vh.sim.tick > 5 && !window.__vh.sim.monsters[0].aware));
   await page.screenshot({ path: `${OUT}51_hunt_start.png` });
   await page.keyboard.down('KeyW');
@@ -496,13 +533,14 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.screenshot({ path: `${OUT}62_base_inventory.png` });
 
   // ---- 保存（IndexedDB）: 読み込み直し、二重取り、失敗、取り込み、強化、別のタブ ----
-  check('初級を達成したので、中級の依頼が受けられる（上級・極級はまだ）。セルヴァルクと群れの中級も、同じ時に開く（v0.34.0）', await page.evaluate(() => {
-    const qs = [...document.querySelectorAll('.base-choice[data-quest^="quest.basin."]')];
-    const dis = (id) => document.querySelector(`.base-choice[data-quest="${id}"]`)?.disabled;
-    return qs.map((b) => b.disabled).join() === 'false,false,true,true' && /達成 2 回/.test(qs[0].textContent) && /「脈打つ岩殻」を達成すると/.test(qs[2].textContent)
-      && dis('quest.selvark.r2') === false && dis('quest.kordopil.pack.r2') === false && dis('quest.palseit.pack.r2') === false && dis('quest.selvark.r3') === true && dis('quest.palseit.pack.r4') === true;
-  }));
-  await page.click('.base-choice[data-quest="quest.basin.r2.001"]');
+  {
+    const rows = await receptionRows(page);
+    const locked = (id) => rows.find((r) => r.id === id)?.locked;
+    check('初級を達成したので、中級の依頼が受けられる（上級・極級はまだ）。セルヴァルクと群れの中級も、同じ時に開く（v0.34.0。v0.38.0 から級別の受付）', ['quest.basin.003', 'quest.basin.r2.001', 'quest.basin.r3.001', 'quest.basin.r4.001'].map(locked).join() === 'false,false,true,true'
+      && /済/.test(rows.find((r) => r.id === 'quest.basin.003')?.text ?? '') && locked('quest.selvark.r2') === false && locked('quest.kordopil.pack.r2') === false && locked('quest.palseit.pack.r2') === false && locked('quest.selvark.r3') === true && locked('quest.palseit.pack.r4') === true,
+      JSON.stringify(rows.filter((r) => r.rank !== 'rank.1').map((r) => `${r.id}:${r.locked ? '×' : '○'}`)));
+  }
+  await departQuest(page, 'quest.basin.r2.001');
   check('中級の依頼: HUD に【中級】と出て、個体の体力は 2430（初級 1800）、与えるダメージは 1.3 倍、出る素材は中級の表', await until(page, () => {
     const v = window.__vh, m = v.sim.monsters[0];
     return v.sim.hunt?.phase === 'active' && v.sim.tick > 5 && m.hp === 2430 && m.def.hp === 2430 && v.sim.monsterAttackScale === 1.3 && v.sim.rank.id === 'rank.2'
@@ -601,7 +639,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     const d = window.__vh.save.doc;
     return d.equippedWeaponId === 'weapon.heavy_blade.002' && d.money === 1130 && d.revision === 5 && window.__vh.weaponId === 'weapon.heavy_blade.002' && /岩殻の断岳剣（攻撃力 92）/.test(document.querySelector('.base-weapon-note').textContent);
   }));
-  await page.locator('.base-choice').last().click();
+  await startTraining(page);
   await until(page, () => window.__vh.sim.tick > 10);
   check('訓練場でも岩殻の断岳剣（攻撃力 92）を持っている', await page.evaluate(() => window.__vh.sim.player.weaponId === 'weapon.heavy_blade.002' && window.__vh.sim.content.weapons.get(window.__vh.sim.player.weaponId).attack === 92));
   await page.keyboard.press('KeyR');
@@ -728,7 +766,10 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
       && d.armor.join() === 'armor.head.001,armor.chest.001,armor.arms.001,armor.waist.001,armor.legs.001' && d.progress.questClears['quest.basin.003'] === 2 && d.revision === 4
       && bs.some((b) => b.reason === 'migrate' && JSON.stringify(b.doc) === JSON.stringify(orig)) && /新しい形へ直しました/.test(document.querySelector('.base-banner')?.textContent ?? '');
   }, v1), await page.evaluate(() => `${window.__vh.save.mode} v${window.__vh.save.doc.schemaVersion} r${window.__vh.save.doc.revision} ${window.__vh.save.notice}`));
-  check('初級を達成済みなので、中級の依頼が受けられる', await page.evaluate(() => [...document.querySelectorAll('.base-choice[data-quest^="quest.basin."]')].map((b) => b.disabled).join() === 'false,false,true,true'));
+  {
+    const rows = await receptionRows(page);
+    check('初級を達成済みなので、中級の依頼が受けられる', ['quest.basin.003', 'quest.basin.r2.001', 'quest.basin.r3.001', 'quest.basin.r4.001'].map((id) => rows.find((r) => r.id === id)?.locked).join() === 'false,false,true,true');
+  }
   // 防具: 岩殻の兜（岩殻片 2 + 硬骨 1 + 80 通貨）
   await page.click('#base-forge > summary');
   await page.screenshot({ path: `${OUT}75_forge_armor.png`, fullPage: false });
@@ -744,7 +785,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     const h = window.__vh.view.hunter;
     return h.armorKey === '21111' && h.armorTriangles > 0 && h.hiddenBody.join() === 'hair';
   }, 8000), await page.evaluate(() => window.__vh.view.hunter.armorKey));
-  await page.locator('.base-choice').last().click();
+  await startTraining(page);
   check('訓練場でも、岩殻の兜をかぶっている', await until(page, () => window.__vh.sim.tick > 5 && window.__vh.view.hunter.armorKey === '21111' && window.__vh.sim.armorIds.includes('armor.head.002')));
   await page.screenshot({ path: `${OUT}78_training_helm.png` });
   check('訓練場でも依頼でも、その防御力で受けるダメージが減る（防御力 6 → 100/106 倍）', await until(page, () => window.__vh.sim.tick > 5 && window.__vh.sim.defense === 6 && Math.abs(window.__vh.sim.defenseScale - 100 / 106) < 1e-9));
@@ -804,7 +845,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.tap('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   await page.screenshot({ path: `${OUT}20_touch_base.png` });
-  await page.locator('.base-choice').last().tap();
+  await startTraining(page, true);
   await until(page, () => window.__vh.sim.tick > 10);
   await page.screenshot({ path: `${OUT}20_touch_start.png` });
   const cdp = await ctx.newCDPSession(page);
@@ -1000,7 +1041,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   await page.screenshot({ path: `${OUT}weapon_select.png` });
   // ---- 刃の状態と研磨石（訓練場、断岳剣）----
-  await page.locator('.base-choice').last().click();
+  await startTraining(page);
   await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
   check('訓練場: 刃の棒が出て「鋭い」。道具は研磨石 ×10', await page.evaluate(() => {
     const e = document.querySelector('.hud-blade .edge');
@@ -1053,7 +1094,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   check('環弓では、刃の棒と研磨石が出ない', await (async () => {
     await page.locator('.base-weapon[data-weapon="weapon.ring_bow.001"]').click();
     await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy'), 6000, 'weapon.ring_bow.001');
-    await page.locator('.base-choice').last().click();
+    await startTraining(page);
     await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
     const ok = await page.evaluate(() => document.querySelector('.hud-blade .edge').hidden && window.__vh.sim.player.items.length === 0);
     await page.keyboard.press('Escape');
@@ -1067,7 +1108,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     // 持ち替えは、保存が完了してから替わる
     await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy'), 6000, `weapon.${fam}.001`);
     const picked = await page.evaluate(() => window.__vh.weaponId);
-    await page.locator('.base-choice').last().click();
+    await startTraining(page);
     await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
     await page.evaluate((d) => {
       const s = window.__vh.sim, m = s.monsters[0], p = s.player;
@@ -1179,12 +1220,13 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
-  check('フィールド: 拠点の依頼に、狩場の名前と、長くした制限時間（30 分）が出る', await page.evaluate(() => {
-    const t = document.querySelector('.base-choice[data-quest="quest.basin.003"]').textContent;
-    return window.__vh.fieldHunts === true && /制限 30 分/.test(t) && /狩場: 風礫盆地（野営地から出発。エリア 10 か所/.test(t);
-  }), await page.evaluate(() => document.querySelector('.base-choice[data-quest="quest.basin.003"]').textContent));
+  await showQuest(page, 'quest.basin.003');
+  check('フィールド: 依頼の詳細に、狩場の名前と、長くした制限時間（30 分）が出る（v0.38.0 から、受付の詳細）', await page.evaluate(() => {
+    const t = document.querySelector('.reception-detail').textContent;
+    return window.__vh.fieldHunts === true && /30 分/.test(t) && /風礫盆地/.test(t);
+  }), await page.evaluate(() => document.querySelector('.reception-detail')?.textContent?.slice(0, 200) ?? ''));
   await page.screenshot({ path: `${OUT}80_field_base.png` });
-  await page.click('.base-choice[data-quest="quest.basin.003"]');
+  await page.click('.reception-depart[data-quest="quest.basin.003"]');
   await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
   const hudField = () => page.evaluate(() => {
     const s = window.__vh.sim, m = s.monsters[0];
@@ -1445,12 +1487,12 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.keyboard.up('ShiftLeft');
   await page.waitForTimeout(200);
   h = await hubState();
-  check('里: 前へ歩くと依頼板の前に着き、「依頼を見る」のボタンが出る', atBoard && /依頼を見る/.test(h.prompt), JSON.stringify(h));
+  check('里: 前へ歩くと依頼板の前に着き、「初級の依頼を見る」のボタンが出る', atBoard && /初級の依頼を見る/.test(h.prompt), JSON.stringify(h));
   await page.screenshot({ path: `${OUT}91_hub_board.png` });
   await click(page);
   await until(page, () => !document.getElementById('base').hidden);
   h = await hubState();
-  check('里: 主ボタンで依頼板の画面が開く（依頼の欄だけ。工房・商店・武器の欄は出ない。「里へ戻る」がある）', h.base && h.section === 'quest' && h.title === '依頼板' && h.quests !== 'none' && h.forge === 'none' && h.shop === 'none' && h.weapons === 'none' && h.close !== 'none', JSON.stringify(h));
+  check('里: 主ボタンで依頼板の画面が開く（初級の受付。依頼の欄だけ。工房・商店・武器の欄は出ない。「里へ戻る」がある）', h.base && h.section === 'quest' && h.title === '初級受付・広場の依頼板' && h.quests !== 'none' && h.forge === 'none' && h.shop === 'none' && h.weapons === 'none' && h.close !== 'none', JSON.stringify(h));
   const tickBefore = await page.evaluate(() => window.__vh.sim.tick);
   await page.waitForTimeout(300);
   check('里: 画面が開いている間は、一時停止する', await page.evaluate((t) => window.__vh.sim.tick === t, tickBefore));
@@ -1741,7 +1783,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     };
   });
   check('図鑑: 依頼の欄に、86 種（78 種と幼体 8 種）が段階ごとに並ぶ（初級 13 / 13、中級 20 / 20、上級 25 / 25、極級 20 / 20）。遊べるのは、はじめの 12 種と幼体 8 種で、原画あり 66、案 0（v0.24.0 で原画案 73 枚を受け取った）',
-    zukan.shown && zukan.summary === 'モンスター図鑑（78 種・幼体 8 種）' && zukan.n === 86 && zukan.heads.join('|') === '初級から 13 / 13 種 幼体 8|中級から 20 / 20 種|上級から 25 / 25 種|極級から 20 / 20 種' && zukan.done.split(',').length === 20 && zukan.done.startsWith('monster.galdros,monster.selvark') && zukan.done.endsWith('monster.yurtepica,monster.hinasalv') && zukan.art === 66 && zukan.planned === 0 && zukan.lazy === 5, JSON.stringify({ ...zukan, rare: '', juv: '', fieldText: '' }));
+    zukan.shown && zukan.summary === '図鑑 86種' && zukan.n === 86 && zukan.heads.join('|') === '初級から 13 / 13 種 幼体 8|中級から 20 / 20 種|上級から 25 / 25 種|極級から 20 / 20 種' && zukan.done.split(',').length === 20 && zukan.done.startsWith('monster.galdros,monster.selvark') && zukan.done.endsWith('monster.yurtepica,monster.hinasalv') && zukan.art === 66 && zukan.planned === 0 && zukan.lazy === 5, JSON.stringify({ ...zukan, rare: '', juv: '', fieldText: '' }));
   check('図鑑: 原画のある種を開くと、原画と、生態 8 項目が出る。体と動きがまだ無いことが分かる。遊べる種には「仮の形」と出る', zukan.img === 720 && /まだありません/.test(zukan.cap) && /食べ物,行動と気性,なわばり,1 日の動き,巣と眠り,ほかとの関わり,幼体,痕跡$/.test(zukan.eco) && /仮の形/.test(zukan.selCap), JSON.stringify({ img: zukan.img, cap: zukan.cap, selCap: zukan.selCap, eco: zukan.eco }));
   check('図鑑: 希少種には、もとの種と、一緒に出る相手が出る。幼体には、群れの数と、幼体自身の原画案（体はまだ親の絵から）が出る。超大型は、原画案だけで体が無いと分かる。ガルドロスは採用した設定図',
     /上級|大型・希少種/.test(zukan.rare) && /もとの種/.test(zukan.rareLabels) && /一緒に出る相手/.test(zukan.rareLabels) && /帆角獣 セルヴァルク/.test(zukan.rare) && /裂扇獣 グラセドン/.test(zukan.rare) && /群れ3〜5 体/.test(zukan.juv) && /岩殻獣 ガルドロス/.test(zukan.juv) && /^超大型／巨躯／沈根沢地／水・睡眠$/.test(zukan.hugeTags) && /原画案.*まだありません/.test(zukan.hugeCap) && zukan.hugeState === '原画あり'
@@ -1755,8 +1797,15 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     zukan.fields === 20 && zukan.walkable === '風礫盆地' && zukan.fieldHead === '狩場の案 20（歩けるのは 1）' && zukan.basinState === '歩ける' && /燠脈台地/.test(zukan.fieldText) && /熾炉獣 エンバルグ/.test(zukan.fieldText) && zukan.fieldState === '案', JSON.stringify({ fields: zukan.fields, walkable: zukan.walkable, head: zukan.fieldHead, state: zukan.fieldState, text: zukan.fieldText }));
   await page.evaluate(() => document.getElementById('base-bestiary').scrollIntoView({ block: 'start' }));
   await page.screenshot({ path: `${OUT}99_bestiary.png` });
-  // 依頼へ: 買った回復液を、支給品に足して持っていく
-  await page.click('.base-choice[data-quest="quest.basin.003"]');
+  // 依頼へ: 買った回復液を、支給品に足して持っていく（v0.38.0: 一覧には受付の案内だけ。初級の受付まで行って、詳細から出発する）
+  check('里: 「一覧」の依頼の欄は、4 つの受付の案内（全部の依頼を縦に並べない。歩く里では、そこから出発しない）', await page.evaluate(() => document.querySelectorAll('article.reception-desk[data-reception]').length === 4 && !document.querySelector('.reception-row, .reception-depart')));
+  await page.click('.base-close');
+  await until(page, () => document.getElementById('base').hidden);
+  await put('board');
+  await until(page, () => window.__vh.nearFacility?.id === 'board');
+  await page.click('#hud-facility');
+  await until(page, () => !document.getElementById('base').hidden);
+  await departQuest(page, 'quest.basin.003');
   await until(page, () => window.__vh.place === 'hunt' && window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
   const pouch = await page.evaluate(() => {
     const s = window.__vh.sim;
@@ -1804,7 +1853,8 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   check('物語: 依頼板に物語の欄が出る。ガルドロスは達成済みなので、次の狩りは「帆角の風」。帰還記録は 3 つ', sp.shown && sp.title === '物語「帰り道の灯」' && sp.step === 'st02' && sp.go === 'quest.selvark.r1' && sp.rec === '帰還記録を読む（3）', JSON.stringify(sp));
   await page.screenshot({ path: `${OUT}98_story_panel.png` });
   const rev0 = await page.evaluate(() => window.__vh.save.doc.revision);
-  await page.evaluate(() => { document.querySelector('.story-records').open = true; });
+  // v0.38.0: 物語の欄は、受付の下の「物語・帰還記録」の中（たたんである）
+  await page.evaluate(() => { document.querySelector('.reception-story-fold').open = true; document.querySelector('.story-records').open = true; });
   await page.click('.story-record[data-scene="sc02"]');
   const opened = await until(page, () => !document.getElementById('story').hidden && document.getElementById('story').dataset.scene === 'sc02' && document.querySelector('.story-face img').naturalWidth === 256, 8000);
   await page.screenshot({ path: `${OUT}98_story_dialog.png` });
@@ -1901,10 +1951,13 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const { ctx, page } = await open({ width: 1280, height: 720 }, false);
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
-  check('大型 11 種: 拠点に、11 種の初級の依頼が並び、最初から受けられる', await page.evaluate((keys) => keys.every((k) => {
-    const b = document.querySelector(`.base-choice[data-quest="quest.${k}.r1"]`);
-    return b && !b.disabled && /【初級】/.test(b.textContent);
-  }), KEYS));
+  {
+    const rows11 = await receptionRows(page);
+    check('大型 11 種: 初級の受付に、11 種の初級の依頼が並び、最初から受けられる', KEYS.every((k) => {
+      const r = rows11.find((x) => x.id === `quest.${k}.r1`);
+      return r && r.rank === 'rank.1' && !r.locked;
+    }), JSON.stringify(KEYS.filter((k) => !rows11.find((x) => x.id === `quest.${k}.r1`))));
+  }
   const rows = [];
   for (const key of KEYS) {
     await page.evaluate((k) => window.__vh.startHunt(`quest.${k}.r1`), key);
@@ -2019,14 +2072,21 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const { ctx, page } = await open({ width: 1280, height: 720 }, false);
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
-  check('群れの依頼: 拠点に、幼体の群れの依頼 9 件が見出しの下に並び、最初から受けられる', await page.evaluate((keys) => {
-    const head = [...document.querySelectorAll('#base .forge-head')].some((h) => /幼体の群れの依頼/.test(h.textContent));
-    const ok = keys.every((k) => {
-      const b = document.querySelector(`.base-choice[data-quest="quest.${k}.pack1"]`);
-      return b && !b.disabled && /頭|羽|体/.test(b.textContent) && /の討伐/.test(b.textContent);
+  {
+    const rowsPack = await receptionRows(page);
+    const ok = KEYS.every((k) => {
+      const r = rowsPack.find((x) => x.id === `quest.${k}.pack1`);
+      return r && r.rank === 'rank.1' && !r.locked && /討伐/.test(r.text);
     });
-    return head && ok && !!document.querySelector('.base-choice[data-quest="quest.basin_young.r1"]');
-  }, KEYS));
+    const young = rowsPack.find((x) => x.id === 'quest.basin_young.r1');
+    check('群れの依頼: 初級の受付に、幼体の群れの依頼 9 件が並び（分類は討伐）、最初から受けられる。混ざった群れは 2 種の絵と頭数', ok && !!young && !young.locked
+      && await page.evaluate(async () => {
+        await window.__vh.base.showQuest('quest.basin_young.r1');
+        const t = [...document.querySelectorAll('.reception-detail .quest-mini-target')].map((e) => `${e.dataset.monster}×${e.dataset.count}`).join();
+        window.__vh.base.setOpen(true, 'all');
+        return t === 'monster.kordopil×2,monster.palseit×3';
+      }), JSON.stringify(KEYS.filter((k) => !rowsPack.find((x) => x.id === `quest.${k}.pack1`))));
+  }
   const rows = [];
   for (const key of KEYS) {
     await page.evaluate((k) => window.__vh.startHunt(`quest.${k}.pack1`), key);
@@ -2115,17 +2175,21 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const { ctx, page } = await open({ width: 844, height: 390 }, true, '?hub=menu');
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
-  const board = await page.evaluate(() => {
-    const t = (id) => document.querySelector(`.base-choice[data-quest="${id}"]`)?.textContent ?? '';
-    return { n: document.querySelectorAll('.base-choice[data-quest][data-stars]').length, letters: document.querySelectorAll('.quest-letter[data-quest]').length, rec: document.querySelector('.quest-recommend')?.textContent ?? '', st01: t('quest.basin.003'), r4: t('quest.basin.r4.001'), deliv: document.querySelector('.base-delivery')?.dataset.state, pack: document.querySelector('.forge-support')?.dataset.state, last: [...document.querySelectorAll('.base-choice')].pop().textContent };
-  });
-  check('依頼の掲示: 38 件（狩り 33・狩らない 5）に星と依頼人の話（開いて読む）。主線・昇級確認の札。制限と目安の時間。おすすめの順。里の納品と工房の支給は、まだ', board.n === 38 && board.letters === 38 && /^★2【初級】依頼「岩場の足音」　主線/.test(board.st01) && /依頼人: 受付ミナギ/.test(board.st01) && /制限 30 分（目安 8〜12 分）/.test(board.st01)
-    && /^★8【極級】依頼「輝く岩山」　昇級確認/.test(board.r4) && /おすすめ/.test(board.rec) && board.deliv === 'locked' && board.pack === 'locked' && /^訓練場/.test(board.last), JSON.stringify(board).slice(0, 300));
-  await page.evaluate(() => { const d = document.querySelector('.quest-letter[data-quest="quest.basin.003"]'); d.open = true; d.scrollIntoView(); });
-  check('依頼人の話を開くと、星の列（★★☆☆☆☆☆☆ 2 / 8）と話が出る。押しても出発しない', await page.evaluate(() => {
-    const d = document.querySelector('.quest-letter[data-quest="quest.basin.003"]');
-    return d.open && /★★☆☆☆☆☆☆ 2 \/ 8　主線/.test(d.querySelector('.quest-stars').textContent) && d.querySelector('.quest-text').textContent.length > 100 && !document.getElementById('base').hidden && !window.__vh.sim.hunt;
-  }));
+  // v0.38.0（ChatGPT の #17）: 依頼は級ごとの受付で、星ごとの短い一覧 → 詳細
+  const boardRows = await receptionRows(page);
+  const boardInfo = boardRows.map((r) => `${r.id}:${r.stars}`);
+  check('依頼の掲示: 39 件（狩り 33・狩らない 5・里の納品 1）が、4 つの受付の星ごとの一覧に 1 度ずつ。主線・昇級確認の札と、制限時間・報酬が行に出る。里の納品は、まだ', boardRows.length === 39 && new Set(boardRows.map((r) => r.id)).size === 39
+    && boardRows.every((r) => r.stars >= 1 && r.stars <= 8) && /主線/.test(boardRows.find((r) => r.id === 'quest.basin.003')?.text ?? '') && /昇級確認/.test(boardRows.find((r) => r.id === 'quest.basin.r4.001')?.text ?? '')
+    && /30 分/.test(boardRows.find((r) => r.id === 'quest.basin.003')?.text ?? '') && /未解放/.test(boardRows.find((r) => r.id === 'quest.delivery.009')?.text ?? '') && boardRows.find((r) => r.id === 'quest.basin.r4.001')?.stars === 8,
+    JSON.stringify(boardInfo).slice(0, 300));
+  await page.evaluate(() => window.__vh.base.setOpen(true, 'quest', 'board'));
+  check('初級の受付: おすすめの順の案内・星の札（件数つき）・押しても出発しない行。訓練場と物語は下にまとめてある', await page.evaluate(() => /おすすめ/.test(document.querySelector('.quest-recommend')?.textContent ?? '')
+    && [...document.querySelectorAll('.reception-star')].every((b) => /件/.test(b.textContent)) && document.querySelectorAll('.reception-row').length > 0 && !document.querySelector('.reception-training').hidden && !!document.querySelector('.reception-story-fold')));
+  await showQuest(page, 'quest.basin.003');
+  check('依頼の詳細: 星の列（★★☆☆☆☆☆☆ 2 / 8）・目標・制限時間・目安・報酬・依頼人の話。開いても出発しない', await page.evaluate(() => {
+    const d = document.querySelector('.reception-detail');
+    return !!d && /★★☆☆☆☆☆☆ 2 \/ 8/.test(d.textContent) && /クリアの目安/.test(d.textContent) && document.querySelector('.reception-letter').textContent.length > 100 && !document.getElementById('base').hidden && !window.__vh.sim.hunt;
+  }), await page.evaluate(() => document.querySelector('.reception-detail')?.textContent?.slice(0, 200) ?? ''));
   await page.screenshot({ path: `${OUT}9z_quest_board.png` });
   // 第 1 章の 2 件を達成した保存データにする（保存の管理役から。岩殻片 2）
   await page.evaluate(async () => {
@@ -2133,11 +2197,14 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     await s.settle({ runId: 'smoke-st01', questId: 'quest.basin.003', money: 600, items: [{ itemId: 'mat.galdros.shell_shard', count: 2 }] });
     await s.settle({ runId: 'smoke-st02', questId: 'quest.selvark.r1', money: 600, items: [] });
   });
-  check('第 1 章の後: 工房の支給を受け取れる（工房の見出しと物語の欄に知らせ）。中級は制限 35 分（フィールドの時間）。納品は素材が足りない', await until(page, () => {
-    const r2 = document.querySelector('.base-choice[data-quest="quest.basin.r2.001"]')?.textContent ?? '';
-    return document.querySelector('.forge-support')?.dataset.state === 'ready' && /支給を受け取れます/.test(document.querySelector('#base-forge summary')?.textContent ?? '') && !!document.querySelector('.story-support')
-      && /制限 35 分（目安 12〜16 分）/.test(r2) && document.querySelector('.base-delivery')?.dataset.state === 'short';
-  }, 8000));
+  await page.evaluate(() => window.__vh.base.setOpen(true, 'all'));
+  const support = await until(page, () => document.querySelector('.forge-support')?.dataset.state === 'ready' && /支給を受け取れます/.test(document.querySelector('#base-forge summary')?.textContent ?? '') && !!document.querySelector('.story-support'), 8000);
+  await showQuest(page, 'quest.basin.r2.001');
+  const r2detail = await page.evaluate(() => document.querySelector('.reception-detail')?.textContent ?? '');
+  await showQuest(page, 'quest.delivery.009');
+  const delivShort = await page.evaluate(() => document.querySelector('.base-delivery')?.dataset.state === 'short');
+  await page.evaluate(() => window.__vh.base.setOpen(true, 'all'));
+  check('第 1 章の後: 工房の支給を受け取れる（工房の見出しと物語の欄に知らせ）。中級は制限 35 分（フィールドの時間）。納品は素材が足りない', support && /35 分/.test(r2detail) && /12〜16分/.test(r2detail) && delivShort, r2detail.slice(0, 160));
   await page.evaluate(() => { document.getElementById('base-forge').open = true; document.querySelector('.forge-support').scrollIntoView(); });
   await page.screenshot({ path: `${OUT}9z_support.png` });
   await page.locator('.forge-support button.go').tap();
@@ -2145,7 +2212,8 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     const d = window.__vh.save.doc;
     return document.querySelector('.forge-support')?.dataset.state === 'claimed' && !document.querySelector('.forge-support button') && d.claims.join() === 'story.support.tier2' && d.items['mat.galdros.shell_shard'] === 16 && d.items['mat.galdros.hard_bone'] === 6;
   }, 8000));
-  check('岩殻片が 16 個になったので、里の納品「余った岩殻片を修繕に」ができる', await page.evaluate(() => document.querySelector('.base-delivery')?.dataset.state === 'ready'));
+  await showQuest(page, 'quest.delivery.009');
+  check('岩殻片が 16 個になったので、里の納品「余った岩殻片を修繕に」ができる（初級の受付の詳細から）', await page.evaluate(() => document.querySelector('.base-delivery')?.dataset.state === 'ready'));
   await page.evaluate(() => document.querySelector('.base-delivery').scrollIntoView());
   await page.locator('.base-delivery button.go').tap();
   const confirmText = await page.evaluate(() => document.querySelector('.base-delivery .forge-confirm')?.textContent ?? '');
@@ -2161,9 +2229,11 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
-  check('読み込み直しても、受け取りの記録が残る（保存の版 4 からの記録）。支給も納品も、もう受けられない', await page.evaluate(() => {
+  const supportClaimed = await page.evaluate(() => document.querySelector('.forge-support')?.dataset.state === 'claimed');
+  await showQuest(page, 'quest.delivery.009');
+  check('読み込み直しても、受け取りの記録が残る（保存の版 4 からの記録）。支給も納品も、もう受けられない', supportClaimed && await page.evaluate(() => {
     const d = window.__vh.save.doc;
-    return d.schemaVersion === 5 && d.claims.length === 2 && document.querySelector('.base-delivery')?.dataset.state === 'claimed' && document.querySelector('.forge-support')?.dataset.state === 'claimed';
+    return d.schemaVersion === 5 && d.claims.length === 2 && document.querySelector('.base-delivery')?.dataset.state === 'claimed';
   }));
   await page.evaluate(() => window.__vh.startHunt('quest.basin.r2.001'));
   await until(page, () => window.__vh.sim.hunt && window.__vh.sim.tick > 5);
@@ -2177,15 +2247,14 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const { ctx, page } = await open({ width: 844, height: 390 }, true, '?hub=menu');
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
-  const list = await page.evaluate(() => {
-    const qs = [...document.querySelectorAll('.base-choice[data-quest]')];
-    const er = qs.filter((b) => /^quest\.(gather|mine|delivery)\./.test(b.dataset.quest));
-    const heads = [...document.querySelectorAll('.forge-head')].map((h) => h.textContent);
-    return { n: qs.length, er: er.map((b) => b.querySelector('b').textContent), afterHerds: qs.indexOf(er[0]) === 33, head: heads.some((t) => /採集・採掘・現地の納品/.test(t)), g1: er[0]?.textContent ?? '' };
-  });
-  check('狩らない依頼: 群れの依頼の後に 5 件（採集 2・採掘 2・現地の納品 1）。★1・制限 15 分・獣は出ない', list.n === 38 && list.er.length === 5 && list.afterHerds && list.head && /^★1　採集「薬房へ、最初の六枚」/.test(list.er[0]) && /^★1　現地の納品「薬房と工具棚の小包」/.test(list.er[4])
-    && /ヒラナギの葉 6 枚を採集して、野営地の納品箱へ届ける/.test(list.g1) && /制限 15 分（目安 4〜6 分）/.test(list.g1) && /大型・幼体は出ない/.test(list.g1), JSON.stringify(list).slice(0, 300));
-  await page.click('.base-choice[data-quest="quest.gather.001"]');
+  const gRows = await receptionRows(page);
+  const er = gRows.filter((r) => /^quest\.(gather|mine|delivery)\./.test(r.id) && r.id !== 'quest.delivery.009');
+  await showQuest(page, 'quest.gather.001');
+  const g1 = await page.evaluate(() => document.querySelector('.reception-detail')?.textContent ?? '');
+  check('狩らない依頼: 初級の受付の ★1 に 5 件（採集 2・採掘 2・現地の納品 1。葉・つるはし・箱の印）。制限 15 分・獣は出ない', er.length === 5 && er.every((r) => r.rank === 'rank.1' && r.stars === 1)
+    && /採集/.test(er.find((r) => r.id === 'quest.gather.001')?.text ?? '') && /採掘/.test(er.find((r) => r.id.startsWith('quest.mine.'))?.text ?? '')
+    && /ヒラナギの葉 6 枚/.test(g1) && /15 分/.test(g1) && /4〜6分/.test(g1) && /大型・幼体は出ません/.test(g1), JSON.stringify({ er: er.map((r) => r.id), g1: g1.slice(0, 160) }));
+  await page.click('.reception-depart[data-quest="quest.gather.001"]');
   await until(page, () => window.__vh.sim.errand && window.__vh.sim.tick > 5);
   check('出発すると、野営地から。大型も幼体も出ない。HUD の目標は「ヒラナギの葉 0 / 6」、地図には採取点のあるエリア', await page.evaluate(() => {
     const s = window.__vh.sim;

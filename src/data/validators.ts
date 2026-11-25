@@ -671,10 +671,19 @@ export function validateHub(c: Content, errors: string[]): void {
     x >= map.bounds.minX + pr && x <= map.bounds.maxX - pr && z >= map.bounds.minZ + pr && z <= map.bounds.maxZ - pr && map.rocks.every((r) => Math.hypot(r.x - x, r.z - z) >= r.r + pr);
   if (!free(map.spawn.x, map.spawn.z)) errors.push('hub: 出発地点が、建物か外周に重なる');
   const ids = new Set<string>();
-  for (const kind of ['quest', 'workshop', 'shop', 'chest'] as const) {
+  for (const kind of ['workshop', 'shop', 'chest'] as const) {
     const n = (h.facilities ?? []).filter((f) => f.kind === kind).length;
     if (n !== 1) errors.push(`hub: 施設 ${kind} が ${n} 個（1 個にする）`);
   }
+  // 依頼の受付は、級ごとに 1 つずつ（v0.38.0。ChatGPT の Pull Request #17。受付の級は questRankId。星から級を決めない）
+  const coveredRanks = new Set<string>();
+  for (const f of (h.facilities ?? []).filter((x) => x.kind === 'quest')) {
+    if (f.questRankId === undefined || !c.ranks.has(f.questRankId)) errors.push(`hub facility ${f.id}: 受付の級 ${String(f.questRankId)} が無い`);
+    else if (coveredRanks.has(f.questRankId)) errors.push(`hub: 級 ${f.questRankId} の受付が重複`);
+    else coveredRanks.add(f.questRankId);
+  }
+  for (const rankId of c.ranks.keys()) if (!coveredRanks.has(rankId)) errors.push(`hub: 級 ${rankId} の受付が無い`);
+  for (const f of h.facilities ?? []) if (f.kind !== 'quest' && f.questRankId !== undefined) errors.push(`hub facility ${f.id}: 依頼受付以外に questRankId を指定できない`);
   // 施設の前（立つ輪）には、その施設の建物のほかの当たりがかからない（v0.35.0。建物と飾り・小物が増えたので）
   for (const f of h.facilities ?? []) {
     for (const r of map.rocks) {

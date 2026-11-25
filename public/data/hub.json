@@ -2,13 +2,16 @@
   "schemaVersion": 1,
   "id": "hub.village",
   "name": "灯継ぎの里",
-  "note": "拠点（v0.12.0、docs/spec.md 19 章）。里を歩いて、施設の前（x, z から半径 r）で主ボタンを押すと、その施設の画面が開く。v0.35.0（ChatGPT の里の設計 #11 の P1）から、里は 5 つの段（水音の庭 -10m・炉の段 -3m・灯の広場 0m・暮らしの段 +8m・灯見の台 +22m）と 2 つの回遊路（生活の道・見晴らしの道）。段と階段の形（maps/hub_village.json の platforms）と、当たり（rocks）は、この表から tools/gen-hub.py（npm run hub:gen）が作る（手で編集しない）。当たりの並びは、施設（facilities の順）→ 建物と飾り（scenery の順）→ 人（npcs の順）→ 小物（props の順）。施設の前は、同じ段にいる時だけ開く（src/game/hub.ts）。建物は src/render/hubScene.ts と src/render/villageScene.ts が、簡単な立体で描く（施設 4 つは、正面と右側面の図を貼る。v0.13.0）。位置はすべて机上の値。",
+  "note": "拠点（v0.12.0、docs/spec.md 19 章）。里を歩いて、施設の前（x, z から半径 r）で主ボタンを押すと、その施設の画面が開く。v0.35.0（ChatGPT の里の設計 #11 の P1）から、里は 5 つの段（水音の庭 -10m・炉の段 -3m・灯の広場 0m・暮らしの段 +8m・灯見の台 +22m）と 2 つの回遊路（生活の道・見晴らしの道）。段と階段の形（maps/hub_village.json の platforms）と、当たり（rocks）は、この表から tools/gen-hub.py（npm run hub:gen）が作る（手で編集しない）。当たりの並びは、施設（facilities の順）→ 建物と飾り（scenery の順）→ 人（npcs の順）→ 小物（props の順）。施設の前は、同じ段にいる時だけ開く（src/game/hub.ts）。建物は src/render/hubScene.ts と src/render/villageScene.ts が、簡単な立体で描く（施設 4 つは、正面と右側面の図を貼る。v0.13.0）。位置はすべて机上の値。 v0.38.0（ChatGPT の Pull Request #17）: 依頼の受付は級ごと（facilities の questRankId。初級 = 広場の依頼板、中級 = 西の依頼所、上級 = 東の調査所、極級 = 帰路の詰所。どれも広場の段）。questRankId は一覧の振り分けだけに使い、依頼の requires は変えない。",
   "mapId": "map.hub.village",
   "facilities": [
     {"id": "workshop", "kind": "workshop", "name": "工房", "action": "工房に入る", "summary": "武器と防具を強化する", "x": -29.1, "z": 10, "r": 3.2, "building": {"x": -34, "z": 10, "yaw": 1.5708}},
     {"id": "shop", "kind": "shop", "name": "商店", "action": "商店に入る", "summary": "道具を買う。素材を売る", "x": 14, "z": 4.6, "r": 3.2, "building": {"x": 14, "z": 9.5, "yaw": 3.1416}},
-    {"id": "board", "kind": "quest", "name": "依頼板", "action": "依頼を見る", "summary": "依頼を受けて狩りへ出る。訓練場へ行く", "x": 0, "z": 10.4, "r": 3.0, "building": {"x": 0, "z": 13.2, "yaw": 3.1416}},
-    {"id": "chest", "kind": "chest", "name": "装備箱", "action": "装備箱を開ける", "summary": "武器と防具を替える。持ち物とデータ", "x": -15.2, "z": -5, "r": 3.0, "building": {"x": -18.5, "z": -5, "yaw": 1.5708}}
+    {"id": "board", "kind": "quest", "name": "初級受付・広場の依頼板", "action": "初級の依頼を見る", "summary": "初級の狩猟・採集・採掘・納品。訓練と物語の案内", "x": 0, "z": 10.4, "r": 3.0, "building": {"x": 0, "z": 13.2, "yaw": 3.1416}, "questRankId": "rank.1"},
+    {"id": "chest", "kind": "chest", "name": "装備箱", "action": "装備箱を開ける", "summary": "武器と防具を替える。持ち物とデータ", "x": -15.2, "z": -5, "r": 3.0, "building": {"x": -18.5, "z": -5, "yaw": 1.5708}},
+    {"id": "board.r2", "kind": "quest", "questRankId": "rank.2", "name": "中級受付・西の依頼所", "action": "中級の依頼を見る", "summary": "中級の依頼を星ごとに見る。受注条件も確認できる", "x": -10, "z": 10.4, "r": 3, "building": {"x": -10, "z": 13.2, "yaw": 3.1416}},
+    {"id": "board.r3", "kind": "quest", "questRankId": "rank.3", "name": "上級受付・東の調査所", "action": "上級の依頼を見る", "summary": "上級の依頼を星ごとに見る。受注条件も確認できる", "x": 14, "z": -6, "r": 3, "building": {"x": 18, "z": -6, "yaw": -1.5708}},
+    {"id": "board.r4", "kind": "quest", "questRankId": "rank.4", "name": "極級受付・帰路の詰所", "action": "極級の依頼を見る", "summary": "極級の依頼を星ごとに見る。受注条件も確認できる", "x": -8, "z": -5, "r": 3, "building": {"x": -8, "z": -9, "yaw": 0}}
   ],
   "gates": [
     {"id": "gate.hunt", "name": "狩り場への道", "x": 24, "z": -9, "marker": true, "trail": true},

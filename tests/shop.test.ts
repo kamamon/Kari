@@ -226,8 +226,9 @@ describe('狩りの後の精算', () => {
 });
 
 describe('拠点のデータ', () => {
-  it('施設は 4 つ（工房・商店・依頼板・装備箱）。検査に通る', () => {
-    expect(content.hub.facilities.map((f) => f.kind).sort()).toEqual(['chest', 'quest', 'shop', 'workshop']);
+  it('施設は工房・商店・装備箱が 1 つずつと、依頼の受付が級ごとに 1 つ（v0.38.0。ChatGPT の #17）。検査に通る', () => {
+    expect(content.hub.facilities.map((f) => f.kind).sort()).toEqual(['chest', 'quest', 'quest', 'quest', 'quest', 'shop', 'workshop']);
+    expect(content.hub.facilities.filter((f) => f.kind === 'quest').map((f) => f.questRankId).sort()).toEqual([...content.ranks.keys()].sort());
     expect(content.hub.name).toBe('灯継ぎの里');
     const errors: string[] = [];
     validateHub(content, errors);
@@ -265,7 +266,8 @@ describe('拠点のデータ', () => {
       validateHub(c, errors);
       return errors.join('\n');
     };
-    expect(broken((c) => void c.hub.facilities.pop())).toContain('0 個');
+    expect(broken((c) => void (c.hub.facilities = c.hub.facilities.filter((f) => f.kind !== 'shop')))).toContain('0 個');
+    expect(broken((c) => void c.hub.facilities.pop())).toContain('受付が無い');
     expect(broken((c) => {
       const f = c.hub.facilities[0]!;
       f.x = f.building.x;

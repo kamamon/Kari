@@ -1,7 +1,7 @@
 // 拠点「灯継ぎの里」の見た目。施設の位置と当たりは public/data/hub.json と maps/hub_village.json が正本で、ここは描くだけ。
 // 建物は、箱・屋根・板の簡単な立体に、正面と右側面の図（依頼 8 の D、art-source/env/bld_*_v1.png）を貼ったもの（v0.13.0）。
 // 図の中の場所は px（1536 × 1024、左上が原点）で書く。立体の大きさは、依頼書の m の値（図の比率は、ほぼ合わせてあるが、製図ではない）。
-import { BufferGeometry, CircleGeometry, DoubleSide, Float32BufferAttribute, Group, Mesh, MeshBasicMaterial, RingGeometry } from 'three';
+import { BufferGeometry, CanvasTexture, CircleGeometry, DoubleSide, Float32BufferAttribute, Group, Mesh, MeshBasicMaterial, PlaneGeometry, RingGeometry, SRGBColorSpace } from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import type { FacilityDef, HubDef, MapDef } from '../data/schemas';
 import { groundAt } from '../game/world';
@@ -200,6 +200,41 @@ export const BUILDINGS: Record<FacilityDef['kind'], { file: string; shape: () =>
 const PLAZA = { x: 0, z: 1, r: 9.5 };
 
 /**
+ * 級別の受付の札（v0.38.0。ChatGPT の Pull Request #17）: 級は色だけでなく文字で見分ける。受付の建物の上に、級の名前と受付の名前を書いた板を立てる。
+ * 文字は画面の中で描く（Node の検査では作らない）。1 枚ずつ別の絵なので、まとめない（描画 1 回ずつ）。
+ */
+function receptionSign(f: FacilityDef): Mesh | null {
+  if (f.kind !== 'quest' || !f.questRankId || typeof document === 'undefined') return null;
+  const canvas = document.createElement('canvas');
+  canvas.width = 640;
+  canvas.height = 192;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+  const accents: Record<string, string> = { 'rank.1': '#8fb598', 'rank.2': '#91bac7', 'rank.3': '#d5b66d', 'rank.4': '#c1a6cf' };
+  ctx.fillStyle = '#1b2a22';
+  ctx.fillRect(0, 0, 640, 192);
+  ctx.strokeStyle = '#b89460';
+  ctx.lineWidth = 5;
+  ctx.strokeRect(4, 4, 632, 184);
+  ctx.fillStyle = accents[f.questRankId] ?? '#b89460';
+  ctx.fillRect(12, 12, 12, 168);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#f0ead9';
+  ctx.font = 'bold 62px "Hiragino Sans", "Noto Sans CJK JP", sans-serif';
+  ctx.fillText(f.name.split('・')[0]!, 332, 72, 570);
+  ctx.fillStyle = '#c8c8b8';
+  ctx.font = '32px "Hiragino Sans", "Noto Sans CJK JP", sans-serif';
+  ctx.fillText(f.name.split('・').slice(1).join('・'), 332, 145, 570);
+  const texture = new CanvasTexture(canvas);
+  texture.colorSpace = SRGBColorSpace;
+  const sign = new Mesh(new PlaneGeometry(2.5, 0.75), new MeshBasicMaterial({ map: texture, toneMapped: false }));
+  sign.userData.noMerge = true;
+  sign.name = `reception-sign:${f.id}`;
+  return sign;
+}
+
+/**
  * 里の地形と建物。施設の前（立つ場所）には、青銅色の輪を置く。
  * 外周の岩壁・草は、狩場と同じ作り（buildAreaGroup）。地面は踏み固めた土、広場は石畳。
  * v0.35.0: 5 つの段・階段・沢・吊り橋（terraces.ts）と、建物と暮らし（villageScene.ts）。外周の口は hub.json の gates
@@ -230,12 +265,19 @@ export function buildHubGroup(hub: HubDef, map: MapDef): { group: Group; village
     b.position.set(f.building.x, groundAt(map.platforms, f.building.x, f.building.z), f.building.z);
     b.rotation.y = f.building.yaw;
     g.add(b);
+    const sign = receptionSign(f);
+    if (sign) {
+      const yaw = f.building.yaw;
+      sign.position.set(f.building.x + Math.sin(yaw) * 0.08, b.position.y + 2.25, f.building.z + Math.cos(yaw) * 0.08);
+      sign.rotation.y = yaw;
+      g.add(sign);
+    }
     const ring = new RingGeometry(f.r * 0.5 - 0.09, f.r * 0.5, 28);
     ring.rotateX(-Math.PI / 2);
     ring.translate(f.x, groundAt(map.platforms, f.x, f.z) + 0.03, f.z);
     rings.push(ring);
   }
-  // 施設の前の輪（4 つで 1 回の描画。v0.35.0）
+  // 施設の前の輪（まとめて 1 回の描画。v0.35.0）
   const ringMesh = new Mesh(mergeGeometries(rings)!, M.ring);
   ringMesh.renderOrder = 1;
   ringMesh.userData.rings = rings.length;

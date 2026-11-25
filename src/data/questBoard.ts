@@ -65,7 +65,7 @@ export function validateSupport(support: SupportDef, content: Pick<Content, 'que
 }
 
 /** 里の納品の検査 */
-export function validateDeliveries(doc: DeliveriesDef, content: Pick<Content, 'quests' | 'materials'>, supportIds: ReadonlySet<string>): string[] {
+export function validateDeliveries(doc: DeliveriesDef, content: Pick<Content, 'quests' | 'materials' | 'ranks'>, supportIds: ReadonlySet<string>): string[] {
   const e: string[] = [];
   if (!doc || !Array.isArray(doc.deliveries)) return ['deliveries が無い'];
   const seen = new Set<string>();
@@ -76,6 +76,8 @@ export function validateDeliveries(doc: DeliveriesDef, content: Pick<Content, 'q
     if (content.quests.has(d.id) || supportIds.has(d.id)) e.push(`${w}: 依頼か支給の id と同じ`);
     if (!text(d.name, 40) || !text(d.client, 30) || !text(d.text, BOARD_TEXT_MAX)) e.push(`${w}: 名前・依頼人・話が不正`);
     if (!(isInt(d.stars) && d.stars >= STAR_MIN && d.stars <= STAR_MAX)) e.push(`${w}: 星は ${STAR_MIN}〜${STAR_MAX} の整数`);
+    const rankId = d.rankId ?? 'rank.1';
+    if (!content.ranks.has(rankId)) e.push(`${w}: 受付の級 ${String(rankId)} が無い`);
     for (const id of d.requires ?? []) if (!content.quests.has(id)) e.push(`${w}: 条件の依頼 ${id} が無い`);
     if (!Array.isArray(d.items) || d.items.length === 0) e.push(`${w}: 渡す素材が無い`);
     const ids = new Set<string>();

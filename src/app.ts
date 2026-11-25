@@ -60,6 +60,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
   private looks: AppearanceEditor;
   private looksYaw = 0;
   private looksFrom: BaseSection = 'chest';
+  private looksFacilityId: string | undefined;
   /** 狩人に渡した外見の元（保存の外見か下見）と、渡した描画（作り直したら、もう 1 度渡す） */
   private lookSrc: unknown = null;
   private lookView: GameView | null = null;
@@ -136,7 +137,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       else if (a === 'camReset' && !this.paused) this.resetCamera();
       else if (a === 'lockOn' && !this.paused) this.toggleLock();
       else if (a === 'return' && !this.paused) this.returnNow();
-      else if (a === 'interact' && !this.paused && this.place === 'hub' && this.nearFacility) this.openFacility(this.nearFacility.kind);
+      else if (a === 'interact' && !this.paused && this.place === 'hub' && this.nearFacility) this.openFacility(this.nearFacility.kind, this.nearFacility.id);
       else if (a === 'hubList' && !this.paused && this.place === 'hub') this.openFacility('all');
     });
     store.onChange((s) => {
@@ -338,8 +339,8 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
   }
 
   /** 拠点・結果の画面を出す / 消す。出ている間は操作ボタンを隠して一時停止する。 */
-  private setOverlay(which: 'base' | 'result' | null, section: BaseSection = 'all'): void {
-    this.base.setOpen(which === 'base', section);
+  private setOverlay(which: 'base' | 'result' | null, section: BaseSection = 'all', facilityId?: string): void {
+    this.base.setOpen(which === 'base', section, facilityId);
     if (which === 'result') this.result.show(this.sim, this.rewardSaveState());
     else this.result.hide();
     const playing = which === null;
@@ -413,6 +414,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       const old = this.sim.player;
       const at = { pos: { ...old.pos }, yaw: old.yaw };
       const section = this.base.section;
+      const facilityId = this.base.facilityId ?? undefined;
       this.createSession(null, true);
       const p = this.sim.player;
       p.pos = { ...at.pos };
@@ -420,7 +422,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       p.yaw = at.yaw;
       p.prevYaw = at.yaw;
       this.view.cam.snap(at.yaw);
-      this.setOverlay('base', section);
+      this.setOverlay('base', section, facilityId);
       return;
     }
     this.createSession(null);
@@ -441,6 +443,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
   openLooks(): void {
     if (this.place === 'hunt' || this.looks.open) return;
     this.looksFrom = this.base.section;
+    this.looksFacilityId = this.base.facilityId ?? undefined;
     this.looksYaw = this.view.cam.yaw;
     this.base.setOpen(false);
     this.looks.openEditor();
@@ -450,7 +453,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
   /** 見た目を変える画面を閉じた: 元の施設の画面へ戻る */
   looksClosed(saved: boolean): void {
     this.lookSrc = null;
-    this.base.setOpen(true, this.looksFrom);
+    this.base.setOpen(true, this.looksFrom, this.looksFacilityId);
     if (saved) {
       this.base.notify('見た目を保存しました。');
       this.audio.play('ui');
@@ -464,8 +467,8 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
 
   // ---- 里（歩く拠点）----
   /** 施設の画面を開く（all = すべての欄の一覧）。開いている間は、一時停止する。 */
-  openFacility(section: BaseSection): void {
-    this.setOverlay('base', section);
+  openFacility(section: BaseSection, facilityId?: string): void {
+    this.setOverlay('base', section, facilityId);
     this.audio.play('ui');
   }
 
@@ -684,7 +687,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
         // 施設の前で、同じ段にいる時だけ（v0.31.0。src/game/hub.ts）
         const near = nearestFacility(this.content.hub.facilities, this.sim.world, this.sim.player.pos);
         this.nearFacility = near;
-        if (interact && near) this.openFacility(near.kind);
+        if (interact && near) this.openFacility(near.kind, near.id);
       }
       alpha = this.clock.alpha;
       const events = this.sim.drainEvents();

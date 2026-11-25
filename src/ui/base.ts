@@ -1,11 +1,11 @@
 // 拠点（仮）。武器を選び、依頼か訓練場へ出る。持ち物を確かめ、工房で強化し、データを書き出す / 取り込む。
-// 里を歩く・受付・道具箱は、これから作る。
+// 受付は級ごとの実施設とつなぎ、星ごとの短い一覧から詳細へ進む。
 //
 // 持ち物・装備の表示は、保存の管理役（SaveManager）が持つ「書き込みが完了した内容」だけを映す。
 // 強化・取り込みなどの結果は、書き込みが完了してから表示する（押した時点では「保存しています…」）。
 import { APP_VERSION, BUILD_ID, assetUrl } from '../core/assets';
-import { ARMOR_SLOTS, QUEST_LANE_NAMES, recipeFrom, recipeResult, type ArmorSlot, type Content, type RecipeDef } from '../data/schemas';
-import { minutesText, starLabel, starRow } from '../data/questBoard';
+import { ARMOR_SLOTS, QUEST_LANE_NAMES, recipeFrom, recipeResult, type ArmorSlot, type Content, type DeliveryDef, type RecipeDef } from '../data/schemas';
+import { minutesText, starRow } from '../data/questBoard';
 import { materialRanks } from '../data/validators';
 import { fieldOf, questTimeLimitTicks } from '../game/field';
 import { defenseScale } from '../game/rank';
@@ -17,6 +17,7 @@ import { canFullscreen, fullscreenHint, toggleFullscreen } from './fullscreen';
 import { questGoal } from './targets';
 import { fieldArtUrl, withIcon } from './icons';
 import { renderStoryPanel } from './story';
+import { receptionGroups, questActivity, QUEST_ACTIVITY_LABELS, questIconStrip, deliveryIconStrip, deliveryReceptionRank, type ReceptionEntry } from './questReception';
 import { DRAFT_KIND_NAMES, changedKinds, describeKind, draftOf, editableAppearance, emptyDraft } from '../data/appearance';
 import { computeGear } from '../game/gear';
 import { armorStat, gearSummary, weaponShortName, weaponStat } from './gearText';
@@ -82,9 +83,25 @@ export function artCaption(state: string, cls: string, adopted: boolean): string
   return head + (cls === 'juvenile' ? 'ゲームの中の体は、まだ親の原画から作った仮の形です。' : 'ゲームの中の体は、この絵から作った仮の形です。');
 }
 
+interface ReceptionViewState {
+  stars: number | null;
+  selected: string | null;
+  listScroll: number;
+  detailScroll: number;
+}
+
 export class BaseScreen {
   readonly root: HTMLElement;
   section: BaseSection = 'all';
+  /** 実際に開いている施設。Appの画面復帰でもこのIDを引き継ぐ。 */
+  facilityId: string | null = null;
+  private receptionStates = new Map<string, ReceptionViewState>();
+  private questScroller: HTMLElement | null = null;
+  private questScrollContext: { key: string; detail: boolean } | null = null;
+  private receptionNotice = '';
+  private storyFold: HTMLDetailsElement;
+  private questExtras: HTMLElement;
+  private trainingBtn: HTMLButtonElement;
   private title: HTMLElement;
   private lead: HTMLElement;
   private shop: HTMLDetailsElement;
@@ -127,11 +144,14 @@ export class BaseScreen {
     root.id = 'base';
     root.hidden = true;
     const card = el('div', 'base-card');
+    const header = el('header', 'base-heading');
+    const headingText = el('div', 'base-heading-text');
     this.title = el('h2', undefined, content.hub.name);
-    card.append(this.title);
     this.banners = el('div', 'base-banners');
     this.lead = el('p', 'base-lead', '行き先を選んでください。');
-    card.append(this.banners, this.lead);
+    headingText.append(this.title, this.lead);
+    header.appendChild(headingText);
+    card.append(header, this.banners);
     // 施設ごとの画面では、その施設のものだけを出す（data-sec と、root の data-section を CSS で突き合わせる）
     const sec = <T extends HTMLElement>(e: T, s: FacilityKind): T => {
       e.dataset.sec = s;
@@ -157,12 +177,16 @@ export class BaseScreen {
     card.append(sec(el('p', 'base-weapon-label', '防具（部位ごとに、着る・外す）'), 'chest'), this.armorBox, this.armorNote, this.gearNote);
     this.matRank = materialRanks(content);
 
-    // 物語「帰り道の灯」（v0.23.0）: いまの章・次の狩り・読み返せる記録・章の一覧。中身は refresh で作る
-    this.storyBox = sec(el('div', 'base-story'), 'quest');
-    card.appendChild(this.storyBox);
-    // 依頼（段階の順）と訓練場。受けられるかどうかは進行で変わるので、中身は refresh で作る
+    // 一覧を先に見せ、物語・図鑑・訓練は小さな導線へまとめる。
     this.questBox = sec(el('div', 'base-quests'), 'quest');
     card.appendChild(this.questBox);
+    this.questExtras = sec(el('div', 'reception-extras'), 'quest');
+    this.storyFold = el('details', 'reception-story-fold');
+    this.storyFold.appendChild(el('summary', undefined, '物語・帰還記録'));
+    this.storyBox = el('div', 'base-story');
+    this.storyFold.appendChild(this.storyBox);
+    this.questExtras.appendChild(this.storyFold);
+    card.appendChild(this.questExtras);
 
     // 持ち物は、装備箱・工房・商店のどれでも見える
     this.inv = el('div', 'base-inv');
@@ -172,12 +196,21 @@ export class BaseScreen {
     // モンスター図鑑（依頼板で見る。登録簿 bestiary.json を、段階ごとに並べる）。開いた時に 1 度だけ組む
     this.bestiary = sec(el('details', 'base-section'), 'quest');
     this.bestiary.id = 'base-bestiary';
-    const juveniles = content.bestiary.species.filter((x) => x.class === 'juvenile').length;
-    this.bestiary.appendChild(el('summary', undefined, `モンスター図鑑（${content.bestiary.species.length - juveniles} 種${juveniles ? `・幼体 ${juveniles} 種` : ''}）`));
-    this.bestiary.addEventListener('toggle', () => {
-      if (this.bestiary.open && this.bestiary.childElementCount === 1) this.bestiary.appendChild(this.renderBestiary());
+    this.bestiary.appendChild(el('summary', undefined, `図鑑 ${content.bestiary.species.length}種`));
+    this.storyFold.addEventListener('toggle', () => {
+      if (this.storyFold.open) this.bestiary.open = false;
+      if (!this.storyFold.open && !this.bestiary.open) this.restoreReceptionScroll();
     });
-    card.appendChild(this.bestiary);
+    this.bestiary.addEventListener('toggle', () => {
+      if (this.bestiary.open) this.storyFold.open = false;
+      if (this.bestiary.open && this.bestiary.childElementCount === 1) this.bestiary.appendChild(this.renderBestiary());
+      if (!this.storyFold.open && !this.bestiary.open) this.restoreReceptionScroll();
+    });
+    this.questExtras.appendChild(this.bestiary);
+    this.trainingBtn = el('button', 'reception-training', '訓練場');
+    this.trainingBtn.type = 'button';
+    this.trainingBtn.addEventListener('click', () => { if (!this.busy) this.host.startTraining(); });
+    this.questExtras.appendChild(this.trainingBtn);
 
     this.shop = sec(el('details', 'base-section'), 'shop');
     this.shop.id = 'base-shop';
@@ -209,9 +242,12 @@ export class BaseScreen {
 
     // 歩く拠点: 画面を閉じて、里へ戻る
     this.closeBtn = el('button', 'base-close', '里へ戻る');
-    this.closeBtn.addEventListener('click', () => host.closeFacility());
+    this.closeBtn.addEventListener('click', () => {
+      if (host.hubWalk) host.closeFacility();
+      else this.setOpen(true, 'all');
+    });
     this.closeBtn.hidden = !host.hubWalk;
-    card.appendChild(this.closeBtn);
+    header.appendChild(this.closeBtn);
 
     card.appendChild(el('p', 'base-note', `v${APP_VERSION} (${BUILD_ID}) ／ 見た目・動き・音は仮素材。里の建物は仮の形です。`));
     // 画面を広く使う方法: 全画面にできる端末はボタン、iPhone は「ホーム画面に追加」の案内
@@ -236,20 +272,34 @@ export class BaseScreen {
     return !this.root.hidden;
   }
 
-  /** 開く / 閉じる。section で、出す範囲を決める（施設の画面では、その施設の欄を開いた状態にする）。 */
-  setOpen(open: boolean, section: BaseSection = 'all'): void {
-    const fresh = this.root.hidden || section !== this.section;
+  /** 実施設IDも引き継いで開く。閉じても受付ごとの閲覧位置は残す。 */
+  setOpen(open: boolean, section: BaseSection = 'all', facilityId?: string): void {
+    this.rememberReceptionScroll();
+    this.questScroller = null;
+    this.questScrollContext = null;
     this.root.hidden = !open;
     if (!open) return;
+    const f = facilityId
+      ? this.content.hub.facilities.find((x) => x.id === facilityId && x.kind === section)
+      : section === 'quest' ? undefined : this.content.hub.facilities.find((x) => x.kind === section);
+    const fresh = section !== this.section || (f?.id ?? null) !== this.facilityId;
     this.section = section;
+    this.facilityId = f?.id ?? null;
     this.root.dataset.section = section;
-    const f = this.content.hub.facilities.find((x) => x.kind === section);
-    this.title.textContent = f ? f.name : this.content.hub.name;
-    this.lead.textContent = f ? `${f.summary}。` : '行き先を選んでください。';
+    this.root.dataset.facility = this.facilityId ?? '';
+    this.title.textContent = f ? f.name : section === 'quest' ? '依頼の受付案内' : this.content.hub.name;
+    this.lead.textContent = f?.kind === 'quest' ? '星を選び、依頼の内容を確認してください。' : f ? `${f.summary}。` : '行き先を選んでください。';
+    this.closeBtn.hidden = !this.host.hubWalk && section === 'all';
+    this.closeBtn.textContent = this.host.hubWalk ? '里へ戻る' : '拠点の一覧へ';
     if (section === 'workshop') this.forge.open = true;
     if (section === 'shop') this.shop.open = true;
-    // 開き直した時だけ、前の操作の結果を消す（強化の直後に作り直す時は、残す）
-    if (fresh) this.say('');
+    if (fresh) {
+      this.say('');
+      this.receptionNotice = '';
+      this.confirming = null;
+      this.storyFold.open = false;
+      this.bestiary.open = false;
+    }
     this.refresh();
   }
 
@@ -300,7 +350,7 @@ export class BaseScreen {
       this.banners.appendChild(p);
     }
 
-    if ([...c.recipes.values()].some((r) => checkCraft(doc, r, craftRankOpen(doc, c, r)).ok)) this.banners.appendChild(el('p', 'base-banner', '強化できる装備があります（下の「工房」）。'));
+    if (this.section !== 'quest' && [...c.recipes.values()].some((r) => checkCraft(doc, r, craftRankOpen(doc, c, r)).ok)) this.banners.appendChild(el('p', 'base-banner', '強化できる装備があります（下の「工房」）。'));
 
     // 武器（持っていて、この版で使えるもの）
     this.weaponRow.textContent = '';
@@ -366,20 +416,21 @@ export class BaseScreen {
     this.gearNote.append(el('span', 'skills', `技能: ${sum.skills || 'なし'}`), el('span', 'resist', `耐性: ${sum.resist || 'なし'}`));
 
     this.renderQuests();
-    renderStoryPanel(this.storyBox, c, doc.progress.questClears, {
-      openStory: (ids) => this.host.openStory(ids),
-      startHunt: (id) => this.host.startHunt(id),
-      questUnlocked: (id) => {
-        const q = c.quests.get(id);
-        return !!q && questUnlocked(doc, q);
-      },
-    });
-    // 工房からの支給（v0.26.0）: 受け取れる時だけ、物語の欄にも知らせる（受け取るのは工房）
-    for (const pack of c.support.packs) {
-      if (supportState(doc, pack) !== 'ready') continue;
-      const p = el('p', 'story-support', `${pack.name}を受け取れます（工房で。1 度だけ）。`);
-      p.dataset.pack = pack.id;
-      this.storyBox.appendChild(p);
+    if (!this.storyFold.hidden) {
+      renderStoryPanel(this.storyBox, c, doc.progress.questClears, {
+        openStory: (ids) => this.host.openStory(ids),
+        startHunt: (id) => this.openStoryQuest(id),
+        questUnlocked: (id) => {
+          const q = c.quests.get(id);
+          return !!q && questUnlocked(doc, q);
+        },
+      });
+      for (const pack of c.support.packs) {
+        if (supportState(doc, pack) !== 'ready') continue;
+        const p = el('p', 'story-support', `${pack.name}を受け取れます（工房で。1 度だけ）。`);
+        p.dataset.pack = pack.id;
+        this.storyBox.appendChild(p);
+      }
     }
 
     // 持ち物
@@ -565,134 +616,299 @@ export class BaseScreen {
     this.shopBody.appendChild(el('p', 'shop-note', '売った素材は戻りません。強化に使う素材は、工房で数を確かめてから。'));
   }
 
-  /**
-   * 依頼の並び（段階の順）と、里の納品と、訓練場。まだ受けられない依頼は、押せない 1 行にする。
-   * v0.26.0: 見出しに星（★1〜8）と分類（主線・昇級確認）、依頼人、制限時間と目安の時間。依頼人の話は、ボタンの下の「依頼人の話」を開いて読む。
-   */
-  private renderQuests(): void {
-    const c = this.content;
-    const doc = this.host.save.doc;
-    this.questBox.textContent = '';
-    const choice = (title: string, lines: string[], onClick: (() => void) | null): HTMLButtonElement => {
-      const b = el('button', 'base-choice');
-      b.appendChild(el('b', undefined, title));
-      for (const line of lines) b.appendChild(el('span', undefined, line));
-      if (onClick) b.addEventListener('click', onClick);
-      else b.disabled = true;
-      this.questBox.appendChild(b);
-      return b;
-    };
-    // 依頼人の話（開いた時だけ読む。押しても出発しない）
-    const letter = (id: string, stars: number, lane: string, client: string, text: string): void => {
-      const d = el('details', 'quest-letter');
-      d.dataset.quest = id;
-      d.appendChild(el('summary', undefined, `依頼人の話（${client}）`));
-      d.appendChild(el('p', 'quest-stars', `${starRow(stars)}${lane ? `　${lane}` : ''}`));
-      d.appendChild(el('p', 'quest-text', text));
-      this.questBox.appendChild(d);
-    };
-    if (c.board.recommend.text) this.questBox.appendChild(el('p', 'quest-recommend', c.board.recommend.text));
-    const order = (rankId: string): number => c.ranks.get(rankId)?.order ?? 0;
-    // 段階の順。同じ段階では、1 体の標的の依頼 → 群れの依頼（v0.18.0）。狩らない依頼（v0.27.0）は、その後にまとめる（フィールドで遊ぶ時だけ）
-    const hunts = [...c.quests.values()].filter((q) => q.kind !== 'gather').sort((x, y) => order(x.rankId) - order(y.rankId) || (x.targets ? 1 : 0) - (y.targets ? 1 : 0));
-    const errands = this.host.fieldHunts ? [...c.quests.values()].filter((q) => q.kind === 'gather') : [];
-    let group = '';
-    for (const q of [...hunts, ...errands]) {
-      const g = q.kind === 'gather' ? 'gather' : `${q.rankId}|${q.targets ? 'pack' : 'one'}`;
-      if (q.targets && g !== group) this.questBox.appendChild(el('p', 'forge-head', `【${c.ranks.get(q.rankId)?.name ?? ''}】幼体の群れの依頼（決まった頭数を討伐する）`));
-      if (q.kind === 'gather' && g !== group) this.questBox.appendChild(el('p', 'forge-head', '採集・採掘・現地の納品（狩らない依頼。獣は出ない。この出発で採ったものを、野営地の納品箱へ）'));
-      group = g;
-      const rank = c.ranks.get(q.rankId)?.name ?? '';
-      const clears = doc.progress.questClears[q.id] ?? 0;
-      const lane = q.board && q.board.lane !== 'free' ? QUEST_LANE_NAMES[q.board.lane] : '';
-      const kindName = q.gather ? errandKindName(q) : `【${rank}】依頼`;
-      const title = `${starLabel(q)}${q.gather ? '　' : ''}${kindName}「${q.name}」${lane ? `　${lane}` : ''}${clears > 0 ? `　達成 ${clears} 回` : ''}`;
-      let b: HTMLButtonElement;
-      if (!questUnlocked(doc, q)) {
-        const need = (q.requires ?? []).filter((id) => !(doc.progress.questClears[id] ?? 0)).map((id) => `「${c.quests.get(id)?.name ?? id}」`);
-        b = choice(title, [`${need.join('と')}を達成すると受けられます。`], null);
-        b.classList.add('locked');
-      } else {
-        const field = this.host.fieldHunts ? fieldOf(c, q) : null;
-        const limit = minutesText(questTimeLimitTicks(c, q, this.host.fieldHunts));
-        const aim = q.board ? `（目安 ${q.board.clearMinutes[0]}〜${q.board.clearMinutes[1]} 分）` : '';
-        const lines = [q.summary, `目標: ${questGoal(c, q)}　制限 ${limit}${aim}　力尽き ${q.maxFaints} 回で失敗`];
-        if (q.board) lines.unshift(`依頼人: ${q.board.client}`);
-        if (field && q.gather) {
-          const areas = [...new Set(q.gather.nodes.map((n) => n.areaId))].map((id) => field.areas.find((a) => a.id === id)!).map((a) => (a.kind === 'camp' ? a.name : `エリア ${a.no} ${a.name}`));
-          lines.push(`狩場: ${field.name}（野営地から出発。採取点は ${areas.join('・')}。大型・幼体は出ない）`);
-        } else if (field) lines.push(`狩場: ${field.name}（野営地から出発。エリア ${field.areas.filter((a) => a.kind !== 'camp').length} か所。${q.targets ? '群れは、住みかのエリアを移ることがある' : '標的はエリアを移動する'}）`);
-        if (q.supplies?.length) lines.push(`支給品: ${q.supplies.map((s) => `${c.items.get(s.itemId)?.name ?? s.itemId} ×${s.count}`).join('　')}`);
-        if (q.rewards) lines.push(`報酬: ${q.rewards.money} 通貨 + ${q.gather ? '納品で余った素材' : '素材'}`);
-        b = choice(title, lines, () => this.host.startHunt(q.id));
-      }
-      b.dataset.quest = q.id;
-      b.dataset.rank = q.rankId;
-      if (q.board) {
-        b.dataset.stars = String(q.board.stars);
-        b.dataset.lane = q.board.lane;
-        letter(q.id, q.board.stars, lane, q.board.client, q.board.text);
-      }
-    }
-    this.renderDeliveries();
-    choice('訓練場', ['動かない標的で、操作と技を確かめる。'], () => this.host.startTraining());
+  /** いま開いている実施設から級を取る。星から級は計算しない。 */
+  private receptionRank(): string | null {
+    const desks = this.content.hub.facilities.filter((f) => f.kind === 'quest');
+    const desk = desks.find((f) => f.id === this.facilityId);
+    if (!desk) return null;
+    return desk.questRankId ?? null;
+  }
+
+  private rememberReceptionScroll(): void {
+    if (!this.questScroller || !this.questScrollContext || this.questScroller.getClientRects().length === 0) return;
+    const state = this.receptionStates.get(this.questScrollContext.key);
+    if (state) state[this.questScrollContext.detail ? 'detailScroll' : 'listScroll'] = this.questScroller.scrollTop;
+  }
+
+  /** 物語・図鑑を閉じて一覧が見える時だけ、保存していた位置へ戻す。 */
+  private restoreReceptionScroll(): void {
+    if (!this.questScroller || !this.questScrollContext || this.questScroller.getClientRects().length === 0) return;
+    const state = this.receptionStates.get(this.questScrollContext.key);
+    if (state) this.questScroller.scrollTop = state[this.questScrollContext.detail ? 'detailScroll' : 'listScroll'];
   }
 
   /**
-   * 里の納品（v0.26.0）: 狩りに出ず、倉庫の素材を受付で渡す。1 つの保存で 1 度だけ。
-   * 渡す前に「渡す数・残る数・報酬・1 度だけ」を出して、もう 1 度押してもらう。保存が完了してから「渡した」にする。
+   * 依頼（か里の納品）の詳細を開く（v0.38.0。物語の「この依頼へ」と、検査から使う）。即出発はしない。
+   * 歩く里では、いま開いている受付の依頼だけ開き、ほかの受付の依頼なら、行き先の受付を知らせる。一覧の拠点（?hub=menu）では、その受付を開く。
    */
-  private renderDeliveries(): void {
+  showQuest(id: string): void {
+    this.openStoryQuest(id);
+  }
+
+  /** 物語の入口も、即出発ではなく該当の受付・星・詳細へつなぐ。 */
+  private openStoryQuest(id: string): void {
+    const q = this.content.quests.get(id);
+    const dv = q ? undefined : this.content.deliveries.get(id);
+    if (!q && !dv) return;
+    const rank = q ? q.rankId : deliveryReceptionRank(dv!);
+    const name = q ? q.name : dv!.name;
+    const desk = this.content.hub.facilities.find((f) => f.kind === 'quest' && f.questRankId === rank);
+    if (!desk) { this.say('この依頼の受付が見つかりません。', true); return; }
+    if (this.host.hubWalk && (this.section !== 'quest' || this.facilityId !== desk.id)) {
+      this.receptionNotice = `「${name}」は「${desk.name}」で受けられます。里へ戻って、その受付へ向かってください。`;
+      this.renderQuests();
+      this.questBox.scrollIntoView({ block: 'nearest' });
+      return;
+    }
+    if (!this.host.hubWalk && this.facilityId !== desk.id) this.setOpen(true, 'quest', desk.id);
+    const groups = receptionGroups(this.content, rank, this.host.fieldHunts);
+    const group = groups.find((g) => g.entries.some((e) => e.id === id));
+    if (!group) { this.say('この遊び方では、この依頼へ出発できません。', true); return; }
+    this.rememberReceptionScroll();
+    const state = this.receptionStates.get(desk.id) ?? { stars: group.stars, selected: null, listScroll: 0, detailScroll: 0 };
+    state.stars = group.stars;
+    state.selected = id;
+    state.detailScroll = 0;
+    this.receptionStates.set(desk.id, state);
+    this.storyFold.open = false;
+    this.renderQuests('detail-back', false);
+  }
+
+  /** 級の受付 → 星 → 短い一覧 → 詳細。依頼の解禁・報酬・保存は既存の判定を使う。 */
+  private renderQuests(focusKey?: string, remember = true): void {
     const c = this.content;
     const doc = this.host.save.doc;
-    if (c.deliveries.size === 0) return;
-    this.questBox.appendChild(el('p', 'forge-head', '里の納品（狩りに出ない。倉庫の素材を受付で渡す。1 度だけ）'));
-    const name = (id: string): string => c.materials.get(id)?.name ?? id;
-    for (const d of c.deliveries.values()) {
-      const chk = checkDelivery(doc, d);
-      const box = el('div', `base-delivery ${chk.state}`);
-      box.dataset.delivery = d.id;
-      box.dataset.state = chk.state;
-      box.appendChild(el('b', undefined, `★${d.stars}　里の納品「${d.name}」${chk.state === 'claimed' ? '　納品済み' : ''}`));
-      box.appendChild(el('span', undefined, `依頼人: ${d.client}　報酬: ${d.money} 通貨（1 度だけ）　制限なし・出発なし`));
-      const ul = el('ul', 'forge-cost');
-      for (const i of chk.items) {
-        const li = withIcon(el('li', chk.state === 'short' && i.after < i.keep ? 'short' : undefined), i.itemId, `${name(i.itemId)} ${i.need} 個を渡す（持っている数 ${i.have}。渡した後も ${i.keep} 個は残す）`);
-        ul.appendChild(li);
+    if (remember) this.rememberReceptionScroll();
+    const oldFocus = document.activeElement instanceof HTMLElement ? document.activeElement.dataset.receptionFocus : undefined;
+    this.questBox.textContent = '';
+    this.questScroller = null;
+    this.questScrollContext = null;
+    const rankId = this.section === 'quest' ? this.receptionRank() : null;
+    const firstRank = [...c.ranks.values()].sort((a, b) => a.order - b.order)[0]?.id;
+    this.storyFold.hidden = this.section === 'quest' && rankId !== firstRank;
+    this.trainingBtn.hidden = this.section === 'quest' && rankId !== firstRank;
+    this.root.dataset.reception = rankId ? 'counter' : 'directory';
+
+    if (this.receptionNotice) this.questBox.appendChild(el('p', 'reception-notice', this.receptionNotice));
+    if (!rankId || !this.facilityId) {
+      this.questBox.appendChild(el('h3', 'reception-directory-title', '級ごとの受付'));
+      this.questBox.appendChild(el('p', 'reception-directory-note', this.host.hubWalk ? '里にある、それぞれの受付で依頼を選べます。看板に級の名前が付いています。' : '受付を選ぶと、その級の依頼を星ごとに確認できます。'));
+      const desks = el('div', 'reception-directory');
+      for (const f of c.hub.facilities.filter((x) => x.kind === 'quest')) {
+        const id = f.questRankId;
+        if (!id) continue;
+        const groups = receptionGroups(c, id, this.host.fieldHunts);
+        const count = groups.reduce((n, g) => n + g.entries.length, 0);
+        const b = this.host.hubWalk ? el('article', 'reception-desk') : el('button', 'reception-desk');
+        b.dataset.reception = f.id;
+        b.append(el('b', undefined, f.name), el('span', undefined, groups.map((g) => `${g.stars === null ? '星未設定' : `★${g.stars}`} ${g.entries.length}件`).join(' ／ ')), el('small', undefined, `${count}件・${f.summary}`));
+        if (b instanceof HTMLButtonElement) {
+          b.type = 'button';
+          b.addEventListener('click', () => this.setOpen(true, 'quest', f.id));
+        }
+        desks.appendChild(b);
       }
-      box.appendChild(ul);
-      const letterBox = el('details', 'quest-letter');
-      letterBox.appendChild(el('summary', undefined, `依頼人の話（${d.client}）`));
-      letterBox.appendChild(el('p', 'quest-text', d.text));
-      box.appendChild(letterBox);
-      if (chk.state === 'locked') {
-        const need = d.requires.filter((id) => !(doc.progress.questClears[id] ?? 0)).map((id) => `「${c.quests.get(id)?.name ?? id}」`);
-        box.appendChild(el('p', 'base-note', `${need.join('と')}を達成すると受けられます。`));
-      } else if (chk.state === 'ready' && this.confirming === d.id) {
-        const p = el('p', 'forge-confirm', `${chk.items.map((i) => `${name(i.itemId)} ${i.need} 個（残り ${i.after} 個）`).join('、')}を渡して、${d.money} 通貨を受け取ります。元には戻せません。`);
-        const yes = el('button', 'go', '渡す');
-        yes.addEventListener('click', () => {
-          this.confirming = null;
-          void this.run('渡しています', () => this.host.save.deliver(d.id), `「${d.name}」を納品しました（+${d.money} 通貨）。`);
-        });
-        const no = el('button', undefined, 'やめる');
-        no.addEventListener('click', () => {
-          this.confirming = null;
-          this.refresh();
-        });
-        p.append(yes, no);
-        box.appendChild(p);
-      } else if (chk.state !== 'claimed') {
-        const b = el('button', 'go', chk.ok ? '納品する' : '素材が足りません（残す数を含めて）');
-        b.disabled = !chk.ok;
-        b.addEventListener('click', () => {
-          this.confirming = d.id;
-          this.refresh();
-        });
-        box.appendChild(b);
-      }
-      this.questBox.appendChild(box);
+      this.questBox.appendChild(desks);
+      return;
     }
+
+    const groups = receptionGroups(c, rankId, this.host.fieldHunts);
+    const key = this.facilityId;
+    let state = this.receptionStates.get(key);
+    if (!state) {
+      const ready = groups.find((g) => g.entries.some((e) => e.kind === 'quest' ? questUnlocked(doc, e.quest) && !(doc.progress.questClears[e.id] ?? 0) : checkDelivery(doc, e.delivery).ok));
+      state = { stars: (ready ?? groups[0])?.stars ?? null, selected: null, listScroll: 0, detailScroll: 0 };
+      this.receptionStates.set(key, state);
+    }
+    if (!groups.some((g) => g.stars === state!.stars)) state.stars = groups[0]?.stars ?? null;
+    const group = groups.find((g) => g.stars === state!.stars);
+    if (state.selected && !group?.entries.some((e) => e.id === state!.selected)) state.selected = null;
+    const current = state;
+    // 依頼の掲示のおすすめの順（v0.26.0。#9）は、最初の級の受付にだけ短く出す
+    if (rankId === [...c.ranks.values()].sort((a, b) => a.order - b.order)[0]?.id && c.board.recommend.text) this.questBox.appendChild(el('p', 'quest-recommend', c.board.recommend.text));
+    const tabs = el('div', 'reception-stars');
+    tabs.setAttribute('role', 'group');
+    tabs.setAttribute('aria-label', '星ごとの依頼');
+    for (const g of groups) {
+      const label = g.stars === null ? '星未設定' : `★${g.stars}`;
+      const b = el('button', 'reception-star');
+      b.type = 'button';
+      b.dataset.stars = String(g.stars);
+      b.dataset.receptionFocus = `star-${g.stars}`;
+      b.setAttribute('aria-pressed', String(g.stars === current.stars));
+      b.setAttribute('aria-label', `${label}、${g.entries.length}件`);
+      b.append(el('b', undefined, label), el('span', undefined, `${g.entries.length}件`));
+      b.addEventListener('click', () => {
+        if (current.stars === g.stars && !current.selected) return;
+        this.rememberReceptionScroll();
+        current.stars = g.stars;
+        current.selected = null;
+        current.listScroll = 0;
+        current.detailScroll = 0;
+        this.confirming = null;
+        this.receptionNotice = '';
+        this.renderQuests(`star-${g.stars}`, false);
+      });
+      tabs.appendChild(b);
+    }
+    this.questBox.appendChild(tabs);
+    const picked = group?.entries.find((e) => e.id === current.selected);
+    const pane = el('div', picked ? 'reception-scroll reception-detail' : 'reception-scroll reception-list');
+    this.questScroller = pane;
+    this.questScrollContext = { key, detail: !!picked };
+    pane.addEventListener('scroll', () => this.rememberReceptionScroll(), { passive: true });
+    if (picked) {
+      const back = el('button', 'reception-back', '‹ 星の一覧へ戻る');
+      back.type = 'button';
+      back.dataset.receptionFocus = 'detail-back';
+      back.addEventListener('click', () => {
+        this.rememberReceptionScroll();
+        current.selected = null;
+        this.confirming = null;
+        this.renderQuests(`row-${picked.id}`, false);
+      });
+      this.questBox.appendChild(back);
+      this.renderReceptionDetail(pane, picked);
+    } else {
+      const count = el('p', 'reception-count', `${current.stars === null ? '星未設定' : `★${current.stars}`} の依頼　${group?.entries.length ?? 0}件`);
+      count.setAttribute('role', 'status');
+      this.questBox.appendChild(count);
+      for (const entry of group?.entries ?? []) {
+        const q = entry.kind === 'quest' ? entry.quest : null;
+        const d = entry.kind === 'delivery' ? entry.delivery : null;
+        const locked = q ? !questUnlocked(doc, q) : checkDelivery(doc, d!).state === 'locked';
+        const done = q ? (doc.progress.questClears[q.id] ?? 0) > 0 : checkDelivery(doc, d!).state === 'claimed';
+        const b = el('button', `reception-row${locked ? ' locked' : ''}`);
+        b.type = 'button';
+        b.dataset.quest = entry.id;
+        b.dataset.rank = rankId;
+        b.dataset.stars = String(entry.stars);
+        b.dataset.receptionFocus = `row-${entry.id}`;
+        const title = q?.name ?? d!.name;
+        b.setAttribute('aria-label', `${title}、${q ? questGoal(c, q, true) : '里の素材納品'}、${locked ? '未解放、条件を見る' : done ? '達成済み、詳細を見る' : '詳細を見る'}`);
+        b.appendChild(q ? questIconStrip(c, q) : deliveryIconStrip());
+        const text = el('span', 'reception-row-text');
+        text.appendChild(el('b', 'reception-row-name', title));
+        const kind = q ? QUEST_ACTIVITY_LABELS[questActivity(q)] : '里納品';
+        const time = q ? minutesText(questTimeLimitTicks(c, q, this.host.fieldHunts)) : '制限なし';
+        text.appendChild(el('span', 'reception-row-meta', `${kind}　${time}　報酬 ${q?.rewards?.money ?? d?.money ?? 0}`));
+        if (q?.board && q.board.lane !== 'free') text.appendChild(el('small', 'reception-lane', QUEST_LANE_NAMES[q.board.lane]));
+        b.appendChild(text);
+        b.appendChild(el('span', `reception-row-state${done ? ' done' : ''}`, locked ? '未解放' : done ? '済' : d && !checkDelivery(doc, d).ok ? '素材不足' : '›'));
+        b.addEventListener('click', () => {
+          this.rememberReceptionScroll();
+          current.selected = entry.id;
+          current.detailScroll = 0;
+          this.confirming = null;
+          this.receptionNotice = '';
+          this.renderQuests('detail-back', false);
+        });
+        pane.appendChild(b);
+      }
+      if (!group?.entries.length) pane.appendChild(el('p', 'reception-empty', 'この受付の依頼は、まだありません。'));
+    }
+    this.questBox.appendChild(pane);
+    this.restoreReceptionScroll();
+    const focus = focusKey ?? oldFocus;
+    if (focus) this.questBox.querySelectorAll<HTMLButtonElement>('[data-reception-focus]').forEach((b) => { if (b.dataset.receptionFocus === focus) b.focus({ preventScroll: true }); });
+  }
+
+  private renderReceptionDetail(pane: HTMLElement, entry: ReceptionEntry): void {
+    const c = this.content;
+    const doc = this.host.save.doc;
+    const title = entry.kind === 'quest' ? entry.quest.name : entry.delivery.name;
+    pane.appendChild(el('h3', 'reception-detail-title', title));
+    pane.appendChild(entry.kind === 'quest' ? questIconStrip(c, entry.quest) : deliveryIconStrip());
+    if (entry.kind === 'delivery') { this.renderDeliveryDetail(pane, entry.delivery); return; }
+    const q = entry.quest;
+    const field = this.host.fieldHunts ? fieldOf(c, q) : null;
+    const limit = minutesText(questTimeLimitTicks(c, q, this.host.fieldHunts));
+    const facts = el('dl', 'reception-facts');
+    const fact = (label: string, value: string): void => { facts.append(el('dt', undefined, label), el('dd', undefined, value)); };
+    fact('目標', questGoal(c, q));
+    fact('難度', `${entry.stars === null ? '星未設定' : starRow(entry.stars)} ／ ${c.ranks.get(q.rankId)?.name ?? q.rankId}`);
+    fact('制限時間', `${limit} ／ 力尽き ${q.maxFaints}回で失敗`);
+    if (q.board) fact('クリアの目安', `${q.board.clearMinutes[0]}〜${q.board.clearMinutes[1]}分`);
+    if (field) fact('狩場', field.name);
+    if (q.rewards) fact('報酬', `${q.rewards.money} 通貨 ＋ ${q.gather ? '納品で余った素材' : '素材'}`);
+    if (q.supplies?.length) fact('支給品', q.supplies.map((s) => `${c.items.get(s.itemId)?.name ?? s.itemId} ×${s.count}`).join('、'));
+    pane.appendChild(facts);
+    if (q.gather && field) {
+      const areas = [...new Set(q.gather.nodes.map((n) => n.areaId))].map((id) => field.areas.find((a) => a.id === id)).filter((a) => !!a).map((a) => a.kind === 'camp' ? a.name : `エリア${a.no} ${a.name}`);
+      pane.appendChild(el('p', 'reception-detail-note', `採取点: ${areas.join('・')}。この出発で採った品を野営地の納品箱へ。大型・幼体は出ません。`));
+    }
+    pane.appendChild(el('p', 'reception-summary', q.summary));
+    if (q.board) {
+      pane.appendChild(el('h4', 'reception-client', `依頼人: ${q.board.client}`));
+      pane.appendChild(el('p', 'reception-letter', q.board.text));
+    }
+    const unlocked = questUnlocked(doc, q);
+    if (!unlocked) {
+      const need = (q.requires ?? []).filter((id) => !(doc.progress.questClears[id] ?? 0)).map((id) => `「${c.quests.get(id)?.name ?? id}」`);
+      pane.appendChild(el('p', 'reception-locked-note', `${need.join('と')}を達成すると受けられます。`));
+    }
+    const go = el('button', 'reception-depart', unlocked ? '受注して出発' : '解放条件を満たしていません');
+    go.type = 'button';
+    go.dataset.quest = q.id;
+    go.dataset.receptionFocus = `depart-${q.id}`;
+    go.disabled = !unlocked || this.busy;
+    go.addEventListener('click', () => {
+      if (this.busy || this.receptionRank() !== q.rankId || !questUnlocked(this.host.save.doc, q)) return;
+      this.rememberReceptionScroll();
+      this.host.startHunt(q.id);
+    });
+    pane.appendChild(go);
+  }
+
+  /** 里の納品は詳細から確認する。保存処理は従来どおり在庫と残す数を再検査する。 */
+  private renderDeliveryDetail(pane: HTMLElement, d: DeliveryDef): void {
+    const c = this.content;
+    const doc = this.host.save.doc;
+    const chk = checkDelivery(doc, d);
+    const name = (id: string): string => c.materials.get(id)?.name ?? id;
+    const box = el('div', `base-delivery ${chk.state}`);
+    box.dataset.delivery = d.id;
+    box.dataset.state = chk.state;
+    box.appendChild(el('b', undefined, `★${d.stars}　里の納品${chk.state === 'claimed' ? '・納品済み' : ''}`));
+    box.appendChild(el('span', undefined, `報酬 ${d.money} 通貨・一度限り・制限なし・出発なし`));
+    const ul = el('ul', 'forge-cost');
+    for (const i of chk.items) {
+      const text = chk.state === 'claimed'
+        ? `${name(i.itemId)} ${i.need}個を納品済み（現在の所持 ${i.have}個）`
+        : `${name(i.itemId)} ${i.need}個を渡す（所持 ${i.have}個。${i.after < i.keep ? `保護分を含めてあと ${i.keep - i.after}個必要` : `納品後 ${i.after}個`}。${i.keep}個以上残します）`;
+      ul.appendChild(withIcon(el('li', chk.state === 'short' && i.after < i.keep ? 'short' : undefined), i.itemId, text));
+    }
+    box.appendChild(ul);
+    box.append(el('h4', 'reception-client', `依頼人: ${d.client}`), el('p', 'reception-letter', d.text));
+    if (chk.state === 'locked') {
+      const need = d.requires.filter((id) => !(doc.progress.questClears[id] ?? 0)).map((id) => `「${c.quests.get(id)?.name ?? id}」`);
+      box.appendChild(el('p', 'reception-locked-note', `${need.join('と')}を達成すると受けられます。`));
+    } else if (chk.state === 'ready' && this.confirming === d.id) {
+      const p = el('p', 'forge-confirm', `${chk.items.map((i) => `${name(i.itemId)} ${i.need}個（残り ${i.after}個）`).join('、')}を渡して、${d.money}通貨を受け取ります。元には戻せません。`);
+      const yes = el('button', 'go', 'この内容で納品する');
+      yes.type = 'button';
+      yes.disabled = this.busy;
+      yes.dataset.receptionFocus = 'delivery-confirm';
+      yes.addEventListener('click', () => {
+        if (this.busy || this.receptionRank() !== deliveryReceptionRank(d)) return;
+        this.confirming = null;
+        void this.run('渡しています', () => this.host.save.deliver(d.id), `「${d.name}」を納品しました（+${d.money} 通貨）。`);
+      });
+      const no = el('button', undefined, 'やめる');
+      no.type = 'button';
+      no.dataset.receptionFocus = 'delivery-cancel';
+      no.addEventListener('click', () => { this.confirming = null; this.renderQuests('delivery-open'); });
+      p.append(yes, no);
+      box.appendChild(p);
+    } else if (chk.state !== 'claimed') {
+      const b = el('button', 'go', chk.ok ? '納品する数を確認' : '素材が足りません（残す数を含めて）');
+      b.type = 'button';
+      b.dataset.receptionFocus = 'delivery-open';
+      b.disabled = !chk.ok || this.busy;
+      b.addEventListener('click', () => { this.confirming = d.id; this.renderQuests('delivery-confirm'); });
+      box.appendChild(b);
+    }
+    pane.appendChild(box);
   }
 
   /**
@@ -1013,11 +1229,5 @@ export class BaseScreen {
     }
     this.renderData();
   }
-}
-
-/** 狩らない依頼の呼び方（v0.27.0）: 採取点がどれも採集なら「採集」、どれも採掘なら「採掘」、混ざっていれば「現地の納品」 */
-function errandKindName(q: { gather?: { nodes: { kind: string }[] } }): string {
-  const kinds = new Set((q.gather?.nodes ?? []).map((n) => n.kind));
-  return kinds.size > 1 ? '現地の納品' : kinds.has('mine') ? '採掘' : '採集';
 }
 

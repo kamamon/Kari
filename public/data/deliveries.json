@@ -18,7 +18,8 @@
           "keep": 14
         }
       ],
-      "money": 250
+      "money": 250,
+      "rankId": "rank.1"
     }
   ]
 }

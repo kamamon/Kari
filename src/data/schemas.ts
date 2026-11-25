@@ -734,6 +734,8 @@ export type FacilityKind = 'quest' | 'workshop' | 'shop' | 'chest';
 export interface FacilityDef {
   id: string;
   kind: FacilityKind;
+  /** 級別の依頼受付に必須の rank の id。ほかの施設では指定しない。全級の受付を hub データと同時に適用する。 */
+  questRankId?: string;
   name: string;
   /** ボタンに出す言葉（「工房に入る」） */
   action: string;
@@ -1041,6 +1043,8 @@ export interface DeliveryDef {
   name: string;
   client: string;
   stars: number;
+  /** 受け付ける級。星から求めない。省略した旧データは、恒久 ID rank.1（初級）の受付に出す。受注条件は requires のまま。 */
+  rankId?: string;
   text: string;
   /** 受けられる条件: どれも 1 回は達成している依頼 */
   requires: string[];
