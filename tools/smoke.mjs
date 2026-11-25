@@ -1409,7 +1409,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     const v = window.__vh.view;
     const files = [];
     // 建物の図（切り抜き）。外周の崖の面（v0.22.0。崖の図集を切り抜く）と、里の人の板（v0.23.0）は除く
-    v.scene.traverse((o) => { if (o.isMesh && !o.isInstancedMesh && !o.userData.cliffArt && !o.userData.npc && o.material.alphaTest > 0 && o.material.map && o.material.visible) files.push(String(o.material.map.image?.src ?? '').split('/').pop()); });
+    v.scene.traverse((o) => { if (o.isMesh && !o.isInstancedMesh && !o.userData.cliffArt && !o.userData.npc && !o.material.userData?.prop && o.material.alphaTest > 0 && o.material.map && o.material.visible) files.push(String(o.material.map.image?.src ?? '').split('/').pop()); });
     return { art: window.__vh.envArt(), buildings: files.sort(), far: v.scene.getObjectByName('backdrop').children.filter((m) => m.material.map && m.material.visible).length, ...v.stats() };
   });
   check('景色の絵（里）: 頼んだ絵がすべて読めている。建物 4 つ（工房・商店・依頼板・装備箱）に、それぞれの図が貼られている', hubArt && hubLook.far === 2 && hubLook.buildings.join() === 'bld_board_v1.webp,bld_chest_v1.webp,bld_shop_v1.webp,bld_workshop_v1.webp', JSON.stringify(hubLook));
@@ -1495,7 +1495,7 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
     const maps = t ? t.children.filter((m) => m.material.map).every((m) => m.material.map.image?.naturalWidth > 0 || m.material.map.image?.width > 0) : false;
     return { kinds, maps, walls: t?.children.find((m) => m.userData.terrace === 'wall')?.userData.walls ?? 0, rails: t?.children.find((m) => m.userData.terrace === 'rail')?.userData.rails ?? 0 };
   });
-  check('段のある里: 炉の段の床・石段・擁壁・柵が描かれ、絵が読めている', tier.kinds === 'rail,stone,wall,yard' && tier.maps && tier.walls > 20 && tier.rails > 4, JSON.stringify(tier));
+  check('段のある里: 段の床（土・石・草・岩）・石積みの擁壁・岩の壁・小滝・水面・柵が描かれ、絵が読めている（v0.35.0 から 5 つの段）', tier.kinds === 'cliff,fall,grass,rail,rock,stone,wall,water,yard' && tier.maps && tier.walls > 100 && tier.rails > 20, JSON.stringify(tier));
   await place(-15, 8.5, -Math.PI / 2);
   await page.waitForTimeout(300);
   await page.screenshot({ path: `${OUT}95a_hub_stairs_top.png` });
@@ -1524,6 +1524,60 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const back = await until(page, () => window.__vh.sim.player.pos.x > -16.6 && window.__vh.sim.player.pos.y === 0, 15000);
   await page.keyboard.up('KeyW');
   check('段のある里: 炉の段から東へ歩くと、階段を上って広場の高さ（0m）へ戻る', back, JSON.stringify(await page.evaluate(() => window.__vh.sim.player.pos)));
+  // ---- 里の 5 つの段（v0.35.0。ChatGPT の里の設計 #11 の P1）: 水音の庭・暮らしの段・灯見の台、2 つの回遊路、建物と暮らし ----
+  const village = await page.evaluate(() => {
+    const v = window.__vh.view.scene.getObjectByName('village');
+    if (!v) return null;
+    const kinds = v.children.map((o) => o.userData.village).filter(Boolean).sort().join();
+    const props = v.children.find((o) => o.userData.props);
+    const wheel = v.children.find((o) => o.userData.wheel);
+    const lift = v.children.find((o) => o.userData.lift);
+    return { kinds, props: props?.userData.props ?? 0, propsArt: !!props?.material.map && props.material.visible, wheel: wheel?.rotation.x ?? null, lift: lift?.position.y ?? null, trails: v.children.find((o) => o.userData.trails)?.userData.trails ?? 0 };
+  });
+  await page.waitForTimeout(1500);
+  const village2 = await page.evaluate(() => {
+    const v = window.__vh.view.scene.getObjectByName('village');
+    const puffs = v.children.find((o) => o.isPoints);
+    const a = puffs.geometry.getAttribute('aAlpha');
+    let alive = 0;
+    for (let i = 0; i < a.count; i++) if (a.getX(i) > 0.01) alive++;
+    return { wheel: v.children.find((o) => o.userData.wheel).rotation.x, puffs: alive };
+  });
+  check('里の 5 つの段: 建物（頂点の色・石・瓦・灯）・小物の板（#13 の絵）・外の斜面ができ、水車は回り、煙としぶきが出ている', village && village.kinds === 'glow,plain,roof,stone' && village.props >= 15 && village.propsArt && village.trails === 2 && village2.wheel > village.wheel + 0.3 && village2.puffs > 10, JSON.stringify({ village, village2 }));
+  // 生活の道: 広場の南東の見晴らし台から、崖沿いの石段を下りて、水音の庭（-10m）へ。跳ばずに、1 段ずつ床に付いたまま
+  await place(21, -19.5, -Math.PI / 2);
+  await page.keyboard.down('KeyW');
+  const gardenLanding = await until(page, () => Math.abs(window.__vh.sim.player.pos.y + 5) < 0.01, 15000);
+  const garden = await until(page, () => window.__vh.sim.player.pos.y < -9.99 && window.__vh.sim.player.pos.x < -5, 15000);
+  await page.keyboard.up('KeyW');
+  const g1 = await page.evaluate(() => ({ ...window.__vh.sim.player.pos, amb: window.__vh.audio.ambWant }));
+  check('里の 5 つの段: 見晴らし台から崖沿いの石段を西へ歩くと、踊り場（-5m）を通って水音の庭（-10m）へ下りる', gardenLanding && garden && Math.abs(g1.y + 10) < 0.01, JSON.stringify(g1));
+  await page.screenshot({ path: `${OUT}95d_hub_garden.png` });
+  // 沢のそば（小滝の下）では、沢の音が大きい。灯見の台では、風が強い（里の音の大きさ。音そのものは合成の仮の音）
+  await place(-38, -22.5, -Math.PI / 2);
+  await page.waitForTimeout(700);
+  const ambWater = await page.evaluate(() => window.__vh.audio.ambWant);
+  // 見晴らしの道: 暮らしの段の石段の上から、灯見の台への崖沿いの石段を上り、吊り橋を渡る
+  await place(-4.5, 41.5, -Math.PI / 2);
+  await page.keyboard.down('KeyW');
+  const lookout = await until(page, () => window.__vh.sim.player.pos.y > 21.99 && window.__vh.sim.player.pos.x < -35.5, 25000);
+  await page.keyboard.up('KeyW');
+  await place(-6, 51.5, Math.PI / 2);
+  await page.keyboard.down('KeyW');
+  const crossed = await until(page, () => window.__vh.sim.player.pos.x > 4, 15000);
+  await page.keyboard.up('KeyW');
+  const g2 = await page.evaluate(() => ({ ...window.__vh.sim.player.pos, amb: window.__vh.audio.ambWant }));
+  check('里の 5 つの段: 暮らしの段から崖沿いの石段を上って灯見の台（+22m）へ。吊り橋を渡って東へ（橋の上も 22m）', lookout && crossed && Math.abs(g2.y - 22) < 0.01, JSON.stringify(g2));
+  check('里の 5 つの段: 里の音の大きさ（沢・炉・風）は場所で変わる（沢のそばは沢、灯見の台は風）', ambWater.water > 0.6 && g2.amb.water < ambWater.water && g2.amb.wind > ambWater.wind, JSON.stringify({ ambWater, top: g2.amb }));
+  // 灯見の台から、通ってきた里を見下ろす（描画量も目標内）
+  await place(4, 44, Math.PI - 0.2);
+  await page.evaluate(() => { window.__vh.view.cam.pitch = 0.95; });
+  await page.waitForTimeout(600);
+  await page.screenshot({ path: `${OUT}95e_hub_lookout_down.png` });
+  const topLook = await page.evaluate(() => window.__vh.view.stats());
+  check('里の 5 つの段: 灯見の台から見下ろしても、描画量は目標内（100 draw calls / 20万 tri）', topLook.calls <= 100 && topLook.triangles <= 200000, JSON.stringify(topLook));
+  await page.evaluate(() => { window.__vh.view.cam.pitch = 0.3; });
+  await place(0, -9, 0);
   // ---- 工房で作る（v0.32.0。ChatGPT の全装備四級版 #15 の直接生産）: 鐘嚢の大槌【初級】を作って、装備箱で持つ ----
   const CRAFT = 'recipe.craft.weapon.bornakel.war_maul.r1', MADE = 'weapon.war_maul.bornakel.r1';
   await page.evaluate((id) => {

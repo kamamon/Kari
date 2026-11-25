@@ -141,6 +141,8 @@ export const BIG_ROCKS = ROCK_ART.filter((a) => a.size !== 'S' && !a.tags.includ
 export interface RockPlacement {
   id: string;
   x: number;
+  /** 根元の高さ（v0.35.0。里の山の岩。無ければ 0） */
+  y?: number;
   z: number;
   yaw: number;
   sx: number;
@@ -193,7 +195,7 @@ export function mergeRocks(list: readonly RockPlacement[]): BufferGeometry {
     const c = Math.cos(p.yaw), s = Math.sin(p.yaw);
     for (let i = 0; i < pos.count; i++) {
       const x = pos.getX(i) * p.sx, y = pos.getY(i) * p.sy, z = pos.getZ(i) * p.sz;
-      out.position.push(p.x + x * c + z * s, y - 0.03, p.z - x * s + z * c);
+      out.position.push(p.x + x * c + z * s, y - 0.03 + (p.y ?? 0), p.z - x * s + z * c);
     }
     for (const nm of names) {
       if (nm === 'position') continue;
@@ -512,6 +514,8 @@ export interface ArtCliffOptions {
   low: boolean;
   nest: boolean;
   moss: number;
+  /** 崖の根元の高さ（v0.35.0。段のある里は、外周のすぐ内の床の高さ。無ければ 0）。段の境の列の間には、面を張らない */
+  baseAt?: (x: number, z: number) => number;
 }
 
 /**
@@ -533,10 +537,17 @@ export function artCliffGeometry(o: ArtCliffOptions, rng: SeededRng): { face: Bu
     const base = fp.length / 3;
     const capBase = cp.length / 3;
     const have: boolean[] = [];
+    // 列ごとの根元の高さ（外周の道から 0.9m 内の床）
+    const yb: number[] = [];
+    for (let i = -1; i <= COLS + 1; i++) {
+      const q = pathAt(o.path, cum, L, pc.s0 + (i / COLS) * CLIFF_M * pc.k);
+      yb.push(o.baseAt ? o.baseAt(q.x - q.nx * 0.9, q.z - q.nz * 0.9) : 0);
+    }
     for (let i = 0; i <= COLS; i++) {
       const xm = (i / COLS) * CLIFF_M;
       const s = pc.s0 + xm * pc.k;
       const q = pathAt(o.path, cum, L, s);
+      const y0 = yb[i + 1]!;
       const topImg = cliffTopAt(c, xm);
       // 隣の列も見て、何も無い所か決める（出口のわきの図の、透明の側）
       const topNear = Math.max(topImg, cliffTopAt(c, ((i - 1) / COLS) * CLIFF_M), cliffTopAt(c, ((i + 1) / COLS) * CLIFF_M));
@@ -552,7 +563,7 @@ export function artCliffGeometry(o: ArtCliffOptions, rng: SeededRng): { face: Bu
         const rel = cliffReliefAt(c, xm, Math.max(0, ym)) * edgeFade;
         const d = Math.max(-0.42, 0.06 * Math.max(0, y) - 0.45 * rel);
         if (k === R - 2) dTop = d;
-        fp.push(q.x + q.nx * d, y, q.z + q.nz * d);
+        fp.push(q.x + q.nx * d, y0 + y, q.z + q.nz * d);
         fuv.push(lerp(c.rect[0], c.rect[2], xm / CLIFF_M), lerp(c.rect[1], c.rect[3], clamp(c.g + ym / c.hM, 0, 1)));
         const ao = 0.74 + 0.26 * smooth(-0.3, 1.6, y);
         fcol.push(ao, ao, ao);
@@ -561,7 +572,7 @@ export function artCliffGeometry(o: ArtCliffOptions, rng: SeededRng): { face: Bu
       for (const [out, dy] of capRows) {
         const dd = Math.min(dTop + out, Math.max(dTop + 0.1, q.reach));
         const y = Math.max(-0.3, H + dy * o.vk);
-        cp.push(q.x + q.nx * dd, y, q.z + q.nz * dd);
+        cp.push(q.x + q.nx * dd, y0 + y, q.z + q.nz * dd);
         cuv.push(s / 3, (dd + y * 0.4) / 3);
         const mossy = o.moss * (out <= 3 ? 0.65 : 0.35);
         const sh = 0.82 - 0.12 * (out / 9.5);
@@ -570,6 +581,8 @@ export function artCliffGeometry(o: ArtCliffOptions, rng: SeededRng): { face: Bu
     }
     for (let i = 0; i < COLS; i++) {
       if (!have[i] && !have[i + 1]) continue;
+      // 段の境（根元の高さが跳ぶ所）では、列の間に面を張らない（斜めに伸びた面になる。境は段の擁壁が外周の外まで延びて隠す）
+      if (Math.abs(yb[i + 1]! - yb[i + 2]!) > 0.6) continue;
       const capOk = cliffTopAt(c, (i / COLS) * CLIFF_M) > 0.5 && cliffTopAt(c, ((i + 1) / COLS) * CLIFF_M) > 0.5;
       for (let k = 0; k < R - 1; k++) {
         const a = base + i * R + k, b = base + (i + 1) * R + k, cc = base + i * R + k + 1, d = base + (i + 1) * R + k + 1;

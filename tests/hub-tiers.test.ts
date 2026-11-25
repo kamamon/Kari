@@ -1,4 +1,4 @@
-// 段のある里（v0.31.0。ChatGPT の里の設計 #11 の P0）: 広場（0m）と、3m 低い「炉の段」（工房）。
+// 段のある里（v0.31.0。ChatGPT の里の設計 #11 の P0）: 広場（0m）と、3m 低い「炉の段」（工房）。v0.35.0 の P1 で 5 つの段になった（tests/hub-village.test.ts）。
 // - 地面の高さ: 0 より低い段差も、重なる段差の最も高いもの（無ければ 0）
 // - 段の縁から落ちない（stepDown）。階段と踊り場を下りて、上って、行き来できる
 // - 施設は、同じ段にいる時だけ開く。施設・人・建物の当たりは、その段の床に立つ
@@ -10,7 +10,7 @@ import { validateHub } from '../src/data/validators';
 import { FACILITY_FLOOR_TOL, nearestFacility } from '../src/game/hub';
 import { Simulation } from '../src/game/sim';
 import { World, groundAt } from '../src/game/world';
-import { RAIL_DROP, buildTerraces, holedGround, railLines, terraceWalls } from '../src/render/terraces';
+import { RAIL_DROP, buildTerraces, holedGround, railLines, railRuns, terraceWalls } from '../src/render/terraces';
 import { baseOptions, loadContent } from './helpers';
 
 let content: Content;
@@ -51,18 +51,18 @@ describe('段のある里: 地面と歩き方（v0.31.0）', () => {
     expect(groundAt(plats, 15, 5)).toBe(0);
     expect(groundAt(plats, 21, 1)).toBe(0.8);
     expect(groundAt([], 3, 3)).toBe(0);
-    // 里の段: 広場は 0、炉の段は -3、階段は 1/6m ずつ、踊り場は -1.5
+    // 里の段: 広場は 0、炉の段は -3、西の階段は 1/6m ずつ、踊り場は -1.5
     expect(groundAt(map.platforms, 0, 0)).toBe(0);
     expect(groundAt(map.platforms, -30, 5)).toBe(-3);
     expect(groundAt(map.platforms, -20, 8.5)).toBe(-1.5);
-    const stairs = map.platforms.filter((p) => p.look === 'stone').map((p) => p.h).sort((a, b) => b - a);
-    expect(stairs.length).toBe(17);
-    stairs.reduce((prev, h) => {
+    const west = map.platforms.filter((p) => p.look === 'stone' && p.minZ >= 6 && p.maxZ <= 11 && p.minX >= -23.7 && p.maxX <= -16.8).map((p) => p.h).sort((a, b) => b - a);
+    expect(west.length).toBe(17);
+    west.reduce((prev, h) => {
       expect(prev - h).toBeLessThanOrEqual(map.stepUp);
       expect(prev - h).toBeLessThanOrEqual(map.stepDown!);
       return h;
     }, 0);
-    expect(stairs.at(-1)! - -3).toBeLessThanOrEqual(map.stepDown!);
+    expect(west.at(-1)! - -3).toBeLessThanOrEqual(map.stepDown!);
   });
 
   it('段の縁から落ちない: 広場の高さから炉の段へ、柵の所を歩いても、体が縁にかからない所で止まる。階段の脇からも下りられない', () => {
@@ -148,27 +148,44 @@ describe('段のある里: 地面と歩き方（v0.31.0）', () => {
 });
 
 describe('段のある里: 見た目（地面の穴・床・擁壁・柵）', () => {
-  it('擁壁: 炉の段の縁は 3m（階段の口を除く）、階段は 1/6m の蹴上げ、階段の脇は段の高さから 0m まで。面は低い側を向く', () => {
-    const walls = terraceWalls(map.platforms);
-    // 炉の段の東の縁（x = -23.7。面は西＝低い側を向く）: 北と南は 3m、階段の口（z 7〜10）は最後の蹴上げ
+  it('擁壁: 炉の段の東の縁は 3m（階段の口を除く）、階段は 1/6m の蹴上げ。どの壁も、面は低い側を向き、高さは床と合う。外周の上には作らない', () => {
+    const walls = terraceWalls(map.platforms, map.bounds);
+    // 炉の段の東の縁（x = -23.7。面は西＝低い側を向く）: 北と南は 3m、階段の口（z 7〜10）は最後の蹴上げ。v0.35.0 から、炉の段は庭の縁（z -17）まで
     const east = walls.filter((w) => w.nx === -1 && Math.abs(w.ax + 23.7) < 1e-6);
-    expect(east.map((w) => [Math.min(w.az, w.bz), Math.max(w.az, w.bz), +(w.hi - w.lo).toFixed(4)]).sort((a, b) => a[0]! - b[0]!)).toEqual([[-4, 7, 3], [7, 10, 0.1667], [10, 15, 3]]);
-    // 蹴上げは 17 + 踊り場の前後
-    const risers = walls.filter((w) => w.hi - w.lo < RAIL_DROP && w.nx === -1);
+    expect(east.map((w) => [Math.min(w.az, w.bz), Math.max(w.az, w.bz), +(w.hi - w.lo).toFixed(4)]).sort((a, b) => a[0]! - b[0]!)).toEqual([[-17, 7, 3], [7, 10, 0.1667], [10, 15, 3]]);
+    // 西の階段の蹴上げは 17 + 踊り場の前後
+    const risers = walls.filter((w) => w.hi - w.lo < RAIL_DROP && w.nx === -1 && w.az >= 6 && w.bz <= 11 && w.ax >= -23.71 && w.ax <= -16.79);
     expect(risers.length).toBeGreaterThanOrEqual(17);
     for (const w of walls) {
-      // 面の向きの側が低い（groundAt で、面の少し前は lo、少し後ろは hi）
-      const mx = (w.ax + w.bx) / 2, mz = (w.az + w.bz) / 2;
+      // 面の向きの側が低い（groundAt で、面の少し前は lo、少し後ろは hi）。外周の外へ延ばした所は測らない
+      const mx = (Math.max(w.ax, map.bounds.minX) + Math.min(w.bx, map.bounds.maxX)) / 2, mz = (Math.max(w.az, map.bounds.minZ) + Math.min(w.bz, map.bounds.maxZ)) / 2;
       expect(groundAt(map.platforms, mx + w.nx * 0.01, mz + w.nz * 0.01)).toBeCloseTo(w.lo, 6);
       expect(groundAt(map.platforms, mx - w.nx * 0.01, mz - w.nz * 0.01)).toBeCloseTo(w.hi, 6);
+      // 外周の上の縁は無い
+      if (w.nx !== 0) expect(w.ax !== map.bounds.minX && w.ax !== map.bounds.maxX).toBe(true);
+      else expect(w.az !== map.bounds.minZ && w.az !== map.bounds.maxZ).toBe(true);
     }
-    // 柵は、下りが 0.5m 以上の縁だけ。階段の上の数段の脇と、蹴上げには無い
+    // 柵は、下りが 0.5m 以上の縁だけ（水面と、歩いては行けない岩の床の上には立てない）
     const rails = railLines(walls);
     expect(rails.length).toBeGreaterThan(4);
-    for (const r of rails) expect(r.hi - r.lo).toBeGreaterThanOrEqual(RAIL_DROP);
+    for (const r of rails) {
+      expect(r.hi - r.lo).toBeGreaterThanOrEqual(RAIL_DROP);
+      expect(['water', 'rock']).not.toContain(r.upper);
+    }
+    // 階段の脇の柵は、段ごとではなく、段に沿って 1 本につなぐ。炉の段から庭へ下りる石段 b の西の脇（x -30）は、段に沿って斜めに下りる 1 本
+    const runs = railRuns(rails);
+    expect(runs.length).toBeLessThan(rails.length);
+    const bWest = runs.filter((r) => !r.byX && Math.abs(r.at + 30) < 1e-6 && r.s0 >= -23.31 && r.s1 <= -16.99);
+    expect(bWest.length).toBe(1);
+    const run = bWest[0]!;
+    expect(run.s1 - run.s0).toBeGreaterThan(6);
+    // 元の線は、北（炉の段の側）ほど高く、なめらかに下がる。柱は段の上に立つ
+    expect(run.profile(run.s1 - 0.2)).toBeGreaterThan(run.profile((run.s0 + run.s1) / 2));
+    expect(run.profile((run.s0 + run.s1) / 2)).toBeGreaterThan(run.profile(run.s0 + 0.2));
+    expect(run.floor(-20.05)).toBeCloseTo(groundAt(map.platforms, -28.5, -20.05), 6);
   });
 
-  it('地面の板は、低い段差の中にます目を残さない。床・擁壁・柵は 4 つの面（描画 4 回）で、高さがデータと合う', () => {
+  it('地面の板は、段差の中にます目を残さない。床・擁壁・柵は、床の絵の種類と、石積み・岩・小滝・水・木の面（描画はその数）で、高さがデータと合う', () => {
     const low = map.platforms.filter((p) => p.h < 0);
     const g = holedGround(-9, 0, 326, 294, low);
     const pos = g.getAttribute('position'), idx = g.getIndex()!;
@@ -178,11 +195,12 @@ describe('段のある里: 見た目（地面の穴・床・擁壁・柵）', ()
       c.multiplyScalar(1 / 3);
       expect(low.some((p) => c.x > p.minX && c.x < p.maxX && c.z > p.minZ && c.z < p.maxZ), `${c.x},${c.z}`).toBe(false);
     }
-    const group = buildTerraces(map.platforms, 1.25);
+    const group = buildTerraces(map.platforms, 1.25, map.bounds);
     const kinds = group.children.map((m) => (m as Mesh).userData.terrace as string);
-    expect(kinds.sort()).toEqual(['rail', 'stone', 'wall', 'yard']);
+    expect(kinds.sort()).toEqual(['cliff', 'fall', 'grass', 'rail', 'rock', 'stone', 'wall', 'water', 'yard']);
+    // 土の床は、炉の段（-3）と水音の庭（-10）だけ
     const floor = group.children.find((m) => m.userData.terrace === 'yard') as Mesh<BufferGeometry>;
     const ys = new Set(Array.from({ length: floor.geometry.getAttribute('position').count }, (_, i) => floor.geometry.getAttribute('position').getY(i)));
-    expect([...ys]).toEqual([-3]);
+    expect([...ys].sort((a, b) => a - b)).toEqual([-10, -3]);
   });
 });

@@ -11,6 +11,9 @@ import { validateBoard, validateDeliveries, validateSupport } from './questBoard
 import {
   ARMOR_SLOTS,
   ELEMENT_IDS,
+  HUB_PROP_ARTS,
+  HUB_SCENERY_KINDS,
+  PLATFORM_LOOKS,
   FINISH_STATES,
   STATUS_KINDS,
   GATHER_BAG,
@@ -196,7 +199,7 @@ function validateMap(m: MapDef, errors: string[]): void {
   if (m.stepDown !== undefined && !(isNum(m.stepDown) && m.stepDown > 0)) errors.push(`${w}: stepDown が不正`);
   for (const p of m.platforms ?? []) {
     if (!(p.maxX > p.minX) || !(p.maxZ > p.minZ) || !isNum(p.h)) errors.push(`${w}: platform が不正`);
-    if (p.look !== undefined && p.look !== 'yard' && p.look !== 'stone') errors.push(`${w}: platform の look ${String(p.look)} が不明`);
+    if (p.look !== undefined && !PLATFORM_LOOKS.includes(p.look)) errors.push(`${w}: platform の look ${String(p.look)} が不明`);
   }
   for (const r of m.rocks ?? []) if (r.y !== undefined && !(isNum(r.y) && r.y < r.h)) errors.push(`${w}: rock の y が不正（下の端は上の端より低く）`);
 }
@@ -672,6 +675,13 @@ export function validateHub(c: Content, errors: string[]): void {
     const n = (h.facilities ?? []).filter((f) => f.kind === kind).length;
     if (n !== 1) errors.push(`hub: 施設 ${kind} が ${n} 個（1 個にする）`);
   }
+  // 施設の前（立つ輪）には、その施設の建物のほかの当たりがかからない（v0.35.0。建物と飾り・小物が増えたので）
+  for (const f of h.facilities ?? []) {
+    for (const r of map.rocks) {
+      if (f.building && Math.hypot(r.x - f.building.x, r.z - f.building.z) < 0.01) continue;
+      if (Math.hypot(r.x - f.x, r.z - f.z) < r.r + f.r * 0.5) errors.push(`hub facility ${f.id}: 施設の前（立つ輪）に、当たり（${r.x}, ${r.z}）がかかる`);
+    }
+  }
   for (const f of h.facilities ?? []) {
     const w = `hub facility ${f.id}`;
     if (ids.has(f.id)) errors.push(`${w}: id が重複`);
@@ -720,6 +730,48 @@ export function validateHub(c: Content, errors: string[]): void {
     else if (Math.abs((body.y ?? 0) - floor) > 0.01) errors.push(`${w}: 人の当たりの下の端（y）が床の高さと違う`);
     for (const f of h.facilities ?? []) if (Math.hypot(f.x - n.x, f.z - n.z) < f.r * 0.5 + 0.8) errors.push(`${w}: 施設 ${f.id} の前（立つ輪）に近すぎる`);
     if (Math.hypot(map.spawn.x - n.x, map.spawn.z - n.z) < 2) errors.push(`${w}: 出発地点に近すぎる`);
+  }
+  // 里の 5 つの段（v0.35.0）: 外周の出口・建物と飾り・小物
+  const b = map.bounds;
+  const sceneIds = new Set<string>([...ids]);
+  for (const g of h.gates ?? []) {
+    const w = `hub gate ${g.id}`;
+    if (sceneIds.has(g.id)) errors.push(`${w}: id が重複`);
+    sceneIds.add(g.id);
+    if (typeof g.name !== 'string' || g.name === '') errors.push(`${w}: name が無い`);
+    const onEdge = Math.min(Math.abs(g.x - b.minX), Math.abs(g.x - b.maxX), Math.abs(g.z - b.minZ), Math.abs(g.z - b.maxZ)) < 0.6;
+    if (!(isNum(g.x) && isNum(g.z)) || !onEdge || g.x < b.minX - 0.6 || g.x > b.maxX + 0.6 || g.z < b.minZ - 0.6 || g.z > b.maxZ + 0.6) errors.push(`${w}: 外周の上に無い`);
+  }
+  /** (x, z) の床に下の端（y）を置いた当たりで、中心が near m 以内のもの */
+  const bodyAt = (x: number, z: number, near: number): MapDef['rocks'][number] | undefined => {
+    const floor = groundAt(map.platforms, x, z);
+    return map.rocks.find((r) => Math.hypot(r.x - x, r.z - z) <= near && Math.abs((r.y ?? 0) - floor) < 0.01);
+  };
+  for (const s of h.scenery ?? []) {
+    const w = `hub scenery ${s.id}`;
+    if (sceneIds.has(s.id)) errors.push(`${w}: id が重複`);
+    sceneIds.add(s.id);
+    if (!HUB_SCENERY_KINDS.includes(s.kind)) errors.push(`${w}: kind ${String(s.kind)} が不明`);
+    if (typeof s.name !== 'string' || s.name === '') errors.push(`${w}: name が無い`);
+    if (!(isNum(s.x) && isNum(s.z) && isNum(s.yaw)) || s.x < b.minX || s.x > b.maxX || s.z < b.minZ || s.z > b.maxZ) {
+      errors.push(`${w}: 位置が不正（里の外）`);
+      continue;
+    }
+    // 畑は歩ける（当たりが無い）。物干しは柱の 2 本。ほかは、建物の近く（3m 以内）に、床に立つ当たりがある
+    if (s.kind !== 'field' && !bodyAt(s.x, s.z, 3)) errors.push(`${w}: 当たり（map の rocks。下の端が床）が無い`);
+    if (Math.hypot(map.spawn.x - s.x, map.spawn.z - s.z) < 2.5) errors.push(`${w}: 出発地点に近すぎる`);
+  }
+  for (const p of h.props ?? []) {
+    const w = `hub prop ${p.id}`;
+    if (sceneIds.has(p.id)) errors.push(`${w}: id が重複`);
+    sceneIds.add(p.id);
+    if (!(HUB_PROP_ARTS as readonly string[]).includes(p.art)) errors.push(`${w}: art ${p.art} が不明`);
+    if (!(isNum(p.x) && isNum(p.z))) {
+      errors.push(`${w}: 位置が不正`);
+      continue;
+    }
+    const body = bodyAt(p.x, p.z, 0.01);
+    if (!body || body.r > 1.3) errors.push(`${w}: 当たり（map の rocks、半径 1.3m まで。下の端が床）が無い`);
   }
 }
 

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "hub.village",
   "name": "灯継ぎの里",
-  "note": "拠点（v0.12.0、docs/spec.md 19 章）。里を歩いて、施設の前（x, z から半径 r）で主ボタンを押すと、その施設の画面が開く。建物の当たり（円柱）は maps/hub_village.json の rocks で、並びは facilities と同じ順（工房・商店・依頼板・装備箱）+ 広場の灯。建物は、src/render/hubScene.ts が、簡単な立体に、正面と右側面の図（依頼 8 の D）を貼って作る（v0.13.0、docs/spec.md 21 章）。位置はすべて机上の値。v0.31.0（ChatGPT の里の設計 #11 の P0）: 工房とロクハは、広場より 3m 低い「炉の段」（maps/hub_village.json の platforms。西の階段と踊り場で下りる）。施設の前は、同じ段にいる時だけ開く（src/game/hub.ts）。",
+  "note": "拠点（v0.12.0、docs/spec.md 19 章）。里を歩いて、施設の前（x, z から半径 r）で主ボタンを押すと、その施設の画面が開く。v0.35.0（ChatGPT の里の設計 #11 の P1）から、里は 5 つの段（水音の庭 -10m・炉の段 -3m・灯の広場 0m・暮らしの段 +8m・灯見の台 +22m）と 2 つの回遊路（生活の道・見晴らしの道）。段と階段の形（maps/hub_village.json の platforms）と、当たり（rocks）は、この表から tools/gen-hub.py（npm run hub:gen）が作る（手で編集しない）。当たりの並びは、施設（facilities の順）→ 建物と飾り（scenery の順）→ 人（npcs の順）→ 小物（props の順）。施設の前は、同じ段にいる時だけ開く（src/game/hub.ts）。建物は src/render/hubScene.ts と src/render/villageScene.ts が、簡単な立体で描く（施設 4 つは、正面と右側面の図を貼る。v0.13.0）。位置はすべて机上の値。",
   "mapId": "map.hub.village",
   "facilities": [
     {"id": "workshop", "kind": "workshop", "name": "工房", "action": "工房に入る", "summary": "武器と防具を強化する", "x": -29.1, "z": 10, "r": 3.2, "building": {"x": -34, "z": 10, "yaw": 1.5708}},
@@ -10,10 +10,56 @@
     {"id": "board", "kind": "quest", "name": "依頼板", "action": "依頼を見る", "summary": "依頼を受けて狩りへ出る。訓練場へ行く", "x": 0, "z": 10.4, "r": 3.0, "building": {"x": 0, "z": 13.2, "yaw": 3.1416}},
     {"id": "chest", "kind": "chest", "name": "装備箱", "action": "装備箱を開ける", "summary": "武器と防具を替える。持ち物とデータ", "x": -15.2, "z": -5, "r": 3.0, "building": {"x": -18.5, "z": -5, "yaw": 1.5708}}
   ],
+  "gates": [
+    {"id": "gate.hunt", "name": "狩り場への道", "x": 24, "z": -9, "marker": true, "trail": true},
+    {"id": "gate.valley", "name": "谷への道（閉じている）", "x": 16, "z": -44, "trail": true}
+  ],
+  "scenery": [
+    {"id": "lamp.plaza", "kind": "lamp", "name": "広場の灯", "x": -6, "z": 1.5, "yaw": 0},
+    {"id": "records.board", "kind": "records", "name": "記録台", "x": -3.6, "z": 12.4, "yaw": 3.1416},
+    {"id": "shed.forge", "kind": "shed", "name": "半屋外の作業場", "x": -33.5, "z": -9, "yaw": 1.5708},
+    {"id": "logs.forge", "kind": "logs", "name": "丸太置き場", "x": -37.6, "z": -14.2, "yaw": 0},
+    {"id": "crates.forge", "kind": "crates", "name": "材料の箱", "x": -37.8, "z": -2.6, "yaw": 0.4},
+    {"id": "tank.forge", "kind": "tank", "name": "冷却槽", "x": -38.3, "z": 5.4, "yaw": 0},
+    {"id": "anvil.forge", "kind": "anvil", "name": "金床", "x": -29.6, "z": 12.9, "yaw": 0.5},
+    {"id": "mill.garden", "kind": "mill", "name": "水車小屋", "x": -39.2, "z": -31, "yaw": 1.5708},
+    {"id": "wash.garden", "kind": "wash", "name": "洗い場", "x": -40, "z": -22.2, "yaw": 1.5708},
+    {"id": "store.garden", "kind": "storehouse", "name": "資材庫", "x": -20, "z": -40, "yaw": 0},
+    {"id": "lift.garden", "kind": "lift", "name": "荷揚げの昇降台", "x": -36.5, "z": -18.6, "yaw": 0},
+    {"id": "crates.dock", "kind": "crates", "name": "荷揚げ場の箱", "x": -34.6, "z": -25.2, "yaw": -0.3},
+    {"id": "inn.living", "kind": "inn", "name": "狩人の宿", "x": -33, "z": 31, "yaw": 3.1416},
+    {"id": "firewood.inn", "kind": "firewood", "name": "薪棚", "x": -27.2, "z": 34.6, "yaw": 3.1416},
+    {"id": "house.a", "kind": "house", "name": "住居", "x": -13, "z": 28, "yaw": 3.1416},
+    {"id": "house.b", "kind": "house", "name": "住居", "x": 13.5, "z": 33, "yaw": 3.1416},
+    {"id": "field.living", "kind": "field", "name": "小さな畑", "x": -23, "z": 37.4, "yaw": 0},
+    {"id": "laundry.living", "kind": "laundry", "name": "物干し", "x": -4, "z": 26.5, "yaw": 0},
+    {"id": "hall.lookout", "kind": "hall", "name": "集会所", "x": -25, "z": 54, "yaw": 3.1416},
+    {"id": "survey.lookout", "kind": "survey", "name": "調査の机", "x": -11, "z": 47.6, "yaw": 3.1416},
+    {"id": "watch.lookout", "kind": "watch", "name": "見張りの灯", "x": 13, "z": 55.5, "yaw": 3.1416}
+  ],
   "npcs": [
     {"id": "npc.minagi", "name": "ミナギ", "facility": "board", "art": "minagi", "x": 2.6, "z": 11.4, "yaw": -2.8966},
     {"id": "npc.rokuha", "name": "ロクハ", "facility": "workshop", "art": "smith", "x": -30.5, "z": 12.6, "yaw": 2.112},
     {"id": "npc.isane", "name": "イサネ", "facility": "shop", "art": "merchant", "x": 10.6, "z": 6.4, "yaw": -2.042},
     {"id": "npc.senaki", "name": "セナキ", "art": "senaki", "x": -4.5, "z": -11.5, "yaw": 1.0637}
+  ],
+  "props": [
+    {"id": "prop.lamp.balcony", "art": "route_lamp_on", "x": 22.6, "z": -21.0},
+    {"id": "prop.lamp.a", "art": "route_lamp_on", "x": 7.9, "z": -21.0},
+    {"id": "prop.lamp.b", "art": "route_lamp_on", "x": -25.9, "z": -27.4},
+    {"id": "prop.lamp.garden", "art": "route_lamp_on", "x": -25.2, "z": -35.6},
+    {"id": "prop.lamp.mill", "art": "route_lamp_on", "x": -35.6, "z": -27.6},
+    {"id": "prop.lamp.c", "art": "route_lamp_on", "x": -17.3, "z": 21.0},
+    {"id": "prop.lamp.living", "art": "route_lamp_on", "x": -26.2, "z": 21.6},
+    {"id": "prop.lamp.d", "art": "route_lamp_on", "x": -22.7, "z": 44.0},
+    {"id": "prop.lamp.d_foot", "art": "route_lamp_on", "x": -2.4, "z": 38.6},
+    {"id": "prop.lamp.bridge_w", "art": "route_lamp_on", "x": -2.7, "z": 49.4},
+    {"id": "prop.lamp.bridge_e", "art": "route_lamp_on", "x": 2.7, "z": 53.6},
+    {"id": "prop.lamp.e", "art": "route_lamp_on", "x": 19.9, "z": 27.0},
+    {"id": "prop.lamp.f", "art": "route_lamp_on", "x": 14.3, "z": 21.0},
+    {"id": "prop.lamp.valley", "art": "route_lamp_off", "x": 19.0, "z": -42.8},
+    {"id": "prop.sign.valley", "art": "closed_route_sign", "x": 16, "z": -42.7},
+    {"id": "prop.cart.dock", "art": "supply_cart", "x": -32.8, "z": -21.6},
+    {"id": "prop.parts.store", "art": "replaceable_parts", "x": -16.2, "z": -37.4}
   ]
 }

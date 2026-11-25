@@ -13,7 +13,16 @@ export const SOUND_IDS = [
   // 大型 11 種（v0.17.0）。どれも合成音の仮素材
   'beast_cry', 'bird_screech', 'insect_buzz', 'hiss', 'gust', 'splash', 'bell_boom', 'zap', 'ice_crack', 'mist_pop', 'shell_clack', 'status_on',
   'item_drink', 'item_heal', 'item_fail', 'trap_set', 'trap_armed', 'trap_trigger', 'orb_throw', 'tranq_hit', 'capture', 'carve', 'carve_get',
+  // 里の暮らし（v0.35.0）: 鍛冶の槌・水車のきしみ・灯見の台の遠い鐘
+  'forge_clank', 'wheel_creak', 'bell_far',
 ] as const;
+
+/** 里の音の大きさ（v0.35.0。0〜1）: 沢・炉・風。環境音の音量（設定の「環境音」）の中で、ゆっくり変える */
+export interface AmbienceLevels {
+  water: number;
+  forge: number;
+  wind: number;
+}
 
 export class AudioSystem {
   private ctx: AudioContext | null = null;
@@ -21,6 +30,9 @@ export class AudioSystem {
   private buses!: Record<Bus, GainNode>;
   private noise!: AudioBuffer;
   private settings: Settings;
+  /** 里の音（v0.35.0）: 沢・炉・風の、大きさの節 */
+  private amb: Record<keyof AmbienceLevels, GainNode> | null = null;
+  private ambWant: AmbienceLevels = { water: 0, forge: 0, wind: 1 };
 
   constructor(settings: Settings) {
     this.settings = settings;
@@ -51,9 +63,56 @@ export class AudioSystem {
       }
       this.applySettings(this.settings);
       this.startWind();
+      this.startAmbience();
     }
     await this.resume();
   }
+
+  /** 沢（明るい雑音を、ゆっくり揺らす）と炉（低い雑音）の、鳴り続ける音。大きさは setAmbience で変える */
+  private startAmbience(): void {
+    const ctx = this.ctx!;
+    const loop = (lo: number, hi: number, wobble: number, rate: number): GainNode => {
+      const src = ctx.createBufferSource();
+      src.buffer = this.noise;
+      src.loop = true;
+      src.playbackRate.value = 0.93;
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass';
+      hp.frequency.value = lo;
+      const lp = ctx.createBiquadFilter();
+      lp.type = 'lowpass';
+      lp.frequency.value = hi;
+      const shake = ctx.createGain();
+      shake.gain.value = 1;
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = rate;
+      const depth = ctx.createGain();
+      depth.gain.value = wobble;
+      lfo.connect(depth).connect(shake.gain);
+      const level = ctx.createGain();
+      level.gain.value = 0;
+      src.connect(hp).connect(lp).connect(shake).connect(level).connect(this.buses.env);
+      src.start(0, Math.random());
+      lfo.start();
+      return level;
+    };
+    const water = loop(380, 2600, 0.25, 0.7);
+    const forge = loop(40, 280, 0.35, 0.33);
+    this.amb = { water, forge, wind: this.windLevel! };
+    this.setAmbience(this.ambWant);
+  }
+
+  /** 里の音の大きさ（0〜1）。急に変わらないよう、0.4 秒ほどで近づける */
+  setAmbience(a: AmbienceLevels): void {
+    this.ambWant = { ...a };
+    if (!this.ctx || !this.amb) return;
+    const t = this.ctx.currentTime;
+    this.amb.water.gain.setTargetAtTime(0.1 * Math.min(1, Math.max(0, a.water)), t, 0.4);
+    this.amb.forge.gain.setTargetAtTime(0.09 * Math.min(1, Math.max(0, a.forge)), t, 0.4);
+    this.amb.wind.gain.setTargetAtTime(Math.min(1.6, Math.max(0, a.wind)), t, 0.6);
+  }
+
+  private windLevel: GainNode | null = null;
 
   async resume(): Promise<boolean> {
     if (!this.ctx) return false;
@@ -89,7 +148,10 @@ export class AudioSystem {
     const lfoGain = ctx.createGain();
     lfoGain.gain.value = 0.025;
     lfo.connect(lfoGain).connect(g.gain);
-    src.connect(lp).connect(g).connect(this.buses.env);
+    // 風の大きさ（v0.35.0。里の高い段ほど強い。setAmbience）
+    this.windLevel = ctx.createGain();
+    this.windLevel.gain.value = 1;
+    src.connect(lp).connect(g).connect(this.windLevel).connect(this.buses.env);
     src.start();
     lfo.start();
   }
@@ -354,6 +416,21 @@ export class AudioSystem {
         break;
       case 'ui':
         this.tone('triangle', 660, 880, 0.07, 0.1);
+        break;
+      // ---- 里の暮らし（v0.35.0。合成音の仮素材）----
+      case 'forge_clank':
+        this.tone('triangle', 1760, 1690, 0.16, 0.11 * k);
+        this.tone('sine', 3520, 3400, 0.28, 0.035 * k);
+        this.noiseBurst(0.05, 'highpass', 3000, 5000, 0.18 * k);
+        break;
+      case 'wheel_creak':
+        this.noiseBurst(0.38, 'bandpass', 520, 380, 0.14 * k, 7);
+        this.tone('sawtooth', 150, 128, 0.3, 0.018 * k, 0.05);
+        break;
+      case 'bell_far':
+        this.tone('sine', 587, 585, 2.6, 0.07 * k);
+        this.tone('sine', 1180, 1176, 1.6, 0.025 * k);
+        this.tone('sine', 1460, 1455, 1.0, 0.012 * k);
         break;
       default:
         return false;

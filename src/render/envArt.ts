@@ -71,10 +71,10 @@ const loader = new TextureLoader();
 const cache = new Map<string, { tex: Texture | null; waiting: ((t: Texture) => void)[]; failed: boolean }>();
 
 /** 絵を読む（同じ絵は 1 回だけ）。読めたら done を呼ぶ。読めなければ呼ばない（平均の色のまま）。 */
-function loadEnv(file: string, setup: (t: Texture) => void, done: (t: Texture) => void): void {
+function loadEnv(file: string, setup: (t: Texture) => void, done: (t: Texture) => void, dir = DIR): void {
   // 画面の無い所（Node の検査）では読まない（平均の色のまま）
   if (typeof document === 'undefined') return;
-  let e = cache.get(file);
+  let e = cache.get(dir + file);
   if (e?.tex) {
     done(e.tex);
     return;
@@ -84,10 +84,10 @@ function loadEnv(file: string, setup: (t: Texture) => void, done: (t: Texture) =
     return;
   }
   e = { tex: null, waiting: [done], failed: false };
-  cache.set(file, e);
+  cache.set(dir + file, e);
   const entry = e;
   loader.load(
-    assetUrl(`${DIR}${file}.webp`),
+    assetUrl(`${dir}${file}.webp`),
     (t) => {
       t.colorSpace = SRGBColorSpace;
       setup(t);
@@ -104,9 +104,12 @@ function loadEnv(file: string, setup: (t: Texture) => void, done: (t: Texture) =
   );
 }
 
-/** 絵を読む（同じ絵は 1 回だけ。v0.22.0 の岩と崖の図集・岩肌も、ここから読む）。setup は読めた時に 1 回、done は使う所ごとに呼ぶ */
-export function loadEnvTexture(file: string, setup: (t: Texture) => void, done: (t: Texture) => void): void {
-  loadEnv(file, setup, done);
+/**
+ * 絵を読む（同じ絵は 1 回だけ。v0.22.0 の岩と崖の図集・岩肌も、ここから読む）。setup は読めた時に 1 回、done は使う所ごとに呼ぶ。
+ * dir は置き場所（v0.35.0。里の小物の図集は assets/textures/props/）。読めたかどうかは、景色の絵と一緒に数える
+ */
+export function loadEnvTexture(file: string, setup: (t: Texture) => void, done: (t: Texture) => void, dir = DIR): void {
+  loadEnv(file, setup, done, dir);
 }
 
 /** 読み終わった絵の数と、頼んだ絵の数（検査用）。 */
@@ -259,7 +262,7 @@ export class SpriteField {
    * 1 種類を count 個、pick が返す場所へ置く（pick が null を返したら、その 1 個は置かない）。
    * scale は大きさの幅 [最小, 最大]。
    */
-  scatter(sheet: { file: string }, cell: SpriteCell, count: number, pick: () => { x: number; z: number } | null, scale: [number, number] = [0.8, 1.25], vary = 0): void {
+  scatter(sheet: { file: string }, cell: SpriteCell, count: number, pick: () => { x: number; z: number; y?: number } | null, scale: [number, number] = [0.8, 1.25], vary = 0): void {
     if (count <= 0) return;
     let mat = this.mats.get(sheet.file);
     if (!mat) {
@@ -276,7 +279,7 @@ export class SpriteField {
       if (!p) continue;
       const s = scale[0] + this.rng.next() * (scale[1] - scale[0]);
       q.setFromAxisAngle(up, this.rng.next() * 6.283);
-      m4.compose(at.set(p.x, 0, p.z), q, sc.set(s, s * (0.85 + this.rng.next() * 0.3), s));
+      m4.compose(at.set(p.x, p.y ?? 0, p.z), q, sc.set(s, s * (0.85 + this.rng.next() * 0.3), s));
       mesh.setMatrixAt(n, m4);
       // 1 本ずつ、明るさと色み（黄み・青み）を少し変える（同じ絵が並んで見えないように）
       if (vary > 0) {

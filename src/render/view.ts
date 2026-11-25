@@ -1,6 +1,6 @@
 // 描画のまとめ役。simulation の状態を読んで、仮モデル・カメラ・エフェクト・検証表示を更新する。
 // ここから simulation へ値を書き戻すことはしない（描画補間や骨の姿勢を計算の正本にしない）。
-import { CylinderGeometry, DoubleSide, Group, IcosahedronGeometry, Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshStandardMaterial, RingGeometry, Scene, Vector3, WebGLRenderer, type Object3D } from 'three';
+import { CylinderGeometry, DoubleSide, Group, IcosahedronGeometry, Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshStandardMaterial, RingGeometry, Scene, Vector2, Vector3, WebGLRenderer, type Object3D } from 'three';
 import { angleDiff, fromArr, lerpV, norm, smoothstep, toWorld, type V3 } from '../core/math';
 import { STATUS_KINDS, type Content, type ElementId, type MonsterDef, type StatusKind } from '../data/schemas';
 import { inWindow, renderTick } from '../game/action';
@@ -13,6 +13,7 @@ import type { Settings } from '../save/settings';
 import { blobShadow, buildArena, buildAreaGroup, setupSky, type Arena } from './arena';
 import { WIND } from './envArt';
 import { buildHubGroup } from './hubScene';
+import type { Ambience, Village } from './villageScene';
 import { buildNpcSprites, updateNpcSprites } from './npcSprites';
 import { buildErrandProps, updateErrandProps, type ErrandProps } from './errandProps';
 import { FollowCamera } from './camera';
@@ -181,6 +182,12 @@ export class GameView {
   private viewOffset = false;
   /** 見た目の側から鳴らす音（モンスターの足音など）。App が音声へつなぐ。 */
   onSound: ((id: string, intensity: number) => void) | null = null;
+  /** 里の音の大きさ（v0.35.0。沢・炉・風）。0.25 秒ごと。里でない所では、沢と炉は 0、風は 1。App が音声へつなぐ */
+  onAmbience: ((a: Ambience) => void) | null = null;
+  private ambienceTimer = 1;
+  /** 里の建物と暮らし（v0.35.0。里の時だけ） */
+  private village: Village | null = null;
+  private tmpSize = new Vector2();
   /** モンスターの見た目が出す効果: 足音と土ぼこり。近いほど大きく、画面も少し揺れる。 */
   private monsterFx = {
     px: 0,
@@ -231,8 +238,9 @@ export class GameView {
       this.arena = { group: new Group(), ...setupSky(this.scene, settings.shadows, 'basin') };
       this.showArea(sim);
     } else if (sim.world.map.id === content.hub.mapId) {
-      // 拠点（里）: 建物と広場
-      const group = buildHubGroup(content.hub, sim.world.map);
+      // 拠点（里）: 建物と広場。v0.35.0 から、5 つの段と暮らし（水車・昇降台・煙・音）
+      const { group, village } = buildHubGroup(content.hub, sim.world.map);
+      this.village = village;
       this.scene.add(group);
       // 里に立つ人（v0.23.0。絵の板。毎フレーム、カメラの方へ向ける）
       this.npcs = buildNpcSprites(content.hub.npcs ?? [], sim.world.map.platforms);
@@ -727,13 +735,29 @@ export class GameView {
       this.viewOffset = false;
       this.cam.camera.clearViewOffset();
     }
-    this.arena.sun.target.position.set(pos.x, 0, pos.z);
-    this.arena.sun.position.set(pos.x - 14, 26, pos.z - 11);
+    // 光と影の向きの元は、狩人の足もとの高さ（v0.35.0。里の上の段でも、影の範囲が狩人の周りに来る）
+    this.arena.sun.target.position.set(pos.x, this.renderY, pos.z);
+    this.arena.sun.position.set(pos.x - 14, this.renderY + 26, pos.z - 11);
     // 空と遠景は、カメラと一緒に動かす（どこまで歩いても、近づかない）。雲は少しずつ流れる
     this.arena.backdrop.position.set(this.cam.camera.position.x, 0, this.cam.camera.position.z);
     // 採掘（v0.27.0）の間だけ、右手に採掘道具
     this.hunter.tool.visible = p.mode === 'action' && p.action?.def.clip === 'common_mine_01';
-    if (this.npcs) updateNpcSprites(this.npcs, this.cam.camera.position);
+    if (this.npcs) updateNpcSprites(this.npcs, this.cam.camera.position, this.time);
+    // 里の暮らし（v0.35.0）: 水車・昇降台・煙・しぶき・水の流れ。鍛冶の槌の火花と、里の音
+    this.ambienceTimer += dt;
+    if (this.village) {
+      this.renderer.getDrawingBufferSize(this.tmpSize);
+      const fr = this.village.update(dt, this.time, { x: pos.x, y: this.renderY + 1.5, z: pos.z }, this.tmpSize.y / 2);
+      for (const s of fr.sounds) this.onSound?.(s.id, s.k);
+      for (const sp of fr.sparks) this.sparks.emit(7, sp, 2.6, 1.4, 0.35, [1, 0.72, 0.32]);
+      if (this.ambienceTimer >= 0.25) {
+        this.ambienceTimer = 0;
+        this.onAmbience?.(fr.ambience);
+      }
+    } else if (this.ambienceTimer >= 0.25) {
+      this.ambienceTimer = 0;
+      this.onAmbience?.({ water: 0, forge: 0, wind: 1 });
+    }
     if (this.errandProps && sim.errand) updateErrandProps(this.errandProps, sim.errand, sim.areaId, sim.hunt?.phase === 'active', this.cam.camera.position, this.time);
     this.arena.sky?.setTime(this.time);
     WIND.value = this.time;

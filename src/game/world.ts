@@ -5,7 +5,7 @@
 // 外周は、四角（bounds）か、自然な形の多角形（shape。v0.20.0。src/game/areaShape.ts）。
 import { clamp, type V3 } from '../core/math';
 import type { SeededRng } from '../core/seededRng';
-import type { MapDef } from '../data/schemas';
+import type { MapDef, PlatformLook } from '../data/schemas';
 import { AreaShape, NavGraph, type Pt } from './areaShape';
 
 export interface Circle {
@@ -24,7 +24,7 @@ export interface AreaGeom {
   /** 岩・建物・人の当たり（円柱）。h は上の端の高さ、y は下の端（無ければ 0。カメラだけが使う） */
   rocks: { x: number; z: number; r: number; h: number; y?: number }[];
   /** 段差。h は上の面の高さ（0 より低くてもよい）。look は描き方だけ（simulation は読まない） */
-  platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number; look?: 'yard' | 'stone' }[];
+  platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number; look?: PlatformLook }[];
   /** 歩ける範囲の外周（v0.20.0。自然な形のエリア）。[x, z] の点の列。無ければ bounds の四角 */
   shape?: Pt[];
   /** 道しるべ（v0.20.0）。外周に遮られて目当てが見えない時に、ここを伝って歩く */
@@ -199,11 +199,16 @@ export class World {
     return g - pos.y <= area.stepUp + 1e-6 && here - g <= area.stepDown + 1e-6;
   }
 
-  /** 半径 radius のキャラクターを (dx, dz) だけ動かす。壁・岩・高い段差は抜けない。 */
+  /**
+   * 半径 radius のキャラクターを (dx, dz) だけ動かす。壁・岩・高い段差は抜けない。
+   * stepDown のある区画（里。v0.35.0）では、足が床に着いたまま歩いて下りる段（stepDown まで）は、床に付いたまま下りる
+   * （長い階段を下りる間、1 段ごとに少し宙に浮いて落ちる、を繰り返さない）。
+   */
   move(pos: V3, radius: number, dx: number, dz: number, others: readonly Circle[] = []): void {
     const area = this.areaAt(pos.x, pos.z);
     const g = this.geo(area);
     const b = area.bounds;
+    const grounded = area.stepDown !== undefined && Math.abs(pos.y - this.groundHeight(pos.x, pos.z)) < 1e-6;
     // 外周の中へ: 四角なら軸ごとに、自然な形なら、縁のいちばん近い点から内側へ
     const keepIn = (x: number, z: number): [number, number] =>
       g ? g.shape.constrain(x, z, radius) : [clamp(x, b.minX + radius, b.maxX - radius), clamp(z, b.minZ + radius, b.maxZ - radius)];
@@ -226,6 +231,7 @@ export class World {
     pos.z = nz;
     const h = this.groundHeight(nx, nz);
     if (h > pos.y) pos.y = h;
+    else if (grounded && pos.y - h <= area.stepDown! + 1e-6) pos.y = h;
   }
 
   /** 重力。接地していれば true。 */

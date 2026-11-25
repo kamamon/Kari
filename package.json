@@ -1,7 +1,7 @@
 {
   "name": "veilbound-hunters",
   "private": true,
-  "version": "0.34.0",
+  "version": "0.35.0",
   "description": "霧境の狩人 - VEILBOUND HUNTERS / 横画面・三人称3Dのオリジナル狩猟アクション",
   "type": "module",
   "engines": {
@@ -23,6 +23,8 @@
     "supplement:art": "python3 tools/supplement-art.py",
     "equipment:gen": "python3 -I tools/gen-equipment.py",
     "field:gen": "python3 tools/gen-field.py",
+    "hub:gen": "python3 tools/gen-hub.py",
+    "props:art": "python3 tools/prop-art.py",
     "monsters:gen": "python3 tools/gen-monsters.py && npm run monsters:bake",
     "monsters:bake": "CREATURE_BAKE=1 vitest run tests/creature-motion.test.ts",
     "monsters:art": "python3 tools/monster-art.py",

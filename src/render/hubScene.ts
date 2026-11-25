@@ -1,17 +1,16 @@
 // 拠点「灯継ぎの里」の見た目。施設の位置と当たりは public/data/hub.json と maps/hub_village.json が正本で、ここは描くだけ。
 // 建物は、箱・屋根・板の簡単な立体に、正面と右側面の図（依頼 8 の D、art-source/env/bld_*_v1.png）を貼ったもの（v0.13.0）。
 // 図の中の場所は px（1536 × 1024、左上が原点）で書く。立体の大きさは、依頼書の m の値（図の比率は、ほぼ合わせてあるが、製図ではない）。
-import {
-  BufferGeometry, CircleGeometry, CylinderGeometry, DoubleSide, Float32BufferAttribute, Group, IcosahedronGeometry, Mesh, MeshBasicMaterial, MeshLambertMaterial, RingGeometry,
-} from 'three';
+import { BufferGeometry, CircleGeometry, DoubleSide, Float32BufferAttribute, Group, Mesh, MeshBasicMaterial, RingGeometry } from 'three';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import type { FacilityDef, HubDef, MapDef } from '../data/schemas';
 import { groundAt } from '../game/world';
 import { buildAreaGroup, mergeStatic } from './arena';
 import { ENV_TILES, boxUv, cutoutMaterial, tileMaterial } from './envArt';
+import type { WallSegment } from './terraces';
+import { buildVillage, type Village } from './villageScene';
 
 const M = {
-  woodDark: new MeshLambertMaterial({ color: 0x4f3a28, flatShading: true }),
-  lamp: new MeshBasicMaterial({ color: 0xffd98a }),
   ring: new MeshBasicMaterial({ color: 0xd9b46a, transparent: true, opacity: 0.55, depthWrite: false, side: DoubleSide }),
 };
 
@@ -203,13 +202,17 @@ const PLAZA = { x: 0, z: 1, r: 9.5 };
 /**
  * 里の地形と建物。施設の前（立つ場所）には、青銅色の輪を置く。
  * 外周の岩壁・草は、狩場と同じ作り（buildAreaGroup）。地面は踏み固めた土、広場は石畳。
+ * v0.35.0: 5 つの段・階段・沢・吊り橋（terraces.ts）と、建物と暮らし（villageScene.ts）。外周の口は hub.json の gates
  */
-export function buildHubGroup(hub: HubDef, map: MapDef): Group {
+export function buildHubGroup(hub: HubDef, map: MapDef): { group: Group; village: Village } {
   // 建物の当たり（rocks）は、岩としては描かない
   const g = buildAreaGroup({
     bounds: map.bounds, rocks: map.rocks, platforms: map.platforms, drawRocks: false, kind: 'village', seed: 7001, wallHeight: [2.2, 2.2],
-    gates: [{ x: 0, z: map.bounds.minZ + 2, marker: true }],
-    clear: [{ ...PLAZA, r: PLAZA.r + 0.2 }, ...hub.facilities.map((f) => ({ x: f.x, z: f.z, r: f.r * 0.6 })), ...(hub.npcs ?? []).map((n) => ({ x: n.x, z: n.z, r: 0.7 }))],
+    gates: (hub.gates ?? []).map((q) => ({ x: q.x, z: q.z, marker: q.marker === true })),
+    clear: [
+      { ...PLAZA, r: PLAZA.r + 0.2 }, ...hub.facilities.map((f) => ({ x: f.x, z: f.z, r: f.r * 0.6 })), ...(hub.npcs ?? []).map((n) => ({ x: n.x, z: n.z, r: 0.7 })),
+      ...(hub.scenery ?? []).map((q) => ({ x: q.x, z: q.z, r: q.kind === 'field' ? 5 : q.kind === 'laundry' ? 2.6 : 1.2 })), ...(hub.props ?? []).map((q) => ({ x: q.x, z: q.z, r: 0.8 })),
+    ],
   });
   const plaza = new Mesh(new CircleGeometry(PLAZA.r, 36), tileMaterial('paving', 0xffffff, { gain: 1.3 }));
   plaza.rotation.x = -Math.PI / 2;
@@ -217,6 +220,7 @@ export function buildHubGroup(hub: HubDef, map: MapDef): Group {
   plaza.receiveShadow = true;
   boxUv(plaza, ENV_TILES.paving.tile);
   g.add(plaza);
+  const rings: BufferGeometry[] = [];
   for (const f of hub.facilities) {
     const def = BUILDINGS[f.kind];
     const b = new Mesh(def.shape(), cutoutMaterial(def.file, BUILDING_GAIN));
@@ -226,23 +230,22 @@ export function buildHubGroup(hub: HubDef, map: MapDef): Group {
     b.position.set(f.building.x, groundAt(map.platforms, f.building.x, f.building.z), f.building.z);
     b.rotation.y = f.building.yaw;
     g.add(b);
-    const ring = new Mesh(new RingGeometry(f.r * 0.5 - 0.09, f.r * 0.5, 28), M.ring);
-    ring.rotation.x = -Math.PI / 2;
-    ring.position.set(f.x, groundAt(map.platforms, f.x, f.z) + 0.03, f.z);
-    ring.renderOrder = 1;
-    g.add(ring);
+    const ring = new RingGeometry(f.r * 0.5 - 0.09, f.r * 0.5, 28);
+    ring.rotateX(-Math.PI / 2);
+    ring.translate(f.x, groundAt(map.platforms, f.x, f.z) + 0.03, f.z);
+    rings.push(ring);
   }
-  // 広場の灯（当たりは、施設の建物の次の rocks）
-  const lampAt = map.rocks[hub.facilities.length];
-  if (lampAt) {
-    const post = new Mesh(new CylinderGeometry(0.13, 0.15, 3.0, 6), M.woodDark);
-    post.position.set(lampAt.x, 1.5, lampAt.z);
-    post.castShadow = true;
-    const lamp = new Mesh(new IcosahedronGeometry(0.3, 0), M.lamp);
-    lamp.position.set(lampAt.x, 3.2, lampAt.z);
-    g.add(post, lamp);
-  }
+  // 施設の前の輪（4 つで 1 回の描画。v0.35.0）
+  const ringMesh = new Mesh(mergeGeometries(rings)!, M.ring);
+  ringMesh.renderOrder = 1;
+  ringMesh.userData.rings = rings.length;
+  g.add(ringMesh);
   // 同じ素材の部品を 1 つにまとめる（描画回数を減らす）
   mergeStatic(g);
-  return g;
+  // 里の建物と暮らし（v0.35.0。広場の灯もここ）。動くものがあるので、まとめた後に足す
+  const terraces = g.getObjectByName('terraces');
+  const falls = (terraces?.children.find((m) => m.userData.terrace === 'fall')?.userData.falls ?? []) as WallSegment[];
+  const village = buildVillage(hub, map, falls);
+  g.add(village.group);
+  return { group: g, village };
 }

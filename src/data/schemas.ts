@@ -603,9 +603,16 @@ export interface MapDef {
   monsterSpawn: { x: number; z: number; yaw: number };
   /** 当たりの円柱。h は上の端、y は下の端（無ければ 0。カメラだけが使う。v0.31.0） */
   rocks: { x: number; z: number; r: number; h: number; y?: number }[];
-  /** 段差。h は上の面の高さ（v0.31.0 から 0 より低くてもよい: 里の下の段と階段）。look は描き方（'yard' 作業場の床 / 'stone' 石段。simulation は読まない） */
-  platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number; look?: 'yard' | 'stone' }[];
+  /** 段差。h は上の面の高さ（v0.31.0 から 0 より低くてもよい: 里の下の段と階段）。look は描き方（PlatformLook。simulation は読まない） */
+  platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number; look?: PlatformLook }[];
 }
+
+/**
+ * 段差の描き方（simulation は読まない）。'yard' 踏み固めた土 / 'stone' 石段・踊り場 / 'grass' 草地（v0.35.0）/
+ * 'water' 沢の水面（v0.35.0。歩いては入れない高さに置く）/ 'bridge' 吊り橋の板（下に擁壁を描かない）/ 'rock' 岩の床（歩いては行けない所）
+ */
+export type PlatformLook = 'yard' | 'stone' | 'grass' | 'water' | 'bridge' | 'rock';
+export const PLATFORM_LOOKS: readonly PlatformLook[] = ['yard', 'stone', 'grass', 'water', 'bridge', 'rock'];
 
 /** フィールドの出口。入ると、行き先のエリアの arrive へ移る。large が付いた出口は、大型モンスターも通る（arriveLarge へ出る）。 */
 export interface FieldExit {
@@ -736,6 +743,44 @@ export interface HubNpcDef {
   yaw: number;
 }
 
+/** 里の外周の出口（v0.35.0。見た目だけ。外周の崖に口を開ける）。marker は門柱、trail は外へ続く道 */
+export interface HubGateDef {
+  id: string;
+  name: string;
+  x: number;
+  z: number;
+  marker?: boolean;
+  trail?: boolean;
+}
+
+/** 里の建物と飾り（v0.35.0。施設ではないもの）。当たりは maps の rocks（tools/gen-hub.py が kind ごとの形から作る） */
+export type HubSceneryKind =
+  | 'lamp' | 'records' | 'shed' | 'logs' | 'crates' | 'tank' | 'mill' | 'wash' | 'storehouse' | 'lift'
+  | 'inn' | 'firewood' | 'house' | 'field' | 'laundry' | 'hall' | 'survey' | 'watch' | 'anvil';
+export const HUB_SCENERY_KINDS: readonly HubSceneryKind[] = [
+  'lamp', 'records', 'shed', 'logs', 'crates', 'tank', 'mill', 'wash', 'storehouse', 'lift', 'inn', 'firewood', 'house', 'field', 'laundry', 'hall', 'survey', 'watch', 'anvil',
+];
+export interface HubSceneryDef {
+  id: string;
+  kind: HubSceneryKind;
+  name: string;
+  x: number;
+  z: number;
+  /** 正面の向き（建物の正面は、局所の +z） */
+  yaw: number;
+}
+
+/** 小物の絵の名前（v0.35.0。src/render/propArt.ts の名前と同じ。検査が両方を照らす） */
+export const HUB_PROP_ARTS = ['route_lamp_on', 'route_lamp_off', 'supply_cart', 'replaceable_parts', 'closed_route_sign', 'record_board'] as const;
+
+/** 里に立てる小物の絵（v0.35.0。ChatGPT の物語の原画 #13 の小物。カメラの方を向く板）。art は HUB_PROP_ARTS の名前 */
+export interface HubPropDef {
+  id: string;
+  art: string;
+  x: number;
+  z: number;
+}
+
 /** 拠点（public/data/hub.json）。里を歩く場所（mapId）と、施設の並び。 */
 export interface HubDef {
   schemaVersion: number;
@@ -744,6 +789,9 @@ export interface HubDef {
   mapId: string;
   facilities: FacilityDef[];
   npcs?: HubNpcDef[];
+  gates?: HubGateDef[];
+  scenery?: HubSceneryDef[];
+  props?: HubPropDef[];
 }
 
 /** プレイヤーの初期調整値（設計書 p.09）。本作独自の値で、実機の手触りを見て調整する。 */

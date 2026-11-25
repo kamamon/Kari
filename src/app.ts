@@ -331,6 +331,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     this.view?.dispose();
     this.view = new GameView(this.canvas, this.content, this.sim, this.store.value);
     this.view.onSound = (id, k) => void this.audio.play(id, k);
+    this.view.onAmbience = (a) => this.audio.setAmbience(a);
     this.recorded = [];
     this.recordOverflow = false;
     this.clock.reset();
