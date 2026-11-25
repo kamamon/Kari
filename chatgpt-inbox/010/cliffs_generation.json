@@ -1,0 +1,2918 @@
+{
+  "source": "docs/chatgpt-request-10.txt",
+  "generator": "built-in image_gen",
+  "referencePaths": [
+    "art-source/board/style_board_v2.png",
+    "docs/chatgpt-ref/field_v019_a.jpg",
+    "docs/chatgpt-ref/field_v019_b.jpg",
+    "art-source/env/tex_rock_basin_v1.png"
+  ],
+  "records": [
+    {
+      "id": "C-01",
+      "name": "地層の段の崖",
+      "file": "cliff_c01_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          4,
+          6
+        ],
+        "edgesM": [
+          4.5,
+          4.5
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "strata",
+        "pebbles"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. Reference images are ONLY palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: Four to six horizontal sedimentary ledges; small embedded gravel on the upper surfaces. Central crest ranges 4.0 to 6.0 metres high, target highest point 5.6m at y226. Cut each outer edge at 4.5m height (y320).",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-36149feb-1156-46e4-a8e3-ba253b0f3f6d.png",
+      "correctionHistory": [
+        {
+          "source": "/workspace/scratch/f5ec33877ad1/generated_images/exec-0384774d-ca76-43e8-baad-873f92a5c9f4.png",
+          "reason": "端上端y385で高さ不足。元の生成結果は不採用。"
+        },
+        {
+          "source": "/workspace/scratch/f5ec33877ad1/generated_images/exec-36149feb-1156-46e4-a8e3-ba253b0f3f6d.png",
+          "prompt": "Edit only the outer left and right connector heights of this original cliff cutout. Keep the canvas exactly2048x768, the entire central cliff identical in shape, scale, texture, color, photographic detail, ambient shadows and alpha. The present outermost left/right crest is at y385 from top, which is65px too low. RAISE the top surface of EACH outer164px-wide end band by exactly65pixels, to y320 at x0 and x2047. Extend the rock upward with the same dark vertical fissures and blend into neighboring terrace shoulders. Do not move the whole wall or increase the central peak. The cliff begins at x0 and ends at x2047. Ground cutoff remains at y704, with optional small fragments reaching no lower than y720. Both extreme top edges must be y320, not y385. All space above the new crest and below the ground cutoff is actual alpha transparent. No background, no new objects, no words or markings. This is a measurement correction, not a new composition.",
+          "selected": true,
+          "measurement": {
+            "alphaThreshold": 128,
+            "dimensions": [
+              2048,
+              768
+            ],
+            "mode": "RGBA",
+            "dimensionsMatch": true,
+            "alphaMin": 0,
+            "alphaMax": 254,
+            "alphaZeroFraction": 0.445013,
+            "alphaBodyMedian": 253.0,
+            "bboxAt128Inclusive": [
+              0,
+              231,
+              2047,
+              714
+            ],
+            "edgeTopY": [
+              316,
+              316
+            ],
+            "edgeHeightsM": [
+              4.54688,
+              4.54688
+            ],
+            "edgeHeightErrorM": [
+              0.04688,
+              0.04688
+            ],
+            "edgeHeightsWithinTolerance": [
+              true,
+              true
+            ],
+            "centralCrestHeightRangeM": [
+              4.11328,
+              5.54297
+            ],
+            "bodyBottomY": 714,
+            "groundLineBottomDeltaPx": 10,
+            "bodyBottomWithinSoilAllowance": true,
+            "alphaBelowY720Max": 1,
+            "alphaBelowY720NonzeroPixels": 60,
+            "alphaBelowY720AtLeast128Pixels": 0,
+            "rockLuminanceMeanRec709": 101.504,
+            "rockLuminanceStdRec709": 24.292,
+            "luminanceTarget20to35": true,
+            "luminanceAcceptanceAtLeast18": true,
+            "exitStrip": null,
+            "bytes": 2266102,
+            "sha256": "ce185c62bb16c965d7473ca72b1524b0ccf56b8f7e9825bca1010d2601649e50",
+            "bodyBottomPerColumnMedianY": 714.0,
+            "bodyBottomPerColumnModeY": 714,
+            "bodyBottomPerColumnModeFraction": 0.95166,
+            "groundLineModeDeltaPx": 10,
+            "groundLineMedianDeltaPx": 10.0
+          }
+        }
+      ],
+      "visualReview": "4〜6本の横段、端の縦溝、強い局所濃淡を目視確認。端は中央より暗いが完全同一の継ぎ目保証は未検証。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.445013,
+        "alphaBodyMedian": 253.0,
+        "bboxAt128Inclusive": [
+          0,
+          231,
+          2047,
+          714
+        ],
+        "edgeTopY": [
+          316,
+          316
+        ],
+        "edgeHeightsM": [
+          4.54688,
+          4.54688
+        ],
+        "edgeHeightErrorM": [
+          0.04688,
+          0.04688
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          4.11328,
+          5.54297
+        ],
+        "bodyBottomY": 714,
+        "groundLineBottomDeltaPx": 10,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 60,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 101.504,
+        "rockLuminanceStdRec709": 24.292,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 2266102,
+        "sha256": "ce185c62bb16c965d7473ca72b1524b0ccf56b8f7e9825bca1010d2601649e50",
+        "bodyBottomPerColumnMedianY": 714.0,
+        "bodyBottomPerColumnModeY": 714,
+        "bodyBottomPerColumnModeFraction": 0.95166,
+        "groundLineModeDeltaPx": 10,
+        "groundLineMedianDeltaPx": 10.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy714。基準y704から+10pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが60px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。"
+      ]
+    },
+    {
+      "id": "C-02",
+      "name": "地層の段の高い崖",
+      "file": "cliff_c02_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          6,
+          8
+        ],
+        "edgesM": [
+          4.5,
+          4.5
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "strata",
+        "tall"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: Tall deeply stepped sedimentary cliff; pronounced dark ambient cavities below deep horizontal ledges. Central height ranges 6 to 8m with highest broad crest about 7.6m at y55. Ends descend to 4.5m at y320.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-50ebb86e-4908-43c6-9751-89877f010d90.png",
+      "visualReview": "深い地層の段と暗い段下、中央の高い輪郭を目視確認。側端の縦割れ帯はC01と揃えた。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.320501,
+        "alphaBodyMedian": 253.0,
+        "bboxAt128Inclusive": [
+          0,
+          58,
+          2047,
+          711
+        ],
+        "edgeTopY": [
+          321,
+          321
+        ],
+        "edgeHeightsM": [
+          4.48828,
+          4.48828
+        ],
+        "edgeHeightErrorM": [
+          -0.01172,
+          -0.01172
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          4.20703,
+          7.57031
+        ],
+        "bodyBottomY": 711,
+        "groundLineBottomDeltaPx": 7,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 67,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 94.108,
+        "rockLuminanceStdRec709": 29.089,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 2762871,
+        "sha256": "2073165093ebe142e2037475a142a8195f59097708c64b0a54dea1bc4e1fd239",
+        "bodyBottomPerColumnMedianY": 710.0,
+        "bodyBottomPerColumnModeY": 710,
+        "bodyBottomPerColumnModeFraction": 0.879395,
+        "groundLineModeDeltaPx": 6,
+        "groundLineMedianDeltaPx": 6.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy710。基準y704から+6pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが67px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-03",
+      "name": "斜めの地層の崖",
+      "file": "cliff_c03_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          4,
+          6
+        ],
+        "edgesM": [
+          4.5,
+          4.5
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "strata"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: Layered grey-brown cliff whose sedimentary bands slope approximately 15 degrees, with convincing angular offsets and small natural chips. Central height 4 to 6m, highest crest about 5.6m at y226; both ends at 4.5m (y320).",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-47190982-ff8b-4a55-beee-a51afffd2c89.png",
+      "visualReview": "約15度に傾いた地層と側端の縦割れ帯を目視確認。斜角は目視の概算であり精密計測していない。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.429589,
+        "alphaBodyMedian": 253.0,
+        "bboxAt128Inclusive": [
+          0,
+          226,
+          2047,
+          712
+        ],
+        "edgeTopY": [
+          316,
+          318
+        ],
+        "edgeHeightsM": [
+          4.54688,
+          4.52344
+        ],
+        "edgeHeightErrorM": [
+          0.04688,
+          0.02344
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          4.11328,
+          5.60156
+        ],
+        "bodyBottomY": 712,
+        "groundLineBottomDeltaPx": 8,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 1317,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 94.507,
+        "rockLuminanceStdRec709": 28.093,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 2371559,
+        "sha256": "82ed7b800932bd8cf25bd59d2c1090138e421f271f7b08d9e4c315db5e6014de",
+        "bodyBottomPerColumnMedianY": 711.0,
+        "bodyBottomPerColumnModeY": 711,
+        "bodyBottomPerColumnModeFraction": 0.98584,
+        "groundLineModeDeltaPx": 7,
+        "groundLineMedianDeltaPx": 7.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy711。基準y704から+7pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが1317px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-04",
+      "name": "低い地層の崖",
+      "file": "cliff_c04_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          2.5,
+          4
+        ],
+        "edgesM": [
+          3,
+          3
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "strata",
+        "flat"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: Low sedimentary bank with only two or three broad horizontal steps, earthy mineral bands, occasional small stones. Central height 2.5 to 4m, highest crest about 3.6m at y397; both ends 3m at y448. Much lower than other wall segments.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-612b6883-2ff6-4ba3-8df3-3e97be6646ec.png",
+      "visualReview": "2〜3本の低い地層段、低い端の縦溝を目視確認。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.60213,
+        "alphaBodyMedian": 252.0,
+        "bboxAt128Inclusive": [
+          0,
+          368,
+          2047,
+          712
+        ],
+        "edgeTopY": [
+          435,
+          435
+        ],
+        "edgeHeightsM": [
+          3.15234,
+          3.15234
+        ],
+        "edgeHeightErrorM": [
+          0.15234,
+          0.15234
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          2.69531,
+          3.9375
+        ],
+        "bodyBottomY": 712,
+        "groundLineBottomDeltaPx": 8,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 1001,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 101.619,
+        "rockLuminanceStdRec709": 29.145,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 1940466,
+        "sha256": "ab2f467468f5cbc9642d4a0a467158f2463b71c961f07f1e1a4ec583720de422",
+        "bodyBottomPerColumnMedianY": 711.0,
+        "bodyBottomPerColumnModeY": 711,
+        "bodyBottomPerColumnModeFraction": 0.782227,
+        "groundLineModeDeltaPx": 7,
+        "groundLineMedianDeltaPx": 7.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy711。基準y704から+7pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが1001px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-05",
+      "name": "柱の割れ目の崖",
+      "file": "cliff_c05_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          5,
+          7
+        ],
+        "edgesM": [
+          4.5,
+          4.5
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "columns"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: Naturally jointed vertical stone columns forming one continuous cliff wall. Individual columns 0.6 to 1.2m wide, equivalently 51 to 102 pixels, uneven polygonal fracture faces and dark joints. Central height 5 to 7m, tallest about 6.6m at y141. Both end tops y320.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-5738ad69-5583-42ea-842f-11c456161f21.png",
+      "visualReview": "縦の柱状割れ目を目視確認。一部の主柱が指定0.6〜1.2mより幅広く見えるため柱幅の厳密一致は未確認。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.366805,
+        "alphaBodyMedian": 252.0,
+        "bboxAt128Inclusive": [
+          0,
+          136,
+          2047,
+          712
+        ],
+        "edgeTopY": [
+          317,
+          318
+        ],
+        "edgeHeightsM": [
+          4.53516,
+          4.52344
+        ],
+        "edgeHeightErrorM": [
+          0.03516,
+          0.02344
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          4.33594,
+          6.65625
+        ],
+        "bodyBottomY": 712,
+        "groundLineBottomDeltaPx": 8,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 1859,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 89.923,
+        "rockLuminanceStdRec709": 26.648,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 2723042,
+        "sha256": "6fcbfdd9d8274dd93d0fdefc92e3ec3a790758bb22998a640776627ff286af65",
+        "bodyBottomPerColumnMedianY": 712.0,
+        "bodyBottomPerColumnModeY": 712,
+        "bodyBottomPerColumnModeFraction": 0.508301,
+        "groundLineModeDeltaPx": 8,
+        "groundLineMedianDeltaPx": 8.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy712。基準y704から+8pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが1859px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。",
+        "柱幅0.6〜1.2mは未測定。目視では太い主柱もある。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-06",
+      "name": "崩れかけの柱の崖",
+      "file": "cliff_c06_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          4,
+          6
+        ],
+        "edgesM": [
+          4.5,
+          4.5
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "columns",
+        "rubble"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: A continuous cliff of vertical jointed columns, some fractured and partly fallen. At the base, broken column fragments nest into the wall, not floating or piled as separate background. Central height 4 to 6m, tallest about 5.6m at y226. Both end tops y320.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-c0ec4ac1-4540-4447-a4e7-bb616384ac3b.png",
+      "visualReview": "柱の欠け、根元の柱断片、端の縦溝を目視確認。崩れた柱の根元は地面線で切れるように描かれている。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.43157,
+        "alphaBodyMedian": 253.0,
+        "bboxAt128Inclusive": [
+          0,
+          203,
+          2047,
+          715
+        ],
+        "edgeTopY": [
+          318,
+          318
+        ],
+        "edgeHeightsM": [
+          4.52344,
+          4.52344
+        ],
+        "edgeHeightErrorM": [
+          0.02344,
+          0.02344
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          4.03125,
+          5.87109
+        ],
+        "bodyBottomY": 715,
+        "groundLineBottomDeltaPx": 11,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 533,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 98.46,
+        "rockLuminanceStdRec709": 28.077,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 2495663,
+        "sha256": "306ab233a7f03b91a283346ec349c00b3e6374b50709de677be550ac9b644802",
+        "bodyBottomPerColumnMedianY": 714.0,
+        "bodyBottomPerColumnModeY": 714,
+        "bodyBottomPerColumnModeFraction": 0.99707,
+        "groundLineModeDeltaPx": 10,
+        "groundLineMedianDeltaPx": 10.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy714。基準y704から+10pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが533px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-07",
+      "name": "丸く削られた崖",
+      "file": "cliff_c07_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          4,
+          6
+        ],
+        "edgesM": [
+          4.5,
+          4.5
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "overhang"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: Rounded wind-eroded continuous cliff face, softly scalloped large rock lobes but realistic cracks and tiny cavities; base slightly undercut and darker by ambient occlusion. Central height 4 to 6m, maximum about 5.6m y226. Both end tops y320.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-78c1c4fd-6481-44a5-b638-63e3b0904d8b.png",
+      "visualReview": "風で丸く削られた面、小さなくぼみ、浅くえぐれた根元を目視確認。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.450509,
+        "alphaBodyMedian": 253.0,
+        "bboxAt128Inclusive": [
+          0,
+          215,
+          2047,
+          718
+        ],
+        "edgeTopY": [
+          334,
+          334
+        ],
+        "edgeHeightsM": [
+          4.33594,
+          4.33594
+        ],
+        "edgeHeightErrorM": [
+          -0.16406,
+          -0.16406
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          3.92578,
+          5.73047
+        ],
+        "bodyBottomY": 718,
+        "groundLineBottomDeltaPx": 14,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 2,
+        "alphaBelowY720NonzeroPixels": 78,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 96.034,
+        "rockLuminanceStdRec709": 27.937,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 2286555,
+        "sha256": "6f6306dc27a28bba8b3d81251a11b45304b8a37b06ec1174c273d410c6ee031e",
+        "bodyBottomPerColumnMedianY": 714.0,
+        "bodyBottomPerColumnModeY": 714,
+        "bodyBottomPerColumnModeFraction": 0.73291,
+        "groundLineModeDeltaPx": 10,
+        "groundLineMedianDeltaPx": 10.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy714。基準y704から+10pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが78px残る。最大alpha=2、alpha128以上は0px。厳密な全透明条件を未達。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-08",
+      "name": "えぐれの深い崖",
+      "file": "cliff_c08_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          5,
+          7
+        ],
+        "edgesM": [
+          4.5,
+          4.5
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "overhang"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: Continuous cliff with a deep undercut at its foot, a heavy projecting upper lip like a low natural eave. Deep dark ambient recess below the overhang stays opaque rock, not a transparent cave hole. Central height 5 to 7m, maximum about 6.6m y141. Both end tops y320.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-63672ca9-ba9b-476e-979f-c253e53da2ea.png",
+      "visualReview": "深いえぐれと重い張り出し、奥は透けない岩の暗部を目視確認。端の縦溝は独立した接続帯。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.388271,
+        "alphaBodyMedian": 252.0,
+        "bboxAt128Inclusive": [
+          0,
+          145,
+          2047,
+          713
+        ],
+        "edgeTopY": [
+          317,
+          318
+        ],
+        "edgeHeightsM": [
+          4.53516,
+          4.52344
+        ],
+        "edgeHeightErrorM": [
+          0.03516,
+          0.02344
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          4.23047,
+          6.55078
+        ],
+        "bodyBottomY": 713,
+        "groundLineBottomDeltaPx": 9,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 2691,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 79.935,
+        "rockLuminanceStdRec709": 30.661,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 2569413,
+        "sha256": "11d8b2c9cb64bf0d52f97eff14e8e0bd4d9f081bd658988cf464f027c42235ec",
+        "bodyBottomPerColumnMedianY": 713.0,
+        "bodyBottomPerColumnModeY": 713,
+        "bodyBottomPerColumnModeFraction": 1.0,
+        "groundLineModeDeltaPx": 9,
+        "groundLineMedianDeltaPx": 9.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy713。基準y704から+9pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが2691px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-09",
+      "name": "縦の溝の崖",
+      "file": "cliff_c09_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          4,
+          6
+        ],
+        "edgesM": [
+          4.5,
+          4.5
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "cracked"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: Rain-eroded continuous cliff face with three to four prominent vertical channels, dark damp stains, fine downward water streaks, chipped grey-brown faces. Central height 4 to 6m, max about 5.6m y226. Both end tops y320.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-b40ec280-4af9-41f8-bae0-ae79f41947b8.png",
+      "visualReview": "雨筋に沿う黒い縦溝を4筋目視確認。細い白っぽい鉱物/水染みも混じる。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.416938,
+        "alphaBodyMedian": 252.0,
+        "bboxAt128Inclusive": [
+          0,
+          214,
+          2047,
+          714
+        ],
+        "edgeTopY": [
+          318,
+          318
+        ],
+        "edgeHeightsM": [
+          4.52344,
+          4.52344
+        ],
+        "edgeHeightErrorM": [
+          0.02344,
+          0.02344
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          4.32422,
+          5.74219
+        ],
+        "bodyBottomY": 714,
+        "groundLineBottomDeltaPx": 10,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 1615,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 92.551,
+        "rockLuminanceStdRec709": 27.926,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 2585387,
+        "sha256": "9b06ec74c32f040f9af164466a10b2f48e601b8badadcd5ba79794aa57fded14",
+        "bodyBottomPerColumnMedianY": 714.0,
+        "bodyBottomPerColumnModeY": 714,
+        "bodyBottomPerColumnModeFraction": 1.0,
+        "groundLineModeDeltaPx": 10,
+        "groundLineMedianDeltaPx": 10.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy714。基準y704から+10pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが1615px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-10",
+      "name": "大きな割れ目の崖",
+      "file": "cliff_c10_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          5,
+          7
+        ],
+        "edgesM": [
+          4.5,
+          4.5
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "cracked"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: A continuous cliff with one deeply recessed central vertical fissure 1.5m wide (128 pixels), filled with dark inner rock so the fissure is opaque and the background never shows through. Layered shoulders around fissure. Central height 5 to 7m, max about 6.6m y141. Both end tops y320.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-758f55e6-1ff7-42de-807b-1d4e035fbe64.png",
+      "visualReview": "中央に深い縦割れ目と暗い内壁を目視確認。空洞奥は岩で閉じている。割れ目の1.5m幅は数値測定していない。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.383736,
+        "alphaBodyMedian": 252.0,
+        "bboxAt128Inclusive": [
+          0,
+          139,
+          2047,
+          712
+        ],
+        "edgeTopY": [
+          314,
+          316
+        ],
+        "edgeHeightsM": [
+          4.57031,
+          4.54688
+        ],
+        "edgeHeightErrorM": [
+          0.07031,
+          0.04688
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          4.11328,
+          6.62109
+        ],
+        "bodyBottomY": 712,
+        "groundLineBottomDeltaPx": 8,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 1494,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 90.284,
+        "rockLuminanceStdRec709": 27.506,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 2531924,
+        "sha256": "0068441e3e37364411494543820f5d1b8dd691c261975f4bf894ea01bafe6fee",
+        "bodyBottomPerColumnMedianY": 712.0,
+        "bodyBottomPerColumnModeY": 712,
+        "bodyBottomPerColumnModeFraction": 1.0,
+        "groundLineModeDeltaPx": 8,
+        "groundLineMedianDeltaPx": 8.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy712。基準y704から+8pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが1494px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-11",
+      "name": "苔の崖",
+      "file": "cliff_c11_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          4,
+          6
+        ],
+        "edgesM": [
+          4.5,
+          4.5
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "moss",
+        "grass"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: Continuous grey-brown rock cliff with muted grey-green moss on ledges, sparse grass rooted in ledge cracks, and occasional thin hanging moss at several ledge lips. Rocks remain the main substance. Central height 4 to 6m, max about 5.6m y226. Both end tops y320.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-3e241286-29d7-4b86-a7e9-b283dd5b968f.png",
+      "visualReview": "段の上の灰緑色の苔、まばらな草、複数の垂れ苔を目視確認。岩主体のまま植物の違いを出した。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.445042,
+        "alphaBodyMedian": 253.0,
+        "bboxAt128Inclusive": [
+          0,
+          231,
+          2047,
+          712
+        ],
+        "edgeTopY": [
+          316,
+          317
+        ],
+        "edgeHeightsM": [
+          4.54688,
+          4.53516
+        ],
+        "edgeHeightErrorM": [
+          0.04688,
+          0.03516
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          3.96094,
+          5.54297
+        ],
+        "bodyBottomY": 712,
+        "groundLineBottomDeltaPx": 8,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 832,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 95.0,
+        "rockLuminanceStdRec709": 26.064,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 2373626,
+        "sha256": "e97fb9476a67cf953373dade92821eaf0211a2acc6e18fe075bafb42befb2e15",
+        "bodyBottomPerColumnMedianY": 712.0,
+        "bodyBottomPerColumnModeY": 712,
+        "bodyBottomPerColumnModeFraction": 1.0,
+        "groundLineModeDeltaPx": 8,
+        "groundLineMedianDeltaPx": 8.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy712。基準y704から+8pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが832px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-12",
+      "name": "草の乗った土手",
+      "file": "cliff_c12_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          2,
+          3
+        ],
+        "edgesM": [
+          3,
+          3
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "grass",
+        "flat"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: Low continuous earth-and-stone bank with dense subdued grey-green grass on the upper ridge; embedded rock faces and dry brown-grey soil, no foreground ground plane. Central top lies 2 to 3m above baseline (y448 to y533), both endpoints exactly 3m high at y448. Grass counts within these heights.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-fb98c0a5-4ae8-4473-8dba-83b42b6f280c.png",
+      "visualReview": "局所修正後、草を含む高さは2.32〜2.80mに改善。端2.80mは3m±0.3m内。下端はy723で、許容y720より3px残る。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.272895,
+        "alphaBodyMedian": 253.0,
+        "bboxAt128Inclusive": [
+          0,
+          465,
+          2047,
+          723
+        ],
+        "edgeTopY": [
+          465,
+          465
+        ],
+        "edgeHeightsM": [
+          2.80078,
+          2.80078
+        ],
+        "edgeHeightErrorM": [
+          -0.19922,
+          -0.19922
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          2.32031,
+          2.80078
+        ],
+        "bodyBottomY": 723,
+        "groundLineBottomDeltaPx": 19,
+        "bodyBottomWithinSoilAllowance": false,
+        "alphaBelowY720Max": 251,
+        "alphaBelowY720NonzeroPixels": 20859,
+        "alphaBelowY720AtLeast128Pixels": 4104,
+        "rockLuminanceMeanRec709": 97.66,
+        "rockLuminanceStdRec709": 25.493,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 1976487,
+        "sha256": "161a5b37dda2d2085fecee80ccce99353385b167dd1da3e5dc86f84b1ac2c55c",
+        "bodyBottomPerColumnMedianY": 722.0,
+        "bodyBottomPerColumnModeY": 722,
+        "bodyBottomPerColumnModeFraction": 0.996094,
+        "groundLineModeDeltaPx": 18,
+        "groundLineMedianDeltaPx": 18.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "correctionHistory": [
+        {
+          "source": "/workspace/scratch/f5ec33877ad1/generated_images/exec-e4e6d340-5547-40ea-9b5b-0d27400bf5b7.png",
+          "measurement": {
+            "alphaThreshold": 128,
+            "dimensions": [
+              2048,
+              768
+            ],
+            "mode": "RGBA",
+            "dimensionsMatch": true,
+            "alphaMin": 0,
+            "alphaMax": 254,
+            "alphaZeroFraction": 0.595175,
+            "alphaBodyMedian": 252.0,
+            "bboxAt128Inclusive": [
+              0,
+              404,
+              2047,
+              729
+            ],
+            "edgeTopY": [
+              430,
+              431
+            ],
+            "edgeHeightsM": [
+              3.21094,
+              3.19922
+            ],
+            "edgeHeightErrorM": [
+              0.21094,
+              0.19922
+            ],
+            "edgeHeightsWithinTolerance": [
+              true,
+              true
+            ],
+            "centralCrestHeightRangeM": [
+              2.66016,
+              3.51562
+            ],
+            "bodyBottomY": 729,
+            "groundLineBottomDeltaPx": 25,
+            "bodyBottomWithinSoilAllowance": false,
+            "alphaBelowY720Max": 254,
+            "alphaBelowY720NonzeroPixels": 31899,
+            "alphaBelowY720AtLeast128Pixels": 10446,
+            "rockLuminanceMeanRec709": 90.58,
+            "rockLuminanceStdRec709": 26.808,
+            "luminanceTarget20to35": true,
+            "luminanceAcceptanceAtLeast18": true,
+            "exitStrip": null,
+            "bytes": 2037804,
+            "sha256": "d68ab32d16e66600b35c314b90f0a25311404a1b3d5fefa9d3e34a8981d2b9e8"
+          },
+          "selected": false
+        },
+        {
+          "source": "/workspace/scratch/f5ec33877ad1/generated_images/exec-fb98c0a5-4ae8-4473-8dba-83b42b6f280c.png",
+          "prompt": "Precisely correct this existing low grassy bank cutout while preserving its original realistic rock, earth and grass detail and the exact2048x768 canvas. Its current rock base incorrectly reaches y729: ERASE all image content below the straight ground cutoff y704 (including soil, stones, alpha1 noise, background and faint residual haze). Do not move the whole object down or rescale the canvas. Top heights also need lowering: the crest including every grass blade must be at y448 or below, representing maximum3m height. Both outermost endpoints must begin exactly at y448 with dark vertical connectors, not at y428. Preserve a 2–3m low soil bank with embedded stones, grass along the top, natural irregular slopes but no tall central bulge. Rock exists only between the natural crest y448 or lower and ground y704. Every pixel above the crest and every pixel y705..767 must have alpha=0, no low-opacity dust, no backdrop, no shadows. This is a numeric geometry correction to the same asset, not a fresh composition. PNG with genuine transparency, exact2048x768.",
+          "selected": true,
+          "measurement": {
+            "alphaThreshold": 128,
+            "dimensions": [
+              2048,
+              768
+            ],
+            "mode": "RGBA",
+            "dimensionsMatch": true,
+            "alphaMin": 0,
+            "alphaMax": 254,
+            "alphaZeroFraction": 0.272895,
+            "alphaBodyMedian": 253.0,
+            "bboxAt128Inclusive": [
+              0,
+              465,
+              2047,
+              723
+            ],
+            "edgeTopY": [
+              465,
+              465
+            ],
+            "edgeHeightsM": [
+              2.80078,
+              2.80078
+            ],
+            "edgeHeightErrorM": [
+              -0.19922,
+              -0.19922
+            ],
+            "edgeHeightsWithinTolerance": [
+              true,
+              true
+            ],
+            "centralCrestHeightRangeM": [
+              2.32031,
+              2.80078
+            ],
+            "bodyBottomY": 723,
+            "groundLineBottomDeltaPx": 19,
+            "bodyBottomWithinSoilAllowance": false,
+            "alphaBelowY720Max": 251,
+            "alphaBelowY720NonzeroPixels": 20859,
+            "alphaBelowY720AtLeast128Pixels": 4104,
+            "rockLuminanceMeanRec709": 97.66,
+            "rockLuminanceStdRec709": 25.493,
+            "luminanceTarget20to35": true,
+            "luminanceAcceptanceAtLeast18": true,
+            "exitStrip": null,
+            "bytes": 1976487,
+            "sha256": "161a5b37dda2d2085fecee80ccce99353385b167dd1da3e5dc86f84b1ac2c55c",
+            "bodyBottomPerColumnMedianY": 722.0,
+            "bodyBottomPerColumnModeY": 722,
+            "bodyBottomPerColumnModeFraction": 0.996094,
+            "groundLineModeDeltaPx": 18,
+            "groundLineMedianDeltaPx": 18.0
+          }
+        }
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy722。基準y704から+18pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが20859px残る。最大alpha=251、alpha128以上は4104px。厳密な全透明条件を未達。",
+        "本体下端y723が土砂許容y720より3px下にある。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-13",
+      "name": "晶脈の崖",
+      "file": "cliff_c13_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          4,
+          6
+        ],
+        "edgesM": [
+          4.5,
+          4.5
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "vein"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: Continuous grey-brown cliff with two to three diagonal thin bronze-to-amber mineral veins embedded flush in rough stone. The mineral is opaque metallic mineral, does not glow. Central height 4 to 6m, max about 5.6m y226. Both end tops y320.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-9ec01999-b122-4725-bec1-1871fa19d3a1.png",
+      "visualReview": "3本の斜めの銅〜琥珀色鉱脈を目視確認。鉱脈は反射する鉱物として描写され、周囲への発光なし。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.430574,
+        "alphaBodyMedian": 253.0,
+        "bboxAt128Inclusive": [
+          0,
+          216,
+          2047,
+          713
+        ],
+        "edgeTopY": [
+          319,
+          318
+        ],
+        "edgeHeightsM": [
+          4.51172,
+          4.52344
+        ],
+        "edgeHeightErrorM": [
+          0.01172,
+          0.02344
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          4.08984,
+          5.71875
+        ],
+        "bodyBottomY": 713,
+        "groundLineBottomDeltaPx": 9,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 448,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 92.134,
+        "rockLuminanceStdRec709": 27.239,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 2615054,
+        "sha256": "1afbb2a4a199e7742f3e9f09dd56846f33a2cbfcf3e52a977f7ed6d91b73cc48",
+        "bodyBottomPerColumnMedianY": 713.0,
+        "bodyBottomPerColumnModeY": 713,
+        "bodyBottomPerColumnModeFraction": 1.0,
+        "groundLineModeDeltaPx": 9,
+        "groundLineMedianDeltaPx": 9.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy713。基準y704から+9pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが448px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-14",
+      "name": "晶の露頭の崖",
+      "file": "cliff_c14_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          5,
+          7
+        ],
+        "edgesM": [
+          4.5,
+          4.5
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "crystal"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: Continuous grey-brown cliff with three to four isolated clusters of angular bronze/amber mineral crystal protruding from the face, all away from the outer connector bands. Opaque weathered mineral chunks, no emitted glow. Central height 5 to 7m, max about 6.6m y141. Both end tops y320.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-f96813ff-ff20-4ec6-8903-eda65c02165e.png",
+      "visualReview": "4群の琥珀銅色の晶露頭を目視確認。外側の接続帯には晶を置かず、発光なし。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.40298,
+        "alphaBodyMedian": 253.0,
+        "bboxAt128Inclusive": [
+          0,
+          121,
+          2047,
+          717
+        ],
+        "edgeTopY": [
+          319,
+          320
+        ],
+        "edgeHeightsM": [
+          4.51172,
+          4.5
+        ],
+        "edgeHeightErrorM": [
+          0.01172,
+          0.0
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          3.82031,
+          6.83203
+        ],
+        "bodyBottomY": 717,
+        "groundLineBottomDeltaPx": 13,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 1342,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 90.564,
+        "rockLuminanceStdRec709": 25.002,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 2510598,
+        "sha256": "f2808f5989bfa1c86e3cf069f7289688fb3dcb511eaa9bbc0802841f4a571379",
+        "bodyBottomPerColumnMedianY": 713.0,
+        "bodyBottomPerColumnModeY": 713,
+        "bodyBottomPerColumnModeFraction": 0.63623,
+        "groundLineModeDeltaPx": 9,
+        "groundLineMedianDeltaPx": 9.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy713。基準y704から+9pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが1342px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-15",
+      "name": "崩れた崖",
+      "file": "cliff_c15_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          4,
+          6
+        ],
+        "edgesM": [
+          4.5,
+          4.5
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "rubble",
+        "cracked"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: Continuous broken cliff with a missing chipped crest section and an uneven scree mound at its foot. Mound reaches no more than 1.5m high (128 pixels above baseline); all rubble rests at baseline and stays within the cutout. Central cliff height 4 to 6m, max about 5.6m y226. Both end tops y320.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-a73a4771-077d-4612-8b2f-508e52960ab8.png",
+      "visualReview": "中央右の崩落した上端と砕けた岩、基部の大小の瓦礫を目視確認。1.5m以下の瓦礫高は地形との境界が曖昧なため未測定。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.448067,
+        "alphaBodyMedian": 252.0,
+        "bboxAt128Inclusive": [
+          0,
+          231,
+          2047,
+          713
+        ],
+        "edgeTopY": [
+          320,
+          320
+        ],
+        "edgeHeightsM": [
+          4.5,
+          4.5
+        ],
+        "edgeHeightErrorM": [
+          0.0,
+          0.0
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          3.76172,
+          5.54297
+        ],
+        "bodyBottomY": 713,
+        "groundLineBottomDeltaPx": 9,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 2084,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 95.399,
+        "rockLuminanceStdRec709": 29.473,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 2498835,
+        "sha256": "fddfb9fc919d1f880005bc7f892dc5e6d54253e67678c297aa78e981fe135af3",
+        "bodyBottomPerColumnMedianY": 713.0,
+        "bodyBottomPerColumnModeY": 713,
+        "bodyBottomPerColumnModeFraction": 0.826172,
+        "groundLineModeDeltaPx": 9,
+        "groundLineMedianDeltaPx": 9.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy713。基準y704から+9pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが2084px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-16",
+      "name": "岩の塔のある崖",
+      "file": "cliff_c16_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          4,
+          8
+        ],
+        "edgesM": [
+          4.5,
+          4.5
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "tall"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: Continuous low wall 4 to 6m high with exactly one central naturally eroded rock tower rising to 8m high: central top at y21, not cropped. Tower is geological stone, not masonry or a building. Ends at 4.5m high y320. No tall features in the outer 164px bands.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-eb470159-4320-4cb5-a7bb-d4beb7a87a09.png",
+      "visualReview": "局所修正で基部の突出小石を除去し、本体下端y722→711に改善。中央の岩塔は約8.051m。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.421415,
+        "alphaBodyMedian": 253.0,
+        "bboxAt128Inclusive": [
+          0,
+          17,
+          2047,
+          711
+        ],
+        "edgeTopY": [
+          321,
+          323
+        ],
+        "edgeHeightsM": [
+          4.48828,
+          4.46484
+        ],
+        "edgeHeightErrorM": [
+          -0.01172,
+          -0.03516
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          3.73828,
+          8.05078
+        ],
+        "bodyBottomY": 711,
+        "groundLineBottomDeltaPx": 7,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 42,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 107.877,
+        "rockLuminanceStdRec709": 24.535,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 2292374,
+        "sha256": "5353a3e70493be9a2b71d01b19b977041a3431a28f8a5ca9cecfbd72e019b28a",
+        "bodyBottomPerColumnMedianY": 711.0,
+        "bodyBottomPerColumnModeY": 711,
+        "bodyBottomPerColumnModeFraction": 0.999023,
+        "groundLineModeDeltaPx": 7,
+        "groundLineMedianDeltaPx": 7.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "correctionHistory": [
+        {
+          "source": "/workspace/scratch/f5ec33877ad1/generated_images/exec-76338a22-3a54-43e2-a193-759624b82da3.png",
+          "measurement": {
+            "alphaThreshold": 128,
+            "dimensions": [
+              2048,
+              768
+            ],
+            "mode": "RGBA",
+            "dimensionsMatch": true,
+            "alphaMin": 0,
+            "alphaMax": 254,
+            "alphaZeroFraction": 0.398425,
+            "alphaBodyMedian": 252.0,
+            "bboxAt128Inclusive": [
+              0,
+              17,
+              2047,
+              722
+            ],
+            "edgeTopY": [
+              321,
+              323
+            ],
+            "edgeHeightsM": [
+              4.48828,
+              4.46484
+            ],
+            "edgeHeightErrorM": [
+              -0.01172,
+              -0.03516
+            ],
+            "edgeHeightsWithinTolerance": [
+              true,
+              true
+            ],
+            "centralCrestHeightRangeM": [
+              3.73828,
+              8.05078
+            ],
+            "bodyBottomY": 722,
+            "groundLineBottomDeltaPx": 18,
+            "bodyBottomWithinSoilAllowance": false,
+            "alphaBelowY720Max": 248,
+            "alphaBelowY720NonzeroPixels": 3525,
+            "alphaBelowY720AtLeast128Pixels": 32,
+            "rockLuminanceMeanRec709": 100.132,
+            "rockLuminanceStdRec709": 26.665,
+            "luminanceTarget20to35": true,
+            "luminanceAcceptanceAtLeast18": true,
+            "exitStrip": null,
+            "bytes": 2611406,
+            "sha256": "c186dd304633b02d35e9e751139e68233bb49a16834231fbf452b5e8ba421489"
+          },
+          "selected": false
+        },
+        {
+          "source": "/workspace/scratch/f5ec33877ad1/generated_images/exec-eb470159-4320-4cb5-a7bb-d4beb7a87a09.png",
+          "prompt": "Make one precise cleanup to this existing original rock tower cliff cutout. Preserve the exact2048x768 canvas, entire rock tower shape, crest, side connector heights, texture, color and photographic quality. ONLY correct the ground cutoff. All cliff bases end on the straight line y704. Remove the few small basal stones that currently extend down to y722, and ERASE every pixel below y704 to true alpha=0, including faint alpha1 residue, shadows and backdrop. Do not shift or resize the cliff. Tower top stays near y21, each extreme endpoint crest stays near y320. Output exact2048x768 RGBA PNG with real transparent background and no new content.",
+          "selected": true,
+          "measurement": {
+            "alphaThreshold": 128,
+            "dimensions": [
+              2048,
+              768
+            ],
+            "mode": "RGBA",
+            "dimensionsMatch": true,
+            "alphaMin": 0,
+            "alphaMax": 254,
+            "alphaZeroFraction": 0.421415,
+            "alphaBodyMedian": 253.0,
+            "bboxAt128Inclusive": [
+              0,
+              17,
+              2047,
+              711
+            ],
+            "edgeTopY": [
+              321,
+              323
+            ],
+            "edgeHeightsM": [
+              4.48828,
+              4.46484
+            ],
+            "edgeHeightErrorM": [
+              -0.01172,
+              -0.03516
+            ],
+            "edgeHeightsWithinTolerance": [
+              true,
+              true
+            ],
+            "centralCrestHeightRangeM": [
+              3.73828,
+              8.05078
+            ],
+            "bodyBottomY": 711,
+            "groundLineBottomDeltaPx": 7,
+            "bodyBottomWithinSoilAllowance": true,
+            "alphaBelowY720Max": 1,
+            "alphaBelowY720NonzeroPixels": 42,
+            "alphaBelowY720AtLeast128Pixels": 0,
+            "rockLuminanceMeanRec709": 107.877,
+            "rockLuminanceStdRec709": 24.535,
+            "luminanceTarget20to35": true,
+            "luminanceAcceptanceAtLeast18": true,
+            "exitStrip": null,
+            "bytes": 2292374,
+            "sha256": "5353a3e70493be9a2b71d01b19b977041a3431a28f8a5ca9cecfbd72e019b28a",
+            "bodyBottomPerColumnMedianY": 711.0,
+            "bodyBottomPerColumnModeY": 711,
+            "bodyBottomPerColumnModeFraction": 0.999023,
+            "groundLineModeDeltaPx": 7,
+            "groundLineMedianDeltaPx": 7.0
+          }
+        }
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy711。基準y704から+7pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが42px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。",
+        "最高約8.05078mで目標8mを約0.051m上回る。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-17",
+      "name": "段々の崖",
+      "file": "cliff_c17_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          4,
+          6
+        ],
+        "edgesM": [
+          4.5,
+          4.5
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "strata",
+        "pebbles",
+        "grass"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: Continuous grey-brown cliff with two to three broad ledge shelves, small gravel and sparse grey-green grass on the shelves. Distinct ledge lips and dark undersides, not a staircase. Central height 4 to 6m, max about 5.6m y226. Both end tops y320.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-17a40afa-55e4-4b3e-86ad-6008cd00031c.png",
+      "visualReview": "2〜3段の広い岩棚と小石、まばらな草を目視確認。岩棚の下面に濃い局所陰影あり。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.441182,
+        "alphaBodyMedian": 253.0,
+        "bboxAt128Inclusive": [
+          0,
+          205,
+          2047,
+          715
+        ],
+        "edgeTopY": [
+          323,
+          323
+        ],
+        "edgeHeightsM": [
+          4.46484,
+          4.46484
+        ],
+        "edgeHeightErrorM": [
+          -0.03516,
+          -0.03516
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          3.92578,
+          5.84766
+        ],
+        "bodyBottomY": 715,
+        "groundLineBottomDeltaPx": 11,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 1107,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 93.216,
+        "rockLuminanceStdRec709": 28.353,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 2435983,
+        "sha256": "4c7f23d5cb6753c029c9373deaa3bff05f55dc065f888b1b61b02fb0c3a47492",
+        "bodyBottomPerColumnMedianY": 711.0,
+        "bodyBottomPerColumnModeY": 711,
+        "bodyBottomPerColumnModeFraction": 0.70752,
+        "groundLineModeDeltaPx": 7,
+        "groundLineMedianDeltaPx": 7.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy711。基準y704から+7pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが1107px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-18",
+      "name": "なだらかな岩の斜面",
+      "file": "cliff_c18_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          3,
+          4
+        ],
+        "edgesM": [
+          3,
+          3
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": null
+      },
+      "tags": [
+        "flat"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: A low continuous rocky slope leaning approximately 45 degrees toward the viewer, allowing its upper facing surface to be visible while using exact front orthographic projection. Small fissures and chips; central height 3 to 4m, max about 3.7m y388. Both end tops y448 (3m). No perspective convergence and no ground plane.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-3940fcb4-3275-485f-891f-10262d27de58.png",
+      "visualReview": "局所修正で両端を2.906/2.918mへ下げ3m±0.3m内へ改善。中央最高は4.137mで4m上限より0.137m高い。45度の奥行き角は画像から厳密検証していない。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.580612,
+        "alphaBodyMedian": 253.0,
+        "bboxAt128Inclusive": [
+          0,
+          351,
+          2047,
+          713
+        ],
+        "edgeTopY": [
+          456,
+          455
+        ],
+        "edgeHeightsM": [
+          2.90625,
+          2.91797
+        ],
+        "edgeHeightErrorM": [
+          -0.09375,
+          -0.08203
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          2.90625,
+          4.13672
+        ],
+        "bodyBottomY": 713,
+        "groundLineBottomDeltaPx": 9,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 800,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 105.363,
+        "rockLuminanceStdRec709": 27.844,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": null,
+        "bytes": 1959802,
+        "sha256": "8015ae0caee0c4538c82e4102913354445da0536fb73a6b0b541f1383bbe4224",
+        "bodyBottomPerColumnMedianY": 711.0,
+        "bodyBottomPerColumnModeY": 711,
+        "bodyBottomPerColumnModeFraction": 0.959961,
+        "groundLineModeDeltaPx": 7,
+        "groundLineMedianDeltaPx": 7.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "correctionHistory": [
+        {
+          "source": "/workspace/scratch/f5ec33877ad1/generated_images/exec-02195f6a-33c4-4211-8ddf-8e4a5e68b675.png",
+          "measurement": {
+            "alphaThreshold": 128,
+            "dimensions": [
+              2048,
+              768
+            ],
+            "mode": "RGBA",
+            "dimensionsMatch": true,
+            "alphaMin": 0,
+            "alphaMax": 254,
+            "alphaZeroFraction": 0.039565,
+            "alphaBodyMedian": 252.0,
+            "bboxAt128Inclusive": [
+              0,
+              317,
+              2047,
+              716
+            ],
+            "edgeTopY": [
+              319,
+              319
+            ],
+            "edgeHeightsM": [
+              4.51172,
+              4.51172
+            ],
+            "edgeHeightErrorM": [
+              1.51172,
+              1.51172
+            ],
+            "edgeHeightsWithinTolerance": [
+              false,
+              false
+            ],
+            "centralCrestHeightRangeM": [
+              3.10547,
+              4.21875
+            ],
+            "bodyBottomY": 716,
+            "groundLineBottomDeltaPx": 12,
+            "bodyBottomWithinSoilAllowance": true,
+            "alphaBelowY720Max": 3,
+            "alphaBelowY720NonzeroPixels": 34159,
+            "alphaBelowY720AtLeast128Pixels": 0,
+            "rockLuminanceMeanRec709": 102.169,
+            "rockLuminanceStdRec709": 28.203,
+            "luminanceTarget20to35": true,
+            "luminanceAcceptanceAtLeast18": true,
+            "exitStrip": null,
+            "bytes": 2304093,
+            "sha256": "4f934ddf07c2a339216442d764d5f6abda8236a036888e3844e48a327d087264"
+          },
+          "selected": false
+        },
+        {
+          "source": "/workspace/scratch/f5ec33877ad1/generated_images/exec-3940fcb4-3275-485f-891f-10262d27de58.png",
+          "prompt": "Correct the vertical geometry of this existing low rocky slope cutout. Exact2048x768 PNG, strict front orthographic, uniform scale85.333px/m, groundy704. Current extreme left and right connectors wrongly start near y319 (4.5m). LOWER both outer164px connector-band crests by129pixels so each extreme top is exactly y448 (3m). All central slope crest must be y388 or lower, reaching no more than3.7m; the present central top near y344 is too high and must be lowered44pixels. Keep the tilted broad upper facing rock slope, about45degrees toward viewer, the geological texture, crevices and natural grey-brown photographic material. Do not preserve the tall pillar heights from the input. Entire visible rock fits from y388 to y704, left and right endpoint tops exactlyy448. Ground cutoff stays horizontaly704. Everything belowy704 and above the new crest must be TRUE alpha0, with no gradient backdrop or low-opacity residue. Do not change canvas size, make a new scene, or add text.",
+          "selected": true,
+          "measurement": {
+            "alphaThreshold": 128,
+            "dimensions": [
+              2048,
+              768
+            ],
+            "mode": "RGBA",
+            "dimensionsMatch": true,
+            "alphaMin": 0,
+            "alphaMax": 254,
+            "alphaZeroFraction": 0.580612,
+            "alphaBodyMedian": 253.0,
+            "bboxAt128Inclusive": [
+              0,
+              351,
+              2047,
+              713
+            ],
+            "edgeTopY": [
+              456,
+              455
+            ],
+            "edgeHeightsM": [
+              2.90625,
+              2.91797
+            ],
+            "edgeHeightErrorM": [
+              -0.09375,
+              -0.08203
+            ],
+            "edgeHeightsWithinTolerance": [
+              true,
+              true
+            ],
+            "centralCrestHeightRangeM": [
+              2.90625,
+              4.13672
+            ],
+            "bodyBottomY": 713,
+            "groundLineBottomDeltaPx": 9,
+            "bodyBottomWithinSoilAllowance": true,
+            "alphaBelowY720Max": 1,
+            "alphaBelowY720NonzeroPixels": 800,
+            "alphaBelowY720AtLeast128Pixels": 0,
+            "rockLuminanceMeanRec709": 105.363,
+            "rockLuminanceStdRec709": 27.844,
+            "luminanceTarget20to35": true,
+            "luminanceAcceptanceAtLeast18": true,
+            "exitStrip": null,
+            "bytes": 1959802,
+            "sha256": "8015ae0caee0c4538c82e4102913354445da0536fb73a6b0b541f1383bbe4224",
+            "bodyBottomPerColumnMedianY": 711.0,
+            "bodyBottomPerColumnModeY": 711,
+            "bodyBottomPerColumnModeFraction": 0.959961,
+            "groundLineModeDeltaPx": 7,
+            "groundLineMedianDeltaPx": 7.0
+          }
+        }
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy711。基準y704から+7pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが800px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。",
+        "最高約4.13672mで目標上限4mを約0.137m上回る。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-19",
+      "name": "出口の左側の終わり",
+      "file": "cliff_c19_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          0,
+          4.5
+        ],
+        "edgesM": [
+          4.5,
+          0
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": {
+          "xStart": 1536,
+          "xEnd": 2047
+        }
+      },
+      "tags": [
+        "exit_left",
+        "rubble"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: LEFT END OF AN EXIT. Rock wall starts at left edge x0 with crest y320 (4.5m high), then slopes gradually downward to the RIGHT through a natural mixture of eroded strata and low debris, reaches baseline y704 exactly at x1535. CRITICAL: the entire rightmost 512-pixel strip x1536 through2047 is 100 percent transparent at every y, completely blank, no stones or grass. Leftmost164px is a dark vertical connection groove. This wall occupies ONLY the left three-quarters of canvas; do not center it. No right connector because exit is open.\nAbsolute alpha rule: the rightmost 512-pixel area is alpha=0 even for anti-aliasing, stray mist or invisible residue. Keep the final rock tip safely at x1500, leaving 36px safety before the strictly empty quarter x1536..2047. Never render the grey/brown preview backdrop; output a genuine transparent cutout.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-2d83403a-997c-41b6-bb6d-a9a62ac50230.png",
+      "visualReview": "2回目の局所修正で本体は右512pxに入らなくなった。出口左側の地層と風食の造形。右512pxにalpha1の16pxが残るため厳密な完全透明ではない。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.736418,
+        "alphaBodyMedian": 253.0,
+        "bboxAt128Inclusive": [
+          0,
+          313,
+          1444,
+          713
+        ],
+        "edgeTopY": [
+          314,
+          null
+        ],
+        "edgeHeightsM": [
+          4.57031,
+          0.0
+        ],
+        "edgeHeightErrorM": [
+          0.07031,
+          0.0
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          -0.09375,
+          4.53516
+        ],
+        "bodyBottomY": 713,
+        "groundLineBottomDeltaPx": 9,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 227,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 99.351,
+        "rockLuminanceStdRec709": 28.974,
+        "luminanceTarget20to35": true,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": {
+          "bounds": {
+            "xStart": 1536,
+            "xEnd": 2047
+          },
+          "nonzeroAlphaPixels": 16,
+          "alphaAtLeast128Pixels": 0,
+          "maxAlpha": 1,
+          "strictlyTransparent": false
+        },
+        "bytes": 1532850,
+        "sha256": "3e82b3ee8af90d0b78d90bb71d82ea42d3643cc5f4bd91df54b4a3bfaaab4cdd",
+        "bodyBottomPerColumnMedianY": 713.0,
+        "bodyBottomPerColumnModeY": 713,
+        "bodyBottomPerColumnModeFraction": 0.999308,
+        "groundLineModeDeltaPx": 9,
+        "groundLineMedianDeltaPx": 9.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "correctionHistory": [
+        {
+          "source": "/workspace/scratch/f5ec33877ad1/generated_images/exec-9c213b00-c4db-4b19-b818-ef0d2ebbf222.png",
+          "measurement": {
+            "alphaThreshold": 128,
+            "dimensions": [
+              2048,
+              768
+            ],
+            "mode": "RGBA",
+            "dimensionsMatch": true,
+            "alphaMin": 0,
+            "alphaMax": 254,
+            "alphaZeroFraction": 0.716182,
+            "alphaBodyMedian": 253.0,
+            "bboxAt128Inclusive": [
+              0,
+              313,
+              1579,
+              713
+            ],
+            "edgeTopY": [
+              315,
+              null
+            ],
+            "edgeHeightsM": [
+              4.55859,
+              0.0
+            ],
+            "edgeHeightErrorM": [
+              0.05859,
+              0.0
+            ],
+            "edgeHeightsWithinTolerance": [
+              true,
+              true
+            ],
+            "centralCrestHeightRangeM": [
+              -0.09375,
+              4.52344
+            ],
+            "bodyBottomY": 713,
+            "groundLineBottomDeltaPx": 9,
+            "bodyBottomWithinSoilAllowance": true,
+            "alphaBelowY720Max": 1,
+            "alphaBelowY720NonzeroPixels": 914,
+            "alphaBelowY720AtLeast128Pixels": 0,
+            "rockLuminanceMeanRec709": 96.332,
+            "rockLuminanceStdRec709": 31.568,
+            "luminanceTarget20to35": true,
+            "luminanceAcceptanceAtLeast18": true,
+            "exitStrip": {
+              "bounds": {
+                "xStart": 1536,
+                "xEnd": 2047
+              },
+              "nonzeroAlphaPixels": 2537,
+              "alphaAtLeast128Pixels": 954,
+              "maxAlpha": 253,
+              "strictlyTransparent": false
+            },
+            "bytes": 1733376,
+            "sha256": "6473aba436e6c35a5c9ca45f14e047562e4eb891fe8ad5012ed00629df4bde6c"
+          },
+          "selected": false
+        },
+        {
+          "source": "/workspace/scratch/f5ec33877ad1/generated_images/exec-e044470e-8247-4599-a179-4279429a05f9.png",
+          "prompt": "Precise geometry and alpha cleanup of this original LEFT EXIT cliff cutout, preserve its original rock design and canvas EXACT2048x768. The lower right tip is currently too far right aroundx1578. Shorten the descending rock slope to reach the ground line y704 by x1472, leaving a64pixel safety margin beforex1536. Every single pixel in the full rightmost quarter x1536..2047 at ally0..767 must have EXACT alpha0. Delete all fragments, haze, tiny alpha1 speckles, shadows or low-opacity residue there. Do not merely make the tip faint: remove its alpha entirely. Preserve the left connector atx0..163 with crest near y320 and same dark vertical grooves. Keep the same descending rocky landform, photographic stone material, no new geology or objects. Base remains y704, all pixels belowy704 alsoalpha0. Render only an original cliff cutout occupying x0..1472, with fully empty right quarter. No background or checkerboard pixels.",
+          "selected": false,
+          "measurement": {
+            "alphaThreshold": 128,
+            "dimensions": [
+              1774,
+              887
+            ],
+            "mode": "RGBA",
+            "dimensionsMatch": false,
+            "alphaMin": 0,
+            "alphaMax": 255,
+            "alphaZeroFraction": 0.770673,
+            "alphaBodyMedian": 253.0,
+            "bboxAt128Inclusive": [
+              0,
+              355,
+              1233,
+              763
+            ],
+            "edgeTopY": [
+              357,
+              null
+            ],
+            "edgeHeightsM": [
+              4.06641,
+              0.0
+            ],
+            "edgeHeightErrorM": [
+              -0.43359,
+              0.0
+            ],
+            "edgeHeightsWithinTolerance": [
+              false,
+              true
+            ],
+            "centralCrestHeightRangeM": [
+              -0.67969,
+              4.05469
+            ],
+            "bodyBottomY": 763,
+            "groundLineBottomDeltaPx": 59,
+            "bodyBottomWithinSoilAllowance": false,
+            "alphaBelowY720Max": 255,
+            "alphaBelowY720NonzeroPixels": 57765,
+            "alphaBelowY720AtLeast128Pixels": 52243,
+            "rockLuminanceMeanRec709": 100.465,
+            "rockLuminanceStdRec709": 32.715,
+            "luminanceTarget20to35": true,
+            "luminanceAcceptanceAtLeast18": true,
+            "exitStrip": {
+              "bounds": {
+                "xStart": 1536,
+                "xEnd": 2047
+              },
+              "nonzeroAlphaPixels": 35,
+              "alphaAtLeast128Pixels": 0,
+              "maxAlpha": 1,
+              "strictlyTransparent": false
+            },
+            "bytes": 949876,
+            "sha256": "896c9982f09a81c0dcb57c58f6a04467cc5ef783bb9dd1a6273777a721c07f44"
+          },
+          "reason": "出力寸法が1774×887へ変化し、端高さと地面位置も規格から外れたため不採用。"
+        },
+        {
+          "source": "/workspace/scratch/f5ec33877ad1/generated_images/exec-2d83403a-997c-41b6-bb6d-a9a62ac50230.png",
+          "prompt": "Keep the provided2048x768 PNG at EXACTLY the same2048x768 canvas. Keep the original cliff at the exact same pixel position, scale, texture, lighting and silhouette except its last tiny right tip. Remove the last80pixels of the rock tip: the original ends nearx1578, the new tip must end atx1490. Blend only that tip into a natural slope toward the existing y704 ground baseline. Preserve x0 endpoint crest at y320. No other changes. Do not crop, resize, reframe or add margins. The rightmost512pixels x1536..2047 must be truly empty alpha0 at everyy. Delete all lowalpha speckles from that strip too. Preserve all other rock, preserve original left3/4 placement, preserve EXACT2048x768 dimensions. TransparentPNG original art, no words or marks.",
+          "selected": true,
+          "measurement": {
+            "alphaThreshold": 128,
+            "dimensions": [
+              2048,
+              768
+            ],
+            "mode": "RGBA",
+            "dimensionsMatch": true,
+            "alphaMin": 0,
+            "alphaMax": 254,
+            "alphaZeroFraction": 0.736418,
+            "alphaBodyMedian": 253.0,
+            "bboxAt128Inclusive": [
+              0,
+              313,
+              1444,
+              713
+            ],
+            "edgeTopY": [
+              314,
+              null
+            ],
+            "edgeHeightsM": [
+              4.57031,
+              0.0
+            ],
+            "edgeHeightErrorM": [
+              0.07031,
+              0.0
+            ],
+            "edgeHeightsWithinTolerance": [
+              true,
+              true
+            ],
+            "centralCrestHeightRangeM": [
+              -0.09375,
+              4.53516
+            ],
+            "bodyBottomY": 713,
+            "groundLineBottomDeltaPx": 9,
+            "bodyBottomWithinSoilAllowance": true,
+            "alphaBelowY720Max": 1,
+            "alphaBelowY720NonzeroPixels": 227,
+            "alphaBelowY720AtLeast128Pixels": 0,
+            "rockLuminanceMeanRec709": 99.351,
+            "rockLuminanceStdRec709": 28.974,
+            "luminanceTarget20to35": true,
+            "luminanceAcceptanceAtLeast18": true,
+            "exitStrip": {
+              "bounds": {
+                "xStart": 1536,
+                "xEnd": 2047
+              },
+              "nonzeroAlphaPixels": 16,
+              "alphaAtLeast128Pixels": 0,
+              "maxAlpha": 1,
+              "strictlyTransparent": false
+            },
+            "bytes": 1532850,
+            "sha256": "3e82b3ee8af90d0b78d90bb71d82ea42d3643cc5f4bd91df54b4a3bfaaab4cdd",
+            "bodyBottomPerColumnMedianY": 713.0,
+            "bodyBottomPerColumnModeY": 713,
+            "bodyBottomPerColumnModeFraction": 0.999308,
+            "groundLineModeDeltaPx": 9,
+            "groundLineMedianDeltaPx": 9.0
+          }
+        }
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy713。基準y704から+9pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが227px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。",
+        "出口512px区間はalpha128以上0pxだが非ゼロalpha16px（最大1）が残り、完全透明ではない。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    },
+    {
+      "id": "C-20",
+      "name": "出口の右側の終わり",
+      "file": "cliff_c20_v1.png",
+      "target": {
+        "dimensions": [
+          2048,
+          768
+        ],
+        "pxPerMeter": 85.33333333333333,
+        "groundY": 704,
+        "maximumSoilY": 720,
+        "heightM": [
+          0,
+          4.5
+        ],
+        "edgesM": [
+          0,
+          4.5
+        ],
+        "edgeToleranceM": 0.3,
+        "connectorWidthPx": 164,
+        "transparentExitStrip": {
+          "xStart": 0,
+          "xEnd": 511
+        }
+      },
+      "tags": [
+        "exit_right",
+        "rubble"
+      ],
+      "prompt": "Input image1 is a previously generated cliff modular scaffold. Preserve only its exact 2048x768 canvas, baseline near y704, full width crop, and dark outer connector structure. Replace the central geology completely with the segment described below, so this is a distinct geological pattern. For 4.5m ends retain outer crest at y320; for 3m ends lower it to y448. For exit variants follow the empty-quarter rule instead. Do not replicate the template's middle terraces when the new design calls for something different.\nUse case: stylized-concept. Asset type: original photorealistic cliff front-elevation cutout for terrain modeling in VEILBOUND HUNTERS. Output EXACTLY 2048 pixels wide by 768 pixels high, 8:3 aspect ratio, PNG with REAL alpha transparency. One continuous cliff wall segment only, one strict orthographic front view, no perspective. The horizontal span represents24m, uniform scale85.333 pixels per metre both directions. Coordinates are measured from the upper left. All rock bases terminate at a straight ground cut line y704, 64px above the bottom; tiny attached debris can extend at most to y720. The entire area below y720 must be transparent; do not draw ground or cast shadows. All pixels above the natural crest must be transparent. Wall extends flush to canvas left/right edges except the deliberately empty exit quarter when requested. Connector rule: outer164px bands at both non-exit ends are realistic deep dark vertical rock fissures, terminating at the required edge top height; edge heights must not drift and these bands contain no tall rock, crystals or moss changing the crest. The two edge crest pixels must be within25px of the specified y. Strong natural rock detail: weathered fractures, chips, lichen specks, dark cavities and bright worn faces; photographic detail generated from scratch, not the smooth clay-like old reference. Neutral overcast diffuse illumination with NO directional shadows, only ambient dark crevices. Grey-brown rock #8B8D82 to #6E7268, recesses toward #3E413A, muted moss #6F8562, soil #A79F84; bronze mineral only when asked, never self luminous. Aim opaque-rock luminance standard deviation20–35 on0–255 scale through cavities and local detail, avoid muddy low contrast. The additional art board is only palette/context: do not copy people, creature, buildings, weapon, UI, sky, scene, old flat texture, or layout. No text, glyphs, arrows, grids, labels, numbers, frame, ground plane, landscape, fog, mountain backdrop, cast shadow, beings, or background color.\nSpecific segment: RIGHT END OF AN EXIT. This is a NEW different geological design, not a mirrored copy of any left exit: use broken diagonally jointed block faces with a natural rubble ramp. CRITICAL: the entire leftmost512-pixel strip x0 through511 is 100 percent transparent at every y, completely blank. Wall begins gently at baseline y704 at x512, then rises to the RIGHT, reaching 4.5m high (crest y320) at x2047. Rightmost164px dark vertical connector groove. Wall occupies ONLY the right three-quarters of canvas; do not center it.\nAbsolute alpha rule: all x0..511 at every y must have alpha=0, no low-opacity residue, fog, ground or isolated particles. Place the first visible rock at x590 for a clear safety gap after x511. The entire wall occupies x590..2047. Rock shape rises continuously from the lower left rubble to the higher right end. Do not add anything into the left quarter. This is not the previous full width template and the left end pillar must be completely absent. Keep the entire transparent area truly empty, including invisible faint noise. Output exact2048x768.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-a4b7143e-cf5f-450e-b51f-ecb096943f59.png",
+      "visualReview": "左から右へ上がる出口右側。斜めの大きい板状節理と瓦礫から成り、C19の反転ではない。修正で左512pxのalpha1残留は175→2pxへ減少したが厳密完全透明ではない。輝度SDは36.783で目標上限35を超える。",
+      "measurement": {
+        "alphaThreshold": 128,
+        "dimensions": [
+          2048,
+          768
+        ],
+        "mode": "RGBA",
+        "dimensionsMatch": true,
+        "alphaMin": 0,
+        "alphaMax": 254,
+        "alphaZeroFraction": 0.715943,
+        "alphaBodyMedian": 253.0,
+        "bboxAt128Inclusive": [
+          523,
+          307,
+          2047,
+          710
+        ],
+        "edgeTopY": [
+          null,
+          318
+        ],
+        "edgeHeightsM": [
+          0.0,
+          4.52344
+        ],
+        "edgeHeightErrorM": [
+          0.0,
+          0.02344
+        ],
+        "edgeHeightsWithinTolerance": [
+          true,
+          true
+        ],
+        "centralCrestHeightRangeM": [
+          -0.05859,
+          4.65234
+        ],
+        "bodyBottomY": 710,
+        "groundLineBottomDeltaPx": 6,
+        "bodyBottomWithinSoilAllowance": true,
+        "alphaBelowY720Max": 1,
+        "alphaBelowY720NonzeroPixels": 5,
+        "alphaBelowY720AtLeast128Pixels": 0,
+        "rockLuminanceMeanRec709": 107.464,
+        "rockLuminanceStdRec709": 36.783,
+        "luminanceTarget20to35": false,
+        "luminanceAcceptanceAtLeast18": true,
+        "exitStrip": {
+          "bounds": {
+            "xStart": 0,
+            "xEnd": 511
+          },
+          "nonzeroAlphaPixels": 2,
+          "alphaAtLeast128Pixels": 0,
+          "maxAlpha": 1,
+          "strictlyTransparent": false
+        },
+        "bytes": 1654477,
+        "sha256": "99846e4fd2d6f38d24151d66b464a6947390c5903221e5348c9eba4f381f4d16",
+        "bodyBottomPerColumnMedianY": 709.0,
+        "bodyBottomPerColumnModeY": 709,
+        "bodyBottomPerColumnModeFraction": 0.987541,
+        "groundLineModeDeltaPx": 5,
+        "groundLineMedianDeltaPx": 5.0
+      },
+      "unverified": [
+        "正式採用",
+        "3D地形化",
+        "全組合せの色・形の接続連続性",
+        "ゲーム内表示",
+        "iPhone実機"
+      ],
+      "correctionHistory": [
+        {
+          "source": "/workspace/scratch/f5ec33877ad1/generated_images/exec-b2ae3e7f-c491-43c7-ac03-0de27e8a2c75.png",
+          "measurement": {
+            "alphaThreshold": 128,
+            "dimensions": [
+              2048,
+              768
+            ],
+            "mode": "RGBA",
+            "dimensionsMatch": true,
+            "alphaMin": 0,
+            "alphaMax": 254,
+            "alphaZeroFraction": 0.714975,
+            "alphaBodyMedian": 253.0,
+            "bboxAt128Inclusive": [
+              523,
+              307,
+              2047,
+              711
+            ],
+            "edgeTopY": [
+              null,
+              318
+            ],
+            "edgeHeightsM": [
+              0.0,
+              4.52344
+            ],
+            "edgeHeightErrorM": [
+              0.0,
+              0.02344
+            ],
+            "edgeHeightsWithinTolerance": [
+              true,
+              true
+            ],
+            "centralCrestHeightRangeM": [
+              -0.07031,
+              4.65234
+            ],
+            "bodyBottomY": 711,
+            "groundLineBottomDeltaPx": 7,
+            "bodyBottomWithinSoilAllowance": true,
+            "alphaBelowY720Max": 1,
+            "alphaBelowY720NonzeroPixels": 24,
+            "alphaBelowY720AtLeast128Pixels": 0,
+            "rockLuminanceMeanRec709": 103.16,
+            "rockLuminanceStdRec709": 33.487,
+            "luminanceTarget20to35": true,
+            "luminanceAcceptanceAtLeast18": true,
+            "exitStrip": {
+              "bounds": {
+                "xStart": 0,
+                "xEnd": 511
+              },
+              "nonzeroAlphaPixels": 175,
+              "alphaAtLeast128Pixels": 0,
+              "maxAlpha": 1,
+              "strictlyTransparent": false
+            },
+            "bytes": 1767750,
+            "sha256": "0d79de3a247f3883208ae6e33e4a914b9f3aa108c5de9404a7eae58618f0b716"
+          },
+          "selected": false
+        },
+        {
+          "source": "/workspace/scratch/f5ec33877ad1/generated_images/exec-a4b7143e-cf5f-450e-b51f-ecb096943f59.png",
+          "prompt": "Alpha cleanup only of this original RIGHT EXIT cliff cutout. Exact2048x768 canvas. Preserve the existing distinctive diagonal fractured rock design, rock placement, rise to the right, right endpoint crest near y320 and ground liney704. The entire leftmost512pixel strip x0..511 must be EXACTalpha0 at everyy0..767. Remove every tiny faint alpha1 residual pixel in this strip; make it truly empty, not almost transparent. Keep first visible stone atx560 or farther right for a48pixel safety margin. Do not mirror or reverse the rock design. All area above the rock silhouette and all area belowy704 must also be exactalpha0, including invisible speckles. No solid color backdrop, gradient, scene, grass, shadows, text or additional objects. PNGRGBA with actual transparent empty background, exact2048x768.",
+          "selected": true,
+          "measurement": {
+            "alphaThreshold": 128,
+            "dimensions": [
+              2048,
+              768
+            ],
+            "mode": "RGBA",
+            "dimensionsMatch": true,
+            "alphaMin": 0,
+            "alphaMax": 254,
+            "alphaZeroFraction": 0.715943,
+            "alphaBodyMedian": 253.0,
+            "bboxAt128Inclusive": [
+              523,
+              307,
+              2047,
+              710
+            ],
+            "edgeTopY": [
+              null,
+              318
+            ],
+            "edgeHeightsM": [
+              0.0,
+              4.52344
+            ],
+            "edgeHeightErrorM": [
+              0.0,
+              0.02344
+            ],
+            "edgeHeightsWithinTolerance": [
+              true,
+              true
+            ],
+            "centralCrestHeightRangeM": [
+              -0.05859,
+              4.65234
+            ],
+            "bodyBottomY": 710,
+            "groundLineBottomDeltaPx": 6,
+            "bodyBottomWithinSoilAllowance": true,
+            "alphaBelowY720Max": 1,
+            "alphaBelowY720NonzeroPixels": 5,
+            "alphaBelowY720AtLeast128Pixels": 0,
+            "rockLuminanceMeanRec709": 107.464,
+            "rockLuminanceStdRec709": 36.783,
+            "luminanceTarget20to35": false,
+            "luminanceAcceptanceAtLeast18": true,
+            "exitStrip": {
+              "bounds": {
+                "xStart": 0,
+                "xEnd": 511
+              },
+              "nonzeroAlphaPixels": 2,
+              "alphaAtLeast128Pixels": 0,
+              "maxAlpha": 1,
+              "strictlyTransparent": false
+            },
+            "bytes": 1654477,
+            "sha256": "99846e4fd2d6f38d24151d66b464a6947390c5903221e5348c9eba4f381f4d16",
+            "bodyBottomPerColumnMedianY": 709.0,
+            "bodyBottomPerColumnModeY": 709,
+            "bodyBottomPerColumnModeFraction": 0.987541,
+            "groundLineModeDeltaPx": 5,
+            "groundLineMedianDeltaPx": 5.0
+          }
+        }
+      ],
+      "knownExceptions": [
+        "各列下端の最頻値による接地輪郭はy709。基準y704から+5pxずれる（瓦礫を含む輪郭の推定）。",
+        "y721以下に非ゼロalphaが5px残る。最大alpha=1、alpha128以上は0px。厳密な全透明条件を未達。",
+        "出口512px区間はalpha128以上0pxだが非ゼロalpha2px（最大1）が残り、完全透明ではない。",
+        "本体Rec.709輝度標準偏差36.783は目標20〜35の範囲外。最低受入18以上は満たす。"
+      ],
+      "generationInputReferences": [
+        "cliff_c01_v1.png（生成済み原本を寸法・接続帯の下敷きに使用）",
+        "art-source/board/style_board_v2.png（画風・色の参照）"
+      ]
+    }
+  ],
+  "depthFiles": "未制作。生成だけでは色図とピクセル単位の輪郭一致を保証できないため任意図は省略。",
+  "measurementMethod": "alpha >= 128 を本体として測定。基準 y704、縮尺 2048/24 px/m。端高は画像の x0 と x2047 の本体上端。centralCrestHeightRangeM は左右164pxを除く各列上端の最小最大。色の濃淡は本体内 Rec.709 輝度の標準偏差。透明の厳密ゼロと輪郭抽出用128閾値を分けて記録。 地面線は各有効列の本体下端の最頻値/中央値も併記。これらは瓦礫や段差を含む画像輪郭の推定であり、3Dの接地線確定値ではない。",
+  "postprocess": "PNGは選択した生成原本をコピーしたのみ。局所修正はbuilt-in image_genで生成し直した。Python等によるサイズ変更、背景除去、色補正、輪郭編集は行っていない。",
+  "summary": {
+    "imageCount": 20,
+    "dimensionsMatchCount": 20,
+    "edgeTolerancePassCount": 20,
+    "luminanceTarget20to35Count": 19,
+    "luminanceAcceptanceAtLeast18Count": 20,
+    "bodyBottomWithinY720Count": 19,
+    "exitStrictTransparencyPassCount": 0,
+    "uniqueSha256Count": 20,
+    "imageBytes": 46383068,
+    "generatorCalls": 27,
+    "finishState": "20点の原本候補を保存。厳密なalpha0、接地線、その他の微小な形状差はknownExceptionsを参照。"
+  },
+  "connectionCaveat": "端高さの計測適合は、全組合せの継ぎ目の色・形の連続性を保証しない。3m端と4.5m端は別の接続群として扱い、3D化後に確認する。"
+}

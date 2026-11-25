@@ -1,0 +1,7 @@
+{
+  "id": "T-01",
+  "original_source": "/workspace/scratch/f5ec33877ad1/generated_images/exec-6761fcfb-711a-4b78-a03a-6f0426375cff.png",
+  "selected_source": "/workspace/scratch/f5ec33877ad1/generated_images/exec-76828627-345a-46b5-bdfa-817ad174d8c6.png",
+  "refinement_prompt": "Edit only the provided original gray-brown rock tile for VEILBOUND HUNTERS. Preserve the existing pattern scale, stone colors, scattered lichen, overall even illumination, full-surface layout and lack of a focal object. Increase fine local crevice and pit contrast enough for luminance standard deviation about 27 on 0-255 scale; current source was measured at 19.8. Make recesses modestly darker and chipped rough raised edges modestly lighter, without any top-to-bottom or side lighting gradient. Repair the opposite outer edges so the texture repeats seamlessly both horizontally and vertically, with no bright border, visible joining line or big dominant crack. Return exactly 1024 by 1024 pixels if possible. Front-on material texture only. No direction of sunlight, no cast shadows, text, frame, new subject, sky, plants, terrain or glow. This is a technical refinement of this same texture, not a new composition.",
+  "reason": "Initial luma standard deviation 19.8054 was below minimum20; refined version selected after measurement."
+}
