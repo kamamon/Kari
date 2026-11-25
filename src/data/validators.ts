@@ -4,6 +4,7 @@
 
 import { buildFollowTable } from '../game/follow';
 import { AreaShape, NavGraph } from '../game/areaShape';
+import { groundAt } from '../game/world';
 import { validateBestiary, type BestiaryDef } from './bestiary';
 import { validateStory, type StoryDef } from './story';
 import { validateBoard, validateDeliveries, validateSupport } from './questBoard';
@@ -180,9 +181,12 @@ function validateMap(m: MapDef, errors: string[]): void {
   const b = m.bounds;
   if (!b || !(b.maxX > b.minX) || !(b.maxZ > b.minZ)) errors.push(`${w}: bounds が不正`);
   if (!isNum(m.stepUp)) errors.push(`${w}: stepUp が無い`);
+  if (m.stepDown !== undefined && !(isNum(m.stepDown) && m.stepDown > 0)) errors.push(`${w}: stepDown が不正`);
   for (const p of m.platforms ?? []) {
     if (!(p.maxX > p.minX) || !(p.maxZ > p.minZ) || !isNum(p.h)) errors.push(`${w}: platform が不正`);
+    if (p.look !== undefined && p.look !== 'yard' && p.look !== 'stone') errors.push(`${w}: platform の look ${String(p.look)} が不明`);
   }
+  for (const r of m.rocks ?? []) if (r.y !== undefined && !(isNum(r.y) && r.y < r.h)) errors.push(`${w}: rock の y が不正（下の端は上の端より低く）`);
 }
 
 /** 相互参照の検査。存在しない曲線・軌道・技を指していないか。 */
@@ -605,6 +609,21 @@ export function validateHub(c: Content, errors: string[]): void {
     else if (Math.hypot(f.x - map.spawn.x, f.z - map.spawn.z) <= f.r) errors.push(`${w}: 出発地点が、施設の前に重なる`);
     if (!(f.building && isNum(f.building.x) && isNum(f.building.z) && isNum(f.building.yaw))) errors.push(`${w}: building が不正`);
     else if (!map.rocks.some((r) => Math.hypot(r.x - f.building.x, r.z - f.building.z) < 0.01)) errors.push(`${w}: 建物の当たり（map の rocks）が無い`);
+    else {
+      // 段のある里（v0.31.0）: 施設の前（立つ輪の中）は平ら、建物は同じ床、当たりの下の端は床
+      const floor = groundAt(map.platforms, f.x, f.z);
+      const ring = f.r * 0.5;
+      for (let k = 0; k < 16; k++) {
+        const a = (k / 16) * Math.PI * 2;
+        if (Math.abs(groundAt(map.platforms, f.x + Math.cos(a) * ring, f.z + Math.sin(a) * ring) - floor) > 0.01) {
+          errors.push(`${w}: 施設の前（立つ輪）が平らでない（段か階段にかかる）`);
+          break;
+        }
+      }
+      if (Math.abs(groundAt(map.platforms, f.building.x, f.building.z) - floor) > 0.01) errors.push(`${w}: 建物と施設の前の床の高さが違う`);
+      const rock = map.rocks.find((r) => Math.hypot(r.x - f.building.x, r.z - f.building.z) < 0.01)!;
+      if (Math.abs((rock.y ?? 0) - floor) > 0.01) errors.push(`${w}: 建物の当たりの下の端（y）が床の高さと違う`);
+    }
     for (const o of h.facilities) if (o !== f && o.id < f.id && Math.hypot(o.x - f.x, o.z - f.z) < o.r + f.r) errors.push(`${w}: 施設 ${o.id} の前と重なる`);
   }
   // 里に立つ人（v0.23.0）: id は重ならない。同じ位置に当たりの円がある。施設の前（立つ輪）と出発地点に重ならない
@@ -618,8 +637,14 @@ export function validateHub(c: Content, errors: string[]): void {
       errors.push(`${w}: 位置が不正`);
       continue;
     }
-    if (n.facility !== undefined && !(h.facilities ?? []).some((f) => f.id === n.facility)) errors.push(`${w}: 施設 ${n.facility} が無い`);
-    if (!map.rocks.some((r) => Math.hypot(r.x - n.x, r.z - n.z) < 0.01 && r.r <= 0.6)) errors.push(`${w}: 人の当たり（map の rocks、半径 0.6m まで）が無い`);
+    const own = n.facility !== undefined ? (h.facilities ?? []).find((f) => f.id === n.facility) : undefined;
+    if (n.facility !== undefined && !own) errors.push(`${w}: 施設 ${n.facility} が無い`);
+    const floor = groundAt(map.platforms, n.x, n.z);
+    // 段のある里（v0.31.0）: 係の人は、その施設と同じ段に立つ
+    if (own && Math.abs(groundAt(map.platforms, own.x, own.z) - floor) > 0.01) errors.push(`${w}: 施設 ${own.id} と違う段に立っている`);
+    const body = map.rocks.find((r) => Math.hypot(r.x - n.x, r.z - n.z) < 0.01 && r.r <= 0.6);
+    if (!body) errors.push(`${w}: 人の当たり（map の rocks、半径 0.6m まで）が無い`);
+    else if (Math.abs((body.y ?? 0) - floor) > 0.01) errors.push(`${w}: 人の当たりの下の端（y）が床の高さと違う`);
     for (const f of h.facilities ?? []) if (Math.hypot(f.x - n.x, f.z - n.z) < f.r * 0.5 + 0.8) errors.push(`${w}: 施設 ${f.id} の前（立つ輪）に近すぎる`);
     if (Math.hypot(map.spawn.x - n.x, map.spawn.z - n.z) < 2) errors.push(`${w}: 出発地点に近すぎる`);
   }

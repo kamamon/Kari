@@ -28,6 +28,7 @@ import { counterOf, shortName } from './ui/targets';
 import { ResultScreen, type ResultHost } from './ui/result';
 import { iconUrl } from './ui/icons';
 import { StoryDialog, type StoryPlay } from './ui/story';
+import { nearestFacility } from './game/hub';
 import { scenesUnlocked, type StoryOutcome } from './data/story';
 import { AppearanceEditor, type LooksHost } from './ui/appearanceEditor';
 import { resolveAppearance, type ResolvedAppearance } from './data/appearance';
@@ -679,16 +680,8 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
         this.sim.step(input);
       }
       if (this.place === 'hub') {
-        const p = this.sim.player.pos;
-        let near: FacilityDef | null = null;
-        let best = Infinity;
-        for (const f of this.content.hub.facilities) {
-          const d = Math.hypot(f.x - p.x, f.z - p.z);
-          if (d <= f.r && d < best) {
-            best = d;
-            near = f;
-          }
-        }
+        // 施設の前で、同じ段にいる時だけ（v0.31.0。src/game/hub.ts）
+        const near = nearestFacility(this.content.hub.facilities, this.sim.world, this.sim.player.pos);
         this.nearFacility = near;
         if (interact && near) this.openFacility(near.kind);
       }

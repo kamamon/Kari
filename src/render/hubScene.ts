@@ -5,6 +5,7 @@ import {
   BufferGeometry, CircleGeometry, CylinderGeometry, DoubleSide, Float32BufferAttribute, Group, IcosahedronGeometry, Mesh, MeshBasicMaterial, MeshLambertMaterial, RingGeometry,
 } from 'three';
 import type { FacilityDef, HubDef, MapDef } from '../data/schemas';
+import { groundAt } from '../game/world';
 import { buildAreaGroup, mergeStatic } from './arena';
 import { ENV_TILES, boxUv, cutoutMaterial, tileMaterial } from './envArt';
 
@@ -221,12 +222,13 @@ export function buildHubGroup(hub: HubDef, map: MapDef): Group {
     const b = new Mesh(def.shape(), cutoutMaterial(def.file, BUILDING_GAIN));
     b.castShadow = true;
     b.receiveShadow = true;
-    b.position.set(f.building.x, 0, f.building.z);
+    // 建物と立つ輪は、その場所の床の高さ（v0.31.0。工房は下の段）
+    b.position.set(f.building.x, groundAt(map.platforms, f.building.x, f.building.z), f.building.z);
     b.rotation.y = f.building.yaw;
     g.add(b);
     const ring = new Mesh(new RingGeometry(f.r * 0.5 - 0.09, f.r * 0.5, 28), M.ring);
     ring.rotation.x = -Math.PI / 2;
-    ring.position.set(f.x, 0.03, f.z);
+    ring.position.set(f.x, groundAt(map.platforms, f.x, f.z) + 0.03, f.z);
     ring.renderOrder = 1;
     g.add(ring);
   }

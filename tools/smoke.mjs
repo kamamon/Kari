@@ -1440,7 +1440,8 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   // 商店: 通貨が無いと買えない → 報酬をもらって、買う・売る
   const put = (id) => page.evaluate((id) => {
     const a = window.__vh, f = a.content.hub.facilities.find((x) => x.id === id), p = a.sim.player;
-    p.pos = { x: f.x, y: 0, z: f.z };
+    // 施設の前の床の高さへ（v0.31.0。工房は 3m 下の段）
+    p.pos = { x: f.x, y: a.sim.world.groundHeight(f.x, f.z), z: f.z };
     p.prevPos = { ...p.pos };
     p.yaw = Math.atan2(f.building.x - f.x, f.building.z - f.z);
     p.prevYaw = p.yaw;
@@ -1476,6 +1477,50 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   h = await hubState();
   check('里: 工房の画面は、強化の欄が開いた状態で出る', h.section === 'workshop' && h.title === '工房' && h.forge !== 'none' && h.shop === 'none' && await page.evaluate(() => document.getElementById('base-forge').open), JSON.stringify(h));
   await page.click('.base-close');
+  // ---- 段のある里（v0.31.0。ChatGPT の里の設計 #11 の P0）: 広場から西の階段と踊り場を下りて、3m 低い炉の段の工房へ ----
+  const place = (x, z, yaw) => page.evaluate(([x, z, yaw]) => {
+    const a = window.__vh, p = a.sim.player;
+    p.pos = { x, y: a.sim.world.groundHeight(x, z), z };
+    p.prevPos = { ...p.pos };
+    p.yaw = yaw;
+    p.prevYaw = yaw;
+    a.view.cam.snap(yaw);
+  }, [x, z, yaw]);
+  const tier = await page.evaluate(() => {
+    const t = window.__vh.view.scene.getObjectByName('terraces');
+    const kinds = t ? t.children.map((m) => m.userData.terrace).sort().join() : '';
+    const maps = t ? t.children.filter((m) => m.material.map).every((m) => m.material.map.image?.naturalWidth > 0 || m.material.map.image?.width > 0) : false;
+    return { kinds, maps, walls: t?.children.find((m) => m.userData.terrace === 'wall')?.userData.walls ?? 0, rails: t?.children.find((m) => m.userData.terrace === 'rail')?.userData.rails ?? 0 };
+  });
+  check('段のある里: 炉の段の床・石段・擁壁・柵が描かれ、絵が読めている', tier.kinds === 'rail,stone,wall,yard' && tier.maps && tier.walls > 20 && tier.rails > 4, JSON.stringify(tier));
+  await place(-15, 8.5, -Math.PI / 2);
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${OUT}95a_hub_stairs_top.png` });
+  await page.keyboard.down('KeyW');
+  const landing = await until(page, () => Math.abs(window.__vh.sim.player.pos.y + 1.5) < 0.01 && window.__vh.sim.player.pos.x < -19.3, 15000);
+  const bottom = await until(page, () => window.__vh.sim.player.pos.y < -2.99 && window.__vh.sim.player.pos.x < -24, 15000);
+  const atForge = await until(page, () => window.__vh.nearFacility?.id === 'workshop', 15000);
+  await page.keyboard.up('KeyW');
+  await page.waitForTimeout(200);
+  h = await hubState();
+  check('段のある里: 広場から西へ歩くと、階段と踊り場（-1.5m）を下りて炉の段（-3m）へ着き、工房の前で「工房に入る」が出る', landing && bottom && atForge && /工房に入る/.test(h.prompt), JSON.stringify({ landing, bottom, atForge, y: await page.evaluate(() => window.__vh.sim.player.pos.y), prompt: h.prompt }));
+  await place(-26, 9, Math.PI / 2);
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: `${OUT}95b_hub_forge_terrace.png` });
+  // 上の段の縁（階段の北の脇、柵の所）: 工房は開かず、西へ歩いても落ちない
+  await place(-22.6, 12.4, -Math.PI / 2);
+  await page.keyboard.down('KeyW');
+  await page.waitForTimeout(1500);
+  await page.keyboard.up('KeyW');
+  const edge = await page.evaluate(() => ({ x: window.__vh.sim.player.pos.x, y: window.__vh.sim.player.pos.y, near: window.__vh.nearFacility?.id ?? '' }));
+  check('段のある里: 上の段の縁（柵の所）からは工房を開けず、西へ歩いても、体が縁にかからない所で止まる（落ちない）', edge.y === 0 && edge.x > -23.7 + 0.38 && edge.near === '', JSON.stringify(edge));
+  await page.screenshot({ path: `${OUT}95c_hub_edge.png` });
+  // 炉の段から、階段を上って広場へ戻る
+  await place(-25, 8.5, Math.PI / 2);
+  await page.keyboard.down('KeyW');
+  const back = await until(page, () => window.__vh.sim.player.pos.x > -16.6 && window.__vh.sim.player.pos.y === 0, 15000);
+  await page.keyboard.up('KeyW');
+  check('段のある里: 炉の段から東へ歩くと、階段を上って広場の高さ（0m）へ戻る', back, JSON.stringify(await page.evaluate(() => window.__vh.sim.player.pos)));
   // 装備箱: 持ち替えても、立っている場所と開いている画面は変わらない
   await put('chest');
   await until(page, () => window.__vh.nearFacility?.id === 'chest');

@@ -486,11 +486,15 @@ export interface MapDef {
   name: string;
   bounds: { minX: number; maxX: number; minZ: number; maxZ: number };
   stepUp: number;
+  /** 一歩で下りられる高さ（v0.31.0。里の段の縁から落ちない）。無ければ、どこまでも下りられる */
+  stepDown?: number;
   spawn: { x: number; z: number; yaw: number };
   camp: { x: number; z: number; r: number };
   monsterSpawn: { x: number; z: number; yaw: number };
-  rocks: { x: number; z: number; r: number; h: number }[];
-  platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number }[];
+  /** 当たりの円柱。h は上の端、y は下の端（無ければ 0。カメラだけが使う。v0.31.0） */
+  rocks: { x: number; z: number; r: number; h: number; y?: number }[];
+  /** 段差。h は上の面の高さ（v0.31.0 から 0 より低くてもよい: 里の下の段と階段）。look は描き方（'yard' 作業場の床 / 'stone' 石段。simulation は読まない） */
+  platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number; look?: 'yard' | 'stone' }[];
 }
 
 /** フィールドの出口。入ると、行き先のエリアの arrive へ移る。large が付いた出口は、大型モンスターも通る（arriveLarge へ出る）。 */

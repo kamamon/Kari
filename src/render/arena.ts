@@ -2,7 +2,7 @@
 // 立体は、箱・板・多面体の簡単な形。その面に、景色の絵（依頼 8。src/render/envArt.ts）を貼る（v0.13.0、docs/spec.md の 21 章）。
 // フィールドでは、エリアごとに 1 つの Group を作る（setupSky で空と光を 1 回だけ用意し、buildAreaGroup をエリアの数だけ呼ぶ）。
 import {
-  CircleGeometry, Color, ConeGeometry, CylinderGeometry, DirectionalLight, Float32BufferAttribute, FogExp2, Group, HemisphereLight, IcosahedronGeometry,
+  type BufferGeometry, CircleGeometry, Color, ConeGeometry, CylinderGeometry, DirectionalLight, Float32BufferAttribute, FogExp2, Group, HemisphereLight, IcosahedronGeometry,
   InstancedMesh, Matrix4, Mesh, MeshBasicMaterial, MeshLambertMaterial, Object3D, PlaneGeometry, Quaternion, Scene, Vector3,
 } from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
@@ -13,6 +13,7 @@ import { AreaShape, type Pt } from '../game/areaShape';
 import { ROCK_REACH, ledgeGeometry, polyPath, wallPath } from './rockGeo';
 import { artCliffGeometry, cliffArtMaterial, mergeRocks, placeBigRock, rockArt, rockArtGeometry, rockArtMaterial, type RockPlacement } from './rockArt';
 import { SKY_LOOKS, SkyDome } from './sky';
+import { buildTerraces, holedGround } from './terraces';
 
 export const FOG_COLOR = 0xaebcab;
 /**
@@ -38,7 +39,8 @@ export interface AreaLook {
   /** 歩ける範囲の外周（v0.20.0。自然な形のエリア）。あれば、岩壁・草・崩れた岩は、これに沿う。無ければ bounds の四角 */
   shape?: Pt[];
   rocks: { x: number; z: number; r: number; h: number }[];
-  platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number }[];
+  /** 段差。h が負のもの（v0.31.0。里の下の段と階段）は、地面に穴を開けて、床・擁壁・柵を描く（src/render/terraces.ts） */
+  platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number; look?: 'yard' | 'stone' }[];
   /** 天幕を置く場所（無ければ置かない） */
   camp?: { x: number; z: number; r: number } | null;
   /** 外周の岩壁を開ける場所。marker が付いたものは、出口の目印（門柱と踏み跡）も置く */
@@ -148,9 +150,15 @@ export function buildAreaGroup(map: AreaLook): Group {
 
   // 地面: 絵を、1 枚 = 6m 四方で敷き詰める。同じ絵の並びが目立たないよう、頂点の色で、ゆるい濃淡と色むらを足す
   const gw = w + GROUND_MARGIN * 2, gd = d + GROUND_MARGIN * 2;
-  const groundGeo = new PlaneGeometry(gw, gd, Math.ceil(gw / 5), Math.ceil(gd / 5));
-  groundGeo.rotateX(-Math.PI / 2);
-  groundGeo.translate(cx, 0, cz);
+  // 0 より低い段差（v0.31.0）があれば、その形の穴を開けた格子にする（無ければ、これまでと同じ板）
+  const sunken = map.platforms.filter((p) => p.h < 0);
+  let groundGeo: BufferGeometry;
+  if (sunken.length > 0) groundGeo = holedGround(cx, cz, gw, gd, sunken);
+  else {
+    groundGeo = new PlaneGeometry(gw, gd, Math.ceil(gw / 5), Math.ceil(gd / 5));
+    groundGeo.rotateX(-Math.PI / 2);
+    groundGeo.translate(cx, 0, cz);
+  }
   {
     const pos = groundGeo.getAttribute('position');
     const tile = ENV_TILES[look.ground].tile;
@@ -197,11 +205,14 @@ export function buildAreaGroup(map: AreaLook): Group {
 
   // 段差（v0.20.0: 角の丸い岩の棚。上は、その場所の地面。横は岩肌で、下ほど外へ広がって地面に入る）
   for (const p of map.platforms) {
+    if (p.h < 0) continue;
     const ledge = new Mesh(ledgeGeometry(rng, p, ENV_TILES[look.ground].tile, ENV_TILES.rock.tile), [stepTop, boulderMat]);
     ledge.castShadow = true;
     ledge.receiveShadow = true;
     group.add(ledge);
   }
+  // 0 より低い段差（v0.31.0。里の下の段と階段）: 床・擁壁・柵
+  if (sunken.length > 0) group.add(buildTerraces(map.platforms, GROUND_GAIN));
 
   // 外周の崖（v0.22.0）: 依頼 10 の崖の図（横 24m）を、外周の外 0.5m の道に沿って並べる。出口のわきは C-19・C-20 で、出口の前は開く。
   // 上の縁から外へ下る背は、岩肌の絵（見た目のみ。衝突は外周で止まり、出口は simulation が扱う）

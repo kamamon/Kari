@@ -79,7 +79,8 @@ export class FollowCamera {
       let hit = world.wallDistance(area, x, z) < 0.4 || y < world.groundHeight(x, z) + 0.25;
       if (!hit) {
         for (const r of area.rocks) {
-          if (y < r.h && Math.hypot(x - r.x, z - r.z) < r.r + 0.3) {
+          // 円柱の上の端（h）と下の端（y。v0.31.0。下の段の建物と人。無ければ地面の下まで）の間
+          if (y < r.h && y > (r.y ?? -Infinity) && Math.hypot(x - r.x, z - r.z) < r.r + 0.3) {
             hit = true;
             break;
           }

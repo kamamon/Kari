@@ -3,6 +3,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { Content } from '../src/data/schemas';
 import { validateHub, validateShop } from '../src/data/validators';
+import { nearestFacility } from '../src/game/hub';
 import { Simulation } from '../src/game/sim';
 import { checkBuy, newSave, pouchOf, settleRun, validateSave, type SaveDoc } from '../src/save/profile';
 import { MemoryBackend } from '../src/save/saveDb';
@@ -233,20 +234,26 @@ describe('拠点のデータ', () => {
     expect(errors).toEqual([]);
   });
 
-  it('里は歩ける: 出発地点から、どの施設の前へも、まっすぐか岩をよけて行ける（建物の中へは入れない）', () => {
+  it('里は歩ける: 出発地点から、どの施設の前へも、まっすぐか岩をよけて行ける（建物の中へは入れない。工房は、西の階段を下りて。v0.31.0）', () => {
     const map = content.maps.get(content.hub.mapId)!;
+    // 下の段（炉の段）の工房へは、階段の上（-15, 8.5）と下（-24.6, 8.5）を通る
+    const via: Record<string, [number, number][]> = { workshop: [[-15, 8.5], [-24.6, 8.5]] };
     for (const f of content.hub.facilities) {
       const sim = new Simulation(content, baseOptions({ mapId: content.hub.mapId, monsterId: null }));
+      const route: [number, number][] = [...(via[f.id] ?? []), [f.x, f.z]];
       let reached = false;
-      for (let i = 0; i < 1500 && !reached; i++) {
+      for (let i = 0; i < 2400 && !reached; i++) {
         const p = sim.player.pos;
-        const dx = f.x - p.x, dz = f.z - p.z;
+        const [tx, tz] = route[0]!;
+        const dx = tx - p.x, dz = tz - p.z;
         const d = Math.hypot(dx, dz) || 1;
         sim.step({ moveX: dx / d, moveZ: dz / d, held: 0, pressed: 0, released: 0 });
-        reached = Math.hypot(f.x - p.x, f.z - p.z) <= f.r;
+        if (route.length > 1 && Math.hypot(tx - p.x, tz - p.z) < 0.6) route.shift();
+        reached = route.length === 1 && nearestFacility(content.hub.facilities, sim.world, p) === f;
         for (const r of map.rocks) expect(Math.hypot(p.x - r.x, p.z - r.z)).toBeGreaterThanOrEqual(r.r + content.player.radius - 1e-6);
       }
       expect(reached, f.name).toBe(true);
+      expect(sim.player.pos.y, f.name).toBeCloseTo(sim.world.groundHeight(f.x, f.z), 6);
     }
   });
 

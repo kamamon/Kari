@@ -224,7 +224,7 @@ export class GameView {
       const group = buildHubGroup(content.hub, sim.world.map);
       this.scene.add(group);
       // 里に立つ人（v0.23.0。絵の板。毎フレーム、カメラの方へ向ける）
-      this.npcs = buildNpcSprites(content.hub.npcs ?? []);
+      this.npcs = buildNpcSprites(content.hub.npcs ?? [], sim.world.map.platforms);
       this.scene.add(this.npcs);
       this.arena = { group, ...setupSky(this.scene, settings.shadows, 'village') };
     } else this.arena = buildArena(this.scene, sim.world.map, settings.shadows);

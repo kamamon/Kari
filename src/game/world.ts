@@ -1,5 +1,7 @@
 // 地形と衝突。controller が距離と衝突を所有する（アニメーションは移動量を持たない）。
 // 地面は高さ 0 の平面 + 段差（platform）。壁は区画の外周、岩は円柱として扱う。
+// v0.31.0: 段差は 0 より低くてもよい（里の下の段・階段。その場所の地面は、重なる段差のうち最も高いもの、無ければ 0）。
+// stepDown のある区画では、それより深く下る所も壁（段の縁から落ちない）。
 // 外周は、四角（bounds）か、自然な形の多角形（shape。v0.20.0。src/game/areaShape.ts）。
 import { clamp, type V3 } from '../core/math';
 import type { SeededRng } from '../core/seededRng';
@@ -17,8 +19,12 @@ export interface AreaGeom {
   /** 外周を囲む四角。shape が無ければ、これが外周 */
   bounds: { minX: number; maxX: number; minZ: number; maxZ: number };
   stepUp: number;
-  rocks: { x: number; z: number; r: number; h: number }[];
-  platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number }[];
+  /** 一歩で下りられる高さ（m。v0.31.0）。これより深く下る所は壁。無ければ、どこまでも下りられる（落ちる） */
+  stepDown?: number;
+  /** 岩・建物・人の当たり（円柱）。h は上の端の高さ、y は下の端（無ければ 0。カメラだけが使う） */
+  rocks: { x: number; z: number; r: number; h: number; y?: number }[];
+  /** 段差。h は上の面の高さ（0 より低くてもよい）。look は描き方だけ（simulation は読まない） */
+  platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number; look?: 'yard' | 'stone' }[];
   /** 歩ける範囲の外周（v0.20.0。自然な形のエリア）。[x, z] の点の列。無ければ bounds の四角 */
   shape?: Pt[];
   /** 道しるべ（v0.20.0）。外周に遮られて目当てが見えない時に、ここを伝って歩く */
@@ -27,6 +33,9 @@ export interface AreaGeom {
   center?: { x: number; z: number };
 }
 
+/** 段のある区画（stepDown）で、体の半径の先に空ける余り（m）。柵は縁の上（縁から 0.07m）に立つので、それより広く */
+export const EDGE_GAP = 0.12;
+
 /** steerTo が、求めた点を使い回す回数（1 tick に 1 回呼ぶなら、およそ 1/3 秒） */
 const STEER_REUSE = 20;
 
@@ -34,6 +43,18 @@ const STEER_REUSE = 20;
 export interface AreaGeo {
   shape: AreaShape;
   nav: NavGraph | null;
+}
+
+/**
+ * 段差の並びから、その場所の地面の高さ: 重なる段差のうち最も高いもの。どれにも重ならなければ 0。
+ * v0.31.0 から、段差は 0 より低くてもよい（里の下の段と階段）。描画の側も、同じ計算で床の高さを決める。
+ */
+export function groundAt(platforms: readonly { minX: number; maxX: number; minZ: number; maxZ: number; h: number }[], x: number, z: number): number {
+  let h = -Infinity;
+  for (const p of platforms) {
+    if (x >= p.minX && x <= p.maxX && z >= p.minZ && z <= p.maxZ && p.h > h) h = p.h;
+  }
+  return h === -Infinity ? 0 : h;
 }
 
 export class World {
@@ -154,16 +175,28 @@ export class World {
     return best;
   }
 
+  /** その場所の地面の高さ（groundAt） */
   groundHeight(x: number, z: number): number {
-    let h = 0;
-    for (const p of this.areaAt(x, z).platforms) {
-      if (x >= p.minX && x <= p.maxX && z >= p.minZ && z <= p.maxZ && p.h > h) h = p.h;
-    }
-    return h;
+    return groundAt(this.areaAt(x, z).platforms, x, z);
   }
 
-  private canStand(pos: V3, x: number, z: number): boolean {
-    return this.groundHeight(x, z) - pos.y <= this.areaAt(pos.x, pos.z).stepUp + 1e-6;
+  /**
+   * (x, z) へ立てるか: 上りは stepUp まで。
+   * stepDown のある区画（里。v0.31.0）では、いまの地面から stepDown より深い下りも壁。さらに、進む向きへ「体の半径 + EDGE_GAP」先の床も
+   * 同じ決まりで見る（体が段の縁・柵・段の壁にかからない所で止まる）。stepDown の無い区画（狩場）は、これまでどおり中心だけを見る。
+   */
+  private canStand(pos: V3, x: number, z: number, radius = 0): boolean {
+    const area = this.areaAt(pos.x, pos.z);
+    const h = this.groundHeight(x, z);
+    if (h - pos.y > area.stepUp + 1e-6) return false;
+    if (area.stepDown === undefined) return true;
+    const here = this.groundHeight(pos.x, pos.z);
+    if (here - h > area.stepDown + 1e-6) return false;
+    const dx = x - pos.x, dz = z - pos.z, d = Math.hypot(dx, dz);
+    if (d < 1e-9) return true;
+    const reach = radius + EDGE_GAP;
+    const g = this.groundHeight(x + (dx / d) * reach, z + (dz / d) * reach);
+    return g - pos.y <= area.stepUp + 1e-6 && here - g <= area.stepDown + 1e-6;
   }
 
   /** 半径 radius のキャラクターを (dx, dz) だけ動かす。壁・岩・高い段差は抜けない。 */
@@ -184,9 +217,9 @@ export class World {
     [nx, nz] = keepIn(nx, nz);
 
     // 登れない高さの段差は壁として扱い、軸ごとに滑らせる
-    if (!this.canStand(pos, nx, nz)) {
-      if (this.canStand(pos, nx, pos.z)) nz = pos.z;
-      else if (this.canStand(pos, pos.x, nz)) nx = pos.x;
+    if (!this.canStand(pos, nx, nz, radius)) {
+      if (this.canStand(pos, nx, pos.z, radius)) nz = pos.z;
+      else if (this.canStand(pos, pos.x, nz, radius)) nx = pos.x;
       else return;
     }
     pos.x = nx;

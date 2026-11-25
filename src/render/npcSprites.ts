@@ -4,6 +4,7 @@
 import { BufferAttribute, DoubleSide, Group, Mesh, MeshLambertMaterial, PlaneGeometry, SRGBColorSpace, TextureLoader, type Vector3 } from 'three';
 import { assetUrl } from '../core/assets';
 import type { HubNpcDef } from '../data/schemas';
+import { groundAt } from '../game/world';
 import { blobShadow } from './arena';
 import { NPC_ART, type NpcSide } from './npcArt';
 
@@ -56,7 +57,7 @@ interface NpcSprite {
 }
 
 /** 里の人の板と、足もとの影。group.userData.npcs に、向きを替えるための情報を持たせる */
-export function buildNpcSprites(npcs: readonly HubNpcDef[]): Group {
+export function buildNpcSprites(npcs: readonly HubNpcDef[], platforms: Parameters<typeof groundAt>[0] = []): Group {
   const g = new Group();
   g.name = 'npcs';
   const list: NpcSprite[] = [];
@@ -66,12 +67,14 @@ export function buildNpcSprites(npcs: readonly HubNpcDef[]): Group {
     const front = { geo: plane(art.height, art.front), mat: sideMaterial(art.front) };
     const back = art.back ? { geo: plane(art.height, art.back), mat: sideMaterial(art.back) } : null;
     const mesh = new Mesh(front.geo, front.mat);
-    mesh.position.set(def.x, 0, def.z);
+    // 足の裏は、立つ場所の床の高さ（v0.31.0。工房のロクハは下の段）
+    const floor = groundAt(platforms, def.x, def.z);
+    mesh.position.set(def.x, floor, def.z);
     mesh.rotation.y = def.yaw;
     mesh.userData.npc = def.id;
     mesh.renderOrder = 2;
     const shadow = blobShadow(0.42);
-    shadow.position.set(def.x, 0.02, def.z);
+    shadow.position.set(def.x, floor + 0.02, def.z);
     g.add(mesh, shadow);
     list.push({ def, mesh, front, back, showingBack: false });
   }
