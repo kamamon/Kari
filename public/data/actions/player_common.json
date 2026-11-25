@@ -25,10 +25,10 @@
       "schemaVersion": 1,
       "actionId": "player.item.drink",
       "clip": "common_item_drink_01",
-      "tickRate": 60, "durationTicks": 92,
+      "tickRate": 60, "durationTicks": 124,
       "phases": [
         {"id":"startup", "from":0, "to":58},
-        {"id":"recovery", "from":58, "to":92}
+        {"id":"recovery", "from":58, "to":124}
       ],
       "rootMotion": {"mode":"none"},
       "hitWindows": [],
@@ -139,7 +139,7 @@
       "hitWindows": [],
       "cancelWindows": [{"from":102, "to":120, "into":["roll"]}],
       "events": [{"tick":26, "type":"sound", "id":"hb_sheathe_01"}, {"tick":51, "type":"sound", "id":"hb_sheathe_01"}, {"tick":77, "type":"sound", "id":"hb_sheathe_01"}],
-      "onFinish": "drawn_idle"
+      "onFinish": "sheathed_idle"
     }
   ]
 }

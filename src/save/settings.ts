@@ -11,6 +11,11 @@ export interface Settings {
   buttonOpacity: number;
   sprintMode: 'button' | 'outer';
   targetAssist: boolean;
+  /**
+   * 操作補助: ロックオンのボタン（v0.40.0）。標準は手で視点を回す（2G）。新しく始めた人は切。
+   * v0.39.0 までに設定を保存していた人は、これまでどおり入（黙って消さない）
+   */
+  lockOnButton: boolean;
   shake: 'off' | 'weak' | 'mid';
   fpsCap: 30 | 60;
   renderScale: number;
@@ -40,6 +45,7 @@ export function defaultSettings(): Settings {
     buttonOpacity: 0.62,
     sprintMode: 'button',
     targetAssist: false,
+    lockOnButton: false,
     shake: 'weak',
     fpsCap: 60,
     renderScale: coarse ? 0.85 : 1,
@@ -60,6 +66,10 @@ type Listener = (s: Settings) => void;
 export class SettingsStore {
   value: Settings;
   private listeners: Listener[] = [];
+  /** 保存した設定に「ロックオンのボタン」（v0.40.0）がまだ無い */
+  private lockKeyMissing = true;
+  /** v0.39.0 までの設定を読んだ（これまで遊んでいた人） */
+  savedBefore = false;
 
   constructor() {
     this.value = defaultSettings();
@@ -68,11 +78,26 @@ export class SettingsStore {
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<Settings>;
         // 未知の版は読まずに初期値を使う（黙って壊れた値を混ぜない）
-        if (parsed.schemaVersion === 1) this.value = { ...this.value, ...parsed, layout: { ...(parsed.layout ?? {}) } };
+        if (parsed.schemaVersion === 1) {
+          // 設定を保存していた人は、これまで遊んでいた人
+          this.savedBefore = true;
+          this.value = { ...this.value, ...parsed, layout: { ...(parsed.layout ?? {}) } };
+          this.lockKeyMissing = parsed.lockOnButton === undefined;
+        }
       }
     } catch {
       // プライベートブラウズ等で localStorage が使えない場合は初期値のまま動かす
     }
+  }
+
+  /**
+   * v0.40.0: ロックオンのボタン（操作補助）を、まだ決めていなければ決めて残す。これまで遊んでいた人（保存データがある、
+   * または設定を保存していた人）は入のまま（黙って消さない）、新しく始めた人は切（標準は手で視点を回す）。
+   */
+  settleLockOnButton(existingPlayer: boolean): void {
+    if (!this.lockKeyMissing) return;
+    this.lockKeyMissing = false;
+    this.set({ lockOnButton: existingPlayer });
   }
 
   set(patch: Partial<Settings>): void {

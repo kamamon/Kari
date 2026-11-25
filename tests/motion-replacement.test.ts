@@ -221,7 +221,7 @@ describe('歩く・走る時に、体が跳ねない（v0.28.1。利用者の指
 });
 
 describe('断岳剣の下半身と体幹', () => {
-  it('実際の靴メッシュ254頂点が、三つの攻撃の全1/4 tickで地面に埋まらない', async () => {
+  it('実際の靴メッシュ254頂点が、五つの攻撃（斬り上げ 2 つを含む。v0.40.0）の全1/4 tickで地面に埋まらない', async () => {
     const mock = vi.spyOn(TextureLoader.prototype, 'load').mockImplementation(() => new Texture());
     try {
       const content = await loadContent(), rig = new HunterRig();
@@ -234,7 +234,7 @@ describe('断岳剣の下半身と体幹', () => {
       }
       expect(vertices.length).toBeGreaterThan(200);
       const point = new Vector3();
-      for (const name of ['overhead', 'side_sweep', 'draw_slash']) {
+      for (const name of ['overhead', 'side_sweep', 'draw_slash', 'upswing', 'upswing_low']) {
         const a = content.actions.get(`player.heavy_blade.${name}`)!;
         for (let t = 0; t <= a.durationTicks; t += 0.25) {
           rig.setPose(groundedHeavyAttack(clipPose(a.clip, t)!, a.clip, t));
@@ -250,12 +250,12 @@ describe('断岳剣の下半身と体幹', () => {
     } finally { mock.mockRestore(); }
   });
 
-  it('三つの攻撃の全 1/4 tick で、実リグの左右 socket が柄へ 2mm 以内で届く', async () => {
+  it('五つの攻撃（斬り上げ 2 つを含む）の全 1/4 tick で、実リグの左右 socket が柄へ 2mm 以内で届く', async () => {
     // GPU を使わず、テクスチャの通信だけを置き換えて、ゲームの本物の骨格/腕 IK を通す。
     const mock = vi.spyOn(TextureLoader.prototype, 'load').mockImplementation(() => new Texture());
     try {
       const content = await loadContent(), rig = new HunterRig();
-      for (const name of ['overhead', 'side_sweep', 'draw_slash']) {
+      for (const name of ['overhead', 'side_sweep', 'draw_slash', 'upswing', 'upswing_low']) {
         const a = content.actions.get(`player.heavy_blade.${name}`)!;
         const track = content.tracks.get(a.weaponTrack!)!;
         for (let t = 0; t <= a.durationTicks; t += 0.25) {
@@ -282,8 +282,8 @@ describe('断岳剣の下半身と体幹', () => {
     }
   });
 
-  it('三つの攻撃の全 tick で足の FK が地面の下へ突き抜けない', () => {
-    for (const [clip, duration] of [['hb_attack_vertical_01', 72], ['hb_attack_side_01', 66], ['hb_draw_slash_01', 64]] as const) {
+  it('五つの攻撃の全 tick で足の FK が地面の下へ突き抜けない', () => {
+    for (const [clip, duration] of [['hb_attack_vertical_01', 72], ['hb_attack_side_01', 66], ['hb_draw_slash_01', 64], ['hb_attack_upswing_01', 66], ['hb_attack_upswing_low_01', 54]] as const) {
       for (let t = 0; t <= duration; t++) {
         const p = groundedHeavyAttack(clipPose(clip, t)!, clip, t);
         expect(p.grounded).toBe(true);

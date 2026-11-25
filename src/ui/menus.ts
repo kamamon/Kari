@@ -25,22 +25,26 @@ const CONTROLS_HTML = `
 <h3>操作表</h3>
 <table>
 <tr><th>行動</th><th>タッチ</th><th>PC</th><th>ゲームパッド</th></tr>
-<tr><td>移動 / 疾走</td><td>左スティック / 疾走</td><td>WASD / Shift</td><td>左スティック / LB</td></tr>
-<tr><td>視点 / 正面復帰</td><td>空いた所をドラッグ / 正面</td><td>中ボタンドラッグ・矢印 / F</td><td>右スティック / 押込み</td></tr>
-<tr><td>ロックオン（入・切）</td><td>ロック</td><td>T</td><td>RT</td></tr>
-<tr><td>主攻撃 / 副攻撃</td><td>斬る / 薙ぐ</td><td>左クリック / 右クリック</td><td>X(□) / Y(△)</td></tr>
-<tr><td>回避 / 防御</td><td>回避 / 防御</td><td>Space / Ctrl または C</td><td>A(×) / RB</td></tr>
-<tr><td>抜刀・納刀</td><td>抜刀</td><td>R</td><td>B(○)</td></tr>
+<tr><td>移動 / 疾走</td><td>左スティック / 疾走</td><td>WASD / Shift</td><td>左スティック / RB（納刀中）</td></tr>
+<tr><td>視点 / 背後へ戻す</td><td>空いた所をドラッグ / 背後</td><td>中ボタンドラッグ・矢印 / F</td><td>右スティック / LB・押込み</td></tr>
+<tr><td>主攻撃 / 副攻撃</td><td>斬る / 薙ぐ</td><td>左クリック / 右クリック</td><td>Y(△) / B(○)</td></tr>
+<tr><td>主と副の同時押し</td><td>斬上（小さいボタン）</td><td>左右のクリックを同時に・V</td><td>Y と B を同時に</td></tr>
+<tr><td>回避 / 防御</td><td>回避 / 防御</td><td>Space / Ctrl または C</td><td>A(×) / RB（抜刀中）</td></tr>
+<tr><td>道具（抜刀中は納刀）</td><td>道具 / ◀ ▶</td><td>E / Q・ホイール</td><td>X(□) / 十字の左右</td></tr>
+<tr><td>抜刀・納刀</td><td>抜刀</td><td>R</td><td>LT</td></tr>
+<tr><td>ロックオン（操作補助。設定で出す）</td><td>ロック</td><td>T</td><td>RT</td></tr>
 <tr><td>メニュー / 検証表示</td><td>☰ / 検証</td><td>Esc / F3</td><td>Start / -</td></tr>
 </table>
+<p><small>道具は納刀している時に使います。抜刀中に道具を押すと納刀だけをして、もう 1 度押すと使います（護刃は、防御を構えたまま使えます）。回復液は飲み終わった後に力を込める姿があり、その間は動けません。研磨石は片ひざを突いて研ぎ、終わると武器を納めます。</small></p>
 <h3>断岳剣</h3>
 <table>
 <tr><th>技</th><th>出し方</th><th>特徴</th></tr>
-<tr><td>抜刀斬り</td><td>納刀中に 主攻撃</td><td>踏み込みながら抜いて斬る</td></tr>
-<tr><td>縦斬り</td><td>抜刀中に 主攻撃</td><td>予備動作が長く重い。終わり際だけ回避へ繋がる</td></tr>
+<tr><td>抜刀斬り</td><td>納刀中に 主攻撃</td><td>踏み込みながら抜いて斬る。主攻撃を押し続けると溜められる</td></tr>
+<tr><td>縦斬り</td><td>抜刀中に 主攻撃</td><td>予備動作が長く重い。振り下ろした後から、薙ぎ払い・斬り上げへつながる</td></tr>
 <tr><td>溜め斬り</td><td>主攻撃を押し続けて離す</td><td>3 段階。溜めるほど威力が上がる</td></tr>
-<tr><td>横薙ぎ</td><td>抜刀中に 副攻撃</td><td>広く払う。後半から縦斬り・回避へ繋がる</td></tr>
-<tr><td>防御</td><td>抜刀中に 防御を押し続ける</td><td>正面だけ。スタミナを消費し、少し削られる</td></tr>
+<tr><td>薙ぎ払い</td><td>抜刀中に 副攻撃</td><td>広く払う。後半から斬り上げ・縦斬り・回避へ</td></tr>
+<tr><td>斬り上げ</td><td>抜刀中に 主と副の同時押し（斬上）</td><td>地面すれすれから頭の上へ振り上げる。後から縦斬り・薙ぎ払いへ</td></tr>
+<tr><td>防御</td><td>抜刀中に 防御を押し続ける</td><td>正面だけ。スタミナを消費し、少し削られ、刃で受けるので刃も減る</td></tr>
 <tr><td>回避</td><td>回避（スティックで方向）</td><td>スタミナ 25。出始めの短い間だけ無敵</td></tr>
 </table>
 <h3>岩殻獣ガルドロス</h3>
@@ -52,7 +56,7 @@ const CONTROLS_HTML = `
 <tr><td>鉱殻崩落</td><td>背を震わせ、落ちる場所に輪が出る</td><td>輪の外へ出る。落ちる場所は変わらない</td></tr>
 </table>
 <p><small>頭と背殻は壊せます。尾は斬って切断できます。脚を攻め続けると転倒します。ダメージが溜まると怒り、攻撃の間隔が詰まります。</small></p>
-<p><small>ゲームパッドは実機で未検証です。捕獲・剥ぎ取り・道具・砥ぎは、これから追加します。</small></p>`;
+<p><small>ゲームパッドは実機で未検証です（v0.40.0 から PSP の 2G の並びに寄せました）。</small></p>`;
 
 export class Menu {
   readonly root: HTMLElement;
@@ -200,7 +204,8 @@ export class Menu {
     this.row('視点の感度', '', this.range('camSensitivity', 0.4, 2, 0.05));
     this.row('左右を反転', '', this.check('invertX'));
     this.row('上下を反転', '', this.check('invertY'));
-    this.row('対象への向き直り補助', '「正面」を押すと標的の方向へ視点を向ける', this.check('targetAssist'));
+    this.row('対象への向き直り補助', '操作補助。「背後」を押すと、狩人の背後ではなく標的の方向へ視点を向ける', this.check('targetAssist'));
+    this.row('ロックオンのボタン', '操作補助。標的を画面の中に捉え続けるボタンを出す（標準は、手で視点を回す）', this.check('lockOnButton'));
     this.row('画面の揺れ', '', this.select('shake', [['off', '無'], ['weak', '弱'], ['mid', '中']]));
     this.heading('タッチ操作');
     this.row('左利き配置', 'スティックを右、ボタンを左へ', this.check('leftHanded'));

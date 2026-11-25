@@ -1,6 +1,6 @@
 // 入力のまとめ役。タッチ・キーボード・ゲームパッドは、ここで共通の InputAction（Btn と移動軸）へ変換される。
 // pressed / held / released を分けて持ち、simulation が 1 tick に 1 回 sample() で取り出す。
-import { Btn, type InputFrame } from '../game/inputFrame';
+import { BTN_ALL, Btn, type InputFrame } from '../game/inputFrame';
 
 export type Device = 'touch' | 'keyboard' | 'gamepad';
 /** interact = 里で、前に立っている施設へ入る / hubList = 里の施設の一覧を開く / lockOn = 標的へのロックオンを切り替える（v0.16.0） */
@@ -74,7 +74,7 @@ export class InputHub {
   /** ある機器の入力をすべて離す（pointercancel・切断・フォーカス喪失など）。 */
   releaseDevice(dev: Device): void {
     const held = this.heldBy[dev];
-    for (let b = 1; b <= Btn.Retire; b <<= 1) if (held & b) this.setButton(dev, b, false);
+    for (let b = 1; b <= BTN_ALL; b <<= 1) if (held & b) this.setButton(dev, b, false);
     this.axes[dev].x = 0;
     this.axes[dev].y = 0;
   }

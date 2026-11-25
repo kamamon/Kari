@@ -3,8 +3,9 @@
 import { DEG, angleDiff, forwardOf, turnToward, v3, yawOf, type V3 } from '../core/math';
 import type { SeededRng } from '../core/seededRng';
 import type { GearEffects } from './gear';
-import { STATUS_KINDS, type FieldDef, type ActionDef, type Content, type GuardDef, type HazardDef, type ItemDef, type ItemStack, type MonsterDef, type ShootDef, type StatusHit, type StatusKind, type StatusTuning, type WeaponDef, type WeaponFamilyDef } from '../data/schemas';
+import { STATUS_KINDS, type FieldDef, type ActionDef, type CancelWindowDef, type Content, type GuardDef, type HazardDef, type ItemDef, type ItemStack, type MonsterDef, type ShootDef, type StatusHit, type StatusKind, type StatusTuning, type WeaponDef, type WeaponFamilyDef } from '../data/schemas';
 import { inWindow, newRun, type ActionRun } from './action';
+import { edgeStage } from './combat';
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
 import { sampleCurve } from './tracks';
@@ -41,7 +42,16 @@ export interface PlayerState {
   ailment: { poisonTicks: number; build: Record<StatusKind, number> };
   deadTicks: number;
   invulnTicks: number;
-  buffer: { main: number; sub: number; dodge: number; weapon: number; item: number; special: number };
+  /**
+   * 先行入力（押した tick から inputBufferTicks の間）。1 回の押下は 1 つの命令で、使ったら消える（v0.40.0 の入力の表。docs/spec.md の 32.2）。
+   * combo は主と副の同時押し（複合入力）。主と副が両方残っている時も、複合の技を持つ系統では複合として扱う
+   */
+  buffer: { main: number; sub: number; dodge: number; weapon: number; item: number; special: number; combo: number };
+  /**
+   * 押し遅れの複合入力（v0.40.0）: 主か副の 1 つだけで技を始めた直後（COMBO_SLACK_TICKS 以内）に、もう片方が押されたら、
+   * 同時押しの技へ替える。comboId は、その時に複合で出せた技
+   */
+  lastSingle: { instanceId: number; key: 'main' | 'sub'; comboId: string } | null;
   /** 勢い（双剣）の段階と、最後に振ってからの tick 数。勢いの無い武器では 0 のまま。 */
   momentum: number;
   momentumTicks: number;
@@ -52,8 +62,6 @@ export interface PlayerState {
   itemIndex: number;
   /** 使っている途中の道具。効果が出る tick より前に妨害されると、消費しない。 */
   itemUse: { itemId: string; instanceId: number; done: boolean } | null;
-  /** 抜刀中に道具ボタンを押した: 納刀が終わったら続けて使う */
-  pendingItem: boolean;
   /** 剥ぎ取りの途中（source は剥ぎ取る対象） */
   carving: { source: string; instanceId: number; done: boolean } | null;
   /** 採る・納める途中（狩らない依頼。v0.27.0）。品が入る tick より前に止まると、何も起きない */
@@ -134,6 +142,8 @@ function tryUseItem(p: PlayerState, ctx: SimCtx, keepDrawn = false): boolean {
 }
 
 const MOVE_DEADZONE = 0.12;
+/** 押し遅れの複合入力を受け付ける、技を始めてからの tick 数（v0.40.0。Kari の仮の値。判定の始まるずっと前） */
+export const COMBO_SLACK_TICKS = 3;
 
 export function createPlayer(content: Content, spawn: { x: number; z: number; yaw: number }, weaponId: string, supplies: readonly ItemStack[] = []): PlayerState {
   const T = content.player;
@@ -162,14 +172,14 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
     ailment: freshAilment(),
     deadTicks: 0,
     invulnTicks: 0,
-    buffer: { main: 0, sub: 0, dodge: 0, weapon: 0, item: 0, special: 0 },
+    buffer: { main: 0, sub: 0, dodge: 0, weapon: 0, item: 0, special: 0, combo: 0 },
+    lastSingle: null,
     momentum: 0,
     momentumTicks: 0,
     edge: content.edge.max,
     items: carried.map((s) => ({ itemId: s.itemId, count: s.count })),
     itemIndex: 0,
     itemUse: null,
-    pendingItem: false,
     carving: null,
     errandOp: null,
     sprinting: false,
@@ -324,20 +334,60 @@ function tryStartRoll(p: PlayerState, inp: InputFrame, ctx: SimCtx): boolean {
   return true;
 }
 
-function tryCancelInto(p: PlayerState, name: string, inp: InputFrame, ctx: SimCtx): boolean {
+/** 技の名前（cancelNames）を、どのボタンで出すか */
+function cancelKey(fam: WeaponFamilyDef, name: string): 'main' | 'sub' | 'special' | 'combo' | null {
+  const actionId = fam.cancelNames[name];
+  if (!actionId) return null;
+  return fam.cancelButtons?.[name] ?? (actionId === fam.actions.main ? 'main' : actionId === fam.actions.sub ? 'sub' : actionId === fam.actions.combo ? 'combo' : null);
+}
+
+/** 主と副の同時押しを待っているか（複合の技を持つ系統だけ。主と副が両方残っている時も含む） */
+function comboIntent(p: PlayerState, fam: WeaponFamilyDef): boolean {
+  if (!fam.actions.combo) return false;
+  return p.buffer.combo > 0 || (p.buffer.main > 0 && p.buffer.sub > 0);
+}
+
+/** 主・副・複合の先行入力を、まとめて使い切る（1 押しを 2 つの技に使わない） */
+function clearAttackBuffers(p: PlayerState): void {
+  p.buffer.main = 0;
+  p.buffer.sub = 0;
+  p.buffer.combo = 0;
+}
+
+function tryCancelInto(p: PlayerState, name: string, cw: CancelWindowDef, inp: InputFrame, ctx: SimCtx): boolean {
   if (name === 'roll') {
     return p.buffer.dodge > 0 && consume(p, 'dodge') && tryStartRoll(p, inp, ctx);
   }
   const fam = familyOf(p, ctx.content);
   const actionId = fam.cancelNames[name];
-  if (!actionId) return false;
-  const key = fam.cancelButtons?.[name] ?? (actionId === fam.actions.main ? 'main' : actionId === fam.actions.sub ? 'sub' : null);
-  if (!key || p.buffer[key] <= 0) return false;
+  const key = cancelKey(fam, name);
+  if (!actionId || !key) return false;
+  if (key === 'combo' ? !comboIntent(p, fam) : p.buffer[key] <= 0) return false;
   const def = ctx.content.actions.get(actionId);
   if (def && p.stamina < staminaCostOf(p, def, ctx)) return false;
+  if (key === 'combo' || key === 'main' || key === 'sub') {
+    // この区間で複合の技も出せるなら、押し遅れのもう片方で替えられるように覚えておく
+    const comboName = key !== 'combo' ? cw.into.find((n) => cancelKey(fam, n) === 'combo') : undefined;
+    clearAttackBuffers(p);
+    const run = startAction(p, actionId, ctx);
+    p.lastSingle = comboName && (key === 'main' || key === 'sub') ? { instanceId: run.instanceId, key, comboId: fam.cancelNames[comboName]! } : null;
+    return true;
+  }
   consume(p, key);
   startAction(p, actionId, ctx);
   return true;
+}
+
+/** 区間の中で、つなげられる技を試す。複合の入力を待っている時は、複合の技を先に試す（1 つの押下で単発の技を先に出さない） */
+function tryCancels(p: PlayerState, def: ActionDef, run: ActionRun, inp: InputFrame, ctx: SimCtx): boolean {
+  const fam = familyOf(p, ctx.content);
+  const combo = comboIntent(p, fam);
+  for (const cw of def.cancelWindows) {
+    if (!inWindow(run.tick, cw)) continue;
+    const names = combo ? [...cw.into.filter((n) => cancelKey(fam, n) === 'combo'), ...cw.into.filter((n) => cancelKey(fam, n) !== 'combo')] : cw.into;
+    for (const name of names) if (tryCancelInto(p, name, cw, inp, ctx)) return true;
+  }
+  return false;
 }
 
 function finishAction(p: PlayerState): void {
@@ -399,14 +449,7 @@ function stepAction(p: PlayerState, inp: InputFrame, ctx: SimCtx, depth = 0): vo
         ctx.emit({ type: 'charge_level', level, pos: { ...p.pos } });
       }
       // 溜めの最中に回避へ移れる技もある（環弓）
-      if (depth === 0) {
-        for (const cw of def.cancelWindows) {
-          if (!inWindow(run.tick, cw)) continue;
-          for (const name of cw.into) {
-            if (tryCancelInto(p, name, inp, ctx)) return stepAction(p, inp, ctx, 1);
-          }
-        }
-      }
+      if (depth === 0 && tryCancels(p, def, run, inp, ctx)) return stepAction(p, inp, ctx, 1);
       turn();
       freeMove(p, def, run.tick, inp, ctx);
       return;
@@ -415,16 +458,9 @@ function stepAction(p: PlayerState, inp: InputFrame, ctx: SimCtx, depth = 0): vo
   }
 
   // キャンセルは定義した区間でだけ受け付ける
-  if (depth === 0) {
-    for (const cw of def.cancelWindows) {
-      if (!inWindow(run.tick, cw)) continue;
-      for (const name of cw.into) {
-        if (tryCancelInto(p, name, inp, ctx)) {
-          stepAction(p, inp, ctx, 1);
-          return;
-        }
-      }
-    }
+  if (depth === 0 && tryCancels(p, def, run, inp, ctx)) {
+    stepAction(p, inp, ctx, 1);
+    return;
   }
 
   turn();
@@ -470,17 +506,13 @@ function stepFree(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   const T = ctx.content.player;
   const fam = familyOf(p, ctx.content);
 
-  if (consume(p, 'dodge') && tryStartRoll(p, inp, ctx)) {
-    p.pendingItem = false;
-    return stepAction(p, inp, ctx, 1);
-  }
+  if (consume(p, 'dodge') && tryStartRoll(p, inp, ctx)) return stepAction(p, inp, ctx, 1);
   // 剥ぎ取り: 達成後、対象の近くで攻撃ボタン（道具ボタンでもよい）
   if (p.buffer.main > 0 || p.buffer.item > 0) {
     const source = ctx.carveTarget();
     if (source) {
-      p.buffer.main = 0;
+      clearAttackBuffers(p);
       p.buffer.item = 0;
-      p.pendingItem = false;
       p.drawn = false;
       const run = startAction(p, CARVE_ACTION, ctx);
       p.carving = { source, instanceId: run.instanceId, done: false };
@@ -489,58 +521,37 @@ function stepFree(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     // 狩らない依頼（v0.27.0）: 納刀して採取点・納品箱のそばで、攻撃ボタン（道具ボタンは、道具を使うまま）
     const target = p.buffer.main > 0 ? ctx.errandTarget() : null;
     if (target) {
-      p.buffer.main = 0;
+      clearAttackBuffers(p);
       p.buffer.item = 0;
-      p.pendingItem = false;
       const run = startAction(p, target.actionId, ctx);
       p.errandOp = { target, instanceId: run.instanceId, done: false };
       return stepAction(p, inp, ctx, 1);
     }
   }
-  // 研磨石: 抜刀して、手に持った武器を研ぐ。納刀中に押したら、使えることを確かめてから、抜いて続けて使う。
-  const whet = selectedItem(p, ctx)?.kind === 'whet';
-  if (whet && (consume(p, 'item') || (p.pendingItem && p.drawn))) {
+  // 道具（v0.40.0。2G に合わせた）: 納刀している時だけ使える（研磨石も、片ひざを突いて背から下ろして研ぎ、終わったら納める）。
+  // 抜刀中に押したら納刀するだけで、続けて使いはしない（使うのは、納刀した後にもう 1 度押した時）。護刃は、防御を構えたまま使える（stepGuard）
+  if (consume(p, 'item')) {
     if (p.drawn) {
-      p.pendingItem = false;
-      if (tryUseItem(p, ctx, true)) return stepAction(p, inp, ctx, 1);
-      return;
-    }
-    const why = itemBlock(p, ctx);
-    if (why) {
-      p.pendingItem = false;
-      ctx.emit({ type: 'item_fail', reason: why });
-      return;
-    }
-    p.pendingItem = true;
-    startAction(p, fam.actions.draw, ctx);
-    return stepAction(p, inp, ctx, 1);
-  }
-  // 道具: 納刀中だけ使える。抜刀中に押したら、納刀してから続けて使う。護刃だけは、抜刀したまま使える。
-  if (!whet && (consume(p, 'item') || (p.pendingItem && !p.drawn))) {
-    if (p.drawn && fam.itemsWhileDrawn) {
-      p.pendingItem = false;
-      if (tryUseItem(p, ctx, true)) return stepAction(p, inp, ctx, 1);
-      return;
-    }
-    if (p.drawn) {
-      p.pendingItem = true;
       startAction(p, fam.actions.sheathe, ctx);
       return stepAction(p, inp, ctx, 1);
     }
-    p.pendingItem = false;
     if (tryUseItem(p, ctx)) return stepAction(p, inp, ctx, 1);
   }
   if (consume(p, 'weapon')) {
-    p.pendingItem = false;
     startAction(p, p.drawn ? fam.actions.sheathe : fam.actions.draw, ctx);
     return stepAction(p, inp, ctx, 1);
   }
-  if (consume(p, 'main')) {
-    startAction(p, p.drawn ? fam.actions.main : fam.actions.drawAttack, ctx);
+  // 主と副の同時押し（複合入力。v0.40.0）: 抜刀していれば複合の技、納刀していれば抜刀攻撃
+  if (comboIntent(p, fam)) {
+    clearAttackBuffers(p);
+    startAction(p, p.drawn ? fam.actions.combo! : fam.actions.drawAttack, ctx);
     return stepAction(p, inp, ctx, 1);
   }
-  if (consume(p, 'sub')) {
-    startAction(p, p.drawn ? fam.actions.sub : fam.actions.drawAttack, ctx);
+  for (const key of ['main', 'sub'] as const) {
+    if (!consume(p, key)) continue;
+    const run = startAction(p, p.drawn ? fam.actions[key] : fam.actions.drawAttack, ctx);
+    // 押し遅れのもう片方が来たら、複合の技へ替える（抜刀して立っている時だけ）
+    p.lastSingle = p.drawn && fam.actions.combo ? { instanceId: run.instanceId, key, comboId: fam.actions.combo } : null;
     return stepAction(p, inp, ctx, 1);
   }
   if (p.drawn && fam.guard && inp.held & Btn.Special) {
@@ -585,6 +596,11 @@ function stepGuard(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   const T = ctx.content.player;
   const canAct = g.phase === 'start' || g.phase === 'hold' || g.phase === 'end';
   if (canAct && p.buffer.dodge > 0 && consume(p, 'dodge') && tryStartRoll(p, inp, ctx)) return stepAction(p, inp, ctx, 1);
+  // 護刃（v0.40.0）: 防御を構えている間だけ、抜刀したまま道具を使える（使い終わっても抜刀のまま）
+  if (fam.itemsWhileGuarding && isGuarding(p, G) && p.buffer.item > 0) {
+    consume(p, 'item');
+    if (tryUseItem(p, ctx, true)) return stepAction(p, inp, ctx, 1);
+  }
   // 構えたまま出す技（長尖槍の構え突き・受け返し）
   if (isGuarding(p, G)) {
     for (const [key, id] of [['main', fam.actions.guardMain], ['sub', fam.actions.guardSub]] as const) {
@@ -690,24 +706,45 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   p.moveSpeed = 0;
 
   // 先行入力: 押した tick を含めて inputBufferTicks の間だけ有効
-  for (const k of ['main', 'sub', 'dodge', 'weapon', 'item', 'special'] as const) if (p.buffer[k] > 0) p.buffer[k]--;
-  if (inp.pressed & Btn.Main) p.buffer.main = T.inputBufferTicks;
-  if (inp.pressed & Btn.Sub) p.buffer.sub = T.inputBufferTicks;
+  for (const k of ['main', 'sub', 'dodge', 'weapon', 'item', 'special', 'combo'] as const) if (p.buffer[k] > 0) p.buffer[k]--;
+  // 主と副を同じ tick に押した（または複合のボタン）: 複合の技を持つ系統では、1 つの命令（combo）。持たない系統では、これまでどおり主と副
+  const fam = familyOf(p, ctx.content);
+  const both = (inp.pressed & Btn.Main) !== 0 && (inp.pressed & Btn.Sub) !== 0;
+  if (fam.actions.combo && ((inp.pressed & Btn.Combo) !== 0 || both)) {
+    p.buffer.combo = T.inputBufferTicks;
+    p.buffer.main = 0;
+    p.buffer.sub = 0;
+  } else {
+    if (inp.pressed & (Btn.Main | Btn.Combo)) p.buffer.main = T.inputBufferTicks;
+    if (inp.pressed & Btn.Sub) p.buffer.sub = T.inputBufferTicks;
+  }
   if (inp.pressed & Btn.Dodge) p.buffer.dodge = T.inputBufferTicks;
   if (inp.pressed & Btn.Weapon) p.buffer.weapon = T.inputBufferTicks;
   if (inp.pressed & Btn.Item) p.buffer.item = T.inputBufferTicks;
   if (inp.pressed & Btn.Special) p.buffer.special = T.inputBufferTicks;
   // 道具の切り替えは、いつでもできる（使っている途中の道具は変わらない）
   if (p.items.length > 0) {
-    const before = p.itemIndex;
     if (inp.pressed & Btn.ItemNext) p.itemIndex = (p.itemIndex + 1) % p.items.length;
     if (inp.pressed & Btn.ItemPrev) p.itemIndex = (p.itemIndex + p.items.length - 1) % p.items.length;
-    // 「納刀（抜刀）してから使う」の待ちは、道具を替えたら取り消す（別の道具が勝手に使われないように）
-    if (p.itemIndex !== before) p.pendingItem = false;
   }
   if (p.invulnTicks > 0) p.invulnTicks--;
-  if (p.mode === 'hurt' || p.mode === 'dead' || p.mode === 'guard') p.pendingItem = false;
+  // 被弾・転倒・力尽き（v0.40.0）: 古い先行入力は消す（起き上がった時に、前の入力で勝手に攻撃・回避・道具をしない）
+  if (p.mode === 'hurt' || p.mode === 'dead') {
+    for (const k of Object.keys(p.buffer) as (keyof PlayerState['buffer'])[]) p.buffer[k] = 0;
+    p.lastSingle = null;
+  }
   stepAilment(p, ctx);
+  // 押し遅れの複合入力（v0.40.0）: 主か副で技を始めた直後に、もう片方が押されたら、同時押しの技へ替える
+  const ls = p.lastSingle;
+  if (ls) {
+    const run = p.mode === 'action' ? p.action : null;
+    if (!run || run.instanceId !== ls.instanceId || run.tick > COMBO_SLACK_TICKS) p.lastSingle = null;
+    else if (run.hitstop === 0 && inp.pressed & (ls.key === 'main' ? Btn.Sub | Btn.Combo : Btn.Main | Btn.Combo)) {
+      p.lastSingle = null;
+      clearAttackBuffers(p);
+      startAction(p, ls.comboId, ctx);
+    }
+  }
 
   switch (p.mode) {
     case 'dead':
@@ -833,6 +870,8 @@ export function resolveIncomingHit(p: PlayerState, hit: IncomingHit, ctx: SimCtx
     const guardCost = hit.guardCost * ctx.gear.guardStamina;
     if (p.stamina >= guardCost) {
       spendStamina(p, guardCost, ctx);
+      // 刃で受ける系統（断岳剣。v0.40.0）: 受けるたびに刃が減る（防具の技能「刃の保ち」で減り方が小さくなる）
+      if (G.edgeWear && fam.edge) wearEdge(p, G.edgeWear * ctx.gear.edgeWear, ctx);
       const chip = Math.floor(hit.baseDamage * G.chipScale);
       p.hp = Math.max(0, p.hp - chip);
       // 行動の最中に受けた時は、その行動を続ける（後退しない）
@@ -875,6 +914,15 @@ export function resolveIncomingHit(p: PlayerState, hit: IncomingHit, ctx: SimCtx
   if (knock) p.invulnTicks = T.knockdownInvulnTicks;
   if (hit.status) applyStatus(p, hit.status, ctx);
   return 'hit';
+}
+
+/** 刃の状態を減らす。段階が替わったら知らせる */
+function wearEdge(p: PlayerState, amount: number, ctx: SimCtx): void {
+  const E = ctx.content.edge;
+  const before = edgeStage(E, p.edge).id;
+  p.edge = Math.max(0, p.edge - amount);
+  const now = edgeStage(E, p.edge);
+  if (now.id !== before) ctx.emit({ type: 'edge', stage: now.id, value: p.edge });
 }
 
 function killPlayer(p: PlayerState, ctx: SimCtx): void {

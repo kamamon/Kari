@@ -20,11 +20,14 @@ export const TOUCH_BUTTONS: ButtonSpec[] = [
   { name: 'main', label: '斬る', x: 104, y: 66, s: 78, btn: Btn.Main },
   { name: 'dodge', label: '回避', x: 20, y: 22, s: 66, btn: Btn.Dodge },
   { name: 'sub', label: '薙ぐ', x: 20, y: 110, s: 64, btn: Btn.Sub },
+  // 主と副の同時押し（複合入力。v0.40.0）: 斬る・薙ぐ・回避の間の小さなボタン（複合の技を持つ武器だけ出る。断岳剣の斬り上げ）
+  { name: 'combo', label: '斬上', x: 64, y: 83, s: 36, btn: Btn.Combo },
   { name: 'special', label: '防御', x: 112, y: 162, s: 60, btn: Btn.Special },
   { name: 'weapon', label: '抜刀', x: 24, y: 196, s: 54, btn: Btn.Weapon },
   { name: 'sprint', label: '疾走', x: 204, y: 22, s: 54 },
-  { name: 'camreset', label: '正面', x: 200, y: 104, s: 48 },
-  // ロックオン（v0.16.0）: 押すたびに入・切。入っている間は明るく光る
+  // 視点を狩人の背後へ戻す（v0.40.0 から「背後」。2G の L ボタン）
+  { name: 'camreset', label: '背後', x: 200, y: 104, s: 48 },
+  // ロックオン（v0.16.0）: 押すたびに入・切。入っている間は明るく光る。v0.40.0 から操作補助（設定の「ロックオンのボタン」で出す）
   { name: 'lock', label: 'ロック', x: 196, y: 160, s: 48 },
   // 道具: 画面の下・中央。中央が「使う」、左右が切り替え（依頼で道具を持っている時だけ出る）
   { name: 'item', label: '道具', x: 0, y: 10, s: 62, btn: Btn.Item, center: true },

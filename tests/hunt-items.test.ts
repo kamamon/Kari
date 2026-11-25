@@ -82,7 +82,11 @@ describe('支給品と道具', () => {
     expect(sim.player.hp).toBe(70);
     expect(count(sim, HEAL)).toBe(4);
     expect(of(ev, 'item_effect')[0]).toMatchObject({ kind: 'heal', ok: true, amount: 40 });
+    // 飲み終わった後の決め姿勢（v0.40.0。2G）: 124 tick まで動けない
     run(sim, 60);
+    expect(sim.player.mode).toBe('action');
+    expect(sim.player.action?.def.actionId).toBe('player.item.drink');
+    run(sim, 6);
     expect(sim.player.mode).toBe('free');
     sim.player.hp = 90;
     useItem(sim, HEAL);
@@ -103,7 +107,7 @@ describe('支給品と道具', () => {
     expect(sim.player.itemUse).toBeNull();
   });
 
-  it('抜刀中に道具ボタンを押すと、納刀してから続けて使う', () => {
+  it('抜刀中に道具ボタンを押すと、納刀するだけ（v0.40.0。2G）。使うのは、納刀した後にもう 1 度押した時', () => {
     const sim = hunt();
     sim.player.drawn = true;
     sim.player.hp = 50;
@@ -111,9 +115,33 @@ describe('支給品と道具', () => {
     const ev = run(sim, 1, () => press(Btn.Item));
     expect(ev.some((e) => e.type === 'action_start' && e.actionId.endsWith('sheathe'))).toBe(true);
     const later = run(sim, 160);
-    expect(of(later, 'item_use')).toHaveLength(1);
+    expect(of(later, 'item_use')).toHaveLength(0);
     expect(sim.player.drawn).toBe(false);
+    expect(sim.player.hp).toBe(50);
+    expect(count(sim, HEAL)).toBe(5);
+    // 納刀した後に、もう 1 度押す
+    const use = run(sim, 1, () => press(Btn.Item));
+    expect(of(use, 'item_use')).toHaveLength(1);
+    run(sim, 130);
     expect(sim.player.hp).toBe(90);
+    expect(count(sim, HEAL)).toBe(4);
+  });
+
+  it('納刀の終わり際（先行入力の 6 tick 以内）に押した道具は、納刀が終わった tick に使い始める（1 回の押下は 1 回だけ）', () => {
+    const sim = hunt();
+    sim.player.drawn = true;
+    sim.player.hp = 50;
+    select(sim, HEAL);
+    run(sim, 1, () => press(Btn.Item)); // 納刀を始める（断岳剣の納刀は 44 tick）
+    run(sim, 40);
+    expect(sim.player.action?.def.actionId).toBe('player.heavy_blade.sheathe');
+    const ev = run(sim, 1, () => press(Btn.Item)); // 残り 3 tick の所で押す
+    expect(of(ev, 'item_use')).toHaveLength(0);
+    const later = run(sim, 8);
+    expect(of(later, 'item_use')).toHaveLength(1);
+    const rest = run(sim, 200);
+    expect(of(rest, 'item_use')).toHaveLength(0);
+    expect(count(sim, HEAL)).toBe(4);
   });
 
   it('数が 0 の道具は使えない', () => {

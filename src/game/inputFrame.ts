@@ -13,7 +13,15 @@ export const Btn = {
   ItemNext: 256,
   /** 依頼のリタイア。入力として記録するので、再生でも同じ tick に終わる。 */
   Retire: 512,
+  /**
+   * 主と副の同時押し（複合入力。v0.40.0、docs/spec.md の 32 章）。タッチは専用の小さなボタン、キーボードは V、
+   * パッドとマウスは主と副を同じ tick に押すと、simulation がこれと同じに扱う。断岳剣の斬り上げ。
+   */
+  Combo: 1024,
 } as const;
+
+/** 全部のボタンの印（押しっぱなしを離す時に使う） */
+export const BTN_ALL = 2047;
 
 export interface InputFrame {
   moveX: number;

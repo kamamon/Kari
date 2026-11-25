@@ -14,7 +14,7 @@ import { assetUrl, fetchJson, loadContent } from './core/assets';
 import type { ActionDef, Content } from './data/schemas';
 import { inWindow, newRun, phaseAt } from './game/action';
 import { createMonster, monsterShapes, type MonsterState } from './game/monster';
-import { sampleTrack, trackSegment } from './game/tracks';
+import { sampleTrack, sampleTrackNormal, trackSegment } from './game/tracks';
 import { DebugDraw } from './render/debugDraw';
 import { GaldrosRig } from './render/galdrosRig';
 import { buildArrow, buildBow, buildQuiver } from './render/bow';
@@ -409,7 +409,8 @@ function frame(ts: number): void {
         const s = sampleTrack(tr, t);
         const shoot = a.shoot?.[0];
         const other = shoot && fam.primaryHand === 'left' && t < shoot.tick ? { x: 0, y: 0.02, z: 0.17 + 0.36 * Math.min(1, t / shoot.tick) } : null;
-        hunter.weaponToTrack(s.grip, s.dir, tr.planeNormal ?? [1, 0, 0], { two: fam.twoHanded, along: fam.otherHandAlong, primary: fam.primaryHand, other });
+        const n = sampleTrackNormal(tr, t);
+        hunter.weaponToTrack(s.grip, s.dir, [n.x, n.y, n.z], { two: fam.twoHanded, along: fam.otherHandAlong, primary: fam.primaryHand, other });
         if (fam.offhand && fam.offhandReady) {
           const at = a.offhandTrack ? sampleTrack(content.tracks.get(a.offhandTrack)!, t).grip : { x: fam.offhandReady[0], y: fam.offhandReady[1], z: fam.offhandReady[2] };
           hunter.shieldTo(at, a.offhandTrack ? 0 : 0.5);

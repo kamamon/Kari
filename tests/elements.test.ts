@@ -410,7 +410,7 @@ describe('受ける攻撃と、防具の技能（simulation）', () => {
     const whet = (armorIds: string[]): number => {
       const sim = new Simulation(content, baseOptions({ armorIds }));
       sim.player.edge = 10;
-      sim.player.drawn = true;
+      sim.player.drawn = false; // v0.40.0（2G）: 研磨石は納刀して使う
       for (let i = 0; i < 400; i++) {
         sim.step(i === 0 ? press(Btn.Item) : frame());
         if (ofType(sim.drainEvents(), 'item_effect').some((e) => e.kind === 'whet' && e.ok)) return i;

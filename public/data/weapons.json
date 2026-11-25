@@ -14,25 +14,29 @@
     {
       "id": "heavy_blade",
       "edge": { "wearPerMotion": 1.6, "label": "刃" },
-      "labels": { "main": "斬る", "sub": "薙ぐ", "special": "防御" },
-      "summary": "大剣。隙を読んで、重い一撃を当てる。溜め斬りと、遅い防御。",
+      "labels": { "main": "斬る", "sub": "薙ぐ", "special": "防御", "combo": "斬上" },
+      "summary": "大剣。隙を読んで、重い一撃を当てる。縦斬り・薙ぎ払い・斬り上げをつなぎ、溜め斬り（抜刀斬りからも溜められる）。刃で受ける遅い防御（受けるたびに刃が減る）。",
       "name": "断岳剣",
       "twoHanded": true,
       "drawnMoveSpeed": 2.4,
       "drawnTurnDegPerSec": 300,
-      "ready": { "grip": [-0.18, 1.02, 0.22], "dir": [-0.10, 0.92, -0.38], "planeNormal": [1, 0, 0] },
+      "ready": { "grip": [-0.18, 1.02, 0.22], "dir": [-0.10, 0.92, -0.38], "planeNormal": [-1, 0, 0] },
       "blade": { "from": 0.30, "to": 1.75, "radius": 0.20 },
       "actions": {
         "main": "player.heavy_blade.overhead",
         "sub": "player.heavy_blade.side_sweep",
         "drawAttack": "player.heavy_blade.draw_slash",
         "draw": "player.heavy_blade.draw",
-        "sheathe": "player.heavy_blade.sheathe"
+        "sheathe": "player.heavy_blade.sheathe",
+        "combo": "player.heavy_blade.upswing"
       },
       "cancelNames": {
         "overhead": "player.heavy_blade.overhead",
-        "side_sweep": "player.heavy_blade.side_sweep"
+        "side_sweep": "player.heavy_blade.side_sweep",
+        "upswing": "player.heavy_blade.upswing",
+        "upswing_low": "player.heavy_blade.upswing_low"
       },
+      "cancelButtons": { "upswing": "combo", "upswing_low": "combo" },
       "guard": {
         "startTicks": 10,
         "activeFromTick": 5,
@@ -43,6 +47,7 @@
         "chipScale": 0.25,
         "breakDamageScale": 0.7,
         "turnDegPerSec": 90,
+        "edgeWear": 3,
         "pose": { "grip": [-0.05, 1.05, 0.36], "dir": [0.55, 0.80, 0.10], "planeNormal": [0, 0, 1] }
       }
     },
@@ -50,7 +55,7 @@
       "id": "guard_blade",
       "edge": { "wearPerMotion": 1.5, "label": "刃" },
       "labels": { "main": "斬る", "sub": "盾打ち", "special": "防御" },
-      "summary": "短剣と盾。張り付いて手数。抜刀したまま道具が使え、構えてすぐ受けると受け流し。",
+      "summary": "短剣と盾。張り付いて手数。防御を構えたまま道具が使え、構えてすぐ受けると受け流し。",
       "name": "護刃",
       "twoHanded": false,
       "drawnMoveSpeed": 3.6,
@@ -71,7 +76,7 @@
         "gb_bash": "player.guard_blade.bash"
       },
       "cancelButtons": { "gb_slash2": "main", "gb_thrust": "main" },
-      "itemsWhileDrawn": true,
+      "itemsWhileGuarding": true,
       "offhand": "shield_small",
       "offhandReady": [0.3, 1.08, 0.28],
       "offhandGuard": [0.1, 1.2, 0.48],

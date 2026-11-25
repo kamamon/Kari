@@ -214,16 +214,16 @@ describe('弾かれ', () => {
   });
 });
 
-describe('研磨石', () => {
-  const whetReady = (edge: number, drawn = true): Simulation => {
-    const sim = sim1();
+describe('研磨石（v0.40.0 から、2G に合わせて納刀して使う）', () => {
+  const whetReady = (edge: number, drawn = false, weaponId = 'weapon.heavy_blade.001'): Simulation => {
+    const sim = sim1(content, weaponId);
     sim.player.edge = edge;
     sim.player.drawn = drawn;
     sim.player.itemIndex = sim.player.items.findIndex((s) => s.itemId === WHET);
     return sim;
   };
 
-  it('抜刀中に使う: 96 tick 目に最大へ戻り、1 個減る。研ぎ終わっても抜刀のまま', () => {
+  it('納刀中に使う: 96 tick 目に最大へ戻り、1 個減る。研ぎ終わると武器は納めたまま', () => {
     const sim = whetReady(30);
     const start = run(sim, 1, () => press(Btn.Item));
     expect(of(start, 'item_use')).toHaveLength(1);
@@ -238,18 +238,22 @@ describe('研磨石', () => {
     expect(count(sim, WHET)).toBe(9);
     run(sim, 40);
     expect(sim.player.mode).toBe('free');
-    expect(sim.player.drawn).toBe(true);
+    expect(sim.player.drawn).toBe(false);
   });
 
-  it('納刀中に使う: 先に抜いてから、続けて研ぐ', () => {
-    const sim = whetReady(30, false);
+  it('抜刀中に押すと、納刀するだけで研がない。納刀した後にもう 1 度押すと研ぐ', () => {
+    const sim = whetReady(30, true);
     const ev = run(sim, 1, () => press(Btn.Item));
-    expect(of(ev, 'action_start').map((e) => e.actionId)).toEqual(['player.heavy_blade.draw']);
+    expect(of(ev, 'action_start').map((e) => e.actionId)).toEqual(['player.heavy_blade.sheathe']);
     const later = run(sim, 200);
-    expect(of(later, 'item_use')).toHaveLength(1);
+    expect(of(later, 'item_use')).toHaveLength(0);
+    expect(sim.player.edge).toBe(30);
+    expect(sim.player.drawn).toBe(false);
+    run(sim, 1, () => press(Btn.Item));
+    run(sim, 130);
     expect(sim.player.edge).toBe(100);
     expect(count(sim, WHET)).toBe(9);
-    expect(sim.player.drawn).toBe(true);
+    expect(sim.player.drawn).toBe(false);
   });
 
   it('研ぎ終わる前に攻撃を受けると、戻らず、道具も減らない', () => {
@@ -263,16 +267,20 @@ describe('研磨石', () => {
     expect(sim.player.itemUse).toBeNull();
   });
 
-  it('刃が最大の時は使えない（減らない。納刀中なら、抜きもしない）', () => {
-    for (const drawn of [true, false]) {
-      const sim = whetReady(100, drawn);
-      const ev = run(sim, 1, () => press(Btn.Item));
-      expect(of(ev, 'item_fail')).toEqual([{ type: 'item_fail', reason: 'no_need' }]);
-      expect(of(ev, 'action_start')).toHaveLength(0);
-      run(sim, 60);
-      expect(count(sim, WHET)).toBe(10);
-      expect(sim.player.drawn).toBe(drawn);
-    }
+  it('刃が最大の時は使えない（減らない）。抜刀中なら、納刀だけをする', () => {
+    const sheathed = whetReady(100);
+    const ev = run(sheathed, 1, () => press(Btn.Item));
+    expect(of(ev, 'item_fail')).toEqual([{ type: 'item_fail', reason: 'no_need' }]);
+    expect(of(ev, 'action_start')).toHaveLength(0);
+    run(sheathed, 60);
+    expect(count(sheathed, WHET)).toBe(10);
+    expect(sheathed.player.drawn).toBe(false);
+    const drawn = whetReady(100, true);
+    const ev2 = run(drawn, 1, () => press(Btn.Item));
+    expect(of(ev2, 'item_fail')).toHaveLength(0);
+    expect(of(ev2, 'action_start').map((e) => e.actionId)).toEqual(['player.heavy_blade.sheathe']);
+    run(drawn, 60);
+    expect(count(drawn, WHET)).toBe(10);
   });
 
   it('研いでいる最中は、102 tick 目から回避で切り上げられる（効果の後）', () => {
@@ -286,22 +294,18 @@ describe('研磨石', () => {
     expect(sim.player.edge).toBe(100);
   });
 
-  it('「納刀してから使う」の待ちは、道具を替えると取り消される（替えた先の研磨石が勝手に使われない）', () => {
-    const sim = new Simulation(content, baseOptions({ questId: 'quest.basin.003' }));
-    sim.player.drawn = true;
-    sim.player.edge = 30;
-    sim.player.hp = 50;
-    sim.player.itemIndex = sim.player.items.findIndex((s) => s.itemId === 'item.heal_tonic');
-    run(sim, 1, () => press(Btn.Item)); // 回復液: 納刀が始まる
-    expect(sim.player.pendingItem).toBe(true);
-    // 納刀の途中で、研磨石へ替える
-    while (sim.player.items[sim.player.itemIndex]!.itemId !== WHET) run(sim, 1, () => press(Btn.ItemNext));
-    expect(sim.player.pendingItem).toBe(false);
-    const ev = run(sim, 200);
-    expect(of(ev, 'item_use')).toHaveLength(0);
-    expect(sim.player.hp).toBe(50);
-    expect(sim.player.edge).toBe(30);
-    expect(sim.player.drawn).toBe(false);
+  it('護刃は、防御を構えたまま研げる（抜刀のまま。v0.40.0）。構えていない時は納刀する', () => {
+    const sim = whetReady(30, true, 'weapon.guard_blade.001');
+    run(sim, 12, () => ({ ...frame(), held: Btn.Special }));
+    expect(sim.player.mode).toBe('guard');
+    const ev = run(sim, 1, () => ({ ...frame(), held: Btn.Special | Btn.Item, pressed: Btn.Item }));
+    expect(of(ev, 'item_use')).toHaveLength(1);
+    run(sim, 130);
+    expect(sim.player.edge).toBe(100);
+    expect(sim.player.drawn).toBe(true);
+    const other = whetReady(30, true, 'weapon.guard_blade.001');
+    const ev2 = run(other, 1, () => press(Btn.Item));
+    expect(of(ev2, 'action_start').map((e) => e.actionId)).toEqual(['player.guard_blade.sheathe']);
   });
 
   it('依頼では 3 個、訓練場では 10 個持つ', () => {

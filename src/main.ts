@@ -64,6 +64,8 @@ async function boot(): Promise<void> {
   });
 
   const store = new SettingsStore();
+  // v0.40.0: ロックオンのボタン（操作補助）。これまで遊んでいた人は入のまま、新しく始めた人は切
+  store.settleLockOnButton(store.savedBefore || save.doc.revision > 0);
   const audio = new AudioSystem(store.value);
   status.textContent = '横向きで遊びます。音が出ます。';
   startBtn.hidden = false;

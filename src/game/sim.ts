@@ -1004,7 +1004,6 @@ export class Simulation implements SimCtx {
     if (p.action !== run || p.mode !== 'action') return;
     p.action = null;
     p.guard = null;
-    p.pendingItem = false;
     p.mode = 'hurt';
     p.hurt = { kind: 'bounce', tick: 0, duration: this.content.edge.bounce.recoilTicks, dirYaw: p.yaw + Math.PI };
   }
@@ -1250,7 +1249,7 @@ export class Simulation implements SimCtx {
       for (const q of m.parts) parts.push(q.durability, q.broken ? 1 : 0, q.severed ? 1 : 0, q.severAcc, q.flinchAcc, q.flinchThreshold);
     }
     for (const h of this.hazards) parts.push(h.x, h.z, h.warn, h.active, h.hit ? 1 : 0);
-    parts.push(p.itemIndex, p.items.map((s) => s.count).join(','), p.itemUse ? `${p.itemUse.itemId}:${p.itemUse.done ? 1 : 0}` : '-', p.pendingItem ? 1 : 0, p.carving ? p.carving.source : '-');
+    parts.push(p.itemIndex, p.items.map((s) => s.count).join(','), p.itemUse ? `${p.itemUse.itemId}:${p.itemUse.done ? 1 : 0}` : '-', p.lastSingle ? `${p.lastSingle.key}:${p.lastSingle.instanceId}` : '-', p.carving ? p.carving.source : '-');
     for (const m of this.monsters) parts.push(m.trapTicks, m.trapCount, m.tranq, m.tranqTicks, m.captured ? 1 : 0);
     for (const m of this.monsters) {
       const a = m.ailments;

@@ -67,6 +67,8 @@ pelvis 高さ 0.92 / 肩幅 0.37（肩の関節は左右 0.185）/ 上腕 0.29�
 - 仮アニメーションは武器をこの軌道へ置き、腕を IK で伸ばしている（見える刃 = 判定）。断岳剣はこの方式。
 - 護刃・長尖槍・環弓・大槌・双剣・太刀は逆で、**体の動きが先**: 体の動きを解いた握りと向きを、毎 tick 書き出したものが shapeTrack（`tools/gen-weapons.mjs`）。描画も同じ動きを解くので、見える武器と判定は一致する（`tests/human-motion.test.ts` が、全 tick で 2mm 以内を確かめる）。
 - 双剣は左手にも剣を持つ。左の剣の判定は `<技>_l` の shapeTrack（同じ解き方から書き出す）。
+- **刃の面の向き**（v0.40.0。D-127）: 軌道の `planeNormal`（武器の +X）と、キーごとの `normal`（描画だけ。当たりの形には関わらない）で決める。武器の +Y = `dir`、+X = `normal` を `dir` に直交させたもの、+Z = X × Y で、断岳剣の刃は -Z。**刃が振る向きの前に来る**ように置く（v0.39.0 までの断岳剣は、縦斬り・薙ぎ払いで峰が前だった）。手首で刃を返す技は、キーごとに `normal` を持ち、隣り合うキーで真逆にしない（`validateTrack` が確かめる）。
+- **技が替わった時**（v0.40.0。断岳剣）: 手に持った武器の位置と向きを 0.1 秒混ぜる（向きは回転の球面補間）。判定のある tick は混ぜず、正本の軌道に合わせる。
 - この 6 系統の動きは、関節の曲がる範囲・手の届き・手首・重心・足の滑り・速さの検査（`src/render/humanLimits.ts`）を全 tick で通すこと。正式クリップへ替える時も、同じ検査を目安にする。
 - 納めた武器の置き場所は、武器系統ごとに持つ（`weaponClipSpecs.ts` の sheath: 付く骨と位置と向き）。socket_back / socket_hip は断岳剣と、正式モデルの目安。
 - 正式クリップへ替える時は、クリップの刃の位置と shapeTrack の誤差を検証表示で比べ、**どちらを基準に直すかを先に決める**。
@@ -80,12 +82,14 @@ pelvis 高さ 0.92 / 肩幅 0.37（肩の関節は左右 0.185）/ 上腕 0.29�
 | --- | --- | --- | --- |
 | hb_attack_vertical_01 | player.heavy_blade.overhead | 72 tick | 18 tick が最大振り上げ（溜めの保持姿勢） |
 | hb_attack_side_01 | player.heavy_blade.side_sweep | 66 tick | 右後ろ → 左前へ水平に払う |
-| hb_draw_slash_01 | player.heavy_blade.draw_slash | 64 tick | 背中から抜いてそのまま振り下ろす |
+| hb_draw_slash_01 | player.heavy_blade.draw_slash | 64 tick | 背中から抜いてそのまま振り下ろす。v0.40.0 から 16 tick で溜めの保持姿勢 |
+| hb_attack_upswing_01 | player.heavy_blade.upswing | 66 tick | v0.40.0。構えから刃を返して前の低い所へ下ろし（12〜16）、左足を踏み込んで頭の上へ振り上げる（判定 18〜27） |
+| hb_attack_upswing_low_01 | player.heavy_blade.upswing_low | 54 tick | v0.40.0。縦斬り・抜刀斬りの後（刃が前の低い所）からの斬り上げ。上の 12 tick 目からと同じ動き（判定 6〜15） |
 | hb_draw_01 / hb_sheathe_01 | …draw / …sheathe | 26 / 44 tick | |
 | common_roll_01 | player.common.roll | 36 tick | 前転。抜刀中は前後左右の 4 方向が必要（いまは前転を回して代用している仮の処理） |
-| common_item_drink_01 | player.item.drink | 92 tick | 回復液を飲む。58 tick で効果（それまでに口元へ） |
+| common_item_drink_01 | player.item.drink | 124 tick | 回復液を飲む。58 tick で効果（それまでに口元へ）。v0.40.0 から、飲み終えた後の決め姿勢（両腕を横へ上げて力を込める。76〜106） |
 | common_item_place_01 | player.item.set_trap | 112 tick | しゃがんで罠を据える。84 tick で設置 |
-| common_item_whet_01 | player.item.whet | 120 tick | 片ひざを突いて、ひざの前に渡した武器を研ぐ。96 tick で研ぎ上がる。武器の位置と腕は、描画の側が構えから渡した位置へ動かして手を合わせる（データの軌道は持たない） |
+| common_item_whet_01 | player.item.whet | 120 tick | 片ひざを突いて、ひざの前に渡した武器を研ぐ。96 tick で研ぎ上がる。武器の位置と腕は、描画の側が動かして手を合わせる（データの軌道は持たない）。v0.40.0 から納刀して使い、背の置き場所（その系統の抜刀の軌道の始まり）から下ろして、終わったら納める。護刃が防御を構えたまま使った時だけ、構えの位置から |
 | common_item_throw_01 | player.item.throw_orb | 46 tick | 右手で前へ投げる。22 tick で手を離れる |
 | common_carve_01 | player.common.carve | 100 tick | 片ひざを突いて剥ぎ取る。80 tick で素材が手に入る |
 | common_gather_01 | player.common.gather | 90 tick | 狩らない依頼（v0.27.0）の採集。片ひざで摘み、腰の袋へ。72 tick で品が入る。6〜72 tick は回避で止められる |

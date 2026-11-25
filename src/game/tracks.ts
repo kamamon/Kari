@@ -29,6 +29,23 @@ export function sampleTrack(tr: ShapeTrackDef, t: number): { grip: V3; dir: V3 }
   };
 }
 
+/**
+ * 刃の面の向き（描画だけ。v0.40.0）。キーに normal があれば、その間を球面で補う（隣り合うキーで真逆にしない）。無ければ planeNormal。
+ * 判定には使わない（当たりの形は線分と太さだけ）。
+ */
+export function sampleTrackNormal(tr: ShapeTrackDef, t: number): V3 {
+  const base = fromArr(tr.planeNormal ?? [1, 0, 0]);
+  const keys = tr.keys;
+  if (!keys.some((k) => k.normal)) return base;
+  const nOf = (i: number): V3 => norm(fromArr(keys[i]!.normal ?? tr.planeNormal ?? [1, 0, 0]));
+  if (t <= keys[0]!.t) return nOf(0);
+  if (t >= keys[keys.length - 1]!.t) return nOf(keys.length - 1);
+  let i = 0;
+  while (i < keys.length - 2 && keys[i + 1]!.t <= t) i++;
+  const u = (t - keys[i]!.t) / (keys[i + 1]!.t - keys[i]!.t);
+  return slerpDir(nOf(i), nOf(i + 1), u);
+}
+
 /** 判定カプセルの芯（ローカル座標の線分）。 */
 export function trackSegment(tr: ShapeTrackDef, t: number): { a: V3; b: V3 } {
   const s = sampleTrack(tr, t);

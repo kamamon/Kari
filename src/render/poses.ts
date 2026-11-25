@@ -80,7 +80,35 @@ const HALF_TUCK: J = {
 };
 const LYING: J = { upperArmL: [0, 0, 55], upperArmR: [0, 0, -55], thighL: [-8, 0, 10], thighR: [6, 0, -10], shinL: [14, 0, 0], shinR: [6, 0, 0], head: [-10, 0, 0] };
 
+/**
+ * 断岳剣の斬り上げ（v0.40.0。2G の大剣の △+○ に当たる）: 構えから刃を返しながら前の低い所へ下ろして沈み（12〜16）、
+ * 左足を踏み込んで地面すれすれから頭の上へ振り上げる（判定 18〜27）。腕は刃の軌道（hb_upswing_blade_sweep）へ IK で届かせる
+ */
+const UPSWING: Key[] = [
+  { t: 0 },
+  { t: 6, j: { ...STANCE, spine: [12, 0, 0], chest: [6, -8, 0], thighL: [-20, 0, 4], shinL: [24, 0, 0] }, py: -0.07 },
+  { t: 12, j: { spine: [26, 0, 0], chest: [16, 0, 0], head: [-16, 0, 0], thighL: [-44, 0, 4], shinL: [54, 0, 0], thighR: [24, 0, -4], shinR: [26, 0, 0] }, py: -0.19 },
+  { t: 16, j: SWING_DOWN, py: -0.22 },
+  { t: 19, j: { spine: [24, 0, 0], chest: [14, 0, 0], head: [-12, 0, 0], thighL: [-46, 0, 4], shinL: [56, 0, 0], thighR: [26, 0, -4], shinR: [26, 0, 0] }, py: -0.19 },
+  { t: 22, j: SWING_MID, py: -0.12 },
+  { t: 24, j: { spine: [2, 0, 0], chest: [-2, 0, 0], thighL: [-30, 0, 4], shinL: [30, 0, 0], thighR: [18, 0, -4], shinR: [16, 0, 0] }, py: -0.06 },
+  { t: 27, j: { ...SWING_UP, head: [-4, 0, 0] }, py: -0.03 },
+  { t: 36, j: { ...SWING_UP, spine: [-10, 0, 0], chest: [-8, 0, 0] }, py: -0.03 },
+  { t: 50, j: { ...STANCE, spine: [0, 0, 0], chest: [-4, -10, 0] }, py: -0.04 },
+  { t: 66 },
+];
+/** 刃が前の低い所にある時（縦斬り・抜刀斬りの後）の斬り上げ: 下ろす所を省いた同じ動き（12 tick 早い） */
+const UPSWING_LOW: Key[] = [{ t: 0, j: SWING_DOWN, py: -0.22 }, ...UPSWING.filter((k) => k.t > 12).map((k) => ({ ...k, t: k.t - 12 }))];
+/** 回復液を飲んだ後の決め姿勢: 両腕を肩の高さで横へ開き、肘を曲げて拳を上へ。胸を張り、少し上を向いて、ひざを緩める */
+const FLEX: J = {
+  spine: [-4, 0, 0], chest: [-8, 0, 0], head: [-8, 0, 0],
+  upperArmL: [-10, 0, 80], upperArmR: [-10, 0, -80], forearmL: [0, 0, 98], forearmR: [0, 0, -98],
+  thighL: [-6, 0, 6], shinL: [10, 0, 0], thighR: [6, 0, -6], shinR: [10, 0, 0],
+};
+
 export const CLIPS: Record<string, Clip> = {
+  hb_attack_upswing_01: { base: STANCE, basePy: STANCE_PY, keys: UPSWING },
+  hb_attack_upswing_low_01: { base: STANCE, basePy: STANCE_PY, keys: UPSWING_LOW },
   hb_attack_vertical_01: {
     base: STANCE, basePy: STANCE_PY,
     keys: [
@@ -140,7 +168,7 @@ export const CLIPS: Record<string, Clip> = {
     ],
   },
   // ---- 道具と剥ぎ取り（M2 後半）----
-  // 回復液: 右手を口元へ上げ、上を向いて飲む。58 tick で効果。
+  // 回復液: 右手を口元へ上げ、上を向いて飲む。58 tick で効果。飲み終えたら決め姿勢（76〜106）
   common_item_drink_01: {
     base: NEUTRAL, basePy: 0,
     keys: [
@@ -148,8 +176,13 @@ export const CLIPS: Record<string, Clip> = {
       { t: 16, j: { upperArmR: [-70, 0, -18], forearmR: [-95, 0, 0], head: [6, 0, 0] } },
       { t: 30, j: { upperArmR: [-98, 0, -22], forearmR: [-118, 0, 0], head: [-22, 0, 0], chest: [-6, 0, 0] } },
       { t: 58, j: { upperArmR: [-102, 0, -22], forearmR: [-122, 0, 0], head: [-26, 0, 0], chest: [-8, 0, 0] } },
-      { t: 74, j: { upperArmR: [-40, 0, -12], forearmR: [-60, 0, 0] } },
-      { t: 92 },
+      { t: 66, j: { upperArmR: [-40, 0, -12], forearmR: [-60, 0, 0], head: [-8, 0, 0] } },
+      // 決め姿勢（v0.40.0。2G に合わせた）: 両腕を横へ上げて力を込め（76〜106）、下ろして戻る。この間は動けない
+      { t: 76, j: FLEX, py: -0.05 },
+      { t: 92, j: { ...FLEX, upperArmL: [-14, 0, 84], upperArmR: [-14, 0, -84], forearmL: [0, 0, 104], forearmR: [0, 0, -104] }, py: -0.06 },
+      { t: 106, j: FLEX, py: -0.05 },
+      { t: 116, j: { upperArmL: [0, 0, 20], upperArmR: [0, 0, -20], forearmL: [-20, 0, 0], forearmR: [-20, 0, 0] }, py: -0.01 },
+      { t: 124 },
     ],
   },
   // 拘束罠: しゃがんで地面に据える。84 tick で設置。

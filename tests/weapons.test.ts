@@ -100,16 +100,29 @@ describe('護刃（短剣と盾）', () => {
     expect(sim.player.hp).toBeLessThan(100);
   });
 
-  it('抜刀したまま道具を使え、使い終わっても抜刀のまま。断岳剣は納刀してから使う', () => {
-    for (const [w, drawnAfter, sheathes] of [['guard_blade', true, false], ['heavy_blade', false, true]] as const) {
+  it('v0.40.0（2G）: 防御を構えたまま道具を使え、使い終わっても抜刀のまま。構えていなければ、ほかの武器と同じく納刀だけ', () => {
+    // 護刃: 防御を構えたまま道具を押す
+    const g = mk('guard_blade', { questId: 'quest.basin.003', monsterAttacks: false });
+    g.player.drawn = true;
+    g.player.hp = 50;
+    g.player.itemIndex = g.player.items.findIndex((s) => s.itemId === 'item.heal_tonic');
+    run(g, 8, () => ({ ...frame(), held: Btn.Special }));
+    const evs = run(g, 220, (i) => (i === 0 ? { ...frame(), held: Btn.Special | Btn.Item, pressed: Btn.Item } : frame()));
+    expect(evs.some((e) => e.type === 'item_effect')).toBe(true);
+    expect(starts(evs).some((a) => a.endsWith('.sheathe'))).toBe(false);
+    expect(g.player.drawn).toBe(true);
+    expect(g.player.hp).toBeGreaterThan(50);
+    // 構えていない護刃と、断岳剣: 押すと納刀だけ（使わない）
+    for (const w of ['guard_blade', 'heavy_blade']) {
       const sim = mk(w, { questId: 'quest.basin.003', monsterAttacks: false });
       sim.player.drawn = true;
       sim.player.hp = 50;
-      const evs = run(sim, 220, (i) => (i === 0 ? press(Btn.Item) : frame()));
-      expect(evs.some((e) => e.type === 'item_effect'), w).toBe(true);
-      expect(starts(evs).some((a) => a.endsWith('.sheathe')), w).toBe(sheathes);
-      expect(sim.player.drawn, w).toBe(drawnAfter);
-      expect(sim.player.hp, w).toBeGreaterThan(50);
+      sim.player.itemIndex = sim.player.items.findIndex((s) => s.itemId === 'item.heal_tonic');
+      const e2 = run(sim, 220, (i) => (i === 0 ? press(Btn.Item) : frame()));
+      expect(e2.some((e) => e.type === 'item_effect'), w).toBe(false);
+      expect(starts(e2).some((a) => a.endsWith('.sheathe')), w).toBe(true);
+      expect(sim.player.drawn, w).toBe(false);
+      expect(sim.player.hp, w).toBe(50);
     }
   });
 });

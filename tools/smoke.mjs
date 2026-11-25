@@ -201,6 +201,19 @@ const startTraining = async (page, tap = false) => {
   // 段階 2 は 123、離すのが遅れて段階 3 に入ると 164（通常の縦斬りは 58）。v0.23.0 の係数（縦斬り 1.05、溜め ×2.1 / ×2.8。D-092）
   check('溜め斬り（段階 2 以上）が命中し、威力が上がる', s5.hits === 4 && (last.damage === 123 || last.damage === 164), `damage ${last?.damage} part ${last?.partId}`);
 
+  // 斬り上げ（v0.40.0。2G の △+○）: V（主と副の同時押し）で、地面すれすれから振り上げて 1 回だけ当たる。縦斬りの後から、低い所からの斬り上げへつながる
+  await page.keyboard.press('KeyV');
+  check('V（主と副の同時押し）で斬り上げが出る（v0.40.0）', await until(page, () => window.__vh.sim.player.action?.def.actionId === 'player.heavy_blade.upswing', 3000));
+  await until(page, () => (window.__vh.sim.player.action?.tick ?? 0) >= 21);
+  await page.screenshot({ path: `${OUT}09b_upswing.png` });
+  await idle(page);
+  check('斬り上げが 1 回だけ命中する', (await state(page)).hits === 5, `hits ${(await state(page)).hits}`);
+  await click(page);
+  await until(page, () => (window.__vh.sim.player.action?.tick ?? 0) >= 44);
+  await page.keyboard.press('KeyV');
+  check('縦斬りの振り下ろしの後で V を押すと、低い所からの斬り上げへつながる', await until(page, () => window.__vh.sim.player.action?.def.actionId === 'player.heavy_blade.upswing_low', 3000));
+  await idle(page);
+
   // 防御: 標的の攻撃を再開して正面で受ける
   await page.evaluate(() => {
     const m = window.__vh.sim.monsters[0];
@@ -907,6 +920,25 @@ const startTraining = async (page, tap = false) => {
   check('タッチ: もう一度押すと外れ、ボタンが消灯する', await until(page, () => !window.__vh.view.lockOn && !document.querySelector('.tbtn-lock').classList.contains('latched'), 3000));
   await idle(page);
 
+  // v0.40.0（2G）: 主と副の同時押しの小さなボタン「斬上」（断岳剣だけ）。丸いボタンどうしが重ならない。視点を戻すボタンは「背後」
+  const comboBtn = await page.evaluate(() => {
+    const b = document.querySelector('.tbtn-combo');
+    const circ = (q) => ({ x: q.left + q.width / 2, y: q.top + q.height / 2, r: q.width / 2 });
+    const me = circ(b.getBoundingClientRect());
+    const others = [...document.querySelectorAll('#touch .tbtn')].filter((x) => x !== b && !x.hidden && getComputedStyle(x).display !== 'none' && !x.classList.contains('center')).map((x) => ({ name: x.dataset.name, ...circ(x.getBoundingClientRect()) }));
+    const gaps = others.map((o) => ({ name: o.name, gap: Math.round((Math.hypot(o.x - me.x, o.y - me.y) - o.r - me.r) * 10) / 10 })).sort((a, c) => a.gap - c.gap).slice(0, 3);
+    return { x: me.x, y: me.y, w: me.r * 2, text: b.textContent, hidden: b.hidden, gaps, cam: document.querySelector('.tbtn-camreset').textContent };
+  });
+  check('タッチ: 断岳剣では「斬上」（主と副の同時押し）の小さなボタンが出て、ほかの丸いボタンと重ならない。視点を戻すボタンは「背後」', !comboBtn.hidden && comboBtn.text === '斬上' && comboBtn.w >= 34 && comboBtn.gaps[0].gap >= 0 && comboBtn.cam === '背後', JSON.stringify(comboBtn));
+  await page.evaluate(() => {
+    const p = window.__vh.sim.player;
+    p.drawn = true;
+  });
+  await touch('touchStart', [{ x: comboBtn.x, y: comboBtn.y, id: 1 }]);
+  await touch('touchEnd', []);
+  check('タッチ: 抜刀して「斬上」を押すと、斬り上げが出る', await until(page, () => window.__vh.sim.player.action?.def.actionId === 'player.heavy_blade.upswing', 3000));
+  await idle(page);
+
   // HUD のボタンはタッチ操作の層に隠れず押せる
   await page.tap('.hud-btn:nth-of-type(1)');
   check('タッチ: 「検証」ボタンで検証表示が出る', await until(page, () => !document.getElementById('verify').hidden, 3000));
@@ -1019,6 +1051,8 @@ const startTraining = async (page, tap = false) => {
     ['32_viewer_overhead_active', '?action=player.heavy_blade.overhead&tick=26&yaw=-1.5708'],
     ['33_viewer_overhead_end', '?action=player.heavy_blade.overhead&tick=34&yaw=-1.5708'],
     ['34_viewer_side_sweep', '?action=player.heavy_blade.side_sweep&tick=22&yaw=0.6'],
+    ['34b_viewer_upswing', '?action=player.heavy_blade.upswing&tick=21&yaw=1.57'],
+    ['34c_viewer_drink_flex', '?action=player.item.drink&tick=92&yaw=0.5'],
     ['35_viewer_roll', '?action=player.common.roll&tick=14&yaw=-1.5708'],
     ['36_viewer_dummy_slam', '?action=monster.training_dummy.slam&tick=52&yaw=-1.2'],
     ['37_viewer_draw', '?action=player.heavy_blade.draw&tick=4&yaw=2.6'],
@@ -1075,15 +1109,20 @@ const startTraining = async (page, tap = false) => {
   await page.screenshot({ path: `${OUT}70_edge_bounce.png` });
   await page.evaluate(() => (window.__vh.sim.content.monsters.get('monster.training_dummy').parts[0].hitzone.cut = 0.7));
   await until(page, () => window.__vh.sim.player.mode === 'free', 8000);
-  // 研磨石（E キー）: 片ひざを突いて研ぎ、最大へ戻る
+  // 研磨石（E キー）: v0.40.0（2G）から、抜刀中の E は納刀だけ。納刀してから、もう 1 度 E で、片ひざを突いて研ぎ、最大へ戻る
+  await page.keyboard.press('KeyE');
+  check('研磨石: 抜刀中に E を押すと、納刀だけをする（研がない。v0.40.0、2G）', await until(page, () => {
+    const p = window.__vh.sim.player;
+    return p.mode === 'free' && !p.drawn;
+  }, 6000) && await page.evaluate(() => window.__vh.sim.player.items[0].count === 10 && window.__vh.sim.player.edge < 100), await page.evaluate(() => JSON.stringify({ mode: window.__vh.sim.player.mode, drawn: window.__vh.sim.player.drawn })));
   await page.keyboard.press('KeyE');
   check('研磨石を使うと、研ぐ動きが始まる', await until(page, () => window.__vh.sim.player.action?.def.actionId === 'player.item.whet', 6000));
   await until(page, () => (window.__vh.sim.player.action?.tick ?? 0) >= 52, 8000);
   await page.screenshot({ path: `${OUT}71_edge_whet.png` });
-  check('研ぎ終わると、刃が最大（鋭い）へ戻り、研磨石が 1 個減る。抜刀のまま', await until(page, () => {
+  check('研ぎ終わると、刃が最大（鋭い）へ戻り、研磨石が 1 個減る。武器は納めたまま（v0.40.0）', await until(page, () => {
     const p = window.__vh.sim.player;
     const e = document.querySelector('.hud-blade .edge');
-    return p.mode === 'free' && p.edge === 100 && p.items[0].count === 9 && p.drawn && e.dataset.stage === 'keen' && [...window.__vh.view.missingClips].length === 0;
+    return p.mode === 'free' && p.edge === 100 && p.items[0].count === 9 && !p.drawn && e.dataset.stage === 'keen' && [...window.__vh.view.missingClips].length === 0;
   }, 10000));
   await page.keyboard.press('KeyE');
   check('刃が最大の時は、研磨石は使えない（減らない）', await until(page, () => /まだ研がなくてよい/.test(document.getElementById('toasts').textContent), 4000) && (await page.evaluate(() => window.__vh.sim.player.items[0].count === 9 && !window.__vh.sim.player.action)));

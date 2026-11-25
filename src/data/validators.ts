@@ -136,6 +136,19 @@ export function validateTrack(t: ShapeTrackDef, errors: string[]): void {
     last = k.t;
     if (!isTriple(k.grip) || !isTriple(k.dir)) errors.push(`${w}: key t=${k.t} の grip/dir が不正`);
     else if (Math.hypot(k.dir[0], k.dir[1], k.dir[2]) < 1e-6) errors.push(`${w}: key t=${k.t} の dir が零ベクトル`);
+    // 刃の面の向き（v0.40.0。描画だけ）: 刃の向きと平行に近いと、面が決まらない
+    if (k.normal !== undefined) {
+      if (!isTriple(k.normal) || Math.hypot(k.normal[0], k.normal[1], k.normal[2]) < 1e-6) errors.push(`${w}: key t=${k.t} の normal が不正`);
+      else if (isTriple(k.dir)) {
+        const n = Math.hypot(...k.normal) * Math.hypot(...k.dir);
+        if (Math.abs(k.normal[0] * k.dir[0] + k.normal[1] * k.dir[1] + k.normal[2] * k.dir[2]) / n > 0.9) errors.push(`${w}: key t=${k.t} の normal が dir とほぼ平行`);
+      }
+    }
+  }
+  // 隣り合うキーの面の向きが真逆だと、間の向きが決まらない
+  for (let i = 1; i < t.keys.length; i++) {
+    const a = t.keys[i - 1]!.normal ?? t.planeNormal, b = t.keys[i]!.normal ?? t.planeNormal;
+    if (a && b && isTriple(a) && isTriple(b) && a[0] * b[0] + a[1] * b[1] + a[2] * b[2] < -0.999 * Math.hypot(...a) * Math.hypot(...b)) errors.push(`${w}: t=${t.keys[i - 1]!.t} と ${t.keys[i]!.t} の normal が真逆`);
   }
 }
 
@@ -222,6 +235,12 @@ export function crossCheck(c: Content, errors: string[]): void {
     for (const [name, id] of Object.entries(f.cancelNames)) {
       if (!c.actions.has(id)) errors.push(`${w}: cancelNames.${name} の ${id} が無い`);
     }
+    // 複合入力（v0.40.0）で出す技は、複合の技（actions.combo）を持つ系統だけ
+    for (const [name, key] of Object.entries(f.cancelButtons ?? {})) {
+      if (!(name in f.cancelNames)) errors.push(`${w}: cancelButtons.${name} が cancelNames に無い`);
+      if (key === 'combo' && !f.actions.combo) errors.push(`${w}: cancelButtons.${name} は combo だが、actions.combo が無い`);
+    }
+    if (f.labels && f.actions.combo && !f.labels.combo) errors.push(`${w}: actions.combo があるのに labels.combo（ボタンの表示名）が無い`);
   }
   for (const wpn of c.weapons.values()) {
     if (!c.families.has(wpn.family)) errors.push(`weapon ${wpn.id}: family ${wpn.family} が無い`);
@@ -314,8 +333,8 @@ export function crossCheck(c: Content, errors: string[]): void {
     } else if (it.kind === 'tranq') {
       if (!(it.tranq && it.tranq.range > 0 && it.tranq.halfAngleDeg > 0)) errors.push(`${w}: tranq が不正`);
     } else if (it.kind === 'whet') {
-      // 研いだ後は抜刀のままにする（手に持った武器を研ぐ）
-      if (a && a.onFinish !== 'drawn_idle') errors.push(`${w}: 研ぐ行動の onFinish は drawn_idle にする`);
+      // 研いだ後は納める（v0.40.0。2G に合わせて、納刀して使い、背から下ろして研ぐ。護刃が防御を構えたまま使った時だけ、抜刀のまま）
+      if (a && a.onFinish !== 'sheathed_idle') errors.push(`${w}: 研ぐ行動の onFinish は sheathed_idle にする`);
     } else errors.push(`${w}: kind "${String(it.kind)}" は未定義`);
   }
   const checkRoll = (w: string, r: LootRoll | undefined): void => {

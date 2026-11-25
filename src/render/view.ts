@@ -1,6 +1,6 @@
 // 描画のまとめ役。simulation の状態を読んで、仮モデル・カメラ・エフェクト・検証表示を更新する。
 // ここから simulation へ値を書き戻すことはしない（描画補間や骨の姿勢を計算の正本にしない）。
-import { CylinderGeometry, DoubleSide, Group, IcosahedronGeometry, Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshStandardMaterial, RingGeometry, Scene, Vector2, Vector3, WebGLRenderer, type Object3D } from 'three';
+import { CylinderGeometry, DoubleSide, Group, IcosahedronGeometry, Matrix4, Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshStandardMaterial, Quaternion, RingGeometry, Scene, Vector2, Vector3, WebGLRenderer, type Object3D } from 'three';
 import { angleDiff, fromArr, lerpV, norm, smoothstep, toWorld, type V3 } from '../core/math';
 import { STATUS_KINDS, type Content, type ElementId, type MonsterDef, type StatusKind } from '../data/schemas';
 import { inWindow, renderTick } from '../game/action';
@@ -8,7 +8,7 @@ import type { SimEvent } from '../game/events';
 import { monsterBlockers, monsterShapes, type MonsterState } from '../game/monster';
 import { familyOf, isGuarding, playerHurtCapsule } from '../game/player';
 import type { Simulation } from '../game/sim';
-import { sampleTrack, trackSegment } from '../game/tracks';
+import { sampleTrack, sampleTrackNormal, trackSegment } from '../game/tracks';
 import type { Settings } from '../save/settings';
 import { blobShadow, buildArena, buildAreaGroup, setupSky, type Arena } from './arena';
 import { WIND } from './envArt';
@@ -43,6 +43,20 @@ const PART_COLORS: Record<string, [number, number, number]> = {
   legs: [0.5, 1, 0.5],
   body: [0.45, 0.7, 1],
 };
+/** 技が替わった時に、武器の位置と向きを混ぜる時間（秒。v0.40.0） */
+const WEAPON_BLEND_SEC = 0.1;
+const v3From = (v: Vector3): V3 => ({ x: v.x, y: v.y, z: v.z });
+const basisM = new Matrix4();
+/** 武器の向き（+Y = dir、+X = normal を dir に直交させたもの。HunterRig の置き方と同じ）を、回転にする */
+function weaponQuat(dir: V3, normal: readonly number[]): Quaternion {
+  const y = new Vector3(dir.x, dir.y, dir.z).normalize();
+  const x = new Vector3(normal[0], normal[1], normal[2]);
+  x.addScaledVector(y, -x.dot(y));
+  if (x.lengthSq() < 1e-6) x.set(1, 0, 0).addScaledVector(y, -y.x);
+  x.normalize();
+  const z = new Vector3().crossVectors(x, y);
+  return new Quaternion().setFromRotationMatrix(basisM.makeBasis(x, y, z));
+}
 /** 研磨石で研ぐ時の動きの名前と、武器を渡す位置（アクターのローカル座標。片ひざを突いた時の、ひざの前） */
 const WHET_CLIP = 'common_item_whet_01';
 const WHET_HOLD = { grip: { x: -0.2, y: 0.74, z: 0.28 }, dir: norm({ x: 0.9, y: -0.08, z: 0.42 }), normal: [0, 1, 0] as [number, number, number] };
@@ -206,6 +220,13 @@ export class GameView {
   private renderY = 0;
   private poseKey = '';
   private lastPose: BodyPose = emptyPose();
+  /**
+   * 武器の置き場所の混ぜ（v0.40.0）: 技が替わった時、直前に手に持っていた武器の位置と向きから、短く混ぜる（刃を手首で返す連係で、刃が一瞬で裏返らない）。
+   * 判定のある tick は混ぜない（見える刃と判定を合わせる）。描画だけ
+   */
+  private lastWeapon: { grip: V3; q: Quaternion } | null = null;
+  private weaponFrom: { grip: V3; q: Quaternion } | null = null;
+  private weaponBlendT = 1;
   private blendFrom: BodyPose | null = null;
   private blendT = 1;
   /** 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）の体を解く係 */
@@ -571,19 +592,27 @@ export class GameView {
       if (run.def.weaponTrack) {
         const tr = content.tracks.get(run.def.weaponTrack)!;
         const s = sampleTrack(tr, t);
-        weapon = { mode: 'track', grip: s.grip, dir: s.dir, normal: tr.planeNormal ?? [1, 0, 0] };
+        const n = sampleTrackNormal(tr, t);
+        weapon = { mode: 'track', grip: s.grip, dir: s.dir, normal: [n.x, n.y, n.z] };
         shieldOut = true;
       }
       if (run.def.offhandTrack) shieldAt = sampleTrack(content.tracks.get(run.def.offhandTrack)!, t).grip;
       else if (run.def.guardWindows) shieldU = 1;
-      // 研磨石: 構えの位置から、ひざの前へ武器を渡し（片ひざを突く）、研ぎ終わったら構えへ戻す
+      // 研磨石: 武器をひざの前へ渡し（片ひざを突く）、研ぎ終わったら戻す。v0.40.0 から、納刀して使う（背の置き場所から下ろして、背へ納める）。
+      // 護刃が防御を構えたまま使った時（抜刀のまま）は、これまでどおり構えの位置から
       if (run.def.clip === WHET_CLIP) {
         const u = smoothstep(Math.min(1, t / 18)) * (1 - smoothstep((t - 102) / 18));
+        const drawTr = !run.keepDrawn ? content.actions.get(fam.actions.draw)?.weaponTrack : undefined;
+        const tr = drawTr ? content.tracks.get(drawTr) : undefined;
+        const home = tr ? { ...sampleTrack(tr, 0), normal: sampleTrackNormal(tr, 0) } : null;
+        const homeGrip = home ? home.grip : fromArr(fam.ready.grip);
+        const homeDir = home ? home.dir : norm(fromArr(fam.ready.dir));
+        const homeNormal = home ? [home.normal.x, home.normal.y, home.normal.z] : fam.ready.planeNormal;
         weapon = {
           mode: 'track',
-          grip: lerpV(fromArr(fam.ready.grip), WHET_HOLD.grip, u),
-          dir: norm(lerpV(norm(fromArr(fam.ready.dir)), WHET_HOLD.dir, u)),
-          normal: u < 0.5 ? fam.ready.planeNormal : WHET_HOLD.normal,
+          grip: lerpV(homeGrip, WHET_HOLD.grip, u),
+          dir: norm(lerpV(homeDir, WHET_HOLD.dir, u)),
+          normal: u < 0.5 ? homeNormal : WHET_HOLD.normal,
         };
         shieldOut = true;
         // 左手が空く武器（両手持ち、または左の剣を腰へ納める双剣）は、左手の石で刃をなでる（3 往復）。左腕に盾を持つ武器は、右手で支えるだけ（仮）
@@ -653,7 +682,8 @@ export class GameView {
     } else this.anim.reset();
 
     // 状態が切り替わった瞬間は、直前の姿勢から短く混ぜる
-    if (key !== this.poseKey) {
+    const keyChanged = key !== this.poseKey;
+    if (keyChanged) {
       this.poseKey = key;
       // IK を解いた後で骨だけを混ぜると、手と武器が離れる。解く側だけでブレンドする。
       this.blendFrom = solved ? null : { ...this.lastPose, tumble: ((((this.lastPose.tumble + 180) % 360) + 360) % 360) - 180 };
@@ -671,9 +701,28 @@ export class GameView {
       this.hunter.setPose(pose);
       this.hunter.setString(null);
       const sheath = WEAPON_STANCES[fam.id]?.sheath;
-      if (weapon.mode === 'track') this.hunter.weaponToTrack(weapon.grip, weapon.dir, weapon.normal, hands);
-      else if (weapon.mode === 'back' && sheath) this.hunter.weaponToSheath(sheath);
-      else this.hunter.weaponToSocket(weapon.mode === 'back' ? fam.sheathSocket ?? 'back' : fam.primaryHand === 'left' ? 'hand_l' : 'hand_r');
+      if (weapon.mode === 'track') {
+        // 技が替わった直後は、直前の武器の位置と向きから混ぜる（判定のある tick は、正本の軌道のまま）
+        const q = weaponQuat(weapon.dir, weapon.normal);
+        if (keyChanged) {
+          this.weaponFrom = this.lastWeapon;
+          this.weaponBlendT = 0;
+        }
+        this.weaponBlendT += dt;
+        const contact = !!p.action && playerContactFrame(p.action.def, playerRenderTick(p.action, alpha));
+        const wu = this.weaponBlendT / WEAPON_BLEND_SEC;
+        if (this.weaponFrom && wu < 1 && !contact) {
+          const e = smoothstep(wu);
+          const bq = this.weaponFrom.q.clone().slerp(q, e);
+          weapon = { mode: 'track', grip: lerpV(this.weaponFrom.grip, weapon.grip, e), dir: v3From(new Vector3(0, 1, 0).applyQuaternion(bq)), normal: new Vector3(1, 0, 0).applyQuaternion(bq).toArray() };
+          this.lastWeapon = { grip: weapon.grip, q: bq };
+        } else this.lastWeapon = { grip: weapon.grip, q };
+        this.hunter.weaponToTrack(weapon.grip, weapon.dir, weapon.normal, hands);
+      } else {
+        this.lastWeapon = null;
+        if (weapon.mode === 'back' && sheath) this.hunter.weaponToSheath(sheath);
+        else this.hunter.weaponToSocket(weapon.mode === 'back' ? fam.sheathSocket ?? 'back' : fam.primaryHand === 'left' ? 'hand_l' : 'hand_r');
+      }
     }
     if (fam.offhand && !solved) {
       // 盾: 抜刀中は左腕で前に持ち、納刀中・被弾中・力尽きた時は背中へ

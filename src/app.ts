@@ -362,7 +362,8 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
 
   /** ロックオンを入・切する（v0.16.0）。里では使わない。ロックできる相手が居なければ、知らせるだけ。 */
   toggleLock(): void {
-    if (this.place === 'hub') return;
+    // 操作補助（v0.40.0）: 設定でロックオンのボタンを出している時だけ（標準は手で視点を回す）
+    if (this.place === 'hub' || !this.store.value.lockOnButton) return;
     if (this.view.lockOn) {
       this.view.lockOn = false;
       this.hud.toast('ロックオンを外した');
@@ -700,17 +701,22 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       const stack = pl.items[pl.itemIndex];
       const inHub = this.place === 'hub';
       this.touch.setHidden(['item', 'itemprev', 'itemnext'], inHub || pl.items.length === 0);
-      const labels = familyOf(pl, this.content).labels;
+      const fam = familyOf(pl, this.content);
+      const labels = fam.labels;
       this.touch.setHidden(['special'], inHub || !labels?.special);
-      // 里では、武器を使うボタンを出さない
+      // 里では、武器を使うボタンを出さない。複合入力のボタン（v0.40.0）は、複合の技を持つ武器だけ
       this.touch.setHidden(['weapon', 'sub'], inHub);
+      this.touch.setHidden(['combo'], inHub || !fam.actions.combo);
+      // 道具（v0.40.0。2G）: 抜刀中に押すと納刀する（護刃は、防御を構えている間だけ、そのまま使える）
+      const sheathesFirst = pl.drawn && !(fam.itemsWhileGuarding && pl.mode === 'guard');
       this.touch.setLabels({
         weapon: pl.drawn ? '納刀' : '抜刀',
         main: inHub ? (this.nearFacility ? '入る' : '—') : this.sim.carveTarget() ? '剥ぎ取り' : errandLabel(this.sim) ?? labels?.main ?? '斬る',
         sub: labels?.sub ?? '薙ぐ',
         special: labels?.special ?? '',
+        combo: labels?.combo ?? '',
         dodge: (pl.drawn && labels?.dodge) || '回避',
-        item: stack ? `${this.content.items.get(stack.itemId)?.name ?? ''}\n×${stack.count}` : '道具',
+        item: stack ? `${this.content.items.get(stack.itemId)?.name ?? ''}\n${sheathesFirst ? '納刀' : `×${stack.count}`}` : '道具',
       });
       this.touch.setIcon('item', stack ? iconUrl(stack.itemId) : null);
       this.touch.root.classList.toggle('item-empty', !!stack && stack.count === 0);
@@ -732,8 +738,10 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     }
     const lockAt = this.view.lockPoint ? this.view.project(this.view.lockPoint) : null;
     this.hud.setLock(lockAt && lockAt.visible ? lockAt : null);
+    // ロックオンのボタンを設定で消したら、ロックオンも外す（v0.40.0）
+    if (this.view.lockOn && !this.store.value.lockOnButton) this.view.lockOn = false;
     this.touch.setLatched('lock', this.view.lockOn);
-    this.touch.setHidden(['lock'], this.place === 'hub');
+    this.touch.setHidden(['lock'], this.place === 'hub' || !this.store.value.lockOnButton);
     this.view.render();
     this.hud.setFacility(this.place === 'hub' && !paused ? this.nearFacility : null, this.place === 'hub');
     this.hud.update(this.sim, this.view, { fps: this.fps, droppedTicks: this.clock.droppedTicks, frames: this.meterSummary }, dt);

@@ -136,6 +136,11 @@ export interface TrackKey {
   t: number;
   grip: Triple;
   dir: Triple;
+  /**
+   * 刃の面の向き（描画だけ。v0.40.0）。省くと軌道の planeNormal。刃を手首で返す技（断岳剣の斬り上げ）は、キーごとに持ち、
+   * 刃（-Z）が振る向きの前に来るようにする。当たりの形（線分と太さ）には関わらない。
+   */
+  normal?: Triple;
 }
 
 /**
@@ -167,6 +172,8 @@ export interface GuardDef {
   parryTicks?: number;
   /** 受け止めた時に下がる距離 (m)。省くと 0.9。 */
   recoilDistance?: number;
+  /** 受け止めるたびに減る刃の状態（v0.40.0。断岳剣は刃で受けるので減る。2G の大剣に合わせた。量は Kari の仮の値）。省くと減らない */
+  edgeWear?: number;
 }
 
 export interface WeaponFamilyDef {
@@ -190,13 +197,18 @@ export interface WeaponFamilyDef {
     guardSub?: string;
     /** 回避の行動。省くと共通の転がる回避。 */
     dodge?: string;
+    /** 主と副の同時押し（複合入力。v0.40.0）で出す技。抜刀して立っている時（断岳剣の斬り上げ） */
+    combo?: string;
   };
   cancelNames: Record<string, string>;
   /** cancelNames の技を、どのボタンで出すか。省いた名前は、actions.main / sub と同じ技ならそのボタン。 */
-  cancelButtons?: Record<string, 'main' | 'sub' | 'special'>;
+  cancelButtons?: Record<string, 'main' | 'sub' | 'special' | 'combo'>;
   guard: GuardDef | null;
-  /** 抜刀したまま道具を使える（護刃） */
-  itemsWhileDrawn?: boolean;
+  /**
+   * 防御を構えている間だけ、抜刀したまま道具を使える（護刃。v0.40.0 から。2G の片手剣に合わせて、防御の構えを通す）。
+   * ほかの系統は、抜刀中に道具ボタンを押すと納刀する（使うのは、納刀した後にもう 1 度押した時）
+   */
+  itemsWhileGuarding?: boolean;
   /**
    * 刃の状態（15 章の次、16 章）。wearPerMotion: 当てるたびに、技の威力の係数 × この値だけ減る。
    * label は画面に出す名前（刃 / 打面）。省くと、この系統に刃の状態は無い（環弓）。
@@ -216,7 +228,7 @@ export interface WeaponFamilyDef {
   /** 納刀した武器を付ける場所。省くと背中。 */
   sheathSocket?: 'back' | 'hip';
   /** ボタンの表示名。special を省くと、固有ボタンを隠す。 */
-  labels?: { main: string; sub: string; special?: string; dodge?: string };
+  labels?: { main: string; sub: string; special?: string; dodge?: string; combo?: string };
   /** 拠点の武器選びに出す、ひとことの説明 */
   summary?: string;
 }

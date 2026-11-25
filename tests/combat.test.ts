@@ -38,7 +38,8 @@ describe('断岳剣・縦斬り', () => {
       { id: 'recovery', from: 30, to: 72 },
     ]);
     expect(a.hitWindows[0]).toMatchObject({ id: 'blade_main', from: 22, to: 30, damageCoefficient: 1.05, maxHitsPerTarget: 1, hitstopTicks: 4 });
-    expect(a.cancelWindows).toEqual([{ from: 58, to: 72, into: ['roll'] }]);
+    // v0.40.0（2G。D-125）: 振り下ろした後から、斬り上げ（刃が低い所からの短い方）・薙ぎ払いへつながる。回避は 58 から（これまでどおり）
+    expect(a.cancelWindows).toEqual([{ from: 40, to: 72, into: ['upswing_low', 'side_sweep'] }, { from: 58, to: 72, into: ['roll'] }]);
     expect(a.turning).toEqual({ untilTick: 10, maxDegreesPerSecond: 90 });
   });
 
