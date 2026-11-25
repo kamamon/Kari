@@ -1,0 +1,176 @@
+{
+  "schema": "kari.flagship_story.art_manifest.v1",
+  "created_jst": "2026-11-26",
+  "title": "帰り道の灯――雷が帰る峰：追加原画4点",
+  "method": "image_gen.imagegen（built-in）による生成。CLI/API/Fal代替・Python画像編集なし。",
+  "deliverable_scope": "物語・演出・美術の制作参考PNG。3Dモデル・アニメーション・ゲーム実装・採用決定ではない。",
+  "reference_images": [
+    {
+      "id": "orzelion_concept",
+      "repository_path": "chatgpt-inbox/user-20261126-thunder-wyverns/art/orzelion/orzelion_concept_v1.png",
+      "source_state": "同時制作中の看板原画案。採用確定/本体実装は示さない。",
+      "sha256": "2b5f3503906f16266d62d5e981b5e613acc0e725083956db629de7e5ea32fba4",
+      "width": 1672,
+      "height": 941
+    },
+    {
+      "id": "style_board_v2",
+      "repository_path": "art-source/board/style_board_v2.png",
+      "source_commit": "0925487b686473e1a4d7e45fdc63449ef3a7d2ec",
+      "source_state": "採用済み画風基準",
+      "sha256": "5c209a7bd8115e3d1cb5bd94e211166e788613468eb3e44d3d0de4b8cbafdd72",
+      "width": 1671,
+      "height": 941
+    },
+    {
+      "id": "diversion_repaired",
+      "repository_path": "art-source/story/ref_story_diversion_repaired_v1.png",
+      "source_commit": "0925487b686473e1a4d7e45fdc63449ef3a7d2ec",
+      "sha256": "083a4fbea0e6d0c496025801b0950d2deb224f344b2c1ff810d9c83cea4d07dc",
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "id": "homecoming_v1",
+      "repository_path": "art-source/story/event_story_homecoming_v1.png",
+      "source_commit": "0925487b686473e1a4d7e45fdc63449ef3a7d2ec",
+      "sha256": "c0227f691b2847e9924f9ec33f8cedbc97d18a884c5b61701b39a6858b99fcd3",
+      "width": 1672,
+      "height": 941
+    },
+    {
+      "id": "minagi_full_v1",
+      "repository_path": "art-source/npc/minagi_full_v1.png",
+      "source_commit": "0925487b686473e1a4d7e45fdc63449ef3a7d2ec",
+      "sha256": "f1b83c417ed87262ee407b6060956c38fb1f0cc81a1ed8f7c8423c36ecb7d700",
+      "width": 1086,
+      "height": 1448
+    }
+  ],
+  "design_updates_ja": [
+    "生成開始後に看板の詳細設定を受領。正式な雷の経路は『胸左右の蓄雷嚢→翼前縁二条→尾の三枚槍』を優先する。冠は首の持ち上げで警告を見せる硬い角で、発電始点と解釈しない。",
+    "1・2枚目のpromptにある冠→翼の記述は生成時の初期案を記録した履歴。生成画の冠付近の火花から通電経路を決めない。細部の三枚槍・胸の嚢・翼前縁二条の厳密な板数や順序は本画で保証しない。正式解剖・アニメーション仕様に従って組む。",
+    "看板の主生息地は鉛雲高地。沿岸画は遠い風回廊の目撃、決戦画は同高地内『鳴天の背』の構想画。",
+    "4枚とも文字を絵へ焼き込まず、説明・字幕は実装側で表示する。"
+  ],
+  "images": [
+    {
+      "file": "art/event_thunder_first_sighting_v1.png",
+      "status": "generated_reference_art_reviewed",
+      "notes_ja": [
+        "嵐青の鱗、象牙の胸腹、後向き冠角、膜翼と2本の後脚を目視確認。独立した前脚は見当たらない。",
+        "海岸の荷道と荷車、背面のフード狩人、山へ向かう飛翔を描く。",
+        "寸法・地理・飛翔速度を規定する精密資料ではない。生成画では冠角本数・細部の板数は参考原画と完全一致とは保証しない。",
+        "沿岸の荷下ろし路から鉛雲高地へ向かう風回廊を目撃する地理案。海岸を本種の主生息地とする資料ではない。"
+      ],
+      "prompt": "Use case: illustration-story.\nAsset type: one cinematic event key art frame for the original Japanese hunting game VEILBOUND HUNTERS.\nPrimary request: Create a new wide 16:9 narrative illustration of the FIRST DISTANT SIGHTING of Orzelion, the blue thunder wyvern in reference image 1. Preserve that exact creature identity while posing it in natural soaring flight. Reference 2 defines grounded painterly fantasy materials and atmosphere, not a collage layout.\nScene: an ordinary coastal unloading road of pale mineral sand and gray stone, wooden railing, a stopped canvas-covered handcart with cloth and medicine packages, mist over the sea, heavy storm clouds parting above the cliff. A small anonymous hooded hunter in olive canvas and leather is seen from behind on the safe road in the lower foreground, gazing up. No determined gender or face.\nSubject: the immense wyvern is in the upper central sky, wings fully readable, traveling across the road toward the distant mountain ridge. Storm-blue layered scales, ivory chest and belly, long swept-back copper-gold crown horns, bronze-edged wing fingers, tan smoky wing membranes, long tapering tail with bronze tip. EXACTLY TWO hind legs, TWO wings which are its forelimbs, NO separate front legs. Use natural batlike wing attachment and body weight. Faint restrained blue-white electrical traces along crown and wing ridges only, NOT a giant lightning explosion. The animal is neither attacking the cart nor deliberately helping people.\nStyle: high-end original game concept painting, realistic anatomy, tactile weathered stone, linen and wood, fine painterly rendering, restrained bronze accents, slate blue/olive/ivory palette.\nComposition: wide cinematic landscape, creature silhouette clear against lighter cloud opening; coast and small human create scale. Readable atmospheric depth and enough quieter foreground for future optional subtitles; no captions or framing panels.\nLighting: cold storm light on blue scales, ivory throat catches a soft warm opening in clouds.\nConstraints: preserve reference creature head/crown, wing structure, colors and leg count. No additional dragons, no existing franchise motifs, no logos, no text, no magic symbols, no modern equipment, no photoreal movie screenshot. Opaque complete scene; not a technical diagram.",
+      "reference_ids": [
+        "orzelion_concept",
+        "style_board_v2"
+      ],
+      "sha256": "4c33be44028bad9cd52d6f6ba8b8d035011ed3f3d387c5af2325cb4ce290605f",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "has_alpha": false,
+      "bytes": 2773157,
+      "requested_aspect": "16:9",
+      "actual_aspect_note": "1672:941（ほぼ16:9）。勝手なクロップや伸縮は実施していない。",
+      "used_builtin_imagegen": true
+    },
+    {
+      "file": "art/event_thunder_final_ridge_v1.png",
+      "status": "generated_reference_art_reviewed",
+      "notes_ja": [
+        "原画と同じ冠角・胸腹・翼膜を保持し、二後脚で着地する輪郭を目視確認。",
+        "広い岩棚と、低所の分流設備・点検路を描く。文字とUIは見当たらない。",
+        "地形寸法・高低差・足場の転落判定は別設計。冠から翼までの通電の連続順序は静止画から検証できず、映像担当に渡す。",
+        "更新設定に合わせ、この岩棚は鉛雲高地内の小区域『鳴天の背』として使用する。重霧環谷との直接の水理接続や地理位置は本画で確定しない。"
+      ],
+      "prompt": "Use case: illustration-story.\nAsset type: one original game story keyframe, the decisive thunder wyvern encounter at a mountain ledge called NARUTEN NO SE / the Thunder Ridge.\nInput image 1 is the exact creature identity to preserve. Input image 2 defines grounded painterly fantasy material language and muted palette; do not copy its collage.\nPrimary request: a dramatic, beautifully legible WIDE 16:9 scene immediately before the climactic hunt. The blue thunder wyvern ORZELION has just landed on an open broad stone shelf, facing the viewer at a three-quarter angle. Its TWO hind legs brace against stone; its TWO wings are the front limbs and spread across the sky, with their clawed wrists visible. No separate arms or additional front legs. Full creature visible with generous margin around wingtips.\nCreature invariants: storm-blue layered scales, ivory throat/chest/belly, the same elegant head, a pair of long swept-back copper-gold crown horns, bronze-gold wing ridges and tan smoky membranes, long tapering tail with bronze tip. Crown-to-wing-ridge blue-white charge is thin and anatomically attached; no all-screen lightning. Animal has real weight, breath, tendons and careful footing. It is a dangerous territorial wild animal, not supernatural demon or a humanlike character.\nEnvironment: foreground a tiny anonymous hooded hunter viewed from behind, restrained olive/leather outfit and ordinary carried weapon. Very wide flat combat shelf with no central obstacle, naturally mineral-streaked stone pillars on the side; a small shallow stone-and-wood manual diversion channel and maintenance path are visible FAR BELOW at the valley edge, separate from the combat shelf. Only mineral seams on rock edges have copper colors, no futuristic electricity plant. A cautious narrow observation path and wooden rail run along one distant edge. Distant layered mist ridges remain.\nMood: final encounter tension, restrained grandeur, late storm light, warm copper edge light against slate sky and pale ivory chest. Legible anatomy, hero composition, environmental storytelling. Detailed premium hand-painted original fantasy concept art, no franchise references.\nConstraints: not a technical map, no UI, no lettering, no subtitles, no logo, no border, no magic circles, no all-white flash, no other monsters, no modern armor, no castle, no human manipulating lightning. Full opaque scene.",
+      "reference_ids": [
+        "orzelion_concept",
+        "style_board_v2"
+      ],
+      "sha256": "1478792e75cc1c013041b1f6e52400e44e913b2043bd40ff5b011f5eb80821a8",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "has_alpha": false,
+      "bytes": 2960986,
+      "requested_aspect": "16:9",
+      "actual_aspect_note": "1672:941（ほぼ16:9）。勝手なクロップや伸縮は実施していない。",
+      "used_builtin_imagegen": true
+    },
+    {
+      "file": "art/ref_thunder_field_station_v1.png",
+      "status": "generated_reference_art_reviewed",
+      "notes_ja": [
+        "手動の分流レバー・交換用の素焼き部材・木の観測杭・紙の記録・青銅留め具・雨よけ布を目視確認。",
+        "寸法と安全性能を示す技術図ではなく、架空世界の設備の美術資料。電気設備の実作業手順として使用しない。",
+        "レバーの可動範囲、流量、部材の接合と当たり判定は実装時に別途設計する。"
+      ],
+      "prompt": "Use case: stylized-concept.\nAsset type: one environment/prop production reference painting for an original grounded fantasy hunting game.\nPrimary request: Create an inviting, carefully designed small outdoor SURVEY AND REPAIR STATION beside an old shallow stone water-diversion channel, in wide landscape 16:9. Preserve the hand-built stone/wood/bronze construction language from reference image 1 and grounded painterly world style from reference image 2. This is an environmental concept scene, NOT an engineering or electrical-safety diagram.\nScene: a sheltered workbench under patched ivory linen stretched between wooden poles. At right and in the middle ground a small manually operated WOODEN SLUICE GATE in a forked shallow stone water channel, simple hand lever and replaceable bronze pins, visible honest joinery. On the workbench arrange a few REPLACEABLE UNGLAZED TERRACOTTA INSULATING SPACERS (chunky fired clay disks and saddles with holes), loose bronze clamps, a folded paper field log on wooden board, dull ink cup, measuring cord, and a small spare gate board. Nearby rough wooden observation stakes have small blank removable wooden tags. Everyday craft tools and covered spare supplies. A low wooden fence and an unobstructed walking path keep the station orderly.\nBackground: mist-filled gray rocky valley with sparse olive grass; no thunder creature present. Damp weathered stone, woven cloth, stained wood, unglazed clay and bronze are materially distinct.\nComposition: slightly elevated three-quarter view, workshop at left, canal and manual sluice at right, readable separation and modest scale. Crisp prop silhouettes, textured hand-painted premium art, quiet daylight with a warm lantern under the canopy.\nConstraints: all-original objects; use no modern electrical cables, no power generator, no transmission tower, no batteries, no sci-fi instruments, no glowing magic technology, no magical runes, no readable text, no labels or arrows, no technical measurements, no people. Full opaque environment reference. This must look like functional humble maintenance work of an ordinary community, not a cathedral or temple.",
+      "reference_ids": [
+        "diversion_repaired",
+        "style_board_v2"
+      ],
+      "sha256": "be593ab78b6e17a7ab3e833519700f59c372f70d118178935cd45e8111262e3e",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "has_alpha": false,
+      "bytes": 3522676,
+      "requested_aspect": "16:9",
+      "actual_aspect_note": "1672:941（ほぼ16:9）。勝手なクロップや伸縮は実施していない。",
+      "used_builtin_imagegen": true
+    },
+    {
+      "file": "art/event_thunder_homecoming_v1.png",
+      "status": "generated_reference_art_reviewed",
+      "notes_ja": [
+        "ミナギの記録板・灰オリーブの上着・象牙の襟元、低い荷道、戻る荷車、階段と複数段の里、残る霧を目視確認。",
+        "ミナギの顔は小さく、髪の結び目と衣装金具の細部は原画ほど確認できない。正式キャラクターモデルは既存正面/背面原画を優先する。",
+        "里の高低差と道幅を厳密に決める図ではない。新しい道の通行と帰還を表す場面案。"
+      ],
+      "prompt": "Use case: illustration-story.\nAsset type: ending scene key art, WIDE 16:9, for original hunting game VEILBOUND HUNTERS, chapter A NEW ROAD HOME.\nInput image 1: established village look and ordinary supply handcart. Input image 2: MINAGI exact character identity, hair, clothing and wooden record board. Input image 3: approved art/material style. Create a new story scene, do not merely duplicate the old composition.\nPrimary request: a quiet emotionally satisfying dawn homecoming after a long difficult hunt and repair work. A small loaded wooden two-wheel handcart pushed by two ordinary working adults is returning along the NEW LONGER LOWER PATH of the terraced stone-and-timber village. They are alive, tired, calmly talking, no victory parade. Other villagers begin normal work around simple cloth awnings, sacks, spare wood and bronze fittings.\nMINAGI stands in the middle ground beside a low wooden arrival desk and blank wooden route tags, recording that everyone came home. She is the same ordinary young adult woman in reference 2: dark brown hair gathered at the nape in a loose low bun, wispy side bangs, gray-olive practical linen jacket with bronze toggles over ivory collared shirt, brown trousers and sturdy brown lace-up ankle boots. A plain wood record board held in her hands. Keep her face small in frame, relaxed and attentive; do not redesign her clothing or hair, no robe or armor. No foreground glamour portrait.\nEnvironment: village built in visible levels with stone retaining walls, a higher closed short path marked by a simple wooden rail, open lower sloping detour suitable for handcarts, stone stairs connecting terraces, weathered timber frames, cream canvas canopies, bronze lanterns. A few lanterns still glow warmly as pale morning light enters. Plenty of mist REMAINS in the valleys and between distant mountains. The land is recovering locally; the entire world has not suddenly become sunny or magically healed.\nComposition: cinematic but intimate, lead the eye along the curving lower road toward people and warm inhabited terraces; 3 levels clearly visible. Cart is ordinary scale, not a wagon train. Calm broad sky and landscape.\nStyle: premium painterly fantasy concept art, natural soft dawn colors, tangible stone/linen/wood/bronze, muted olive and slate contrasted with a little warm lantern amber. Opaque full-scene illustration, no text or logos.\nAvoid: any dragon in sky, giant monster trophy, halos, magic glow, instant global blue sky, battle, graves, modern buildings, guard towers, crowds celebrating royalty.",
+      "reference_ids": [
+        "homecoming_v1",
+        "minagi_full_v1",
+        "style_board_v2"
+      ],
+      "sha256": "34b647d693ff0afe454ef9b1e8191ffa315226a079cd115174b50e58a9d45339",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "has_alpha": false,
+      "bytes": 3286407,
+      "requested_aspect": "16:9",
+      "actual_aspect_note": "1672:941（ほぼ16:9）。勝手なクロップや伸縮は実施していない。",
+      "used_builtin_imagegen": true
+    }
+  ],
+  "validation": {
+    "checked": [
+      "画像4枚を目視し、主体・画風・色・大きな解剖・場面意図を確認",
+      "実PNGの寸法・RGB・非透過・SHA256を実測",
+      "参照原画のSHA256を記録",
+      "既存原画と本体ソースを上書きしていない"
+    ],
+    "not_checked": [
+      "3Dモデル・骨格・ヒット判定",
+      "雷の時系列とゲーム内視認性",
+      "フィールドの正式な寸法・地理接続・流量",
+      "ミナギの顔と衣装の細部の完全一致",
+      "iPhone実機上でのトリミングと字幕可読性"
+    ],
+    "rule_deviations": [
+      "指定の横16:9に対し生成出力は1672×941で厳密な比率ではない。画角を守って原寸のまま納品。"
+    ],
+    "decisions": [
+      "新規人物の顔を固定せず、主人公は小さい後ろ姿のフード姿とした。",
+      "本来の看板原画/設定図を優先し、物語画を正式解剖の代用にしない。",
+      "里の地形・設備の細部は本体と今後のフィールド設計に合わせて調整可能な原画案とした。"
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "capturedOnJST": "2026-11-26",
+  "baseCommit": "0925487b686473e1a4d7e45fdc63449ef3a7d2ec",
+  "references": [
+    {
+      "sourceRepository": "kamamon/Kari",
+      "sourceWorkingTreePath": "chatgpt-inbox/user-20261126-thunder-wyverns/orzelion_design_v1.md",
+      "gitStatusAtCapture": "uncommitted parallel-production snapshot, not main",
+      "localSnapshot": "references/orzelion_design_reference_v1.md",
+      "sha256": "31a2fda1e0b8f8d7e3f8fad199e6af5a422a0e31f8d4b459c7d16681578de616",
+      "bytes": 32011,
+      "purpose": "Reference only; newly authored by parallel flagship design work, not newly generated in this story package."
+    },
+    {
+      "sourceRepository": "kamamon/Kari",
+      "sourceWorkingTreePath": "chatgpt-inbox/user-20261126-thunder-wyverns/art/orzelion/orzelion_concept_v1.png",
+      "gitStatusAtCapture": "uncommitted parallel-production snapshot, not main",
+      "localSnapshot": "references/orzelion_concept_reference_v1.png",
+      "sha256": "2b5f3503906f16266d62d5e981b5e613acc0e725083956db629de7e5ea32fba4",
+      "bytes": 2463247,
+      "purpose": "Reference only; newly authored by parallel flagship design work, not newly generated in this story package."
+    }
+  ]
+}

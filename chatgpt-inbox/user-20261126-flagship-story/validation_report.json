@@ -1,0 +1,214 @@
+{
+  "scope": "Artifact integrity and source-contract checks only; not runtime/gameplay verification.",
+  "baseCommit": "0925487b686473e1a4d7e45fdc63449ef3a7d2ec",
+  "dateJST": "2026-11-26",
+  "coreOnly": false,
+  "passed": true,
+  "checks": [
+    {
+      "name": "All core deliverables exist",
+      "passed": true,
+      "detail": "12"
+    },
+    {
+      "name": "All delivered JSON parses",
+      "passed": true,
+      "detail": "7"
+    },
+    {
+      "name": "Proposal schemas cannot be confused with runtime data",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Base story and legacy chapter/scene IDs are preserved",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "11 chapters; new finale before original epilogue",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "14 legacy quests preserve IDs, actors, stars, time and prerequisite arrays",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "First two quests remain unordered",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "ST14 remains セオルミド under monster.segranio",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Seven new proposals, one mandatory hunt, six optional",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Unique new id",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Unique new code",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Unique new suggestedRuntimeId",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finale quest identity matches all handoff data",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finale requires ST14 and no optional work",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No optional proposal is lost from chapter references",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Quest dependency references resolve within the design catalog",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "Quest dependency graph has no cycles",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "All field times and untimed hub delivery are coherent",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "Finale is 45 minutes / 162000 ticks",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Highland and species rank contract preserved",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finale outcome is not gated on watching dialogue",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Finale is once; repeat hunt has a different quest ID",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Exactly 12 unique scenes match the written script",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scene gates use known quests and no read-to-progress flag",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Epilogue has only the final success gate",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Script retains four existing speaker keys",
+      "passed": true,
+      "detail": "Counter({'minagi': 25, 'senaki': 17, 'rokuha': 13, 'isane': 11})"
+    },
+    {
+      "name": "Scene art production references exist",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Four generated PNG files open and match metadata/SHA256",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "All 44 assets distinguish produced, existing, parallel and planned",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "CSV inventory matches JSON",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Parallel design reference snapshots match recorded SHA256",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Supply references marked existing resolve in current public data",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "Every file is under 40 MiB",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Tracked changes are restricted to this inbox package",
+      "passed": true,
+      "detail": "26 tracked changes; package additions may be unstaged"
+    },
+    {
+      "name": "Git working and staged whitespace check",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PDF and editable review HTML exist",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Review PDF has substantive Japanese text and pages",
+      "passed": true,
+      "detail": "22 pages / 12221 extracted characters"
+    },
+    {
+      "name": "Review PDF has no blank extracted pages",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "counts": {
+    "chapters": 11,
+    "legacyMainQuests": 14,
+    "newQuestProposals": 7,
+    "newMandatoryHunts": 1,
+    "scriptScenes": 12,
+    "generatedImages": 4,
+    "assetRows": 44
+  },
+  "notTested": [
+    "Future game implementation",
+    "Combat, capture, animations, weather, field geometry, balance",
+    "New save migration and scene gates in runtime",
+    "iPhone rendering and performance"
+  ]
+}
