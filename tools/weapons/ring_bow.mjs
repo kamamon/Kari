@@ -116,12 +116,12 @@ export function ringBow() {
   // ---- 技のデータ ----
   const after = ['rb_shot', 'rb_spread', 'roll'];
   // 引き絞り → 放つ。溜めの段階（0〜3）で、矢の速さと威力が変わる。溜めている間はスタミナが減り、歩ける。
-  action('shot', { clip: 'rb_shot_01', dur: 52, active: [14, 18], track: 'rb_shot',
+  action('shot', { clip: 'rb_shot_01', dur: 52, active: [14, 19], track: 'rb_shot',
     charge: { holdTick: 14, button: 'main', levelTicks: [30, 70, 120], maxHoldTicks: 240, coefficientScale: [1, 1, 1, 1], hitstopBonus: [0, 0, 0, 0], staminaPerSec: 12 },
-    shoot: [{ tick: 18, count: 1, spreadDeg: 0, speed: [26, 32, 40, 48], coefficient: [0.18, 0.3, 0.55, 0.9] }],
+    shoot: [{ tick: 18, count: 1, spreadDeg: 0, speed: [26, 32, 40, 48], coefficient: [0.22, 0.58, 1.12, 1.85] }],
     freeMove: { speed: 1.6, turnDegPerSec: 240, from: 0, to: 18 }, turn: [18, 240], sound: [18, 'orb_throw'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }], cancels: [[14, 15, ['roll']], [32, 52, after]] });
-  action('spread', { clip: 'rb_spread_01', dur: 46, active: [12, 16], track: 'rb_spread',
-    shoot: [{ tick: 16, count: 3, spreadDeg: 16, speed: [30], coefficient: [0.22] }], turn: [14, 300], sound: [16, 'orb_throw'], cancels: [[30, 46, after]] });
+  action('spread', { clip: 'rb_spread_01', dur: 46, active: [12, 17], track: 'rb_spread',
+    shoot: [{ tick: 16, count: 3, spreadDeg: 16, speed: [30], coefficient: [0.17] }], turn: [14, 300], sound: [16, 'orb_throw'], cancels: [[30, 46, after]] });
   action('draw', { clip: 'rb_draw_01', dur: 28, track: 'rb_draw', sound: [4, 'hb_draw_01'] });
   action('sheathe', { clip: 'rb_sheathe_01', dur: 32, track: 'rb_sheathe', sound: [20, 'hb_sheathe_01'], finish: 'sheathed_idle' });
 }

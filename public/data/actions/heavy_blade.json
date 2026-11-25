@@ -16,7 +16,7 @@
       "hitWindows": [{
         "id":"blade_main", "from":22, "to":30,
         "shapeTrack":"hb_vertical_blade_sweep",
-        "damageType":"cut", "damageCoefficient":1.0,
+        "damageType":"cut", "damageCoefficient":1.05,
         "maxHitsPerTarget":1, "hitstopTicks":4
       }],
       "cancelWindows": [
@@ -32,7 +32,7 @@
       "charge": {
         "holdTick": 18, "button": "main",
         "levelTicks": [30, 60, 90], "maxHoldTicks": 120,
-        "coefficientScale": [1.0, 1.3, 1.65, 2.1],
+        "coefficientScale": [1.0, 1.5, 2.1, 2.8],
         "hitstopBonus": [0, 2, 4, 6]
       }
     },
@@ -51,7 +51,7 @@
       "hitWindows": [{
         "id":"blade_main", "from":18, "to":27,
         "shapeTrack":"hb_side_blade_sweep",
-        "damageType":"cut", "damageCoefficient":0.75,
+        "damageType":"cut", "damageCoefficient":0.7,
         "maxHitsPerTarget":1, "hitstopTicks":3
       }],
       "cancelWindows": [
@@ -80,7 +80,7 @@
       "hitWindows": [{
         "id":"blade_main", "from":20, "to":28,
         "shapeTrack":"hb_draw_slash_sweep",
-        "damageType":"cut", "damageCoefficient":0.9,
+        "damageType":"cut", "damageCoefficient":1.0,
         "maxHitsPerTarget":1, "hitstopTicks":4
       }],
       "cancelWindows": [

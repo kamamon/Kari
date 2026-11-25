@@ -2,7 +2,23 @@
 // ゲームの画面（view.ts）と素材ビューア（viewer.ts）と検査（tests/human-motion.test.ts）が、ここを使う。
 import { evalMotion, gaitFeet, mixCtl, mixFoot, solveBody, type Ctl, type Foot, type Solved } from './bodySolve';
 import type { HunterRig } from './rig';
+import { ContactLocomotion, type RenderRoot } from './contactLocomotion';
 import { WEAPON_MOTIONS, WEAPON_STANCES } from './weaponClipSpecs';
+import { renderTick, type ActionRun } from '../game/action';
+import type { ActionDef } from '../data/schemas';
+
+/** run.tick は「次に処理する tick」。命中停止中は処理済みの接触姿勢を保つ。simulation は変更しない。 */
+export function playerRenderTick(run: ActionRun, alpha: number): number {
+  const holding = !!run.def.charge && run.tick === run.def.charge.holdTick && !run.released;
+  if (run.hitstop > 0 || (!run.advanced && !holding && run.tick > 0)) return Math.max(0, run.tick - 1);
+  return renderTick(run, alpha);
+}
+
+/** 射撃の発射フレームも、手/弦と projectile の対応を保つために遷移を終える。 */
+export function playerContactFrame(def: ActionDef, t: number): boolean {
+  return def.hitWindows.some((h) => t >= h.from && t < h.to)
+    || !!def.shoot?.some((s) => t >= s.tick && t < s.tick + 1);
+}
 
 export type AnimState =
   /** 技。t は技の tick（小数可）、dirAngle は回避の向き（ラジアン）、chargeTicks は溜めている tick、freeMove は技の間に歩けるか */
@@ -32,6 +48,13 @@ const BLEND_SEC = 0.08;
 /** 弓: 溜めるほど深く引く（引く長さに掛ける割増と、引き切るまでの tick） */
 const CHARGE_PULL = 0.12, CHARGE_TICKS = 36;
 
+export interface AnimContext {
+  root?: RenderRoot;
+  /** 判定が有効な tick は、ブレンドせずに正本の軌道へ一致させる。 */
+  active?: boolean;
+  frozen?: boolean;
+}
+
 interface Frame {
   ctl: Ctl;
   fL: Foot;
@@ -44,12 +67,18 @@ export class HunterAnimator {
   private key = '';
   private blendT = 1;
   private phase = 0;
+  private contact = new ContactLocomotion();
+  private previousRoot: RenderRoot | null = null;
+
+  constructor(phase = 0) { this.phase = phase; }
 
   /** 解ける状態を抜けた（被弾・納刀など）。次に入る時は、直前の姿から混ぜない。 */
   reset(): void {
     this.last = null;
     this.from = null;
     this.key = '';
+    this.contact.reset();
+    this.previousRoot = null;
   }
 
   /** 直前のフレームも、ここで解いた姿だったか */
@@ -61,7 +90,13 @@ export class HunterAnimator {
    * 1 フレームぶん解く。key は状態の名前（替わった時に混ぜ始める）。moveSpeed は m/秒。
    * 返り値の姿勢・武器・盾を、applySolved でリグへ渡す。
    */
-  frame(familyId: string, st: AnimState, key: string, dt: number, moveSpeed: number, time: number): Solved {
+  frame(familyId: string, st: AnimState, key: string, dt: number, moveSpeed: number, time: number, context: AnimContext = {}): Solved {
+    dt = context.frozen ? 0 : Math.max(0, dt);
+    if (context.root && this.previousRoot && dt > 0 && dt < 0.2) {
+      const distance = Math.hypot(context.root.x - this.previousRoot.x, context.root.z - this.previousRoot.z);
+      if (distance < 1.2) moveSpeed = Math.min(7, distance / dt);
+    }
+    if (context.root) this.previousRoot = { ...context.root };
     const S = WEAPON_STANCES[familyId]!;
     const idle = S.idle;
     let f: Frame;
@@ -71,7 +106,7 @@ export class HunterAnimator {
       const e = evalMotion(m, Math.min(st.t, m.dur), st.dirAngle);
       f = { ctl: e.ctl, fL: e.footL, fR: e.footR };
       if (S.hands.second === 'string' && st.chargeTicks > 0) f.ctl.pull = [(f.ctl.pull[0] ?? 0) * (1 + CHARGE_PULL * smooth(st.chargeTicks / CHARGE_TICKS))];
-      if (st.freeMove) walk = smooth((moveSpeed - 0.1) / 0.5);
+      if (st.freeMove && !context.active) walk = smooth((moveSpeed - 0.1) / 0.5);
     } else if (st.kind === 'guard') {
       const g = S.guard!;
       const u = smooth(st.blend);
@@ -82,7 +117,7 @@ export class HunterAnimator {
       f = { ctl: mixCtl(idle.ctl, idle.ctl, 0), fL: idle.feet.L.slice() as Foot, fR: idle.feet.R.slice() as Foot };
       const breathe = Math.sin(time * 1.7);
       f.ctl.chest = [f.ctl.chest[0]! + breathe * 1.2, f.ctl.chest[1]!, f.ctl.chest[2]!];
-      f.ctl.hip = [f.ctl.hip[0]!, f.ctl.hip[1]! + breathe * 0.004, f.ctl.hip[2]!];
+      f.ctl.hip = [f.ctl.hip[0]!, f.ctl.hip[1]! + Math.sin(time * 1.7 - 0.3) * 0.004, f.ctl.hip[2]!];
       walk = smooth((moveSpeed - 0.1) / 0.5);
     }
     // 歩く: 足を交互に運ぶ。腰は進む方へ少し戻し、その分だけ背でひねり直す（胸と腕の向きは変えない）
@@ -104,11 +139,16 @@ export class HunterAnimator {
       this.blendT = 0;
     }
     this.blendT += dt;
-    const w = Math.min(1, this.blendT / BLEND_SEC);
+    const w = context.active ? 1 : Math.min(1, this.blendT / BLEND_SEC);
     if (w < 1 && this.from) {
       const u = smooth(w);
       f = { ctl: mixCtl(this.from.ctl, f.ctl, u), fL: mixFoot(this.from.fL, f.fL, u), fR: mixFoot(this.from.fR, f.fR, u) };
     }
+    // 足を世界座標へ留める処理は、通常歩行だけ。攻撃中の判定軌道は変えない。
+    if (context.root && st.kind === 'idle') {
+      const grounded = this.contact.frame(context.root, f.fL, f.fR, dt, walk > 0.01);
+      f.fL = grounded.L; f.fR = grounded.R;
+    } else this.contact.reset();
     this.last = f;
     return solveBody(f.ctl, f.fL, f.fR, S.hands);
   }
@@ -116,7 +156,9 @@ export class HunterAnimator {
 
 /** 混ぜずに、その場で 1 つの状態を解く（素材ビューア・検査用）。 */
 export function solveState(familyId: string, st: AnimState, moveSpeed = 0, time = 0): Solved {
-  return new HunterAnimator().frame(familyId, st, '', 1, moveSpeed, time);
+  // 絶対時刻から周期を決める。以前は毎回 dt=1 から始まり、全て同じ脚の位相を検査していた。
+  const phase = moveSpeed * Math.max(0, time) * Math.PI * 2 / strideOf(moveSpeed);
+  return new HunterAnimator(phase).frame(familyId, st, '', 0, moveSpeed, time);
 }
 
 /** 解いた結果を、リグへ渡す。familyId は、左手のものを持っていない時の置き場所を決めるのに使う。 */

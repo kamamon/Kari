@@ -70,13 +70,13 @@ describe('刃の状態の決まり（データ）', () => {
 });
 
 describe('当てると減る', () => {
-  it('最初は最大（鋭い）。縦斬りを 1 回当てると、係数 1.0 × 1.6 = 1.6 減る', () => {
+  it('最初は最大（鋭い）。縦斬りを 1 回当てると、係数 1.05 × 1.6 = 1.68 減る', () => {
     const sim = sim1();
     expect(sim.player.edge).toBe(100);
     const ev = overhead(sim);
     expect(of(ev, 'hit')).toHaveLength(1);
     expect(of(ev, 'hit')[0]!.bounced).toBe(false);
-    expect(sim.player.edge).toBeCloseTo(98.4, 6);
+    expect(sim.player.edge).toBeCloseTo(98.32, 6);
   });
 
   it('空振りでは減らない', () => {
@@ -94,7 +94,7 @@ describe('当てると減る', () => {
     const ev = run(sim, 200, (i) => (i === 0 ? press(Btn.Main) : i < 120 ? frame({ held: Btn.Main }) : i === 120 ? frame({ released: Btn.Main }) : frame()));
     const hit = of(ev, 'hit')[0]!;
     expect(hit.chargeLevel).toBeGreaterThanOrEqual(1);
-    expect(sim.player.edge).toBeCloseTo(98.4, 6);
+    expect(sim.player.edge).toBeCloseTo(98.32, 6);
   });
 
   it('段階が下がった tick に、出来事が 1 回出る', () => {
@@ -102,7 +102,7 @@ describe('当てると減る', () => {
     sim.player.edge = 60.5;
     const ev = overhead(sim);
     expect(of(ev, 'edge')).toEqual([{ type: 'edge', stage: 'worn', value: sim.player.edge }]);
-    expect(sim.player.edge).toBeCloseTo(58.9, 6);
+    expect(sim.player.edge).toBeCloseTo(58.82, 6);
   });
 
   it('0 より下へは減らない', () => {
@@ -119,7 +119,7 @@ describe('段階でダメージが変わる', () => {
     sim.player.edge = edge;
     return of(overhead(sim), 'hit')[0]!.damage;
   };
-  const expected = (scale: number): number => computeDamage({ attack: 80, motion: 1, sharpness: scale, hitzone: 0.7, crit: 1, element: 0, elementMotion: 1, elementZone: 0, questModifier: 1 });
+  const expected = (scale: number): number => computeDamage({ attack: 80, motion: 1.05, sharpness: scale, hitzone: 0.7, crit: 1, element: 0, elementMotion: 1, elementZone: 0, questModifier: 1 });
 
   it('鋭い = ×1.0、並 = ×0.88、鈍い = ×0.7（ダメージ式の刃補正へ掛ける）', () => {
     expect(dmg(100)).toBe(expected(1));
@@ -136,7 +136,7 @@ describe('弾かれ', () => {
     const ev = overhead(sim);
     expect(of(ev, 'hit')[0]!.bounced).toBe(false);
     expect(sim.player.mode).toBe('action');
-    expect(sim.player.edge).toBeCloseTo(98.4, 6);
+    expect(sim.player.edge).toBeCloseTo(98.32, 6);
   });
 
   it('並の時は弾かれる: ダメージは入るが、行動が止まってよろけ、刃は 2 倍減る', () => {
@@ -160,7 +160,7 @@ describe('弾かれ', () => {
     expect(sim.player.action).toBeNull();
     expect(sim.player.mode).toBe('hurt');
     expect(sim.player.hurt).toMatchObject({ kind: 'bounce', duration: content.edge.bounce.recoilTicks });
-    expect(sim.player.edge).toBeCloseTo(50 - 1.6 * 2, 6);
+    expect(sim.player.edge).toBeCloseTo(50 - 1.68 * 2, 6);
     // よろけの間は動けず、少し後ろへ下がる。被弾ではないので体力は減らず、無敵も付かない
     // （押しても技は出ない。先行入力が残らないよう、押すのは前半だけ）
     run(sim, content.edge.bounce.recoilTicks - 1, (i) => (i < 10 ? press(Btn.Main) : frame()));

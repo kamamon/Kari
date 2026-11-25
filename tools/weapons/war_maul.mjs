@@ -148,12 +148,12 @@ export function warMaul() {
 
   // ---- 技のデータ ----
   const hit = (t, coef, o = {}) => [{ id: 'head', track: t, coef, type: 'blunt', hitstop: 5, ...o }];
-  action('smash', { clip: 'wm_smash_01', dur: 56, active: [22, 30], track: 'wm_smash', hits: hit('wm_smash', 0.62), curve: 'w_step_030b', turn: [12, 180], sound: [20, 'hb_swing_01'], events: [{ tick: 30, type: 'sound', id: 'ground_slam' }], cancels: [[36, 56, ['wm_swing', 'roll']]] });
-  action('swing', { clip: 'wm_swing_01', dur: 56, active: [19, 34], track: 'wm_swing', hits: hit('wm_swing', 0.58), turn: [14, 180], sound: [17, 'hb_swing_01'], cancels: [[40, 56, ['wm_smash', 'roll']]] });
+  action('smash', { clip: 'wm_smash_01', dur: 56, active: [22, 30], track: 'wm_smash', hits: hit('wm_smash', 0.6), curve: 'w_step_030b', turn: [12, 180], sound: [20, 'hb_swing_01'], events: [{ tick: 30, type: 'sound', id: 'ground_slam' }], cancels: [[36, 56, ['wm_swing', 'roll']]] });
+  action('swing', { clip: 'wm_swing_01', dur: 56, active: [19, 34], track: 'wm_swing', hits: hit('wm_swing', 0.76), turn: [14, 180], sound: [17, 'hb_swing_01'], cancels: [[40, 56, ['wm_smash', 'roll']]] });
   // 溜め叩き: 頭上で溜める。段階（0〜3）で威力が上がる。
-  action('charge', { clip: 'wm_charge_01', dur: 60, active: [24, 32], track: 'wm_charge', hits: hit('wm_charge', 0.6, { hitstop: 6 }), curve: 'w_step_030b', turn: [14, 150], sound: [22, 'hb_swing_01'], events: [{ tick: 32, type: 'sound', id: 'ground_slam' }],
-    charge: { holdTick: 14, button: 'sub', levelTicks: [30, 60, 95], maxHoldTicks: 160, coefficientScale: [1, 1.35, 1.75, 2.3], hitstopBonus: [0, 1, 2, 4] }, cancels: [[42, 60, ['wm_swing', 'roll']]] });
-  action('draw_smash', { clip: 'wm_draw_smash_01', dur: 68, active: [36, 44], track: 'wm_draw_smash', hits: hit('wm_draw_smash', 0.6), curve: 'w_step_060', turn: [20, 150], sound: [34, 'hb_swing_01'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }, { tick: 44, type: 'sound', id: 'ground_slam' }], cancels: [[54, 68, ['wm_swing', 'roll']]] });
+  action('charge', { clip: 'wm_charge_01', dur: 60, active: [24, 32], track: 'wm_charge', hits: hit('wm_charge', 0.72, { hitstop: 6 }), curve: 'w_step_030b', turn: [14, 150], sound: [22, 'hb_swing_01'], events: [{ tick: 32, type: 'sound', id: 'ground_slam' }],
+    charge: { holdTick: 14, button: 'sub', levelTicks: [30, 60, 95], maxHoldTicks: 160, coefficientScale: [1, 1.7, 2.55, 3.8], hitstopBonus: [0, 1, 2, 4] }, cancels: [[42, 60, ['wm_swing', 'roll']]] });
+  action('draw_smash', { clip: 'wm_draw_smash_01', dur: 68, active: [36, 44], track: 'wm_draw_smash', hits: hit('wm_draw_smash', 0.76), curve: 'w_step_060', turn: [20, 150], sound: [34, 'hb_swing_01'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }, { tick: 44, type: 'sound', id: 'ground_slam' }], cancels: [[54, 68, ['wm_swing', 'roll']]] });
   action('draw', { clip: 'wm_draw_01', dur: 40, track: 'wm_draw', sound: [4, 'hb_draw_01'] });
   action('sheathe', { clip: 'wm_sheathe_01', dur: 42, track: 'wm_sheathe', sound: [29, 'hb_sheathe_01'], finish: 'sheathed_idle' });
 }

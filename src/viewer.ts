@@ -27,6 +27,8 @@ import { HunterRig } from './render/rig';
 import type { ArmorLook } from './render/hunterArmor';
 import { applySolved, canSolve, solveState, stowOffhand, type AnimState } from './render/hunterAnim';
 import type { Solved } from './render/bodySolve';
+import { GroundedLocomotion } from './render/contactLocomotion';
+import { groundedHeavyAttack } from './render/heavyBodyMotion';
 import { WEAPON_STANCES } from './render/weaponClipSpecs';
 import { buildLongBlade, buildTwinBlade, buildWarMaul } from './render/provisionalWeapons';
 import { withShell } from './render/shellPlates';
@@ -393,7 +395,8 @@ function frame(ts: number): void {
     } else if (a) {
       lastSolved = null;
       hunter.setString(null);
-      const pose = clipPose(a.clip, t);
+      let pose = clipPose(a.clip, t);
+      if (pose && fam.id === 'heavy_blade') pose = groundedHeavyAttack(pose, a.clip, t);
       missing = !pose;
       hunter.setPose(pose ?? emptyPose());
       if (a.weaponTrack) {
@@ -413,7 +416,11 @@ function frame(ts: number): void {
     } else {
       lastSolved = null;
       hunter.setString(null);
-      hunter.setPose(locomotionPose(false, t < 60 ? 0 : 4, time * 9, time));
+      const speed = t < 60 ? 0 : 4;
+      const phase = t / 60 * speed * Math.PI * 2 / (1.7 + 0.9 * Math.min(1, speed / 6.4));
+      const pose = locomotionPose(false, speed, phase, time);
+      // ビューアはその場で周期を確認する。ゲームでは状態を保持して世界接地する。
+      hunter.setPose(new GroundedLocomotion().frame(pose, false, speed, phase, 0, { x: 0, z: 0, yaw: 0 }));
       sheathWeapon(fam);
       if (fam.offhand) stowOffhand(hunter, fam.id);
     }

@@ -164,11 +164,11 @@ export function guardBlade() {
 
   // ---- 技のデータ ----
   const cut = (t, coef, o = {}) => [{ id: 'blade_main', track: t, coef, hitstop: 2, ...o }];
-  action('slash1', { clip: 'gb_slash1_01', dur: 26, active: [8, 13], track: 'gb_slash1', hits: cut('gb_slash1', 0.28), curve: 'w_step_015', turn: [6, 360], sound: [7, 'hb_swing_02'], cancels: [[14, 26, ['gb_slash2', 'gb_bash', 'roll']]] });
+  action('slash1', { clip: 'gb_slash1_01', dur: 26, active: [8, 13], track: 'gb_slash1', hits: cut('gb_slash1', 0.24), curve: 'w_step_015', turn: [6, 360], sound: [7, 'hb_swing_02'], cancels: [[14, 26, ['gb_slash2', 'gb_bash', 'roll']]] });
   action('slash2', { clip: 'gb_slash2_01', dur: 26, active: [7, 12], track: 'gb_slash2', hits: cut('gb_slash2', 0.3), curve: 'w_step_015', turn: [5, 360], sound: [6, 'hb_swing_02'], cancels: [[13, 26, ['gb_thrust', 'gb_bash', 'roll']]] });
-  action('thrust', { clip: 'gb_thrust_01', dur: 36, active: [11, 16], track: 'gb_thrust', hits: cut('gb_thrust', 0.42, { hitstop: 3 }), curve: 'w_step_030', turn: [8, 360], sound: [10, 'hb_swing_02'], cancels: [[23, 36, ['gb_bash', 'roll']]] });
-  action('bash', { clip: 'gb_bash_01', dur: 36, active: [11, 16], track: 'gb_bash_sword', offhandTrack: 'gb_bash_shield', hits: [{ id: 'shield', track: 'gb_bash_shield', coef: 0.25, type: 'blunt', hitstop: 4 }], trail: false, curve: 'w_step_040', turn: [8, 360], sound: [10, 'hb_swing_01'], cancels: [[22, 36, ['gb_slash1', 'roll']]] });
-  action('lunge', { clip: 'gb_lunge_01', dur: 50, active: [22, 28], track: 'gb_lunge', hits: cut('gb_lunge', 0.45, { hitstop: 3 }), curve: 'w_lunge_120', turn: [12, 240], sound: [21, 'hb_swing_02'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }], cancels: [[35, 50, ['gb_slash1', 'gb_bash', 'roll']]] });
+  action('thrust', { clip: 'gb_thrust_01', dur: 36, active: [11, 16], track: 'gb_thrust', hits: cut('gb_thrust', 0.56, { hitstop: 3 }), curve: 'w_step_030', turn: [8, 360], sound: [10, 'hb_swing_02'], cancels: [[23, 36, ['gb_bash', 'roll']]] });
+  action('bash', { clip: 'gb_bash_01', dur: 36, active: [11, 16], track: 'gb_bash_sword', offhandTrack: 'gb_bash_shield', hits: [{ id: 'shield', track: 'gb_bash_shield', coef: 0.28, type: 'blunt', hitstop: 4 }], trail: false, curve: 'w_step_040', turn: [8, 360], sound: [10, 'hb_swing_01'], cancels: [[22, 36, ['gb_slash1', 'roll']]] });
+  action('lunge', { clip: 'gb_lunge_01', dur: 50, active: [22, 28], track: 'gb_lunge', hits: cut('gb_lunge', 0.48, { hitstop: 3 }), curve: 'w_lunge_120', turn: [12, 240], sound: [21, 'hb_swing_02'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }], cancels: [[35, 50, ['gb_slash1', 'gb_bash', 'roll']]] });
   action('draw', { clip: 'gb_draw_01', dur: 26, track: 'gb_draw', sound: [3, 'hb_draw_01'] });
   action('sheathe', { clip: 'gb_sheathe_01', dur: 30, track: 'gb_sheathe', sound: [18, 'hb_sheathe_01'], finish: 'sheathed_idle' });
 }

@@ -22,8 +22,10 @@ import type { HazardLook } from '../data/schemas';
 import { CREATURE_PLANS } from './creaturePlans';
 import { DummyRig, type MonsterRig } from './monsterRig';
 import { blendPose, clipPose, deadPose, emptyPose, guardPose, hurtPose, locomotionPose, type BodyPose } from './poses';
-import { HunterAnimator, applySolved, canSolve, stowOffhand, type AnimState } from './hunterAnim';
+import { HunterAnimator, applySolved, canSolve, playerContactFrame, playerRenderTick, stowOffhand, type AnimState } from './hunterAnim';
 import type { Solved } from './bodySolve';
+import { GroundedLocomotion } from './contactLocomotion';
+import { groundedHeavyAttack } from './heavyBodyMotion';
 import { WEAPON_STANCES } from './weaponClipSpecs';
 import { buildArrow } from './bow';
 import { armorTierOf, type ArmorLook } from './hunterArmor';
@@ -138,6 +140,7 @@ export class GameView {
   private debug: DebugDraw;
   private playerShadow = blobShadow(0.45);
   private phase = 0;
+  private lastPlayerXZ: { x: number; z: number } | null = null;
   private time = 0;
   /** 見た目の側から鳴らす音（モンスターの足音など）。App が音声へつなぐ。 */
   onSound: ((id: string, intensity: number) => void) | null = null;
@@ -163,6 +166,7 @@ export class GameView {
   private blendT = 1;
   /** 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）の体を解く係 */
   private anim = new HunterAnimator();
+  private groundLocomotion = new GroundedLocomotion();
   private tmpA = new Vector3();
   private tmpB = new Vector3();
   private tmpLock = new Vector3();
@@ -438,8 +442,11 @@ export class GameView {
     this.renderY += (pos.y - this.renderY) * Math.min(1, dt * 16);
     this.hunter.root.position.set(pos.x, this.renderY, pos.z);
     this.hunter.root.rotation.y = yaw;
-    const stride = p.drawn ? 1.35 : 1.7 + 0.9 * Math.min(1, p.moveSpeed / 6.4);
-    this.phase += (p.moveSpeed * dt * Math.PI * 2) / stride;
+    const travel = this.lastPlayerXZ ? Math.hypot(pos.x - this.lastPlayerXZ.x, pos.z - this.lastPlayerXZ.z) : 0;
+    const visualSpeed = this.lastPlayerXZ && dt > 0 && dt < 0.2 && travel < 1.2 ? Math.min(7, travel / dt) : p.moveSpeed;
+    this.lastPlayerXZ = { x: pos.x, z: pos.z };
+    const stride = p.drawn ? 1.35 : 1.7 + 0.9 * Math.min(1, visualSpeed / 6.4);
+    this.phase += (visualSpeed * dt * Math.PI * 2) / stride;
 
     // ---- 姿勢と武器の置き場所を決める ----
     let key: string;
@@ -464,12 +471,13 @@ export class GameView {
 
     if (p.mode === 'action' && p.action) {
       const run = p.action;
-      const t = renderTick(run, alpha);
+      const t = playerRenderTick(run, alpha);
       const fm = run.def.freeMove;
       st = { kind: 'action', clip: run.def.clip, t, dirAngle: (run.dirIndex * Math.PI) / 2, chargeTicks: run.chargeTicks, freeMove: !!fm && t >= (fm.from ?? 0) && t < (fm.to ?? run.def.durationTicks) };
       const cp = canSolve(fam.id, st) ? emptyPose() : clipPose(run.def.clip, t);
       if (!cp) this.missingClips.add(run.def.clip);
       pose = cp ?? emptyPose();
+      if (fam.id === 'heavy_blade') pose = groundedHeavyAttack(pose, run.def.clip, t);
       pose.tumbleDir = (run.dirIndex * Math.PI) / 2;
       key = `action:${run.instanceId}`;
       if (run.def.weaponTrack) {
@@ -536,7 +544,8 @@ export class GameView {
       pose = deadPose(p.deadTicks + alpha);
       key = 'dead';
     } else {
-      pose = locomotionPose(p.drawn, p.moveSpeed, this.phase, this.time);
+      pose = locomotionPose(p.drawn, visualSpeed, this.phase, this.time);
+      if (!p.drawn || fam.id === 'heavy_blade') pose = this.groundLocomotion.frame(pose, p.drawn, visualSpeed, this.phase, dt, { x: pos.x, z: pos.z, yaw });
       key = p.drawn ? 'free-drawn' : 'free-sheathed';
       if (p.drawn) {
         weapon = ready;
@@ -544,18 +553,22 @@ export class GameView {
       }
     }
     // 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）: 体・武器・盾（双剣は左の剣）をまとめて解く（足は地面に、手は武器に付いたままになる）
-    const continued = this.anim.continuing;
+    if (p.mode !== 'free') this.groundLocomotion.reset();
     let solved: Solved | null = null;
     if (st && canSolve(fam.id, st)) {
-      solved = this.anim.frame(fam.id, st, key, dt, p.moveSpeed, this.time);
+      solved = this.anim.frame(fam.id, st, key, dt, visualSpeed, this.time, {
+        root: { x: pos.x, z: pos.z, yaw },
+        active: st.kind === 'action' && !!p.action && playerContactFrame(p.action.def, st.t),
+        frozen: !!p.action && p.action.hitstop > 0,
+      });
       pose = solved.pose;
     } else this.anim.reset();
 
     // 状態が切り替わった瞬間は、直前の姿勢から短く混ぜる
     if (key !== this.poseKey) {
       this.poseKey = key;
-      // 解いた姿どうしの切り替えは、解く側が混ぜ終えている
-      this.blendFrom = solved && continued ? null : { ...this.lastPose, tumble: ((((this.lastPose.tumble + 180) % 360) + 360) % 360) - 180 };
+      // IK を解いた後で骨だけを混ぜると、手と武器が離れる。解く側だけでブレンドする。
+      this.blendFrom = solved ? null : { ...this.lastPose, tumble: ((((this.lastPose.tumble + 180) % 360) + 360) % 360) - 180 };
       this.blendT = 0;
     }
     this.blendT += dt;
@@ -565,8 +578,7 @@ export class GameView {
 
     if (solved) {
       applySolved(this.hunter, solved, fam.id);
-      // 混ぜている途中は、混ぜた姿勢を置き直す（武器と盾は解いた位置のまま）
-      if (pose !== solved.pose) this.hunter.setPose(pose);
+      // applySolved の後で姿勢を上書きしない（握りと添え手を保つ）。
     } else {
       this.hunter.setPose(pose);
       this.hunter.setString(null);
@@ -863,7 +875,7 @@ export class GameView {
       const guarding = isGuarding(p, fam.guard);
       d.capsule(cap.a, cap.b, cap.r, guarding ? [1, 1, 0.4] : [0.3, 0.9, 1]);
       if (p.action) {
-        const t = renderTick(p.action, alpha);
+        const t = playerRenderTick(p.action, alpha);
         for (const hw of p.action.def.hitWindows) {
           const tr = content.tracks.get(hw.shapeTrack)!;
           const seg = trackSegment(tr, t);

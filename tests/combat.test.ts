@@ -29,7 +29,7 @@ describe('ダメージ式（設計書 p.10）', () => {
 });
 
 describe('断岳剣・縦斬り', () => {
-  it('技データが設計書の値で入っている', () => {
+  it('技データ: 時間と区間は設計書の値。係数は v0.23.0 で 1.0 → 1.05（D-092）', () => {
     const a = content.actions.get(OVERHEAD)!;
     expect(a.durationTicks).toBe(72);
     expect(a.phases).toEqual([
@@ -37,7 +37,7 @@ describe('断岳剣・縦斬り', () => {
       { id: 'active', from: 22, to: 30 },
       { id: 'recovery', from: 30, to: 72 },
     ]);
-    expect(a.hitWindows[0]).toMatchObject({ id: 'blade_main', from: 22, to: 30, damageCoefficient: 1.0, maxHitsPerTarget: 1, hitstopTicks: 4 });
+    expect(a.hitWindows[0]).toMatchObject({ id: 'blade_main', from: 22, to: 30, damageCoefficient: 1.05, maxHitsPerTarget: 1, hitstopTicks: 4 });
     expect(a.cancelWindows).toEqual([{ from: 58, to: 72, into: ['roll'] }]);
     expect(a.turning).toEqual({ untilTick: 10, maxDegreesPerSecond: 90 });
   });
@@ -52,9 +52,9 @@ describe('断岳剣・縦斬り', () => {
     expect(h.actionTick).toBeGreaterThanOrEqual(22);
     expect(h.actionTick).toBeLessThan(30);
     expect(h.partId).toBe('head');
-    // 80 × 1.0 × 1.0 × 0.70 = 56
-    expect(h.damage).toBe(56);
-    expect(sim.monsters[0]!.hp).toBe(1200 - 56);
+    // 80 × 1.05 × 1.0 × 0.70 = 58.8 → 58
+    expect(h.damage).toBe(58);
+    expect(sim.monsters[0]!.hp).toBe(1200 - 58);
   });
 
   it('届かない距離の空振りは命中しない', () => {
@@ -118,8 +118,8 @@ describe('断岳剣・縦斬り', () => {
     const levels = events.filter((e) => e.type === 'charge_level').map((e) => (e.type === 'charge_level' ? e.level : 0));
     expect(levels).toEqual([1, 2]);
     const h = sim.recentHits[0]!;
-    // 80 × (1.0 × 1.65) × 0.70 = 92.4 → 92
-    expect(h.damage).toBe(92);
+    // 80 × (1.05 × 2.1) × 0.70 = 123.48 → 123
+    expect(h.damage).toBe(123);
     expect(h.actionTick).toBeGreaterThanOrEqual(22);
   });
 });

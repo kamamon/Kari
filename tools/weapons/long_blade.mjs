@@ -167,12 +167,12 @@ export function longBlade() {
 
   // ---- 技のデータ ----
   const cut = (t, coef, o = {}) => [{ id: 'blade_main', track: t, coef, hitstop: 3, ...o }];
-  action('kesa', { clip: 'lb_kesa_01', dur: 34, active: [12, 18], track: 'lb_kesa', hits: cut('lb_kesa', 0.4), curve: 'w_step_030', turn: [8, 300], sound: [11, 'hb_swing_02'], cancels: [[20, 34, ['lb_rise', 'lb_back', 'lb_helm', 'roll']]] });
-  action('rise', { clip: 'lb_rise_01', dur: 32, active: [9, 15], track: 'lb_rise', hits: cut('lb_rise', 0.38), curve: 'w_step_015', turn: [6, 300], sound: [8, 'hb_swing_02'], cancels: [[18, 32, ['lb_thrust', 'lb_back', 'lb_helm', 'roll']]] });
-  action('thrust', { clip: 'lb_thrust_01', dur: 38, active: [12, 17], track: 'lb_thrust', hits: cut('lb_thrust', 0.5, { hitstop: 4 }), curve: 'w_step_030', turn: [8, 300], sound: [11, 'hb_swing_02'], cancels: [[24, 38, ['lb_back', 'lb_helm', 'roll']]] });
-  action('back_cut', { clip: 'lb_back_01', dur: 50, active: [10, 16], track: 'lb_back', hits: cut('lb_back', 0.42), curve: 'w_back_200', turn: [8, 300], sound: [9, 'hb_swing_02'], cancels: [[38, 50, ['lb_kesa', 'lb_helm', 'roll']]] });
-  action('helm', { clip: 'lb_helm_01', dur: 70, active: [30, 36], track: 'lb_helm', hits: cut('lb_helm', 1.15, { hitstop: 7 }), curve: 'w_step_040b', turn: [24, 150], sound: [29, 'hb_swing_01'], cancels: [[54, 70, ['roll']]] });
-  action('draw_cut', { clip: 'lb_draw_cut_01', dur: 60, active: [30, 36], track: 'lb_draw_cut', hits: cut('lb_draw_cut', 0.48), curve: 'w_step_060', turn: [20, 180], sound: [29, 'hb_swing_02'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }], cancels: [[44, 60, ['lb_rise', 'lb_back', 'roll']]] });
+  action('kesa', { clip: 'lb_kesa_01', dur: 34, active: [12, 18], track: 'lb_kesa', hits: cut('lb_kesa', 0.38), curve: 'w_step_030', turn: [8, 300], sound: [11, 'hb_swing_02'], cancels: [[20, 34, ['lb_rise', 'lb_back', 'lb_helm', 'roll']]] });
+  action('rise', { clip: 'lb_rise_01', dur: 32, active: [9, 15], track: 'lb_rise', hits: cut('lb_rise', 0.44), curve: 'w_step_015', turn: [6, 300], sound: [8, 'hb_swing_02'], cancels: [[18, 32, ['lb_thrust', 'lb_back', 'lb_helm', 'roll']]] });
+  action('thrust', { clip: 'lb_thrust_01', dur: 38, active: [12, 17], track: 'lb_thrust', hits: cut('lb_thrust', 0.72, { hitstop: 4 }), curve: 'w_step_030', turn: [8, 300], sound: [11, 'hb_swing_02'], cancels: [[24, 38, ['lb_back', 'lb_helm', 'roll']]] });
+  action('back_cut', { clip: 'lb_back_01', dur: 50, active: [10, 16], track: 'lb_back', hits: cut('lb_back', 0.32), curve: 'w_back_200', turn: [8, 300], sound: [9, 'hb_swing_02'], cancels: [[38, 50, ['lb_kesa', 'lb_helm', 'roll']]] });
+  action('helm', { clip: 'lb_helm_01', dur: 70, active: [30, 36], track: 'lb_helm', hits: cut('lb_helm', 1.42, { hitstop: 7 }), curve: 'w_step_040b', turn: [24, 150], sound: [29, 'hb_swing_01'], cancels: [[54, 70, ['roll']]] });
+  action('draw_cut', { clip: 'lb_draw_cut_01', dur: 60, active: [30, 36], track: 'lb_draw_cut', hits: cut('lb_draw_cut', 0.56), curve: 'w_step_060', turn: [20, 180], sound: [29, 'hb_swing_02'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }], cancels: [[44, 60, ['lb_rise', 'lb_back', 'roll']]] });
   action('draw', { clip: 'lb_draw_01', dur: 38, track: 'lb_draw', sound: [4, 'hb_draw_01'] });
   action('sheathe', { clip: 'lb_sheathe_01', dur: 40, track: 'lb_sheathe', sound: [28, 'hb_sheathe_01'], finish: 'sheathed_idle' });
 }

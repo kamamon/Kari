@@ -172,16 +172,16 @@ export function longLance() {
   const stab = (t, coef, o = {}) => [{ id: 'tip', track: t, coef, hitstop: 3, ...o }];
   const chain = (name, coef, next) =>
     action(name, { clip: 'll_thrust_01', dur: 38, active: [10, 15], track: 'll_thrust', hits: stab('ll_thrust', coef), curve: 'w_step_015', turn: [8, 120], sound: [9, 'hb_swing_02'], cancels: [[18, 38, [...next, 'roll']]] });
-  chain('thrust1', 0.5, ['ll_thrust2', 'll_high']);
-  chain('thrust2', 0.5, ['ll_thrust3', 'll_high']);
-  chain('thrust3', 0.62, []);
-  action('high', { clip: 'll_high_01', dur: 42, active: [12, 17], track: 'll_high', hits: stab('ll_high', 0.55), curve: 'w_step_015', turn: [10, 120], sound: [11, 'hb_swing_02'], cancels: [[22, 42, ['ll_thrust1', 'roll']]] });
+  chain('thrust1', 0.36, ['ll_thrust2', 'll_high']);
+  chain('thrust2', 0.42, ['ll_thrust3', 'll_high']);
+  chain('thrust3', 0.72, []);
+  action('high', { clip: 'll_high_01', dur: 42, active: [12, 17], track: 'll_high', hits: stab('ll_high', 0.38), curve: 'w_step_015', turn: [10, 120], sound: [11, 'hb_swing_02'], cancels: [[22, 42, ['ll_thrust1', 'roll']]] });
   // 構え突き: 突いている間も防御が有効
-  action('guard_thrust', { clip: 'll_guard_thrust_01', dur: 44, active: [14, 19], track: 'll_guard_thrust', hits: stab('ll_guard_thrust', 0.36, { hitstop: 2 }), guardWindows: [{ from: 0, to: 44 }], sound: [13, 'hb_swing_02'], cancels: [[30, 44, ['roll']]] });
+  action('guard_thrust', { clip: 'll_guard_thrust_01', dur: 44, active: [14, 19], track: 'll_guard_thrust', hits: stab('ll_guard_thrust', 0.3, { hitstop: 2 }), guardWindows: [{ from: 0, to: 44 }], sound: [13, 'hb_swing_02'], cancels: [[30, 44, ['roll']]] });
   // 受け返し: 構えの間に正面から受けると、無傷で大きな突きを返す
   action('counter', { clip: 'll_counter_01', dur: 60, track: 'll_counter', staminaCost: 15, counter: { from: 4, to: 50, into: 'player.long_lance.counter_thrust' }, sound: [2, 'guard'] });
-  action('counter_thrust', { clip: 'll_counter_thrust_01', dur: 44, active: [9, 15], track: 'll_counter_thrust', hits: stab('ll_counter_thrust', 1.6, { hitstop: 7 }), curve: 'w_step_030', sound: [8, 'hb_swing_01'], invulnerable: [{ from: 0, to: 9 }], cancels: [[28, 44, ['ll_thrust1', 'roll']]] });
-  action('lunge', { clip: 'll_lunge_01', dur: 66, active: [34, 46], track: 'll_lunge', hits: stab('ll_lunge', 0.7, { hitstop: 5 }), curve: 'w_lunge_200', turn: [20, 90], sound: [32, 'hb_swing_01'], events: [{ tick: 4, type: 'sound', id: 'hb_draw_01' }], cancels: [[52, 66, ['ll_thrust1', 'roll']]] });
+  action('counter_thrust', { clip: 'll_counter_thrust_01', dur: 44, active: [9, 15], track: 'll_counter_thrust', hits: stab('ll_counter_thrust', 1.55, { hitstop: 7 }), curve: 'w_step_030', sound: [8, 'hb_swing_01'], invulnerable: [{ from: 0, to: 9 }], cancels: [[28, 44, ['ll_thrust1', 'roll']]] });
+  action('lunge', { clip: 'll_lunge_01', dur: 66, active: [34, 46], track: 'll_lunge', hits: stab('ll_lunge', 0.82, { hitstop: 5 }), curve: 'w_lunge_200', turn: [20, 90], sound: [32, 'hb_swing_01'], events: [{ tick: 4, type: 'sound', id: 'hb_draw_01' }], cancels: [[52, 66, ['ll_thrust1', 'roll']]] });
   // 短い跳び（回避）。続けてもう 1 回跳べる。
   action('hop', { clip: 'll_hop_01', dur: 26, track: 'll_hold', curve: 'w_hop_120', staminaCost: 14, invulnerable: [{ from: 3, to: 11 }], sound: [3, 'roll_01'], cancels: [[18, 26, ['roll']]], dodge: true });
   action('draw', { clip: 'll_draw_01', dur: 34, track: 'll_draw', sound: [5, 'hb_draw_01'] });
