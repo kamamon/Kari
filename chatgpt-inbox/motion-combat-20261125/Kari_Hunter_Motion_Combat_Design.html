@@ -12,7 +12,8 @@
     .cover{height:244mm;box-sizing:border-box;padding-top:20mm;page-break-after:always}.eyebrow{font-size:11pt;letter-spacing:2px;color:#7e956d}.cover h1{font-size:31pt;line-height:1.45;margin:16mm 0 9mm}.subtitle{font-size:15pt;color:#476652;line-height:1.8}.stamp{margin-top:13mm;padding:5mm;border-left:4px solid #cd9e56;background:#f4f5ed;font-size:10pt}.metric{display:inline-block;width:30%;padding-top:8mm;font-size:25pt;color:#17634d}.metric small{display:block;font-size:9pt;color:#566c60}.cover-note{margin-top:15mm;font-size:9pt}.chapter{break-before:page}.callout{padding:4mm;background:#edf4ed;border-left:3px solid #6b957b;margin:4mm 0}.warning{padding:4mm;background:#fbf3e7;border-left:3px solid #d4a264}
     .moves small{font-size:7.4pt;color:#68796e}.moves strong{color:#17634d}.moves tbody{break-inside:avoid}.rationale td{font-size:7.7pt;color:#597163;padding-top:0;background:#fafcf9}.compact{font-size:8.5pt}.family h3{margin-top:7mm}.status td:first-child{width:24%}.sources{font-size:8pt} svg{max-width:100%;height:auto}
     .toc{break-after:page;padding-top:15mm}.toc ul{list-style:none;padding:0;margin-top:12mm}.toc li{border-bottom:1px solid #d5e1d9;padding:4mm 0;font-size:12pt}.toc a{color:#214d3b;display:block}.toc a::after{content:target-counter(attr(href),page);float:right}.toc .callout{margin-top:15mm;font-size:10pt}
-    </style></head><body><div class="cover"><div class="eyebrow">VEILBOUND HUNTERS / DESIGN & IMPLEMENTATION</div><h1>ハンターモーション<br>骨格・モデル・攻撃力設計</h1><p class="subtitle">足で支え、腰から動かし、<br>狙って当てた一撃に報いる。</p><div class="metric">7<small>武器系統</small></div><div class="metric">33<small>攻撃モーション</small></div><div class="metric">17 → 25<small>現行関節 → 第1拡張案</small></div><div class="stamp">差し替えコード・攻撃力データ・実コード比較試験を同梱<br>本番未反映 / 正式GLBは設計段階 / 実機の操作感は未確認</div><div class="cover-note">2026年11月25日（日本時間）<br>確認基点: Kari v0.20.0 / 1d8e084d0d16fe77c376570f9542dd3c54fb5332<br>対象: kamamon/Kari<br>数値は本作向けの初期調整案。既存作品のモーション値は転用していない。</div></div><nav class="toc"><h1>目次</h1><ul><li><a href="#overview">今回の設計と差し替え内容</a></li><li><a href="#comparison">骨格と実装の比較図</a></li><li><a href="#rig-design">骨格・モデル・7武器の動作設計</a></li><li><a href="#balance">攻撃力と難易度の設計</a></li><li><a href="#all-values">全33モーションの新旧MV</a></li><li><a href="#runtime-report">実コードによる攻撃時間・火力比較</a></li><li><a href="#handoff">差し替え・検証・Claudeへの引き継ぎ</a></li></ul><div class="callout">最終統合検証: 442テスト・型検査・ビルド成功。<br>公開反映と実機の見た目・操作感の確認は、この提出には含まない。</div><p>本文中の「現行」は確認基点のソース、「提案」は今回用意した差し替え値・制作方針を指す。数値試験、形状図、実戦の仮説を区別して読む。</p></nav><section id="overview"><h1>今回の設計と差し替え内容</h1>
+    .latest{font-size:9pt;line-height:1.5}.latest h1{font-size:19pt;margin-top:4mm}.latest h2{font-size:13pt;margin-top:5mm}.latest table{font-size:7.6pt;margin-bottom:3mm}
+    </style></head><body><div class="cover"><div class="eyebrow">VEILBOUND HUNTERS / DESIGN & IMPLEMENTATION</div><h1>ハンターモーション<br>骨格・モデル・攻撃力設計</h1><p class="subtitle">足で支え、腰から動かし、<br>狙って当てた一撃に報いる。</p><div class="metric">7<small>武器系統</small></div><div class="metric">33<small>攻撃モーション</small></div><div class="metric">17 → 25<small>現行関節 → 第1拡張案</small></div><div class="stamp">差し替えコード・攻撃力データ・実コード比較試験を同梱<br>本番未反映 / 正式GLBは設計段階 / 実機の操作感は未確認</div><div class="cover-note">2026年11月25日（日本時間）<br>監査基点: Kari v0.20.0 / 1d8e084d0d16fe77c376570f9542dd3c54fb5332<br>最新適用検証: v0.21.0 / 9a5443a（追補参照）<br>対象: kamamon/Kari<br>数値は本作向けの初期調整案。既存作品のモーション値は転用していない。</div></div><nav class="toc"><h1>目次</h1><ul><li><a href="#overview">今回の設計と差し替え内容</a></li><li><a href="#latest-integration">最新main v0.21への取り込み追補</a></li><li><a href="#comparison">骨格と実装の比較図</a></li><li><a href="#rig-design">骨格・モデル・7武器の動作設計</a></li><li><a href="#balance">攻撃力と難易度の設計</a></li><li><a href="#all-values">全33モーションの新旧MV</a></li><li><a href="#runtime-report">実コードによる攻撃時間・火力比較</a></li><li><a href="#handoff">差し替え・検証・Claudeへの引き継ぎ</a></li></ul><div class="callout">最終統合検証: 452テスト・型検査・ビルド成功。<br>公開反映と実機の見た目・操作感の確認は、この提出には含まない。</div><p>本文中の「現行」は確認基点のソース、「提案」は今回用意した差し替え値・制作方針を指す。数値試験、形状図、実戦の仮説を区別して読む。</p></nav><section id="overview"><h1>今回の設計と差し替え内容</h1>
 <p><strong>足が地面を支え、腰から胸・腕へ力が伝わる動きと、当てる難しさに応じた攻撃力を、同じ時間軸で設計する。</strong> これを今回の方針とした。現在のKariを調べたうえで、差し替えコード、全7武器・33攻撃モーションの新旧数値、実コードを使う比較試験、正式モデルの制作指針をまとめている。</p>
 <p>確認基点は <strong>v0.20.0 / <code>1d8e084d0d16fe77c376570f9542dd3c54fb5332</code></strong>。公開ゲームで使われているデータと制作元の両方を読み、武器の攻撃時刻や派生の経路を踏まえて変更した。</p>
 <h2>最初に見るポイント</h2>
@@ -78,6 +79,42 @@
 <li>最後の差し替え・検証・引き継ぎに、適用コマンド、実行済みの検証、残る確認項目をまとめる。</li>
 </ul>
 <p>根拠となる現行コード: <a href="https://github.com/kamamon/Kari/blob/1d8e084d0d16fe77c376570f9542dd3c54fb5332/docs/animation-contract.md">アニメーション規格</a>、<a href="https://github.com/kamamon/Kari/blob/1d8e084d0d16fe77c376570f9542dd3c54fb5332/src/render/view.ts">描画処理</a>、<a href="https://github.com/kamamon/Kari/blob/1d8e084d0d16fe77c376570f9542dd3c54fb5332/src/render/poses.ts">ハンターの姿勢</a>、<a href="https://github.com/kamamon/Kari/blob/1d8e084d0d16fe77c376570f9542dd3c54fb5332/src/game/combat.ts">ダメージ計算</a>。</p>
+</section><section class="chapter latest" id="latest-integration"><h1>最新mainへの取り込み追補（v0.21.0）</h1>
+<p><strong>設計中にmainへモンスターの更新が入ったため、その更新を保持した最新用の差し替えパッケージも作成した。全23スイート452テスト・型検査・本番ビルドが成功した。</strong></p>
+<table>
+<thead>
+<tr>
+<th>区分</th>
+<th>基点</th>
+<th>扱い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>設計・攻撃値・骨格監査</td>
+<td>v0.20.0 / <code>1d8e084d0d16fe77c376570f9542dd3c54fb5332</code></td>
+<td>本文の新旧比較、811姿勢、36旋回、制御DPSの確認基点</td>
+</tr>
+<tr>
+<td>最新の適用検証</td>
+<td>v0.21.0 / <code>9a5443ab1ac813512deac03422ee996f57f8a900</code></td>
+<td>新しいモンスター描画を保持して統合。取り込みはこちらを使う</td>
+</tr>
+</tbody>
+</table>
+<h2>何が変わり、何を保持したか</h2>
+<p>mainの新しい1コミットは、モンスターのモデル・動き・行動・描画効果等の更新だった。今回変更する21ファイルのうち、変更前の内容が変わったのは <code>src/render/view.ts</code> だけだった。ハンターの骨格、武器の行動・生成元、プレイヤーの戦闘処理はこの更新で変わっていない。</p>
+<p>旧統合パッチは最新mainへ競合せず適用できた。ただし、古い <code>view.ts</code> の完成ファイルをそのまま上書きするとモンスター更新を失うため、最新mainを土台にした完成候補を別に作った。独立した差分レビューで、最新の統合 <code>view.ts</code> と旧提案の差が、mainに追加されたモンスター側の2つの差分と一致することを確認した。</p>
+<h2>採用するパッケージ</h2>
+<p><code>implementation/current-main/</code> の <code>replacement.patch</code>、<code>manifest.json</code>、<code>apply-proposal.py</code> を使う。対象は同じ21ファイル。変更前後のハッシュを最新基点に合わせ、モンスター更新を含む <code>view.ts</code> も同梱した。</p>
+<p>元の <code>implementation/replacement.patch</code> と、<code>implementation/motion/</code>・<code>implementation/balance/</code> は、v0.20時点の監査を再現するために残す。最新用と重ねて適用しない。適用先のファイルがさらに変わっている場合はハッシュ検査が止めるので、内容を見て移植する。</p>
+<h2>確認結果と限界</h2>
+<ul>
+<li>最新基点の新しい作業コピーで、全23スイート452テスト、型検査、本番ビルドが成功。</li>
+<li>武器の厳格再生成も成功。44行動・48軌道・10移動曲線・42身体モーションを生成し、提案データとの整合を確認。</li>
+<li>変更対象21ファイルでは、旧提案から変更前後ハッシュが変わるのは共有描画の <code>view.ts</code> だけ。攻撃力の値、ハンターの接地・握りの実装は同じ。</li>
+</ul>
+<p>ログと詳細は <code>qa/current-main-*</code> と <code>implementation/current-main/README.md</code>。これは新しいモンスターを相手にした実機の難易度・自然さの検収ではない。本文の制御DPSと討伐時間の仮説を、そのまま全モンスターの実戦結果として扱わない。公開ゲームへの適用・mergeは引き続き行っていない。</p>
 </section><section class="chapter" id="comparison"><h1>骨格と実装の比較</h1><figure><img src="figures/seven-weapons.png"><figcaption>現行の7武器。ソースから骨の行列とスキニングを計算して描いた形状図。テクスチャ・WebGL・実機の映像確認ではない。</figcaption></figure><figure><img src="figures/heavy-comparison.png"><figcaption>断岳剣・横薙ぎの同じ時刻の比較。既存の武器軌道を保持し、骨盤の回転・沈み込み・踏み替えへ分散する。</figcaption></figure><figure><img src="figures/gait-comparison.png"><figcaption>異なる4時刻の歩行サンプル。現行の検査用solveStateは同じ位相を繰り返していたため、時間から位相を求めるよう修正した。</figcaption></figure><h2>骨格の拡張は段階的に</h2><svg xmlns="http://www.w3.org/2000/svg" width="650" height="540" viewBox="0 0 650 540"><rect width="650" height="540" fill="#f3f6f4"/><line x1="65" y1="510" x2="410" y2="510" stroke="#a0b5a9"/><line x1="235" y1="255" x2="235" y2="228" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="235" y1="228" x2="235" y2="182" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="235" y1="182" x2="235" y2="112" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="235" y1="112" x2="235" y2="77" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="235" y1="182" x2="300" y2="147" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="300" y1="147" x2="339" y2="225" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="339" y1="225" x2="370" y2="302" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="235" y1="255" x2="268" y2="266" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="268" y1="266" x2="283" y2="380" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="283" y1="380" x2="293" y2="489" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="235" y1="182" x2="170" y2="147" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="170" y1="147" x2="131" y2="225" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="131" y1="225" x2="100" y2="302" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="235" y1="255" x2="202" y2="266" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="202" y1="266" x2="187" y2="380" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="187" y1="380" x2="177" y2="489" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><circle cx="235" cy="255" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="235" cy="228" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="235" cy="182" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="235" cy="112" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="235" cy="77" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="300" cy="147" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="339" cy="225" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="370" cy="302" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="170" cy="147" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="131" cy="225" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="100" cy="302" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="268" cy="266" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="283" cy="380" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="293" cy="489" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="202" cy="266" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="187" cy="380" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="177" cy="489" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="272" cy="137" r="7" fill="#e2a84a" stroke="#875d25" stroke-width="2"/><circle cx="198" cy="137" r="7" fill="#e2a84a" stroke="#875d25" stroke-width="2"/><circle cx="319" cy="186" r="7" fill="#e2a84a" stroke="#875d25" stroke-width="2"/><circle cx="151" cy="186" r="7" fill="#e2a84a" stroke="#875d25" stroke-width="2"/><circle cx="354" cy="263" r="7" fill="#e2a84a" stroke="#875d25" stroke-width="2"/><circle cx="116" cy="263" r="7" fill="#e2a84a" stroke="#875d25" stroke-width="2"/><circle cx="312" cy="502" r="7" fill="#e2a84a" stroke="#875d25" stroke-width="2"/><circle cx="158" cy="502" r="7" fill="#e2a84a" stroke="#875d25" stroke-width="2"/><text x="430" y="80" font-size="17" fill="#236a61" font-family="Noto Sans CJK JP">既存: 17 関節</text><text x="430" y="114" font-size="17" fill="#875d25" font-family="Noto Sans CJK JP">追加案: +8 骨</text><text x="430" y="150" font-size="17" fill="#43594e" font-family="Noto Sans CJK JP">鎖骨 ×2</text><text x="430" y="180" font-size="17" fill="#43594e" font-family="Noto Sans CJK JP">腕のねじり ×4</text><text x="430" y="210" font-size="17" fill="#43594e" font-family="Noto Sans CJK JP">つま先 ×2</text><text x="430" y="275" font-size="17" fill="#173f35" font-family="Noto Sans CJK JP">第1段階: 25 骨</text><text x="430" y="310" font-size="17" fill="#43594e" font-family="Noto Sans CJK JP">脚のねじりまで: 29</text><text x="430" y="340" font-size="17" fill="#43594e" font-family="Noto Sans CJK JP">手指まで: 59</text><text x="430" y="370" font-size="17" fill="#43594e" font-family="Noto Sans CJK JP">布も含める: 最大63</text><text x="430" y="450" font-size="13" fill="#596c61" font-family="Noto Sans CJK JP">root・4 socket は別枠</text><text x="430" y="474" font-size="13" fill="#596c61" font-family="Noto Sans CJK JP">図は配置の説明図</text></svg><p>橙色は次のモデル制作で追加する骨の案。今回の差し替え実装は既存の17関節を使う。指・布まで含む完成モデルを納品したという意味ではない。</p></section><section class="chapter" id="rig-design"><h1>ハンターの骨格・モデル・動作設計</h1>
 <p>確認基点: <code>kamamon/Kari</code> / <code>main</code> / <code>1d8e084d0d16fe77c376570f9542dd3c54fb5332</code> / v0.20.0。確認日: 2026-11-25（日本時間）。</p>
 <p>この文書は現状のソースを読んだ監査と、置き換えの設計である。<strong>正式な人型 GLB・Blender ファイル・手付けアニメーションを完成させたという報告ではない。</strong> この納品で用意したコードの適用範囲、実行した検証と結果は、同じ納品の README と検証結果を正本とする。以下で「提案」「目標」とした数値は今回の制作判断であり、人間の医学的な標準値、端末の実測値、既存ゲームからの転用ではない。</p>
@@ -1016,7 +1053,9 @@
 </table>
 <p>検査: 7項目すべて通過。全結果・各技の待ち時間込みの値は <code>balance-runtime-report.json</code>。</p>
 </section><section class="chapter" id="handoff"><h1>差し替え・検証・引き継ぎ</h1><p>確認基点は <strong>Kari v0.20.0 / <code>1d8e084d0d16fe77c376570f9542dd3c54fb5332</code></strong>。2026年11月25日（日本時間）の依頼への返答。</p>
-<p><strong>全7武器の歩行・接地、断岳剣3攻撃、描画と判定の同期を直すコードと、33攻撃の威力を調整するデータを用意した。</strong> 検証用コピーへの適用後、全442テスト・型検査・ビルド・武器の厳格再生成が通過した。正式モデルの骨格・手首・指・メッシュ・GLB制作も設計書へまとめた。</p>
+<p><strong>最新mainのv0.21.0（<code>9a5443ab1ac813512deac03422ee996f57f8a900</code>）への適用も確認した。取り込みには <code>implementation/current-main/</code> を使う。</strong> モンスター側の共有描画更新を保持し、23スイート452テスト・型検査・ビルドが成功した。詳しくは <a href="LATEST_INTEGRATION.md">LATEST_INTEGRATION.md</a>。</p>
+<p>GitHubには設計本文・データ・コード・検証記録・再生成コードを収録した。PDFと比較画像は別添で、GitHubへのバイナリ登録は完了していない。収録範囲と図・PDFの再生成方法は <a href="DELIVERY_STATUS.md">DELIVERY_STATUS.md</a> を参照。</p>
+<p><strong>全7武器の歩行・接地、断岳剣3攻撃、描画と判定の同期を直すコードと、33攻撃の威力を調整するデータを用意した。</strong> 監査基点v0.20の検証用コピーでは全442テスト・型検査・ビルド・武器の厳格再生成が通過した。正式モデルの骨格・手首・指・メッシュ・GLB制作も設計書へまとめた。</p>
 <p>本PRは受け渡し用の <code>chatgpt-inbox/</code> のみを変更する。公開中のゲーム、本体の <code>src/</code>・<code>public/</code> 等にはまだ反映していない。コードとデータはClaudeが取り込める適用済み相当の完成候補で、新しいGLBや全武器の完成アニメーションクリップを納品したという意味ではない。</p>
 <h2>1. 返したもの</h2>
 <table>
@@ -1062,6 +1101,10 @@
 <tr>
 <td><code>implementation/replacement.patch</code></td>
 <td>モーション6ファイル＋攻撃データ・生成元13ファイル＋既存テスト2ファイルの統合差分。計21ファイル</td>
+</tr>
+<tr>
+<td><code>implementation/current-main/</code></td>
+<td>推奨するv0.21用の統合差分・ハッシュ付き適用スクリプト。更新されたモンスター描画を残した21ファイル版</td>
 </tr>
 <tr>
 <td><code>implementation/manifest.json</code> / <code>apply-proposal.py</code></td>
@@ -1141,10 +1184,10 @@
 <p>大槌の主2段は循環するため「後半」であり、固定された終端ではない。連携専用の既存行動IDの威力を調整しており、どの技にも自動で付く「最後の一撃ボーナス」は追加していない。受け返しは防御成功条件を維持する。</p>
 <p>武器本体の攻撃力、敵HP、実際のヒット窓・発射・派生・キャンセル時刻、移動量、スタミナ規則は維持した。弓の発射時刻と双剣二段突きの最終判定がactive区間から外れる分類だけを修正した。溜め倍率は刃消耗へ掛からない既存仕様のため、溜めのダメージ/刃効率が上がる点も分析へ含めた。</p>
 <h2>3. 取り込み方法（Claude向け）</h2>
-<p>統合パッチと個別パッチは同じ変更である。どちらか一方を適用する。下は統合版の例で、この納品があるリポジトリのルートから始める。</p>
-<pre><code class="language-sh">git worktree add ../Kari-motion-review --detach 1d8e084d0d16fe77c376570f9542dd3c54fb5332
-python3 chatgpt-inbox/motion-combat-20261125/implementation/apply-proposal.py --repo ../Kari-motion-review
-python3 chatgpt-inbox/motion-combat-20261125/implementation/apply-proposal.py --repo ../Kari-motion-review --apply
+<p>最新v0.21用は <code>implementation/current-main/</code>。元の統合パッチと個別パッチはv0.20監査の再現用として保持する。重ねて適用しない。下は最新用の例で、この納品があるリポジトリのルートから始める。</p>
+<pre><code class="language-sh">git worktree add ../Kari-motion-review --detach 9a5443ab1ac813512deac03422ee996f57f8a900
+python3 chatgpt-inbox/motion-combat-20261125/implementation/current-main/apply-proposal.py --repo ../Kari-motion-review
+python3 chatgpt-inbox/motion-combat-20261125/implementation/current-main/apply-proposal.py --repo ../Kari-motion-review --apply
 cd ../Kari-motion-review
 npm ci
 node --experimental-strip-types --no-warnings tools/gen-weapons.mjs --strict
@@ -1172,8 +1215,12 @@ npm run check
 <td>全21ファイル成功。新規3、変更18</td>
 </tr>
 <tr>
-<td>差し替え後の <code>npm run check</code></td>
+<td>v0.20差し替え後の <code>npm run check</code></td>
 <td>型検査・22ファイル442テスト・本番ビルド成功</td>
+</tr>
+<tr>
+<td>最新v0.21差し替え後の <code>npm run check</code></td>
+<td>型検査・23ファイル452テスト・本番ビルド成功。共有描画のモンスター更新を保持</td>
 </tr>
 <tr>
 <td><code>gen-weapons.mjs --strict</code></td>

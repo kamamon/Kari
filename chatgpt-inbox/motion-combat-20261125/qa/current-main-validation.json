@@ -1,0 +1,62 @@
+{
+  "baseCommit": "9a5443ab1ac813512deac03422ee996f57f8a900",
+  "baseVersion": "0.21.0",
+  "originalAuditBaseCommit": "1d8e084d0d16fe77c376570f9542dd3c54fb5332",
+  "reviewDateJST": "2026-11-25",
+  "node": "24.22.3",
+  "suiteCount": 23,
+  "testCount": 452,
+  "typecheckPassed": true,
+  "buildPassed": true,
+  "command": "npm run check",
+  "checkLog": "current-main-npm-check.txt",
+  "originalPayloadCleanApply": true,
+  "manualConflictResolution": false,
+  "payloadFiles": 21,
+  "newFiles": 3,
+  "modifiedFiles": 18,
+  "upstreamChangedFiles": 97,
+  "upstreamTouchedPayloadPaths": [
+    "src/render/view.ts"
+  ],
+  "payloadBeforeHashChanges": [
+    "src/render/view.ts"
+  ],
+  "payloadAfterHashChanges": [
+    "src/render/view.ts"
+  ],
+  "dependencyLockUnchangedExceptRootVersions": true,
+  "monsterViewUpdatePreserved": true,
+  "monsterViewPreservationMethod": "Normalized full diff from original proposed view to integrated view exactly equals upstream old-main to new-main view diff; independent read-only reviewer confirmed all18 new VFX entries and around branch.",
+  "generator": {
+    "command": "node --experimental-strip-types --no-warnings tools/gen-weapons.mjs --strict",
+    "passed": true,
+    "actions": 44,
+    "tracks": 48,
+    "rootCurves": 10,
+    "motions": 42,
+    "log": "current-main-generator.txt",
+    "payloadHashesUnchanged": true,
+    "unexpectedTrackedSourceChanges": []
+  },
+  "guardedPatch": {
+    "reverseThenForwardRoundTrip": true,
+    "postApplyHashesVerified": true,
+    "patchSha256": "cfd5e58fcd5c3a36a67f9539877e3e7f7d090ccf81397a656ae571865c562c8f"
+  },
+  "integratedViewSha256": "1711a2469b4475935dfc3d0162997703e2a09d8cd70dfce5bd125fef5a820255",
+  "playerMeasurementDependenciesUnchanged": [
+    "src/game/",
+    "src/core/",
+    "src/data/",
+    "player weapon actions/tracks/generators",
+    "Galdros gameplay data"
+  ],
+  "limits": [
+    "Other11large and8juvenile monsters changed in v0.21; no live hunt balance acceptance",
+    "No WebGL/iPhone gameplay or performance acceptance",
+    "Formal GLB/palms/fingers remain design proposals",
+    "Sharp-turn foot lock release may slide",
+    "Original independent rig metrics are retained with original frozen source hashes; latest full suite includes the same11 motion regression tests"
+  ]
+}

@@ -2,9 +2,11 @@
 
 確認基点は **Kari v0.20.0 / `1d8e084d0d16fe77c376570f9542dd3c54fb5332`**。2026年11月25日（日本時間）の依頼への返答。
 
+**最新mainのv0.21.0（`9a5443ab1ac813512deac03422ee996f57f8a900`）への適用も確認した。取り込みには `implementation/current-main/` を使う。** モンスター側の共有描画更新を保持し、23スイート452テスト・型検査・ビルドが成功した。詳しくは [LATEST_INTEGRATION.md](LATEST_INTEGRATION.md)。
+
 GitHubには設計本文・データ・コード・検証記録・再生成コードを収録した。PDFと比較画像は別添で、GitHubへのバイナリ登録は完了していない。収録範囲と図・PDFの再生成方法は [DELIVERY_STATUS.md](DELIVERY_STATUS.md) を参照。
 
-**全7武器の歩行・接地、断岳剣3攻撃、描画と判定の同期を直すコードと、33攻撃の威力を調整するデータを用意した。** 検証用コピーへの適用後、全442テスト・型検査・ビルド・武器の厳格再生成が通過した。正式モデルの骨格・手首・指・メッシュ・GLB制作も設計書へまとめた。
+**全7武器の歩行・接地、断岳剣3攻撃、描画と判定の同期を直すコードと、33攻撃の威力を調整するデータを用意した。** 監査基点v0.20の検証用コピーでは全442テスト・型検査・ビルド・武器の厳格再生成が通過した。正式モデルの骨格・手首・指・メッシュ・GLB制作も設計書へまとめた。
 
 本PRは受け渡し用の `chatgpt-inbox/` のみを変更する。公開中のゲーム、本体の `src/`・`public/` 等にはまだ反映していない。コードとデータはClaudeが取り込める適用済み相当の完成候補で、新しいGLBや全武器の完成アニメーションクリップを納品したという意味ではない。
 
@@ -21,6 +23,7 @@ GitHubには設計本文・データ・コード・検証記録・再生成コ�
 | `analysis/balance-difficulty-scenarios.json` | 初見・慣れた狩人・熟練者の討伐時間の仮説。実測と区別 |
 | `analysis/rig-validation.json` / `.md` / `validation-tests/` | 最終ソースの独立監査。811姿勢、実メッシュ、36急旋回ケースと再実行用テスト |
 | `implementation/replacement.patch` | モーション6ファイル＋攻撃データ・生成元13ファイル＋既存テスト2ファイルの統合差分。計21ファイル |
+| `implementation/current-main/` | 推奨するv0.21用の統合差分・ハッシュ付き適用スクリプト。更新されたモンスター描画を残した21ファイル版 |
 | `implementation/manifest.json` / `apply-proposal.py` | 基点・変更前後のSHA256。既存の変更を上書きせず、適用可否確認・適用・逆適用を行う |
 | `implementation/motion/` | モーションの完成候補ソース、11件の追加回帰テスト、単独パッチ、説明 |
 | `implementation/balance/` | 攻撃データと生成元の完成候補、単独パッチ、期待値更新、比較・再生成スクリプト |
@@ -62,12 +65,12 @@ GitHubには設計本文・データ・コード・検証記録・再生成コ�
 
 ## 3. 取り込み方法（Claude向け）
 
-統合パッチと個別パッチは同じ変更である。どちらか一方を適用する。下は統合版の例で、この納品があるリポジトリのルートから始める。
+最新v0.21用は `implementation/current-main/`。元の統合パッチと個別パッチはv0.20監査の再現用として保持する。重ねて適用しない。下は最新用の例で、この納品があるリポジトリのルートから始める。
 
 ```sh
-git worktree add ../Kari-motion-review --detach 1d8e084d0d16fe77c376570f9542dd3c54fb5332
-python3 chatgpt-inbox/motion-combat-20261125/implementation/apply-proposal.py --repo ../Kari-motion-review
-python3 chatgpt-inbox/motion-combat-20261125/implementation/apply-proposal.py --repo ../Kari-motion-review --apply
+git worktree add ../Kari-motion-review --detach 9a5443ab1ac813512deac03422ee996f57f8a900
+python3 chatgpt-inbox/motion-combat-20261125/implementation/current-main/apply-proposal.py --repo ../Kari-motion-review
+python3 chatgpt-inbox/motion-combat-20261125/implementation/current-main/apply-proposal.py --repo ../Kari-motion-review --apply
 cd ../Kari-motion-review
 npm ci
 node --experimental-strip-types --no-warnings tools/gen-weapons.mjs --strict
@@ -88,7 +91,8 @@ npm run check
 | --- | --- |
 | 基点の `npm run check` | 型検査・既存21ファイル431テスト・本番ビルド成功 |
 | 最終3パッチのクリーン適用 | 全21ファイル成功。新規3、変更18 |
-| 差し替え後の `npm run check` | 型検査・22ファイル442テスト・本番ビルド成功 |
+| v0.20差し替え後の `npm run check` | 型検査・22ファイル442テスト・本番ビルド成功 |
+| 最新v0.21差し替え後の `npm run check` | 型検査・23ファイル452テスト・本番ビルド成功。共有描画のモンスター更新を保持 |
 | `gen-weapons.mjs --strict` | 44行動・48軌道・10移動曲線・42身体モーション。既存の関節等の厳格検査を通過 |
 | 再生成の整合性 | 生成後も21ファイルすべてが納品ハッシュと一致。余計な本体変更なし |
 | 統合適用スクリプト | 基点での読み取り確認、適用後の逆方向確認、逆適用→再適用を実行。全ハッシュ一致 |
