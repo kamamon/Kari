@@ -7,18 +7,26 @@ import {
 } from 'three';
 import { assetUrl } from '../core/assets';
 import type { SeededRng } from '../core/seededRng';
+import { ROCK_TILES } from './rockArtData';
 
 const DIR = 'assets/textures/env/';
 
-/** 繰り返して敷く絵。tile は 1 枚ぶんの大きさ（m）、mean は平均の色、mirror は鏡写しに繰り返すもの。 */
+const hexOf = (c: readonly number[]): number => (Math.round(c[0]! * 255) << 16) | (Math.round(c[1]! * 255) << 8) | Math.round(c[2]! * 255);
+
+/**
+ * 繰り返して敷く絵。tile は 1 枚ぶんの大きさ（m）、mean は平均の色、mirror は鏡写しに繰り返すもの。
+ * 岩の 2 枚は、v0.22.0 から依頼 10 の岩肌（T-01 灰褐色の岩・T-03 晶脈の暗い岩。tools/rock-art.py が端をつないだもの）。
+ */
 export const ENV_TILES = {
   grass: { file: 'tex_ground_basin_grass_v1', tile: 6, mean: 0x6d764f, mirror: false },
   gravel: { file: 'tex_ground_basin_gravel_v1', tile: 6, mean: 0x9f8e6f, mirror: false },
   nest: { file: 'tex_ground_nest_v1', tile: 6, mean: 0x6d6b5e, mirror: false },
   earth: { file: 'tex_ground_village_earth_v1', tile: 6, mean: 0xa8977d, mirror: false },
   paving: { file: 'tex_ground_village_paving_v1', tile: 4, mean: 0x867e6e, mirror: true },
-  rock: { file: 'tex_rock_basin_v1', tile: 3, mean: 0x837c6f, mirror: false },
-  vein: { file: 'tex_rock_vein_v1', tile: 3, mean: 0x867d71, mirror: true },
+  rock: { file: ROCK_TILES.t01.file, tile: 3, mean: hexOf(ROCK_TILES.t01.mean), mirror: false },
+  vein: { file: ROCK_TILES.t03.file, tile: 3, mean: hexOf(ROCK_TILES.t03.mean), mirror: false },
+  /** 苔の溜まった岩肌（依頼 10 の T-04。v0.22.0）: 野営地・狩りのエリアの、段差の横と崖の背 */
+  moss: { file: ROCK_TILES.t04.file, tile: 3, mean: hexOf(ROCK_TILES.t04.mean), mirror: false },
 } as const;
 export type EnvTile = keyof typeof ENV_TILES;
 
@@ -64,6 +72,8 @@ const cache = new Map<string, { tex: Texture | null; waiting: ((t: Texture) => v
 
 /** 絵を読む（同じ絵は 1 回だけ）。読めたら done を呼ぶ。読めなければ呼ばない（平均の色のまま）。 */
 function loadEnv(file: string, setup: (t: Texture) => void, done: (t: Texture) => void): void {
+  // 画面の無い所（Node の検査）では読まない（平均の色のまま）
+  if (typeof document === 'undefined') return;
   let e = cache.get(file);
   if (e?.tex) {
     done(e.tex);
@@ -92,6 +102,11 @@ function loadEnv(file: string, setup: (t: Texture) => void, done: (t: Texture) =
       console.warn(`景色の絵を読めません: ${file}`);
     },
   );
+}
+
+/** 絵を読む（同じ絵は 1 回だけ。v0.22.0 の岩と崖の図集・岩肌も、ここから読む）。setup は読めた時に 1 回、done は使う所ごとに呼ぶ */
+export function loadEnvTexture(file: string, setup: (t: Texture) => void, done: (t: Texture) => void): void {
+  loadEnv(file, setup, done);
 }
 
 /** 読み終わった絵の数と、頼んだ絵の数（検査用）。 */

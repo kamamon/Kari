@@ -131,22 +131,6 @@
   "contrastAfter": 18.05,
   "bytes": 21492
  },
- "tex_rock_basin_v1": {
-  "kind": "tile",
-  "wrap": "repeat",
-  "mean": "#837C6F",
-  "seamBefore": [
-   2.74,
-   2.29
-  ],
-  "seamAfter": [
-   1.18,
-   1.06
-  ],
-  "contrastBefore": 9.97,
-  "contrastAfter": 17.08,
-  "bytes": 94560
- },
  "tex_ground_village_paving_v1": {
   "kind": "tile",
   "wrap": "mirror",
@@ -162,22 +146,6 @@
   "contrastBefore": 13.88,
   "contrastAfter": 13.88,
   "bytes": 88742
- },
- "tex_rock_vein_v1": {
-  "kind": "tile",
-  "wrap": "mirror",
-  "mean": "#867D71",
-  "seamBefore": [
-   3.21,
-   2.98
-  ],
-  "seamAfter": [
-   2.97,
-   2.95
-  ],
-  "contrastBefore": 10.24,
-  "contrastAfter": 14.57,
-  "bytes": 75540
  },
  "sprite_grass_basin_v1": {
   "kind": "sprite",

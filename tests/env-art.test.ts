@@ -7,6 +7,8 @@ import { BoxGeometry, Box3, Mesh, PlaneGeometry, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
 import { ENV_FAR, ENV_SPRITES, ENV_TILES, boxUv } from '../src/render/envArt';
 import { BUILDINGS } from '../src/render/hubScene';
+import { DETAIL_TILES } from '../src/render/rockArt';
+import { CLIFF_ATLAS, ROCK_ATLAS, ROCK_TILES } from '../src/render/rockArtData';
 import { loadContent } from './helpers';
 
 const ROOT = join(__dirname, '..');
@@ -16,29 +18,46 @@ const measure = JSON.parse(readFileSync(join(ROOT, 'art-source/env/request8_v1.m
   cells?: { x0: number; x1: number; y0: number; y1: number; rootX: number }[];
 }>;
 const hex = (n: number): string => `#${n.toString(16).padStart(6, '0').toUpperCase()}`;
+/** 依頼 10（v0.22.0。tools/rock-art.py）の測った値 */
+const measure10 = JSON.parse(readFileSync(join(ROOT, 'art-source/env/request10_v1.measure.json'), 'utf8')) as {
+  tiles: { id: string; file: string; seamAfter: [number, number] }[];
+  outputs: Record<string, { px: [number, number]; bytes: number }>;
+};
+const tile10 = new Set<string>(Object.values(ROCK_TILES).map((t) => t.file));
 
 describe('景色の絵のファイル', () => {
-  const used = [
-    ...Object.values(ENV_TILES).map((t) => t.file),
+  // 依頼 8 の 15 枚（岩肌の 2 枚は、v0.22.0 から依頼 10 の岩肌に替えた）と、依頼 10 の 6 枚（岩と崖の図集・岩肌 4 枚）
+  const used8 = [
+    ...Object.values(ENV_TILES).map((t) => t.file).filter((f) => !tile10.has(f)),
     ...Object.values(ENV_FAR).flat(),
     ...Object.values(ENV_SPRITES).map((s) => s.file),
     ...Object.values(BUILDINGS).map((b) => b.file),
   ];
+  const used10 = [ROCK_ATLAS, CLIFF_ATLAS, ...tile10];
+  const used = [...used8, ...used10];
 
-  it('17 枚すべてを使っていて、どれも、元の絵と、ゲームで読む絵の両方がある', () => {
-    expect(new Set(used).size).toBe(17);
-    for (const f of used) {
+  it('依頼 8 の 15 枚と、依頼 10 の 6 枚を使っていて、どれも、元の絵と、ゲームで読む絵の両方がある', () => {
+    expect(new Set(used8).size).toBe(15);
+    expect(new Set(used10).size).toBe(6);
+    for (const f of used8) {
       expect(existsSync(join(ROOT, 'art-source/env', `${f}.png`)), `元の絵 ${f}.png`).toBe(true);
-      expect(existsSync(join(ENV, `${f}.webp`)), `読む絵 ${f}.webp`).toBe(true);
       expect(measure[f], `測った値 ${f}`).toBeDefined();
     }
+    for (const f of tile10) expect(existsSync(join(ROOT, 'art-source/env/tiles', `${f}.png`)), `元の絵 ${f}.png`).toBe(true);
+    expect(readdirSync(join(ROOT, 'art-source/env/rocks')).filter((f) => f.endsWith('.png')).length).toBe(20);
+    expect(readdirSync(join(ROOT, 'art-source/env/cliffs')).filter((f) => f.endsWith('.png')).length).toBe(20);
+    for (const f of used10) expect(measure10.outputs[f], `測った値 ${f}`).toBeDefined();
+    for (const f of used) expect(existsSync(join(ENV, `${f}.webp`)), `読む絵 ${f}.webp`).toBe(true);
+    // 依頼 10 の岩肌 4 枚は、どれもゲームのどこかで貼る（地面・段差・崖の背の絵か、岩と崖の細かな模様）
+    const refs = new Set<string>([...Object.values(ENV_TILES).map((t) => t.file), ...Object.values(DETAIL_TILES).map((k) => ROCK_TILES[k].file)]);
+    for (const f of tile10) expect(refs.has(f), `使っていない岩肌 ${f}`).toBe(true);
   });
 
-  it('ゲームで読む絵の置き場に、使っていない絵が無い。合わせて 1.5MB を超えない', () => {
+  it('ゲームで読む絵の置き場に、使っていない絵が無い。合わせて 5MB を超えない（v0.22.0 で、岩と崖の図集 2 枚が約 2.4MB）', () => {
     const files = readdirSync(ENV);
     expect(files.sort()).toEqual(used.map((f) => `${f}.webp`).sort());
     const total = files.reduce((n, f) => n + statSync(join(ENV, f)).size, 0);
-    expect(total).toBeLessThan(1.5 * 1024 * 1024);
+    expect(total).toBeLessThan(5 * 1024 * 1024);
   });
 });
 
@@ -57,11 +76,21 @@ describe('空と遠景', () => {
 
 describe('繰り返して敷く絵', () => {
   it('平均の色（絵が届くまでの色）が、測った値と合っている', () => {
-    for (const t of Object.values(ENV_TILES)) expect(hex(t.mean), t.file).toBe(measure[t.file]!.mean);
+    for (const t of Object.values(ENV_TILES)) {
+      if (tile10.has(t.file)) {
+        const m = Object.values(ROCK_TILES).find((x) => x.file === t.file)!.mean;
+        expect(t.mean, t.file).toBe((Math.round(m[0] * 255) << 16) | (Math.round(m[1] * 255) << 8) | Math.round(m[2] * 255));
+      } else expect(hex(t.mean), t.file).toBe(measure[t.file]!.mean);
+    }
   });
 
-  it('そのまま繰り返す絵は、つなぎ目が見えない。直していない絵（石畳・晶脈の岩）は、鏡写しに繰り返す', () => {
+  it('そのまま繰り返す絵は、つなぎ目が見えない。直していない絵（石畳）は、鏡写しに繰り返す', () => {
     for (const t of Object.values(ENV_TILES)) {
+      if (tile10.has(t.file)) {
+        expect(t.mirror, t.file).toBe(false);
+        for (const s of measure10.tiles.find((x) => x.file.endsWith(`${t.file}.png`))!.seamAfter) expect(s, t.file).toBeLessThan(1.3);
+        continue;
+      }
       const m = measure[t.file]!;
       expect(m.wrap, t.file).toBe(t.mirror ? 'mirror' : 'repeat');
       if (!t.mirror) for (const s of m.seamAfter!) expect(s, t.file).toBeLessThan(1.3);

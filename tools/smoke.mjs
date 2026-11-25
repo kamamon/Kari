@@ -616,6 +616,8 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await boot(page2);
   await page2.click('.base-weapon[data-weapon="weapon.twin_blades.001"]');
   check('別のタブ: 2 つ目のタブで双剣に持ち替えて保存', await until(page2, () => window.__vh.save.doc.equippedWeaponId === 'weapon.twin_blades.001' && window.__vh.save.doc.revision === 6, 6000));
+  // 1 つ目のタブを前へ（人は見ているタブを操作する。後ろのタブは、ヘッドレス Chrome では毎秒 1 回しか描かれず、v0.22.0 の景色では 6 秒に収まらなかった）
+  await page.bringToFront();
   await page.click('.base-weapon[data-weapon="weapon.long_blade.001"]');
   check('別のタブ: 古い内容のままの 1 つ目のタブからは上書きせず、新しい内容（双剣）を読み直して知らせる', await until(page, () => {
     const d = window.__vh.save.doc;
@@ -1233,6 +1235,28 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   f = await hudField();
   check('フィールド: エリア 3 に入ると、標的が描かれる（着く場所は、これまでの狩場の出発地点）', f.area === 'a3' && f.rigVisible === true && Math.abs(f.x) < 0.5 && Math.abs(f.z + 20) < 1.5 && f.here === '3', JSON.stringify(f));
   await page.screenshot({ path: `${OUT}83_field_area3.png` });
+  // 依頼 10 の岩と崖（v0.22.0）: エリア 3 の岩は図から作った形、外周は崖の図を並べたもの（出口のわきは C-19・C-20）。図集と岩肌が読めている
+  const art10 = await until(page, () => {
+    const v = window.__vh.view;
+    let rocks = [], cliffs = [], cliffOn = false, rockOn = false;
+    for (const g of v.areaGroups.values()) {
+      if (!g.visible) continue;
+      g.traverse((o) => {
+        if (o.userData.rockArt) {
+          rocks = rocks.concat(o.userData.rockArt);
+          rockOn = o.material.userData.art?.artOn.value === 1 && o.material.userData.art?.detailOn.value === 1;
+        }
+        if (o.userData.cliffArt) {
+          cliffs = cliffs.concat(o.userData.cliffArt);
+          cliffOn = o.material.visible && !!o.material.map && o.material.userData.art?.detailOn.value === 1;
+        }
+      });
+    }
+    window.__art10 = { rocks: rocks.length, cliffs: cliffs.length, kinds: new Set(cliffs).size, exitPieces: cliffs.filter((id) => id === 'C-19' || id === 'C-20').length, exits: window.__vh.sim.area().exits.length, rockOn, cliffOn, area: window.__vh.sim.area().rocks.length };
+    return rockOn && cliffOn;
+  }, 15000).then(() => page.evaluate(() => ({ ...window.__art10, ...window.__vh.view.stats() })));
+  check('岩と崖（v0.22.0）: エリア 3 の岩は依頼 10 の岩の図から作り（データの岩の数だけ）、外周は崖の図を並べる（出口ごとに C-19・C-20）。図集と岩肌が読めている。描画量は目標内',
+    art10.rockOn && art10.cliffOn && art10.rocks === art10.area && art10.rocks >= 1 && art10.cliffs >= 6 && art10.kinds >= 4 && art10.exitPieces === art10.exits * 2 && art10.calls <= 100 && art10.triangles <= 200000, JSON.stringify(art10));
   // 標的の移動と休息: 弱らせて、巣で眠るまで simulation を先へ進める（検査用。画面の時間は待たない）
   const slept = await page.evaluate(() => {
     const s = window.__vh.sim, m = s.monsters[0];
@@ -1378,7 +1402,8 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const hubLook = await page.evaluate(() => {
     const v = window.__vh.view;
     const files = [];
-    v.scene.traverse((o) => { if (o.isMesh && !o.isInstancedMesh && o.material.alphaTest > 0 && o.material.map && o.material.visible) files.push(String(o.material.map.image?.src ?? '').split('/').pop()); });
+    // 建物の図（切り抜き）。外周の崖の面（v0.22.0。崖の図集を切り抜く）は除く
+    v.scene.traverse((o) => { if (o.isMesh && !o.isInstancedMesh && !o.userData.cliffArt && o.material.alphaTest > 0 && o.material.map && o.material.visible) files.push(String(o.material.map.image?.src ?? '').split('/').pop()); });
     return { art: window.__vh.envArt(), buildings: files.sort(), far: v.scene.getObjectByName('backdrop').children.filter((m) => m.material.map && m.material.visible).length, ...v.stats() };
   });
   check('景色の絵（里）: 頼んだ絵がすべて読めている。建物 4 つ（工房・商店・依頼板・装備箱）に、それぞれの図が貼られている', hubArt && hubLook.far === 2 && hubLook.buildings.join() === 'bld_board_v1.webp,bld_chest_v1.webp,bld_shop_v1.webp,bld_workshop_v1.webp', JSON.stringify(hubLook));

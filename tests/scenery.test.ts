@@ -1,4 +1,5 @@
-// 景色を現実に近づけた版（v0.19.0。docs/spec.md の 21 章）: 空・遠景の切り抜き・岩と岩壁の形・草の揺れ・岩の絵の濃淡。
+// 景色を現実に近づけた版（v0.19.0。docs/spec.md の 21 章）: 空・遠景の切り抜き・草の揺れ・岩の棚。
+// v0.22.0 から、岩と外周の崖は、依頼 10 の図から作る（src/render/rockArt.ts。21.3）。その形の決まりも、ここで確かめる。
 // 見た目そのものは画面で確かめる（tools/field-shots.mjs、tools/hub-shots.mjs）。ここでは、形と数の決まりを確かめる。
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -8,7 +9,12 @@ import { describe, expect, it } from 'vitest';
 import { SeededRng } from '../src/core/seededRng';
 import { FOG_COLOR, SUN_DIR } from '../src/render/arena';
 import { ENV_FAR, ENV_TILES, WIND, swayInWind } from '../src/render/envArt';
-import { ROCK_REACH, boulderGeometry, cavityOf, cliffGeometry, ledgeGeometry } from '../src/render/rockGeo';
+import { ROCK_REACH, cavityOf, ledgeGeometry, polyPath, wallPath } from '../src/render/rockGeo';
+import {
+  BIG_ROCKS, GATE_HALF, artCliffGeometry, cliffArt, cliffArtMaterial, cliffReliefAt, cliffTopAt, mergeRocks, pathLengths, pathSOf, placeBigRock, planCliffs, rockArt,
+  rockArtGeometry, rockArtMaterial,
+} from '../src/render/rockArt';
+import { CLIFF_ART, CLIFF_M, CLIFF_RELIEF, ROCK_ART, ROCK_TILES } from '../src/render/rockArtData';
 import { AreaShape } from '../src/game/areaShape';
 import { SKY_LOOKS, SkyDome } from '../src/render/sky';
 
@@ -17,6 +23,12 @@ const measure = JSON.parse(readFileSync(join(ROOT, 'art-source/env/request8_v1.m
   ridge?: { min: number; max: number; edge: number; alphaTop: number; alphaBottom: number };
   contrastBefore?: number; contrastAfter?: number;
 }>;
+const measure10 = JSON.parse(readFileSync(join(ROOT, 'art-source/env/request10_v1.measure.json'), 'utf8')) as {
+  rocks: { id: string; normalized: [number, number, number]; diffPct: Record<string, number>; lumSd: number }[];
+  cliffs: { id: string; edgesM: [number, number]; edgesPass: boolean; lumSd: number; empty: [number, number] | null }[];
+  tiles: { id: string; lumSd: number; seamAfter: [number, number] }[];
+  outputs: Record<string, { px: [number, number]; bytes: number }>;
+};
 
 /** 頂点の位置・色がすべて数で、色は 0〜2 に収まる */
 function sane(g: BufferGeometry, label: string): void {
@@ -72,88 +84,198 @@ describe('空と遠景', () => {
   });
 });
 
-describe('岩壁', () => {
-  const bounds = { minX: -30, maxX: 26, minZ: -24, maxZ: 32 };
-  const gates = [{ x: 0, z: -24 }, { x: 26, z: 4 }];
-
-  it('内側の面は、歩ける範囲の四角へ入り込まない（当たりは四角のまま）', () => {
-    for (const seed of [1, 7, 42, 9001]) {
-      const g = cliffGeometry(new SeededRng(seed), { bounds, gates, height: [5, 5.5], moss: 0.6, veins: 0.3 }, ENV_TILES.rock.tile);
-      const pos = g.getAttribute('position');
-      for (let i = 0; i < pos.count; i++) {
-        const x = pos.getX(i), z = pos.getZ(i);
-        const inside = x > bounds.minX + 0.01 && x < bounds.maxX - 0.01 && z > bounds.minZ + 0.01 && z < bounds.maxZ - 0.01;
-        expect(inside, `seed ${seed} 頂点 ${i} (${x.toFixed(2)}, ${z.toFixed(2)})`).toBe(false);
+describe('依頼 10 の岩の図から作る岩（v0.22.0）', () => {
+  it('20 種。大きさは 3 つの図の平均で、図の値と合う。上の線は 0〜1 で、いちばん高い所は 1 に近い。図集の範囲は重ならない', () => {
+    expect(ROCK_ART.length).toBe(20);
+    const rects: [number, number, number, number][] = [];
+    for (const a of ROCK_ART) {
+      const m = measure10.rocks.find((r) => r.id === a.id)!;
+      expect([a.w, a.d, a.h], a.id).toEqual(m.normalized);
+      for (const p of [a.fp, a.sp]) {
+        expect(p.length).toBe(64);
+        expect(Math.min(...p), a.id).toBeGreaterThanOrEqual(0);
+        expect(Math.max(...p), a.id).toBeGreaterThan(0.97);
+        expect(Math.max(...p), a.id).toBeLessThanOrEqual(1);
+      }
+      expect(a.foot.length, a.id).toBeGreaterThanOrEqual(1);
+      for (const r of [a.front, a.side, a.top]) {
+        expect(r[0]).toBeGreaterThanOrEqual(0);
+        expect(r[3]).toBeLessThanOrEqual(1);
+        expect(r[2]).toBeGreaterThan(r[0]);
+        expect(r[3]).toBeGreaterThan(r[1]);
+        rects.push(r as [number, number, number, number]);
+      }
+    }
+    for (let i = 0; i < rects.length; i++) {
+      for (let j = i + 1; j < rects.length; j++) {
+        const a = rects[i]!, b = rects[j]!;
+        const overlap = a[0] < b[2] - 1e-6 && b[0] < a[2] - 1e-6 && a[1] < b[3] - 1e-6 && b[1] < a[3] - 1e-6;
+        expect(overlap, `${i} と ${j}`).toBe(false);
       }
     }
   });
 
-  it('出口の前は開いていて（4m の内は低い）、ほかは高い壁になる。形と色は数で、重さは 1 万面より小さい', () => {
-    const g = cliffGeometry(new SeededRng(3), { bounds, gates, height: [5, 5.5], moss: 0.6, veins: 0.3 }, ENV_TILES.rock.tile);
-    const pos = g.getAttribute('position');
-    let gateTop = -Infinity, wallTop = -Infinity, far = 0, tall = 0;
-    for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
-      const dGate = Math.min(...gates.map((gt) => Math.hypot(x - gt.x, z - gt.z)));
-      if (dGate < 4) gateTop = Math.max(gateTop, y);
-      if (dGate > 12) {
-        wallTop = Math.max(wallTop, y);
-        far++;
-        if (y > 3) tall++;
+  it('形: 根元は地面の下（埋まった岩）、いちばん高い所は図の高さ、平面の大きさの外へ出ない。上は上を向き、横は外を向く。色・図の位置・混ぜ方は数', () => {
+    for (const a of ROCK_ART) {
+      for (const lod of [1, 0] as const) {
+        const g = rockArtGeometry(a, lod);
+        const pos = g.getAttribute('position'), nor = g.getAttribute('normal'), wts = g.getAttribute('wts');
+        let top = -Infinity, low = Infinity, topI = 0;
+        for (let i = 0; i < pos.count; i++) {
+          const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+          if (y > top) [top, topI] = [y, i];
+          low = Math.min(low, y);
+          expect(Math.abs(x), a.id).toBeLessThanOrEqual(a.w / 2 + 1e-3);
+          expect(Math.abs(z), a.id).toBeLessThanOrEqual(a.d / 2 + 1e-3);
+          const sw = wts.getX(i) + wts.getY(i) + wts.getZ(i);
+          expect(sw, a.id).toBeCloseTo(1, 4);
+          for (const nm of ['uvF', 'uvS', 'uvT']) {
+            const u = g.getAttribute(nm);
+            expect(u.getX(i) >= 0 && u.getX(i) <= 1 && u.getY(i) >= 0 && u.getY(i) <= 1, `${a.id} ${nm}`).toBe(true);
+          }
+        }
+        expect(low, a.id).toBeLessThan(-0.03);
+        expect(low, a.id).toBeGreaterThan(-0.3);
+        expect(top / a.h, a.id).toBeGreaterThan(lod ? 0.9 : 0.8);
+        expect(top / a.h, a.id).toBeLessThanOrEqual(1.0001);
+        // いちばん高い所は上を向く（傾いた板・立ち岩は、とがった先なので、斜め上まで）
+        expect(nor.getY(topI), a.id).toBeGreaterThan(a.tags.includes('tall') ? 0.05 : 0.6);
+        sane(g, `岩 ${a.id}`);
       }
+      // 横の面は外を向く: 輪郭のすぐ内の輪（地面の少し上）の法線が、塊の中心から外へ
+      const g = rockArtGeometry(a, 1);
+      const pos = g.getAttribute('position'), nor = g.getAttribute('normal');
+      let out = 0, total = 0;
+      let base = 0;
+      for (const part of a.foot) {
+        const N = part.pts.length / 2;
+        for (let j = 0; j < N; j++) {
+          const i = base + N + j;
+          const dx = pos.getX(i) - part.c[0], dz = pos.getZ(i) - part.c[1];
+          total++;
+          if (nor.getX(i) * dx + nor.getZ(i) * dz > 0) out++;
+        }
+        base += N * 8 + 1;
+      }
+      expect(out / total, a.id).toBeGreaterThan(0.85);
     }
-    expect(gateTop).toBeLessThan(0.3);
-    expect(wallTop).toBeGreaterThan(5);
-    // 出口から離れた所の頂点の多くが、背より高い所にある（低い所だけの壁にならない）
-    expect(tall / far).toBeGreaterThan(0.3);
-    expect(g.getIndex()!.count / 3).toBeLessThan(10000);
-    sane(g, '岩壁');
   });
 
-  it('同じ種なら、同じ形になる（エリアを作り直しても、景色が変わらない）', () => {
-    const a = cliffGeometry(new SeededRng(11), { bounds, gates, height: [5, 5.5] }, 3).getAttribute('position');
-    const b = cliffGeometry(new SeededRng(11), { bounds, gates, height: [5, 5.5] }, 3).getAttribute('position');
-    expect(Array.from(a.array as Float32Array)).toEqual(Array.from(b.array as Float32Array));
+  it('当たりの円柱に置く: 根元のいちばん外は、当たりの半径の ROCK_REACH 倍。高さは、図の比の 0.8〜1.25 倍まで。種が同じなら同じ岩', () => {
+    expect(BIG_ROCKS.length).toBeGreaterThanOrEqual(10);
+    const rng = new SeededRng(17);
+    for (let k = 0; k < 60; k++) {
+      const r = { x: 0, z: 0, r: 1 + rng.next() * 2, h: 1.3 + rng.next() * 3 };
+      const p = placeBigRock(new SeededRng(100 + k), r, ROCK_REACH);
+      expect(BIG_ROCKS).toContain(p.id);
+      const a = rockArt(p.id);
+      let reach = 0;
+      for (const part of a.foot) for (let i = 0; i < part.pts.length; i += 2) reach = Math.max(reach, Math.hypot(part.pts[i]! * p.sx, part.pts[i + 1]! * p.sz));
+      expect(reach / r.r).toBeCloseTo(ROCK_REACH, 5);
+      expect(Math.max(p.sx, p.sz) / Math.min(p.sx, p.sz)).toBeLessThanOrEqual(1.25 + 1e-9);
+      const s = Math.sqrt(p.sx * p.sz);
+      expect(p.sy / s).toBeGreaterThanOrEqual(0.8 - 1e-9);
+      expect(p.sy / s).toBeLessThanOrEqual(1.25 + 1e-9);
+      expect(placeBigRock(new SeededRng(100 + k), r, ROCK_REACH)).toEqual(p);
+    }
+    const geo = mergeRocks([placeBigRock(new SeededRng(1), { x: 5, z: -3, r: 2, h: 3 }, ROCK_REACH), placeBigRock(new SeededRng(2), { x: -9, z: 4, r: 1.4, h: 2 }, ROCK_REACH)]);
+    sane(geo, '2 つの岩をまとめた形');
+  });
+
+  it('素材: 岩は 3 つの図を混ぜ、崖は図を切り抜く。どちらも岩肌を細かな模様として掛ける（シェーダーへ入る）', () => {
+    for (const [mat, key] of [[rockArtMaterial(), 'rock-art-v1'], [cliffArtMaterial(), 'cliff-art-v1']] as const) {
+      const sh = { uniforms: {} as Record<string, unknown>, vertexShader: 'void main() {\n#include <begin_vertex>\n#include <project_vertex>\n}', fragmentShader: 'void main() {\n#include <map_fragment>\n}' };
+      mat.onBeforeCompile(sh as never, undefined as never);
+      expect(mat.customProgramCacheKey()).toBe(key);
+      expect(sh.uniforms.rockDetail).toBeDefined();
+      expect(sh.fragmentShader).toContain('detailMean');
+      expect(sh.vertexShader).toContain('vRockW');
+    }
+    expect(cliffArtMaterial().alphaTest).toBe(0.5);
   });
 });
 
-describe('岩', () => {
-  it('大きさ 1 の岩: 根元は地面の下へ埋まり、高さは 0.5〜1.2。根元の広がりは、いちばん外で ROCK_REACH（当たりの円柱から大きくはみ出さない）', () => {
-    for (let seed = 1; seed <= 12; seed++) {
-      const g = boulderGeometry(new SeededRng(seed), { detail: 3, rough: 0.5, moss: 0.6, vein: seed % 3 === 0, strata: 0.8, cuts: seed % 7 });
-      g.computeBoundingBox();
-      const b = g.boundingBox!;
-      expect(b.min.y, `seed ${seed}`).toBeLessThan(0);
-      expect(b.max.y, `seed ${seed}`).toBeGreaterThan(0.5);
-      expect(b.max.y, `seed ${seed}`).toBeLessThan(1.2);
-      const pos = g.getAttribute('position');
-      let reach = 0, sum = 0, n = 0;
-      for (let i = 0; i < pos.count; i++) {
-        const y = pos.getY(i), r = Math.hypot(pos.getX(i), pos.getZ(i));
-        if (y >= 0 && y <= 0.45) {
-          reach = Math.max(reach, r);
-          sum += r;
-          n++;
-        }
+describe('依頼 10 の崖の図から作る外周の崖（v0.22.0）', () => {
+  const field = JSON.parse(readFileSync(join(ROOT, 'public/data/fields/basin.json'), 'utf8')) as {
+    areas: { id: string; kind: string; bounds: { minX: number; maxX: number; minZ: number; maxZ: number }; shape: [number, number][]; exits: { x: number; z: number }[] }[];
+  };
+
+  it('20 種。端の高さは 4.5m（低い 3 種は 3m）に ±0.3m。出口のわきの 2 つは、出口の側が何も無い。凹凸は 96 × 36', () => {
+    expect(CLIFF_ART.length).toBe(20);
+    for (const c of CLIFF_ART) {
+      const m = measure10.cliffs.find((x) => x.id === c.id)!;
+      expect(m.edgesPass, c.id).toBe(true);
+      expect(c.top.length).toBe(256);
+      expect(Math.min(...c.top), c.id).toBeGreaterThanOrEqual(0);
+      expect(atob(c.relief).length).toBe(CLIFF_RELIEF[0] * CLIFF_RELIEF[1]);
+      for (const y of [0.5, 2, 4]) for (const x of [1, 12, 23]) expect(Math.abs(cliffReliefAt(c, x, y))).toBeLessThanOrEqual(1);
+    }
+    expect(cliffArt('C-19').exit).toBe('right');
+    expect(cliffArt('C-20').exit).toBe('left');
+    expect(cliffTopAt(cliffArt('C-19'), 23)).toBeLessThan(0.05);
+    expect(cliffTopAt(cliffArt('C-20'), 1)).toBeLessThan(0.05);
+    expect(cliffTopAt(cliffArt('C-19'), 2)).toBeGreaterThan(4);
+    expect(cliffTopAt(cliffArt('C-20'), 22)).toBeGreaterThan(4);
+  });
+
+  it('並べ方: 出口の前（±4.5m）には壁が無く、ほかは、すき間なく図が並ぶ。同じ図は続かない。横の伸び縮みは 0.7〜1.25 倍（比で 1 に近くなる数の図を入れる）', () => {
+    for (const a of field.areas) {
+      const path = polyPath(a.shape, 0.5, 0.5);
+      const { cum, L } = pathLengths(path);
+      const gs = a.exits.map((e) => pathSOf(path, cum, e.x, e.z));
+      const pieces = planCliffs(L, gs, new SeededRng(3), { low: false, nest: a.kind === 'nest' });
+      const walled = (s: number): boolean => pieces.some((p) => {
+        const c = cliffArt(p.id);
+        const x = ((((s - p.s0) % L) + L) % L) / p.k;
+        return x >= 0 && x <= CLIFF_M && cliffTopAt(c, x) > 0.05;
+      });
+      for (let s = 0; s < L; s += 0.5) {
+        const gd = Math.min(...gs.map((g) => Math.min(Math.abs(s - g), L - Math.abs(s - g))));
+        if (gd < GATE_HALF - 0.3) expect(walled(s), `${a.id} s=${s.toFixed(1)}（出口の前）`).toBe(false);
+        if (gd > GATE_HALF + 0.6) expect(walled(s), `${a.id} s=${s.toFixed(1)}`).toBe(true);
       }
-      expect(reach, `seed ${seed}`).toBeCloseTo(ROCK_REACH, 5);
-      expect(ROCK_REACH).toBeLessThan(1.1);
-      // 平均では、当たりの円柱の 7 割より外に、岩の面がある（当たりと見た目の間が、大きく空かない）
-      expect(sum / n, `seed ${seed}`).toBeGreaterThan(0.7);
-      sane(g, `岩 ${seed}`);
+      for (let i = 0; i < pieces.length; i++) {
+        const p = pieces[i]!;
+        expect(p.k, a.id).toBeGreaterThan(0.7);
+        expect(p.k, a.id).toBeLessThan(1.25);
+        if (i > 0 && !cliffArt(p.id).exit) expect(p.id, a.id).not.toBe(pieces[i - 1]!.id);
+      }
     }
   });
 
-  it('くぼみの深さ: 丸い球（出っ張りだけ）では、どの頂点も 0 以下になる', () => {
-    let g: BufferGeometry = new IcosahedronGeometry(1, 2);
-    g.deleteAttribute('uv');
-    g.deleteAttribute('normal');
-    g = mergeVertices(g);
-    g.computeVertexNormals();
-    const cav = cavityOf(g);
-    expect(cav.length).toBe(g.getAttribute('position').count);
-    for (const c of cav) expect(c).toBeLessThanOrEqual(1e-6);
-    expect(Math.min(...cav)).toBeLessThan(-0.001);
+  it('形: 面は歩ける範囲へ入らない（外周の外 0.05m より外）。出口の前は開く。ほかは 4m より高い。同じ種なら同じ形。三角形は 2 万より少ない', () => {
+    for (const a of field.areas) {
+      const s = new AreaShape(a.shape);
+      const o = { path: wallPath(a.bounds, a.shape, 0.5, 0.5), gates: a.exits, vk: 1.087, low: false, nest: a.kind === 'nest', moss: 0.6 };
+      const { face, cap } = artCliffGeometry(o, new SeededRng(5));
+      const pos = face.getAttribute('position');
+      let gateTop = -Infinity, wallTop = -Infinity;
+      for (let i = 0; i < pos.count; i++) {
+        const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+        expect(s.signedDistance(x, z), `${a.id} 頂点 ${i}`).toBeLessThan(-0.05);
+        const dGate = Math.min(...a.exits.map((e) => Math.hypot(x - e.x, z - e.z)));
+        if (dGate < 3.5) gateTop = Math.max(gateTop, y);
+        if (dGate > 16) wallTop = Math.max(wallTop, y);
+      }
+      expect(gateTop, a.id).toBeLessThan(0.6);
+      expect(wallTop, a.id).toBeGreaterThan(4);
+      sane(face, `${a.id} の崖の面`);
+      sane(cap, `${a.id} の崖の背`);
+      const tris = (face.getIndex()!.count + cap.getIndex()!.count) / 3;
+      expect(tris, a.id).toBeLessThan(20000);
+      const again = artCliffGeometry(o, new SeededRng(5)).face.getAttribute('position');
+      expect(Array.from(again.array as Float32Array)).toEqual(Array.from(pos.array as Float32Array));
+    }
+  });
+
+  it('里（低い崖）は、端の高さ 3m の図だけで、高さの倍率を掛ける', () => {
+    const b = { minX: -20, maxX: 20, minZ: -15, maxZ: 15 };
+    const { pieces } = artCliffGeometry({ path: wallPath(b, null, 0.5, 0.5), gates: [{ x: 0, z: -15 }], vk: 2.2 / 3, low: true, nest: false, moss: 0.5 }, new SeededRng(1));
+    for (const p of pieces) {
+      const c = cliffArt(p.id);
+      if (c.exit) continue;
+      expect(Math.max(...c.edges), p.id).toBeLessThan(3.6);
+    }
   });
 });
 
@@ -172,59 +294,17 @@ describe('草の揺れと、岩の絵の濃淡', () => {
     expect(mat.customProgramCacheKey()).toBe('sway-in-wind');
   });
 
-  it('岩の 2 枚の絵は、元の絵より濃淡が強い（割れ目と面の陰が見える）。平均の色は変わらない', () => {
-    for (const t of [ENV_TILES.rock, ENV_TILES.vein]) {
-      const m = measure[t.file]!;
-      expect(m.contrastAfter!, t.file).toBeGreaterThan(m.contrastBefore! * 1.35);
+  it('岩肌（v0.22.0 から依頼 10 の 4 枚）は、濃淡がはっきり（明るさのばらつき 18 以上）で、上下左右の端がつながる', () => {
+    expect(ENV_TILES.rock.file).toBe(ROCK_TILES.t01.file);
+    expect(ENV_TILES.vein.file).toBe(ROCK_TILES.t03.file);
+    for (const t of measure10.tiles) {
+      expect(t.lumSd, t.id).toBeGreaterThanOrEqual(18);
+      for (const r of t.seamAfter) expect(r, t.id).toBeLessThan(1.3);
     }
   });
 });
 
-describe('自然な形のエリアの岩壁・埋まった岩・岩の棚（v0.20.0）', () => {
-  const field = JSON.parse(readFileSync(join(ROOT, 'public/data/fields/basin.json'), 'utf8')) as {
-    areas: { id: string; bounds: { minX: number; maxX: number; minZ: number; maxZ: number }; shape: [number, number][]; exits: { x: number; z: number }[] }[];
-  };
-
-  it('岩壁は外周に沿い、歩ける範囲へ入り込まない（狭い谷・広い原・巣）。出口の前は開く', () => {
-    for (const id of ['a1', 'a2', 'a5', 'a10']) {
-      const a = field.areas.find((x) => x.id === id)!;
-      const s = new AreaShape(a.shape);
-      const g = cliffGeometry(new SeededRng(5), { bounds: a.bounds, shape: s.points(), gates: a.exits, height: [5, 5.5], moss: 0.6, veins: 0.3 }, ENV_TILES.rock.tile);
-      const pos = g.getAttribute('position');
-      let gateTop = -Infinity, wallTop = -Infinity;
-      for (let i = 0; i < pos.count; i++) {
-        const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
-        expect(s.signedDistance(x, z), `${id} 頂点 ${i}`).toBeLessThan(0.01);
-        const dGate = Math.min(...a.exits.map((e) => Math.hypot(x - e.x, z - e.z)));
-        if (dGate < 4) gateTop = Math.max(gateTop, y);
-        if (dGate > 14) wallTop = Math.max(wallTop, y);
-      }
-      expect(gateTop, id).toBeLessThan(0.3);
-      expect(wallTop, id).toBeGreaterThan(5);
-      sane(g, `${id} の岩壁`);
-    }
-  });
-
-  it('埋まった岩: いちばん太い所が地面の高さにあり（当たりの半径の 1.06 倍）、上ほど細い。高さは 0〜1 で、地面の下は浅い', () => {
-    for (let seed = 1; seed <= 10; seed++) {
-      const g = boulderGeometry(new SeededRng(seed), { detail: 3, rough: 0.5, moss: 0.6, strata: 0.7, cuts: 4, bury: 0.35 + (seed % 5) * 0.05 });
-      const pos = g.getAttribute('position');
-      let top = -Infinity, low = Infinity, base = 0, upper = 0;
-      for (let i = 0; i < pos.count; i++) {
-        const y = pos.getY(i), r = Math.hypot(pos.getX(i), pos.getZ(i));
-        top = Math.max(top, y);
-        low = Math.min(low, y);
-        if (y >= -0.02 && y <= 0.2) base = Math.max(base, r);
-        if (y >= 0.6) upper = Math.max(upper, r);
-      }
-      expect(top, `seed ${seed}`).toBeCloseTo(1, 5);
-      expect(low, `seed ${seed}`).toBeGreaterThan(-0.15);
-      expect(base, `seed ${seed}`).toBeCloseTo(ROCK_REACH, 5);
-      expect(upper, `seed ${seed}`).toBeLessThan(base * 0.95);
-      sane(g, `埋まった岩 ${seed}`);
-    }
-  });
-
+describe('岩の棚（v0.20.0）', () => {
   it('岩の棚: 上の面は高さ h で上を向き、横の面は外を向く。見た目は、当たりの四角から 0.25m までしかはみ出さない', () => {
     const p = { minX: -6, maxX: 8, minZ: 2, maxZ: 12, h: 0.3 };
     const g = ledgeGeometry(new SeededRng(4), p, 6, 3);

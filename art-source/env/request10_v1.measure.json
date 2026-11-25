@@ -1,0 +1,1739 @@
+{
+ "rocks": [
+  {
+   "id": "R-01",
+   "file": "art-source/env/rocks/rock_r01_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 2.0,
+   "size": "S",
+   "faintAlpha": 16782,
+   "groundPx": [
+    593,
+    594
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    1,
+    0
+   ],
+   "frontWHm": [
+    1.71,
+    0.445
+   ],
+   "sideDHm": [
+    1.323,
+    0.453
+   ],
+   "topWDm": [
+    1.633,
+    1.138
+   ],
+   "diffPct": {
+    "width": 4.6,
+    "depth": 15.0,
+    "height": 1.8
+   },
+   "normalized": [
+    1.671,
+    1.231,
+    0.449
+   ],
+   "asked": [
+    1.7099,
+    1.1381,
+    0.4475
+   ],
+   "lumSd": 31.03,
+   "centreOffsetPct": [
+    4.4,
+    2.7,
+    -2.0
+   ],
+   "pass3view": false,
+   "footParts": 1
+  },
+  {
+   "id": "R-02",
+   "file": "art-source/env/rocks/rock_r02_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 2.0,
+   "size": "S",
+   "faintAlpha": 16246,
+   "groundPx": [
+    552,
+    552
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    0,
+    0
+   ],
+   "frontWHm": [
+    1.265,
+    0.191
+   ],
+   "sideDHm": [
+    1.006,
+    0.191
+   ],
+   "topWDm": [
+    1.309,
+    1.006
+   ],
+   "diffPct": {
+    "width": 3.4,
+    "depth": 0.0,
+    "height": 0.0
+   },
+   "normalized": [
+    1.287,
+    1.006,
+    0.191
+   ],
+   "asked": [
+    1.2652,
+    1.0055,
+    0.1906
+   ],
+   "lumSd": 28.26,
+   "centreOffsetPct": [
+    0.0,
+    0.1,
+    0.1
+   ],
+   "pass3view": true,
+   "footParts": 1
+  },
+  {
+   "id": "R-03",
+   "file": "art-source/env/rocks/rock_r03_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 2.0,
+   "size": "S",
+   "faintAlpha": 24787,
+   "groundPx": [
+    578,
+    578
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    1,
+    0
+   ],
+   "frontWHm": [
+    1.144,
+    0.544
+   ],
+   "sideDHm": [
+    0.942,
+    0.544
+   ],
+   "topWDm": [
+    1.044,
+    0.884
+   ],
+   "diffPct": {
+    "width": 9.1,
+    "depth": 6.4,
+    "height": 0.0
+   },
+   "normalized": [
+    1.094,
+    0.913,
+    0.544
+   ],
+   "asked": [
+    1.1436,
+    0.884,
+    0.547
+   ],
+   "lumSd": 28.43,
+   "centreOffsetPct": [
+    1.0,
+    0.8,
+    -0.4
+   ],
+   "pass3view": false,
+   "footParts": 1
+  },
+  {
+   "id": "R-04",
+   "file": "art-source/env/rocks/rock_r04_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 2.0,
+   "size": "S",
+   "faintAlpha": 231336,
+   "groundPx": [
+    586,
+    586
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    0,
+    0
+   ],
+   "frontWHm": [
+    1.144,
+    0.442
+   ],
+   "sideDHm": [
+    1.149,
+    0.439
+   ],
+   "topWDm": [
+    1.119,
+    1.014
+   ],
+   "diffPct": {
+    "width": 2.2,
+    "depth": 12.5,
+    "height": 0.6
+   },
+   "normalized": [
+    1.131,
+    1.081,
+    0.441
+   ],
+   "asked": [
+    1.1436,
+    1.0138,
+    0.442
+   ],
+   "lumSd": 26.3,
+   "centreOffsetPct": [
+    0.0,
+    0.0,
+    0.1
+   ],
+   "pass3view": false,
+   "footParts": 1
+  },
+  {
+   "id": "R-05",
+   "file": "art-source/env/rocks/rock_r05_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 4.0,
+   "size": "M",
+   "faintAlpha": 17794,
+   "groundPx": [
+    575,
+    575
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    0,
+    0
+   ],
+   "frontWHm": [
+    2.939,
+    1.0
+   ],
+   "sideDHm": [
+    2.271,
+    1.0
+   ],
+   "topWDm": [
+    2.724,
+    2.271
+   ],
+   "diffPct": {
+    "width": 7.6,
+    "depth": 0.0,
+    "height": 0.0
+   },
+   "normalized": [
+    2.831,
+    2.271,
+    1.0
+   ],
+   "asked": [
+    2.9392,
+    2.2707,
+    1.0
+   ],
+   "lumSd": 25.4,
+   "centreOffsetPct": [
+    1.0,
+    0.5,
+    -1.2
+   ],
+   "pass3view": true,
+   "footParts": 1
+  },
+  {
+   "id": "R-06",
+   "file": "art-source/env/rocks/rock_r06_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 4.0,
+   "size": "M",
+   "faintAlpha": 47435,
+   "groundPx": [
+    585,
+    585
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    0,
+    0
+   ],
+   "frontWHm": [
+    2.663,
+    1.425
+   ],
+   "sideDHm": [
+    2.133,
+    1.425
+   ],
+   "topWDm": [
+    2.409,
+    2.028
+   ],
+   "diffPct": {
+    "width": 10.0,
+    "depth": 5.0,
+    "height": 0.0
+   },
+   "normalized": [
+    2.536,
+    2.08,
+    1.425
+   ],
+   "asked": [
+    2.663,
+    2.0276,
+    1.4254
+   ],
+   "lumSd": 28.47,
+   "centreOffsetPct": [
+    2.2,
+    0.8,
+    -1.8
+   ],
+   "pass3view": false,
+   "footParts": 1
+  },
+  {
+   "id": "R-07",
+   "file": "art-source/env/rocks/rock_r07_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 4.0,
+   "size": "M",
+   "faintAlpha": 34107,
+   "groundPx": [
+    568,
+    568
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    0,
+    0
+   ],
+   "frontWHm": [
+    3.669,
+    0.492
+   ],
+   "sideDHm": [
+    2.829,
+    0.519
+   ],
+   "topWDm": [
+    3.481,
+    2.453
+   ],
+   "diffPct": {
+    "width": 5.3,
+    "depth": 14.2,
+    "height": 5.5
+   },
+   "normalized": [
+    3.575,
+    2.641,
+    0.506
+   ],
+   "asked": [
+    3.6685,
+    2.453,
+    0.4917
+   ],
+   "lumSd": 26.19,
+   "centreOffsetPct": [
+    0.6,
+    1.2,
+    -1.0
+   ],
+   "pass3view": false,
+   "footParts": 1
+  },
+  {
+   "id": "R-08",
+   "file": "art-source/env/rocks/rock_r08_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 4.0,
+   "size": "M",
+   "faintAlpha": 45422,
+   "groundPx": [
+    582,
+    581
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    0,
+    1
+   ],
+   "frontWHm": [
+    2.967,
+    1.293
+   ],
+   "sideDHm": [
+    2.464,
+    1.293
+   ],
+   "topWDm": [
+    2.856,
+    2.271
+   ],
+   "diffPct": {
+    "width": 3.8,
+    "depth": 8.2,
+    "height": 0.0
+   },
+   "normalized": [
+    2.912,
+    2.367,
+    1.293
+   ],
+   "asked": [
+    2.9669,
+    2.2707,
+    1.2928
+   ],
+   "lumSd": 31.91,
+   "centreOffsetPct": [
+    2.6,
+    1.7,
+    -0.2
+   ],
+   "pass3view": false,
+   "footParts": 1
+  },
+  {
+   "id": "R-09",
+   "file": "art-source/env/rocks/rock_r09_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 4.0,
+   "size": "M",
+   "faintAlpha": 28706,
+   "groundPx": [
+    577,
+    577
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    0,
+    0
+   ],
+   "frontWHm": [
+    3.193,
+    1.221
+   ],
+   "sideDHm": [
+    2.177,
+    1.227
+   ],
+   "topWDm": [
+    3.072,
+    2.138
+   ],
+   "diffPct": {
+    "width": 3.9,
+    "depth": 1.8,
+    "height": 0.5
+   },
+   "normalized": [
+    3.133,
+    2.157,
+    1.224
+   ],
+   "asked": [
+    3.1934,
+    2.1381,
+    1.221
+   ],
+   "lumSd": 30.11,
+   "centreOffsetPct": [
+    0.4,
+    0.1,
+    0.3
+   ],
+   "pass3view": true,
+   "footParts": 1
+  },
+  {
+   "id": "R-10",
+   "file": "art-source/env/rocks/rock_r10_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 4.0,
+   "size": "M",
+   "faintAlpha": 17743,
+   "groundPx": [
+    593,
+    593
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    0,
+    0
+   ],
+   "frontWHm": [
+    2.785,
+    1.674
+   ],
+   "sideDHm": [
+    1.32,
+    1.68
+   ],
+   "topWDm": [
+    2.613,
+    1.094
+   ],
+   "diffPct": {
+    "width": 6.3,
+    "depth": 18.8,
+    "height": 0.3
+   },
+   "normalized": [
+    2.699,
+    1.207,
+    1.677
+   ],
+   "asked": [
+    2.7845,
+    1.0939,
+    1.674
+   ],
+   "lumSd": 33.01,
+   "centreOffsetPct": [
+    1.2,
+    1.7,
+    0.9
+   ],
+   "pass3view": false,
+   "footParts": 1
+  },
+  {
+   "id": "R-11",
+   "file": "art-source/env/rocks/rock_r11_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 4.0,
+   "size": "M",
+   "faintAlpha": 38704,
+   "groundPx": [
+    574,
+    574
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    0,
+    0
+   ],
+   "frontWHm": [
+    2.934,
+    1.006
+   ],
+   "sideDHm": [
+    2.481,
+    1.039
+   ],
+   "topWDm": [
+    2.79,
+    2.276
+   ],
+   "diffPct": {
+    "width": 5.0,
+    "depth": 8.6,
+    "height": 3.2
+   },
+   "normalized": [
+    2.862,
+    2.378,
+    1.022
+   ],
+   "asked": [
+    2.9337,
+    2.2762,
+    1.0166
+   ],
+   "lumSd": 27.54,
+   "centreOffsetPct": [
+    0.2,
+    -0.2,
+    -0.9
+   ],
+   "pass3view": false,
+   "footParts": 1
+  },
+  {
+   "id": "R-12",
+   "file": "art-source/env/rocks/rock_r12_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 4.0,
+   "size": "M",
+   "faintAlpha": 15573,
+   "groundPx": [
+    574,
+    574
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    0,
+    0
+   ],
+   "frontWHm": [
+    2.873,
+    1.193
+   ],
+   "sideDHm": [
+    2.359,
+    1.193
+   ],
+   "topWDm": [
+    2.652,
+    2.011
+   ],
+   "diffPct": {
+    "width": 8.0,
+    "depth": 15.9,
+    "height": 0.0
+   },
+   "normalized": [
+    2.762,
+    2.185,
+    1.193
+   ],
+   "asked": [
+    2.8729,
+    2.011,
+    1.1934
+   ],
+   "lumSd": 30.5,
+   "centreOffsetPct": [
+    0.8,
+    1.0,
+    -0.6
+   ],
+   "pass3view": false,
+   "footParts": 1
+  },
+  {
+   "id": "R-13",
+   "file": "art-source/env/rocks/rock_r13_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 8.0,
+   "size": "L",
+   "faintAlpha": 16316,
+   "groundPx": [
+    579,
+    579
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    0,
+    0
+   ],
+   "frontWHm": [
+    7.072,
+    2.122
+   ],
+   "sideDHm": [
+    5.89,
+    2.122
+   ],
+   "topWDm": [
+    6.122,
+    5.127
+   ],
+   "diffPct": {
+    "width": 14.4,
+    "depth": 13.8,
+    "height": 0.0
+   },
+   "normalized": [
+    6.597,
+    5.508,
+    2.122
+   ],
+   "asked": [
+    7.0718,
+    5.1271,
+    2.1215
+   ],
+   "lumSd": 28.65,
+   "centreOffsetPct": [
+    0.8,
+    3.0,
+    -0.8
+   ],
+   "pass3view": false,
+   "footParts": 1
+  },
+  {
+   "id": "R-14",
+   "file": "art-source/env/rocks/rock_r14_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 8.0,
+   "size": "L",
+   "faintAlpha": 43931,
+   "groundPx": [
+    582,
+    582
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    0,
+    0
+   ],
+   "frontWHm": [
+    6.652,
+    3.061
+   ],
+   "sideDHm": [
+    6.11,
+    3.039
+   ],
+   "topWDm": [
+    6.033,
+    4.884
+   ],
+   "diffPct": {
+    "width": 9.8,
+    "depth": 22.3,
+    "height": 0.7
+   },
+   "normalized": [
+    6.343,
+    5.497,
+    3.05
+   ],
+   "asked": [
+    6.6519,
+    4.884,
+    3.0608
+   ],
+   "lumSd": 27.98,
+   "centreOffsetPct": [
+    0.4,
+    2.8,
+    -1.4
+   ],
+   "pass3view": false,
+   "footParts": 1
+  },
+  {
+   "id": "R-15",
+   "file": "art-source/env/rocks/rock_r15_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 8.0,
+   "size": "L",
+   "faintAlpha": 26938,
+   "groundPx": [
+    572,
+    572
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    1,
+    1
+   ],
+   "frontWHm": [
+    6.818,
+    2.884
+   ],
+   "sideDHm": [
+    4.243,
+    2.84
+   ],
+   "topWDm": [
+    6.906,
+    4.265
+   ],
+   "diffPct": {
+    "width": 1.3,
+    "depth": 0.5,
+    "height": 1.5
+   },
+   "normalized": [
+    6.862,
+    4.254,
+    2.862
+   ],
+   "asked": [
+    6.8177,
+    4.2652,
+    2.895
+   ],
+   "lumSd": 28.02,
+   "centreOffsetPct": [
+    -0.2,
+    0.1,
+    -0.2
+   ],
+   "pass3view": true,
+   "footParts": 1
+  },
+  {
+   "id": "R-16",
+   "file": "art-source/env/rocks/rock_r16_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 8.0,
+   "size": "L",
+   "faintAlpha": 26061,
+   "groundPx": [
+    568,
+    568
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    0,
+    0
+   ],
+   "frontWHm": [
+    2.552,
+    4.564
+   ],
+   "sideDHm": [
+    2.166,
+    4.564
+   ],
+   "topWDm": [
+    2.354,
+    2.32
+   ],
+   "diffPct": {
+    "width": 8.1,
+    "depth": 6.9,
+    "height": 0.0
+   },
+   "normalized": [
+    2.453,
+    2.243,
+    4.564
+   ],
+   "asked": [
+    2.5525,
+    2.3204,
+    4.5635
+   ],
+   "lumSd": 23.62,
+   "centreOffsetPct": [
+    1.2,
+    2.2,
+    -1.3
+   ],
+   "pass3view": false,
+   "footParts": 1
+  },
+  {
+   "id": "R-17",
+   "file": "art-source/env/rocks/rock_r17_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 8.0,
+   "size": "L",
+   "faintAlpha": 26502,
+   "groundPx": [
+    544,
+    544
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    1,
+    1
+   ],
+   "frontWHm": [
+    7.304,
+    0.818
+   ],
+   "sideDHm": [
+    5.503,
+    0.796
+   ],
+   "topWDm": [
+    7.083,
+    4.619
+   ],
+   "diffPct": {
+    "width": 3.1,
+    "depth": 17.5,
+    "height": 2.7
+   },
+   "normalized": [
+    7.193,
+    5.061,
+    0.807
+   ],
+   "asked": [
+    7.3039,
+    4.6188,
+    0.8287
+   ],
+   "lumSd": 25.57,
+   "centreOffsetPct": [
+    0.5,
+    0.7,
+    -0.2
+   ],
+   "pass3view": false,
+   "footParts": 1
+  },
+  {
+   "id": "R-18",
+   "file": "art-source/env/rocks/rock_r18_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 8.0,
+   "size": "L",
+   "faintAlpha": 53924,
+   "groundPx": [
+    578,
+    578
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    0,
+    0
+   ],
+   "frontWHm": [
+    6.166,
+    3.171
+   ],
+   "sideDHm": [
+    5.127,
+    3.16
+   ],
+   "topWDm": [
+    5.735,
+    4.63
+   ],
+   "diffPct": {
+    "width": 7.2,
+    "depth": 10.2,
+    "height": 0.3
+   },
+   "normalized": [
+    5.95,
+    4.878,
+    3.166
+   ],
+   "asked": [
+    6.1657,
+    4.6298,
+    3.1713
+   ],
+   "lumSd": 27.27,
+   "centreOffsetPct": [
+    2.1,
+    2.1,
+    -0.8
+   ],
+   "pass3view": false,
+   "footParts": 1
+  },
+  {
+   "id": "R-19",
+   "file": "art-source/env/rocks/rock_r19_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 8.0,
+   "size": "L",
+   "faintAlpha": 40362,
+   "groundPx": [
+    566,
+    566
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    0,
+    0
+   ],
+   "frontWHm": [
+    6.552,
+    2.663
+   ],
+   "sideDHm": [
+    5.381,
+    2.674
+   ],
+   "topWDm": [
+    6.155,
+    5.193
+   ],
+   "diffPct": {
+    "width": 6.3,
+    "depth": 3.6,
+    "height": 0.4
+   },
+   "normalized": [
+    6.354,
+    5.287,
+    2.669
+   ],
+   "asked": [
+    6.5525,
+    5.1934,
+    2.663
+   ],
+   "lumSd": 24.81,
+   "centreOffsetPct": [
+    1.7,
+    0.5,
+    0.3
+   ],
+   "pass3view": true,
+   "footParts": 1
+  },
+  {
+   "id": "R-20",
+   "file": "art-source/env/rocks/rock_r20_v1.png",
+   "px": [
+    2172,
+    724
+   ],
+   "cellPx": 724,
+   "cellM": 8.0,
+   "size": "L",
+   "faintAlpha": 29047,
+   "groundPx": [
+    570,
+    570
+   ],
+   "groundAsked": 543.0,
+   "belowGroundPx": [
+    0,
+    0
+   ],
+   "frontWHm": [
+    6.32,
+    2.862
+   ],
+   "sideDHm": [
+    5.116,
+    2.862
+   ],
+   "topWDm": [
+    5.746,
+    4.619
+   ],
+   "diffPct": {
+    "width": 9.5,
+    "depth": 10.2,
+    "height": 0.0
+   },
+   "normalized": [
+    6.033,
+    4.867,
+    2.862
+   ],
+   "asked": [
+    6.3204,
+    4.6188,
+    2.8619
+   ],
+   "lumSd": 33.3,
+   "centreOffsetPct": [
+    6.5,
+    1.5,
+    -3.2
+   ],
+   "pass3view": false,
+   "footParts": 1
+  }
+ ],
+ "cliffs": [
+  {
+   "id": "C-01",
+   "file": "art-source/env/cliffs/cliff_c01_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 16083,
+   "groundPx": 714,
+   "groundAsked": 704,
+   "belowGroundPx": 0,
+   "edgesM": [
+    4.688,
+    4.699
+   ],
+   "edgesAsked": [
+    4.5469,
+    4.5469
+   ],
+   "topMaxM": 5.672,
+   "lumSd": 24.29,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-02",
+   "file": "art-source/env/cliffs/cliff_c02_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 15974,
+   "groundPx": 710,
+   "groundAsked": 704,
+   "belowGroundPx": 1,
+   "edgesM": [
+    4.582,
+    4.57
+   ],
+   "edgesAsked": [
+    4.4883,
+    4.4883
+   ],
+   "topMaxM": 7.652,
+   "lumSd": 29.09,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-03",
+   "file": "art-source/env/cliffs/cliff_c03_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 34125,
+   "groundPx": 711,
+   "groundAsked": 704,
+   "belowGroundPx": 1,
+   "edgesM": [
+    4.629,
+    4.617
+   ],
+   "edgesAsked": [
+    4.5469,
+    4.5234
+   ],
+   "topMaxM": 5.695,
+   "lumSd": 28.09,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-04",
+   "file": "art-source/env/cliffs/cliff_c04_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 31003,
+   "groundPx": 711,
+   "groundAsked": 704,
+   "belowGroundPx": 1,
+   "edgesM": [
+    3.246,
+    3.246
+   ],
+   "edgesAsked": [
+    3.1523,
+    3.1523
+   ],
+   "topMaxM": 4.031,
+   "lumSd": 29.14,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-05",
+   "file": "art-source/env/cliffs/cliff_c05_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 41310,
+   "groundPx": 711,
+   "groundAsked": 704,
+   "belowGroundPx": 1,
+   "edgesM": [
+    4.617,
+    4.629
+   ],
+   "edgesAsked": [
+    4.5352,
+    4.5234
+   ],
+   "topMaxM": 6.75,
+   "lumSd": 26.65,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-06",
+   "file": "art-source/env/cliffs/cliff_c06_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 19915,
+   "groundPx": 714,
+   "groundAsked": 704,
+   "belowGroundPx": 1,
+   "edgesM": [
+    4.652,
+    4.652
+   ],
+   "edgesAsked": [
+    4.5234,
+    4.5234
+   ],
+   "topMaxM": 6.0,
+   "lumSd": 28.08,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-07",
+   "file": "art-source/env/cliffs/cliff_c07_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 13058,
+   "groundPx": 714,
+   "groundAsked": 704,
+   "belowGroundPx": 4,
+   "edgesM": [
+    4.465,
+    4.465
+   ],
+   "edgesAsked": [
+    4.3359,
+    4.3359
+   ],
+   "topMaxM": 5.859,
+   "lumSd": 27.94,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-08",
+   "file": "art-source/env/cliffs/cliff_c08_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 34606,
+   "groundPx": 713,
+   "groundAsked": 704,
+   "belowGroundPx": 0,
+   "edgesM": [
+    4.652,
+    4.652
+   ],
+   "edgesAsked": [
+    4.5352,
+    4.5234
+   ],
+   "topMaxM": 6.668,
+   "lumSd": 30.66,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-09",
+   "file": "art-source/env/cliffs/cliff_c09_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 33518,
+   "groundPx": 714,
+   "groundAsked": 704,
+   "belowGroundPx": 0,
+   "edgesM": [
+    4.664,
+    4.652
+   ],
+   "edgesAsked": [
+    4.5234,
+    4.5234
+   ],
+   "topMaxM": 5.871,
+   "lumSd": 27.93,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-10",
+   "file": "art-source/env/cliffs/cliff_c10_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 42803,
+   "groundPx": 712,
+   "groundAsked": 704,
+   "belowGroundPx": 0,
+   "edgesM": [
+    4.676,
+    4.676
+   ],
+   "edgesAsked": [
+    4.5703,
+    4.5469
+   ],
+   "topMaxM": 6.727,
+   "lumSd": 27.51,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-11",
+   "file": "art-source/env/cliffs/cliff_c11_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 29345,
+   "groundPx": 712,
+   "groundAsked": 704,
+   "belowGroundPx": 0,
+   "edgesM": [
+    4.652,
+    4.652
+   ],
+   "edgesAsked": [
+    4.5469,
+    4.5352
+   ],
+   "topMaxM": 5.648,
+   "lumSd": 26.06,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-12",
+   "file": "art-source/env/cliffs/cliff_c12_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 647899,
+   "groundPx": 722,
+   "groundAsked": 704,
+   "belowGroundPx": 1,
+   "edgesM": [
+    3.023,
+    3.023
+   ],
+   "edgesAsked": [
+    2.8008,
+    2.8008
+   ],
+   "topMaxM": 3.023,
+   "lumSd": 25.49,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-13",
+   "file": "art-source/env/cliffs/cliff_c13_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 21826,
+   "groundPx": 713,
+   "groundAsked": 704,
+   "belowGroundPx": 0,
+   "edgesM": [
+    4.652,
+    4.641
+   ],
+   "edgesAsked": [
+    4.5117,
+    4.5234
+   ],
+   "topMaxM": 5.836,
+   "lumSd": 27.24,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-14",
+   "file": "art-source/env/cliffs/cliff_c14_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 33360,
+   "groundPx": 713,
+   "groundAsked": 704,
+   "belowGroundPx": 4,
+   "edgesM": [
+    4.641,
+    4.629
+   ],
+   "edgesAsked": [
+    4.5117,
+    4.5
+   ],
+   "topMaxM": 6.949,
+   "lumSd": 25.0,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-15",
+   "file": "art-source/env/cliffs/cliff_c15_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 32574,
+   "groundPx": 713,
+   "groundAsked": 704,
+   "belowGroundPx": 0,
+   "edgesM": [
+    4.641,
+    4.617
+   ],
+   "edgesAsked": [
+    4.5,
+    4.5
+   ],
+   "topMaxM": 5.66,
+   "lumSd": 29.47,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-16",
+   "file": "art-source/env/cliffs/cliff_c16_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 14568,
+   "groundPx": 711,
+   "groundAsked": 704,
+   "belowGroundPx": 0,
+   "edgesM": [
+    4.623,
+    4.605
+   ],
+   "edgesAsked": [
+    4.4883,
+    4.4648
+   ],
+   "topMaxM": 8.145,
+   "lumSd": 24.53,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-17",
+   "file": "art-source/env/cliffs/cliff_c17_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 24315,
+   "groundPx": 711,
+   "groundAsked": 704,
+   "belowGroundPx": 4,
+   "edgesM": [
+    4.57,
+    4.57
+   ],
+   "edgesAsked": [
+    4.4648,
+    4.4648
+   ],
+   "topMaxM": 5.941,
+   "lumSd": 28.35,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-18",
+   "file": "art-source/env/cliffs/cliff_c18_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 28198,
+   "groundPx": 711,
+   "groundAsked": 704,
+   "belowGroundPx": 2,
+   "edgesM": [
+    3.053,
+    3.053
+   ],
+   "edgesAsked": [
+    2.9062,
+    2.918
+   ],
+   "topMaxM": 4.23,
+   "lumSd": 27.84,
+   "empty": null,
+   "edgesPass": true
+  },
+  {
+   "id": "C-19",
+   "file": "art-source/env/cliffs/cliff_c19_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 10278,
+   "groundPx": 713,
+   "groundAsked": 704,
+   "belowGroundPx": 0,
+   "edgesM": [
+    4.676,
+    0.0
+   ],
+   "edgesAsked": [
+    4.5703,
+    0.0
+   ],
+   "topMaxM": 4.699,
+   "lumSd": 28.97,
+   "empty": [
+    16.85,
+    24.0
+   ],
+   "edgesPass": true
+  },
+  {
+   "id": "C-20",
+   "file": "art-source/env/cliffs/cliff_c20_v1.png",
+   "px": [
+    2048,
+    768
+   ],
+   "faintAlpha": 12302,
+   "groundPx": 709,
+   "groundAsked": 704,
+   "belowGroundPx": 1,
+   "edgesM": [
+    0.0,
+    4.605
+   ],
+   "edgesAsked": [
+    0.0,
+    4.5234
+   ],
+   "topMaxM": 4.723,
+   "lumSd": 36.78,
+   "empty": [
+    0.0,
+    6.16
+   ],
+   "edgesPass": true
+  }
+ ],
+ "tiles": [
+  {
+   "id": "T-01",
+   "file": "art-source/env/tiles/tex_rock_t01_v2.png",
+   "px": [
+    1254,
+    1254
+   ],
+   "lumSd": 32.12,
+   "lumSdOut": 29.5,
+   "edgeDiff": 21.3,
+   "edgeDiffOut": 18.07,
+   "seamBefore": [
+    1.173,
+    1.239
+   ],
+   "seamAfter": [
+    1.057,
+    1.009
+   ]
+  },
+  {
+   "id": "T-02",
+   "file": "art-source/env/tiles/tex_rock_t02_v2.png",
+   "px": [
+    1254,
+    1254
+   ],
+   "lumSd": 21.26,
+   "lumSdOut": 19.47,
+   "edgeDiff": 13.92,
+   "edgeDiffOut": 11.75,
+   "seamBefore": [
+    0.89,
+    1.24
+   ],
+   "seamAfter": [
+    0.993,
+    1.197
+   ]
+  },
+  {
+   "id": "T-03",
+   "file": "art-source/env/tiles/tex_rock_t03_v2.png",
+   "px": [
+    1254,
+    1254
+   ],
+   "lumSd": 20.35,
+   "lumSdOut": 18.24,
+   "edgeDiff": 12.79,
+   "edgeDiffOut": 10.59,
+   "seamBefore": [
+    1.191,
+    1.122
+   ],
+   "seamAfter": [
+    0.977,
+    0.945
+   ]
+  },
+  {
+   "id": "T-04",
+   "file": "art-source/env/tiles/tex_rock_t04_v2.png",
+   "px": [
+    1254,
+    1254
+   ],
+   "lumSd": 25.66,
+   "lumSdOut": 23.57,
+   "edgeDiff": 17.06,
+   "edgeDiffOut": 14.26,
+   "seamBefore": [
+    1.042,
+    1.21
+   ],
+   "seamAfter": [
+    1.073,
+    1.047
+   ]
+  }
+ ],
+ "outputs": {
+  "rocks_atlas_v1": {
+   "px": [
+    2048,
+    2048
+   ],
+   "densityScale": 0.94,
+   "bytes": 1085088
+  },
+  "cliffs_atlas_v1": {
+   "px": [
+    2048,
+    3840
+   ],
+   "bytes": 1352696
+  },
+  "tex_rock_t01_v2": {
+   "px": [
+    512,
+    512
+   ],
+   "bytes": 101418
+  },
+  "tex_rock_t02_v2": {
+   "px": [
+    512,
+    512
+   ],
+   "bytes": 72292
+  },
+  "tex_rock_t03_v2": {
+   "px": [
+    512,
+    512
+   ],
+   "bytes": 79772
+  },
+  "tex_rock_t04_v2": {
+   "px": [
+    512,
+    512
+   ],
+   "bytes": 87776
+  }
+ }
+}

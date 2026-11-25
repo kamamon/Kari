@@ -37,11 +37,12 @@ SKY = np.array([0xC5, 0xD2, 0xCB], dtype=np.float32)
 FOG = np.array([0xAE, 0xBC, 0xAB], dtype=np.float32)
 
 FAR = {'basin': ['env_basin_far_a_v1', 'env_basin_far_b_v1'], 'village': ['env_village_far_a_v1', 'env_village_far_b_v1']}
-BLEND = ['tex_ground_basin_grass_v1', 'tex_ground_basin_gravel_v1', 'tex_ground_nest_v1', 'tex_ground_village_earth_v1', 'tex_rock_basin_v1']
-MIRROR = ['tex_ground_village_paving_v1', 'tex_rock_vein_v1']
+# 岩の 2 枚（tex_rock_basin_v1・tex_rock_vein_v1）は、v0.22.0 から使わない（依頼 10 の岩肌に替えた。tools/rock-art.py）。元の絵は art-source/env/ に残す
+BLEND = ['tex_ground_basin_grass_v1', 'tex_ground_basin_gravel_v1', 'tex_ground_nest_v1', 'tex_ground_village_earth_v1']
+MIRROR = ['tex_ground_village_paving_v1']
 SPRITES = ['sprite_grass_basin_v1', 'sprite_props_basin_v1']
 # 岩の絵の濃淡を強める倍（細かな濃淡, 大きな濃淡）。境目は、繰り返し方（つなぐ・鏡写し）に合わせて扱う
-ROCK_DETAIL = {'tex_rock_basin_v1': (3.0, 1.8), 'tex_rock_vein_v1': (2.4, 1.5),
+ROCK_DETAIL = {
                # 地面も少しだけ（強くすると、6m ごとの繰り返しが目に付く）
                'tex_ground_basin_grass_v1': (1.7, 1.0), 'tex_ground_basin_gravel_v1': (1.5, 1.0), 'tex_ground_nest_v1': (1.5, 1.0)}
 BUILDINGS = ['bld_workshop_v1', 'bld_shop_v1', 'bld_board_v1', 'bld_chest_v1']
