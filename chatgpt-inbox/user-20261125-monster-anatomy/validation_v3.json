@@ -1,0 +1,21 @@
+{
+  "source_commit": "1e078bfce1e68f287ae577cf41d2fe5bafb94afa",
+  "node_version": "v24.22.3",
+  "npm_ci": "pass (50 packages)",
+  "build": "pass (existing large-chunk warning)",
+  "tests": {
+    "command": "npm exec vitest run tests/creature-motion.test.ts tests/follow.test.ts",
+    "files": 2,
+    "passed": 15,
+    "bake_enabled": false
+  },
+  "new_runtime_models": "not_created",
+  "new_rig_deformation": "not_verified",
+  "iphone_performance": "not_verified",
+  "gameplay_visual_review": "not_performed_in_this_submission",
+  "write_scope": "chatgpt-inbox/user-20261125-monster-anatomy only",
+  "design_nodes": 79,
+  "technical_figures": 7,
+  "species": 86,
+  "pdf_pages": 43
+}
