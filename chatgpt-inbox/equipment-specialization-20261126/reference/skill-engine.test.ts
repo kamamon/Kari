@@ -95,13 +95,20 @@ test('Non-attack effects expire immediately even if an old action snapshot remai
 });
 test('2+2 mixed sets, rank mixing, 4-piece Lv2; duplicates/unknown/unowned do not create skills', () => {
   const slots = ['head', 'chest', 'arms', 'waist', 'legs'];
-  const records = new Map<string, ArmorRecord>(slots.map((slot, i) => [`a${i}`, {id: `a${i}`, slot, defense: i + 1, seriesId: i < 2 ? 'series.a' : i < 4 ? 'series.b' : 'series.c', skill: {id: 'guard_economy'}}]));
+  const records = new Map<string, ArmorRecord>(slots.map((slot, i) => [`a${i}`, {id: `a${i}`, slot, defense: i + 1, seriesId: i < 2 ? 'series.a' : i < 4 ? 'series.b' : 'series.c', signatureId: i < 2 ? 'signature.a' : i < 4 ? 'signature.b' : 'signature.c', skill: {id: 'guard_economy'}}]));
   const owned = new Set(records.keys());
   const mix = collectLoadout(['a0','a1','a2','a3','a4','a0','unknown'], owned, records);
-  assert.deepEqual(mix.signatures, {'series.a': 1, 'series.b': 1}); assert.equal(mix.levels.guard_economy, 3);
-  records.get('a2')!.seriesId = 'series.a'; records.get('a3')!.seriesId = 'series.a';
-  assert.deepEqual(collectLoadout([...owned], owned, records).signatures, {'series.a': 2});
-  owned.delete('a3'); assert.deepEqual(collectLoadout([...records.keys()], owned, records).signatures, {'series.a': 1});
+  assert.deepEqual(mix.signatures, {'signature.a': 1, 'signature.b': 1}); assert.equal(mix.levels.guard_economy, 3);
+  for (const id of ['a2', 'a3']) {records.get(id)!.seriesId = 'series.a'; records.get(id)!.signatureId = 'signature.a';}
+  assert.deepEqual(collectLoadout([...owned], owned, records).signatures, {'signature.a': 2});
+  owned.delete('a3'); assert.deepEqual(collectLoadout([...records.keys()], owned, records).signatures, {'signature.a': 1});
+});
+test('Gathering armor grants common skills without inventing a monster signature', () => {
+  const records = new Map<string, ArmorRecord>(['head','chest','arms','waist','legs'].map((slot, i) => [`g${i}`, {id: `g${i}`, slot, defense: 5, seriesId: 'gathering.woven_grass', skill: {id: 'gather_haste'}}]));
+  const result = collectLoadout([...records.keys()], new Set(records.keys()), records);
+  assert.deepEqual(result.signatures, {}); assert.equal(result.levels.gather_haste, 3); assert.equal(result.pieces.length, 5);
+  for (const id of ['g0','g1']) {records.get(id)!.seriesId = 'series.galdros'; records.get(id)!.signatureId = 'signature.galdros';}
+  assert.deepEqual(collectLoadout([...records.keys()], new Set(records.keys()), records).signatures, {'signature.galdros': 1});
 });
 test('Common resist parameters stay separate and values never exceed Lv3', () => {
   const c = commonEffects({guard_economy: 10, 'element_resistance:fire': 2, 'element_resistance:ice': 1, 'status_resistance:para': 3, weak_crit: 1});

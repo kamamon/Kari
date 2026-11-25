@@ -156,7 +156,7 @@ export function canonicalEvent(e: SkillEvent, proof: EventProof = {}): SkillEven
 }
 
 export interface CommonSkill {id: string; parameters?: {element?: string; status?: string}}
-export interface ArmorRecord {id: string; slot: string; defense: number; seriesId: string; skill: CommonSkill}
+export interface ArmorRecord {id: string; slot: string; defense: number; seriesId: string; signatureId?: string; skill: CommonSkill}
 export function skillKey(s: CommonSkill): string {return [s.id, s.parameters?.element ?? s.parameters?.status].filter(Boolean).join(':');}
 export function collectLoadout(ids: string[], owned: Set<string>, records: Map<string, ArmorRecord>): {pieces: ArmorRecord[]; levels: Record<string, number>; signatures: Record<string, 1 | 2>} {
   const bySlot = new Map<string, ArmorRecord>();
@@ -169,7 +169,8 @@ export function collectLoadout(ids: string[], owned: Set<string>, records: Map<s
   const pieces = [...bySlot.values()].sort((a, b) => a.slot.localeCompare(b.slot));
   for (const a of pieces) {
     const k = skillKey(a.skill); levels[k] = Math.min(3, (levels[k] ?? 0) + 1);
-    counts[a.seriesId] = (counts[a.seriesId] ?? 0) + 1;
+    // Gathering/legacy armor has common skills but no monster signature.
+    if (a.signatureId) counts[a.signatureId] = (counts[a.signatureId] ?? 0) + 1;
   }
   const signatures: Record<string, 1 | 2> = {};
   for (const [id, count] of Object.entries(counts)) if (count >= 2) signatures[id] = count >= 4 ? 2 : 1;
