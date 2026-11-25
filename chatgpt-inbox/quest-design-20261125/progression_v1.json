@@ -1,0 +1,109 @@
+{
+  "artifactType": "future-progression-proposal",
+  "schemaVersion": 1,
+  "status": "not-implemented",
+  "baselineCommit": "9a5443ab1ac813512deac03422ee996f57f8a900",
+  "existingQuestPolicy": "preserve-all-existing-requires-and-clears",
+  "initialGroup": "new_free_initial",
+  "rules": [
+    {
+      "groupId": "new_free_mid",
+      "appliesTo": "new_quests_only",
+      "requiresContentReady": true,
+      "alternativeRouteMinimumReadyCandidates": 3,
+      "expression": {
+        "any": [
+          {
+            "questCleared": "quest.story.st04"
+          },
+          {
+            "all": [
+              {
+                "uniqueQuestClearsAtLeast": {
+                  "count": 2,
+                  "candidates": [
+                    "quest.basin.003",
+                    "quest.selvark.r1",
+                    "quest.numeradon.r1",
+                    "quest.orglass.r1",
+                    "quest.lumisca.r1"
+                  ]
+                }
+              },
+              {
+                "questCleared": "quest.basin.r2.001"
+              }
+            ]
+          }
+        ]
+      },
+      "note": "既存24件は対象外。主線にも重ねない。候補はその許可なしに受注できる下位帯。選択式は現行requires未対応。"
+    },
+    {
+      "groupId": "new_free_high",
+      "appliesTo": "new_quests_only",
+      "requiresContentReady": true,
+      "alternativeRouteMinimumReadyCandidates": 3,
+      "expression": {
+        "any": [
+          {
+            "questCleared": "quest.story.st08"
+          },
+          {
+            "all": [
+              {
+                "uniqueQuestClearsAtLeast": {
+                  "count": 2,
+                  "candidates": [
+                    "quest.design.hasdren.first",
+                    "quest.design.ivselam.first",
+                    "quest.design.domelkano.first",
+                    "quest.design.ulnaset.first",
+                    "quest.design.nufraken.first"
+                  ]
+                }
+              },
+              {
+                "questCleared": "quest.basin.r3.001"
+              }
+            ]
+          }
+        ]
+      },
+      "note": "既存24件は対象外。主線にも重ねない。候補はその許可なしに受注できる下位帯。選択式は現行requires未対応。"
+    },
+    {
+      "groupId": "new_free_extreme",
+      "appliesTo": "new_quests_only",
+      "requiresContentReady": true,
+      "alternativeRouteMinimumReadyCandidates": 3,
+      "expression": {
+        "any": [
+          {
+            "questCleared": "quest.story.st13"
+          },
+          {
+            "all": [
+              {
+                "uniqueQuestClearsAtLeast": {
+                  "count": 2,
+                  "candidates": [
+                    "quest.design.ryuzelka.first",
+                    "quest.design.mordine.first",
+                    "quest.design.elmejika.first",
+                    "quest.design.azelnoto.first",
+                    "quest.design.zedbanil.first"
+                  ]
+                }
+              },
+              {
+                "questCleared": "quest.basin.r4.001"
+              }
+            ]
+          }
+        ]
+      },
+      "note": "既存24件は対象外。主線にも重ねない。候補はその許可なしに受注できる下位帯。選択式は現行requires未対応。"
+    }
+  ]
+}
