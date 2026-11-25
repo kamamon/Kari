@@ -217,7 +217,7 @@ describe('大型の移動', () => {
       expect(only(evs, 'monster_leave').length).toBe(1);
       expect(only(run(new Simulation(content, baseOptions({ questId: Q, field: true, seed })), lo - 5), 'monster_leave')).toEqual([]);
     }
-  });
+  }, 30_000); // Actions では 5 秒を超えることがある（v0.39.0 の公開で 5.2 秒。手元は 2〜3 秒）
 
   it('しばらく居た後、次のエリアへ歩いて移る。順番は決まっている（3 → 7 → 4 → 2 → 3）', () => {
     const sim = fieldSim();
@@ -229,7 +229,7 @@ describe('大型の移動', () => {
     expect(leaves[0]).toMatchObject({ from: 'a3', to: 'a7' });
     expect(m.hp).toBe(m.def.hp);
     expect(m.asleep).toBe(false);
-  });
+  }, 30_000); // Actions では 5 秒を超えることがある（v0.39.0 の公開で 5.2 秒。手元は 2〜3 秒）
 
   it('出口へ歩く間も、着いた後も、エリアの外へ出ない。着く場所は、大型用の場所', () => {
     const sim = fieldSim();
@@ -250,7 +250,7 @@ describe('大型の移動', () => {
       }
     }
     expect(arrived).toBeGreaterThanOrEqual(3);
-  });
+  }, 30_000); // Actions では 5 秒を超えることがある（v0.39.0 の公開で 5.2 秒。手元は 2〜3 秒）
 
   it('長く動かしても、どこかに引っかかって止まらない（seed を変えて 40 分ずつ。出口へ歩く時間は 1 分以内）', () => {
     for (const seed of [11, 22, 33, 44]) {

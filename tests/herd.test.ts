@@ -491,7 +491,7 @@ describe('フィールドの群れ', () => {
     }
     const ma = a.monsters[0]!, mb = b.monsters[0]!;
     expect([ma.pos.x, ma.pos.z, ma.roam!.areaId, a.rng.state]).toEqual([mb.pos.x, mb.pos.z, mb.roam!.areaId, b.rng.state]);
-  });
+  }, 30_000); // Actions では手元の 2 倍ほどかかる（v0.39.0 の公開で 2.8 秒）
 
   it('時々、群れごと住みかの別のエリアへ移る（出口を歩いて通る）', () => {
     const sim = new Simulation(content, baseOptions({ questId: Q, field: true }));
