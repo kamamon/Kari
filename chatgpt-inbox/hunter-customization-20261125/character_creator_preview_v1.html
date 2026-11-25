@@ -1,0 +1,427 @@
+<div id="kari-creator-preview-v1" class="viz-dotted-background">
+  <style>
+    #kari-creator-preview-v1 { --kc-paper:light-dark(#f6f3e9,#202821); --kc-panel:light-dark(#fffdf7,#2b342c); --kc-ink:light-dark(#2e3b30,#e8eedf); --kc-muted:light-dark(#637060,#b0bca9); --kc-line:light-dark(#d2d6c7,#4a594a); --kc-green:light-dark(#4f6249,#c3d2b5); --kc-on-green:light-dark(#fffdf7,#263223); --kc-soft:light-dark(#e8ecdf,#374534); --kc-bronze:light-dark(#927442,#c6ad7b); --kc-stage:light-dark(#e6e5d9,#353e34); --kc-mantle:light-dark(#6b7256,#858c6a); --kc-shirt:light-dark(#d9cfb9,#d4c9ad); --kc-leather:light-dark(#6d4d35,#79563c); --kc-boot:light-dark(#4d3b2c,#654a34); --kc-figure-line:light-dark(#584b37,#c3b59a); color:var(--kc-ink); font:400 14px/1.55 system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; }
+    #kari-creator-preview-v1 * { box-sizing:border-box; }
+    #kari-creator-preview-v1 [hidden] { display:none !important; }
+    #kari-creator-preview-v1 .kc-app { background:var(--kc-paper); border:1px solid var(--kc-line); border-radius:16px; overflow:hidden; max-width:820px; margin:auto; }
+    #kari-creator-preview-v1 .kc-head { padding:18px 18px 13px; padding-right:100px; border-bottom:1px solid var(--kc-line); }
+    #kari-creator-preview-v1 h2 { font:500 22px/1.35 system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; margin:0; letter-spacing:.04em; }
+    #kari-creator-preview-v1 h3 { font:500 15px/1.5 system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; margin:0; }
+    #kari-creator-preview-v1 p { margin:0; }
+    #kari-creator-preview-v1 .kc-eyebrow { color:var(--kc-muted); font-size:11px; letter-spacing:.13em; margin-bottom:4px; }
+    #kari-creator-preview-v1 .kc-label { display:inline-block; color:var(--kc-muted); font-size:12px; margin-top:5px; }
+    #kari-creator-preview-v1 .kc-main { display:grid; grid-template-columns:minmax(205px,.83fr) minmax(0,1.17fr); gap:0; }
+    #kari-creator-preview-v1 .kc-stage { padding:14px; border-right:1px solid var(--kc-line); background:var(--kc-stage); display:flex; flex-direction:column; align-items:stretch; }
+    #kari-creator-preview-v1 .kc-stage-top { display:flex; flex-wrap:wrap; gap:6px; justify-content:space-between; align-items:center; }
+    #kari-creator-preview-v1 .kc-caption { color:var(--kc-muted); font-size:12px; }
+    #kari-creator-preview-v1 .kc-view-name { font-weight:500; font-size:12px; }
+    #kari-creator-preview-v1 .kc-portrait { display:block; width:100%; height:350px; flex:none; color:var(--kc-figure-line); }
+    #kari-creator-preview-v1 .kc-summary { font-size:12px; text-align:center; min-height:38px; }
+    #kari-creator-preview-v1 .kc-compare { display:flex; gap:6px; justify-content:center; margin:8px 0 0; }
+    #kari-creator-preview-v1 button,#kari-creator-preview-v1 select,#kari-creator-preview-v1 input { font:inherit; }
+    #kari-creator-preview-v1 button { min-height:38px; background:var(--kc-panel); color:var(--kc-ink); border:1px solid var(--kc-line); border-radius:7px; padding:7px 11px; font-size:13px; line-height:1.35; }
+    #kari-creator-preview-v1 button[aria-pressed="true"],#kari-creator-preview-v1 button[aria-selected="true"] { background:var(--kc-green); border-color:var(--kc-green); color:var(--kc-on-green); }
+    #kari-creator-preview-v1 button:disabled { opacity:.42; }
+    #kari-creator-preview-v1 .kc-primary { background:var(--kc-green); border-color:var(--kc-green); color:var(--kc-on-green); }
+    #kari-creator-preview-v1 .kc-controls { min-width:0; padding:14px; background:var(--kc-panel); }
+    #kari-creator-preview-v1 .kc-tabs { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px; margin-bottom:13px; }
+    #kari-creator-preview-v1 .kc-tabs button { padding:8px 4px; }
+    #kari-creator-preview-v1 .kc-section-head { display:flex; flex-wrap:wrap; gap:6px; justify-content:space-between; align-items:center; margin:0 0 10px; }
+    #kari-creator-preview-v1 .kc-field-note { color:var(--kc-muted); font-size:12px; margin:7px 0 10px; }
+    #kari-creator-preview-v1 .kc-presets { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+    #kari-creator-preview-v1 .kc-presets button { text-align:left; min-height:54px; padding:9px; }
+    #kari-creator-preview-v1 .kc-presets button small { display:block; font-size:11px; margin-top:3px; opacity:.9; }
+    #kari-creator-preview-v1 .kc-swatches { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:5px; }
+    #kari-creator-preview-v1 .kc-swatch { display:flex; flex-direction:column; align-items:center; gap:3px; padding:4px 2px; min-height:47px; font-size:11px; }
+    #kari-creator-preview-v1 .kc-swatch span { display:block; width:23px; height:22px; border-radius:4px; background:var(--kc-swatch); border:1px solid color-mix(in srgb,var(--kc-ink) 18%,transparent); }
+    #kari-creator-preview-v1 .kc-swatch[aria-pressed="true"] span { outline:2px solid var(--kc-on-green); outline-offset:1px; }
+    #kari-creator-preview-v1 select { width:100%; min-height:43px; color:var(--kc-ink); background:var(--kc-paper); border:1px solid var(--kc-line); border-radius:6px; padding:8px 9px; font-size:16px; }
+    #kari-creator-preview-v1 .kc-select-label { display:block; margin-bottom:6px; font-weight:500; }
+    #kari-creator-preview-v1 .kc-color-heading { margin-top:14px; }
+    #kari-creator-preview-v1 .kc-body-presets { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; margin-bottom:13px; }
+    #kari-creator-preview-v1 .kc-range-head { display:flex; justify-content:space-between; align-items:center; margin:10px 0 4px; }
+    #kari-creator-preview-v1 .kc-number { font-variant-numeric:tabular-nums; color:var(--kc-muted); }
+    #kari-creator-preview-v1 input[type="range"] { display:block; width:100%; margin:0; min-height:28px; accent-color:var(--kc-green); }
+    #kari-creator-preview-v1 .kc-range-limits { display:flex; justify-content:space-between; font-size:11px; color:var(--kc-muted); }
+    #kari-creator-preview-v1 .kc-random { margin-top:15px; padding-top:12px; border-top:1px solid var(--kc-line); }
+    #kari-creator-preview-v1 .kc-locks { display:flex; flex-wrap:wrap; gap:6px 12px; margin:6px 0 9px; }
+    #kari-creator-preview-v1 .kc-locks label { display:flex; align-items:center; gap:5px; min-height:30px; font-size:12px; }
+    #kari-creator-preview-v1 input[type="checkbox"] { accent-color:var(--kc-green); width:17px; height:17px; margin:0; }
+    #kari-creator-preview-v1 .kc-random button { width:100%; }
+    #kari-creator-preview-v1 .kc-history { display:flex; flex-wrap:wrap; gap:6px; padding:12px 14px; border-top:1px solid var(--kc-line); }
+    #kari-creator-preview-v1 .kc-history button { font-size:12px; }
+    #kari-creator-preview-v1 .kc-history .kc-reset { margin-left:auto; }
+    #kari-creator-preview-v1 .kc-bottom { border-top:1px solid var(--kc-line); padding:12px 14px 14px; }
+    #kari-creator-preview-v1 .kc-status { min-height:20px; color:var(--kc-muted); font-size:12px; margin-bottom:9px; }
+    #kari-creator-preview-v1 .kc-bottom-actions { display:flex; gap:8px; justify-content:flex-end; }
+    #kari-creator-preview-v1 .kc-bottom-actions button { min-width:100px; }
+    #kari-creator-preview-v1 .kc-footnote { color:var(--kc-muted); font-size:11px; margin-top:11px; }
+    #kari-creator-preview-v1 .kc-confirm { padding:15px; background:var(--kc-panel); min-width:0; }
+    #kari-creator-preview-v1 .kc-confirm h3 { font-size:17px; margin-bottom:8px; }
+    #kari-creator-preview-v1 .kc-confirm dl { margin:14px 0; }
+    #kari-creator-preview-v1 .kc-confirm dl > div { display:grid; grid-template-columns:43px minmax(0,1fr); gap:8px; padding:7px 0; border-bottom:1px solid var(--kc-line); }
+    #kari-creator-preview-v1 .kc-confirm dt { color:var(--kc-muted); font-size:12px; }
+    #kari-creator-preview-v1 .kc-confirm dd { margin:0; font-size:13px; overflow-wrap:anywhere; }
+    #kari-creator-preview-v1 .kc-confirm-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:15px; }
+    #kari-creator-preview-v1 .kc-confirm .kc-field-note { margin:6px 0; }
+    @media(max-width:540px) {
+      #kari-creator-preview-v1 .kc-main { grid-template-columns:1fr; }
+      #kari-creator-preview-v1 .kc-stage { border-right:none; border-bottom:1px solid var(--kc-line); padding:12px 14px; }
+      #kari-creator-preview-v1 .kc-portrait { height:265px; }
+      #kari-creator-preview-v1 .kc-summary { min-height:0; }
+      #kari-creator-preview-v1 .kc-controls { padding:12px; }
+      #kari-creator-preview-v1 .kc-head { padding:14px 98px 11px 14px; }
+      #kari-creator-preview-v1 h2 { font-size:20px; }
+      #kari-creator-preview-v1 .kc-history .kc-reset { margin-left:0; flex-basis:100%; }
+      #kari-creator-preview-v1 .kc-history button { flex:1; }
+    }
+    @media(pointer:coarse) {
+      #kari-creator-preview-v1 button { min-height:44px; }
+      #kari-creator-preview-v1 .kc-locks label { min-height:44px; }
+      #kari-creator-preview-v1 input[type="range"] { min-height:44px; }
+    }
+  </style>
+  <section class="kc-app" aria-label="キャラメイクの操作見本">
+    <header class="kc-head">
+      <p class="kc-eyebrow">VEILBOUND HUNTERS</p>
+      <h2>狩人の身支度</h2>
+      <span class="kc-label">操作見本</span>
+    </header>
+    <div class="kc-main">
+      <section class="kc-stage" aria-label="外見の簡易表示">
+        <div class="kc-stage-top"><span class="kc-caption">簡易プレビュー</span><span class="kc-view-name" data-view-name>現在</span></div>
+        <svg class="kc-portrait" viewBox="0 0 260 400" role="img" aria-labelledby="kc-figure-title kc-figure-desc">
+          <title id="kc-figure-title">現在の狩人の簡易輪郭</title>
+          <desc id="kc-figure-desc">肌、髪、体型の選択に合わせて変わる2D表示。完成3Dモデルではありません。</desc>
+          <ellipse cx="130" cy="381" rx="60" ry="6" fill="currentColor" opacity=".12"></ellipse>
+          <g data-hair-back fill="#603e2a"><path d="M102 58 Q99 28 131 28 Q163 32 160 70 L153 91 L105 89Z"></path></g>
+          <path data-legs d="M99 226 L125 225 L127 298 L123 352 L99 352 L95 298Z M135 225 L162 226 L166 298 L160 352 L136 352 L132 298Z" fill="var(--kc-leather)"></path>
+          <path data-left-arm d="M89 119 Q73 124 70 151 L63 204 L70 229 L83 229 L91 202 L99 149Z" fill="var(--kc-shirt)" stroke="var(--kc-figure-line)" stroke-width=".7"></path>
+          <path data-right-arm d="M171 119 Q187 124 190 151 L197 204 L190 229 L177 229 L169 202 L161 149Z" fill="var(--kc-shirt)" stroke="var(--kc-figure-line)" stroke-width=".7"></path>
+          <path d="M64 207 L83 210 L80 239 L66 238Z M177 210 L196 207 L194 238 L180 239Z" fill="var(--kc-leather)"></path>
+          <path data-skin d="M67 236 Q62 242 65 253 L69 261 Q73 265 78 261 L81 245 L80 238Z M180 238 L179 245 L182 261 Q187 265 191 261 L195 253 Q198 242 193 236Z" fill="#d1a084"></path>
+          <path data-torso d="M97 113 Q130 102 163 113 L169 165 Q163 194 161 227 Q130 238 99 227 Q97 194 91 165Z" fill="var(--kc-shirt)" stroke="var(--kc-figure-line)" stroke-width=".8"></path>
+          <path data-skin d="M117 83 L117 113 Q130 126 143 113 L143 83Z" fill="#d1a084"></path>
+          <path data-mantle d="M116 107 L95 111 Q83 115 76 140 L107 154 L117 125 L130 138 L143 125 L153 154 L184 140 Q177 115 165 111 L144 107 L144 115 Q130 128 116 115Z" fill="var(--kc-mantle)" stroke="var(--kc-figure-line)" stroke-width=".7"></path>
+          <path data-straps d="M104 128 L159 195 L153 202 L99 134Z M154 128 L101 194 L107 202 L160 134Z" fill="var(--kc-leather)"></path>
+          <circle cx="108" cy="128" r="5" fill="var(--kc-bronze)" stroke="var(--kc-figure-line)" stroke-width="1"></circle>
+          <circle cx="152" cy="128" r="5" fill="var(--kc-bronze)" stroke="var(--kc-figure-line)" stroke-width="1"></circle>
+          <path data-belt d="M98 198 Q130 205 162 198 L163 211 Q130 219 97 211Z" fill="var(--kc-leather)"></path>
+          <rect x="123" y="202" width="14" height="10" rx="2" fill="none" stroke="var(--kc-bronze)" stroke-width="2"></rect>
+          <path data-apron d="M111 215 L149 215 L154 269 L131 278 L109 269Z" fill="var(--kc-mantle)" stroke="var(--kc-bronze)" stroke-width="1"></path>
+          <path data-pouch d="M92 213 L113 213 L114 239 Q102 245 89 239Z" fill="var(--kc-leather)" stroke="var(--kc-figure-line)" stroke-width="1"></path>
+          <path data-pouch-flap d="M91 214 L113 214 L112 225 L91 225Z" fill="var(--kc-leather)" stroke="var(--kc-bronze)" stroke-width="1"></path>
+          <path data-boots d="M97 329 L125 329 L124 365 L128 374 L92 374 L94 362Z M135 329 L163 329 L166 362 L168 374 L132 374 L136 365Z" fill="var(--kc-boot)" stroke="var(--kc-figure-line)" stroke-width=".8"></path>
+          <path d="M95 337 L124 337 M136 337 L164 337 M94 365 L124 365 M136 365 L166 365" fill="none" stroke="var(--kc-bronze)" stroke-width="2"></path>
+          <ellipse data-skin cx="102" cy="67" rx="5" ry="9" fill="#d1a084"></ellipse>
+          <ellipse data-skin cx="158" cy="67" rx="5" ry="9" fill="#d1a084"></ellipse>
+          <path data-face data-skin d="M103 48 Q130 24 157 48 L155 76 Q147 96 130 100 Q113 96 105 76Z" fill="#d1a084"></path>
+          <path d="M111 61 Q117 58 122 61 M138 61 Q144 58 149 61" fill="none" stroke="#3c3027" stroke-width="2" stroke-linecap="round"></path>
+          <ellipse cx="117" cy="66" rx="4" ry="2.8" fill="#ede5d5"></ellipse><ellipse cx="143" cy="66" rx="4" ry="2.8" fill="#ede5d5"></ellipse>
+          <ellipse cx="117" cy="66" rx="2" ry="2.4" fill="#312a24"></ellipse><ellipse cx="143" cy="66" rx="2" ry="2.4" fill="#312a24"></ellipse>
+          <path d="M130 67 L127 78 L132 79 M122 87 Q130 89 138 87" fill="none" stroke="#594235" stroke-width="1.2" stroke-linecap="round" opacity=".7"></path>
+          <g data-hair-front fill="#603e2a"><path d="M101 60 Q99 29 132 28 Q165 30 160 64 L151 51 Q140 47 135 37 Q130 52 112 54 L106 65Z"></path></g>
+        </svg>
+        <p class="kc-summary" data-summary></p>
+        <div class="kc-compare" aria-label="編集前と現在を比較">
+          <button type="button" class="cursor-interaction" data-compare="before" aria-pressed="false">編集前</button>
+          <button type="button" class="cursor-interaction" data-compare="current" aria-pressed="true">現在</button>
+        </div>
+      </section>
+      <section class="kc-controls" data-editor aria-label="外見を編集">
+        <div class="kc-tabs" role="tablist" aria-label="編集項目">
+          <button type="button" class="cursor-interaction" id="kc-tab-preset" role="tab" aria-controls="kc-panel-preset" aria-selected="true" data-tab="preset">見本</button>
+          <button type="button" class="cursor-interaction" id="kc-tab-skin" role="tab" aria-controls="kc-panel-skin" aria-selected="false" data-tab="skin">肌</button>
+          <button type="button" class="cursor-interaction" id="kc-tab-hair" role="tab" aria-controls="kc-panel-hair" aria-selected="false" data-tab="hair">髪</button>
+          <button type="button" class="cursor-interaction" id="kc-tab-body" role="tab" aria-controls="kc-panel-body" aria-selected="false" data-tab="body">体型</button>
+        </div>
+        <div id="kc-panel-preset" role="tabpanel" aria-labelledby="kc-tab-preset">
+          <div class="kc-section-head"><h3>見本から始める</h3></div>
+          <div class="kc-presets" data-presets></div>
+          <p class="kc-field-note">見本にかかわらず、肌・髪・体型は自由に選べます。</p>
+        </div>
+        <div id="kc-panel-skin" role="tabpanel" aria-labelledby="kc-tab-skin" hidden>
+          <div class="kc-section-head"><h3>肌の色</h3><span class="kc-caption" data-skin-id></span></div>
+          <div class="kc-swatches" data-skin-swatches aria-label="肌色12種類"></div>
+          <p class="kc-field-note" data-skin-label></p>
+        </div>
+        <div id="kc-panel-hair" role="tabpanel" aria-labelledby="kc-tab-hair" hidden>
+          <label class="kc-select-label" for="kc-hair-style">髪型 <span class="kc-caption">16種類</span></label>
+          <select id="kc-hair-style" data-hair-select></select>
+          <div class="kc-section-head kc-color-heading"><h3>髪の色</h3><span class="kc-caption" data-hair-id></span></div>
+          <div class="kc-swatches" data-hair-swatches aria-label="髪色12種類"></div>
+          <p class="kc-field-note" data-hair-label></p>
+        </div>
+        <div id="kc-panel-body" role="tabpanel" aria-labelledby="kc-tab-body" hidden>
+          <div class="kc-section-head"><h3>体型</h3></div>
+          <div class="kc-body-presets" data-bodies></div>
+          <label class="kc-range-head" for="kc-muscle"><span>筋肉の量</span><output class="kc-number" data-muscle-value>50</output></label>
+          <input type="range" id="kc-muscle" min="0" max="100" value="50" data-axis="muscle" aria-label="筋肉の量">
+          <div class="kc-range-limits"><span>控えめ</span><span>しっかり</span></div>
+          <label class="kc-range-head" for="kc-softness"><span>柔らかさ</span><output class="kc-number" data-softness-value>50</output></label>
+          <input type="range" id="kc-softness" min="0" max="100" value="50" data-axis="softness" aria-label="柔らかさ">
+          <div class="kc-range-limits"><span>引き締める</span><span>丸みを持たせる</span></div>
+          <p class="kc-field-note">数値はこの簡易表示の操作値です。</p>
+        </div>
+        <div class="kc-random">
+          <p class="kc-caption">ランダム時の固定</p>
+          <div class="kc-locks">
+            <label><input type="checkbox" data-lock="skin">肌を固定</label>
+            <label><input type="checkbox" data-lock="hair">髪を固定</label>
+            <label><input type="checkbox" data-lock="body">体型を固定</label>
+          </div>
+          <button type="button" class="cursor-interaction" data-action="random">固定していない項目をランダム</button>
+        </div>
+      </section>
+      <section class="kc-confirm" data-confirm hidden aria-label="外見を確認">
+        <h3 data-confirm-title>この外見でよいですか？</h3>
+        <p class="kc-field-note" data-confirm-note>この見本内でのみ確定します。</p>
+        <dl data-confirm-summary></dl>
+        <div class="kc-confirm-actions">
+          <button type="button" class="cursor-interaction" data-action="back">編集へ戻る</button>
+          <button type="button" class="kc-primary cursor-interaction" data-action="accept">この見本内で確定</button>
+        </div>
+      </section>
+    </div>
+    <div class="kc-history" data-history>
+      <button type="button" class="cursor-interaction" data-action="undo" disabled>1手戻す</button>
+      <button type="button" class="cursor-interaction" data-action="redo" disabled>やり直し</button>
+      <button type="button" class="kc-reset cursor-interaction" data-action="reset">編集開始値へ戻す</button>
+    </div>
+    <footer class="kc-bottom">
+      <p class="kc-status" role="status" aria-live="polite" data-status>選んだ外見をここで試せます。</p>
+      <div class="kc-bottom-actions" data-bottom-actions>
+        <button type="button" class="cursor-interaction" data-action="cancel">キャンセル</button>
+        <button type="button" class="kc-primary cursor-interaction" data-action="review">外見を確認</button>
+      </div>
+      <p class="kc-footnote">顔・眉・目の詳細、3D表示、ゲームへの保存は試作対象外。</p>
+    </footer>
+  </section>
+  <script>
+  (() => {
+    const root = document.getElementById("kari-creator-preview-v1");
+    if (!root || root.dataset.ready === "true") return;
+    const find = (q) => root.querySelector(q);
+    const all = (q) => Array.from(root.querySelectorAll(q));
+    const copy = (v) => JSON.parse(JSON.stringify(v));
+    const equal = (a,b) => JSON.stringify(a) === JSON.stringify(b);
+    const skins = [
+      ["S01","明るいニュートラル","#F1D6C1"],["S02","明るい赤みのベージュ","#E7C3A9"],["S03","明るい暖色ベージュ","#DDB396"],["S04","中明度のベージュ","#D1A084"],
+      ["S05","中明度の暖色ブラウン","#C59170"],["S06","中間のニュートラルブラウン","#B98A6C"],["S07","中深度のブラウン","#A66E50"],["S08","落ち着いたブラウン","#925C43"],
+      ["S09","深い暖色ブラウン","#7C4B36"],["S10","深いニュートラルブラウン","#683C2B"],["S11","さらに深いブラウン","#533023"],["S12","最も深いブラウン","#3E241D"]
+    ];
+    const colors = [
+      ["C01","黒","#211C1A"],["C02","採用Aの焦げ茶","#3D2D22"],["C03","栗色","#603E2A"],["C04","暖かい茶","#805437"],["C05","灰褐色","#65584C"],["C06","赤褐色","#6C3E2D"],
+      ["C07","銅色","#A4653F"],["C08","暗い金色","#A0844D"],["C09","砂色の金髪","#C7B185"],["C10","灰色","#79756F"],["C11","銀灰","#B6B3AA"],["C12","白に近い灰","#DDD9CF"]
+    ];
+    const hairs = [
+      ["H01","Aの無造作な短髪"],["H02","直毛の短い刈り込み"],["H03","直毛の横分け短髪"],["H04","直毛の耳丈ボブ"],
+      ["H05","直毛の低い結び髪"],["H06","波状の後ろ流し短髪"],["H07","波状の耳かけ短髪"],["H08","波状の低い結び髪"],
+      ["H09","巻き毛の短髪"],["H10","巻き毛の短いボブ"],["H11","巻き毛の低い結び髪"],["H12","巻き毛の高いまとめ髪"],
+      ["H13","強いカールの短い刈り込み"],["H14","強いカールの丸い短髪"],["H15","頭に沿わせた編み髪"],["H16","短いツイストのまとめ髪"]
+    ];
+    const bodies = [["B01","細身",30,35],["B02","標準",50,50],["B03","筋肉質",85,30],["B04","ふくよか",40,80]];
+    const presets = [
+      {id:"P01",title:"基準ハンターA",note:"採用Aの概形",skin:"legacyA",hair:"H01",color:"C02",body:"legacyA",muscle:50,softness:50},
+      {id:"P02",title:"女性的・標準",note:"落ち着いた印象",skin:"S04",hair:"H07",color:"C03",body:"B02",muscle:50,softness:50},
+      {id:"P03",title:"男性的・筋肉質",note:"力のある体つき",skin:"S10",hair:"H13",color:"C01",body:"B03",muscle:85,softness:30},
+      {id:"P04",title:"女性的・ふくよか",note:"自然な丸み",skin:"S08",hair:"H11",color:"C05",body:"B04",muscle:40,softness:80},
+      {id:"P05",title:"中性的・細身",note:"すっきりした輪郭",skin:"S02",hair:"H03",color:"C06",body:"B01",muscle:30,softness:35},
+      {id:"P06",title:"中性的・標準",note:"柔らかな輪郭",skin:"S12",hair:"H15",color:"C01",body:"B02",muscle:50,softness:50}
+    ];
+    const stateFrom = (p) => ({source:p.id,skin:p.skin,hair:p.hair,color:p.color,body:p.body,muscle:p.muscle,softness:p.softness});
+    let draft = stateFrom(presets[1]);
+    let start = copy(draft);
+    let undo = [], redo = [], gesture = null, pointerGesture = false, comparison = false, confirmMode = null;
+    const getSkin = (s) => skins.find((v)=>v[0]===s.skin) || ["legacyA","採用A（参考色）","#B98A6C"];
+    const getHair = (s) => hairs.find((v)=>v[0]===s.hair);
+    const getColor = (s) => colors.find((v)=>v[0]===s.color);
+    const getBody = (s) => bodies.find((v)=>v[0]===s.body) || ["legacyA","採用A（概形）",50,50];
+    const say = (text) => {find("[data-status]").textContent=text;};
+    const push = (previous) => {undo.push(copy(previous)); if(undo.length>50) undo.shift(); redo=[];};
+    function finishGesture() {
+      if (gesture && !equal(gesture,draft)) push(gesture);
+      gesture = null;
+      pointerGesture = false;
+      sync();
+    }
+    function cancelGesture() {
+      if (!gesture) return;
+      draft=copy(gesture);gesture=null;pointerGesture=false;comparison=false;sync();
+      say("調整を中断し、ドラッグ開始時の値へ戻しました。");
+    }
+    function change(next,message) {
+      finishGesture();
+      if (!equal(draft,next)) {push(draft);draft=copy(next);}
+      comparison=false;sync();if(message)say(message);
+    }
+    function setAttr(q,name,value) {find(q).setAttribute(name,String(value));}
+    function circle(cx,cy,r) {return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'"></circle>';}
+    function hairShape(id) {
+      let back="",front="";
+      const cap='<path d="M102 60 Q99 28 130 27 Q161 28 158 62 L150 47 Q130 42 110 48Z"></path>';
+      const lowTail='<path d="M151 73 Q174 81 164 118 Q161 129 156 132 Q163 105 149 95Z"></path>';
+      if(id==="H01") front='<path d="M101 66 L98 46 L105 47 L108 33 L117 37 L126 24 L131 33 L145 28 L146 36 L159 39 L157 62 L150 48 L139 45 L133 54 L126 43 L113 52 L106 67Z"></path>';
+      else if(id==="H02") front='<path d="M102 59 Q100 31 130 30 Q160 31 158 59 L153 47 Q130 40 107 47Z"></path>';
+      else if(id==="H03") front='<path d="M100 65 Q98 29 131 26 Q165 26 158 65 L153 48 L144 37 Q125 54 108 57 L104 68Z"></path>';
+      else if(id==="H04") {back='<path d="M98 47 Q100 25 130 25 Q161 25 162 49 L165 93 L148 98 L107 98 L95 93Z"></path>';front='<path d="M101 55 Q103 30 130 29 Q155 29 159 54 L136 46 L129 36 L121 52 L102 59Z"></path>';}
+      else if(id==="H05") {back=lowTail;front=cap;}
+      else if(id==="H06") front='<path d="M101 61 Q96 46 104 36 Q102 24 120 28 Q123 18 136 26 Q155 21 159 36 Q169 43 158 64 L150 47 Q127 43 107 56Z"></path>';
+      else if(id==="H07") {back='<path d="M103 42 Q93 60 101 90 L108 86 L110 51Z M151 42 Q168 61 158 88 L151 85 L149 51Z"></path>';front='<path d="M101 60 Q98 29 132 28 Q165 30 160 64 L151 51 Q140 47 135 37 Q130 52 112 54 L106 65Z"></path>';}
+      else if(id==="H08") {back=lowTail+circle(161,91,10)+circle(164,106,8);front='<path d="M101 61 Q96 43 110 35 Q117 22 133 29 Q157 22 161 42 L157 64 L149 47 Q131 37 109 57Z"></path>';}
+      else if(["H09","H10","H11","H12","H13","H14"].includes(id)) {
+        const radius=id==="H13"?6:id==="H14"?11:8;
+        const reach=id==="H14"?30:id==="H13"?22:25;
+        for(let i=0;i<9;i++){const a=Math.PI+(Math.PI*i/8);front+=circle(130+reach*Math.cos(a),54+22*Math.sin(a),radius);}
+        front+='<path d="M105 51 Q130 35 155 51 L156 59 Q130 45 104 60Z"></path>';
+        if(id==="H10"){for(let i=0;i<4;i++){back+=circle(103,55+i*11,9)+circle(158,55+i*11,9);}}
+        if(id==="H11"){back=lowTail+circle(161,91,10)+circle(164,107,8);}
+        if(id==="H12"){back=circle(130,24,15)+circle(119,22,8)+circle(143,22,8);}
+        if(id==="H14")back=circle(130,52,37);
+      } else if(id==="H15") {
+        front=cap+'<g fill="none" stroke="var(--kc-bronze)" stroke-opacity=".45" stroke-width="2"><path d="M108 45 Q116 31 129 29 M116 47 Q126 32 136 30 M125 46 Q139 35 145 33 M138 46 Q150 38 152 40"></path></g>';
+      } else {
+        back=circle(155,83,12)+circle(158,96,8);
+        front=cap+'<g fill="none" stroke="var(--kc-bronze)" stroke-opacity=".4" stroke-width="2"><path d="M108 48 Q105 35 117 34 M118 46 Q115 29 128 30 M129 45 Q129 29 141 33 M141 47 Q145 34 152 40"></path></g>';
+      }
+      return {back,front};
+    }
+    function draw(s) {
+      const skin=getSkin(s),hair=getColor(s),shape=hairShape(s.hair);
+      all("[data-skin]").forEach((el)=>el.setAttribute("fill",skin[2]));
+      const hg=find("[data-hair-front]"),bg=find("[data-hair-back]");
+      hg.innerHTML=shape.front;bg.innerHTML=shape.back;hg.setAttribute("fill",hair[2]);bg.setAttribute("fill",hair[2]);
+      const base=s.body==="B01"?-6:s.body==="B03"?7:s.body==="B04"?10:0;
+      const shoulder=33+base+(s.muscle-50)*.11;
+      const belly=29+base*.8+(s.softness-50)*.13;
+      const left=130-shoulder,right=130+shoulder,waistL=130-belly,waistR=130+belly;
+      setAttr("[data-torso]","d","M"+left+" 113 Q130 102 "+right+" 113 L"+(right+6)+" 165 Q"+(waistR+3)+" 194 "+waistR+" 227 Q130 238 "+waistL+" 227 Q"+(waistL-3)+" 194 "+(left-6)+" 165Z");
+      setAttr("[data-mantle]","d","M116 107 L"+(left-2)+" 111 Q"+(left-14)+" 115 "+(left-21)+" 140 L"+(left+10)+" 154 L117 125 L130 138 L143 125 L"+(right-10)+" 154 L"+(right+21)+" 140 Q"+(right+14)+" 115 "+(right+2)+" 111 L144 107 L144 115 Q130 128 116 115Z");
+      setAttr("[data-left-arm]","d","M"+(left-8)+" 119 Q"+(left-24)+" 124 "+(left-27)+" 151 L63 204 L70 229 L83 229 L"+(left-6)+" 202 L"+(left+2)+" 149Z");
+      setAttr("[data-right-arm]","d","M"+(right+8)+" 119 Q"+(right+24)+" 124 "+(right+27)+" 151 L197 204 L190 229 L177 229 L"+(right+6)+" 202 L"+(right-2)+" 149Z");
+      setAttr("[data-belt]","d","M"+(waistL-1)+" 198 Q130 205 "+(waistR+1)+" 198 L"+(waistR+2)+" 211 Q130 219 "+(waistL-2)+" 211Z");
+      setAttr("[data-straps]","d","M"+(left+7)+" 128 L"+waistR+" 195 L"+(waistR-6)+" 202 L"+(left+2)+" 134Z M"+(right-7)+" 128 L"+waistL+" 195 L"+(waistL+6)+" 202 L"+(right-2)+" 134Z");
+      const pouchX=waistL-8;
+      setAttr("[data-pouch]","d","M"+pouchX+" 213 L"+(pouchX+21)+" 213 L"+(pouchX+22)+" 239 Q"+(pouchX+10)+" 245 "+(pouchX-3)+" 239Z");
+      setAttr("[data-pouch-flap]","d","M"+(pouchX-1)+" 214 L"+(pouchX+21)+" 214 L"+(pouchX+20)+" 225 L"+(pouchX-1)+" 225Z");
+      const legShift=base*.45+(s.softness-50)*.035;
+      setAttr("[data-legs]","d","M"+(99-legShift)+" 226 L125 225 L127 298 L123 352 L99 352 L"+(95-legShift)+" 298Z M135 225 L"+(162+legShift)+" 226 L"+(166+legShift)+" 298 L160 352 L136 352 L132 298Z");
+      find("[data-summary]").textContent=getHair(s)[1]+" / "+getBody(s)[1];
+      find("#kc-figure-title").textContent=(comparison?"編集前":"現在")+"の狩人の簡易輪郭";
+      find("#kc-figure-desc").textContent=skin[1]+"、"+getHair(s)[1]+"、"+hair[1]+"、"+getBody(s)[1]+"。2Dの簡易表示で、完成3Dモデルではありません。";
+    }
+    function sync() {
+      draw(comparison?start:draft);
+      find("[data-view-name]").textContent=comparison?"編集前":"現在";
+      all("[data-compare]").forEach((b)=>b.setAttribute("aria-pressed",String((b.dataset.compare==="before")===comparison)));
+      all("[data-color-kind]").forEach((b)=>b.setAttribute("aria-pressed",String(draft[b.dataset.colorKind]===b.dataset.value)));
+      all("[data-body]").forEach((b)=>b.setAttribute("aria-pressed",String(draft.body===b.dataset.body)));
+      all("[data-preset]").forEach((b)=>b.setAttribute("aria-pressed",String(equal(draft,stateFrom(presets.find((p)=>p.id===b.dataset.preset))))));
+      find("[data-hair-select]").value=draft.hair;
+      find("[data-skin-id]").textContent=draft.skin==="legacyA"?"参考":draft.skin;
+      find("[data-skin-label]").textContent=getSkin(draft)[1];
+      find("[data-hair-id]").textContent=draft.color;
+      find("[data-hair-label]").textContent=getColor(draft)[1];
+      ["muscle","softness"].forEach((k)=>{find("[data-axis='"+k+"']").value=draft[k];find("[data-"+k+"-value]").textContent=String(draft[k]);});
+      find("[data-action='undo']").disabled=undo.length===0;
+      find("[data-action='redo']").disabled=redo.length===0;
+      root.dataset.undoCount=String(undo.length);root.dataset.redoCount=String(redo.length);
+      root.dataset.previewState=JSON.stringify(draft);
+      root.dataset.startState=JSON.stringify(start);
+    }
+    function swatches(target,list,kind) {
+      const parent=find(target);
+      list.forEach((v)=>{
+        const b=document.createElement("button");b.type="button";b.className="kc-swatch cursor-interaction";b.dataset.colorKind=kind;b.dataset.value=v[0];
+        b.style.setProperty("--kc-swatch",v[2]);b.setAttribute("aria-label",v[0]+" "+v[1]);b.setAttribute("aria-pressed","false");
+        const chip=document.createElement("span");chip.setAttribute("aria-hidden","true");b.append(chip,document.createTextNode(v[0]));
+        b.addEventListener("click",()=>change(Object.assign({},draft,{[kind]:v[0]}),v[1]+"に変更しました。"));parent.append(b);
+      });
+    }
+    swatches("[data-skin-swatches]",skins,"skin");swatches("[data-hair-swatches]",colors,"color");
+    hairs.forEach((v)=>{const o=document.createElement("option");o.value=v[0];o.textContent=v[0]+" "+v[1];find("[data-hair-select]").append(o);});
+    find("[data-hair-select]").addEventListener("change",(e)=>change(Object.assign({},draft,{hair:e.target.value}),"髪型を変更しました。"));
+    presets.forEach((p)=>{
+      const b=document.createElement("button");b.type="button";b.className="cursor-interaction";b.dataset.preset=p.id;b.setAttribute("aria-pressed","false");
+      b.append(document.createTextNode(p.title));const sub=document.createElement("small");sub.textContent=p.note;b.append(sub);
+      b.addEventListener("click",()=>change(stateFrom(p),p.title+"を選びました。"));find("[data-presets]").append(b);
+    });
+    bodies.forEach((b)=>{
+      const el=document.createElement("button");el.type="button";el.className="cursor-interaction";el.dataset.body=b[0];el.textContent=b[1];el.setAttribute("aria-pressed","false");
+      el.addEventListener("click",()=>change(Object.assign({},draft,{body:b[0],muscle:b[2],softness:b[3]}),b[1]+"に変更しました。"));find("[data-bodies]").append(el);
+    });
+    all("[data-tab]").forEach((b)=>{
+      b.addEventListener("click",()=>{
+        finishGesture();
+        all("[data-tab]").forEach((t)=>t.setAttribute("aria-selected",String(t===b)));
+        all("[role='tabpanel']").forEach((p)=>{p.hidden=p.id!==b.getAttribute("aria-controls");});
+      });
+      b.addEventListener("keydown",(e)=>{
+        const tabs=all("[data-tab]"),i=tabs.indexOf(b);
+        let next=e.key==="ArrowRight"?(i+1)%tabs.length:e.key==="ArrowLeft"?(i+tabs.length-1)%tabs.length:e.key==="Home"?0:e.key==="End"?tabs.length-1:null;
+        if(next!==null){e.preventDefault();tabs[next].click();tabs[next].focus();}
+      });
+    });
+    all("[data-axis]").forEach((el)=>{
+      el.addEventListener("pointerdown",()=>{if(!gesture)gesture=copy(draft);pointerGesture=true;});
+      el.addEventListener("input",()=>{
+        const value=Number(el.value);
+        if(!Number.isFinite(value)){el.value=String(draft[el.dataset.axis]);return;}
+        if(!gesture)gesture=copy(draft);
+        draft[el.dataset.axis]=Math.max(0,Math.min(100,value));comparison=false;sync();
+      });
+      el.addEventListener("change",()=>{
+        const changed=gesture&&!equal(gesture,draft);
+        finishGesture();if(changed)say("体型の調整を反映しました。");
+      });
+      el.addEventListener("blur",()=>{if(pointerGesture)cancelGesture();else finishGesture();});
+      el.addEventListener("pointercancel",()=>cancelGesture());
+    });
+    let viewportWidth=window.innerWidth;
+    window.addEventListener("resize",()=>{
+      if(window.innerWidth!==viewportWidth){viewportWidth=window.innerWidth;cancelGesture();}
+    });
+    window.addEventListener("orientationchange",()=>cancelGesture());
+    all("[data-compare]").forEach((b)=>b.addEventListener("click",()=>{finishGesture();comparison=b.dataset.compare==="before";sync();}));
+    const randomChoice=(list,current)=>{const options=list.filter((v)=>v[0]!==current);return options[Math.floor(Math.random()*options.length)];};
+    function showConfirm(mode) {
+      finishGesture();comparison=false;confirmMode=mode;sync();
+      find("[data-editor]").hidden=true;find("[data-confirm]").hidden=false;find("[data-history]").hidden=true;find("[data-bottom-actions]").hidden=true;
+      find("[data-confirm-title]").textContent=mode==="cancel"?"変更を破棄しますか？":"この外見でよいですか？";
+      find("[data-confirm-note]").textContent=mode==="cancel"?"編集開始時の外見へ戻ります。":"この見本内でのみ確定します。ゲームへの保存は行いません。";
+      find("[data-action='accept']").textContent=mode==="cancel"?"変更を破棄":"この見本内で確定";
+      find("[data-action='back']").textContent=mode==="cancel"?"編集を続ける":"編集へ戻る";
+      const dl=find("[data-confirm-summary]");dl.replaceChildren();
+      [["肌",getSkin(draft)[1]],["髪型",getHair(draft)[1]],["髪色",getColor(draft)[1]],["体型",getBody(draft)[1]+" / 筋肉 "+draft.muscle+"・柔らかさ "+draft.softness]].forEach((row)=>{
+        const div=document.createElement("div"),dt=document.createElement("dt"),dd=document.createElement("dd");dt.textContent=row[0];dd.textContent=row[1];div.append(dt,dd);dl.append(div);
+      });
+      find("[data-action='back']").focus();
+    }
+    function closeConfirm() {
+      confirmMode=null;find("[data-confirm]").hidden=true;find("[data-editor]").hidden=false;find("[data-history]").hidden=false;find("[data-bottom-actions]").hidden=false;
+    }
+    all("[data-action]").forEach((b)=>b.addEventListener("click",()=>{
+      const act=b.dataset.action;
+      if(act==="random"){
+        finishGesture();const next=copy(draft);let count=0;
+        if(!find("[data-lock='skin']").checked){next.skin=randomChoice(skins,draft.skin)[0];count++;}
+        if(!find("[data-lock='hair']").checked){next.hair=randomChoice(hairs,draft.hair)[0];next.color=randomChoice(colors,draft.color)[0];count++;}
+        if(!find("[data-lock='body']").checked){const body=randomChoice(bodies,draft.body);next.body=body[0];next.muscle=body[2];next.softness=body[3];count++;}
+        if(count)change(next,"固定していない"+count+"項目を変更しました。");else say("すべて固定されています。固定を外すと変更できます。");
+      } else if(act==="undo"){finishGesture();if(undo.length){redo.push(copy(draft));draft=undo.pop();comparison=false;sync();say("1手戻しました。");}}
+      else if(act==="redo"){finishGesture();if(redo.length){undo.push(copy(draft));draft=redo.pop();comparison=false;sync();say("やり直しました。");}}
+      else if(act==="reset"){change(copy(start),"編集開始時の外見へ戻しました。");}
+      else if(act==="review")showConfirm("commit");
+      else if(act==="cancel"){finishGesture();if(!equal(draft,start))showConfirm("cancel");else say("変更はありません。編集開始時の外見です。");}
+      else if(act==="back"){closeConfirm();find("[data-action='review']").focus();}
+      else if(act==="accept"){
+        if(confirmMode==="cancel"){draft=copy(start);say("変更を破棄し、編集開始時の外見へ戻しました。");}
+        else {start=copy(draft);say("この見本内で確定しました。ページを閉じると初期状態に戻ります。");}
+        undo=[];redo=[];gesture=null;pointerGesture=false;comparison=false;closeConfirm();sync();find("[data-action='review']").focus();
+      }
+    }));
+    root.addEventListener("keydown",(e)=>{if(e.key==="Escape"&&confirmMode){e.preventDefault();closeConfirm();find("[data-action='review']").focus();}});
+    root.dataset.ready="true";sync();
+  })();
+  </script>
+</div>

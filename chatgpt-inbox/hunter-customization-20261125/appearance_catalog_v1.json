@@ -1,0 +1,1364 @@
+{
+  "catalogSchemaVersion": 1,
+  "id": "kari_hunter_appearance_catalog_v1",
+  "status": "design_only",
+  "createdAt": "2026-11-25",
+  "project": "霧境の狩人 — VEILBOUND HUNTERS",
+  "repository": "kamamon/Kari",
+  "referenceCommit": "4851d57ecc24c8fd127508b084999cec5d0e975f",
+  "runtimeConnected": false,
+  "specification": "customization_spec_v2.md",
+  "implementationContract": "implementation_contract_v1.md",
+  "scopeNote": "利用者の最新指示により、A限定の精密化から全成人外見のキャラメイクへ拡張する。既存Aは初期プリセットとして保持する。これは実行データへ未接続の設計カタログであり、新規モデル・肌マスク・髪素材・保存移行の完成を示さない。",
+  "selectionPolicy": {
+    "allowAllCrossCategoryCombinations": true,
+    "appearanceDescriptorsAreStartingExamplesOnly": true,
+    "appearanceDescriptors": [
+      "feminine",
+      "masculine",
+      "androgynous"
+    ],
+    "genderLocks": [],
+    "skinToneLocks": [],
+    "hairTextureLocks": [],
+    "bodyTypeLocks": [],
+    "equipmentLocksByAppearance": [],
+    "newAncestryOrFactionAssignments": false,
+    "gameplayModifiers": {},
+    "gameplayPolicy": "全外見で能力・移動・回避・リーチ・被弾判定・成長を共通とする。体型の許可範囲は共通判定との見た目の整合を含めて校正する。"
+  },
+  "firstStageCompatibility": {
+    "heightMeters": 1.75,
+    "heightMode": "fixed",
+    "jointPositions": "preserve_existing",
+    "boneLengths": "preserve_existing",
+    "weaponSockets": "preserve_existing",
+    "existingArmorSlots": [
+      "head",
+      "chest",
+      "arms",
+      "waist",
+      "legs"
+    ],
+    "bodyFit": "衣服・硬い板・金具を同じ体型情報へ合わせ、全外見で同じ身体部位を保護する。",
+    "futureHeightAdjustment": "別段階。握り・接地・IK・武器軌道・カメラ・全装備の適合を確認してから追加する。",
+    "physicalDeformationRangesCalibrated": false
+  },
+  "colorPolicy": {
+    "colorSpace": "sRGB",
+    "encoding": "#RRGGBB",
+    "intendedUse": "baseColor_authoring_reference",
+    "note": "HEXはsRGB baseColorの設計目安であり、採用画の測色値でも完成shaderの出力でもない。照明、陰影、領域マスク、唇や手のひらなどの色の関係は別途調整する。",
+    "shaderComplete": false,
+    "measuredFromArt": false,
+    "legacyA": "既存Aのアトラスと部品色を優先して保持する。S06やC02のHEXへ一律に塗り替えない。"
+  },
+  "profiles": [
+    {
+      "id": "legacy_hunter_a_v1",
+      "status": "design_only_profile_contract",
+      "sourceAppearance": "既存の採用ハンターA",
+      "preserveExistingGeometry": true,
+      "preserveExistingMaterials": true,
+      "preserveExistingHair": true,
+      "normalizedAxisValues": null,
+      "migrationPolicy": "旧保存の外見項目欠落はこのprofileを使用する。8体型軸や5顔軸を全て50に置換せず、肌をS06など最寄りの色番号へ丸めない。",
+      "newCustomizationContractImplemented": false
+    },
+    {
+      "id": "custom_hunter_v1",
+      "status": "design_only_profile_contract",
+      "note": "明示的に選択したカタログIDと調整値を保持する。数値から形への対応は校正前。",
+      "newCustomizationContractImplemented": false
+    }
+  ],
+  "uiAxes": {
+    "contractStatus": "ui_ranges_only_deformation_uncalibrated",
+    "rangeMeaning": "0〜100と-100〜100はUIの規格。cm、体重、骨長、実際の変位量を表さない。",
+    "body": [
+      {
+        "id": "shoulderWidth",
+        "label": "肩幅",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "ui_value",
+        "deformationMapping": null
+      },
+      {
+        "id": "torsoDepth",
+        "label": "胴の厚み",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "ui_value",
+        "deformationMapping": null
+      },
+      {
+        "id": "chestVolume",
+        "label": "胸部の量",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "ui_value",
+        "deformationMapping": null
+      },
+      {
+        "id": "hipWidth",
+        "label": "腰の幅",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "ui_value",
+        "deformationMapping": null
+      },
+      {
+        "id": "abdomenVolume",
+        "label": "腹部の量",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "ui_value",
+        "deformationMapping": null
+      },
+      {
+        "id": "limbThickness",
+        "label": "手脚の太さ",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "ui_value",
+        "deformationMapping": null
+      },
+      {
+        "id": "muscleAmount",
+        "label": "筋肉量",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "ui_value",
+        "deformationMapping": null
+      },
+      {
+        "id": "softness",
+        "label": "柔らかさ",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "ui_value",
+        "deformationMapping": null
+      }
+    ],
+    "face": [
+      {
+        "id": "jawWidth",
+        "label": "顎幅",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "ui_value",
+        "deformationMapping": null
+      },
+      {
+        "id": "cheekFullness",
+        "label": "頬の厚み",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "ui_value",
+        "deformationMapping": null
+      },
+      {
+        "id": "noseWidth",
+        "label": "鼻の幅",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "ui_value",
+        "deformationMapping": null
+      },
+      {
+        "id": "mouthShape",
+        "label": "口元",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "ui_value",
+        "deformationMapping": null
+      },
+      {
+        "id": "eyeSpacing",
+        "label": "目の間隔",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "ui_value",
+        "deformationMapping": null
+      }
+    ],
+    "skin": [
+      {
+        "id": "redness",
+        "label": "赤み",
+        "min": -100,
+        "max": 100,
+        "step": 1,
+        "neutral": 0,
+        "unit": "ui_value",
+        "colorTransform": null
+      },
+      {
+        "id": "yellowness",
+        "label": "黄み",
+        "min": -100,
+        "max": 100,
+        "step": 1,
+        "neutral": 0,
+        "unit": "ui_value",
+        "colorTransform": null
+      }
+    ],
+    "calibrationPolicy": "各軸の上下限と複合した上下限を3D・代表動作・装備で校正する。authoringDraftValuesは形の方向を共有する仮の入力値であり、公開用の変形量や旧Aの数値化ではない。"
+  },
+  "skinColors": [
+    {
+      "id": "S01",
+      "label": "明るいニュートラル",
+      "srgbHex": "#F1D6C1",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "S02",
+      "label": "明るい赤みのベージュ",
+      "srgbHex": "#E7C3A9",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "S03",
+      "label": "明るい暖色ベージュ",
+      "srgbHex": "#DDB396",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "S04",
+      "label": "中明度のベージュ",
+      "srgbHex": "#D1A084",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "S05",
+      "label": "中明度の暖色ブラウン",
+      "srgbHex": "#C59170",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "S06",
+      "label": "中間のニュートラルブラウン",
+      "srgbHex": "#B98A6C",
+      "status": "authoring_draft",
+      "legacyNote": "既存の耳・親指の固定色に近い設計値。ただし旧Aの肌は部位・アトラスを含めて保持し、この番号へ自動移行しない。"
+    },
+    {
+      "id": "S07",
+      "label": "中深度のブラウン",
+      "srgbHex": "#A66E50",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "S08",
+      "label": "落ち着いたブラウン",
+      "srgbHex": "#925C43",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "S09",
+      "label": "深い暖色ブラウン",
+      "srgbHex": "#7C4B36",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "S10",
+      "label": "深いニュートラルブラウン",
+      "srgbHex": "#683C2B",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "S11",
+      "label": "さらに深いブラウン",
+      "srgbHex": "#533023",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "S12",
+      "label": "最も深いブラウン",
+      "srgbHex": "#3E241D",
+      "status": "authoring_draft"
+    }
+  ],
+  "hairColors": [
+    {
+      "id": "C01",
+      "label": "黒",
+      "srgbHex": "#211C1A",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "C02",
+      "label": "採用Aの焦げ茶",
+      "srgbHex": "#3D2D22",
+      "status": "authoring_draft",
+      "legacyNote": "既存Aの焦げ茶を優先する。HEXは新しい着色処理の設計目安であり、旧Aをこの単色へ置換しない。"
+    },
+    {
+      "id": "C03",
+      "label": "栗色",
+      "srgbHex": "#603E2A",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "C04",
+      "label": "暖かい茶",
+      "srgbHex": "#805437",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "C05",
+      "label": "灰褐色",
+      "srgbHex": "#65584C",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "C06",
+      "label": "赤褐色",
+      "srgbHex": "#6C3E2D",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "C07",
+      "label": "銅色",
+      "srgbHex": "#A4653F",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "C08",
+      "label": "暗い金色",
+      "srgbHex": "#A0844D",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "C09",
+      "label": "砂色の金髪",
+      "srgbHex": "#C7B185",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "C10",
+      "label": "灰色",
+      "srgbHex": "#79756F",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "C11",
+      "label": "銀灰",
+      "srgbHex": "#B6B3AA",
+      "status": "authoring_draft"
+    },
+    {
+      "id": "C12",
+      "label": "白に近い灰",
+      "srgbHex": "#DDD9CF",
+      "status": "authoring_draft"
+    }
+  ],
+  "hairStyles": [
+    {
+      "id": "H01",
+      "label": "Aの無造作な短髪",
+      "textureFamily": "wavy",
+      "styleFamily": "short_tousled",
+      "silhouette": "採用Aの中央付近の分け目、額の一房、後頭部の束を維持する",
+      "helmetFitIntent": "前髪・耳前・襟足を保ち、兜に覆われる上部を収める",
+      "allowedAppearanceDescriptors": "all",
+      "allowedSkinColors": "all",
+      "allowedBodyPresets": "all",
+      "allowedHairColors": "all",
+      "assets": {
+        "normal": {
+          "status": "not_created",
+          "path": null
+        },
+        "helmetFit": {
+          "status": "not_created",
+          "path": null
+        }
+      },
+      "assetStatusMeaning": "本キャラメイク用の交換可能な3D髪資産の状態。既存Aの絵・仮の髪束が存在することとは別。",
+      "referenceArt": "art-source/player/hunter_face_v1.md",
+      "identityRule": "採用Aの髪型を維持する。"
+    },
+    {
+      "id": "H02",
+      "label": "直毛の短い刈り込み",
+      "textureFamily": "straight",
+      "styleFamily": "short_crop",
+      "silhouette": "頭の丸みを見せ、前髪と側頭部を短くまとめる",
+      "helmetFitIntent": "生え際と短い襟足を残し、兜に覆われる領域を隠す",
+      "allowedAppearanceDescriptors": "all",
+      "allowedSkinColors": "all",
+      "allowedBodyPresets": "all",
+      "allowedHairColors": "all",
+      "assets": {
+        "normal": {
+          "status": "not_created",
+          "path": null
+        },
+        "helmetFit": {
+          "status": "not_created",
+          "path": null
+        }
+      },
+      "assetStatusMeaning": "本キャラメイク用の交換可能な3D髪資産の状態。既存Aの絵・仮の髪束が存在することとは別。"
+    },
+    {
+      "id": "H03",
+      "label": "直毛の横分け短髪",
+      "textureFamily": "straight",
+      "styleFamily": "side_part",
+      "silhouette": "額を一部見せ、片側へ流れる大きな面を作る",
+      "helmetFitIntent": "額に残す流れを保ち、頂部を頭に沿わせる",
+      "allowedAppearanceDescriptors": "all",
+      "allowedSkinColors": "all",
+      "allowedBodyPresets": "all",
+      "allowedHairColors": "all",
+      "assets": {
+        "normal": {
+          "status": "not_created",
+          "path": null
+        },
+        "helmetFit": {
+          "status": "not_created",
+          "path": null
+        }
+      },
+      "assetStatusMeaning": "本キャラメイク用の交換可能な3D髪資産の状態。既存Aの絵・仮の髪束が存在することとは別。"
+    },
+    {
+      "id": "H04",
+      "label": "直毛の耳丈ボブ",
+      "textureFamily": "straight",
+      "styleFamily": "ear_length_bob",
+      "silhouette": "顎より上で収め、襟と肩の可動を空ける",
+      "helmetFitIntent": "耳周りの束を頬当てから離し、襟足を短く畳む",
+      "allowedAppearanceDescriptors": "all",
+      "allowedSkinColors": "all",
+      "allowedBodyPresets": "all",
+      "allowedHairColors": "all",
+      "assets": {
+        "normal": {
+          "status": "not_created",
+          "path": null
+        },
+        "helmetFit": {
+          "status": "not_created",
+          "path": null
+        }
+      },
+      "assetStatusMeaning": "本キャラメイク用の交換可能な3D髪資産の状態。既存Aの絵・仮の髪束が存在することとは別。"
+    },
+    {
+      "id": "H05",
+      "label": "直毛の低い結び髪",
+      "textureFamily": "straight",
+      "styleFamily": "low_tie",
+      "silhouette": "襟足で結び、短い束を首の後ろへ下げる",
+      "helmetFitIntent": "結び目を低く小さくし、うなじ板と背負い武器を避ける",
+      "allowedAppearanceDescriptors": "all",
+      "allowedSkinColors": "all",
+      "allowedBodyPresets": "all",
+      "allowedHairColors": "all",
+      "assets": {
+        "normal": {
+          "status": "not_created",
+          "path": null
+        },
+        "helmetFit": {
+          "status": "not_created",
+          "path": null
+        }
+      },
+      "assetStatusMeaning": "本キャラメイク用の交換可能な3D髪資産の状態。既存Aの絵・仮の髪束が存在することとは別。"
+    },
+    {
+      "id": "H06",
+      "label": "波状の後ろ流し短髪",
+      "textureFamily": "wavy",
+      "styleFamily": "swept_back_short",
+      "silhouette": "額を開き、上面から後ろへ緩い波を作る",
+      "helmetFitIntent": "側頭部の波を残し、上部を頭に沿わせる",
+      "allowedAppearanceDescriptors": "all",
+      "allowedSkinColors": "all",
+      "allowedBodyPresets": "all",
+      "allowedHairColors": "all",
+      "assets": {
+        "normal": {
+          "status": "not_created",
+          "path": null
+        },
+        "helmetFit": {
+          "status": "not_created",
+          "path": null
+        }
+      },
+      "assetStatusMeaning": "本キャラメイク用の交換可能な3D髪資産の状態。既存Aの絵・仮の髪束が存在することとは別。"
+    },
+    {
+      "id": "H07",
+      "label": "波状の耳かけ短髪",
+      "textureFamily": "wavy",
+      "styleFamily": "ear_tucked_short",
+      "silhouette": "頬の横をすっきりさせ、耳の後ろに小さな束を残す",
+      "helmetFitIntent": "耳前・耳後の小束を兜の開口に合わせる",
+      "allowedAppearanceDescriptors": "all",
+      "allowedSkinColors": "all",
+      "allowedBodyPresets": "all",
+      "allowedHairColors": "all",
+      "assets": {
+        "normal": {
+          "status": "not_created",
+          "path": null
+        },
+        "helmetFit": {
+          "status": "not_created",
+          "path": null
+        }
+      },
+      "assetStatusMeaning": "本キャラメイク用の交換可能な3D髪資産の状態。既存Aの絵・仮の髪束が存在することとは別。"
+    },
+    {
+      "id": "H08",
+      "label": "波状の低い結び髪",
+      "textureFamily": "wavy",
+      "styleFamily": "low_tie",
+      "silhouette": "波のある短い尾を背中の武器から離してまとめる",
+      "helmetFitIntent": "波を保った短い尾を低く畳む",
+      "allowedAppearanceDescriptors": "all",
+      "allowedSkinColors": "all",
+      "allowedBodyPresets": "all",
+      "allowedHairColors": "all",
+      "assets": {
+        "normal": {
+          "status": "not_created",
+          "path": null
+        },
+        "helmetFit": {
+          "status": "not_created",
+          "path": null
+        }
+      },
+      "assetStatusMeaning": "本キャラメイク用の交換可能な3D髪資産の状態。既存Aの絵・仮の髪束が存在することとは別。"
+    },
+    {
+      "id": "H09",
+      "label": "巻き毛の短髪",
+      "textureFamily": "curly",
+      "styleFamily": "short_curls",
+      "silhouette": "輪になる束を少数の大きな塊で表す",
+      "helmetFitIntent": "露出する前髪・側頭部の巻きを保つ",
+      "allowedAppearanceDescriptors": "all",
+      "allowedSkinColors": "all",
+      "allowedBodyPresets": "all",
+      "allowedHairColors": "all",
+      "assets": {
+        "normal": {
+          "status": "not_created",
+          "path": null
+        },
+        "helmetFit": {
+          "status": "not_created",
+          "path": null
+        }
+      },
+      "assetStatusMeaning": "本キャラメイク用の交換可能な3D髪資産の状態。既存Aの絵・仮の髪束が存在することとは別。"
+    },
+    {
+      "id": "H10",
+      "label": "巻き毛の短いボブ",
+      "textureFamily": "curly",
+      "styleFamily": "short_bob",
+      "silhouette": "耳周りに丸い量感を作り、肩へ届かない長さにする",
+      "helmetFitIntent": "側頭部を小さく収め、見える巻きを残す",
+      "allowedAppearanceDescriptors": "all",
+      "allowedSkinColors": "all",
+      "allowedBodyPresets": "all",
+      "allowedHairColors": "all",
+      "assets": {
+        "normal": {
+          "status": "not_created",
+          "path": null
+        },
+        "helmetFit": {
+          "status": "not_created",
+          "path": null
+        }
+      },
+      "assetStatusMeaning": "本キャラメイク用の交換可能な3D髪資産の状態。既存Aの絵・仮の髪束が存在することとは別。"
+    },
+    {
+      "id": "H11",
+      "label": "巻き毛の低い結び髪",
+      "textureFamily": "curly",
+      "styleFamily": "low_tie",
+      "silhouette": "こめかみの巻き毛と、襟足の小さなまとめ髪",
+      "helmetFitIntent": "こめかみの巻きを保ち、結び目をうなじ板から離す",
+      "allowedAppearanceDescriptors": "all",
+      "allowedSkinColors": "all",
+      "allowedBodyPresets": "all",
+      "allowedHairColors": "all",
+      "assets": {
+        "normal": {
+          "status": "not_created",
+          "path": null
+        },
+        "helmetFit": {
+          "status": "not_created",
+          "path": null
+        }
+      },
+      "assetStatusMeaning": "本キャラメイク用の交換可能な3D髪資産の状態。既存Aの絵・仮の髪束が存在することとは別。"
+    },
+    {
+      "id": "H12",
+      "label": "巻き毛の高いまとめ髪",
+      "textureFamily": "curly",
+      "styleFamily": "high_bun",
+      "silhouette": "まとまった丸い結び目を作る",
+      "helmetFitIntent": "同じ巻き毛を低く畳んだ兜用形へ切り替える",
+      "allowedAppearanceDescriptors": "all",
+      "allowedSkinColors": "all",
+      "allowedBodyPresets": "all",
+      "allowedHairColors": "all",
+      "assets": {
+        "normal": {
+          "status": "not_created",
+          "path": null
+        },
+        "helmetFit": {
+          "status": "not_created",
+          "path": null
+        }
+      },
+      "assetStatusMeaning": "本キャラメイク用の交換可能な3D髪資産の状態。既存Aの絵・仮の髪束が存在することとは別。"
+    },
+    {
+      "id": "H13",
+      "label": "強いカールの短い刈り込み",
+      "textureFamily": "coily",
+      "styleFamily": "short_crop",
+      "silhouette": "頭に沿う細かな巻きと自然な生え際",
+      "helmetFitIntent": "露出する生え際の巻きと頭皮の関係を保つ",
+      "allowedAppearanceDescriptors": "all",
+      "allowedSkinColors": "all",
+      "allowedBodyPresets": "all",
+      "allowedHairColors": "all",
+      "assets": {
+        "normal": {
+          "status": "not_created",
+          "path": null
+        },
+        "helmetFit": {
+          "status": "not_created",
+          "path": null
+        }
+      },
+      "assetStatusMeaning": "本キャラメイク用の交換可能な3D髪資産の状態。既存Aの絵・仮の髪束が存在することとは別。"
+    },
+    {
+      "id": "H14",
+      "label": "強いカールの丸い短髪",
+      "textureFamily": "coily",
+      "styleFamily": "compact_round",
+      "silhouette": "短く密なカールで丸い輪郭を作る",
+      "helmetFitIntent": "頂部の量を収め、露出した生え際・襟足のカールを残す",
+      "allowedAppearanceDescriptors": "all",
+      "allowedSkinColors": "all",
+      "allowedBodyPresets": "all",
+      "allowedHairColors": "all",
+      "assets": {
+        "normal": {
+          "status": "not_created",
+          "path": null
+        },
+        "helmetFit": {
+          "status": "not_created",
+          "path": null
+        }
+      },
+      "assetStatusMeaning": "本キャラメイク用の交換可能な3D髪資産の状態。既存Aの絵・仮の髪束が存在することとは別。"
+    },
+    {
+      "id": "H15",
+      "label": "頭に沿わせた編み髪",
+      "textureFamily": "coily",
+      "styleFamily": "scalp_braids",
+      "silhouette": "前から後ろへ編んだ流れを見せ、襟足で短く留める",
+      "helmetFitIntent": "露出する編み筋を保ち、留め部分を低く畳む",
+      "allowedAppearanceDescriptors": "all",
+      "allowedSkinColors": "all",
+      "allowedBodyPresets": "all",
+      "allowedHairColors": "all",
+      "assets": {
+        "normal": {
+          "status": "not_created",
+          "path": null
+        },
+        "helmetFit": {
+          "status": "not_created",
+          "path": null
+        }
+      },
+      "assetStatusMeaning": "本キャラメイク用の交換可能な3D髪資産の状態。既存Aの絵・仮の髪束が存在することとは別。"
+    },
+    {
+      "id": "H16",
+      "label": "短いツイストのまとめ髪",
+      "textureFamily": "coily",
+      "styleFamily": "short_twists_tied",
+      "silhouette": "太いねじり束を後方へまとめ、束の形を読みやすくする",
+      "helmetFitIntent": "短いねじり束を低く収め、うなじ板と背負い武器を避ける",
+      "allowedAppearanceDescriptors": "all",
+      "allowedSkinColors": "all",
+      "allowedBodyPresets": "all",
+      "allowedHairColors": "all",
+      "assets": {
+        "normal": {
+          "status": "not_created",
+          "path": null
+        },
+        "helmetFit": {
+          "status": "not_created",
+          "path": null
+        }
+      },
+      "assetStatusMeaning": "本キャラメイク用の交換可能な3D髪資産の状態。既存Aの絵・仮の髪束が存在することとは別。"
+    }
+  ],
+  "facePresets": [
+    {
+      "id": "F01",
+      "label": "採用A",
+      "adult": true,
+      "allowedAppearanceDescriptors": "all",
+      "status": "authoring_draft",
+      "authoringDraftValues": null,
+      "calibrated": false,
+      "referenceProfile": "legacy_hunter_a_v1",
+      "legacyRule": "既存Aの顔を保持し、5顔軸の数値50を代用しない。"
+    },
+    {
+      "id": "F02",
+      "label": "自然な卵型",
+      "adult": true,
+      "allowedAppearanceDescriptors": "all",
+      "status": "authoring_draft",
+      "authoringDraftValues": {
+        "jawWidth": 40,
+        "cheekFullness": 55,
+        "noseWidth": 45,
+        "mouthShape": 50,
+        "eyeSpacing": 50
+      },
+      "calibrated": false
+    },
+    {
+      "id": "F03",
+      "label": "頬と顎が広い形",
+      "adult": true,
+      "allowedAppearanceDescriptors": "all",
+      "status": "authoring_draft",
+      "authoringDraftValues": {
+        "jawWidth": 75,
+        "cheekFullness": 40,
+        "noseWidth": 60,
+        "mouthShape": 50,
+        "eyeSpacing": 52
+      },
+      "calibrated": false
+    },
+    {
+      "id": "F04",
+      "label": "頬に丸みがある形",
+      "adult": true,
+      "allowedAppearanceDescriptors": "all",
+      "status": "authoring_draft",
+      "authoringDraftValues": {
+        "jawWidth": 52,
+        "cheekFullness": 80,
+        "noseWidth": 50,
+        "mouthShape": 55,
+        "eyeSpacing": 50
+      },
+      "calibrated": false
+    },
+    {
+      "id": "F05",
+      "label": "細めの輪郭",
+      "adult": true,
+      "allowedAppearanceDescriptors": "all",
+      "status": "authoring_draft",
+      "authoringDraftValues": {
+        "jawWidth": 35,
+        "cheekFullness": 35,
+        "noseWidth": 45,
+        "mouthShape": 45,
+        "eyeSpacing": 50
+      },
+      "calibrated": false
+    },
+    {
+      "id": "F06",
+      "label": "頬骨と柔らかな顎の組合せ",
+      "adult": true,
+      "allowedAppearanceDescriptors": "all",
+      "status": "authoring_draft",
+      "authoringDraftValues": {
+        "jawWidth": 45,
+        "cheekFullness": 55,
+        "noseWidth": 55,
+        "mouthShape": 50,
+        "eyeSpacing": 53
+      },
+      "calibrated": false
+    }
+  ],
+  "browStyles": [
+    {
+      "id": "R01",
+      "label": "採用A",
+      "status": "authoring_draft",
+      "allowedAppearanceDescriptors": "all",
+      "referenceProfile": "legacy_hunter_a_v1"
+    },
+    {
+      "id": "R02",
+      "label": "細めの直線",
+      "status": "authoring_draft",
+      "allowedAppearanceDescriptors": "all"
+    },
+    {
+      "id": "R03",
+      "label": "自然な弧",
+      "status": "authoring_draft",
+      "allowedAppearanceDescriptors": "all"
+    },
+    {
+      "id": "R04",
+      "label": "太めの直線",
+      "status": "authoring_draft",
+      "allowedAppearanceDescriptors": "all"
+    },
+    {
+      "id": "R05",
+      "label": "短めで幅広",
+      "status": "authoring_draft",
+      "allowedAppearanceDescriptors": "all"
+    },
+    {
+      "id": "R06",
+      "label": "長めで緩い弧",
+      "status": "authoring_draft",
+      "allowedAppearanceDescriptors": "all"
+    }
+  ],
+  "browColorPolicy": {
+    "modes": [
+      "match_hair",
+      "independent"
+    ],
+    "independentColorCatalog": "hairColors",
+    "legacyA": "既存Aの眉の色を保持する。"
+  },
+  "eyeColors": [
+    {
+      "id": "E01",
+      "label": "採用Aの茶",
+      "srgbHex": "#6A4C35",
+      "status": "authoring_draft",
+      "region": "iris",
+      "legacyNote": "既存Aの目色を優先する。HEXは測色値ではない。"
+    },
+    {
+      "id": "E02",
+      "label": "濃い茶",
+      "srgbHex": "#39291F",
+      "status": "authoring_draft",
+      "region": "iris"
+    },
+    {
+      "id": "E03",
+      "label": "琥珀",
+      "srgbHex": "#9C733A",
+      "status": "authoring_draft",
+      "region": "iris"
+    },
+    {
+      "id": "E04",
+      "label": "緑褐",
+      "srgbHex": "#747044",
+      "status": "authoring_draft",
+      "region": "iris"
+    },
+    {
+      "id": "E05",
+      "label": "灰緑",
+      "srgbHex": "#667465",
+      "status": "authoring_draft",
+      "region": "iris"
+    },
+    {
+      "id": "E06",
+      "label": "灰青",
+      "srgbHex": "#667E8A",
+      "status": "authoring_draft",
+      "region": "iris"
+    },
+    {
+      "id": "E07",
+      "label": "灰",
+      "srgbHex": "#777B79",
+      "status": "authoring_draft",
+      "region": "iris"
+    }
+  ],
+  "bodyPresets": [
+    {
+      "id": "B01",
+      "label": "細身",
+      "adult": true,
+      "allowedAppearanceDescriptors": "all",
+      "status": "authoring_draft",
+      "authoringDraftValues": {
+        "shoulderWidth": 35,
+        "torsoDepth": 30,
+        "chestVolume": 35,
+        "hipWidth": 38,
+        "abdomenVolume": 25,
+        "limbThickness": 30,
+        "muscleAmount": 30,
+        "softness": 35
+      },
+      "calibrated": false
+    },
+    {
+      "id": "B02",
+      "label": "標準",
+      "adult": true,
+      "allowedAppearanceDescriptors": "all",
+      "status": "authoring_draft",
+      "authoringDraftValues": {
+        "shoulderWidth": 50,
+        "torsoDepth": 50,
+        "chestVolume": 50,
+        "hipWidth": 50,
+        "abdomenVolume": 50,
+        "limbThickness": 50,
+        "muscleAmount": 50,
+        "softness": 50
+      },
+      "calibrated": false,
+      "legacyNote": "基準カテゴリにAを含むが、ここに示す50の仮入力は旧Aの形を符号化した値ではない。P01はlegacy profileを保持する。"
+    },
+    {
+      "id": "B03",
+      "label": "筋肉質",
+      "adult": true,
+      "allowedAppearanceDescriptors": "all",
+      "status": "authoring_draft",
+      "authoringDraftValues": {
+        "shoulderWidth": 70,
+        "torsoDepth": 65,
+        "chestVolume": 65,
+        "hipWidth": 50,
+        "abdomenVolume": 35,
+        "limbThickness": 75,
+        "muscleAmount": 85,
+        "softness": 30
+      },
+      "calibrated": false
+    },
+    {
+      "id": "B04",
+      "label": "ふくよか",
+      "adult": true,
+      "allowedAppearanceDescriptors": "all",
+      "status": "authoring_draft",
+      "authoringDraftValues": {
+        "shoulderWidth": 55,
+        "torsoDepth": 75,
+        "chestVolume": 65,
+        "hipWidth": 70,
+        "abdomenVolume": 80,
+        "limbThickness": 70,
+        "muscleAmount": 40,
+        "softness": 80
+      },
+      "calibrated": false
+    }
+  ],
+  "startingPresets": [
+    {
+      "id": "P01",
+      "label": "基準ハンターA／男性的。採用済みの同じ人物",
+      "appearanceDescriptor": "masculine",
+      "adult": true,
+      "profile": "legacy_hunter_a_v1",
+      "status": "preserve_legacy_reference",
+      "selectionLocks": [],
+      "displaySelectionAliases": {
+        "faceId": "F01",
+        "hairStyleId": "H01",
+        "hairColorId": "C02",
+        "bodyPresetId": "B02",
+        "browStyleId": "R01",
+        "eyeColorId": "E01"
+      },
+      "skinColorId": null,
+      "authoringDraftValues": null,
+      "note": "表示用IDとの対応であって、旧Aの肌や形を離散色や50の数値へ変換する指示ではない。"
+    },
+    {
+      "id": "P02",
+      "label": "女性的・標準。実務的で落ち着いた顔立ち",
+      "appearanceDescriptor": "feminine",
+      "adult": true,
+      "profile": "custom_hunter_v1",
+      "status": "authoring_draft",
+      "selectionLocks": [],
+      "selections": {
+        "faceId": "F02",
+        "hairStyleId": "H07",
+        "hairColorId": "C03",
+        "skinColorId": "S04",
+        "bodyPresetId": "B02",
+        "browStyleId": "R02",
+        "eyeColorId": "E01"
+      },
+      "authoringDraftValues": {
+        "bodyAxes": {
+          "shoulderWidth": 50,
+          "torsoDepth": 50,
+          "chestVolume": 50,
+          "hipWidth": 50,
+          "abdomenVolume": 50,
+          "limbThickness": 50,
+          "muscleAmount": 50,
+          "softness": 50
+        },
+        "faceAxes": {
+          "jawWidth": 40,
+          "cheekFullness": 55,
+          "noseWidth": 45,
+          "mouthShape": 50,
+          "eyeSpacing": 50
+        },
+        "skinAdjustments": {
+          "redness": 0,
+          "yellowness": 0
+        }
+      },
+      "calibrated": false
+    },
+    {
+      "id": "P03",
+      "label": "男性的・筋肉質。広い頬と顎、力のある体つき",
+      "appearanceDescriptor": "masculine",
+      "adult": true,
+      "profile": "custom_hunter_v1",
+      "status": "authoring_draft",
+      "selectionLocks": [],
+      "selections": {
+        "faceId": "F03",
+        "hairStyleId": "H13",
+        "hairColorId": "C01",
+        "skinColorId": "S10",
+        "bodyPresetId": "B03",
+        "browStyleId": "R04",
+        "eyeColorId": "E03"
+      },
+      "authoringDraftValues": {
+        "bodyAxes": {
+          "shoulderWidth": 70,
+          "torsoDepth": 65,
+          "chestVolume": 65,
+          "hipWidth": 50,
+          "abdomenVolume": 35,
+          "limbThickness": 75,
+          "muscleAmount": 85,
+          "softness": 30
+        },
+        "faceAxes": {
+          "jawWidth": 75,
+          "cheekFullness": 40,
+          "noseWidth": 60,
+          "mouthShape": 50,
+          "eyeSpacing": 52
+        },
+        "skinAdjustments": {
+          "redness": 0,
+          "yellowness": 0
+        }
+      },
+      "calibrated": false
+    },
+    {
+      "id": "P04",
+      "label": "女性的・ふくよか。頬と胴に自然な丸み",
+      "appearanceDescriptor": "feminine",
+      "adult": true,
+      "profile": "custom_hunter_v1",
+      "status": "authoring_draft",
+      "selectionLocks": [],
+      "selections": {
+        "faceId": "F04",
+        "hairStyleId": "H11",
+        "hairColorId": "C05",
+        "skinColorId": "S08",
+        "bodyPresetId": "B04",
+        "browStyleId": "R03",
+        "eyeColorId": "E02"
+      },
+      "authoringDraftValues": {
+        "bodyAxes": {
+          "shoulderWidth": 55,
+          "torsoDepth": 75,
+          "chestVolume": 65,
+          "hipWidth": 70,
+          "abdomenVolume": 80,
+          "limbThickness": 70,
+          "muscleAmount": 40,
+          "softness": 80
+        },
+        "faceAxes": {
+          "jawWidth": 52,
+          "cheekFullness": 80,
+          "noseWidth": 50,
+          "mouthShape": 55,
+          "eyeSpacing": 50
+        },
+        "skinAdjustments": {
+          "redness": 0,
+          "yellowness": 0
+        }
+      },
+      "calibrated": false
+    },
+    {
+      "id": "P05",
+      "label": "中性的・細身。すっきりした頬と長すぎない顎",
+      "appearanceDescriptor": "androgynous",
+      "adult": true,
+      "profile": "custom_hunter_v1",
+      "status": "authoring_draft",
+      "selectionLocks": [],
+      "selections": {
+        "faceId": "F05",
+        "hairStyleId": "H03",
+        "hairColorId": "C06",
+        "skinColorId": "S02",
+        "bodyPresetId": "B01",
+        "browStyleId": "R06",
+        "eyeColorId": "E05"
+      },
+      "authoringDraftValues": {
+        "bodyAxes": {
+          "shoulderWidth": 35,
+          "torsoDepth": 30,
+          "chestVolume": 35,
+          "hipWidth": 38,
+          "abdomenVolume": 25,
+          "limbThickness": 30,
+          "muscleAmount": 30,
+          "softness": 35
+        },
+        "faceAxes": {
+          "jawWidth": 35,
+          "cheekFullness": 35,
+          "noseWidth": 45,
+          "mouthShape": 45,
+          "eyeSpacing": 50
+        },
+        "skinAdjustments": {
+          "redness": 0,
+          "yellowness": 0
+        }
+      },
+      "calibrated": false
+    },
+    {
+      "id": "P06",
+      "label": "中性的・標準。頬骨と柔らかな顎を組み合わせる",
+      "appearanceDescriptor": "androgynous",
+      "adult": true,
+      "profile": "custom_hunter_v1",
+      "status": "authoring_draft",
+      "selectionLocks": [],
+      "selections": {
+        "faceId": "F06",
+        "hairStyleId": "H15",
+        "hairColorId": "C01",
+        "skinColorId": "S12",
+        "bodyPresetId": "B02",
+        "browStyleId": "R05",
+        "eyeColorId": "E04"
+      },
+      "authoringDraftValues": {
+        "bodyAxes": {
+          "shoulderWidth": 50,
+          "torsoDepth": 50,
+          "chestVolume": 50,
+          "hipWidth": 50,
+          "abdomenVolume": 50,
+          "limbThickness": 50,
+          "muscleAmount": 50,
+          "softness": 50
+        },
+        "faceAxes": {
+          "jawWidth": 45,
+          "cheekFullness": 55,
+          "noseWidth": 55,
+          "mouthShape": 50,
+          "eyeSpacing": 53
+        },
+        "skinAdjustments": {
+          "redness": 0,
+          "yellowness": 0
+        }
+      },
+      "calibrated": false
+    }
+  ],
+  "editingPolicy": {
+    "workingState": "draft_only",
+    "presetPartialSelection": "顔など個別の見本を選び直しても、未選択の髪・肌・体型を保持する。",
+    "commit": "既存の保存オブジェクトへユーザーが変更した項目だけをpatchする。検証と保存が成功した後に里の姿へ反映する。",
+    "cancel": "編集開始時の確定外見を維持し、draftを破棄する。",
+    "saveFailure": "draftを保持し、保存成功として表示しない。",
+    "revisit": "拠点の装備箱で費用なしに再編集する。",
+    "inventoryAndProgress": "外見編集によって変更しない。"
+  },
+  "unknownValuePolicy": {
+    "knownDataVersion": 1,
+    "unknownWellFormedIds": "保存の元の文字列を保持し、描画だけ利用可能な既定資産へ代替する。",
+    "persistResolvedFallbackIds": false,
+    "unknownUneditedFields": "編集確定・書き出し・取り込み・復元で欠落させない。",
+    "editStrategy": "patch_only_explicitly_edited_fields",
+    "unknownAppearanceDataVersion": "元の領域を保持し、描画用代替を使う。既知の版へ勝手に変換して確定せず、該当領域の書換えを保留する。",
+    "malformedOrOutOfRangeValues": "形状生成やGPUへ渡さない。保存原本と安全な描画用解決値を分け、未編集の原本を代替値で上書きしない。"
+  },
+  "saveExamples": {
+    "status": "proposed_schema4_fragments_not_runtime_fixtures",
+    "note": "以下は保存オブジェクトの一部だけを示す設計例。既存schema3への投入や、既存の装備・進行を含む保存全体の置換に使わない。customの数値もauthoring draft。",
+    "legacyA": {
+      "schemaVersion": 4,
+      "appearance": {
+        "dataVersion": 1,
+        "profile": "legacy_hunter_a_v1",
+        "overrides": {}
+      }
+    },
+    "customP02": {
+      "schemaVersion": 4,
+      "appearance": {
+        "dataVersion": 1,
+        "profile": "custom_hunter_v1",
+        "sourcePresetId": "P02",
+        "body": {
+          "presetId": "B02",
+          "axes": {
+            "shoulderWidth": 50,
+            "torsoDepth": 50,
+            "chestVolume": 50,
+            "hipWidth": 50,
+            "abdomenVolume": 50,
+            "limbThickness": 50,
+            "muscleAmount": 50,
+            "softness": 50
+          }
+        },
+        "face": {
+          "presetId": "F02",
+          "axes": {
+            "jawWidth": 40,
+            "cheekFullness": 55,
+            "noseWidth": 45,
+            "mouthShape": 50,
+            "eyeSpacing": 50
+          }
+        },
+        "skin": {
+          "colorId": "S04",
+          "redness": 0,
+          "yellowness": 0
+        },
+        "hair": {
+          "styleId": "H07",
+          "colorId": "C03"
+        },
+        "brows": {
+          "styleId": "R02",
+          "colorMode": "match_hair"
+        },
+        "eyes": {
+          "colorId": "E01"
+        }
+      }
+    },
+    "unknownIdRoundTrip": {
+      "schemaVersion": 4,
+      "appearanceFragment": {
+        "dataVersion": 1,
+        "profile": "custom_hunter_v1",
+        "skin": {
+          "colorId": "S04",
+          "redness": 0,
+          "yellowness": 0
+        },
+        "hair": {
+          "styleId": "H99",
+          "colorId": "C03"
+        },
+        "extensions": {
+          "futureSkinDetailId": "SKIN_DETAIL_99"
+        }
+      },
+      "explicitlyEditedPatch": {
+        "skin.colorId": "S08"
+      },
+      "renderOnlyResolution": {
+        "hair.styleId": "H01"
+      },
+      "expectedPreservedSavedValues": {
+        "hair.styleId": "H99",
+        "extensions.futureSkinDetailId": "SKIN_DETAIL_99"
+      },
+      "expectedChangedSavedValues": {
+        "skin.colorId": "S08"
+      },
+      "note": "H99は意図的な未知IDの例。別項目の肌色変更を保存してもH01へ置換しない。"
+    }
+  },
+  "references": [
+    "docs/animation-contract.md",
+    "docs/chatgpt-request-4.txt",
+    "art-source/player/hunter_base_turnaround_v1.md",
+    "art-source/player/hunter_face_v1.md",
+    "art-source/armor/galdros/armor_galdros_t2_v2.md"
+  ],
+  "verificationState": {
+    "jsonSyntax": "passed_local_structural_check",
+    "idReferences": "passed_local_structural_check_except_intentional_unknown_H99_example",
+    "runtimeIntegration": "not_performed",
+    "geometryAndFit": "not_performed",
+    "shaderColorCalibration": "not_performed",
+    "devicePerformance": "not_performed"
+  }
+}
