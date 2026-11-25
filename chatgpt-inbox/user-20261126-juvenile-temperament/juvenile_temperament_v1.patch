@@ -1,0 +1,722 @@
+diff --git a/src/game/herd.ts b/src/game/herd.ts
+--- a/src/game/herd.ts
++++ b/src/game/herd.ts
+@@ -5,7 +5,7 @@
+ //   rest    群れで伏せて休む（気づく距離が短くなる）
+ //   alert   狩人に気づいて、顔を上げて見る（その場に止まる）
+ //   flee    逃げる（狩人から離れる向きへ。走り続けると、息を整えるまで止まる）
+-//   fight   向き直って反撃する（攻撃された時と、追い詰められた時。この間だけ技を出す）
++//   fight   向き直って戦う（性格による先制、被弾・追い詰めへの反撃。この間だけ技を出す）
+ //   regroup 群れへ戻る
+ //   hide    親（成体）が同じエリアで戦っている間、岩陰へ寄る
+ //   travel  群れで、住みかの別のエリアへ移る（フィールドだけ）
+@@ -16,10 +16,12 @@
+ import type { FieldAreaDef, FieldExit, HerdDef } from '../data/schemas';
+ import type { MonsterState } from './monster';
+ import type { PlayerState, SimCtx } from './player';
++import { activeControl } from './ailment';
+ import { headingTo, nextHop, wakeMonster } from './roam';
+ import type { AreaGeom, Circle, World } from './world';
+ 
+ export type HerdMood = 'graze' | 'rest' | 'alert' | 'flee' | 'fight' | 'regroup' | 'hide' | 'travel';
++export type HerdTemperament = 'timid' | 'cautious' | 'aggressive';
+ 
+ export interface HerdGroup {
+   id: number;
+@@ -49,6 +51,10 @@
+   /** 親（同じ狩場に居る成体。居なければ null） */
+   parent: MonsterState | null;
+   rng: SeededRng;
++  /** 性格専用の種。生成時の rng.state を読むだけで、群れ・戦闘の乱数を進めない。 */
++  temperamentSeed: number;
++  /** 同時に戦う 1 頭。技の途中は、気分が逃走へ変わっても完了まで枠を保つ。 */
++  engagedId: string | null;
+   members: MonsterState[];
+ }
+ 
+@@ -56,16 +62,28 @@
+   group: HerdGroup;
+   /** 群れの中の番号（自分の場所と、散る向きに使う） */
+   index: number;
++  /** 個体を作った時に固定する性格（状態・被弾ごとに抽選し直さない）。 */
++  temperament: HerdTemperament;
+   mood: HerdMood;
+-  /** 気分ごとの時間（flee: 走った時間、fight: 残り、alert: 静かになってからの時間） */
++  /** 気分ごとの時間（flee: 走った時間、fight: 技の再生中も減る残り、alert: 静かになってからの時間） */
+   ticks: number;
++  /** 顔を上げて威嚇している時間 / 再交戦までの残り。 */
++  threatTicks: number;
++  reengageTicks: number;
++  /** 被弾の反撃意思。怯み中や仲間の攻撃中は、技を開始せずここに保持する。 */
++  retaliate: boolean;
++  /** 今回の交戦で出せる残りの技と、既に数えた技の instanceId。 */
++  attacksLeft: number;
++  countedActionId: number | null;
++  /** 追跡を始めた場所。この点から離れすぎると、今の技の後で退く。 */
++  fightOrigin: { x: number; z: number } | null;
+   /** 向かっている点（食べに行く場所・逃げる先・隠れる場所） */
+   goal: { x: number; z: number } | null;
+   /** goal へ、群れへ戻る速さで歩く */
+   hurry: boolean;
+   /** 立ち止まって食べる残り */
+   idle: number;
+-  /** 仲間の知らせを受けて、反応するまでの残り（0 = 知らせ無し）。alarmFlee なら逃げる、でなければ顔を上げる */
++  /** 仲間の知らせを受けて、反応するまでの残り。alarmFlee は強い危険の知らせで、反応は個体が決める。 */
+   alarm: number;
+   alarmFlee: boolean;
+   /** 中心から見た自分の場所 */
+@@ -110,6 +128,61 @@
+ /** 親の近くに居る時の、親との間 */
+ const NEAR_PARENT = 9;
+ 
++// 個体差の初期案。技の強さ・攻撃窓・移動曲線は変えない。
++const RETREAT_HP_RATIO = 0.3;
++const AGGRESSIVE_WARNING = 30;
++const CAUTIOUS_WARNING = 45;
++const REENGAGE_TICKS = 180;
++const MAX_FIGHT_TICKS = 360;
++const INITIATE_RANGE = 6;
++const CHASE_FROM_START = 8;
++const LOSE_TARGET_RANGE = 10;
++
++/** 乱数列を消費しない 32bit の混ぜ合わせ。 */
++function temperamentAt(seed: number, index: number): HerdTemperament {
++  let n = (seed ^ Math.imul((index >>> 2) + 1, 0x9e3779b9)) >>> 0;
++  n = Math.imul(n ^ (n >>> 16), 0x85ebca6b);
++  n = Math.imul(n ^ (n >>> 13), 0xc2b2ae35);
++  n ^= n >>> 16;
++  // 2頭なら臆病+攻撃的、3頭なら各1、4頭なら臆病1/慎重2/攻撃的1。
++  // 最初の2枠を専用の種で入れ替え、4頭ごとに同じ構成を繰り返す。
++  const slot = index & 3;
++  if (slot >= 2) return 'cautious';
++  return (slot ^ (n & 1)) === 0 ? 'timid' : 'aggressive';
++}
++
++const mustRetreat = (m: MonsterState): boolean => m.hp <= m.def.hp * RETREAT_HP_RATIO;
++
++/** 状態異常・怯みで中断された個体は、ほかの個体の攻撃枠を塞がない。ヒットストップは技が続くので除外しない。 */
++function canContinue(m: MonsterState): boolean {
++  return !m.dead && !m.captured && m.staggerTicks <= 0 && m.trapTicks <= 0 && activeControl(m.ailments) === null;
++}
++
++function refreshEngagement(g: HerdGroup): void {
++  const owner = g.members.find((m) => m.id === g.engagedId);
++  if (owner && (!canContinue(owner) || (!owner.action && (!owner.aiEnabled || owner.herd!.mood !== 'fight')))) {
++    g.engagedId = null;
++    if (owner.herd!.mood === 'fight') setMood(owner, 'alert');
++  } else if (!owner) g.engagedId = null;
++  if (g.engagedId !== null) return;
++  // 進行中の技があれば最優先。外から始めた技や、被弾で flee になった個体も含む。
++  const active = g.members.find((m) => canContinue(m) && m.action !== null)
++    ?? g.members.find((m) => canContinue(m) && m.aiEnabled && m.herd!.mood === 'fight');
++  if (active) g.engagedId = active.id;
++}
++
++function tryFight(m: MonsterState, ctx: SimCtx): boolean {
++  const h = m.herd!;
++  if (!m.aiEnabled || !canContinue(m) || mustRetreat(m) || h.reengageTicks > 0) return false;
++  refreshEngagement(h.group);
++  if (h.group.engagedId !== null && h.group.engagedId !== m.id) return false;
++  h.group.engagedId = m.id;
++  setMood(m, 'fight');
++  h.retaliate = false;
++  raise(m, false, ctx);
++  return true;
++}
++
+ const roll = (rng: SeededRng, [lo, hi]: [number, number]): number => lo + rng.int(hi - lo + 1);
+ 
+ /** 落ち着いている気分（知らせを受けると、顔を上げる・逃げる） */
+@@ -127,10 +200,11 @@
+   anchor: { x: number; z: number },
+   rng: SeededRng,
+ ): HerdGroup {
++  const temperamentSeed = rng.state;
+   return {
+     id, monsterId, def, areas, areaIndex: Math.max(0, areas.indexOf(areaId)), areaId, anchor: { ...anchor },
+     driftIn: roll(rng, DRIFT_EVERY), restTicks: 0, restIn: roll(rng, REST_EVERY), travelIn: areas.length > 1 ? roll(rng, TRAVEL_EVERY) : 0,
+-    travel: null, quiet: 0, stirred: false, alarmLevel: 0, parent: null, rng, members: [],
++    travel: null, quiet: 0, stirred: false, alarmLevel: 0, parent: null, rng, temperamentSeed, engagedId: null, members: [],
+   };
+ }
+ 
+@@ -144,7 +218,11 @@
+ 
+ export function addMember(g: HerdGroup, m: MonsterState): void {
+   const index = g.members.length;
+-  m.herd = { group: g, index, mood: 'graze', ticks: 0, goal: null, hurry: false, idle: roll(g.rng, GRAZE_IDLE), alarm: 0, alarmFlee: false, slot: slotOf(index, g.def.spacing), tired: 0, stuck: 0 };
++  m.herd = {
++    group: g, index, temperament: temperamentAt(g.temperamentSeed, index), mood: 'graze', ticks: 0,
++    threatTicks: 0, reengageTicks: 0, retaliate: false, attacksLeft: 0, countedActionId: null, fightOrigin: null,
++    goal: null, hurry: false, idle: roll(g.rng, GRAZE_IDLE), alarm: 0, alarmFlee: false, slot: slotOf(index, g.def.spacing), tired: 0, stuck: 0,
++  };
+   g.members.push(m);
+ }
+ 
+@@ -166,12 +244,24 @@
+ function setMood(m: MonsterState, mood: HerdMood): void {
+   const h = m.herd!;
+   if (h.mood === mood) return;
++  if (h.mood === 'fight') {
++    h.reengageTicks = Math.max(h.reengageTicks, REENGAGE_TICKS);
++    h.fightOrigin = null;
++    h.retaliate = false;
++    if (!m.action && h.group.engagedId === m.id) h.group.engagedId = null;
++  }
+   h.mood = mood;
+   h.ticks = 0;
++  h.threatTicks = 0;
+   h.goal = null;
+   h.hurry = false;
+   h.stuck = 0;
+-  if (mood === 'fight') h.ticks = roll(h.group.rng, h.group.def.fightTicks);
++  if (mood === 'fight') {
++    h.ticks = Math.min(MAX_FIGHT_TICKS, roll(h.group.rng, h.group.def.fightTicks));
++    h.fightOrigin = { x: m.pos.x, z: m.pos.z };
++    h.attacksLeft = h.temperament === 'aggressive' ? 2 : 1;
++    h.countedActionId = null;
++  }
+   if (mood === 'graze') h.idle = roll(h.group.rng, GRAZE_IDLE) >> 1;
+ }
+ 
+@@ -203,9 +293,17 @@
+   if (!h) return;
+   const g = h.group;
+   if (!m.dead && !m.captured) {
+-    if (h.mood === 'fight') h.ticks = Math.max(h.ticks, 60);
+-    else if (m.aiEnabled && (h.tired > 0 || g.rng.next() < g.def.fightChance)) setMood(m, 'fight');
+-    else setMood(m, 'flee');
++    if (mustRetreat(m)) {
++      h.retaliate = false;
++      setMood(m, h.tired > 0 ? 'alert' : 'flee');
++    } else if (h.mood !== 'fight') {
++      // fightChance は旧データとの互換性のため残すが、性格は被弾ごとに抽選しない。
++      h.retaliate = m.aiEnabled && (h.temperament !== 'timid' || h.tired > 0);
++      if (h.retaliate) {
++        if (!tryFight(m, ctx)) setMood(m, 'alert');
++      } else setMood(m, h.tired > 0 ? 'alert' : 'flee');
++    }
++    // 既に戦っている時の被弾では、期限・技数を延長しない。
+   }
+   raise(m, true, ctx);
+   const p = g.parent;
+@@ -251,6 +349,7 @@
+  * 騒ぎ（顔を上げる・逃げる・戦う・隠れる）がある間は、どれも止まる。静まったら、居る所を新しい中心にする。
+  */
+ export function stepHerdGroup(g: HerdGroup, ctx: SimCtx): void {
++  refreshEngagement(g);
+   const alive = livingMembers(g);
+   if (alive.length === 0) return;
+   const disturbed = alive.some((m) => m.herd!.mood === 'alert' || m.herd!.mood === 'flee' || m.herd!.mood === 'fight' || m.herd!.alarm > 0);
+@@ -481,7 +580,17 @@
+   const h = m.herd!;
+   const g = h.group;
+   const H = g.def;
+-  if (m.action) return false;
++  refreshEngagement(g);
++  if (h.reengageTicks > 0) h.reengageTicks--;
++  if (h.mood === 'fight') h.ticks--;
++  if (m.action) {
++    // 技の途中で期限が尽きても、攻撃窓を切らずにその技を完了させる。
++    if (h.mood === 'fight' && h.countedActionId !== m.action.instanceId) {
++      h.countedActionId = m.action.instanceId;
++      h.attacksLeft = Math.max(0, h.attacksLeft - 1);
++    }
++    return false;
++  }
+   m.pos.y = ctx.world.groundHeight(m.pos.x, m.pos.z);
+   const here = ctx.world.areaAt(m.pos.x, m.pos.z);
+   const pHere = player.mode !== 'dead' && ctx.world.areaAt(player.pos.x, player.pos.z) === here;
+@@ -489,14 +598,32 @@
+   const sense = h.mood === 'rest' ? REST_SENSE : 1;
+   const near = pHere && dist <= H.fleeRange * sense;
+   const seen = pHere && dist <= H.alertRange * sense;
++  const lowHp = mustRetreat(m);
++  const close = dist <= Math.min(H.fleeRange * 0.45, m.def.bodyRadius + ctx.content.player.radius + 1.3);
+   const avoid: Circle[] = player.mode === 'dead' ? [] : [{ x: player.pos.x, z: player.pos.z, r: ctx.content.player.radius }];
+   if (h.tired > 0) h.tired--;
+   if (h.mood !== 'fight') h.ticks++;
+ 
++  // 怯みなどから戻った時も、瀕死なら被弾反撃・先制より退避を優先する。
++  if (lowHp) {
++    h.retaliate = false;
++    h.threatTicks = 0;
++    if (pHere && (near || h.mood === 'fight' || h.mood === 'flee')) setMood(m, h.tired > 0 ? 'alert' : 'flee');
++  }
++
+   // ---- 仲間の知らせ ----
+   if (h.alarm > 0 && --h.alarm === 0) {
+-    if (h.alarmFlee && pHere && h.tired === 0) setMood(m, 'flee');
+-    else if (isCalm(h.mood)) setMood(m, 'alert');
++    // 逃走は命令ではなく危険情報。既に戦う/退く判断をした個体は上書きしない。
++    if (isCalm(h.mood) || h.mood === 'alert') {
++      if (h.alarmFlee && pHere && h.tired === 0 && (lowHp || h.temperament === 'timid')) setMood(m, 'flee');
++      else setMood(m, 'alert');
++    }
++  }
++
++  // 被弾した時に怯んだ、または仲間が戦っていた個体は、動けるようになってから判断する。
++  if (h.retaliate) {
++    if (!pHere || dist > LOSE_TARGET_RANGE || lowHp || !m.aiEnabled) h.retaliate = false;
++    else if (h.reengageTicks === 0) tryFight(m, ctx);
+   }
+ 
+   // ---- 気分を決める ----
+@@ -508,8 +635,9 @@
+     case 'travel':
+     case 'hide':
+       if (near && h.tired === 0) {
+-        raise(m, true, ctx);
+-        setMood(m, 'flee');
++        const flee = lowHp || h.temperament === 'timid';
++        raise(m, flee, ctx);
++        setMood(m, flee ? 'flee' : 'alert');
+       } else if (seen && h.mood !== 'hide') {
+         raise(m, false, ctx);
+         setMood(m, 'alert');
+@@ -517,11 +645,22 @@
+       else if (!parent && h.mood === 'hide') setMood(m, 'regroup');
+       break;
+     case 'alert':
+-      if (near && h.tired === 0) {
++      if (near && h.tired === 0 && (lowHp || h.temperament === 'timid')) {
+         raise(m, true, ctx);
+         setMood(m, 'flee');
+-      } else if (seen) h.ticks = 0;
+-      else if (h.ticks >= CALM_TICKS) setMood(m, parent ? 'hide' : 'regroup');
++      } else if (seen) {
++        h.ticks = 0;
++        if (near && !lowHp && h.tired === 0 && h.reengageTicks === 0 && h.temperament !== 'timid') {
++          const aggressive = h.temperament === 'aggressive';
++          const inReach = aggressive ? dist <= Math.min(H.fleeRange, INITIATE_RANGE) : close;
++          const warning = aggressive ? AGGRESSIVE_WARNING : CAUTIOUS_WARNING;
++          h.threatTicks = inReach ? Math.min(warning, h.threatTicks + 1) : 0;
++          if (inReach && h.threatTicks >= warning) tryFight(m, ctx);
++        } else h.threatTicks = 0;
++      } else {
++        h.threatTicks = 0;
++        if (h.ticks >= CALM_TICKS) setMood(m, parent ? 'hide' : 'regroup');
++      }
+       break;
+     case 'flee':
+       if (!pHere || dist > H.alertRange + FLEE_MARGIN) {
+@@ -531,10 +670,16 @@
+         // 走り続けて息が上がった: 少しの間、その場で息を整える
+         h.tired = TIRED_TICKS;
+         setMood(m, 'alert');
++      } else if (!lowHp && h.tired === 0 && h.reengageTicks === 0
++        && ((h.temperament === 'aggressive' && dist <= Math.min(H.fleeRange, INITIATE_RANGE)) || (h.temperament === 'cautious' && close))) {
++        // 退いた後も追い続けられた: 個体の性格に応じて、もう一度顔を上げてから戦う。
++        setMood(m, 'alert');
+       }
+       break;
+     case 'fight':
+-      if (--h.ticks > 0 && m.aiEnabled && pHere) return false;
++      if (h.ticks > 0 && h.attacksLeft > 0 && !lowHp && m.aiEnabled && pHere && dist <= LOSE_TARGET_RANGE
++        && g.engagedId === m.id && h.fightOrigin
++        && Math.hypot(m.pos.x - h.fightOrigin.x, m.pos.z - h.fightOrigin.z) <= CHASE_FROM_START) return false;
+       setMood(m, pHere && h.tired === 0 ? 'flee' : 'alert');
+       break;
+   }
+@@ -556,7 +701,10 @@
+       // 追い詰められた: 狩人が近く、ほとんど進めない
+       if (dist < CORNER_DIST && moved >= 0 && moved < step * 0.3) h.stuck++;
+       else h.stuck = Math.max(0, h.stuck - 1);
+-      if (h.stuck >= CORNER_TICKS && m.aiEnabled) setMood(m, 'fight');
++      if (h.stuck >= CORNER_TICKS && m.aiEnabled && !lowHp && h.reengageTicks === 0) {
++        h.retaliate = true;
++        tryFight(m, ctx);
++      }
+       return true;
+     }
+     case 'hide': {
+diff --git a/src/game/sim.ts b/src/game/sim.ts
+--- a/src/game/sim.ts
++++ b/src/game/sim.ts
+@@ -1264,10 +1264,10 @@
+       const h = this.hunt;
+       parts.push(h.phase, h.reason ?? '-', h.ticks, h.faints, h.returnTicks, h.closed ? 1 : 0, h.loot.map((g) => `${g.itemId}@${g.source}`).join(','), Object.entries(h.carves).map(([k, v]) => `${k}=${v}`).join(','));
+     }
+-    for (const g of this.herds) parts.push(g.rng.state, g.anchor.x, g.anchor.z, g.restTicks, g.restIn, g.driftIn, g.travelIn, g.travel ? `${g.travel.to}:${g.travel.ticks}` : '-', g.areaId, g.quiet);
++    for (const g of this.herds) parts.push(g.rng.state, g.anchor.x, g.anchor.z, g.restTicks, g.restIn, g.driftIn, g.travelIn, g.travel ? `${g.travel.to}:${g.travel.ticks}` : '-', g.areaId, g.quiet, g.temperamentSeed, g.engagedId ?? '-');
+     for (const m of this.monsters) {
+       const hm = m.herd;
+-      if (hm) parts.push(hm.mood, hm.ticks, hm.alarm, hm.idle, hm.tired, hm.stuck, hm.goal ? `${hm.goal.x},${hm.goal.z}` : '-');
++      if (hm) parts.push(hm.mood, hm.ticks, hm.alarm, hm.idle, hm.tired, hm.stuck, hm.goal ? `${hm.goal.x},${hm.goal.z}` : '-', hm.temperament, hm.threatTicks, hm.reengageTicks, hm.retaliate ? 1 : 0, hm.attacksLeft, hm.countedActionId ?? '-', hm.fightOrigin ? `${hm.fightOrigin.x},${hm.fightOrigin.z}` : '-');
+     }
+     if (this.field) {
+       parts.push(this.areaId);
+diff --git a/tests/herd.test.ts b/tests/herd.test.ts
+--- a/tests/herd.test.ts
++++ b/tests/herd.test.ts
+@@ -325,9 +325,10 @@
+     for (const m of ms) expect(dist(m.pos, center(ms))).toBeLessThan(m.herd!.group.def.spacing * 4 + 2);
+   });
+ 
+-  it('近づくと、気づいて顔を上げ、さらに近づくと逃げる。知らせで、仲間も遅れて逃げる', () => {
++  it('臆病な個体は、近づくと顔を上げ、さらに近づくと逃げる。知らせで、仲間も遅れて逃げる', () => {
+     for (const key of KEYS) {
+       const sim = pack(key);
++      for (const m of members(sim)) m.herd!.temperament = 'timid';
+       const H = content.monsters.get(`monster.${key}`)!.herd!;
+       // 気づく距離の少し内
+       placeFrom(sim, H.alertRange - 1.5);
+@@ -350,6 +351,7 @@
+ 
+   it('逃げ切ると、止まって様子を見て、やがて静まり、逃げた先を新しい居場所にする（もとの場所へは戻らない）', () => {
+     const sim = pack('palseit');
++    for (const m of members(sim)) m.herd!.temperament = 'timid';
+     const H = content.monsters.get('monster.palseit')!.herd!;
+     const c0 = center(members(sim));
+     placeFrom(sim, H.fleeRange - 2);
+@@ -365,6 +367,7 @@
+ 
+   it('走り続けると、息が上がって止まる（その間は逃げない）', () => {
+     const sim = pack('numaporon');
++    for (const m of members(sim)) m.herd!.temperament = 'timid';
+     const H = content.monsters.get('monster.numaporon')!.herd!;
+     const m = members(sim)[0]!;
+     // 狩人が後ろから追い続ける
+@@ -381,7 +384,7 @@
+     expect(m.herd!.mood).toBe('alert');
+   });
+ 
+-  it('攻撃されると、向き直って反撃するか、逃げる。反撃の間は技を出し、狩人に当たる', () => {
++  it('攻撃されると、性格に応じて反撃するか、逃げる。反撃の間は技を出し、狩人に当たる', () => {
+     let fights = 0, flees = 0, hits = 0;
+     for (let seed = 1; seed <= 24; seed++) {
+       const sim = pack('kordopil', seed);
+@@ -396,13 +399,14 @@
+       hits += only(ev, 'player_hurt').length;
+     }
+     expect(fights).toBeGreaterThan(2);
+-    expect(flees).toBeGreaterThan(fights);
++    expect(flees).toBeGreaterThan(2);
+     expect(hits).toBeGreaterThan(0);
+   });
+ 
+   it('追い詰めると（壁際で逃げられない）、向き直って反撃する', () => {
+     const sim = pack('yurtepica');
+     const m = members(sim)[0]!;
++    m.herd!.temperament = 'timid';
+     // ほかの仲間は遠くへ
+     for (const o of members(sim).slice(1)) {
+       o.pos = { x: -30, y: 0, z: 20 };
+diff --git a/tests/herd-temperament.test.ts b/tests/herd-temperament.test.ts
+new file mode 100644
+--- /dev/null
++++ b/tests/herd-temperament.test.ts
+@@ -0,0 +1,313 @@
++// 個体差が実際の行動へ表れることと、反撃が無制限な追跡・同時攻撃にならないことを確認する。
++import { beforeAll, describe, expect, it } from 'vitest';
++import type { Content } from '../src/data/schemas';
++import { newRun } from '../src/game/action';
++import type { SimEvent } from '../src/game/events';
++import { herdHurt, type HerdTemperament } from '../src/game/herd';
++import { applyDamageToMonster, type MonsterState } from '../src/game/monster';
++import { Simulation } from '../src/game/sim';
++import { baseOptions, frame, loadContent, run } from './helpers';
++
++let content: Content;
++beforeAll(async () => { content = await loadContent(); });
++
++const KIDS = ['kordopil', 'palseit', 'numaporon', 'chilumicana', 'kohalgis', 'mitogaron', 'yurtepica', 'hinasalv'];
++type Started = Extract<SimEvent, { type: 'action_start' }>;
++const starts = (events: SimEvent[], m?: MonsterState): Started[] => events.filter((e): e is Started => e.type === 'action_start' && (!m || e.actor === m.id));
++const distance = (a: { x: number; z: number }, b: { x: number; z: number }): number => Math.hypot(a.x - b.x, a.z - b.z);
++
++/** 頭数だけ固定した、元の種・技・AIを使う群れ。依頼の必要数もその頭数以下へ合わせる。 */
++function pack(key = 'kordopil', count = 3, seed = 12345): Simulation {
++  const id = `monster.${key}`;
++  const questId = `quest.${key}.pack1`;
++  const def = content.monsters.get(id)!;
++  const quest = content.quests.get(questId)!;
++  const local: Content = { ...content, monsters: new Map(content.monsters), quests: new Map(content.quests) };
++  local.monsters.set(id, { ...def, herd: { ...def.herd!, size: [count, count] } });
++  local.quests.set(questId, { ...quest, targets: quest.targets!.map((t) => ({ ...t, count: Math.min(t.count, count) })) });
++  const sim = new Simulation(local, baseOptions({ questId, seed }));
++  // 複数回の行動観察中、狩人の力尽きで刺激が消えないようにする。
++  sim.player.hp = 10_000;
++  return sim;
++}
++
++function playerAt(sim: Simulation, x: number, z: number): void {
++  sim.player.pos = { x, y: sim.world.groundHeight(x, z), z };
++  sim.player.prevPos = { ...sim.player.pos };
++}
++
++function monsterAt(sim: Simulation, m: MonsterState, x: number, z: number): void {
++  m.pos = { x, y: sim.world.groundHeight(x, z), z };
++  m.prevPos = { ...m.pos };
++  m.yaw = Math.atan2(sim.player.pos.x - x, sim.player.pos.z - z);
++  m.prevYaw = m.yaw;
++}
++
++/** 同じ距離5.8m、正面向き。互いに重ならず、狩人は攻撃しない。 */
++function approachPack(allAggressive = false): Simulation {
++  const sim = pack();
++  playerAt(sim, 0, 4);
++  sim.herds[0]!.anchor = { x: 0, z: 10 };
++  sim.herds[0]!.members.forEach((m, i) => {
++    const a = (i - 1) * 0.48;
++    monsterAt(sim, m, Math.sin(a) * 5.8, 4 + Math.cos(a) * 5.8);
++    if (allAggressive) m.herd!.temperament = 'aggressive';
++  });
++  return sim;
++}
++
++function lone(temperament: HerdTemperament, dist = 5.8): { sim: Simulation; m: MonsterState } {
++  const sim = pack();
++  playerAt(sim, 0, 10 - dist);
++  sim.herds[0]!.anchor = { x: 0, z: 10 };
++  const [m, ...rest] = sim.herds[0]!.members;
++  monsterAt(sim, m!, 0, 10);
++  m!.herd!.temperament = temperament;
++  rest.forEach((o, i) => {
++    monsterAt(sim, o, -30, -24 + i * 3);
++    o.aiEnabled = false;
++    o.herd!.temperament = 'timid';
++  });
++  return { sim, m: m! };
++}
++
++function until(sim: Simulation, condition: () => boolean, limit = 480): SimEvent[] {
++  const out: SimEvent[] = [];
++  for (let i = 0; i < limit && !condition(); i++) {
++    sim.step(frame());
++    out.push(...sim.drainEvents());
++  }
++  expect(condition(), `condition not reached after ${limit} ticks`).toBe(true);
++  return out;
++}
++
++function firstAction(sim: Simulation, m: MonsterState): SimEvent[] {
++  return until(sim, () => m.action !== null, 300);
++}
++
++function hurt(sim: Simulation, m: MonsterState, damage = 1): void {
++  applyDamageToMonster(m, m.def.parts.findIndex((p) => p.id === 'body'), damage, 'blunt', sim);
++  herdHurt(m, sim);
++}
++
++describe('幼体の固定した性格と反応', () => {
++  it('全8種で同種の性格が混在し、同じseedでは配分も個体の性格も変わらない', () => {
++    for (const key of KIDS) for (const count of [3, 4]) {
++      const a = pack(key, count, 91), b = pack(key, count, 91);
++      const profile = (s: Simulation): HerdTemperament[] => s.herds[0]!.members.map((m) => m.herd!.temperament);
++      const before = profile(a);
++      expect(before.filter((t) => t === 'timid'), key).toHaveLength(1);
++      expect(before.filter((t) => t === 'aggressive'), key).toHaveLength(1);
++      expect(before.filter((t) => t === 'cautious'), key).toHaveLength(count - 2);
++      expect(profile(b)).toEqual(before);
++      playerAt(a, -35, -24);
++      run(a, 300);
++      expect(profile(a)).toEqual(before);
++    }
++    const arrangements = new Set(Array.from({ length: 12 }, (_, seed) => pack('kordopil', 3, seed + 1).herds[0]!.members.map((m) => m.herd!.temperament).join(',')));
++    expect(arrangements.size).toBeGreaterThan(1);
++  });
++
++  it('同じ近づき方でも、臆病は逃走・慎重は警戒・攻撃的は威嚇後に実際の技を出す', () => {
++    const sim = approachPack();
++    const ms = sim.herds[0]!.members;
++    const by = (t: HerdTemperament): MonsterState => ms.find((m) => m.herd!.temperament === t)!;
++    const timid = by('timid'), cautious = by('cautious'), aggressive = by('aggressive');
++    const early = run(sim, 20);
++    expect(starts(early)).toEqual([]);
++    expect(timid.herd!.mood).toBe('flee');
++    expect(cautious.herd!.mood).toBe('alert');
++    expect(aggressive.herd!.mood).toBe('alert');
++    expect(early.some((e) => e.type === 'herd_alarm')).toBe(true);
++    const later = run(sim, 240);
++    expect(starts(later, aggressive).some((e) => sim.content.actions.get(e.actionId)!.hitWindows.length > 0)).toBe(true);
++    expect(starts(later, timid)).toEqual([]);
++    expect(starts(later, cautious)).toEqual([]);
++  });
++
++  it('遅れて届く逃走警報は、既に始めた反撃を逃走へ上書きしない', () => {
++    const { sim, m } = lone('aggressive', 3.5);
++    const ev = firstAction(sim, m);
++    expect(starts(ev, m).length).toBeGreaterThan(0);
++    until(sim, () => m.action === null, 240);
++    expect(m.herd!.mood).toBe('fight');
++    // 技の途中で警報処理が待つ場合も、実際に警報が届くtickを検査する。
++    m.herd!.alarm = 1;
++    m.herd!.alarmFlee = true;
++    run(sim, 1);
++    expect(m.herd!.alarm).toBe(0);
++    expect(m.herd!.mood).toBe('fight');
++    expect(sim.herds[0]!.engagedId).toBe(m.id);
++    expect(starts(firstAction(sim, m), m).length).toBeGreaterThan(0);
++  });
++
++  it('警戒範囲の外で長く見ていても、交戦距離へ入った直後には攻撃しない', () => {
++    const { sim, m } = lone('aggressive', 7);
++    expect(starts(run(sim, 120), m)).toEqual([]);
++    expect(m.herd!.mood).toBe('alert');
++    playerAt(sim, m.pos.x, m.pos.z - 5.8);
++    expect(starts(run(sim, 20), m)).toEqual([]);
++    expect(m.herd!.mood).toBe('alert');
++    expect(starts(firstAction(sim, m), m).length).toBeGreaterThan(0);
++  });
++});
++
++describe('短い反撃と撤退', () => {
++  it('1回の交戦は攻撃的でも2技まで、慎重・疲れた臆病個体は1技で退く', () => {
++    for (const temperament of ['aggressive', 'cautious', 'timid'] as const) {
++      const { sim, m } = lone(temperament, 1.5);
++      if (temperament === 'timid') m.herd!.tired = 60;
++      hurt(sim, m);
++      const ev = firstAction(sim, m);
++      ev.push(...until(sim, () => m.herd!.mood !== 'fight' && m.action === null, 600));
++      expect(starts(ev, m).length, temperament).toBeGreaterThan(0);
++      expect(starts(ev, m).length, temperament).toBeLessThanOrEqual(temperament === 'aggressive' ? 2 : 1);
++      expect(m.herd!.reengageTicks, temperament).toBeGreaterThan(0);
++    }
++  });
++
++  it('長い技の再生中も交戦期限を消費し、360tick後はその技を終えて次を出さない', () => {
++    const { sim, m } = lone('aggressive', 1.5);
++    hurt(sim, m);
++    const begun = firstAction(sim, m);
++    expect(starts(begun, m)).toHaveLength(1);
++    const real = m.action!;
++    // 実際にAIが開始した技を長くした境界条件。判定・移動を無くし、時間制限だけを見る。
++    m.action = newRun({ ...real.def, durationTicks: 420, hitWindows: [], events: [], rootMotion: { mode: 'none' } }, real.instanceId, m.yaw);
++    const ev = run(sim, 365);
++    expect(m.action).not.toBeNull();
++    expect(m.herd!.ticks).toBeLessThanOrEqual(0);
++    expect(starts(ev, m)).toEqual([]);
++    ev.push(...run(sim, 60));
++    expect(m.action).toBeNull();
++    expect(m.herd!.mood).not.toBe('fight');
++    expect(starts(ev, m)).toEqual([]);
++  });
++
++  it('交戦開始点から8mを超えたら、近くに狩人がいても新しい技を始めない', () => {
++    const { sim, m } = lone('aggressive', 5.8);
++    until(sim, () => m.herd!.mood === 'fight');
++    expect(m.action).toBeNull();
++    const origin = { ...m.herd!.fightOrigin! };
++    playerAt(sim, origin.x + 8.2, origin.z - 1.5);
++    monsterAt(sim, m, origin.x + 8.2, origin.z);
++    const ev = run(sim, 20);
++    expect(m.herd!.mood).not.toBe('fight');
++    expect(starts(ev, m)).toEqual([]);
++  });
++
++  it('退いた直後に再び被弾しても、180tickの再交戦待ちを飛ばさない', () => {
++    const { sim, m } = lone('aggressive', 1.5);
++    hurt(sim, m);
++    firstAction(sim, m);
++    until(sim, () => m.herd!.mood !== 'fight' && m.action === null, 600);
++    expect(m.herd!.reengageTicks).toBe(180);
++    playerAt(sim, m.pos.x, m.pos.z - 1.5);
++    hurt(sim, m);
++    const ev = run(sim, 179);
++    expect(starts(ev, m)).toEqual([]);
++    expect(m.herd!.mood).not.toBe('fight');
++  });
++
++  it('HPが30%以下なら全性格が撤退し、被弾・近接・警報でも反撃を始めない', () => {
++    for (const temperament of ['aggressive', 'cautious', 'timid'] as const) {
++      const { sim, m } = lone(temperament, 3.5);
++      m.hp = m.def.hp * 0.3;
++      m.herd!.alarm = 1;
++      m.herd!.alarmFlee = true;
++      const before = distance(m.pos, sim.player.pos);
++      herdHurt(m, sim);
++      const ev = run(sim, 90);
++      expect(starts(ev, m), temperament).toEqual([]);
++      expect(m.herd!.mood, temperament).not.toBe('fight');
++      expect(distance(m.pos, sim.player.pos), temperament).toBeGreaterThan(before + 1);
++    }
++    const { sim, m } = lone('aggressive', 1.5);
++    hurt(sim, m);
++    firstAction(sim, m);
++    m.hp = m.def.hp * 0.3;
++    herdHurt(m, sim);
++    const ev = until(sim, () => m.action === null, 250);
++    ev.push(...run(sim, 60));
++    expect(starts(ev, m)).toEqual([]);
++    expect(m.herd!.mood).not.toBe('fight');
++  });
++});
++
++describe('群れの同時攻撃と状態の再現', () => {
++  it('攻撃的な個体が複数近づいても、同時に戦うのは群れで1頭まで', () => {
++    const sim = approachPack(true);
++    const out: SimEvent[] = [];
++    for (let i = 0; i < 540; i++) {
++      sim.step(frame());
++      out.push(...sim.drainEvents());
++      const active = sim.herds[0]!.members.filter((m) => m.action !== null || m.herd!.mood === 'fight');
++      expect(active.length, `tick ${i}`).toBeLessThanOrEqual(1);
++      if (active[0]) expect(sim.herds[0]!.engagedId).toBe(active[0].id);
++    }
++    expect(starts(out).length).toBeGreaterThan(0);
++  });
++
++  it('交戦中の個体が倒れたら枠を空け、生きた別個体が技を出せる', () => {
++    const sim = approachPack(true);
++    until(sim, () => sim.herds[0]!.members.some((m) => m.action !== null), 300);
++    const owner = sim.herds[0]!.members.find((m) => m.id === sim.herds[0]!.engagedId)!;
++    hurt(sim, owner, owner.hp);
++    const ev = run(sim, 200);
++    expect(owner.dead).toBe(true);
++    expect(starts(ev, owner)).toEqual([]);
++    expect(starts(ev).some((e) => e.actor !== owner.id)).toBe(true);
++    expect(sim.herds[0]!.engagedId).not.toBe(owner.id);
++  });
++
++  it('麻痺・睡眠・気絶は攻撃意思より優先され、止まった個体は仲間の枠を塞がない', () => {
++    for (const kind of ['para', 'sleep', 'stun'] as const) {
++      const sim = approachPack(true);
++      until(sim, () => sim.herds[0]!.members.some((m) => m.action !== null), 300);
++      const owner = sim.herds[0]!.members.find((m) => m.id === sim.herds[0]!.engagedId)!;
++      const at = { ...owner.pos };
++      owner.ailments.ticks[kind] = 600;
++      owner.herd!.alarm = 1;
++      owner.herd!.alarmFlee = true;
++      const ev = run(sim, 160);
++      expect(owner.action, kind).toBeNull();
++      expect(starts(ev, owner), kind).toEqual([]);
++      expect(distance(owner.pos, at), kind).toBeLessThan(0.01);
++      expect(starts(ev).some((e) => e.actor !== owner.id), kind).toBe(true);
++      expect(sim.herds[0]!.engagedId, kind).not.toBe(owner.id);
++    }
++  });
++
++  it('同じseed・同じ刺激を与えた群れは、攻撃開始の列と状態指紋が一致する', () => {
++    const a = approachPack(), b = approachPack();
++    const ea: SimEvent[] = [], eb: SimEvent[] = [];
++    for (let i = 0; i < 900; i++) {
++      const input = frame({ moveX: i >= 300 && i < 360 ? 0.5 : 0, moveZ: i >= 550 && i < 600 ? 0.5 : 0 });
++      a.step(input); b.step(input);
++      ea.push(...a.drainEvents()); eb.push(...b.drainEvents());
++      expect(a.hash(), `tick ${i}`).toBe(b.hash());
++    }
++    expect(starts(ea).length).toBeGreaterThan(0);
++    expect(starts(ea)).toEqual(starts(eb));
++  });
++
++  it('性格・攻撃枠・威嚇や再交戦の残りなど、次の判断を変える状態はhashで区別できる', () => {
++    const mutations: ((s: Simulation) => void)[] = [
++      (s) => { s.herds[0]!.temperamentSeed++; },
++      (s) => { s.herds[0]!.engagedId = s.herds[0]!.members[0]!.id; },
++      (s) => { s.herds[0]!.members[0]!.herd!.temperament = 'cautious'; },
++      (s) => { s.herds[0]!.members[0]!.herd!.threatTicks = 10; },
++      (s) => { s.herds[0]!.members[0]!.herd!.reengageTicks = 20; },
++      (s) => { s.herds[0]!.members[0]!.herd!.retaliate = true; },
++      (s) => { s.herds[0]!.members[0]!.herd!.attacksLeft = 1; },
++      (s) => { s.herds[0]!.members[0]!.herd!.countedActionId = 99; },
++      (s) => { s.herds[0]!.members[0]!.herd!.fightOrigin = { x: 2, z: 3 }; },
++    ];
++    for (const mutate of mutations) {
++      const sim = pack();
++      const before = sim.hash();
++      mutate(sim);
++      expect(sim.hash()).not.toBe(before);
++    }
++  });
++});
