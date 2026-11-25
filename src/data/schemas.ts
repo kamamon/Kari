@@ -124,6 +124,11 @@ export interface ActionDef {
   spin?: { from: number; to: number; degrees: number };
   /** 左腕の盾の軌道（見た目用。盾打ちでは判定の形と同じ軌道を指す） */
   offhandTrack?: string;
+  /**
+   * 突進の制動（v0.41.0。#19 の M02。モンスターの技）: from〜to の間に、壁・段・岩で前へ進めなくなったら、to（減速の始め）へ進める。
+   * 壁の前で走り続けたり、壁に沿って滑ったりしない
+   */
+  brake?: { from: number; to: number };
 }
 
 /** 移動曲線。keys は [tick, 累積距離m]。controller がこの距離だけ進める。 */
@@ -520,6 +525,12 @@ export interface MonsterDef {
   collision?: { z: number; r: number }[];
   /** 技を出していない間の間合い取り */
   approach?: { stopDist: number; faceDeg: number };
+  /**
+   * 足を踏み替える向き直り（v0.41.0。#19 の M01。2G）: 戦っていて技を出していない時、狩人が正面から faceDeg より外に居たら、
+   * 決まった角度だけ回る技（left / right = 90°、backLeft / backRight = 180°。backDeg より後ろなら 180°）を出し、回り終わってから選び直す。
+   * 回っている間は狩人を追わない（横へ回り込めば、その分ずれる）。無ければ、これまでどおり少しずつ向く。正面の内側では、少しずつ向く
+   */
+  turnSteps?: { faceDeg: number; backDeg: number; left: string; right: string; backLeft: string; backRight: string };
   /** 発見。気付くまでは動かない。 */
   discover?: { range: number; fovDeg: number; closeRange: number; actionId: string } | null;
   /** 怒り。受けたダメージが threshold に達すると durationTicks の間続く。 */

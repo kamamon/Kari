@@ -193,6 +193,10 @@
     "untilTick": 40,
     "maxDegreesPerSecond": 70
    },
+   "brake": {
+    "from": 70,
+    "to": 125
+   },
    "hitWindows": [
     {
      "id": "body_front",

@@ -414,25 +414,41 @@ describe('弱ると巣で眠る', () => {
     expect(only(again, 'monster_sleep').length).toBe(1);
   });
 
-  it('巣で気づいて戦いになった時は、寝床へは歩かず、しばらくしてその場で眠る', () => {
+  it('v0.41.0（#19 の M05）: 巣で気づいて戦いになった時は、相手が居る間は眠らない。相手が去って見失うと、寝床へ歩いて眠る', () => {
     const sim = fieldSim();
     const m = sim.monsters[0]!;
     m.hp = Math.round(m.def.hp * 0.2);
     // 巣に着くまで進める
     for (let i = 0; i < 60 * 60 * 5 && sim.monsterArea(m)!.id !== 'a10'; i++) sim.step(frame());
     expect(sim.monsterArea(m)!.id).toBe('a10');
-    // 追いついた狩人が、同じエリアの目の前に居る（技は当たらない所へ置き直し続ける）
+    // 追いついた狩人が、同じエリアの目の前に居る（技は当たらない所へ置き直し続ける）。v0.40.0 までは 1500 tick ほどで眠った
     m.aware = true;
     const evs: SimEvent[] = [];
-    for (let i = 0; i < 1700 && !m.asleep; i++) {
+    const away = (): void => {
       sim.player.pos = { x: m.pos.x, y: 0, z: m.pos.z - 30 > 211 ? m.pos.z - 30 : m.pos.z + 30 };
       sim.player.prevPos = { ...sim.player.pos };
       sim.areaId = 'a10';
+    };
+    for (let i = 0; i < 2400; i++) {
+      away();
+      sim.step(frame());
+      evs.push(...sim.drainEvents());
+    }
+    expect(m.asleep).toBe(false);
+    expect(only(evs, 'monster_sleep')).toEqual([]);
+    // 狩人が野営地へ戻る: 見失ってから、寝床（巣の中央）まで歩いて眠る
+    sim.player.pos = { ...sim.player.pos, x: 0, z: 0 };
+    sim.player.prevPos = { ...sim.player.pos };
+    sim.areaId = sim.field!.areas[0]!.id;
+    for (let i = 0; i < 60 * 60 * 3 && !m.asleep; i++) {
       sim.step(frame());
       evs.push(...sim.drainEvents());
     }
     expect(m.asleep).toBe(true);
-    expect(only(evs, 'monster_sleep').length).toBe(1);
+    expect(only(evs, 'monster_lost').length).toBeGreaterThanOrEqual(1);
+    expect(only(evs, 'monster_sleep')).toHaveLength(1);
+    const bed = sim.world.centerOf(sim.world.areaAt(m.pos.x, m.pos.z));
+    expect(Math.hypot(bed.x - m.pos.x, bed.z - m.pos.z)).toBeLessThanOrEqual(m.def.bodyRadius + 1.01);
   });
 
   it('眠っている間は、技を出さないし、歩かない', () => {

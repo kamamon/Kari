@@ -188,22 +188,15 @@ export function stepRoam(m: MonsterState, playerHere: boolean, ctx: SimCtx): boo
   const weak = m.hp <= m.def.hp * R.limpHpRatio;
   if (r.state === 'stay') {
     if (weak && !r.limping) {
-      // 弱ったら、巣へ向かう。巣に居るなら、少しして眠る
+      // 弱ったら、巣へ向かう。巣に居るなら、寝床へ歩いて眠る
       r.limping = true;
       r.ticks = Math.min(r.ticks, 180);
     }
-    if (r.ticks > 0) {
-      r.ticks--;
-      if (!m.aware && !m.action) {
-        // 弱って巣に着いたら、寝床（巣の中央）まで歩いて、着いたらすぐ眠る。それ以外は、ぶらつく
-        if (r.limping && r.areaId === route.nest) {
-          if (walkToBed(m, ctx)) r.ticks = 0;
-        } else wander(m, ctx);
-      }
-      if (r.ticks > 0) return false;
-    }
-    if (m.action) return false;
+    // 弱って巣に居る（v0.41.0。#19 の M05）: 気づいている相手が居る間は眠らずに戦う（相手が別のエリアへ行って見失えば、寝床へ向かう）。
+    // 相手が居なければ、寝床（巣の中央）まで歩き、着いたら眠る。v0.40.0 までは、戦っている最中でも、時間が過ぎるとその場で眠った
     if (r.limping && r.areaId === route.nest) {
+      if (m.aware || m.action) return false;
+      if (!walkToBed(m, ctx)) return true;
       r.state = 'sleep';
       r.ticks = R.sleepTicks;
       m.asleep = true;
@@ -211,6 +204,12 @@ export function stepRoam(m: MonsterState, playerHere: boolean, ctx: SimCtx): boo
       ctx.emit({ type: 'monster_sleep', target: m.id, areaId: r.areaId });
       return true;
     }
+    if (r.ticks > 0) {
+      r.ticks--;
+      if (!m.aware && !m.action) wander(m, ctx);
+      if (r.ticks > 0) return false;
+    }
+    if (m.action) return false;
     let dest = route.nest;
     if (!r.limping) {
       // 目当てのエリアに着いていたら、次のエリアへ。途中のエリアなら、そのまま目当てへ向かう
@@ -247,8 +246,8 @@ export function stepRoam(m: MonsterState, playerHere: boolean, ctx: SimCtx): boo
     r.via = null;
     r.state = 'stay';
     const [lo, hi] = R.stayTicks;
-    // 巣に着いたら、少しして眠る。目当てのエリアに着いたら、しばらく居る。途中のエリアは、少し立ち止まって通り抜ける
-    // （巣では、寝床まで歩いて眠る。気づいて戦いになった時は、この時間が過ぎてから、その場で眠る）
+    // 目当てのエリアに着いたら、しばらく居る。途中のエリアは、少し立ち止まって通り抜ける
+    // （弱って巣に着いたら、寝床まで歩いて眠る。気づいて戦いになった時は、相手を見失うまで眠らない。v0.41.0）
     if (r.limping) r.ticks = r.areaId === route.nest ? 1500 : 60;
     else r.ticks = r.areaId === route.roam[r.routeIndex] ? lo + ctx.rng.int(hi - lo + 1) : 90;
     ctx.emit({ type: 'monster_move', target: m.id, areaId: r.areaId });

@@ -223,10 +223,12 @@ describe('ガルドロスの姿勢が v0.29.0 と同じ（#12 の M1: 骨の名�
     const r = worst(rest, old.rest);
     expect(rest.length).toBe(53 * 7);
     expect(r.d, `基準の姿勢: ${where(r.at)}`).toBeLessThanOrEqual(1);
-    expect(Object.keys(now).sort()).toEqual(Object.keys(old.poses).sort());
+    // 記録にある動き（v0.29.0 までの技・待機・尾を切った後）は全部あること。記録の後に足した技（v0.41.0 の向き直り）は、記録と比べない
+    expect(Object.keys(old.poses).filter((k) => !(k in now))).toEqual([]);
     // 技の数（v0.29.0 で 23）
     expect(Object.keys(now).filter((k) => k.startsWith('monster.galdros.') && !k.includes('#')).length).toBeGreaterThanOrEqual(23);
     for (const [id, list] of Object.entries(now)) {
+      if (!(id in old.poses)) continue;
       list.forEach((pose, j) => {
         const w = worst(pose, old.poses[id]![j]!);
         expect(w.d, `${id} の ${j} 番目の時刻: ${where(w.at)}`).toBeLessThanOrEqual(1);

@@ -71,6 +71,8 @@ export interface MonsterState {
   captured: boolean;
   /** 状態異常（v0.33.0。毒・麻痺・睡眠・気絶のためた量と、効いている残り。src/game/ailment.ts） */
   ailments: MonsterAilments;
+  /** 突進の制動（v0.41.0）: 前へ進めなかった tick が続いた数（技を始めるたびに 0） */
+  stall: number;
 }
 
 /** 弱っているか（体力が捕獲できる割合以下）。見た目の合図と捕獲の条件が同じ値を使う。 */
@@ -131,6 +133,7 @@ export function createMonster(def: MonsterDef, spawn: { x: number; z: number; ya
     herd: null,
     spawn,
     ailments: freshAilments(),
+    stall: 0,
   };
 }
 
@@ -240,6 +243,7 @@ function chooseAction(m: MonsterState, player: PlayerState, ctx: SimCtx): Monste
 }
 
 function begin(m: MonsterState, actionId: string, ctx: SimCtx): void {
+  m.stall = 0;
   m.action = newRun(ctx.content.actions.get(actionId)!, ctx.newInstanceId(), m.yaw);
   ctx.emit({ type: 'action_start', actor: m.id, actionId, instanceId: m.action.instanceId });
 }
@@ -340,24 +344,40 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
       begin(m, def.rage.actionId, ctx);
     } else {
       if (!active) return;
-      m.yaw = turnToward(m.yaw, toPlayer, (def.turnDegPerSec * (rage ? rage.speedScale : 1) * DEG) / 60);
-      // 間合い取り: 正面に捉えていて遠ければ歩いて近づく
-      if (def.moveSpeed && def.approach && dist > def.approach.stopDist && ang < def.approach.faceDeg) {
-        const step = (def.moveSpeed * (rage ? rage.speedScale : 1)) / 60;
-        const f = forwardOf(m.yaw);
-        ctx.world.move(m.pos, def.bodyRadius, f.x * step, f.z * step);
+      const ts = def.turnSteps;
+      // 足を踏み替える向き直り（v0.41.0。#19 の M01）: 正面の外に居る相手には、待ち時間の間は決まった角度だけ回る。
+      // 待ち時間が明けていれば、まずその位置へ出せる技（横・後ろへの技）を選び、無ければ回る。回っている間は相手を追わない
+      const outside = !!ts && ang > ts.faceDeg;
+      if (!outside) {
+        m.yaw = turnToward(m.yaw, toPlayer, (def.turnDegPerSec * (rage ? rage.speedScale : 1) * DEG) / 60);
+        // 間合い取り: 正面に捉えていて遠ければ歩いて近づく
+        if (def.moveSpeed && def.approach && dist > def.approach.stopDist && ang < def.approach.faceDeg) {
+          const step = (def.moveSpeed * (rage ? rage.speedScale : 1)) / 60;
+          const f = forwardOf(m.yaw);
+          ctx.world.move(m.pos, def.bodyRadius, f.x * step, f.z * step);
+        }
       }
+      // 相手が左（rel > 0）なら左回り。backDeg より後ろなら 180°
+      const turn = (): void => {
+        const rel = angleDiff(m.yaw, toPlayer) / DEG;
+        const back = ang > ts!.backDeg;
+        begin(m, rel > 0 ? (back ? ts!.backLeft : ts!.left) : back ? ts!.backRight : ts!.right, ctx);
+      };
       if (m.cooldown > 0) {
         m.cooldown--;
-        return;
+        if (!outside) return;
+        turn();
+      } else {
+        const choice = chooseAction(m, player, ctx);
+        if (choice) {
+          const actionId = choice.ifSevered && isSevered(m, choice.ifSevered.partId) ? choice.ifSevered.actionId : choice.actionId;
+          m.lastActionId = choice.actionId;
+          if (choice.cooldownTicks) m.moveCooldowns[choice.actionId] = choice.cooldownTicks;
+          begin(m, actionId, ctx);
+          // 開始した tick に行動の 0 tick 目を処理する（プレイヤーと同じ数え方）
+        } else if (outside) turn();
+        else return;
       }
-      const choice = chooseAction(m, player, ctx);
-      if (!choice) return;
-      const actionId = choice.ifSevered && isSevered(m, choice.ifSevered.partId) ? choice.ifSevered.actionId : choice.actionId;
-      m.lastActionId = choice.actionId;
-      if (choice.cooldownTicks) m.moveCooldowns[choice.actionId] = choice.cooldownTicks;
-      begin(m, actionId, ctx);
-      // 開始した tick に行動の 0 tick 目を処理する（プレイヤーと同じ数え方）
     }
   }
 
@@ -367,13 +387,35 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   if (active && adef.turning && t < adef.turning.untilTick) {
     m.yaw = turnToward(m.yaw, toPlayer, (adef.turning.maxDegreesPerSecond * DEG) / 60);
   }
+  // 体ごと回る（v0.41.0。向き直りの技）: ゆっくり始まってゆっくり止まる
+  const sp = adef.spin;
+  if (sp && t >= sp.from && t < sp.to) {
+    const ease = (u: number): number => (u <= 0 ? 0 : u >= 1 ? 1 : u * u * (3 - 2 * u));
+    const n = sp.to - sp.from;
+    const y = m.yaw + sp.degrees * DEG * (ease((t + 1 - sp.from) / n) - ease((t - sp.from) / n));
+    m.yaw = Math.atan2(Math.sin(y), Math.cos(y));
+  }
   if (adef.rootMotion.mode === 'controller' && adef.rootMotion.curveId) {
     const curve = ctx.content.curves.get(adef.rootMotion.curveId)!;
     const d = sampleCurve(curve, t + 1) - sampleCurve(curve, t);
     if (d !== 0) {
       // dirDeg: 横・斜め・後ろへ跳ぶ技（v0.17.0）。体の向きは変えない
       const f = forwardOf(m.yaw + (adef.rootMotion.dirDeg ?? 0) * DEG);
+      const x0 = m.pos.x, z0 = m.pos.z;
       ctx.world.move(m.pos, def.bodyRadius, f.x * d, f.z * d);
+      // 突進の制動（v0.41.0。#19 の M02）: 走る間に前へ進めない（壁に沿って滑る時も、前への進みで見る）tick が 3 つ続いたら、減速の始めへ。
+      // 浅い角度でかすめる時（40° より浅い）は、そのまま壁に沿って走る
+      const br = adef.brake;
+      if (br && t >= br.from && t < br.to && d > 0.02) {
+        const ahead = (m.pos.x - x0) * f.x + (m.pos.z - z0) * f.z;
+        // 前への進みが 6 割に届かない（壁へ斜め 40° より深く当たって滑る時を含む）
+        m.stall = ahead < d * 0.6 ? m.stall + 1 : 0;
+        if (m.stall >= 3) {
+          m.stall = 0;
+          run.tick = br.to - 1;
+          ctx.emit({ type: 'monster_brake', target: m.id, tick: t });
+        }
+      }
     }
   }
   for (const hz of adef.hazards ?? []) {

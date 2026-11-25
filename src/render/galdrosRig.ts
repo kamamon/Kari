@@ -1461,6 +1461,19 @@ export class GaldrosRig implements MonsterRig {
         P.spread += 0.15 * bash;
         P.rattle = Math.max(P.rattle, gauss(t, 44, 3));
         P.look = 0.3;
+      } else if (clip.startsWith('galdros_turn_')) {
+        // 足を踏み替える向き直り（v0.41.0。#19 の M01）: 回る向きへ首と頭を先に向け、内側へ傾いて少し沈む。
+        // 体の向きは simulation が回し（ゆっくり始まってゆっくり止まる）、脚は踏み替え、背骨は向きの速さで曲がる（下の turnBend）
+        const dir = clip.includes('_l') ? 1 : -1;
+        const big = clip.includes('180') ? 1 : 0.65;
+        const u = clamp(t / run.def.durationTicks, 0, 1);
+        const lead = Math.sin(Math.PI * Math.min(1, u * 1.3));
+        const mid = Math.sin(Math.PI * u);
+        P.neckYaw += 0.3 * dir * lead * big;
+        P.headYaw += 0.15 * dir * lead * big;
+        P.roll += -0.05 * dir * mid * big;
+        P.y -= 0.04 * mid * big;
+        P.look = 0.35;
       } else if (clip === 'galdros_rock_fling_01') {
         // 左前脚で地面を掻き、岩を前へ弾き飛ばす
         const kick = gauss(t, 44, 4), after = smoothstep((t - 44) / 4) * (1 - smoothstep((t - 60) / 40));

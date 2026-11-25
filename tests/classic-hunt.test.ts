@@ -168,3 +168,105 @@ describe('断岳剣（H03 の大剣。v0.40.0）', () => {
     for (const k of up.keys.filter((k) => k.t >= 16 && k.t <= 27)) expect(k.normal).toEqual([1, 0, 0]);
   });
 });
+
+describe('ガルドロスの動き（#19 の M01・M02。v0.41.0）', () => {
+  const G = 'monster.galdros.';
+  /** ガルドロスを (0,10) に -Z 向きで置き、気付いた状態にする（訓練場の広さの盆地。依頼「岩場の足音」の 1 つの狩場） */
+  function arena(): { sim: Simulation; m: Simulation['monsters'][number] } {
+    const sim = new Simulation(content, baseOptions({ questId: 'quest.basin.003' }));
+    const m = sim.monsters[0]!;
+    m.pos = { x: 0, y: 0, z: 10 };
+    m.prevPos = { ...m.pos };
+    m.yaw = Math.PI;
+    m.prevYaw = Math.PI;
+    m.aware = true;
+    return { sim, m };
+  }
+  /** モンスターのローカル座標（左 +X、前 +Z）でプレイヤーを置く（-Z 向きなので、ワールドは x と z を反転） */
+  const at = (sim: Simulation, lx: number, lz: number): void => {
+    sim.player.pos = { x: -lx, y: 0, z: 10 - lz };
+    sim.player.prevPos = { ...sim.player.pos };
+  };
+  const startsOf = (evs: SimEvent[]): string[] => evs.filter((e) => e.type === 'action_start' && e.actor !== 'player').map((e) => (e as Extract<SimEvent, { type: 'action_start' }>).actionId);
+  const yawDiff = (a: number, b: number): number => Math.atan2(Math.sin(a - b), Math.cos(a - b));
+
+  it('待ち時間の間に横（左）へ回り込まれると、左へ 90° の向き直りを出し、回り終わるまで狩人を追わない（回る量は決まっている）', () => {
+    const { sim, m } = arena();
+    m.cooldown = 200;
+    at(sim, 6, 0); // 左 90°
+    const y0 = m.yaw;
+    const ev = run(sim, 1);
+    expect(startsOf(ev)).toEqual([G + 'turn_l90']);
+    // 回っている間に、右へ回り込む
+    at(sim, -6, 0);
+    run(sim, 43);
+    expect(m.action).toBeNull();
+    expect(yawDiff(m.yaw, y0) / (Math.PI / 180)).toBeCloseTo(90, 6);
+  });
+
+  it('後ろ（130° より外）に居ると 180°。正面の 50° 以内では、技の待ちの間は少しずつ向く（向き直りの技は出さない）', () => {
+    const a = arena();
+    a.m.cooldown = 200;
+    at(a.sim, -1, -6); // 右後ろ
+    expect(startsOf(run(a.sim, 1))).toEqual([G + 'turn_r180']);
+    const b = arena();
+    b.m.cooldown = 200;
+    at(b.sim, 3, 8); // 左前 ~20°
+    const y0 = b.m.yaw;
+    const ev = run(b.sim, 30);
+    expect(startsOf(ev)).toEqual([]);
+    expect(yawDiff(b.m.yaw, y0)).toBeGreaterThan(0);
+  });
+
+  it('待ち時間が明けていて、横・後ろへ出せる技が届く所なら、向き直りより技を選ぶ（尾払いなど）', () => {
+    const { sim, m } = arena();
+    m.cooldown = 0;
+    at(sim, 0, -3); // すぐ後ろ
+    const first = startsOf(run(sim, 1));
+    expect(first).toHaveLength(1);
+    expect(first[0]).not.toMatch(/turn_/);
+  });
+
+  it('向き直りの技を持たない種（セルヴァルク）は、これまでどおり少しずつ向く', () => {
+    const sim = new Simulation(content, baseOptions({ questId: 'quest.selvark.r1' }));
+    const m = sim.monsters[0]!;
+    m.aware = true;
+    m.cooldown = 200;
+    sim.player.pos = { x: m.pos.x + Math.sin(m.yaw + Math.PI / 2) * 6, y: 0, z: m.pos.z + Math.cos(m.yaw + Math.PI / 2) * 6 };
+    const ev = run(sim, 60);
+    expect(startsOf(ev).some((id) => /turn_/.test(id))).toBe(false);
+  });
+
+  it('突進の制動: 走る間に壁で前へ進めなくなると、減速の始めへ進め、壁の前で走り続けない', () => {
+    const { sim, m } = arena();
+    // 盆地の訓練場の壁へ向けて、壁の 3m 手前から突進させる
+    const b = sim.world.areaAt(m.pos.x, m.pos.z).bounds;
+    m.pos = { x: 0, y: 0, z: b.maxZ - 3 - m.def.bodyRadius };
+    m.prevPos = { ...m.pos };
+    m.yaw = 0; // +Z（壁）へ
+    m.aiEnabled = false;
+    m.action = null;
+    const ev: SimEvent[] = [];
+    // 突進の技だけを直接始める
+    (m as { action: unknown }).action = null;
+    // 狩人は正面（壁との間）。走り出す前の向きの追いで、向きを変えない
+    sim.player.pos = { x: 0, y: 0, z: m.pos.z + 1.5 };
+    sim.player.prevPos = { ...sim.player.pos };
+    const def = content.actions.get(G + 'charge')!;
+    m.action = { def, instanceId: 999, tick: 0, hitstop: 0, chargeTicks: 0, chargeLevel: 0, released: false, advanced: false, moveYaw: m.yaw, fixedDir: false, dirIndex: 0, keepDrawn: false, speed: 1, speedAcc: 0, momentumLevel: 0, momentumGained: false };
+    m.aiEnabled = true;
+    m.aware = true;
+    let jumpedFrom = -1;
+    for (let i = 0; i < 190 && m.action; i++) {
+      const before = m.action.tick;
+      ev.push(...run(sim, 1));
+      if (m.action && m.action.tick - before > 1) jumpedFrom = before;
+    }
+    const br = ev.filter((e): e is Extract<SimEvent, { type: 'monster_brake' }> => e.type === 'monster_brake');
+    expect(br).toHaveLength(1);
+    expect(br[0]!.tick).toBeGreaterThanOrEqual(70);
+    expect(br[0]!.tick).toBeLessThan(125);
+    expect(jumpedFrom).toBe(br[0]!.tick);
+    expect(m.pos.z).toBeLessThanOrEqual(b.maxZ - m.def.bodyRadius + 1e-6);
+  });
+});

@@ -39,6 +39,8 @@ function action(name, o) {
     ...(o.hazards ? { hazards: o.hazards } : {}),
     onFinish: 'keep',
     ...(o.track ? { weaponTrack: o.track } : {}),
+    ...(o.spin ? { spin: o.spin } : {}),
+    ...(o.brake ? { brake: { from: o.brake[0], to: o.brake[1] } } : {}),
   };
   actions.push(def);
   if (!clips.includes(def.clip)) clips.push(def.clip);
@@ -77,7 +79,8 @@ for (const [s, sign] of [['l', 1], ['r', -1]]) {
 }
 // 短い突進: 溜めが短く、距離も短い
 curve('g_charge_short', [[0, 0], [28, 0], [40, -0.35], [44, -0.35], [52, 0.8], [86, 7.2], [96, 7.8], [130, 7.8]]);
-action('charge_short', { dur: 130, active: [46, 86], curve: 'g_charge_short', track: 'galdros_charge_front', turn: [28, 80], hits: [hit('body_front', 'galdros_charge_front', 28, { cost: 40 })], events: [snd(2, 'galdros_warn'), snd(14, 'galdros_scrape'), snd(44, 'galdros_charge')] });
+// v0.41.0（#19 の M02）: 走る間（52〜86）に壁・段・岩で前へ進めなくなったら、減速（86）へ進める
+action('charge_short', { dur: 130, active: [46, 86], curve: 'g_charge_short', track: 'galdros_charge_front', turn: [28, 80], brake: [52, 86], hits: [hit('body_front', 'galdros_charge_front', 28, { cost: 40 })], events: [snd(2, 'galdros_warn'), snd(14, 'galdros_scrape'), snd(44, 'galdros_charge')] });
 
 // ---- 尾 ----
 const TAIL = { radius: 0.5, from: 0.3, to: 1.75 }, STUMP = { radius: 0.5, from: 0.3, to: 0.95 };
@@ -117,6 +120,13 @@ curve('g_retreat', [[0, 0], [20, 0], [38, -3.2], [72, -3.2]]);
 action('retreat', { dur: 72, active: [20, 38], curve: 'g_retreat', events: [snd(18, 'galdros_scrape'), SLAM(38)] });
 // 威嚇: 離れた相手へ、短く吠える
 action('threat', { dur: 64, active: [14, 44], turn: [40, 60], events: [snd(4, 'galdros_warn')] });
+
+// ---- 足を踏み替える向き直り（v0.41.0。#19 の M01。2G）----
+// 戦っていて、狩人が正面の外に居る時に、決まった角度だけ回る（回っている間は狩人を追わない。回り終わってから選び直す）。
+// 体の向きは、ゆっくり始まってゆっくり止まる（spin。モンスターでは、なめらかに足す）。脚は描画が踏み替える。判定は無い。時間は Kari の仮の値
+for (const [name, deg, dur] of [['turn_l90', 90, 44], ['turn_r90', -90, 44], ['turn_l180', 180, 72], ['turn_r180', -180, 72]]) {
+  action(name, { dur, active: [6, dur - 8], spin: { from: 6, to: dur - 8, degrees: deg }, events: [snd(4, 'galdros_scrape')] });
+}
 
 // ---- 書き出し ----
 const line = (o) => JSON.stringify(o).replace(/"(\w+)":/g, '"$1": ').replace(/,"/g, ', "');
