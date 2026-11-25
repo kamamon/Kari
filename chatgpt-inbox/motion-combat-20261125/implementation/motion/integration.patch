@@ -1,0 +1,765 @@
+diff --git a/src/render/contactLocomotion.ts b/src/render/contactLocomotion.ts
+new file mode 100644
+--- /dev/null
++++ b/src/render/contactLocomotion.ts
+@@ -0,0 +1,176 @@
++// 描画専用。simulation の位置・yaw・攻撃軌道は変更しない。
++// 足首ではなく母指球を世界座標へ留める。停止/方向転換で届かなくなる足は、滑らせずに踏み替える。
++import { fillCtl, mixFoot, solveBody, type BodyPose, type Foot, type Hands } from './bodySolve';
++
++export interface RenderRoot { x: number; z: number; yaw: number }
++interface Point { x: number; z: number; yaw: number }
++interface Swing { from: Point; to: Point; elapsed: number; duration: number; lift: number }
++interface FootState { at: Point; lift: number; contact: boolean; swing: Swing | null }
++const BALL = 0.13, DEG = Math.PI / 180;
++const clamp = (x: number, a: number, b: number): number => Math.max(a, Math.min(b, x));
++const smooth = (x: number): number => { const t = clamp(x, 0, 1); return t * t * (3 - 2 * t); };
++const angle = (a: number, b: number): number => Math.atan2(Math.sin(b - a), Math.cos(b - a));
++
++/** 足の母指球。world-space contact の検査にも使う。 */
++export function footContactWorld(f: Foot, r: RenderRoot): Point {
++  const fy = f[3] * DEG;
++  const x = f[0] + Math.sin(fy) * BALL, z = f[2] + Math.cos(fy) * BALL;
++  const c = Math.cos(r.yaw), s = Math.sin(r.yaw);
++  return { x: r.x + x * c + z * s, z: r.z - x * s + z * c, yaw: r.yaw + fy };
++}
++function local(at: Point, lift: number, heel: number, r: RenderRoot): Foot {
++  const c = Math.cos(r.yaw), s = Math.sin(r.yaw), dx = at.x - r.x, dz = at.z - r.z;
++  const yaw = angle(r.yaw, at.yaw);
++  return [dx * c - dz * s - Math.sin(yaw) * BALL, lift, dx * s + dz * c - Math.cos(yaw) * BALL, yaw / DEG, heel];
++}
++
++export class ContactLocomotion {
++  private feet: [FootState, FootState] | null = null;
++  private root: RenderRoot | null = null;
++  private released: { from: [FootState, FootState]; age: number } | null = null;
++  reset(): void { this.feet = null; this.root = null; this.released = null; }
++
++  frame(root: RenderRoot, desiredL: Foot, desiredR: Foot, dt: number, moving: boolean): { L: Foot; R: Foot } {
++    const desired = [desiredL, desiredR] as const;
++    // エリア移動・ビューアの飛び先は補間しない。大きい dt も再入場として扱う。
++    if (!this.feet || !this.root || Math.hypot(root.x - this.root.x, root.z - this.root.z) > 1.2 || dt > 0.2) {
++      this.feet = desired.map((f) => ({ at: footContactWorld(f, root), lift: f[1], contact: f[1] <= 0.004, swing: null })) as [FootState, FootState];
++    }
++    const stepDt = clamp(dt, 0, 0.1);
++    const feet = this.feet;
++    const dx = this.root ? root.x - this.root.x : 0, dz = this.root ? root.z - this.root.z : 0;
++    const distance = Math.hypot(dx, dz);
++    const directionError = distance > 0.0001 ? Math.abs(angle(root.yaw, Math.atan2(dx, dz))) : 0;
++    const turnSpeed = this.root && stepDt > 0 ? Math.abs(angle(this.root.yaw, root.yaw)) / stepDt : 0;
++    const overextended = feet.some((state) => {
++      const f = local(state.at, state.lift, 0, root);
++      return Math.hypot(f[0], f[2]) > 0.52;
++    });
++    const release = moving && (directionError > 0.45 || turnSpeed > 2.6 || overextended);
++    if (release && !this.released) {
++      this.released = { from: feet.map((f) => ({ ...f, at: { ...f.at }, swing: null })) as [FootState, FootState], age: 0 };
++    }
++    if (this.released) {
++      // Controller は向きが追いつく前に反対方向へ動ける。足を固定したまま脚を伸ばさず、
++      // 80ms の足上げを経て安全な歩行へ戻す。この間は世界接地を保証しない。
++      const rel = this.released;
++      rel.age += stepDt;
++      const u = clamp(rel.age / 0.08, 0, 1), w = smooth(u);
++      const result = desired.map((f, i) => {
++        const old = rel.from[i]!;
++        const p = mixFoot(local(old.at, old.lift, 0, root), f, w);
++        p[1] = Math.max(p[1], 0.07 * Math.sin(Math.PI * u));
++        // 足上げ中の届き方にも上限を設ける。通常の歩行の範囲から外へ引っ張らない。
++        p[0] = i === 0 ? clamp(p[0], 0.055, 0.23) : clamp(p[0], -0.23, -0.055);
++        p[2] = clamp(p[2], -0.44, 0.44);
++        return p;
++      });
++      this.feet = result.map((f) => ({ at: footContactWorld(f, root), lift: f[1], contact: f[1] <= 0.004, swing: null })) as [FootState, FootState];
++      this.root = { ...root };
++      if (!release && u >= 1) this.released = null;
++      return { L: result[0]!, R: result[1]! };
++    }
++    const out: Foot[] = [];
++    let stepping = feet.some((f) => !!f.swing);
++    for (let i = 0; i < 2; i++) {
++      const f = desired[i]!, state = feet[i]!, target = footContactWorld(f, root);
++      const nominalSwing = moving && f[1] > 0.004;
++      if (!state.swing && nominalSwing) {
++        // 普通の遊脚は、距離から進めた歩行周期を使う。接地した側の足は動かさない。
++        state.at = target;
++        state.lift = f[1];
++        state.contact = false;
++      } else if (!state.swing && !state.contact) {
++        if (moving) {
++          state.at = target;
++          state.lift = 0;
++          state.contact = true;
++        } else if (!stepping) {
++          // 入力を離した瞬間に、空中の足を地面へ瞬間移動させない。
++          state.swing = { from: { ...state.at }, to: target, elapsed: 0, duration: 0.16, lift: state.lift };
++          stepping = true;
++        }
++      }
++      if (!state.swing && state.contact && !stepping && !nominalSwing && !moving) {
++        const error = Math.hypot(target.x - state.at.x, target.z - state.at.z);
++        if (error > 0.075 || Math.abs(angle(state.at.yaw, target.yaw)) > 24 * DEG) {
++          state.swing = { from: { ...state.at }, to: target, elapsed: 0, duration: clamp(error / 1.7, 0.16, 0.3), lift: 0 };
++          state.contact = false;
++          stepping = true;
++        }
++      }
++      if (state.swing) {
++        const sw = state.swing;
++        sw.elapsed += stepDt;
++        const u = clamp(sw.elapsed / sw.duration, 0, 1), w = smooth(u);
++        state.at = { x: sw.from.x + (sw.to.x - sw.from.x) * w, z: sw.from.z + (sw.to.z - sw.from.z) * w, yaw: sw.from.yaw + angle(sw.from.yaw, sw.to.yaw) * w };
++        state.lift = sw.lift * (1 - w) + 0.065 * Math.sin(Math.PI * u);
++        if (u >= 1) { state.swing = null; state.contact = true; state.lift = 0; }
++      }
++      let heel = state.contact ? f[4] : 0;
++      if (moving && state.contact) {
++        const turn = angle(state.at.yaw, target.yaw);
++        if (Math.abs(turn) > 12 * DEG) {
++          // 急に向きを変えた時は母指球を軸に踵を回す。世界座標の接地点は同じ。
++          state.at.yaw += clamp(turn, -8 * stepDt, 8 * stepDt);
++          heel = Math.max(heel, 18);
++        }
++      }
++      out.push(local(state.at, state.lift, heel, root));
++    }
++    this.root = { ...root };
++    return { L: out[0]!, R: out[1]! };
++  }
++}
++
++const FREE_HANDS: Hands = { primary: 'R', second: 'free', wrist: [0, 180] };
++/** 接地率に歩幅を合わせる。run=1 では両足が短く浮く走りになり、歩幅だけを過大にしない。 */
++export function travelGait(phase: number, stride: number, L: Foot, R: Foot, run = 0): { L: Foot; R: Foot; bob: number } {
++  const duty = 0.6 - 0.28 * clamp(run, 0, 1), half = stride * duty * 0.5;
++  const one = (ph: number, base: Foot): Foot => {
++    const u = ((ph / (Math.PI * 2)) % 1 + 1) % 1;
++    if (u < duty) {
++      const k = u / duty;
++      const heel = k < 0.18 ? -16 * (1 - k / 0.18) : k > 0.74 ? 24 * ((k - 0.74) / 0.26) : 0;
++      return [base[0], 0, half - stride * u, base[3] * 0.4, heel];
++    }
++    const s = (u - duty) / (1 - duty);
++    return [base[0], (0.09 + run * 0.12) * Math.sin(Math.PI * s), -half + 2 * half * smooth(s), base[3] * 0.4, 0];
++  };
++  return { L: one(phase, L), R: one(phase + Math.PI, R), bob: 0.012 * Math.cos(phase * 2) };
++}
++/** 既存の上体を保ち、脚と骨盤だけを二本骨 IK で地面へ合わせる。 */
++export function groundLowerBody(pose: BodyPose, L: Foot, R: Foot, hipYaw = 0, hipRoll = 0): BodyPose {
++  let solved = solveBody(fillCtl({ hip: [pose.px ?? 0, pose.py, pose.pz ?? 0], hipR: [0, hipYaw, hipRoll], grab: [0], on: [0] }), L, R, FREE_HANDS);
++  // 今の靴は toe 骨が無い一枚の剛体。母指球 .13m より先の .19m を地面へ埋めない。
++  // 初回で求めた骨盤は保持し、靴をつま先/踵の接触高さへ戻して膝だけを解き直す。
++  const sole = (f: Foot, heel: number): Foot => {
++    const extra = heel >= 0 ? 0.06 * Math.sin(heel * DEG) : -0.01 * Math.sin(heel * DEG);
++    return [f[0], f[1] + Math.max(0, extra) + 0.004, f[2], f[3], heel];
++  };
++  const sl = sole(L, solved.frames.heelL), sr = sole(R, solved.frames.heelR);
++  solved = solveBody(fillCtl({ hip: [solved.pose.px ?? 0, solved.pose.py, solved.pose.pz ?? 0], hipR: [0, hipYaw, hipRoll], grab: [0], on: [0] }), sl, sr, FREE_HANDS);
++  const p = { ...pose, j: { ...pose.j }, px: solved.pose.px, py: solved.pose.py, pz: solved.pose.pz, grounded: true };
++  for (const name of ['pelvis', 'thighL', 'shinL', 'footL', 'thighR', 'shinR', 'footR'] as const) p.j[name] = solved.pose.j[name];
++  return p;
++}
++
++/** 納刀中（全 7 系統）と断岳剣の通常歩行。武器の判定時刻には呼ばない。 */
++export class GroundedLocomotion {
++  private contact = new ContactLocomotion();
++  reset(): void { this.contact.reset(); }
++  frame(pose: BodyPose, drawn: boolean, speed: number, phase: number, dt: number, root: RenderRoot): BodyPose {
++    const L: Foot = drawn ? [0.11, 0, 0.18, 6, 0] : [0.105, 0, 0, 5, 0];
++    const R: Foot = drawn ? [-0.13, 0, -0.16, -28, 0] : [-0.105, 0, 0, -5, 0];
++    const moving = speed > 0.15;
++    const stride = drawn ? 1.35 : 1.7 + 0.9 * Math.min(1, speed / 6.4);
++    const run = drawn ? 0 : smooth((speed - 3.5) / 2.9);
++    const g = moving ? travelGait(phase, stride, L, R, run) : { L, R, bob: 0 };
++    const f = this.contact.frame(root, g.L, g.R, dt, moving);
++    const w = smooth((speed - 0.15) / 1.0), yaw = 2.2 * Math.sin(phase) * w, roll = 1.1 * Math.sin(phase) * w;
++    const out = groundLowerBody(pose, f.L, f.R, yaw, roll);
++    // 腰と胸は逆方向へ。頭と武器の向きを大きく振らない。
++    out.j.spine = [pose.j.spine[0], pose.j.spine[1] - yaw * 0.65, pose.j.spine[2] - roll * 0.65];
++    return out;
++  }
++}
+diff --git a/src/render/heavyBodyMotion.ts b/src/render/heavyBodyMotion.ts
+new file mode 100644
+--- /dev/null
++++ b/src/render/heavyBodyMotion.ts
+@@ -0,0 +1,67 @@
++// 断岳剣の既存の刃軌道を保ち、下半身を接地 IK へ替える。
++// 腰→胸のひねりを分担する。技の時刻・移動距離・判定窓は変更しない。
++import { fillCtl, footAt, type BodyPose, type Foot, type Motion, type Step } from './bodySolve';
++import { groundLowerBody } from './contactLocomotion';
++
++const L: Step = [0, 0, 0.11, 0.18, 6];
++const R: Step = [0, 0, -0.13, -0.16, -28];
++const clamp = (v: number, a: number, b: number): number => Math.min(b, Math.max(a, v));
++function smoothKeys(keys: readonly (readonly [number, number])[], t: number): number {
++  if (t <= keys[0]![0]) return keys[0]![1];
++  for (let i = 1; i < keys.length; i++) {
++    const a = keys[i - 1]!, b = keys[i]!;
++    if (t <= b[0]) { const u = clamp((t - a[0]) / (b[0] - a[0]), 0, 1), w = u * u * (3 - 2 * u); return a[1] + (b[1] - a[1]) * w; }
++  }
++  return keys[keys.length - 1]![1];
++}
++const HEAVY: Record<string, Motion> = {
++  hb_attack_vertical_01: {
++    dur: 72, family: 'heavy_blade', base: fillCtl({}), ch: {},
++    root: [[0, 0], [14, 0], [24, 0.33], [30, 0.35], [72, 0.35]],
++    feet: { L: [L, [12, 24, 0.11, 0.24, 6, 0.07], [54, 67, 0.11, 0.18, 6, 0.05]], R: [R, [38, 52, -0.13, -0.16, -28, 0.06]] },
++  },
++  hb_attack_side_01: {
++    dur: 66, family: 'heavy_blade', base: fillCtl({}), ch: {},
++    root: [[0, 0], [10, 0], [20, 0.25], [66, 0.25]],
++    feet: { L: [L, [8, 18, 0.12, 0.23, 6, 0.06], [52, 64, 0.11, 0.18, 6, 0.05]], R: [R, [38, 51, -0.13, -0.16, -28, 0.05]] },
++  },
++  hb_draw_slash_01: {
++    dur: 64, family: 'heavy_blade', base: fillCtl({}), ch: {},
++    root: [[0, 0], [8, 0], [22, 0.42], [28, 0.45], [64, 0.45]],
++    feet: { L: [[0, 0, 0.105, 0, 5], [7, 20, 0.11, 0.23, 6, 0.07], [50, 62, 0.11, 0.18, 6, 0.05]], R: [[0, 0, -0.105, 0, -5], [33, 48, -0.13, -0.16, -28, 0.06]] },
++  },
++};
++
++/** 母指球を動かさず、踵を上げて向きを変える。 */
++function pivot(f: Foot, degrees: number, heel: number): Foot {
++  const old = f[3] * Math.PI / 180, next = degrees * Math.PI / 180;
++  return [f[0] + (Math.sin(old) - Math.sin(next)) * 0.13, f[1], f[2] + (Math.cos(old) - Math.cos(next)) * 0.13, degrees, f[1] > 0.004 ? f[4] : Math.max(f[4], heel)];
++}
++
++export function groundedHeavyAttack(pose: BodyPose, clip: string, t: number): BodyPose {
++  const m = HEAVY[clip];
++  if (!m) return pose;
++  if (clip === 'hb_attack_side_01') {
++    // 両手を柄へ届かせるため、前脚へ重さを移しながら膝で 12cm 沈む。
++    // 足は移動させない。既存の刃軌道に腕だけを伸ばすと左手が約 9cm 届かなかった。
++    const crouch = smoothKeys([[0, 0], [8, 1], [38, 1], [54, 0], [66, 0]], t);
++    const transfer = smoothKeys([[0, 0], [16, 0], [22, 1], [38, 1], [54, 0], [66, 0]], t);
++    pose = { ...pose, py: pose.py - 0.12 * crouch, pz: (pose.pz ?? 0) + 0.08 * transfer };
++  }
++  let left = footAt(m, m.feet.L, t), right = footAt(m, m.feet.R, t);
++  const totalYaw = pose.j.spine[1] + pose.j.chest[1];
++  // 最大 92° が背骨だけへ掛かっていた薙ぎを、骨盤 44° + 背/胸 48° に分ける。
++  const hipYaw = clip === 'hb_attack_side_01'
++    ? smoothKeys([[0, 0], [8, -16], [18, -28], [22, -2], [27, 34], [34, 44], [50, 16], [66, 0]], t)
++    : clamp(totalYaw * 0.3, -12, 12);
++  if (clip === 'hb_attack_side_01') {
++    const u = smoothKeys([[0, 0], [18, 0], [34, 1], [50, 0.4], [66, 0]], t);
++    left = pivot(left, left[3] + 32 * u, 12 * Math.sin(Math.PI * u));
++    right = pivot(right, right[3] + 46 * u, 22 * Math.sin(Math.PI * u));
++  }
++  const p = groundLowerBody(pose, left, right, hipYaw);
++  const spine = pose.j.spine[1] * 0.35;
++  p.j.spine = [pose.j.spine[0], spine, pose.j.spine[2]];
++  p.j.chest = [pose.j.chest[0], totalYaw - hipYaw - spine, pose.j.chest[2]];
++  return p;
++}
+diff --git a/src/render/hunterAnim.ts b/src/render/hunterAnim.ts
+--- a/src/render/hunterAnim.ts
++++ b/src/render/hunterAnim.ts
+@@ -2,7 +2,23 @@
+ // ゲームの画面（view.ts）と素材ビューア（viewer.ts）と検査（tests/human-motion.test.ts）が、ここを使う。
+ import { evalMotion, gaitFeet, mixCtl, mixFoot, solveBody, type Ctl, type Foot, type Solved } from './bodySolve';
+ import type { HunterRig } from './rig';
++import { ContactLocomotion, type RenderRoot } from './contactLocomotion';
+ import { WEAPON_MOTIONS, WEAPON_STANCES } from './weaponClipSpecs';
++import { renderTick, type ActionRun } from '../game/action';
++import type { ActionDef } from '../data/schemas';
++
++/** run.tick は「次に処理する tick」。命中停止中は処理済みの接触姿勢を保つ。simulation は変更しない。 */
++export function playerRenderTick(run: ActionRun, alpha: number): number {
++  const holding = !!run.def.charge && run.tick === run.def.charge.holdTick && !run.released;
++  if (run.hitstop > 0 || (!run.advanced && !holding && run.tick > 0)) return Math.max(0, run.tick - 1);
++  return renderTick(run, alpha);
++}
++
++/** 射撃の発射フレームも、手/弦と projectile の対応を保つために遷移を終える。 */
++export function playerContactFrame(def: ActionDef, t: number): boolean {
++  return def.hitWindows.some((h) => t >= h.from && t < h.to)
++    || !!def.shoot?.some((s) => t >= s.tick && t < s.tick + 1);
++}
+ 
+ export type AnimState =
+   /** 技。t は技の tick（小数可）、dirAngle は回避の向き（ラジアン）、chargeTicks は溜めている tick、freeMove は技の間に歩けるか */
+@@ -32,6 +48,13 @@
+ /** 弓: 溜めるほど深く引く（引く長さに掛ける割増と、引き切るまでの tick） */
+ const CHARGE_PULL = 0.12, CHARGE_TICKS = 36;
+ 
++export interface AnimContext {
++  root?: RenderRoot;
++  /** 判定が有効な tick は、ブレンドせずに正本の軌道へ一致させる。 */
++  active?: boolean;
++  frozen?: boolean;
++}
++
+ interface Frame {
+   ctl: Ctl;
+   fL: Foot;
+@@ -44,12 +67,18 @@
+   private key = '';
+   private blendT = 1;
+   private phase = 0;
++  private contact = new ContactLocomotion();
++  private previousRoot: RenderRoot | null = null;
++
++  constructor(phase = 0) { this.phase = phase; }
+ 
+   /** 解ける状態を抜けた（被弾・納刀など）。次に入る時は、直前の姿から混ぜない。 */
+   reset(): void {
+     this.last = null;
+     this.from = null;
+     this.key = '';
++    this.contact.reset();
++    this.previousRoot = null;
+   }
+ 
+   /** 直前のフレームも、ここで解いた姿だったか */
+@@ -61,7 +90,13 @@
+    * 1 フレームぶん解く。key は状態の名前（替わった時に混ぜ始める）。moveSpeed は m/秒。
+    * 返り値の姿勢・武器・盾を、applySolved でリグへ渡す。
+    */
+-  frame(familyId: string, st: AnimState, key: string, dt: number, moveSpeed: number, time: number): Solved {
++  frame(familyId: string, st: AnimState, key: string, dt: number, moveSpeed: number, time: number, context: AnimContext = {}): Solved {
++    dt = context.frozen ? 0 : Math.max(0, dt);
++    if (context.root && this.previousRoot && dt > 0 && dt < 0.2) {
++      const distance = Math.hypot(context.root.x - this.previousRoot.x, context.root.z - this.previousRoot.z);
++      if (distance < 1.2) moveSpeed = Math.min(7, distance / dt);
++    }
++    if (context.root) this.previousRoot = { ...context.root };
+     const S = WEAPON_STANCES[familyId]!;
+     const idle = S.idle;
+     let f: Frame;
+@@ -71,7 +106,7 @@
+       const e = evalMotion(m, Math.min(st.t, m.dur), st.dirAngle);
+       f = { ctl: e.ctl, fL: e.footL, fR: e.footR };
+       if (S.hands.second === 'string' && st.chargeTicks > 0) f.ctl.pull = [(f.ctl.pull[0] ?? 0) * (1 + CHARGE_PULL * smooth(st.chargeTicks / CHARGE_TICKS))];
+-      if (st.freeMove) walk = smooth((moveSpeed - 0.1) / 0.5);
++      if (st.freeMove && !context.active) walk = smooth((moveSpeed - 0.1) / 0.5);
+     } else if (st.kind === 'guard') {
+       const g = S.guard!;
+       const u = smooth(st.blend);
+@@ -82,7 +117,7 @@
+       f = { ctl: mixCtl(idle.ctl, idle.ctl, 0), fL: idle.feet.L.slice() as Foot, fR: idle.feet.R.slice() as Foot };
+       const breathe = Math.sin(time * 1.7);
+       f.ctl.chest = [f.ctl.chest[0]! + breathe * 1.2, f.ctl.chest[1]!, f.ctl.chest[2]!];
+-      f.ctl.hip = [f.ctl.hip[0]!, f.ctl.hip[1]! + breathe * 0.004, f.ctl.hip[2]!];
++      f.ctl.hip = [f.ctl.hip[0]!, f.ctl.hip[1]! + Math.sin(time * 1.7 - 0.3) * 0.004, f.ctl.hip[2]!];
+       walk = smooth((moveSpeed - 0.1) / 0.5);
+     }
+     // 歩く: 足を交互に運ぶ。腰は進む方へ少し戻し、その分だけ背でひねり直す（胸と腕の向きは変えない）
+@@ -104,11 +139,16 @@
+       this.blendT = 0;
+     }
+     this.blendT += dt;
+-    const w = Math.min(1, this.blendT / BLEND_SEC);
++    const w = context.active ? 1 : Math.min(1, this.blendT / BLEND_SEC);
+     if (w < 1 && this.from) {
+       const u = smooth(w);
+       f = { ctl: mixCtl(this.from.ctl, f.ctl, u), fL: mixFoot(this.from.fL, f.fL, u), fR: mixFoot(this.from.fR, f.fR, u) };
+     }
++    // 足を世界座標へ留める処理は、通常歩行だけ。攻撃中の判定軌道は変えない。
++    if (context.root && st.kind === 'idle') {
++      const grounded = this.contact.frame(context.root, f.fL, f.fR, dt, walk > 0.01);
++      f.fL = grounded.L; f.fR = grounded.R;
++    } else this.contact.reset();
+     this.last = f;
+     return solveBody(f.ctl, f.fL, f.fR, S.hands);
+   }
+@@ -116,7 +156,9 @@
+ 
+ /** 混ぜずに、その場で 1 つの状態を解く（素材ビューア・検査用）。 */
+ export function solveState(familyId: string, st: AnimState, moveSpeed = 0, time = 0): Solved {
+-  return new HunterAnimator().frame(familyId, st, '', 1, moveSpeed, time);
++  // 絶対時刻から周期を決める。以前は毎回 dt=1 から始まり、全て同じ脚の位相を検査していた。
++  const phase = moveSpeed * Math.max(0, time) * Math.PI * 2 / strideOf(moveSpeed);
++  return new HunterAnimator(phase).frame(familyId, st, '', 0, moveSpeed, time);
+ }
+ 
+ /** 解いた結果を、リグへ渡す。familyId は、左手のものを持っていない時の置き場所を決めるのに使う。 */
+diff --git a/src/render/view.ts b/src/render/view.ts
+--- a/src/render/view.ts
++++ b/src/render/view.ts
+@@ -22,8 +22,10 @@
+ import { CREATURE_PLANS } from './creaturePlans';
+ import { DummyRig, type MonsterRig } from './monsterRig';
+ import { blendPose, clipPose, deadPose, emptyPose, guardPose, hurtPose, locomotionPose, type BodyPose } from './poses';
+-import { HunterAnimator, applySolved, canSolve, stowOffhand, type AnimState } from './hunterAnim';
++import { HunterAnimator, applySolved, canSolve, playerContactFrame, playerRenderTick, stowOffhand, type AnimState } from './hunterAnim';
+ import type { Solved } from './bodySolve';
++import { GroundedLocomotion } from './contactLocomotion';
++import { groundedHeavyAttack } from './heavyBodyMotion';
+ import { WEAPON_STANCES } from './weaponClipSpecs';
+ import { buildArrow } from './bow';
+ import { armorTierOf, type ArmorLook } from './hunterArmor';
+@@ -116,6 +118,7 @@
+   private debug: DebugDraw;
+   private playerShadow = blobShadow(0.45);
+   private phase = 0;
++  private lastPlayerXZ: { x: number; z: number } | null = null;
+   private time = 0;
+   /** 見た目の側から鳴らす音（モンスターの足音など）。App が音声へつなぐ。 */
+   onSound: ((id: string, intensity: number) => void) | null = null;
+@@ -141,6 +144,7 @@
+   private blendT = 1;
+   /** 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）の体を解く係 */
+   private anim = new HunterAnimator();
++  private groundLocomotion = new GroundedLocomotion();
+   private tmpA = new Vector3();
+   private tmpB = new Vector3();
+   private tmpLock = new Vector3();
+@@ -416,8 +420,11 @@
+     this.renderY += (pos.y - this.renderY) * Math.min(1, dt * 16);
+     this.hunter.root.position.set(pos.x, this.renderY, pos.z);
+     this.hunter.root.rotation.y = yaw;
+-    const stride = p.drawn ? 1.35 : 1.7 + 0.9 * Math.min(1, p.moveSpeed / 6.4);
+-    this.phase += (p.moveSpeed * dt * Math.PI * 2) / stride;
++    const travel = this.lastPlayerXZ ? Math.hypot(pos.x - this.lastPlayerXZ.x, pos.z - this.lastPlayerXZ.z) : 0;
++    const visualSpeed = this.lastPlayerXZ && dt > 0 && dt < 0.2 && travel < 1.2 ? Math.min(7, travel / dt) : p.moveSpeed;
++    this.lastPlayerXZ = { x: pos.x, z: pos.z };
++    const stride = p.drawn ? 1.35 : 1.7 + 0.9 * Math.min(1, visualSpeed / 6.4);
++    this.phase += (visualSpeed * dt * Math.PI * 2) / stride;
+ 
+     // ---- 姿勢と武器の置き場所を決める ----
+     let key: string;
+@@ -442,12 +449,13 @@
+ 
+     if (p.mode === 'action' && p.action) {
+       const run = p.action;
+-      const t = renderTick(run, alpha);
++      const t = playerRenderTick(run, alpha);
+       const fm = run.def.freeMove;
+       st = { kind: 'action', clip: run.def.clip, t, dirAngle: (run.dirIndex * Math.PI) / 2, chargeTicks: run.chargeTicks, freeMove: !!fm && t >= (fm.from ?? 0) && t < (fm.to ?? run.def.durationTicks) };
+       const cp = canSolve(fam.id, st) ? emptyPose() : clipPose(run.def.clip, t);
+       if (!cp) this.missingClips.add(run.def.clip);
+       pose = cp ?? emptyPose();
++      if (fam.id === 'heavy_blade') pose = groundedHeavyAttack(pose, run.def.clip, t);
+       pose.tumbleDir = (run.dirIndex * Math.PI) / 2;
+       key = `action:${run.instanceId}`;
+       if (run.def.weaponTrack) {
+@@ -514,7 +522,8 @@
+       pose = deadPose(p.deadTicks + alpha);
+       key = 'dead';
+     } else {
+-      pose = locomotionPose(p.drawn, p.moveSpeed, this.phase, this.time);
++      pose = locomotionPose(p.drawn, visualSpeed, this.phase, this.time);
++      if (!p.drawn || fam.id === 'heavy_blade') pose = this.groundLocomotion.frame(pose, p.drawn, visualSpeed, this.phase, dt, { x: pos.x, z: pos.z, yaw });
+       key = p.drawn ? 'free-drawn' : 'free-sheathed';
+       if (p.drawn) {
+         weapon = ready;
+@@ -522,18 +531,22 @@
+       }
+     }
+     // 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）: 体・武器・盾（双剣は左の剣）をまとめて解く（足は地面に、手は武器に付いたままになる）
+-    const continued = this.anim.continuing;
++    if (p.mode !== 'free') this.groundLocomotion.reset();
+     let solved: Solved | null = null;
+     if (st && canSolve(fam.id, st)) {
+-      solved = this.anim.frame(fam.id, st, key, dt, p.moveSpeed, this.time);
++      solved = this.anim.frame(fam.id, st, key, dt, visualSpeed, this.time, {
++        root: { x: pos.x, z: pos.z, yaw },
++        active: st.kind === 'action' && !!p.action && playerContactFrame(p.action.def, st.t),
++        frozen: !!p.action && p.action.hitstop > 0,
++      });
+       pose = solved.pose;
+     } else this.anim.reset();
+ 
+     // 状態が切り替わった瞬間は、直前の姿勢から短く混ぜる
+     if (key !== this.poseKey) {
+       this.poseKey = key;
+-      // 解いた姿どうしの切り替えは、解く側が混ぜ終えている
+-      this.blendFrom = solved && continued ? null : { ...this.lastPose, tumble: ((((this.lastPose.tumble + 180) % 360) + 360) % 360) - 180 };
++      // IK を解いた後で骨だけを混ぜると、手と武器が離れる。解く側だけでブレンドする。
++      this.blendFrom = solved ? null : { ...this.lastPose, tumble: ((((this.lastPose.tumble + 180) % 360) + 360) % 360) - 180 };
+       this.blendT = 0;
+     }
+     this.blendT += dt;
+@@ -543,8 +556,7 @@
+ 
+     if (solved) {
+       applySolved(this.hunter, solved, fam.id);
+-      // 混ぜている途中は、混ぜた姿勢を置き直す（武器と盾は解いた位置のまま）
+-      if (pose !== solved.pose) this.hunter.setPose(pose);
++      // applySolved の後で姿勢を上書きしない（握りと添え手を保つ）。
+     } else {
+       this.hunter.setPose(pose);
+       this.hunter.setString(null);
+@@ -825,7 +837,7 @@
+       const guarding = isGuarding(p, fam.guard);
+       d.capsule(cap.a, cap.b, cap.r, guarding ? [1, 1, 0.4] : [0.3, 0.9, 1]);
+       if (p.action) {
+-        const t = renderTick(p.action, alpha);
++        const t = playerRenderTick(p.action, alpha);
+         for (const hw of p.action.def.hitWindows) {
+           const tr = content.tracks.get(hw.shapeTrack)!;
+           const seg = trackSegment(tr, t);
+diff --git a/src/viewer.ts b/src/viewer.ts
+--- a/src/viewer.ts
++++ b/src/viewer.ts
+@@ -27,6 +27,8 @@
+ import type { ArmorLook } from './render/hunterArmor';
+ import { applySolved, canSolve, solveState, stowOffhand, type AnimState } from './render/hunterAnim';
+ import type { Solved } from './render/bodySolve';
++import { GroundedLocomotion } from './render/contactLocomotion';
++import { groundedHeavyAttack } from './render/heavyBodyMotion';
+ import { WEAPON_STANCES } from './render/weaponClipSpecs';
+ import { buildLongBlade, buildTwinBlade, buildWarMaul } from './render/provisionalWeapons';
+ import { withShell } from './render/shellPlates';
+@@ -393,7 +395,8 @@
+     } else if (a) {
+       lastSolved = null;
+       hunter.setString(null);
+-      const pose = clipPose(a.clip, t);
++      let pose = clipPose(a.clip, t);
++      if (pose && fam.id === 'heavy_blade') pose = groundedHeavyAttack(pose, a.clip, t);
+       missing = !pose;
+       hunter.setPose(pose ?? emptyPose());
+       if (a.weaponTrack) {
+@@ -413,7 +416,11 @@
+     } else {
+       lastSolved = null;
+       hunter.setString(null);
+-      hunter.setPose(locomotionPose(false, t < 60 ? 0 : 4, time * 9, time));
++      const speed = t < 60 ? 0 : 4;
++      const phase = t / 60 * speed * Math.PI * 2 / (1.7 + 0.9 * Math.min(1, speed / 6.4));
++      const pose = locomotionPose(false, speed, phase, time);
++      // ビューアはその場で周期を確認する。ゲームでは状態を保持して世界接地する。
++      hunter.setPose(new GroundedLocomotion().frame(pose, false, speed, phase, 0, { x: 0, z: 0, yaw: 0 }));
+       sheathWeapon(fam);
+       if (fam.offhand) stowOffhand(hunter, fam.id);
+     }
+diff --git a/tests/motion-replacement.test.ts b/tests/motion-replacement.test.ts
+new file mode 100644
+--- /dev/null
++++ b/tests/motion-replacement.test.ts
+@@ -0,0 +1,234 @@
++import { describe, expect, it, vi } from 'vitest';
++import { Euler, Quaternion, SkinnedMesh, Texture, TextureLoader, Vector3 } from 'three';
++import { ContactLocomotion, footContactWorld, travelGait } from '../src/render/contactLocomotion';
++import { HunterAnimator, playerContactFrame, playerRenderTick, solveState } from '../src/render/hunterAnim';
++import { groundedHeavyAttack } from '../src/render/heavyBodyMotion';
++import { evalMotion, solveBody, vlen, vsub, type Foot } from '../src/render/bodySolve';
++import { WEAPON_MOTIONS, WEAPON_STANCES } from '../src/render/weaponClipSpecs';
++import { clipPose } from '../src/render/poses';
++import { HunterRig } from '../src/render/rig';
++import { sampleTrack } from '../src/game/tracks';
++import { checkFrame } from '../src/render/humanLimits';
++import { Simulation } from '../src/game/sim';
++import { Btn, baseOptions, frame, hold, loadContent, placeInFrontOfHead, press } from './helpers';
++
++const near = (a: readonly number[], b: readonly number[], tolerance = 1e-8): void => {
++  expect(Math.hypot(...a.map((v, i) => v - b[i]!))).toBeLessThan(tolerance);
++};
++const L: Foot = [0.105, 0, 0, 5, 0], R: Foot = [-0.105, 0, 0, -5, 0];
++const D = Math.PI / 180;
++
++describe('runtime の動作差し替え', () => {
++  it('solveState の時刻が歩行の位相を変える（以前は time を変えても同じ脚だった）', () => {
++    for (const family of Object.keys(WEAPON_STANCES)) {
++      const a = solveState(family, { kind: 'idle' }, 2.4, 0);
++      const b = solveState(family, { kind: 'idle' }, 2.4, 0.13);
++      expect(vlen(vsub(a.frames.ankleL, b.frames.ankleL)), family).toBeGreaterThan(0.05);
++    }
++  });
++
++  it('全ての判定開始で、直前の歩行や遷移時間に関係なく正本の握り/向きに一致する', async () => {
++    const content = await loadContent();
++    let checked = 0;
++    for (const action of content.actions.values()) {
++      const m = WEAPON_MOTIONS[action.clip];
++      if (!m) continue;
++      const S = WEAPON_STANCES[m.family]!;
++      const contacts = [...action.hitWindows.map((h) => h.from), ...(action.shoot ?? []).map((s) => s.tick)];
++      for (const contact of contacts) {
++        const anim = new HunterAnimator();
++        for (let f = 0; f < 15; f++) anim.frame(m.family, { kind: 'idle' }, 'idle', 1 / 60, 2.4, f / 60);
++        const expectedFrame = evalMotion(m, contact);
++        const expected = solveBody(expectedFrame.ctl, expectedFrame.footL, expectedFrame.footR, S.hands);
++        const actual = anim.frame(m.family, { kind: 'action', clip: action.clip, t: contact, dirAngle: 0, chargeTicks: 0, freeMove: !!action.freeMove }, `a-${checked}`, 1 / 144, 2.4, 1, { active: playerContactFrame(action, contact) });
++        near(actual.weapon.grip, expected.weapon.grip);
++        near(actual.weapon.dir, expected.weapon.dir);
++        if (expected.off) { expect(actual.off).not.toBeNull(); near(actual.off!.grip, expected.off.grip); near(actual.off!.dir, expected.off.dir); }
++        checked++;
++      }
++    }
++    expect(checked).toBeGreaterThan(20);
++  });
++
++  it('実際の Simulation の命中→最終停止 tick で接触姿勢を保ち、溜め保持時刻も守る', async () => {
++    const content = await loadContent();
++    const sim = new Simulation(content, baseOptions({ weaponId: 'weapon.guard_blade.001' }));
++    placeInFrontOfHead(sim, 1.2);
++    for (let i = 0; i < 40 && !sim.recentHits.length; i++) { sim.step(i === 0 ? press(Btn.Main) : frame()); sim.drainEvents(); }
++    expect(sim.recentHits.length).toBeGreaterThan(0);
++    const run = sim.player.action!, contact = sim.recentHits[sim.recentHits.length - 1]!.actionTick;
++    const stops = run.hitstop;
++    expect(stops).toBeGreaterThan(0);
++    for (let i = 0; i <= stops; i++) {
++      for (const alpha of [0, 0.5, 0.99]) expect(playerRenderTick(run, alpha)).toBe(contact);
++      if (i < stops) sim.step(frame());
++    }
++    expect(run.hitstop).toBe(0); expect(run.advanced).toBe(false);
++    sim.step(frame());
++    expect(playerRenderTick(run, 0.5)).toBeGreaterThan(contact);
++    const charge = new Simulation(content, baseOptions());
++    placeInFrontOfHead(charge, 10);
++    for (let i = 0; i < 40; i++) {
++      charge.step(i === 0 ? press(Btn.Main) : hold(Btn.Main));
++      const r = charge.player.action;
++      if (r?.chargeTicks) for (const alpha of [0, 0.5, 0.99]) expect(playerRenderTick(r, alpha)).toBe(r.def.charge!.holdTick);
++    }
++    expect(charge.player.action!.chargeTicks).toBeGreaterThan(0);
++  });
++
++  it('接地中の母指球は、移動・方向転換・停止を通じて世界座標で滑らない', () => {
++    const lock = new ContactLocomotion();
++    let x = 0, z = 0, yaw = 0, phase = 0;
++    let previous: { at: ReturnType<typeof footContactWorld>; lift: number }[] | null = null;
++    let contacts = 0;
++    for (let i = 0; i < 300; i++) {
++      const speed = i < 160 ? 2.4 : 0, dt = 1 / 60;
++      if (i < 160) { yaw += 0.2 * dt; x += Math.sin(yaw) * speed * dt; z += Math.cos(yaw) * speed * dt; }
++      const root = { x, z, yaw };
++      phase += speed * dt * Math.PI * 2 / 1.2;
++      const g = speed ? travelGait(phase, 1.2, L, R) : { L, R };
++      const f = lock.frame(root, g.L, g.R, dt, speed > 0);
++      const now = [f.L, f.R].map((foot) => ({ at: footContactWorld(foot, root), lift: foot[1] }));
++      if (previous) for (let j = 0; j < 2; j++) {
++        if (previous[j]!.lift <= 0.004 && now[j]!.lift <= 0.004) {
++          near([now[j]!.at.x, now[j]!.at.z], [previous[j]!.at.x, previous[j]!.at.z]); contacts++;
++        }
++      }
++      previous = now;
++    }
++    expect(contacts).toBeGreaterThan(250);
++  });
++
++  it('停止したまま大きく向きを変える時は、足を上げて踏み替える', () => {
++    const lock = new ContactLocomotion();
++    lock.frame({ x: 0, z: 0, yaw: 0 }, L, R, 1 / 60, false);
++    let maxLift = 0;
++    for (let f = 0; f < 60; f++) {
++      const feet = lock.frame({ x: 0, z: 0, yaw: 0.8 }, L, R, 1 / 60, false);
++      maxLift = Math.max(maxLift, feet.L[1], feet.R[1]);
++    }
++    expect(maxLift).toBeGreaterThan(0.05);
++  });
++
++  it('90/180° の急反転でも、6 系統×30/60/120fps で脚の届きと関節範囲を保つ', async () => {
++    const content = await loadContent();
++    let scenarios = 0;
++    for (const family of Object.keys(WEAPON_STANCES)) for (const turn of [Math.PI / 2, Math.PI]) for (const fps of [30, 60, 120]) {
++      const anim = new HunterAnimator(), familyDef = content.families.get(family)!;
++      const speed = familyDef.drawnMoveSpeed, turnRate = familyDef.drawnTurnDegPerSec * D;
++      let x = 0, z = 0, yaw = 0;
++      for (let i = 0; i < fps * 3; i++) {
++        const dt = 1 / fps, want = i < fps * 0.6 ? 0 : turn;
++        const diff = Math.atan2(Math.sin(want - yaw), Math.cos(want - yaw));
++        yaw += Math.sign(diff) * Math.min(Math.abs(diff), turnRate * dt);
++        const moving = i < fps * 2.2;
++        if (moving) { x += Math.sin(want) * speed * dt; z += Math.cos(want) * speed * dt; }
++        const s = anim.frame(family, { kind: 'idle' }, 'idle', dt, moving ? speed : 0, i / fps, { root: { x, z, yaw } });
++        const label = `${family} ${turn / D}° ${fps}fps frame ${i}`;
++        expect(Math.max(s.frames.legShortL, s.frames.legShortR), label).toBeLessThan(0.012);
++        const S = WEAPON_STANCES[family]!;
++        // 単純な静的重心判定は走行・旋回の動的な釣り合いを評価できない。別の受入項目とする。
++        expect(checkFrame(s, S.hands, S.shape).filter((v) => !v.rule.startsWith('重心')), label).toEqual([]);
++      }
++      scenarios++;
++    }
++    expect(scenarios).toBe(36);
++  });
++
++  it('疾走は、脚の届く歩幅で短い空中局面を持つ', () => {
++    let flight = 0, contacts = 0;
++    for (let k = 0; k < 240; k++) {
++      const g = travelGait(k / 240 * Math.PI * 2, 2.6, L, R, 1);
++      if (g.L[1] > 0.02 && g.R[1] > 0.02) flight++;
++      if (g.L[1] <= 0.004) contacts++;
++      expect(Math.max(Math.abs(g.L[2]), Math.abs(g.R[2]))).toBeLessThanOrEqual(0.417);
++    }
++    expect(flight).toBeGreaterThan(40);
++    expect(contacts / 240).toBeLessThan(0.4);
++  });
++});
++
++describe('断岳剣の下半身と体幹', () => {
++  it('実際の靴メッシュ254頂点が、三つの攻撃の全1/4 tickで地面に埋まらない', async () => {
++    const mock = vi.spyOn(TextureLoader.prototype, 'load').mockImplementation(() => new Texture());
++    try {
++      const content = await loadContent(), rig = new HunterRig();
++      const mesh = rig.root.getObjectByName('hunter_body') as SkinnedMesh;
++      const position = mesh.geometry.getAttribute('position'), indices = mesh.geometry.getAttribute('skinIndex'), weights = mesh.geometry.getAttribute('skinWeight');
++      const footIds = mesh.skeleton.bones.flatMap((bone, i) => bone.name === 'footL' || bone.name === 'footR' ? [i] : []);
++      const vertices: number[] = [];
++      for (let i = 0; i < position.count; i++) for (let j = 0; j < 4; j++) {
++        if (footIds.includes(indices.getComponent(i, j)) && weights.getComponent(i, j) > 0.01) { vertices.push(i); break; }
++      }
++      expect(vertices.length).toBeGreaterThan(200);
++      const point = new Vector3();
++      for (const name of ['overhead', 'side_sweep', 'draw_slash']) {
++        const a = content.actions.get(`player.heavy_blade.${name}`)!;
++        for (let t = 0; t <= a.durationTicks; t += 0.25) {
++          rig.setPose(groundedHeavyAttack(clipPose(a.clip, t)!, a.clip, t));
++          rig.root.updateMatrixWorld(true); mesh.skeleton.update();
++          let lowest = Infinity;
++          for (const i of vertices) {
++            point.fromBufferAttribute(position, i); mesh.applyBoneTransform(i, point); point.applyMatrix4(mesh.matrixWorld);
++            lowest = Math.min(lowest, point.y);
++          }
++          expect(lowest, `${name} tick ${t}`).toBeGreaterThan(-0.0001);
++        }
++      }
++    } finally { mock.mockRestore(); }
++  });
++
++  it('三つの攻撃の全 1/4 tick で、実リグの左右 socket が柄へ 2mm 以内で届く', async () => {
++    // GPU を使わず、テクスチャの通信だけを置き換えて、ゲームの本物の骨格/腕 IK を通す。
++    const mock = vi.spyOn(TextureLoader.prototype, 'load').mockImplementation(() => new Texture());
++    try {
++      const content = await loadContent(), rig = new HunterRig();
++      for (const name of ['overhead', 'side_sweep', 'draw_slash']) {
++        const a = content.actions.get(`player.heavy_blade.${name}`)!;
++        const track = content.tracks.get(a.weaponTrack!)!;
++        for (let t = 0; t <= a.durationTicks; t += 0.25) {
++          rig.setPose(groundedHeavyAttack(clipPose(a.clip, t)!, a.clip, t));
++          const k = sampleTrack(track, t);
++          rig.weaponToTrack(k.grip, k.dir, track.planeNormal ?? [1, 0, 0], { two: true, along: 0.2 });
++          rig.root.updateMatrixWorld(true);
++          const right = new Vector3(k.grip.x, k.grip.y, k.grip.z);
++          const left = right.clone().addScaledVector(new Vector3(k.dir.x, k.dir.y, k.dir.z).normalize(), 0.2);
++          expect(rig.sockets.hand_r.getWorldPosition(new Vector3()).distanceTo(right), `${name} R ${t}`).toBeLessThan(0.002);
++          expect(rig.sockets.hand_l.getWorldPosition(new Vector3()).distanceTo(left), `${name} L ${t}`).toBeLessThan(0.002);
++        }
++      }
++    } finally { mock.mockRestore(); }
++  });
++
++  it('薙ぎ払いは腰へ回転を分け、胸と腰の相対 yaw が 52° に収まる', () => {
++    for (let t = 0; t <= 66; t += 0.25) {
++      const p = groundedHeavyAttack(clipPose('hb_attack_side_01', t)!, 'hb_attack_side_01', t);
++      const q = (v: readonly number[]): Quaternion => new Quaternion().setFromEuler(new Euler(v[0]! * D, v[1]! * D, v[2]! * D));
++      const relative = q(p.j.spine).multiply(q(p.j.chest));
++      const twist = new Euler().setFromQuaternion(relative, 'XYZ').y / D;
++      expect(Math.abs(twist), `tick ${t}`).toBeLessThanOrEqual(52);
++    }
++  });
++
++  it('三つの攻撃の全 tick で足の FK が地面の下へ突き抜けない', () => {
++    for (const [clip, duration] of [['hb_attack_vertical_01', 72], ['hb_attack_side_01', 66], ['hb_draw_slash_01', 64]] as const) {
++      for (let t = 0; t <= duration; t++) {
++        const p = groundedHeavyAttack(clipPose(clip, t)!, clip, t);
++        expect(p.grounded).toBe(true);
++        const q = (v: readonly number[]): Quaternion => new Quaternion().setFromEuler(new Euler(v[0]! * D, v[1]! * D, v[2]! * D));
++        const qp = q(p.j.pelvis);
++        for (const [side, sign] of [['L', 1], ['R', -1]] as const) {
++          const hip = new Vector3((p.px ?? 0), 0.92 + p.py, p.pz ?? 0).add(new Vector3(0.095 * sign, -0.04, 0).applyQuaternion(qp));
++          const qt = qp.clone().multiply(q(p.j[`thigh${side}`]));
++          const qs = qt.clone().multiply(q(p.j[`shin${side}`]));
++          const qf = qs.clone().multiply(q(p.j[`foot${side}`]));
++          const ankle = hip.add(new Vector3(0, -0.43, 0).applyQuaternion(qt)).add(new Vector3(0, -0.41, 0).applyQuaternion(qs));
++          for (const toe of [-0.075, 0.19]) {
++            const sole = ankle.clone().add(new Vector3(0, -0.044, toe).applyQuaternion(qf));
++            expect(sole.y, `${clip} ${side} tick ${t}`).toBeGreaterThanOrEqual(-0.002);
++          }
++        }
++      }
++    }
++  });
++});

@@ -1,0 +1,91 @@
+{
+  "baseCommit": "1d8e084d0d16fe77c376570f9542dd3c54fb5332",
+  "status": "design assumptions only; no HP changes proposed",
+  "formula": "effective DPS = nominal raw DPS × attack duty × successful-hit fraction × weighted hitzone × average edge multiplier; time = HP / effective DPS + noncombat seconds",
+  "scenarios": [
+    {
+      "name": "初見",
+      "hp": 1800,
+      "nominalRawDps": 55,
+      "attackDuty": 0.32,
+      "hitFraction": 0.7,
+      "weightedHitzone": 0.42,
+      "averageEdgeScale": 0.88,
+      "expectedEffectiveDps": 4.553472,
+      "combatSeconds": 395.30274919885306,
+      "otherSeconds": 90,
+      "totalSeconds": 485.30274919885306,
+      "designTargetTotalSeconds": [
+        360,
+        600
+      ],
+      "assumption": "All behavior ratios and DPS mix are hypothetical; not telemetry or a guaranteed difficulty."
+    },
+    {
+      "name": "慣れた狩人",
+      "hp": 1800,
+      "nominalRawDps": 78,
+      "attackDuty": 0.45,
+      "hitFraction": 0.8,
+      "weightedHitzone": 0.5,
+      "averageEdgeScale": 0.92,
+      "expectedEffectiveDps": 12.916800000000002,
+      "combatSeconds": 139.3534002229654,
+      "otherSeconds": 60,
+      "totalSeconds": 199.3534002229654,
+      "designTargetTotalSeconds": [
+        180,
+        300
+      ],
+      "assumption": "All behavior ratios and DPS mix are hypothetical; not telemetry or a guaranteed difficulty."
+    },
+    {
+      "name": "熟練",
+      "hp": 1800,
+      "nominalRawDps": 86,
+      "attackDuty": 0.6,
+      "hitFraction": 0.9,
+      "weightedHitzone": 0.6,
+      "averageEdgeScale": 0.96,
+      "expectedEffectiveDps": 26.74944,
+      "combatSeconds": 67.29112833763996,
+      "otherSeconds": 45,
+      "totalSeconds": 112.29112833763996,
+      "designTargetTotalSeconds": [
+        120,
+        180
+      ],
+      "assumption": "All behavior ratios and DPS mix are hypothetical; not telemetry or a guaranteed difficulty."
+    }
+  ],
+  "rankExamples": [
+    {
+      "name": "初級",
+      "hp": 1800,
+      "exampleHeavyBladeAttack": 80,
+      "relativePureHpPerAttack": 1.0,
+      "note": "Same player performance assumed; higher rank AI attack/cooldown can further lower attack duty."
+    },
+    {
+      "name": "中級",
+      "hp": 2430,
+      "exampleHeavyBladeAttack": 106,
+      "relativePureHpPerAttack": 1.0188679245283019,
+      "note": "Same player performance assumed; higher rank AI attack/cooldown can further lower attack duty."
+    },
+    {
+      "name": "上級",
+      "hp": 3240,
+      "exampleHeavyBladeAttack": 122,
+      "relativePureHpPerAttack": 1.1803278688524592,
+      "note": "Same player performance assumed; higher rank AI attack/cooldown can further lower attack duty."
+    },
+    {
+      "name": "極級",
+      "hp": 4320,
+      "exampleHeavyBladeAttack": 140,
+      "relativePureHpPerAttack": 1.3714285714285714,
+      "note": "Same player performance assumed; higher rank AI attack/cooldown can further lower attack duty."
+    }
+  ]
+}

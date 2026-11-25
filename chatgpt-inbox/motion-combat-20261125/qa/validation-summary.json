@@ -1,0 +1,72 @@
+{
+  "baseCommit": "1d8e084d0d16fe77c376570f9542dd3c54fb5332",
+  "reviewDateJST": "2026-11-25",
+  "node": "24.22.3",
+  "target": "kamamon/Kari v0.20.0",
+  "deliveryScope": "chatgpt-inbox only; runtime applied to disposable validation worktree; no production update",
+  "baseline": {
+    "command": "npm run check",
+    "typecheck": true,
+    "suites": 21,
+    "tests": 431,
+    "build": true
+  },
+  "integrated": {
+    "command": "npm run check",
+    "typecheck": true,
+    "suites": 22,
+    "tests": 442,
+    "build": true,
+    "log": "npm-check.txt"
+  },
+  "generator": {
+    "command": "node --experimental-strip-types --no-warnings tools/gen-weapons.mjs --strict",
+    "passed": true,
+    "actions": 44,
+    "tracks": 48,
+    "rootCurves": 10,
+    "motions": 42,
+    "log": "generator.txt",
+    "payloadHashesUnchanged": true,
+    "unexpectedSourceChanges": []
+  },
+  "package": {
+    "files": 21,
+    "newFiles": 3,
+    "modifiedFiles": 18,
+    "cleanPatchApply": true,
+    "guardReadOnlyCheck": true,
+    "reverseThenForwardRoundTrip": true,
+    "postApplyHashesVerified": true
+  },
+  "combatControlledTrial": {
+    "singleActions": 42,
+    "repeatPaths": 37,
+    "invariants": 7,
+    "passed": true,
+    "source": "../analysis/balance-runtime-report.json"
+  },
+  "rigAudit": {
+    "independentTests": 3,
+    "heavyQuarterTickSamples": 811,
+    "bootVertices": 254,
+    "turnCases": 36,
+    "turnFrames": 7560,
+    "source": "../analysis/rig-validation.json",
+    "passed": true,
+    "dynamicCOMExcluded": true
+  },
+  "geometryFigures": {
+    "method": "CPU actual bone transforms and SkinnedMesh vertex transforms; texture load replaced only; no WebGL",
+    "baselineSnapshots": 13,
+    "proposedSnapshots": 13
+  },
+  "limitations": [
+    "No WebGL or iPhone visual/play/performance acceptance",
+    "No measured human hit rates or live hunt balance acceptance",
+    "Sharp turns release contact lock and may slide",
+    "Formal GLB, added bones, palm orientation and fingers are design only",
+    "Existing six-family attack keys retained; heavy three attacks concretely replaced",
+    "Slope, wall-clipped attack root motion, all armor and all monster/rank combinations not accepted"
+  ]
+}

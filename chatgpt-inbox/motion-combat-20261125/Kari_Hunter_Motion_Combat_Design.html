@@ -1,0 +1,1270 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>Kari ハンターモーション・攻撃力設計</title><style>
+    @page {size:A4; margin:17mm 16mm 18mm; @bottom-left {content:"KARI / HUNTER MOTION & COMBAT"; font:8pt "Noto Sans CJK JP";color:#66796e} @bottom-right {content:counter(page);font:9pt "Noto Sans CJK JP";color:#345646} }
+    @page:first { @bottom-left {content:""} @bottom-right {content:""} }
+    body{font-family:"Noto Sans CJK JP",sans-serif;font-size:9.7pt;line-height:1.65;color:#20372c;margin:0}
+    p{margin:0 0 3.1mm} h1{font-size:22pt;color:#174c3f;margin:10mm 0 4mm;line-height:1.4;break-after:avoid}
+    h2{font-size:15pt;border-bottom:1.5px solid #aec4b7;padding-bottom:2mm;margin:7mm 0 3mm;break-after:avoid} h3{font-size:11.7pt;margin:5mm 0 2mm;color:#245c4a;break-after:avoid}
+    h4{font-size:10pt;margin:4mm 0 2mm;break-after:avoid} li{margin-bottom:1.4mm} ul,ol{padding-left:6mm;margin-top:2mm}
+    table{width:100%;border-collapse:collapse;font-size:8.2pt;line-height:1.5;margin:3mm 0 5mm;table-layout:fixed}
+    thead{display:table-header-group} th{background:#e8f0eb;color:#214d3b;text-align:left;border-bottom:1px solid #739c87;padding:2.1mm} td{border-bottom:1px solid #d5e1d9;padding:2mm;vertical-align:top;overflow-wrap:anywhere}
+    tr{break-inside:avoid} a{color:#2b6a60;text-decoration:none;overflow-wrap:anywhere} code{font-family:"Noto Sans Mono CJK JP",monospace;font-size:8pt;background:#eff3f0;overflow-wrap:anywhere}
+    pre{white-space:pre-wrap;font-size:8pt;background:#f1f5f2;padding:3mm} img{max-width:100%;height:auto} figure{margin:4mm 0;break-inside:avoid} figcaption{font-size:8pt;color:#5c7165;line-height:1.5;margin-top:2mm}
+    .cover{height:244mm;box-sizing:border-box;padding-top:20mm;page-break-after:always}.eyebrow{font-size:11pt;letter-spacing:2px;color:#7e956d}.cover h1{font-size:31pt;line-height:1.45;margin:16mm 0 9mm}.subtitle{font-size:15pt;color:#476652;line-height:1.8}.stamp{margin-top:13mm;padding:5mm;border-left:4px solid #cd9e56;background:#f4f5ed;font-size:10pt}.metric{display:inline-block;width:30%;padding-top:8mm;font-size:25pt;color:#17634d}.metric small{display:block;font-size:9pt;color:#566c60}.cover-note{margin-top:15mm;font-size:9pt}.chapter{break-before:page}.callout{padding:4mm;background:#edf4ed;border-left:3px solid #6b957b;margin:4mm 0}.warning{padding:4mm;background:#fbf3e7;border-left:3px solid #d4a264}
+    .moves small{font-size:7.4pt;color:#68796e}.moves strong{color:#17634d}.moves tbody{break-inside:avoid}.rationale td{font-size:7.7pt;color:#597163;padding-top:0;background:#fafcf9}.compact{font-size:8.5pt}.family h3{margin-top:7mm}.status td:first-child{width:24%}.sources{font-size:8pt} svg{max-width:100%;height:auto}
+    .toc{break-after:page;padding-top:15mm}.toc ul{list-style:none;padding:0;margin-top:12mm}.toc li{border-bottom:1px solid #d5e1d9;padding:4mm 0;font-size:12pt}.toc a{color:#214d3b;display:block}.toc a::after{content:target-counter(attr(href),page);float:right}.toc .callout{margin-top:15mm;font-size:10pt}
+    .latest{font-size:9pt;line-height:1.5}.latest h1{font-size:19pt;margin-top:4mm}.latest h2{font-size:13pt;margin-top:5mm}.latest table{font-size:7.6pt;margin-bottom:3mm}
+    </style></head><body><div class="cover"><div class="eyebrow">VEILBOUND HUNTERS / DESIGN & IMPLEMENTATION</div><h1>ハンターモーション<br>骨格・モデル・攻撃力設計</h1><p class="subtitle">足で支え、腰から動かし、<br>狙って当てた一撃に報いる。</p><div class="metric">7<small>武器系統</small></div><div class="metric">33<small>攻撃モーション</small></div><div class="metric">17 → 25<small>現行関節 → 第1拡張案</small></div><div class="stamp">差し替えコード・攻撃力データ・実コード比較試験を同梱<br>本番未反映 / 正式GLBは設計段階 / 実機の操作感は未確認</div><div class="cover-note">2026年11月25日（日本時間）<br>監査基点: Kari v0.20.0 / 1d8e084d0d16fe77c376570f9542dd3c54fb5332<br>最新適用検証: v0.21.0 / 9a5443a（追補参照）<br>対象: kamamon/Kari<br>数値は本作向けの初期調整案。既存作品のモーション値は転用していない。</div></div><nav class="toc"><h1>目次</h1><ul><li><a href="#overview">今回の設計と差し替え内容</a></li><li><a href="#latest-integration">最新main v0.21への取り込み追補</a></li><li><a href="#comparison">骨格と実装の比較図</a></li><li><a href="#rig-design">骨格・モデル・7武器の動作設計</a></li><li><a href="#balance">攻撃力と難易度の設計</a></li><li><a href="#all-values">全33モーションの新旧MV</a></li><li><a href="#runtime-report">実コードによる攻撃時間・火力比較</a></li><li><a href="#handoff">差し替え・検証・Claudeへの引き継ぎ</a></li></ul><div class="callout">最終統合検証: 452テスト・型検査・ビルド成功。<br>公開反映と実機の見た目・操作感の確認は、この提出には含まない。</div><p>本文中の「現行」は確認基点のソース、「提案」は今回用意した差し替え値・制作方針を指す。数値試験、形状図、実戦の仮説を区別して読む。</p></nav><section id="overview"><h1>今回の設計と差し替え内容</h1>
+<p><strong>足が地面を支え、腰から胸・腕へ力が伝わる動きと、当てる難しさに応じた攻撃力を、同じ時間軸で設計する。</strong> これを今回の方針とした。現在のKariを調べたうえで、差し替えコード、全7武器・33攻撃モーションの新旧数値、実コードを使う比較試験、正式モデルの制作指針をまとめている。</p>
+<p>確認基点は <strong>v0.20.0 / <code>1d8e084d0d16fe77c376570f9542dd3c54fb5332</code></strong>。公開ゲームで使われているデータと制作元の両方を読み、武器の攻撃時刻や派生の経路を踏まえて変更した。</p>
+<h2>最初に見るポイント</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>今回用意したもの</th>
+<th>現時点の扱い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>歩行・接地</td>
+<td>実移動量を使う歩行、接地保持、停止時の踏み替え、疾走の空中局面</td>
+<td>差し替え用実装。検証結果は末尾</td>
+</tr>
+<tr>
+<td>断岳剣の攻撃</td>
+<td>3攻撃の接地IK、骨盤へのひねり分配、握りを成立させる腰の移動</td>
+<td>差し替え用実装。武器の既存軌道を保持</td>
+</tr>
+<tr>
+<td>状態遷移</td>
+<td>解いた姿勢を後から再補間する経路の整理、命中窓とヒットストップの同期</td>
+<td>差し替え用実装</td>
+</tr>
+<tr>
+<td>攻撃力</td>
+<td>33攻撃、38近接命中枠、溜め段階込み42行</td>
+<td>置き換え用データと生成元を同梱</td>
+</tr>
+<tr>
+<td>全7武器の演技</td>
+<td>支持足、重心、攻撃の準備・加速・制動、連携のつながり</td>
+<td>各武器の次の制作方針</td>
+</tr>
+<tr>
+<td>正式な骨格・モデル</td>
+<td>17関節から25骨へ段階的に増やす案、手首・指・メッシュ・GLBの仕様</td>
+<td>制作設計。新しい完成GLBの納品ではない</td>
+</tr>
+</tbody>
+</table>
+<p><strong>公開ゲームへの反映はまだ行っていない。</strong> リポジトリの <code>AGENTS.md</code> は、ChatGPTの成果物を <code>chatgpt-inbox/</code> に置き、Claudeが本体へ取り込む運用を定めている。今回もその経路で、適用可能な差分を提出する。ソース本体への適用は検証用の別コピーで行う。</p>
+<h2>現状で見つかった具体的な問題</h2>
+<ol>
+<li>歩行の検査用関数が、渡された時刻を足の位相に使っていなかった。異なる時刻を検査しているつもりでも、足は同じ位相を繰り返していた。</li>
+<li>手を武器へ合わせて姿勢を解いたあと、別の補間で腕だけを動かす経路があった。切り替え時も、最終的な手・武器・盾の対応を守る必要がある。</li>
+<li>断岳剣の横薙ぎは、あるキーで背と胸のyawの単純合計が92度、骨盤は0度だった。さらに、既存の腕IKは届かない距離を残す区間があった。体重移動と骨盤回転を増やし、武器の場所まで両手が届く姿勢へ直す。</li>
+<li>大槌は主連携の後半が前半より弱く、長尖槍は「初段→上段」だけを繰り返す方が三段を完遂するより高火力だった。行動時間と命中停止を含めて比較し、後半へ進む利益を作る。</li>
+<li>環弓の溜め評価はスタミナを含める必要がある。最大溜めを狙う入力を繰り返しても、スタミナ不足で低い段階の射撃になる。全弾を最大段階として数える比較は使わない。</li>
+</ol>
+<p>これらはソース・制御試験で確認した内容である。この環境ではWebGLを起動できなかったため、通常速度のゲーム映像やiPhoneの操作感を検収したという意味ではない。掲載する骨格図は、実モデルの行列・頂点をCPUで計算した説明図である。</p>
+<h2>攻撃力の基本方針</h2>
+<p>速く安全で当てやすい攻撃には、控えめな一撃を割り当てる。狭い突き、長い溜め、途中で止めにくい連携には、その拘束と空振りの危険に見合う一撃を割り当てる。三段目を強くしても、途中で回避する判断が必要な場面は残す。</p>
+<p>盾・射程・離脱距離も武器の価値として扱う。全武器の理論火力を同じにそろえる目標にはしていない。初期ガルドロスのHP1800は維持し、まず武器側の偏りを修正する。討伐時間の目標と試算は、実測の結果と分けて示す。</p>
+<h2>読み方</h2>
+<ul>
+<li>骨格と形状の比較図で、現在の仕組みと変更箇所を確認する。</li>
+<li>「ハンターの骨格・モデル・動作設計」で、正式モデルを作る場合の骨・握り・接地・書き出し規格を確認する。</li>
+<li>「攻撃力と難易度」で設計の理由を読み、全33モーションの一覧で採用値を確認する。</li>
+<li>最後の差し替え・検証・引き継ぎに、適用コマンド、実行済みの検証、残る確認項目をまとめる。</li>
+</ul>
+<p>根拠となる現行コード: <a href="https://github.com/kamamon/Kari/blob/1d8e084d0d16fe77c376570f9542dd3c54fb5332/docs/animation-contract.md">アニメーション規格</a>、<a href="https://github.com/kamamon/Kari/blob/1d8e084d0d16fe77c376570f9542dd3c54fb5332/src/render/view.ts">描画処理</a>、<a href="https://github.com/kamamon/Kari/blob/1d8e084d0d16fe77c376570f9542dd3c54fb5332/src/render/poses.ts">ハンターの姿勢</a>、<a href="https://github.com/kamamon/Kari/blob/1d8e084d0d16fe77c376570f9542dd3c54fb5332/src/game/combat.ts">ダメージ計算</a>。</p>
+</section><section class="chapter latest" id="latest-integration"><h1>最新mainへの取り込み追補（v0.21.0）</h1>
+<p><strong>設計中にmainへモンスターの更新が入ったため、その更新を保持した最新用の差し替えパッケージも作成した。全23スイート452テスト・型検査・本番ビルドが成功した。</strong></p>
+<table>
+<thead>
+<tr>
+<th>区分</th>
+<th>基点</th>
+<th>扱い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>設計・攻撃値・骨格監査</td>
+<td>v0.20.0 / <code>1d8e084d0d16fe77c376570f9542dd3c54fb5332</code></td>
+<td>本文の新旧比較、811姿勢、36旋回、制御DPSの確認基点</td>
+</tr>
+<tr>
+<td>最新の適用検証</td>
+<td>v0.21.0 / <code>9a5443ab1ac813512deac03422ee996f57f8a900</code></td>
+<td>新しいモンスター描画を保持して統合。取り込みはこちらを使う</td>
+</tr>
+</tbody>
+</table>
+<h2>何が変わり、何を保持したか</h2>
+<p>mainの新しい1コミットは、モンスターのモデル・動き・行動・描画効果等の更新だった。今回変更する21ファイルのうち、変更前の内容が変わったのは <code>src/render/view.ts</code> だけだった。ハンターの骨格、武器の行動・生成元、プレイヤーの戦闘処理はこの更新で変わっていない。</p>
+<p>旧統合パッチは最新mainへ競合せず適用できた。ただし、古い <code>view.ts</code> の完成ファイルをそのまま上書きするとモンスター更新を失うため、最新mainを土台にした完成候補を別に作った。独立した差分レビューで、最新の統合 <code>view.ts</code> と旧提案の差が、mainに追加されたモンスター側の2つの差分と一致することを確認した。</p>
+<h2>採用するパッケージ</h2>
+<p><code>implementation/current-main/</code> の <code>replacement.patch</code>、<code>manifest.json</code>、<code>apply-proposal.py</code> を使う。対象は同じ21ファイル。変更前後のハッシュを最新基点に合わせ、モンスター更新を含む <code>view.ts</code> も同梱した。</p>
+<p>元の <code>implementation/replacement.patch</code> と、<code>implementation/motion/</code>・<code>implementation/balance/</code> は、v0.20時点の監査を再現するために残す。最新用と重ねて適用しない。適用先のファイルがさらに変わっている場合はハッシュ検査が止めるので、内容を見て移植する。</p>
+<h2>確認結果と限界</h2>
+<ul>
+<li>最新基点の新しい作業コピーで、全23スイート452テスト、型検査、本番ビルドが成功。</li>
+<li>武器の厳格再生成も成功。44行動・48軌道・10移動曲線・42身体モーションを生成し、提案データとの整合を確認。</li>
+<li>変更対象21ファイルでは、旧提案から変更前後ハッシュが変わるのは共有描画の <code>view.ts</code> だけ。攻撃力の値、ハンターの接地・握りの実装は同じ。</li>
+</ul>
+<p>ログと詳細は <code>qa/current-main-*</code> と <code>implementation/current-main/README.md</code>。これは新しいモンスターを相手にした実機の難易度・自然さの検収ではない。本文の制御DPSと討伐時間の仮説を、そのまま全モンスターの実戦結果として扱わない。公開ゲームへの適用・mergeは引き続き行っていない。</p>
+</section><section class="chapter" id="comparison"><h1>骨格と実装の比較</h1><figure><img src="figures/seven-weapons.png"><figcaption>現行の7武器。ソースから骨の行列とスキニングを計算して描いた形状図。テクスチャ・WebGL・実機の映像確認ではない。</figcaption></figure><figure><img src="figures/heavy-comparison.png"><figcaption>断岳剣・横薙ぎの同じ時刻の比較。既存の武器軌道を保持し、骨盤の回転・沈み込み・踏み替えへ分散する。</figcaption></figure><figure><img src="figures/gait-comparison.png"><figcaption>異なる4時刻の歩行サンプル。現行の検査用solveStateは同じ位相を繰り返していたため、時間から位相を求めるよう修正した。</figcaption></figure><h2>骨格の拡張は段階的に</h2><svg xmlns="http://www.w3.org/2000/svg" width="650" height="540" viewBox="0 0 650 540"><rect width="650" height="540" fill="#f3f6f4"/><line x1="65" y1="510" x2="410" y2="510" stroke="#a0b5a9"/><line x1="235" y1="255" x2="235" y2="228" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="235" y1="228" x2="235" y2="182" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="235" y1="182" x2="235" y2="112" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="235" y1="112" x2="235" y2="77" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="235" y1="182" x2="300" y2="147" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="300" y1="147" x2="339" y2="225" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="339" y1="225" x2="370" y2="302" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="235" y1="255" x2="268" y2="266" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="268" y1="266" x2="283" y2="380" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="283" y1="380" x2="293" y2="489" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="235" y1="182" x2="170" y2="147" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="170" y1="147" x2="131" y2="225" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="131" y1="225" x2="100" y2="302" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="235" y1="255" x2="202" y2="266" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="202" y1="266" x2="187" y2="380" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><line x1="187" y1="380" x2="177" y2="489" stroke="#236a61" stroke-width="10" stroke-linecap="round"/><circle cx="235" cy="255" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="235" cy="228" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="235" cy="182" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="235" cy="112" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="235" cy="77" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="300" cy="147" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="339" cy="225" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="370" cy="302" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="170" cy="147" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="131" cy="225" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="100" cy="302" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="268" cy="266" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="283" cy="380" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="293" cy="489" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="202" cy="266" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="187" cy="380" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="177" cy="489" r="7" fill="#e4f9ef" stroke="#236a61" stroke-width="2"/><circle cx="272" cy="137" r="7" fill="#e2a84a" stroke="#875d25" stroke-width="2"/><circle cx="198" cy="137" r="7" fill="#e2a84a" stroke="#875d25" stroke-width="2"/><circle cx="319" cy="186" r="7" fill="#e2a84a" stroke="#875d25" stroke-width="2"/><circle cx="151" cy="186" r="7" fill="#e2a84a" stroke="#875d25" stroke-width="2"/><circle cx="354" cy="263" r="7" fill="#e2a84a" stroke="#875d25" stroke-width="2"/><circle cx="116" cy="263" r="7" fill="#e2a84a" stroke="#875d25" stroke-width="2"/><circle cx="312" cy="502" r="7" fill="#e2a84a" stroke="#875d25" stroke-width="2"/><circle cx="158" cy="502" r="7" fill="#e2a84a" stroke="#875d25" stroke-width="2"/><text x="430" y="80" font-size="17" fill="#236a61" font-family="Noto Sans CJK JP">既存: 17 関節</text><text x="430" y="114" font-size="17" fill="#875d25" font-family="Noto Sans CJK JP">追加案: +8 骨</text><text x="430" y="150" font-size="17" fill="#43594e" font-family="Noto Sans CJK JP">鎖骨 ×2</text><text x="430" y="180" font-size="17" fill="#43594e" font-family="Noto Sans CJK JP">腕のねじり ×4</text><text x="430" y="210" font-size="17" fill="#43594e" font-family="Noto Sans CJK JP">つま先 ×2</text><text x="430" y="275" font-size="17" fill="#173f35" font-family="Noto Sans CJK JP">第1段階: 25 骨</text><text x="430" y="310" font-size="17" fill="#43594e" font-family="Noto Sans CJK JP">脚のねじりまで: 29</text><text x="430" y="340" font-size="17" fill="#43594e" font-family="Noto Sans CJK JP">手指まで: 59</text><text x="430" y="370" font-size="17" fill="#43594e" font-family="Noto Sans CJK JP">布も含める: 最大63</text><text x="430" y="450" font-size="13" fill="#596c61" font-family="Noto Sans CJK JP">root・4 socket は別枠</text><text x="430" y="474" font-size="13" fill="#596c61" font-family="Noto Sans CJK JP">図は配置の説明図</text></svg><p>橙色は次のモデル制作で追加する骨の案。今回の差し替え実装は既存の17関節を使う。指・布まで含む完成モデルを納品したという意味ではない。</p></section><section class="chapter" id="rig-design"><h1>ハンターの骨格・モデル・動作設計</h1>
+<p>確認基点: <code>kamamon/Kari</code> / <code>main</code> / <code>1d8e084d0d16fe77c376570f9542dd3c54fb5332</code> / v0.20.0。確認日: 2026-11-25（日本時間）。</p>
+<p>この文書は現状のソースを読んだ監査と、置き換えの設計である。<strong>正式な人型 GLB・Blender ファイル・手付けアニメーションを完成させたという報告ではない。</strong> この納品で用意したコードの適用範囲、実行した検証と結果は、同じ納品の README と検証結果を正本とする。以下で「提案」「目標」とした数値は今回の制作判断であり、人間の医学的な標準値、端末の実測値、既存ゲームからの転用ではない。</p>
+<h2>1. 結論と置き換える順番</h2>
+<p>自然さを改善する優先順は、①実際の移動量に足を合わせる、②攻撃の準備・加速・制動を全身で分担する、③状態遷移中も握りと接地を守る、④鎖骨・ねじり・つま先・指を持つ正式モデルへ移る、である。</p>
+<p>現状にも 2 本骨の IK、踵の補正、足位置を決めた攻撃、関節範囲の検査がある。その土台は使える。骨を増やすだけでは、入力方向と歩行方向の食い違い、壁で止まった時の足踏み、攻撃途中の姿勢補間による手離れは直らない。先に現在の 17 関節で運動と接触の一貫性を整える。</p>
+<p>また、攻撃を「自然に見せるため」に自由な見た目の補正だけで刃を大きく動かすと、判定と映像がずれる。<strong>通常姿勢の表現、接触を守る補正、攻撃の判定軌道を別々に管理し、最後に一致を検査する。</strong> 現行 6 系統では体の動作から判定軌道を再生成し、断岳剣では先にその方式へ移行するか、既存軌道を拘束として残すかを明示する。</p>
+<h2>2. 現行実装で確認したこと</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>現在の実装</th>
+<th>設計上の意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>骨格</td>
+<td><code>bodySolve.ts</code> の <code>JOINTS</code> は 17 関節。<code>rig.ts</code> が Bone と SkinnedMesh を生成</td>
+<td>箱の人形だけではなく、既に骨に重み付けした皮がある</td>
+</tr>
+<tr>
+<td>武器 6 系統</td>
+<td>護刃・長尖槍・環弓・大槌・双剣・太刀は <code>weaponClipSpecs.ts</code> → <code>bodySolve.ts</code> → 描画 / 軌道生成</td>
+<td>同じ解き方を共通利用できている。生成ファイルだけを手で直す運用は避ける</td>
+</tr>
+<tr>
+<td>断岳剣</td>
+<td><code>poses.ts</code> のキー姿勢、<code>rig.ts</code> の腕 IK、既存武器軌道</td>
+<td>他 6 系統の全 tick 関節検査には含まれない</td>
+</tr>
+<tr>
+<td>歩行</td>
+<td>抜刀時の 6 系統は <code>gaitFeet()</code>。納刀歩行と断岳剣は <code>locomotionPose()</code> の周期角度</td>
+<td>歩行の品質と検査範囲が分かれている</td>
+</tr>
+<tr>
+<td>攻撃中の足</td>
+<td><code>footAt()</code> は技開始基準で authored root に対して母指球を固定</td>
+<td>指定された曲線どおりなら接地できる。壁・方向補正による実際の移動差は別問題</td>
+</tr>
+<tr>
+<td>姿勢遷移</td>
+<td><code>HunterAnimator.frame()</code> は約 0.08 秒で制御値を補間。<code>view.ts</code> にも約 0.09 秒の姿勢補間</td>
+<td>補間後の最終姿勢を検査する必要がある</td>
+</tr>
+<tr>
+<td>手首</td>
+<td><code>solveBody()</code> は <code>handL</code> / <code>handR</code> の回転を常に <code>[0,0,0]</code> にしている</td>
+<td>手が握り位置へ到達しても、手のひらの向きと柄の向きの整合は保証されない</td>
+</tr>
+<tr>
+<td>関節検査</td>
+<td><code>humanLimits.ts</code> が関節、到達、武器と胴の交差、速度、接地ずれを調べる</td>
+<td>有用な制作ゲート。ただし人体の完全な物理検証ではない</td>
+</tr>
+<tr>
+<td>正式モデル</td>
+<td><code>docs/animation-contract.md</code> は GLB の読み込みを素材ビューア側のみと記載</td>
+<td>正式 GLB に替えるにはゲーム描画側の統合も必要</td>
+</tr>
+</tbody>
+</table>
+<p>出典: <a href="https://github.com/kamamon/Kari/blob/1d8e084d0d16fe77c376570f9542dd3c54fb5332/docs/animation-contract.md">animation-contract.md</a>、<a href="https://github.com/kamamon/Kari/blob/1d8e084d0d16fe77c376570f9542dd3c54fb5332/src/render/bodySolve.ts">bodySolve.ts</a>、<a href="https://github.com/kamamon/Kari/blob/1d8e084d0d16fe77c376570f9542dd3c54fb5332/src/render/hunterAnim.ts">hunterAnim.ts</a>、<a href="https://github.com/kamamon/Kari/blob/1d8e084d0d16fe77c376570f9542dd3c54fb5332/src/render/rig.ts">rig.ts</a>、<a href="https://github.com/kamamon/Kari/blob/1d8e084d0d16fe77c376570f9542dd3c54fb5332/tests/human-motion.test.ts">human-motion.test.ts</a>。</p>
+<h3>2.1 具体的な問題と、既存検査の見落とし</h3>
+<ol>
+<li><strong>表示上の歩く速さと、実際の移動量が一致しない場合がある。</strong> <code>player.ts</code> は入力方向へ移動を要求し、体の向きを徐々に追従させ、<code>p.moveSpeed</code> に要求した速さを入れる。壁で押し戻された時や旋回途中でも、足運びがその scalar speed だけから計算される。確認すべき値は <code>prevPos → pos</code> の実移動と身体ローカルの前後左右成分である。</li>
+<li><strong>固定した足も身体と一緒に回ってしまう経路がある。</strong> authored root に対する接地と、現実のゲーム内の接地は異なる。壁、旋回、ロックオンの向き変更、回避方向、エリア移動を含めて確認する。</li>
+<li><strong>姿勢を解いた後で別の補間をかけると、手と武器の関係が崩れる。</strong> <code>view.ts</code> は <code>applySolved()</code> の後に、切り替え途中なら補間した <code>pose</code> を <code>setPose()</code> し直す。武器・盾は解いた位置のままなので、腕だけ別の姿勢になる経路がある。</li>
+<li><strong>補間中・自由移動中の表示と判定は、素のクリップ一致テストだけでは保証できない。</strong> 現行テストの 2 mm は、主に <code>evalMotion → solveBody</code> と保存済み track の比較である。実際の <code>HunterAnimator.frame()</code>、runtime の後段補間、充填姿勢、freeMove の脚からの骨盤補正まで含める必要がある。</li>
+<li><strong>断岳剣だけ、上体のひねりが強くなりやすい。</strong> <code>hb_attack_side_01</code> の tick 34 は <code>spine</code> の yaw が +30°、<code>chest</code> が +62°、<code>pelvis</code> の yaw は 0。単純合計では約 92°を背中側だけで負担するキーになっている。実姿勢の相対 quaternion でも確認し、骨盤・足の踏み替えへ分配する。</li>
+<li><strong>手首の検査名と、実際に検査しているものを分ける。</strong> 現在は「前腕の方向と武器軸のなす角」の検査であり、掌の回内外、手首の屈曲、指の接触を測っているわけではない。</li>
+<li><strong>重心と足滑りの合格を、物理的な自然さの証明にしない。</strong> 現在の重心は骨盤 60% + 胸 40% の近似で、腕・武器の質量はない。接地滑りの既存許容は 0.006 m/tick で、連続すれば大きなずれにもなり得る。接地一回の累積変位も別に調べる。</li>
+</ol>
+<p>これはソースから確認できる経路とリスクであり、すべての技・端末で同じ見た目の不具合を再現した、という意味ではない。</p>
+<h2>3. 骨格設計</h2>
+<h3>3.1 現在の単位・向き・寸法を固定する</h3>
+<p>ゲーム空間は m、Y 上、+Z 前、右手側 -X。原点は接地面の中央。simulation の actor が位置と向きを所有し、骨盤は actor に対する体重移動を表す。root と pelvis に同じ前進を重ねて入れない。</p>
+<table>
+<thead>
+<tr>
+<th>指標</th>
+<th style="text-align:right">現行 <code>REST</code></th>
+<th>今回の方針</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>身長の基準</td>
+<td style="text-align:right">1.75 m</td>
+<td>維持</td>
+</tr>
+<tr>
+<td>骨盤高</td>
+<td style="text-align:right">0.92 m</td>
+<td>維持し、構えで上下する</td>
+</tr>
+<tr>
+<td>肩関節間</td>
+<td style="text-align:right">0.37 m</td>
+<td>初期置き換えでは維持</td>
+</tr>
+<tr>
+<td>上腕 / 前腕</td>
+<td style="text-align:right">0.29 / 0.27 m</td>
+<td>伸縮で帳尻を合わせない</td>
+</tr>
+<tr>
+<td>大腿 / 下腿</td>
+<td style="text-align:right">0.43 / 0.41 m</td>
+<td>足が届かなければ腰・踏み幅を調整</td>
+</tr>
+<tr>
+<td>手の握り点</td>
+<td style="text-align:right">手首より先に 0.04 m</td>
+<td>手首の向きを変える時は握り点の移動も解き直す</td>
+</tr>
+</tbody>
+</table>
+<p>頭身は別の造形判断として扱う。設定図メモは約 8.5 頭身と説明する一方、<code>HEAD_SHAPE</code> のあご〜頭頂本体は約 0.1855 m で、髪束を除いた単純な 1.75 m 換算では約 9.4 個分になる。これを人体平均と比較して即修正せず、4 方向の原画・実モデルを同縮尺で並べる。人間らしい比率へ改訂する場合の<strong>制作案</strong>は頭高約 0.22〜0.23 m、約 7.6〜8.0 頭身だが、兜・首・肩・防具の整合も同時に直す。今回のモーション修正に紛れて外見を変えない。</p>
+<p>出典: <a href="https://github.com/kamamon/Kari/blob/1d8e084d0d16fe77c376570f9542dd3c54fb5332/src/render/hunterBody.ts">hunterBody.ts</a>、<a href="https://github.com/kamamon/Kari/blob/1d8e084d0d16fe77c376570f9542dd3c54fb5332/art-source/player/hunter_base_turnaround_v1.md">基準ハンター設定図メモ</a>。</p>
+<h3>3.2 まず 17 関節を使う。その後に補助骨を足す</h3>
+<table>
+<thead>
+<tr>
+<th>系統</th>
+<th>現行の主要骨</th>
+<th>正式モデルでの追加案</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>中心</td>
+<td>pelvis → spine → chest → neck → head</td>
+<td>原則として主要名を維持</td>
+<td>骨盤・胸・顔の向きを分担</td>
+</tr>
+<tr>
+<td>腕・左右</td>
+<td>chest → upperArm → forearm → hand</td>
+<td>clavicle、upperArmTwist、forearmTwist を各側</td>
+<td>肩の上げ下げ、前腕の回内外、ねじり潰れ防止</td>
+</tr>
+<tr>
+<td>脚・左右</td>
+<td>pelvis → thigh → shin → foot</td>
+<td>thighTwist、shinTwist、toe を各側</td>
+<td>大腿のねじり、蹴り出し、母指球を軸とした踏み替え</td>
+</tr>
+<tr>
+<td>手指・左右</td>
+<td>なし</td>
+<td>1 指 3 骨 × 5 指 × 2 手</td>
+<td>柄を包む形、弦の指離し、道具の把持</td>
+</tr>
+<tr>
+<td>布・小物</td>
+<td>現在は胸・腰・四肢へ重み付け</td>
+<td>外套左右、腰布左右の最大 4 骨を別枠</td>
+<td>動作の後に少し遅れて追従</td>
+</tr>
+<tr>
+<td>非変形ノード</td>
+<td>root、4 socket</td>
+<td>名前と握り規格を維持</td>
+<td>位置・武器・盾・納刀位置の接続</td>
+</tr>
+</tbody>
+</table>
+<p>骨数の案は、最小拡張 25 本（17 + 鎖骨 2 + つま先 2 + 腕の twist 4）、脚の twist まで 29 本、指まで 59 本、布を足して最大 63 本の変形骨。root と 4 socket はこの本数に含めない。これは mobile 向けの制作目標であり、既にこの骨格に置き換わったという意味ではない。</p>
+<p><strong>骨名を保つだけでは互換にならない。</strong> 鎖骨を挟んで親子関係を変えると、既存上腕のローカル回転をそのまま再生できない。新リグは <code>rigVersion: 2</code> として、元の 17 関節のワールド姿勢から新しい親座標系へ変換する adapter を用意する。rest pose と inverse bind matrix を同時に確定し、武器 socket のワールド位置・向きが旧リグと一致することを検査してから移行する。</p>
+<h2>4. 関節、握り、接地をどう解くか</h2>
+<h3>4.1 人間らしさは「止める関節」と「動く順序」で作る</h3>
+<p>攻撃は支持足・骨盤・胸・肩・肘・手・武器の順で力を伝え、終わりは逆向きに減速を分担する。全関節を同時に開始・同時に停止させない。ただし 3 tick の先行、5 tick の遅延などを全技に固定で足すと、短い技では攻撃窓が壊れる。<strong>各技の既存 startup の範囲内で</strong>、溜める点、加速する点、接触を狙う点、制動する点を決める。</p>
+<p>以下は制作時の通常域の案。既存 <code>humanLimits.ts</code> の上限は別の破綻検知ゲートとして残し、足りないから上限を広げるという直し方をしない。</p>
+<table>
+<thead>
+<tr>
+<th>部位</th>
+<th>通常制作域の目安</th>
+<th>動かし方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>骨盤〜胸の合計 yaw</td>
+<td>通常 ±30°、大振りでも概ね ±45°までを狙う</td>
+<td>それ以上は骨盤回転・踏み替えを先に増やす</td>
+</tr>
+<tr>
+<td>肘</td>
+<td>通常 15〜135°程度</td>
+<td>伸び切りを常用せず、方向を変える余地を残す</td>
+</tr>
+<tr>
+<td>膝</td>
+<td>待機は軽く曲げ、歩行・攻撃では 5〜100°程度、深いしゃがみは別動作</td>
+<td>膝の曲がる面を足先と大きくねじらない</td>
+</tr>
+<tr>
+<td>首</td>
+<td>視線は先行するが、胸とのズレは普段 ±45°程度を狙う</td>
+<td>大きな振り向きは胸・骨盤が追う</td>
+</tr>
+<tr>
+<td>手首</td>
+<td>屈伸・横曲げを小さく保ち、柄の方向変更は前腕・肘から分担</td>
+<td>前腕と武器の角度だけで合否を決めない</td>
+</tr>
+</tbody>
+</table>
+<p>関節制限は完成モデルのローカル軸を定義してから実装する。Euler の各成分に単純な clamp を掛けるのではなく、回転軸の swing と twist を分け、前腕ねじりを補助骨へ分散する。小さな超過の修正では、手を武器から離すのではなく、肘 pole・肩・胸・足の順で姿勢を解き直す。</p>
+<h3>4.2 握りは位置と向きの両方を拘束する</h3>
+<p>武器側に主手の握り transform、添え手の握り transform、刃の基点・先端を定義する。主手と添え手のどちらも、手のひらの向きまで含めて拘束する。弓は左手が本体、右手は弦のノック点、盾は前腕の固定点、双剣は左右別の武器として扱う。</p>
+<p>現状の solver は肘から「手首 + 0.04 m」までをまとめて解いている。ここへ hand 回転だけを追加すると、実際の socket が 0.04 m の円弧を動き、逆に握りずれを増やす。手の向きを <code>R_hand</code>、手首から握り点への局所ベクトルを <code>p_grip</code>、武器の握り位置を <code>G</code> とすると、まず <code>W = G − R_hand × p_grip</code> を手首目標にし、その W へ上腕・前腕の IK を解く。最後に palm のワールド向きから親前腕の回転を除いて hand の局所回転を決める。</p>
+<p>指は手首 IK の代わりに使わない。通常の握り、抜刀、持ち替え、弓を引く指、離す指の少数の hand pose を用意し、on / grab と同期する。添え手を柄の上で滑らせる技では、手が外れた区間と接触する区間を明記する。</p>
+<h3>4.3 足の固定は、接触点をワールド座標で持つ</h3>
+<p>足首を固定すると踵上げの時に不自然になる。heel / sole / ball / airborne の接触状態を持ち、踵接地 → 足裏 → 母指球 → 離地を区別する。</p>
+<p>各足に「固定した接触点のワールド座標」「接地面の法線」「固定時の actor transform」「接触の重み」を保存する。描画前に現在の actor の逆 transform で局所座標へ戻し、2 本骨 IK を解く。向きを変える時も固定点が地面を滑らない。足が届く範囲を越えそうなら、骨盤を少量下げるか固定を解除して踏み替える。骨を伸ばす、地面の下へ足を逃がす、といった補正をしない。</p>
+<p>初期版の平地に対する受け入れ目標は、固定中の接触点の累積ずれ 2 cm 以下、単フレーム 5 mm 以下、足裏の地面への沈み 1 cm 以下。これらは提案する見た目の QA 値で、現在すべて達成済みという意味ではない。急旋回・回避・段差・押し戻しは別ケースとする。</p>
+<p>攻撃の移動曲線が壁で止められた時、見た目だけで予定位置まで進めない。予定 root と実 root の残差は足の補正に使い、刃の判定は実際の actor transform に従う。大きな残差は踏み直しとして見せる。将来の傾斜地では、地面の法線と足の向きを合わせつつ、膝・骨盤の許容域を優先する。</p>
+<h2>5. 状態と補正の優先順位</h2>
+<ol>
+<li><strong>simulation</strong> が行動、tick、移動、向き、溜め、ヒットストップ、当たり判定を確定する。</li>
+<li>locomotion / weapon stance / action / hurt / dead から主姿勢を一つ選ぶ。全身の強い被弾・死亡は攻撃に優先する。</li>
+<li>前の状態との遷移を、制御値または quaternion ベースで行う。単純な Euler の成分補間で 179°→−179°を遠回りさせない。</li>
+<li>視線、呼吸、傾きの微調整を加える。ただし攻撃窓中の武器軌道を変える骨には無制限に加算しない。</li>
+<li>足の固定 → 骨盤の到達補正 → 胸・肩 → 両腕の握り IK → 掌の向きの順で、最終姿勢を解く。</li>
+<li>武器・盾・弦・指をその最終姿勢に配置する。ここで姿勢だけを再補間しない。</li>
+<li>必要な布・髪・小物の追従を最後に加える。攻撃判定の入力に使わない。</li>
+<li>描画後ではなく、この最終姿勢と同時刻の track の誤差を測る。</li>
+</ol>
+<p>攻撃開始から最初の当たり判定までに姿勢の大きな遷移を収束させる。攻撃窓中に crossfade の重みが残る場合は、刃の位置・向きを基準へ拘束する。早い技を長いブレンドで鈍らせない。歩行停止も、両足をその場で同時に初期位置へ戻すのでなく、支持足を残してもう片足を揃える。</p>
+<p>Three.js の AnimationAction は weight、time、crossFade などを提供するが、Kari の 60 Hz の攻撃窓を代わりに管理しない。正式クリップ統合でも行動 tick が時刻の正本であり、<code>warp=true</code> による自動再生速度変更を戦闘クリップへ無条件に使わない。<a href="https://threejs.org/docs/pages/AnimationAction.html">Three.js AnimationAction</a></p>
+<h2>6. 7 系統のモーション案</h2>
+<p>既存の行動 ID、当たり窓、キャンセル窓を出発点にする。ここでの内容は演技・体重移動の提案であり、別添の差し替えコードがこれら全部を手付けクリップとして実装した、という意味ではない。攻撃力の全技数値は同納品のバランス表にまとめる。</p>
+<h3>6.1 断岳剣: 持ち上げる重さと、止める重さ</h3>
+<ul>
+<li><strong>縦斬り</strong>: 後足へ乗せ、膝を軽く抜いて骨盤から剣を持ち上げる。頭上の溜めで肘を完全に伸ばさない。前足を先に置き、骨盤が前へ移り、胸と腕が後から刃を落とす。接触後は刃先を急停止させず、腰と前膝で減速する。</li>
+<li><strong>横薙ぎ</strong>: 背中だけを 90°近くねじる現在のキーを、骨盤・後足の回旋と踏み替えへ分配する。刃の通過後に頭と胸を先に戻し、腕は少し遅れて構えへ戻る。</li>
+<li><strong>抜刀斬り</strong>: 背中から刃が身体を通らずに抜ける経路を確保し、握りを取る → 刃が離れる → 両手になる → 打点へ進む、の順を見せる。</li>
+<li><strong>溜め</strong>: 溜めるほど腕を大きく振動させるのでなく、支持足・息・肘の張りで力を表す。ヒットストップで刃が止まった時、足だけ歩き続けない。</li>
+</ul>
+<p>現行縦斬りの時間は 0〜21 tick が準備、22〜29 が判定、30〜71 が後隙、18 tick で溜め保持。例えば準備の中を「0〜9 重心を後ろへ、10〜17 振り上げ、18 保持、19〜21 踏み込みの確定」と再配置できる。これは既存攻撃窓を変えずに行う演技案。</p>
+<h3>6.2 護刃: 盾と身体を近く保ち、三段目で伸ばす</h3>
+<ul>
+<li>1 段目は肘を体の近くに保つ小さい斜め斬り。前足の短い踏み込みで距離を作る。</li>
+<li>2 段目は反対側へ返し、腰も小さく戻す。1 段目終了時の姿勢から始め、いったん待機へ戻らない。</li>
+<li>3 段目の突きは後足で押し、胸と肘が前へ伸びる。盾側は防御を残す。高い攻撃力はこの狭い打点と、突き切った後の復帰を伴う。</li>
+<li>盾打ちは肘だけのパンチにせず、前腕に固定された盾へ肩と体重を乗せる。打撃の見た目が鋭くても、スタンの有用性を含めて火力を決める。</li>
+</ul>
+<h3>6.3 長尖槍: 長い射程と、狭い打点を両立させる</h3>
+<ul>
+<li>通常三連突きは同じポーズの繰り返しにせず、1 段目は腕、2 段目は後足の送り、3 段目は前足をもう一度確定して深く突く。</li>
+<li>盾の位置と正面を毎回崩しすぎない。刺した後に柄を引く時間を残し、次の突きが伸ばし切った肘から始まらないようにする。</li>
+<li>上段突きは腕だけで真上へ上げず、胸の向きと前足の距離で打点を高くする。</li>
+<li>防御突きは足を狭く動かす安全な技。高火力にしすぎない。カウンター成功は盾・後膝で衝撃を受けてから刺し返し、通常突きより強い一発を視覚的にも説明する。</li>
+<li>突進抜刀は長い槍が地面・自分の脚を通らないことを背面視点でも見る。</li>
+</ul>
+<h3>6.4 大槌: 頭の重さを両手・腰・足で支える</h3>
+<ul>
+<li>叩きつけは手の高さだけを変えず、重い頭が外へ落ちるのを、添え手と腰で導く。支持足を先に置く。</li>
+<li>横振りは後足の母指球を軸に回り、槌頭を身体の後ろへ通した後に勝手に止めない。接触後の減速を反対足で受ける。</li>
+<li>溜め叩きは重心を低くして準備し、放す直前に骨盤が上がり、打点へ下がる。長い隙には見合う高打撃とスタンの設計を与える。</li>
+<li>現行通常技は smash ↔ swing の相互派生であり、決まった三段終端がない。「最終段ボーナス」を全ての swing に無条件に付けるのでなく、強打を溜めの役割に置くか、将来コンボ履歴付きの終端を新設する。</li>
+</ul>
+<h3>6.5 双剣: 手数より先に左右の役割を読む</h3>
+<ul>
+<li>1 段目右、2 段目左で、骨盤と肩の小さな反転を使う。毎回両腕を同時に最大まで開かない。</li>
+<li>交差斬りは左右の刃が同じ場所へ入る直前に、肘が互いにぶつからない高低差を付ける。左右別の判定を保つ。</li>
+<li>連続突きは左右の手を入れ替え、反対側の足を支えとして前へ出す。</li>
+<li>乱舞は前半で細かく刻み、最後の両刃で踏み込みと上体の解放を大きくする。高い最終段ダメージは両刃の<strong>合計</strong>として評価し、各刃へ同じ合計値を重複設定しない。</li>
+<li>強化状態の速度上昇でも足・体重移動を同時に速める。腕だけが回り、脚が元の時間に残る動きにしない。</li>
+</ul>
+<h3>6.6 太刀: 弧の連続性と、下がる時の足順</h3>
+<ul>
+<li>袈裟 → 斬り上げ → 突きは、前の切っ先の終点から次の始点へつなぐ。刀を毎回構えへ戻すと、長い刀が軽く見える。</li>
+<li>突き終端は前膝と後足で長さを出す。身体を前へ折りすぎず、刺した後に足から戻る。</li>
+<li>下がり斬りは既存の後退 2 m を尊重し、後ろ足が先に逃げ、前足が追う。刃は敵側を向き、身体だけが後ろへ滑る見せ方を避ける。</li>
+<li>兜割り系の強打は準備で刀・胸・前足の向きが読めることを重視し、狭い打点に高い攻撃力を割り当てる。身体が宙へ飛ぶような新演出は、実際の移動曲線や地面との関係を決めてから足す。</li>
+</ul>
+<h3>6.7 環弓: 肩を支え、引き手を離す</h3>
+<ul>
+<li>左手で弓を支え、左右の肩を水平に近づけて右肘を引く。右手だけが弦を伸ばす動きにしない。</li>
+<li>引き絞り終端では引き手を頬の近くに寄せる制作目標を設ける。正式頭モデル・弦の位置に対して照合し、顔を貫通させない。</li>
+<li>放つ瞬間は右手が後ろへ少し抜け、左手・弓の反動は小さくする。矢の生成時刻と指離し・弦戻りを同じ tick にする。</li>
+<li>散射は各矢の係数を合計して近距離の報酬を評価する。溜め射ちは高い一発と引き時間・スタミナ・照準難度を一緒に評価する。</li>
+<li>現行 <code>shot</code> は <code>active=[14,18)</code> に対し矢の生成が tick18、<code>spread</code> は <code>active=[12,16)</code> に対し生成が tick16。位相名の境界と実発射がずれている。発射を早めるのでなく、正本の <code>shoot.tick</code> を保って位相表記を合わせるのが初期修正案。</li>
+</ul>
+<h2>7. 攻撃力と動作の接点</h2>
+<p>当てにくさは「見た目が大きい」だけで決めない。発生までの時間、旋回を止める時刻、判定の幅・高さ、判定の持続、前進量、外した時のキャンセル可能時刻、防御・移動の安全性、コンボをそこまで続ける必要性から判定する。</p>
+<p>弱い連打だけでも遊べる入口を残し、敵の隙を読んで強い終端まで続けた時に効率が上がる構成を狙う。安全な盾突き・長射程の連打・短い回避派生へ、単に「狙いが細い」という理由だけで最大火力を与えない。逆に乱舞は総ヒットの合計、弓は複数矢と距離補正、溜めは追加保持時間込みで比較する。</p>
+<p>最終段の大きい音・刃の軌跡・身体の制動は、最終段のダメージ発生に合わせる。空振り時に命中演出を出さない。ヒットストップは命中時だけの演出として、係数を上げた分だけ長くし続けると操作のテンポが崩れるため、ダメージと別の上限を持つ。</p>
+<p>また、コンボ終端の報酬は、前段を省略できる入口を含めて調べる。技が単独ボタンでも直接出せるなら、その技名だけに「三段目」の倍率を付けてもコンボの報酬にはならない。現在の実際の派生グラフ・状態条件を正本にする。</p>
+<h2>8. 正式モデルのメッシュ設計</h2>
+<p>Three.js の SkinnedMesh は骨格だけでなく、頂点ごとの骨 index と weight を使って変形する。骨を増やした場合は同じ頂点を旧 weight のまま残さず、肩・肘・股関節・膝・手首の変形を再調整する。<a href="https://threejs.org/docs/pages/SkinnedMesh.html">Three.js SkinnedMesh</a></p>
+<table>
+<thead>
+<tr>
+<th>部分</th>
+<th>制作要求</th>
+<th>受け入れ姿勢</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>肩・脇</td>
+<td>胸から上腕へ流れる面。鎖骨の持ち上げに追従し、腕を上げても肩が凹まない</td>
+<td>弓の引き絞り、剣の頭上溜め、背への抜刀</td>
+</tr>
+<tr>
+<td>肘・膝</td>
+<td>曲がる中心とその前後へ必要な面を置く。曲げの内側を折り畳み、外側の体積を保つ</td>
+<td>90°曲げ、深いしゃがみ、回避の丸まり</td>
+</tr>
+<tr>
+<td>前腕・手首</td>
+<td>twist の重みを腕に沿って配分し、細い手首だけへねじりを集中させない</td>
+<td>刃の返し、槍の上段、両手持ち</td>
+</tr>
+<tr>
+<td>手</td>
+<td>柄の太さに合う掌と指。親指を閉じた固定形だけにしない</td>
+<td>大槌、太刀、弓の指離し、道具を飲む</td>
+</tr>
+<tr>
+<td>股関節</td>
+<td>脚を前後に出しても腰布と身体が裂けず、臀部の体積が消えない</td>
+<td>大股、後退、片膝</td>
+</tr>
+<tr>
+<td>足</td>
+<td>踵・足裏・母指球・つま先の形が判別できる</td>
+<td>立位、蹴り出し、旋回、着地</td>
+</tr>
+<tr>
+<td>防具</td>
+<td>装甲板は硬さを保ち、革や布は適度に追従。装備で隠れる身体を同時に隠す</td>
+<td>最大腕上げ、深いしゃがみ、回避</td>
+</tr>
+</tbody>
+</table>
+<p>制作時の bind pose は腕をやや開いた A ポーズを案とするが、現行の「気をつけ」rest pose を黙って差し替えない。採用する bind pose、骨の局所軸、主要骨の名称、socket transform、inverse bind matrix を一組としてバージョン管理する。glTF の skin は joint と inverse bind matrix を定義するため、座標変換とバインドを二重適用しない。<a href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html">Khronos glTF 2.0 仕様</a></p>
+<p>見た目の目標として、ハンター本体と標準装備の LOD0 を合計 1.2〜2.0 万三角形、通常 LOD を 0.6〜1.0 万三角形、skin weight は 1 頂点最大 4、素材を少数 atlas にまとめる案を置く。<strong>この数値なら iPhone で動くと保証するものではない。</strong> モンスター、草、透明な効果、影を含む戦闘全体で測り、必要なら下げる。</p>
+<h2>9. Blender → GLB → ゲームの制作経路</h2>
+<ol>
+<li>現行 1.75 m の参照体・武器寸法・主要 socket を Blender へ置き、同じ大きさで作る。</li>
+<li>編集用の IK・足の固定・pole・手の握りコントロールと、書き出す変形骨を分ける。</li>
+<li>技ごとの時刻表を取り込み、60 tick/秒との対応を固定する。原画や動画だけを完成アニメーションとして登録しない。</li>
+<li>制御リグで演技を作り、変形骨へ bake する。制約やドライバの実行をゲームに持ち込まない。glTF の出力対象に合う骨の transform アニメーションへする。</li>
+<li>clip 名は行動データと完全一致させる。Action / NLA の関連付けを確認し、未関連の Action が出力されない事故を防ぐ。Blender の export mode で挙動が異なるので、使用した Blender 版と export preset を保存する。<a href="https://docs.blender.org/manual/en/latest/addons/scene_gltf2.html">Blender glTF マニュアル</a></li>
+<li>出力後は GLB を読み戻し、clip 本数、名前、長さ、骨、socket、skin、向き、大きさを検査する。Blender 内で動くことを出力後の保証にしない。</li>
+<li>体を正本にする技は、この最終クリップの weapon socket と blade marker から track を生成する。現在の手続き生成と別々の曲線を手作業で維持しない。</li>
+<li>素材ビューアで 4 方向、通常速、0.25 倍速、1 tick 送りを確認し、その後ゲーム側で行動 tick に同期して再生する。</li>
+<li>runtime の root motion は simulation が実行する。クリップの root 水平移動は in-place で持ち、authoring 時の移動量は controller 用曲線として分離する。</li>
+<li>問題が出た時に戻せるよう、手続きリグと GLB リグは rigVersion で切り替えられる状態から始める。採用後に不要な経路を整理する。</li>
+</ol>
+<h3>clip の契約に足す項目案</h3>
+<p>既存の JSON を壊さない別 manifest として、<code>rigVersion</code>、<code>durationTicks</code>、<code>sourceActionId</code>、<code>contactLeft/Right</code>、<code>primaryGrip</code>、<code>secondaryGrip</code>、<code>authoringRootCurveId</code>、<code>trackHash</code>、<code>sourceAssetHash</code> を持つ。接触窓や握り点は visual contract であり、無敵・防御・攻撃力の判定を二重に定義しない。</p>
+<h2>10. 実際の受け入れ検査</h2>
+<h3>自動検査で見るもの</h3>
+<ul>
+<li>保存された技単体の全 tick に加え、前段→次段、歩行→攻撃、被弾→待機、回避→攻撃を実際の animator 経路で流す。</li>
+<li>30 / 60 / 120 fps と変動 dt で、同じ simulation tick の刃の位置・向き・手の到達を比較する。hitstop 中や charge 保持中に脚だけ進んでいないか調べる。</li>
+<li>腕の到達は現行上限を保ち、正式モデルでは掌の方向誤差も測る。武器先端の位置誤差は柄の 2 mm とは別に測る。向きベクトル誤差を m と呼ばない。</li>
+<li>足の変位は actor ローカルだけでなくワールドで測る。接地中の累積ずれ、壁で停止、90°・180°旋回、後退、斜め移動を含む。</li>
+<li>槍・両刃・盾・弓は、主手の 1 本だけでなく副手側も検査する。</li>
+<li>断岳剣・回避・被弾の経路も対象へ加える。ただし新しい validator を通すために限界値だけを緩めない。</li>
+<li>clip と action の時間、shoot / hitWindows と phase の境界、animation event と実ダメージの時刻を照合する。</li>
+</ul>
+<h3>人が見るもの</h3>
+<p>訓練場の白床・足元グリッド・正面 / 真横 / 背面 / 実戦カメラで比較する。止めた 1 枚では、力の流れや足滑りを判断できない。最初は通常速で「重い武器の始動と停止が見える」「最終段だけ見ても強さが読める」「攻撃した手が離れない」を確認し、その後低速で原因を探す。</p>
+<p>iPhone 実機では、通常装備と最も大きな防具、単体の大型戦と群れのいる戦闘、草と効果が重なる場面を各 60 秒以上計測する案とする。平均 fps だけでなく frame interval p95 と 100 ms 超の回数を残し、旧版と同じ設定・シナリオで比較する。モーション評価の目標は、CPU 時間の小さい増加に抑え、GPU の draw call や透明処理を無関係に増やさないこと。数値は計測後に決める。</p>
+<h2>11. Claude への引き継ぎ</h2>
+<p>このレビューを受けて最初に行う順番は、runtime の実移動を使う歩行と遷移の修正 → 現行 7 系統の攻撃力表の適用 → 最終描画姿勢と track の照合 → 断岳剣の足と骨盤の再設計 → 正式 GLB の制作、がよい。</p>
+<p>差し替え用ファイルは、同納品の README の適用手順に従って受け入れる。<code>weaponClipSpecs.ts</code> と tracks の原生成器 <code>tools/gen-weapons.mjs</code> を別々に直してはならない。生成器を修正した場合は再生成差分と再生成再現性まで確認する。</p>
+<p><strong>守れなかった決まり:</strong> このレビュー単体では正式モデル・正式 clip は作っていない。ゲーム上で全提案を実装完了と扱えない。</p>
+<p><strong>迷って決めたこと:</strong> 現在の 17 関節を使う修正を先行し、鎖骨・指・布を含む 59〜63 骨への移行は別段階にした。頭身は原画・防具の整合が必要なので即変更しない。</p>
+<p><strong>確かめていないこと:</strong> iPhone 実機の見た目・性能、全技の新しい手付け演技、正式 GLB の読み込み、布の追従、傾斜地、人体計測に基づく厳密な関節域。ここでの技術レビューはソースと公式仕様の確認であり、実際のプレイ評価の代わりにはならない。</p>
+<h2>参照</h2>
+<ul>
+<li>Kari の各出典は本文の固定 commit のリンク。最新版へ移す前に main の更新と差分を確認する。</li>
+<li><a href="https://threejs.org/docs/pages/AnimationAction.html">Three.js AnimationAction</a>: 時刻、重み、遷移、再生速度。</li>
+<li><a href="https://threejs.org/docs/pages/SkinnedMesh.html">Three.js SkinnedMesh</a>: bone index / weight、bind、アニメーション後の境界。</li>
+<li><a href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html">Khronos glTF 2.0 仕様</a>: node transform、skin、inverse bind matrix、animation。</li>
+<li><a href="https://docs.blender.org/manual/en/latest/addons/scene_gltf2.html">Blender glTF 2.0 マニュアル</a>: Action / NLA と export、骨アニメーションの出力。</li>
+</ul>
+</section><section class="chapter" id="balance"><h1>攻撃力と難易度</h1><p>基点: <code>kamamon/Kari</code> main <code>1d8e084d0d16fe77c376570f9542dd3c54fb5332</code>（v0.20.0）。2026-11-25。</p>
+<p>これは既存の7武器を対象にした差し替え案。33の攻撃行動、38の近接命中枠、2種類の射撃行動を確認した。溜め段階を展開した表は42行。モンスターのHP、武器本体の攻撃力、攻撃の実際の命中時刻・移動・キャンセル時刻は変更しない。変更データと生成元、独立した期待値のテスト差分を同梱した。公開中のゲームへの反映・通常速度での見た目と操作感・実機の難易度は未確認。</p>
+<h2>1. 現行実装で具体的に見つかったこと</h2>
+<ul>
+<li>大槌は主連携の叩きつけ0.62に対して、その後の横殴りが0.58。横殴りに進む報酬が小さい。大槌は叩きつけと横殴りを循環できるので、横殴りは「連携後半」であり、必ずそこで終わるフィニッシャーではない。</li>
+<li>最大溜めの大槌は0.60×2.30=1.38。95tickの溜め、攻撃60tick、命中の停止10tickを払う。制御試験では無溜め反復46.75に対し最大溜め反復43.27 raw DPSで、長く危険な溜めを選ぶ継続火力の報酬が弱い。</li>
+<li>長尖槍の「一段突き→上段突き」は60秒の制御試験で98.10 raw DPS。主3段83.73より高い。射程と盾がある武器で、主3段目に進まない反復が優位だった。</li>
+<li>環弓は無溜め0.18、最大溜め0.90、散らし0.22×3。最速派生で3本とも当たる散らしは90.00 raw DPS。一方、最大溜めを繰り返そうとしてもスタミナが尽き、低い段階で自動的に放たれる。連打の見かけだけで「最大溜めを何発も撃てた」と数えると評価を誤る。</li>
+<li>弓の発射tickは射撃18、散らし16だが、phaseのactiveはそれぞれ[14,18)、[12,16)で、発射時がrecoveryに分類されていた。双剣の二段突きは2撃目が[17,21)なのにactiveは[10,20)。分類を発射・命中枠に合わせた。実際の発射・命中・派生時刻は変えていない。</li>
+</ul>
+<p>根拠: <code>public/data/actions/*.json</code>、<code>tools/weapons/*.mjs</code>、<code>src/game/player.ts</code>、<code>src/game/sim.ts</code>。制御試験の条件と全結果は <code>balance-runtime-report.json</code>。</p>
+<h2>2. モーション値の定義</h2>
+<p>この資料のモーション値（MV）は <code>damageCoefficient × 100</code>。MV100は武器の攻撃力1倍。画面の最終ダメージとは別の値である。</p>
+<pre><code class="language-text">近接の1命中分 = floor((攻撃力 × MV/100 × 溜め/勢い倍率 × 刃補正 × 部位係数 × 会心
+                    + 属性値 × 属性技倍率 × 属性部位係数) × 依頼補正)
+多段技の合計   = 各命中分を個別に切り捨てた結果の合計
+</code></pre>
+<p>有効なダメージの下限1、完全無効0という既存の計算を維持する。射撃は矢ごとの係数に適正距離補正を掛ける。近接の溜め倍率を矢へ二重に掛けない。既存の弓の<code>coefficientScale</code>が全て1なのは、この区別のため。</p>
+<p>例: 初期断岳剣の攻撃力80、最大溜めのMV294、刃・会心・依頼の倍率1、部位係数0.70なら、<code>floor(80×2.94×0.70)=164</code>。MV294は294ダメージという意味ではない。</p>
+<p>双剣の連ね斬りはMV16+18+20+42+42。勢い3の消費倍率1.90、初期攻撃力60、部位係数0.65なら、11+13+14+31+31=100ダメージ。合計MVへ一度だけ切り捨てを掛ける102ダメージという計算は使わない。左右片方が外れた場合は、その分を加えない。</p>
+<h2>3. 各武器への配分</h2>
+<p>全33行の新旧数値、実効段階、命中時刻、持ち替えから出せるか、移動距離、判定半径は <code>balance-motion-values.json</code> / <code>.csv</code>。以下は主な連携の要点。</p>
+<table>
+<thead>
+<tr>
+<th>武器</th>
+<th>提案する主なMV</th>
+<th>意図</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>断岳剣</td>
+<td>横薙ぎ70、縦斬り105、溜め1/2/3は157.5/220.5/294、抜刀100</td>
+<td>広い横薙ぎはつなぎ。狭い縦斬りと溜めの拘束を大きい一撃へ還元する。</td>
+</tr>
+<tr>
+<td>護刃</td>
+<td>24→30→56、盾28、踏み込み48</td>
+<td>速く盾を使える武器。主3段目の狭い突きへ威力を寄せる。</td>
+</tr>
+<tr>
+<td>大槌</td>
+<td>叩きつけ60→横殴り76、溜め基礎72、溜め1/2/3は122.4/183.6/273.6、抜刀76</td>
+<td>短い打点・盾無し・長い準備を評価。横殴りは循環連携の後半。気絶は未実装なので、それを既存の利点として数えない。</td>
+</tr>
+<tr>
+<td>双剣</td>
+<td>18→22→30+30、二段突き20+30、連ね斬り16+18+20+42+42</td>
+<td>同時に当たる左右も別々に計算。連ね斬りの最後2撃へ合計威力の60.9%を置く。勢いが無い連ね斬り連打は弱く、勢いを作って使う。</td>
+</tr>
+<tr>
+<td>太刀</td>
+<td>38→44→72、下がり32、兜割り142、抜刀56</td>
+<td>主3段目の狭い突き、始動の遅い兜割りへ報酬。2m退ける下がり斬りは、安全性を持つ移動技として低くする。</td>
+</tr>
+<tr>
+<td>長尖槍</td>
+<td>36→42→72、上段38、構え30、受け返し155、踏み込み82</td>
+<td>長い間合いと盾を評価して始動を控えめにする。3段目を避ける最短反復が主連携を上回らないようにする。</td>
+</tr>
+<tr>
+<td>環弓</td>
+<td>無溜め/1/2/3=22/58/112/185、散らし17×3</td>
+<td>溜め時間とスタミナに報酬を付ける。散らしは1本17、全3本命中で51。</td>
+</tr>
+</tbody>
+</table>
+<p>護刃の突き、双剣の交差、太刀の突きは主連携の3段目。さらに別の技へつなげられる場合があるので、技の終了時に追加ボーナスを後付けする実装にはしていない。既存の派生で到達する専用の行動IDに値を設定した。兜割りは自由状態からも出せる大技で、コンボ到達限定ボーナスではない。長尖槍の受け返しは正面の防御可能な攻撃を受けたときにだけ出るので、任意に単発連打できる技としてDPSを比較しない。</p>
+<h2>4. 当てにくさの扱い</h2>
+<p>準備、実際に当たる幅と高さ、向きを直せる時刻、踏み込み、回避へ移れる時刻、前の技から到達する必要、敵に近づく必要を組み合わせて見る。判定の半径を広げて帳尻を合わせる変更はしていない。</p>
+<p><code>balance-runtime-report.json</code> の <code>geometry</code> は既存の実判定カプセルを0.25tick刻みで測った包絡範囲。固定した向き、障害物無し、移動曲線込みの説明値で、届くことや命中率を保証する値ではない。敵の形・位置・移動、壁や胴体の押し戻し、照準補助で実際の結果は変わる。</p>
+<p>バランス判断は次の期待値を使う。</p>
+<pre><code class="language-text">期待与ダメージ = Σ(その段まで届く確率 × その命中枠が当たる条件付き確率 × 1命中分のダメージ)
+期待DPS        = 期待与ダメージ / (準備 + 溜め + 攻撃 + 派生/後隙 + 停止 + 必要な回復待ち)
+</code></pre>
+<p>確率はまだ実測されていない。現段階では、時間・可否・幾何はコードから測定し、技を外す頻度や被弾リスクは仮説として扱う。静止標的に当たっただけで、人が操作しやすいと判定しない。</p>
+<h2>5. 時間と連携の検証</h2>
+<p>実際の<code>stepPlayer</code>と<code>computeDamage</code>を実行した制御試験では、主連携を完遂する方が、始動だけを反復するより高いraw DPSになった。長尖槍の3段も、一段→上段の反復を上回った。溜め3種は、単一行動の待ち時間と命中停止を含めても、段階を上げた際の名目DPSが単調に増える。比較する主な60秒値は次のとおり。</p>
+<table>
+<thead>
+<tr>
+<th>入力</th>
+<th style="text-align:right">現行 raw DPS</th>
+<th style="text-align:right">提案 raw DPS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>断岳剣・最大溜め反復</td>
+<td style="text-align:right">58.80</td>
+<td style="text-align:right">82.25</td>
+</tr>
+<tr>
+<td>護刃・主3段</td>
+<td style="text-align:right">55.02</td>
+<td style="text-align:right">60.07</td>
+</tr>
+<tr>
+<td>大槌・主2段</td>
+<td style="text-align:right">71.40</td>
+<td style="text-align:right">81.20</td>
+</tr>
+<tr>
+<td>大槌・最大溜め反復</td>
+<td style="text-align:right">43.27</td>
+<td style="text-align:right">86.17</td>
+</tr>
+<tr>
+<td>双剣・主3段</td>
+<td style="text-align:right">68.03</td>
+<td style="text-align:right">80.82</td>
+</tr>
+<tr>
+<td>双剣・主3段→連ね斬り</td>
+<td style="text-align:right">80.60</td>
+<td style="text-align:right">93.17</td>
+</tr>
+<tr>
+<td>太刀・主3段</td>
+<td style="text-align:right">67.20</td>
+<td style="text-align:right">80.50</td>
+</tr>
+<tr>
+<td>長尖槍・主3段</td>
+<td style="text-align:right">83.73</td>
+<td style="text-align:right">76.38</td>
+</tr>
+<tr>
+<td>長尖槍・一段→上段だけ</td>
+<td style="text-align:right">98.10</td>
+<td style="text-align:right">68.02</td>
+</tr>
+</tbody>
+</table>
+<p>raw DPSは初期武器での全命中・部位係数1・鋭い刃固定という制御条件。攻撃を受けず、敵が動かず、全ての判定枠が当たる。この条件を実際の討伐速度と混同しない。60秒末尾の途中の攻撃も計上するため、整数周期だけの計算とは小差がある。全37反復と42段階の結果をJSONに残した。</p>
+<p>双剣と大槌は近距離で守れない危険がある。盾を持つ護刃・長尖槍、距離を保てる弓と、理論DPSを全て同じ値にする方針ではない。</p>
+<h3>環弓の持続性</h3>
+<p>最大溜め1発は24スタミナを使う（12/秒×2秒）。消費後の回復待ち50tick、回復24/秒がある。最速で最大溜めを狙い続けた300秒試験では、早い時期の4発だけが段階3で、以降は段階0/1へ落ちた。提案の35.55 raw DPSを「最大溜めを撃ち続けたDPS」と呼ばない。</p>
+<table>
+<thead>
+<tr>
+<th>提案・300秒の入力方針</th>
+<th style="text-align:right">raw DPS</th>
+<th style="text-align:right">段階3射撃</th>
+<th style="text-align:right">最低スタミナ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>最大溜めを狙って最速反復</td>
+<td style="text-align:right">35.55</td>
+<td style="text-align:right">4</td>
+<td style="text-align:right">0</td>
+</tr>
+<tr>
+<td>24まで回復するのを待って最大溜め</td>
+<td style="text-align:right">33.97</td>
+<td style="text-align:right">79</td>
+<td style="text-align:right">4</td>
+</tr>
+<tr>
+<td>最大溜め→散らし3回を繰り返す</td>
+<td style="text-align:right">56.24</td>
+<td style="text-align:right">74</td>
+<td style="text-align:right">76</td>
+</tr>
+</tbody>
+</table>
+<p>最後の行は散らしの3本全命中を仮定する。1本しか当たらなければ、その部分のダメージは1/3。4m未満は既存の距離補正0.6、6〜12mは1。矢は刃を消耗せず、現実装に矢の残弾制限も無い。これらも近接との比較へ含める必要がある。</p>
+<p>たとえば「近接の攻撃稼働率0.4、弓0.7」という仮説を置けば、護刃60.07×0.4=24.03、休みを挟む弓33.97×0.7=23.78となる。ただし0.4/0.7は説明のための仮定で、両者が等しく強いことを証明していない。射線を妨げる地形、幼体の妨害、大型の突進がある場合は実測を優先する。</p>
+<h3>刃と拘束の副作用</h3>
+<p>近接の刃の減少は、溜め・勢いを掛ける前の係数×系統の<code>wearPerMotion</code>。係数を上げた攻撃は刃の消耗も増える。断岳剣の1命中は1.60から1.68、大槌の溜め叩きは0.78から0.936へ増える一方、溜め倍率自体は消耗に掛からないため、最大溜めのダメージ/刃効率は大きく改善する。硬い部位での弾かれはさらに消耗2倍と26tickの反動を持つ。制御DPSでは刃を固定し、この効率差を別項目に記録した。</p>
+<p>大槌最大溜めの初期攻撃力86、頭の打撃部位係数0.75なら176ダメージ。ガルドロスの最初の頭怯み閾値180の直前に当たるが、壊れた頭、強化段階、会心等で変わる。実際の怯み・部位破壊・転倒の回数が増えると、単純なDPS以上に攻撃機会が増える。これを最終調整で確認する。現時点で新しい気絶システムを追加してはいない。</p>
+<h2>6. 難易度の目標と仮説</h2>
+<p>現行ガルドロスのHPは初級1800。まずこのHPを保ち、武器側の不均衡と連携報酬を調整する。初見6〜10分、慣れた狩人3〜5分、熟練者2〜3分を初級の仮の検討範囲とする。移動・回復・研磨の時間を含む。達成済みの測定値ではない。</p>
+<table>
+<thead>
+<tr>
+<th>仮の操作状況</th>
+<th style="text-align:right">名目raw DPS</th>
+<th style="text-align:right">攻撃稼働率</th>
+<th style="text-align:right">命中割合</th>
+<th style="text-align:right">平均部位係数</th>
+<th style="text-align:right">平均刃補正</th>
+<th style="text-align:right">HP1800の戦闘時間</th>
+<th style="text-align:right">非戦闘を含む試算</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>初見・単発と途中までの連携</td>
+<td style="text-align:right">55</td>
+<td style="text-align:right">0.32</td>
+<td style="text-align:right">0.70</td>
+<td style="text-align:right">0.42</td>
+<td style="text-align:right">0.88</td>
+<td style="text-align:right">約6.6分</td>
+<td style="text-align:right">約8.1分（+90秒）</td>
+</tr>
+<tr>
+<td>慣れた狩人・主連携中心</td>
+<td style="text-align:right">78</td>
+<td style="text-align:right">0.45</td>
+<td style="text-align:right">0.80</td>
+<td style="text-align:right">0.50</td>
+<td style="text-align:right">0.92</td>
+<td style="text-align:right">約2.3分</td>
+<td style="text-align:right">約3.3分（+60秒）</td>
+</tr>
+<tr>
+<td>熟練・弱点と大きい隙を活用</td>
+<td style="text-align:right">86</td>
+<td style="text-align:right">0.60</td>
+<td style="text-align:right">0.90</td>
+<td style="text-align:right">0.60</td>
+<td style="text-align:right">0.96</td>
+<td style="text-align:right">約1.1分</td>
+<td style="text-align:right">約1.9分（+45秒）</td>
+</tr>
+</tbody>
+</table>
+<p>計算式は <code>実効DPS=名目DPS×稼働率×命中割合×部位係数×刃補正</code>。全行の行動比率は仮説であり、実機データではない。表に収まるようにHPを逆算して変更したわけではない。試算の正確な数値は <code>balance-difficulty-scenarios.json</code>。</p>
+<p>既存の中級/上級/極級のHPは2430/3240/4320。対応の断岳剣を106/122/140とすると、初期80との単純なHP/攻撃力比は約1.02/1.18/1.37倍。上の段階は敵の攻撃間隔も短くなるため、実際には攻撃稼働率も下がり得る。他の大型11種、幼体8種、群れの妨害、捕獲終了はこのガルドロス1体の式から保証できない。</p>
+<h2>7. 受入と次の調整</h2>
+<ol>
+<li>同一基点の作業コピーに<code>balance.patch</code>と<code>test-expectations.patch</code>を適用。全体の型検査・テスト・ビルド、武器生成の厳格検査を通す。モーション側の差分も併用する場合は、生成元を統合してから再生成し、出力だけを手修正しない。</li>
+<li>訓練場で7武器、各主連携、全溜め段階、双剣の勢い0/3、長尖槍の受け返し成功/失敗、矢の近距離/適正/遠距離/一部命中を確認する。攻撃の速度・発生・当たり判定を変えない差分でも、増えたダメージで怯みの発生時刻が変わる。</li>
+<li>実機で初級を数回ずつ遊び、技別の開始数、到達数、命中枠数、部位、与ダメージ、行動中の被弾、溜め解除段階、刃/スタミナ、討伐時間を記録する。技の実効DPSと「その技の最中に被弾した割合」を並べる。</li>
+<li>連携後半へ進む割合が低ければ、操作の分かりやすさ、入力受付、足運び・向き・打点を先に調べる。値を上げるだけでは、当たらない大技をさらに極端にする。</li>
+<li>盾・射程・離脱を持つ技が、攻撃専用の高リスク技より常に高い実効火力になる場合は、その安全技か反復経路を調整する。全武器の攻撃力をまとめて上げ下げする前に、偏りのある技を特定する。</li>
+</ol>
+<h3>確認したものと未確認のもの</h3>
+<p>データの読込、全33攻撃の網羅、38命中枠、7個の独立した不変条件、42段階の単一行動、37反復の計算は実行した。正規の入力から出せない技を反復DPSへ混ぜていない。攻撃時刻と移動・キャンセルは維持した。検証実行用のスクリプトと数値結果を同梱した。</p>
+<p>人の命中率、通常速度の操作感、入力しにくさ、全モンスターと全強化段階の最終難易度、iPhone上の性能は未確認。提示値は最初の調整案であり、完成したバランスという判定ではない。</p>
+<h2>攻撃時間と高威力の関係</h2><svg xmlns="http://www.w3.org/2000/svg" width="680" height="162" viewBox="0 0 680 162"><rect x="30" y="36" width="176" height="42" fill="#d6a551"/><text x="118.0" y="62" text-anchor="middle" font-size="16" fill="white" font-family="Noto Sans CJK JP">準備</text><rect x="206" y="36" width="64" height="42" fill="#c86250"/><text x="238.0" y="62" text-anchor="middle" font-size="16" fill="white" font-family="Noto Sans CJK JP">判定</text><rect x="270" y="36" width="336" height="42" fill="#719c88"/><text x="438.0" y="62" text-anchor="middle" font-size="16" fill="white" font-family="Noto Sans CJK JP">後隙</text><line x1="30" y1="80" x2="30" y2="87" stroke="#274d40"/><text x="30" y="106" text-anchor="middle" font-size="12" font-family="Noto Sans CJK JP">0</text><line x1="174" y1="80" x2="174" y2="87" stroke="#274d40"/><text x="174" y="106" text-anchor="middle" font-size="12" font-family="Noto Sans CJK JP">18</text><line x1="206" y1="80" x2="206" y2="87" stroke="#274d40"/><text x="206" y="106" text-anchor="middle" font-size="12" font-family="Noto Sans CJK JP">22</text><line x1="270" y1="80" x2="270" y2="87" stroke="#274d40"/><text x="270" y="106" text-anchor="middle" font-size="12" font-family="Noto Sans CJK JP">30</text><line x1="494" y1="80" x2="494" y2="87" stroke="#274d40"/><text x="494" y="106" text-anchor="middle" font-size="12" font-family="Noto Sans CJK JP">58</text><line x1="606" y1="80" x2="606" y2="87" stroke="#274d40"/><text x="606" y="106" text-anchor="middle" font-size="12" font-family="Noto Sans CJK JP">72</text><text x="30" y="24" font-size="15" font-family="Noto Sans CJK JP">断岳剣・縦斬りの基本72 tick（1 tick = 1/60秒）</text><text x="30" y="134" font-size="13" font-family="Noto Sans CJK JP">18 tick で溜め保持 / 58 tick から回避可能</text><text x="30" y="155" font-size="13" font-family="Noto Sans CJK JP">最大溜め命中: 72 + 保持90 + ヒットストップ10 = 172 tick</text></svg><div class="callout">モーション値（MV）100 = 基礎攻撃力に掛ける係数1.0。MVがそのまま画面に出るダメージになるわけではない。部位・刃・会心・属性・依頼補正を反映し、各ヒットで切り捨てる。</div><h2 id="all-values">全33モーションの置き換え値</h2><p>「+」は別ヒットの合計、「×3」は矢3本がすべて当たった場合。全長は無溜めの基本長で、保持時間・ヒットストップは含めない。発生は実際の判定開始、または矢の発射tick。</p><section class="family"><h3>断岳剣</h3><table class="moves"><colgroup><col style="width:31%"><col style="width:22%"><col style="width:27%"><col style="width:20%"></colgroup><thead><tr><th>技 / ID</th><th>旧MV</th><th>提案MV</th><th>発生 / 全長</th></tr></thead><tbody><tr><td>縦斬り・溜め斬り<br><small>overhead</small></td><td>100 / 130 / 165 / 210<br><small>無溜め / 溜め1 / 2 / 3</small></td><td><strong>105 / 157.5 / 220.5 / 294<br><small>無溜め / 溜め1 / 2 / 3</small></strong></td><td>22 / 72<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">狭い縦軌道と回避不能時間を一撃へ還元。最大溜めは待ち時間込みでも無溜めより報われる。</td></tr></tbody><tbody><tr><td>横薙ぎ<br><small>side_sweep</small></td><td>75</td><td><strong>70</strong></td><td>18 / 66<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">広い横方向の当てやすさを優先する始動。縦斬りへのつなぎに使う。</td></tr></tbody><tbody><tr><td>抜刀斬り<br><small>draw_slash</small></td><td>90</td><td><strong>100</strong></td><td>20 / 64<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">納刀からの長い準備と最初の一撃の位置取りを評価。</td></tr></tbody></table></section><section class="family"><h3>護刃</h3><table class="moves"><colgroup><col style="width:31%"><col style="width:22%"><col style="width:27%"><col style="width:20%"></colgroup><thead><tr><th>技 / ID</th><th>旧MV</th><th>提案MV</th><th>発生 / 全長</th></tr></thead><tbody><tr><td>斬り<br><small>slash1</small></td><td>28</td><td><strong>24</strong></td><td>8 / 26<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">盾と速い回避移行を持つ安全な始動。</td></tr></tbody><tbody><tr><td>返し斬り<br><small>slash2</small></td><td>30</td><td><strong>30</strong></td><td>7 / 26<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">始動より少し高い中継。</td></tr></tbody><tbody><tr><td>主連携3段目・突き<br><small>thrust</small></td><td>42</td><td><strong>56</strong></td><td>11 / 36<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">3段目まで残る判断と横に狭い突きを評価。</td></tr></tbody><tbody><tr><td>盾打ち<br><small>bash</small></td><td>25</td><td><strong>28</strong></td><td>11 / 36<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">短い間合い。現状は気絶効果が無いので架空の気絶価値で減額しない。</td></tr></tbody><tbody><tr><td>踏み込み抜刀斬り<br><small>lunge</small></td><td>45</td><td><strong>48</strong></td><td>22 / 50<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">22tickの始動と1.2mの位置取りを評価。</td></tr></tbody></table></section><section class="family"><h3>長尖槍</h3><table class="moves"><colgroup><col style="width:31%"><col style="width:22%"><col style="width:27%"><col style="width:20%"></colgroup><thead><tr><th>技 / ID</th><th>旧MV</th><th>提案MV</th><th>発生 / 全長</th></tr></thead><tbody><tr><td>一段突き<br><small>thrust1</small></td><td>50</td><td><strong>36</strong></td><td>10 / 38<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">長い間合い・盾への復帰を考慮した始動。</td></tr></tbody><tbody><tr><td>二段突き<br><small>thrust2</small></td><td>50</td><td><strong>42</strong></td><td>10 / 38<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">中継。三段目へ価値を寄せる。</td></tr></tbody><tbody><tr><td>主連携3段目・三段突き<br><small>thrust3</small></td><td>62</td><td><strong>72</strong></td><td>10 / 38<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">攻撃派生が無く、回復を最後まで払う3段目。始動→上段だけの反復より連携完遂が報われる。</td></tr></tbody><tbody><tr><td>上段突き<br><small>high</small></td><td>55</td><td><strong>38</strong></td><td>12 / 42<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">高所の部位を狙う用途。始動と交互に使う最短ループの過大火力を抑える。</td></tr></tbody><tbody><tr><td>構え突き<br><small>guard_thrust</small></td><td>36</td><td><strong>30</strong></td><td>14 / 44<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">全44tickで防御可能なので安全性に代価を置く。</td></tr></tbody><tbody><tr><td>受け返し突き<br><small>counter_thrust</small></td><td>160</td><td><strong>155</strong></td><td>9 / 44<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">敵の防御可能な攻撃を正面で受ける条件とスタミナ15を評価。独立した連打技として数えない。</td></tr></tbody><tbody><tr><td>踏み込み抜刀突き<br><small>lunge</small></td><td>70</td><td><strong>82</strong></td><td>34 / 66<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">34tickの準備・長い直進の拘束を評価。</td></tr></tbody></table></section><section class="family"><h3>大槌</h3><table class="moves"><colgroup><col style="width:31%"><col style="width:22%"><col style="width:27%"><col style="width:20%"></colgroup><thead><tr><th>技 / ID</th><th>旧MV</th><th>提案MV</th><th>発生 / 全長</th></tr></thead><tbody><tr><td>叩きつけ<br><small>smash</small></td><td>62</td><td><strong>60</strong></td><td>22 / 56<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">コンボ始動。後続の横殴りへ威力を移す。</td></tr></tbody><tbody><tr><td>横殴り（連携後半）<br><small>swing</small></td><td>58</td><td><strong>76</strong></td><td>19 / 56<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">叩きつけ・溜め叩き等からの派生と長い後隙を評価。再び叩きつけへ戻れる循環連携で、真の終端ではない。</td></tr></tbody><tbody><tr><td>溜め叩き<br><small>charge</small></td><td>60 / 81 / 105 / 138<br><small>無溜め / 溜め1 / 2 / 3</small></td><td><strong>72 / 122.4 / 183.6 / 273.6<br><small>無溜め / 溜め1 / 2 / 3</small></strong></td><td>24 / 60<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">短い頭部の判定・盾無し・長い溜めを大きい一撃へ還元。気絶は未実装。</td></tr></tbody><tbody><tr><td>抜刀叩き<br><small>draw_smash</small></td><td>60</td><td><strong>76</strong></td><td>36 / 68<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">36tickの始動と抜刀の拘束に見合う一撃。</td></tr></tbody></table></section><section class="family"><h3>双剣</h3><table class="moves"><colgroup><col style="width:31%"><col style="width:22%"><col style="width:27%"><col style="width:20%"></colgroup><thead><tr><th>技 / ID</th><th>旧MV</th><th>提案MV</th><th>発生 / 全長</th></tr></thead><tbody><tr><td>右斬り<br><small>slash1</small></td><td>20</td><td><strong>18</strong></td><td>8 / 24<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">素早く勢いを作る始動。</td></tr></tbody><tbody><tr><td>左斬り<br><small>slash2</small></td><td>20</td><td><strong>22</strong></td><td>7 / 24<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">始動より高い中継。</td></tr></tbody><tbody><tr><td>主連携3段目・交差斬り<br><small>cross</small></td><td>22 + 22</td><td><strong>30 + 30</strong></td><td>11 / 36<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">左右両方を当てて初めて合計0.60。短い間合いと連携継続を評価。</td></tr></tbody><tbody><tr><td>二段突き<br><small>stab</small></td><td>20 + 24</td><td><strong>20 + 30</strong></td><td>10 / 42<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">2撃目の遅い狭い判定へ威力を寄せる。</td></tr></tbody><tbody><tr><td>連ね斬り<br><small>flurry</small></td><td>20 + 20 + 20 + 30 + 30</td><td><strong>16 + 18 + 20 + 42 + 42</strong></td><td>10 / 86<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">最後の交差2撃に合計威力の60.9%を配分。勢い消費と中断の危険を評価。</td></tr></tbody><tbody><tr><td>抜刀交差斬り<br><small>draw_cross</small></td><td>22 + 22</td><td><strong>27 + 27</strong></td><td>30 / 52<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">両腰から抜く30tickの準備を評価。片刃だけなら半分。</td></tr></tbody></table></section><section class="family"><h3>太刀</h3><table class="moves"><colgroup><col style="width:31%"><col style="width:22%"><col style="width:27%"><col style="width:20%"></colgroup><thead><tr><th>技 / ID</th><th>旧MV</th><th>提案MV</th><th>発生 / 全長</th></tr></thead><tbody><tr><td>袈裟斬り<br><small>kesa</small></td><td>40</td><td><strong>38</strong></td><td>12 / 34<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">踏み込みのある扱いやすい始動。</td></tr></tbody><tbody><tr><td>斬り上げ<br><small>rise</small></td><td>38</td><td><strong>44</strong></td><td>9 / 32<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">中継に少し報酬を付ける。</td></tr></tbody><tbody><tr><td>主連携3段目・突き<br><small>thrust</small></td><td>50</td><td><strong>72</strong></td><td>12 / 38<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">狭い突きと3段目到達を評価。</td></tr></tbody><tbody><tr><td>下がり斬り<br><small>back_cut</small></td><td>42</td><td><strong>32</strong></td><td>10 / 50<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">2m離脱の安全性を持つため攻撃専用技より低い威力。無敵は追加しない。</td></tr></tbody><tbody><tr><td>兜割り<br><small>helm</small></td><td>115</td><td><strong>142</strong></td><td>30 / 70<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">30tickの始動・狭い縦斬り・54tickまで回避できない拘束を評価。</td></tr></tbody><tbody><tr><td>抜刀斬り<br><small>draw_cut</small></td><td>48</td><td><strong>56</strong></td><td>30 / 60<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">30tickの抜刀準備を評価。</td></tr></tbody></table></section><section class="family"><h3>環弓</h3><table class="moves"><colgroup><col style="width:31%"><col style="width:22%"><col style="width:27%"><col style="width:20%"></colgroup><thead><tr><th>技 / ID</th><th>旧MV</th><th>提案MV</th><th>発生 / 全長</th></tr></thead><tbody><tr><td>射撃・溜め射撃<br><small>shot</small></td><td>18 / 30 / 55 / 90</td><td><strong>22 / 58 / 112 / 185</strong></td><td>18 / 52<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">待ち時間とスタミナ消費込みで溜め段階に価値を持たせる。1発の係数。</td></tr></tbody><tbody><tr><td>散らし撃ち<br><small>spread</small></td><td>22 × 3</td><td><strong>17 × 3</strong></td><td>16 / 46<br><small>tick</small></td></tr><tr class="rationale"><td colspan="4">1本0.17、3本全部命中で0.51。近距離0.6倍と拡散で位置取りを分ける。</td></tr></tbody></table></section></section><section class="chapter" id="runtime-report"><h1>攻撃力・行動時間の比較（実コードを用いた制御試験）</h1>
+<p>基点: <code>1d8e084d0d16fe77c376570f9542dd3c54fb5332</code>。人が遊んだ結果ではない。<code>stepPlayer</code> の時間・溜め・最速の合法派生・ヒットストップ・勢い・スタミナ回復を実行し、各判定を有効開始時に必ず当てる。部位、刃、会心、依頼の倍率は1。刃の消耗・敵AI・移動の阻害・矢の飛行時間は除外。係数の比較用で、討伐DPSの保証ではない。</p>
+<table>
+<thead>
+<tr>
+<th>武器</th>
+<th>入力の反復</th>
+<th style="text-align:right">現行 raw DPS</th>
+<th style="text-align:right">提案 raw DPS</th>
+<th style="text-align:right">提案 最後の周期tick</th>
+<th style="text-align:right">提案 最小スタミナ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>断岳剣</td>
+<td>縦斬り単発</td>
+<td style="text-align:right">64.00</td>
+<td style="text-align:right">67.20</td>
+<td style="text-align:right">76</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>断岳剣</td>
+<td>横薙ぎ→縦斬り</td>
+<td style="text-align:right">68.67</td>
+<td style="text-align:right">68.60</td>
+<td style="text-align:right">123</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>断岳剣</td>
+<td>溜め1反復</td>
+<td style="text-align:right">57.20</td>
+<td style="text-align:right">69.30</td>
+<td style="text-align:right">108</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>断岳剣</td>
+<td>溜め2反復</td>
+<td style="text-align:right">57.20</td>
+<td style="text-align:right">76.27</td>
+<td style="text-align:right">140</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>断岳剣</td>
+<td>溜め3反復</td>
+<td style="text-align:right">58.80</td>
+<td style="text-align:right">82.25</td>
+<td style="text-align:right">172</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>護刃</td>
+<td>始動だけ反復</td>
+<td style="text-align:right">38.70</td>
+<td style="text-align:right">32.25</td>
+<td style="text-align:right">28</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>護刃</td>
+<td>主3段</td>
+<td style="text-align:right">55.02</td>
+<td style="text-align:right">60.07</td>
+<td style="text-align:right">70</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>護刃</td>
+<td>主3段→盾</td>
+<td style="text-align:right">57.95</td>
+<td style="text-align:right">63.63</td>
+<td style="text-align:right">83</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>護刃</td>
+<td>始動→盾だけ</td>
+<td style="text-align:right">48.73</td>
+<td style="text-align:right">47.30</td>
+<td style="text-align:right">42</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>大槌</td>
+<td>始動だけ反復</td>
+<td style="text-align:right">52.12</td>
+<td style="text-align:right">50.15</td>
+<td style="text-align:right">61</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>大槌</td>
+<td>主2段</td>
+<td style="text-align:right">71.40</td>
+<td style="text-align:right">81.20</td>
+<td style="text-align:right">86</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>大槌</td>
+<td>溜め0反復</td>
+<td style="text-align:right">46.75</td>
+<td style="text-align:right">55.92</td>
+<td style="text-align:right">66</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>大槌</td>
+<td>溜め1反復</td>
+<td style="text-align:right">42.55</td>
+<td style="text-align:right">64.75</td>
+<td style="text-align:right">97</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>大槌</td>
+<td>溜め2反復</td>
+<td style="text-align:right">42.00</td>
+<td style="text-align:right">73.27</td>
+<td style="text-align:right">128</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>大槌</td>
+<td>溜め3反復</td>
+<td style="text-align:right">43.27</td>
+<td style="text-align:right">86.17</td>
+<td style="text-align:right">165</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>大槌</td>
+<td>最大溜め→横殴り</td>
+<td style="text-align:right">47.32</td>
+<td style="text-align:right">85.00</td>
+<td style="text-align:right">208</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>双剣</td>
+<td>始動だけ反復</td>
+<td style="text-align:right">36.32</td>
+<td style="text-align:right">31.12</td>
+<td style="text-align:right">23</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>双剣</td>
+<td>主3段・勢い蓄積</td>
+<td style="text-align:right">68.03</td>
+<td style="text-align:right">80.82</td>
+<td style="text-align:right">51</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>双剣</td>
+<td>右斬り→二段突き</td>
+<td style="text-align:right">64.08</td>
+<td style="text-align:right">66.88</td>
+<td style="text-align:right">42</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>双剣</td>
+<td>主3段→連ね斬り</td>
+<td style="text-align:right">80.60</td>
+<td style="text-align:right">93.17</td>
+<td style="text-align:right">139</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>双剣</td>
+<td>勢いゼロ連ね斬り反復</td>
+<td style="text-align:right">45.00</td>
+<td style="text-align:right">50.47</td>
+<td style="text-align:right">96</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>太刀</td>
+<td>始動だけ反復</td>
+<td style="text-align:right">48.50</td>
+<td style="text-align:right">45.27</td>
+<td style="text-align:right">37</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>太刀</td>
+<td>主3段</td>
+<td style="text-align:right">67.20</td>
+<td style="text-align:right">80.50</td>
+<td style="text-align:right">86</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>太刀</td>
+<td>主3段→兜割り</td>
+<td style="text-align:right">73.70</td>
+<td style="text-align:right">89.27</td>
+<td style="text-align:right">149</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>太刀</td>
+<td>始動→下がり斬り</td>
+<td style="text-align:right">57.43</td>
+<td style="text-align:right">49.00</td>
+<td style="text-align:right">64</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>太刀</td>
+<td>兜割り単発反復</td>
+<td style="text-align:right">68.15</td>
+<td style="text-align:right">83.82</td>
+<td style="text-align:right">77</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>長尖槍</td>
+<td>始動だけ反復</td>
+<td style="text-align:right">52.80</td>
+<td style="text-align:right">36.67</td>
+<td style="text-align:right">41</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>長尖槍</td>
+<td>主3段</td>
+<td style="text-align:right">83.73</td>
+<td style="text-align:right">76.38</td>
+<td style="text-align:right">83</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>長尖槍</td>
+<td>始動→上段だけ</td>
+<td style="text-align:right">98.10</td>
+<td style="text-align:right">68.02</td>
+<td style="text-align:right">46</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>環弓</td>
+<td>溜め0を狙って射撃60秒</td>
+<td style="text-align:right">22.40</td>
+<td style="text-align:right">28.00</td>
+<td style="text-align:right">32</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>環弓</td>
+<td>溜め1を狙って射撃60秒</td>
+<td style="text-align:right">20.65</td>
+<td style="text-align:right">35.67</td>
+<td style="text-align:right">62</td>
+<td style="text-align:right">0.0</td>
+</tr>
+<tr>
+<td>環弓</td>
+<td>溜め2を狙って射撃60秒</td>
+<td style="text-align:right">21.33</td>
+<td style="text-align:right">37.10</td>
+<td style="text-align:right">62</td>
+<td style="text-align:right">0.0</td>
+</tr>
+<tr>
+<td>環弓</td>
+<td>溜め3を狙って射撃60秒</td>
+<td style="text-align:right">21.65</td>
+<td style="text-align:right">37.52</td>
+<td style="text-align:right">62</td>
+<td style="text-align:right">0.0</td>
+</tr>
+<tr>
+<td>環弓</td>
+<td>散らし3本全命中</td>
+<td style="text-align:right">90.00</td>
+<td style="text-align:right">66.00</td>
+<td style="text-align:right">30</td>
+<td style="text-align:right">100.0</td>
+</tr>
+<tr>
+<td>環弓</td>
+<td>最大溜めを狙って射撃300秒</td>
+<td style="text-align:right">21.16</td>
+<td style="text-align:right">35.55</td>
+<td style="text-align:right">32</td>
+<td style="text-align:right">0.0</td>
+</tr>
+<tr>
+<td>環弓</td>
+<td>最大溜め・スタミナ24回復を待つ300秒</td>
+<td style="text-align:right">16.59</td>
+<td style="text-align:right">33.97</td>
+<td style="text-align:right">229</td>
+<td style="text-align:right">4.0</td>
+</tr>
+<tr>
+<td>環弓</td>
+<td>最大溜め→散らし3回300秒</td>
+<td style="text-align:right">48.84</td>
+<td style="text-align:right">56.24</td>
+<td style="text-align:right">242</td>
+<td style="text-align:right">76.0</td>
+</tr>
+</tbody>
+</table>
+<p>検査: 7項目すべて通過。全結果・各技の待ち時間込みの値は <code>balance-runtime-report.json</code>。</p>
+</section><section class="chapter" id="handoff"><h1>差し替え・検証・引き継ぎ</h1><p>確認基点は <strong>Kari v0.20.0 / <code>1d8e084d0d16fe77c376570f9542dd3c54fb5332</code></strong>。2026年11月25日（日本時間）の依頼への返答。</p>
+<p><strong>最新mainのv0.21.0（<code>9a5443ab1ac813512deac03422ee996f57f8a900</code>）への適用も確認した。取り込みには <code>implementation/current-main/</code> を使う。</strong> モンスター側の共有描画更新を保持し、23スイート452テスト・型検査・ビルドが成功した。詳しくは <a href="LATEST_INTEGRATION.md">LATEST_INTEGRATION.md</a>。</p>
+<p>GitHubには設計本文・データ・コード・検証記録・再生成コードを収録した。PDFと比較画像は別添で、GitHubへのバイナリ登録は完了していない。収録範囲と図・PDFの再生成方法は <a href="DELIVERY_STATUS.md">DELIVERY_STATUS.md</a> を参照。</p>
+<p><strong>全7武器の歩行・接地、断岳剣3攻撃、描画と判定の同期を直すコードと、33攻撃の威力を調整するデータを用意した。</strong> 監査基点v0.20の検証用コピーでは全442テスト・型検査・ビルド・武器の厳格再生成が通過した。正式モデルの骨格・手首・指・メッシュ・GLB制作も設計書へまとめた。</p>
+<p>本PRは受け渡し用の <code>chatgpt-inbox/</code> のみを変更する。公開中のゲーム、本体の <code>src/</code>・<code>public/</code> 等にはまだ反映していない。コードとデータはClaudeが取り込める適用済み相当の完成候補で、新しいGLBや全武器の完成アニメーションクリップを納品したという意味ではない。</p>
+<h2>1. 返したもの</h2>
+<table>
+<thead>
+<tr>
+<th>ファイル・フォルダ</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Kari_Hunter_Motion_Combat_Design.pdf</code></td>
+<td>日本語の統合設計書。現状の監査、形状比較、骨格・モデル、7武器の動作案、全技の新旧MV、難易度、検証、取り込み手順</td>
+</tr>
+<tr>
+<td><code>Kari_Hunter_Motion_Combat_Design.html</code> / <code>build-report.py</code></td>
+<td>同じ設計書のHTMLと再生成コード。PythonのWeasyPrint・markdown-it-py、Noto Sans CJK JPを使用</td>
+</tr>
+<tr>
+<td><code>analysis/rig-design.md</code></td>
+<td>骨格・モデル・動作の設計。17関節の現状から25骨への最小拡張、29/59/63骨への段階案</td>
+</tr>
+<tr>
+<td><code>analysis/balance-design.md</code></td>
+<td>配分理由、ダメージ式、命中しにくさ、連携、スタミナ・刃・怯みの考慮、難易度の仮説</td>
+</tr>
+<tr>
+<td><code>analysis/balance-motion-values.json</code> / <code>.csv</code></td>
+<td>全33攻撃の新旧値。CSVは溜め段階を展開した42行</td>
+</tr>
+<tr>
+<td><code>analysis/balance-runtime-report.json</code> / <code>.md</code></td>
+<td>実際のゲーム処理による42単独行動、37反復経路、7不変条件の比較</td>
+</tr>
+<tr>
+<td><code>analysis/balance-difficulty-scenarios.json</code></td>
+<td>初見・慣れた狩人・熟練者の討伐時間の仮説。実測と区別</td>
+</tr>
+<tr>
+<td><code>analysis/rig-validation.json</code> / <code>.md</code> / <code>validation-tests/</code></td>
+<td>最終ソースの独立監査。811姿勢、実メッシュ、36急旋回ケースと再実行用テスト</td>
+</tr>
+<tr>
+<td><code>implementation/replacement.patch</code></td>
+<td>モーション6ファイル＋攻撃データ・生成元13ファイル＋既存テスト2ファイルの統合差分。計21ファイル</td>
+</tr>
+<tr>
+<td><code>implementation/current-main/</code></td>
+<td>推奨するv0.21用の統合差分・ハッシュ付き適用スクリプト。更新されたモンスター描画を残した21ファイル版</td>
+</tr>
+<tr>
+<td><code>implementation/manifest.json</code> / <code>apply-proposal.py</code></td>
+<td>基点・変更前後のSHA256。既存の変更を上書きせず、適用可否確認・適用・逆適用を行う</td>
+</tr>
+<tr>
+<td><code>implementation/motion/</code></td>
+<td>モーションの完成候補ソース、11件の追加回帰テスト、単独パッチ、説明</td>
+</tr>
+<tr>
+<td><code>implementation/balance/</code></td>
+<td>攻撃データと生成元の完成候補、単独パッチ、期待値更新、比較・再生成スクリプト</td>
+</tr>
+<tr>
+<td><code>figures/</code></td>
+<td>実ソースのCPUスキニングから作った形状比較PNG。WebGLの画面撮影ではない</td>
+</tr>
+<tr>
+<td><code>qa/</code></td>
+<td>統合検証の結果・ログ、形状図の再生成コード</td>
+</tr>
+</tbody>
+</table>
+<h2>2. 具体的に差し替えた部分</h2>
+<h3>身体と動作</h3>
+<ul>
+<li>全7系統の通常歩行へ接地処理を接続する。要求された入力速度ではなく、実際の移動量から足運びを進める。</li>
+<li>直進・緩い旋回では支持している足を世界座標に保つ。停止時は浮いた足を下ろし、その場の大きな旋回は踏み替える。走りには短い空中局面を持たせる。</li>
+<li>急反転では脚が届かなくなる前に80msで固定を解除する。急旋回中の完全な無滑走は保証しない。</li>
+<li>断岳剣の縦斬り・横薙ぎ・抜刀斬りを、脚の接地IKと骨盤の回転・上下・前後移動で支える。横薙ぎは、背と胸だけの強いひねりを骨盤へ分散する。</li>
+<li>現行の硬い靴の寸法に合わせて足底を補正し、踵を上げたときにつま先が床へ沈む問題を直す。</li>
+<li>IKを解いたあとに骨だけを再補間する経路を外す。命中窓と弓の発射tickでは遷移を終え、武器軌道へ一致させる。</li>
+<li>ヒットストップの最後のstepまで、処理済みの接触時刻を表示する。溜め保持の時刻は維持する。</li>
+<li>検査用 <code>solveState()</code> の歩行位相を絶対時刻から求め、異なる時刻が実際に異なる脚の状態を検査するようにする。</li>
+</ul>
+<p>断岳剣の既存武器軌道と攻撃の時刻・root移動曲線は維持する。他6系統の攻撃キーを全面的に作り直す作業は今回の適用差分に含めず、各武器の支持足・荷重・予備動作・制動・連携の案を設計書へ示した。</p>
+<h3>モーションごとの攻撃力</h3>
+<p>主連携の後半と、狭い打点・長い溜め・長い拘束を伴う技へ報酬を寄せる。MVは係数×100で、画面に出るダメージではない。全33攻撃の値はJSON/CSVと設計書の一覧を正本とする。</p>
+<table>
+<thead>
+<tr>
+<th>武器</th>
+<th>代表的な提案MV</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>断岳剣</td>
+<td>横薙ぎ70、縦105、溜め157.5 / 220.5 / 294、抜刀100</td>
+</tr>
+<tr>
+<td>護刃</td>
+<td>主連携24 → 30 → 56、盾28、踏み込み48</td>
+</tr>
+<tr>
+<td>長尖槍</td>
+<td>主連携36 → 42 → 72、上段38、構え30、受け返し155、踏み込み82</td>
+</tr>
+<tr>
+<td>大槌</td>
+<td>叩きつけ60 → 横殴り76、溜め基礎72 / 段階122.4 / 183.6 / 273.6、抜刀76</td>
+</tr>
+<tr>
+<td>双剣</td>
+<td>主連携18 → 22 → 30+30、二段突き20+30、連ね16+18+20+42+42、抜刀27+27</td>
+</tr>
+<tr>
+<td>太刀</td>
+<td>主連携38 → 44 → 72、下がり32、兜割り142、抜刀56</td>
+</tr>
+<tr>
+<td>環弓</td>
+<td>射撃22 / 58 / 112 / 185、散らし17×3</td>
+</tr>
+</tbody>
+</table>
+<p>大槌の主2段は循環するため「後半」であり、固定された終端ではない。連携専用の既存行動IDの威力を調整しており、どの技にも自動で付く「最後の一撃ボーナス」は追加していない。受け返しは防御成功条件を維持する。</p>
+<p>武器本体の攻撃力、敵HP、実際のヒット窓・発射・派生・キャンセル時刻、移動量、スタミナ規則は維持した。弓の発射時刻と双剣二段突きの最終判定がactive区間から外れる分類だけを修正した。溜め倍率は刃消耗へ掛からない既存仕様のため、溜めのダメージ/刃効率が上がる点も分析へ含めた。</p>
+<h2>3. 取り込み方法（Claude向け）</h2>
+<p>最新v0.21用は <code>implementation/current-main/</code>。元の統合パッチと個別パッチはv0.20監査の再現用として保持する。重ねて適用しない。下は最新用の例で、この納品があるリポジトリのルートから始める。</p>
+<pre><code class="language-sh">git worktree add ../Kari-motion-review --detach 9a5443ab1ac813512deac03422ee996f57f8a900
+python3 chatgpt-inbox/motion-combat-20261125/implementation/current-main/apply-proposal.py --repo ../Kari-motion-review
+python3 chatgpt-inbox/motion-combat-20261125/implementation/current-main/apply-proposal.py --repo ../Kari-motion-review --apply
+cd ../Kari-motion-review
+npm ci
+node --experimental-strip-types --no-warnings tools/gen-weapons.mjs --strict
+npm run check
+</code></pre>
+<p><code>--apply</code> のない実行は読み取りだけ。対象21ファイルの入力ハッシュが合わなければ止まり、別の変更を勝手に上書きしない。基点以降に変更がある場合は、差分を読み、競合する行動IDや骨格処理を移植する。生成JSONだけを編集すると、次の生成で消えるため、必ず生成元も取り込む。</p>
+<p>逆方向の確認は <code>--reverse</code>、戻す実行は <code>--reverse --apply</code>。逆適用も変更後の全ハッシュが一致する場合に限る。このスクリプトはコミット・push・merge・公開を行わない。</p>
+<p>比較スクリプト <code>implementation/balance/measure_balance.mjs</code> は、元の実装と提案データを比較する。<strong>本体へ適用する前の基点＋inbox</strong>で実行する。適用後のデータを「旧版」として誤って比較しないよう、元のファイルのハッシュを検査する。</p>
+<h2>4. 確かめたこと</h2>
+<p>実行環境はNode.js 24.22.3。依存関係を <code>npm ci --no-audit --no-fund</code> で準備し、基点と差し替え後を別々に確認した。</p>
+<table>
+<thead>
+<tr>
+<th>確認</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>基点の <code>npm run check</code></td>
+<td>型検査・既存21ファイル431テスト・本番ビルド成功</td>
+</tr>
+<tr>
+<td>最終3パッチのクリーン適用</td>
+<td>全21ファイル成功。新規3、変更18</td>
+</tr>
+<tr>
+<td>v0.20差し替え後の <code>npm run check</code></td>
+<td>型検査・22ファイル442テスト・本番ビルド成功</td>
+</tr>
+<tr>
+<td>最新v0.21差し替え後の <code>npm run check</code></td>
+<td>型検査・23ファイル452テスト・本番ビルド成功。共有描画のモンスター更新を保持</td>
+</tr>
+<tr>
+<td><code>gen-weapons.mjs --strict</code></td>
+<td>44行動・48軌道・10移動曲線・42身体モーション。既存の関節等の厳格検査を通過</td>
+</tr>
+<tr>
+<td>再生成の整合性</td>
+<td>生成後も21ファイルすべてが納品ハッシュと一致。余計な本体変更なし</td>
+</tr>
+<tr>
+<td>統合適用スクリプト</td>
+<td>基点での読み取り確認、適用後の逆方向確認、逆適用→再適用を実行。全ハッシュ一致</td>
+</tr>
+<tr>
+<td>攻撃力の制御試験</td>
+<td>42単独行動、37反復経路、7不変条件通過</td>
+</tr>
+<tr>
+<td>追加モーション検査</td>
+<td>11件成功。実Simulationの命中停止と溜め、両方の弓発射、接地・旋回・実メッシュなど</td>
+</tr>
+<tr>
+<td>独立骨格監査</td>
+<td>最終ソースで3件成功。下記の測定を別テストから再確認</td>
+</tr>
+</tbody>
+</table>
+<p>生成器の44行動には、納刀・持ち替え等も含む。全7武器の「攻撃を持つ行動が33件」という数え方とは対象が異なる。</p>
+<p>断岳剣3技を0.25tick刻みで811姿勢検査し、左右の握り位置の最大誤差は約 <code>1.56×10^-15 m</code>、2mm基準以内だった。足の骨の影響を受ける実メッシュ254頂点を変形して確認し、最下点は約 <code>−1.90×10^-10 m</code> の丸め誤差だった。膝の最大曲げ約92.04°、肘約149.28°。</p>
+<p>急旋回は6系統×90°/180°×30/60/120fpsの36ケース、7,560フレームを検査。脚の到達不足0、確認対象の関節・手・自己交差違反0。動作中の物理的な釣り合いを表せない静的重心の近似ルールは、既存歩行検査と同様に除外した。完全な人体動力学の認定ではない。</p>
+<p>制御DPSは、初期武器で全判定枠が命中し、部位係数1・鋭い刃固定という条件。実際の入力派生、時間、命中停止、溜め、勢い、スタミナは通すが、敵AI・幾何的な空振り・矢の飛行時間・刃の経時消耗は除く。討伐時間や人の命中率の実測として扱わない。</p>
+<p>記録は <code>qa/validation-summary.json</code>、<code>qa/npm-check.txt</code>、<code>qa/generator.txt</code>、各 <code>analysis/*report*</code> と <code>analysis/rig-validation.*</code>。</p>
+<h2>5. 守れなかった決まり・迷って決めたこと</h2>
+<ul>
+<li>掲示板番号のない直接依頼なので、3桁番号を勝手に割り当てず、<code>motion-combat-20261125</code> を受け渡し先にした。ブランチも <code>chatgpt/motion-combat-20261125</code> とした。既存の掲示板10の素材依頼へ混ぜていない。</li>
+<li><code>AGENTS.md</code> の役割分担に従い、主リポジトリの書き込みはinboxのみ。本体へ直接入れる代わりに、適用可能なコードとデータを検証用コピーで確認して返した。公開反映は未実施。</li>
+<li>全武器の理論DPSを同じにせず、盾・射程・離脱を武器の価値として評価した。狭い打点・長い溜め・連携後半を強くする一方、安全な短い反復の偏りを抑えた。</li>
+<li>ガルドロス初級HP1800は維持した。初見6〜10分、慣れた狩人3〜5分、熟練者2〜3分を検討範囲に置くが、試算の行動割合は仮定。熟練者の例は約1.9分と目標の下端を少し下回り、達成済みとしていない。</li>
+<li>既存の17関節で接地と握りを直す作業を先行した。鎖骨・ねじり・つま先・指の正式骨格は、親子階層とbind姿勢を含めて別工程で移行する設計とした。</li>
+<li>既存ゲームのモーション値、固有演技、画像・モデル素材は流用していない。</li>
+</ul>
+<h2>6. 確かめていないこと・Claudeへの引き継ぎ</h2>
+<p>この実行環境ではWebGLを起動できず、通常速度のゲーム映像・iPhone実機・実際の入力感の検収は行えていない。掲載画像は実際の骨行列とスキニング後の頂点をCPUで描いた形状図で、ブラウザの描画結果ではない。</p>
+<p>取り込み後は、通常速度と0.25倍の正面・側面・後面から、歩行→停止、90°/180°反転、攻撃開始、命中停止、溜め解除、弓発射を確認する。特に急旋回中の足の滑り、壁で攻撃のroot移動が止まる場合、斜面・段差、すべての防具の貫通は残る確認範囲である。</p>
+<p>掌の向き・指の把持、新しいGLB、他6系統の全攻撃クリップ、回避・被弾・起き上がり・道具の正式クリップは制作対象として残る。GLB化では、17骨のワールド姿勢を新しい親座標へ移す <code>rigVersion: 2</code> のadapter、武器socket、靴底輪郭、toe骨、動くメッシュのboundsを一緒に統合する。</p>
+<p>難易度は、全大型・幼体・群れ・強化段階について、技の開始数→後半到達数→実命中数、行動中の被弾、スタミナ・刃、怯み・部位破壊、討伐時間を実機で測る。弓は散らしの実命中本数と回復待ち、大槌は溜め強化による拘束連鎖を優先する。これは今回の数値を最終化するための確認であり、既に完了したものとして扱わない。</p>
+</section></body></html>
