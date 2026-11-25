@@ -4,8 +4,9 @@
 //   - 幼体は、親の絵を淡くして貼る（plan.look）。群れの気分（src/game/herd.ts）で、頭を下げて食む・顔を上げて見る・伏せる。
 //   - 背骨・脚は「筒」。輪ごとに、近い 2 本の骨へ重みを分けて、関節でなめらかに曲がる。
 //   - 角膜・翼・帆・嚢などは、骨を 1 本持つ「板・塊」。技の値（src/render/creatureMoves.ts）で開く・ふくらむ。
-//   - 歩く: 進んだ距離で足の周期を進める（足を地面に固定する解き方は無い。滑って見えることがある）。
+//   - 歩く: 進んだ距離で足の周期を進める。v0.25.0 から、前後に振る脚は、支えている間の足先を地面に留める（plantFeet。描画だけ）。
 //   - 怯み・転倒・眠り・罠・死は、体の高さ・傾き・脚の折り方で表す。
+//   - 顎（v0.25.0）: 四足・二足・長胴は、頭の下の側に顎の骨があり、咆哮・威嚇・噛む技で口を開ける（口の中は暗い面）。
 // 形・色・動きは、原画 1 枚から作った仮素材。正式モデル（GLB）が来たら置き換える。
 import {
   Bone, BufferGeometry, Color, Euler, Float32BufferAttribute, Group, MeshStandardMaterial, NoColorSpace, RepeatWrapping, SRGBColorSpace, Quaternion, ShapeUtils, Skeleton, SkinnedMesh, type Texture, TextureLoader, Uint16BufferAttribute, Vector2, Vector3,
@@ -140,6 +141,8 @@ interface LegRec {
   bones: number[];
   phase: number;
   length: number;
+  /** 付け根から足先までの高さ（形を作った時。v0.25.0。歩く振り幅に使う） */
+  reach: number;
 }
 
 interface PartRange {
@@ -177,6 +180,14 @@ class CreatureBody {
   /** 体を支える頂点（胴の筒と、胴の大きな塊 = 袋・甲羅・嚢、胴に付いた塊）。横たわる姿勢では、ここの下を地面に着ける */
   support = new Uint8Array(0);
   private readonly blobRanges: [number, number][] = [];
+  /**
+   * 顎の骨（v0.25.0。ChatGPT の設計提案 #6 の「顎の可動経路」）。頭（役 h）の後ろに続く点がある四足・二足・長胴だけ。無ければ -1。
+   * 頭の点の少し下を蝶番にして、頭から鼻先までの筒の下の側（口の線より下）を、この骨へ重み付けする。
+   */
+  jawBone = -1;
+  private jawAt = -1;
+  /** 口の中の面（暗い色。口を開けると、上下の間に伸びて見える）の三角形の数 */
+  mouthTris = 0;
 
   constructor(readonly plan: CreaturePlan, readonly art: CreatureArt) {
     this.buildBones();
@@ -184,6 +195,7 @@ class CreatureBody {
     this.spineVerts = this.main.count;
     for (const leg of this.legs) this.buildLeg(leg);
     for (const e of plan.extras) this.buildExtra(e);
+    this.weightJaw();
     const n = this.main.count;
     this.support = new Uint8Array(n);
     this.support.set(this.torsoVert);
@@ -300,7 +312,9 @@ class CreatureBody {
         for (let j = 1; j < bones.length; j++) length += this.bones[bones[j]!]!.world.distanceTo(this.bones[bones[j - 1]!]!.world);
         // 右の脚は、左と半周期ずらす（四足は対角の脚がそろう。二足・甲殻は左右が交互）
         const phase = lp.phase + (side < 0 ? 0.5 : 0);
-        this.legs.push({ plan: lp, side: side === 0 ? Math.sign(lp.pts[0]![2]) || 1 : side, bones, phase, length });
+        // 付け根から足先までの高さ（脚を前後に θ 回すと、足先は高さ × sin θ だけ前後へ動く）
+        const reach = Math.abs(this.bones[bones[0]!]!.world.y - this.bones[bones[bones.length - 1]!]!.world.y);
+        this.legs.push({ plan: lp, side: side === 0 ? Math.sign(lp.pts[0]![2]) || 1 : side, bones, phase, length, reach });
       }
     }
     // 背骨の領域（重みの分け方）
@@ -332,6 +346,83 @@ class CreatureBody {
         const order = /(\d+)(?:_[LR])?$/.exec(name)?.[1];
         this.own.set(name, this.addBone(at, par, { kind: 'own', role: e.ch ?? '', index: 0, side: side === 0 ? Math.sign(x) : side, ch: e.ch, order: order ? Number(order) : undefined }));
       }
+    }
+    // 顎（v0.25.0）: 四足・二足・長胴で、頭（役 h）の点の先に、まだ鼻先の点がある体だけ
+    if (p.frame === 'quad' || p.frame === 'biped' || p.frame === 'serpent') {
+      let hi = -1;
+      for (let i = p.spine.length - 1; i > p.root; i--) {
+        if (p.roles[i] === 'h') {
+          hi = i;
+          break;
+        }
+      }
+      if (hi > 0 && hi < p.spine.length - 1 && this.spineBone.has(hi)) {
+        const hinge = this.spinePts[hi]!.clone();
+        hinge.y -= p.spine[hi]![3] * p.scale * 0.3;
+        this.jawBone = this.addBone(hinge, this.spineBone.get(hi)!, { kind: 'own', role: 'jaw', index: hi, side: 0, ch: 'jaw' });
+        this.jawAt = hi;
+      }
+    }
+  }
+
+  /**
+   * 顎の重み（v0.25.0）: 頭の点から鼻先までの筒の、口の線（中心より少し下）より下の頂点を、顎の骨へ移す（頭の点から先へ少しずつ）。
+   * 口の線をまたぐ三角形は、頂点を写して暗い色にする（口の中。閉じている時は細い線、開けると上下の間に伸びる）。
+   */
+  private weightJaw(): void {
+    if (this.jawBone < 0) return;
+    const smp = this.spineSamples;
+    const uHinge = smp.find((q) => q.at >= this.jawAt - 1e-6)?.u ?? 0;
+    const uNose = smp[smp.length - 1]!.u;
+    if (uNose - uHinge < 0.04) return;
+    const ramp = Math.max(0.02, (uNose - uHinge) * 0.25);
+    const jw = new Float32Array(smp.length * SPINE_SEG);
+    const b = this.main;
+    for (let k = 0; k < smp.length; k++) {
+      const w = clamp((smp[k]!.u - uHinge) / ramp, 0, 1);
+      if (w <= 0) continue;
+      for (let j = 0; j < SPINE_SEG; j++) {
+        if (Math.sin(-Math.PI / 2 + (TAU * j) / SPINE_SEG) >= -0.22) continue;
+        const vi = k * SPINE_SEG + j;
+        jw[vi] = w;
+        const inf: Inf = [];
+        for (let q = 0; q < 4; q++) if (b.sw[vi * 4 + q]! > 0) inf.push([b.si[vi * 4 + q]!, b.sw[vi * 4 + q]! * (1 - w)]);
+        inf.push([this.jawBone, w]);
+        const top = inf.sort((x, y) => y[1] - x[1]).slice(0, 4);
+        const sum = top.reduce((a, x) => a + x[1], 0) || 1;
+        for (let q = 0; q < 4; q++) {
+          b.si[vi * 4 + q] = top[q]?.[0] ?? 0;
+          b.sw[vi * 4 + q] = top[q] ? top[q]![1] / sum : 0;
+        }
+      }
+    }
+    // 背骨の筒の三角形は、main の最初にある（輪の間 + 両端のふた）
+    const nTri = (smp.length - 1) * SPINE_SEG * 2 + SPINE_SEG * 2;
+    const dup = new Map<number, number>();
+    const copy = (vi: number): number => {
+      let d = dup.get(vi);
+      if (d !== undefined) return d;
+      b.pos.push(b.pos[vi * 3]!, b.pos[vi * 3 + 1]!, b.pos[vi * 3 + 2]!);
+      b.uv.push(b.uv[vi * 2]!, b.uv[vi * 2 + 1]!);
+      b.col.push(0.14, 0.09, 0.08);
+      for (let q = 0; q < 4; q++) {
+        b.si.push(b.si[vi * 4 + q]!);
+        b.sw.push(b.sw[vi * 4 + q]!);
+      }
+      d = b.count - 1;
+      dup.set(vi, d);
+      return d;
+    };
+    const jaw = (vi: number): number => (vi < jw.length ? jw[vi]! : 0);
+    for (let t = 0; t < nTri; t++) {
+      const i0 = b.idx[t * 3]!, i1 = b.idx[t * 3 + 1]!, i2 = b.idx[t * 3 + 2]!;
+      const w = [jaw(i0), jaw(i1), jaw(i2)];
+      const lo = Math.min(...w), hi = Math.max(...w);
+      if (hi < 0.5 || lo >= 0.5) continue;
+      b.idx[t * 3] = copy(i0);
+      b.idx[t * 3 + 1] = copy(i1);
+      b.idx[t * 3 + 2] = copy(i2);
+      this.mouthTris++;
     }
   }
 
@@ -959,6 +1050,42 @@ export class CreatureRig implements MonsterRig {
     });
   }
 
+  /**
+   * 焼き付け用（v0.25.0。部位の追従）: 体の座標の点 p に、いちばん近い体の面の頂点の重み（骨と重み）。
+   * 部位の形の端を、見える面と同じに動かすために使う（npm run monsters:bake）
+   */
+  skinOf(p: Vector3): { bones: number[]; w: number[] } {
+    const b = this.body.main;
+    let best = 0, bd = Infinity;
+    for (let i = 0; i < b.count; i++) {
+      const d = (b.pos[i * 3]! - p.x) ** 2 + (b.pos[i * 3 + 1]! - p.y) ** 2 + (b.pos[i * 3 + 2]! - p.z) ** 2;
+      if (d < bd) {
+        bd = d;
+        best = i;
+      }
+    }
+    const bones: number[] = [], w: number[] = [];
+    for (let k = 0; k < 4; k++) {
+      const wk = b.sw[best * 4 + k]!;
+      if (wk > 0) {
+        bones.push(b.si[best * 4 + k]!);
+        w.push(wk);
+      }
+    }
+    return { bones, w };
+  }
+
+  /** 焼き付け用（v0.24.0）: 形を作った時の点 p を、重み s で骨に乗せた、いまの位置（ワールド。モンスターが原点・向き 0 なら体の座標） */
+  skinned(p: Vector3, s: { bones: number[]; w: number[] }): Vector3 {
+    this.root.updateMatrixWorld(true);
+    const out = new Vector3();
+    s.bones.forEach((bi, k) => {
+      const br = this.bones[bi]!;
+      out.addScaledVector(p.clone().sub(br.world).applyMatrix4(br.bone.matrixWorld), s.w[k]!);
+    });
+    return out;
+  }
+
   /** 検査用: いましているしぐさ（無ければ null。v0.21.0） */
   fidgetId(): string | null {
     return this.fid?.f.id ?? null;
@@ -1435,6 +1562,8 @@ export class CreatureRig implements MonsterRig {
 
     this.apply(P, { gaitAmt: m.dead || this.rest > 0.5 ? 0 : gaitAmt, und, paddle, rollDist, rollTotal, seq, windup, side, time, H });
     this.groundParts(lieW, lieSteady);
+    // 足の接地（v0.25.0。ChatGPT の設計提案 #6）: 技を出していない歩き・向き直りの間、支えている脚の足先を地面に留める
+    this.plantFeet(!m.action && !m.dead && !resting && m.staggerTicks <= 0 && m.trapTicks <= 0 && this.rest < 0.5 && lieW < 0.01);
 
     // 光・叩かれた時の光
     this.flash = Math.max(0, this.flash - dt * 6);
@@ -1477,6 +1606,111 @@ export class CreatureRig implements MonsterRig {
       for (const b of r.own) {
         this.brokenBones.add(b);
         this.bones[b]!.bone.scale.setScalar(0.82);
+      }
+    }
+  }
+
+  /** 検査用: 足の接地を使うか（比べるために切れる） */
+  static plantFeetOn = true;
+
+  /** 検査用（v0.25.0）: 前後に振る脚の、足先の位置（ワールド）と、いま留めているか（足の接地は四足と二足だけ） */
+  feet(): { group: string; side: number; planted: boolean; stance: number; p: Vector3 }[] {
+    this.root.updateMatrixWorld(true);
+    return this.body.legs
+      .filter((l) => (l.plan.swing ?? 'x') === 'x' && l.bones.length >= 3 && l.plan.group !== 'clawR' && l.plan.group !== 'clawL')
+      .map((l) => {
+        const ph = TAU * (this.phase + l.phase);
+        // stance: 支えの中の位置（0 = 着いた時 … 1 = 離れる時）。踏み出している間は -1
+        const stance = Math.cos(ph) > 0 ? -1 : ((((ph - Math.PI / 2) % TAU) + TAU) % TAU) / Math.PI;
+        return { group: l.plan.group, side: l.side, planted: !!this.plants.get(l)?.at, stance, p: new Vector3().setFromMatrixPosition(this.bones[l.bones[l.bones.length - 1]!]!.bone.matrixWorld) };
+      });
+  }
+
+  /** 足の接地の状態（脚ごと）: 留めた足先の位置（ワールド）。踏み出している間は null */
+  private readonly plants = new Map<LegRec, { at: Vector3 | null }>();
+  /** 足の接地を解いた量（検査用。最後の 1 回の、留めた位置と足先のずれの最大 m） */
+  plantError = 0;
+  /** 検査用: ずれが大きすぎて、その場で踏み直した回数 */
+  plantResteps = 0;
+  private readonly tv1 = new Vector3();
+  private readonly tv2 = new Vector3();
+  private readonly tv3 = new Vector3();
+  private readonly tq1 = new Quaternion();
+  private readonly tq2 = new Quaternion();
+  private readonly tq3 = new Quaternion();
+
+  /**
+   * 足の接地（v0.25.0）: 前後に振る脚（四足・二足）は、歩く周期の「支える」半分の間、足先を、支え始めた所（ワールド）に留める。
+   * 脚の骨を付け根から順に回して足先を届かせる（CCD。1 回で回す量は小さく、関節の向きは歩きの形のまま）。
+   * 着いた時から留め、離れる前に少しずつ歩きの形へ戻す。ずれが脚の長さの 3 割を超えたら、その場で踏み直す（向き直りで足がちぎれない）。
+   * 描画だけの計算で、判定（技データ・部位の追従の表）は変えない。
+   */
+  private plantFeet(active: boolean): void {
+    this.plantError = 0;
+    // 四足と二足だけ（長胴の短い脚・輪の虫・甲殻と多脚の虫は、これまでどおり）
+    if (!active || !CreatureRig.plantFeetOn || (this.plan.frame !== 'quad' && this.plan.frame !== 'biped')) {
+      for (const st of this.plants.values()) st.at = null;
+      return;
+    }
+    this.root.updateMatrixWorld(true);
+    const rootY = this.root.position.y;
+    for (const leg of this.body.legs) {
+      const g = leg.plan.group;
+      if ((leg.plan.swing ?? 'x') !== 'x' || leg.bones.length < 3 || g === 'clawR' || g === 'clawL') continue;
+      let st = this.plants.get(leg);
+      if (!st) {
+        st = { at: null };
+        this.plants.set(leg, st);
+      }
+      const ph = TAU * (this.phase + leg.phase);
+      const c = Math.cos(ph);
+      const endRec = this.bones[leg.bones[leg.bones.length - 1]!]!;
+      const ground = rootY + endRec.world.y; // 立っている時の、足先の骨の高さ（地面の上）
+      const foot = this.tv1.setFromMatrixPosition(endRec.bone.matrixWorld);
+      if (c > 0) {
+        // 踏み出している: 足先が地面へ潜る時だけ、地面の上へ出す
+        st.at = null;
+        if (foot.y >= ground - 0.005) continue;
+        const target = this.tv2.set(foot.x, ground, foot.z);
+        this.reach(leg, target);
+        continue;
+      }
+      if (!st.at) st.at = foot.clone();
+      // 前後左右は着いた所に留める。高さは、歩きの形のまま（地面より下へは行かせない）
+      const err = Math.hypot(st.at.x - foot.x, st.at.z - foot.z);
+      if (err > leg.length * 0.3) {
+        st.at.copy(foot);
+        this.plantResteps++;
+        continue;
+      }
+      // 着いてから支えの半ばまでは留めきり、離れる前の 1/4 で歩きの形へ戻す（離れる時に足先が跳ばない）
+      const w = Math.sin(ph) > 0 ? 1 : clamp(-c * 4, 0, 1);
+      const target = this.tv2.set(foot.x + (st.at.x - foot.x) * w, Math.max(foot.y, ground), foot.z + (st.at.z - foot.z) * w);
+      if (target.distanceTo(foot) < 1e-4) continue;
+      this.reach(leg, target);
+      this.plantError = Math.max(this.plantError, this.tv1.setFromMatrixPosition(endRec.bone.matrixWorld).distanceTo(target));
+    }
+  }
+
+  /** 脚の骨を、足先が target へ届くように回す（先の側から 1 本ずつ。1 回 0.2 rad まで、4 回） */
+  private reach(leg: LegRec, target: Vector3): void {
+    const chain = leg.bones.map((k) => this.bones[k]!.bone);
+    const end = chain[chain.length - 1]!;
+    for (let it = 0; it < 8; it++) {
+      for (let i = chain.length - 2; i >= 0; i--) {
+        const b = chain[i]!;
+        const bp = this.tv3.setFromMatrixPosition(b.matrixWorld);
+        const v1 = new Vector3().setFromMatrixPosition(end.matrixWorld).sub(bp);
+        const v2 = target.clone().sub(bp);
+        if (v1.lengthSq() < 1e-8 || v2.lengthSq() < 1e-8) continue;
+        const q = this.tq1.setFromUnitVectors(v1.normalize(), v2.normalize());
+        const ang = 2 * Math.acos(clamp(q.w, -1, 1));
+        if (ang < 1e-5) continue;
+        if (ang > 0.3) q.slerp(this.tq2.identity(), 1 - 0.3 / ang);
+        b.getWorldQuaternion(this.tq2);
+        b.parent!.getWorldQuaternion(this.tq3);
+        b.quaternion.copy(this.tq3.invert().multiply(q.multiply(this.tq2)));
+        b.updateMatrixWorld(true);
       }
     }
   }
@@ -1593,10 +1827,13 @@ export class CreatureRig implements MonsterRig {
         continue;
       }
       addL('*'); addL(g); addL(`${g}.${sideName}`); addL(`*.${sideName}`);
-      // 歩く周期
+      // 歩く周期。前後に振る脚は、支えている半周期の間に足先が下がる量が、体の進む量（歩幅の半分）と合う振り幅にする（v0.25.0。足の接地）
       const ph = TAU * (this.phase + leg.phase);
       const amt = Math.min(1.2, o.gaitAmt);
-      swing += Math.sin(ph) * 0.3 * amt;
+      if ((plan.frame === 'quad' || plan.frame === 'biped') && (leg.plan.swing ?? 'x') === 'x' && leg.reach > 0.05) {
+        const stride = plan.stride * (1 + 0.9 * this.runW);
+        swing += Math.sin(ph) * Math.asin(clamp(stride / (4 * leg.reach), 0.1, 0.85)) * Math.min(1, amt * 2.5);
+      } else swing += Math.sin(ph) * 0.3 * amt;
       lift += Math.max(0, Math.cos(ph)) * 0.55 * Math.min(1, amt * 1.5);
       if (o.paddle && g === 'F') lift += Math.max(0, Math.sin(o.time * 12 * (s > 0 ? 1 : -1))) * 0.7 * o.paddle;
       lift += crouch * (plan.frame === 'serpent' ? 0.6 : 1.6);
@@ -1665,6 +1902,10 @@ export class CreatureRig implements MonsterRig {
           break;
         case 'finger':
           this.setRot(b.bone, -P.finger * 0.5, 0, 0);
+          break;
+        case 'jaw':
+          // 口を開ける（v0.25.0）: + で下顎が下がる。開けすぎない
+          this.setRot(b.bone, clamp(P.jaw, 0, 1.2) * 0.42, 0, 0);
           break;
         default:
           break;

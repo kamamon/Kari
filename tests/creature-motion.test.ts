@@ -3,12 +3,13 @@
 //   - 体の部位に付けた判定（設計図の bind）は、動きの中の部位の位置と、技データの軌道が一致する。
 //     CREATURE_BAKE=1 で走らせると（npm run monsters:bake）、検査の代わりに、動きから軌道を作って public/data/tracks/ へ書く。
 //   - 技以外の動き（構え・眠る・倒れる・しぐさ）も、種ごとに持つ。
-import { readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { Vector3 } from 'three';
-import type { ActionDef, Content, ShapeTrackDef } from '../src/data/schemas';
+import type { ActionDef, Content, FollowDef, FollowSetDef, ShapeTrackDef } from '../src/data/schemas';
 import { newRun } from '../src/game/action';
+import { followKeys, followTick } from '../src/game/follow';
 import { sampleCurve, trackSegment } from '../src/game/tracks';
 import { createMonster } from '../src/game/monster';
 import { CREATURE_PLANS } from '../src/render/creaturePlans';
@@ -93,6 +94,116 @@ function writeBaked(baked: Map<string, ShapeTrackDef>): number {
 }
 
 const near = (a: readonly number[], b: readonly number[], tol: number): boolean => a.every((v, i) => Math.abs(v - b[i]!) <= tol);
+
+/**
+ * 部位の追従（v0.25.0。ChatGPT の設計提案 #6）: 攻撃を受ける部位の形の端が、技の間（と眠り）に、体の面と同じに動いた量（cm）。
+ * 端は、いちばん近い体の面の頂点と同じ重みで骨に乗せる。5cm に満たない形は書かない。
+ */
+const FOLLOW_STEP = 6;
+const FOLLOW_MIN_CM = 5;
+function bakeFollow(only?: string): Map<string, FollowDef> {
+  const out = new Map<string, FollowDef>();
+  for (const [id, plan] of Object.entries(CREATURE_PLANS)) {
+    if (only && id !== only) continue;
+    const def = content.monsters.get(id)!;
+    const ids = def.parts.map((p) => p.id);
+    const probe = new CreatureRig(plan, ids, { seed: 0 });
+    const ends = def.parts.flatMap((part) => part.shapes.map((s, i) => {
+      const a = new Vector3(...s.a), b = s.b ? new Vector3(...s.b) : null;
+      return { part: part.id, i, a, b, sa: probe.skinOf(a), sb: b ? probe.skinOf(b) : null };
+    }));
+    const sampleAll = (rig: CreatureRig): number[][] => ends.map((e) => {
+      const da = rig.skinned(e.a, e.sa).sub(e.a);
+      const db = e.b ? rig.skinned(e.b, e.sb!).sub(e.b) : new Vector3();
+      return [da.x, da.y, da.z, db.x, db.y, db.z].map((v) => Math.round(v * 100) + 0);
+    });
+    const pick = (keys: number[][][]): FollowSetDef => ({
+      shapes: ends.flatMap((e, q) => (keys.some((k) => k[q]!.some((v) => Math.abs(v) >= FOLLOW_MIN_CM)) ? [{ part: e.part, i: e.i, d: keys.map((k) => k[q]!) }] : [])),
+    });
+    const actions: Record<string, FollowSetDef> = {};
+    for (const a of content.actions.values()) {
+      if (!a.actionId.startsWith(`${id}.`)) continue;
+      const rig = new CreatureRig(plan, ids, { seed: 0 });
+      const m = createMonster(def, { x: 0, z: 0, yaw: 0 }, 'follow');
+      m.aware = true;
+      const want = new Set(Array.from({ length: followKeys(a.durationTicks, FOLLOW_STEP) }, (_, k) => followTick(k, a.durationTicks, FOLLOW_STEP)));
+      const keys: number[][][] = [];
+      for (let t = 0; t < a.durationTicks; t++) {
+        const run = newRun(a, 1, 0);
+        run.tick = t;
+        m.action = run;
+        rig.update(m, { alpha: 0, dt: 1 / 60, time: 0, content });
+        if (want.has(t)) keys.push(sampleAll(rig));
+      }
+      const set = pick(keys);
+      if (set.shapes.length) actions[a.actionId] = set;
+    }
+    // 眠っている姿勢（捕獲された時も同じ）
+    const rig = new CreatureRig(plan, ids, { seed: 0 });
+    const m = createMonster(def, { x: 0, z: 0, yaw: 0 }, 'follow');
+    m.asleep = true;
+    let time = 0;
+    for (let i = 0; i < 180; i++) {
+      time += 1 / 60;
+      rig.update(m, { alpha: 0, dt: 1 / 60, time, content });
+    }
+    const sleep = pick([sampleAll(rig)]);
+    out.set(id, {
+      schemaVersion: 1, monsterId: id, step: FOLLOW_STEP,
+      note: '攻撃を受ける部位の追従（v0.25.0。npm run monsters:bake の出力。手で編集しない）。d は部位の形の端 a・b のずれ（cm）を、技の step tick ごとに並べたもの',
+      actions, poses: sleep.shapes.length ? { sleep } : {},
+    });
+  }
+  return out;
+}
+
+/** 追従の表を public/data/follow/ へ書き、content.json の files.follow を合わせる */
+function writeFollow(docs: Map<string, FollowDef>): void {
+  const files: string[] = [];
+  for (const [id, d] of docs) {
+    const f = `follow/${id.split('.')[1]}.json`;
+    files.push(f);
+    const rows = (o: Record<string, FollowSetDef>): string[] => Object.entries(o).map(([k, v], i, all) => `  ${JSON.stringify(k)}: ${JSON.stringify(v)}${i < all.length - 1 ? ',' : ''}`);
+    const text = ['{', ` "schemaVersion": ${d.schemaVersion},`, ` "monsterId": ${JSON.stringify(d.monsterId)},`, ` "step": ${d.step},`, ` "note": ${JSON.stringify(d.note)},`,
+      ' "actions": {', ...rows(d.actions), ' },', ' "poses": {', ...rows(d.poses ?? {}), ' }', '}', ''].join('\n');
+    mkdirSync(resolve(ROOT, 'public/data/follow'), { recursive: true });
+    writeFileSync(resolve(ROOT, 'public/data', f), text);
+  }
+  const path = resolve(ROOT, 'public/data/content.json');
+  const idx = JSON.parse(readFileSync(path, 'utf8')) as { files: Record<string, unknown> };
+  if (JSON.stringify(idx.files.follow) !== JSON.stringify(files)) {
+    idx.files.follow = files;
+    writeFileSync(path, JSON.stringify(idx, null, 2) + '\n');
+  }
+}
+
+describe('攻撃を受ける部位の追従（v0.25.0）', () => {
+  it(BAKE ? '動きから追従の表を作って、public/data/follow/ へ書く（npm run monsters:bake）' : '追従の表が、動きの中の部位の位置と一致する（ずれていたら npm run monsters:bake）', () => {
+    if (BAKE) {
+      const docs = bakeFollow();
+      expect(docs.size).toBe(Object.keys(CREATURE_PLANS).length);
+      writeFollow(docs);
+      return;
+    }
+    // ふだんの検査は 3 種だけ作り直して比べる（全部は npm run monsters:bake の時）
+    for (const id of ['monster.selvark', 'monster.razmer', 'monster.kordopil']) {
+      const doc = bakeFollow(id).get(id)!;
+      const table = content.monsters.get(id)!.follow!;
+      expect(table, id).toBeDefined();
+      for (const [aid, set] of Object.entries(doc.actions)) {
+        const grid = table.actions.get(aid);
+        expect(grid, aid).toBeDefined();
+        const def = content.monsters.get(id)!;
+        for (const sh of set.shapes) {
+          const d = grid![def.parts.findIndex((p) => p.id === sh.part)]![sh.i]!;
+          expect(d, `${aid} ${sh.part}[${sh.i}]`).not.toBeNull();
+          const flat = sh.d.flat();
+          expect(flat.every((v, k) => Math.abs(v - d[k]!) <= 2), `${aid} ${sh.part}[${sh.i}]`).toBe(true);
+        }
+      }
+    }
+  }, 120000);
+});
 
 describe('判定の形を体の部位に付けた技（v0.21.0）', () => {
   it(BAKE ? '動きから軌道を作って、public/data/tracks/ へ書く（npm run monsters:bake）' : '技データの軌道が、動きの中の部位の位置と一致する（ずれていたら npm run monsters:bake）', () => {
@@ -321,5 +432,58 @@ describe.skipIf(BAKE)('横たわる姿勢は、地面に横たわる（v0.21.0�
       pose('死', (m) => { m.dead = true; m.deadTicks = 300; }, 0.1);
     }
     expect(bad, bad.join('\n')).toEqual([]);
+  });
+});
+
+describe.skipIf(BAKE)('足の接地（v0.25.0。ChatGPT の設計提案 #6）', () => {
+  // まっすぐ歩く 5 秒（はじめの 1 秒は数えない）の、足先の滑り（支えの始めから 3/4 までの間の、着いた所からの水平のずれの最大）と、いちばん低い足先
+  const walk = (id: string, on: boolean): { slide: number; contacts: number; low: number } => {
+    CreatureRig.plantFeetOn = on;
+    try {
+      const def = content.monsters.get(id)!;
+      const rig = new CreatureRig(CREATURE_PLANS[id]!, def.parts.map((p) => p.id), { seed: 0 });
+      const m = createMonster(def, { x: 0, z: 0, yaw: 0 }, 'walk');
+      m.aware = true;
+      const v = def.moveSpeed ?? 2.5;
+      const start = new Map<string, Vector3>();
+      let slide = 0, contacts = 0, low = Infinity, time = 0;
+      for (let i = 0; i < 300; i++) {
+        time += 1 / 60;
+        m.pos.z += v / 60;
+        rig.root.position.set(m.pos.x, 0, m.pos.z);
+        rig.update(m, { alpha: 0, dt: 1 / 60, time, content });
+        if (i < 60) continue;
+        for (const f of rig.feet()) {
+          low = Math.min(low, f.p.y);
+          const key = `${f.group}${f.side}`;
+          if (f.stance < 0 || f.stance > 0.75) {
+            start.delete(key);
+            continue;
+          }
+          const s0 = start.get(key);
+          if (!s0) {
+            start.set(key, f.p.clone());
+            contacts++;
+            continue;
+          }
+          slide = Math.max(slide, Math.hypot(f.p.x - s0.x, f.p.z - s0.z));
+        }
+      }
+      return { slide, contacts, low };
+    } finally {
+      CreatureRig.plantFeetOn = true;
+    }
+  };
+
+  it('四足・二足が歩く間、支えている足先は 3.5cm より滑らず、地面へ潜らない（留めないと、6〜20cm 滑る）', () => {
+    const ids = Object.entries(CREATURE_PLANS).filter(([, p]) => p.frame === 'quad' || p.frame === 'biped').map(([id]) => id);
+    expect(ids.length).toBe(10);
+    for (const id of ids) {
+      const on = walk(id, true), off = walk(id, false);
+      expect(on.contacts, id).toBeGreaterThan(8);
+      expect(on.slide, `${id}: ${on.slide.toFixed(3)} m`).toBeLessThan(0.035);
+      expect(off.slide, `${id}: 留めない時 ${off.slide.toFixed(3)} m`).toBeGreaterThan(on.slide + 0.03);
+      expect(on.low, `${id}: いちばん低い足先 ${on.low.toFixed(3)} m`).toBeGreaterThan(-0.015);
+    }
   });
 });

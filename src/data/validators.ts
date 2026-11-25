@@ -2,6 +2,7 @@
 // ブラウザ（fetch）と Node のテスト（fs）の両方から同じ関数を使う。
 // 問題は黙って直さず、すべて errors に積んで呼び出し側へ返す。
 
+import { buildFollowTable } from '../game/follow';
 import { AreaShape, NavGraph } from '../game/areaShape';
 import { validateBestiary, type BestiaryDef } from './bestiary';
 import { validateStory, type StoryDef } from './story';
@@ -25,6 +26,7 @@ import {
   type LootRoll,
   type MapDef,
   type MaterialDef,
+  type FollowDef,
   type MonsterDef,
   type PlayerTuning,
   type QuestDef,
@@ -787,6 +789,18 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     const m = (await get(f)) as MonsterDef;
     validateMonster(m, errors);
     putUnique(content.monsters, m.id, m, 'monster', errors);
+  }
+  // 攻撃を受ける部位の追従（v0.25.0。npm run monsters:bake の出力）。読み込みの時に、種の定義へ付ける
+  for (const f of index.files.follow ?? []) {
+    const doc = (await get(f)) as FollowDef;
+    checkVersion(f, doc.schemaVersion, errors);
+    const m = content.monsters.get(doc.monsterId);
+    if (!m) {
+      errors.push(`${f}: monster ${doc.monsterId} が無い`);
+      continue;
+    }
+    if (m.follow) errors.push(`${f}: ${doc.monsterId} の追従が 2 つある`);
+    m.follow = buildFollowTable(m, doc, (id) => content.actions.get(id)?.durationTicks, errors);
   }
   for (const f of index.files.maps) {
     const m = (await get(f)) as MapDef;

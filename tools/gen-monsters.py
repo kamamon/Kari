@@ -1109,7 +1109,7 @@ def build_juvenile(spec):
     key = J.key
     mid = f'monster.{key}'
     st = spec['stats']
-    actions, tracks, curves, choices, clips, plan_moves = build_moves(key, mid, spec['moves'](J))
+    actions, tracks, curves, choices, clips, plan_moves = build_moves(key, mid, spec['moves'](J), spec['frame'])
     mdef = {
         'schemaVersion': 1, 'id': mid, 'name': spec['name'], 'rigFamily': spec['rig'], 'assetId': f'model.monster.{key}',
         'hp': st['hp'], 'bodyRadius': st['bodyRadius'], 'turnDegPerSec': st['turn'], 'moveSpeed': st['moveSpeed'], 'captureAllowed': False,
@@ -1155,10 +1155,46 @@ def smooth_curve(cid, dur, dist, t0, t1):
     return {'id': cid, 'keys': keys}
 
 
-def build_moves(key, mid, moves):
+# 顎（v0.25.0。ChatGPT の設計提案 #6）: 頭の下に顎の骨がある体つき（src/render/creatureRig.ts の CreatureBody.jawBone）と、口を使う技
+JAW_FRAMES = ('quad', 'biped', 'serpent')
+BITE_MOVES = ('bite', 'double_bite', 'pounce', 'peck', 'peck_combo', 'beak_thrust')
+
+
+def add_jaw(name, anim):
+    """口を開ける動きを、技の鍵の姿勢へ足す（もう jaw が書いてある鍵は、そのまま）。
+    咆哮は攻撃の区間で大きく開け、威嚇は半分開ける。噛む・つつく技は、構えの終わりで開けて、攻撃で閉じる
+    （攻撃の区間に鍵がいくつもある技は、閉じる・開けるを繰り返す）。"""
+    keys = anim['K']
+
+    def put(k, v):
+        if 'jaw' not in k['pose']:
+            k['pose']['jaw'] = v
+    w = [k for k in keys if k['p'] == 'w']
+    st = [k for k in keys if k['p'] == 's']
+    if name == 'roar':
+        if w:
+            put(w[-1], 0.3)
+        for k in st:
+            put(k, 0.95)
+        for k in keys:
+            if k['p'] == 'r' and k['t'] <= 0.6:
+                put(k, 0.55)
+    elif name == 'threat':
+        for k in st:
+            put(k, 0.5)
+    elif name in BITE_MOVES:
+        if w:
+            put(w[-1], 0.85)
+        for i, k in enumerate(st):
+            put(k, 0.05 if i % 2 == 0 else 0.75)
+
+
+def build_moves(key, mid, moves, frame=None):
     """技の一覧から、技データ・軌道・曲線・AI の選び方・clip・見た目の動きの対応を作る。"""
     actions, tracks, curves, choices, clips, plan_moves = [], [], [], [], [], {}
     for mv in moves:
+        if frame in JAW_FRAMES:
+            add_jaw(mv['name'], mv['anim'])
         aid = f'{mid}.{mv["name"]}'
         clip = f'{key}_{mv["name"]}_01'
         clips.append(clip)
@@ -1216,7 +1252,7 @@ def build_species(spec):
     key = s.key
     mid = f'monster.{key}'
     st = spec['stats']
-    actions, tracks, curves, choices, clips, plan_moves = build_moves(key, mid, spec['moves'](s))
+    actions, tracks, curves, choices, clips, plan_moves = build_moves(key, mid, spec['moves'](s), spec['frame'])
     roar = f'{mid}.roar'
     mdef = {
         'schemaVersion': 1, 'id': mid, 'name': spec['name'], 'rigFamily': spec['rig'], 'assetId': f'model.monster.{key}',
@@ -1284,22 +1320,30 @@ def replace_rows(path, list_key, prefixes, rows):
 
 
 def update_manifest(entries):
+    """素材台帳の、この生成器が書く行を差し替える。もうある行は、その場所のまま中身だけ替える（並びを変えない。v0.25.0）。無い行は終わりに足す。"""
     full = os.path.join(ROOT, 'docs', 'asset-manifest.json')
     lines = open(full, encoding='utf-8').read().split('\n')
-    ids = {e['id'] for e in entries}
+    by_id = {e['id']: e for e in entries}
+    row = lambda e: '    ' + json.dumps(e, ensure_ascii=False).replace('{"', '{ "', 1)[:-1] + ' }'
     out = []
     for l in lines:
         m = re.match(r'\s*\{ "id": "([^"]+)"', l)
-        if m and m.group(1) in ids:
+        if m and m.group(1) in by_id:
+            out.append(row(by_id.pop(m.group(1))) + (',' if l.rstrip().endswith(',') else ''))
             continue
         out.append(l)
+    entries = list(by_id.values())
+    if not entries:
+        json.loads('\n'.join(out))
+        open(full, 'w', encoding='utf-8').write('\n'.join(out))
+        return
     end = max(i for i, l in enumerate(out) if l.strip() == ']')
     last = end - 1
     while not out[last].strip():
         last -= 1
     if not out[last].rstrip().endswith(','):
         out[last] = out[last].rstrip() + ','
-    rows = ['    ' + json.dumps(e, ensure_ascii=False).replace('{"', '{ "', 1)[:-1] + ' }' for e in entries]
+    rows = [row(e) for e in entries]
     rows = [r + (',' if i < len(rows) - 1 else '') for i, r in enumerate(rows)]
     out = out[:last + 1] + rows + out[last + 1:]
     json.loads('\n'.join(out))
@@ -1436,7 +1480,8 @@ def main():
                              'source': 'art-source/monster/galdros/galdros_right_v1.png（採用済みの設定図）を tools/monster-art.py で加工（背景を抜き、体の外の色を近くの体の色で埋めた）',
                              'terms': '本作オリジナル', 'dims': '幅 1024px 以下の WebP'})
             manifest.append(skin_entry('galdros', 'ガルドロス', 'art-source/monster/galdros/galdros_right_v1.png（採用済みの設定図）', '本作オリジナル'))
-        states[f'monster.{key}'] = f'実装済み（v0.18.0。技と動きは v0.21.0 で {len(actions)} に。登録簿の 3 つ・威嚇・子に固有の技。群れの依頼 1 件。形は親の絵から作った仮の形。狩場は風礫盆地）'
+        states[f'monster.{key}'] = (f'実装済み（v0.18.0。技と動きは v0.21.0 で {len(actions)} に。登録簿の 3 つ・威嚇・子に固有の技。群れの依頼 1 件。形は親の絵から作った仮の形。狩場は風礫盆地）'
+                                    '。幼体自身の原画案（ChatGPT、2026-11-25 受領。採用待ち）を図鑑に出す（体はまだ親の絵から）')
         plans.append(dict(key=J.art, frame=spec['frame'], **{k: v for k, v in J.plan.items() if k not in ('key', 'frame')}, moves=plan_moves, monster=key,
                           **({'idle': spec['idle']} if spec.get('idle') else {})))
     for mq in MIXED_QUESTS:

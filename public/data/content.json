@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.24.0",
+  "contentVersion": "0.25.0",
   "files": {
     "actions": [
       "actions/player_common.json",
@@ -120,6 +120,27 @@
     "shop": "shop.json",
     "hub": "hub.json",
     "bestiary": "bestiary.json",
-    "story": "story.json"
+    "story": "story.json",
+    "follow": [
+      "follow/selvark.json",
+      "follow/numeradon.json",
+      "follow/bornakel.json",
+      "follow/ashreia.json",
+      "follow/lumisca.json",
+      "follow/orglass.json",
+      "follow/tengaro.json",
+      "follow/verito.json",
+      "follow/razmer.json",
+      "follow/kirisave.json",
+      "follow/velgait.json",
+      "follow/kordopil.json",
+      "follow/palseit.json",
+      "follow/numaporon.json",
+      "follow/chilumicana.json",
+      "follow/kohalgis.json",
+      "follow/mitogaron.json",
+      "follow/yurtepica.json",
+      "follow/hinasalv.json"
+    ]
   }
 }

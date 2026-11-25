@@ -412,6 +412,43 @@ export interface MonsterDef {
   parentId?: string;
   /** 群れで暮らす（幼体。v0.18.0。src/game/herd.ts）。あると、ふだんは群れの動きをして、追い詰められた時と攻撃された時だけ技を出す */
   herd?: HerdDef;
+  /**
+   * 攻撃を受ける部位の追従（v0.25.0。読み込みの時に public/data/follow/ から付ける。JSON には書かない）。
+   * 技の間（と眠っている間）、部位の形を、動きの中の位置へ動かす（src/game/follow.ts）
+   */
+  follow?: FollowTable;
+}
+
+/**
+ * 部位の追従のデータ（public/data/follow/<種>.json。v0.25.0、ChatGPT の設計提案 #6）。npm run monsters:bake が、描画の動きから作る
+ * （戦闘はこの表だけを読む。描画の骨を、戦闘の正本にしない）。
+ * d は、部位の形の端 a・b の、形を作った時の位置からのずれ（cm の整数）を、step tick ごとに並べたもの（[ax, ay, az, bx, by, bz] の列）。
+ * 鍵の tick は min(k × step, 技の長さ − 1)。動きが 5cm に満たない形は書かない（動かない）。
+ */
+export interface FollowShapeDef {
+  part: string;
+  /** 部位の shapes の何番目か */
+  i: number;
+  d: number[][];
+}
+export interface FollowSetDef {
+  shapes: FollowShapeDef[];
+}
+export interface FollowDef {
+  schemaVersion: number;
+  monsterId: string;
+  step: number;
+  note?: string;
+  /** 技の id → 動き */
+  actions: Record<string, FollowSetDef>;
+  /** 技以外の、決まった姿勢（sleep = 眠っている・捕獲された） */
+  poses?: Record<string, FollowSetDef>;
+}
+/** 読み込んだ後の形: [部位の番号][形の番号] → ずれの列（cm。鍵ごとに 6 つ）か null */
+export interface FollowTable {
+  step: number;
+  actions: Map<string, (Int16Array | null)[][]>;
+  sleep: (Int16Array | null)[][] | null;
 }
 
 /**
@@ -744,6 +781,8 @@ export interface ContentIndex {
     player: string;
     /** 物語（v0.23.0。src/data/story.ts） */
     story: string;
+    /** 攻撃を受ける部位の追従（v0.25.0。npm run monsters:bake の出力） */
+    follow?: string[];
   };
 }
 

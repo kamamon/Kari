@@ -1,6 +1,7 @@
 // モンスターの状態と行動選択（訓練標的とガルドロスで共通）。
 // 技は開始時に一度だけ抽選し、攻撃中に毎 tick 選び直さない。旋回は turning.untilTick まで。
 // 本体 HP・部位の耐久・切断の蓄積・怯みの蓄積・怒りは、それぞれ別の値として持つ。
+import { followShape } from './follow';
 import { DEG, angleDiff, forwardOf, fromArr, toWorld, turnToward, v3, yawOf, type V3 } from '../core/math';
 import type { SeededRng } from '../core/seededRng';
 import type { DamageType, MonsterAiChoice, MonsterDef } from '../data/schemas';
@@ -139,9 +140,24 @@ export function resetMonster(m: MonsterState): void {
 /** 部位の当たり形状（ワールド座標）。並び順が「同時接触の固定優先順」になる。切断済みの部位は短い形状へ替わる。 */
 export function monsterShapes(m: MonsterState): WorldShape[] {
   const out: WorldShape[] = [];
+  // 部位の追従（v0.25.0。src/game/follow.ts）: 技の間と、眠っている間は、表のとおりに形を動かす
+  const fol = m.def.follow;
+  let grid: (Int16Array | null)[][] | null = null;
+  let tick = 0, dur = 1;
+  if (fol && !m.dead) {
+    if (m.action) {
+      grid = fol.actions.get(m.action.def.actionId) ?? null;
+      tick = m.action.tick;
+      dur = m.action.def.durationTicks;
+    } else if ((m.asleep || m.captured) && fol.sleep) grid = fol.sleep;
+  }
   m.def.parts.forEach((part, i) => {
-    const shapes = m.parts[i]!.severed && part.sever ? part.sever.shapesAfter : part.shapes;
-    for (const s of shapes) out.push(shapeToWorld(s, i, m.pos, m.yaw));
+    const severed = m.parts[i]!.severed && part.sever;
+    const shapes = severed ? part.sever!.shapesAfter : part.shapes;
+    shapes.forEach((s, j) => {
+      const d = !severed && grid ? grid[i]?.[j] : null;
+      out.push(shapeToWorld(d ? followShape(s, d, tick, dur, fol!.step) : s, i, m.pos, m.yaw));
+    });
   });
   return out;
 }
