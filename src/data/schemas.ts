@@ -1,4 +1,5 @@
 import type { BestiaryDef } from './bestiary';
+import type { StoryDef } from './story';
 // データ定義の型。public/data/*.json はすべてこの形で書き、読み込み時に validators.ts で検証する。
 // 「恒久ID」と「表示名」を分ける。名前を変えても id は変えない。
 
@@ -569,6 +570,21 @@ export interface FacilityDef {
   building: { x: number; z: number; yaw: number };
 }
 
+/**
+ * 里に立つ人（v0.23.0）。見た目は絵の板（art は src/render/npcArt.ts の名前）。当たりは、map の rocks に同じ位置の円を置く。
+ * yaw は向いている方（正面）。名前の表示名は仮（物語の人物。docs/story.md）。
+ */
+export interface HubNpcDef {
+  id: string;
+  name: string;
+  /** 施設の係（その施設の近くに立つ）。無ければ、ただ立っている人 */
+  facility?: string;
+  art: string;
+  x: number;
+  z: number;
+  yaw: number;
+}
+
 /** 拠点（public/data/hub.json）。里を歩く場所（mapId）と、施設の並び。 */
 export interface HubDef {
   schemaVersion: number;
@@ -576,6 +592,7 @@ export interface HubDef {
   name: string;
   mapId: string;
   facilities: FacilityDef[];
+  npcs?: HubNpcDef[];
 }
 
 /** プレイヤーの初期調整値（設計書 p.09）。本作独自の値で、実機の手触りを見て調整する。 */
@@ -725,6 +742,8 @@ export interface ContentIndex {
     bestiary: string;
     armor: string;
     player: string;
+    /** 物語（v0.23.0。src/data/story.ts） */
+    story: string;
   };
 }
 
@@ -749,6 +768,8 @@ export interface Content {
   hub: HubDef;
   /** モンスターの登録簿（図鑑と、これからの登場の計画） */
   bestiary: BestiaryDef;
+  /** 物語（v0.23.0。序章と第 1 章だけ遊べる） */
+  story: StoryDef;
   ranks: Map<string, RankDef>;
   armor: Map<string, ArmorDef>;
   armorRules: ArmorRules;

@@ -119,6 +119,7 @@
     "armor": "armor.json",
     "shop": "shop.json",
     "hub": "hub.json",
-    "bestiary": "bestiary.json"
+    "bestiary": "bestiary.json",
+    "story": "story.json"
   }
 }

@@ -119,6 +119,15 @@ export class TouchControls {
     }
   }
 
+  /** ボタンに絵を付ける（道具のアイコン。v0.23.0）。null で外す */
+  setIcon(name: string, url: string | null): void {
+    const el = this.els.get(name);
+    if (!el || el.dataset.icon === (url ?? '')) return;
+    el.dataset.icon = url ?? '';
+    el.style.backgroundImage = url ? `url("${url}")` : '';
+    el.classList.toggle('has-icon', !!url);
+  }
+
   setEditing(on: boolean): void {
     this.releaseAll();
     this.editing = on;

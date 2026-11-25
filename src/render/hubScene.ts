@@ -208,7 +208,7 @@ export function buildHubGroup(hub: HubDef, map: MapDef): Group {
   const g = buildAreaGroup({
     bounds: map.bounds, rocks: map.rocks, platforms: map.platforms, drawRocks: false, kind: 'village', seed: 7001, wallHeight: [2.2, 2.2],
     gates: [{ x: 0, z: map.bounds.minZ + 2, marker: true }],
-    clear: [{ ...PLAZA, r: PLAZA.r + 0.2 }, ...hub.facilities.map((f) => ({ x: f.x, z: f.z, r: f.r * 0.6 }))],
+    clear: [{ ...PLAZA, r: PLAZA.r + 0.2 }, ...hub.facilities.map((f) => ({ x: f.x, z: f.z, r: f.r * 0.6 })), ...(hub.npcs ?? []).map((n) => ({ x: n.x, z: n.z, r: 0.7 }))],
   });
   const plaza = new Mesh(new CircleGeometry(PLAZA.r, 36), tileMaterial('paving', 0xffffff, { gain: 1.3 }));
   plaza.rotation.x = -Math.PI / 2;

@@ -1,0 +1,958 @@
+{
+ "icons": [
+  {
+   "id": "item.heal_tonic",
+   "file": "icon_item_heal_v1",
+   "px": [
+    1254,
+    1254
+   ],
+   "faintAlpha": 10694,
+   "marginPx": [
+    258,
+    106,
+    261,
+    107
+   ],
+   "marginPct": [
+    20.6,
+    8.5,
+    20.8,
+    8.5
+   ],
+   "subjectPx": [
+    735,
+    1041
+   ]
+  },
+  {
+   "id": "item.bind_trap",
+   "file": "icon_item_bind_trap_v1",
+   "px": [
+    1254,
+    1254
+   ],
+   "faintAlpha": 11996,
+   "marginPx": [
+    95,
+    198,
+    96,
+    187
+   ],
+   "marginPct": [
+    7.6,
+    15.8,
+    7.7,
+    14.9
+   ],
+   "subjectPx": [
+    1063,
+    869
+   ]
+  },
+  {
+   "id": "item.calm_orb",
+   "file": "icon_item_calm_orb_v1",
+   "px": [
+    1254,
+    1254
+   ],
+   "faintAlpha": 14587,
+   "marginPx": [
+    258,
+    151,
+    274,
+    190
+   ],
+   "marginPct": [
+    20.6,
+    12.0,
+    21.9,
+    15.2
+   ],
+   "subjectPx": [
+    722,
+    913
+   ]
+  },
+  {
+   "id": "item.whetstone",
+   "file": "icon_item_whetstone_v1",
+   "px": [
+    1254,
+    1254
+   ],
+   "faintAlpha": 25172,
+   "marginPx": [
+    94,
+    260,
+    90,
+    164
+   ],
+   "marginPct": [
+    7.5,
+    20.7,
+    7.2,
+    13.1
+   ],
+   "subjectPx": [
+    1070,
+    830
+   ]
+  },
+  {
+   "id": "mat.galdros.shell_shard",
+   "file": "icon_mat_galdros_shell_v1",
+   "px": [
+    1254,
+    1254
+   ],
+   "faintAlpha": 14476,
+   "marginPx": [
+    105,
+    198,
+    112,
+    204
+   ],
+   "marginPct": [
+    8.4,
+    15.8,
+    8.9,
+    16.3
+   ],
+   "subjectPx": [
+    1037,
+    852
+   ]
+  },
+  {
+   "id": "mat.galdros.hard_bone",
+   "file": "icon_mat_bone_v1",
+   "px": [
+    1254,
+    1254
+   ],
+   "faintAlpha": 6855,
+   "marginPx": [
+    122,
+    142,
+    123,
+    142
+   ],
+   "marginPct": [
+    9.7,
+    11.3,
+    9.8,
+    11.3
+   ],
+   "subjectPx": [
+    1009,
+    970
+   ]
+  },
+  {
+   "id": "mat.galdros.bronze_vein",
+   "file": "icon_mat_vein_v1",
+   "px": [
+    1254,
+    1254
+   ],
+   "faintAlpha": 29876,
+   "marginPx": [
+    195,
+    180,
+    165,
+    173
+   ],
+   "marginPct": [
+    15.6,
+    14.4,
+    13.2,
+    13.8
+   ],
+   "subjectPx": [
+    894,
+    901
+   ]
+  },
+  {
+   "id": "mat.galdros.foreleg_plate",
+   "file": "icon_mat_foreplate_v1",
+   "px": [
+    1254,
+    1254
+   ],
+   "faintAlpha": 7734,
+   "marginPx": [
+    178,
+    218,
+    178,
+    248
+   ],
+   "marginPct": [
+    14.2,
+    17.4,
+    14.2,
+    19.8
+   ],
+   "subjectPx": [
+    898,
+    788
+   ]
+  },
+  {
+   "id": "mat.galdros.veined_shell",
+   "file": "icon_mat_galdros_veined_shell_v1",
+   "px": [
+    1254,
+    1254
+   ],
+   "faintAlpha": 14031,
+   "marginPx": [
+    76,
+    222,
+    89,
+    256
+   ],
+   "marginPct": [
+    6.1,
+    17.7,
+    7.1,
+    20.4
+   ],
+   "subjectPx": [
+    1089,
+    776
+   ]
+  },
+  {
+   "id": "mat.galdros.tail_crystal",
+   "file": "icon_mat_tail_v1",
+   "px": [
+    1254,
+    1254
+   ],
+   "faintAlpha": 6064,
+   "marginPx": [
+    174,
+    232,
+    198,
+    273
+   ],
+   "marginPct": [
+    13.9,
+    18.5,
+    15.8,
+    21.8
+   ],
+   "subjectPx": [
+    882,
+    749
+   ]
+  },
+  {
+   "id": "mat.galdros.crystal_shell",
+   "file": "icon_mat_galdros_crystal_shell_v1",
+   "px": [
+    1254,
+    1254
+   ],
+   "faintAlpha": 9664,
+   "marginPx": [
+    155,
+    223,
+    126,
+    220
+   ],
+   "marginPct": [
+    12.4,
+    17.8,
+    10.0,
+    17.5
+   ],
+   "subjectPx": [
+    973,
+    811
+   ]
+  },
+  {
+   "id": "mat.galdros.bronze_lump",
+   "file": "icon_mat_galdros_bronze_lump_v1",
+   "px": [
+    1254,
+    1254
+   ],
+   "faintAlpha": 16883,
+   "marginPx": [
+    109,
+    254,
+    117,
+    202
+   ],
+   "marginPct": [
+    8.7,
+    20.3,
+    9.3,
+    16.1
+   ],
+   "subjectPx": [
+    1028,
+    798
+   ]
+  },
+  {
+   "id": "mat.galdros.radiant_shell",
+   "file": "icon_mat_galdros_radiant_shell_v1",
+   "px": [
+    1254,
+    1254
+   ],
+   "faintAlpha": 8005,
+   "marginPx": [
+    133,
+    230,
+    130,
+    228
+   ],
+   "marginPct": [
+    10.6,
+    18.3,
+    10.4,
+    18.2
+   ],
+   "subjectPx": [
+    991,
+    796
+   ]
+  },
+  {
+   "id": "mat.galdros.pulse_core",
+   "file": "icon_mat_core_v1",
+   "px": [
+    1254,
+    1254
+   ],
+   "faintAlpha": 10899,
+   "marginPx": [
+    201,
+    225,
+    176,
+    206
+   ],
+   "marginPct": [
+    16.0,
+    17.9,
+    14.0,
+    16.4
+   ],
+   "subjectPx": [
+    877,
+    823
+   ]
+  }
+ ],
+ "npcs": [
+  {
+   "id": "minagi",
+   "side": "front",
+   "src": "npc/minagi_full_v1",
+   "px": [
+    1086,
+    1448
+   ],
+   "bgLab": [
+    84.16,
+    2.93,
+    2.72
+   ],
+   "borderDeltaE99": 1.19,
+   "bbox": [
+    321,
+    24,
+    721,
+    1415
+   ],
+   "floorShadowPx": 7555,
+   "holesCleared": 1
+  },
+  {
+   "id": "smith",
+   "side": "front",
+   "src": "npc/ref_npc_smith_front_v1",
+   "px": [
+    1086,
+    1448
+   ],
+   "bgLab": [
+    84.21,
+    2.93,
+    2.1
+   ],
+   "borderDeltaE99": 1.16,
+   "bbox": [
+    258,
+    45,
+    812,
+    1401
+   ],
+   "floorShadowPx": 603,
+   "holesCleared": 0
+  },
+  {
+   "id": "smith",
+   "side": "back",
+   "src": "npc/ref_npc_smith_back_v1",
+   "px": [
+    1086,
+    1448
+   ],
+   "bgLab": [
+    84.16,
+    2.92,
+    1.61
+   ],
+   "borderDeltaE99": 1.14,
+   "bbox": [
+    259,
+    37,
+    824,
+    1402
+   ],
+   "floorShadowPx": 483,
+   "holesCleared": 0
+  },
+  {
+   "id": "merchant",
+   "side": "front",
+   "src": "npc/ref_npc_merchant_front_v1",
+   "px": [
+    1086,
+    1448
+   ],
+   "bgLab": [
+    84.93,
+    2.91,
+    2.22
+   ],
+   "borderDeltaE99": 1.16,
+   "bbox": [
+    283,
+    21,
+    783,
+    1418
+   ],
+   "floorShadowPx": 523,
+   "holesCleared": 0
+  },
+  {
+   "id": "merchant",
+   "side": "back",
+   "src": "npc/ref_npc_merchant_back_v1",
+   "px": [
+    1086,
+    1448
+   ],
+   "bgLab": [
+    85.39,
+    3.26,
+    2.22
+   ],
+   "borderDeltaE99": 1.16,
+   "bbox": [
+    273,
+    17,
+    794,
+    1417
+   ],
+   "floorShadowPx": 421,
+   "holesCleared": 0
+  }
+ ],
+ "portraits": [
+  {
+   "id": "minagi",
+   "src": "npc/minagi_bust_v1",
+   "cropPx": [
+    169,
+    24,
+    813
+   ]
+  },
+  {
+   "id": "smith",
+   "src": "npc/ref_npc_smith_front_v1",
+   "cropPx": [
+    332,
+    21,
+    406
+   ]
+  },
+  {
+   "id": "merchant",
+   "src": "npc/ref_npc_merchant_front_v1",
+   "cropPx": [
+    323,
+    -4,
+    419
+   ]
+  }
+ ],
+ "fields": [
+  {
+   "name": "風礫盆地",
+   "file": "field_01_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "根絡み湿原",
+   "file": "field_02_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "硝砂海岸",
+   "file": "field_03_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "灰鐘鉱山",
+   "file": "field_04_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "氷帆峡谷",
+   "file": "field_05_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "霧灯樹海",
+   "file": "field_06_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "燠脈台地",
+   "file": "field_07_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "雨裂断崖",
+   "file": "field_08_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "銅苔段丘",
+   "file": "field_09_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "枯響河床",
+   "file": "field_10_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "鉛雲高地",
+   "file": "field_11_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "沈根沢地",
+   "file": "field_12_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "玻璃裂原",
+   "file": "field_13_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "灰繭窪地",
+   "file": "field_14_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "冷銅洞庭",
+   "file": "field_15_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "響礫回廊",
+   "file": "field_16_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "重霧環谷",
+   "file": "field_17_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "伏熱石原",
+   "file": "field_18_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "錆星高原",
+   "file": "field_19_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  },
+  {
+   "name": "深帷樹洞",
+   "file": "field_20_overview_v1",
+   "px": [
+    1536,
+    1024
+   ]
+  }
+ ],
+ "outputs": {
+  "icons/icon_item_heal_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 10678
+  },
+  "icons/icon_item_bind_trap_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 15064
+  },
+  "icons/icon_item_calm_orb_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 10500
+  },
+  "icons/icon_item_whetstone_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 9924
+  },
+  "icons/icon_mat_galdros_shell_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 12996
+  },
+  "icons/icon_mat_bone_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 9562
+  },
+  "icons/icon_mat_vein_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 16326
+  },
+  "icons/icon_mat_foreplate_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 13238
+  },
+  "icons/icon_mat_galdros_veined_shell_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 11418
+  },
+  "icons/icon_mat_tail_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 11720
+  },
+  "icons/icon_mat_galdros_crystal_shell_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 13156
+  },
+  "icons/icon_mat_galdros_bronze_lump_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 13508
+  },
+  "icons/icon_mat_galdros_radiant_shell_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 13034
+  },
+  "icons/icon_mat_core_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 14610
+  },
+  "textures/npc/npc_minagi_front_v1": {
+   "px": [
+    189,
+    640
+   ],
+   "bytes": 30066
+  },
+  "textures/npc/npc_smith_front_v1": {
+   "px": [
+    266,
+    640
+   ],
+   "bytes": 42914
+  },
+  "textures/npc/npc_smith_back_v1": {
+   "px": [
+    269,
+    640
+   ],
+   "bytes": 41906
+  },
+  "textures/npc/npc_merchant_front_v1": {
+   "px": [
+    233,
+    640
+   ],
+   "bytes": 38798
+  },
+  "textures/npc/npc_merchant_back_v1": {
+   "px": [
+    242,
+    640
+   ],
+   "bytes": 38138
+  },
+  "portraits/portrait_minagi_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 13726
+  },
+  "portraits/portrait_smith_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 14976
+  },
+  "portraits/portrait_merchant_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 15568
+  },
+  "fields/field_01_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 50832
+  },
+  "fields/field_02_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 58762
+  },
+  "fields/field_03_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 45226
+  },
+  "fields/field_04_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 51850
+  },
+  "fields/field_05_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 49254
+  },
+  "fields/field_06_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 54432
+  },
+  "fields/field_07_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 42800
+  },
+  "fields/field_08_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 45222
+  },
+  "fields/field_09_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 48578
+  },
+  "fields/field_10_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 56132
+  },
+  "fields/field_11_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 38066
+  },
+  "fields/field_12_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 48506
+  },
+  "fields/field_13_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 38244
+  },
+  "fields/field_14_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 55426
+  },
+  "fields/field_15_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 43254
+  },
+  "fields/field_16_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 52580
+  },
+  "fields/field_17_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 50098
+  },
+  "fields/field_18_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 52220
+  },
+  "fields/field_19_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 44466
+  },
+  "fields/field_20_overview_v1": {
+   "px": [
+    640,
+    427
+   ],
+   "bytes": 53852
+  }
+ }
+}

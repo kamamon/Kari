@@ -9,5 +9,10 @@
     {"id": "shop", "kind": "shop", "name": "商店", "action": "商店に入る", "summary": "道具を買う。素材を売る", "x": 14, "z": 4.6, "r": 3.2, "building": {"x": 14, "z": 9.5, "yaw": 3.1416}},
     {"id": "board", "kind": "quest", "name": "依頼板", "action": "依頼を見る", "summary": "依頼を受けて狩りへ出る。訓練場へ行く", "x": 0, "z": 10.4, "r": 3.0, "building": {"x": 0, "z": 13.2, "yaw": 3.1416}},
     {"id": "chest", "kind": "chest", "name": "装備箱", "action": "装備箱を開ける", "summary": "武器と防具を替える。持ち物とデータ", "x": -15.2, "z": -5, "r": 3.0, "building": {"x": -18.5, "z": -5, "yaw": 1.5708}}
+  ],
+  "npcs": [
+    {"id": "npc.minagi", "name": "ミナギ", "facility": "board", "art": "minagi", "x": 2.6, "z": 11.4, "yaw": -2.8966},
+    {"id": "npc.rokuha", "name": "ロクハ", "facility": "workshop", "art": "smith", "x": -10.6, "z": 6.4, "yaw": 2.042},
+    {"id": "npc.isane", "name": "イサネ", "facility": "shop", "art": "merchant", "x": 10.6, "z": 6.4, "yaw": -2.042}
   ]
 }

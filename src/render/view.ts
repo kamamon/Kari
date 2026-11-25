@@ -13,6 +13,7 @@ import type { Settings } from '../save/settings';
 import { blobShadow, buildArena, buildAreaGroup, setupSky, type Arena } from './arena';
 import { WIND } from './envArt';
 import { buildHubGroup } from './hubScene';
+import { buildNpcSprites, updateNpcSprites } from './npcSprites';
 import { FollowCamera } from './camera';
 import { DebugDraw } from './debugDraw';
 import { BladeTrail, GroundRings, Particles } from './effects';
@@ -130,6 +131,8 @@ export class GameView {
   private arena: Arena;
   /** フィールド: 作ったエリアの地形（入った時に作り、居るエリアだけ見せる）と、いま見せているエリア */
   private areaGroups = new Map<string, Group>();
+  /** 里に立つ人の板（拠点の時だけ） */
+  private npcs: Group | null = null;
   private shownArea = '';
   /** まだ入っていないエリアの地形を、前もって 1 つずつ作るまでのフレーム数（エリアを移った時に、作る間だけ止まらないように） */
   private prebuildIn = 90;
@@ -197,6 +200,9 @@ export class GameView {
       // 拠点（里）: 建物と広場
       const group = buildHubGroup(content.hub, sim.world.map);
       this.scene.add(group);
+      // 里に立つ人（v0.23.0。絵の板。毎フレーム、カメラの方へ向ける）
+      this.npcs = buildNpcSprites(content.hub.npcs ?? []);
+      this.scene.add(this.npcs);
       this.arena = { group, ...setupSky(this.scene, settings.shadows, 'village') };
     } else this.arena = buildArena(this.scene, sim.world.map, settings.shadows);
     this.scene.add(this.hunter.root, this.playerShadow);
@@ -646,6 +652,7 @@ export class GameView {
     this.arena.sun.position.set(pos.x - 14, 26, pos.z - 11);
     // 空と遠景は、カメラと一緒に動かす（どこまで歩いても、近づかない）。雲は少しずつ流れる
     this.arena.backdrop.position.set(this.cam.camera.position.x, 0, this.cam.camera.position.z);
+    if (this.npcs) updateNpcSprites(this.npcs, this.cam.camera.position);
     this.arena.sky?.setTime(this.time);
     WIND.value = this.time;
     this.sparks.update(dt);

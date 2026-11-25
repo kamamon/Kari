@@ -12,6 +12,7 @@ import type { Simulation } from '../game/sim';
 import type { InputHub } from '../input/hub';
 import type { GameView } from '../render/view';
 import { counterOf, questGoal, shortName } from './targets';
+import { withIcon } from './icons';
 
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls: string, parent: HTMLElement, text = ''): HTMLElementTagNameMap[K] {
   const e = document.createElement(tag);
@@ -451,7 +452,8 @@ export class Hud {
     const stack = p.items[p.itemIndex];
     const itemText = stack ? `${sim.content.items.get(stack.itemId)?.name ?? ''} ×${stack.count}` : '';
     this.set('item', itemText, () => {
-      this.item.textContent = itemText;
+      this.item.textContent = '';
+      if (stack) withIcon(this.item, stack.itemId, itemText);
       this.item.hidden = itemText === '';
       // 勢い（双剣）: 段階を印で出す
       const M = familyOf(sim.player, sim.content).momentum;

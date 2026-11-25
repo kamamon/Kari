@@ -20,6 +20,7 @@
     "bestiary:thumbs": "python3 tools/concept-thumbs.py",
     "env:art": "python3 tools/env-art.py",
     "rocks:art": "python3 tools/rock-art.py",
+    "supplement:art": "python3 tools/supplement-art.py",
     "field:gen": "python3 tools/gen-field.py",
     "monsters:gen": "python3 tools/gen-monsters.py && npm run monsters:bake",
     "monsters:bake": "CREATURE_BAKE=1 vitest run tests/creature-motion.test.ts",

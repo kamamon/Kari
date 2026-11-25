@@ -823,6 +823,9 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   });
   await touch('touchStart', [{ x: 120, y: 215, id: 1 }, { x: 592, y: 180, id: 2 }, { x: main.x, y: main.y, id: 3 }]);
   check('タッチ: 移動+視点+攻撃の同時操作', await until(page, () => window.__vh.sim.player.action?.def.actionId === 'player.heavy_blade.draw_slash', 5000), `移動中 z ${z1.toFixed(1)}`);
+  // v0.23.0: 道具のボタンに、道具の絵（ChatGPT の追加原画のアイコン）が出る。訓練場は研磨石
+  const itemBtn = await page.evaluate(() => { const b = document.querySelector('.tbtn-item'); return { icon: b.classList.contains('has-icon'), bg: b.style.backgroundImage, text: b.textContent }; });
+  check('タッチ: 道具のボタンに、いま選んでいる道具の絵が出る（訓練場は研磨石）', itemBtn.icon && /icon_item_whetstone_v1\.webp/.test(itemBtn.bg) && /研磨石/.test(itemBtn.text), JSON.stringify(itemBtn));
   await page.screenshot({ path: `${OUT}21_touch_three_fingers.png` });
   // 押しっぱなしのまま touchcancel（通知・ジェスチャー等で指が奪われた状況）→ 入力が解除されること
   await touch('touchCancel', []);
@@ -1456,6 +1459,9 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.click('.shop-buy[data-item="item.heal_tonic"][data-count="1"]');
   const bought = await until(page, () => window.__vh.save.doc.money === 940 && window.__vh.save.doc.items['item.heal_tonic'] === 1 && /回復液を 1 個買いました/.test(document.querySelector('.base-message').textContent), 8000);
   check('里: 回復液を 1 個買うと、通貨が 60 減って道具が増える（保存が完了してから表示が変わる）', bought && await page.evaluate(() => /通貨 940/.test(document.querySelector('.shop-money').textContent) && /持っている数 1/.test(document.querySelector('.shop-row[data-item="item.heal_tonic"]').textContent) && /道具: 回復液 ×1/.test(document.querySelector('.base-inv').textContent)), JSON.stringify(await hubState()));
+  // v0.23.0: 商店の行と持ち物に、道具・素材の絵（アイコン。256 四方）が出る。文字はこれまでどおり
+  const icons = await until(page, () => ['.shop-row[data-item="item.heal_tonic"] img.ico', '.shop-row[data-item="mat.galdros.shell_shard"] img.ico'].every((q) => document.querySelector(q)?.naturalWidth === 256), 8000);
+  check('アイコン: 商店の行（回復液・岩殻片）に、道具と素材の絵が出る', icons, await page.evaluate(() => [...document.querySelectorAll('#base-shop img.ico')].map((i) => `${i.dataset.icon}:${i.naturalWidth}`).join(' ')));
   await page.click('.shop-sell[data-item="mat.galdros.shell_shard"][data-count="1"]');
   check('里: 岩殻片を 1 個売ると、通貨が 20 増えて素材が減る', await until(page, () => window.__vh.save.doc.money === 960 && window.__vh.save.doc.items['mat.galdros.shell_shard'] === 2, 8000), JSON.stringify(await hubState()));
   await page.screenshot({ path: `${OUT}94_hub_shop_panel.png` });
@@ -1573,6 +1579,10 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   check('図鑑: 希少種には、もとの種と、一緒に出る相手が出る。幼体には、群れの数が出る。超大型は、案だけと分かる',
     /上級|大型・希少種/.test(zukan.rare) && /もとの種/.test(zukan.rareLabels) && /一緒に出る相手/.test(zukan.rareLabels) && /帆角獣 セルヴァルク/.test(zukan.rare) && /裂扇獣 グラセドン/.test(zukan.rare) && /群れ3〜5 体/.test(zukan.juv) && /岩殻獣 ガルドロス/.test(zukan.juv) && /^超大型／巨躯／沈根沢地／水・睡眠$/.test(zukan.hugeTags) && /案だけです/.test(zukan.hugeNote),
     JSON.stringify({ rare: zukan.rare, rareLabels: zukan.rareLabels, juv: zukan.juv.slice(0, 120), hugeTags: zukan.hugeTags, hugeNote: zukan.hugeNote }));
+  // v0.23.0: 狩場の案を開くと、景色の原画（ChatGPT の追加原画。640 × 427）が出る
+  await page.evaluate(() => { document.querySelector('[data-field="根絡み湿原"]').open = true; });
+  const fieldArt = await until(page, () => document.querySelector('[data-field="根絡み湿原"] figure img')?.naturalWidth === 640, 8000);
+  check('図鑑: 狩場の案を開くと、景色の原画が出る（まだ歩けない狩場は、そう書く）', fieldArt && await page.evaluate(() => /まだ歩けません/.test(document.querySelector('[data-field="根絡み湿原"] figcaption').textContent)), await page.evaluate(() => document.querySelector('[data-field="根絡み湿原"]')?.innerHTML.slice(0, 200)));
   check('図鑑: 狩場の案が 20 並ぶ（歩けるのは風礫盆地だけ）。開くと、地形と、そこに出る種が出る',
     zukan.fields === 20 && zukan.walkable === '風礫盆地' && zukan.fieldHead === '狩場の案 20（歩けるのは 1）' && zukan.basinState === '歩ける' && /燠脈台地/.test(zukan.fieldText) && /熾炉獣 エンバルグ/.test(zukan.fieldText) && zukan.fieldState === '案', JSON.stringify({ fields: zukan.fields, walkable: zukan.walkable, head: zukan.fieldHead, state: zukan.fieldState, text: zukan.fieldText }));
   await page.evaluate(() => document.getElementById('base-bestiary').scrollIntoView({ block: 'start' }));
@@ -1605,6 +1615,65 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   h = await hubState();
   check('里: 読み込み直しても、買い物の結果が残っている（通貨 960、岩殻片 2、回復液 0）', h.money === 960 && h.shell === 2 && h.tonic === 0, JSON.stringify(h));
   check('里: 読み込み直しても、選んだ防具が残っている（兜は着たまま、胴は外したまま。胸当ては持っている）', await page.evaluate(() => { const d = window.__vh.save.doc; return d.schemaVersion === 3 && d.armor.includes('armor.chest.002') && !d.equippedArmorIds.includes('armor.chest.002') && d.equippedArmorIds.includes('armor.head.002') && window.__vh.sim.armorIds.join() === 'armor.head.002,armor.arms.001,armor.waist.001,armor.legs.001'; }), await page.evaluate(() => JSON.stringify(window.__vh.save.doc.equippedArmorIds)));
+
+  // ---- 里の人と、物語「帰り道の灯」（v0.23.0。ChatGPT の Pull Request #5・#7）----
+  const npcs = await until(page, () => {
+    const g = window.__vh.view.scene.getObjectByName('npcs');
+    return !!g && g.userData.npcs.length === 3 && g.userData.npcs.every((s) => s.mesh.material.visible && s.mesh.material.map?.image?.naturalWidth > 0);
+  }, 15000);
+  check('里: ミナギ・ロクハ・イサネが、依頼板・工房・商店のそばに立っている（切り抜いた絵の板。絵が読めている）', npcs, await page.evaluate(() => JSON.stringify(window.__vh.content.hub.npcs.map((n) => n.name))));
+  await put('board');
+  await until(page, () => window.__vh.nearFacility?.id === 'board');
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: `${OUT}97_hub_npcs.png` });
+  await page.click('#hud-facility');
+  await until(page, () => !document.getElementById('base').hidden);
+  const panel = () => page.evaluate(() => {
+    const b = document.querySelector('.base-story');
+    return { shown: getComputedStyle(b).display !== 'none', title: b.querySelector('.story-title').textContent, step: b.querySelector('.story-next-hunt')?.dataset.step ?? '', go: b.querySelector('.story-go')?.dataset.quest ?? '', rec: b.querySelector('.story-records summary').textContent, end: b.querySelector('.story-unplayable')?.textContent ?? '' };
+  });
+  let sp = await panel();
+  check('物語: 依頼板に物語の欄が出る。ガルドロスは達成済みなので、次の狩りは「帆角の風」。帰還記録は 3 つ', sp.shown && sp.title === '物語「帰り道の灯」' && sp.step === 'st02' && sp.go === 'quest.selvark.r1' && sp.rec === '帰還記録を読む（3）', JSON.stringify(sp));
+  await page.screenshot({ path: `${OUT}98_story_panel.png` });
+  const rev0 = await page.evaluate(() => window.__vh.save.doc.revision);
+  await page.evaluate(() => { document.querySelector('.story-records').open = true; });
+  await page.click('.story-record[data-scene="sc02"]');
+  const opened = await until(page, () => !document.getElementById('story').hidden && document.getElementById('story').dataset.scene === 'sc02' && document.querySelector('.story-face img').naturalWidth === 256, 8000);
+  await page.screenshot({ path: `${OUT}98_story_dialog.png` });
+  const said = [];
+  for (let i = 0; i < 6 && !(await page.evaluate(() => document.getElementById('story').hidden)); i++) {
+    said.push(await page.evaluate(() => `${document.querySelector('.story-who').textContent}|${document.querySelector('.story-text').textContent}`));
+    await page.click('.story-buttons button');
+  }
+  check('物語: 記録を開くと会話の窓が出る（顔の絵・名前・台詞）。読み返す時の報告は、討伐・捕獲の分かれない言葉。最後にまとめが出る',
+    opened && said[0] === 'イサネ（荷を運ぶ商い手）|「荷、通ったよ。布も薬も全部。さっきまで向こうで止まってたのが、ここにある。」' && said[3] === 'ミナギ（受付と記録）|「区間の安全を確かめて、荷を通したそう。」' && /^記録\|/.test(said[5] ?? ''), JSON.stringify(said));
+  await page.click('.story-buttons button');
+  check('物語: 閉じると窓が消え、読んでも保存は変わらない（revision が同じ）', await until(page, () => document.getElementById('story').hidden, 3000) && await page.evaluate((r) => window.__vh.save.doc.revision === r, rev0));
+  // 帰還の報告: 帆角の風を初めて達成した保存の後、里で 1 回だけ開く（捕獲の言葉）。同じ結果では、もう開かない
+  await page.click('.base-close');
+  await until(page, () => document.getElementById('base').hidden);
+  const clearsBefore = await page.evaluate(() => ({ ...window.__vh.save.doc.progress.questClears }));
+  await page.evaluate(() => window.__vh.save.settle({ runId: 'smoke-story-selvark', questId: 'quest.selvark.r1', money: 0, items: [] }));
+  await page.evaluate((b) => window.__vh.afterSettleStory(b, 'capture'), clearsBefore);
+  const auto = await until(page, () => !document.getElementById('story').hidden && document.getElementById('story').dataset.scene === 'sc03', 5000);
+  const autoState = await page.evaluate(() => ({ hud: document.getElementById('hud').hidden, paused: window.__vh.sim.tick, text: document.querySelector('.story-text').textContent }));
+  await page.waitForTimeout(300);
+  check('物語: 帆角の風を初めて達成した保存の後、里で第 1 章の報告（二つの仕事を並べる）が開く。開いている間は止まり、HUD は隠れる',
+    auto && autoState.hud && /穀物の荷も通った/.test(autoState.text) && await page.evaluate((t) => window.__vh.sim.tick === t, autoState.paused), JSON.stringify(autoState));
+  await page.click('.story-close');
+  await until(page, () => document.getElementById('story').hidden, 3000);
+  const again = await page.evaluate(() => ({ ...window.__vh.save.doc.progress.questClears }));
+  await page.evaluate((b) => window.__vh.afterSettleStory(b, 'slay'), again);
+  await page.waitForTimeout(400);
+  check('物語: 閉じると HUD が戻り、同じ結果では、報告はもう開かない', await page.evaluate(() => document.getElementById('story').hidden && !document.getElementById('hud').hidden));
+  await page.click('#hud-hub-list');
+  await until(page, () => !document.getElementById('base').hidden);
+  sp = await panel();
+  check('物語: 第 1 章を済ませると、次の狩りは無く、「まだ遊べません」と出る。帰還記録は 4 つ', sp.step === '' && /次の地域の物語は、まだ遊べません/.test(sp.end) && sp.rec === '帰還記録を読む（4）', JSON.stringify(sp));
+  await page.evaluate(() => { document.querySelector('.story-chapters').open = true; });
+  const chapters = await until(page, () => document.querySelectorAll('.story-chapter').length === 10 && document.querySelector('.story-chapter[data-chapter="ch2"] img')?.naturalWidth === 640, 8000);
+  check('物語: 章の一覧は 10（序章・8 章・終章）。第 1 章は「済み」、第 2 章から先は「まだ遊べません」。狩場の景色の原画が出る', chapters && await page.evaluate(() => document.querySelector('.story-chapter[data-chapter="ch1"] .state').textContent === '済み' && document.querySelector('.story-chapter[data-chapter="ch8"] .state').textContent === 'まだ遊べません'), await page.evaluate(() => [...document.querySelectorAll('.story-chapter .state')].map((x) => x.textContent).join(',')));
+  await page.screenshot({ path: `${OUT}98_story_chapters.png` });
   await ctx.close();
 }
 

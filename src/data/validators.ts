@@ -4,6 +4,7 @@
 
 import { AreaShape, NavGraph } from '../game/areaShape';
 import { validateBestiary, type BestiaryDef } from './bestiary';
+import { validateStory, type StoryDef } from './story';
 import {
   ARMOR_SLOTS,
   FINISH_STATES,
@@ -520,6 +521,22 @@ export function validateHub(c: Content, errors: string[]): void {
     else if (!map.rocks.some((r) => Math.hypot(r.x - f.building.x, r.z - f.building.z) < 0.01)) errors.push(`${w}: 建物の当たり（map の rocks）が無い`);
     for (const o of h.facilities) if (o !== f && o.id < f.id && Math.hypot(o.x - f.x, o.z - f.z) < o.r + f.r) errors.push(`${w}: 施設 ${o.id} の前と重なる`);
   }
+  // 里に立つ人（v0.23.0）: id は重ならない。同じ位置に当たりの円がある。施設の前（立つ輪）と出発地点に重ならない
+  const npcIds = new Set<string>();
+  for (const n of h.npcs ?? []) {
+    const w = `hub npc ${n.id}`;
+    if (npcIds.has(n.id)) errors.push(`${w}: id が重複`);
+    npcIds.add(n.id);
+    if (typeof n.name !== 'string' || n.name === '' || typeof n.art !== 'string' || n.art === '') errors.push(`${w}: name / art が無い`);
+    if (!(isNum(n.x) && isNum(n.z) && isNum(n.yaw))) {
+      errors.push(`${w}: 位置が不正`);
+      continue;
+    }
+    if (n.facility !== undefined && !(h.facilities ?? []).some((f) => f.id === n.facility)) errors.push(`${w}: 施設 ${n.facility} が無い`);
+    if (!map.rocks.some((r) => Math.hypot(r.x - n.x, r.z - n.z) < 0.01 && r.r <= 0.6)) errors.push(`${w}: 人の当たり（map の rocks、半径 0.6m まで）が無い`);
+    for (const f of h.facilities ?? []) if (Math.hypot(f.x - n.x, f.z - n.z) < f.r * 0.5 + 0.8) errors.push(`${w}: 施設 ${f.id} の前（立つ輪）に近すぎる`);
+    if (Math.hypot(map.spawn.x - n.x, map.spawn.z - n.z) < 2) errors.push(`${w}: 出発地点に近すぎる`);
+  }
 }
 
 /** エリアどうしを、これだけ離す（別のエリアの相手に、気づいたり攻撃が届いたりしないための距離）。 */
@@ -725,6 +742,7 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
     shop: { schemaVersion: 0, holdMax: 0, goods: [], sell: [] },
     hub: { schemaVersion: 0, id: '', name: '', mapId: '', facilities: [] },
     bestiary: { schemaVersion: 0, plan: {}, frames: [], fields: [], species: [] },
+    story: { schemaVersion: 0, id: '', title: '', note: '', speakers: {}, chapters: [], scenes: [], common: { unplayable: '' } },
     quests: new Map(),
     items: new Map(),
     materials: new Map(),
@@ -829,6 +847,11 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
   }
   // 依頼の標的は、登録簿にあること（訓練用の標的は除く）
   for (const q of content.quests.values()) if (!content.bestiary.species.some((s) => s.id === q.targetMonsterId)) errors.push(`quest ${q.id}: 標的 ${q.targetMonsterId} が、登録簿（bestiary）に無い`);
+  // 物語（v0.23.0）: 遊べる章の狩りは、いまある依頼だけ。場面は、どれもどこかの章から使う。狩場の名前は登録簿の狩場の案
+  content.story = (await get(index.files.story)) as StoryDef;
+  checkVersion(index.files.story, content.story.schemaVersion, errors);
+  for (const e of validateStory(content.story, new Set(content.quests.keys()))) errors.push(`story: ${e}`);
+  for (const ch of content.story.chapters ?? []) if (ch.field && !(content.bestiary.fields ?? []).some((f) => f.name === ch.field)) errors.push(`story: chapter ${ch.id}: 狩場 ${ch.field} が登録簿に無い`);
   if (errors.length > 0) throw new ContentError(errors);
   return content;
 }

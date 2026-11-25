@@ -24,6 +24,9 @@ import { Hud } from './ui/hud';
 import { Menu, type MenuHost } from './ui/menus';
 import { counterOf, shortName } from './ui/targets';
 import { ResultScreen, type ResultHost } from './ui/result';
+import { iconUrl } from './ui/icons';
+import { StoryDialog, type StoryPlay } from './ui/story';
+import { scenesUnlocked, type StoryOutcome } from './data/story';
 
 const DEFAULT_SEED = 20261122;
 const MAX_RECORD = 60 * 60 * 16;
@@ -46,6 +49,8 @@ export class App implements MenuHost, BaseHost, ResultHost {
   private menu: Menu;
   private base: BaseScreen;
   private result: ResultScreen;
+  /** 物語の会話の窓（v0.23.0） */
+  private story: StoryDialog;
   private editBar: HTMLElement;
   private rotate: HTMLElement;
   private recorded: InputFrame[] = [];
@@ -79,6 +84,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
     this.menu = new Menu(ui, store, this);
     this.result = new ResultScreen(ui, this);
     this.base = new BaseScreen(ui, content, this);
+    this.story = new StoryDialog(ui, content);
 
     this.editBar = document.createElement('div');
     this.editBar.className = 'edit-bar';
@@ -111,7 +117,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
     this.hud.setVerify(store.value.verify);
 
     this.hub.onUi((a) => {
-      if (this.base.open || this.result.open) return;
+      if (this.base.open || this.result.open || this.story.open) return;
       if (a === 'menu') this.menu.open ? this.closeMenu() : this.openMenu();
       else if (a === 'verify') store.set({ verify: !store.value.verify });
       else if (a === 'camReset' && !this.paused) this.resetCamera();
@@ -204,11 +210,15 @@ export class App implements MenuHost, BaseHost, ResultHost {
       ? { runId: this.runId, questId: h.quest.id, money: h.rewards!.money, items: h.rewards!.items.map((s) => ({ ...s })), spent }
       : { runId: this.runId, questId: h.quest.id, money: 0, items: [], spent, cleared: false };
     this.settleState = { runId: this.runId, state: 'saving', message: '', spentOnly: !success };
+    if (success) this.runOutcome.set(this.runId, h.reason === 'capture' ? 'capture' : 'slay');
     void this.saveRewards(rewards);
   }
 
   private async saveRewards(r: RunRewards): Promise<SaveResult> {
+    const before = { ...this.save.doc.progress.questClears };
     const res = await this.save.settle(r);
+    // 物語（v0.23.0）: 保存が完了してから、新しく読めるようになった帰還の報告を、拠点へ戻った時に 1 回だけ開く
+    if (res.ok) this.afterSettleStory(before, this.runOutcome.get(r.runId) ?? 'any');
     if (res.ok) this.unsaved = this.unsaved.filter((u) => u.runId !== r.runId);
     else if (!this.unsaved.some((u) => u.runId === r.runId)) this.unsaved.push(r);
     if (this.settleState?.runId === r.runId) {
@@ -234,6 +244,51 @@ export class App implements MenuHost, BaseHost, ResultHost {
 
   unsavedRewards(): number {
     return this.unsaved.length;
+  }
+
+  /** 依頼の結果（討伐か捕獲か）。帰還の報告の言葉を選ぶため */
+  private runOutcome = new Map<string, StoryOutcome>();
+  /** 拠点へ戻った時に開く、帰還の報告 */
+  private pendingStory: StoryPlay[] = [];
+
+  /**
+   * 保存の前後の達成回数を比べて、新しく読めるようになった場面を、開く順に積む（同じ runId の保存し直しでは増えない）。
+   * 里を歩く拠点にいれば、すぐ開く。依頼の途中なら、拠点へ戻った時に開く。一覧の拠点（?hub=menu。検査と見比べ用）では開かない（依頼板の記録から読める）。
+   */
+  afterSettleStory(before: Readonly<Record<string, number>>, outcome: StoryOutcome = 'any'): void {
+    const ids = scenesUnlocked(this.content.story, before, this.save.doc.progress.questClears);
+    if (ids.length === 0 || !this.hubWalk) return;
+    this.pendingStory.push(...ids.map((sceneId) => ({ sceneId, outcome })));
+    if (this.place === 'hub') this.showPendingStory();
+  }
+
+  private showPendingStory(): void {
+    if (this.pendingStory.length === 0 || this.story.open) return;
+    const list = this.pendingStory;
+    this.pendingStory = [];
+    this.openStoryPlays(list);
+  }
+
+  /** 物語の場面を読む（依頼板の欄から。何も保存しない） */
+  openStory(sceneIds: string[]): void {
+    this.openStoryPlays(sceneIds.map((sceneId) => ({ sceneId })));
+  }
+
+  private openStoryPlays(list: StoryPlay[]): void {
+    // 会話の間は、操作のボタンと HUD を隠す（拠点の画面が開いていれば、その上に重ねる）
+    const playing = !this.base.open && !this.result.open;
+    if (playing) {
+      this.touch.root.hidden = true;
+      this.hud.root.hidden = true;
+    }
+    this.releaseInputs();
+    this.story.play(list, () => {
+      if (!this.base.open && !this.result.open && !this.menu.open) {
+        this.touch.root.hidden = false;
+        this.hud.root.hidden = false;
+      }
+      this.releaseInputs();
+    });
   }
 
   /** 保存できていない報酬を、もう一度保存する */
@@ -400,6 +455,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
     if (this.hubWalk) {
       this.createSession(null, true);
       this.setOverlay(null);
+      this.showPendingStory();
       return;
     }
     this.createSession(null);
@@ -534,7 +590,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
     const cap = this.store.value.fpsCap;
     if (cap === 30 && ts - this.lastRender < 1000 / 30 - 3) return;
     this.lastRender = ts;
-    const paused = this.menu.open || this.base.open || this.result.open || this.touch.editing || this.portrait.matches || document.hidden;
+    const paused = this.menu.open || this.base.open || this.result.open || this.story.open || this.touch.editing || this.portrait.matches || document.hidden;
     if (paused !== this.paused) {
       this.paused = paused;
       this.releaseInputs();
@@ -609,6 +665,7 @@ export class App implements MenuHost, BaseHost, ResultHost {
         dodge: (pl.drawn && labels?.dodge) || '回避',
         item: stack ? `${this.content.items.get(stack.itemId)?.name ?? ''}\n×${stack.count}` : '道具',
       });
+      this.touch.setIcon('item', stack ? iconUrl(stack.itemId) : null);
       this.touch.root.classList.toggle('item-empty', !!stack && stack.count === 0);
       const h = this.sim.hunt;
       if (h?.closed) {

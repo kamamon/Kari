@@ -2,6 +2,7 @@
 // 持ち物への加算は App が依頼 1 回につき一度だけ行う（結果画面を何度開いても増えない）。
 import type { Simulation } from '../game/sim';
 import { counterOf, shortName } from './targets';
+import { withIcon } from './icons';
 
 export interface ResultHost {
   toBase(): void;
@@ -143,7 +144,7 @@ export class ResultScreen {
       for (const [key, n] of rows2) {
         const [itemId, src] = key.split('|');
         const li = document.createElement('li');
-        li.textContent = `${sim.content.materials.get(itemId!)?.name ?? itemId} ×${n}`;
+        withIcon(li, itemId!, `${sim.content.materials.get(itemId!)?.name ?? itemId} ×${n}`);
         const sp = document.createElement('span');
         sp.textContent = label(src!);
         li.appendChild(sp);

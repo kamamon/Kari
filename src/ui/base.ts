@@ -14,6 +14,8 @@ import { checkBuy, checkCraft, defenseOf, ownedArmor, parseImport, questUnlocked
 import type { SaveManager, SaveResult } from '../save/saveManager';
 import { canFullscreen, fullscreenHint, toggleFullscreen } from './fullscreen';
 import { questGoal } from './targets';
+import { fieldArtUrl, withIcon } from './icons';
+import { renderStoryPanel } from './story';
 
 export interface BaseHost {
   startTraining(): void;
@@ -37,6 +39,8 @@ export interface BaseHost {
   /** 保存できていない報酬の数と、保存のやり直し */
   unsavedRewards(): number;
   retryUnsaved(): Promise<SaveResult>;
+  /** 物語の場面を読む（v0.23.0。会話の窓を開く。何も保存しない） */
+  openStory(sceneIds: string[]): void;
 }
 
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string): HTMLElementTagNameMap[K] => {
@@ -79,6 +83,8 @@ export class BaseScreen {
   private armorNote: HTMLElement;
   private armorBox: HTMLElement;
   private questBox: HTMLElement;
+  /** 物語の欄（依頼板。v0.23.0） */
+  private storyBox: HTMLElement;
   /** 素材ごとの、手に入るいちばん下の段階（工房で「どこから出るか」を添えるため） */
   private matRank: Map<string, number>;
   private inv: HTMLElement;
@@ -124,6 +130,9 @@ export class BaseScreen {
     card.append(sec(el('p', 'base-weapon-label', '防具（部位ごとに、着る・外す）'), 'chest'), this.armorBox, this.armorNote);
     this.matRank = materialRanks(content);
 
+    // 物語「帰り道の灯」（v0.23.0）: いまの章・次の狩り・読み返せる記録・章の一覧。中身は refresh で作る
+    this.storyBox = sec(el('div', 'base-story'), 'quest');
+    card.appendChild(this.storyBox);
     // 依頼（段階の順）と訓練場。受けられるかどうかは進行で変わるので、中身は refresh で作る
     this.questBox = sec(el('div', 'base-quests'), 'quest');
     card.appendChild(this.questBox);
@@ -309,15 +318,32 @@ export class BaseScreen {
     this.armorNote.textContent = `防御力の合計 ${defense}（受けるダメージ ×${defenseScale(c, defense).toFixed(2)}）`;
 
     this.renderQuests();
+    renderStoryPanel(this.storyBox, c, doc.progress.questClears, {
+      openStory: (ids) => this.host.openStory(ids),
+      startHunt: (id) => this.host.startHunt(id),
+      questUnlocked: (id) => {
+        const q = c.quests.get(id);
+        return !!q && questUnlocked(doc, q);
+      },
+    });
 
     // 持ち物
     this.inv.textContent = '';
     const known = Object.entries(doc.items).filter(([id, n]) => n > 0 && c.materials.has(id));
-    const items = known.map(([id, n]) => `${c.materials.get(id)!.name} ×${n}`);
-    this.inv.appendChild(el('p', undefined, `持ち物: 通貨 ${doc.money}　${items.length ? items.join('　') : '素材はまだ無い'}`));
+    // 名前の前にアイコン（v0.23.0。絵のある素材だけ）。文字はこれまでと同じ
+    const invLine = (cls: string | undefined, head: string, list: [string, string][], none: string): HTMLElement => {
+      const p = el('p', cls, head);
+      if (list.length === 0) p.append(none);
+      list.forEach(([id, text], i) => {
+        if (i > 0) p.append('　');
+        p.appendChild(withIcon(el('span', 'inv-item'), id, text));
+      });
+      return p;
+    };
+    this.inv.appendChild(invLine(undefined, `持ち物: 通貨 ${doc.money}　`, known.map(([id, n]) => [id, `${c.materials.get(id)!.name} ×${n}`]), '素材はまだ無い'));
     // 道具（商店で買ったもの。狩りへ、持ち出せる数まで持っていく）
-    const tools = [...c.items.values()].filter((it) => (doc.items[it.id] ?? 0) > 0).map((it) => `${it.name} ×${doc.items[it.id]}`);
-    if (tools.length) this.inv.appendChild(el('p', 'base-tools', `道具: ${tools.join('　')}`));
+    const tools: [string, string][] = [...c.items.values()].filter((it) => (doc.items[it.id] ?? 0) > 0).map((it) => [it.id, `${it.name} ×${doc.items[it.id]}`]);
+    if (tools.length) this.inv.appendChild(invLine('base-tools', '道具: ', tools, ''));
     const unk = unknownIds(doc, c);
     if (unk.items.length + unk.weapons.length + unk.armor.length > 0) {
       this.inv.appendChild(el('p', 'base-unknown', `この版では使えないもの（消さずに持っています）: ${[...unk.items.map((id) => `${id} ×${doc.items[id]}`), ...unk.weapons, ...unk.armor].join('　')}`));
@@ -406,6 +432,19 @@ export class BaseScreen {
       const dl = el('dl');
       if (f.mood) dl.append(el('dt', undefined, '天気・光・音'), el('dd', undefined, f.mood));
       dl.append(el('dt', undefined, 'ここに出る種'), el('dd', undefined, here.map((x) => `${x.title} ${x.name}`).join('、') || '—'));
+      // 景色の原画（v0.23.0。ChatGPT の追加原画。地形を作る前の絵で、ゲームの中の形ではない）。開いた時に読む
+      const art = fieldArtUrl(f.name);
+      if (art) {
+        d.addEventListener('toggle', () => {
+          if (!d.open || d.querySelector('figure')) return;
+          const fig = el('figure', 'bestiary-art bestiary-field-art');
+          const img = document.createElement('img');
+          img.alt = `${f.name} の景色の原画`;
+          img.src = art;
+          fig.append(img, el('figcaption', undefined, f.fieldId ? '景色の原画。ゲームの中の地形は、この絵とは別に作ったものです。' : '景色の原画。この狩場は、まだ歩けません。'));
+          d.insertBefore(fig, dl);
+        });
+      }
       d.appendChild(dl);
       box.appendChild(d);
     }
@@ -423,10 +462,10 @@ export class BaseScreen {
     this.shopBody.textContent = '';
     this.shopBody.appendChild(el('p', 'shop-money', `通貨 ${doc.money}`));
     this.shopBody.appendChild(el('p', 'shop-note', '買った道具は、依頼の支給品に足して持っていきます（道具ごとに、持ち出せる数まで）。支給品から先に使い、自分の道具は、使ったぶんだけ減ります。'));
-    const row = (name: string, sub: string, buttons: HTMLButtonElement[]): HTMLElement => {
+    const row = (name: string, sub: string, buttons: HTMLButtonElement[], iconId = ''): HTMLElement => {
       const r = el('div', 'shop-row');
       const t = el('div', 'shop-text');
-      t.append(el('b', undefined, name), el('span', undefined, sub));
+      t.append(withIcon(el('b'), iconId, name), el('span', undefined, sub));
       const bs = el('div', 'shop-buttons');
       bs.append(...buttons);
       r.append(t, bs);
@@ -444,7 +483,7 @@ export class BaseScreen {
         b.addEventListener('click', () => void this.run('買っています', () => this.host.buy(g.itemId, n), `${it.name}を ${n} 個買いました。`));
         return b;
       });
-      const r = row(`${it.name}　${g.price} 通貨`, `${it.summary ?? ''}　持っている数 ${have}（狩りへ持ち出せるのは ${it.carryMax} 個まで）`, buttons);
+      const r = row(`${it.name}　${g.price} 通貨`, `${it.summary ?? ''}　持っている数 ${have}（狩りへ持ち出せるのは ${it.carryMax} 個まで）`, buttons, g.itemId);
       r.dataset.item = g.itemId;
       this.shopBody.appendChild(r);
     }
@@ -462,7 +501,7 @@ export class BaseScreen {
         b.addEventListener('click', () => void this.run('売っています', () => this.host.sell(g.itemId, n), `${name}を ${n} 個売りました（+${g.price * n} 通貨）。`));
         return b;
       });
-      const r = row(`${name}　${g.price} 通貨`, `持っている数 ${have}`, buttons);
+      const r = row(`${name}　${g.price} 通貨`, `持っている数 ${have}`, buttons, g.itemId);
       r.dataset.item = g.itemId;
       this.shopBody.appendChild(r);
     }
@@ -547,7 +586,7 @@ export class BaseScreen {
         const ul = el('ul', 'forge-cost');
         for (const i of chk.items) {
           const short = i.have < i.need;
-          ul.appendChild(el('li', short ? 'short' : undefined, `${c.materials.get(i.itemId)?.name ?? i.itemId} ${i.have} / ${i.need}${short ? rankName(i.itemId) : ''}`));
+          ul.appendChild(withIcon(el('li', short ? 'short' : undefined), i.itemId, `${c.materials.get(i.itemId)?.name ?? i.itemId} ${i.have} / ${i.need}${short ? rankName(i.itemId) : ''}`));
         }
         ul.appendChild(el('li', chk.money.have >= chk.money.need ? undefined : 'short', `通貨 ${chk.money.have} / ${chk.money.need}`));
         box.appendChild(ul);
