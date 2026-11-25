@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1300" viewBox="0 0 1800 1300" role="img" aria-labelledby="title desc">
+  <title id="title">灯継ぎの里 — 五段の俯瞰配置</title>
+  <desc id="desc">完成済みPNG配置図から編集用に再構成したベクター図。設計相対標高は水音の庭マイナス10m、炉の段マイナス3m、灯の広場0m、暮らしの段プラス8m、灯見の台プラス22m。最大高低差32m。距離と接続形状は概念で未実装。旧SVGの同一バイト復元ではない。</desc>
+  <defs>
+    <style>
+      text{font-family:'Noto Sans CJK JP','Noto Sans JP',sans-serif;fill:#293d39}
+      .heading{font-size:42px;font-weight:700}
+      .sub{font-size:22px;fill:#728075}
+      .region{font-size:28px;font-weight:700}
+      .height{font-size:24px;font-weight:700}
+      .label{font-size:22px}
+      .small{font-size:20px;fill:#728075}
+      .rule{stroke:#cbd1c1;stroke-width:2}
+      .roof{stroke:#2e423d;stroke-width:2;stroke-linejoin:round}
+      .route{fill:none;stroke-linejoin:round;stroke-linecap:round}
+      .route-living{stroke:#a77c48;stroke-width:3;stroke-dasharray:8 10}
+      .route-view{stroke:#4c8585;stroke-width:4;stroke-dasharray:10 9}
+      .index{font-size:24px;fill:#fff;font-weight:700;text-anchor:middle;dominant-baseline:central}
+      .index text{fill:#fff}
+    </style>
+    <marker id="flow-arrow" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 L11 6 L1 11 Z" fill="#dceff0"/></marker>
+    <g id="home-roof" class="roof"><path d="M0 12 L43 0 L88 9 L88 51 L44 43 L0 54 Z" fill="#aca78c"/><path d="M43 0 L44 43" fill="none" stroke="#e2dcc5"/><path d="M0 54 L44 43 L88 51" fill="none"/></g>
+  </defs>
+  <rect width="1800" height="1300" fill="#f3f0e7"/>
+  <text x="72" y="64" font-size="18" font-weight="700" fill="#a77c48" style="fill:#a77c48">VEILBOUND HUNTERS / HUB DESIGN 01</text>
+  <text x="72" y="116" class="heading">灯継ぎの里｜五段の俯瞰配置</text>
+  <text x="73" y="158" class="sub">高低差 32m ／ 中段に狩りの準備、上下段に暮らしと眺望を重ねる</text>
+  <path class="rule" d="M72 184 H1728"/>
+  <rect x="72" y="212" width="1148" height="976" rx="26" fill="#e6e9de"/>
+  <rect x="1250" y="212" width="478" height="976" rx="26" fill="#fcfaf4"/>
+
+  <!-- 北・水系。北側から南の谷側へ流下する。 -->
+  <text x="112" y="261" font-size="24" font-weight="700">N</text>
+  <path d="M120 277 L105 309 L120 302 L135 309 Z" fill="#293d39"/>
+  <text x="175" y="265" class="small">北・山側</text>
+  <path d="M347 233 C308 292 317 372 262 424 C204 475 172 541 163 622 C151 677 143 726 154 780 C169 858 173 880 163 930 C143 1036 211 1091 296 1160" fill="none" stroke="#8db3b4" stroke-width="34" stroke-linecap="round"/>
+  <path d="M347 233 C308 292 317 372 262 424 C204 475 172 541 163 622 C151 677 143 726 154 780 C169 858 173 880 163 930 C143 1036 211 1091 296 1160" fill="none" stroke="#dceff0" stroke-width="5" stroke-linecap="round"/>
+  <path d="M277 409 Q265 427 246 443" class="route" stroke="#dceff0" stroke-width="3" marker-end="url(#flow-arrow)"/>
+  <path d="M164 997 Q171 1026 187 1048" class="route" stroke="#dceff0" stroke-width="3" marker-end="url(#flow-arrow)"/>
+  <text x="111" y="466" font-size="24" font-weight="700" style="fill:#4e8387">沢</text>
+
+  <!-- 五段の概念平面。屋根や塔の高さは段の標高に含めない。 -->
+  <path d="M590 238 L995 220 L1162 280 L1120 400 L740 414 L540 354 Z" fill="#9ab3a4" stroke="#769585" stroke-width="3"/>
+  <path d="M540 362 L740 423 L1120 409 M540 370 L740 431 L1120 417" fill="none" stroke="#769585" stroke-width="2"/>
+  <path d="M360 407 L677 382 L835 429 L1110 411 L1168 514 L1035 588 L413 551 Z" fill="#bfccb6" stroke="#8aa080" stroke-width="3"/>
+  <path d="M413 559 L1035 596 M413 567 L1035 605" fill="none" stroke="#8aa080" stroke-width="2"/>
+  <path d="M405 606 L714 585 L1019 612 L1170 707 L1110 861 L785 877 L405 788 Z" fill="#e1d7ad" stroke="#aaa06e" stroke-width="3"/>
+  <path d="M405 796 L785 885 L1110 869 M405 804 L785 893 L1110 877" fill="none" stroke="#aaa06e" stroke-width="2"/>
+  <path d="M205 613 L363 565 L425 618 L561 756 L495 869 L294 892 L184 759 Z" fill="#d6c19d" stroke="#aa9268" stroke-width="3"/>
+  <path d="M269 900 L598 894 L1094 913 L1170 1011 L990 1097 L703 1121 L348 1069 L194 996 Z" fill="#c9dbd4" stroke="#89a89e" stroke-width="3"/>
+
+  <!-- 散策経路。生活の道から見晴らしの道で中段へ戻る。 -->
+  <path d="M1078 301 L1038 340 L842 362 L621 396 L619 454 L777 491 L1012 466 L1048 517 L842 567 L671 633 L811 741 M682 723 L646 783 L560 830 L592 924 L848 987 L1078 972" class="route" stroke="#f3ecda" stroke-width="25"/>
+  <path d="M1078 301 L1038 340 L842 362 L621 396 L619 454 L777 491 L1012 466 L1048 517 L842 567 L671 633 L811 741 M682 723 L646 783 L560 830 L592 924 L848 987 L1078 972" class="route route-living"/>
+  <path d="M1038 340 L1172 347 L1192 535 L1164 598 L1180 708 L1151 798 L1166 830 L1178 891 L1149 951 L1078 972" class="route" stroke="#e8eee5" stroke-width="23"/>
+  <path d="M1038 340 L1172 347 L1192 535 L1164 598 L1180 708 L1151 798 L1166 830 L1178 891 L1149 951 L1078 972" class="route route-view"/>
+
+  <!-- 主4施設の準備動線。工房は隣接する一段下。 -->
+  <path d="M433 749 L481 687 L550 678 L682 723 L811 741 L841 682 L1028 700 L1076 754 L1151 798 L970 803 L811 741" class="route" stroke="#fffaf1" stroke-width="23"/>
+  <path d="M433 749 L481 687 L550 678 L682 723 L811 741 L841 682 L1028 700 L1076 754 L1151 798 L970 803 L811 741" class="route" stroke="#c27d31" stroke-width="8"/>
+
+  <text x="560" y="278" class="region">灯見の台</text><text x="560" y="313" class="height">+22m</text>
+  <text x="399" y="433" class="region">暮らしの段</text><text x="399" y="466" class="height">+8m</text>
+  <text x="535" y="635" class="region">灯の広場</text><text x="535" y="668" class="height">0m</text>
+  <text x="223" y="634" class="region">炉の段</text><text x="223" y="669" class="height">-3m</text>
+  <text x="397" y="979" class="region">水音の庭</text><text x="397" y="1013" class="height">-10m</text>
+
+  <!-- 建物の屋根。位置と機能の模式表現。 -->
+  <g class="roof"><path d="M767 265 L841 251 L915 258 L919 328 L843 322 L771 335 Z" fill="#8f8d74"/><path d="M841 251 L843 322" stroke="#ded9c2" fill="none"/></g>
+  <g class="roof"><path d="M440 470 L477 451 L519 452 L531 501 L489 500 L451 520 Z" fill="#b5b197"/><path d="M477 451 L489 500" stroke="#e7dfc6" fill="none"/></g>
+  <g class="roof"><path d="M572 469 L614 465 L653 479 L646 531 L606 516 L565 519 Z" fill="#b7b399"/><path d="M614 465 L606 516" stroke="#e7dfc6" fill="none"/></g>
+  <g class="roof"><path d="M834 441 L896 424 L962 428 L968 496 L903 492 L841 509 Z" fill="#b5b196"/><path d="M896 424 L903 492" stroke="#e7dfc6" fill="none"/></g>
+  <g class="roof"><path d="M1049 454 L1088 454 L1123 473 L1110 519 L1077 499 L1037 499 Z" fill="#b5b196"/><path d="M1088 454 L1077 499" stroke="#e7dfc6" fill="none"/></g>
+  <g class="roof"><path d="M801 622 L847 611 L893 622 L893 662 L847 651 L801 662 Z" fill="#aaa27d"/><path d="M847 611 V651" stroke="#e8dec0" fill="none"/></g>
+  <g class="roof"><path d="M1000 619 L1054 619 L1105 638 L1096 692 L1045 675 L990 675 Z" fill="#b8b292"/><path d="M1054 619 L1045 675" stroke="#e8dec0" fill="none"/></g>
+  <g class="roof"><path d="M895 832 L936 815 L980 820 L987 858 L943 855 L902 873 Z" fill="#beb797"/><path d="M936 815 L943 855" stroke="#e8dec0" fill="none"/></g>
+  <g class="roof"><path d="M307 724 L358 697 L413 690 L431 757 L379 765 L329 791 Z" fill="#7d7b63"/><path d="M358 697 L379 765" stroke="#d8d2b8" fill="none"/></g>
+  <g class="roof"><path d="M917 990 L966 973 L1017 976 L1026 1032 L974 1028 L925 1046 Z" fill="#969e86"/><path d="M966 973 L974 1028" stroke="#e3dfc7" fill="none"/></g>
+
+  <!-- 水車は1基。 -->
+  <g fill="none" stroke="#8d7650"><circle cx="258" cy="978" r="33" stroke-width="7"/><path d="M258 946 V1010 M226 978 H290 M235 955 L281 1001 M235 1001 L281 955" stroke-width="4"/></g>
+  <circle cx="762" cy="776" r="13" fill="#edba60" stroke="#a47d44" stroke-width="4"/>
+  <text x="653" y="824" font-size="20" style="fill:#a47d44">広場の灯</text>
+  <circle cx="1078" cy="301" r="27" fill="#edce83" stroke="#7f896f" stroke-width="5"/>
+  <path d="M1078 277 L1089 300 L1078 315 L1067 300 Z" fill="#bd7d30"/>
+
+  <!-- 施設番号。 -->
+  <g stroke="#fffdf8" stroke-width="3">
+    <g fill="#c27d31"><circle cx="842" cy="682" r="19"/><circle cx="1028" cy="700" r="19"/><circle cx="970" cy="803" r="19"/><circle cx="433" cy="749" r="19"/></g>
+    <g fill="#293d39"><circle cx="891" cy="516" r="19"/><circle cx="843" cy="352" r="19"/><circle cx="1105" cy="329" r="19"/><circle cx="1048" cy="1004" r="19"/><circle cx="317" cy="982" r="19"/></g>
+  </g>
+  <g class="index"><text x="842" y="682">1</text><text x="1028" y="700">2</text><text x="970" y="803">3</text><text x="433" y="749">4</text><text x="891" y="516">5</text><text x="843" y="352">6</text><text x="1105" y="329">7</text><text x="1048" y="1004">8</text><text x="317" y="982">9</text></g>
+
+  <path d="M1139 778 L1156 792 L1145 813" class="route" stroke="#293d39" stroke-width="5"/>
+  <text x="980" y="894" class="small">中段から狩場へ</text>
+  <path d="M1157 798 H1207 V1065 L1130 1100" fill="none" stroke="#728075" stroke-width="1.5"/>
+  <rect x="990" y="1098" width="192" height="65" rx="8" fill="#293d39"/>
+  <text x="1086" y="1127" font-size="22" font-weight="700" text-anchor="middle" style="fill:#fffdf8">帰還・出発</text>
+  <text x="1086" y="1152" font-size="18" text-anchor="middle" style="fill:#e0e7d4">中段・0m</text>
+  <path d="M105 1146 H269 M105 1138 V1155 M187 1138 V1155 M269 1138 V1155" fill="none" stroke="#293d39" stroke-width="4"/>
+  <text x="104" y="1175" font-size="18" class="small">0</text><text x="217" y="1175" font-size="18" class="small">約20m</text>
+
+  <!-- 説明欄。 -->
+  <text x="1284" y="260" font-size="28" font-weight="700">階層を歩いて味わう</text>
+  <text x="1284" y="297" class="sub">北ほど高く、南ほど谷に近い。</text>
+  <path class="rule" d="M1284 326 H1694"/>
+  <text x="1284" y="368" font-size="24" font-weight="700" style="fill:#c27d31">毎回使う4施設</text>
+  <g fill="#c27d31"><circle cx="1304" cy="405" r="16"/><circle cx="1304" cy="463" r="16"/><circle cx="1304" cy="521" r="16"/><circle cx="1304" cy="579" r="16"/></g>
+  <g class="index"><text x="1304" y="405">1</text><text x="1304" y="463">2</text><text x="1304" y="521">3</text><text x="1304" y="579">4</text></g>
+  <g font-size="24" font-weight="700"><text x="1337" y="412">依頼板</text><text x="1337" y="470">商店</text><text x="1337" y="528">装備箱</text><text x="1337" y="586">工房</text></g>
+  <g class="small"><text x="1460" y="411">受付・狩りの選択</text><text x="1460" y="469">補充・素材の売却</text><text x="1460" y="527">装備変更・データ</text><text x="1460" y="585">武器と防具の強化</text></g>
+  <path class="rule" d="M1284 624 H1694"/>
+  <text x="1284" y="668" font-size="24" font-weight="700">散策と暮らしの目的地</text>
+  <g fill="#293d39"><circle cx="1304" cy="702" r="15"/><circle cx="1304" cy="749" r="15"/><circle cx="1304" cy="796" r="15"/><circle cx="1304" cy="843" r="15"/><circle cx="1304" cy="890" r="15"/></g>
+  <g class="index"><text x="1304" y="702">5</text><text x="1304" y="749">6</text><text x="1304" y="796">7</text><text x="1304" y="843">8</text><text x="1304" y="890">9</text></g>
+  <g class="label"><text x="1337" y="709">狩人の宿・民家</text><text x="1337" y="756">集会所</text><text x="1337" y="803">見張り灯</text><text x="1337" y="850">荷揚げ場</text><text x="1337" y="897">水車と水路</text></g>
+  <path class="rule" d="M1284 955 H1694"/>
+  <path d="M1285 986 H1340" stroke="#c27d31" stroke-width="8"/>
+  <path d="M1285 1025 H1340" fill="none" stroke="#a77c48" stroke-width="3" stroke-dasharray="7 7"/>
+  <path d="M1285 1064 H1340" fill="none" stroke="#4c8585" stroke-width="4" stroke-dasharray="10 9"/>
+  <g class="label"><text x="1360" y="993">準備の動線</text><text x="1360" y="1032">生活の道（坂・階段）</text><text x="1360" y="1071">見晴らしの道・水辺の戻り道</text></g>
+  <text x="1284" y="1121" font-size="22" font-weight="700">投影範囲：約120 × 110m</text>
+  <text x="1284" y="1156" class="small">「一覧」の施設アクセスを維持</text>
+  <text x="73" y="1231" class="small">設計提案・未実装。新施設名は仮称。概念配置／距離は試作で調整。平面図は坂や階段の施工形状を示しません。</text>
+  <text x="73" y="1269" class="small">吊り橋の上下を歩く立体交差はP2案。初期の必須動線には含めません。</text>
+</svg>

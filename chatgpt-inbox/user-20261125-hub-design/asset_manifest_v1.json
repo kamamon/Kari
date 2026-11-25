@@ -1,0 +1,112 @@
+{
+  "version": 1,
+  "design_date": "2026-11-25",
+  "project": "Kari / 灯継ぎの里",
+  "status": "design_proposal_not_implemented",
+  "design_reference_commit": "4851d57ecc24c8fd127508b084999cec5d0e975f",
+  "submission_reference_commit": "1e078bfce1e68f287ae577cf41d2fe5bafb94afa",
+  "assets": [
+    {
+      "path": "diagrams/hub_plan_editable_v1.svg",
+      "bytes": 12927,
+      "sha256": "db05fbdbb23b8761f05cec94cdc452a049f773ba5689d0a0c541232128231a78",
+      "git_blob_sha": "81012e1ebf2d0a106e0b2139be9562ec44c61618",
+      "format": "SVG",
+      "view_box": "0 0 1800 1300",
+      "provenance": "editable_vector_reconstructed_from_original_png"
+    },
+    {
+      "path": "diagrams/hub_plan_v1.png",
+      "bytes": 476241,
+      "sha256": "b9930d70e9754b5145b01e2033830aafebb1f165c9223066410cb01dda7c664f",
+      "git_blob_sha": "e72db38b3d303a323e80bcc166e910002c5cec15",
+      "format": "PNG",
+      "width": 1800,
+      "height": 1300,
+      "mode": "RGBA",
+      "alpha_channel": true,
+      "provenance": "original_bytes_recovered_and_verified"
+    },
+    {
+      "path": "diagrams/hub_section_editable_v1.svg",
+      "bytes": 10449,
+      "sha256": "7ba7383b3a76e77403b34f2e58942a7bd6384c4e223de80f6f54f89043775690",
+      "git_blob_sha": "bf7e6a0fc06a73a0739bff64db343a4a1b98f6eb",
+      "format": "SVG",
+      "view_box": "0 0 1800 1180",
+      "provenance": "editable_vector_reconstructed_from_original_png"
+    },
+    {
+      "path": "diagrams/hub_section_v1.png",
+      "bytes": 240509,
+      "sha256": "d764c4974f7964cdd3ca79603d320013de3f90ae91e5baa4633b67c29f0ae04f",
+      "git_blob_sha": "2d7df2b557d59c8368b849625baab10ac4972a7c",
+      "format": "PNG",
+      "width": 1800,
+      "height": 1180,
+      "mode": "RGBA",
+      "alpha_channel": true,
+      "provenance": "original_bytes_recovered_and_verified"
+    },
+    {
+      "path": "images/hub_lodge_interior_v1.png",
+      "bytes": 3084799,
+      "sha256": "d80c93c7974e0927f71ee849c7e93ed9fc0b59224582e7c159a353e3e0b3050a",
+      "git_blob_sha": "573c7e5c021dae17eaa9082f24c248ddac17b1d0",
+      "format": "PNG",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "alpha_channel": false,
+      "provenance": "original_bytes_recovered_and_verified"
+    },
+    {
+      "path": "images/hub_overlook_dusk_v1.png",
+      "bytes": 3240033,
+      "sha256": "f53963d6b17fa7f0f7280dabf2bdaf7a6d573e00359390ec3f25435752f77e74",
+      "git_blob_sha": "d09ab369a71af3981b6fd8cc5ddd774a8d049aff",
+      "format": "PNG",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "alpha_channel": false,
+      "provenance": "original_bytes_recovered_and_verified"
+    },
+    {
+      "path": "images/hub_panorama_v1.png",
+      "bytes": 3588421,
+      "sha256": "3de8d7acc5f7c4ffc716aebf47b165ca41de042bc55ff787675c09dab05e4fb3",
+      "git_blob_sha": "dadca1abc50dda568fd35c4f83ecc0e39ce0f7b8",
+      "format": "PNG",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "alpha_channel": false,
+      "provenance": "original_bytes_recovered_and_verified"
+    },
+    {
+      "path": "images/hub_plaza_eye_v2.png",
+      "bytes": 3336148,
+      "sha256": "9c82a63e01fd9e3efb99ffbe05d24274a15a44a510d4df813a5ced1fbf1dfa3c",
+      "git_blob_sha": "4cff01a3f49fce3d748200f1b1fe4071b0ed6884",
+      "format": "PNG",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "alpha_channel": false,
+      "provenance": "original_bytes_recovered_and_verified"
+    }
+  ],
+  "separate_pdf": {
+    "file_name": "Kari_Hub_Design_v1.pdf",
+    "included_in_git": false,
+    "pages": 16,
+    "bytes": 13413633,
+    "sha256": "80b3d39b7e27b8d71dd02ec9a8afe8f804e37c13b599db9e3f30c10ec4523c0c"
+  },
+  "notes": [
+    "All concept art has a background and is production reference, not a 3D asset.",
+    "PNG files and the separate PDF match original hashes. Markdown and editable SVG were reconstructed; former source byte identity is not claimed.",
+    "Elevation and distance values are proposals; runtime movement, camera and device performance are unverified."
+  ]
+}
