@@ -1,7 +1,10 @@
-// 大型 11 種の仮の動き（v0.17.0）。技ごとに「構え（W）」と「攻撃（S）」の 2 つの姿勢を、決まった名前の値（チャンネル）で書き、
-// 技データの時間（startup / active / recovery）に合わせて、休み → 構え → 攻撃 → 休み と混ぜる。
-// 値はラジアンと、体の高さ H に対する割合（yH）。side のある技（左右の技）は、向きのある値（yaw・roll・...Yaw）に side を掛ける。
-// 判定は技データの軌道（public/data/tracks/<id>.json）が持ち、ここは見た目だけ。判定とずれないように、時間は技データから取る。
+// 大型 11 種と幼体 8 種の動き（v0.17.0 → v0.21.0 で、種ごとに固有の鍵の姿勢へ）。
+// 技ごとに、決まった名前の値（チャンネル）の姿勢を、技データの時間（startup / active / recovery）の中の位置に並べ、
+// 鍵と鍵の間をなめらかにつなぐ（予備動作 → 打つ → 振り抜き → 戻り）。鍵の中身は tools/gen-monsters.py が種ごとに書き、
+// src/render/creaturePlans.ts の moves に入る（手で編集しない）。
+// 値はラジアンと、体の高さ H に対する割合（yH・z・x）。side のある技（左右の技）は、向きのある値（yaw・roll・...Yaw・x）に side を掛ける。
+// 判定は技データの軌道（public/data/tracks/<id>.json）が持つ。体の部位に付けた判定（設計図の bind）は、npm run monsters:bake が
+// この動きから軌道を作り直すので、見た目と判定がずれない。時間は技データから取る。
 import { smoothstep } from '../core/math';
 import type { ActionDef } from '../data/schemas';
 
@@ -9,20 +12,30 @@ export type LegKey = string;
 
 /** 姿勢の値。legs は「組（F・H・B・M1…）か *（全部）」に、.S（攻撃する側）/.O（反対側）を付けた名前 → [前後の振り, 持ち上げ, 外への開き] */
 export interface Pose {
+  /** 体の上下・前後・左右のずれ（H に対する割合。x は + が技の側） */
   yH?: number;
+  z?: number;
+  x?: number;
+  /** 体全体の傾き（pitch + で前が上がる、roll + で左が上がる、yaw + で左を向く） */
   pitch?: number;
   roll?: number;
   yaw?: number;
+  /** 胴の前の側の曲げ（横・縦）と、ねじり */
   spineYaw?: number;
   spinePitch?: number;
+  twist?: number;
+  /** 首（+ で上げる）・頭・顎 */
   neckPitch?: number;
   neckYaw?: number;
   headPitch?: number;
   headYaw?: number;
+  headRoll?: number;
   jaw?: number;
+  /** 尾（tailYaw + で左へ、tailPitch + で上げる、tailCurl で先を巻く、tailWave で波打たせる） */
   tailYaw?: number;
   tailPitch?: number;
   tailCurl?: number;
+  tailWave?: number;
   crest?: number;
   wing?: number;
   /** 攻撃する側の翼だけ */
@@ -39,88 +52,55 @@ export interface Pose {
   ring?: number;
   archFront?: number;
   archBack?: number;
+  /** ひれ足を開く（+）・畳む（-）（v0.21.0。キリサーヴ・ヒナサルヴ） */
+  fin?: number;
   clawR?: [number, number];
   clawL?: [number, number];
   legs?: Record<LegKey, [number, number, number?]>;
 }
 
+/**
+ * 動きの鍵の姿勢（v0.21.0）。技の時間の 3 つの区間（w = 構え、s = 攻撃、r = 後隙）の中の位置 t（0〜1）で、その姿勢になる。
+ * 鍵の間は、なめらかにつなぐ（e: io = ゆっくり出て、ゆっくり着く / o = 速く出て、ゆっくり着く（打つ・振る）/ i = ゆっくり出て、速く着く（叩きつけ）/ lin = 一定）。
+ * e は、その鍵へ向かう区間の決まり。技の始め（0）と終わり（後隙の 1）は、鍵が無ければ、ふだんの姿勢。
+ */
+export interface MoveKey {
+  p: 'w' | 's' | 'r';
+  t: number;
+  pose: Pose;
+  e?: 'io' | 'o' | 'i' | 'lin';
+}
+
 export interface MoveDef {
-  W: Pose;
-  S: Pose;
+  /** 鍵の姿勢の並び（予備動作 → 打つ → 振り抜き → 戻り） */
+  K: MoveKey[];
   /** 跳ぶ高さ（H に対する割合）。技の前へ進む区間で弧を描く */
   hop?: number;
-  /** 体を小刻みに震わせる大きさ（rad）。shakeIn: 構えの間だけ */
+  /** 体を小刻みに震わせる大きさ（rad）。shakeIn: その区間だけ（無ければ攻撃の後） */
   shake?: number;
-  shakeIn?: 'windup' | 'strike';
-  /** 攻撃の後、攻撃の姿勢を保つ割合（後隙の中で） */
-  hold?: number;
+  shakeIn?: 'windup' | 'strike' | 'all';
   /** 速く足を動かす（横への突進・泥掻き） */
   scurry?: number;
   paddle?: number;
   /** 体をくねらせる（長胴の突進）。wiggle: 小さく */
   und?: number;
   wiggle?: number;
-  /** 体ごと回る（殻振り） */
+  /** 体ごと回る（回数。+ で左回り）。攻撃の区間で回る */
   spin?: number;
   /** 輪になって転がる（テンガロ） */
   roll?: number;
-  /** 背の帆を、前から順に立てる */
-  seqSail?: number;
+  /** 並んだ物（帆・嚢）を、前から順に立てる・ふくらませる */
+  seq?: boolean;
 }
 
-export const CREATURE_MOVES: Record<string, MoveDef> = {
-  roar: {
-    W: { pitch: -0.1, neckPitch: 0.3, headPitch: 0.2, jaw: 0.3, crest: 0.5, wing: 0.4, sac: 0.5, sail: 0.6, glow: 0.6, tailPitch: 0.2, crown: 0.3, plates: 0.4, bags: 0.4, clawR: [0.4, 0], clawL: [0.4, 0], finger: 0.5 },
-    S: { pitch: 0.12, yH: 0.04, neckPitch: 0.3, headPitch: 0.2, jaw: 1, crest: 1, wing: 1, sac: 1, sail: 1, glow: 1, tailPitch: 0.45, crown: 0.6, plates: 1, bags: 1, clawR: [0.9, -0.3], clawL: [0.9, -0.3], finger: 1, ring: 0.15 },
-    shake: 0.035, hold: 0.7,
-  },
-  hop_side: { W: { yH: -0.16, roll: -0.12, legs: { '*': [0, 0.6] } }, S: { roll: 0.22, headYaw: 0.25, legs: { '*': [0, 0.7], 'H.S': [-0.5, 0.3, 0.5] } }, hop: 0.28 },
-  hop_back: { W: { yH: -0.18, pitch: -0.1, legs: { '*': [0, 0.6] } }, S: { pitch: 0.35, neckPitch: 0.2, crest: 0.6, legs: { F: [0.7, 0.9], H: [-0.3, 0.5] } }, hop: 0.32 },
-  leap: { W: { yH: -0.2, pitch: -0.12, wing: -0.2, bags: -0.4, legs: { '*': [0, 0.7] } }, S: { pitch: -0.22, wing: 0.9, bags: 0.6, legs: { '*': [0, 0.9] } }, hop: 0.35 },
-  glide: { W: { yH: -0.18, pitch: -0.1, wing: 0.5, legs: { '*': [0, 0.6] } }, S: { yH: -0.12, pitch: -0.15, wing: 1.1, neckPitch: -0.25, legs: { '*': [-0.4, 0.8] } } },
-  lunge: { W: { yH: -0.14, pitch: -0.18, neckPitch: -0.15, crest: -0.3, legs: { F: [0.2, 0.3], H: [-0.2, 0.4] } }, S: { pitch: -0.28, neckPitch: -0.45, headPitch: -0.2, crest: 0.2, legs: { F: [0.5, 0.2], H: [-0.5, 0.2] } } },
-  gust: { W: { crest: 1, neckPitch: 0.35, headPitch: 0.3, pitch: 0.12, jaw: 0.4 }, S: { crest: 1.3, neckPitch: -0.25, headPitch: -0.15, pitch: -0.1, jaw: 0.8 }, hold: 0.4 },
-  spit: { W: { neckPitch: 0.35, headPitch: 0.35, dish: 1, jaw: 0.3, pitch: 0.06 }, S: { neckPitch: -0.15, headPitch: -0.25, dish: -0.35, jaw: 1, pitch: -0.05 } },
-  slide: { W: { yH: 0.05, pitch: 0.12, legs: { '*': [0, 0.5] } }, S: { yH: -0.22, pitch: -0.08, neckPitch: -0.1, legs: { F: [0.6, 0.4], H: [-0.6, 0.4] } }, wiggle: 0.12 },
-  shoulder: { W: { yaw: -0.22, roll: 0.12, yH: -0.05, legs: { 'F.S': [0, 0.4] } }, S: { yaw: 0.35, roll: -0.15, pitch: -0.08, legs: { 'F.O': [-0.3, 0.3] } } },
-  paw: { W: { pitch: 0.12, legs: { F: [0.3, 0.8] } }, S: { pitch: -0.08, headPitch: -0.1, legs: { F: [0.5, 0.1] } }, paddle: 1 },
-  blast: { W: { sac: 1, neckPitch: 0.25, headPitch: 0.2, pitch: 0.08, yH: 0.03 }, S: { sac: 0.2, neckPitch: -0.1, headPitch: -0.1, pitch: -0.05, jaw: 1 }, shake: 0.025, hold: 0.5 },
-  slam_head: { W: { neckPitch: 0.6, headPitch: 0.45, pitch: 0.2, legs: { F: [0.15, 0.2] } }, S: { neckPitch: -0.55, headPitch: -0.35, pitch: -0.18, yH: -0.06 } },
-  shiver: { W: { sac: 0.6, yH: -0.04 }, S: { pitch: -0.12, yH: -0.06, sac: 0.2, legs: { F: [0.4, 0.2], H: [-0.3, 0.2] } }, shake: 0.05, shakeIn: 'windup' },
-  curtain: { W: { wing: 1, neckPitch: 0.3, headPitch: 0.1, pitch: 0.12 }, S: { wing: 1.3, neckPitch: -0.2, pitch: -0.1 }, hold: 0.4 },
-  thrust_head: { W: { neckPitch: 0.45, headPitch: 0.35, pitch: 0.1, yH: -0.06 }, S: { neckPitch: -0.75, headPitch: -0.35, pitch: -0.3, yH: -0.12 } },
-  wing_sweep: { W: { yaw: -0.2, wingS: 1, roll: 0.06 }, S: { yaw: 0.35, wingS: -0.4 } },
-  kick_front: { W: { pitch: 0.1, legs: { 'F.S': [-0.4, 1], 'B.S': [-0.5, 1] } }, S: { pitch: -0.06, legs: { 'F.S': [1.0, 0.3], 'B.S': [1.1, 0.25] } } },
-  spark_tail: { W: { tailPitch: 0.45, glow: 1, wing: 0.3, neckPitch: 0.15 }, S: { tailPitch: -0.3, glow: 1, headPitch: -0.15 }, hold: 0.3 },
-  sweep_tail: { W: { yaw: -0.25, spineYaw: -0.25, tailYaw: -0.7 }, S: { yaw: 0.6, spineYaw: 0.35, tailYaw: 1.4 } },
-  sweep_body: { W: { spineYaw: 0.55, neckYaw: 0.4, headYaw: 0.25 }, S: { spineYaw: -0.6, neckYaw: -0.5, headYaw: -0.3 } },
-  sweep_body_side: { W: { spineYaw: -0.4, tailYaw: 0.5, sail: 0.6 }, S: { spineYaw: 0.5, tailYaw: -0.6, roll: 0.15 } },
-  claw_pinch: { W: { clawR: [0.7, -0.2], finger: 1, pitch: 0.06 }, S: { clawR: [-0.05, 0.5], finger: -0.2, pitch: -0.05 } },
-  claw_fan: { W: { clawR: [0.4, -0.6], clawL: [0.4, -0.6], finger: 1 }, S: { clawR: [0, 0.6], clawL: [0, 0.6], finger: 0 } },
-  dash_side: { W: { yH: -0.1, roll: -0.12, legs: { '*': [0, 0.5] } }, S: { roll: 0.12, legs: { '*': [0, 0.3] } }, scurry: 1 },
-  shell_swing: { W: { plates: 1, roll: 0.15, yH: 0.04 }, S: { plates: 0.6 }, spin: 1 },
-  roll: { W: { ring: 1, yH: -0.1 }, S: { ring: 1, yH: -0.1 }, roll: 1, hold: 0.15 },
-  arch_drop: { W: { archFront: 1 }, S: { archFront: -0.35 } },
-  hook_sweep: { W: { yaw: -0.25, roll: -0.1 }, S: { yaw: 0.4, roll: 0.15 } },
-  tail_strike: { W: { tailPitch: 0.9, tailCurl: 0.5, archBack: 1 }, S: { tailPitch: -0.5, archBack: -0.3 } },
-  spray_rear: { W: { pitch: -0.15, tubes: 1, yaw: -0.2 }, S: { pitch: -0.1, tubes: 1, yaw: 0.25 } },
-  foreleg_sweep: { W: { pitch: 0.1, legs: { M1: [0.3, 0.9] } }, S: { pitch: -0.05, legs: { M1: [-0.5, 0.4] } } },
-  drip: { W: { pitch: -0.25, yH: 0.06 }, S: { pitch: 0.05 } },
-  crawl_charge: { W: { yH: -0.12, neckPitch: -0.1, legs: { '*': [-0.4, 0.4] } }, S: { yH: -0.1, legs: { '*': [-0.5, 0.3] } }, und: 1 },
-  ring_slam: { W: { spinePitch: 0.45, neckPitch: 0.3, legs: { F: [0.3, 0.9] } }, S: { spinePitch: -0.2, neckPitch: -0.3, legs: { F: [0.2, 0] } } },
-  ice_row: { W: { sail: 1, neckPitch: 0.2 }, S: { sail: 1, neckPitch: -0.15, headPitch: -0.1 }, seqSail: 1 },
-  mist_ball: { W: { crown: 1, glow: 1, headPitch: 0.25, neckPitch: 0.15 }, S: { crown: -0.3, glow: 0.6, headPitch: -0.3, neckPitch: -0.1 } },
-  stomp_front: { W: { pitch: 0.45, yH: 0.08, legs: { F: [0.7, 1] } }, S: { pitch: -0.08, yH: -0.04, legs: { F: [0.3, 0] } } },
-};
-
 /** 向きのある値（左右の技で side を掛ける） */
-const SIDED = new Set(['roll', 'yaw', 'spineYaw', 'neckYaw', 'headYaw', 'tailYaw']);
+const SIDED = new Set(['roll', 'yaw', 'spineYaw', 'neckYaw', 'headYaw', 'tailYaw', 'x', 'headRoll', 'twist']);
 
 export interface MoveSample {
   pose: Pose;
-  /** 構え・攻撃・後隙のどこか（0〜1 の進み） */
+  /** 構え・攻撃・後隙のどこか */
   stage: 'windup' | 'strike' | 'recover';
-  /** 攻撃の姿勢の強さ（0〜1）。震え・跳び・回るの量に使う */
+  /** 攻撃の強さ（0〜1）。震え・跳び・回るの量に使う */
   strike: number;
   /** 構えの進み（0〜1） */
   windup: number;
@@ -128,53 +108,66 @@ export interface MoveSample {
 
 const ease = (u: number): number => smoothstep(Math.max(0, Math.min(1, u)));
 const easeOut = (u: number): number => 1 - (1 - Math.max(0, Math.min(1, u))) ** 2;
+const easeIn = (u: number): number => Math.max(0, Math.min(1, u)) ** 2;
+const EASE = { io: ease, o: easeOut, i: easeIn, lin: (u: number) => Math.max(0, Math.min(1, u)) };
 
-/** 技データの時間で、構え → 攻撃 → 休み を混ぜる。t は描画の tick（小数）。 */
-export function sampleMove(def: MoveDef, action: ActionDef, t: number, side: number, amp: number): MoveSample {
-  const D = action.durationTicks;
-  const act = action.phases.find((p) => p.id === 'active');
-  // 攻撃の区間が無い技（咆哮）は、全体の 3 割で構え、4 割半までに攻撃の姿勢へ
-  const a0 = act ? act.from : Math.round(D * 0.3);
-  const a1 = act ? act.to : Math.round(D * 0.45);
-  let wW = 0, wS = 0, stage: MoveSample['stage'];
-  if (t < a0) {
-    stage = 'windup';
-    wW = ease(t / Math.max(1, a0));
-  } else if (t < a1) {
-    stage = 'strike';
-    wS = easeOut((t - a0) / Math.max(1, a1 - a0));
-    wW = 1 - wS;
-  } else {
-    stage = 'recover';
-    const hold = def.hold ?? 0.25;
-    const v = (t - a1) / Math.max(1, D - a1);
-    wS = 1 - ease((v - hold) / Math.max(0.05, 1 - hold));
-  }
-  const pose: Pose = {};
-  const mix = (k: keyof Pose, a: number | undefined, b: number | undefined): void => {
-    const v = ((a ?? 0) * wW + (b ?? 0) * wS) * amp * (SIDED.has(k) ? side : 1);
-    if (v !== 0) (pose as Record<string, number>)[k] = v;
-  };
-  const keys = new Set([...Object.keys(def.W), ...Object.keys(def.S)]);
-  for (const k of keys) {
-    if (k === 'legs' || k === 'clawR' || k === 'clawL') continue;
-    mix(k as keyof Pose, (def.W as Record<string, number>)[k], (def.S as Record<string, number>)[k]);
-  }
-  for (const c of ['clawR', 'clawL'] as const) {
-    const a = def.W[c], b = def.S[c];
-    if (a || b) pose[c] = [((a?.[0] ?? 0) * wW + (b?.[0] ?? 0) * wS) * amp, ((a?.[1] ?? 0) * wW + (b?.[1] ?? 0) * wS) * amp];
-  }
-  const legKeys = new Set([...Object.keys(def.W.legs ?? {}), ...Object.keys(def.S.legs ?? {})]);
-  if (legKeys.size) {
-    pose.legs = {};
-    for (const k of legKeys) {
-      const a = def.W.legs?.[k], b = def.S.legs?.[k];
-      pose.legs[k] = [
-        ((a?.[0] ?? 0) * wW + (b?.[0] ?? 0) * wS) * amp,
-        ((a?.[1] ?? 0) * wW + (b?.[1] ?? 0) * wS) * amp,
-        ((a?.[2] ?? 0) * wW + (b?.[2] ?? 0) * wS) * amp,
-      ];
+/** 姿勢の値を、重み付きで足す（向きのある値は side を掛ける） */
+export function addScaled(into: Pose, p: Pose, w: number, side: number): void {
+  if (w === 0) return;
+  for (const [k, v] of Object.entries(p) as [keyof Pose, unknown][]) {
+    if (k === 'legs') {
+      into.legs ??= {};
+      for (const [lk, lv] of Object.entries(v as Record<string, [number, number, number?]>)) {
+        const cur = into.legs[lk] ?? [0, 0, 0];
+        into.legs[lk] = [cur[0] + lv[0] * w, cur[1] + lv[1] * w, (cur[2] ?? 0) + (lv[2] ?? 0) * w];
+      }
+    } else if (k === 'clawR' || k === 'clawL') {
+      const cv = v as [number, number];
+      const cur = into[k] ?? [0, 0];
+      into[k] = [cur[0] + cv[0] * w, cur[1] + cv[1] * w];
+    } else {
+      const num = (v as number) * w * (SIDED.has(k) ? side : 1);
+      (into as Record<string, number>)[k] = ((into as Record<string, number>)[k] ?? 0) + num;
     }
   }
-  return { pose, stage, strike: stage === 'windup' ? 0 : wS, windup: stage === 'windup' ? wW : 1 };
+}
+
+/** 鍵の並びを、0〜1 の位置 u で補間する（しぐさ・倒れる動きにも使う）。鍵の時刻は at(k) で決める */
+export function sampleKeyList(keys: readonly { at: number; pose: Pose; e?: MoveKey['e'] }[], u: number, side = 1, amp = 1): Pose {
+  const pose: Pose = {};
+  if (keys.length === 0) return pose;
+  let i = 0;
+  while (i < keys.length - 2 && keys[i + 1]!.at <= u) i++;
+  const k0 = keys[i]!, k1 = keys[Math.min(keys.length - 1, i + 1)]!;
+  const f = k1.at > k0.at ? (u - k0.at) / (k1.at - k0.at) : 1;
+  const w = EASE[k1.e ?? 'io'](f);
+  addScaled(pose, k0.pose, (1 - w) * amp, side);
+  addScaled(pose, k1.pose, w * amp, side);
+  return pose;
+}
+
+/** 技の区間（構えの終わり a0、攻撃の終わり a1） */
+export function moveSpan(action: ActionDef): { D: number; a0: number; a1: number } {
+  const D = action.durationTicks;
+  const act = action.phases.find((p) => p.id === 'active');
+  // 攻撃の区間が無い技（咆哮・威嚇）は、全体の 3 割で構え、4 割半までを「攻撃」の区間とみなす
+  return { D, a0: act ? act.from : Math.round(D * 0.3), a1: act ? act.to : Math.round(D * 0.45) };
+}
+
+/** 鍵の時刻（技の tick） */
+export function keyTick(k: MoveKey, D: number, a0: number, a1: number): number {
+  return k.p === 'w' ? k.t * a0 : k.p === 's' ? a0 + k.t * (a1 - a0) : a1 + k.t * (D - a1);
+}
+
+/** 技データの時間で、鍵の姿勢を混ぜる。t は描画の tick（小数）。 */
+export function sampleMove(def: MoveDef, action: ActionDef, t: number, side: number, amp: number): MoveSample {
+  const { D, a0, a1 } = moveSpan(action);
+  const keys: { at: number; pose: Pose; e?: MoveKey['e'] }[] = [{ at: 0, pose: {} }];
+  for (const k of def.K) keys.push({ at: keyTick(k, D, a0, a1), pose: k.pose, e: k.e });
+  keys.sort((a, b) => a.at - b.at);
+  if (keys[keys.length - 1]!.at < D - 1e-6) keys.push({ at: D, pose: {}, e: 'io' });
+  const pose = sampleKeyList(keys, t, side, amp);
+  const stage: MoveSample['stage'] = t < a0 ? 'windup' : t < a1 ? 'strike' : 'recover';
+  const strike = stage === 'windup' ? 0 : stage === 'strike' ? easeOut((t - a0) / Math.max(1, a1 - a0)) : Math.max(0, 1 - (t - a1) / Math.max(1, (D - a1) * 0.6));
+  return { pose, stage, strike, windup: stage === 'windup' ? ease(t / Math.max(1, a0)) : 1 };
 }

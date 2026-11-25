@@ -29,9 +29,12 @@
     "cooldownTicks": [45, 85],
     "choices": [
       {"actionId": "monster.numaporon.mud_spit", "minDist": 3, "maxDist": 10, "maxAngleDeg": 40, "weight": 2.5, "cooldownTicks": 240},
-      {"actionId": "monster.numaporon.belly_slide", "minDist": 2, "maxDist": 7, "maxAngleDeg": 25, "weight": 2, "cooldownTicks": 300, "clearAhead": 4},
-      {"actionId": "monster.numaporon.mud_push_l", "minDist": 0, "maxDist": 2.6, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 40, "side": "left"},
-      {"actionId": "monster.numaporon.mud_push_r", "minDist": 0, "maxDist": 2.6, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 40, "side": "right"}
+      {"actionId": "monster.numaporon.belly_slide", "minDist": 2, "maxDist": 4.9, "maxAngleDeg": 25, "weight": 2, "cooldownTicks": 300, "clearAhead": 4},
+      {"actionId": "monster.numaporon.mud_push_l", "minDist": 0, "maxDist": 1.9, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 40, "side": "left"},
+      {"actionId": "monster.numaporon.mud_push_r", "minDist": 0, "maxDist": 1.9, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 40, "side": "right"},
+      {"actionId": "monster.numaporon.threat", "minDist": 2.5, "maxDist": 8, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 600},
+      {"actionId": "monster.numaporon.bite", "minDist": 0, "maxDist": 2.0, "maxAngleDeg": 30, "weight": 2.5},
+      {"actionId": "monster.numaporon.tail_slap", "minDist": 0, "maxDist": 1.6, "maxAngleDeg": 180, "weight": 2.4, "minAngleDeg": 120}
     ]
   }
 }

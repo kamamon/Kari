@@ -31,10 +31,23 @@
     "aggroRange": 200,
     "cooldownTicks": [55, 105],
     "choices": [
-      {"actionId": "monster.bornakel.sound_blast", "minDist": 3, "maxDist": 11, "maxAngleDeg": 35, "weight": 2.5, "cooldownTicks": 300},
-      {"actionId": "monster.bornakel.sac_slam", "minDist": 0, "maxDist": 7, "maxAngleDeg": 50, "weight": 2.5},
-      {"actionId": "monster.bornakel.bell_slam", "minDist": 0, "maxDist": 5, "maxAngleDeg": 35, "weight": 2.5},
-      {"actionId": "monster.bornakel.shiver_step", "minDist": 2, "maxDist": 6, "maxAngleDeg": 40, "weight": 2}
+      {"actionId": "monster.bornakel.threat", "minDist": 5, "maxDist": 14, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 700},
+      {"actionId": "monster.bornakel.retreat", "minDist": 0, "maxDist": 3.2, "maxAngleDeg": 180, "weight": 0.8, "cooldownTicks": 520},
+      {"actionId": "monster.bornakel.sound_blast", "minDist": 3, "maxDist": 10.9, "maxAngleDeg": 35, "weight": 2.5, "cooldownTicks": 300},
+      {"actionId": "monster.bornakel.sac_slam", "minDist": 0, "maxDist": 5.2, "maxAngleDeg": 70, "weight": 2.2, "side": "right"},
+      {"actionId": "monster.bornakel.sac_slam_l", "minDist": 0, "maxDist": 5.2, "maxAngleDeg": 70, "weight": 2.2, "side": "left"},
+      {"actionId": "monster.bornakel.bell_slam", "minDist": 0, "maxDist": 4.2, "maxAngleDeg": 35, "weight": 2.5},
+      {"actionId": "monster.bornakel.shiver_step", "minDist": 2, "maxDist": 5.8, "maxAngleDeg": 40, "weight": 2},
+      {"actionId": "monster.bornakel.bell_swing_l", "minDist": 0, "maxDist": 4.1, "maxAngleDeg": 110, "weight": 2.2, "minAngleDeg": 25, "side": "left"},
+      {"actionId": "monster.bornakel.bell_swing_r", "minDist": 0, "maxDist": 4.1, "maxAngleDeg": 110, "weight": 2.2, "minAngleDeg": 25, "side": "right"},
+      {"actionId": "monster.bornakel.triple_boom", "minDist": 3, "maxDist": 10, "maxAngleDeg": 35, "weight": 1.4, "cooldownTicks": 600},
+      {"actionId": "monster.bornakel.resonant_stomp", "minDist": 0, "maxDist": 4.5, "maxAngleDeg": 60, "weight": 1.8, "cooldownTicks": 360},
+      {"actionId": "monster.bornakel.rump_bump", "minDist": 0, "maxDist": 4.2, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 120},
+      {"actionId": "monster.bornakel.chest_ram", "minDist": 6, "maxDist": 11.3, "maxAngleDeg": 25, "weight": 1.6, "cooldownTicks": 420, "clearAhead": 8},
+      {"actionId": "monster.bornakel.sonic_ring", "minDist": 0, "maxDist": 4, "maxAngleDeg": 180, "weight": 1.2, "cooldownTicks": 640},
+      {"actionId": "monster.bornakel.tap_line", "minDist": 5, "maxDist": 16, "maxAngleDeg": 40, "weight": 1.4, "cooldownTicks": 420},
+      {"actionId": "monster.bornakel.scoop", "minDist": 0, "maxDist": 4.1, "maxAngleDeg": 35, "weight": 2.5},
+      {"actionId": "monster.bornakel.charge", "minDist": 8, "maxDist": 16.5, "maxAngleDeg": 25, "weight": 1.4, "cooldownTicks": 560, "clearAhead": 11}
     ]
   }
 }

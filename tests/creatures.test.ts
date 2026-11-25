@@ -3,9 +3,9 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import type { Content } from '../src/data/schemas';
 import type { SimEvent } from '../src/game/events';
 import { trackSegment } from '../src/game/tracks';
+import { newRun } from '../src/game/action';
 import { Simulation } from '../src/game/sim';
 import { CREATURE_PLANS } from '../src/render/creaturePlans';
-import { CREATURE_MOVES } from '../src/render/creatureMoves';
 import { CREATURE_ART } from '../src/render/creatureArt';
 import { applyStatus } from '../src/game/player';
 import { baseOptions, frame, loadContent, run } from './helpers';
@@ -68,7 +68,7 @@ describe('大型 11 種のデータ', () => {
     }
   });
 
-  it('部位は、登録簿の部位 4 つを含み、壊せる。技は登録簿の 4 つ（左右のあるものは 2 つ）と咆哮', () => {
+  it('部位は、登録簿の部位 4 つを含み、壊せる。技はガルドロスと同じく 17 以上（咆哮・威嚇・退き・登録簿の 4 つ・種に固有の技。v0.21.0）', () => {
     for (const key of KEYS) {
       const m = content.monsters.get(`monster.${key}`)!;
       const sp = content.bestiary.species.find((s) => s.id === m.id)!;
@@ -77,19 +77,24 @@ describe('大型 11 種のデータ', () => {
       expect(m.parts.filter((p) => p.breakDurability !== null).length, key).toBeGreaterThanOrEqual(4);
       const acts = [...content.actions.keys()].filter((a) => a.startsWith(`${m.id}.`));
       expect(acts).toContain(`${m.id}.roar`);
-      expect(acts.length, key).toBeGreaterThanOrEqual(5);
+      expect(acts).toContain(`${m.id}.threat`);
+      expect(acts).toContain(`${m.id}.retreat`);
+      expect(acts.length, key).toBeGreaterThanOrEqual(17);
+      // 咆哮のほかは、どれも AI で選ばれる
+      for (const a of acts) if (a !== `${m.id}.roar`) expect(m.ai.choices.some((c) => c.actionId === a), a).toBe(true);
+      expect(new Set(acts.map((a) => content.actions.get(a)!.clip)).size, key).toBe(acts.length);
       expect(m.discover!.actionId).toBe(`${m.id}.roar`);
     }
   });
 
-  it('どの技にも見た目の動き（設計図の moves と、動きの型）がある', () => {
+  it('どの技にも見た目の動き（設計図の moves の鍵の姿勢）がある', () => {
     for (const key of KEYS) {
       const plan = CREATURE_PLANS[`monster.${key}`]!;
       for (const a of content.actions.values()) {
         if (!a.actionId.startsWith(`monster.${key}.`)) continue;
         const mv = plan.moves[a.clip];
         expect(mv, a.clip).toBeDefined();
-        expect(CREATURE_MOVES[mv!.kind], `${a.clip} → ${mv!.kind}`).toBeDefined();
+        expect(mv!.def.K.length, a.clip).toBeGreaterThan(0);
       }
     }
   });
@@ -163,6 +168,71 @@ describe('大型 11 種の戦い', () => {
     // 標的は -Z 向き。左（+X ローカル）はワールドの -X
     expect(m.pos.x).toBeLessThan(-2.2);
     expect(Math.abs(m.pos.z - 10)).toBeLessThan(0.6);
+  });
+
+  it('攻撃の判定はどれも、その判定が通る所に立つ狩人へ当たる（根元の動きを含めて。v0.21.0 の全部の技と判定）', () => {
+    const miss: string[] = [];
+    let n = 0;
+    for (const key of KEYS) {
+      for (const def of content.actions.values()) {
+        if (!def.actionId.startsWith(`monster.${key}.`)) continue;
+        for (const hw of def.hitWindows) {
+          // 1) 狩人を遠くに置いて動かし、判定の時間の中で、地面から届く所（下の端が 1.5m より低い所）のうち体からいちばん遠い点を、
+          //    判定の真ん中に近い tick で求める
+          const dry = arena(key);
+          const dm = dry.monsters[0]!;
+          dm.aiEnabled = false;
+          at(dry, 0, -40);
+          dm.action = newRun(def, 9001, dm.yaw);
+          const tr = content.tracks.get(hw.shapeTrack)!;
+          const tm = (hw.from + hw.to) / 2;
+          let target: { x: number; z: number } | null = null;
+          let bestT = Infinity;
+          for (let t = 0; t < hw.to; t++) {
+            dry.step(frame());
+            if (t < hw.from) continue;
+            const sg = trackSegment(tr, t);
+            let best = -1;
+            let cand: { x: number; z: number } | null = null;
+            for (let k = 0; k <= 10; k++) {
+              const lx = sg.a.x + ((sg.b.x - sg.a.x) * k) / 10, ly = sg.a.y + ((sg.b.y - sg.a.y) * k) / 10, lz = sg.a.z + ((sg.b.z - sg.a.z) * k) / 10;
+              if (ly - tr.radius > 1.5) continue;
+              const d = Math.hypot(lx, lz);
+              if (d > best) {
+                best = d;
+                // 標的のローカル（左 +X、前 +Z）→ ワールド
+                const c = Math.cos(dm.yaw), sn = Math.sin(dm.yaw);
+                cand = { x: dm.pos.x + lx * c + lz * sn, z: dm.pos.z - lx * sn + lz * c };
+              }
+            }
+            if (cand && Math.abs(t - tm) < Math.abs(bestT - tm)) {
+              bestT = t;
+              target = cand;
+            }
+          }
+          n++;
+          if (!target) {
+            miss.push(`${def.actionId}#${hw.id}（届く所が無い）`);
+            continue;
+          }
+          // 2) その場所に狩人を置いて、この判定だけを持つ技で、もう一度（ほかの判定に先に当たって飛ばされないように）
+          const sim = arena(key);
+          const m = sim.monsters[0]!;
+          m.aiEnabled = false;
+          sim.player.pos = { x: target.x, y: 0, z: target.z };
+          sim.player.prevPos = { ...sim.player.pos };
+          m.action = newRun({ ...def, hitWindows: [hw] }, 9002, m.yaw);
+          let ok = false;
+          for (let t = 0; t <= hw.to + 1 && !ok; t++) {
+            sim.step(frame());
+            ok = sim.drainEvents().some((e) => e.type === 'player_hurt') && t >= hw.from;
+          }
+          if (!ok) miss.push(`${def.actionId}#${hw.id}`);
+        }
+      }
+    }
+    expect(n).toBeGreaterThan(150);
+    expect(miss, miss.join(', ')).toEqual([]);
   });
 
   it('転がる（テンガロ）は、斜め前へ 11m 進む', () => {

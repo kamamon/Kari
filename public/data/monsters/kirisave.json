@@ -28,11 +28,23 @@
     "aggroRange": 200,
     "cooldownTicks": [50, 100],
     "choices": [
+      {"actionId": "monster.kirisave.threat", "minDist": 5, "maxDist": 15, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 700},
+      {"actionId": "monster.kirisave.retreat", "minDist": 0, "maxDist": 3.4, "maxAngleDeg": 180, "weight": 0.8, "cooldownTicks": 520},
       {"actionId": "monster.kirisave.ice_row", "minDist": 5, "maxDist": 18, "maxAngleDeg": 45, "weight": 2.5, "cooldownTicks": 360},
-      {"actionId": "monster.kirisave.slide", "minDist": 2.5, "maxDist": 16, "maxAngleDeg": 25, "weight": 2.5, "cooldownTicks": 300, "clearAhead": 10},
+      {"actionId": "monster.kirisave.slide", "minDist": 2.5, "maxDist": 13.7, "maxAngleDeg": 25, "weight": 2.5, "cooldownTicks": 300, "clearAhead": 10},
       {"actionId": "monster.kirisave.body_sweep_l", "minDist": 0, "maxDist": 5, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "left"},
       {"actionId": "monster.kirisave.body_sweep_r", "minDist": 0, "maxDist": 5, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "right"},
-      {"actionId": "monster.kirisave.tail_slam", "minDist": 0, "maxDist": 7, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 120}
+      {"actionId": "monster.kirisave.tail_slam", "minDist": 0, "maxDist": 5.7, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 120},
+      {"actionId": "monster.kirisave.bite", "minDist": 0, "maxDist": 6, "maxAngleDeg": 30, "weight": 2.5},
+      {"actionId": "monster.kirisave.frost_breath", "minDist": 3, "maxDist": 10.5, "maxAngleDeg": 30, "weight": 1.8, "cooldownTicks": 420},
+      {"actionId": "monster.kirisave.sail_slash_l", "minDist": 0, "maxDist": 4.2, "maxAngleDeg": 120, "weight": 2, "minAngleDeg": 30, "side": "left"},
+      {"actionId": "monster.kirisave.sail_slash_r", "minDist": 0, "maxDist": 4.2, "maxAngleDeg": 120, "weight": 2, "minAngleDeg": 30, "side": "right"},
+      {"actionId": "monster.kirisave.ice_ring", "minDist": 0, "maxDist": 4.5, "maxAngleDeg": 180, "weight": 1.2, "cooldownTicks": 600},
+      {"actionId": "monster.kirisave.coil_slam", "minDist": 0, "maxDist": 5.4, "maxAngleDeg": 35, "weight": 2.2},
+      {"actionId": "monster.kirisave.tail_whip_l", "minDist": 0, "maxDist": 5.8, "maxAngleDeg": 180, "weight": 2, "minAngleDeg": 100, "side": "left"},
+      {"actionId": "monster.kirisave.tail_whip_r", "minDist": 0, "maxDist": 5.8, "maxAngleDeg": 180, "weight": 2, "minAngleDeg": 100, "side": "right"},
+      {"actionId": "monster.kirisave.ice_burst", "minDist": 6, "maxDist": 18, "maxAngleDeg": 90, "weight": 1.4, "cooldownTicks": 480},
+      {"actionId": "monster.kirisave.slide_long", "minDist": 8, "maxDist": 19.5, "maxAngleDeg": 25, "weight": 1.5, "cooldownTicks": 520, "clearAhead": 14}
     ]
   }
 }

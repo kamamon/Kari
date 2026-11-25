@@ -29,12 +29,23 @@
     "aggroRange": 200,
     "cooldownTicks": [50, 100],
     "choices": [
-      {"actionId": "monster.razmer.body_sweep_l", "minDist": 0, "maxDist": 6, "maxAngleDeg": 110, "weight": 2.5, "side": "left"},
-      {"actionId": "monster.razmer.body_sweep_r", "minDist": 0, "maxDist": 6, "maxAngleDeg": 110, "weight": 2.5, "side": "right"},
-      {"actionId": "monster.razmer.crawl_charge", "minDist": 6, "maxDist": 22, "maxAngleDeg": 25, "weight": 2, "cooldownTicks": 480, "clearAhead": 14},
-      {"actionId": "monster.razmer.ring_slam", "minDist": 0, "maxDist": 5.5, "maxAngleDeg": 35, "weight": 2.5},
-      {"actionId": "monster.razmer.tail_wrap_l", "minDist": 0, "maxDist": 6, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 70, "side": "left"},
-      {"actionId": "monster.razmer.tail_wrap_r", "minDist": 0, "maxDist": 6, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 70, "side": "right"}
+      {"actionId": "monster.razmer.threat", "minDist": 5, "maxDist": 14, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 700},
+      {"actionId": "monster.razmer.retreat", "minDist": 0, "maxDist": 3.4, "maxAngleDeg": 180, "weight": 0.8, "cooldownTicks": 520},
+      {"actionId": "monster.razmer.body_sweep_l", "minDist": 0, "maxDist": 4.5, "maxAngleDeg": 110, "weight": 2.5, "side": "left"},
+      {"actionId": "monster.razmer.body_sweep_r", "minDist": 0, "maxDist": 4.5, "maxAngleDeg": 110, "weight": 2.5, "side": "right"},
+      {"actionId": "monster.razmer.crawl_charge", "minDist": 6, "maxDist": 16.7, "maxAngleDeg": 25, "weight": 2, "cooldownTicks": 480, "clearAhead": 14},
+      {"actionId": "monster.razmer.ring_slam", "minDist": 0, "maxDist": 3.7, "maxAngleDeg": 35, "weight": 2.5},
+      {"actionId": "monster.razmer.tail_wrap_l", "minDist": 0, "maxDist": 4.7, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 70, "side": "left"},
+      {"actionId": "monster.razmer.tail_wrap_r", "minDist": 0, "maxDist": 4.7, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 70, "side": "right"},
+      {"actionId": "monster.razmer.bite", "minDist": 0, "maxDist": 6, "maxAngleDeg": 30, "weight": 2.5},
+      {"actionId": "monster.razmer.double_bite", "minDist": 0, "maxDist": 6.5, "maxAngleDeg": 30, "weight": 1.8, "cooldownTicks": 300},
+      {"actionId": "monster.razmer.tail_slam", "minDist": 0, "maxDist": 5.1, "maxAngleDeg": 180, "weight": 2.2, "minAngleDeg": 135},
+      {"actionId": "monster.razmer.coil_spin", "minDist": 0, "maxDist": 5, "maxAngleDeg": 180, "weight": 1.4, "cooldownTicks": 480},
+      {"actionId": "monster.razmer.quake", "minDist": 0, "maxDist": 5, "maxAngleDeg": 180, "weight": 1.2, "cooldownTicks": 600},
+      {"actionId": "monster.razmer.head_slam", "minDist": 2, "maxDist": 4.8, "maxAngleDeg": 30, "weight": 2},
+      {"actionId": "monster.razmer.side_roll_l", "minDist": 0, "maxDist": 3.6, "maxAngleDeg": 130, "weight": 1.6, "minAngleDeg": 40, "side": "left", "cooldownTicks": 300},
+      {"actionId": "monster.razmer.side_roll_r", "minDist": 0, "maxDist": 3.6, "maxAngleDeg": 130, "weight": 1.6, "minAngleDeg": 40, "side": "right", "cooldownTicks": 300},
+      {"actionId": "monster.razmer.lunge_sweep", "minDist": 0, "maxDist": 6, "maxAngleDeg": 40, "weight": 1.6, "cooldownTicks": 360}
     ]
   }
 }

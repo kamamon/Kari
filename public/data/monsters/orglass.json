@@ -30,11 +30,23 @@
     "aggroRange": 200,
     "cooldownTicks": [50, 100],
     "choices": [
-      {"actionId": "monster.orglass.pinch", "minDist": 0, "maxDist": 5, "maxAngleDeg": 40, "weight": 3},
-      {"actionId": "monster.orglass.dash_l", "minDist": 2, "maxDist": 9, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 45, "side": "left", "cooldownTicks": 240},
-      {"actionId": "monster.orglass.dash_r", "minDist": 2, "maxDist": 9, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 45, "side": "right", "cooldownTicks": 240},
-      {"actionId": "monster.orglass.fan_pinch", "minDist": 0, "maxDist": 5, "maxAngleDeg": 60, "weight": 2.5},
-      {"actionId": "monster.orglass.shell_swing", "minDist": 0, "maxDist": 3.6, "maxAngleDeg": 180, "weight": 2, "cooldownTicks": 300}
+      {"actionId": "monster.orglass.threat", "minDist": 5, "maxDist": 14, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 700},
+      {"actionId": "monster.orglass.retreat", "minDist": 0, "maxDist": 3.2, "maxAngleDeg": 180, "weight": 0.8, "cooldownTicks": 520},
+      {"actionId": "monster.orglass.pinch", "minDist": 0, "maxDist": 4.7, "maxAngleDeg": 40, "weight": 3},
+      {"actionId": "monster.orglass.dash_l", "minDist": 2, "maxDist": 7, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 45, "side": "left", "cooldownTicks": 240},
+      {"actionId": "monster.orglass.dash_r", "minDist": 2, "maxDist": 7, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 45, "side": "right", "cooldownTicks": 240},
+      {"actionId": "monster.orglass.fan_pinch", "minDist": 0, "maxDist": 4, "maxAngleDeg": 60, "weight": 2.5},
+      {"actionId": "monster.orglass.shell_swing", "minDist": 0, "maxDist": 3.6, "maxAngleDeg": 180, "weight": 2, "cooldownTicks": 300},
+      {"actionId": "monster.orglass.claw_slam", "minDist": 0, "maxDist": 4, "maxAngleDeg": 45, "weight": 2.2},
+      {"actionId": "monster.orglass.claw_sweep", "minDist": 0, "maxDist": 4.1, "maxAngleDeg": 80, "weight": 2.2},
+      {"actionId": "monster.orglass.jab", "minDist": 0, "maxDist": 3.7, "maxAngleDeg": 35, "weight": 2.5},
+      {"actionId": "monster.orglass.jab_combo", "minDist": 0, "maxDist": 4.5, "maxAngleDeg": 40, "weight": 2, "cooldownTicks": 240},
+      {"actionId": "monster.orglass.shell_drop", "minDist": 0, "maxDist": 3.4, "maxAngleDeg": 180, "weight": 1.6, "cooldownTicks": 360},
+      {"actionId": "monster.orglass.glass_shards", "minDist": 5, "maxDist": 18, "maxAngleDeg": 180, "weight": 1.2, "cooldownTicks": 600},
+      {"actionId": "monster.orglass.claw_double", "minDist": 0, "maxDist": 4, "maxAngleDeg": 45, "weight": 1.6, "cooldownTicks": 360},
+      {"actionId": "monster.orglass.sand_rake", "minDist": 0, "maxDist": 4.5, "maxAngleDeg": 40, "weight": 2},
+      {"actionId": "monster.orglass.rear_shove", "minDist": 0, "maxDist": 3.8, "maxAngleDeg": 180, "weight": 2.2, "minAngleDeg": 120},
+      {"actionId": "monster.orglass.charge", "minDist": 7, "maxDist": 13.5, "maxAngleDeg": 25, "weight": 1.5, "cooldownTicks": 520, "clearAhead": 10}
     ]
   }
 }

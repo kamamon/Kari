@@ -30,11 +30,25 @@
     "aggroRange": 200,
     "cooldownTicks": [55, 110],
     "choices": [
+      {"actionId": "monster.numeradon.threat", "minDist": 5, "maxDist": 14, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 700},
+      {"actionId": "monster.numeradon.retreat", "minDist": 0, "maxDist": 3.2, "maxAngleDeg": 180, "weight": 0.8, "cooldownTicks": 520},
       {"actionId": "monster.numeradon.mud_ball", "minDist": 6, "maxDist": 18, "maxAngleDeg": 45, "weight": 2.5, "cooldownTicks": 300},
-      {"actionId": "monster.numeradon.belly_slide", "minDist": 5, "maxDist": 14, "maxAngleDeg": 25, "weight": 2, "cooldownTicks": 420, "clearAhead": 8},
-      {"actionId": "monster.numeradon.push_l", "minDist": 0, "maxDist": 5, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 40, "side": "left"},
-      {"actionId": "monster.numeradon.push_r", "minDist": 0, "maxDist": 5, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 40, "side": "right"},
-      {"actionId": "monster.numeradon.splash", "minDist": 0, "maxDist": 4.6, "maxAngleDeg": 60, "weight": 3}
+      {"actionId": "monster.numeradon.belly_slide", "minDist": 5, "maxDist": 9.8, "maxAngleDeg": 25, "weight": 2, "cooldownTicks": 420, "clearAhead": 8},
+      {"actionId": "monster.numeradon.push_l", "minDist": 0, "maxDist": 3.8, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 40, "side": "left"},
+      {"actionId": "monster.numeradon.push_r", "minDist": 0, "maxDist": 3.8, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 40, "side": "right"},
+      {"actionId": "monster.numeradon.splash", "minDist": 0, "maxDist": 4.6, "maxAngleDeg": 60, "weight": 3},
+      {"actionId": "monster.numeradon.dish_slam", "minDist": 0, "maxDist": 4.5, "maxAngleDeg": 35, "weight": 2.5},
+      {"actionId": "monster.numeradon.mud_volley", "minDist": 7, "maxDist": 20, "maxAngleDeg": 50, "weight": 1.6, "cooldownTicks": 420},
+      {"actionId": "monster.numeradon.pressure_jet", "minDist": 4, "maxDist": 10.1, "maxAngleDeg": 25, "weight": 1.8, "cooldownTicks": 400},
+      {"actionId": "monster.numeradon.tail_slap", "minDist": 0, "maxDist": 3.8, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 130},
+      {"actionId": "monster.numeradon.tail_sweep_l", "minDist": 0, "maxDist": 3.3, "maxAngleDeg": 180, "weight": 2, "minAngleDeg": 70, "side": "left"},
+      {"actionId": "monster.numeradon.tail_sweep_r", "minDist": 0, "maxDist": 3.3, "maxAngleDeg": 180, "weight": 2, "minAngleDeg": 70, "side": "right"},
+      {"actionId": "monster.numeradon.wallow_l", "minDist": 0, "maxDist": 3.4, "maxAngleDeg": 130, "weight": 1.6, "minAngleDeg": 40, "side": "left", "cooldownTicks": 300},
+      {"actionId": "monster.numeradon.wallow_r", "minDist": 0, "maxDist": 3.4, "maxAngleDeg": 130, "weight": 1.6, "minAngleDeg": 40, "side": "right", "cooldownTicks": 300},
+      {"actionId": "monster.numeradon.bite", "minDist": 0, "maxDist": 4.8, "maxAngleDeg": 30, "weight": 2.5},
+      {"actionId": "monster.numeradon.front_slam", "minDist": 0, "maxDist": 3.9, "maxAngleDeg": 45, "weight": 2, "cooldownTicks": 260},
+      {"actionId": "monster.numeradon.mud_rain", "minDist": 0, "maxDist": 20, "maxAngleDeg": 180, "weight": 1.2, "cooldownTicks": 700},
+      {"actionId": "monster.numeradon.charge", "minDist": 7, "maxDist": 16, "maxAngleDeg": 25, "weight": 1.6, "cooldownTicks": 520, "clearAhead": 10}
     ]
   }
 }

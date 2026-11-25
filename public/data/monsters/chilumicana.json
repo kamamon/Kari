@@ -28,9 +28,13 @@
     "aggroRange": 30,
     "cooldownTicks": [35, 75],
     "choices": [
-      {"actionId": "monster.chilumicana.tail_jab", "minDist": 0, "maxDist": 3.0, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 100, "cooldownTicks": 180},
-      {"actionId": "monster.chilumicana.kick", "minDist": 0, "maxDist": 2.0, "maxAngleDeg": 40, "weight": 3},
-      {"actionId": "monster.chilumicana.glide_back", "minDist": 0, "maxDist": 1.8, "maxAngleDeg": 70, "weight": 2, "cooldownTicks": 300}
+      {"actionId": "monster.chilumicana.tail_jab", "minDist": 0, "maxDist": 1.9, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 100, "cooldownTicks": 180},
+      {"actionId": "monster.chilumicana.kick", "minDist": 0, "maxDist": 1.8, "maxAngleDeg": 40, "weight": 3},
+      {"actionId": "monster.chilumicana.glide_back", "minDist": 0, "maxDist": 1.6, "maxAngleDeg": 70, "weight": 2, "cooldownTicks": 300},
+      {"actionId": "monster.chilumicana.threat", "minDist": 2.5, "maxDist": 8, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 600},
+      {"actionId": "monster.chilumicana.peck", "minDist": 0, "maxDist": 1.3, "maxAngleDeg": 30, "weight": 2.5},
+      {"actionId": "monster.chilumicana.wing_slap_l", "minDist": 0, "maxDist": 1, "maxAngleDeg": 120, "weight": 2, "minAngleDeg": 30, "side": "left"},
+      {"actionId": "monster.chilumicana.wing_slap_r", "minDist": 0, "maxDist": 1, "maxAngleDeg": 120, "weight": 2, "minAngleDeg": 30, "side": "right"}
     ]
   }
 }

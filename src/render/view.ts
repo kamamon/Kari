@@ -76,13 +76,35 @@ const HAZARD_COLORS: Record<HazardLook, { ring: number; ball: number; glow: numb
   ash: { ring: 0xc0c0b8, ball: 0x9a9a92, glow: 0, dust: [0.66, 0.66, 0.62], spark: [0.8, 0.8, 0.76] },
 };
 
-/** 大型 11 種の吹き出し（技データの vfx の id）。rear = 尾の側から後ろへ */
-const CREATURE_VFX: Record<string, { count: number; speed: number; spread: number; life: number; color: [number, number, number]; bursts?: number; rings?: number; ringColor?: number; rear?: boolean; dirY?: number; y?: number }> = {
+/**
+ * 大型 11 種と幼体の吹き出し（技データの vfx の id）。rear = 尾の側から後ろへ、around = 体のまわりへ輪に（v0.21.0）。
+ * 見た目だけ（判定は技データの軌道と落下物）。
+ */
+const CREATURE_VFX: Record<string, { count: number; speed: number; spread: number; life: number; color: [number, number, number]; bursts?: number; rings?: number; ringColor?: number; rear?: boolean; around?: boolean; dirY?: number; y?: number }> = {
   gust: { count: 34, speed: 9, spread: 3.5, life: 0.7, color: [0.86, 0.88, 0.8], bursts: 2 },
   sound_wave: { count: 18, speed: 7, spread: 2.5, life: 0.6, color: [0.85, 0.6, 0.38], rings: 3, ringColor: 0xf0b070 },
   ash_cloud: { count: 44, speed: 4.5, spread: 5, life: 1.6, color: [0.62, 0.62, 0.6], bursts: 2, dirY: 0.05 },
   mud_splash: { count: 30, speed: 5, spread: 4, life: 0.8, color: [0.42, 0.32, 0.22], dirY: 0.3, y: 0.4 },
   poison_threads: { count: 34, speed: 4, spread: 4.5, life: 1.4, color: [0.62, 0.42, 0.7], rear: true, y: 0.5, dirY: 0 },
+  // v0.21.0: 体のまわり・後ろ・前への吹き出し
+  wind_ring: { count: 12, speed: 8, spread: 1.6, life: 0.7, color: [0.86, 0.88, 0.8], around: true, rings: 2, ringColor: 0xe6eadc, y: 0.9 },
+  sound_ring: { count: 8, speed: 6, spread: 1.2, life: 0.6, color: [0.85, 0.6, 0.38], around: true, rings: 3, ringColor: 0xf0b070, y: 1.0 },
+  ash_ring: { count: 14, speed: 3.5, spread: 2.5, life: 1.8, color: [0.62, 0.62, 0.6], around: true, y: 1.0, dirY: 0.05 },
+  spark_ring: { count: 10, speed: 7, spread: 1.5, life: 0.5, color: [0.95, 0.95, 0.45], around: true, rings: 2, ringColor: 0xf5f090, y: 0.6 },
+  quake_ring: { count: 10, speed: 5, spread: 1.4, life: 0.8, color: [0.6, 0.58, 0.5], around: true, rings: 3, ringColor: 0xe9e2c8, y: 0.3, dirY: 0.25 },
+  dust_ring: { count: 8, speed: 3.5, spread: 1.2, life: 0.8, color: [0.62, 0.62, 0.55], around: true, rings: 1, ringColor: 0xe9e2c8, y: 0.2, dirY: 0.2 },
+  ice_ring: { count: 12, speed: 6, spread: 1.8, life: 0.9, color: [0.82, 0.92, 1.0], around: true, rings: 2, ringColor: 0xd8ecff, y: 0.6, dirY: 0.35 },
+  glass_burst: { count: 12, speed: 5, spread: 2.4, life: 1.0, color: [0.8, 0.9, 0.95], around: true, y: 2.2, dirY: 0.7 },
+  poison_cloud: { count: 14, speed: 2.5, spread: 2.4, life: 2.0, color: [0.62, 0.42, 0.7], around: true, y: 0.7, dirY: 0.05 },
+  mist_gather: { count: 10, speed: -2.5, spread: 1.4, life: 0.9, color: [0.7, 0.95, 0.9], around: true, y: 1.6, dirY: 0 },
+  mist_burst: { count: 16, speed: 5, spread: 2.6, life: 1.6, color: [0.7, 0.95, 0.9], around: true, rings: 2, ringColor: 0xc8f2e8, y: 1.0, dirY: 0.1 },
+  mud_rear: { count: 26, speed: 4.5, spread: 3.5, life: 0.8, color: [0.42, 0.32, 0.22], rear: true, y: 0.4, dirY: 0.35 },
+  mud_up: { count: 36, speed: 6, spread: 2.5, life: 1.2, color: [0.42, 0.32, 0.22], y: 2.5, dirY: 2.5 },
+  spark_rear: { count: 24, speed: 6, spread: 3, life: 0.5, color: [0.95, 0.95, 0.45], rear: true, y: 0.4, dirY: 0.1 },
+  water_jet: { count: 40, speed: 13, spread: 1.0, life: 0.6, color: [0.6, 0.7, 0.8], bursts: 3, dirY: -0.08 },
+  frost_breath: { count: 40, speed: 8, spread: 2.2, life: 1.0, color: [0.86, 0.95, 1.0], bursts: 3, dirY: -0.1 },
+  venom_spray: { count: 30, speed: 7, spread: 2.5, life: 0.9, color: [0.85, 0.85, 0.35], bursts: 2, dirY: -0.1 },
+  web_spray: { count: 30, speed: 7, spread: 2.0, life: 1.0, color: [0.62, 0.42, 0.7], bursts: 2, dirY: 0.05 },
 };
 
 export class GameView {
@@ -739,6 +761,22 @@ export class GameView {
   /** 大型 11 種の吹き出し（風圧・音圧・灰の幕・泥跳ね・毒糸）。頭（または尾）の前へ、向きのある粒を出す。見た目だけ */
   private creatureVfx(id: string, m: Simulation['monsters'][number]): void {
     const v = CREATURE_VFX[id]!;
+    if (v.around) {
+      // 体のまわりへ、8 方向に吹き出す（速さが負なら、まわりから体へ集まる）
+      const R = Math.max(0.8, m.def.bodyRadius);
+      for (let k = 0; k < 8; k++) {
+        const a = m.yaw + (k * Math.PI) / 4;
+        const dx = Math.sin(a), dz = Math.cos(a);
+        const inward = v.speed < 0;
+        const r0 = inward ? R + 2.2 : R * 0.6;
+        const o = { x: m.pos.x + dx * r0, y: v.y ?? 0.8, z: m.pos.z + dz * r0 };
+        const s = inward ? -1 : 1;
+        this.dust.emitDir(v.count, o, { x: dx * s, y: v.dirY ?? 0, z: dz * s }, Math.abs(v.speed), v.spread, v.life, v.color, 0.4);
+      }
+      if (v.rings) for (let k = 1; k <= v.rings; k++) this.rings.spawn(m.pos.x, 0, m.pos.z, R + 0.8 + k * 0.9, 0.45 + k * 0.12, v.ringColor ?? 0xe9e2c8);
+      this.cam.addShake(0.12);
+      return;
+    }
     const plan = CREATURE_PLANS[m.def.id];
     const tip = plan ? plan.spine[v.rear ? 0 : plan.spine.length - 1]! : null;
     const z = tip && plan ? (tip[0] - plan.origin[0]) * plan.scale : v.rear ? -2 : 2;

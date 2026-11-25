@@ -8,7 +8,7 @@
 //   - 怯み・転倒・眠り・罠・死は、体の高さ・傾き・脚の折り方で表す。
 // 形・色・動きは、原画 1 枚から作った仮素材。正式モデル（GLB）が来たら置き換える。
 import {
-  Bone, BufferGeometry, Color, Euler, Float32BufferAttribute, Group, MeshStandardMaterial, SRGBColorSpace, ShapeUtils, Skeleton, SkinnedMesh, type Texture, TextureLoader, Uint16BufferAttribute, Vector2, Vector3,
+  Bone, BufferGeometry, Color, Euler, Float32BufferAttribute, Group, MeshStandardMaterial, NoColorSpace, RepeatWrapping, SRGBColorSpace, Quaternion, ShapeUtils, Skeleton, SkinnedMesh, type Texture, TextureLoader, Uint16BufferAttribute, Vector2, Vector3,
 } from 'three';
 import { assetUrl } from '../core/assets';
 import { angleDiff, smoothstep } from '../core/math';
@@ -17,12 +17,17 @@ import { isGrazing, isWatching } from '../game/herd';
 import { isWeak, type MonsterState } from '../game/monster';
 import { sampleCurve } from '../game/tracks';
 import { CREATURE_ART, type CreatureArt } from './creatureArt';
-import { CREATURE_MOVES, sampleMove, type Pose } from './creatureMoves';
-import type { CreaturePlan, ExtraPlan, LegPlan } from './creaturePlan';
+import { addScaled, sampleKeyList, sampleMove, type Pose } from './creatureMoves';
+import type { CreaturePlan, ExtraPlan, FidgetPlan, LegPlan } from './creaturePlan';
 import type { MonsterRig, MonsterRigCtx } from './monsterRig';
 
 const TAU = Math.PI * 2;
 const clamp = (v: number, a: number, b: number): number => Math.max(a, Math.min(b, v));
+/** 体の面の細かさ（v0.21.0 で、なめらかに）: 背骨の輪の点の数と、輪の間隔 (m)。脚も同じ */
+const SPINE_SEG = 28;
+const SPINE_STEP = 0.05;
+const LEG_SEG = 16;
+const LEG_STEP = 0.04;
 
 /** 頂点の骨の影響（骨の番号、重み） */
 type Inf = [number, number][];
@@ -104,7 +109,7 @@ function samplePath(pts: readonly Vector3[], step: number): Sample[] {
   let prev: Vector3 | null = null;
   for (let i = 0; i < pts.length - 1; i++) {
     const p0 = pts[Math.max(0, i - 1)]!, p1 = pts[i]!, p2 = pts[i + 1]!, p3 = pts[Math.min(pts.length - 1, i + 2)]!;
-    const n = clamp(Math.ceil(p1.distanceTo(p2) / step), 2, 14);
+    const n = clamp(Math.ceil(p1.distanceTo(p2) / step), 2, 40);
     for (let k = i === 0 ? 0 : 1; k <= n; k++) {
       const c = catmull(p0, p1, p2, p3, k / n);
       if (prev) u += prev.distanceTo(c);
@@ -150,6 +155,8 @@ class CreatureBody {
   readonly legs: LegRec[] = [];
   readonly main = new Buf();
   readonly glow = new Buf();
+  /** 目（v0.21.0）: 濡れて光る、別の材質 */
+  readonly eye = new Buf();
   readonly parts = new Map<string, PartRange[]>();
   /** 背骨の骨のある点の番号 → 骨の番号 */
   readonly spineBone = new Map<number, number>();
@@ -163,11 +170,78 @@ class CreatureBody {
   length = 1;
   private blend = 0.2;
 
+  /** 体の筒（背骨）の頂点の数（main の最初から）と、その頂点が胴（1）か、首・頭・尾（0）か。横たわる姿勢の高さ合わせと検査で使う */
+  spineVerts = 0;
+  torsoVert = new Uint8Array(0);
+
+  /** 体を支える頂点（胴の筒と、胴の大きな塊 = 袋・甲羅・嚢、胴に付いた塊）。横たわる姿勢では、ここの下を地面に着ける */
+  support = new Uint8Array(0);
+  private readonly blobRanges: [number, number][] = [];
+
   constructor(readonly plan: CreaturePlan, readonly art: CreatureArt) {
     this.buildBones();
     this.buildSpine();
+    this.spineVerts = this.main.count;
     for (const leg of this.legs) this.buildLeg(leg);
     for (const e of plan.extras) this.buildExtra(e);
+    const n = this.main.count;
+    this.support = new Uint8Array(n);
+    this.support.set(this.torsoVert);
+    for (let i = this.spineVerts; i < n; i++) {
+      const b = this.bones[this.mainBone(i)]!;
+      if (b.kind === 'own' && SUPPORT_CH.has(b.ch ?? '')) this.support[i] = 1;
+    }
+    // 胴に付いた塊（房・節など）も、胴の一部として地面に着ける
+    for (const [a, b] of this.blobRanges) {
+      for (let i = a; i < b; i++) {
+        const r = this.bones[this.mainBone(i)]!;
+        if (r.kind === 'spine' && (r.index === plan.root || r.role === 'b' || r.role === 'a')) this.support[i] = 1;
+      }
+    }
+  }
+
+  /** main の頂点 i を、いちばん強く動かす骨 */
+  mainBone(i: number): number {
+    let best = 0, bw = -1;
+    for (let k = 0; k < 4; k++) {
+      const w = this.main.sw[i * 4 + k]!;
+      if (w > bw) { bw = w; best = this.main.si[i * 4 + k]!; }
+    }
+    return best;
+  }
+
+  private hulls: Map<number, Vector3[]> | null = null;
+  /**
+   * 骨ごとの、形の端の点（その骨が動かす頂点のうち、14 の向きでいちばん外の点。動かす前の位置）。
+   * 横たわる間、脚や翼が地面へ潜っていないかを、安く測る（v0.21.0）
+   */
+  hull(bi: number): readonly Vector3[] {
+    if (!this.hulls) {
+      const dirs: Vector3[] = [];
+      for (const d of [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]]) dirs.push(new Vector3(d[0], d[1], d[2]));
+      for (const x of [-1, 1]) for (const y of [-1, 1]) for (const z of [-1, 1]) dirs.push(new Vector3(x, y, z).normalize());
+      const best = new Map<number, { d: number; i: number }[]>();
+      const pos = this.main.pos;
+      for (let i = 0; i < this.main.count; i++) {
+        const b = this.mainBone(i);
+        let row = best.get(b);
+        if (!row) {
+          row = dirs.map(() => ({ d: -Infinity, i: -1 }));
+          best.set(b, row);
+        }
+        const x = pos[i * 3]!, y = pos[i * 3 + 1]!, z = pos[i * 3 + 2]!;
+        dirs.forEach((dv, k) => {
+          const d = dv.x * x + dv.y * y + dv.z * z;
+          if (d > row[k]!.d) row[k] = { d, i };
+        });
+      }
+      this.hulls = new Map();
+      for (const [b, row] of best) {
+        const ids = [...new Set(row.map((r) => r.i))];
+        this.hulls.set(b, ids.map((i) => new Vector3(pos[i * 3]!, pos[i * 3 + 1]!, pos[i * 3 + 2]!)));
+      }
+    }
+    return this.hulls.get(bi) ?? [];
   }
 
   /** 原画の px → モンスターの座標 (m) */
@@ -230,7 +304,7 @@ class CreatureBody {
       }
     }
     // 背骨の領域（重みの分け方）
-    const samples = samplePath(this.spinePts, 0.09);
+    const samples = samplePath(this.spinePts, SPINE_STEP);
     this.spineSamples = samples;
     this.length = samples[samples.length - 1]!.u;
     const uAt = (i: number): number => samples.find((s) => s.at >= i - 1e-6)?.u ?? 0;
@@ -254,7 +328,8 @@ class CreatureBody {
         const x = (e.x ?? 0) * (side === 0 ? 1 : side);
         const at = this.m(e.own.at[0], e.own.at[1], x);
         const par = this.resolveBone(e.own.parent, side, at);
-        const order = /sail(\d+)/.exec(name)?.[1];
+        // 並ぶ物（帆 sail0…・嚢 sac0…）は、名前の数字が前からの順
+        const order = /(\d+)(?:_[LR])?$/.exec(name)?.[1];
         this.own.set(name, this.addBone(at, par, { kind: 'own', role: e.ch ?? '', index: 0, side: side === 0 ? Math.sign(x) : side, ch: e.ch, order: order ? Number(order) : undefined }));
       }
     }
@@ -337,30 +412,58 @@ class CreatureBody {
     cap(rings.length - 1, false);
   }
 
+  /** 太さの並び（[位置, 値…]）を、位置 at で補間する */
+  private static profAt(prof: readonly (readonly number[])[], at: number, k: number): number {
+    let lo = 0, hi = prof.length - 1;
+    if (at <= prof[0]![0]!) return prof[0]![k]!;
+    if (at >= prof[hi]![0]!) return prof[hi]![k]!;
+    while (hi - lo > 1) {
+      const mid = (lo + hi) >> 1;
+      if (prof[mid]![0]! <= at) lo = mid;
+      else hi = mid;
+    }
+    const a = prof[lo]!, b = prof[hi]!;
+    const f = (at - a[0]!) / Math.max(1e-9, b[0]! - a[0]!);
+    return a[k]! + (b[k]! - a[k]!) * f;
+  }
+
   private buildSpine(): void {
     const p = this.plan;
     const s = p.scale;
     const rad = p.spine.map((q) => [q[2] * s, q[3] * s, q[4] * s] as const);
+    const prof = p.profile;
     const rings = this.spineSamples.map((smp, k) => {
       const i = Math.min(p.spine.length - 2, Math.floor(smp.at));
       const f = smp.at - i;
       const r0 = rad[i]!, r1 = rad[i + 1]!;
-      const lerp = (a: number, b: number): number => a + (b - a) * f;
+      // 原画の輪郭から測った太さ（v0.21.0）があれば、それを使う
+      const lerp = (a: number, b: number, kk: number): number => (prof ? CreatureBody.profAt(prof, smp.at, kk) * s : a + (b - a) * f);
       // 進む向き（前後の点の差）
       const a = this.spineSamples[Math.max(0, k - 1)]!.c, b = this.spineSamples[Math.min(this.spineSamples.length - 1, k + 1)]!.c;
       const t = b.clone().sub(a).normalize();
       const right = new Vector3(1, 0, 0);
       const up = new Vector3().crossVectors(t, right).normalize();
-      return { c: smp.c, right, up, top: lerp(r0[0], r1[0]), bot: lerp(r0[1], r1[1]), side: lerp(r0[2], r1[2]), inf: regionWeights(smp.u, this.spineRegions, this.blend) };
+      return { c: smp.c, right, up, top: lerp(r0[0], r1[0], 1), bot: lerp(r0[1], r1[1], 2), side: lerp(r0[2], r1[2], 3), inf: regionWeights(smp.u, this.spineRegions, this.blend) };
     });
-    this.tube(this.main, rings, 18);
+    const base = this.main.count;
+    this.tube(this.main, rings, SPINE_SEG);
+    // 胴の輪（根元の点と、役が b・a の点）。ふたの中心は、両端の輪と同じ
+    const torso = this.spineSamples.map((smp) => {
+      const i = Math.round(smp.at);
+      return i === p.root || p.roles[i] === 'b' || p.roles[i] === 'a' ? 1 : 0;
+    });
+    const mask = new Uint8Array(this.main.count - base);
+    for (let k = 0; k < rings.length; k++) mask.fill(torso[k]!, k * SPINE_SEG, (k + 1) * SPINE_SEG);
+    mask[rings.length * SPINE_SEG] = torso[0]!;
+    mask[rings.length * SPINE_SEG + 1] = torso[rings.length - 1]!;
+    this.torsoVert = mask;
   }
 
   private buildLeg(leg: LegRec): void {
     const p = this.plan;
     const s = p.scale;
     const pts = leg.bones.map((b) => this.bones[b]!.world);
-    const samples = samplePath(pts, 0.07);
+    const samples = samplePath(pts, LEG_STEP);
     // 領域: 付け根の背骨の骨 → 関節ごとの骨
     const attach = this.boneForSpine(leg.plan.attach);
     const uAt = (j: number): number => samples.find((q) => q.at >= j - 1e-6)?.u ?? 0;
@@ -369,10 +472,12 @@ class CreatureBody {
     const regs: Region[] = [{ bone: attach, lo: -Infinity, hi: 0 }];
     for (let j = 0; j < n - 1; j++) regs.push({ bone: leg.bones[j]!, lo: uAt(j), hi: j === n - 2 ? Infinity : uAt(j + 1) });
     const blend = clamp(leg.length * 0.08, 0.04, 0.15);
+    const lprof = leg.plan.prof;
     const rings = samples.map((smp, k) => {
       const i = Math.min(pts.length - 2, Math.floor(smp.at));
       const f = smp.at - i;
-      const r = (leg.plan.r[i]! + (leg.plan.r[i + 1]! - leg.plan.r[i]!) * f) * s;
+      // 原画の輪郭から測った太さ（v0.21.0）があれば、それを使う
+      const r = (lprof ? CreatureBody.profAt(lprof, smp.at, 1) : leg.plan.r[i]! + (leg.plan.r[i + 1]! - leg.plan.r[i]!) * f) * s;
       const a = samples[Math.max(0, k - 1)]!.c, b = samples[Math.min(samples.length - 1, k + 1)]!.c;
       const t = b.clone().sub(a).normalize();
       let right = new Vector3().crossVectors(t, new Vector3(0, 0, 1));
@@ -382,17 +487,64 @@ class CreatureBody {
       return { c: smp.c, right, up, top: r, bot: r, side: r, inf: regionWeights(smp.u, regs, blend) };
     });
     const from = this.main.count;
-    this.tube(this.main, rings, 10);
+    this.tube(this.main, rings, LEG_SEG);
     // 足先の塊
     if (leg.plan.foot) {
       const last = pts[pts.length - 1]!;
       const lb = leg.bones[leg.bones.length - 1]!;
       const len = leg.plan.foot[0] * s, h = leg.plan.foot[1] * s;
       const w = Math.max(leg.plan.r[leg.plan.r.length - 1]! * s * 1.3, len * 0.35);
-      this.ellipsoid(this.main, new Vector3(last.x, Math.max(h * 0.5, last.y - h * 0.2), last.z + len * 0.22), len * 0.5, h * 0.55, w, 0, 0.92, () => [[lb, 1]], 12, 7);
+      const fc = new Vector3(last.x, Math.max(h * 0.5, last.y - h * 0.2), last.z + len * 0.22);
+      const toes = leg.plan.toes;
+      if (toes?.kind === 'hoof') {
+        // 蹄: 足先の塊の代わりに、硬くて暗い 2 つの爪（前へ細く）
+        for (const sx of [-1, 1]) {
+          this.ellipsoid(this.main, new Vector3(fc.x + sx * w * 0.42, h * 0.42, fc.z + len * 0.12), len * 0.42, h * 0.45, w * 0.5, 0.12, 0.42, () => [[lb, 1]], 12, 7);
+        }
+      } else {
+        this.ellipsoid(this.main, fc, len * 0.5, h * 0.55, w, 0, 0.92, () => [[lb, 1]], 12, 7);
+      }
+      if (toes && toes.kind !== 'hoof') this.addToes(fc, len, h, w, toes, lb);
     }
     if (leg.plan.group === 'clawR') this.markPart('claw_r', 'main', from, []);
     if (leg.plan.group === 'clawL') this.markPart('claw_l', 'main', from, []);
+  }
+
+  /**
+   * 足先の指（v0.21.0）。toe: 前へ扇に開いた丸い指（先に短い爪）。talon: 鳥の足（前へ長い指 n 本 + 後ろへ 1 本、先は下へ曲がった鉤爪）。
+   * どれも、脚の最後の骨に付く。
+   */
+  private addToes(fc: Vector3, len: number, h: number, w: number, t: NonNullable<LegPlan['toes']>, lb: number): void {
+    const inf = (): Inf => [[lb, 1]];
+    const n = Math.max(1, t.n);
+    const talon = t.kind === 'talon';
+    const L = len * t.len;
+    const spread = talon ? 0.42 : 0.32;
+    const dirs: { a: number; back: boolean }[] = [];
+    for (let i = 0; i < n; i++) dirs.push({ a: n === 1 ? 0 : (i / (n - 1) - 0.5) * 2 * spread, back: false });
+    if (talon) dirs.push({ a: Math.PI, back: true });
+    for (const d of dirs) {
+      const len2 = d.back ? L * 0.55 : L * (1 - Math.abs(d.a) * 0.35);
+      const dx = Math.sin(d.a), dz = Math.cos(d.a);
+      const r0 = talon ? h * 0.22 : h * 0.3;
+      // 付け根（足先の塊の前の縁）→ 先
+      const base = new Vector3(fc.x + dx * w * 0.55, talon ? h * 0.35 : h * 0.32, fc.z + dz * len * 0.32);
+      const tip = new Vector3(base.x + dx * len2, talon ? h * 0.16 : h * 0.2, base.z + dz * len2);
+      if (talon) {
+        // 指は 2 つの節（少し持ち上がって、先で地面へ）
+        const mid = base.clone().lerp(tip, 0.55).add(new Vector3(0, h * 0.12, 0));
+        this.cone(this.main, base, mid, r0, r0 * 0.8, 0.85, inf, false);
+        this.cone(this.main, mid, tip, r0 * 0.8, r0 * 0.55, 0.85, inf, false);
+      } else {
+        this.ellipsoid(this.main, base.clone().lerp(tip, 0.5), len2 * 0.55, r0, r0 * 1.05, 0, 0.9, inf, 10, 6);
+      }
+      if (t.claw > 0) {
+        // 爪: 暗く硬い円すい。鉤爪は下へ曲がる
+        const cl = L * t.claw;
+        const end = tip.clone().add(new Vector3(dx * cl * (talon ? 0.7 : 0.9), talon ? -h * 0.22 : -h * 0.08, dz * cl * (talon ? 0.7 : 0.9)));
+        this.cone(this.main, tip, end, r0 * (talon ? 0.55 : 0.6), r0 * 0.08, 0.32, inf, false);
+      }
+    }
   }
 
   private ellipsoid(b: Buf, c: Vector3, rz: number, ry: number, rx: number, pitch: number, shade: number, inf: (p: Vector3) => Inf, seg = 16, rows = 10, uvFrom?: (p: Vector3) => Vector3): void {
@@ -423,8 +575,10 @@ class CreatureBody {
     const s = p.scale;
     for (const side of e.mirror ? [1, -1] : [0]) {
       const x = (e.x ?? 0) * (side === 0 ? 1 : side);
-      const buf = e.glow ? this.glow : this.main;
-      const shade = e.shade ?? 1;
+      // 目（暗くて小さな塊）は、濡れて光る別の材質へ（v0.21.0）
+      const isEye = e.kind === 'blob' && (e.shade ?? 1) <= 0.3 && !!e.r && e.r[0] <= 40;
+      const buf = e.glow ? this.glow : isEye ? this.eye : this.main;
+      const shade = isEye ? 1 : e.shade ?? 1;
       const own: number[] = [];
       let bone = 0;
       let infAt: (q: Vector3) => Inf;
@@ -438,6 +592,7 @@ class CreatureBody {
       if (e.kind === 'blob' && e.c && e.r) {
         const c = this.m(e.c[0], e.c[1], x);
         this.ellipsoid(buf, c, e.r[0] * s, e.r[1] * s, e.r[2], e.pitch ?? 0, shade, infAt);
+        if (buf === this.main) this.blobRanges.push([from, buf.count]);
       } else if (e.kind === 'sheet' && e.pts) {
         this.sheet(buf, e, x, side, shade, infAt);
       } else if ((e.kind === 'cone' || e.kind === 'funnel') && e.a && e.b) {
@@ -575,8 +730,9 @@ class CreatureBody {
 }
 
 const ZERO_POSE = (): Required<Omit<Pose, 'legs' | 'clawR' | 'clawL'>> & { legs: Record<string, [number, number, number?]>; clawR: [number, number]; clawL: [number, number] } => ({
-  yH: 0, pitch: 0, roll: 0, yaw: 0, spineYaw: 0, spinePitch: 0, neckPitch: 0, neckYaw: 0, headPitch: 0, headYaw: 0, jaw: 0, tailYaw: 0, tailPitch: 0, tailCurl: 0,
-  crest: 0, wing: 0, wingS: 0, sac: 0, dish: 0, plates: 0, bags: 0, sail: 0, crown: 0, glow: 0, finger: 0, tubes: 0, ring: 0, archFront: 0, archBack: 0,
+  yH: 0, z: 0, x: 0, pitch: 0, roll: 0, yaw: 0, spineYaw: 0, spinePitch: 0, twist: 0, neckPitch: 0, neckYaw: 0, headPitch: 0, headYaw: 0, headRoll: 0, jaw: 0,
+  tailYaw: 0, tailPitch: 0, tailCurl: 0, tailWave: 0,
+  crest: 0, wing: 0, wingS: 0, sac: 0, dish: 0, plates: 0, bags: 0, sail: 0, crown: 0, glow: 0, finger: 0, tubes: 0, ring: 0, archFront: 0, archBack: 0, fin: 0,
   legs: {}, clawR: [0, 0], clawL: [0, 0],
 });
 type FullPose = ReturnType<typeof ZERO_POSE>;
@@ -613,6 +769,8 @@ function blendInto(a: FullPose, b: Pose, w: number): void {
 /** 貼る絵は、同じ絵を 1 回だけ読む（親と幼体・群れの仲間で使い回す） */
 const ART_CACHE = new Map<string, { tex: Texture | null; wait: ((t: Texture) => void)[] }>();
 function loadArt(file: string, done: (t: Texture) => void): void {
+  // 画面の無い所（Node の検査・判定の軌道を作る npm run monsters:bake）では、絵を読まない
+  if (typeof document === 'undefined') return;
   let e = ART_CACHE.get(file);
   if (e?.tex) return done(e.tex);
   if (e) {
@@ -631,7 +789,39 @@ function loadArt(file: string, done: (t: Texture) => void): void {
 }
 
 /** 種ごとに 1 つだけ作る体（面の形と骨の並び）。群れの仲間で使い回す */
-const BODY_CACHE = new Map<CreaturePlan, { body: CreatureBody; main: BufferGeometry; glow: BufferGeometry | null }>();
+/** 体を支える飾り（動かす骨の名前）: 横たわる時は、胴と同じく地面に着ける（翼・冠などは、潜らないように回す） */
+const SUPPORT_CH = new Set(['bags', 'plates', 'sac']);
+const UP = new Vector3(0, 1, 0);
+/** 横たわる姿勢で、胴の下・首や尾の下を草へ沈める深さ（体の高さに対する割合） */
+const LIE_SINK = 0.02;
+const LIE_SINK_REST = 0.06;
+/** 横たわる姿勢の高さ合わせ（体の形 → 姿勢の名前 → 上下のずれ m） */
+const LIE_FIT = new WeakMap<object, Map<string, number>>();
+const BODY_CACHE = new Map<CreaturePlan, { body: CreatureBody; main: BufferGeometry; glow: BufferGeometry | null; eye: BufferGeometry | null }>();
+/** 目の材質（濡れて光る。どの種も同じ） */
+const EYE_MAT = new MeshStandardMaterial({ color: 0x17120c, roughness: 0.12, metalness: 0.0, emissive: 0x050302 });
+/** 原画の濃淡を、面の凹凸にも使う強さ（v0.21.0。しわ・鱗・羽の筋に、光の当たり方の差が付く） */
+const ART_BUMP = 1.6;
+/**
+ * 絵の混ぜ方（v0.21.0。MeshStandardMaterial の map の代わり）。横を向いた面は、横から貼った原画のまま。
+ * 前・後ろ・上・下を向いた面は、原画をぼかした色に、肌の細かな模様（3 方向から貼る）を掛ける（横から貼った絵が伸びて、筋になるのを隠す）。
+ * 位置と向きは、骨で動かす前の形のもの（動いても、模様が肌の上を滑らない）。肌の絵が無い間は、原画のまま。
+ */
+const SKIN_BLEND = `
+#ifdef USE_MAP
+  vec4 sideCol = texture2D( map, vMapUv );
+  vec3 an = abs( normalize( vSkinNrm ) );
+  float sideW = smoothstep( 0.22, 0.72, an.x );
+  vec3 tw = an * an * an;
+  tw /= ( tw.x + tw.y + tw.z + 1e-5 );
+  vec3 tA = texture2D( skinTile, vSkinPos.zy * skinScale ).rgb;
+  vec3 tB = texture2D( skinTile, vSkinPos.xz * skinScale ).rgb;
+  vec3 tC = texture2D( skinTile, vSkinPos.xy * skinScale ).rgb;
+  vec3 detail = ( tA * tw.x + tB * tw.y + tC * tw.z ) * 2.0;
+  vec3 soft = texture2D( map, vMapUv, 3.0 ).rgb;
+  diffuseColor *= vec4( mix( soft * detail, sideCol.rgb, sideW ), sideCol.a );
+#endif
+`;
 
 export class CreatureRig implements MonsterRig {
   readonly root = new Group();
@@ -664,18 +854,44 @@ export class CreatureRig implements MonsterRig {
   private react = { yaw: 0, pitch: 0, roll: 0 };
   private broken = new Set<string>();
   private brokenBones = new Set<number>();
+  /** 肌の細かな模様の絵（読み込めるまで null。シェーダーの uniform と同じもの） */
+  private skinUniform: { value: Texture | null };
   private toppleSide = 1;
   private stepAcc = 0;
+  /** 種ごとの構えの重み（v0.21.0） */
+  private unaware = 0;
+  private alertW = 0;
+  private weakW = 0;
+  private rageW = 0;
+  private runW = 0;
+  /** 尾の付け根が向いている向き（体の向きに遅れて付いてくる） */
+  private tailHead = 0;
+  private fid: { f: FidgetPlan; t0: number; side: number } | null = null;
+  /** 横たわる間に、地面へ潜った脚や飾りを出すための、骨ごとの補正（v0.21.0。落ち着いた姿勢では使い回す） */
+  private readonly groundFix: { bone: Bone; q: Quaternion }[] = [];
+  private groundW = -1;
+  private groundAge = 0;
+  private nextFid = 2.5;
+  private fidCount = 0;
+  /** 個体ごとの揺れのずれ（群れの仲間が同じ動きにならないように） */
+  private readonly seed: number;
+  private rndState: number;
+  private static count = 0;
 
-  constructor(readonly plan: CreaturePlan, private readonly partIds: readonly string[]) {
+  /** seed: 個体ごとの揺れのずれ（省くと作った順。判定の軌道を作る時は 0 にして、毎回同じ姿勢にする） */
+  constructor(readonly plan: CreaturePlan, private readonly partIds: readonly string[], opts: { seed?: number } = {}) {
     const art = CREATURE_ART[plan.key]!;
     let shared = BODY_CACHE.get(plan);
     if (!shared) {
       const body = new CreatureBody(plan, art);
-      shared = { body, main: body.main.build(), glow: body.glow.count > 0 ? body.glow.build() : null };
+      shared = { body, main: body.main.build(), glow: body.glow.count > 0 ? body.glow.build() : null, eye: body.eye.count > 0 ? body.eye.build() : null };
       BODY_CACHE.set(plan, shared);
     }
     this.body = shared.body;
+    const n = opts.seed ?? CreatureRig.count++;
+    this.seed = (n * 2.399963) % TAU;
+    this.rndState = (n * 2654435761 + plan.key.length * 97) >>> 0;
+    this.nextFid = 2 + (n % 5) * 0.7;
     // 骨は 1 頭ずつ（体の骨と同じ並び・同じ親子）
     const src = this.body.bones;
     this.bones = src.map((r) => ({ ...r, bone: new Bone() }));
@@ -709,12 +925,43 @@ export class CreatureRig implements MonsterRig {
       this.glowMesh.frustumCulled = false;
       this.root.add(this.glowMesh);
     }
-    // 原画の絵（読み込めたら、平均の色から絵へ替える）
+    if (shared.eye) {
+      const eyeMesh = new SkinnedMesh(shared.eye, EYE_MAT);
+      eyeMesh.bind(skeleton, this.mesh.bindMatrix);
+      eyeMesh.frustumCulled = false;
+      this.root.add(eyeMesh);
+    }
+    // 横から貼る絵が伸びる面（前・後ろ・上・下を向いた面）には、肌の細かな模様を重ねる（v0.21.0）
+    this.skinUniform = { value: null as Texture | null };
+    const skinScale = { value: 1 / Math.max(0.05, art.skinPx * plan.scale) };
+    const skinTex = this.skinUniform;
+    this.mat.onBeforeCompile = (sh) => {
+      sh.uniforms.skinTile = skinTex;
+      sh.uniforms.skinScale = skinScale;
+      sh.vertexShader = 'varying vec3 vSkinPos;\nvarying vec3 vSkinNrm;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n  vSkinPos = position;\n  vSkinNrm = normal;');
+      sh.fragmentShader = 'uniform sampler2D skinTile;\nuniform float skinScale;\nvarying vec3 vSkinPos;\nvarying vec3 vSkinNrm;\n' + sh.fragmentShader.replace('#include <map_fragment>', SKIN_BLEND);
+    };
+    this.mat.customProgramCacheKey = () => 'creature-skin';
+    loadArt(art.skin, (tex) => {
+      tex.colorSpace = NoColorSpace;
+      tex.wrapS = tex.wrapT = RepeatWrapping;
+      tex.needsUpdate = true;
+      skinTex.value = tex;
+      this.mat.needsUpdate = true;
+    });
+    // 原画の絵（読み込めたら、平均の色から絵へ替える）。同じ絵の濃淡を、面の凹凸にも使う（v0.21.0）
     loadArt(art.file, (tex) => {
       this.mat.map = tex;
+      this.mat.bumpMap = tex;
+      this.mat.bumpScale = ART_BUMP;
       this.mat.color.setRGB(tint[0], tint[1], tint[2]);
       this.mat.needsUpdate = true;
     });
+  }
+
+  /** 検査用: いましているしぐさ（無ければ null。v0.21.0） */
+  fidgetId(): string | null {
+    return this.fid?.f.id ?? null;
   }
 
   /** 検査用: 骨の数・頂点の数・絵が貼られたか */
@@ -722,8 +969,186 @@ export class CreatureRig implements MonsterRig {
     return { bones: this.bones.length, verts: this.body.main.count, glow: this.body.glow.count, textured: !!this.mat.map, height: this.body.height };
   }
 
+  /**
+   * いまの姿勢の、いちばん低い点の高さ（world の y。v0.21.0）。torso = 体を支える所（胴の筒と、袋・甲羅・嚢）、rest = 首・頭・尾の筒、
+   * all = 脚や飾りも含めた全部。
+   * 横たわる姿勢（眠る・倒れる・死ぬ）の高さ合わせと、それが地面に横たわっているか（浮いていないか、沈んでいないか）の検査で使う
+   */
+  lowest(): { torso: number; rest: number; all: number } {
+    this.root.updateMatrixWorld(true);
+    const v = new Vector3();
+    const n = this.body.main.count, ns = this.body.spineVerts, sup = this.body.support;
+    let torso = Infinity, rest = Infinity, all = Infinity;
+    for (let i = 0; i < n; i++) {
+      this.mesh.getVertexPosition(i, v);
+      v.applyMatrix4(this.mesh.matrixWorld);
+      if (sup[i]) torso = Math.min(torso, v.y);
+      else if (i < ns) rest = Math.min(rest, v.y);
+      all = Math.min(all, v.y);
+    }
+    return { torso, rest, all };
+  }
+
+  /**
+   * 横たわる姿勢の、体の下を地面に着けるための上下のずれ（m。v0.21.0）。体の形と姿勢ごとに 1 回だけ、その姿勢を置いて測る。
+   * 胴の下を少しだけ草へ沈め、首・頭・尾が胴より下へ潜るなら、そちらが沈みすぎないように合わせる
+   */
+  private lieFit(key: string, pose: Pose, H: number): number {
+    let map = LIE_FIT.get(this.body);
+    if (!map) {
+      map = new Map();
+      LIE_FIT.set(this.body, map);
+    }
+    let v = map.get(key);
+    if (v === undefined) {
+      const P = ZERO_POSE();
+      addPose(P, pose);
+      this.apply(P, { gaitAmt: 0, und: 0, paddle: 0, rollDist: 0, rollTotal: 0, seq: 0, windup: 0, side: 1, time: 0, H });
+      const lo = this.lowest();
+      const y0 = this.root.position.y;
+      v = Math.max(-LIE_SINK * H - (lo.torso - y0), Number.isFinite(lo.rest) ? -LIE_SINK_REST * H - (lo.rest - y0) : -Infinity);
+      map.set(key, v);
+    }
+    return v;
+  }
+
+  /** 横たわる姿勢に、高さ合わせを足したもの */
+  private fitLie(key: string, pose: Pose, H: number): Pose {
+    return { ...pose, yH: (pose.yH ?? 0) + this.lieFit(key, pose, H) / H };
+  }
+
+  /**
+   * 横たわる間、地面へ潜った脚（鋏も）と、動かす飾り（翼・冠・帆など。袋・甲羅・嚢は体として地面に着ける）を、
+   * 付け根の骨で回して、地面の上へ出す（v0.21.0。見た目だけ。w = 横たわる重み）。
+   * 形の端の点（骨ごとの hull）のうち、いちばん潜った点が地面に出るだけ、その点を上へ向ける向きに回す（2 回くり返す。脚は関節ごとに）
+   */
+  private groundParts(w: number, steady: boolean): void {
+    if (w <= 0.01) {
+      this.groundFix.length = 0;
+      this.groundW = -1;
+      return;
+    }
+    // 姿勢がほとんど変わらない間（眠り・死んで落ち着いた後）は、4 フレームに 1 回だけ解き、間は前の補正をそのまま当てる
+    if (steady && this.groundW >= 0 && this.groundAge < 3 && Math.abs(w - this.groundW) < 0.02) {
+      this.groundAge++;
+      for (const f of this.groundFix) f.bone.quaternion.premultiply(f.q);
+      return;
+    }
+    this.groundAge = 0;
+    this.groundW = w;
+    this.groundFix.length = 0;
+    this.root.updateMatrixWorld(true);
+    const gy = this.root.position.y;
+    const body = this.body;
+    const piv = new Vector3(), p = new Vector3(), d = new Vector3(), axis = new Vector3(), bestAxis = new Vector3();
+    const q = new Quaternion(), pq = new Quaternion(), pqi = new Quaternion();
+    const lift = (pivot: number, chain: readonly number[]): void => {
+      const hb = this.bones[pivot]!.bone;
+      for (let it = 0; it < 2; it++) {
+        hb.getWorldPosition(piv);
+        let need = 0;
+        for (const bi of chain) {
+          const br = this.bones[bi]!;
+          for (const rest of body.hull(bi)) {
+            p.copy(rest).sub(br.world).applyMatrix4(br.bone.matrixWorld);
+            if (p.y >= gy) continue;
+            d.copy(p).sub(piv);
+            const L = d.length();
+            if (L < 1e-3) continue;
+            const phi = Math.asin(clamp(d.y / L, -1, 1));
+            let target = Math.asin(clamp((gy - piv.y) / L, -1, 1));
+            if (piv.y < gy) target = Math.min(target, 0.2);
+            const delta = target - phi;
+            if (delta <= need) continue;
+            axis.crossVectors(d, UP);
+            if (axis.lengthSq() < 1e-8) axis.set(1, 0, 0).applyQuaternion(this.root.quaternion);
+            need = delta;
+            bestAxis.copy(axis).normalize();
+          }
+        }
+        if (need < 1e-3) break;
+        q.setFromAxisAngle(bestAxis, need * w);
+        (hb.parent ?? this.root).getWorldQuaternion(pq);
+        // world で回す q を、親の向きの中の回転へ直す: local' = pq⁻¹ · q · pq · local
+        pqi.copy(pq).invert().multiply(q).multiply(pq);
+        hb.quaternion.premultiply(pqi);
+        hb.updateMatrixWorld(true);
+        const fix = this.groundFix.find((f) => f.bone === hb);
+        if (fix) fix.q.premultiply(pqi);
+        else this.groundFix.push({ bone: hb, q: pqi.clone() });
+      }
+    };
+    // 脚は、付け根 → 膝 → 足首の順に、残った分を回す
+    for (const leg of body.legs) {
+      for (let j = 0; j < leg.bones.length - 1; j++) lift(leg.bones[j]!, leg.bones.slice(j));
+    }
+    for (const [, bi] of body.own) {
+      const b = this.bones[bi]!;
+      if (!SUPPORT_CH.has(b.ch ?? '')) lift(bi, [bi]);
+    }
+  }
+
+
   hitFlash(): void {
     this.flash = 1;
+  }
+
+  /**
+   * 体の印の位置（v0.21.0。判定の軌道を作る npm run monsters:bake と、検査で使う）。root を含めた world の座標。
+   *   sp:N（背骨の点 N。小数なら、点と点の間）/ leg:組:側:関節（関節の番号か end = 足先）/ own:名前:側（動かす物の骨）/
+   *   tip:名前:側（own の骨を持つ物の、骨からいちばん遠い点）。
+   *   側: S = 技の側（side）、O = その反対、L = 左、R = 右、C = 左右の無い物
+   */
+  marker(spec: string, side = 1): Vector3 {
+    this.root.updateMatrixWorld(true);
+    const body = this.body;
+    const [kind, a, b, c] = spec.split(':');
+    const sideOf = (x: string | undefined): number => (x === 'S' ? side : x === 'O' ? -side : x === 'L' ? 1 : x === 'R' ? -1 : 0);
+    // 骨に付いた点（形を作った時の位置）の、いまの位置
+    const at = (bi: number, rest: Vector3): Vector3 => {
+      const br = this.bones[bi]!;
+      return rest.clone().sub(br.world).applyMatrix4(br.bone.matrixWorld);
+    };
+    if (kind === 'sp') {
+      const f = Number(a);
+      const i0 = Math.max(0, Math.min(body.spinePts.length - 1, Math.floor(f)));
+      const i1 = Math.min(body.spinePts.length - 1, i0 + 1);
+      const p0 = at(body.boneForSpine(i0), body.spinePts[i0]!);
+      if (i1 === i0 || f === i0) return p0;
+      return p0.lerp(at(body.boneForSpine(i1), body.spinePts[i1]!), f - i0);
+    }
+    if (kind === 'leg') {
+      const s = sideOf(b);
+      const leg = body.legs.find((l) => l.plan.group === a && (!l.plan.mirror || l.side === (s || 1)));
+      if (!leg) throw new Error(`no leg ${spec} (${this.plan.key})`);
+      if (c === 'end') {
+        const lb = leg.bones[leg.bones.length - 1]!;
+        const rest = this.bones[lb]!.world.clone();
+        if (leg.plan.foot) rest.z += leg.plan.foot[0] * this.plan.scale * 0.6;
+        return at(lb, rest);
+      }
+      const j = Math.min(leg.bones.length - 1, Number(c));
+      return at(leg.bones[j]!, this.bones[leg.bones[j]!]!.world);
+    }
+    if (kind === 'own' || kind === 'tip') {
+      const s = sideOf(b);
+      const name = a + (s > 0 ? '_L' : s < 0 ? '_R' : '');
+      const bi = body.own.get(name) ?? body.own.get(a!);
+      if (bi === undefined) throw new Error(`no own bone ${spec} (${this.plan.key})`);
+      if (kind === 'own') return at(bi, this.bones[bi]!.world);
+      const e = this.plan.extras.find((x) => x.own?.name === a);
+      if (!e?.own) throw new Error(`no extra ${spec} (${this.plan.key})`);
+      const pts = e.pts ?? [e.b ?? e.c ?? e.own.at];
+      const o = e.own.at;
+      let far = pts[0]!, fd = -1;
+      for (const q of pts) {
+        const d = (q[0] - o[0]) ** 2 + (q[1] - o[1]) ** 2;
+        if (d > fd) { fd = d; far = q; }
+      }
+      const x = (e.x ?? 0) * (e.mirror ? s || 1 : 1);
+      return at(bi, body.m(far[0], far[1], x));
+    }
+    throw new Error(`bad marker ${spec}`);
   }
 
   hitReact(partIndex: number, wx: number, wz: number, strength = 1): void {
@@ -741,12 +1166,13 @@ export class CreatureRig implements MonsterRig {
     const dt = Math.min(0.1, Math.max(0, c.dt));
     const time = c.time;
     const plan = this.plan;
+    const idle = plan.idle;
     const H = this.body.height;
     // ---- 動きの速さ（描画の位置の差から） ----
     const yaw = this.root.rotation.y;
     const px = this.root.position.x, pz = this.root.position.z;
     if (!this.started) {
-      this.lastX = px; this.lastZ = pz; this.lastYaw = yaw; this.started = true;
+      this.lastX = px; this.lastZ = pz; this.lastYaw = yaw; this.tailHead = yaw; this.started = true;
     }
     const dx = px - this.lastX, dz = pz - this.lastZ;
     const dyaw = angleDiff(this.lastYaw, yaw);
@@ -759,23 +1185,27 @@ export class CreatureRig implements MonsterRig {
       this.yawVel += (dyaw / dt - this.yawVel) * k;
     }
     const moveSpeed = m.def.moveSpeed ?? 2.5;
-    const gaitAmt = clamp(this.speed / moveSpeed, 0, 1.4) + clamp(Math.abs(this.yawVel) * 0.6, 0, 0.6);
-    this.phase += (dist + Math.abs(dyaw) * Math.max(0.6, m.def.bodyRadius) * 0.8) / Math.max(0.3, plan.stride);
+    // 速く動く（出ていく・逃げる。v0.21.0）: 歩幅を広げ、走る構えへ
+    const runT = !m.action && !m.dead ? smoothstep((this.speed / moveSpeed - 1.3) / 0.8) : 0;
+    this.runW += (runT - this.runW) * (1 - Math.exp(-dt * 5));
+    const gaitAmt = clamp(this.speed / moveSpeed, 0, 1.4) + clamp(Math.abs(this.yawVel) * 0.6, 0, 0.6) + 0.35 * this.runW;
+    this.phase += (dist + Math.abs(dyaw) * Math.max(0.6, m.def.bodyRadius) * 0.8) / Math.max(0.3, plan.stride * (1 + 0.9 * this.runW));
 
     const P = ZERO_POSE();
+    const k2 = 1 - Math.exp(-dt * 3);
     // ---- いつもの動き: 呼吸・尾の揺れ・狩人を目で追う ----
     const enraged = m.enraged && !m.dead;
     const weak = isWeak(m);
     const herd = m.herd;
+    const resting = (m.asleep || m.captured || herd?.mood === 'rest') && !m.dead;
     const breathRate = enraged ? 3.2 : weak || (herd && herd.tired > 0) ? 3.6 : herd ? (herd.mood === 'flee' ? 3 : 1.4) : m.aware ? 1.8 : 1.2;
-    const br = Math.sin(time * breathRate);
+    const br = Math.sin(time * breathRate + this.seed);
     P.pitch += br * 0.012;
     P.yH += br * 0.006;
     P.sac += 0.12 + br * 0.08;
     P.bags += br * 0.1;
-    P.tailYaw += Math.sin(time * 0.8) * 0.1;
-    P.glow += enraged ? 0.45 + 0.25 * Math.sin(time * 6) : 0.1 + 0.06 * Math.sin(time * 1.6);
-    if (enraged) { P.crest += 0.25; P.wing += 0.15; P.sail += 0.2; }
+    P.tailYaw += Math.sin(time * 0.8 + this.seed) * 0.1;
+    P.glow += enraged ? 0.45 + 0.25 * Math.sin(time * 6) : 0.1 + 0.06 * Math.sin(time * 1.6 + this.seed);
     let lookTarget = 0, lookUpTarget = 0;
     if (c.lookAt && !m.dead && !m.asleep && !m.captured && m.aware && (!herd || isWatching(m))) {
       const head = this.body.spinePts[this.body.spinePts.length - 1]!;
@@ -792,17 +1222,42 @@ export class CreatureRig implements MonsterRig {
     P.neckPitch += this.lookUp * 0.4;
     P.headPitch += this.lookUp * 0.4;
 
+    // ---- 種ごとの構え（v0.21.0）: 気付く前は餌を探し、気付くと身構える。弱ると頭と尾が下がり、怒ると飾りを立てる ----
+    const free = !m.action && !m.dead && !resting && m.staggerTicks <= 0;
+    this.unaware += ((free && !m.aware && !herd ? 1 : 0) - this.unaware) * k2;
+    this.alertW += ((free && m.aware && !herd ? 1 - this.runW : 0) - this.alertW) * k2;
+    this.weakW += ((weak && !m.dead ? 1 : 0) - this.weakW) * k2;
+    this.rageW += ((enraged ? 1 : 0) - this.rageW) * k2;
+    if (idle) {
+      if (this.unaware > 0.01) {
+        addPose(P, idle.unaware, this.unaware);
+        const w = this.unaware * (1 - this.runW);
+        P.neckYaw += idle.sway * Math.sin(time * idle.rate * Math.PI + this.seed) * w;
+        P.headPitch += idle.nod * Math.sin(time * idle.rate * TAU + this.seed * 1.7) * w;
+      }
+      if (this.alertW > 0.01) addPose(P, idle.alert, this.alertW);
+      if (this.weakW > 0.01) addPose(P, idle.weak, this.weakW);
+      if (this.rageW > 0.01) addPose(P, idle.rage, this.rageW);
+      if (this.runW > 0.01) addPose(P, idle.run, this.runW);
+    } else if (enraged) {
+      P.crest += 0.25; P.wing += 0.15; P.sail += 0.2;
+    }
+
     // ---- 群れ（幼体）: 立ち止まって頭を下げて食む / 顔を上げて見る（v0.18.0）----
     if (herd) {
       const gk = 1 - Math.exp(-dt * 3);
       this.graze += ((isGrazing(m) && !m.dead && !m.action ? 1 : 0) - this.graze) * gk;
       this.watch += ((isWatching(m) && !m.dead ? 1 : 0) - this.watch) * (1 - Math.exp(-dt * 6));
       if (this.graze > 0.01) {
-        // 首の長い体ほど、首を深く下ろす（首の骨の数で）。鳥は体ごと前へ傾ける
-        const nib = 0.5 + 0.5 * Math.sin(time * 5.3 + this.partIds.length);
-        const necks = plan.roles.split('').filter((r) => r === 'n').length;
-        const neck = -Math.min(1.5, 0.5 + 0.38 * necks);
-        blendInto(P, { neckPitch: neck, headPitch: -0.35 - 0.12 * nib, jaw: 0.3 * nib, pitch: plan.frame === 'biped' ? -0.3 : -0.06, yH: -0.02, legs: { F: [0.12, 0.05] } }, this.graze);
+        const nib = 0.5 + 0.5 * Math.sin(time * 5.3 + this.seed);
+        if (idle?.graze) {
+          blendInto(P, { ...idle.graze, headPitch: (idle.graze.headPitch ?? 0) - 0.12 * nib, jaw: (idle.graze.jaw ?? 0) + 0.3 * nib }, this.graze);
+        } else {
+          // 首の長い体ほど、首を深く下ろす（首の骨の数で）。鳥は体ごと前へ傾ける
+          const necks = plan.roles.split('').filter((r) => r === 'n').length;
+          const neck = -Math.min(1.5, 0.5 + 0.38 * necks);
+          blendInto(P, { neckPitch: neck, headPitch: -0.35 - 0.12 * nib, jaw: 0.3 * nib, pitch: plan.frame === 'biped' ? -0.3 : -0.06, yH: -0.02, legs: { F: [0.12, 0.05] } }, this.graze);
+        }
       }
       if (this.watch > 0.01) {
         P.neckPitch += 0.25 * this.watch;
@@ -815,13 +1270,42 @@ export class CreatureRig implements MonsterRig {
       }
     }
 
+    // ---- しぐさ（技も怯みも無く、ほぼ止まっている間だけ。v0.21.0）----
+    const calm = free && m.trapTicks <= 0 && this.speed < 0.45 && Math.abs(this.yawVel) < 0.25 && this.graze < 0.5 && (!herd || herd.mood !== 'flee');
+    if (!calm) {
+      this.fid = null;
+      this.nextFid = Math.max(this.nextFid, time + 1.2);
+    } else if (!this.fid && time >= this.nextFid && idle?.fidgets.length) {
+      const list = idle.fidgets.filter((f) => f.when === 'any' || (f.when === 'aware') === m.aware);
+      if (list.length) {
+        const f = list[Math.floor(this.rnd() * list.length) % list.length]!;
+        this.fid = { f, t0: time, side: this.fidCount++ % 2 ? 1 : -1 };
+      } else this.nextFid = time + 2;
+    }
+    if (this.fid) {
+      const { f, t0, side: fs } = this.fid;
+      const u = (time - t0) / f.dur;
+      if (u >= 1) {
+        this.fid = null;
+        this.nextFid = time + 1.8 + this.rnd() * 3.5;
+      } else {
+        const keys = [{ at: 0, pose: {} as Pose }, ...f.K.map((k) => ({ at: k.t, pose: k.pose, e: k.e })), { at: 1, pose: {} as Pose }];
+        addPose(P, sampleKeyList(keys, u, fs));
+        if (f.shake) {
+          const env = Math.sin(Math.PI * u);
+          P.roll += Math.sin(time * 33) * f.shake * env;
+          P.headRoll += Math.sin(time * 27 + 1) * f.shake * 2 * env;
+        }
+      }
+    }
+
     // ---- 技 ----
     let und = plan.frame === 'serpent' ? 0.12 * Math.min(1, gaitAmt) : 0;
-    let scurry = 0, paddle = 0, spin = 0, rollDist = 0, seqSail = 0, windup = 0, side = 1;
+    let scurry = 0, paddle = 0, rollDist = 0, rollTotal = 0, seq = 0, windup = 0, side = 1;
     const run = m.action;
     if (run && !m.dead) {
       const mp = plan.moves[run.def.clip];
-      const def = mp ? CREATURE_MOVES[mp.kind] : undefined;
+      const def = mp?.def;
       if (def) {
         side = mp!.side ?? 1;
         const t = renderTick(run, c.alpha);
@@ -834,10 +1318,13 @@ export class CreatureRig implements MonsterRig {
           const total = curve.keys[curve.keys.length - 1]![1];
           const prog = total !== 0 ? clamp(sampleCurve(curve, t) / total, 0, 1) : 0;
           if (def.hop) P.yH += def.hop * Math.sin(Math.PI * prog);
-          if (def.roll) rollDist = sampleCurve(curve, t);
+          if (def.roll) {
+            rollDist = sampleCurve(curve, t);
+            rollTotal = total;
+          }
         }
         if (def.shake) {
-          const amt = def.shakeIn === 'windup' ? (smp.stage === 'windup' ? smp.windup : 0) : smp.strike;
+          const amt = def.shakeIn === 'all' ? 1 : def.shakeIn === 'windup' ? (smp.stage === 'windup' ? smp.windup : 0) : def.shakeIn === 'strike' ? (smp.stage === 'strike' ? 1 : 0) : smp.strike;
           P.roll += Math.sin(time * 37) * def.shake * amt;
           P.pitch += Math.sin(time * 29 + 1) * def.shake * amt;
           P.headYaw += Math.sin(time * 23 + 2) * def.shake * 2 * amt;
@@ -846,68 +1333,108 @@ export class CreatureRig implements MonsterRig {
         if (def.paddle) paddle = def.paddle * Math.max(smp.windup * (smp.stage === 'windup' ? 1 : 0), smp.strike);
         if (def.und) und += 0.28 * def.und * (smp.stage === 'windup' ? 0 : 1);
         if (def.wiggle) und += def.wiggle * smp.strike;
-        if (def.spin) spin = def.spin * (smp.stage === 'strike' ? 1 : 0);
-        if (def.seqSail) seqSail = 1;
-        if (spin) {
+        if (def.seq) seq = 1;
+        if (def.spin) {
+          // 体ごと回る（回数）。攻撃の区間で回りきり、後は同じ向き（1 周回れば、元の向きと同じ）
           const act = run.def.phases.find((ph) => ph.id === 'active');
-          const u = act ? clamp((t - act.from) / (act.to - act.from), 0, 1) : 0;
-          P.yaw += Math.sin(TAU * u) * 0.8;
+          const u = act ? clamp((t - act.from) / Math.max(1, act.to - act.from), 0, 1) : 0;
+          P.yaw += def.spin * TAU * smoothstep(u) * side;
         }
       }
     }
     if (scurry) this.phase += dt * 3.5 * scurry;
 
     // ---- 状態: 怯み・転倒・罠・眠り・死 ----
-    const resting = (m.asleep || m.captured || herd?.mood === 'rest') && !m.dead;
     this.rest = resting ? Math.min(1, this.rest + dt * 0.8) : Math.max(0, this.rest - dt * 1.5);
+    // 横たわる重み（眠る・倒れる・死ぬ）: 潜った脚を地面の上へ出す（v0.21.0）。steady = 姿勢がほとんど変わらない
+    let lieW = 0;
+    let lieSteady = false;
     if (this.rest > 0) {
       const w = smoothstep(this.rest);
-      const lie: Pose = plan.frame === 'arch'
+      const lie: Pose = idle?.sleep ?? (plan.frame === 'arch'
         ? { yH: -0.12, archFront: -0.5, archBack: -0.5, ring: -0.2 }
-        : { yH: plan.frame === 'serpent' ? -0.15 : -0.42, neckPitch: -0.35, neckYaw: 0.5, headPitch: -0.2, tailYaw: 0.6, crest: -0.4, wing: -0.1, legs: { '*': [0, 1, 0.2] } };
-      blendInto(P, lie, w);
+        : { yH: plan.frame === 'serpent' ? -0.15 : -0.42, neckPitch: -0.35, neckYaw: 0.5, headPitch: -0.2, tailYaw: 0.6, crest: -0.4, wing: -0.1, legs: { '*': [0, 1, 0.2] } });
+      blendInto(P, this.fitLie('sleep', lie, H), w);
       P.pitch += Math.sin(time * 0.9) * 0.01 * w;
+      lieW = w;
+      lieSteady = this.rest >= 1 && m.trapTicks <= 0;
     }
     if (m.trapTicks > 0 && !m.dead) {
       this.phase += dt * 2.5;
       P.roll += Math.sin(time * 8) * 0.07;
       P.neckYaw += Math.sin(time * 5.3) * 0.25;
       P.headPitch += Math.sin(time * 7.1) * 0.15;
+      P.jaw += 0.3 + 0.15 * Math.sin(time * 9);
+      P.tailWave += 0.25;
     }
     if (m.staggerTicks > 0 && !m.dead) {
       const total = Math.max(1, m.staggerTotal);
       const prog = 1 - m.staggerTicks / total;
       if (m.staggerKind === 'topple') {
-        const e = smoothstep(prog / 0.2) * (1 - smoothstep((prog - 0.75) / 0.25));
+        // 倒れる → もがく → 起き上がる（種ごとの姿勢。v0.21.0）
         if (prog < 0.02) this.toppleSide = this.lat >= 0 ? 1 : -1;
-        blendInto(P, { roll: 1.25 * this.toppleSide, yH: -0.42, neckPitch: -0.2, tailPitch: -0.2, legs: { '*': [Math.sin(time * 9) * 0.3, 0.4, 0.3] } }, e);
+        const down = smoothstep(prog / 0.15) * (1 - smoothstep((prog - 0.76) / 0.12));
+        const rise = smoothstep((prog - 0.72) / 0.1) * (1 - smoothstep((prog - 0.86) / 0.14));
+        const lie = this.fitLie('topple', idle?.topple ?? { roll: 1.25, yH: -0.42, neckPitch: -0.2, tailPitch: -0.2, legs: { '*': [0, 0.4, 0.3] } }, H);
+        const tp: Pose = {};
+        addScaled(tp, lie, 1, this.toppleSide);
+        blendInto(P, tp, down);
+        lieW = Math.max(lieW, down);
+        if (idle?.rise && rise > 0) addPose(P, idle.rise, rise);
+        const kick = down * (1 - rise);
+        P.legs['*'] = [(P.legs['*']?.[0] ?? 0) + Math.sin(time * 9 + this.seed) * 0.35 * kick, (P.legs['*']?.[1] ?? 0) + 0.15 * kick * (0.5 + 0.5 * Math.sin(time * 7)), P.legs['*']?.[2] ?? 0];
+        P.neckPitch += Math.sin(time * 4.2) * 0.2 * kick;
+        P.jaw += (0.35 + 0.1 * Math.sin(time * 11)) * kick;
+        P.tailWave += 0.3 * kick;
+        P.roll += Math.sin(time * 5.5) * 0.05 * kick * this.toppleSide;
       } else {
         const r = Math.sin(Math.PI * clamp(prog * 1.4, 0, 1));
         const k = m.staggerKind === 'break' || m.staggerKind === 'sever' ? 1.5 : 1;
-        P.pitch += 0.12 * r * k;
-        P.neckPitch += 0.3 * r * k;
-        P.headPitch += 0.25 * r * k;
-        P.yH -= 0.04 * r * k;
+        if (idle?.flinch) addPose(P, idle.flinch, r * k);
+        else {
+          P.pitch += 0.12 * r * k;
+          P.neckPitch += 0.3 * r * k;
+          P.headPitch += 0.25 * r * k;
+          P.yH -= 0.04 * r * k;
+        }
         P.roll += Math.sin(time * 31) * 0.03 * r;
       }
     }
     if (m.dead) {
-      const e = smoothstep((m.deadTicks + c.alpha) / 55);
-      blendInto(P, plan.frame === 'arch'
-        ? { roll: 1.3, yH: -0.25, archFront: -0.4, archBack: -0.4 }
-        : { roll: 1.3, yH: -0.45, neckPitch: -0.4, headPitch: -0.2, tailPitch: -0.2, crest: -0.4, wing: 0.2, legs: { '*': [0, 0.35, 0.4] } }, e);
+      const tick = m.deadTicks + c.alpha;
+      if (idle?.dead.length) {
+        // 最初の鍵は、膝を折る途中（高さは合わせない）。2 つ目からは横たわった姿勢で、体の下を地面に着ける
+        const keys = [{ at: 0, pose: {} as Pose }, ...idle.dead.map((d, i) => ({ at: d.t, pose: i === 0 && idle.dead.length > 1 ? d.pose : this.fitLie(`dead${i}`, d.pose, H) }))];
+        const dp = sampleKeyList(keys, tick, this.toppleSide);
+        blendInto(P, dp, 1);
+      } else {
+        const e = smoothstep(tick / 55);
+        blendInto(P, this.fitLie('dead', plan.frame === 'arch'
+          ? { roll: 1.3, yH: -0.25, archFront: -0.4, archBack: -0.4 }
+          : { roll: 1.3, yH: -0.45, neckPitch: -0.4, headPitch: -0.2, tailPitch: -0.2, crest: -0.4, wing: 0.2, legs: { '*': [0, 0.35, 0.4] } }, H), e);
+      }
+      lieW = 1;
+      lieSteady = !!idle?.dead.length && tick > idle.dead[idle.dead.length - 1]!.t + 10;
     }
     // のけぞり（叩かれた向き）
     const decay = Math.exp(-dt * 6);
     this.react.yaw *= decay; this.react.pitch *= decay; this.react.roll *= decay;
     P.yaw += this.react.yaw; P.pitch += this.react.pitch; P.roll += this.react.roll;
 
+    // ---- 後から付いてくる動き（v0.21.0）: 向きを変えると、尾は遅れて外へ振れ、首は曲がる側へ先に向く ----
+    if (dt > 0) this.tailHead += angleDiff(this.tailHead, yaw) * (1 - Math.exp(-dt * 5));
+    if (!m.dead && this.rest < 0.5) {
+      P.tailYaw += clamp(angleDiff(this.tailHead, yaw) * 0.8, -0.7, 0.7);
+      P.neckYaw += clamp(this.yawVel * 0.12, -0.3, 0.3);
+    }
+
     // 部位の破壊（壊れた部位は、暗く縮む）
     m.def.parts.forEach((part, i) => {
       if (m.parts[i]!.broken && !this.broken.has(part.id)) this.breakPart(part.id);
     });
 
-    this.apply(P, { gaitAmt: m.dead || this.rest > 0.5 ? 0 : gaitAmt, und, paddle, rollDist, seqSail, windup, side, time, H });
+    this.apply(P, { gaitAmt: m.dead || this.rest > 0.5 ? 0 : gaitAmt, und, paddle, rollDist, rollTotal, seq, windup, side, time, H });
+    this.groundParts(lieW, lieSteady);
 
     // 光・叩かれた時の光
     this.flash = Math.max(0, this.flash - dt * 6);
@@ -925,6 +1452,12 @@ export class CreatureRig implements MonsterRig {
         c.fx.footfall(px, 0, pz, heavy);
       }
     }
+  }
+
+  /** しぐさを選ぶ乱数（見た目だけ。戦闘の乱数とは別） */
+  private rnd(): number {
+    this.rndState = (this.rndState * 1664525 + 1013904223) >>> 0;
+    return this.rndState / 4294967296;
   }
 
   private breakPart(id: string): void {
@@ -953,7 +1486,7 @@ export class CreatureRig implements MonsterRig {
     b.quaternion.setFromEuler(this.euler);
   }
 
-  private apply(P: FullPose, o: { gaitAmt: number; und: number; paddle: number; rollDist: number; seqSail: number; windup: number; side: number; time: number; H: number }): void {
+  private apply(P: FullPose, o: { gaitAmt: number; und: number; paddle: number; rollDist: number; rollTotal: number; seq: number; windup: number; side: number; time: number; H: number }): void {
     const body = this.body;
     const plan = this.plan;
     const root = plan.root;
@@ -978,9 +1511,15 @@ export class CreatureRig implements MonsterRig {
         if (plan.frame === 'biped' || plan.frame === 'quad') rz += Math.sin(TAU * this.phase) * 0.025 * Math.min(1, o.gaitAmt);
         const pos = b.rest.clone();
         pos.y += P.yH * o.H + Math.abs(Math.sin(TAU * this.phase)) * 0.03 * Math.min(1, o.gaitAmt) * (plan.frame === 'serpent' ? 0 : 1);
+        pos.z += P.z * o.H;
+        pos.x += P.x * o.H;
         if (arch && o.rollDist) {
-          // 輪になって転がる: 輪の中心のまわりに回す
-          const th = o.rollDist / Math.max(0.5, ringR);
+          // 輪になって転がる: 輪の中心のまわりに回す。転がり終えた時に、ちょうど何周かして元の向きに戻るように、回る量を少し合わせる
+          // （戻らないと、技の終わりに体の向きが跳ぶ。v0.21.0）
+          const R = Math.max(0.5, ringR);
+          const full = Math.abs(o.rollTotal) / R;
+          const turns = Math.max(1, Math.round(full / TAU));
+          const th = (o.rollDist / R) * (full > 0 ? (turns * TAU) / full : 1);
           const cy = pos.y - ringR * 0.9;
           const ly = pos.y - cy;
           pos.y = cy + ly * Math.cos(th);
@@ -992,11 +1531,13 @@ export class CreatureRig implements MonsterRig {
       if (b.role === 'b' && i > root) {
         ry += P.spineYaw / Math.max(1, headSideBody.length);
         rx += -P.spinePitch / Math.max(1, headSideBody.length);
+        rz += P.twist / Math.max(1, headSideBody.length);
       }
       if (b.role === 'b' && i < root) ry += -P.spineYaw * 0.3 / Math.max(1, tailSideBody.length);
       if (headSideBody.length === 0 && i === root) {
         ry += P.spineYaw * 0.5;
         rx += -P.spinePitch * 0.5;
+        rz += P.twist * 0.5;
       }
       if (b.role === 'n') {
         rx += -P.neckPitch / Math.max(1, neck.length);
@@ -1006,6 +1547,7 @@ export class CreatureRig implements MonsterRig {
       if (b.role === 'h') {
         rx += -P.headPitch;
         ry += P.headYaw;
+        rz += P.headRoll;
       }
       if (b.role === 't') {
         const k = tail.indexOf(b);
@@ -1014,6 +1556,8 @@ export class CreatureRig implements MonsterRig {
         rx += P.tailPitch * (0.5 + w) * 1.2 / tail.length;
         ry += Math.sin(o.time * 1.1 - k * 0.6) * 0.035 * w;
         if (P.tailCurl) rx += P.tailCurl * w * 0.4;
+        // 波打たせる（尾を鳴らす・もがく）: 付け根から先へ進む波
+        if (P.tailWave) ry += P.tailWave * Math.sin(o.time * 11 - k * 0.9) * (0.3 + w) / Math.max(1, tail.length * 0.5);
       }
       if (b.role === 'a') {
         const headSide = i > root;
@@ -1079,14 +1623,25 @@ export class CreatureRig implements MonsterRig {
         case 'crest':
           this.setRot(b.bone, -0.25 * P.crest, 0, -s * (0.12 + 0.4 * P.crest));
           break;
+        case 'fin': {
+          // ひれ足（v0.21.0。キリサーヴ）: 歩く周期で前後に漕ぐ（前と後ろ、左と右で逆）。水を掻く技（paddle）では速く漕ぐ。fin で開く（+）・畳む（-）
+          const ph = TAU * this.phase + ((b.order ?? 0) % 2) * Math.PI + (s > 0 ? 0 : Math.PI);
+          const stroke = Math.sin(ph) * 0.45 * Math.min(1, o.gaitAmt) + Math.sin(o.time * 12 + (s > 0 ? 0 : Math.PI)) * 0.55 * o.paddle;
+          this.setRot(b.bone, stroke * bk, 0, s * 0.4 * P.fin);
+          break;
+        }
         case 'wing': {
           const w = P.wing + (s === o.side ? P.wingS : 0);
           this.setRot(b.bone, -0.15 * w, s * 0.25 * w, s * (0.04 + 1.0 * w));
           break;
         }
-        case 'sac':
-          b.bone.scale.setScalar(bk * (1 + 0.25 * P.sac));
+        case 'sac': {
+          // 並んだ嚢は、前から順にふくらむ（技の seq）
+          const order = b.order ?? 0;
+          const amt = o.seq ? P.sac * smoothstep((o.windup * 1.6 - order * 0.22) / 0.4) : P.sac;
+          b.bone.scale.setScalar(bk * (1 + 0.25 * amt));
           break;
+        }
         case 'dish':
           this.setRot(b.bone, -P.dish * 0.35, 0, 0);
           break;
@@ -1099,7 +1654,7 @@ export class CreatureRig implements MonsterRig {
           break;
         case 'sail': {
           const order = b.order ?? 0;
-          const amt = o.seqSail ? P.sail * smoothstep((o.windup * 1.7 - order * 0.09) / 0.35) : P.sail;
+          const amt = o.seq ? P.sail * smoothstep((o.windup * 1.7 - order * 0.09) / 0.35) : P.sail;
           // 立てる: 外へ傾いた帆を起こし、少し伸ばす
           this.setRot(b.bone, 0, 0, s * 0.25 * amt);
           b.bone.scale.y = bk * (1 + 0.25 * amt);

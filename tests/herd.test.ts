@@ -7,9 +7,9 @@ import type { SimEvent } from '../src/game/events';
 import { herdHurt, isCalm, type HerdMood } from '../src/game/herd';
 import { applyDamageToMonster, type MonsterState } from '../src/game/monster';
 import { Simulation } from '../src/game/sim';
+import { newRun } from '../src/game/action';
 import { trackSegment } from '../src/game/tracks';
 import { CREATURE_ART } from '../src/render/creatureArt';
-import { CREATURE_MOVES } from '../src/render/creatureMoves';
 import { CREATURE_PLANS } from '../src/render/creaturePlans';
 import { Btn, baseOptions, frame, loadContent, press, run } from './helpers';
 import { readFile } from 'node:fs/promises';
@@ -77,12 +77,12 @@ describe('幼体 8 種のデータ', () => {
       expect(plan.look!.pale).toBeGreaterThan(0);
       for (const a of content.actions.values()) {
         if (!a.actionId.startsWith(`${id}.`)) continue;
-        expect(CREATURE_MOVES[plan.moves[a.clip]!.kind], a.clip).toBeDefined();
+        expect(plan.moves[a.clip]!.def.K.length, a.clip).toBeGreaterThan(0);
       }
     }
   });
 
-  it('大きさは、登録簿の全長の約 0.68 倍で、親より小さい。技は登録簿の 3 つ（左右のあるものは 2 つ）', () => {
+  it('大きさは、登録簿の全長の約 0.68 倍で、親より小さい。技は登録簿の 3 つと、幼体に固有の技（合わせて 6〜8。v0.21.0）', () => {
     for (const key of KEYS) {
       const id = `monster.${key}`;
       const sp = content.bestiary.species.find((s) => s.id === id)!;
@@ -95,8 +95,8 @@ describe('幼体 8 種のデータ', () => {
       expect(m.hp).toBeLessThan(parent.hp / 4);
       expect(m.bodyRadius).toBeLessThan(parent.bodyRadius);
       const acts = [...content.actions.keys()].filter((a) => a.startsWith(`${id}.`));
-      expect(acts.length, key).toBeGreaterThanOrEqual(3);
-      expect(acts.length, key).toBeLessThanOrEqual(5);
+      expect(acts.length, key).toBeGreaterThanOrEqual(6);
+      expect(acts.length, key).toBeLessThanOrEqual(8);
       expect(m.ai.choices.length).toBe(acts.length);
     }
   });
@@ -146,6 +146,84 @@ describe('幼体 8 種のデータ', () => {
     expect(await bad((qs) => (qs[0]!.targets = [{ monsterId: 'monster.galdros', count: 1 }]))).toContain('群れで暮らさない');
     expect(await bad((qs) => (qs[0]!.kind = 'hunt'))).toContain('討伐だけ');
     expect(await bad((qs) => ((qs[0]!.targets as { count: number }[])[0]!.count = 0))).toContain('頭数');
+  });
+});
+
+describe('幼体の技（v0.21.0）', () => {
+  /** 群れの依頼（狩場なし）で、最初の 1 頭だけを (0,10) に -Z 向きで置き、ほかは遠くへ */
+  function lone(key: string): { sim: Simulation; m: MonsterState } {
+    const sim = new Simulation(content, baseOptions({ questId: `quest.${key}.pack1` }));
+    const [m, ...rest] = sim.monsters;
+    for (const o of rest) {
+      o.pos = { x: 200, y: 0, z: 200 };
+      o.prevPos = { ...o.pos };
+      o.aiEnabled = false;
+    }
+    m!.pos = { x: 0, y: 0, z: 10 };
+    m!.prevPos = { ...m!.pos };
+    m!.yaw = Math.PI;
+    m!.prevYaw = Math.PI;
+    m!.aware = true;
+    m!.aiEnabled = false;
+    return { sim, m: m! };
+  }
+
+  it('攻撃の判定はどれも、その判定が通る所に立つ狩人へ当たる', () => {
+    const miss: string[] = [];
+    let n = 0;
+    for (const key of KEYS) {
+      for (const def of content.actions.values()) {
+        if (!def.actionId.startsWith(`monster.${key}.`)) continue;
+        for (const hw of def.hitWindows) {
+          const dry = lone(key);
+          dry.sim.player.pos = { x: 0, y: 0, z: 50 };
+          dry.sim.player.prevPos = { ...dry.sim.player.pos };
+          dry.m.action = newRun(def, 9001, dry.m.yaw);
+          const tr = content.tracks.get(hw.shapeTrack)!;
+          const tm = (hw.from + hw.to) / 2;
+          let target: { x: number; z: number } | null = null;
+          let bestT = Infinity;
+          for (let t = 0; t < hw.to; t++) {
+            dry.sim.step(frame());
+            if (t < hw.from) continue;
+            const sg = trackSegment(tr, t);
+            let best = -1;
+            let cand: { x: number; z: number } | null = null;
+            for (let k = 0; k <= 10; k++) {
+              const lx = sg.a.x + ((sg.b.x - sg.a.x) * k) / 10, ly = sg.a.y + ((sg.b.y - sg.a.y) * k) / 10, lz = sg.a.z + ((sg.b.z - sg.a.z) * k) / 10;
+              if (ly - tr.radius > 1.2) continue;
+              const d = Math.hypot(lx, lz);
+              if (d > best) {
+                best = d;
+                const c = Math.cos(dry.m.yaw), sn = Math.sin(dry.m.yaw);
+                cand = { x: dry.m.pos.x + lx * c + lz * sn, z: dry.m.pos.z - lx * sn + lz * c };
+              }
+            }
+            if (cand && Math.abs(t - tm) < Math.abs(bestT - tm)) {
+              bestT = t;
+              target = cand;
+            }
+          }
+          n++;
+          if (!target) {
+            miss.push(`${def.actionId}#${hw.id}（届く所が無い）`);
+            continue;
+          }
+          const { sim, m } = lone(key);
+          sim.player.pos = { x: target.x, y: 0, z: target.z };
+          sim.player.prevPos = { ...sim.player.pos };
+          m.action = newRun({ ...def, hitWindows: [hw] }, 9002, m.yaw);
+          let ok = false;
+          for (let t = 0; t <= hw.to + 1 && !ok; t++) {
+            sim.step(frame());
+            ok = sim.drainEvents().some((e) => e.type === 'player_hurt') && t >= hw.from;
+          }
+          if (!ok) miss.push(`${def.actionId}#${hw.id}`);
+        }
+      }
+    }
+    expect(n).toBeGreaterThan(40);
+    expect(miss, miss.join(', ')).toEqual([]);
   });
 });
 

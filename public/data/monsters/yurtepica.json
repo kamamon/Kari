@@ -28,9 +28,13 @@
     "aggroRange": 30,
     "cooldownTicks": [35, 70],
     "choices": [
-      {"actionId": "monster.yurtepica.thread_flick", "minDist": 0, "maxDist": 2.6, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 100, "cooldownTicks": 200},
-      {"actionId": "monster.yurtepica.hop_back", "minDist": 0, "maxDist": 1.6, "maxAngleDeg": 70, "weight": 2, "cooldownTicks": 300},
-      {"actionId": "monster.yurtepica.thread_push", "minDist": 0, "maxDist": 2.0, "maxAngleDeg": 50, "weight": 3}
+      {"actionId": "monster.yurtepica.thread_flick", "minDist": 0, "maxDist": 2.4, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 100, "cooldownTicks": 200},
+      {"actionId": "monster.yurtepica.hop_back", "minDist": 0, "maxDist": 1.3, "maxAngleDeg": 70, "weight": 2, "cooldownTicks": 300},
+      {"actionId": "monster.yurtepica.thread_push", "minDist": 0, "maxDist": 1.5, "maxAngleDeg": 50, "weight": 3},
+      {"actionId": "monster.yurtepica.threat", "minDist": 2, "maxDist": 7, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 600},
+      {"actionId": "monster.yurtepica.bite", "minDist": 0, "maxDist": 1.2, "maxAngleDeg": 30, "weight": 2.5},
+      {"actionId": "monster.yurtepica.drip", "minDist": 0, "maxDist": 3.5, "maxAngleDeg": 180, "weight": 1.6, "cooldownTicks": 300},
+      {"actionId": "monster.yurtepica.pounce", "minDist": 1.2, "maxDist": 2.8, "maxAngleDeg": 30, "weight": 1.6, "cooldownTicks": 260, "clearAhead": 2}
     ]
   }
 }

@@ -30,10 +30,23 @@
     "aggroRange": 200,
     "cooldownTicks": [45, 95],
     "choices": [
+      {"actionId": "monster.verito.threat", "minDist": 5, "maxDist": 14, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 700},
+      {"actionId": "monster.verito.retreat", "minDist": 0, "maxDist": 3.0, "maxAngleDeg": 180, "weight": 0.8, "cooldownTicks": 520},
       {"actionId": "monster.verito.thread_spray", "minDist": 0, "maxDist": 6, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 100, "cooldownTicks": 300},
-      {"actionId": "monster.verito.hop", "minDist": 4, "maxDist": 10, "maxAngleDeg": 30, "weight": 2, "cooldownTicks": 300, "clearAhead": 6},
-      {"actionId": "monster.verito.foreleg_sweep", "minDist": 0, "maxDist": 4.5, "maxAngleDeg": 50, "weight": 3},
-      {"actionId": "monster.verito.drip", "minDist": 0, "maxDist": 7, "maxAngleDeg": 180, "weight": 2, "cooldownTicks": 300}
+      {"actionId": "monster.verito.hop", "minDist": 4, "maxDist": 7.4, "maxAngleDeg": 30, "weight": 2, "cooldownTicks": 300, "clearAhead": 6},
+      {"actionId": "monster.verito.foreleg_sweep", "minDist": 0, "maxDist": 3.1, "maxAngleDeg": 50, "weight": 3},
+      {"actionId": "monster.verito.drip", "minDist": 0, "maxDist": 7, "maxAngleDeg": 180, "weight": 2, "cooldownTicks": 300},
+      {"actionId": "monster.verito.foreleg_stab", "minDist": 0, "maxDist": 3.1, "maxAngleDeg": 40, "weight": 2.5},
+      {"actionId": "monster.verito.bite", "minDist": 0, "maxDist": 3, "maxAngleDeg": 30, "weight": 2.5},
+      {"actionId": "monster.verito.thread_whip_l", "minDist": 0, "maxDist": 3.2, "maxAngleDeg": 180, "weight": 2, "minAngleDeg": 70, "side": "left"},
+      {"actionId": "monster.verito.thread_whip_r", "minDist": 0, "maxDist": 3.2, "maxAngleDeg": 180, "weight": 2, "minAngleDeg": 70, "side": "right"},
+      {"actionId": "monster.verito.web_volley", "minDist": 5, "maxDist": 16, "maxAngleDeg": 40, "weight": 1.6, "cooldownTicks": 420},
+      {"actionId": "monster.verito.body_slam", "minDist": 0, "maxDist": 2.6, "maxAngleDeg": 40, "weight": 2, "cooldownTicks": 240},
+      {"actionId": "monster.verito.spin_threads", "minDist": 0, "maxDist": 3.6, "maxAngleDeg": 180, "weight": 1.3, "cooldownTicks": 420},
+      {"actionId": "monster.verito.leg_rake_l", "minDist": 0, "maxDist": 2.8, "maxAngleDeg": 130, "weight": 2, "minAngleDeg": 40, "side": "left"},
+      {"actionId": "monster.verito.leg_rake_r", "minDist": 0, "maxDist": 2.8, "maxAngleDeg": 130, "weight": 2, "minAngleDeg": 40, "side": "right"},
+      {"actionId": "monster.verito.mist_cloud", "minDist": 0, "maxDist": 4, "maxAngleDeg": 180, "weight": 1.1, "cooldownTicks": 640},
+      {"actionId": "monster.verito.pounce", "minDist": 3, "maxDist": 5.7, "maxAngleDeg": 30, "weight": 1.6, "cooldownTicks": 300, "clearAhead": 4}
     ]
   }
 }

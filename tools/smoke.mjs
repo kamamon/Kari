@@ -1662,6 +1662,59 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   }
   check('大型 11 種: どの依頼も始まり、標的に原画を貼った体が出る（骨 15 本以上）。描画量は目標内（100 draw calls / 20万 tri）', rows.every((r) => r.ready && r.bones >= 15 && r.calls <= 100 && r.tris <= 200000), JSON.stringify(rows.map((r) => `${r.key}:${r.ready ? '' : '×'}${r.bones}骨/${r.verts}頂点/${r.calls}calls`)));
   check('大型 11 種: 近くに立つと、12 秒以内に技を出す', rows.every((r) => r.acted), JSON.stringify(rows.filter((r) => !r.acted).map((r) => r.key)));
+  // 種ごとの動き（v0.21.0）: どの技も、技の途中で体（背骨・脚の先）が動く。気付いていない間に、しぐさをする。死ぬと地面に横たわる
+  const moveRows = [];
+  for (const key of ['selvark', 'orglass', 'tengaro']) {
+    await page.evaluate((k) => window.__vh.startHunt(`quest.${k}.r1`), key);
+    await until(page, () => window.__vh.sim.tick > 5 && window.__vh.view.monsterRig?.info?.().textured === true, 20000);
+    moveRows.push(await page.evaluate(() => {
+      const v = window.__vh, s = v.sim, m = s.monsters[0], rig = v.view.monsterRig;
+      m.aiEnabled = false;
+      m.aware = true;
+      const plan = rig.plan;
+      const marks = plan.spine.map((_, i) => `sp:${i}`);
+      for (const l of plan.legs) for (const sd of l.mirror ? ['L', 'R'] : ['C']) marks.push(`leg:${l.group}:${sd}:end`);
+      const snap = () => marks.map((k) => rig.marker(k).clone());
+      const step = (n, dt = 1 / 30) => { for (let i = 0; i < n; i++) v.view.update(s, 1, dt, { x: 0, y: 0 }, false); };
+      const ids = [...s.content.actions.values()].filter((a) => a.actionId.startsWith(`${m.def.id}.`));
+      const still = [];
+      let bad = 0;
+      for (const def of ids) {
+        m.action = null;
+        step(20);
+        const p0 = snap();
+        // 構えの終わり・攻撃の途中・攻撃の終わりのうち、いちばん大きく動いた所で見る
+        const act = def.phases.find((ph) => ph.id === 'active');
+        const a0 = act ? act.from : Math.round(def.durationTicks * 0.3), a1 = act ? act.to : Math.round(def.durationTicks * 0.45);
+        let d = 0;
+        for (const T of [Math.round(a0 * 0.85), Math.round((a0 + a1) / 2), a1]) {
+          m.action = { def, instanceId: 77, tick: T, hitstop: 0, chargeTicks: 0, chargeLevel: 0, released: false, advanced: false, moveYaw: 0, fixedDir: false, dirIndex: 0, keepDrawn: false, speed: 1, speedAcc: 0, momentumLevel: 0, momentumGained: false };
+          step(1);
+          snap().forEach((p, i) => { if (!Number.isFinite(p.x + p.y + p.z)) bad++; d = Math.max(d, p.distanceTo(p0[i])); });
+        }
+        if (d < 0.1) still.push(def.actionId.split('.').pop());
+      }
+      m.action = null;
+      // しぐさ: 気付いていない間、止まっていると、ときどきする（12 秒の間に）
+      m.aware = false;
+      const fids = new Set();
+      for (let i = 0; i < 360; i++) { step(1); const f = rig.fidgetId(); if (f) fids.add(f); }
+      // 死ぬと、体の下が地面に着く
+      m.dead = true;
+      m.deadTicks = 300;
+      step(3);
+      const lo = rig.lowest();
+      const H = rig.info().height;
+      m.dead = false;
+      m.deadTicks = 0;
+      return { key: plan.key, n: ids.length, still, bad, fids: [...fids], torso: Math.round(lo.torso * 100) / 100, H };
+    }));
+    await page.evaluate(() => window.__vh.toBase());
+    await until(page, () => !document.getElementById('base').hidden, 8000);
+  }
+  check('種ごとの動き: 大型の技（17 以上）は、どれも技の中で体（背骨・脚の先）が 10 cm 以上動き、位置は有限', moveRows.every((r) => r.n >= 17 && r.still.length === 0 && r.bad === 0), JSON.stringify(moveRows.map((r) => `${r.key}:${r.n}技 止${r.still.join('/')} 無${r.bad}`)));
+  check('種ごとの動き: 気付いていない間、止まっていると、しぐさをする', moveRows.every((r) => r.fids.length > 0), JSON.stringify(moveRows.map((r) => `${r.key}:${r.fids.join('/')}`)));
+  check('種ごとの動き: 死ぬと、体の下が地面に着く（浮かない・沈まない）', moveRows.every((r) => r.torso > -(0.06 * r.H + 0.02) && r.torso < 0.05 * r.H + 0.03), JSON.stringify(moveRows.map((r) => `${r.key}:${r.torso}`)));
   // 状態異常の札（HUD）
   await page.evaluate(() => window.__vh.startHunt('quest.ashreia.r1'));
   await until(page, () => window.__vh.sim.tick > 5);

@@ -28,9 +28,12 @@
     "cooldownTicks": [45, 85],
     "choices": [
       {"actionId": "monster.hinasalv.ice_scatter", "minDist": 1, "maxDist": 7, "maxAngleDeg": 60, "weight": 2.5, "cooldownTicks": 260},
-      {"actionId": "monster.hinasalv.slide", "minDist": 2, "maxDist": 9, "maxAngleDeg": 25, "weight": 2, "cooldownTicks": 260, "clearAhead": 5},
-      {"actionId": "monster.hinasalv.tail_flick_l", "minDist": 0, "maxDist": 2.8, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "left"},
-      {"actionId": "monster.hinasalv.tail_flick_r", "minDist": 0, "maxDist": 2.8, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "right"}
+      {"actionId": "monster.hinasalv.slide", "minDist": 2, "maxDist": 6, "maxAngleDeg": 25, "weight": 2, "cooldownTicks": 260, "clearAhead": 5},
+      {"actionId": "monster.hinasalv.tail_flick_l", "minDist": 0, "maxDist": 2, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "left"},
+      {"actionId": "monster.hinasalv.tail_flick_r", "minDist": 0, "maxDist": 2, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "right"},
+      {"actionId": "monster.hinasalv.threat", "minDist": 2.5, "maxDist": 8, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 600},
+      {"actionId": "monster.hinasalv.bite", "minDist": 0, "maxDist": 2.4, "maxAngleDeg": 30, "weight": 2.5},
+      {"actionId": "monster.hinasalv.frost_puff", "minDist": 1, "maxDist": 3.6, "maxAngleDeg": 30, "weight": 1.8, "cooldownTicks": 280}
     ]
   }
 }

@@ -28,12 +28,23 @@
     "aggroRange": 200,
     "cooldownTicks": [50, 100],
     "choices": [
-      {"actionId": "monster.tengaro.roll_l", "minDist": 6, "maxDist": 18, "maxAngleDeg": 40, "weight": 1.5, "side": "left", "cooldownTicks": 480, "clearAhead": 10},
-      {"actionId": "monster.tengaro.roll_r", "minDist": 6, "maxDist": 18, "maxAngleDeg": 40, "weight": 1.5, "side": "right", "cooldownTicks": 480, "clearAhead": 10},
-      {"actionId": "monster.tengaro.hook_sweep_l", "minDist": 0, "maxDist": 5, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "left"},
-      {"actionId": "monster.tengaro.hook_sweep_r", "minDist": 0, "maxDist": 5, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "right"},
-      {"actionId": "monster.tengaro.arch_drop", "minDist": 0, "maxDist": 6, "maxAngleDeg": 35, "weight": 2.5},
-      {"actionId": "monster.tengaro.venom_strike", "minDist": 2, "maxDist": 12, "maxAngleDeg": 180, "weight": 2, "cooldownTicks": 360}
+      {"actionId": "monster.tengaro.threat", "minDist": 5, "maxDist": 14, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 700},
+      {"actionId": "monster.tengaro.retreat", "minDist": 0, "maxDist": 3.2, "maxAngleDeg": 180, "weight": 0.8, "cooldownTicks": 520},
+      {"actionId": "monster.tengaro.roll_l", "minDist": 6, "maxDist": 12.9, "maxAngleDeg": 40, "weight": 1.5, "side": "left", "cooldownTicks": 480, "clearAhead": 10},
+      {"actionId": "monster.tengaro.roll_r", "minDist": 6, "maxDist": 12.9, "maxAngleDeg": 40, "weight": 1.5, "side": "right", "cooldownTicks": 480, "clearAhead": 10},
+      {"actionId": "monster.tengaro.hook_sweep_l", "minDist": 0, "maxDist": 3.2, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "left"},
+      {"actionId": "monster.tengaro.hook_sweep_r", "minDist": 0, "maxDist": 3.2, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "right"},
+      {"actionId": "monster.tengaro.arch_drop", "minDist": 0, "maxDist": 4.6, "maxAngleDeg": 35, "weight": 2.5},
+      {"actionId": "monster.tengaro.venom_strike", "minDist": 2, "maxDist": 12, "maxAngleDeg": 180, "weight": 2, "cooldownTicks": 360},
+      {"actionId": "monster.tengaro.head_bite", "minDist": 0, "maxDist": 3.6, "maxAngleDeg": 35, "weight": 2.5},
+      {"actionId": "monster.tengaro.rear_drop", "minDist": 0, "maxDist": 4.3, "maxAngleDeg": 180, "weight": 2.2, "minAngleDeg": 130},
+      {"actionId": "monster.tengaro.double_drop", "minDist": 0, "maxDist": 4.1, "maxAngleDeg": 70, "weight": 1.6, "cooldownTicks": 360},
+      {"actionId": "monster.tengaro.roll_straight", "minDist": 7, "maxDist": 13.9, "maxAngleDeg": 25, "weight": 1.4, "cooldownTicks": 520, "clearAhead": 12},
+      {"actionId": "monster.tengaro.spin_hooks", "minDist": 0, "maxDist": 3.4, "maxAngleDeg": 180, "weight": 1.4, "cooldownTicks": 420},
+      {"actionId": "monster.tengaro.venom_spray", "minDist": 2, "maxDist": 7, "maxAngleDeg": 30, "weight": 1.8, "cooldownTicks": 360},
+      {"actionId": "monster.tengaro.spring_drop", "minDist": 5, "maxDist": 8.7, "maxAngleDeg": 30, "weight": 1.5, "cooldownTicks": 400, "clearAhead": 6},
+      {"actionId": "monster.tengaro.hook_rake", "minDist": 0, "maxDist": 4, "maxAngleDeg": 40, "weight": 2},
+      {"actionId": "monster.tengaro.para_rain", "minDist": 6, "maxDist": 18, "maxAngleDeg": 180, "weight": 1.2, "cooldownTicks": 600}
     ]
   }
 }

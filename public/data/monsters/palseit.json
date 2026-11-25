@@ -28,10 +28,13 @@
     "aggroRange": 30,
     "cooldownTicks": [35, 70],
     "choices": [
-      {"actionId": "monster.palseit.side_kick_l", "minDist": 0, "maxDist": 2.4, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 35, "side": "left"},
-      {"actionId": "monster.palseit.side_kick_r", "minDist": 0, "maxDist": 2.4, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 35, "side": "right"},
-      {"actionId": "monster.palseit.puff", "minDist": 1, "maxDist": 4.5, "maxAngleDeg": 35, "weight": 2, "cooldownTicks": 240},
-      {"actionId": "monster.palseit.hop_back", "minDist": 0, "maxDist": 1.8, "maxAngleDeg": 70, "weight": 2, "cooldownTicks": 300}
+      {"actionId": "monster.palseit.side_kick_l", "minDist": 0, "maxDist": 2.2, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 35, "side": "left"},
+      {"actionId": "monster.palseit.side_kick_r", "minDist": 0, "maxDist": 2.2, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 35, "side": "right"},
+      {"actionId": "monster.palseit.puff", "minDist": 1, "maxDist": 3.4, "maxAngleDeg": 35, "weight": 2, "cooldownTicks": 240},
+      {"actionId": "monster.palseit.hop_back", "minDist": 0, "maxDist": 1.5, "maxAngleDeg": 70, "weight": 2, "cooldownTicks": 300},
+      {"actionId": "monster.palseit.threat", "minDist": 2.5, "maxDist": 8, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 600},
+      {"actionId": "monster.palseit.headbutt", "minDist": 0, "maxDist": 2.4, "maxAngleDeg": 30, "weight": 2.5},
+      {"actionId": "monster.palseit.rear_kick", "minDist": 0, "maxDist": 1.6, "maxAngleDeg": 180, "weight": 2.4, "minAngleDeg": 120}
     ]
   }
 }

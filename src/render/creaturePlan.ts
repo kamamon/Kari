@@ -4,6 +4,8 @@
 // 体の面は、骨の通った 1 枚の面（SkinnedMesh）。色は、原画を横から貼る（src/render/creatureArt.ts の切り出し位置で uv を決める）。
 // 形と動きは仮素材（設定図は 1 枚の原画だけ。4 方向の図・正式モデルは無い）。当たり判定の形は public/data/monsters/<id>.json が持つ。
 
+import type { MoveDef, MoveKey, Pose } from './creatureMoves';
+
 /** 体つき（動きの決まりが変わる）。quad = 四足、biped = 二足と翼、crab = 六脚の甲殻と鋏、bug = 多脚の虫、arch = 輪の虫、serpent = 長胴 */
 export type CreatureFrame = 'quad' | 'biped' | 'crab' | 'bug' | 'arch' | 'serpent';
 
@@ -25,6 +27,13 @@ export interface LegPlan {
   phase: number;
   /** 足先の平たい塊: [前後の長さ px, 高さ px]（無ければ足先は細くなって終わる） */
   foot?: [number, number];
+  /** 原画の輪郭から測った太さの並び（v0.21.0）: [脚の線の上の位置（関節の番号 + 0〜1）, 半径 px]。あれば r より優先 */
+  prof?: [number, number][];
+  /**
+   * 足先の指（v0.21.0）: hoof = 2 つに割れた蹄、toe = 丸い指と爪（n 本）、talon = 鳥の足（前 n 本 + 後ろ 1 本、曲がった鉤爪）。
+   * 長さは足先の塊の長さに対する割合
+   */
+  toes?: { kind: 'hoof' | 'toe' | 'talon'; n: number; len: number; claw: number };
   /** 脚の振り方: x = 前後に振る（四足・二足）、y = 水平に振る（甲殻・虫） */
   swing?: 'x' | 'y';
 }
@@ -67,13 +76,77 @@ export interface ExtraPlan {
   part?: string;
 }
 
-/** 技ごとの動き（src/render/creatureMoves.ts の型の名前と、左右） */
+/**
+ * 判定の形を、体の部位に付ける（v0.21.0）。tools/gen-monsters.py が書き、npm run monsters:bake が、
+ * 動きの中の部位の位置から、技データの軌道（public/data/tracks/<key>.json の track）を作り直す。
+ * 印（a・b）の書き方は CreatureRig.marker（sp:点の番号 / leg:組:側:関節 / own:名前:側 / tip:名前:側。側は S = 技の側、O = 反対、L、R、C）。
+ */
+export interface BindPlan {
+  track: string;
+  a: string;
+  b: string;
+  /** カプセルの太さ (m) */
+  r: number;
+  /** b の先へ伸ばす長さ (m) */
+  ext?: number;
+  /** a の手前へ伸ばす長さ (m) */
+  back?: number;
+}
+
+/** 技ごとの動き（v0.21.0 から、種ごとに固有の鍵の姿勢。src/render/creatureMoves.ts の MoveDef） */
 export interface MovePlan {
-  kind: string;
+  def: MoveDef;
   /** 1 = 左（+x）、-1 = 右 */
   side?: number;
   /** 動きの大きさの倍率 */
   amp?: number;
+  /** 判定の形を付ける部位（無ければ、軌道は手で書いた形のまま） */
+  bind?: BindPlan[];
+}
+
+/** しぐさ（技も怯みも無く、ほぼ止まっている間に、ときどきする。v0.21.0）。K の t は、しぐさの長さの中の位置（0〜1）で、p は使わない */
+export interface FidgetPlan {
+  id: string;
+  /** 長さ（秒） */
+  dur: number;
+  /** aware = 狩人に気付いている時だけ、calm = 気付いていない時だけ、any = いつでも */
+  when: 'aware' | 'calm' | 'any';
+  K: MoveKey[];
+  /** 体を小刻みに震わせる（rad） */
+  shake?: number;
+}
+
+/**
+ * 種ごとの、技以外の動き（v0.21.0。ガルドロスの専用の動きに合わせた一揃い）。
+ * 姿勢は、ふだんの姿勢に足す（sleep・dead・topple は置き換える）。
+ */
+export interface IdlePlan {
+  /** 気付いていない間（餌を探す・食む）。sway / nod は、首と頭のゆっくりした揺れ（rad）、rate は速さ（1 秒の回数） */
+  unaware: Pose;
+  sway: number;
+  nod: number;
+  rate: number;
+  /** 気付いて、技を出していない間（身構え） */
+  alert: Pose;
+  /** 弱っている（頭と尾が下がる） */
+  weak: Pose;
+  /** 怒り（体の飾りを立てる） */
+  rage: Pose;
+  /** 速く動く（出ていく・逃げる）時の構え */
+  run: Pose;
+  /** 眠る・捕獲された時の姿勢 */
+  sleep: Pose;
+  /** 怯み（叩かれた向きへの、のけぞりに足す） */
+  flinch: Pose;
+  /** 転倒（倒れている間。もがく動きは legs に足す） */
+  topple: Pose;
+  /** 転倒から起き上がる途中 */
+  rise: Pose;
+  /** 倒れる（死）: tick ごとの鍵の姿勢（最後の姿勢のまま） */
+  dead: { t: number; pose: Pose }[];
+  /** 群れの幼体が食む時の姿勢（無ければ、首を下ろすだけ） */
+  graze?: Pose;
+  fidgets: FidgetPlan[];
 }
 
 export interface CreaturePlan {
@@ -84,6 +157,11 @@ export interface CreaturePlan {
   /** 体の中心の px（横）と、地面の px（縦） */
   origin: [number, number];
   spine: SpinePoint[];
+  /**
+   * 原画の輪郭から測った、背骨に沿った太さの並び（v0.21.0。tools/gen-monsters.py の fit_profile）:
+   * [背骨の上の位置（点の番号 + 0〜1）, 上の半径, 下の半径, 横の半径]（px）。あれば spine の半径より優先
+   */
+  profile?: [number, number, number, number][];
   /** 背骨の点ごとの役: - 骨なし（前の骨に付いて動く）、t 尾、b 胴、n 首、h 頭、a 輪の体（arch） */
   roles: string;
   /** 根元の骨（体の中心）の点 */
@@ -98,4 +176,6 @@ export interface CreaturePlan {
   /** 幼体（v0.18.0）: 親の絵に掛ける色（1 より大きいと明るい）と、淡さ（白へ寄せる割合） */
   look?: { tint: [number, number, number]; pale: number };
   moves: Record<string, MovePlan>;
+  /** 技以外の動き（v0.21.0） */
+  idle?: IdlePlan;
 }

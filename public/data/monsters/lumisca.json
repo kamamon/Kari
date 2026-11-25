@@ -29,11 +29,23 @@
     "aggroRange": 200,
     "cooldownTicks": [45, 90],
     "choices": [
+      {"actionId": "monster.lumisca.threat", "minDist": 5, "maxDist": 14, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 700},
+      {"actionId": "monster.lumisca.retreat", "minDist": 0, "maxDist": 3.0, "maxAngleDeg": 180, "weight": 0.8, "cooldownTicks": 520},
       {"actionId": "monster.lumisca.discharge", "minDist": 4, "maxDist": 16, "maxAngleDeg": 45, "weight": 2.5, "cooldownTicks": 360},
-      {"actionId": "monster.lumisca.kick", "minDist": 0, "maxDist": 4.5, "maxAngleDeg": 35, "weight": 3},
-      {"actionId": "monster.lumisca.tail_sweep_l", "minDist": 0, "maxDist": 4.8, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 60, "side": "left"},
-      {"actionId": "monster.lumisca.tail_sweep_r", "minDist": 0, "maxDist": 4.8, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 60, "side": "right"},
-      {"actionId": "monster.lumisca.leap_in", "minDist": 4, "maxDist": 11, "maxAngleDeg": 30, "weight": 2, "cooldownTicks": 300, "clearAhead": 6}
+      {"actionId": "monster.lumisca.kick", "minDist": 0, "maxDist": 3.1, "maxAngleDeg": 35, "weight": 3},
+      {"actionId": "monster.lumisca.tail_sweep_l", "minDist": 0, "maxDist": 4.5, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 60, "side": "left"},
+      {"actionId": "monster.lumisca.tail_sweep_r", "minDist": 0, "maxDist": 4.5, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 60, "side": "right"},
+      {"actionId": "monster.lumisca.leap_in", "minDist": 4, "maxDist": 7.2, "maxAngleDeg": 30, "weight": 2, "cooldownTicks": 300, "clearAhead": 6},
+      {"actionId": "monster.lumisca.kick_double", "minDist": 0, "maxDist": 3.7, "maxAngleDeg": 35, "weight": 2, "cooldownTicks": 300},
+      {"actionId": "monster.lumisca.peck", "minDist": 0, "maxDist": 2.4, "maxAngleDeg": 30, "weight": 2.5},
+      {"actionId": "monster.lumisca.tail_slam", "minDist": 0, "maxDist": 4.6, "maxAngleDeg": 180, "weight": 2.2, "minAngleDeg": 135},
+      {"actionId": "monster.lumisca.tail_spin", "minDist": 0, "maxDist": 4.2, "maxAngleDeg": 180, "weight": 1.4, "cooldownTicks": 420},
+      {"actionId": "monster.lumisca.spark_ring", "minDist": 0, "maxDist": 4, "maxAngleDeg": 180, "weight": 1.2, "cooldownTicks": 600},
+      {"actionId": "monster.lumisca.chain_discharge", "minDist": 6, "maxDist": 18, "maxAngleDeg": 45, "weight": 1.4, "cooldownTicks": 520},
+      {"actionId": "monster.lumisca.tail_jab", "minDist": 0, "maxDist": 4.8, "maxAngleDeg": 180, "weight": 2, "minAngleDeg": 150},
+      {"actionId": "monster.lumisca.leap_kick", "minDist": 4, "maxDist": 6.2, "maxAngleDeg": 30, "weight": 1.6, "cooldownTicks": 300, "clearAhead": 5},
+      {"actionId": "monster.lumisca.wing_slap_l", "minDist": 0, "maxDist": 2.2, "maxAngleDeg": 120, "weight": 2, "minAngleDeg": 30, "side": "left"},
+      {"actionId": "monster.lumisca.wing_slap_r", "minDist": 0, "maxDist": 2.2, "maxAngleDeg": 120, "weight": 2, "minAngleDeg": 30, "side": "right"}
     ]
   }
 }

@@ -29,11 +29,23 @@
     "aggroRange": 200,
     "cooldownTicks": [45, 95],
     "choices": [
-      {"actionId": "monster.ashreia.ash_curtain", "minDist": 2, "maxDist": 8, "maxAngleDeg": 40, "weight": 2.5, "cooldownTicks": 360},
-      {"actionId": "monster.ashreia.beak_thrust", "minDist": 0, "maxDist": 4.8, "maxAngleDeg": 30, "weight": 3},
-      {"actionId": "monster.ashreia.glide", "minDist": 6, "maxDist": 15, "maxAngleDeg": 25, "weight": 2, "cooldownTicks": 420, "clearAhead": 9},
-      {"actionId": "monster.ashreia.wing_sweep_l", "minDist": 0, "maxDist": 5, "maxAngleDeg": 150, "weight": 2.5, "minAngleDeg": 40, "side": "left"},
-      {"actionId": "monster.ashreia.wing_sweep_r", "minDist": 0, "maxDist": 5, "maxAngleDeg": 150, "weight": 2.5, "minAngleDeg": 40, "side": "right"}
+      {"actionId": "monster.ashreia.threat", "minDist": 5, "maxDist": 14, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 700},
+      {"actionId": "monster.ashreia.retreat", "minDist": 0, "maxDist": 3.0, "maxAngleDeg": 180, "weight": 0.8, "cooldownTicks": 520},
+      {"actionId": "monster.ashreia.ash_curtain", "minDist": 2, "maxDist": 5.6, "maxAngleDeg": 40, "weight": 2.5, "cooldownTicks": 360},
+      {"actionId": "monster.ashreia.beak_thrust", "minDist": 0, "maxDist": 3.1, "maxAngleDeg": 30, "weight": 3},
+      {"actionId": "monster.ashreia.glide", "minDist": 6, "maxDist": 9.6, "maxAngleDeg": 25, "weight": 2, "cooldownTicks": 420, "clearAhead": 9},
+      {"actionId": "monster.ashreia.wing_sweep_l", "minDist": 0, "maxDist": 2.8, "maxAngleDeg": 150, "weight": 2.5, "minAngleDeg": 40, "side": "left"},
+      {"actionId": "monster.ashreia.wing_sweep_r", "minDist": 0, "maxDist": 2.8, "maxAngleDeg": 150, "weight": 2.5, "minAngleDeg": 40, "side": "right"},
+      {"actionId": "monster.ashreia.peck_combo", "minDist": 0, "maxDist": 3.5, "maxAngleDeg": 35, "weight": 2.2, "cooldownTicks": 240},
+      {"actionId": "monster.ashreia.neck_whip_l", "minDist": 0, "maxDist": 2.1, "maxAngleDeg": 120, "weight": 2.2, "minAngleDeg": 20, "side": "left"},
+      {"actionId": "monster.ashreia.neck_whip_r", "minDist": 0, "maxDist": 2.1, "maxAngleDeg": 120, "weight": 2.2, "minAngleDeg": 20, "side": "right"},
+      {"actionId": "monster.ashreia.stomp_kick", "minDist": 0, "maxDist": 2, "maxAngleDeg": 40, "weight": 2.5},
+      {"actionId": "monster.ashreia.leap_dive", "minDist": 5, "maxDist": 7.9, "maxAngleDeg": 30, "weight": 1.6, "cooldownTicks": 400, "clearAhead": 6},
+      {"actionId": "monster.ashreia.ash_burst", "minDist": 0, "maxDist": 4, "maxAngleDeg": 180, "weight": 1.2, "cooldownTicks": 600},
+      {"actionId": "monster.ashreia.tail_fan", "minDist": 0, "maxDist": 3.9, "maxAngleDeg": 180, "weight": 2, "minAngleDeg": 100},
+      {"actionId": "monster.ashreia.wing_clap", "minDist": 0, "maxDist": 2.8, "maxAngleDeg": 40, "weight": 2},
+      {"actionId": "monster.ashreia.ash_rain", "minDist": 6, "maxDist": 18, "maxAngleDeg": 60, "weight": 1.2, "cooldownTicks": 600},
+      {"actionId": "monster.ashreia.wing_spin", "minDist": 0, "maxDist": 2.6, "maxAngleDeg": 180, "weight": 1.3, "cooldownTicks": 420}
     ]
   }
 }

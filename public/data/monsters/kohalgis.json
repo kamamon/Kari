@@ -28,10 +28,13 @@
     "aggroRange": 30,
     "cooldownTicks": [40, 80],
     "choices": [
-      {"actionId": "monster.kohalgis.pinch", "minDist": 0, "maxDist": 2.2, "maxAngleDeg": 50, "weight": 3},
-      {"actionId": "monster.kohalgis.side_hop_l", "minDist": 1, "maxDist": 5, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 45, "side": "left", "cooldownTicks": 200},
-      {"actionId": "monster.kohalgis.side_hop_r", "minDist": 1, "maxDist": 5, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 45, "side": "right", "cooldownTicks": 200},
-      {"actionId": "monster.kohalgis.sand_scrape", "minDist": 1, "maxDist": 3.6, "maxAngleDeg": 35, "weight": 2, "cooldownTicks": 220}
+      {"actionId": "monster.kohalgis.pinch", "minDist": 0, "maxDist": 1.6, "maxAngleDeg": 50, "weight": 3},
+      {"actionId": "monster.kohalgis.side_hop_l", "minDist": 1, "maxDist": 3.2, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 45, "side": "left", "cooldownTicks": 200},
+      {"actionId": "monster.kohalgis.side_hop_r", "minDist": 1, "maxDist": 3.2, "maxAngleDeg": 135, "weight": 2.5, "minAngleDeg": 45, "side": "right", "cooldownTicks": 200},
+      {"actionId": "monster.kohalgis.sand_scrape", "minDist": 1, "maxDist": 2.9, "maxAngleDeg": 35, "weight": 2, "cooldownTicks": 220},
+      {"actionId": "monster.kohalgis.threat", "minDist": 2.5, "maxDist": 8, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 600},
+      {"actionId": "monster.kohalgis.jab", "minDist": 0, "maxDist": 1.8, "maxAngleDeg": 35, "weight": 2.5},
+      {"actionId": "monster.kohalgis.shell_bump", "minDist": 0, "maxDist": 1.6, "maxAngleDeg": 180, "weight": 1.8, "cooldownTicks": 240}
     ]
   }
 }

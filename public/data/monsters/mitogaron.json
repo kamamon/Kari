@@ -27,10 +27,13 @@
     "aggroRange": 30,
     "cooldownTicks": [45, 90],
     "choices": [
-      {"actionId": "monster.mitogaron.curl_bump", "minDist": 0, "maxDist": 2.6, "maxAngleDeg": 35, "weight": 3},
-      {"actionId": "monster.mitogaron.hook_scrape_l", "minDist": 0, "maxDist": 2.6, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "left"},
-      {"actionId": "monster.mitogaron.hook_scrape_r", "minDist": 0, "maxDist": 2.6, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "right"},
-      {"actionId": "monster.mitogaron.para_drip", "minDist": 1, "maxDist": 6, "maxAngleDeg": 180, "weight": 2, "cooldownTicks": 300}
+      {"actionId": "monster.mitogaron.curl_bump", "minDist": 0, "maxDist": 2.4, "maxAngleDeg": 35, "weight": 3},
+      {"actionId": "monster.mitogaron.hook_scrape_l", "minDist": 0, "maxDist": 1.9, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "left"},
+      {"actionId": "monster.mitogaron.hook_scrape_r", "minDist": 0, "maxDist": 1.9, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 40, "side": "right"},
+      {"actionId": "monster.mitogaron.para_drip", "minDist": 1, "maxDist": 6, "maxAngleDeg": 180, "weight": 2, "cooldownTicks": 300},
+      {"actionId": "monster.mitogaron.threat", "minDist": 2.5, "maxDist": 8, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 600},
+      {"actionId": "monster.mitogaron.half_roll", "minDist": 2, "maxDist": 5.5, "maxAngleDeg": 30, "weight": 1.8, "cooldownTicks": 300, "clearAhead": 5},
+      {"actionId": "monster.mitogaron.bite", "minDist": 0, "maxDist": 2.0, "maxAngleDeg": 35, "weight": 2.5}
     ]
   }
 }

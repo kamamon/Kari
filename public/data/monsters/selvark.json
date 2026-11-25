@@ -30,11 +30,23 @@
     "aggroRange": 200,
     "cooldownTicks": [40, 85],
     "choices": [
-      {"actionId": "monster.selvark.hop_kick_l", "minDist": 0, "maxDist": 5.5, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 35, "side": "left"},
-      {"actionId": "monster.selvark.hop_kick_r", "minDist": 0, "maxDist": 5.5, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 35, "side": "right"},
-      {"actionId": "monster.selvark.gust", "minDist": 3, "maxDist": 11, "maxAngleDeg": 35, "weight": 2, "cooldownTicks": 360},
-      {"actionId": "monster.selvark.lunge", "minDist": 3, "maxDist": 8, "maxAngleDeg": 30, "weight": 2.5},
-      {"actionId": "monster.selvark.back_flip", "minDist": 0, "maxDist": 3.6, "maxAngleDeg": 70, "weight": 2, "cooldownTicks": 420}
+      {"actionId": "monster.selvark.threat", "minDist": 5, "maxDist": 14, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 700},
+      {"actionId": "monster.selvark.retreat", "minDist": 0, "maxDist": 3.0, "maxAngleDeg": 180, "weight": 0.8, "cooldownTicks": 520},
+      {"actionId": "monster.selvark.hop_kick_l", "minDist": 0, "maxDist": 4.4, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 35, "side": "left"},
+      {"actionId": "monster.selvark.hop_kick_r", "minDist": 0, "maxDist": 4.4, "maxAngleDeg": 140, "weight": 2.5, "minAngleDeg": 35, "side": "right"},
+      {"actionId": "monster.selvark.gust", "minDist": 3, "maxDist": 9.5, "maxAngleDeg": 35, "weight": 2, "cooldownTicks": 360},
+      {"actionId": "monster.selvark.lunge", "minDist": 3, "maxDist": 5.4, "maxAngleDeg": 30, "weight": 2.5},
+      {"actionId": "monster.selvark.back_flip", "minDist": 0, "maxDist": 2.9, "maxAngleDeg": 70, "weight": 2, "cooldownTicks": 420},
+      {"actionId": "monster.selvark.double_thrust", "minDist": 2.5, "maxDist": 4.8, "maxAngleDeg": 30, "weight": 2, "cooldownTicks": 300},
+      {"actionId": "monster.selvark.rear_kick", "minDist": 0, "maxDist": 3, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 120},
+      {"actionId": "monster.selvark.head_sweep_l", "minDist": 0, "maxDist": 2.8, "maxAngleDeg": 110, "weight": 2.2, "minAngleDeg": 25, "side": "left"},
+      {"actionId": "monster.selvark.head_sweep_r", "minDist": 0, "maxDist": 2.8, "maxAngleDeg": 110, "weight": 2.2, "minAngleDeg": 25, "side": "right"},
+      {"actionId": "monster.selvark.stomp", "minDist": 0, "maxDist": 3.1, "maxAngleDeg": 45, "weight": 2.2},
+      {"actionId": "monster.selvark.wind_spin", "minDist": 0, "maxDist": 3.5, "maxAngleDeg": 180, "weight": 1.4, "cooldownTicks": 600},
+      {"actionId": "monster.selvark.charge", "minDist": 7, "maxDist": 16.1, "maxAngleDeg": 25, "weight": 1.6, "cooldownTicks": 520, "clearAhead": 10},
+      {"actionId": "monster.selvark.leap_stomp", "minDist": 5, "maxDist": 8.5, "maxAngleDeg": 30, "weight": 1.6, "cooldownTicks": 360, "clearAhead": 6},
+      {"actionId": "monster.selvark.tail_whip_l", "minDist": 0, "maxDist": 3.6, "maxAngleDeg": 180, "weight": 1.8, "minAngleDeg": 90, "side": "left"},
+      {"actionId": "monster.selvark.tail_whip_r", "minDist": 0, "maxDist": 3.6, "maxAngleDeg": 180, "weight": 1.8, "minAngleDeg": 90, "side": "right"}
     ]
   }
 }

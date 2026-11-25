@@ -30,12 +30,23 @@
     "aggroRange": 200,
     "cooldownTicks": [45, 90],
     "choices": [
+      {"actionId": "monster.velgait.threat", "minDist": 5, "maxDist": 14, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 700},
+      {"actionId": "monster.velgait.retreat", "minDist": 0, "maxDist": 3.0, "maxAngleDeg": 180, "weight": 0.8, "cooldownTicks": 520},
       {"actionId": "monster.velgait.mist_ball", "minDist": 5, "maxDist": 16, "maxAngleDeg": 45, "weight": 2.5, "cooldownTicks": 300},
-      {"actionId": "monster.velgait.side_thrust_l", "minDist": 2, "maxDist": 7, "maxAngleDeg": 120, "weight": 2.5, "minAngleDeg": 30, "side": "left"},
-      {"actionId": "monster.velgait.side_thrust_r", "minDist": 2, "maxDist": 7, "maxAngleDeg": 120, "weight": 2.5, "minAngleDeg": 30, "side": "right"},
-      {"actionId": "monster.velgait.stomp", "minDist": 0, "maxDist": 4.5, "maxAngleDeg": 35, "weight": 3},
-      {"actionId": "monster.velgait.tail_sweep_l", "minDist": 0, "maxDist": 4.6, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 60, "side": "left"},
-      {"actionId": "monster.velgait.tail_sweep_r", "minDist": 0, "maxDist": 4.6, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 60, "side": "right"}
+      {"actionId": "monster.velgait.side_thrust_l", "minDist": 2, "maxDist": 4.9, "maxAngleDeg": 120, "weight": 2.5, "minAngleDeg": 30, "side": "left"},
+      {"actionId": "monster.velgait.side_thrust_r", "minDist": 2, "maxDist": 4.9, "maxAngleDeg": 120, "weight": 2.5, "minAngleDeg": 30, "side": "right"},
+      {"actionId": "monster.velgait.stomp", "minDist": 0, "maxDist": 3.7, "maxAngleDeg": 35, "weight": 3},
+      {"actionId": "monster.velgait.tail_sweep_l", "minDist": 0, "maxDist": 4, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 60, "side": "left"},
+      {"actionId": "monster.velgait.tail_sweep_r", "minDist": 0, "maxDist": 4, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 60, "side": "right"},
+      {"actionId": "monster.velgait.crown_ram", "minDist": 5, "maxDist": 10.2, "maxAngleDeg": 25, "weight": 1.8, "cooldownTicks": 360, "clearAhead": 8},
+      {"actionId": "monster.velgait.crown_swing_l", "minDist": 0, "maxDist": 2.7, "maxAngleDeg": 110, "weight": 2.2, "minAngleDeg": 25, "side": "left"},
+      {"actionId": "monster.velgait.crown_swing_r", "minDist": 0, "maxDist": 2.7, "maxAngleDeg": 110, "weight": 2.2, "minAngleDeg": 25, "side": "right"},
+      {"actionId": "monster.velgait.rear_kick", "minDist": 0, "maxDist": 3.4, "maxAngleDeg": 180, "weight": 2.4, "minAngleDeg": 120},
+      {"actionId": "monster.velgait.mist_burst", "minDist": 0, "maxDist": 4.4, "maxAngleDeg": 180, "weight": 1.2, "cooldownTicks": 600},
+      {"actionId": "monster.velgait.mist_volley", "minDist": 7, "maxDist": 18, "maxAngleDeg": 50, "weight": 1.5, "cooldownTicks": 480},
+      {"actionId": "monster.velgait.pounce", "minDist": 4, "maxDist": 8.1, "maxAngleDeg": 30, "weight": 1.6, "cooldownTicks": 320, "clearAhead": 5},
+      {"actionId": "monster.velgait.stomp_double", "minDist": 0, "maxDist": 3.5, "maxAngleDeg": 50, "weight": 1.8, "cooldownTicks": 280},
+      {"actionId": "monster.velgait.charge", "minDist": 7, "maxDist": 15.9, "maxAngleDeg": 25, "weight": 1.5, "cooldownTicks": 520, "clearAhead": 10}
     ]
   }
 }

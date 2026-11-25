@@ -12,6 +12,10 @@
      立体の上面・下面・ふちは、横から写すと形の外の色を拾うので、背景の色が出ないようにする。
   3. 体の形を囲む四角（余白 16px）で切り出し、幅 1024px 以下へ縮める。
 
+  4. 肌の細かな模様（v0.21.0）: 体のいちばん奥（体の形の縁から最も遠い所）を中心に、正方形を切り出し、
+     ゆるい濃淡を除いて（細かな模様だけ）、上下左右の端がつながるようにした 256px の絵 <key>_skin_v1.webp。
+     横から貼る絵が伸びてしまう面（前・後ろ・上・下を向いた面）に、細かな模様として重ねる（色は、横から貼る絵の、ぼかした色）。
+
 体の立体は src/render/creaturePlans.ts（tools/gen-monsters.py の出力）が、原画の px の座標で持つ。
 貼る時は、立体の (z, y) を原画の (x, y) へ戻し、この切り出し位置で絵の uv にする。
 出力は手で編集しない。元の PNG を変えたら、もう一度これを走らせる。
@@ -65,6 +69,29 @@ def bleed(rgb, solid):
     return rgb[idx[0], idx[1]]
 
 
+SKIN = 256
+
+
+def skin_tile(rgb, solid):
+    """体の奥の正方形を切り出し、細かな模様だけにして、端をつなぐ（平均 = 0.5 で、模様の倍率 0〜2 を表す）"""
+    dist = ndimage.distance_transform_edt(solid)
+    cy, cx = np.unravel_index(np.argmax(dist), dist.shape)
+    half = int(max(48, min(160, dist[cy, cx] * 0.9)))
+    crop = rgb[max(0, cy - half):cy + half, max(0, cx - half):cx + half]
+    img = np.asarray(Image.fromarray(np.clip(crop, 0, 255).astype(np.uint8)).resize((SKIN, SKIN), Image.LANCZOS)).astype(np.float32)
+    # ゆるい濃淡を除く（細かな模様 = 元 / ぼかした元）
+    low = ndimage.gaussian_filter(img, sigma=(24, 24, 0), mode='wrap')
+    det = img / np.maximum(low, 1)
+    # 端をつなぐ: 半分ずらした自分と、端に近いほど混ぜる
+    sh = np.roll(np.roll(det, SKIN // 2, axis=0), SKIN // 2, axis=1)
+    y, x = np.mgrid[0:SKIN, 0:SKIN]
+    edge = np.minimum(np.minimum(x, SKIN - 1 - x), np.minimum(y, SKIN - 1 - y)) / (SKIN / 2)
+    w = np.clip(edge * 1.6, 0, 1)[..., None]
+    out = det * w + sh * (1 - w)
+    out = out / out.reshape(-1, 3).mean(axis=0)
+    return np.clip(out * 127.5, 0, 255).astype(np.uint8), half * 2
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     report = {}
@@ -87,12 +114,16 @@ def main():
         path = os.path.join(OUT, f'{key}_side_v1.webp')
         img.save(path, 'WEBP', quality=80, method=6)
         nbytes = os.path.getsize(path)
+        skin_path = os.path.join(OUT, f'{key}_skin_v1.webp')
+        tile, skin_px = skin_tile(rgb, solid)
+        Image.fromarray(tile).save(skin_path, 'WEBP', quality=82, method=6)
+        nbytes += os.path.getsize(skin_path)
         report[key] = {
             'source': os.path.relpath(src, ROOT), 'image': [w, h], 'background': '#%02x%02x%02x' % tuple(int(round(c)) for c in bg),
             'bbox': [bx0, by0, bx1, by1], 'crop': [x0, y0, x1, y1], 'out': list(size), 'bytes': nbytes,
             'share': round(float(filled.mean()), 3), 'average': [round(float(c), 3) for c in avg],
         }
-        ts.append(f"  {key}: {{ file: 'assets/textures/monsters/{key}_side_v1.webp', crop: [{x0}, {y0}, {x1}, {y1}], bbox: [{bx0}, {by0}, {bx1}, {by1}], average: [{avg[0]:.3f}, {avg[1]:.3f}, {avg[2]:.3f}] }},")
+        ts.append(f"  {key}: {{ file: 'assets/textures/monsters/{key}_side_v1.webp', skin: 'assets/textures/monsters/{key}_skin_v1.webp', skinPx: {skin_px}, crop: [{x0}, {y0}, {x1}, {y1}], bbox: [{bx0}, {by0}, {bx1}, {by1}], average: [{avg[0]:.3f}, {avg[1]:.3f}, {avg[2]:.3f}] }},")
         print(f'{key:10s} bbox {bx0},{by0}-{bx1},{by1}  out {size[0]}x{size[1]}  {nbytes // 1024}KB')
     with open(MEASURE, 'w', encoding='utf-8') as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
@@ -100,7 +131,7 @@ def main():
     with open(TS, 'w', encoding='utf-8') as f:
         f.write('// 生成物（npm run monsters:art = tools/monster-art.py）。手で編集しない。\n')
         f.write('// 原画の、体へ貼るために切り出した範囲（原画の px）。crop = 絵に入れた範囲、bbox = 体の形を囲む四角。\n')
-        f.write('export interface CreatureArt {\n  file: string;\n  crop: [number, number, number, number];\n  bbox: [number, number, number, number];\n  /** 体の色の平均（0〜1。絵が読み込まれるまでの色） */\n  average: [number, number, number];\n}\n\n')
+        f.write('export interface CreatureArt {\n  file: string;\n  /** 肌の細かな模様（v0.21.0。平均 0.5 = 倍率 1）と、その 1 枚が原画の何 px ぶんか */\n  skin: string;\n  skinPx: number;\n  crop: [number, number, number, number];\n  bbox: [number, number, number, number];\n  /** 体の色の平均（0〜1。絵が読み込まれるまでの色） */\n  average: [number, number, number];\n}\n\n')
         f.write('export const CREATURE_ART: Record<string, CreatureArt> = {\n')
         f.write('\n'.join(ts) + '\n};\n')
     total = sum(r['bytes'] for r in report.values())

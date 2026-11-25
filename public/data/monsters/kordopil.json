@@ -28,9 +28,13 @@
     "aggroRange": 30,
     "cooldownTicks": [40, 80],
     "choices": [
-      {"actionId": "monster.kordopil.push_slam", "minDist": 0, "maxDist": 2.4, "maxAngleDeg": 45, "weight": 3},
-      {"actionId": "monster.kordopil.dash", "minDist": 2, "maxDist": 8, "maxAngleDeg": 30, "weight": 2.5, "cooldownTicks": 200, "clearAhead": 3},
-      {"actionId": "monster.kordopil.dirt_kick", "minDist": 0, "maxDist": 3.2, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 100, "cooldownTicks": 180}
+      {"actionId": "monster.kordopil.push_slam", "minDist": 0, "maxDist": 1.8, "maxAngleDeg": 45, "weight": 3},
+      {"actionId": "monster.kordopil.dash", "minDist": 2, "maxDist": 4.2, "maxAngleDeg": 30, "weight": 2.5, "cooldownTicks": 200, "clearAhead": 3},
+      {"actionId": "monster.kordopil.dirt_kick", "minDist": 0, "maxDist": 2.6, "maxAngleDeg": 180, "weight": 2.5, "minAngleDeg": 100, "cooldownTicks": 180},
+      {"actionId": "monster.kordopil.threat", "minDist": 2.5, "maxDist": 8, "maxAngleDeg": 60, "weight": 0.7, "cooldownTicks": 600},
+      {"actionId": "monster.kordopil.headbutt", "minDist": 0, "maxDist": 2.0, "maxAngleDeg": 35, "weight": 2.5},
+      {"actionId": "monster.kordopil.tail_swipe_l", "minDist": 0, "maxDist": 1.7, "maxAngleDeg": 180, "weight": 2, "minAngleDeg": 70, "side": "left"},
+      {"actionId": "monster.kordopil.tail_swipe_r", "minDist": 0, "maxDist": 1.7, "maxAngleDeg": 180, "weight": 2, "minAngleDeg": 70, "side": "right"}
     ]
   }
 }
