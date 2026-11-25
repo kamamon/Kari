@@ -1,0 +1,162 @@
+[
+  {
+    "no": 80,
+    "sourceSpeciesId": "monster.pasnelim",
+    "artFile": "art/monsters/equipment_080_pasnelim_v1.png",
+    "artReview": {
+      "status": "visually-reviewed",
+      "checkedAt": "2026-11-25",
+      "coverage": {
+        "armorFullBody": true,
+        "fiveArmorRegions": true,
+        "weaponGroups": 7,
+        "heavyBlade": true,
+        "guardBladeAndShield": true,
+        "hardFaceHammer": true,
+        "twoTwinBlades": true,
+        "longBlade": true,
+        "lanceAndShield": true,
+        "bowStringSmallRingAndArrow": true,
+        "allGroupsInsideFrame": true
+      },
+      "observations": "頭頂を覆う低い兜と5防具部位、7武器群を確認。腰の前帆・灰緑と青銅・長い低襟の意図を反映。盾2枚、閉じた硬質槌、双剣2本、実弓の弦・分離した小照準環・矢がある。全先端と足先の欠損なし。前帆の厳密な四枚の付根と兜の視野は次の形状確定で確認。",
+      "limitations": [
+        "初登場級=極級の系列原画。背面・断面・正投影・実寸・共通リグは未検証。",
+        "厳密な四辺80px余白と部材層数・結合位置は完全再現ではない。"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "8fec5d2a42b5e12984a923dd8b0d80a33fee64bc420cb8b9a28cf221db9b8d3c",
+      "sourceGeneratedFile": "exec-af97290a-ce4c-443d-9103-5e63f02a205e.png",
+      "generator": "built-in image_gen",
+      "promptFile": "art/prompts/monster_080.json",
+      "referencePaths": [
+        "art-source/board/style_board_v2.png",
+        "art-source/monster/concepts/monster_080_pasnelim_concept_v1.png"
+      ]
+    }
+  },
+  {
+    "no": 81,
+    "sourceSpeciesId": "monster.zaclatom",
+    "artFile": "art/monsters/equipment_081_zaclatom_v1.png",
+    "artReview": {
+      "status": "visually-reviewed",
+      "checkedAt": "2026-11-25",
+      "coverage": {
+        "armorFullBody": true,
+        "fiveArmorRegions": true,
+        "weaponGroups": 7,
+        "heavyBlade": true,
+        "guardBladeAndShield": true,
+        "hardFaceHammer": true,
+        "twoTwinBlades": true,
+        "longBlade": true,
+        "lanceAndShield": true,
+        "bowStringSmallRingAndArrow": true,
+        "allGroupsInsideFrame": true
+      },
+      "observations": "低い閉鎖兜、左だけに立つ三角襟、灰褐の胸・腕・腰・脚と7武器群を確認。熱筋は主に左襟内側。盾2枚、閉じた硬質槌頭、双剣2本、実弓弦・分離した小照準環・矢あり。剣先・槍先・足先の欠損なし。後腰の短扇の全形は斜め正面で隠れる。",
+      "limitations": [
+        "初登場級=極級の系列原画。背面・断面・正投影・実寸・共通リグは未検証。",
+        "厳密な四辺80px余白と部材層数・結合位置は完全再現ではない。"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "a1fa320cdb6750d22be5cc9788e68296b1da3b4b287d02f120e65a6b3a3cb674",
+      "sourceGeneratedFile": "exec-bd77264a-9650-4268-ba11-b367e9e782aa.png",
+      "generator": "built-in image_gen",
+      "promptFile": "art/prompts/monster_081.json",
+      "referencePaths": [
+        "art-source/board/style_board_v2.png",
+        "art-source/monster/concepts/monster_081_zaclatom_concept_v1.png"
+      ]
+    }
+  },
+  {
+    "no": 82,
+    "sourceSpeciesId": "monster.izoflane",
+    "artFile": "art/monsters/equipment_082_izoflane_v1.png",
+    "artReview": {
+      "status": "visually-reviewed",
+      "checkedAt": "2026-11-25",
+      "coverage": {
+        "armorFullBody": true,
+        "fiveArmorRegions": true,
+        "weaponGroups": 7,
+        "heavyBlade": true,
+        "guardBladeAndShield": true,
+        "hardFaceHammer": true,
+        "twoTwinBlades": true,
+        "longBlade": true,
+        "lanceAndShield": true,
+        "bowStringSmallRingAndArrow": true,
+        "allGroupsInsideFrame": true
+      },
+      "observations": "低い兜と胸下のずれ皿、右前腕と右脛が長い非対称の5部位、7武器群を確認。盾2枚、硬い皿槌頭、双剣2本、実弓弦・分離小環・矢あり。全先端と足先の欠損なし。羽皮の段が多めで胸皿の厳密な二枚構造と兜の視野は形状確定時に整理。",
+      "limitations": [
+        "初登場級=極級の系列原画。背面・断面・正投影・実寸・共通リグは未検証。",
+        "厳密な四辺80px余白と部材層数・結合位置は完全再現ではない。"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "219bed42c0440046b40d42b9c5e2c44b34e5196a35d6ba6020421dc6007f2420",
+      "sourceGeneratedFile": "exec-fd507d2b-8fc8-45ad-afde-5bc2574746ca.png",
+      "generator": "built-in image_gen",
+      "promptFile": "art/prompts/monster_082.json",
+      "referencePaths": [
+        "art-source/board/style_board_v2.png",
+        "art-source/monster/concepts/monster_082_izoflane_concept_v1.png"
+      ]
+    }
+  },
+  {
+    "no": 83,
+    "sourceSpeciesId": "monster.queribas",
+    "artFile": "art/monsters/equipment_083_queribas_v1.png",
+    "artReview": {
+      "status": "visually-reviewed",
+      "checkedAt": "2026-11-25",
+      "coverage": {
+        "armorFullBody": true,
+        "fiveArmorRegions": true,
+        "weaponGroups": 7,
+        "heavyBlade": true,
+        "guardBladeAndShield": true,
+        "hardFaceHammer": true,
+        "twoTwinBlades": true,
+        "longBlade": true,
+        "lanceAndShield": true,
+        "bowStringSmallRingAndArrow": true,
+        "allGroupsInsideFrame": true
+      },
+      "observations": "低い帽体、左額と左前腕に櫛を寄せた5防具部位、7武器群を確認。腰の後ろは平ら、先端琥珀を小点に抑える。盾2枚、閉じた硬質槌、双剣2本、実弓弦・分離小環・矢あり。全先端と足先の欠損なし。兜上の櫛が指定よりやや高く、低い最終寸法へ詰める余地あり。",
+      "limitations": [
+        "初登場級=極級の系列原画。背面・断面・正投影・実寸・共通リグは未検証。",
+        "厳密な四辺80px余白と部材層数・結合位置は完全再現ではない。"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "e2cf7578288ce4c0c5a2921f2616ada27ae2ce821b3013ae4cfb5ebde5fe4d69",
+      "sourceGeneratedFile": "exec-b5c83a9d-fa1f-4ea3-9aaf-7178deed28e6.png",
+      "generator": "built-in image_gen",
+      "promptFile": "art/prompts/monster_083.json",
+      "referencePaths": [
+        "art-source/board/style_board_v2.png",
+        "art-source/monster/concepts/monster_083_queribas_concept_v1.png"
+      ]
+    }
+  }
+]

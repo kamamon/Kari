@@ -1,0 +1,38 @@
+{
+  "mode": "built-in image_gen",
+  "no": 74,
+  "seriesId": "series.rimposera",
+  "prompt": "Use case: stylized-concept. Create ONE professional ORIGINAL hunting-equipment family concept sheet for VEILBOUND HUNTERS. Landscape 3:2, warm ivory background, no scenery, no watermark, restrained realistic hand-painted materials, aged bronze fittings and dark leather. Reference image 1 is the approved art direction. Reference image 2 is the source creature; derive materials and asymmetry but do NOT draw a creature or turn the human into that creature.\nCOMPOSITION: LEFT 30 percent: one complete adult neutral human mannequin wearing all five armor regions, head to boots fully visible, relaxed upright stance, empty hands, front three-quarter view. Practical closed clothing, MANDATORY LOW HELMET fully covering the crown and forehead, NO visible hair and no bare head, readable joints. Never omit head armor. RIGHT 70 percent: exactly SEVEN cleanly separated weapon groups in two rows, each complete with generous gaps, no cropping. Top row 01-04; bottom row 05-07. Only text is small labels 01,02,03,04,05,06,07 below corresponding groups. Each group keeps its recognizable form:\n01 enormous broad single-edge slab greatsword; 02 compact SINGLE-EDGE sword AND a separate shield; 03 long-handled heavy blunt maul with a CLOSED HARD BONE impact face, NOT a drum; 04 TWO matching short blades; 05 long slim curved single-edge sword; 06 straight long lance AND a separate tall shield; 07 bow with an actual string, small separate aiming ring, AND one arrow. No firearms, scythes, axes, duplicate groups, magical floating parts. Armor mannequin holds none of these.\nSOURCE SERIES 074: リムポセラ / 汐函獣. Native grade: 4. This sheet shows ONLY this native-grade design. Palette: 灰褐 / 生成り / 青銅.\nArmor silhouette: 灰褐色の平たい背板と、腰の四隅へ短く下がる生成りの袋を写す。袋の留め部だけ青銅色にする。\nArmor five regions: head: 濾水甲を低く平らに重ねた兜; chest: 平たい背板と四室へ分かれる短い腹甲; arms: 手首手前で止める薄い濾水甲の籠手; waist: 腰の四隅に短い生成りの袋、留め具だけ青銅; legs: 袋に触れない細い膝甲と濾水膜の脛衣\nDistinct weapons: 01 平たい濾水甲を刃背の広い面へ当てた剣; 02 浅い片刃と濾水甲の幅広盾; 03 四室芯を殻で閉じる四角い槌頭; 04 四室の仕切骨から作る同寸の短い双刃; 05 汐尾板の薄い反りを持つ曲刀; 06 濾水芯を柄内へ収めた直槍と四隅を落とす盾; 07 汐尾板の弓身、四室膜は握り裏の小容器\nPreserve the specifically stated anatomical LEFT and RIGHT of the WEARER. Keep shoulder and waist protrusions restrained for movement. Helmets, both hands, boots, blade tips, bowstring, shields and spear point fully inside the canvas. Original visual language, avoid any recognizable existing franchise designs. Clear fabrication joints, few broad forms, no dense filigree. This is concept art, not a precise orthographic production drawing.\nThe style board is ONLY a rendering style reference. Do not reuse the stone armor, bare-headed man or stone weapon material from it. The creature materials and the species-specific armor silhouette dominate this sheet.\nFRAMING: put every object entirely within the inner 85 percent of the canvas with at least 80 pixels empty margin on every outer edge. Scale down the largest sword, spear and human as needed. Every blade tip and every boot must be visible with clear empty space around it; never touch or crop at the canvas boundary.",
+  "referenceRoles": [
+    "approved style board",
+    "source creature material and silhouette reference"
+  ],
+  "referencePaths": [
+    "art-source/board/style_board_v2.png",
+    "art-source/monster/concepts/monster_074_rimposera_concept_v1.png"
+  ],
+  "output": "art/monsters/equipment_074_rimposera_v1.png",
+  "transparent_background": false,
+  "finalSourcePath": "exec-756da8bb-246c-4af3-b755-a781c9487ff3.png",
+  "review": {
+    "generated": true,
+    "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+    "notVerified": [
+      "正投影",
+      "寸法",
+      "背面",
+      "共通リグ干渉",
+      "ゲーム内描画"
+    ],
+    "revision": 1,
+    "sevenWeaponGroupsVisible": true,
+    "fiveArmorRegionsVisible": true,
+    "clippingObserved": false,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "sha256": "0a4e84b263c0e6a37b7f54916e7afa5589f71290780431bf87612ec62a49841c",
+    "notes": "全7武器群・防具5部位を視認。低い濾水兜、四室の腹甲、腰の生成り袋、弓握りの小容器を確認。前側2袋を視認し、後側2袋と平たい背板は背面図で要確認。槌は閉じた四室形の打面。剣先、槍先、足先に欠損なし。断岳剣上端の余白80pxは未達。"
+  }
+}

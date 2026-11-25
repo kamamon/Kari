@@ -1,0 +1,18 @@
+{
+  "generator": "built-in image_gen",
+  "useCase": "stylized-concept",
+  "scope": "native-rank equipment family concept sheet",
+  "seriesId": "series.pukrenoa",
+  "speciesId": "monster.pukrenoa",
+  "nativeRank": 2,
+  "prompt": "Use case: stylized-concept. Create a NEW original hunting-game EQUIPMENT FAMILY concept art sheet, landscape 3:2, high detail. Reference 1 supplies approved restrained semi-real art direction; reference 2 supplies ONLY this creature's materials and distinctive anatomy. Do NOT show the creature itself. Warm ivory plain background, soft studio contact shadows, graphite-fine edges, matte leather, bone and restrained bronze joinery. No logos, no fantasy brand references, no Japanese text.\nCOMPOSITION: exactly ONE adult neutral mannequin wearing a COMPLETE FIVE-PIECE armor set, full body head to boots, standing at left 30% of sheet, empty relaxed hands, front three-quarter view with both shoulders readable. Helmet, chest armor, separate forearm gauntlets, waist armor, greaves all present. Practical low helmet, protected torso, no exposed midriff, no high heels, no cape. No anatomy deformities. At right 70%, exactly SEVEN clearly separated weapon GROUPS on a clean TWO ROW grid: top groups 01,02,03,04; bottom groups 05,06,07. Give all long weapons enough space; nothing clipped, overlapping, floating into adjacent groups or held by mannequin. Small plain labels 01 through 07 are the ONLY text.\nGROUP TYPES (all seven mandatory): 01 thick broad single-edged greatblade with two-hand grip. 02 short SINGLE-EDGED sword AND separate shield. 03 long-handled maul with HARD CLOSED bone/stone faces, never a skin drum. 04 exactly TWO matching short twin blades. 05 ONE slender long curved single-edged blade. 06 ONE long STRAIGHT pointed lance AND separate broad shield. 07 ONE slender functional bow with a visible continuous string, small aiming ring near grip, AND ONE arrow. Bow is NOT a ring-shaped weapon.\nPalette: 灰褐, 淡紫灰, 骨白.\nArmor silhouette: 前へ長く低い顎形の胸当てと、丸く高い腰甲を対にする。灰褐色の革に淡い紫灰の小袋を頬と腰へ付ける。\nArmor parts: {\"head\": \"匙顎を浅く縮めた前庇と、小さな紫灰の頬袋を備えた低い兜。\", \"chest\": \"前へ低く伸びる匙形胸当て。腹の中央を分割して屈伸できるようにする。\", \"arms\": \"下顎骨の縁を前腕外側へ沿わせ、内側は湿潤皮の布にする。\", \"waist\": \"丸く高い後腰甲に左右二つの小袋を付け、前は短い重ね革で閉じる。\", \"legs\": \"丸い膝甲と低い匙形脛甲。袋は足元へ垂らさない。\"}\nExact weapon material/shape directions, in group order: [\"幅広い匙顎骨を厚い一枚の片刃へ削り、背に微細な霧溝を刻む。両手で握る長い柄と幅広い片刃。刃先・刃面を明確にし、厚さだけで重量感を出す。\", \"匙形の低い片刃と、丸く深い顎骨盾。短い片刃剣と独立した盾の一組。盾には背面の握りと前腕帯を備える。\", \"顎骨の厚い基部を丸い二面へ整え、霧嚢を中心へ収めた槌。長柄と閉じた硬い二つの打面。膜や嚢を打面として露出しない。\", \"匙顎の左右縁を短い同形の刃へ加工した二刀。同じ長さ・同じ輪郭の短い片刃二本。手首を塞ぐ鉤や長い飾り紐を付けない。\", \"細霧嚢の導溝を低い背へ沿わせた緩い反り刀。細い長刀と緩い反り、握りの余長。刃を片側へ限定し、峰を低く保つ。\", \"長い匙顎骨を直線芯へ継いだ槍と、頬袋を裏側へ隠した丸盾。真っ直ぐな長槍と独立した大盾の一組。穂先を小さく、握りと前腕の空間を残す。\", \"顎骨の縁を細く削った弓身と、小さな霧嚢の握り覆い。細い上下対称の弓身、一本の弦、握りのすぐ上の小さい照準環、矢一本。環を巨大化しない。\"]\nUse material-derived structural forms, not giant animal heads as helmets. Keep decorated projections low and joints free. Keep weapons functional, blade edges distinct from the spine, no repeated generic swords. This is a native-rank family concept board, NOT an orthographic diagram or a battle scene. Never add large glow halos, particle effects, monsters, extra people, extra weapons or unrelated scenery.\nCRITICAL TEXT RULE: Do not typeset any title, header, species name, rank, palette words, Japanese description, swatches or captions. Only the seven small numeric labels 01 through 07 may appear. Use the full canvas for the objects.",
+  "referenceRoles": [
+    "approved art direction",
+    "creature material/anatomy only"
+  ],
+  "referencePaths": [
+    "art-source/board/style_board_v2.png",
+    "art-source/monster/concepts/monster_034_pukrenoa_concept_v1.png"
+  ],
+  "target": "art/monsters/equipment_034_pukrenoa_v1.png"
+}

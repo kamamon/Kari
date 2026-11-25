@@ -1,0 +1,4445 @@
+{
+  "sourceCommit": "1e078bfce1e68f287ae577cf41d2fe5bafb94afa",
+  "scope": "One native-rank concept per series; higher-rank changes are written specifications.",
+  "expectedPrimaryArt": 95,
+  "primaryArt": 95,
+  "primaryBytes": 185100511,
+  "entries": [
+    {
+      "no": 1,
+      "seriesId": "series.galdros",
+      "name": "ガルドロス",
+      "seriesName": "岩殻",
+      "sourceSpeciesId": "monster.galdros",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_001_galdros_v1.png",
+      "promptFile": "art/prompts/monster_001.json",
+      "sha256": "3c76f815cb55a70b8e925fdbc34ec425e431e91ef357c0d5ea413bc20a617707",
+      "bytes": 1986313,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "頭から靴までの成人装備と7群を確認。左肩・左籠手・左腰が大きく灰褐色、低い兜と目口、独立盾2枚、硬い槌頭、双剣2本、弦と小照準環と矢あり。01先端は上縁に近いが切れていない。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "3c76f815cb55a70b8e925fdbc34ec425e431e91ef357c0d5ea413bc20a617707",
+        "sourceGeneratedFile": "exec-692db64d-49e5-4a63-8d7a-25197b84ba3e.png"
+      },
+      "catalogDesignPage": 11,
+      "catalogStatsPage": 12
+    },
+    {
+      "no": 2,
+      "seriesId": "series.selvark",
+      "name": "セルヴァルク",
+      "seriesName": "帆角",
+      "sourceSpeciesId": "monster.selvark",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_002_selvark_v1.png",
+      "promptFile": "art/prompts/monster_002.json",
+      "sha256": "602030c74a3d7e2325e231d2bd333c368c271d1a184825f42720226dc81795cc",
+      "bytes": 1852917,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "全身5部位と7武器群を確認。帆膜と桟の軽い構成、独立した小盾と長盾、硬い槌の両端、双剣2本、実弓の弦と小環と矢あり。肩膜はやや横へ開くため実寸での折り畳み量はモデル化時確認。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "602030c74a3d7e2325e231d2bd333c368c271d1a184825f42720226dc81795cc",
+        "sourceGeneratedFile": "exec-467f1bc7-4f24-4a3e-b69f-38419308e071.png"
+      },
+      "catalogDesignPage": 13,
+      "catalogStatsPage": 14
+    },
+    {
+      "no": 3,
+      "seriesId": "series.numeradon",
+      "name": "ヌメラドン",
+      "seriesName": "泥冠",
+      "sourceSpeciesId": "monster.numeradon",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_003_numeradon_v1.png",
+      "promptFile": "art/prompts/monster_003.json",
+      "sha256": "dabce08958109f72c0ec9ddf08236ebe2630a5b693119e8cdb744b9c4545bac8",
+      "bytes": 1894441,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い皿兜、重ねた胸・腕・腰・脚と7武器群を確認。泥晶面と耐水皮、小盾・溝長盾、硬い槌、双剣2本、弦付き弓と滴形小環・矢が分かる。兜縁の粒は泥晶の小留めとして読む。全体が画面内。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "dabce08958109f72c0ec9ddf08236ebe2630a5b693119e8cdb744b9c4545bac8",
+        "sourceGeneratedFile": "exec-641022ca-ed7d-44c5-9ab8-c1cc95fac7ca.png"
+      },
+      "catalogDesignPage": 15,
+      "catalogStatsPage": 16
+    },
+    {
+      "no": 4,
+      "seriesId": "series.bornakel",
+      "name": "ボルナケル",
+      "seriesName": "鐘嚢",
+      "sourceSpeciesId": "monster.bornakel",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_004_bornakel_v1.png",
+      "promptFile": "art/prompts/monster_004.json",
+      "sha256": "fb780f9a2dffae0f63c4bb8711b0a4b99df85b3eec9326358ec03a18f5d97dae",
+      "bytes": 1970721,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い鐘皿兜、胸・腕・腰・脚の5部位と7武器群を確認。三連鐘嚢の閉じた丸面、小盾・長盾、硬い大槌打面、双剣2本、弦付き弓の小環と矢あり。01の先端は上縁近くのため余白は小さいが欠損なし。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "fb780f9a2dffae0f63c4bb8711b0a4b99df85b3eec9326358ec03a18f5d97dae",
+        "sourceGeneratedFile": "exec-b2056ec9-8b31-477a-934c-21becfe48920.png"
+      },
+      "catalogDesignPage": 17,
+      "catalogStatsPage": 18
+    },
+    {
+      "no": 5,
+      "seriesId": "series.ashreia",
+      "name": "アシュレイア",
+      "seriesName": "灰帷",
+      "sourceSpeciesId": "monster.ashreia",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_005_ashreia_v1.png",
+      "promptFile": "art/prompts/monster_005.json",
+      "sha256": "7832289a2899ac0e8b96d8e6b854d8405447057adb97f481ce6cce567909ef0d",
+      "bytes": 1902918,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "羽板を低く重ねた頭部、灰色の羽帷と胸・腕・腰・脚の5部位、7武器群を確認。槌の両端打面は硬く、盾2枚、双剣2本、弓弦・照準小環・矢あり。01石突側は上端に近いが全体が画面内。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "7832289a2899ac0e8b96d8e6b854d8405447057adb97f481ce6cce567909ef0d",
+        "sourceGeneratedFile": "exec-6b692c2e-5631-47b6-ad28-813eca7d3a28.png"
+      },
+      "catalogDesignPage": 19,
+      "catalogStatsPage": 20
+    },
+    {
+      "no": 6,
+      "seriesId": "series.lumisca",
+      "name": "ルミスカ",
+      "seriesName": "燐尾",
+      "sourceSpeciesId": "monster.lumisca",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_006_lumisca_v1.png",
+      "promptFile": "art/prompts/monster_006.json",
+      "sha256": "0901e863919f6b0444caaed7ca65cef8cf9cc295da081d99c15885690a6b92ab",
+      "bytes": 1820584,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い燐板兜と胸・腕・腰・脚、7武器群を確認。薄い鱗と琥珀色の点状発光、硬い閉鎖槌面、盾2枚、双剣2本、弓弦・小照準環・矢あり。剣先・槍先・足先を含め全パーツが画面内。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "0901e863919f6b0444caaed7ca65cef8cf9cc295da081d99c15885690a6b92ab",
+        "sourceGeneratedFile": "exec-fa58fd73-6742-491b-8ac0-f36b4c6b7d47.png"
+      },
+      "catalogDesignPage": 21,
+      "catalogStatsPage": 22
+    },
+    {
+      "no": 7,
+      "seriesId": "series.orglass",
+      "name": "オルグラス",
+      "seriesName": "硝殻",
+      "sourceSpeciesId": "monster.orglass",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_007_orglass_v1.png",
+      "promptFile": "art/prompts/monster_007.json",
+      "sha256": "d63f9ec0c0e5e4d4cf22d7744247ba69b82e8308e9d48aba6527382a57f72a89",
+      "bytes": 1765791,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い多面兜と硝殻の胸・腕・腰・脚、7武器群を確認。右籠手が大きく指先は露出して把持を確保。盾2枚、閉鎖槌面、双剣2本、弓弦・小環・矢あり。01石突の上余白は短いが欠損なし。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "d63f9ec0c0e5e4d4cf22d7744247ba69b82e8308e9d48aba6527382a57f72a89",
+        "sourceGeneratedFile": "exec-30c7b066-3619-4abe-b1c4-a41fa1a22b4f.png"
+      },
+      "catalogDesignPage": 23,
+      "catalogStatsPage": 24
+    },
+    {
+      "no": 8,
+      "seriesId": "series.tengaro",
+      "name": "テンガロ",
+      "seriesName": "鉤輪",
+      "sourceSpeciesId": "monster.tengaro",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_008_tengaro_v1.png",
+      "promptFile": "art/prompts/monster_008.json",
+      "sha256": "ff66babca4de42d10aa000cb87979dc19a954894de251570508feff6780d66ce",
+      "bytes": 1722986,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "鉤殻を低く重ねた兜と分節した胸・腕・腰・脚、7武器群を確認。小鉤は外側に向き手・膝の把持屈曲域を空ける。盾2枚、硬い槌面、双剣2本、弓弦・小環・矢、剣先・槍先・足先の画面内収まりを確認。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "ff66babca4de42d10aa000cb87979dc19a954894de251570508feff6780d66ce",
+        "sourceGeneratedFile": "exec-70d97a55-65c4-4620-b1e8-270e4beab1df.png"
+      },
+      "catalogDesignPage": 25,
+      "catalogStatsPage": 26
+    },
+    {
+      "no": 9,
+      "seriesId": "series.verito",
+      "name": "ヴェリト",
+      "seriesName": "絹霧",
+      "sourceSpeciesId": "monster.verito",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_009_verito_v1.png",
+      "promptFile": "art/prompts/monster_009.json",
+      "sha256": "065a3b036868a6d1761da797c65b378c4f9e001c78fb46f1fccd8a9c61e4d80c",
+      "bytes": 1821978,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い糸甲帽、密な織り胸当てと前腕・腰布・脛の5部位、7武器群を確認。絹糸と淡い紫の殻を読み分けられ、盾2枚、硬い閉鎖槌端、双剣2本、弦付き弓と小環・矢あり。先端・足先の欠損なし。細糸の量は実装LODで簡略化が必要。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "065a3b036868a6d1761da797c65b378c4f9e001c78fb46f1fccd8a9c61e4d80c",
+        "sourceGeneratedFile": "exec-a094b2d6-699d-48ec-a7d7-a22ed04a5056.png"
+      },
+      "catalogDesignPage": 27,
+      "catalogStatsPage": 28
+    },
+    {
+      "no": 10,
+      "seriesId": "series.razmer",
+      "name": "ラズメル",
+      "seriesName": "環骨",
+      "sourceSpeciesId": "monster.razmer",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_010_razmer_v1.png",
+      "promptFile": "art/prompts/monster_010.json",
+      "sha256": "4c4ea4e54448407bf3a309ffb374a36ebfd1e1b6ff3511fc1b8bdbabb160ce2a",
+      "bytes": 1935432,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い環骨の鉢金と肋骨状の胸当て、輪を重ねた腕・腰・脚を確認。7武器群は骨の曲率を共通化し、盾2枚、硬い槌端、双剣2本、実弓の弦・小環・矢が独立して見える。全先端が画面内。頭部は鉢金型で頭頂を覆う全兜ではない。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "4c4ea4e54448407bf3a309ffb374a36ebfd1e1b6ff3511fc1b8bdbabb160ce2a",
+        "sourceGeneratedFile": "exec-08c0a691-62c9-44ac-bf7b-ab3fa08a767d.png"
+      },
+      "catalogDesignPage": 29,
+      "catalogStatsPage": 30
+    },
+    {
+      "no": 11,
+      "seriesId": "series.kirisave",
+      "name": "キリサーヴ",
+      "seriesName": "氷帆",
+      "sourceSpeciesId": "monster.kirisave",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_011_kirisave_v1.png",
+      "promptFile": "art/prompts/monster_011.json",
+      "sha256": "f029f508d7061fc99db5cfda852aaa72862899b5be7e90a875d8012321fc4a8e",
+      "bytes": 1647185,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い氷帆兜と段状の肩・腕・腰・脛、7武器群を確認。透明感のある氷帆板と暗い芯材を分離し、盾2枚、硬い槌の両端、双剣2本、弓弦・小環・矢あり。01先端は上余白が小さいが全先端と足先は欠損なし。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "f029f508d7061fc99db5cfda852aaa72862899b5be7e90a875d8012321fc4a8e",
+        "sourceGeneratedFile": "exec-6522d18e-c2f0-47c4-a595-bad79d31782f.png"
+      },
+      "catalogDesignPage": 31,
+      "catalogStatsPage": 32
+    },
+    {
+      "no": 12,
+      "seriesId": "series.velgait",
+      "name": "ヴェルガイト",
+      "seriesName": "霧灯",
+      "sourceSpeciesId": "monster.velgait",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_012_velgait_v1.png",
+      "promptFile": "art/prompts/monster_012.json",
+      "sha256": "e662bdc792ab88f85382a85b51dfb79421d9654275848762173eb880723de5e6",
+      "bytes": 1587173,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い帽体と半環、胸・腕・腰・脚の5部位、7武器群を確認。背側に小灯が並び正面腰へ灯を移していない。盾2枚、硬い槌、双剣2本、実弓弦・小環・矢あり。全先端は画面内。背側六灯の全数・取付構造は斜め正面図では隠れ、背面図で別確認が必要。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "e662bdc792ab88f85382a85b51dfb79421d9654275848762173eb880723de5e6",
+        "sourceGeneratedFile": "exec-443c9dcd-4e0d-461e-a4c6-5ffbb305ba22.png"
+      },
+      "catalogDesignPage": 33,
+      "catalogStatsPage": 34
+    },
+    {
+      "no": 13,
+      "seriesId": "series.embarg",
+      "name": "エンバルグ",
+      "seriesName": "熾炉",
+      "sourceSpeciesId": "monster.embarg",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_013_embarg_v1.png",
+      "promptFile": "art/prompts/monster_013.json",
+      "sha256": "76678f434c0e3361e2745fd29cb29518723fe1c06783a530fcf689bda86fd9bb",
+      "bytes": 1908035,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い炉殻兜、胸の小排熱格子、前腕・腰・脚と7武器群を確認。黒殻に小さな橙色の熱線を限定。盾2枚、硬い槌の両端、双剣2本、弓弦・小照準環・矢あり。剣先・槍先・足先を含む欠損なし。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "76678f434c0e3361e2745fd29cb29518723fe1c06783a530fcf689bda86fd9bb",
+        "sourceGeneratedFile": "exec-1d1fc859-abc7-417a-b39c-15fbc8da4d98.png"
+      },
+      "catalogDesignPage": 35,
+      "catalogStatsPage": 36
+    },
+    {
+      "no": 14,
+      "seriesId": "series.kordopil",
+      "name": "コルドピル",
+      "seriesName": "幼岩",
+      "sourceSpeciesId": "monster.kordopil",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_014_kordopil_v1.png",
+      "promptFile": "art/prompts/monster_014.json",
+      "sha256": "35ddaf77a38235a8cdd1335435fba6401bf93d82c2ae21578b3060ec2f32cfb3",
+      "bytes": 1501147,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "丸い幼岩片の額当て、成人寸法の軽い胸・腕・腰・脚、7武器群を確認。成体より小さな丸殻と少ない重なりで区別。盾2枚、硬い槌頭、双剣2本、実弓の弦・小環・矢あり。各先端と足先の欠損なし。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "35ddaf77a38235a8cdd1335435fba6401bf93d82c2ae21578b3060ec2f32cfb3",
+        "sourceGeneratedFile": "exec-f512c21d-b656-49e7-ac52-733e9fb69720.png"
+      },
+      "catalogDesignPage": 37,
+      "catalogStatsPage": 38
+    },
+    {
+      "no": 15,
+      "seriesId": "series.palseit",
+      "name": "パルセイト",
+      "seriesName": "幼帆",
+      "sourceSpeciesId": "monster.palseit",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_015_palseit_v1.png",
+      "promptFile": "art/prompts/monster_015.json",
+      "sha256": "b10ea87020978c7369b2af40db54d14b947c9683c03b7c213622aafc2374a607",
+      "bytes": 1679235,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い膜帽、短い肩膜と前腕・腰・脛の成人用軽装5部位、7武器群を確認。小さな未発達帆と布主体を保持。盾2枚、硬い槌面、双剣2本、弓弦・小環・矢あり。全シルエットと先端が画面内。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "b10ea87020978c7369b2af40db54d14b947c9683c03b7c213622aafc2374a607",
+        "sourceGeneratedFile": "exec-1a80ab5c-d1e9-4868-b827-4ce5b085a3d2.png"
+      },
+      "catalogDesignPage": 39,
+      "catalogStatsPage": 40
+    },
+    {
+      "no": 16,
+      "seriesId": "series.numaporon",
+      "name": "ヌマポロン",
+      "seriesName": "幼泥",
+      "sourceSpeciesId": "monster.numaporon",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_016_numaporon_v1.png",
+      "promptFile": "art/prompts/monster_016.json",
+      "sha256": "eaee1e8678d4baad483e34eac725468ffc4e112b2248325f60f562d7701a61de",
+      "bytes": 1779355,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "小皿状の低い泥帽、撥水布の胸・腕・腰・脛と7武器群を確認。幼体の薄い丸泥晶と成人用の布主体装備で成立。盾2枚、閉じた硬い槌頭、双剣2本、弓弦・小環・矢あり。全先端と足先が画面内。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "eaee1e8678d4baad483e34eac725468ffc4e112b2248325f60f562d7701a61de",
+        "sourceGeneratedFile": "exec-1eef32a5-b0ae-4a0e-82ae-b478837a84fc.png"
+      },
+      "catalogDesignPage": 41,
+      "catalogStatsPage": 42
+    },
+    {
+      "no": 17,
+      "seriesId": "series.chilumicana",
+      "name": "チルミカナ",
+      "seriesName": "幼燐",
+      "sourceSpeciesId": "monster.chilumicana",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_017_chilumicana_v1.png",
+      "promptFile": "art/prompts/monster_017.json",
+      "sha256": "657a374b9d2794a6a3ad7a0266d393647d51b27603905bf38a72a3d0633147bc",
+      "bytes": 1526374,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い布帽と幼燐の額板、軽い胸・腕・腰・脚、7武器群を確認。点光を少数に抑えた幼鱗材。盾2枚、硬い閉鎖槌面、双剣2本、弓弦・小環・矢あり。弓の小環が握りに近いため具体的な把持断面はモデル工程で確認。全先端の欠損なし。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "657a374b9d2794a6a3ad7a0266d393647d51b27603905bf38a72a3d0633147bc",
+        "sourceGeneratedFile": "exec-c3d96fe2-0461-4463-897d-9a6a2e01b36d.png"
+      },
+      "catalogDesignPage": 43,
+      "catalogStatsPage": 44
+    },
+    {
+      "no": 18,
+      "seriesId": "series.kohalgis",
+      "name": "コハルギス",
+      "seriesName": "幼硝",
+      "sourceSpeciesId": "monster.kohalgis",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_018_kohalgis_v1.png",
+      "promptFile": "art/prompts/monster_018.json",
+      "sha256": "b40eaec17da473d607f981f8c6a8a8010e904cdfbeeaa06bfa452ca5658cb078",
+      "bytes": 1538288,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "丸い乳白硝の低い兜と胸・前腕・腰・脛、7武器群を確認。成体の鋭い厚殻ではなく薄い小殻の成人軽装。盾2枚、閉鎖槌面、双剣2本、弓弦・小環・矢あり。全先端と足先は画面内。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "b40eaec17da473d607f981f8c6a8a8010e904cdfbeeaa06bfa452ca5658cb078",
+        "sourceGeneratedFile": "exec-8e9a9279-3ceb-4ed3-8835-132a9d17d22e.png"
+      },
+      "catalogDesignPage": 45,
+      "catalogStatsPage": 46
+    },
+    {
+      "no": 19,
+      "seriesId": "series.mitogaron",
+      "name": "ミトガロン",
+      "seriesName": "幼鉤",
+      "sourceSpeciesId": "monster.mitogaron",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_019_mitogaron_v1.png",
+      "promptFile": "art/prompts/monster_019.json",
+      "sha256": "b807c82120ed2cfe123e0a8cc91f7a17b2d5bea2344ddb7229d9c53192522c65",
+      "bytes": 1808567,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "短い鉤を伏せた頭部帯、胸・腕・腰・脚の5部位と7武器群を確認。幼鉤の丸い先端と疎な分節殻で成体との差を保持。盾2枚、硬い槌面、双剣2本、弓弦・小環・矢あり。逆向きに置かれた矢も穂先と矢羽が分離し全体が画面内。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "b807c82120ed2cfe123e0a8cc91f7a17b2d5bea2344ddb7229d9c53192522c65",
+        "sourceGeneratedFile": "exec-8c67820b-d35f-476a-bf0e-b9018deb8183.png"
+      },
+      "catalogDesignPage": 47,
+      "catalogStatsPage": 48
+    },
+    {
+      "no": 20,
+      "seriesId": "series.yurtepica",
+      "name": "ユルテピカ",
+      "seriesName": "幼絹",
+      "sourceSpeciesId": "monster.yurtepica",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_020_yurtepica_v1.png",
+      "promptFile": "art/prompts/monster_020.json",
+      "sha256": "92c9496ff05dd379b9f8971b2405f4ed803c6b2dc3fbfe11dfec8e4c1e1dd748",
+      "bytes": 1733777,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い幼絹帽と網織りの胸・腕・腰・脚、7武器群を確認。小羽甲と編布を中心にし成体の大きな毒嚢や長い帷は増やしていない。盾2枚、硬い槌面、双剣2本、弓弦・小環・矢あり。全先端と足先の欠損なし。細糸はLOD簡略化対象。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "92c9496ff05dd379b9f8971b2405f4ed803c6b2dc3fbfe11dfec8e4c1e1dd748",
+        "sourceGeneratedFile": "exec-7db61082-ffc6-4de6-b4f3-161d5d336c11.png"
+      },
+      "catalogDesignPage": 49,
+      "catalogStatsPage": 50
+    },
+    {
+      "no": 21,
+      "seriesId": "series.hinasalv",
+      "name": "ヒナサルヴ",
+      "seriesName": "幼氷",
+      "sourceSpeciesId": "monster.hinasalv",
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_021_hinasalv_v1.png",
+      "promptFile": "art/prompts/monster_021.json",
+      "sha256": "ee837850449c8d36cb64a78192d942d7ffa988e481209e13e06c75dc999329aa",
+      "bytes": 1776252,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い薄氷帽と丸い未発達氷板の胸・腕・腰・脛、7武器群を確認。成人向け軽装で成体の大きな三角帆板とは区別。盾2枚、硬い槌端、双剣2本、実弓弦・氷の小環・矢あり。剣先・槍先・足先の欠損なし。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "ee837850449c8d36cb64a78192d942d7ffa988e481209e13e06c75dc999329aa",
+        "sourceGeneratedFile": "exec-eacfcc2e-789b-4119-9748-f5b5676a5361.png"
+      },
+      "catalogDesignPage": 51,
+      "catalogStatsPage": 52
+    },
+    {
+      "no": 22,
+      "seriesId": "series.hasdren",
+      "name": "ハスドレン",
+      "seriesName": "銅苔槽",
+      "sourceSpeciesId": "monster.hasdren",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_022_hasdren_v1.png",
+      "promptFile": "art/prompts/monster_022.json",
+      "sha256": "f43bbef656e0e085037ba907242b68542e113834d67a96c326f7ee57408755a6",
+      "bytes": 1656858,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い泥槽兜、銅苔の樋を走らせた胸・腕・腰・脛、7武器群を確認。腰の小貯水槽、湿った緑と灰殻を識別できる。盾2枚、硬い槌頭、双剣2本、弓弦・小環・矢あり。全先端・足先は画面内。腰槽の実可動域は3D確認を要する。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "f43bbef656e0e085037ba907242b68542e113834d67a96c326f7ee57408755a6",
+        "sourceGeneratedFile": "exec-0146cf61-2bed-4138-92e7-184667953525.png"
+      },
+      "catalogDesignPage": 53,
+      "catalogStatsPage": 54
+    },
+    {
+      "no": 23,
+      "seriesId": "series.ivselam",
+      "name": "イヴセラム",
+      "seriesName": "霜扇",
+      "sourceSpeciesId": "monster.ivselam",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_023_ivselam_v1.png",
+      "promptFile": "art/prompts/monster_023.json",
+      "sha256": "dfd0df7c266d0a052a29d680bdb3baf410b65c883784a2543e0d73843643a409",
+      "bytes": 1620897,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い片扇兜、肩の畳み扇と前腕・腰・脛の5部位、7武器群を確認。盾2枚、左端に明瞭な硬い槌打面、双剣2本、実弓弦・小環・矢あり。扇の支点と狭い開き角で成体氷帆11と区別。全先端と足先の欠損なし。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "dfd0df7c266d0a052a29d680bdb3baf410b65c883784a2543e0d73843643a409",
+        "sourceGeneratedFile": "exec-2248081b-bb74-4f58-b5e8-d0d78493fdd5.png"
+      },
+      "catalogDesignPage": 55,
+      "catalogStatsPage": 56
+    },
+    {
+      "no": 24,
+      "seriesId": "series.domelkano",
+      "name": "ドメルカノ",
+      "seriesName": "二重熱皿",
+      "sourceSpeciesId": "monster.domelkano",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_024_domelkano_v1.png",
+      "promptFile": "art/prompts/monster_024.json",
+      "sha256": "041323d3d68045ddd5a3864848c8846123b6dec292f074977ebef351731588cf",
+      "bytes": 1733818,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い二重皿兜、胸の段状熱皿、前腕・腰・脛と7武器群を確認。くすんだ赤銅と薄い熱線で13の黒い排気殻と区別。盾2枚、硬い槌両端、双剣2本、弓弦・小環・矢あり。全先端・足先の欠損なし。胸皿の厚みと身体からの距離は実寸設計が必要。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "041323d3d68045ddd5a3864848c8846123b6dec292f074977ebef351731588cf",
+        "sourceGeneratedFile": "exec-6509249b-9936-45f6-b2ea-c452337fda34.png"
+      },
+      "catalogDesignPage": 57,
+      "catalogStatsPage": 58
+    },
+    {
+      "no": 25,
+      "seriesId": "series.holnebas",
+      "name": "ホルネバス",
+      "seriesName": "風鐘",
+      "sourceSpeciesId": "monster.holnebas",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_025_holnebas_v1.png",
+      "promptFile": "art/prompts/monster_025.json",
+      "sha256": "58b6eb9049731aca9b5128f5400487416a9cb6e4312acaf48596f84b14562fe2",
+      "bytes": 1683984,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い鐘兜と段状の鐘肩、胸の短管・前腕・腰・脛の5部位、7武器群を確認。風管は小さな付属器官とし大槌には硬い両端打面あり。盾2枚、双剣2本、弓弦・小照準環・矢あり。全先端と足先は画面内。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "58b6eb9049731aca9b5128f5400487416a9cb6e4312acaf48596f84b14562fe2",
+        "sourceGeneratedFile": "exec-baecd83f-6b49-482f-a8a0-282d7e6d2f60.png"
+      },
+      "catalogDesignPage": 59,
+      "catalogStatsPage": 60
+    },
+    {
+      "no": 26,
+      "seriesId": "series.miltasea",
+      "name": "ミルタセア",
+      "seriesName": "露珠",
+      "sourceSpeciesId": "monster.miltasea",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_026_miltasea_v1.png",
+      "promptFile": "art/prompts/monster_026.json",
+      "sha256": "c7cf32a41a19c3e828280e218ae51c105748dbb715e2516cda16b5184d615963",
+      "bytes": 1593094,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い露羽帽、胸・前腕・腰・脛の5部位、7武器群を確認。淡い紫の滴材を少数の露珠として配置。盾2枚、硬い槌両端、双剣2本、実弓弦・小環・矢あり。全先端と足先が画面内。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "c7cf32a41a19c3e828280e218ae51c105748dbb715e2516cda16b5184d615963",
+        "sourceGeneratedFile": "exec-120b9baf-5cb2-4541-8545-375301fe7978.png"
+      },
+      "catalogDesignPage": 61,
+      "catalogStatsPage": 62
+    },
+    {
+      "no": 27,
+      "seriesId": "series.talgrina",
+      "name": "タルグリナ",
+      "seriesName": "鳴鋏",
+      "sourceSpeciesId": "monster.talgrina",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_027_talgrina_v1.png",
+      "promptFile": "art/prompts/monster_027.json",
+      "sha256": "d00f0189f765ea9aaeea2aa3d0cadd94f51ea4f25fd1f3f0b672b48254c26e01",
+      "bytes": 1672085,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い鋏兜、胸・腕・腰・脚と7武器群を確認。大型の左籠手を手首で止め指を空けた非対称。盾2枚、硬い槌両端、双剣2本、実弓弦と矢あり。弓の側面小環は三つ並ぶ描写になっており照準環一つへ整理する余地を記録。剣先・槍先・足先の欠損なし。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "d00f0189f765ea9aaeea2aa3d0cadd94f51ea4f25fd1f3f0b672b48254c26e01",
+        "sourceGeneratedFile": "exec-3c54fd39-1790-4cf1-893d-eff90a37bb12.png"
+      },
+      "catalogDesignPage": 63,
+      "catalogStatsPage": 64
+    },
+    {
+      "no": 28,
+      "seriesId": "series.zanetolka",
+      "name": "ザネトルカ",
+      "seriesName": "砂裾",
+      "sourceSpeciesId": "monster.zanetolka",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_028_zanetolka_v1.png",
+      "promptFile": "art/prompts/monster_028.json",
+      "sha256": "6f7d3c4b64c7502f43bb623bbcaca23d4b16aba46b0c72908b4307dc3d6c1cdf",
+      "bytes": 1752563,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い砂尾兜、耐摩耗革の胸と尾板の腕・腰・脛、7武器群を確認。砂色の平板と短い返しで物理会心系列を表現。盾2枚、硬い槌両端、双剣2本、実弓弦・小環・矢あり。毒の発光等を付けず、全先端と足先が画面内。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "6f7d3c4b64c7502f43bb623bbcaca23d4b16aba46b0c72908b4307dc3d6c1cdf",
+        "sourceGeneratedFile": "exec-bae68dfa-2606-4cab-8ccb-fd9ce4854a35.png"
+      },
+      "catalogDesignPage": 65,
+      "catalogStatsPage": 66
+    },
+    {
+      "no": 29,
+      "seriesId": "series.ulnaset",
+      "name": "ウルナセト",
+      "seriesName": "樋帆",
+      "sourceSpeciesId": "monster.ulnaset",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_029_ulnaset_v1.png",
+      "promptFile": "art/prompts/monster_029.json",
+      "sha256": "a445e64e550afb097fafe9b98dd3fb2b91af376b67ad683808a47d74c2e8bf4e",
+      "bytes": 1649585,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い樋帆兜、胸・前腕・腰・脛の流路板と7武器群を確認。灰青の縦樋と水袋の曲面を識別。盾2枚、金属面の槌頭、双剣2本、実弓弦・小環・矢あり。右手後方の短帆と腰板の干渉は3D可動確認対象。全先端と足先は画面内。",
+        "limitations": [
+          "初登場級の系列比較原画。各級別の専用画像ではない。",
+          "背面・断面・正投影・実寸・共通リグ可動域は別工程。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "a445e64e550afb097fafe9b98dd3fb2b91af376b67ad683808a47d74c2e8bf4e",
+        "sourceGeneratedFile": "exec-420cdb9b-a727-4e72-bd91-269b95e4459d.png"
+      },
+      "catalogDesignPage": 67,
+      "catalogStatsPage": 68
+    },
+    {
+      "no": 30,
+      "seriesId": "series.nemboraf",
+      "name": "ネムボラフ",
+      "seriesName": "泥層",
+      "sourceSpeciesId": "monster.nemboraf",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_030_nemboraf_v2.png",
+      "promptFile": "art/prompts/monster_030.json",
+      "sha256": "c8500a8de01fcac8ea835dcfc0f52ad2e7546969338adcd8e483b8662fe399b6",
+      "bytes": 1966277,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "c8500a8de01fcac8ea835dcfc0f52ad2e7546969338adcd8e483b8662fe399b6",
+        "generatedSource": "exec-47141190-0b03-4ceb-8d6c-c67e3be3692c.png",
+        "notes": [
+          "v1で加わった題字、級名、パレットと横線をv2で除去。番号01〜07だけを保持。",
+          "7武器群・5防具部位・両盾・双剣2本・実弓弦と小環・矢、全先端と靴先の画内収まりを確認。",
+          "盾裏、装備の寸法、背面の泥扇骨は未確定。"
+        ],
+        "scope": "中級初登場の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 69,
+      "catalogStatsPage": 70
+    },
+    {
+      "no": 31,
+      "seriesId": "series.borazeln",
+      "name": "ボラゼルン",
+      "seriesName": "段稜",
+      "sourceSpeciesId": "monster.borazeln",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_031_borazeln_v1.png",
+      "promptFile": "art/prompts/monster_031.json",
+      "sha256": "6456cb569c7658e8a9a009dacfcbaf70a98ca9f2d954200105165b852199c317",
+      "bytes": 2269952,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "6456cb569c7658e8a9a009dacfcbaf70a98ca9f2d954200105165b852199c317",
+        "generatedSource": "exec-4cb7f807-e197-40ad-ac2e-9d92da3d33ac.png",
+        "notes": [
+          "全7武器群、防具5部位、両盾、双剣2本、弓弦と矢、硬い槌面を視認。",
+          "背面、各パーツの実寸、盾裏と握りの寸法、共通リグ上の可動域は未確定。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 71,
+      "catalogStatsPage": 72
+    },
+    {
+      "no": 32,
+      "seriesId": "series.kudrimal",
+      "name": "クドリマル",
+      "seriesName": "煙棚",
+      "sourceSpeciesId": "monster.kudrimal",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_032_kudrimal_v1.png",
+      "promptFile": "art/prompts/monster_032.json",
+      "sha256": "7a7311a90f5db29120fcf38eed223b4035456e7cd005ba5d5b005a42a62ac45b",
+      "bytes": 2181136,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "7a7311a90f5db29120fcf38eed223b4035456e7cd005ba5d5b005a42a62ac45b",
+        "generatedSource": "exec-91397436-1ed7-4a8b-9d6e-1cd825ecc809.png",
+        "notes": [
+          "全7武器群、防具5部位、双剣2本、弓弦と矢、硬い槌面を視認。護刃盾は表と裏が並び、握りと腕帯を読める。",
+          "身体右側の棚と左の平面を区別できる。正確な4枚の接続、背面、実寸、共通リグでの可動域は未検証。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 73,
+      "catalogStatsPage": 74
+    },
+    {
+      "no": 33,
+      "seriesId": "series.tosamurie",
+      "name": "トサムリエ",
+      "seriesName": "枝鉤",
+      "sourceSpeciesId": "monster.tosamurie",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_033_tosamurie_v1.png",
+      "promptFile": "art/prompts/monster_033.json",
+      "sha256": "15769d524f24cfa93b99a0a82ebbe4d8bb044bbded37d6cf7ede6cccc02d0d6e",
+      "bytes": 2014577,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "15769d524f24cfa93b99a0a82ebbe4d8bb044bbded37d6cf7ede6cccc02d0d6e",
+        "generatedSource": "exec-efa0723f-1795-4a8b-99fc-e899d8ed914f.png",
+        "notes": [
+          "全7武器群、防具5部位、双剣2本、大小盾、硬い槌面、弓弦・小照準環・矢を再視認。全先端と足先に切れなし。肩から伸びた長い鉤を除去し、左右の肘外側のみに短い下向き逆鉤を配置した。先端は手首より十分上で止まり手を塞がない。",
+          "肩は低い薄甲へ整理した。背面、盾裏、可動域の実寸と厳密な80px余白は未確定または未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。",
+        "revisionHistory": [
+          {
+            "reason": "長い逆鉤の根元が肩へ寄っていた",
+            "previousGeneratedSource": "exec-ca8a7c2a-9fa1-4916-8866-310e6b7f56cf.png",
+            "promptFile": "art/prompts/monster_033_revision_1.json",
+            "resolved": true,
+            "verified": "長い肩鉤を除去し、両肘の外側へ短い下向き逆鉤を一つずつ配置。手首の可動部へ届かない。"
+          }
+        ]
+      },
+      "catalogDesignPage": 75,
+      "catalogStatsPage": 76
+    },
+    {
+      "no": 34,
+      "seriesId": "series.pukrenoa",
+      "name": "プクレノア",
+      "seriesName": "沈匙",
+      "sourceSpeciesId": "monster.pukrenoa",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_034_pukrenoa_v1.png",
+      "promptFile": "art/prompts/monster_034.json",
+      "sha256": "3ae0ecce425be4d43f2aa2ab2bd4f40fe456d1eb5068b489c706e2d12808b7b1",
+      "bytes": 2208182,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "3ae0ecce425be4d43f2aa2ab2bd4f40fe456d1eb5068b489c706e2d12808b7b1",
+        "generatedSource": "exec-c0bfe370-f9e8-4ad8-b1eb-ad051cf1b32b.png",
+        "notes": [
+          "全7武器群、防具5部位、両盾、双剣2本、弓弦と矢、硬い槌面を視認。矢は下向きの展示。",
+          "匙形の胸甲と丸い盾、紫灰の小袋を確認。剣先・足先は欠けていないが上余白は小さい。胸甲の屈曲干渉、背面、実寸は未検証。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 77,
+      "catalogStatsPage": 78
+    },
+    {
+      "no": 35,
+      "seriesId": "series.kesalpina",
+      "name": "ケサルピナ",
+      "seriesName": "庇頬",
+      "sourceSpeciesId": "monster.kesalpina",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_035_kesalpina_v1.png",
+      "promptFile": "art/prompts/monster_035.json",
+      "sha256": "646c1679fad90631d688f57f21d6c5c09762bf8e42efe7a8853bf4adb702f236",
+      "bytes": 2039093,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "646c1679fad90631d688f57f21d6c5c09762bf8e42efe7a8853bf4adb702f236",
+        "generatedSource": "exec-0e8618dd-b153-4c45-8cd7-b2481f32c47d.png",
+        "notes": [
+          "全7武器群、防具5部位、両盾、双剣2本、弓弦と矢、硬い槌面を視認。剣先・足先の欠損なし。",
+          "灰緑/生成りの羽層と低い片庇を確認。左右の片庇基準と背面の短い三尾羽、装備の実寸は個別図で確定する。80pxの厳密余白は満たしていない。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 79,
+      "catalogStatsPage": 80
+    },
+    {
+      "no": 36,
+      "seriesId": "series.riptaum",
+      "name": "リプタウム",
+      "seriesName": "氷畝",
+      "sourceSpeciesId": "monster.riptaum",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_036_riptaum_v1.png",
+      "promptFile": "art/prompts/monster_036.json",
+      "sha256": "617390aae0e142ef82da0931516d6ebaeb6c5a0740be85a52902ba5f71f069cf",
+      "bytes": 2090891,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "617390aae0e142ef82da0931516d6ebaeb6c5a0740be85a52902ba5f71f069cf",
+        "generatedSource": "exec-2e783ee9-0f4d-4140-8112-eeabd1cc93ee.png",
+        "notes": [
+          "全7武器群、防具5部位、両盾、双剣2本、弓弦と矢、硬い槌面を視認。剣先・槍先・足先の欠損なし。",
+          "青灰の二列畝と左右対称の守りを確認。正投影での左右幅の同寸、二列溝の断面、盾裏、実寸は未確認。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 81,
+      "catalogStatsPage": 82
+    },
+    {
+      "no": 37,
+      "seriesId": "series.serinodam",
+      "name": "セリノダム",
+      "seriesName": "灯櫂",
+      "sourceSpeciesId": "monster.serinodam",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_037_serinodam_v1.png",
+      "promptFile": "art/prompts/monster_037.json",
+      "sha256": "907873aa3ba36e354ad2586a1ba4748254b49ef678ee93a2af16d26356d45c71",
+      "bytes": 2018273,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "907873aa3ba36e354ad2586a1ba4748254b49ef678ee93a2af16d26356d45c71",
+        "generatedSource": "exec-9fb9f15f-8b3f-4c98-bec1-f1cffd60eaa3.png",
+        "notes": [
+          "全7武器群、防具5部位、両盾、双剣2本、弓弦と矢、硬い槌面を視認。剣先・槍先・足先の欠損なし。",
+          "三点の琥珀節と低い横節甲を確認。背面三段の位置と後頭部の灯点は正面比較画だけでは確定できない。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 83,
+      "catalogStatsPage": 84
+    },
+    {
+      "no": 38,
+      "seriesId": "series.nufraken",
+      "name": "ヌフラケン",
+      "seriesName": "冷壺",
+      "sourceSpeciesId": "monster.nufraken",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_038_nufraken_v1.png",
+      "promptFile": "art/prompts/monster_038.json",
+      "sha256": "66a5ec0da62c318915006cae9a35cde47f6810e5f026d061bcd8b0f981a28029",
+      "bytes": 2046072,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "66a5ec0da62c318915006cae9a35cde47f6810e5f026d061bcd8b0f981a28029",
+        "generatedSource": "exec-f0c60fa6-f20c-46cb-95d4-dddd4073611f.png",
+        "notes": [
+          "全7武器群、防具5部位、両盾、双剣2本、弓弦と矢、硬い槌面を視認。先端と足先の欠損なし。",
+          "後ろへ膨らむ壺襟、白い内膜、細い青灰鱗を確認。長刀の反り量、壺襟の背面、盾裏は別図で確定する。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 85,
+      "catalogStatsPage": 86
+    },
+    {
+      "no": 39,
+      "seriesId": "series.akaunel",
+      "name": "アカウネル",
+      "seriesName": "灼襟",
+      "sourceSpeciesId": "monster.akaunel",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_039_akaunel_v1.png",
+      "promptFile": "art/prompts/monster_039.json",
+      "sha256": "0e8fdbe796d501f5798feaf07fb585298e2c21969d9f28262bc984d6afb7eb46",
+      "bytes": 2019359,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "0e8fdbe796d501f5798feaf07fb585298e2c21969d9f28262bc984d6afb7eb46",
+        "generatedSource": "exec-e0264b9e-32b0-4bb6-a0dd-95fe7c853f32.png",
+        "notes": [
+          "全7武器群、防具5部位、両盾、双剣2本、弓弦と矢、硬い槌面を視認。剣先・足先の欠損なし。",
+          "低い四角襟、灰黒の羽層、内側の赤銅色を確認。襟の四辺高さと首振り干渉、各武器断面、背面は別図で確定する。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 87,
+      "catalogStatsPage": 88
+    },
+    {
+      "no": 40,
+      "seriesId": "series.tsumarobek",
+      "name": "ツマロベク",
+      "seriesName": "脈鼓",
+      "sourceSpeciesId": "monster.tsumarobek",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_040_tsumarobek_v1.png",
+      "promptFile": "art/prompts/monster_040.json",
+      "sha256": "9f22814e957c47f688a147fd03dbefeebf1c722fca515b25b7534d6d0f824326",
+      "bytes": 2050258,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "9f22814e957c47f688a147fd03dbefeebf1c722fca515b25b7534d6d0f824326",
+        "generatedSource": "exec-b9fdc07f-555f-418c-b11b-83b9fddb1c90.png",
+        "notes": [
+          "7武器群、双剣2本、槍と独立大盾、弓弦と矢、防具5部位、全剣先・槍先・足先を視認。切れなし。脈鼓甲の丸い胸、灰褐の硬殻、細い琥珀筋、小さい肩を確認。",
+          "02は盾の表裏を併記。背面の握りと前腕帯が見える。左右の打面が硬殻で閉じている。厳密な80px余白と背甲構造・実寸可動域は未確定。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 89,
+      "catalogStatsPage": 90
+    },
+    {
+      "no": 41,
+      "seriesId": "series.furemsad",
+      "name": "フレムサド",
+      "seriesName": "霧鰭",
+      "sourceSpeciesId": "monster.furemsad",
+      "nativeRank": 2,
+      "availableRanks": [
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_041_furemsad_v1.png",
+      "promptFile": "art/prompts/monster_041.json",
+      "sha256": "a1fb8a9b48da948e8945a69657ce6c75807a2ceee371478b5f92442cdcceb72b",
+      "bytes": 2069591,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "a1fb8a9b48da948e8945a69657ce6c75807a2ceee371478b5f92442cdcceb72b",
+        "generatedSource": "exec-72aa60fa-2cf4-4510-baed-4ccbaf265c95.png",
+        "notes": [
+          "7武器群と防具5部位、双剣2本、独立した大小盾、弓弦・小照準環・矢を視認。剣先・槍先・足先に切れなし。灰青の細鱗と水平な喉鰭襟、鈍い丸骨の腰甲を確認。",
+          "02は盾表裏の併記で握り・腕帯を確認できる。尾端骨の丸腰甲は側面が主体のため、後腰に付く位置と可動域は背面設定で確定する。最上部の厳密な80px余白は未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 91,
+      "catalogStatsPage": 92
+    },
+    {
+      "no": 42,
+      "seriesId": "series.grasedon",
+      "name": "グラセドン",
+      "seriesName": "裂扇",
+      "sourceSpeciesId": "monster.grasedon",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_042_grasedon_v1.png",
+      "promptFile": "art/prompts/monster_042.json",
+      "sha256": "96f6f401cd7120865afba0c0d1f4c5a726002bb7d828885881519480d20ad522",
+      "bytes": 2048995,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "96f6f401cd7120865afba0c0d1f4c5a726002bb7d828885881519480d20ad522",
+        "generatedSource": "exec-90b53359-a264-4ec3-b50d-778d780da484.png",
+        "notes": [
+          "全7武器群、双剣2本、大小盾、弓弦・照準環・矢、防具5部位、全先端と足先を視認。切れなし。左肩の縦扇甲・小さい右肩・灰褐と鈍い銅色の材質差を確認。",
+          "02の盾裏には握りと前腕帯が描画。扇甲の接合と左肩上げの可動域は実寸設定で確認する。厳密な80px余白は上端で未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 93,
+      "catalogStatsPage": 94
+    },
+    {
+      "no": 43,
+      "seriesId": "series.ryuzelka",
+      "name": "リュゼルカ",
+      "seriesName": "双帆角",
+      "sourceSpeciesId": "monster.ryuzelka",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_043_ryuzelka_v1.png",
+      "promptFile": "art/prompts/monster_043.json",
+      "sha256": "36005b6a8eb77d5a8c4e8cb69a2a07683ff65d63b3baebd3204d4640da7ae79a",
+      "bytes": 2044357,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "36005b6a8eb77d5a8c4e8cb69a2a07683ff65d63b3baebd3204d4640da7ae79a",
+        "generatedSource": "exec-a5c8c31d-8f6b-4517-8bba-81f96cd8d3fc.png",
+        "notes": [
+          "7武器群と防具5部位、双剣2本、大小盾、硬い槌の両端、弓弦・小照準環・矢を視認。全先端と足先は画内。灰青の薄膜と白い冷露膜、低い兜、短い腰膜を確認。",
+          "二層帆の指定に対して左肩の輪郭は三段に見えるため、個別設定では支持骨と二枚の膜を分けて確定する。盾裏と背面接合、80px余白は未確定または未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 95,
+      "catalogStatsPage": 96
+    },
+    {
+      "no": 44,
+      "seriesId": "series.mordine",
+      "name": "モルディネ",
+      "seriesName": "蓮冠",
+      "sourceSpeciesId": "monster.mordine",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_044_mordine_v1.png",
+      "promptFile": "art/prompts/monster_044.json",
+      "sha256": "4e501efbc173dff2058b95da1e7cc82b7476a2d3776a1662f55a3e5945f7c415",
+      "bytes": 2162415,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "4e501efbc173dff2058b95da1e7cc82b7476a2d3776a1662f55a3e5945f7c415",
+        "generatedSource": "exec-2d62818b-a2ca-4ba4-8fb5-d0698d3d851b.png",
+        "notes": [
+          "全7武器群、防具5部位、双剣2本、独立した盾2種、弓弦・小照準環・矢、硬い槌面を視認。剣先・槍先・足先の切れなし。三段の低い冠甲、着用者右胸の水圧管、生成りの短布を確認。",
+          "三槽管の内部分岐と右肩の可動域、盾裏の握り寸法は後続の実装用設定で確定する。上端の厳密な80px余白は未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 97,
+      "catalogStatsPage": 98
+    },
+    {
+      "no": 45,
+      "seriesId": "series.doberken",
+      "name": "ドベルケン",
+      "seriesName": "重鐘嚢",
+      "sourceSpeciesId": "monster.doberken",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_045_doberken_v1.png",
+      "promptFile": "art/prompts/monster_045.json",
+      "sha256": "5e2a3d53f66fc964265c075b285e641d0371c56c40911126c939913444761e3f",
+      "bytes": 2140729,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "5e2a3d53f66fc964265c075b285e641d0371c56c40911126c939913444761e3f",
+        "generatedSource": "exec-472be9aa-5416-4622-b3d7-a77ea05e703c.png",
+        "notes": [
+          "7武器群と防具5部位、双剣2本、独立した大小盾、閉じた硬い槌面、弓弦・小照準環・矢を視認。左肩の大小二つの丸い共鳴殻と小さい右肩、灰褐甲と琥珀の縁を確認。剣先・槍先・足先に欠けなし。",
+          "矢は鏃を下にした展示。盾裏・二つの共鳴殻内部・左腕挙上時の干渉は未確定。上端の80px余白は未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 99,
+      "catalogStatsPage": 100
+    },
+    {
+      "no": 46,
+      "seriesId": "series.shilhatora",
+      "name": "シルハトラ",
+      "seriesName": "枝燐",
+      "sourceSpeciesId": "monster.shilhatora",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_046_shilhatora_v1.png",
+      "promptFile": "art/prompts/monster_046.json",
+      "sha256": "25af80e8dc050c6640eb243cfb5e93cfff0265ef74b77ce0e3971dbbf427a079",
+      "bytes": 2013632,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "25af80e8dc050c6640eb243cfb5e93cfff0265ef74b77ce0e3971dbbf427a079",
+        "generatedSource": "exec-20ead0f7-2c7c-45f7-bb09-69fb16afd040.png",
+        "notes": [
+          "全7武器群、防具5部位、双剣2本、両盾、硬い槌面、弓弦・小照準環・矢を視認。剣先・槍先・足先の欠けなし。青灰の細身羽甲、少数の琥珀点、後腰から見える短い三節の枝を確認。",
+          "三叉後腰の全体配置は正面寄りの一視点では確定できない。盾裏、尾節の屈曲、実寸可動域と厳密な80px余白は未確定または未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 101,
+      "catalogStatsPage": 102
+    },
+    {
+      "no": 47,
+      "seriesId": "series.kuzanerio",
+      "name": "クザネリオ",
+      "seriesName": "逆硝殻",
+      "sourceSpeciesId": "monster.kuzanerio",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_047_kuzanerio_v1.png",
+      "promptFile": "art/prompts/monster_047.json",
+      "sha256": "df0ed824573d4b6ccd21701d09a74c1af2512d93e0f6319b53fe626c1b445860",
+      "bytes": 2052597,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "df0ed824573d4b6ccd21701d09a74c1af2512d93e0f6319b53fe626c1b445860",
+        "generatedSource": "exec-1c1907e9-fe82-4689-9fd1-3077dbdbb4da.png",
+        "notes": [
+          "7武器群、防具5部位、双剣2本、盾2種、槌の硬い閉面、弓弦・小照準環・矢を視認。全先端と足先に切れなし。着用者右肩の外へ反る冷板、左の低い長籠手、短い脛甲、薄氷模様を確認。",
+          "冷板は光沢と白い霜模様で示され、透過率の厳密な指定はマテリアル設定で確定する。盾裏と可動域、80px余白は未確定または未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 103,
+      "catalogStatsPage": 104
+    },
+    {
+      "no": 48,
+      "seriesId": "series.fesrami",
+      "name": "フェスラミ",
+      "seriesName": "結絹",
+      "sourceSpeciesId": "monster.fesrami",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_048_fesrami_v1.png",
+      "promptFile": "art/prompts/monster_048.json",
+      "sha256": "340d1650b9a81b843578510aaddb8652b0ab02a185c8533d20609bb05aa5c07a",
+      "bytes": 1983887,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "340d1650b9a81b843578510aaddb8652b0ab02a185c8533d20609bb05aa5c07a",
+        "generatedSource": "exec-a1d2b61b-9400-42fd-8a6a-fe993d08e0c4.png",
+        "notes": [
+          "全7武器群、防具5部位、双剣2本、大小盾、硬い槌面、弓弦・照準環・矢を再視認。全先端と足先に切れなし。01断岳剣と05長刀を横断していた絹巻きを除き、峰側の小さい留め位置だけへ配置した。灰紫の板面と淡色の縁が連続して見える。",
+          "後腰の絹房は横から一部だけ見え、三房の厳密な本数は背面設定で確定する。盾裏、実寸可動域、上端の80px余白は未確定または未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。",
+        "revisionHistory": [
+          {
+            "reason": "01断岳剣と05長刀を絹巻きが横断していた",
+            "previousGeneratedSource": "exec-86a5d9b4-c111-496c-8921-9983399c6a10.png",
+            "promptFile": "art/prompts/monster_048_revision_2.json",
+            "resolved": true,
+            "verified": "2種の灰紫の表面を横切る絹巻きを除き、峰側に小さな留めだけを残した。全7武器と5防具部位を維持。"
+          }
+        ]
+      },
+      "catalogDesignPage": 105,
+      "catalogStatsPage": 106
+    },
+    {
+      "no": 49,
+      "seriesId": "series.elmejika",
+      "name": "エルメジカ",
+      "seriesName": "霜灯",
+      "sourceSpeciesId": "monster.elmejika",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_049_elmejika_v1.png",
+      "promptFile": "art/prompts/monster_049.json",
+      "sha256": "ebea36b92cba120887eda5b3dd009f54a9e6011d3291527c1df97267f3d5a23b",
+      "bytes": 2010336,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "ebea36b92cba120887eda5b3dd009f54a9e6011d3291527c1df97267f3d5a23b",
+        "generatedSource": "exec-8a8e1de3-3ea5-4364-bb93-c0400c50cdbf.png",
+        "notes": [
+          "7武器群、防具5部位、双剣2本、大小盾、硬い槌面、弓弦・小照準環・矢を視認。全先端と足先は画内。左右肩各三個で計六個の小節、暗灰緑の細身甲、淡い青灰縁、低い兜を確認。",
+          "後ろが開いた冠の開口寸法、霜滴腺の固定と背面、盾裏は一視点では未確定。上端の厳密な80px余白は未達。矢は鏃を下にした展示。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 107,
+      "catalogStatsPage": 108
+    },
+    {
+      "no": 50,
+      "seriesId": "series.azelnoto",
+      "name": "アゼルノト",
+      "seriesName": "潮環",
+      "sourceSpeciesId": "monster.azelnoto",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_050_azelnoto_v1.png",
+      "promptFile": "art/prompts/monster_050.json",
+      "sha256": "640f99ca0fb71ce337dc7bda4b8ef167fd9c282c70b8290d32ff6f7bdf75f4bc",
+      "bytes": 2084568,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "640f99ca0fb71ce337dc7bda4b8ef167fd9c282c70b8290d32ff6f7bdf75f4bc",
+        "generatedSource": "exec-bc189e42-c315-4e23-b8fb-f9d718589a98.png",
+        "notes": [
+          "全7武器群と防具5部位、双剣2本、盾2種、硬い槌の両端、弓弦・小照準環・矢を視認。剣先・槍先・足先は画内。灰青の水枕膜、生成りの半環骨、外腰と外脛の半環支持を確認。",
+          "肩下の柔らかな膜と胸の硬い板は材質差が出ている。平らな背、盾裏、膜膨張時の寸法と共通リグ可動域は未確定。上端の80px余白は未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 109,
+      "catalogStatsPage": 110
+    },
+    {
+      "no": 51,
+      "seriesId": "series.bezrakio",
+      "name": "ベズラキオ",
+      "seriesName": "蒸帆",
+      "sourceSpeciesId": "monster.bezrakio",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_051_bezrakio_v1.png",
+      "promptFile": "art/prompts/monster_051.json",
+      "sha256": "2fe1461194f8267a781dbe82ab0fdc57bd1b214384fcf9d3a83e8580450b36e9",
+      "bytes": 2058854,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "2fe1461194f8267a781dbe82ab0fdc57bd1b214384fcf9d3a83e8580450b36e9",
+        "generatedSource": "exec-92d8ce18-1994-4e7c-b3a6-e259af901d76.png",
+        "notes": [
+          "全7武器群、防具5部位、双剣2本、両盾、硬い槌面、弓弦・小照準環・矢を視認。全先端と足先の切れなし。灰銅の寝た薄甲、胸下に収めた熱樹脂嚢、細い脚の面を確認。",
+          "熱嚢の腹部での突出は見えるため、腰曲げ時の干渉と嚢を守る内骨格を個別設定で確定する。盾裏、背面、厳密な80px余白は未確定または未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 111,
+      "catalogStatsPage": 112
+    },
+    {
+      "no": 52,
+      "seriesId": "series.murzenato",
+      "name": "ムルゼナト",
+      "seriesName": "泥鉤",
+      "sourceSpeciesId": "monster.murzenato",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_052_murzenato_v1.png",
+      "promptFile": "art/prompts/monster_052.json",
+      "sha256": "27f39342b79da0c80e6ee6820d40b4975ce13d9f9afdfa7feca050d9a5614fdc",
+      "bytes": 2092282,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "27f39342b79da0c80e6ee6820d40b4975ce13d9f9afdfa7feca050d9a5614fdc",
+        "generatedSource": "exec-71cc1ddc-8d2e-43ee-adbf-1a5970cd34ab.png",
+        "notes": [
+          "全7武器群、防具5部位、双剣2本、大小盾、硬い槌面、弓弦・照準環・矢を視認。剣先・槍先・足先の欠けなし。灰褐の横節甲、幅のある下半身、小さい肩、低い兜を確認。",
+          "鉤は裾内へ収める設計のためこの視点では形状を確認できない。裾内面と股関節屈曲、盾裏、80px余白は未確定または未達。矢は鏃を下にした展示。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 113,
+      "catalogStatsPage": 114
+    },
+    {
+      "no": 53,
+      "seriesId": "series.hauremika",
+      "name": "ハウレミカ",
+      "seriesName": "苔帷",
+      "sourceSpeciesId": "monster.hauremika",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_053_hauremika_v1.png",
+      "promptFile": "art/prompts/monster_053.json",
+      "sha256": "694695dbd35ff1b32d59ec15a347997dca681c2670346d4b00dfafc998b28a78",
+      "bytes": 2096665,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "694695dbd35ff1b32d59ec15a347997dca681c2670346d4b00dfafc998b28a78",
+        "generatedSource": "exec-7fdc26d5-744b-401c-a351-4231bb45ca6c.png",
+        "notes": [
+          "全7武器群、防具5部位、双剣2本、両盾、硬い槌面、弓弦・小照準環・矢を視認。剣先・槍先・足先の欠けなし。左肩だけの短い灰緑の菌糸膜、右腕の細い骨籠手、淡い羽甲と菌糸縫合を確認。",
+          "原画の小型容器は眠粉封入部の意匠として描画されている。容器固定、膜が刃と弦へ触れない実寸配置、盾裏、80px余白は未確定または未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 115,
+      "catalogStatsPage": 116
+    },
+    {
+      "no": 54,
+      "seriesId": "series.zedbanil",
+      "name": "ゼドバニル",
+      "seriesName": "銅炉",
+      "sourceSpeciesId": "monster.zedbanil",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_054_zedbanil_v1.png",
+      "promptFile": "art/prompts/monster_054.json",
+      "sha256": "d374ac1075695dc23ab40f5492cc43bba2165093cc50c8d91a59a22b0edf5fab",
+      "bytes": 2145799,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "d374ac1075695dc23ab40f5492cc43bba2165093cc50c8d91a59a22b0edf5fab",
+        "generatedSource": "exec-e95e5b34-2448-4433-86f7-952481ede9a5.png",
+        "notes": [
+          "全7武器群、防具5部位、双剣2本、独立した大小盾、硬い槌の両端、弓弦・照準環・矢を視認。全先端と足先に切れなし。灰黒の厚い胴、左右に低く開く銅色胸甲、前腕まで続く琥珀の導筋を確認。",
+          "02は盾表裏を併記し握りと前腕帯が見える。導電膜の胸から肘への配線、二層膜の断面と背面接合は未確定。上端の80px余白は未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 117,
+      "catalogStatsPage": 118
+    },
+    {
+      "no": 55,
+      "seriesId": "series.oldasem",
+      "name": "オルダセム",
+      "seriesName": "棚巌",
+      "sourceSpeciesId": "monster.oldasem",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_055_oldasem_v1.png",
+      "promptFile": "art/prompts/monster_055.json",
+      "sha256": "cb136925a03a1ee8bca2a375fbbefd444722d5b6e1eae21d26a444adffb5b691",
+      "bytes": 2146773,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "cb136925a03a1ee8bca2a375fbbefd444722d5b6e1eae21d26a444adffb5b691",
+        "generatedSource": "exec-55bf9515-0ee8-4e89-b8ee-9631a952587b.png",
+        "notes": [
+          "7武器群、防具5部位、双剣2本、独立した大小盾、硬い槌面、弓弦・小照準環・矢を視認。全先端と足先に切れなし。左の低い岩棚、岩下の灰緑風嚢、小さい右側甲、盾の三段棚を確認。",
+          "左胴は胸棚と腰棚が分割され、肩から腰まで三段という設計の接合位置は一枚では確定しない。個別設定で主棚三枚と補助板を区別する。盾裏、実寸干渉、80px余白は未確定または未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 119,
+      "catalogStatsPage": 120
+    },
+    {
+      "no": 56,
+      "seriesId": "series.nuolvan",
+      "name": "ヌオルヴァン",
+      "seriesName": "濾沼",
+      "sourceSpeciesId": "monster.nuolvan",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_056_nuolvan_v1.png",
+      "promptFile": "art/prompts/monster_056.json",
+      "sha256": "53c727b293b8bde04835e1d962a22e87a7c8c60b5c591efe314fcc26ce35c164",
+      "bytes": 2153699,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "53c727b293b8bde04835e1d962a22e87a7c8c60b5c591efe314fcc26ce35c164",
+        "generatedSource": "exec-73f923c1-f62a-4370-b168-76e3b0ad360c.png",
+        "notes": [
+          "全7武器群、防具5部位、双剣2本、大小盾、硬い槌面、弓弦・小照準環・矢を視認。剣先・槍先・足先に欠けなし。厚い灰褐胴、胸前の短い濾過房、外腿の丸い押水室を確認。",
+          "胸以外にも短い羽鞘が付くが濾過房とは用途を分ける。02に盾裏の握りと腕帯を併記。押水室の内圧構造、股関節可動域、80px余白は未確定または未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 121,
+      "catalogStatsPage": 122
+    },
+    {
+      "no": 57,
+      "seriesId": "series.tarhegna",
+      "name": "テムソギア",
+      "seriesName": "籠晶",
+      "sourceSpeciesId": "monster.tarhegna",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_057_tarhegna_v1.png",
+      "promptFile": "art/prompts/monster_057.json",
+      "sha256": "c84518b6d3cab8a712d689b7be595d0d2940d00570861d5facb2af68d56604f3",
+      "bytes": 2067905,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "c84518b6d3cab8a712d689b7be595d0d2940d00570861d5facb2af68d56604f3",
+        "generatedSource": "exec-d0867885-d3ad-41ee-b22d-d1165f4fd06a.png",
+        "notes": [
+          "全7武器群、防具5部位、双剣2本、両盾、硬い槌面、弓弦・照準環・矢を再視認。全先端と足先に切れなし。局所修正で02護刃盾の三弧の間へ薄甲が入り、連続した守り面になった。背の中空弧は開いたまま維持。",
+          "背の三本弧は一部が胴の陰に入り、本数と接合位置は追加背面図で確定する。盾裏と共通リグ可動域、厳密な80px余白は未確定または未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。",
+        "revisionHistory": [
+          {
+            "reason": "02護刃盾の三弧間の薄甲欠落",
+            "previousGeneratedSource": "exec-7d010bd4-0fcf-499f-a2a1-a17edab13516.png",
+            "promptFile": "art/prompts/monster_057_revision_1.json",
+            "resolved": true,
+            "verified": "背景の見える開口を薄甲で閉じ、背の開いた中空弧と全7武器群を維持した。"
+          }
+        ]
+      },
+      "catalogDesignPage": 123,
+      "catalogStatsPage": 124
+    },
+    {
+      "no": 58,
+      "seriesId": "series.porgamis",
+      "name": "ポルガミス",
+      "seriesName": "箒顎",
+      "sourceSpeciesId": "monster.porgamis",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_058_porgamis_v1.png",
+      "promptFile": "art/prompts/monster_058.json",
+      "sha256": "8b0b18e5b392f2f55fbdd9ed6a55d89064e4b1545ba5df1b30879677a349f23d",
+      "bytes": 2068882,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "croppingObserved": false,
+        "imageSize": [
+          1536,
+          1024
+        ],
+        "sha256": "8b0b18e5b392f2f55fbdd9ed6a55d89064e4b1545ba5df1b30879677a349f23d",
+        "generatedSource": "exec-1df6018c-2767-4b3b-b77a-567bdc523d6c.png",
+        "notes": [
+          "全7武器群、防具5部位、双剣2本、独立した大小盾、硬い槌面、弓弦・小照準環・矢を視認。剣先・槍先・足先の欠けなし。兜下縁の幅広い櫛、低い肩、厚い短籠手と灰褐の重ね板を確認。",
+          "弾性腱の厚み・打撃時の変形量と肩背面の平らな接合、盾裏は未確定。上端の厳密な80px余白は未達。"
+        ],
+        "scope": "初登場級の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+      },
+      "catalogDesignPage": 125,
+      "catalogStatsPage": 126
+    },
+    {
+      "no": 59,
+      "seriesId": "series.yarlshena",
+      "name": "ヤルシェナ",
+      "seriesName": "鞍頬獣装備",
+      "sourceSpeciesId": "monster.yarlshena",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_059_yarlshena_v3.png",
+      "promptFile": "art/prompts/monster_059.json",
+      "sha256": "dcf4a4d228d3b2110999c495ee35021ea1689f1f6c8bb896612dd7b040cbd511",
+      "bytes": 1828485,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 3,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "notes": "v1の兜欠落をv2で修正し、最終拡大確認で発見した01断岳剣先の上端見切れをv3で修正。全体を内側へ縮小配置し、01〜07全武器群、独立した両盾、双剣2本、弓弦・矢・照準環、兜から足まで5防具部位を視認。全先端がキャンバス内に入り欠損なし。鞍膜の取付構造と素材断面は追加設定図で確認。",
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "dcf4a4d228d3b2110999c495ee35021ea1689f1f6c8bb896612dd7b040cbd511"
+      },
+      "catalogDesignPage": 127,
+      "catalogStatsPage": 128
+    },
+    {
+      "no": 60,
+      "seriesId": "series.pizelta",
+      "name": "ピゼルタ",
+      "seriesName": "扇趾鳥装備",
+      "sourceSpeciesId": "monster.pizelta",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_060_pizelta_v1.png",
+      "promptFile": "art/prompts/monster_060.json",
+      "sha256": "9f731d30a3245877c54fa3c7d3035281110de347b85a5e6f33bf81c9da54add8",
+      "bytes": 2011390,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "9f731d30a3245877c54fa3c7d3035281110de347b85a5e6f33bf81c9da54add8",
+        "notes": "01〜07全群、護刃/槍の別盾、弓弦と矢、兜から扇趾の脚までを確認。先端の欠損なし。余白80pxは一部で未達だが切れなし。三葉板と低い肩の方向が読める。"
+      },
+      "catalogDesignPage": 129,
+      "catalogStatsPage": 130
+    },
+    {
+      "no": 61,
+      "seriesId": "series.damorikus",
+      "name": "ダモリクス",
+      "seriesName": "縁壺蟹装備",
+      "sourceSpeciesId": "monster.damorikus",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_061_damorikus_v1.png",
+      "promptFile": "art/prompts/monster_061.json",
+      "sha256": "02d159f01e521000565dbe3c5b5202010b1eba5533f1c3506e1b9cfa84caf0b7",
+      "bytes": 2070604,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "02d159f01e521000565dbe3c5b5202010b1eba5533f1c3506e1b9cfa84caf0b7",
+        "notes": "全7武器群・両盾・弓弦と矢、全身5部位を視認。左の壺甲と細い右側が識別可能。剣先・槍先・靴に欠損なし。壺甲は肩寄りの表現であり前腕への詳細配置と盾内部は追加設定図で確認。"
+      },
+      "catalogDesignPage": 131,
+      "catalogStatsPage": 132
+    },
+    {
+      "no": 62,
+      "seriesId": "series.isarnem",
+      "name": "イサルネム",
+      "seriesName": "節帽蟲装備",
+      "sourceSpeciesId": "monster.isarnem",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_062_isarnem_v1.png",
+      "promptFile": "art/prompts/monster_062.json",
+      "sha256": "c9d50881090693f86fa7e275c1833b4edbb03f255f8a5fa2c8901c146ef45c42",
+      "bytes": 1960199,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "c9d50881090693f86fa7e275c1833b4edbb03f255f8a5fa2c8901c146ef45c42",
+        "notes": "全7武器群と5防具部位、三枚帽殻と片胸の小熱房を確認。双剣2本、両盾、弓弦と矢が分離。剣/槍/靴の先端に欠損なし。兜が深めなので視野と寸法は設定図で調整。"
+      },
+      "catalogDesignPage": 133,
+      "catalogStatsPage": 134
+    },
+    {
+      "no": 63,
+      "seriesId": "series.regsanio",
+      "name": "レグサニオ",
+      "seriesName": "片盤蛇装備",
+      "sourceSpeciesId": "monster.regsanio",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_063_regsanio_v1.png",
+      "promptFile": "art/prompts/monster_063.json",
+      "sha256": "af66e6c4bc2a669ffb0b6a5b148a2ad05296a25e19d9f0435189ad88f913c0a6",
+      "bytes": 2034799,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "af66e6c4bc2a669ffb0b6a5b148a2ad05296a25e19d9f0435189ad88f913c0a6",
+        "notes": "7武器群と5防具部位、左肩の盤と細い右肩、両盾、弓弦を確認。全先端と足先に欠損なし。背側二列骨と円盤の厚さは追加設定図で確認。"
+      },
+      "catalogDesignPage": 135,
+      "catalogStatsPage": 136
+    },
+    {
+      "no": 64,
+      "seriesId": "series.rupenias",
+      "name": "ルペニアス",
+      "seriesName": "袋肩獣装備",
+      "sourceSpeciesId": "monster.rupenias",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_064_rupenias_v1.png",
+      "promptFile": "art/prompts/monster_064.json",
+      "sha256": "409884e6293e554b304708e576434b2405974222e5f293bf933622112dba025b",
+      "bytes": 2053346,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "409884e6293e554b304708e576434b2405974222e5f293bf933622112dba025b",
+        "notes": "7武器群と5防具部位、胸側/背側へずれた二つの袋を確認。槌の硬い閉鎖打面、両盾、弓弦と矢、全先端の欠損なし。袋の前後距離と肩の可動は共通リグで確認。"
+      },
+      "catalogDesignPage": 137,
+      "catalogStatsPage": 138
+    },
+    {
+      "no": 65,
+      "seriesId": "series.sograpin",
+      "name": "ソグラピン",
+      "seriesName": "刻踵獣装備",
+      "sourceSpeciesId": "monster.sograpin",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_065_sograpin_v1.png",
+      "promptFile": "art/prompts/monster_065.json",
+      "sha256": "d84bb846e505b2dfdb5bc95e990d3e4d883873e70af61f936d1661c9c25adb22",
+      "bytes": 2014246,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "d84bb846e505b2dfdb5bc95e990d3e4d883873e70af61f936d1661c9c25adb22",
+        "notes": "7武器群と5部位、四角い刻印/槌打面/脚先の溝を視認。両盾、弓弦と矢があり先端欠損なし。踵の後方突出と足裏は追加設定図で確認。"
+      },
+      "catalogDesignPage": 139,
+      "catalogStatsPage": 140
+    },
+    {
+      "no": 66,
+      "seriesId": "series.makuejira",
+      "name": "マクエジラ",
+      "seriesName": "梯胸鳥装備",
+      "sourceSpeciesId": "monster.makuejira",
+      "nativeRank": 3,
+      "availableRanks": [
+        3,
+        4
+      ],
+      "artFile": "art/monsters/equipment_066_makuejira_v1.png",
+      "promptFile": "art/prompts/monster_066.json",
+      "sha256": "0f83ca468d8d429a86c18dfde30b600590f12e4a1e029e6cb90bd8ab2205781d",
+      "bytes": 1997848,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "0f83ca468d8d429a86c18dfde30b600590f12e4a1e029e6cb90bd8ab2205781d",
+        "notes": "7群と5部位、梯胸骨と下折れ肩先、両盾、双剣2本、弓弦/矢を確認。先端欠損なし。槌の打面と骨の中空断面は追加設定図で確認。"
+      },
+      "catalogDesignPage": 141,
+      "catalogStatsPage": 142
+    },
+    {
+      "no": 67,
+      "seriesId": "series.gumesald",
+      "name": "グメサルド",
+      "seriesName": "熔継獣装備",
+      "sourceSpeciesId": "monster.gumesald",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_067_gumesald_v1.png",
+      "promptFile": "art/prompts/monster_067.json",
+      "sha256": "7aa1206d43e7bf77ab51fffc132f0325d0981ee208b645871108593be3847677",
+      "bytes": 2047778,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "7aa1206d43e7bf77ab51fffc132f0325d0981ee208b645871108593be3847677",
+        "notes": "7群と5部位、左肩から腰の段橋甲と継ぎ目だけの琥珀線を確認。両盾、弓弦と矢、全先端に欠損なし。兜視野・肩突出量・胸の重なりは共通リグと正投影で確認。"
+      },
+      "catalogDesignPage": 143,
+      "catalogStatsPage": 144
+    },
+    {
+      "no": 68,
+      "seriesId": "series.nericaus",
+      "name": "ネリカウス",
+      "seriesName": "環燐鳥装備",
+      "sourceSpeciesId": "monster.nericaus",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_068_nericaus_v1.png",
+      "promptFile": "art/prompts/monster_068.json",
+      "sha256": "c92b3972254a8283c9d7dbaf901b566f785cd30610b69477df1dcd38d85dc122",
+      "bytes": 1943552,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "c92b3972254a8283c9d7dbaf901b566f785cd30610b69477df1dcd38d85dc122",
+        "notes": "7武器群と5部位、右腰の開いた輪と下半分の灯点を視認。両盾、双剣2本、弓弦/矢に欠損なし。輪の後腰への正確な取付位置、前面灯点の範囲は背面設定図で調整。"
+      },
+      "catalogDesignPage": 145,
+      "catalogStatsPage": 146
+    },
+    {
+      "no": 69,
+      "seriesId": "series.voltena",
+      "name": "ヴォルテナ",
+      "seriesName": "重帷蟲装備",
+      "sourceSpeciesId": "monster.voltena",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_069_voltena_v1.png",
+      "promptFile": "art/prompts/monster_069.json",
+      "sha256": "e9b5b1efef3515e20c25fa62ed86a06c49b538f73dbcf96f710f825b17747bcd",
+      "bytes": 1976689,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "e9b5b1efef3515e20c25fa62ed86a06c49b538f73dbcf96f710f825b17747bcd",
+        "notes": "7群と5部位、左肩の三段灰紫帷と細い右腕を確認。両盾、双剣2本、弓弦と矢、全先端に欠損なし。布の層厚・滴金具の揺れ・背面は追加確認。"
+      },
+      "catalogDesignPage": 147,
+      "catalogStatsPage": 148
+    },
+    {
+      "no": 70,
+      "seriesId": "series.kitolnam",
+      "name": "キトルナム",
+      "seriesName": "重氷蛇装備",
+      "sourceSpeciesId": "monster.kitolnam",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_070_kitolnam_v2.png",
+      "promptFile": "art/prompts/monster_070.json",
+      "sha256": "fe7ea92f2b5e46405103cf8242e87601297309d4e232249efbc20fec04f4a2c3",
+      "bytes": 1939617,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 2,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "fe7ea92f2b5e46405103cf8242e87601297309d4e232249efbc20fec04f4a2c3",
+        "notes": "全7武器群・防具5部位を視認。剣先、槍先、弓端、足先の欠損なし。前腰の誤った3本の氷滴を除去し、素布へ修正済み。後腰の短い3滴はこの角度では見えず背面図で要確認。余白80pxは断岳剣上端で未達だが切れなし。"
+      },
+      "catalogDesignPage": 149,
+      "catalogStatsPage": 150
+    },
+    {
+      "no": 71,
+      "seriesId": "series.segranio",
+      "name": "セオルミド",
+      "seriesName": "双環獣装備",
+      "sourceSpeciesId": "monster.segranio",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_071_segranio_v1.png",
+      "promptFile": "art/prompts/monster_071.json",
+      "sha256": "aaa124cdd6d441c83a7bb53edf28bee647bf795033704ed44547f5505b723223",
+      "bytes": 1931031,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "aaa124cdd6d441c83a7bb53edf28bee647bf795033704ed44547f5505b723223",
+        "notes": "全7武器群・防具5部位を視認。低い兜、襟後方の大小2環、胸下の琥珀灯を確認。弓弦・矢・独立照準環あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80pxは未達。後部2環の留め具は背面図で確認を要する。"
+      },
+      "catalogDesignPage": 151,
+      "catalogStatsPage": 152
+    },
+    {
+      "no": 72,
+      "seriesId": "series.dekoranze",
+      "name": "デコランゼ",
+      "seriesName": "炉畝獣装備",
+      "sourceSpeciesId": "monster.dekoranze",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_072_dekoranze_v1.png",
+      "promptFile": "art/prompts/monster_072.json",
+      "sha256": "8b6706c4aecd9170e5a732bdede50dd395d8052024e62d5ace4fbef952ff266e",
+      "bytes": 2119804,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "8b6706c4aecd9170e5a732bdede50dd395d8052024e62d5ace4fbef952ff266e",
+        "notes": "全7武器群・防具5部位を視認。装着者の右腰と右脛の段畝を厚く、左脚を細くした非対称を確認。槌は閉じた平打面。弓弦・矢・照準環あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80pxは未達。厚皮の屈曲断面と熱筋の裏面配置は別図で要確認。"
+      },
+      "catalogDesignPage": 153,
+      "catalogStatsPage": 154
+    },
+    {
+      "no": 73,
+      "seriesId": "series.fusaldom",
+      "name": "フサルドム",
+      "seriesName": "氷礁獣装備",
+      "sourceSpeciesId": "monster.fusaldom",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_073_fusaldom_v1.png",
+      "promptFile": "art/prompts/monster_073.json",
+      "sha256": "92cb1ac571addd2d4e3811348caa1f2c0a3274e05bf3aa70798b8e4162f0ebed",
+      "bytes": 2061782,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "92cb1ac571addd2d4e3811348caa1f2c0a3274e05bf3aa70798b8e4162f0ebed",
+        "notes": "全7武器群・防具5部位を視認。肩に水平の氷礁板、低い兜と細い下肢を確認。槌の硬い閉鎖打面、双剣2本、剣盾2群、弓弦・矢・照準環あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80px未達。肩板の左右高低差は小さく、可動時の干渉と正確な高さは別図で要確認。"
+      },
+      "catalogDesignPage": 155,
+      "catalogStatsPage": 156
+    },
+    {
+      "no": 74,
+      "seriesId": "series.rimposera",
+      "name": "リムポセラ",
+      "seriesName": "汐函獣装備",
+      "sourceSpeciesId": "monster.rimposera",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_074_rimposera_v1.png",
+      "promptFile": "art/prompts/monster_074.json",
+      "sha256": "0a4e84b263c0e6a37b7f54916e7afa5589f71290780431bf87612ec62a49841c",
+      "bytes": 2058390,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "0a4e84b263c0e6a37b7f54916e7afa5589f71290780431bf87612ec62a49841c",
+        "notes": "全7武器群・防具5部位を視認。低い濾水兜、四室の腹甲、腰の生成り袋、弓握りの小容器を確認。前側2袋を視認し、後側2袋と平たい背板は背面図で要確認。槌は閉じた四室形の打面。剣先、槍先、足先に欠損なし。断岳剣上端の余白80pxは未達。"
+      },
+      "catalogDesignPage": 157,
+      "catalogStatsPage": 158
+    },
+    {
+      "no": 75,
+      "seriesId": "series.dalhoina",
+      "name": "ダルホイナ",
+      "seriesName": "風梁獣装備",
+      "sourceSpeciesId": "monster.dalhoina",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_075_dalhoina_v1.png",
+      "promptFile": "art/prompts/monster_075.json",
+      "sha256": "5c2cd4106b12bf72e79c9189ad68b39acd3498bd8dcc6e155247c1a9da649de8",
+      "bytes": 2016722,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "5c2cd4106b12bf72e79c9189ad68b39acd3498bd8dcc6e155247c1a9da649de8",
+        "notes": "全7武器群・防具5部位を視認。胸の横長三梁、兜・籠手の中空孔、槌の閉じた硬骨面を確認。太刀は切先を下に置いた配置で全体が入っている。弓は三梁腱の弦が複数線で表現され、照準環と矢が独立。剣先、槍先、足先の欠損なし。断岳剣上端の余白80pxは未達。背腰の短さと肩可動域は別図で要確認。"
+      },
+      "catalogDesignPage": 159,
+      "catalogStatsPage": 160
+    },
+    {
+      "no": 76,
+      "seriesId": "series.zonikebal",
+      "name": "ゾニケバル",
+      "seriesName": "砕脈獣装備",
+      "sourceSpeciesId": "monster.zonikebal",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_076_zonikebal_v1.png",
+      "promptFile": "art/prompts/monster_076.json",
+      "sha256": "fad97b2fe6c91dce1d2901ada82e15a886a9896da63ac932782b49f90f8b9729",
+      "bytes": 2045311,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "fad97b2fe6c91dce1d2901ada82e15a886a9896da63ac932782b49f90f8b9729",
+        "notes": "全7武器群・防具5部位を視認。胸の縦2枚、装着者右側の琥珀縁と左側の青銅縁、高い肩と低い腰を確認。槌は硬い閉鎖面。長尖槍の穂元熱電部と弓握りの内側灯、弓弦・矢・照準環あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80px未達。背面接地尾板と肩干渉は別図で要確認。"
+      },
+      "catalogDesignPage": 161,
+      "catalogStatsPage": 162
+    },
+    {
+      "no": 77,
+      "seriesId": "series.ludopanea",
+      "name": "ルドパネア",
+      "seriesName": "孔顎獣装備",
+      "sourceSpeciesId": "monster.ludopanea",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_077_ludopanea_v1.png",
+      "promptFile": "art/prompts/monster_077.json",
+      "sha256": "0fbfec54c815f78c3e2698eed633ac203cddec30ecf84c7aa6a2975e51208788",
+      "bytes": 1982406,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "0fbfec54c815f78c3e2698eed633ac203cddec30ecf84c7aa6a2975e51208788",
+        "notes": "全7武器群・防具5部位を視認。顎から胸上へ短く下がる2枚の有孔板、暗青銅の孔縁、細い脛を確認。両盾と弓根元の孔、槌の閉じた硬質面、弓弦・矢・照準環あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80px未達。後腰の高さと孔周辺の厚さは背面・断面図で要確認。"
+      },
+      "catalogDesignPage": 163,
+      "catalogStatsPage": 164
+    },
+    {
+      "no": 78,
+      "seriesId": "series.salpinoc",
+      "name": "サルピノク",
+      "seriesName": "帷鋏蟹装備",
+      "sourceSpeciesId": "monster.salpinoc",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_078_salpinoc_v1.png",
+      "promptFile": "art/prompts/monster_078.json",
+      "sha256": "1565595b36fe11557aa7098fbabb27f167a0f808630a886d10101698060cedb0",
+      "bytes": 2062222,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "1565595b36fe11557aa7098fbabb27f167a0f808630a886d10101698060cedb0",
+        "notes": "全7武器群・防具5部位を視認。装着者左肩の高い縦板と右籠手の厚い甲、自由な手指を確認。灰紫の短い溝と腰の小容器、弓握りの圧露管あり。槌は閉じた鋏芯形の硬質面。剣先、槍先、足先の欠損なし。断岳剣上端の余白80px未達。縦肩板の横方向可動と右手首の干渉は別図で要確認。"
+      },
+      "catalogDesignPage": 165,
+      "catalogStatsPage": 166
+    },
+    {
+      "no": 79,
+      "seriesId": "series.hemzario",
+      "name": "ヘムザリオ",
+      "seriesName": "連額獣装備",
+      "sourceSpeciesId": "monster.hemzario",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_079_hemzario_v1.png",
+      "promptFile": "art/prompts/monster_079.json",
+      "sha256": "a9390c007033e1ddaee317e729cb4d340c4b22f9a265f9ebbb5e8e735cb65e87",
+      "bytes": 2028650,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "a9390c007033e1ddaee317e729cb4d340c4b22f9a265f9ebbb5e8e735cb65e87",
+        "notes": "全7武器群・防具5部位を視認。兜の低い三節額、胴の三段甲、太刀の低い峰節を確認。槌は連額甲を閉じた硬質面。弓弦・矢・照準環あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80px未達。後腰の折れ甲は背面図で確認を要する。"
+      },
+      "catalogDesignPage": 167,
+      "catalogStatsPage": 168
+    },
+    {
+      "no": 80,
+      "seriesId": "series.pasnelim",
+      "name": "パスネリム",
+      "seriesName": "逆穂獣装備",
+      "sourceSpeciesId": "monster.pasnelim",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_080_pasnelim_v1.png",
+      "promptFile": "art/prompts/monster_080.json",
+      "sha256": "8fec5d2a42b5e12984a923dd8b0d80a33fee64bc420cb8b9a28cf221db9b8d3c",
+      "bytes": 1983237,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "頭頂を覆う低い兜と5防具部位、7武器群を確認。腰の前帆・灰緑と青銅・長い低襟の意図を反映。盾2枚、閉じた硬質槌、双剣2本、実弓の弦・分離した小照準環・矢がある。全先端と足先の欠損なし。前帆の厳密な四枚の付根と兜の視野は次の形状確定で確認。",
+        "limitations": [
+          "初登場級=極級の系列原画。背面・断面・正投影・実寸・共通リグは未検証。",
+          "厳密な四辺80px余白と部材層数・結合位置は完全再現ではない。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "8fec5d2a42b5e12984a923dd8b0d80a33fee64bc420cb8b9a28cf221db9b8d3c",
+        "sourceGeneratedFile": "exec-af97290a-ce4c-443d-9103-5e63f02a205e.png",
+        "generator": "built-in image_gen",
+        "promptFile": "art/prompts/monster_080.json",
+        "referencePaths": [
+          "art-source/board/style_board_v2.png",
+          "art-source/monster/concepts/monster_080_pasnelim_concept_v1.png"
+        ]
+      },
+      "catalogDesignPage": 169,
+      "catalogStatsPage": 170
+    },
+    {
+      "no": 81,
+      "seriesId": "series.zaclatom",
+      "name": "ザクラトム",
+      "seriesName": "炉喉鳥装備",
+      "sourceSpeciesId": "monster.zaclatom",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_081_zaclatom_v1.png",
+      "promptFile": "art/prompts/monster_081.json",
+      "sha256": "a1fa320cdb6750d22be5cc9788e68296b1da3b4b287d02f120e65a6b3a3cb674",
+      "bytes": 2048652,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い閉鎖兜、左だけに立つ三角襟、灰褐の胸・腕・腰・脚と7武器群を確認。熱筋は主に左襟内側。盾2枚、閉じた硬質槌頭、双剣2本、実弓弦・分離した小照準環・矢あり。剣先・槍先・足先の欠損なし。後腰の短扇の全形は斜め正面で隠れる。",
+        "limitations": [
+          "初登場級=極級の系列原画。背面・断面・正投影・実寸・共通リグは未検証。",
+          "厳密な四辺80px余白と部材層数・結合位置は完全再現ではない。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "a1fa320cdb6750d22be5cc9788e68296b1da3b4b287d02f120e65a6b3a3cb674",
+        "sourceGeneratedFile": "exec-bd77264a-9650-4268-ba11-b367e9e782aa.png",
+        "generator": "built-in image_gen",
+        "promptFile": "art/prompts/monster_081.json",
+        "referencePaths": [
+          "art-source/board/style_board_v2.png",
+          "art-source/monster/concepts/monster_081_zaclatom_concept_v1.png"
+        ]
+      },
+      "catalogDesignPage": 171,
+      "catalogStatsPage": 172
+    },
+    {
+      "no": 82,
+      "seriesId": "series.izoflane",
+      "name": "イゾフラネ",
+      "seriesName": "湧皿鳥装備",
+      "sourceSpeciesId": "monster.izoflane",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_082_izoflane_v1.png",
+      "promptFile": "art/prompts/monster_082.json",
+      "sha256": "219bed42c0440046b40d42b9c5e2c44b34e5196a35d6ba6020421dc6007f2420",
+      "bytes": 2022446,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い兜と胸下のずれ皿、右前腕と右脛が長い非対称の5部位、7武器群を確認。盾2枚、硬い皿槌頭、双剣2本、実弓弦・分離小環・矢あり。全先端と足先の欠損なし。羽皮の段が多めで胸皿の厳密な二枚構造と兜の視野は形状確定時に整理。",
+        "limitations": [
+          "初登場級=極級の系列原画。背面・断面・正投影・実寸・共通リグは未検証。",
+          "厳密な四辺80px余白と部材層数・結合位置は完全再現ではない。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "219bed42c0440046b40d42b9c5e2c44b34e5196a35d6ba6020421dc6007f2420",
+        "sourceGeneratedFile": "exec-fd507d2b-8fc8-45ad-afde-5bc2574746ca.png",
+        "generator": "built-in image_gen",
+        "promptFile": "art/prompts/monster_082.json",
+        "referencePaths": [
+          "art-source/board/style_board_v2.png",
+          "art-source/monster/concepts/monster_082_izoflane_concept_v1.png"
+        ]
+      },
+      "catalogDesignPage": 173,
+      "catalogStatsPage": 174
+    },
+    {
+      "no": 83,
+      "seriesId": "series.queribas",
+      "name": "クェリバス",
+      "seriesName": "氷櫛蟲装備",
+      "sourceSpeciesId": "monster.queribas",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_083_queribas_v1.png",
+      "promptFile": "art/prompts/monster_083.json",
+      "sha256": "e2cf7578288ce4c0c5a2921f2616ada27ae2ce821b3013ae4cfb5ebde5fe4d69",
+      "bytes": 2036628,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "visually-reviewed",
+        "checkedAt": "2026-11-25",
+        "coverage": {
+          "armorFullBody": true,
+          "fiveArmorRegions": true,
+          "weaponGroups": 7,
+          "heavyBlade": true,
+          "guardBladeAndShield": true,
+          "hardFaceHammer": true,
+          "twoTwinBlades": true,
+          "longBlade": true,
+          "lanceAndShield": true,
+          "bowStringSmallRingAndArrow": true,
+          "allGroupsInsideFrame": true
+        },
+        "observations": "低い帽体、左額と左前腕に櫛を寄せた5防具部位、7武器群を確認。腰の後ろは平ら、先端琥珀を小点に抑える。盾2枚、閉じた硬質槌、双剣2本、実弓弦・分離小環・矢あり。全先端と足先の欠損なし。兜上の櫛が指定よりやや高く、低い最終寸法へ詰める余地あり。",
+        "limitations": [
+          "初登場級=極級の系列原画。背面・断面・正投影・実寸・共通リグは未検証。",
+          "厳密な四辺80px余白と部材層数・結合位置は完全再現ではない。"
+        ],
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "mode": "RGB",
+        "sha256": "e2cf7578288ce4c0c5a2921f2616ada27ae2ce821b3013ae4cfb5ebde5fe4d69",
+        "sourceGeneratedFile": "exec-b5c83a9d-fa1f-4ea3-9aaf-7178deed28e6.png",
+        "generator": "built-in image_gen",
+        "promptFile": "art/prompts/monster_083.json",
+        "referencePaths": [
+          "art-source/board/style_board_v2.png",
+          "art-source/monster/concepts/monster_083_queribas_concept_v1.png"
+        ]
+      },
+      "catalogDesignPage": 175,
+      "catalogStatsPage": 176
+    },
+    {
+      "no": 84,
+      "seriesId": "series.enagrio",
+      "name": "エナグリオ",
+      "seriesName": "礫環蛇装備",
+      "sourceSpeciesId": "monster.enagrio",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_084_enagrio_v1.png",
+      "promptFile": "art/prompts/monster_084.json",
+      "sha256": "897cf3e4dcd46866c2d3d4b3961fc41a46463514ddee30933932bc5f00f3a135",
+      "bytes": 2053412,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "897cf3e4dcd46866c2d3d4b3961fc41a46463514ddee30933932bc5f00f3a135",
+        "notes": "全7武器群・防具5部位を視認。低い兜、首後ろの段襟と内側の青銅礫粒、滑らかな胴、環留めの腰帯を確認。断岳剣・槍・弓握りに三段環、両盾、双剣2本、弓弦・矢・独立照準環あり。槌の両端は硬骨で閉鎖。剣先、槍先、足先の欠損なし。断岳剣上端の余白80pxは未達。襟の後側三段の連続と背面厚さは追加図で要確認。"
+      },
+      "catalogDesignPage": 177,
+      "catalogStatsPage": 178
+    },
+    {
+      "no": 85,
+      "seriesId": "series.nucbarea",
+      "name": "ヌクバレア",
+      "seriesName": "霧扁蟹装備",
+      "sourceSpeciesId": "monster.nucbarea",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_085_nucbarea_v2.png",
+      "promptFile": "art/prompts/monster_085.json",
+      "sha256": "3c2974a93196e69744ef37c0fd7d4cb6ac8c0e4158ceae77d4fa0b2e4aa3f914",
+      "bytes": 1950448,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 2,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "3c2974a93196e69744ef37c0fd7d4cb6ac8c0e4158ceae77d4fa0b2e4aa3f914",
+        "notes": "全7武器群・防具5部位を視認。v1で前腰へ出た扇甲をv2で除去し布革へ置換、後腰専用の設定に合わせた。襟の短い2房、左右同じ大きさの籠手、弓握り下の2房を確認。双剣柄先の小毒房、両盾、弓弦・矢・独立照準環、槌の閉鎖硬質面あり。剣先、槍先、足先の欠損なし。断岳剣上端の余白80px未達。後腰の扇甲はこの角度では見えず、背面図で要確認。"
+      },
+      "catalogDesignPage": 179,
+      "catalogStatsPage": 180
+    },
+    {
+      "no": 86,
+      "seriesId": "series.towalsem",
+      "name": "トワルセム",
+      "seriesName": "冷滴蛇装備",
+      "sourceSpeciesId": "monster.towalsem",
+      "nativeRank": 4,
+      "availableRanks": [
+        4
+      ],
+      "artFile": "art/monsters/equipment_086_towalsem_v1.png",
+      "promptFile": "art/prompts/monster_086.json",
+      "sha256": "96359ad014c81c7563b73e28536f90c60e0f5f21e2e981d7dececaccbf347645",
+      "bytes": 2045904,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "generated": true,
+        "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+        "notVerified": [
+          "正投影",
+          "寸法",
+          "背面",
+          "共通リグ干渉",
+          "ゲーム内描画"
+        ],
+        "revision": 1,
+        "sevenWeaponGroupsVisible": true,
+        "fiveArmorRegionsVisible": true,
+        "clippingObserved": false,
+        "dimensions": [
+          1536,
+          1024
+        ],
+        "sha256": "96359ad014c81c7563b73e28536f90c60e0f5f21e2e981d7dececaccbf347645",
+        "notes": "全7武器群・防具5部位を視認。低く滑らかな兜、小さい肩甲、氷滴のない前腰を確認。後腰専用3滴はこの前方角度で隠れており背面図で要確認。護刃盾の内部3滴、双剣根元の小晶粒、弓握り下の短い3滴容器、弓弦・矢・照準環あり。槌は丸い閉鎖硬質面。頭肩に大きい氷板や棘なし。剣先、槍先、足先の欠損なし。断岳剣上端の余白80pxは未達。"
+      },
+      "catalogDesignPage": 181,
+      "catalogStatsPage": 182
+    },
+    {
+      "no": 87,
+      "seriesId": "gathering.woven_grass",
+      "name": "編草",
+      "seriesName": "編草",
+      "sourceSpeciesId": null,
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/gathering/equipment_G01_woven_grass_v2.png",
+      "promptFile": "art/prompts/gathering_G01.json",
+      "sha256": "7d64ed811572a43a385d29f9e084439657506b1e93f44c56dbb2df20c0b926bf",
+      "bytes": 2125067,
+      "dimensions": [
+        1671,
+        941
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "coverage": [
+          "5 armor slots",
+          "7 weapon groups",
+          "2 shields",
+          "twin blades pair",
+          "bow string/ring/arrow",
+          "complete blade/spear tips and boots"
+        ],
+        "limitations": [
+          "初級の比較原画。高級は形状仕様で定義、正投影・3Dは未制作。"
+        ],
+        "revision": "v1の断岳剣先端切れをv2で修正。四辺へ余白を追加。",
+        "sha256": "7d64ed811572a43a385d29f9e084439657506b1e93f44c56dbb2df20c0b926bf"
+      },
+      "catalogDesignPage": 183,
+      "catalogStatsPage": 184
+    },
+    {
+      "no": 88,
+      "seriesId": "gathering.rootwood",
+      "name": "根編",
+      "seriesName": "根編",
+      "sourceSpeciesId": null,
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/gathering/equipment_G02_rootwood_v1.png",
+      "promptFile": "art/prompts/gathering_G02.json",
+      "sha256": "5f32f8b39baa978e812ff99fa3e4339939e45611b0fee3ba0b07f16347e004bb",
+      "bytes": 1994071,
+      "dimensions": [
+        1671,
+        941
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "coverage": [
+          "5 armor slots",
+          "7 weapon groups",
+          "2 shields",
+          "twin blades pair",
+          "bow string/ring/arrow",
+          "complete tips and boots"
+        ],
+        "limitations": [
+          "初級の系列比較原画。8%余白・厳密縮尺・正投影の合格を意味しない。"
+        ],
+        "dimensions": [
+          1671,
+          941
+        ],
+        "sha256": "5f32f8b39baa978e812ff99fa3e4339939e45611b0fee3ba0b07f16347e004bb"
+      },
+      "catalogDesignPage": 185,
+      "catalogStatsPage": 186
+    },
+    {
+      "no": 89,
+      "seriesId": "gathering.resin",
+      "name": "樹脂継",
+      "seriesName": "樹脂継",
+      "sourceSpeciesId": null,
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/gathering/equipment_G03_resin_v1.png",
+      "promptFile": "art/prompts/gathering_G03.json",
+      "sha256": "82a2b85f3573169fb367bb7106a4e65bca4ec184f56e76abf194ac8d3b23c5ad",
+      "bytes": 1918474,
+      "dimensions": [
+        1671,
+        941
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "coverage": [
+          "5 armor slots",
+          "7 weapon groups",
+          "2 shields",
+          "twin blades pair",
+          "bow string/ring/arrow",
+          "complete blade/spear tips and boots"
+        ],
+        "limitations": [
+          "初級の比較原画。高級は形状仕様で定義、正投影・3Dは未制作。",
+          "指定した8%余白は厳密には達していないが、全装備の先端・足元は画面内。"
+        ],
+        "sourceGeneratedFile": "exec-d19fec74-0192-4565-b695-751f7b2482ac.png",
+        "dimensions": [
+          1671,
+          941
+        ],
+        "sha256": "82a2b85f3573169fb367bb7106a4e65bca4ec184f56e76abf194ac8d3b23c5ad"
+      },
+      "catalogDesignPage": 187,
+      "catalogStatsPage": 188
+    },
+    {
+      "no": 90,
+      "seriesId": "gathering.forged_iron",
+      "name": "風礫鍛鉄",
+      "seriesName": "風礫鍛鉄",
+      "sourceSpeciesId": null,
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/gathering/equipment_G04_forged_iron_v1.png",
+      "promptFile": "art/prompts/gathering_G04.json",
+      "sha256": "a3a0eecce2d2884c6aae98eb96eb79f82fddba865a8862de5591994f8dfe1e6e",
+      "bytes": 1983586,
+      "dimensions": [
+        1670,
+        942
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "coverage": [
+          "5 armor slots",
+          "7 weapon groups",
+          "2 shields",
+          "twin blades pair",
+          "bow string/ring/arrow",
+          "complete blade/spear tips and boots"
+        ],
+        "limitations": [
+          "初級の比較原画。高級は形状仕様で定義、正投影・3Dは未制作。",
+          "全装備の先端・足元は画面内。指定余白の厳密な寸法と背面の構造は未検証。"
+        ],
+        "sourceGeneratedFile": "exec-9a877e49-520b-42fb-a6c6-af3bf36d62b5.png",
+        "dimensions": [
+          1670,
+          942
+        ],
+        "sha256": "a3a0eecce2d2884c6aae98eb96eb79f82fddba865a8862de5591994f8dfe1e6e",
+        "notes": "初回生成は画像が返ったが出力ファイルが得られず、同一プロンプトで再生成した2回目を収録。"
+      },
+      "catalogDesignPage": 189,
+      "catalogStatsPage": 190
+    },
+    {
+      "no": 91,
+      "seriesId": "gathering.mica",
+      "name": "薄晶",
+      "seriesName": "薄晶",
+      "sourceSpeciesId": null,
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/gathering/equipment_G05_mica_v1.png",
+      "promptFile": "art/prompts/gathering_G05.json",
+      "sha256": "166ff9457053d2bdd99882f0c2b6536f8ddfb1e472f0d6a2e4b81c303efd0ac4",
+      "bytes": 1894689,
+      "dimensions": [
+        1670,
+        941
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "coverage": [
+          "5 armor slots",
+          "7 weapon groups",
+          "2 shields",
+          "twin blades pair",
+          "bow string/ring/arrow",
+          "complete blade/spear tips and boots"
+        ],
+        "limitations": [
+          "初級の比較原画。高級は形状仕様で定義、正投影・3Dは未制作。",
+          "全装備の先端・足元は画面内。指定余白の厳密な寸法と背面の構造は未検証。"
+        ],
+        "sourceGeneratedFile": "exec-63bbfa7b-3e33-46be-87df-dec293cf0810.png",
+        "dimensions": [
+          1670,
+          941
+        ],
+        "sha256": "166ff9457053d2bdd99882f0c2b6536f8ddfb1e472f0d6a2e4b81c303efd0ac4"
+      },
+      "catalogDesignPage": 191,
+      "catalogStatsPage": 192
+    },
+    {
+      "no": 92,
+      "seriesId": "gathering.densestone",
+      "name": "積岩",
+      "seriesName": "積岩",
+      "sourceSpeciesId": null,
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/gathering/equipment_G06_densestone_v1.png",
+      "promptFile": "art/prompts/gathering_G06.json",
+      "sha256": "6ebcafb1b37cd613eb34f3ed788daab6d7ba6d65f50f4573910eec83e0f50dd7",
+      "bytes": 1983410,
+      "dimensions": [
+        1670,
+        941
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "coverage": [
+          "5 armor slots",
+          "7 weapon groups",
+          "2 shields",
+          "twin blades pair",
+          "bow string/ring/arrow",
+          "complete blade/spear tips and boots"
+        ],
+        "limitations": [
+          "初級の比較原画。高級は形状仕様で定義、正投影・3Dは未制作。",
+          "全装備の先端・足元は画面内。指定余白の厳密な寸法と背面の構造は未検証。"
+        ],
+        "sourceGeneratedFile": "exec-6dcd15bb-9dc8-4937-948e-5b4653e78bb5.png",
+        "dimensions": [
+          1670,
+          941
+        ],
+        "sha256": "6ebcafb1b37cd613eb34f3ed788daab6d7ba6d65f50f4573910eec83e0f50dd7"
+      },
+      "catalogDesignPage": 193,
+      "catalogStatsPage": 194
+    },
+    {
+      "no": 93,
+      "seriesId": "gathering.ring_beetle",
+      "name": "縫甲",
+      "seriesName": "縫甲",
+      "sourceSpeciesId": null,
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/gathering/equipment_G07_ring_beetle_v1.png",
+      "promptFile": "art/prompts/gathering_G07.json",
+      "sha256": "c39835c43b8818b02826e872a7f824bf88acee612dd4825fbc097c37c43f4291",
+      "bytes": 2030858,
+      "dimensions": [
+        1670,
+        941
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "coverage": [
+          "5 armor slots",
+          "7 weapon groups",
+          "2 shields",
+          "twin blades pair",
+          "bow string/ring/arrow",
+          "complete blade/spear tips and boots"
+        ],
+        "limitations": [
+          "初級の比較原画。高級は形状仕様で定義、正投影・3Dは未制作。",
+          "全装備の先端・足元は画面内。指定余白の厳密な寸法と背面の構造は未検証。"
+        ],
+        "sourceGeneratedFile": "exec-ceb1ebf7-12cd-461a-afcb-a47fffe6ee4d.png",
+        "dimensions": [
+          1670,
+          941
+        ],
+        "sha256": "c39835c43b8818b02826e872a7f824bf88acee612dd4825fbc097c37c43f4291"
+      },
+      "catalogDesignPage": 195,
+      "catalogStatsPage": 196
+    },
+    {
+      "no": 94,
+      "seriesId": "gathering.silk_moth",
+      "name": "繭紡",
+      "seriesName": "繭紡",
+      "sourceSpeciesId": null,
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/gathering/equipment_G08_silk_moth_v1.png",
+      "promptFile": "art/prompts/gathering_G08.json",
+      "sha256": "2efa5857db2834cd14deb18b66855c9d5d947584ad95b2ae427a3a2eae47d1b7",
+      "bytes": 1969228,
+      "dimensions": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "coverage": [
+          "5 armor slots",
+          "7 weapon groups",
+          "2 shields",
+          "twin blades pair",
+          "bow string/ring/arrow",
+          "complete blade/spear tips and boots"
+        ],
+        "limitations": [
+          "初級の比較原画。高級は形状仕様で定義、正投影・3Dは未制作。",
+          "全装備の先端・足元は画面内。指定余白の厳密な寸法と背面の構造は未検証。"
+        ],
+        "sourceGeneratedFile": "exec-5e3ce2d6-9f7e-4221-90bc-e5e8a62e3ce2.png",
+        "dimensions": [
+          1672,
+          941
+        ],
+        "sha256": "2efa5857db2834cd14deb18b66855c9d5d947584ad95b2ae427a3a2eae47d1b7",
+        "notes": "太刀の繭糸巻きは峰側を意図する。切刃との境界と固定断面は個別設定図で確定する。"
+      },
+      "catalogDesignPage": 197,
+      "catalogStatsPage": 198
+    },
+    {
+      "no": 95,
+      "seriesId": "gathering.lantern_firefly",
+      "name": "灯鞘",
+      "seriesName": "灯鞘",
+      "sourceSpeciesId": null,
+      "nativeRank": 1,
+      "availableRanks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "artFile": "art/gathering/equipment_G09_lantern_firefly_v1.png",
+      "promptFile": "art/prompts/gathering_G09.json",
+      "sha256": "97dab336b8a8bf8f6d0620db3770d0cb7c4be9133040f32d9b86408932126943",
+      "bytes": 2007141,
+      "dimensions": [
+        1670,
+        941
+      ],
+      "mode": "RGB",
+      "visualReview": {
+        "status": "reviewed",
+        "coverage": [
+          "5 armor slots",
+          "7 weapon groups",
+          "2 shields",
+          "twin blades pair",
+          "bow string/ring/arrow",
+          "complete blade/spear tips and boots"
+        ],
+        "limitations": [
+          "初級の比較原画。高級は形状仕様で定義、正投影・3Dは未制作。",
+          "全装備の先端・足元は画面内。指定余白の厳密な寸法と背面の構造は未検証。"
+        ],
+        "sourceGeneratedFile": "exec-583fd941-8892-4571-a053-2848c5fe075e.png",
+        "dimensions": [
+          1670,
+          941
+        ],
+        "sha256": "97dab336b8a8bf8f6d0620db3770d0cb7c4be9133040f32d9b86408932126943",
+        "notes": "灯嚢は小さな保護鞘に固定。発光は意匠であり、雷・霧属性や独立した照明効果は付与しない。"
+      },
+      "catalogDesignPage": 199,
+      "catalogStatsPage": 200
+    }
+  ]
+}

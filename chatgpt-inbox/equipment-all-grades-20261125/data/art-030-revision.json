@@ -1,0 +1,25 @@
+[
+  {
+    "no": 30,
+    "sourceSpeciesId": "monster.nemboraf",
+    "artFile": "art/monsters/equipment_030_nemboraf_v2.png",
+    "artReview": {
+      "status": "reviewed",
+      "sevenWeaponGroupsVisible": true,
+      "fiveArmorRegionsVisible": true,
+      "croppingObserved": false,
+      "imageSize": [
+        1536,
+        1024
+      ],
+      "sha256": "c8500a8de01fcac8ea835dcfc0f52ad2e7546969338adcd8e483b8662fe399b6",
+      "generatedSource": "exec-47141190-0b03-4ceb-8d6c-c67e3be3692c.png",
+      "notes": [
+        "v1で加わった題字、級名、パレットと横線をv2で除去。番号01〜07だけを保持。",
+        "7武器群・5防具部位・両盾・双剣2本・実弓弦と小環・矢、全先端と靴先の画内収まりを確認。",
+        "盾裏、装備の寸法、背面の泥扇骨は未確定。"
+      ],
+      "scope": "中級初登場の系列比較原画。各級の独立正投影図・3Dモデルではない。"
+    }
+  }
+]

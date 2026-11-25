@@ -1,0 +1,12 @@
+{
+  "primaryImages": 95,
+  "expectedImages": 95,
+  "allPrimaryFilesUnique": true,
+  "missing": [],
+  "errors": [],
+  "nativeRankImagesOnly": true,
+  "allGradesHaveWrittenAppearance": true,
+  "passed": true,
+  "draft": false,
+  "scope": "File/hash/review-record checks plus individual visual review by the generating agents. No 3D or orthographic validation."
+}

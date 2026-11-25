@@ -1,0 +1,18 @@
+{
+  "generator": "built-in image_gen",
+  "useCase": "stylized-concept",
+  "scope": "native-rank equipment family concept sheet",
+  "seriesId": "series.borazeln",
+  "speciesId": "monster.borazeln",
+  "nativeRank": 2,
+  "prompt": "Use case: stylized-concept. Create a NEW original hunting-game EQUIPMENT FAMILY concept art sheet, landscape 3:2, high detail. Reference 1 supplies approved restrained semi-real art direction; reference 2 supplies ONLY this creature's materials and distinctive anatomy. Do NOT show the creature itself. Warm ivory plain background, soft studio contact shadows, graphite-fine edges, matte leather, bone and restrained bronze joinery. No logos, no fantasy brand references, no Japanese text.\nCOMPOSITION: exactly ONE adult neutral mannequin wearing a COMPLETE FIVE-PIECE armor set, full body head to boots, standing at left 30% of sheet, empty relaxed hands, front three-quarter view with both shoulders readable. Helmet, chest armor, separate forearm gauntlets, waist armor, greaves all present. Practical low helmet, protected torso, no exposed midriff, no high heels, no cape. No anatomy deformities. At right 70%, exactly SEVEN clearly separated weapon GROUPS on a clean TWO ROW grid: top groups 01,02,03,04; bottom groups 05,06,07. Give all long weapons enough space; nothing clipped, overlapping, floating into adjacent groups or held by mannequin. Small plain labels 01 through 07 are the ONLY text.\nGROUP TYPES (all seven mandatory): 01 thick broad single-edged greatblade with two-hand grip. 02 short SINGLE-EDGED sword AND separate shield. 03 long-handled maul with HARD CLOSED bone/stone faces, never a skin drum. 04 exactly TWO matching short twin blades. 05 ONE slender long curved single-edged blade. 06 ONE long STRAIGHT pointed lance AND separate broad shield. 07 ONE slender functional bow with a visible continuous string, small aiming ring near grip, AND ONE arrow. Bow is NOT a ring-shaped weapon.\nPalette: 灰褐, 骨白, 青銅.\nArmor silhouette: 灰褐色の三段の庇を肩と胸へ集め、腰から後ろは細くする。青銅色の縁は水平に走り、角を尖らせない。\nArmor parts: {\"head\": \"頭に沿う平らな兜へ三本の短い横稜を並べ、頭上には伸ばさない。\", \"chest\": \"胸と肩の前側にだけ三段の低い庇を作り、背と腹は細く締める。\", \"arms\": \"振動腹板を厚い短甲へ切り、前腕上面に三枚重ねる。手の甲は別片。\", \"waist\": \"肋棚殻を前腰へ短く張り、後ろ腰は柔らかな苔擦り皮の細帯にする。\", \"legs\": \"重尾骨を脛の外側の短い支柱へ加工し、膝の前を滑らかな半円甲で守る。\"}\nExact weapon material/shape directions, in group order: [\"段稜大骨を三段の背へ露出させた厚い鉈刃。両手で握る長い柄と幅広い片刃。刃先・刃面を明確にし、厚さだけで重量感を出す。\", \"平たい一枚片刃と、三本の横庇が正面へ重なる盾。短い片刃剣と独立した盾の一組。盾には背面の握りと前腕帯を備える。\", \"重尾骨の塊を平らな二打面へ削り、腹板の帯で締めた槌。長柄と閉じた硬い二つの打面。膜や嚢を打面として露出しない。\", \"段稜の低い背を持つ同形の短刀二本。同じ長さ・同じ輪郭の短い片刃二本。手首を塞ぐ鉤や長い飾り紐を付けない。\", \"三つの節を低い峰へ連ねた緩い反りの長刀。細い長刀と緩い反り、握りの余長。刃を片側へ限定し、峰を低く保つ。\", \"太い肋骨芯をまっすぐ継ぐ槍と、前半だけ厚い肋棚盾。真っ直ぐな長槍と独立した大盾の一組。穂先を小さく、握りと前腕の空間を残す。\", \"段稜骨を薄く積層して弾性を得る、短い握りの骨弓。細い上下対称の弓身、一本の弦、握りのすぐ上の小さい照準環、矢一本。環を巨大化しない。\"]\nUse material-derived structural forms, not giant animal heads as helmets. Keep decorated projections low and joints free. Keep weapons functional, blade edges distinct from the spine, no repeated generic swords. This is a native-rank family concept board, NOT an orthographic diagram or a battle scene. Never add large glow halos, particle effects, monsters, extra people, extra weapons or unrelated scenery.\nCRITICAL TEXT RULE: Do not typeset any title, header, species name, rank, palette words, Japanese description, swatches or captions. Only the seven small numeric labels 01 through 07 may appear. Use the full canvas for the objects.",
+  "referenceRoles": [
+    "approved art direction",
+    "creature material/anatomy only"
+  ],
+  "referencePaths": [
+    "art-source/board/style_board_v2.png",
+    "art-source/monster/concepts/monster_031_borazeln_concept_v1.png"
+  ],
+  "target": "art/monsters/equipment_031_borazeln_v1.png"
+}

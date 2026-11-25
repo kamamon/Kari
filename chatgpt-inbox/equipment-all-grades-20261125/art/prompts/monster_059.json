@@ -1,0 +1,46 @@
+{
+  "mode": "built-in image_gen",
+  "no": 59,
+  "seriesId": "series.yarlshena",
+  "prompt": "Use case: stylized-concept. Create ONE professional ORIGINAL hunting-equipment family concept sheet for VEILBOUND HUNTERS. Landscape 3:2, warm ivory background, no scenery, no watermark, restrained realistic hand-painted materials, aged bronze fittings and dark leather. Reference image 1 is the approved art direction. Reference image 2 is the source creature; derive materials and asymmetry but do NOT draw a creature or turn the human into that creature.\nCOMPOSITION: LEFT 30 percent: one complete adult neutral human mannequin wearing all five armor regions, head to boots fully visible, relaxed upright stance, empty hands, front three-quarter view. Practical closed clothing, low helmet, readable joints. RIGHT 70 percent: exactly SEVEN cleanly separated weapon groups in two rows, each complete with generous gaps, no cropping. Top row 01-04; bottom row 05-07. Only text is small labels 01,02,03,04,05,06,07 below corresponding groups. Each group keeps its recognizable form:\n01 enormous broad single-edge slab greatsword; 02 compact SINGLE-EDGE sword AND a separate shield; 03 long-handled heavy blunt maul with a CLOSED HARD BONE impact face, NOT a drum; 04 TWO matching short blades; 05 long slim curved single-edge sword; 06 straight long lance AND a separate tall shield; 07 bow with an actual string, small separate aiming ring, AND one arrow. No firearms, scythes, axes, duplicate groups, magical floating parts. Armor mannequin holds none of these.\nSOURCE SERIES 059: ヤルシェナ / 鞍頬獣. Native grade: 3. This sheet shows ONLY this native-grade design. Palette: 灰緑 / 生成り / 鈍い青銅.\nArmor silhouette: 灰緑の頬膜を頬当てから襟へ鞍状につなぎ、胸を高く腰を低く見せる。前腕だけ長い細板を置き、肩は張らせない。\nArmor five regions: head: 目の下から襟へつながる低い鞍形の頬当て; chest: 前中心を高く、腹側を短く切った灰緑の胸衣; arms: 前腕だけを長い細板で包み手首を空ける; waist: 骨盤に沿う薄い帯と後ろの短い鞍膜; legs: 高脚腱を縦へ通した細い脛当て\nDistinct weapons: 01 鞍膜を背の溝へ収めた細身の板剣; 02 低い鞍形鍔の片刃と浅い縁高盾; 03 左右の頬骨で支える閉鎖打面の軽槌; 04 内向きの鞍曲線を揃えた短い双刃; 05 鞍の窪みを峰の根元へ入れた細い曲刀; 06 頬膜を巻いた細い槍芯と縦長の薄盾; 07 鞍膜の二重弓身と高脚腱の弦、小環照準\nPreserve the specifically stated anatomical LEFT and RIGHT of the WEARER. Keep shoulder and waist protrusions restrained for movement. Helmets, both hands, boots, blade tips, bowstring, shields and spear point fully inside the canvas. Original visual language, avoid any recognizable existing franchise designs. Clear fabrication joints, few broad forms, no dense filigree. This is concept art, not a precise orthographic production drawing.",
+  "referenceRoles": [
+    "approved style board",
+    "source creature material and silhouette reference"
+  ],
+  "referencePaths": [
+    "art-source/board/style_board_v2.png",
+    "art-source/monster/concepts/monster_059_yarlshena_concept_v1.png"
+  ],
+  "output": "art/monsters/equipment_059_yarlshena_v3.png",
+  "transparent_background": false,
+  "revisionPrompt": "Change ONLY the bare human head: add a complete low helmet covering the crown and forehead, made of thin muted gray-green saddle membrane plates with a subtle bronze edge. The lower helmet cheeks connect smoothly into the existing saddle-shaped high collar. Keep the face visible below the brow, remove visible hair. Do not add horns or a crest. Keep body, armor, all seven numbered weapon groups, composition and lighting exactly unchanged.",
+  "revisions": [
+    {
+      "revision": 3,
+      "reason": "最終拡大確認で01断岳剣の切先が上端に接触して見切れていたため",
+      "prompt": "Edit this equipment sheet ONLY to fix framing. Zoom out and shrink the entire arrangement of the human and all seven weapon groups by about 15 percent, preserving their relative scale, material rendering, anatomy, geometry, existing low helmet and group numbering. Keep every object fully inside the canvas with a continuous blank warm-ivory margin of at least 90 pixels on all four sides. In particular, reconstruct and show the complete pointed upper tip of the large sword 01, which is currently cut off at the top edge. Keep the blade length plausible and every other weapon unchanged. The full person, all seven groups 01 through 07, two distinct shields, two short blades in group 04, bowstring, arrow and small aiming ring must remain visible. Do not crop any object, add objects, delete objects or add other text. Landscape 3:2."
+    }
+  ],
+  "finalSourcePath": "exec-63c8fd73-f028-463d-ab74-73dc944a18c7.png",
+  "review": {
+    "generated": true,
+    "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+    "notVerified": [
+      "正投影",
+      "寸法",
+      "背面",
+      "共通リグ干渉",
+      "ゲーム内描画"
+    ],
+    "revision": 3,
+    "sevenWeaponGroupsVisible": true,
+    "fiveArmorRegionsVisible": true,
+    "clippingObserved": false,
+    "notes": "v1の兜欠落をv2で修正し、最終拡大確認で発見した01断岳剣先の上端見切れをv3で修正。全体を内側へ縮小配置し、01〜07全武器群、独立した両盾、双剣2本、弓弦・矢・照準環、兜から足まで5防具部位を視認。全先端がキャンバス内に入り欠損なし。鞍膜の取付構造と素材断面は追加設定図で確認。",
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "sha256": "dcf4a4d228d3b2110999c495ee35021ea1689f1f6c8bb896612dd7b040cbd511"
+  }
+}

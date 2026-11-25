@@ -1,0 +1,257 @@
+{
+  "profiles": {
+    "raw": {
+      "rawRatio": 1.0,
+      "affinity": 0,
+      "elementRatio": 0,
+      "statusRatio": 0
+    },
+    "precision": {
+      "rawRatio": 0.94,
+      "affinity": 25,
+      "elementRatio": 0,
+      "statusRatio": 0
+    },
+    "single": {
+      "rawRatio": 0.92,
+      "affinity": 0,
+      "elementRatio": 0.28,
+      "statusRatio": 0
+    },
+    "status": {
+      "rawRatio": 0.94,
+      "affinity": 0,
+      "elementRatio": 0,
+      "statusRatio": 0.1
+    },
+    "compound": {
+      "rawRatio": 0.88,
+      "affinity": 0,
+      "elementRatio": 0.28,
+      "statusRatio": 0
+    }
+  },
+  "skills": {
+    "guard_economy": {
+      "name": "受け支え",
+      "values": [
+        8,
+        14,
+        20
+      ],
+      "unit": "%",
+      "effect": "ガード時のスタミナ消費を軽減。削りダメージや防御範囲は変えない。"
+    },
+    "edge_keep": {
+      "name": "刃持ち",
+      "values": [
+        5,
+        9,
+        13
+      ],
+      "unit": "%",
+      "effect": "刃・打面の消耗を軽減。弓には効果なし。"
+    },
+    "dodge_economy": {
+      "name": "身軽",
+      "values": [
+        5,
+        9,
+        13
+      ],
+      "unit": "%",
+      "effect": "回避スタミナ消費を軽減。無敵時間・移動距離は変えない。"
+    },
+    "stamina_recovery": {
+      "name": "息継ぎ",
+      "values": [
+        4,
+        7,
+        10
+      ],
+      "unit": "%",
+      "effect": "自然スタミナ回復速度を増す。回復開始までの遅延は変えない。"
+    },
+    "part_damage": {
+      "name": "砕き",
+      "values": [
+        5,
+        9,
+        13
+      ],
+      "unit": "%",
+      "effect": "破壊・切断専用の蓄積を増す。HP、通常怯み、気絶は増やさない。"
+    },
+    "element_tuning": {
+      "name": "属性調律",
+      "values": [
+        4,
+        7,
+        10
+      ],
+      "unit": "%",
+      "effect": "属性部分だけを増す。"
+    },
+    "status_tuning": {
+      "name": "状態調律",
+      "values": [
+        4,
+        7,
+        10
+      ],
+      "unit": "%",
+      "effect": "毒・麻痺・睡眠の蓄積を増す。気絶は対象外。"
+    },
+    "weak_crit": {
+      "name": "急所観察",
+      "values": [
+        4,
+        7,
+        10
+      ],
+      "unit": "会心ポイント",
+      "effect": "物理肉質0.55以上の命中に加算。会心は物理部分のみ、合計上限60%。"
+    },
+    "stun_tuning": {
+      "name": "響打",
+      "values": [
+        4,
+        7,
+        10
+      ],
+      "unit": "%",
+      "effect": "気絶判定のある打撃技が頭部へ命中した時だけ蓄積を増す。"
+    },
+    "item_efficiency": {
+      "name": "道具整備",
+      "values": [
+        5,
+        9,
+        13
+      ],
+      "unit": "%",
+      "effect": "許可した整備用アイテムの使用時間だけを短縮。回復量や無敵時間は増やさない。"
+    },
+    "status_resistance": {
+      "name": "個別状態耐性",
+      "values": [
+        20,
+        35,
+        50
+      ],
+      "unit": "%",
+      "effect": "指定した状態異常の必要蓄積を増す。対象status必須。"
+    },
+    "element_resistance": {
+      "name": "個別属性耐性",
+      "values": [
+        3,
+        6,
+        9
+      ],
+      "unit": "耐性ポイント",
+      "effect": "指定した属性の防具耐性へ加算。対象element必須。"
+    },
+    "gather_haste": {
+      "name": "採集手際",
+      "values": [
+        8,
+        14,
+        20
+      ],
+      "unit": "%",
+      "effect": "非戦闘中の植物採集動作を短縮。抽選回数・レア率は増やさない。"
+    },
+    "mining_haste": {
+      "name": "採掘手際",
+      "values": [
+        8,
+        14,
+        20
+      ],
+      "unit": "%",
+      "effect": "非戦闘中の採掘動作を短縮。抽選回数・レア率は増やさない。"
+    },
+    "insect_haste": {
+      "name": "虫取り手際",
+      "values": [
+        8,
+        14,
+        20
+      ],
+      "unit": "%",
+      "effect": "非戦闘中の虫取り後の収納動作を短縮。捕獲範囲・成功率・レア率は増やさない。"
+    },
+    "gather_sense": {
+      "name": "素材観察",
+      "values": [
+        4,
+        7,
+        10
+      ],
+      "unit": "m",
+      "effect": "既知の採取点を近距離で示す。敵・未解放地点・レア素材の確定位置を示さない。"
+    }
+  },
+  "ranks": [
+    {
+      "order": 1,
+      "id": "rank.1",
+      "name": "初級",
+      "galdrosTier": 2
+    },
+    {
+      "order": 2,
+      "id": "rank.2",
+      "name": "中級",
+      "galdrosTier": 3
+    },
+    {
+      "order": 3,
+      "id": "rank.3",
+      "name": "上級",
+      "galdrosTier": 4
+    },
+    {
+      "order": 4,
+      "id": "rank.4",
+      "name": "極級",
+      "galdrosTier": 5
+    }
+  ],
+  "weapons": {
+    "reference": "現行同武器種・同級のガルドロス攻撃力A。既存35武器の全フィールドはbaselineで保持。",
+    "rounding": "正数の四捨五入、.5は切上げ。複合Eは丸め済み単属性E×1.5の.5を保持。",
+    "elementMotion": "各ヒットの最終物理モーション係数を属性・状態異常の係数へ使う。溜め・勢い・弓の距離補正は一回だけ適用。コンボ合計を各ヒットへ重ねない。",
+    "damage": "floor((A*motion*sharpness*physicalZone*critical + E*effectiveMotion*elementZone)*quest). 無効0、それ以外は既存の最小1。",
+    "compound": "上級・極級（既存T4/T5）のみ。2属性の部位係数の大きい方を使う。2つのどちらも攻撃対象モンスターのweak指定でない時だけ、属性項を0.5倍にする。片方でも弱点なら半減しない。",
+    "affinity": "物理だけ。会心1.25、負会心0.75。装備・技能の合計上限60%。",
+    "smallSeries": "幼体はraw係数へ0.94、属性/状態係数へ0.85、防御へ0.90。全7種を成人の装備として小片の接合で作る。"
+  },
+  "armor": {
+    "defense": "100/(100+5部位防御合計)。重装100%、中装95%、軽装90%。幼体と非狩猟系列はさらに90%。合計を四捨五入後5等分、余りは胴→脚→頭→腕→腰。",
+    "skillBudget": "1部位1点、全級5点。主技能=頭腕脚3点、副技能=胴腰2点。各技能上限Lv3、同系列5部位の特別ボーナスなし。",
+    "typedSkills": "耐性技能は(id,element)または(id,status)で集計。IDだけを合算し複数の属性/状態へ同時に高レベルを付与しない。",
+    "resistance": "素材元のweakを各部位-2、resistを+3。他0。合計と技能を足して[-30,30]へ制限。属性項のみへ(1-resistance/100)。",
+    "incoming": "(物理+属性*(1-耐性/100))*防御補正*rank*既存経路のrage を小数のままresolveIncomingHitへ。通常/防御崩れは分岐後floorで最小1、削りはfloorで0可、受け流し/返し0。既存hazardへ新たにrageを掛けない。"
+  },
+  "statuses": {
+    "potency": "基礎蓄積×最終モーション係数×状態部位係数×技能。固定小数1000単位。武器の接触タグが該当する命中のみ。",
+    "threshold": "毒/麻痺/睡眠は初回100、n回発症後ceil(100*1.35^n)。最後の蓄積から5秒後、毎秒2減衰。",
+    "effects": "麻痺2.5秒。睡眠8秒、起こす最初の物理命中のみ1.5倍。同tickは固定命中順。毒は最大HP2%切捨てを15秒10回へ商と余りで分配。",
+    "stun": "頭部タグへの許可された打撃だけ。初回100、ceil(100*1.5^n)、2.5秒。素材がstunでも斬撃へ自動付与しない。",
+    "control": "麻痺・睡眠・気絶は重複不可。継続中と終了後180tickは他硬直ゲージを閾値1000単位-1へ制限。猶予終了だけでは発症せず、次の有効命中が必要。毒は別。",
+    "active": "同じ状態の継続中は蓄積しない。発症時の超過分は破棄。部位怯み・転倒との競合は実機で追加確認。"
+  },
+  "acquisition": {
+    "nonhunt": "9系列の全レシピは採集・採掘・虫取り素材だけ。貸与貨物と討伐素材を使用しない。級・狩場解放は通常進行。",
+    "sameGrade": "上位素材点はその級の許可と狩場解放で利用可。作ろうとする同級装備や同級採取道具を前提にしない。初期貸与道具で採取できる。",
+    "ecology": "虫は小型の環境生物。12虫素材は新設計。灯虫の光を雷/霧属性ダメージに読み替えない。樹脂反射は自発光ではない。",
+    "materialUpgrade": "高級のモンスター素材は同種のその級個体から。素材を下級から無制限に変換するレシピは設けない。",
+    "crafting": "新系列は解放級で直接生産し、以降は同系列・同武器/部位を一方向に強化。前装備は消費する。横派生なし。直接生産は現行に未実装。"
+  },
+  "handoff": {
+    "save": "現行schema4。既存IDを保持。新所持品・技能・採取進行の追加はClaudeが版管理し、復元と重複を検査。",
+    "noImport": "このJSONは設計用。bestiary importer/現行weapons loaderへ直接渡さない。画像は比較原画で、正投影/3D/全級個別画像ではない。"
+  }
+}

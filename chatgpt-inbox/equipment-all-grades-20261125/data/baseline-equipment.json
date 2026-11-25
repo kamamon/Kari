@@ -1,0 +1,1666 @@
+{
+  "sourceCommit": "1e078bfce1e68f287ae577cf41d2fe5bafb94afa",
+  "weapons": [
+    {
+      "id": "weapon.heavy_blade.001",
+      "family": "heavy_blade",
+      "name": "里鍛ちの断岳剣",
+      "attack": 80,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.heavy_blade.001",
+      "starter": true
+    },
+    {
+      "id": "weapon.heavy_blade.002",
+      "family": "heavy_blade",
+      "name": "岩殻の断岳剣",
+      "attack": 92,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.heavy_blade.002"
+    },
+    {
+      "id": "weapon.heavy_blade.003",
+      "family": "heavy_blade",
+      "name": "脈殻の断岳剣",
+      "attack": 106,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.heavy_blade.003"
+    },
+    {
+      "id": "weapon.heavy_blade.004",
+      "family": "heavy_blade",
+      "name": "晶殻の断岳剣",
+      "attack": 122,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.heavy_blade.004"
+    },
+    {
+      "id": "weapon.heavy_blade.005",
+      "family": "heavy_blade",
+      "name": "輝殻の断岳剣",
+      "attack": 140,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.heavy_blade.005"
+    },
+    {
+      "id": "weapon.guard_blade.001",
+      "family": "guard_blade",
+      "name": "里鍛ちの護刃",
+      "attack": 66,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.guard_blade.001",
+      "starter": true
+    },
+    {
+      "id": "weapon.guard_blade.002",
+      "family": "guard_blade",
+      "name": "岩殻の護刃",
+      "attack": 76,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.guard_blade.002"
+    },
+    {
+      "id": "weapon.guard_blade.003",
+      "family": "guard_blade",
+      "name": "脈殻の護刃",
+      "attack": 87,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.guard_blade.003"
+    },
+    {
+      "id": "weapon.guard_blade.004",
+      "family": "guard_blade",
+      "name": "晶殻の護刃",
+      "attack": 100,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.guard_blade.004"
+    },
+    {
+      "id": "weapon.guard_blade.005",
+      "family": "guard_blade",
+      "name": "輝殻の護刃",
+      "attack": 115,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.guard_blade.005"
+    },
+    {
+      "id": "weapon.war_maul.001",
+      "family": "war_maul",
+      "name": "里鍛ちの大槌",
+      "attack": 86,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.war_maul.001",
+      "starter": true
+    },
+    {
+      "id": "weapon.war_maul.002",
+      "family": "war_maul",
+      "name": "岩殻の大槌",
+      "attack": 99,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.war_maul.002"
+    },
+    {
+      "id": "weapon.war_maul.003",
+      "family": "war_maul",
+      "name": "脈殻の大槌",
+      "attack": 114,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.war_maul.003"
+    },
+    {
+      "id": "weapon.war_maul.004",
+      "family": "war_maul",
+      "name": "晶殻の大槌",
+      "attack": 131,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.war_maul.004"
+    },
+    {
+      "id": "weapon.war_maul.005",
+      "family": "war_maul",
+      "name": "輝殻の大槌",
+      "attack": 150,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.war_maul.005"
+    },
+    {
+      "id": "weapon.twin_blades.001",
+      "family": "twin_blades",
+      "name": "里鍛ちの双剣",
+      "attack": 60,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.twin_blades.001",
+      "starter": true
+    },
+    {
+      "id": "weapon.twin_blades.002",
+      "family": "twin_blades",
+      "name": "岩殻の双剣",
+      "attack": 69,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.twin_blades.002"
+    },
+    {
+      "id": "weapon.twin_blades.003",
+      "family": "twin_blades",
+      "name": "脈殻の双剣",
+      "attack": 79,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.twin_blades.003"
+    },
+    {
+      "id": "weapon.twin_blades.004",
+      "family": "twin_blades",
+      "name": "晶殻の双剣",
+      "attack": 91,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.twin_blades.004"
+    },
+    {
+      "id": "weapon.twin_blades.005",
+      "family": "twin_blades",
+      "name": "輝殻の双剣",
+      "attack": 105,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.twin_blades.005"
+    },
+    {
+      "id": "weapon.long_blade.001",
+      "family": "long_blade",
+      "name": "里鍛ちの太刀",
+      "attack": 76,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_blade.001",
+      "starter": true
+    },
+    {
+      "id": "weapon.long_blade.002",
+      "family": "long_blade",
+      "name": "岩殻の太刀",
+      "attack": 87,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_blade.002"
+    },
+    {
+      "id": "weapon.long_blade.003",
+      "family": "long_blade",
+      "name": "脈殻の太刀",
+      "attack": 101,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_blade.003"
+    },
+    {
+      "id": "weapon.long_blade.004",
+      "family": "long_blade",
+      "name": "晶殻の太刀",
+      "attack": 116,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_blade.004"
+    },
+    {
+      "id": "weapon.long_blade.005",
+      "family": "long_blade",
+      "name": "輝殻の太刀",
+      "attack": 133,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_blade.005"
+    },
+    {
+      "id": "weapon.long_lance.001",
+      "family": "long_lance",
+      "name": "里鍛ちの長尖槍",
+      "attack": 72,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_lance.001",
+      "starter": true
+    },
+    {
+      "id": "weapon.long_lance.002",
+      "family": "long_lance",
+      "name": "岩殻の長尖槍",
+      "attack": 83,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_lance.002"
+    },
+    {
+      "id": "weapon.long_lance.003",
+      "family": "long_lance",
+      "name": "脈殻の長尖槍",
+      "attack": 95,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_lance.003"
+    },
+    {
+      "id": "weapon.long_lance.004",
+      "family": "long_lance",
+      "name": "晶殻の長尖槍",
+      "attack": 110,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_lance.004"
+    },
+    {
+      "id": "weapon.long_lance.005",
+      "family": "long_lance",
+      "name": "輝殻の長尖槍",
+      "attack": 126,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.long_lance.005"
+    },
+    {
+      "id": "weapon.ring_bow.001",
+      "family": "ring_bow",
+      "name": "里鍛ちの環弓",
+      "attack": 70,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.ring_bow.001",
+      "starter": true
+    },
+    {
+      "id": "weapon.ring_bow.002",
+      "family": "ring_bow",
+      "name": "岩殻の環弓",
+      "attack": 80,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.ring_bow.002"
+    },
+    {
+      "id": "weapon.ring_bow.003",
+      "family": "ring_bow",
+      "name": "脈殻の環弓",
+      "attack": 93,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.ring_bow.003"
+    },
+    {
+      "id": "weapon.ring_bow.004",
+      "family": "ring_bow",
+      "name": "晶殻の環弓",
+      "attack": 106,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.ring_bow.004"
+    },
+    {
+      "id": "weapon.ring_bow.005",
+      "family": "ring_bow",
+      "name": "輝殻の環弓",
+      "attack": 122,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.ring_bow.005"
+    }
+  ],
+  "armor": [
+    {
+      "id": "armor.head.001",
+      "slot": "head",
+      "name": "里の頭巾",
+      "defense": 0,
+      "starter": true
+    },
+    {
+      "id": "armor.head.002",
+      "slot": "head",
+      "name": "岩殻の兜",
+      "defense": 6,
+      "assetId": "model.armor.galdros.t2"
+    },
+    {
+      "id": "armor.head.003",
+      "slot": "head",
+      "name": "脈殻の兜",
+      "defense": 13,
+      "assetId": "model.armor.galdros.t3"
+    },
+    {
+      "id": "armor.head.004",
+      "slot": "head",
+      "name": "晶殻の兜",
+      "defense": 21,
+      "assetId": "model.armor.galdros.t4"
+    },
+    {
+      "id": "armor.head.005",
+      "slot": "head",
+      "name": "輝殻の兜",
+      "defense": 30,
+      "assetId": "model.armor.galdros.t5"
+    },
+    {
+      "id": "armor.chest.001",
+      "slot": "chest",
+      "name": "里の上衣",
+      "defense": 0,
+      "starter": true
+    },
+    {
+      "id": "armor.chest.002",
+      "slot": "chest",
+      "name": "岩殻の胸当て",
+      "defense": 6,
+      "assetId": "model.armor.galdros.t2"
+    },
+    {
+      "id": "armor.chest.003",
+      "slot": "chest",
+      "name": "脈殻の胸当て",
+      "defense": 13,
+      "assetId": "model.armor.galdros.t3"
+    },
+    {
+      "id": "armor.chest.004",
+      "slot": "chest",
+      "name": "晶殻の胸当て",
+      "defense": 21,
+      "assetId": "model.armor.galdros.t4"
+    },
+    {
+      "id": "armor.chest.005",
+      "slot": "chest",
+      "name": "輝殻の胸当て",
+      "defense": 30,
+      "assetId": "model.armor.galdros.t5"
+    },
+    {
+      "id": "armor.arms.001",
+      "slot": "arms",
+      "name": "里の手甲",
+      "defense": 0,
+      "starter": true
+    },
+    {
+      "id": "armor.arms.002",
+      "slot": "arms",
+      "name": "岩殻の籠手",
+      "defense": 6,
+      "assetId": "model.armor.galdros.t2"
+    },
+    {
+      "id": "armor.arms.003",
+      "slot": "arms",
+      "name": "脈殻の籠手",
+      "defense": 13,
+      "assetId": "model.armor.galdros.t3"
+    },
+    {
+      "id": "armor.arms.004",
+      "slot": "arms",
+      "name": "晶殻の籠手",
+      "defense": 21,
+      "assetId": "model.armor.galdros.t4"
+    },
+    {
+      "id": "armor.arms.005",
+      "slot": "arms",
+      "name": "輝殻の籠手",
+      "defense": 30,
+      "assetId": "model.armor.galdros.t5"
+    },
+    {
+      "id": "armor.waist.001",
+      "slot": "waist",
+      "name": "里の腰帯",
+      "defense": 0,
+      "starter": true
+    },
+    {
+      "id": "armor.waist.002",
+      "slot": "waist",
+      "name": "岩殻の腰当て",
+      "defense": 6,
+      "assetId": "model.armor.galdros.t2"
+    },
+    {
+      "id": "armor.waist.003",
+      "slot": "waist",
+      "name": "脈殻の腰当て",
+      "defense": 13,
+      "assetId": "model.armor.galdros.t3"
+    },
+    {
+      "id": "armor.waist.004",
+      "slot": "waist",
+      "name": "晶殻の腰当て",
+      "defense": 21,
+      "assetId": "model.armor.galdros.t4"
+    },
+    {
+      "id": "armor.waist.005",
+      "slot": "waist",
+      "name": "輝殻の腰当て",
+      "defense": 30,
+      "assetId": "model.armor.galdros.t5"
+    },
+    {
+      "id": "armor.legs.001",
+      "slot": "legs",
+      "name": "里の脚絆",
+      "defense": 0,
+      "starter": true
+    },
+    {
+      "id": "armor.legs.002",
+      "slot": "legs",
+      "name": "岩殻の脛当て",
+      "defense": 6,
+      "assetId": "model.armor.galdros.t2"
+    },
+    {
+      "id": "armor.legs.003",
+      "slot": "legs",
+      "name": "脈殻の脛当て",
+      "defense": 13,
+      "assetId": "model.armor.galdros.t3"
+    },
+    {
+      "id": "armor.legs.004",
+      "slot": "legs",
+      "name": "晶殻の脛当て",
+      "defense": 21,
+      "assetId": "model.armor.galdros.t4"
+    },
+    {
+      "id": "armor.legs.005",
+      "slot": "legs",
+      "name": "輝殻の脛当て",
+      "defense": 30,
+      "assetId": "model.armor.galdros.t5"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "recipe.heavy_blade.002",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.heavy_blade.001",
+      "resultWeaponId": "weapon.heavy_blade.002",
+      "cost": {
+        "money": 120,
+        "items": [
+          {
+            "itemId": "mat.galdros.shell_shard",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.hard_bone",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.bronze_vein",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.heavy_blade.003",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.heavy_blade.002",
+      "resultWeaponId": "weapon.heavy_blade.003",
+      "cost": {
+        "money": 400,
+        "items": [
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.tail_crystal",
+            "count": 1
+          },
+          {
+            "itemId": "mat.galdros.hard_bone",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.heavy_blade.004",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.heavy_blade.003",
+      "resultWeaponId": "weapon.heavy_blade.004",
+      "cost": {
+        "money": 900,
+        "items": [
+          {
+            "itemId": "mat.galdros.crystal_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.galdros.bronze_lump",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.heavy_blade.005",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.heavy_blade.004",
+      "resultWeaponId": "weapon.heavy_blade.005",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.galdros.radiant_shell",
+            "count": 5
+          },
+          {
+            "itemId": "mat.galdros.pulse_core",
+            "count": 1
+          },
+          {
+            "itemId": "mat.galdros.bronze_lump",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.guard_blade.002",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.002",
+      "cost": {
+        "money": 120,
+        "items": [
+          {
+            "itemId": "mat.galdros.shell_shard",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.foreleg_plate",
+            "count": 1
+          },
+          {
+            "itemId": "mat.galdros.hard_bone",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.guard_blade.003",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.guard_blade.002",
+      "resultWeaponId": "weapon.guard_blade.003",
+      "cost": {
+        "money": 400,
+        "items": [
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.tail_crystal",
+            "count": 1
+          },
+          {
+            "itemId": "mat.galdros.foreleg_plate",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.guard_blade.004",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.guard_blade.003",
+      "resultWeaponId": "weapon.guard_blade.004",
+      "cost": {
+        "money": 900,
+        "items": [
+          {
+            "itemId": "mat.galdros.crystal_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.bronze_lump",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.foreleg_plate",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.guard_blade.005",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.guard_blade.004",
+      "resultWeaponId": "weapon.guard_blade.005",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.galdros.radiant_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.galdros.pulse_core",
+            "count": 1
+          },
+          {
+            "itemId": "mat.galdros.crystal_shell",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.war_maul.002",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.002",
+      "cost": {
+        "money": 120,
+        "items": [
+          {
+            "itemId": "mat.galdros.shell_shard",
+            "count": 4
+          },
+          {
+            "itemId": "mat.galdros.hard_bone",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.war_maul.003",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.war_maul.002",
+      "resultWeaponId": "weapon.war_maul.003",
+      "cost": {
+        "money": 400,
+        "items": [
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.galdros.hard_bone",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.war_maul.004",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.war_maul.003",
+      "resultWeaponId": "weapon.war_maul.004",
+      "cost": {
+        "money": 900,
+        "items": [
+          {
+            "itemId": "mat.galdros.crystal_shell",
+            "count": 5
+          },
+          {
+            "itemId": "mat.galdros.bronze_lump",
+            "count": 1
+          },
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.war_maul.005",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.war_maul.004",
+      "resultWeaponId": "weapon.war_maul.005",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.galdros.radiant_shell",
+            "count": 6
+          },
+          {
+            "itemId": "mat.galdros.pulse_core",
+            "count": 1
+          },
+          {
+            "itemId": "mat.galdros.crystal_shell",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.twin_blades.002",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.002",
+      "cost": {
+        "money": 120,
+        "items": [
+          {
+            "itemId": "mat.galdros.shell_shard",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.bronze_vein",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.hard_bone",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.twin_blades.003",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.twin_blades.002",
+      "resultWeaponId": "weapon.twin_blades.003",
+      "cost": {
+        "money": 400,
+        "items": [
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.tail_crystal",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.bronze_vein",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.twin_blades.004",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.twin_blades.003",
+      "resultWeaponId": "weapon.twin_blades.004",
+      "cost": {
+        "money": 900,
+        "items": [
+          {
+            "itemId": "mat.galdros.crystal_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.bronze_lump",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.tail_crystal",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.twin_blades.005",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.twin_blades.004",
+      "resultWeaponId": "weapon.twin_blades.005",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.galdros.radiant_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.galdros.pulse_core",
+            "count": 1
+          },
+          {
+            "itemId": "mat.galdros.bronze_lump",
+            "count": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.long_blade.002",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.002",
+      "cost": {
+        "money": 120,
+        "items": [
+          {
+            "itemId": "mat.galdros.shell_shard",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.bronze_vein",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.long_blade.003",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.long_blade.002",
+      "resultWeaponId": "weapon.long_blade.003",
+      "cost": {
+        "money": 400,
+        "items": [
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.tail_crystal",
+            "count": 1
+          },
+          {
+            "itemId": "mat.galdros.bronze_vein",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.long_blade.004",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.long_blade.003",
+      "resultWeaponId": "weapon.long_blade.004",
+      "cost": {
+        "money": 900,
+        "items": [
+          {
+            "itemId": "mat.galdros.crystal_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.galdros.bronze_lump",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.tail_crystal",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.long_blade.005",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.long_blade.004",
+      "resultWeaponId": "weapon.long_blade.005",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.galdros.radiant_shell",
+            "count": 5
+          },
+          {
+            "itemId": "mat.galdros.pulse_core",
+            "count": 1
+          },
+          {
+            "itemId": "mat.galdros.bronze_lump",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.long_lance.002",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.002",
+      "cost": {
+        "money": 120,
+        "items": [
+          {
+            "itemId": "mat.galdros.shell_shard",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.foreleg_plate",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.long_lance.003",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.long_lance.002",
+      "resultWeaponId": "weapon.long_lance.003",
+      "cost": {
+        "money": 400,
+        "items": [
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.tail_crystal",
+            "count": 1
+          },
+          {
+            "itemId": "mat.galdros.foreleg_plate",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.long_lance.004",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.long_lance.003",
+      "resultWeaponId": "weapon.long_lance.004",
+      "cost": {
+        "money": 900,
+        "items": [
+          {
+            "itemId": "mat.galdros.crystal_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.galdros.bronze_lump",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.foreleg_plate",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.long_lance.005",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.long_lance.004",
+      "resultWeaponId": "weapon.long_lance.005",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.galdros.radiant_shell",
+            "count": 5
+          },
+          {
+            "itemId": "mat.galdros.pulse_core",
+            "count": 1
+          },
+          {
+            "itemId": "mat.galdros.crystal_shell",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ring_bow.002",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.002",
+      "cost": {
+        "money": 120,
+        "items": [
+          {
+            "itemId": "mat.galdros.hard_bone",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.bronze_vein",
+            "count": 1
+          },
+          {
+            "itemId": "mat.galdros.shell_shard",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ring_bow.003",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.ring_bow.002",
+      "resultWeaponId": "weapon.ring_bow.003",
+      "cost": {
+        "money": 400,
+        "items": [
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.hard_bone",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.bronze_vein",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ring_bow.004",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.ring_bow.003",
+      "resultWeaponId": "weapon.ring_bow.004",
+      "cost": {
+        "money": 900,
+        "items": [
+          {
+            "itemId": "mat.galdros.crystal_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.bronze_lump",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ring_bow.005",
+      "kind": "upgrade",
+      "fromWeaponId": "weapon.ring_bow.004",
+      "resultWeaponId": "weapon.ring_bow.005",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.galdros.radiant_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.galdros.pulse_core",
+            "count": 1
+          },
+          {
+            "itemId": "mat.galdros.bronze_lump",
+            "count": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.head.002",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.head.001",
+      "resultArmorId": "armor.head.002",
+      "cost": {
+        "money": 80,
+        "items": [
+          {
+            "itemId": "mat.galdros.shell_shard",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.hard_bone",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.head.003",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.head.002",
+      "resultArmorId": "armor.head.003",
+      "cost": {
+        "money": 250,
+        "items": [
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.tail_crystal",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.head.004",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.head.003",
+      "resultArmorId": "armor.head.004",
+      "cost": {
+        "money": 550,
+        "items": [
+          {
+            "itemId": "mat.galdros.crystal_shell",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.bronze_lump",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.head.005",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.head.004",
+      "resultArmorId": "armor.head.005",
+      "cost": {
+        "money": 1100,
+        "items": [
+          {
+            "itemId": "mat.galdros.radiant_shell",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.pulse_core",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.chest.002",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.chest.001",
+      "resultArmorId": "armor.chest.002",
+      "cost": {
+        "money": 80,
+        "items": [
+          {
+            "itemId": "mat.galdros.shell_shard",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.hard_bone",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.chest.003",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.chest.002",
+      "resultArmorId": "armor.chest.003",
+      "cost": {
+        "money": 250,
+        "items": [
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.hard_bone",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.chest.004",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.chest.003",
+      "resultArmorId": "armor.chest.004",
+      "cost": {
+        "money": 550,
+        "items": [
+          {
+            "itemId": "mat.galdros.crystal_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.bronze_lump",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.chest.005",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.chest.004",
+      "resultArmorId": "armor.chest.005",
+      "cost": {
+        "money": 1100,
+        "items": [
+          {
+            "itemId": "mat.galdros.radiant_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.galdros.bronze_lump",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.arms.002",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.arms.001",
+      "resultArmorId": "armor.arms.002",
+      "cost": {
+        "money": 80,
+        "items": [
+          {
+            "itemId": "mat.galdros.shell_shard",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.foreleg_plate",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.arms.003",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.arms.002",
+      "resultArmorId": "armor.arms.003",
+      "cost": {
+        "money": 250,
+        "items": [
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.foreleg_plate",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.arms.004",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.arms.003",
+      "resultArmorId": "armor.arms.004",
+      "cost": {
+        "money": 550,
+        "items": [
+          {
+            "itemId": "mat.galdros.crystal_shell",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.arms.005",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.arms.004",
+      "resultArmorId": "armor.arms.005",
+      "cost": {
+        "money": 1100,
+        "items": [
+          {
+            "itemId": "mat.galdros.radiant_shell",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.crystal_shell",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.waist.002",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.waist.001",
+      "resultArmorId": "armor.waist.002",
+      "cost": {
+        "money": 80,
+        "items": [
+          {
+            "itemId": "mat.galdros.shell_shard",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.bronze_vein",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.waist.003",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.waist.002",
+      "resultArmorId": "armor.waist.003",
+      "cost": {
+        "money": 250,
+        "items": [
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.bronze_vein",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.waist.004",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.waist.003",
+      "resultArmorId": "armor.waist.004",
+      "cost": {
+        "money": 550,
+        "items": [
+          {
+            "itemId": "mat.galdros.crystal_shell",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.tail_crystal",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.waist.005",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.waist.004",
+      "resultArmorId": "armor.waist.005",
+      "cost": {
+        "money": 1100,
+        "items": [
+          {
+            "itemId": "mat.galdros.radiant_shell",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.bronze_lump",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.legs.002",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.legs.001",
+      "resultArmorId": "armor.legs.002",
+      "cost": {
+        "money": 80,
+        "items": [
+          {
+            "itemId": "mat.galdros.shell_shard",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.hard_bone",
+            "count": 1
+          },
+          {
+            "itemId": "mat.galdros.foreleg_plate",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.legs.003",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.legs.002",
+      "resultArmorId": "armor.legs.003",
+      "cost": {
+        "money": 250,
+        "items": [
+          {
+            "itemId": "mat.galdros.veined_shell",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.hard_bone",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.legs.004",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.legs.003",
+      "resultArmorId": "armor.legs.004",
+      "cost": {
+        "money": 550,
+        "items": [
+          {
+            "itemId": "mat.galdros.crystal_shell",
+            "count": 2
+          },
+          {
+            "itemId": "mat.galdros.bronze_lump",
+            "count": 1
+          },
+          {
+            "itemId": "mat.galdros.foreleg_plate",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.armor.legs.005",
+      "kind": "armor_upgrade",
+      "fromArmorId": "armor.legs.004",
+      "resultArmorId": "armor.legs.005",
+      "cost": {
+        "money": 1100,
+        "items": [
+          {
+            "itemId": "mat.galdros.radiant_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.galdros.tail_crystal",
+            "count": 1
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "scope": "No.030〜058 設計・原画の構造/実在照合。性能数値の検証ではない。",
+  "seriesCount": 29,
+  "seriesGradeCount": 70,
+  "armorShapeCount": 145,
+  "weaponShapeCount": 203,
+  "artCount": 29,
+  "checks": {
+    "series_count_29": true,
+    "exact_no_range": true,
+    "unique_species_ids": true,
+    "native_and_above_only": true,
+    "five_armor_parts_each": true,
+    "seven_weapon_families_each": true,
+    "weapon_grade_evolution_matches": true,
+    "all_prompt_files_exist": true,
+    "all_art_files_exist": true,
+    "all_reviewed": true,
+    "all_review_flags_true": true,
+    "recorded_sha256_matches": true,
+    "recorded_dimensions_match": true,
+    "unique_final_images": true,
+    "typed_profile_no_dual_status_element": true,
+    "name_57_correct_stable_id": true
+  },
+  "allPassed": true,
+  "parentMergePending": "No.030の題字除去修正は主担当のdata/art-030-revision.jsonを統合する。",
+  "visualLimitations": "初登場級の一視点原画。背面、正投影寸法、リグ可動域は未確定。80px余白の未達は各artReviewに明記。",
+  "subsequentRootRevision": {
+    "no": 30,
+    "artFile": "art/monsters/equipment_030_nemboraf_v2.png",
+    "reason": "Remove unwanted title and improve margins",
+    "finalValidation": "analysis/art-validation.json"
+  }
+}

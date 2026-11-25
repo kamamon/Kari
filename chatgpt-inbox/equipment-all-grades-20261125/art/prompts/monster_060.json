@@ -1,0 +1,38 @@
+{
+  "mode": "built-in image_gen",
+  "no": 60,
+  "seriesId": "series.pizelta",
+  "prompt": "Use case: stylized-concept. Create ONE professional ORIGINAL hunting-equipment family concept sheet for VEILBOUND HUNTERS. Landscape 3:2, warm ivory background, no scenery, no watermark, restrained realistic hand-painted materials, aged bronze fittings and dark leather. Reference image 1 is the approved art direction. Reference image 2 is the source creature; derive materials and asymmetry but do NOT draw a creature or turn the human into that creature.\nCOMPOSITION: LEFT 30 percent: one complete adult neutral human mannequin wearing all five armor regions, head to boots fully visible, relaxed upright stance, empty hands, front three-quarter view. Practical closed clothing, MANDATORY LOW HELMET fully covering the crown and forehead, NO visible hair and no bare head, readable joints. Never omit head armor. RIGHT 70 percent: exactly SEVEN cleanly separated weapon groups in two rows, each complete with generous gaps, no cropping. Top row 01-04; bottom row 05-07. Only text is small labels 01,02,03,04,05,06,07 below corresponding groups. Each group keeps its recognizable form:\n01 enormous broad single-edge slab greatsword; 02 compact SINGLE-EDGE sword AND a separate shield; 03 long-handled heavy blunt maul with a CLOSED HARD BONE impact face, NOT a drum; 04 TWO matching short blades; 05 long slim curved single-edge sword; 06 straight long lance AND a separate tall shield; 07 bow with an actual string, small separate aiming ring, AND one arrow. No firearms, scythes, axes, duplicate groups, magical floating parts. Armor mannequin holds none of these.\nSOURCE SERIES 060: ピゼルタ / 扇趾鳥. Native grade: 3. This sheet shows ONLY this native-grade design. Palette: 灰青 / 淡灰 / 鈍い青銅.\nArmor silhouette: 足先に横へ広がる灰青の三葉板を置き、肩と首は短くまとめる。胴は淡い灰色で、翼膜の筋を腰の短い布へ写す。\nArmor five regions: head: 低い三葉冠を前額へ重ねた短い兜; chest: 淡灰の胸板を短い羽皮で脇へつなぐ; arms: 冷床管を手首の上で止めた短い籠手; waist: 翼膜の筋を写す短い腰布; legs: つま先に低い三葉の扇趾板を横へ配した脚甲\nDistinct weapons: 01 扇趾の三葉を短い峰へ積んだ幅広刃; 02 扇形の低い片刃鍔と三葉の盾; 03 三つの趾板を外周で束ね平らに閉じた槌頭; 04 三葉の根元骨を細い同形刃へ加工した双剣; 05 薄い扇趾板を刃先方向へ重ねた曲刀; 06 踏氷腱を芯へ張った直槍と三葉の足止め盾; 07 三葉の趾骨を小さく分割した弓身、冷床管を握り裏へ配置\nPreserve the specifically stated anatomical LEFT and RIGHT of the WEARER. Keep shoulder and waist protrusions restrained for movement. Helmets, both hands, boots, blade tips, bowstring, shields and spear point fully inside the canvas. Original visual language, avoid any recognizable existing franchise designs. Clear fabrication joints, few broad forms, no dense filigree. This is concept art, not a precise orthographic production drawing.\nThe style board is ONLY a rendering style reference. Do not reuse the stone armor, bare-headed man or stone weapon material from it. The creature materials and the species-specific armor silhouette dominate this sheet.\nFRAMING: put every object entirely within the inner 85 percent of the canvas with at least 80 pixels empty margin on every outer edge. Scale down the largest sword, spear and human as needed. Every blade tip and every boot must be visible with clear empty space around it; never touch or crop at the canvas boundary.",
+  "referenceRoles": [
+    "approved style board",
+    "source creature material and silhouette reference"
+  ],
+  "referencePaths": [
+    "art-source/board/style_board_v2.png",
+    "art-source/monster/concepts/monster_060_pizelta_concept_v1.png"
+  ],
+  "output": "art/monsters/equipment_060_pizelta_v1.png",
+  "transparent_background": false,
+  "finalSourcePath": "exec-77e2c200-e3cf-476d-a223-64962cfdbcbf.png",
+  "review": {
+    "generated": true,
+    "scope": "初登場級の系列比較原画。各級別の画像ではなく、級差はgradeAppearanceで指示。",
+    "notVerified": [
+      "正投影",
+      "寸法",
+      "背面",
+      "共通リグ干渉",
+      "ゲーム内描画"
+    ],
+    "revision": 1,
+    "sevenWeaponGroupsVisible": true,
+    "fiveArmorRegionsVisible": true,
+    "clippingObserved": false,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "sha256": "9f731d30a3245877c54fa3c7d3035281110de347b85a5e6f33bf81c9da54add8",
+    "notes": "01〜07全群、護刃/槍の別盾、弓弦と矢、兜から扇趾の脚までを確認。先端の欠損なし。余白80pxは一部で未達だが切れなし。三葉板と低い肩の方向が読める。"
+  }
+}

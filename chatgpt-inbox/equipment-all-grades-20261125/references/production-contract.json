@@ -1,0 +1,102 @@
+{
+  "sourceCommit": "1e078bfce1e68f287ae577cf41d2fe5bafb94afa",
+  "rankNames": {
+    "1": "初級",
+    "2": "中級",
+    "3": "上級",
+    "4": "極級"
+  },
+  "familyOrder": [
+    "heavy_blade",
+    "guard_blade",
+    "war_maul",
+    "twin_blades",
+    "long_blade",
+    "long_lance",
+    "ring_bow"
+  ],
+  "familyNames": {
+    "heavy_blade": "断岳剣",
+    "guard_blade": "護刃",
+    "war_maul": "大槌",
+    "twin_blades": "双剣",
+    "long_blade": "太刀",
+    "long_lance": "長尖槍",
+    "ring_bow": "環弓"
+  },
+  "slotOrder": [
+    "head",
+    "chest",
+    "arms",
+    "waist",
+    "legs"
+  ],
+  "seriesFields": [
+    "id",
+    "sourceSpeciesId",
+    "no",
+    "name",
+    "seriesName",
+    "nativeRank",
+    "armorClass",
+    "weaponProfile",
+    "elements",
+    "status",
+    "primarySkill",
+    "secondarySkill",
+    "skillParameters",
+    "palette",
+    "silhouette",
+    "armorParts",
+    "weapons",
+    "gradeAppearance",
+    "mainMaterial",
+    "supportMaterial",
+    "organMaterial",
+    "artFile",
+    "artPromptFile",
+    "artReview"
+  ],
+  "weaponFields": [
+    "shape",
+    "material",
+    "gradeEvolution"
+  ],
+  "allowedArmorClasses": [
+    "heavy",
+    "medium",
+    "light"
+  ],
+  "allowedProfiles": [
+    "raw",
+    "precision",
+    "single",
+    "status",
+    "compound"
+  ],
+  "skillIds": [
+    "guard_economy",
+    "edge_keep",
+    "dodge_economy",
+    "stamina_recovery",
+    "part_damage",
+    "element_tuning",
+    "status_tuning",
+    "weak_crit",
+    "stun_tuning",
+    "item_efficiency",
+    "status_resistance",
+    "element_resistance"
+  ],
+  "notes": [
+    "Use source monster native rank through 4 only. Do not invent earlier availability.",
+    "elements and status describe WEAPON output, at most one damage element OR status, except compound2. stun is not an all-weapon status; use raw/precision and armor stun skill.",
+    "Armor source weak/resist retained by root.",
+    "Unknown derived names retain source id. no57 is monster.tarhegna nameテムソギア; no71 is monster.segranio nameセオルミド.",
+    "Each species: fully write five slot shapes and seven weapon shapes. No identical all-species boilerplate.",
+    "Each series concept art has one complete adult neutral mannequin armor set and SEVEN distinct separated weapon families. Native-rank reference sheet. All rank variants receive explicit geometry/material evolution in JSON and final book. Do not call it orthographic/finished3D.",
+    "Art filename art/monsters/equipment_NNN_<idtail>_v1.png. Prompt file art/prompts/monster_NNN.json. Never modify repo outside this package.",
+    "Generate via built-in image_gen, not Fal/API. Always inspect outputs and record seven-weapon coverage or specific uncertainty. Use imagegen skill.",
+    "Source reference images available in art-source/monster/concepts/<species.art>; Galdros special art-source/monster/galdros/galdros_left_v1.png. Approved style board art-source/board/style_board_v2.png."
+  ]
+}
