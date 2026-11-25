@@ -1,0 +1,239 @@
+{
+  "request": "006",
+  "version": 2,
+  "units": "cm",
+  "method": "各PNGを平均RGB<185で輪郭抽出。端を含む全高を指定全長に換算。頭・刃・握り等の境界は原画の目視と行幅で記録。明るい縁、斜め刃先により数pxの誤差があり得る。実物の製作図ではなく、ゲーム美術の比率比較。",
+  "source_commit": "e006b3500184e82b321ff8e64797e900113523a0",
+  "files": {
+    "weapon_otsuchi_front_v2.png": {
+      "canvas_px": [
+        1086,
+        1448
+      ],
+      "foreground_bbox_inclusive_px": [
+        351,
+        54,
+        733,
+        1354
+      ],
+      "foreground_height_px": 1301,
+      "sha256": "d6b0eb386bfd9405c43e216e0decbfb1fda95095dca82a8e642c2dc55627d049"
+    },
+    "weapon_otsuchi_side_v2.png": {
+      "canvas_px": [
+        1086,
+        1448
+      ],
+      "foreground_bbox_inclusive_px": [
+        473,
+        53,
+        612,
+        1354
+      ],
+      "foreground_height_px": 1302,
+      "sha256": "65cf45281e5b8f95b0c75c38a3493fc61a19e17da25f991691c89131063ca6f8"
+    },
+    "weapon_soken_front_v1.png": {
+      "canvas_px": [
+        1086,
+        1448
+      ],
+      "foreground_bbox_inclusive_px": [
+        462,
+        65,
+        622,
+        1354
+      ],
+      "foreground_height_px": 1290,
+      "sha256": "4fba80e7d88f98586521d6b208203ff1364d6b22a129dd7619014db282530bf0"
+    },
+    "weapon_soken_side_v1.png": {
+      "canvas_px": [
+        1086,
+        1448
+      ],
+      "foreground_bbox_inclusive_px": [
+        514,
+        65,
+        571,
+        1353
+      ],
+      "foreground_height_px": 1289,
+      "sha256": "2fb0073567822356da6cdbabac97d099bfd627db50da90659e83beb570e8a2b7"
+    }
+  },
+  "A": {
+    "files": [
+      "weapon_otsuchi_front_v2.png",
+      "weapon_otsuchi_side_v2.png"
+    ],
+    "target": {
+      "total": 145,
+      "head_height": 24,
+      "head_width_front": 38,
+      "head_width_side": 20,
+      "shaft_diameter": 4.5,
+      "lower_grip_center_from_bottom": 20,
+      "upper_grip_center_from_bottom": 70,
+      "wood_projection_range": [
+        1,
+        2
+      ]
+    },
+    "measured_front": {
+      "total_normalized": 145,
+      "head_height": 24.74,
+      "head_width": 42.57,
+      "shaft_diameter": 4.12,
+      "upper_grip_center_from_bottom": 69.49,
+      "lower_grip_center_from_bottom": 22.35,
+      "wood_projection": 2.23
+    },
+    "measured_side": {
+      "total_normalized": 145,
+      "head_height": 24.95,
+      "head_width": 15.59,
+      "shaft_diameter": 4.23,
+      "upper_grip_center_from_bottom": 69.49,
+      "lower_grip_center_from_bottom": 22.44,
+      "wood_projection": 2.12
+    },
+    "pixel_evidence": {
+      "front_head_y": [
+        74,
+        295
+      ],
+      "side_head_y": [
+        72,
+        295
+      ],
+      "front_head_width_at_y150": 382,
+      "side_head_width_at_y150": 140,
+      "front_shaft_width_at_y500": 37,
+      "side_shaft_width_at_y500": 38,
+      "front_upper_grip_y": [
+        669,
+        792
+      ],
+      "side_upper_grip_y": [
+        668,
+        792
+      ],
+      "front_lower_grip_y": [
+        1092,
+        1215
+      ],
+      "side_lower_grip_y": [
+        1091,
+        1214
+      ]
+    },
+    "alignment": {
+      "full_height_difference_px": 1,
+      "top_difference_px": 1,
+      "bottom_difference_px": 0,
+      "grip_center_difference_px_max": 1,
+      "head_top_difference_px": 2
+    },
+    "acceptance": "4PNGのうち大槌2枚は画角・全高・部品高さがそろう。頭幅が正面で広く、側面で狭いため、指定寸法に一致する図面としては未合格。",
+    "claude_action": "原画は材質と外観資料。3D形状は依頼書の145cm/頭24x38x20cm/柄4.5cm/握り中心20・70cmを使い、輪郭をそのまま複写しない。",
+    "delta_front": {
+      "head_height": 0.74,
+      "head_width": 4.57,
+      "shaft_diameter": -0.38,
+      "upper_grip_center_from_bottom": -0.51,
+      "lower_grip_center_from_bottom": 2.35
+    },
+    "delta_side": {
+      "head_height": 0.95,
+      "head_width": -4.41,
+      "shaft_diameter": -0.27,
+      "upper_grip_center_from_bottom": -0.51,
+      "lower_grip_center_from_bottom": 2.44
+    }
+  },
+  "B": {
+    "files": [
+      "weapon_soken_front_v1.png",
+      "weapon_soken_side_v1.png"
+    ],
+    "target": {
+      "total": 70,
+      "blade": 54,
+      "hilt": 14,
+      "guard_allowance": 2,
+      "blade_width": 4.5,
+      "spine_thickness": 0.8,
+      "guard_width": 8
+    },
+    "measured_front": {
+      "total_normalized": 70,
+      "blade": 53.12,
+      "hilt": 14.16,
+      "guard_allowance": 2.71,
+      "blade_width": 4.45,
+      "guard_width": 8.74
+    },
+    "measured_side": {
+      "total_normalized": 70,
+      "blade": 52.73,
+      "hilt": 14.12,
+      "guard_allowance": 3.15,
+      "spine_thickness": 1.14
+    },
+    "pixel_evidence": {
+      "front_blade_tip_y": 65,
+      "front_blade_base_y": 1044,
+      "side_blade_tip_y": 65,
+      "side_blade_base_y": 1036,
+      "front_hilt_y": [
+        1094,
+        1354
+      ],
+      "side_hilt_y": [
+        1094,
+        1353
+      ],
+      "front_blade_width_at_y500": 82,
+      "front_guard_width_at_y1060": 161,
+      "side_spine_width_at_y500": 21
+    },
+    "alignment": {
+      "full_height_difference_px": 1,
+      "top_difference_px": 0,
+      "bottom_difference_px": 1,
+      "grip_top_difference_px": 0,
+      "guard_top_difference_px": 8
+    },
+    "acceptance": "双剣の正面・真横2枚を初納品。最小キャンバス・単品・直立・素材は目視で満たす。峰厚と鍔幅などに残差あり。",
+    "correction_status": {
+      "process": "B2の峰厚21pxを約15pxへ細くし、鍔位置を8px下げる編集",
+      "result": "moderation_blocked",
+      "category": "violence",
+      "request_id": "0c6f0aee-8fec-4540-8ec7-dc111d21526f",
+      "handling": "この編集は再試行せず、すでに生成済みのB2を保持。"
+    },
+    "claude_action": "全長70cm、刃54cm、柄14cm、鍔等2cm、刃幅4.5cm、峰厚0.8cm、鍔幅8cmを3Dの基準とする。原画の峰厚をそのまま採用しない。",
+    "delta_front": {
+      "blade": -0.88,
+      "hilt": 0.16,
+      "guard_allowance": 0.71,
+      "blade_width": -0.05,
+      "guard_width": 0.74
+    },
+    "delta_side": {
+      "blade": -1.27,
+      "hilt": 0.12,
+      "guard_allowance": 1.15,
+      "spine_thickness": 0.34
+    }
+  },
+  "unverified": [
+    "正式採用",
+    "3D形状への取り込み",
+    "ゲーム内の見た目",
+    "当たり判定",
+    "iPhone実機"
+  ],
+  "overall": "このJSONは大槌・双剣の4枚だけを記録する。描画枚数と寸法合格は区別する。寸法残差があり、すべての受入条件を合格とはしない。太刀2枚の記録は別資料を参照。"
+}

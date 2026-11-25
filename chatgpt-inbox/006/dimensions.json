@@ -1,0 +1,162 @@
+{
+  "request": "006",
+  "units": "cm",
+  "method": "ゲーム内の指定全長へ全体像を等倍換算。平均RGB<185の輪郭と目視で部品の境界を測定。下記は原画からの概算で、実物製作の図面ではない。",
+  "A": {
+    "files": [
+      "weapon_otsuchi_front_v1.png",
+      "weapon_otsuchi_side_v1.png"
+    ],
+    "target": {
+      "total": 145,
+      "head_height": 24,
+      "head_width_front": 38,
+      "head_width_side": 20,
+      "shaft_diameter": 4.5,
+      "lower_grip_center_from_bottom": 20,
+      "upper_grip_center_from_bottom": 70,
+      "wood_projection_range": [
+        1,
+        2
+      ]
+    },
+    "measured": {
+      "total_normalized": 145,
+      "head_height": 23.8,
+      "head_width_front": 45.6,
+      "head_width_side": 17.4,
+      "shaft_diameter": 5.7,
+      "lower_grip_center_from_bottom": 24.6,
+      "upper_grip_center_from_bottom": 79.9,
+      "wood_projection": 2.2
+    },
+    "delta": {
+      "head_height": -0.2,
+      "head_width_front": 7.6,
+      "head_width_side": -2.6,
+      "shaft_diameter": 1.2,
+      "lower_grip_center_from_bottom": 4.6,
+      "upper_grip_center_from_bottom": 9.9
+    },
+    "pixel_evidence": {
+      "canvas_front": [
+        1086,
+        1448
+      ],
+      "canvas_side": [
+        1086,
+        1448
+      ],
+      "foreground_bbox_front": [
+        326,
+        34,
+        759,
+        1412
+      ],
+      "foreground_bbox_side": [
+        460,
+        33,
+        625,
+        1412
+      ],
+      "height_front_px": 1379,
+      "height_side_px": 1380,
+      "front_head_width_px_at_y150": 434,
+      "side_head_width_px_at_y150": 166,
+      "shaft_width_px_at_y500": 54,
+      "head_y": [
+        55,
+        281
+      ],
+      "upper_grip_y": [
+        573,
+        732
+      ],
+      "lower_grip_y": [
+        1098,
+        1259
+      ]
+    },
+    "alignment": "正面・真横の全高差1px。頭・握り・柄頭の高さは目視でほぼ一致。",
+    "correction_status": "A1寸法修正のimagegenが自動安全判定violenceで拒否。原画は変更せず数値差を引き継ぐ。",
+    "claude_action": "形状を作る際は指定値を使用。正面の頭幅を38cm、真横の厚みを20cm、柄径を4.5cmへ合わせ、握り中心を下端から20cm/70cmへ移す。"
+  },
+  "B": {
+    "files": [],
+    "status": "B1の新規画像生成が自動安全判定violenceで拒否。B2は同じ剣の参照がないため未実施。寸法の実測なし。",
+    "target": {
+      "total": 70,
+      "blade": 54,
+      "hilt": 14,
+      "guard_allowance": 2,
+      "blade_width": 4.5,
+      "spine_thickness": 0.8,
+      "guard_width": 8
+    }
+  },
+  "C": {
+    "files": [
+      "weapon_tachi_front_v1.png",
+      "weapon_tachi_side_v1.png"
+    ],
+    "target": {
+      "total": 147,
+      "blade": 112,
+      "hilt": 33,
+      "blade_width": 3.2,
+      "spine_thickness": 0.7,
+      "guard_width": 8,
+      "tip_right_displacement": 4
+    },
+    "measured_front": {
+      "blade": 108.16,
+      "hilt": 34.72,
+      "blade_width": 3.78,
+      "guard_width": 8.79,
+      "tip_right_displacement": 0.67
+    },
+    "measured_side": {
+      "blade": 108.1,
+      "hilt": 34.59,
+      "spine_thickness": 1.19
+    },
+    "delta_front": {
+      "blade": -3.84,
+      "hilt": 1.72,
+      "blade_width": 0.58,
+      "guard_width": 0.79,
+      "tip_right_displacement": -3.33
+    },
+    "delta_side": {
+      "spine_thickness": 0.49
+    },
+    "pixel_evidence": {
+      "canvas_front": [
+        1086,
+        1448
+      ],
+      "canvas_side": [
+        1055,
+        1491
+      ],
+      "front_top_bottom_y": [
+        69,
+        1390
+      ],
+      "side_top_bottom_y": [
+        67,
+        1431
+      ],
+      "height_front_px": 1321,
+      "height_side_px": 1364,
+      "side_height_difference_px": 43,
+      "side_height_difference_percent": 3.26,
+      "side_width_shortfall_px": 31,
+      "front_hilt_axis_x": 541,
+      "front_tip_center_x": 547
+    },
+    "measurement_basis": "147cmを全高へ対応。反りは下部柄中心x541の垂線から最上先端中心x547までの6pxを換算。",
+    "correction_status": "C2のサイズと位置だけを合わせるimagegen編集が自動安全判定illicitで拒否。現物を保持。",
+    "claude_action": "指定寸法を3D形状の基準とし、原画を無補正の寸法図として扱わない。C2は最小画像幅も未達の参考画像。"
+  }
+}

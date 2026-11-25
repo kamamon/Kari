@@ -1,0 +1,106 @@
+{
+  "generator": "built-in image_gen",
+  "date": "2026-11-24",
+  "notes": "All raster editing used image_gen. No resampling, painting, warping or compositing performed in code. The final C1 and C2 are handled by root; prompt_c1 here records a preliminary candidate only.",
+  "prompts": [
+    {
+      "key": "prompt_a1_v2",
+      "prompt": "Use case: precise-object-edit.\nAsset type: original fantasy game's prop concept sheet for VEILBOUND HUNTERS.\nEdit target: first image, the front view of the village-forged iron maul. Supporting style reference: the second image, an established prop from the same original project.\nPreserve the design identity, weathered grey iron, plain bronze riveted central band, wooden handle, brown diagonal leather wraps, and bronze pommel.\nCorrect proportions and vertical locations. Output one front orthographic view only, perfectly upright, no perspective, no cast shadow. The head is a simple double-flat-faced rectangular iron mallet with small bevelled corners, no spikes and no sharp blades.\nOutput a 1536 by 2048 px portrait PNG. On this canvas the subject has total vertical extent y=154 to y=1894 (145 cm; 12px/cm); centerline x=768. Head iron body y=172 to460 (24 cm high) and x=540 to996 (38 cm wide). Short wood tip protrudes 18px above the head. The plain wooden shaft is 54px wide (4.5 cm).\nExactly two leather grip sections, each about 168px tall: one centered y=1054 (70 cm from bottom), the other centered y=1654 (20 cm from bottom). Bronze pommel at the very bottom, not a third leather section.\nUse the coordinates to correct the old oversized head width and shaft, and to move both grip sections downward. Keep the existing muted studio paint finish and closely match the supplied established sword's material.\nBackground uniformly very pale warm grey. No people, hands, stand, scabbard, inscriptions, text, diagrams, rulers, frames or contact shadow. Whole object with clear margins. One object only."
+    },
+    {
+      "key": "prompt_a1_canvas",
+      "prompt": "Use case: precise-object-edit. Edit the supplied original fantasy prop illustration.\nCreate a 3:4 portrait canvas, WIDE PORTRAIT not narrow, with output resolution 1536 x 2048 pixels or at least 1086 x 1448. The image's WIDTH must be three quarters of its HEIGHT.\nPreserve exactly the maul's shape, materials, colors, proportions, vertical orientation and all details. Change only canvas/framing: enlarge the uniform pale warm-grey background on both sides so that the original maul occupies the central part of a 3:4 frame. Do not stretch the object horizontally or vertically. Retain a little clear top and bottom margin. No new objects, text, ground, cast shadow or decoration. Full maul must be visible. This is a format correction of existing art; preserve the subject."
+    },
+    {
+      "key": "prompt_a1_geometry",
+      "prompt": "Use case: precise-object-edit. Correct proportions in this existing ORIGINAL fantasy game prop concept illustration. Preserve this exact 3:4 portrait canvas (1086x1448 pixels or larger), centerline, palette, realistic paint texture and pale uniform background. One single straight upright front-view maul. No text, shadows or extra objects.\nKeep total maul height and pommel position unchanged. Enlarge only the iron head to be 26.21% of total object height WIDE and 16.55% of total object height HIGH. Compared with the current image, the head must be about 13% wider and 17% taller. Flat double striking faces, bevelled corners, central riveted bronze band. The head-to-total-height ratio matters.\nReduce wooden shaft width to 3.10% of total object height, a roughly 15% reduction from its current diameter. Keep two diagonal leather grip wraps. Place the lower wrap center exactly 13.79% of object height above the bottom and the upper wrap center 48.28% above bottom (both slightly downward from current locations). Preserve total object size and all other features. Output the final full-canvas illustration, not a crop."
+    },
+    {
+      "key": "prompt_a2",
+      "prompt": "Use case: precise-object-edit. Make the strict orthographic SIDE VIEW of the original village-forged maul in image 1; image 2 shows the old side orientation.\nUse exactly the same 3:4 portrait canvas and object height/positions as IMAGE 1. Output at least 1086x1448. Rotate the object 90 degrees around its vertical axis, with no perspective or tilt. We look directly at one flat striking face. The head now shows the THICKNESS, not the wide front: visible head width must equal 13.79% of total object height (20cm on a 145cm prop). Head height equals 16.55% of total height (24cm). Keep upper wood projection, lower iron-head boundary, collar, both leather wrap sections, and bronze pommel at precisely the same y-coordinates as image 1. Wooden shaft diameter 3.10% of total object height (4.5cm). Two leather grip centers are 20cm and70cm above the bottom. The side of the bronze fastening band may be visible at the edges, but the center is a plain flat striking face, softly bevelled at all four corners.\nKeep weathered grey iron, bronze fittings, wooden shaft and diagonal dark brown leather wraps from the references. Full prop, one object, upright. Pale uniform background, no text, person, hands, stands, cast shadows, dimensions, frames or scenery."
+    },
+    {
+      "key": "prompt_a2_alignment",
+      "prompt": "Use case: precise-object-edit. Correct this original maul SIDE VIEW to align with its front view. Keep exact 3:4 canvas, at least1086x1448, pale uniform background, iron/bronze/wood/leather materials, one upright object, no text or shadows. Do not change view: looking directly onto the flat end striking face.\nSet full object top at y55 and bottom at y1354 on the1086x1448 canvas, thus slightly shorter than this current side view. Iron head top at y75, bottomy295 (height220). Visible iron striking face width180px, centeredx543; this corrects the current overly narrow side head. Keep central shaft width38px. Place upper leather wrap y669to792, lower leather wrap y1094to1215. Bronze pommel bottomy1354. These component heights align with the front view. Remove the three large protruding side rivet domes: keep fastening details very small at the edges, so the silhouette is plain with bevelled rectangular corners. Uniform softly textured pale background, no extra objects."
+    },
+    {
+      "key": "prompt_a2_final_alignment",
+      "prompt": "Use case: precise-object-edit. From this original maul FRONT illustration, create its precisely matching SIDE orthographic illustration. Show the SAME maul rotated ninety degrees about its upright shaft: we now see its rectangular flat end striking face.\nKEEP exactly the same3:4 portrait canvas, same top and bottom, and SAME Y COORDINATES OF EVERY PART in this front reference. Do not move or resize the grip sections vertically. In particular, the upper leather grip is near the middle of the total object's height, and the lower leather grip is near its lower end. Do not move the upper grip closer to the head.\nThe rectangular side striking face should be0.5263 times as wide as the FRONT head in this reference, while head HEIGHT remains identical. The shaft and both leather grips retain exactly the front-view widths. Bronze pommel retains its height. ONLY the head's horizontal appearance changes to side view. Avoid a second angle, perspective, or visible top surface. Preserve the original iron / bronze / wood / brown leather and pale uniform background.\nImage width must be at least1086 and height1448, with3:4 ratio. One object only; no text, people, hands, scabbard, stand, ground shadow or annotations."
+    },
+    {
+      "key": "prompt_b1",
+      "prompt": "Use case: stylized-concept. Create an ORIGINAL prop concept illustration for the game VEILBOUND HUNTERS: one single short slender one-handed sword from the village-forged set. This is the front view of one sword that is used in an identical pair, but SHOW ONLY ONE. Use the reference sword only for the established iron / bronze rivets / plain diagonal leather wrap material design.\nMandatory CANVAS ASPECT RATIO: exactly 3:4 portrait, 1086x1448 pixels or larger. Wide blank margins on left and right. Full upright sword, top and bottom visible. Perfect orthographic front view of the flat blade, no perspective.\nThe fictional total size is 70cm: blade54cm (77.14% of total height), small guard/collar2cm (2.86%), grip plus bronze pommel14cm (20%). Slender blade width4.5cm (6.43% of total height). Tiny straight bronze crossguard width8cm (11.43% of total height). One edge on left, thick flat spine on right, diagonally cut tip. Brown leather simple diagonal wrap, small plain bronze pommel, a few matching rivets; no large ornaments. It must look short and light, far narrower than the reference large sword.\nMuted hammered grey iron, gently worn bronze, brown leather. Uniform pale warm-grey background. NO human, hands, scabbard, ruler, labels, text, cast shadow, frames or decoration. One single sword centered, absolutely vertical."
+    },
+    {
+      "key": "prompt_b1_correction",
+      "prompt": "Use case: precise-object-edit. Make only small proportion corrections to this original short sword front-view illustration. Keep same exact3:4 canvas1086x1448, same full object topy65 and bottomy1354, same center, style, iron/bronze/leather materials. The whole sword height stays unchanged.\nMove the top of the guard DOWN21pixels, to approximately y1059, so the blade becomes a little longer. Compress the tall bronze collar beneath the guard: together guard+collar should span only y1059to1096. Keep the grip+pommel from y1096to1354. Slightly narrow the broad blade from about90px to83px, keeping single left edge and right spine. Slightly narrow the guard to147px. Retain the diagonally cut tip, plain diagonal brown leather wrap and small bronze pommel. No perspective, full upright view, one sword. Do not add text, annotations, people, hands, scabbard, shadows, frames or props. Keep blank pale warm-grey background."
+    },
+    {
+      "key": "prompt_b2",
+      "prompt": "Use case: precise-object-edit. Create a matching strict orthographic SIDE VIEW of this original short fantasy sword. SAME canvas 3:4 portrait, at least1086x1448. SAME total height, top, bottom and guard/grip levels as reference. Turn it exactly90degrees about its vertical axis to look directly onto the thick spine. The blade must appear as one narrow vertical strip, NOT the broad face and NOT a 3/4 view.\nBlade spine thickness0.8cm relative to total70cm =1.143% of full sword height. Blade length54cm, guard/collar2cm, grip+pommel14cm. Keep all these component Y levels identical to reference. Tiny guard seen edge-on, plain bronze fittings, one brown diagonal leather grip. Preserve blunt faceting of the original illustration, original palette and realistic painted finish. Full sword upright in center, pale uniform background. Only one sword, no people, hand, text, frame, dimension lines, stand, scenery, scabbard or cast shadow."
+    },
+    {
+      "key": "prompt_b2_correction",
+      "prompt": "Use case: precise-object-edit. Correct only blade thickness and guard level in this ORIGINAL short-sword SIDE concept illustration. KEEP exact same 1086x1448 3:4 portrait framing and sword top/bottom, one perfectly vertical sword. No perspective.\nThe current blade-spine strip is too thick. Narrow this entire metal strip from approximately20pixels to15pixels, centered at x543. Keep its upper point and blade length. Move the tiny guard down8pixels so its top is y1046, while the leather grip still starts abouty1094 and bronze pommel staysy1354; reduce bronze collar height to accommodate this. Preserve the plain bronze fittings and diagonal brown leather material identity. This is a subtle edit only. Do not enlarge anything or alter the background. Plain pale warm-grey background, no text, shadow, people, frame or any extra object."
+    },
+    {
+      "key": "prompt_c1",
+      "prompt": "Use case: precise-object-edit. Correct the proportions and curve of this ORIGINAL fantasy game's village-forged long sword concept art. Preserve the 3:4 portrait canvas, at least1086x1448, the original muted iron texture, modest bronze riveted guard and pommel, and plain spiral brown leather wrap. Full upright FRONT orthographic view, no perspective. The sword is very slender with a single left cutting edge and a right spine; diagonally clipped point.\nTotal length147cm. Blade112cm=76.19% of total height. Grip including pommel33cm=22.45%, and thin guard/collar2cm=1.36%. Blade width3.2cm=2.18% of total height, guard width8cm=5.44%. Change the prior almost straight blade to a very gentle continuous curve TOWARD THE RIGHT SPINE. The uppermost tip must be displaced RIGHT by4cm=2.72% of the total sword height from a vertical line extending through the center of the straight handle. Do not bend the handle. Clear gentle rightward curve, not a dramatic saber.\nOn 1086x1448 framing, keep tip around y70 and pommel around y1390; blade-to-guard boundary should be around y1076, grip starts around y1094. Center of handle x542, uppermost point near x578. These are layout guides ONLY, draw no numbers or lines. Retain small blank margins and whole object.\nBackground uniformly pale warm grey. No people, hands, text, decorations, scabbard, stand, frames, diagrams or cast shadows."
+    }
+  ],
+  "blocked": [
+    {
+      "key": "prompt_b2_correction",
+      "category": "violence",
+      "code": "moderation_blocked",
+      "request_id": "0c6f0aee-8fec-4540-8ec7-dc111d21526f",
+      "action": "Do not retry. Keep successfully generated B2 side artwork and disclose dimensional residuals."
+    }
+  ],
+  "deliverables": [
+    {
+      "file": "weapon_otsuchi_front_v2.png",
+      "source_generated_file": "exec-8b128d12-e265-4136-99c1-bd33cc060731.png",
+      "final_prompt": "prompt_a1_geometry",
+      "history": [
+        "prompt_a1_v2",
+        "prompt_a1_canvas",
+        "prompt_a1_geometry"
+      ]
+    },
+    {
+      "file": "weapon_otsuchi_side_v2.png",
+      "source_generated_file": "exec-98395fb4-ed82-4b28-8659-827056b82ab2.png",
+      "final_prompt": "prompt_a2_final_alignment",
+      "history": [
+        "prompt_a2",
+        "prompt_a2_alignment",
+        "prompt_a2_final_alignment"
+      ]
+    },
+    {
+      "file": "weapon_soken_front_v1.png",
+      "source_generated_file": "exec-5886fa84-e3b4-44c8-8186-fa5de7990a4f.png",
+      "final_prompt": "prompt_b1_correction",
+      "history": [
+        "prompt_b1",
+        "prompt_b1_correction"
+      ]
+    },
+    {
+      "file": "weapon_soken_side_v1.png",
+      "source_generated_file": "exec-2f05b6b3-6897-4ab2-8154-ee4e844cd13a.png",
+      "final_prompt": "prompt_b2",
+      "history": [
+        "prompt_b2"
+      ],
+      "blocked_correction": "prompt_b2_correction"
+    }
+  ],
+  "preliminary_tachi": {
+    "file": "exec-e5757b67-cb82-4aa2-bfe0-b706720d4e63.png",
+    "prompt": "prompt_c1",
+    "selected": false,
+    "reason": "1055x1491, width below required minimum; root handles final tachi front and side"
+  }
+}

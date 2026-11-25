@@ -1,0 +1,88 @@
+{
+  "task": "006 B 双剣（1本の正面と真横）",
+  "status": "blocked_no_images_generated",
+  "generation_mode": "built-in image_gen only",
+  "scope": "Only the two B PNGs and this manifest; root owns README, validation, PR and remote.",
+  "read_documents": [
+    "AGENTS.md",
+    "docs/chatgpt-board.md",
+    "docs/chatgpt-request-6.txt",
+    "chatgpt-inbox/README.md"
+  ],
+  "inspected_references": [
+    "/workspace/scratch/b1fa555057db/repos/Kari-weapons/art-source/weapon/weapon_dangaku_front_v1.png",
+    "/workspace/scratch/b1fa555057db/repos/Kari-weapons/art-source/weapon/weapon_gojin_sword_front_v1.png",
+    "/workspace/scratch/b1fa555057db/repos/Kari-weapons/art-source/player/hunter_base_front_v1.png",
+    "/workspace/scratch/b1fa555057db/repos/Kari-weapons/art-source/board/style_board_v2.png"
+  ],
+  "assumptions": [
+    "Whole length70cm = blade54cm + grip/pommel14cm + guard/collar2cm.",
+    "Front edge is on image left, spine on image right, following Gojin.",
+    "Guard and plain collar together occupy2cm vertically; guard front-back depth is not specified and will be kept modest."
+  ],
+  "target_geometry": {
+    "canvas": [
+      1086,
+      1448
+    ],
+    "overall_cm": 70,
+    "blade_cm": 54,
+    "grip_pommel_cm": 14,
+    "guard_collar_cm": 2,
+    "blade_width_cm": 4.5,
+    "spine_thickness_cm": 0.8,
+    "guard_width_cm": 8,
+    "planned_object_y": [
+      88,
+      1360
+    ],
+    "planned_blade_base_y": 1069,
+    "planned_grip_top_y": 1106,
+    "planned_blade_width_px": 82,
+    "planned_spine_thickness_px": 15,
+    "planned_guard_width_px": 145,
+    "minimum_canvas": [
+      1086,
+      1448
+    ]
+  },
+  "measurement_plan": "Read final PNG dimensions and silhouette pixel extents, compare ratios after overall length normalization to70cm; front/side object top,bottom and component y positions compared directly. Measurement is approximate due to antialiasing and subtle material shading. Any remaining difference must be reported; no Python resizing or image editing.",
+  "items": [
+    {
+      "no": "B-1",
+      "filename": "weapon_soken_front_v1.png",
+      "status": "blocked_by_imagegen_safety",
+      "prompt": "Use case: original game production weapon design reference, VEILBOUND HUNTERS request 6B. ONE sword only, no second matching sword, no character, hands, scabbard, stand, text, symbols, border, dimension line or cast/contact shadow. Plain uniform pale warm off-white background, no gradient or vignette. A precisely upright vertically aligned ORTHOGRAPHIC view, absolutely no perspective, tilt or foreshortening. Canvas MUST be portrait 3:4, at least1086 pixels wide by1448 pixels high. Prefer1086x1448 matching the supplied adopted reference canvas; the paired views must use the same canvas size. Entire object uncropped with small top and bottom margins. Render believable worn forged iron, simple riveted dull bronze fittings, wood under diagonal dark brown leather grip wrap, and a small bronze pommel. The same smithy and restrained grey-green/bronze/undyed/leather material family as the supplied adopted Dangaku and Gojin references. Practical inexpensive initial equipment, no ornate decoration or fantasy spikes. Use one definitive original design. Precision of the silhouette proportions and component alignment takes priority over decorative texture.\nB-1: a single SATO-FORGED SOKEN short sword, the narrower lighter younger sibling of the adopted Gojin sword. Show the broad flat BLADE FACE exactly front-on. Single cutting edge on image LEFT, thick straight spine on image RIGHT. The highest sharp tip is at the left cutting edge; a simple diagonal drop slopes DOWN toward the right spine, like the adopted reference. Straight narrow blade body, not a curved dagger, not double-edged, not a large slab sword. Exact target proportions: overall length 70 cm; blade from highest tip to guard 54 cm; grip plus pommel 14 cm; remaining 2 cm assigned to small guard and plain collar together. Blade face maximum width 4.5 cm. Tiny simple riveted bronze crossguard total width 8 cm; use a low rectangular crossbar, not an ornate guard. Blade spine thickness is 0.8 cm (not visible as a broad side face in this front view). A wood-core one-hand grip with diagonal leather wrap and compact bronze pommel, no left/right-specific ornaments. Position the overall centerline at x=543 on a1086x1448 canvas. The sword extends from y=88 to y=1360 (1272pixels). Tip-to-guard distance is981pixels (tip y88; guard top approximately y1069). Guard+plain collar occupy y1069–1106 (37pixels combined). Grip+pommel occupy y1106–1360 (254pixels). Blade body width approximately82pixels; guard width approximately145pixels. If the output canvas is larger, scale ALL these pixel landmarks by the same factor. Keep narrow proportions; do not enlarge the blade to fill the broad blank canvas. The blade-face texture is subtle hammered grey iron, with a narrow worn cutting bevel along the left. Brass/bronze appearance must match the supplied Gojin hilt, without extra iron/bronze brackets along the blade.",
+      "reference_paths": [
+        "/workspace/scratch/b1fa555057db/repos/Kari-weapons/art-source/weapon/weapon_gojin_sword_front_v1.png",
+        "/workspace/scratch/b1fa555057db/repos/Kari-weapons/art-source/weapon/weapon_dangaku_front_v1.png"
+      ],
+      "output": null,
+      "measurements": null,
+      "error": {
+        "code": "moderation_blocked",
+        "moderation_stage": "input",
+        "categories": [
+          "violence"
+        ],
+        "request_id": "a298072b-00e5-4753-8884-a2e732ae31ce",
+        "message": "Your request was rejected by the safety system.",
+        "result": "No image was generated; no retry, rewording, or alternate tool attempted."
+      }
+    },
+    {
+      "no": "B-2",
+      "filename": "weapon_soken_side_v1.png",
+      "status": "not_attempted_missing_B1_due_to_safety_block",
+      "prompt": "Use case: original game production weapon design reference, VEILBOUND HUNTERS request 6B. ONE sword only, no second matching sword, no character, hands, scabbard, stand, text, symbols, border, dimension line or cast/contact shadow. Plain uniform pale warm off-white background, no gradient or vignette. A precisely upright vertically aligned ORTHOGRAPHIC view, absolutely no perspective, tilt or foreshortening. Canvas MUST be portrait 3:4, at least1086 pixels wide by1448 pixels high. Prefer1086x1448 matching the supplied adopted reference canvas; the paired views must use the same canvas size. Entire object uncropped with small top and bottom margins. Render believable worn forged iron, simple riveted dull bronze fittings, wood under diagonal dark brown leather grip wrap, and a small bronze pommel. The same smithy and restrained grey-green/bronze/undyed/leather material family as the supplied adopted Dangaku and Gojin references. Practical inexpensive initial equipment, no ornate decoration or fantasy spikes. Use one definitive original design. Precision of the silhouette proportions and component alignment takes priority over decorative texture.\nB-2: the EXACT SAME sword as the supplied B-1 image, rotated exactly 90 degrees about its vertical long axis to show the THICKNESS from the SPINE direction. This is a strict edge-on orthographic view: the wide 4.5 cm blade face disappears, leaving a very thin straight 0.8 cm steel spine strip, no broad face visible and no three-quarter angle. Retain the exact same blade tip height, blade base/guard height, guard+collar boundaries, grip length, pommel and overall height as B-1, matching every horizontal registration. Do not redesign or make a new sword. For a1086x1448 image retain centerline x=543, highest tip y=88, guard top near y1069, grip+pommel beginning near y1106, lowest pommel y1360. If B-1 uses a different canvas, match B-1 actual landmarks exactly. Overall70cm, blade54cm, grip+pommel14cm, guard/collar2cm. At this scale the steel spine is approximately15pixels wide on the1086x1448 canvas, corresponding to0.8cm, not82pixels wide. The diagonally clipped tip may taper in thickness near the top but the topmost silhouette stays at exactly the same y as B-1. The bronze crossguard is now viewed from its narrow END: its previous 8cm front width must disappear into depth; show a small practical rounded-rectangular end thickness. The wood-core leather-wrapped grip and bronze pommel retain their same real section sizes, clear diagonal wraps, age and colors. Preserve B-1's single cutting edge, overall proportions and exact same vertical scale. Allow ample blank left/right background instead of thickening the blade.",
+      "reference_paths": [
+        "/workspace/scratch/b1fa555057db/repos/Kari-weapons/chatgpt-inbox/006/weapon_soken_front_v1.png"
+      ],
+      "output": null,
+      "measurements": null,
+      "note": "B-2 requires the same B-1 sword reference; B-1 new generation was blocked at input, so B-2 was not attempted."
+    }
+  ],
+  "resolution_note": "Root accepted1086x1448 matching references, as this meets request6 minimum. Both views must use the same actual canvas dimensions;1536x2048 is optional.",
+  "delivery_note": "PNG delivery:0/2. Pixel measurements and dimensional deviations cannot be obtained because no image was generated. target_geometry contains requested/planned values only, not actual measurements."
+}
