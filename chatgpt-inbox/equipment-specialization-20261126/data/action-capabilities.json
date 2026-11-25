@@ -1,0 +1,372 @@
+{
+  "families": {
+    "heavy_blade": {
+      "events": [
+        "hit",
+        "dodge",
+        "draw",
+        "sheathe",
+        "part_break",
+        "status_inflicted",
+        "damage_taken",
+        "item_used",
+        "guard",
+        "charge_release"
+      ],
+      "actions": [
+        {
+          "actionId": "player.heavy_blade.overhead",
+          "tags": [
+            "charge",
+            "slash"
+          ]
+        },
+        {
+          "actionId": "player.heavy_blade.side_sweep",
+          "tags": [
+            "finisher",
+            "slash"
+          ]
+        },
+        {
+          "actionId": "player.heavy_blade.draw_slash",
+          "tags": [
+            "draw_attack",
+            "slash"
+          ]
+        }
+      ],
+      "maintenanceItem": "whetstone",
+      "finisher": "player.heavy_blade.side_sweep"
+    },
+    "guard_blade": {
+      "events": [
+        "hit",
+        "dodge",
+        "draw",
+        "sheathe",
+        "part_break",
+        "status_inflicted",
+        "damage_taken",
+        "item_used",
+        "guard",
+        "parry"
+      ],
+      "actions": [
+        {
+          "actionId": "player.guard_blade.slash1",
+          "tags": [
+            "slash"
+          ]
+        },
+        {
+          "actionId": "player.guard_blade.slash2",
+          "tags": [
+            "slash"
+          ]
+        },
+        {
+          "actionId": "player.guard_blade.thrust",
+          "tags": [
+            "finisher",
+            "thrust"
+          ]
+        },
+        {
+          "actionId": "player.guard_blade.bash",
+          "tags": [
+            "blunt"
+          ]
+        },
+        {
+          "actionId": "player.guard_blade.lunge",
+          "tags": [
+            "draw_attack",
+            "slash"
+          ]
+        }
+      ],
+      "maintenanceItem": "whetstone",
+      "finisher": "player.guard_blade.thrust"
+    },
+    "war_maul": {
+      "events": [
+        "hit",
+        "dodge",
+        "draw",
+        "sheathe",
+        "part_break",
+        "status_inflicted",
+        "damage_taken",
+        "item_used",
+        "charge_release"
+      ],
+      "actions": [
+        {
+          "actionId": "player.war_maul.smash",
+          "tags": [
+            "blunt"
+          ]
+        },
+        {
+          "actionId": "player.war_maul.swing",
+          "tags": [
+            "finisher",
+            "blunt"
+          ]
+        },
+        {
+          "actionId": "player.war_maul.charge",
+          "tags": [
+            "charge",
+            "blunt"
+          ]
+        },
+        {
+          "actionId": "player.war_maul.draw_smash",
+          "tags": [
+            "draw_attack",
+            "blunt"
+          ]
+        }
+      ],
+      "maintenanceItem": "whetstone",
+      "finisher": "player.war_maul.swing"
+    },
+    "twin_blades": {
+      "events": [
+        "hit",
+        "dodge",
+        "draw",
+        "sheathe",
+        "part_break",
+        "status_inflicted",
+        "damage_taken",
+        "item_used"
+      ],
+      "actions": [
+        {
+          "actionId": "player.twin_blades.slash1",
+          "tags": [
+            "slash"
+          ]
+        },
+        {
+          "actionId": "player.twin_blades.slash2",
+          "tags": [
+            "slash"
+          ]
+        },
+        {
+          "actionId": "player.twin_blades.cross",
+          "tags": [
+            "slash"
+          ]
+        },
+        {
+          "actionId": "player.twin_blades.stab",
+          "tags": [
+            "thrust"
+          ]
+        },
+        {
+          "actionId": "player.twin_blades.flurry",
+          "tags": [
+            "finisher",
+            "slash"
+          ]
+        },
+        {
+          "actionId": "player.twin_blades.draw_cross",
+          "tags": [
+            "draw_attack",
+            "slash"
+          ]
+        }
+      ],
+      "maintenanceItem": "whetstone",
+      "finisher": "player.twin_blades.flurry"
+    },
+    "long_blade": {
+      "events": [
+        "hit",
+        "dodge",
+        "draw",
+        "sheathe",
+        "part_break",
+        "status_inflicted",
+        "damage_taken",
+        "item_used"
+      ],
+      "actions": [
+        {
+          "actionId": "player.long_blade.kesa",
+          "tags": [
+            "slash"
+          ]
+        },
+        {
+          "actionId": "player.long_blade.rise",
+          "tags": [
+            "slash"
+          ]
+        },
+        {
+          "actionId": "player.long_blade.thrust",
+          "tags": [
+            "thrust"
+          ]
+        },
+        {
+          "actionId": "player.long_blade.back_cut",
+          "tags": [
+            "slash"
+          ]
+        },
+        {
+          "actionId": "player.long_blade.helm",
+          "tags": [
+            "finisher",
+            "slash"
+          ]
+        },
+        {
+          "actionId": "player.long_blade.draw_cut",
+          "tags": [
+            "draw_attack",
+            "slash"
+          ]
+        }
+      ],
+      "maintenanceItem": "whetstone",
+      "finisher": "player.long_blade.helm"
+    },
+    "long_lance": {
+      "events": [
+        "hit",
+        "dodge",
+        "draw",
+        "sheathe",
+        "part_break",
+        "status_inflicted",
+        "damage_taken",
+        "item_used",
+        "guard",
+        "parry"
+      ],
+      "actions": [
+        {
+          "actionId": "player.long_lance.thrust1",
+          "tags": [
+            "thrust"
+          ]
+        },
+        {
+          "actionId": "player.long_lance.thrust2",
+          "tags": [
+            "thrust"
+          ]
+        },
+        {
+          "actionId": "player.long_lance.thrust3",
+          "tags": [
+            "finisher",
+            "thrust"
+          ]
+        },
+        {
+          "actionId": "player.long_lance.high",
+          "tags": [
+            "thrust"
+          ]
+        },
+        {
+          "actionId": "player.long_lance.guard_thrust",
+          "tags": [
+            "thrust"
+          ]
+        },
+        {
+          "actionId": "player.long_lance.counter_thrust",
+          "tags": [
+            "thrust",
+            "counter"
+          ]
+        },
+        {
+          "actionId": "player.long_lance.lunge",
+          "tags": [
+            "draw_attack",
+            "thrust"
+          ]
+        }
+      ],
+      "maintenanceItem": "whetstone",
+      "finisher": "player.long_lance.thrust3"
+    },
+    "ring_bow": {
+      "events": [
+        "hit",
+        "dodge",
+        "draw",
+        "sheathe",
+        "part_break",
+        "status_inflicted",
+        "damage_taken",
+        "charge_release"
+      ],
+      "actions": [
+        {
+          "actionId": "player.ring_bow.shot",
+          "tags": [
+            "charge",
+            "draw_attack",
+            "projectile"
+          ]
+        },
+        {
+          "actionId": "player.ring_bow.spread",
+          "tags": [
+            "finisher",
+            "projectile"
+          ]
+        }
+      ],
+      "maintenanceItem": null,
+      "finisher": "player.ring_bow.spread"
+    }
+  },
+  "tags": [
+    "asleep",
+    "blunt",
+    "broken",
+    "charge",
+    "counter",
+    "draw_attack",
+    "finisher",
+    "head",
+    "paralyzed",
+    "poisoned",
+    "projectile",
+    "rear",
+    "slash",
+    "stunned",
+    "thrust",
+    "unbroken",
+    "weakspot"
+  ],
+  "events": [
+    "hit",
+    "guard",
+    "parry",
+    "dodge",
+    "charge_release",
+    "sheathe",
+    "draw",
+    "part_break",
+    "status_inflicted",
+    "damage_taken",
+    "item_used"
+  ],
+  "note": "動作タグは同一行動内の積集合。draw_attackは抜刀開始、chargeは実際に1段以上解放した場合だけ。文脈タグは命中直前。"
+}

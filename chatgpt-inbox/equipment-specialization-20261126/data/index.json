@@ -1,0 +1,843 @@
+{
+  "format": "kari-equipment-specialization-v3-sharded",
+  "runtimeImportable": false,
+  "note": "前回失われた原本の再構築版。旧94ファイルとバイト同一ではない。採集9系列はPR15のまま。",
+  "counts": {
+    "species": 86,
+    "gatheringSeries": 9,
+    "seriesRanks": 250,
+    "monsterSeriesRanks": 214,
+    "weapons": 1750,
+    "armor": 1250,
+    "recipes": 3000,
+    "materials": 583,
+    "signatures": 86,
+    "weaponTraits": 602,
+    "mechanics": 688,
+    "adaptedWeaponTraits": 143
+  },
+  "series": [
+    {
+      "path": "equipment/001-galdros.json",
+      "seriesId": "series.galdros",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/002-selvark.json",
+      "seriesId": "series.selvark",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/003-numeradon.json",
+      "seriesId": "series.numeradon",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/004-bornakel.json",
+      "seriesId": "series.bornakel",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/005-ashreia.json",
+      "seriesId": "series.ashreia",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/006-lumisca.json",
+      "seriesId": "series.lumisca",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/007-orglass.json",
+      "seriesId": "series.orglass",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/008-tengaro.json",
+      "seriesId": "series.tengaro",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/009-verito.json",
+      "seriesId": "series.verito",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/010-razmer.json",
+      "seriesId": "series.razmer",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/011-kirisave.json",
+      "seriesId": "series.kirisave",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/012-velgait.json",
+      "seriesId": "series.velgait",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/013-embarg.json",
+      "seriesId": "series.embarg",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/014-kordopil.json",
+      "seriesId": "series.kordopil",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/015-palseit.json",
+      "seriesId": "series.palseit",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/016-numaporon.json",
+      "seriesId": "series.numaporon",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/017-chilumicana.json",
+      "seriesId": "series.chilumicana",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/018-kohalgis.json",
+      "seriesId": "series.kohalgis",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/019-mitogaron.json",
+      "seriesId": "series.mitogaron",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/020-yurtepica.json",
+      "seriesId": "series.yurtepica",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/021-hinasalv.json",
+      "seriesId": "series.hinasalv",
+      "category": "monster",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/022-hasdren.json",
+      "seriesId": "series.hasdren",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/023-ivselam.json",
+      "seriesId": "series.ivselam",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/024-domelkano.json",
+      "seriesId": "series.domelkano",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/025-holnebas.json",
+      "seriesId": "series.holnebas",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/026-miltasea.json",
+      "seriesId": "series.miltasea",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/027-talgrina.json",
+      "seriesId": "series.talgrina",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/028-zanetolka.json",
+      "seriesId": "series.zanetolka",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/029-ulnaset.json",
+      "seriesId": "series.ulnaset",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/030-nemboraf.json",
+      "seriesId": "series.nemboraf",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/031-borazeln.json",
+      "seriesId": "series.borazeln",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/032-kudrimal.json",
+      "seriesId": "series.kudrimal",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/033-tosamurie.json",
+      "seriesId": "series.tosamurie",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/034-pukrenoa.json",
+      "seriesId": "series.pukrenoa",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/035-kesalpina.json",
+      "seriesId": "series.kesalpina",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/036-riptaum.json",
+      "seriesId": "series.riptaum",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/037-serinodam.json",
+      "seriesId": "series.serinodam",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/038-nufraken.json",
+      "seriesId": "series.nufraken",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/039-akaunel.json",
+      "seriesId": "series.akaunel",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/040-tsumarobek.json",
+      "seriesId": "series.tsumarobek",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/041-furemsad.json",
+      "seriesId": "series.furemsad",
+      "category": "monster",
+      "weapons": 21,
+      "armor": 15,
+      "recipes": 36
+    },
+    {
+      "path": "equipment/042-grasedon.json",
+      "seriesId": "series.grasedon",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/043-ryuzelka.json",
+      "seriesId": "series.ryuzelka",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/044-mordine.json",
+      "seriesId": "series.mordine",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/045-doberken.json",
+      "seriesId": "series.doberken",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/046-shilhatora.json",
+      "seriesId": "series.shilhatora",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/047-kuzanerio.json",
+      "seriesId": "series.kuzanerio",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/048-fesrami.json",
+      "seriesId": "series.fesrami",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/049-elmejika.json",
+      "seriesId": "series.elmejika",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/050-azelnoto.json",
+      "seriesId": "series.azelnoto",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/051-bezrakio.json",
+      "seriesId": "series.bezrakio",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/052-murzenato.json",
+      "seriesId": "series.murzenato",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/053-hauremika.json",
+      "seriesId": "series.hauremika",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/054-zedbanil.json",
+      "seriesId": "series.zedbanil",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/055-oldasem.json",
+      "seriesId": "series.oldasem",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/056-nuolvan.json",
+      "seriesId": "series.nuolvan",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/057-tarhegna.json",
+      "seriesId": "series.tarhegna",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/058-porgamis.json",
+      "seriesId": "series.porgamis",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/059-yarlshena.json",
+      "seriesId": "series.yarlshena",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/060-pizelta.json",
+      "seriesId": "series.pizelta",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/061-damorikus.json",
+      "seriesId": "series.damorikus",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/062-isarnem.json",
+      "seriesId": "series.isarnem",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/063-regsanio.json",
+      "seriesId": "series.regsanio",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/064-rupenias.json",
+      "seriesId": "series.rupenias",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/065-sograpin.json",
+      "seriesId": "series.sograpin",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/066-makuejira.json",
+      "seriesId": "series.makuejira",
+      "category": "monster",
+      "weapons": 14,
+      "armor": 10,
+      "recipes": 24
+    },
+    {
+      "path": "equipment/067-gumesald.json",
+      "seriesId": "series.gumesald",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/068-nericaus.json",
+      "seriesId": "series.nericaus",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/069-voltena.json",
+      "seriesId": "series.voltena",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/070-kitolnam.json",
+      "seriesId": "series.kitolnam",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/071-segranio.json",
+      "seriesId": "series.segranio",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/072-dekoranze.json",
+      "seriesId": "series.dekoranze",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/073-fusaldom.json",
+      "seriesId": "series.fusaldom",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/074-rimposera.json",
+      "seriesId": "series.rimposera",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/075-dalhoina.json",
+      "seriesId": "series.dalhoina",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/076-zonikebal.json",
+      "seriesId": "series.zonikebal",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/077-ludopanea.json",
+      "seriesId": "series.ludopanea",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/078-salpinoc.json",
+      "seriesId": "series.salpinoc",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/079-hemzario.json",
+      "seriesId": "series.hemzario",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/080-pasnelim.json",
+      "seriesId": "series.pasnelim",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/081-zaclatom.json",
+      "seriesId": "series.zaclatom",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/082-izoflane.json",
+      "seriesId": "series.izoflane",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/083-queribas.json",
+      "seriesId": "series.queribas",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/084-enagrio.json",
+      "seriesId": "series.enagrio",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/085-nucbarea.json",
+      "seriesId": "series.nucbarea",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/086-towalsem.json",
+      "seriesId": "series.towalsem",
+      "category": "monster",
+      "weapons": 7,
+      "armor": 5,
+      "recipes": 12
+    },
+    {
+      "path": "equipment/G87-woven_grass.json",
+      "seriesId": "gathering.woven_grass",
+      "category": "gathering",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/G88-rootwood.json",
+      "seriesId": "gathering.rootwood",
+      "category": "gathering",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/G89-resin.json",
+      "seriesId": "gathering.resin",
+      "category": "gathering",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/G90-forged_iron.json",
+      "seriesId": "gathering.forged_iron",
+      "category": "gathering",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/G91-mica.json",
+      "seriesId": "gathering.mica",
+      "category": "gathering",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/G92-densestone.json",
+      "seriesId": "gathering.densestone",
+      "category": "gathering",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/G93-ring_beetle.json",
+      "seriesId": "gathering.ring_beetle",
+      "category": "gathering",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/G94-silk_moth.json",
+      "seriesId": "gathering.silk_moth",
+      "category": "gathering",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    },
+    {
+      "path": "equipment/G95-lantern_firefly.json",
+      "seriesId": "gathering.lantern_firefly",
+      "category": "gathering",
+      "weapons": 28,
+      "armor": 20,
+      "recipes": 48
+    }
+  ],
+  "mechanics": [
+    "mechanics/01.json",
+    "mechanics/02.json",
+    "mechanics/03.json",
+    "mechanics/04.json",
+    "mechanics/05.json",
+    "mechanics/06.json",
+    "mechanics/07.json",
+    "mechanics/08.json",
+    "mechanics/09.json",
+    "mechanics/10.json",
+    "mechanics/11.json",
+    "mechanics/12.json",
+    "mechanics/13.json",
+    "mechanics/14.json",
+    "mechanics/15.json",
+    "mechanics/16.json",
+    "mechanics/17.json",
+    "mechanics/18.json",
+    "mechanics/19.json",
+    "mechanics/20.json",
+    "mechanics/21.json",
+    "mechanics/22.json",
+    "mechanics/23.json",
+    "mechanics/24.json",
+    "mechanics/25.json",
+    "mechanics/26.json",
+    "mechanics/27.json",
+    "mechanics/28.json",
+    "mechanics/29.json",
+    "mechanics/30.json",
+    "mechanics/31.json",
+    "mechanics/32.json",
+    "mechanics/33.json",
+    "mechanics/34.json",
+    "mechanics/35.json"
+  ],
+  "materials": [
+    "materials/01.json",
+    "materials/02.json",
+    "materials/03.json",
+    "materials/04.json",
+    "materials/05.json",
+    "materials/06.json",
+    "materials/07.json",
+    "materials/08.json",
+    "materials/09.json",
+    "materials/10.json",
+    "materials/11.json",
+    "materials/12.json"
+  ],
+  "appearance": [
+    "appearance/01.json",
+    "appearance/02.json",
+    "appearance/03.json",
+    "appearance/04.json",
+    "appearance/05.json",
+    "appearance/06.json",
+    "appearance/07.json",
+    "appearance/08.json",
+    "appearance/09.json"
+  ]
+}
