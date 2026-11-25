@@ -1622,9 +1622,9 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   // ---- 里の人と、物語「帰り道の灯」（v0.23.0。ChatGPT の Pull Request #5・#7）----
   const npcs = await until(page, () => {
     const g = window.__vh.view.scene.getObjectByName('npcs');
-    return !!g && g.userData.npcs.length === 3 && g.userData.npcs.every((s) => s.mesh.material.visible && s.mesh.material.map?.image?.naturalWidth > 0);
+    return !!g && g.userData.npcs.length === 4 && g.userData.npcs.every((s) => s.mesh.material.visible && s.mesh.material.map?.image?.naturalWidth > 0);
   }, 15000);
-  check('里: ミナギ・ロクハ・イサネが、依頼板・工房・商店のそばに立っている（切り抜いた絵の板。絵が読めている）', npcs, await page.evaluate(() => JSON.stringify(window.__vh.content.hub.npcs.map((n) => n.name))));
+  check('里: ミナギ・ロクハ・イサネが依頼板・工房・商店のそばに、セナキ（v0.29.0）が里の出口の門のそばに立っている（切り抜いた絵の板。絵が読めている）', npcs, await page.evaluate(() => JSON.stringify(window.__vh.content.hub.npcs.map((n) => n.name))));
   await put('board');
   await until(page, () => window.__vh.nearFacility?.id === 'board');
   await page.waitForTimeout(400);
@@ -1645,11 +1645,25 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   await page.screenshot({ path: `${OUT}98_story_dialog.png` });
   // 台詞を 1 つずつ読み、まとめ（記録）が出たら止める（最後の「閉じる」は、下で押す）
   const said = [];
+  const faces = [];
   for (let i = 0; i < 8; i++) {
     said.push(await page.evaluate(() => `${document.querySelector('.story-who').textContent}|${document.querySelector('.story-text').textContent}`));
+    faces.push(await page.evaluate(() => document.getElementById('story').dataset.face));
     if (said.at(-1).startsWith('記録|')) break;
     await page.click('.story-buttons button');
   }
+  // 場面の絵（v0.29.0。#13）: 会話の窓の後ろに出る。台詞ごとに表情が替わる
+  const sceneArt = await page.evaluate(async () => {
+    const st = document.getElementById('story');
+    const url = (getComputedStyle(st).backgroundImage.match(/url\("?([^")]+)"?\)/) ?? [])[1] ?? '';
+    const img = new Image();
+    img.src = url;
+    await img.decode().catch(() => {});
+    return { art: st.dataset.art, hasArt: st.classList.contains('has-art'), w: img.naturalWidth, h: img.naturalHeight };
+  });
+  check('物語（v0.29.0）: 会話の窓の後ろに場面の絵（最初の荷が届く。1280×720）。台詞ごとに表情の顔が替わる（イサネの安堵 → ロクハ → ミナギの安堵 → ミナギ → ミナギの集中）',
+    sceneArt.art === 'event_story_first_delivery_v1' && sceneArt.hasArt && sceneArt.w === 1280 && sceneArt.h === 720
+      && faces.slice(0, 5).join() === 'merchant_relief,smith,minagi_relief,minagi,minagi_focus', JSON.stringify({ sceneArt, faces }));
   check('物語: 記録を開くと会話の窓が出る（顔の絵・名前・台詞）。読み返す時の報告は、討伐・捕獲の分かれない言葉。最後にまとめが出る',
     opened && said[0] === 'イサネ（荷を運ぶ商い手）|「荷、通ったよ。布も薬も全部。さっきまで向こうで止まってたのが、ここにある。」' && said[3] === 'ミナギ（受付と記録）|「区間の安全を確かめて、荷を通したそう。」' && /^記録\|/.test(said[5] ?? ''), JSON.stringify(said));
   await page.click('.story-buttons button');

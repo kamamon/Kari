@@ -376,6 +376,29 @@
    "holesCleared": 1
   },
   {
+   "id": "minagi",
+   "side": "back",
+   "src": "npc/ref_npc_minagi_back_v1",
+   "px": [
+    1086,
+    1448
+   ],
+   "bgLab": [
+    84.93,
+    3.27,
+    2.35
+   ],
+   "borderDeltaE99": 1.17,
+   "bbox": [
+    327,
+    24,
+    742,
+    1401
+   ],
+   "floorShadowPx": 6193,
+   "holesCleared": 1
+  },
+  {
    "id": "smith",
    "side": "front",
    "src": "npc/ref_npc_smith_front_v1",
@@ -466,6 +489,52 @@
    ],
    "floorShadowPx": 421,
    "holesCleared": 0
+  },
+  {
+   "id": "senaki",
+   "side": "front",
+   "src": "npc/ref_npc_senaki_front_v1",
+   "px": [
+    1086,
+    1448
+   ],
+   "bgLab": [
+    83.25,
+    3.11,
+    3.48
+   ],
+   "borderDeltaE99": 1.23,
+   "bbox": [
+    273,
+    19,
+    787,
+    1411
+   ],
+   "floorShadowPx": 7543,
+   "holesCleared": 1
+  },
+  {
+   "id": "senaki",
+   "side": "back",
+   "src": "npc/ref_npc_senaki_back_v1",
+   "px": [
+    1086,
+    1448
+   ],
+   "bgLab": [
+    83.53,
+    3.63,
+    2.98
+   ],
+   "borderDeltaE99": 1.3,
+   "bbox": [
+    275,
+    19,
+    786,
+    1406
+   ],
+   "floorShadowPx": 7562,
+   "holesCleared": 1
   }
  ],
  "portraits": [
@@ -473,27 +542,81 @@
    "id": "minagi",
    "src": "npc/minagi_bust_v1",
    "cropPx": [
-    169,
-    24,
-    813
+    111,
+    17,
+    869
+   ]
+  },
+  {
+   "id": "minagi_focus",
+   "src": "portraits/portrait_minagi_focus_v1",
+   "cropPx": [
+    110,
+    26,
+    869
+   ]
+  },
+  {
+   "id": "minagi_relief",
+   "src": "portraits/portrait_minagi_relief_v1",
+   "cropPx": [
+    108,
+    27,
+    869
    ]
   },
   {
    "id": "smith",
-   "src": "npc/ref_npc_smith_front_v1",
+   "src": "portraits/portrait_rokuha_neutral_v1",
    "cropPx": [
-    332,
-    21,
-    406
+    116,
+    43,
+    869
+   ]
+  },
+  {
+   "id": "smith_thinking",
+   "src": "portraits/portrait_rokuha_thinking_v1",
+   "cropPx": [
+    117,
+    42,
+    869
    ]
   },
   {
    "id": "merchant",
-   "src": "npc/ref_npc_merchant_front_v1",
+   "src": "portraits/portrait_isane_neutral_v1",
    "cropPx": [
-    323,
-    -4,
-    419
+    100,
+    -10,
+    869
+   ]
+  },
+  {
+   "id": "merchant_relief",
+   "src": "portraits/portrait_isane_relief_v1",
+   "cropPx": [
+    98,
+    -9,
+    869
+   ]
+  },
+  {
+   "id": "senaki",
+   "src": "portraits/portrait_senaki_neutral_v1",
+   "cropPx": [
+    111,
+    68,
+    869
+   ]
+  },
+  {
+   "id": "senaki_reflective",
+   "src": "portraits/portrait_senaki_reflective_v1",
+   "cropPx": [
+    112,
+    70,
+    869
    ]
   }
  ],
@@ -765,6 +888,13 @@
    ],
    "bytes": 30066
   },
+  "textures/npc/npc_minagi_back_v1": {
+   "px": [
+    197,
+    640
+   ],
+   "bytes": 28014
+  },
   "textures/npc/npc_smith_front_v1": {
    "px": [
     266,
@@ -793,26 +923,82 @@
    ],
    "bytes": 38138
   },
+  "textures/npc/npc_senaki_front_v1": {
+   "px": [
+    241,
+    640
+   ],
+   "bytes": 43612
+  },
+  "textures/npc/npc_senaki_back_v1": {
+   "px": [
+    240,
+    640
+   ],
+   "bytes": 43372
+  },
   "portraits/portrait_minagi_v1": {
    "px": [
     256,
     256
    ],
-   "bytes": 13726
+   "bytes": 13042
+  },
+  "portraits/portrait_minagi_focus_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 15758
+  },
+  "portraits/portrait_minagi_relief_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 15802
   },
   "portraits/portrait_smith_v1": {
    "px": [
     256,
     256
    ],
-   "bytes": 14976
+   "bytes": 16458
+  },
+  "portraits/portrait_smith_thinking_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 15488
   },
   "portraits/portrait_merchant_v1": {
    "px": [
     256,
     256
    ],
-   "bytes": 15568
+   "bytes": 19248
+  },
+  "portraits/portrait_merchant_relief_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 17086
+  },
+  "portraits/portrait_senaki_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 19738
+  },
+  "portraits/portrait_senaki_reflective_v1": {
+   "px": [
+    256,
+    256
+   ],
+   "bytes": 17022
   },
   "textures/props/prop_herb_v1": {
    "px": [
@@ -967,6 +1153,20 @@
     427
    ],
    "bytes": 53852
+  },
+  "story/event_story_arrival_board_v1": {
+   "px": [
+    1280,
+    720
+   ],
+   "bytes": 194078
+  },
+  "story/event_story_first_delivery_v1": {
+   "px": [
+    1280,
+    720
+   ],
+   "bytes": 200234
   }
  },
  "props": [
@@ -1013,6 +1213,22 @@
    ],
    "floorShadowPx": 1689,
    "holesCleared": 0
+  }
+ ],
+ "story": [
+  {
+   "file": "event_story_arrival_board_v1",
+   "px": [
+    1672,
+    941
+   ]
+  },
+  {
+   "file": "event_story_first_delivery_v1",
+   "px": [
+    1672,
+    941
+   ]
   }
  ]
 }

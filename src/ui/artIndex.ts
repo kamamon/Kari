@@ -21,9 +21,21 @@ export const ITEM_ICONS: Readonly<Record<string, string>> = {
 /** 会話の顔（public/assets/portraits/<名前>.webp。256 四方の切り抜き） */
 export const PORTRAITS: Readonly<Record<string, string>> = {
   minagi: 'portrait_minagi_v1',
+  minagi_focus: 'portrait_minagi_focus_v1',
+  minagi_relief: 'portrait_minagi_relief_v1',
   smith: 'portrait_smith_v1',
+  smith_thinking: 'portrait_smith_thinking_v1',
   merchant: 'portrait_merchant_v1',
+  merchant_relief: 'portrait_merchant_relief_v1',
+  senaki: 'portrait_senaki_v1',
+  senaki_reflective: 'portrait_senaki_reflective_v1',
 };
+
+/** 物語の場面の絵（public/assets/story/<名前>.webp。1280 × 720。v0.29.0） */
+export const STORY_ART: readonly string[] = [
+  'event_story_arrival_board_v1',
+  'event_story_first_delivery_v1',
+];
 
 /** 狩場の名前（登録簿の fields）→ 景色の原画（public/assets/fields/<名前>.webp。640 × 427） */
 export const FIELD_ART: Readonly<Record<string, string>> = {

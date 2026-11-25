@@ -1,8 +1,8 @@
 // 物語「帰り道の灯」の画面（v0.23.0）: 会話の窓（StoryDialog）と、依頼板の物語の欄（renderStoryPanel）。
 // 会話は、安全な場所（里・拠点）でだけ開く。読み返しても、報酬・進み方・選んだ返事は変わらない（何も保存しない）。
 import type { Content } from '../data/schemas';
-import { lineText, storyView, type StoryLine, type StoryOutcome, type StoryScene } from '../data/story';
-import { fieldArtUrl, portraitUrl } from './icons';
+import { lineFace, lineText, storyView, type StoryLine, type StoryOutcome, type StoryScene } from '../data/story';
+import { fieldArtUrl, portraitUrl, storyArtUrl } from './icons';
 
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string): HTMLElementTagNameMap[K] => {
   const e = document.createElement(tag);
@@ -99,6 +99,12 @@ export class StoryDialog {
     this.outcome = p.outcome ?? 'any';
     this.index = 0;
     this.root.dataset.scene = this.scene.id;
+    // 場面の絵（v0.29.0）: 窓の後ろに出す。無い場面は、後ろのゲームの画面のまま
+    const art = this.scene.art ? storyArtUrl(this.scene.art) : null;
+    this.root.classList.toggle('has-art', !!art);
+    // CSS の変数の中の相対の URL は、CSS のファイルの場所から解かれる（BASE_URL が ./ の時に assets/assets/ になる）ので、文書の場所から絶対の URL にしておく
+    this.root.style.setProperty('--story-art', art ? `url("${new URL(art, document.baseURI).href}")` : 'none');
+    this.root.dataset.art = this.scene.art ?? '';
     this.show();
   }
 
@@ -110,6 +116,7 @@ export class StoryDialog {
       // 場面の終わり: まとめの 1 行
       this.who.textContent = '記録';
       this.text.textContent = s.summary;
+      this.root.dataset.face = '';
       this.setFace(null);
       const more = this.queue.length > 0;
       this.addButton(more ? '次の話へ' : '閉じる', () => (more ? this.nextScene() : this.close()));
@@ -119,6 +126,7 @@ export class StoryDialog {
     if (line.choices?.length) {
       this.who.textContent = 'あなた';
       this.text.textContent = '';
+      this.root.dataset.face = '';
       this.setFace(null);
       for (const c of line.choices) this.addButton(c, () => this.advance(), 'story-choice');
       return;
@@ -126,7 +134,9 @@ export class StoryDialog {
     const sp = line.who ? this.content.story.speakers[line.who] : undefined;
     this.who.textContent = sp ? `${sp.name}（${sp.role}）` : '';
     this.text.textContent = lineText(line, this.outcome);
-    this.setFace(sp?.portrait ? portraitUrl(sp.portrait) : null, sp?.name);
+    const face = lineFace(sp, line);
+    this.root.dataset.face = face ?? '';
+    this.setFace(face ? portraitUrl(face) : null, sp?.name);
     this.addButton('次へ', () => this.advance());
   }
 

@@ -3,11 +3,12 @@
 // 進み方は、保存データの「依頼の達成回数」（progress.questClears）から決める（保存の形は変えない。S0 の決まり）。
 // ここは計算だけ（画面と保存には触れない）。
 
-/** 話す人。portrait は会話の顔（src/ui/artIndex.ts の PORTRAITS の名前）。無ければ、名前だけ */
+/** 話す人。portrait は会話の顔（src/ui/artIndex.ts の PORTRAITS の名前）。無ければ、名前だけ。faces は表情 → 顔の名前（v0.29.0） */
 export interface StorySpeaker {
   name: string;
   role: string;
   portrait?: string;
+  faces?: Record<string, string>;
 }
 
 /** 台詞 1 つ。variants は、帰還の報告で、討伐か捕獲かで変える言葉（any = どちらか分からない時。読み返す時もこれ） */
@@ -17,6 +18,8 @@ export interface StoryLine {
   variants?: { slay: string; capture: string; any: string };
   /** 主人公の返事（どれを選んでも、話は同じに続く。選んだものは保存しない） */
   choices?: string[];
+  /** 表情（話す人の faces の名前。無ければ平静の顔。v0.29.0） */
+  face?: string;
 }
 
 export interface StoryScene {
@@ -27,6 +30,8 @@ export interface StoryScene {
   lines: StoryLine[];
   /** 読み終えた後に出す、まとめの 1 行（記録の一覧にも出す） */
   summary: string;
+  /** 会話の窓の後ろに出す場面の絵（src/ui/artIndex.ts の STORY_ART の名前。v0.29.0） */
+  art?: string;
 }
 
 /** 章の中の 1 つの狩り（いまある依頼を使う。S0） */
@@ -155,23 +160,35 @@ export function scenesUnlocked(story: StoryDef, before: Clears, after: Clears): 
   });
 }
 
-/** データの決まり。questIds は、いまある依頼。portraits は、顔の絵のある名前 */
-export function validateStory(story: StoryDef, questIds: ReadonlySet<string>, portraits?: ReadonlySet<string>): string[] {
+/** 台詞の顔の名前（表情があれば、その顔。無ければ平静の顔。顔の無い人は undefined） */
+export function lineFace(sp: StorySpeaker | undefined, line: StoryLine): string | undefined {
+  if (!sp) return undefined;
+  return (line.face && sp.faces?.[line.face]) || sp.portrait;
+}
+
+/** データの決まり。questIds は、いまある依頼。portraits は、顔の絵のある名前。art は、場面の絵のある名前 */
+export function validateStory(story: StoryDef, questIds: ReadonlySet<string>, portraits?: ReadonlySet<string>, art?: ReadonlySet<string>): string[] {
   const errors: string[] = [];
   const scenes = new Map(story.scenes.map((s) => [s.id, s]));
   if (scenes.size !== story.scenes.length) errors.push('scene の id が重複');
   for (const [k, sp] of Object.entries(story.speakers)) {
     if (!sp.name) errors.push(`speaker ${k}: name が無い`);
     if (sp.portrait && portraits && !portraits.has(sp.portrait)) errors.push(`speaker ${k}: 顔の絵 ${sp.portrait} が無い`);
+    for (const [face, name] of Object.entries(sp.faces ?? {})) {
+      if (!sp.portrait) errors.push(`speaker ${k}: 平静の顔が無いのに、表情 ${face} がある`);
+      if (portraits && !portraits.has(name)) errors.push(`speaker ${k}: 表情 ${face} の顔の絵 ${name} が無い`);
+    }
   }
   for (const s of story.scenes) {
     if (!s.title || !s.place || !s.summary) errors.push(`scene ${s.id}: title / place / summary が無い`);
     if (s.lines.length === 0) errors.push(`scene ${s.id}: 台詞が無い`);
+    if (s.art !== undefined && art && !art.has(s.art)) errors.push(`scene ${s.id}: 場面の絵 ${s.art} が無い`);
     for (const l of s.lines) {
       if (l.who && !story.speakers[l.who]) errors.push(`scene ${s.id}: 話す人 ${l.who} が無い`);
       if (!l.text && !l.variants && !l.choices?.length) errors.push(`scene ${s.id}: 中身の無い台詞`);
       if (l.variants && !(l.variants.slay && l.variants.capture && l.variants.any)) errors.push(`scene ${s.id}: 討伐・捕獲・共通の言葉がそろっていない`);
       if (!l.who && !l.choices?.length) errors.push(`scene ${s.id}: 話す人の無い台詞`);
+      if (l.face !== undefined && !(l.who && story.speakers[l.who]?.faces?.[l.face])) errors.push(`scene ${s.id}: 表情 ${l.face} が、話す人 ${l.who ?? '（無し）'} に無い`);
     }
   }
   const used = new Set<string>();

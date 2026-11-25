@@ -513,3 +513,5 @@ body.looks-open #rotate { display: none !important; }
   .looks-bar .gap { display: none; }
 }
 @media (orientation: portrait) and (pointer: coarse) { .looks-note::after { content: '縦向きでも編集できます。狩りは横向きで始めます。'; display: block; } }
+/* 物語の場面の絵（v0.29.0）: 会話の窓の後ろに、画面いっぱいに。下の窓の所は暗くする */
+#story.has-art { background: linear-gradient(to top, rgba(6, 9, 7, 0.82), rgba(6, 9, 7, 0.1) 55%, rgba(6, 9, 7, 0)), var(--story-art) center / cover no-repeat, #0b0f0c; }

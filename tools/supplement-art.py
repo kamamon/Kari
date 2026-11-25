@@ -6,10 +6,14 @@
   art-source/npc/minagi_full_v1.png         受付ミナギの全身（依頼 3）。minagi_bust_v1.png は会話の顔
   art-source/fields/field_NN_overview_v1.png 登録簿の狩場 20 の景色の原画（1536 × 1024）
   art-source/env/props/ref_fureki_prop_*_v1.png  採集草と採掘の露頭（RGB。無地の背景。v0.27.0 から、狩らない依頼の採取点）
+  art-source/portraits/portrait_*_v1.png    会話の表情（RGBA。胸から上。ChatGPT の Pull Request #13。v0.29.0）
+  art-source/npc/ref_npc_{minagi_back,senaki_front,senaki_back}_v1.png  ミナギの背面と、セナキの正面・背面（#13）
+  art-source/story/event_story_*_v1.png     物語の場面の絵（1672 × 941。#13）
     → public/assets/icons/<名前>.webp            256 四方。透明の所の薄い残り（alpha 1〜15）を 0 に、外の余白を 1 割に
       public/assets/textures/npc/<名前>.webp      人の切り抜き（高さ 640px）。里に立てる板に貼る
       public/assets/portraits/<名前>.webp         会話の窓に出す、頭と肩の切り抜き（256 四方）
       public/assets/fields/<名前>.webp            狩場の景色（640 × 427）。図鑑と物語の欄に出す
+      public/assets/story/<名前>.webp             物語の場面の絵（1280 × 720）。会話の窓の後ろに出す
       src/ui/artIndex.ts                          アイコン・顔・狩場の絵の名前（素材の id から）
       src/render/npcArt.ts                        人の板の大きさ（絵の縦横の比・足の位置・背丈）と、採取点の板の大きさ（PROP_ART）
       public/assets/textures/props/<名前>.webp    採取点の切り抜き（高さ 384px。v0.27.0）
@@ -57,18 +61,30 @@ ALPHA_CUT = 16
 
 # 人: 名前 → (正面, 背面, 背丈 m。仮の値。docs/decisions.md の D-093)
 NPCS = {
-    'minagi': ('npc/minagi_full_v1', None, 1.64),
+    'minagi': ('npc/minagi_full_v1', 'npc/ref_npc_minagi_back_v1', 1.64),
     'smith': ('npc/ref_npc_smith_front_v1', 'npc/ref_npc_smith_back_v1', 1.78),
     'merchant': ('npc/ref_npc_merchant_front_v1', 'npc/ref_npc_merchant_back_v1', 1.66),
+    'senaki': ('npc/ref_npc_senaki_front_v1', 'npc/ref_npc_senaki_back_v1', 1.68),
 }
 NPC_H = 640
-# 会話の顔: 名前 → 原画（ミナギは会話用のバストアップ、ほかは全身の正面から頭と肩を切る）
+# 会話の顔（v0.29.0 から表情つき）: 名前 → 原画。どれも胸から上の 1086 × 1448 で、同じ切り方（頭の上から、幅の 8 割の正方形）。
+# 平静は「話す人の名前」、表情は「名前_表情」。ミナギの平静は依頼 3 のバストアップ（無地の背景を切り抜く）、ほかは #13 の透明の絵
 PORTRAITS = {
     'minagi': 'npc/minagi_bust_v1',
-    'smith': 'npc/ref_npc_smith_front_v1',
-    'merchant': 'npc/ref_npc_merchant_front_v1',
+    'minagi_focus': 'portraits/portrait_minagi_focus_v1',
+    'minagi_relief': 'portraits/portrait_minagi_relief_v1',
+    'smith': 'portraits/portrait_rokuha_neutral_v1',
+    'smith_thinking': 'portraits/portrait_rokuha_thinking_v1',
+    'merchant': 'portraits/portrait_isane_neutral_v1',
+    'merchant_relief': 'portraits/portrait_isane_relief_v1',
+    'senaki': 'portraits/portrait_senaki_neutral_v1',
+    'senaki_reflective': 'portraits/portrait_senaki_reflective_v1',
 }
 PORTRAIT_PX = 256
+# 物語の場面の絵（#13）: 名前 → 原画。会話の窓の後ろに出す。遊べる場面（序章・第 1 章）で使う絵だけを作る。
+# 残りの 3 枚（old_records = 第 4 章、limited_lights = 第 7 章、homecoming = 終章）は art-source/story/ に置いたまま。章ができたら足す
+STORY_ART = ['event_story_arrival_board_v1', 'event_story_first_delivery_v1']
+STORY_W, STORY_H = 1280, 720
 # 採取点の板（v0.27.0。狩らない依頼）: 名前 → (原画, 高さ m。仮の値)。切り抜き方は人と同じ
 PROPS = {
     'herb': ('env/props/ref_fureki_prop_herb_v1', 0.85),
@@ -140,6 +156,18 @@ def cutout(path):
     return rgb, alpha, m
 
 
+def bleed(rgb, alpha, solid=0.95):
+    """縁の半透明の所の色を、いちばん近い不透明の所の色にする（明るい背景の色が縁に残って、暗い所で白く光るのを防ぐ）"""
+    hard = alpha >= solid
+    if hard.all() or not hard.any():
+        return rgb
+    _, (iy, ix) = ndimage.distance_transform_edt(~hard, return_indices=True)
+    out = rgb.copy()
+    soft = ~hard
+    out[soft] = rgb[iy[soft], ix[soft]]
+    return out
+
+
 def save_webp(arr_rgba, path, q=88):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     Image.fromarray(arr_rgba).save(path, 'WEBP', quality=q, method=6)
@@ -204,21 +232,25 @@ def main():
             measure['outputs'][f'textures/npc/{name}'] = {'px': list(img.size), 'bytes': b}
         npc_meta[key] = meta
 
-    # ---- 会話の顔 ----
+    # ---- 会話の顔（胸から上の絵を、同じ切り方で: 頭の上の少し上から、幅の 8 割の正方形。横は頭の中心）----
     for key, src in PORTRAITS.items():
-        rgb, alpha, m = cutout(os.path.join(ART, src + '.png'))
-        x0, y0, x1, y1 = m['bbox']
-        if key == 'minagi':
-            # バストアップ: 横幅の 75% の正方形を、頭の上から
-            s = int((x1 - x0) * 0.75)
-            cx = (x0 + x1) / 2 + (x1 - x0) * 0.03
-            top = y0 - int(s * 0.04)
+        path = os.path.join(ART, src + '.png')
+        im = Image.open(path)
+        if im.mode == 'RGBA':
+            a = np.asarray(im).astype(np.float64) / 255
+            rgb, alpha = a[..., :3], a[..., 3]
         else:
-            # 全身: 背丈の 30% の正方形（頭と肩）
-            s = int((y1 - y0) * 0.30)
-            cols = np.nonzero(alpha[y0:y0 + int(s * 0.35)].max(axis=0) > 0.5)[0]
-            cx = (cols.min() + cols.max()) / 2
-            top = y0 - int(s * 0.06)
+            rgb, alpha, _ = cutout(path)
+            # 髪の先に残る背景の明るい色: 縁を 3px 削って、なめらかにしてから、縁の色を内側の色にする
+            alpha = ndimage.gaussian_filter(ndimage.grey_erosion(alpha, size=(7, 7)), 1.0)
+            rgb = bleed(rgb, alpha)
+        rows = np.nonzero((alpha > 0.5).any(axis=1))[0]
+        y0 = int(rows.min())
+        s = int(round(alpha.shape[1] * 0.8))
+        head = alpha[y0:y0 + int(s * 0.25)] > 0.5
+        cols = np.nonzero(head.any(axis=0))[0]
+        cx = (cols.min() + cols.max()) / 2
+        top = y0 - int(s * 0.05)
         X0 = int(round(cx - s / 2))
         u8 = to_u8(rgb, alpha)
         pad = np.zeros((u8.shape[0] + 2 * s, u8.shape[1] + 2 * s, 4), np.uint8)
@@ -267,6 +299,15 @@ def main():
     if len(field_art) != len(known):
         raise SystemExit(f'狩場の絵が {len(field_art)} 枚（登録簿は {len(known)}）')
 
+    # ---- 物語の場面（v0.29.0）----
+    measure['story'] = []
+    for name in STORY_ART:
+        im = Image.open(os.path.join(ART, 'story', name + '.png')).convert('RGB')
+        out = im.resize((STORY_W, STORY_H), Image.LANCZOS)
+        b = save_webp(np.asarray(out), os.path.join(PUB, 'story', name + '.webp'), q=80)
+        measure['story'].append({'file': name, 'px': list(im.size)})
+        measure['outputs'][f'story/{name}'] = {'px': [STORY_W, STORY_H], 'bytes': b}
+
     # ---- 書き出し ----
     ts = ['// tools/supplement-art.py の出力（npm run supplement:art）。手で編集しない。', '',
           '/** 素材・道具の id → アイコン（public/assets/icons/<名前>.webp。256 四方） */',
@@ -275,7 +316,10 @@ def main():
     ts += ['};', '', '/** 会話の顔（public/assets/portraits/<名前>.webp。256 四方の切り抜き） */',
            'export const PORTRAITS: Readonly<Record<string, string>> = {']
     ts += [f"  {k}: 'portrait_{k}_v1'," for k in PORTRAITS]
-    ts += ['};', '', '/** 狩場の名前（登録簿の fields）→ 景色の原画（public/assets/fields/<名前>.webp。640 × 427） */',
+    ts += ['};', '', '/** 物語の場面の絵（public/assets/story/<名前>.webp。1280 × 720。v0.29.0） */',
+           'export const STORY_ART: readonly string[] = [']
+    ts += [f"  '{k}'," for k in STORY_ART]
+    ts += ['];', '', '/** 狩場の名前（登録簿の fields）→ 景色の原画（public/assets/fields/<名前>.webp。640 × 427） */',
            'export const FIELD_ART: Readonly<Record<string, string>> = {']
     ts += [f"  '{k}': '{v}'," for k, v in field_art.items()]
     ts += ['};', '']
@@ -295,7 +339,7 @@ def main():
     with open(MEASURE, 'w', encoding='utf-8') as f:
         json.dump(measure, f, ensure_ascii=False, indent=1)
     total = sum(v['bytes'] for v in measure['outputs'].values())
-    print(f"アイコン {len(measure['icons'])}、人 {sum(1 for _ in measure['npcs'])} 枚、顔 {len(measure['portraits'])}、採取点 {len(measure['props'])}、狩場 {len(measure['fields'])}。合わせて {total / 1e6:.2f}MB")
+    print(f"アイコン {len(measure['icons'])}、人 {sum(1 for _ in measure['npcs'])} 枚、顔 {len(measure['portraits'])}、採取点 {len(measure['props'])}、狩場 {len(measure['fields'])}、場面 {len(measure['story'])}。合わせて {total / 1e6:.2f}MB")
 
 
 if __name__ == '__main__':

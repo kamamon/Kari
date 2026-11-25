@@ -2,8 +2,8 @@
 // 受入条件（docs/source/chatgpt-story-20261125/implementation_handoff_v1.md の 9 章）のうち、S0 に当たるものを、データと計算で確かめる。
 // 会話の窓・依頼板の欄・帰還の後に開くことは、ブラウザ検査（tools/smoke.mjs）で見る。
 import { describe, expect, it } from 'vitest';
-import { lineText, scenesUnlocked, storyView, validateStory, type StoryDef } from '../src/data/story';
-import { PORTRAITS } from '../src/ui/artIndex';
+import { lineFace, lineText, scenesUnlocked, storyView, validateStory, type StoryDef } from '../src/data/story';
+import { PORTRAITS, STORY_ART } from '../src/ui/artIndex';
 import { Vector3 } from 'three';
 import { NPC_ART } from '../src/render/npcArt';
 import { buildNpcSprites, updateNpcSprites } from '../src/render/npcSprites';
@@ -14,10 +14,10 @@ const GALDROS = 'quest.basin.003';
 const SELVARK = 'quest.selvark.r1';
 
 describe('物語のデータ', () => {
-  it('読み込みの検査を通る。顔の絵は、どの話す人にもある（セナキは絵が無いので名前だけ）', async () => {
+  it('読み込みの検査を通る。顔の絵は、どの話す人にもある（v0.29.0 からセナキも。ChatGPT #13 の表情の顔）', async () => {
     const c = await loadContent();
-    expect(validateStory(c.story, new Set(c.quests.keys()), new Set(Object.keys(PORTRAITS)))).toEqual([]);
-    expect(Object.values(c.story.speakers).filter((s) => s.portrait).map((s) => s.name).sort()).toEqual(['イサネ', 'ミナギ', 'ロクハ'].sort());
+    expect(validateStory(c.story, new Set(c.quests.keys()), new Set(Object.keys(PORTRAITS)), new Set(STORY_ART))).toEqual([]);
+    expect(Object.values(c.story.speakers).filter((s) => s.portrait).map((s) => s.name).sort()).toEqual(['イサネ', 'セナキ', 'ミナギ', 'ロクハ'].sort());
     // 序章・8 章・終章。遊べるのは序章と第 1 章だけ（第 1 章は、いまある 2 つの依頼）
     expect(c.story.chapters.map((x) => x.no)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
     expect(c.story.chapters.filter((x) => x.playable).map((x) => x.id)).toEqual(['ch0', 'ch1']);
@@ -27,10 +27,11 @@ describe('物語のデータ', () => {
     for (const s of c.story.scenes) for (const l of s.lines) for (const t of [l.text, ...(l.variants ? Object.values(l.variants) : []), ...(l.choices ?? [])]) if (t) expect(t.length, `${s.id}: ${t}`).toBeLessThanOrEqual(60);
   });
 
-  it('里に立つ人（ミナギ・ロクハ・イサネ）は、絵の板と当たりの円がある', async () => {
+  it('里に立つ人（ミナギ・ロクハ・イサネと、v0.29.0 から道守のセナキ）は、絵の板（正面と背面）と当たりの円がある', async () => {
     const c = await loadContent();
     const map = c.maps.get(c.hub.mapId)!;
-    expect((c.hub.npcs ?? []).map((n) => n.name)).toEqual(['ミナギ', 'ロクハ', 'イサネ']);
+    expect((c.hub.npcs ?? []).map((n) => n.name)).toEqual(['ミナギ', 'ロクハ', 'イサネ', 'セナキ']);
+    for (const n of c.hub.npcs ?? []) expect(NPC_ART[n.art]!.back, `${n.id} の背面`).toBeDefined();
     for (const n of c.hub.npcs ?? []) {
       expect(NPC_ART[n.art], n.id).toBeDefined();
       expect(map.rocks.some((r) => Math.hypot(r.x - n.x, r.z - n.z) < 0.01 && r.r <= 0.6), n.id).toBe(true);
@@ -40,6 +41,26 @@ describe('物語のデータ', () => {
       expect(art.height).toBeLessThan(1.9);
       expect(art.front.aspect).toBeLessThan(0.6);
     }
+  });
+
+  it('表情と場面の絵（v0.29.0）: 台詞の表情は話す人の顔へ、無い表情・無い絵は検査が見つける', async () => {
+    const c = await loadContent();
+    const sp = c.story.speakers;
+    const sc02 = c.story.scenes.find((s) => s.id === 'sc02')!;
+    // 荷が通った時のイサネは安堵、ロクハは平静（表情の指定なし）、ミナギは安堵
+    expect(sc02.lines.map((l) => lineFace(sp[l.who ?? ''], l) ?? '')).toEqual(['merchant_relief', 'smith', 'minagi_relief', 'minagi', 'minagi_focus']);
+    expect(c.story.scenes.map((s) => s.art)).toEqual(['event_story_arrival_board_v1', 'event_story_arrival_board_v1', 'event_story_first_delivery_v1', 'event_story_arrival_board_v1']);
+    // セナキの台詞は、セナキの顔（平静）
+    const sc03 = c.story.scenes.find((s) => s.id === 'sc03')!;
+    expect(lineFace(sp.senaki, sc03.lines.find((l) => l.who === 'senaki')!)).toBe('senaki');
+    const bad = JSON.parse(JSON.stringify(c.story)) as StoryDef;
+    bad.scenes[0]!.lines[0]!.face = 'anger';
+    bad.scenes[1]!.art = 'event_nothing';
+    bad.speakers.isane!.faces = { relief: 'portrait_nothing' };
+    const e = validateStory(bad, new Set(c.quests.keys()), new Set(Object.keys(PORTRAITS)), new Set(STORY_ART)).join('\n');
+    expect(e).toMatch(/表情 anger が、話す人 minagi に無い/);
+    expect(e).toMatch(/場面の絵 event_nothing が無い/);
+    expect(e).toMatch(/表情 relief の顔の絵 portrait_nothing が無い/);
   });
 
   it('検査は、まだ無い依頼を遊べる章に入れること・まだ遊べない章に狩りを入れること・使わない場面を見つける', async () => {
@@ -120,18 +141,18 @@ describe('進み方（保存データの達成回数から。保存の形は変�
 });
 
 describe('里に立つ人の板（描画）', () => {
-  it('板はカメラの方を向く。カメラが後ろへ回ると背面の絵に替わる（背面の絵が無いミナギは、正面のまま）', async () => {
+  it('板はカメラの方を向く。カメラが後ろへ回ると背面の絵に替わる（v0.29.0 からミナギとセナキにも背面の絵）', async () => {
     const c = await loadContent();
     const g = buildNpcSprites(c.hub.npcs ?? []);
     const list = g.userData.npcs as { def: { id: string; x: number; z: number; yaw: number }; mesh: { rotation: { y: number }; material: { userData: { npc: string } } } }[];
-    expect(list.length).toBe(3);
+    expect(list.length).toBe(4);
     for (const s of list) {
       const fwd = { x: Math.sin(s.def.yaw), z: Math.cos(s.def.yaw) };
       updateNpcSprites(g, new Vector3(s.def.x + fwd.x * 6, 1.6, s.def.z + fwd.z * 6));
       expect(s.mesh.material.userData.npc, s.def.id).toMatch(/_front_v1$/);
       expect(Math.abs(Math.atan2(Math.sin(s.mesh.rotation.y - s.def.yaw), Math.cos(s.mesh.rotation.y - s.def.yaw)))).toBeLessThan(1e-6);
       updateNpcSprites(g, new Vector3(s.def.x - fwd.x * 6, 1.6, s.def.z - fwd.z * 6));
-      expect(s.mesh.material.userData.npc, s.def.id).toMatch(s.def.id === 'npc.minagi' ? /_front_v1$/ : /_back_v1$/);
+      expect(s.mesh.material.userData.npc, s.def.id).toMatch(/_back_v1$/);
       // 真横では、どちらにも揺れない（替えた側のまま）
       const was = s.mesh.material.userData.npc;
       updateNpcSprites(g, new Vector3(s.def.x + fwd.z * 6, 1.6, s.def.z - fwd.x * 6));

@@ -13,6 +13,7 @@
   "npcs": [
     {"id": "npc.minagi", "name": "ミナギ", "facility": "board", "art": "minagi", "x": 2.6, "z": 11.4, "yaw": -2.8966},
     {"id": "npc.rokuha", "name": "ロクハ", "facility": "workshop", "art": "smith", "x": -10.6, "z": 6.4, "yaw": 2.042},
-    {"id": "npc.isane", "name": "イサネ", "facility": "shop", "art": "merchant", "x": 10.6, "z": 6.4, "yaw": -2.042}
+    {"id": "npc.isane", "name": "イサネ", "facility": "shop", "art": "merchant", "x": 10.6, "z": 6.4, "yaw": -2.042},
+    {"id": "npc.senaki", "name": "セナキ", "art": "senaki", "x": -4.5, "z": -11.5, "yaw": 1.0637}
   ]
 }

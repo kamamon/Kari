@@ -2,26 +2,40 @@
   "schemaVersion": 1,
   "id": "story.homeward_lights",
   "title": "帰り道の灯",
-  "note": "ChatGPT のストーリー設計 v1（Pull Request #7。原本は docs/source/chatgpt-story-20261125/）。v0.23.0 で入れたのは、序章と第 1 章（S0: いまある 2 つの依頼に、前後の話と記録を重ねる）。第 2 章から先は、狩場と依頼がそろった章から入れる。台詞は台本（dialogue_samples_v1.md）のまま。狩りの前の短い説明（brief）は、設計の文から Claude が書いた。人物の名前は仮。",
+  "note": "ChatGPT のストーリー設計 v1（Pull Request #7。原本は docs/source/chatgpt-story-20261125/）。v0.23.0 で入れたのは、序章と第 1 章（S0: いまある 2 つの依頼に、前後の話と記録を重ねる）。第 2 章から先は、狩場と依頼がそろった章から入れる。台詞は台本（dialogue_samples_v1.md）のまま。狩りの前の短い説明（brief）は、設計の文から Claude が書いた。人物の名前は仮。 v0.29.0: ChatGPT の人物原画・物語素材（Pull Request #13）から、会話の表情（faces と、台詞の face）・場面の絵（art）・セナキの顔を足した。どの表情をどの台詞に当てるかは、#13 の catalog の使い方から Claude が決めた。",
   "speakers": {
     "minagi": {
       "name": "ミナギ",
       "role": "受付と記録",
-      "portrait": "minagi"
+      "portrait": "minagi",
+      "faces": {
+        "focus": "minagi_focus",
+        "relief": "minagi_relief"
+      }
     },
     "isane": {
       "name": "イサネ",
       "role": "荷を運ぶ商い手",
-      "portrait": "merchant"
+      "portrait": "merchant",
+      "faces": {
+        "relief": "merchant_relief"
+      }
     },
     "rokuha": {
       "name": "ロクハ",
       "role": "工房の職人",
-      "portrait": "smith"
+      "portrait": "smith",
+      "faces": {
+        "thinking": "smith_thinking"
+      }
     },
     "senaki": {
       "name": "セナキ",
-      "role": "道の補修と見回りの古参"
+      "role": "道の補修と見回りの古参",
+      "portrait": "senaki",
+      "faces": {
+        "reflective": "senaki_reflective"
+      }
     }
   },
   "chapters": [
@@ -189,7 +203,8 @@
           "who": "minagi",
           "text": "「どちらでも。支度ができたら声をかけて。盆地で待っている荷があるの。」"
         }
-      ]
+      ],
+      "art": "event_story_arrival_board_v1"
     },
     {
       "id": "sc01",
@@ -213,7 +228,8 @@
           "who": "minagi",
           "text": "「帰ってきたら、道の様子も聞かせて。分からなかったことは、そのままでいいから。」"
         }
-      ]
+      ],
+      "art": "event_story_arrival_board_v1"
     },
     {
       "id": "sc02",
@@ -223,7 +239,8 @@
       "lines": [
         {
           "who": "isane",
-          "text": "「荷、通ったよ。布も薬も全部。さっきまで向こうで止まってたのが、ここにある。」"
+          "text": "「荷、通ったよ。布も薬も全部。さっきまで向こうで止まってたのが、ここにある。」",
+          "face": "relief"
         },
         {
           "who": "rokuha",
@@ -231,7 +248,8 @@
         },
         {
           "who": "minagi",
-          "text": "「仕事は達成。ありがとう。道の記録も、いま書き直した。」"
+          "text": "「仕事は達成。ありがとう。道の記録も、いま書き直した。」",
+          "face": "relief"
         },
         {
           "who": "minagi",
@@ -243,9 +261,11 @@
         },
         {
           "who": "minagi",
-          "text": "「ただ、別の荷道でも獣が寄っている。次は、その場所を確かめたい。」"
+          "text": "「ただ、別の荷道でも獣が寄っている。次は、その場所を確かめたい。」",
+          "face": "focus"
         }
-      ]
+      ],
+      "art": "event_story_first_delivery_v1"
     },
     {
       "id": "sc03",
@@ -255,11 +275,13 @@
       "lines": [
         {
           "who": "minagi",
-          "text": "「穀物の荷も通った。二つの報告を並べたら、気になることがあって。」"
+          "text": "「穀物の荷も通った。二つの報告を並べたら、気になることがあって。」",
+          "face": "focus"
         },
         {
           "who": "minagi",
-          "text": "「ガルドロスが掘った場所に新芽が出て、セルヴァルクが来る。それは、いつもどおり。」"
+          "text": "「ガルドロスが掘った場所に新芽が出て、セルヴァルクが来る。それは、いつもどおり。」",
+          "face": "focus"
         },
         {
           "who": "senaki",
@@ -267,9 +289,11 @@
         },
         {
           "who": "minagi",
-          "text": "「獣が変わったのか、土地が変わったのか。湿原の記録とも比べてみよう。」"
+          "text": "「獣が変わったのか、土地が変わったのか。湿原の記録とも比べてみよう。」",
+          "face": "focus"
         }
-      ]
+      ],
+      "art": "event_story_arrival_board_v1"
     }
   ],
   "common": {
