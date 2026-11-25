@@ -1,0 +1,201 @@
+{
+  "no": 14,
+  "speciesId": "monster.kordopil",
+  "name": "コルドピル",
+  "nativeRank": 1,
+  "identity": {
+    "role": "補修して小板を保つ幼岩装",
+    "ecologyBasis": "三〜五頭で互いの背を近づけ、外側の個体が先に逃げる。親の警戒姿勢を見ると近くの岩陰へ集まる。",
+    "combatLoop": "整備アイテムを使い、残った体力と小さな晶床を保って継戦する。",
+    "strength": "防御1.03倍、刃容量1.22倍。整備後は刃持ちと軽い被ダメージ軽減。",
+    "weakness": "基礎物理0.96倍、会心-5、戦闘スタミナ1.05倍。HP60%未満では固有を起動できない。",
+    "recommendedFamilies": [
+      "heavy_blade",
+      "guard_blade",
+      "long_lance"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.96倍、会心-5、戦闘スタミナ1.05倍。HP60%未満では固有を起動できない。"
+  },
+  "stats": {
+    "rawScale": 0.96,
+    "affinity": -5,
+    "elementScale": 0,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.22,
+    "edgeWearScale": 0.86,
+    "staminaCostScale": 1.05,
+    "defenseScale": 1.03,
+    "familyBias": {
+      "heavy_blade": 1.04,
+      "guard_blade": 1.02,
+      "war_maul": 1.0,
+      "twin_blades": 1.0,
+      "long_blade": 1.0,
+      "long_lance": 1.02,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": -25,
+      "thunder": 20,
+      "ice": 0,
+      "water": 0,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "edge_keep",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "edge_keep",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "item_efficiency",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "guard_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.kordopil",
+    "name": "柔晶の受け留め",
+    "trigger": {
+      "event": "guard",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "edgeWearPct",
+        "values": [
+          -8,
+          -8
+        ]
+      }
+    ],
+    "explanation": "通常ガード後に柔晶の表面を保つ。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.kordopil",
+    "name": "幼床の繕い",
+    "trigger": {
+      "event": "item_used",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 60,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 960,
+    "durationTicks": 480,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "edgeWearPct",
+        "values": [
+          -12,
+          -20
+        ]
+      },
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          -4,
+          -6
+        ]
+      }
+    ],
+    "explanation": "HP60%以上で整備を終え、小板の表面を保つ。回復薬や未消費の操作では起きない。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。 砥石など整備アイテムを実際に消費した完了時のみ。環弓は対象外。"
+  },
+  "appearance": {
+    "silhouette": "成人用の生成り胴着に、左肩だけ丸い幼岩板を三枚寄せる。親の巨大な左岩塊は作らず、小点の軽い輪郭。",
+    "armorParts": {
+      "head": "薄い一枚の丸い幼冠板を額へ。顔と側頭部を開く",
+      "chest": "左肩に小板三枚、胸は生成りの革紐だけ",
+      "arms": "左腕に小さな丸板二枚、右は補修用の細帯",
+      "waist": "腰後ろの尾端晶は丸粒一つ。左腰に巨板を置かない",
+      "legs": "脛に丸い小板一枚ずつ、靴は柔らかい革"
+    },
+    "weaponShapes": {
+      "heavy_blade": "刃元へ丸い補修板三枚を留めた細身の岩刃",
+      "guard_blade": "薄い岩短刃と、小板三枚を生成り裏板に置く軽盾",
+      "war_maul": "硬い小岩を閉じた打面へまとめた小ぶりの槌頭",
+      "twin_blades": "薄い小板を峰へ二枚ずつ置く短剣二本",
+      "long_blade": "低い小岩片を刃元だけへ貼る連続曲刀",
+      "long_lance": "丸い尾晶を刃元へ一粒置く直槍と、小板三枚の軽盾",
+      "ring_bow": "弓の握り外に丸い岩粒一つ。細い骨弓身、小環と直線弦"
+    },
+    "production": {
+      "primaryForm": "生成り布と三枚の丸小板",
+      "secondaryForm": "青銅の小点留め",
+      "dominantRegion": "左肩",
+      "asymmetry": "左肩のみ小さな偏り。左右の腕量は近い",
+      "repeatCount": "左肩板3、尾粒1",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "三枚の幼岩板を薄く丸くする。成人の可動域を保つ。",
+      "2": "小板の周囲へ点留めを足す。板を親の岩塊へ成長させない。",
+      "3": "柔晶の縁を二重に仕上げるが灰褐の丸さは残す。",
+      "4": "点留めを青銅に揃え、尾粒を滑らかに磨く。板数を増やさない。"
+    },
+    "skillCue": {
+      "location": "左肩の点留め三つ",
+      "inactive": "鈍い青銅点",
+      "active": "整備完了時に三点だけ弱く明るむ",
+      "maxLitSurfacePercent": 2
+    },
+    "avoid": [
+      "ガルドロス装の縮小版にしない",
+      "尖った成体冠や大尾晶を付けない",
+      "幼体用の小さい人体比例にしない"
+    ],
+    "palette": [
+      "淡い灰褐",
+      "青銅の点",
+      "生成り"
+    ],
+    "organTranslation": [
+      "左背にだけ先行して育つ柔らかな晶脈床。頭冠は薄い一枚で、尾端晶はまだ丸い粒である。",
+      "未発達の柔晶床を左肩の丸小板へ、尾端晶を腰後ろの一粒へ縮めて置く。",
+      "小板を育てる未完成さを、整備を挟むことで保つ技能として表す。"
+    ]
+  }
+}

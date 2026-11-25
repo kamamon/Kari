@@ -1,0 +1,204 @@
+{
+  "no": 25,
+  "speciesId": "monster.holnebas",
+  "name": "ホルネバス",
+  "nativeRank": 2,
+  "identity": {
+    "role": "三鐘を二度整える風管装",
+    "ecologyBasis": "岩棚を歩きながら短い音を返し、同種との距離を保つ。出口を塞がれると嚢口を向けて威嚇してから攻撃する。",
+    "combatLoop": "二つの溜め解放で三鐘の向きを揃え、その後の別行動を部位へ集める。",
+    "strength": "風倍率1.55、刃容量1.18倍。二度の溜め解放後は部位と属性を同時に伸ばす。",
+    "weakness": "基礎物理0.88倍、会心-5、戦闘スタミナ1.17倍。溜めを連続で作れないと固有が遅い。",
+    "recommendedFamilies": [
+      "war_maul",
+      "ring_bow",
+      "heavy_blade"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.88倍、会心-5、戦闘スタミナ1.17倍。溜めを連続で作れないと固有が遅い。"
+  },
+  "stats": {
+    "rawScale": 0.88,
+    "affinity": -5,
+    "elementScale": 1.55,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.18,
+    "edgeWearScale": 1.1,
+    "staminaCostScale": 1.17,
+    "defenseScale": 1.04,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 1.0,
+      "war_maul": 1.04,
+      "twin_blades": 1.0,
+      "long_blade": 1.0,
+      "long_lance": 0.96,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": -25,
+      "thunder": 0,
+      "ice": 0,
+      "water": 0,
+      "wind": 20,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "element_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.holnebas",
+    "name": "一鐘の打点",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "blunt",
+        "head"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "stunPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "頭への打撃で次の別行動の正規の気絶蓄積を強める。打撃を持たない系統の適合版では部位補正へ置換する。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.holnebas",
+    "name": "三鐘の風合わせ",
+    "trigger": {
+      "event": "charge_release",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 420,
+    "cooldownTicks": 900,
+    "durationTicks": 360,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          16,
+          24
+        ]
+      },
+      {
+        "stat": "elementPct",
+        "values": [
+          10,
+          14
+        ]
+      }
+    ],
+    "explanation": "7秒以内に二つの溜め解放を終え、三鐘の風を揃える。二つ目の解放行動自身を除外し、その次から補正。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "右肩へ斜め前に並ぶ三つの長い鐘縁。先端を硬く閉じ、左肩と首を低くして右だけ段状の重量を作る。",
+    "armorParts": {
+      "head": "骨灰の低い鐘縁兜。頭頂に長い筒を立てない",
+      "chest": "右肩に斜めの三鐘室、胸へ細い青銅管筋を渡す",
+      "arms": "右前腕に短い管筋二本、左は低い硬皮板",
+      "waist": "腰は低い灰緑の分割板。鐘室を腰へ増やさない",
+      "legs": "硬皮の細い脛覆いと低い革靴"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の刃元に閉じた三つの小鐘室を段違いに置く大剣",
+      "guard_blade": "小鐘縁の短刃と、右上に閉じた三鐘室を持つ盾",
+      "war_maul": "硬い両打面の側面に閉じた三段の響室を並べる",
+      "twin_blades": "刃元に小鐘の筋を二本と一本へ分ける二短刃",
+      "long_blade": "鍔後ろの三つの閉じた小室、刃は連続した細い曲線",
+      "long_lance": "直槍の根元へ三小鐘、右上が厚い硬い大盾",
+      "ring_bow": "握り外側に閉じた三小鐘室。弓身は細く、直線弦一本、小環"
+    },
+    "production": {
+      "primaryForm": "右肩の閉じた三段鐘縁",
+      "secondaryForm": "細い青銅管筋",
+      "dominantRegion": "右肩",
+      "asymmetry": "右高、左低。頭は中心",
+      "repeatCount": "主鐘室3",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "2": "右肩の三段鐘室を灰緑で閉じ、縁だけ骨灰。",
+      "3": "三室の長さを短中長へ分け、胸の管筋を三本へ。",
+      "4": "室の内側縁に青銅を足す。口は開けず、筒を長くしない。"
+    },
+    "skillCue": {
+      "location": "右肩の三室の内縁",
+      "inactive": "鈍い青銅",
+      "active": "二解放後に三つの内縁だけ順に反射",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "鐘室の口を開いて砲口風にしない",
+      "弓弦を曲がる管や複数弦にしない",
+      "左肩へ同じ三鐘を足さない"
+    ],
+    "palette": [
+      "灰緑",
+      "青銅管",
+      "骨灰"
+    ],
+    "organTranslation": [
+      "右肩の三つの共鳴嚢が長い風管につながり、開いた嚢だけが狭い風圧を放つ。嚢口の膨らみと向きで発射位置を読める。",
+      "右肩の三つの長鐘嚢を先端の閉じた段状室へ。筒口や発射機の印象を避ける。",
+      "嚢の向きを揃えて風を出す行動を、二つの準備行動が必要な部位攻撃区間へ結ぶ。"
+    ]
+  }
+}

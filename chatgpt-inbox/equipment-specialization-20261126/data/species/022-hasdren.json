@@ -1,0 +1,204 @@
+{
+  "no": 22,
+  "speciesId": "monster.hasdren",
+  "name": "ハスドレン",
+  "nativeRank": 2,
+  "identity": {
+    "role": "苔槽を満たして守る右腰装",
+    "ecologyBasis": "普段は殻を濡らしながらゆっくり歩き、近づく相手には右腰を見せて警告する。槽の水が減ると争いを切り上げる。",
+    "combatLoop": "スタミナを残してガードし、槽の水を使う短い属性・防護区間を保つ。",
+    "strength": "水倍率1.60、防御1.10倍。高スタミナの通常ガード後に守りと水が伸びる。",
+    "weakness": "基礎物理0.86倍、会心-10、戦闘スタミナ1.15倍。ガード後60%未満なら固有が出ない。",
+    "recommendedFamilies": [
+      "long_lance",
+      "guard_blade",
+      "heavy_blade"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.86倍、会心-10、戦闘スタミナ1.15倍。ガード後60%未満なら固有が出ない。"
+  },
+  "stats": {
+    "rawScale": 0.86,
+    "affinity": -10,
+    "elementScale": 1.6,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.2,
+    "edgeWearScale": 1.18,
+    "staminaCostScale": 1.15,
+    "defenseScale": 1.1,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 1.02,
+      "war_maul": 1.0,
+      "twin_blades": 1.0,
+      "long_blade": 1.0,
+      "long_lance": 1.04,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.14,
+      "chest": 0.24,
+      "arms": 0.18,
+      "waist": 0.28,
+      "legs": 0.16
+    },
+    "setResistances": {
+      "fire": -25,
+      "thunder": 20,
+      "ice": 0,
+      "water": 20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "status_resistance",
+      "parameters": {
+        "status": "poison"
+      }
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "status_resistance",
+      "parameters": {
+        "status": "poison"
+      }
+    },
+    "legs": {
+      "id": "element_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.hasdren",
+    "name": "槽殻の継ぎ水",
+    "trigger": {
+      "event": "part_break",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 600,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "部位破壊の後に槽の水を整え、同じ相手への次の別行動から水属性を強める。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.hasdren",
+    "name": "右槽の含水守り",
+    "trigger": {
+      "event": "guard",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 60,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 900,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          -6,
+          -10
+        ]
+      }
+    ],
+    "explanation": "通常ガード後にスタミナ60%以上を保つと、5秒間だけ苔水の槽を閉じて守る。毒を武器へ追加しない。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "右腰の浅い槽殻一つを最も大きくし、頭肩は低い灰緑板。左上から右下へ荷重が流れる段差。",
+    "armorParts": {
+      "head": "薄い平らな頭冠、正面に浅い青銅溝",
+      "chest": "低い胸殻二枚。右腰の槽へ向かう一本の溝筋",
+      "arms": "左右前腕は短い苔膜板。肘の内側を開ける",
+      "waist": "右腰だけ浅い大槽板。上縁は低く前後へは短い",
+      "legs": "脛の前側へ灰緑板、右だけ細い溝筋"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰側に浅い槽溝を一筋抱える片刃大剣",
+      "guard_blade": "低い槽縁の短刃と、右下に浅槽を持つ閉じた盾",
+      "war_maul": "硬い苔晶の閉打面、片側に浅い槽室を添える",
+      "twin_blades": "刃元に小水槽溝を一つずつ持つ短剣二本",
+      "long_blade": "刃元から峰へ細い苔水溝を一筋通す曲刀",
+      "long_lance": "深い直芯の槍と、右下に槽板を寄せた大盾",
+      "ring_bow": "握り外側に小槽板一枚。細い弓身、小環、直線弦"
+    },
+    "production": {
+      "primaryForm": "右腰の低い槽板",
+      "secondaryForm": "苔膜と一本の青銅溝",
+      "dominantRegion": "右腰",
+      "asymmetry": "右下が大きく左肩は低い",
+      "repeatCount": "主槽1、胸板2",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "2": "右腰の一槽と低い頭冠。苔は溝の内だけ。",
+      "3": "槽の上縁へ二重の青銅留め、板を深くしない。",
+      "4": "内側の含水筋を二本へ整える。右腰の一槽という形を維持。"
+    },
+    "skillCue": {
+      "location": "右腰槽の内溝",
+      "inactive": "鈍い苔緑",
+      "active": "高スタミナガード後だけ溝が濡れ色に変わる",
+      "maxLitSurfacePercent": 3
+    },
+    "avoid": [
+      "背中に巨大な水タンクを付けない",
+      "毒を新しい武器属性として足さない",
+      "槽板を左腰にも同量複製しない"
+    ],
+    "palette": [
+      "灰緑",
+      "苔の鈍緑",
+      "青銅溝"
+    ],
+    "organTranslation": [
+      "背殻の内面に苔水を蓄える槽があり、腹筋で片側の溝へ押し出す。槽の苔膜には餌から取り込んだ毒が薄く蓄積する。",
+      "右腰へ傾く槽殻を防具でも右腰一か所へ集中し、頭冠は薄く保つ。",
+      "水が減ると争いを切る生態を、ガード後のスタミナ残量による起動条件へ置く。"
+    ]
+  }
+}

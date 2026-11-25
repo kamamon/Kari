@@ -1,0 +1,201 @@
+{
+  "no": 12,
+  "speciesId": "monster.velgait",
+  "name": "ヴェルガイト",
+  "nativeRank": 1,
+  "identity": {
+    "role": "納めて六灯を整える霧装",
+    "ecologyBasis": "灯節を弱く光らせながら静かに巡回する。警戒時は頭冠を向けてから霧球を落とし、球が膨らむ間に離れられる。",
+    "combatLoop": "明示的に納刀して呼吸を揃え、短い守りと会心の区間で再接近する。",
+    "strength": "霧倍率1.80。納刀完了後の会心と被ダメージ軽減で接近を助ける。",
+    "weakness": "基礎物理0.80倍、防御0.79倍。納刀の隙を作れないと低い防御を補えない。",
+    "recommendedFamilies": [
+      "ring_bow",
+      "long_blade",
+      "twin_blades"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.80倍、防御0.79倍。納刀の隙を作れないと低い防御を補えない。"
+  },
+  "stats": {
+    "rawScale": 0.8,
+    "affinity": 15,
+    "elementScale": 1.8,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.9,
+    "edgeWearScale": 1.14,
+    "staminaCostScale": 0.92,
+    "defenseScale": 0.79,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.0,
+      "war_maul": 1.0,
+      "twin_blades": 1.02,
+      "long_blade": 1.02,
+      "long_lance": 0.96,
+      "ring_bow": 1.04
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 0,
+      "ice": 0,
+      "water": 0,
+      "wind": -20,
+      "mist": 15
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "weak_crit",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.velgait",
+    "name": "凝霧の初灯",
+    "trigger": {
+      "event": "draw",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 540,
+    "durationTicks": 240,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "抜刀完了で凝霧を整えるが、抜刀攻撃自体には乗らず次の別行動に使う。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.velgait",
+    "name": "六灯のしじま",
+    "trigger": {
+      "event": "sheathe",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 50,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 720,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "affinityPoints",
+        "values": [
+          8,
+          12
+        ]
+      },
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          -6,
+          -10
+        ]
+      }
+    ],
+    "explanation": "残スタミナ50%以上で明示的な納刀を完了すると、4秒だけ身を整える。採取やアイテムの自動納刀は対象外。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "後頭部の低い半環と、背中一列の六灯だけが明るい細い靭皮装。胸腹は暗く大面を作らない。",
+    "armorParts": {
+      "head": "後頭部に寝かせた半環。顔側は細い革額当て",
+      "chest": "背中央の六つの小灯室、胸は細い交差革帯",
+      "arms": "外腕の細い凝霧筋だけ。手首に灯室を追加しない",
+      "waist": "背の第六灯を腰上で止め、裾は短い暗革二枚",
+      "legs": "暗革の細い脛巻き、足先を軽くする"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の根元に六つの小霧窓を並べた薄い大剣",
+      "guard_blade": "暗い短刃と、六点を縦に埋めた硬い細盾",
+      "war_maul": "閉じた靭骨の槌頭に六小窓を側面二列で配置",
+      "twin_blades": "三つずつの低い霧窓を持つ二短刃",
+      "long_blade": "峰の六窓を小さく沈めた連続曲刃",
+      "long_lance": "細い凝霧芯の直槍、六小灯を縦に持つ閉じた盾",
+      "ring_bow": "弓の握り周辺だけ六小窓。小照準環一つと直線弦"
+    },
+    "production": {
+      "primaryForm": "細い縦軸と低い後頭環",
+      "secondaryForm": "小さな灯窓",
+      "dominantRegion": "背中央と後頭部",
+      "asymmetry": "背中中心、前面は無灯",
+      "repeatCount": "背灯6、後頭半環1",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "六灯を鈍い点に抑え、暗い靭皮を主面にする。",
+      "2": "後頭半環の下縁だけ青銅で留める。",
+      "3": "六灯の間の黒い間隔を広げて見せる。",
+      "4": "灯窓に薄い内縁を足す。新しい灯や全身の光膜を加えない。"
+    },
+    "skillCue": {
+      "location": "背の六灯",
+      "inactive": "鈍い琥珀の点",
+      "active": "納刀完了で六点が一度順に弱く点灯",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "頭上の浮遊輪や天使の輪にしない",
+      "背の灯を六つ以外へ増やさない",
+      "長い尾や霧の常時大雲を付けない"
+    ],
+    "palette": [
+      "暗い灰緑",
+      "鈍い琥珀",
+      "灰青"
+    ],
+    "organTranslation": [
+      "背の六つの灯節と、環状の頭冠に囲まれた凝霧孔。体表の水分を薄い霧へし、粘液膜で包んだ小球を前方へ落とす。",
+      "環状の頭冠は後頭部の寝た半環へ、六灯は背の一本列だけへ移す。",
+      "静かに巡回して間合いを整える生態を、明示納刀で短い区間を作る技能へ結ぶ。"
+    ]
+  }
+}

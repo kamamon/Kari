@@ -1,0 +1,205 @@
+{
+  "no": 19,
+  "speciesId": "monster.mitogaron",
+  "name": "ミトガロン",
+  "nativeRank": 1,
+  "identity": {
+    "role": "閉じ切らぬ輪で刻む幼鉤装",
+    "ecologyBasis": "三〜六体が近い間隔で歩き、体節の湿りを保つ。丸まり切れないため、追われると倒木の隙間へ逃げる。",
+    "combatLoop": "短い三つの行動を同じ相手へ通して痺液をまとめ、回避で輪を開き直す。",
+    "strength": "麻痺倍率1.15、戦闘スタミナ0.90倍。短い連係の後に回避しやすい。",
+    "weakness": "基礎物理0.87倍、防御0.79倍。三秒で三行動が必要で、長い溜めには合わない。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "guard_blade",
+      "long_blade"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.87倍、防御0.79倍。三秒で三行動が必要で、長い溜めには合わない。"
+  },
+  "stats": {
+    "rawScale": 0.87,
+    "affinity": 10,
+    "elementScale": 0,
+    "statusScale": 1.15,
+    "edgeCapacityScale": 0.95,
+    "edgeWearScale": 1.03,
+    "staminaCostScale": 0.9,
+    "defenseScale": 0.79,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.02,
+      "war_maul": 1.0,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 1.0,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": -20,
+      "thunder": 15,
+      "ice": 0,
+      "water": 0,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "dodge_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.mitogaron",
+    "name": "小鉤の初渡し",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "unbroken"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 420,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          4,
+          4
+        ]
+      }
+    ],
+    "explanation": "未破壊の面へ触れ、次の別行動の細い麻痺蓄積を支える。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.mitogaron",
+    "name": "開輪の三渡り",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 3,
+    "windowTicks": 180,
+    "cooldownTicks": 660,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "target_change",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          10,
+          14
+        ]
+      },
+      {
+        "stat": "dodgeCostPct",
+        "values": [
+          -8,
+          -12
+        ]
+      }
+    ],
+    "explanation": "同じ相手へ3秒以内に三つの行動を当てると、短い痺液区間が生まれる。多段一行動は一回。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "生成りの成人胴着に、閉じない半円板を三つずらす。鉤先は小さく丸く、成体の尖った螺旋にしない。",
+    "armorParts": {
+      "head": "丸い短鉤二つの低い額当て",
+      "chest": "胸の半円板は前中央を広く開き、背へ半周だけ",
+      "arms": "外前腕の開いた半円板一つずつ。丸鉤を小さく",
+      "waist": "腰後ろの半円板を低く置き、両脇を開く",
+      "legs": "脛の細い革帯と小さい丸鉤片一枚"
+    },
+    "weaponShapes": {
+      "heavy_blade": "刃元の峰に小さな丸鉤を三つ並べた薄い片刃",
+      "guard_blade": "細い短刃と、開いた半円意匠を硬い裏板へ載せる軽盾",
+      "war_maul": "閉じた硬い小節の打頭、側面の鉤は丸く短い",
+      "twin_blades": "小さな丸鉤を峰の根元に一つずつ持つ二短刃",
+      "long_blade": "低い半円筋を峰へ沈めた連続曲刃",
+      "long_lance": "細い痺液管の直槍、半円板一枚の低い盾",
+      "ring_bow": "弓根元に小さい開輪の留め二つ。直線弦、小環"
+    },
+    "production": {
+      "primaryForm": "閉じない三つの半円",
+      "secondaryForm": "ごく短い丸鉤",
+      "dominantRegion": "胸外側と腰後ろ",
+      "asymmetry": "半円を互い違いにずらす",
+      "repeatCount": "主半円3、各板の丸鉤1～2",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "丸い小鉤と開いた半円を生成り服に留める。",
+      "2": "半円の両端へ淡い赤銅の点留め。",
+      "3": "痺液管の細筋を板内側へ一本。",
+      "4": "半円の縁を磨くが輪を閉じず鉤を伸ばさない。"
+    },
+    "skillCue": {
+      "location": "胸の開輪の両端",
+      "inactive": "淡い赤銅点",
+      "active": "三行動後に両端だけ淡く灯る",
+      "maxLitSurfacePercent": 2
+    },
+    "avoid": [
+      "成体の長い鉤や巨大な巻き角にしない",
+      "閉じた輪へ完成させない",
+      "成人装備を幼児サイズへしない"
+    ],
+    "palette": [
+      "灰褐",
+      "淡い赤銅",
+      "生成り"
+    ],
+    "organTranslation": [
+      "まだ締まり切らない輪留め腱と、丸い鉤先へ続く細い痺液管。弧状には曲がるが成体の斜め回転はできない。",
+      "閉じ切らない輪留め腱を開いた半円板へ、丸い鉤先を短い丸突起へ移す。",
+      "幼体が丸まり切れず短く逃げる様子を、短い三行動と回避費用へ結ぶ。"
+    ]
+  }
+}

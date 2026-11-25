@@ -1,0 +1,207 @@
+{
+  "no": 8,
+  "speciesId": "monster.tengaro",
+  "name": "テンガロ",
+  "nativeRank": 1,
+  "identity": {
+    "role": "輪を閉じる麻痺連係装",
+    "ecologyBasis": "歩く時は体節を開き、追われた時だけ輪になる。回転は短距離で止まり、向きを変える前に再び体を開く。",
+    "combatLoop": "別行動の締め技を同じ相手へ二度通し、短い麻痺蓄積区間にまとめる。",
+    "strength": "麻痺倍率1.45、戦闘スタミナ0.94倍。連係の締めを狙うほど蓄積が伸びる。",
+    "weakness": "基礎物理0.84倍、防御0.82倍。刃消耗1.26倍に加え、発動中+12/+18%。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "long_blade",
+      "long_lance"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.84倍、防御0.82倍。刃消耗1.26倍に加え、発動中+12/+18%。"
+  },
+  "stats": {
+    "rawScale": 0.84,
+    "affinity": 5,
+    "elementScale": 0,
+    "statusScale": 1.45,
+    "edgeCapacityScale": 1.12,
+    "edgeWearScale": 1.26,
+    "staminaCostScale": 0.94,
+    "defenseScale": 0.82,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.0,
+      "war_maul": 1.0,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 1.02,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": -20,
+      "thunder": 15,
+      "ice": 0,
+      "water": 0,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "status_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.tengaro",
+    "name": "鉤管の継ぎ",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "thrust"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 240,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "突きで管を揃え、次の別行動の麻痺蓄積を上げる。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.tengaro",
+    "name": "傾輪の締め継ぎ",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "finisher"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 420,
+    "cooldownTicks": 780,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "target_change",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          10,
+          16
+        ]
+      },
+      {
+        "stat": "edgeWearPct",
+        "values": [
+          12,
+          18
+        ]
+      }
+    ],
+    "explanation": "同じ相手への二つの締め技で輪留めを閉じる。攻撃回数そのものでは進まず、納刀で解ける。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "右肩から左腰へ一周未満の螺旋節甲。短い外鉤が一方向へ寝て、胴の前に大きい空隙を残す。",
+    "armorParts": {
+      "head": "低い半環の額当て、鉤は後ろ向きに二つだけ",
+      "chest": "胸前を開けた三節の螺旋板、右肩を起点に左腰へ",
+      "arms": "右前腕の外に二節、左は一節。内肘を空ける",
+      "waist": "左腰の最後の三節だけ厚くし、短鉤を下へ寝かせる",
+      "legs": "脛へ開いた半環を二枚ずつ。膝を締め付けない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "刃元から峰へ三つの低い鉤節を沿わせる片刃",
+      "guard_blade": "短い鉤刃と、三節を斜めに組む閉じた盾",
+      "war_maul": "硬い節甲を横巻きした閉じた槌頭。鉤は側面へ寝かせる",
+      "twin_blades": "短い外鉤を峰側へ一つずつ持つ二本の連続刃",
+      "long_blade": "三節の筋を峰に沈めた曲刀。返し鉤を刃先へ出さない",
+      "long_lance": "痺液管を内側へ刻む直槍と、斜め輪節の硬盾",
+      "ring_bow": "しなる弓身の根元へ開いた三小節。直線弦一本と小環"
+    },
+    "production": {
+      "primaryForm": "開いた螺旋節甲",
+      "secondaryForm": "短く寝た外鉤",
+      "dominantRegion": "右肩から左腰",
+      "asymmetry": "斜めの流れ、前中央は開く",
+      "repeatCount": "主節6、外鉤は各節1つ",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "赤褐色の六節と丸い短鉤。",
+      "2": "節の間に青銅の細い輪留め。",
+      "3": "左腰の三節だけ深い色と二重縁。",
+      "4": "六節の内縁へ細い管筋。鉤の長さは増やさない。"
+    },
+    "skillCue": {
+      "location": "左腰の輪留め三つ",
+      "inactive": "暗赤褐の溝",
+      "active": "締め技二回で内縁が一周未満だけ淡く灯る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "閉じた巨大な車輪を背負わせない",
+      "鉤を長い牙や角へ成長させない",
+      "全身を同じ環甲で覆わない"
+    ],
+    "palette": [
+      "赤褐色",
+      "鈍青銅",
+      "黒茶"
+    ],
+    "organTranslation": [
+      "円弧状の体節を固定する輪留め腱と、外側の鉤に通じる痺液管。鉤を地面へ掛け、傾いた輪のまま短距離を転がる。",
+      "輪留め腱を斜めに継ぐ節甲へ、短距離だけ転がる輪を閉じない螺旋へ移す。",
+      "締め技二回で継ぐ機能を、外鉤の消耗という代償と結ぶ。"
+    ]
+  }
+}

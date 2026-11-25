@@ -1,0 +1,201 @@
+{
+  "no": 13,
+  "speciesId": "monster.embarg",
+  "name": "エンバルグ",
+  "nativeRank": 1,
+  "identity": {
+    "role": "危機を熱へ換える熾炉装",
+    "ecologyBasis": "熱を逃がす間は動きを止め、殻の隙間をゆっくり開く。追い詰められた時ほど排気が増え、吐息の向きを胸の向きで示す。",
+    "combatLoop": "生存した直接被弾で炉が開く。低体力の短い火力区間を使うか、直ちに退いて整えるかを選ぶ。",
+    "strength": "火倍率1.65と基礎物理1.00倍。HP40%以下で被弾後の火属性が強い。",
+    "weakness": "会心-10、刃消耗1.40倍、戦闘スタミナ1.15倍。発動中は被ダメージ+12/+18%。",
+    "recommendedFamilies": [
+      "heavy_blade",
+      "war_maul",
+      "long_lance"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。会心-10、刃消耗1.40倍、戦闘スタミナ1.15倍。発動中は被ダメージ+12/+18%。"
+  },
+  "stats": {
+    "rawScale": 1.0,
+    "affinity": -10,
+    "elementScale": 1.65,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.15,
+    "edgeWearScale": 1.4,
+    "staminaCostScale": 1.15,
+    "defenseScale": 0.91,
+    "familyBias": {
+      "heavy_blade": 1.04,
+      "guard_blade": 1.0,
+      "war_maul": 1.02,
+      "twin_blades": 1.0,
+      "long_blade": 1.0,
+      "long_lance": 1.02,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.32,
+      "arms": 0.18,
+      "waist": 0.18,
+      "legs": 0.16
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 0,
+      "ice": 15,
+      "water": -20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "element_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.embarg",
+    "name": "熾筋の開弁",
+    "trigger": {
+      "event": "charge_release",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 540,
+    "durationTicks": 240,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "溜めを解放して弁を開く。次の別行動の火属性を強め、溜め攻撃自身には乗らない。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.embarg",
+    "name": "熾炉の逼迫",
+    "trigger": {
+      "event": "damage_taken",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 1,
+      "hpMax": 40,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 900,
+    "durationTicks": 360,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          12,
+          18
+        ]
+      }
+    ],
+    "explanation": "生存した敵の直撃後HP40%以下で発動。ガード削り・自傷・継続ダメージ・致死では起きない。納刀で危険な炉を閉じられる。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "黒い胸腹の一枚炉殻が前に張り、背の三枚弁は低く伏せる。腕脚は節を細くして炉だけを重くする。",
+    "armorParts": {
+      "head": "額の黒い低殻、顔周辺の熱筋は細い二本",
+      "chest": "胸腹に一つの大炉殻。中央を閉じ、縁だけ赤銅の隙間",
+      "arms": "前腕外に黒殻一枚。内肘の冷たい革を広く残す",
+      "waist": "前腰に短い炉縁を二分、背腰に大型排気筒を置かない",
+      "legs": "黒い脛殻を前だけ。膝と足首は灰革"
+    },
+    "weaponShapes": {
+      "heavy_blade": "黒い大刃の刃元内側に炉筋、峰の低い弁三つ",
+      "guard_blade": "短い黒殻刃と、中央閉鎖の炉殻盾",
+      "war_maul": "閉じた黒殻の硬打頭、側面に低い三弁",
+      "twin_blades": "左右の刃元に小炉筋一つずつ。火柱を出さない",
+      "long_blade": "黒い連続曲刃の根元だけ細い赤銅筋",
+      "long_lance": "直槍の刃元に小炉室、前へ厚い閉鎖盾",
+      "ring_bow": "細い骨弓の握り背面だけ黒殻二枚。小環と直線弦"
+    },
+    "production": {
+      "primaryForm": "前に張る一枚炉殻",
+      "secondaryForm": "低い三枚弁と細い熱筋",
+      "dominantRegion": "胸腹",
+      "asymmetry": "前重心、背は低い",
+      "repeatCount": "主炉1、背弁3",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "黒殻の継ぎ目だけ暗い琥珀。",
+      "2": "胸殻下縁に赤銅の細い受け帯。",
+      "3": "背弁三枚を独立させ、閉じた面を残す。",
+      "4": "胸内縁に二重の細い熱筋。殻全体を溶岩色にしない。"
+    },
+    "skillCue": {
+      "location": "胸炉の下縁",
+      "inactive": "ほぼ黒い細筋",
+      "active": "危機の区間だけ暗い琥珀が細く強まる",
+      "maxLitSurfacePercent": 6
+    },
+    "avoid": [
+      "前面を開いた火口や砲口にしない",
+      "背へ長い煙突を立てない",
+      "全身の黒殻を赤い溶岩へ変えない"
+    ],
+    "palette": [
+      "黒灰",
+      "鈍い赤銅",
+      "暗い琥珀"
+    ],
+    "organTranslation": [
+      "胸腹の鉱物層を酸化させて熱を蓄える熾炉器と、背の排気弁。弁を開くと琥珀色の熱筋が見え、前方へ短い熱気を吐く。",
+      "熾炉を胸腹一か所へ集約、背の排気弁を低い三枚板として残す。",
+      "追い詰められるほど排気が増える生態を、低体力の被弾後に守りを削る火力へ結ぶ。"
+    ]
+  }
+}

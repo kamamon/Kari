@@ -1,0 +1,202 @@
+{
+  "no": 20,
+  "speciesId": "monster.yurtepica",
+  "name": "ユルテピカ",
+  "nativeRank": 1,
+  "identity": {
+    "role": "整備で毒糸を編み直す幼糸装",
+    "ecologyBasis": "四〜八体が一枚の小さな糸床を共有し、乾いた場所へ一頭で出ない。危険を感じると尾糸を引いて隣の個体へ知らせる。",
+    "combatLoop": "砥石などの整備後に短い毒区間を作り、被弾する前に離れて糸を保つ。",
+    "strength": "毒倍率1.25。整備後に毒蓄積+12/+16%。",
+    "weakness": "基礎物理0.86倍、防御0.78倍。固有中は被ダメージ+6/+10%。環弓では整備条件が満たせない。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "guard_blade",
+      "long_blade"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.86倍、防御0.78倍。固有中は被ダメージ+6/+10%。環弓では整備条件が満たせない。"
+  },
+  "stats": {
+    "rawScale": 0.86,
+    "affinity": 10,
+    "elementScale": 0,
+    "statusScale": 1.25,
+    "edgeCapacityScale": 1.1,
+    "edgeWearScale": 0.94,
+    "staminaCostScale": 0.92,
+    "defenseScale": 0.78,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.02,
+      "war_maul": 1.0,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 1.0,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": -20,
+      "thunder": 0,
+      "ice": 0,
+      "water": 15,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "edge_keep",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "item_efficiency",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "status_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.yurtepica",
+    "name": "幼糸の巻き直し",
+    "trigger": {
+      "event": "item_used",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 540,
+    "durationTicks": 240,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "整備を終え、次の別行動の毒蓄積へ細糸を渡す。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。 砥石など整備アイテムを実際に消費した完了時のみ。環弓は対象外。"
+  },
+  "signature": {
+    "id": "signature.yurtepica",
+    "name": "二糸の巣繕い",
+    "trigger": {
+      "event": "item_used",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 900,
+    "durationTicks": 360,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          6,
+          10
+        ]
+      }
+    ],
+    "explanation": "整備後6秒間だけ毒糸を張り直す。薄い羽袋を開くため被弾が痛くなり、被弾または納刀で区間を閉じる。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。 砥石など整備アイテムを実際に消費した完了時のみ。環弓は対象外。"
+  },
+  "appearance": {
+    "silhouette": "背の上部に平たい羽袋一枚と、左右へ短く出る二本の糸縁。生成り布の成人軽装で、ふくらんだ成体袋を持たない。",
+    "armorParts": {
+      "head": "細い灰紫の糸帯を額へ。大きな頭飾りなし",
+      "chest": "肩甲骨上に平たい薄羽袋一枚。胸は生成り布",
+      "arms": "前腕外側に細い糸巻き、指と手首は空ける",
+      "waist": "腰帯の左右へ短い二糸縁。尾のように垂らさない",
+      "legs": "生成りの脛布と灰茶の革靴"
+    },
+    "weaponShapes": {
+      "heavy_blade": "刃元背面へ平たい袋留め一つと二筋の糸巻き",
+      "guard_blade": "細い毒糸溝の短刃と、薄羽袋の面を硬板へ貼る軽盾",
+      "war_maul": "閉じた硬骨頭を二筋糸で締める小ぶりの大槌",
+      "twin_blades": "平たい刃元へ糸を一筋ずつ巻く二短剣",
+      "long_blade": "峰の根元へ二筋だけ糸溝を刻む滑らかな曲刃",
+      "long_lance": "細い直槍の根元に平袋留め、薄い硬盾へ二筋の縁",
+      "ring_bow": "薄い袋飾りを握り背面へ。小環と直線弦。外見設定のみで整備技能は発動不可"
+    },
+    "production": {
+      "primaryForm": "平たい背の一袋",
+      "secondaryForm": "二本の短い糸縁",
+      "dominantRegion": "背上部",
+      "asymmetry": "左右の糸縁は短く対称",
+      "repeatCount": "平羽袋1、糸縁2",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "薄く平たい袋一枚、灰紫を淡くする。",
+      "2": "袋縁の細い縫い目を二重にする。",
+      "3": "左右の糸縁の撚りを明瞭化。",
+      "4": "袋の内縁に細い鈍紫の点。成体の膨れ袋へ変えない。"
+    },
+    "skillCue": {
+      "location": "平袋の縫い目",
+      "inactive": "生成りの短い線",
+      "active": "整備完了で縫い目二筋だけ淡く紫がかる",
+      "maxLitSurfacePercent": 2
+    },
+    "avoid": [
+      "ヴェリトの二つの大袋を縮小して載せない",
+      "糸縁を長い触手にしない",
+      "環弓の外見を整備技能の有効性と混同しない"
+    ],
+    "palette": [
+      "淡い灰紫",
+      "生成り糸",
+      "灰茶"
+    ],
+    "organTranslation": [
+      "湿りを保つ平たい幼羽袋と二本の細紡糸管。毒を含む短い糸を巣の周囲へ張れるが、広い面にはできない。",
+      "幼羽袋を背上の平たい一枚へ、二本の紡糸管を短い左右の糸縁へ。",
+      "古い糸を回収して張り直す生態を、整備アイテム後の短い毒区間へ結ぶ。"
+    ]
+  }
+}

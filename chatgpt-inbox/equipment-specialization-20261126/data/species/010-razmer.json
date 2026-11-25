@@ -1,0 +1,205 @@
+{
+  "no": 10,
+  "speciesId": "monster.razmer",
+  "name": "ラズメル",
+  "nativeRank": 1,
+  "identity": {
+    "role": "二度支えて骨環をずらす長柄装",
+    "ecologyBasis": "細長い体を大きく回す前に、必ず前半身を反対へ曲げる。警戒時も全身を一度に巻き付けず、開いた側から相手を逃がす。",
+    "combatLoop": "同じ敵の通常攻撃を二度ガードし、骨環が噛み合う区間で長柄を押し返す。",
+    "strength": "基礎物理1.10倍、防御1.08倍。二回受けた後のガード負担が小さい。",
+    "weakness": "会心-15、戦闘スタミナ消費1.12倍。受け流しでは通常ガードの回数は増えない。",
+    "recommendedFamilies": [
+      "long_lance",
+      "heavy_blade",
+      "guard_blade"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。会心-15、戦闘スタミナ消費1.12倍。受け流しでは通常ガードの回数は増えない。"
+  },
+  "stats": {
+    "rawScale": 1.1,
+    "affinity": -15,
+    "elementScale": 0,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.18,
+    "edgeWearScale": 1.12,
+    "staminaCostScale": 1.12,
+    "defenseScale": 1.08,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 1.02,
+      "war_maul": 1.0,
+      "twin_blades": 1.0,
+      "long_blade": 1.0,
+      "long_lance": 1.04,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 0,
+      "ice": 20,
+      "water": -25,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "guard_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.razmer",
+    "name": "環骨の直芯",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "thrust"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "突きの命中で芯を揃え、次の別行動の部位攻撃へつなぐ。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.razmer",
+    "name": "二環の据え直し",
+    "trigger": {
+      "event": "guard",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 360,
+    "cooldownTicks": 840,
+    "durationTicks": 420,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "target_change",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "guardCostPct",
+        "values": [
+          -12,
+          -20
+        ]
+      },
+      {
+        "stat": "rawPct",
+        "values": [
+          4,
+          8
+        ]
+      }
+    ],
+    "explanation": "同じ敵の二つの攻撃行動を通常ガードして骨環を噛み合わせる。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "胸と腰に二つの太い白骨半環。環の前中央は切り、細い革の縦軸でつないだ開放的な樽形。",
+    "armorParts": {
+      "head": "低い白骨の半環帽。額中央を切り欠く",
+      "chest": "胸を左右から囲う半環一組。前中央は暗革を見せる",
+      "arms": "前腕外に骨環の短い弧二枚。内側は閉じない",
+      "waist": "腰の半環を胸より低く広く置き、股間は空ける",
+      "legs": "白骨の細い縦桟と小半環。膝に輪を掛けない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "太い骨芯の片刃、刃元を二つの半環で囲む",
+      "guard_blade": "白骨の直短刃と、二つの半環を硬い板へ重ねる盾",
+      "war_maul": "閉じた骨打頭を二本の半環で締める横槌",
+      "twin_blades": "太さを揃えた二短刃の刃元に半環を一つずつ",
+      "long_blade": "骨の細い芯を二つの低い環留めで支える曲刃",
+      "long_lance": "長い白骨の直芯と、胸腰を模す二半環の大盾",
+      "ring_bow": "しなる骨弓の握りを二つの低い半環で囲む。小環と直線弦"
+    },
+    "production": {
+      "primaryForm": "二つの太い骨半環",
+      "secondaryForm": "暗革の縦桟",
+      "dominantRegion": "胸と腰",
+      "asymmetry": "左右均等だが前中央は開く",
+      "repeatCount": "主要半環2",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "白骨二環の外面を滑らかにし、内側は暗革。",
+      "2": "二環を結ぶ縦桟へ小さな青銅留め。",
+      "3": "腰環だけ二重縁。胸の空隙は残す。",
+      "4": "振動腺の小窓を胸環内側へ二点。環を増やさない。"
+    },
+    "skillCue": {
+      "location": "胸環と腰環の内縁",
+      "inactive": "くすんだ白",
+      "active": "二度支えると内縁二点が淡く灯る",
+      "maxLitSurfacePercent": 2
+    },
+    "avoid": [
+      "巨大な首輪や手錠状の閉環にしない",
+      "骨環を関節に食い込ませない",
+      "人骨の意匠へ置き換えない"
+    ],
+    "palette": [
+      "骨白",
+      "暗い革",
+      "くすんだ青銅"
+    ],
+    "organTranslation": [
+      "胴を一周する骨環と、その内側の振動腺。二対の短肢で踏ん張って骨環をずらし、地面へ低い振動を伝える。",
+      "体を一周する環骨を胸と腰の開いた二環へ。短肢は太い縦支えに置換。",
+      "踏ん張って骨環をずらす行動を二つの通常ガードへ結ぶ。"
+    ]
+  }
+}

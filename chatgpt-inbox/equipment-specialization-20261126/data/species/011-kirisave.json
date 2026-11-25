@@ -1,0 +1,206 @@
+{
+  "no": 11,
+  "speciesId": "monster.kirisave",
+  "name": "キリサーヴ",
+  "nativeRank": 1,
+  "identity": {
+    "role": "背後の冷気を刻む交互帆装",
+    "ecologyBasis": "広い岩棚では滑るが、狭い足場は短い肢で這う。氷帆を立てる動作が威嚇で、攻撃の前に白い欠片が少量落ちる。",
+    "combatLoop": "相手の背後へ回り、二つの別行動で薄氷の列を作る。正面へ戻る前に離れる。",
+    "strength": "氷倍率1.85。背後二接触の後に属性と回避効率が伸びる。",
+    "weakness": "基礎物理0.83倍、防御0.81倍、刃消耗1.32倍。正面での攻撃では固有を始められない。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "long_blade",
+      "ring_bow"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.83倍、防御0.81倍、刃消耗1.32倍。正面での攻撃では固有を始められない。"
+  },
+  "stats": {
+    "rawScale": 0.83,
+    "affinity": 10,
+    "elementScale": 1.85,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.88,
+    "edgeWearScale": 1.32,
+    "staminaCostScale": 0.96,
+    "defenseScale": 0.81,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.0,
+      "war_maul": 1.0,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 0.96,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": -20,
+      "thunder": 0,
+      "ice": 15,
+      "water": 0,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "element_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.kirisave",
+    "name": "薄氷の列",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "rear"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 420,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "背後の接触から、次の別行動の氷属性へ冷晶を渡す。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.kirisave",
+    "name": "交帆の冷路",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "rear"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 300,
+    "cooldownTicks": 780,
+    "durationTicks": 360,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          10,
+          16
+        ]
+      },
+      {
+        "stat": "dodgeCostPct",
+        "values": [
+          -8,
+          -12
+        ]
+      }
+    ],
+    "explanation": "同じ相手の背後へ二つの別行動を当て、薄氷を保つ6秒間を作る。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "左肩、右背、左腰に三枚の薄い氷帆を交互配置。片側の翼にせず、斜めに折れた細い輪郭。",
+    "armorParts": {
+      "head": "低い氷片の額板。後頭部の小片は寝かせる",
+      "chest": "左肩と右肩甲骨へ薄板一枚ずつ、胸は灰緑の革",
+      "arms": "右前腕に短い薄板、左は細い冷晶管の筋",
+      "waist": "左腰に最後の薄帆。右腰と前面を空ける",
+      "legs": "脛外に低い半透明片。膝上へ尖りを出さない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の三か所だけ交互に薄氷板を沿わせる大剣",
+      "guard_blade": "細い氷刃と、硬い裏板へ交互の三薄板を重ねた盾",
+      "war_maul": "硬い冷晶打面の側面へ三枚の薄板を寝かす",
+      "twin_blades": "峰の板を左右互い違いに置く二短刃",
+      "long_blade": "低い三枚薄板を峰へ連ねる滑らかな曲刃",
+      "long_lance": "冷晶芯の直槍と、三段の交互板を閉じた芯へ付けた盾",
+      "ring_bow": "細い弓身の根元へ三枚の低い氷片。直線弦一本と小環"
+    },
+    "production": {
+      "primaryForm": "交互に寝た三枚の薄帆",
+      "secondaryForm": "灰緑革の細い胴",
+      "dominantRegion": "左肩・右背・左腰",
+      "asymmetry": "左右交互、上へ尖らせない",
+      "repeatCount": "主氷帆3",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "三枚の縁を曇らせ、皮の間隔を広く取る。",
+      "2": "冷晶管の細筋を薄帆の根元に見せる。",
+      "3": "左右の交互位置を強め、板の面に短い霜線。",
+      "4": "三枚の内縁だけ透けを深める。板数と輪郭は維持。"
+    },
+    "skillCue": {
+      "location": "三枚の薄帆の根元",
+      "inactive": "曇った淡青",
+      "active": "二接触で根元三点だけ白く曇る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "全身を氷柱の棘で覆わない",
+      "左右対称の大翼へ揃えない",
+      "半透明板を刃の判定外へ伸ばさない"
+    ],
+    "palette": [
+      "薄い青灰",
+      "半透明氷",
+      "灰緑革"
+    ],
+    "organTranslation": [
+      "左右交互の薄板へ冷却液を送る冷晶管。板の表面に薄い氷を作り、体を振ると進行方向の狭い列へ欠片が落ちる。",
+      "交互に張る氷帆を三か所へ絞り、体を長くする代わりに視線の斜め移動を作る。",
+      "狭い氷片列を敵の背後へ二度通す条件として表す。"
+    ]
+  }
+}

@@ -1,0 +1,208 @@
+{
+  "no": 29,
+  "speciesId": "monster.ulnaset",
+  "name": "ウルナセト",
+  "nativeRank": 2,
+  "identity": {
+    "role": "雨樋を交互に満たす水間合い装",
+    "ecologyBasis": "雨を受ける向きへ体を置き、満ちた水嚢を揺らさないようゆっくり歩く。水嚢を狙われると長い胴で間合いを作る。",
+    "combatLoop": "同じ敵の未破壊部位へ二つの突きを通し、水樋を揃えて長い間合いを保つ。",
+    "strength": "水倍率1.70、刃容量1.24倍。二突き後の水とガード負担軽減。",
+    "weakness": "基礎物理0.84倍、会心-5、戦闘スタミナ1.12倍。突き行動を持たない系統は固有を起動できない。",
+    "recommendedFamilies": [
+      "long_lance",
+      "guard_blade"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.84倍、会心-5、戦闘スタミナ1.12倍。突き行動を持たない系統は固有を起動できない。"
+  },
+  "stats": {
+    "rawScale": 0.84,
+    "affinity": -5,
+    "elementScale": 1.7,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.24,
+    "edgeWearScale": 0.98,
+    "staminaCostScale": 1.12,
+    "defenseScale": 1.02,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.02,
+      "war_maul": 1.0,
+      "twin_blades": 1.0,
+      "long_blade": 1.0,
+      "long_lance": 1.04,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": -25,
+      "ice": 20,
+      "water": 20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_resistance",
+      "parameters": {
+        "element": "water"
+      }
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "guard_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.ulnaset",
+    "name": "雨樋の継ぎ滴",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "thrust"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 540,
+    "durationTicks": 240,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "突きの命中から同じ相手への次の別行動へ水を渡す。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.ulnaset",
+    "name": "交樋の満ち筋",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "thrust",
+        "unbroken"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 360,
+    "cooldownTicks": 900,
+    "durationTicks": 360,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "target_change",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "guardCostPct",
+        "values": [
+          -10,
+          -16
+        ]
+      }
+    ],
+    "explanation": "同じ敵の未破壊部位へ二つの突き行動を通すと、6秒間だけ水樋が満ちる。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "左右交互に下へ垂れる樋板三枚と、腰後ろの低い平尾板。肩を低く保ち、樋の縦溝が細くつながる。",
+    "armorParts": {
+      "head": "低い青灰額板と側頭部の短い樋筋",
+      "chest": "左肩下と右脇へ樋板一枚ずつ。胸中央は灰緑皮",
+      "arms": "外前腕に浅い樋状板。先端を手へ伸ばさない",
+      "waist": "左腰に三枚目の樋板、後ろ中央に短い平尾板",
+      "legs": "脛は短い灰緑皮。足首の前に樋口を置かない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の片面へ浅い雨樋を一本通す片刃大剣",
+      "guard_blade": "樋筋の短刃と、交互三板を硬い芯へ添える盾",
+      "war_maul": "閉じた水骨打頭の側面に浅い樋三筋",
+      "twin_blades": "峰へ樋筋を一本ずつ持つ細い二短剣",
+      "long_blade": "連続曲刃の峰を低い水樋にする",
+      "long_lance": "長い直芯に一本の水樋、交互三板と平尾板の大盾",
+      "ring_bow": "弓根元へ交互に短い樋板。直線弦一本、小照準環"
+    },
+    "production": {
+      "primaryForm": "交互に垂れた三樋板",
+      "secondaryForm": "低い平尾板と灰緑皮",
+      "dominantRegion": "体側と腰後ろ",
+      "asymmetry": "左上・右中・左下の交互配置",
+      "repeatCount": "主樋板3、平尾板1",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "2": "三樋を浅く垂らし、後ろ平尾板は短く水平。",
+      "3": "樋の縁へ青銅の細い支えを付け、左右交互を明瞭化。",
+      "4": "内溝を二筋に磨く。樋の垂れ長さや尾板幅は増やさない。"
+    },
+    "skillCue": {
+      "location": "三樋の内溝",
+      "inactive": "くすんだ青灰",
+      "active": "二突き後に溝三本だけ濡れ色がつながる",
+      "maxLitSurfacePercent": 3
+    },
+    "avoid": [
+      "氷帆の尖った三角形へ戻さない",
+      "平尾板を長い尻尾へ伸ばさない",
+      "薄い樋膜だけを盾の支持構造にしない"
+    ],
+    "palette": [
+      "くすんだ青灰",
+      "灰緑の皮",
+      "鈍青銅"
+    ],
+    "organTranslation": [
+      "冷晶の薄板が雨を集める柔らかな樋帆へ変わり、節間の水嚢へつながる。体を捻ると片側の樋だけが前へ向く。",
+      "下へ垂れる交互樋帆を肩・脇・腰の三枚へ、平尾を腰後ろの短板へ。",
+      "満ちた水嚢を揺らさず間合いを作る生態を、二つの突きから続くガード可能な水区間へ。"
+    ]
+  }
+}
