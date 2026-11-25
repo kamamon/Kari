@@ -68,6 +68,14 @@ const BACKUP_REASON: Record<string, string> = {
 /** 拠点の画面に出す範囲。all = すべて（一覧）。ほかは、施設 1 つぶん */
 export type BaseSection = 'all' | FacilityKind;
 
+/** 図鑑の絵の説明。adopted = 採用した設定図（ガルドロス）。ほかは ChatGPT の原画案（真横 1 方向。採用は利用者が決める） */
+export function artCaption(state: string, cls: string, adopted: boolean): string {
+  if (adopted) return '設定図（採用済み。左の側面）。ゲームの中の体は、この図から作った仮の形です。';
+  const head = '原画案（ChatGPT。採用待ち・真横 1 方向）。';
+  if (state !== 'implemented') return head + 'ゲームの中の体と動きは、まだありません。';
+  return head + (cls === 'juvenile' ? 'ゲームの中の体は、まだ親の原画から作った仮の形です。' : 'ゲームの中の体は、この絵から作った仮の形です。');
+}
+
 export class BaseScreen {
   readonly root: HTMLElement;
   section: BaseSection = 'all';
@@ -388,7 +396,9 @@ export class BaseScreen {
         d.addEventListener('toggle', () => {
           if (!d.open || d.querySelector('dl')) return;
           const nameOf = (id: string): string => (byId.has(id) ? `${byId.get(id)!.title} ${byId.get(id)!.name}` : id);
-          const rows: [string, string][] = [['外見の核', s.look]];
+          const rows: [string, string][] = [];
+          if (s.stateNote) rows.push(['いまの状態', s.stateNote]);
+          rows.push(['外見の核', s.look]);
           if (s.organ) rows.push(['器官', s.organ]);
           rows.push(['技', s.moves.join('、')]);
           rows.push(['全長', `${s.size} m`]);
@@ -402,13 +412,13 @@ export class BaseScreen {
           else rows.push(['生態', 'まだ書かれていません。']);
           const dl = el('dl');
           for (const [k, v] of rows) dl.append(el('dt', undefined, k), el('dd', undefined, v));
-          // 原画（設定画）。ゲームの中の体がまだ無い種は、そう書く
+          // 絵: ガルドロスは採用した設定図。ほかは ChatGPT の原画案（真横 1 方向。採用待ち）。ゲームの中の体がまだ無い種は、そう書く
           if (art) {
             const fig = el('figure', 'bestiary-art');
             const img = document.createElement('img');
             img.alt = `${s.title} ${s.name} の原画`;
-            img.src = assetUrl(`assets/bestiary/${art.replace(/\.png$/, '.webp')}`);
-            fig.append(img, el('figcaption', undefined, s.state === 'implemented' ? '原画（設定画）。ゲームの中の体は、この絵から作った仮の形です。' : '原画（設定画）。ゲームの中の体と動きは、まだありません。'));
+            img.src = assetUrl(`assets/bestiary/${art.split('/').pop()!.replace(/\.png$/, '.webp')}`);
+            fig.append(img, el('figcaption', undefined, artCaption(s.state, s.class, art.includes('/'))));
             d.appendChild(fig);
           } else if (s.state === 'planned') d.appendChild(el('p', 'bestiary-note', '案だけです（絵も、ゲームの中の体も、まだありません）。'));
           d.appendChild(dl);

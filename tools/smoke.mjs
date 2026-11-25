@@ -1568,17 +1568,20 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
       heads: [...d.querySelectorAll('h4[data-rank]')].map((x) => x.textContent.replace(/\s+/g, ' ')), done: [...d.querySelectorAll('[data-species].implemented')].map((x) => x.dataset.species).join(),
       art: d.querySelectorAll('[data-species].art').length, planned: d.querySelectorAll('[data-species].planned').length, lazy: d.querySelectorAll('[data-species] dl').length,
       img: img ? img.naturalWidth : 0, cap: second.querySelector('figcaption')?.textContent ?? '', eco: labels(second), selCap: selvark.querySelector('figcaption')?.textContent ?? '',
-      rare: rare.textContent.replace(/\s+/g, ' ').slice(0, 400), rareLabels: labels(rare), juv: juv.querySelector('dl').textContent, hugeTags: huge.querySelector('.tags').textContent, hugeNote: huge.querySelector('p.bestiary-note')?.textContent ?? '',
+      rare: rare.textContent.replace(/\s+/g, ' ').slice(0, 400), rareLabels: labels(rare), juv: juv.querySelector('dl').textContent, hugeTags: huge.querySelector('.tags').textContent, hugeCap: huge.querySelector('figcaption')?.textContent ?? '',
+      juvCap: juv.querySelector('figcaption')?.textContent ?? '', juvImg: juv.querySelector('img')?.getAttribute('src') ?? '', hugeState: huge.querySelector('.state').textContent,
+      galdrosCap: (() => { const g = openItem('[data-species="monster.galdros"]'); return `${g.querySelector('figcaption')?.textContent ?? ''} ${g.querySelector('img')?.getAttribute('src') ?? ''}`; })(),
       fields: d.querySelectorAll('[data-field]').length, walkable: [...d.querySelectorAll('.bestiary-field.implemented')].map((x) => x.dataset.field).join(), fieldHead: d.querySelector('h4[data-fields]').textContent.replace(/\s+/g, ' '),
       fieldText: field.textContent.replace(/\s+/g, ' ').slice(0, 300), fieldState: field.querySelector('.state').textContent, basinState: basin.querySelector('.state').textContent,
     };
   });
-  check('図鑑: 依頼の欄に、86 種（78 種と幼体 8 種）が段階ごとに並ぶ（初級 13 / 13、中級 20 / 20、上級 25 / 25、極級 20 / 20）。遊べるのは、はじめの 12 種と幼体 8 種で、原画あり 1、案 65',
-    zukan.shown && zukan.summary === 'モンスター図鑑（78 種・幼体 8 種）' && zukan.n === 86 && zukan.heads.join('|') === '初級から 13 / 13 種 幼体 8|中級から 20 / 20 種|上級から 25 / 25 種|極級から 20 / 20 種' && zukan.done.split(',').length === 20 && zukan.done.startsWith('monster.galdros,monster.selvark') && zukan.done.endsWith('monster.yurtepica,monster.hinasalv') && zukan.art === 1 && zukan.planned === 65 && zukan.lazy === 5, JSON.stringify({ ...zukan, rare: '', juv: '', fieldText: '' }));
+  check('図鑑: 依頼の欄に、86 種（78 種と幼体 8 種）が段階ごとに並ぶ（初級 13 / 13、中級 20 / 20、上級 25 / 25、極級 20 / 20）。遊べるのは、はじめの 12 種と幼体 8 種で、原画あり 66、案 0（v0.24.0 で原画案 73 枚を受け取った）',
+    zukan.shown && zukan.summary === 'モンスター図鑑（78 種・幼体 8 種）' && zukan.n === 86 && zukan.heads.join('|') === '初級から 13 / 13 種 幼体 8|中級から 20 / 20 種|上級から 25 / 25 種|極級から 20 / 20 種' && zukan.done.split(',').length === 20 && zukan.done.startsWith('monster.galdros,monster.selvark') && zukan.done.endsWith('monster.yurtepica,monster.hinasalv') && zukan.art === 66 && zukan.planned === 0 && zukan.lazy === 6, JSON.stringify({ ...zukan, rare: '', juv: '', fieldText: '' }));
   check('図鑑: 原画のある種を開くと、原画と、生態 8 項目が出る。体と動きがまだ無いことが分かる。遊べる種には「仮の形」と出る', zukan.img === 720 && /まだありません/.test(zukan.cap) && /食べ物,行動と気性,なわばり,1 日の動き,巣と眠り,ほかとの関わり,幼体,痕跡$/.test(zukan.eco) && /仮の形/.test(zukan.selCap), JSON.stringify({ img: zukan.img, cap: zukan.cap, selCap: zukan.selCap, eco: zukan.eco }));
-  check('図鑑: 希少種には、もとの種と、一緒に出る相手が出る。幼体には、群れの数が出る。超大型は、案だけと分かる',
-    /上級|大型・希少種/.test(zukan.rare) && /もとの種/.test(zukan.rareLabels) && /一緒に出る相手/.test(zukan.rareLabels) && /帆角獣 セルヴァルク/.test(zukan.rare) && /裂扇獣 グラセドン/.test(zukan.rare) && /群れ3〜5 体/.test(zukan.juv) && /岩殻獣 ガルドロス/.test(zukan.juv) && /^超大型／巨躯／沈根沢地／水・睡眠$/.test(zukan.hugeTags) && /案だけです/.test(zukan.hugeNote),
-    JSON.stringify({ rare: zukan.rare, rareLabels: zukan.rareLabels, juv: zukan.juv.slice(0, 120), hugeTags: zukan.hugeTags, hugeNote: zukan.hugeNote }));
+  check('図鑑: 希少種には、もとの種と、一緒に出る相手が出る。幼体には、群れの数と、幼体自身の原画案（体はまだ親の絵から）が出る。超大型は、原画案だけで体が無いと分かる。ガルドロスは採用した設定図',
+    /上級|大型・希少種/.test(zukan.rare) && /もとの種/.test(zukan.rareLabels) && /一緒に出る相手/.test(zukan.rareLabels) && /帆角獣 セルヴァルク/.test(zukan.rare) && /裂扇獣 グラセドン/.test(zukan.rare) && /群れ3〜5 体/.test(zukan.juv) && /岩殻獣 ガルドロス/.test(zukan.juv) && /^超大型／巨躯／沈根沢地／水・睡眠$/.test(zukan.hugeTags) && /原画案.*まだありません/.test(zukan.hugeCap) && zukan.hugeState === '原画あり'
+    && /親の原画/.test(zukan.juvCap) && /monster_014_kordopil_concept_v1\.webp$/.test(zukan.juvImg) && /^設定図（採用済み.*galdros_left_v1\.webp$/.test(zukan.galdrosCap),
+    JSON.stringify({ rare: zukan.rare, rareLabels: zukan.rareLabels, juv: zukan.juv.slice(0, 120), hugeTags: zukan.hugeTags, hugeCap: zukan.hugeCap, juvCap: zukan.juvCap, juvImg: zukan.juvImg, galdrosCap: zukan.galdrosCap }));
   // v0.23.0: 狩場の案を開くと、景色の原画（ChatGPT の追加原画。640 × 427）が出る
   await page.evaluate(() => { document.querySelector('[data-field="根絡み湿原"]').open = true; });
   const fieldArt = await until(page, () => document.querySelector('[data-field="根絡み湿原"] figure img')?.naturalWidth === 640, 8000);

@@ -531,7 +531,7 @@ SPECIES.append(dict(
 # =============================================================================================
 # 幼体 8 種（登録簿の 14〜21。v0.18.0、docs/spec.md の 23 章）
 #   体: 親の原画の形を、尾を縮め・頭を大きく・飾りを小さくして、幼体の大きさ（登録簿の全長の 0.68 倍）にしたもの。
-#       絵は親の原画をそのまま貼り、淡い色にする（幼体の原画は、まだ取り込んでいない）。
+#       絵は親の原画をそのまま貼り、淡い色にする（幼体自身の原画案は v0.24.0 で受け取ったが、図鑑に出すだけで、形にはまだ使っていない）。
 #   コルドピル（ガルドロスの幼体）だけは、ガルドロスの設定図（右側面）から形を書く。
 #   技は登録簿の「構え→攻撃」3 つ。群れの決まり（herd）を持ち、捕獲はできない。
 # =============================================================================================
@@ -1425,7 +1425,7 @@ def main():
         art_tex = f'tex.monster.{J.art}.side'
         manifest.append({'id': f'model.monster.{key}', 'name': spec['name'], 'type': 'model', 'use': f'幼体（登録簿 {spec["no"]:02d}。v0.18.0 で遊べるようにした。群れで暮らす）', 'owner': 'Claude（仮モデル・動き）',
                          'status': 'concept', 'version': 0, 'path': None,
-                         'source': f'親の{"設定図（右側面）" if J.art == "galdros" else "原画"}の形を、尾を縮め・頭を大きく・飾りを小さくした仮の形（tools/gen-monsters.py の Juv）。幼体の原画・設定図は取り込んでいない',
+                         'source': f'親の{"設定図（右側面）" if J.art == "galdros" else "原画"}の形を、尾を縮め・頭を大きく・飾りを小さくした仮の形（tools/gen-monsters.py の Juv）。幼体自身の原画案（v0.24.0 受領。採用待ち）は図鑑に出すだけで、形にはまだ使っていない',
                          'terms': '本作オリジナル', 'dims': f'全長 約 {J.span * J.s:.1f}m（登録簿の全長の約 0.68 倍）。Y 上・+Z 前',
                          'clips': clips, 'dependsOn': [art_tex, f'tex.monster.{J.art}.skin'],
                          'placeholder': {'kind': 'procedural', 'source': 'src/render/creatureRig.ts', 'note': f'形は src/render/creaturePlans.ts。体つき {spec["frame"]}。親の絵を淡くして貼る。群れの気分（食む・見る・伏せる・逃げる）の姿勢は src/render/creatureRig.ts'},

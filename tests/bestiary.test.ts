@@ -32,7 +32,7 @@ const reject = (edit: (s: Partial<SpeciesDef>, all: Partial<SpeciesDef>[]) => vo
 
 /** はじめの 13 種（初級の大型）。id・番号・名前・骨格・原画は、案を取り込んでも変えない */
 const FIRST_13: [string, string, string, string | null][] = [
-  ['monster.galdros', '岩殻獣 ガルドロス', 'frame.quad_heavy', null],
+  ['monster.galdros', '岩殻獣 ガルドロス', 'frame.quad_heavy', 'galdros/galdros_left_v1.png'], // v0.24.0: 採用した設定図（左の側面）を図鑑へ
   ['monster.selvark', '帆角獣 セルヴァルク', 'frame.quad_light', 'monster_02_selvark_concept_v2.png'],
   ['monster.numeradon', '泥冠獣 ヌメラドン', 'frame.quad_heavy', 'monster_03_numeradon_concept_v2.png'],
   ['monster.bornakel', '鐘嚢獣 ボルナケル', 'frame.quad_heavy', 'monster_04_bornakel_concept_v2.png'],
@@ -48,7 +48,7 @@ const FIRST_13: [string, string, string, string | null][] = [
 ];
 
 describe('登録簿のデータ', () => {
-  it('86 種（成体 78・幼体 8）が入っていて、どの種も、生態 8 項目・器官・部位・素材までそろっている。遊べるのは、はじめの 12 種と幼体 8 種（v0.18.0）', () => {
+  it('86 種（成体 78・幼体 8）が入っていて、どの種も、生態 8 項目・器官・部位・素材と、絵までそろっている。遊べるのは、はじめの 12 種と幼体 8 種（v0.18.0）', () => {
     const b = content.bestiary;
     expect(validateBestiary(b, env)).toEqual([]);
     // 受け取る案と同じ厳しさで、全部の種を見ても、合わない所が無い
@@ -57,8 +57,11 @@ describe('登録簿のデータ', () => {
     expect(b.species.filter((s) => s.class !== 'juvenile').length).toBe(78);
     expect(b.species.filter((s) => s.class === 'juvenile').length).toBe(8);
     expect(b.species.filter((s) => s.state === 'implemented').map((s) => s.no)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21]);
-    expect(b.species.filter((s) => s.state === 'art').map((s) => s.id)).toEqual(['monster.embarg']);
-    expect(b.species.filter((s) => s.state === 'planned').length).toBe(65);
+    // v0.24.0: ChatGPT の原画案 73 枚（14〜86）を受け取った。体の無い種は、どれも「原画あり」（採用待ち）
+    expect(b.species.filter((s) => s.state === 'art').length).toBe(66);
+    expect(b.species.filter((s) => s.state === 'art').map((s) => s.no)).toEqual([13, ...Array.from({ length: 65 }, (_, i) => i + 22)]);
+    expect(b.species.filter((s) => s.state === 'planned').length).toBe(0);
+    expect(b.species.every((s) => s.art)).toBe(true);
     expect(b.species.map((s) => s.no)).toEqual(Array.from({ length: 86 }, (_, i) => i + 1));
   });
 

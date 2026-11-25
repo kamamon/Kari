@@ -241,10 +241,12 @@ describe('図鑑に出す原画', () => {
   it('登録簿の art に書かれた絵は、どれも、原画と、図鑑に出す小さな絵の両方がある', async () => {
     const content = await loadContent();
     const withArt = content.bestiary.species.filter((s) => s.art);
-    expect(withArt.length).toBe(12);
+    // v0.24.0: 86 種すべて（ガルドロスは採用した設定図 galdros/…。ほかは原画案で、concepts/ にある）
+    expect(withArt.length).toBe(86);
     for (const s of withArt) {
-      expect(existsSync(join(ROOT, 'art-source/monster/concepts', s.art!)), s.art).toBe(true);
-      expect(existsSync(join(ROOT, 'public/assets/bestiary', s.art!.replace(/\.png$/, '.webp'))), s.art).toBe(true);
+      const src = s.art!.includes('/') ? join(ROOT, 'art-source/monster', s.art!) : join(ROOT, 'art-source/monster/concepts', s.art!);
+      expect(existsSync(src), s.art).toBe(true);
+      expect(existsSync(join(ROOT, 'public/assets/bestiary', s.art!.split('/').pop()!.replace(/\.png$/, '.webp'))), s.art).toBe(true);
     }
   });
 });
