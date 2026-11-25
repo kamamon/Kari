@@ -1,0 +1,641 @@
+{
+  "source": "public/data/bestiary.json.fields at b62f1e6607061bc6afa8895cef3192923915c0a9",
+  "styleReference": "art-source/board/style_board_v2.png",
+  "purpose": "狩場20点の環境原画。実行用テクスチャ・完成地形・寸法や衝突判定の正本ではない。",
+  "generator": "built-in image_gen",
+  "records": [
+    {
+      "number": 1,
+      "name": "風礫盆地",
+      "terrain": "灰緑の草と岩原。見通しがよく、最初の練習に向く。",
+      "mood": "冷たく湿った曇り昼、灰緑の霧。",
+      "filename": "field_01_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 風礫盆地.\nSource terrain: 灰緑の草と岩原。見通しがよく、最初の練習に向く。\nSource mood: 冷たく湿った曇り昼、灰緑の霧。\nScene: Show a broad gently uneven clearing of grey-green low grass and grey-brown boulders, encircled by low eroded cliffs with intermittent modest bronze mineral seams. Central roughly 80m by 60m open traversable ground, three broad path gaps between rocks, a sheltered camp approach indicated by a simple empty pale-canvas shelter at the very near edge. First training and exploration area; generous visibility and low cover. Elevated three-quarter overview, no diagram.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-9dff4fe8-1314-4789-b5e4-1121656cc352.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "d02f91721118c3ed2f879eae29f8a9f64a5247690e6996a89053282c202ba6c9",
+      "visualReview": "草地の広い中央、周縁の低い岩、出口と野営地入口を目視確認。空間寸法は概念的で未測定。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": null,
+      "moodBasis": "登録簿にmood欄がないため基準ボードから曇天・灰緑の霧を補完"
+    },
+    {
+      "number": 2,
+      "name": "根絡み湿原",
+      "terrain": "浅い沼、網目状の根、乾いた小島。足場を選ぶ。",
+      "mood": "湿った曇り昼、浅い霧。",
+      "filename": "field_02_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 根絡み湿原.\nSource terrain: 浅い沼、網目状の根、乾いた小島。足場を選ぶ。\nSource mood: 湿った曇り昼、浅い霧。\nScene: Low wetland seen from an elevated rocky bank: shallow pewter pools woven through a dense natural network of broad old tree roots; several dry compact earth islands large enough for combat connect by root ridges and firm gravel causeways. Green-grey sedges, twisted trees framing edges, clear dry passages leaving the clearing. Wet and dry ground must be distinguishable, no deep ocean.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-d3a4f430-e4ca-4e76-8634-5225bf98d308.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "b1d1599b3af1f9a96cea1738eb212cf4ee6aa69142facbd91fdc1f6e69b76176",
+      "visualReview": "根の網・浅沼・乾いた島を目視確認。一部の接続路が石を敷いた道に見えるため自然路として採用時に整理が必要。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": null,
+      "moodBasis": "登録簿にmood欄がないため基準ボードから曇天・灰緑の霧を補完"
+    },
+    {
+      "number": 3,
+      "name": "硝砂海岸",
+      "terrain": "白砂、硝子層、低い海食洞。壁際の位置取り。",
+      "mood": "寒冷な曇りの昼、淡い海霧。",
+      "filename": "field_03_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 硝砂海岸.\nSource terrain: 白砂、硝子層、低い海食洞。壁際の位置取り。\nSource mood: 寒冷な曇りの昼、淡い海霧。\nScene: A cold original coast of broad white-grey sand, chalk-grey coastal cliffs with muted translucent glassy mineral strata and low sea-carved caverns. Elevated oblique view along the shore; large dry sandy combat apron beside the cave entrances, shallow sea on one side, safe dry routes along cliff base and around a blunt rock outcrop. Tiny diffuse highlights on glass, no giant magical crystals, no tropical palette.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-ceabf915-faf6-45e1-9938-f909532bd82b.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "de5c0c5bf2ec70a2b4121accefab988ceb00985cad43bb13d53d8a765e2d8dff",
+      "visualReview": "白砂、硝質層、低い海食洞、海岸の広い足場を目視確認。潮位・衝突・通行幅は未定。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": null,
+      "moodBasis": "登録簿にmood欄がないため基準ボードから曇天・灰緑の霧を補完"
+    },
+    {
+      "number": 4,
+      "name": "灰鐘鉱山",
+      "terrain": "採掘路と広い坑口。狭い所から誘い出して戦う。",
+      "mood": "灰色の湿った曇り昼。",
+      "filename": "field_04_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 灰鐘鉱山.\nSource terrain: 採掘路と広い坑口。狭い所から誘い出して戦う。\nSource mood: 灰色の湿った曇り昼。\nScene: A quiet abandoned frontier mineral working: broad open grey stone apron before a large dark mine mouth, narrowing excavated track leads into the cave, worn low timber supports and modest bronze metal clamps, angular spoil heaps well outside the central flat fighting ground. Elevated three-quarter view reveals a second winding service path along the rock slope. Original practical mining scene, no machinery, no people, no glowing lava.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-e6b1b44a-61c4-4fa0-bfb8-b446f53be551.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "932f4431746f91b663cd6ea7b2a949872a26bc4d8c1a1d9969f637bae095cb31",
+      "visualReview": "坑口前の広い足場と採掘路・支保工を目視確認。広場の人工的舗装は案として追加した。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": null,
+      "moodBasis": "登録簿にmood欄がないため基準ボードから曇天・灰緑の霧を補完"
+    },
+    {
+      "number": 5,
+      "name": "氷帆峡谷",
+      "terrain": "断崖、薄い氷板、滑走の跡。長い攻撃の線を読む。",
+      "mood": "寒冷な曇天、青灰の拡散光と低い霧。",
+      "filename": "field_05_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 氷帆峡谷.\nSource terrain: 断崖、薄い氷板、滑走の跡。長い攻撃の線を読む。\nSource mood: 寒冷な曇天、青灰の拡散光と低い霧。\nScene: A wide cold canyon between tall fractured cliffs, naturally thin upright ice sheets like irregular low sails along the sides, a long flat central icy-gravel lane with visible parallel sliding scrape marks curving through it. High oblique view clearly exposes long unobstructed approach lanes and a broad turning basin, two ground-level exits between cliffs. Pale blue-grey ice, subdued stone, patches of frost, no blizzard or castle.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-a1e04e20-d50e-47ed-98c4-63be9a2c3777.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "4f7752cdd0aac1c3e304c39180975da19b174944339bc2dea0cb932a6ca7a409",
+      "visualReview": "断崖・薄い氷板・長い滑走痕を目視確認。氷の強度・滑り判定は未設定。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": null,
+      "moodBasis": "登録簿にmood欄がないため基準ボードから曇天・灰緑の霧を補完"
+    },
+    {
+      "number": 6,
+      "name": "霧灯樹海",
+      "terrain": "環状の大樹、点在する光。予告を見失わない。",
+      "mood": "灰緑の薄い昼霧と点々の琥珀光。",
+      "filename": "field_06_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 霧灯樹海.\nSource terrain: 環状の大樹、点在する光。予告を見失わない。\nSource mood: 灰緑の薄い昼霧と点々の琥珀光。\nScene: An ancient forest clearing with ring-shaped growth patterns in colossal living trunks and curved root arches around, rather than covering, a generous open earth floor. Small scattered amber bioluminescent mineral or fungal lights at roots provide sparse landmarks. Elevated view into the clearing, two visible ground paths through trees, diffuse daylight and soft grey-green mist behind the clearing; floor and silhouettes stay readable. No artificial lantern buildings.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-657d4ff9-80f2-4c84-897e-1ebfc3491c43.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "2f036d5934094f552be60a8db2978e30a884bc4c609e328003b1a032f29476a8",
+      "visualReview": "環状の巨木・点在する琥珀光・開けた根元を目視確認。巨木の環は構想を具体化した案。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": null,
+      "moodBasis": "登録簿にmood欄がないため基準ボードから曇天・灰緑の霧を補完"
+    },
+    {
+      "number": 7,
+      "name": "燠脈台地",
+      "terrain": "温い晶脈の割れ目と冷えた草の段が交互に続く、低く開けた岩台地。",
+      "mood": "冷たい霧と細雨の昼。割れ目の琥珀色だけが鈍く見え、排気と風の低い音が響く。",
+      "filename": "field_07_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 燠脈台地.\nSource terrain: 温い晶脈の割れ目と冷えた草の段が交互に続く、低く開けた岩台地。\nSource mood: 冷たい霧と細雨の昼。割れ目の琥珀色だけが鈍く見え、排気と風の低い音が響く。\nScene: A low, open rock plateau with alternating flat grass terraces and broad grey rock ledges. Thin warm mineral seams in shallow fissures emit only dull amber light and wisps of low vapor, never bright lava. Cold drizzle across grey-green turf. Elevated three-quarter overview with continuous walkable ramps between low levels, broad uncluttered central ground and paths leaving the plateau; wet rock and cold grass visually distinct.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-59e4a3ab-bd92-49cd-b07d-0962f2159162.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "270572b28a4d1803df204a9785865cda62bf6b5294803e7db3fa7346ed5d4ec5",
+      "visualReview": "低い岩台地・草の段・淡い琥珀晶脈と蒸気・細雨を目視確認。熱源と地形寸法は未検証。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": "冷たい霧と細雨の昼。割れ目の琥珀色だけが鈍く見え、排気と風の低い音が響く。",
+      "moodBasis": "登録簿のmoodを維持"
+    },
+    {
+      "number": 8,
+      "name": "雨裂断崖",
+      "terrain": "雨水が刻んだ断崖と、地上で往来できる広い三段の岩棚。",
+      "mood": "細い雨と低い雲が続き、崖の切れ目だけで風が鳴る。",
+      "filename": "field_08_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 雨裂断崖.\nSource terrain: 雨水が刻んだ断崖と、地上で往来できる広い三段の岩棚。\nSource mood: 細い雨と低い雲が続き、崖の切れ目だけで風が鳴る。\nScene: Rain-carved grey cliffs framing three broad continuous rock terraces, each reached by wide natural sloping ground paths rather than ladders or jumps. A high oblique camera shows all three shelves, wide flat areas for combat, runoff gullies at edges, distant low cloud and fine rain. Cliffs have water-worn vertical grooves, tiny bronze seams, muted sparse green grass, no dramatic bottomless jump gaps.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-5cc9dcd3-1910-4505-bb7c-f8921d515e81.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "7d2106fc1b37d51c39a84d90e0a0c71033ca2da0e9fbec5fe61c3dc3ad99fc99",
+      "visualReview": "三段の広い岩棚と地上の接続坂・雨筋を目視確認。崖の高低差や出口幅は地形化時に決める。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": "細い雨と低い雲が続き、崖の切れ目だけで風が鳴る。",
+      "moodBasis": "登録簿のmoodを維持"
+    },
+    {
+      "number": 9,
+      "name": "銅苔段丘",
+      "terrain": "銅色の晶脈を含む湧水が、苔の厚い低い段丘をつなぐ。",
+      "mood": "曇天の淡い光に濡れた苔が鈍く光り、水滴の音が近い。",
+      "filename": "field_09_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 銅苔段丘.\nSource terrain: 銅色の晶脈を含む湧水が、苔の厚い低い段丘をつなぐ。\nSource mood: 曇天の淡い光に濡れた苔が鈍く光り、水滴の音が近い。\nScene: A chain of low broad stone terraces blanketed by dense muted moss, connected by narrow clear spring streams carrying subtle copper-colored mineral deposits. Wet moss softly gleams under overcast daylight. Elevated overview shows flat dry stony shelves large enough for combat, shallow stepping edges and gentle accessible ramps, and two unambiguous paths continuing between terraces. Copper is muted bronze, not saturated orange.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-07c08dd1-4386-4097-a668-655939e43df5.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "4f43b1e5089d2633b8e01d7aba0590e46963f0fd57e32bdafed340445624378c",
+      "visualReview": "苔むす低い段丘・湧水の流れ・控えめな銅色を目視確認。一部坂は舗装風の角石として表現されている。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": "曇天の淡い光に濡れた苔が鈍く光り、水滴の音が近い。",
+      "moodBasis": "登録簿のmoodを維持"
+    },
+    {
+      "number": 10,
+      "name": "枯響河床",
+      "terrain": "増水時だけ流れが戻る幅広い礫河床と、浅い残り淵。",
+      "mood": "灰黄の湿った礫に薄霧が流れ、足音が岩壁へ短く返る。",
+      "filename": "field_10_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 枯響河床.\nSource terrain: 増水時だけ流れが戻る幅広い礫河床と、浅い残り淵。\nSource mood: 灰黄の湿った礫に薄霧が流れ、足音が岩壁へ短く返る。\nScene: A broad mostly dry gravel riverbed curving between modest grey rock walls, damp yellow-grey pebbles and scattered shallow remnant pools occupy depressions. Thin low mist drifts along the bed. Elevated overview emphasizes a wide open combat area and uninterrupted winding dry route entering and leaving the scene, low boulder cover set to margins, rain erosion marks and occasional grey-green bank grasses. No large flowing river.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-a263b1f0-1e23-45fc-a9b6-9a5777f5658a.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "fd4bfe7efb5d985f6ff19a2daedb62d033d5cdea1578128011566baac4dc36d9",
+      "visualReview": "広い礫河床・浅い残り淵・連続した乾いた通路を目視確認。中央の筋は流水痕の想定だが轍にも見える。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": "灰黄の湿った礫に薄霧が流れ、足音が岩壁へ短く返る。",
+      "moodBasis": "登録簿のmoodを維持"
+    },
+    {
+      "number": 11,
+      "name": "鉛雲高地",
+      "terrain": "地表近くまで雲が下りる草の高地と、霜の残る浅い窪み。",
+      "mood": "光は鈍い灰色で、強風の合間だけ滴と草擦れが聞こえる。",
+      "filename": "field_11_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 鉛雲高地.\nSource terrain: 地表近くまで雲が下りる草の高地と、霜の残る浅い窪み。\nSource mood: 光は鈍い灰色で、強風の合間だけ滴と草擦れが聞こえる。\nScene: A gently rolling highland of windswept short grey-green grass, clouds descending almost to the ground, frost surviving in shallow sheltered hollows. Dull silver-grey daylight. Elevated landscape camera reveals a spacious clear central ridge-top floor and two low worn tracks curving between hollows; distant layers become misty, foreground visibility remains crisp. Sparse flat slate rocks, no snow mountain adventure scene or sunbeams.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-15eb4115-49c4-47ce-9e02-4da5effb8bd3.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "fbde2a0aca5da859b03b57ea0ffa6cb2176216c7f9663b5d093eceb3846a2132",
+      "visualReview": "低い雲・吹かれた草・霜の残る浅い窪みを目視確認。霜の白い筋は装飾的に見える部分がある。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": "光は鈍い灰色で、強風の合間だけ滴と草擦れが聞こえる。",
+      "moodBasis": "登録簿のmoodを維持"
+    },
+    {
+      "number": 12,
+      "name": "沈根沢地",
+      "terrain": "沈んだ根の網と膝下の浅瀬を、乾いた根丘が隔てる沢地。",
+      "mood": "低い霧に樹冠が沈み、濁水の泡と朽木の軋みが響く。",
+      "filename": "field_12_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 沈根沢地.\nSource terrain: 沈んだ根の網と膝下の浅瀬を、乾いた根丘が隔てる沢地。\nSource mood: 低い霧に樹冠が沈み、濁水の泡と朽木の軋みが響く。\nScene: A secluded forest fen with submerged tangled root webs visibly beneath knee-deep turbid shallow water, broad dry root hummocks separating pools. Partly rotting tree trunks, a few bubbles in muddy water, tree crowns disappearing into low grey-green fog. Elevated oblique overview: large dry root-supported platforms and a wide shallow route connect across the clearing, two obvious exits along firmer land. No deep flooded lake.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-84ece516-fc96-4dc2-b06c-71e08f0c8a82.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "86c68ff6e024dbeb265ca23c4aaa7f93a4361669cb2fa97f636602c7b66ac640",
+      "visualReview": "浅瀬の水中の根・乾いた根丘・朽木と濁水の泡を目視確認。水深は見た目の案で未測定。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": "低い霧に樹冠が沈み、濁水の泡と朽木の軋みが響く。",
+      "moodBasis": "登録簿のmoodを維持"
+    },
+    {
+      "number": 13,
+      "name": "玻璃裂原",
+      "terrain": "鈍い硝質の板岩が割れた平原で、広い裸地と低い晶脈の畝が交互に続く。",
+      "mood": "冷たい曇天と低い霧の下で、薄板が触れる乾いた音がする。",
+      "filename": "field_13_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 玻璃裂原.\nSource terrain: 鈍い硝質の板岩が割れた平原で、広い裸地と低い晶脈の畝が交互に続く。\nSource mood: 冷たい曇天と低い霧の下で、薄板が触れる乾いた音がする。\nScene: An open fractured plain of dull glassy slate: broad exposed flat earth and grey slate pads alternate with low mineral-vein ridges. Fine broken plates lean at the margins, translucent smoky edges only; subdued bronze seams not bright crystal towers. Elevated wide three-quarter view emphasizes large connected open ground for combat and clear paths between low ridges, cold overcast sky and thin low mist.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-9e4adf07-aa4a-4913-ad1f-ae1f2367646b.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "2d7fc283e3a3b485949438a343f1afa097e4106fceeda85d743fa3f44a2cb511",
+      "visualReview": "割れた薄い板岩・広い裸地・低い晶脈の畝を目視確認。硝質の透明感は控えめで、通常の板岩にも見える。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": "冷たい曇天と低い霧の下で、薄板が触れる乾いた音がする。",
+      "moodBasis": "登録簿のmoodを維持"
+    },
+    {
+      "number": 14,
+      "name": "灰繭窪地",
+      "terrain": "灰色の菌糸が根を包む浅い窪地で、乾いた根棚と湿った小盆地がつながる。",
+      "mood": "弱い拡散光が差し、細かな胞子が見えるほど静かで湿っている。",
+      "filename": "field_14_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 灰繭窪地.\nSource terrain: 灰色の菌糸が根を包む浅い窪地で、乾いた根棚と湿った小盆地がつながる。\nSource mood: 弱い拡散光が差し、細かな胞子が見えるほど静かで湿っている。\nScene: A shallow quiet woodland hollow where grey fungal mycelium softly wraps exposed roots like natural felt. Wide dry root shelves lead between damp small earthen basins; pale minute spores catch weak diffuse daylight. Elevated overview of navigable open connected floor, root-covered margins and two visible ground-level passages. Organic ecological terrain, subtle and serene, no horror bodies, no cocoons with occupants, no web maze blocking view.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-deba9e48-df1e-4419-9cac-63dbf1183c1a.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "cb46c0deeaad2bcdaa15f4b5a465bed4df326ac7f88845bc8d1ac6013974644c",
+      "visualReview": "根を包む灰色菌糸・乾いた棚・湿った盆地・細かな胞子を目視確認。右奥の石アーチは地形案として追加された形。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": "弱い拡散光が差し、細かな胞子が見えるほど静かで湿っている。",
+      "moodBasis": "登録簿のmoodを維持"
+    },
+    {
+      "number": 15,
+      "name": "冷銅洞庭",
+      "terrain": "天井の抜けた冷たい鉱洞が連なる地形で、銅色の露頭と平たい洞床がある。",
+      "mood": "外光が淡く入り、冷えた滴の音が低く反響する。",
+      "filename": "field_15_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 冷銅洞庭.\nSource terrain: 天井の抜けた冷たい鉱洞が連なる地形で、銅色の露頭と平たい洞床がある。\nSource mood: 外光が淡く入り、冷えた滴の音が低く反響する。\nScene: Interconnected cool mineral caverns with several natural roof openings letting in pale overcast sky light. Flat broad grey cave floors, muted copper ore exposures along the walls, wet drip ledges and tiny shallow puddles. Elevated oblique view from a roof opening shows a spacious main chamber and wide ground passages into adjacent open-roof chambers; clear walkable connections, quiet reflective atmosphere, no hot lava or temple architecture.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-2d9ef50f-6b7b-48bf-b8e4-31fed4f46e7a.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "0a14b6cf67de7e3a453746acf4fe92e028a3c8e23deea4443f9fee1fac5e650b",
+      "visualReview": "天井が抜けた洞・銅色の露頭・広い平坦床と接続口を目視確認。俯瞰角は他図より浅く、通路奥の寸法は不明。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": "外光が淡く入り、冷えた滴の音が低く反響する。",
+      "moodBasis": "登録簿のmoodを維持"
+    },
+    {
+      "number": 16,
+      "name": "響礫回廊",
+      "terrain": "礫の通路と戦える広い岩盆が交互に連なり、側壁に低い棚状の岩が張り出す。",
+      "mood": "霧を含む風が通り、礫の転がる音が方向ごとに遅れて聞こえる。",
+      "filename": "field_16_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 響礫回廊.\nSource terrain: 礫の通路と戦える広い岩盆が交互に連なり、側壁に低い棚状の岩が張り出す。\nSource mood: 霧を含む風が通り、礫の転がる音が方向ごとに遅れて聞こえる。\nScene: A natural corridor system seen from above at an oblique angle: broad gravel paths alternate with generous flat rock bowls, low ledge-like shelves protrude from grey side walls. Fog-bearing wind threads through the route, loose angular stones collect at edges. Show one large open bowl in the foreground and another beyond a wide bend, with readable connecting exits, subtle bronze veins, sparse tough grass, no buildings.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-11a13632-7a88-4245-b6b2-2b7e15ccd3d8.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "45484e72207231f4c59f429cf142b4d0595034237839a07cde3d484508ad3ffd",
+      "visualReview": "礫通路と2つの広い岩盆・側壁の低い張出し棚を目視確認。音響や各通路の地形寸法は未設定。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": "霧を含む風が通り、礫の転がる音が方向ごとに遅れて聞こえる。",
+      "moodBasis": "登録簿のmoodを維持"
+    },
+    {
+      "number": 17,
+      "name": "重霧環谷",
+      "terrain": "環状の低い尾根に囲まれ、浅い水滴場と開けた岩棚が交互にある霧の谷。",
+      "mood": "曇天の灰緑の霧。尾根では風音、谷底では葉から落ちる水滴が聞こえる。",
+      "filename": "field_17_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 重霧環谷.\nSource terrain: 環状の低い尾根に囲まれ、浅い水滴場と開けた岩棚が交互にある霧の谷。\nSource mood: 曇天の灰緑の霧。尾根では風音、谷底では葉から落ちる水滴が聞こえる。\nScene: A valley enclosed by a natural ring of low ridges, alternating shallow rain-fed drip pools and open broad rock shelves. Grey-green fog layered under overcast sky, wet leaves and low shrubs near pools. Elevated overview should clearly reveal the ring's broken ground-level passages, a large unobstructed combat shelf and connected dry routes around shallow water. Mist is atmospheric in distance but does not obscure foreground footing.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-bec314ec-1683-4231-a7d6-335e803e190a.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "2e4555271fc944c770e4051f7aec298476a4ef71425843ebc8563529acec11d9",
+      "visualReview": "低い尾根と浅い水場・広い岩棚・周囲の霧を目視確認。環状地形全体は画面外に続く構想であり厳密な閉環を示す上面図ではない。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": "曇天の灰緑の霧。尾根では風音、谷底では葉から落ちる水滴が聞こえる。",
+      "moodBasis": "登録簿のmoodを維持"
+    },
+    {
+      "number": 18,
+      "name": "伏熱石原",
+      "terrain": "地中の温い晶脈と、根の残る冷たい縁が接する広い礫原。",
+      "mood": "冷たい小雨と低い蒸気。裂け目の琥珀色だけが鈍く光り、石の収縮音がする。",
+      "filename": "field_18_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 伏熱石原.\nSource terrain: 地中の温い晶脈と、根の残る冷たい縁が接する広い礫原。\nSource mood: 冷たい小雨と低い蒸気。裂け目の琥珀色だけが鈍く光り、石の収縮音がする。\nScene: A wide gravel plain where warm subterranean mineral seams meet cold root-lined borders. Shallow irregular fissures show faint dull amber light, low thin steam meets cold fine rain, old roots persist along cooler stone margins. Elevated landscape overview of large stable grey gravel surfaces with wide clear routes around narrow fissures and two natural exits. Low relief and practical footing, no lava river, eruption or giant magical crystals.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-2470d513-5fed-4b79-858c-58970f237ffa.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "16d2c4388de3357f4ae3e6d31a69aa560a5b5d3b760dc99fbc74af78d2f504d7",
+      "visualReview": "広い礫原・冷たい根の周縁・淡い琥珀の亀裂・低い蒸気と雨を目視確認。亀裂の危険判定は未設定。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": "冷たい小雨と低い蒸気。裂け目の琥珀色だけが鈍く光り、石の収縮音がする。",
+      "moodBasis": "登録簿のmoodを維持"
+    },
+    {
+      "number": 19,
+      "name": "錆星高原",
+      "terrain": "点状の青銅鉱床と鉱物藻を載せた低い岩棚が続く、起伏の緩い高原。",
+      "mood": "灰青の曇り空と細い霧。金属質の小石が風で触れ合う乾いた音が混じる。",
+      "filename": "field_19_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 錆星高原.\nSource terrain: 点状の青銅鉱床と鉱物藻を載せた低い岩棚が続く、起伏の緩い高原。\nSource mood: 灰青の曇り空と細い霧。金属質の小石が風で触れ合う乾いた音が混じる。\nScene: A gently undulating plateau under grey-blue cloud, low stone shelves bear scattered dot-like bronze mineral deposits and subtle mineral algae. Small metallic pebbles mingle with muted grey grit; narrow ribbons of mist between shallow swells. Elevated broad view of a spacious flat terrace connected by gentle ramps to further shelves, unmistakable traversable paths. Rust/bronze is sparse earthy flecking, not luminous stars or red desert.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-23ab9e0f-066c-4253-a72b-ff4a6f0b9882.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "542bf989f46b8cd6f9ca705f5ab63f6c84f38cfb8ee2b73c57946c701200eaef",
+      "visualReview": "緩い高原・点状の青銅鉱床・低い岩棚と薄霧を目視確認。鉱物藻は灰緑の薄膜として描かれ、通常の苔との差は控えめ。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": "灰青の曇り空と細い霧。金属質の小石が風で触れ合う乾いた音が混じる。",
+      "moodBasis": "登録簿のmoodを維持"
+    },
+    {
+      "number": 20,
+      "name": "深帷樹洞",
+      "terrain": "倒れた巨木と根棚が地上に大きな幹洞を作り、浅い流れと乾いた木屑床が並ぶ森林。",
+      "mood": "灰緑の薄暗い昼光。霧滴が幹を伝い、湿った木の軋みがゆっくり響く。",
+      "filename": "field_20_overview_v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: original environment concept painting for VEILBOUND HUNTERS, a terrain modeling reference, not a completed map or tileable background. Create exactly one landscape image, 1536x1024 preferred, no panels. Match only the painterly semi-realistic visual language, large readable shapes, muted grey-green / grey-brown stone / subtle bronze mineral accents of the provided art style board. Do not reproduce its people, beast, weapons, board layout, or collage. High quality hand-painted original environment, gentle material brushwork, restrained details and realistic geological weight. The camera is moderately elevated and angled down so walkable ground occupies most of the frame. Terrain and routes are legible; open central space, cover at margins, natural area connections. Soft diffuse overcast daylight, subdued color, mist in distance only. No people, animals, monsters, weapons, UI, logos, labels, letters, numbers, text, watermark, border, or arrows.\nField identity (do not print): 深帷樹洞.\nSource terrain: 倒れた巨木と根棚が地上に大きな幹洞を作り、浅い流れと乾いた木屑床が並ぶ森林。\nSource mood: 灰緑の薄暗い昼光。霧滴が幹を伝い、湿った木の軋みがゆっくり響く。\nScene: An immense fallen ancient tree and broad root shelves form a cavernous hollow at ground level within a wet forest. A shallow narrow stream runs beside a wide dry bed of woody mulch, damp bark carries fine mist droplets. Elevated oblique view into the hollow with a large open natural floor for movement and visible broad passages through both ends and between roots. Dim grey-green daylight remains readable, no lanterns, creatures or structures.",
+      "status": "generated_candidate",
+      "generatedSource": "/workspace/scratch/f5ec33877ad1/generated_images/exec-9ee81a34-0f6e-4652-8feb-6514ffa1994b.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "4e5fb86d148b55af393b50fda1ed4e5ea4ee7955a975dd0203bd20f4aafce540",
+      "visualReview": "倒れた巨木の幹洞・根棚・浅い流れ・乾いた木屑床を目視確認。巨木の通路寸法と崩落判定は未設定。",
+      "unverified": [
+        "正式採用",
+        "3D地形・当たり判定",
+        "ゲーム内表示",
+        "iPhone性能"
+      ],
+      "sourceMood": "灰緑の薄暗い昼光。霧滴が幹を伝い、湿った木の軋みがゆっくり響く。",
+      "moodBasis": "登録簿のmoodを維持"
+    }
+  ],
+  "verification": {
+    "pngCount": 20,
+    "uniqueSha256Count": 20,
+    "dimensionsAll": [
+      1536,
+      1024
+    ],
+    "allPngDecode": true,
+    "allNamesAndTerrainMatchRegistry": true,
+    "visuallyReviewedAll": true,
+    "postprocess": "原本PNGのバイトをコピー。画像の加工・再圧縮・リサイズなし。",
+    "totalImageBytes": 57318426,
+    "checks": [
+      {
+        "filename": "field_01_overview_v1.png",
+        "bytes": 2936165,
+        "sha256": "d02f91721118c3ed2f879eae29f8a9f64a5247690e6996a89053282c202ba6c9"
+      },
+      {
+        "filename": "field_02_overview_v1.png",
+        "bytes": 3063406,
+        "sha256": "b1d1599b3af1f9a96cea1738eb212cf4ee6aa69142facbd91fdc1f6e69b76176"
+      },
+      {
+        "filename": "field_03_overview_v1.png",
+        "bytes": 2793781,
+        "sha256": "de5c0c5bf2ec70a2b4121accefab988ceb00985cad43bb13d53d8a765e2d8dff"
+      },
+      {
+        "filename": "field_04_overview_v1.png",
+        "bytes": 2892539,
+        "sha256": "932f4431746f91b663cd6ea7b2a949872a26bc4d8c1a1d9969f637bae095cb31"
+      },
+      {
+        "filename": "field_05_overview_v1.png",
+        "bytes": 2935449,
+        "sha256": "4f7752cdd0aac1c3e304c39180975da19b174944339bc2dea0cb932a6ca7a409"
+      },
+      {
+        "filename": "field_06_overview_v1.png",
+        "bytes": 2919518,
+        "sha256": "2f036d5934094f552be60a8db2978e30a884bc4c609e328003b1a032f29476a8"
+      },
+      {
+        "filename": "field_07_overview_v1.png",
+        "bytes": 2786999,
+        "sha256": "270572b28a4d1803df204a9785865cda62bf6b5294803e7db3fa7346ed5d4ec5"
+      },
+      {
+        "filename": "field_08_overview_v1.png",
+        "bytes": 2737647,
+        "sha256": "7d2106fc1b37d51c39a84d90e0a0c71033ca2da0e9fbec5fe61c3dc3ad99fc99"
+      },
+      {
+        "filename": "field_09_overview_v1.png",
+        "bytes": 2813015,
+        "sha256": "4f43b1e5089d2633b8e01d7aba0590e46963f0fd57e32bdafed340445624378c"
+      },
+      {
+        "filename": "field_10_overview_v1.png",
+        "bytes": 3088415,
+        "sha256": "fd4bfe7efb5d985f6ff19a2daedb62d033d5cdea1578128011566baac4dc36d9"
+      },
+      {
+        "filename": "field_11_overview_v1.png",
+        "bytes": 2697629,
+        "sha256": "fbde2a0aca5da859b03b57ea0ffa6cb2176216c7f9663b5d093eceb3846a2132"
+      },
+      {
+        "filename": "field_12_overview_v1.png",
+        "bytes": 2813836,
+        "sha256": "86c68ff6e024dbeb265ca23c4aaa7f93a4361669cb2fa97f636602c7b66ac640"
+      },
+      {
+        "filename": "field_13_overview_v1.png",
+        "bytes": 2624111,
+        "sha256": "2d7fc283e3a3b485949438a343f1afa097e4106fceeda85d743fa3f44a2cb511"
+      },
+      {
+        "filename": "field_14_overview_v1.png",
+        "bytes": 3046714,
+        "sha256": "cb46c0deeaad2bcdaa15f4b5a465bed4df326ac7f88845bc8d1ac6013974644c"
+      },
+      {
+        "filename": "field_15_overview_v1.png",
+        "bytes": 2691573,
+        "sha256": "0a14b6cf67de7e3a453746acf4fe92e028a3c8e23deea4443f9fee1fac5e650b"
+      },
+      {
+        "filename": "field_16_overview_v1.png",
+        "bytes": 2933108,
+        "sha256": "45484e72207231f4c59f429cf142b4d0595034237839a07cde3d484508ad3ffd"
+      },
+      {
+        "filename": "field_17_overview_v1.png",
+        "bytes": 2898110,
+        "sha256": "2e4555271fc944c770e4051f7aec298476a4ef71425843ebc8563529acec11d9"
+      },
+      {
+        "filename": "field_18_overview_v1.png",
+        "bytes": 2952665,
+        "sha256": "16d2c4388de3357f4ae3e6d31a69aa560a5b5d3b760dc99fbc74af78d2f504d7"
+      },
+      {
+        "filename": "field_19_overview_v1.png",
+        "bytes": 2699444,
+        "sha256": "542bf989f46b8cd6f9ca705f5ab63f6c84f38cfb8ee2b73c57946c701200eaef"
+      },
+      {
+        "filename": "field_20_overview_v1.png",
+        "bytes": 2994302,
+        "sha256": "4e5fb86d148b55af393b50fda1ed4e5ea4ee7955a975dd0203bd20f4aafce540"
+      }
+    ],
+    "notRunByThisSubtask": [
+      "npm ci（親担当）",
+      "ゲーム内表示",
+      "3D・衝突判定",
+      "iPhone実機"
+    ]
+  },
+  "decisions": [
+    "010は今回のユーザー直接依頼の便宜の番号。掲示板の既存依頼番号ではない。",
+    "全て採用待ちの環境原画。地形寸法や出口位置は構想上の案。",
+    "1〜6の天候は登録簿に明示がないため採用基準の曇り昼と霧で統一。",
+    "同じ世界に見えることと足場の読みやすさを優先。通路の具体配置・石敷き・自然アーチは原画での補完。"
+  ],
+  "unmetOrLimits": [
+    "厳密な80m×60mの投影図ではない。位置・寸法・衝突の正本はClaudeが作る地形データ。",
+    "02と09の接続路は一部石敷き風。10の流水痕は轍に見える部分がある。",
+    "13の硝質透明感、19の鉱物藻の個性は控えめ。",
+    "15の俯瞰角は他図より浅い。17の環状地形全体は画面外に続き、閉環を証明しない。"
+  ]
+}

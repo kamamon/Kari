@@ -1,0 +1,282 @@
+{
+  "reference_commit": "b62f1e6607061bc6afa8895cef3192923915c0a9",
+  "generator": "built-in image_gen",
+  "status": "generated; adoption and game integration not complete",
+  "assets": [
+    {
+      "id": "mat.galdros.shell_shard",
+      "name": "岩殻片",
+      "filename": "icon_mat_galdros_shell_v1.png",
+      "source_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-c3624e7c-e107-495d-9814-bd375a127072.png",
+      "prompt": "Use case: stylized-concept. Create ONE inventory asset for the original fantasy game VEILBOUND HUNTERS, derived from the approved reference art. Input image 1 is palette/material/style only; image 2 is the Galdros creature whose shell supplies this material. Do not reproduce either reference composition.\nSubject: a single detached ROCK SHELL SHARD (岩殻片), a broad low asymmetrical chipped plate of gray-brown layered stone with just a narrow muted bronze mineral rim. One cohesive irregular plate, three readable planes, one freshly chipped pale edge, a rough granular underside. It must clearly look like a piece of the animal's huge back armor, not a crystal, manufactured shield, or a pile. No flesh, blood, creature or scenery.\nAsset: one square 1024x1024 PNG with genuine transparent alpha background. Semi-real hand-painted production art, realistic subdued material textures and simple readable silhouette. Isometric three-quarter view from slightly above, camera looking down around 30 degrees. Soft upper-left lighting, self-shading only, no cast shadow or ground. Object centered, maximum extent 80 percent of canvas, about 10 percent empty margin on every side, fully visible. Gray green / weathered bronze / warm stone palette from approved board. No text, numbers, border, watermark, symbols, extra objects or checkerboard pattern.",
+      "reference_images": [
+        "art-source/board/style_board_v2.png",
+        "art-source/monster/galdros/galdros_right_v1.png"
+      ],
+      "kind": "inventory_icon",
+      "status": "generated_proposal",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ]
+    },
+    {
+      "id": "item.heal_tonic",
+      "name": "回復液",
+      "subject": "ONE squat reusable field flask of restorative liquid. Rounded cloudy pale sea-green glass body with broad shoulders and flat base, filled with muted sage green liquid. Simple cork stopper, two modest bronze neck bands and a small crossed brown leather carrying strap around the body. Clearly a sealed drink bottle, practical and used, minimal adornment. No label, emblem or hanging accessories. The compact bottle silhouette must be recognizable at 32 pixels.",
+      "prompt": "Use case: stylized-concept. Produce ONE original fantasy inventory icon for VEILBOUND HUNTERS, using the reference only for approved palette and semi-real material rendering; do not copy the reference layout.\nSubject: ONE squat reusable field flask of restorative liquid. Rounded cloudy pale sea-green glass body with broad shoulders and flat base, filled with muted sage green liquid. Simple cork stopper, two modest bronze neck bands and a small crossed brown leather carrying strap around the body. Clearly a sealed drink bottle, practical and used, minimal adornment. No label, emblem or hanging accessories. The compact bottle silhouette must be recognizable at 32 pixels.\nCanvas requested 1024x1024 square PNG, genuine fully transparent alpha background. No ground or cast shadow. Entire single object centered and fully visible, maximum extent 80% of frame, at least 10% clear empty padding. Three-quarter view slightly from above, 30-degree downward camera; consistent soft upper-left light with self-shading. Semi-real painterly production game asset with realistic but simplified worn textures, legible at 32 to 48 px. Palette muted gray-green, warm ivory, brown leather and old bronze. No text, label, number, logo, symbols, frame, watermark, border, smoke, aura, particles, decorative backdrop or checkerboard. Transparent empty pixels should be truly clear without stray debris.",
+      "source_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-ed3d1e51-df6f-442e-8cd5-7462e78cfab4.png",
+      "reference_images": [
+        "art-source/board/style_board_v2.png"
+      ],
+      "status": "generated_proposal",
+      "filename": "icon_item_heal_v1.png",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ]
+    },
+    {
+      "id": "item.whetstone",
+      "name": "研磨石",
+      "subject": "ONE practical rectangular sharpening stone, short thick rounded oblong block of slate-gray abrasive stone with a flat worn lighter gray polishing face, resting partially in a simple fitted dark-brown leather sleeve covering only the lower third. No holder or base outside the leather sleeve, no metal, no jewel. Distinct long rectangular silhouette readable at 32 pixels.",
+      "prompt": "Use case: stylized-concept. Produce ONE original fantasy inventory icon for VEILBOUND HUNTERS, using the reference only for approved palette and semi-real material rendering; do not copy the reference layout.\nSubject: ONE practical rectangular sharpening stone, short thick rounded oblong block of slate-gray abrasive stone with a flat worn lighter gray polishing face, resting partially in a simple fitted dark-brown leather sleeve covering only the lower third. No holder or base outside the leather sleeve, no metal, no jewel. Distinct long rectangular silhouette readable at 32 pixels.\nCanvas requested 1024x1024 square PNG, genuine fully transparent alpha background. No ground or cast shadow. Entire single object centered and fully visible, maximum extent 80% of frame, at least 10% clear empty padding. Three-quarter view slightly from above, 30-degree downward camera; consistent soft upper-left light with self-shading. Semi-real painterly production game asset with realistic but simplified worn textures, legible at 32 to 48 px. Palette muted gray-green, warm ivory, brown leather and old bronze. No text, label, number, logo, symbols, frame, watermark, border, smoke, aura, particles, decorative backdrop or checkerboard. Transparent empty pixels should be truly clear without stray debris.",
+      "source_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-29bd8c70-843f-43e7-aae1-6b22e19c3c90.png",
+      "reference_images": [
+        "art-source/board/style_board_v2.png"
+      ],
+      "status": "generated_proposal",
+      "filename": "icon_item_whetstone_v1.png",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ]
+    },
+    {
+      "id": "mat.galdros.hard_bone",
+      "name": "硬骨",
+      "subject": "ONE clean naturally weathered ivory-colored stout animal long bone from a large fictional herbivorous quadruped. Thick center and unequal blunt rounded joint ends with subtle porous texture. Dry archaeological/shed-material appearance without meat, blood, skin, gore, or sharp weapon form. Single compact diagonal bone, clearly bone not crystal. Warm ivory against transparent empty space.",
+      "prompt": "Use case: stylized-concept. Produce ONE original fantasy inventory icon for VEILBOUND HUNTERS. Input images are approved style/material references, not compositions to repeat. If a creature reference is present, extract only the specified material in its established color and texture.\nSubject: ONE clean naturally weathered ivory-colored stout animal long bone from a large fictional herbivorous quadruped. Thick center and unequal blunt rounded joint ends with subtle porous texture. Dry archaeological/shed-material appearance without meat, blood, skin, gore, or sharp weapon form. Single compact diagonal bone, clearly bone not crystal. Warm ivory against transparent empty space.\nCanvas requested 1024x1024 square PNG, genuine transparent alpha background. No ground or cast shadow. Single cohesive object centered and fully visible, maximum extent 80% of frame, at least 10% completely clear empty padding. Three-quarter view slightly from above, about 30-degree downward camera; soft upper-left light with self-shading only. Semi-real painterly game production art with realistic but simplified worn textures, legible at 32 to 48 pixels. Palette muted gray-green, warm ivory, brown leather, gray-brown stone and old bronze. No text, label, numbers, logo, symbols, frame, watermark, border, scenery, aura, particles, checkerboard or loose debris in empty background.",
+      "source_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-642551d4-a334-43da-a0c4-e41852731f50.png",
+      "reference_images": [
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/board/style_board_v2.png",
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/monster/galdros/galdros_right_v1.png"
+      ],
+      "status": "generated_proposal",
+      "filename": "icon_mat_bone_v1.png",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ]
+    },
+    {
+      "id": "mat.galdros.bronze_vein",
+      "name": "青銅晶脈",
+      "subject": "ONE modest rough gray-brown stone fragment traversed by a branching muted bronze-colored mineral vein exposed through cracks. The metallic mineral forms a recognizable forked Y across the dark stone matrix. No tall pointed crystals. Not a crafted jewelry piece. Distinguish from a plain shell shard by dominant branching copper/bronze vein occupying roughly a third of the fragment. Earthy oxidation and small patinated spots.",
+      "prompt": "Use case: stylized-concept. Produce ONE original fantasy inventory icon for VEILBOUND HUNTERS. Input images are approved style/material references, not compositions to repeat. If a creature reference is present, extract only the specified material in its established color and texture.\nSubject: ONE modest rough gray-brown stone fragment traversed by a branching muted bronze-colored mineral vein exposed through cracks. The metallic mineral forms a recognizable forked Y across the dark stone matrix. No tall pointed crystals. Not a crafted jewelry piece. Distinguish from a plain shell shard by dominant branching copper/bronze vein occupying roughly a third of the fragment. Earthy oxidation and small patinated spots.\nCanvas requested 1024x1024 square PNG, genuine transparent alpha background. No ground or cast shadow. Single cohesive object centered and fully visible, maximum extent 80% of frame, at least 10% completely clear empty padding. Three-quarter view slightly from above, about 30-degree downward camera; soft upper-left light with self-shading only. Semi-real painterly game production art with realistic but simplified worn textures, legible at 32 to 48 pixels. Palette muted gray-green, warm ivory, brown leather, gray-brown stone and old bronze. No text, label, numbers, logo, symbols, frame, watermark, border, scenery, aura, particles, checkerboard or loose debris in empty background.",
+      "source_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-9bca461c-37ce-42b1-b353-46630d426a8d.png",
+      "reference_images": [
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/board/style_board_v2.png",
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/monster/galdros/galdros_right_v1.png"
+      ],
+      "status": "generated_proposal",
+      "filename": "icon_mat_vein_v1.png",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ]
+    },
+    {
+      "id": "mat.galdros.foreleg_plate",
+      "name": "前脚甲",
+      "subject": "ONE detached natural foreleg armor plate from the approved Galdros, closely following the broad angular gray-brown rock patch on its foreleg. Compact shield-shaped convex irregular pentagonal stone scute with a single bronze mineral rim, a thick readable side edge and rough non-bloody underside; no limb or creature attached, no straps or manufactured fasteners, no emblem. Visually smaller stout domed plate, not a broad flat back shell shard.",
+      "prompt": "Use case: stylized-concept. Produce ONE original fantasy inventory icon for VEILBOUND HUNTERS. Input images are approved style/material references, not compositions to repeat. If a creature reference is present, extract only the specified material in its established color and texture.\nSubject: ONE detached natural foreleg armor plate from the approved Galdros, closely following the broad angular gray-brown rock patch on its foreleg. Compact shield-shaped convex irregular pentagonal stone scute with a single bronze mineral rim, a thick readable side edge and rough non-bloody underside; no limb or creature attached, no straps or manufactured fasteners, no emblem. Visually smaller stout domed plate, not a broad flat back shell shard.\nCanvas requested 1024x1024 square PNG, genuine transparent alpha background. No ground or cast shadow. Single cohesive object centered and fully visible, maximum extent 80% of frame, at least 10% completely clear empty padding. Three-quarter view slightly from above, about 30-degree downward camera; soft upper-left light with self-shading only. Semi-real painterly game production art with realistic but simplified worn textures, legible at 32 to 48 pixels. Palette muted gray-green, warm ivory, brown leather, gray-brown stone and old bronze. No text, label, numbers, logo, symbols, frame, watermark, border, scenery, aura, particles, checkerboard or loose debris in empty background.",
+      "source_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-33458e72-71ae-40e0-a7f8-2c2755901bc7.png",
+      "reference_images": [
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/board/style_board_v2.png",
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/monster/galdros/galdros_right_v1.png"
+      ],
+      "status": "generated_proposal",
+      "filename": "icon_mat_foreplate_v1.png",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ]
+    },
+    {
+      "id": "item.bind_trap",
+      "name": "拘束罠",
+      "subject": "ONE fictional nonlethal monster-restraint field kit packed for carrying: compact folded olive-gray canvas net bundle wrapped around a shallow wooden spool frame, secured by two dull bronze buckles and a clearly visible coiled thick rope forming a rounded rectangular silhouette. The item is a bundled net snare, no teeth, spikes, jaws, weapons, explosive, fuse, or technical construction detail. Practical rustic inventory object, not deployed, one cohesive kit.",
+      "prompt": "Use case: stylized-concept. Produce ONE original fantasy inventory icon for VEILBOUND HUNTERS. Input images are approved style/material references, not compositions to repeat. If a creature reference is present, extract only the specified material in its established color and texture.\nSubject: ONE fictional nonlethal monster-restraint field kit packed for carrying: compact folded olive-gray canvas net bundle wrapped around a shallow wooden spool frame, secured by two dull bronze buckles and a clearly visible coiled thick rope forming a rounded rectangular silhouette. The item is a bundled net snare, no teeth, spikes, jaws, weapons, explosive, fuse, or technical construction detail. Practical rustic inventory object, not deployed, one cohesive kit.\nCanvas requested 1024x1024 square PNG, genuine transparent alpha background. No ground or cast shadow. Single cohesive object centered and fully visible, maximum extent 80% of frame, at least 10% completely clear empty padding. Three-quarter view slightly from above, about 30-degree downward camera; soft upper-left light with self-shading only. Semi-real painterly game production art with realistic but simplified worn textures, legible at 32 to 48 pixels. Palette muted gray-green, warm ivory, brown leather, gray-brown stone and old bronze. No text, label, numbers, logo, symbols, frame, watermark, border, scenery, aura, particles, checkerboard or loose debris in empty background.",
+      "source_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-057115d5-5a3f-4296-9b11-d7b7cb847844.png",
+      "reference_images": [
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/board/style_board_v2.png"
+      ],
+      "status": "generated_proposal",
+      "filename": "icon_item_bind_trap_v1.png",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ]
+    },
+    {
+      "id": "item.calm_orb",
+      "name": "鎮静玉",
+      "subject": "ONE calm-orb inventory item, a small rounded matte sage-green ceramic ball in a snug cream cloth pouch gathered into a very short tied cloth nub at the top. A single flat bronze neck ring secures cloth. Subtle dusty surface, one small seam. Must appear like a soft herbal calming pouch with sphere body, NOT a bomb; no fuse, sparks, metal pin, smoke, flame, lettering or diagrams. One ball only.",
+      "prompt": "Use case: stylized-concept. Produce ONE original fantasy inventory icon for VEILBOUND HUNTERS. Input images are approved style/material references, not compositions to repeat. If a creature reference is present, extract only the specified material in its established color and texture.\nSubject: ONE calm-orb inventory item, a small rounded matte sage-green ceramic ball in a snug cream cloth pouch gathered into a very short tied cloth nub at the top. A single flat bronze neck ring secures cloth. Subtle dusty surface, one small seam. Must appear like a soft herbal calming pouch with sphere body, NOT a bomb; no fuse, sparks, metal pin, smoke, flame, lettering or diagrams. One ball only.\nCanvas requested 1024x1024 square PNG, genuine transparent alpha background. No ground or cast shadow. Single cohesive object centered and fully visible, maximum extent 80% of frame, at least 10% completely clear empty padding. Three-quarter view slightly from above, about 30-degree downward camera; soft upper-left light with self-shading only. Semi-real painterly game production art with realistic but simplified worn textures, legible at 32 to 48 pixels. Palette muted gray-green, warm ivory, brown leather, gray-brown stone and old bronze. No text, label, numbers, logo, symbols, frame, watermark, border, scenery, aura, particles, checkerboard or loose debris in empty background.",
+      "source_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-08749065-f7fe-41df-b459-efc986b3285e.png",
+      "reference_images": [
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/board/style_board_v2.png"
+      ],
+      "status": "generated_proposal",
+      "filename": "icon_item_calm_orb_v1.png",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ]
+    },
+    {
+      "id": "mat.galdros.veined_shell",
+      "name": "脈岩殻",
+      "subject": "ONE mid-rank Galdros veined shell plate. Broad irregular low gray-brown rock plate like the base shell shard, with two clearly visible thin branching warm-bronze mineral seams growing through the face and a bronze rim. Stone remains most of the material; no huge crystal spikes, no saturated gold. Slightly hooked asymmetric outer silhouette, three readable planes, rough dry underside. The seams make it distinct from the un-veined base shell.",
+      "prompt": "Use case: stylized-concept. Produce ONE original fantasy inventory icon for VEILBOUND HUNTERS. Input images are approved style/material references, not compositions to repeat. If a creature reference is present, extract only the specified material in its established color and texture.\nSubject: ONE mid-rank Galdros veined shell plate. Broad irregular low gray-brown rock plate like the base shell shard, with two clearly visible thin branching warm-bronze mineral seams growing through the face and a bronze rim. Stone remains most of the material; no huge crystal spikes, no saturated gold. Slightly hooked asymmetric outer silhouette, three readable planes, rough dry underside. The seams make it distinct from the un-veined base shell.\nCanvas requested 1024x1024 square PNG, genuine transparent alpha background. No ground or cast shadow. Single cohesive object centered and fully visible, maximum extent 80% of frame, at least 10% completely clear empty padding. Three-quarter view slightly from above, about 30-degree downward camera; soft upper-left light with self-shading only. Semi-real painterly game production art with realistic but simplified worn textures, legible at 32 to 48 pixels. Palette muted gray-green, warm ivory, brown leather, gray-brown stone and old bronze. No text, label, numbers, logo, symbols, frame, watermark, border, scenery, aura, particles, checkerboard or loose debris in empty background.",
+      "source_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-a138067e-971f-4136-a17e-53c6e37ff8cc.png",
+      "reference_images": [
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/board/style_board_v2.png",
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/monster/galdros/galdros_right_v1.png"
+      ],
+      "status": "generated_proposal",
+      "filename": "icon_mat_galdros_veined_shell_v1.png",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ]
+    },
+    {
+      "id": "mat.galdros.tail_crystal",
+      "name": "尾端晶",
+      "subject": "ONE detached tail-end crystal mineral from the approved Galdros tail tip. A compact blunt tapered almond-shaped cluster with broad angular bronze mineral facets, wider at one end and narrowed at the other, inspired directly by the animal's tail crystal in the reference. Only mineral material, no skin, flesh, blood, bone or attached tail. Subdued brass-bronze, subtle darker seams, blunt rather than needle-like.",
+      "prompt": "Use case: stylized-concept. Produce ONE original fantasy inventory icon for VEILBOUND HUNTERS. Input images are approved style/material references, not compositions to repeat. If a creature reference is present, extract only the specified material in its established color and texture.\nSubject: ONE detached tail-end crystal mineral from the approved Galdros tail tip. A compact blunt tapered almond-shaped cluster with broad angular bronze mineral facets, wider at one end and narrowed at the other, inspired directly by the animal's tail crystal in the reference. Only mineral material, no skin, flesh, blood, bone or attached tail. Subdued brass-bronze, subtle darker seams, blunt rather than needle-like.\nCanvas requested 1024x1024 square PNG, genuine transparent alpha background. No ground or cast shadow. Single cohesive object centered and fully visible, maximum extent 80% of frame, at least 10% completely clear empty padding. Three-quarter view slightly from above, about 30-degree downward camera; soft upper-left light with self-shading only. Semi-real painterly game production art with realistic but simplified worn textures, legible at 32 to 48 pixels. Palette muted gray-green, warm ivory, brown leather, gray-brown stone and old bronze. No text, label, numbers, logo, symbols, frame, watermark, border, scenery, aura, particles, checkerboard or loose debris in empty background.",
+      "source_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-f35ae0ff-a859-447b-8904-62e4cac06355.png",
+      "reference_images": [
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/board/style_board_v2.png",
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/monster/galdros/galdros_right_v1.png"
+      ],
+      "status": "generated_proposal",
+      "filename": "icon_mat_tail_v1.png",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ]
+    },
+    {
+      "id": "mat.galdros.crystal_shell",
+      "name": "晶岩殻",
+      "subject": "ONE high-rank Galdros crystal shell plate: an asymmetrical substantial gray-brown stone scute with two broad low amber-bronze crystal facets growing flush out of its left edge, around one third of the surface mineralized. Remaining stone stays dark and matte with layered chipped edge. No tall crystal forest, no spikes, no full gold armor. Silhouette clearly stepped on one side. Natural armor material, no crafted fittings.",
+      "prompt": "Use case: stylized-concept. Produce ONE original fantasy inventory icon for VEILBOUND HUNTERS. Input images are approved style/material references, not compositions to repeat. If a creature reference is present, extract only the specified material in its established color and texture.\nSubject: ONE high-rank Galdros crystal shell plate: an asymmetrical substantial gray-brown stone scute with two broad low amber-bronze crystal facets growing flush out of its left edge, around one third of the surface mineralized. Remaining stone stays dark and matte with layered chipped edge. No tall crystal forest, no spikes, no full gold armor. Silhouette clearly stepped on one side. Natural armor material, no crafted fittings.\nCanvas requested 1024x1024 square PNG, genuine transparent alpha background. No ground or cast shadow. Single cohesive object centered and fully visible, maximum extent 80% of frame, at least 10% completely clear empty padding. Three-quarter view slightly from above, about 30-degree downward camera; soft upper-left light with self-shading only. Semi-real painterly game production art with realistic but simplified worn textures, legible at 32 to 48 pixels. Palette muted gray-green, warm ivory, brown leather, gray-brown stone and old bronze. No text, label, numbers, logo, symbols, frame, watermark, border, scenery, aura, particles, checkerboard or loose debris in empty background.",
+      "source_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-d0227acf-42d4-44c0-8b75-b329650317f0.png",
+      "reference_images": [
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/board/style_board_v2.png",
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/monster/galdros/galdros_right_v1.png"
+      ],
+      "status": "generated_proposal",
+      "filename": "icon_mat_galdros_crystal_shell_v1.png",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ]
+    },
+    {
+      "id": "mat.galdros.bronze_lump",
+      "name": "青銅晶塊",
+      "subject": "ONE large compact irregular lump of solid bronze-colored crystal with several broad angular blunt facets fused into a squat cluster. Dark oxidized crevices and small gray stony inclusions, no pointing needles, not polished precious jewelry. Wider than tall, approximately lobed hexagonal mass, no taper like a tail crystal and no oval central core. Color muted weathered bronze and dull amber, gentle metallic reflections.",
+      "prompt": "Use case: stylized-concept. Produce ONE original fantasy inventory icon for VEILBOUND HUNTERS. Input images are approved style/material references, not compositions to repeat. If a creature reference is present, extract only the specified material in its established color and texture.\nSubject: ONE large compact irregular lump of solid bronze-colored crystal with several broad angular blunt facets fused into a squat cluster. Dark oxidized crevices and small gray stony inclusions, no pointing needles, not polished precious jewelry. Wider than tall, approximately lobed hexagonal mass, no taper like a tail crystal and no oval central core. Color muted weathered bronze and dull amber, gentle metallic reflections.\nCanvas requested 1024x1024 square PNG, genuine transparent alpha background. No ground or cast shadow. Single cohesive object centered and fully visible, maximum extent 80% of frame, at least 10% completely clear empty padding. Three-quarter view slightly from above, about 30-degree downward camera; soft upper-left light with self-shading only. Semi-real painterly game production art with realistic but simplified worn textures, legible at 32 to 48 pixels. Palette muted gray-green, warm ivory, brown leather, gray-brown stone and old bronze. No text, label, numbers, logo, symbols, frame, watermark, border, scenery, aura, particles, checkerboard or loose debris in empty background.",
+      "source_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-af2a1f93-43ef-4d7c-a6d2-47baf1b73523.png",
+      "reference_images": [
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/board/style_board_v2.png",
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/monster/galdros/galdros_right_v1.png"
+      ],
+      "status": "generated_proposal",
+      "filename": "icon_mat_galdros_bronze_lump_v1.png",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ]
+    },
+    {
+      "id": "mat.galdros.radiant_shell",
+      "name": "輝岩殻",
+      "subject": "ONE top-rank Galdros radiant shell: large thick dark gray-brown layered plate with a low scalloped angular outline and several narrow amber-bronze mineral fissures gently illuminated from inside. Rock remains more than two thirds of visible surface. A few shallow broad translucent crystal growths at the rim, restrained soft internal light, no external magic halo, sparks, flames, floating particles or spiky crown. Dry rock material, no flesh.",
+      "prompt": "Use case: stylized-concept. Produce ONE original fantasy inventory icon for VEILBOUND HUNTERS. Input images are approved style/material references, not compositions to repeat. If a creature reference is present, extract only the specified material in its established color and texture.\nSubject: ONE top-rank Galdros radiant shell: large thick dark gray-brown layered plate with a low scalloped angular outline and several narrow amber-bronze mineral fissures gently illuminated from inside. Rock remains more than two thirds of visible surface. A few shallow broad translucent crystal growths at the rim, restrained soft internal light, no external magic halo, sparks, flames, floating particles or spiky crown. Dry rock material, no flesh.\nCanvas requested 1024x1024 square PNG, genuine transparent alpha background. No ground or cast shadow. Single cohesive object centered and fully visible, maximum extent 80% of frame, at least 10% completely clear empty padding. Three-quarter view slightly from above, about 30-degree downward camera; soft upper-left light with self-shading only. Semi-real painterly game production art with realistic but simplified worn textures, legible at 32 to 48 pixels. Palette muted gray-green, warm ivory, brown leather, gray-brown stone and old bronze. No text, label, numbers, logo, symbols, frame, watermark, border, scenery, aura, particles, checkerboard or loose debris in empty background.",
+      "source_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-d0b13005-b308-4708-869d-f5d563121025.png",
+      "reference_images": [
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/board/style_board_v2.png",
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/monster/galdros/galdros_right_v1.png"
+      ],
+      "status": "generated_proposal",
+      "filename": "icon_mat_galdros_radiant_shell_v1.png",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ]
+    },
+    {
+      "id": "mat.galdros.pulse_core",
+      "name": "脈動晶芯",
+      "subject": "ONE pulse crystal core: a rounded ovoid dense bronze-amber crystal nucleus partially cradled by a very thin broken crescent of gray-brown rock. Large simple translucent central facets around a small softly glowing pale amber center and several concentric imperfect growth rings. Clearly a compact oval nucleus, unlike flat armor plates or irregular crystal ore lumps. Restrained mineral light internal only, no aura, particle effects, runes or crafted ornaments.",
+      "prompt": "Use case: stylized-concept. Produce ONE original fantasy inventory icon for VEILBOUND HUNTERS. Input images are approved style/material references, not compositions to repeat. If a creature reference is present, extract only the specified material in its established color and texture.\nSubject: ONE pulse crystal core: a rounded ovoid dense bronze-amber crystal nucleus partially cradled by a very thin broken crescent of gray-brown rock. Large simple translucent central facets around a small softly glowing pale amber center and several concentric imperfect growth rings. Clearly a compact oval nucleus, unlike flat armor plates or irregular crystal ore lumps. Restrained mineral light internal only, no aura, particle effects, runes or crafted ornaments.\nCanvas requested 1024x1024 square PNG, genuine transparent alpha background. No ground or cast shadow. Single cohesive object centered and fully visible, maximum extent 80% of frame, at least 10% completely clear empty padding. Three-quarter view slightly from above, about 30-degree downward camera; soft upper-left light with self-shading only. Semi-real painterly game production art with realistic but simplified worn textures, legible at 32 to 48 pixels. Palette muted gray-green, warm ivory, brown leather, gray-brown stone and old bronze. No text, label, numbers, logo, symbols, frame, watermark, border, scenery, aura, particles, checkerboard or loose debris in empty background.",
+      "source_path": "/workspace/scratch/f5ec33877ad1/generated_images/exec-4168a335-df65-4250-a09f-e9d10c062ef3.png",
+      "reference_images": [
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/board/style_board_v2.png",
+        "/workspace/scratch/f5ec33877ad1/Kari/art-source/monster/galdros/galdros_right_v1.png"
+      ],
+      "status": "generated_proposal",
+      "filename": "icon_mat_core_v1.png",
+      "kind": "inventory_icon",
+      "source": "public/data/items.json",
+      "spec_notes": [
+        "原寸1254×1254のRGBA透過原画。1024px指定から寸法差あり。",
+        "背景の外周に極薄いalpha=1残留がある。実行用縮小と透過端整理は未実施。",
+        "正式採用・ゲーム内32〜48px表示・実機は未確認。"
+      ]
+    }
+  ]
+}
