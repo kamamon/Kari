@@ -38,6 +38,11 @@ export class ArtMesh {
   private readonly uv: number[] = [];
   /** 置き場所の変換。絵の位置（UV）は変換の前の形から決め、頂点だけを動かす（同じ部品を、向きを変えて何個も置ける）。 */
   transform: ((p: P3) => P3) | null = null;
+  /**
+   * 形の点 → 図の画素 [x, y]。形（依頼書の寸法）と図の割合が違う時に、部品ごとに図の同じ所を当てる（依頼 6 の 3 武器）。
+   * null なら、図の縮尺どおりにまっすぐ写す。回した形（lathe）では、点の Z に「図での半幅（px）」が入って来る。
+   */
+  artPx: ((p: P3) => readonly [number, number]) | null = null;
 
   constructor(
     readonly sheet: ArtSheet,
@@ -47,9 +52,16 @@ export class ArtMesh {
   /** 図へまっすぐ写す（遠近なし）。 */
   planar(p: P3): UV {
     const s = this.sheet;
+    if (this.artPx) return this.uvOfPx(...this.artPx(p));
     const across = this.axis === 'zy' ? p[2] : this.axis === 'xy' ? p[0] : -p[0];
     const px = across / s.mPerPx + s.cx;
     const py = s.py0 - p[1] / s.mPerPx;
+    return this.uvOfPx(px, py);
+  }
+
+  /** 図の画素 → UV */
+  uvOfPx(px: number, py: number): UV {
+    const s = this.sheet;
     return [(px - s.x0) / s.w, 1 - (py - s.y0) / s.h];
   }
 

@@ -30,7 +30,7 @@ import type { Solved } from './render/bodySolve';
 import { GroundedLocomotion } from './render/contactLocomotion';
 import { groundedHeavyAttack } from './render/heavyBodyMotion';
 import { WEAPON_STANCES } from './render/weaponClipSpecs';
-import { buildLongBlade, buildTwinBlade, buildWarMaul } from './render/provisionalWeapons';
+import { buildLongBlade, buildTwinBlade, buildWarMaul } from './render/forgedWeapons';
 import { withShell } from './render/shellPlates';
 
 interface ManifestAsset {
@@ -88,7 +88,7 @@ const stand = (key: string, model: WeaponModel, x: number, y: number, turn: numb
   rack.add(model.group);
   rackModels[key] = model;
 };
-// 左から: 護刃（盾・剣）、断岳剣、長尖槍（槍・大盾）、ハンター、大槌・双剣・太刀（設定図が無いので単色の仮の形）、環弓（弓・矢・矢筒）
+// 左から: 護刃（盾・剣）、断岳剣、長尖槍（槍・大盾）、ハンター、大槌・双剣・太刀（依頼 6 の設定図から。forgedWeapons.ts）、環弓（弓・矢・矢筒）
 // URL に ?tier=2〜5 を付けると、強化後（2 岩殻・3 脈殻・4 晶殻・5 輝殻。元の形に岩の板を足した仮の形）を並べる
 const tierParam = Number(new URLSearchParams(location.search).get('tier'));
 const tier = [2, 3, 4, 5].includes(tierParam) ? tierParam : 0;

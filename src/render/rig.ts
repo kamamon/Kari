@@ -9,7 +9,7 @@ import { BOW_STRING, buildArrow, buildBow } from './bow';
 import { buildGuardBladeShield, buildGuardBladeSword } from './guardBlade';
 import { buildHeavyBlade, type WeaponModel } from './heavyBlade';
 import { buildGreatShield, buildLance } from './lance';
-import { buildLongBlade, buildTwinBlade, buildWarMaul } from './provisionalWeapons';
+import { buildLongBlade, buildTwinBlade, buildWarMaul } from './forgedWeapons';
 import { withShell } from './shellPlates';
 import { HUNTER_ATLAS } from './hunterAtlas';
 import { armorLookKey, buildHunterArmor, type ArmorLook } from './hunterArmor';

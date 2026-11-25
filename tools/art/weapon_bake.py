@@ -7,6 +7,7 @@
 - 切り出し範囲・原点・縮尺と、輪郭から測った点（盾の外形、鎌の刃の上下の線）を
   src/render/weaponSheets.ts に書く。形を組む側（src/render/*.ts）は、この値を使う。
 """
+import json
 import os
 import sys
 import cv2
@@ -42,7 +43,106 @@ SHEETS = {
     # 矢（長さ 1285px = 0.8m。原点は矢の中央）と矢筒（同じ図の右側。原点は筒の中央）
     'kankyuArrow': dict(src='weapon_kankyu_arrow_quiver_v1.png', x0=258, y0=45, w=112, h=1316, cx=313.5, py0=702.5, m=0.8 / 1285, out=(96, 1024), file='kankyu_arrow_v1.webp', byColor=True),
     'kankyuQuiver': dict(src='weapon_kankyu_arrow_quiver_v1.png', x0=530, y0=100, w=320, h=1270, cx=672, py0=865, m=0.8 / 1285, out=(256, 1024), file='kankyu_quiver_v1.webp', byColor=True),
+    # 依頼 6（2026-11-25 に受け取った）。図の割合は依頼書の寸法と少し違うので、形は依頼書の寸法で組み、
+    # 図は部品ごとに対応させて貼る（下の OTSUCHI_ART など。py0・m は、まっすぐ写す時の目安）。
+    # 大槌: 正面 v2（全高 1301px = 1.45m。柄の中心 x=542.5。原点は下の握りの中央）と、真横 v2 の頭のまわり
+    'otsuchiFront': dict(src='weapon_otsuchi_front_v2.png', x0=340, y0=44, w=405, h=1320, cx=542.5, py0=1153.5, m=1.45 / 1301, out=(320, 1024), file='otsuchi_front_v1.webp'),
+    'otsuchiSide': dict(src='weapon_otsuchi_side_v2.png', x0=460, y0=44, w=165, h=300, cx=542.5, py0=1153.5, m=1.45 / 1301, out=(176, 320), file='otsuchi_side_v1.webp'),
+    # 双剣の 1 本: 正面 v1（全高 1288px = 0.7m。握りの中心 x=542.5）
+    'sokenFront': dict(src='weapon_soken_front_v1.png', x0=455, y0=58, w=175, h=1302, cx=542.5, py0=1198, m=0.7 / 1288, out=(144, 1024), file='soken_v1.webp'),
+    # 太刀: 正面 v2（全高 1335px = 1.47m。柄の中心 x=540.5。原点は鍔のすぐ下の握り）
+    'tachiFront': dict(src='weapon_tachi_front_v2.png', x0=490, y0=50, w=96, h=1346, cx=540.5, py0=1101, m=1.47 / 1335, out=(96, 1344), file='tachi_v1.webp'),
 }
+
+# 依頼 6 の図の、目で確かめた所（輪郭から自動では分けにくい所。px）
+SOKEN_LANGET = dict(top=982, x0=524, x1=561)  # 鍔から刃へ伸びる、鋲 2 つの留め金
+OTSUCHI_BAND = dict(x0=516, x1=575, rivets=[105, 155, 210, 260])  # 頭を縦に巻く帯金と、鋲の行
+
+
+def runs(flags):
+    """True が続く範囲 [(始め, 終わり), ...]（終わりを含む）"""
+    out, start = [], None
+    for i, f in enumerate(flags):
+        if f and start is None:
+            start = i
+        if not f and start is not None:
+            out.append((start, i - 1))
+            start = None
+    if start is not None:
+        out.append((start, len(flags) - 1))
+    return out
+
+
+def profile(mask):
+    """行ごとの左端・右端・幅（px）。無い行は幅 0"""
+    h = mask.shape[0]
+    left, right, width = np.zeros(h, int), np.zeros(h, int), np.zeros(h, int)
+    for y in range(h):
+        xs = np.where(mask[y])[0]
+        if len(xs):
+            left[y], right[y], width[y] = xs[0], xs[-1], xs[-1] - xs[0] + 1
+    rows = np.where(width > 0)[0]
+    return left, right, width, int(rows[0]), int(rows[-1])
+
+
+def request6(masks):
+    """依頼 6 の 3 武器: 図の部品の境の行と、刃の輪郭の表。形を組む側（src/render/forgedWeapons.ts）が使う。"""
+    out = []
+    # 大槌（正面）: 頭は幅が最大の半分より広い行。頭の上は柄の突き出し（青銅の冠）。頭の下は口金、その下が柄。
+    _, _, w, top, bottom = profile(masks['otsuchiFront'])
+    head = max(runs(w > w.max() * 0.5), key=lambda r: r[1] - r[0])
+    shaft = int(np.median(w[head[1] + 100:head[1] + 300]))
+    y = head[1] + 1
+    while w[y] > shaft + 3:
+        y += 1
+    collar = y - 1
+    grips = [r for r in runs((w >= shaft + 3) & (w <= shaft + 8)) if collar < r[0] and r[1] - r[0] > 60]
+    y = bottom
+    while w[y - 1] > shaft + 1 or w[y] <= shaft + 1:
+        y -= 1
+    butt = y
+    _, _, ws, _, _ = profile(masks['otsuchiSide'])
+    sl, sr, _, stop, _ = profile(hb.load('weapon_otsuchi_side_v2.png')['mask'])
+    sw = sr - sl + 1
+    shead = max(runs(sw > sw.max() * 0.5), key=lambda r: r[1] - r[0])
+    assert len(grips) == 2, grips
+    fl, fr, _, _, _ = profile(masks['otsuchiFront'])
+    o = dict(capTop=top, headTop=head[0], headBottom=head[1], collarBottom=collar, upperGrip=list(grips[0]), lowerGrip=list(grips[1]), buttTop=butt, bottom=bottom,
+             headX=[int(fl[(head[0] + head[1]) // 2]), int(fr[(head[0] + head[1]) // 2])], shaftW=shaft, gripW=int(np.median(w[grips[0][0]:grips[0][1]])),
+             collarW=[int(w[head[1] + 4]), int(np.median(w[head[1] + 12:collar - 4]))], capW=int(np.median(w[top + 6:head[0] - 2])), buttW=int(w[butt:bottom - 10].max()),
+             band=OTSUCHI_BAND, side=dict(capTop=stop, headTop=shead[0], headBottom=shead[1], headX=[int(sl[(shead[0] + shead[1]) // 2]), int(sr[(shead[0] + shead[1]) // 2])]))
+    out.append(('OTSUCHI_ART', '大槌の図（正面 v2 と真横 v2）で測った部品の行と幅（px）', o))
+
+    def blade(key, langet=None):
+        l, r, w, tip, _ = profile(masks[key])
+        guard = max(runs(w > w[tip + 200:tip + 600].max() * 1.6), key=lambda q: q[1] - q[0])
+        y = guard[1] + 1
+        grip = int(np.median(w[guard[1] + 60:guard[1] + 160]))
+        while w[y] > grip + 3:
+            y += 1
+        ferrule = y - 1
+        _, bottom = tip, int(np.where(w > 0)[0][-1])
+        y = bottom
+        while w[y - 1] > grip + 2 or w[y] <= grip + 2:
+            y -= 1
+        pommel = y
+        full = int(np.median(w[tip + 150:guard[0] - 60]))
+        # 刃の表: 先から鍔へ [行, 刃の側（左）の端, 切っ先で欠けていない幅]。
+        # 切っ先の斜めの線は、峰の側（右）の端がいちばん右へ出た行（角）より上。そこから上は、角の行の幅を使う。
+        top = range(tip, tip + 200)
+        corner = tip + int(np.argmax([r[y] for y in top]))
+        rows = list(range(tip, guard[0] - 4, 6)) + [guard[0] - 4]
+        table = [[y, int(l[y]), int(w[max(y, corner)])] for y in rows]
+        o = dict(tip=tip, guardTop=guard[0], guardBottom=guard[1], ferruleBottom=ferrule, pommelTop=pommel, bottom=bottom, bladeW=full, gripW=grip,
+                 guardX=[int(l[(guard[0] + guard[1]) // 2]), int(r[(guard[0] + guard[1]) // 2])], ferruleW=int(np.median(w[guard[1] + 2:ferrule])), pommelW=int(w[pommel:bottom - 4].max()),
+                 cx=(int(l[guard[1] + 100]) + int(r[guard[1] + 100])) / 2, corner=corner, edge=table)
+        if langet:
+            o['langet'] = langet
+        return o
+
+    out.append(('SOKEN_ART', '双剣の図（正面 v1）で測った部品の行と幅、刃の表 [行, 刃の側の端, 幅]（px）', blade('sokenFront', SOKEN_LANGET)))
+    out.append(('TACHI_ART', '太刀の図（正面 v2）で測った部品の行と幅、刃の表 [行, 刃の側の端, 幅]（px）', blade('tachiFront')))
+    return out
 
 
 def color_mask(img):
@@ -153,7 +253,11 @@ def main():
     lines += ['/** 環弓の本体。上から下へ [高さ, 厚みの中心の前後位置（図のまま。-Z が弓の背、+Z が弦の側）, 厚みの半分, 幅の半分] */',
               'export const KANKYU_BOW: readonly (readonly [number, number, number, number])[] = [', '  ' + ', '.join(bow) + ',', '];',
               '/** 環弓の図での、弦の前後位置と、輪の中心（高さ・前後位置）。図のままの値 */',
-              'export const KANKYU_ART = { stringZ: %.4f, ringY: %.4f, ringZ: %.4f } as const;' % ((626.5 - side['cx']) * side['m'], (side['py0'] - 560) * side['m'], (470 - side['cx']) * side['m']), '']
+              'export const KANKYU_ART = { stringZ: %.4f, ringY: %.4f, ringZ: %.4f } as const;' % ((626.5 - side['cx']) * side['m'], (side['py0'] - 560) * side['m'], (470 - side['cx']) * side['m'])]
+    for name, label, o in request6(masks):
+        print('%s %s' % (name, {k: v for k, v in o.items() if k != 'edge'}))
+        lines += ['', '/** %s */' % label, 'export const %s = %s as const;' % (name, json.dumps(o, ensure_ascii=False, separators=(', ', ': ')))]
+    lines.append('')
     with open(TS, 'w', encoding='utf-8') as f:
         f.write('\n'.join(lines))
     print('寸法: %s（盾の角 %d 点、鎌の刃 %d 点）' % (os.path.relpath(TS, ROOT), len(poly), len(stations)))
