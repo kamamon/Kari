@@ -20,6 +20,7 @@ TypeScript + Vite + Three.js。入力、simulation、render、data、save、UI �
 - 依頼の掲示（v0.26.0。ChatGPT のクエスト設計 #9。docs/spec.md の 26 章）: 星（1〜8）・分類・依頼人・依頼人の話・目安の時間は public/data/quest_board.json が正本（どの依頼にも 1 つ要る。生成した依頼の文もここに書く）。星から段階や強さを変えない。フィールドの制限時間は、依頼に `fieldTimeLimitTicks` があれば、その値（倍率を掛けない）。工房からの支給（support.json）と里の納品（deliveries.json）は 1 度だけで、保存の `claims` に残す。設計の残り（物語の ST03〜14、これからの種の依頼、ほかの地域の採集・採掘、貨物の輸送）は docs/source/chatgpt-quest-design-20261125/ にあり、狩場・種・機能ができてから入れる（盆地で代わりにしない）。
 - 狩らない依頼（v0.27.0。docs/spec.md の 27 章）: 採集・採掘・現地の納品は `kind: gather`（public/data/quests_errands.json。計算は src/game/errand.ts）。標的を書かない（ダミーの標的・空の targets で表さない）。この出発で採った品だけを数え、野営地の納品箱で全部を 1 度に納めて達成、持ち帰りは余りだけ。採取点の位置は validateGather が確かめる（エリアの中・岩と出口から離す・要る数 + 2 以上・採集袋に入る）。フィールドでだけ遊べる。
 - ハンターの見た目（v0.28.0。ChatGPT のキャラメイク設計 #10。docs/spec.md の 28 章）: 選べるものは public/data/appearance.json（ChatGPT のカタログから写す。足さない。`ready: false` は画面で準備中）。計算は src/data/appearance.ts、画面は src/ui/appearanceEditor.ts（装備箱から）、描くのは src/render/appearance.ts（肌と髪は体の絵の印 hunter_mask_v1.png の所だけ shader で替える。体型は骨・socket・身長を変えずに、体の皮と防具の頂点を広げる）。外見は simulation に渡さない（能力・当たりに関わらない）。印は `npm run hunter:masks` の出力（手で編集しない）。
+- 系列の装備（v0.32.0。ChatGPT の全装備四級版 #15 の最初の一切れ。docs/spec.md の 29 章）: public/data/equipment_series.json は `npm run equipment:gen`（tools/gen-equipment.py。設計の JSON docs/source/chatgpt-equipment-20261125/data/all-equipment.json から作る）の出力で、手で編集しない。工房の「作る」は `craft`・`armor_craft` のレシピ（元を使わず持ち物へ足す。級が開いていない物は作れない）。属性・状態異常の系列は、属性の計算（docs/elements.md）と一緒に入れる（属性値だけを入れない）。
 - ハンターの攻撃の係数は v0.23.0 で見直した（ChatGPT の提案。docs/weapons.md の 14 章、D-092）。断岳剣以外は tools/weapons/*.mjs が正本で、`node --experimental-strip-types tools/gen-weapons.mjs --strict` で作り直す（生成した JSON だけを直さない）。
 
 # ChatGPT との受け渡し
@@ -54,6 +55,7 @@ main へ push すると Actions（Build and publish）が gh-pages（配信元�
 - `npm run bestiary:import -- <ファイル>` ChatGPT のモンスターの案（JSON。種と、狩場の案）を登録簿へ足す（`--dry` で書かずに試す。`--check` でいまの数。`--out <ファイル>` で別のファイルへ書く。決まりに合わなければ、何も変えずに止まる）
 - `npm run bestiary:thumbs` 図鑑に出す原画の小さな絵 public/assets/bestiary/ を作り直す（Python が必要）
 - `npm run env:art` 景色の絵を、ゲームが読む形 public/assets/textures/env/ へ直す（Python が必要。出力は手で編集しない）
+- `npm run equipment:gen` ChatGPT の全装備四級版（#15）の設計の JSON から、いまの計算で働く系列の装備と作るレシピ public/data/equipment_series.json を作り直す（Python が必要。出力は手で編集しない。入れる系列は tools/gen-equipment.py の SERIES。素材が手に入らない・属性がある系列は止まる）
 - `npm run supplement:art` ChatGPT の追加原画（Pull Request #5）・物語の原画（#13。表情・人物・場面）と受付ミナギの設定図から、アイコン（public/assets/icons/）・里の人の板（textures/npc/）・会話の顔（portraits/）・狩場の景色（fields/）・物語の場面の絵（story/。遊べる場面で使う絵だけ）と、src/ui/artIndex.ts・src/render/npcArt.ts を作り直す（Python が必要。出力は手で編集しない）
 - `npm run rocks:art` 岩と崖の設定図（依頼 10。art-source/env/rocks・cliffs・tiles）から、岩と崖の図集・岩肌（public/assets/textures/env/）と形の値（src/render/rockArtData.ts）を作り直す（Python が必要。出力は手で編集しない。受け入れの確認で測った値は art-source/env/request10_v1.measure.json）
 - `npm run monsters:gen` 大型 11 種（登録簿の 02〜12）と幼体 8 種（14〜21）の体・技・依頼・素材・見た目の設計図を作り直す（Python が必要。出力は手で編集しない。形は原画の px で tools/gen-monsters.py に、技の動きは tools/monster_moves.py に書く。最後に monsters:bake が走る）

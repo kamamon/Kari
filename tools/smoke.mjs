@@ -643,7 +643,8 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   check('実機の保存データ（v0.7.0）を取り込める。太刀を装備した状態になる', await until(page, () => window.__vh.save.doc.money === 1200 && window.__vh.weaponId === 'weapon.long_blade.001' && window.__vh.sim.player.weaponId === 'weapon.long_blade.001', 8000));
   await page.click('#base-forge > summary');
   check('工房: 武器 7 と防具 5 の「次の強化」が並ぶ。いま装備している太刀がいちばん上で、強化できる（岩殻片 7 / 3、青銅晶脈 2 / 2）。断岳剣は硬骨が足りない', await page.evaluate(() => {
-    const boxes = [...document.querySelectorAll('.forge-recipe')];
+    // 強化の行だけ（v0.32.0 から、たたんだ「作る」の欄にも行がある）
+    const boxes = [...document.querySelectorAll('.forge-recipe')].filter((b) => !b.closest('.forge-make'));
     const first = boxes[0]?.textContent ?? '';
     const heavy = boxes.find((b) => b.dataset.recipe === 'recipe.heavy_blade.002');
     return boxes.length === 12 && /里鍛ちの太刀 → 岩殻の太刀/.test(first) && /攻撃力 76 → 87/.test(first) && /岩殻片 7 \/ 3/.test(first) && /青銅晶脈 2 \/ 2/.test(first) && !boxes[0].querySelector('button.go').disabled
@@ -1521,6 +1522,43 @@ const idle = (page) => until(page, () => window.__vh.sim.player.mode === 'free')
   const back = await until(page, () => window.__vh.sim.player.pos.x > -16.6 && window.__vh.sim.player.pos.y === 0, 15000);
   await page.keyboard.up('KeyW');
   check('段のある里: 炉の段から東へ歩くと、階段を上って広場の高さ（0m）へ戻る', back, JSON.stringify(await page.evaluate(() => window.__vh.sim.player.pos)));
+  // ---- 工房で作る（v0.32.0。ChatGPT の全装備四級版 #15 の直接生産）: 鐘嚢の大槌【初級】を作って、装備箱で持つ ----
+  const CRAFT = 'recipe.craft.weapon.bornakel.war_maul.r1', MADE = 'weapon.war_maul.bornakel.r1';
+  await page.evaluate((id) => {
+    const r = window.__vh.content.recipes.get(id);
+    return window.__vh.save.settle({ runId: 'smoke-craft-1', questId: 'quest.gather.001', money: r.cost.money, items: r.cost.items.map((s) => ({ itemId: s.itemId, count: s.count })) });
+  }, CRAFT);
+  await put('workshop');
+  await until(page, () => window.__vh.nearFacility?.id === 'workshop');
+  await page.click('#hud-facility');
+  await until(page, () => !document.getElementById('base').hidden);
+  const makeBefore = await page.evaluate((id) => {
+    document.querySelector('.forge-make').open = true;
+    const box = document.querySelector('.forge-series[data-series="series.bornakel"]');
+    box.open = true;
+    const b = document.querySelector(`.forge-recipe[data-recipe="${id}"] button.go`);
+    return { summary: document.querySelector('#base-forge summary').textContent, series: document.querySelectorAll('.forge-series').length, head: box.querySelector('summary').textContent, button: b?.textContent ?? '', enabled: b ? !b.disabled : false, weapon: window.__vh.save.doc.equippedWeaponId, rev: window.__vh.save.doc.revision };
+  }, CRAFT);
+  await page.click(`.forge-recipe[data-recipe="${CRAFT}"] button.go`);
+  await until(page, () => !!document.querySelector('.forge-confirm button.go'), 3000);
+  await page.click('.forge-confirm button.go');
+  const made = await until(page, (w) => window.__vh.save.doc.weapons.includes(w) && /を作りました/.test(document.querySelector('.base-message')?.textContent ?? ''), 8000, MADE);
+  const makeAfter = await page.evaluate((w) => ({ msg: document.querySelector('.base-message').textContent, weapon: window.__vh.save.doc.equippedWeaponId, rev: window.__vh.save.doc.revision, owned: !!document.querySelector('.forge-series[data-series="series.bornakel"] .forge-recipe.owned'), has: window.__vh.save.doc.weapons.includes(w) }), MADE);
+  check('工房で作る（v0.32.0）: 系列 5 つの欄に「作る」が出て、素材をそろえると作れる。作ると持ち物に入り、装備は替わらない（保存の書き込みは 1 回）',
+    makeBefore.series === 5 && /作れます/.test(makeBefore.summary) && makeBefore.button === '作る' && makeBefore.enabled && made && makeAfter.has && makeAfter.owned && makeAfter.weapon === makeBefore.weapon && makeAfter.rev === makeBefore.rev + 1,
+    JSON.stringify({ makeBefore, makeAfter }));
+  await page.click('.base-close');
+  await put('chest');
+  await until(page, () => window.__vh.nearFacility?.id === 'chest');
+  await page.click('#hud-facility');
+  await until(page, () => !document.getElementById('base').hidden);
+  await page.click(`.base-weapon[data-weapon="${MADE}"]`);
+  const holding = await until(page, (w) => window.__vh.sim.player.weaponId === w, 8000, MADE);
+  check('工房で作る: 作った鐘嚢の大槌を、装備箱で持てる（攻撃力 99）', holding && await page.evaluate((w) => window.__vh.content.weapons.get(w).attack === 99 && window.__vh.save.doc.equippedWeaponId === w, MADE));
+  await page.click('.base-weapon[data-weapon="weapon.heavy_blade.001"]');
+  await until(page, () => window.__vh.sim.player.weaponId === 'weapon.heavy_blade.001', 8000);
+  await page.click('.base-close');
+  await until(page, () => document.getElementById('base').hidden, 3000);
   // 装備箱: 持ち替えても、立っている場所と開いている画面は変わらない
   await put('chest');
   await until(page, () => window.__vh.nearFacility?.id === 'chest');

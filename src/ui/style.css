@@ -515,3 +515,11 @@ body.looks-open #rotate { display: none !important; }
 @media (orientation: portrait) and (pointer: coarse) { .looks-note::after { content: '縦向きでも編集できます。狩りは横向きで始めます。'; display: block; } }
 /* 物語の場面の絵（v0.29.0）: 会話の窓の後ろに、画面いっぱいに。下の窓の所は暗くする */
 #story.has-art { background: linear-gradient(to top, rgba(6, 9, 7, 0.82), rgba(6, 9, 7, 0.1) 55%, rgba(6, 9, 7, 0)), var(--story-art) center / cover no-repeat, #0b0f0c; }
+/* 工房: 作る（v0.32.0。ChatGPT の全装備四級版 #15）。系列ごとにたたむ */
+.forge-make { margin: 10px 0 0; }
+.forge-make > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+.forge-series { margin: 6px 0 0; padding: 4px 10px 8px; border: 1px solid var(--line); border-radius: 6px; }
+.forge-series > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-size: 13px; }
+.forge-series .forge-recipe.owned { opacity: 0.7; }
+.forge-owned { margin-left: 10px; font-size: 12px; color: #8fb58a; }
+.forge-make button { min-height: 44px; }

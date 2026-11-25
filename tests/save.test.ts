@@ -195,6 +195,12 @@ describe('武器の強化（7 武器 × 5 段）', () => {
     const rankOf = materialRanks(content);
     for (const r of [...content.recipes.values()]) {
       const need = Math.max(...r.cost.items.map((s) => rankOf.get(s.itemId) ?? 99));
+      // 作るレシピ（v0.32.0。系列の装備）は、結果の級の素材
+      if (r.kind === 'craft' || r.kind === 'armor_craft') {
+        const item = r.kind === 'craft' ? content.weapons.get(r.resultWeaponId)! : content.armor.get(r.resultArmorId)!;
+        expect(need, r.id).toBe(content.ranks.get(item.rankId!)!.order);
+        continue;
+      }
       expect(need, r.id).toBe(tier(recipeResult(r)) - 1);
     }
   });
@@ -257,7 +263,8 @@ describe('防具（5 部位 × 5 段）', () => {
   it('どの部位も 5 段の 1 本道で、防御力は段ごとに上がる（1 部位 0 / 6 / 13 / 21 / 30）', () => {
     expect(armorRecipes()).toHaveLength(5 * 4);
     for (const slot of ARMOR_SLOTS) {
-      const pieces = [...content.armor.values()].filter((a) => a.slot === slot).sort((x, y) => tier(x.id) - tier(y.id));
+      // 里の防具とガルドロスの 4 段（系列の装備は v0.32.0 から別。tests/equipment.test.ts）
+      const pieces = [...content.armor.values()].filter((a) => a.slot === slot && !a.series).sort((x, y) => tier(x.id) - tier(y.id));
       expect(pieces.map((a) => a.defense), slot).toEqual([0, 6, 13, 21, 30]);
       const chain = armorRecipes().filter((r) => content.armor.get(r.fromArmorId)!.slot === slot);
       expect(chain.map((r) => `${tier(r.fromArmorId)}>${tier(r.resultArmorId)}`).sort(), slot).toEqual(['1>2', '2>3', '3>4', '4>5']);

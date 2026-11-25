@@ -12,6 +12,7 @@ import {
   buy,
   claimSupport,
   craft,
+  craftRankOpen,
   deliver,
   equip,
   equipArmor,
@@ -255,7 +256,8 @@ export class SaveManager {
   craft(recipeId: string): Promise<SaveResult> {
     const recipe = this.content.recipes.get(recipeId);
     if (!recipe) return Promise.resolve({ ok: false, reason: 'rule', message: 'その強化はありません。' });
-    return this.commit((doc) => craft(doc, recipe));
+    // 級が開いているかも、書き込みの中の最新の内容で確かめる（v0.32.0）
+    return this.commit((doc) => craft(doc, recipe, craftRankOpen(doc, this.content, recipe)));
   }
 
   /** 商店で道具を買う / 素材を売る（通貨と持ち物を、1 回の書き込みで変える） */

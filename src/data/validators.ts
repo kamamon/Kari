@@ -352,6 +352,7 @@ export function crossCheck(c: Content, errors: string[]): void {
   validateArmor(c, errors);
   // 工房: 元と結果の武器（防具）があり、同じ系統（部位）で、素材はどこかで手に入ること（手に入らない素材を要求しない）
   const obtainable = obtainableMaterials(c);
+  const matRank = materialRanks(c);
   const results = new Set<string>();
   const sources = new Set<string>();
   for (const r of c.recipes.values()) {
@@ -372,14 +373,30 @@ export function crossCheck(c: Content, errors: string[]): void {
       if (from && to && from.slot !== to.slot) errors.push(`${w}: 元と結果の部位が違う`);
       if (to?.starter) errors.push(`${w}: 結果の防具が最初から持つ防具になっている`);
       if (from && to && !(to.defense > from.defense)) errors.push(`${w}: 強化しても防御力が上がらない`);
+    } else if (r.kind === 'craft' || r.kind === 'armor_craft') {
+      // 作る（v0.32.0。ChatGPT の全装備四級版 #15）: 結果は系列と級を持ち、最初から持つ物ではない。素材は、その級までの依頼で手に入る
+      const to = r.kind === 'craft' ? c.weapons.get(r.resultWeaponId) : c.armor.get(r.resultArmorId);
+      if (!to) errors.push(`${w}: 結果の${r.kind === 'craft' ? '武器' : '防具'} ${recipeResult(r)} が無い`);
+      else {
+        if (to.starter) errors.push(`${w}: 結果が最初から持つ物になっている`);
+        if (!to.series || !to.rankId) errors.push(`${w}: 結果に系列（series）と級（rankId）が無い`);
+        const order = to.rankId ? c.ranks.get(to.rankId)?.order : undefined;
+        if (to.rankId && order === undefined) errors.push(`${w}: 級 ${to.rankId} が無い`);
+        for (const s of r.cost?.items ?? []) {
+          const got = matRank.get(s.itemId);
+          if (order !== undefined && got !== undefined && got > order) errors.push(`${w}: 素材 ${s.itemId} は、結果の級より上の依頼でしか手に入らない`);
+        }
+      }
     } else errors.push(`${w}: kind "${String((r as { kind: unknown }).kind)}" は未定義`);
     const fromId = recipeFrom(r), resultId = recipeResult(r);
     if (fromId === resultId) errors.push(`${w}: 元と結果が同じ`);
     if (results.has(resultId)) errors.push(`${w}: 結果 ${resultId} を作るレシピが重複`);
     results.add(resultId);
     // 1 つの武器・防具から進める先は 1 つ（派生はまだ無い。工房の画面は「次の強化」を 1 つだけ出す）
-    if (sources.has(fromId)) errors.push(`${w}: 元 ${fromId} から進めるレシピが重複`);
-    sources.add(fromId);
+    if (fromId !== null) {
+      if (sources.has(fromId)) errors.push(`${w}: 元 ${fromId} から進めるレシピが重複`);
+      sources.add(fromId);
+    }
     if (!(r.cost && isInt(r.cost.money) && r.cost.money >= 0 && Array.isArray(r.cost.items))) {
       errors.push(`${w}: cost が不正`);
       continue;
@@ -953,6 +970,14 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
   checkVersion(index.files.armor, armor.schemaVersion, errors);
   content.armorRules = { base: armor.defense?.base ?? 0, slotNames: Object.fromEntries((armor.slots ?? []).map((s) => [s.id, s.name])) as Record<ArmorSlot, string> };
   for (const a of armor.armor ?? []) putUnique(content.armor, a.id, a, 'armor', errors);
+  // 系列の装備（v0.32.0。武器・防具・作るレシピ。npm run equipment:gen の出力）
+  for (const f of index.files.equipment ?? []) {
+    const eq = (await get(f)) as { schemaVersion: number; weapons?: WeaponDef[]; armor?: ArmorDef[]; recipes?: RecipeDef[] };
+    checkVersion(f, eq.schemaVersion, errors);
+    for (const w of eq.weapons ?? []) putUnique(content.weapons, w.id, w, 'weapon', errors);
+    for (const a of eq.armor ?? []) putUnique(content.armor, a.id, a, 'armor', errors);
+    for (const r of eq.recipes ?? []) putUnique(content.recipes, r.id, r, 'recipe', errors);
+  }
   content.shop = (await get(index.files.shop)) as ShopDef;
   checkVersion(index.files.shop, content.shop.schemaVersion, errors);
   content.hub = (await get(index.files.hub)) as HubDef;

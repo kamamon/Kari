@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.31.0",
+  "contentVersion": "0.32.0",
   "files": {
     "actions": [
       "actions/player_common.json",
@@ -126,6 +126,9 @@
     "support": "support.json",
     "deliveries": "deliveries.json",
     "appearance": "appearance.json",
+    "equipment": [
+      "equipment_series.json"
+    ],
     "follow": [
       "follow/selvark.json",
       "follow/numeradon.json",

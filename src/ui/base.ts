@@ -4,14 +4,14 @@
 // 持ち物・装備の表示は、保存の管理役（SaveManager）が持つ「書き込みが完了した内容」だけを映す。
 // 強化・取り込みなどの結果は、書き込みが完了してから表示する（押した時点では「保存しています…」）。
 import { APP_VERSION, BUILD_ID, assetUrl } from '../core/assets';
-import { ARMOR_SLOTS, QUEST_LANE_NAMES, recipeFrom, type ArmorSlot, type Content, type RecipeDef } from '../data/schemas';
+import { ARMOR_SLOTS, QUEST_LANE_NAMES, recipeFrom, recipeResult, type ArmorSlot, type Content, type RecipeDef } from '../data/schemas';
 import { minutesText, starLabel, starRow } from '../data/questBoard';
 import { materialRanks } from '../data/validators';
 import { fieldOf, questTimeLimitTicks } from '../game/field';
 import { defenseScale } from '../game/rank';
 import { CLASS_NAMES, ECOLOGY_KEYS, ECOLOGY_NAMES, ELEMENT_NAMES, STATE_NAMES, STATUS_NAMES, VARIANT_NAMES, bestiaryCounts } from '../data/bestiary';
 import type { FacilityKind } from '../data/schemas';
-import { checkBuy, checkCraft, checkDelivery, defenseOf, ownedArmor, parseImport, questUnlocked, supportState, unknownIds, usableWeapons, wornArmor } from '../save/profile';
+import { checkBuy, checkCraft, craftRankOpen, checkDelivery, defenseOf, ownedArmor, parseImport, questUnlocked, supportState, unknownIds, usableWeapons, wornArmor } from '../save/profile';
 import type { SaveManager, SaveResult } from '../save/saveManager';
 import { canFullscreen, fullscreenHint, toggleFullscreen } from './fullscreen';
 import { questGoal } from './targets';
@@ -731,8 +731,8 @@ export class BaseScreen {
       for (const r of next) {
         const chk = checkCraft(doc, r);
         if (chk.ownsResult) continue;
-        const from = r.kind === 'upgrade' ? r.fromWeaponId : r.fromArmorId;
-        const to = r.kind === 'upgrade' ? r.resultWeaponId : r.resultArmorId;
+        const from = recipeFrom(r)!;
+        const to = recipeResult(r);
         const box = el('div', 'forge-recipe');
         box.dataset.recipe = r.id;
         box.appendChild(el('b', undefined, `${nameOf(from)} → ${nameOf(to)}`));
@@ -772,15 +772,99 @@ export class BaseScreen {
         }
         this.forgeBody.appendChild(box);
       }
-      // 最後の段まで進んだもの（進める先のレシピが無い）
+      // 最後の段まで進んだもの（強化で作られ、進める先のレシピが無い。作った初級の装備は、次の級がまだ無いので数えない）
       const sources = new Set([...c.recipes.values()].map(recipeFrom));
-      const done = ownedIds.filter((id) => (c.weapons.has(id) || c.armor.has(id)) && !sources.has(id));
+      const upgraded = new Set([...c.recipes.values()].filter((r) => r.kind === 'upgrade' || r.kind === 'armor_upgrade').map(recipeResult));
+      const done = ownedIds.filter((id) => (c.weapons.has(id) || c.armor.has(id)) && !sources.has(id) && upgraded.has(id));
       if (done.length > 0) this.forgeBody.appendChild(el('p', 'forge-done', `最後の段まで強化済み: ${done.map((id) => `${nameOf(id)}（${statOf(id)}）`).join('　')}`));
     };
     section('武器', 'upgrade', doc.weapons);
     section('防具', 'armor_upgrade', doc.armor);
-    const notes = [ready > 0 ? `強化できます: ${ready}` : '', packs > 0 ? '支給を受け取れます' : ''].filter(Boolean);
+    const made = this.renderMake(nameOf);
+    const notes = [ready > 0 ? `強化できます: ${ready}` : '', made > 0 ? `作れます: ${made}` : '', packs > 0 ? '支給を受け取れます' : ''].filter(Boolean);
     this.forge.querySelector('summary')!.textContent = notes.length ? `工房（${notes.join('・')}）` : '工房';
+  }
+
+  /**
+   * 作る（v0.32.0。ChatGPT の全装備四級版 #15 の直接生産）: 系列ごとにたたんだ欄。作れる数を返す。
+   * 級の開いていない物は「まだ作れない級」、持っている物は「持っています」。作った物は装備箱で持ち替える（装備は替えない）。
+   */
+  private renderMake(nameOf: (id: string) => string): number {
+    const c = this.content;
+    const doc = this.host.save.doc;
+    const crafts = [...c.recipes.values()].filter((r) => r.kind === 'craft' || r.kind === 'armor_craft');
+    if (crafts.length === 0) return 0;
+    const seriesOf = (r: RecipeDef): string => (r.kind === 'craft' ? c.weapons.get(r.resultWeaponId)?.series : r.kind === 'armor_craft' ? c.armor.get(r.resultArmorId)?.series : undefined) ?? '';
+    const groups = new Map<string, RecipeDef[]>();
+    for (const r of crafts) groups.set(seriesOf(r), [...(groups.get(seriesOf(r)) ?? []), r]);
+    const wrap = el('details', 'forge-make');
+    wrap.appendChild(el('summary', 'forge-head', '作る（新しい系列の装備）'));
+    wrap.appendChild(el('p', 'base-note', '素材と通貨で、新しい武器・防具を作ります（持っている装備は減りません）。作った物は装備箱で持ち替えます。形は、まだ里の武器と里の服のままです。'));
+    let ready = 0;
+    for (const [series, list] of groups) {
+      const species = c.monsters.get(`monster.${series.split('.')[1] ?? ''}`)?.name ?? '';
+      const label = nameOf(recipeResult(list[0]!)).split('の')[0] ?? series;
+      const box = el('details', 'forge-series');
+      box.dataset.series = series;
+      const head = el('summary');
+      box.appendChild(head);
+      let can = 0, have = 0;
+      for (const r of list) {
+        const rankOpen = craftRankOpen(doc, c, r);
+        const chk = checkCraft(doc, r, rankOpen);
+        const to = recipeResult(r);
+        const w = c.weapons.get(to), a = c.armor.get(to);
+        const row = el('div', 'forge-recipe');
+        row.dataset.recipe = r.id;
+        row.appendChild(el('b', undefined, nameOf(to)));
+        row.appendChild(el('span', 'forge-stat', w ? `攻撃力 ${w.attack}${w.affinity ? `・会心 ${w.affinity}%` : ''}` : `防御力 ${a?.defense ?? 0}`));
+        if (chk.ownsResult) {
+          have++;
+          row.classList.add('owned');
+          row.appendChild(el('span', 'forge-owned', '持っています'));
+          box.appendChild(row);
+          continue;
+        }
+        const ul = el('ul', 'forge-cost');
+        for (const i of chk.items) ul.appendChild(withIcon(el('li', i.have < i.need ? 'short' : undefined), i.itemId, `${c.materials.get(i.itemId)?.name ?? i.itemId} ${i.have} / ${i.need}`));
+        ul.appendChild(el('li', chk.money.have >= chk.money.need ? undefined : 'short', `通貨 ${chk.money.have} / ${chk.money.need}`));
+        row.appendChild(ul);
+        if (chk.ok) can++;
+        if (this.confirming === r.id && chk.ok) {
+          box.open = true;
+          wrap.open = true;
+          const p = el('p', 'forge-confirm', `素材と通貨を使って、${nameOf(to)}を作ります。元には戻せません。`);
+          const yes = el('button', 'go', '作る');
+          yes.addEventListener('click', () => {
+            this.confirming = null;
+            void this.run('作っています', () => this.host.save.craft(r.id), `${nameOf(to)}を作りました。装備箱で持ち替えられます。`).then((ok) => {
+              if (ok) this.host.saveChanged();
+            });
+          });
+          const no = el('button', undefined, 'やめる');
+          no.addEventListener('click', () => {
+            this.confirming = null;
+            this.refresh();
+          });
+          p.append(yes, no);
+          row.appendChild(p);
+        } else {
+          const b = el('button', 'go', !chk.rankOpen ? 'まだ作れない級です' : chk.ok ? '作る' : '素材か通貨が足りません');
+          b.disabled = !chk.ok;
+          b.addEventListener('click', () => {
+            this.confirming = r.id;
+            this.refresh();
+          });
+          row.appendChild(b);
+        }
+        box.appendChild(row);
+      }
+      head.textContent = `${label}（${species}の素材）　${list.length} 点${can > 0 ? `・作れる ${can}` : ''}${have > 0 ? `・持っている ${have}` : ''}`;
+      ready += can;
+      wrap.appendChild(box);
+    }
+    this.forgeBody.appendChild(wrap);
+    return ready;
   }
 
   private renderData(): void {

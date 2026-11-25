@@ -225,6 +225,9 @@ export interface WeaponDef {
   assetId: string;
   /** 最初から持っている武器（新しい保存データへ配る） */
   starter?: boolean;
+  /** 系列（v0.32.0。ChatGPT の全装備四級版 #15 の series の id）と級（ranks の id）。級の開いていない物は作れない */
+  series?: string;
+  rankId?: string;
 }
 
 /** 刃の状態の 1 段階。値が min 以上（で、上の段階の min 未満）の時にこの段階になる。 */
@@ -250,7 +253,7 @@ export interface EdgeRules {
  * 工房で作るもの。kind: upgrade は、持っている武器（fromWeaponId）を素材と通貨で別の武器に変える。
  * 元の武器は無くなる。必要な数の確認・減算・武器の入れ替えは、保存の 1 回の書き込みの中で行う（src/save/profile.ts）。
  */
-export type RecipeDef = WeaponRecipeDef | ArmorRecipeDef;
+export type RecipeDef = WeaponRecipeDef | ArmorRecipeDef | WeaponCraftDef | ArmorCraftDef;
 
 /** 武器の強化: 持っている武器（fromWeaponId）を、素材と通貨で別の武器（resultWeaponId）に変える。 */
 export interface WeaponRecipeDef {
@@ -270,9 +273,27 @@ export interface ArmorRecipeDef {
   cost: { money: number; items: ItemStack[] };
 }
 
-/** レシピの元と結果の ID（武器でも防具でも） */
-export const recipeFrom = (r: RecipeDef): string => (r.kind === 'upgrade' ? r.fromWeaponId : r.fromArmorId);
-export const recipeResult = (r: RecipeDef): string => (r.kind === 'upgrade' ? r.resultWeaponId : r.resultArmorId);
+/** 武器を作る（v0.32.0。ChatGPT の全装備四級版 #15 の直接生産）: 元の武器を使わず、素材と通貨で新しい武器（resultWeaponId）を持つ。 */
+export interface WeaponCraftDef {
+  id: string;
+  kind: 'craft';
+  resultWeaponId: string;
+  cost: { money: number; items: ItemStack[] };
+}
+
+/** 防具を作る（v0.32.0）: 元の防具を使わず、新しい防具（resultArmorId）を持つ。 */
+export interface ArmorCraftDef {
+  id: string;
+  kind: 'armor_craft';
+  resultArmorId: string;
+  cost: { money: number; items: ItemStack[] };
+}
+
+/** レシピの結果が武器か（強化・作るのどちらも） */
+export const recipeIsWeapon = (r: RecipeDef): r is WeaponRecipeDef | WeaponCraftDef => r.kind === 'upgrade' || r.kind === 'craft';
+/** レシピの元（作るレシピは null）と結果の ID（武器でも防具でも） */
+export const recipeFrom = (r: RecipeDef): string | null => (r.kind === 'upgrade' ? r.fromWeaponId : r.kind === 'armor_upgrade' ? r.fromArmorId : null);
+export const recipeResult = (r: RecipeDef): string => (recipeIsWeapon(r) ? r.resultWeaponId : r.resultArmorId);
 
 /** 防具の部位（並び順は表示の順） */
 export const ARMOR_SLOTS = ['head', 'chest', 'arms', 'waist', 'legs'] as const;
@@ -288,6 +309,9 @@ export interface ArmorDef {
   starter?: boolean;
   /** 見た目（素材台帳の id）。同じ式・同じ段の 5 部位は、同じ id を持つ。無ければ、着ても姿は変わらない（里の装束） */
   assetId?: string;
+  /** 系列と級（v0.32.0。WeaponDef と同じ） */
+  series?: string;
+  rankId?: string;
 }
 
 /** 防具の決まり。受けるダメージ = 元のダメージ × base / (base + 防御力の合計) */
@@ -958,6 +982,8 @@ export interface ContentIndex {
     board: string;
     /** ハンターの外見の選べるもの（v0.28.0） */
     appearance: string;
+    /** 系列の装備（v0.32.0。武器・防具・作るレシピ。npm run equipment:gen の出力） */
+    equipment?: string[];
     support: string;
     deliveries: string;
   };

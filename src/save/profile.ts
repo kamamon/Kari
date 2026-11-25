@@ -6,7 +6,7 @@
 // - 報酬の受け取りと強化は、必要な確認・減算・加算・処理済みの記録を 1 回の書き込みで確定する。
 // - 知らない ID（この版に無い素材や武器）は捨てずに持ち続ける。
 // - 新しい版が書いたデータ（schemaVersion がこの版より大きい）は、読まないし上書きもしない。
-import { ARMOR_SLOTS, recipeFrom, recipeResult, type ArmorDef, type ArmorSlot, type Content, type DeliveryDef, type ItemStack, type QuestDef, type RecipeDef, type ShopDef, type SupportPackDef } from '../data/schemas';
+import { ARMOR_SLOTS, recipeFrom, recipeIsWeapon, recipeResult, type ArmorDef, type ArmorSlot, type Content, type DeliveryDef, type ItemStack, type QuestDef, type RecipeDef, type ShopDef, type SupportPackDef } from '../data/schemas';
 import { appearanceShapeErrors, applyDraft, changedKinds, editableAppearance, legacyAppearance, validateDraft, type AppearanceDoc, type AppearanceDraft } from '../data/appearance';
 
 /**
@@ -269,33 +269,49 @@ export function settleRun(doc: SaveDoc, r: RunRewards): SaveDoc | null {
 
 export interface CraftCheck {
   ok: boolean;
-  /** 元の武器（防具）を持っているか */
+  /** 元の武器（防具）を持っているか（作るレシピは元が無いので、いつも true） */
   ownsBase: boolean;
+  /** 結果の級が開いているか（v0.32.0。作るレシピだけ。craftRankOpen） */
+  rankOpen: boolean;
   /** すでに結果の武器（防具）を持っているか */
   ownsResult: boolean;
   money: { have: number; need: number };
   items: { itemId: string; have: number; need: number }[];
 }
 
-/** 強化できるか（画面の表示用。実際の確認は craft が書き込みの中でもう一度行う）。 */
-export function checkCraft(doc: SaveDoc, recipe: RecipeDef): CraftCheck {
+/**
+ * 作るレシピ（craft・armor_craft。v0.32.0）の結果の級が、もう開いているか: その級の依頼が 1 つは受けられる。
+ * 強化のレシピと、級の無い結果は、いつも開いている（ChatGPT の全装備四級版 #15 の「未登場の級の装備は作れない」）。
+ */
+export function craftRankOpen(doc: SaveDoc, content: Content, recipe: RecipeDef): boolean {
+  if (recipe.kind !== 'craft' && recipe.kind !== 'armor_craft') return true;
+  const rankId = recipe.kind === 'craft' ? content.weapons.get(recipe.resultWeaponId)?.rankId : content.armor.get(recipe.resultArmorId)?.rankId;
+  if (!rankId) return true;
+  return [...content.quests.values()].some((q) => q.rankId === rankId && questUnlocked(doc, q));
+}
+
+/** 強化できるか・作れるか（画面の表示用。実際の確認は craft が書き込みの中でもう一度行う）。rankOpen は craftRankOpen の結果 */
+export function checkCraft(doc: SaveDoc, recipe: RecipeDef, rankOpen = true): CraftCheck {
   const items = recipe.cost.items.map((s) => ({ itemId: s.itemId, have: doc.items[s.itemId] ?? 0, need: s.count }));
-  const owned = recipe.kind === 'upgrade' ? doc.weapons : doc.armor;
-  const ownsBase = owned.includes(recipeFrom(recipe));
+  const owned = recipeIsWeapon(recipe) ? doc.weapons : doc.armor;
+  const from = recipeFrom(recipe);
+  const ownsBase = from === null || owned.includes(from);
   const ownsResult = owned.includes(recipeResult(recipe));
   const money = { have: doc.money, need: recipe.cost.money };
-  return { ok: ownsBase && !ownsResult && money.have >= money.need && items.every((i) => i.have >= i.need), ownsBase, ownsResult, money, items };
+  return { ok: ownsBase && rankOpen && !ownsResult && money.have >= money.need && items.every((i) => i.have >= i.need), ownsBase, rankOpen, ownsResult, money, items };
 }
 
 /**
  * 強化: 素材と通貨を減らし、元の武器（防具）を結果のものに入れ替える。元の武器を装備していたら、装備も入れ替える。
  * 防具も同じ: 元の防具を身に着けていたら、強化した防具を身に着ける（外していた部位は、外したまま）。
- * 足りない・持っていない時は RuleError を投げる（何も変えない）。
+ * 作る（v0.32.0）: 素材と通貨を減らし、結果の武器（防具）を持ち物に足す（装備は替えない）。
+ * 足りない・持っていない・級が開いていない時は RuleError を投げる（何も変えない）。
  */
-export function craft(doc: SaveDoc, recipe: RecipeDef): SaveDoc {
-  const c = checkCraft(doc, recipe);
+export function craft(doc: SaveDoc, recipe: RecipeDef, rankOpen = true): SaveDoc {
+  const c = checkCraft(doc, recipe, rankOpen);
   if (c.ownsResult) throw new RuleError('already_owned', 'すでに持っています');
   if (!c.ownsBase) throw new RuleError('not_owned', recipe.kind === 'upgrade' ? '元になる武器を持っていません' : '元になる防具を持っていません');
+  if (!c.rankOpen) throw new RuleError('locked', 'その級の装備は、まだ作れません');
   if (!c.ok) throw new RuleError('insufficient', '素材か通貨が足りません');
   const next = cloneSave(doc);
   next.money -= recipe.cost.money;
@@ -307,10 +323,11 @@ export function craft(doc: SaveDoc, recipe: RecipeDef): SaveDoc {
   if (recipe.kind === 'upgrade') {
     next.weapons = next.weapons.map((w) => (w === recipe.fromWeaponId ? recipe.resultWeaponId : w));
     if (next.equippedWeaponId === recipe.fromWeaponId) next.equippedWeaponId = recipe.resultWeaponId;
-  } else {
+  } else if (recipe.kind === 'armor_upgrade') {
     next.armor = next.armor.map((a) => (a === recipe.fromArmorId ? recipe.resultArmorId : a));
     next.equippedArmorIds = next.equippedArmorIds.map((a) => (a === recipe.fromArmorId ? recipe.resultArmorId : a));
-  }
+  } else if (recipe.kind === 'craft') next.weapons = [...next.weapons, recipe.resultWeaponId];
+  else next.armor = [...next.armor, recipe.resultArmorId];
   return next;
 }
 
