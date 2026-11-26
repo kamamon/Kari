@@ -744,3 +744,6 @@ button.reception-desk { cursor: pointer; }
 .room-window{left:36%;top:8%;width:30%;height:30%;background:#a2b4a0!important;color:#283c35!important}.room-bed{left:5%;bottom:7%;width:25%;height:35%}.room-chest{left:37%;bottom:8%;width:22%;height:21%}.room-shelf{right:4%;bottom:8%;width:30%;height:40%}.room-rack{right:4%;top:8%;width:30%;height:28%}
 .life-monster{padding:7px;border-top:1px solid #536052}.life-monster summary{min-height:34px;cursor:pointer}
 @media(max-height:450px){#base[data-section="life"] .base-card{padding:7px 10px;gap:4px}#base[data-section="life"] .base-lead{display:none}.life-section{padding:7px}.life-tabs{padding:0}}
+
+/* 里の催しと調度 */
+.life-contest{margin:12px 0;padding:12px;border:1px solid #927856;border-radius:8px;background:#1a2420}.life-timing{position:relative;height:24px;background:#344b45;border-radius:5px;overflow:hidden;margin:12px 0}.life-timing-target{position:absolute;top:0;bottom:0;background:#639b5b}.life-timing-needle{position:absolute;top:0;bottom:0;width:4px;background:#fff2c2;box-shadow:0 0 7px #ffcf70;transform:translateX(-50%)}.life-room.layout-right{transform:scaleX(-1)}.life-room.layout-right>span{transform:scaleX(-1)}

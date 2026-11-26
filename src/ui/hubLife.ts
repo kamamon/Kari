@@ -102,9 +102,11 @@ export class HubLifePanel {
  }
  private home(d:SaveDoc,s:HubLifeState){
    const a=this.section('狩人の自室','部屋の家具と展示を選択。外見編集と3D装備閲覧もここから。');
-   const room=el('div','life-room '+s.decor);
+   const room=el('div','life-room '+s.decor+' layout-'+(s.roomLayout??'left'));
    room.append(el('span','room-window','灯継ぎの里'),el('span','room-bed','寝台'),el('span','room-chest','装備箱'),el('span','room-shelf',s.displayArmor?this.name(s.displayArmor):'防具展示'),el('span','room-rack',s.displayWeapon?this.name(s.displayWeapon):'武器展示'));a.append(room);
    this.row(a,'家具の調度','木・緑・青銅の3種を無料で切替',this.select([{id:'wood',name:'木の調度'},{id:'green',name:'緑の帆布'},{id:'bronze',name:'青銅の調度'}] as const,s.decor,id=>void this.run({kind:'decor',id})));
+   const roomLink=el('a','life-button','自室に入る（3D）');const roomParams=new URLSearchParams({room:'home',decor:s.decor,layout:s.roomLayout??'left'});if(s.displayWeapon&&d.weapons.includes(s.displayWeapon))roomParams.set('weapon',s.displayWeapon);if(s.displayArmor&&d.armor.includes(s.displayArmor))roomParams.set('armor',s.displayArmor);roomLink.href=assetUrl('viewer.html')+'?'+roomParams.toString();roomLink.target='_blank';roomLink.rel='noopener';
+   this.row(a,'家具の配置','寝台と装備棚の位置を変更できます。',this.select([{id:'left',name:'寝台を左に'},{id:'right',name:'寝台を右に'}] as const,s.roomLayout??'left',id=>void this.run({kind:'roomLayout',id})),roomLink);
    const weaponIds=d.weapons.filter(id=>this.c.weapons.has(id)),armorIds=d.armor.filter(id=>this.c.armor.has(id));
    const selectDisplay=(kind:'displayWeapon'|'displayArmor',ids:string[],value:string|null)=>this.select([{id:'',name:'展示しない'},...ids.map(id=>({id,name:this.name(id)}))],value&&ids.includes(value)?value:'',id=>void this.run({kind,id:id||null}));
    this.row(a,'武器の展示','所持品から選択',selectDisplay('displayWeapon',weaponIds,s.displayWeapon),...(s.displayWeapon&&weaponIds.includes(s.displayWeapon)?[this.preview(s.displayWeapon)]:[]));
@@ -152,7 +154,18 @@ export class HubLifePanel {
    a.append(el('p','life-highlight','里 Lv.'+lv+'｜'+(rank?.name??'初級')+'の狩人'),el('p','life-text',lv>=4?'全盛の里：四方に灯と旗が満ちる':lv>=3?'繁栄の里：交易と灯の広場が活気づく':lv===2?'復興の里：資材と飾りが増える':'小さな山里：設備の拡張と住民依頼を進めよう'));
    for(const t of VILLAGE_TASKS)this.row(a,t.name,t.text+'｜'+this.quote(t.cost,d)+' → 報酬 '+t.reward,this.cmd(s.tasks.includes(t.id)?'修繕完了':'納品する',{kind:'task',id:t.id},s.tasks.includes(t.id)||!afford(d,t.cost)));
    const f=festival(d,this.c),b=this.section('里の催し','依頼達成5回ごとに2回分の開催期間。素材を持ち寄る季節の催し。');
-   this.row(b,f.name,f.active?this.quote(f.cost,d)+' → 報酬 '+f.reward:'現在は開催期間外または受取済み',this.cmd('参加・納品',{kind:'festival'},!f.active||!afford(d,f.cost)));
+   this.row(b,f.name,f.active?this.quote(f.cost,d)+' → 報酬 '+f.reward:'現在は開催期間外または受取済み',this.button('競技に参加',()=>this.festivalGame(b,f),!f.active||!afford(d,f.cost)));
+ }
+ private festivalGame(section:HTMLElement,f:ReturnType<typeof festival>){
+   if(section.querySelector('.life-contest'))return;
+   const game=el('div','life-contest');game.append(el('h4','',f.kind==='fish'?'釣果祭・合わせの腕試し':'料理祭・火加減の腕試し'),el('p','life-text','目印が緑の範囲に来たら押してください。3回中2回以上成功で納品・報酬受取。'));
+   const meter=el('div','life-timing'),target=el('span','life-timing-target'),needle=el('span','life-timing-needle'),result=el('p','life-text','準備完了');meter.append(target,needle);
+   let attempts=0,score=0,start=performance.now(),center=.35,done=false;
+   const setTarget=()=>{center=[.35,.68,.48][attempts]??.5;target.style.left=(center-.11)*100+'%';target.style.width='22%';};
+   const read=()=>{const phase=((performance.now()-start)/((f.kind==='fish'?1700:2100)-attempts*150))%2;return phase<=1?phase:2-phase;};
+   const tick=()=>{if(done||!game.isConnected||this.root.hidden||this.root.closest<HTMLElement>('#base')?.hidden)return;needle.style.left=(read()*100)+'%';requestAnimationFrame(tick);};
+   const tap=this.button(f.kind==='fish'?'合わせる':'火を止める',()=>{if(done)return;if(Math.abs(read()-center)<=.11)score++;attempts++;result.textContent=attempts+'/3回　成功 '+score+'回';if(attempts===3){done=true;tap.disabled=true;result.textContent+='｜'+(score>=2?'合格':'惜しい！再挑戦できます');if(score>=2)game.append(this.cmd('納品して報酬を受け取る',{kind:'festival',score}));else game.append(this.button('再挑戦',()=>{game.remove();this.festivalGame(section,f);}));}else{start=performance.now();setTarget();}});
+   game.append(meter,result,tap);section.append(game);setTarget();requestAnimationFrame(tick);
  }
  private world(s:HubLifeState){
    const a=this.section('山里の景観','自動設定では経過時間・狩猟実績で景観が変わる。自由な固定も可能。施設の営業時間による制限はありません。');

@@ -33,6 +33,7 @@ import { WEAPON_STANCES } from './render/weaponClipSpecs';
 import { motionSetOf, useMotionSet } from './render/motionSet';
 import { buildLongBlade, buildTwinBlade, buildWarMaul } from './render/forgedWeapons';
 import { withShell } from './render/shellPlates';
+import {startHubRoom} from './render/hubRoom';
 
 interface ManifestAsset {
   id: string;
@@ -532,6 +533,7 @@ async function main(): Promise<void> {
     panel.textContent = `読み込みに失敗しました: ${e instanceof Error ? e.message : String(e)}`;
     return;
   }
+  if(new URLSearchParams(location.search).get('room')==='home'){startHubRoom(renderer,canvas,panel,content,new URLSearchParams(location.search));return;}
   scene.add(hunter.root);
   for (const [key, id] of Object.entries(MONSTER_IDS) as [MonsterKey, string][]) {
     const def = content.monsters.get(id)!;

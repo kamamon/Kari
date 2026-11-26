@@ -16,13 +16,13 @@ export type Expedition={kind:'mine'|'plant'|'insect'|'fish'|'bone';rankId:string
 export interface HubLifeState {
   version:1; levels:Record<ResourceId,number>; crop:Crop; prep:HuntPrep;
   visited:string[]; pouch:Record<string,number>|null; sets:Record<string,EquipmentSet>;
-  decor:Decor; displayWeapon:string|null; displayArmor:string|null; wish:string|null;
+  decor:Decor; roomLayout?:'left'|'right'; displayWeapon:string|null; displayArmor:string|null; wish:string|null;
   expedition:Expedition|null; tradeCycle:number; festivalCycle:number; tasks:string[];
   weather:'auto'|'clear'|'rain'|'mist'|'snow'; daylight:'auto'|'morning'|'day'|'dusk'|'night';
   season:'auto'|'spring'|'summer'|'autumn'|'winter';
   training:{weapon:string;hits:number;damage:number}|null;
 }
-export const freshHubLife=():HubLifeState=>({version:1,levels:{farm:1,mine:1,fish:1,insect:1,bone:1},crop:'mixed',prep:{bath:false,meal:null},visited:[],pouch:null,sets:{},decor:'wood',displayWeapon:null,displayArmor:null,wish:null,expedition:null,tradeCycle:-1,festivalCycle:-1,tasks:[],weather:'auto',daylight:'auto',season:'auto',training:null});
+export const freshHubLife=():HubLifeState=>({version:1,levels:{farm:1,mine:1,fish:1,insect:1,bone:1},crop:'mixed',prep:{bath:false,meal:null},visited:[],pouch:null,sets:{},decor:'wood',roomLayout:'left',displayWeapon:null,displayArmor:null,wish:null,expedition:null,tradeCycle:-1,festivalCycle:-1,tasks:[],weather:'auto',daylight:'auto',season:'auto',training:null});
 export const lifeOf=(d:{hubLife?:HubLifeState}):HubLifeState=>d.hubLife??freshHubLife();
 export const hasPrep=(p:HuntPrep):boolean=>p.bath||p.meal!==null;
 export interface PrepBonus {hp:number;stamina:number;attack:number;defense:number;poison:number}
@@ -54,6 +54,7 @@ export function hubLifeShapeErrors(v:unknown):string[]{
   if(!obj(v.levels)||!RESOURCE_IDS.every(k=>int((v.levels as Record<string,unknown>)[k],1,4)))return ['里の設備レベルが不正です'];
   const p=v.prep;
   if(!obj(p)||typeof p.bath!=='boolean'||!(p.meal===null||one(p.meal,MEAL_IDS)))return ['食事・温泉の記録が不正です'];
+  if(v.roomLayout!==undefined&&!one(v.roomLayout,['left','right']))return ['家具の配置が不正です'];
   if(!one(v.crop,CROPS)||!one(v.decor,DECORS)||!list(v.visited,256)||!list(v.tasks,64)||!pouch(v.pouch))return ['里の生活記録が不正です'];
   if(!obj(v.sets)||Object.entries(v.sets).some(([k,s])=>!['1','2','3'].includes(k)||!obj(s)||!str(s.weapon)||!list(s.armor,5)||!pouch(s.pouch)))return ['装備セットが不正です'];
   if(![v.displayWeapon,v.displayArmor,v.wish].every(nullableStr)||!int(v.tradeCycle,-1)||!int(v.festivalCycle,-1))return ['里の受取記録が不正です'];

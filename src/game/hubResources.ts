@@ -50,7 +50,7 @@ function readMarker(doc:SaveDoc,p:HubResourcePoint): { cycle:number; count:numbe
 export function resourceStatus(doc:SaveDoc,c:Catalog,p:HubResourcePoint):ResourceStatus {
   const cycle=resourceCycle(doc,c),rankId=resourceRank(doc,c), m=readMarker(doc,p);
   const life=lifeOf(doc),level=life.levels[p.id as ResourceId]??1;
-  const token=[p.id,cycle,rankId,m?.cycle??'-',m?.count??'-',level,life.crop].join(':');
+  const token=[p.id,cycle,rankId,m?.cycle??'-',m?.count??'-',level,p.id==='farm'?life.crop:'-'].join(':');
   const rank=c.ranks.get(rankId)?.name??'初級';
   if(!c.fieldGathering?.tables.some(t=>t.nodeKind===p.kind&&t.rankId===rankId&&t.quality==='ordinary'))
     return {action:'unavailable',summary:'素材表がありません',token,rankId,left:0};

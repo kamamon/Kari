@@ -84,7 +84,7 @@ export function expeditionReward(c:Content,ex:Expedition):ItemStack|null{
  return t?.entries.length?stack(t.entries[0]!.itemId,3):null;
 }
 export function festival(d:SaveDoc,c:Content):{cycle:number;active:boolean;kind:'fish'|'cook';cost:Cost;reward:number;name:string}{
- const n=resourceCycle(d,c),cycle=Math.floor(n/5),kind=cycle%2?'cook':'fish';
+ const n=resourceCycle(d,c),cycle=Math.floor(n/5),kind=cycle%2?'fish':'cook';
  return {cycle,active:n>=5&&n%5<2&&lifeOf(d).festivalCycle!==cycle,kind,cost:kind==='fish'?cost(0,stack(FISH,3)):cost(0,stack(LEAF,2),stack(FRUIT,2)),reward:180+40*rankOrder(d,c),name:kind==='fish'?'沢魚の釣果祭':'山菜料理祭'};
 }
 export type LifeCommand=
@@ -93,8 +93,8 @@ export type LifeCommand=
  |{kind:'upgrade';id:ResourceId}|{kind:'crop';id:Crop}|{kind:'collect'}
  |{kind:'mix';id:string}|{kind:'trade'}|{kind:'dispatch';source:Expedition['kind']}|{kind:'receive'}
  |{kind:'saveSet'|'applySet'|'deleteSet';slot:string}|{kind:'pouch';itemId:string;count:number}|{kind:'autoPouch'}
- |{kind:'decor';id:Decor}|{kind:'displayWeapon'|'displayArmor';id:string|null}|{kind:'wish';id:string|null}
- |{kind:'task';id:string}|{kind:'festival'}
+ |{kind:'roomLayout';id:'left'|'right'}|{kind:'decor';id:Decor}|{kind:'displayWeapon'|'displayArmor';id:string|null}|{kind:'wish';id:string|null}
+ |{kind:'task';id:string}|{kind:'festival';score:number}
  |{kind:'weather';id:HubLifeState['weather']}|{kind:'daylight';id:HubLifeState['daylight']}|{kind:'season';id:HubLifeState['season']}
  |{kind:'training';weapon:string;hits:number;damage:number};
 
@@ -140,12 +140,13 @@ export function applyHubLife(doc:SaveDoc,c:Content,cmd:LifeCommand):SaveDoc|null
  }
  case 'pouch':{const it=c.items.get(cmd.itemId);requireIt(it&&Number.isInteger(cmd.count)&&cmd.count>=0&&cmd.count<=it.carryMax,'持ち込み数が不正です');if(s.pouch===null)s.pouch=Object.fromEntries(pouchOf(doc,c).map(x=>[x.itemId,x.count]));s.pouch[cmd.itemId]=cmd.count;break;}
  case 'autoPouch':s.pouch=null;break;
+ case 'roomLayout':requireIt(['left','right'].includes(cmd.id),'家具の配置が不正です');s.roomLayout=cmd.id;break;
  case 'decor':requireIt(DECORS.includes(cmd.id),'家具の種類が不正です');s.decor=cmd.id;break;
  case 'displayWeapon':requireIt(cmd.id===null||(doc.weapons.includes(cmd.id)&&c.weapons.has(cmd.id)),'所持している武器を選んでください');s.displayWeapon=cmd.id;break;
  case 'displayArmor':requireIt(cmd.id===null||(doc.armor.includes(cmd.id)&&c.armor.has(cmd.id)),'所持している防具を選んでください');s.displayArmor=cmd.id;break;
  case 'wish':requireIt(cmd.id===null||c.recipes.has(cmd.id),'製作レシピがありません');s.wish=cmd.id;break;
  case 'task':{const t=VILLAGE_TASKS.find(t=>t.id===cmd.id);requireIt(t&&!s.tasks.includes(t.id),'依頼は完了済みです');spend(n,t.cost);n.money=Math.min(MAX_COUNT,n.money+t.reward);s.tasks.push(t.id);break;}
- case 'festival':{const f=festival(doc,c);requireIt(f.active,'催しは開催期間外または受取済みです');spend(n,f.cost);n.money=Math.min(MAX_COUNT,n.money+f.reward);s.festivalCycle=f.cycle;break;}
+ case 'festival':{requireIt(Number.isInteger(cmd.score)&&cmd.score>=2&&cmd.score<=3,'3回のうち2回以上成功してください');const f=festival(doc,c);requireIt(f.active,'催しは開催期間外または受取済みです');spend(n,f.cost);n.money=Math.min(MAX_COUNT,n.money+f.reward);s.festivalCycle=f.cycle;break;}
  case 'weather':requireIt(['auto','clear','rain','mist','snow'].includes(cmd.id),'天候が不正です');s.weather=cmd.id;break;
  case 'daylight':requireIt(['auto','morning','day','dusk','night'].includes(cmd.id),'時刻が不正です');s.daylight=cmd.id;break;
  case 'season':requireIt(['auto','spring','summer','autumn','winter'].includes(cmd.id),'季節が不正です');s.season=cmd.id;break;
