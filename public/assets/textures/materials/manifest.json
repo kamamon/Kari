@@ -252,6 +252,24 @@
       "bytes": 5180,
       "gitBlob": "ce6276bdf9cd040dbaec480733dca22008716a2b",
       "source": "periodic ripple raster + image-derived microdetail"
+    },
+    {
+      "name": "ivy",
+      "file": "ivy.webp",
+      "width": 256,
+      "height": 512,
+      "bytes": 26766,
+      "gitBlob": "0f975f34a664c8054181fba544a5f26e26c4c16c",
+      "source": "original image-derived cutout / animated alpha raster"
+    },
+    {
+      "name": "waterfall",
+      "file": "waterfall.webp",
+      "width": 256,
+      "height": 512,
+      "bytes": 48196,
+      "gitBlob": "9767c8be37a6c087555d27eb1948b3eaabefdac9",
+      "source": "original image-derived cutout / animated alpha raster"
     }
   ]
 }

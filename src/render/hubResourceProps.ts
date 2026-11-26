@@ -4,13 +4,15 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import type { MapDef } from '../data/schemas';
 import { groundAt } from '../game/world';
 import { HUB_RESOURCE_POINTS } from '../game/hubResources';
+import { imageLambert,projectSurfaceUV,type ImageSurface } from './materialImages';
 const COLOR={plant:0x86b563,mine:0x78bdd1,fish:0x70d8ce,insect:0xe5ba63,bone:0xe1d2b2};
 export function buildHubResourceProps(map:MapDef):Group {
   const group=new Group();group.name='hub-resource-points';
   const solid:BufferGeometry[]=[], markers:BufferGeometry[]=[];
+  const surface=(color:number):ImageSurface=>color===0x827e70||color===0x575d59?'cliff':color===0x8eab9c?'crystal':color===0x829849||color===0x4c713f?'leaf':color===0xdac16c?'scale':color===0xd6c8aa?'bone':color===0x64513b?'bark':'wood';
   const put=(g:BufferGeometry,color:number,x:number,y:number,z:number,dst=solid)=>{
     const geo=g.index?g.toNonIndexed():g; if(geo!==g)g.dispose();
-    geo.deleteAttribute('uv');geo.translate(x,y,z);
+    geo.translate(x,y,z);projectSurfaceUV(geo,.55);if(dst===solid)geo.userData.imageSurface=surface(color);
     const c=new Color(color),a=new Float32Array(geo.getAttribute('position').count*3);
     for(let i=0;i<a.length;i+=3)a.set([c.r,c.g,c.b],i);
     geo.setAttribute('color',new Float32BufferAttribute(a,3));dst.push(geo);
@@ -52,7 +54,8 @@ export function buildHubResourceProps(map:MapDef):Group {
       }
     }
   }
-  if(solid.length){const m=new Mesh(mergeGeometries(solid)!,new MeshLambertMaterial({vertexColors:true,flatShading:true}));m.name='resource-objects';m.userData.noMerge=true;group.add(m);}
+  if(solid.length){const objects=new Group();objects.name='resource-objects';
+    for(const kind of ['cliff','crystal','leaf','scale','bone','bark','wood'] as const){const geos=solid.filter(g=>g.userData.imageSurface===kind);if(!geos.length)continue;const m=new Mesh(mergeGeometries(geos)!,imageLambert(kind,{vertexColors:true,flatShading:true}));m.name='resource-'+kind;m.userData.noMerge=true;objects.add(m);}group.add(objects);}
   if(markers.length){const m=new Mesh(mergeGeometries(markers)!,new MeshBasicMaterial({vertexColors:true,side:DoubleSide}));m.name='resource-markers';m.userData.noMerge=true;group.add(m);}
   for(const g of [...solid,...markers])g.dispose();
   return group;

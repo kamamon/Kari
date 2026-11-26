@@ -12,6 +12,7 @@ import { SKY_LOOKS, type SkyLook } from './sky';
 import { HubLivestock, PENS } from './hubLivestock';
 import type { HubThreat } from '../data/hubNarrative';
 import type { HubSample } from '../core/hubSoundtrack';
+import { imageLambert,bindSurfaceImage,ensureSurfaceUV,type ImageSurface } from './materialImages';
 type V=readonly [number,number,number];
 type Part={p:V;s:V;color:number;ry:number;rx:number;rz:number;resource?:ResourceId;level?:number;village?:number;decor?:string};
 const wood=0x644831, stone=0x818175, roof=0x4d5348, gold=0xd2a664, cloth=0xaa7851, moss=0x708b4f, warm=0xfac17b;
@@ -35,7 +36,7 @@ const SKY:Record<HubVisualEnvironment['daylight'],{zenith:number;horizon:number;
 export class HubLifeScene {
  readonly group=new Group();
  private state=freshHubLife();private cycle=0;private village=1;private lastEnv='';
- private structure:InstancedMesh;private parts:Part[]=[];
+ private structures:{mesh:InstancedMesh;parts:Part[]}[]=[];private parts:Part[]=[];
  private agents:InstancedMesh;private heads:InstancedMesh;private birds:InstancedMesh;private fish:InstancedMesh;
  private rain:LineSegments;private snow:Points;private steam:Points;private rainPos:Float32Array;private snowPos:Float32Array;
  private originals=new Map<InstancedMesh,Float32Array>();private lastSeason='';
@@ -88,14 +89,19 @@ export class HubLifeScene {
   // 宿の調度は外から見える展示棚の色も変える。室内の全景は専用メニューのプレビュー。
   for(const [style,color] of [['wood',0x94704e],['green',0x718b57],['bronze',0xa99156]] as const)
    part([-30.3,8+1.12,28.65],[1.12,.67,.09],color,0,0,0,{decor:style});
-  this.structure=new InstancedMesh(new BoxGeometry(1,1,1),new MeshLambertMaterial({color:0xffffff}),this.parts.length);this.structure.name='hub-life-structures';this.structure.castShadow=false;this.structure.receiveShadow=false;this.structure.frustumCulled=false;this.group.add(this.structure);
+  const kindOf=(a:Part):ImageSurface|'light'=>a.color===stone?'masonry':a.color===roof?'roof':a.color===gold?'bronze':a.color===warm?'light':a.color===cloth||a.color===0xa65d42||a.color===0xbda475?'cloth':a.color===0x6caaa2||a.color===0x659a90?'water':a.color===moss?'leaf':a.color===0xc4b394?'bone':a.color===0xb3a24f?'scale':a.decor==='bronze'?'bronze':'wood';
+  for(const kind of ['wood','masonry','roof','bronze','cloth','water','leaf','bone','scale','light'] as const){
+   const parts=this.parts.filter(a=>kindOf(a)===kind);if(!parts.length)continue;
+   const material=kind==='light'?new MeshBasicMaterial({color:0xffffff}):imageLambert(kind,{color:0xffffff},{gain:kind==='water'?2.5:1.35});
+   const mesh=new InstancedMesh(new BoxGeometry(1,1,1),material,parts.length);mesh.name='hub-life-'+kind;mesh.castShadow=false;mesh.receiveShadow=false;mesh.frustumCulled=false;mesh.userData.noMerge=true;this.structures.push({mesh,parts});this.group.add(mesh);
+  }
   // 匿名の生活者4人: 住民を増やす仮形状。採集点や依頼のNPCとは分離。
   this.agentLocations=[[-19,ground(-19,34),34],[mx+.8,dy,mz+.8],[-33,ground(-33,-27),-27],[8,ground(8,48),48]];
-  this.agents=new InstancedMesh(new BoxGeometry(1,1,1),new MeshLambertMaterial({color:0xffffff}),this.agentLocations.length*6);this.agents.name='hub-workers';this.agents.frustumCulled=false;
-  this.heads=new InstancedMesh(new IcosahedronGeometry(1,1),new MeshLambertMaterial({color:0xffffff}),this.agentLocations.length);this.heads.frustumCulled=false;
+  this.agents=new InstancedMesh(new BoxGeometry(1,1,1),imageLambert('cloth',{color:0xffffff}),this.agentLocations.length*6);this.agents.name='hub-workers';this.agents.frustumCulled=false;
+  this.heads=new InstancedMesh(new IcosahedronGeometry(1,1),imageLambert('skin',{color:0xffffff}),this.agentLocations.length);this.heads.frustumCulled=false;
   const birdGeo=new BufferGeometry();birdGeo.setAttribute('position',new Float32BufferAttribute([0,0,0,-.5,0,.08,-.20,0,-.30,0,0,0,.20,0,-.30,.5,0,.08],3));birdGeo.computeVertexNormals();
-  this.birds=new InstancedMesh(birdGeo,new MeshBasicMaterial({color:0x394143,side:2}),6);this.birds.frustumCulled=false;this.birds.name='hub-birds';
-  this.fish=new InstancedMesh(new IcosahedronGeometry(1,0),new MeshLambertMaterial({color:0x566d6a}),5);this.fish.frustumCulled=false;this.fish.name='hub-river-fish';
+  this.birds=new InstancedMesh(ensureSurfaceUV(birdGeo,.8),bindSurfaceImage(new MeshBasicMaterial({color:0x394143,side:2}),'feather'),6);this.birds.frustumCulled=false;this.birds.name='hub-birds';
+  this.fish=new InstancedMesh(new IcosahedronGeometry(1,0),imageLambert('scale',{color:0x566d6a}),5);this.fish.frustumCulled=false;this.fish.name='hub-river-fish';
   this.group.add(this.agents,this.heads,this.birds,this.fish);
   const n=140;this.rainPos=new Float32Array(n*6);const rg=new BufferGeometry();rg.setAttribute('position',new Float32BufferAttribute(this.rainPos,3));
   // Float32BufferAttribute copies the array: retain the actual attribute array.
@@ -109,11 +115,13 @@ export class HubLifeScene {
  }
  set(state:HubLifeState,cycle:number,village:number,threat:HubThreat=0){
   this.state=state;this.cycle=cycle;this.village=village;this.threat=threat;this.lastEnv='';this.livestock.set(state.livestock??{});
-  for(const [i,a] of this.parts.entries()){
-   const show=(!a.resource||(state.levels[a.resource]>=a.level!))&&(!a.village||village>=a.village)&&(!a.decor||state.decor===a.decor);
-   place(this.structure,i,a.p,show?a.s:[0,0,0],a.ry,a.rx,a.rz);tint(this.structure,i,a.color);
+  for(const {mesh,parts} of this.structures){
+   for(const [i,a] of parts.entries()){
+    const show=(!a.resource||(state.levels[a.resource]>=a.level!))&&(!a.village||village>=a.village)&&(!a.decor||state.decor===a.decor);
+    place(mesh,i,a.p,show?a.s:[0,0,0],a.ry,a.rx,a.rz);tint(mesh,i,a.color);
+   }
+   mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;
   }
-  this.structure.instanceMatrix.needsUpdate=true;if(this.structure.instanceColor)this.structure.instanceColor.needsUpdate=true;
  }
  private environment(time:number){
   const env=hubEnvironment(this.state,this.cycle,time);if(this.threat===2&&this.state.weather==='auto')env.weather='mist';const key=Object.values(env).join(':')+':'+this.threat;this.env=env;if(key===this.lastEnv)return;this.lastEnv=key;

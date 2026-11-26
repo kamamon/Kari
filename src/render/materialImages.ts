@@ -2,17 +2,17 @@
 // カラー付きのモデルには、生成絵から作った明度正規化版を貼って二重の色掛けを抑える。
 import { BufferGeometry, Float32BufferAttribute, MeshLambertMaterial, MeshStandardMaterial, MeshBasicMaterial, RepeatWrapping, type MeshLambertMaterialParameters } from 'three';
 import { loadEnvTexture } from './envArt';
-export const IMAGE_SURFACES=['wood','masonry','roof','bronze','cloth','earth','grass','cliff','bark','moss','plaster','bone','skin','fur','feather','scale','leaf','crystal','water'] as const;
+export const IMAGE_SURFACES=['wood','masonry','roof','bronze','cloth','earth','grass','cliff','bark','moss','plaster','bone','skin','fur','feather','scale','leaf','crystal','water','ivy','waterfall'] as const;
 export type ImageSurface=typeof IMAGE_SURFACES[number];
 export const MATERIAL_DIR='assets/textures/materials/';
 export type ImageOptions={raw?:boolean;gain?:number;bump?:number;animated?:boolean;replaceFallback?:boolean};
 type Lit=MeshLambertMaterial|MeshStandardMaterial|MeshBasicMaterial;
-export const imageFile=(kind:ImageSurface,raw=false):string=>kind==='water'||raw?kind:kind+'_detail';
+export const imageFile=(kind:ImageSurface,raw=false):string=>['water','ivy','waterfall'].includes(kind)||raw?kind:kind+'_detail';
 /** Same cached decode as envArt. Each moving water surface gets its own texture offset.
  * In Node / while loading / on error, existing fallback is retained. UV is preserved through mergeStatic.
  */
 export function bindSurfaceImage<M extends Lit>(mat:M,kind:ImageSurface,options:ImageOptions={}):M{
- const raw=!!options.raw||kind==='water',file=imageFile(kind,raw),base=mat.color.clone();
+ const raw=!!options.raw||['water','ivy','waterfall'].includes(kind),file=imageFile(kind,raw),base=mat.color.clone();
  mat.userData.uv=true;mat.userData.surfaceImage=kind;mat.userData.surfaceFile=MATERIAL_DIR+file+'.webp';mat.userData.surfaceReady=false;
  loadEnvTexture(file,t=>{t.wrapS=t.wrapT=RepeatWrapping;t.anisotropy=4;},t=>{
    const map=options.animated?t.clone():t;if(options.animated)map.needsUpdate=true;

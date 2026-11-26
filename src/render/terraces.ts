@@ -485,6 +485,7 @@ function waterMaterials(): { water: MeshLambertMaterial; fall: MeshLambertMateri
   if (!fallMat) {
     fallMat = new MeshLambertMaterial({ map: waterTexture(true), transparent: true, side: DoubleSide, emissive: 0x3a4846 });
     fallMat.userData.uv = true;
+    bindSurfaceImage(fallMat,'waterfall',{animated:true,replaceFallback:true});
   }
   return { water: waterMat, fall: fallMat };
 }
