@@ -1,0 +1,7653 @@
+{
+  "schemaVersion": 1,
+  "note": "PR #26の設計を実行用に調整。盆地の実座標、四級の地域別素材、純鉱石・環境骨装備。釣りは涸れ沢の実地形と水面。",
+  "fieldId": "field.basin",
+  "pond": {
+    "areaId": "a5",
+    "x": 236,
+    "z": -231,
+    "radius": 3.6,
+    "waterY": -0.04,
+    "depth": 0.55,
+    "bank": {
+      "x": 236,
+      "z": -235.5
+    },
+    "terrainBlendM": 2.8
+  },
+  "nodes": [
+    {
+      "id": "node.basin.camp.plant.01",
+      "areaId": "camp",
+      "kind": "plant",
+      "x": -233,
+      "z": -247.5,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.camp.plant.02",
+      "areaId": "camp",
+      "kind": "plant",
+      "x": -225,
+      "z": -244.5,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.camp.plant.03",
+      "areaId": "camp",
+      "kind": "plant",
+      "x": -235,
+      "z": -231.5,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.camp.insect.01",
+      "areaId": "camp",
+      "kind": "insect",
+      "x": -223.1,
+      "z": -238.5,
+      "quality": "ordinary",
+      "uses": 2
+    },
+    {
+      "id": "node.basin.a1.mine.01",
+      "areaId": "a1",
+      "kind": "mine",
+      "x": -27,
+      "z": -243,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a1.mine.02",
+      "areaId": "a1",
+      "kind": "mine",
+      "x": -21,
+      "z": -233.5,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a1.mine.03",
+      "areaId": "a1",
+      "kind": "mine",
+      "x": -8,
+      "z": -245,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a1.bone.01",
+      "areaId": "a1",
+      "kind": "bone",
+      "x": 12.9,
+      "z": -237.5,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a1.plant.01",
+      "areaId": "a1",
+      "kind": "plant",
+      "x": 12,
+      "z": -244.8,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a2.plant.01",
+      "areaId": "a2",
+      "kind": "plant",
+      "x": -223,
+      "z": 0,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a2.plant.02",
+      "areaId": "a2",
+      "kind": "plant",
+      "x": -256.7,
+      "z": 3,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a2.plant.03",
+      "areaId": "a2",
+      "kind": "plant",
+      "x": -224,
+      "z": -5.8,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a2.insect.01",
+      "areaId": "a2",
+      "kind": "insect",
+      "x": -244.4,
+      "z": -16.4,
+      "quality": "ordinary",
+      "uses": 2
+    },
+    {
+      "id": "node.basin.a2.insect.02",
+      "areaId": "a2",
+      "kind": "insect",
+      "x": -232.8,
+      "z": 15.4,
+      "quality": "ordinary",
+      "uses": 2
+    },
+    {
+      "id": "node.basin.a2.insect.03",
+      "areaId": "a2",
+      "kind": "insect",
+      "x": -249.8,
+      "z": -13.9,
+      "quality": "deep",
+      "uses": 2
+    },
+    {
+      "id": "node.basin.a2.bone.01",
+      "areaId": "a2",
+      "kind": "bone",
+      "x": -254.7,
+      "z": 8.5,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a3.mine.01",
+      "areaId": "a3",
+      "kind": "mine",
+      "x": 17,
+      "z": 0,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a3.mine.02",
+      "areaId": "a3",
+      "kind": "mine",
+      "x": -11.13,
+      "z": -7.08,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a3.bone.01",
+      "areaId": "a3",
+      "kind": "bone",
+      "x": 3,
+      "z": -16.7,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a3.bone.02",
+      "areaId": "a3",
+      "kind": "bone",
+      "x": 13.9,
+      "z": 9.8,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a3.insect.01",
+      "areaId": "a3",
+      "kind": "insect",
+      "x": 0,
+      "z": 17,
+      "quality": "deep",
+      "uses": 2
+    },
+    {
+      "id": "node.basin.a4.mine.01",
+      "areaId": "a4",
+      "kind": "mine",
+      "x": -238.15,
+      "z": 232.96,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a4.mine.02",
+      "areaId": "a4",
+      "kind": "mine",
+      "x": -251,
+      "z": 215.3,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a4.mine.03",
+      "areaId": "a4",
+      "kind": "mine",
+      "x": -254.5,
+      "z": 248.13,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a4.bone.01",
+      "areaId": "a4",
+      "kind": "bone",
+      "x": -258.4,
+      "z": 215.6,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a4.plant.01",
+      "areaId": "a4",
+      "kind": "plant",
+      "x": -266.4,
+      "z": 241.8,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a5.mine.01",
+      "areaId": "a5",
+      "kind": "mine",
+      "x": 253,
+      "z": -238,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a5.mine.02",
+      "areaId": "a5",
+      "kind": "mine",
+      "x": 224.35,
+      "z": -248.03,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a5.plant.01",
+      "areaId": "a5",
+      "kind": "plant",
+      "x": 250.7,
+      "z": -229.5,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a5.plant.02",
+      "areaId": "a5",
+      "kind": "plant",
+      "x": 236,
+      "z": -221,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a5.bone.01",
+      "areaId": "a5",
+      "kind": "bone",
+      "x": 220,
+      "z": -243.8,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a5.fish.01",
+      "areaId": "a5",
+      "kind": "fish",
+      "x": 236,
+      "z": -235.5,
+      "quality": "ordinary",
+      "uses": 2
+    },
+    {
+      "id": "node.basin.a6.mine.01",
+      "areaId": "a6",
+      "kind": "mine",
+      "x": 257,
+      "z": 0,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a6.mine.02",
+      "areaId": "a6",
+      "kind": "mine",
+      "x": 223.3,
+      "z": 3,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a6.mine.03",
+      "areaId": "a6",
+      "kind": "mine",
+      "x": 256,
+      "z": -5.8,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a6.mine.04",
+      "areaId": "a6",
+      "kind": "mine",
+      "x": 237,
+      "z": -16.7,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a6.bone.01",
+      "areaId": "a6",
+      "kind": "bone",
+      "x": 253.9,
+      "z": 9.8,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a6.insect.01",
+      "areaId": "a6",
+      "kind": "insect",
+      "x": 247.2,
+      "z": 15.4,
+      "quality": "deep",
+      "uses": 2
+    },
+    {
+      "id": "node.basin.a7.plant.01",
+      "areaId": "a7",
+      "kind": "plant",
+      "x": 17,
+      "z": 240,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a7.plant.02",
+      "areaId": "a7",
+      "kind": "plant",
+      "x": -16.7,
+      "z": 243,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a7.insect.01",
+      "areaId": "a7",
+      "kind": "insect",
+      "x": 15.4,
+      "z": 232.8,
+      "quality": "ordinary",
+      "uses": 2
+    },
+    {
+      "id": "node.basin.a7.insect.02",
+      "areaId": "a7",
+      "kind": "insect",
+      "x": 0,
+      "z": 257,
+      "quality": "ordinary",
+      "uses": 2
+    },
+    {
+      "id": "node.basin.a7.insect.03",
+      "areaId": "a7",
+      "kind": "insect",
+      "x": -10.2,
+      "z": 248.5,
+      "quality": "deep",
+      "uses": 2
+    },
+    {
+      "id": "node.basin.a7.bone.01",
+      "areaId": "a7",
+      "kind": "bone",
+      "x": 7.2,
+      "z": 255.4,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a7.bone.02",
+      "areaId": "a7",
+      "kind": "bone",
+      "x": -9.8,
+      "z": 226.1,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a8.mine.01",
+      "areaId": "a8",
+      "kind": "mine",
+      "x": 487.8,
+      "z": -220.1,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a8.mine.02",
+      "areaId": "a8",
+      "kind": "mine",
+      "x": 461.64,
+      "z": -231.94,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a8.bone.01",
+      "areaId": "a8",
+      "kind": "bone",
+      "x": 466.17,
+      "z": -245.02,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a8.bone.02",
+      "areaId": "a8",
+      "kind": "bone",
+      "x": 490.94,
+      "z": -223.05,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a9.mine.01",
+      "areaId": "a9",
+      "kind": "mine",
+      "x": 488.6,
+      "z": 10.61,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a9.mine.02",
+      "areaId": "a9",
+      "kind": "mine",
+      "x": 463.3,
+      "z": 3,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a9.mine.03",
+      "areaId": "a9",
+      "kind": "mine",
+      "x": 496,
+      "z": -5.8,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a9.insect.01",
+      "areaId": "a9",
+      "kind": "insect",
+      "x": 474.07,
+      "z": -15.11,
+      "quality": "ordinary",
+      "uses": 2
+    },
+    {
+      "id": "node.basin.a9.insect.02",
+      "areaId": "a9",
+      "kind": "insect",
+      "x": 471.5,
+      "z": 14.7,
+      "quality": "deep",
+      "uses": 2
+    },
+    {
+      "id": "node.basin.a9.bone.01",
+      "areaId": "a9",
+      "kind": "bone",
+      "x": 469.1,
+      "z": -13,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a10.bone.01",
+      "areaId": "a10",
+      "kind": "bone",
+      "x": 249.8,
+      "z": 253.9,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a10.bone.02",
+      "areaId": "a10",
+      "kind": "bone",
+      "x": 228,
+      "z": 228,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a10.bone.03",
+      "areaId": "a10",
+      "kind": "bone",
+      "x": 253.9,
+      "z": 249.8,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a10.mine.01",
+      "areaId": "a10",
+      "kind": "mine",
+      "x": 235.6,
+      "z": 223.6,
+      "quality": "ordinary",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a10.mine.02",
+      "areaId": "a10",
+      "kind": "mine",
+      "x": 223.1,
+      "z": 241.5,
+      "quality": "deep",
+      "uses": 3
+    },
+    {
+      "id": "node.basin.a10.plant.01",
+      "areaId": "a10",
+      "kind": "plant",
+      "x": 244.4,
+      "z": 223.6,
+      "quality": "deep",
+      "uses": 3
+    }
+  ],
+  "materials": [
+    {
+      "id": "mat.ore.basin_iron",
+      "name": "風礫鉄鉱",
+      "unit": "個",
+      "rarity": 1,
+      "sourceKind": "mine",
+      "firstRankId": "rank.1",
+      "rarityRole": "common",
+      "sellPrice": 12
+    },
+    {
+      "id": "mat.ore.layered_ashstone",
+      "name": "層灰石",
+      "unit": "個",
+      "rarity": 2,
+      "sourceKind": "mine",
+      "firstRankId": "rank.1",
+      "rarityRole": "secondary",
+      "sellPrice": 18
+    },
+    {
+      "id": "mat.ore.grit_whetstone",
+      "name": "礫目砥石原石",
+      "unit": "個",
+      "rarity": 4,
+      "sourceKind": "mine",
+      "firstRankId": "rank.1",
+      "rarityRole": "rare",
+      "sellPrice": 30
+    },
+    {
+      "id": "mat.ore.deepcopper",
+      "name": "深層青銅鉱",
+      "unit": "個",
+      "rarity": 3,
+      "sourceKind": "mine",
+      "firstRankId": "rank.2",
+      "rarityRole": "common",
+      "sellPrice": 28
+    },
+    {
+      "id": "mat.ore.strata_copper",
+      "name": "段晶銅鉱",
+      "unit": "個",
+      "rarity": 4,
+      "sourceKind": "mine",
+      "firstRankId": "rank.2",
+      "rarityRole": "secondary",
+      "sellPrice": 42
+    },
+    {
+      "id": "mat.ore.mist_silver",
+      "name": "霞銀鉱",
+      "unit": "個",
+      "rarity": 6,
+      "sourceKind": "mine",
+      "firstRankId": "rank.2",
+      "rarityRole": "rare",
+      "sellPrice": 70
+    },
+    {
+      "id": "mat.ore.crystalseam_steel",
+      "name": "晶脈鋼鉱",
+      "unit": "個",
+      "rarity": 5,
+      "sourceKind": "mine",
+      "firstRankId": "rank.3",
+      "rarityRole": "common",
+      "sellPrice": 55
+    },
+    {
+      "id": "mat.ore.highdensity_mica",
+      "name": "圧晶雲母",
+      "unit": "個",
+      "rarity": 6,
+      "sourceKind": "mine",
+      "firstRankId": "rank.3",
+      "rarityRole": "secondary",
+      "sellPrice": 83
+    },
+    {
+      "id": "mat.ore.violet_vein",
+      "name": "紫脈晶鉱",
+      "unit": "個",
+      "rarity": 8,
+      "sourceKind": "mine",
+      "firstRankId": "rank.3",
+      "rarityRole": "rare",
+      "sellPrice": 138
+    },
+    {
+      "id": "mat.ore.starlight_iron",
+      "name": "星紋鉄鉱",
+      "unit": "個",
+      "rarity": 7,
+      "sourceKind": "mine",
+      "firstRankId": "rank.4",
+      "rarityRole": "common",
+      "sellPrice": 100
+    },
+    {
+      "id": "mat.ore.pulse_ore",
+      "name": "脈律石",
+      "unit": "個",
+      "rarity": 8,
+      "sourceKind": "mine",
+      "firstRankId": "rank.4",
+      "rarityRole": "secondary",
+      "sellPrice": 150
+    },
+    {
+      "id": "mat.ore.prismheart",
+      "name": "虹稜心鉱",
+      "unit": "個",
+      "rarity": 10,
+      "sourceKind": "mine",
+      "firstRankId": "rank.4",
+      "rarityRole": "rare",
+      "sellPrice": 250
+    },
+    {
+      "id": "mat.bone.weathered_fragment",
+      "name": "風化骨片",
+      "unit": "個",
+      "rarity": 1,
+      "sourceKind": "bone",
+      "firstRankId": "rank.1",
+      "rarityRole": "common",
+      "sellPrice": 12
+    },
+    {
+      "id": "mat.bone.hollow_rib",
+      "name": "空洞肋骨",
+      "unit": "個",
+      "rarity": 2,
+      "sourceKind": "bone",
+      "firstRankId": "rank.1",
+      "rarityRole": "secondary",
+      "sellPrice": 18
+    },
+    {
+      "id": "mat.bone.strong_joint",
+      "name": "硬節骨",
+      "unit": "個",
+      "rarity": 4,
+      "sourceKind": "bone",
+      "firstRankId": "rank.1",
+      "rarityRole": "rare",
+      "sellPrice": 30
+    },
+    {
+      "id": "mat.bone.dense_long",
+      "name": "緻密長骨",
+      "unit": "個",
+      "rarity": 3,
+      "sourceKind": "bone",
+      "firstRankId": "rank.2",
+      "rarityRole": "common",
+      "sellPrice": 28
+    },
+    {
+      "id": "mat.bone.cave_rib",
+      "name": "洞刻肋骨",
+      "unit": "個",
+      "rarity": 4,
+      "sourceKind": "bone",
+      "firstRankId": "rank.2",
+      "rarityRole": "secondary",
+      "sellPrice": 42
+    },
+    {
+      "id": "mat.bone.stonebound_pelvis",
+      "name": "石抱き腰骨",
+      "unit": "個",
+      "rarity": 6,
+      "sourceKind": "bone",
+      "firstRankId": "rank.2",
+      "rarityRole": "rare",
+      "sellPrice": 70
+    },
+    {
+      "id": "mat.bone.fossil_saber",
+      "name": "刀稜化石骨",
+      "unit": "個",
+      "rarity": 5,
+      "sourceKind": "bone",
+      "firstRankId": "rank.3",
+      "rarityRole": "common",
+      "sellPrice": 55
+    },
+    {
+      "id": "mat.bone.tower_vertebra",
+      "name": "巨塔椎骨",
+      "unit": "個",
+      "rarity": 6,
+      "sourceKind": "bone",
+      "firstRankId": "rank.3",
+      "rarityRole": "secondary",
+      "sellPrice": 83
+    },
+    {
+      "id": "mat.bone.crystal_femur",
+      "name": "晶芯大腿骨",
+      "unit": "個",
+      "rarity": 8,
+      "sourceKind": "bone",
+      "firstRankId": "rank.3",
+      "rarityRole": "rare",
+      "sellPrice": 138
+    },
+    {
+      "id": "mat.bone.ancient_ridge",
+      "name": "古稜巨骨",
+      "unit": "個",
+      "rarity": 7,
+      "sourceKind": "bone",
+      "firstRankId": "rank.4",
+      "rarityRole": "common",
+      "sellPrice": 100
+    },
+    {
+      "id": "mat.bone.deepfossil_core",
+      "name": "深層化石核",
+      "unit": "個",
+      "rarity": 8,
+      "sourceKind": "bone",
+      "firstRankId": "rank.4",
+      "rarityRole": "secondary",
+      "sellPrice": 150
+    },
+    {
+      "id": "mat.bone.astral_spine",
+      "name": "星条脊骨",
+      "unit": "個",
+      "rarity": 10,
+      "sourceKind": "bone",
+      "firstRankId": "rank.4",
+      "rarityRole": "rare",
+      "sellPrice": 250
+    },
+    {
+      "id": "mat.gather.flatnagi_leaf",
+      "name": "ヒラナギの葉",
+      "unit": "個",
+      "rarity": 1,
+      "sourceKind": "plant",
+      "firstRankId": "rank.1",
+      "rarityRole": "common",
+      "sellPrice": 12
+    },
+    {
+      "id": "mat.gather.dewbreak_fruit",
+      "name": "ツユワリの実",
+      "unit": "個",
+      "rarity": 2,
+      "sourceKind": "plant",
+      "firstRankId": "rank.1",
+      "rarityRole": "secondary",
+      "sellPrice": 18
+    },
+    {
+      "id": "mat.gather.threadbind_fiber",
+      "name": "スジユイの繊維",
+      "unit": "個",
+      "rarity": 4,
+      "sourceKind": "plant",
+      "firstRankId": "rank.1",
+      "rarityRole": "rare",
+      "sellPrice": 30
+    },
+    {
+      "id": "mat.equip.insect.gap_beetle_shell",
+      "name": "ハザマ甲虫の翅鞘",
+      "unit": "個",
+      "rarity": 1,
+      "sourceKind": "insect",
+      "firstRankId": "rank.1",
+      "rarityRole": "common",
+      "sellPrice": 12
+    },
+    {
+      "id": "mat.equip.insect.thread_moth_silk",
+      "name": "スジハリ糸蛾の繭糸",
+      "unit": "個",
+      "rarity": 2,
+      "sourceKind": "insect",
+      "firstRankId": "rank.1",
+      "rarityRole": "secondary",
+      "sellPrice": 18
+    },
+    {
+      "id": "mat.equip.insect.holding_light_sac",
+      "name": "ヒカリモチ蛍の灯嚢",
+      "unit": "個",
+      "rarity": 4,
+      "sourceKind": "insect",
+      "firstRankId": "rank.1",
+      "rarityRole": "rare",
+      "sellPrice": 30
+    },
+    {
+      "id": "mat.fish.streamfin",
+      "name": "沢ひれ魚",
+      "unit": "個",
+      "rarity": 1,
+      "sourceKind": "fish",
+      "firstRankId": "rank.1",
+      "rarityRole": "common",
+      "sellPrice": 12
+    },
+    {
+      "id": "mat.fish.shallow_crest",
+      "name": "浅瀬冠魚",
+      "unit": "個",
+      "rarity": 2,
+      "sourceKind": "fish",
+      "firstRankId": "rank.1",
+      "rarityRole": "secondary",
+      "sellPrice": 18
+    },
+    {
+      "id": "mat.fish.dusk_needle",
+      "name": "薄暮針魚",
+      "unit": "個",
+      "rarity": 4,
+      "sourceKind": "fish",
+      "firstRankId": "rank.1",
+      "rarityRole": "rare",
+      "sellPrice": 30
+    },
+    {
+      "id": "mat.field.basin.plant.r2.1",
+      "name": "深根ヒラナギ葉",
+      "unit": "枚",
+      "rarity": 3,
+      "sourceKind": "plant",
+      "firstRankId": "rank.2",
+      "rarityRole": "common",
+      "sellPrice": 28
+    },
+    {
+      "id": "mat.field.basin.plant.r2.2",
+      "name": "濃蜜ツユワリ実",
+      "unit": "個",
+      "rarity": 4,
+      "sourceKind": "plant",
+      "firstRankId": "rank.2",
+      "rarityRole": "secondary",
+      "sellPrice": 42
+    },
+    {
+      "id": "mat.field.basin.plant.r2.3",
+      "name": "層紋スジユイ繊維",
+      "unit": "束",
+      "rarity": 6,
+      "sourceKind": "plant",
+      "firstRankId": "rank.2",
+      "rarityRole": "rare",
+      "sellPrice": 70
+    },
+    {
+      "id": "mat.field.basin.plant.r3.1",
+      "name": "銀縁ヒラナギ葉",
+      "unit": "枚",
+      "rarity": 5,
+      "sourceKind": "plant",
+      "firstRankId": "rank.3",
+      "rarityRole": "common",
+      "sellPrice": 55
+    },
+    {
+      "id": "mat.field.basin.plant.r3.2",
+      "name": "晶蜜ツユワリ実",
+      "unit": "個",
+      "rarity": 6,
+      "sourceKind": "plant",
+      "firstRankId": "rank.3",
+      "rarityRole": "secondary",
+      "sellPrice": 83
+    },
+    {
+      "id": "mat.field.basin.plant.r3.3",
+      "name": "強靭スジユイ繊維",
+      "unit": "束",
+      "rarity": 8,
+      "sourceKind": "plant",
+      "firstRankId": "rank.3",
+      "rarityRole": "rare",
+      "sellPrice": 138
+    },
+    {
+      "id": "mat.field.basin.plant.r4.1",
+      "name": "星葉ヒラナギ",
+      "unit": "枚",
+      "rarity": 7,
+      "sourceKind": "plant",
+      "firstRankId": "rank.4",
+      "rarityRole": "common",
+      "sellPrice": 100
+    },
+    {
+      "id": "mat.field.basin.plant.r4.2",
+      "name": "琥蜜ツユワリ実",
+      "unit": "個",
+      "rarity": 8,
+      "sourceKind": "plant",
+      "firstRankId": "rank.4",
+      "rarityRole": "secondary",
+      "sellPrice": 150
+    },
+    {
+      "id": "mat.field.basin.plant.r4.3",
+      "name": "極細層スジユイ繊維",
+      "unit": "束",
+      "rarity": 10,
+      "sourceKind": "plant",
+      "firstRankId": "rank.4",
+      "rarityRole": "rare",
+      "sellPrice": 250
+    },
+    {
+      "id": "mat.field.basin.insect.r2.1",
+      "name": "厚翅ハザマ甲虫",
+      "unit": "個",
+      "rarity": 3,
+      "sourceKind": "insect",
+      "firstRankId": "rank.2",
+      "rarityRole": "common",
+      "sellPrice": 28
+    },
+    {
+      "id": "mat.field.basin.insect.r2.2",
+      "name": "強糸スジハリ蛾",
+      "unit": "個",
+      "rarity": 4,
+      "sourceKind": "insect",
+      "firstRankId": "rank.2",
+      "rarityRole": "secondary",
+      "sellPrice": 42
+    },
+    {
+      "id": "mat.field.basin.insect.r2.3",
+      "name": "青灯ヒカリモチ蛍",
+      "unit": "個",
+      "rarity": 6,
+      "sourceKind": "insect",
+      "firstRankId": "rank.2",
+      "rarityRole": "rare",
+      "sellPrice": 70
+    },
+    {
+      "id": "mat.field.basin.insect.r3.1",
+      "name": "晶翅ハザマ甲虫",
+      "unit": "個",
+      "rarity": 5,
+      "sourceKind": "insect",
+      "firstRankId": "rank.3",
+      "rarityRole": "common",
+      "sellPrice": 55
+    },
+    {
+      "id": "mat.field.basin.insect.r3.2",
+      "name": "銀糸スジハリ蛾",
+      "unit": "個",
+      "rarity": 6,
+      "sourceKind": "insect",
+      "firstRankId": "rank.3",
+      "rarityRole": "secondary",
+      "sellPrice": 83
+    },
+    {
+      "id": "mat.field.basin.insect.r3.3",
+      "name": "蒼灯ヒカリモチ蛍",
+      "unit": "個",
+      "rarity": 8,
+      "sourceKind": "insect",
+      "firstRankId": "rank.3",
+      "rarityRole": "rare",
+      "sellPrice": 138
+    },
+    {
+      "id": "mat.field.basin.insect.r4.1",
+      "name": "虹翅ハザマ甲虫",
+      "unit": "個",
+      "rarity": 7,
+      "sourceKind": "insect",
+      "firstRankId": "rank.4",
+      "rarityRole": "common",
+      "sellPrice": 100
+    },
+    {
+      "id": "mat.field.basin.insect.r4.2",
+      "name": "星糸スジハリ蛾",
+      "unit": "個",
+      "rarity": 8,
+      "sourceKind": "insect",
+      "firstRankId": "rank.4",
+      "rarityRole": "secondary",
+      "sellPrice": 150
+    },
+    {
+      "id": "mat.field.basin.insect.r4.3",
+      "name": "極灯ヒカリモチ蛍",
+      "unit": "個",
+      "rarity": 10,
+      "sourceKind": "insect",
+      "firstRankId": "rank.4",
+      "rarityRole": "rare",
+      "sellPrice": 250
+    },
+    {
+      "id": "mat.field.basin.fish.r2.1",
+      "name": "大沢ひれ魚",
+      "unit": "匹",
+      "rarity": 3,
+      "sourceKind": "fish",
+      "firstRankId": "rank.2",
+      "rarityRole": "common",
+      "sellPrice": 28
+    },
+    {
+      "id": "mat.field.basin.fish.r2.2",
+      "name": "赤冠浅瀬魚",
+      "unit": "匹",
+      "rarity": 4,
+      "sourceKind": "fish",
+      "firstRankId": "rank.2",
+      "rarityRole": "secondary",
+      "sellPrice": 42
+    },
+    {
+      "id": "mat.field.basin.fish.r2.3",
+      "name": "銀針薄暮魚",
+      "unit": "匹",
+      "rarity": 6,
+      "sourceKind": "fish",
+      "firstRankId": "rank.2",
+      "rarityRole": "rare",
+      "sellPrice": 70
+    },
+    {
+      "id": "mat.field.basin.fish.r3.1",
+      "name": "銀沢ひれ魚",
+      "unit": "匹",
+      "rarity": 5,
+      "sourceKind": "fish",
+      "firstRankId": "rank.3",
+      "rarityRole": "common",
+      "sellPrice": 55
+    },
+    {
+      "id": "mat.field.basin.fish.r3.2",
+      "name": "晶冠浅瀬魚",
+      "unit": "匹",
+      "rarity": 6,
+      "sourceKind": "fish",
+      "firstRankId": "rank.3",
+      "rarityRole": "secondary",
+      "sellPrice": 83
+    },
+    {
+      "id": "mat.field.basin.fish.r3.3",
+      "name": "蒼針薄暮魚",
+      "unit": "匹",
+      "rarity": 8,
+      "sourceKind": "fish",
+      "firstRankId": "rank.3",
+      "rarityRole": "rare",
+      "sellPrice": 138
+    },
+    {
+      "id": "mat.field.basin.fish.r4.1",
+      "name": "星沢ひれ魚",
+      "unit": "匹",
+      "rarity": 7,
+      "sourceKind": "fish",
+      "firstRankId": "rank.4",
+      "rarityRole": "common",
+      "sellPrice": 100
+    },
+    {
+      "id": "mat.field.basin.fish.r4.2",
+      "name": "金冠浅瀬魚",
+      "unit": "匹",
+      "rarity": 8,
+      "sourceKind": "fish",
+      "firstRankId": "rank.4",
+      "rarityRole": "secondary",
+      "sellPrice": 150
+    },
+    {
+      "id": "mat.field.basin.fish.r4.3",
+      "name": "虹針薄暮魚",
+      "unit": "匹",
+      "rarity": 10,
+      "sourceKind": "fish",
+      "firstRankId": "rank.4",
+      "rarityRole": "rare",
+      "sellPrice": 250
+    }
+  ],
+  "tables": [
+    {
+      "id": "loot.field.basin.mine.r1.ordinary",
+      "nodeKind": "mine",
+      "rankId": "rank.1",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.ore.basin_iron",
+          "weightBps": 6600,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.ore.layered_ashstone",
+          "weightBps": 3100,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.ore.grit_whetstone",
+          "weightBps": 300,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.mine.r1.deep",
+      "nodeKind": "mine",
+      "rankId": "rank.1",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.ore.basin_iron",
+          "weightBps": 4000,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.ore.layered_ashstone",
+          "weightBps": 4700,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.ore.grit_whetstone",
+          "weightBps": 1300,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.mine.r2.ordinary",
+      "nodeKind": "mine",
+      "rankId": "rank.2",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.ore.basin_iron",
+          "weightBps": 1800,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.ore.deepcopper",
+          "weightBps": 5100,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.ore.strata_copper",
+          "weightBps": 2500,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.ore.mist_silver",
+          "weightBps": 600,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.mine.r2.deep",
+      "nodeKind": "mine",
+      "rankId": "rank.2",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.ore.basin_iron",
+          "weightBps": 1000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.ore.deepcopper",
+          "weightBps": 4000,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.ore.strata_copper",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.ore.mist_silver",
+          "weightBps": 2000,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.mine.r3.ordinary",
+      "nodeKind": "mine",
+      "rankId": "rank.3",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.ore.deepcopper",
+          "weightBps": 1500,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.ore.crystalseam_steel",
+          "weightBps": 4800,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.ore.highdensity_mica",
+          "weightBps": 2600,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.ore.violet_vein",
+          "weightBps": 1100,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.mine.r3.deep",
+      "nodeKind": "mine",
+      "rankId": "rank.3",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.ore.deepcopper",
+          "weightBps": 800,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.ore.crystalseam_steel",
+          "weightBps": 3600,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.ore.highdensity_mica",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.ore.violet_vein",
+          "weightBps": 2600,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.mine.r4.ordinary",
+      "nodeKind": "mine",
+      "rankId": "rank.4",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.ore.crystalseam_steel",
+          "weightBps": 1200,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.ore.starlight_iron",
+          "weightBps": 4100,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.ore.pulse_ore",
+          "weightBps": 2900,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.ore.prismheart",
+          "weightBps": 1800,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.mine.r4.deep",
+      "nodeKind": "mine",
+      "rankId": "rank.4",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.ore.crystalseam_steel",
+          "weightBps": 600,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.ore.starlight_iron",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.ore.pulse_ore",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.ore.prismheart",
+          "weightBps": 3400,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.bone.r1.ordinary",
+      "nodeKind": "bone",
+      "rankId": "rank.1",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.bone.weathered_fragment",
+          "weightBps": 6600,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.bone.hollow_rib",
+          "weightBps": 3100,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.bone.strong_joint",
+          "weightBps": 300,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.bone.r1.deep",
+      "nodeKind": "bone",
+      "rankId": "rank.1",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.bone.weathered_fragment",
+          "weightBps": 4000,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.bone.hollow_rib",
+          "weightBps": 4700,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.bone.strong_joint",
+          "weightBps": 1300,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.bone.r2.ordinary",
+      "nodeKind": "bone",
+      "rankId": "rank.2",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.bone.weathered_fragment",
+          "weightBps": 1800,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.bone.dense_long",
+          "weightBps": 5100,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.bone.cave_rib",
+          "weightBps": 2500,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.bone.stonebound_pelvis",
+          "weightBps": 600,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.bone.r2.deep",
+      "nodeKind": "bone",
+      "rankId": "rank.2",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.bone.weathered_fragment",
+          "weightBps": 1000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.bone.dense_long",
+          "weightBps": 4000,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.bone.cave_rib",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.bone.stonebound_pelvis",
+          "weightBps": 2000,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.bone.r3.ordinary",
+      "nodeKind": "bone",
+      "rankId": "rank.3",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.bone.dense_long",
+          "weightBps": 1500,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.bone.fossil_saber",
+          "weightBps": 4800,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.bone.tower_vertebra",
+          "weightBps": 2600,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.bone.crystal_femur",
+          "weightBps": 1100,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.bone.r3.deep",
+      "nodeKind": "bone",
+      "rankId": "rank.3",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.bone.dense_long",
+          "weightBps": 800,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.bone.fossil_saber",
+          "weightBps": 3600,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.bone.tower_vertebra",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.bone.crystal_femur",
+          "weightBps": 2600,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.bone.r4.ordinary",
+      "nodeKind": "bone",
+      "rankId": "rank.4",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.bone.fossil_saber",
+          "weightBps": 1200,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.bone.ancient_ridge",
+          "weightBps": 4100,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.bone.deepfossil_core",
+          "weightBps": 2900,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.bone.astral_spine",
+          "weightBps": 1800,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.bone.r4.deep",
+      "nodeKind": "bone",
+      "rankId": "rank.4",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.bone.fossil_saber",
+          "weightBps": 600,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.bone.ancient_ridge",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.bone.deepfossil_core",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.bone.astral_spine",
+          "weightBps": 3400,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.plant.r1.ordinary",
+      "nodeKind": "plant",
+      "rankId": "rank.1",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.gather.flatnagi_leaf",
+          "weightBps": 6600,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.gather.dewbreak_fruit",
+          "weightBps": 3100,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.gather.threadbind_fiber",
+          "weightBps": 300,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.plant.r1.deep",
+      "nodeKind": "plant",
+      "rankId": "rank.1",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.gather.flatnagi_leaf",
+          "weightBps": 4000,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.gather.dewbreak_fruit",
+          "weightBps": 4700,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.gather.threadbind_fiber",
+          "weightBps": 1300,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.plant.r2.ordinary",
+      "nodeKind": "plant",
+      "rankId": "rank.2",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.gather.flatnagi_leaf",
+          "weightBps": 1800,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.plant.r2.1",
+          "weightBps": 5100,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.field.basin.plant.r2.2",
+          "weightBps": 2500,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.plant.r2.3",
+          "weightBps": 600,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.plant.r2.deep",
+      "nodeKind": "plant",
+      "rankId": "rank.2",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.gather.flatnagi_leaf",
+          "weightBps": 1000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.plant.r2.1",
+          "weightBps": 4000,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.field.basin.plant.r2.2",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.plant.r2.3",
+          "weightBps": 2000,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.plant.r3.ordinary",
+      "nodeKind": "plant",
+      "rankId": "rank.3",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.field.basin.plant.r2.1",
+          "weightBps": 1500,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.plant.r3.1",
+          "weightBps": 4800,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.field.basin.plant.r3.2",
+          "weightBps": 2600,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.plant.r3.3",
+          "weightBps": 1100,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.plant.r3.deep",
+      "nodeKind": "plant",
+      "rankId": "rank.3",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.field.basin.plant.r2.1",
+          "weightBps": 800,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.plant.r3.1",
+          "weightBps": 3600,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.field.basin.plant.r3.2",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.plant.r3.3",
+          "weightBps": 2600,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.plant.r4.ordinary",
+      "nodeKind": "plant",
+      "rankId": "rank.4",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.field.basin.plant.r3.1",
+          "weightBps": 1200,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.plant.r4.1",
+          "weightBps": 4100,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.field.basin.plant.r4.2",
+          "weightBps": 2900,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.plant.r4.3",
+          "weightBps": 1800,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.plant.r4.deep",
+      "nodeKind": "plant",
+      "rankId": "rank.4",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.field.basin.plant.r3.1",
+          "weightBps": 600,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.plant.r4.1",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.field.basin.plant.r4.2",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.plant.r4.3",
+          "weightBps": 3400,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.insect.r1.ordinary",
+      "nodeKind": "insect",
+      "rankId": "rank.1",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.equip.insect.gap_beetle_shell",
+          "weightBps": 6600,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.equip.insect.thread_moth_silk",
+          "weightBps": 3100,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.equip.insect.holding_light_sac",
+          "weightBps": 300,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.insect.r1.deep",
+      "nodeKind": "insect",
+      "rankId": "rank.1",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.equip.insect.gap_beetle_shell",
+          "weightBps": 4000,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.equip.insect.thread_moth_silk",
+          "weightBps": 4700,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.equip.insect.holding_light_sac",
+          "weightBps": 1300,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.insect.r2.ordinary",
+      "nodeKind": "insect",
+      "rankId": "rank.2",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.equip.insect.gap_beetle_shell",
+          "weightBps": 1800,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.insect.r2.1",
+          "weightBps": 5100,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.field.basin.insect.r2.2",
+          "weightBps": 2500,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.insect.r2.3",
+          "weightBps": 600,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.insect.r2.deep",
+      "nodeKind": "insect",
+      "rankId": "rank.2",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.equip.insect.gap_beetle_shell",
+          "weightBps": 1000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.insect.r2.1",
+          "weightBps": 4000,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.field.basin.insect.r2.2",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.insect.r2.3",
+          "weightBps": 2000,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.insect.r3.ordinary",
+      "nodeKind": "insect",
+      "rankId": "rank.3",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.field.basin.insect.r2.1",
+          "weightBps": 1500,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.insect.r3.1",
+          "weightBps": 4800,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.field.basin.insect.r3.2",
+          "weightBps": 2600,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.insect.r3.3",
+          "weightBps": 1100,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.insect.r3.deep",
+      "nodeKind": "insect",
+      "rankId": "rank.3",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.field.basin.insect.r2.1",
+          "weightBps": 800,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.insect.r3.1",
+          "weightBps": 3600,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.field.basin.insect.r3.2",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.insect.r3.3",
+          "weightBps": 2600,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.insect.r4.ordinary",
+      "nodeKind": "insect",
+      "rankId": "rank.4",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.field.basin.insect.r3.1",
+          "weightBps": 1200,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.insect.r4.1",
+          "weightBps": 4100,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.field.basin.insect.r4.2",
+          "weightBps": 2900,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.insect.r4.3",
+          "weightBps": 1800,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.insect.r4.deep",
+      "nodeKind": "insect",
+      "rankId": "rank.4",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.field.basin.insect.r3.1",
+          "weightBps": 600,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.insect.r4.1",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "itemId": "mat.field.basin.insect.r4.2",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.insect.r4.3",
+          "weightBps": 3400,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.fish.r1.ordinary",
+      "nodeKind": "fish",
+      "rankId": "rank.1",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.fish.streamfin",
+          "weightBps": 6600,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.fish.shallow_crest",
+          "weightBps": 3100,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.fish.dusk_needle",
+          "weightBps": 300,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.fish.r1.deep",
+      "nodeKind": "fish",
+      "rankId": "rank.1",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.fish.streamfin",
+          "weightBps": 4000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.fish.shallow_crest",
+          "weightBps": 4700,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.fish.dusk_needle",
+          "weightBps": 1300,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.fish.r2.ordinary",
+      "nodeKind": "fish",
+      "rankId": "rank.2",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.fish.streamfin",
+          "weightBps": 1800,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r2.1",
+          "weightBps": 5100,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r2.2",
+          "weightBps": 2500,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r2.3",
+          "weightBps": 600,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.fish.r2.deep",
+      "nodeKind": "fish",
+      "rankId": "rank.2",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.fish.streamfin",
+          "weightBps": 1000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r2.1",
+          "weightBps": 4000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r2.2",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r2.3",
+          "weightBps": 2000,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.fish.r3.ordinary",
+      "nodeKind": "fish",
+      "rankId": "rank.3",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.field.basin.fish.r2.1",
+          "weightBps": 1500,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r3.1",
+          "weightBps": 4800,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r3.2",
+          "weightBps": 2600,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r3.3",
+          "weightBps": 1100,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.fish.r3.deep",
+      "nodeKind": "fish",
+      "rankId": "rank.3",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.field.basin.fish.r2.1",
+          "weightBps": 800,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r3.1",
+          "weightBps": 3600,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r3.2",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r3.3",
+          "weightBps": 2600,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.fish.r4.ordinary",
+      "nodeKind": "fish",
+      "rankId": "rank.4",
+      "quality": "ordinary",
+      "entries": [
+        {
+          "itemId": "mat.field.basin.fish.r3.1",
+          "weightBps": 1200,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r4.1",
+          "weightBps": 4100,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r4.2",
+          "weightBps": 2900,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r4.3",
+          "weightBps": 1800,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    },
+    {
+      "id": "loot.field.basin.fish.r4.deep",
+      "nodeKind": "fish",
+      "rankId": "rank.4",
+      "quality": "deep",
+      "entries": [
+        {
+          "itemId": "mat.field.basin.fish.r3.1",
+          "weightBps": 600,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r4.1",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r4.2",
+          "weightBps": 3000,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "itemId": "mat.field.basin.fish.r4.3",
+          "weightBps": 3400,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    }
+  ],
+  "weapons": [
+    {
+      "id": "weapon.heavy_blade.ore_only.r1",
+      "family": "heavy_blade",
+      "name": "晶鍛の断岳剣【初級】",
+      "attack": 84,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.heavy_blade.ore.r1",
+      "series": "gathering.ore_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.guard_blade.ore_only.r1",
+      "family": "guard_blade",
+      "name": "晶鍛の護刃【初級】",
+      "attack": 69,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.guard_blade.ore.r1",
+      "series": "gathering.ore_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.war_maul.ore_only.r1",
+      "family": "war_maul",
+      "name": "晶鍛の大槌【初級】",
+      "attack": 90,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.war_maul.ore.r1",
+      "series": "gathering.ore_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.twin_blades.ore_only.r1",
+      "family": "twin_blades",
+      "name": "晶鍛の双剣【初級】",
+      "attack": 62,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.twin_blades.ore.r1",
+      "series": "gathering.ore_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.long_blade.ore_only.r1",
+      "family": "long_blade",
+      "name": "晶鍛の太刀【初級】",
+      "attack": 78,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.long_blade.ore.r1",
+      "series": "gathering.ore_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.long_lance.ore_only.r1",
+      "family": "long_lance",
+      "name": "晶鍛の長尖槍【初級】",
+      "attack": 74,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.long_lance.ore.r1",
+      "series": "gathering.ore_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.ring_bow.ore_only.r1",
+      "family": "ring_bow",
+      "name": "晶鍛の環弓【初級】",
+      "attack": 65,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.ring_bow.ore.r1",
+      "series": "gathering.ore_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.heavy_blade.ore_only.r2",
+      "family": "heavy_blade",
+      "name": "晶鍛の断岳剣【中級】",
+      "attack": 114,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.heavy_blade.ore.r2",
+      "series": "gathering.ore_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.guard_blade.ore_only.r2",
+      "family": "guard_blade",
+      "name": "晶鍛の護刃【中級】",
+      "attack": 95,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.guard_blade.ore.r2",
+      "series": "gathering.ore_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.war_maul.ore_only.r2",
+      "family": "war_maul",
+      "name": "晶鍛の大槌【中級】",
+      "attack": 124,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.war_maul.ore.r2",
+      "series": "gathering.ore_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.twin_blades.ore_only.r2",
+      "family": "twin_blades",
+      "name": "晶鍛の双剣【中級】",
+      "attack": 85,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.twin_blades.ore.r2",
+      "series": "gathering.ore_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.long_blade.ore_only.r2",
+      "family": "long_blade",
+      "name": "晶鍛の太刀【中級】",
+      "attack": 107,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.long_blade.ore.r2",
+      "series": "gathering.ore_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.long_lance.ore_only.r2",
+      "family": "long_lance",
+      "name": "晶鍛の長尖槍【中級】",
+      "attack": 101,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.long_lance.ore.r2",
+      "series": "gathering.ore_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.ring_bow.ore_only.r2",
+      "family": "ring_bow",
+      "name": "晶鍛の環弓【中級】",
+      "attack": 89,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.ring_bow.ore.r2",
+      "series": "gathering.ore_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.heavy_blade.ore_only.r3",
+      "family": "heavy_blade",
+      "name": "晶鍛の断岳剣【上級】",
+      "attack": 149,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.heavy_blade.ore.r3",
+      "series": "gathering.ore_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.guard_blade.ore_only.r3",
+      "family": "guard_blade",
+      "name": "晶鍛の護刃【上級】",
+      "attack": 123,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.guard_blade.ore.r3",
+      "series": "gathering.ore_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.war_maul.ore_only.r3",
+      "family": "war_maul",
+      "name": "晶鍛の大槌【上級】",
+      "attack": 161,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.war_maul.ore.r3",
+      "series": "gathering.ore_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.twin_blades.ore_only.r3",
+      "family": "twin_blades",
+      "name": "晶鍛の双剣【上級】",
+      "attack": 111,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.twin_blades.ore.r3",
+      "series": "gathering.ore_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.long_blade.ore_only.r3",
+      "family": "long_blade",
+      "name": "晶鍛の太刀【上級】",
+      "attack": 138,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.long_blade.ore.r3",
+      "series": "gathering.ore_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.long_lance.ore_only.r3",
+      "family": "long_lance",
+      "name": "晶鍛の長尖槍【上級】",
+      "attack": 132,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.long_lance.ore.r3",
+      "series": "gathering.ore_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.ring_bow.ore_only.r3",
+      "family": "ring_bow",
+      "name": "晶鍛の環弓【上級】",
+      "attack": 116,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.ring_bow.ore.r3",
+      "series": "gathering.ore_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.heavy_blade.ore_only.r4",
+      "family": "heavy_blade",
+      "name": "晶鍛の断岳剣【極級】",
+      "attack": 190,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.heavy_blade.ore.r4",
+      "series": "gathering.ore_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.guard_blade.ore_only.r4",
+      "family": "guard_blade",
+      "name": "晶鍛の護刃【極級】",
+      "attack": 157,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.guard_blade.ore.r4",
+      "series": "gathering.ore_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.war_maul.ore_only.r4",
+      "family": "war_maul",
+      "name": "晶鍛の大槌【極級】",
+      "attack": 205,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.war_maul.ore.r4",
+      "series": "gathering.ore_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.twin_blades.ore_only.r4",
+      "family": "twin_blades",
+      "name": "晶鍛の双剣【極級】",
+      "attack": 142,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.twin_blades.ore.r4",
+      "series": "gathering.ore_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.long_blade.ore_only.r4",
+      "family": "long_blade",
+      "name": "晶鍛の太刀【極級】",
+      "attack": 177,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.long_blade.ore.r4",
+      "series": "gathering.ore_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.long_lance.ore_only.r4",
+      "family": "long_lance",
+      "name": "晶鍛の長尖槍【極級】",
+      "attack": 168,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.long_lance.ore.r4",
+      "series": "gathering.ore_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.ring_bow.ore_only.r4",
+      "family": "ring_bow",
+      "name": "晶鍛の環弓【極級】",
+      "attack": 148,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.ring_bow.ore.r4",
+      "series": "gathering.ore_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.heavy_blade.bone_only.r1",
+      "family": "heavy_blade",
+      "name": "骨紋の断岳剣【初級】",
+      "attack": 92,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.heavy_blade.bone.r1",
+      "series": "gathering.bone_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.guard_blade.bone_only.r1",
+      "family": "guard_blade",
+      "name": "骨紋の護刃【初級】",
+      "attack": 76,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.guard_blade.bone.r1",
+      "series": "gathering.bone_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.war_maul.bone_only.r1",
+      "family": "war_maul",
+      "name": "骨紋の大槌【初級】",
+      "attack": 99,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.war_maul.bone.r1",
+      "series": "gathering.bone_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.twin_blades.bone_only.r1",
+      "family": "twin_blades",
+      "name": "骨紋の双剣【初級】",
+      "attack": 69,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.twin_blades.bone.r1",
+      "series": "gathering.bone_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.long_blade.bone_only.r1",
+      "family": "long_blade",
+      "name": "骨紋の太刀【初級】",
+      "attack": 85,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.long_blade.bone.r1",
+      "series": "gathering.bone_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.long_lance.bone_only.r1",
+      "family": "long_lance",
+      "name": "骨紋の長尖槍【初級】",
+      "attack": 81,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.long_lance.bone.r1",
+      "series": "gathering.bone_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.ring_bow.bone_only.r1",
+      "family": "ring_bow",
+      "name": "骨紋の環弓【初級】",
+      "attack": 72,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.ring_bow.bone.r1",
+      "series": "gathering.bone_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.heavy_blade.bone_only.r2",
+      "family": "heavy_blade",
+      "name": "骨紋の断岳剣【中級】",
+      "attack": 126,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.heavy_blade.bone.r2",
+      "series": "gathering.bone_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.guard_blade.bone_only.r2",
+      "family": "guard_blade",
+      "name": "骨紋の護刃【中級】",
+      "attack": 104,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.guard_blade.bone.r2",
+      "series": "gathering.bone_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.war_maul.bone_only.r2",
+      "family": "war_maul",
+      "name": "骨紋の大槌【中級】",
+      "attack": 136,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.war_maul.bone.r2",
+      "series": "gathering.bone_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.twin_blades.bone_only.r2",
+      "family": "twin_blades",
+      "name": "骨紋の双剣【中級】",
+      "attack": 94,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.twin_blades.bone.r2",
+      "series": "gathering.bone_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.long_blade.bone_only.r2",
+      "family": "long_blade",
+      "name": "骨紋の太刀【中級】",
+      "attack": 117,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.long_blade.bone.r2",
+      "series": "gathering.bone_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.long_lance.bone_only.r2",
+      "family": "long_lance",
+      "name": "骨紋の長尖槍【中級】",
+      "attack": 111,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.long_lance.bone.r2",
+      "series": "gathering.bone_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.ring_bow.bone_only.r2",
+      "family": "ring_bow",
+      "name": "骨紋の環弓【中級】",
+      "attack": 98,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.ring_bow.bone.r2",
+      "series": "gathering.bone_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.heavy_blade.bone_only.r3",
+      "family": "heavy_blade",
+      "name": "骨紋の断岳剣【上級】",
+      "attack": 163,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.heavy_blade.bone.r3",
+      "series": "gathering.bone_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.guard_blade.bone_only.r3",
+      "family": "guard_blade",
+      "name": "骨紋の護刃【上級】",
+      "attack": 135,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.guard_blade.bone.r3",
+      "series": "gathering.bone_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.war_maul.bone_only.r3",
+      "family": "war_maul",
+      "name": "骨紋の大槌【上級】",
+      "attack": 177,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.war_maul.bone.r3",
+      "series": "gathering.bone_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.twin_blades.bone_only.r3",
+      "family": "twin_blades",
+      "name": "骨紋の双剣【上級】",
+      "attack": 122,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.twin_blades.bone.r3",
+      "series": "gathering.bone_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.long_blade.bone_only.r3",
+      "family": "long_blade",
+      "name": "骨紋の太刀【上級】",
+      "attack": 152,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.long_blade.bone.r3",
+      "series": "gathering.bone_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.long_lance.bone_only.r3",
+      "family": "long_lance",
+      "name": "骨紋の長尖槍【上級】",
+      "attack": 145,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.long_lance.bone.r3",
+      "series": "gathering.bone_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.ring_bow.bone_only.r3",
+      "family": "ring_bow",
+      "name": "骨紋の環弓【上級】",
+      "attack": 128,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.ring_bow.bone.r3",
+      "series": "gathering.bone_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.heavy_blade.bone_only.r4",
+      "family": "heavy_blade",
+      "name": "骨紋の断岳剣【極級】",
+      "attack": 208,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.heavy_blade.bone.r4",
+      "series": "gathering.bone_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.guard_blade.bone_only.r4",
+      "family": "guard_blade",
+      "name": "骨紋の護刃【極級】",
+      "attack": 172,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.guard_blade.bone.r4",
+      "series": "gathering.bone_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.war_maul.bone_only.r4",
+      "family": "war_maul",
+      "name": "骨紋の大槌【極級】",
+      "attack": 225,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.war_maul.bone.r4",
+      "series": "gathering.bone_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.twin_blades.bone_only.r4",
+      "family": "twin_blades",
+      "name": "骨紋の双剣【極級】",
+      "attack": 156,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.twin_blades.bone.r4",
+      "series": "gathering.bone_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.long_blade.bone_only.r4",
+      "family": "long_blade",
+      "name": "骨紋の太刀【極級】",
+      "attack": 194,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.long_blade.bone.r4",
+      "series": "gathering.bone_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.long_lance.bone_only.r4",
+      "family": "long_lance",
+      "name": "骨紋の長尖槍【極級】",
+      "attack": 184,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.long_lance.bone.r4",
+      "series": "gathering.bone_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.ring_bow.bone_only.r4",
+      "family": "ring_bow",
+      "name": "骨紋の環弓【極級】",
+      "attack": 163,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.ring_bow.bone.r4",
+      "series": "gathering.bone_only",
+      "rankId": "rank.4"
+    }
+  ],
+  "armor": [
+    {
+      "id": "armor.head.ore_only.r1",
+      "slot": "head",
+      "name": "晶鍛の兜【初級】",
+      "defense": 5,
+      "assetId": "model.armor.ore.r1",
+      "series": "gathering.ore_only",
+      "rankId": "rank.1",
+      "skill": {
+        "id": "mining_haste",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.chest.ore_only.r1",
+      "slot": "chest",
+      "name": "晶鍛の胴衣【初級】",
+      "defense": 5,
+      "assetId": "model.armor.ore.r1",
+      "series": "gathering.ore_only",
+      "rankId": "rank.1",
+      "skill": {
+        "id": "edge_keep",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.arms.ore_only.r1",
+      "slot": "arms",
+      "name": "晶鍛の籠手【初級】",
+      "defense": 5,
+      "assetId": "model.armor.ore.r1",
+      "series": "gathering.ore_only",
+      "rankId": "rank.1",
+      "skill": {
+        "id": "mining_haste",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.waist.ore_only.r1",
+      "slot": "waist",
+      "name": "晶鍛の腰帯【初級】",
+      "defense": 5,
+      "assetId": "model.armor.ore.r1",
+      "series": "gathering.ore_only",
+      "rankId": "rank.1",
+      "skill": {
+        "id": "edge_keep",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.legs.ore_only.r1",
+      "slot": "legs",
+      "name": "晶鍛の脚甲【初級】",
+      "defense": 5,
+      "assetId": "model.armor.ore.r1",
+      "series": "gathering.ore_only",
+      "rankId": "rank.1",
+      "skill": {
+        "id": "mining_haste",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.head.ore_only.r2",
+      "slot": "head",
+      "name": "晶鍛の兜【中級】",
+      "defense": 12,
+      "assetId": "model.armor.ore.r2",
+      "series": "gathering.ore_only",
+      "rankId": "rank.2",
+      "skill": {
+        "id": "mining_haste",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.chest.ore_only.r2",
+      "slot": "chest",
+      "name": "晶鍛の胴衣【中級】",
+      "defense": 12,
+      "assetId": "model.armor.ore.r2",
+      "series": "gathering.ore_only",
+      "rankId": "rank.2",
+      "skill": {
+        "id": "edge_keep",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.arms.ore_only.r2",
+      "slot": "arms",
+      "name": "晶鍛の籠手【中級】",
+      "defense": 12,
+      "assetId": "model.armor.ore.r2",
+      "series": "gathering.ore_only",
+      "rankId": "rank.2",
+      "skill": {
+        "id": "mining_haste",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.waist.ore_only.r2",
+      "slot": "waist",
+      "name": "晶鍛の腰帯【中級】",
+      "defense": 12,
+      "assetId": "model.armor.ore.r2",
+      "series": "gathering.ore_only",
+      "rankId": "rank.2",
+      "skill": {
+        "id": "edge_keep",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.legs.ore_only.r2",
+      "slot": "legs",
+      "name": "晶鍛の脚甲【中級】",
+      "defense": 12,
+      "assetId": "model.armor.ore.r2",
+      "series": "gathering.ore_only",
+      "rankId": "rank.2",
+      "skill": {
+        "id": "mining_haste",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.head.ore_only.r3",
+      "slot": "head",
+      "name": "晶鍛の兜【上級】",
+      "defense": 19,
+      "assetId": "model.armor.ore.r3",
+      "series": "gathering.ore_only",
+      "rankId": "rank.3",
+      "skill": {
+        "id": "mining_haste",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.chest.ore_only.r3",
+      "slot": "chest",
+      "name": "晶鍛の胴衣【上級】",
+      "defense": 19,
+      "assetId": "model.armor.ore.r3",
+      "series": "gathering.ore_only",
+      "rankId": "rank.3",
+      "skill": {
+        "id": "edge_keep",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.arms.ore_only.r3",
+      "slot": "arms",
+      "name": "晶鍛の籠手【上級】",
+      "defense": 19,
+      "assetId": "model.armor.ore.r3",
+      "series": "gathering.ore_only",
+      "rankId": "rank.3",
+      "skill": {
+        "id": "mining_haste",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.waist.ore_only.r3",
+      "slot": "waist",
+      "name": "晶鍛の腰帯【上級】",
+      "defense": 19,
+      "assetId": "model.armor.ore.r3",
+      "series": "gathering.ore_only",
+      "rankId": "rank.3",
+      "skill": {
+        "id": "edge_keep",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.legs.ore_only.r3",
+      "slot": "legs",
+      "name": "晶鍛の脚甲【上級】",
+      "defense": 19,
+      "assetId": "model.armor.ore.r3",
+      "series": "gathering.ore_only",
+      "rankId": "rank.3",
+      "skill": {
+        "id": "mining_haste",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.head.ore_only.r4",
+      "slot": "head",
+      "name": "晶鍛の兜【極級】",
+      "defense": 28,
+      "assetId": "model.armor.ore.r4",
+      "series": "gathering.ore_only",
+      "rankId": "rank.4",
+      "skill": {
+        "id": "mining_haste",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.chest.ore_only.r4",
+      "slot": "chest",
+      "name": "晶鍛の胴衣【極級】",
+      "defense": 28,
+      "assetId": "model.armor.ore.r4",
+      "series": "gathering.ore_only",
+      "rankId": "rank.4",
+      "skill": {
+        "id": "edge_keep",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.arms.ore_only.r4",
+      "slot": "arms",
+      "name": "晶鍛の籠手【極級】",
+      "defense": 28,
+      "assetId": "model.armor.ore.r4",
+      "series": "gathering.ore_only",
+      "rankId": "rank.4",
+      "skill": {
+        "id": "mining_haste",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.waist.ore_only.r4",
+      "slot": "waist",
+      "name": "晶鍛の腰帯【極級】",
+      "defense": 28,
+      "assetId": "model.armor.ore.r4",
+      "series": "gathering.ore_only",
+      "rankId": "rank.4",
+      "skill": {
+        "id": "edge_keep",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.legs.ore_only.r4",
+      "slot": "legs",
+      "name": "晶鍛の脚甲【極級】",
+      "defense": 28,
+      "assetId": "model.armor.ore.r4",
+      "series": "gathering.ore_only",
+      "rankId": "rank.4",
+      "skill": {
+        "id": "mining_haste",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.head.bone_only.r1",
+      "slot": "head",
+      "name": "骨紋の兜【初級】",
+      "defense": 4,
+      "assetId": "model.armor.bone.r1",
+      "series": "gathering.bone_only",
+      "rankId": "rank.1",
+      "skill": {
+        "id": "gather_sense",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.chest.bone_only.r1",
+      "slot": "chest",
+      "name": "骨紋の胴衣【初級】",
+      "defense": 4,
+      "assetId": "model.armor.bone.r1",
+      "series": "gathering.bone_only",
+      "rankId": "rank.1",
+      "skill": {
+        "id": "dodge_economy",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.arms.bone_only.r1",
+      "slot": "arms",
+      "name": "骨紋の籠手【初級】",
+      "defense": 4,
+      "assetId": "model.armor.bone.r1",
+      "series": "gathering.bone_only",
+      "rankId": "rank.1",
+      "skill": {
+        "id": "gather_sense",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.waist.bone_only.r1",
+      "slot": "waist",
+      "name": "骨紋の腰帯【初級】",
+      "defense": 4,
+      "assetId": "model.armor.bone.r1",
+      "series": "gathering.bone_only",
+      "rankId": "rank.1",
+      "skill": {
+        "id": "dodge_economy",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.legs.bone_only.r1",
+      "slot": "legs",
+      "name": "骨紋の脚甲【初級】",
+      "defense": 4,
+      "assetId": "model.armor.bone.r1",
+      "series": "gathering.bone_only",
+      "rankId": "rank.1",
+      "skill": {
+        "id": "gather_sense",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.head.bone_only.r2",
+      "slot": "head",
+      "name": "骨紋の兜【中級】",
+      "defense": 10,
+      "assetId": "model.armor.bone.r2",
+      "series": "gathering.bone_only",
+      "rankId": "rank.2",
+      "skill": {
+        "id": "gather_sense",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.chest.bone_only.r2",
+      "slot": "chest",
+      "name": "骨紋の胴衣【中級】",
+      "defense": 10,
+      "assetId": "model.armor.bone.r2",
+      "series": "gathering.bone_only",
+      "rankId": "rank.2",
+      "skill": {
+        "id": "dodge_economy",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.arms.bone_only.r2",
+      "slot": "arms",
+      "name": "骨紋の籠手【中級】",
+      "defense": 10,
+      "assetId": "model.armor.bone.r2",
+      "series": "gathering.bone_only",
+      "rankId": "rank.2",
+      "skill": {
+        "id": "gather_sense",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.waist.bone_only.r2",
+      "slot": "waist",
+      "name": "骨紋の腰帯【中級】",
+      "defense": 10,
+      "assetId": "model.armor.bone.r2",
+      "series": "gathering.bone_only",
+      "rankId": "rank.2",
+      "skill": {
+        "id": "dodge_economy",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.legs.bone_only.r2",
+      "slot": "legs",
+      "name": "骨紋の脚甲【中級】",
+      "defense": 10,
+      "assetId": "model.armor.bone.r2",
+      "series": "gathering.bone_only",
+      "rankId": "rank.2",
+      "skill": {
+        "id": "gather_sense",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.head.bone_only.r3",
+      "slot": "head",
+      "name": "骨紋の兜【上級】",
+      "defense": 17,
+      "assetId": "model.armor.bone.r3",
+      "series": "gathering.bone_only",
+      "rankId": "rank.3",
+      "skill": {
+        "id": "gather_sense",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.chest.bone_only.r3",
+      "slot": "chest",
+      "name": "骨紋の胴衣【上級】",
+      "defense": 17,
+      "assetId": "model.armor.bone.r3",
+      "series": "gathering.bone_only",
+      "rankId": "rank.3",
+      "skill": {
+        "id": "dodge_economy",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.arms.bone_only.r3",
+      "slot": "arms",
+      "name": "骨紋の籠手【上級】",
+      "defense": 17,
+      "assetId": "model.armor.bone.r3",
+      "series": "gathering.bone_only",
+      "rankId": "rank.3",
+      "skill": {
+        "id": "gather_sense",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.waist.bone_only.r3",
+      "slot": "waist",
+      "name": "骨紋の腰帯【上級】",
+      "defense": 17,
+      "assetId": "model.armor.bone.r3",
+      "series": "gathering.bone_only",
+      "rankId": "rank.3",
+      "skill": {
+        "id": "dodge_economy",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.legs.bone_only.r3",
+      "slot": "legs",
+      "name": "骨紋の脚甲【上級】",
+      "defense": 17,
+      "assetId": "model.armor.bone.r3",
+      "series": "gathering.bone_only",
+      "rankId": "rank.3",
+      "skill": {
+        "id": "gather_sense",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.head.bone_only.r4",
+      "slot": "head",
+      "name": "骨紋の兜【極級】",
+      "defense": 25,
+      "assetId": "model.armor.bone.r4",
+      "series": "gathering.bone_only",
+      "rankId": "rank.4",
+      "skill": {
+        "id": "gather_sense",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.chest.bone_only.r4",
+      "slot": "chest",
+      "name": "骨紋の胴衣【極級】",
+      "defense": 25,
+      "assetId": "model.armor.bone.r4",
+      "series": "gathering.bone_only",
+      "rankId": "rank.4",
+      "skill": {
+        "id": "dodge_economy",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.arms.bone_only.r4",
+      "slot": "arms",
+      "name": "骨紋の籠手【極級】",
+      "defense": 25,
+      "assetId": "model.armor.bone.r4",
+      "series": "gathering.bone_only",
+      "rankId": "rank.4",
+      "skill": {
+        "id": "gather_sense",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.waist.bone_only.r4",
+      "slot": "waist",
+      "name": "骨紋の腰帯【極級】",
+      "defense": 25,
+      "assetId": "model.armor.bone.r4",
+      "series": "gathering.bone_only",
+      "rankId": "rank.4",
+      "skill": {
+        "id": "dodge_economy",
+        "points": 1
+      }
+    },
+    {
+      "id": "armor.legs.bone_only.r4",
+      "slot": "legs",
+      "name": "骨紋の脚甲【極級】",
+      "defense": 25,
+      "assetId": "model.armor.bone.r4",
+      "series": "gathering.bone_only",
+      "rankId": "rank.4",
+      "skill": {
+        "id": "gather_sense",
+        "points": 1
+      }
+    }
+  ],
+  "recipes": [
+    {
+      "id": "recipe.ore_only.heavy_blade.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_blade.ore_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.layered_ashstone",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.guard_blade.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.guard_blade.ore_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.layered_ashstone",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.war_maul.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.war_maul.ore_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.layered_ashstone",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.twin_blades.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.twin_blades.ore_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.layered_ashstone",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.long_blade.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_blade.ore_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.layered_ashstone",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.long_lance.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_lance.ore_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.layered_ashstone",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.ring_bow.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.ring_bow.ore_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.layered_ashstone",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.head.r1.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.head.ore_only.r1",
+      "cost": {
+        "money": 70,
+        "items": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.layered_ashstone",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.chest.r1.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.chest.ore_only.r1",
+      "cost": {
+        "money": 70,
+        "items": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.layered_ashstone",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.arms.r1.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.arms.ore_only.r1",
+      "cost": {
+        "money": 70,
+        "items": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.layered_ashstone",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.waist.r1.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.waist.ore_only.r1",
+      "cost": {
+        "money": 70,
+        "items": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.layered_ashstone",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.legs.r1.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.legs.ore_only.r1",
+      "cost": {
+        "money": 70,
+        "items": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.layered_ashstone",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.heavy_blade.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_blade.ore_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.heavy_blade.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.heavy_blade.ore_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.heavy_blade.ore_only.r1"
+    },
+    {
+      "id": "recipe.ore_only.guard_blade.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.guard_blade.ore_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.guard_blade.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.guard_blade.ore_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.guard_blade.ore_only.r1"
+    },
+    {
+      "id": "recipe.ore_only.war_maul.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.war_maul.ore_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.war_maul.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.war_maul.ore_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.war_maul.ore_only.r1"
+    },
+    {
+      "id": "recipe.ore_only.twin_blades.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.twin_blades.ore_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.twin_blades.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.twin_blades.ore_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.twin_blades.ore_only.r1"
+    },
+    {
+      "id": "recipe.ore_only.long_blade.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_blade.ore_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.long_blade.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.long_blade.ore_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.long_blade.ore_only.r1"
+    },
+    {
+      "id": "recipe.ore_only.long_lance.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_lance.ore_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.long_lance.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.long_lance.ore_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.long_lance.ore_only.r1"
+    },
+    {
+      "id": "recipe.ore_only.ring_bow.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.ring_bow.ore_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.ring_bow.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.ring_bow.ore_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.ring_bow.ore_only.r1"
+    },
+    {
+      "id": "recipe.ore_only.head.r2.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.head.ore_only.r2",
+      "cost": {
+        "money": 252,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 1
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.head.r2.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.head.ore_only.r2",
+      "cost": {
+        "money": 162,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 1
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.head.ore_only.r1"
+    },
+    {
+      "id": "recipe.ore_only.chest.r2.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.chest.ore_only.r2",
+      "cost": {
+        "money": 252,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 1
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.chest.r2.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.chest.ore_only.r2",
+      "cost": {
+        "money": 162,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 1
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.chest.ore_only.r1"
+    },
+    {
+      "id": "recipe.ore_only.arms.r2.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.arms.ore_only.r2",
+      "cost": {
+        "money": 252,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.arms.r2.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.arms.ore_only.r2",
+      "cost": {
+        "money": 162,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.arms.ore_only.r1"
+    },
+    {
+      "id": "recipe.ore_only.waist.r2.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.waist.ore_only.r2",
+      "cost": {
+        "money": 252,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.waist.r2.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.waist.ore_only.r2",
+      "cost": {
+        "money": 162,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.waist.ore_only.r1"
+    },
+    {
+      "id": "recipe.ore_only.legs.r2.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.legs.ore_only.r2",
+      "cost": {
+        "money": 252,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.legs.r2.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.legs.ore_only.r2",
+      "cost": {
+        "money": 162,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.legs.ore_only.r1"
+    },
+    {
+      "id": "recipe.ore_only.heavy_blade.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_blade.ore_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 6
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.heavy_blade.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.heavy_blade.ore_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.heavy_blade.ore_only.r2"
+    },
+    {
+      "id": "recipe.ore_only.guard_blade.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.guard_blade.ore_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 6
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.guard_blade.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.guard_blade.ore_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.guard_blade.ore_only.r2"
+    },
+    {
+      "id": "recipe.ore_only.war_maul.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.war_maul.ore_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 6
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.war_maul.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.war_maul.ore_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.war_maul.ore_only.r2"
+    },
+    {
+      "id": "recipe.ore_only.twin_blades.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.twin_blades.ore_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 6
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.twin_blades.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.twin_blades.ore_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.twin_blades.ore_only.r2"
+    },
+    {
+      "id": "recipe.ore_only.long_blade.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_blade.ore_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 6
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.long_blade.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.long_blade.ore_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.long_blade.ore_only.r2"
+    },
+    {
+      "id": "recipe.ore_only.long_lance.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_lance.ore_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 6
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.long_lance.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.long_lance.ore_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.long_lance.ore_only.r2"
+    },
+    {
+      "id": "recipe.ore_only.ring_bow.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.ring_bow.ore_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 6
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.ring_bow.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.ring_bow.ore_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.ring_bow.ore_only.r2"
+    },
+    {
+      "id": "recipe.ore_only.head.r3.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.head.ore_only.r3",
+      "cost": {
+        "money": 595,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 1
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.head.r3.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.head.ore_only.r3",
+      "cost": {
+        "money": 383,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 1
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.head.ore_only.r2"
+    },
+    {
+      "id": "recipe.ore_only.chest.r3.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.chest.ore_only.r3",
+      "cost": {
+        "money": 595,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 1
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.chest.r3.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.chest.ore_only.r3",
+      "cost": {
+        "money": 383,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 1
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.chest.ore_only.r2"
+    },
+    {
+      "id": "recipe.ore_only.arms.r3.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.arms.ore_only.r3",
+      "cost": {
+        "money": 595,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.arms.r3.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.arms.ore_only.r3",
+      "cost": {
+        "money": 383,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.arms.ore_only.r2"
+    },
+    {
+      "id": "recipe.ore_only.waist.r3.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.waist.ore_only.r3",
+      "cost": {
+        "money": 595,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.waist.r3.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.waist.ore_only.r3",
+      "cost": {
+        "money": 383,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.waist.ore_only.r2"
+    },
+    {
+      "id": "recipe.ore_only.legs.r3.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.legs.ore_only.r3",
+      "cost": {
+        "money": 595,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.legs.r3.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.legs.ore_only.r3",
+      "cost": {
+        "money": 383,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.legs.ore_only.r2"
+    },
+    {
+      "id": "recipe.ore_only.heavy_blade.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_blade.ore_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 7
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.heavy_blade.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.heavy_blade.ore_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.heavy_blade.ore_only.r3"
+    },
+    {
+      "id": "recipe.ore_only.guard_blade.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.guard_blade.ore_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 7
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.guard_blade.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.guard_blade.ore_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.guard_blade.ore_only.r3"
+    },
+    {
+      "id": "recipe.ore_only.war_maul.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.war_maul.ore_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 7
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.war_maul.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.war_maul.ore_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.war_maul.ore_only.r3"
+    },
+    {
+      "id": "recipe.ore_only.twin_blades.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.twin_blades.ore_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 7
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.twin_blades.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.twin_blades.ore_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.twin_blades.ore_only.r3"
+    },
+    {
+      "id": "recipe.ore_only.long_blade.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_blade.ore_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 7
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.long_blade.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.long_blade.ore_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.long_blade.ore_only.r3"
+    },
+    {
+      "id": "recipe.ore_only.long_lance.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_lance.ore_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 7
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.long_lance.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.long_lance.ore_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.long_lance.ore_only.r3"
+    },
+    {
+      "id": "recipe.ore_only.ring_bow.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.ring_bow.ore_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 7
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.ring_bow.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.ring_bow.ore_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.ring_bow.ore_only.r3"
+    },
+    {
+      "id": "recipe.ore_only.head.r4.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.head.ore_only.r4",
+      "cost": {
+        "money": 1225,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.head.r4.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.head.ore_only.r4",
+      "cost": {
+        "money": 788,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.head.ore_only.r3"
+    },
+    {
+      "id": "recipe.ore_only.chest.r4.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.chest.ore_only.r4",
+      "cost": {
+        "money": 1225,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.chest.r4.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.chest.ore_only.r4",
+      "cost": {
+        "money": 788,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.chest.ore_only.r3"
+    },
+    {
+      "id": "recipe.ore_only.arms.r4.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.arms.ore_only.r4",
+      "cost": {
+        "money": 1225,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.arms.r4.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.arms.ore_only.r4",
+      "cost": {
+        "money": 788,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 2
+          }
+        ]
+      },
+      "fromArmorId": "armor.arms.ore_only.r3"
+    },
+    {
+      "id": "recipe.ore_only.waist.r4.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.waist.ore_only.r4",
+      "cost": {
+        "money": 1225,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.waist.r4.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.waist.ore_only.r4",
+      "cost": {
+        "money": 788,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 2
+          }
+        ]
+      },
+      "fromArmorId": "armor.waist.ore_only.r3"
+    },
+    {
+      "id": "recipe.ore_only.legs.r4.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.legs.ore_only.r4",
+      "cost": {
+        "money": 1225,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.legs.r4.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.legs.ore_only.r4",
+      "cost": {
+        "money": 788,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 2
+          }
+        ]
+      },
+      "fromArmorId": "armor.legs.ore_only.r3"
+    },
+    {
+      "id": "recipe.bone_only.heavy_blade.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_blade.bone_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.bone.weathered_fragment",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.hollow_rib",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.guard_blade.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.guard_blade.bone_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.bone.weathered_fragment",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.hollow_rib",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.war_maul.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.war_maul.bone_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.bone.weathered_fragment",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.hollow_rib",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.twin_blades.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.twin_blades.bone_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.bone.weathered_fragment",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.hollow_rib",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.long_blade.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_blade.bone_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.bone.weathered_fragment",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.hollow_rib",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.long_lance.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_lance.bone_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.bone.weathered_fragment",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.hollow_rib",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.ring_bow.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.ring_bow.bone_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.bone.weathered_fragment",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.hollow_rib",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.head.r1.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.head.bone_only.r1",
+      "cost": {
+        "money": 70,
+        "items": [
+          {
+            "itemId": "mat.bone.weathered_fragment",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.hollow_rib",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.chest.r1.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.chest.bone_only.r1",
+      "cost": {
+        "money": 70,
+        "items": [
+          {
+            "itemId": "mat.bone.weathered_fragment",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.hollow_rib",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.arms.r1.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.arms.bone_only.r1",
+      "cost": {
+        "money": 70,
+        "items": [
+          {
+            "itemId": "mat.bone.weathered_fragment",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.hollow_rib",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.waist.r1.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.waist.bone_only.r1",
+      "cost": {
+        "money": 70,
+        "items": [
+          {
+            "itemId": "mat.bone.weathered_fragment",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.hollow_rib",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.legs.r1.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.legs.bone_only.r1",
+      "cost": {
+        "money": 70,
+        "items": [
+          {
+            "itemId": "mat.bone.weathered_fragment",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.hollow_rib",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.heavy_blade.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_blade.bone_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.heavy_blade.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.heavy_blade.bone_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.heavy_blade.bone_only.r1"
+    },
+    {
+      "id": "recipe.bone_only.guard_blade.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.guard_blade.bone_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.guard_blade.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.guard_blade.bone_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.guard_blade.bone_only.r1"
+    },
+    {
+      "id": "recipe.bone_only.war_maul.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.war_maul.bone_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.war_maul.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.war_maul.bone_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.war_maul.bone_only.r1"
+    },
+    {
+      "id": "recipe.bone_only.twin_blades.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.twin_blades.bone_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.twin_blades.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.twin_blades.bone_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.twin_blades.bone_only.r1"
+    },
+    {
+      "id": "recipe.bone_only.long_blade.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_blade.bone_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.long_blade.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.long_blade.bone_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.long_blade.bone_only.r1"
+    },
+    {
+      "id": "recipe.bone_only.long_lance.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_lance.bone_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.long_lance.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.long_lance.bone_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.long_lance.bone_only.r1"
+    },
+    {
+      "id": "recipe.bone_only.ring_bow.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.ring_bow.bone_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.ring_bow.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.ring_bow.bone_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.ring_bow.bone_only.r1"
+    },
+    {
+      "id": "recipe.bone_only.head.r2.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.head.bone_only.r2",
+      "cost": {
+        "money": 252,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 1
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.head.r2.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.head.bone_only.r2",
+      "cost": {
+        "money": 162,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 1
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.head.bone_only.r1"
+    },
+    {
+      "id": "recipe.bone_only.chest.r2.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.chest.bone_only.r2",
+      "cost": {
+        "money": 252,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 1
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.chest.r2.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.chest.bone_only.r2",
+      "cost": {
+        "money": 162,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 1
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.chest.bone_only.r1"
+    },
+    {
+      "id": "recipe.bone_only.arms.r2.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.arms.bone_only.r2",
+      "cost": {
+        "money": 252,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.arms.r2.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.arms.bone_only.r2",
+      "cost": {
+        "money": 162,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.arms.bone_only.r1"
+    },
+    {
+      "id": "recipe.bone_only.waist.r2.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.waist.bone_only.r2",
+      "cost": {
+        "money": 252,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.waist.r2.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.waist.bone_only.r2",
+      "cost": {
+        "money": 162,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.waist.bone_only.r1"
+    },
+    {
+      "id": "recipe.bone_only.legs.r2.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.legs.bone_only.r2",
+      "cost": {
+        "money": 252,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.legs.r2.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.legs.bone_only.r2",
+      "cost": {
+        "money": 162,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.legs.bone_only.r1"
+    },
+    {
+      "id": "recipe.bone_only.heavy_blade.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_blade.bone_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 6
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.heavy_blade.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.heavy_blade.bone_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.heavy_blade.bone_only.r2"
+    },
+    {
+      "id": "recipe.bone_only.guard_blade.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.guard_blade.bone_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 6
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.guard_blade.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.guard_blade.bone_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.guard_blade.bone_only.r2"
+    },
+    {
+      "id": "recipe.bone_only.war_maul.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.war_maul.bone_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 6
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.war_maul.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.war_maul.bone_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.war_maul.bone_only.r2"
+    },
+    {
+      "id": "recipe.bone_only.twin_blades.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.twin_blades.bone_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 6
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.twin_blades.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.twin_blades.bone_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.twin_blades.bone_only.r2"
+    },
+    {
+      "id": "recipe.bone_only.long_blade.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_blade.bone_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 6
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.long_blade.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.long_blade.bone_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.long_blade.bone_only.r2"
+    },
+    {
+      "id": "recipe.bone_only.long_lance.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_lance.bone_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 6
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.long_lance.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.long_lance.bone_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.long_lance.bone_only.r2"
+    },
+    {
+      "id": "recipe.bone_only.ring_bow.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.ring_bow.bone_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 6
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.ring_bow.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.ring_bow.bone_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.ring_bow.bone_only.r2"
+    },
+    {
+      "id": "recipe.bone_only.head.r3.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.head.bone_only.r3",
+      "cost": {
+        "money": 595,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 1
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.head.r3.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.head.bone_only.r3",
+      "cost": {
+        "money": 383,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 1
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.head.bone_only.r2"
+    },
+    {
+      "id": "recipe.bone_only.chest.r3.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.chest.bone_only.r3",
+      "cost": {
+        "money": 595,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 1
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.chest.r3.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.chest.bone_only.r3",
+      "cost": {
+        "money": 383,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 1
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.chest.bone_only.r2"
+    },
+    {
+      "id": "recipe.bone_only.arms.r3.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.arms.bone_only.r3",
+      "cost": {
+        "money": 595,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.arms.r3.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.arms.bone_only.r3",
+      "cost": {
+        "money": 383,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.arms.bone_only.r2"
+    },
+    {
+      "id": "recipe.bone_only.waist.r3.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.waist.bone_only.r3",
+      "cost": {
+        "money": 595,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.waist.r3.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.waist.bone_only.r3",
+      "cost": {
+        "money": 383,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.waist.bone_only.r2"
+    },
+    {
+      "id": "recipe.bone_only.legs.r3.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.legs.bone_only.r3",
+      "cost": {
+        "money": 595,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.legs.r3.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.legs.bone_only.r3",
+      "cost": {
+        "money": 383,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.legs.bone_only.r2"
+    },
+    {
+      "id": "recipe.bone_only.heavy_blade.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_blade.bone_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 7
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.heavy_blade.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.heavy_blade.bone_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.heavy_blade.bone_only.r3"
+    },
+    {
+      "id": "recipe.bone_only.guard_blade.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.guard_blade.bone_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 7
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.guard_blade.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.guard_blade.bone_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.guard_blade.bone_only.r3"
+    },
+    {
+      "id": "recipe.bone_only.war_maul.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.war_maul.bone_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 7
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.war_maul.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.war_maul.bone_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.war_maul.bone_only.r3"
+    },
+    {
+      "id": "recipe.bone_only.twin_blades.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.twin_blades.bone_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 7
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.twin_blades.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.twin_blades.bone_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.twin_blades.bone_only.r3"
+    },
+    {
+      "id": "recipe.bone_only.long_blade.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_blade.bone_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 7
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.long_blade.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.long_blade.bone_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.long_blade.bone_only.r3"
+    },
+    {
+      "id": "recipe.bone_only.long_lance.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_lance.bone_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 7
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.long_lance.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.long_lance.bone_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.long_lance.bone_only.r3"
+    },
+    {
+      "id": "recipe.bone_only.ring_bow.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.ring_bow.bone_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 7
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.ring_bow.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.ring_bow.bone_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.ring_bow.bone_only.r3"
+    },
+    {
+      "id": "recipe.bone_only.head.r4.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.head.bone_only.r4",
+      "cost": {
+        "money": 1225,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.head.r4.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.head.bone_only.r4",
+      "cost": {
+        "money": 788,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.head.bone_only.r3"
+    },
+    {
+      "id": "recipe.bone_only.chest.r4.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.chest.bone_only.r4",
+      "cost": {
+        "money": 1225,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.chest.r4.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.chest.bone_only.r4",
+      "cost": {
+        "money": 788,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.chest.bone_only.r3"
+    },
+    {
+      "id": "recipe.bone_only.arms.r4.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.arms.bone_only.r4",
+      "cost": {
+        "money": 1225,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.arms.r4.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.arms.bone_only.r4",
+      "cost": {
+        "money": 788,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 2
+          }
+        ]
+      },
+      "fromArmorId": "armor.arms.bone_only.r3"
+    },
+    {
+      "id": "recipe.bone_only.waist.r4.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.waist.bone_only.r4",
+      "cost": {
+        "money": 1225,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.waist.r4.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.waist.bone_only.r4",
+      "cost": {
+        "money": 788,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 2
+          }
+        ]
+      },
+      "fromArmorId": "armor.waist.bone_only.r3"
+    },
+    {
+      "id": "recipe.bone_only.legs.r4.craft",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.legs.bone_only.r4",
+      "cost": {
+        "money": 1225,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.legs.r4.upgrade",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.legs.bone_only.r4",
+      "cost": {
+        "money": 788,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 2
+          }
+        ]
+      },
+      "fromArmorId": "armor.legs.bone_only.r3"
+    }
+  ],
+  "actions": [
+    {
+      "schemaVersion": 1,
+      "actionId": "player.common.field_net",
+      "clip": "common_net_01",
+      "tickRate": 60,
+      "durationTicks": 105,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 82
+        },
+        {
+          "id": "recovery",
+          "from": 82,
+          "to": 105
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [],
+      "cancelWindows": [
+        {
+          "from": 6,
+          "to": 82,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "tick": 60,
+          "type": "sound",
+          "id": "carve"
+        },
+        {
+          "tick": 82,
+          "type": "sound",
+          "id": "carve_get"
+        }
+      ],
+      "onFinish": "sheathed_idle"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.common.field_bone",
+      "clip": "common_carve_01",
+      "tickRate": 60,
+      "durationTicks": 100,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 80
+        },
+        {
+          "id": "recovery",
+          "from": 80,
+          "to": 100
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [],
+      "cancelWindows": [
+        {
+          "from": 6,
+          "to": 80,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "tick": 40,
+          "type": "sound",
+          "id": "carve"
+        },
+        {
+          "tick": 80,
+          "type": "sound",
+          "id": "carve_get"
+        }
+      ],
+      "onFinish": "sheathed_idle"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.common.field_fish",
+      "clip": "common_fish_01",
+      "tickRate": 60,
+      "durationTicks": 240,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 216
+        },
+        {
+          "id": "recovery",
+          "from": 216,
+          "to": 240
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [],
+      "cancelWindows": [
+        {
+          "from": 6,
+          "to": 216,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "tick": 24,
+          "type": "sound",
+          "id": "carve"
+        },
+        {
+          "tick": 216,
+          "type": "sound",
+          "id": "carve_get"
+        }
+      ],
+      "onFinish": "sheathed_idle"
+    }
+  ],
+  "quests": [
+    {
+      "id": "quest.explore.basin.r1",
+      "name": "風礫盆地の採集遠征【初級】",
+      "kind": "gather",
+      "summary": "大型・幼体は出ません。各所で素材を集め、野営地の納品箱から自由に帰還します。",
+      "mapId": "map.basin.training",
+      "fieldId": "field.basin",
+      "rankId": "rank.1",
+      "timeLimitTicks": 108000,
+      "fieldTimeLimitTicks": 108000,
+      "maxFaints": 3,
+      "returnTicks": 300,
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        }
+      ],
+      "rewards": {
+        "money": 0,
+        "items": []
+      },
+      "gather": {
+        "needs": [],
+        "yieldPerNode": 1,
+        "encounters": "none",
+        "depot": {
+          "areaId": "camp",
+          "x": -242,
+          "z": -245.5
+        },
+        "nodes": [],
+        "fieldGathering": true
+      }
+    },
+    {
+      "id": "quest.explore.basin.r2",
+      "name": "風礫盆地の採集遠征【中級】",
+      "kind": "gather",
+      "summary": "大型・幼体は出ません。各所で素材を集め、野営地の納品箱から自由に帰還します。",
+      "mapId": "map.basin.training",
+      "fieldId": "field.basin",
+      "rankId": "rank.2",
+      "timeLimitTicks": 108000,
+      "fieldTimeLimitTicks": 108000,
+      "maxFaints": 3,
+      "returnTicks": 300,
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        }
+      ],
+      "rewards": {
+        "money": 0,
+        "items": []
+      },
+      "requires": [
+        "quest.basin.003"
+      ],
+      "gather": {
+        "needs": [],
+        "yieldPerNode": 1,
+        "encounters": "none",
+        "depot": {
+          "areaId": "camp",
+          "x": -242,
+          "z": -245.5
+        },
+        "nodes": [],
+        "fieldGathering": true
+      }
+    },
+    {
+      "id": "quest.explore.basin.r3",
+      "name": "風礫盆地の採集遠征【上級】",
+      "kind": "gather",
+      "summary": "大型・幼体は出ません。各所で素材を集め、野営地の納品箱から自由に帰還します。",
+      "mapId": "map.basin.training",
+      "fieldId": "field.basin",
+      "rankId": "rank.3",
+      "timeLimitTicks": 108000,
+      "fieldTimeLimitTicks": 108000,
+      "maxFaints": 3,
+      "returnTicks": 300,
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        }
+      ],
+      "rewards": {
+        "money": 0,
+        "items": []
+      },
+      "requires": [
+        "quest.basin.r2.001"
+      ],
+      "gather": {
+        "needs": [],
+        "yieldPerNode": 1,
+        "encounters": "none",
+        "depot": {
+          "areaId": "camp",
+          "x": -242,
+          "z": -245.5
+        },
+        "nodes": [],
+        "fieldGathering": true
+      }
+    },
+    {
+      "id": "quest.explore.basin.r4",
+      "name": "風礫盆地の採集遠征【極級】",
+      "kind": "gather",
+      "summary": "大型・幼体は出ません。各所で素材を集め、野営地の納品箱から自由に帰還します。",
+      "mapId": "map.basin.training",
+      "fieldId": "field.basin",
+      "rankId": "rank.4",
+      "timeLimitTicks": 108000,
+      "fieldTimeLimitTicks": 108000,
+      "maxFaints": 3,
+      "returnTicks": 300,
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        }
+      ],
+      "rewards": {
+        "money": 0,
+        "items": []
+      },
+      "requires": [
+        "quest.basin.r3.001"
+      ],
+      "gather": {
+        "needs": [],
+        "yieldPerNode": 1,
+        "encounters": "none",
+        "depot": {
+          "areaId": "camp",
+          "x": -242,
+          "z": -245.5
+        },
+        "nodes": [],
+        "fieldGathering": true
+      }
+    }
+  ],
+  "board": [
+    {
+      "questId": "quest.explore.basin.r1",
+      "stars": 1,
+      "lane": "free",
+      "client": "採集組合の案内係",
+      "clearMinutes": [
+        3,
+        15
+      ],
+      "text": "狩場の草、虫、骨、鉱石、魚を自由に採ってください。採掘具、捕虫網、釣り竿は出発時に貸し出します。採ったものは野営地の箱から帰還すれば持ち帰れます。"
+    },
+    {
+      "questId": "quest.explore.basin.r2",
+      "stars": 3,
+      "lane": "free",
+      "client": "採集組合の案内係",
+      "clearMinutes": [
+        3,
+        15
+      ],
+      "text": "狩場の草、虫、骨、鉱石、魚を自由に採ってください。採掘具、捕虫網、釣り竿は出発時に貸し出します。採ったものは野営地の箱から帰還すれば持ち帰れます。"
+    },
+    {
+      "questId": "quest.explore.basin.r3",
+      "stars": 5,
+      "lane": "free",
+      "client": "採集組合の案内係",
+      "clearMinutes": [
+        3,
+        15
+      ],
+      "text": "狩場の草、虫、骨、鉱石、魚を自由に採ってください。採掘具、捕虫網、釣り竿は出発時に貸し出します。採ったものは野営地の箱から帰還すれば持ち帰れます。"
+    },
+    {
+      "questId": "quest.explore.basin.r4",
+      "stars": 7,
+      "lane": "free",
+      "client": "採集組合の案内係",
+      "clearMinutes": [
+        3,
+        15
+      ],
+      "text": "狩場の草、虫、骨、鉱石、魚を自由に採ってください。採掘具、捕虫網、釣り竿は出発時に貸し出します。採ったものは野営地の箱から帰還すれば持ち帰れます。"
+    }
+  ],
+  "skills": [
+    {
+      "id": "mining_haste",
+      "name": "採掘手際",
+      "values": [
+        8,
+        14,
+        20
+      ],
+      "unit": "%",
+      "effect": "採掘行動を短縮。レア率は変えない。"
+    },
+    {
+      "id": "gather_sense",
+      "name": "素材観察",
+      "values": [
+        4,
+        7,
+        10
+      ],
+      "unit": "m",
+      "effect": "採取点を発見する距離を伸ばす。"
+    }
+  ],
+  "toolCharges": {
+    "mine": 12,
+    "insect": 12
+  },
+  "fish": {
+    "biteFrom": 144,
+    "biteTo": 204
+  }
+}

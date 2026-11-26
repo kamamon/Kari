@@ -16,6 +16,7 @@ import { buildHubGroup } from './hubScene';
 import type { Ambience, Village } from './villageScene';
 import { buildNpcSprites, updateNpcSprites } from './npcSprites';
 import { buildErrandProps, updateErrandProps, type ErrandProps } from './errandProps';
+import { buildFieldGatherProps, updateFieldGatherProps, type FieldGatherProps } from './fieldGatherProps';
 import { FollowCamera } from './camera';
 import { DebugDraw } from './debugDraw';
 import { BladeTrail, GroundRings, Particles } from './effects';
@@ -179,6 +180,7 @@ export class GameView {
   private npcs: Group | null = null;
   /** 狩らない依頼（v0.27.0）の採取点と納品箱 */
   private errandProps: ErrandProps | null = null;
+  private fieldGatherProps: FieldGatherProps | null = null;
   private shownArea = '';
   /** まだ入っていないエリアの地形を、前もって 1 つずつ作るまでのフレーム数（エリアを移った時に、作る間だけ止まらないように） */
   private prebuildIn = 90;
@@ -273,6 +275,8 @@ export class GameView {
       this.errandProps = buildErrandProps(sim.errand.def, (x, z) => sim.world.groundHeight(x, z));
       this.scene.add(this.errandProps.group);
     }
+    this.fieldGatherProps=buildFieldGatherProps(sim);
+    if(this.fieldGatherProps)this.scene.add(this.fieldGatherProps.group);
     const m = sim.main ?? sim.monsters[0];
     if (m) this.monsterRig = this.rigOf(m).rig;
     this.trail = new BladeTrail(this.scene);
@@ -867,6 +871,8 @@ export class GameView {
     this.arena.backdrop.position.set(this.cam.camera.position.x, 0, this.cam.camera.position.z);
     // 採掘（v0.27.0）の間だけ、右手に採掘道具
     this.hunter.tool.visible = p.mode === 'action' && p.action?.def.clip === 'common_mine_01';
+    this.hunter.netTool.visible=p.mode==='action'&&p.action?.def.clip==='common_net_01';
+    this.hunter.fishTool.visible=p.mode==='action'&&p.action?.def.clip==='common_fish_01';
     if (this.npcs) updateNpcSprites(this.npcs, this.cam.camera.position, this.time);
     // 里の暮らし（v0.35.0）: 水車・昇降台・煙・しぶき・水の流れ。鍛冶の槌の火花と、里の音
     this.ambienceTimer += dt;
@@ -884,6 +890,7 @@ export class GameView {
       // 狩場の風の音は、居るエリアの大きさ（v0.51.0。#19 の F06。広い原・台地は強く、狭い谷・沢・巣は弱く）
       this.onAmbience?.({ water: 0, forge: 0, wind: sim.field ? sim.area()?.look?.wind ?? 1 : 1 });
     }
+    if(this.fieldGatherProps)updateFieldGatherProps(this.fieldGatherProps,sim,this.time);
     if (this.errandProps && sim.errand) updateErrandProps(this.errandProps, sim.errand, sim.areaId, sim.hunt?.phase === 'active', this.cam.camera.position, this.time);
     this.arena.sky?.setTime(this.time);
     WIND.value = this.time;

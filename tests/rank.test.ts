@@ -63,9 +63,9 @@ describe('段階のデータ', () => {
     const gate: Record<string, string> = { 'rank.2': 'quest.basin.003', 'rank.3': 'quest.basin.r2.001', 'rank.4': 'quest.basin.r3.001' };
     for (const q of upper) expect(q.requires, q.id).toEqual([gate[q.rankId]]);
     // 狩りの依頼 33 件と、狩らない依頼 5 件（v0.27.0。初級・最初から受けられる）
-    const errands = [...content.quests.values()].filter((q) => q.kind === 'gather');
+    const errands = [...content.quests.values()].filter((q) => q.kind === 'gather' && !q.gather?.fieldGathering);
     for (const q of errands) expect([q.rankId, q.requires ?? []]).toEqual(['rank.1', []]);
-    expect([content.quests.size, errands.length]).toEqual([38, 5]);
+    expect([content.quests.size, errands.length]).toEqual([42, 5]);
   });
 
   it('段階ごとに、その段階からしか出ない素材が 2 つずつある。初級の 4 種は初級から出る', () => {
@@ -73,7 +73,7 @@ describe('段階のデータ', () => {
     // ガルドロスの素材（ほかの 11 種は初級だけ。素材は 4 つずつ。幼体 8 種は初級だけで、2〜3 つずつ）
     const from = (order: number): string[] => [...rankOf].filter(([id, o]) => o === order && id.startsWith('mat.galdros.')).map(([id]) => content.materials.get(id)!.name).sort();
     // ほかの 11 種 44・幼体 23・採集と採掘 4（v0.27.0）
-    expect([...rankOf].filter(([id, o]) => !id.startsWith('mat.galdros.') && o === 1)).toHaveLength(44 + 23 + 4);
+    expect([...rankOf].filter(([id, o]) => !id.startsWith('mat.galdros.') && o === 1)).toHaveLength(44 + 23 + 15);
     expect(from(1)).toEqual(['前脚甲', '岩殻片', '硬骨', '青銅晶脈'].sort());
     expect(from(2)).toEqual(['尾端晶', '脈岩殻'].sort());
     expect(from(3)).toEqual(['晶岩殻', '青銅晶塊'].sort());

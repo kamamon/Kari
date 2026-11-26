@@ -100,7 +100,7 @@ describe('フィールドのデータ（風礫盆地）', () => {
       expect(q.fieldId).toBe('field.basin');
       expect(questTimeLimitTicks(content, q, false)).toBe(q.timeLimitTicks);
       // 狩らない依頼（v0.27.0）は、フィールドで 15 分（tests/errand.test.ts）
-      if (q.kind === 'gather') expect(questTimeLimitTicks(content, q, true)).toBe(15 * 3600);
+      if (q.kind === 'gather') expect(questTimeLimitTicks(content, q, true)).toBe((q.gather?.fieldGathering?30:15) * 3600);
       else if (explicit[q.id]) expect(questTimeLimitTicks(content, q, true)).toBe(explicit[q.id]! * 3600);
       else {
         expect(q.fieldTimeLimitTicks).toBeUndefined();

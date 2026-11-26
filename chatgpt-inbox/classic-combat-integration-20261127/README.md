@@ -16,3 +16,6 @@ verification.jsonの通り1289件の限定的なassertion成功（状態異常34
 
 ## Claudeへの統合
 最新mainと差分を照合し、#30が既に取り込まれている場合は重複を除く。#32等とsim.ts/validators.ts/schemaの挿入箇所を確認。データ調整表の正本は一つ。まず npm ci / npm run typecheck / npm run test -- tests/species-ailments.test.ts tests/part-elements.test.ts tests/trap-traits.test.ts tests/elements.test.ts tests/hunt-items.test.ts tests/classic-hunt.test.ts tests/determinism.test.ts、その後 npm run check / npm run smoke。実戦で罠の設置、怒り、属性演出、級別毒の実効性を確認。実機未確認の状態で公開合格にしない。
+
+## 採集PR取り込み後の競合解消
+mainが 5704d15256f0efda0e2448f9e20212969475cf12 に進んだため、基準 65515084de558475659a7e419256637159207e7f と実装先 2939510f07c81133f52338951596d2e658eafd63 との3方向比較を行った。schemas.ts/validators.tsは変更範囲が重ならず合成。sim.tsは2箇所のimportを統合し、採集のskillValue・usesFieldGather・FieldGatherState/FIELD_NODE_REACH、戦闘のweaponElementHit・罠関数を保持。採集側の変更はmainのtreeを正本として保持した。統合後の型検査・Vitest・実機は未実行。

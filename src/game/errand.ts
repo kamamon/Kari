@@ -1,5 +1,6 @@
 // 狩らない依頼（採集・採掘・現地の納品。v0.27.0、docs/spec.md の 27 章、ChatGPT のクエスト設計 #9 の G・M・D01）。
 // 計算だけ（DOM・Three.js・時刻に触れない）。採った状態と採集袋は、この出発の間だけ持つ（里の持ち物とは別）。
+import type { FieldGatherKind } from '../data/fieldGathering';
 import { GATHER_BAG, type GatherDef, type GatherNodeDef } from '../data/schemas';
 
 /** 採る・納める行動（public/data/actions/player_common.json）。品が入るのは recovery の始まり */
@@ -24,7 +25,7 @@ export interface ErrandState {
 }
 
 /** いまできること（攻撃ボタンで始める） */
-export type ErrandTarget = { kind: 'node'; nodeId: string; actionId: string } | { kind: 'deliver'; actionId: string };
+export type ErrandTarget = { kind: 'node'; nodeId: string; actionId: string } | { kind: 'deliver'; actionId: string } | { kind:'field_node'; nodeId:string; source:FieldGatherKind; actionId:string; faceYaw:number; speed:number };
 
 export function createErrand(def: GatherDef): ErrandState {
   return { def, used: [], bag: {}, delivered: false };

@@ -58,7 +58,7 @@ const traitsOf = (a: Design['armorCandidates'][number]): { resist?: Record<strin
   }
   return out;
 };
-const crafts = (): RecipeDef[] => [...content.recipes.values()].filter((r) => r.kind === 'craft' || r.kind === 'armor_craft');
+const crafts = (): RecipeDef[] => [...content.recipes.values()].filter((r) => (r.kind === 'craft' || r.kind === 'armor_craft') && !/^recipe\.(ore_only|bone_only)\./.test(r.id));
 let clock = 0;
 const env: SaveEnv = { now: () => `2026-11-25T00:00:${String(clock++ % 60).padStart(2, '0')}.000Z`, appVersion: 'test' };
 const STAMP = { now: '2026-11-25T00:00:00.000Z', appVersion: 'test', contentVersion: 'test' };
@@ -66,8 +66,8 @@ const STAMP = { now: '2026-11-25T00:00:00.000Z', appVersion: 'test', contentVers
 describe('系列の装備のデータ（#15 の初級・19 系列）', () => {
   it('19 系列 × 武器 7・防具 5 = 228 点と、作るレシピ 228。数値・属性・状態異常・耐性・技能・素材・費用は設計のまま、恒久 ID に付け直した', () => {
     const d = design();
-    const weapons = [...content.weapons.values()].filter((w) => w.series && w.rankId === 'rank.1');
-    const armor = [...content.armor.values()].filter((a) => a.series && a.rankId === 'rank.1');
+    const weapons = [...content.weapons.values()].filter((w) => w.series?.startsWith('series.') && w.rankId === 'rank.1');
+    const armor = [...content.armor.values()].filter((a) => a.series?.startsWith('series.') && a.rankId === 'rank.1');
     expect(weapons).toHaveLength(133);
     expect(armor).toHaveLength(95);
     expect(crafts()).toHaveLength(228);
@@ -110,10 +110,10 @@ describe('系列の装備のデータ（#15 の初級・19 系列）', () => {
   it('中級〜極級（v0.34.0）: 帆角・幼岩・幼帆の 3 系列 × 3 級 × 武器 7・防具 5 = 108 点と、1 つ下の級からの強化 108。数値・素材の名前と数・費用は設計のまま', () => {
     const d = design();
     const ranked = ['selvark', 'kordopil', 'palseit'];
-    const upgrades = [...content.recipes.values()].filter((r) => (r.kind === 'upgrade' && content.weapons.get(r.resultWeaponId)?.series) || (r.kind === 'armor_upgrade' && content.armor.get(r.resultArmorId)?.series));
+    const upgrades = [...content.recipes.values()].filter((r) => (r.kind === 'upgrade' && content.weapons.get(r.resultWeaponId)?.series?.startsWith('series.')) || (r.kind === 'armor_upgrade' && content.armor.get(r.resultArmorId)?.series?.startsWith('series.')));
     expect(upgrades).toHaveLength(108);
-    expect([...content.weapons.values()].filter((w) => w.series && w.rankId !== 'rank.1')).toHaveLength(63);
-    expect([...content.armor.values()].filter((a) => a.series && a.rankId !== 'rank.1')).toHaveLength(45);
+    expect([...content.weapons.values()].filter((w) => w.series?.startsWith('series.') && w.rankId !== 'rank.1')).toHaveLength(63);
+    expect([...content.armor.values()].filter((a) => a.series?.startsWith('series.') && a.rankId !== 'rank.1')).toHaveLength(45);
     const dname = new Map(d.materials.map((m) => [m.id, m.name]));
     for (const sp of ranked) {
       const sid = `series.${sp}`;
@@ -138,7 +138,7 @@ describe('系列の装備のデータ（#15 の初級・19 系列）', () => {
       }
     }
     // ほかの 16 系列は初級だけ（設計の上の級の狩場が、まだ無い）
-    expect([...content.weapons.values()].filter((w) => w.series && w.rankId !== 'rank.1' && !ranked.some((sp) => w.series === `series.${sp}`))).toEqual([]);
+    expect([...content.weapons.values()].filter((w) => w.series?.startsWith('series.') && w.rankId !== 'rank.1' && !ranked.some((sp) => w.series === `series.${sp}`))).toEqual([]);
   });
 
   it('中級の強化: 帆角の断岳剣【初級】を持っていて、中級の素材がそろうと【中級】になる（元は無くなる）。素材は中級のセルヴァルクの依頼で手に入る', () => {

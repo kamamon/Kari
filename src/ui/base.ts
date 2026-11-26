@@ -446,7 +446,7 @@ export class BaseScreen {
       });
       return p;
     };
-    this.inv.appendChild(invLine(undefined, `持ち物: 通貨 ${doc.money}　`, known.map(([id, n]) => [id, `${c.materials.get(id)!.name} ×${n}`]), '素材はまだ無い'));
+    this.inv.appendChild(invLine(undefined, `持ち物: 通貨 ${doc.money}　`, known.map(([id, n]) => [id, `${c.materials.get(id)!.name}${c.materials.get(id)!.rarity?' [RARE '+c.materials.get(id)!.rarity+']':''} ×${n}`]), '素材はまだ無い'));
     // 道具（商店で買ったもの。狩りへ、持ち出せる数まで持っていく）
     const tools: [string, string][] = [...c.items.values()].filter((it) => (doc.items[it.id] ?? 0) > 0).map((it) => [it.id, `${it.name} ×${doc.items[it.id]}`]);
     if (tools.length) this.inv.appendChild(invLine('base-tools', '道具: ', tools, ''));
@@ -1030,7 +1030,7 @@ export class BaseScreen {
     for (const r of crafts) groups.set(seriesOf(r), [...(groups.get(seriesOf(r)) ?? []), r]);
     const wrap = el('details', 'forge-make');
     wrap.appendChild(el('summary', 'forge-head', '作る（新しい系列の装備）'));
-    wrap.appendChild(el('p', 'base-note', '素材と通貨で、新しい武器・防具を作ります（持っている装備は減りません）。作った物は装備箱で持ち替えます。形は、まだ里の武器と里の服のままです。'));
+    wrap.appendChild(el('p', 'base-note', '素材と通貨で、新しい武器・防具を作ります（持っている装備は減りません）。作った物は装備箱で持ち替えます。採取装備は鉱石・骨に応じた仮の外見になります。'));
     let ready = 0;
     for (const [series, list] of groups) {
       const species = c.monsters.get(`monster.${series.split('.')[1] ?? ''}`)?.name ?? '';

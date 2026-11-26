@@ -2,6 +2,7 @@
 // ブラウザ（fetch）と Node のテスト（fs）の両方から同じ関数を使う。
 // 問題は黙って直さず、すべて errors に積んで呼び出し側へ返す。
 
+import { carveGatherPond, fieldGatherMaterials, validateFieldGatherCatalog, type FieldGatherCatalog } from './fieldGathering';
 import { buildFollowTable } from '../game/follow';
 import { AreaShape, NavGraph } from '../game/areaShape';
 import { VAULT_REACH, groundAt } from '../game/world';
@@ -522,8 +523,11 @@ export function crossCheck(c: Content, errors: string[]): void {
     } else errors.push(`${w}: kind "${String((r as { kind: unknown }).kind)}" は未定義`);
     const fromId = recipeFrom(r), resultId = recipeResult(r);
     if (fromId === resultId) errors.push(`${w}: 元と結果が同じ`);
-    if (results.has(resultId)) errors.push(`${w}: 結果 ${resultId} を作るレシピが重複`);
-    results.add(resultId);
+    // 採集装備のみ直接生産と一段強化の両方を認める。同じ方式の重複は禁止。
+    const pureSeries = c.weapons.get(resultId)?.series ?? c.armor.get(resultId)?.series;
+    const resultKey = pureSeries === 'gathering.ore_only' || pureSeries === 'gathering.bone_only' ? `${resultId}:${fromId === null ? 'craft' : 'upgrade'}` : resultId;
+    if (results.has(resultKey)) errors.push(`${w}: 結果 ${resultId} を作るレシピが重複`);
+    results.add(resultKey);
     // 1 つの武器・防具から進める先は 1 つ（派生はまだ無い。工房の画面は「次の強化」を 1 つだけ出す）
     if (fromId !== null) {
       if (sources.has(fromId)) errors.push(`${w}: 元 ${fromId} から進めるレシピが重複`);
@@ -708,7 +712,8 @@ export function validateGather(c: Content, q: QuestDef): string[] {
   if (q.fieldTimeLimitTicks === undefined) e.push(`${w}: フィールドの時間（fieldTimeLimitTicks）を書く`);
   if (g.encounters !== 'none') e.push(`${w}: encounters "${String(g.encounters)}" は未定義（いまは none だけ）`);
   if (!(isInt(g.yieldPerNode) && g.yieldPerNode >= 1 && g.yieldPerNode <= 5)) e.push(`${w}: yieldPerNode が不正`);
-  if (!Array.isArray(g.needs) || g.needs.length === 0) e.push(`${w}: 要る素材が無い`);
+  if (!Array.isArray(g.needs) || (!g.fieldGathering && g.needs.length === 0)) e.push(`${w}: 要る素材が無い`);
+  if (g.fieldGathering && (g.needs.length !== 0 || g.nodes.length !== 0 || c.fieldGathering?.fieldId !== q.fieldId)) e.push(`${w}: 自由採集遠征の定義が不正`);
   const need = new Map<string, number>();
   for (const s of g.needs ?? []) {
     if (!c.materials.has(s.itemId)) e.push(`${w}: 要る素材 ${s.itemId} が無い`);
@@ -767,6 +772,7 @@ export function questMaterials(c: Content, q: QuestDef): Set<string> {
   for (const s of q.rewards?.items ?? []) out.add(s.itemId);
   // 狩らない依頼（v0.27.0）: 採取点の素材（納品の余りを持ち帰る）
   for (const n of q.gather?.nodes ?? []) out.add(n.itemId);
+  for (const id of fieldGatherMaterials(c,q)) out.add(id);
   for (const t of questTargets(q)) {
     const m = c.monsters.get(t.monsterId);
     const l = lootForQuest(c, q, t.monsterId);
@@ -1435,9 +1441,29 @@ export async function assembleContent(getRaw: JsonGetter, opts: LoadOptions = {}
       else content.armor.set(id, { ...a, ...t });
     }
   }
+  if (index.files.fieldGathering) {
+    const g = (await get(index.files.fieldGathering)) as FieldGatherCatalog;
+    checkVersion(index.files.fieldGathering, g.schemaVersion, errors);
+    content.fieldGathering = g;
+    for (const m of g.materials) {
+      const old = content.materials.get(m.id);
+      if (old && old.name !== m.name) errors.push(`field gathering: ${m.id} の既存名と一致しない`);
+      else if (old) content.materials.set(m.id, { ...old, rarity: m.rarity });
+      else putUnique(content.materials, m.id, m, 'material', errors);
+    }
+    for (const s of g.skills) putUnique(content.skills,s.id,s,'skill',errors);
+    for (const a of g.actions) { validateAction(a,errors); putUnique(content.actions,a.actionId,a,'action',errors); }
+    for (const w of g.weapons) putUnique(content.weapons,w.id,w,'weapon',errors);
+    for (const a of g.armor) putUnique(content.armor,a.id,a,'armor',errors);
+    for (const r of g.recipes) putUnique(content.recipes,r.id,r,'recipe',errors);
+    for (const q of g.quests) putUnique(content.quests,q.id,q,'quest',errors);
+    errors.push(...validateFieldGatherCatalog(content,g));
+    carveGatherPond(content,g,errors);
+  }
   validateGear(content, errors);
   content.shop = (await get(index.files.shop)) as ShopDef;
   checkVersion(index.files.shop, content.shop.schemaVersion, errors);
+  if(content.fieldGathering){const sold=new Set(content.shop.sell.map(g=>g.itemId));content.shop={...content.shop,sell:[...content.shop.sell,...content.fieldGathering.materials.filter(m=>!sold.has(m.id)).map(m=>({itemId:m.id,price:m.sellPrice}))]};}
   content.hub = (await get(index.files.hub)) as HubDef;
   checkVersion(index.files.hub, content.hub.schemaVersion, errors);
   crossCheck(content, errors);
@@ -1475,6 +1501,7 @@ export async function assembleContent(getRaw: JsonGetter, opts: LoadOptions = {}
   // 依頼の掲示・工房からの支給・里の納品（v0.26.0、docs/spec.md の 25 章）。掲示は、読み込みの時に依頼へ付ける
   content.board = (await get(index.files.board)) as QuestBoardDef;
   checkVersion(index.files.board, content.board.schemaVersion, errors);
+  if (content.fieldGathering) content.board = { ...content.board, quests: [...content.board.quests, ...content.fieldGathering.board] };
   errors.push(...validateBoard(content.board, content));
   for (const b of content.board.quests ?? []) {
     const q = content.quests.get(b.questId);
