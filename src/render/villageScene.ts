@@ -19,6 +19,7 @@ import { mergeRocks, placeBigRock, rockArtMaterial } from './rockArt';
 import { animateTerraces, type WallSegment } from './terraces';
 import { buildHubOutskirts } from './hubOutskirts';
 import { buildHubResourceProps } from './hubResourceProps';
+import { bindSurfaceImage, imageLambert, projectSurfaceUV, type ImageSurface } from './materialImages';
 
 /** 頂点の色（絵の無い所） */
 const C = {
@@ -27,6 +28,9 @@ const C = {
 } as const;
 
 type Mat = 'plain' | 'stone' | 'roof' | 'glow';
+type PlainSurface='wood'|'cloth'|'bronze'|'soil'|'leaf'|'plaster'|'water';
+const plainSurface=(color:number):PlainSurface=>color===C.bronze||color===C.iron?'bronze':color===C.cloth||color===C.clothRed||color===C.clothBlue||color===C.paper||color===C.sack?'cloth':color===C.crop||color===C.cropLight?'leaf':color===C.soil?'soil':color===C.water?'water':color===C.plaster?'plaster':'wood';
+const plainImage=(k:PlainSurface):ImageSurface=>k==='soil'?'earth':k;
 type P3 = readonly [number, number, number];
 
 const tmpQ = new Quaternion();
@@ -83,6 +87,7 @@ class Kit {
     const col = new Float32Array(geo.getAttribute('position').count * 3);
     for (let i = 0; i < col.length; i += 3) col.set([tmpColor.r, tmpColor.g, tmpColor.b], i);
     geo.setAttribute('color', new Float32BufferAttribute(col, 3));
+    if(mat==='plain')geo.userData.plainSurface=plainSurface(color);
     this.out[mat].push(geo);
   }
 
@@ -423,7 +428,7 @@ function wheelGeometry(r: number, w: number): BufferGeometry {
   const hub = new CylinderGeometry(0.3, 0.3, w + 0.3, 10);
   hub.rotateZ(Math.PI / 2);
   add(hub);
-  for (const p of parts) if (p.getAttribute('uv')) p.deleteAttribute('uv');
+  for (const p of parts) projectSurfaceUV(p,.8);
   return mergeGeometries(parts)!;
 }
 
@@ -670,7 +675,8 @@ function buildLaundry(list: HubSceneryDef[], floorOf: (x: number, z: number) => 
   geo.setAttribute('color', new Float32BufferAttribute(col, 3));
   geo.setAttribute('aSway', new Float32BufferAttribute(sway, 1));
   geo.computeVertexNormals();
-  const mat = new MeshLambertMaterial({ vertexColors: true, side: DoubleSide });
+  projectSurfaceUV(geo,.45);
+  const mat = imageLambert('cloth',{vertexColors:true,side:DoubleSide});
   mat.onBeforeCompile = (sh) => {
     sh.uniforms.uWind = WIND;
     sh.vertexShader = 'uniform float uWind;\nattribute float aSway;\n' + sh.vertexShader.replace(
@@ -742,13 +748,23 @@ export function buildVillage(hub: HubDef, map: MapDef, falls: readonly WallSegme
   }
   // 素材（頂点の色で塗るもの・石・瓦・灯の明かり）ごとに 1 つの形
   const stoneMat = tileMaterial('rock', 0xd9d2c4, { gain: 1.4, vertexColors: true });
-  const plainMat = new MeshLambertMaterial({ vertexColors: true });
+  const plainMat = imageLambert('wood',{vertexColors:true});
   const roofMat = new MeshLambertMaterial({ map: roofTexture(), vertexColors: false, side: DoubleSide });
   roofMat.userData.uv = true;
+  bindSurfaceImage(roofMat,'roof',{raw:true,gain:1.5,replaceFallback:true,bump:.06});
   const glowMat = new MeshBasicMaterial({ color: C.glow });
   const mats: Record<Mat, MeshLambertMaterial | MeshBasicMaterial> = { plain: plainMat, stone: stoneMat, roof: roofMat, glow: glowMat };
   for (const k of ['plain', 'stone', 'roof', 'glow'] as const) {
     if (geo[k].length === 0) continue;
+    if(k==='plain'){
+      // 分類済みの頂点色を保ち、木・布・金属などは別の画像を貼る。既存の子グループ名は維持。
+      const plain=new Group();plain.userData.village='plain';
+      for(const kind of ['wood','cloth','bronze','soil','leaf','plaster','water'] as const){
+        const parts=geo.plain.filter(g=>g.userData.plainSurface===kind);if(!parts.length)continue;
+        const material=kind==='wood'?plainMat:imageLambert(plainImage(kind),{vertexColors:true},{gain:kind==='water'?2.6:1.35});
+        const mesh=new Mesh(mergeGeometries(parts)!,material);mesh.name='village-'+kind;mesh.castShadow=true;mesh.receiveShadow=true;mesh.userData.noMerge=true;plain.add(mesh);
+      }group.add(plain);continue;
+    }
     const m = new Mesh(mergeGeometries(geo[k])!, mats[k]);
     m.castShadow = k !== 'glow';
     m.receiveShadow = true;
@@ -763,7 +779,7 @@ export function buildVillage(hub: HubDef, map: MapDef, falls: readonly WallSegme
     const c = Math.cos(mill.yaw), s = Math.sin(mill.yaw);
     const wx = mill.x + -4.8 * s, wz = mill.z + -4.8 * c;
     const water = floorOf(wx, wz);
-    wheel = new Mesh(wheelGeometry(2.3, 0.8), new MeshLambertMaterial({ color: 0x5a4430 }));
+    wheel = new Mesh(wheelGeometry(2.3, 0.8), imageLambert('wood',{color:0x5a4430},{bump:.035}));
     wheel.position.set(wx, water + 2.3 - 0.45, wz);
     wheel.rotation.y = mill.yaw - Math.PI / 2;
     wheel.castShadow = true;
@@ -777,11 +793,11 @@ export function buildVillage(hub: HubDef, map: MapDef, falls: readonly WallSegme
   const liftFloor = lift ? floorOf(lift.x, lift.z) : 0;
   if (lift) {
     liftCar = new Group();
-    const wood = new MeshLambertMaterial({ color: 0x7a5d40 });
+    const wood = imageLambert('wood',{color:0x7a5d40});
     const plat = new Mesh(new BoxGeometry(1.6, 0.12, 1.4), wood);
-    const box1 = new Mesh(new BoxGeometry(0.7, 0.6, 0.6), new MeshLambertMaterial({ color: 0x8f7048 }));
+    const box1 = new Mesh(new BoxGeometry(0.7, 0.6, 0.6), imageLambert('wood',{color:0x8f7048}));
     box1.position.set(-0.3, 0.36, 0.1);
-    const box2 = new Mesh(new BoxGeometry(0.55, 0.45, 0.5), new MeshLambertMaterial({ color: 0x9c7f58 }));
+    const box2 = new Mesh(new BoxGeometry(0.55, 0.45, 0.5), imageLambert('wood',{color:0x9c7f58}));
     box2.position.set(0.4, 0.29, -0.15);
     box2.rotation.y = 0.4;
     liftCar.add(plat, box1, box2);
@@ -792,7 +808,7 @@ export function buildVillage(hub: HubDef, map: MapDef, falls: readonly WallSegme
     group.add(liftCar);
     const rope = new BoxGeometry(0.04, 1, 0.04);
     rope.translate(0, -0.5, 0);
-    liftRope = new Mesh(rope, new MeshLambertMaterial({ color: 0x3a3026 }));
+    liftRope = new Mesh(rope, imageLambert('cloth',{color:0x3a3026}));
     const c = Math.cos(lift.yaw), s = Math.sin(lift.yaw);
     liftRope.position.set(lift.x + 0.6 * s, liftFloor + 9.6, lift.z + 0.6 * c);
     group.add(liftRope);

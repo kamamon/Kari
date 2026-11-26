@@ -6,13 +6,14 @@ import { CraftKit, craftMaterials } from './hubCraft';
 import type { AnimalKind, Livestock } from '../data/hubEstate';
 import type { MapDef } from '../data/schemas';
 import { groundAt } from '../game/world';
+import { imageLambert } from './materialImages';
 type V=readonly [number,number,number];
 type Part={geo:BufferGeometry;at:V;phase:number;motion:'body'|'head'|'leg'|'tail'};
 const KINDS:AnimalKind[]=['goat','hen','ox'];
 export const PENS:Record<AnimalKind,{x:number;z:number;w:number;d:number}>={goat:{x:3.2,z:30.3,w:3.2,d:2.7},hen:{x:-1.1,z:32.6,w:2.3,d:2.3},ox:{x:4.0,z:36.5,w:4.2,d:3.0}};
 function packed(kit:CraftKit):BufferGeometry{
  const group=kit.build('animal-piece'),pieces:BufferGeometry[]=[];
- group.traverse(o=>{if(o instanceof Mesh){const g=o.geometry;g.deleteAttribute('uv');pieces.push(g);}});
+ group.traverse(o=>{if(o instanceof Mesh){const g=o.geometry;pieces.push(g);}});
  const merged=mergeGeometries(pieces)!;for(const g of pieces)g.dispose();return merged;
 }
 function buildParts(kind:AnimalKind,mats:ReturnType<typeof craftMaterials>):Part[]{
@@ -101,7 +102,8 @@ export class HubLivestock{
  readonly group=new Group();private herds:HerdVisual[]=[];
  constructor(map:MapDef){
   this.group.name='hub-livestock';
-  const mats=craftMaterials(),batch=new CraftKit(mats),animMat=new MeshLambertMaterial({vertexColors:true,color:0xffffff});
+  const mats=craftMaterials(),batch=new CraftKit(mats);
+  const fur=imageLambert('fur',{vertexColors:true,color:0xffffff}),feather=imageLambert('feather',{vertexColors:true,color:0xffffff});
   for(const kind of KINDS){
    const p=PENS[kind],y=groundAt(map.platforms,p.x,p.z),w=p.w,d=p.d;
    const k=new CraftKit(mats,[p.x,y,p.z]);
@@ -115,7 +117,7 @@ export class HubLivestock{
    k.box('plain',[w*.25,.42,-d*.34],[.54,.035,.30],kind==='hen'?0xbe9f63:0x74854d);
    if(kind==='hen'){k.box('wood',[-.64,.36,-.66],[.56,.58,.51],0x806648,[0,0,0],.025);k.box('plain',[-.64,.35,-.39],[.36,.32,.02],0x4d3d2d);k.box('roof',[-.64,.70,-.66],[.66,.12,.59],0x7c7a66,[.18,0,0]);}
    batch.append(k);
-   const herd=new HerdVisual(kind,y,animMat,mats);this.herds.push(herd);this.group.add(herd.group);
+   const herd=new HerdVisual(kind,y,kind==='hen'?feather:fur,mats);this.herds.push(herd);this.group.add(herd.group);
   }
   this.group.add(batch.build('hub-animal-enclosures'));
  }

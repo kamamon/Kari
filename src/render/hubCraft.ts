@@ -6,39 +6,14 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { FURNITURE, type FurniturePlacement } from '../data/hubEstate';
 import type { HubDef, MapDef } from '../data/schemas';
 import { groundAt } from '../game/world';
+import { bindSurfaceImage, type ImageSurface } from './materialImages';
 type V=readonly [number,number,number];
-type Surface='wood'|'stone'|'roof'|'metal'|'cloth'|'plain'|'light';
-const SURFACES:Surface[]=['wood','stone','roof','metal','cloth','plain','light'];
+type Surface='wood'|'stone'|'roof'|'metal'|'cloth'|'plain'|'light'|'cliff'|'leaf'|'bark'|'soil'|'scale';
+const SURFACES:Surface[]=['wood','stone','roof','metal','cloth','plain','light','cliff','leaf','bark','soil','scale'];
+const IMAGE_KIND:Record<Exclude<Surface,'light'>,ImageSurface>={wood:'wood',stone:'masonry',roof:'roof',metal:'bronze',cloth:'cloth',plain:'plaster',cliff:'cliff',leaf:'leaf',bark:'bark',soil:'earth',scale:'scale'};
 const c={wood:0x886748,trim:0x513d2c,stone:0x9d9c8d,roof:0x777c70,bronze:0xb59a59,cloth:0xc6b18e,red:0x8d4736,green:0x657d4e,light:0xe1ad61,wall:0xd5c7a7,dark:0x332a23,iron:0x515756};
-const hash=(x:number,y:number)=>{let n=Math.imul(x+137,1597334677)^Math.imul(y+349,3812015801);n=Math.imul(n^(n>>>15),2246822519);return ((n^(n>>>13))>>>0)/4294967295;};
-const pixels=new Map<Surface,{albedo:Uint8Array;normal:Uint8Array}>();
-function materialPixels(kind:Surface){
- const prev=pixels.get(kind);if(prev)return prev;
- const n=256,height=new Float32Array(n*n),albedo=new Uint8Array(n*n*4),normal=new Uint8Array(n*n*4);
- for(let y=0;y<n;y++)for(let x=0;x<n;x++){
-  const u=x/n*Math.PI*2,v=y/n*Math.PI*2;let a=0;
-  if(kind==='wood')a=.11*Math.sin(u*3+Math.sin(v*2)*.9)+.08*Math.sin(u*33+Math.sin(v)*1.8)+.045*Math.sin(u*73+v*2);
-  else if(kind==='stone')a=.075*Math.sin(u*9+v*3)+.05*Math.sin(u*17-v*11)+.04*Math.cos(u*31+v*12);
-  else if(kind==='roof')a=.08*Math.sin(u*8)+.075*Math.cos(v*7)+.035*Math.sin(u*46+v*2);
-  else if(kind==='cloth')a=.065*Math.cos(u*64)*Math.cos(v*64)+.035*Math.sin(u*8+v*8);
-  else if(kind==='metal')a=.04*Math.sin(u*11+v*13)+.07*Math.cos(u*3-v*6);
-  const i=y*n+x;const g=Math.round(255*Math.max(.45,Math.min(1,.80+a+.085*(hash(x,y)-.5))));
-  height[i]=a;albedo.set([g,g,g,255],i*4);
- }
- const get=(x:number,y:number)=>height[((y+n)%n)*n+(x+n)%n]!;
- for(let y=0;y<n;y++)for(let x=0;x<n;x++){
-  const strength=kind==='cloth'?1.3:kind==='metal'?.85:2.0,dx=(get(x+1,y)-get(x-1,y))*strength,dy=(get(x,y+1)-get(x,y-1))*strength,m=1/Math.hypot(dx,dy,1);
-  normal.set([Math.round(127.5*(-dx*m+1)),Math.round(127.5*(-dy*m+1)),Math.round(127.5*(m+1)),255],(y*n+x)*4);
- }
- const result={albedo,normal};pixels.set(kind,result);return result;
-}
-function mapFor(kind:Surface,isNormal=false):DataTexture{
- const p=materialPixels(kind),t=new DataTexture(isNormal?p.normal:p.albedo,256,256);
- if(!isNormal)t.colorSpace=SRGBColorSpace;
- t.wrapS=t.wrapT=RepeatWrapping;t.magFilter=LinearFilter;t.minFilter=LinearMipmapLinearFilter;t.generateMipmaps=true;t.needsUpdate=true;return t;
-}
 export function craftMaterials():Record<Surface,MeshStandardMaterial>{
- return Object.fromEntries(SURFACES.map(k=>[k,new MeshStandardMaterial({color:0xffffff,vertexColors:true,roughness:k==='metal'?.53:.88,metalness:k==='metal'?.37:0,...(['plain','light'].includes(k)?{}:{map:mapFor(k),normalMap:mapFor(k,true),normalScale:new Vector2(.65,.65)}),...(k==='light'?{emissive:0xd98b3c,emissiveIntensity:.42}:{})})])) as Record<Surface,MeshStandardMaterial>;
+ return Object.fromEntries(SURFACES.map(k=>[k,new MeshStandardMaterial({color:0xffffff,vertexColors:true,roughness:k==='metal'?.53:.88,metalness:k==='metal'?.37:0,...(k==='light'?{emissive:0xd98b3c,emissiveIntensity:.42}:{})})])) as Record<Surface,MeshStandardMaterial>;
 }
 export class CraftKit{
  private bags=new Map<Surface,BufferGeometry[]>();
@@ -50,7 +25,8 @@ export class CraftKit{
   for(let i=0;i<attr.count;i++){
    a.set([cc.r,cc.g,cc.b],i*3);
    const x=attr.getX(i),y=attr.getY(i),z=attr.getZ(i),nx=Math.abs(norm.getX(i)),ny=Math.abs(norm.getY(i)),nz=Math.abs(norm.getZ(i));
-   uv[i*2]=(nx>ny&&nx>nz?z:x)/1.25;uv[i*2+1]=(ny>nx&&ny>nz?z:y)/1.25;
+   const tile=surface==='cloth'?.45:surface==='metal'?.55:surface==='leaf'?.32:surface==='scale'?.25:1.25;
+   uv[i*2]=(nx>ny&&nx>nz?z:x)/tile;uv[i*2+1]=(ny>nx&&ny>nz?-z:y)/tile;
   }
   g.setAttribute('color',new Float32BufferAttribute(a,3));g.setAttribute('uv',new Float32BufferAttribute(uv,2));
   for(const name of Object.keys(g.attributes))if(!['position','normal','uv','color'].includes(name))g.deleteAttribute(name);
@@ -82,7 +58,9 @@ export class CraftKit{
  build(name:string):Group{
   const g=new Group();g.name=name;let tris=0;
   for(const [surface,parts] of this.bags){if(!parts.length)continue;const geo=mergeGeometries(parts);for(const p of parts)p.dispose();if(!geo)throw Error('工芸モデルの属性不一致');
-   const m=new Mesh(geo,this.materials[surface]);m.name=name+':'+surface;m.castShadow=false;m.receiveShadow=true;m.userData.noMerge=true;g.add(m);tris+=geo.getAttribute('position').count/3;
+   const material=this.materials[surface];
+   if(surface!=='light'&&!material.userData.surfaceFile)bindSurfaceImage(material,IMAGE_KIND[surface],{bump:surface==='metal'?.025:surface==='cloth'?.018:.055});
+   const m=new Mesh(geo,material);m.name=name+':'+surface;m.castShadow=false;m.receiveShadow=true;m.userData.noMerge=true;g.add(m);tris+=geo.getAttribute('position').count/3;
   }this.bags.clear();g.userData.triangles=tris;return g;
  }
 }
@@ -297,7 +275,7 @@ export function furnitureModel(p:FurniturePlacement,materials:ReturnType<typeof 
  case 'rug':k.box('cloth',[0,.012,0],[f.w,.018,f.d],cloth,[0,0,0],.004);for(let i=0;i<8;i++){const x=(i-3.5)*f.w/9;k.box('cloth',[x,.025,0],[.027,.008,f.d-.08],0xb59a63);}break;
  case 'lamp':k.cyl('metal',[0,.07,0],.18,.2,.14,c.bronze);k.cyl('wood',[0,.54,0],.052,.07,.92,wood);lantern(k,0,1.02,0,.49);break;
  case 'screen':for(const x of [-.66,0,.66])k.box('wood',[x,.75,0],[.055,1.5,.13],wood);k.box('cloth',[0,.81,0],[1.32,1.14,.046],cloth);for(const x of [-.66,.66])k.box('wood',[x,.055,0],[.12,.11,.25],wood);break;
- case 'planter':k.cyl('plain',[0,.19,0],.19,.14,.38,0x9b7258,[0,0,0],16);k.cyl('plain',[0,.382,0],.18,.18,.025,0x584839);for(let i=0;i<7;i++){const a=i*2.4;k.beam('wood',[0,.38,0],[Math.cos(a)*.1,.61,Math.sin(a)*.1],.025,0x668047,true);k.sphere('plain',[Math.cos(a)*.11,.65,Math.sin(a)*.11],[.08,.035,.13],i%2?0x749557:0x4c7b40,1,[.35,a,0]);}break;
+ case 'planter':k.cyl('plain',[0,.19,0],.19,.14,.38,0x9b7258,[0,0,0],16);k.cyl('soil',[0,.382,0],.18,.18,.025,0x584839);for(let i=0;i<7;i++){const a=i*2.4;k.beam('wood',[0,.38,0],[Math.cos(a)*.1,.61,Math.sin(a)*.1],.025,0x668047,true);k.sphere('leaf',[Math.cos(a)*.11,.65,Math.sin(a)*.11],[.08,.035,.13],i%2?0x749557:0x4c7b40,1,[.35,a,0]);}break;
  }
  const g=k.build('furniture:'+p.id);g.position.set(p.x,0,p.z);g.rotation.y=p.yaw;g.userData.furniture=p.id;return g;
 }
