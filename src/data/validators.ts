@@ -5,6 +5,7 @@
 import { buildFollowTable } from '../game/follow';
 import { AreaShape, NavGraph } from '../game/areaShape';
 import { groundAt } from '../game/world';
+import { reliefAt } from '../game/relief';
 import { validateBestiary, type BestiaryDef } from './bestiary';
 import { validateStory, type StoryDef } from './story';
 import { validateBoard, validateDeliveries, validateSupport } from './questBoard';
@@ -865,6 +866,44 @@ export function validateField(c: Content, f: FieldDef, errors: string[]): void {
     }
     // 岩は、まるごと外周の中（自然な形のエリア）。四角のエリアは、中心が中
     for (const r of a.rocks ?? []) if (!(isNum(r.x) && isNum(r.z) && r.r > 0 && inside(a, r.x, r.z, shapes.has(a.id) ? r.r : 0))) errors.push(`${wa}: rock が不正（エリアの外）`);
+    // 地面の起伏（v0.46.0。#19 の F02）: 格子が外周を覆い、坂は 30° まで、出口・着く所・中心・登り口は平ら、段は起伏に埋まらない
+    const rl = a.relief;
+    if (rl) {
+      const okGrid = isNum(rl.x0) && isNum(rl.z0) && rl.step > 0 && isInt(rl.nx) && isInt(rl.nz) && rl.nx >= 2 && rl.nz >= 2 && Array.isArray(rl.h) && rl.h.length === rl.nx * rl.nz && rl.h.every((v) => isInt(v) && v >= -1000 && v <= 1000);
+      if (!okGrid) errors.push(`${wa}: relief が不正（nx × nz の cm の整数）`);
+      else {
+        if (rl.x0 > b.minX || rl.z0 > b.minZ || rl.x0 + (rl.nx - 1) * rl.step < b.maxX || rl.z0 + (rl.nz - 1) * rl.step < b.maxZ) errors.push(`${wa}: relief が外周を覆っていない`);
+        let steep = 0;
+        const lim = Math.tan((30 * Math.PI) / 180) * rl.step * 100 + 1;
+        for (let j = 0; j < rl.nz; j++) {
+          for (let i = 0; i < rl.nx; i++) {
+            const x = rl.x0 + i * rl.step, z = rl.z0 + j * rl.step;
+            if (!inside(a, x, z, 0)) continue;
+            const v = rl.h[j * rl.nx + i]!;
+            if (i + 1 < rl.nx && inside(a, x + rl.step, z, 0) && Math.abs(rl.h[j * rl.nx + i + 1]! - v) > lim) steep++;
+            if (j + 1 < rl.nz && inside(a, x, z + rl.step, 0) && Math.abs(rl.h[(j + 1) * rl.nx + i]! - v) > lim) steep++;
+          }
+        }
+        if (steep > 0) errors.push(`${wa}: relief の坂が 30° を超える所が ${steep} か所`);
+        const flat = (x: number, z: number, what: string): void => {
+          if (Math.abs(reliefAt(rl, x, z)) > 0.05) errors.push(`${wa}: ${what} が平らでない（起伏 ${reliefAt(rl, x, z).toFixed(2)}m）`);
+        };
+        for (const e of a.exits ?? []) flat(e.x, e.z, `出口 ${e.to}`);
+        if (a.center) flat(a.center.x, a.center.z, '中心');
+        for (const c of a.climbs ?? []) flat(c.x, c.z, `登り口 ${c.id}`);
+        for (const other of areas.values()) {
+          for (const e of other.exits ?? []) {
+            if (e.to !== a.id) continue;
+            flat(e.arrive.x, e.arrive.z, `${other.id} から着く所`);
+            if (e.arriveLarge) flat(e.arriveLarge.x, e.arriveLarge.z, `${other.id} から大型が着く所`);
+          }
+        }
+        for (const q of a.platforms ?? []) {
+          const under = Math.max(...[[q.minX, q.minZ], [q.maxX, q.minZ], [q.minX, q.maxZ], [q.maxX, q.maxZ]].map(([x, z]) => reliefAt(rl, x!, z!)));
+          if (q.h < under + 0.2) errors.push(`${wa}: 段（高さ ${q.h}）が起伏（${under.toFixed(2)}m）に埋まる`);
+        }
+      }
+    }
     // 登攀（v0.44.0。#19 の H07）: 登り口は歩ける地面、壁の面の先は上の段（top）、手前は登れない高さ、登り切って立つ所は上の段の上
     for (const c of a.climbs ?? []) {
       const wc = `${wa} climb ${String(c.id)}`;
@@ -876,12 +915,12 @@ export function validateField(c: Content, f: FieldDef, errors: string[]): void {
       }
       if (!(c.width >= 1.2 && c.width <= 6) || !(c.faceDist >= 0.6 && c.faceDist <= 2.5)) errors.push(`${wc}: width（1.2〜6m）か faceDist（0.6〜2.5m）が範囲の外`);
       const fx = Math.sin(c.yaw), fz = Math.cos(c.yaw);
-      const base = groundAt(a.platforms ?? [], c.x, c.z);
+      const base = groundAt(a.platforms ?? [], c.x, c.z, a.relief);
       const faceX = c.x + fx * c.faceDist, faceZ = c.z + fz * c.faceDist;
       if (!inside(a, c.x, c.z, 1.5)) errors.push(`${wc}: 登り口が外周に近すぎる（1.5m より内側に）`);
       if (!(c.top - base >= 1.5 && c.top - base <= 8)) errors.push(`${wc}: 登る高さ ${c.top - base}m が 1.5〜8m の外`);
       if (Math.abs(groundAt(a.platforms ?? [], faceX + fx * 0.2, faceZ + fz * 0.2) - c.top) > 1e-6) errors.push(`${wc}: 壁の面の先が、高さ top の段ではない`);
-      if (groundAt(a.platforms ?? [], faceX - fx * 0.2, faceZ - fz * 0.2) > c.top - a.stepUp - 1e-6) errors.push(`${wc}: 壁の面の手前が、歩いて上がれる高さ（壁になっていない）`);
+      if (groundAt(a.platforms ?? [], faceX - fx * 0.2, faceZ - fz * 0.2, a.relief) > c.top - a.stepUp - 1e-6) errors.push(`${wc}: 壁の面の手前が、歩いて上がれる高さ（壁になっていない）`);
       if (Math.abs(groundAt(a.platforms ?? [], c.exit.x, c.exit.z) - c.top) > 1e-6 || !inside(a, c.exit.x, c.exit.z, 0.5)) errors.push(`${wc}: 登り切って立つ所が、上の段の上ではない`);
       const back = (c.exit.x - faceX) * fx + (c.exit.z - faceZ) * fz;
       if (!(back >= 0.8 && back <= 3)) errors.push(`${wc}: 登り切って立つ所が、壁の面から 0.8〜3m 内側ではない`);

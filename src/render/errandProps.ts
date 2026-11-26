@@ -75,7 +75,8 @@ export interface ErrandProps {
 }
 
 /** 採取点と納品箱を作る（1 つの依頼で 1 度）。 */
-export function buildErrandProps(def: GatherDef): ErrandProps {
+/** ground は、その場所の地面の高さ（v0.46.0 の起伏。simulation の World.groundHeight を渡す） */
+export function buildErrandProps(def: GatherDef, ground: (x: number, z: number) => number = () => 0): ErrandProps {
   const group = new Group();
   group.name = 'errand';
   const herb = PROP_ART.herb, ore = PROP_ART.ore;
@@ -104,7 +105,7 @@ export function buildErrandProps(def: GatherDef): ErrandProps {
   const depotMarkerMat = new MeshBasicMaterial({ color: 0x9fe08a });
   const nodes: PropNode[] = def.nodes.map((n) => {
     const root = new Group();
-    root.position.set(n.x, 0, n.z);
+    root.position.set(n.x, ground(n.x, n.z), n.z);
     const sprite = new Mesh(geo[n.kind], mats[n.kind]);
     sprite.renderOrder = 2;
     sprite.userData.node = n.id;
@@ -120,7 +121,7 @@ export function buildErrandProps(def: GatherDef): ErrandProps {
   // 納品箱: 木の箱（蓋の色を変える）と、立てた竿の布（遠くからも見える）
   const d = def.depot;
   const depotRoot = new Group();
-  depotRoot.position.set(d.x, 0, d.z);
+  depotRoot.position.set(d.x, ground(d.x, d.z), d.z);
   depotRoot.rotation.y = 0.35;
   const wood = new MeshLambertMaterial({ color: 0x8a6a44 });
   const woodDark = new MeshLambertMaterial({ color: 0x5f4a30 });

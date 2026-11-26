@@ -322,6 +322,79 @@ for aid, a in areas.items():
         a['climbs'] = [dict(id=f'{aid}_climb_01', x=r1(bx), z=r1(bz), yaw=round(math.atan2(-nx_, -nz_), 4), width=2.4, faceDist=1.2, top=shelf['h'],
                             exit=dict(x=r1(fx_ - nx_ * 1.6), z=r1(fz_ - nz_ * 1.6)))]
 
+# ---- 高低差（v0.46.0。#19 の F02 の一切れ。ChatGPT の field_blueprints の height_band_m）----
+# 設計の高さの帯は「エリアの中の地形の幅」（ポータルをまたいで続く座標ではない）。各エリアの床は 0 のまま、外周に近いほど上がる「盆」の形にする。
+# 出口・着く所・中心（戦う床）・段と登り口のまわりは平ら（0）に残し、ほかは、ゆるい起伏で上がる。坂は 28° まで（歩いて上がれる）。
+# エリア 3 は、これまでの狩場のまま平ら（設計も 0〜0.6m）。値は m、データは cm の整数の格子（2m おき）
+RELIEF_BAND = {'camp': 1.0, 'a1': 3.0, 'a2': 2.0, 'a4': 3.0, 'a5': 3.0, 'a6': 3.0, 'a7': 3.0, 'a8': 4.0, 'a9': 3.0, 'a10': 2.0}
+RELIEF_STEP = 2.0
+RELIEF_SLOPE = math.tan(math.radians(28))
+
+def sstep(e0, e1, x):
+    t = np.clip((x - e0) / (e1 - e0), 0, 1)
+    return t * t * (3 - 2 * t)
+
+def relief_of(aid, a):
+    band = RELIEF_BAND.get(aid)
+    if not band: return None
+    poly = shapes[aid][0]; b = a['bounds']
+    x0, z0 = math.floor(b['minX'] - 4), math.floor(b['minZ'] - 4)
+    nx = int(math.ceil((b['maxX'] + 4 - x0) / RELIEF_STEP)) + 1
+    nz = int(math.ceil((b['maxZ'] + 4 - z0) / RELIEF_STEP)) + 1
+    xs, zs = x0 + np.arange(nx) * RELIEF_STEP, z0 + np.arange(nz) * RELIEF_STEP
+    X, Z = np.meshgrid(xs, zs)
+    wd = np.array([[wall_dist(poly, float(x), float(z)) for x in xs] for z in zs])
+    F = float(np.clip(0.8 * wd.max(), 5, 20))
+    rise = min(band, 0.3 * F)
+    base = rise * (1 - sstep(0, F, np.maximum(wd, 0)))
+    # ゆるい起伏（エリアごとに決まった位相。40m ほどの波）: 外周の高さを、場所によって 55〜100% に
+    rnd = random.Random(7000 + a['no'])
+    p1, p2, p3 = rnd.random() * 6.3, rnd.random() * 6.3, rnd.random() * 6.3
+    n = 0.5 + 0.25 * np.sin(X / 23 + p1) * np.cos(Z / 29 + p2) + 0.25 * np.sin((X + Z) / 37 + p3)
+    h = base * (0.55 + 0.45 * np.clip(n, 0, 1))
+    # 平らに残す所: 出口・着く所・中心・段と登り口（r0 の内は 0、r1 で元の高さ）
+    mask = np.ones_like(h)
+    def flat_pt(px, pz, r0, r1):
+        nonlocal mask
+        mask = mask * sstep(r0, r1, np.hypot(X - px, Z - pz))
+    for e in a['exits']: flat_pt(e['x'], e['z'], 6, 14)
+    for other in areas.values():
+        for e in other['exits']:
+            if e['to'] != aid: continue
+            flat_pt(e['arrive']['x'], e['arrive']['z'], 4, 10)
+            if 'arriveLarge' in e: flat_pt(e['arriveLarge']['x'], e['arriveLarge']['z'], 5, 11)
+    flat_pt(a['center']['x'], a['center']['z'], 8, 16)
+    for q in a['platforms']:
+        dx = np.maximum(np.maximum(q['minX'] - X, X - q['maxX']), 0); dz = np.maximum(np.maximum(q['minZ'] - Z, Z - q['maxZ']), 0)
+        mask = mask * sstep(2.5, 8, np.hypot(dx, dz))
+    for c in a.get('climbs', []): flat_pt(c['x'], c['z'], 3, 8)
+    if aid == 'camp': flat_pt(ccx_ - 9, ccz_ + 4, 5, 10)
+    # 大型が戦う床（設計の combat_core: 中心 uv [0.5, 0.52]、半径 uv [0.29, 0.28]、坂 6° まで）は平ら
+    if a['large']:
+        ucx, ucz = b['minX'] + 0.5 * (b['maxX'] - b['minX']), b['minZ'] + 0.52 * (b['maxZ'] - b['minZ'])
+        rx, rz = 0.29 * (b['maxX'] - b['minX']), 0.28 * (b['maxZ'] - b['minZ'])
+        mask = mask * sstep(1.0, 1.35, np.hypot((X - ucx) / rx, (Z - ucz) / rz))
+    h = h * mask
+    # 坂を 28° までに抑える（低い所から測って、それより高い所を削る）
+    pad = lambda m_: np.pad(m_, 1, mode='edge')
+    for _ in range(400):
+        P = pad(h)
+        lim = h.copy()
+        for di in (-1, 0, 1):
+            for dj in (-1, 0, 1):
+                if di == 0 and dj == 0: continue
+                nb = P[1 + dj:1 + dj + nz, 1 + di:1 + di + nx]
+                lim = np.minimum(lim, nb + RELIEF_SLOPE * RELIEF_STEP * math.hypot(di, dj))
+        if np.allclose(lim, h): break
+        h = lim
+    hc = np.round(h * 100).astype(int)
+    return dict(x0=x0, z0=z0, step=RELIEF_STEP, nx=nx, nz=nz, h=[int(v) for v in hc.ravel()])
+
+ccx_, ccz_ = center('camp')
+for aid, a in areas.items():
+    r = relief_of(aid, a)
+    if r: a['relief'] = r
+
 ccx, ccz = center('camp')
 field = dict(
     schemaVersion=1, id='field.basin', name='風礫盆地',
@@ -353,9 +426,10 @@ out.append('  "herds": [\n    ' + ',\n    '.join(dump(h) for h in field['herds']
 out.append('  "areas": [')
 for i, a in enumerate(field['areas']):
     out.append('    {')
-    keys = [k for k in a if k not in ('rocks', 'platforms', 'exits', 'shape', 'nav')]
+    keys = [k for k in a if k not in ('rocks', 'platforms', 'exits', 'shape', 'nav', 'relief')]
     out.append('      ' + ', '.join(f'{json.dumps(k)}: {dump(a[k])}' for k in keys) + ',')
     out.append(f'      "nav": {dump(a["nav"])},')
+    if 'relief' in a: out.append(f'      "relief": {dump(a["relief"])},')
     out.append(f'      "shape": {dump(a["shape"])},')
     for k in ('exits', 'rocks', 'platforms'):
         out.append(f'      {json.dumps(k)}: [' + ('\n        ' + ',\n        '.join(dump(x) for x in a[k]) + '\n      ' if a[k] else '') + ']' + (',' if k != 'platforms' else ''))

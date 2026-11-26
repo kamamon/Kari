@@ -7,6 +7,7 @@ import { clamp, type V3 } from '../core/math';
 import type { SeededRng } from '../core/seededRng';
 import type { ClimbDef, MapDef, PlatformLook } from '../data/schemas';
 import { AreaShape, NavGraph, type Pt } from './areaShape';
+import { reliefAt, type ReliefDef } from './relief';
 
 export interface Circle {
   x: number;
@@ -33,6 +34,8 @@ export interface AreaGeom {
   center?: { x: number; z: number };
   /** 登攀（v0.44.0。狩人だけ）。無ければ登れる所は無い */
   climbs?: readonly ClimbDef[];
+  /** 地面の起伏（v0.46.0）。無ければ平ら */
+  relief?: ReliefDef;
 }
 
 /** 段のある区画（stepDown）で、体の半径の先に空ける余り（m）。柵は縁の上（縁から 0.07m）に立つので、それより広く */
@@ -48,15 +51,15 @@ export interface AreaGeo {
 }
 
 /**
- * 段差の並びから、その場所の地面の高さ: 重なる段差のうち最も高いもの。どれにも重ならなければ 0。
+ * 段差の並びから、その場所の地面の高さ: 重なる段差のうち最も高いもの。どれにも重ならなければ、地面の起伏（v0.46.0。無ければ 0）。
  * v0.31.0 から、段差は 0 より低くてもよい（里の下の段と階段）。描画の側も、同じ計算で床の高さを決める。
  */
-export function groundAt(platforms: readonly { minX: number; maxX: number; minZ: number; maxZ: number; h: number }[], x: number, z: number): number {
+export function groundAt(platforms: readonly { minX: number; maxX: number; minZ: number; maxZ: number; h: number }[], x: number, z: number, relief?: ReliefDef | null): number {
   let h = -Infinity;
   for (const p of platforms) {
     if (x >= p.minX && x <= p.maxX && z >= p.minZ && z <= p.maxZ && p.h > h) h = p.h;
   }
-  return h === -Infinity ? 0 : h;
+  return h === -Infinity ? reliefAt(relief, x, z) : h;
 }
 
 export class World {
@@ -157,7 +160,7 @@ export class World {
     const b = area.bounds;
     for (let i = 0; i < 20; i++) {
       const x = b.minX + rng.next() * (b.maxX - b.minX), z = b.minZ + rng.next() * (b.maxZ - b.minZ);
-      if (this.inArea(area, x, z, inset) && groundAt(area.platforms, x, z) <= area.stepUp) return { x, z };
+      if (this.inArea(area, x, z, inset) && groundAt(area.platforms, x, z) - reliefAt(area.relief, x, z) <= area.stepUp) return { x, z };
     }
     return this.centerOf(area);
   }
@@ -180,9 +183,10 @@ export class World {
     return best;
   }
 
-  /** その場所の地面の高さ（groundAt） */
+  /** その場所の地面の高さ（groundAt。v0.46.0 から地面の起伏も） */
   groundHeight(x: number, z: number): number {
-    return groundAt(this.areaAt(x, z).platforms, x, z);
+    const a = this.areaAt(x, z);
+    return groundAt(a.platforms, x, z, a.relief);
   }
 
   /**
@@ -213,7 +217,12 @@ export class World {
     const area = this.areaAt(pos.x, pos.z);
     const g = this.geo(area);
     const b = area.bounds;
-    const grounded = area.stepDown !== undefined && Math.abs(pos.y - this.groundHeight(pos.x, pos.z)) < 1e-6;
+    // 地面より下に置かれていたら（高さを 0 のまま置いた時など。v0.46.0 の起伏）、まず地面へ上げる
+    const here = this.groundHeight(pos.x, pos.z);
+    if (pos.y < here) pos.y = here;
+    // 足が床に着いたまま歩いて下りる高さ: 里は stepDown、狩場（v0.46.0。起伏の下り坂）は stepUp まで。それより深い所へは落ちる
+    const snapDown = area.stepDown ?? area.stepUp;
+    const grounded = Math.abs(pos.y - here) < 1e-6;
     // 外周の中へ: 四角なら軸ごとに、自然な形なら、縁のいちばん近い点から内側へ
     const keepIn = (x: number, z: number): [number, number] =>
       g ? g.shape.constrain(x, z, radius) : [clamp(x, b.minX + radius, b.maxX - radius), clamp(z, b.minZ + radius, b.maxZ - radius)];
@@ -236,7 +245,7 @@ export class World {
     pos.z = nz;
     const h = this.groundHeight(nx, nz);
     if (h > pos.y) pos.y = h;
-    else if (grounded && pos.y - h <= area.stepDown! + 1e-6) pos.y = h;
+    else if (grounded && pos.y - h <= snapDown + 1e-6) pos.y = h;
   }
 
   /**

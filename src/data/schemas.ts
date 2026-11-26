@@ -3,6 +3,8 @@ import type { StoryDef } from './story';
 // データ定義の型。public/data/*.json はすべてこの形で書き、読み込み時に validators.ts で検証する。
 // 「恒久ID」と「表示名」を分ける。名前を変えても id は変えない。
 
+import type { ReliefDef } from '../game/relief';
+export type { ReliefDef };
 export const SCHEMA_VERSION = 1;
 
 export type Triple = [number, number, number];
@@ -710,6 +712,8 @@ export interface FieldAreaDef {
   exits: FieldExit[];
   /** 登攀（v0.44.0）。無ければ登れる所は無い */
   climbs?: ClimbDef[];
+  /** 地面の起伏（v0.46.0。src/game/relief.ts。field:gen の出力）。無ければ平ら（0） */
+  relief?: ReliefDef;
 }
 
 /** 大型の移動と休息の決まり（src/game/roam.ts）。 */

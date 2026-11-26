@@ -270,7 +270,7 @@ export class GameView {
     } else this.arena = buildArena(this.scene, sim.world.map, settings.shadows);
     this.scene.add(this.hunter.root, this.playerShadow);
     if (sim.errand) {
-      this.errandProps = buildErrandProps(sim.errand.def);
+      this.errandProps = buildErrandProps(sim.errand.def, (x, z) => sim.world.groundHeight(x, z));
       this.scene.add(this.errandProps.group);
     }
     const m = sim.main ?? sim.monsters[0];
@@ -308,7 +308,7 @@ export class GameView {
     let g = this.areaGroups.get(area.id);
     if (!g) {
       g = buildAreaGroup({
-        bounds: area.bounds, shape: area.shape, rocks: area.rocks, platforms: area.platforms, kind: area.kind, seed: 9001 + area.no * 131, climbs: area.climbs,
+        bounds: area.bounds, shape: area.shape, rocks: area.rocks, platforms: area.platforms, kind: area.kind, seed: 9001 + area.no * 131, climbs: area.climbs, relief: area.relief,
         camp: area.kind === 'camp' ? field.camp : null,
         gates: area.exits.map((e) => ({ x: e.x, z: e.z, marker: true })),
       });
@@ -395,6 +395,8 @@ export class GameView {
   }
 
   handleEvents(events: readonly SimEvent[], sim: Simulation): void {
+    /** その場所の地面の高さ（v0.46.0 の起伏。足元の砂ぼこり・輪を地面に合わせる） */
+    const gy = (x: number, z: number): number => sim.world.groundHeight(x, z);
     const byId = (id: string): MonsterState | undefined => sim.monsters.find((x) => x.id === id);
     for (const e of events) {
       // その出来事の主のモンスター（無ければ 1 体の標的）
@@ -409,8 +411,8 @@ export class GameView {
             const tr = this.content.tracks.get(m.action.def.weaponTrack)!;
             const seg = trackSegment(tr, m.action.tick);
             const tip = toWorld(seg.b, m.pos, m.yaw);
-            this.rings.spawn(tip.x, 0, tip.z, 2.6, 0.5, 0xe9e2c8);
-            this.dust.emit(22, { x: tip.x, y: 0.2, z: tip.z }, 3.6, 1.2, 0.9, [0.62, 0.62, 0.55], 0.5);
+            this.rings.spawn(tip.x, gy(tip.x, tip.z), tip.z, 2.6, 0.5, 0xe9e2c8);
+            this.dust.emit(22, { x: tip.x, y: gy(tip.x, tip.z) + 0.2, z: tip.z }, 3.6, 1.2, 0.9, [0.62, 0.62, 0.55], 0.5);
             this.cam.addShake(0.55);
           }
           break;
@@ -446,13 +448,13 @@ export class GameView {
           break;
         case 'part_sever':
           rig?.placeSevered?.(e.pos.x, e.pos.y, e.pos.z, e.yaw);
-          this.sparks.emit(36, { x: e.pos.x, y: 0.9, z: e.pos.z }, 6, 3, 0.7, [1, 0.8, 0.45]);
-          this.dust.emit(12, { x: e.pos.x, y: 0.4, z: e.pos.z }, 2.4, 1.2, 0.9, [0.55, 0.52, 0.48]);
+          this.sparks.emit(36, { x: e.pos.x, y: gy(e.pos.x, e.pos.z) + 0.9, z: e.pos.z }, 6, 3, 0.7, [1, 0.8, 0.45]);
+          this.dust.emit(12, { x: e.pos.x, y: gy(e.pos.x, e.pos.z) + 0.4, z: e.pos.z }, 2.4, 1.2, 0.9, [0.55, 0.52, 0.48]);
           this.cam.addShake(0.55);
           break;
         case 'monster_stagger':
           if (m && e.kind === 'topple') {
-            this.dust.emit(24, { x: m.pos.x, y: 0.4, z: m.pos.z }, 3.4, 1, 1.0, [0.6, 0.6, 0.54], 0.5);
+            this.dust.emit(24, { x: m.pos.x, y: gy(m.pos.x, m.pos.z) + 0.4, z: m.pos.z }, 3.4, 1, 1.0, [0.6, 0.6, 0.54], 0.5);
             this.cam.addShake(0.45);
           }
           break;
@@ -473,9 +475,9 @@ export class GameView {
         case 'hazard_impact': {
           const look = sim.hazards.find((h) => h.id === e.id)?.look ?? 'rock';
           const hc = HAZARD_COLORS[look];
-          this.rings.spawn(e.x, 0, e.z, e.radius * 1.5, 0.45, hc.ring === 0xff7a3a ? 0xe9e2c8 : hc.ring);
-          this.dust.emit(look === 'mist' || look === 'poison' || look === 'para' ? 26 : 14, { x: e.x, y: 0.3, z: e.z }, look === 'mist' ? 4.5 : 3, 1.4, look === 'poison' || look === 'para' ? 1.6 : 0.9, hc.dust, 0.6);
-          this.sparks.emit(look === 'spark' ? 26 : 8, { x: e.x, y: 0.4, z: e.z }, look === 'spark' ? 6 : 4, 2.5, 0.4, hc.spark);
+          this.rings.spawn(e.x, gy(e.x, e.z), e.z, e.radius * 1.5, 0.45, hc.ring === 0xff7a3a ? 0xe9e2c8 : hc.ring);
+          this.dust.emit(look === 'mist' || look === 'poison' || look === 'para' ? 26 : 14, { x: e.x, y: gy(e.x, e.z) + 0.3, z: e.z }, look === 'mist' ? 4.5 : 3, 1.4, look === 'poison' || look === 'para' ? 1.6 : 0.9, hc.dust, 0.6);
+          this.sparks.emit(look === 'spark' ? 26 : 8, { x: e.x, y: gy(e.x, e.z) + 0.4, z: e.z }, look === 'spark' ? 6 : 4, 2.5, 0.4, hc.spark);
           this.cam.addShake(look === 'rock' ? 0.3 : 0.18);
           break;
         }
@@ -497,17 +499,17 @@ export class GameView {
         case 'monster_respawn':
           if (m) {
             const k = m.herd ? 0.4 : 1;
-            this.dust.emit(Math.round(26 * k), { x: m.pos.x, y: 0.6 * k, z: m.pos.z }, 3.2 * k, 1.2, 1.1, [0.6, 0.62, 0.55], 0.6);
+            this.dust.emit(Math.round(26 * k), { x: m.pos.x, y: gy(m.pos.x, m.pos.z) + 0.6 * k, z: m.pos.z }, 3.2 * k, 1.2, 1.1, [0.6, 0.62, 0.55], 0.6);
           }
           break;
         case 'herd_alarm':
           // 群れが騒いだ: 足元に小さな土ぼこり（逃げ出す時は多め）
-          this.dust.emit(e.flee ? 8 : 3, { x: e.pos.x, y: 0.2, z: e.pos.z }, 1.4, 0.6, 0.6, [0.62, 0.6, 0.54], 0.4);
+          this.dust.emit(e.flee ? 8 : 3, { x: e.pos.x, y: gy(e.pos.x, e.pos.z) + 0.2, z: e.pos.z }, 1.4, 0.6, 0.6, [0.62, 0.6, 0.54], 0.4);
           break;
         // ---- 道具・捕獲・剥ぎ取り（見た目は仮）----
         case 'item_effect':
-          if (e.kind === 'heal') this.sparks.emit(14, { x: e.pos.x, y: 1.1, z: e.pos.z }, 1.2, 2.2, 0.7, [0.55, 0.95, 0.6], 0.5);
-          else if (e.kind === 'trap' && e.ok) this.dust.emit(8, { x: e.pos.x, y: 0.15, z: e.pos.z }, 1.4, 0.6, 0.6, [0.6, 0.6, 0.55], 0.5);
+          if (e.kind === 'heal') this.sparks.emit(14, { x: e.pos.x, y: gy(e.pos.x, e.pos.z) + 1.1, z: e.pos.z }, 1.2, 2.2, 0.7, [0.55, 0.95, 0.6], 0.5);
+          else if (e.kind === 'trap' && e.ok) this.dust.emit(8, { x: e.pos.x, y: gy(e.pos.x, e.pos.z) + 0.15, z: e.pos.z }, 1.4, 0.6, 0.6, [0.6, 0.6, 0.55], 0.5);
           else if (e.kind === 'tranq') this.dust.emit(e.ok ? 22 : 8, e.pos, e.ok ? 2.4 : 1.2, 1.2, 1.2, [0.62, 0.78, 0.92], 0.8);
           // 標識玉（v0.42.0）: 当たると、相手の体に灯の色の粉が散る（見た目は仮）
           else if (e.kind === 'mark') this.sparks.emit(e.ok ? 18 : 6, e.pos, e.ok ? 2.0 : 1.0, 1.4, 0.9, [1, 0.84, 0.45], 0.6);
@@ -517,15 +519,15 @@ export class GameView {
           this.dust.emit(Math.round(6 + e.height * 4), { x: e.pos.x, y: e.pos.y + 0.1, z: e.pos.z }, 1.1 + e.height * 0.25, 0.5, 0.5, [0.6, 0.6, 0.54], 0.45);
           break;
         case 'trap_trigger':
-          this.rings.spawn(e.x, 0, e.z, 2.6, 0.5, 0xfff0a0);
-          this.sparks.emit(24, { x: e.x, y: 0.3, z: e.z }, 5, 3, 0.5, [1, 0.92, 0.6]);
+          this.rings.spawn(e.x, gy(e.x, e.z), e.z, 2.6, 0.5, 0xfff0a0);
+          this.sparks.emit(24, { x: e.x, y: gy(e.x, e.z) + 0.3, z: e.z }, 5, 3, 0.5, [1, 0.92, 0.6]);
           this.cam.addShake(0.25);
           break;
         case 'monster_captured':
-          if (m) this.dust.emit(30, { x: m.pos.x, y: 1.2, z: m.pos.z }, 2.2, 1, 1.6, [0.62, 0.78, 0.92], 0.9);
+          if (m) this.dust.emit(30, { x: m.pos.x, y: gy(m.pos.x, m.pos.z) + 1.2, z: m.pos.z }, 2.2, 1, 1.6, [0.62, 0.78, 0.92], 0.9);
           break;
         case 'carve':
-          this.sparks.emit(6, { x: e.pos.x, y: 0.5, z: e.pos.z }, 1.6, 1.6, 0.4, [0.95, 0.85, 0.6], 0.4);
+          this.sparks.emit(6, { x: e.pos.x, y: gy(e.pos.x, e.pos.z) + 0.5, z: e.pos.z }, 1.6, 1.6, 0.4, [0.95, 0.85, 0.6], 0.4);
           break;
         default:
           break;
@@ -960,7 +962,7 @@ export class GameView {
       } else {
         mat.color.setHex(0xfff0a0);
         mat.opacity = 0.6 + 0.4 * Math.sin(this.time * 31);
-        if (Math.sin(this.time * 17 + t.id) > 0.82) this.sparks.emit(1, { x: t.x + Math.sin(this.time * 9) * t.radius, y: 0.3, z: t.z + Math.cos(this.time * 7) * t.radius }, 2, 2.5, 0.35, [1, 0.92, 0.6]);
+        if (Math.sin(this.time * 17 + t.id) > 0.82) this.sparks.emit(1, { x: t.x + Math.sin(this.time * 9) * t.radius, y: v.group.position.y + 0.3, z: t.z + Math.cos(this.time * 7) * t.radius }, 2, 2.5, 0.35, [1, 0.92, 0.6]);
       }
     }
     for (const [id, v] of this.trapViews) {
@@ -995,11 +997,11 @@ export class GameView {
         const dx = Math.sin(a), dz = Math.cos(a);
         const inward = v.speed < 0;
         const r0 = inward ? R + 2.2 : R * 0.6;
-        const o = { x: m.pos.x + dx * r0, y: v.y ?? 0.8, z: m.pos.z + dz * r0 };
+        const o = { x: m.pos.x + dx * r0, y: m.pos.y + (v.y ?? 0.8), z: m.pos.z + dz * r0 };
         const s = inward ? -1 : 1;
         this.dust.emitDir(v.count, o, { x: dx * s, y: v.dirY ?? 0, z: dz * s }, Math.abs(v.speed), v.spread, v.life, v.color, 0.4);
       }
-      if (v.rings) for (let k = 1; k <= v.rings; k++) this.rings.spawn(m.pos.x, 0, m.pos.z, R + 0.8 + k * 0.9, 0.45 + k * 0.12, v.ringColor ?? 0xe9e2c8);
+      if (v.rings) for (let k = 1; k <= v.rings; k++) this.rings.spawn(m.pos.x, m.pos.y, m.pos.z, R + 0.8 + k * 0.9, 0.45 + k * 0.12, v.ringColor ?? 0xe9e2c8);
       this.cam.addShake(0.12);
       return;
     }
@@ -1066,7 +1068,7 @@ export class GameView {
         v.rock.scale.set(size / h.radius, (v.look === 'ice' ? size * 1.8 : size), size / h.radius);
         v.rock.rotation.set(this.time * 4 + h.id, this.time * 3, 0);
         // 雷: 予告の間、輪の上に小さな火花
-        if (v.look === 'spark' && Math.random() < 0.25) this.sparks.emit(2, { x: h.x + (Math.random() - 0.5) * h.radius, y: 0.15, z: h.z + (Math.random() - 0.5) * h.radius }, 2.5, 1.5, 0.25, [1, 0.95, 0.45]);
+        if (v.look === 'spark' && Math.random() < 0.25) this.sparks.emit(2, { x: h.x + (Math.random() - 0.5) * h.radius, y: v.group.position.y + 0.15, z: h.z + (Math.random() - 0.5) * h.radius }, 2.5, 1.5, 0.25, [1, 0.95, 0.45]);
       }
     }
     for (const [id, v] of this.hazardViews) {

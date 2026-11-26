@@ -1497,6 +1497,64 @@ const startTraining = async (page, tap = false) => {
   await ctx.close();
 }
 
+// ---- 地面の起伏（v0.46.0。#19 の F02）: エリア 6 の外周寄りの坂を上る。描いた地面と当たりの高さが同じ ----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  await page.evaluate(() => window.__vh.startHunt('quest.basin.003'));
+  await until(page, () => window.__vh.sim.tick > 5 && !!window.__vh.sim.field);
+  // エリア 6 の歩ける所でいちばん高い格子の点の 12m 手前（中心の側）に立ち、そちらを向く（標的は止めておく）
+  const goal = await page.evaluate(() => {
+    const v = window.__vh, s = v.sim, p = s.player, a = s.field.areas.find((x) => x.id === 'a6'), r = a.relief;
+    let best = -1;
+    for (let k = 0; k < r.h.length; k++) {
+      const x = r.x0 + (k % r.nx) * r.step, z = r.z0 + Math.floor(k / r.nx) * r.step;
+      if (s.world.inArea(a, x, z, 2.5) && (best < 0 || r.h[k] > r.h[best])) best = k;
+    }
+    const tx = r.x0 + (best % r.nx) * r.step, tz = r.z0 + Math.floor(best / r.nx) * r.step;
+    const d = Math.hypot(tx - a.center.x, tz - a.center.z), ux = (tx - a.center.x) / d, uz = (tz - a.center.z) / d;
+    const sx = tx - ux * 12, sz = tz - uz * 12;
+    p.pos = { x: sx, y: s.world.groundHeight(sx, sz), z: sz };
+    p.prevPos = { ...p.pos };
+    p.yaw = Math.atan2(ux, uz);
+    p.prevYaw = p.yaw;
+    s.areaId = 'a6';
+    for (const m of s.monsters) m.aiEnabled = false;
+    v.view.cam.snap(p.yaw);
+    return { tx, tz, top: r.h[best] / 100, start: p.pos.y };
+  });
+  await until(page, () => window.__vh.view.areaGroups.get('a6')?.visible === true, 30000);
+  // 描いた地面の板の頂点の高さ = simulation の地面の高さ（段の無い所。外周の内）。起伏は 1.5m より高い所がある
+  const mesh = await page.evaluate(() => {
+    const s = window.__vh.sim, a = s.field.areas.find((x) => x.id === 'a6'), b = a.bounds;
+    let maxY = -1, n = 0, worst = 0, cnt = 0;
+    window.__vh.view.areaGroups.get('a6').traverse((o) => {
+      if (!o.userData.ground) return;
+      n++;
+      const pos = o.geometry.getAttribute('position');
+      for (let i = 0; i < pos.count; i++) {
+        const x = pos.getX(i), z = pos.getZ(i), y = pos.getY(i);
+        maxY = Math.max(maxY, y);
+        if (x < b.minX || x > b.maxX || z < b.minZ || z > b.maxZ) continue;
+        if (a.platforms.some((q) => x > q.minX - 0.1 && x < q.maxX + 0.1 && z > q.minZ - 0.1 && z < q.maxZ + 0.1)) continue;
+        worst = Math.max(worst, Math.abs(y - s.world.groundHeight(x, z)));
+        cnt++;
+      }
+    });
+    return { n, maxY, worst, cnt };
+  });
+  // W で坂を上る（3 秒）: 足は地面に付いたまま、高い所へ上がる
+  await page.keyboard.down('KeyW');
+  await page.waitForTimeout(3000);
+  await page.keyboard.up('KeyW');
+  await page.waitForTimeout(300);
+  const up = await page.evaluate(() => { const s = window.__vh.sim, p = s.player; return { y: p.pos.y, g: s.world.groundHeight(p.pos.x, p.pos.z), grounded: p.grounded }; });
+  await page.screenshot({ path: `${OUT}86b_relief.png` });
+  check('地面の起伏（v0.46.0）: エリア 6 の描いた地面の高さは simulation の地面の高さと同じ（頂点ごと）。坂を歩いて上ると、足は地面に付いたまま高い所へ着く', mesh.n === 1 && mesh.cnt > 500 && mesh.worst < 1e-3 && mesh.maxY > 1.5 && goal.top > 1.5 && up.y > goal.start + 0.5 && Math.abs(up.y - up.g) < 1e-6 && up.grounded, JSON.stringify({ goal, mesh, up }));
+  await ctx.close();
+}
+
 // ---- 登攀（v0.44.0。#19 の H07）: エリア 4 の 3m の棚へ、蔦の壁を登る・下りる ----
 {
   const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');

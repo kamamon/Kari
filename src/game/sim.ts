@@ -1226,7 +1226,8 @@ export class Simulation implements SimCtx {
       a.pos = next;
       a.travelled += Math.hypot(a.vel.x, a.vel.y, a.vel.z);
       a.life--;
-      if (a.life > 0 && a.pos.y > -0.5) keep.push(a);
+      // 地面（v0.46.0 から起伏も）の下へ 0.5m 潜ったら消す
+      if (a.life > 0 && a.pos.y > this.world.groundHeight(a.pos.x, a.pos.z) - 0.5) keep.push(a);
     }
     this.projectiles = keep;
   }

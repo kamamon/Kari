@@ -9,6 +9,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { SeededRng } from '../core/seededRng';
 import type { ClimbDef, MapDef, PlatformLook } from '../data/schemas';
 import { buildClimbFaces } from './climbArt';
+import { reliefAt, type ReliefDef } from '../game/relief';
 import { groundAt } from '../game/world';
 import { ENV_SPRITES, ENV_TILES, SpriteField, boxUv, buildBackdrop, tileMaterial, type EnvPlace, type EnvTile } from './envArt';
 import { AreaShape, type Pt } from '../game/areaShape';
@@ -63,6 +64,8 @@ export interface AreaLook {
   wallHeight?: [number, number];
   /** 登攀（v0.44.0）。壁の面に蔦の板を貼る */
   climbs?: readonly ClimbDef[];
+  /** 地面の起伏（v0.46.0）。地面の板・崖の根元・草・岩・門柱を、この高さに合わせる */
+  relief?: ReliefDef;
 }
 
 /** これまでの狩場（エリアが 1 つ）: 空と光を用意して、狩場を描く。 */
@@ -145,17 +148,26 @@ export function buildAreaGroup(map: AreaLook): Group {
   const gw = village ? w + 2 : w + GROUND_MARGIN * 2, gd = village ? d + 2 : d + GROUND_MARGIN * 2;
   /** 外周の内側へ寄せた点 */
   const clampIn = (x: number, z: number): [number, number] => [Math.min(b.maxX - 0.05, Math.max(b.minX + 0.05, x)), Math.min(b.maxZ - 0.05, Math.max(b.minZ + 0.05, z))];
-  /** 外周の崖の根元の高さ（里は、外周のすぐ内の床。狩場は 0） */
-  const baseAt = village ? (x: number, z: number): number => plats.ground(...clampIn(x, z)) : (): number => 0;
+  /** 地面の起伏（v0.46.0。無ければ 0） */
+  const rel = (x: number, z: number): number => reliefAt(map.relief, x, z);
+  /** 外周の崖の根元の高さ（里は、外周のすぐ内の床。狩場は起伏。v0.45.0 までは 0） */
+  const baseAt = village ? (x: number, z: number): number => plats.ground(...clampIn(x, z)) : (x: number, z: number): number => rel(...clampIn(x, z));
   // 0 より低い段差（v0.31.0）があれば、その形の穴を開けた格子にする（無ければ、これまでと同じ板）。里は、どの段差も穴にする
   const sunken = map.platforms.filter((p) => p.h < 0);
   const holes = village ? map.platforms : sunken;
   let groundGeo: BufferGeometry;
   if (holes.length > 0) groundGeo = holedGround(cx, cz, gw, gd, holes, 5, village ? (x, z) => plats.top(...clampIn(x, z)) === null : undefined);
   else {
-    groundGeo = new PlaneGeometry(gw, gd, Math.ceil(gw / 5), Math.ceil(gd / 5));
+    // 起伏のある狩場（v0.46.0）は 2m おきに分けて、起伏の高さへ持ち上げる（外周の外は、縁の高さのまま崖の下へ続く）
+    const seg = map.relief ? 2 : 5;
+    groundGeo = new PlaneGeometry(gw, gd, Math.ceil(gw / seg), Math.ceil(gd / seg));
     groundGeo.rotateX(-Math.PI / 2);
     groundGeo.translate(cx, 0, cz);
+    if (map.relief) {
+      const pos = groundGeo.getAttribute('position');
+      for (let i = 0; i < pos.count; i++) pos.setY(i, rel(pos.getX(i), pos.getZ(i)));
+      groundGeo.computeVertexNormals();
+    }
   }
   {
     const pos = groundGeo.getAttribute('position');
@@ -177,6 +189,7 @@ export function buildAreaGroup(map: AreaLook): Group {
   const ground = new Mesh(groundGeo, tileMaterial(look.ground, 0xffffff, { vertexColors: true, gain: GROUND_GAIN }));
   ground.receiveShadow = true;
   ground.userData.noMerge = true;
+  ground.userData.ground = true;
   group.add(ground);
 
   const rockDark = tileMaterial('rock', 0xd2d6ce, { flat: true, gain: ROCK_GAIN });
@@ -191,7 +204,14 @@ export function buildAreaGroup(map: AreaLook): Group {
   // 岩（円柱として衝突する）。v0.22.0: 依頼 10 の岩の図から作った形（src/render/rockArt.ts）。当たりの半径に合わせて、
   // 根元のいちばん外が半径の ROCK_REACH 倍に来るように伸ばす。地面に埋まった、低くどっしりした岩。エリアの岩は 1 つの形にまとめる（描画 1 回）
   const placed: RockPlacement[] = [];
-  for (const r of map.drawRocks === false ? [] : map.rocks) placed.push(placeBigRock(rng, r, ROCK_REACH));
+  // 起伏の上の岩（v0.46.0）は、根元のいちばん低い所の高さに置く（坂の下の側が浮かない。上の側は埋まる）
+  const rockBase = (r: { x: number; z: number; r: number }): number => {
+    if (!map.relief) return 0;
+    let lo = rel(r.x, r.z);
+    for (let k = 0; k < 8; k++) lo = Math.min(lo, rel(r.x + Math.cos((k * Math.PI) / 4) * r.r, r.z + Math.sin((k * Math.PI) / 4) * r.r));
+    return lo;
+  };
+  for (const r of map.drawRocks === false ? [] : map.rocks) placed.push({ ...placeBigRock(rng, r, ROCK_REACH), y: rockBase(r) });
   if (placed.length) {
     const rocks = new Mesh(mergeRocks(placed), rockArtMaterial());
     rocks.castShadow = true;
@@ -221,7 +241,7 @@ export function buildAreaGroup(map: AreaLook): Group {
   const low = wallH[0] < 3.6;
   const cliff = artCliffGeometry({
     path: wallPath(b, outline?.points() ?? null, 0.5, 0.5), gates, vk: low ? wallH[0] / 3.0 : Math.min(1.25, Math.max(0.85, wallH[0] / 4.6)),
-    low, nest: map.kind === 'nest', moss, baseAt: village ? baseAt : undefined,
+    low, nest: map.kind === 'nest', moss, baseAt: village || map.relief ? baseAt : undefined,
   }, rng);
   const face = new Mesh(cliff.face, cliffArtMaterial());
   face.castShadow = true;
@@ -250,11 +270,21 @@ export function buildAreaGroup(map: AreaLook): Group {
     const [ox, oz] = outward(g);
     // 踏み跡: 出口から内へ、外向きに沿った細長い帯
     const gy = baseAt(g.x, g.z);
-    const path = new Mesh(new PlaneGeometry(5.4, 16), trail);
+    const path = new Mesh(new PlaneGeometry(5.4, 16, 3, 8), trail);
     path.rotation.x = -Math.PI / 2;
     path.rotation.z = Math.atan2(ox, oz) + Math.PI;
     path.position.set(g.x - ox * 3, gy + 0.015, g.z - oz * 3);
     path.receiveShadow = true;
+    // 起伏に沿わせる（v0.46.0）: 板の面の向き（ローカルの z）が、世界の上
+    if (map.relief) {
+      path.updateMatrix();
+      const pp = path.geometry.getAttribute('position');
+      const v = new Vector3();
+      for (let i = 0; i < pp.count; i++) {
+        v.set(pp.getX(i), pp.getY(i), 0).applyMatrix4(path.matrix);
+        pp.setZ(i, rel(v.x, v.z) - gy);
+      }
+    }
     boxUv(path, ENV_TILES.gravel.tile);
     group.add(path);
     for (const s of [-1, 1]) {
@@ -291,7 +321,7 @@ export function buildAreaGroup(map: AreaLook): Group {
       if (gates.some((g) => Math.hypot(g.x - x, g.z - z) < 7)) continue;
       const h = 1.4 + rng.next() * 3.2;
       const c = new Mesh(new ConeGeometry(0.28 + rng.next() * 0.3, h, 5), crystal);
-      c.position.set(x, h / 2 - 0.1, z);
+      c.position.set(x, rel(x, z) + h / 2 - 0.1, z);
       c.rotation.set((rng.next() - 0.5) * 0.5, rng.next() * 6, (rng.next() - 0.5) * 0.5);
       group.add(c);
     }
@@ -331,7 +361,7 @@ export function buildAreaGroup(map: AreaLook): Group {
       const z = b.minZ + 0.4 + rng.next() * (d - 0.8);
       if (blocked(x, z)) continue;
       if (clump > 0 && rng.next() > 1 - clump + clump * Math.min(1, noise(x, z) * 1.7)) continue;
-      return { x, z, y: village ? groundAt(map.platforms, x, z) : 0 };
+      return { x, z, y: village ? groundAt(map.platforms, x, z) : rel(x, z) };
     }
     return null;
   };
