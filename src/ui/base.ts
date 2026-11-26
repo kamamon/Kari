@@ -21,6 +21,7 @@ import { receptionGroups, questActivity, QUEST_ACTIVITY_LABELS, questIconStrip, 
 import { DRAFT_KIND_NAMES, changedKinds, describeKind, draftOf, editableAppearance, emptyDraft } from '../data/appearance';
 import { computeGear } from '../game/gear';
 import { armorStat, gearSummary, weaponShortName, weaponStat } from './gearText';
+
 import { HubLifePanel, type HubLifeHost } from './hubLife';
 import { lifeOf, prepText, type HubTab } from '../data/hubLife';
 
@@ -29,7 +30,6 @@ function lifePreviewLink(id:string):HTMLAnchorElement{
  q.set(id.startsWith('armor.')?'previewArmor':'previewWeapon',id);
  a.href=assetUrl('viewer.html')+'?'+q.toString();a.target='_blank';a.rel='noopener';return a;
 }
-
 export interface BaseHost extends HubLifeHost {
   startTraining(): void;
   startHunt(questId: string): void;
@@ -91,11 +91,33 @@ export function artCaption(state: string, cls: string, adopted: boolean): string
   return head + (cls === 'juvenile' ? 'ゲームの中の体は、まだ親の原画から作った仮の形です。' : 'ゲームの中の体は、この絵から作った仮の形です。');
 }
 
-interface ReceptionViewState {
-  stars: number | null;
+interface ReceptionBookmark {
   selected: string | null;
   listScroll: number;
   detailScroll: number;
+}
+
+interface ReceptionViewState extends ReceptionBookmark {
+  stage: 'stars' | 'list';
+  stars: number | null;
+  history: Map<number | null, ReceptionBookmark>;
+}
+
+function newReceptionView(stars: number | null): ReceptionViewState {
+  return { stage: 'stars', stars, selected: null, listScroll: 0, detailScroll: 0, history: new Map() };
+}
+
+/** 星を替える時は、元の星の選択とスクロールを覚えておく。 */
+function selectReceptionStar(state: ReceptionViewState, stars: number | null): void {
+  if (state.stars !== stars) {
+    state.history.set(state.stars, { selected: state.selected, listScroll: state.listScroll, detailScroll: state.detailScroll });
+    const previous = state.history.get(stars);
+    state.stars = stars;
+    state.selected = previous?.selected ?? null;
+    state.listScroll = previous?.listScroll ?? 0;
+    state.detailScroll = previous?.detailScroll ?? 0;
+  }
+  state.stage = 'list';
 }
 
 export class BaseScreen {
@@ -105,7 +127,11 @@ export class BaseScreen {
   facilityId: string | null = null;
   private receptionStates = new Map<string, ReceptionViewState>();
   private questScroller: HTMLElement | null = null;
-  private questScrollContext: { key: string; detail: boolean } | null = null;
+  private questScrollContext: { key: string } | null = null;
+  private questDetailScroller: HTMLElement | null = null;
+  private huntConfirmId: string | null = null;
+  private receptionPadActive = false;
+  private receptionPadPrevious = 0;
   private receptionNotice = '';
   private storyFold: HTMLDetailsElement;
   private questExtras: HTMLElement;
@@ -277,6 +303,23 @@ export class BaseScreen {
     root.appendChild(card);
     parent.appendChild(root);
     this.root = root;
+    // 戦闘用の矢印・Escより先に、受付の階層と行を操作する。
+    root.addEventListener('keydown', (e) => {
+      if (this.section !== 'quest' || !this.receptionRank() || !this.open || this.busy) return;
+      const inQuests = this.questBox.contains(document.activeElement);
+      if (e.key === 'Escape' || e.key === 'Backspace') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!e.repeat) this.backReception();
+      } else if (inQuests && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+        if (this.huntConfirmId !== null || this.confirming !== null) return;
+        const focused = document.activeElement;
+        if (focused instanceof HTMLElement && focused.closest('.reception-classic-detail')) return;
+        e.preventDefault();
+        e.stopPropagation();
+        this.moveReceptionSelection(e.key === 'ArrowDown' ? 1 : -1);
+      }
+    });
     host.save.onChange(() => {
       if (this.open) this.refresh();
     });
@@ -291,9 +334,15 @@ export class BaseScreen {
   setOpen(open: boolean, section: BaseSection = 'all', facilityId?: string): void {
     this.rememberReceptionScroll();
     this.questScroller = null;
+    this.questDetailScroller = null;
     this.questScrollContext = null;
+    const wasHidden = this.root.hidden;
     this.root.hidden = !open;
-    if (!open) return;
+    if (!open) {
+      this.huntConfirmId = null;
+      this.confirming = null;
+      return;
+    }
     const f = facilityId
       ? this.content.hub.facilities.find((x) => x.id === facilityId && x.kind === section)
       : section === 'quest' ? undefined : this.content.hub.facilities.find((x) => x.kind === section);
@@ -310,14 +359,21 @@ export class BaseScreen {
     this.closeBtn.textContent = this.host.hubWalk ? '里へ戻る' : '拠点の一覧へ';
     if (section === 'workshop') this.forge.open = true;
     if (section === 'shop') this.shop.open = true;
-    if (fresh) {
+    if (fresh || wasHidden) {
       this.say('');
       this.receptionNotice = '';
       this.confirming = null;
+      this.huntConfirmId = null;
       this.storyFold.open = false;
       this.bestiary.open = false;
+      // 受付へ入り直す時は星の選択から。前回の星・行の記憶は残す。
+      const previous = this.facilityId ? this.receptionStates.get(this.facilityId) : undefined;
+      if (section === 'quest' && previous) previous.stage = 'stars';
     }
     this.refresh();
+    if ((fresh || wasHidden) && section === 'quest' && this.receptionRank()) {
+      this.questBox.querySelector<HTMLButtonElement>('.reception-star[aria-pressed="true"], .reception-star')?.focus({ preventScroll: true });
+    }
   }
 
   showLife(tab:HubTab):void { this.setOpen(true,'life');this.lifePanel.open(tab); }
@@ -645,16 +701,104 @@ export class BaseScreen {
   }
 
   private rememberReceptionScroll(): void {
-    if (!this.questScroller || !this.questScrollContext || this.questScroller.getClientRects().length === 0) return;
+    if (!this.questScrollContext) return;
     const state = this.receptionStates.get(this.questScrollContext.key);
-    if (state) state[this.questScrollContext.detail ? 'detailScroll' : 'listScroll'] = this.questScroller.scrollTop;
+    if (!state) return;
+    if (this.questScroller && this.questScroller.getClientRects().length) state.listScroll = this.questScroller.scrollTop;
+    if (this.questDetailScroller && this.questDetailScroller.getClientRects().length) state.detailScroll = this.questDetailScroller.scrollTop;
   }
 
-  /** 物語・図鑑を閉じて一覧が見える時だけ、保存していた位置へ戻す。 */
+  /** 図鑑を閉じた時も、見えないペインから 0 を読まず、両方の位置を戻す。 */
   private restoreReceptionScroll(): void {
-    if (!this.questScroller || !this.questScrollContext || this.questScroller.getClientRects().length === 0) return;
+    if (!this.questScrollContext) return;
     const state = this.receptionStates.get(this.questScrollContext.key);
-    if (state) this.questScroller.scrollTop = state[this.questScrollContext.detail ? 'detailScroll' : 'listScroll'];
+    if (!state) return;
+    if (this.questScroller && this.questScroller.getClientRects().length) this.questScroller.scrollTop = state.listScroll;
+    if (this.questDetailScroller && this.questDetailScroller.getClientRects().length) this.questDetailScroller.scrollTop = state.detailScroll;
+  }
+
+  private receptionView(): ReceptionViewState | undefined {
+    return this.facilityId ? this.receptionStates.get(this.facilityId) : undefined;
+  }
+
+  private backReception(): void {
+    if (this.busy) return;
+    if (this.storyFold.open || this.bestiary.open) {
+      this.storyFold.open = false;
+      this.bestiary.open = false;
+      this.restoreReceptionScroll();
+      return;
+    }
+    if (this.huntConfirmId !== null || this.confirming !== null) {
+      const state = this.receptionView();
+      const hunt = this.huntConfirmId;
+      this.huntConfirmId = null;
+      this.confirming = null;
+      this.renderQuests(hunt ? 'depart-' + hunt : 'delivery-open');
+      return;
+    }
+    const state = this.receptionView();
+    if (state?.stage === 'list') {
+      this.rememberReceptionScroll();
+      state.stage = 'stars';
+      this.renderQuests('star-' + state.stars, false);
+    } else if (this.host.hubWalk) {
+      this.host.closeFacility();
+    } else {
+      this.setOpen(true, 'all');
+    }
+  }
+
+  private moveReceptionSelection(delta: number): void {
+    if (this.storyFold.open || this.bestiary.open || this.busy || this.huntConfirmId !== null || this.confirming !== null) return;
+    const state = this.receptionView();
+    if (!state) return;
+    const selector = state.stage === 'stars' ? '.reception-star' : '.reception-row';
+    const buttons = [...this.questBox.querySelectorAll<HTMLButtonElement>(selector)];
+    if (!buttons.length) return;
+    const selected = buttons.findIndex((b) => b === document.activeElement);
+    const marked = buttons.findIndex((b) => b.getAttribute('aria-pressed') === 'true');
+    const index = selected >= 0 ? selected : marked;
+    const next = buttons[Math.max(0, Math.min(buttons.length - 1, index < 0 ? 0 : index + delta))]!;
+    if (state.stage === 'list') {
+      next.click(); // 依頼書を更新するだけ。出発は別の操作。
+    } else {
+      next.focus({ preventScroll: true });
+      next.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  /** standard mapping のパッドを受付の表示中だけ読む。開いた時の押しっぱなしは無視する。 */
+  updateReceptionPad(active: boolean): void {
+    if (!active || this.section !== 'quest' || !this.receptionRank() || !navigator.getGamepads || this.busy || this.storyFold.open || this.bestiary.open) {
+      this.receptionPadActive = false;
+      this.receptionPadPrevious = 0;
+      return;
+    }
+    const pad = [...navigator.getGamepads()].find((p) => p && p.connected && p.mapping === 'standard');
+    if (!pad) { this.receptionPadActive = false; this.receptionPadPrevious = 0; return; }
+    const mask = ((pad.buttons[12]?.pressed || (pad.axes[1] ?? 0) < -0.55) ? 1 : 0)
+      | ((pad.buttons[13]?.pressed || (pad.axes[1] ?? 0) > 0.55) ? 2 : 0)
+      | ((pad.buttons[0]?.pressed ?? false) ? 4 : 0)
+      | ((pad.buttons[1]?.pressed ?? false) ? 8 : 0);
+    const edge = this.receptionPadActive ? mask & ~this.receptionPadPrevious : 0;
+    this.receptionPadActive = true;
+    this.receptionPadPrevious = mask;
+    if (edge & 8) { this.backReception(); return; }
+    if (edge & 1) this.moveReceptionSelection(-1);
+    else if (edge & 2) this.moveReceptionSelection(1);
+    else if (edge & 4) {
+      const state = this.receptionView();
+      const focused = document.activeElement;
+      let button: HTMLButtonElement | null = null;
+      if (state?.stage === 'stars') {
+        button = focused instanceof HTMLButtonElement && focused.matches('.reception-star') ? focused : this.questBox.querySelector('.reception-star[aria-pressed="true"]');
+      } else {
+        button = this.questBox.querySelector<HTMLButtonElement>('.reception-confirm-go, .base-delivery .forge-confirm button.go, .reception-depart:not([disabled]), .base-delivery button.go:not([disabled])');
+        // 確認中の最初の受注ボタンは非表示。確認の決定だけを使う。
+      }
+      if (button && !button.disabled) button.click();
+    }
   }
 
   /**
@@ -685,13 +829,16 @@ export class BaseScreen {
     const group = groups.find((g) => g.entries.some((e) => e.id === id));
     if (!group) { this.say('この遊び方では、この依頼へ出発できません。', true); return; }
     this.rememberReceptionScroll();
-    const state = this.receptionStates.get(desk.id) ?? { stars: group.stars, selected: null, listScroll: 0, detailScroll: 0 };
-    state.stars = group.stars;
+    const state = this.receptionStates.get(desk.id) ?? newReceptionView(group.stars);
+    selectReceptionStar(state, group.stars);
+    if (state.selected !== id) state.detailScroll = 0;
     state.selected = id;
-    state.detailScroll = 0;
+    this.huntConfirmId = null;
+    this.confirming = null;
     this.receptionStates.set(desk.id, state);
     this.storyFold.open = false;
-    this.renderQuests('detail-back', false);
+    this.bestiary.open = false;
+    this.renderQuests('row-' + id, false);
   }
 
   /** 級の受付 → 星 → 短い一覧 → 詳細。依頼の解禁・報酬・保存は既存の判定を使う。 */
@@ -702,12 +849,14 @@ export class BaseScreen {
     const oldFocus = document.activeElement instanceof HTMLElement ? document.activeElement.dataset.receptionFocus : undefined;
     this.questBox.textContent = '';
     this.questScroller = null;
+    this.questDetailScroller = null;
     this.questScrollContext = null;
     const rankId = this.section === 'quest' ? this.receptionRank() : null;
     const firstRank = [...c.ranks.values()].sort((a, b) => a.order - b.order)[0]?.id;
     this.storyFold.hidden = this.section === 'quest' && rankId !== firstRank;
     this.trainingBtn.hidden = this.section === 'quest' && rankId !== firstRank;
     this.root.dataset.reception = rankId ? 'counter' : 'directory';
+    this.root.dataset.receptionStage = '';
 
     if (this.receptionNotice) this.questBox.appendChild(el('p', 'reception-notice', this.receptionNotice));
     if (!rankId || !this.facilityId) {
@@ -737,106 +886,140 @@ export class BaseScreen {
     let state = this.receptionStates.get(key);
     if (!state) {
       const ready = groups.find((g) => g.entries.some((e) => e.kind === 'quest' ? questUnlocked(doc, e.quest) && !(doc.progress.questClears[e.id] ?? 0) : checkDelivery(doc, e.delivery).ok));
-      state = { stars: (ready ?? groups[0])?.stars ?? null, selected: null, listScroll: 0, detailScroll: 0 };
+      state = newReceptionView((ready ?? groups[0])?.stars ?? null);
       this.receptionStates.set(key, state);
     }
-    if (!groups.some((g) => g.stars === state!.stars)) state.stars = groups[0]?.stars ?? null;
-    const group = groups.find((g) => g.stars === state!.stars);
-    if (state.selected && !group?.entries.some((e) => e.id === state!.selected)) state.selected = null;
     const current = state;
-    // 依頼の掲示のおすすめの順（v0.26.0。#9）は、最初の級の受付にだけ短く出す
-    if (rankId === [...c.ranks.values()].sort((a, b) => a.order - b.order)[0]?.id && c.board.recommend.text) this.questBox.appendChild(el('p', 'quest-recommend', c.board.recommend.text));
-    const tabs = el('div', 'reception-stars');
-    tabs.setAttribute('role', 'group');
-    tabs.setAttribute('aria-label', '星ごとの依頼');
-    for (const g of groups) {
-      const label = g.stars === null ? '星未設定' : `★${g.stars}`;
-      const b = el('button', 'reception-star');
-      b.type = 'button';
-      b.dataset.stars = String(g.stars);
-      b.dataset.receptionFocus = `star-${g.stars}`;
-      b.setAttribute('aria-pressed', String(g.stars === current.stars));
-      b.setAttribute('aria-label', `${label}、${g.entries.length}件`);
-      b.append(el('b', undefined, label), el('span', undefined, `${g.entries.length}件`));
-      b.addEventListener('click', () => {
-        if (current.stars === g.stars && !current.selected) return;
-        this.rememberReceptionScroll();
-        current.stars = g.stars;
-        current.selected = null;
-        current.listScroll = 0;
-        current.detailScroll = 0;
-        this.confirming = null;
-        this.receptionNotice = '';
-        this.renderQuests(`star-${g.stars}`, false);
-      });
-      tabs.appendChild(b);
+    if (!groups.some((g) => g.stars === current.stars)) {
+      current.stars = groups[0]?.stars ?? null;
+      current.selected = null;
+      current.stage = 'stars';
     }
-    this.questBox.appendChild(tabs);
-    const picked = group?.entries.find((e) => e.id === current.selected);
-    const pane = el('div', picked ? 'reception-scroll reception-detail' : 'reception-scroll reception-list');
-    this.questScroller = pane;
-    this.questScrollContext = { key, detail: !!picked };
-    pane.addEventListener('scroll', () => this.rememberReceptionScroll(), { passive: true });
-    if (picked) {
-      const back = el('button', 'reception-back', '‹ 星の一覧へ戻る');
+    const group = groups.find((g) => g.stars === current.stars);
+    if (current.selected && !group?.entries.some((e) => e.id === current.selected)) current.selected = null;
+    this.root.dataset.receptionStage = current.stage;
+    const panel = el('div', 'reception-classic');
+    const left = el('section', 'reception-classic-menu');
+    const right = el('section', 'reception-classic-paper');
+    const levelLabel = (stars: number | null): string => stars === null ? '星未設定' : '★'.repeat(stars) + '  ' + stars;
+    if (current.stage === 'stars') {
+      left.appendChild(el('h3', 'reception-classic-heading', '難易度を選ぶ'));
+      const levels = el('div', 'reception-scroll reception-levels');
+      levels.setAttribute('role', 'group');
+      levels.setAttribute('aria-label', '星ごとの依頼');
+      for (const g of groups) {
+        const label = levelLabel(g.stars);
+        const b = el('button', 'reception-star reception-level');
+        b.type = 'button';
+        b.dataset.stars = String(g.stars);
+        b.dataset.receptionFocus = 'star-' + g.stars;
+        b.setAttribute('aria-pressed', String(g.stars === current.stars));
+        b.setAttribute('aria-label', (g.stars === null ? '星未設定' : '星' + g.stars) + '、' + g.entries.length + '件');
+        b.append(el('b', undefined, label), el('span', undefined, g.entries.length + '件  ›'));
+        b.addEventListener('click', () => {
+          if (this.busy) return;
+          selectReceptionStar(current, g.stars);
+          this.huntConfirmId = null;
+          this.confirming = null;
+          this.receptionNotice = '';
+          this.renderQuests(current.selected ? 'row-' + current.selected : undefined, false);
+          if (!this.questBox.contains(document.activeElement)) this.questBox.querySelector<HTMLButtonElement>('.reception-row[aria-pressed="true"]')?.focus({ preventScroll: true });
+        });
+        levels.appendChild(b);
+      }
+      if (!groups.length) levels.appendChild(el('p', 'reception-empty', 'この受付に依頼はありません。'));
+      left.appendChild(levels);
+      right.appendChild(el('div', 'reception-classic-intro', '依頼帳'));
+      right.appendChild(el('p', 'reception-classic-guide', '左の星を選び、依頼を確認してください。'));
+      if (rankId === firstRank && c.board.recommend.text) right.appendChild(el('p', 'quest-recommend', c.board.recommend.text));
+      right.appendChild(el('p', 'reception-classic-tip', '上下で選択・決定　／　戻るで前の画面'));
+    } else {
+      const header = el('div', 'reception-classic-listhead');
+      const back = el('button', 'reception-back', '‹ 星を選ぶ');
       back.type = 'button';
       back.dataset.receptionFocus = 'detail-back';
-      back.addEventListener('click', () => {
-        this.rememberReceptionScroll();
-        current.selected = null;
-        this.confirming = null;
-        this.renderQuests(`row-${picked.id}`, false);
-      });
-      this.questBox.appendChild(back);
-      this.renderReceptionDetail(pane, picked);
-    } else {
-      const count = el('p', 'reception-count', `${current.stars === null ? '星未設定' : `★${current.stars}`} の依頼　${group?.entries.length ?? 0}件`);
+      back.addEventListener('click', () => this.backReception());
+      header.append(back, el('h3', 'reception-classic-heading', levelLabel(current.stars)));
+      left.appendChild(header);
+      const count = el('p', 'reception-count', (group?.entries.length ?? 0) + '件の依頼');
       count.setAttribute('role', 'status');
-      this.questBox.appendChild(count);
+      left.appendChild(count);
+      const list = el('div', 'reception-scroll reception-list');
+      this.questScroller = list;
+      this.questScrollContext = { key };
+      list.addEventListener('scroll', () => this.rememberReceptionScroll(), { passive: true });
+      // 最初に星を開いた時は受注可能な依頼を表示。選択済みのIDはそのまま。
+      if (!current.selected) {
+        current.selected = (group?.entries.find((e) => e.kind === 'quest' ? questUnlocked(doc, e.quest) : checkDelivery(doc, e.delivery).ok) ?? group?.entries[0])?.id ?? null;
+      }
       for (const entry of group?.entries ?? []) {
         const q = entry.kind === 'quest' ? entry.quest : null;
         const d = entry.kind === 'delivery' ? entry.delivery : null;
         const locked = q ? !questUnlocked(doc, q) : checkDelivery(doc, d!).state === 'locked';
         const done = q ? (doc.progress.questClears[q.id] ?? 0) > 0 : checkDelivery(doc, d!).state === 'claimed';
-        const b = el('button', `reception-row${locked ? ' locked' : ''}`);
+        const b = el('button', 'reception-row' + (locked ? ' locked' : ''));
         b.type = 'button';
         b.dataset.quest = entry.id;
         b.dataset.rank = rankId;
         b.dataset.stars = String(entry.stars);
-        b.dataset.receptionFocus = `row-${entry.id}`;
+        b.dataset.receptionFocus = 'row-' + entry.id;
+        b.setAttribute('aria-pressed', String(entry.id === current.selected));
         const title = q?.name ?? d!.name;
-        b.setAttribute('aria-label', `${title}、${q ? questGoal(c, q, true) : '里の素材納品'}、${locked ? '未解放、条件を見る' : done ? '達成済み、詳細を見る' : '詳細を見る'}`);
+        b.setAttribute('aria-label', title + '、' + (q ? questGoal(c, q, true) : '里の素材納品') + '、' + (locked ? '未解放、条件を見る' : done ? '達成済み、詳細を見る' : '詳細を見る'));
         b.appendChild(q ? questIconStrip(c, q) : deliveryIconStrip());
-        const text = el('span', 'reception-row-text');
-        text.appendChild(el('b', 'reception-row-name', title));
+        const rowText = el('span', 'reception-row-text');
+        rowText.appendChild(el('b', 'reception-row-name', title));
         const kind = q ? QUEST_ACTIVITY_LABELS[questActivity(q)] : '里納品';
-        const time = q ? minutesText(questTimeLimitTicks(c, q, this.host.fieldHunts)) : '制限なし';
-        text.appendChild(el('span', 'reception-row-meta', `${kind}　${time}　報酬 ${q?.rewards?.money ?? d?.money ?? 0}`));
-        if (q?.board && q.board.lane !== 'free') text.appendChild(el('small', 'reception-lane', QUEST_LANE_NAMES[q.board.lane]));
-        b.appendChild(text);
-        b.appendChild(el('span', `reception-row-state${done ? ' done' : ''}`, locked ? '未解放' : done ? '済' : d && !checkDelivery(doc, d).ok ? '素材不足' : '›'));
+        const lane = q?.board && q.board.lane !== 'free' ? QUEST_LANE_NAMES[q.board.lane] : '';
+        rowText.appendChild(el('span', 'reception-row-meta', kind + (lane ? ' ／ ' + lane : '')));
+        b.appendChild(rowText);
+        b.appendChild(el('span', 'reception-row-state' + (done ? ' done' : ''), locked ? '未解放' : done ? '済' : d && !checkDelivery(doc, d).ok ? '素材不足' : '›'));
         b.addEventListener('click', () => {
+          if (this.busy) return;
           this.rememberReceptionScroll();
-          current.selected = entry.id;
-          current.detailScroll = 0;
-          this.confirming = null;
-          this.receptionNotice = '';
-          this.renderQuests('detail-back', false);
+          if (current.selected !== entry.id) {
+            current.selected = entry.id;
+            current.detailScroll = 0;
+            this.confirming = null;
+            this.huntConfirmId = null;
+            this.receptionNotice = '';
+            this.renderQuests('row-' + entry.id, false);
+          } else {
+            b.focus({ preventScroll: true });
+          }
         });
-        pane.appendChild(b);
+        list.appendChild(b);
       }
-      if (!group?.entries.length) pane.appendChild(el('p', 'reception-empty', 'この受付の依頼は、まだありません。'));
+      if (!group?.entries.length) list.appendChild(el('p', 'reception-empty', 'この受付の依頼は、まだありません。'));
+      left.appendChild(list);
+      const detail = el('div', 'reception-scroll reception-detail reception-classic-detail');
+      this.questDetailScroller = detail;
+      detail.addEventListener('scroll', () => this.rememberReceptionScroll(), { passive: true });
+      const picked = group?.entries.find((e) => e.id === current.selected);
+      const actions = el('div', 'reception-classic-actions');
+      if (picked) this.renderReceptionDetail(detail, picked, actions);
+      else detail.appendChild(el('p', 'reception-classic-guide', '依頼を選んでください。'));
+      right.appendChild(detail);
+      if (actions.childElementCount) right.appendChild(actions);
     }
-    this.questBox.appendChild(pane);
+    panel.append(left, right);
+    this.questBox.appendChild(panel);
     this.restoreReceptionScroll();
     const focus = focusKey ?? oldFocus;
-    if (focus) this.questBox.querySelectorAll<HTMLButtonElement>('[data-reception-focus]').forEach((b) => { if (b.dataset.receptionFocus === focus) b.focus({ preventScroll: true }); });
+    if (focus) {
+      const match = [...this.questBox.querySelectorAll<HTMLButtonElement>('[data-reception-focus]')].find((b) => b.dataset.receptionFocus === focus);
+      if (match && !match.disabled) {
+        match.focus({ preventScroll: true });
+        if (match.matches('.reception-row')) match.scrollIntoView({ block: 'nearest' });
+      }
+    }
   }
 
-  private renderReceptionDetail(pane: HTMLElement, entry: ReceptionEntry): void {
+  private renderReceptionDetail(pane: HTMLElement, entry: ReceptionEntry, actions: HTMLElement): void {
     const c = this.content;
     const doc = this.host.save.doc;
     const title = entry.kind === 'quest' ? entry.quest.name : entry.delivery.name;
+    pane.appendChild(el('p', 'reception-paper-kicker', '狩人組合　依頼書'));
     pane.appendChild(el('h3', 'reception-detail-title', title));
     pane.appendChild(entry.kind === 'quest' ? questIconStrip(c, entry.quest) : deliveryIconStrip());
     if (entry.kind === 'delivery') { this.renderDeliveryDetail(pane, entry.delivery); return; }
@@ -867,18 +1050,42 @@ export class BaseScreen {
       const need = (q.requires ?? []).filter((id) => !(doc.progress.questClears[id] ?? 0)).map((id) => `「${c.quests.get(id)?.name ?? id}」`);
       pane.appendChild(el('p', 'reception-locked-note', `${need.join('と')}を達成すると受けられます。`));
     }
-    pane.appendChild(el('p','life-text','出発準備：'+prepText(lifeOf(doc).prep)+'｜装備 '+(c.weapons.get(doc.equippedWeaponId)?.name??'現在の武器')));
-    const go = el('button', 'reception-depart', unlocked ? '受注して出発' : '解放条件を満たしていません');
-    go.type = 'button';
-    go.dataset.quest = q.id;
-    go.dataset.receptionFocus = `depart-${q.id}`;
-    go.disabled = !unlocked || this.busy;
-    go.addEventListener('click', () => {
-      if (this.busy || this.receptionRank() !== q.rankId || !questUnlocked(this.host.save.doc, q)) return;
-      this.rememberReceptionScroll();
-      this.host.startHunt(q.id);
-    });
-    pane.appendChild(go);
+    pane.appendChild(el('p','reception-detail-note','出発準備：'+prepText(lifeOf(doc).prep)+'｜装備 '+(c.weapons.get(doc.equippedWeaponId)?.name??'現在の武器')));
+    const canDepart = (): boolean => !this.busy && this.receptionRank() === q.rankId && this.receptionView()?.selected === q.id && questUnlocked(this.host.save.doc, q);
+    if (unlocked && this.huntConfirmId === q.id) {
+      actions.appendChild(el('p', 'reception-confirm-question', 'この依頼を受注しますか？'));
+      const yes = el('button', 'reception-confirm-go', '出発する');
+      yes.type = 'button';
+      yes.dataset.quest = q.id;
+      yes.dataset.receptionFocus = 'confirm-' + q.id;
+      yes.disabled = this.busy;
+      yes.addEventListener('click', () => {
+        if (this.huntConfirmId !== q.id || !canDepart()) return;
+        this.rememberReceptionScroll();
+        this.huntConfirmId = null;
+        this.host.startHunt(q.id);
+      });
+      const no = el('button', 'reception-confirm-no', 'やめる');
+      no.type = 'button';
+      no.addEventListener('click', () => {
+        this.huntConfirmId = null;
+        this.renderQuests('depart-' + q.id);
+      });
+      actions.append(no, yes);
+    } else {
+      if (this.huntConfirmId === q.id) this.huntConfirmId = null;
+      const go = el('button', 'reception-depart', unlocked ? '受注する' : '解放条件を満たしていません');
+      go.type = 'button';
+      go.dataset.quest = q.id;
+      go.dataset.receptionFocus = 'depart-' + q.id;
+      go.disabled = !unlocked || this.busy;
+      go.addEventListener('click', () => {
+        if (!canDepart()) return;
+        this.huntConfirmId = q.id;
+        this.renderQuests('confirm-' + q.id);
+      });
+      actions.appendChild(go);
+    }
   }
 
   /** 里の納品は詳細から確認する。保存処理は従来どおり在庫と残す数を再検査する。 */
