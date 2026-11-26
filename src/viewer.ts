@@ -21,7 +21,7 @@ import { buildArrow, buildBow, buildQuiver } from './render/bow';
 import { buildGuardBladeShield, buildGuardBladeSword } from './render/guardBlade';
 import { buildHeavyBlade, type WeaponModel } from './render/heavyBlade';
 import { DummyRig, type MonsterRig } from './render/monsterRig';
-import { CLIPS, JOINTS, clipPose, emptyPose, locomotionPose } from './render/poses';
+import { CLIPS, JOINTS, clipPose, deadPose, emptyPose, hurtPose, locomotionPose } from './render/poses';
 import { buildGreatShield, buildLance } from './render/lance';
 import { HunterRig } from './render/rig';
 import { armorTierOf, type ArmorLook } from './render/hunterArmor';
@@ -77,6 +77,8 @@ let damaged = false;
  * 戦闘の状態（怯みの種類・残り・全体、睡眠、気絶、死）を置いて、ゲームと同じ update を通す。部位の形（追従）も同じ状態から出る。
  */
 let posePreview: { kind: 'topple' | 'flinch' | 'sleep' | 'stun' | 'dead'; tick: number } | null = null;
+/** ハンターの被弾の形の確認（v0.64.0。?hurt=flinch|knockdown|bounce&rel=押された向き（体から測った角度。π = 後ろへ）&tick=） */
+let hurtPreview: { kind: 'flinch' | 'knockdown' | 'bounce' | 'dead'; tick: number; rel: number } | null = null;
 const socketAxes: AxesHelper[] = [];
 for (const s of Object.values(hunter.sockets)) {
   const a = new AxesHelper(0.14);
@@ -399,7 +401,18 @@ function frame(ts: number): void {
     let missing = false;
     const st: AnimState | null = a ? { kind: 'action', clip: a.clip, t, dirAngle: 0, chargeTicks: 0, freeMove: false } : state.stance !== 'none' ? (state.stance === 'guard' ? { kind: 'guard', blend: 1, shake: 0 } : { kind: 'idle' }) : null;
     const stFam = a ? fam : content.families.get(state.stanceFamily) ?? fam;
-    if (st && canSolve(stFam.id, st)) {
+    if (hurtPreview && !a) {
+      // 被弾の形（納刀したまま。ゲームと同じ hurtPose。転倒は押された向きへ倒れる）
+      lastSolved = null;
+      hunter.setString(null);
+      const D = hurtPreview.kind === 'dead' ? 60 : hurtPreview.kind === 'knockdown' ? content.player.knockdownTicks : hurtPreview.kind === 'bounce' ? content.edge.bounce.recoilTicks : content.player.flinchTicks;
+      const tk = state.playing ? (time * 60) % D : hurtPreview.tick;
+      const pose = hurtPreview.kind === 'dead' ? deadPose(tk) : hurtPose(hurtPreview.kind, tk, D, false, hurtPreview.rel);
+      if (hurtPreview.kind === 'knockdown') pose.tumbleDir = hurtPreview.rel - Math.PI;
+      hunter.setPose(pose);
+      sheathWeapon(fam);
+      if (fam.offhand) stowOffhand(hunter, fam.id);
+    } else if (st && canSolve(stFam.id, st)) {
       // 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）: ゲームと同じ解き方で、体・武器・盾を置く
       hunter.setFamily(stFam.id, stFam.offhand, held(stFam.id));
       const sol = solveState(stFam.id, st, state.stance === 'walk' ? stFam.drawnMoveSpeed : 0, state.stance === 'walk' ? t / 60 : time);
@@ -569,6 +582,8 @@ async function main(): Promise<void> {
     if (!q.has('yaw')) state.camYaw = 0;
   }
   if (q.has('damaged')) damaged = true;
+  const hz = q.get('hurt');
+  if (hz === 'flinch' || hz === 'knockdown' || hz === 'bounce' || hz === 'dead') hurtPreview = { kind: hz, tick: Number(q.get('tick') ?? 0), rel: q.has('rel') ? Number(q.get('rel')) : Math.PI };
   const pz = q.get('pose');
   if (pz === 'topple' || pz === 'flinch' || pz === 'sleep' || pz === 'stun' || pz === 'dead') {
     setSubject('galdros');

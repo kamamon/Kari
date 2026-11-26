@@ -188,26 +188,33 @@ export const CLIPS: Record<string, Clip> = {
       { t: 124 },
     ],
   },
-  // 拘束罠: しゃがんで地面に据える。84 tick で設置。
+  // 拘束罠（v0.64.0。2G を手本に、取り出す → しゃがむ → 据える → 押し込む → 立つ に分けた）: 右手で腰の袋から罠を取り出し（〜10）、
+  // 片ひざを突いて両手で体の前に持ち（22）、地面へ下ろして（40）、両手で 2 回押し込み（56・76）、手を離して（84 tick で設置）、立つ。
   common_item_place_01: {
     base: NEUTRAL, basePy: 0,
     keys: [
       { t: 0 },
-      { t: 20, j: { spine: [30, 0, 0], chest: [18, 0, 0], thighL: [-78, 0, 6], shinL: [110, 0, 0], thighR: [-20, 0, -6], shinR: [96, 0, 0], upperArmL: [-52, 0, 8], upperArmR: [-52, 0, -8], forearmL: [-30, 0, 0], forearmR: [-30, 0, 0] }, py: -0.42 },
-      { t: 50, j: { spine: [38, 0, 0], chest: [22, 6, 0], thighL: [-80, 0, 6], shinL: [112, 0, 0], thighR: [-20, 0, -6], shinR: [98, 0, 0], upperArmL: [-62, 0, 14], upperArmR: [-58, 0, -4], forearmL: [-16, 0, 0], forearmR: [-34, 0, 0] }, py: -0.44 },
-      { t: 84, j: { spine: [36, 0, 0], chest: [20, -6, 0], thighL: [-80, 0, 6], shinL: [112, 0, 0], thighR: [-20, 0, -6], shinR: [98, 0, 0], upperArmL: [-58, 0, 4], upperArmR: [-62, 0, -14], forearmL: [-34, 0, 0], forearmR: [-16, 0, 0] }, py: -0.44 },
+      { t: 10, j: { chest: [4, -12, 0], upperArmR: [24, 0, -22], forearmR: [-70, 0, 0], thighL: [-8, 0, 3], shinL: [10, 0, 0] }, py: -0.03 },
+      { t: 22, j: { spine: [26, 0, 0], chest: [14, 0, 0], head: [14, 0, 0], thighL: [-80, 0, 6], shinL: [110, 0, 0], thighR: [-18, 0, -6], shinR: [100, 0, 0], upperArmL: [-46, 0, 14], forearmL: [-46, 0, 0], upperArmR: [-46, 0, -14], forearmR: [-46, 0, 0] }, py: -0.43 },
+      { t: 40, j: { spine: [36, 0, 0], chest: [22, 0, 0], head: [16, 0, 0], thighL: [-80, 0, 6], shinL: [112, 0, 0], thighR: [-20, 0, -6], shinR: [98, 0, 0], upperArmL: [-62, 0, 10], forearmL: [-18, 0, 0], upperArmR: [-62, 0, -10], forearmR: [-18, 0, 0] }, py: -0.45 },
+      { t: 56, j: { spine: [42, 0, 0], chest: [24, 0, 0], head: [18, 0, 0], thighL: [-80, 0, 6], shinL: [112, 0, 0], thighR: [-20, 0, -6], shinR: [98, 0, 0], upperArmL: [-56, 0, 8], forearmL: [-4, 0, 0], upperArmR: [-56, 0, -8], forearmR: [-4, 0, 0] }, py: -0.47 },
+      { t: 66, j: { spine: [34, 0, 0], chest: [20, 0, 0], head: [16, 0, 0], thighL: [-80, 0, 6], shinL: [112, 0, 0], thighR: [-20, 0, -6], shinR: [98, 0, 0], upperArmL: [-60, 0, 10], forearmL: [-28, 0, 0], upperArmR: [-60, 0, -10], forearmR: [-28, 0, 0] }, py: -0.45 },
+      { t: 76, j: { spine: [42, 0, 0], chest: [24, 0, 0], head: [18, 0, 0], thighL: [-80, 0, 6], shinL: [112, 0, 0], thighR: [-20, 0, -6], shinR: [98, 0, 0], upperArmL: [-56, 0, 8], forearmL: [-4, 0, 0], upperArmR: [-56, 0, -8], forearmR: [-4, 0, 0] }, py: -0.47 },
+      { t: 84, j: { spine: [30, 0, 0], chest: [16, 0, 0], head: [12, 0, 0], thighL: [-80, 0, 6], shinL: [110, 0, 0], thighR: [-20, 0, -6], shinR: [98, 0, 0], upperArmL: [-36, 0, 14], forearmL: [-50, 0, 0], upperArmR: [-36, 0, -14], forearmR: [-50, 0, 0] }, py: -0.44 },
       { t: 100, j: { spine: [12, 0, 0], thighL: [-30, 0, 4], shinL: [40, 0, 0], thighR: [-8, 0, -4], shinR: [30, 0, 0] }, py: -0.12 },
       { t: 112 },
     ],
   },
-  // 鎮静玉: 右手を引いて、前へ投げる。22 tick で手を離れる。
+  // 投げる玉（鎮静玉・標識玉。v0.64.0。2G を手本に、取り出す → 構える → 踏み込んで投げる → 振り抜く に分けた）: 右手で腰の袋から玉を取り（〜6）、
+  // 右足へ体重を乗せて左腕で狙い、右腕を頭の後ろへ引き（12）、左足を踏み込みながら上から投げる（22 tick で手を離れる）。振り抜いて戻る。
   common_item_throw_01: {
     base: NEUTRAL, basePy: 0,
     keys: [
       { t: 0 },
-      { t: 12, j: { chest: [-4, -28, 0], upperArmR: [-150, 0, -30], forearmR: [-80, 0, 0], thighL: [-14, 0, 4], shinL: [14, 0, 0] } },
-      { t: 22, j: { chest: [10, 26, 0], spine: [8, 0, 0], upperArmR: [-70, 0, 8], forearmR: [-10, 0, 0], thighL: [-22, 0, 4], shinL: [20, 0, 0] } },
-      { t: 32, j: { chest: [8, 16, 0], upperArmR: [-20, 0, 0], forearmR: [-20, 0, 0] } },
+      { t: 6, j: { chest: [4, -10, 0], upperArmR: [20, 0, -20], forearmR: [-60, 0, 0] } },
+      { t: 13, j: { spine: [-4, 0, 0], chest: [-6, -30, 0], head: [0, 22, 0], upperArmR: [-150, 0, -30], forearmR: [-92, 0, 0], upperArmL: [-80, 0, 20], forearmL: [-10, 0, 0], thighL: [-20, 0, 4], shinL: [10, 0, 0], thighR: [10, 0, -4], shinR: [24, 0, 0] }, py: -0.04 },
+      { t: 22, j: { spine: [10, 0, 0], chest: [12, 28, 0], head: [0, -14, 0], upperArmR: [-62, 0, 6], forearmR: [-6, 0, 0], upperArmL: [-20, 0, 18], forearmL: [-40, 0, 0], thighL: [-30, 0, 4], shinL: [30, 0, 0], thighR: [16, 0, -4], shinR: [20, 0, 0] }, py: -0.07 },
+      { t: 30, j: { spine: [14, 0, 0], chest: [14, 30, 0], head: [0, -16, 0], upperArmR: [-20, 0, 14], forearmR: [-10, 0, 0], upperArmL: [0, 0, 20], forearmL: [-30, 0, 0], thighL: [-28, 0, 4], shinL: [30, 0, 0], thighR: [16, 0, -4], shinR: [22, 0, 0] }, py: -0.06 },
       { t: 46 },
     ],
   },
@@ -227,17 +234,22 @@ export const CLIPS: Record<string, Clip> = {
       { t: 120 },
     ],
   },
-  // 剥ぎ取り: 片ひざを突いて、右手の小刀を前後に動かす。80 tick で素材が手に入る。
+  // 剥ぎ取り（v0.64.0。2G を手本に、小刀を抜く → ひざを突く → 突き入れて引く を 2 回 → 素材をつかむ → 掲げる → 立つ に分けた）:
+  // 右手で腰の小刀を抜き（〜10）、片ひざを突いて左手で獲物を押さえ（20）、小刀を突き入れて手前へ引き切る（30・40、50・60）。
+  // 左手で素材をつかみ（70）、胸の前へ持ち上げる（80 tick で素材が手に入る）。立つ。
   common_carve_01: {
     base: NEUTRAL, basePy: 0,
     keys: [
       { t: 0 },
-      { t: 18, j: { spine: [26, 0, 0], chest: [14, 0, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-58, 0, -10], forearmR: [-40, 0, 0], upperArmL: [-40, 0, 12], forearmL: [-50, 0, 0] }, py: -0.43 },
-      { t: 34, j: { spine: [32, 0, 0], chest: [18, 10, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-74, 0, -6], forearmR: [-14, 0, 0], upperArmL: [-40, 0, 12], forearmL: [-50, 0, 0] }, py: -0.44 },
-      { t: 48, j: { spine: [26, 0, 0], chest: [14, -6, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-52, 0, -12], forearmR: [-56, 0, 0], upperArmL: [-40, 0, 12], forearmL: [-50, 0, 0] }, py: -0.43 },
-      { t: 64, j: { spine: [32, 0, 0], chest: [18, 10, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-74, 0, -6], forearmR: [-14, 0, 0], upperArmL: [-40, 0, 12], forearmL: [-50, 0, 0] }, py: -0.44 },
-      { t: 80, j: { spine: [20, 0, 0], chest: [8, 0, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-90, 0, -16], forearmR: [-70, 0, 0], upperArmL: [-40, 0, 12], forearmL: [-50, 0, 0] }, py: -0.42 },
-      { t: 92, j: { spine: [10, 0, 0], thighL: [-30, 0, 4], shinL: [40, 0, 0], thighR: [-8, 0, -4], shinR: [30, 0, 0] }, py: -0.12 },
+      { t: 10, j: { chest: [4, -8, 0], upperArmR: [20, 0, -18], forearmR: [-60, 0, 0], thighL: [-10, 0, 3], shinL: [12, 0, 0] }, py: -0.05 },
+      { t: 20, j: { spine: [28, 0, 0], chest: [14, 0, 0], head: [14, 0, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-60, 0, -10], forearmR: [-40, 0, 0], upperArmL: [-44, 0, 12], forearmL: [-50, 0, 0] }, py: -0.43 },
+      { t: 30, j: { spine: [34, 0, 0], chest: [18, 10, 0], head: [16, 0, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-78, 0, -6], forearmR: [-8, 0, 0], upperArmL: [-46, 0, 12], forearmL: [-44, 0, 0] }, py: -0.44 },
+      { t: 40, j: { spine: [26, 0, 0], chest: [12, -8, 0], head: [14, 0, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-38, 0, -14], forearmR: [-74, 0, 0], upperArmL: [-44, 0, 12], forearmL: [-50, 0, 0] }, py: -0.43 },
+      { t: 50, j: { spine: [34, 0, 0], chest: [18, 10, 0], head: [16, 0, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-78, 0, -6], forearmR: [-8, 0, 0], upperArmL: [-46, 0, 12], forearmL: [-44, 0, 0] }, py: -0.44 },
+      { t: 60, j: { spine: [26, 0, 0], chest: [12, -8, 0], head: [14, 0, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-38, 0, -14], forearmR: [-74, 0, 0], upperArmL: [-44, 0, 12], forearmL: [-50, 0, 0] }, py: -0.43 },
+      { t: 70, j: { spine: [32, 0, 0], chest: [16, 6, 0], head: [16, 0, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-34, 0, -16], forearmR: [-60, 0, 0], upperArmL: [-64, 0, 8], forearmL: [-14, 0, 0] }, py: -0.44 },
+      { t: 80, j: { spine: [16, 0, 0], chest: [6, 0, 0], head: [6, 0, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0], upperArmR: [-26, 0, -14], forearmR: [-46, 0, 0], upperArmL: [-74, 0, 22], forearmL: [-96, 0, 0] }, py: -0.42 },
+      { t: 92, j: { spine: [10, 0, 0], thighL: [-30, 0, 4], shinL: [40, 0, 0], thighR: [-8, 0, -4], shinR: [30, 0, 0], upperArmL: [-30, 0, 16], forearmL: [-60, 0, 0] }, py: -0.12 },
       { t: 100 },
     ],
   },
@@ -411,7 +423,87 @@ export function guardPose(blend: number, shake: number): BodyPose {
   return blendPose(a, b, smoothstep(blend));
 }
 
-export function hurtPose(kind: 'flinch' | 'knockdown' | 'break' | 'bounce' | 'para' | 'sleep' | 'stun', tick: number, duration: number, drawn: boolean): BodyPose {
+/**
+ * 被弾の動きの形（v0.64.0。D-150・D-160）。'2g' = 2G を手本に作り直した形（当たった向きへ上体が持っていかれて踏み直す怯み、
+ * 宙へ浮いて背から落ち、転がって片ひざから立つ転倒、腕を跳ね上げられる弾かれ）、'v056' = 保留の組（v0.63.0 までの形）。
+ * 設定の「ハンターの動き」で入れ替わる（src/render/motionSet.ts）。
+ */
+export const HURT_STYLE: { style: '2g' | 'v056' } = { style: '2g' };
+
+/** 片ひざを突いて、片手を地面に着いた形（転倒からの起き上がりの途中） */
+const KNEEL: J = {
+  spine: [34, 0, 0], chest: [14, 0, 0], neck: [6, 0, 0], head: [-14, 0, 0],
+  thighL: [-78, 0, 6], shinL: [96, 0, 0], thighR: [12, 0, -6], shinR: [112, 0, 0],
+  upperArmL: [-30, 0, 22], forearmL: [-40, 0, 0], upperArmR: [-46, 0, -16], forearmR: [-10, 0, 0],
+};
+/** 宙で手足が開いた形（吹き飛び） */
+const FLUNG: J = {
+  spine: [-18, 0, 0], chest: [-10, 0, 0], head: [16, 0, 0],
+  upperArmL: [-40, 0, 62], upperArmR: [-40, 0, -62], forearmL: [-30, 0, 0], forearmR: [-30, 0, 0],
+  thighL: [-34, 0, 12], shinL: [46, 0, 0], thighR: [-8, 0, -10], shinR: [20, 0, 0],
+};
+
+/**
+ * rel: 押された向き（体の向きから測った角度。0 = 前へ、π = 後ろへ、+π/2 = 左へ）。怯みと弾かれで、上体が持っていかれる向き。
+ */
+export function hurtPose(kind: 'flinch' | 'knockdown' | 'break' | 'bounce' | 'para' | 'sleep' | 'stun', tick: number, duration: number, drawn: boolean, rel = Math.PI): BodyPose {
+  if (HURT_STYLE.style === 'v056') return hurtPoseV056(kind, tick, duration, drawn);
+  const base = drawn ? STANCE : NEUTRAL;
+  const basePy = drawn ? STANCE_PY : 0;
+  if (kind === 'para' || kind === 'stun' || kind === 'sleep') return statusPose(kind, base, basePy, tick, duration);
+  if (kind === 'break') return hurtPoseV056(kind, tick, duration, drawn);
+  let keys: Key[];
+  if (kind === 'flinch' || kind === 'bounce') {
+    // 怯み: 当たった瞬間に上体が押された向きへ持っていかれ（頭は遅れて逆へ振れる）、腕が開いて、押された側の足を踏み直して受け止め、構えへ戻る。
+    // 弾かれ: 武器ごと腕を上へ跳ね上げられ、上体がのけぞって半歩下がる。
+    const f = Math.cos(rel), s = Math.sin(rel);
+    const bounce = kind === 'bounce';
+    const P = bounce ? -22 : 21 * f; // 前へ曲げる（+）・のけぞる（−）
+    const R = bounce ? 0 : -16 * s; // 左右へ傾ける
+    const D = Math.max(1, duration);
+    const at = (u: number): number => Math.round(D * u * 100) / 100;
+    // 踏み直す足: 後ろへ押されたら後ろ足（右）、前へ押されたら前足（左）、横へは押された側の足
+    const stepR = bounce || f < -0.3 || (Math.abs(f) <= 0.3 && s < 0);
+    const step: J = stepR
+      ? { thighR: [26 * (f < 0 ? 1 : 0.4), 0, -8 - 10 * Math.max(0, -s)], shinR: [34, 0, 0], thighL: [-20, 0, 4], shinL: [30, 0, 0] }
+      : { thighL: [-34 * (f >= 0 ? 1 : 0.4), 0, 8 + 10 * Math.max(0, s)], shinL: [44, 0, 0], thighR: [14, 0, -4], shinR: [26, 0, 0] };
+    const arms: J = bounce
+      ? { upperArmL: [-130, 0, 24], upperArmR: [-130, 0, -24], forearmL: [-34, 0, 0], forearmR: [-34, 0, 0] }
+      : { upperArmL: [-22, 0, 34], upperArmR: [-22, 0, -34], forearmL: [-46, 0, 0], forearmR: [-46, 0, 0] };
+    keys = [
+      { t: 0 },
+      { t: at(0.1), j: { ...base, ...arms, pelvis: [P * 0.15, 0, R * 0.3], spine: [P * 0.7, 0, R * 0.7], chest: [P * 0.4, 0, R * 0.5], neck: [0, 0, 0], head: [-P * 0.1, 0, -R * 0.2], thighL: [-22, 0, 4], shinL: [34, 0, 0], thighR: [16, 0, -4], shinR: [30, 0, 0] }, py: basePy - 0.07 },
+      { t: at(0.3), j: { ...base, ...arms, ...step, pelvis: [P * 0.2, 0, R * 0.4], spine: [P, 0, R], chest: [P * 0.5, 0, R * 0.6], neck: [-P * 0.2, 0, -R * 0.3], head: [-P * 0.35, 0, -R * 0.4] }, py: basePy - 0.1 },
+      { t: at(0.55), j: { ...base, ...step, spine: [P * 0.45, 0, R * 0.4], chest: [P * 0.25, 0, R * 0.3], head: [-P * 0.1, 0, -R * 0.1], upperArmL: [-10, 0, 18], upperArmR: [-10, 0, -18] }, py: basePy - 0.05 },
+      { t: D },
+    ];
+  } else {
+    // 転倒: 当たった瞬間に体が浮いて手足が開き、押された向きへ背から落ちる（ほかの所で体の向きを押された向きへ回す: view.ts の tumbleDir）。
+    // 落ちて少し弾み、しばらく倒れたまま。横へ転がって片ひじを突き、片ひざを突いて手で地面を押し、立ち上がる。
+    keys = [
+      { t: 0 },
+      { t: 4, j: FLUNG, tumble: -24, drop: 0.08, py: basePy },
+      { t: 10, j: FLUNG, tumble: -58, drop: 0.1 },
+      { t: 17, j: LYING, tumble: -92, drop: -0.43 },
+      { t: 21, j: { ...LYING, thighL: [-30, 0, 10], shinL: [40, 0, 0], head: [-20, 0, 0] }, tumble: -84, drop: -0.38 },
+      { t: 26, j: LYING, tumble: -90, drop: -0.43 },
+      { t: 44, j: LYING, tumble: -90, drop: -0.43 },
+      { t: 54, j: { ...HALF_TUCK, upperArmL: [-10, 0, 40], forearmL: [-80, 0, 0] }, tumble: -52, drop: -0.3, py: -0.12 },
+      { t: 64, j: KNEEL, py: -0.36 },
+      { t: 74, j: { ...KNEEL, spine: [16, 0, 0], chest: [6, 0, 0], head: [-4, 0, 0], thighR: [0, 0, -4], shinR: [60, 0, 0], upperArmR: [-10, 0, -14] }, py: -0.16 },
+      { t: duration },
+    ];
+  }
+  let i = 0;
+  while (i < keys.length - 2 && keys[i + 1]!.t <= tick) i++;
+  const k0 = keys[i]!;
+  const k1 = keys[i + 1]!;
+  const u = Math.min(1, Math.max(0, (tick - k0.t) / (k1.t - k0.t)));
+  return blendPose(fromKey(base, basePy, k0), fromKey(base, basePy, k1), smoothstep(u));
+}
+
+/** 保留の組 v056 の被弾の形（v0.63.0 まで。手を入れない） */
+function hurtPoseV056(kind: 'flinch' | 'knockdown' | 'break' | 'bounce' | 'para' | 'sleep' | 'stun', tick: number, duration: number, drawn: boolean): BodyPose {
   const base = drawn ? STANCE : NEUTRAL;
   const basePy = drawn ? STANCE_PY : 0;
   if (kind === 'para' || kind === 'stun' || kind === 'sleep') return statusPose(kind, base, basePy, tick, duration);
@@ -587,6 +679,20 @@ export function landPose(left: number, total: number): BodyPose {
 }
 
 export function deadPose(ticks: number): BodyPose {
-  const u = smoothstep(ticks / 30);
-  return blendPose(fromKey(NEUTRAL, 0, { t: 0 }), fromKey(NEUTRAL, 0, { t: 0, j: LYING, tumble: -90, drop: -0.43 }), u);
+  if (HURT_STYLE.style === 'v056') {
+    const u = smoothstep(ticks / 30);
+    return blendPose(fromKey(NEUTRAL, 0, { t: 0 }), fromKey(NEUTRAL, 0, { t: 0, j: LYING, tumble: -90, drop: -0.43 }), u);
+  }
+  // 力尽き（v0.64.0）: ひざが折れて片ひざを突き、頭を垂れて、そのまま背から倒れて止まる
+  const keys: Key[] = [
+    { t: 0 },
+    { t: 12, j: { ...KNEEL, spine: [40, 0, 0], head: [24, 0, 0], upperArmL: [0, 0, 12], upperArmR: [0, 0, -12], forearmL: [-20, 0, 0], forearmR: [-20, 0, 0] }, py: -0.38 },
+    { t: 20, j: { ...KNEEL, spine: [30, 0, 0], head: [20, 0, 0], upperArmL: [0, 0, 16], upperArmR: [0, 0, -16] }, py: -0.38 },
+    { t: 34, j: LYING, tumble: -90, drop: -0.43 },
+  ];
+  let i = 0;
+  while (i < keys.length - 2 && keys[i + 1]!.t <= ticks) i++;
+  const k0 = keys[i]!, k1 = keys[i + 1]!;
+  const u = Math.min(1, Math.max(0, (ticks - k0.t) / (k1.t - k0.t)));
+  return blendPose(fromKey(NEUTRAL, 0, k0), fromKey(NEUTRAL, 0, k1), smoothstep(u));
 }

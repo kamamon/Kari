@@ -692,7 +692,8 @@ export class GameView {
         };
       }
     } else if (p.mode === 'hurt' && p.hurt) {
-      pose = hurtPose(p.hurt.kind, p.hurt.tick + alpha, p.hurt.duration, p.drawn);
+      // rel: 押された向き（体の向きから測る。v0.64.0 の怯みは、この向きへ上体が持っていかれる）
+      pose = hurtPose(p.hurt.kind, p.hurt.tick + alpha, p.hurt.duration, p.drawn, p.hurt.dirYaw - yaw);
       if (p.hurt.kind === 'knockdown') pose.tumbleDir = p.hurt.dirYaw - yaw - Math.PI;
       key = `hurt:${p.hurt.kind}`;
     } else if (p.mode === 'dead') {
