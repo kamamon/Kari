@@ -30,7 +30,9 @@ import { ResultScreen, type ResultHost } from './ui/result';
 import { iconUrl } from './ui/icons';
 import { StoryDialog, type StoryPlay } from './ui/story';
 import { nearestFacility } from './game/hub';
-import { HUB_FISH_BITE, nearbyResource, resourceStatus, resourceReward, type HubResourcePoint } from './game/hubResources';
+import { HUB_FISH_BITE, HUB_RESOURCE_POINTS, nearbyResource, resourceStatus, resourceReward, resourceCycle, type HubResourcePoint } from './game/hubResources';
+import { destinations, serviceNear, chosenPouch, villageLevel, type HubService, type HubDestination } from './game/hubLife';
+import { lifeOf, hasPrep, prepText, type HubTab, type HuntPrep } from './data/hubLife';
 import { scenesUnlocked, type StoryOutcome } from './data/story';
 import { AppearanceEditor, type LooksHost } from './ui/appearanceEditor';
 import { resolveAppearance, type ResolvedAppearance } from './data/appearance';
@@ -138,7 +140,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       else if (a === 'verify') store.set({ verify: !store.value.verify });
       else if (a === 'camReset' && !this.paused) this.resetCamera();
       else if (a === 'lockOn' && !this.paused) this.toggleLock();
-      else if (a === 'map' && !this.paused) this.hud.fieldMap.toggle(this.place === 'hunt' ? this.sim.field : null);
+      else if (a === 'map' && !this.paused) {if(this.place==='hub')this.openLife('map');else this.hud.fieldMap.toggle(this.place === 'hunt' ? this.sim.field : null);}
       else if (a === 'return' && !this.paused) this.returnNow();
       else if (a === 'interact' && !this.paused && this.place === 'hub') this.interactHub();
       else if (a === 'hubList' && !this.paused && this.place === 'hub') this.openFacility('all');
@@ -181,6 +183,12 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
   /** 里で、いま前に立っている施設（無ければ null） */
   nearFacility: FacilityDef | null = null;
   private nearResource: HubResourcePoint | null = null;
+  private nearService: HubService | null = null;
+  private visitPending=new Set<string>();
+  private departing=false;
+  private huntPrep: HuntPrep | undefined;
+  private lifeRevision=-1;
+  private gatheringVisual:{kind:HubResourcePoint['kind'];until:number}|null=null;
   private resourceBusy = false;
   private fishing: { from: number; to: number; token: string } | null = null;
 
@@ -193,7 +201,8 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       monsterAttacks: hub ? false : this.store.value.dummyAttacks,
       questId,
       // 依頼へは、持っている道具を、持ち出せる数まで持っていく
-      pouch: questId ? pouchOf(this.save.doc, this.content) : [],
+      pouch: questId ? chosenPouch(this.save.doc, this.content) : [],
+      ...(questId&&this.huntPrep?{hubPrep:this.huntPrep}:{}),
       armorIds: wornArmor(this.save.doc, this.content).map((a) => a.id),
       field: this.fieldHunts,
     };
@@ -334,6 +343,9 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     this.place = questId ? 'hunt' : hub ? 'hub' : 'training';
     this.nearFacility = null;
     this.nearResource = null;
+    this.nearService = null;
+    this.lifeRevision=-1;
+    this.gatheringVisual=null;
     this.fishing = null;
     this.runId = questId ? makeRunId() : '';
     this.sim = new Simulation(this.content, this.options(questId, hub));
@@ -476,7 +488,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
 
   // ---- 里（歩く拠点）----
   private resourcePrompt(): Pick<FacilityDef,'id'|'action'|'summary'> | null {
-    const p=this.nearResource;if(!p)return null;
+    const p=this.nearResource;if(!p)return this.nearService?{id:'service.'+this.nearService.id,action:this.nearService.name+'を利用',summary:this.nearService.detail}:null;
     const s=resourceStatus(this.save.doc,this.content,p);
     if(this.resourceBusy)return {id:'resource.'+p.id,action:'保存中',summary:p.name};
     if(p.id==='fish'&&this.fishing){
@@ -490,9 +502,10 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
   private interactHub(): void {
     if(this.place!=='hub'||this.paused||this.resourceBusy)return;
     const f=nearestFacility(this.content.hub.facilities,this.sim.world,this.sim.player.pos);
-    if(f){this.fishing=null;this.openFacility(f.kind,f.id);return;}
-    const p=nearbyResource(this.sim.world,this.sim.player.pos);if(!p)return;
+    if(f){this.fishing=null;this.visit('facility.'+f.id);this.openFacility(f.kind,f.id);return;}
+    const p=nearbyResource(this.sim.world,this.sim.player.pos);if(!p){const s=serviceNear(this.sim.world,this.sim.player.pos);if(s){this.visit('service.'+s.id);this.openLife(s.tab);}return;}
     const s=resourceStatus(this.save.doc,this.content,p);
+    this.visit('resource.'+p.id);
     if(s.action==='wait'||s.action==='empty'||s.action==='unavailable'){this.hud.toast(s.summary);return;}
     if(p.id==='fish'){
       if(!this.fishing){
@@ -505,6 +518,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       }
     }
     const reward=resourceReward(this.save.doc,this.content,p);
+    this.gatheringVisual={kind:p.kind,until:this.sim.tick+52};
     this.resourceBusy=true;
     void this.save.useHubResource(p.id,s.token).then(r=>{
       if(!r.ok){this.hud.toast(r.message);return;}
@@ -512,6 +526,32 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       this.hud.toast(message+(this.save.mode==='persistent'?'（保存済み）':'（この端末では保存なし）'));
       this.audio.play('ui');
     }).catch(()=>this.hud.toast('採集の保存に失敗しました')).finally(()=>{this.resourceBusy=false;});
+  }
+
+  private visit(id:string):void{
+    if(lifeOf(this.save.doc).visited.includes(id)||this.visitPending.has(id))return;
+    this.visitPending.add(id);
+    void this.save.hubLife({kind:'visit',id}).finally(()=>this.visitPending.delete(id));
+  }
+  openLife(tab:HubTab):void{
+    if(this.place!=='hub')return;
+    this.fishing=null;this.setOverlay('base','life');this.base.showLife(tab);this.audio.play('ui');
+  }
+  lifeDestinations():HubDestination[]{
+    if(this.place==='hub')return destinations(this.content,this.sim.world);
+    // メニュー拠点でも施設一覧は見られるが移動はできない。
+    return [];
+  }
+  lifePosition():{x:number;y:number;z:number}|null{return this.place==='hub'?{...this.sim.player.pos}:null;}
+  lifeTravel(id:string):void{
+    if(this.place!=='hub'||!lifeOf(this.save.doc).visited.includes(id)||this.resourceBusy)return;
+    const f=destinations(this.content,this.sim.world).find(x=>x.id===id);if(!f)return;
+    const map=this.sim.world.map,r=this.content.player.radius,y=this.sim.world.groundHeight(f.x,f.z);
+    if(Math.abs(y-f.floor)>0.1||map.rocks.some(q=>Math.hypot(q.x-f.x,q.z-f.z)<q.r+r))return;
+    for(let i=0;i<8;i++){const a=i*Math.PI/4;if(Math.abs(this.sim.world.groundHeight(f.x+Math.sin(a)*(r+.15),f.z+Math.cos(a)*(r+.15))-y)>0.35)return;}
+    const p=this.sim.player;p.pos={x:f.x,y,z:f.z};p.prevPos={...p.pos};p.vel.vy=0;
+    this.nearResource=null;this.nearFacility=null;this.nearService=null;this.fishing=null;
+    this.view.snapHubHeight(y);this.setOverlay(null);this.hud.toast(f.name+'へ移動しました');
   }
 
   /** 施設の画面を開く（all = すべての欄の一覧）。開いている間は、一時停止する。 */
@@ -547,17 +587,23 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     if (!quest || !questUnlocked(this.save.doc, quest)) return;
     // 狩らない依頼（v0.27.0）は、フィールドでだけ遊べる（1 つの狩場 ?hunt=arena では始めない）
     if (quest.kind === 'gather' && !this.fieldHunts) return;
-    this.createSession(questId);
-    this.setOverlay(null);
-    this.audio.play('ui');
+    if(this.departing)return;
+    const prep={...lifeOf(this.save.doc).prep};
+    const start=()=>{this.huntPrep=prep;this.createSession(questId);this.huntPrep=undefined;this.setOverlay(null);this.audio.play('ui');};
+    if(!hasPrep(prep)){start();return;}
+    this.departing=true;
+    void this.save.hubLife({kind:'consumePrep'},this.save.doc.revision).then(r=>{if(r.ok)start();else this.base.notify(r.message,true);}).catch(()=>this.base.notify('出発準備の保存に失敗しました',true)).finally(()=>{this.departing=false;});
   }
 
   /** 拠点へ戻る。歩く拠点では里に立ち、一覧の拠点では画面を開く。 */
   toBase(): void {
+    if(this.place==='training'&&this.sim.hitCount>0)void this.save.hubLife({kind:'training',weapon:this.sim.player.weaponId,hits:this.sim.hitCount,damage:Math.round(this.sim.totalDamage)});
     if (this.hubWalk) {
       this.createSession(null, true);
       this.setOverlay(null);
       this.showPendingStory();
+      const ready=HUB_RESOURCE_POINTS.filter(p=>['gather','harvest'].includes(resourceStatus(this.save.doc,this.content,p).action)).length;
+      if(ready)this.hud.toast('帰還：回収できる採集場 '+ready+'か所｜地図で確認');
       return;
     }
     this.createSession(null);
@@ -693,7 +739,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     const cap = this.store.value.fpsCap;
     if (cap === 30 && ts - this.lastRender < 1000 / 30 - 3) return;
     this.lastRender = ts;
-    const paused = this.menu.open || this.base.open || this.result.open || this.story.open || this.looks.open || this.touch.editing || this.portrait.matches || document.hidden;
+    const paused = this.departing || this.menu.open || this.base.open || this.result.open || this.story.open || this.looks.open || this.touch.editing || this.portrait.matches || document.hidden;
     if (paused !== this.paused) {
       this.paused = paused;
       this.releaseInputs();
@@ -736,6 +782,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
         const near = nearestFacility(this.content.hub.facilities, this.sim.world, this.sim.player.pos);
         this.nearFacility = near;
         this.nearResource=near?null:nearbyResource(this.sim.world,this.sim.player.pos);
+        this.nearService=near||this.nearResource?null:serviceNear(this.sim.world,this.sim.player.pos);
         if(this.fishing&&(this.nearResource?.id!=='fish'||this.sim.tick>=this.fishing.to)){
           this.fishing=null;this.hud.toast('釣りを中止した。もう一度釣れる');
         }
@@ -782,6 +829,10 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     const pv = this.looks.preview(this.canvas.getBoundingClientRect());
     this.view.portrait = pv ? { baseYaw: this.looksYaw, spin: pv.spin, focus: pv.focus, zoom: pv.zoom, pane: pv.pane, clothes: pv.clothes } : null;
     this.syncLook(pv?.look ?? null);
+    if(this.place==='hub'){
+      if(this.lifeRevision!==this.save.doc.revision){this.lifeRevision=this.save.doc.revision;this.view.setHubLife(lifeOf(this.save.doc),resourceCycle(this.save.doc,this.content),villageLevel(this.save.doc,this.content));}
+      this.view.hubGather=this.fishing?'fish':this.gatheringVisual&&this.sim.tick<this.gatheringVisual.until?this.gatheringVisual.kind:null;
+    }
     this.view.update(this.sim, alpha, paused ? 0 : dt, paused ? { x: 0, y: 0 } : this.hub.consumeLook(), this.store.value.verify);
     // ロックオン: 照準と、ボタンの印。標的が見えなくなって外れた時は、知らせる
     if (this.view.lockLost) {

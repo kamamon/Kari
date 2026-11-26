@@ -715,3 +715,32 @@ button.reception-desk { cursor: pointer; }
 .field-map-svg .tgt { fill: #e0606a; stroke: #2a1010; stroke-width: 1.2; }
 .field-map-svg .tgt.marked { fill: #ffd678; }
 
+
+/* 拠点生活。横画面の限られた高さを使い、タブと内容を独立してスクロール。 */
+#base[data-section="life"] [data-sec]:not([data-sec~="life"]){display:none}
+#base[data-section="life"] .base-card{width:min(100%,72rem);height:100%;display:flex;flex-direction:column;gap:7px;overflow:hidden;background:#18221c}
+#base[data-section="life"] .base-banners,#base[data-section="life"] .base-message,#base[data-section="life"] .base-note,#base[data-section="life"] .base-hint,#base[data-section="life"] .base-fs{display:none}
+#base .life-entry{margin:6px 0;min-height:44px}
+#base .hub-life{flex:1;display:flex;flex-direction:column;min-height:0;gap:6px}
+#base .hub-life[hidden]{display:none}
+.life-tabs{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;flex-shrink:0;touch-action:pan-x;padding:2px 0}
+#base .life-button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:6px 11px;border-radius:6px;border:1px solid #867b63;background:#314035;color:#f4e6ca;text-decoration:none;font-size:13px;line-height:1.25;white-space:normal;cursor:pointer}
+#base .life-tabs .life-button{white-space:nowrap;flex:0 0 auto}
+#base .life-button.on{background:#89663e;border-color:#dfbe83}
+#base .life-button:disabled{opacity:.42;cursor:default}
+.life-body{flex:1;overflow-y:auto;min-height:0;touch-action:pan-y;-webkit-overflow-scrolling:touch;padding:0 2px 12px}
+.life-section{border:1px solid #4d594a;border-radius:8px;padding:10px;margin:7px 0;background:#243027}
+.life-section h3{margin:0 0 6px;color:#d8ba86;font-size:16px}
+.life-summary,.life-text,.life-notice,.life-warn{font-size:12px;line-height:1.5;margin:4px 0;color:#d5d8cb}
+.life-notice:empty{display:none}.life-notice.bad,.life-warn{color:#f0b18b}
+.life-highlight{padding:8px;border:1px solid #88704e;background:#382e22;border-radius:5px;color:#ffe0a4}
+.life-row{display:flex;align-items:center;flex-wrap:wrap;justify-content:space-between;gap:8px;border-top:1px solid #536052;padding:8px 0}
+.life-row-text{display:flex;flex:1 1 210px;flex-direction:column;gap:3px}.life-row-text b{font-size:13px}.life-row-text small{font-size:11px;color:#c4c6b8}
+.life-actions{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.life-select,.life-search{font:inherit;min-height:42px;border-radius:6px;border:1px solid #867b63;color:#f4e6ca;background:#27362b;padding:5px;max-width:100%}
+.life-map{width:min(100%,350px);height:auto;display:block;margin:8px auto;background:#26322b;border:1px solid #687563;border-radius:8px}
+.life-room{position:relative;min-height:158px;background:linear-gradient(145deg,#6c543b 0 55%,#9a7a54 55% 100%);border:5px solid #473427;border-radius:8px;overflow:hidden}
+.life-room.green{background:linear-gradient(145deg,#546d4d 0 55%,#8c9872 55% 100%)}.life-room.bronze{background:linear-gradient(145deg,#79654d 0 55%,#b3925d 55% 100%)}
+.life-room span{display:flex;align-items:center;justify-content:center;position:absolute;background:#3a3227;border:2px solid #b0996b;color:#f7dfb6;font-size:11px;text-align:center;padding:5px;overflow:hidden}
+.room-window{left:36%;top:8%;width:30%;height:30%;background:#a2b4a0!important;color:#283c35!important}.room-bed{left:5%;bottom:7%;width:25%;height:35%}.room-chest{left:37%;bottom:8%;width:22%;height:21%}.room-shelf{right:4%;bottom:8%;width:30%;height:40%}.room-rack{right:4%;top:8%;width:30%;height:28%}
+.life-monster{padding:7px;border-top:1px solid #536052}.life-monster summary{min-height:34px;cursor:pointer}
+@media(max-height:450px){#base[data-section="life"] .base-card{padding:7px 10px;gap:4px}#base[data-section="life"] .base-lead{display:none}.life-section{padding:7px}.life-tabs{padding:0}}

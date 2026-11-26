@@ -24,7 +24,7 @@ import { DummyRig, type MonsterRig } from './render/monsterRig';
 import { CLIPS, JOINTS, clipPose, emptyPose, locomotionPose } from './render/poses';
 import { buildGreatShield, buildLance } from './render/lance';
 import { HunterRig } from './render/rig';
-import type { ArmorLook } from './render/hunterArmor';
+import { armorTierOf, type ArmorLook } from './render/hunterArmor';
 import { applySolved, canSolve, solveState, stowOffhand, type AnimState } from './render/hunterAnim';
 import type { Solved } from './render/bodySolve';
 import { GroundedLocomotion, freeStride } from './render/contactLocomotion';
@@ -104,7 +104,11 @@ const armorParam = Number(new URLSearchParams(location.search).get('armor'));
 const armorSlots = (new URLSearchParams(location.search).get('armorSlots') ?? 'head,chest,arms,waist,legs').split(',');
 const armorLook: ArmorLook = [2, 3, 4, 5].includes(armorParam) ? Object.fromEntries(armorSlots.map((s) => [s, armorParam])) : {};
 /** ?tier= を付けた時、ハンターにも強化後の形を持たせる */
-const held = (fam: string): string | undefined => (tier ? `model.weapon.${fam}.00${tier}` : undefined);
+let previewWeaponId: string | null = null;
+const held = (fam: string): string | undefined => {
+  const w=previewWeaponId?content.weapons.get(previewWeaponId):undefined;
+  return w?.family===fam?w.assetId:tier?`model.weapon.${fam}.00${tier}`:undefined;
+};
 stand('guardShield', buildGuardBladeShield(), -3.0, 0.3, 0);
 stand('guardSword', up(buildGuardBladeSword(), 'guard_blade'), -2.68, 0.1224, Math.PI / 2);
 stand('heavyBlade', buildHeavyBlade(), -2.27, 0.155, Math.PI / 2);
@@ -388,7 +392,7 @@ function frame(ts: number): void {
 
   if (state.subject === 'hunter') {
     // 技の id（player.<系統>.<技>）から武器系統を決め、その武器と盾を持たせる。共通の技は断岳剣で見せる。
-    const fam = content.families.get(a?.actionId.split('.')[1] ?? '') ?? content.families.get('heavy_blade')!;
+    const fam = content.families.get(a?.actionId.split('.')[1] ?? (previewWeaponId?content.weapons.get(previewWeaponId)?.family??'':'')) ?? content.families.get('heavy_blade')!;
     hunter.setArmor(armorLook);
     hunter.setFamily(fam.id, fam.offhand, held(fam.id));
     let missing = false;
@@ -578,6 +582,9 @@ async function main(): Promise<void> {
   const stance = q.get('stance');
   if (stance === 'idle' || stance === 'walk' || stance === 'guard') state.stance = stance;
   if (q.get('family')) state.stanceFamily = q.get('family')!;
+  const pw=q.get('previewWeapon'),pa=q.get('previewArmor');
+  if(pw&&content.weapons.has(pw)){previewWeaponId=pw;state.stanceFamily=content.weapons.get(pw)!.family;state.stance='idle';state.bones=false;state.shapes=false;}
+  if(pa){const armor=content.armor.get(pa);if(armor){armorLook[armor.slot]=armorTierOf(armor.assetId);state.stance='idle';state.bones=false;state.shapes=false;}}
   if (q.get('shapes') === '0') state.shapes = false;
   if (q.get('bones') === '0') state.bones = false;
   const glb = q.get('glb');
