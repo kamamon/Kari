@@ -4,6 +4,7 @@ import { CROPS, DECORS, MEAL_IDS, RESOURCE_IDS, freshHubLife, lifeOf, hasPrep, t
 import { cloneSave, MAX_COUNT, RuleError, wornArmor, pouchOf, playWeaponId, type SaveDoc } from '../save/profile';
 import { HUB_RESOURCE_POINTS, resourceCycle, resourceRank, resourceStatus, useHubResource } from './hubResources';
 import { nearestFacility } from './hub';
+import { ANIMALS, furnitureErrors, type AnimalKind, type FurniturePlacement } from '../data/hubEstate';
 import type { V3 } from '../core/math';
 import type { World } from './world';
 
@@ -93,6 +94,7 @@ export type LifeCommand=
  |{kind:'upgrade';id:ResourceId}|{kind:'crop';id:Crop}|{kind:'collect'}
  |{kind:'mix';id:string}|{kind:'trade'}|{kind:'dispatch';source:Expedition['kind']}|{kind:'receive'}
  |{kind:'saveSet'|'applySet'|'deleteSet';slot:string}|{kind:'pouch';itemId:string;count:number}|{kind:'autoPouch'}
+ |{kind:'furniture';items:FurniturePlacement[]}|{kind:'animalBuy'|'animalFeed'|'animalCollect';id:AnimalKind}
  |{kind:'roomLayout';id:'left'|'right'}|{kind:'decor';id:Decor}|{kind:'displayWeapon'|'displayArmor';id:string|null}|{kind:'wish';id:string|null}
  |{kind:'task';id:string}|{kind:'festival';score:number}
  |{kind:'weather';id:HubLifeState['weather']}|{kind:'daylight';id:HubLifeState['daylight']}|{kind:'season';id:HubLifeState['season']}
@@ -140,7 +142,24 @@ export function applyHubLife(doc:SaveDoc,c:Content,cmd:LifeCommand):SaveDoc|null
  }
  case 'pouch':{const it=c.items.get(cmd.itemId);requireIt(it&&Number.isInteger(cmd.count)&&cmd.count>=0&&cmd.count<=it.carryMax,'持ち込み数が不正です');if(s.pouch===null)s.pouch=Object.fromEntries(pouchOf(doc,c).map(x=>[x.itemId,x.count]));s.pouch[cmd.itemId]=cmd.count;break;}
  case 'autoPouch':s.pouch=null;break;
- case 'roomLayout':requireIt(['left','right'].includes(cmd.id),'家具の配置が不正です');s.roomLayout=cmd.id;break;
+ case 'furniture':{const errors=furnitureErrors(cmd.items);requireIt(!errors.length,errors.join('、'));s.furniture=cmd.items.map(p=>({...p}));break;}
+ case 'animalBuy':case 'animalFeed':case 'animalCollect':{
+  requireIt(Object.prototype.hasOwnProperty.call(ANIMALS,cmd.id),'家畜の種類が不正です');
+  const def=ANIMALS[cmd.id],stock=s.livestock??={},a=stock[cmd.id];
+  if(cmd.kind==='animalBuy'){
+   requireIt((a?.count??0)<3,'1種につき3頭までです');
+   requireIt(a?.fedCycle==null,'世話の途中では増やせません');spend(n,cost(def.price));
+   stock[cmd.id]={count:(a?.count??0)+1,fedCycle:null,lastHarvest:a?.lastHarvest??-1};
+  }else if(cmd.kind==='animalFeed'){
+   requireIt(a&&a.fedCycle===null&&cycle>a.lastHarvest,'今は給餌できません。回収または次の依頼を待ってください');
+   spend(n,cost(0,stack(def.feed,a.count)));a.fedCycle=cycle;
+  }else{
+   requireIt(a&&a.fedCycle!==null&&cycle>a.fedCycle,'依頼を1回達成すると回収できます');
+   gain(n,c,stack(def.product,def.yield*a.count));a.fedCycle=null;a.lastHarvest=cycle;
+  }
+  break;
+ }
+ case 'roomLayout':requireIt(['left','right'].includes(cmd.id),'家具の配置が不正です');s.roomLayout=cmd.id;delete s.furniture;break;
  case 'decor':requireIt(DECORS.includes(cmd.id),'家具の種類が不正です');s.decor=cmd.id;break;
  case 'displayWeapon':requireIt(cmd.id===null||(doc.weapons.includes(cmd.id)&&c.weapons.has(cmd.id)),'所持している武器を選んでください');s.displayWeapon=cmd.id;break;
  case 'displayArmor':requireIt(cmd.id===null||(doc.armor.includes(cmd.id)&&c.armor.has(cmd.id)),'所持している防具を選んでください');s.displayArmor=cmd.id;break;

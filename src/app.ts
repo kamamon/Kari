@@ -34,6 +34,7 @@ import { nearestFacility } from './game/hub';
 import { HUB_FISH_BITE, HUB_RESOURCE_POINTS, nearbyResource, resourceStatus, resourceReward, resourceCycle, type HubResourcePoint } from './game/hubResources';
 import { destinations, serviceNear, chosenPouch, villageLevel, type HubService, type HubDestination } from './game/hubLife';
 import { lifeOf, hasPrep, prepText, type HubTab, type HuntPrep } from './data/hubLife';
+import { hubThreat, newHubReports } from './data/hubNarrative';
 import { scenesUnlocked, type StoryOutcome } from './data/story';
 import { AppearanceEditor, type LooksHost } from './ui/appearanceEditor';
 import { resolveAppearance, type ResolvedAppearance } from './data/appearance';
@@ -327,7 +328,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
    * 里を歩く拠点にいれば、すぐ開く。依頼の途中なら、拠点へ戻った時に開く。一覧の拠点（?hub=menu。検査と見比べ用）では開かない（依頼板の記録から読める）。
    */
   afterSettleStory(before: Readonly<Record<string, number>>, outcome: StoryOutcome = 'any'): void {
-    const ids = scenesUnlocked(this.content.story, before, this.save.doc.progress.questClears);
+    const ids = [...scenesUnlocked(this.content.story, before, this.save.doc.progress.questClears),...newHubReports(this.content,before,this.save.doc.progress.questClears)];
     if (ids.length === 0 || !this.hubWalk) return;
     this.pendingStory.push(...ids.map((sceneId) => ({ sceneId, outcome })));
     if (this.place === 'hub') this.showPendingStory();
@@ -876,7 +877,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     this.view.portrait = pv ? { baseYaw: this.looksYaw, spin: pv.spin, focus: pv.focus, zoom: pv.zoom, pane: pv.pane, clothes: pv.clothes } : null;
     this.syncLook(pv?.look ?? null);
     if(this.place==='hub'){
-      if(this.lifeRevision!==this.save.doc.revision){this.lifeRevision=this.save.doc.revision;this.view.setHubLife(lifeOf(this.save.doc),resourceCycle(this.save.doc,this.content),villageLevel(this.save.doc,this.content));}
+      if(this.lifeRevision!==this.save.doc.revision){this.lifeRevision=this.save.doc.revision;this.view.setHubLife(lifeOf(this.save.doc),resourceCycle(this.save.doc,this.content),villageLevel(this.save.doc,this.content),hubThreat(this.content,this.save.doc.progress.questClears));}
       this.view.hubGather=this.fishing?'fish':this.gatheringVisual&&this.sim.tick<this.gatheringVisual.until?this.gatheringVisual.kind:null;
     }
     let look = paused ? { x: 0, y: 0 } : this.hub.consumeLook();
