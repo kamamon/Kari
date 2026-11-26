@@ -215,10 +215,10 @@ export class Hud {
   }
 
   /** 里: 前に立っている施設（無ければ null）と、里に居るかどうか。施設があれば、入るボタンを出す。 */
-  setFacility(f: FacilityDef | null, inHub: boolean): void {
+  setFacility(f: Pick<FacilityDef, 'id' | 'action' | 'summary'> | null, inHub: boolean): void {
     this.inHub = inHub;
     this.set('hublist', inHub ? 1 : 0, () => (this.listBtn.hidden = !inHub));
-    this.set('facility', f ? f.id : '', () => {
+    this.set('facility', f ? [f.id, f.action, f.summary].join('|') : '', () => {
       this.facilityBtn.hidden = !f;
       if (f) {
         this.facilityName.textContent = f.action;

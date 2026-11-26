@@ -31,6 +31,7 @@ import {
 } from './profile';
 import { MemoryBackend, type SaveBackend, type StoredBackup } from './saveDb';
 import type { AppearanceDraft } from '../data/appearance';
+import { useHubResource } from '../game/hubResources';
 
 /**
  * persistent: 端末に保存
@@ -267,6 +268,11 @@ export class SaveManager {
 
   sell(itemId: string, count: number): Promise<SaveResult> {
     return this.commit((doc) => sell(doc, this.content.shop, itemId, count));
+  }
+
+  /** 里の採集・作付けは素材と状態を同時に書く。表示時のtokenも確認する。 */
+  useHubResource(id: string, token: string): Promise<SaveResult> {
+    return this.commit(doc => useHubResource(doc, this.content, id, token));
   }
 
   /** 工房からの支給を受け取る（v0.26.0。材料と受け取りの記録を、1 回の書き込みで） */
