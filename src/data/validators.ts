@@ -593,7 +593,35 @@ export function validateElementRules(e: ElementRules | undefined, errors: string
 }
 
 /** 武器の属性・状態異常と、防具の耐性・技能（v0.33.0）が、決まりの中の名前と値か */
+/** 部位・属性の調整表: 全モンスターを読み込んだ後に参照先も検査する。 */
+export function validatePartZones(c: Content, errors: string[]): void {
+  const zones = c.elements?.partZones;
+  const els = new Set<string>(ELEMENT_IDS);
+  const table = (raw: unknown, label: string): void => {
+    if (!isObj(raw) || !Object.keys(raw).length) { errors.push(`${label}: 属性肉質表が不正`); return; }
+    for (const [e, v] of Object.entries(raw)) if (!els.has(e) || !isNum(v) || v < 0 || v > 1) errors.push(`${label}.${e}: 属性肉質が不正`);
+  };
+  if (zones === undefined) return;
+  if (!isObj(zones)) { errors.push('elements.partZones: 属性肉質表が不正'); return; }
+  for (const [id, entries] of Object.entries(zones)) {
+    const m = c.monsters.get(id);
+    if (!m || !isObj(entries) || !Object.keys(entries).length) { errors.push(`elements.partZones.${id}: 種または表が不正`); continue; }
+    for (const [partId, raw] of Object.entries(entries)) {
+      const p = m.parts.find(x => x.id === partId);
+      const label = `elements.partZones.${id}.${partId}`;
+      if (!p || !isObj(raw)) { errors.push(`${label}: 部位または表が不正`); continue; }
+      table(raw.normal, `${label}.normal`);
+      if (raw.broken !== undefined) {
+        if (p.breakDurability === null) errors.push(`${label}: 破壊できない部位の破壊後属性肉質`);
+        table(raw.broken, `${label}.broken`);
+      }
+      if (Object.keys(raw).some(k => k !== 'normal' && k !== 'broken')) errors.push(`${label}: 未知の欄`);
+    }
+  }
+}
+
 export function validateGear(c: Content, errors: string[]): void {
+  validatePartZones(c, errors);
   const profiles = c.elements?.ailment?.species;
   if (isObj(profiles)) for (const id of Object.keys(profiles)) {
     if (!c.monsters.has(id)) errors.push(`elements: ailment.species の種 ${id} が無い`);

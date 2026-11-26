@@ -49,5 +49,27 @@
       "monster.yurtepica": {"poison":{"initial":75,"increase":26,"cap":153,"durationTicks":480,"decayIntervalTicks":240,"decayAmount":4,"poisonDamage":3,"poisonHits":6},"para":{"initial":35,"increase":20,"cap":95,"durationTicks":96,"decayIntervalTicks":360,"decayAmount":3},"sleep":{"initial":50,"increase":22,"cap":116,"durationTicks":210,"decayIntervalTicks":360,"decayAmount":3},"stun":{"initial":45,"increase":20,"cap":105,"durationTicks":84,"decayIntervalTicks":360,"decayAmount":3}},
       "monster.hinasalv": {"poison":{"initial":50,"increase":20,"cap":110,"durationTicks":660,"decayIntervalTicks":240,"decayAmount":4,"poisonDamage":9,"poisonHits":6},"para":{"initial":55,"increase":24,"cap":127,"durationTicks":84,"decayIntervalTicks":360,"decayAmount":3},"sleep":{"initial":60,"increase":24,"cap":132,"durationTicks":210,"decayIntervalTicks":360,"decayAmount":3},"stun":{"initial":65,"increase":24,"cap":137,"durationTicks":72,"decayIntervalTicks":360,"decayAmount":3}}
     }
+  },
+  "partZones": {
+    "monster.galdros": {"back":{"normal":{"fire":0.12,"thunder":0.035},"broken":{"fire":0.27,"thunder":0.075}},"tail":{"normal":{"thunder":0.045,"water":0.22}}},
+    "monster.selvark": {"crest_l":{"normal":{"ice":0.38,"wind":0.07},"broken":{"ice":0.46,"wind":0.14}},"crest_r":{"normal":{"ice":0.38,"wind":0.07},"broken":{"ice":0.46,"wind":0.14}},"hindleg":{"normal":{"ice":0.34},"broken":{"ice":0.4}}},
+    "monster.numeradon": {"dish":{"normal":{"thunder":0.22,"water":0.06},"broken":{"thunder":0.38,"water":0.13}},"sacs":{"normal":{"thunder":0.43,"water":0.08},"broken":{"thunder":0.5,"water":0.14}}},
+    "monster.bornakel": {"head":{"normal":{"ice":0.23},"broken":{"ice":0.36}},"sac_chest":{"normal":{"ice":0.4,"wind":0.07},"broken":{"ice":0.48,"wind":0.13}},"sac_l":{"normal":{"ice":0.38},"broken":{"ice":0.45}},"sac_r":{"normal":{"ice":0.38},"broken":{"ice":0.45}}},
+    "monster.ashreia": {"tuft_l":{"normal":{"fire":0.43,"mist":0.07},"broken":{"fire":0.48,"mist":0.14}},"tuft_r":{"normal":{"fire":0.43,"mist":0.07},"broken":{"fire":0.48,"mist":0.14}}},
+    "monster.lumisca": {"nodes":{"normal":{"ice":0.4,"thunder":0},"broken":{"ice":0.46,"thunder":0.12}},"tail_tip":{"normal":{"ice":0.34,"thunder":0.04},"broken":{"ice":0.4,"thunder":0.09}}},
+    "monster.orglass": {"claw_r":{"normal":{"thunder":0.19,"water":0.07},"broken":{"thunder":0.36,"water":0.14}},"plates":{"normal":{"thunder":0.21,"water":0.06},"broken":{"thunder":0.44,"water":0.12}}},
+    "monster.tengaro": {"hooks":{"normal":{"fire":0.24,"thunder":0.07},"broken":{"fire":0.34,"thunder":0.13}},"lock":{"normal":{"fire":0.44},"broken":{"fire":0.5}}},
+    "monster.verito": {"bag_l":{"normal":{"fire":0.42,"water":0.07},"broken":{"fire":0.49,"water":0.13}},"bag_r":{"normal":{"fire":0.42,"water":0.07},"broken":{"fire":0.49,"water":0.13}},"spinner":{"normal":{"fire":0.37},"broken":{"fire":0.44}}},
+    "monster.razmer": {"ring_f":{"normal":{"water":0.2,"ice":0.06},"broken":{"water":0.4,"ice":0.12}},"ring_b":{"normal":{"water":0.2,"ice":0.06},"broken":{"water":0.4,"ice":0.12}}},
+    "monster.kirisave": {"sails_l":{"normal":{"fire":0.43,"ice":0},"broken":{"fire":0.51,"ice":0.11}},"sails_r":{"normal":{"fire":0.43,"ice":0},"broken":{"fire":0.51,"ice":0.11}}},
+    "monster.velgait": {"lamps_f":{"normal":{"wind":0.42,"mist":0.04},"broken":{"wind":0.49,"mist":0.12}},"lamps_b":{"normal":{"wind":0.42,"mist":0.04},"broken":{"wind":0.49,"mist":0.12}}},
+    "monster.kordopil": {"plate":{"normal":{"fire":0.27,"thunder":0.09},"broken":{"fire":0.43,"thunder":0.17}}},
+    "monster.palseit": {"crest_l":{"normal":{"ice":0.45,"wind":0.1},"broken":{"ice":0.49}},"crest_r":{"normal":{"ice":0.45,"wind":0.1},"broken":{"ice":0.49}}},
+    "monster.numaporon": {"dish":{"normal":{"thunder":0.31,"water":0.09},"broken":{"thunder":0.44,"water":0.16}}},
+    "monster.chilumicana": {"nodes":{"normal":{"ice":0.43,"thunder":0.06},"broken":{"ice":0.5,"thunder":0.15}}},
+    "monster.kohalgis": {"shell":{"normal":{"thunder":0.3,"water":0.09},"broken":{"thunder":0.47,"water":0.16}}},
+    "monster.mitogaron": {"hooks":{"normal":{"fire":0.31,"thunder":0.1},"broken":{"fire":0.44,"thunder":0.16}}},
+    "monster.yurtepica": {"bag":{"normal":{"fire":0.46,"water":0.1},"broken":{"fire":0.5,"water":0.16}}},
+    "monster.hinasalv": {"sails":{"normal":{"fire":0.46,"ice":0.06},"broken":{"fire":0.52,"ice":0.15}}}
   }
 }

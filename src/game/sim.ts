@@ -9,7 +9,7 @@ import { HitLedger, computeDamage, edgeStage, sweepCapsule, type WorldShape } fr
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
 import { defenseScale, scaleMonsterDef, totalDefense } from './rank';
-import { computeGear, critChance, incomingElementScale, weaponElementZone, type GearEffects } from './gear';
+import { computeGear, critChance, incomingElementScale, weaponElementHit, type GearEffects } from './gear';
 import { addAilment, ailmentAmount, ailmentRules, activeControl, clearAilments, startPoison, wakeFromSleep } from './ailment';
 import { applyDamageToMonster, createMonster, monsterBlockers, monsterShapes, stepMonster, type MonsterState } from './monster';
 import { questTimeLimitTicks } from './field';
@@ -1116,7 +1116,8 @@ export class Simulation implements SimCtx {
     else if (chance < 0 && roll < -chance) crit = -1;
     // 武器の属性は、武器そのもので当てた時だけ（盾には乗らない）。部位の係数は属性ごと（弱点・耐性。複合は大きい方、弱点でなければ半分）
     const weaponHit = h.contact !== 'shield';
-    const elementZone = weaponHit ? weaponElementZone(C, weapon, m.def, part) : 0;
+    const elementHit = weaponHit ? weaponElementHit(C, weapon, m.def, part, m.parts[partIndex]!.broken) : { zone: 0, element: null };
+    const elementZone = elementHit.zone;
     // 状態異常の睡眠: 覚ます最初の命中だけ wakeScale 倍（v0.33.0）
     const woke = !m.dead && wakeFromSleep(m.ailments, R);
     const damage = computeDamage({
@@ -1152,7 +1153,7 @@ export class Simulation implements SimCtx {
       chargeLevel: h.chargeLevel,
       tick: this.tick,
       bounced,
-      ...(elementZone > 0 ? { element: (weapon.element.type === 'compound' ? weapon.element.elements![0] : weapon.element.type) as ElementId } : {}),
+      ...(elementHit.element ? { element: elementHit.element } : {}),
     });
     applyDamageToMonster(m, partIndex, damage, h.damageType, this, g.partDamage);
     if (m.herd) herdHurt(m, this);

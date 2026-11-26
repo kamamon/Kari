@@ -431,7 +431,15 @@ export interface SkillDef {
  * 属性と状態異常の決まり（public/data/elements.json。v0.33.0。docs/elements.md・ChatGPT の全装備四級版 #15 の rules）。
  * 部位の属性係数 = 部位の elementZone × （弱点 weak / 耐性 resist / ほか 1）。弱点と耐性はモンスターの登録簿の weak・resist。
  */
+/** 属性肉質の明示値は絶対係数。未設定属性は従来式で補う。 */
+export interface PartElementProfile {
+  normal: Partial<Record<ElementId, number>>;
+  broken?: Partial<Record<ElementId, number>>;
+}
+
 export interface ElementRules {
+  /** 恒久種ID/部位ID。生成されるモンスター定義とは独立した調整表。 */
+  partZones?: Record<string, Record<string, PartElementProfile>>;
   elements: { id: ElementId; name: string }[];
   /** 部位の elementZone に掛ける倍率 */
   zone: { weak: number; resist: number };
