@@ -1,3 +1,4 @@
+import { PROVISIONS } from '../game/provisions';
 import {emptyClassicGear, JEWELS, socketCapacity, installedSlots, fortifyBonus, classicRank, type ClassicGearState} from '../game/classicGear';
 import {computeGear} from '../game/gear';
 // 保存データ（里の持ち物・装備・進行）の形と、それを変える処理。
@@ -617,4 +618,11 @@ export function changeClassicGear(doc:SaveDoc,c:Content,op:'craft'|'attach'|'det
  if(op==='attach'){if((g.stock[j.id]??0)<=0)throw new RuleError('not_owned','装飾品を持っていません');if(installedSlots(id,g)+j.cost>socketCapacity(c,id))throw new RuleError('full','空きスロットがありません');g.stock[j.id]=(g.stock[j.id]??0)-1;list.push(j.id);}
  else {const i=list.indexOf(j.id);if(i<0)throw new RuleError('not_owned','装着されていません');if((g.stock[j.id]??0)>=MAX_COUNT)throw new RuleError('full','装飾品がいっぱいです');list.splice(i,1);g.stock[j.id]=(g.stock[j.id]??0)+1;}
  return next;
+}
+
+export function prepareProvisions(doc:SaveDoc,c:Content,id:string):SaveDoc{
+ const r=PROVISIONS.find(x=>x.id===id);if(!r||!c.items.has(r.output))throw new RuleError('unknown','調合がありません');
+ if(doc.money<r.money||r.materials.some(m=>(doc.items[m.itemId]??0)<m.count))throw new RuleError('insufficient','素材か通貨が足りません');
+ if((doc.items[r.output]??0)+r.count>MAX_COUNT)throw new RuleError('full','所持上限です');
+ const next=cloneSave(doc);next.money-=r.money;for(const m of r.materials){const n=next.items[m.itemId]!-m.count;if(n)next.items[m.itemId]=n;else delete next.items[m.itemId];}next.items[r.output]=(next.items[r.output]??0)+r.count;return next;
 }

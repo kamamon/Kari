@@ -75,6 +75,8 @@ export interface MonsterState {
   stall: number;
   /** 目印（v0.42.0。標識玉）の残り tick。0 なら印は無い */
   markTicks: number;
+  flashTicks: number;
+  flashCount: number;
   /** 最後に狩人が見たエリア（同じエリアに居た時。フィールドの大型だけ。見ていなければ null） */
   seenAreaId: string | null;
 }
@@ -139,6 +141,8 @@ export function createMonster(def: MonsterDef, spawn: { x: number; z: number; ya
     ailments: freshAilments(),
     stall: 0,
     markTicks: 0,
+    flashTicks: 0,
+    flashCount: 0,
     seenAreaId: null,
   };
 }
@@ -286,6 +290,8 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   }
 
   if (m.captured) return;
+  const dazzled=m.flashTicks>0;
+  if(dazzled)m.flashTicks--;
   if (m.tranqTicks > 0 && --m.tranqTicks === 0) m.tranq = 0;
 
   // 状態異常（v0.33.0）: 効き目の残り・毒・猶予・ためた量の減り。毒で倒れることもある
@@ -317,6 +323,8 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
     return;
   }
 
+  // 白光玉: 気絶とは別の短い方向喪失。視界を失う間は追尾・技の選択を止める。
+  if(dazzled){m.action=null;m.yaw+=0.014;return;}
   // 群れの幼体: ふだんは群れの動き。反撃する間（fight）と技の途中だけ、下のふつうの技の選び方へ進む
   if (m.herd && stepHerdMember(m, player, ctx)) return;
 

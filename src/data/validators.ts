@@ -427,6 +427,12 @@ export function crossCheck(c: Content, errors: string[]): void {
       if (!(it.tranq && it.tranq.range > 0 && it.tranq.halfAngleDeg > 0)) errors.push(`${w}: tranq が不正`);
     } else if (it.kind === 'mark') {
       if (!(it.mark && it.mark.range > 0 && it.mark.halfAngleDeg > 0 && Number.isInteger(it.mark.ticks) && it.mark.ticks > 0)) errors.push(`${w}: mark が不正`);
+    } else if (it.kind === 'stamina' || it.kind === 'cook') {
+      if(!isNum(it.stamina)||it.stamina<=0)errors.push(`${w}: stamina が不正`);
+    } else if (it.kind === 'heat' || it.kind === 'cold') {
+      if(!isInt(it.protectTicks)||it.protectTicks!<=0)errors.push(`${w}: protectTicks が不正`);
+    } else if (it.kind === 'flash') {
+      if(!it.flash||!isNum(it.flash.range)||it.flash.range<=0||!isNum(it.flash.halfAngleDeg)||it.flash.halfAngleDeg<=0||it.flash.halfAngleDeg>180||!isInt(it.flash.ticks)||it.flash.ticks<=0)errors.push(`${w}: flash が不正`);
     } else if (it.kind === 'whet') {
       // 研いだ後は納める（v0.40.0。2G に合わせて、納刀して使い、背から下ろして研ぐ。護刃が防御を構えたまま使った時だけ、抜刀のまま）
       if (a && a.onFinish !== 'sheathed_idle') errors.push(`${w}: 研ぐ行動の onFinish は sheathed_idle にする`);

@@ -1,3 +1,4 @@
+import { PROVISIONS } from '../game/provisions';
 import {emptyClassicGear, JEWELS, socketCapacity, installedSlots, classicRank} from '../game/classicGear';
 // 拠点（仮）。武器を選び、依頼か訓練場へ出る。持ち物を確かめ、工房で強化し、データを書き出す / 取り込む。
 // 受付は級ごとの実施設とつなぎ、星ごとの短い一覧から詳細へ進む。
@@ -596,6 +597,8 @@ export class BaseScreen {
       r.dataset.item = g.itemId;
       this.shopBody.appendChild(r);
     }
+    this.shopBody.appendChild(el('h4', undefined, '食事・調合'));
+    for(const r of PROVISIONS){const b=el('button','go','作る');b.disabled=doc.money<r.money||r.materials.some(m=>(doc.items[m.itemId]??0)<m.count);b.addEventListener('click',()=>void this.run('準備中',()=>this.host.save.provision(r.id),'道具袋に追加しました。'));this.shopBody.appendChild(row(r.name,r.materials.map(m=>(c.materials.get(m.itemId)?.name??c.items.get(m.itemId)?.name??m.itemId)+' '+(doc.items[m.itemId]??0)+'/'+m.count).join('、')+' / '+r.money+'通貨',[b],r.output));}
     this.shopBody.appendChild(el('h4', undefined, '売る'));
     const owned = shop.sell.filter((g) => (doc.items[g.itemId] ?? 0) > 0);
     if (owned.length === 0) this.shopBody.appendChild(el('p', 'shop-note', '売れる素材を持っていません。'));

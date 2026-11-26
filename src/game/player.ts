@@ -77,7 +77,7 @@ export interface PlayerState {
   coatings: ItemStack[];
   coating: string | null;
   /** 使っている途中の道具。効果が出る tick より前に妨害されると、消費しない。 */
-  itemUse: { itemId: string; instanceId: number; done: boolean } | null;
+  itemUse: { itemId: string; instanceId: number; done: boolean; cookGood?:boolean; cookPressed?:boolean } | null;
   /** 剥ぎ取りの途中（source は剥ぎ取る対象） */
   carving: { source: string; instanceId: number; done: boolean } | null;
   /** 採る・納める途中（狩らない依頼。v0.27.0）。品が入る tick より前に止まると、何も起きない */
@@ -1177,6 +1177,7 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   const use = p.itemUse;
   if (use) {
     const item = ctx.content.items.get(use.itemId)!;
+    if(item.kind==='cook'&&!use.done&&!use.cookPressed&&ev?.run.instanceId===use.instanceId&&(inp.pressed&Btn.Main)) {use.cookPressed=true;use.cookGood=ev.t>=76&&ev.t<96;p.buffer.main=0;}
     if (!use.done && ev && ev.run.instanceId === use.instanceId && ev.t >= item.effectTick!) {
       use.done = true;
       const stack = p.items.find((s) => s.itemId === use.itemId);

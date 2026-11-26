@@ -193,6 +193,9 @@ export class Simulation implements SimCtx {
   readonly rng: SeededRng;
   readonly options: SimOptions;
   tick = 0;
+  hotProtection = 0;
+  coldProtection = 0;
+  get climate():'normal'|'hot'|'cold'{const id=this.field?.id??'';return ['field.classic_07','field.classic_18'].includes(id)?'hot':['field.classic_05','field.classic_11','field.classic_15'].includes(id)?'cold':'normal';}
   player: PlayerState;
   monsters: MonsterState[] = [];
   readonly ledger = new HitLedger();
@@ -548,7 +551,7 @@ export class Simulation implements SimCtx {
 
   canUseItem(item: ItemDef): boolean {
     // 回復と研磨石は依頼の外（訓練場）や達成後でも使える。罠と鎮静玉は狩猟中だけ。罠は同時に 1 つまで。
-    if (item.kind === 'heal' || item.kind === 'whet') return true;
+    if (item.kind === 'heal' || item.kind === 'whet' || item.kind === 'stamina') return true;
     if (this.hunt?.phase !== 'active') return false;
     return item.kind !== 'trap' || (this.traps.length === 0 && trapSite(this.world, this.player.pos, this.player.yaw) !== null);
   }
@@ -578,6 +581,25 @@ export class Simulation implements SimCtx {
     if (!this.canUseItem(item)) {
       this.emit({ type: 'item_effect', itemId: item.id, kind: item.kind, ok: false, amount: 0, pos });
       return false;
+    }
+    if(item.kind==='stamina'||item.kind==='cook'){
+      const before=p.stamina,good=item.kind!=='cook'||p.itemUse?.cookGood===true;
+      p.stamina=Math.min(this.content.player.maxStamina,p.stamina+(good?item.stamina!:15));
+      this.emit({type:'item_effect',itemId:item.id,kind:item.kind,ok:good,amount:Math.round(p.stamina-before),pos});return true;
+    }
+    if(item.kind==='heat'||item.kind==='cold'){
+      if(item.kind==='heat')this.hotProtection=item.protectTicks!;else this.coldProtection=item.protectTicks!;
+      this.emit({type:'item_effect',itemId:item.id,kind:item.kind,ok:true,amount:item.protectTicks!,pos});return true;
+    }
+    if(item.kind==='flash'){
+      const k=item.flash!,area=this.world.areaAt(p.pos.x,p.pos.z);
+      const m=this.frontMonster(k.range,k.halfAngleDeg);
+      let ticks=0;
+      if(m&&this.world.areaAt(m.pos.x,m.pos.z)===area&&!m.asleep&&m.flashTicks===0&&Math.abs(angleDiff(yawOf(p.pos.x-m.pos.x,p.pos.z-m.pos.z),m.yaw))<=Math.PI*.60){
+        const g=this.world.geo(area),visible=!g||g.shape.clear(p.pos.x,p.pos.z,m.pos.x,m.pos.z,.05);
+        if(visible){ticks=Math.max(60,Math.round(k.ticks*Math.pow(.7,m.flashCount)));m.flashCount++;m.flashTicks=ticks;m.action=null;m.attackEval=null;m.aware=true;}
+      }
+      this.emit({type:'item_effect',itemId:item.id,kind:'flash',ok:ticks>0,amount:ticks,pos});return true;
     }
     if (item.kind === 'trap') {
       const t = item.trap!;
@@ -931,6 +953,11 @@ export class Simulation implements SimCtx {
     const fg=this.fieldGather,op=this.player.errandOp,run=this.player.action;
     if(fg&&op?.target.kind==='field_node'&&op.target.source==='fish'&&run?.instanceId===op.instanceId&&fg.bite(run.tick)&&(input.pressed&Btn.Main))fg.hookInstance=run.instanceId;
     stepPlayer(this.player, input, this);
+    if(this.hotProtection>0)this.hotProtection--;if(this.coldProtection>0)this.coldProtection--;
+    if(this.hunt?.phase==='active'&&this.player.mode!=='dead'){
+      if(this.climate==='hot'&&!this.hotProtection&&this.tick%120===0)this.player.hp=Math.max(1,this.player.hp-1);
+      if(this.climate==='cold'&&!this.coldProtection&&this.tick%60===0)this.player.stamina=Math.max(0,this.player.stamina-4);
+    }
     if(fg&&this.hunt?.phase==='active')fg.discover(this.areaId,this.player.pos.x,this.player.pos.z,10+skillValue(this.content,this.gear.levels,'gather_sense'));
     if (this.field) this.stepExits();
     for (const g of this.herds) stepHerdGroup(g, this);
@@ -1395,6 +1422,7 @@ export class Simulation implements SimCtx {
       this.totalDamage,
       this.hitCount,
       this.damageTaken,
+      this.hotProtection,this.coldProtection,p.itemUse?.cookGood?1:0,p.itemUse?.cookPressed?1:0,
     ];
     for (const m of this.monsters) {
       parts.push(m.hp, m.pos.x, m.pos.z, m.yaw, m.dead ? 1 : 0, m.staggerTicks, m.cooldown, act(m.action), m.aware ? 1 : 0, m.enraged ? m.enragedTicks : 0, m.rageAcc);
@@ -1402,7 +1430,7 @@ export class Simulation implements SimCtx {
     }
     for (const h of this.hazards) parts.push(h.x, h.z, h.warn, h.active, h.hit ? 1 : 0);
     parts.push(p.itemIndex, p.items.map((s) => s.count).join(','), p.itemUse ? `${p.itemUse.itemId}:${p.itemUse.done ? 1 : 0}` : '-', p.lastSingle ? `${p.lastSingle.key}:${p.lastSingle.instanceId}` : '-', p.carving ? p.carving.source : '-');
-    for (const m of this.monsters) parts.push(m.trapTicks, m.trapCount, m.tranq, m.tranqTicks, m.captured ? 1 : 0, m.markTicks, m.seenAreaId ?? '-');
+    for (const m of this.monsters) parts.push(m.flashTicks,m.flashCount,m.trapTicks, m.trapCount, m.tranq, m.tranqTicks, m.captured ? 1 : 0, m.markTicks, m.seenAreaId ?? '-');
     for (const m of this.monsters) {
       const a = m.ailments;
       parts.push(STATUS_KINDS.map((k) => `${a.gauge[k]}/${a.count[k]}/${a.idle[k]}/${a.ticks[k]}`).join(','), a.poisonTotal, a.poisonDone, a.grace);

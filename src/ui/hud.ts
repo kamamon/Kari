@@ -415,6 +415,10 @@ export class Hud {
         case 'item_effect': {
           const name = sim.content.items.get(e.itemId)?.name ?? '';
           if (e.kind === 'heal') this.toast(`${name}: 体力 +${e.amount}`);
+          else if(e.kind==='cook')this.toast(e.ok?`上手に焼けた！ スタミナ +${e.amount}`:`焼き加減失敗 スタミナ +${e.amount}`);
+          else if(e.kind==='stamina')this.toast(`${name}: スタミナ +${e.amount}`);
+          else if(e.kind==='heat'||e.kind==='cold')this.toast(`${name}: ${Math.round(e.amount/3600)}分間の気候対策`);
+          else if(e.kind==='flash')this.toast(e.ok?`白光玉が効いた（${Math.round(e.amount/60)}秒）`:'白光玉は効かなかった');
           else if (e.kind === 'whet') this.toast(`${name}: 研ぎ上がった`);
           else if (e.kind === 'trap') this.toast(e.ok ? `${name}を仕掛けた` : `${name}は置けなかった`);
           else if (e.kind === 'mark') this.toast(e.ok ? `${name}が当たった（${Math.round(e.amount / 60)} 分ほど、地図に居場所が出る）` : `${name}は外れた`);
@@ -619,7 +623,9 @@ export class Hud {
     });
     // 道具
     const stack = p.items[p.itemIndex];
-    const itemText = stack ? `${sim.content.items.get(stack.itemId)?.name ?? ''} ×${stack.count}` : '';
+    let itemText = stack ? `${sim.content.items.get(stack.itemId)?.name ?? ''} ×${stack.count}` : '';
+    if(p.itemUse&&sim.content.items.get(p.itemUse.itemId)?.kind==='cook'&&!p.itemUse.done){const t=p.action?.tick??0;itemText+=t>=77&&t<=96?' ｜ 今！主ボタン':' ｜ 焼き中 '+Math.min(100,Math.round(t/96*100))+'%';}
+    if(sim.climate!=='normal'){const remain=sim.climate==='hot'?sim.hotProtection:sim.coldProtection;itemText+=' ｜ '+(sim.climate==='hot'?'暑さ':'寒さ')+(remain>0?'対策 '+Math.ceil(remain/60)+'秒':' 注意');}
     this.set('item', itemText, () => {
       this.item.textContent = '';
       if (stack) withIcon(this.item, stack.itemId, itemText);

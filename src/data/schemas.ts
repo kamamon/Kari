@@ -1253,13 +1253,16 @@ export interface ItemDef {
   id: string;
   name: string;
   /** whet: 研磨石。刃の状態を最大まで戻す。抜刀して、手に持った武器を研ぐ */
-  kind: 'heal' | 'trap' | 'tranq' | 'whet' | 'mark' | 'coating';
+  kind: 'heal' | 'trap' | 'tranq' | 'whet' | 'mark' | 'coating' | 'flash' | 'stamina' | 'cook' | 'heat' | 'cold';
   carryMax: number;
   /** 使う行動と、効き目の tick。ビン（kind 'coating'）は道具の欄から使わないので持たない（v0.60.0） */
   useActionId?: string;
   effectTick?: number;
   summary: string;
   heal?: number;
+  stamina?: number;
+  protectTicks?: number;
+  flash?: {range:number; halfAngleDeg:number; ticks:number};
   /** 仕掛けてから armTicks で作動可能になり、大型が radius 内に入ると holdTicks の間止める。lifeTicks で消える。 */
   trap?: { armTicks: number; radius: number; holdTicks: number; lifeTicks: number };
   /** 正面 ±halfAngleDeg、range 以内の大型に当たる */
