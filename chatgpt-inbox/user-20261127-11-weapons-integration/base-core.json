@@ -1,0 +1,22 @@
+[
+  {
+    "path": "tools/gen-weapons.mjs",
+    "baseBlob": "d1d3b0284d2a3f70d3fca5995da9208c19c0785a"
+  },
+  {
+    "path": "src/game/action.ts",
+    "baseBlob": "5eb2f3fbbcb21af706b0cdc3fb054daf08fe444c"
+  },
+  {
+    "path": "src/game/player.ts",
+    "baseBlob": "3147801c1352e51f60f4650cd4bd93781c1776a5"
+  },
+  {
+    "path": "src/game/sim.ts",
+    "baseBlob": "b42afe6c84b146f8a7ca1a5622512f6f8bdf6fec"
+  },
+  {
+    "path": "src/data/validators.ts",
+    "baseBlob": "d6e7b8f6b92620384523c4f9037cc8885caa6c7d"
+  }
+]

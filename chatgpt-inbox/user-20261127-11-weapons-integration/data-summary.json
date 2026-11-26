@@ -1,0 +1,70 @@
+{
+  "baseCommit": "56578c6917ae1d958052c38db85fcd9707b5e336",
+  "counts": {
+    "starter+upgrade": [
+      20,
+      16
+    ],
+    "public/data/equipment_series.json": [
+      112,
+      112
+    ],
+    "public/data/field_gathering.json": [
+      32,
+      56
+    ]
+  },
+  "newWeapons": 164,
+  "newRecipes": 184,
+  "newAssets": 52,
+  "actionNames": {
+    "hunting_horn": [
+      "swing_left",
+      "swing_right",
+      "poke",
+      "slam",
+      "recital_enter",
+      "play_note1",
+      "play_note2",
+      "play_note3",
+      "recital_exit",
+      "draw",
+      "sheathe"
+    ],
+    "gunlance": [
+      "thrust",
+      "thrust2",
+      "thrust3",
+      "uppercut",
+      "guard_thrust",
+      "shell",
+      "wyvern_fire",
+      "reload",
+      "guard",
+      "hop",
+      "backstep",
+      "draw",
+      "sheathe"
+    ],
+    "light_bowgun": [
+      "fire",
+      "rapid_fire",
+      "reload",
+      "aim",
+      "backstep",
+      "draw",
+      "sheathe"
+    ],
+    "heavy_bowgun": [
+      "fire",
+      "charge_stance",
+      "reload",
+      "aim",
+      "dodge",
+      "draw",
+      "sheathe"
+    ]
+  },
+  "newClips": 38,
+  "allFamilyCount": 11
+}

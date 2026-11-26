@@ -1,0 +1,327 @@
+{
+  "schemaVersion": 1,
+  "note": "tools/gen-weapons.mjs extraWeapons()",
+  "actions": [
+    {
+      "schemaVersion": 1,
+      "actionId": "player.light_bowgun.fire",
+      "clip": "xw_light_bowgun_fire",
+      "tickRate": 60,
+      "durationTicks": 42,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 14
+        },
+        {
+          "id": "active",
+          "from": 14,
+          "to": 15
+        },
+        {
+          "id": "recovery",
+          "from": 15,
+          "to": 42
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [],
+      "cancelWindows": [
+        {
+          "from": 33,
+          "to": 42,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "tick": 14,
+          "type": "sound",
+          "id": "xw_shot"
+        }
+      ],
+      "onFinish": "drawn_idle",
+      "weaponTrack": "xw_light_bowgun_fire",
+      "shoot": [
+        {
+          "tick": 14,
+          "count": 1,
+          "spreadDeg": 0,
+          "speed": [
+            40
+          ],
+          "coefficient": [
+            0.39
+          ]
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.light_bowgun.rapid_fire",
+      "clip": "xw_light_bowgun_rapid_fire",
+      "tickRate": 60,
+      "durationTicks": 76,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 14
+        },
+        {
+          "id": "active",
+          "from": 14,
+          "to": 43
+        },
+        {
+          "id": "recovery",
+          "from": 43,
+          "to": 76
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [],
+      "cancelWindows": [
+        {
+          "from": 60,
+          "to": 76,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "tick": 14,
+          "type": "sound",
+          "id": "xw_shot"
+        },
+        {
+          "tick": 28,
+          "type": "sound",
+          "id": "xw_shot"
+        },
+        {
+          "tick": 42,
+          "type": "sound",
+          "id": "xw_shot"
+        }
+      ],
+      "onFinish": "drawn_idle",
+      "weaponTrack": "xw_light_bowgun_rapid_fire",
+      "shoot": [
+        {
+          "tick": 14,
+          "count": 1,
+          "spreadDeg": 0,
+          "speed": [
+            40
+          ],
+          "coefficient": [
+            0.22
+          ]
+        },
+        {
+          "tick": 28,
+          "count": 1,
+          "spreadDeg": 0,
+          "speed": [
+            40
+          ],
+          "coefficient": [
+            0.22
+          ]
+        },
+        {
+          "tick": 42,
+          "count": 1,
+          "spreadDeg": 0,
+          "speed": [
+            40
+          ],
+          "coefficient": [
+            0.22
+          ]
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.light_bowgun.reload",
+      "clip": "xw_light_bowgun_reload",
+      "tickRate": 60,
+      "durationTicks": 86,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 48
+        },
+        {
+          "id": "active",
+          "from": 48,
+          "to": 49
+        },
+        {
+          "id": "recovery",
+          "from": 49,
+          "to": 86
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [
+        {
+          "tick": 48,
+          "type": "sound",
+          "id": "xw_reload"
+        }
+      ],
+      "onFinish": "drawn_idle",
+      "weaponTrack": "xw_light_bowgun_reload"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.light_bowgun.aim",
+      "clip": "xw_light_bowgun_aim",
+      "tickRate": 60,
+      "durationTicks": 28,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 18
+        },
+        {
+          "id": "active",
+          "from": 18,
+          "to": 19
+        },
+        {
+          "id": "recovery",
+          "from": 19,
+          "to": 28
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [],
+      "onFinish": "drawn_idle",
+      "weaponTrack": "xw_light_bowgun_aim"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.light_bowgun.backstep",
+      "clip": "xw_light_bowgun_backstep",
+      "tickRate": 60,
+      "durationTicks": 38,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 17
+        },
+        {
+          "id": "recovery",
+          "from": 17,
+          "to": 38
+        }
+      ],
+      "rootMotion": {
+        "mode": "controller",
+        "curveId": "xw_light_bowgun_dodge"
+      },
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [],
+      "onFinish": "drawn_idle",
+      "weaponTrack": "xw_light_bowgun_backstep",
+      "staminaCost": 12,
+      "invulnerable": [
+        {
+          "from": 3,
+          "to": 16
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.light_bowgun.sheathe",
+      "clip": "xw_light_bowgun_sheathe",
+      "tickRate": 60,
+      "durationTicks": 48,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 22
+        },
+        {
+          "id": "recovery",
+          "from": 22,
+          "to": 48
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [
+        {
+          "tick": 28,
+          "type": "sound",
+          "id": "hb_sheathe_01"
+        }
+      ],
+      "onFinish": "sheathed_idle",
+      "weaponTrack": "xw_light_bowgun_sheathe"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.light_bowgun.draw",
+      "clip": "xw_light_bowgun_draw",
+      "tickRate": 60,
+      "durationTicks": 48,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 22
+        },
+        {
+          "id": "recovery",
+          "from": 22,
+          "to": 48
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [
+        {
+          "tick": 20,
+          "type": "sound",
+          "id": "hb_draw_01"
+        }
+      ],
+      "onFinish": "drawn_idle",
+      "weaponTrack": "xw_light_bowgun_draw"
+    }
+  ]
+}

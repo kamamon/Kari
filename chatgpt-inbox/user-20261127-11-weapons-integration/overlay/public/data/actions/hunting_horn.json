@@ -1,0 +1,581 @@
+{
+  "schemaVersion": 1,
+  "note": "tools/gen-weapons.mjs extraWeapons()",
+  "actions": [
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.swing_left",
+      "clip": "xw_hunting_horn_swing_left",
+      "tickRate": 60,
+      "durationTicks": 56,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 19
+        },
+        {
+          "id": "active",
+          "from": 19,
+          "to": 34
+        },
+        {
+          "id": "recovery",
+          "from": 34,
+          "to": 56
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [
+        {
+          "id": "swing_left_0",
+          "from": 19,
+          "to": 34,
+          "shapeTrack": "xw_hunting_horn_swing_left",
+          "damageType": "blunt",
+          "damageCoefficient": 0.32,
+          "maxHitsPerTarget": 1,
+          "hitstopTicks": 5
+        }
+      ],
+      "cancelWindows": [
+        {
+          "from": 43,
+          "to": 56,
+          "into": [
+            "xw_hh_right",
+            "xw_hh_slam",
+            "roll"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "tick": 19,
+          "type": "sound",
+          "id": "hb_swing_01"
+        },
+        {
+          "tick": 19,
+          "type": "trail_on",
+          "id": "blade"
+        },
+        {
+          "tick": 34,
+          "type": "trail_off",
+          "id": "blade"
+        }
+      ],
+      "onFinish": "drawn_idle",
+      "weaponTrack": "xw_hunting_horn_swing_left"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.swing_right",
+      "clip": "xw_hunting_horn_swing_right",
+      "tickRate": 60,
+      "durationTicks": 64,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 25
+        },
+        {
+          "id": "active",
+          "from": 25,
+          "to": 34
+        },
+        {
+          "id": "recovery",
+          "from": 34,
+          "to": 64
+        }
+      ],
+      "rootMotion": {
+        "mode": "controller",
+        "curveId": "xw_hunting_horn_swing_right"
+      },
+      "hitWindows": [
+        {
+          "id": "swing_right_0",
+          "from": 25,
+          "to": 34,
+          "shapeTrack": "xw_hunting_horn_swing_right",
+          "damageType": "blunt",
+          "damageCoefficient": 0.34,
+          "maxHitsPerTarget": 1,
+          "hitstopTicks": 5
+        }
+      ],
+      "cancelWindows": [
+        {
+          "from": 49,
+          "to": 64,
+          "into": [
+            "xw_hh_left",
+            "xw_hh_slam",
+            "roll"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "tick": 25,
+          "type": "sound",
+          "id": "hb_swing_02"
+        },
+        {
+          "tick": 25,
+          "type": "trail_on",
+          "id": "blade"
+        },
+        {
+          "tick": 34,
+          "type": "trail_off",
+          "id": "blade"
+        }
+      ],
+      "onFinish": "drawn_idle",
+      "weaponTrack": "xw_hunting_horn_swing_right"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.poke",
+      "clip": "xw_hunting_horn_poke",
+      "tickRate": 60,
+      "durationTicks": 40,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 14
+        },
+        {
+          "id": "active",
+          "from": 14,
+          "to": 20
+        },
+        {
+          "id": "recovery",
+          "from": 20,
+          "to": 40
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [
+        {
+          "id": "poke",
+          "from": 14,
+          "to": 20,
+          "shapeTrack": "xw_hunting_horn_poke_hit",
+          "damageType": "blunt",
+          "damageCoefficient": 0.13,
+          "maxHitsPerTarget": 1,
+          "hitstopTicks": 3
+        }
+      ],
+      "cancelWindows": [
+        {
+          "from": 32,
+          "to": 40,
+          "into": [
+            "xw_hh_left",
+            "roll"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "tick": 14,
+          "type": "sound",
+          "id": "hb_swing_02"
+        },
+        {
+          "tick": 14,
+          "type": "trail_on",
+          "id": "blade"
+        },
+        {
+          "tick": 20,
+          "type": "trail_off",
+          "id": "blade"
+        }
+      ],
+      "onFinish": "drawn_idle",
+      "weaponTrack": "xw_hunting_horn_poke"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.slam",
+      "clip": "xw_hunting_horn_slam",
+      "tickRate": 60,
+      "durationTicks": 102,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 25
+        },
+        {
+          "id": "active",
+          "from": 25,
+          "to": 71
+        },
+        {
+          "id": "recovery",
+          "from": 71,
+          "to": 102
+        }
+      ],
+      "rootMotion": {
+        "mode": "controller",
+        "curveId": "xw_hunting_horn_slam"
+      },
+      "hitWindows": [
+        {
+          "id": "slam_0",
+          "from": 25,
+          "to": 35,
+          "shapeTrack": "xw_hunting_horn_slam",
+          "damageType": "blunt",
+          "damageCoefficient": 0.21,
+          "maxHitsPerTarget": 1,
+          "hitstopTicks": 6
+        },
+        {
+          "id": "slam_1",
+          "from": 61,
+          "to": 71,
+          "shapeTrack": "xw_hunting_horn_slam",
+          "damageType": "blunt",
+          "damageCoefficient": 0.62,
+          "maxHitsPerTarget": 1,
+          "hitstopTicks": 9
+        }
+      ],
+      "cancelWindows": [
+        {
+          "from": 78,
+          "to": 102,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "tick": 25,
+          "type": "sound",
+          "id": "hb_swing_01"
+        },
+        {
+          "tick": 25,
+          "type": "trail_on",
+          "id": "blade"
+        },
+        {
+          "tick": 71,
+          "type": "trail_off",
+          "id": "blade"
+        }
+      ],
+      "onFinish": "drawn_idle",
+      "weaponTrack": "xw_hunting_horn_slam"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.recital_enter",
+      "clip": "xw_hunting_horn_recital_enter",
+      "tickRate": 60,
+      "durationTicks": 48,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 23
+        },
+        {
+          "id": "active",
+          "from": 23,
+          "to": 24
+        },
+        {
+          "id": "recovery",
+          "from": 24,
+          "to": 48
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [],
+      "cancelWindows": [
+        {
+          "from": 38,
+          "to": 48,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "tick": 23,
+          "type": "sound",
+          "id": "xw_note_1"
+        }
+      ],
+      "onFinish": "drawn_idle",
+      "weaponTrack": "xw_hunting_horn_recital_enter"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.play_note1",
+      "clip": "xw_hunting_horn_play_note1",
+      "tickRate": 60,
+      "durationTicks": 60,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 28
+        },
+        {
+          "id": "active",
+          "from": 28,
+          "to": 29
+        },
+        {
+          "id": "recovery",
+          "from": 29,
+          "to": 60
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [],
+      "cancelWindows": [
+        {
+          "from": 48,
+          "to": 60,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "tick": 28,
+          "type": "sound",
+          "id": "xw_note_1"
+        }
+      ],
+      "onFinish": "drawn_idle",
+      "weaponTrack": "xw_hunting_horn_play_note1"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.play_note2",
+      "clip": "xw_hunting_horn_play_note2",
+      "tickRate": 60,
+      "durationTicks": 64,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 30
+        },
+        {
+          "id": "active",
+          "from": 30,
+          "to": 31
+        },
+        {
+          "id": "recovery",
+          "from": 31,
+          "to": 64
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [],
+      "cancelWindows": [
+        {
+          "from": 51,
+          "to": 64,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "tick": 30,
+          "type": "sound",
+          "id": "xw_note_2"
+        }
+      ],
+      "onFinish": "drawn_idle",
+      "weaponTrack": "xw_hunting_horn_play_note2"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.play_note3",
+      "clip": "xw_hunting_horn_play_note3",
+      "tickRate": 60,
+      "durationTicks": 68,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 32
+        },
+        {
+          "id": "active",
+          "from": 32,
+          "to": 33
+        },
+        {
+          "id": "recovery",
+          "from": 33,
+          "to": 68
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [],
+      "cancelWindows": [
+        {
+          "from": 54,
+          "to": 68,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "tick": 32,
+          "type": "sound",
+          "id": "xw_note_3"
+        }
+      ],
+      "onFinish": "drawn_idle",
+      "weaponTrack": "xw_hunting_horn_play_note3"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.recital_exit",
+      "clip": "xw_hunting_horn_recital_exit",
+      "tickRate": 60,
+      "durationTicks": 36,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 17
+        },
+        {
+          "id": "active",
+          "from": 17,
+          "to": 18
+        },
+        {
+          "id": "recovery",
+          "from": 18,
+          "to": 36
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [],
+      "cancelWindows": [
+        {
+          "from": 28,
+          "to": 36,
+          "into": [
+            "roll"
+          ]
+        }
+      ],
+      "events": [],
+      "onFinish": "drawn_idle",
+      "weaponTrack": "xw_hunting_horn_recital_exit"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.draw",
+      "clip": "xw_hunting_horn_draw",
+      "tickRate": 60,
+      "durationTicks": 44,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 20
+        },
+        {
+          "id": "recovery",
+          "from": 20,
+          "to": 44
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [
+        {
+          "tick": 19,
+          "type": "sound",
+          "id": "hb_draw_01"
+        }
+      ],
+      "onFinish": "drawn_idle",
+      "weaponTrack": "xw_hunting_horn_draw"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.sheathe",
+      "clip": "xw_hunting_horn_sheathe",
+      "tickRate": 60,
+      "durationTicks": 46,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 21
+        },
+        {
+          "id": "recovery",
+          "from": 21,
+          "to": 46
+        }
+      ],
+      "rootMotion": {
+        "mode": "none"
+      },
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [
+        {
+          "tick": 20,
+          "type": "sound",
+          "id": "hb_sheathe_01"
+        }
+      ],
+      "onFinish": "sheathed_idle",
+      "weaponTrack": "xw_hunting_horn_sheathe"
+    }
+  ]
+}

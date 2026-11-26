@@ -1,0 +1,629 @@
+// 関節付きの仮ハンター（2 代目）。骨の階層へ、設定図に合わせた体の皮（hunterBody.ts）を重み付けして付ける。
+// コードで組んだ仮素材で、正式モデル（GLB）の差し替え口になる。
+// 骨と socket の名前・向きは docs/animation-contract.md と揃える。
+//   root → pelvis → spine → chest → neck → head / 腕 / 脚、socket_hand_r / socket_hand_l / socket_back / socket_hip
+// 単位 m、Y 上、+Z 前。身長 1.75m。右手側は -X。
+import { Bone, BoxGeometry, BufferAttribute, BufferGeometry, ConeGeometry, CylinderGeometry, DataTexture, DoubleSide, Group, Line, LineBasicMaterial, Matrix4, Mesh, MeshLambertMaterial, Object3D, Quaternion, SRGBColorSpace, Skeleton, SkinnedMesh, TextureLoader, TorusGeometry, CircleGeometry, Vector3 } from 'three';
+import { assetUrl } from '../core/assets';
+import { BOW_STRING, buildArrow, buildBow } from './bow';
+import { buildGuardBladeShield, buildGuardBladeSword } from './guardBlade';
+import { buildHeavyBlade, type WeaponModel } from './heavyBlade';
+import { buildGreatShield, buildLance } from './lance';
+import { buildLongBlade, buildTwinBlade, buildWarMaul } from './forgedWeapons';
+import { buildHuntingHorn, buildGunlance, buildLightBowgun, buildHeavyBowgun } from './extraWeaponModels';
+import { withShell } from './shellPlates';
+import { HUNTER_ATLAS } from './hunterAtlas';
+import { armorLookKey, buildHunterArmor, type ArmorLook } from './hunterArmor';
+import { addAppearanceShader, deformBody, setLookColors, type AppearanceUniforms } from './appearance';
+import { bodyKey, hexRgb, type ResolvedAppearance } from '../data/appearance';
+import { BODY_RANGES, REST, buildHunterBody } from './hunterBody';
+import { JOINTS, type BodyPose, type JointName } from './poses';
+import { packCharts, type AtlasChart } from './procGeo';
+
+const HUNTER_TEX = 'assets/textures/hunter/hunter_body_v1.webp';
+/** 肌と髪の印（v0.28.0。npm run hunter:masks。R = 肌、G = 髪） */
+const HUNTER_MASK = 'assets/textures/hunter/hunter_mask_v1.png';
+/** 外見の決まりが届く前の、肌と髪の印の所の A の平均の色（appearance.json の base と同じ。tests/appearance.test.ts が確かめる） */
+export const BASE_LOOK = { skin: '#C38E6E', hair: '#473628' } as const;
+
+const D2R = Math.PI / 180;
+const UPPER_ARM = REST.upperArm;
+const FOREARM = REST.forearm;
+const HAND = 0.04;
+const TUMBLE_PIVOT = 0.55;
+
+/** 武器系統ごとの仮モデル（握りが原点、+Y が武器の先）。無い系統は断岳剣で代用する。 */
+const WEAPON_BUILDERS: Record<string, () => WeaponModel> = {
+  heavy_blade: buildHeavyBlade,
+  guard_blade: buildGuardBladeSword,
+  war_maul: buildWarMaul,
+  twin_blades: buildTwinBlade,
+  long_blade: buildLongBlade,
+  long_lance: buildLance,
+  // 弦は、引いた形に合わせてリグが張る
+  ring_bow: () => buildBow(false),
+  hunting_horn: buildHuntingHorn,
+  gunlance: buildGunlance,
+  light_bowgun: buildLightBowgun,
+  heavy_bowgun: buildHeavyBowgun,
+};
+/** 左手に持つもの: 盾、または双剣のもう 1 本 */
+/**
+ * 系統の既定の形ではなく、武器ごとの形があるもの（モデルの ID → 作り方）。
+ * 強化後（.002 岩殻 〜 .005 輝殻）: 元の形に、岩の板を足す（shellPlates.ts。設定図が無い間の仮の見た目。段で色が変わる）。
+ */
+const MODEL_BUILDERS: Record<string, () => WeaponModel> = {};
+/** 左手に持つ物にも、武器ごとの形があるもの（手に持つ武器のモデルの ID → 作り方）。双剣の左の剣 */
+const OFFHAND_MODEL_BUILDERS: Record<string, () => WeaponModel> = {};
+const SHELL_BASES: Record<string, () => WeaponModel> = {
+  guard_blade: buildGuardBladeSword,
+  war_maul: buildWarMaul,
+  twin_blades: buildTwinBlade,
+  long_blade: buildLongBlade,
+  long_lance: buildLance,
+  ring_bow: () => buildBow(false),
+  hunting_horn: buildHuntingHorn,
+  gunlance: buildGunlance,
+  light_bowgun: buildLightBowgun,
+  heavy_bowgun: buildHeavyBowgun,
+};
+for (const tier of [2, 3, 4, 5]) {
+  MODEL_BUILDERS[`model.weapon.heavy_blade.00${tier}`] = () => buildHeavyBlade('shell', tier);
+  for (const [fam, build] of Object.entries(SHELL_BASES)) MODEL_BUILDERS[`model.weapon.${fam}.00${tier}`] = () => withShell(build(), `model.weapon.${fam}.00${tier}`);
+  OFFHAND_MODEL_BUILDERS[`model.weapon.twin_blades.00${tier}`] = () => withShell(buildTwinBlade(), `model.weapon.twin_blades.00${tier}`);
+}
+const SHIELD_BUILDERS = { shield_small: buildGuardBladeShield, shield_great: buildGreatShield, blade_left: buildTwinBlade } as const;
+export type ShieldKind = keyof typeof SHIELD_BUILDERS;
+function gatherModel(model:WeaponModel,style:'ore'|'bone',rank:number):WeaponModel{
+ const colors=style==='ore'?[0x6f838c,0x8db2be,0xacc9d0,0x8bc5d6]:[0xb6a17c,0xd0ba94,0xe2d4b4,0xece0c5];
+ const surface=new MeshLambertMaterial({color:colors[rank-1],flatShading:style==='ore'});
+ model.group.traverse(o=>{if(o instanceof Mesh)o.material=surface;});return model;
+}
+for(const style of ['ore','bone'] as const)for(const rank of [1,2,3,4])for(const [family,build] of Object.entries(WEAPON_BUILDERS)){
+ const key=`model.weapon.${family}.${style}.r${rank}`;
+ MODEL_BUILDERS[key]=()=>gatherModel(build(),style,rank);
+ const off=family==='guard_blade'?SHIELD_BUILDERS.shield_small:(family==='long_lance'||family==='gunlance')?SHIELD_BUILDERS.shield_great:family==='twin_blades'?SHIELD_BUILDERS.blade_left:null;
+ if(off)OFFHAND_MODEL_BUILDERS[key]=()=>gatherModel(off(),style,rank);
+}
+
+/** 両腕の持ち方。two = 両手で 1 本を持つ（もう片方は握りから along だけ先）/ other = もう片方の手の位置（武器のローカル座標。弓の弦） */
+export interface HandsSpec {
+  two: boolean;
+  along?: number;
+  primary?: 'right' | 'left';
+  other?: { x: number; y: number; z: number } | null;
+}
+
+/** 納めた時の置き場所: 付く骨、その骨の座標での握りの位置、武器の向き（+Y）、武器の +X の向き */
+export interface SheathPlace {
+  parent: 'chest' | 'pelvis';
+  pos: readonly number[];
+  dir: readonly number[];
+  normal: readonly number[];
+}
+
+export class HunterRig {
+  readonly root = new Group();
+  readonly joints = {} as Record<JointName, Object3D>;
+  readonly sockets = { hand_r: new Object3D(), hand_l: new Object3D(), back: new Object3D(), hip: new Object3D() };
+  /** 手に持つ武器の入れ物（中身は武器系統ごとに差し替える）と、左腕の盾の入れ物 */
+  readonly weapon = new Group();
+  /** 採掘の時だけ右手に持つ、借りた採掘道具（v0.27.0。狩らない依頼。見た目だけ） */
+  readonly tool = new Group();
+  readonly netTool = new Group();
+  readonly fishTool = new Group();
+  readonly shield = new Group();
+  familyId = '';
+  /** いま手に持たせている形（武器ごとの形があればモデルの ID、無ければ系統の ID） */
+  modelKey = '';
+  private models: Record<string, WeaponModel> = {};
+  /** 左手に持つ物の形（盾の種類、または武器ごとの形があるものはモデルの ID で覚える） */
+  private shields: Record<string, WeaponModel> = {};
+  private tumbleYaw = new Group();
+  private tumble = new Group();
+  private tumbleBack = new Group();
+  private body = new Group();
+  private materials: MeshLambertMaterial[] = [];
+  /** 弓の弦（上の先 → 引いた点 → 下の先）と、つがえた矢 */
+  private bowString: Line | null = null;
+  private bowArrow: Group | null = null;
+  /** 弦を引く手が握った矢（v0.60.0。環弓の近接）。アクターの座標に置く */
+  private handArrow: Group | null = null;
+  /** 体の絵を貼る区画（書き出しと検査用）と、区画の並びが焼いた絵と同じか */
+  atlasCharts: AtlasChart[] = [];
+  atlasStored = false;
+  /** 設定図から焼いた絵の読み込みが終わったか / 失敗したか */
+  artLoaded = false;
+  artFailed = false;
+  bodyTriangles = 0;
+  /** 断岳剣の絵の読み込み状態と、面の数（検査用） */
+  weaponArt: { loaded: boolean; failed: boolean }[] = [];
+  weaponTriangles = 0;
+  // 計算用の使い回し
+  private v1 = new Vector3();
+  private v2 = new Vector3();
+  private v3 = new Vector3();
+  private v4 = new Vector3();
+  private q1 = new Quaternion();
+  private q2 = new Quaternion();
+  private m1 = new Matrix4();
+  private m2 = new Matrix4();
+
+  private skeleton!: Skeleton;
+  private bodyMesh!: SkinnedMesh;
+  private bodyMat!: MeshLambertMaterial;
+  /** いま描いていない体の部分（'mantle' = 外套、'hair' = 髪の束） */
+  hiddenBody: string[] = [];
+  private armorMeshes: SkinnedMesh[] = [];
+  /** いま付けている防具の組み合わせ（部位の順に段を並べた文字列。'11111' = 里の装束） */
+  armorKey = '11111';
+  /** 外見（v0.28.0）: 色替えの uniform、A の体の形（作り直しの元）、いまの体型（null = A）と、その鍵 */
+  private looks!: AppearanceUniforms;
+  private bodyBase!: BufferGeometry;
+  private bodyAxes: Record<string, number> | null = null;
+  bodyShapeKey = 'A';
+  /** いま描いている肌・髪の色（検査用。null = A のまま） */
+  lookColors: { skin: [number, number, number] | null; hair: [number, number, number] | null } = { skin: null, hair: null };
+  /** いまの組み合わせの防具の形（体型で変える前）。体型が変わった時は、これを写して変える */
+  private armorBase: { geos: BufferGeometry[]; glow: number; triangles: number } | null = null;
+  /** 肌と髪の印の読み込み（検査用） */
+  maskLoaded = false;
+  armorTriangles = 0;
+
+  constructor() {
+    this.root.name = 'root';
+    const j = (name: JointName, parent: Object3D, x: number, y: number, z: number): Object3D => {
+      const o = new Bone();
+      o.name = name;
+      o.position.set(x, y, z);
+      parent.add(o);
+      this.joints[name] = o;
+      return o;
+    };
+    this.tumbleYaw.position.y = TUMBLE_PIVOT;
+    this.body.position.y = -TUMBLE_PIVOT;
+    this.root.add(this.tumbleYaw);
+    this.tumbleYaw.add(this.tumble);
+    this.tumble.add(this.tumbleBack);
+    this.tumbleBack.add(this.body);
+
+    // 骨の静止位置は hunterBody.ts の REST と同じ値（体の皮はこの位置に合わせて作ってある）
+    const pelvis = j('pelvis', this.body, 0, REST.pelvisY, 0);
+    const spine = j('spine', pelvis, 0, REST.spineY - REST.pelvisY, 0);
+    const chest = j('chest', spine, 0, REST.chestY - REST.spineY, 0);
+    const neck = j('neck', chest, 0, REST.neckY - REST.chestY, 0);
+    j('head', neck, 0, REST.headY - REST.neckY, 0);
+    for (const side of [-1, 1] as const) {
+      const S = side < 0 ? 'R' : 'L';
+      const upper = j(`upperArm${S}` as JointName, chest, REST.shoulderX * side, REST.shoulderY - REST.chestY, 0);
+      const fore = j(`forearm${S}` as JointName, upper, 0, -UPPER_ARM, 0);
+      const hand = j(`hand${S}` as JointName, fore, 0, -FOREARM, 0);
+      const socket = side < 0 ? this.sockets.hand_r : this.sockets.hand_l;
+      socket.name = side < 0 ? 'socket_hand_r' : 'socket_hand_l';
+      socket.position.set(0, -HAND, 0);
+      hand.add(socket);
+      const thigh = j(`thigh${S}` as JointName, pelvis, REST.hipX * side, REST.hipY - REST.pelvisY, 0);
+      const shin = j(`shin${S}` as JointName, thigh, 0, -REST.thigh, 0);
+      j(`foot${S}` as JointName, shin, 0, -REST.shin, 0);
+    }
+
+    // ---- 体の皮: 骨に重み付けした 1 枚のメッシュ。色は設定図から焼いた絵（読み込みが終わるまでは平均の色）----
+    const body = buildHunterBody();
+    this.atlasCharts = body.charts;
+    const stored = HUNTER_ATLAS.rects as Record<string, readonly [number, number, number, number] | undefined>;
+    this.atlasStored = body.charts.length === Object.keys(stored).length && body.charts.every((c) => stored[c.kind]);
+    const rects = this.atlasStored ? stored : packCharts(body.charts);
+    for (const c of body.charts) c.rect = rects[c.kind]!;
+    this.bodyBase = body.build();
+    const flat = new DataTexture(new Uint8Array([130, 104, 83, 255]), 1, 1);
+    flat.colorSpace = SRGBColorSpace;
+    flat.channel = 1;
+    flat.needsUpdate = true;
+    const bodyMat = new MeshLambertMaterial({ map: flat, vertexColors: true, side: DoubleSide });
+    this.materials.push(bodyMat);
+    this.root.updateMatrixWorld(true);
+    const skeleton = new Skeleton(JOINTS.map((n) => this.joints[n] as Bone));
+    this.skeleton = skeleton;
+    const mesh = new SkinnedMesh(this.bodyBase.clone(), bodyMat);
+    this.bodyMesh = mesh;
+    this.bodyMat = bodyMat;
+    // 外見の色替え（v0.28.0）: 肌と髪の印を読み、届くまでは何も替えない
+    this.looks = addAppearanceShader(bodyMat, { skin: hexRgb(BASE_LOOK.skin), hair: hexRgb(BASE_LOOK.hair) });
+    new TextureLoader().load(assetUrl(HUNTER_MASK), (t) => {
+      t.channel = 1;
+      this.looks.appearanceMask.value = t;
+      this.maskLoaded = true;
+    });
+
+    mesh.name = 'hunter_body';
+    mesh.castShadow = true;
+    mesh.frustumCulled = false;
+    this.root.add(mesh);
+    mesh.bind(skeleton, new Matrix4());
+    this.bodyTriangles = body.triangles;
+    new TextureLoader().load(
+      assetUrl(HUNTER_TEX),
+      (t) => {
+        t.colorSpace = SRGBColorSpace;
+        t.channel = 1;
+        t.anisotropy = 4;
+        bodyMat.map = t;
+        flat.dispose();
+        this.artLoaded = true;
+      },
+      undefined,
+      () => (this.artFailed = true),
+    );
+
+    // 背中の socket: 納刀時の武器位置（握りが右肩の上、刃は左下へ）
+    this.sockets.back.name = 'socket_back';
+    this.sockets.back.position.set(-0.22, 0.38, -0.16);
+    this.orient(this.sockets.back, new Vector3(0.62, -0.77, -0.13), new Vector3(0, 0, -1));
+    chest.add(this.sockets.back);
+    this.sockets.hip.name = 'socket_hip';
+    this.sockets.hip.position.set(0.16, 0, 0);
+    pelvis.add(this.sockets.hip);
+    // 手の socket: 刃は前腕の前方やや上へ向く
+    this.orient(this.sockets.hand_r, new Vector3(0, 0.35, 1), new Vector3(1, 0, 0));
+    this.orient(this.sockets.hand_l, new Vector3(0, 0.35, 1), new Vector3(1, 0, 0));
+    // 採掘道具（つるはし）: 柄は socket の +Y、頭は振る向き（socket の +Z / -Z）へ。ふだんは見せない
+    {
+      const wood = new MeshLambertMaterial({ color: 0x7a5a3a });
+      const iron = new MeshLambertMaterial({ color: 0x55585c });
+      const handle = new Mesh(new CylinderGeometry(0.016, 0.019, 0.62, 6), wood);
+      handle.position.y = 0.2;
+      const head = new Mesh(new BoxGeometry(0.035, 0.045, 0.3), iron);
+      head.position.y = 0.48;
+      const tip = new Mesh(new ConeGeometry(0.024, 0.1, 5), iron);
+      tip.rotation.x = Math.PI / 2;
+      tip.position.set(0, 0.48, 0.2);
+      this.tool.add(handle, head, tip);
+      this.tool.visible = false;
+      this.tool.name = 'tool_pick';
+      this.sockets.hand_r.add(this.tool);
+    }
+    {
+      const wood=new MeshLambertMaterial({color:0x856447}),rim=new MeshLambertMaterial({color:0x99886b}),net=new MeshLambertMaterial({color:0xe7e0c5,side:DoubleSide,transparent:true,opacity:.38,depthWrite:false});
+      const h=new Mesh(new CylinderGeometry(.024,.031,.83,8),wood);h.position.y=.34;
+      const hoop=new Mesh(new TorusGeometry(.27,.023,6,24),rim);hoop.position.y=.95;
+      const web=new Mesh(new CircleGeometry(.25,24),net);web.position.y=.95;this.netTool.add(h,hoop,web);
+      const rod=new Mesh(new CylinderGeometry(.009,.027,1.55,8),wood);rod.position.y=.68;
+      const line=new Line(new BufferGeometry().setFromPoints([new Vector3(0,1.45,0),new Vector3(0,1.60,-.15),new Vector3(0,1.36,-.70)]),new LineBasicMaterial({color:0xd2dfdc}));
+      this.fishTool.add(rod,line);this.netTool.visible=false;this.fishTool.visible=false;this.sockets.hand_r.add(this.netTool,this.fishTool);
+    }
+
+    // 腰の socket: 短い剣を納める（握りが左腰の前寄り、刃は後ろ下へ）。右手が届く位置にしてある。
+    // 位置と向きは、抜刀・納刀の動き（tools/weapons/guard_blade.mjs の HILT・SHEATH）と同じ値。
+    this.sockets.hip.position.set(0.17, 0.08, 0.06);
+    this.orient(this.sockets.hip, new Vector3(0.1, -0.8, -0.6), new Vector3(1, 0, 0));
+    this.weapon.matrixAutoUpdate = false;
+    this.shield.matrixAutoUpdate = false;
+    this.shield.visible = false;
+    this.root.add(this.weapon, this.shield);
+    this.setFamily('heavy_blade');
+  }
+
+  /** 手に持つ武器（と左腕の盾）を、武器系統のものへ差し替える。 */
+  /**
+   * 着ている防具の見た目を付け替える（部位 → 段。hunterArmor.ts）。同じ組み合わせなら何もしない。
+   * 板は、体と同じ骨に付く別のメッシュ。胴の防具を着ている間は、里の外套（首まわりと肩の布）を描かない（設定図は外套なし）。
+   */
+  setArmor(look: ArmorLook): void {
+    const key = armorLookKey(look);
+    if (key === this.armorKey) return;
+    this.armorKey = key;
+    const built = buildHunterArmor(look);
+    for (const g of this.armorBase?.geos ?? []) g.dispose();
+    this.armorBase = built ? { geos: [built.rock.build(), built.rim.build()], glow: built.glow, triangles: built.rock.triangles + built.rim.triangles } : null;
+    this.placeArmor();
+    // 体の一部を描かない: 胴の防具を着ている間は外套、兜をかぶっている間は髪の束（体の絵の区画はそのまま。脱げば、また描く）
+    const hide: [string, [number, number]][] = [];
+    if ((look.chest ?? 1) >= 2) hide.push(['mantle', BODY_RANGES.mantle]);
+    if ((look.head ?? 1) >= 2) hide.push(['hair', BODY_RANGES.hair]);
+    const ranges = hide.filter(([, [a, b]]) => b > a).sort((x, y) => x[1][0] - y[1][0]);
+    this.hiddenBody = ranges.map(([name]) => name);
+    const g = this.bodyMesh.geometry;
+    g.clearGroups();
+    if (ranges.length === 0) {
+      this.bodyMesh.material = this.bodyMat;
+      return;
+    }
+    let at = 0;
+    for (const [, [a, b]] of ranges) {
+      if (a > at) g.addGroup(at * 3, (a - at) * 3, 0);
+      at = b;
+    }
+    if (this.bodyTriangles > at) g.addGroup(at * 3, (this.bodyTriangles - at) * 3, 0);
+    this.bodyMesh.material = [this.bodyMat];
+  }
+
+  /** 防具のメッシュを、作っておいた形（armorBase）から置き直す。体型が A でなければ、体の皮と同じ決まりで広げる・寄せる（v0.28.0） */
+  private placeArmor(): void {
+    for (const m of this.armorMeshes) {
+      this.root.remove(m);
+      m.geometry.dispose();
+      (m.material as MeshLambertMaterial).dispose();
+    }
+    this.armorMeshes = [];
+    this.armorTriangles = 0;
+    const base = this.armorBase;
+    if (!base) return;
+    const rockMat = new MeshLambertMaterial({ vertexColors: true, side: DoubleSide });
+    const rimMat = new MeshLambertMaterial({ vertexColors: true, side: DoubleSide, emissive: 0xd9a441, emissiveIntensity: base.glow });
+    for (const [geo, mat, name] of [[base.geos[0]!, rockMat, 'hunter_armor'], [base.geos[1]!, rimMat, 'hunter_armor_rim']] as const) {
+      const g = geo.clone();
+      if (this.bodyAxes) deformBody(g, this.bodyAxes);
+      const m = new SkinnedMesh(g, mat);
+      m.name = name;
+      m.castShadow = true;
+      m.frustumCulled = false;
+      this.root.add(m);
+      m.bind(this.skeleton, new Matrix4());
+      this.armorMeshes.push(m);
+    }
+    this.armorTriangles = base.triangles;
+  }
+
+  /**
+   * 外見（v0.28.0。docs/spec.md の 28 章）: 肌と髪の色を替え、体型が変わった時は体の皮と防具を作り直す。
+   * 骨・関節・socket・当たりは変えない。base は外見の決まり（appearance.json の base。色を替える計算の元）。
+   */
+  setLook(look: Pick<ResolvedAppearance, 'skin' | 'hair' | 'body'>, base?: { skin: string; hair: string }): void {
+    if (base) {
+      this.looks.uSkinBase.value.setRGB(...hexRgb(base.skin), 'srgb');
+      this.looks.uHairBase.value.setRGB(...hexRgb(base.hair), 'srgb');
+    }
+    this.lookColors = { skin: look.skin ? [...look.skin] : null, hair: look.hair ? [...look.hair] : null };
+    setLookColors(this.looks, look);
+    const key = bodyKey(look.body);
+    if (key === this.bodyShapeKey) return;
+    this.bodyShapeKey = key;
+    this.bodyAxes = look.body ? { ...look.body } : null;
+    const old = this.bodyMesh.geometry;
+    const g = this.bodyBase.clone();
+    if (this.bodyAxes) deformBody(g, this.bodyAxes);
+    // 描かない体の部分（外套・髪の束）の区切りを、新しい形にも写す
+    for (const gr of old.groups) g.addGroup(gr.start, gr.count, gr.materialIndex);
+    this.bodyMesh.geometry = g;
+    old.dispose();
+    this.placeArmor();
+  }
+
+  setFamily(id: string, offhand?: ShieldKind, assetId?: string): void {
+    const modelKey = assetId && MODEL_BUILDERS[assetId] ? assetId : id;
+    if (id === this.familyId && modelKey === this.modelKey) return;
+    this.familyId = id;
+    this.modelKey = modelKey;
+    const m = (this.models[modelKey] ??= (MODEL_BUILDERS[modelKey] ?? WEAPON_BUILDERS[id] ?? (() => buildHeavyBlade()))());
+    this.weapon.clear();
+    this.weapon.add(m.group);
+    this.weaponArt = m.art;
+    this.weaponTriangles = m.triangles;
+    if (id === 'ring_bow') {
+      if (!this.bowString) {
+        const g = new BufferGeometry();
+        g.setAttribute('position', new BufferAttribute(new Float32Array(9), 3));
+        this.bowString = new Line(g, new LineBasicMaterial({ color: 0xd8cfb4 }));
+        this.bowString.frustumCulled = false;
+        this.bowArrow = buildArrow().group;
+        this.bowArrow.rotation.x = -Math.PI / 2;
+        this.handArrow = buildArrow().group;
+        this.handArrow.matrixAutoUpdate = false;
+        this.handArrow.visible = false;
+        this.root.add(this.handArrow);
+      }
+      this.weapon.add(this.bowString, this.bowArrow!);
+      this.setString(null);
+    } else if (this.handArrow) this.handArrow.visible = false;
+    this.shield.clear();
+    this.shield.visible = !!offhand;
+    if (offhand) {
+      const offKey = OFFHAND_MODEL_BUILDERS[modelKey] ? modelKey : offhand;
+      const s = (this.shields[offKey] ??= (OFFHAND_MODEL_BUILDERS[offKey] ?? SHIELD_BUILDERS[offhand])());
+      this.shield.add(s.group);
+      this.weaponArt = [...m.art, ...s.art];
+    }
+  }
+
+  /** 盾を、アクターのローカル座標の位置へ置き（表は前。yaw で左右へ向ける）、左腕を IK で伸ばす。姿勢と武器を置いた後に呼ぶ。 */
+  shieldTo(pos: { x: number; y: number; z: number }, yaw = 0): void {
+    this.shield.matrix.makeRotationY(yaw).setPosition(pos.x, pos.y, pos.z);
+    this.shield.matrixWorldNeedsUpdate = true;
+    this.root.updateMatrixWorld(true);
+    const target = new Vector3(pos.x, pos.y, pos.z - 0.04).applyMatrix4(this.root.matrixWorld);
+    const rootQ = this.root.getWorldQuaternion(this.q2);
+    this.solveArm(this.joints.upperArmL, this.joints.forearmL, target, new Vector3(0.7, -0.6, -0.3).applyQuaternion(rootQ));
+  }
+
+  /** 盾を背中へ付ける（納刀中）。姿勢を設定した後に呼ぶ。 */
+  shieldToBack(): void {
+    this.root.updateMatrixWorld(true);
+    const inv = this.m2.copy(this.root.matrixWorld).invert();
+    const local = this.m1.makeRotationY(Math.PI).setPosition(0.04, 0.2, -0.2);
+    this.shield.matrix.multiplyMatrices(inv, this.joints.chest.matrixWorld).multiply(local);
+    this.shield.matrixWorldNeedsUpdate = true;
+  }
+
+  /** 武器を、解いた置き場所（アクターのローカル座標）へ置く。腕は姿勢の側で解いてあるので、ここでは動かさない。 */
+  placeWeapon(grip: readonly number[], dir: readonly number[], normal: readonly number[]): void {
+    const b = this.basis(this.v4.set(dir[0]!, dir[1]!, dir[2]!).normalize(), new Vector3(normal[0], normal[1], normal[2]));
+    b.setPosition(grip[0]!, grip[1]!, grip[2]!);
+    this.weapon.matrix.copy(b);
+    this.weapon.matrixWorldNeedsUpdate = true;
+  }
+
+  /** 盾を、解いた置き場所（アクターのローカル座標の位置と向き）へ置く。 */
+  placeShield(pos: readonly number[], quat: readonly number[]): void {
+    this.shield.matrix.compose(this.v1.set(pos[0]!, pos[1]!, pos[2]!), this.q1.set(quat[0]!, quat[1]!, quat[2]!, quat[3]!), this.v2.set(1, 1, 1));
+    this.shield.matrixWorldNeedsUpdate = true;
+  }
+
+  /** 弓の弦を、引いた点（弓のローカル座標）まで張る。null なら、引いていない形へ戻す。矢をつがえている時は矢も出す。 */
+  setString(s: { y: number; z: number; arrow: boolean } | null): void {
+    if (!this.bowString || !this.bowArrow || this.familyId !== 'ring_bow') return;
+    const y = s ? s.y : 0, z = s ? Math.max(BOW_STRING.z, s.z) : BOW_STRING.z;
+    const p = this.bowString.geometry.getAttribute('position') as BufferAttribute;
+    p.setXYZ(0, 0, BOW_STRING.top, BOW_STRING.z);
+    p.setXYZ(1, 0, s ? y : 0, z);
+    p.setXYZ(2, 0, BOW_STRING.bottom, BOW_STRING.z);
+    p.needsUpdate = true;
+    // 矢: 矢はずを弦の引いた点に掛け、矢じりを的（弓の背の方）へ向ける。矢の原点は中央（長さ 0.8m）。
+    this.bowArrow.visible = !!s && s.arrow;
+    this.bowArrow.position.set(0, y, z - 0.4);
+  }
+
+  /**
+   * 弦を引く手が握った矢（v0.60.0。環弓の近接）: 握りの位置から、矢じりを dir の方へ向けて置く（矢はずは手の 0.15m 後ろ）。null なら隠す
+   */
+  placeHandArrow(h: { pos: readonly number[]; dir: readonly number[] } | null): void {
+    if (!this.handArrow) return;
+    this.handArrow.visible = !!h && this.familyId === 'ring_bow';
+    if (!h || !this.handArrow.visible) return;
+    const d = this.v4.set(h.dir[0]!, h.dir[1]!, h.dir[2]!).normalize();
+    const b = this.basis(d, new Vector3(0, 1, 0).cross(d).lengthSq() > 1e-4 ? new Vector3(0, 1, 0).cross(d) : new Vector3(1, 0, 0));
+    b.setPosition(h.pos[0]! + d.x * 0.25, h.pos[1]! + d.y * 0.25, h.pos[2]! + d.z * 0.25);
+    this.handArrow.matrix.copy(b);
+    this.handArrow.matrixWorldNeedsUpdate = true;
+  }
+
+  /** 武器を、納めた時の置き場所（骨と、その骨の座標での位置・向き）へ付ける。姿勢を設定した後に呼ぶ。 */
+  weaponToSheath(sh: SheathPlace): void {
+    this.toSheath(this.weapon, sh);
+  }
+
+  /** 左手に持つもの（双剣のもう 1 本）を、納めた時の置き場所へ付ける。 */
+  shieldToSheath(sh: SheathPlace): void {
+    this.toSheath(this.shield, sh);
+  }
+
+  private toSheath(obj: Group, sh: SheathPlace): void {
+    this.root.updateMatrixWorld(true);
+    const inv = this.m2.copy(this.root.matrixWorld).invert();
+    const local = this.basis(this.v4.set(sh.dir[0]!, sh.dir[1]!, sh.dir[2]!).normalize(), new Vector3(sh.normal[0], sh.normal[1], sh.normal[2])).setPosition(sh.pos[0]!, sh.pos[1]!, sh.pos[2]!);
+    const world = new Matrix4().multiplyMatrices(this.joints[sh.parent].matrixWorld, local);
+    obj.matrix.multiplyMatrices(inv, world);
+    obj.matrixWorldNeedsUpdate = true;
+  }
+
+  /** +Y を dir、+X を normal に近い向きへ揃える回転を obj に設定する。 */
+  private orient(obj: Object3D, dir: Vector3, normal: Vector3): void {
+    obj.quaternion.setFromRotationMatrix(this.basis(dir, normal));
+  }
+
+  private basis(dir: Vector3, normal: Vector3): Matrix4 {
+    const y = this.v1.copy(dir).normalize();
+    const x = this.v2.copy(normal).addScaledVector(y, -normal.dot(y));
+    if (x.lengthSq() < 1e-6) x.set(1, 0, 0).addScaledVector(y, -y.x);
+    x.normalize();
+    const z = this.v3.crossVectors(x, y);
+    return this.m1.makeBasis(x, y, z);
+  }
+
+  setPose(p: BodyPose): void {
+    for (const n of JOINTS) {
+      const r = p.j[n];
+      this.joints[n].rotation.set(r[0] * D2R, r[1] * D2R, r[2] * D2R);
+    }
+    this.joints.pelvis.position.set(p.px ?? 0, REST.pelvisY + p.py, p.pz ?? 0);
+    this.tumbleYaw.position.y = TUMBLE_PIVOT + p.drop;
+    this.tumbleYaw.rotation.y = p.tumbleDir;
+    this.tumble.rotation.x = p.tumble * D2R;
+    this.tumbleBack.rotation.y = -p.tumbleDir;
+    // 立っている姿勢では、低い方の足裏が地面（root の高さ）へ付くように骨盤を上下させる。
+    // 仮のキー姿勢でも足が沈んだり浮いたりしないようにするための簡易な接地。
+    // （足を解き終えた姿勢は、もう地面に合っているので触らない）
+    if (!p.grounded && Math.abs(p.tumble) < 1 && p.drop === 0) {
+      this.root.updateMatrixWorld(true);
+      let min = Infinity;
+      for (const foot of [this.joints.footL, this.joints.footR]) {
+        for (const z of [-0.065, 0.175]) {
+          const y = this.root.worldToLocal(foot.localToWorld(this.v1.set(0, -0.04, z))).y;
+          if (y < min) min = y;
+        }
+      }
+      this.joints.pelvis.position.y -= min;
+    }
+  }
+
+  /** 武器を socket（背中・手）へ付ける。姿勢を設定した後に呼ぶ。 */
+  weaponToSocket(which: 'back' | 'hand_r' | 'hand_l' | 'hip'): void {
+    this.root.updateMatrixWorld(true);
+    const inv = this.m2.copy(this.root.matrixWorld).invert();
+    this.weapon.matrix.multiplyMatrices(inv, this.sockets[which].matrixWorld);
+    this.weapon.matrixWorldNeedsUpdate = true;
+  }
+
+  /**
+   * 武器を軌道（アクターのローカル座標）へ置き、両腕を IK で握りへ伸ばす。
+   * 判定と同じ軌道データを使うので、見える刃と当たり判定が一致する。
+   */
+  weaponToTrack(grip: { x: number; y: number; z: number }, dir: { x: number; y: number; z: number }, normal: readonly number[], hands: HandsSpec): void {
+    const d = this.v4.set(dir.x, dir.y, dir.z).normalize();
+    const b = this.basis(d, new Vector3(normal[0], normal[1], normal[2]));
+    b.setPosition(grip.x, grip.y, grip.z);
+    this.weapon.matrix.copy(b);
+    this.weapon.matrixWorldNeedsUpdate = true;
+    this.root.updateMatrixWorld(true);
+    const gripW = new Vector3(grip.x, grip.y, grip.z).applyMatrix4(this.root.matrixWorld);
+    const dirW = new Vector3(dir.x, dir.y, dir.z).normalize().transformDirection(this.root.matrixWorld);
+    const rootQ = this.root.getWorldQuaternion(this.q2);
+    const J = this.joints;
+    const right: [Object3D, Object3D, Vector3] = [J.upperArmR, J.forearmR, new Vector3(-0.6, -0.6, -0.5).applyQuaternion(rootQ)];
+    const left: [Object3D, Object3D, Vector3] = [J.upperArmL, J.forearmL, new Vector3(0.6, -0.6, -0.5).applyQuaternion(rootQ)];
+    const [first, second] = hands.primary === 'left' ? [left, right] : [right, left];
+    this.solveArm(first[0], first[1], gripW, first[2]);
+    if (hands.two) {
+      this.solveArm(second[0], second[1], gripW.clone().addScaledVector(dirW, hands.along ?? 0.2), second[2]);
+    } else if (hands.other) {
+      // もう片方の手は、武器の上の決まった点へ（弓の弦）
+      const o = new Vector3(hands.other.x, hands.other.y, hands.other.z).applyMatrix4(this.weapon.matrix).applyMatrix4(this.root.matrixWorld);
+      this.solveArm(second[0], second[1], o, second[2]);
+    }
+  }
+
+  /** 2 本骨の IK。肩から target へ腕を伸ばし、肘は pole の側へ曲げる。 */
+  private solveArm(upper: Object3D, fore: Object3D, target: Vector3, pole: Vector3): void {
+    const L1 = UPPER_ARM;
+    const L2 = FOREARM + HAND;
+    const S = upper.getWorldPosition(this.v1);
+    const n = this.v2.subVectors(target, S);
+    const dist = Math.min(Math.max(n.length(), 0.08), L1 + L2 - 0.002);
+    n.normalize();
+    const a = (L1 * L1 - L2 * L2 + dist * dist) / (2 * dist);
+    const h = Math.sqrt(Math.max(0, L1 * L1 - a * a));
+    const perp = this.v3.copy(pole).addScaledVector(n, -pole.dot(n));
+    if (perp.lengthSq() < 1e-6) perp.set(0, -1, 0);
+    perp.normalize();
+    const elbow = this.v4.copy(S).addScaledVector(n, a).addScaledVector(perp, h);
+    const hand = S.clone().addScaledVector(n, dist);
+    this.aim(upper, elbow.clone().sub(S));
+    upper.updateMatrixWorld(true);
+    this.aim(fore, hand.sub(elbow));
+    fore.updateMatrixWorld(true);
+  }
+
+  /** 関節のローカル -Y をワールド方向 dir へ向ける。 */
+  private aim(obj: Object3D, dir: Vector3): void {
+    const world = this.q1.setFromUnitVectors(DOWN, dir.normalize());
+    const parent = obj.parent!.getWorldQuaternion(new Quaternion()).invert();
+    obj.quaternion.copy(parent.multiply(world));
+  }
+
+  /** 無敵中などの点滅表示。 */
+  setGhost(on: boolean): void {
+    for (const m of this.materials) {
+      m.transparent = on;
+      m.opacity = on ? 0.55 : 1;
+    }
+  }
+
+  /** 素材ビューア用: 全高 (m)。 */
+  measureHeight(): number {
+    this.root.updateMatrixWorld(true);
+    const p = this.joints.head.getWorldPosition(new Vector3());
+    const base = this.root.getWorldPosition(new Vector3());
+    return p.y - base.y + (REST.top - REST.headY);
+  }
+}
+
+const DOWN = new Vector3(0, -1, 0);

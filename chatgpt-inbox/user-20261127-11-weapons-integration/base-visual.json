@@ -1,0 +1,26 @@
+[
+  {
+    "path": "src/render/view.ts",
+    "baseBlob": "4967b346bf63b8cf9099324d194d54fa6269aa4b"
+  },
+  {
+    "path": "src/render/rig.ts",
+    "baseBlob": "dae113487c69fde365561fd44bcb2acb22049285"
+  },
+  {
+    "path": "src/render/motionsets/v056.ts",
+    "baseBlob": "04ae2c0ccfe12ba020ef898c9c44d182fa4fa862"
+  },
+  {
+    "path": "src/ui/hud.ts",
+    "baseBlob": "a2c9e4ad61aea490d78b29b0b69d3d9ac0d176ce"
+  },
+  {
+    "path": "src/core/audio.ts",
+    "baseBlob": "30e2a915abfa0c6864eb08659e54e40cabf05628"
+  },
+  {
+    "path": "src/ui/icons.ts",
+    "baseBlob": "a7dfcc75663b05d8c2c322aa21bcbcef05d8637e"
+  }
+]

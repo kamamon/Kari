@@ -1,0 +1,26 @@
+[
+  {
+    "path": "public/data/content.json",
+    "baseBlob": "4e8ce440cae5fc581fc442c536045f9448192aaf"
+  },
+  {
+    "path": "public/data/weapons.json",
+    "baseBlob": "e34f83e05d2476bffd0e76a79f504a5bea5658b8"
+  },
+  {
+    "path": "public/data/recipes.json",
+    "baseBlob": "d923ff4cb324155582ddb22f03776650a6e89e52"
+  },
+  {
+    "path": "public/data/equipment_series.json",
+    "baseBlob": "0b8b22ed2b907660a7921dd64aaa589591ac2a4e"
+  },
+  {
+    "path": "public/data/field_gathering.json",
+    "baseBlob": "401eb75ffcc5da4da0d39809d4baeac57335902f"
+  },
+  {
+    "path": "docs/asset-manifest.json",
+    "baseBlob": "395f278ea2c1ab0bf51540bc289c6f94ba950f71"
+  }
+]
