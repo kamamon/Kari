@@ -27,7 +27,7 @@
     },
     {
       "path": "player.guard_blade.bash.json",
-      "blobSha": "279eb7b8b06d33bfa2cdf86a73b0d6ec8f117475"
+      "blobSha": "5efcb229e4656c69eaad009e73eebeec7fc8b569"
     },
     {
       "path": "player.guard_blade.draw.json",
@@ -35,7 +35,7 @@
     },
     {
       "path": "player.guard_blade.guard_slash.json",
-      "blobSha": "4f14660d3db2ef3c437e4e630b1ae3f9dc1a2588"
+      "blobSha": "89684d17c832450122f9283823b6ab10b5f4bebf"
     },
     {
       "path": "player.guard_blade.lunge.json",
@@ -66,12 +66,12 @@
       "blobSha": "b1dd34de2ffc1486f9f29ba618d5722d854f8bd6"
     },
     {
-      "path": "player.heavy_blade.draw.json",
-      "blobSha": "4aa47e9d5af45cd5823d5aa43d13d7489d117591"
-    },
-    {
       "path": "player.heavy_blade.draw_slash.json",
       "blobSha": "cad5c98962db49b0475d86a68f31159b82265707"
+    },
+    {
+      "path": "player.heavy_blade.draw.json",
+      "blobSha": "4aa47e9d5af45cd5823d5aa43d13d7489d117591"
     },
     {
       "path": "player.heavy_blade.overhead.json",
@@ -83,15 +83,15 @@
     },
     {
       "path": "player.heavy_blade.side_sweep.json",
-      "blobSha": "ec06296b25d467340965b9492056485d7d61e809"
-    },
-    {
-      "path": "player.heavy_blade.upswing.json",
-      "blobSha": "23073b70e200db3f76ad6860dd1736003a8245ee"
+      "blobSha": "9a375413601126fd52614f63809b0f52713c0af3"
     },
     {
       "path": "player.heavy_blade.upswing_low.json",
       "blobSha": "670f2a933ef829412f980a3efe2e64161206b9cc"
+    },
+    {
+      "path": "player.heavy_blade.upswing.json",
+      "blobSha": "23073b70e200db3f76ad6860dd1736003a8245ee"
     },
     {
       "path": "player.item.drink.json",
@@ -114,16 +114,16 @@
       "blobSha": "2d10123c673caa5fe963a219dfdd7fb217f3098e"
     },
     {
-      "path": "player.long_blade.draw.json",
-      "blobSha": "d50de3214809c1d66c46dbd68e1a5664d2493192"
-    },
-    {
       "path": "player.long_blade.draw_cut.json",
       "blobSha": "7a65baf2d71dea7e79ae15c2ad148ebc11a857cd"
     },
     {
+      "path": "player.long_blade.draw.json",
+      "blobSha": "d50de3214809c1d66c46dbd68e1a5664d2493192"
+    },
+    {
       "path": "player.long_blade.helm.json",
-      "blobSha": "32b4a6c2996f4fabab26127aad3a5085a9540697"
+      "blobSha": "826b9eba32fbe443d8afc3ae141af77128caede9"
     },
     {
       "path": "player.long_blade.kesa.json",
@@ -142,12 +142,12 @@
       "blobSha": "a4b4231777966c9bf8451326257250c02f0357c0"
     },
     {
-      "path": "player.long_lance.counter.json",
-      "blobSha": "3fa90ee49c30c1564dc0b11a14b827363d027c11"
-    },
-    {
       "path": "player.long_lance.counter_thrust.json",
       "blobSha": "fd458b3df3bee4c10ff6009443e9be26d72b9bbe"
+    },
+    {
+      "path": "player.long_lance.counter.json",
+      "blobSha": "3fa90ee49c30c1564dc0b11a14b827363d027c11"
     },
     {
       "path": "player.long_lance.draw.json",
@@ -167,7 +167,7 @@
     },
     {
       "path": "player.long_lance.lunge.json",
-      "blobSha": "dfc791f6d01f429449dbd7daa1a8985453e921f3"
+      "blobSha": "6f7904c0b73748bce72679dfc9ab3b8fd8cf581e"
     },
     {
       "path": "player.long_lance.sheathe.json",
@@ -199,7 +199,7 @@
     },
     {
       "path": "player.ring_bow.spread.json",
-      "blobSha": "f7e771ae2f8b4fd4b3611dbb81569b2537e62feb"
+      "blobSha": "57e9a350b1601c83300d2107a67397389c494257"
     },
     {
       "path": "player.twin_blades.cross.json",
@@ -214,16 +214,16 @@
       "blobSha": "e4510ea2789649b3208bf1482e6bffaa4e7106e8"
     },
     {
-      "path": "player.twin_blades.draw.json",
-      "blobSha": "746f33dce9c9b2b3d4f34f28a11f1f0d119872fa"
-    },
-    {
       "path": "player.twin_blades.draw_cross.json",
       "blobSha": "f0d8009ac7d69235c43cb1878b994834fa5e483a"
     },
     {
+      "path": "player.twin_blades.draw.json",
+      "blobSha": "746f33dce9c9b2b3d4f34f28a11f1f0d119872fa"
+    },
+    {
       "path": "player.twin_blades.flurry.json",
-      "blobSha": "abcc31e4303cf13ed40901aaaae1fb8eaed7d5f8"
+      "blobSha": "696ad604dc5cf7cbc8b01a9ab4398b5014010d9e"
     },
     {
       "path": "player.twin_blades.round.json",
@@ -243,11 +243,7 @@
     },
     {
       "path": "player.twin_blades.stab.json",
-      "blobSha": "058549e23d6ba3fbe73b8957ff713465296a4520"
-    },
-    {
-      "path": "player.war_maul.charge.json",
-      "blobSha": "97719d5a78c6a2dd3d5abae213684ca32d4acc76"
+      "blobSha": "5d91f9a9a1b723be32bd0836a1091253eaed4338"
     },
     {
       "path": "player.war_maul.charge_smash.json",
@@ -255,15 +251,19 @@
     },
     {
       "path": "player.war_maul.charge_upswing.json",
-      "blobSha": "2ed046a519df370957f024d452f9119d38e98be2"
+      "blobSha": "a1359478c97bb8c72d494eb8feb6f8af59c8c8ad"
     },
     {
-      "path": "player.war_maul.draw.json",
-      "blobSha": "a0137e9f0f07d1ce92ad6e96745508ce1e43052b"
+      "path": "player.war_maul.charge.json",
+      "blobSha": "97719d5a78c6a2dd3d5abae213684ca32d4acc76"
     },
     {
       "path": "player.war_maul.draw_smash.json",
       "blobSha": "9a5e357a273a6d1929594d9d887480189d736ecf"
+    },
+    {
+      "path": "player.war_maul.draw.json",
+      "blobSha": "a0137e9f0f07d1ce92ad6e96745508ce1e43052b"
     },
     {
       "path": "player.war_maul.pound.json",
@@ -356,10 +356,6 @@
     {
       "path": "src_render_hunterAnim.ts.walk.war_maul.json",
       "blobSha": "073b37e3a9ed82836788b89fc1ff35f699ad062b"
-    },
-    {
-      "path": "src_render_poses.ts.STANCE.json",
-      "blobSha": "e603c04c11aae4ece9ef6d9cf19ba8e3f7814e39"
     },
     {
       "path": "src_render_poses.ts.climb.climb.json",
@@ -510,6 +506,10 @@
       "blobSha": "fa42597641208ad2387017b764ea155ae9c845b1"
     },
     {
+      "path": "src_render_poses.ts.STANCE.json",
+      "blobSha": "e603c04c11aae4ece9ef6d9cf19ba8e3f7814e39"
+    },
+    {
       "path": "src_render_poses.ts.vault.json",
       "blobSha": "b251338a1319ccda837ecfa69c8fdb78fc8b9eb2"
     },
@@ -525,5 +525,7 @@
       "path": "src_render_view.ts.guard.long_lance.json",
       "blobSha": "7bc452a942e51fb923a366dfa29e33b3cdbb1abb"
     }
-  ]
+  ],
+  "generatedAt": "2026-11-26",
+  "updatedFor": "2G control literature corrections to 9 action records"
 }

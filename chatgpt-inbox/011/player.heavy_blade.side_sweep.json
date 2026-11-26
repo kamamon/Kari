@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kariActionId": "player.heavy_blade.side_sweep",
-  "observed2gMove": "大剣・横殴り／薙ぎ払い（掲示板と資料で呼称が異なる）",
+  "observed2gMove": "大剣・薙ぎ払い（PSP版2Gでは○。横殴りとは別）",
   "source": [
     {
       "title": "MHP2G PSP 実況／大剣武器訓練の章（再生位置候補・未視聴）",
@@ -248,12 +248,13 @@
   "weaponPath": "Kari制作案：右後ろ→正面→左前の横軌道",
   "rootMotion": "原作未測定。Kariの既存root曲線を変更する場合は先に比較検証",
   "contactEvents": "Kari制作案：支持足を残し踏み替える。実映像の順序は未観測",
-  "differencesFromKari": "現行は横へ広く払う。依頼文の「横殴り」とMHP2G攻略資料の「薙ぎ払い」は別の技の可能性があり、名称と軌道を映像で同定するまで結論を保留",
+  "differencesFromKari": "2Gの○は薙ぎ払い（右方から前方を横切る大剣の攻撃）。従来の『横殴り』併記は別作品由来の技名と紛らわしいため撤回。Kariの現在の横軌道を、原作の足運び・体幹・刃先の通過方向と比較する段階は未了",
   "unknowns": [
     "2G原作のK0〜K4の実際の姿勢・足の接触順・腰と胸の角度・握り位置",
     "原作の発生フレーム、動作終了、前進距離",
     "映像を直接フレーム検査していない",
-    "横殴りと薙ぎ払いの映像上の対応関係が未特定"
+    "横殴りと薙ぎ払いの映像上の対応関係が未特定",
+    "2Gの映像から同一アクションとして検証するための技開始・刃先・支持脚の観察"
   ],
   "kariReference": {
     "clip": "hb_attack_side_01",
@@ -266,5 +267,12 @@
     ]
   },
   "evidenceStatus": "暫定制作票（技名・入力構成は文献から確認。原作のK0〜K4映像観察は未実施）",
-  "verification": "sourceの時刻は章の範囲であり、攻撃開始・接触時刻ではない"
+  "verification": "sourceの時刻は章の範囲であり、攻撃開始・接触時刻ではない",
+  "controlEvidence": {
+    "sourceType": "written_weapon_controls_only",
+    "url": "https://w.atwiki.jp/mhp2g/pages/146.html",
+    "fact": "2G大剣の○＝なぎ払い／△＋○＝斬り上げ",
+    "frameBasedObservation": false,
+    "verifiedKinematics": false
+  }
 }

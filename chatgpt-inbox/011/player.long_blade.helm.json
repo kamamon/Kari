@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kariActionId": "player.long_blade.helm",
-  "observed2gMove": "兜割り（2Gにはない旧Kari技）",
+  "observed2gMove": "兜割り（Kari旧技。PSP版2G標準には存在しない）",
   "source": [
     {
       "title": "PSP版MHP2G 武器訓練の録画（章の位置のみ確認）",
@@ -261,11 +261,12 @@
   "weaponPath": "Kariの暫定キーをつないで軌道を作り、刃の表示と判定を一致させる。PSP原作の弧・手の向きは未測定",
   "rootMotion": "原作の前進・後退距離は未測定。Kari controllerの既存曲線を当面維持",
   "contactEvents": "暫定：右足支持→左足着地→骨盤回転→両足で制動。PSP原作の支持足順は未観測",
-  "differencesFromKari": "PSP 2G標準には存在しないKari独自アクション。新標準から除外し、旧技の移行記録に留める",
+  "differencesFromKari": "2Gの太刀ではRの気刃斬り1→△突き→R気刃2→△斬り上げ→R気刃3が主軸。兜割りは新標準から除外し、旧セーブとリプレイの互換経路にのみ残す",
   "unknowns": [
     "2G原作の各姿勢、支持足、弧、握りと刃の向き",
     "原作の入力から接触までの時刻、移動距離、キャンセル挙動",
-    "この章の該当技のフレームを直接確認できていない"
+    "この章の該当技のフレームを直接確認できていない",
+    "2Gの映像から同一アクションとして検証するための技開始・刃先・支持脚の観察"
   ],
   "kariReference": {
     "clip": "lb_helm_01",
@@ -281,5 +282,12 @@
     "chargeHoldTick": null
   },
   "timeBasis": "plannedKariTickは現行KariのJSONでありPSP2G実測ではない",
-  "evidenceStatus": "2Gには該当動作なし"
+  "evidenceStatus": "2Gには該当動作なし",
+  "controlEvidence": {
+    "sourceType": "written_weapon_controls_only",
+    "url": "https://w.atwiki.jp/mhp2g/pages/147.html",
+    "fact": "2G太刀：気刃斬り1/2/3（途中に通常攻撃が入る）",
+    "frameBasedObservation": false,
+    "verifiedKinematics": false
+  }
 }

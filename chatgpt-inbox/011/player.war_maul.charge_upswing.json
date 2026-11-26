@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kariActionId": "player.war_maul.charge_upswing",
-  "observed2gMove": "溜め二段・振り上げ",
+  "observed2gMove": "溜め2の振り上げ（Kari現行の単発動作。2Gは先に叩きつけがある）",
   "source": [
     {
       "title": "PSP版MHP2G 武器訓練の録画（章の位置のみ確認）",
@@ -261,11 +261,12 @@
   "weaponPath": "Kariの暫定キーをつないで軌道を作り、刃の表示と判定を一致させる。PSP原作の弧・手の向きは未測定",
   "rootMotion": "原作の前進・後退距離は未測定。Kari controllerの既存曲線を当面維持",
   "contactEvents": "暫定：右足支持→左足着地→骨盤回転→両足で制動。PSP原作の支持足順は未観測",
-  "differencesFromKari": "現行Kariの長さと判定tickを参照した仮案。原作PSPの足運び・武器の軌道との対照観察が必要",
+  "differencesFromKari": "PSP 2G溜め2は叩きつけ→振り上げの2打点。現在のKari charge_upswingは単発の振り上げ動作・1命中窓なので、そのまま同じ技と見なさず前段接触と体重移動を追加する",
   "unknowns": [
     "2G原作の各姿勢、支持足、弧、握りと刃の向き",
     "原作の入力から接触までの時刻、移動距離、キャンセル挙動",
-    "この章の該当技のフレームを直接確認できていない"
+    "この章の該当技のフレームを直接確認できていない",
+    "2Gの映像から同一アクションとして検証するための技開始・刃先・支持脚の観察"
   ],
   "kariReference": {
     "clip": "wm_upswing_01",
@@ -281,5 +282,12 @@
     "chargeHoldTick": null
   },
   "timeBasis": "plannedKariTickは現行KariのJSONでありPSP2G実測ではない",
-  "evidenceStatus": "仮制作票：原作映像観察は未実施"
+  "evidenceStatus": "仮制作票：原作映像観察は未実施",
+  "controlEvidence": {
+    "sourceType": "written_weapon_controls_only",
+    "url": "https://w.atwiki.jp/mhp2g/pages/151.html",
+    "fact": "2Gハンマー溜め2は2接触、溜め3は移動/停止で分岐",
+    "frameBasedObservation": false,
+    "verifiedKinematics": false
+  }
 }

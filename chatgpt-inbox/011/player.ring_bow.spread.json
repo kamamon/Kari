@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kariActionId": "player.ring_bow.spread",
-  "observed2gMove": "散らし撃ち（2Gの矢種とは未対応）",
+  "observed2gMove": "散らし撃ち（Kari旧技。2Gの拡散射種とは別概念）",
   "source": [
     {
       "title": "PSP版MHP2G 武器訓練の録画（章の位置のみ確認）",
@@ -261,11 +261,12 @@
   "weaponPath": "Kariの暫定キーをつないで軌道を作り、刃の表示と判定を一致させる。PSP原作の弧・手の向きは未測定",
   "rootMotion": "原作の前進・後退距離は未測定。Kari controllerの既存曲線を当面維持",
   "contactEvents": "暫定：右足支持→左足着地→骨盤回転→両足で制動。PSP原作の支持足順は未観測",
-  "differencesFromKari": "現行の散らし撃ちを、原作の矢種・近接攻撃・ビン装着などに再構成する。未確定の対応を断定しない",
+  "differencesFromKari": "2Gの弓の連射・拡散・貫通は弓と溜め段階で決まる射種。○は矢切り近接、△+○はビン装填。Kariの固定spread副攻撃を独立した2Gの拡散ボタンとして残さない",
   "unknowns": [
     "2G原作の各姿勢、支持足、弧、握りと刃の向き",
     "原作の入力から接触までの時刻、移動距離、キャンセル挙動",
-    "この章の該当技のフレームを直接確認できていない"
+    "この章の該当技のフレームを直接確認できていない",
+    "2Gの映像から同一アクションとして検証するための技開始・刃先・支持脚の観察"
   ],
   "kariReference": {
     "clip": "rb_spread_01",
@@ -277,5 +278,12 @@
     "chargeHoldTick": null
   },
   "timeBasis": "plannedKariTickは現行KariのJSONでありPSP2G実測ではない",
-  "evidenceStatus": "原作での対応は要判定"
+  "evidenceStatus": "原作での対応は要判定",
+  "controlEvidence": {
+    "sourceType": "written_weapon_controls_only",
+    "url": "https://w.atwiki.jp/mhp2gyumi/pages/17.html",
+    "fact": "2G弓△＝溜め射撃、○＝矢切り、△+○＝ビン装着、R＝射線",
+    "frameBasedObservation": false,
+    "verifiedKinematics": false
+  }
 }
