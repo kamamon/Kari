@@ -162,7 +162,7 @@ export class GameView {
   /** 飛んでいる矢の形（使い回す） */
   private arrows: Group[] = [];
   /** モンスターの見た目（個体の id → 体と影）。群れの幼体は、居るエリアへ入った時に作る（v0.18.0） */
-  private rigs = new Map<string, { rig: MonsterRig; shadow: Object3D }>();
+  private rigs = new Map<string, { rig: MonsterRig; shadow: Object3D; tilt?: { x: number; z: number } }>();
   /** 1 体の標的（依頼の標的・訓練の標的。群れの依頼では、最初の 1 頭）の見た目 */
   monsterRig: MonsterRig | null = null;
   private hazardViews = new Map<number, { group: Group; ring: Mesh; rock: Mesh; look: HazardLook }>();
@@ -337,7 +337,7 @@ export class GameView {
    * その個体の見た目（無ければ作る）。大型 11 種と幼体 8 種は設計図から作る仮モデル（幼体は群れの仲間で面を分け合う）、
    * ガルドロスは専用の仮モデル、訓練の標的は岩偶。
    */
-  private rigOf(m: MonsterState): { rig: MonsterRig; shadow: Object3D } {
+  private rigOf(m: MonsterState): { rig: MonsterRig; shadow: Object3D; tilt?: { x: number; z: number } } {
     const had = this.rigs.get(m.id);
     if (had) return had;
     const ids = m.def.parts.map((p) => p.id);
@@ -683,7 +683,7 @@ export class GameView {
       key = 'climb';
     } else {
       pose = locomotionPose(p.drawn, visualSpeed, this.phase, this.time);
-      if (!p.drawn || fam.id === 'heavy_blade') pose = this.groundLocomotion.frame(pose, p.drawn, visualSpeed, this.phase, dt, { x: pos.x, z: pos.z, yaw });
+      if (!p.drawn || fam.id === 'heavy_blade') pose = this.groundLocomotion.frame(pose, p.drawn, visualSpeed, this.phase, dt, { x: pos.x, z: pos.z, yaw, y: pos.y, ground: (x, z) => sim.world.groundHeight(x, z) });
       key = p.drawn ? 'free-drawn' : 'free-sheathed';
       if (p.drawn) {
         weapon = ready;
@@ -695,7 +695,7 @@ export class GameView {
     let solved: Solved | null = null;
     if (st && canSolve(fam.id, st)) {
       solved = this.anim.frame(fam.id, st, key, dt, visualSpeed, this.time, {
-        root: { x: pos.x, z: pos.z, yaw },
+        root: { x: pos.x, z: pos.z, yaw, y: pos.y, ground: (x, z) => sim.world.groundHeight(x, z) },
         active: st.kind === 'action' && !!p.action && playerContactFrame(p.action.def, st.t),
         frozen: !!p.action && p.action.hitstop > 0,
       });
@@ -777,7 +777,24 @@ export class GameView {
       if (!here) continue;
       const mp = lerpV(m.prevPos, m.pos, alpha);
       e.rig.root.position.set(mp.x, mp.y, mp.z);
-      e.rig.root.rotation.y = m.prevYaw + angleDiff(m.prevYaw, m.yaw) * alpha;
+      const myaw = m.prevYaw + angleDiff(m.prevYaw, m.yaw) * alpha;
+      e.rig.root.rotation.y = myaw;
+      // 坂（v0.47.0。地面の起伏）: 体の前後・左右の地面の高さの差だけ、体を傾ける（描画だけ。当たりは傾けない。10° まで、なめらかに）
+      {
+        const L = Math.max(0.6, m.def.bodyRadius * 1.2), W = Math.max(0.4, m.def.bodyRadius * 0.8);
+        const fx = Math.sin(myaw), fz = Math.cos(myaw);
+        const g = (x: number, z: number): number => sim.world.groundHeight(x, z);
+        const lim = 0.18;
+        const pitch = m.dead ? 0 : Math.max(-lim, Math.min(lim, -Math.atan2(g(mp.x + fx * L, mp.z + fz * L) - g(mp.x - fx * L, mp.z - fz * L), 2 * L)));
+        const roll = m.dead ? 0 : Math.max(-lim, Math.min(lim, Math.atan2(g(mp.x + fz * W, mp.z - fx * W) - g(mp.x - fz * W, mp.z + fx * W), 2 * W)));
+        const t = (e.tilt ??= { x: pitch, z: roll });
+        const k = Math.min(1, dt * 6);
+        t.x += (pitch - t.x) * k;
+        t.z += (roll - t.z) * k;
+        e.rig.root.rotation.order = 'YXZ';
+        e.rig.root.rotation.x = t.x;
+        e.rig.root.rotation.z = t.z;
+      }
       e.rig.update(m, { alpha, dt, time: this.time, content, rankOrder: sim.rank?.order, lookAt: pos, fx: this.monsterFx });
       e.shadow.position.set(mp.x, sim.world.groundHeight(mp.x, mp.z) + 0.03, mp.z);
     }

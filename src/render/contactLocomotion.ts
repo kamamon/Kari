@@ -2,7 +2,13 @@
 // 足首ではなく母指球を世界座標へ留める。停止/方向転換で届かなくなる足は、滑らせずに踏み替える。
 import { fillCtl, mixFoot, solveBody, type BodyPose, type Foot, type Hands } from './bodySolve';
 
-export interface RenderRoot { x: number; z: number; yaw: number }
+/**
+ * 描く体の根元。y と ground があれば（v0.47.0。地面の起伏）、それぞれの足の母指球の下の地面の高さへ足を合わせる
+ * （坂で片足が浮かない。根元の高さは simulation の体の中心の下の地面）
+ */
+export interface RenderRoot { x: number; z: number; yaw: number; y?: number; ground?: (x: number, z: number) => number }
+/** 坂で足を合わせる高さの上限（m）。これより大きい段差は、合わせない（段の縁など） */
+const SLOPE_REACH = 0.35;
 interface Point { x: number; z: number; yaw: number }
 interface Swing { from: Point; to: Point; elapsed: number; duration: number; lift: number }
 interface FootState { at: Point; lift: number; contact: boolean; swing: Swing | null }
@@ -177,6 +183,18 @@ export function travelGait(phase: number, stride: number, L: Foot, R: Foot, run 
   const wave = Math.cos(4 * Math.PI * (uL - duty / 2));
   return { L: one(phase, L), R: one(phase + Math.PI, R), base: -(0.055 - 0.025 * walkish), bob: (0.012 * walkish - 0.016 * (1 - walkish)) * wave, duty };
 }
+/**
+ * 坂（v0.47.0。#19 の 01「斜面では左右の地面高さを別々に採り、脚が届く範囲で骨盤を調整する」）: 足の高さを、母指球の下の地面の高さへ（根元との差。
+ * ±SLOPE_REACH まで）。届かない分は、呼ぶ側の sag が腰を落とす。root に y と ground が無ければ何もしない（平らな所と同じ）
+ */
+export function fitFeetToGround(root: RenderRoot, L: Foot, R: Foot): void {
+  if (!root.ground || root.y === undefined) return;
+  for (const foot of [L, R]) {
+    const at = footContactWorld(foot, root);
+    foot[1] += clamp(root.ground(at.x, at.z) - root.y, -SLOPE_REACH, SLOPE_REACH);
+  }
+}
+
 /** 既存の上体を保ち、脚と骨盤だけを二本骨 IK で地面へ合わせる。 */
 export function groundLowerBody(pose: BodyPose, L: Foot, R: Foot, hipYaw = 0, hipRoll = 0): BodyPose {
   let solved = solveBody(fillCtl({ hip: [pose.px ?? 0, pose.py, pose.pz ?? 0], hipR: [0, hipYaw, hipRoll], grab: [0], on: [0] }), L, R, FREE_HANDS);
@@ -207,6 +225,7 @@ export class GroundedLocomotion {
     const run = drawn ? 0 : smooth((speed - 3.5) / 2.9);
     const g = moving ? travelGait(phase, stride, L, R, run) : { L, R, base: 0, bob: 0 };
     const f = this.contact.frame(root, g.L, g.R, dt, moving);
+    fitFeetToGround(root, f.L, f.R);
     const w = smooth((speed - 0.15) / 1.0), yaw = 2.2 * Math.sin(phase) * w, roll = 1.1 * Math.sin(phase) * w;
     // 腰の高さ: 膝を少し曲げた高さ（構えで既に低い時は、低い方）に、足の運びに合わせた波。前のフレームで足が届かずに落とした分は、ゆっくり戻す
     const designed = (1 - w) * pose.py + w * (Math.min(pose.py, g.base) + g.bob);

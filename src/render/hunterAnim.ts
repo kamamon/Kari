@@ -2,7 +2,7 @@
 // ゲームの画面（view.ts）と素材ビューア（viewer.ts）と検査（tests/human-motion.test.ts）が、ここを使う。
 import { evalMotion, gaitFeet, mixCtl, mixFoot, solveBody, type Ctl, type Foot, type Solved } from './bodySolve';
 import type { HunterRig } from './rig';
-import { ContactLocomotion, type RenderRoot } from './contactLocomotion';
+import { ContactLocomotion, fitFeetToGround, type RenderRoot } from './contactLocomotion';
 import { WEAPON_MOTIONS, WEAPON_STANCES } from './weaponClipSpecs';
 import { renderTick, type ActionRun } from '../game/action';
 import type { ActionDef } from '../data/schemas';
@@ -150,6 +150,8 @@ export class HunterAnimator {
     // 足を世界座標へ留める処理は、通常歩行だけ。攻撃中の判定軌道は変えない。
     if (context.root && st.kind === 'idle') {
       const grounded = this.contact.frame(context.root, f.fL, f.fR, dt, walk > 0.01);
+      // 坂（v0.47.0）: それぞれの足の下の地面の高さへ
+      fitFeetToGround(context.root, grounded.L, grounded.R);
       f.fL = grounded.L; f.fR = grounded.R;
     } else this.contact.reset();
     this.last = f;
