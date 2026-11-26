@@ -703,7 +703,8 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       const inHub = this.place === 'hub';
       this.touch.setHidden(['item', 'itemprev', 'itemnext'], inHub || pl.items.length === 0);
       const fam = familyOf(pl, this.content);
-      const labels = fam.labels;
+      // 猛り（双剣。v0.54.0）の間は、固有ボタン（解く）と同時押し（連ね斬り）の表示名が替わる
+      const labels = pl.demon && fam.labels && fam.demon?.labels ? { ...fam.labels, ...fam.demon.labels } : fam.labels;
       this.touch.setHidden(['special'], inHub || !labels?.special);
       // 里では、武器を使うボタンを出さない。複合入力のボタン（v0.40.0）は、複合の技を持つ武器だけ
       this.touch.setHidden(['weapon', 'sub'], inHub);
@@ -837,6 +838,14 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
         }
         case 'stamina_empty':
           play('no_stamina');
+          break;
+        case 'demon':
+          // 猛り（双剣）: 入った時は溜めの音、スタミナが尽きて解けた時は知らせ
+          if (e.on) play('charge_2');
+          else if (e.reason === 'stamina') {
+            play('no_stamina');
+            this.hud.toast('スタミナが尽きて、猛りが解けた');
+          }
           break;
         case 'item_effect':
           if (e.kind === 'heal') play('item_heal');

@@ -179,12 +179,12 @@ describe('弾かれ', () => {
   it('弾かれた後は、同じ行動の残りの判定は出ない（双剣の突き込みは 2 回目が出ない）', () => {
     const normal = sim1(content, 'weapon.twin_blades.001');
     placeInFrontOfHead(normal, 0.9);
-    expect(of(run(normal, 60, (i) => (i === 0 ? press(Btn.Sub) : frame())), 'hit')).toHaveLength(2);
+    expect(of(run(normal, 60, (i) => (i === 0 ? press(Btn.Combo) : frame())), 'hit')).toHaveLength(2);
 
     const sim = sim1(hard, 'weapon.twin_blades.001');
     sim.player.edge = 50;
     placeInFrontOfHead(sim, 0.9);
-    const hits = of(run(sim, 60, (i) => (i === 0 ? press(Btn.Sub) : frame())), 'hit');
+    const hits = of(run(sim, 60, (i) => (i === 0 ? press(Btn.Combo) : frame())), 'hit');
     expect(hits).toHaveLength(1);
     expect(hits[0]!.bounced).toBe(true);
   });

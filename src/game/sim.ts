@@ -1029,23 +1029,12 @@ export class Simulation implements SimCtx {
   private applyPlayerHit(run: ActionRun, hw: HitWindowDef, t: number, m: MonsterState, partIndex: number, point: V3): void {
     const charge = run.def.charge;
     let scale = charge ? charge.coefficientScale[run.chargeLevel] ?? 1 : 1;
-    // 勢い（双剣）: 始めた時の段階で威力が変わる。大技は、使った段階の倍率になる。
-    const M = familyOf(this.player, this.content).momentum;
-    const mo = run.def.momentum;
-    if (M && mo) scale *= mo.spendScale ? mo.spendScale[run.momentumLevel] ?? 1 : M.damageScale[run.momentumLevel] ?? 1;
+    // 猛り（双剣。v0.54.0）: 入っている間は、命中の係数に倍率を掛ける
+    if (this.player.demon) scale *= familyOf(this.player, this.content).demon?.damageScale ?? 1;
     const hitstop = hw.hitstopTicks + (charge ? charge.hitstopBonus[run.chargeLevel] ?? 0 : 0);
     run.hitstop = hitstop;
-    // 刃の減り方は、溜めや勢いの倍率を掛ける前の、技そのものの係数で決める
+    // 刃の減り方は、溜めや猛りの倍率を掛ける前の、技そのものの係数で決める
     const bounced = this.dealPlayerDamage(m, partIndex, point, { actionId: run.def.actionId, windowId: hw.id, actionTick: t, motion: hw.damageCoefficient * scale, damageType: hw.damageType, hitstop, chargeLevel: run.chargeLevel, wearMotion: hw.damageCoefficient, contact: hw.contact });
-    if (M && mo?.gain && !run.momentumGained) {
-      run.momentumGained = true;
-      const p = this.player;
-      p.momentumTicks = 0;
-      if (p.momentum < M.max) {
-        p.momentum++;
-        this.emit({ type: 'momentum', level: p.momentum });
-      }
-    }
     if (bounced) this.bouncePlayer(run);
   }
 
@@ -1068,7 +1057,7 @@ export class Simulation implements SimCtx {
       actionId: string;
       windowId: string;
       actionTick: number;
-      /** 命中の最後の係数（溜め・勢い・矢の距離を掛けた後）。物理にも、属性・状態異常・気絶にも、これを 1 回だけ使う（v0.33.0） */
+      /** 命中の最後の係数（溜め・双剣の猛り・矢の距離を掛けた後）。物理にも、属性・状態異常・気絶にも、これを 1 回だけ使う（v0.33.0） */
       motion: number;
       damageType: DamageType;
       hitstop: number;
@@ -1308,7 +1297,7 @@ export class Simulation implements SimCtx {
       parts.push(STATUS_KINDS.map((k) => `${a.gauge[k]}/${a.count[k]}/${a.idle[k]}/${a.ticks[k]}`).join(','), a.poisonTotal, a.poisonDone, a.grace);
     }
     for (const t of this.traps) parts.push(t.x, t.z, t.state, t.arm, t.life);
-    parts.push(p.momentum, p.momentumTicks);
+    parts.push(p.demon ? 1 : 0);
     if (p.climb) parts.push(p.climb.def.id, p.climb.phase, p.climb.t, p.climb.h);
     if (p.vault) parts.push(p.vault.def.id, p.vault.t);
     if (this.errand) parts.push(this.errand.used.join(','), Object.entries(this.errand.bag).map(([k, v]) => `${k}=${v}`).join(','), this.errand.delivered ? 1 : 0, p.errandOp ? `${p.errandOp.target.kind}:${p.errandOp.done ? 1 : 0}` : '-');

@@ -127,8 +127,8 @@
     {
       "id": "twin_blades",
       "edge": { "wearPerMotion": 1.2, "label": "刃" },
-      "labels": { "main": "斬る", "sub": "突き込む", "special": "連ね斬り" },
-      "summary": "双剣。両手の剣で手数。当て続けると勢いが上がり、速く強くなる。固有で、勢いを使い切る連撃。守りは無い。",
+      "labels": { "main": "斬る", "sub": "回転斬り", "special": "猛り", "combo": "突き込む" },
+      "summary": "双剣。両手の剣で手数。主は右・左・交差の連係、副は 1 回転して周りを斬る回転斬り、主と副の同時押しは突き込み。固有で「猛り」に入ると、スタミナが減り続ける間だけ威力が上がり、同時押しが連ね斬りになる。守りは無い。",
       "name": "双剣",
       "twoHanded": false,
       "drawnMoveSpeed": 3.8,
@@ -137,21 +137,28 @@
       "blade": { "from": 0.1, "to": 0.62, "radius": 0.1 },
       "actions": {
         "main": "player.twin_blades.slash1",
-        "sub": "player.twin_blades.stab",
+        "sub": "player.twin_blades.round",
+        "combo": "player.twin_blades.stab",
         "drawAttack": "player.twin_blades.draw_cross",
         "draw": "player.twin_blades.draw",
         "sheathe": "player.twin_blades.sheathe",
-        "special": "player.twin_blades.flurry"
+        "special": "player.twin_blades.demon_on"
       },
       "cancelNames": {
         "tb_slash1": "player.twin_blades.slash1",
         "tb_slash2": "player.twin_blades.slash2",
         "tb_cross": "player.twin_blades.cross",
+        "tb_round": "player.twin_blades.round",
         "tb_stab": "player.twin_blades.stab",
-        "tb_flurry": "player.twin_blades.flurry"
+        "tb_demon": "player.twin_blades.demon_on"
       },
-      "cancelButtons": { "tb_slash2": "main", "tb_cross": "main", "tb_flurry": "special" },
-      "momentum": { "max": 3, "decayTicks": 90, "damageScale": [1, 1, 1.1, 1.2], "speedScale": [1, 1, 0.92, 0.85] },
+      "cancelButtons": { "tb_slash2": "main", "tb_cross": "main", "tb_demon": "special" },
+      "demon": {
+        "staminaPerSec": 6,
+        "damageScale": 1.15,
+        "swap": { "player.twin_blades.stab": "player.twin_blades.flurry", "player.twin_blades.demon_on": "player.twin_blades.demon_off" },
+        "labels": { "special": "解く", "combo": "連ね斬り" }
+      },
       "offhand": "blade_left",
       "sheathSocket": "hip",
       "guard": null

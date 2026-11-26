@@ -243,6 +243,23 @@ export function crossCheck(c: Content, errors: string[]): void {
       if (key === 'combo' && !f.actions.combo) errors.push(`${w}: cancelButtons.${name} は combo だが、actions.combo が無い`);
     }
     if (f.labels && f.actions.combo && !f.labels.combo) errors.push(`${w}: actions.combo があるのに labels.combo（ボタンの表示名）が無い`);
+    // 猛り（v0.54.0）: 入る行動は固有ボタン、解く行動は swap で替わる先。替える行動はどれもこの系統の行動
+    const D = f.demon;
+    const own = (id: string): boolean => id.startsWith(`player.${f.id}.`) && c.actions.has(id);
+    if (D) {
+      if (!isNum(D.staminaPerSec) || D.staminaPerSec <= 0) errors.push(`${w}: demon.staminaPerSec が不正（0 より大きく）`);
+      if (!isNum(D.damageScale) || D.damageScale < 1 || D.damageScale > 2) errors.push(`${w}: demon.damageScale が不正（1〜2）`);
+      for (const [from, to] of Object.entries(D.swap)) if (!own(from) || !own(to)) errors.push(`${w}: demon.swap の ${from} → ${to} が、この系統の行動でない`);
+      const on = f.actions.special ? c.actions.get(f.actions.special) : undefined;
+      const off = on ? c.actions.get(D.swap[on.actionId] ?? '') : undefined;
+      if (on?.demon !== 'on') errors.push(`${w}: demon があるのに、固有ボタンの行動が猛りに入る行動（demon: on）でない`);
+      if (off?.demon !== 'off') errors.push(`${w}: 猛りの間の固有ボタンの行動（demon.swap で替わる先）が、解く行動（demon: off）でない`);
+      if (c.actions.get(f.actions.sheathe)?.demon !== 'off') errors.push(`${w}: demon があるのに、納刀の行動で猛りが解けない（demon: off）`);
+      if (D.labels?.combo && !f.actions.combo) errors.push(`${w}: demon.labels.combo があるのに actions.combo が無い`);
+    }
+    for (const a of c.actions.values()) {
+      if (a.demon && a.actionId.startsWith(`player.${f.id}.`) && !D) errors.push(`action ${a.actionId}: demon（猛り）を持つが、系統 ${f.id} に demon が無い`);
+    }
   }
   for (const wpn of c.weapons.values()) {
     if (!c.families.has(wpn.family)) errors.push(`weapon ${wpn.id}: family ${wpn.family} が無い`);

@@ -183,56 +183,116 @@ describe('双剣', () => {
     expect(h.filter((x) => x.actionId === 'player.twin_blades.cross').map((x) => x.windowId).sort()).toEqual(['blade_l', 'blade_r']);
   });
 
-  it('当て続けると勢いが 3 まで上がり、振らずにいると消える', () => {
+  it('副は回転斬り: 0.4m 踏み込んで体ごと左へ 1 回転し、左右の剣が 1 回ずつ当たって、元の向きへ戻る', () => {
+    const sim = mk('twin_blades');
+    placeInFrontOfHead(sim, 1.0);
+    const z0 = sim.player.pos.z;
+    const yaws: number[] = [];
+    const evs: SimEvent[] = [];
+    for (let i = 0; i < 60; i++) {
+      sim.step(i === 0 ? press(Btn.Sub) : frame());
+      evs.push(...sim.drainEvents());
+      yaws.push(sim.player.yaw);
+    }
+    expect(starts(evs)).toEqual(['player.twin_blades.round']);
+    expect(hits(evs).map((h) => h.windowId)).toEqual(['blade_r', 'blade_l']);
+    // 回る途中は後ろを向き（|yaw| が 90° を超える）、回り終えると元の向き
+    expect(Math.max(...yaws.map(Math.abs))).toBeGreaterThan(Math.PI / 2);
+    expect(Math.abs(sim.player.yaw)).toBeLessThan(1e-6);
+    expect(sim.player.pos.z - z0).toBeGreaterThan(0.3);
+    expect(sim.player.mode).toBe('free');
+  });
+
+  it('主と副の同時押しは突き込み（2 回当たる）。猛りの間は、連ね斬り（5 回当たる）に替わる', () => {
+    const normal = mk('twin_blades');
+    placeInFrontOfHead(normal, 0.9);
+    const a = run(normal, 60, (i) => (i === 0 ? press(Btn.Main | Btn.Sub) : frame()));
+    expect(starts(a)).toEqual(['player.twin_blades.stab']);
+    expect(hits(a)).toHaveLength(2);
+
+    const demon = mk('twin_blades');
+    placeInFrontOfHead(demon, 0.9);
+    demon.player.demon = true;
+    const b = run(demon, 100, (i) => (i === 0 ? press(Btn.Main | Btn.Sub) : frame()));
+    expect(starts(b)).toEqual(['player.twin_blades.flurry']);
+    expect(hits(b)).toHaveLength(5);
+    // 押し遅れ（主の 2 tick 後に副）でも、同じく替わる
+    const late = mk('twin_blades');
+    placeInFrontOfHead(late, 0.9);
+    late.player.demon = true;
+    const c = run(late, 10, (i) => (i === 0 ? press(Btn.Main) : i === 2 ? press(Btn.Sub) : frame()));
+    expect(starts(c)).toEqual(['player.twin_blades.slash1', 'player.twin_blades.flurry']);
+  });
+
+  it('固有ボタンで猛りに入り、もう 1 度押すと解ける。入っている間はスタミナが減り続けて戻らない', () => {
+    const D = content.families.get('twin_blades')!.demon!;
+    const sim = mk('twin_blades');
+    sim.player.drawn = true;
+    const on = run(sim, 1, () => press(Btn.Special));
+    expect(starts(on)).toEqual(['player.twin_blades.demon_on']);
+    expect(on.filter((e) => e.type === 'demon')).toEqual([{ type: 'demon', on: true, reason: 'toggle' }]);
+    expect(sim.player.demon).toBe(true);
+    // 2 秒で staminaPerSec × 2 だけ減る（待ち時間が過ぎても戻らない）
+    const st0 = sim.player.stamina;
+    run(sim, 120);
+    expect(st0 - sim.player.stamina).toBeCloseTo(D.staminaPerSec * 2, 5);
+    const off = run(sim, 1, () => press(Btn.Special));
+    expect(starts(off)).toEqual(['player.twin_blades.demon_off']);
+    expect(off.filter((e) => e.type === 'demon')).toEqual([{ type: 'demon', on: false, reason: 'toggle' }]);
+    expect(sim.player.demon).toBe(false);
+    // 解いた後は、待ち時間を置いて戻る
+    const st1 = sim.player.stamina;
+    run(sim, 120);
+    expect(sim.player.stamina).toBeGreaterThan(st1 + 10);
+  });
+
+  it('猛りは、連係の後半からも入れる。猛りの間は、同じ技の威力が上がる', () => {
     const sim = mk('twin_blades');
     placeInFrontOfHead(sim, 0.9);
-    const evs = run(sim, 260, (i) => (i % 9 === 0 ? press(Btn.Main) : frame()));
-    const levels = evs.filter((e) => e.type === 'momentum').map((e) => (e as Extract<SimEvent, { type: 'momentum' }>).level);
-    expect(levels.slice(0, 3)).toEqual([1, 2, 3]);
-    expect(sim.player.momentum).toBe(3);
-    run(sim, 200);
-    expect(sim.player.momentum).toBe(0);
-  });
-
-  it('勢いが高いと、同じ斬りが速く終わる', () => {
-    const ticksFor = (momentum: number): number => {
-      const sim = mk('twin_blades');
-      sim.player.drawn = true;
-      sim.player.momentum = momentum;
-      sim.step(press(Btn.Main));
-      let n = 1;
-      while (sim.player.mode === 'action' && n < 200) {
-        sim.step(frame());
-        n++;
-      }
-      return n;
+    const evs = run(sim, 40, (i) => (i === 0 ? press(Btn.Main) : i === 15 ? press(Btn.Special) : frame()));
+    expect(starts(evs)).toEqual(['player.twin_blades.slash1', 'player.twin_blades.demon_on']);
+    expect(sim.player.demon).toBe(true);
+    const dmg = (demon: boolean): number => {
+      const s1 = mk('twin_blades');
+      placeInFrontOfHead(s1, 0.9);
+      s1.player.demon = demon;
+      return hits(run(s1, 30, (i) => (i === 0 ? press(Btn.Main) : frame())))[0]!.damage;
     };
-    expect(ticksFor(0)).toBe(24);
-    expect(ticksFor(3)).toBeLessThan(ticksFor(2));
-    expect(ticksFor(2)).toBeLessThan(ticksFor(0));
+    const base = dmg(false), up = dmg(true);
+    const scale = content.families.get('twin_blades')!.demon!.damageScale;
+    expect(up).toBeGreaterThan(base);
+    expect(up).toBeLessThanOrEqual(Math.ceil(base * scale) + 1);
   });
 
-  it('連ね斬りは 5 回当たり、勢いをすべて使い、段階が高いほど強い', () => {
-    const total = (momentum: number): { damage: number; left: number; n: number } => {
-      const sim = mk('twin_blades');
-      placeInFrontOfHead(sim, 0.9);
-      sim.player.momentum = momentum;
-      const h = hits(run(sim, 100, (i) => (i === 0 ? press(Btn.Special) : frame())));
-      return { damage: h.reduce((s, x) => s + x.damage, 0), left: sim.player.momentum, n: h.length };
-    };
-    const low = total(0), high = total(3);
-    expect(low.n).toBe(5);
-    expect(high.left).toBe(0);
-    expect(high.damage).toBeGreaterThan(low.damage * 1.7);
+  it('スタミナが尽きると猛りは解け、空のままでは入れない', () => {
+    const sim = mk('twin_blades');
+    sim.player.drawn = true;
+    sim.player.demon = true;
+    sim.player.stamina = 0.05;
+    const evs = run(sim, 3);
+    expect(sim.player.demon).toBe(false);
+    expect(evs.filter((e) => e.type === 'demon')).toEqual([{ type: 'demon', on: false, reason: 'stamina' }]);
+    sim.player.stamina = 0;
+    sim.player.staminaDelay = 9999;
+    const again = run(sim, 2, (i) => (i === 0 ? press(Btn.Special) : frame()));
+    expect(starts(again)).toEqual([]);
+    expect(again.some((e) => e.type === 'stamina_empty')).toBe(true);
+    expect(sim.player.demon).toBe(false);
   });
 
-  it('被弾すると勢いを失う', () => {
-    const sim = underSlam('twin_blades');
-    sim.player.momentum = 3;
-    sim.player.momentumTicks = -100000;
-    const evs = run(sim, 120);
-    expect(evs.some((e) => e.type === 'player_hurt')).toBe(true);
-    expect(sim.player.momentum).toBe(0);
+  it('納刀を始めると猛りは解ける。被弾しても解けない', () => {
+    const sim = mk('twin_blades');
+    sim.player.drawn = true;
+    sim.player.demon = true;
+    const evs = run(sim, 1, () => press(Btn.Weapon));
+    expect(starts(evs)).toEqual(['player.twin_blades.sheathe']);
+    expect(evs.filter((e) => e.type === 'demon')).toEqual([{ type: 'demon', on: false, reason: 'sheathe' }]);
+
+    const hit = underSlam('twin_blades');
+    hit.player.demon = true;
+    const h = run(hit, 120);
+    expect(h.some((e) => e.type === 'player_hurt')).toBe(true);
+    expect(hit.player.demon).toBe(true);
   });
 });
 

@@ -495,6 +495,13 @@ export class GameView {
           this.sparks.emit(8 + e.level * 4, tip, 2.2, 1, 0.4, [1, 0.85, 0.5]);
           break;
         }
+        case 'demon':
+          // 猛り（双剣。v0.54.0）に入った: 刃先から赤い火花（見た目は仮）
+          if (e.on) {
+            this.sparks.emit(18, this.bladePoint(1), 2.6, 1.2, 0.5, [1, 0.42, 0.3]);
+            this.cam.addShake(0.12);
+          }
+          break;
         case 'monster_dead':
         case 'monster_respawn':
           if (m) {
@@ -764,6 +771,7 @@ export class GameView {
     this.playerShadow.position.set(pos.x, sim.world.groundHeight(pos.x, pos.z) + 0.03, pos.z);
 
     if (p.mode !== 'action') this.trail.active = false;
+    this.trail.hot = p.demon;
     const base = this.bladePoint(0.05);
     const tip = this.bladePoint(1);
     this.trail.update(dt, this.tmpA.set(base.x, base.y, base.z), new Vector3(tip.x, tip.y, tip.z));

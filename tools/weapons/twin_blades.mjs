@@ -1,7 +1,9 @@
 // 双剣（短い剣 2 本）の技と動き。右手と左手に 1 本ずつ。左足を前にして、両方の切っ先を前へ向けて構える。
 // 右で斬れば腰は左へ、左で斬れば腰は右へ回る。振らない側の剣は、体の前へ戻して守りに残す。
-// 座標はアクターのローカル（m、Y 上、+Z 前、+X 左）。数値は机上の初期値。
-import { curve, family, sheathOf } from './lib.mjs';
+// v0.54.0 で 2G の動作構成へ（#19 の H03。docs/spec.md の 32.20、D-147）: 主の連係、副の回転斬り、主と副の同時押しの突き込み、
+// 固有の「猛り」（スタミナを使い続ける強化の状態。入っている間は、同時押しが連ね斬りになる）。命中でたまる勢いは外した。
+// 座標はアクターのローカル（m、Y 上、+Z 前、+X 左）。数値は机上の初期値（Kari の仮の値）。
+import { D2R, curve, family, sheathOf } from './lib.mjs';
 
 export function twinBlades() {
   const hands = { primary: 'R', second: 'blade', wrist: [3, 135] };
@@ -76,7 +78,7 @@ export function twinBlades() {
   trackOf('tb_cross', B, cross);
   trackOf('tb_cross_l', B, cross, left);
 
-  // ---- 突き込み（右で突き、すぐ左で突く）----
+  // ---- 突き込み（主と副の同時押し。v0.54.0 までは副。右で突き、すぐ左で突く）----
   const AIM = [0, -1, 0];
   const stab = motion('tb_stab_01', {
     dur: 42, from: idle, root: 'w_step_040',
@@ -93,7 +95,60 @@ export function twinBlades() {
   trackOf('tb_stab', B, stab);
   trackOf('tb_stab_l', B, stab, left);
 
-  // ---- 連ね斬り（固有。右・左・右と斬り、最後に交差）----
+  // ---- 回転斬り（副。v0.54.0）----
+  // 0.4m 踏み込みながら、両方の剣を左右へ水平に開き、左足の母指球を軸に、体ごと左へ 1 回転する（spin +360°）。
+  // 右の剣は刃を前へ向けて先に回り、左の剣が続く（前の相手には右・左の順に 1 回ずつ当たる）。回る間は右足で地面を蹴り、
+  // 回り終えたら、両方の剣を体の前へ戻す。回りながらは進まない（体の向きが回るので、進むと渦を巻く）。
+  curve('w_round_040', [[0, 0], [2, 0], [9, 0.38], [11, 0.4], [60, 0.4]]);
+  const BZ = 0.13;
+  const L_PIVOT = [-Math.sin(30 * D2R) * BZ, -Math.cos(30 * D2R) * BZ];
+  const OPEN = {
+    gripA: [-0.48, 1.18, 0.18], dirA: [-0.84, 0.06, 0.54], edgeA: [0.54, 0, 0.84],
+    offA: [0.48, 1.2, 0.16], offNA: [0.84, 0.06, 0.54], offEA: [0.2, -0.95, 0.24],
+  };
+  const round = motion('tb_round_01', {
+    dur: 52, from: idle, root: 'w_round_040', spin: { from: 11, to: 43, degrees: 360 },
+    keys: [
+      { t: 5, hip: [0, -0.08, 0.03], hipR: [5, -22, 0], spine: [6, -5, 0], chest: [3, -14, 0], gripA: [-0.4, 1.16, 0.1], dirA: [-0.72, 0.2, 0.66], edgeA: [0.62, -0.2, 0.76], offA: [0.26, 1.18, 0.38], offNA: [0.5, 0.4, 0.77], offEA: [0, -0.9, 0.44] },
+      { t: 10, hip: [0, -0.1, 0.02], hipR: [5, -6, 0], spine: [6, -2, 0], chest: [3, -2, 0], ...OPEN },
+      { t: 26, hip: [0, -0.1, 0.02], hipR: [5, -4, 0], spine: [6, -1, 0], chest: [3, 0, 0], ...OPEN },
+      { t: 42, hip: [0, -0.1, 0.02], hipR: [5, -6, 0], spine: [6, -2, 0], chest: [3, -2, 0], ...OPEN },
+      { t: 47, hip: [0, -0.08, 0.01], hipR: [4, -12, 0], gripA: [-0.32, 1.14, 0.24], dirA: [-0.3, 0.5, 0.81], edgeA: [0.3, -0.75, 0.6], offA: [0.3, 1.16, 0.28], offNA: [0.3, 0.5, 0.81], offEA: [-0.3, -0.75, 0.6] },
+    ],
+    // 左足: 回る前に、母指球が体の中心に来る所へ寄せ、回る間は軸（pivot）。右足: 回る間、90° ごとに地面を蹴り直す
+    feet: {
+      L: [[2, 8, L_PIVOT[0], L_PIVOT[1], 30, 0.05, 1], [44, 50, 0.11, 0.18, 10, 0.04]],
+      R: [[6, 14, -0.22, 0.12, -20, 0.05], [14, 21, -0.22, 0.12, -20, 0.05], [21, 28, -0.22, 0.12, -20, 0.05], [28, 35, -0.22, 0.12, -20, 0.05], [35, 43, -0.22, 0.12, -20, 0.05], [45, 51, -0.13, -0.16, -30, 0.04]],
+    },
+  });
+  trackOf('tb_round', B, round);
+  trackOf('tb_round_l', B, round, left);
+
+  // ---- 猛り（固有。v0.54.0。2G の強化の状態に当たる Kari の形）----
+  // 入る: 両方の剣を顔の前で交差させて掲げ、腰を落として力をため、左右の下へ一気に振り開いて、右足で地を踏む。
+  // 解く: 両方の剣を下ろして力を抜き、構えへ戻る。どちらも当たりは無い。
+  const demonOn = motion('tb_demon_on_01', {
+    dur: 32, from: idle,
+    keys: [
+      { t: 6, hip: [0, -0.05, 0], hipR: [2, -6, 0], spine: [-2, 0, 0], chest: [-4, 0, 0], gripA: [-0.07, 1.32, 0.32], dirA: [0.42, 0.88, 0.2], edgeA: [0.3, -0.35, 0.89], offA: [0.07, 1.34, 0.34], offNA: [-0.42, 0.88, 0.2], offEA: [-0.33, -0.36, 0.87] },
+      { t: 12, hip: [0, -0.1, 0], hipR: [4, -6, 0], spine: [0, 0, 0], chest: [-3, 0, 0], gripA: [-0.07, 1.36, 0.3], dirA: [0.42, 0.88, 0.2], edgeA: [0.3, -0.35, 0.89], offA: [0.07, 1.38, 0.32], offNA: [-0.42, 0.88, 0.2], offEA: [-0.33, -0.36, 0.87] },
+      { t: 15, hip: [0, -0.12, 0.02], hipR: [6, -6, 0], spine: [6, 0, 0], chest: [3, 0, 0], gripA: [-0.24, 1.22, 0.32], dirA: [-0.22, 0.42, 0.88], edgeA: [0.5, -0.6, 0.62], offA: [0.24, 1.24, 0.34], offNA: [0.22, 0.42, 0.88], offEA: [-0.5, -0.6, 0.62] },
+      { t: 18, hip: [0, -0.14, 0.03], hipR: [10, -6, 0], spine: [12, 0, 0], chest: [6, 0, 0], gripA: [-0.42, 1.02, 0.22], dirA: [-0.62, -0.5, 0.6], edgeA: [0.73, -0.1, 0.67], offA: [0.42, 1.04, 0.24], offNA: [0.62, -0.5, 0.6], offEA: [-0.74, -0.13, 0.66] },
+      { t: 24, hip: [0, -0.13, 0.03], hipR: [9, -6, 0], spine: [11, 0, 0], chest: [5, 0, 0], gripA: [-0.43, 1.03, 0.2], dirA: [-0.62, -0.48, 0.62], edgeA: [0.73, -0.1, 0.67], offA: [0.43, 1.05, 0.22], offNA: [0.62, -0.48, 0.62], offEA: [-0.74, -0.13, 0.66] },
+    ],
+    feet: { R: [[13, 18, -0.15, -0.17, -30, 0.06]], L: [[27, 31, 0.11, 0.18, 10, 0.03]] },
+  });
+  trackOf('tb_demon_on', B, demonOn);
+  const demonOff = motion('tb_demon_off_01', {
+    dur: 20, from: idle,
+    keys: [
+      { t: 7, hip: [0, -0.02, -0.01], hipR: [2, -8, 0], spine: [0, -1, 0], chest: [-2, 0, 0], gripA: [-0.3, 0.98, 0.16], dirA: [-0.3, -0.6, 0.74], edgeA: [0.95, -0.19, 0.23], offA: [0.3, 1.0, 0.18], offNA: [0.3, -0.6, 0.74], offEA: [-0.95, -0.19, 0.23] },
+      { t: 11, hip: [0, -0.03, -0.01], gripA: [-0.3, 0.99, 0.17], dirA: [-0.28, -0.56, 0.78], edgeA: [0.95, -0.17, 0.25], offA: [0.3, 1.01, 0.19], offNA: [0.28, -0.56, 0.78], offEA: [-0.95, -0.17, 0.25] },
+    ],
+  });
+  trackOf('tb_demon_off', B, demonOff);
+
+  // ---- 連ね斬り（猛りの間の、主と副の同時押し。右・左・右と斬り、最後に交差）----
   const flurry = motion('tb_flurry_01', {
     dur: 86, from: idle,
     keys: [
@@ -157,16 +212,23 @@ export function twinBlades() {
   // ---- 技のデータ ----
   const R = (t, coef, o = {}) => ({ id: 'blade_r', track: t, coef, hitstop: 2, ...o });
   const L = (t, coef, o = {}) => ({ id: 'blade_l', track: `${t}_l`, coef, hitstop: 2, ...o });
-  const gain = { gain: true };
-  action('slash1', { clip: 'tb_slash1_01', dur: 24, active: [8, 13], track: 'tb_slash1', hits: [R('tb_slash1', 0.18)], curve: 'w_step_015', turn: [6, 360], momentum: gain, sound: [7, 'hb_swing_02'], cancels: [[14, 24, ['tb_slash2', 'tb_stab', 'tb_flurry', 'roll']]] });
-  action('slash2', { clip: 'tb_slash2_01', dur: 24, active: [7, 12], track: 'tb_slash2', hits: [L('tb_slash2', 0.22)], curve: 'w_step_015', turn: [5, 360], momentum: gain, sound: [6, 'hb_swing_02'], cancels: [[13, 24, ['tb_cross', 'tb_stab', 'tb_flurry', 'roll']]] });
-  action('cross', { clip: 'tb_cross_01', dur: 36, active: [11, 17], track: 'tb_cross', hits: [R('tb_cross', 0.3, { hitstop: 3 }), L('tb_cross', 0.3, { hitstop: 3 })], curve: 'w_step_030', turn: [8, 360], momentum: gain, sound: [10, 'hb_swing_01'], cancels: [[22, 36, ['tb_slash1', 'tb_stab', 'tb_flurry', 'roll']]] });
-  action('stab', { clip: 'tb_stab_01', dur: 42, active: [10, 21], track: 'tb_stab', hits: [R('tb_stab', 0.2, { from: 10, to: 14 }), L('tb_stab', 0.3, { from: 17, to: 21 })], curve: 'w_step_040', turn: [8, 360], momentum: gain, sound: [9, 'hb_swing_02'], events: [{ tick: 16, type: 'sound', id: 'hb_swing_02' }], cancels: [[26, 42, ['tb_slash1', 'tb_flurry', 'roll']]] });
-  // 連ね斬り: 5 回当たる。勢いをすべて使い、その段階で威力が決まる。
+  // 技の後半から出せる技: 副 = 回転斬り、主と副の同時押し = 突き込み（猛りの間は連ね斬りに替わる。weapons.json の demon.swap）、固有 = 猛りに入る・解く
+  const NEXT = ['tb_round', 'tb_stab', 'tb_demon', 'roll'];
+  action('slash1', { clip: 'tb_slash1_01', dur: 24, active: [8, 13], track: 'tb_slash1', hits: [R('tb_slash1', 0.18)], curve: 'w_step_015', turn: [6, 360], sound: [7, 'hb_swing_02'], cancels: [[14, 24, ['tb_slash2', ...NEXT]]] });
+  action('slash2', { clip: 'tb_slash2_01', dur: 24, active: [7, 12], track: 'tb_slash2', hits: [L('tb_slash2', 0.22)], curve: 'w_step_015', turn: [5, 360], sound: [6, 'hb_swing_02'], cancels: [[13, 24, ['tb_cross', ...NEXT]]] });
+  action('cross', { clip: 'tb_cross_01', dur: 36, active: [11, 17], track: 'tb_cross', hits: [R('tb_cross', 0.3, { hitstop: 3 }), L('tb_cross', 0.3, { hitstop: 3 })], curve: 'w_step_030', turn: [8, 360], sound: [10, 'hb_swing_01'], cancels: [[22, 36, ['tb_slash1', ...NEXT]]] });
+  // 回転斬り: 回り始める前（8 tick まで）は、スティックの向きへ向き直れる。左右の剣が 1 回ずつ当たる（周りの相手にも）
+  action('round', { clip: 'tb_round_01', dur: 52, active: [12, 43], track: 'tb_round', hits: [R('tb_round', 0.24, { hitstop: 3 }), L('tb_round', 0.24, { hitstop: 3 })], curve: 'w_round_040', turn: [8, 540], spin: { from: 11, to: 43, degrees: 360 }, sound: [11, 'hb_swing_01'], events: [{ tick: 27, type: 'sound', id: 'hb_swing_02' }], cancels: [[44, 52, ['tb_slash1', 'tb_stab', 'tb_demon', 'roll']]] });
+  action('stab', { clip: 'tb_stab_01', dur: 42, active: [10, 21], track: 'tb_stab', hits: [R('tb_stab', 0.2, { from: 10, to: 14 }), L('tb_stab', 0.3, { from: 17, to: 21 })], curve: 'w_step_040', turn: [8, 360], sound: [9, 'hb_swing_02'], events: [{ tick: 16, type: 'sound', id: 'hb_swing_02' }], cancels: [[26, 42, ['tb_slash1', 'tb_round', 'tb_demon', 'roll']]] });
+  // 連ね斬り: 猛りの間だけ（同時押しの突き込みが替わる）。5 回当たり、その場から動かない。後隙が長い
   action('flurry', { clip: 'tb_flurry_01', dur: 86, active: [10, 62], track: 'tb_flurry',
-    hits: [R('tb_flurry', 0.16, { id: 'r1', from: 10, to: 15 }), L('tb_flurry', 0.18, { id: 'l1', from: 23, to: 28 }), R('tb_flurry', 0.2, { id: 'r2', from: 36, to: 41 }), R('tb_flurry', 0.42, { id: 'r3', from: 56, to: 62, hitstop: 4 }), L('tb_flurry', 0.42, { id: 'l3', from: 56, to: 62, hitstop: 4 })],
-    momentum: { spendScale: [1, 1, 1.4, 1.9] }, turn: [8, 240], sound: [9, 'hb_swing_02'], events: [{ tick: 22, type: 'sound', id: 'hb_swing_02' }, { tick: 35, type: 'sound', id: 'hb_swing_02' }, { tick: 55, type: 'sound', id: 'hb_swing_01' }], cancels: [[70, 86, ['roll']]] });
-  action('draw_cross', { clip: 'tb_draw_cross_01', dur: 52, active: [30, 36], track: 'tb_draw_cross', hits: [R('tb_draw_cross', 0.27), L('tb_draw_cross', 0.27)], curve: 'w_step_060', turn: [20, 240], momentum: gain, sound: [29, 'hb_swing_01'], events: [{ tick: 4, type: 'sound', id: 'hb_draw_01' }], cancels: [[42, 52, ['tb_slash1', 'tb_stab', 'roll']]] });
+    hits: [R('tb_flurry', 0.2, { id: 'r1', from: 10, to: 15 }), L('tb_flurry', 0.22, { id: 'l1', from: 23, to: 28 }), R('tb_flurry', 0.24, { id: 'r2', from: 36, to: 41 }), R('tb_flurry', 0.5, { id: 'r3', from: 56, to: 62, hitstop: 4 }), L('tb_flurry', 0.5, { id: 'l3', from: 56, to: 62, hitstop: 4 })],
+    turn: [8, 240], sound: [9, 'hb_swing_02'], events: [{ tick: 22, type: 'sound', id: 'hb_swing_02' }, { tick: 35, type: 'sound', id: 'hb_swing_02' }, { tick: 55, type: 'sound', id: 'hb_swing_01' }], cancels: [[70, 86, ['roll']]] });
+  // 猛り: 始めた tick に入る・解ける（動きの途中で止められても、状態は変わったまま）
+  action('demon_on', { clip: 'tb_demon_on_01', dur: 32, track: 'tb_demon_on', demon: 'on', sound: [17, 'hb_swing_01'], cancels: [[20, 32, ['tb_slash1', 'tb_round', 'tb_stab', 'roll']]] });
+  action('demon_off', { clip: 'tb_demon_off_01', dur: 20, track: 'tb_demon_off', demon: 'off', cancels: [[10, 20, ['tb_slash1', 'tb_round', 'tb_stab', 'roll']]] });
+  action('draw_cross', { clip: 'tb_draw_cross_01', dur: 52, active: [30, 36], track: 'tb_draw_cross', hits: [R('tb_draw_cross', 0.27), L('tb_draw_cross', 0.27)], curve: 'w_step_060', turn: [20, 240], sound: [29, 'hb_swing_01'], events: [{ tick: 4, type: 'sound', id: 'hb_draw_01' }], cancels: [[42, 52, ['tb_slash1', 'tb_round', 'tb_stab', 'roll']]] });
   action('draw', { clip: 'tb_draw_01', dur: 30, track: 'tb_draw', sound: [4, 'hb_draw_01'] });
-  action('sheathe', { clip: 'tb_sheathe_01', dur: 34, track: 'tb_sheathe', sound: [24, 'hb_sheathe_01'], finish: 'sheathed_idle' });
+  // 納刀を始めると、猛りは解ける
+  action('sheathe', { clip: 'tb_sheathe_01', dur: 34, track: 'tb_sheathe', demon: 'off', sound: [24, 'hb_sheathe_01'], finish: 'sheathed_idle' });
 }

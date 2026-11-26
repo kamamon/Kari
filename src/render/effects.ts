@@ -12,6 +12,8 @@ export class BladeTrail {
   private col: Float32Array;
   private pts: { a: Vector3; b: Vector3; life: number }[] = [];
   active = false;
+  /** 双剣の猛り（v0.54.0）の間は、赤みのある軌跡にする（見た目だけ） */
+  hot = false;
 
   constructor(scene: Scene) {
     const geo = new BufferGeometry();
@@ -49,7 +51,8 @@ export class BladeTrail {
       }
       this.pos.set([p.a.x, p.a.y, p.a.z, p.b.x, p.b.y, p.b.z], o);
       const l = Math.max(0, p.life);
-      this.col.set([0.1 * l, 0.09 * l, 0.06 * l, 0.5 * l, 0.47 * l, 0.36 * l], o);
+      if (this.hot) this.col.set([0.14 * l, 0.04 * l, 0.03 * l, 0.62 * l, 0.22 * l, 0.15 * l], o);
+      else this.col.set([0.1 * l, 0.09 * l, 0.06 * l, 0.5 * l, 0.47 * l, 0.36 * l], o);
     }
     const g = this.mesh.geometry;
     (g.getAttribute('position') as BufferAttribute).needsUpdate = true;

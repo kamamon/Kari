@@ -76,6 +76,30 @@ async function until(page, fn, timeout = 20000, arg = null) {
     return false;
   }
 }
+/**
+ * 条件が成り立つまで待つ。上限は simulation の tick で数える（v0.54.0）: ソフトウェア描画が遅い手元では、1 フレームで進む tick に
+ * 上限（6）があるので、ゲームの中の時間が壁の時計より遅れる。待つ長さを「ゲームの中で ticks だけ進んでも成り立たなければ失敗」にする。
+ * 壁の時計の上限は wallMs（止まった時に終わらせるため）。
+ */
+async function untilSim(page, fn, ticks, arg = null, wallMs = 240000) {
+  const t0 = await page.evaluate(() => window.__vh.sim.tick);
+  const end = Date.now() + wallMs;
+  for (;;) {
+    if (await page.evaluate(fn, arg)) return true;
+    const t = await page.evaluate(() => window.__vh.sim.tick);
+    if (t - t0 > ticks || Date.now() > end) return !!(await page.evaluate(fn, arg));
+    await page.waitForTimeout(50);
+  }
+}
+/** 押したまま、simulation が ticks だけ進むのを待って離す（歩く長さを、ゲームの中の時間で決める） */
+async function holdSim(page, key, ticks) {
+  const t0 = await page.evaluate(() => window.__vh.sim.tick);
+  await page.keyboard.down(key);
+  await page.waitForFunction(([start, n]) => window.__vh.sim.tick - start >= n, [t0, ticks], { timeout: 240000, polling: 30 }).catch(() => {});
+  await page.keyboard.up(key);
+}
+/** 描画が 2 回進むのを待つ（HUD・地図は描画のたびに直すので、遅い手元では決まった時間では足りない） */
+const nextFrames = (page) => page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r()))));
 const click = async (page, button = 'left') => {
   await page.mouse.down({ button });
   await page.waitForTimeout(80);
@@ -146,7 +170,7 @@ const startTraining = async (page, tap = false) => {
   await page.evaluate(() => (window.__vh.sim.monsters[0].aiEnabled = false));
 
   await page.keyboard.down('KeyW');
-  check('W で前進する', await until(page, () => window.__vh.sim.player.pos.z > -16));
+  check('W で前進する', await untilSim(page, () => window.__vh.sim.player.pos.z > -16, 1200));
   await page.keyboard.down('ShiftLeft');
   check('Shift の疾走でスタミナが減る', await until(page, () => window.__vh.sim.player.stamina < 92));
   await page.screenshot({ path: `${OUT}03_sprint.png` });
@@ -250,8 +274,7 @@ const startTraining = async (page, tap = false) => {
   await page.keyboard.up('KeyS');
   check('回避でスタミナを 25 使う', (await state(page)).st <= 100);
   await page.keyboard.press('KeyR');
-  await idle(page);
-  check('R で納刀する', !(await state(page)).drawn);
+  check('R で納刀する', await untilSim(page, () => !window.__vh.sim.player.drawn && window.__vh.sim.player.mode === 'free', 180));
   await page.screenshot({ path: `${OUT}14_sheathed.png` });
 
   // 30/60fps 一致チェック（メニュー → 検証）
@@ -281,7 +304,7 @@ const startTraining = async (page, tap = false) => {
   // やり直し → 手を加えない操作だけで「いまの画面の状態とも一致」を確かめる
   await page.evaluate(() => window.__vh.restartTraining());
   await page.keyboard.down('KeyW');
-  await until(page, () => window.__vh.sim.player.pos.z > 4.2, 40000);
+  await untilSim(page, () => window.__vh.sim.player.pos.z > 4.2, 2400);
   await page.keyboard.up('KeyW');
   await click(page);
   await idle(page);
@@ -295,6 +318,8 @@ const startTraining = async (page, tap = false) => {
   const result2 = await page.textContent('.menu-body pre');
   check('記録した入力の再生が、いまの画面の状態と一致', /結果: 一致/.test(result2) && /いまの画面の状態とも一致/.test(result2), result2.split('\n').slice(1, 2).join(''));
   await page.keyboard.press('Escape');
+  // 一時停止が解けたことは、次の描画で知る（その時に押していたキーは離したことにする）。遅い手元では、解ける前に押すと消えるので待つ
+  await until(page, () => window.__vh.paused === false, 10000);
 
   // 段差: 東の段々（0.3m ずつ）を登る。高い岩棚（1.4m）は登れない。
   await page.evaluate(() => {
@@ -305,7 +330,8 @@ const startTraining = async (page, tap = false) => {
     window.__vh.view.cam.snap(0);
   });
   await page.keyboard.down('KeyA');
-  check('小さな段差を登れる（0.9m の段の上へ）', await until(page, () => window.__vh.sim.player.pos.y > 0.85));
+  check('小さな段差を登れる（0.9m の段の上へ）', await untilSim(page, () => window.__vh.sim.player.pos.y > 0.85, 900),
+    await page.evaluate(() => { const v = window.__vh, p = v.sim.player; return JSON.stringify({ x: p.pos.x, y: p.pos.y, z: p.pos.z, mode: p.mode, drawn: p.drawn, tick: v.sim.tick, camYaw: v.view.cam.yaw, paused: v.paused ?? null, menu: !document.getElementById('menu').hidden }); }));
   await page.keyboard.up('KeyA');
   await page.screenshot({ path: `${OUT}18_steps.png` });
   await page.evaluate(() => {
@@ -315,12 +341,10 @@ const startTraining = async (page, tap = false) => {
     p.pos.z = -23;
     window.__vh.view.cam.snap(0);
   });
-  await page.keyboard.down('KeyA');
-  await page.waitForTimeout(1500);
-  await page.keyboard.up('KeyA');
+  await holdSim(page, 'KeyA', 90);
   await page.keyboard.down('KeyD');
-  await until(page, () => window.__vh.sim.player.pos.x < -26.9, 15000);
-  await page.waitForTimeout(800);
+  await untilSim(page, () => window.__vh.sim.player.pos.x < -26.9, 900);
+  await untilSim(page, () => false, 48);
   await page.keyboard.up('KeyD');
   const s9 = await state(page);
   // 岩棚の縁は x = -27。1 tick の移動量（約 0.07m）より手前で止まり、上には乗らない。
@@ -458,7 +482,7 @@ const startTraining = async (page, tap = false) => {
   await page.waitForTimeout(150);
   check('亡骸の近くでは、攻撃ボタンが「剥ぎ取り」に変わる', await until(page, () => document.querySelector('.tbtn-main').textContent === '剥ぎ取り', 3000));
   await click(page);
-  check('剥ぎ取ると素材が 1 個手に入り、残りが 2 回になる', await until(page, () => window.__vh.sim.hunt.carves.body === 2 && window.__vh.sim.hunt.loot.length === 1, 8000));
+  check('剥ぎ取ると素材が 1 個手に入り、残りが 2 回になる', await untilSim(page, () => window.__vh.sim.hunt.carves.body === 2 && window.__vh.sim.hunt.loot.length === 1, 480));
   await page.screenshot({ path: `${OUT}55_hunt_carve.png` });
   await page.click('#hud-return');
   check('「帰還する」で結果が閉じ、少し間を置いて結果の画面が出る', await until(page, () => window.__vh.sim.hunt.closed && !document.getElementById('result').hidden, 20000));
@@ -486,7 +510,7 @@ const startTraining = async (page, tap = false) => {
     p.itemIndex = 1;
   });
   await page.keyboard.press('KeyE');
-  check('拘束罠を置くと、少しして作動可能になる', await until(page, () => window.__vh.sim.traps[0]?.state === 'armed' && window.__vh.sim.player.items[1].count === 0, 10000));
+  check('拘束罠を置くと、少しして作動可能になる', await untilSim(page, () => window.__vh.sim.traps[0]?.state === 'armed' && window.__vh.sim.player.items[1].count === 0, 600));
   await page.evaluate(() => {
     const v = window.__vh;
     const t = v.sim.traps[0];
@@ -728,6 +752,8 @@ const startTraining = async (page, tap = false) => {
   for (const fam of ['guard_blade', 'war_maul', 'twin_blades', 'long_lance', 'ring_bow', 'heavy_blade']) {
     await page.click(`.base-weapon[data-weapon="weapon.${fam}.002"]`);
     await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy') && window.__vh.view.hunter.modelKey === id.replace('weapon.', 'model.weapon.'), 8000, `weapon.${fam}.002`);
+    // 絵は読み込みに時間がかかる（遅い手元では、形が替わった時にまだ読めていない）
+    await until(page, () => window.__vh.view.hunter.weaponArt.every((a) => a.loaded || a.failed), 20000);
     shapes.push(await page.evaluate(() => {
       const h = window.__vh.view.hunter;
       const names = [];
@@ -1111,10 +1137,10 @@ const startTraining = async (page, tap = false) => {
   await until(page, () => window.__vh.sim.player.mode === 'free', 8000);
   // 研磨石（E キー）: v0.40.0（2G）から、抜刀中の E は納刀だけ。納刀してから、もう 1 度 E で、片ひざを突いて研ぎ、最大へ戻る
   await page.keyboard.press('KeyE');
-  check('研磨石: 抜刀中に E を押すと、納刀だけをする（研がない。v0.40.0、2G）', await until(page, () => {
+  check('研磨石: 抜刀中に E を押すと、納刀だけをする（研がない。v0.40.0、2G）', await untilSim(page, () => {
     const p = window.__vh.sim.player;
     return p.mode === 'free' && !p.drawn;
-  }, 6000) && await page.evaluate(() => window.__vh.sim.player.items[0].count === 10 && window.__vh.sim.player.edge < 100), await page.evaluate(() => JSON.stringify({ mode: window.__vh.sim.player.mode, drawn: window.__vh.sim.player.drawn })));
+  }, 360) && await page.evaluate(() => window.__vh.sim.player.items[0].count === 10 && window.__vh.sim.player.edge < 100), await page.evaluate(() => JSON.stringify({ mode: window.__vh.sim.player.mode, drawn: window.__vh.sim.player.drawn })));
   await page.keyboard.press('KeyE');
   check('研磨石を使うと、研ぐ動きが始まる', await until(page, () => window.__vh.sim.player.action?.def.actionId === 'player.item.whet', 6000));
   await until(page, () => (window.__vh.sim.player.action?.tick ?? 0) >= 52, 8000);
@@ -1299,6 +1325,7 @@ const startTraining = async (page, tap = false) => {
   // マウスを画面の真ん中へ戻す（後の click(page) は、いまのマウスの位置で押す。地図の上のままだと、攻撃の代わりに地図を開け閉めする）
   await page.mouse.move(640, 360);
   await page.waitForTimeout(250);
+  await nextFrames(page);
   const fieldMap = () => page.evaluate(() => {
     const r = document.querySelector('.field-map');
     const areas = [...document.querySelectorAll('.field-map-svg path.area')];
@@ -1316,13 +1343,10 @@ const startTraining = async (page, tap = false) => {
   const fm0 = await fieldMap();
   await page.screenshot({ path: `${OUT}81_field_map.png` });
   const walk0 = await page.evaluate(() => ({ ...window.__vh.sim.player.pos }));
-  await page.keyboard.down('KeyW');
-  await page.waitForTimeout(500);
-  await page.keyboard.up('KeyW');
+  await holdSim(page, 'KeyW', 30);
   const walk1 = await page.evaluate(() => ({ ...window.__vh.sim.player.pos }));
   await page.keyboard.press('KeyM');
-  await page.waitForTimeout(150);
-  const fmClosed = await page.evaluate(() => document.querySelector('.field-map').hidden);
+  const fmClosed = await until(page, () => document.querySelector('.field-map').hidden, 8000);
   check('全体の地図（v0.51.0）: 右上の地図を押すと開き、本当の形のエリア 11・道 14（大型も通る 8）・番号・居るエリア（野営地）・自分の矢じりが出る。標的は不明なので点は無い。開いたまま歩け、M で閉じる',
     fm0.open && fm0.pe === 'none' && fm0.areas === 11 && fm0.links === 14 && fm0.large === 8 && fm0.here === 'camp' && /^translate\(/.test(fm0.me) && fm0.tgt === 'none' && fm0.target === '' && fm0.labels === '1,10,2,3,4,5,6,7,8,9,営' && Math.hypot(walk1.x - walk0.x, walk1.z - walk0.z) > 0.5 && fmClosed,
     JSON.stringify({ fm0, walk0, walk1, fmClosed }));
@@ -1359,7 +1383,7 @@ const startTraining = async (page, tap = false) => {
   // 前へ歩く（東の出口へ向いて始まる）。出口に入ると、エリア 1 へ移る
   await page.keyboard.down('KeyW');
   await page.keyboard.down('ShiftLeft');
-  const hint = await until(page, () => !document.querySelector('.hud-exit').hidden, 15000);
+  const hint = await untilSim(page, () => !document.querySelector('.hud-exit').hidden, 900);
   const hintText = await page.evaluate(() => document.querySelector('.hud-exit').textContent);
   const moved = await until(page, () => window.__vh.sim.areaId === 'a1', 20000);
   await page.keyboard.up('KeyW');
@@ -1395,9 +1419,7 @@ const startTraining = async (page, tap = false) => {
   await page.evaluate(() => { const v = window.__vh, p = v.sim.player; p.yaw = 0; p.prevYaw = 0; v.view.cam.snap(0); });
   await page.waitForTimeout(250);
   const me0 = await meAt();
-  await page.keyboard.down('KeyD');
-  await page.waitForTimeout(1200);
-  await page.keyboard.up('KeyD');
+  await holdSim(page, 'KeyD', 72);
   await page.waitForTimeout(250);
   const me1 = await meAt();
   check('地図（v0.42.0）: 北を向くと矢じりは上（0°）。画面の右へ歩くと、地図の自分の印も右へ動き、矢じりは右（90°）を向く', !!me0 && !!me1 && me0[2] === 0 && me1[0] > me0[0] + 1 && Math.abs(me1[1] - me0[1]) < Math.abs(me1[0] - me0[0]) && Math.abs(me1[2] - 90) <= 20, JSON.stringify({ me0, me1 }));
@@ -1474,6 +1496,7 @@ const startTraining = async (page, tap = false) => {
     return { asleep: m.asleep, area: s.monsterArea(m)?.id, seen, markTicks: m.markTicks };
   });
   await page.waitForTimeout(300);
+  await nextFrames(page);
   f = await hudField();
   // 印がある間は、移った先（エリア 10）が地図と文字に出る。眠っていることは、見ていないので出ない（v0.42.0）
   check('フィールド: 弱った標的は、エリアを渡って巣（エリア 10）へ行き、眠る。標識玉の印で、居場所が地図と文字に出る（眠りは、見ていないので出ない）', slept.asleep && slept.area === 'a10' && slept.seen[0]?.startsWith('monster_leave') && slept.seen.at(-1) === 'monster_sleep:a10' && f.mark === '10' && f.marked === '10' && f.sleepMark === '' && /標的: エリア 10（印）/.test(f.where) && f.rigVisible === false, `${slept.seen.join(' ')} / ${slept.markTicks} / ${f.where}`);
@@ -1481,6 +1504,7 @@ const startTraining = async (page, tap = false) => {
   // 全体の地図（v0.51.0）: 印のある間は、巣（エリア 10）に標的の点（印の色）。眠りは見ていないので出ない
   await page.keyboard.press('KeyM');
   await page.waitForTimeout(250);
+  await nextFrames(page);
   const fmMark = await fieldMap();
   await page.keyboard.press('KeyM');
   check('全体の地図（v0.51.0）: 印のある標的は、居るエリア（10）の中に点で出る（印の色）。眠りは出ない', fmMark.open && fmMark.target === 'a10' && fmMark.marked === 'a10' && fmMark.asleep === '' && fmMark.tgt !== 'none' && fmMark.tgtMarked && fmMark.tgtIn10, JSON.stringify(fmMark));
@@ -1491,6 +1515,7 @@ const startTraining = async (page, tap = false) => {
   check('フィールド: 印が切れると、地図は最後に見た所（エリア 3）だけになり、「標的: 不明（最後に見た所 エリア 3）」', lost && f.mark === '' && f.seen === '3' && f.sleepMark === '' && /標的: 不明（最後に見た所 エリア 3）/.test(f.where), JSON.stringify(f));
   await page.keyboard.press('KeyM');
   await page.waitForTimeout(250);
+  await nextFrames(page);
   const fmLost = await fieldMap();
   await page.keyboard.press('KeyM');
   check('全体の地図（v0.51.0）: 印が切れると、点は消え、最後に見た所（エリア 3）に「3?」', fmLost.open && fmLost.tgt === 'none' && fmLost.target === '' && fmLost.seen === '3?', JSON.stringify(fmLost));
@@ -1588,10 +1613,8 @@ const startTraining = async (page, tap = false) => {
     });
     return { n, maxY, worst, cnt };
   });
-  // W で坂を上る（3 秒）: 足は地面に付いたまま、高い所へ上がる
-  await page.keyboard.down('KeyW');
-  await page.waitForTimeout(3000);
-  await page.keyboard.up('KeyW');
+  // W で坂を上る（ゲームの中で 3 秒）: 足は地面に付いたまま、高い所へ上がる
+  await holdSim(page, 'KeyW', 180);
   await page.waitForTimeout(300);
   const up = await page.evaluate(() => { const s = window.__vh.sim, p = s.player; return { y: p.pos.y, g: s.world.groundHeight(p.pos.x, p.pos.z), grounded: p.grounded }; });
   await page.screenshot({ path: `${OUT}86b_relief.png` });
@@ -1654,6 +1677,69 @@ const startTraining = async (page, tap = false) => {
   await ctx.close();
 }
 
+// ---- 双剣の猛り（v0.54.0。#19 の H03）: 副で回転斬り（体が後ろを向く）、固有で猛りに入る（印・スタミナの棒の色・ボタンの表示名が替わる）、
+// 猛りの間の同時押しで連ね斬り、固有でもう 1 度押すと解ける。新しい動きはどれも描ける（欠けた clip が無い）----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false);
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  await page.locator('.base-weapon[data-weapon="weapon.twin_blades.001"]').click();
+  await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy'), 6000, 'weapon.twin_blades.001');
+  await startTraining(page);
+  await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+  await page.evaluate(() => {
+    const v = window.__vh, s = v.sim, m = s.monsters[0], p = s.player;
+    m.aiEnabled = false;
+    v.clock.advance = () => 0;
+    p.mode = 'free'; p.action = null; p.drawn = true;
+    p.pos = { x: m.pos.x, y: 0, z: m.pos.z - 1.75 - 1.0 }; p.prevPos = { ...p.pos }; p.yaw = 0; p.prevYaw = 0;
+  });
+  // simulation を決まった入力で進める（presses は [tick, ボタン]）。stopAt の技がその tick まで進んだら止める
+  const step = (presses, n, stopAt) => page.evaluate(([presses, n, stopAt]) => {
+    const s = window.__vh.sim, p = s.player;
+    const idle = { moveX: 0, moveZ: 0, held: 0, pressed: 0, released: 0 };
+    const seen = [], ev = [];
+    for (let i = 0; i < n; i++) {
+      const b = presses.find(([t]) => t === i)?.[1] ?? 0;
+      s.step({ ...idle, held: b, pressed: b });
+      for (const e of s.drainEvents()) {
+        if (e.type === 'action_start') seen.push(e.actionId.replace('player.twin_blades.', ''));
+        if (e.type === 'demon') ev.push(`${e.on}:${e.reason}`);
+      }
+      if (stopAt && p.action?.def.actionId === `player.twin_blades.${stopAt[0]}` && p.action.tick >= stopAt[1]) break;
+    }
+    return { now: p.action?.def.actionId.replace('player.twin_blades.', '') ?? null, yaw: Math.round(p.yaw * 100) / 100, demon: p.demon, stamina: Math.round(p.stamina * 10) / 10, seen, ev };
+  }, [presses, n, stopAt]);
+  const frames = async () => page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r({
+    missing: [...window.__vh.view.missingClips],
+    mark: !document.querySelector('#hud .hud-demon').hidden,
+    bar: document.querySelector('#hud .bar-st').classList.contains('demon'),
+    special: document.querySelector('.tbtn-special')?.textContent ?? null,
+    combo: document.querySelector('.tbtn-combo')?.textContent ?? null,
+  })))));
+  const round = await step([[0, 2]], 80, ['round', 27]);
+  const f1 = await frames();
+  await page.screenshot({ path: `${OUT}85d_twin_blades_round.png` });
+  await step([], 40);
+  const on = await step([[0, 8]], 60, ['demon_on', 18]);
+  const f2 = await frames();
+  await page.screenshot({ path: `${OUT}85e_twin_blades_demon.png` });
+  await step([], 20);
+  const fl = await step([[0, 3]], 80, ['flurry', 40]);
+  const f3 = await frames();
+  await step([], 60);
+  const off = await step([[0, 8]], 30, ['demon_off', 8]);
+  const f4 = await frames();
+  check('双剣（v0.54.0）: 副で回転斬り（途中で体が後ろを向く）。固有で猛りに入ると、印が出てスタミナの棒の色が変わり、ボタンは「解く」「連ね斬り」になる。猛りの間の同時押しで連ね斬り、固有でもう 1 度押すと解けて元へ戻る。新しい動きはどれも描ける（欠けた clip が無い）',
+    round.now === 'round' && Math.abs(Math.abs(round.yaw) - Math.PI) < 0.3
+      && on.now === 'demon_on' && on.demon && on.ev.join() === 'true:toggle' && f2.mark && f2.bar && f2.special === '解く' && f2.combo === '連ね斬り'
+      && fl.now === 'flurry' && fl.demon && fl.stamina < 100
+      && off.now === 'demon_off' && !off.demon && off.ev.join() === 'false:toggle' && !f4.mark && !f4.bar && f4.special === '猛り' && f4.combo === '突き込む'
+      && !f1.mark && [...f1.missing, ...f2.missing, ...f3.missing, ...f4.missing].length === 0,
+    JSON.stringify({ round, on, fl, off, f1, f2, f3, f4 }));
+  await ctx.close();
+}
+
 // ---- 弱った足取り（v0.52.0。#19 の M05）: 弱って巣へ向かう大型が歩くと、一歩ごとに体が片側へ傾き、頭が下がる。弱っていなければ傾かない ----
 {
   const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');
@@ -1689,7 +1775,9 @@ const startTraining = async (page, tap = false) => {
         m.pos = { x: m.pos.x + 0.12, y: m.pos.y, z: m.pos.z };
         return v.view.rigs.get(m.id)?.rig.root.rotation.z ?? NaN;
       }));
+      // 1 歩ぶんの動きを、描画 1 回ずつに見せる（遅い手元では、決まった時間では何歩ぶんもまとめて描く）
       await page.waitForTimeout(60);
+      await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => r())));
     }
     const a = zs.slice(10);
     return { min: Math.min(...a), max: Math.max(...a) };
@@ -1752,20 +1840,20 @@ const startTraining = async (page, tap = false) => {
   check('エリアの色合いと風（v0.51.0）: エリア 4 の地面は暖かい色（赤 ÷ 青が 1.06 より大きい。野営地はほぼ 1）、風の音はデータの 1.15', looks.wind === 1.15 && looks.a4 > 1.06 && Math.abs(looks.camp - 1) < 0.03, JSON.stringify(looks));
   // 壁へ向かって W を押し続ける: 取り付いて登り、上の段（3m）に立つ
   await page.keyboard.down('KeyW');
-  const mounted = await until(page, () => window.__vh.sim.player.mode === 'climb', 4000);
+  const mounted = await untilSim(page, () => window.__vh.sim.player.mode === 'climb', 240);
   // 登り始めるまで待つ（v0.50.0。決まった 0.6 秒で待つと、手元が重い時に、まだ 0.2m に届いていないことがあった）
-  await until(page, () => window.__vh.sim.player.pos.y > 0.25, 6000);
+  await untilSim(page, () => window.__vh.sim.player.pos.y > 0.25, 360);
   const mid = await page.evaluate(() => ({ y: window.__vh.sim.player.pos.y, drawn: window.__vh.sim.player.drawn, hint: document.querySelector('.hud-exit').textContent }));
   await page.screenshot({ path: `${OUT}86_climb.png` });
-  const topped = await until(page, () => window.__vh.sim.player.mode === 'free' && window.__vh.sim.player.pos.y === 3, 8000);
+  const topped = await untilSim(page, () => window.__vh.sim.player.mode === 'free' && window.__vh.sim.player.pos.y === 3, 480);
   await page.keyboard.up('KeyW');
   await page.waitForTimeout(300);
   const top = await page.evaluate(() => ({ y: window.__vh.sim.player.pos.y, grounded: window.__vh.sim.player.grounded, hint: document.querySelector('.hud-exit').textContent }));
   check('登攀（v0.44.0）: 壁へ押し続けると、武器を納めて取り付き、登って、上の段（3m）に立つ。登る間は「↑↓ 登る・下りる」の案内', mounted && mid.y > 0.2 && mid.y < 3 && !mid.drawn && /登る・下りる/.test(mid.hint) && topped && top.grounded && top.hint === '↓ 縁へ押すと下りる', JSON.stringify({ mid, top }));
   // 縁へ向かって S（後ろ）を押すと、向きを変えて取り付き、下まで下りる
   await page.keyboard.down('KeyS');
-  const down = await until(page, () => window.__vh.sim.player.climb?.phase === 'climb', 4000);
-  const bottom = await until(page, () => window.__vh.sim.player.mode === 'free' && window.__vh.sim.player.pos.y === 0, 8000);
+  const down = await untilSim(page, () => window.__vh.sim.player.climb?.phase === 'climb', 240);
+  const bottom = await untilSim(page, () => window.__vh.sim.player.mode === 'free' && window.__vh.sim.player.pos.y === 0, 480);
   await page.keyboard.up('KeyS');
   check('登攀（v0.44.0）: 上の段で縁へ向かって押すと、向きを変えて取り付き、下まで下りて地面に立つ', down && bottom, JSON.stringify(await page.evaluate(() => ({ mode: window.__vh.sim.player.mode, y: window.__vh.sim.player.pos.y }))));
   // 降下と着地（v0.45.0）: 棚の横の縁から歩いて出ると降下になり、着いたらしゃがんで立て直す
@@ -1780,10 +1868,10 @@ const startTraining = async (page, tap = false) => {
   await page.waitForTimeout(300);
   // カメラは +Z（北）を向く: 画面の右（D）が −X（棚の外。入力の右 = (-cos, sin)）
   await page.keyboard.down('KeyD');
-  const dropped = await until(page, () => !!window.__vh.sim.player.drop, 4000);
+  const dropped = await untilSim(page, () => !!window.__vh.sim.player.drop, 240);
   await page.keyboard.up('KeyD');
-  const landed = await until(page, () => !!window.__vh.sim.player.land || (window.__vh.sim.player.grounded && window.__vh.sim.player.pos.y === 0), 4000);
-  const after = await until(page, () => window.__vh.sim.player.land === null && window.__vh.sim.player.pos.y === 0 && window.__vh.sim.player.mode === 'free', 4000);
+  const landed = await untilSim(page, () => !!window.__vh.sim.player.land || (window.__vh.sim.player.grounded && window.__vh.sim.player.pos.y === 0), 240);
+  const after = await untilSim(page, () => window.__vh.sim.player.land === null && window.__vh.sim.player.pos.y === 0 && window.__vh.sim.player.mode === 'free', 240);
   check('降下と着地（v0.45.0）: 3m の棚の縁から歩いて出ると降下になり、地面に着いて立て直し、また歩ける', dropped && landed && after, JSON.stringify(await page.evaluate(() => ({ y: window.__vh.sim.player.pos.y, drop: window.__vh.sim.player.drop, land: window.__vh.sim.player.land }))));
   // 低い岩棚の乗り越え（v0.49.0。#19 の H07 の低棚）: エリア 4 の 1.1m の棚の帯で、棚へ押すと手を掛けて乗り越える
   await page.evaluate(() => {
@@ -1796,12 +1884,13 @@ const startTraining = async (page, tap = false) => {
     v.view.cam.snap(vt.yaw);
   });
   await page.waitForTimeout(400);
+  await until(page, () => !document.querySelector('.hud-exit').hidden, 8000);
   const vhint = await page.evaluate(() => (document.querySelector('.hud-exit').hidden ? '' : document.querySelector('.hud-exit').textContent));
   await page.keyboard.down('KeyW');
-  const vaulting = await until(page, () => window.__vh.sim.player.mode === 'vault', 4000);
+  const vaulting = await untilSim(page, () => window.__vh.sim.player.mode === 'vault', 240);
   await page.waitForTimeout(120);
   await page.screenshot({ path: `${OUT}87_vault.png` });
-  const vtop = await until(page, () => window.__vh.sim.player.mode === 'free' && window.__vh.sim.player.pos.y === 1.1, 4000);
+  const vtop = await untilSim(page, () => window.__vh.sim.player.mode === 'free' && window.__vh.sim.player.pos.y === 1.1, 240);
   await page.keyboard.up('KeyW');
   const vst = await page.evaluate(() => ({ y: window.__vh.sim.player.pos.y, drawn: window.__vh.sim.player.drawn, grounded: window.__vh.sim.player.grounded }));
   check('低い岩棚（v0.49.0）: エリア 4 の 1.1m の棚の前で「↑ 段へ押すと乗り越える」と出て、押すと武器を納めて手を掛け、段の上に立つ', vhint === '↑ 段へ押すと乗り越える' && vaulting && vtop && !vst.drawn && vst.grounded, JSON.stringify({ vhint, vaulting, vtop, vst }));
@@ -1833,7 +1922,7 @@ const startTraining = async (page, tap = false) => {
   });
   await page.keyboard.down('KeyW');
   // 縁に着くまで歩く（v0.52.0。決まった 3 秒だと、手元が重い時に縁まで届かないことがあった）。着いてからも 1 秒押し続ける
-  await until(page, () => { const s = window.__vh.sim, p = s.player; return s.world.wallDistance(s.world.areaAt(p.pos.x, p.pos.z), p.pos.x, p.pos.z) < 1.5; }, 9000);
+  await untilSim(page, () => { const s = window.__vh.sim, p = s.player; return s.world.wallDistance(s.world.areaAt(p.pos.x, p.pos.z), p.pos.x, p.pos.z) < 1.5; }, 540);
   await page.waitForTimeout(1000);
   await page.keyboard.up('KeyW');
   await page.waitForTimeout(400);
@@ -1908,7 +1997,7 @@ const startTraining = async (page, tap = false) => {
   // 前へ歩くと、依頼板の前に着く
   await page.keyboard.down('KeyW');
   await page.keyboard.down('ShiftLeft');
-  const atBoard = await until(page, () => window.__vh.nearFacility?.id === 'board', 20000);
+  const atBoard = await untilSim(page, () => window.__vh.nearFacility?.id === 'board', 1200);
   await page.keyboard.up('KeyW');
   await page.keyboard.up('ShiftLeft');
   await page.waitForTimeout(200);
@@ -1986,8 +2075,8 @@ const startTraining = async (page, tap = false) => {
   await page.waitForTimeout(300);
   await page.screenshot({ path: `${OUT}95a_hub_stairs_top.png` });
   await page.keyboard.down('KeyW');
-  const landing = await until(page, () => Math.abs(window.__vh.sim.player.pos.y + 1.5) < 0.01 && window.__vh.sim.player.pos.x < -19.3, 15000);
-  const bottom = await until(page, () => window.__vh.sim.player.pos.y < -2.99 && window.__vh.sim.player.pos.x < -24, 15000);
+  const landing = await untilSim(page, () => Math.abs(window.__vh.sim.player.pos.y + 1.5) < 0.01 && window.__vh.sim.player.pos.x < -19.3, 900);
+  const bottom = await untilSim(page, () => window.__vh.sim.player.pos.y < -2.99 && window.__vh.sim.player.pos.x < -24, 900);
   const atForge = await until(page, () => window.__vh.nearFacility?.id === 'workshop', 15000);
   await page.keyboard.up('KeyW');
   await page.waitForTimeout(200);
@@ -1998,16 +2087,14 @@ const startTraining = async (page, tap = false) => {
   await page.screenshot({ path: `${OUT}95b_hub_forge_terrace.png` });
   // 上の段の縁（階段の北の脇、柵の所）: 工房は開かず、西へ歩いても落ちない
   await place(-22.6, 12.4, -Math.PI / 2);
-  await page.keyboard.down('KeyW');
-  await page.waitForTimeout(1500);
-  await page.keyboard.up('KeyW');
+  await holdSim(page, 'KeyW', 90);
   const edge = await page.evaluate(() => ({ x: window.__vh.sim.player.pos.x, y: window.__vh.sim.player.pos.y, near: window.__vh.nearFacility?.id ?? '' }));
   check('段のある里: 上の段の縁（柵の所）からは工房を開けず、西へ歩いても、体が縁にかからない所で止まる（落ちない）', edge.y === 0 && edge.x > -23.7 + 0.38 && edge.near === '', JSON.stringify(edge));
   await page.screenshot({ path: `${OUT}95c_hub_edge.png` });
   // 炉の段から、階段を上って広場へ戻る
   await place(-25, 8.5, Math.PI / 2);
   await page.keyboard.down('KeyW');
-  const back = await until(page, () => window.__vh.sim.player.pos.x > -16.6 && window.__vh.sim.player.pos.y === 0, 15000);
+  const back = await untilSim(page, () => window.__vh.sim.player.pos.x > -16.6 && window.__vh.sim.player.pos.y === 0, 900);
   await page.keyboard.up('KeyW');
   check('段のある里: 炉の段から東へ歩くと、階段を上って広場の高さ（0m）へ戻る', back, JSON.stringify(await page.evaluate(() => window.__vh.sim.player.pos)));
   // ---- 里の 5 つの段（v0.35.0。ChatGPT の里の設計 #11 の P1）: 水音の庭・暮らしの段・灯見の台、2 つの回遊路、建物と暮らし ----
@@ -2033,8 +2120,8 @@ const startTraining = async (page, tap = false) => {
   // 生活の道: 広場の南東の見晴らし台から、崖沿いの石段を下りて、水音の庭（-10m）へ。跳ばずに、1 段ずつ床に付いたまま
   await place(21, -19.5, -Math.PI / 2);
   await page.keyboard.down('KeyW');
-  const gardenLanding = await until(page, () => Math.abs(window.__vh.sim.player.pos.y + 5) < 0.01, 15000);
-  const garden = await until(page, () => window.__vh.sim.player.pos.y < -9.99 && window.__vh.sim.player.pos.x < -5, 15000);
+  const gardenLanding = await untilSim(page, () => Math.abs(window.__vh.sim.player.pos.y + 5) < 0.01, 900);
+  const garden = await untilSim(page, () => window.__vh.sim.player.pos.y < -9.99 && window.__vh.sim.player.pos.x < -5, 900);
   await page.keyboard.up('KeyW');
   const g1 = await page.evaluate(() => ({ ...window.__vh.sim.player.pos, amb: window.__vh.audio.ambWant }));
   check('里の 5 つの段: 見晴らし台から崖沿いの石段を西へ歩くと、踊り場（-5m）を通って水音の庭（-10m）へ下りる', gardenLanding && garden && Math.abs(g1.y + 10) < 0.01, JSON.stringify(g1));
@@ -2046,11 +2133,11 @@ const startTraining = async (page, tap = false) => {
   // 見晴らしの道: 暮らしの段の石段の上から、灯見の台への崖沿いの石段を上り、吊り橋を渡る
   await place(-4.5, 41.5, -Math.PI / 2);
   await page.keyboard.down('KeyW');
-  const lookout = await until(page, () => window.__vh.sim.player.pos.y > 21.99 && window.__vh.sim.player.pos.x < -35.5, 25000);
+  const lookout = await untilSim(page, () => window.__vh.sim.player.pos.y > 21.99 && window.__vh.sim.player.pos.x < -35.5, 1500);
   await page.keyboard.up('KeyW');
   await place(-6, 51.5, Math.PI / 2);
   await page.keyboard.down('KeyW');
-  const crossed = await until(page, () => window.__vh.sim.player.pos.x > 4, 15000);
+  const crossed = await untilSim(page, () => window.__vh.sim.player.pos.x > 4, 900);
   await page.keyboard.up('KeyW');
   const g2 = await page.evaluate(() => ({ ...window.__vh.sim.player.pos, amb: window.__vh.audio.ambWant }));
   check('里の 5 つの段: 暮らしの段から崖沿いの石段を上って灯見の台（+22m）へ。吊り橋を渡って東へ（橋の上も 22m）', lookout && crossed && Math.abs(g2.y - 22) < 0.01, JSON.stringify(g2));
@@ -2466,7 +2553,7 @@ const startTraining = async (page, tap = false) => {
         const a0 = act ? act.from : Math.round(def.durationTicks * 0.3), a1 = act ? act.to : Math.round(def.durationTicks * 0.45);
         let d = 0;
         for (const T of [Math.round(a0 * 0.85), Math.round((a0 + a1) / 2), a1]) {
-          m.action = { def, instanceId: 77, tick: T, hitstop: 0, chargeTicks: 0, chargeLevel: 0, released: false, advanced: false, moveYaw: 0, fixedDir: false, dirIndex: 0, keepDrawn: false, speed: 1, speedAcc: 0, momentumLevel: 0, momentumGained: false };
+          m.action = { def, instanceId: 77, tick: T, hitstop: 0, chargeTicks: 0, chargeLevel: 0, released: false, advanced: false, moveYaw: 0, fixedDir: false, dirIndex: 0, keepDrawn: false, speed: 1, speedAcc: 0 };
           step(1);
           snap().forEach((p, i) => { if (!Number.isFinite(p.x + p.y + p.z)) bad++; d = Math.max(d, p.distanceTo(p0[i])); });
         }
@@ -2706,41 +2793,44 @@ const startTraining = async (page, tap = false) => {
       && /採取点: 野営地 4/.test(document.getElementById('hud').textContent) && s.hunt.timeLimitTicks === 54000;
   }), await page.evaluate(() => document.getElementById('hud').textContent.slice(0, 200)));
   const gatherAt = async (i) => {
+    // 前の採集の動き（採った後の戻り）が終わってから移す（動きの最中に押した攻撃ボタンは、先行入力の間に使われずに消える）
+    await untilSim(page, () => window.__vh.sim.player.mode === 'free', 300);
     await page.evaluate((k) => {
       const s = window.__vh.sim, n = s.errand.def.nodes[k], p = s.player;
       s.areaId = n.areaId; p.pos = { x: n.x - 1.2, y: 0, z: n.z }; p.prevPos = { ...p.pos }; p.yaw = Math.PI / 2; p.drawn = false;
     }, i);
-    await until(page, () => document.querySelector('.tbtn-main')?.textContent === '採集', 3000);
+    await until(page, () => document.querySelector('.tbtn-main')?.textContent === '採集', 8000);
   };
   await gatherAt(0);
   const near = await page.evaluate(() => ({ main: document.querySelector('.tbtn-main')?.textContent ?? '', wrap: document.querySelector('.hud-wrap')?.textContent ?? '', back: document.getElementById('hud-return').hidden }));
   check('採取点のそば（納刀）: 攻撃ボタンが「採集」、案内に「攻撃ボタンで 採集」（帰還するのボタンは出ない）', near.main === '採集' && /攻撃ボタンで 採集（ヒラナギの葉）/.test(near.wrap) && near.back, JSON.stringify(near));
   await page.screenshot({ path: `${OUT}9z_errand_node.png` });
   await page.evaluate(() => window.__vh.hub.pulse(1));
-  check('攻撃ボタンで採集: 1.5 秒で 2 枚入り、採取点の印が消える', await until(page, () => (window.__vh.sim.errand.bag['mat.gather.flatnagi_leaf'] ?? 0) === 2 && window.__vh.sim.errand.used.length === 1, 8000));
+  check('攻撃ボタンで採集: 1.5 秒で 2 枚入り、採取点の印が消える', await untilSim(page, () => (window.__vh.sim.errand.bag['mat.gather.flatnagi_leaf'] ?? 0) === 2 && window.__vh.sim.errand.used.length === 1, 480));
   for (let i = 1; i < 4; i++) {
     await gatherAt(i);
     await page.evaluate(() => window.__vh.hub.pulse(1));
-    await until(page, (k) => window.__vh.sim.errand.used.length === k + 1, 8000, i);
+    await untilSim(page, (k) => window.__vh.sim.errand.used.length === k + 1, 480, i);
   }
-  check('4 か所で 8 枚。「そろった。野営地の納品箱へ」', await until(page, () => window.__vh.sim.errand.bag['mat.gather.flatnagi_leaf'] === 8 && /そろった。野営地の納品箱へ/.test(document.getElementById('hud').textContent), 5000));
+  check('4 か所で 8 枚。「そろった。野営地の納品箱へ」', await untilSim(page, () => window.__vh.sim.errand.bag['mat.gather.flatnagi_leaf'] === 8 && /そろった。野営地の納品箱へ/.test(document.getElementById('hud').textContent), 300),
+    await page.evaluate(() => JSON.stringify({ bag: window.__vh.sim.errand.bag, used: window.__vh.sim.errand.used, mode: window.__vh.sim.player.mode, hud: document.getElementById('hud').textContent.slice(0, 120) })));
   await page.evaluate(() => {
     const s = window.__vh.sim, d = s.errand.def.depot, p = s.player;
     p.pos = { x: d.x - 1.5, y: 0, z: d.z }; p.prevPos = { ...p.pos }; p.yaw = Math.PI / 2;
     window.__vh.view.cam.snap(p.yaw);
   });
-  check('納品箱のそば: 攻撃ボタンが「納品」', await until(page, () => document.querySelector('.tbtn-main')?.textContent === '納品', 3000));
+  check('納品箱のそば: 攻撃ボタンが「納品」', await until(page, () => document.querySelector('.tbtn-main')?.textContent === '納品', 8000));
   await page.screenshot({ path: `${OUT}9z_errand_depot.png` });
   await page.evaluate(() => window.__vh.hub.pulse(1));
-  check('納品すると達成（時計が止まる）。5 秒の帰還の後に結果: 納品しました・採ったもの 8（要る数 6）・余り 2 枚・240 通貨', await until(page, () => {
+  check('納品すると達成（時計が止まる）。5 秒の帰還の後に結果: 納品しました・採ったもの 8（要る数 6）・余り 2 枚・240 通貨', await untilSim(page, () => {
     const h = window.__vh.sim.hunt;
     const t = document.getElementById('result').textContent;
     return h.phase === 'success' && h.reason === 'deliver' && !document.getElementById('result').hidden && /納品しました/.test(t) && /ヒラナギの葉 8（要る数 6）/.test(t) && /240 通貨/.test(t) && /納品の余り/.test(t);
-  }, 20000), await page.evaluate(() => document.getElementById('result').textContent.slice(0, 200)));
+  }, 1200), await page.evaluate(() => document.getElementById('result').textContent.slice(0, 200)));
   check('保存: 余りの 2 枚と通貨と達成回数（納品した 6 枚は入らない）', await until(page, () => {
     const d = window.__vh.save.doc;
     return d.items['mat.gather.flatnagi_leaf'] === 2 && d.progress.questClears['quest.gather.001'] === 1 && d.money === 240;
-  }, 8000));
+  }, 20000));
   await page.screenshot({ path: `${OUT}9z_errand_result.png` });
   // 採掘: 道具を持って、3 回振る
   await page.evaluate(() => window.__vh.toBase());
@@ -2751,10 +2841,10 @@ const startTraining = async (page, tap = false) => {
     const s = window.__vh.sim, n = s.errand.def.nodes[0], p = s.player;
     s.areaId = n.areaId; p.pos = { x: n.x - 1.3, y: 0, z: n.z }; p.prevPos = { ...p.pos }; p.yaw = Math.PI / 2; p.drawn = false;
   });
-  check('採掘: 礫の坂の鉱床で、攻撃ボタンが「採掘」', await until(page, () => document.querySelector('.tbtn-main')?.textContent === '採掘', 5000));
+  check('採掘: 礫の坂の鉱床で、攻撃ボタンが「採掘」', await until(page, () => document.querySelector('.tbtn-main')?.textContent === '採掘', 8000));
   await page.evaluate(() => window.__vh.hub.pulse(1));
-  check('採掘の間だけ、右手に採掘道具。2.5 秒で風礫鉄鉱 2 個', await until(page, () => window.__vh.sim.player.action?.def.actionId === 'player.common.mine' && window.__vh.view.hunter.tool.visible, 3000)
-    && await until(page, () => window.__vh.sim.errand.bag['mat.ore.basin_iron'] === 2 && !window.__vh.view.hunter.tool.visible, 8000));
+  check('採掘の間だけ、右手に採掘道具。2.5 秒で風礫鉄鉱 2 個', await untilSim(page, () => window.__vh.sim.player.action?.def.actionId === 'player.common.mine' && window.__vh.view.hunter.tool.visible, 120)
+    && await untilSim(page, () => window.__vh.sim.errand.bag['mat.ore.basin_iron'] === 2 && !window.__vh.view.hunter.tool.visible, 480));
   await ctx.close();
 }
 
@@ -2768,6 +2858,9 @@ const startTraining = async (page, tap = false) => {
   await page.tap('.base-looks-open');
   await until(page, () => !document.getElementById('looks').hidden, 3000);
   await page.waitForTimeout(300);
+  // 下見の向きと絵の印は描画のたびに当てる（遅い手元では 300ms では足りない）
+  await until(page, () => !!window.__vh.view.portrait && window.__vh.view.hunter.maskLoaded, 15000);
+  await nextFrames(page);
   const opened = await page.evaluate(() => {
     const v = window.__vh.view, h = v.hunter, pt = v.portrait;
     const small = [...document.querySelectorAll('#looks .looks-bar button, #looks .looks-view button, #looks .looks-tabs button, #looks .looks-choice, #looks .looks-slider .step')].filter((b) => b.offsetParent && b.getBoundingClientRect().height < 44).length;
@@ -2784,12 +2877,15 @@ const startTraining = async (page, tap = false) => {
   await page.tap('.looks-choice[data-choice="S10"]');
   await page.tap('.looks-tabs button[data-tab="hair"]');
   await page.tap('.looks-choice[data-choice="C09"]');
+  await nextFrames(page);
   const drafted = await page.evaluate(() => ({ key: window.__vh.view.hunter.bodyShapeKey, c: window.__vh.view.hunter.lookColors, undo: document.querySelector('.looks-bar [data-act="undo"]').textContent, saved: window.__vh.save.doc.appearance.profile, rev: window.__vh.save.doc.revision, face: window.__vh.view.portrait?.focus }));
   check('体型 B03・肌 S10・髪 C09 を選ぶと、下見の狩人が替わる（髪の欄へ初めて入ると顔へ寄る）。保存はまだ A のまま', drafted.key.includes('muscleAmount:85') && !!drafted.c.skin && Math.abs(drafted.c.hair[0] - 0xc7 / 255) < 1e-6 && drafted.undo === '元に戻す（3）' && drafted.saved === 'legacy_hunter_a_v1' && drafted.rev === 0 && drafted.face === 'face', JSON.stringify(drafted));
   await page.screenshot({ path: `${OUT}9y_looks_face.png` });
   await page.tap('.looks-bar [data-act="undo"]');
+  await nextFrames(page);
   const undone = await page.evaluate(() => ({ hair: window.__vh.view.hunter.lookColors.hair, redo: document.querySelector('.looks-bar [data-act="redo"]').disabled }));
   await page.tap('.looks-bar [data-act="redo"]');
+  await nextFrames(page);
   const redone = await page.evaluate(() => !!window.__vh.view.hunter.lookColors.hair);
   check('元に戻すで髪の色が A に戻り、やり直すで C09 に戻る', undone.hair === null && !undone.redo && redone, JSON.stringify(undone));
   await page.tap('.looks-tabs button[data-tab="body"]');
@@ -2802,8 +2898,10 @@ const startTraining = async (page, tap = false) => {
   const bad = await slider();
   check('筋肉量の ＋ で 86（1 操作）。数の欄に 150 を入れると「0〜100で入力してください」で、値は 86 のまま', plus.v === '86' && plus.undo === '元に戻す（4）' && bad.v === '86' && bad.err === '0〜100で入力してください' && bad.undo === '元に戻す（4）', JSON.stringify([plus, bad]));
   await page.tap('.looks-view button[data-view="compare"]');
+  await nextFrames(page);
   const cmp = await page.evaluate(() => ({ key: window.__vh.view.hunter.bodyShapeKey, c: window.__vh.view.hunter.lookColors, undo: document.querySelector('.looks-bar [data-act="undo"]').textContent }));
   await page.tap('.looks-view button[data-view="compare"]');
+  await nextFrames(page);
   const back = await page.evaluate(() => window.__vh.view.hunter.bodyShapeKey);
   check('比較: 編集開始時（A）を見せ、もう一度押すと現在。比較は履歴に入らない', cmp.key === 'A' && cmp.c.skin === null && cmp.c.hair === null && cmp.undo === '元に戻す（4）' && back.includes('muscleAmount:86'), JSON.stringify(cmp));
   const ready = await page.evaluate(() => {
@@ -2826,6 +2924,7 @@ const startTraining = async (page, tap = false) => {
   const locked = await page.evaluate(() => ({ msg: document.querySelector('.looks-status').textContent, undo: document.querySelector('.looks-bar [data-act="undo"]').textContent }));
   await page.evaluate(() => document.querySelector('[data-lock="hairColor"]').click());
   await page.tap('.looks-bar [data-act="random"]');
+  await nextFrames(page);
   const rnd = await page.evaluate(() => ({ key: window.__vh.view.hunter.bodyShapeKey, undo: document.querySelector('.looks-bar [data-act="undo"]').textContent }));
   check('ランダム: 全部を固定すると「固定されていない項目がありません」。髪の色だけ外すと、体型は固定したまま（1 操作）', locked.msg === '固定されていない項目がありません。' && locked.undo === '元に戻す（4）' && rnd.key.includes('muscleAmount:86') && rnd.undo === '元に戻す（5）', JSON.stringify([locked, rnd]));
   await page.tap('.looks-bar [data-act="cancel"]');
@@ -2835,6 +2934,7 @@ const startTraining = async (page, tap = false) => {
   // 縦向き: 編集はできる（狩りは横向き）。「横向きにしてください」は出さない
   await page.setViewportSize({ width: 390, height: 844 });
   await page.waitForTimeout(400);
+  await nextFrames(page);
   const tall = await page.evaluate(() => {
     const st = document.querySelector('.looks-stage').getBoundingClientRect(), side = document.querySelector('.looks-side').getBoundingClientRect(), bar = document.querySelector('.looks-bar').getBoundingClientRect();
     return { rotate: getComputedStyle(document.getElementById('rotate')).display, stacked: st.bottom <= side.top + 1 && side.bottom <= bar.top + 1, h: window.__vh.view.portrait?.pane.h ?? 0 };
@@ -2852,24 +2952,26 @@ const startTraining = async (page, tap = false) => {
     return document.getElementById('looks').hidden && !document.getElementById('base').hidden && document.querySelector('.base-message').textContent === '見た目を保存しました。'
       && a.profile === 'custom_hunter_v1' && a.body.presetId === 'B03' && a.body.axes.muscleAmount === 86 && a.skin.colorId === 'S10' && /^C\d\d$/.test(a.hair.colorId) && !('face' in a) && window.__vh.save.doc.revision === 1
       && window.__vh.view.portrait === null && window.__vh.view.hunter.bodyShapeKey.includes('muscleAmount:86') && /いまの見た目: 体型 筋肉質/.test(document.querySelector('.base-looks-note').textContent);
-  }, 6000), await page.evaluate(() => JSON.stringify(window.__vh.save.doc.appearance)));
+  }, 20000), await page.evaluate(() => JSON.stringify(window.__vh.save.doc.appearance)));
   await page.reload();
   await page.waitForSelector('#boot-start:not([hidden])');
   await page.tap('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   await page.waitForTimeout(300);
-  check('読み込み直しても、決めた見た目で描く（体型・肌・髪）', await page.evaluate(() => {
+  check('読み込み直しても、決めた見た目で描く（体型・肌・髪）', await until(page, () => {
     const h = window.__vh.view.hunter;
     return window.__vh.save.doc.appearance.skin.colorId === 'S10' && h.bodyShapeKey.includes('muscleAmount:86') && !!h.lookColors.skin && !!h.lookColors.hair;
-  }), await page.evaluate(() => window.__vh.view.hunter.bodyShapeKey));
+  }, 15000), await page.evaluate(() => window.__vh.view.hunter.bodyShapeKey));
   // もう一度開いて、A 全体へ → 破棄して戻る（保存は変わらない）。キーボードの元に戻す
   await page.tap('.base-looks-open');
   await until(page, () => !document.getElementById('looks').hidden, 3000);
   await page.tap('.looks-bar [data-act="legacy"]');
   const legacyAsk = await page.evaluate(() => [...document.querySelectorAll('.looks-changes li')].length);
   await page.tap('.looks-modal-buttons button.go');
+  await nextFrames(page);
   const allA = await page.evaluate(() => ({ key: window.__vh.view.hunter.bodyShapeKey, c: window.__vh.view.hunter.lookColors }));
   await page.keyboard.press('Control+z');
+  await nextFrames(page);
   const undoKey = await page.evaluate(() => window.__vh.view.hunter.bodyShapeKey);
   check('A全体へ: 変わる所 3 つを見せて当てる（下見は A）。Ctrl+Z で戻る', legacyAsk === 3 && allA.key === 'A' && allA.c.skin === null && allA.c.hair === null && undoKey.includes('muscleAmount:86'), JSON.stringify([legacyAsk, allA, undoKey]));
   await page.tap('.looks-bar [data-act="legacy"]');

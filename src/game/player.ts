@@ -56,9 +56,11 @@ export interface PlayerState {
    * 同時押しの技へ替える。comboId は、その時に複合で出せた技
    */
   lastSingle: { instanceId: number; key: 'main' | 'sub'; comboId: string } | null;
-  /** 勢い（双剣）の段階と、最後に振ってからの tick 数。勢いの無い武器では 0 のまま。 */
-  momentum: number;
-  momentumTicks: number;
+  /**
+   * 猛り（双剣。v0.54.0。docs/spec.md の 32.20）: 入っている間は、スタミナが減り続けて戻らず、命中の係数が上がり、一部の技が替わる。
+   * 抜刀している間だけ（納刀・登攀・乗り越え・剥ぎ取り・力尽きで解ける）。猛りの無い武器では false のまま
+   */
+  demon: boolean;
   /** 刃の状態（0〜最大）。当てると減り、研磨石で最大へ戻る。狩りごとの値で、保存はしない。刃の状態の無い武器（環弓）では最大のまま */
   edge: number;
   /** 狩猟中の持ち物（依頼の支給品）。数が 0 になっても欄は残る。 */
@@ -192,8 +194,7 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
     invulnTicks: 0,
     buffer: { main: 0, sub: 0, dodge: 0, weapon: 0, item: 0, special: 0, combo: 0 },
     lastSingle: null,
-    momentum: 0,
-    momentumTicks: 0,
+    demon: false,
     edge: content.edge.max,
     items: carried.map((s) => ({ itemId: s.itemId, count: s.count })),
     itemIndex: 0,
@@ -306,7 +307,27 @@ export function staminaCostOf(p: PlayerState, def: ActionDef, ctx: SimCtx): numb
   return isDodgeAction(p, def.actionId, ctx) ? c * ctx.gear.dodgeStamina : c;
 }
 
+/** 猛り（双剣）に入る・解く。変わった時だけ知らせる */
+function setDemon(p: PlayerState, on: boolean, ctx: SimCtx, reason: 'toggle' | 'stamina' | 'sheathe'): void {
+  if (p.demon === on) return;
+  p.demon = on;
+  ctx.emit({ type: 'demon', on, reason });
+}
+
+/** いまの状態で実際に出る行動。猛りの間は、系統の demon.swap で替える（同時押しの突き込み → 連ね斬り、入る → 解く） */
+export function resolveActionId(p: PlayerState, actionId: string, ctx: SimCtx): string {
+  if (!p.demon) return actionId;
+  return familyOf(p, ctx.content).demon?.swap[actionId] ?? actionId;
+}
+
+/** その行動を、いまのスタミナで始められるか（猛りに入るには、スタミナが残っている必要がある） */
+function enoughStamina(p: PlayerState, def: ActionDef, ctx: SimCtx): boolean {
+  if (p.stamina < staminaCostOf(p, def, ctx)) return false;
+  return def.demon !== 'on' || p.stamina > 0;
+}
+
 export function startAction(p: PlayerState, actionId: string, ctx: SimCtx): ActionRun {
+  actionId = resolveActionId(p, actionId, ctx);
   const def = ctx.content.actions.get(actionId)!;
   const run = newRun(def, ctx.newInstanceId(), p.yaw);
   p.mode = 'action';
@@ -315,17 +336,8 @@ export function startAction(p: PlayerState, actionId: string, ctx: SimCtx): Acti
   p.hurt = null;
   const cost = staminaCostOf(p, def, ctx);
   if (cost > 0) spendStamina(p, cost, ctx);
-  // 勢い（双剣）: 始めた時の段階で、この行動の速さと威力が決まる。大技は段階をすべて使う。
-  const M = familyOf(p, ctx.content).momentum;
-  if (M && def.momentum) {
-    run.momentumLevel = p.momentum;
-    run.speed = M.speedScale[p.momentum] ?? 1;
-    p.momentumTicks = 0;
-    if (def.momentum.spendScale && p.momentum > 0) {
-      p.momentum = 0;
-      ctx.emit({ type: 'momentum', level: 0 });
-    }
-  }
+  // 猛り（双剣）: 入る・解く行動は、始めた tick に状態を変える（動きの途中で止められても、変わったまま）。納刀を始めても解ける
+  if (def.demon) setDemon(p, def.demon === 'on', ctx, actionId === familyOf(p, ctx.content).actions.sheathe ? 'sheathe' : 'toggle');
   ctx.emit({ type: 'action_start', actor: p.id, actionId, instanceId: run.instanceId });
   return run;
 }
@@ -385,8 +397,8 @@ function tryCancelInto(p: PlayerState, name: string, cw: CancelWindowDef, inp: I
   const key = cancelKey(fam, name);
   if (!actionId || !key) return false;
   if (key === 'combo' ? !comboIntent(p, fam) : p.buffer[key] <= 0) return false;
-  const def = ctx.content.actions.get(actionId);
-  if (def && p.stamina < staminaCostOf(p, def, ctx)) return false;
+  const def = ctx.content.actions.get(resolveActionId(p, actionId, ctx));
+  if (def && !enoughStamina(p, def, ctx)) return false;
   if (key === 'combo' || key === 'main' || key === 'sub') {
     // この区間で複合の技も出せるなら、押し遅れのもう片方で替えられるように覚えておく
     const comboName = key !== 'combo' ? cw.into.find((n) => cancelKey(fam, n) === 'combo') : undefined;
@@ -415,10 +427,7 @@ function tryCancels(p: PlayerState, def: ActionDef, run: ActionRun, inp: InputFr
 function finishAction(p: PlayerState): void {
   const fin = p.action?.def.onFinish;
   if (fin === 'drawn_idle') p.drawn = true;
-  else if (fin === 'sheathed_idle' && !p.action?.keepDrawn) {
-    p.drawn = false;
-    p.momentum = 0; // 納刀で勢いは消える
-  }
+  else if (fin === 'sheathed_idle' && !p.action?.keepDrawn) p.drawn = false;
   p.mode = 'free';
   p.action = null;
 }
@@ -488,7 +497,7 @@ function stepAction(p: PlayerState, inp: InputFrame, ctx: SimCtx, depth = 0): vo
   turn();
   freeMove(p, def, run.tick, inp, ctx);
 
-  // 行動の tick を 1 つ進める。勢いで速くなっている時（双剣）は、判定の時間枠の外でだけ、もう 1 tick 進めることがある。
+  // 行動の tick を 1 つ進める。速くなっている時（防具の技能「道具整備」の研磨石）は、判定の時間枠の外でだけ、もう 1 tick 進めることがある。
   const one = (): void => {
     const t = run.tick;
     if (def.rootMotion.mode === 'controller' && def.rootMotion.curveId) {
@@ -832,10 +841,13 @@ function stepFree(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     p.guard = { phase: 'start', tick: 0 };
     return;
   }
-  // 固有ボタンの技（防御の無い武器）
+  // 固有ボタンの技（防御の無い武器）。双剣は猛りに入る・解く（スタミナが空なら入れない）
   if (p.drawn && !fam.guard && fam.actions.special && consume(p, 'special')) {
-    startAction(p, fam.actions.special, ctx);
-    return stepAction(p, inp, ctx, 1);
+    if (!enoughStamina(p, ctx.content.actions.get(resolveActionId(p, fam.actions.special, ctx))!, ctx)) ctx.emit({ type: 'stamina_empty' });
+    else {
+      startAction(p, fam.actions.special, ctx);
+      return stepAction(p, inp, ctx, 1);
+    }
   }
 
   const mag = Math.min(1, Math.hypot(inp.moveX, inp.moveZ));
@@ -1076,15 +1088,6 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     if (!p.action || p.action.instanceId !== eo.instanceId) p.errandOp = null;
   }
 
-  // 勢い（双剣）: 振っていない時間が続くと消える
-  const M = familyOf(p, ctx.content).momentum;
-  if (M && p.momentum > 0) {
-    if (p.mode === 'action' && p.action?.def.momentum) p.momentumTicks = 0;
-    else if (++p.momentumTicks >= M.decayTicks) {
-      p.momentum = 0;
-      ctx.emit({ type: 'momentum', level: 0 });
-    }
-  }
 
   // 登攀・乗り越えの間は、その動きが位置を持つ（重力も、地面への合わせも無い）。終えた時に、立つ面（地面・上の段）が決まる
   const wasGrounded = p.grounded;
@@ -1092,8 +1095,18 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   else p.grounded = ctx.world.settle(p.pos, p.vel, T.gravity, 1 / 60);
   stepDrop(p, wasGrounded, ctx);
 
-  // スタミナ: 消費が終わってから待ち時間を置いて回復
-  if (p.mode !== 'dead' && !p.sprinting) {
+  // 猛り（双剣。v0.54.0）: 入っている間はスタミナが減り続け、戻らない。0 になると解ける。抜刀していない時（納刀し終えた・登攀・
+  // 乗り越え・剥ぎ取り）と、力尽きた時も解ける
+  if (p.demon) {
+    const D = familyOf(p, ctx.content).demon;
+    if (!D || !p.drawn || p.mode === 'dead') setDemon(p, false, ctx, 'sheathe');
+    else {
+      spendStamina(p, D.staminaPerSec / 60, ctx);
+      if (p.stamina <= 0) setDemon(p, false, ctx, 'stamina');
+    }
+  }
+  // スタミナ: 消費が終わってから待ち時間を置いて回復（猛りの間は戻らない）
+  if (p.mode !== 'dead' && !p.sprinting && !p.demon) {
     if (p.staminaDelay > 0) p.staminaDelay--;
     else if (p.stamina < T.maxStamina) p.stamina = Math.min(T.maxStamina, p.stamina + (T.staminaRegenPerSec * ctx.gear.staminaRegen) / 60);
   }
@@ -1190,10 +1203,7 @@ export function resolveIncomingHit(p: PlayerState, hit: IncomingHit, ctx: SimCtx
   p.action = null;
   p.guard = null;
   p.mode = 'hurt';
-  if (p.momentum > 0) {
-    p.momentum = 0; // 被弾で勢いを失う
-    ctx.emit({ type: 'momentum', level: 0 });
-  }
+  // （猛りは、被弾しても解けない。解けるのは、スタミナが尽きた時・自分で解いた時・抜刀していない時。Kari の決まり）
   const knock = hit.reaction === 'knockdown';
   // 眠っていた・麻痺していた時は、この攻撃で目が覚める（動けない状態は終わり、怯みか転倒になる）
   if (p.hurt && (p.hurt.kind === 'para' || p.hurt.kind === 'sleep' || p.hurt.kind === 'stun')) ctx.emit({ type: 'status', kind: p.hurt.kind, on: false });

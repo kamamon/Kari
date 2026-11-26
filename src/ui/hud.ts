@@ -80,7 +80,7 @@ export class Hud {
   private lockMark: HTMLElement;
   private ailments: HTMLElement;
   private item: HTMLElement;
-  private momentum: HTMLElement;
+  private demon: HTMLElement;
   private wrap: HTMLElement;
   private wrapText: HTMLElement;
   /** 達成後の「帰還する」。狩らない依頼の案内（狩りの途中）では隠す */
@@ -148,8 +148,9 @@ export class Hud {
     this.toasts.id = 'toasts';
     // 選んでいる道具と、達成後の案内（剥ぎ取りの残りと帰還）
     this.item = el('div', 'hud-item', this.root);
-    this.momentum = el('div', 'hud-momentum', this.root);
-    this.momentum.hidden = true;
+    // 猛り（双剣。v0.54.0）: 入っている間だけ出す
+    this.demon = el('div', 'hud-demon', this.root, '猛り');
+    this.demon.hidden = true;
     this.wrap = el('div', 'hud-wrap', this.root);
     this.wrap.hidden = true;
     this.wrapText = el('span', '', this.wrap);
@@ -435,6 +436,11 @@ export class Hud {
     const st = p.stamina / T.maxStamina;
     this.set('st', Math.round(st * 200), () => (this.st.style.transform = `scaleX(${st})`));
     this.set('stlow', p.exhausted || p.stamina < 25 ? 1 : 0, () => this.stBar.classList.toggle('low', p.exhausted || p.stamina < 25));
+    // 猛り（双剣）: 入っている間は、印を出し、スタミナの棒の色を変える（減り続けていることが分かるように）
+    this.set('demon', p.demon ? 1 : 0, () => {
+      this.demon.hidden = !p.demon;
+      this.stBar.classList.toggle('demon', p.demon);
+    });
     const disabled = p.mode === 'hurt' && p.hurt && (p.hurt.kind === 'para' || p.hurt.kind === 'sleep' || p.hurt.kind === 'stun') ? p.hurt.kind : '';
     const tags = [p.ailment.poisonTicks > 0 ? 'poison' : '', disabled].filter(Boolean).join(' ');
     this.set('ailments', tags, () => {
@@ -570,10 +576,6 @@ export class Hud {
       this.item.textContent = '';
       if (stack) withIcon(this.item, stack.itemId, itemText);
       this.item.hidden = itemText === '';
-      // 勢い（双剣）: 段階を印で出す
-      const M = familyOf(sim.player, sim.content).momentum;
-      this.momentum.hidden = !M || !sim.player.drawn;
-      if (M) this.momentum.textContent = `勢い ${'●'.repeat(sim.player.momentum)}${'○'.repeat(M.max - sim.player.momentum)}`;
     });
     // 達成後: 剥ぎ取りの残りと、帰還までの時間
     let wrap = '';

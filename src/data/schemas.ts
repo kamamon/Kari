@@ -40,7 +40,7 @@ export interface HitWindowDef {
   damageCoefficient: number;
   /**
    * 当てる物（v0.33.0）。shield = 盾で打つ（護刃の盾打ち）。武器の属性・状態異常は、武器そのもので当てた時だけ乗る（盾には乗らない）。
-   * 省くと武器。属性・状態異常の係数は、その命中の最後の係数（溜め・勢い・矢の距離を掛けた後）を使う（設計 #15。前の elementCoefficient は無くした）
+   * 省くと武器。属性・状態異常の係数は、その命中の最後の係数（溜め・双剣の猛り・矢の距離を掛けた後）を使う（設計 #15。前の elementCoefficient は無くした）
    */
   contact?: 'shield';
   maxHitsPerTarget: number;
@@ -119,10 +119,10 @@ export interface ActionDef {
   guardWindows?: { from: number; to: number }[];
   /** この区間に正面から攻撃を受けると、無傷で into の行動へ移る（長尖槍の受け返し）。 */
   counter?: { from: number; to: number; into: string };
-  /** 勢い（双剣）: gain = 当てると 1 段階上がる / spendScale = 始めた時の段階をすべて使い、威力をその段階の倍率にする */
-  momentum?: { gain?: boolean; spendScale?: number[] };
+  /** 猛り（双剣。v0.54.0）: この行動を始めた tick に、猛りに入る（on）・解く（off）。系統に demon が要る */
+  demon?: 'on' | 'off';
   shoot?: ShootDef[];
-  /** この区間に、体ごと回る（度。+ が左回り）。v0.5.0 の時点では使う技が無い（旋鎌で使っていた）。武器の軌道は体に対して決まるので、判定も一緒に回る。 */
+  /** この区間に、体ごと回る（度。+ が左回り）。護刃と双剣の回転斬り（v0.53.0・v0.54.0）。武器の軌道は体に対して決まるので、判定も一緒に回る。 */
   spin?: { from: number; to: number; degrees: number };
   /** 左腕の盾の軌道（見た目用。盾打ちでは判定の形と同じ軌道を指す） */
   offhandTrack?: string;
@@ -221,8 +221,12 @@ export interface WeaponFamilyDef {
    * label は画面に出す名前（刃 / 打面）。省くと、この系統に刃の状態は無い（環弓）。
    */
   edge?: { wearPerMotion: number; label: string };
-  /** 勢い（双剣）。段階ごとの威力の倍率と、行動の時間の倍率（1 より小さいと速い）。 */
-  momentum?: { max: number; decayTicks: number; damageScale: number[]; speedScale: number[] };
+  /**
+   * 猛り（双剣。v0.54.0。#19 の「スタミナを消費する強化状態」に当たる Kari の形。値は Kari の仮の値。docs/spec.md の 32.20）。
+   * 固有ボタンで入る・解く。入っている間は、スタミナが毎秒 staminaPerSec 減り続けて戻らず、0 になると解ける。納刀でも解ける。
+   * 入っている間は、命中の係数に damageScale を掛け、swap の行動を替える（同時押しの突き込み → 連ね斬り、入る → 解く）。labels はボタンの表示名の上書き
+   */
+  demon?: { staminaPerSec: number; damageScale: number; swap: Record<string, string>; labels?: { special?: string; combo?: string } };
   // ---- ここから下は見た目だけに使う ----
   /** 両手で持つ時、もう片方の手を握りから dir の向きへ何 m 離すか。省くと 0.2。 */
   otherHandAlong?: number;
