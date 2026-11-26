@@ -1,0 +1,2 @@
+# GPU検証シーン（実行未確認）
+既存three依存とglTFのPBRテクスチャを使用。Kariの npm ci → npm run dev の後、 /chatgpt-inbox/orzelion-v2-20261127/storm_v3/studio_gpu.html を開く。GLTFLoader、GPUスキニング、実モデルの姿勢補正、bind-spaceモーフ、発光リボン3層、加算粒子、局所ライト、UnrealBloomPass、ACESを使用。低品質はブルームなし。判定境界はデバッグ表示と分離。外部CDN不要。GPU用コードは構文のみ検査した。Three.jsの実行・シェーダ・iPhone・本体のSimEvent/shapeTrack接続未検証。低空攻撃の本体判定、地形接地、破壊、物理膜、正式スカルプト、全武器・セーブ互換は完了していない。
