@@ -54,8 +54,8 @@
     {
       "id": "guard_blade",
       "edge": { "wearPerMotion": 1.5, "label": "刃" },
-      "labels": { "main": "斬る", "sub": "盾打ち", "special": "防御" },
-      "summary": "短剣と盾。張り付いて手数。防御を構えたまま道具が使え、構えてすぐ受けると受け流し。",
+      "labels": { "main": "斬る", "sub": "横斬り", "special": "防御" },
+      "summary": "短剣と盾。張り付いて手数。斬り下ろし（横斬り）から横斬り・斬り返し・回転斬りへつながり、連係の途中の副で盾打ち。防御を構えたまま道具が使え、構えから斬れる。",
       "name": "護刃",
       "twoHanded": false,
       "drawnMoveSpeed": 3.6,
@@ -64,18 +64,21 @@
       "blade": { "from": 0.13, "to": 0.88, "radius": 0.11 },
       "actions": {
         "main": "player.guard_blade.slash1",
-        "sub": "player.guard_blade.bash",
+        "sub": "player.guard_blade.side",
+        "guardMain": "player.guard_blade.guard_slash",
         "drawAttack": "player.guard_blade.lunge",
         "draw": "player.guard_blade.draw",
         "sheathe": "player.guard_blade.sheathe"
       },
       "cancelNames": {
         "gb_slash1": "player.guard_blade.slash1",
+        "gb_side": "player.guard_blade.side",
         "gb_slash2": "player.guard_blade.slash2",
-        "gb_thrust": "player.guard_blade.thrust",
+        "gb_return": "player.guard_blade.return",
+        "gb_round": "player.guard_blade.round",
         "gb_bash": "player.guard_blade.bash"
       },
-      "cancelButtons": { "gb_slash2": "main", "gb_thrust": "main" },
+      "cancelButtons": { "gb_slash2": "main", "gb_return": "main", "gb_round": "main", "gb_bash": "sub" },
       "itemsWhileGuarding": true,
       "offhand": "shield_small",
       "offhandReady": [0.3, 1.08, 0.28],
@@ -91,7 +94,6 @@
         "chipScale": 0.2,
         "breakDamageScale": 0.7,
         "turnDegPerSec": 180,
-        "parryTicks": 6,
         "recoilDistance": 0.5,
         "pose": { "grip": [-0.34, 0.98, 0.02], "dir": [0.1507, 0.6027, 0.7836], "planeNormal": [-0.9738, -0.0461, 0.2228] }
       }

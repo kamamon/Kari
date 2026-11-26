@@ -1,6 +1,8 @@
 // 護刃（短剣と盾）の技と動き。右手に剣、左腕に盾。左足を前にした半身の構え。
 // 座標はアクターのローカル（m、Y 上、+Z 前、+X 左）。数値は机上の初期値。
-import { curve, family, sheathOf } from './lib.mjs';
+// v0.53.0（#19 の H03・01 の 5 章の片手剣。D-146）: 2G を基準にした連係へ組み直した。主 = 斬り下ろし → 横斬り → 斬り返し → 回転斬り、
+// 副 = 横斬り（構えから）。盾打ちは連係の途中の副。防御から主でガード斬り。突きと受け流しは外した。動きと値は Kari の仮の値（原作を測っていない）
+import { D2R, curve, family, sheathOf } from './lib.mjs';
 
 export function guardBlade() {
   const hands = { primary: 'R', second: 'shield', shieldGrip: [-0.116, 0.04, -0.041], wrist: [5, 135] };
@@ -44,6 +46,8 @@ export function guardBlade() {
   curve('w_step_030', [[0, 0], [6, 0], [14, 0.3], [40, 0.3]]);
   curve('w_step_040', [[0, 0], [6, 0], [14, 0.4], [40, 0.4]]);
   curve('w_lunge_120', [[0, 0], [4, 0], [26, 1.15], [32, 1.2], [50, 1.2]]);
+  // 回転斬り: 回る前に半歩だけ出る（回る間は、その場で回る。軸足の母指球が地面に残るように）
+  curve('w_round_012', [[0, 0], [3, 0], [8, 0.12], [60, 0.12]]);
 
   // ---- 斬り 1（右上 → 左下の袈裟）----
   // 腰を右へ溜めてから左へ回し、その回転で剣を振り下ろす。左足を半歩出す。盾は体の前に残す。
@@ -76,20 +80,6 @@ export function guardBlade() {
   });
   trackOf('gb_slash2', B, slash2);
 
-  // ---- 突き（3 段目）----
-  // 斬り 2 の振り抜きから。剣を右の脇へ引き、左足を大きく出して、腰の回転と腕の伸びで突く。
-  const thrust = motion('gb_thrust_01', {
-    dur: 36, from: snap(slash2, 14), root: 'w_step_030',
-    keys: [
-      { t: 6, hip: [0, -0.07, -0.04], hipR: [3, -34, 0], spine: [4, -6, 0], chest: [2, -12, 0], gripA: [-0.32, 1.12, -0.02], dirA: [0.1, 0.05, 1], edgeA: [0, -1, 0], offA: [0, 1.2, 0.38] },
-      { t: 11, hip: [0, -0.09, 0.05], hipR: [6, -14, 0], spine: [6, -2, 0], chest: [4, 2, 0], gripA: [-0.22, 1.18, 0.42], dirA: [0.03, 0.02, 1], edgeA: [0, -1, 0], offA: [0.12, 1.16, 0.3] },
-      { t: 14, hip: [0, -0.11, 0.1], hipR: [8, -2, 0], spine: [8, 3, 0], chest: [5, 14, 0], gripA: [-0.12, 1.2, 0.74], dirA: [0, 0, 1], edgeA: [0, -1, 0], offA: [0.22, 1.14, 0.2] },
-      { t: 20, hip: [0, -0.11, 0.1], hipR: [8, -2, 0], spine: [8, 3, 0], chest: [5, 14, 0], gripA: [-0.12, 1.2, 0.72], dirA: [0, 0, 1], edgeA: [0, -1, 0], offA: [0.22, 1.14, 0.2] },
-    ],
-    feet: { L: [[7, 14, 0.1, 0.3, 4, 0.06], [29, 35, 0.1, 0.2, 6, 0.03]], R: [[21, 28, -0.14, -0.2, -42, 0.05]] },
-  });
-  trackOf('gb_thrust', B, thrust);
-
   // ---- 盾打ち ----
   // 盾を胸へ引き付けてから、左足を踏み込み、左肩を前へ入れて盾の面を突き出す。剣は右腰へ引いておく。
   const bash = motion('gb_bash_01', {
@@ -105,6 +95,80 @@ export function guardBlade() {
   trackOf('gb_bash_sword', B, bash);
   // 当たるのは盾: 盾の中心を通る、縦の短い芯
   trackOf('gb_bash_shield', { radius: 0.26, from: -0.18, to: 0.18 }, bash, (s) => [s.shield.pos, [0, 1, 0]]);
+
+  // ---- 横斬り（副。構えから、右から左への水平の斬り。v0.53.0）----
+  // 剣を右後ろへ引いて腰を右へ溜め、腰と胸を左へ回して水平に払う。左足を半歩出す。盾は払う剣の道を空けて左へ寄せる。
+  const side = motion('gb_side_01', {
+    dur: 28, from: idle, root: 'w_step_015',
+    keys: [
+      { t: 5, hip: [-0.01, -0.06, -0.03], hipR: [2, -38, 0], spine: [3, -8, 0], chest: [1, -16, 0], gripA: [-0.42, 1.22, 0.04], dirA: [-0.66, 0.42, -0.5], edgeA: [-0.6, 0.06, 0.8], offA: [0.02, 1.2, 0.38] },
+      { t: 8, hip: [0, -0.07, 0], hipR: [4, -28, 0], spine: [5, -6, 0], chest: [2, -12, 0], gripA: [-0.4, 1.22, 0.24], dirA: [-0.8, 0.22, 0.33], edgeA: [0.36, 0.08, 0.93], offA: [0.08, 1.19, 0.34] },
+      { t: 9, hip: [0, -0.07, 0.01], hipR: [4, -22, 0], gripA: [-0.36, 1.22, 0.32], dirA: [-0.68, 0.12, 0.72], edgeA: [0.72, 0.06, 0.69], offA: [0.1, 1.18, 0.32] },
+      { t: 11, hip: [0.01, -0.08, 0.03], hipR: [5, -6, 0], spine: [6, -1, 0], chest: [3, 6, 0], gripA: [-0.08, 1.2, 0.54], dirA: [0.12, 0.06, 0.99], edgeA: [0.99, 0, -0.12], offA: [0.18, 1.14, 0.22] },
+      { t: 14, hip: [0.02, -0.08, 0.04], hipR: [5, 10, 0], spine: [7, 3, 0], chest: [3, 18, 0], gripA: [0.22, 1.16, 0.4], dirA: [0.82, 0.04, 0.57], edgeA: [0.57, 0, -0.82], offA: [0.22, 1.12, 0.18] },
+      { t: 17, hipR: [5, 12, 0], spine: [7, 3, 0], chest: [3, 20, 0], gripA: [0.28, 1.14, 0.26], dirA: [0.93, 0.12, 0.34], edgeA: [0.34, 0, -0.94] },
+      { t: 22, hipR: [4, -4, 0], chest: [3, 4, 0], gripA: [0.05, 1.12, 0.26], dirA: [0.55, 0.55, 0.62], edgeA: [0.75, -0.65, 0.05], offA: [0.1, 1.16, 0.3] },
+    ],
+    feet: { L: [[3, 9, 0.1, 0.26, 4, 0.05]], R: [[17, 23, -0.14, -0.18, -42, 0.04]] },
+  });
+  trackOf('gb_side', B, side);
+
+  // ---- 斬り返し（主の 3 段目。右下から左上への斬り上げ。v0.53.0）----
+  // 横斬りの振り抜き（剣が右）から、剣を右下へ落として腰を右へ溜め、腰を左へ回しながら左上へ斬り上げる。左足を半歩出す。
+  const rise = motion('gb_return_01', {
+    dur: 30, from: snap(slash2, 14), root: 'w_step_015',
+    keys: [
+      { t: 4, hip: [0, -0.08, -0.02], hipR: [3, -34, 0], spine: [4, -7, 0], chest: [2, -18, 0], gripA: [-0.38, 0.94, 0.22], dirA: [-0.55, -0.5, 0.67], edgeA: [-0.36, 0.85, 0.38] },
+      { t: 7, hip: [0, -0.08, 0.02], hipR: [4, -22, 0], spine: [5, -5, 0], chest: [3, -8, 0], gripA: [-0.26, 1.04, 0.44], dirA: [-0.3, -0.12, 0.95], edgeA: [0.2, 0.97, 0.18], offA: [0.16, 1.14, 0.24] },
+      { t: 10, hip: [0.01, -0.09, 0.04], hipR: [5, -8, 0], spine: [7, -1, 0], chest: [4, 6, 0], gripA: [-0.06, 1.26, 0.54], dirA: [0.15, 0.42, 0.9], edgeA: [0.45, 0.78, -0.43] },
+      { t: 13, hip: [0.02, -0.08, 0.05], hipR: [5, 6, 0], spine: [7, 2, 0], chest: [3, 16, 0], gripA: [0.12, 1.48, 0.4], dirA: [0.5, 0.72, 0.48], edgeA: [0.5, 0.2, -0.84], offA: [0.2, 1.1, 0.2] },
+      { t: 16, hipR: [5, 8, 0], chest: [3, 18, 0], gripA: [0.16, 1.55, 0.3], dirA: [0.42, 0.86, 0.28], edgeA: [0.55, 0, -0.84] },
+      { t: 22, hipR: [4, -8, 0], chest: [3, 2, 0], gripA: [0, 1.35, 0.3], dirA: [0.28, 0.84, 0.45], edgeA: [0.85, -0.3, 0], offA: [0.08, 1.18, 0.32] },
+    ],
+    feet: { L: [[4, 10, 0.1, 0.26, 5, 0.05]], R: [[18, 24, -0.14, -0.18, -42, 0.04]] },
+  });
+  trackOf('gb_return', B, rise);
+
+  // ---- 回転斬り（主の 4 段目。連係の締め。v0.53.0）----
+  // 斬り上げた剣を左横へ倒して水平に構え、右へ 1 回転（体ごと 360°。spin）しながら、左へ伸ばした剣で周りを払う。回り終えた勢いで右前まで振り抜く。
+  // 回る前に右足を体の中心へ寄せ（母指球が回る中心）、回る間は右足を軸に、左足で地面を蹴って回る。
+  const BZ = 0.13;
+  const R_PIVOT = [-Math.sin(-30 * D2R) * BZ, -Math.cos(-30 * D2R) * BZ];
+  const round = motion('gb_round_01', {
+    dur: 60, from: snap(rise, 15), root: 'w_round_012', spin: { from: 10, to: 42, degrees: -360 },
+    keys: [
+      { t: 3, gripA: [0.24, 1.42, 0.34], dirA: [0.78, 0.6, -0.1], edgeA: [0.62, -0.75, 0.25] },
+      { t: 6, hip: [0, -0.09, 0], hipR: [4, 12, 0], spine: [6, 3, 0], chest: [3, 18, 0], gripA: [0.22, 1.26, 0.34], dirA: [0.9, 0.3, -0.3], edgeA: [0.4, -0.4, 0.82] },
+      { t: 9, hip: [0, -0.1, 0], hipR: [5, 12, 0], spine: [6, 3, 0], chest: [3, 16, 0], gripA: [0.18, 1.2, 0.36], dirA: [0.95, 0.1, -0.2], edgeA: [0.2, 0, 0.98], offA: [-0.02, 1.2, 0.32] },
+      { t: 12, hip: [0, -0.1, 0], hipR: [5, 10, 0], spine: [6, 3, 0], chest: [3, 12, 0], gripA: [0.15, 1.18, 0.4], dirA: [0.9, 0.06, 0.42], edgeA: [-0.42, 0, 0.9] },
+      { t: 26, hip: [0, -0.1, 0], hipR: [5, 6, 0], spine: [6, 1, 0], chest: [3, 8, 0], gripA: [0.14, 1.18, 0.42], dirA: [0.86, 0.05, 0.5], edgeA: [-0.5, 0, 0.86] },
+      { t: 41, hip: [0, -0.1, 0.02], hipR: [5, 2, 0], spine: [6, 0, 0], chest: [3, 2, 0], gripA: [0.1, 1.17, 0.48], dirA: [0.6, 0.05, 0.8], edgeA: [-0.8, 0, 0.6] },
+      { t: 45, hip: [0, -0.09, 0.03], hipR: [5, -8, 0], spine: [6, -3, 0], chest: [3, -10, 0], gripA: [-0.1, 1.15, 0.55], dirA: [-0.3, 0.08, 0.95], edgeA: [-0.95, 0, -0.3], offA: [0.06, 1.18, 0.3] },
+      { t: 49, hipR: [4, -24, 0], chest: [2, -14, 0], gripA: [-0.3, 1.13, 0.42], dirA: [-0.78, 0.12, 0.6], edgeA: [-0.6, 0, -0.78] },
+      { t: 54, gripA: [-0.34, 1.1, 0.26], dirA: [-0.4, 0.55, 0.72], edgeA: [-0.25, -0.8, 0.5] },
+    ],
+    // 右足: 回る前に、母指球が体の中心に来る所へ寄せ、回る間は軸（pivot）。左足: 回る間、90° ごとに地面を蹴り直す
+    feet: {
+      R: [[4, 9, R_PIVOT[0], R_PIVOT[1], -30, 0.04, 1], [44, 51, -0.14, -0.2, -42, 0.04]],
+      L: [[10, 18, 0.22, 0.2, 20, 0.05], [18, 26, 0.22, 0.2, 20, 0.05], [26, 34, 0.22, 0.2, 20, 0.05], [34, 42, 0.22, 0.2, 20, 0.05], [46, 52, 0.1, 0.2, 6, 0.04]],
+    },
+  });
+  trackOf('gb_round', B, round);
+
+  // ---- ガード斬り（防御から主。v0.53.0）----
+  // 盾を構えたまま、盾の陰から剣を右へ引き、低い姿勢のまま前を水平に払って、防御の構えへ戻る。盾は少し左へずらして、剣の道を空ける。
+  const guardPose = fam.stances.guard;
+  const guardSlash = motion('gb_guard_slash_01', {
+    dur: 28, from: guardPose, to: guardPose,
+    keys: [
+      { t: 4, hipR: [6, -36, 0], chest: [4, -12, 0], gripA: [-0.44, 1.06, 0.12], dirA: [-0.7, 0.25, 0.67], edgeA: [0.68, 0.06, 0.73], offA: [-0.02, 1.29, 0.38] },
+      { t: 8, hipR: [7, -18, 0], spine: [8, -2, 0], chest: [5, 4, 0], gripA: [-0.14, 1.1, 0.56], dirA: [0.1, 0.06, 0.99], edgeA: [0.99, 0, -0.1], offA: [0.04, 1.28, 0.36] },
+      { t: 11, hipR: [7, -10, 0], spine: [8, 0, 0], chest: [5, 10, 0], gripA: [0.1, 1.08, 0.5], dirA: [0.75, 0.04, 0.66], edgeA: [0.66, 0, -0.75], offA: [0.08, 1.27, 0.34] },
+      { t: 15, hipR: [7, -8, 0], chest: [5, 12, 0], gripA: [0.18, 1.06, 0.36], dirA: [0.88, 0.1, 0.46], edgeA: [0.46, 0, -0.89] },
+      { t: 20, hipR: [6, -24, 0], chest: [4, -4, 0], gripA: [-0.1, 1.0, 0.25], dirA: [0.4, 0.6, 0.7], edgeA: [0.8, -0.55, 0], offA: [0.0, 1.28, 0.34] },
+    ],
+  });
+  trackOf('gb_guard_slash', B, guardSlash);
 
   // ---- 抜刀斬り（踏み込み斬り）----
   // 右足・左足と 2 歩走り込みながら、左腰の鞘から抜きざまに、左下から右上へ斬り上げる。盾は走りながら背から前へ回す。
@@ -165,9 +229,12 @@ export function guardBlade() {
   // ---- 技のデータ ----
   const cut = (t, coef, o = {}) => [{ id: 'blade_main', track: t, coef, hitstop: 2, ...o }];
   action('slash1', { clip: 'gb_slash1_01', dur: 26, active: [8, 13], track: 'gb_slash1', hits: cut('gb_slash1', 0.24), curve: 'w_step_015', turn: [6, 360], sound: [7, 'hb_swing_02'], cancels: [[14, 26, ['gb_slash2', 'gb_bash', 'roll']]] });
-  action('slash2', { clip: 'gb_slash2_01', dur: 26, active: [7, 12], track: 'gb_slash2', hits: cut('gb_slash2', 0.3), curve: 'w_step_015', turn: [5, 360], sound: [6, 'hb_swing_02'], cancels: [[13, 26, ['gb_thrust', 'gb_bash', 'roll']]] });
-  action('thrust', { clip: 'gb_thrust_01', dur: 36, active: [11, 16], track: 'gb_thrust', hits: cut('gb_thrust', 0.56, { hitstop: 3 }), curve: 'w_step_030', turn: [8, 360], sound: [10, 'hb_swing_02'], cancels: [[23, 36, ['gb_bash', 'roll']]] });
-  action('bash', { clip: 'gb_bash_01', dur: 36, active: [11, 16], track: 'gb_bash_sword', offhandTrack: 'gb_bash_shield', hits: [{ id: 'shield', track: 'gb_bash_shield', coef: 0.28, type: 'blunt', hitstop: 4, contact: 'shield' }], trail: false, curve: 'w_step_040', turn: [8, 360], sound: [10, 'hb_swing_01'], cancels: [[22, 36, ['gb_slash1', 'roll']]] });
+  action('side', { clip: 'gb_side_01', dur: 28, active: [9, 14], track: 'gb_side', hits: cut('gb_side', 0.26), curve: 'w_step_015', turn: [6, 360], sound: [8, 'hb_swing_02'], cancels: [[15, 28, ['gb_slash2', 'gb_bash', 'roll']]] });
+  action('slash2', { clip: 'gb_slash2_01', dur: 26, active: [7, 12], track: 'gb_slash2', hits: cut('gb_slash2', 0.3), curve: 'w_step_015', turn: [5, 360], sound: [6, 'hb_swing_02'], cancels: [[13, 26, ['gb_return', 'gb_bash', 'roll']]] });
+  action('return', { clip: 'gb_return_01', dur: 30, active: [8, 14], track: 'gb_return', hits: cut('gb_return', 0.32), curve: 'w_step_015', turn: [5, 360], sound: [8, 'hb_swing_02'], cancels: [[15, 30, ['gb_round', 'roll']]] });
+  action('round', { clip: 'gb_round_01', dur: 60, active: [11, 44], track: 'gb_round', hits: cut('gb_round', 0.5, { hitstop: 3 }), curve: 'w_round_012', turn: [6, 360], spin: { from: 10, to: 42, degrees: -360 }, sound: [10, 'hb_swing_01'], cancels: [[50, 60, ['roll']]] });
+  action('bash', { clip: 'gb_bash_01', dur: 36, active: [11, 16], track: 'gb_bash_sword', offhandTrack: 'gb_bash_shield', hits: [{ id: 'shield', track: 'gb_bash_shield', coef: 0.28, type: 'blunt', hitstop: 4, contact: 'shield' }], trail: false, curve: 'w_step_040', turn: [8, 360], sound: [10, 'hb_swing_01'], cancels: [[22, 36, ['gb_return', 'roll']]] });
+  action('guard_slash', { clip: 'gb_guard_slash_01', dur: 28, active: [7, 12], track: 'gb_guard_slash', hits: cut('gb_guard_slash', 0.18), turn: [4, 240], guardWindows: [{ from: 0, to: 4 }, { from: 20, to: 28 }], sound: [6, 'hb_swing_02'], cancels: [[18, 28, ['roll']]] });
   action('lunge', { clip: 'gb_lunge_01', dur: 50, active: [22, 28], track: 'gb_lunge', hits: cut('gb_lunge', 0.48, { hitstop: 3 }), curve: 'w_lunge_120', turn: [12, 240], sound: [21, 'hb_swing_02'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }], cancels: [[35, 50, ['gb_slash1', 'gb_bash', 'roll']]] });
   action('draw', { clip: 'gb_draw_01', dur: 26, track: 'gb_draw', sound: [3, 'hb_draw_01'] });
   action('sheathe', { clip: 'gb_sheathe_01', dur: 30, track: 'gb_sheathe', sound: [18, 'hb_sheathe_01'], finish: 'sheathed_idle' });

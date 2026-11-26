@@ -226,14 +226,14 @@ describe('属性・状態異常の命中（simulation）', () => {
     const sim = new Simulation(content, baseOptions({ weaponId: 'weapon.guard_blade.verito.r1' }));
     const m = sim.monsters[0]!;
     placeInFrontOfHead(sim, 1.4);
-    swing(sim, Btn.Sub, 60);
-    expect(sim.recentHits.length).toBe(1);
-    expect(sim.recentHits[0]!.windowId).toBe('shield');
-    expect(m.ailments.gauge.poison).toBe(0);
-    placeInFrontOfHead(sim, 1.4);
-    swing(sim, Btn.Main, 60);
-    expect(sim.recentHits[1]!.windowId).toBe('blade_main');
-    expect(m.ailments.gauge.poison).toBeGreaterThan(0);
+    // v0.53.0: 盾打ちは、連係の途中の副（斬り下ろしの後）。斬り下ろし（刃）で毒がたまり、続く盾打ち（盾）では増えない
+    run(sim, 15, (i) => (i === 0 ? press(Btn.Main) : frame()));
+    expect(sim.recentHits.map((h) => h.windowId)).toEqual(['blade_main']);
+    const afterBlade = m.ailments.gauge.poison;
+    expect(afterBlade).toBeGreaterThan(0);
+    run(sim, 45, (i) => (i === 0 ? press(Btn.Sub) : frame()));
+    expect(sim.recentHits.map((h) => h.windowId)).toEqual(['blade_main', 'shield']);
+    expect(m.ailments.gauge.poison).toBeLessThanOrEqual(afterBlade);
   });
 
   it('睡眠: 眠らせた後、覚ます最初の命中だけ 1.5 倍', () => {

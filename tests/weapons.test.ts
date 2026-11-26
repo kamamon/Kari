@@ -67,29 +67,65 @@ describe('武器系統の共通', () => {
 });
 
 describe('護刃（短剣と盾）', () => {
-  it('主ボタンを続けて押すと、斬り → 返し → 突き とつながる', () => {
+  it('v0.53.0（2G）: 主ボタンを続けて押すと、斬り下ろし → 横斬り → 斬り返し → 回転斬り とつながり、どれも当たる', () => {
     const sim = mk('guard_blade');
     placeInFrontOfHead(sim, 1.2);
-    const evs = run(sim, 110, (i) => (i === 0 || i === 13 || i === 26 ? press(Btn.Main) : frame()));
-    expect(starts(evs)).toEqual(['player.guard_blade.slash1', 'player.guard_blade.slash2', 'player.guard_blade.thrust']);
-    expect(hits(evs).map((h) => h.actionId)).toEqual(['player.guard_blade.slash1', 'player.guard_blade.slash2', 'player.guard_blade.thrust']);
+    const evs = run(sim, 150, (i) => (i === 0 || i === 15 || i === 29 || i === 44 ? press(Btn.Main) : frame()));
+    const chain = ['player.guard_blade.slash1', 'player.guard_blade.slash2', 'player.guard_blade.return', 'player.guard_blade.round'];
+    expect(starts(evs)).toEqual(chain);
+    expect(hits(evs).map((h) => h.actionId)).toEqual(chain);
     expect(sim.player.mode).toBe('free');
   });
 
-  it('盾打ちは打撃で当たる', () => {
+  it('v0.53.0: 回転斬りは体ごと右へ 1 回転して、元の向きに戻る（回る間は向きが変わる）。連係の締めで、続けて主を押しても次の技は無い', () => {
     const sim = mk('guard_blade');
-    placeInFrontOfHead(sim, 1.2);
-    const h = hits(run(sim, 60, (i) => (i === 0 ? press(Btn.Sub) : frame())));
-    expect(h.map((x) => x.windowId)).toEqual(['shield']);
+    const yaw0 = sim.player.yaw;
+    sim.player.drawn = true;
+    const evs: SimEvent[] = [];
+    const yaws: number[] = [];
+    for (let i = 0; i < 140; i++) {
+      sim.step(i === 0 || i === 15 || i === 29 || i === 44 || i === 100 ? press(Btn.Main) : frame());
+      evs.push(...sim.drainEvents());
+      if (sim.player.action?.def.actionId === 'player.guard_blade.round') yaws.push(sim.player.yaw);
+    }
+    expect(starts(evs).slice(0, 4).at(-1)).toBe('player.guard_blade.round');
+    // 回る間に、右（yaw が減る向き）へ 90° より大きく向きが変わる時がある
+    const turned = yaws.map((y) => Math.atan2(Math.sin(y - yaw0), Math.cos(y - yaw0)));
+    expect(Math.min(...turned)).toBeLessThan(-Math.PI / 2);
+    expect(Math.abs(Math.atan2(Math.sin(sim.player.yaw - yaw0), Math.cos(sim.player.yaw - yaw0)))).toBeLessThan(1e-6);
   });
 
-  it('受け流し: 構えてすぐに受けると、削りもスタミナ消費も無い', () => {
+  it('v0.53.0: 副は横斬り（構えから）。連係の途中の副で盾打ち（打撃）、盾打ちから主で斬り返しへ', () => {
+    const side = mk('guard_blade');
+    placeInFrontOfHead(side, 1.2);
+    const sevs = run(side, 60, (i) => (i === 0 ? press(Btn.Sub) : frame()));
+    expect(starts(sevs)).toEqual(['player.guard_blade.side']);
+    expect(hits(sevs).map((x) => x.windowId)).toEqual(['blade_main']);
+    const sim = mk('guard_blade');
+    placeInFrontOfHead(sim, 1.2);
+    const evs = run(sim, 110, (i) => (i === 0 ? press(Btn.Main) : i === 15 ? press(Btn.Sub) : i === 38 ? press(Btn.Main) : frame()));
+    expect(starts(evs)).toEqual(['player.guard_blade.slash1', 'player.guard_blade.bash', 'player.guard_blade.return']);
+    expect(hits(evs).map((x) => x.windowId)).toEqual(['blade_main', 'shield', 'blade_main']);
+  });
+
+  it('v0.53.0（2G）: 受け流しは無い。構えてすぐに受けても、ふつうの防御（削りとスタミナ消費がある）', () => {
     const at = slamTick('guard_blade');
     const sim = underSlam('guard_blade');
     const evs = run(sim, at + 30, (i) => (i >= at - 4 ? hold(Btn.Special) : frame()));
-    expect(evs.filter((e) => e.type === 'parry')).toHaveLength(1);
-    expect(evs.some((e) => e.type === 'guard' || e.type === 'player_hurt')).toBe(false);
-    expect(sim.player.hp).toBe(100);
+    expect(evs.filter((e) => e.type === 'parry')).toHaveLength(0);
+    expect(evs.filter((e) => e.type === 'guard')).toHaveLength(1);
+    expect(sim.player.hp).toBeLessThan(100);
+  });
+
+  it('v0.53.0: ガード斬り: 防御を構えたまま主で斬り、防御を押し続けていれば、斬った後は防御へ戻る', () => {
+    const sim = mk('guard_blade');
+    placeInFrontOfHead(sim, 1.2);
+    run(sim, 10, () => hold(Btn.Special));
+    expect(sim.player.mode).toBe('guard');
+    const evs = run(sim, 60, (i) => (i === 0 ? { ...press(Btn.Main), held: Btn.Main | Btn.Special } : hold(Btn.Special)));
+    expect(starts(evs)).toEqual(['player.guard_blade.guard_slash']);
+    expect(hits(evs).map((x) => x.actionId)).toEqual(['player.guard_blade.guard_slash']);
+    expect(sim.player.mode).toBe('guard');
   });
 
   it('早くから構えていると、ふつうの防御になる（削りとスタミナ消費がある）', () => {

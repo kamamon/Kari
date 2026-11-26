@@ -1599,6 +1599,61 @@ const startTraining = async (page, tap = false) => {
   await ctx.close();
 }
 
+// ---- 護刃の連係（v0.53.0。#19 の H03）: 斬り下ろし → 横斬り → 斬り返し → 回転斬り、構えからの横斬り、ガード斬り。新しい動きが描けて（欠けた clip が無い）、回転斬りで体が回る ----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false);
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  await page.locator('.base-weapon[data-weapon="weapon.guard_blade.001"]').click();
+  await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy'), 6000, 'weapon.guard_blade.001');
+  await startTraining(page);
+  await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+  await page.evaluate(() => {
+    const v = window.__vh, s = v.sim, m = s.monsters[0];
+    m.aiEnabled = false;
+    v.clock.advance = () => 0;
+  });
+  // simulation を決まった入力で進め、技の途中で 1 枚描かせる（描く側が clip を知らなければ、欠けた clip に入る）
+  const reach = (name, tick) => page.evaluate(([name, tick]) => {
+    const s = window.__vh.sim, p = s.player, m = s.monsters[0];
+    p.mode = 'free'; p.action = null; p.guard = null; p.drawn = true;
+    p.pos = { x: m.pos.x, y: 0, z: m.pos.z - 1.75 - 1.2 }; p.prevPos = { ...p.pos }; p.yaw = 0; p.prevYaw = 0;
+    const idle = { moveX: 0, moveZ: 0, held: 0, pressed: 0, released: 0 };
+    for (let i = 0; i < 20; i++) { s.step(idle); s.drainEvents(); }
+    const target = `player.guard_blade.${name}`, seen = [];
+    if (name === 'guard_slash') {
+      for (let k = 0; k < 10; k++) { s.step({ ...idle, held: 8, pressed: k === 0 ? 8 : 0 }); s.drainEvents(); }
+      s.step({ ...idle, held: 9, pressed: 1 });
+      for (const e of s.drainEvents()) if (e.type === 'action_start') seen.push(e.actionId);
+      for (let i = 0; i < 100 && p.action?.def.actionId === target && p.action.tick < tick; i++) { s.step({ ...idle, held: 8 }); s.drainEvents(); }
+    } else {
+      const at = { side: [[0, 2]], round: [[0, 1], [15, 1], [29, 1], [44, 1]], return: [[0, 1], [15, 1], [29, 1]] }[name];
+      for (let i = 0; i < 300; i++) {
+        const b = at.find(([t]) => t === i)?.[1] ?? 0;
+        s.step({ ...idle, held: b, pressed: b });
+        for (const e of s.drainEvents()) if (e.type === 'action_start') seen.push(e.actionId);
+        if (p.action?.def.actionId === target && p.action.tick >= tick) break;
+      }
+    }
+    return { now: p.action?.def.actionId ?? null, tick: p.action?.tick ?? null, yaw: p.yaw, seen };
+  }, [name, tick]);
+  const frames = async () => page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r([...window.__vh.view.missingClips])))));
+  const side = await reach('side', 11);
+  const m1 = await frames();
+  const ret = await reach('return', 11);
+  const m2 = await frames();
+  const round = await reach('round', 26);
+  const m3 = await frames();
+  await page.screenshot({ path: `${OUT}85c_guard_blade_round.png` });
+  const gs = await reach('guard_slash', 10);
+  const m4 = await frames();
+  check('護刃（v0.53.0）: 構えからの副で横斬り、主の連係は 斬り下ろし → 横斬り → 斬り返し → 回転斬り（回転斬りの途中は体が後ろを向く）、防御から主でガード斬り。新しい動きはどれも描ける（欠けた clip が無い）',
+    side.now === 'player.guard_blade.side' && ret.seen.join() === 'player.guard_blade.slash1,player.guard_blade.slash2,player.guard_blade.return' && round.now === 'player.guard_blade.round' && Math.abs(Math.abs(round.yaw) - Math.PI) < 0.3
+      && gs.now === 'player.guard_blade.guard_slash' && [...m1, ...m2, ...m3, ...m4].length === 0,
+    JSON.stringify({ side, ret, round, gs, missing: [...m1, ...m2, ...m3, ...m4] }));
+  await ctx.close();
+}
+
 // ---- 弱った足取り（v0.52.0。#19 の M05）: 弱って巣へ向かう大型が歩くと、一歩ごとに体が片側へ傾き、頭が下がる。弱っていなければ傾かない ----
 {
   const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');
