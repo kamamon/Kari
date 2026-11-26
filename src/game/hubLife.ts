@@ -161,7 +161,7 @@ export function desiredGear(c:Content,d:SaveDoc):{name:string;missing:{itemId:st
   const rankId=q.rankId;
   if(c.fieldGathering&&q.fieldId===c.fieldGathering.fieldId&&c.fieldGathering.tables.some(t=>t.rankId===rankId&&t.entries.some(e=>ids.has(e.itemId))))names.add(q.name);
   const monster=q.targetMonsterId?c.monsters.get(q.targetMonsterId):undefined,lootId=monster?.lootByRank?.[rankId]??monster?.lootId,loot=lootId?c.loot.get(lootId):undefined;
-  if(loot&&[loot.carve,loot.capture,loot.severed,...Object.values(loot.breaks??{})].some(t=>t?.table.some(x=>ids.has(x.itemId))))names.add(q.name);
+  if(loot&&[loot.carve,loot.capture,...Object.values(loot.severed??{}),...Object.values(loot.breaks??{})].some(t=>t?.table.some(x=>ids.has(x.itemId))))names.add(q.name);
  }
  return {name:c.weapons.get(id)?.name??c.armor.get(id)?.name??id,missing,money:Math.max(0,r.cost.money-d.money),questNames:[...names].slice(0,12)};
 }
