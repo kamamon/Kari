@@ -6,6 +6,7 @@ import { cloneSave, MAX_COUNT, RuleError, type SaveDoc } from '../save/profile';
 import { nearestFacility } from './hub';
 import type { World } from './world';
 import type { V3 } from '../core/math';
+import { freshHubLife, lifeOf, type ResourceId } from '../data/hubLife';
 
 export interface HubResourcePoint {
   id: string; name: string; kind: FieldGatherKind; x: number; z: number; r: number; uses: number; floor: number;
@@ -48,7 +49,8 @@ function readMarker(doc:SaveDoc,p:HubResourcePoint): { cycle:number; count:numbe
 }
 export function resourceStatus(doc:SaveDoc,c:Catalog,p:HubResourcePoint):ResourceStatus {
   const cycle=resourceCycle(doc,c),rankId=resourceRank(doc,c), m=readMarker(doc,p);
-  const token=[p.id,cycle,rankId,m?.cycle??'-',m?.count??'-'].join(':');
+  const life=lifeOf(doc),level=life.levels[p.id as ResourceId]??1;
+  const token=[p.id,cycle,rankId,m?.cycle??'-',m?.count??'-',level,life.crop].join(':');
   const rank=c.ranks.get(rankId)?.name??'初級';
   if(!c.fieldGathering?.tables.some(t=>t.nodeKind===p.kind&&t.rankId===rankId&&t.quality==='ordinary'))
     return {action:'unavailable',summary:'素材表がありません',token,rankId,left:0};
@@ -57,8 +59,9 @@ export function resourceStatus(doc:SaveDoc,c:Catalog,p:HubResourcePoint):Resourc
     if(cycle<=m.cycle)return {action:'wait',summary:'生育中：依頼を1回達成すると収穫できる',token,rankId,left:0};
     return {action:'harvest',summary:rank+'の作物を収穫する',token,rankId,left:1};
   }
-  const used=m&&m.cycle>=cycle?Math.min(p.uses,m.count):0;
-  const left=p.uses-used;
+  const capacity=p.uses+level-1;
+  const used=m&&m.cycle>=cycle?Math.min(capacity,m.count):0;
+  const left=capacity-used;
   return {action:left?'gather':'empty',summary:left?rank+'・残り'+left+'回（依頼達成で補充）':'採取済み：依頼を達成すると補充',token,rankId,left};
 }
 export function nearbyResource(world:World,pos:V3):HubResourcePoint|null {
@@ -74,7 +77,9 @@ export function resourceReward(doc:SaveDoc,c:Catalog,p:HubResourcePoint):{itemId
   const rng=new SeededRng(seed);
   let roll=rng.int(10000),e=t.entries[t.entries.length-1]!;
   for(const a of t.entries){roll-=a.weightBps;if(roll<0){e=a;break;}}
-  return {itemId:e.itemId,count:p.id==='farm'?2:e.minCount+rng.int(e.maxCount-e.minCount+1)};
+  const life=lifeOf(doc),level=life.levels[p.id as ResourceId]??1;
+  if(p.id==='farm'&&life.crop!=='mixed')e=t.entries[Math.min(life.crop==='leaf'?0:1,t.entries.length-1)]!;
+  return {itemId:e.itemId,count:p.id==='farm'?2+level-1:e.minCount+rng.int(e.maxCount-e.minCount+1)};
 }
 /** 同じ表示から送った二重操作を token で拒否する。素材と状態は一つの保存トランザクション。 */
 export function useHubResource(doc:SaveDoc,c:Catalog,id:string,expectedToken:string):SaveDoc {
@@ -84,12 +89,14 @@ export function useHubResource(doc:SaveDoc,c:Catalog,id:string,expectedToken:str
   if(s.token!==expectedToken)throw new RuleError('claimed','状態が変わりました。もう一度確認してください');
   if(s.action==='empty'||s.action==='wait'||s.action==='unavailable')throw new RuleError('locked',s.summary);
   const n=cloneSave(doc), cycle=resourceCycle(doc,c);
+  const life=n.hubLife??=freshHubLife();
+  if(!life.visited.includes('resource.'+p.id))life.visited.push('resource.'+p.id);
   n.claims=n.claims.filter(x=>!x.startsWith(prefix(id)));
   if(s.action==='sow'){n.claims.push(prefix(id)+cycle+':1');return n;}
   const reward=resourceReward(doc,c,p);
   if(!reward||!c.materials.has(reward.itemId))throw new RuleError('unknown','採集素材が見つかりません');
   if((n.items[reward.itemId]??0)+reward.count>MAX_COUNT)throw new RuleError('full','これ以上は持てません');
   n.items[reward.itemId]=(n.items[reward.itemId]??0)+reward.count;
-  if(p.id!=='farm')n.claims.push(prefix(id)+cycle+':'+(p.uses-s.left+1));
+  if(p.id!=='farm')n.claims.push(prefix(id)+cycle+':'+(p.uses+(life.levels[p.id as ResourceId]??1)-1-s.left+1));
   return n;
 }
