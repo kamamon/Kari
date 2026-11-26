@@ -1,0 +1,26 @@
+{
+  "artifact": "Kari_2G_11_Weapons_Package.zip",
+  "zipSha256": "6e17b64c0308a14a241a48940028d07541cc3f74c17a2f0fcdee45eb87d8cf24",
+  "zipSizeBytes": 6034416,
+  "availability": "Full-res transparent PNGs, GLBs, material tiles, motion source, GIFs are supplied as a downloadable chat ZIP. NOT uploaded to this GitHub PR because current binary transfer through connector is unavailable.",
+  "contents": {
+    "weapons": 11,
+    "transparentConceptPNG": 11,
+    "blockoutGLB": 15,
+    "motionFamilyJSON": 11,
+    "motionProposedActions": 54,
+    "animatedGIF": 4,
+    "textureTiles": 9,
+    "originalSheet": 1,
+    "rebuildPython": 1
+  },
+  "productionReadiness": {
+    "concepts": "yes",
+    "blockoutModels": "yes (no skeleton)",
+    "motionSpecs": "yes (conceptual keys, not baked animation)",
+    "gameWired": "no",
+    "userTesting": "no"
+  },
+  "manifestRef": "catalog.json inside chat ZIP",
+  "integrityNote": "Use zip SHA256 to match the user's local download before adopting. Source image and regeneration script included in ZIP."
+}

@@ -1,0 +1,3765 @@
+{
+  "schemaVersion": 1,
+  "baseKari": "0.59.0",
+  "status": "26_Proposed_ActionDefs_Not_Production_Ready",
+  "actions": [
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.swing_left",
+      "family": "hunting_horn",
+      "clipId": "kari_hunting_horn_swing_left_v1",
+      "controlName": "△・左へぶん回す",
+      "tickRate": 60,
+      "durationTicks": 44,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 15
+        },
+        {
+          "id": "active",
+          "from": 15,
+          "to": 21
+        },
+        {
+          "id": "recovery",
+          "from": 21,
+          "to": 44
+        }
+      ],
+      "motionValuesProposal": [
+        0.32
+      ],
+      "damageType": "blunt",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 9,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 15,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 21,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 32,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 44,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [
+        {
+          "tick": 15,
+          "type": "weapon_hit",
+          "socket": "tipSocket",
+          "hitIndex": 0
+        }
+      ],
+      "playability": {
+        "mode": "recital vs combat",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.swing_right",
+      "family": "hunting_horn",
+      "clipId": "kari_hunting_horn_swing_right_v1",
+      "controlName": "△・右へぶん回す",
+      "tickRate": 60,
+      "durationTicks": 46,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 18
+        },
+        {
+          "id": "active",
+          "from": 18,
+          "to": 24
+        },
+        {
+          "id": "recovery",
+          "from": 24,
+          "to": 46
+        }
+      ],
+      "motionValuesProposal": [
+        0.34
+      ],
+      "damageType": "blunt",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 11,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 18,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 24,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 35,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 46,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [
+        {
+          "tick": 18,
+          "type": "weapon_hit",
+          "socket": "tipSocket",
+          "hitIndex": 0
+        }
+      ],
+      "playability": {
+        "mode": "recital vs combat",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.poke",
+      "family": "hunting_horn",
+      "clipId": "kari_hunting_horn_poke_v1",
+      "controlName": "○・つか殴り",
+      "tickRate": 60,
+      "durationTicks": 32,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 11
+        },
+        {
+          "id": "active",
+          "from": 11,
+          "to": 17
+        },
+        {
+          "id": "recovery",
+          "from": 17,
+          "to": 32
+        }
+      ],
+      "motionValuesProposal": [
+        0.13
+      ],
+      "damageType": "blunt",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 7,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 11,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 17,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 24,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 32,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [
+        {
+          "tick": 11,
+          "type": "weapon_hit",
+          "socket": "tipSocket",
+          "hitIndex": 0
+        }
+      ],
+      "playability": {
+        "mode": "recital vs combat",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.slam",
+      "family": "hunting_horn",
+      "clipId": "kari_hunting_horn_slam_v1",
+      "controlName": "△+○・叩きつけ",
+      "tickRate": 60,
+      "durationTicks": 83,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 26
+        },
+        {
+          "id": "active",
+          "from": 26,
+          "to": 38
+        },
+        {
+          "id": "recovery",
+          "from": 38,
+          "to": 83
+        }
+      ],
+      "motionValuesProposal": [
+        0.21,
+        0.62
+      ],
+      "damageType": "blunt",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 16,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 26,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 38,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 60,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 83,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [
+        {
+          "tick": 26,
+          "type": "weapon_hit",
+          "socket": "tipSocket",
+          "hitIndex": 0
+        },
+        {
+          "tick": 31,
+          "type": "weapon_hit",
+          "socket": "tipSocket",
+          "hitIndex": 1
+        }
+      ],
+      "playability": {
+        "mode": "recital vs combat",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.recital_enter",
+      "family": "hunting_horn",
+      "clipId": "kari_hunting_horn_recital_enter_v1",
+      "controlName": "R・演奏構えに入る",
+      "tickRate": 60,
+      "durationTicks": 47,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 16
+        },
+        {
+          "id": "active",
+          "from": 16,
+          "to": 28
+        },
+        {
+          "id": "recovery",
+          "from": 28,
+          "to": 47
+        }
+      ],
+      "motionValuesProposal": [],
+      "damageType": "state",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 10,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 16,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 28,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 37,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 47,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [],
+      "playability": {
+        "mode": "recital vs combat",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.play_note1",
+      "family": "hunting_horn",
+      "clipId": "kari_hunting_horn_play_note1_v1",
+      "controlName": "演奏中1番の音",
+      "tickRate": 60,
+      "durationTicks": 63,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 23
+        },
+        {
+          "id": "active",
+          "from": 23,
+          "to": 37
+        },
+        {
+          "id": "recovery",
+          "from": 37,
+          "to": 63
+        }
+      ],
+      "motionValuesProposal": [],
+      "damageType": "state",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 14,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 23,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 37,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 50,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 63,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [],
+      "playability": {
+        "mode": "recital vs combat",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.play_note2",
+      "family": "hunting_horn",
+      "clipId": "kari_hunting_horn_play_note2_v1",
+      "controlName": "演奏中2番の音",
+      "tickRate": 60,
+      "durationTicks": 68,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 25
+        },
+        {
+          "id": "active",
+          "from": 25,
+          "to": 41
+        },
+        {
+          "id": "recovery",
+          "from": 41,
+          "to": 68
+        }
+      ],
+      "motionValuesProposal": [],
+      "damageType": "state",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 16,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 25,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 41,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 54,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 68,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [],
+      "playability": {
+        "mode": "recital vs combat",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.play_note3",
+      "family": "hunting_horn",
+      "clipId": "kari_hunting_horn_play_note3_v1",
+      "controlName": "演奏中3番の音",
+      "tickRate": 60,
+      "durationTicks": 72,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 28
+        },
+        {
+          "id": "active",
+          "from": 28,
+          "to": 44
+        },
+        {
+          "id": "recovery",
+          "from": 44,
+          "to": 72
+        }
+      ],
+      "motionValuesProposal": [],
+      "damageType": "state",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 18,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 28,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 44,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 58,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 72,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [],
+      "playability": {
+        "mode": "recital vs combat",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.hunting_horn.recital_exit",
+      "family": "hunting_horn",
+      "clipId": "kari_hunting_horn_recital_exit_v1",
+      "controlName": "演奏終了",
+      "tickRate": 60,
+      "durationTicks": 34,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 13
+        },
+        {
+          "id": "active",
+          "from": 13,
+          "to": 20
+        },
+        {
+          "id": "recovery",
+          "from": 20,
+          "to": 34
+        }
+      ],
+      "motionValuesProposal": [],
+      "damageType": "state",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 8,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 13,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 20,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 27,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 34,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [],
+      "playability": {
+        "mode": "recital vs combat",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.gunlance.thrust",
+      "family": "gunlance",
+      "clipId": "kari_gunlance_thrust_v1",
+      "controlName": "△・前方突き",
+      "tickRate": 60,
+      "durationTicks": 45,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 14
+        },
+        {
+          "id": "active",
+          "from": 14,
+          "to": 21
+        },
+        {
+          "id": "recovery",
+          "from": 21,
+          "to": 45
+        }
+      ],
+      "motionValuesProposal": [
+        0.42
+      ],
+      "damageType": "cut",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 9,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 14,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 21,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 33,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 45,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [
+        {
+          "tick": 14,
+          "type": "weapon_hit",
+          "socket": "tipSocket",
+          "hitIndex": 0
+        }
+      ],
+      "playability": {
+        "mode": "shell counter / guard / recoil",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.gunlance.uppercut",
+      "family": "gunlance",
+      "clipId": "kari_gunlance_uppercut_v1",
+      "controlName": "△+○・斬り上げ",
+      "tickRate": 60,
+      "durationTicks": 53,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 19
+        },
+        {
+          "id": "active",
+          "from": 19,
+          "to": 28
+        },
+        {
+          "id": "recovery",
+          "from": 28,
+          "to": 53
+        }
+      ],
+      "motionValuesProposal": [
+        0.58
+      ],
+      "damageType": "cut",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 12,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 19,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 28,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 40,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 53,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [
+        {
+          "tick": 19,
+          "type": "weapon_hit",
+          "socket": "tipSocket",
+          "hitIndex": 0
+        }
+      ],
+      "playability": {
+        "mode": "shell counter / guard / recoil",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.gunlance.shell",
+      "family": "gunlance",
+      "clipId": "kari_gunlance_shell_v1",
+      "controlName": "○・砲撃（弾1消費）",
+      "tickRate": 60,
+      "durationTicks": 58,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 18
+        },
+        {
+          "id": "active",
+          "from": 18,
+          "to": 22
+        },
+        {
+          "id": "recovery",
+          "from": 22,
+          "to": 58
+        }
+      ],
+      "motionValuesProposal": [
+        0.37
+      ],
+      "damageType": "shell",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 11,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 18,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 22,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 40,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 58,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [
+        {
+          "tick": 18,
+          "type": "shell_fire",
+          "socket": "muzzleSocket"
+        }
+      ],
+      "playability": {
+        "mode": "shell counter / guard / recoil",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.gunlance.reload",
+      "family": "gunlance",
+      "clipId": "kari_gunlance_reload_v1",
+      "controlName": "ガード+○・再装填",
+      "tickRate": 60,
+      "durationTicks": 91,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 50
+        },
+        {
+          "id": "active",
+          "from": 50,
+          "to": 57
+        },
+        {
+          "id": "recovery",
+          "from": 57,
+          "to": 91
+        }
+      ],
+      "motionValuesProposal": [],
+      "damageType": "state",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 32,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 50,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 57,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 74,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 91,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [],
+      "playability": {
+        "mode": "shell counter / guard / recoil",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.gunlance.wyvern_fire",
+      "family": "gunlance",
+      "clipId": "kari_gunlance_wyvern_fire_v1",
+      "controlName": "ガード+△+○・竜撃砲（冷却）",
+      "tickRate": 60,
+      "durationTicks": 174,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 86
+        },
+        {
+          "id": "active",
+          "from": 86,
+          "to": 103
+        },
+        {
+          "id": "recovery",
+          "from": 103,
+          "to": 174
+        }
+      ],
+      "motionValuesProposal": [
+        2.5
+      ],
+      "damageType": "shell",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 55,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 86,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 103,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 138,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 174,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [
+        {
+          "tick": 86,
+          "type": "wyvern_fire",
+          "socket": "muzzleSocket"
+        }
+      ],
+      "playability": {
+        "mode": "shell counter / guard / recoil",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.gunlance.guard",
+      "family": "gunlance",
+      "clipId": "kari_gunlance_guard_v1",
+      "controlName": "R・盾を構える",
+      "tickRate": 60,
+      "durationTicks": 24,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 2
+        },
+        {
+          "id": "active",
+          "from": 2,
+          "to": 22
+        },
+        {
+          "id": "recovery",
+          "from": 22,
+          "to": 24
+        }
+      ],
+      "motionValuesProposal": [],
+      "damageType": "state",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 1,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 2,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 22,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 23,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 24,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [],
+      "playability": {
+        "mode": "shell counter / guard / recoil",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.gunlance.backstep",
+      "family": "gunlance",
+      "clipId": "kari_gunlance_backstep_v1",
+      "controlName": "×・後ろへ跳ぶ",
+      "tickRate": 60,
+      "durationTicks": 34,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 0
+        },
+        {
+          "id": "active",
+          "from": 0,
+          "to": 6
+        },
+        {
+          "id": "recovery",
+          "from": 6,
+          "to": 34
+        }
+      ],
+      "motionValuesProposal": [],
+      "damageType": "movement",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 0,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 0,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 6,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 20,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 34,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": "socket_hand_l",
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [],
+      "playability": {
+        "mode": "shell counter / guard / recoil",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.light_bowgun.aim",
+      "family": "light_bowgun",
+      "clipId": "kari_light_bowgun_aim_v1",
+      "controlName": "R・射線照準",
+      "tickRate": 60,
+      "durationTicks": 25,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 2
+        },
+        {
+          "id": "active",
+          "from": 2,
+          "to": 22
+        },
+        {
+          "id": "recovery",
+          "from": 22,
+          "to": 25
+        }
+      ],
+      "motionValuesProposal": [],
+      "damageType": "state",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 1,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 2,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 22,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 23,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 25,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [],
+      "playability": {
+        "mode": "magazine and burst state",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.light_bowgun.fire",
+      "family": "light_bowgun",
+      "clipId": "kari_light_bowgun_fire_v1",
+      "controlName": "△・一発射撃",
+      "tickRate": 60,
+      "durationTicks": 35,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 11
+        },
+        {
+          "id": "active",
+          "from": 11,
+          "to": 15
+        },
+        {
+          "id": "recovery",
+          "from": 15,
+          "to": 35
+        }
+      ],
+      "motionValuesProposal": [
+        0.39
+      ],
+      "damageType": "projectile",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 7,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 11,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 15,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 25,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 35,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [
+        {
+          "tick": 11,
+          "type": "projectile_spawn",
+          "socket": "muzzleSocket",
+          "burstIndex": 0
+        }
+      ],
+      "playability": {
+        "mode": "magazine and burst state",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.light_bowgun.rapid_fire",
+      "family": "light_bowgun",
+      "clipId": "kari_light_bowgun_rapid_fire_v1",
+      "controlName": "対応弾に限る速射",
+      "tickRate": 60,
+      "durationTicks": 76,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 13
+        },
+        {
+          "id": "active",
+          "from": 13,
+          "to": 51
+        },
+        {
+          "id": "recovery",
+          "from": 51,
+          "to": 76
+        }
+      ],
+      "motionValuesProposal": [
+        0.22,
+        0.22,
+        0.22
+      ],
+      "damageType": "projectile",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 8,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 13,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 51,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 63,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 76,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [
+        {
+          "tick": 13,
+          "type": "projectile_spawn",
+          "socket": "muzzleSocket",
+          "burstIndex": 0
+        },
+        {
+          "tick": 28,
+          "type": "projectile_spawn",
+          "socket": "muzzleSocket",
+          "burstIndex": 1
+        },
+        {
+          "tick": 43,
+          "type": "projectile_spawn",
+          "socket": "muzzleSocket",
+          "burstIndex": 2
+        }
+      ],
+      "playability": {
+        "mode": "magazine and burst state",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.light_bowgun.reload",
+      "family": "light_bowgun",
+      "clipId": "kari_light_bowgun_reload_v1",
+      "controlName": "リロード",
+      "tickRate": 60,
+      "durationTicks": 86,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 49
+        },
+        {
+          "id": "active",
+          "from": 49,
+          "to": 55
+        },
+        {
+          "id": "recovery",
+          "from": 55,
+          "to": 86
+        }
+      ],
+      "motionValuesProposal": [],
+      "damageType": "state",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 31,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 49,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 55,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 70,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 86,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [],
+      "playability": {
+        "mode": "magazine and burst state",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.light_bowgun.backstep",
+      "family": "light_bowgun",
+      "clipId": "kari_light_bowgun_backstep_v1",
+      "controlName": "回避",
+      "tickRate": 60,
+      "durationTicks": 38,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 0
+        },
+        {
+          "id": "active",
+          "from": 0,
+          "to": 10
+        },
+        {
+          "id": "recovery",
+          "from": 10,
+          "to": 38
+        }
+      ],
+      "motionValuesProposal": [],
+      "damageType": "movement",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 0,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 0,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 10,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 24,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 38,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [],
+      "playability": {
+        "mode": "magazine and burst state",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.heavy_bowgun.aim",
+      "family": "heavy_bowgun",
+      "clipId": "kari_heavy_bowgun_aim_v1",
+      "controlName": "R・射線照準",
+      "tickRate": 60,
+      "durationTicks": 36,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 3
+        },
+        {
+          "id": "active",
+          "from": 3,
+          "to": 34
+        },
+        {
+          "id": "recovery",
+          "from": 34,
+          "to": 36
+        }
+      ],
+      "motionValuesProposal": [],
+      "damageType": "state",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 1,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 3,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 34,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 35,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 36,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [],
+      "playability": {
+        "mode": "magazine and recoil",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.heavy_bowgun.fire",
+      "family": "heavy_bowgun",
+      "clipId": "kari_heavy_bowgun_fire_v1",
+      "controlName": "△・発射と反動",
+      "tickRate": 60,
+      "durationTicks": 74,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 23
+        },
+        {
+          "id": "active",
+          "from": 23,
+          "to": 29
+        },
+        {
+          "id": "recovery",
+          "from": 29,
+          "to": 74
+        }
+      ],
+      "motionValuesProposal": [
+        0.98
+      ],
+      "damageType": "projectile",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 14,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 23,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 29,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 51,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 74,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [
+        {
+          "tick": 23,
+          "type": "projectile_spawn",
+          "socket": "muzzleSocket",
+          "burstIndex": 0
+        }
+      ],
+      "playability": {
+        "mode": "magazine and recoil",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.heavy_bowgun.reload",
+      "family": "heavy_bowgun",
+      "clipId": "kari_heavy_bowgun_reload_v1",
+      "controlName": "重量のある再装填",
+      "tickRate": 60,
+      "durationTicks": 139,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 73
+        },
+        {
+          "id": "active",
+          "from": 73,
+          "to": 82
+        },
+        {
+          "id": "recovery",
+          "from": 82,
+          "to": 139
+        }
+      ],
+      "motionValuesProposal": [],
+      "damageType": "state",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 47,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 73,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 82,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 110,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 139,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [],
+      "playability": {
+        "mode": "magazine and recoil",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.heavy_bowgun.charge_stance",
+      "family": "heavy_bowgun",
+      "clipId": "kari_heavy_bowgun_charge_stance_v1",
+      "controlName": "腰を落として重さを受ける（しゃがみ撃ちではない）",
+      "tickRate": 60,
+      "durationTicks": 42,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 18
+        },
+        {
+          "id": "active",
+          "from": 18,
+          "to": 26
+        },
+        {
+          "id": "recovery",
+          "from": 26,
+          "to": 42
+        }
+      ],
+      "motionValuesProposal": [],
+      "damageType": "state",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 11,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 18,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 26,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 34,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 42,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [],
+      "playability": {
+        "mode": "magazine and recoil",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.heavy_bowgun.dodge",
+      "family": "heavy_bowgun",
+      "clipId": "kari_heavy_bowgun_dodge_v1",
+      "controlName": "重い回避",
+      "tickRate": 60,
+      "durationTicks": 50,
+      "phases": [
+        {
+          "id": "startup",
+          "from": 0,
+          "to": 1
+        },
+        {
+          "id": "active",
+          "from": 1,
+          "to": 9
+        },
+        {
+          "id": "recovery",
+          "from": 9,
+          "to": 50
+        }
+      ],
+      "motionValuesProposal": [],
+      "damageType": "movement",
+      "animationKeys": [
+        {
+          "tick": 0,
+          "id": "K0",
+          "phase": "start",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 0,
+          "id": "K1",
+          "phase": "anticipate",
+          "pelvis": {
+            "yaw": -14,
+            "pitch": 5
+          },
+          "chest": {
+            "yaw": -11,
+            "pitch": -7
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 1,
+          "id": "K2",
+          "phase": "begin_effect",
+          "pelvis": {
+            "yaw": 9,
+            "pitch": 9
+          },
+          "chest": {
+            "yaw": 19,
+            "pitch": 13
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 9,
+          "id": "K3",
+          "phase": "end_effect",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 29,
+          "id": "K4",
+          "phase": "followthrough",
+          "pelvis": {
+            "yaw": 4,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        },
+        {
+          "tick": 50,
+          "id": "K5",
+          "phase": "recover",
+          "pelvis": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "chest": {
+            "yaw": 0,
+            "pitch": 0
+          },
+          "handSocket": "socket_hand_r",
+          "offhandSocket": null,
+          "ground": "both_feet_with_weight_shift",
+          "notes": "Kari original candidate, not measured PSP frames."
+        }
+      ],
+      "effectEvents": [],
+      "playability": {
+        "mode": "magazine and recoil",
+        "cancelDuringHit": false,
+        "rootMotionSource": "controller",
+        "maxHitsPerTargetPerWindow": 1
+      },
+      "notFromGame": "All tick timings and damage coefficients are Kari design proposals, not copied from 2G. Need implementation and playtest."
+    }
+  ]
+}
