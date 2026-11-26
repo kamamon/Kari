@@ -4,10 +4,11 @@ import { CROPS, DECORS, MEAL_IDS, RESOURCE_IDS, freshHubLife, lifeOf, hasPrep, t
 import { cloneSave, MAX_COUNT, RuleError, wornArmor, pouchOf, playWeaponId, type SaveDoc } from '../save/profile';
 import { HUB_RESOURCE_POINTS, resourceCycle, resourceRank, resourceStatus, useHubResource } from './hubResources';
 import { nearestFacility } from './hub';
+import { ANIMALS, furnitureErrors, type AnimalKind, type FurniturePlacement, type ZoneId } from '../data/hubEstate';
 import type { V3 } from '../core/math';
 import type { World } from './world';
 
-export type HubService={id:string;name:string;tab:HubTab;x:number;z:number;r:number;floor:number;detail:string};
+export type HubService={id:string;name:string;tab:HubTab;x:number;z:number;r:number;floor:number;detail:string;zone?:ZoneId};
 export const HUB_SERVICES:readonly HubService[]=[
  {id:'dining',name:'山里の食事処',tab:'prep',x:5,z:-1,r:2.2,floor:0,detail:'食事で次の狩りを強化'},
  {id:'bath',name:'水音の湯',tab:'prep',x:2,z:-36,r:2.4,floor:-10,detail:'湯治と休憩'},
@@ -20,6 +21,9 @@ export const HUB_SERVICES:readonly HubService[]=[
  {id:'expedition',name:'山道の探索隊詰所',tab:'economy',x:11,z:-32,r:2,floor:-10,detail:'探索隊を派遣'},
  {id:'farmdesk',name:'段々農場・管理小屋',tab:'farm',x:-20,z:33,r:1.3,floor:8,detail:'設備投資と栽培計画'},
  {id:'gallery',name:'狩人の展示室',tab:'home',x:-19,z:26,r:1.5,floor:8,detail:'装備と狩猟の記録'},
+ {id:'mine_zone',name:'灰層の坑道入口',tab:'farm',x:-32,z:2,r:1.4,floor:-3,detail:'専用の坑道を歩く',zone:'mine'},
+ {id:'pond_zone',name:'沢鏡の養魚池入口',tab:'farm',x:-32,z:-35,r:1.5,floor:-10,detail:'専用の養魚池を歩く',zone:'pond'},
+ {id:'ranch',name:'山里の畜産場',tab:'farm',x:1,z:27.5,r:1.4,floor:8,detail:'家畜を世話する'},
 ];
 export const serviceNear=(w:World,pos:V3):HubService|null=>nearestFacility(HUB_SERVICES,w,pos);
 export interface HubDestination {id:string;name:string;x:number;z:number;floor:number;detail:string;tab?:HubTab}
@@ -93,6 +97,7 @@ export type LifeCommand=
  |{kind:'upgrade';id:ResourceId}|{kind:'crop';id:Crop}|{kind:'collect'}
  |{kind:'mix';id:string}|{kind:'trade'}|{kind:'dispatch';source:Expedition['kind']}|{kind:'receive'}
  |{kind:'saveSet'|'applySet'|'deleteSet';slot:string}|{kind:'pouch';itemId:string;count:number}|{kind:'autoPouch'}
+ |{kind:'furniture';items:FurniturePlacement[]}|{kind:'animalBuy'|'animalFeed'|'animalCollect';id:AnimalKind}
  |{kind:'roomLayout';id:'left'|'right'}|{kind:'decor';id:Decor}|{kind:'displayWeapon'|'displayArmor';id:string|null}|{kind:'wish';id:string|null}
  |{kind:'task';id:string}|{kind:'festival';score:number}
  |{kind:'weather';id:HubLifeState['weather']}|{kind:'daylight';id:HubLifeState['daylight']}|{kind:'season';id:HubLifeState['season']}
@@ -140,7 +145,24 @@ export function applyHubLife(doc:SaveDoc,c:Content,cmd:LifeCommand):SaveDoc|null
  }
  case 'pouch':{const it=c.items.get(cmd.itemId);requireIt(it&&Number.isInteger(cmd.count)&&cmd.count>=0&&cmd.count<=it.carryMax,'持ち込み数が不正です');if(s.pouch===null)s.pouch=Object.fromEntries(pouchOf(doc,c).map(x=>[x.itemId,x.count]));s.pouch[cmd.itemId]=cmd.count;break;}
  case 'autoPouch':s.pouch=null;break;
- case 'roomLayout':requireIt(['left','right'].includes(cmd.id),'家具の配置が不正です');s.roomLayout=cmd.id;break;
+ case 'furniture':{const errors=furnitureErrors(cmd.items);requireIt(!errors.length,errors.join('、'));s.furniture=cmd.items.map(p=>({...p}));break;}
+ case 'animalBuy':case 'animalFeed':case 'animalCollect':{
+  requireIt(Object.prototype.hasOwnProperty.call(ANIMALS,cmd.id),'家畜の種類が不正です');
+  const def=ANIMALS[cmd.id],stock=s.livestock??={},a=stock[cmd.id];
+  if(cmd.kind==='animalBuy'){
+   requireIt((a?.count??0)<3,'1種につき3頭までです');
+   requireIt(a?.fedCycle==null,'世話の途中では増やせません');spend(n,cost(def.price));
+   stock[cmd.id]={count:(a?.count??0)+1,fedCycle:null,lastHarvest:a?.lastHarvest??-1};
+  }else if(cmd.kind==='animalFeed'){
+   requireIt(a&&a.fedCycle===null&&cycle>a.lastHarvest,'今は給餌できません。回収または次の依頼を待ってください');
+   spend(n,cost(0,stack(def.feed,a.count)));a.fedCycle=cycle;
+  }else{
+   requireIt(a&&a.fedCycle!==null&&cycle>a.fedCycle,'依頼を1回達成すると回収できます');
+   gain(n,c,stack(def.product,def.yield*a.count));a.fedCycle=null;a.lastHarvest=cycle;
+  }
+  break;
+ }
+ case 'roomLayout':requireIt(['left','right'].includes(cmd.id),'家具の配置が不正です');s.roomLayout=cmd.id;delete s.furniture;break;
  case 'decor':requireIt(DECORS.includes(cmd.id),'家具の種類が不正です');s.decor=cmd.id;break;
  case 'displayWeapon':requireIt(cmd.id===null||(doc.weapons.includes(cmd.id)&&c.weapons.has(cmd.id)),'所持している武器を選んでください');s.displayWeapon=cmd.id;break;
  case 'displayArmor':requireIt(cmd.id===null||(doc.armor.includes(cmd.id)&&c.armor.has(cmd.id)),'所持している防具を選んでください');s.displayArmor=cmd.id;break;

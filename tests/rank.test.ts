@@ -2,6 +2,7 @@
 // 段階が上の依頼ほど、同じガルドロスが強い個体になる。防具の防御力で、受けるダメージが減る。
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { Content } from '../src/data/schemas';
+import { ANIMALS } from '../src/data/hubEstate';
 import { lootForQuest, materialRanks, questMaterials } from '../src/data/validators';
 import type { SimEvent } from '../src/game/events';
 import { defenseScale, scaleMonsterDef, totalDefense } from '../src/game/rank';
@@ -78,8 +79,11 @@ describe('段階のデータ', () => {
     expect(from(2)).toEqual(['尾端晶', '脈岩殻'].sort());
     expect(from(3)).toEqual(['晶岩殻', '青銅晶塊'].sort());
     expect(from(4)).toEqual(['脈動晶芯', '輝岩殻'].sort());
-    // すべての素材が、どこかの依頼で手に入る
-    expect(rankOf.size).toBe(content.materials.size);
+    // 畜産物だけは狩猟報酬ではなく、里の飼育・給餌・回収で入手する。
+    // その他の全素材は引き続き依頼経由で入手可能でなければならない。
+    const livestockProducts = Object.values(ANIMALS).map(a => a.product).sort();
+    expect([...content.materials.keys()].filter(id => !rankOf.has(id)).sort()).toEqual(livestockProducts);
+    expect(rankOf.size + livestockProducts.length).toBe(content.materials.size);
   });
 
   it('その段階の素材は、切らなくても壊さなくても手に入る（本体の剥ぎ取りか報酬に入っている）', () => {

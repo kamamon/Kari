@@ -34,6 +34,7 @@ import { nearestFacility } from './game/hub';
 import { HUB_FISH_BITE, HUB_RESOURCE_POINTS, nearbyResource, resourceStatus, resourceReward, resourceCycle, type HubResourcePoint } from './game/hubResources';
 import { destinations, serviceNear, chosenPouch, villageLevel, type HubService, type HubDestination } from './game/hubLife';
 import { lifeOf, hasPrep, prepText, type HubTab, type HuntPrep } from './data/hubLife';
+import { hubThreat, newHubReports } from './data/hubNarrative';
 import { scenesUnlocked, type StoryOutcome } from './data/story';
 import { AppearanceEditor, type LooksHost } from './ui/appearanceEditor';
 import { resolveAppearance, type ResolvedAppearance } from './data/appearance';
@@ -327,7 +328,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
    * 里を歩く拠点にいれば、すぐ開く。依頼の途中なら、拠点へ戻った時に開く。一覧の拠点（?hub=menu。検査と見比べ用）では開かない（依頼板の記録から読める）。
    */
   afterSettleStory(before: Readonly<Record<string, number>>, outcome: StoryOutcome = 'any'): void {
-    const ids = scenesUnlocked(this.content.story, before, this.save.doc.progress.questClears);
+    const ids = [...scenesUnlocked(this.content.story, before, this.save.doc.progress.questClears),...newHubReports(this.content,before,this.save.doc.progress.questClears)];
     if (ids.length === 0 || !this.hubWalk) return;
     this.pendingStory.push(...ids.map((sceneId) => ({ sceneId, outcome })));
     if (this.place === 'hub') this.showPendingStory();
@@ -395,6 +396,8 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     this.view = new GameView(this.canvas, this.content, this.sim, this.store.value);
     this.view.onSound = (id, k) => void this.audio.play(id, k);
     this.view.onAmbience = (a) => this.audio.setAmbience(a);
+    this.view.onHubSample=(id,k)=>this.audio.playHubSample(id,k);
+    this.audio.setHubMusic(this.place==='hub',hubThreat(this.content,this.save.doc.progress.questClears)===2);
     this.recorded = [];
     this.recordOverflow = false;
     this.clock.reset();
@@ -545,7 +548,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     if(this.place!=='hub'||this.paused||this.resourceBusy||(this.gatheringVisual&&this.sim.tick<this.gatheringVisual.until))return;
     const f=nearestFacility(this.content.hub.facilities,this.sim.world,this.sim.player.pos);
     if(f){this.fishing=null;this.visit('facility.'+f.id);this.openFacility(f.kind,f.id);return;}
-    const p=nearbyResource(this.sim.world,this.sim.player.pos);if(!p){const s=serviceNear(this.sim.world,this.sim.player.pos);if(s){this.visit('service.'+s.id);this.openLife(s.tab);}return;}
+    const p=nearbyResource(this.sim.world,this.sim.player.pos);if(!p){const s=serviceNear(this.sim.world,this.sim.player.pos);if(s){this.visit('service.'+s.id);this.openLife(s.tab);if(s.zone)this.base.openEstate(s.zone);}return;}
     const s=resourceStatus(this.save.doc,this.content,p);
     this.visit('resource.'+p.id);
     if(s.action==='wait'||s.action==='empty'||s.action==='unavailable'){this.hud.toast(s.summary);return;}
@@ -584,6 +587,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     // メニュー拠点でも施設一覧は見られるが移動はできない。
     return [];
   }
+  playEstateSound(id:import('./core/hubSoundtrack').HubSample,k=1):void{this.audio.playHubSample(id,k);}
   lifePosition():{x:number;y:number;z:number}|null{return this.place==='hub'?{...this.sim.player.pos}:null;}
   lifeTravel(id:string):void{
     if(this.place!=='hub'||!lifeOf(this.save.doc).visited.includes(id)||this.resourceBusy)return;
@@ -876,7 +880,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     this.view.portrait = pv ? { baseYaw: this.looksYaw, spin: pv.spin, focus: pv.focus, zoom: pv.zoom, pane: pv.pane, clothes: pv.clothes } : null;
     this.syncLook(pv?.look ?? null);
     if(this.place==='hub'){
-      if(this.lifeRevision!==this.save.doc.revision){this.lifeRevision=this.save.doc.revision;this.view.setHubLife(lifeOf(this.save.doc),resourceCycle(this.save.doc,this.content),villageLevel(this.save.doc,this.content));}
+      if(this.lifeRevision!==this.save.doc.revision){this.lifeRevision=this.save.doc.revision;this.audio.setHubMusic(true,hubThreat(this.content,this.save.doc.progress.questClears)===2);this.view.setHubLife(lifeOf(this.save.doc),resourceCycle(this.save.doc,this.content),villageLevel(this.save.doc,this.content),hubThreat(this.content,this.save.doc.progress.questClears));}
       this.view.hubGather=this.fishing?'fish':this.gatheringVisual&&this.sim.tick<this.gatheringVisual.until?this.gatheringVisual.kind:null;
     }
     let look = paused ? { x: 0, y: 0 } : this.hub.consumeLook();
@@ -907,7 +911,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     if (this.view.lockOn && !this.store.value.lockOnButton) this.view.lockOn = false;
     this.touch.setLatched('lock', this.view.lockOn);
     this.touch.setHidden(['lock'], this.place === 'hub' || !this.store.value.lockOnButton);
-    this.view.render();
+    if(!this.base.estateActive)this.view.render();
     this.hud.setFacility(this.place === 'hub' && !paused ? (this.nearFacility ?? this.resourcePrompt()) : null, this.place === 'hub');
     this.hud.update(this.sim, this.view, { fps: this.fps, droppedTicks: this.clock.droppedTicks, frames: this.meterSummary }, dt);
   };

@@ -1,4 +1,5 @@
 // 拠点生活の保存値・定数。依存の無い層。旧schema5はこの欄が無くても読める。
+import { furnitureErrors, livestockErrors, type FurniturePlacement, type Livestock } from './hubEstate';
 export const RESOURCE_IDS=['farm','mine','fish','insect','bone'] as const;
 export type ResourceId=typeof RESOURCE_IDS[number];
 export const HUB_TABS=['map','prep','farm','economy','home','research','training','hall','world'] as const;
@@ -16,7 +17,7 @@ export type Expedition={kind:'mine'|'plant'|'insect'|'fish'|'bone';rankId:string
 export interface HubLifeState {
   version:1; levels:Record<ResourceId,number>; crop:Crop; prep:HuntPrep;
   visited:string[]; pouch:Record<string,number>|null; sets:Record<string,EquipmentSet>;
-  decor:Decor; roomLayout?:'left'|'right'; displayWeapon:string|null; displayArmor:string|null; wish:string|null;
+  decor:Decor; roomLayout?:'left'|'right'; furniture?:FurniturePlacement[]; livestock?:Livestock; displayWeapon:string|null; displayArmor:string|null; wish:string|null;
   expedition:Expedition|null; tradeCycle:number; festivalCycle:number; tasks:string[];
   weather:'auto'|'clear'|'rain'|'mist'|'snow'; daylight:'auto'|'morning'|'day'|'dusk'|'night';
   season:'auto'|'spring'|'summer'|'autumn'|'winter';
@@ -54,6 +55,8 @@ export function hubLifeShapeErrors(v:unknown):string[]{
   if(!obj(v.levels)||!RESOURCE_IDS.every(k=>int((v.levels as Record<string,unknown>)[k],1,4)))return ['里の設備レベルが不正です'];
   const p=v.prep;
   if(!obj(p)||typeof p.bath!=='boolean'||!(p.meal===null||one(p.meal,MEAL_IDS)))return ['食事・温泉の記録が不正です'];
+  if(v.furniture!==undefined){const errors=furnitureErrors(v.furniture);if(errors.length)return errors;}
+  {const errors=livestockErrors(v.livestock);if(errors.length)return errors;}
   if(v.roomLayout!==undefined&&!one(v.roomLayout,['left','right']))return ['家具の配置が不正です'];
   if(!one(v.crop,CROPS)||!one(v.decor,DECORS)||!list(v.visited,256)||!list(v.tasks,64)||!pouch(v.pouch))return ['里の生活記録が不正です'];
   if(!obj(v.sets)||Object.entries(v.sets).some(([k,s])=>!['1','2','3'].includes(k)||!obj(s)||!str(s.weapon)||!list(s.armor,5)||!pouch(s.pouch)))return ['装備セットが不正です'];

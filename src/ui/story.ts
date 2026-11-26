@@ -2,6 +2,7 @@
 // 会話は、安全な場所（里・拠点）でだけ開く。読み返しても、報酬・進み方・選んだ返事は変わらない（何も保存しない）。
 import type { Content } from '../data/schemas';
 import { lineFace, lineText, storyView, type StoryLine, type StoryOutcome, type StoryScene } from '../data/story';
+import { hubStoryScene } from '../data/hubNarrative';
 import { fieldArtUrl, portraitUrl, storyArtUrl, storyThumbUrl } from './icons';
 
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string): HTMLElementTagNameMap[K] => {
@@ -72,7 +73,7 @@ export class StoryDialog {
 
   /** 場面を順に読む。読み終えた（閉じた）時に onDone */
   play(list: readonly StoryPlay[], onDone?: () => void): void {
-    this.queue = list.filter((p) => this.content.story.scenes.some((s) => s.id === p.sceneId));
+    this.queue = list.filter((p) => this.content.story.scenes.some((s) => s.id === p.sceneId)||!!hubStoryScene(p.sceneId));
     if (this.queue.length === 0) return;
     this.onDone = onDone ?? null;
     this.root.hidden = false;
@@ -95,7 +96,7 @@ export class StoryDialog {
       this.close();
       return;
     }
-    this.scene = this.content.story.scenes.find((s) => s.id === p.sceneId)!;
+    this.scene = (this.content.story.scenes.find((s) => s.id === p.sceneId)??hubStoryScene(p.sceneId))!;
     this.outcome = p.outcome ?? 'any';
     this.index = 0;
     this.root.dataset.scene = this.scene.id;
