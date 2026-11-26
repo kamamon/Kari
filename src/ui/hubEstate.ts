@@ -28,7 +28,7 @@ export class HubEstatePanel{
  private lastPrompt='';private lastWidth=0;private lastHeight=0;private inputListeners:Array<()=>void>=[];
  constructor(private c:Content,private h:EstateHost,readonly id:ZoneId,private close:()=>void){
   this.root.dataset.zone=id;const head=el('header','estate-head');head.append(el('h3','',label(id)),this.button('農場・自室の一覧へ',()=>this.requestClose()));
-  this.stage.append(this.canvas);this.root.append(head,this.stage,this.side);this.side.append(this.status);this.status.setAttribute('role','status');
+  this.canvas.tabIndex=0;this.stage.append(this.canvas);this.root.append(head,this.stage,this.side);this.side.append(this.status);this.status.setAttribute('role','status');
   // rendererは利用時だけ作成し、閉じると破棄する。メインのゲーム描画を停止して2重負荷を避ける。
   this.renderer=new WebGLRenderer({canvas:this.canvas,antialias:true,powerPreference:'high-performance'});this.renderer.setPixelRatio(Math.min(1.5,window.devicePixelRatio||1));
   this.renderer.setClearColor(0x70877b);this.scene.add(new HemisphereLight(0xf1e6ce,id==='mine'?0x4a443a:0x5b6b50,id==='mine'?1.12:1.8));
@@ -59,12 +59,12 @@ export class HubEstatePanel{
  private bind<K extends keyof WindowEventMap>(name:K,fn:(e:WindowEventMap[K])=>void){window.addEventListener(name,fn as EventListener);this.inputListeners.push(()=>window.removeEventListener(name,fn as EventListener));}
  private addInput(){
   const moveKeys=['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'];
-  this.bind('keydown',e=>{if(!this.active||e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement||e.target instanceof HTMLButtonElement)return;
-   const key=e.key.toLowerCase();if(moveKeys.includes(key)){e.preventDefault();this.keys.add(key);}else if(key==='e'&&!e.repeat&&this.id!=='home'){e.preventDefault();this.interact();}
+  this.bind('keydown',e=>{if(!this.active||e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement)return;
+   const key=e.key.toLowerCase();if(key==='escape'){e.preventDefault();this.requestClose();return;}if(moveKeys.includes(key)){e.preventDefault();this.keys.add(key);}else if(key==='e'&&!e.repeat&&this.id!=='home'){e.preventDefault();this.interact();}
   });
   this.bind('keyup',e=>this.keys.delete(e.key.toLowerCase()));
   this.bind('blur',()=>{this.keys.clear();this.drag=null;this.operation=null;});
-  this.canvas.addEventListener('pointerdown',e=>{this.canvas.setPointerCapture(e.pointerId);this.drag={x:e.clientX,y:e.clientY};if(this.edit)this.editAt(e.clientX,e.clientY);});
+  this.canvas.addEventListener('pointerdown',e=>{this.canvas.focus({preventScroll:true});this.canvas.setPointerCapture(e.pointerId);this.drag={x:e.clientX,y:e.clientY};if(this.edit)this.editAt(e.clientX,e.clientY);});
   this.canvas.addEventListener('pointermove',e=>{
    if(!this.drag)return;
    if(this.edit){this.editAt(e.clientX,e.clientY);return;}
@@ -92,7 +92,7 @@ export class HubEstatePanel{
    const l=el('label','estate-range'),t=el('span','life-text',name),input=el('input');input.type='range';input.min=String(min);input.max=String(max);input.step=String(step);l.append(t,input);editing.append(l);return input;
   };
   this.controls={x:makeRange('横の位置（m）',-3.8,3.8,.025),z:makeRange('奥行き（m）',-3.25,3.25,.025),yaw:makeRange('回転（°）',0,359,1)};
-  for(const k of ['x','z','yaw'] as const)this.controls[k].addEventListener('input',()=>{const p=this.selectedFurniture();if(!p)return;const v=Number(this.controls![k].value);p[k]=k==='yaw'?v*Math.PI/180:v;this.changed();});
+  for(const k of ['x','z','yaw'] as const)this.controls[k].addEventListener('input',()=>{if(this.busy)return;const p=this.selectedFurniture();if(!p)return;const v=Number(this.controls![k].value);p[k]=k==='yaw'?v*Math.PI/180:v;this.changed();});
   editing.append(this.button('材質を切替',()=>{const p=this.selectedFurniture();if(p){p.finish=((p.finish+1)%3) as 0|1|2;this.changed();}}),this.button('選択した家具を撤去',()=>{this.furniture=this.furniture.filter(p=>p.id!==this.selected);this.selected=this.furniture[0]?.id??'';this.changed();this.updateControls();}));
   this.saveBtn=this.button('家具配置を保存',()=>void this.saveFurniture());editing.append(this.saveBtn,this.button('初期配置に戻す',()=>{this.furniture=defaultFurniture(lifeOf(this.h.save.doc).roomLayout);this.selected=this.furniture[0]!.id;this.changed();this.updateControls();}),this.button('保存済みを読み直す',()=>{this.furniture=roomFurniture(lifeOf(this.h.save.doc)).map(p=>({...p}));this.selected=this.furniture[0]?.id??'';this.savedRevision=this.h.save.doc.revision;this.dirty=false;this.warnedClose=false;this.syncFurniture();this.updateControls();this.tell('保存済みの配置を読み込みました');}));
   editing.append(el('p','life-text','真上からの地図をタップ／ドラッグして移動。位置・角度の微調整、追加、撤去もできます。最大24点。壁、入口、家具の重なりを検査します。'));this.side.append(editing);this.updateControls();
@@ -112,7 +112,7 @@ export class HubEstatePanel{
   for(const e of Object.values(this.controls))e.disabled=!p;
  }
  private editAt(cx:number,cy:number){
-  const p=this.selectedFurniture();if(!p)return;const r=this.canvas.getBoundingClientRect();this.ray.setFromCamera(new Vector2((cx-r.left)/r.width*2-1,-(cy-r.top)/r.height*2+1),this.planCam);
+  if(this.busy)return;const p=this.selectedFurniture();if(!p)return;const r=this.canvas.getBoundingClientRect();this.ray.setFromCamera(new Vector2((cx-r.left)/r.width*2-1,-(cy-r.top)/r.height*2+1),this.planCam);
   const hit=this.ray.ray.intersectPlane(this.floor,new Vector3());if(hit){p.x=Math.round(hit.x*40)/40;p.z=Math.round(hit.z*40)/40;this.changed();this.updateControls();}
  }
  private changed(){this.dirty=true;this.warnedClose=false;this.syncFurniture();const e=furnitureErrors(this.furniture);this.tell(e.length?e[0]!:'未保存の変更があります。',!!e.length);if(this.saveBtn)this.saveBtn.disabled=!!e.length;}

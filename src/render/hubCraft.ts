@@ -1,6 +1,6 @@
 // 原創のゲーム用3D工芸モデル。単なる板絵でなく、屋根・柱・瓦・石積・金具・建具・布を立体化。
 // 近景を細かくしつつマテリアルごとに結合。テクスチャは決定的な256pxの材質合成で、外部ファイル不要。
-import { BoxGeometry, BufferGeometry, Color, CylinderGeometry, DataTexture, DoubleSide, Euler, Float32BufferAttribute, Group, IcosahedronGeometry, LinearMipmapLinearFilter, Matrix4, Mesh, MeshStandardMaterial, Quaternion, RepeatWrapping, SRGBColorSpace, SphereGeometry, TorusGeometry, Vector3 } from 'three';
+import { BoxGeometry, BufferGeometry, Color, CylinderGeometry, DataTexture, DoubleSide, Euler, Float32BufferAttribute, Group, IcosahedronGeometry, LinearFilter, LinearMipmapLinearFilter, Matrix4, Mesh, MeshStandardMaterial, Quaternion, RepeatWrapping, SRGBColorSpace, SphereGeometry, TorusGeometry, Vector2, Vector3 } from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { FURNITURE, type FurniturePlacement } from '../data/hubEstate';
@@ -11,23 +11,34 @@ type Surface='wood'|'stone'|'roof'|'metal'|'cloth'|'plain'|'light';
 const SURFACES:Surface[]=['wood','stone','roof','metal','cloth','plain','light'];
 const c={wood:0x886748,trim:0x513d2c,stone:0x9d9c8d,roof:0x777c70,bronze:0xb59a59,cloth:0xc6b18e,red:0x8d4736,green:0x657d4e,light:0xe1ad61,wall:0xd5c7a7,dark:0x332a23,iron:0x515756};
 const hash=(x:number,y:number)=>{let n=Math.imul(x+137,1597334677)^Math.imul(y+349,3812015801);n=Math.imul(n^(n>>>15),2246822519);return ((n^(n>>>13))>>>0)/4294967295;};
-function mapFor(kind:Surface):DataTexture{
- const n=256,buf=new Uint8Array(n*n*4);
+const pixels=new Map<Surface,{albedo:Uint8Array;normal:Uint8Array}>();
+function materialPixels(kind:Surface){
+ const prev=pixels.get(kind);if(prev)return prev;
+ const n=256,height=new Float32Array(n*n),albedo=new Uint8Array(n*n*4),normal=new Uint8Array(n*n*4);
  for(let y=0;y<n;y++)for(let x=0;x<n;x++){
-  const u=x/n*Math.PI*2,v=y/n*Math.PI*2;
-  let a=0;
+  const u=x/n*Math.PI*2,v=y/n*Math.PI*2;let a=0;
   if(kind==='wood')a=.11*Math.sin(u*3+Math.sin(v*2)*.9)+.08*Math.sin(u*33+Math.sin(v)*1.8)+.045*Math.sin(u*73+v*2);
   else if(kind==='stone')a=.075*Math.sin(u*9+v*3)+.05*Math.sin(u*17-v*11)+.04*Math.cos(u*31+v*12);
   else if(kind==='roof')a=.08*Math.sin(u*8)+.075*Math.cos(v*7)+.035*Math.sin(u*46+v*2);
   else if(kind==='cloth')a=.065*Math.cos(u*64)*Math.cos(v*64)+.035*Math.sin(u*8+v*8);
   else if(kind==='metal')a=.04*Math.sin(u*11+v*13)+.07*Math.cos(u*3-v*6);
-  const g=Math.round(255*Math.max(.45,Math.min(1,.80+a+.12*(hash(x,y)-.5))));
-  const i=(y*n+x)*4;buf.set([g,g,g,255],i);
+  const i=y*n+x;const g=Math.round(255*Math.max(.45,Math.min(1,.80+a+.085*(hash(x,y)-.5))));
+  height[i]=a;albedo.set([g,g,g,255],i*4);
  }
- const t=new DataTexture(buf,n,n);t.colorSpace=SRGBColorSpace;t.wrapS=t.wrapT=RepeatWrapping;t.magFilter=1006;t.minFilter=LinearMipmapLinearFilter;t.generateMipmaps=true;t.needsUpdate=true;return t;
+ const get=(x:number,y:number)=>height[((y+n)%n)*n+(x+n)%n]!;
+ for(let y=0;y<n;y++)for(let x=0;x<n;x++){
+  const strength=kind==='cloth'?1.3:kind==='metal'?.85:2.0,dx=(get(x+1,y)-get(x-1,y))*strength,dy=(get(x,y+1)-get(x,y-1))*strength,m=1/Math.hypot(dx,dy,1);
+  normal.set([Math.round(127.5*(-dx*m+1)),Math.round(127.5*(-dy*m+1)),Math.round(127.5*(m+1)),255],(y*n+x)*4);
+ }
+ const result={albedo,normal};pixels.set(kind,result);return result;
+}
+function mapFor(kind:Surface,isNormal=false):DataTexture{
+ const p=materialPixels(kind),t=new DataTexture(isNormal?p.normal:p.albedo,256,256);
+ if(!isNormal)t.colorSpace=SRGBColorSpace;
+ t.wrapS=t.wrapT=RepeatWrapping;t.magFilter=LinearFilter;t.minFilter=LinearMipmapLinearFilter;t.generateMipmaps=true;t.needsUpdate=true;return t;
 }
 export function craftMaterials():Record<Surface,MeshStandardMaterial>{
- return Object.fromEntries(SURFACES.map(k=>[k,new MeshStandardMaterial({color:0xffffff,vertexColors:true,roughness:k==='metal'?.53:.88,metalness:k==='metal'?.37:0,...(['plain','light'].includes(k)?{}:{map:mapFor(k)}),...(k==='light'?{emissive:0xd98b3c,emissiveIntensity:.42}:{})})])) as Record<Surface,MeshStandardMaterial>;
+ return Object.fromEntries(SURFACES.map(k=>[k,new MeshStandardMaterial({color:0xffffff,vertexColors:true,roughness:k==='metal'?.53:.88,metalness:k==='metal'?.37:0,...(['plain','light'].includes(k)?{}:{map:mapFor(k),normalMap:mapFor(k,true),normalScale:new Vector2(.65,.65)}),...(k==='light'?{emissive:0xd98b3c,emissiveIntensity:.42}:{})})])) as Record<Surface,MeshStandardMaterial>;
 }
 export class CraftKit{
  private bags=new Map<Surface,BufferGeometry[]>();
@@ -127,8 +138,8 @@ function door(k:CraftKit,x:number,y:number,z:number,w:number,h:number){
 function plinth(k:CraftKit,w:number,d:number,h=.40){
  k.box('stone',[0,h/2,0],[w,h,d],c.stone);
  for(const side of [-1,1]){
-  for(let i=0;i<Math.ceil(w/.55);i++){const n=Math.ceil(w/.55),x=(i+.5-n/2)*w/n;k.box('stone',[x,h*.52,side*d*.5],[w/n-.035,h*.8,.085],i%3?c.stone:0x85877b,[0,0,0],.012);}
-  for(let i=0;i<Math.ceil(d/.55);i++){const n=Math.ceil(d/.55),z=(i+.5-n/2)*d/n;k.box('stone',[side*w*.5,h*.52,z],[.085,h*.8,d/n-.035],i%3?c.stone:0x85877b,[0,0,0],.012);}
+  for(let i=0;i<Math.ceil(w/.55);i++){const n=Math.ceil(w/.55),x=(i+.5-n/2)*w/n;k.box('stone',[x,h*.52,side*d*.5],[w/n-.035,h*.8,.085],i%3?c.stone:0x85877b);}
+  for(let i=0;i<Math.ceil(d/.55);i++){const n=Math.ceil(d/.55),z=(i+.5-n/2)*d/n;k.box('stone',[side*w*.5,h*.52,z],[.085,h*.8,d/n-.035],i%3?c.stone:0x85877b);}
  }
 }
 function chest(k:CraftKit,x:number,y:number,z:number,w=1.3,d=.64,h=.68){

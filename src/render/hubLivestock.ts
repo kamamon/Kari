@@ -79,7 +79,7 @@ class HerdVisual{
  }
  set(stock:Livestock){this.count=Math.max(1,stock[this.kind]?.count??0);for(const m of this.meshes)m.count=this.count;}
  update(time:number,listener:Vector3){
-  const pen=PENS[this.kind];this.group.visible=Math.hypot(listener.x-pen.x,listener.z-pen.z)<50&&Math.abs(listener.y-this.y)<21;
+  const pen=PENS[this.kind];this.group.visible=Math.hypot(listener.x-pen.x,listener.z-pen.z)<25&&Math.abs(listener.y-this.y)<10;
   if(!this.group.visible)return;
   const mat=new Matrix4(),q=new Quaternion(),e=new Euler(),pos=new Vector3(),scale=new Vector3(1,1,1);
   for(let i=0;i<this.count;i++){
