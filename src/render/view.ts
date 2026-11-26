@@ -1,6 +1,6 @@
 // 描画のまとめ役。simulation の状態を読んで、仮モデル・カメラ・エフェクト・検証表示を更新する。
 // ここから simulation へ値を書き戻すことはしない（描画補間や骨の姿勢を計算の正本にしない）。
-import { CylinderGeometry, DoubleSide, Group, IcosahedronGeometry, Matrix4, Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshStandardMaterial, Quaternion, RingGeometry, Scene, Vector2, Vector3, WebGLRenderer, type Object3D } from 'three';
+import { Color, FogExp2, CylinderGeometry, DoubleSide, Group, IcosahedronGeometry, Matrix4, Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshStandardMaterial, Quaternion, RingGeometry, Scene, Vector2, Vector3, WebGLRenderer, type Object3D } from 'three';
 import { angleDiff, fromArr, lerpV, norm, smoothstep, toWorld, type V3 } from '../core/math';
 import { STATUS_KINDS, type Content, type ElementId, type MonsterDef, type StatusKind } from '../data/schemas';
 import { inWindow, renderTick } from '../game/action';
@@ -12,6 +12,7 @@ import type { Simulation } from '../game/sim';
 import { sampleTrack, sampleTrackNormal, trackSegment } from '../game/tracks';
 import type { Settings } from '../save/settings';
 import { blobShadow, buildArena, buildAreaGroup, setupSky, type Arena } from './arena';
+import { landscapeProfile } from './fieldLandscape';
 import { WIND } from './envArt';
 import { imageLambert } from './materialImages';
 import { buildHubGroup } from './hubScene';
@@ -317,6 +318,11 @@ export class GameView {
     const area = sim.area();
     if (!area) return false;
     this.areaGroupOf(sim, area.id);
+    const landscape=landscapeProfile(field.id,area);
+    this.arena.sky?.setLook(landscape.sky);
+    if(this.scene.fog instanceof FogExp2){this.scene.fog.color.set(landscape.sky.horizon);this.scene.fog.density=landscape.fog;}
+    if(this.scene.background instanceof Color)this.scene.background.set(landscape.sky.horizon);
+    for(const obj of this.arena.backdrop.children)if(obj.name!=='sky')obj.visible=!!landscape.basinBackdrop;
     for (const [id, grp] of this.areaGroups) grp.visible = id === area.id;
     this.shownArea = area.id;
     return true;
@@ -331,6 +337,7 @@ export class GameView {
     if (!g) {
       g = buildAreaGroup({
         bounds: area.bounds, shape: area.shape, rocks: area.rocks, platforms: area.platforms, kind: area.kind, seed: 9001 + area.no * 131, climbs: area.climbs, relief: area.relief, groundTint: area.look?.ground,
+        landscape: landscapeProfile(field.id,area),
         camp: area.kind === 'camp' ? field.camp : null,
         gates: area.exits.map((e) => ({ x: e.x, z: e.z, marker: true })),
       });
