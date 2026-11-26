@@ -228,6 +228,17 @@ export function crossCheck(c: Content, errors: string[]): void {
     for (const h of a.hitWindows) {
       if (!c.tracks.has(h.shapeTrack)) errors.push(`${w}: shapeTrack ${h.shapeTrack} が無い`);
     }
+    // 溜めの解放の分かれ（v0.55.0）: 移る先がある・段階は 0〜段階の数・最後は段階 0 で必ずどれかへ移る
+    const rel = a.charge?.release;
+    if (rel) {
+      for (const r of rel) {
+        if (!c.actions.has(r.into)) errors.push(`${w}: charge.release の ${r.into} が無い`);
+        if (!Number.isInteger(r.level) || r.level < 0 || r.level > a.charge!.levelTicks.length) errors.push(`${w}: charge.release の段階 ${r.level} が不正`);
+      }
+      const last = rel[rel.length - 1];
+      if (!last || last.level !== 0 || last.moving !== undefined) errors.push(`${w}: charge.release の最後は、段階 0・動きを問わないもの（どの放し方でも移る先がある）`);
+      if (a.hitWindows.length > 0) errors.push(`${w}: charge.release を持つ行動は溜めて待つだけ（判定は移った先が持つ）`);
+    }
   }
   for (const f of c.families.values()) {
     const w = `family ${f.id}`;

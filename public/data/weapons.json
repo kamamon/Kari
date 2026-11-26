@@ -101,8 +101,8 @@
     {
       "id": "war_maul",
       "edge": { "wearPerMotion": 1.3, "label": "打面" },
-      "labels": { "main": "叩く", "sub": "溜め叩き" },
-      "summary": "大槌。遅くて重い打撃。主は叩きつけ → 横殴り。副を押し続けて溜め、離して叩きつける。守りは無い。",
+      "labels": { "main": "叩く", "sub": "横殴り", "special": "溜め" },
+      "summary": "大槌。遅くて重い打撃。主は叩きつけ → 叩きつけ → 振り上げ、副は横殴り。固有を押し続けて溜め（溜めながら歩ける）、放した時の段階で溜め叩き・振り上げ・大叩きつけ（動きながらなら回転攻撃）。頭を叩くと気絶をためる。守りは無い。",
       "name": "大槌",
       "twoHanded": true,
       "otherHandAlong": 0.5,
@@ -112,16 +112,20 @@
       "blade": { "from": 0.95, "to": 1.27, "radius": 0.2 },
       "actions": {
         "main": "player.war_maul.smash",
-        "sub": "player.war_maul.charge",
+        "sub": "player.war_maul.swing",
         "drawAttack": "player.war_maul.draw_smash",
         "draw": "player.war_maul.draw",
-        "sheathe": "player.war_maul.sheathe"
+        "sheathe": "player.war_maul.sheathe",
+        "special": "player.war_maul.charge"
       },
       "cancelNames": {
         "wm_smash": "player.war_maul.smash",
-        "wm_swing": "player.war_maul.swing"
+        "wm_smash2": "player.war_maul.smash2",
+        "wm_upswing": "player.war_maul.upswing",
+        "wm_swing": "player.war_maul.swing",
+        "wm_charge": "player.war_maul.charge"
       },
-      "cancelButtons": { "wm_swing": "main" },
+      "cancelButtons": { "wm_smash2": "main", "wm_upswing": "main", "wm_charge": "special" },
       "guard": null
     },
     {

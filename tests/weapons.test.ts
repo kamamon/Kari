@@ -297,28 +297,81 @@ describe('双剣', () => {
 });
 
 describe('大槌', () => {
-  it('主ボタンを続けて押すと、叩きつけ → 横殴り とつながり、どちらも打撃で当たる', () => {
+  it('主ボタンを続けて押すと、叩きつけ → 叩きつけ（二）→ 振り上げ とつながり、どれも打撃で頭に当たる（v0.55.0）', () => {
     const sim = mk('war_maul');
     placeInFrontOfHead(sim, 1.2);
-    const evs = run(sim, 150, (i) => (i % 10 === 0 ? press(Btn.Main) : frame()));
-    expect(starts(evs).slice(0, 2)).toEqual(['player.war_maul.smash', 'player.war_maul.swing']);
+    const evs = run(sim, 200, (i) => (i % 10 === 0 ? press(Btn.Main) : frame()));
+    expect(starts(evs).slice(0, 3)).toEqual(['player.war_maul.smash', 'player.war_maul.smash2', 'player.war_maul.upswing']);
     const h = hits(evs);
-    expect(h.length).toBeGreaterThanOrEqual(2);
+    expect(h.length).toBeGreaterThanOrEqual(3);
     expect(h.every((x) => x.windowId === 'head')).toBe(true);
-    expect(content.actions.get('player.war_maul.smash')!.hitWindows[0]!.damageType).toBe('blunt');
+    for (const a of ['smash', 'smash2', 'upswing']) expect(content.actions.get(`player.war_maul.${a}`)!.hitWindows[0]!.damageType).toBe('blunt');
   });
 
-  it('副ボタンを押し続けて溜めるほど、叩きつけが強い', () => {
-    const smash = (holdTicks: number): number => {
-      const sim = mk('war_maul');
-      placeInFrontOfHead(sim, 1.2);
-      const h = hits(run(sim, holdTicks + 80, (i) => (i === 0 ? press(Btn.Sub) : i < holdTicks ? hold(Btn.Sub) : frame())));
-      expect(h, `溜め ${holdTicks}`).toHaveLength(1);
-      return h[0]!.damage;
-    };
-    const d0 = smash(2), d2 = smash(90), d3 = smash(125);
-    expect(d2).toBeGreaterThan(d0 * 1.5);
-    expect(d3).toBeGreaterThan(d2);
+  it('副は構えからの横殴り。連係の途中の副でも横殴りへ移る', () => {
+    const sim = mk('war_maul');
+    placeInFrontOfHead(sim, 1.2);
+    const a = run(sim, 80, (i) => (i === 0 ? press(Btn.Sub) : frame()));
+    expect(starts(a)).toEqual(['player.war_maul.swing']);
+    expect(hits(a)).toHaveLength(1);
+    const b = mk('war_maul');
+    placeInFrontOfHead(b, 1.2);
+    const c = run(b, 120, (i) => (i === 0 ? press(Btn.Main) : i === 40 ? press(Btn.Sub) : frame()));
+    expect(starts(c)).toEqual(['player.war_maul.smash', 'player.war_maul.swing']);
+  });
+
+  /** 固有を holdTicks 押し続けて放す。movingAtRelease ならば、放す前後の数 tick だけスティックを横へ倒す（放した tick に倒していれば「動きながら」） */
+  const chargeRelease = (holdTicks: number, movingAtRelease = false, after = 160): { starts: string[]; hits: Hit[]; level: number } => {
+    const sim = mk('war_maul');
+    placeInFrontOfHead(sim, 1.2);
+    const evs = run(sim, holdTicks + after, (i) => {
+      if (i === 0) return press(Btn.Special);
+      const move = movingAtRelease && i >= holdTicks - 4 && i <= holdTicks + 1 ? { moveX: 1 } : {};
+      if (i < holdTicks) return frame({ held: Btn.Special, ...move });
+      return frame(move);
+    });
+    const lv = evs.filter((e) => e.type === 'charge_level').map((e) => (e as Extract<SimEvent, { type: 'charge_level' }>).level);
+    return { starts: starts(evs), hits: hits(evs), level: lv.length > 0 ? Math.max(...lv) : 0 };
+  };
+
+  it('固有を押し続けて溜め、放した時の段階で分かれる: 0・1 = 溜め叩き、2 = 溜め振り上げ、3 で止まっていれば大叩きつけ（2 回）（v0.55.0）', () => {
+    const lv1 = chargeRelease(45);
+    expect(lv1.level).toBe(1);
+    expect(lv1.starts).toEqual(['player.war_maul.charge', 'player.war_maul.charge_smash']);
+    expect(lv1.hits).toHaveLength(1);
+    const lv2 = chargeRelease(80);
+    expect(lv2.level).toBe(2);
+    expect(lv2.starts).toEqual(['player.war_maul.charge', 'player.war_maul.charge_upswing']);
+    expect(lv2.hits).toHaveLength(1);
+    expect(lv2.hits[0]!.damage).toBeGreaterThan(lv1.hits[0]!.damage * 1.3);
+    const lv3 = chargeRelease(115);
+    expect(lv3.level).toBe(3);
+    expect(lv3.starts).toEqual(['player.war_maul.charge', 'player.war_maul.pound']);
+    expect(lv3.hits.map((h) => h.windowId)).toEqual(['head1', 'head2']);
+    expect(lv3.hits[1]!.damage).toBeGreaterThan(lv2.hits[0]!.damage);
+    // すぐ放しても（段階 0）、溜め叩き
+    expect(chargeRelease(3).starts).toEqual(['player.war_maul.charge', 'player.war_maul.charge_smash']);
+  });
+
+  it('段階 3 で、スティックを倒しながら放すと回転攻撃: 体ごと 2 回転して周りを殴り、締めの叩きつけ（v0.55.0）', () => {
+    const r = chargeRelease(115, true, 200);
+    expect(r.starts).toEqual(['player.war_maul.charge', 'player.war_maul.spin']);
+    const ids = r.hits.map((h) => h.windowId);
+    expect(ids).toContain('head');
+    expect(ids.filter((x) => x.startsWith('spin')).length).toBeGreaterThanOrEqual(1);
+    expect(content.actions.get('player.war_maul.spin')!.spin).toEqual({ from: 12, to: 80, degrees: -720 });
+  });
+
+  it('溜めている間は歩け（構えたまま）、スタミナが減って戻らない。回避へ移れる', () => {
+    const sim = mk('war_maul');
+    sim.player.drawn = true;
+    const z0 = sim.player.pos.z;
+    run(sim, 70, (i) => (i === 0 ? press(Btn.Special) : frame({ held: Btn.Special, moveZ: 1 })));
+    expect(sim.player.action?.def.actionId).toBe('player.war_maul.charge');
+    expect(sim.player.pos.z - z0).toBeGreaterThan(0.8);
+    expect(sim.player.stamina).toBeLessThan(100 - 5);
+    const evs = run(sim, 2, (i) => (i === 0 ? frame({ held: Btn.Special, pressed: Btn.Dodge }) : frame({ held: Btn.Special })));
+    expect(starts(evs)).toEqual(['player.common.roll']);
   });
 });
 

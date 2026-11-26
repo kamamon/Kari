@@ -449,6 +449,12 @@ function freeMove(p: PlayerState, def: ActionDef, t: number, inp: InputFrame, ct
   p.moveSpeed = fm.speed * mag;
 }
 
+/** 溜めを放した時に移る行動（charge.release の上から、段階と動いているかが合う最初のもの）。分かれが無ければ null */
+export function chargeReleaseOf(def: ActionDef, level: number, moving: boolean): string | null {
+  for (const r of def.charge?.release ?? []) if (level >= r.level && (r.moving === undefined || r.moving === moving)) return r.into;
+  return null;
+}
+
 function stepAction(p: PlayerState, inp: InputFrame, ctx: SimCtx, depth = 0): void {
   const run = p.action!;
   run.advanced = false;
@@ -468,7 +474,7 @@ function stepAction(p: PlayerState, inp: InputFrame, ctx: SimCtx, depth = 0): vo
 
   // 溜め: holdTick で止まり、ボタンを離す（または上限、スタミナ切れ）で続きへ進む
   if (def.charge && run.tick === def.charge.holdTick && !run.released) {
-    const b = def.charge.button === 'main' ? Btn.Main : Btn.Sub;
+    const b = def.charge.button === 'main' ? Btn.Main : def.charge.button === 'sub' ? Btn.Sub : Btn.Special;
     const drain = def.charge.staminaPerSec ?? 0;
     if (inp.held & b && run.chargeTicks < def.charge.maxHoldTicks && (drain <= 0 || p.stamina > 0)) {
       run.chargeTicks++;
@@ -486,6 +492,14 @@ function stepAction(p: PlayerState, inp: InputFrame, ctx: SimCtx, depth = 0): vo
       return;
     }
     run.released = true;
+    // 放した時の分かれ（大槌。v0.55.0）: 段階と、スティックを倒しているかで、別の行動へ移る
+    const into = chargeReleaseOf(def, run.chargeLevel, mag > MOVE_DEADZONE);
+    if (into) {
+      const next = startAction(p, into, ctx);
+      next.chargeLevel = run.chargeLevel;
+      next.chargeTicks = run.chargeTicks;
+      return stepAction(p, inp, ctx, 1);
+    }
   }
 
   // キャンセルは定義した区間でだけ受け付ける

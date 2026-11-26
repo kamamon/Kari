@@ -74,13 +74,20 @@ export interface ActionEventDef {
 /** 溜め。holdTick で動作を止め、ボタンを離すと続きへ進む。溜めない場合の時間は元の技と同じ。 */
 export interface ChargeDef {
   holdTick: number;
-  button: 'main' | 'sub';
+  /** 押し続けるボタン。special は固有ボタン（大槌の溜め。v0.55.0） */
+  button: 'main' | 'sub' | 'special';
   levelTicks: number[];
   maxHoldTicks: number;
   coefficientScale: number[];
   hitstopBonus: number[];
   /** 溜めている間に減るスタミナ（毎秒）。0 になると自動で放つ（環弓）。 */
   staminaPerSec?: number;
+  /**
+   * 放した時に、溜めの段階と動いているかで、別の行動へ移る（大槌。v0.55.0。2G の溜めの解放の分かれ）。上から順に、
+   * 段階が level 以上で、moving が書いてあればスティックを倒しているか（true）・いないか（false）が合うものを選ぶ。
+   * 書いてあれば、この行動は溜めて待つだけ（放した後の判定は、移った先の行動が持つ）
+   */
+  release?: { level: number; moving?: boolean; into: string }[];
 }
 
 /** 矢を放つ。speed と coefficient は溜めの段階ごと（溜めの無い技は先頭の値）。 */

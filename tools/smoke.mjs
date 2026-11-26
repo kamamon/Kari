@@ -1740,6 +1740,62 @@ const startTraining = async (page, tap = false) => {
   await ctx.close();
 }
 
+// ---- 大槌の溜め（v0.55.0。#19 の H03）: 主の 3 段（叩きつけ → 叩きつけ（二）→ 振り上げ）、固有を押し続けて溜めながら歩き、
+// 段階 2 で放すと溜め振り上げ、段階 3 で動きながら放すと回転攻撃（体が後ろを向く）。ボタンの表示名、新しい動きはどれも描ける ----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false);
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  await page.locator('.base-weapon[data-weapon="weapon.war_maul.001"]').click();
+  await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy'), 6000, 'weapon.war_maul.001');
+  await startTraining(page);
+  await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+  await page.evaluate(() => {
+    const v = window.__vh, s = v.sim, m = s.monsters[0], p = s.player;
+    m.aiEnabled = false;
+    v.clock.advance = () => 0;
+    p.mode = 'free'; p.action = null; p.drawn = true;
+    p.pos = { x: m.pos.x, y: 0, z: m.pos.z - 1.75 - 1.2 }; p.prevPos = { ...p.pos }; p.yaw = 0; p.prevYaw = 0;
+  });
+  // ticks: tick ごとの [押している, 押した, 左右, 前後]。stopAt の技がその tick まで進んだら止める
+  const drive = (ticks, stopAt) => page.evaluate(([ticks, stopAt]) => {
+    const s = window.__vh.sim, p = s.player;
+    const seen = [];
+    for (const [held, pressed, mx, mz] of ticks) {
+      s.step({ moveX: mx, moveZ: mz, held, pressed, released: 0 });
+      for (const e of s.drainEvents()) if (e.type === 'action_start') seen.push(e.actionId.replace('player.war_maul.', ''));
+      if (stopAt && p.action?.def.actionId === `player.war_maul.${stopAt[0]}` && p.action.tick >= stopAt[1]) break;
+    }
+    return { now: p.action?.def.actionId.replace('player.war_maul.', '') ?? null, yaw: Math.round(p.yaw * 100) / 100, z: Math.round(p.pos.z * 100) / 100, level: p.action?.chargeLevel ?? null, st: Math.round(p.stamina), seen };
+  }, [ticks, stopAt]);
+  const T = (n, f) => Array.from({ length: n }, (_, i) => f(i));
+  const frames = async () => page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r({
+    missing: [...window.__vh.view.missingClips],
+    special: document.querySelector('.tbtn-special')?.textContent ?? null,
+    sub: document.querySelector('.tbtn-sub')?.textContent ?? null,
+  })))));
+  const chain = await drive(T(200, (i) => (i % 10 === 0 ? [1, 1, 0, 0] : [0, 0, 0, 0])), ['upswing', 14]);
+  const f1 = await frames();
+  await page.screenshot({ path: `${OUT}85f_war_maul_upswing.png` });
+  await drive(T(60, () => [0, 0, 0, 0]));
+  const z0 = await page.evaluate(() => window.__vh.sim.player.pos.z);
+  const walk = await drive(T(80, (i) => [8, i === 0 ? 8 : 0, 0, i > 12 ? 1 : 0]));
+  const f2 = await frames();
+  await page.screenshot({ path: `${OUT}85g_war_maul_charge_walk.png` });
+  const up = await drive(T(30, () => [0, 0, 0, 0]), ['charge_upswing', 12]);
+  await drive(T(80, () => [0, 0, 0, 0]));
+  const spin = await drive([...T(118, (i) => [8, i === 0 ? 8 : 0, i > 115 ? 1 : 0, 0]), ...T(60, (i) => [0, 0, i < 2 ? 1 : 0, 0])], ['spin', 29]);
+  const f3 = await frames();
+  await page.screenshot({ path: `${OUT}85h_war_maul_spin.png` });
+  check('大槌（v0.55.0）: 主の連係は 叩きつけ → 叩きつけ（二）→ 振り上げ。固有を押し続けると溜めたまま歩け（スタミナが減る）、段階 2 で放すと溜め振り上げ、段階 3 で動きながら放すと回転攻撃（途中で体が後ろを向く）。ボタンは「溜め」「横殴り」。新しい動きはどれも描ける',
+    chain.seen.join() === 'smash,smash2,upswing' && chain.now === 'upswing'
+      && walk.now === 'charge' && walk.level === 2 && walk.z - z0 > 0.8 && walk.st < 100
+      && up.now === 'charge_upswing' && spin.now === 'spin' && Math.abs(Math.abs(spin.yaw) - Math.PI) < 0.3
+      && f1.special === '溜め' && f1.sub === '横殴り' && [...f1.missing, ...f2.missing, ...f3.missing].length === 0,
+    JSON.stringify({ chain, walk: { ...walk, z0 }, up, spin, f1, f2, f3 }));
+  await ctx.close();
+}
+
 // ---- 弱った足取り（v0.52.0。#19 の M05）: 弱って巣へ向かう大型が歩くと、一歩ごとに体が片側へ傾き、頭が下がる。弱っていなければ傾かない ----
 {
   const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');
