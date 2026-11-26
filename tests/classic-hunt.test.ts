@@ -63,10 +63,10 @@ describe('入力の表（H01）: 押下・同時押し・1 押し 1 命令', () 
     expect(starts(run(sim, 3, (i) => (i === 0 ? press(Btn.Sub) : i === 2 ? press(Btn.Main) : frame())))).toEqual([hb('side_sweep'), hb('upswing')]);
   });
 
-  it('複合の技を持たない武器（護刃）は、同時押しを主と副として扱う（これまでどおり、主の技が出る）', () => {
-    const sim = drawn(mk('guard_blade'));
+  it('複合の技を持たない武器（大槌。v0.62.0 までは護刃）は、同時押しを主と副として扱う（これまでどおり、主の技が出る）', () => {
+    const sim = drawn(mk('war_maul'));
     const evs = run(sim, 1, () => press(Btn.Main | Btn.Sub));
-    expect(starts(evs)).toEqual(['player.guard_blade.slash1']);
+    expect(starts(evs)).toEqual(['player.war_maul.smash']);
   });
 
   it('被弾・転倒の間に押した入力は消える（起き上がった時に、前の入力で勝手に動かない）', () => {

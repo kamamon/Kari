@@ -176,7 +176,7 @@ describe('弾かれ', () => {
     expect(back).toBeGreaterThan(-0.31);
   });
 
-  it('弾かれた後は、同じ行動の残りの判定は出ない（双剣の突き込みは 2 回目が出ない）', () => {
+  it('弾かれた後は、同じ行動の残りの判定は出ない（双剣の斬り払いは 2 回目が出ない。v0.62.0 までは突き込み）', () => {
     const normal = sim1(content, 'weapon.twin_blades.001');
     placeInFrontOfHead(normal, 0.9);
     expect(of(run(normal, 60, (i) => (i === 0 ? press(Btn.Combo) : frame())), 'hit')).toHaveLength(2);

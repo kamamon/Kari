@@ -54,8 +54,8 @@
     {
       "id": "guard_blade",
       "edge": { "wearPerMotion": 1.5, "label": "刃" },
-      "labels": { "main": "斬る", "sub": "横斬り", "special": "防御" },
-      "summary": "短剣と盾。張り付いて手数。斬り下ろし（横斬り）から横斬り・斬り返し・回転斬りへつながり、連係の途中の副で盾打ち。防御を構えたまま道具が使え、構えから斬れる。",
+      "labels": { "main": "斬る", "sub": "横斬り", "special": "防御", "combo": "跳び斬り" },
+      "summary": "短剣と盾。張り付いて手数。斬り下ろし（副は横斬り）から横斬り・斬り返し・回転斬りへつながり、連係の途中の副で盾打ち。主と副の同時押しは跳び斬り。防御を構えたまま道具が使え、構えから主でガード斬り、副で盾打ち。",
       "name": "護刃",
       "twoHanded": false,
       "drawnMoveSpeed": 3.6,
@@ -66,6 +66,8 @@
         "main": "player.guard_blade.slash1",
         "sub": "player.guard_blade.side",
         "guardMain": "player.guard_blade.guard_slash",
+        "guardSub": "player.guard_blade.bash",
+        "combo": "player.guard_blade.jump",
         "drawAttack": "player.guard_blade.lunge",
         "draw": "player.guard_blade.draw",
         "sheathe": "player.guard_blade.sheathe"
@@ -76,7 +78,8 @@
         "gb_slash2": "player.guard_blade.slash2",
         "gb_return": "player.guard_blade.return",
         "gb_round": "player.guard_blade.round",
-        "gb_bash": "player.guard_blade.bash"
+        "gb_bash": "player.guard_blade.bash",
+        "gb_jump": "player.guard_blade.jump"
       },
       "cancelButtons": { "gb_slash2": "main", "gb_return": "main", "gb_round": "main", "gb_bash": "sub" },
       "itemsWhileGuarding": true,
@@ -133,8 +136,8 @@
     {
       "id": "twin_blades",
       "edge": { "wearPerMotion": 1.2, "label": "刃" },
-      "labels": { "main": "斬る", "sub": "回転斬り", "special": "猛り", "combo": "突き込む" },
-      "summary": "双剣。両手の剣で手数。主は右・左・交差の連係、副は 1 回転して周りを斬る回転斬り、主と副の同時押しは突き込み。固有で「猛り」に入ると、スタミナが減り続ける間だけ威力が上がり、同時押しが連ね斬りになる。守りは無い。",
+      "labels": { "main": "斬る", "sub": "回転斬り", "special": "猛り", "combo": "斬り払い" },
+      "summary": "双剣。両手の剣で手数。主は右・左・交差の連係、副は 1 回転して周りを斬る回転斬り、主と副の同時押しは、踏み込んで両方の剣を下から前上へ払う斬り払い。固有で「猛り」に入ると、スタミナが減り続ける間だけ威力が上がり、同時押しが連ね斬りになる。守りは無い。",
       "name": "双剣",
       "twoHanded": false,
       "drawnMoveSpeed": 3.8,
@@ -144,7 +147,7 @@
       "actions": {
         "main": "player.twin_blades.slash1",
         "sub": "player.twin_blades.round",
-        "combo": "player.twin_blades.stab",
+        "combo": "player.twin_blades.sweep",
         "drawAttack": "player.twin_blades.draw_cross",
         "draw": "player.twin_blades.draw",
         "sheathe": "player.twin_blades.sheathe",
@@ -155,14 +158,14 @@
         "tb_slash2": "player.twin_blades.slash2",
         "tb_cross": "player.twin_blades.cross",
         "tb_round": "player.twin_blades.round",
-        "tb_stab": "player.twin_blades.stab",
+        "tb_sweep": "player.twin_blades.sweep",
         "tb_demon": "player.twin_blades.demon_on"
       },
       "cancelButtons": { "tb_slash2": "main", "tb_cross": "main", "tb_demon": "special" },
       "demon": {
         "staminaPerSec": 6,
         "damageScale": 1.15,
-        "swap": { "player.twin_blades.stab": "player.twin_blades.flurry", "player.twin_blades.demon_on": "player.twin_blades.demon_off" },
+        "swap": { "player.twin_blades.sweep": "player.twin_blades.flurry", "player.twin_blades.demon_on": "player.twin_blades.demon_off" },
         "labels": { "special": "解く", "combo": "連ね斬り" }
       },
       "offhand": "blade_left",

@@ -129,6 +129,37 @@ describe('護刃（短剣と盾）', () => {
     expect(sim.player.mode).toBe('guard');
   });
 
+  it('v0.63.0（2G）: 防御を構えたまま副で盾打ち（打撃で当たる）。防御を押し続けていれば、打った後は防御へ戻る', () => {
+    const sim = mk('guard_blade');
+    placeInFrontOfHead(sim, 1.2);
+    run(sim, 10, () => hold(Btn.Special));
+    expect(sim.player.mode).toBe('guard');
+    const evs = run(sim, 70, (i) => (i === 0 ? { ...press(Btn.Sub), held: Btn.Sub | Btn.Special } : hold(Btn.Special)));
+    expect(starts(evs)).toEqual(['player.guard_blade.bash']);
+    expect(hits(evs).map((x) => [x.actionId, x.windowId])).toEqual([['player.guard_blade.bash', 'shield']]);
+    expect(sim.player.mode).toBe('guard');
+  });
+
+  it('v0.63.0（2G の △+○）: 主と副の同時押しは跳び斬り。両足が浮いて前へ 1m ほど跳び、着きながら斬って当たる。連係の途中からも出る。抜刀攻撃は踏み込み斬りのまま', () => {
+    const sim = mk('guard_blade');
+    const m = sim.monsters[0]!;
+    sim.player.pos = { x: m.pos.x, y: 0, z: m.pos.z - 1.75 - 2.0 };
+    sim.player.prevPos = { ...sim.player.pos };
+    sim.player.yaw = 0;
+    sim.player.drawn = true;
+    const z0 = sim.player.pos.z;
+    const evs = run(sim, 60, (i) => (i === 0 ? press(Btn.Main | Btn.Sub) : frame()));
+    expect(starts(evs)).toEqual(['player.guard_blade.jump']);
+    expect(hits(evs).map((x) => x.actionId)).toEqual(['player.guard_blade.jump']);
+    expect(sim.player.pos.z - z0).toBeGreaterThan(0.95);
+    // 連係の 1 段目の後半から
+    const chain = mk('guard_blade');
+    placeInFrontOfHead(chain, 1.2);
+    const cevs = run(chain, 40, (i) => (i === 0 ? press(Btn.Main) : i === 16 ? press(Btn.Main | Btn.Sub) : frame()));
+    expect(starts(cevs)).toEqual(['player.guard_blade.slash1', 'player.guard_blade.jump']);
+    expect(content.families.get('guard_blade')!.actions.drawAttack).toBe('player.guard_blade.lunge');
+  });
+
   it('早くから構えていると、ふつうの防御になる（削りとスタミナ消費がある）', () => {
     const sim = underSlam('guard_blade');
     const evs = run(sim, 120, () => hold(Btn.Special));
@@ -204,12 +235,15 @@ describe('双剣', () => {
     expect(sim.player.mode).toBe('free');
   });
 
-  it('主と副の同時押しは突き込み（2 回当たる）。猛りの間は、連ね斬り（5 回当たる）に替わる', () => {
+  it('主と副の同時押しは斬り払い（v0.63.0。2G の △+○。右・左の順に 2 回当たり、0.5m 踏み込む）。猛りの間は、連ね斬り（5 回当たる）に替わる', () => {
     const normal = mk('twin_blades');
     placeInFrontOfHead(normal, 0.9);
+    const z0 = normal.player.pos.z;
     const a = run(normal, 60, (i) => (i === 0 ? press(Btn.Main | Btn.Sub) : frame()));
-    expect(starts(a)).toEqual(['player.twin_blades.stab']);
-    expect(hits(a)).toHaveLength(2);
+    expect(starts(a)).toEqual(['player.twin_blades.sweep']);
+    expect(hits(a).map((h) => h.windowId)).toEqual(['blade_r', 'blade_l']);
+    expect(normal.player.pos.z - z0).toBeGreaterThan(0.4);
+    expect(content.actions.has('player.twin_blades.stab')).toBe(false);
 
     const demon = mk('twin_blades');
     placeInFrontOfHead(demon, 0.9);

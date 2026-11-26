@@ -2,6 +2,7 @@
 // 座標はアクターのローカル（m、Y 上、+Z 前、+X 左）。数値は机上の初期値。
 // v0.53.0（#19 の H03・01 の 5 章の片手剣。D-146）: 2G を基準にした連係へ組み直した。主 = 斬り下ろし → 横斬り → 斬り返し → 回転斬り、
 // 副 = 横斬り（構えから）。盾打ちは連係の途中の副。防御から主でガード斬り。突きと受け流しは外した。動きと値は Kari の仮の値（原作を測っていない）
+// v0.63.0（docs/spec.md の 32.29、D-159。依頼 11 の第 2 便の資料確認）: 主と副の同時押し = 跳び斬り（2G の △+○ のジャンプ斬り）、防御から副 = 盾打ち。
 import { D2R, curve, family, sheathOf } from './lib.mjs';
 
 export function guardBlade() {
@@ -46,6 +47,8 @@ export function guardBlade() {
   curve('w_step_030', [[0, 0], [6, 0], [14, 0.3], [40, 0.3]]);
   curve('w_step_040', [[0, 0], [6, 0], [14, 0.4], [40, 0.4]]);
   curve('w_lunge_120', [[0, 0], [4, 0], [26, 1.15], [32, 1.2], [50, 1.2]]);
+  // 跳び斬り: 沈んでから前へ跳び（7〜21 tick は両足が浮く）、着きながら斬り下ろす
+  curve('w_jump_105', [[0, 0], [6, 0], [8, 0.06], [12, 0.36], [16, 0.66], [20, 0.92], [23, 1.02], [26, 1.05], [60, 1.05]]);
   // 回転斬り: 回る前に半歩だけ出る（回る間は、その場で回る。軸足の母指球が地面に残るように）
   curve('w_round_012', [[0, 0], [3, 0], [8, 0.12], [60, 0.12]]);
 
@@ -192,6 +195,26 @@ export function guardBlade() {
   });
   trackOf('gb_lunge', B, lunge);
 
+  // ---- 跳び斬り（主と副の同時押し。v0.63.0。2G の片手剣の △+○ のジャンプ斬りに当たる Kari の形）----
+  // 腰を落として剣を右肩の上へ担ぎ（〜5）、両足で蹴って前へ跳ぶ（7〜21 は両足が浮く。頂きで腰が 0.06m 上がる）。
+  // 跳んでいる間に剣を頭上へ振りかぶり、着きながら右上から左下へ斬り下ろす（18〜24）。盾は体の前に残す。深くしゃがんで着き、構えへ戻る。
+  const jump = motion('gb_jump_01', {
+    dur: 48, from: idle, root: 'w_jump_105',
+    keys: [
+      { t: 5, hip: [0, -0.15, -0.02], hipR: [8, -30, 0], spine: [8, -6, 0], chest: [4, -10, 0], gripA: [-0.32, 1.4, 0.06], dirA: [-0.25, 0.8, -0.55], edgeA: [0.2, 0.45, 0.87], offA: [0, 1.2, 0.4] },
+      { t: 9, hip: [0, -0.04, 0.02], hipR: [4, -26, 0], spine: [4, -5, 0], chest: [1, -8, 0], gripA: [-0.28, 1.56, 0.04], dirA: [-0.2, 0.86, -0.47], edgeA: [0.15, 0.42, 0.9] },
+      { t: 13, hip: [0, 0.06, 0.04], hipR: [2, -24, 0], spine: [0, -5, 0], chest: [-2, -8, 0], gripA: [-0.24, 1.64, 0.1], dirA: [-0.15, 0.95, -0.27], edgeA: [0.1, 0.27, 0.96] },
+      { t: 17, hip: [0, 0.03, 0.04], hipR: [4, -20, 0], spine: [5, -4, 0], chest: [2, -2, 0], gripA: [-0.24, 1.5, 0.22], dirA: [-0.12, 0.92, 0.36], edgeA: [0.3, -0.2, 0.9] },
+      { t: 20, hip: [0.01, -0.06, 0.04], hipR: [5, -10, 0], spine: [8, -2, 0], chest: [3, 8, 0], gripA: [-0.06, 1.3, 0.5], dirA: [0.12, 0.3, 0.95], edgeA: [0.5, -0.8, 0.2], offA: [0.06, 1.18, 0.34] },
+      { t: 23, hip: [0.02, -0.16, 0.05], hipR: [8, -2, 0], spine: [12, 2, 0], chest: [5, 18, 0], gripA: [0.12, 0.96, 0.44], dirA: [0.62, -0.42, 0.66], edgeA: [0.6, -0.75, -0.2], offA: [0.14, 1.1, 0.28] },
+      { t: 28, hip: [0.02, -0.17, 0.04], hipR: [8, 0, 0], spine: [12, 2, 0], chest: [5, 20, 0], gripA: [0.15, 0.92, 0.38], dirA: [0.68, -0.38, 0.62], edgeA: [0.6, -0.75, -0.2], offA: [0.15, 1.1, 0.26] },
+      { t: 37, hip: [0, -0.08, 0.01], hipR: [4, -16, 0], spine: [6, -3, 0], chest: [3, -2, 0], gripA: [-0.2, 1.06, 0.26], dirA: [0.2, 0.7, 0.68], edgeA: [0.25, -0.6, 0.75], offA: [0, 1.2, 0.38] },
+    ],
+    // 両足とも 7〜21 で浮く（右足は少し遅れて着く）。着いた後、右足を構えの所へ引き直す
+    feet: { L: [[7, 20, 0.1, 0.2, 6, 0.3]], R: [[8, 21, -0.14, -0.1, -42, 0.26], [31, 38, -0.14, -0.2, -42, 0.04]] },
+  });
+  trackOf('gb_jump', B, jump);
+
   // ---- 抜刀・納刀 ----
   // 抜刀: 胸を左へひねって右手を左腰の柄へ。鞘の向きに沿って引き抜き、体の左で切っ先を前へ返して構える。左手は背の盾を取る。
   const draw = motion('gb_draw_01', {
@@ -228,14 +251,16 @@ export function guardBlade() {
 
   // ---- 技のデータ ----
   const cut = (t, coef, o = {}) => [{ id: 'blade_main', track: t, coef, hitstop: 2, ...o }];
-  action('slash1', { clip: 'gb_slash1_01', dur: 26, active: [8, 13], track: 'gb_slash1', hits: cut('gb_slash1', 0.24), curve: 'w_step_015', turn: [6, 360], sound: [7, 'hb_swing_02'], cancels: [[14, 26, ['gb_slash2', 'gb_bash', 'roll']]] });
-  action('side', { clip: 'gb_side_01', dur: 28, active: [9, 14], track: 'gb_side', hits: cut('gb_side', 0.26), curve: 'w_step_015', turn: [6, 360], sound: [8, 'hb_swing_02'], cancels: [[15, 28, ['gb_slash2', 'gb_bash', 'roll']]] });
-  action('slash2', { clip: 'gb_slash2_01', dur: 26, active: [7, 12], track: 'gb_slash2', hits: cut('gb_slash2', 0.3), curve: 'w_step_015', turn: [5, 360], sound: [6, 'hb_swing_02'], cancels: [[13, 26, ['gb_return', 'gb_bash', 'roll']]] });
+  action('slash1', { clip: 'gb_slash1_01', dur: 26, active: [8, 13], track: 'gb_slash1', hits: cut('gb_slash1', 0.24), curve: 'w_step_015', turn: [6, 360], sound: [7, 'hb_swing_02'], cancels: [[14, 26, ['gb_slash2', 'gb_bash', 'gb_jump', 'roll']]] });
+  action('side', { clip: 'gb_side_01', dur: 28, active: [9, 14], track: 'gb_side', hits: cut('gb_side', 0.26), curve: 'w_step_015', turn: [6, 360], sound: [8, 'hb_swing_02'], cancels: [[15, 28, ['gb_slash2', 'gb_bash', 'gb_jump', 'roll']]] });
+  action('slash2', { clip: 'gb_slash2_01', dur: 26, active: [7, 12], track: 'gb_slash2', hits: cut('gb_slash2', 0.3), curve: 'w_step_015', turn: [5, 360], sound: [6, 'hb_swing_02'], cancels: [[13, 26, ['gb_return', 'gb_bash', 'gb_jump', 'roll']]] });
   action('return', { clip: 'gb_return_01', dur: 30, active: [8, 14], track: 'gb_return', hits: cut('gb_return', 0.32), curve: 'w_step_015', turn: [5, 360], sound: [8, 'hb_swing_02'], cancels: [[15, 30, ['gb_round', 'roll']]] });
   action('round', { clip: 'gb_round_01', dur: 60, active: [11, 44], track: 'gb_round', hits: cut('gb_round', 0.5, { hitstop: 3 }), curve: 'w_round_012', turn: [6, 360], spin: { from: 10, to: 42, degrees: -360 }, sound: [10, 'hb_swing_01'], cancels: [[50, 60, ['roll']]] });
   action('bash', { clip: 'gb_bash_01', dur: 36, active: [11, 16], track: 'gb_bash_sword', offhandTrack: 'gb_bash_shield', hits: [{ id: 'shield', track: 'gb_bash_shield', coef: 0.28, type: 'blunt', hitstop: 4, contact: 'shield' }], trail: false, curve: 'w_step_040', turn: [8, 360], sound: [10, 'hb_swing_01'], cancels: [[22, 36, ['gb_return', 'roll']]] });
   action('guard_slash', { clip: 'gb_guard_slash_01', dur: 28, active: [7, 12], track: 'gb_guard_slash', hits: cut('gb_guard_slash', 0.18), turn: [4, 240], guardWindows: [{ from: 0, to: 4 }, { from: 20, to: 28 }], sound: [6, 'hb_swing_02'], cancels: [[18, 28, ['roll']]] });
   action('lunge', { clip: 'gb_lunge_01', dur: 50, active: [22, 28], track: 'gb_lunge', hits: cut('gb_lunge', 0.48, { hitstop: 3 }), curve: 'w_lunge_120', turn: [12, 240], sound: [21, 'hb_swing_02'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }], cancels: [[35, 50, ['gb_slash1', 'gb_bash', 'roll']]] });
+  // 跳び斬り（v0.63.0。主と副の同時押し。構えから・連係の 1〜3 段の後半から）
+  action('jump', { clip: 'gb_jump_01', dur: 48, active: [18, 24], track: 'gb_jump', hits: cut('gb_jump', 0.42, { hitstop: 3 }), curve: 'w_jump_105', turn: [6, 360], sound: [17, 'hb_swing_02'], cancels: [[33, 48, ['gb_slash1', 'gb_bash', 'roll']]] });
   action('draw', { clip: 'gb_draw_01', dur: 26, track: 'gb_draw', sound: [3, 'hb_draw_01'] });
   action('sheathe', { clip: 'gb_sheathe_01', dur: 30, track: 'gb_sheathe', sound: [18, 'hb_sheathe_01'], finish: 'sheathed_idle' });
 }

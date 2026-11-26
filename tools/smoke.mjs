@@ -1653,14 +1653,15 @@ const startTraining = async (page, tap = false) => {
     p.pos = { x: m.pos.x, y: 0, z: m.pos.z - 1.75 - 1.2 }; p.prevPos = { ...p.pos }; p.yaw = 0; p.prevYaw = 0;
     const idle = { moveX: 0, moveZ: 0, held: 0, pressed: 0, released: 0 };
     for (let i = 0; i < 20; i++) { s.step(idle); s.drainEvents(); }
-    const target = `player.guard_blade.${name}`, seen = [];
-    if (name === 'guard_slash') {
+    const target = `player.guard_blade.${name === 'guard_bash' ? 'bash' : name}`, seen = [];
+    if (name === 'guard_slash' || name === 'guard_bash') {
+      const b = name === 'guard_bash' ? 2 : 1;
       for (let k = 0; k < 10; k++) { s.step({ ...idle, held: 8, pressed: k === 0 ? 8 : 0 }); s.drainEvents(); }
-      s.step({ ...idle, held: 9, pressed: 1 });
+      s.step({ ...idle, held: 8 | b, pressed: b });
       for (const e of s.drainEvents()) if (e.type === 'action_start') seen.push(e.actionId);
       for (let i = 0; i < 100 && p.action?.def.actionId === target && p.action.tick < tick; i++) { s.step({ ...idle, held: 8 }); s.drainEvents(); }
     } else {
-      const at = { side: [[0, 2]], round: [[0, 1], [15, 1], [29, 1], [44, 1]], return: [[0, 1], [15, 1], [29, 1]] }[name];
+      const at = { side: [[0, 2]], round: [[0, 1], [15, 1], [29, 1], [44, 1]], return: [[0, 1], [15, 1], [29, 1]], jump: [[0, 3]] }[name];
       for (let i = 0; i < 300; i++) {
         const b = at.find(([t]) => t === i)?.[1] ?? 0;
         s.step({ ...idle, held: b, pressed: b });
@@ -1684,6 +1685,16 @@ const startTraining = async (page, tap = false) => {
     side.now === 'player.guard_blade.side' && ret.seen.join() === 'player.guard_blade.slash1,player.guard_blade.slash2,player.guard_blade.return' && round.now === 'player.guard_blade.round' && Math.abs(Math.abs(round.yaw) - Math.PI) < 0.3
       && gs.now === 'player.guard_blade.guard_slash' && [...m1, ...m2, ...m3, ...m4].length === 0,
     JSON.stringify({ side, ret, round, gs, missing: [...m1, ...m2, ...m3, ...m4] }));
+  // v0.63.0（2G）: 主と副の同時押しで跳び斬り（ボタンは「跳び斬り」）、防御から副で盾打ち
+  const jump = await reach('jump', 14);
+  const m5 = await frames();
+  await page.screenshot({ path: `${OUT}85c2_guard_blade_jump.png` });
+  const gb = await reach('guard_bash', 12);
+  const m6 = await frames();
+  const comboLabel = await page.evaluate(() => document.querySelector('.tbtn-combo')?.textContent ?? null);
+  check('護刃（v0.63.0。2G）: 主と副の同時押しで跳び斬り（ボタンは「跳び斬り」）、防御を構えたまま副で盾打ち。新しい動きが描ける',
+    jump.now === 'player.guard_blade.jump' && gb.now === 'player.guard_blade.bash' && comboLabel === '跳び斬り' && [...m5, ...m6].length === 0,
+    JSON.stringify({ jump, gb, comboLabel, missing: [...m5, ...m6] }));
   await ctx.close();
 }
 
@@ -1744,9 +1755,17 @@ const startTraining = async (page, tap = false) => {
     round.now === 'round' && Math.abs(Math.abs(round.yaw) - Math.PI) < 0.3
       && on.now === 'demon_on' && on.demon && on.ev.join() === 'true:toggle' && f2.mark && f2.bar && f2.special === '解く' && f2.combo === '連ね斬り'
       && fl.now === 'flurry' && fl.demon && fl.stamina < 100
-      && off.now === 'demon_off' && !off.demon && off.ev.join() === 'false:toggle' && !f4.mark && !f4.bar && f4.special === '猛り' && f4.combo === '突き込む'
+      && off.now === 'demon_off' && !off.demon && off.ev.join() === 'false:toggle' && !f4.mark && !f4.bar && f4.special === '猛り' && f4.combo === '斬り払い'
       && !f1.mark && [...f1.missing, ...f2.missing, ...f3.missing, ...f4.missing].length === 0,
     JSON.stringify({ round, on, fl, off, f1, f2, f3, f4 }));
+  // v0.63.0（2G）: 猛りの外の同時押しは斬り払い（突き込みから替えた）
+  await step([], 30);
+  const sw = await step([[0, 3]], 60, ['sweep', 16]);
+  const f5 = await frames();
+  await page.screenshot({ path: `${OUT}85e2_twin_blades_sweep.png` });
+  check('双剣（v0.63.0。2G）: 猛りの外の同時押しで斬り払い（ボタンは「斬り払い」）。新しい動きが描ける',
+    sw.now === 'sweep' && sw.seen.join() === 'sweep' && !sw.demon && f5.combo === '斬り払い' && f5.missing.length === 0,
+    JSON.stringify({ sw, f5 }));
   await ctx.close();
 }
 
