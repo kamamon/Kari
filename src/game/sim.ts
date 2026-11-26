@@ -1,3 +1,4 @@
+import {individualScale,sizeMonster,scalePoint} from './individual';
 import { fortifyBonus, type ClassicGearState } from './classicGear';
 // simulation 本体。60Hz 固定 tick で step() を 1 回ずつ呼ぶ。
 // ここは DOM・Three.js・Math.random・現在時刻に触れない。同じ seed と同じ入力列なら同じ結果になる。
@@ -13,7 +14,7 @@ import { Btn, type InputFrame } from './inputFrame';
 import { defenseScale, scaleMonsterDef, totalDefense } from './rank';
 import { computeGear, skillValue, critChance, incomingElementScale, weaponElementHit, type GearEffects } from './gear';
 import { addAilment, ailmentAmount, ailmentRules, activeControl, clearAilments, startPoison, wakeFromSleep } from './ailment';
-import { applyDamageToMonster, createMonster, monsterBlockers, monsterShapes, stepMonster, type MonsterState } from './monster';
+import { applyDamageToMonster, createMonster, monsterAirborne, monsterBlockers, monsterShapes, stepMonster, type MonsterState } from './monster';
 import { questTimeLimitTicks } from './field';
 import { addMember, createHerdGroup, herdArea, herdHurt, livingMembers, slotOf, stepHerdGroup, type HerdGroup } from './herd';
 import { createRoam } from './roam';
@@ -296,8 +297,9 @@ export class Simulation implements SimCtx {
       const base = content.monsters.get(monsterId);
       if (!base) throw new Error(`monster ${monsterId} が無い`);
       // 段階が上の依頼では、強い個体（体力・部位・間隔を段階の倍率で変えた定義）が出る
-      const def = this.rank ? scaleMonsterDef(base, this.rank) : base;
-      const m = createMonster(def, quest?.monsterSpawn ?? map.monsterSpawn, 'monster#1');
+      const size=quest&&options.classicGear?individualScale(options.seed,base.id):1;
+      const def = sizeMonster(this.rank ? scaleMonsterDef(base, this.rank) : base,size);
+      const m = createMonster(def, quest?.monsterSpawn ?? map.monsterSpawn, 'monster#1');m.sizeScale=size;
       m.aiEnabled = quest ? true : options.monsterAttacks;
       if (field) {
         // 最初に居るエリア。「これまでの狩場」にあたるエリアなら依頼の位置、そうでなければエリアの中央
@@ -690,7 +692,7 @@ export class Simulation implements SimCtx {
         // 罠は大型だけが踏む（幼体は軽くて作動しない）
         if (m.dead || m.captured || m.trapTicks > 0 || m.herd) continue;
         if (Math.hypot(m.pos.x - t.x, m.pos.z - t.z) > t.radius + TRAP_REACH) continue;
-        if (!trapGroundContact(this.world, m.pos, t)) continue;
+        if (monsterAirborne(m)||!trapGroundContact(this.world, m.pos, t)) continue;
         const ticks = trapHoldTicks(t.holdTicks, m.trapCount, m.enraged, this.content.elements.trapProfiles?.[m.def.id]);
         if (ticks <= 0) continue; // 効かない相手では発動回数も増やさない。罠は有効期限まで残る
         m.trapTicks = ticks;
@@ -1369,6 +1371,7 @@ export class Simulation implements SimCtx {
         if (!inWindow(t, hw)) continue;
         if (this.ledger.count(run.instanceId, hw.id, p.id) >= hw.maxHitsPerTarget) continue;
         const sw = this.windowSweep(hw, t, m.pos, m.yaw);
+        sw.a0=scalePoint(sw.a0,m.pos,m.sizeScale);sw.b0=scalePoint(sw.b0,m.pos,m.sizeScale);sw.a1=scalePoint(sw.a1,m.pos,m.sizeScale);sw.b1=scalePoint(sw.b1,m.pos,m.sizeScale);sw.r*=m.sizeScale;
         const cap = playerHurtCapsule(p, this.content);
         const shape: WorldShape = { partIndex: 0, a: cap.a, b: cap.b, r: cap.r };
         const hit = sweepCapsule(sw.a0, sw.b0, sw.a1, sw.b1, sw.r, [shape]);
@@ -1430,7 +1433,7 @@ export class Simulation implements SimCtx {
     }
     for (const h of this.hazards) parts.push(h.x, h.z, h.warn, h.active, h.hit ? 1 : 0);
     parts.push(p.itemIndex, p.items.map((s) => s.count).join(','), p.itemUse ? `${p.itemUse.itemId}:${p.itemUse.done ? 1 : 0}` : '-', p.lastSingle ? `${p.lastSingle.key}:${p.lastSingle.instanceId}` : '-', p.carving ? p.carving.source : '-');
-    for (const m of this.monsters) parts.push(m.flashTicks,m.flashCount,m.trapTicks, m.trapCount, m.tranq, m.tranqTicks, m.captured ? 1 : 0, m.markTicks, m.seenAreaId ?? '-');
+    for (const m of this.monsters) parts.push(m.sizeScale,m.flashTicks,m.flashCount,m.trapTicks, m.trapCount, m.tranq, m.tranqTicks, m.captured ? 1 : 0, m.markTicks, m.seenAreaId ?? '-');
     for (const m of this.monsters) {
       const a = m.ailments;
       parts.push(STATUS_KINDS.map((k) => `${a.gauge[k]}/${a.count[k]}/${a.idle[k]}/${a.ticks[k]}`).join(','), a.poisonTotal, a.poisonDone, a.grace);

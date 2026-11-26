@@ -1,3 +1,4 @@
+import {scalePoint,isAirborneAction} from './individual';
 // モンスターの状態と行動選択（訓練標的とガルドロスで共通）。
 // 技は開始時に一度だけ抽選し、攻撃中に毎 tick 選び直さない。旋回は turning.untilTick まで。
 // 本体 HP・部位の耐久・切断の蓄積・怯みの蓄積・怒りは、それぞれ別の値として持つ。
@@ -77,6 +78,8 @@ export interface MonsterState {
   markTicks: number;
   flashTicks: number;
   flashCount: number;
+  /** 描画・部位・技の当たりに共通の倍率 */
+  sizeScale: number;
   /** 最後に狩人が見たエリア（同じエリアに居た時。フィールドの大型だけ。見ていなければ null） */
   seenAreaId: string | null;
 }
@@ -143,6 +146,7 @@ export function createMonster(def: MonsterDef, spawn: { x: number; z: number; ya
     markTicks: 0,
     flashTicks: 0,
     flashCount: 0,
+    sizeScale: 1,
     seenAreaId: null,
   };
 }
@@ -151,6 +155,7 @@ export function resetMonster(m: MonsterState): void {
   const fresh = createMonster(m.def, m.spawn, m.id);
   fresh.aiEnabled = m.aiEnabled;
   fresh.herd = m.herd;
+  fresh.sizeScale=m.sizeScale;
   Object.assign(m, fresh);
 }
 
@@ -187,13 +192,16 @@ export function monsterShapes(m: MonsterState): WorldShape[] {
     const shapes = severed ? part.sever!.shapesAfter : part.shapes;
     shapes.forEach((s, j) => {
       const d = grid ? grid[i]?.[severed ? part.shapes.length + j : j] : null;
-      out.push(shapeToWorld(d ? followShape(s, d, tick, dur, fol!.step) : s, i, m.pos, m.yaw));
+      const sh=shapeToWorld(d ? followShape(s, d, tick, dur, fol!.step) : s, i, m.pos, m.yaw);
+      out.push({...sh,a:scalePoint(sh.a,m.pos,m.sizeScale),b:sh.b?scalePoint(sh.b,m.pos,m.sizeScale):null,r:sh.r*m.sizeScale});
     });
   });
   return out;
 }
 
 /** プレイヤーが通り抜けられない円（ワールド座標）。 */
+export function monsterAirborne(m:MonsterState):boolean{return !m.dead&&!m.captured&&!m.trapTicks&&isAirborneAction(m.action?.def.actionId,m.action?.tick??0);}
+
 export function monsterBlockers(m: MonsterState): { x: number; z: number; r: number }[] {
   const list = m.def.collision ?? [{ z: 0, r: m.def.bodyRadius }];
   const f = forwardOf(m.yaw);
@@ -433,7 +441,7 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
     }
   }
   for (const hz of adef.hazards ?? []) {
-    if (hz.tick === t) ctx.spawnHazards(hz, player.pos, hz.origin ? toWorld(fromArr(hz.origin), m.pos, m.yaw) : undefined, def);
+    if (hz.tick === t) ctx.spawnHazards(hz, player.pos, hz.origin ? scalePoint(toWorld(fromArr(hz.origin), m.pos, m.yaw),m.pos,m.sizeScale) : undefined, def);
   }
   for (const ev of adef.events) {
     if (ev.tick === t) ctx.emit({ type: 'action_event', actor: m.id, kind: ev.type, id: ev.id, pos: { ...m.pos } });
@@ -524,7 +532,7 @@ export function applyDamageToMonster(m: MonsterState, partIndex: number, damage:
     if (severed) {
       // 切り落とした先端の落ちる位置（切断前の形状の先端）
       const tip = def.shapes[def.shapes.length - 1]!;
-      const pos = toWorld(fromArr(tip.b ?? tip.a), m.pos, m.yaw);
+      const pos = scalePoint(toWorld(fromArr(tip.b ?? tip.a), m.pos, m.yaw),m.pos,m.sizeScale);
       ctx.emit({ type: 'part_sever', target: m.id, partId: def.id, partIndex, pos: { x: pos.x, y: m.pos.y, z: pos.z }, yaw: m.yaw });
     }
   };

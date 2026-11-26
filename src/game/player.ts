@@ -432,7 +432,7 @@ function tryStartRoll(p: PlayerState, inp: InputFrame, ctx: SimCtx): boolean {
   }
   const run = startAction(p, def.actionId, ctx);
   const extra=Math.max(0,ctx.gear.evadeExtraTicks??0);
-  if(extra&&run.def.invulnerable)run.def={...run.def,invulnerable:run.def.invulnerable.map(w=>({...w,to:Math.min(run.def.durationTicks,w.from+25,w.to+extra)}))};
+  if(extra&&run.def.invulnerable)run.def={...run.def,invulnerable:run.def.invulnerable.map(w=>({...w,to:Math.max(w.to,Math.min(run.def.durationTicks,w.from+25,w.to+extra))}))};
   run.moveYaw = dir;
   run.fixedDir = true;
   run.dirIndex = dirIndex;

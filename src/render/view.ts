@@ -801,6 +801,7 @@ export class GameView {
       if (!here) continue;
       const mp = lerpV(m.prevPos, m.pos, alpha);
       e.rig.root.position.set(mp.x, mp.y, mp.z);
+      e.rig.root.scale.setScalar(m.sizeScale);
       const myaw = m.prevYaw + angleDiff(m.prevYaw, m.yaw) * alpha;
       e.rig.root.rotation.y = myaw;
       // 坂（v0.47.0。地面の起伏）: 体の前後・左右の地面の高さの差だけ、体を傾ける（描画だけ。当たりは傾けない。10° まで、なめらかに）

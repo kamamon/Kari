@@ -664,7 +664,7 @@ export class Hud {
         })
         .filter(Boolean)
         .join('　');
-      const text = `${m.def.name}  HP ${m.hp}/${m.def.hp}　${parts}`;
+      const text = `${m.def.name} 個体 ${Math.round(m.sizeScale*100)}%  HP ${m.hp}/${m.def.hp}　${parts}`;
       this.set('eparts', text, () => (this.enemyParts.textContent = text));
     }
     const a = p.action;
