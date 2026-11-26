@@ -1599,6 +1599,54 @@ const startTraining = async (page, tap = false) => {
   await ctx.close();
 }
 
+// ---- 弱った足取り（v0.52.0。#19 の M05）: 弱って巣へ向かう大型が歩くと、一歩ごとに体が片側へ傾き、頭が下がる。弱っていなければ傾かない ----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  await page.evaluate(() => window.__vh.startHunt('quest.basin.003'));
+  await until(page, () => window.__vh.sim.tick > 5 && !!window.__vh.sim.field);
+  // エリア 3 の標的の横 14m に立つ（標的は止めて、検査が手で前へ動かす）
+  await page.evaluate(() => {
+    const v = window.__vh, s = v.sim, p = s.player, m = s.monsters[0];
+    m.aiEnabled = false;
+    m.action = null;
+    const c = s.world.centerOf(s.field.areas.find((a) => a.id === 'a3'));
+    m.pos = { x: c.x - 10, y: s.world.groundHeight(c.x - 10, c.z), z: c.z };
+    m.prevPos = { ...m.pos };
+    m.yaw = Math.PI / 2;
+    m.prevYaw = m.yaw;
+    p.pos = { x: c.x, y: s.world.groundHeight(c.x, c.z - 14), z: c.z - 14 };
+    p.prevPos = { ...p.pos };
+    p.yaw = 0;
+    s.areaId = 'a3';
+    v.view.cam.snap(0);
+  });
+  await until(page, () => window.__vh.view.areaGroups.get('a3')?.visible === true, 30000);
+  // 標的を +X へ 0.12m ずつ動かして、体の左右の傾き（root の z）を集める
+  const sway = async (limping) => {
+    await page.evaluate((l) => { window.__vh.sim.monsters[0].roam.limping = l; }, limping);
+    const zs = [];
+    for (let i = 0; i < 40; i++) {
+      zs.push(await page.evaluate(() => {
+        const v = window.__vh, s = v.sim, m = s.monsters[0];
+        m.prevPos = { ...m.pos };
+        m.pos = { x: m.pos.x + 0.12, y: m.pos.y, z: m.pos.z };
+        return v.view.rigs.get(m.id)?.rig.root.rotation.z ?? NaN;
+      }));
+      await page.waitForTimeout(60);
+    }
+    const a = zs.slice(10);
+    return { min: Math.min(...a), max: Math.max(...a) };
+  };
+  const calm = await sway(false);
+  const weak = await sway(true);
+  await page.screenshot({ path: `${OUT}85b_limp.png` });
+  check('弱った足取り（v0.52.0）: 弱って巣へ向かう大型が歩くと、体が一歩ごとに片側へ傾く（0.05 rad より大きく揺れる）。弱っていなければ、平らな所では傾かない',
+    weak.max - weak.min > 0.05 && calm.max - calm.min < 0.02, JSON.stringify({ calm, weak }));
+  await ctx.close();
+}
+
 // ---- 登攀（v0.44.0。#19 の H07）: エリア 4 の 3m の棚へ、蔦の壁を登る・下りる ----
 {
   const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');
@@ -1729,7 +1777,9 @@ const startTraining = async (page, tap = false) => {
     v.view.cam.snap(yaw);
   });
   await page.keyboard.down('KeyW');
-  await page.waitForTimeout(3000);
+  // 縁に着くまで歩く（v0.52.0。決まった 3 秒だと、手元が重い時に縁まで届かないことがあった）。着いてからも 1 秒押し続ける
+  await until(page, () => { const s = window.__vh.sim, p = s.player; return s.world.wallDistance(s.world.areaAt(p.pos.x, p.pos.z), p.pos.x, p.pos.z) < 1.5; }, 9000);
+  await page.waitForTimeout(1000);
   await page.keyboard.up('KeyW');
   await page.waitForTimeout(400);
   const wall = await page.evaluate(() => {

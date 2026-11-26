@@ -162,7 +162,7 @@ export class GameView {
   /** 飛んでいる矢の形（使い回す） */
   private arrows: Group[] = [];
   /** モンスターの見た目（個体の id → 体と影）。群れの幼体は、居るエリアへ入った時に作る（v0.18.0） */
-  private rigs = new Map<string, { rig: MonsterRig; shadow: Object3D; tilt?: { x: number; z: number } }>();
+  private rigs = new Map<string, { rig: MonsterRig; shadow: Object3D; tilt?: { x: number; z: number }; limp?: { d: number; w: number; x: number; z: number } }>();
   /** 1 体の標的（依頼の標的・訓練の標的。群れの依頼では、最初の 1 頭）の見た目 */
   monsterRig: MonsterRig | null = null;
   private hazardViews = new Map<number, { group: Group; ring: Mesh; rock: Mesh; look: HazardLook }>();
@@ -337,7 +337,7 @@ export class GameView {
    * その個体の見た目（無ければ作る）。大型 11 種と幼体 8 種は設計図から作る仮モデル（幼体は群れの仲間で面を分け合う）、
    * ガルドロスは専用の仮モデル、訓練の標的は岩偶。
    */
-  private rigOf(m: MonsterState): { rig: MonsterRig; shadow: Object3D; tilt?: { x: number; z: number } } {
+  private rigOf(m: MonsterState): { rig: MonsterRig; shadow: Object3D; tilt?: { x: number; z: number }; limp?: { d: number; w: number; x: number; z: number } } {
     const had = this.rigs.get(m.id);
     if (had) return had;
     const ids = m.def.parts.map((p) => p.id);
@@ -798,6 +798,24 @@ export class GameView {
         e.rig.root.rotation.order = 'YXZ';
         e.rig.root.rotation.x = t.x;
         e.rig.root.rotation.z = t.z;
+      }
+      // 弱った足取り（v0.52.0。#19 の M05「弱った足取りの崩れ」）: 弱って巣へ向かう大型（roam.limping）が歩く間、一歩ごとに片足をかばって
+      // 体が片側へ傾き、頭が下がる（描画だけ。歩幅は体の大きさから、進んだ距離で決める。速さ・当たりは simulation のまま。値は Kari の仮の値。
+      // 体の高さ（root の y）は変えない: 仮モデルの足の接地が、root の y を地面として使う）
+      {
+        const L = (e.limp ??= { d: 0, w: 0, x: mp.x, z: mp.z });
+        const moved = Math.hypot(mp.x - L.x, mp.z - L.z);
+        L.x = mp.x;
+        L.z = mp.z;
+        const walking = !!m.roam?.limping && !m.action && !m.dead && !m.asleep && m.staggerTicks <= 0 && moved > 0.002 && moved < 2;
+        if (walking) L.d += moved;
+        L.w += ((walking ? 1 : 0) - L.w) * Math.min(1, dt * 4);
+        if (L.w > 0.001) {
+          const stride = Math.max(1.2, m.def.bodyRadius * 1.8);
+          const hitch = Math.max(0, Math.sin((2 * Math.PI * L.d) / stride)) ** 3;
+          e.rig.root.rotation.z += 0.11 * hitch * L.w;
+          e.rig.root.rotation.x += 0.05 * L.w;
+        }
       }
       e.rig.update(m, { alpha, dt, time: this.time, content, rankOrder: sim.rank?.order, lookAt: pos, fx: this.monsterFx });
       e.shadow.position.set(mp.x, sim.world.groundHeight(mp.x, mp.z) + 0.03, mp.z);
