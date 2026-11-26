@@ -27,5 +27,14 @@
   "weaponCount": 21,
   "armorCount": 15,
   "materials": 6,
-  "notes": "Structural checks only; not loaded in Blender/Three, no glTF validator, game/IK/FPS/import testing. SVG studies not finished paintings; no baked texture maps."
+  "notes": "Structural checks only; not loaded in Blender/Three, no glTF validator, game/IK/FPS/import testing. SVG studies not finished paintings; no baked texture maps. PNGs are software-rendered rest-pose snapshots, not final concept art or proof of motion quality.",
+  "tubeWinding": "corrected outward; membrane unchanged double sided",
+  "bufferLengthOK": true,
+  "previewFiles": [
+    "art/model_front_v2.png",
+    "art/model_left_v2.png",
+    "art/model_rear_v2.png",
+    "art/model_top_v2.png",
+    "art/model_hero_v2.png"
+  ]
 }
