@@ -15,11 +15,18 @@ export interface FieldGatherCatalog {
   weapons:WeaponDef[]; armor:ArmorDef[]; recipes:RecipeDef[]; actions:ActionDef[]; quests:QuestDef[];
   board:Content['board']['quests']; skills:SkillDef[]; toolCharges:{mine:number;insect:number}; fish:{biteFrom:number;biteTo:number};
 }
-export function usesFieldGather(c: Pick<Content,'fieldGathering'>, q: QuestDef): boolean {
-  return !!c.fieldGathering && q.fieldId===c.fieldGathering.fieldId && (!q.gather || q.gather.fieldGathering===true);
+type GatheringContent = Pick<Content, 'fieldGathering' | 'regionalGathering'>;
+/** 地域を取り違えない。盆地以外の遠征では、その地域の採取点・池・抽選を使う。 */
+export function gatheringCatalog(c: GatheringContent, fieldId: string | undefined): FieldGatherCatalog | undefined {
+  if (!fieldId) return undefined;
+  return c.fieldGathering?.fieldId === fieldId ? c.fieldGathering : c.regionalGathering?.get(fieldId);
 }
-export function fieldGatherMaterials(c: Pick<Content,'fieldGathering'>, q:QuestDef): string[] {
-  return usesFieldGather(c,q) ? [...new Set(c.fieldGathering!.tables.filter(t=>t.rankId===q.rankId).flatMap(t=>t.entries.map(e=>e.itemId)))] : [];
+export function usesFieldGather(c: GatheringContent, q: QuestDef): boolean {
+  return !!gatheringCatalog(c,q.fieldId) && (!q.gather || q.gather.fieldGathering===true);
+}
+export function fieldGatherMaterials(c: GatheringContent, q:QuestDef): string[] {
+  const g = gatheringCatalog(c,q.fieldId);
+  return g && usesFieldGather(c,q) ? [...new Set(g.tables.filter(t=>t.rankId===q.rankId).flatMap(t=>t.entries.map(e=>e.itemId)))] : [];
 }
 /** 地形の高さの格子そのものを掘る。表示と衝突が同じ格子を使う。 */
 export function carveGatherPond(c: Content, def:FieldGatherCatalog, errors:string[]):void {

@@ -3185,7 +3185,7 @@ const startTraining = async (page, tap = false) => {
   // v0.38.0（ChatGPT の #17）: 依頼は級ごとの受付で、星ごとの短い一覧 → 詳細
   const boardRows = await receptionRows(page);
   const boardInfo = boardRows.map((r) => `${r.id}:${r.stars}`);
-  check('依頼の掲示: 43 件（狩り 33・狩らない 5・採集の遠征 4（#32）・里の納品 1）が、4 つの受付の星ごとの一覧に 1 度ずつ。主線・昇級確認の札が短い行に出る。里の納品は、まだ', boardRows.length === 43 && new Set(boardRows.map((r) => r.id)).size === 43
+  check('依頼の掲示: 119 件（狩り 33・狩らない 5・採取ツアー80・里の納品 1）が、4 つの受付の星ごとの一覧に 1 度ずつ。主線・昇級確認の札が短い行に出る。里の納品は、まだ', boardRows.length === 119 && new Set(boardRows.map((r) => r.id)).size === 119
     && ['r1', 'r2', 'r3', 'r4'].every((k) => boardRows.some((r) => r.id === `quest.explore.basin.${k}`))
     && boardRows.every((r) => r.stars >= 1 && r.stars <= 8) && /主線/.test(boardRows.find((r) => r.id === 'quest.basin.003')?.text ?? '') && /昇級確認/.test(boardRows.find((r) => r.id === 'quest.basin.r4.001')?.text ?? '')
     && !/30 分/.test(boardRows.find((r) => r.id === 'quest.basin.003')?.text ?? '') && /未解放/.test(boardRows.find((r) => r.id === 'quest.delivery.009')?.text ?? '') && boardRows.find((r) => r.id === 'quest.basin.r4.001')?.stars === 8,
