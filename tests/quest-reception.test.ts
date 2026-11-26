@@ -30,16 +30,16 @@ function walkTo(sim: Simulation, x: number, z: number): boolean {
 }
 
 describe('級ごとの受付と、星ごとの依頼', () => {
-  it('現在の43件が4受付へ一度ずつ届き、初級13+15件、他級3+2件になる。ロック中の仕事も消えない', () => {
+  it('既存43件と追加35件が4受付へ一度ずつ届き、星ごとに分類される。ロック中の仕事も消えない', () => {
     const groups = RANKS.map((rank) => receptionGroups(content, rank));
     const actual = groups.flatMap((list) => list.flatMap((group) => group.entries.map((entry) => entry.id)));
     const expected = [...content.quests.keys(), ...content.deliveries.keys()];
-    expect(expected).toHaveLength(43);
-    expect(actual).toHaveLength(43);
-    expect(new Set(actual).size).toBe(43);
+    expect(expected).toHaveLength(78);
+    expect(actual).toHaveLength(78);
+    expect(new Set(actual).size).toBe(78);
     expect([...actual].sort()).toEqual([...expected].sort());
     expect(groups.map((list) => list.map((group) => [group.stars, group.entries.length]))).toEqual([
-      [[1, 13], [2, 15]], [[3, 3], [4, 2]], [[5, 3], [6, 2]], [[7, 3], [8, 2]],
+      [[1, 22], [2, 27]], [[3, 8], [4, 2]], [[5, 8], [6, 2]], [[7, 7], [8, 2]],
     ]);
     for (let i = 0; i < RANKS.length; i++) {
       for (const group of groups[i]!) {
@@ -51,17 +51,18 @@ describe('級ごとの受付と、星ごとの依頼', () => {
     expect(RANKS.slice(1).flatMap((rank) => idsAt(content, rank))).not.toContain(DELIVERY);
   });
 
-  it('arenaではフィールド専用の採取9件だけを除き、里納品D09と全狩猟を残す', () => {
+  it('arenaではフィールド専用の採取28件を除き、里納品D09と全狩猟を残す', () => {
     const fieldIds = RANKS.flatMap((rank) => idsAt(content, rank));
     const arenaIds = RANKS.flatMap((rank) => idsAt(content, rank, false));
     const excluded = fieldIds.filter((id) => !arenaIds.includes(id)).sort();
     expect(excluded).toEqual([
       'quest.delivery.001', 'quest.explore.basin.r1', 'quest.explore.basin.r2', 'quest.explore.basin.r3', 'quest.explore.basin.r4',
       'quest.gather.001', 'quest.gather.002', 'quest.mine.001', 'quest.mine.002',
+      ...Array.from({length:19},(_,i)=>'quest.survey.classic_'+String(i+2).padStart(2,'0')),
     ]);
-    expect(arenaIds).toHaveLength(34);
+    expect(arenaIds).toHaveLength(50);
     expect(arenaIds).toContain(DELIVERY);
-    expect(arenaIds.filter((id) => content.quests.get(id)?.kind !== 'gather')).toHaveLength(34);
+    expect(arenaIds.filter((id) => content.quests.get(id)?.kind !== 'gather')).toHaveLength(50);
   });
 
   it('上級の星が1でも上級に留まり、掲示が欠けても星未設定の末尾に残る。入力データは変わらない', () => {
@@ -83,7 +84,7 @@ describe('級ごとの受付と、星ごとの依頼', () => {
     const groups = receptionGroups(unposted, 'rank.3');
     expect(groups.at(-1)!.stars).toBeNull();
     expect(groups.at(-1)!.entries.map((entry) => entry.id)).toEqual([original.id]);
-    expect(groups.flatMap((group) => group.entries)).toHaveLength(5);
+    expect(groups.flatMap((group) => group.entries)).toHaveLength(10);
     expect(content.quests.get(original.id)).toBe(original);
     expect(content.board.quests.some((board) => board.questId === original.id)).toBe(true);
   });

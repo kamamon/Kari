@@ -97,8 +97,13 @@ describe('フィールドのデータ（風礫盆地）', () => {
     // v0.34.0: セルヴァルクの中級〜極級も、ガルドロスと同じ 35 / 40 / 45 分
     const explicit: Record<string, number> = { 'quest.basin.r2.001': 35, 'quest.basin.r3.001': 40, 'quest.basin.r4.001': 45, 'quest.selvark.r2': 35, 'quest.selvark.r3': 40, 'quest.selvark.r4': 45 };
     for (const q of content.quests.values()) {
-      expect(q.fieldId).toBe('field.basin');
       expect(questTimeLimitTicks(content, q, false)).toBe(q.timeLimitTicks);
+      if(q.fieldId?.startsWith('field.classic_')){
+        expect(content.fields.has(q.fieldId),q.id).toBe(true);
+        expect(questTimeLimitTicks(content,q,true)).toBe(q.fieldTimeLimitTicks);
+        continue;
+      }
+      expect(q.fieldId).toBe('field.basin');
       // 狩らない依頼（v0.27.0）は、フィールドで 15 分（tests/errand.test.ts）
       if (q.kind === 'gather') expect(questTimeLimitTicks(content, q, true)).toBe((q.gather?.fieldGathering?30:15) * 3600);
       else if (explicit[q.id]) expect(questTimeLimitTicks(content, q, true)).toBe(explicit[q.id]! * 3600);

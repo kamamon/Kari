@@ -440,6 +440,82 @@
     {
       "itemId": "mat.hinasalv.thin_skin",
       "price": 12
+    },
+    {
+      "itemId": "mat.survey.classic_02",
+      "price": 10
+    },
+    {
+      "itemId": "mat.survey.classic_03",
+      "price": 10
+    },
+    {
+      "itemId": "mat.survey.classic_04",
+      "price": 10
+    },
+    {
+      "itemId": "mat.survey.classic_05",
+      "price": 10
+    },
+    {
+      "itemId": "mat.survey.classic_06",
+      "price": 10
+    },
+    {
+      "itemId": "mat.survey.classic_07",
+      "price": 20
+    },
+    {
+      "itemId": "mat.survey.classic_08",
+      "price": 20
+    },
+    {
+      "itemId": "mat.survey.classic_09",
+      "price": 20
+    },
+    {
+      "itemId": "mat.survey.classic_10",
+      "price": 20
+    },
+    {
+      "itemId": "mat.survey.classic_11",
+      "price": 20
+    },
+    {
+      "itemId": "mat.survey.classic_12",
+      "price": 30
+    },
+    {
+      "itemId": "mat.survey.classic_13",
+      "price": 30
+    },
+    {
+      "itemId": "mat.survey.classic_14",
+      "price": 30
+    },
+    {
+      "itemId": "mat.survey.classic_15",
+      "price": 30
+    },
+    {
+      "itemId": "mat.survey.classic_16",
+      "price": 30
+    },
+    {
+      "itemId": "mat.survey.classic_17",
+      "price": 40
+    },
+    {
+      "itemId": "mat.survey.classic_18",
+      "price": 40
+    },
+    {
+      "itemId": "mat.survey.classic_19",
+      "price": 40
+    },
+    {
+      "itemId": "mat.survey.classic_20",
+      "price": 40
     }
   ]
 }
