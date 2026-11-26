@@ -2,7 +2,7 @@
   "artifactType": "proposal-static-validation",
   "baseline": "main v0.59.0 (current source at validation)",
   "validationScope": "proposal geometry + schema-lite only, not runtime tests",
-  "status": "FAILED",
+  "status": "PASSED_STATIC_ONLY",
   "counts": {
     "points": 61,
     "pointsByKind": {
@@ -45,7 +45,9 @@
     "validRankIds": true,
     "knownFieldIds": true,
     "noNonGatherMaterials": true,
-    "rareRequiredFromRank2": false
+    "rareRequiredFromRank2": true,
+    "rareGradeOddsCorrect": true,
+    "pureOreAndBoneCraft": true
   },
   "geometry": {
     "minRockClearanceM": 2.0453757229387324,
@@ -55,9 +57,7 @@
     "minClimbDistanceM": 6.266258851978561,
     "minVaultDistanceM": 5.640221626851182
   },
-  "errors": [
-    "false check rareRequiredFromRank2"
-  ],
+  "errors": [],
   "notTested": [
     "gameplay insertion",
     "real ground height and walkability",
@@ -71,10 +71,16 @@
     "rare loot statistical balance"
   ],
   "warnings": [
-    "Fish node a5 requires newly authored water surface; disabled until then",
+    "The single fish node a5 is not playable until a permanent water surface and fish school are authored; no runtime code has been modified",
     "Other 19 fields only have ecological placement rules, not coordinates",
     "Global plant/insect/fish tier pools require ecological filtering; basin overrides prevent cross-biome drops",
     "Ranks, tool durability, damage, recipe costs and loot odds are proposed values",
     "Only chatgpt-inbox/012 changed; no production code has been modified"
-  ]
+  ],
+  "gradeRareChanceBps": {
+    "rank.1": 300,
+    "rank.2": 600,
+    "rank.3": 1100,
+    "rank.4": 1800
+  }
 }
