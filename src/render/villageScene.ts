@@ -726,7 +726,9 @@ export function buildVillage(hub: HubDef, map: MapDef, falls: readonly WallSegme
   for (const s of scenery) {
     const y = floorOf(s.x, s.z);
     const kit = new Kit(geo, s.x, y, s.z, s.yaw);
-    for (const [lx, ly, lz] of buildKind(kit, s)) {
+    // 箱型の主要家屋は hubCraft の専用立体に置換。煙の位置は旧版と同じ。
+    const detailSmoke = s.kind==='inn'?[[2.6,7.5,-1.7]] as P3[]:s.kind==='house'?[[-1.6,5.3,-1.2]] as P3[]:s.kind==='hall'||s.kind==='storehouse'?[]:buildKind(kit,s);
+    for (const [lx, ly, lz] of detailSmoke) {
       const p = kit.at(lx, ly, lz);
       emitters.push({ x: p.x, y: p.y, z: p.z, kind: 'smoke', rate: 2.2, acc: Math.random() });
     }

@@ -9,6 +9,7 @@ import { buildAreaGroup, mergeStatic } from './arena';
 import { ENV_TILES, boxUv, cutoutMaterial, tileMaterial } from './envArt';
 import type { WallSegment } from './terraces';
 import { buildVillage, type Village } from './villageScene';
+import { buildCraftVillage } from './hubCraft';
 
 const M = {
   ring: new MeshBasicMaterial({ color: 0xd9b46a, transparent: true, opacity: 0.55, depthWrite: false, side: DoubleSide }),
@@ -257,18 +258,12 @@ export function buildHubGroup(hub: HubDef, map: MapDef): { group: Group; village
   g.add(plaza);
   const rings: BufferGeometry[] = [];
   for (const f of hub.facilities) {
-    const def = BUILDINGS[f.kind];
-    const b = new Mesh(def.shape(), cutoutMaterial(def.file, BUILDING_GAIN));
-    b.castShadow = true;
-    b.receiveShadow = true;
-    // 建物と立つ輪は、その場所の床の高さ（v0.31.0。工房は下の段）
-    b.position.set(f.building.x, groundAt(map.platforms, f.building.x, f.building.z), f.building.z);
-    b.rotation.y = f.building.yaw;
-    g.add(b);
+    // 専用3Dの本体は全施設・主要家屋を一括した後に追加。ここは看板と既存の操作輪だけ。
+    const buildingY = groundAt(map.platforms, f.building.x, f.building.z);
     const sign = receptionSign(f);
     if (sign) {
       const yaw = f.building.yaw;
-      sign.position.set(f.building.x + Math.sin(yaw) * 0.08, b.position.y + 2.25, f.building.z + Math.cos(yaw) * 0.08);
+      sign.position.set(f.building.x + Math.sin(yaw) * 0.08, buildingY + 2.25, f.building.z + Math.cos(yaw) * 0.08);
       sign.rotation.y = yaw;
       g.add(sign);
     }
@@ -284,6 +279,7 @@ export function buildHubGroup(hub: HubDef, map: MapDef): { group: Group; village
   g.add(ringMesh);
   // 同じ素材の部品を 1 つにまとめる（描画回数を減らす）
   mergeStatic(g);
+  g.add(buildCraftVillage(hub,map));
   // 里の建物と暮らし（v0.35.0。広場の灯もここ）。動くものがあるので、まとめた後に足す
   const terraces = g.getObjectByName('terraces');
   const falls = (terraces?.children.find((m) => m.userData.terrace === 'fall')?.userData.falls ?? []) as WallSegment[];
