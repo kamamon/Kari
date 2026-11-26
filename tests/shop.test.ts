@@ -31,8 +31,8 @@ async function rich(money = 1000, items: [string, number][] = [[SHELL, 5]]): Pro
 const fresh = (): SaveDoc => newSave(content, { now: '2026-11-24T00:00:00.000Z', appVersion: 'test', contentVersion: content.contentVersion });
 
 describe('商店のデータ', () => {
-  it('売っているのは道具 4 つ。モンスターの素材は、どれも買い取る（採集・採掘の素材は、用途が決まるまで買い取らない。v0.27.0）。検査に通る', () => {
-    expect(content.shop.goods.map((g) => g.itemId)).toEqual([TONIC, STONE, ORB, TRAP]);
+  it('売っているのは道具 5 つ（v0.42.0 で標識玉）。モンスターの素材は、どれも買い取る（採集・採掘の素材は、用途が決まるまで買い取らない。v0.27.0）。検査に通る', () => {
+    expect(content.shop.goods.map((g) => g.itemId)).toEqual([TONIC, STONE, ORB, 'item.marker_orb', TRAP]);
     const natural = (id: string): boolean => id.startsWith('mat.gather.') || id.startsWith('mat.ore.');
     expect(content.shop.sell.map((g) => g.itemId).sort()).toEqual([...content.materials.keys()].filter((id) => !natural(id)).sort());
     expect([...content.materials.keys()].filter(natural)).toHaveLength(4);

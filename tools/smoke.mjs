@@ -1275,13 +1275,23 @@ const startTraining = async (page, tap = false) => {
       where: document.querySelector('.hud-quest .where').textContent, cells: cells.length,
       here: cells.filter((c) => c.classList.contains('here')).map((c) => c.textContent).join(), mark: cells.filter((c) => c.classList.contains('target')).map((c) => c.textContent).join(),
       sleepMark: cells.filter((c) => c.classList.contains('asleep')).map((c) => c.textContent).join(),
+      marked: cells.filter((c) => c.classList.contains('marked')).map((c) => c.textContent).join(), seen: cells.filter((c) => c.classList.contains('seen')).map((c) => c.textContent).join(),
       rigVisible: window.__vh.view.monsterRig.root.visible, exit: document.querySelector('.hud-exit').hidden ? '' : document.querySelector('.hud-exit').textContent,
       banner: document.querySelector('.hud-area-banner').textContent, limit: s.hunt.timeLimitTicks,
     };
   });
   let f = await hudField();
-  check('フィールド: 野営地から始まる。標的はエリア 3 に居て、地図に現在地（営）と標的（3）の印が出る', f.area === 'camp' && f.target === 'a3' && f.cells === 11 && f.here === '営' && f.mark === '3' && /^野営地　標的: エリア 3/.test(f.where) && f.limit === 108000, JSON.stringify(f));
+  // v0.42.0（#19 の F04）: 出発した時は、標的の居場所を知らない（地図に印は無い）。2G と同じく、見つけて標識玉を当てると分かる
+  check('フィールド: 野営地から始まる。標的はエリア 3 に居るが、まだ見ていないので、地図に印は無く「標的: 不明」', f.area === 'camp' && f.target === 'a3' && f.cells === 11 && f.here === '営' && f.mark === '' && f.seen === '' && /^野営地　標的: 不明$/.test(f.where) && f.limit === 108000, JSON.stringify(f));
   check('フィールド: 別のエリアに居る標的は描かない', f.rigVisible === false);
+  // 地図（v0.42.0。#19 の F04）: 居るエリアの地図（外周・出口の行き先・自分の矢じり）と、上から見た向きの全体の地図
+  const loc0 = await page.evaluate(() => {
+    const labels = [...document.querySelectorAll('.hud-local .exit-label')].map((t) => t.textContent);
+    const tgt = document.querySelector('.hud-local .tgt');
+    const cell = (t) => [...document.querySelectorAll('.hud-map .cell')].find((c) => c.textContent === t)?.getBoundingClientRect().left ?? -1;
+    return { labels, outline: !!document.querySelector('.hud-local .outline'), me: document.querySelector('.hud-local .me')?.getAttribute('transform') ?? '', tgt: tgt ? getComputedStyle(tgt).display : '', camp: cell('営'), a1: cell('1'), a9: cell('9') };
+  });
+  check('地図（v0.42.0）: 居るエリアの地図に、外周・出口の行き先（野営地は 1 へ）・自分の矢じりが出て、標的の点は出ない。全体の地図は上から見た向き（+X が左: 野営地が右、エリア 9 が左）', loc0.outline && loc0.labels.join() === '1' && /^translate\(/.test(loc0.me) && loc0.tgt === 'none' && loc0.camp > loc0.a1 && loc0.a9 < loc0.a1, JSON.stringify(loc0));
   await page.screenshot({ path: `${OUT}81_field_camp.png` });
   // 景色の絵（依頼 8。v0.13.0）: 空と遠景・地面・岩・草
   const art = await until(page, () => { const a = window.__vh.envArt(); return a.asked >= 8 && a.loaded === a.asked && a.failed === 0; }, 15000);
@@ -1337,8 +1347,65 @@ const startTraining = async (page, tap = false) => {
   await until(page, () => window.__vh.sim.areaId === 'a3');
   await page.waitForTimeout(300);
   f = await hudField();
-  check('フィールド: エリア 3 に入ると、標的が描かれる（着く場所は、これまでの狩場の出発地点）', f.area === 'a3' && f.rigVisible === true && Math.abs(f.x) < 0.5 && Math.abs(f.z + 20) < 1.5 && f.here === '3', JSON.stringify(f));
+  check('フィールド: エリア 3 に入ると、標的が描かれ、地図と文字に出る（着く場所は、これまでの狩場の出発地点）', f.area === 'a3' && f.rigVisible === true && Math.abs(f.x) < 0.5 && Math.abs(f.z + 20) < 1.5 && f.here === '3' && f.mark === '3' && /標的: エリア 3/.test(f.where), JSON.stringify(f));
   await page.screenshot({ path: `${OUT}83_field_area3.png` });
+  const loc3 = await page.evaluate(() => {
+    const lab = Object.fromEntries([...document.querySelectorAll('.hud-local .exit-label')].map((t) => [t.textContent, { x: +t.getAttribute('x'), y: +t.getAttribute('y') }]));
+    return { lab, tgt: getComputedStyle(document.querySelector('.hud-local .tgt')).display };
+  });
+  check('地図（v0.42.0）: エリア 3 の地図は、北（7）が上・南（1）が下、+X（6）が左・-X（2）が右。標的は同じエリアに居るので点が出る', !!loc3.lab['7'] && !!loc3.lab['1'] && !!loc3.lab['6'] && !!loc3.lab['2'] && loc3.lab['7'].y < loc3.lab['1'].y && loc3.lab['6'].x < loc3.lab['2'].x && loc3.tgt !== 'none', JSON.stringify(loc3));
+  // 北を向いて画面の右へ歩くと、地図の自分の印も右へ動く（地図と画面の左右が同じ。v0.41.0 までは鏡写しだった）
+  const meAt = () => page.evaluate(() => {
+    const m = /translate\(([-\d.]+) ([-\d.]+)\) rotate\(([-\d]+)\)/.exec(document.querySelector('.hud-local .me').getAttribute('transform') ?? '');
+    return m ? [+m[1], +m[2], +m[3]] : null;
+  });
+  await page.evaluate(() => { const v = window.__vh, p = v.sim.player; p.yaw = 0; p.prevYaw = 0; v.view.cam.snap(0); });
+  await page.waitForTimeout(250);
+  const me0 = await meAt();
+  await page.keyboard.down('KeyD');
+  await page.waitForTimeout(1200);
+  await page.keyboard.up('KeyD');
+  await page.waitForTimeout(250);
+  const me1 = await meAt();
+  check('地図（v0.42.0）: 北を向くと矢じりは上（0°）。画面の右へ歩くと、地図の自分の印も右へ動き、矢じりは右（90°）を向く', !!me0 && !!me1 && me0[2] === 0 && me1[0] > me0[0] + 1 && Math.abs(me1[1] - me0[1]) < Math.abs(me1[0] - me0[0]) && Math.abs(me1[2] - 90) <= 20, JSON.stringify({ me0, me1 }));
+  // 標識玉（v0.42.0。#19 の F04）: 標的の正面 8m で、納刀して投げる。当たると、別のエリアへ移っても居場所が地図に出る。投げた後は、元の場所へ戻る
+  const before = await page.evaluate(() => {
+    const v = window.__vh, s = v.sim, m = s.monsters[0], p = s.player;
+    const keep = { pos: { ...p.pos }, yaw: p.yaw };
+    m.aiEnabled = false;
+    m.action = null;
+    const c = s.world.centerOf(s.world.areaAt(m.pos.x, m.pos.z));
+    const d = Math.hypot(c.x - m.pos.x, c.z - m.pos.z);
+    const ux = d > 1 ? (c.x - m.pos.x) / d : 1, uz = d > 1 ? (c.z - m.pos.z) / d : 0;
+    const r = 8 + m.def.bodyRadius;
+    const x = m.pos.x + ux * r, z = m.pos.z + uz * r;
+    p.pos = { x, y: s.world.groundHeight(x, z), z };
+    p.prevPos = { ...p.pos };
+    p.yaw = Math.atan2(m.pos.x - x, m.pos.z - z);
+    p.prevYaw = p.yaw;
+    p.mode = 'free';
+    p.action = null;
+    p.hurt = null;
+    p.guard = null;
+    p.drawn = false;
+    p.itemIndex = p.items.findIndex((it) => it.itemId === 'item.marker_orb');
+    v.view.cam.snap(p.yaw);
+    return keep;
+  });
+  await page.keyboard.press('KeyE');
+  const orbHit = await until(page, () => window.__vh.sim.monsters[0].markTicks > 0 && window.__vh.sim.player.mode === 'free' && !window.__vh.sim.player.action, 8000);
+  const orbToast = await page.evaluate(() => document.getElementById('toasts').textContent);
+  const orbLeft = await page.evaluate(() => window.__vh.sim.player.items.find((it) => it.itemId === 'item.marker_orb')?.count);
+  check('標識玉（v0.42.0）: 標的の正面で投げると当たり、1 個減る（支給 2）。「地図に居場所が出る」と知らせる', orbHit && orbLeft === 1 && /標識玉が当たった（5 分ほど、地図に居場所が出る）/.test(orbToast), `${orbLeft} / ${orbToast}`);
+  await page.evaluate((keep) => {
+    const v = window.__vh, s = v.sim, p = s.player;
+    s.monsters[0].aiEnabled = true;
+    p.pos = { ...keep.pos };
+    p.prevPos = { ...p.pos };
+    p.yaw = keep.yaw;
+    p.prevYaw = p.yaw;
+    v.view.cam.snap(p.yaw);
+  }, before);
   // 依頼 10 の岩と崖（v0.22.0）: エリア 3 の岩は図から作った形、外周は崖の図を並べたもの（出口のわきは C-19・C-20）。図集と岩肌が読めている
   const art10 = await until(page, () => {
     const v = window.__vh.view;
@@ -1371,11 +1438,18 @@ const startTraining = async (page, tap = false) => {
       s.step(idle);
       for (const e of s.drainEvents()) if (e.type === 'monster_move' || e.type === 'monster_sleep' || e.type === 'monster_leave') seen.push(`${e.type}:${e.areaId ?? e.to}`);
     }
-    return { asleep: m.asleep, area: s.monsterArea(m)?.id, seen };
+    return { asleep: m.asleep, area: s.monsterArea(m)?.id, seen, markTicks: m.markTicks };
   });
   await page.waitForTimeout(300);
   f = await hudField();
-  check('フィールド: 弱った標的は、エリアを渡って巣（エリア 10）へ行き、眠る。地図と文字に出る', slept.asleep && slept.area === 'a10' && slept.seen[0]?.startsWith('monster_leave') && slept.seen.at(-1) === 'monster_sleep:a10' && f.mark === '10' && f.sleepMark === '10' && /標的: エリア 10（眠り）/.test(f.where) && f.rigVisible === false, `${slept.seen.join(' ')} / ${f.where}`);
+  // 印がある間は、移った先（エリア 10）が地図と文字に出る。眠っていることは、見ていないので出ない（v0.42.0）
+  check('フィールド: 弱った標的は、エリアを渡って巣（エリア 10）へ行き、眠る。標識玉の印で、居場所が地図と文字に出る（眠りは、見ていないので出ない）', slept.asleep && slept.area === 'a10' && slept.seen[0]?.startsWith('monster_leave') && slept.seen.at(-1) === 'monster_sleep:a10' && f.mark === '10' && f.marked === '10' && f.sleepMark === '' && /標的: エリア 10（印）/.test(f.where) && f.rigVisible === false, `${slept.seen.join(' ')} / ${slept.markTicks} / ${f.where}`);
+  await page.screenshot({ path: `${OUT}83b_field_marked.png` });
+  // 印が切れると、最後に見た所（エリア 3。点線と ?）に戻り、いまの居場所は分からない
+  await page.evaluate(() => { window.__vh.sim.monsters[0].markTicks = 0; });
+  const lost = await until(page, () => document.querySelectorAll('.hud-map .cell.seen').length === 1, 4000);
+  f = await hudField();
+  check('フィールド: 印が切れると、地図は最後に見た所（エリア 3）だけになり、「標的: 不明（最後に見た所 エリア 3）」', lost && f.mark === '' && f.seen === '3' && f.sleepMark === '' && /標的: 不明（最後に見た所 エリア 3）/.test(f.where), JSON.stringify(f));
   // 巣へ行って、眠っている標的を見る → 攻撃すると起きる
   await page.evaluate(() => {
     const s = window.__vh.sim, m = s.monsters[0];
@@ -1555,7 +1629,8 @@ const startTraining = async (page, tap = false) => {
   await page.click('#hud-facility');
   await until(page, () => !document.getElementById('base').hidden);
   h = await hubState();
-  check('里: 商店の前のボタンを押すと、商店の画面が開く。通貨が無い間は、買うボタンが押せない', h.section === 'shop' && h.title === '商店' && h.shop !== 'none' && h.quests === 'none' && await page.evaluate(() => [...document.querySelectorAll('.shop-buy')].length === 8 && [...document.querySelectorAll('.shop-buy')].every((b) => b.disabled) && /売れる素材を持っていません/.test(document.getElementById('base-shop').textContent)), JSON.stringify(h));
+  // 道具 5 つ（v0.42.0 で標識玉）× 1 個・5 個
+  check('里: 商店の前のボタンを押すと、商店の画面が開く。通貨が無い間は、買うボタンが押せない', h.section === 'shop' && h.title === '商店' && h.shop !== 'none' && h.quests === 'none' && await page.evaluate(() => [...document.querySelectorAll('.shop-buy')].length === 10 && !!document.querySelector('.shop-buy[data-item="item.marker_orb"]') && [...document.querySelectorAll('.shop-buy')].every((b) => b.disabled) && /売れる素材を持っていません/.test(document.getElementById('base-shop').textContent)), JSON.stringify(h));
   await page.evaluate(() => window.__vh.save.settle({ runId: 'smoke-hub-seed', questId: 'quest.basin.003', money: 1000, items: [{ itemId: 'mat.galdros.shell_shard', count: 3 }] }));
   await until(page, () => window.__vh.save.doc.money === 1000 && !document.querySelector('.shop-buy[data-item="item.heal_tonic"][data-count="1"]').disabled);
   await page.click('.shop-buy[data-item="item.heal_tonic"][data-count="1"]');

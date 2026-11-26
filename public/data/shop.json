@@ -5,7 +5,7 @@
   "goods": [
     {"itemId": "item.heal_tonic", "price": 60},
     {"itemId": "item.whetstone", "price": 40},
-    {"itemId": "item.calm_orb", "price": 150},
+    {"itemId": "item.calm_orb", "price": 150}, {"itemId": "item.marker_orb", "price": 90},
     {"itemId": "item.bind_trap", "price": 300}
   ],
   "sell": [

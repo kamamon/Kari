@@ -18,6 +18,7 @@ import type { StatusKind } from '../data/schemas';
 /** モンスターに状態異常が付いた時の知らせ（v0.33.0） */
 const AILMENT_ON: Record<StatusKind, string> = { poison: 'が毒になった', para: 'が麻痺した', sleep: 'が眠った', stun: 'が気絶した' };
 import { withIcon } from './icons';
+import { LocalMap } from './localMap';
 
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls: string, parent: HTMLElement, text = ''): HTMLElementTagNameMap[K] {
   const e = document.createElement(tag);
@@ -54,6 +55,10 @@ export class Hud {
   private where: HTMLElement;
   private map: HTMLElement;
   private mapCells = new Map<string, HTMLElement>();
+  /** 地図の並び（居るエリアの地図と、全体の地図。v0.42.0） */
+  private maps: HTMLElement;
+  /** 居るエリアの地図（外周・出口・自分の向き。v0.42.0。#19 の F04） */
+  private local: LocalMap;
   private exitHint: HTMLElement;
   private banner: HTMLElement;
   /** 里: 前に立っている施設へ入るボタンと、施設の一覧を開くボタン */
@@ -109,8 +114,10 @@ export class Hud {
     this.goal = el('div', 'goal', quest, '');
     this.faints = el('div', 'goal', quest, '');
     this.where = el('div', 'goal where', quest, '');
-    this.map = el('div', 'hud-map', quest);
-    this.map.hidden = true;
+    this.maps = el('div', 'hud-maps', quest);
+    this.maps.hidden = true;
+    this.local = new LocalMap(this.maps);
+    this.map = el('div', 'hud-map', this.maps);
     this.verifyBtn = el('button', 'hud-btn', tr, '検証');
     this.verifyBtn.addEventListener('click', () => hub.ui('verify'));
     const menuBtn = el('button', 'hud-btn', tr, '☰');
@@ -194,19 +201,22 @@ export class Hud {
     });
   }
 
-  /** フィールドの小さな地図を作り直す（マス目に、エリアの番号と、つながりの線）。 */
+  /**
+   * フィールドの小さな地図を作り直す（マス目に、エリアの番号と、つながりの線）。
+   * v0.42.0 から、上から見た向き（北 = +Z が上、+X が左）。これまでは左右が鏡写しで、画面の右と地図の右が逆だった（D-133）
+   */
   private buildMap(sim: Simulation): void {
     this.map.textContent = '';
     this.mapCells.clear();
     const field = sim.field;
-    this.map.hidden = !field;
+    this.maps.hidden = !field;
     if (!field) return;
     const CW = 27, CH = 19, BW = 20, BH = 14;
     const cols = Math.max(...field.areas.map((a) => a.grid[0])) + 1;
     const rows = Math.max(...field.areas.map((a) => a.grid[1])) + 1;
     this.map.style.width = `${(cols - 1) * CW + BW}px`;
     this.map.style.height = `${(rows - 1) * CH + BH}px`;
-    const at = (g: [number, number]): { x: number; y: number } => ({ x: g[0] * CW, y: (rows - 1 - g[1]) * CH });
+    const at = (g: [number, number]): { x: number; y: number } => ({ x: (cols - 1 - g[0]) * CW, y: (rows - 1 - g[1]) * CH });
     for (const a of field.areas) {
       const p = at(a.grid);
       for (const e of a.exits) {
@@ -299,12 +309,16 @@ export class Hud {
           if (e.from === sim.areaId) this.toast('標的が移動を始めた');
           break;
         case 'monster_move': {
+          // v0.42.0（#19 の F04）: 別のエリアへ移ったことが分かるのは、標識玉の印がある時だけ
           const a = sim.field && areaOf(sim.field, e.areaId);
-          if (a) this.toast(e.areaId === sim.areaId ? '標的が現れた' : `標的が${areaLabel(a)}へ移った`);
+          const m = byId(e.target);
+          if (a && e.areaId === sim.areaId) this.toast('標的が現れた');
+          else if (a && m && m.markTicks > 0) this.toast(`標的が${areaLabel(a)}へ移った（印）`);
           break;
         }
         case 'monster_sleep':
-          this.toast('標的が巣で眠った');
+          // 眠ったことが分かるのは、同じエリアで見ている時だけ（v0.42.0）
+          if (e.areaId === sim.areaId) this.toast('標的が巣で眠った');
           break;
         case 'monster_wake':
           if (e.byHit) this.toast('標的が目を覚ました');
@@ -322,7 +336,10 @@ export class Hud {
           // 状態異常（v0.33.0）: 付いた時と、眠りから覚めた時、毒が抜けた時
           const m = byId(e.target);
           const who = m?.herd ? shortName(m.def.name) : '標的';
+          // 別のエリアへ逃げた後に抜けた・覚めたことは、見ていないので知らせない（v0.42.0。#19 の F04）
+          const seen = !m || !sim.field || !m.roam || sim.trackOf(m).state === 'visible';
           if (e.on) this.toast(`${who}${AILMENT_ON[e.kind]}`);
+          else if (!seen) break;
           else if (e.woke) this.toast(`${who}が目を覚ました`);
           else if (e.kind === 'poison') this.toast(`${who}の毒が抜けた`);
           break;
@@ -364,6 +381,7 @@ export class Hud {
           if (e.kind === 'heal') this.toast(`${name}: 体力 +${e.amount}`);
           else if (e.kind === 'whet') this.toast(`${name}: 研ぎ上がった`);
           else if (e.kind === 'trap') this.toast(e.ok ? `${name}を仕掛けた` : `${name}は置けなかった`);
+          else if (e.kind === 'mark') this.toast(e.ok ? `${name}が当たった（${Math.round(e.amount / 60)} 分ほど、地図に居場所が出る）` : `${name}は外れた`);
           else this.toast(e.ok ? `${name}が当たった（${e.amount} 個目）` : `${name}は外れた`);
           break;
         }
@@ -455,8 +473,14 @@ export class Hud {
     // 標的: 1 体の標的か、群れの依頼では、まだ倒していない標的のうち、同じエリアに居るもの（居なければ、最初の 1 頭）
     const live = sim.livingTargets();
     const tm = sim.pack ? live.find((m) => sim.monsterArea(m)?.id === sim.areaId) ?? live[0] : sim.main ?? sim.monsters[0];
-    const ta = tm ? sim.monsterArea(tm) : null;
-    const tState = !tm || tm.dead ? 'dead' : tm.asleep ? 'sleep' : tm.roam?.state === 'leave' || tm.herd?.mood === 'travel' ? 'leave' : '';
+    // 標的の居場所（v0.42.0。#19 の F04）: 同じエリアで見えている時か、標識玉の印がある時だけ、いまの居場所。見失ったら、最後に見た所（? で区別）。
+    // 眠り・移動中などの中身は、見えている時だけ（地図からは分からない）
+    const track = tm && !sim.pack ? sim.trackOf(tm) : null;
+    const known = !track || track.state === 'visible' || track.state === 'marked';
+    const ta = tm ? (known ? sim.monsterArea(tm) : null) : null;
+    const seenArea = track?.state === 'last_seen' && field && track.areaId ? areaOf(field, track.areaId) ?? null : null;
+    const visible = !track || track.state === 'visible';
+    const tState = !tm || tm.dead ? 'dead' : !visible ? (track?.state ?? '') : tm.asleep ? 'sleep' : tm.roam?.state === 'leave' || tm.herd?.mood === 'travel' ? 'leave' : '';
     let targetAreas = new Set(sim.pack ? live.map((m) => sim.monsterArea(m)?.id ?? '') : ta && tState !== 'dead' ? [ta.id] : []);
     let errandWhere = '';
     if (er && field && h?.phase === 'active') {
@@ -471,18 +495,24 @@ export class Hud {
         errandWhere = left.size ? `　採取点: ${[...left].map(([id, n]) => `${areaLabel(areaOf(field, id)!)} ${n}`).join('・')}` : '';
       }
     }
-    const where = field && here ? `${areaLabel(here)}${here.kind === 'camp' ? '' : ` ${here.name}`}${er ? errandWhere : ta && tState !== 'dead' ? `　標的: ${areaLabel(ta)}${tState === 'sleep' ? '（眠り）' : tState === 'leave' ? '（移動中）' : ''}` : ''}` : '';
+    const targetText = tState === 'dead' || !tm ? '' : ta ? `　標的: ${areaLabel(ta)}${tState === 'sleep' ? '（眠り）' : tState === 'leave' ? '（移動中）' : tState === 'marked' ? '（印）' : ''}` : seenArea ? `　標的: 不明（最後に見た所 ${areaLabel(seenArea)}）` : '　標的: 不明';
+    const where = field && here ? `${areaLabel(here)}${here.kind === 'camp' ? '' : ` ${here.name}`}${er ? errandWhere : targetText}` : '';
     this.set('where', where, () => {
       this.where.textContent = where;
       this.where.hidden = where === '';
     });
-    this.set('mapmark', field ? `${sim.areaId}|${[...targetAreas].join(',')}|${tState}` : '', () => {
+    this.set('mapmark', field ? `${sim.areaId}|${[...targetAreas].join(',')}|${tState}|${seenArea?.id ?? ''}` : '', () => {
       for (const [id, cell] of this.mapCells) {
         cell.classList.toggle('here', id === sim.areaId);
         cell.classList.toggle('target', targetAreas.has(id));
+        cell.classList.toggle('marked', targetAreas.has(id) && tState === 'marked');
+        cell.classList.toggle('seen', !!seenArea && id === seenArea.id);
         cell.classList.toggle('asleep', !!ta && id === ta.id && tState === 'sleep');
       }
     });
+    // 居るエリアの地図: 自分の位置と向き。標的の点は、同じエリアに居る時だけ（見えている。狩らない依頼では出さない）
+    this.set('localArea', field && here ? `${field.id}:${here.id}` : '', () => this.local.setArea(field, here ?? null));
+    if (field && here) this.local.update(p.pos.x, p.pos.z, p.yaw, !er && tm && !tm.dead && !tm.captured && sim.monsterArea(tm)?.id === here.id ? tm.pos : null);
     let exitText = '';
     if (field && here && p.mode !== 'dead') {
       // 近くて、そちらを向いている出口だけ（着いた直後に、背中側の出口を案内しない）

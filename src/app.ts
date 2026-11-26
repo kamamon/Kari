@@ -842,6 +842,8 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
           // 研ぎ上がり（専用の音はまだ無く、溜めの段階の音を流用）
           else if (e.kind === 'whet') play('charge_2');
           else if (e.kind === 'tranq' && e.ok) play('tranq_hit');
+          // 標識玉が当たった（専用の音はまだ無く、鎮静玉の音を流用。v0.42.0）
+          else if (e.kind === 'mark' && e.ok) play('tranq_hit');
           else if (!e.ok && e.kind === 'trap') play('item_fail');
           break;
         case 'item_fail':

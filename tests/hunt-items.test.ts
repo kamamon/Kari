@@ -51,12 +51,21 @@ const weaken = (m: MonsterState, sim: Simulation): void => {
 };
 
 describe('支給品と道具', () => {
-  it('依頼の支給品を持って出発する。訓練場では研磨石だけを持つ。環弓は研磨石を持たない', () => {
+  it('依頼の支給品を持って出発する（フィールドで大型を狩る依頼には標識玉 2 も。v0.42.0）。訓練場では研磨石だけを持つ。環弓は研磨石を持たない', () => {
     const sim = hunt();
     expect(sim.player.items).toEqual([{ itemId: HEAL, count: 5 }, { itemId: TRAP, count: 1 }, { itemId: ORB, count: 3 }, { itemId: 'item.whetstone', count: 3 }]);
+    expect(new Simulation(content, baseOptions({ questId: QUEST, field: true })).player.items).toEqual([...sim.player.items, { itemId: 'item.marker_orb', count: 2 }]);
     expect(new Simulation(content, baseOptions()).player.items).toEqual([{ itemId: 'item.whetstone', count: 10 }]);
     expect(new Simulation(content, baseOptions({ questId: QUEST, weaponId: 'weapon.ring_bow.001' })).player.items.map((s) => s.itemId)).toEqual([HEAL, TRAP, ORB]);
     expect(new Simulation(content, baseOptions({ weaponId: 'weapon.ring_bow.001' })).player.items).toEqual([]);
+    // 群れの依頼・狩らない依頼には足さない
+    const kinds = new Set<string>();
+    for (const q of content.quests.values()) {
+      if (!q.fieldId || (q.kind !== 'gather' && !q.targets)) continue;
+      kinds.add(q.kind === 'gather' ? 'gather' : 'herd');
+      expect(new Simulation(content, baseOptions({ questId: q.id, field: true })).player.items.some((s) => s.itemId === 'item.marker_orb'), q.id).toBe(false);
+    }
+    expect([...kinds].sort()).toEqual(['gather', 'herd']);
   });
 
   it('道具の切り替えは端で回り込む', () => {

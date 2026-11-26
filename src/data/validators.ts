@@ -332,6 +332,8 @@ export function crossCheck(c: Content, errors: string[]): void {
       if (!(it.trap && it.trap.armTicks >= 0 && it.trap.radius > 0 && it.trap.holdTicks > 0 && it.trap.lifeTicks > 0)) errors.push(`${w}: trap が不正`);
     } else if (it.kind === 'tranq') {
       if (!(it.tranq && it.tranq.range > 0 && it.tranq.halfAngleDeg > 0)) errors.push(`${w}: tranq が不正`);
+    } else if (it.kind === 'mark') {
+      if (!(it.mark && it.mark.range > 0 && it.mark.halfAngleDeg > 0 && Number.isInteger(it.mark.ticks) && it.mark.ticks > 0)) errors.push(`${w}: mark が不正`);
     } else if (it.kind === 'whet') {
       // 研いだ後は納める（v0.40.0。2G に合わせて、納刀して使い、背から下ろして研ぐ。護刃が防御を構えたまま使った時だけ、抜刀のまま）
       if (a && a.onFinish !== 'sheathed_idle') errors.push(`${w}: 研ぐ行動の onFinish は sheathed_idle にする`);
@@ -375,6 +377,11 @@ export function crossCheck(c: Content, errors: string[]): void {
   }
   for (const f of c.families.values()) {
     if (f.edge !== undefined && !(f.edge && f.edge.wearPerMotion > 0 && f.edge.wearPerMotion <= 20 && typeof f.edge.label === 'string' && f.edge.label !== '')) errors.push(`family ${f.id}: edge が不正`);
+  }
+  for (const s of c.player.huntSupplies ?? []) {
+    const it = c.items.get(s.itemId);
+    if (!it) errors.push(`player: huntSupplies の ${s.itemId} が無い`);
+    else if (!(Number.isInteger(s.count) && s.count > 0 && s.count <= it.carryMax)) errors.push(`player: huntSupplies の ${s.itemId} の数が不正`);
   }
   for (const s of c.player.trainingSupplies ?? []) {
     const it = c.items.get(s.itemId);

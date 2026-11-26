@@ -37,7 +37,7 @@ export type SimEvent =
   | { type: 'hunt_close' }
   /** 道具を使い始めた / 効果が出た（ok が false なら効果なし。amount は回復量など）/ 使えなかった */
   | { type: 'item_use'; itemId: string; pos: V3 }
-  | { type: 'item_effect'; itemId: string; kind: 'heal' | 'trap' | 'tranq' | 'whet'; ok: boolean; amount: number; pos: V3 }
+  | { type: 'item_effect'; itemId: string; kind: 'heal' | 'trap' | 'tranq' | 'whet' | 'mark'; ok: boolean; amount: number; pos: V3 }
   /** no_need: 研磨石を、刃が最大の時に使おうとした */
   | { type: 'item_fail'; reason: 'empty' | 'not_now' | 'no_need' }
   /** 刃の状態の段階が変わった（当てて下がった、または研いで戻った） */

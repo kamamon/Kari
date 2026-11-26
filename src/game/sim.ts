@@ -237,7 +237,11 @@ export class Simulation implements SimCtx {
     }
     // 支給品: 依頼なら依頼の支給品、訓練場なら訓練用（研磨石）。依頼では、自分の道具を足す（合わせて carryMax まで。残りは里に置いていく）
     // 里（拠点）では、道具を持たない
-    const supplies = quest ? quest.supplies ?? [] : map.id === content.hub.mapId ? [] : content.player.trainingSupplies ?? [];
+    const base = quest ? quest.supplies ?? [] : map.id === content.hub.mapId ? [] : content.player.trainingSupplies ?? [];
+    // フィールドで大型を狩る依頼（v0.42.0）: 標識玉を足す（群れの依頼・狩らない依頼・エリアが 1 つの狩場には足さない。依頼に同じ道具があれば、そちら）
+    const bigHunt = !!field && !!quest && quest.kind !== 'gather' && !quest.targets && !!quest.targetMonsterId;
+    const extra = bigHunt ? (content.player.huntSupplies ?? []).filter((x) => !base.some((b) => b.itemId === x.itemId)) : [];
+    const supplies = [...base, ...extra];
     const carry: ItemStack[] = supplies.map((s) => ({ ...s }));
     for (const s of supplies) this.brought[s.itemId] = { supplied: s.count, own: 0 };
     for (const own of quest ? options.pouch ?? [] : []) {
@@ -553,6 +557,15 @@ export class Simulation implements SimCtx {
       this.emit({ type: 'item_effect', itemId: item.id, kind: 'trap', ok: true, amount: 0, pos: { x: trap.x, y: p.pos.y, z: trap.z } });
       return true;
     }
+    // 標識玉（v0.42.0。#19 の F04）: 正面の範囲に居る、いちばん近い大型に当たると、しばらく地図に居場所が出る。外しても 1 個減る
+    if (item.kind === 'mark') {
+      const k = item.mark!;
+      const hit = this.frontMonster(k.range, k.halfAngleDeg);
+      if (hit) hit.markTicks = k.ticks;
+      const f = forwardOf(p.yaw);
+      this.emit({ type: 'item_effect', itemId: item.id, kind: 'mark', ok: !!hit, amount: hit ? Math.round(k.ticks / 60) : 0, pos: hit ? { x: hit.pos.x, y: 1.4, z: hit.pos.z } : { x: p.pos.x + f.x * k.range, y: 0.3, z: p.pos.z + f.z * k.range } });
+      return true;
+    }
     // 鎮静玉: 正面の範囲に居る、いちばん近い大型に当たる。外しても 1 個減る。
     const q = item.tranq!;
     let best: MonsterState | null = null;
@@ -573,6 +586,36 @@ export class Simulation implements SimCtx {
     const f = forwardOf(p.yaw);
     this.emit({ type: 'item_effect', itemId: item.id, kind: 'tranq', ok: !!best, amount: best ? best.tranq : 0, pos: best ? { x: best.pos.x, y: 1.4, z: best.pos.z } : { x: p.pos.x + f.x * q.range, y: 0.3, z: p.pos.z + f.z * q.range } });
     return true;
+  }
+
+  /** 正面 ±halfAngleDeg、range 以内のいちばん近い大型（群れの幼体を除く）。投げる道具が当たる相手 */
+  private frontMonster(range: number, halfAngleDeg: number): MonsterState | null {
+    const p = this.player;
+    let best: MonsterState | null = null;
+    let bestDist = Infinity;
+    for (const m of this.monsters) {
+      if (m.dead || m.captured || m.herd) continue;
+      const dx = m.pos.x - p.pos.x, dz = m.pos.z - p.pos.z;
+      const dist = Math.max(0, Math.hypot(dx, dz) - m.def.bodyRadius);
+      if (dist > range || dist >= bestDist) continue;
+      if (Math.abs(angleDiff(yawOf(dx, dz), p.yaw)) > halfAngleDeg * DEG) continue;
+      best = m;
+      bestDist = dist;
+    }
+    return best;
+  }
+
+  /**
+   * 標的の居場所を、狩人が知っている範囲で（v0.42.0。#19 の F04。地図と文字に出すもの）。
+   * visible = 同じエリアに居る / marked = 標識玉の印がある（別のエリアでも、いまの居場所）/ last_seen = 最後に見たエリア（いまは違うかもしれない）/ unknown。
+   * フィールドの大型だけ。群れの幼体と、エリアが 1 つの狩場は、いつも visible
+   */
+  trackOf(m: MonsterState): { state: 'visible' | 'marked' | 'last_seen' | 'unknown'; areaId: string | null } {
+    const area = this.monsterArea(m);
+    if (!this.field || !m.roam || !area) return { state: 'visible', areaId: area?.id ?? null };
+    if (area.id === this.areaId) return { state: 'visible', areaId: area.id };
+    if (m.markTicks > 0) return { state: 'marked', areaId: area.id };
+    return m.seenAreaId ? { state: 'last_seen', areaId: m.seenAreaId } : { state: 'unknown', areaId: null };
   }
 
   private stepTraps(): void {
@@ -839,6 +882,14 @@ export class Simulation implements SimCtx {
     if (this.field) this.stepExits();
     for (const g of this.herds) stepHerdGroup(g, this);
     for (const m of this.monsters) stepMonster(m, this.player, this);
+    // 目印と、最後に見た所（v0.42.0。#19 の F04）: 印の残りを減らし、同じエリアに居る大型は「見た」ことにする
+    if (this.field) {
+      for (const m of this.monsters) {
+        if (!m.roam) continue;
+        if (m.markTicks > 0) m.markTicks--;
+        if (!m.dead && !m.captured && m.roam.areaId === this.areaId) m.seenAreaId = m.roam.areaId;
+      }
+    }
     this.separateHerds();
     // 歩いてきた大型に重なったら押し出す（プレイヤーが動いていなくても胴を抜けない）
     if (this.player.mode !== 'dead') this.world.move(this.player.pos, this.content.player.radius, 0, 0, this.blockers());
@@ -1250,7 +1301,7 @@ export class Simulation implements SimCtx {
     }
     for (const h of this.hazards) parts.push(h.x, h.z, h.warn, h.active, h.hit ? 1 : 0);
     parts.push(p.itemIndex, p.items.map((s) => s.count).join(','), p.itemUse ? `${p.itemUse.itemId}:${p.itemUse.done ? 1 : 0}` : '-', p.lastSingle ? `${p.lastSingle.key}:${p.lastSingle.instanceId}` : '-', p.carving ? p.carving.source : '-');
-    for (const m of this.monsters) parts.push(m.trapTicks, m.trapCount, m.tranq, m.tranqTicks, m.captured ? 1 : 0);
+    for (const m of this.monsters) parts.push(m.trapTicks, m.trapCount, m.tranq, m.tranqTicks, m.captured ? 1 : 0, m.markTicks, m.seenAreaId ?? '-');
     for (const m of this.monsters) {
       const a = m.ailments;
       parts.push(STATUS_KINDS.map((k) => `${a.gauge[k]}/${a.count[k]}/${a.idle[k]}/${a.ticks[k]}`).join(','), a.poisonTotal, a.poisonDone, a.grace);

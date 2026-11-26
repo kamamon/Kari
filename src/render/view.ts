@@ -509,6 +509,8 @@ export class GameView {
           if (e.kind === 'heal') this.sparks.emit(14, { x: e.pos.x, y: 1.1, z: e.pos.z }, 1.2, 2.2, 0.7, [0.55, 0.95, 0.6], 0.5);
           else if (e.kind === 'trap' && e.ok) this.dust.emit(8, { x: e.pos.x, y: 0.15, z: e.pos.z }, 1.4, 0.6, 0.6, [0.6, 0.6, 0.55], 0.5);
           else if (e.kind === 'tranq') this.dust.emit(e.ok ? 22 : 8, e.pos, e.ok ? 2.4 : 1.2, 1.2, 1.2, [0.62, 0.78, 0.92], 0.8);
+          // 標識玉（v0.42.0）: 当たると、相手の体に灯の色の粉が散る（見た目は仮）
+          else if (e.kind === 'mark') this.sparks.emit(e.ok ? 18 : 6, e.pos, e.ok ? 2.0 : 1.0, 1.4, 0.9, [1, 0.84, 0.45], 0.6);
           break;
         case 'trap_trigger':
           this.rings.spawn(e.x, 0, e.z, 2.6, 0.5, 0xfff0a0);

@@ -73,6 +73,10 @@ export interface MonsterState {
   ailments: MonsterAilments;
   /** 突進の制動（v0.41.0）: 前へ進めなかった tick が続いた数（技を始めるたびに 0） */
   stall: number;
+  /** 目印（v0.42.0。標識玉）の残り tick。0 なら印は無い */
+  markTicks: number;
+  /** 最後に狩人が見たエリア（同じエリアに居た時。フィールドの大型だけ。見ていなければ null） */
+  seenAreaId: string | null;
 }
 
 /** 弱っているか（体力が捕獲できる割合以下）。見た目の合図と捕獲の条件が同じ値を使う。 */
@@ -134,6 +138,8 @@ export function createMonster(def: MonsterDef, spawn: { x: number; z: number; ya
     spawn,
     ailments: freshAilments(),
     stall: 0,
+    markTicks: 0,
+    seenAreaId: null,
   };
 }
 

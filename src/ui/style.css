@@ -286,8 +286,19 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 /* ---- フィールド: いま居るエリア・小さな地図・出口の案内・エリアの名前 ---- */
 .hud-quest .where { color: var(--ink); }
 .hud-quest .where[hidden] { display: none; }
-.hud-map { position: relative; margin: 4px 0 0 auto; }
-.hud-map[hidden] { display: none; }
+/* 地図の並び（v0.42.0）: 居るエリアの地図（左）と、全体の地図（右） */
+.hud-maps { display: flex; gap: 6px; justify-content: flex-end; align-items: flex-start; margin-top: 4px; }
+.hud-maps[hidden] { display: none; }
+.hud-map { position: relative; margin: 0; }
+/* 居るエリアの地図（v0.42.0。#19 の F04）: 外周・段・岩・出口と行き先の番号・自分の矢じり・見えている標的 */
+.hud-local { display: block; overflow: visible; }
+.hud-local .outline { fill: rgba(20, 26, 22, 0.72); stroke: rgba(232, 226, 205, 0.7); stroke-width: 1; stroke-linejoin: round; }
+.hud-local .plat { fill: rgba(232, 226, 205, 0.12); }
+.hud-local .rock { fill: rgba(232, 226, 205, 0.4); }
+.hud-local .exit { fill: rgba(201, 168, 106, 0.9); }
+.hud-local .exit-label { fill: #efe6c8; font-size: 9px; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: rgba(0, 0, 0, 0.7); stroke-width: 2px; }
+.hud-local .me { fill: #fff; stroke: #20261f; stroke-width: 1; }
+.hud-local .tgt { fill: #e0906f; stroke: #2a1410; stroke-width: 1; }
 .hud-map .link { position: absolute; background: rgba(232, 226, 205, 0.55); }
 .hud-map .link.thin { background: rgba(232, 226, 205, 0.28); }
 .hud-map .cell {
@@ -299,6 +310,10 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 .hud-map .cell.nest { border-color: rgba(201, 168, 106, 0.8); }
 .hud-map .cell.target { background: #8a3a2c; border-color: #e0906f; color: #fff; }
 .hud-map .cell.target.asleep { background: #4a5a7a; border-color: #9fb4dc; }
+/* v0.42.0（#19 の F04）: 標識玉の印で分かる居場所は、光る縁。最後に見た所は、点線と「?」（いまは違うかもしれない） */
+.hud-map .cell.target.marked { box-shadow: 0 0 6px 2px rgba(255, 214, 120, 0.85); }
+.hud-map .cell.seen { border-style: dotted; border-color: #e0906f; }
+.hud-map .cell.seen::after { content: '?'; position: absolute; right: -4px; top: -6px; font-size: 10px; color: #f0c0a0; }
 .hud-map .cell.here { border-color: var(--bronze); box-shadow: 0 0 0 1.5px var(--bronze); color: #fff; }
 #hud .hud-exit { position: absolute; left: 50%; top: 36%; transform: translateX(-50%); padding: 3px 12px; border-radius: 10px; background: rgba(20, 26, 22, 0.6); border: 1px solid var(--line); font-size: 12px; font-weight: 700; white-space: nowrap; pointer-events: none; }
 #hud .hud-exit[hidden], #hud .hud-area-banner[hidden] { display: none; }

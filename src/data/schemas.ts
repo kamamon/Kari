@@ -673,7 +673,7 @@ export interface FieldAreaDef {
   kind: 'camp' | 'hunt' | 'path' | 'nest';
   /** 大型モンスターが入れる */
   large: boolean;
-  /** 地図の上のマス（列、行。行は北が大きい） */
+  /** 地図の上のマス（列、行。行は北 = +Z が大きい。列は +X が大きい。地図は上から見た向きで、列の大きい方を左に描く。D-133） */
   grid: [number, number];
   /** 外周を囲む四角（shape の点の、いちばん外） */
   bounds: { minX: number; maxX: number; minZ: number; maxZ: number };
@@ -859,6 +859,8 @@ export interface PlayerTuning {
   gravity: number;
   /** 訓練場（依頼ではない時）に持たせる道具。省くと無し */
   trainingSupplies?: ItemStack[];
+  /** フィールドで大型を狩る依頼（群れ・狩らない依頼・1 つの狩場を除く）に、依頼の支給品へ足す道具（v0.42.0。標識玉）。依頼に同じ道具があれば足さない */
+  huntSupplies?: ItemStack[];
   /** 状態異常（v0.17.0）。省くと src/game/player.ts の既定値 */
   status?: StatusTuning;
 }
@@ -1092,7 +1094,7 @@ export interface ItemDef {
   id: string;
   name: string;
   /** whet: 研磨石。刃の状態を最大まで戻す。抜刀して、手に持った武器を研ぐ */
-  kind: 'heal' | 'trap' | 'tranq' | 'whet';
+  kind: 'heal' | 'trap' | 'tranq' | 'whet' | 'mark';
   carryMax: number;
   useActionId: string;
   effectTick: number;
@@ -1102,6 +1104,11 @@ export interface ItemDef {
   trap?: { armTicks: number; radius: number; holdTicks: number; lifeTicks: number };
   /** 正面 ±halfAngleDeg、range 以内の大型に当たる */
   tranq?: { range: number; halfAngleDeg: number };
+  /**
+   * 目印（v0.42.0。#19 の F04。標識玉）: 正面 ±halfAngleDeg、range 以内のいちばん近い大型に当たると、ticks の間、別のエリアに居ても地図に居場所が出る。
+   * もう 1 度当てると、残りが ticks に戻る
+   */
+  mark?: { range: number; halfAngleDeg: number; ticks: number };
   /** 整備の道具（v0.33.0）。防具の技能「道具整備」で、使う時間が短くなる（研磨石） */
   maintenance?: boolean;
 }

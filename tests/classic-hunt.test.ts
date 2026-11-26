@@ -3,8 +3,11 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { Content } from '../src/data/schemas';
 import type { SimEvent } from '../src/game/events';
+import { yawOf } from '../src/core/math';
+import type { MonsterState } from '../src/game/monster';
 import { COMBO_SLACK_TICKS, resolveIncomingHit } from '../src/game/player';
 import { Simulation } from '../src/game/sim';
+import { areaFrame } from '../src/ui/localMap';
 import { Btn, baseOptions, frame, loadContent, placeInFrontOfHead, press, run } from './helpers';
 
 let content: Content;
@@ -268,5 +271,127 @@ describe('ガルドロスの動き（#19 の M01・M02。v0.41.0）', () => {
     expect(br[0]!.tick).toBeLessThan(125);
     expect(jumpedFrom).toBe(br[0]!.tick);
     expect(m.pos.z).toBeLessThanOrEqual(b.maxZ - m.def.bodyRadius + 1e-6);
+  });
+});
+
+describe('居場所の追跡（#19 の F04。v0.42.0）: 標識玉と、最後に見た所', () => {
+  const MARKER = 'item.marker_orb';
+  const fieldSim = (): Simulation => new Simulation(content, baseOptions({ questId: 'quest.basin.003', field: true }));
+  const count = (sim: Simulation): number => sim.player.items.find((s) => s.itemId === MARKER)?.count ?? 0;
+  /** 狩人を標的と同じエリアへ、標的の 8m 手前（エリアの中心の側）に、標的を向けて置く。標的の AI は止める */
+  const meet = (sim: Simulation, m: MonsterState): string => {
+    m.aiEnabled = false;
+    const area = sim.monsterArea(m)!;
+    const c = sim.world.centerOf(sim.world.areaAt(m.pos.x, m.pos.z));
+    const d = Math.hypot(c.x - m.pos.x, c.z - m.pos.z);
+    const ux = d > 1 ? (c.x - m.pos.x) / d : 1, uz = d > 1 ? (c.z - m.pos.z) / d : 0;
+    const pos = { x: m.pos.x + ux * (8 + m.def.bodyRadius), y: 0, z: m.pos.z + uz * (8 + m.def.bodyRadius) };
+    pos.y = sim.world.groundHeight(pos.x, pos.z);
+    sim.player.pos = pos;
+    sim.player.prevPos = { ...pos };
+    sim.player.yaw = yawOf(m.pos.x - pos.x, m.pos.z - pos.z);
+    sim.player.prevYaw = sim.player.yaw;
+    sim.areaId = area.id;
+    return area.id;
+  };
+  /** 野営地へ戻す */
+  const toCamp = (sim: Simulation): void => {
+    const st = sim.field!.start;
+    sim.player.pos = { x: st.x, y: 0, z: st.z };
+    sim.player.prevPos = { ...sim.player.pos };
+    sim.areaId = 'camp';
+  };
+  /** 標識玉を 1 回投げ切るまで進める */
+  const throwOrb = (sim: Simulation): SimEvent[] => {
+    sim.player.itemIndex = sim.player.items.findIndex((s) => s.itemId === MARKER);
+    const ev = run(sim, 1, () => press(Btn.Item));
+    ev.push(...run(sim, 80));
+    return ev;
+  };
+  const effect = (ev: SimEvent[]): Extract<SimEvent, { type: 'item_effect' }> | undefined => ev.find((e): e is Extract<SimEvent, { type: 'item_effect' }> => e.type === 'item_effect');
+
+  it('出発した時は、標的の居場所を知らない。同じエリアで見ると見え、離れると「最後に見た所」になる（その後に動いても、そのまま）', () => {
+    const sim = fieldSim();
+    const m = sim.monsters[0]!;
+    expect(sim.areaId).toBe('camp');
+    expect(sim.trackOf(m)).toEqual({ state: 'unknown', areaId: null });
+    run(sim, 30);
+    expect(sim.trackOf(m).state).toBe('unknown');
+    const seen = meet(sim, m);
+    run(sim, 1);
+    expect(sim.trackOf(m)).toEqual({ state: 'visible', areaId: seen });
+    toCamp(sim);
+    run(sim, 1);
+    expect(sim.areaId).toBe('camp');
+    expect(sim.trackOf(m)).toEqual({ state: 'last_seen', areaId: seen });
+    // 見ていない間に別のエリアへ移っても、地図に出るのは最後に見た所（印が無いので、いまの居場所は分からない）
+    const other = sim.field!.areas.find((a) => a.kind !== 'camp' && a.id !== seen)!.id;
+    m.roam!.areaId = other;
+    expect(sim.trackOf(m)).toEqual({ state: 'last_seen', areaId: seen });
+  });
+
+  it('標識玉: 正面 12m 以内の大型に当たると、別のエリアに居ても 18000 tick（5 分）いまの居場所が分かる。切れたら最後に見た所', () => {
+    const sim = fieldSim();
+    const m = sim.monsters[0]!;
+    const here = meet(sim, m);
+    expect(count(sim)).toBe(2);
+    const ev = throwOrb(sim);
+    expect(effect(ev)).toMatchObject({ kind: 'mark', ok: true, amount: 300 });
+    expect(count(sim)).toBe(1);
+    expect(m.markTicks).toBeGreaterThan(18000 - 90);
+    expect(m.markTicks).toBeLessThanOrEqual(18000);
+    toCamp(sim);
+    run(sim, 1);
+    expect(sim.trackOf(m)).toEqual({ state: 'marked', areaId: here });
+    // 印がある間は、移った先がそのまま分かる
+    const other = sim.field!.areas.find((a) => a.kind !== 'camp' && a.id !== here)!.id;
+    m.roam!.areaId = other;
+    expect(sim.trackOf(m)).toEqual({ state: 'marked', areaId: other });
+    m.roam!.areaId = here;
+    // 印は tick ごとに減り、0 になると最後に見た所へ戻る
+    m.markTicks = 2;
+    run(sim, 2);
+    expect(m.markTicks).toBe(0);
+    expect(sim.trackOf(m)).toEqual({ state: 'last_seen', areaId: here });
+  });
+
+  it('地図の向き（D-133）: 上から見た向き（北 = +Z が上、+X が左）。前を上にした時の地図の右は、入力の「右」と同じ。矢じりの角度は前の向きと合う', () => {
+    const a3 = content.fields.get('field.basin')!.areas.find((a) => a.id === 'a3')!;
+    const f = areaFrame(a3, 92, 66);
+    const ex = (to: string): [number, number] => {
+      const e = a3.exits.find((x) => x.to === to)!;
+      return f.toMap(e.x, e.z);
+    };
+    expect(ex('a7')[1]).toBeLessThan(ex('a1')[1]);
+    expect(ex('a6')[0]).toBeLessThan(ex('a2')[0]);
+    const [x0, y0] = f.toMap(0, 0);
+    for (const yaw of [0, 0.7, -1.2, 2.5, -3, 5]) {
+      const deg = (f.rotation(yaw) * Math.PI) / 180;
+      expect(Math.abs(f.rotation(yaw))).toBeLessThanOrEqual(180);
+      // 前 (sin, cos) は、上向きの矢じりを時計回りに deg 回した向き
+      const [x1, y1] = f.toMap(Math.sin(yaw), Math.cos(yaw));
+      const len = Math.hypot(x1 - x0, y1 - y0);
+      expect((x1 - x0) / len).toBeCloseTo(Math.sin(deg), 6);
+      expect((y1 - y0) / len).toBeCloseTo(-Math.cos(deg), 6);
+      // 入力の右 (-cos, sin)（src/input/hub.ts）は、矢じりの右（時計回りに 90°）
+      const [x2, y2] = f.toMap(-Math.cos(yaw), Math.sin(yaw));
+      expect((x2 - x0) / len).toBeCloseTo(Math.cos(deg), 6);
+      expect((y2 - y0) / len).toBeCloseTo(Math.sin(deg), 6);
+    }
+  });
+
+  it('標識玉は、背を向けて投げると外れる（それでも 1 個減る）。エリアの無い狩場では、標的はいつも見えている', () => {
+    const sim = fieldSim();
+    const m = sim.monsters[0]!;
+    meet(sim, m);
+    sim.player.yaw += Math.PI;
+    sim.player.prevYaw = sim.player.yaw;
+    const ev = throwOrb(sim);
+    expect(effect(ev)).toMatchObject({ kind: 'mark', ok: false, amount: 0 });
+    expect(m.markTicks).toBe(0);
+    expect(count(sim)).toBe(1);
+    const arena = new Simulation(content, baseOptions({ questId: 'quest.basin.003' }));
+    expect(arena.field).toBeNull();
+    expect(arena.trackOf(arena.monsters[0]!)).toMatchObject({ state: 'visible' });
   });
 });
