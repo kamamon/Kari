@@ -106,10 +106,11 @@ describe('登録簿のデータ', () => {
     expect(pairs.size).toBe(17);
   });
 
-  it('狩場の案は 20。歩けるのは風礫盆地だけ。どの種の狩場も、この一覧にあり、どの狩場にも種が居る', () => {
+  it('狩場の案は 20。20 地域を採取用に歩ける。どの種の狩場も、この一覧にあり、どの狩場にも種が居る', () => {
     const b = content.bestiary;
     expect(b.fields.length).toBe(20);
-    expect(b.fields.filter((f) => f.fieldId).map((f) => [f.name, f.fieldId])).toEqual([['風礫盆地', 'field.basin']]);
+    expect(b.fields.filter((f) => f.fieldId)).toHaveLength(20);
+    for(const f of b.fields) expect(content.fields.get(f.fieldId!)?.name).toBe(f.name);
     const names = new Set(b.fields.map((f) => f.name));
     for (const s of b.species) expect(names.has(s.habitat), s.id).toBe(true);
     for (const f of b.fields) expect(b.species.some((s) => s.habitat === f.name), f.name).toBe(true);

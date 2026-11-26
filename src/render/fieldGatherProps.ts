@@ -1,13 +1,13 @@
 import { Group, Mesh, MeshLambertMaterial, MeshBasicMaterial, CylinderGeometry, IcosahedronGeometry, SphereGeometry, ConeGeometry, CircleGeometry, RingGeometry, DoubleSide, type BufferGeometry } from 'three';
 import type { Simulation } from '../game/sim';
-import type { FieldGatherNode, FieldGatherKind } from '../data/fieldGathering';
+import { gatheringCatalog, type FieldGatherNode, type FieldGatherKind } from '../data/fieldGathering';
 export const GATHER_COLORS:Record<FieldGatherKind,number>={mine:0x6cc4ff,bone:0xe8d5ad,plant:0x8edc77,insect:0xf3cd64,fish:0x6ce7df};
 type Prop={node:FieldGatherNode;root:Group;visual:Group;marker:Mesh;flutter?:Group};
 export interface FieldGatherProps {group:Group;props:Prop[];pond:Group;school:Mesh[];ripple:Mesh}
 function mat(color:number){return new MeshLambertMaterial({color,flatShading:true});}
 function mesh(parent:Group,geometry:BufferGeometry,material:MeshLambertMaterial|MeshBasicMaterial,x:number,y:number,z:number):Mesh{const m=new Mesh(geometry,material);m.position.set(x,y,z);parent.add(m);return m;}
 export function buildFieldGatherProps(sim:Simulation):FieldGatherProps|null{
- const cat=sim.content.fieldGathering;if(!cat||sim.field?.id!==cat.fieldId)return null;
+ const cat=gatheringCatalog(sim.content,sim.field?.id);if(!cat)return null;
  const group=new Group(),props:Prop[]=[],pond=new Group(),school:Mesh[]=[];group.name='field-gathering';group.add(pond);
  const stone=mat(0x514f4b),dark=mat(0x333d41),ivory=mat(0xd8c6a0),green=mat(0x48713d),leaf=mat(0x9bb857),wood=mat(0x62563b),berry=mat(0xa94a35),gold=mat(0xc69836),wing=mat(0xe3c78e);
  for(const node of sim.fieldGather?.nodes??[]){
@@ -36,7 +36,7 @@ export function buildFieldGatherProps(sim:Simulation):FieldGatherProps|null{
  return {group,props,pond,school,ripple};
 }
 export function updateFieldGatherProps(view:FieldGatherProps,sim:Simulation,time:number):void{
- const g=sim.fieldGather,cat=sim.content.fieldGathering;
+ const g=sim.fieldGather,cat=gatheringCatalog(sim.content,sim.field?.id);
  for(const p of view.props){const n=p.node;p.root.visible=!!g&&n.areaId===sim.areaId;if(!p.root.visible||!g)continue;const left=g.left(n);p.visual.scale.set(1,left?1:.40,1);p.marker.visible=left>0&&g.hasTool(n)&&g.discovered.has(n.id)&&Math.hypot(sim.player.pos.x-n.x,sim.player.pos.z-n.z)<12;p.marker.position.y=1.25+Math.sin(time*3+n.x)*.11;if(p.flutter){p.flutter.visible=left>0;p.flutter.position.y=Math.sin(time*3+n.x)*.12;p.flutter.rotation.y=time*.8;}}
  view.pond.visible=cat?.pond.areaId===sim.areaId;
  if(view.pond.visible){const op=sim.player.errandOp,a=sim.player.action,bite=!!g&&op?.target.kind==='field_node'&&op.target.source==='fish'&&!!a&&g.bite(a.tick);

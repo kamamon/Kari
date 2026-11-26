@@ -2,7 +2,7 @@
 // ブラウザ（fetch）と Node のテスト（fs）の両方から同じ関数を使う。
 // 問題は黙って直さず、すべて errors に積んで呼び出し側へ返す。
 
-import { carveGatherPond, fieldGatherMaterials, validateFieldGatherCatalog, type FieldGatherCatalog } from './fieldGathering';
+import { carveGatherPond, gatheringCatalog, fieldGatherMaterials, validateFieldGatherCatalog, type FieldGatherCatalog } from './fieldGathering';
 import { buildFollowTable } from '../game/follow';
 import { AreaShape, NavGraph } from '../game/areaShape';
 import { VAULT_REACH, groundAt } from '../game/world';
@@ -639,7 +639,7 @@ export function validateGather(c: Content, q: QuestDef): string[] {
   if (g.encounters !== 'none') e.push(`${w}: encounters "${String(g.encounters)}" は未定義（いまは none だけ）`);
   if (!(isInt(g.yieldPerNode) && g.yieldPerNode >= 1 && g.yieldPerNode <= 5)) e.push(`${w}: yieldPerNode が不正`);
   if (!Array.isArray(g.needs) || (!g.fieldGathering && g.needs.length === 0)) e.push(`${w}: 要る素材が無い`);
-  if (g.fieldGathering && (g.needs.length !== 0 || g.nodes.length !== 0 || c.fieldGathering?.fieldId !== q.fieldId)) e.push(`${w}: 自由採集遠征の定義が不正`);
+  if (g.fieldGathering && (g.needs.length !== 0 || g.nodes.length !== 0 || !gatheringCatalog(c,q.fieldId))) e.push(`${w}: 自由採集遠征の定義が不正`);
   const need = new Map<string, number>();
   for (const s of g.needs ?? []) {
     if (!c.materials.has(s.itemId)) e.push(`${w}: 要る素材 ${s.itemId} が無い`);
@@ -1386,10 +1386,33 @@ export async function assembleContent(getRaw: JsonGetter, opts: LoadOptions = {}
     errors.push(...validateFieldGatherCatalog(content,g));
     carveGatherPond(content,g,errors);
   }
+  if (index.files.regionalGathering) {
+    const doc = (await get(index.files.regionalGathering)) as { schemaVersion:number; catalogs:FieldGatherCatalog[] };
+    checkVersion(index.files.regionalGathering, doc.schemaVersion, errors);
+    content.regionalGathering = new Map();
+    for (const g of doc.catalogs ?? []) {
+      checkVersion(g.fieldId,g.schemaVersion,errors);
+      if (gatheringCatalog(content,g.fieldId)) { errors.push('field gathering: duplicate field '+g.fieldId); continue; }
+      if (g.actions.length || g.skills.length || g.weapons.length || g.armor.length || g.recipes.length) errors.push('field gathering: 地域カタログに装備・行動の重複定義 '+g.fieldId);
+      content.regionalGathering.set(g.fieldId,g);
+      for (const m of g.materials) {
+        const old=content.materials.get(m.id);
+        if (old && old.name!==m.name) errors.push('field gathering: 素材名が不一致 '+m.id);
+        else if (!old) putUnique(content.materials,m.id,m,'material',errors);
+      }
+      for (const q of g.quests) putUnique(content.quests,q.id,q,'quest',errors);
+      errors.push(...validateFieldGatherCatalog(content,g));
+      carveGatherPond(content,g,errors);
+    }
+  }
   validateGear(content, errors);
   content.shop = (await get(index.files.shop)) as ShopDef;
   checkVersion(index.files.shop, content.shop.schemaVersion, errors);
-  if(content.fieldGathering){const sold=new Set(content.shop.sell.map(g=>g.itemId));content.shop={...content.shop,sell:[...content.shop.sell,...content.fieldGathering.materials.filter(m=>!sold.has(m.id)).map(m=>({itemId:m.id,price:m.sellPrice}))]};}
+  const catalogList = [...(content.fieldGathering ? [content.fieldGathering] : []), ...Array.from(content.regionalGathering?.values() ?? [])];
+  const sold=new Set(content.shop.sell.map(g=>g.itemId));
+  const regionalSales:ShopDef['sell']=[];
+  for(const g of catalogList) for(const m of g.materials) if(!sold.has(m.id)){sold.add(m.id);regionalSales.push({itemId:m.id,price:m.sellPrice});}
+  content.shop={...content.shop,sell:[...content.shop.sell,...regionalSales]};
   content.hub = (await get(index.files.hub)) as HubDef;
   checkVersion(index.files.hub, content.hub.schemaVersion, errors);
   crossCheck(content, errors);
@@ -1427,7 +1450,7 @@ export async function assembleContent(getRaw: JsonGetter, opts: LoadOptions = {}
   // 依頼の掲示・工房からの支給・里の納品（v0.26.0、docs/spec.md の 25 章）。掲示は、読み込みの時に依頼へ付ける
   content.board = (await get(index.files.board)) as QuestBoardDef;
   checkVersion(index.files.board, content.board.schemaVersion, errors);
-  if (content.fieldGathering) content.board = { ...content.board, quests: [...content.board.quests, ...content.fieldGathering.board] };
+  content.board = { ...content.board, quests: [...content.board.quests, ...catalogList.flatMap(g=>g.board)] };
   errors.push(...validateBoard(content.board, content));
   for (const b of content.board.quests ?? []) {
     const q = content.quests.get(b.questId);

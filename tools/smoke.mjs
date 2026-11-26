@@ -2782,9 +2782,9 @@ const startTraining = async (page, tap = false) => {
   // v0.23.0: 狩場の案を開くと、景色の原画（ChatGPT の追加原画。640 × 427）が出る
   await page.evaluate(() => { document.querySelector('[data-field="根絡み湿原"]').open = true; });
   const fieldArt = await until(page, () => document.querySelector('[data-field="根絡み湿原"] figure img')?.naturalWidth === 640, 8000);
-  check('図鑑: 狩場の案を開くと、景色の原画が出る（まだ歩けない狩場は、そう書く）', fieldArt && await page.evaluate(() => /まだ歩けません/.test(document.querySelector('[data-field="根絡み湿原"] figcaption').textContent)), await page.evaluate(() => document.querySelector('[data-field="根絡み湿原"]')?.innerHTML.slice(0, 200)));
-  check('図鑑: 狩場の案が 20 並ぶ（歩けるのは風礫盆地だけ）。開くと、地形と、そこに出る種が出る',
-    zukan.fields === 20 && zukan.walkable === '風礫盆地' && zukan.fieldHead === '狩場の案 20（歩けるのは 1）' && zukan.basinState === '歩ける' && /燠脈台地/.test(zukan.fieldText) && /熾炉獣 エンバルグ/.test(zukan.fieldText) && zukan.fieldState === '案', JSON.stringify({ fields: zukan.fields, walkable: zukan.walkable, head: zukan.fieldHead, state: zukan.fieldState, text: zukan.fieldText }));
+  check('図鑑: 狩場を開くと、景色の原画が出る（ゲーム内地形とは別）', fieldArt && await page.evaluate(() => /この絵とは別/.test(document.querySelector('[data-field="根絡み湿原"] figcaption').textContent)), await page.evaluate(() => document.querySelector('[data-field="根絡み湿原"]')?.innerHTML.slice(0, 200)));
+  check('図鑑: 20 狩場を歩ける。採取専用の暫定地形と生息予定の種を区別する',
+    zukan.fields === 20 && zukan.walkable.split(',').length === 20 && zukan.fieldHead === '狩場の案 20（歩けるのは 20）' && zukan.basinState === '歩ける' && /燠脈台地/.test(zukan.fieldText) && /熾炉獣 エンバルグ/.test(zukan.fieldText) && zukan.fieldState === '採取可（暫定）', JSON.stringify({ fields: zukan.fields, walkable: zukan.walkable, head: zukan.fieldHead, state: zukan.fieldState, text: zukan.fieldText }));
   await page.evaluate(() => document.getElementById('base-bestiary').scrollIntoView({ block: 'start' }));
   await page.screenshot({ path: `${OUT}99_bestiary.png` });
   // 依頼へ: 買った回復液を、支給品に足して持っていく（v0.38.0: 一覧には受付の案内だけ。初級の受付まで行って、詳細から出発する）
@@ -3185,7 +3185,7 @@ const startTraining = async (page, tap = false) => {
   // v0.38.0（ChatGPT の #17）: 依頼は級ごとの受付で、星ごとの短い一覧 → 詳細
   const boardRows = await receptionRows(page);
   const boardInfo = boardRows.map((r) => `${r.id}:${r.stars}`);
-  check('依頼の掲示: 43 件（狩り 33・狩らない 5・採集の遠征 4（#32）・里の納品 1）が、4 つの受付の星ごとの一覧に 1 度ずつ。主線・昇級確認の札が短い行に出る。里の納品は、まだ', boardRows.length === 43 && new Set(boardRows.map((r) => r.id)).size === 43
+  check('依頼の掲示: 119 件（狩り 33・狩らない 5・採取ツアー80・里の納品 1）が、4 つの受付の星ごとの一覧に 1 度ずつ。主線・昇級確認の札が短い行に出る。里の納品は、まだ', boardRows.length === 119 && new Set(boardRows.map((r) => r.id)).size === 119
     && ['r1', 'r2', 'r3', 'r4'].every((k) => boardRows.some((r) => r.id === `quest.explore.basin.${k}`))
     && boardRows.every((r) => r.stars >= 1 && r.stars <= 8) && /主線/.test(boardRows.find((r) => r.id === 'quest.basin.003')?.text ?? '') && /昇級確認/.test(boardRows.find((r) => r.id === 'quest.basin.r4.001')?.text ?? '')
     && !/30 分/.test(boardRows.find((r) => r.id === 'quest.basin.003')?.text ?? '') && /未解放/.test(boardRows.find((r) => r.id === 'quest.delivery.009')?.text ?? '') && boardRows.find((r) => r.id === 'quest.basin.r4.001')?.stars === 8,

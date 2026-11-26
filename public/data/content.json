@@ -102,10 +102,48 @@
     ],
     "maps": [
       "maps/basin_training.json",
-      "maps/hub_village.json"
+      "maps/hub_village.json",
+      "maps/wetland_survey.json",
+      "maps/coast_survey.json",
+      "maps/ashmine_survey.json",
+      "maps/icegorge_survey.json",
+      "maps/mistforest_survey.json",
+      "maps/emberplateau_survey.json",
+      "maps/raincliff_survey.json",
+      "maps/copperterrace_survey.json",
+      "maps/dryriver_survey.json",
+      "maps/leadcloud_survey.json",
+      "maps/sunkenroot_survey.json",
+      "maps/glassplain_survey.json",
+      "maps/ashcocoon_survey.json",
+      "maps/coldcopper_survey.json",
+      "maps/echohall_survey.json",
+      "maps/heavyfog_survey.json",
+      "maps/buriedheat_survey.json",
+      "maps/ruststar_survey.json",
+      "maps/deepveil_survey.json"
     ],
     "fields": [
-      "fields/basin.json"
+      "fields/basin.json",
+      "fields/wetland.json",
+      "fields/coast.json",
+      "fields/ashmine.json",
+      "fields/icegorge.json",
+      "fields/mistforest.json",
+      "fields/emberplateau.json",
+      "fields/raincliff.json",
+      "fields/copperterrace.json",
+      "fields/dryriver.json",
+      "fields/leadcloud.json",
+      "fields/sunkenroot.json",
+      "fields/glassplain.json",
+      "fields/ashcocoon.json",
+      "fields/coldcopper.json",
+      "fields/echohall.json",
+      "fields/heavyfog.json",
+      "fields/buriedheat.json",
+      "fields/ruststar.json",
+      "fields/deepveil.json"
     ],
     "player": "player.json",
     "quests": [
@@ -160,6 +198,7 @@
       "follow/hinasalv.json",
       "follow/galdros.json"
     ],
-    "fieldGathering": "field_gathering.json"
+    "fieldGathering": "field_gathering.json",
+    "regionalGathering": "regional_gathering.json"
   }
 }
