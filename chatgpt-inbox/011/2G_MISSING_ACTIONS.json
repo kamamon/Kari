@@ -1,0 +1,4359 @@
+{
+  "schemaVersion": 2,
+  "request": "011",
+  "status": "proposed_missing_actions_not_present_in_current_action_json",
+  "baseCommit": "7b22842c2cbce35f4eb41c515b5cd977a3682352",
+  "confidence": "操作構成は資料に根拠。モーション姿勢・実測時間は原作動画未検証",
+  "sources": {
+    "heavy_blade": {
+      "url": "https://w.atwiki.jp/mhp2g/pages/146.html",
+      "title": "MHP2G@Wiki 大剣・操作方法"
+    },
+    "guard_blade": {
+      "url": "https://w.atwiki.jp/mhp2g/pages/149.html",
+      "title": "MHP2G@Wiki 片手剣・操作方法"
+    },
+    "twin_blades": {
+      "url": "https://w.atwiki.jp/mhp2g/pages/150.html",
+      "title": "MHP2G@Wiki 双剣・操作方法"
+    },
+    "war_maul": {
+      "url": "https://w.atwiki.jp/mhp2g/pages/151.html",
+      "title": "MHP2G@Wiki ハンマー・操作方法"
+    },
+    "long_blade": {
+      "url": "https://w.atwiki.jp/mhp2g/pages/147.html",
+      "title": "MHP2G@Wiki 太刀・操作方法"
+    },
+    "long_lance": {
+      "url": "https://w.atwiki.jp/mhp2g/pages/153.html",
+      "title": "MHP2G@Wiki ランス・操作方法"
+    },
+    "ring_bow": {
+      "url": "https://w.atwiki.jp/mhp2gyumi/pages/17.html",
+      "title": "MHP2G弓(ヲチ)Wiki 基本動作"
+    }
+  },
+  "entries": [
+    {
+      "proposedActionId": "player.heavy_blade.kick",
+      "weaponFamily": "heavy_blade",
+      "original2gMove": "蹴り",
+      "documentedControl": "抜刀+SELECT",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/146.html",
+          "title": "MHP2G@Wiki 大剣・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "準備",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "右脚を持ち上げる",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "前方へ蹴る",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "脚を引く",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "既存の防御や斬撃とは別の小さな行動",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.guard_blade.guard_rise",
+      "weaponFamily": "guard_blade",
+      "original2gMove": "ガードからの斬り上げ",
+      "documentedControl": "ガード中 R+△",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/149.html",
+          "title": "MHP2G@Wiki 片手剣・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "盾で上体を守る",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "腰を沈める",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "剣を下から上へ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "盾前方保持",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "ガードへ戻る",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "R+○のガード攻撃と混同しない",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.guard_blade.guard_item",
+      "weaponFamily": "guard_blade",
+      "original2gMove": "ガード中の道具使用",
+      "documentedControl": "ガード中 R+□",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/149.html",
+          "title": "MHP2G@Wiki 片手剣・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "盾の防御準備",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "道具へ右手を移す",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "効果イベント",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "道具をしまう",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "盾へ復帰",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "道具使用の前後に盾の位置を記録",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.guard_blade.combo_shield_blade",
+      "weaponFamily": "guard_blade",
+      "original2gMove": "剣盾コンボ",
+      "documentedControl": "△連続攻撃の末尾",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/149.html",
+          "title": "MHP2G@Wiki 片手剣・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "斬り連係終端",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "盾側肩を前へ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "盾打点",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "剣側へ返す",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "回避／構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "現行bash単独の扱いと比較",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.twin_blades.sweep_entry",
+      "weaponFamily": "twin_blades",
+      "original2gMove": "通常時の斬り払い",
+      "documentedControl": "通常時 △+○／移動中抜刀△",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/150.html",
+          "title": "MHP2G@Wiki 双剣・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "両剣の構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "腰を引く",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "前進し左右刃を払う",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "肩を返す",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "通常連係へ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "既存stabを2Gの通常同時押しとして残さない",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.twin_blades.upslash",
+      "weaponFamily": "twin_blades",
+      "original2gMove": "斬り払い後の斬り上げ",
+      "documentedControl": "斬り払い後△",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/150.html",
+          "title": "MHP2G@Wiki 双剣・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "連係前段",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "膝を緩める",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "低所から刃を返す",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "肩を止める",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "次の斬り下ろし",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "斬り払いからの連係開始として必要",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.twin_blades.demon_double_spin",
+      "weaponFamily": "twin_blades",
+      "original2gMove": "鬼人化中の二回転斬り",
+      "documentedControl": "鬼人化中 ○",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/150.html",
+          "title": "MHP2G@Wiki 双剣・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "胸を逆方向へ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "K2a一周目",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "K2b二周目",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "回避・連係",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "回転中の接地脚を左右で明確化",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.twin_blades.demon_evade",
+      "weaponFamily": "twin_blades",
+      "original2gMove": "鬼人化中の回避",
+      "documentedControl": "鬼人化中 ×",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/150.html",
+          "title": "MHP2G@Wiki 双剣・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "低い構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "足の蹴り",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "移動",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "着地",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "低い構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "通常回避とは別に支持足を検証",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.war_maul.charge_two_hit",
+      "weaponFamily": "war_maul",
+      "original2gMove": "溜め2の打ち下ろしと振り上げ",
+      "documentedControl": "溜め2解放",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/151.html",
+          "title": "MHP2G@Wiki ハンマー・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "溜め保持",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "K2a打ち下ろし",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "反動で槌頭を運ぶ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "K2b振り上げ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "旧charge_upswing単発と異なる二接触",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.war_maul.spin_early_finish",
+      "weaponFamily": "war_maul",
+      "original2gMove": "回転初期の派生フィニッシュ",
+      "documentedControl": "溜め3移動回転の1〜2周で△",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/151.html",
+          "title": "MHP2G@Wiki ハンマー・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "回転開始",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "K2a回転打点",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "入力分岐",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "打ち下ろし/振り上げ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "復帰",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "追加入力と回転周数の判定が必要。Kari用の値は未決定",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.war_maul.spin_late_finish",
+      "weaponFamily": "war_maul",
+      "original2gMove": "回転後半の派生フィニッシュ",
+      "documentedControl": "溜め3移動回転の3〜4周で△",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/151.html",
+          "title": "MHP2G@Wiki ハンマー・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "回転開始",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "K2a/b複数の回転打点",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "腰を止める",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "大きな振り上げ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "復帰",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "早期フィニッシュと重心移動を分離",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.war_maul.charge_walk",
+      "weaponFamily": "war_maul",
+      "original2gMove": "溜めながらの移動",
+      "documentedControl": "R保持+移動",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/151.html",
+          "title": "MHP2G@Wiki ハンマー・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "槌構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "ための重心移動",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "前進中も槌を支える",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "解放姿勢へ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "復帰",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "移動中に溜め3解放でspinへ",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.long_blade.vertical",
+      "weaponFamily": "long_blade",
+      "original2gMove": "太刀の二段目縦斬り",
+      "documentedControl": "踏み込み斬り後 △",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/147.html",
+          "title": "MHP2G@Wiki 太刀・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "前段接触",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "刃を高く戻す",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "下へ縦に通す",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "体の横で制動",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "次連係",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "既存kesaだけで通常連係を表さない",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.long_blade.spirit1",
+      "weaponFamily": "long_blade",
+      "original2gMove": "気刃斬り1",
+      "documentedControl": "練気量が十分で R",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/147.html",
+          "title": "MHP2G@Wiki 太刀・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "気刃開始",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "胸を開く",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "刃のK2接触",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "足を戻す",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "次の連係",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "練気の消費と刃の打点を同期",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.long_blade.spirit2",
+      "weaponFamily": "long_blade",
+      "original2gMove": "気刃斬り2",
+      "documentedControl": "気刃1→△突き→R",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/147.html",
+          "title": "MHP2G@Wiki 太刀・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "突きの終端",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "腰を逆へ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "K2接触",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "剣を引く",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "次の連係",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "R入力だけで飛ばず途中に△突きが入る",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.long_blade.spirit3",
+      "weaponFamily": "long_blade",
+      "original2gMove": "気刃斬り3（連続3打点）",
+      "documentedControl": "気刃2→△斬り上げ→R",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/147.html",
+          "title": "MHP2G@Wiki 太刀・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "下段終端",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "K2a接触",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "K2b接触",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "K2c接触",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "復帰",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "2Gに気刃大回転斬りを足さない",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.long_lance.charge_run",
+      "weaponFamily": "long_lance",
+      "original2gMove": "継続突進",
+      "documentedControl": "抜刀中 △+○",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/153.html",
+          "title": "MHP2G@Wiki ランス・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "盾と槍の突進構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "低く推進",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "継続接触",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "入力による停止orフィニッシュ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "復帰",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "現行lunge 66tickを継続突進とみなさない",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.long_lance.charge_finish",
+      "weaponFamily": "long_lance",
+      "original2gMove": "突進からのフィニッシュ突き",
+      "documentedControl": "突進中 △",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/153.html",
+          "title": "MHP2G@Wiki ランス・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "槍を引きつつ歩幅を整える",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "突進を制動",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "K2槍先接触",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "姿勢を戻す",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "ガード可能へ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "突進の停止とは別の入力",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.long_lance.charge_stop",
+      "weaponFamily": "long_lance",
+      "original2gMove": "突進の停止",
+      "documentedControl": "突進中 ○",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/153.html",
+          "title": "MHP2G@Wiki ランス・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "突進中",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "足でブレーキ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "槍先を止める",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "盾を前へ戻す",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "自由構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "キャンセルと停止を区別",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.long_lance.long_back_hop",
+      "weaponFamily": "long_lance",
+      "original2gMove": "大バックステップ",
+      "documentedControl": "方向↓+×",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/153.html",
+          "title": "MHP2G@Wiki ランス・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "盾構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "膝を曲げる",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "後方へ跳ぶ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "着地",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "通常後方ステップとの移動距離差は未測定",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.long_lance.guard_walk",
+      "weaponFamily": "long_lance",
+      "original2gMove": "盾構えで歩く",
+      "documentedControl": "ガード+移動",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2g/pages/153.html",
+          "title": "MHP2G@Wiki ランス・操作方法"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "盾構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "支持足を替える",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "盾を保ち進む",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "反対足接地",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "盾構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "盾方向と武器の軌道が逸れないこと",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.ring_bow.aim",
+      "weaponFamily": "ring_bow",
+      "original2gMove": "射線表示・手動照準",
+      "documentedControl": "R保持",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2gyumi/pages/17.html",
+          "title": "MHP2G弓(ヲチ)Wiki 基本動作"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "射線方向の構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "弓腕と首を向ける",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "視点に沿って照準",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "向き維持",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "解除",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "射線はsimulationを正本にしてカメラと一致",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.ring_bow.coating_attach",
+      "weaponFamily": "ring_bow",
+      "original2gMove": "ビンの装着",
+      "documentedControl": "△+○（ビン選択後）",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2gyumi/pages/17.html",
+          "title": "MHP2G弓(ヲチ)Wiki 基本動作"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "弓構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "ビン材へ右手を伸ばす",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "矢へ装着",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "弦を持ち直す",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "弓構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "消費確定を装填イベントへ",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.ring_bow.melee1",
+      "weaponFamily": "ring_bow",
+      "original2gMove": "矢切り1段目",
+      "documentedControl": "○",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2gyumi/pages/17.html",
+          "title": "MHP2G弓(ヲチ)Wiki 基本動作"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "弓構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "持ち手を寄せる",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "矢または弓で近接接触",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "引く",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "次段へ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "散らし攻撃を近接として流用しない",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.ring_bow.melee2",
+      "weaponFamily": "ring_bow",
+      "original2gMove": "矢切り2段目",
+      "documentedControl": "近接1段後 ○",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2gyumi/pages/17.html",
+          "title": "MHP2G弓(ヲチ)Wiki 基本動作"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "前段終端",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "肩を逆に開く",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "K2近接接触",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "脚で止める",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "弓構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "連続2段の攻撃窓を分離",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.ring_bow.bow_backstep",
+      "weaponFamily": "ring_bow",
+      "original2gMove": "弓のバックステップ",
+      "documentedControl": "抜弓状態 ×",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2gyumi/pages/17.html",
+          "title": "MHP2G弓(ヲチ)Wiki 基本動作"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "射撃準備",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "膝を沈める",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "後方へ跳ぶ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "着地",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "射撃可能へ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "通常回避とは異なる移動方向",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    },
+    {
+      "proposedActionId": "player.ring_bow.charge_walk",
+      "weaponFamily": "ring_bow",
+      "original2gMove": "溜め引き絞り移動",
+      "documentedControl": "△保持+移動",
+      "source": [
+        {
+          "url": "https://w.atwiki.jp/mhp2gyumi/pages/17.html",
+          "title": "MHP2G弓(ヲチ)Wiki 基本動作"
+        }
+      ],
+      "implementationState": "提案（現行Kariにはない、Claude側でID確定が必要）",
+      "keys": [
+        {
+          "key": "K0",
+          "visualBrief": "取りかけ",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K1",
+          "visualBrief": "弦を引きつつ踏み替え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K2",
+          "visualBrief": "引き絞り保持",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K3",
+          "visualBrief": "リリース",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        },
+        {
+          "key": "K4",
+          "visualBrief": "弓構え",
+          "support": "不明（原作映像未確認）",
+          "feet": {
+            "L": "不明",
+            "R": "不明"
+          },
+          "pelvis": {
+            "height": "不明",
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "chest": {
+            "yaw": "不明",
+            "pitch": "不明",
+            "roll": "不明"
+          },
+          "weapon": {
+            "grip": "不明",
+            "tip": "不明",
+            "edge": "不明",
+            "leftHand": "不明"
+          },
+          "time": "未測定",
+          "root": "原作移動未測定"
+        }
+      ],
+      "technicalNotes": "実移動量と支持足周期を合わせる",
+      "verifiedWrittenCommands": true,
+      "verifiedVideoFrames": false,
+      "coordinateMeasurements": "未測定",
+      "kinematicDesign": "Kari用の独自仮案"
+    }
+  ]
+}

@@ -1,0 +1,531 @@
+{
+  "schemaVersion": 1,
+  "request": "011",
+  "baseCommit": "7b22842c2cbce35f4eb41c515b5cd977a3682352",
+  "count": 130,
+  "evidence": "Original PSP motion frame inspection not performed. Values are Kari provisional candidates. Source chapter timestamps are not move timestamps.",
+  "records": [
+    {
+      "path": "player.common.carve.json",
+      "blobSha": "ba4850e7ee3843e9955cf5cea02c0d3d23d0fd35"
+    },
+    {
+      "path": "player.common.deliver.json",
+      "blobSha": "8f95c1385d36a1c8d3d79eed61b54ef89c6f57f8"
+    },
+    {
+      "path": "player.common.gather.json",
+      "blobSha": "8c73f0ee93d0a6f5c160639a569f6bdb1c6baeb9"
+    },
+    {
+      "path": "player.common.mine.json",
+      "blobSha": "3aa96002f785fbc5c8b0dc16830baccc5b7c518e"
+    },
+    {
+      "path": "player.common.roll.json",
+      "blobSha": "30965166d8c1068c440682c82154a8a494c12487"
+    },
+    {
+      "path": "player.guard_blade.bash.json",
+      "blobSha": "5efcb229e4656c69eaad009e73eebeec7fc8b569"
+    },
+    {
+      "path": "player.guard_blade.draw.json",
+      "blobSha": "c0ba4fc3c78d0bf264f90e85e30d37db67ae0759"
+    },
+    {
+      "path": "player.guard_blade.guard_slash.json",
+      "blobSha": "89684d17c832450122f9283823b6ab10b5f4bebf"
+    },
+    {
+      "path": "player.guard_blade.lunge.json",
+      "blobSha": "42db371720332987eb50c85e9f6ff00414c9f062"
+    },
+    {
+      "path": "player.guard_blade.return.json",
+      "blobSha": "baae33b435b95b6a0dfb46c7febc49665ea8f242"
+    },
+    {
+      "path": "player.guard_blade.round.json",
+      "blobSha": "a1f288c232949d03ee3b753b44d0201ef7be3768"
+    },
+    {
+      "path": "player.guard_blade.sheathe.json",
+      "blobSha": "5fe430409d61afb9baca7b6b580fa0994a54f8ae"
+    },
+    {
+      "path": "player.guard_blade.side.json",
+      "blobSha": "a9207d2a2233a4520366ec0d034be2d15056361e"
+    },
+    {
+      "path": "player.guard_blade.slash1.json",
+      "blobSha": "00487630c33b7407f66f87f7b1b465e02ee6cbdc"
+    },
+    {
+      "path": "player.guard_blade.slash2.json",
+      "blobSha": "b1dd34de2ffc1486f9f29ba618d5722d854f8bd6"
+    },
+    {
+      "path": "player.heavy_blade.draw_slash.json",
+      "blobSha": "cad5c98962db49b0475d86a68f31159b82265707"
+    },
+    {
+      "path": "player.heavy_blade.draw.json",
+      "blobSha": "4aa47e9d5af45cd5823d5aa43d13d7489d117591"
+    },
+    {
+      "path": "player.heavy_blade.overhead.json",
+      "blobSha": "44192b1a9c53ca8d3b6751b7e6b92b48dece2d81"
+    },
+    {
+      "path": "player.heavy_blade.sheathe.json",
+      "blobSha": "fd0663c5a5bfc27aa31724011b504ed01bc09ca1"
+    },
+    {
+      "path": "player.heavy_blade.side_sweep.json",
+      "blobSha": "9a375413601126fd52614f63809b0f52713c0af3"
+    },
+    {
+      "path": "player.heavy_blade.upswing_low.json",
+      "blobSha": "670f2a933ef829412f980a3efe2e64161206b9cc"
+    },
+    {
+      "path": "player.heavy_blade.upswing.json",
+      "blobSha": "23073b70e200db3f76ad6860dd1736003a8245ee"
+    },
+    {
+      "path": "player.item.drink.json",
+      "blobSha": "f7b42865f5983191d9d277a5da26c1656894c164"
+    },
+    {
+      "path": "player.item.set_trap.json",
+      "blobSha": "a8b9da90207851ff53eca7b4b0de896aebc25be4"
+    },
+    {
+      "path": "player.item.throw_orb.json",
+      "blobSha": "4f11fc8b138f56bc9d45e3a189bff5a8ddc15f16"
+    },
+    {
+      "path": "player.item.whet.json",
+      "blobSha": "368ee94afc0e03a31c12dc9a66db1e0d7da21e83"
+    },
+    {
+      "path": "player.long_blade.back_cut.json",
+      "blobSha": "2d10123c673caa5fe963a219dfdd7fb217f3098e"
+    },
+    {
+      "path": "player.long_blade.draw_cut.json",
+      "blobSha": "7a65baf2d71dea7e79ae15c2ad148ebc11a857cd"
+    },
+    {
+      "path": "player.long_blade.draw.json",
+      "blobSha": "d50de3214809c1d66c46dbd68e1a5664d2493192"
+    },
+    {
+      "path": "player.long_blade.helm.json",
+      "blobSha": "826b9eba32fbe443d8afc3ae141af77128caede9"
+    },
+    {
+      "path": "player.long_blade.kesa.json",
+      "blobSha": "ad7f4d7230d1bc239ae3b25b656e1d97558a3a37"
+    },
+    {
+      "path": "player.long_blade.rise.json",
+      "blobSha": "f767238861791cca215972a2afa345e78e9ffdf1"
+    },
+    {
+      "path": "player.long_blade.sheathe.json",
+      "blobSha": "9fda823d777784d7c3fdb473404becdf3c82a6d9"
+    },
+    {
+      "path": "player.long_blade.thrust.json",
+      "blobSha": "a4b4231777966c9bf8451326257250c02f0357c0"
+    },
+    {
+      "path": "player.long_lance.counter_thrust.json",
+      "blobSha": "fd458b3df3bee4c10ff6009443e9be26d72b9bbe"
+    },
+    {
+      "path": "player.long_lance.counter.json",
+      "blobSha": "3fa90ee49c30c1564dc0b11a14b827363d027c11"
+    },
+    {
+      "path": "player.long_lance.draw.json",
+      "blobSha": "35ad9ebdd6b3666948a79fc49c1c24ebccc95b92"
+    },
+    {
+      "path": "player.long_lance.guard_thrust.json",
+      "blobSha": "a0ecede12eeeb1e6d5101f2a8b6a7338ef242b08"
+    },
+    {
+      "path": "player.long_lance.high.json",
+      "blobSha": "97855cfc3747216ba201c6e0f7f5ccd2399f88e6"
+    },
+    {
+      "path": "player.long_lance.hop.json",
+      "blobSha": "4d97653c780799196b18f5a082b11bc06d78d48b"
+    },
+    {
+      "path": "player.long_lance.lunge.json",
+      "blobSha": "6f7904c0b73748bce72679dfc9ab3b8fd8cf581e"
+    },
+    {
+      "path": "player.long_lance.sheathe.json",
+      "blobSha": "199875d12448a84361ee00d11c926761f45f2d65"
+    },
+    {
+      "path": "player.long_lance.thrust1.json",
+      "blobSha": "c0e02e1cfecf83bb2cb4d9a832ad935346d4d20a"
+    },
+    {
+      "path": "player.long_lance.thrust2.json",
+      "blobSha": "310ef27ab40701151be0d7a270f3b3be23656491"
+    },
+    {
+      "path": "player.long_lance.thrust3.json",
+      "blobSha": "5ce902a3363b32ad75e0c60f1d4ce0e40a64b9ce"
+    },
+    {
+      "path": "player.ring_bow.draw.json",
+      "blobSha": "060a5098780091d66bbcc394db639cb3adeb84e0"
+    },
+    {
+      "path": "player.ring_bow.sheathe.json",
+      "blobSha": "3105637a375168bbb0f7825dcbdaf12f5d4acf2b"
+    },
+    {
+      "path": "player.ring_bow.shot.json",
+      "blobSha": "f139739078324057ecf65b1f6f76ff5cdd5a5850"
+    },
+    {
+      "path": "player.ring_bow.spread.json",
+      "blobSha": "57e9a350b1601c83300d2107a67397389c494257"
+    },
+    {
+      "path": "player.twin_blades.cross.json",
+      "blobSha": "f8ec960b6e7a06e534bb5f4575f91859374876e1"
+    },
+    {
+      "path": "player.twin_blades.demon_off.json",
+      "blobSha": "6634e346203d6010e98989ef1d30122225733bb6"
+    },
+    {
+      "path": "player.twin_blades.demon_on.json",
+      "blobSha": "e4510ea2789649b3208bf1482e6bffaa4e7106e8"
+    },
+    {
+      "path": "player.twin_blades.draw_cross.json",
+      "blobSha": "f0d8009ac7d69235c43cb1878b994834fa5e483a"
+    },
+    {
+      "path": "player.twin_blades.draw.json",
+      "blobSha": "746f33dce9c9b2b3d4f34f28a11f1f0d119872fa"
+    },
+    {
+      "path": "player.twin_blades.flurry.json",
+      "blobSha": "696ad604dc5cf7cbc8b01a9ab4398b5014010d9e"
+    },
+    {
+      "path": "player.twin_blades.round.json",
+      "blobSha": "1d4ce3b569f4161b6b4ddcd1613dba2b7c65273d"
+    },
+    {
+      "path": "player.twin_blades.sheathe.json",
+      "blobSha": "bbeb5964f24e7c1d26bbe3899b53753f6d50f8f7"
+    },
+    {
+      "path": "player.twin_blades.slash1.json",
+      "blobSha": "8eae8002d40ddfceece7ac1f0ed81fd18235dc82"
+    },
+    {
+      "path": "player.twin_blades.slash2.json",
+      "blobSha": "4e58aa243c58e06c88641d491c3a05a2223d8449"
+    },
+    {
+      "path": "player.twin_blades.stab.json",
+      "blobSha": "5d91f9a9a1b723be32bd0836a1091253eaed4338"
+    },
+    {
+      "path": "player.war_maul.charge_smash.json",
+      "blobSha": "3e7c654109c9faac3db02d4fc13d252dd76adf32"
+    },
+    {
+      "path": "player.war_maul.charge_upswing.json",
+      "blobSha": "a1359478c97bb8c72d494eb8feb6f8af59c8c8ad"
+    },
+    {
+      "path": "player.war_maul.charge.json",
+      "blobSha": "97719d5a78c6a2dd3d5abae213684ca32d4acc76"
+    },
+    {
+      "path": "player.war_maul.draw_smash.json",
+      "blobSha": "9a5e357a273a6d1929594d9d887480189d736ecf"
+    },
+    {
+      "path": "player.war_maul.draw.json",
+      "blobSha": "a0137e9f0f07d1ce92ad6e96745508ce1e43052b"
+    },
+    {
+      "path": "player.war_maul.pound.json",
+      "blobSha": "588f54b8215b6232d1b2a53ca8618b186a3670db"
+    },
+    {
+      "path": "player.war_maul.sheathe.json",
+      "blobSha": "a76c33485239ed4c84be2df84391c6d2399a6138"
+    },
+    {
+      "path": "player.war_maul.smash.json",
+      "blobSha": "3689a306eee082af5e2681f8eb4a1ea64ba6e136"
+    },
+    {
+      "path": "player.war_maul.smash2.json",
+      "blobSha": "7ec2b41a4ceb5af52cdbfc6c8b1d73558b345c42"
+    },
+    {
+      "path": "player.war_maul.spin.json",
+      "blobSha": "b54539f91789d1078936c9d9b9c2581d279c8e78"
+    },
+    {
+      "path": "player.war_maul.swing.json",
+      "blobSha": "7f35dddd3e2053e81184d7cd872dc52f3c724324"
+    },
+    {
+      "path": "player.war_maul.upswing.json",
+      "blobSha": "a8255c3265d4b117fd4e347f49c18addd9e39cad"
+    },
+    {
+      "path": "src_render_contactLocomotion.ts.GroundedLocomotion.sheathed_run.json",
+      "blobSha": "65ba44187a19ca516f9baed478aa0361aaa6b879"
+    },
+    {
+      "path": "src_render_contactLocomotion.ts.GroundedLocomotion.sheathed_sprint.json",
+      "blobSha": "5a1c45eb96ca86a4b25ca197e55e6e337ae62c32"
+    },
+    {
+      "path": "src_render_contactLocomotion.ts.GroundedLocomotion.sheathed_walk.json",
+      "blobSha": "903664dac8e685dae597582703a6f5c6d015f593"
+    },
+    {
+      "path": "src_render_contactLocomotion.ts.GroundedLocomotion.walk.heavy_blade.json",
+      "blobSha": "f4ecb59e95d92165961b635665d8970b9e7cdca2"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.idle.guard_blade.json",
+      "blobSha": "39b9f4756fc22a7e638432a87a0aa2e4509cc53a"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.idle.long_blade.json",
+      "blobSha": "98247367a61963607e93b37fa0985ce28cfe85b9"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.idle.long_lance.json",
+      "blobSha": "25d52dabdb75cc209f3e11568244caaa600a7163"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.idle.ring_bow.json",
+      "blobSha": "2256e55b3e646b523f7c7ceb7ccc9bd81e5881dc"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.idle.twin_blades.json",
+      "blobSha": "b438f5f01b6c029039f9895222548f3e47e25889"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.idle.war_maul.json",
+      "blobSha": "f2933b62b5bcc65c86ef3c720f00adac4e9ae14b"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.walk.guard_blade.json",
+      "blobSha": "47a627fb5ee42bb4a3757a7e084c360a7ca77f4c"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.walk.long_blade.json",
+      "blobSha": "ab41bf847024f439804d35e03f38988cd790f932"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.walk.long_lance.json",
+      "blobSha": "bbbbc18404806fa6342fe66611c50210de72ddad"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.walk.ring_bow.json",
+      "blobSha": "6eff632acab62f586dd749705f3123ce9d7ce30e"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.walk.twin_blades.json",
+      "blobSha": "aa0614959aea0830ceaf34c0681e9af365a8bf24"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.walk.war_maul.json",
+      "blobSha": "073b37e3a9ed82836788b89fc1ff35f699ad062b"
+    },
+    {
+      "path": "src_render_poses.ts.climb.climb.json",
+      "blobSha": "eda0254cfb87826067175abdd4e65a17311edbde"
+    },
+    {
+      "path": "src_render_poses.ts.climb.down.json",
+      "blobSha": "3c05ab49ed2101e9a40c2cc2ee6b442568485ddc"
+    },
+    {
+      "path": "src_render_poses.ts.climb.exit.json",
+      "blobSha": "d9d79a5cb30081240bbb5ebb935a709d3678120a"
+    },
+    {
+      "path": "src_render_poses.ts.climb.mount.json",
+      "blobSha": "02712792ee1e879f904a2f69af49ff477b6eeda2"
+    },
+    {
+      "path": "src_render_poses.ts.dead.json",
+      "blobSha": "45af6d201cad95b0df1ed18ed9e17b17901de352"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.guard_blade.back.json",
+      "blobSha": "6123dc5ca3a4a886b9526304f65c06adb8884437"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.guard_blade.forward.json",
+      "blobSha": "6ecd3a5041a43357f0745b125563ed84040ac09f"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.guard_blade.left.json",
+      "blobSha": "9c650afea23df5b70ee42b13c1f08805f88223df"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.guard_blade.right.json",
+      "blobSha": "a41d78f363f1c3782d980e07c847b3f1f369394e"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.heavy_blade.back.json",
+      "blobSha": "b0fccce643a89c2e5a0b598b6b51f4d3cc33d0bd"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.heavy_blade.forward.json",
+      "blobSha": "995b6d8bcd0eb3842b6afd3f5a81c7f9a1750d90"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.heavy_blade.left.json",
+      "blobSha": "b7c87fbce1b1c429a269e7525af274dc6cf860f7"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.heavy_blade.right.json",
+      "blobSha": "cb55a2d2f196212102e794b2ccaaeac32b7002a5"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.long_blade.back.json",
+      "blobSha": "6b01d6738e153a5886400c2c62ce9acedace31d8"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.long_blade.forward.json",
+      "blobSha": "7659cc013ad281e2cd885253b50b86b111e2fe19"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.long_blade.left.json",
+      "blobSha": "4cb474f13d8b279a1264f94713e8865efbe7597d"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.long_blade.right.json",
+      "blobSha": "faa350c47b4b98399a4494367509eb6eda12df79"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.long_lance.back.json",
+      "blobSha": "1c39d6f6d6c27c334288bee5b048b3fe88d72dbc"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.long_lance.forward.json",
+      "blobSha": "cc07db8d8a398f3ff5fe3437ab62e6049d2e6ffc"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.long_lance.left.json",
+      "blobSha": "e4f23b9e43194c6eb891004a06b09a17bdf48cf0"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.long_lance.right.json",
+      "blobSha": "b37919b998b0be7c2999d7fc2f71265dcdad2fcb"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.ring_bow.back.json",
+      "blobSha": "4bd589506541c670139c029120362d5185e44186"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.ring_bow.forward.json",
+      "blobSha": "1769990889539c341304710e8e561fc9f3390055"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.ring_bow.left.json",
+      "blobSha": "32d1cd97281dec503f871348f913d115102af46f"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.ring_bow.right.json",
+      "blobSha": "723752cdbc3ffcee28316057a89415e50de67292"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.twin_blades.back.json",
+      "blobSha": "59e59335ae26e9146fcf23d83384a13f4570e7ec"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.twin_blades.forward.json",
+      "blobSha": "7dca06ed2b2933d0c21bc6c6416e2801c3c427f8"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.twin_blades.left.json",
+      "blobSha": "17af84e3ee17799fcf914d365ea1048f93a4d5f8"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.twin_blades.right.json",
+      "blobSha": "e51a4feb0237da6e684e5ccd9184ce7aeedb9cdc"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.war_maul.back.json",
+      "blobSha": "830da98ab5c7fe8c692d1770681a215250134288"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.war_maul.forward.json",
+      "blobSha": "96fec7d8579e55f0a155a80cbbd28de00357ae2f"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.war_maul.left.json",
+      "blobSha": "3488bda9a3529e94d25b1c35eda19fd521c13b76"
+    },
+    {
+      "path": "src_render_poses.ts.dodge.war_maul.right.json",
+      "blobSha": "eb9b02e31e4549c39894437fd7205a30b67c2b2d"
+    },
+    {
+      "path": "src_render_poses.ts.hurt.getup.json",
+      "blobSha": "acaa5d67a4aa1d5f8b8b36b650441de151732056"
+    },
+    {
+      "path": "src_render_poses.ts.hurt.knockdown.json",
+      "blobSha": "e7d503e459e1a2b9820b14c5d41992dbd2483c10"
+    },
+    {
+      "path": "src_render_poses.ts.hurt.stagger.json",
+      "blobSha": "516b023562927fe33824d1ba1c5fdcb5af164fdb"
+    },
+    {
+      "path": "src_render_poses.ts.land.json",
+      "blobSha": "fa42597641208ad2387017b764ea155ae9c845b1"
+    },
+    {
+      "path": "src_render_poses.ts.STANCE.json",
+      "blobSha": "e603c04c11aae4ece9ef6d9cf19ba8e3f7814e39"
+    },
+    {
+      "path": "src_render_poses.ts.vault.json",
+      "blobSha": "b251338a1319ccda837ecfa69c8fdb78fc8b9eb2"
+    },
+    {
+      "path": "src_render_view.ts.guard.guard_blade.json",
+      "blobSha": "fd7d19fd0429916a33838a60301f4bb83ccf7f64"
+    },
+    {
+      "path": "src_render_view.ts.guard.heavy_blade.json",
+      "blobSha": "e26128542f724a3b81dd99d3eaba442c366550b2"
+    },
+    {
+      "path": "src_render_view.ts.guard.long_lance.json",
+      "blobSha": "7bc452a942e51fb923a366dfa29e33b3cdbb1abb"
+    }
+  ],
+  "generatedAt": "2026-11-26",
+  "updatedFor": "2G control literature corrections to 9 action records"
+}
