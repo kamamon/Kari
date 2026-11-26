@@ -1,3 +1,4 @@
+import { accumulateMonsterRecords, monsterRecordErrors, type MonsterRecords, type IndividualRecord } from './monsterRecords';
 import { PROVISIONS } from '../game/provisions';
 import {emptyClassicGear, JEWELS, socketCapacity, installedSlots, fortifyBonus, classicRank, type ClassicGearState} from '../game/classicGear';
 import {computeGear} from '../game/gear';
@@ -70,6 +71,8 @@ export interface SaveDoc {
    */
   appearance: AppearanceDoc;
   classicGear?: ClassicGearState;
+  /** 版6の任意欄。過去の未計測狩猟は推定で補完しない。 */
+  monsterRecords?: MonsterRecords;
   /** 拠点の発展と準備。旧版5のデータは省略可。 */
   hubLife?: HubLifeState;
 }
@@ -152,7 +155,7 @@ export function validateSave(raw: unknown): string[] {
   if (!Array.isArray(raw.settledRuns) || raw.settledRuns.some((r) => typeof r !== 'string')) e.push('処理済みの依頼の記録が不正です');
   if (!Array.isArray(raw.claims) || raw.claims.some((r) => typeof r !== 'string' || r === '')) e.push('受け取りの記録が不正です');
   else if (new Set(raw.claims).size !== raw.claims.length) e.push('同じ受け取りの記録が 2 つ入っています');
-  e.push(...appearanceShapeErrors(raw.appearance), ...hubLifeShapeErrors(raw.hubLife));
+  e.push(...appearanceShapeErrors(raw.appearance), ...hubLifeShapeErrors(raw.hubLife), ...monsterRecordErrors(raw.monsterRecords));
   if(raw.classicGear!==undefined){const g=raw.classicGear;if(!isObj(g)||!isObj(g.stock)||!isObj(g.sockets)||!isObj(g.fortify))e.push('装飾品・防具強化の保存が不正です');else{if(Object.values(g.stock).some(n=>!isCount(n)))e.push('装飾品の数が不正です');if(Object.values(g.sockets).some(v=>!Array.isArray(v)||v.length>3||v.some(id=>typeof id!=='string')))e.push('装飾品の装着が不正です');if(Object.values(g.fortify).some(v=>!isCount(v)||Number(v)>5))e.push('防具強化が不正です');}}
   return e;
 }
@@ -248,6 +251,7 @@ export interface RunRewards {
   items: readonly ItemStack[];
   /** 狩りで使った、自分の道具（支給品のぶんは入れない）。持ち物から減らす */
   spent?: readonly ItemStack[];
+  individuals?: readonly IndividualRecord[];
   /** 達成したか。false（失敗・途中で帰った）なら、達成回数は増やさず、使った道具だけを減らす。無ければ達成 */
   cleared?: boolean;
 }
@@ -272,7 +276,10 @@ export function settleRun(doc: SaveDoc, r: RunRewards): SaveDoc | null {
     if (!(s.count > 0)) continue;
     next.items[s.itemId] = Math.min(MAX_COUNT, (next.items[s.itemId] ?? 0) + Math.floor(s.count));
   }
-  if (cleared) next.progress.questClears[r.questId] = Math.min(MAX_COUNT, (next.progress.questClears[r.questId] ?? 0) + 1);
+  if (cleared) {
+    next.progress.questClears[r.questId] = Math.min(MAX_COUNT, (next.progress.questClears[r.questId] ?? 0) + 1);
+    if (r.individuals?.length) next.monsterRecords=accumulateMonsterRecords(next.monsterRecords,r.individuals);
+  }
   next.settledRuns.push(r.runId);
   if (next.settledRuns.length > MAX_SETTLED_RUNS) next.settledRuns.splice(0, next.settledRuns.length - MAX_SETTLED_RUNS);
   return next;

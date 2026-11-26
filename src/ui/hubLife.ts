@@ -1,3 +1,4 @@
+import {recordSizeText} from '../save/monsterRecords';
 // 里の機能を、横画面・タッチ操作で使う専用パネル。HTMLにユーザー文字列を挿入しない。
 import { assetUrl } from '../core/assets';
 import type { Content, ItemStack } from '../data/schemas';
@@ -129,12 +130,14 @@ export class HubLifePanel {
    const query=this.search.trim().toLowerCase();
    const recipes=[...this.c.recipes.values()].filter(r=>!query||this.name(recipeResult(r)).toLowerCase().includes(query)).slice(0,24);
    for(const r of recipes){const id=recipeResult(r);this.row(a,this.name(id),this.quote(r.cost,d),this.cmd(s.wish===r.id?'登録済み':'欲しい装備に登録',{kind:'wish',id:r.id},s.wish===r.id),this.preview(id));}
-   const book=this.section('モンスター研究所','実装済みモンスターのデータ。討伐・捕獲の区別は旧セーブにないため依頼達成数で表示。');
+   const book=this.section('モンスター研究所','実装済みモンスターのデータ。今回の記録対応以後の討伐・捕獲と個体サイズを表示します。過去の狩猟は依頼達成数のみ。');
    const ri=el('input','life-search');ri.placeholder='モンスター名を検索';ri.value=this.researchSearch;book.append(ri,this.button('検索',()=>{this.researchSearch=ri.value;this.refresh();}));
    for(const m of [...this.c.monsters.values()].filter(m=>!this.researchSearch||m.name.includes(this.researchSearch)).slice(0,32)){
     const qs=[...this.c.quests.values()].filter(q=>q.targetMonsterId===m.id||q.targets?.some(t=>t.monsterId===m.id)),clears=qs.reduce((n,q)=>n+(d.progress.questClears[q.id]??0),0);
     const f=el('details','life-monster');f.appendChild(el('summary','',m.name+'｜依頼達成 '+clears+'回'));
     f.append(el('p','life-text','基礎体力 '+m.hp+' / 弱点 '+(m.weak?.join('・')??'なし')+' / 捕獲 '+(m.captureAllowed?'可能':'不可')));
+    const r=d.monsterRecords?.[m.id];
+    f.appendChild(el('p','life-text',r?'記録対象の討伐 '+r.slain+' / 捕獲 '+r.captured+'｜'+recordSizeText(r,this.c.bestiary.species.find(s=>s.id===m.id)?.size):'個体サイズの計測記録なし'));
     for(const p of m.parts)f.appendChild(el('p','life-text',p.name+'：'+Object.entries(p.hitzone).map(([k,v])=>k+' '+v).join(' / ')+'｜属性係数 '+p.elementZone));
     book.append(f);
    }

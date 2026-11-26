@@ -413,8 +413,12 @@ export class Simulation implements SimCtx {
     const g = createHerdGroup(index + 1, base.id, H, areas, areaId, at, rng);
     for (let i = 0; i < size; i++) {
       const s = slotOf(i, H.spacing);
-      const m = createMonster(def, { x: at.x, z: at.z, yaw: rng.next() * Math.PI * 2 }, `herd${index + 1}#${i + 1}`);
-      this.world.move(m.pos, def.bodyRadius, s.x, s.z);
+      const id=`herd${index + 1}#${i + 1}`;
+      const scale=this.options.questId&&this.options.classicGear?individualScale(this.options.seed,base.id+':'+id):1;
+      const individualDef=sizeMonster(def,scale);
+      const m = createMonster(individualDef, { x: at.x, z: at.z, yaw: rng.next() * Math.PI * 2 }, id);
+      m.sizeScale=scale;
+      this.world.move(m.pos, individualDef.bodyRadius, s.x, s.z);
       if (this.world.areaAt(m.pos.x, m.pos.z) !== area) m.pos = { x: at.x, y: 0, z: at.z };
       m.pos.y = this.world.groundHeight(m.pos.x, m.pos.z);
       m.prevPos = { ...m.pos };

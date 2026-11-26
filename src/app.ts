@@ -280,7 +280,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     const spent = this.sim.spentOwn();
     if (!success && spent.length === 0) return;
     const rewards: RunRewards = success
-      ? { runId: this.runId, questId: h.quest.id, money: h.rewards!.money, items: h.rewards!.items.map((s) => ({ ...s })), spent }
+      ? { runId: this.runId, questId: h.quest.id, money: h.rewards!.money, items: h.rewards!.items.map((s) => ({ ...s })), spent, individuals:this.sim.monsters.filter(m=>m.dead||m.captured).map(m=>({speciesId:m.def.id,sizePct:Math.round(m.sizeScale*100),outcome:m.captured?'capture' as const:'slay' as const})) }
       : { runId: this.runId, questId: h.quest.id, money: 0, items: [], spent, cleared: false };
     this.settleState = { runId: this.runId, state: 'saving', message: '', spentOnly: !success };
     if (success) this.runOutcome.set(this.runId, h.reason === 'capture' ? 'capture' : 'slay');
