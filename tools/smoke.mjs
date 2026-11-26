@@ -1293,6 +1293,39 @@ const startTraining = async (page, tap = false) => {
   });
   check('地図（v0.42.0）: 居るエリアの地図に、外周・出口の行き先（野営地は 1 へ）・自分の矢じりが出て、標的の点は出ない。全体の地図は上から見た向き（+X が左: 野営地が右、エリア 9 が左）', loc0.outline && loc0.labels.join() === '1' && /^translate\(/.test(loc0.me) && loc0.tgt === 'none' && loc0.camp > loc0.a1 && loc0.a9 < loc0.a1, JSON.stringify(loc0));
   await page.screenshot({ path: `${OUT}81_field_camp.png` });
+  // 全体の地図（v0.51.0。#19 の F04）: 右上の地図を押すと開く。本当の形のエリア 11・道 14（大型も通る 8）・居るエリア（野営地）・自分の矢じり。
+  // 標的はまだ見ていないので点は出ない。開いたまま歩ける（重ねは指を受けない）。M で閉じる
+  await page.click('.hud-maps');
+  // マウスを画面の真ん中へ戻す（後の click(page) は、いまのマウスの位置で押す。地図の上のままだと、攻撃の代わりに地図を開け閉めする）
+  await page.mouse.move(640, 360);
+  await page.waitForTimeout(250);
+  const fieldMap = () => page.evaluate(() => {
+    const r = document.querySelector('.field-map');
+    const areas = [...document.querySelectorAll('.field-map-svg path.area')];
+    const tgt = document.querySelector('.field-map-svg .tgt');
+    const tb = tgt.getBoundingClientRect();
+    const inArea = (id) => { const b = areas.find((a) => a.dataset.area === id)?.getBoundingClientRect(); return !!b && tb.left + tb.width / 2 >= b.left && tb.left + tb.width / 2 <= b.right && tb.top + tb.height / 2 >= b.top && tb.top + tb.height / 2 <= b.bottom; };
+    return {
+      open: !!r && !r.hidden, pe: r ? getComputedStyle(r).pointerEvents : '', areas: areas.length, links: document.querySelectorAll('.field-map-svg line.link').length, large: document.querySelectorAll('.field-map-svg line.link:not(.thin)').length,
+      here: areas.filter((a) => a.classList.contains('here')).map((a) => a.dataset.area).join(), target: areas.filter((a) => a.classList.contains('target')).map((a) => a.dataset.area).join(),
+      marked: areas.filter((a) => a.classList.contains('marked')).map((a) => a.dataset.area).join(), asleep: areas.filter((a) => a.classList.contains('asleep')).map((a) => a.dataset.area).join(),
+      seen: [...document.querySelectorAll('.field-map-svg .label.seen')].map((t) => t.textContent).join(), me: document.querySelector('.field-map-svg .me')?.getAttribute('transform') ?? '',
+      tgt: getComputedStyle(tgt).display, tgtMarked: tgt.classList.contains('marked'), tgtIn10: inArea('a10'), labels: [...document.querySelectorAll('.field-map-svg .label')].map((t) => t.textContent).sort().join(),
+    };
+  });
+  const fm0 = await fieldMap();
+  await page.screenshot({ path: `${OUT}81_field_map.png` });
+  const walk0 = await page.evaluate(() => ({ ...window.__vh.sim.player.pos }));
+  await page.keyboard.down('KeyW');
+  await page.waitForTimeout(500);
+  await page.keyboard.up('KeyW');
+  const walk1 = await page.evaluate(() => ({ ...window.__vh.sim.player.pos }));
+  await page.keyboard.press('KeyM');
+  await page.waitForTimeout(150);
+  const fmClosed = await page.evaluate(() => document.querySelector('.field-map').hidden);
+  check('全体の地図（v0.51.0）: 右上の地図を押すと開き、本当の形のエリア 11・道 14（大型も通る 8）・番号・居るエリア（野営地）・自分の矢じりが出る。標的は不明なので点は無い。開いたまま歩け、M で閉じる',
+    fm0.open && fm0.pe === 'none' && fm0.areas === 11 && fm0.links === 14 && fm0.large === 8 && fm0.here === 'camp' && /^translate\(/.test(fm0.me) && fm0.tgt === 'none' && fm0.target === '' && fm0.labels === '1,10,2,3,4,5,6,7,8,9,営' && Math.hypot(walk1.x - walk0.x, walk1.z - walk0.z) > 0.5 && fmClosed,
+    JSON.stringify({ fm0, walk0, walk1, fmClosed }));
   // 景色の絵（依頼 8。v0.13.0）: 空と遠景・地面・岩・草
   const art = await until(page, () => { const a = window.__vh.envArt(); return a.asked >= 8 && a.loaded === a.asked && a.failed === 0; }, 15000);
   await page.waitForTimeout(300);
@@ -1445,11 +1478,22 @@ const startTraining = async (page, tap = false) => {
   // 印がある間は、移った先（エリア 10）が地図と文字に出る。眠っていることは、見ていないので出ない（v0.42.0）
   check('フィールド: 弱った標的は、エリアを渡って巣（エリア 10）へ行き、眠る。標識玉の印で、居場所が地図と文字に出る（眠りは、見ていないので出ない）', slept.asleep && slept.area === 'a10' && slept.seen[0]?.startsWith('monster_leave') && slept.seen.at(-1) === 'monster_sleep:a10' && f.mark === '10' && f.marked === '10' && f.sleepMark === '' && /標的: エリア 10（印）/.test(f.where) && f.rigVisible === false, `${slept.seen.join(' ')} / ${slept.markTicks} / ${f.where}`);
   await page.screenshot({ path: `${OUT}83b_field_marked.png` });
+  // 全体の地図（v0.51.0）: 印のある間は、巣（エリア 10）に標的の点（印の色）。眠りは見ていないので出ない
+  await page.keyboard.press('KeyM');
+  await page.waitForTimeout(250);
+  const fmMark = await fieldMap();
+  await page.keyboard.press('KeyM');
+  check('全体の地図（v0.51.0）: 印のある標的は、居るエリア（10）の中に点で出る（印の色）。眠りは出ない', fmMark.open && fmMark.target === 'a10' && fmMark.marked === 'a10' && fmMark.asleep === '' && fmMark.tgt !== 'none' && fmMark.tgtMarked && fmMark.tgtIn10, JSON.stringify(fmMark));
   // 印が切れると、最後に見た所（エリア 3。点線と ?）に戻り、いまの居場所は分からない
   await page.evaluate(() => { window.__vh.sim.monsters[0].markTicks = 0; });
   const lost = await until(page, () => document.querySelectorAll('.hud-map .cell.seen').length === 1, 4000);
   f = await hudField();
   check('フィールド: 印が切れると、地図は最後に見た所（エリア 3）だけになり、「標的: 不明（最後に見た所 エリア 3）」', lost && f.mark === '' && f.seen === '3' && f.sleepMark === '' && /標的: 不明（最後に見た所 エリア 3）/.test(f.where), JSON.stringify(f));
+  await page.keyboard.press('KeyM');
+  await page.waitForTimeout(250);
+  const fmLost = await fieldMap();
+  await page.keyboard.press('KeyM');
+  check('全体の地図（v0.51.0）: 印が切れると、点は消え、最後に見た所（エリア 3）に「3?」', fmLost.open && fmLost.tgt === 'none' && fmLost.target === '' && fmLost.seen === '3?', JSON.stringify(fmLost));
   // 巣へ行って、眠っている標的を見る → 攻撃すると起きる
   await page.evaluate(() => {
     const s = window.__vh.sim, m = s.monsters[0];
@@ -1589,6 +1633,20 @@ const startTraining = async (page, tap = false) => {
     return { drawn: ids.filter((id) => id === 'R-16').length, data: data.length, rocks: ids.length, all: window.__vh.sim.field.areas.find((a) => a.id === 'a4').rocks.length };
   });
   check('目印（v0.48.0）: エリア 4 のくびれに、割れた立ち岩（R-16 の図）が 2 本描かれ、データの岩の数と描いた岩の数が同じ', marks.drawn === 2 && marks.data === 2 && marks.rocks === marks.all, JSON.stringify(marks));
+  // エリアの色合いと風の音（v0.51.0。#19 の F06）: エリア 4 の地面は少し黄みがかり（データの look.ground）、風の音はデータの大きさ（1.15）
+  const looks = await until(page, () => window.__vh.audio.ambWant.wind === 1.15, 4000).then(() => page.evaluate(() => {
+    const mean = (id) => {
+      let ground = null;
+      window.__vh.view.areaGroups.get(id)?.traverse((o) => { if (o.userData.ground) ground = o; });
+      const c = ground?.geometry.getAttribute('color');
+      if (!c) return null;
+      let r = 0, b = 0;
+      for (let i = 0; i < c.count; i++) { r += c.getX(i); b += c.getZ(i); }
+      return r / b;
+    };
+    return { wind: window.__vh.audio.ambWant.wind, a4: mean('a4'), camp: mean('camp') };
+  }));
+  check('エリアの色合いと風（v0.51.0）: エリア 4 の地面は暖かい色（赤 ÷ 青が 1.06 より大きい。野営地はほぼ 1）、風の音はデータの 1.15', looks.wind === 1.15 && looks.a4 > 1.06 && Math.abs(looks.camp - 1) < 0.03, JSON.stringify(looks));
   // 壁へ向かって W を押し続ける: 取り付いて登り、上の段（3m）に立つ
   await page.keyboard.down('KeyW');
   const mounted = await until(page, () => window.__vh.sim.player.mode === 'climb', 4000);

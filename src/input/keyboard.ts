@@ -1,7 +1,7 @@
 // PC の初期割当（設計書 p.08）。
 // 移動 WASD / 疾走 Shift / 視点 中ボタンドラッグ・矢印キー / 背後へ戻す F / 主攻撃 左クリック / 副攻撃 右クリック
 // 主と副の同時押し（複合入力。v0.40.0）: 左右のクリックを同時に、または V
-// 回避 Space / 防御・固有 Ctrl または C / 抜刀・納刀 R / 道具 E（抜刀中は納刀） / メニュー Esc / 検証表示 F3
+// 回避 Space / 防御・固有 Ctrl または C / 抜刀・納刀 R / 道具 E（抜刀中は納刀） / メニュー Esc / 検証表示 F3 / 全体の地図 M（v0.51.0）
 import { Btn, type InputHub } from './hub';
 
 const KEY_BTN: Record<string, number> = {
@@ -71,6 +71,11 @@ export class KeyboardMouse {
     }
     if (e.code === 'KeyT') {
       if (isDown && !e.repeat) this.hub.ui('lockOn');
+      return;
+    }
+    // 全体の地図（v0.51.0）
+    if (e.code === 'KeyM') {
+      if (isDown && !e.repeat) this.hub.ui('map');
       return;
     }
     const btn = KEY_BTN[e.code];

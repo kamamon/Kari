@@ -731,6 +731,11 @@ export interface FieldAreaDef {
   climbs?: ClimbDef[];
   /** 低い岩棚の乗り越え（v0.49.0）。無ければ乗り越えられる所は無い */
   vaults?: VaultDef[];
+  /**
+   * 色合いと風の音（v0.51.0。#19 の F06。描画と音だけ）。ground = 地面の色に掛ける倍率（赤・緑・青。0.7〜1.3）、
+   * wind = 風の音の大きさ（1 = ふつう。0〜1.6）。無ければ、どちらも 1
+   */
+  look?: { ground?: [number, number, number]; wind?: number };
   /** 地面の起伏（v0.46.0。src/game/relief.ts。field:gen の出力）。無ければ平ら（0） */
   relief?: ReliefDef;
 }

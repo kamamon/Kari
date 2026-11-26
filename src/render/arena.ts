@@ -66,6 +66,8 @@ export interface AreaLook {
   climbs?: readonly ClimbDef[];
   /** 地面の起伏（v0.46.0）。地面の板・崖の根元・草・岩・門柱を、この高さに合わせる */
   relief?: ReliefDef;
+  /** 地面の色に掛ける倍率（v0.51.0。フィールドのエリアの look.ground）。無ければ 1 */
+  groundTint?: readonly [number, number, number];
 }
 
 /** これまでの狩場（エリアが 1 つ）: 空と光を用意して、狩場を描く。 */
@@ -172,6 +174,7 @@ export function buildAreaGroup(map: AreaLook): Group {
   {
     const pos = groundGeo.getAttribute('position');
     const tile = ENV_TILES[look.ground].tile;
+    const tint = map.groundTint ?? [1, 1, 1];
     const uv = new Float32Array(pos.count * 2), col = new Float32Array(pos.count * 3);
     for (let i = 0; i < pos.count; i++) {
       const x = pos.getX(i), z = pos.getZ(i);
@@ -179,9 +182,10 @@ export function buildAreaGroup(map: AreaLook): Group {
       uv[i * 2 + 1] = -z / tile;
       const shade = 1 - 0.2 * noise(x, z);
       const warm = (noise(x + 91, z + 53) - 0.5) * 0.14;
-      col[i * 3] = shade * (1 + warm);
-      col[i * 3 + 1] = shade;
-      col[i * 3 + 2] = shade * (1 - warm);
+      // エリアの色合い（v0.51.0。#19 の F06。データの look.ground。無ければ 1）
+      col[i * 3] = shade * (1 + warm) * tint[0];
+      col[i * 3 + 1] = shade * tint[1];
+      col[i * 3 + 2] = shade * (1 - warm) * tint[2];
     }
     groundGeo.setAttribute('uv', new Float32BufferAttribute(uv, 2));
     groundGeo.setAttribute('color', new Float32BufferAttribute(col, 3));

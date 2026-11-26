@@ -308,7 +308,7 @@ export class GameView {
     let g = this.areaGroups.get(area.id);
     if (!g) {
       g = buildAreaGroup({
-        bounds: area.bounds, shape: area.shape, rocks: area.rocks, platforms: area.platforms, kind: area.kind, seed: 9001 + area.no * 131, climbs: area.climbs, relief: area.relief,
+        bounds: area.bounds, shape: area.shape, rocks: area.rocks, platforms: area.platforms, kind: area.kind, seed: 9001 + area.no * 131, climbs: area.climbs, relief: area.relief, groundTint: area.look?.ground,
         camp: area.kind === 'camp' ? field.camp : null,
         gates: area.exits.map((e) => ({ x: e.x, z: e.z, marker: true })),
       });
@@ -847,7 +847,8 @@ export class GameView {
       }
     } else if (this.ambienceTimer >= 0.25) {
       this.ambienceTimer = 0;
-      this.onAmbience?.({ water: 0, forge: 0, wind: 1 });
+      // 狩場の風の音は、居るエリアの大きさ（v0.51.0。#19 の F06。広い原・台地は強く、狭い谷・沢・巣は弱く）
+      this.onAmbience?.({ water: 0, forge: 0, wind: sim.field ? sim.area()?.look?.wind ?? 1 : 1 });
     }
     if (this.errandProps && sim.errand) updateErrandProps(this.errandProps, sim.errand, sim.areaId, sim.hunt?.phase === 'active', this.cam.camera.position, this.time);
     this.arena.sky?.setTime(this.time);

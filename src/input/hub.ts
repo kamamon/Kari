@@ -4,7 +4,7 @@ import { BTN_ALL, Btn, type InputFrame } from '../game/inputFrame';
 
 export type Device = 'touch' | 'keyboard' | 'gamepad';
 /** interact = 里で、前に立っている施設へ入る / hubList = 里の施設の一覧を開く / lockOn = 標的へのロックオンを切り替える（v0.16.0） */
-export type UiAction = 'menu' | 'camReset' | 'verify' | 'return' | 'interact' | 'hubList' | 'lockOn';
+export type UiAction = 'menu' | 'camReset' | 'verify' | 'return' | 'interact' | 'hubList' | 'lockOn' | 'map';
 
 export { Btn };
 

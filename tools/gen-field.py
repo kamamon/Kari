@@ -24,6 +24,22 @@ AREAS = [
     ('a9', 9, '西の礫原', 'hunt', True, (3, 1), 80, 64),
     ('a10', 10, '晶の窪地', 'nest', True, (2, 2), 70, 58),
 ]
+# エリアの色合いと風の音（v0.51.0。#19 の F06「色と音の作り分け」と、04 のエリアの表。描画と音だけで、当たりには関わらない。Kari の仮の値）。
+# ground = 地面の色に掛ける倍率（赤・緑・青。礫は暖かく、草原は緑、涸れ沢は砂の色、晶の所は冷たく、崩れ谷は暗く）。
+# wind = 風の音の大きさ（1 = v0.50.0 まで。広く開けた原と台地は強く、狭い谷・沢と巣は弱く。敵の声を埋めない 1.6 まで）
+AREA_LOOK = {
+    'camp': dict(ground=[1.0, 1.0, 1.0], wind=0.7),
+    'a1': dict(ground=[1.02, 0.99, 0.94], wind=0.8),
+    'a2': dict(ground=[0.96, 1.04, 0.94], wind=1.4),
+    'a3': dict(ground=[1.0, 1.0, 1.0], wind=1.0),
+    'a4': dict(ground=[1.03, 1.01, 0.92], wind=1.15),
+    'a5': dict(ground=[1.07, 0.99, 0.86], wind=0.5),
+    'a6': dict(ground=[0.95, 0.99, 1.05], wind=0.95),
+    'a7': dict(ground=[1.04, 1.04, 0.94], wind=1.6),
+    'a8': dict(ground=[0.92, 0.9, 0.86], wind=0.45),
+    'a9': dict(ground=[1.02, 0.99, 0.94], wind=1.05),
+    'a10': dict(ground=[0.94, 0.97, 1.05], wind=0.6),
+}
 EDGES = [('camp', 'a1'), ('a1', 'a5'), ('a5', 'a8'), ('a1', 'a3'), ('a5', 'a6'), ('a8', 'a9'), ('a2', 'a3'), ('a3', 'a6'), ('a6', 'a9'),
          ('a2', 'a4'), ('a3', 'a7'), ('a6', 'a10'), ('a4', 'a7'), ('a7', 'a10')]
 ORIGIN = (1, 1)  # エリア 3 のマスを原点に置く
@@ -164,7 +180,7 @@ for aid, no, name, kind, large, grid, w, d in AREAS:
                       center=dict(x=r1(cx + ncx), z=r1(cz + ncz)),
                       shape=[[r1(x), r1(z)] for x, z in poly],
                       nav=[[r1(cx + x), r1(cz + z)] for x, z, r in sk['nodes'].values()],
-                      stepUp=0.35, rocks=[], platforms=[], exits=[])
+                      stepUp=0.35, look=AREA_LOOK[aid], rocks=[], platforms=[], exits=[])
 
 def mouth(aid, other):
     """aid の、other へ向かう口: 出口の位置（口の先から EXIT_IN 内側）と、外向きの向き"""

@@ -19,6 +19,7 @@ import type { StatusKind } from '../data/schemas';
 const AILMENT_ON: Record<StatusKind, string> = { poison: 'が毒になった', para: 'が麻痺した', sleep: 'が眠った', stun: 'が気絶した' };
 import { withIcon } from './icons';
 import { LocalMap } from './localMap';
+import { FieldMapOverlay } from './fieldMap';
 
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls: string, parent: HTMLElement, text = ''): HTMLElementTagNameMap[K] {
   const e = document.createElement(tag);
@@ -59,6 +60,8 @@ export class Hud {
   private maps: HTMLElement;
   /** 居るエリアの地図（外周・出口・自分の向き。v0.42.0。#19 の F04） */
   private local: LocalMap;
+  /** 全体の地図の重ね（v0.51.0） */
+  readonly fieldMap: FieldMapOverlay;
   private exitHint: HTMLElement;
   private banner: HTMLElement;
   /** 里: 前に立っている施設へ入るボタンと、施設の一覧を開くボタン */
@@ -116,7 +119,14 @@ export class Hud {
     this.where = el('div', 'goal where', quest, '');
     this.maps = el('div', 'hud-maps', quest);
     this.maps.hidden = true;
+    // 押すと全体の地図（v0.51.0）
+    this.maps.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      hub.ui('map');
+    });
     this.local = new LocalMap(this.maps);
+    this.fieldMap = new FieldMapOverlay(this.root);
     this.map = el('div', 'hud-map', this.maps);
     this.verifyBtn = el('button', 'hud-btn', tr, '検証');
     this.verifyBtn.addEventListener('click', () => hub.ui('verify'));
@@ -510,6 +520,12 @@ export class Hud {
         cell.classList.toggle('asleep', !!ta && id === ta.id && tState === 'sleep');
       }
     });
+    // 全体の地図（v0.51.0。開いている時だけ）: 居るエリア・目当てのエリア・追跡で分かっている標的の位置（見えている・印の時だけ）
+    if (!field || !here) this.fieldMap.close();
+    else if (this.fieldMap.open) {
+      const pos = !er && !sim.pack && tm && !tm.dead && !tm.captured && ta && (tState === '' || tState === 'sleep' || tState === 'leave' || tState === 'marked') ? { areaId: ta.id, x: tm.pos.x, z: tm.pos.z } : null;
+      this.fieldMap.update(field, { hereId: here.id, me: { x: p.pos.x, z: p.pos.z, yaw: p.yaw }, targetAreas, tState, seenId: seenArea?.id ?? null, target: pos });
+    }
     // 居るエリアの地図: 自分の位置と向き。標的の点は、同じエリアに居る時だけ（見えている。狩らない依頼では出さない）
     this.set('localArea', field && here ? `${field.id}:${here.id}` : '', () => this.local.setArea(field, here ?? null));
     if (field && here) this.local.update(p.pos.x, p.pos.z, p.yaw, !er && tm && !tm.dead && !tm.captured && sim.monsterArea(tm)?.id === here.id ? tm.pos : null);

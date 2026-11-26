@@ -136,6 +136,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       else if (a === 'verify') store.set({ verify: !store.value.verify });
       else if (a === 'camReset' && !this.paused) this.resetCamera();
       else if (a === 'lockOn' && !this.paused) this.toggleLock();
+      else if (a === 'map' && !this.paused) this.hud.fieldMap.toggle(this.place === 'hunt' ? this.sim.field : null);
       else if (a === 'return' && !this.paused) this.returnNow();
       else if (a === 'interact' && !this.paused && this.place === 'hub' && this.nearFacility) this.openFacility(this.nearFacility.kind, this.nearFacility.id);
       else if (a === 'hubList' && !this.paused && this.place === 'hub') this.openFacility('all');
