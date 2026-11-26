@@ -53,3 +53,25 @@ describe('ロックオンのボタン（v0.40.0。操作補助）', () => {
     expect(t.value.lockOnButton).toBe(true);
   });
 });
+
+describe('弓の狙いの補助（v0.61.0。操作補助。#19 の H05）', () => {
+  it('新しく始めた人は切（標準は手で狙う）。v0.60.0 までに遊んでいた人は入のまま（黙って消さない）', () => {
+    const fresh = new SettingsStore();
+    fresh.settleBowAimAssist(fresh.savedBefore || false);
+    expect(fresh.value.bowAimAssist).toBe(false);
+    expect(JSON.parse(mem.get(KEY)!).bowAimAssist).toBe(false);
+    mem.set(KEY, JSON.stringify({ schemaVersion: 1, lockOnButton: false, invertX: true }));
+    const old = new SettingsStore();
+    old.settleBowAimAssist(old.savedBefore);
+    expect(old.value.bowAimAssist).toBe(true);
+    expect(old.value.lockOnButton).toBe(false);
+    expect(old.value.invertX).toBe(true);
+  });
+
+  it('一度決めた後は、利用者が変えた値を上書きしない', () => {
+    mem.set(KEY, JSON.stringify({ schemaVersion: 1, bowAimAssist: false }));
+    const s = new SettingsStore();
+    s.settleBowAimAssist(true);
+    expect(s.value.bowAimAssist).toBe(false);
+  });
+});

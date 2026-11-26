@@ -2059,6 +2059,90 @@ const startTraining = async (page, tap = false) => {
   await ctx.close();
 }
 
+// ---- 手で狙う（v0.61.0。#19 の H05・D-155）: 環弓で抜刀して固有（C）を押している間、カメラが狙いの線の上へ寄り、照準が出る。
+// 視点の操作で狙いが動き、simulation の狙い（入力の aimYaw・aimPitch）と同じ。頭を狙って射ると当たり、横へ外すと当たらない ----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false);
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  await page.locator('.base-weapon[data-weapon="weapon.ring_bow.001"]').click();
+  await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy'), 6000, 'weapon.ring_bow.001');
+  await startTraining(page);
+  await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+  await page.evaluate(() => {
+    const s = window.__vh.sim, m = s.monsters[0], p = s.player;
+    m.aiEnabled = false;
+    p.mode = 'free'; p.action = null; p.drawn = true; p.stamina = 100;
+    p.pos = { x: m.pos.x, y: 0, z: m.pos.z - 1.75 - 8 }; p.prevPos = { ...p.pos }; p.yaw = 0; p.prevYaw = 0;
+  });
+  await page.keyboard.down('KeyC');
+  const entered = await until(page, () => !!window.__vh.aim && !!window.__vh.sim.player.aim && window.__vh.view.cam.aimBlend > 0.95 && !document.getElementById('hud-aim').hidden, 6000);
+  // 視点の操作（矢印キー）で狙いが動く
+  const yaw0 = await page.evaluate(() => window.__vh.aim.yaw);
+  await page.keyboard.down('ArrowRight');
+  const turned = await until(page, (y0) => window.__vh.aim.yaw < y0 - 0.05, 6000, yaw0);
+  await page.keyboard.up('ArrowRight');
+  // 頭（標的の正面 1.75m・高さ 1.25m）を狙う
+  const aimHead = () => page.evaluate(() => {
+    const v = window.__vh, s = v.sim, m = s.monsters[0], p = s.player;
+    const head = { x: m.pos.x, y: 1.25, z: m.pos.z - 1.75 };
+    let yaw = p.yaw, pitch = 0;
+    for (let i = 0; i < 3; i++) {
+      const e = { x: p.pos.x - Math.cos(yaw) * 0.32, y: p.pos.y + 1.6, z: p.pos.z + Math.sin(yaw) * 0.32 };
+      yaw = Math.atan2(head.x - e.x, head.z - e.z);
+      pitch = Math.atan2(head.y - e.y, Math.hypot(head.x - e.x, head.z - e.z));
+    }
+    v.aim.yaw = yaw; v.aim.pitch = pitch;
+  });
+  await aimHead();
+  await until(page, () => document.getElementById('hud-aim').classList.contains('on') && Math.abs(window.__vh.sim.player.aim.yaw - window.__vh.aim.yaw) < 1e-6, 4000);
+  const reticle = await page.evaluate(() => { const e = document.getElementById('hud-aim'); return { on: e.classList.contains('on'), good: e.classList.contains('good'), text: e.textContent }; });
+  await nextFrames(page);
+  await page.screenshot({ path: `${OUT}86e_bow_aim.png` });
+  // 射る: 押して溜めの行動が始まるまで待ち、離して、矢が飛び終わるまで待つ（描画が遅くても tick で待つ）
+  const shoot = async () => {
+    await page.mouse.down();
+    await until(page, () => window.__vh.sim.player.action?.def.actionId === 'player.ring_bow.shot', 6000);
+    await page.mouse.up();
+    await until(page, () => window.__vh.sim.player.mode === 'free' && window.__vh.sim.projectiles.length === 0, 10000);
+  };
+  const h0 = await page.evaluate(() => window.__vh.sim.hitCount);
+  await page.mouse.move(640, 360);
+  await shoot();
+  const hitHead = await page.evaluate((h) => window.__vh.sim.hitCount > h, h0);
+  // 横へ外して射ると当たらない
+  await page.evaluate(() => { window.__vh.aim.yaw += 0.7; });
+  await until(page, () => Math.abs(window.__vh.sim.player.aim.yaw - window.__vh.aim.yaw) < 1e-6 && !document.getElementById('hud-aim').classList.contains('on'), 4000);
+  const h1 = await page.evaluate(() => window.__vh.sim.hitCount);
+  await shoot();
+  const missed = await page.evaluate((h) => window.__vh.sim.hitCount === h, h1);
+  await page.keyboard.up('KeyC');
+  const left = await until(page, () => !window.__vh.aim && !window.__vh.sim.player.aim && document.getElementById('hud-aim').hidden && window.__vh.view.cam.aimBlend < 0.05, 6000);
+  const special = await page.evaluate(() => document.querySelector('.tbtn-special')?.textContent ?? null);
+  check('手で狙う（v0.61.0）: 環弓で固有（C）を押している間、カメラが狙いの線の上へ寄り照準が出る。矢印キーで狙いが動き、simulation も同じ狙い。頭を狙うと当たり、横へ外すと当たらない。離すと戻る',
+    entered && turned && reticle.on && hitHead && missed && left && special === '狙う', JSON.stringify({ entered, turned, reticle, hitHead, missed, left, special }));
+  await ctx.close();
+  // タッチ: 「狙う」は押すたびに切り替える（押し続けなくてよい）。狙っている間は「狙い中」
+  {
+    const { ctx, page } = await open({ width: 844, height: 390 }, true);
+    await page.tap('#boot-start');
+    await until(page, () => window.__vh && !document.getElementById('base').hidden);
+    await page.locator('.base-weapon[data-weapon="weapon.ring_bow.001"]').tap();
+    await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy'), 6000, 'weapon.ring_bow.001');
+    await startTraining(page);
+    await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+    await page.evaluate(() => { const s = window.__vh.sim; s.monsters[0].aiEnabled = false; s.player.drawn = true; s.player.mode = 'free'; s.player.action = null; });
+    await page.tap('.tbtn-special');
+    const on = await until(page, () => !!window.__vh.aim && !!window.__vh.sim.player.aim && document.querySelector('.tbtn-special')?.textContent === '狙い中', 6000);
+    await page.waitForTimeout(500);
+    const stays = await page.evaluate(() => !!window.__vh.aim && !!window.__vh.sim.player.aim);
+    await page.tap('.tbtn-special');
+    const off = await until(page, () => !window.__vh.aim && !window.__vh.sim.player.aim && document.querySelector('.tbtn-special')?.textContent === '狙う', 6000);
+    check('手で狙う（v0.61.0。タッチ）: 「狙う」を押すと狙いに入り、指を離しても狙ったまま（「狙い中」）。もう 1 度押すと戻る', on && stays && off, JSON.stringify({ on, stays, off }));
+    await ctx.close();
+  }
+}
+
 // ---- 弱った足取り（v0.52.0。#19 の M05）: 弱って巣へ向かう大型が歩くと、一歩ごとに体が片側へ傾き、頭が下がる。弱っていなければ傾かない ----
 {
   const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');

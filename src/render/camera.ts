@@ -4,6 +4,9 @@ import { PerspectiveCamera, Vector3 } from 'three';
 import { angleDiff, clamp, turnToward, yawOf } from '../core/math';
 import type { World } from '../game/world';
 
+/** 手で狙う時（v0.61.0）、カメラを目の点の何 m 後ろに置くか */
+export const AIM_BACK = 1.5;
+
 export class FollowCamera {
   readonly camera: PerspectiveCamera;
   yaw = 0;
@@ -14,6 +17,10 @@ export class FollowCamera {
   private shake = 0;
   private shakeTime = 0;
   private pivot = new Vector3();
+  /** 手で狙う時の寄せ具合（0 = ふつうの追従、1 = 狙いの線の上。v0.61.0）と、最後の狙い（戻る間に使う） */
+  aimBlend = 0;
+  private lastAim: { eye: { x: number; y: number; z: number }; dir: { x: number; y: number; z: number } } | null = null;
+  private lookPt = new Vector3();
 
   constructor(aspect: number) {
     this.camera = new PerspectiveCamera(58, aspect, 0.1, 400);
@@ -45,7 +52,18 @@ export class FollowCamera {
    * lock: ロックオンしている標的の位置（無ければ null）。ロック中は、狩人の後ろから標的を見る向きへ、毎フレーム回し続ける。
    * すぐ近く（水平 2m 以内）では、向きが急に裏返らないよう、回さない。
    */
-  update(dt: number, target: { x: number; y: number; z: number }, world: World, shakeScale: number, lock: { x: number; y: number; z: number } | null = null): void {
+  /**
+   * aim（v0.61.0。環弓で手で狙っている間）: 目の点と狙いの向き。カメラを狙いの線の上（目の点の 1.5m 後ろ）へ寄せ、狙いの向きを見る。
+   * 画面の真ん中が、simulation の狙いの線になる（照準の所へ矢が飛ぶ）
+   */
+  update(
+    dt: number,
+    target: { x: number; y: number; z: number },
+    world: World,
+    shakeScale: number,
+    lock: { x: number; y: number; z: number } | null = null,
+    aim: { eye: { x: number; y: number; z: number }; dir: { x: number; y: number; z: number } } | null = null,
+  ): void {
     if (lock) {
       const dx = lock.x - target.x, dz = lock.z - target.z;
       if (Math.hypot(dx, dz) > 2) {
@@ -96,7 +114,24 @@ export class FollowCamera {
     this.currentDist += (allowed - this.currentDist) * Math.min(1, dt * k);
 
     this.camera.position.set(this.pivot.x + dir.x * this.currentDist, this.pivot.y + dir.y * this.currentDist, this.pivot.z + dir.z * this.currentDist);
-    this.camera.lookAt(this.pivot);
+    this.lookPt.copy(this.pivot);
+    // 手で狙う（v0.61.0）: 狙いの線の上へ寄せる（入る・戻るは 0.1 秒ほどで滑らかに）
+    if (aim) this.lastAim = aim;
+    this.aimBlend += ((aim ? 1 : 0) - this.aimBlend) * Math.min(1, dt * 14);
+    if (!aim && this.aimBlend < 0.002) this.aimBlend = 0;
+    if (aim && this.aimBlend > 0.998) this.aimBlend = 1;
+    const fov = 58 - 12 * this.aimBlend;
+    if (Math.abs(this.camera.fov - fov) > 0.01) {
+      this.camera.fov = fov;
+      this.camera.updateProjectionMatrix();
+    }
+    if (this.aimBlend > 0 && this.lastAim) {
+      const { eye, dir: d } = this.lastAim;
+      const u = this.aimBlend;
+      this.camera.position.lerp(new Vector3(eye.x - d.x * AIM_BACK, eye.y - d.y * AIM_BACK, eye.z - d.z * AIM_BACK), u);
+      this.lookPt.lerp(new Vector3(eye.x + d.x * 20, eye.y + d.y * 20, eye.z + d.z * 20), u);
+    }
+    this.camera.lookAt(this.lookPt);
     if (this.shake > 0.001 && shakeScale > 0) {
       this.shakeTime += dt;
       const s = this.shake * this.shake * 0.16 * shakeScale;

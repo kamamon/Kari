@@ -56,6 +56,9 @@ export class Hud {
   private spiritFill!: HTMLElement;
   /** ビン（環弓。v0.60.0）: 付けているビンの名前と残り、付けていない時は持っている本数 */
   private coatBox!: HTMLElement;
+  /** 照準（v0.61.0。環弓で手で狙っている間）: 画面の真ん中。狙いの線の当たる所までの距離 */
+  private aimEl!: HTMLElement;
+  private aimDist!: HTMLElement;
   private time: HTMLElement;
   private goal: HTMLElement;
   private faints: HTMLElement;
@@ -125,6 +128,12 @@ export class Hud {
     this.coatBox = el('div', 'coat', blade, '');
     this.coatBox.id = 'hud-coat';
     this.coatBox.hidden = true;
+
+    this.aimEl = el('div', 'hud-aim', this.root);
+    this.aimEl.id = 'hud-aim';
+    el('i', '', this.aimEl);
+    this.aimDist = el('span', '', this.aimEl, '');
+    this.aimEl.hidden = true;
 
     const tr = el('div', 'hud-top-right', this.root);
     const quest = el('div', 'hud-quest', tr);
@@ -208,6 +217,22 @@ export class Hud {
     this.lockMark.style.transform = `translate(${Math.round(p.x)}px, ${Math.round(p.y)}px)`;
   }
 
+
+  /**
+   * 照準（v0.61.0。環弓で手で狙っている間）: kind は狙いの線が最初に当たったもの、dist はその距離 (m)。
+   * モンスターなら明るく、適正距離（6〜12m）なら金色。null で隠す
+   */
+  setAim(a: { kind: 'monster' | 'ground' | 'none'; dist: number } | null): void {
+    const key = a ? `${a.kind}:${a.dist.toFixed(1)}` : '';
+    this.set('aim', key, () => {
+      this.aimEl.hidden = !a;
+      if (!a) return;
+      const on = a.kind === 'monster';
+      this.aimEl.classList.toggle('on', on);
+      this.aimEl.classList.toggle('good', on && a.dist >= 6 && a.dist <= 12);
+      this.aimDist.textContent = a.kind === 'none' ? '' : `${a.dist.toFixed(1)}m`;
+    });
+  }
   toast(text: string): void {
     const t = el('div', 'toast', this.toasts, text);
     while (this.toasts.childElementCount > 3) this.toasts.firstElementChild?.remove();

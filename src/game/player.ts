@@ -75,6 +75,11 @@ export interface PlayerState {
    */
   coatings: ItemStack[];
   coating: string | null;
+  /**
+   * 手で狙っている間の、狙いの向き（v0.61.0。環弓。#19 の H05。ラジアン。pitch は上が正）。狙っていない時は null。
+   * 狙っている間は、体はこの向きを向いて止まる（入力の移動は使わない）
+   */
+  aim: { yaw: number; pitch: number } | null;
   /** 使っている途中の道具。効果が出る tick より前に妨害されると、消費しない。 */
   itemUse: { itemId: string; instanceId: number; done: boolean } | null;
   /** 剥ぎ取りの途中（source は剥ぎ取る対象） */
@@ -213,6 +218,7 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
     itemIndex: 0,
     coatings: coatings.map((s) => ({ itemId: s.itemId, count: s.count })),
     coating: null,
+    aim: null,
     itemUse: null,
     carving: null,
     errandOp: null,
@@ -371,6 +377,25 @@ export function startAction(p: PlayerState, actionId: string, ctx: SimCtx): Acti
   }
   ctx.emit({ type: 'action_start', actor: p.id, actionId, instanceId: run.instanceId });
   return run;
+}
+
+/**
+ * 手で狙う（v0.61.0。2G の弓の照準。#19 の H05。docs/spec.md の 32.27）: 狙える系統（aim）で、抜刀していて、固有ボタンを押していて、
+ * 入力に狙いの向きがあり、立っているか主の行動（溜めて射る）の途中の時だけ狙う。狙っている間は体をその向きへ向け、移動の入力を消して返す
+ */
+function stepAim(p: PlayerState, inp: InputFrame, fam: WeaponFamilyDef): InputFrame {
+  const A = fam.aim;
+  const ok = !!A && p.drawn && (inp.held & Btn.Special) !== 0 && inp.aimYaw !== undefined && inp.aimPitch !== undefined && Number.isFinite(inp.aimYaw) && Number.isFinite(inp.aimPitch)
+    && (p.mode === 'free' || (p.mode === 'action' && p.action?.def.actionId === fam.actions.main));
+  if (!ok) {
+    p.aim = null;
+    return inp;
+  }
+  const yaw = Math.atan2(Math.sin(inp.aimYaw!), Math.cos(inp.aimYaw!));
+  const pitch = Math.max(A!.pitchMinDeg * DEG, Math.min(A!.pitchMaxDeg * DEG, inp.aimPitch!));
+  p.aim = { yaw, pitch };
+  p.yaw = yaw;
+  return { ...inp, moveX: 0, moveZ: 0 };
 }
 
 /**
@@ -1132,6 +1157,8 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     p.lastSingle = null;
   }
   stepAilment(p, ctx);
+  // 手で狙う（v0.61.0。#19 の H05）: 狙っている間は、体を狙いの向きへ向けて止まる（移動の入力は使わない）
+  inp = stepAim(p, inp, fam);
   // 押し遅れの複合入力（v0.40.0）: 主か副で技を始めた直後に、もう片方が押されたら、同時押しの技へ替える
   const ls = p.lastSingle;
   if (ls) {
