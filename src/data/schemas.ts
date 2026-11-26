@@ -1,3 +1,4 @@
+import type { FieldGatherCatalog } from './fieldGathering';
 import type { BestiaryDef } from './bestiary';
 import type { StoryDef } from './story';
 // データ定義の型。public/data/*.json はすべてこの形で書き、読み込み時に validators.ts で検証する。
@@ -1073,6 +1074,8 @@ export interface GatherDef {
   depot: { areaId: string; x: number; z: number };
   /** 大型・幼体を出すか。いまは 'none'（出さない）だけ */
   encounters: 'none';
+  /** 納品の目標を設けない自由採集遠征（常設点が使える） */
+  fieldGathering?: boolean;
 }
 
 /** 外見の色（v0.28.0。public/data/appearance.json）。hex は sRGB の基準色（設計の目安。照明の後の画面の色ではない） */
@@ -1228,6 +1231,7 @@ export interface ItemDef {
 export interface MaterialDef {
   id: string;
   name: string;
+  rarity?: number;
   /** 数え方（v0.27.0。採集の素材の「枚」「個」など。無ければ「個」） */
   unit?: string;
 }
@@ -1287,6 +1291,7 @@ export interface ContentIndex {
     appearance: string;
     /** 系列の装備（v0.32.0。武器・防具・作るレシピ。npm run equipment:gen の出力） */
     equipment?: string[];
+    fieldGathering?: string;
     /** 属性と状態異常の決まり（v0.33.0） */
     elements: string;
     /** 防具の技能（v0.33.0。npm run equipment:gen の出力） */
@@ -1310,6 +1315,7 @@ export interface MotionSetDef {
 
 export interface Content {
   contentVersion: string;
+  fieldGathering?: FieldGatherCatalog;
   /** 読み込んだハンターの動きの組の名前（v0.57.0。D-150） */
   motionSet: string;
   /** 属性と状態異常の決まり（v0.33.0） */

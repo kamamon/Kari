@@ -9,7 +9,7 @@ import { HitLedger, computeDamage, edgeStage, sweepCapsule, type WorldShape } fr
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
 import { defenseScale, scaleMonsterDef, totalDefense } from './rank';
-import { computeGear, critChance, incomingElementScale, weaponElementZone, type GearEffects } from './gear';
+import { computeGear, skillValue, critChance, incomingElementScale, weaponElementZone, type GearEffects } from './gear';
 import { addAilment, ailmentAmount, ailmentRules, activeControl, clearAilments, startPoison, wakeFromSleep } from './ailment';
 import { applyDamageToMonster, createMonster, monsterBlockers, monsterShapes, stepMonster, type MonsterState } from './monster';
 import { questTimeLimitTicks } from './field';
@@ -18,6 +18,8 @@ import { createRoam } from './roam';
 import { createPlayer, familyOf, playerHurtCapsule, resolveIncomingHit, setSpirit, stepPlayer, weaponOf, type PlayerState, type SimCtx } from './player';
 import { trackSegment } from './tracks';
 import { World, type Circle } from './world';
+import { usesFieldGather } from '../data/fieldGathering';
+import { FieldGatherState, FIELD_NODE_REACH } from './fieldGather';
 import { DELIVER_ACTION, DEPOT_RADIUS, DEPOT_REACH, MINE_NODE_RADIUS, NODE_REACH, bagHasRoom, createErrand, errandReady, errandSurplus, nodeAction, type ErrandState, type ErrandTarget } from './errand';
 
 export interface SimOptions {
@@ -230,6 +232,7 @@ export class Simulation implements SimCtx {
   main: MonsterState | null = null;
   /** 狩らない依頼（採集・採掘・現地の納品。v0.27.0）の、採った採取点と採集袋。狩りの依頼・訓練場では null */
   errand: ErrandState | null = null;
+  fieldGather: FieldGatherState | null = null;
 
   constructor(content: Content, options: SimOptions) {
     this.content = content;
@@ -304,6 +307,7 @@ export class Simulation implements SimCtx {
       this.main = m;
     }
     // 狩らない依頼（v0.27.0）: 大型も幼体も出さない（encounters: none）。採取点と採集袋を用意する
+    if (quest && field && usesFieldGather(content,quest)) this.fieldGather=new FieldGatherState(content.fieldGathering!,quest.rankId,options.seed);
     if (quest?.gather) this.errand = createErrand(quest.gather);
     else this.spawnHerds(quest, field ?? null, quest?.monsterSpawn ?? map.monsterSpawn);
     if (quest) {
@@ -477,6 +481,10 @@ export class Simulation implements SimCtx {
     if (e) {
       if (e.def.depot.areaId === this.areaId) out.push({ x: e.def.depot.x, z: e.def.depot.z, r: DEPOT_RADIUS });
       for (const n of e.def.nodes) if (n.kind === 'mine' && n.areaId === this.areaId) out.push({ x: n.x, z: n.z, r: MINE_NODE_RADIUS });
+    }
+    if (this.fieldGather) {
+      for(const n of this.fieldGather.nodes)if(n.kind==='mine'&&n.areaId===this.areaId)out.push({x:n.x,z:n.z,r:MINE_NODE_RADIUS});
+      const p=this.fieldGather.catalog.pond;if(p.areaId===this.areaId)out.push({x:p.x,z:p.z,r:p.radius});
     }
     return out;
   }
@@ -748,9 +756,14 @@ export class Simulation implements SimCtx {
   errandTarget(): ErrandTarget | null {
     const e = this.errand;
     const h = this.hunt;
-    if (!e || !h || h.phase !== 'active' || h.closed) return null;
+    if (!h || h.phase !== 'active' || h.closed) return null;
     const p = this.player;
-    if (p.drawn || p.mode === 'dead') return null;
+    if (p.drawn || p.mode !== 'free' || !p.grounded) return null;
+    if (!e || e.def.fieldGathering) {
+      if (e && e.def.depot.areaId===this.areaId && Math.hypot(p.pos.x-e.def.depot.x,p.pos.z-e.def.depot.z)<=DEPOT_REACH) return {kind:'deliver',actionId:DELIVER_ACTION};
+      const speed=1-skillValue(this.content,this.gear.levels,'mining_haste')/100;
+      return this.fieldGather?.target(this.areaId,p.pos.x,p.pos.z,p.yaw,(x,z)=>this.world.groundHeight(x,z),speed)??null;
+    }
     const d = e.def.depot;
     if (d.areaId === this.areaId && Math.hypot(p.pos.x - d.x, p.pos.z - d.z) <= DEPOT_REACH && errandReady(e)) return { kind: 'deliver', actionId: DELIVER_ACTION };
     let best: ErrandTarget | null = null;
@@ -770,7 +783,17 @@ export class Simulation implements SimCtx {
   errandDo(t: ErrandTarget): void {
     const e = this.errand;
     const h = this.hunt;
-    if (!e || !h || h.phase !== 'active' || h.closed) return;
+    if (!h || h.phase !== 'active' || h.closed) return;
+    if(t.kind==='field_node'){
+      const g=this.fieldGather,n=g?.nodes.find(n=>n.id===t.nodeId),p=this.player;
+      if(!g||!n||n.areaId!==this.areaId||Math.hypot(p.pos.x-n.x,p.pos.z-n.z)>FIELD_NODE_REACH+.2||p.drawn)return;
+      if(n.kind==='fish'&&g.hookInstance!==p.errandOp?.instanceId){this.emit({type:'field_gather_miss',kind:'fish'});return;}
+      const hit=g.take(n);if(!hit)return;
+      for(let i=0;i<hit.count;i++)h.loot.push({itemId:hit.itemId,source:'field_'+hit.kind});
+      this.emit({type:'field_gather',nodeId:n.id,...hit,pos:{x:n.x,y:this.world.groundHeight(n.x,n.z),z:n.z}});
+      return;
+    }
+    if(!e)return;
     if (t.kind === 'deliver') {
       if (!errandReady(e) || e.delivered) return;
       e.delivered = true;
@@ -896,7 +919,10 @@ export class Simulation implements SimCtx {
 
   step(input: InputFrame): void {
     this.tick++;
+    const fg=this.fieldGather,op=this.player.errandOp,run=this.player.action;
+    if(fg&&op?.target.kind==='field_node'&&op.target.source==='fish'&&run?.instanceId===op.instanceId&&fg.bite(run.tick)&&(input.pressed&Btn.Main))fg.hookInstance=run.instanceId;
     stepPlayer(this.player, input, this);
+    if(fg&&this.hunt?.phase==='active')fg.discover(this.areaId,this.player.pos.x,this.player.pos.z,10+skillValue(this.content,this.gear.levels,'gather_sense'));
     if (this.field) this.stepExits();
     for (const g of this.herds) stepHerdGroup(g, this);
     for (const m of this.monsters) stepMonster(m, this.player, this);
@@ -1372,6 +1398,7 @@ export class Simulation implements SimCtx {
     for (const a of this.projectiles) if (a.pierce !== undefined) parts.push(a.pierce, a.hitParts!.join(','));
     if (p.climb) parts.push(p.climb.def.id, p.climb.phase, p.climb.t, p.climb.h);
     if (p.vault) parts.push(p.vault.def.id, p.vault.t);
+    if(this.fieldGather)parts.push(this.fieldGather.hash());
     if (this.errand) parts.push(this.errand.used.join(','), Object.entries(this.errand.bag).map(([k, v]) => `${k}=${v}`).join(','), this.errand.delivered ? 1 : 0, p.errandOp ? `${p.errandOp.target.kind}:${p.errandOp.done ? 1 : 0}` : '-');
     for (const a of this.projectiles) parts.push(a.pos.x, a.pos.y, a.pos.z, a.life);
     if (this.hunt) {
