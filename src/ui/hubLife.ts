@@ -20,8 +20,8 @@ export interface HubLifeHost {
 }
 export class HubLifePanel {
  readonly root=el('div','hub-life');
- private tabs=el('nav','life-tabs'),body=el('div','life-body'),notice=el('p','life-notice');
- private tab:HubTab='map'; private busy=false; private search='';private researchSearch='';private pendingSearch:HTMLInputElement|null=null;
+ private tabs=el('nav','life-tabs');private body=el('div','life-body');private notice=el('p','life-notice');
+ private tab:HubTab='map'; private busy=false; private search='';private researchSearch='';
  constructor(private c:Content,private h:HubLifeHost){
    this.root.dataset.sec='life';this.root.hidden=true;this.notice.setAttribute('role','status');this.root.append(this.tabs,this.notice,this.body);
  }

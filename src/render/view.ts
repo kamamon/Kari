@@ -13,6 +13,9 @@ import type { Settings } from '../save/settings';
 import { blobShadow, buildArena, buildAreaGroup, setupSky, type Arena } from './arena';
 import { WIND } from './envArt';
 import { buildHubGroup } from './hubScene';
+import { HubLifeScene } from './hubLifeScene';
+import type { HubLifeState } from '../data/hubLife';
+import type { FieldGatherKind } from '../data/fieldGathering';
 import type { Ambience, Village } from './villageScene';
 import { buildNpcSprites, updateNpcSprites } from './npcSprites';
 import { buildErrandProps, updateErrandProps, type ErrandProps } from './errandProps';
@@ -203,6 +206,12 @@ export class GameView {
   private ambienceTimer = 1;
   /** 里の建物と暮らし（v0.35.0。里の時だけ） */
   private village: Village | null = null;
+  private hubLifeScene:HubLifeScene|null=null;
+  hubGather:FieldGatherKind|null=null;
+  private gatherKind:FieldGatherKind|null=null;
+  private gatherT=0;
+  setHubLife(state:HubLifeState,cycle:number,level:number):void{this.hubLifeScene?.set(state,cycle,level);}
+  snapHubHeight(y:number):void{this.renderY=y;this.lastPlayerXZ=null;this.groundLocomotion.reset();}
   private tmpSize = new Vector2();
   /** モンスターの見た目が出す効果: 足音と土ぼこり。近いほど大きく、画面も少し揺れる。 */
   private monsterFx = {
@@ -269,6 +278,8 @@ export class GameView {
       this.npcs = buildNpcSprites(content.hub.npcs ?? [], sim.world.map.platforms);
       this.scene.add(this.npcs);
       this.arena = { group, ...setupSky(this.scene, settings.shadows, 'village') };
+      this.hubLifeScene=new HubLifeScene(sim.world.map,this.scene,this.arena);
+      this.scene.add(this.hubLifeScene.group);
     } else this.arena = buildArena(this.scene, sim.world.map, settings.shadows);
     this.scene.add(this.hunter.root, this.playerShadow);
     if (sim.errand) {
@@ -711,6 +722,15 @@ export class GameView {
         st = { kind: 'idle' };
       }
     }
+    // 拠点の採集は既存狩場クリップを描画専用で再生。戦闘判定・道具消費には触らない。
+    if(this.gatherKind!==this.hubGather){this.gatherKind=this.hubGather;this.gatherT=0;}
+    if(this.hubGather&&this.village&&p.mode==='free'&&visualSpeed<.8&&!this.portrait){
+      const clip=this.hubGather==='mine'?'common_mine_01':this.hubGather==='insect'?'common_net_01':this.hubGather==='fish'?'common_fish_01':'common_gather_01';
+      const duration=this.hubGather==='mine'?150:this.hubGather==='insect'?105:this.hubGather==='fish'?240:90;
+      this.gatherT+=dt*60;
+      pose=clipPose(clip,this.hubGather==='fish'?Math.min(204,this.gatherT):Math.min(duration,this.gatherT*duration/52))??pose;
+      key='hub-gather:'+this.hubGather;st=null;this.groundLocomotion.reset();
+    }
     // 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）: 体・武器・盾（双剣は左の剣）をまとめて解く（足は地面に、手は武器に付いたままになる）
     if (p.mode !== 'free') this.groundLocomotion.reset();
     let solved: Solved | null = null;
@@ -870,9 +890,10 @@ export class GameView {
     // 空と遠景は、カメラと一緒に動かす（どこまで歩いても、近づかない）。雲は少しずつ流れる
     this.arena.backdrop.position.set(this.cam.camera.position.x, 0, this.cam.camera.position.z);
     // 採掘（v0.27.0）の間だけ、右手に採掘道具
-    this.hunter.tool.visible = p.mode === 'action' && p.action?.def.clip === 'common_mine_01';
-    this.hunter.netTool.visible=p.mode==='action'&&p.action?.def.clip==='common_net_01';
-    this.hunter.fishTool.visible=p.mode==='action'&&p.action?.def.clip==='common_fish_01';
+    const work=this.village&&p.mode==='free'&&visualSpeed<.8&&!this.portrait?this.hubGather:null;
+    this.hunter.tool.visible = work==='mine'||(p.mode === 'action' && p.action?.def.clip === 'common_mine_01');
+    this.hunter.netTool.visible=work==='insect'||(p.mode==='action'&&p.action?.def.clip==='common_net_01');
+    this.hunter.fishTool.visible=work==='fish'||(p.mode==='action'&&p.action?.def.clip==='common_fish_01');
     if (this.npcs) updateNpcSprites(this.npcs, this.cam.camera.position, this.time);
     // 里の暮らし（v0.35.0）: 水車・昇降台・煙・しぶき・水の流れ。鍛冶の槌の火花と、里の音
     this.ambienceTimer += dt;
@@ -892,6 +913,7 @@ export class GameView {
     }
     if(this.fieldGatherProps)updateFieldGatherProps(this.fieldGatherProps,sim,this.time);
     if (this.errandProps && sim.errand) updateErrandProps(this.errandProps, sim.errand, sim.areaId, sim.hunt?.phase === 'active', this.cam.camera.position, this.time);
+    if(this.hubLifeScene){this.hubLifeScene.update(this.time,dt,this.cam.camera.position);const cue=this.hubLifeScene.ambienceCue(this.time);if(cue)this.onSound?.(cue.id,cue.k);}
     this.arena.sky?.setTime(this.time);
     WIND.value = this.time;
     this.ailmentFx(sim, dt);

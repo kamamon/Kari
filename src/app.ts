@@ -500,7 +500,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
   }
 
   private interactHub(): void {
-    if(this.place!=='hub'||this.paused||this.resourceBusy)return;
+    if(this.place!=='hub'||this.paused||this.resourceBusy||(this.gatheringVisual&&this.sim.tick<this.gatheringVisual.until))return;
     const f=nearestFacility(this.content.hub.facilities,this.sim.world,this.sim.player.pos);
     if(f){this.fishing=null;this.visit('facility.'+f.id);this.openFacility(f.kind,f.id);return;}
     const p=nearbyResource(this.sim.world,this.sim.player.pos);if(!p){const s=serviceNear(this.sim.world,this.sim.player.pos);if(s){this.visit('service.'+s.id);this.openLife(s.tab);}return;}
@@ -768,7 +768,9 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
         if (this.place === 'hub') {
           // 里: 歩く・走る・回避だけ。主ボタンは「施設へ入る」
           if (input.pressed & Btn.Main) interact = true;
-          const keep = Btn.Dodge | Btn.Sprint;
+          const working=this.gatheringVisual&&this.sim.tick<this.gatheringVisual.until;
+          if(working){input.moveX=0;input.moveZ=0;}
+          const keep = working?0:Btn.Dodge | Btn.Sprint;
           input.held &= keep;
           input.pressed &= keep;
           input.released &= keep;
