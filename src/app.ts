@@ -698,6 +698,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       this.paused = paused;
       this.releaseInputs();
     }
+    this.base.updateReceptionPad(this.base.open && !this.menu.open && !this.result.open && !this.story.open && !this.looks.open && !this.touch.editing && !this.portrait.matches && !document.hidden);
     if (this.lastTs === 0) this.lastTs = ts;
     const rawMs = ts - this.lastTs;
     const dt = Math.min(0.25, rawMs / 1000);
