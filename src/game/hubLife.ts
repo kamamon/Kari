@@ -4,11 +4,11 @@ import { CROPS, DECORS, MEAL_IDS, RESOURCE_IDS, freshHubLife, lifeOf, hasPrep, t
 import { cloneSave, MAX_COUNT, RuleError, wornArmor, pouchOf, playWeaponId, type SaveDoc } from '../save/profile';
 import { HUB_RESOURCE_POINTS, resourceCycle, resourceRank, resourceStatus, useHubResource } from './hubResources';
 import { nearestFacility } from './hub';
-import { ANIMALS, furnitureErrors, type AnimalKind, type FurniturePlacement } from '../data/hubEstate';
+import { ANIMALS, furnitureErrors, type AnimalKind, type FurniturePlacement, type ZoneId } from '../data/hubEstate';
 import type { V3 } from '../core/math';
 import type { World } from './world';
 
-export type HubService={id:string;name:string;tab:HubTab;x:number;z:number;r:number;floor:number;detail:string};
+export type HubService={id:string;name:string;tab:HubTab;x:number;z:number;r:number;floor:number;detail:string;zone?:ZoneId};
 export const HUB_SERVICES:readonly HubService[]=[
  {id:'dining',name:'山里の食事処',tab:'prep',x:5,z:-1,r:2.2,floor:0,detail:'食事で次の狩りを強化'},
  {id:'bath',name:'水音の湯',tab:'prep',x:2,z:-36,r:2.4,floor:-10,detail:'湯治と休憩'},
@@ -21,6 +21,9 @@ export const HUB_SERVICES:readonly HubService[]=[
  {id:'expedition',name:'山道の探索隊詰所',tab:'economy',x:11,z:-32,r:2,floor:-10,detail:'探索隊を派遣'},
  {id:'farmdesk',name:'段々農場・管理小屋',tab:'farm',x:-20,z:33,r:1.3,floor:8,detail:'設備投資と栽培計画'},
  {id:'gallery',name:'狩人の展示室',tab:'home',x:-19,z:26,r:1.5,floor:8,detail:'装備と狩猟の記録'},
+ {id:'mine_zone',name:'灰層の坑道入口',tab:'farm',x:-32,z:2,r:1.4,floor:-3,detail:'専用の坑道を歩く',zone:'mine'},
+ {id:'pond_zone',name:'沢鏡の養魚池入口',tab:'farm',x:-32,z:-35,r:1.5,floor:-10,detail:'専用の養魚池を歩く',zone:'pond'},
+ {id:'ranch',name:'山里の畜産場',tab:'farm',x:1,z:27.5,r:1.4,floor:8,detail:'家畜を世話する'},
 ];
 export const serviceNear=(w:World,pos:V3):HubService|null=>nearestFacility(HUB_SERVICES,w,pos);
 export interface HubDestination {id:string;name:string;x:number;z:number;floor:number;detail:string;tab?:HubTab}

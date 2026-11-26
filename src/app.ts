@@ -548,7 +548,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     if(this.place!=='hub'||this.paused||this.resourceBusy||(this.gatheringVisual&&this.sim.tick<this.gatheringVisual.until))return;
     const f=nearestFacility(this.content.hub.facilities,this.sim.world,this.sim.player.pos);
     if(f){this.fishing=null;this.visit('facility.'+f.id);this.openFacility(f.kind,f.id);return;}
-    const p=nearbyResource(this.sim.world,this.sim.player.pos);if(!p){const s=serviceNear(this.sim.world,this.sim.player.pos);if(s){this.visit('service.'+s.id);this.openLife(s.tab);}return;}
+    const p=nearbyResource(this.sim.world,this.sim.player.pos);if(!p){const s=serviceNear(this.sim.world,this.sim.player.pos);if(s){this.visit('service.'+s.id);this.openLife(s.tab);if(s.zone)this.base.openEstate(s.zone);}return;}
     const s=resourceStatus(this.save.doc,this.content,p);
     this.visit('resource.'+p.id);
     if(s.action==='wait'||s.action==='empty'||s.action==='unavailable'){this.hud.toast(s.summary);return;}
@@ -587,6 +587,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     // メニュー拠点でも施設一覧は見られるが移動はできない。
     return [];
   }
+  playEstateSound(id:import('./core/hubSoundtrack').HubSample,k=1):void{this.audio.playHubSample(id,k);}
   lifePosition():{x:number;y:number;z:number}|null{return this.place==='hub'?{...this.sim.player.pos}:null;}
   lifeTravel(id:string):void{
     if(this.place!=='hub'||!lifeOf(this.save.doc).visited.includes(id)||this.resourceBusy)return;
@@ -910,7 +911,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     if (this.view.lockOn && !this.store.value.lockOnButton) this.view.lockOn = false;
     this.touch.setLatched('lock', this.view.lockOn);
     this.touch.setHidden(['lock'], this.place === 'hub' || !this.store.value.lockOnButton);
-    this.view.render();
+    if(!this.base.estateActive)this.view.render();
     this.hud.setFacility(this.place === 'hub' && !paused ? (this.nearFacility ?? this.resourcePrompt()) : null, this.place === 'hub');
     this.hud.update(this.sim, this.view, { fps: this.fps, droppedTicks: this.clock.droppedTicks, frames: this.meterSummary }, dt);
   };

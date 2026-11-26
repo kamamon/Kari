@@ -329,6 +329,8 @@ export class BaseScreen {
   get open(): boolean {
     return !this.root.hidden;
   }
+  get estateActive():boolean{return this.open&&this.section==='life'&&this.lifePanel.estateActive;}
+  openEstate(id:import('../data/hubEstate').ZoneId):void{this.setOpen(true,'life');this.lifePanel.open(id==='home'?'home':'farm');this.lifePanel.openEstate(id);}
 
   /** 実施設IDも引き継いで開く。閉じても受付ごとの閲覧位置は残す。 */
   setOpen(open: boolean, section: BaseSection = 'all', facilityId?: string): void {
@@ -337,6 +339,7 @@ export class BaseScreen {
     this.questDetailScroller = null;
     this.questScrollContext = null;
     const wasHidden = this.root.hidden;
+    if(!open||section!=='life')this.lifePanel.closeEstate();
     this.root.hidden = !open;
     if (!open) {
       this.huntConfirmId = null;

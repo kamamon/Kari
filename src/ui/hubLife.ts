@@ -7,6 +7,10 @@ import { afford,chosenPouch,desiredGear,expeditionReward,festival,MEAL_COST,MIXE
 import { HUB_RESOURCE_POINTS,resourceCycle,resourceStatus } from '../game/hubResources';
 import type { SaveManager,SaveResult } from '../save/saveManager';
 import type { SaveDoc } from '../save/profile';
+import { HubEstatePanel } from './hubEstate';
+import { ANIMALS, type AnimalKind, type ZoneId } from '../data/hubEstate';
+import { hubReports,hubThreat } from '../data/hubNarrative';
+import type { HubSample } from '../core/hubSoundtrack';
 
 const el=<K extends keyof HTMLElementTagNameMap>(tag:K,cls='',txt=''):HTMLElementTagNameMap[K]=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt)e.textContent=txt;return e;};
 const STAGES:Record<ResourceId,string[]>={farm:['小さな畑','段々畑','育苗小屋','大規模農園'],mine:['露出鉱脈','採掘坑','深層坑道','晶脈採掘所'],fish:['川岸','釣り桟橋','養魚池','大型釣り堀'],insect:['草むら','昆虫樹','飼育場','希少昆虫園'],bone:['骨置き場','発掘場','化石層','深層発掘場']};
@@ -16,18 +20,27 @@ const DRILLS:Record<string,string>={heavy_blade:'溜め斬り・抜刀斬り・�
 export interface HubLifeHost {
  save:SaveManager; hubWalk:boolean;
  lifeDestinations():HubDestination[]; lifePosition():{x:number;y:number;z:number}|null;
- lifeTravel(id:string):void; openLooks():void; startTraining():void; saveChanged():void;
+ lifeTravel(id:string):void; openLooks():void; startTraining():void; saveChanged():void; openStory(sceneIds:string[]):void; playEstateSound?(id:HubSample,k?:number):void;
 }
 export class HubLifePanel {
  readonly root=el('div','hub-life');
  private tabs=el('nav','life-tabs');private body=el('div','life-body');private notice=el('p','life-notice');
+ private estate:HubEstatePanel|null=null;
+ get estateActive():boolean{return !!this.estate;}
+ closeEstate(){if(!this.estate)return;this.estate.destroy();this.estate=null;this.root.classList.remove('life-estate-open');this.tabs.hidden=false;this.body.hidden=false;this.notice.hidden=false;}
+ openEstate(id:ZoneId){
+  this.closeEstate();
+  try{const p=new HubEstatePanel(this.c,this.h,id,()=>{this.closeEstate();this.refresh();});this.estate=p;this.root.classList.add('life-estate-open');this.tabs.hidden=true;this.body.hidden=true;this.notice.hidden=true;this.root.append(p.root);p.start();}
+  catch(e){this.closeEstate();this.notice.textContent='3D区画を開けませんでした。ブラウザの3D描画を確認してください。'+String(e);this.notice.classList.add('bad');}
+ }
  private tab:HubTab='map'; private busy=false; private search='';private researchSearch='';
  constructor(private c:Content,private h:HubLifeHost){
    this.root.dataset.sec='life';this.root.hidden=true;this.notice.setAttribute('role','status');this.root.append(this.tabs,this.notice,this.body);
  }
- open(tab:HubTab){this.tab=tab;this.notice.textContent='';this.refresh();}
+ open(tab:HubTab){this.closeEstate();this.tab=tab;this.notice.textContent='';this.refresh();}
  refresh(){
    if(this.root.hidden)return;
+   if(this.estate){this.estate.sync();return;}
    const scroll=this.body.scrollTop;this.tabs.replaceChildren();this.body.replaceChildren();
    for(const t of HUB_TABS){const b=this.button(HUB_TAB_NAMES[t],()=>{this.tab=t;this.notice.textContent='';this.body.scrollTop=0;this.refresh();},this.busy);b.classList.toggle('on',this.tab===t);this.tabs.appendChild(b);}
    const d=this.h.save.doc,s=lifeOf(d);
@@ -49,6 +62,8 @@ export class HubLifePanel {
    catch(e){r={ok:false,reason:'failed',message:String(e)};}
    this.busy=false;this.notice.textContent=r.ok?(this.h.save.mode==='persistent'?'変更を保存しました':'変更しました（端末保存なし）'):r.message;this.notice.classList.toggle('bad',!r.ok);
    if(r.ok&&command.kind==='applySet')this.h.saveChanged();
+   if(r.ok&&command.kind==='animalFeed')this.h.playEstateSound?.('feed',.55);
+   if(r.ok&&command.kind==='animalCollect')this.h.playEstateSound?.('reward',.6);
    this.refresh();
  }
  private name(id:string){return this.c.materials.get(id)?.name??this.c.items.get(id)?.name??this.c.weapons.get(id)?.name??this.c.armor.get(id)?.name??id;}
@@ -79,11 +94,25 @@ export class HubLifePanel {
    for(const p of HUB_RESOURCE_POINTS){const id=p.id as ResourceId,q=upgradeQuote(d,this.c,id),st=resourceStatus(d,this.c,p);
     this.row(a,p.name+' Lv.'+q.level+'｜'+STAGES[id][q.level-1],st.summary+'｜'+(q.level===4?'最大レベル':q.condition+' / '+this.quote(q.cost,d)),this.cmd('設備を増築',{kind:'upgrade',id},!q.unlocked||!afford(d,q.cost)));
    }
+   const entrances=this.section('専用採集区画','里の採集回数を共有します。設備Lvに応じて奥まで歩けます。');
+   this.row(entrances,'灰層の坑道','露出鉱脈・支坑・深層の晶脈へ歩いて採掘',this.button('坑道へ入る',()=>this.openEstate('mine')));
+   this.row(entrances,'沢鏡の養魚池','岸・桟橋・いけすからタイミング操作で釣る',this.button('養魚池へ入る',()=>this.openEstate('pond')));
+   this.animals(d,s);
    const farm=HUB_RESOURCE_POINTS[0]!,st=resourceStatus(d,this.c,farm);
    const crop=this.select([{id:'mixed',name:'混植（抽選）'},{id:'leaf',name:'葉物'},{id:'fruit',name:'果樹（Lv2）'}] as const,s.crop,id=>void this.run({kind:'crop',id}));crop.disabled=this.busy||st.action!=='sow';
    this.row(a,'栽培品種','作付け前に選択。希少種は混植で抽選。',crop);
    const ready=HUB_RESOURCE_POINTS.some(p=>p.id!=='fish'&&s.levels[p.id as ResourceId]>=2&&s.visited.includes('resource.'+p.id)&&['gather','harvest'].includes(resourceStatus(d,this.c,p).action));
    this.row(a,'一括回収','訪問済みLv2以上・準備できた設備のみ。釣りと作付けを除く。',this.cmd('回収する',{kind:'collect'},!ready));
+ }
+ private animals(d:SaveDoc,s:HubLifeState){
+   const a=this.section('里の家畜','暮らしの段に家畜を飼う。給餌の後に依頼を1回達成すると生産物を回収。狩りをしなくても動物は傷つかない。');
+   const cycle=resourceCycle(d,this.c);
+   for(const [key,def] of Object.entries(ANIMALS)){
+    const id=key as AnimalKind,o=s.livestock?.[id],count=o?.count??0;
+    const feed=!!o&&o.fedCycle===null&&cycle>o.lastHarvest&&(d.items[def.feed]??0)>=count,ready=!!o&&o.fedCycle!==null&&cycle>o.fedCycle;
+    this.row(a,def.name+' '+count+'/3頭',def.description+'｜'+(o?.fedCycle!=null?(ready?'回収可能':'世話中・依頼を1回達成'):'餌：'+this.name(def.feed)+' '+count+'個')+'｜'+this.name(def.product)+' ×'+def.yield*count,
+      this.cmd('飼う（'+def.price+'）',{kind:'animalBuy',id},count>=3||o?.fedCycle!=null||d.money<def.price),this.cmd('餌を与える',{kind:'animalFeed',id},!feed),this.cmd('回収',{kind:'animalCollect',id},!ready));
+   }
  }
  private economy(d:SaveDoc,s:HubLifeState){
    const a=this.section('行商人・交易所','依頼達成ごとに商品が入れ替わる。入手済みの級の通常素材のみ。');
@@ -105,8 +134,7 @@ export class HubLifePanel {
    const room=el('div','life-room '+s.decor+' layout-'+(s.roomLayout??'left'));
    room.append(el('span','room-window','灯継ぎの里'),el('span','room-bed','寝台'),el('span','room-chest','装備箱'),el('span','room-shelf',s.displayArmor?this.name(s.displayArmor):'防具展示'),el('span','room-rack',s.displayWeapon?this.name(s.displayWeapon):'武器展示'));a.append(room);
    this.row(a,'家具の調度','木・緑・青銅の3種を無料で切替',this.select([{id:'wood',name:'木の調度'},{id:'green',name:'緑の帆布'},{id:'bronze',name:'青銅の調度'}] as const,s.decor,id=>void this.run({kind:'decor',id})));
-   const roomLink=el('a','life-button','自室に入る（3D）');const roomParams=new URLSearchParams({room:'home',decor:s.decor,layout:s.roomLayout??'left'});if(s.displayWeapon&&d.weapons.includes(s.displayWeapon))roomParams.set('weapon',s.displayWeapon);if(s.displayArmor&&d.armor.includes(s.displayArmor))roomParams.set('armor',s.displayArmor);roomLink.href=assetUrl('viewer.html')+'?'+roomParams.toString();roomLink.target='_blank';roomLink.rel='noopener';
-   this.row(a,'家具の配置','寝台と装備棚の位置を変更できます。',this.select([{id:'left',name:'寝台を左に'},{id:'right',name:'寝台を右に'}] as const,s.roomLayout??'left',id=>void this.run({kind:'roomLayout',id})),roomLink);
+   this.row(a,'家具を自由に配置','12種・最大24点。任意の位置・回転・材質・撤去と保存。室内の歩行と展示を確認できます。',this.button('自室に入る・家具を編集',()=>this.openEstate('home')));
    const weaponIds=d.weapons.filter(id=>this.c.weapons.has(id)),armorIds=d.armor.filter(id=>this.c.armor.has(id));
    const selectDisplay=(kind:'displayWeapon'|'displayArmor',ids:string[],value:string|null)=>this.select([{id:'',name:'展示しない'},...ids.map(id=>({id,name:this.name(id)}))],value&&ids.includes(value)?value:'',id=>void this.run({kind,id:id||null}));
    this.row(a,'武器の展示','所持品から選択',selectDisplay('displayWeapon',weaponIds,s.displayWeapon),...(s.displayWeapon&&weaponIds.includes(s.displayWeapon)?[this.preview(s.displayWeapon)]:[]));
@@ -153,6 +181,10 @@ export class HubLifePanel {
    const lv=villageLevel(d,this.c),rank=this.c.ranks.get('rank.'+rankOrder(d,this.c));
    a.append(el('p','life-highlight','里 Lv.'+lv+'｜'+(rank?.name??'初級')+'の狩人'),el('p','life-text',lv>=4?'全盛の里：四方に灯と旗が満ちる':lv>=3?'繁栄の里：交易と灯の広場が活気づく':lv===2?'復興の里：資材と飾りが増える':'小さな山里：設備の拡張と住民依頼を進めよう'));
    for(const t of VILLAGE_TASKS)this.row(a,t.name,t.text+'｜'+this.quote(t.cost,d)+' → 報酬 '+t.reward,this.cmd(s.tasks.includes(t.id)?'修繕完了':'納品する',{kind:'task',id:t.id},s.tasks.includes(t.id)||!afford(d,t.cost)));
+   const story=this.section('高地の観測記録','鳴天竜オルゼリオンと里の見張り。実在する依頼の成功保存に連動し、未実装の決戦は達成扱いにしない。');
+   const reports=hubReports(this.c,d.progress.questClears);
+   if(!reports.length)story.append(el('p','life-text','最初のガルドロスの依頼を達成すると新しい報告が届きます。'));
+   for(const report of reports)this.row(story,report.title,report.summary,this.button('報告を読む',()=>this.h.openStory([report.id])));
    const f=festival(d,this.c),b=this.section('里の催し','依頼達成5回ごとに2回分の開催期間。素材を持ち寄る季節の催し。');
    this.row(b,f.name,f.active?this.quote(f.cost,d)+' → 報酬 '+f.reward:'現在は開催期間外または受取済み',this.button('競技に参加',()=>this.festivalGame(b,f),!f.active||!afford(d,f.cost)));
  }

@@ -852,3 +852,19 @@ button.reception-desk { cursor: pointer; }
 
 /* 里の催しと調度 */
 .life-contest{margin:12px 0;padding:12px;border:1px solid #927856;border-radius:8px;background:#1a2420}.life-timing{position:relative;height:24px;background:#344b45;border-radius:5px;overflow:hidden;margin:12px 0}.life-timing-target{position:absolute;top:0;bottom:0;background:#639b5b}.life-timing-needle{position:absolute;top:0;bottom:0;width:4px;background:#fff2c2;box-shadow:0 0 7px #ffcf70;transform:translateX(-50%)}.life-room.layout-right{transform:scaleX(-1)}.life-room.layout-right>span{transform:scaleX(-1)}
+
+/* 専用区画の横画面UI。メインと別の保存ではなく、同じ拠点パネルの中で開く。 */
+#base:has(.life-estate-open) .base-heading{display:none}
+#base:has(.life-estate-open) .base-card{width:100%;max-width:100%;padding:5px}
+.life-estate-open>.life-tabs[hidden],.life-estate-open>.life-body[hidden],.life-estate-open>.life-notice[hidden]{display:none}
+.estate-panel{display:grid;grid-template-columns:minmax(0,1fr) minmax(185px,32%);grid-template-rows:auto minmax(0,1fr);gap:6px;flex:1;min-height:0}
+.estate-head{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:2px 5px;gap:6px}.estate-head h3{font-size:16px;margin:0;color:#dbc390}
+.estate-stage{position:relative;min-height:0;min-width:0;overflow:hidden;border:1px solid #968269;background:#36463d;border-radius:5px}
+.estate-canvas{display:block;width:100%;height:100%;touch-action:none;outline:none}
+.estate-side{overflow-y:auto;min-height:0;touch-action:pan-y;display:flex;flex-direction:column;gap:5px;padding:6px;border:1px solid #68745d;border-radius:5px;background:#243027}
+.estate-side>.life-button{width:100%;flex-shrink:0}
+.estate-status{font-size:12px;margin:3px 0;color:#edcf9d;min-height:1.2em;line-height:1.4}.estate-status.bad{color:#f2ae91}
+.estate-edit{display:flex;flex-direction:column;gap:5px}.estate-edit[hidden]{display:none}
+.estate-range{display:flex;flex-direction:column;gap:2px}.estate-range input{width:100%;min-height:32px;touch-action:pan-x;accent-color:#c4a66e}
+.estate-move{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;touch-action:none}.estate-move button{min-height:42px!important;touch-action:none!important}
+@media(max-height:450px){.estate-head .life-button{min-height:35px!important}.estate-head h3{font-size:14px}.estate-side{padding:4px}.estate-side .life-text{font-size:11px}.estate-panel{grid-template-columns:minmax(0,1fr) minmax(172px,31%)}}
