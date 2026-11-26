@@ -122,6 +122,16 @@ export class SkyDome {
     this.mesh.name = 'sky';
   }
 
+  /** 里の昼夜・天候だけが変更する。狩場の初期値は従来どおり。 */
+  setLook(look:SkyLook):void {
+    this.mat.uniforms.uZenith!.value.set(look.zenith);
+    this.mat.uniforms.uHorizon!.value.set(look.horizon);
+    this.mat.uniforms.uSun!.value.set(look.sun);
+    this.mat.uniforms.uCloudLit!.value.set(look.cloudLit);
+    this.mat.uniforms.uCloudShade!.value.set(look.cloudShade);
+    this.mat.uniforms.uCoverage!.value=look.coverage;
+  }
+
   setTime(t: number): void {
     this.mat.uniforms.uTime!.value = t;
   }

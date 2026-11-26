@@ -53,6 +53,8 @@ export interface AnimContext {
   /** 判定が有効な tick は、ブレンドせずに正本の軌道へ一致させる。 */
   active?: boolean;
   frozen?: boolean;
+  /** 手で狙っている間の狙いの上下（v0.61.0。環弓。ラジアン、上が正）。背と胸を反らす・かがめる（見た目だけ） */
+  aimPitch?: number;
 }
 
 interface Frame {
@@ -66,6 +68,8 @@ export class HunterAnimator {
   private from: Frame | null = null;
   private key = '';
   private blendT = 1;
+  /** 手で狙う時の、背と胸の反らし（狙いの上下へ滑らかに寄せる。v0.61.0） */
+  private aimLean = 0;
   private phase = 0;
   private contact = new ContactLocomotion();
   private previousRoot: RenderRoot | null = null;
@@ -149,6 +153,13 @@ export class HunterAnimator {
     if (w < 1 && this.from) {
       const u = smooth(w);
       f = { ctl: mixCtl(this.from.ctl, f.ctl, u), fL: mixFoot(this.from.fL, f.fL, u), fR: mixFoot(this.from.fR, f.fR, u) };
+    }
+    // 手で狙う（v0.61.0。環弓）: 狙いの上下に合わせて、背と胸を反らす・かがめ、顔を上げ下げする（見た目だけ。矢は simulation の狙いの線へ飛ぶ）
+    this.aimLean += ((context.aimPitch ?? 0) - this.aimLean) * Math.min(1, dt * 12);
+    if (Math.abs(this.aimLean) > 1e-4 && !context.active) {
+      const d = (this.aimLean * 180) / Math.PI;
+      const c = f.ctl;
+      f = { ...f, ctl: { ...c, spine: [c.spine[0]! - d * 0.35, c.spine[1]!, c.spine[2]!], chest: [c.chest[0]! - d * 0.5, c.chest[1]!, c.chest[2]!], look: [c.look[0]!, c.look[1]! - d * 0.3] } };
     }
     // 足を世界座標へ留める処理は、通常歩行だけ。攻撃中の判定軌道は変えない。
     if (context.root && (st.kind === 'idle' || (st.kind === 'guard' && walk > 0.01))) {

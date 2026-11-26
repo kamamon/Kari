@@ -94,6 +94,16 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 .charge { display: flex; gap: 4px; margin-left: 8px; }
 .charge b { width: 12px; height: 12px; border: 1px solid var(--line); transform: rotate(45deg); background: rgba(12, 16, 13, 0.6); }
 .charge b.on { background: #ffd98a; box-shadow: 0 0 8px #ffd98a; }
+/* 照準（環弓で手で狙っている間。v0.61.0）: 画面の真ん中。モンスターに当たる時は明るく、適正距離なら金色 */
+#hud .hud-aim { position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; pointer-events: none; }
+#hud .hud-aim i { position: absolute; inset: 0; border: 2px solid rgba(235, 238, 228, 0.75); border-radius: 50%; box-shadow: 0 0 3px rgba(0, 0, 0, 0.6); }
+#hud .hud-aim i::before, #hud .hud-aim i::after { content: ''; position: absolute; background: rgba(235, 238, 228, 0.85); }
+#hud .hud-aim i::before { left: 50%; top: -7px; bottom: -7px; width: 2px; margin-left: -1px; }
+#hud .hud-aim i::after { top: 50%; left: -7px; right: -7px; height: 2px; margin-top: -1px; }
+#hud .hud-aim span { position: absolute; left: 50%; top: 36px; transform: translateX(-50%); font-size: 11px; color: var(--ink); text-shadow: 0 1px 2px #000; white-space: nowrap; }
+#hud .hud-aim.on i { border-color: #ffffff; }
+#hud .hud-aim.good i { border-color: #ffd98a; box-shadow: 0 0 8px rgba(255, 217, 138, 0.8); }
+#hud .hud-aim.good span { color: #ffd98a; }
 /* ビン（環弓。v0.60.0）: 付けている間は明るく */
 .coat { margin-left: 10px; font-size: 12px; padding: 1px 6px; border: 1px solid var(--line); border-radius: 3px; color: #b9c2b4; background: rgba(12, 16, 13, 0.6); white-space: nowrap; }
 .coat.on { color: #ffe2b0; border-color: #e0a85a; box-shadow: 0 0 6px rgba(224, 168, 90, 0.6); }
@@ -715,3 +725,130 @@ button.reception-desk { cursor: pointer; }
 .field-map-svg .tgt { fill: #e0606a; stroke: #2a1010; stroke-width: 1.2; }
 .field-map-svg .tgt.marked { fill: #ffd678; }
 
+
+
+/* ---- 依頼帳（2026-11-27）: 級 → 星 → 名前の一覧と紙の依頼書。受付だけに適用。 ---- */
+#base[data-section="quest"][data-reception="counter"] .base-card {
+  width: min(100%, 72rem); padding: 8px 12px; gap: 5px;
+  background: linear-gradient(120deg, #302b21, #1d2924 45%, #20271f);
+  border: 1px solid #a28a59;
+  box-shadow: inset 0 0 0 3px #30281d, 0 8px 35px #0008;
+}
+#base[data-section="quest"][data-reception="counter"] .base-heading h2 { color: #e9d5a7; font-size: 17px; margin: 0; }
+#base[data-section="quest"][data-reception="counter"] .base-lead { display: none; }
+#base[data-section="quest"][data-reception="counter"] .base-banners { max-height: 34px; }
+.reception-classic { display: grid; grid-template-columns: minmax(0, 43%) minmax(0, 1fr); gap: 9px; flex: 1 1 auto; min-height: 0; }
+.reception-classic-menu, .reception-classic-paper { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
+.reception-classic-menu { background: #182820; border: 1px solid #756546; padding: 5px; border-radius: 2px; }
+.reception-classic-heading { margin: 0; padding: 5px 6px; font-size: 14px; line-height: 1.45; color: #ead6a7; font-weight: 700; }
+.reception-levels { display: flex; flex-direction: column; gap: 5px; padding: 4px; }
+.reception-classic .reception-level { justify-content: space-between; flex: 0 0 auto; width: 100%; min-height: 47px; padding: 7px 10px; border-radius: 2px; background: #24362a; border-color: #746847; color: #eaddbd; }
+.reception-classic .reception-level b { font-size: clamp(14px, 2.1vw, 20px); color: #dfba63; letter-spacing: 0; overflow-wrap: anywhere; }
+.reception-classic .reception-level span { font-size: 12px; white-space: nowrap; }
+.reception-classic .reception-level[aria-pressed="true"] { background: #a98a52; color: #1c251c; border-color: #ebca8a; }
+.reception-classic .reception-level[aria-pressed="true"] b { color: #232a1e; }
+.reception-classic .reception-level:focus-visible { outline: 2px solid #f2dba0; outline-offset: -3px; }
+.reception-classic-listhead { display: flex; align-items: center; justify-content: space-between; flex: 0 0 auto; gap: 3px; }
+.reception-classic-listhead .reception-back { min-height: 44px; font-size: 12px; padding: 4px 8px; white-space: nowrap; }
+.reception-classic-listhead .reception-classic-heading { text-align: right; padding: 2px; font-size: 13px; }
+.reception-classic .reception-count { margin: 0; color: #c0c0a5; padding: 3px 5px; }
+.reception-classic .reception-list { gap: 2px; }
+.reception-classic .reception-row {
+  display: grid; grid-template-columns: minmax(34px, 72px) minmax(0, 1fr) auto; align-items: center; gap: 5px;
+  min-height: 44px; padding: 4px 6px; border-radius: 2px; background: #24332a; border-color: #40503c;
+}
+.reception-classic .reception-row[aria-pressed="true"] { background: #a88850; border-color: #e5c37d; color: #151c16; box-shadow: inset 3px 0 #f1d59a; }
+.reception-classic .reception-row-text { gap: 1px; }
+.reception-classic .reception-row-name { font-size: 13px; line-height: 1.35; }
+.reception-classic .reception-row-meta, .reception-classic .reception-row-state { font-size: 10.5px; color: #d8d4ba; }
+.reception-classic .reception-row[aria-pressed="true"] :is(.reception-row-name,.reception-row-meta,.reception-row-state) { color: #182015; }
+.reception-classic .reception-row.locked { background: #202923; }
+.reception-classic .reception-row.locked[aria-pressed="true"] { background: #8b8065; }
+.reception-classic .reception-row .quest-mini-icons { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 2px; }
+.reception-classic .reception-row .quest-mini-target { position: relative; display: block; flex: 0 0 auto; width: auto; }
+.reception-classic .reception-row .quest-mini-picture, .reception-classic .reception-row .quest-mini-image { width: 32px; height: 28px; flex: 0 0 32px; border-radius: 2px; }
+.reception-classic .reception-row .quest-mini-label { display: none; }
+.reception-classic .reception-row .quest-mini-target::after { content: '×' attr(data-count); position: absolute; right: 0; bottom: 0; background: #222c21; color: #ffeed0; padding: 0 2px; font-size: 9px; line-height: 11px; }
+.reception-classic .reception-row .quest-category-glyph { font-size: 17px; }
+.reception-classic-paper { color: #2e2a1f; border: 1px solid #9b8053; border-radius: 3px; background: linear-gradient(120deg, #eadbb8 0%, #f4e8cb 45%, #dfcba2 100%); box-shadow: inset 0 0 16px #a4824730; }
+.reception-classic-intro { flex: 0 0 auto; padding: 22px 12px 8px; font-size: 24px; letter-spacing: .14em; text-align: center; color: #5d4328; font-weight: 700; }
+.reception-classic-guide { margin: 8px 12px; font-size: 14px; line-height: 1.7; }
+.reception-classic-tip { margin: auto 12px 12px; color: #65583f; font-size: 12px; }
+.reception-classic-paper > .quest-recommend { margin: 10px 12px; border-left-color: #946c36; color: #433a2b; background: #9e703114; overflow-y: auto; min-height: 0; }
+.reception-classic .reception-classic-detail { padding: 10px 13px; color: #2e2a1f; }
+.reception-paper-kicker { margin: 0 0 4px; font-size: 10px; font-weight: 700; letter-spacing: .14em; color: #695a3b; }
+.reception-classic .reception-detail-title { margin-bottom: 6px; padding-bottom: 5px; font-size: 19px; color: #49321f; border-bottom: 1px solid #9b805580; }
+.reception-classic .reception-detail > .quest-mini-icons { margin-bottom: 6px; }
+.reception-classic .reception-detail .quest-mini-label { color: #3b3022; }
+.reception-classic .reception-facts { grid-template-columns: 6.4em minmax(0,1fr); font-size: 12px; margin: 4px 0 8px; line-height: 1.5; }
+.reception-classic .reception-facts dt, .reception-classic .reception-facts dd { border-bottom-color: #aa926660; padding: 3px 5px; }
+.reception-classic .reception-facts dt { color: #655436; font-weight: 700; }
+.reception-classic :is(.reception-summary, .reception-detail-note, .reception-letter) { font-size: 13px; line-height: 1.65; }
+.reception-classic .reception-letter { background: #fff6df66; color: #3c3021; border-left-color: #a77e3c; padding: 7px 9px; }
+.reception-classic .reception-client { color: #74512d; }
+.reception-classic .reception-locked-note { color: #603522; background: #bc9c6330; border-left-color: #a87743; }
+.reception-classic-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; flex: 0 0 auto; padding: 5px 8px; border-top: 1px solid #b59a6b; background: #dcc89e; }
+.reception-classic-actions .reception-depart { margin: 0; min-height: 44px; background: #3c5340; color: #f9edcf; border-color: #64785a; border-radius: 2px; padding: 7px 9px; }
+.reception-classic-actions .reception-depart:disabled { background: #c1b79d; border-color: #9b8c71; color: #5d5241; }
+.reception-confirm-question { flex: 1 1 100%; margin: 0; font-weight: 700; font-size: 13px; color: #49321f; }
+.reception-confirm-go, .reception-confirm-no { flex: 1 1 0; min-height: 44px; padding: 6px 8px; border: 1px solid #78613d; border-radius: 2px; background: #3c5340; color: #fff1d2; font-weight: 700; }
+.reception-confirm-no { background: #ead9b2; color: #40351f; }
+.reception-confirm-go:focus-visible, .reception-confirm-no:focus-visible { outline: 3px solid #9b6734; outline-offset: -3px; }
+.reception-classic .base-delivery { color: #2e2a1f; border: 1px solid #ae966d; background: #f2e7c8; padding: 8px; }
+.reception-classic .base-delivery .reception-letter { color: #3c3021; }
+.reception-classic .base-delivery .forge-confirm { background: #d8c49b; color: #362e20; }
+.reception-classic .base-delivery button { color: #31291e; background: #e1cfaa; border-color: #97835e; }
+.reception-classic .base-delivery button.go { background: #3c5340; color: #fff1d2; }
+#base[data-section="quest"][data-reception="counter"][data-reception-stage="list"] .reception-extras:not(:has(> details[open])) { display: none; }
+@media (max-width: 620px) {
+  .reception-classic { gap: 5px; grid-template-columns: minmax(0, 46%) minmax(0, 1fr); }
+  .reception-classic-menu { padding: 3px; }
+  .reception-classic .reception-row { grid-template-columns: minmax(28px, 33px) minmax(0, 1fr) auto; gap: 3px; padding: 3px 4px; }
+  .reception-classic .reception-row-name { font-size: 12px; }
+  .reception-classic .reception-row .quest-mini-picture, .reception-classic .reception-row .quest-mini-image { width: 28px; height: 24px; flex-basis: 28px; }
+  .reception-classic .reception-row-state { font-size: 10px; }
+  .reception-classic .reception-classic-detail { padding: 7px 8px; }
+  .reception-classic .reception-detail-title { font-size: 16px; }
+  .reception-classic .reception-facts { grid-template-columns: 4.9em minmax(0,1fr); font-size: 11.5px; }
+  .reception-classic-intro { padding-top: 10px; font-size: 20px; }
+}
+@media (max-height: 430px) {
+  #base[data-section="quest"][data-reception="counter"] .base-card { gap: 3px; padding: 5px 8px; }
+  .reception-classic .reception-row { min-height: 44px; }
+  .reception-classic .reception-classic-detail { padding-top: 6px; }
+  .reception-classic-actions { padding: 3px 6px; }
+}
+
+
+
+/* 拠点生活。横画面の限られた高さを使い、タブと内容を独立してスクロール。 */
+#base[data-section="life"] [data-sec]:not([data-sec~="life"]){display:none}
+#base[data-section="life"] .base-card{width:min(100%,72rem);height:100%;display:flex;flex-direction:column;gap:7px;overflow:hidden;background:#18221c}
+#base[data-section="life"] .base-banners,#base[data-section="life"] .base-message,#base[data-section="life"] .base-note,#base[data-section="life"] .base-hint,#base[data-section="life"] .base-fs{display:none}
+#base .life-entry{margin:6px 0;min-height:44px}
+#base .hub-life{flex:1;display:flex;flex-direction:column;min-height:0;gap:6px}
+#base .hub-life[hidden]{display:none}
+.life-tabs{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;flex-shrink:0;touch-action:pan-x;padding:2px 0}
+#base .life-button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:6px 11px;border-radius:6px;border:1px solid #867b63;background:#314035;color:#f4e6ca;text-decoration:none;font-size:13px;line-height:1.25;white-space:normal;cursor:pointer}
+#base .life-tabs .life-button{white-space:nowrap;flex:0 0 auto}
+#base .life-button.on{background:#89663e;border-color:#dfbe83}
+#base .life-button:disabled{opacity:.42;cursor:default}
+.life-body{flex:1;overflow-y:auto;min-height:0;touch-action:pan-y;-webkit-overflow-scrolling:touch;padding:0 2px 12px}
+.life-section{border:1px solid #4d594a;border-radius:8px;padding:10px;margin:7px 0;background:#243027}
+.life-section h3{margin:0 0 6px;color:#d8ba86;font-size:16px}
+.life-summary,.life-text,.life-notice,.life-warn{font-size:12px;line-height:1.5;margin:4px 0;color:#d5d8cb}
+.life-notice:empty{display:none}.life-notice.bad,.life-warn{color:#f0b18b}
+.life-highlight{padding:8px;border:1px solid #88704e;background:#382e22;border-radius:5px;color:#ffe0a4}
+.life-row{display:flex;align-items:center;flex-wrap:wrap;justify-content:space-between;gap:8px;border-top:1px solid #536052;padding:8px 0}
+.life-row-text{display:flex;flex:1 1 210px;flex-direction:column;gap:3px}.life-row-text b{font-size:13px}.life-row-text small{font-size:11px;color:#c4c6b8}
+.life-actions{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.life-select,.life-search{font:inherit;min-height:42px;border-radius:6px;border:1px solid #867b63;color:#f4e6ca;background:#27362b;padding:5px;max-width:100%}
+.life-map{width:min(100%,350px);height:auto;display:block;margin:8px auto;background:#26322b;border:1px solid #687563;border-radius:8px}
+.life-room{position:relative;min-height:158px;background:linear-gradient(145deg,#6c543b 0 55%,#9a7a54 55% 100%);border:5px solid #473427;border-radius:8px;overflow:hidden}
+.life-room.green{background:linear-gradient(145deg,#546d4d 0 55%,#8c9872 55% 100%)}.life-room.bronze{background:linear-gradient(145deg,#79654d 0 55%,#b3925d 55% 100%)}
+.life-room span{display:flex;align-items:center;justify-content:center;position:absolute;background:#3a3227;border:2px solid #b0996b;color:#f7dfb6;font-size:11px;text-align:center;padding:5px;overflow:hidden}
+.room-window{left:36%;top:8%;width:30%;height:30%;background:#a2b4a0!important;color:#283c35!important}.room-bed{left:5%;bottom:7%;width:25%;height:35%}.room-chest{left:37%;bottom:8%;width:22%;height:21%}.room-shelf{right:4%;bottom:8%;width:30%;height:40%}.room-rack{right:4%;top:8%;width:30%;height:28%}
+.life-monster{padding:7px;border-top:1px solid #536052}.life-monster summary{min-height:34px;cursor:pointer}
+@media(max-height:450px){#base[data-section="life"] .base-card{padding:7px 10px;gap:4px}#base[data-section="life"] .base-lead{display:none}.life-section{padding:7px}.life-tabs{padding:0}}
+
+/* 里の催しと調度 */
+.life-contest{margin:12px 0;padding:12px;border:1px solid #927856;border-radius:8px;background:#1a2420}.life-timing{position:relative;height:24px;background:#344b45;border-radius:5px;overflow:hidden;margin:12px 0}.life-timing-target{position:absolute;top:0;bottom:0;background:#639b5b}.life-timing-needle{position:absolute;top:0;bottom:0;width:4px;background:#fff2c2;box-shadow:0 0 7px #ffcf70;transform:translateX(-50%)}.life-room.layout-right{transform:scaleX(-1)}.life-room.layout-right>span{transform:scaleX(-1)}

@@ -16,6 +16,11 @@ export interface Settings {
    * v0.39.0 までに設定を保存していた人は、これまでどおり入（黙って消さない）
    */
   lockOnButton: boolean;
+  /**
+   * 操作補助: 弓の狙いの補助（v0.61.0。#19 の H05）。手で狙っていない時に、矢を正面の近くの部位へ寄せる。標準は手で狙う（2G）。
+   * 新しく始めた人は切。v0.60.0 までに遊んでいた人は、これまでどおり入（黙って消さない）
+   */
+  bowAimAssist: boolean;
   shake: 'off' | 'weak' | 'mid';
   fpsCap: 30 | 60;
   renderScale: number;
@@ -51,6 +56,7 @@ export function defaultSettings(): Settings {
     sprintMode: 'button',
     targetAssist: false,
     lockOnButton: false,
+    bowAimAssist: false,
     shake: 'weak',
     fpsCap: 60,
     renderScale: coarse ? 0.85 : 1,
@@ -74,6 +80,8 @@ export class SettingsStore {
   private listeners: Listener[] = [];
   /** 保存した設定に「ロックオンのボタン」（v0.40.0）がまだ無い */
   private lockKeyMissing = true;
+  /** 保存した設定に「弓の狙いの補助」（v0.61.0）がまだ無い */
+  private aimKeyMissing = true;
   /** v0.39.0 までの設定を読んだ（これまで遊んでいた人） */
   savedBefore = false;
 
@@ -89,6 +97,7 @@ export class SettingsStore {
           this.savedBefore = true;
           this.value = { ...this.value, ...parsed, layout: { ...(parsed.layout ?? {}) } };
           this.lockKeyMissing = parsed.lockOnButton === undefined;
+          this.aimKeyMissing = parsed.bowAimAssist === undefined;
         }
       }
     } catch {
@@ -104,6 +113,16 @@ export class SettingsStore {
     if (!this.lockKeyMissing) return;
     this.lockKeyMissing = false;
     this.set({ lockOnButton: existingPlayer });
+  }
+
+  /**
+   * v0.61.0: 弓の狙いの補助（操作補助）を、まだ決めていなければ決めて残す。これまで遊んでいた人は入のまま（v0.60.0 までは、いつも寄せていた）、
+   * 新しく始めた人は切（標準は手で狙う）
+   */
+  settleBowAimAssist(existingPlayer: boolean): void {
+    if (!this.aimKeyMissing) return;
+    this.aimKeyMissing = false;
+    this.set({ bowAimAssist: existingPlayer });
   }
 
   set(patch: Partial<Settings>): void {

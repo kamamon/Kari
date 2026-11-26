@@ -32,6 +32,12 @@ export interface InputFrame {
   pressed: number;
   /** 離した瞬間の tick だけ立つ */
   released: number;
+  /**
+   * 手で狙う（v0.61.0。環弓。#19 の H05）: 狙っている間の、狙いの向き（ワールドの左右 yaw・上下 pitch。ラジアン。pitch は上が正）。
+   * 入力の側（視点・スティック）が決めて、毎 tick 渡す。狙っていない時は無い
+   */
+  aimYaw?: number;
+  aimPitch?: number;
 }
 
 export const EMPTY_INPUT: Readonly<InputFrame> = Object.freeze({ moveX: 0, moveZ: 0, held: 0, pressed: 0, released: 0 });

@@ -296,6 +296,12 @@ export function crossCheck(c: Content, errors: string[]): void {
     if (f.guard?.walkSpeed !== undefined && (!isNum(f.guard.walkSpeed) || f.guard.walkSpeed <= 0 || f.guard.walkSpeed > 3)) errors.push(`${w}: guard.walkSpeed が不正（0〜3 m/s）`);
     // 射ち方（v0.60.0）: 射る行動の溜めの段階の数だけ。種類と本数の範囲
     if (f.shots) checkShots(w, f.shots, c.actions.get(f.actions.main));
+    // 手で狙う（v0.61.0）: 上下の範囲。固有ボタンを使うので、固有の技・防御とは一緒に持たない
+    if (f.aim) {
+      const A = f.aim;
+      if (!isNum(A.pitchMinDeg) || !isNum(A.pitchMaxDeg) || A.pitchMinDeg < -80 || A.pitchMaxDeg > 80 || A.pitchMinDeg >= 0 || A.pitchMaxDeg <= 0) errors.push(`${w}: aim の上下の範囲が不正（下 -80〜0 未満・上 0 より大〜80）`);
+      if (f.actions.special || f.guard) errors.push(`${w}: aim は固有ボタンを使う（固有の技・防御と一緒に持たない）`);
+    }
     // 猛り（v0.54.0）: 入る行動は固有ボタン、解く行動は swap で替わる先。替える行動はどれもこの系統の行動
     const D = f.demon;
     const own = (id: string): boolean => id.startsWith(`player.${f.id}.`) && c.actions.has(id);
