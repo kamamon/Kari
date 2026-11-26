@@ -25,6 +25,8 @@ export const FOG_COLOR = 0xaebcab;
  * 近い所にも少しかかり、遠い所ほど空気の色に溶ける（それまでは 38〜150m の間で、まっすぐ濃くなる霧）。
  */
 export const FOG_DENSITY = 0.0112;
+/** 里の外周は遠い山腹の暮らしも見せる。狩場の霧は変えない。 */
+export const VILLAGE_FOG_DENSITY = 0.0076;
 /** 太陽の向き（光の当たる側から見た、空の上の太陽の位置）。光（DirectionalLight）と空の日の位置を合わせる */
 export const SUN_DIR = new Vector3(-14, 26, -11).normalize();
 
@@ -85,7 +87,7 @@ export function buildArena(scene: Scene, map: MapDef, shadows: boolean): Arena {
  */
 export function setupSky(scene: Scene, shadows: boolean, place: EnvPlace): { sun: DirectionalLight; backdrop: Group; sky: SkyDome } {
   scene.background = new Color(FOG_COLOR);
-  scene.fog = new FogExp2(FOG_COLOR, FOG_DENSITY);
+  scene.fog = new FogExp2(FOG_COLOR, place === 'village' ? VILLAGE_FOG_DENSITY : FOG_DENSITY);
   const backdrop = buildBackdrop(place);
   const sky = new SkyDome(SKY_LOOKS[place], SUN_DIR);
   backdrop.add(sky.mesh);

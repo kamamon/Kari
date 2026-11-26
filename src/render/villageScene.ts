@@ -17,6 +17,7 @@ import { WIND, loadEnvTexture, tileMaterial } from './envArt';
 import { PROP_ART, PROP_ATLAS } from './propArt';
 import { mergeRocks, placeBigRock, rockArtMaterial } from './rockArt';
 import { animateTerraces, type WallSegment } from './terraces';
+import { buildHubOutskirts } from './hubOutskirts';
 
 /** 頂点の色（絵の無い所） */
 const C = {
@@ -885,6 +886,9 @@ export function buildVillage(hub: HubDef, map: MapDef, falls: readonly WallSegme
   mount.userData.noMerge = true;
   mount.userData.rockArt = placed.map((p) => p.id);
   group.add(mount);
+  // 外の山肌・森林・暮らしは別グループ。内側のデータと当たりはそのまま。
+  const outskirts = buildHubOutskirts(hub, map);
+  group.add(outskirts.group);
   // 煙としぶき（小滝の下）
   const puffs = new Puffs(260);
   group.add(puffs.points);
@@ -907,6 +911,7 @@ export function buildVillage(hub: HubDef, map: MapDef, falls: readonly WallSegme
     group,
     update(dt, time, ear, pixelScale): VillageFrame {
       animateTerraces(time);
+      outskirts.update(time);
       if (wheel) wheel.rotation.x = time * 0.55;
       if (liftCar && liftRope && lift) {
         const t = time % LIFT_CYCLE;
