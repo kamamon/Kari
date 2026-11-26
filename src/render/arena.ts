@@ -242,6 +242,8 @@ export function buildAreaGroup(map: AreaLook): Group {
   const cliff = artCliffGeometry({
     path: wallPath(b, outline?.points() ?? null, 0.5, 0.5), gates, vk: low ? wallH[0] / 3.0 : Math.min(1.25, Math.max(0.85, wallH[0] / 4.6)),
     low, nest: map.kind === 'nest', moss, baseAt: village || map.relief ? baseAt : undefined,
+    // 外周に沿って高さを変える（v0.50.0。#19 の F06）。段のある里は、段の擁壁とそろえるので変えない
+    vary: village ? 0 : low ? 0.12 : 0.26,
   }, rng);
   const face = new Mesh(cliff.face, cliffArtMaterial());
   face.castShadow = true;

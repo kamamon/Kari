@@ -518,6 +518,25 @@ export interface ArtCliffOptions {
   moss: number;
   /** 崖の根元の高さ（v0.35.0。段のある里は、外周のすぐ内の床の高さ。無ければ 0）。段の境の列の間には、面を張らない */
   baseAt?: (x: number, z: number) => number;
+  /**
+   * 外周に沿った高さの変化の幅（v0.50.0。#19 の F06「同じ高さの全周の崖を減らす」。0 か無ければ、どこも vk）。
+   * 高さの倍率は 1 ± vary の間を、1 周に 1 回と 3 回の 2 つの波で行き来する（位相は道の形から決める。乱数を使わない）
+   */
+  vary?: number;
+}
+
+/** 0〜1 の決まった値（同じ v なら同じ） */
+function hash01(v: number): number {
+  const x = Math.sin(v) * 43758.5453;
+  return x - Math.floor(x);
+}
+
+/** 外周の道の上の位置 s（0〜L。輪で閉じる）での、崖の高さの倍率（ArtCliffOptions.vary） */
+export function cliffHeightScale(path: readonly WallPt[], L: number, vary: number, s: number): number {
+  if (!vary) return 1;
+  const p0 = path[0]!;
+  const ph1 = hash01(L * 0.731 + p0.x * 0.17) * Math.PI * 2, ph2 = hash01(L * 1.37 + p0.z * 0.29) * Math.PI * 2;
+  return 1 + vary * (0.62 * Math.sin((2 * Math.PI * s) / L + ph1) + 0.38 * Math.sin((6 * Math.PI * s) / L + ph2));
 }
 
 /**
@@ -551,15 +570,17 @@ export function artCliffGeometry(o: ArtCliffOptions, rng: SeededRng): { face: Bu
       const q = pathAt(o.path, cum, L, s);
       const y0 = yb[i + 1]!;
       const topImg = cliffTopAt(c, xm);
+      // この列の高さの倍率（v0.50.0。外周に沿って変わる。図は縦に伸び縮みする）
+      const vk = o.vk * cliffHeightScale(o.path, L, o.vary ?? 0, s);
       // 隣の列も見て、何も無い所か決める（出口のわきの図の、透明の側）
       const topNear = Math.max(topImg, cliffTopAt(c, ((i - 1) / COLS) * CLIFF_M), cliffTopAt(c, ((i + 1) / COLS) * CLIFF_M));
       have.push(topNear > 0.05);
-      const H = Math.max(0.3, topImg) * o.vk;
+      const H = Math.max(0.3, topImg) * vk;
       const yTop = H + 0.25;
       let dTop = 0;
       for (let k = 0; k < R; k++) {
         const y = -0.5 + (yTop + 0.5) * ROWS[k]!;
-        const ym = y / o.vk;
+        const ym = y / vk;
         // 図のつなぎ目（左右の端 0.8m）では、凹凸を 0 へ（隣の図と面の位置がそろい、すき間から空が見えない）
         const edgeFade = smooth(0, 0.8, Math.min(xm, CLIFF_M - xm));
         const rel = cliffReliefAt(c, xm, Math.max(0, ym)) * edgeFade;
@@ -573,7 +594,7 @@ export function artCliffGeometry(o: ArtCliffOptions, rng: SeededRng): { face: Bu
       // 背: 上の縁から外へ下る（道の reach を超えない）
       for (const [out, dy] of capRows) {
         const dd = Math.min(dTop + out, Math.max(dTop + 0.1, q.reach));
-        const y = Math.max(-0.3, H + dy * o.vk);
+        const y = Math.max(-0.3, H + dy * vk);
         cp.push(q.x + q.nx * dd, y0 + y, q.z + q.nz * dd);
         cuv.push(s / 3, (dd + y * 0.4) / 3);
         const mossy = o.moss * (out <= 3 ? 0.65 : 0.35);

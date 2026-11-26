@@ -1592,7 +1592,8 @@ const startTraining = async (page, tap = false) => {
   // 壁へ向かって W を押し続ける: 取り付いて登り、上の段（3m）に立つ
   await page.keyboard.down('KeyW');
   const mounted = await until(page, () => window.__vh.sim.player.mode === 'climb', 4000);
-  await page.waitForTimeout(600);
+  // 登り始めるまで待つ（v0.50.0。決まった 0.6 秒で待つと、手元が重い時に、まだ 0.2m に届いていないことがあった）
+  await until(page, () => window.__vh.sim.player.pos.y > 0.25, 6000);
   const mid = await page.evaluate(() => ({ y: window.__vh.sim.player.pos.y, drawn: window.__vh.sim.player.drawn, hint: document.querySelector('.hud-exit').textContent }));
   await page.screenshot({ path: `${OUT}86_climb.png` });
   const topped = await until(page, () => window.__vh.sim.player.mode === 'free' && window.__vh.sim.player.pos.y === 3, 8000);

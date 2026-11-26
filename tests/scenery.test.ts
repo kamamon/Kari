@@ -11,7 +11,7 @@ import { FOG_COLOR, SUN_DIR } from '../src/render/arena';
 import { ENV_FAR, ENV_TILES, WIND, swayInWind } from '../src/render/envArt';
 import { ROCK_REACH, cavityOf, ledgeGeometry, polyPath, wallPath } from '../src/render/rockGeo';
 import {
-  BIG_ROCKS, GATE_HALF, artCliffGeometry, cliffArt, cliffArtMaterial, cliffReliefAt, cliffTopAt, mergeRocks, pathLengths, pathSOf, placeBigRock, planCliffs, rockArt,
+  BIG_ROCKS, GATE_HALF, artCliffGeometry, cliffArt, cliffArtMaterial, cliffHeightScale, cliffReliefAt, cliffTopAt, mergeRocks, pathLengths, pathSOf, placeBigRock, planCliffs, rockArt,
   rockArtGeometry, rockArtMaterial,
 } from '../src/render/rockArt';
 import { CLIFF_ART, CLIFF_M, CLIFF_RELIEF, ROCK_ART, ROCK_TILES } from '../src/render/rockArtData';
@@ -268,6 +268,35 @@ describe('依頼 10 の崖の図から作る外周の崖（v0.22.0）', () => {
     }
     // 11 エリアの頂点（約 6 万）を外周と比べるので重い（手元 2 秒、Actions では 5.5 秒かかって、既定の 5 秒を超えた）
   }, 30000);
+
+  it('崖の高さは外周に沿って変わる（v0.50.0。#19 の F06「同じ高さの全周の崖を減らす」）: 輪の始めと終わりで同じ、幅は 1 ± vary の中', () => {
+    for (const a of field.areas) {
+      const path = wallPath(a.bounds, a.shape, 0.5, 0.5);
+      const { L } = pathLengths(path);
+      const vals = Array.from({ length: 200 }, (_, i) => cliffHeightScale(path, L, 0.26, (i / 200) * L));
+      expect(Math.max(...vals), a.id).toBeLessThanOrEqual(1.26 + 1e-9);
+      expect(Math.min(...vals), a.id).toBeGreaterThanOrEqual(0.74 - 1e-9);
+      // どのエリアも、高い所と低い所の比が 1.25 倍より大きい（同じ高さの輪にしない）
+      expect(Math.max(...vals) / Math.min(...vals), a.id).toBeGreaterThan(1.25);
+      expect(cliffHeightScale(path, L, 0.26, 0)).toBeCloseTo(cliffHeightScale(path, L, 0.26, L), 9);
+      expect(cliffHeightScale(path, L, 0, L * 0.3)).toBe(1);
+    }
+    // 形に効く: エリア 2 の崖の面の、同じ頂点の高さを、変えない時と比べる（頂点の数は同じ）。2m より高い所で、低くなる所と高くなる所がある
+    const a = field.areas.find((x) => x.id === 'a2')!;
+    const o = { path: wallPath(a.bounds, a.shape, 0.5, 0.5), gates: a.exits, vk: 1.087, low: false, nest: false, moss: 0.6 };
+    const flat = artCliffGeometry(o, new SeededRng(5)).face.getAttribute('position');
+    const varied = artCliffGeometry({ ...o, vary: 0.26 }, new SeededRng(5)).face.getAttribute('position');
+    expect(varied.count).toBe(flat.count);
+    let lo = Infinity, hi = 0;
+    for (let i = 0; i < flat.count; i++) {
+      if (flat.getY(i) < 2) continue;
+      const r = varied.getY(i) / flat.getY(i);
+      lo = Math.min(lo, r);
+      hi = Math.max(hi, r);
+    }
+    expect(lo).toBeLessThan(0.85);
+    expect(hi).toBeGreaterThan(1.15);
+  });
 
   it('里（低い崖）は、端の高さ 3m の図だけで、高さの倍率を掛ける', () => {
     const b = { minX: -20, maxX: 20, minZ: -15, maxZ: 15 };
