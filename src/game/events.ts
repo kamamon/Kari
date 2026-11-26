@@ -70,6 +70,9 @@ export type SimEvent =
   | { type: 'monster_lost'; target: string }
   /** 登攀（v0.44.0。#19 の H07）: start = 取り付いた / exit = 縁に手を掛けた / top = 上の段に立った / bottom = 下まで下りた / release = 手を離した・落とされた */
   | { type: 'climb'; phase: 'start' | 'exit' | 'top' | 'bottom' | 'release'; climbId: string; dir: 'up' | 'down' }
+  /** 降下（v0.45.0）: 歩いて段の端から出た（from は出た時の足の高さ）/ 着地: 降りた高さ（m）と、着いた所 */
+  | { type: 'drop'; from: number }
+  | { type: 'land'; height: number; pos: V3 }
   /** 離れる前の牽制（v0.43.0。#19 の M05）: 戦っている相手の前で、1 度だけ威嚇を見せた。この後、エリアを離れる */
   | { type: 'monster_feint'; target: string; actionId: string }
   /** 突進の制動（v0.41.0）: 走る間に前へ進めなくなり、減速へ進めた（tick は、その時の技の tick） */

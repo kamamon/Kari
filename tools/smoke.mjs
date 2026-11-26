@@ -1540,6 +1540,23 @@ const startTraining = async (page, tap = false) => {
   const bottom = await until(page, () => window.__vh.sim.player.mode === 'free' && window.__vh.sim.player.pos.y === 0, 8000);
   await page.keyboard.up('KeyS');
   check('登攀（v0.44.0）: 上の段で縁へ向かって押すと、向きを変えて取り付き、下まで下りて地面に立つ', down && bottom, JSON.stringify(await page.evaluate(() => ({ mode: window.__vh.sim.player.mode, y: window.__vh.sim.player.pos.y }))));
+  // 降下と着地（v0.45.0）: 棚の横の縁から歩いて出ると降下になり、着いたらしゃがんで立て直す
+  await page.evaluate(() => {
+    const v = window.__vh, s = v.sim, p = s.player, a = s.field.areas.find((x) => x.id === 'a4'), sh = a.platforms.find((q) => q.h === 3);
+    p.pos = { x: sh.minX + 0.8, y: 3, z: (sh.minZ + sh.maxZ) / 2 };
+    p.prevPos = { ...p.pos };
+    p.yaw = -Math.PI / 2;
+    p.prevYaw = p.yaw;
+    v.view.cam.snap(0);
+  });
+  await page.waitForTimeout(300);
+  // カメラは +Z（北）を向く: 画面の右（D）が −X（棚の外。入力の右 = (-cos, sin)）
+  await page.keyboard.down('KeyD');
+  const dropped = await until(page, () => !!window.__vh.sim.player.drop, 4000);
+  await page.keyboard.up('KeyD');
+  const landed = await until(page, () => !!window.__vh.sim.player.land || (window.__vh.sim.player.grounded && window.__vh.sim.player.pos.y === 0), 4000);
+  const after = await until(page, () => window.__vh.sim.player.land === null && window.__vh.sim.player.pos.y === 0 && window.__vh.sim.player.mode === 'free', 4000);
+  check('降下と着地（v0.45.0）: 3m の棚の縁から歩いて出ると降下になり、地面に着いて立て直し、また歩ける', dropped && landed && after, JSON.stringify(await page.evaluate(() => ({ y: window.__vh.sim.player.pos.y, drop: window.__vh.sim.player.drop, land: window.__vh.sim.player.land }))));
   await ctx.close();
 }
 

@@ -76,6 +76,13 @@ export interface PlayerState {
    * h は登り口の地面からの足の高さ。from は取り付き・登り切りを始めた時の位置と向き
    */
   climb: { def: ClimbDef; phase: 'mount' | 'down' | 'climb' | 'exit'; t: number; h: number; from: { x: number; y: number; z: number; yaw: number } } | null;
+  /**
+   * 段の端から降りている（v0.45.0。#19 の H07 の降下）: 足元が DROP_MIN より深い所へ歩いて出た時。落ちる間は、出た時の水平の動き（drift。m/tick）のまま進み、
+   * 入力は受けない（攻撃・道具・回避・登攀へつながない）。top は落ち始めた高さ
+   */
+  drop: { top: number; drift: { x: number; z: number }; ticks: number } | null;
+  /** 着地の立て直し（v0.45.0）。高い所から降りて地面に着いた後、ticks の間は動けない（total は始めの長さ） */
+  land: { ticks: number; total: number } | null;
 }
 
 export interface SimCtx {
@@ -192,6 +199,8 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
     moveSpeed: 0,
     weaponId,
     climb: null,
+    drop: null,
+    land: null,
   };
 }
 
@@ -521,6 +530,12 @@ export const CLIMB_EXIT_TICKS = 36;
 export const CLIMB_EXIT_BELOW = 1.45;
 /** 壁にいる時の、壁の面から体の中心までの距離 */
 const CLIMB_OFF = 0.38;
+/** 降下（v0.45.0）: 足元がこれより深い所へ歩いて出ると、降下になる（低い段の上り下りは、ふつうに歩く） */
+export const DROP_MIN = 1.0;
+/** 着地の立て直し: 降りた高さがこれより低ければ LAND_TICKS、高ければ LAND_TICKS_HIGH（Kari の仮の値） */
+export const LAND_HIGH = 2.5;
+export const LAND_TICKS = 10;
+export const LAND_TICKS_HIGH = 20;
 
 /** 壁にいる時の位置（xz） */
 function climbSpot(d: ClimbDef): { x: number; z: number } {
@@ -547,6 +562,8 @@ function endClimb(p: PlayerState, ctx: SimCtx, how: 'top' | 'bottom' | 'release'
   p.mode = 'free';
   p.vel.vy = 0;
   p.moveSpeed = 0;
+  // 手を離した所が高ければ、その場から降下（v0.45.0。着地で立て直す。攻撃で落とされた時は、この後の被弾が降下を消す）
+  if (how === 'release' && p.pos.y - ctx.world.groundHeight(p.pos.x, p.pos.z) > DROP_MIN - 0.05) p.drop = { top: p.pos.y, drift: { x: 0, z: 0 }, ticks: 0 };
   ctx.emit({ type: 'climb', phase: how, climbId: id, dir: how === 'top' ? 'up' : 'down' });
 }
 
@@ -615,9 +632,55 @@ function stepClimb(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   p.pos.y = base + c.h;
 }
 
+/**
+ * 降下と着地（v0.45.0。#19 の H07。docs/spec.md の 32.10）: 歩いて（自由な状態で）段の端から出て、足元が DROP_MIN より深ければ降下。
+ * 地面に着いたら、降りた高さで立て直しの長さを決める（LAND_HIGH より高いと長い）。被弾・技の途中の落下は、それぞれの状態のまま（降下にしない）
+ */
+function stepDrop(p: PlayerState, wasGrounded: boolean, ctx: SimCtx): void {
+  if (p.mode !== 'free') {
+    p.drop = null;
+    return;
+  }
+  if (p.drop) {
+    p.drop.ticks++;
+    if (!p.grounded) return;
+    const height = p.drop.top - p.pos.y;
+    p.drop = null;
+    const total = height >= LAND_HIGH ? LAND_TICKS_HIGH : LAND_TICKS;
+    p.land = { ticks: total, total };
+    ctx.emit({ type: 'land', height: Math.round(height * 100) / 100, pos: { ...p.pos } });
+    return;
+  }
+  if (wasGrounded && !p.grounded && p.pos.y - ctx.world.groundHeight(p.pos.x, p.pos.z) > DROP_MIN - 0.05) {
+    // 出た時の水平の動き（この tick の移動）を保つ。止まって出ることは無いが、念のため前へ少し
+    const dx = p.pos.x - p.prevPos.x, dz = p.pos.z - p.prevPos.z;
+    const f = forwardOf(p.yaw);
+    const d = Math.hypot(dx, dz);
+    const drift = d > 0.01 ? { x: dx, z: dz } : { x: f.x * 0.03, z: f.z * 0.03 };
+    p.drop = { top: p.prevPos.y, drift, ticks: 0 };
+    p.sprinting = false;
+    ctx.emit({ type: 'drop', from: Math.round(p.prevPos.y * 100) / 100 });
+  }
+}
+
 function stepFree(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   const T = ctx.content.player;
   const fam = familyOf(p, ctx.content);
+
+  // 降下の間（v0.45.0）: 出た時の水平の動きのまま進む。入力は受けない（押した入力も残さない）
+  if (p.drop) {
+    for (const k of Object.keys(p.buffer) as (keyof PlayerState['buffer'])[]) p.buffer[k] = 0;
+    ctx.world.move(p.pos, T.radius, p.drop.drift.x, p.drop.drift.z, ctx.blockers());
+    p.moveSpeed = Math.hypot(p.drop.drift.x, p.drop.drift.z) * 60;
+    return;
+  }
+  // 着地の立て直し（v0.45.0）: しゃがんで受け止める間は動けない
+  if (p.land) {
+    for (const k of Object.keys(p.buffer) as (keyof PlayerState['buffer'])[]) p.buffer[k] = 0;
+    p.moveSpeed = 0;
+    if (--p.land.ticks <= 0) p.land = null;
+    return;
+  }
 
   if (consume(p, 'dodge') && tryStartRoll(p, inp, ctx)) return stepAction(p, inp, ctx, 1);
   // 登攀（v0.44.0）: 登り口で壁へ向かって押すと取り付く。上の段の登り切った所で縁へ向かって押すと、向きを変えて取り付いて下りる
@@ -932,8 +995,10 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   }
 
   // 登攀の間は、登攀が位置を持つ（重力も、地面への合わせも無い）。終えた時に、立つ面（地面・上の段）が決まる
+  const wasGrounded = p.grounded;
   if (p.mode === 'climb') p.grounded = false;
   else p.grounded = ctx.world.settle(p.pos, p.vel, T.gravity, 1 / 60);
+  stepDrop(p, wasGrounded, ctx);
 
   // スタミナ: 消費が終わってから待ち時間を置いて回復
   if (p.mode !== 'dead' && !p.sprinting) {

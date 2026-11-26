@@ -3,7 +3,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { ClimbDef, Content } from '../src/data/schemas';
 import type { SimEvent } from '../src/game/events';
-import { CLIMB_EXIT_BELOW, CLIMB_UP, resolveIncomingHit } from '../src/game/player';
+import { CLIMB_EXIT_BELOW, CLIMB_UP, LAND_TICKS, LAND_TICKS_HIGH, resolveIncomingHit } from '../src/game/player';
 import { Simulation } from '../src/game/sim';
 import { Btn, baseOptions, frame, loadContent, run } from './helpers';
 
@@ -156,3 +156,81 @@ describe('登攀（#19 の H07。v0.44.0）', () => {
     expect(a.sim.player.mode).toBe('climb');
   });
 });
+
+describe('降下と着地（#19 の H07。v0.45.0）', () => {
+  /** エリア 4 の棚の上、登る壁と反対の横の縁の 0.6m 内側に立たせる */
+  function onShelf(): { sim: Simulation; c: ClimbDef; shelf: { minX: number; maxX: number; minZ: number; maxZ: number; h: number } } {
+    const { sim, c } = atClimb();
+    const shelf = sim.field!.areas.find((a) => a.id === 'a4')!.platforms.find((p) => p.h === c.top)!;
+    sim.player.pos = { x: shelf.minX + 0.6, y: c.top, z: (shelf.minZ + shelf.maxZ) / 2 };
+    sim.player.prevPos = { ...sim.player.pos };
+    run(sim, 2);
+    expect(sim.player.pos.y).toBe(c.top);
+    return { sim, c, shelf };
+  }
+
+  it('段の端から歩いて出ると降下になり、出た時の動きのまま進む（向きを変える・攻撃する、を受けない）。着地で立て直す（3m からは 20 tick）', () => {
+    const { sim, c } = onShelf();
+    const evs: SimEvent[] = [];
+    for (let i = 0; i < 60 && !sim.player.drop; i++) {
+      sim.step(frame({ moveX: -1, moveZ: 0 }));
+      evs.push(...sim.drainEvents());
+    }
+    expect(sim.player.drop).not.toBeNull();
+    expect(evs.find((e) => e.type === 'drop')).toMatchObject({ from: c.top });
+    // 降りる間: 反対へ押しても、主ボタンを押しても、出た時の向き（−X）へ進み続け、技は始まらない
+    const x0 = sim.player.pos.x;
+    const during: SimEvent[] = [];
+    for (let i = 0; i < 120 && sim.player.drop; i++) {
+      sim.step(frame({ moveX: 1, moveZ: 0, pressed: i === 3 ? Btn.Main : 0, held: Btn.Main }));
+      during.push(...sim.drainEvents());
+    }
+    expect(sim.player.pos.x).toBeLessThan(x0);
+    expect(during.filter((e) => e.type === 'action_start' && e.actor === 'player')).toHaveLength(0);
+    const land = during.find((e): e is Extract<SimEvent, { type: 'land' }> => e.type === 'land')!;
+    expect(land.height).toBeCloseTo(c.top, 1);
+    expect(sim.player.pos.y).toBe(0);
+    expect(sim.player.land).toMatchObject({ total: LAND_TICKS_HIGH });
+    // 立て直しの間は、押しても動かない。終わると歩ける
+    const at = { ...sim.player.pos };
+    run(sim, LAND_TICKS_HIGH - 1, () => frame({ moveX: 1, moveZ: 0 }));
+    expect(sim.player.pos).toEqual(at);
+    run(sim, 10, () => frame({ moveX: 1, moveZ: 0 }));
+    expect(sim.player.land).toBeNull();
+    expect(sim.player.pos.x).toBeGreaterThan(at.x);
+  });
+
+  it('低い段（0.3m）から歩いて降りても、降下にならない（立ち止まらない）', () => {
+    const { sim } = atClimb();
+    const low = sim.field!.areas.find((a) => a.id === 'a4')!.platforms.find((p) => p.h === 0.3)!;
+    sim.player.pos = { x: low.maxX - 0.4, y: 0.3, z: (low.minZ + low.maxZ) / 2 };
+    sim.player.prevPos = { ...sim.player.pos };
+    run(sim, 2);
+    expect(sim.player.pos.y).toBe(0.3);
+    const evs = run(sim, 60, () => frame({ moveX: 1, moveZ: 0 }));
+    expect(evs.filter((e) => e.type === 'drop' || e.type === 'land')).toHaveLength(0);
+    expect(sim.player.pos.y).toBe(0);
+    expect(sim.player.land).toBeNull();
+  });
+
+  it('壁の高い所で手を離すと、その場から降下して着地で立て直す。低い所（1m 未満）で離すと、ただ下りる', () => {
+    const hi = atClimb();
+    run(hi.sim, 70, () => push(hi.c));
+    expect(hi.sim.player.pos.y).toBeGreaterThan(1.1);
+    run(hi.sim, 1, () => frame({ pressed: Btn.Dodge, held: Btn.Dodge }));
+    expect(hi.sim.player.drop).not.toBeNull();
+    const evs = run(hi.sim, 120);
+    const land = evs.find((e): e is Extract<SimEvent, { type: 'land' }> => e.type === 'land')!;
+    expect(land.height).toBeGreaterThan(1);
+    expect(hi.sim.player.pos.y).toBe(0);
+    const lo = atClimb();
+    run(lo.sim, 30, () => push(lo.c));
+    expect(lo.sim.player.pos.y).toBeLessThan(0.95);
+    run(lo.sim, 1, () => frame({ pressed: Btn.Dodge, held: Btn.Dodge }));
+    expect(lo.sim.player.drop).toBeNull();
+    const lev = run(lo.sim, 60);
+    expect(lev.filter((e) => e.type === 'land')).toHaveLength(0);
+    expect(LAND_TICKS).toBeLessThan(LAND_TICKS_HIGH);
+  });
+});
+

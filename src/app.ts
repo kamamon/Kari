@@ -849,6 +849,10 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
         case 'item_fail':
           play('item_fail');
           break;
+        // 降りて着いた（v0.45.0）: 専用の音はまだ無く、高い所からなら岩の当たる音を流用（仮）
+        case 'land':
+          if (e.height >= 2.5) play('rock_impact');
+          break;
         case 'trap_armed':
           play('trap_armed');
           break;

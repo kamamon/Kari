@@ -478,6 +478,31 @@ export function climbPose(phase: 'mount' | 'down' | 'climb' | 'exit', u: number,
   return u < 0.55 ? blendPose(wall, pull, smoothstep(u / 0.55)) : blendPose(pull, stand, smoothstep((u - 0.55) / 0.45));
 }
 
+// ---- 降下と着地（v0.45.0。仮の手付けの姿勢）----
+/** 段の端から降りる間: 両腕を横へ広げ、膝を前へ曲げる */
+const DROPPING: J = {
+  spine: [6, 0, 0], head: [8, 0, 0],
+  upperArmL: [-35, 0, 62], forearmL: [-25, 0, 0], upperArmR: [-35, 0, -62], forearmR: [-25, 0, 0],
+  thighL: [-38, 0, 6], shinL: [58, 0, 0], thighR: [-18, 0, -6], shinR: [42, 0, 0],
+};
+/** 着地: 深くしゃがんで受け止める */
+const LANDED: J = {
+  spine: [28, 0, 0], chest: [8, 0, 0], head: [-14, 0, 0],
+  upperArmL: [-32, 0, 22], forearmL: [-42, 0, 0], upperArmR: [-32, 0, -22], forearmR: [-42, 0, 0],
+  thighL: [-74, 0, 9], shinL: [112, 0, 0], thighR: [-66, 0, -9], shinR: [104, 0, 0],
+};
+
+/** 降りている間の姿勢（落ち始めの 8 tick で、立った姿から移る） */
+export function dropPose(ticks: number): BodyPose {
+  return blendPose(fromKey(NEUTRAL, 0, { t: 0 }), fromKey(DROPPING, 0, { t: 0 }), smoothstep(Math.min(1, ticks / 8)));
+}
+
+/** 着地の姿勢: 着いた時がいちばん低く、立て直しの終わりへ向かって立ち上がる（left = 残り、total = 長さ） */
+export function landPose(left: number, total: number): BodyPose {
+  const u = smoothstep(Math.min(1, Math.max(0, left / total)));
+  return blendPose(fromKey(NEUTRAL, 0, { t: 0 }), fromKey(LANDED, 0, { t: 0, py: -0.34 }), u);
+}
+
 export function deadPose(ticks: number): BodyPose {
   const u = smoothstep(ticks / 30);
   return blendPose(fromKey(NEUTRAL, 0, { t: 0 }), fromKey(NEUTRAL, 0, { t: 0, j: LYING, tumble: -90, drop: -0.43 }), u);

@@ -24,7 +24,7 @@ import { CreatureRig } from './creatureRig';
 import type { HazardLook } from '../data/schemas';
 import { CREATURE_PLANS } from './creaturePlans';
 import { DummyRig, type MonsterRig } from './monsterRig';
-import { blendPose, climbPose, clipPose, deadPose, emptyPose, guardPose, hurtPose, locomotionPose, type BodyPose } from './poses';
+import { blendPose, climbPose, clipPose, deadPose, dropPose, emptyPose, guardPose, hurtPose, landPose, locomotionPose, type BodyPose } from './poses';
 import { HunterAnimator, applySolved, canSolve, playerContactFrame, playerRenderTick, stowOffhand, type AnimState } from './hunterAnim';
 import type { Solved } from './bodySolve';
 import { GroundedLocomotion, freeStride } from './contactLocomotion';
@@ -512,6 +512,10 @@ export class GameView {
           // 標識玉（v0.42.0）: 当たると、相手の体に灯の色の粉が散る（見た目は仮）
           else if (e.kind === 'mark') this.sparks.emit(e.ok ? 18 : 6, e.pos, e.ok ? 2.0 : 1.0, 1.4, 0.9, [1, 0.84, 0.45], 0.6);
           break;
+        case 'land':
+          // 降りて着いた: 足元に土ぼこり（高いほど多い。仮）
+          this.dust.emit(Math.round(6 + e.height * 4), { x: e.pos.x, y: e.pos.y + 0.1, z: e.pos.z }, 1.1 + e.height * 0.25, 0.5, 0.5, [0.6, 0.6, 0.54], 0.45);
+          break;
         case 'trap_trigger':
           this.rings.spawn(e.x, 0, e.z, 2.6, 0.5, 0xfff0a0);
           this.sparks.emit(24, { x: e.x, y: 0.3, z: e.z }, 5, 3, 0.5, [1, 0.92, 0.6]);
@@ -662,6 +666,13 @@ export class GameView {
     } else if (p.mode === 'dead') {
       pose = deadPose(p.deadTicks + alpha);
       key = 'dead';
+    } else if (p.mode === 'free' && p.drop) {
+      // 降下と着地（v0.45.0。仮の姿勢）
+      pose = dropPose(p.drop.ticks + alpha);
+      key = 'drop';
+    } else if (p.mode === 'free' && p.land) {
+      pose = landPose(p.land.ticks - alpha, p.land.total);
+      key = 'land';
     } else if (p.mode === 'climb' && p.climb) {
       // 登攀（v0.44.0。仮の姿勢）: 武器は背に納めたまま
       const c = p.climb;
