@@ -1,0 +1,66 @@
+{
+  "cases": [
+    {
+      "name": "ground_dual_arc",
+      "before": true,
+      "active": true,
+      "duplicateSuppressed": true,
+      "endExclusive": true,
+      "airSafe": true,
+      "outsideSafe": true,
+      "insideVisibleGeometry": true
+    },
+    {
+      "name": "sky_crown",
+      "before": true,
+      "active": true,
+      "duplicateSuppressed": true,
+      "endExclusive": true,
+      "airSafe": true,
+      "outsideSafe": true,
+      "insideVisibleGeometry": true
+    },
+    {
+      "name": "wing_thunder_l",
+      "before": true,
+      "active": true,
+      "duplicateSuppressed": true,
+      "endExclusive": true,
+      "airSafe": true,
+      "outsideSafe": true,
+      "insideVisibleGeometry": true
+    },
+    {
+      "name": "wing_thunder_r",
+      "before": true,
+      "active": true,
+      "duplicateSuppressed": true,
+      "endExclusive": true,
+      "airSafe": true,
+      "outsideSafe": true,
+      "insideVisibleGeometry": true
+    },
+    {
+      "name": "tail_pin",
+      "before": true,
+      "active": true,
+      "duplicateSuppressed": true,
+      "endExclusive": true,
+      "airSafe": true,
+      "outsideSafe": true,
+      "insideVisibleGeometry": true
+    },
+    {
+      "name": "low_pass",
+      "before": true,
+      "active": true,
+      "duplicateSuppressed": true,
+      "endExclusive": true,
+      "airSafe": true,
+      "outsideSafe": true,
+      "insideVisibleGeometry": true
+    }
+  ],
+  "gapSafe": true,
+  "passed": true
+}
