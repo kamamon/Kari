@@ -1,0 +1,2662 @@
+{
+  "schemaVersion": "proposal.skill-points.v1",
+  "baseline": "Kari main v0.59.0",
+  "status": "design_only",
+  "notes": [
+    "値はKariへの提案。legacy=既存効果値のみ引継ぎ、発動条件は未実装。",
+    "positive/negative の value は符号付き効果値、effect の記述が型・単位の契約。実行可能なゲーム用スキーマではない。",
+    "minRank は初出の目安。上位段階の発動を級で直接禁止しない。",
+    "固有・複合を装飾品から発動させない。各系列ポイントで解放。",
+    "7武器のみ。銃・砲術・笛・護石は初期対象外。"
+  ],
+  "skills": [
+    {
+      "id": "guard_economy",
+      "name": "受け支え",
+      "category": "guard",
+      "categoryName": "防御",
+      "minRank": "rank.1",
+      "applies": "guard",
+      "legacy": true,
+      "implementation": "existing_effect_new_activation_pending",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 8
+        },
+        {
+          "threshold": 15,
+          "value": 14
+        },
+        {
+          "threshold": 20,
+          "value": 20
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -8
+        },
+        {
+          "threshold": -15,
+          "value": -14
+        }
+      ],
+      "effect": "ガードのスタミナ消費軽減率。削りや後退と別。"
+    },
+    {
+      "id": "edge_keep",
+      "name": "刃持ち",
+      "category": "weapon",
+      "categoryName": "武器",
+      "minRank": "rank.1",
+      "applies": "melee",
+      "legacy": true,
+      "implementation": "existing_effect_new_activation_pending",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 5
+        },
+        {
+          "threshold": 15,
+          "value": 9
+        },
+        {
+          "threshold": 20,
+          "value": 13
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -10
+        },
+        {
+          "threshold": -15,
+          "value": -20
+        }
+      ],
+      "effect": "刃・打面の消耗軽減率。連続消費は端数を保持。"
+    },
+    {
+      "id": "dodge_economy",
+      "name": "身軽",
+      "category": "stamina",
+      "categoryName": "体力管理",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": true,
+      "implementation": "existing_effect_new_activation_pending",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 5
+        },
+        {
+          "threshold": 15,
+          "value": 9
+        },
+        {
+          "threshold": 20,
+          "value": 13
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -10
+        },
+        {
+          "threshold": -15,
+          "value": -20
+        }
+      ],
+      "effect": "回避とステップのスタミナ消費軽減率。"
+    },
+    {
+      "id": "stamina_recovery",
+      "name": "息継ぎ",
+      "category": "stamina",
+      "categoryName": "体力管理",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": true,
+      "implementation": "existing_effect_new_activation_pending",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 4
+        },
+        {
+          "threshold": 15,
+          "value": 7
+        },
+        {
+          "threshold": 20,
+          "value": 10
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -8
+        },
+        {
+          "threshold": -15,
+          "value": -15
+        }
+      ],
+      "effect": "自然スタミナ回復速度の増加率。回復遅延は不変。"
+    },
+    {
+      "id": "part_damage",
+      "name": "砕き",
+      "category": "combat",
+      "categoryName": "戦闘",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": true,
+      "implementation": "existing_effect_new_activation_pending",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 5
+        },
+        {
+          "threshold": 15,
+          "value": 9
+        },
+        {
+          "threshold": 20,
+          "value": 13
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -8
+        },
+        {
+          "threshold": -15,
+          "value": -15
+        }
+      ],
+      "effect": "破壊・切断蓄積の増加率。HP・怯み・気絶は対象外。"
+    },
+    {
+      "id": "element_tuning",
+      "name": "属性調律",
+      "category": "combat",
+      "categoryName": "戦闘",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": true,
+      "implementation": "existing_effect_new_activation_pending",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 4
+        },
+        {
+          "threshold": 15,
+          "value": 7
+        },
+        {
+          "threshold": 20,
+          "value": 10
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -8
+        },
+        {
+          "threshold": -15,
+          "value": -15
+        }
+      ],
+      "effect": "属性ダメージ増加率。盾打ち・無属性は対象外。"
+    },
+    {
+      "id": "status_tuning",
+      "name": "状態調律",
+      "category": "combat",
+      "categoryName": "戦闘",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": true,
+      "implementation": "existing_effect_new_activation_pending",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 4
+        },
+        {
+          "threshold": 15,
+          "value": 7
+        },
+        {
+          "threshold": 20,
+          "value": 10
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -8
+        },
+        {
+          "threshold": -15,
+          "value": -15
+        }
+      ],
+      "effect": "毒・麻痺・睡眠蓄積増加率。気絶除外。"
+    },
+    {
+      "id": "weak_crit",
+      "name": "急所観察",
+      "category": "combat",
+      "categoryName": "戦闘",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": true,
+      "implementation": "existing_effect_new_activation_pending",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 4
+        },
+        {
+          "threshold": 15,
+          "value": 7
+        },
+        {
+          "threshold": 20,
+          "value": 10
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -5
+        },
+        {
+          "threshold": -15,
+          "value": -10
+        }
+      ],
+      "effect": "物理肉質0.55以上で会心率に加算するポイント。"
+    },
+    {
+      "id": "stun_tuning",
+      "name": "響打",
+      "category": "combat",
+      "categoryName": "戦闘",
+      "minRank": "rank.1",
+      "applies": "blunt",
+      "legacy": true,
+      "implementation": "existing_effect_new_activation_pending",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 4
+        },
+        {
+          "threshold": 15,
+          "value": 7
+        },
+        {
+          "threshold": 20,
+          "value": 10
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -8
+        },
+        {
+          "threshold": -15,
+          "value": -15
+        }
+      ],
+      "effect": "頭部への気絶蓄積増加率。打撃タグ必須。"
+    },
+    {
+      "id": "item_efficiency",
+      "name": "道具整備",
+      "category": "item",
+      "categoryName": "道具",
+      "minRank": "rank.1",
+      "applies": "melee",
+      "legacy": true,
+      "implementation": "existing_effect_new_activation_pending",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 5
+        },
+        {
+          "threshold": 15,
+          "value": 9
+        },
+        {
+          "threshold": 20,
+          "value": 13
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -10
+        },
+        {
+          "threshold": -15,
+          "value": -20
+        }
+      ],
+      "effect": "整備タグのアイテム時間の短縮率。"
+    },
+    {
+      "id": "status_resistance",
+      "name": "個別状態耐性",
+      "category": "resist",
+      "categoryName": "耐性",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": true,
+      "implementation": "existing_effect_new_activation_pending",
+      "targetKind": "status",
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 20
+        },
+        {
+          "threshold": 15,
+          "value": 35
+        },
+        {
+          "threshold": 20,
+          "value": 50
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -15
+        },
+        {
+          "threshold": -15,
+          "value": -30
+        }
+      ],
+      "effect": "対象状態の発症閾値増加率。対象別、毒/麻痺/睡眠/気絶。"
+    },
+    {
+      "id": "element_resistance",
+      "name": "個別属性耐性",
+      "category": "resist",
+      "categoryName": "耐性",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": true,
+      "implementation": "existing_effect_new_activation_pending",
+      "targetKind": "element",
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 3
+        },
+        {
+          "threshold": 15,
+          "value": 6
+        },
+        {
+          "threshold": 20,
+          "value": 9
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -4
+        },
+        {
+          "threshold": -15,
+          "value": -8
+        }
+      ],
+      "effect": "対象属性の耐性ポイント。火/雷/氷/水/風/霧。"
+    },
+    {
+      "id": "raw_power",
+      "name": "武威",
+      "category": "combat",
+      "categoryName": "戦闘",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 4
+        },
+        {
+          "threshold": 15,
+          "value": 7
+        },
+        {
+          "threshold": 20,
+          "value": 11
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -5
+        },
+        {
+          "threshold": -15,
+          "value": -9
+        },
+        {
+          "threshold": -20,
+          "value": -14
+        }
+      ],
+      "effect": "物理攻撃力増加率。属性・固定ダメージ除外。"
+    },
+    {
+      "id": "affinity",
+      "name": "精撃",
+      "category": "combat",
+      "categoryName": "戦闘",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 7
+        },
+        {
+          "threshold": 15,
+          "value": 14
+        },
+        {
+          "threshold": 20,
+          "value": 22
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -6
+        },
+        {
+          "threshold": -15,
+          "value": -12
+        },
+        {
+          "threshold": -20,
+          "value": -18
+        }
+      ],
+      "effect": "物理会心率ポイント加算。既存上限60%。"
+    },
+    {
+      "id": "edge_extension",
+      "name": "刃質",
+      "category": "weapon",
+      "categoryName": "武器",
+      "minRank": "rank.2",
+      "applies": "melee",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 12
+        },
+        {
+          "threshold": 15,
+          "value": 20
+        }
+      ],
+      "negative": [],
+      "effect": "武器別に定義した予備斬れ味容量の解放上限(% of base capacity)。予備がなければ効果なし。"
+    },
+    {
+      "id": "anti_bounce",
+      "name": "貫刃",
+      "category": "weapon",
+      "categoryName": "武器",
+      "minRank": "rank.2",
+      "applies": "melee",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        }
+      ],
+      "negative": [],
+      "effect": "弾かれ硬直のみ無効。肉質・消耗・実ダメージを変えない。"
+    },
+    {
+      "id": "draw_crit",
+      "name": "抜き技",
+      "category": "weapon",
+      "categoryName": "武器",
+      "minRank": "rank.2",
+      "applies": "melee",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 25
+        },
+        {
+          "threshold": 15,
+          "value": 45
+        }
+      ],
+      "negative": [],
+      "effect": "納刀状態からの抜刀攻撃の初回対象命中に会心率ポイント加算。抜刀溜めも対象。"
+    },
+    {
+      "id": "charge_speed",
+      "name": "蓄勢",
+      "category": "weapon",
+      "categoryName": "武器",
+      "minRank": "rank.1",
+      "applies": "charge",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 12
+        },
+        {
+          "threshold": 15,
+          "value": 20
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -12
+        }
+      ],
+      "effect": "溜め段階到達時間の短縮率。断岳剣・大槌・環弓。攻撃判定の速度は変えない。"
+    },
+    {
+      "id": "sharpening",
+      "name": "研磨術",
+      "category": "weapon",
+      "categoryName": "武器",
+      "minRank": "rank.1",
+      "applies": "melee",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 25
+        },
+        {
+          "threshold": 15,
+          "value": 40
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -20
+        }
+      ],
+      "effect": "研磨石使用時間の短縮率。道具整備と同じ枠で最大値採用。"
+    },
+    {
+      "id": "defense",
+      "name": "堅身",
+      "category": "defense",
+      "categoryName": "防御回避",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 8
+        },
+        {
+          "threshold": 15,
+          "value": 14
+        },
+        {
+          "threshold": 20,
+          "value": 22
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -8
+        },
+        {
+          "threshold": -15,
+          "value": -14
+        },
+        {
+          "threshold": -20,
+          "value": -22
+        }
+      ],
+      "effect": "防御合計への固定ポイント加算。防御の下限0。"
+    },
+    {
+      "id": "health",
+      "name": "生命力",
+      "category": "defense",
+      "categoryName": "防御回避",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 12
+        },
+        {
+          "threshold": 15,
+          "value": 24
+        },
+        {
+          "threshold": 20,
+          "value": 36
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -10
+        },
+        {
+          "threshold": -15,
+          "value": -20
+        }
+      ],
+      "effect": "最大HPへの加算。既存上限・食事仕様との整合は統合時に確定。"
+    },
+    {
+      "id": "guard_stability",
+      "name": "盾構え",
+      "category": "guard",
+      "categoryName": "防御",
+      "minRank": "rank.1",
+      "applies": "guard",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        },
+        {
+          "threshold": 20,
+          "value": 2
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -1
+        }
+      ],
+      "effect": "ガード反応閾値の段階改善。削り倍率は段階1で0.9、段階2で0.8。負は1.15。"
+    },
+    {
+      "id": "guard_unlock",
+      "name": "強盾",
+      "category": "guard",
+      "categoryName": "防御",
+      "minRank": "rank.2",
+      "applies": "guard",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        }
+      ],
+      "negative": [],
+      "effect": "guardOverrideAllowed の攻撃のみガード可能にする。掴み・地形等不可。"
+    },
+    {
+      "id": "evade_window",
+      "name": "身かわし",
+      "category": "defense",
+      "categoryName": "防御回避",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 60
+        },
+        {
+          "threshold": 15,
+          "value": 120
+        }
+      ],
+      "negative": [],
+      "effect": "既存回避・ステップの無敵時間にミリ秒加算。60Hzで切り上げ4/8tick、総量上限0.42秒。"
+    },
+    {
+      "id": "evade_distance",
+      "name": "跳歩",
+      "category": "defense",
+      "categoryName": "防御回避",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 25
+        }
+      ],
+      "negative": [],
+      "effect": "回避距離増加率。無敵時間は変更せず壁衝突を維持。"
+    },
+    {
+      "id": "continuous_stamina",
+      "name": "持久",
+      "category": "stamina",
+      "categoryName": "体力管理",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 20
+        },
+        {
+          "threshold": 15,
+          "value": 35
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -15
+        }
+      ],
+      "effect": "走行・溜め・双剣猛り等の継続消費軽減率。単発回避/ガード除外。"
+    },
+    {
+      "id": "resolve",
+      "name": "踏ん張り",
+      "category": "defense",
+      "categoryName": "防御回避",
+      "minRank": "rank.3",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        }
+      ],
+      "negative": [],
+      "effect": "1出撃1回、被弾前HPが最大の65%以上で単発致死攻撃時HP1。環境・継続ダメージ・拘束中不可。"
+    },
+    {
+      "id": "roar_resist",
+      "name": "防音",
+      "category": "resist",
+      "categoryName": "耐性",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        },
+        {
+          "threshold": 15,
+          "value": 2
+        }
+      ],
+      "negative": [],
+      "effect": "咆哮タグ強度1/2以下の硬直無効。攻撃ダメージは別。"
+    },
+    {
+      "id": "wind_resist",
+      "name": "耐風",
+      "category": "resist",
+      "categoryName": "耐性",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        },
+        {
+          "threshold": 15,
+          "value": 2
+        },
+        {
+          "threshold": 20,
+          "value": 3
+        }
+      ],
+      "negative": [],
+      "effect": "風圧タグ強度1/2/3以下の硬直無効。"
+    },
+    {
+      "id": "tremor_resist",
+      "name": "震動耐性",
+      "category": "resist",
+      "categoryName": "耐性",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        },
+        {
+          "threshold": 15,
+          "value": 2
+        }
+      ],
+      "negative": [],
+      "effect": "振動タグ強度1/2以下の硬直無効。"
+    },
+    {
+      "id": "all_resist",
+      "name": "環境順応",
+      "category": "resist",
+      "categoryName": "耐性",
+      "minRank": "rank.3",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 3
+        },
+        {
+          "threshold": 15,
+          "value": 5
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -3
+        }
+      ],
+      "effect": "全6属性耐性ポイント加算、既存±30制限。"
+    },
+    {
+      "id": "red_recovery",
+      "name": "傷癒し",
+      "category": "defense",
+      "categoryName": "防御回避",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 35
+        },
+        {
+          "threshold": 15,
+          "value": 70
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -30
+        }
+      ],
+      "effect": "赤ゲージ自然回復速度増加率。赤ゲージ機構実装後。"
+    },
+    {
+      "id": "damage_blessing",
+      "name": "守り紋",
+      "category": "defense",
+      "categoryName": "防御回避",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -1
+        }
+      ],
+      "effect": "被弾ごと独立25%判定、物理ダメージ0.8倍。負は1.2倍。乱数分離。"
+    },
+    {
+      "id": "last_stand",
+      "name": "逆境",
+      "category": "combat",
+      "categoryName": "戦闘",
+      "minRank": "rank.3",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        },
+        {
+          "threshold": 15,
+          "value": 2
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -1
+        }
+      ],
+      "effect": "HP30%以下で防御+15/+25、段階2のみ物理+12%。負は物理-12%。踏ん張りと同一イベントで攻撃補正しない。"
+    },
+    {
+      "id": "heat_resist",
+      "name": "耐熱",
+      "category": "environment",
+      "categoryName": "環境",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 50
+        },
+        {
+          "threshold": 15,
+          "value": 100
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -30
+        }
+      ],
+      "effect": "暑さタグの継続減少軽減率。火攻撃・溶岩別。"
+    },
+    {
+      "id": "cold_resist",
+      "name": "耐冷",
+      "category": "environment",
+      "categoryName": "環境",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 50
+        },
+        {
+          "threshold": 15,
+          "value": 100
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -30
+        }
+      ],
+      "effect": "寒さタグによるスタミナ上限減少軽減率。氷攻撃別。"
+    },
+    {
+      "id": "terrain_resist",
+      "name": "地表慣れ",
+      "category": "environment",
+      "categoryName": "環境",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 40
+        },
+        {
+          "threshold": 15,
+          "value": 80
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -25
+        }
+      ],
+      "effect": "地形継続ダメージ軽減率。落下・即死除外。"
+    },
+    {
+      "id": "hunger",
+      "name": "腹持ち",
+      "category": "stamina",
+      "categoryName": "体力管理",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 25
+        },
+        {
+          "threshold": 15,
+          "value": 55
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -20
+        }
+      ],
+      "effect": "時間経過のスタミナ上限減少速度軽減率。寒冷別。"
+    },
+    {
+      "id": "ailment_ward",
+      "name": "耐症",
+      "category": "resist",
+      "categoryName": "耐性",
+      "minRank": "rank.3",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 25
+        },
+        {
+          "threshold": 15,
+          "value": 50
+        }
+      ],
+      "negative": [],
+      "effect": "対象4状態の発症閾値増加率。個別状態耐性とは最大値のみ。"
+    },
+    {
+      "id": "poison_relief",
+      "name": "毒抜き",
+      "category": "resist",
+      "categoryName": "耐性",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 40
+        },
+        {
+          "threshold": 15,
+          "value": 100
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -30
+        }
+      ],
+      "effect": "毒の継続総ダメージ軽減率。100で毒ダメージ無効。"
+    },
+    {
+      "id": "paralysis_relief",
+      "name": "痺れ流し",
+      "category": "resist",
+      "categoryName": "耐性",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 40
+        },
+        {
+          "threshold": 15,
+          "value": 100
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -30
+        }
+      ],
+      "effect": "麻痺の拘束時間軽減率。100で発症無効。"
+    },
+    {
+      "id": "sleep_relief",
+      "name": "覚め身",
+      "category": "resist",
+      "categoryName": "耐性",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 40
+        },
+        {
+          "threshold": 15,
+          "value": 100
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -30
+        }
+      ],
+      "effect": "睡眠拘束時間軽減率。100で発症無効。"
+    },
+    {
+      "id": "stun_relief",
+      "name": "平衡感覚",
+      "category": "resist",
+      "categoryName": "耐性",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 40
+        },
+        {
+          "threshold": 15,
+          "value": 100
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -30
+        }
+      ],
+      "effect": "気絶拘束時間軽減率。100で発症無効。"
+    },
+    {
+      "id": "bow_quick_coat",
+      "name": "瓶手際",
+      "category": "ranged",
+      "categoryName": "射撃",
+      "minRank": "rank.2",
+      "applies": "bow",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 20
+        },
+        {
+          "threshold": 15,
+          "value": 35
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -20
+        }
+      ],
+      "effect": "瓶装着時間短縮率。瓶機構実装後。"
+    },
+    {
+      "id": "bow_charge_cap",
+      "name": "張弓",
+      "category": "ranged",
+      "categoryName": "射撃",
+      "minRank": "rank.3",
+      "applies": "bow",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        }
+      ],
+      "negative": [],
+      "effect": "武器が持つ予備溜め段階を1段開放。予備なし無効。"
+    },
+    {
+      "id": "bow_focus_shot",
+      "name": "正射",
+      "category": "ranged",
+      "categoryName": "射撃",
+      "minRank": "rank.1",
+      "applies": "bow",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 6
+        },
+        {
+          "threshold": 15,
+          "value": 11
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -8
+        }
+      ],
+      "effect": "連射型の物理矢ダメージ増加率。矢型実装後。"
+    },
+    {
+      "id": "bow_pierce_shot",
+      "name": "通射",
+      "category": "ranged",
+      "categoryName": "射撃",
+      "minRank": "rank.2",
+      "applies": "bow",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 6
+        },
+        {
+          "threshold": 15,
+          "value": 11
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -8
+        }
+      ],
+      "effect": "貫通型の物理矢ダメージ増加率。各命中に一度。"
+    },
+    {
+      "id": "bow_spread_shot",
+      "name": "広射",
+      "category": "ranged",
+      "categoryName": "射撃",
+      "minRank": "rank.2",
+      "applies": "bow",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 6
+        },
+        {
+          "threshold": 15,
+          "value": 11
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -8
+        }
+      ],
+      "effect": "拡散型の物理矢ダメージ増加率。"
+    },
+    {
+      "id": "bow_aim",
+      "name": "弦安定",
+      "category": "ranged",
+      "categoryName": "射撃",
+      "minRank": "rank.1",
+      "applies": "bow",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 20
+        },
+        {
+          "threshold": 15,
+          "value": 35
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -25
+        }
+      ],
+      "effect": "射撃ブレ角の軽減率。適正距離・ダメージは不変。"
+    },
+    {
+      "id": "bow_coat_access",
+      "name": "瓶適応",
+      "category": "ranged",
+      "categoryName": "射撃",
+      "minRank": "rank.2",
+      "applies": "bow",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": "coating",
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        }
+      ],
+      "negative": [],
+      "effect": "指定した非対応瓶を1種類追加可能。武器側 allowlist 必須。"
+    },
+    {
+      "id": "gather",
+      "name": "採集熟練",
+      "category": "gather",
+      "categoryName": "採集",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        },
+        {
+          "threshold": 15,
+          "value": 2
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -1
+        }
+      ],
+      "effect": "有限採集点の基礎回数への加算。初回訪問時のみ、絶対上限あり。"
+    },
+    {
+      "id": "mining",
+      "name": "採鉱術",
+      "category": "gather",
+      "categoryName": "採集",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 12
+        },
+        {
+          "threshold": 15,
+          "value": 25
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -10
+        }
+      ],
+      "effect": "採掘の通常素材追加1個の確率(%). レア抽選は不変。"
+    },
+    {
+      "id": "insect",
+      "name": "虫捕り",
+      "category": "gather",
+      "categoryName": "採集",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 12
+        },
+        {
+          "threshold": 15,
+          "value": 25
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -10
+        }
+      ],
+      "effect": "昆虫通常素材追加1個の確率(%). レア抽選は不変。"
+    },
+    {
+      "id": "bone",
+      "name": "骨拾い",
+      "category": "gather",
+      "categoryName": "採集",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 12
+        },
+        {
+          "threshold": 15,
+          "value": 25
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -10
+        }
+      ],
+      "effect": "通常骨素材追加1個の確率(%)."
+    },
+    {
+      "id": "plant",
+      "name": "植物鑑定",
+      "category": "gather",
+      "categoryName": "採集",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 12
+        },
+        {
+          "threshold": 15,
+          "value": 25
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -10
+        }
+      ],
+      "effect": "通常植物素材追加1個の確率(%)."
+    },
+    {
+      "id": "fish",
+      "name": "釣技",
+      "category": "gather",
+      "categoryName": "採集",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 20
+        },
+        {
+          "threshold": 15,
+          "value": 40
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -20
+        }
+      ],
+      "effect": "食いつきまでの待ち時間短縮率。魚種レア度は不変。"
+    },
+    {
+      "id": "carve",
+      "name": "解体術",
+      "category": "reward",
+      "categoryName": "報酬",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 20
+        },
+        {
+          "threshold": 15,
+          "value": 45
+        }
+      ],
+      "negative": [],
+      "effect": "討伐した大型の胴の剥ぎ取り完了時、通常枠を追加1回得る確率(%). 1個体1判定。尾・幼体・捕獲不可。"
+    },
+    {
+      "id": "gather_speed",
+      "name": "収集手際",
+      "category": "gather",
+      "categoryName": "採集",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 20
+        },
+        {
+          "threshold": 15,
+          "value": 35
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -20
+        }
+      ],
+      "effect": "採集・採掘・剥ぎ取り・虫取りの操作時間短縮率。釣りの入力猶予は不変。"
+    },
+    {
+      "id": "tool_preserve",
+      "name": "道具保全",
+      "category": "gather",
+      "categoryName": "採集",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 25
+        },
+        {
+          "threshold": 15,
+          "value": 50
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -25
+        }
+      ],
+      "effect": "消耗道具の破損確率軽減率。確率は0〜1。"
+    },
+    {
+      "id": "carry",
+      "name": "運搬術",
+      "category": "gather",
+      "categoryName": "採集",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 15
+        },
+        {
+          "threshold": 15,
+          "value": 25
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -15
+        }
+      ],
+      "effect": "運搬中の移動速度増加率。移動衝突維持。"
+    },
+    {
+      "id": "luck",
+      "name": "福運",
+      "category": "reward",
+      "categoryName": "報酬",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 8
+        },
+        {
+          "threshold": 15,
+          "value": 16
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -8
+        },
+        {
+          "threshold": -15,
+          "value": -16
+        }
+      ],
+      "effect": "追加基本報酬枠の継続抽選確率にポイント加算。各クエスト定義の最大枠以内。レア率不変。"
+    },
+    {
+      "id": "capture_reward",
+      "name": "捕獲術",
+      "category": "reward",
+      "categoryName": "報酬",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 25
+        },
+        {
+          "threshold": 15,
+          "value": 50
+        }
+      ],
+      "negative": [],
+      "effect": "成功した捕獲1頭につき通常捕獲枠を追加1つ得る確率(%)."
+    },
+    {
+      "id": "capture_read",
+      "name": "見極め",
+      "category": "tracking",
+      "categoryName": "追跡",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        }
+      ],
+      "negative": [],
+      "effect": "標識済みの対象が捕獲条件を満たすと印が変化。未発見の位置を公開しない。"
+    },
+    {
+      "id": "track",
+      "name": "追い目",
+      "category": "tracking",
+      "categoryName": "追跡",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        },
+        {
+          "threshold": 15,
+          "value": 2
+        }
+      ],
+      "negative": [],
+      "effect": "標識有効時間+25%/+50%。段階2は発見済み個体の痕跡更新間隔短縮。未発見の全知は不可。"
+    },
+    {
+      "id": "map_memory",
+      "name": "地誌",
+      "category": "tracking",
+      "categoryName": "追跡",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        }
+      ],
+      "negative": [],
+      "effect": "訪問済みエリアの地図情報を保持。未訪問の情報を開示しない。"
+    },
+    {
+      "id": "stealth",
+      "name": "静足",
+      "category": "tracking",
+      "categoryName": "追跡",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 15
+        },
+        {
+          "threshold": 15,
+          "value": 25
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -15
+        }
+      ],
+      "effect": "非戦闘時の感知距離軽減率。交戦中の攻撃無効化なし。"
+    },
+    {
+      "id": "trap_speed",
+      "name": "仕掛け手際",
+      "category": "item",
+      "categoryName": "道具",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 25
+        },
+        {
+          "threshold": 15,
+          "value": 40
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -20
+        }
+      ],
+      "effect": "罠・狩猟用爆具の設置時間短縮率。罠拘束時間は不変。"
+    },
+    {
+      "id": "healing",
+      "name": "薬効",
+      "category": "item",
+      "categoryName": "道具",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 12
+        },
+        {
+          "threshold": 15,
+          "value": 22
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -15
+        }
+      ],
+      "effect": "回復アイテムの回復量増加率。最大HPを超えない。"
+    },
+    {
+      "id": "duration",
+      "name": "薬持ち",
+      "category": "item",
+      "categoryName": "道具",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 20
+        },
+        {
+          "threshold": 15,
+          "value": 40
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -20
+        }
+      ],
+      "effect": "一時強化アイテム持続時間増加率。重複方式は不変。"
+    },
+    {
+      "id": "item_speed",
+      "name": "早支度",
+      "category": "item",
+      "categoryName": "道具",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 15
+        },
+        {
+          "threshold": 15,
+          "value": 30
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -20
+        }
+      ],
+      "effect": "飲食タグの使用時間短縮率。研磨や罠とは別。"
+    },
+    {
+      "id": "wide_heal",
+      "name": "分け薬",
+      "category": "item",
+      "categoryName": "道具",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 35
+        },
+        {
+          "threshold": 15,
+          "value": 70
+        }
+      ],
+      "negative": [],
+      "effect": "許可された回復薬の実回復量ではなく基礎回復量の%を範囲内の味方へ。再伝播不可。協力実装まで保留。"
+    },
+    {
+      "id": "craft_rate",
+      "name": "調剤",
+      "category": "item",
+      "categoryName": "道具",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 10
+        },
+        {
+          "threshold": 15,
+          "value": 20
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -10
+        }
+      ],
+      "effect": "現地調合成功率にポイント加算。上限100%。"
+    },
+    {
+      "id": "craft_yield",
+      "name": "手作り上手",
+      "category": "item",
+      "categoryName": "道具",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        }
+      ],
+      "negative": [],
+      "effect": "指定されたランダム調合レシピを最大数で作る。素材費用は不変。"
+    },
+    {
+      "id": "bomb",
+      "name": "爆具調整",
+      "category": "item",
+      "categoryName": "道具",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 12
+        },
+        {
+          "threshold": 15,
+          "value": 24
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -10
+        }
+      ],
+      "effect": "狩猟用爆具ダメージ増加率。通常攻撃除外。"
+    },
+    {
+      "id": "throwing",
+      "name": "遠投",
+      "category": "item",
+      "categoryName": "道具",
+      "minRank": "rank.1",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 25
+        }
+      ],
+      "negative": [
+        {
+          "threshold": -10,
+          "value": -15
+        }
+      ],
+      "effect": "投げ道具の距離増加率。直撃威力不変。"
+    },
+    {
+      "id": "companion_care",
+      "name": "伴獣育て",
+      "category": "companion",
+      "categoryName": "伴獣",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 15
+        },
+        {
+          "threshold": 15,
+          "value": 30
+        }
+      ],
+      "negative": [],
+      "effect": "伴獣経験値増加率。伴獣が未実装なら表示しない。"
+    },
+    {
+      "id": "companion_attack",
+      "name": "伴獣連携",
+      "category": "companion",
+      "categoryName": "伴獣",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 8
+        },
+        {
+          "threshold": 15,
+          "value": 15
+        }
+      ],
+      "negative": [],
+      "effect": "伴獣物理攻撃力増加率。主人に適用しない。"
+    },
+    {
+      "id": "companion_defense",
+      "name": "伴獣守り",
+      "category": "companion",
+      "categoryName": "伴獣",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 8
+        },
+        {
+          "threshold": 15,
+          "value": 15
+        }
+      ],
+      "negative": [],
+      "effect": "伴獣被ダメージ軽減率。主人に適用しない。"
+    },
+    {
+      "id": "rock_anchor",
+      "name": "晶脈の構え",
+      "category": "signature",
+      "categoryName": "固有",
+      "minRank": "rank.2",
+      "applies": "guard",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        }
+      ],
+      "negative": [],
+      "effect": "ガルドロス系。ガード成功後3秒以内の次の部位破壊蓄積+12%。1回消費、8秒CT。"
+    },
+    {
+      "id": "sail_step",
+      "name": "帆膜の返し",
+      "category": "signature",
+      "categoryName": "固有",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        }
+      ],
+      "negative": [],
+      "effect": "セルヴァルク系。攻撃判定と無敵区間が実際に重なった回避成功後、次の回避消費-15%、4秒以内・8秒CT。"
+    },
+    {
+      "id": "furnace_core",
+      "name": "熾炉の残熱",
+      "category": "signature",
+      "categoryName": "固有",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        }
+      ],
+      "negative": [],
+      "effect": "エンバルグ系。火属性の溜め攻撃命中後、次の火属性命中の属性部分+12%、5秒以内・8秒CT。"
+    },
+    {
+      "id": "thunder_afterimage",
+      "name": "雷翼の残響",
+      "category": "signature",
+      "categoryName": "固有",
+      "minRank": "rank.4",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        }
+      ],
+      "negative": [],
+      "effect": "看板飛竜案オルゼリオン。実回避成功後6秒以内の雷武器の次の命中の属性部分+18%。10秒CT、非雷属性不可。"
+    },
+    {
+      "id": "ore_expertise",
+      "name": "鉱脈読み",
+      "category": "signature",
+      "categoryName": "固有",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        }
+      ],
+      "negative": [],
+      "effect": "鉱石採集系。各採掘点の通常素材1個を初回利用時20%で追加、採鉱術の追加抽選と最大一つ。"
+    },
+    {
+      "id": "bone_mastery",
+      "name": "骨格読み",
+      "category": "signature",
+      "categoryName": "固有",
+      "minRank": "rank.2",
+      "applies": "all",
+      "legacy": false,
+      "implementation": "proposal_requires_hook",
+      "targetKind": null,
+      "positive": [
+        {
+          "threshold": 10,
+          "value": 1
+        }
+      ],
+      "negative": [],
+      "effect": "骨装備系。切断専用蓄積+9%。砕きと同じ効果キーで最大値採用。"
+    }
+  ],
+  "profiles": [
+    {
+      "key": "galdros",
+      "label": "岩殻獣ガルドロス",
+      "main": "guard_stability",
+      "secondary": "edge_keep",
+      "penalty": "evade_distance",
+      "penaltyNote": "跳歩は負段階を持たないため代替として身軽を減点",
+      "negativeKey": "dodge_economy",
+      "signature": "rock_anchor",
+      "source": "bestiary:monster.galdros",
+      "rankStart": 1
+    },
+    {
+      "key": "selvark",
+      "label": "帆角獣セルヴァルク",
+      "main": "evade_window",
+      "secondary": "dodge_economy",
+      "negativeKey": "guard_economy",
+      "signature": "sail_step",
+      "source": "bestiary:monster.selvark",
+      "rankStart": 1
+    },
+    {
+      "key": "embarg",
+      "label": "エンバルグ",
+      "main": "element_tuning",
+      "secondary": "heat_resist",
+      "negativeKey": "cold_resist",
+      "signature": "furnace_core",
+      "source": "bestiary:monster.embarg",
+      "rankStart": 1
+    },
+    {
+      "key": "ore_proposal",
+      "label": "鉱石主体装備（新案・ID未確定）",
+      "main": "mining",
+      "secondary": "tool_preserve",
+      "negativeKey": "dodge_economy",
+      "signature": "ore_expertise",
+      "rankStart": 1
+    },
+    {
+      "key": "bone_proposal",
+      "label": "骨主体装備（新案・ID未確定）",
+      "main": "part_damage",
+      "secondary": "edge_keep",
+      "negativeKey": "defense",
+      "signature": "bone_mastery",
+      "rankStart": 1
+    },
+    {
+      "key": "orzerion_proposal",
+      "label": "オルゼリオン（看板飛竜案・登録簿ID未確認）",
+      "main": "evade_window",
+      "secondary": "element_tuning",
+      "negativeKey": "guard_economy",
+      "signature": "thunder_afterimage",
+      "rankStart": 4
+    }
+  ],
+  "slotOrder": [
+    "head",
+    "chest",
+    "arms",
+    "waist",
+    "legs"
+  ],
+  "rankTemplates": [
+    {
+      "rank": "rank.1",
+      "main": [
+        3,
+        2,
+        3,
+        1,
+        2
+      ],
+      "secondary": [
+        1,
+        3,
+        1,
+        3,
+        2
+      ],
+      "negative": [
+        -2,
+        -2,
+        -2,
+        -2,
+        -2
+      ],
+      "signature": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sockets": [
+        1,
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "rank": "rank.2",
+      "main": [
+        4,
+        2,
+        4,
+        2,
+        3
+      ],
+      "secondary": [
+        1,
+        3,
+        1,
+        3,
+        2
+      ],
+      "negative": [
+        -2,
+        -2,
+        -2,
+        -2,
+        -2
+      ],
+      "signature": [
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "sockets": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "rank": "rank.3",
+      "main": [
+        4,
+        3,
+        4,
+        2,
+        3
+      ],
+      "secondary": [
+        2,
+        3,
+        2,
+        3,
+        2
+      ],
+      "negative": [
+        -2,
+        -3,
+        -2,
+        -3,
+        -2
+      ],
+      "signature": [
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "sockets": [
+        2,
+        1,
+        2,
+        1,
+        1
+      ]
+    },
+    {
+      "rank": "rank.4",
+      "main": [
+        5,
+        3,
+        5,
+        3,
+        4
+      ],
+      "secondary": [
+        2,
+        4,
+        2,
+        4,
+        3
+      ],
+      "negative": [
+        -2,
+        -3,
+        -2,
+        -3,
+        -2
+      ],
+      "signature": [
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "sockets": [
+        2,
+        2,
+        2,
+        1,
+        2
+      ]
+    }
+  ],
+  "jewels": [
+    {
+      "id": "jewel.proposal.guard.1",
+      "name": "受け紋片",
+      "cost": 1,
+      "rank": "rank.1",
+      "points": {
+        "guard_economy": 2,
+        "dodge_economy": -1
+      }
+    },
+    {
+      "id": "jewel.proposal.edge.1",
+      "name": "刃守紋片",
+      "cost": 1,
+      "rank": "rank.1",
+      "points": {
+        "edge_keep": 2,
+        "stamina_recovery": -1
+      }
+    },
+    {
+      "id": "jewel.proposal.evade.1",
+      "name": "歩影紋片",
+      "cost": 1,
+      "rank": "rank.1",
+      "points": {
+        "evade_window": 1,
+        "guard_economy": -1
+      }
+    },
+    {
+      "id": "jewel.proposal.evade.2",
+      "name": "歩影紋石",
+      "cost": 2,
+      "rank": "rank.2",
+      "points": {
+        "evade_window": 3,
+        "guard_economy": -1
+      }
+    },
+    {
+      "id": "jewel.proposal.evade.3",
+      "name": "歩影紋晶",
+      "cost": 3,
+      "rank": "rank.3",
+      "points": {
+        "evade_window": 5,
+        "guard_economy": -2
+      }
+    },
+    {
+      "id": "jewel.proposal.mining.1",
+      "name": "掘脈紋片",
+      "cost": 1,
+      "rank": "rank.1",
+      "points": {
+        "mining": 2,
+        "defense": -1
+      }
+    },
+    {
+      "id": "jewel.proposal.power.2",
+      "name": "武威紋石",
+      "cost": 2,
+      "rank": "rank.2",
+      "points": {
+        "raw_power": 3,
+        "defense": -1
+      }
+    },
+    {
+      "id": "jewel.proposal.coating.2",
+      "name": "瓶適応紋石",
+      "cost": 2,
+      "rank": "rank.2",
+      "points": {
+        "bow_coat_access": 3
+      },
+      "requiresTarget": "coating",
+      "note": "実装前に対象付きキーへ展開。現段階では生産不可。"
+    }
+  ],
+  "compound": [
+    {
+      "id": "compound.proposal.edge_craft",
+      "name": "鍛刃の技",
+      "rank": "rank.4",
+      "points": 10,
+      "members": [
+        [
+          "edge_extension",
+          10
+        ],
+        [
+          "raw_power",
+          15
+        ]
+      ],
+      "note": "合成効果は同一系統の最大段階採用、合成メンバーは負スキルを打ち消さない"
+    },
+    {
+      "id": "compound.proposal.warden",
+      "name": "守勢の型",
+      "rank": "rank.3",
+      "points": 10,
+      "members": [
+        [
+          "guard_stability",
+          10
+        ],
+        [
+          "guard_economy",
+          10
+        ]
+      ]
+    },
+    {
+      "id": "compound.proposal.pathfinder",
+      "name": "野巡り",
+      "rank": "rank.3",
+      "points": 10,
+      "members": [
+        [
+          "track",
+          10
+        ],
+        [
+          "gather_speed",
+          10
+        ]
+      ]
+    }
+  ],
+  "checks": [
+    "技能ID重複なし 84系統",
+    "閾値±9非発動、全定義の閾値境界確認 84系統",
+    "5部位配列・枠範囲・系列/装飾品/複合参照検査: OK"
+  ]
+}
