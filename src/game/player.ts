@@ -904,7 +904,9 @@ function stepFree(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     if (target) {
       clearAttackBuffers(p);
       p.buffer.item = 0;
+      if (target.kind==='field_node') p.yaw=target.faceYaw;
       const run = startAction(p, target.actionId, ctx);
+      if (target.kind==='field_node') run.speed=target.speed;
       p.errandOp = { target, instanceId: run.instanceId, done: false };
       return stepAction(p, inp, ctx, 1);
     }

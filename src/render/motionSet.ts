@@ -46,7 +46,8 @@ export async function useMotionSet(id: string): Promise<void> {
     const m = await import('./motionsets/v056');
     stances = m.WEAPON_STANCES;
     motions = m.WEAPON_MOTIONS;
-    clips = m.COMMON_CLIPS;
+    // 共通追加アクションは保留の組に無い場合も現在の定義を使う。
+    clips = { ...CURRENT.clips, ...m.COMMON_CLIPS };
     loco = m.LOCO_STYLE;
   }
   replace(WEAPON_STANCES, stances);

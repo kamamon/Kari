@@ -10,6 +10,8 @@ import type { SimEvent } from '../game/events';
 import { familyOf, isInvulnerable } from '../game/player';
 import type { Simulation } from '../game/sim';
 import { DEPOT_REACH, NODE_REACH, errandProgress, errandReady, openNodes } from '../game/errand';
+import { FIELD_GATHER_LABEL } from '../data/fieldGathering';
+import { gatheringHint } from '../game/fieldGather';
 import type { InputHub } from '../input/hub';
 import type { GameView } from '../render/view';
 import { counterOf, questGoal, shortName } from './targets';
@@ -434,13 +436,15 @@ export class Hud {
           this.toast(`${sim.content.materials.get(e.itemId)?.name ?? e.itemId} を手に入れた`);
           break;
         // 狩らない依頼（v0.27.0）
+        case 'field_gather': {const m=sim.content.materials.get(e.itemId);this.toast(`${m?.name??e.itemId} ×${e.count}（RARE ${m?.rarity??1}・残り ${e.remaining}回）`);break;}
+        case 'field_gather_miss': this.toast('釣り失敗：食いついた瞬間に主ボタン');break;
         case 'errand_gather': {
           const need = sim.errand?.def.needs.find((x) => x.itemId === e.itemId)?.count ?? 0;
           this.toast(`${sim.content.materials.get(e.itemId)?.name ?? e.itemId} ×${e.count}（${e.total} / ${need}）`);
           break;
         }
         case 'errand_deliver':
-          this.toast('納品箱へ納めた');
+          this.toast(sim.errand?.def.fieldGathering?'採取素材を持ち帰る':'納品箱へ納めた');
           break;
         default:
           break;
@@ -519,7 +523,7 @@ export class Hud {
     const rest = sim.pack && h?.phase === 'active' ? `（あと ${sim.targets.map((t, i) => (sim.targets.length > 1 ? `${shortName(sim.content.monsters.get(t.monsterId)?.name ?? '')} ` : '') + `${left[i]} ${counterOf(t.monsterId)}`).join('・')}）` : '';
     // 狩らない依頼（v0.27.0）: 目標は、採った数 / 要る数（この出発で採ったものだけ）
     const er = sim.errand;
-    const errandGoal = er ? (errandReady(er) && h?.phase === 'active' ? 'そろった。野営地の納品箱へ' : errandProgress(er).map((x) => `${sim.content.materials.get(x.itemId)?.name ?? x.itemId} ${x.have} / ${x.need}`).join('・')) : '';
+    const errandGoal = er?.def.fieldGathering?'自由採集・野営地の納品箱で帰還':er ? (errandReady(er) && h?.phase === 'active' ? 'そろった。野営地の納品箱へ' : errandProgress(er).map((x) => `${sim.content.materials.get(x.itemId)?.name ?? x.itemId} ${x.have} / ${x.need}`).join('・')) : '';
     const goal = this.inHub ? sim.content.hub.name : h ? `【${sim.rank?.name ?? ''}】${h.quest.name}: ${er ? errandGoal : `${questGoal(sim.content, h.quest, true)}${rest}`}` : '訓練: 標的で動作を確かめる';
     this.set('goal', goal, () => (this.goal.textContent = goal));
     const faints = h ? `力尽き ${h.faints} / ${h.quest.maxFaints}` : '';
@@ -577,6 +581,7 @@ export class Hud {
     // 居るエリアの地図: 自分の位置と向き。標的の点は、同じエリアに居る時だけ（見えている。狩らない依頼では出さない）
     this.set('localArea', field && here ? `${field.id}:${here.id}` : '', () => this.local.setArea(field, here ?? null));
     if (field && here) this.local.update(p.pos.x, p.pos.z, p.yaw, !er && tm && !tm.dead && !tm.captured && sim.monsterArea(tm)?.id === here.id ? tm.pos : null);
+    this.local.setGatherNodes(sim.fieldGather?.nodes.filter(n=>n.areaId===sim.areaId&&sim.fieldGather!.discovered.has(n.id)).map(n=>({...n,left:sim.fieldGather!.left(n)}))??[]);
     let exitText = '';
     if (field && here && p.mode !== 'dead') {
       // 近くて、そちらを向いている出口だけ（着いた直後に、背中側の出口を案内しない）
@@ -621,7 +626,7 @@ export class Hud {
     });
     // 達成後: 剥ぎ取りの残りと、帰還までの時間
     let wrap = '';
-    if (er && h && h.phase === 'active') wrap = errandHint(sim);
+    if (h?.phase === 'active') wrap=fieldGatherHint(sim)||(er?errandHint(sim):'');
     if (er && h && h.phase === 'success' && !h.closed) {
       const s2 = Math.ceil(h.returnTicks / 60);
       wrap = `納品完了　帰還まで ${Math.floor(s2 / 60)}:${String(s2 % 60).padStart(2, '0')}`;
@@ -688,6 +693,16 @@ export class Hud {
  * 狩らない依頼の案内（v0.27.0）。攻撃ボタンでできること、納刀していない時、そろった時、納品箱で足りない時。
  * 表示だけ（simulation の値を読むだけ）。
  */
+function fieldGatherHint(sim:Simulation):string{
+ const g=sim.fieldGather,p=sim.player;if(!g)return '';const op=p.errandOp,a=p.action;
+ if(op?.target.kind==='field_node'&&p.mode==='action'){
+  if(op.target.source==='fish'&&a)return g.hookInstance===op.instanceId?'釣り：引き上げています':g.bite(a.tick)?'魚が食いついた！主ボタンで引く':'釣り：食いつくまで待つ';
+  return FIELD_GATHER_LABEL[op.target.source]+'中（回避で中断）';
+ }
+ if(sim.errandTarget()?.kind==='deliver')return '';const n=g.nearby(sim.areaId,p.pos.x,p.pos.z);if(!n)return '';const hint=gatheringHint(g,n);if(g.left(n)<=0||!g.hasTool(n))return hint;
+ const durability=n.kind==='mine'||n.kind==='insect'?`・道具 ${g.toolLeft[n.kind]}回`:'';
+ return p.drawn?`納刀して ${hint}`:`主ボタンで ${hint}${durability}`;
+}
 function errandHint(sim: Simulation): string {
   const er = sim.errand;
   if (!er) return '';
@@ -696,12 +711,12 @@ function errandHint(sim: Simulation): string {
   // 採る・納める途中
   const op = p.errandOp;
   if (op && p.mode === 'action') {
-    if (op.target.kind === 'deliver') return '納めています';
+    if (op.target.kind === 'deliver') return er.def.fieldGathering?'帰還しています':'納めています';
     const n = er.def.nodes.find((x) => op.target.kind === 'node' && x.id === op.target.nodeId);
     return `${n?.kind === 'mine' ? '採掘' : '採集'}しています（回避で止める）`;
   }
   const t = sim.errandTarget();
-  if (t?.kind === 'deliver') return '攻撃ボタンで 納品（全部を 1 度に）';
+  if (t?.kind === 'deliver') return er.def.fieldGathering?'主ボタンで帰還（採取素材を持ち帰る）':'攻撃ボタンで 納品（全部を 1 度に）';
   if (t?.kind === 'node') {
     const n = er.def.nodes.find((x) => x.id === t.nodeId)!;
     return `攻撃ボタンで ${n.kind === 'mine' ? '採掘' : '採集'}（${name(n.itemId)}）`;

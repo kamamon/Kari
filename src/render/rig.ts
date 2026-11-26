@@ -3,7 +3,7 @@
 // 骨と socket の名前・向きは docs/animation-contract.md と揃える。
 //   root → pelvis → spine → chest → neck → head / 腕 / 脚、socket_hand_r / socket_hand_l / socket_back / socket_hip
 // 単位 m、Y 上、+Z 前。身長 1.75m。右手側は -X。
-import { Bone, BoxGeometry, BufferAttribute, BufferGeometry, ConeGeometry, CylinderGeometry, DataTexture, DoubleSide, Group, Line, LineBasicMaterial, Matrix4, Mesh, MeshLambertMaterial, Object3D, Quaternion, SRGBColorSpace, Skeleton, SkinnedMesh, TextureLoader, Vector3 } from 'three';
+import { Bone, BoxGeometry, BufferAttribute, BufferGeometry, ConeGeometry, CylinderGeometry, DataTexture, DoubleSide, Group, Line, LineBasicMaterial, Matrix4, Mesh, MeshLambertMaterial, Object3D, Quaternion, SRGBColorSpace, Skeleton, SkinnedMesh, TextureLoader, TorusGeometry, CircleGeometry, Vector3 } from 'three';
 import { assetUrl } from '../core/assets';
 import { BOW_STRING, buildArrow, buildBow } from './bow';
 import { buildGuardBladeShield, buildGuardBladeSword } from './guardBlade';
@@ -65,6 +65,17 @@ for (const tier of [2, 3, 4, 5]) {
 }
 const SHIELD_BUILDERS = { shield_small: buildGuardBladeShield, shield_great: buildGreatShield, blade_left: buildTwinBlade } as const;
 export type ShieldKind = keyof typeof SHIELD_BUILDERS;
+function gatherModel(model:WeaponModel,style:'ore'|'bone',rank:number):WeaponModel{
+ const colors=style==='ore'?[0x6f838c,0x8db2be,0xacc9d0,0x8bc5d6]:[0xb6a17c,0xd0ba94,0xe2d4b4,0xece0c5];
+ const surface=new MeshLambertMaterial({color:colors[rank-1],flatShading:style==='ore'});
+ model.group.traverse(o=>{if(o instanceof Mesh)o.material=surface;});return model;
+}
+for(const style of ['ore','bone'] as const)for(const rank of [1,2,3,4])for(const [family,build] of Object.entries(WEAPON_BUILDERS)){
+ const key=`model.weapon.${family}.${style}.r${rank}`;
+ MODEL_BUILDERS[key]=()=>gatherModel(build(),style,rank);
+ const off=family==='guard_blade'?SHIELD_BUILDERS.shield_small:family==='long_lance'?SHIELD_BUILDERS.shield_great:family==='twin_blades'?SHIELD_BUILDERS.blade_left:null;
+ if(off)OFFHAND_MODEL_BUILDERS[key]=()=>gatherModel(off(),style,rank);
+}
 
 /** 両腕の持ち方。two = 両手で 1 本を持つ（もう片方は握りから along だけ先）/ other = もう片方の手の位置（武器のローカル座標。弓の弦） */
 export interface HandsSpec {
@@ -90,6 +101,8 @@ export class HunterRig {
   readonly weapon = new Group();
   /** 採掘の時だけ右手に持つ、借りた採掘道具（v0.27.0。狩らない依頼。見た目だけ） */
   readonly tool = new Group();
+  readonly netTool = new Group();
+  readonly fishTool = new Group();
   readonly shield = new Group();
   familyId = '';
   /** いま手に持たせている形（武器ごとの形があればモデルの ID、無ければ系統の ID） */
@@ -259,6 +272,15 @@ export class HunterRig {
       this.tool.visible = false;
       this.tool.name = 'tool_pick';
       this.sockets.hand_r.add(this.tool);
+    }
+    {
+      const wood=new MeshLambertMaterial({color:0x856447}),rim=new MeshLambertMaterial({color:0x99886b}),net=new MeshLambertMaterial({color:0xe7e0c5,side:DoubleSide,transparent:true,opacity:.38,depthWrite:false});
+      const h=new Mesh(new CylinderGeometry(.024,.031,.83,8),wood);h.position.y=.34;
+      const hoop=new Mesh(new TorusGeometry(.27,.023,6,24),rim);hoop.position.y=.95;
+      const web=new Mesh(new CircleGeometry(.25,24),net);web.position.y=.95;this.netTool.add(h,hoop,web);
+      const rod=new Mesh(new CylinderGeometry(.009,.027,1.55,8),wood);rod.position.y=.68;
+      const line=new Line(new BufferGeometry().setFromPoints([new Vector3(0,1.45,0),new Vector3(0,1.60,-.15),new Vector3(0,1.36,-.70)]),new LineBasicMaterial({color:0xd2dfdc}));
+      this.fishTool.add(rod,line);this.netTool.visible=false;this.fishTool.visible=false;this.sockets.hand_r.add(this.netTool,this.fishTool);
     }
 
     // 腰の socket: 短い剣を納める（握りが左腰の前寄り、刃は後ろ下へ）。右手が届く位置にしてある。

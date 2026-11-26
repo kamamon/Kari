@@ -52,6 +52,8 @@ export type SimEvent =
   | { type: 'errand_gather'; nodeId: string; itemId: string; count: number; total: number; kind: 'gather' | 'mine'; pos: V3 }
   /** 狩らない依頼: 納品箱へ納めた（達成は、この tick の終わりに決まる） */
   | { type: 'errand_deliver'; pos: V3 }
+  | { type:'field_gather'; nodeId:string; itemId:string; count:number; kind:import('../data/fieldGathering').FieldGatherKind; remaining:number; pos:V3 }
+  | { type:'field_gather_miss'; kind:'fish' }
   | { type: 'monster_dead'; target: string }
   /**
    * モンスターの状態異常（v0.33.0）: 付いた（on）・消えた。poison は体力が減っていく間、para / sleep / stun は動けない間。

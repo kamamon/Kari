@@ -62,6 +62,7 @@ export function receptionGroups(
 export function questActivity(quest: QuestDef): QuestActivity {
   if (quest.kind !== 'gather') return quest.kind;
   const gather = quest.gather;
+  if(gather?.fieldGathering)return 'gather';
   if (!gather || gather.nodes.length === 0 || gather.needs.length !== 1) return 'field_delivery';
   if (gather.nodes.every((node) => node.kind === 'mine')) return 'mining';
   if (gather.nodes.every((node) => node.kind === 'gather')) return 'gather';

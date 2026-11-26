@@ -46,6 +46,11 @@ describe('防具の見た目: 何を着ると、何が付くか', () => {
     const content = await loadContent();
     for (const a of content.armor.values()) {
       // 系列の装備（v0.32.0〜）は、まだ見た目が無い（里の服のまま。仮）
+      if(a.series?.startsWith('gathering.')){
+        const tier=Number(a.rankId!.slice(-1));
+        expect(armorTierOf(a.assetId),a.id).toBe((a.series==='gathering.ore_only'?10:20)+tier);
+        continue;
+      }
       if (a.series) {
         expect(a.assetId, a.id).toBeUndefined();
         continue;

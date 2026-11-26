@@ -1,7 +1,12 @@
 {
   "schemaVersion": 1,
   "contentVersion": "0.60.0",
-  "motionSets": { "current": "2g", "held": { "v056": "motionsets/v056/set.json" } },
+  "motionSets": {
+    "current": "2g",
+    "held": {
+      "v056": "motionsets/v056/set.json"
+    }
+  },
   "files": {
     "actions": [
       "actions/player_common.json",
@@ -154,6 +159,7 @@
       "follow/yurtepica.json",
       "follow/hinasalv.json",
       "follow/galdros.json"
-    ]
+    ],
+    "fieldGathering": "field_gathering.json"
   }
 }
