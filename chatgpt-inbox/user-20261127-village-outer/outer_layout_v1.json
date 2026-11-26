@@ -1,0 +1,608 @@
+{
+  "schemaVersion": 1,
+  "status": "proposal_not_runtime",
+  "updatedJst": "2026-11-27",
+  "project": "Kari/灯継ぎの里",
+  "referenceVersion": "0.59.0",
+  "referenceMainCommit": "6d7aee3dd96d9143a7ac48da0aead6fa853a975b",
+  "currentPlayBounds": {
+    "minX": -46,
+    "maxX": 24,
+    "minZ": -44,
+    "maxZ": 62
+  },
+  "currentTierHeights_m": [
+    -10,
+    -3,
+    0,
+    8,
+    22
+  ],
+  "existingPrimaryGate": {
+    "x": 24,
+    "z": -9
+  },
+  "existingClosedValleyGate": {
+    "x": 16,
+    "z": -44
+  },
+  "sceneryCoordinateContract": "Proposal centers are not HubSceneryDef; never paste them into public/data/hub.json or colliders without collision/path tests.",
+  "perimeterRules": {
+    "keepAllExistingFacilities": true,
+    "noNewGameplayRoutes": true,
+    "noSecondWaterwheel": true,
+    "avoidExistingMountainZ70Clashes": true,
+    "threeLayers": [
+      "near",
+      "mid",
+      "far"
+    ],
+    "waterflowsDownhill": true,
+    "avoidSkyboxHardEdges": true
+  },
+  "placements": [
+    {
+      "id": "outer.west.forest",
+      "label": "西の杉・針葉樹帯",
+      "depth": "near",
+      "position_m": {
+        "x": -70,
+        "z": 14,
+        "y": 9
+      },
+      "type": "dense_forest",
+      "render": "3D trees, instanced trunks, varied canopy",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.west.cliff",
+      "label": "西の縦崖と岩棚",
+      "depth": "near",
+      "position_m": {
+        "x": -54,
+        "z": 25,
+        "y": 12
+      },
+      "type": "cliff_gallery",
+      "render": "rock mesh + timber ledges; no floating walls",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.west.aqueduct",
+      "label": "水車へ続く木樋",
+      "depth": "near",
+      "position_m": {
+        "x": -51,
+        "z": -33,
+        "y": -6
+      },
+      "type": "aqueduct",
+      "render": "slope downhill toward existing waterwheel; no second wheel",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.west.cave",
+      "label": "暮らしの資材洞",
+      "depth": "mid",
+      "position_m": {
+        "x": -82,
+        "z": 42,
+        "y": 20
+      },
+      "type": "sheltered_cave",
+      "render": "warm lantern inside, no entrance to unimplemented interior",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.west.shrine",
+      "label": "小さな祈りの道標",
+      "depth": "mid",
+      "position_m": {
+        "x": -84,
+        "z": 18,
+        "y": 18
+      },
+      "type": "wayside_shelter",
+      "render": "original waymarker; restrained no copied shrine",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.west.falls",
+      "label": "西の分水瀑布",
+      "depth": "mid",
+      "position_m": {
+        "x": -77,
+        "z": -38,
+        "y": -8
+      },
+      "type": "waterfall",
+      "render": "falls connect physically to watercourse; distinct stream",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.west.baths",
+      "label": "谷湯の湯気",
+      "depth": "mid",
+      "position_m": {
+        "x": -95,
+        "z": 15,
+        "y": 28
+      },
+      "type": "hotspring_steam",
+      "render": "partially occluded bath pavilion; steam not on waterwheel",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.west.switchback",
+      "label": "岩沿いの折返し路",
+      "depth": "mid",
+      "position_m": {
+        "x": -74,
+        "z": 56,
+        "y": 35
+      },
+      "type": "switchback",
+      "render": "decorative distant footpath, not yet navigable",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.west.farm",
+      "label": "山畑の段",
+      "depth": "mid",
+      "position_m": {
+        "x": -86,
+        "z": 85,
+        "y": 45
+      },
+      "type": "terraced_garden",
+      "render": "hand-tended crop beds, subtly inhabited",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.west.shed",
+      "label": "谷側の資材小屋",
+      "depth": "near",
+      "position_m": {
+        "x": -55,
+        "z": -44,
+        "y": -7
+      },
+      "type": "shed",
+      "render": "timber support and stable rock footing",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.east.trail",
+      "label": "東の尾根道",
+      "depth": "near",
+      "position_m": {
+        "x": 43,
+        "z": -7,
+        "y": 3
+      },
+      "type": "edge_trail",
+      "render": "visually continues from hunting gate x24 z-9",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.east.bridge_anchor",
+      "label": "東の吊橋橋台",
+      "depth": "near",
+      "position_m": {
+        "x": 59,
+        "z": 30,
+        "y": 9
+      },
+      "type": "bridge_anchor",
+      "render": "must have both anchors and stable end geometry",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.east.gorge",
+      "label": "東の深い沢筋",
+      "depth": "mid",
+      "position_m": {
+        "x": 112,
+        "z": -15,
+        "y": -23
+      },
+      "type": "ravine",
+      "render": "strong layered parallax and fog",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.east.falls",
+      "label": "東崖の落水",
+      "depth": "mid",
+      "position_m": {
+        "x": 118,
+        "z": 10,
+        "y": -6
+      },
+      "type": "waterfall",
+      "render": "feeds the lower gorge, not duplicated at wheel",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.east.cargo",
+      "label": "荷揚げの遠景索道",
+      "depth": "mid",
+      "position_m": {
+        "x": 67,
+        "z": -40,
+        "y": 12
+      },
+      "type": "cargo_cable",
+      "render": "visual cable tension and believable origin/termination",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.east.outpost",
+      "label": "尾根の見張り小屋",
+      "depth": "mid",
+      "position_m": {
+        "x": 96,
+        "z": 64,
+        "y": 38
+      },
+      "type": "outpost",
+      "render": "lit roof, small, no castle",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.east.shed",
+      "label": "崖上の物置",
+      "depth": "near",
+      "position_m": {
+        "x": 36,
+        "z": 44,
+        "y": 27
+      },
+      "type": "storehouse",
+      "render": "out-of-play world, clearly noninteractable",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.east.woodbridge",
+      "label": "尾根道の細橋",
+      "depth": "mid",
+      "position_m": {
+        "x": 131,
+        "z": 71,
+        "y": 43
+      },
+      "type": "rope_bridge",
+      "render": "secondary bridge distinct from traversable central bridge",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.south.entry",
+      "label": "帰還口の山道と柵",
+      "depth": "near",
+      "position_m": {
+        "x": 11,
+        "z": -77,
+        "y": -11
+      },
+      "type": "approach",
+      "render": "looks like return route, no false playable route",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.south.stream",
+      "label": "足下の沢の続き",
+      "depth": "near",
+      "position_m": {
+        "x": -19,
+        "z": -72,
+        "y": -14
+      },
+      "type": "river",
+      "render": "continues below -10m tier",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.south.warehouse",
+      "label": "河岸の遠い荷場",
+      "depth": "mid",
+      "position_m": {
+        "x": -66,
+        "z": -96,
+        "y": -17
+      },
+      "type": "cargo_yard",
+      "render": "tiny warm lights and stacked cargo",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.south.pines",
+      "label": "手前の枝と赤葉",
+      "depth": "near",
+      "position_m": {
+        "x": 42,
+        "z": -60,
+        "y": 8
+      },
+      "type": "canopy",
+      "render": "foreground frame; don't obscure interaction UI",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.north.rocks",
+      "label": "灯見の台背後の高峰",
+      "depth": "mid",
+      "position_m": {
+        "x": -4,
+        "z": 108,
+        "y": 53
+      },
+      "type": "ridge",
+      "render": "existing back rocks at z70 must transition into it",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.north.lights",
+      "label": "見張り灯の尾根連続",
+      "depth": "mid",
+      "position_m": {
+        "x": 43,
+        "z": 119,
+        "y": 56
+      },
+      "type": "watchtower",
+      "render": "small distant beacons, do not replace existing top-tier lamp",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.north.woodwalk",
+      "label": "山肌の桟道",
+      "depth": "mid",
+      "position_m": {
+        "x": -48,
+        "z": 113,
+        "y": 38
+      },
+      "type": "cliff_walk",
+      "render": "out-of-play passage, no implied accessible gate",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.north.arch",
+      "label": "山の古い岩門",
+      "depth": "mid",
+      "position_m": {
+        "x": 94,
+        "z": 125,
+        "y": 52
+      },
+      "type": "natural_arch",
+      "render": "natural geomorphology, original",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.far.west",
+      "label": "遠い西の稜線",
+      "depth": "far",
+      "position_m": {
+        "x": -400,
+        "z": 260,
+        "y": 160
+      },
+      "type": "mountain_ridge",
+      "render": "blue-gray layered fog, silhouette only",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.far.east",
+      "label": "遠い東の稜線",
+      "depth": "far",
+      "position_m": {
+        "x": 440,
+        "z": 320,
+        "y": 185
+      },
+      "type": "mountain_ridge",
+      "render": "lower contrast than village",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.far.valley",
+      "label": "雲海の谷",
+      "depth": "far",
+      "position_m": {
+        "x": 120,
+        "z": -480,
+        "y": -60
+      },
+      "type": "cloud_valley",
+      "render": "low-cost panorama, no collisions",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.far.peaks",
+      "label": "奥の雪なしの岩峰",
+      "depth": "far",
+      "position_m": {
+        "x": 60,
+        "z": 710,
+        "y": 260
+      },
+      "type": "mountain_peaks",
+      "render": "do not overpower warm village",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.far.pinelines",
+      "label": "尾根の針葉樹帯",
+      "depth": "far",
+      "position_m": {
+        "x": -240,
+        "z": 220,
+        "y": 142
+      },
+      "type": "forest_ridge",
+      "render": "compressed silhouettes in haze",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    },
+    {
+      "id": "outer.far.tower",
+      "label": "遠い監視灯",
+      "depth": "far",
+      "position_m": {
+        "x": 300,
+        "z": 280,
+        "y": 155
+      },
+      "type": "distant_beacon",
+      "render": "tiny warm amber point only",
+      "collision": "none",
+      "interactable": false,
+      "navigable": false,
+      "proposal": true
+    }
+  ],
+  "cameraReview": [
+    {
+      "id": "plaza",
+      "x": 0,
+      "y": 1.7,
+      "z": 0,
+      "check": "east gate / south valley / far silhouettes"
+    },
+    {
+      "id": "forge",
+      "x": -34,
+      "y": -1.3,
+      "z": 10,
+      "check": "west mountain and waterfall continuation"
+    },
+    {
+      "id": "dock",
+      "x": -30,
+      "y": -8.3,
+      "z": -30,
+      "check": "watercourse, cliff scale, no wheel duplicate"
+    },
+    {
+      "id": "lodge",
+      "x": -33,
+      "y": 9.7,
+      "z": 31,
+      "check": "visual continuity above village roofs"
+    },
+    {
+      "id": "lookout",
+      "x": -25,
+      "y": 23.7,
+      "z": 54,
+      "check": "no empty horizon or clipping in every camera direction"
+    },
+    {
+      "id": "hunting_gate",
+      "x": 23,
+      "y": 1.7,
+      "z": -9,
+      "check": "trail appears continuous but interaction remains existing"
+    },
+    {
+      "id": "closed_valley",
+      "x": 16,
+      "y": -8.3,
+      "z": -43,
+      "check": "closed gate remains visibly impassable"
+    }
+  ]
+}
