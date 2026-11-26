@@ -715,3 +715,96 @@ button.reception-desk { cursor: pointer; }
 .field-map-svg .tgt { fill: #e0606a; stroke: #2a1010; stroke-width: 1.2; }
 .field-map-svg .tgt.marked { fill: #ffd678; }
 
+
+
+/* ---- 依頼帳（2026-11-27）: 級 → 星 → 名前の一覧と紙の依頼書。受付だけに適用。 ---- */
+#base[data-section="quest"][data-reception="counter"] .base-card {
+  width: min(100%, 72rem); padding: 8px 12px; gap: 5px;
+  background: linear-gradient(120deg, #302b21, #1d2924 45%, #20271f);
+  border: 1px solid #a28a59;
+  box-shadow: inset 0 0 0 3px #30281d, 0 8px 35px #0008;
+}
+#base[data-section="quest"][data-reception="counter"] .base-heading h2 { color: #e9d5a7; font-size: 17px; margin: 0; }
+#base[data-section="quest"][data-reception="counter"] .base-lead { display: none; }
+#base[data-section="quest"][data-reception="counter"] .base-banners { max-height: 34px; }
+.reception-classic { display: grid; grid-template-columns: minmax(0, 43%) minmax(0, 1fr); gap: 9px; flex: 1 1 auto; min-height: 0; }
+.reception-classic-menu, .reception-classic-paper { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
+.reception-classic-menu { background: #182820; border: 1px solid #756546; padding: 5px; border-radius: 2px; }
+.reception-classic-heading { margin: 0; padding: 5px 6px; font-size: 14px; line-height: 1.45; color: #ead6a7; font-weight: 700; }
+.reception-levels { display: flex; flex-direction: column; gap: 5px; padding: 4px; }
+.reception-classic .reception-level { justify-content: space-between; flex: 0 0 auto; width: 100%; min-height: 47px; padding: 7px 10px; border-radius: 2px; background: #24362a; border-color: #746847; color: #eaddbd; }
+.reception-classic .reception-level b { font-size: clamp(14px, 2.1vw, 20px); color: #dfba63; letter-spacing: 0; overflow-wrap: anywhere; }
+.reception-classic .reception-level span { font-size: 12px; white-space: nowrap; }
+.reception-classic .reception-level[aria-pressed="true"] { background: #a98a52; color: #1c251c; border-color: #ebca8a; }
+.reception-classic .reception-level[aria-pressed="true"] b { color: #232a1e; }
+.reception-classic .reception-level:focus-visible { outline: 2px solid #f2dba0; outline-offset: -3px; }
+.reception-classic-listhead { display: flex; align-items: center; justify-content: space-between; flex: 0 0 auto; gap: 3px; }
+.reception-classic-listhead .reception-back { min-height: 44px; font-size: 12px; padding: 4px 8px; white-space: nowrap; }
+.reception-classic-listhead .reception-classic-heading { text-align: right; padding: 2px; font-size: 13px; }
+.reception-classic .reception-count { margin: 0; color: #c0c0a5; padding: 3px 5px; }
+.reception-classic .reception-list { gap: 2px; }
+.reception-classic .reception-row {
+  display: grid; grid-template-columns: minmax(34px, 72px) minmax(0, 1fr) auto; align-items: center; gap: 5px;
+  min-height: 44px; padding: 4px 6px; border-radius: 2px; background: #24332a; border-color: #40503c;
+}
+.reception-classic .reception-row[aria-pressed="true"] { background: #a88850; border-color: #e5c37d; color: #151c16; box-shadow: inset 3px 0 #f1d59a; }
+.reception-classic .reception-row-text { gap: 1px; }
+.reception-classic .reception-row-name { font-size: 13px; line-height: 1.35; }
+.reception-classic .reception-row-meta, .reception-classic .reception-row-state { font-size: 10.5px; color: #d8d4ba; }
+.reception-classic .reception-row[aria-pressed="true"] :is(.reception-row-name,.reception-row-meta,.reception-row-state) { color: #182015; }
+.reception-classic .reception-row.locked { background: #202923; }
+.reception-classic .reception-row.locked[aria-pressed="true"] { background: #8b8065; }
+.reception-classic .reception-row .quest-mini-icons { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 2px; }
+.reception-classic .reception-row .quest-mini-target { position: relative; display: block; flex: 0 0 auto; width: auto; }
+.reception-classic .reception-row .quest-mini-picture, .reception-classic .reception-row .quest-mini-image { width: 32px; height: 28px; flex: 0 0 32px; border-radius: 2px; }
+.reception-classic .reception-row .quest-mini-label { display: none; }
+.reception-classic .reception-row .quest-mini-target::after { content: '×' attr(data-count); position: absolute; right: 0; bottom: 0; background: #222c21; color: #ffeed0; padding: 0 2px; font-size: 9px; line-height: 11px; }
+.reception-classic .reception-row .quest-category-glyph { font-size: 17px; }
+.reception-classic-paper { color: #2e2a1f; border: 1px solid #9b8053; border-radius: 3px; background: linear-gradient(120deg, #eadbb8 0%, #f4e8cb 45%, #dfcba2 100%); box-shadow: inset 0 0 16px #a4824730; }
+.reception-classic-intro { flex: 0 0 auto; padding: 22px 12px 8px; font-size: 24px; letter-spacing: .14em; text-align: center; color: #5d4328; font-weight: 700; }
+.reception-classic-guide { margin: 8px 12px; font-size: 14px; line-height: 1.7; }
+.reception-classic-tip { margin: auto 12px 12px; color: #65583f; font-size: 12px; }
+.reception-classic-paper > .quest-recommend { margin: 10px 12px; border-left-color: #946c36; color: #433a2b; background: #9e703114; overflow-y: auto; min-height: 0; }
+.reception-classic .reception-classic-detail { padding: 10px 13px; color: #2e2a1f; }
+.reception-paper-kicker { margin: 0 0 4px; font-size: 10px; font-weight: 700; letter-spacing: .14em; color: #695a3b; }
+.reception-classic .reception-detail-title { margin-bottom: 6px; padding-bottom: 5px; font-size: 19px; color: #49321f; border-bottom: 1px solid #9b805580; }
+.reception-classic .reception-detail > .quest-mini-icons { margin-bottom: 6px; }
+.reception-classic .reception-detail .quest-mini-label { color: #3b3022; }
+.reception-classic .reception-facts { grid-template-columns: 6.4em minmax(0,1fr); font-size: 12px; margin: 4px 0 8px; line-height: 1.5; }
+.reception-classic .reception-facts dt, .reception-classic .reception-facts dd { border-bottom-color: #aa926660; padding: 3px 5px; }
+.reception-classic .reception-facts dt { color: #655436; font-weight: 700; }
+.reception-classic :is(.reception-summary, .reception-detail-note, .reception-letter) { font-size: 13px; line-height: 1.65; }
+.reception-classic .reception-letter { background: #fff6df66; color: #3c3021; border-left-color: #a77e3c; padding: 7px 9px; }
+.reception-classic .reception-client { color: #74512d; }
+.reception-classic .reception-locked-note { color: #603522; background: #bc9c6330; border-left-color: #a87743; }
+.reception-classic-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; flex: 0 0 auto; padding: 5px 8px; border-top: 1px solid #b59a6b; background: #dcc89e; }
+.reception-classic-actions .reception-depart { margin: 0; min-height: 44px; background: #3c5340; color: #f9edcf; border-color: #64785a; border-radius: 2px; padding: 7px 9px; }
+.reception-classic-actions .reception-depart:disabled { background: #c1b79d; border-color: #9b8c71; color: #5d5241; }
+.reception-confirm-question { flex: 1 1 100%; margin: 0; font-weight: 700; font-size: 13px; color: #49321f; }
+.reception-confirm-go, .reception-confirm-no { flex: 1 1 0; min-height: 44px; padding: 6px 8px; border: 1px solid #78613d; border-radius: 2px; background: #3c5340; color: #fff1d2; font-weight: 700; }
+.reception-confirm-no { background: #ead9b2; color: #40351f; }
+.reception-confirm-go:focus-visible, .reception-confirm-no:focus-visible { outline: 3px solid #9b6734; outline-offset: -3px; }
+.reception-classic .base-delivery { color: #2e2a1f; border: 1px solid #ae966d; background: #f2e7c8; padding: 8px; }
+.reception-classic .base-delivery .reception-letter { color: #3c3021; }
+.reception-classic .base-delivery .forge-confirm { background: #d8c49b; color: #362e20; }
+.reception-classic .base-delivery button { color: #31291e; background: #e1cfaa; border-color: #97835e; }
+.reception-classic .base-delivery button.go { background: #3c5340; color: #fff1d2; }
+#base[data-section="quest"][data-reception="counter"][data-reception-stage="list"] .reception-extras:not(:has(> details[open])) { display: none; }
+@media (max-width: 620px) {
+  .reception-classic { gap: 5px; grid-template-columns: minmax(0, 46%) minmax(0, 1fr); }
+  .reception-classic-menu { padding: 3px; }
+  .reception-classic .reception-row { grid-template-columns: minmax(28px, 33px) minmax(0, 1fr) auto; gap: 3px; padding: 3px 4px; }
+  .reception-classic .reception-row-name { font-size: 12px; }
+  .reception-classic .reception-row .quest-mini-picture, .reception-classic .reception-row .quest-mini-image { width: 28px; height: 24px; flex-basis: 28px; }
+  .reception-classic .reception-row-state { font-size: 10px; }
+  .reception-classic .reception-classic-detail { padding: 7px 8px; }
+  .reception-classic .reception-detail-title { font-size: 16px; }
+  .reception-classic .reception-facts { grid-template-columns: 4.9em minmax(0,1fr); font-size: 11.5px; }
+  .reception-classic-intro { padding-top: 10px; font-size: 20px; }
+}
+@media (max-height: 430px) {
+  #base[data-section="quest"][data-reception="counter"] .base-card { gap: 3px; padding: 5px 8px; }
+  .reception-classic .reception-row { min-height: 44px; }
+  .reception-classic .reception-classic-detail { padding-top: 6px; }
+  .reception-classic-actions { padding: 3px 6px; }
+}

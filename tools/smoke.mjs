@@ -114,8 +114,10 @@ const receptionRows = (page) => page.evaluate(() => {
     base.setOpen(true, 'quest', f.id);
     const stars = [...document.querySelectorAll('.reception-star')].map((b) => b.dataset.stars);
     for (const st of stars) {
+      if (document.querySelector('.reception-row')) document.querySelector('.reception-back').click();
       document.querySelector(`.reception-star[data-stars="${st}"]`).click();
       for (const r of document.querySelectorAll('.reception-row')) out.push({ desk: f.id, rank: r.dataset.rank, stars: Number(r.dataset.stars), id: r.dataset.quest, locked: r.classList.contains('locked'), text: r.textContent });
+      document.querySelector('.reception-back').click();
     }
   }
   base.setOpen(true, 'all');
@@ -130,6 +132,7 @@ const showQuest = async (page, id) => {
 const departQuest = async (page, id) => {
   await showQuest(page, id);
   await page.click(`.reception-depart[data-quest="${id}"]`);
+  await page.click(`.reception-confirm-go[data-quest="${id}"]`);
 };
 /** 訓練場（受付の一覧と初級の受付の下にある） */
 const startTraining = async (page, tap = false) => {
@@ -1292,6 +1295,7 @@ const startTraining = async (page, tap = false) => {
   }), await page.evaluate(() => document.querySelector('.reception-detail')?.textContent?.slice(0, 200) ?? ''));
   await page.screenshot({ path: `${OUT}80_field_base.png` });
   await page.click('.reception-depart[data-quest="quest.basin.003"]');
+  await page.click('.reception-confirm-go[data-quest="quest.basin.003"]');
   await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
   const hudField = () => page.evaluate(() => {
     const s = window.__vh.sim, m = s.monsters[0];
@@ -3026,19 +3030,32 @@ const startTraining = async (page, tap = false) => {
   // v0.38.0（ChatGPT の #17）: 依頼は級ごとの受付で、星ごとの短い一覧 → 詳細
   const boardRows = await receptionRows(page);
   const boardInfo = boardRows.map((r) => `${r.id}:${r.stars}`);
-  check('依頼の掲示: 39 件（狩り 33・狩らない 5・里の納品 1）が、4 つの受付の星ごとの一覧に 1 度ずつ。主線・昇級確認の札と、制限時間・報酬が行に出る。里の納品は、まだ', boardRows.length === 39 && new Set(boardRows.map((r) => r.id)).size === 39
+  check('依頼の掲示: 39 件（狩り 33・狩らない 5・里の納品 1）が、4 つの受付の星ごとの一覧に 1 度ずつ。主線・昇級確認の札が短い行に出る。里の納品は、まだ', boardRows.length === 39 && new Set(boardRows.map((r) => r.id)).size === 39
     && boardRows.every((r) => r.stars >= 1 && r.stars <= 8) && /主線/.test(boardRows.find((r) => r.id === 'quest.basin.003')?.text ?? '') && /昇級確認/.test(boardRows.find((r) => r.id === 'quest.basin.r4.001')?.text ?? '')
-    && /30 分/.test(boardRows.find((r) => r.id === 'quest.basin.003')?.text ?? '') && /未解放/.test(boardRows.find((r) => r.id === 'quest.delivery.009')?.text ?? '') && boardRows.find((r) => r.id === 'quest.basin.r4.001')?.stars === 8,
+    && !/30 分/.test(boardRows.find((r) => r.id === 'quest.basin.003')?.text ?? '') && /未解放/.test(boardRows.find((r) => r.id === 'quest.delivery.009')?.text ?? '') && boardRows.find((r) => r.id === 'quest.basin.r4.001')?.stars === 8,
     JSON.stringify(boardInfo).slice(0, 300));
   await page.evaluate(() => window.__vh.base.setOpen(true, 'quest', 'board'));
   check('初級の受付: おすすめの順の案内・星の札（件数つき）・押しても出発しない行。訓練場と物語は下にまとめてある', await page.evaluate(() => /おすすめ/.test(document.querySelector('.quest-recommend')?.textContent ?? '')
-    && [...document.querySelectorAll('.reception-star')].every((b) => /件/.test(b.textContent)) && document.querySelectorAll('.reception-row').length > 0 && !document.querySelector('.reception-training').hidden && !!document.querySelector('.reception-story-fold')));
+    && [...document.querySelectorAll('.reception-star')].every((b) => /件/.test(b.textContent)) && document.querySelectorAll('.reception-row').length === 0 && !document.querySelector('.reception-training').hidden && !!document.querySelector('.reception-story-fold')));
+  check('星選択から依頼帳へ: 一覧と依頼書を同時に表示し、選択しても出発しない', await page.evaluate(() => {
+    document.querySelector('.reception-star[data-stars="2"]').click();
+    const row = document.querySelector('.reception-row[data-quest="quest.basin.003"]');
+    row.click();
+    return row.dataset.rank === 'rank.1' && !!document.querySelector('.reception-list') && !!document.querySelector('.reception-detail .reception-letter') && !window.__vh.sim.hunt;
+  }));
   await showQuest(page, 'quest.basin.003');
   check('依頼の詳細: 星の列（★★☆☆☆☆☆☆ 2 / 8）・目標・制限時間・目安・報酬・依頼人の話。開いても出発しない', await page.evaluate(() => {
     const d = document.querySelector('.reception-detail');
     return !!d && /★★☆☆☆☆☆☆ 2 \/ 8/.test(d.textContent) && /クリアの目安/.test(d.textContent) && document.querySelector('.reception-letter').textContent.length > 100 && !document.getElementById('base').hidden && !window.__vh.sim.hunt;
   }), await page.evaluate(() => document.querySelector('.reception-detail')?.textContent?.slice(0, 200) ?? ''));
   await page.screenshot({ path: `${OUT}9z_quest_board.png` });
+  await page.click('.reception-depart[data-quest="quest.basin.003"]');
+  check('受注の確認: まだ出発しない。やめると同じ依頼帳へ戻る', await page.evaluate(() => {
+    const confirm = document.querySelector('.reception-confirm-go[data-quest="quest.basin.003"]');
+    if (!confirm || window.__vh.sim.hunt) return false;
+    document.querySelector('.reception-confirm-no').click();
+    return !!document.querySelector('.reception-depart[data-quest="quest.basin.003"]') && document.querySelector('.reception-row[data-quest="quest.basin.003"]').getAttribute('aria-pressed') === 'true';
+  }));
   // 第 1 章の 2 件を達成した保存データにする（保存の管理役から。岩殻片 2）
   await page.evaluate(async () => {
     const s = window.__vh.save;
@@ -3103,6 +3120,7 @@ const startTraining = async (page, tap = false) => {
     && /採集/.test(er.find((r) => r.id === 'quest.gather.001')?.text ?? '') && /採掘/.test(er.find((r) => r.id.startsWith('quest.mine.'))?.text ?? '')
     && /ヒラナギの葉 6 枚/.test(g1) && /15 分/.test(g1) && /4〜6分/.test(g1) && /大型・幼体は出ません/.test(g1), JSON.stringify({ er: er.map((r) => r.id), g1: g1.slice(0, 160) }));
   await page.click('.reception-depart[data-quest="quest.gather.001"]');
+  await page.click('.reception-confirm-go[data-quest="quest.gather.001"]');
   await until(page, () => window.__vh.sim.errand && window.__vh.sim.tick > 5);
   check('出発すると、野営地から。大型も幼体も出ない。HUD の目標は「ヒラナギの葉 0 / 6」、地図には採取点のあるエリア', await page.evaluate(() => {
     const s = window.__vh.sim;
