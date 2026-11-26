@@ -1,0 +1,80 @@
+{
+  "artifactType": "proposal-static-validation",
+  "baseline": "main v0.59.0 (current source at validation)",
+  "validationScope": "proposal geometry + schema-lite only, not runtime tests",
+  "status": "FAILED",
+  "counts": {
+    "points": 61,
+    "pointsByKind": {
+      "plant": 13,
+      "mine": 21,
+      "bone": 15,
+      "insect": 11,
+      "fish": 1
+    },
+    "pointsByArea": {
+      "camp": 4,
+      "a1": 5,
+      "a2": 7,
+      "a3": 5,
+      "a4": 5,
+      "a5": 6,
+      "a6": 6,
+      "a7": 7,
+      "a8": 4,
+      "a9": 6,
+      "a10": 6
+    },
+    "biomes": 20,
+    "materialDefs": 60,
+    "globalLootTables": 40,
+    "basinEcologyLootTables": 24,
+    "equipmentPieces": 96,
+    "weapons": 56,
+    "armor": 40,
+    "directCrafts": 96,
+    "upgrades": 72
+  },
+  "checks": {
+    "uniqueNodeId": true,
+    "uniqueMaterialId": true,
+    "uniqueGearId": true,
+    "uniqueRecipeId": true,
+    "uniqueGlobalLootIds": true,
+    "uniqueBasinLootIds": true,
+    "validRankIds": true,
+    "knownFieldIds": true,
+    "noNonGatherMaterials": true,
+    "rareRequiredFromRank2": false
+  },
+  "geometry": {
+    "minRockClearanceM": 2.0453757229387324,
+    "minExitDistanceM": 9.518928511129818,
+    "maxDistanceToNavM": 17.007351351694954,
+    "minSameAreaNodeSpacingM": 5.798275605729662,
+    "minClimbDistanceM": 6.266258851978561,
+    "minVaultDistanceM": 5.640221626851182
+  },
+  "errors": [
+    "false check rareRequiredFromRank2"
+  ],
+  "notTested": [
+    "gameplay insertion",
+    "real ground height and walkability",
+    "occlusion and camera",
+    "cliff or platform geometry conflict",
+    "monster collision",
+    "fish pond or water surface existence",
+    "save migration",
+    "tool animation and audio",
+    "FPS and iPhone controls",
+    "rare loot statistical balance"
+  ],
+  "warnings": [
+    "Fish node a5 requires newly authored water surface; disabled until then",
+    "Other 19 fields only have ecological placement rules, not coordinates",
+    "Global plant/insect/fish tier pools require ecological filtering; basin overrides prevent cross-biome drops",
+    "Ranks, tool durability, damage, recipe costs and loot odds are proposed values",
+    "Only chatgpt-inbox/012 changed; no production code has been modified"
+  ]
+}
