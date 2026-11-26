@@ -614,12 +614,14 @@ export class BaseScreen {
       const d = el('details', `bestiary-item bestiary-field ${f.fieldId ? 'implemented' : 'planned'}`);
       d.dataset.field = f.name;
       const here = b.species.filter((x) => x.habitat === f.name);
+      const gatheringOnly = !!f.fieldId && f.fieldId !== 'field.basin';
       const sum = el('summary');
-      sum.append(el('b', undefined, f.name), el('span', 'tags', f.terrain), el('span', 'state', f.fieldId ? '歩ける' : '案'));
+      sum.append(el('b', undefined, f.name), el('span', 'tags', f.terrain), el('span', 'state', gatheringOnly ? '採取可（暫定）' : f.fieldId ? '歩ける' : '案'));
       d.appendChild(sum);
       const dl = el('dl');
       if (f.mood) dl.append(el('dt', undefined, '天気・光・音'), el('dd', undefined, f.mood));
-      dl.append(el('dt', undefined, 'ここに出る種'), el('dd', undefined, here.map((x) => `${x.title} ${x.name}`).join('、') || '—'));
+      dl.append(el('dt', undefined, gatheringOnly ? '生息予定の種' : 'ここに出る種'), el('dd', undefined, here.map((x) => `${x.title} ${x.name}`).join('、') || '—'));
+      if (gatheringOnly) dl.append(el('dt', undefined, '現在の実装'), el('dd', undefined, '採取ツアー専用の暫定地形。専用景観・大型の狩猟は未実装。'));
       // 景色の原画（v0.23.0。ChatGPT の追加原画。地形を作る前の絵で、ゲームの中の形ではない）。開いた時に読む
       const art = fieldArtUrl(f.name);
       if (art) {
