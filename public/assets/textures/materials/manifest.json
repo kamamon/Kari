@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "source": "ChatGPT image generation, 2026-11-27 JST; seamless edge blend, resized, WebP",
+  "materials": [
+    {
+      "name": "wood",
+      "file": "wood.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 43756,
+      "gitBlob": "e4ba7e1838a9a9e574d946519be066618fa2c6a1"
+    },
+    {
+      "name": "masonry",
+      "file": "masonry.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 70972,
+      "gitBlob": "8e71fcad2773b8895f520556c1bf768eb6e0b6b5"
+    },
+    {
+      "name": "roof",
+      "file": "roof.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 34186,
+      "gitBlob": "089051e30edf36337e0f46a87899ac0228133515"
+    },
+    {
+      "name": "bronze",
+      "file": "bronze.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 33812,
+      "gitBlob": "25be6d8603d3c6c51b547f4e8d6d0281f290b457"
+    },
+    {
+      "name": "cloth",
+      "file": "cloth.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 78070,
+      "gitBlob": "3b07e4a45d464c94170b2f3b285e13b3f62843d1"
+    },
+    {
+      "name": "earth",
+      "file": "earth.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 60178,
+      "gitBlob": "81b855ddbddf9149fd6c54ee49cea55e98e5f231"
+    },
+    {
+      "name": "grass",
+      "file": "grass.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 88220,
+      "gitBlob": "f667be25f9e93a921cb730902d294dfb470b6d72"
+    },
+    {
+      "name": "cliff",
+      "file": "cliff.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 78942,
+      "gitBlob": "8ae1ec95947731c4476bbe77b27aeefb1e60a449"
+    },
+    {
+      "name": "bark",
+      "file": "bark.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 76214,
+      "gitBlob": "46b2c0455c71c12aa552e90c1981995a62639bbe"
+    },
+    {
+      "name": "moss",
+      "file": "moss.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 72498,
+      "gitBlob": "53a00fe450b2d4083ca72e3db1408906fadee5b9"
+    }
+  ]
+}
