@@ -1,261 +1,237 @@
 {
   "schemaVersion": 1,
   "kariActionId": "src/render/view.ts#guard.heavy_blade",
-  "observed2gMove": "大剣・刃を立てて受ける防御姿勢",
+  "observed2gMove": "heavy_bladeのガード構え→受け→反動→復帰",
   "source": [
     {
-      "title": "MHP2G PSP 実況／大剣武器訓練の章（再生位置候補・未視聴）",
-      "url": "https://www.youtube.com/watch?v=gPHJlI8714o&t=3125s",
-      "edition": "PSP 日本版（動画の章表記。動画の各フレームは未確認）",
+      "title": "PSP版MHP2G日本語実況（章の場所だけの参照）",
+      "url": "https://www.youtube.com/watch?v=gPHJlI8714o",
+      "edition": "PSP日本版（動画タイトルによる）",
       "from": "00:52:05",
       "to": "00:59:10",
-      "note": "動画説明欄の章開始・次章開始。技の発生時刻とK0〜K4を測ったものではない"
+      "note": "武器訓練章。ガード受けと反動の各コマを確認していない"
+    },
+    {
+      "title": "CAPCOM公式MHFUゲームガイド（海外PSP版）",
+      "url": "https://static.capcom.com/monsterhunter/MH_LRG.pdf",
+      "edition": "PSP海外版",
+      "from": "該当なし（PDF）",
+      "to": "該当なし（PDF）",
+      "note": "武器・操作の補助資料。具体的な関節角度と時刻は掲載されていない"
     }
   ],
-  "startState": "抜刀中、ガード入力で成立",
+  "startState": "納刀・安全な地面／対象の前。PSPの実際の開始状態は未観測",
   "keys": [
     {
       "key": "K0",
       "time": "未測定",
+      "plannedKariTick": 0,
       "support": "両足",
       "feet": {
         "L": [
-          0.11,
-          0.18,
-          6
+          0.105,
+          0.04,
+          5
         ],
         "R": [
-          -0.13,
-          -0.16,
-          -28
+          -0.105,
+          -0.04,
+          -5
         ]
       },
       "pelvis": {
-        "height": 0.89,
-        "yaw": -8,
-        "pitch": 3,
+        "height": 0.9,
+        "yaw": 0,
+        "pitch": 2,
         "roll": 0
       },
       "chest": {
-        "yaw": -12,
-        "pitch": 4,
+        "yaw": 0,
+        "pitch": 1.3,
         "roll": 0
       },
-      "head": "標的方向。目線・首回転は原作未測定",
+      "head": "視線は対象へ、具体角度は不明",
       "weapon": {
-        "grip": [
-          -0.18,
-          1.02,
-          0.22
-        ],
-        "tip": [
-          -0.355,
-          2.63,
-          -0.445
-        ],
-        "edge": "未測定",
-        "leftHand": "両手で柄を保持する制作案"
+        "grip": "不明",
+        "tip": "不明",
+        "edge": "道具・収納・非武器の動作。対象物の位置は別途設計",
+        "leftHand": "左手の役割は動作ごとに決定。実映像未測定"
       },
-      "root": "0m",
-      "notes": "抜刀した構え。重さを腰と両脚で支える",
-      "valueBasis": "Kari用暫定演技（PSP原作の角度・距離・時刻を測定したものではない）"
+      "root": "原作距離未測定、Kariのsimulation位置を正本とする",
+      "notes": "前方へ武器・盾を向ける",
+      "valueBasis": "Kariモデル向け暫定値。PSP原作の実測・目測ではない"
     },
     {
       "key": "K1",
       "time": "未測定",
-      "support": "両足",
+      "plannedKariTick": 14,
+      "support": "右足",
       "feet": {
         "L": [
-          0.11,
-          0.18,
-          6
+          0.1,
+          0.22,
+          7
         ],
         "R": [
           -0.13,
-          -0.16,
-          -28
+          -0.14,
+          -18
         ]
       },
       "pelvis": {
-        "height": 0.84,
-        "yaw": 2,
-        "pitch": 8,
+        "height": 0.83,
+        "yaw": 0,
+        "pitch": 12,
         "roll": 0
       },
       "chest": {
-        "yaw": 4,
-        "pitch": 4,
+        "yaw": 0,
+        "pitch": 7.800000000000001,
         "roll": 0
       },
-      "head": "標的方向。目線・首回転は原作未測定",
+      "head": "視線は対象へ、具体角度は不明",
       "weapon": {
-        "grip": [
-          -0.26,
-          1.14,
-          0.24
-        ],
-        "tip": [
-          -0.28,
-          2.55,
-          0.54
-        ],
-        "edge": "未測定",
-        "leftHand": "両手で柄を保持する制作案"
+        "grip": "不明",
+        "tip": "不明",
+        "edge": "道具・収納・非武器の動作。対象物の位置は別途設計",
+        "leftHand": "左手の役割は動作ごとに決定。実映像未測定"
       },
-      "root": "0m",
-      "notes": "剣腹を前に掲げる",
-      "valueBasis": "Kari用暫定演技（PSP原作の角度・距離・時刻を測定したものではない）"
+      "root": "原作距離未測定、Kariのsimulation位置を正本とする",
+      "notes": "膝を緩めて肩と前腕を固定する",
+      "valueBasis": "Kariモデル向け暫定値。PSP原作の実測・目測ではない"
     },
     {
       "key": "K2",
       "time": "未測定",
-      "support": "両足",
+      "plannedKariTick": 33,
+      "support": "左足",
       "feet": {
         "L": [
-          0.11,
-          0.18,
-          6
+          0.15,
+          0.27,
+          10
         ],
         "R": [
           -0.13,
-          -0.16,
-          -28
+          -0.17,
+          -20
         ]
       },
       "pelvis": {
-        "height": 0.8,
-        "yaw": 2,
-        "pitch": 15,
+        "height": 0.78,
+        "yaw": 0,
+        "pitch": 17,
         "roll": 0
       },
       "chest": {
-        "yaw": 6,
-        "pitch": 14,
+        "yaw": 0,
+        "pitch": 11.05,
         "roll": 0
       },
-      "head": "標的方向。目線・首回転は原作未測定",
+      "head": "対象の手元／進行方向を見る",
       "weapon": {
-        "grip": [
-          -0.29,
-          1.1,
-          0.28
-        ],
-        "tip": [
-          -0.32,
-          2.65,
-          0.48
-        ],
-        "edge": "未測定",
-        "leftHand": "両手で柄を保持する制作案"
+        "grip": "不明",
+        "tip": "不明",
+        "edge": "道具・収納・非武器の動作。対象物の位置は別途設計",
+        "leftHand": "左手の役割は動作ごとに決定。実映像未測定"
       },
-      "root": "0m",
-      "notes": "衝撃で後足へ荷重を移す",
-      "valueBasis": "Kari用暫定演技（PSP原作の角度・距離・時刻を測定したものではない）"
+      "root": "原作距離未測定、Kariのsimulation位置を正本とする",
+      "notes": "敵の衝撃を受け、骨盤を後方へ送る",
+      "valueBasis": "Kariモデル向け暫定値。PSP原作の実測・目測ではない"
     },
     {
       "key": "K3",
       "time": "未測定",
-      "support": "右足",
+      "plannedKariTick": 48,
+      "support": "両足",
       "feet": {
         "L": [
-          0.11,
-          0.18,
-          6
+          0.1,
+          0.22,
+          7
         ],
         "R": [
           -0.13,
-          -0.16,
-          -28
+          -0.14,
+          -18
         ]
       },
       "pelvis": {
-        "height": 0.84,
+        "height": 0.82,
         "yaw": 0,
-        "pitch": 11,
+        "pitch": 12,
         "roll": 0
       },
       "chest": {
-        "yaw": 3,
-        "pitch": 9,
+        "yaw": 0,
+        "pitch": 7.800000000000001,
         "roll": 0
       },
-      "head": "標的方向。目線・首回転は原作未測定",
+      "head": "視線は対象へ、具体角度は不明",
       "weapon": {
-        "grip": [
-          -0.28,
-          1.16,
-          0.24
-        ],
-        "tip": [
-          -0.29,
-          2.55,
-          0.49
-        ],
-        "edge": "未測定",
-        "leftHand": "両手で柄を保持する制作案"
+        "grip": "不明",
+        "tip": "不明",
+        "edge": "道具・収納・非武器の動作。対象物の位置は別途設計",
+        "leftHand": "左手の役割は動作ごとに決定。実映像未測定"
       },
-      "root": "わずかに後退の可能性",
-      "notes": "前傾へ戻す",
-      "valueBasis": "Kari用暫定演技（PSP原作の角度・距離・時刻を測定したものではない）"
+      "root": "原作距離未測定、Kariのsimulation位置を正本とする",
+      "notes": "足を踏み直し制動する",
+      "valueBasis": "Kariモデル向け暫定値。PSP原作の実測・目測ではない"
     },
     {
       "key": "K4",
       "time": "未測定",
+      "plannedKariTick": 60,
       "support": "両足",
       "feet": {
         "L": [
-          0.11,
-          0.18,
-          6
+          0.105,
+          0.04,
+          5
         ],
         "R": [
-          -0.13,
-          -0.16,
-          -28
+          -0.105,
+          -0.04,
+          -5
         ]
       },
       "pelvis": {
-        "height": 0.89,
-        "yaw": -8,
-        "pitch": 3,
+        "height": 0.9,
+        "yaw": 0,
+        "pitch": 2,
         "roll": 0
       },
       "chest": {
-        "yaw": -12,
-        "pitch": 4,
+        "yaw": 0,
+        "pitch": 1.3,
         "roll": 0
       },
-      "head": "標的方向。目線・首回転は原作未測定",
+      "head": "視線は対象へ、具体角度は不明",
       "weapon": {
-        "grip": [
-          -0.18,
-          1.02,
-          0.22
-        ],
-        "tip": [
-          -0.355,
-          2.63,
-          -0.445
-        ],
-        "edge": "未測定",
-        "leftHand": "両手で柄を保持する制作案"
+        "grip": "不明",
+        "tip": "不明",
+        "edge": "道具・収納・非武器の動作。対象物の位置は別途設計",
+        "leftHand": "左手の役割は動作ごとに決定。実映像未測定"
       },
-      "root": "Kariの行動曲線に従う",
-      "notes": "次の攻撃や回避へ戻れる構え。原作の復帰尺は不明",
-      "valueBasis": "Kari用暫定演技（PSP原作の角度・距離・時刻を測定したものではない）"
+      "root": "原作距離未測定、Kariのsimulation位置を正本とする",
+      "notes": "ガード構えへ戻る",
+      "valueBasis": "Kariモデル向け暫定値。PSP原作の実測・目測ではない"
     }
   ],
-  "weaponPath": "原作未測定。キーの刃先経路はKari向け制作案",
-  "rootMotion": "原作未測定。Kariの既存root曲線を変更する場合は先に比較検証",
-  "contactEvents": "Kari制作案：支持足を残し踏み替える。実映像の順序は未観測",
-  "differencesFromKari": "ガード用の完成アクションIDではなくguard state。刃のガード方向と剣の正規の面の対応を検査",
+  "weaponPath": "武器を用いない動作。道具位置と手の接触は原作未観測",
+  "rootMotion": "Kariのsimulation側の位置を正本とし、原作の距離・移動量は未測定",
+  "contactEvents": "膝接地・立ち直りの仮案。原作の足順・接地順は未観測",
+  "differencesFromKari": "受け・反動・戻りを武器別状態として扱い、原作の実ガード時間と混同しない",
   "unknowns": [
-    "2G原作のK0〜K4の実際の姿勢・足の接触順・腰と胸の角度・握り位置",
-    "原作の発生フレーム、動作終了、前進距離",
-    "映像を直接フレーム検査していない",
-    "ガードによる後退量・反動の時刻"
+    "原作PSP版のK0〜K4姿勢・接地順・効果時刻・所要時間",
+    "動画の該当動作をフレーム単位で未確認"
   ],
-  "kariReference": null,
-  "evidenceStatus": "暫定制作票（技名・入力構成は文献から確認。原作のK0〜K4映像観察は未実施）",
-  "verification": "sourceの時刻は章の範囲であり、攻撃開始・接触時刻ではない"
+  "kariReference": {
+    "rendererState": true,
+    "family": "heavy_blade",
+    "clip": "guard state",
+    "durationTicks": 60
+  },
+  "evidenceStatus": "Kari暫定制作票／原作動画の姿勢を観察したものではない",
+  "timeBasis": "plannedKariTickはKari内の仮の時間。原作フレームではない"
 }

@@ -1,0 +1,285 @@
+{
+  "schemaVersion": 1,
+  "kariActionId": "player.long_lance.thrust2",
+  "observed2gMove": "中段突き二段目",
+  "source": [
+    {
+      "title": "PSP版MHP2G 武器訓練の録画（章の位置のみ確認）",
+      "url": "https://www.youtube.com/watch?v=gPHJlI8714o",
+      "edition": "PSP 日本版（動画表題）",
+      "from": "01:35:52",
+      "to": "01:43:10",
+      "note": "説明欄の章区間であり、各技の秒数ではない。映像そのものは直接確認していない"
+    },
+    {
+      "title": "CAPCOM公式 MHFU 武器解説",
+      "url": "https://static.capcom.com/monsterhunter/MH_LRG.pdf",
+      "edition": "PSP海外版 MHFU",
+      "from": "紙面のため該当なし",
+      "to": "紙面のため該当なし",
+      "note": "技構成・役割の参考。姿勢やタイミングの計測資料ではない"
+    }
+  ],
+  "startState": "抜刀して対象方向を向く。原作の実映像の開始状態は未観測",
+  "keys": [
+    {
+      "key": "K0",
+      "time": "未測定",
+      "plannedKariTick": 0,
+      "support": "両足",
+      "feet": {
+        "L": [
+          0.11,
+          0.14,
+          6
+        ],
+        "R": [
+          -0.13,
+          -0.13,
+          -20
+        ]
+      },
+      "pelvis": {
+        "height": 0.9,
+        "yaw": 0,
+        "pitch": 3,
+        "roll": 0
+      },
+      "chest": {
+        "yaw": 0,
+        "pitch": 2.4000000000000004,
+        "roll": 0
+      },
+      "head": "敵の位置／動作方向。首角度は原作未測定",
+      "weapon": {
+        "grip": [
+          -0.3,
+          1.02,
+          0.1
+        ],
+        "tip": [
+          -0.158,
+          1.185,
+          2.451
+        ],
+        "edge": "刃／打面の向きはKari側で最終確認。2G実映像からは未測定",
+        "leftHand": "左手に盾、右手に武器"
+      },
+      "root": "原作の移動距離は未測定。Kari現行controller曲線は維持",
+      "notes": "始動：前の動作から移り、両足で構える",
+      "valueBasis": "Kari用の暫定創作値。PSP版2Gの測定値・目測値ではない"
+    },
+    {
+      "key": "K1",
+      "time": "未測定",
+      "plannedKariTick": 5,
+      "support": "右足",
+      "feet": {
+        "L": [
+          0.11,
+          0.18,
+          8
+        ],
+        "R": [
+          -0.13,
+          -0.17,
+          -23
+        ]
+      },
+      "pelvis": {
+        "height": 0.85,
+        "yaw": -7,
+        "pitch": 8,
+        "roll": 0
+      },
+      "chest": {
+        "yaw": 0,
+        "pitch": 6.4,
+        "roll": 0
+      },
+      "head": "敵の位置／動作方向。首角度は原作未測定",
+      "weapon": {
+        "grip": [
+          -0.3,
+          1.28,
+          0
+        ],
+        "tip": [
+          -0.158,
+          1.563,
+          2.336
+        ],
+        "edge": "刃／打面の向きはKari側で最終確認。2G実映像からは未測定",
+        "leftHand": "左手に盾、右手に武器"
+      },
+      "root": "原作の移動距離は未測定。Kari現行controller曲線は維持",
+      "notes": "予備動作：支持足を決め腰→胸→腕へ動かす",
+      "valueBasis": "Kari用の暫定創作値。PSP版2Gの測定値・目測値ではない"
+    },
+    {
+      "key": "K2",
+      "time": "未測定",
+      "plannedKariTick": 10,
+      "support": "左足",
+      "feet": {
+        "L": [
+          0.12,
+          0.25,
+          10
+        ],
+        "R": [
+          -0.13,
+          -0.16,
+          -20
+        ]
+      },
+      "pelvis": {
+        "height": 0.8,
+        "yaw": 3,
+        "pitch": 10,
+        "roll": 0
+      },
+      "chest": {
+        "yaw": 0,
+        "pitch": 8,
+        "roll": 0
+      },
+      "head": "敵の位置／動作方向。首角度は原作未測定",
+      "weapon": {
+        "grip": [
+          -0.3,
+          1.07,
+          0.33
+        ],
+        "tip": [
+          -0.3,
+          1.259,
+          2.666
+        ],
+        "edge": "刃／打面の向きはKari側で最終確認。2G実映像からは未測定",
+        "leftHand": "左手に盾、右手に武器"
+      },
+      "root": "原作の移動距離は未測定。Kari現行controller曲線は維持",
+      "notes": "判定／発射／状態切り替え：見た目とゲーム側イベントを一致させる",
+      "valueBasis": "Kari用の暫定創作値。PSP版2Gの測定値・目測値ではない"
+    },
+    {
+      "key": "K3",
+      "time": "未測定",
+      "plannedKariTick": 29,
+      "support": "両足",
+      "feet": {
+        "L": [
+          0.11,
+          0.26,
+          12
+        ],
+        "R": [
+          -0.12,
+          -0.14,
+          -17
+        ]
+      },
+      "pelvis": {
+        "height": 0.84,
+        "yaw": 6,
+        "pitch": 7,
+        "roll": 0
+      },
+      "chest": {
+        "yaw": 0,
+        "pitch": 5.6000000000000005,
+        "roll": 0
+      },
+      "head": "敵の位置／動作方向。首角度は原作未測定",
+      "weapon": {
+        "grip": [
+          -0.3,
+          0.92,
+          0.35
+        ],
+        "tip": [
+          0.172,
+          -0.614,
+          2.073
+        ],
+        "edge": "刃／打面の向きはKari側で最終確認。2G実映像からは未測定",
+        "leftHand": "左手に盾、右手に武器"
+      },
+      "root": "原作の移動距離は未測定。Kari現行controller曲線は維持",
+      "notes": "振り終わり：支持足と骨盤で慣性を制動",
+      "valueBasis": "Kari用の暫定創作値。PSP版2Gの測定値・目測値ではない"
+    },
+    {
+      "key": "K4",
+      "time": "未測定",
+      "plannedKariTick": 38,
+      "support": "両足",
+      "feet": {
+        "L": [
+          0.11,
+          0.14,
+          6
+        ],
+        "R": [
+          -0.13,
+          -0.13,
+          -20
+        ]
+      },
+      "pelvis": {
+        "height": 0.9,
+        "yaw": 0,
+        "pitch": 3,
+        "roll": 0
+      },
+      "chest": {
+        "yaw": 0,
+        "pitch": 2.4000000000000004,
+        "roll": 0
+      },
+      "head": "敵の位置／動作方向。首角度は原作未測定",
+      "weapon": {
+        "grip": [
+          -0.3,
+          1.02,
+          0.1
+        ],
+        "tip": [
+          -0.158,
+          1.185,
+          2.451
+        ],
+        "edge": "刃／打面の向きはKari側で最終確認。2G実映像からは未測定",
+        "leftHand": "左手に盾、右手に武器"
+      },
+      "root": "原作の移動距離は未測定。Kari現行controller曲線は維持",
+      "notes": "復帰：次動作へ繋ぎ、全身を同時停止させない",
+      "valueBasis": "Kari用の暫定創作値。PSP版2Gの測定値・目測値ではない"
+    }
+  ],
+  "weaponPath": "Kariの暫定キーをつないで軌道を作り、刃の表示と判定を一致させる。PSP原作の弧・手の向きは未測定",
+  "rootMotion": "原作の前進・後退距離は未測定。Kari controllerの既存曲線を当面維持",
+  "contactEvents": "暫定：右足支持→左足着地→骨盤回転→両足で制動。PSP原作の支持足順は未観測",
+  "differencesFromKari": "現行Kariの長さと判定tickを参照した仮案。原作PSPの足運び・武器の軌道との対照観察が必要",
+  "unknowns": [
+    "2G原作の各姿勢、支持足、弧、握りと刃の向き",
+    "原作の入力から接触までの時刻、移動距離、キャンセル挙動",
+    "この章の該当技のフレームを直接確認できていない"
+  ],
+  "kariReference": {
+    "clip": "ll_thrust_01",
+    "durationTicks": 38,
+    "hitWindows": [
+      {
+        "id": "tip",
+        "from": 10,
+        "to": 15
+      }
+    ],
+    "shootTicks": [],
+    "chargeHoldTick": null
+  },
+  "timeBasis": "plannedKariTickは現行KariのJSONでありPSP2G実測ではない",
+  "evidenceStatus": "仮制作票：原作映像観察は未実施"
+}
