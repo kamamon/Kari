@@ -6,7 +6,7 @@ export const FIELD_GATHER_KINDS = ['mine','bone','plant','insect','fish'] as con
 export type FieldGatherKind = typeof FIELD_GATHER_KINDS[number];
 export const FIELD_GATHER_LABEL: Record<FieldGatherKind,string> = { mine:'採掘', bone:'骨採取', plant:'植物採取', insect:'虫取り', fish:'釣り' };
 export interface FieldGatherNode { id:string; areaId:string; kind:FieldGatherKind; x:number; z:number; quality:'ordinary'|'deep'; uses:number; }
-export interface FieldGatherMaterial extends MaterialDef { rarity:number; sourceKind:FieldGatherKind; firstRankId:string; rarityRole:string; }
+export interface FieldGatherMaterial extends MaterialDef { rarity:number; sellPrice:number; sourceKind:FieldGatherKind; firstRankId:string; rarityRole:string; }
 export interface FieldGatherEntry { itemId:string; weightBps:number; minCount:number; maxCount:number; }
 export interface FieldGatherTable { id:string; nodeKind:FieldGatherKind; rankId:string; quality:'ordinary'|'deep'; entries:FieldGatherEntry[]; }
 export interface FieldGatherPond { areaId:string; x:number; z:number; radius:number; waterY:number; depth:number; bank:{x:number;z:number}; terrainBlendM:number; }
@@ -50,7 +50,7 @@ export function validateFieldGatherCatalog(c: Content, g:FieldGatherCatalog):str
   const ids=new Set<string>(), materials=new Set(g.materials.map(m=>m.id));
   if(materials.size!==g.materials.length)e.push('field gathering: 素材 ID 重複');
   for(const m of g.materials){
-    if(!FIELD_GATHER_KINDS.includes(m.sourceKind)||!c.ranks.has(m.firstRankId)||!Number.isInteger(m.rarity)||m.rarity<1||m.rarity>10)e.push('field gathering: 素材 '+m.id+' の定義が不正');
+    if(!FIELD_GATHER_KINDS.includes(m.sourceKind)||!c.ranks.has(m.firstRankId)||!Number.isInteger(m.rarity)||m.rarity<1||m.rarity>10||!Number.isInteger(m.sellPrice)||m.sellPrice<1)e.push('field gathering: 素材 '+m.id+' の定義が不正');
   }
   for(const n of g.nodes){
     if(ids.has(n.id))e.push('field gathering: 採取点 ID 重複 '+n.id);ids.add(n.id);

@@ -1383,6 +1383,7 @@ export async function assembleContent(getRaw: JsonGetter, opts: LoadOptions = {}
   validateGear(content, errors);
   content.shop = (await get(index.files.shop)) as ShopDef;
   checkVersion(index.files.shop, content.shop.schemaVersion, errors);
+  if(content.fieldGathering){const sold=new Set(content.shop.sell.map(g=>g.itemId));content.shop={...content.shop,sell:[...content.shop.sell,...content.fieldGathering.materials.filter(m=>!sold.has(m.id)).map(m=>({itemId:m.id,price:m.sellPrice}))]};}
   content.hub = (await get(index.files.hub)) as HubDef;
   checkVersion(index.files.hub, content.hub.schemaVersion, errors);
   crossCheck(content, errors);

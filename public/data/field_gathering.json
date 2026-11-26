@@ -574,7 +574,8 @@
       "rarity": 1,
       "sourceKind": "mine",
       "firstRankId": "rank.1",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 12
     },
     {
       "id": "mat.ore.layered_ashstone",
@@ -583,7 +584,8 @@
       "rarity": 2,
       "sourceKind": "mine",
       "firstRankId": "rank.1",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 18
     },
     {
       "id": "mat.ore.grit_whetstone",
@@ -592,7 +594,8 @@
       "rarity": 4,
       "sourceKind": "mine",
       "firstRankId": "rank.1",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 30
     },
     {
       "id": "mat.ore.deepcopper",
@@ -601,7 +604,8 @@
       "rarity": 3,
       "sourceKind": "mine",
       "firstRankId": "rank.2",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 28
     },
     {
       "id": "mat.ore.strata_copper",
@@ -610,7 +614,8 @@
       "rarity": 4,
       "sourceKind": "mine",
       "firstRankId": "rank.2",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 42
     },
     {
       "id": "mat.ore.mist_silver",
@@ -619,7 +624,8 @@
       "rarity": 6,
       "sourceKind": "mine",
       "firstRankId": "rank.2",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 70
     },
     {
       "id": "mat.ore.crystalseam_steel",
@@ -628,7 +634,8 @@
       "rarity": 5,
       "sourceKind": "mine",
       "firstRankId": "rank.3",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 55
     },
     {
       "id": "mat.ore.highdensity_mica",
@@ -637,7 +644,8 @@
       "rarity": 6,
       "sourceKind": "mine",
       "firstRankId": "rank.3",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 83
     },
     {
       "id": "mat.ore.violet_vein",
@@ -646,7 +654,8 @@
       "rarity": 8,
       "sourceKind": "mine",
       "firstRankId": "rank.3",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 138
     },
     {
       "id": "mat.ore.starlight_iron",
@@ -655,7 +664,8 @@
       "rarity": 7,
       "sourceKind": "mine",
       "firstRankId": "rank.4",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 100
     },
     {
       "id": "mat.ore.pulse_ore",
@@ -664,7 +674,8 @@
       "rarity": 8,
       "sourceKind": "mine",
       "firstRankId": "rank.4",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 150
     },
     {
       "id": "mat.ore.prismheart",
@@ -673,7 +684,8 @@
       "rarity": 10,
       "sourceKind": "mine",
       "firstRankId": "rank.4",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 250
     },
     {
       "id": "mat.bone.weathered_fragment",
@@ -682,7 +694,8 @@
       "rarity": 1,
       "sourceKind": "bone",
       "firstRankId": "rank.1",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 12
     },
     {
       "id": "mat.bone.hollow_rib",
@@ -691,7 +704,8 @@
       "rarity": 2,
       "sourceKind": "bone",
       "firstRankId": "rank.1",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 18
     },
     {
       "id": "mat.bone.strong_joint",
@@ -700,7 +714,8 @@
       "rarity": 4,
       "sourceKind": "bone",
       "firstRankId": "rank.1",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 30
     },
     {
       "id": "mat.bone.dense_long",
@@ -709,7 +724,8 @@
       "rarity": 3,
       "sourceKind": "bone",
       "firstRankId": "rank.2",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 28
     },
     {
       "id": "mat.bone.cave_rib",
@@ -718,7 +734,8 @@
       "rarity": 4,
       "sourceKind": "bone",
       "firstRankId": "rank.2",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 42
     },
     {
       "id": "mat.bone.stonebound_pelvis",
@@ -727,7 +744,8 @@
       "rarity": 6,
       "sourceKind": "bone",
       "firstRankId": "rank.2",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 70
     },
     {
       "id": "mat.bone.fossil_saber",
@@ -736,7 +754,8 @@
       "rarity": 5,
       "sourceKind": "bone",
       "firstRankId": "rank.3",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 55
     },
     {
       "id": "mat.bone.tower_vertebra",
@@ -745,7 +764,8 @@
       "rarity": 6,
       "sourceKind": "bone",
       "firstRankId": "rank.3",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 83
     },
     {
       "id": "mat.bone.crystal_femur",
@@ -754,7 +774,8 @@
       "rarity": 8,
       "sourceKind": "bone",
       "firstRankId": "rank.3",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 138
     },
     {
       "id": "mat.bone.ancient_ridge",
@@ -763,7 +784,8 @@
       "rarity": 7,
       "sourceKind": "bone",
       "firstRankId": "rank.4",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 100
     },
     {
       "id": "mat.bone.deepfossil_core",
@@ -772,7 +794,8 @@
       "rarity": 8,
       "sourceKind": "bone",
       "firstRankId": "rank.4",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 150
     },
     {
       "id": "mat.bone.astral_spine",
@@ -781,7 +804,8 @@
       "rarity": 10,
       "sourceKind": "bone",
       "firstRankId": "rank.4",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 250
     },
     {
       "id": "mat.gather.flatnagi_leaf",
@@ -790,7 +814,8 @@
       "rarity": 1,
       "sourceKind": "plant",
       "firstRankId": "rank.1",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 12
     },
     {
       "id": "mat.gather.dewbreak_fruit",
@@ -799,7 +824,8 @@
       "rarity": 2,
       "sourceKind": "plant",
       "firstRankId": "rank.1",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 18
     },
     {
       "id": "mat.gather.threadbind_fiber",
@@ -808,7 +834,8 @@
       "rarity": 4,
       "sourceKind": "plant",
       "firstRankId": "rank.1",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 30
     },
     {
       "id": "mat.equip.insect.gap_beetle_shell",
@@ -817,7 +844,8 @@
       "rarity": 1,
       "sourceKind": "insect",
       "firstRankId": "rank.1",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 12
     },
     {
       "id": "mat.equip.insect.thread_moth_silk",
@@ -826,7 +854,8 @@
       "rarity": 2,
       "sourceKind": "insect",
       "firstRankId": "rank.1",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 18
     },
     {
       "id": "mat.equip.insect.holding_light_sac",
@@ -835,7 +864,8 @@
       "rarity": 4,
       "sourceKind": "insect",
       "firstRankId": "rank.1",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 30
     },
     {
       "id": "mat.fish.streamfin",
@@ -844,7 +874,8 @@
       "rarity": 1,
       "sourceKind": "fish",
       "firstRankId": "rank.1",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 12
     },
     {
       "id": "mat.fish.shallow_crest",
@@ -853,7 +884,8 @@
       "rarity": 2,
       "sourceKind": "fish",
       "firstRankId": "rank.1",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 18
     },
     {
       "id": "mat.fish.dusk_needle",
@@ -862,7 +894,8 @@
       "rarity": 4,
       "sourceKind": "fish",
       "firstRankId": "rank.1",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 30
     },
     {
       "id": "mat.field.basin.plant.r2.1",
@@ -871,7 +904,8 @@
       "rarity": 3,
       "sourceKind": "plant",
       "firstRankId": "rank.2",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 28
     },
     {
       "id": "mat.field.basin.plant.r2.2",
@@ -880,7 +914,8 @@
       "rarity": 4,
       "sourceKind": "plant",
       "firstRankId": "rank.2",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 42
     },
     {
       "id": "mat.field.basin.plant.r2.3",
@@ -889,7 +924,8 @@
       "rarity": 6,
       "sourceKind": "plant",
       "firstRankId": "rank.2",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 70
     },
     {
       "id": "mat.field.basin.plant.r3.1",
@@ -898,7 +934,8 @@
       "rarity": 5,
       "sourceKind": "plant",
       "firstRankId": "rank.3",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 55
     },
     {
       "id": "mat.field.basin.plant.r3.2",
@@ -907,7 +944,8 @@
       "rarity": 6,
       "sourceKind": "plant",
       "firstRankId": "rank.3",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 83
     },
     {
       "id": "mat.field.basin.plant.r3.3",
@@ -916,7 +954,8 @@
       "rarity": 8,
       "sourceKind": "plant",
       "firstRankId": "rank.3",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 138
     },
     {
       "id": "mat.field.basin.plant.r4.1",
@@ -925,7 +964,8 @@
       "rarity": 7,
       "sourceKind": "plant",
       "firstRankId": "rank.4",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 100
     },
     {
       "id": "mat.field.basin.plant.r4.2",
@@ -934,7 +974,8 @@
       "rarity": 8,
       "sourceKind": "plant",
       "firstRankId": "rank.4",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 150
     },
     {
       "id": "mat.field.basin.plant.r4.3",
@@ -943,7 +984,8 @@
       "rarity": 10,
       "sourceKind": "plant",
       "firstRankId": "rank.4",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 250
     },
     {
       "id": "mat.field.basin.insect.r2.1",
@@ -952,7 +994,8 @@
       "rarity": 3,
       "sourceKind": "insect",
       "firstRankId": "rank.2",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 28
     },
     {
       "id": "mat.field.basin.insect.r2.2",
@@ -961,7 +1004,8 @@
       "rarity": 4,
       "sourceKind": "insect",
       "firstRankId": "rank.2",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 42
     },
     {
       "id": "mat.field.basin.insect.r2.3",
@@ -970,7 +1014,8 @@
       "rarity": 6,
       "sourceKind": "insect",
       "firstRankId": "rank.2",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 70
     },
     {
       "id": "mat.field.basin.insect.r3.1",
@@ -979,7 +1024,8 @@
       "rarity": 5,
       "sourceKind": "insect",
       "firstRankId": "rank.3",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 55
     },
     {
       "id": "mat.field.basin.insect.r3.2",
@@ -988,7 +1034,8 @@
       "rarity": 6,
       "sourceKind": "insect",
       "firstRankId": "rank.3",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 83
     },
     {
       "id": "mat.field.basin.insect.r3.3",
@@ -997,7 +1044,8 @@
       "rarity": 8,
       "sourceKind": "insect",
       "firstRankId": "rank.3",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 138
     },
     {
       "id": "mat.field.basin.insect.r4.1",
@@ -1006,7 +1054,8 @@
       "rarity": 7,
       "sourceKind": "insect",
       "firstRankId": "rank.4",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 100
     },
     {
       "id": "mat.field.basin.insect.r4.2",
@@ -1015,7 +1064,8 @@
       "rarity": 8,
       "sourceKind": "insect",
       "firstRankId": "rank.4",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 150
     },
     {
       "id": "mat.field.basin.insect.r4.3",
@@ -1024,7 +1074,8 @@
       "rarity": 10,
       "sourceKind": "insect",
       "firstRankId": "rank.4",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 250
     },
     {
       "id": "mat.field.basin.fish.r2.1",
@@ -1033,7 +1084,8 @@
       "rarity": 3,
       "sourceKind": "fish",
       "firstRankId": "rank.2",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 28
     },
     {
       "id": "mat.field.basin.fish.r2.2",
@@ -1042,7 +1094,8 @@
       "rarity": 4,
       "sourceKind": "fish",
       "firstRankId": "rank.2",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 42
     },
     {
       "id": "mat.field.basin.fish.r2.3",
@@ -1051,7 +1104,8 @@
       "rarity": 6,
       "sourceKind": "fish",
       "firstRankId": "rank.2",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 70
     },
     {
       "id": "mat.field.basin.fish.r3.1",
@@ -1060,7 +1114,8 @@
       "rarity": 5,
       "sourceKind": "fish",
       "firstRankId": "rank.3",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 55
     },
     {
       "id": "mat.field.basin.fish.r3.2",
@@ -1069,7 +1124,8 @@
       "rarity": 6,
       "sourceKind": "fish",
       "firstRankId": "rank.3",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 83
     },
     {
       "id": "mat.field.basin.fish.r3.3",
@@ -1078,7 +1134,8 @@
       "rarity": 8,
       "sourceKind": "fish",
       "firstRankId": "rank.3",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 138
     },
     {
       "id": "mat.field.basin.fish.r4.1",
@@ -1087,7 +1144,8 @@
       "rarity": 7,
       "sourceKind": "fish",
       "firstRankId": "rank.4",
-      "rarityRole": "common"
+      "rarityRole": "common",
+      "sellPrice": 100
     },
     {
       "id": "mat.field.basin.fish.r4.2",
@@ -1096,7 +1154,8 @@
       "rarity": 8,
       "sourceKind": "fish",
       "firstRankId": "rank.4",
-      "rarityRole": "secondary"
+      "rarityRole": "secondary",
+      "sellPrice": 150
     },
     {
       "id": "mat.field.basin.fish.r4.3",
@@ -1105,7 +1164,8 @@
       "rarity": 10,
       "sourceKind": "fish",
       "firstRankId": "rank.4",
-      "rarityRole": "rare"
+      "rarityRole": "rare",
+      "sellPrice": 250
     }
   ],
   "tables": [
