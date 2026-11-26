@@ -120,7 +120,7 @@ export function buildLandscapeSurface(input:LandscapeInput):LandscapeSurface{
  const gateBlend=(x:number,z:number):number=>{
   let v=0;
   for(const g of gates){const dx=x-g.x,dz=z-g.z,a=dx*g.nx+dz*g.nz,side=Math.abs(dx*g.nz-dz*g.nx-g.bend*4*smooth(5,21,a));
-   if(a>=-1&&a<25)v=Math.max(v,(1-smooth(2.6,6.2,side))*(1-smooth(13,25,a)));
+   if(a>=-1&&a<25)v=Math.max(v,(1-smooth(2.6,6.2,side))*(1-smooth(18,25,a)));
   }
   return v;
  };
@@ -176,20 +176,25 @@ export function buildLandscapeSurface(input:LandscapeInput):LandscapeSurface{
  return{near,outer,water,outline,distance,height,gates,metrics:{nearTriangles:ni.length/3,outerTriangles:oi.length/3,outerMin,outerMax,sharedVertices:[...new Set(oi)].filter(i=>locked[i]).length}};
 }
 
-type Instance={x:number;y:number;z:number;sx:number;sy:number;sz:number;yaw:number;shade:number};
+type Instance={x:number;y:number;z:number;sx:number;sy:number;sz:number;yaw:number;shade:number;lean?:number};
 function batch(group:Group,geo:BufferGeometry,mat:MeshLambertMaterial,items:Instance[],name:string):void{
  if(!items.length){geo.dispose();mat.dispose();return;}
- const mesh=new InstancedMesh(geo,mat,items.length),m=new Matrix4(),q=new Quaternion(),up=new Vector3(0,1,0),at=new Vector3(),s=new Vector3(),col=new Color();
- for(let i=0;i<items.length;i++){const a=items[i]!;q.setFromAxisAngle(up,a.yaw);m.compose(at.set(a.x,a.y,a.z),q,s.set(a.sx,a.sy,a.sz));mesh.setMatrixAt(i,m);mesh.setColorAt(i,col.setScalar(a.shade));}
+ const mesh=new InstancedMesh(geo,mat,items.length),m=new Matrix4(),q=new Quaternion(),up=new Vector3(0,1,0),axis=new Vector3(0,0,1),lean=new Quaternion(),at=new Vector3(),s=new Vector3(),col=new Color();
+ for(let i=0;i<items.length;i++){const a=items[i]!;q.setFromAxisAngle(up,a.yaw);if(a.lean)q.multiply(lean.setFromAxisAngle(axis,a.lean));m.compose(at.set(a.x,a.y,a.z),q,s.set(a.sx,a.sy,a.sz));mesh.setMatrixAt(i,m);mesh.setColorAt(i,col.setScalar(a.shade));}
  mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;
  mesh.name=name;mesh.userData.noMerge=true;mesh.computeBoundingSphere();group.add(mesh);
 }
 /** 画像を貼った、輪郭の不規則な岩塊・樹冠。単なる球の並びにしない。 */
-function lump(seed:number,detail:0|1):BufferGeometry{
+function lump(seed:number,detail:0|1|2):BufferGeometry{
  const g=new IcosahedronGeometry(1,detail),v=g.getAttribute('position'),n=valueNoise3(seed);
  for(let i=0;i<v.count;i++){const x=v.getX(i),y=v.getY(i),z=v.getZ(i),k=.76+n(x*3.3,y*3.3,z*3.3)*.40;v.setXYZ(i,x*k,y*k,z*k);}
- g.computeVertexNormals();return g;
+ g.computeVertexNormals();
+ // 樹冠は細かな葉群として見せ、岩の角張った法線と区別する。
+ if(detail===2){const nrm=g.getAttribute('normal'),n=new Vector3(),r=new Vector3();for(let i=0;i<v.count;i++){n.fromBufferAttribute(nrm,i);r.fromBufferAttribute(v,i).normalize();n.lerp(r,.70).normalize();nrm.setXYZ(i,n.x,n.y,n.z);}}
+ return g;
 }
+/** 斜面の一番低い側まで根を埋める。木の根元・露岩に共通。 */
+function groundedBase(s:LandscapeSurface,x:number,z:number,r:number):number{let y=s.height(x,z);for(let i=0;i<8;i++){const a=i*Math.PI/4;y=Math.min(y,s.height(x+Math.cos(a)*r,z+Math.sin(a)*r));}return y;}
 function isGateClear(s:LandscapeSurface,x:number,z:number,r:number):boolean{
  return s.gates.every(g=>{const dx=x-g.x,dz=z-g.z,a=dx*g.nx+dz*g.nz,side=Math.abs(dx*g.nz-dz*g.nx-g.bend*4*smooth(5,21,a));return !(a> -2&&a<24&&side<5.3+r);});
 }
@@ -198,7 +203,7 @@ function trailGeometry(s:LandscapeSurface):BufferGeometry{
  for(const g of s.gates){
   let prev=-1;
   for(let a=4.2;a<=24;a+=1.5){
-   const bend=g.bend*4*smooth(5,21,a),w=lerp(2.5,1.1,smooth(6,24,a));
+   const bend=g.bend*4*smooth(5,21,a),w=lerp(2.45,.16,smooth(6,24,a))*(.94+.08*Math.sin(a*1.7+g.x));
    const x=g.x+g.nx*a+g.nz*bend,z=g.z+g.nz*a-g.nx*bend;
    const left=[x-g.nz*w,z+g.nx*w],right=[x+g.nz*w,z-g.nx*w];
    if(s.distance(left[0]!,left[1]!)<.45||s.distance(right[0]!,right[1]!)<.45){prev=-1;continue;}
@@ -244,11 +249,17 @@ export function buildLandscapeExterior(input:LandscapeInput,s:LandscapeSurface):
   const y=s.height(x,z);if(p.water!=='none'&&y<-.9)continue;
   const h=(p.tree==='pine'?8:p.tree==='swamp'?7.3:10)*(0.65+rng.next()*.9)*(near?1:1.12),r=h*(p.tree==='pine'?.055:.071);
   const shade=.78+rng.next()*.35,yaw=rng.next()*6.283;treeSites.push({x,z});i++;
-  trunks.push({x,y:y+h*.39-.08,z,sx:r,sy:h*.80,sz:r,yaw,shade});
+  const root=groundedBase(s,x,z,r*1.2)-.24,top=y+h*.79;
+  trunks.push({x,y:(root+top)/2,z,sx:r,sy:top-root,sz:r,yaw,shade});
   if(p.tree==='pine'){
    for(let j=0;j<3;j++){const cy=h*(.55+j*.18),rr=h*(.31-j*.075);crowns.push({x,y:y+cy,z,sx:rr,sy:h*(.29-j*.035),sz:rr,yaw:yaw+j*.8,shade:shade*(1+j*.04)});}
   }else{
-   const rr=h*.32;for(let j=0;j<3;j++){const a=yaw+j*2.09,off=j?rr*.62:0;crowns.push({x:x+Math.cos(a)*off,y:y+h*(.77+(j===0?.12:0)),z:z+Math.sin(a)*off,sx:rr*(.9+rng.next()*.3),sy:rr*(.63+rng.next()*.3),sz:rr*(.9+rng.next()*.3),yaw:a,shade:shade*(.93+rng.next()*.12)});}
+   const rr=h*.30;
+   for(let j=0;j<3;j++){
+    const a=yaw+j*2.09,off=j?rr*(.68+rng.next()*.22):0,cy=y+h*(j===0?.91:.70+rng.next()*.10);
+    crowns.push({x:x+Math.cos(a)*off,y:cy,z:z+Math.sin(a)*off,sx:rr*(.75+rng.next()*.38),sy:rr*(.72+rng.next()*.34),sz:rr*(.76+rng.next()*.38),yaw:a,shade:shade*(.86+rng.next()*.24)});
+    if(j){const len=h*.32;trunks.push({x:x+Math.cos(a)*off*.38,y:y+h*.63,z:z+Math.sin(a)*off*.38,sx:r*.39,sy:len,sz:r*.39,yaw:-a,lean:-.48,shade});}
+   }
   }
  }
  for(let i=0,tries=0;i<p.stones&&tries<p.stones*25;tries++){
@@ -256,11 +267,13 @@ export function buildLandscapeExterior(input:LandscapeInput,s:LandscapeSurface):
   if(dist<3.7+rad||dist>88||!isGateClear(s,x,z,rad))continue;
   const y=s.height(x,z);if(p.water!=='none'&&y<-2.8)continue;
   const h=rad*(p.style==='canyon'||p.style==='cave'||p.style==='alpine'?1.1+rng.next()*1.4:.48+rng.next()*.75);
-  rocks.push({x,y:y+h*.26,z,sx:rad,sy:h,sz:rad*(.56+rng.next()*.52),yaw:rng.next()*6.283,shade:.74+rng.next()*.38});i++;
+  const base=groundedBase(s,x,z,rad*.72),sz=rad*(.56+rng.next()*.52);
+  // 岩を斜面の上に置くのではなく、下の地盤に埋めた露岩にする。
+  rocks.push({x,y:base+h*.04,z,sx:rad,sy:h,sz,yaw:rng.next()*6.283,shade:.74+rng.next()*.38});i++;
  }
  batch(group,new CylinderGeometry(.57,1,1,7),imageLambert('bark',{color:p.tree==='swamp'?0x6c6149:0x6a6253,flatShading:true},{gain:1.15}),trunks,'field-exterior-trunks');
  // 松も、枝葉の塊を縦に重ねて不規則な輪郭を作る。
- batch(group,lump(p.seed+11,1),imageLambert('leaf',{color:p.foliage,flatShading:false},{gain:1.2}),crowns,'field-exterior-canopy');
+ batch(group,lump(p.seed+11,2),imageLambert('leaf',{color:p.foliage,flatShading:false},{gain:1.2}),crowns,'field-exterior-canopy');
  batch(group,lump(p.seed+73,1),imageLambert('cliff',{color:p.rock,flatShading:true},{gain:1.15}),rocks,'field-exterior-rocks');
  group.userData.landscape={fieldId:p.fieldId,areaId:p.areaId,style:p.style,trees:treeSites.length,rocks:rocks.length,water:!!s.water,gates:s.gates.length,...s.metrics};
  return group;

@@ -291,19 +291,28 @@ export function buildAreaGroup(map: AreaLook): Group {
     const [ox, oz] = outward(g);
     // 踏み跡: 出口から内へ、外向きに沿った細長い帯
     const gy = baseAt(g.x, g.z);
-    const path = new Mesh(new PlaneGeometry(5.4, 16, 3, 8), trail);
+    const path = new Mesh(new PlaneGeometry(5.4, 16, 3, exterior ? 18 : 8), trail);
+    if(exterior){
+      // 奥へ続く道の入口を長方形ではなく、両端と路肩を不規則に絞る。
+      const pp=path.geometry.getAttribute('position');
+      for(let i=0;i<pp.count;i++){
+        const y=pp.getY(i),u=(y+8)/16,t=Math.min(1,Math.max(0,u*4));
+        const width=(.24+.76*t*t*(3-2*t))*(.94+.065*Math.sin(y*1.63+g.x));
+        pp.setX(i,pp.getX(i)*width+.27*Math.sin(y*.45+g.z)*Math.sin(Math.PI*u));
+      }
+    }
     path.rotation.x = -Math.PI / 2;
     path.rotation.z = Math.atan2(ox, oz) + Math.PI;
     path.position.set(g.x - ox * 3, gy + 0.015, g.z - oz * 3);
     path.receiveShadow = true;
     // 起伏に沿わせる（v0.46.0）: 板の面の向き（ローカルの z）が、世界の上
-    if (map.relief) {
+    if (map.relief || exterior) {
       path.updateMatrix();
       const pp = path.geometry.getAttribute('position');
       const v = new Vector3();
       for (let i = 0; i < pp.count; i++) {
         v.set(pp.getX(i), pp.getY(i), 0).applyMatrix4(path.matrix);
-        pp.setZ(i, rel(v.x, v.z) - gy);
+        pp.setZ(i, (exterior ? exterior.height(v.x,v.z) : rel(v.x, v.z)) - gy);
       }
     }
     boxUv(path, ENV_TILES.gravel.tile);
