@@ -1273,6 +1273,9 @@ def build_moves(key, mid, moves, frame=None):
         if mv.get('spinDeg'):
             # 足を踏み替える向き直り（v0.65.0。#19 の M01）: 技の始まりから終わりまでの間に、体ごと回る（simulation の向き）
             a['spin'] = {'from': a0, 'to': a1, 'degrees': mv['spinDeg']}
+        if mv.get('brake'):
+            # 突進の制動（v0.66.0。#19 の M02。ガルドロスと同じ形）: 走る間に前へ進めなくなったら、走る区間の終わりへ進める
+            a['brake'] = {'from': mv['brake'][0], 'to': mv['brake'][1]}
         a['hitWindows'] = mv['hits']
         a['cancelWindows'] = []
         # 体の部位に付けた判定（v0.21.0）: 軌道は npm run monsters:bake が動きから作る。ここでは仮の形を置く
@@ -1390,9 +1393,27 @@ def list_doc(head, key, items):
 
 
 def replace_rows(path, list_key, prefixes, rows):
-    """1 行 1 件の JSON の一覧（list_key の中）から、id / itemId が prefixes で始まる行を除き、rows を最後へ足す。"""
+    """一覧（list_key の中）から、id / itemId が prefixes で始まる件を除き、rows を最後へ足す。
+    1 行 1 件の JSON は、その形のまま書く。2 字下げの JSON（商店は ChatGPT の #40 でこの形になった）は、読んで 2 字下げで書き直す
+    （v0.66.0。行で書くと、2 字下げの一覧を壊していた）。"""
     full = os.path.join(ROOT, path)
     text = open(full, encoding='utf-8').read()
+    doc = json.loads(text)
+    if json.dumps(doc, ensure_ascii=False, indent=2) + '\n' == text:
+        key = lambda r: str(r.get('id', r.get('itemId', '')))
+        fresh = {key(r): r for r in rows}
+        out = []
+        for r in doc[list_key]:
+            k = key(r)
+            if any(k.startswith(p) for p in prefixes):
+                # もうある件は、その場所のまま中身だけ替える（並びを変えない）。無くなった件は除く
+                if k in fresh:
+                    out.append(fresh.pop(k))
+                continue
+            out.append(r)
+        doc[list_key] = out + [r for r in rows if key(r) in fresh]
+        open(full, 'w', encoding='utf-8').write(json.dumps(doc, ensure_ascii=False, indent=2) + '\n')
+        return
     lines = text.split('\n')
     start = next(i for i, l in enumerate(lines) if l.strip().startswith(f'"{list_key}": ['))
     end = next(i for i in range(start + 1, len(lines)) if lines[i].strip() in (']', '],'))

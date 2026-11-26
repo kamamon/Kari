@@ -4,6 +4,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import type { Content } from '../src/data/schemas';
 import type { SimEvent } from '../src/game/events';
 import { yawOf } from '../src/core/math';
+import { newRun } from '../src/game/action';
 import { applyDamageToMonster, monsterShapes, type MonsterState } from '../src/game/monster';
 import { COMBO_SLACK_TICKS, resolveIncomingHit } from '../src/game/player';
 import { Simulation } from '../src/game/sim';
@@ -336,6 +337,65 @@ describe('ガルドロスの動き（#19 の M01・M02。v0.41.0）', () => {
     expect(br[0]!.tick).toBeLessThan(125);
     expect(jumpedFrom).toBe(br[0]!.tick);
     expect(m.pos.z).toBeLessThanOrEqual(b.maxZ - m.def.bodyRadius + 1e-6);
+  });
+
+  // v0.66.0（#19 の M02。D-163）: ほかの大型の、長く走る突進 7 つにも、ガルドロスと同じ制動
+  const CHARGES: [string, string][] = [['selvark', 'charge'], ['numeradon', 'charge'], ['bornakel', 'charge'], ['orglass', 'charge'], ['razmer', 'crawl_charge'], ['kirisave', 'slide_long'], ['velgait', 'charge']];
+  it('突進の制動は、ほかの大型の長い突進 7 つにも（壁の 3m 手前から走らせると、走る間に 1 度だけ走る区間の終わりへ進め、壁を越えない）', () => {
+    for (const [sp, name] of CHARGES) {
+      const id = `monster.${sp}.${name}`;
+      const def = content.actions.get(id)!;
+      expect(def.brake, id).toBeTruthy();
+      const sim = new Simulation(content, baseOptions({ monsterId: `monster.${sp}`, monsterAttacks: true }));
+      const m = sim.monsters[0]!;
+      const b = sim.world.areaAt(m.pos.x, m.pos.z).bounds;
+      m.pos = { x: 0, y: 0, z: b.maxZ - 3 - m.def.bodyRadius };
+      m.prevPos = { ...m.pos };
+      m.yaw = 0; // +Z（壁）へ
+      m.prevYaw = 0;
+      m.aware = true;
+      m.aiEnabled = true;
+      sim.player.pos = { x: 0, y: 0, z: m.pos.z + 1.5 };
+      sim.player.prevPos = { ...sim.player.pos };
+      m.action = newRun(def, 999, m.yaw);
+      const ev: SimEvent[] = [];
+      let jumpedFrom = -1;
+      for (let i = 0; i < def.durationTicks + 10 && m.action && m.action.def === def; i++) {
+        const before = m.action.tick;
+        ev.push(...run(sim, 1));
+        if (m.action && m.action.def === def && m.action.tick - before > 1) jumpedFrom = before;
+      }
+      const br = ev.filter((e): e is Extract<SimEvent, { type: 'monster_brake' }> => e.type === 'monster_brake');
+      expect(br, id).toHaveLength(1);
+      expect(br[0]!.tick, id).toBeGreaterThanOrEqual(def.brake!.from);
+      expect(br[0]!.tick, id).toBeLessThan(def.brake!.to);
+      expect(jumpedFrom, id).toBe(br[0]!.tick);
+      expect(m.pos.z, id).toBeLessThanOrEqual(b.maxZ - m.def.bodyRadius + 1e-6);
+    }
+  });
+
+  it('壁の無い広い所では、突進は止まらずに最後まで走る（制動は前へ進めない時だけ）', () => {
+    for (const [sp, name] of CHARGES) {
+      const id = `monster.${sp}.${name}`;
+      const def = content.actions.get(id)!;
+      const sim = new Simulation(content, baseOptions({ monsterId: `monster.${sp}`, monsterAttacks: true }));
+      const m = sim.monsters[0]!;
+      const b = sim.world.areaAt(m.pos.x, m.pos.z).bounds;
+      // 訓練区画の x = 0 の通り（岩・段が無い）を、南の端から北へ
+      m.pos = { x: 0, y: 0, z: b.minZ + m.def.bodyRadius + 1 };
+      m.prevPos = { ...m.pos };
+      m.yaw = 0;
+      m.prevYaw = 0;
+      m.aware = true;
+      m.aiEnabled = false;
+      m.action = newRun(def, 999, m.yaw);
+      const p0 = { ...m.pos };
+      const ev = run(sim, def.durationTicks);
+      expect(ev.some((e) => e.type === 'monster_brake'), id).toBe(false);
+      const curve = content.curves.get(def.rootMotion.curveId!)!;
+      const total = curve.keys[curve.keys.length - 1]![1];
+      expect(Math.hypot(m.pos.x - p0.x, m.pos.z - p0.z), id).toBeGreaterThan(total - 0.5);
+    }
   });
 });
 

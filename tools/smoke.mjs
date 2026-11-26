@@ -2458,9 +2458,12 @@ const startTraining = async (page, tap = false) => {
     const files = [];
     // 建物の図（切り抜き）。外周の崖の面（v0.22.0。崖の図集を切り抜く）と、里の人の板（v0.23.0）は除く
     v.scene.traverse((o) => { if (o.isMesh && !o.isInstancedMesh && !o.userData.cliffArt && !o.userData.npc && !o.material.userData?.prop && o.material.alphaTest > 0 && o.material.map && o.material.visible) files.push(String(o.material.map.image?.src ?? '').split('/').pop()); });
-    return { art: window.__vh.envArt(), buildings: files.sort(), far: v.scene.getObjectByName('backdrop').children.filter((m) => m.material.map && m.material.visible).length, ...v.stats() };
+    // 主要施設と家屋は、ChatGPT の #40（利用者が 2026-11-27 にマージした）から専用の立体（src/render/hubCraft.ts の hub-crafted-buildings）。切り抜きの図の建物は無い
+    const crafted = v.scene.getObjectByName('hub-crafted-buildings');
+    const craft = crafted ? { buildings: crafted.userData.buildings, facilities: crafted.userData.facilities, meshes: crafted.children.filter((m) => m.isMesh).length, triangles: crafted.userData.triangles } : null;
+    return { art: window.__vh.envArt(), buildings: files.sort(), craft, far: v.scene.getObjectByName('backdrop').children.filter((m) => m.material.map && m.material.visible).length, ...v.stats() };
   });
-  check('景色の絵（里）: 頼んだ絵がすべて読めている。建物 7 つ（工房・商店・装備箱と、級別の受付 4 つ。受付は依頼板の図。v0.38.0）に、それぞれの図が貼られている', hubArt && hubLook.far === 2 && hubLook.buildings.join() === 'bld_board_v1.webp,bld_board_v1.webp,bld_board_v1.webp,bld_board_v1.webp,bld_chest_v1.webp,bld_shop_v1.webp,bld_workshop_v1.webp', JSON.stringify(hubLook));
+  check('景色の絵（里）: 頼んだ絵がすべて読めている。主要施設と家屋 12 棟（工房・商店・装備箱・級別の受付 4 つと、宿・民家 2 棟・集会所・倉庫）は専用の立体（#40）で、切り抜きの図の建物は無い', hubArt && hubLook.far === 2 && hubLook.buildings.length === 0 && hubLook.craft?.buildings === 12 && hubLook.craft.facilities === 7 && hubLook.craft.meshes > 0 && hubLook.craft.triangles > 0, JSON.stringify(hubLook));
   check('景色の絵（里）: 描画量は目標内（100 draw calls / 20万 tri）', hubLook.calls <= 100 && hubLook.triangles <= 200000, JSON.stringify(hubLook));
   await page.screenshot({ path: `${OUT}90_hub_start.png` });
   // 攻撃のボタンを押しても、武器を抜かない

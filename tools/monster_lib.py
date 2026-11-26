@@ -52,12 +52,15 @@ def hazard(tick, count, spread, radius, warn, active, dmg, reaction, origin, loo
 
 
 def move(name, dur, startup, active, anim, *, side=None, hits=(), tracks=(), hazards=(), curve=None, dirDeg=None, turn=None, sounds=(), vfx=(), slamTrack=None,
-         ai=None, amp=None, bind=(), spinDeg=None):
+         ai=None, amp=None, bind=(), spinDeg=None, brake=None):
     """技 1 つ。startup = 攻撃の始まり、active = 攻撃の終わり（tick）。curve = (距離 m, 始め, 終わり)。anim = A(...)（種ごとの動き）。
-    spinDeg = 体ごと回る角度（v0.65.0。足を踏み替える向き直り。+ で左回り。startup 〜 active の間に simulation の向きが回る）。"""
+    spinDeg = 体ごと回る角度（v0.65.0。足を踏み替える向き直り。+ で左回り。startup 〜 active の間に simulation の向きが回る）。
+    brake = (始め, 終わり)（v0.66.0。突進の制動。#19 の M02）: 走る間（始め〜終わり）に壁・段・岩で前へ進めない tick が 3 つ続くと、終わりへ進める。"""
     assert isinstance(anim, dict) and anim.get('K'), f'{name}: 動きは A(K(...)...) で書く'
+    if brake:
+        assert curve and curve[1] <= brake[0] < brake[1] <= curve[2] <= dur, f'{name}: 制動の区間は、走る区間の中に置く'
     return dict(name=name, dur=dur, startup=startup, active=active, anim=anim, side=side, hits=list(hits), tracks=list(tracks), hazards=list(hazards), curve=curve,
-                dirDeg=dirDeg, turn=turn, sounds=list(sounds), vfx=list(vfx), slamTrack=slamTrack, ai=ai, amp=amp, bind=list(bind), spinDeg=spinDeg)
+                dirDeg=dirDeg, turn=turn, sounds=list(sounds), vfx=list(vfx), slamTrack=slamTrack, ai=ai, amp=amp, bind=list(bind), spinDeg=spinDeg, brake=brake)
 
 
 def turns(w, s1, s2, *, slow=0, flags=None, sound='galdros_scrape'):

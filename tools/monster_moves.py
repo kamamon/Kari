@@ -146,7 +146,7 @@ def selvark_moves(s):
             K('s', 0.92, None, yH=-0.04, pitch=-0.1, neckPitch=-0.45, headPitch=-0.3, crest=-0.6),
             K('r', 0.3, None, yH=-0.06, pitch=0.18, neckPitch=0.1, crest=0.3, legs={'F': (0.6, 0.1), 'H': (0.3, 0.2)}),
             K('r', 0.7, None, pitch=0.03, crest=0.1)),
-             curve=(14.0, 44, 104), turn=(40, 60),
+             curve=(14.0, 44, 104), turn=(40, 60), brake=(50, 104),
              bind=[B('selvark_charge', 'sp:7', 'sp:12', 0.62, ext=0.25)],
              hits=[hit('body', 44, 104, 'selvark_charge', 26, 'knockdown', cost=40)],
              sounds=[(4, 'beast_cry'), (40, 'galdros_charge')], ai=ai(7, 16.1, 25, 1.6, cd=520, clear=10)),
@@ -375,7 +375,7 @@ def numeradon_moves(s):
             K('s', 0.9, None, yH=-0.04, pitch=-0.06, neckPitch=-0.25, headPitch=-0.12, dish=-0.4),
             K('r', 0.3, None, pitch=0.12, yH=-0.03, legs={'F': (0.5, 0.1)}),
             K('r', 0.7, None, pitch=0.02)),
-             curve=(12.0, 56, 120), turn=(50, 50), bind=[B('numeradon_charge', 'sp:5', 'sp:9', 1.0, ext=0.2)],
+             curve=(12.0, 56, 120), turn=(50, 50), brake=(62, 120), bind=[B('numeradon_charge', 'sp:5', 'sp:9', 1.0, ext=0.2)],
              hits=[hit('body', 56, 120, 'numeradon_charge', 28, 'knockdown', cost=45)],
              sounds=[(4, 'galdros_roar'), (52, 'galdros_charge')], ai=ai(7, 16, 25, 1.6, cd=520, clear=10)),
         # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 重い体を低く沈め、泥皿を回る向きへ傾けて、ゆっくり踏み替える ----
@@ -576,7 +576,7 @@ def bornakel_moves(s):
             K('s', 0.9, None, yH=-0.04, pitch=-0.05, neckPitch=-0.35, headPitch=-0.25, sac=0.6),
             K('r', 0.3, None, pitch=0.12, sac=0.2, legs={'F': (0.5, 0.1)}),
             K('r', 0.7, None, pitch=0.02)),
-             curve=(13.0, 60, 124), turn=(54, 50), bind=[B('bornakel_charge', 'sp:5', 'sp:8', 0.95, ext=0.25)],
+             curve=(13.0, 60, 124), turn=(54, 50), brake=(66, 124), bind=[B('bornakel_charge', 'sp:5', 'sp:8', 0.95, ext=0.25)],
              hits=[hit('body', 60, 124, 'bornakel_charge', 28, 'knockdown', cost=45)],
              sounds=[(4, 'bell_boom'), (56, 'galdros_charge')], ai=ai(8, 16.5, 25, 1.4, cd=560, clear=11)),
         # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 頭の鐘を下げたまま肩を入れ、嚢を揺らして重く踏み替える ----
@@ -1152,7 +1152,7 @@ def orglass_moves(s):
             K('s', 0.9, None, yH=-0.04, clawR=(0.3, 0.3), clawL=(0.3, 0.3)),
             K('r', 0.3, None, pitch=0.08, clawR=(0.2, 0.1), clawL=(0.2, 0.1)),
             K('r', 0.7, None, clawR=(0.05, 0.0)), scurry=1),
-             curve=(11.0, 50, 104), turn=(44, 50), bind=[B('orglass_charge', 'leg:clawR:C:2', 'leg:clawL:C:2', 0.9)],
+             curve=(11.0, 50, 104), turn=(44, 50), brake=(56, 104), bind=[B('orglass_charge', 'leg:clawR:C:2', 'leg:clawL:C:2', 0.9)],
              hits=[hit('claws', 50, 104, 'orglass_charge', 26, 'knockdown', cost=40)],
              sounds=[(4, 'shell_clack'), (48, 'galdros_charge')], ai=ai(7, 13.5, 25, 1.5, cd=520, clear=10)),
         # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 大鋏を胸の前に掲げて身を守り、六本の脚を小刻みに運んで、その場で回る ----
@@ -1604,7 +1604,7 @@ def razmer_moves(s):
             K('s', 0.9, None, yH=-0.1, neckPitch=-0.1, legs={'*': (-0.5, 0.3)}),
             K('r', 0.3, None, yH=-0.05, neckPitch=0.15, legs={'F': (0.3, 0.2)}),
             K('r', 0.7, None, yH=-0.01), und=1),
-             curve=(13.0, 40, 84), bind=[head('razmer_crawl_charge')],
+             curve=(13.0, 40, 84), brake=(46, 84), bind=[head('razmer_crawl_charge')],
              hits=[hit('head', 40, 84, 'razmer_crawl_charge', 28, 'knockdown', cost=45)],
              sounds=[(4, 'hiss'), (40, 'galdros_charge')], ai=ai(6, 16.7, 25, 2, cd=480, clear=14)),
         move('ring_slam', 100, 46, 54, A(
@@ -1875,7 +1875,7 @@ def kirisave_moves(s):
             K('s', 0.92, None, yH=-0.3, neckPitch=-0.15, sail=-0.4, fin=-1.0),
             K('r', 0.3, None, yH=-0.15, neckPitch=0.1, sail=0.0, fin=-0.3),
             K('r', 0.7, None, yH=-0.02), wiggle=0.1),
-             curve=(15.0, 46, 100), turn=(40, 50), bind=[B('kirisave_slide_long', 'sp:7', 'sp:11', 0.65, ext=0.2)],
+             curve=(15.0, 46, 100), turn=(40, 50), brake=(52, 100), bind=[B('kirisave_slide_long', 'sp:7', 'sp:11', 0.65, ext=0.2)],
              hits=[hit('body', 46, 100, 'kirisave_slide_long', 26, 'knockdown', cost=40)],
              sounds=[(4, 'hiss'), (46, 'galdros_charge')], ai=ai(8, 19.5, 25, 1.5, cd=520, clear=14)),
         # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 脚が無いので、頭を回る向きへ振り、氷帆を寝かせて、長い体を S 字にくねらせて腹で回る ----
@@ -2059,7 +2059,7 @@ def velgait_moves(s):
             K('s', 0.92, None, yH=-0.04, pitch=-0.1, neckPitch=-0.45, headPitch=-0.3, crown=0.8, glow=1.5),
             K('r', 0.3, None, yH=-0.06, pitch=0.18, neckPitch=0.1, crown=0.3, legs={'F': (0.6, 0.1), 'H': (0.3, 0.2)}),
             K('r', 0.7, None, pitch=0.03, glow=0.3)),
-             curve=(14.0, 44, 104), turn=(40, 60), bind=[crown('velgait_charge')],
+             curve=(14.0, 44, 104), turn=(40, 60), brake=(50, 104), bind=[crown('velgait_charge')],
              hits=[hit('crown', 44, 104, 'velgait_charge', 26, 'knockdown', cost=40)],
              sounds=[(4, 'beast_cry'), (40, 'galdros_charge')], ai=ai(7, 15.9, 25, 1.5, cd=520, clear=10)),
         # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 環冠を回る向きへ傾けて先に見定め、軽い脚で踏み替える。灯節が揺らぐ ----
