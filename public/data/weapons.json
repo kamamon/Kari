@@ -207,8 +207,8 @@
     {
       "id": "long_lance",
       "edge": { "wearPerMotion": 1.4, "label": "穂先" },
-      "labels": { "main": "突く", "sub": "上段", "special": "防御", "dodge": "跳び" },
-      "summary": "ランス。固い盾で受けて刺す。防御中に主で構え突き、副で受け返し。回避は短い跳び。",
+      "labels": { "main": "突く", "sub": "上段", "special": "防御", "dodge": "跳び", "combo": "突進" },
+      "summary": "ランス。固い盾で受けて刺す。主は中段突き、副は上段突き（混ぜて 3 回まで）。主と副の同時押しで突進（走り続けて何度も当たる。主でフィニッシュ突き、副で止まる）。防御を構えたまま歩け、構えたまま主で突く。回避は短い跳び（入力なし・前・左右。後ろへ入れると大きく跳ぶ）。",
       "name": "長尖槍",
       "twoHanded": false,
       "drawnMoveSpeed": 1.8,
@@ -217,21 +217,26 @@
       "blade": { "from": 0.9, "to": 2.36, "radius": 0.1 },
       "actions": {
         "main": "player.long_lance.thrust1",
-        "sub": "player.long_lance.high",
+        "sub": "player.long_lance.high1",
+        "combo": "player.long_lance.charge",
         "drawAttack": "player.long_lance.lunge",
         "draw": "player.long_lance.draw",
         "sheathe": "player.long_lance.sheathe",
         "guardMain": "player.long_lance.guard_thrust",
-        "guardSub": "player.long_lance.counter",
-        "dodge": "player.long_lance.hop"
+        "dodge": "player.long_lance.hop",
+        "dodgeBack": "player.long_lance.backstep"
       },
       "cancelNames": {
         "ll_thrust1": "player.long_lance.thrust1",
         "ll_thrust2": "player.long_lance.thrust2",
         "ll_thrust3": "player.long_lance.thrust3",
-        "ll_high": "player.long_lance.high"
+        "ll_high1": "player.long_lance.high1",
+        "ll_high2": "player.long_lance.high2",
+        "ll_high3": "player.long_lance.high3",
+        "ll_charge_finish": "player.long_lance.charge_finish",
+        "ll_charge_stop": "player.long_lance.charge_stop"
       },
-      "cancelButtons": { "ll_thrust2": "main", "ll_thrust3": "main" },
+      "cancelButtons": { "ll_thrust2": "main", "ll_thrust3": "main", "ll_high2": "sub", "ll_high3": "sub", "ll_charge_finish": "main", "ll_charge_stop": "sub" },
       "offhand": "shield_great",
       "offhandReady": [0.3, 1.0, 0.25],
       "offhandGuard": [0.05, 1.12, 0.5],
@@ -246,6 +251,7 @@
         "breakDamageScale": 0.6,
         "turnDegPerSec": 120,
         "recoilDistance": 0.3,
+        "walkSpeed": 1.0,
         "pose": { "grip": [-0.32, 0.95, -0.02], "dir": [0.0596, 0.0993, 0.9933], "planeNormal": [-0.9982, 0, 0.0599] }
       }
     },

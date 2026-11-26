@@ -87,6 +87,10 @@ pelvis 高さ 0.92 / 肩幅 0.37（肩の関節は左右 0.185）/ 上腕 0.29�
 | hb_attack_upswing_01 | player.heavy_blade.upswing | 66 tick | v0.40.0。構えから手首で刃を返して前の低い所へ下ろし（4〜14）、頭の上へ振り上げる（判定 18〜27）。下ろす前に刃を返して構えへ |
 | hb_attack_upswing_low_01 | player.heavy_blade.upswing_low | 54 tick | v0.40.0。縦斬り・抜刀斬りの後（刃が前の地面）から、手首で刃を返して（0〜4）そのまま振り上げる（判定 6〜15） |
 | hb_draw_01 / hb_sheathe_01 | …draw / …sheathe | 26 / 44 tick | |
+| ll_high_01 | player.long_lance.high1〜3 | 42 tick | v0.59.0 から 2G を手本に: 右ひじを外へ張って槍を肩の上へ持ち上げ（〜7）、盾の上から斜め上へ突き出す（判定 12〜17）。中段の ll_thrust_01（脇に抱えて正面へ）と見分ける |
+| ll_charge_01 | player.long_lance.charge | 210 tick | v0.59.0。突進。腰を落として盾を前に据え（〜14）、槍を脇に抱えて走る（左右の足で 20 tick に 2 歩、両足の浮く間がある）。途中で主・副・スタミナ切れで次の clip へ移るので、どの tick からでも次へつながる形を保つ |
+| ll_charge_finish_01 / ll_charge_stop_01 | …charge_finish / …charge_stop | 44 / 34 tick | v0.59.0。突進の 57 tick の姿から始まる（走っている途中の姿）。フィニッシュ突き（判定 10〜16）/ 前の足で踏んで止まり、穂先を上げて構えへ |
+| ll_backstep_01 | player.long_lance.backstep | 36 tick | v0.59.0。後ろへ入れた回避。深く沈んで両足で蹴り、1.88m 後ろへ跳ぶ（無敵 3〜13）。入力なし・前・左右は ll_hop_01（1.2m）。構え歩き（防御のまま歩く）は防御の足の形から描画が歩かせる（clip は無い） |
 | common_roll_01 | player.common.roll | 36 tick | 前転。v0.58.0 から 2G を手本に、予備（〜3）→ 蹴り出して両手を地面へ（6）→ 丸まって回る（10〜17）→ 足から着いてしゃがむ（22〜26）→ 立つ。抜刀中は前後左右の 4 方向が必要（いまは前転を回して代用している仮の処理） |
 | common_item_drink_01 | player.item.drink | 124 tick | 回復液を飲む。58 tick で効果（それまでに口元へ）。v0.40.0 から、飲み終えた後の決め姿勢（両腕を横へ上げて力を込める。76〜106）。v0.58.0 から、腰の袋から取り出し（〜12）、左手を腰に当てて飲む |
 | common_item_place_01 | player.item.set_trap | 112 tick | しゃがんで罠を据える。84 tick で設置 |

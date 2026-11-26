@@ -116,6 +116,8 @@ export class HunterAnimator {
       f = { ctl: mixCtl(idle.ctl, g.ctl, u), fL: mixFoot(idle.feet.L, g.feet.L, u), fR: mixFoot(idle.feet.R, g.feet.R, u) };
       f.ctl.spine = [f.ctl.spine[0]! + 6 * st.shake, f.ctl.spine[1]!, f.ctl.spine[2]!];
       f.ctl.hip = [f.ctl.hip[0]!, f.ctl.hip[1]! - 0.02 * st.shake, f.ctl.hip[2]! - 0.04 * st.shake];
+      // 構え歩き（v0.59.0。2G のランス）: 構えたまま歩く時は、防御の足の置き方から足を運ぶ
+      if (st.blend >= 1) walk = smooth((moveSpeed - 0.1) / 0.5);
     } else {
       f = { ctl: mixCtl(idle.ctl, idle.ctl, 0), fL: idle.feet.L.slice() as Foot, fR: idle.feet.R.slice() as Foot };
       const breathe = Math.sin(time * 1.7);
@@ -127,7 +129,8 @@ export class HunterAnimator {
     if (walk > 0) {
       const stride = strideOf(moveSpeed);
       this.phase += (moveSpeed * dt * Math.PI * 2) / stride;
-      const g = gaitFeet(this.phase, stride, idle.feet.L, idle.feet.R);
+      const base = st.kind === 'guard' && S.guard ? S.guard.feet : idle.feet;
+      const g = gaitFeet(this.phase, stride, base.L, base.R);
       f.fL = mixFoot(f.fL, g.L, walk);
       f.fR = mixFoot(f.fR, g.R, walk);
       const back = f.ctl.hipR[1]! * 0.4 * walk;
@@ -148,7 +151,7 @@ export class HunterAnimator {
       f = { ctl: mixCtl(this.from.ctl, f.ctl, u), fL: mixFoot(this.from.fL, f.fL, u), fR: mixFoot(this.from.fR, f.fR, u) };
     }
     // 足を世界座標へ留める処理は、通常歩行だけ。攻撃中の判定軌道は変えない。
-    if (context.root && st.kind === 'idle') {
+    if (context.root && (st.kind === 'idle' || (st.kind === 'guard' && walk > 0.01))) {
       const grounded = this.contact.frame(context.root, f.fL, f.fR, dt, walk > 0.01);
       // 坂（v0.47.0）: それぞれの足の下の地面の高さへ
       fitFeetToGround(context.root, grounded.L, grounded.R);
@@ -156,7 +159,7 @@ export class HunterAnimator {
     } else this.contact.reset();
     this.last = f;
     // 歩いている間（v0.28.1）: 足が届かずに腰を落とした分は、次のフレームでゆっくり戻す（腰が跳ね上がらない）
-    if (st.kind === 'idle' && walk > 0) {
+    if ((st.kind === 'idle' || st.kind === 'guard') && walk > 0) {
       this.sag = Math.max(0, this.sag - 0.3 * Math.min(dt, 0.1));
       const solved = solveBody({ ...f.ctl, hip: [f.ctl.hip[0]!, f.ctl.hip[1]! - this.sag, f.ctl.hip[2]!] }, f.fL, f.fR, S.hands);
       this.sag = Math.max(0, f.ctl.hip[1]! - solved.pose.py);

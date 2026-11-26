@@ -130,6 +130,12 @@ export interface ActionDef {
   demon?: 'on' | 'off';
   /** 気（太刀。v0.56.0）: この行動を始めた tick に、気を cost だけ使う（気が 0 なら始められない）。この行動の命中では、気はたまらない。系統に spirit が要る */
   spirit?: { cost: number };
+  /**
+   * 続く行動（v0.59.0。長尖槍の突進）: from の tick から毎 tick、staminaPerSec ÷ 60 のスタミナを使う。尽きたら out の行動へ移る
+   */
+  sustain?: { from: number; staminaPerSec: number; out: string };
+  /** 終わりまで進んだら、待機ではなく、この行動へ移る（v0.59.0。長尖槍の突進 → 止まる） */
+  next?: string;
   shoot?: ShootDef[];
   /** この区間に、体ごと回る（度。+ が左回り）。護刃と双剣の回転斬り（v0.53.0・v0.54.0）。武器の軌道は体に対して決まるので、判定も一緒に回る。 */
   spin?: { from: number; to: number; degrees: number };
@@ -190,6 +196,8 @@ export interface GuardDef {
   recoilDistance?: number;
   /** 受け止めるたびに減る刃の状態（v0.40.0。断岳剣は刃で受けるので減る。2G の大剣に合わせた。量は Kari の仮の値）。省くと減らない */
   edgeWear?: number;
+  /** 防御を構えたまま歩く速さ（m/s。v0.59.0。2G のランスの構え歩き）。省くと、構えている間は向きを変えるだけ */
+  walkSpeed?: number;
 }
 
 export interface WeaponFamilyDef {
@@ -213,6 +221,11 @@ export interface WeaponFamilyDef {
     guardSub?: string;
     /** 回避の行動。省くと共通の転がる回避。 */
     dodge?: string;
+    /**
+     * 大きく後ろへ跳ぶ（v0.59.0。2G のランスの「後ろ + 回避」）。これがある系統は、回避が跳び（ステップ）で、前へは跳ばない:
+     * 入力なし・前 = dodge で後ろへ、後ろ = これ、左右 = dodge で横へ
+     */
+    dodgeBack?: string;
     /** 主と副の同時押し（複合入力。v0.40.0）で出す技。抜刀して立っている時（断岳剣の斬り上げ） */
     combo?: string;
   };

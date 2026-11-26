@@ -365,17 +365,28 @@ export function startAction(p: PlayerState, actionId: string, ctx: SimCtx): Acti
 
 function tryStartRoll(p: PlayerState, inp: InputFrame, ctx: SimCtx): boolean {
   const T = ctx.content.player;
+  const fam = familyOf(p, ctx.content);
+  const mag = Math.hypot(inp.moveX, inp.moveZ);
+  let dir = mag > MOVE_DEADZONE ? yawOf(inp.moveX, inp.moveZ) : p.yaw;
   // 回避の行動は武器ごと（長尖槍は短い跳び）。無ければ共通の転がる回避。
-  const dodgeId = familyOf(p, ctx.content).actions.dodge ?? T.rollActionId;
+  let dodgeId = fam.actions.dodge ?? T.rollActionId;
+  // 跳びの系統（v0.59.0。2G のランス）: 前へは跳ばない。入力なし・前 = 後ろへ、後ろ = 大きく後ろへ、左右 = 横へ
+  let stepIndex: number | null = null;
+  if (p.drawn && fam.actions.dodgeBack) {
+    const rel = mag > MOVE_DEADZONE ? angleDiff(p.yaw, dir) : 0;
+    const i = ((Math.round(rel / (Math.PI / 2)) % 4) + 4) % 4;
+    stepIndex = i === 0 ? 2 : i;
+    if (i === 2) dodgeId = fam.actions.dodgeBack;
+    dir = p.yaw + (stepIndex * Math.PI) / 2;
+  }
   const def = ctx.content.actions.get(p.drawn ? dodgeId : T.rollActionId)!;
   if (p.stamina < staminaCostOf(p, def, ctx)) {
     ctx.emit({ type: 'stamina_empty' });
     return false;
   }
-  const mag = Math.hypot(inp.moveX, inp.moveZ);
-  const dir = mag > MOVE_DEADZONE ? yawOf(inp.moveX, inp.moveZ) : p.yaw;
   let dirIndex = 0;
-  if (p.drawn) {
+  if (stepIndex !== null) dirIndex = stepIndex;
+  else if (p.drawn) {
     // 抜刀中は体の向きを保ち、入力方向へ転がる。見た目は前後左右の近い方を使う。
     const rel = angleDiff(p.yaw, dir);
     dirIndex = ((Math.round(rel / (Math.PI / 2)) % 4) + 4) % 4;
@@ -565,7 +576,23 @@ function stepAction(p: PlayerState, inp: InputFrame, ctx: SimCtx, depth = 0): vo
       one();
     }
   }
-  if (run.tick >= def.durationTicks) finishAction(p);
+  // 続く行動（v0.59.0。長尖槍の突進）: from から毎 tick スタミナを使い、尽きたら out の行動へ移る
+  const su = def.sustain;
+  if (su && run.tick > su.from) {
+    spendStamina(p, su.staminaPerSec / 60, ctx);
+    if (p.stamina <= 0) {
+      startAction(p, su.out, ctx);
+      return;
+    }
+  }
+  if (run.tick >= def.durationTicks) {
+    // 終わりまで進んだら移る行動（v0.59.0）
+    if (def.next) {
+      startAction(p, def.next, ctx);
+      return;
+    }
+    finishAction(p);
+  }
 }
 
 // ---- 登攀（v0.44.0。#19 の H07。docs/spec.md の 32.9。値は Kari の仮の値）----
@@ -922,7 +949,7 @@ function stepGuard(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     consume(p, 'item');
     if (tryUseItem(p, ctx, true)) return stepAction(p, inp, ctx, 1);
   }
-  // 構えたまま出す技（長尖槍の構え突き・受け返し）
+  // 構えたまま出す技（長尖槍の構え突き。受け返しは保留の組 v056 だけ。v0.59.0）
   if (isGuarding(p, G)) {
     for (const [key, id] of [['main', fam.actions.guardMain], ['sub', fam.actions.guardSub]] as const) {
       if (!id || p.buffer[key] <= 0) continue;
@@ -945,8 +972,19 @@ function stepGuard(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
         break;
       }
       g.tick++;
-      if (Math.hypot(inp.moveX, inp.moveZ) > MOVE_DEADZONE) {
-        p.yaw = turnToward(p.yaw, yawOf(inp.moveX, inp.moveZ), (G.turnDegPerSec * DEG) / 60);
+      const gm = Math.min(1, Math.hypot(inp.moveX, inp.moveZ));
+      if (gm > MOVE_DEADZONE) {
+        const want = yawOf(inp.moveX, inp.moveZ);
+        p.yaw = turnToward(p.yaw, want, (G.turnDegPerSec * DEG) / 60);
+        // 構え歩き（v0.59.0。2G のランス）: 盾を構えたまま、向いている方へゆっくり歩く。入力の向きへ回りながら、
+        // 入力と向きが離れているほど遅い（後ろへ入れた時は、その場で回ってから歩く）
+        if (G.walkSpeed) {
+          const along = Math.max(0, Math.cos(angleDiff(p.yaw, want)));
+          const f = forwardOf(p.yaw);
+          const d = (G.walkSpeed * gm * along) / 60;
+          if (d > 0) ctx.world.move(p.pos, T.radius, f.x * d, f.z * d, ctx.blockers());
+          p.moveSpeed = G.walkSpeed * gm * along;
+        }
       }
       break;
     }

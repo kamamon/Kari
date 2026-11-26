@@ -1946,6 +1946,56 @@ const startTraining = async (page, tap = false) => {
   await ctx.close();
 }
 
+// ---- 長尖槍の突進（v0.59.0。#19 の H03・D-153）: 同時押し（「突進」）で走り続け、同じ標的に何度も当たる。主でフィニッシュ突き。
+// 副の上段突きと混ぜて 3 回まで。回避は後ろへの跳び（前へは跳ばない）。受け返しは無い ----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false);
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  await page.locator('.base-weapon[data-weapon="weapon.long_lance.001"]').click();
+  await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy'), 6000, 'weapon.long_lance.001');
+  await startTraining(page);
+  await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+  const place = (dz) => page.evaluate((dz) => {
+    const v = window.__vh, s = v.sim, m = s.monsters[0], p = s.player;
+    m.aiEnabled = false;
+    v.clock.advance = () => 0;
+    p.mode = 'free'; p.action = null; p.guard = null; p.drawn = true; p.stamina = 100;
+    p.pos = { x: m.pos.x, y: 0, z: m.pos.z - dz }; p.prevPos = { ...p.pos }; p.yaw = 0; p.prevYaw = 0;
+    return p.pos.z;
+  }, dz);
+  const drive = (ticks) => page.evaluate((ticks) => {
+    const s = window.__vh.sim, p = s.player;
+    const seen = [], hit = [];
+    for (const [pressed, mx, mz] of ticks) {
+      s.step({ moveX: mx ?? 0, moveZ: mz ?? 0, held: pressed, pressed, released: 0 });
+      for (const e of s.drainEvents()) {
+        if (e.type === 'action_start' && e.actor === 'player') seen.push(e.actionId.replace('player.long_lance.', ''));
+        if (e.type === 'hit' && e.attacker === 'player') hit.push(e.actionId.replace('player.long_lance.', ''));
+      }
+    }
+    return { seen, hit, z: Math.round(p.pos.z * 100) / 100, stamina: Math.round(p.stamina), now: p.action?.def.actionId.replace('player.long_lance.', '') ?? p.mode };
+  }, ticks);
+  const T = (n, f) => Array.from({ length: n }, (_, i) => f(i));
+  await place(9);
+  const btn = await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r({ combo: document.querySelector('.tbtn-combo')?.textContent ?? null, sub: document.querySelector('.tbtn-sub')?.textContent ?? null })))));
+  const run1 = await drive(T(150, (i) => [i === 0 ? 1024 : 0]));
+  await nextFrames(page);
+  await page.screenshot({ path: `${OUT}86c_lance_charge.png` });
+  const run2 = await drive(T(60, (i) => [i === 0 ? 1 : 0]));
+  await place(2.4);
+  const mix = await drive(T(150, (i) => [i === 0 ? 1 : i === 20 ? 2 : i === 44 ? 1 : i === 64 ? 2 : 0]));
+  const hopZ0 = await place(4);
+  const hop = await drive(T(30, (i) => [i === 0 ? 4 : 0]));
+  hop.back = Math.round((hopZ0 - hop.z) * 100) / 100;
+  const missing = await page.evaluate(() => [...window.__vh.view.missingClips]);
+  check('長尖槍（v0.59.0）: 同時押し（「突進」）で走り続け、標的に 2 回以上当たり、スタミナを使う。主でフィニッシュ突き。中段・上段は混ぜて 3 回まで。入力なしの回避は後ろへの跳び。新しい動きはどれも描ける',
+    btn.combo === '突進' && btn.sub === '上段' && run1.seen.join() === 'charge' && run1.hit.filter((h) => h === 'charge').length >= 2 && run1.stamina < 90
+      && run2.seen[0] === 'charge_finish' && mix.seen.join() === 'thrust1,high2,thrust3' && hop.seen.join() === 'hop' && hop.back > 1 && missing.length === 0,
+    JSON.stringify({ btn, run1, run2, mix, hop, missing }));
+  await ctx.close();
+}
+
 // ---- 弱った足取り（v0.52.0。#19 の M05）: 弱って巣へ向かう大型が歩くと、一歩ごとに体が片側へ傾き、頭が下がる。弱っていなければ傾かない ----
 {
   const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');

@@ -150,7 +150,7 @@ export function family(id, hands, shape) {
       onFinish: o.finish ?? 'drawn_idle',
       ...(o.track ? { weaponTrack: o.track } : {}),
     };
-    for (const k of ['staminaCost', 'invulnerable', 'charge', 'freeMove', 'guardWindows', 'counter', 'demon', 'spirit', 'shoot', 'spin', 'offhandTrack']) if (o[k] !== undefined) def[k] = o[k];
+    for (const k of ['staminaCost', 'invulnerable', 'charge', 'freeMove', 'guardWindows', 'counter', 'demon', 'spirit', 'sustain', 'next', 'shoot', 'spin', 'offhandTrack']) if (o[k] !== undefined) def[k] = o[k];
     F.actions.push(def);
     const prev = state.clips.get(o.clip);
     if (prev && prev.dur !== o.dur) throw new Error(`clip ${o.clip} の長さが技ごとに違う`);

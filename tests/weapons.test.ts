@@ -478,21 +478,136 @@ describe('長尖槍（ランス）', () => {
     expect(sim.player.hp).toBeLessThan(100); // 削りはある
   });
 
-  it('受け返し: 構えの間に受けると無傷で、大きな突きを返す', () => {
-    const at = slamTick('long_lance');
-    const sim = underSlam('long_lance');
-    const evs = run(sim, at + 60, (i) => (i === at - 12 ? frame({ held: Btn.Special, pressed: Btn.Sub }) : i < at - 12 ? hold(Btn.Special) : frame()));
-    expect(evs.filter((e) => e.type === 'parry')).toHaveLength(1);
-    expect(starts(evs)).toContain('player.long_lance.counter_thrust');
-    expect(sim.player.hp).toBe(100);
+  it('中段と上段を混ぜて 3 回まで（v0.59.0。2G のランス）。3 回目の後は突きが出ず、跳びへ移れる', () => {
+    const sim = mk('long_lance');
+    placeInFrontOfHead(sim, 2.4);
+    const evs = run(sim, 170, (i) => (i === 0 ? press(Btn.Main) : i === 20 ? press(Btn.Sub) : i === 44 ? press(Btn.Main) : i === 64 ? press(Btn.Sub) : frame()));
+    expect(starts(evs)).toEqual(['player.long_lance.thrust1', 'player.long_lance.high2', 'player.long_lance.thrust3']);
+    // 中段の 2 回は、正面の標的に当たる（上段は高い所を突く）
+    expect(hits(evs).filter((h) => h.actionId !== 'player.long_lance.high2')).toHaveLength(2);
+    const sim2 = mk('long_lance');
+    placeInFrontOfHead(sim2, 2.4);
+    const evs2 = run(sim2, 120, (i) => (i === 0 ? press(Btn.Sub) : i === 24 ? press(Btn.Sub) : i === 48 ? press(Btn.Sub) : i === 90 ? press(Btn.Dodge) : frame()));
+    expect(starts(evs2)).toEqual(['player.long_lance.high1', 'player.long_lance.high2', 'player.long_lance.high3', 'player.long_lance.hop']);
   });
 
-  it('回避は短い跳び（転がらない）。納刀中は共通の回避', () => {
+  it('受け返しは無い（v0.59.0。2G に合わせて外した）。防御中の副は何も出さず、ふつうに受け止める。保留の組 v056 では、これまでどおり受け返す', async () => {
+    const at = slamTick('long_lance');
+    const sim = underSlam('long_lance');
+    const evs = run(sim, at + 40, (i) => (i === at - 12 ? frame({ held: Btn.Special, pressed: Btn.Sub }) : hold(Btn.Special)));
+    expect(content.families.get('long_lance')!.actions.guardSub).toBeUndefined();
+    expect(evs.filter((e) => e.type === 'parry')).toHaveLength(0);
+    expect(evs.filter((e) => e.type === 'guard').length).toBeGreaterThan(0);
+    expect(starts(evs).filter((id) => id.startsWith('player.long_lance.'))).toEqual([]);
+    const held = await loadContent({ motionSet: 'v056' });
+    const old = new Simulation(held, baseOptions({ weaponId: 'weapon.long_lance.001', monsterAttacks: true }));
+    const m = old.monsters[0]!;
+    m.cooldown = 0;
+    old.player.pos = { x: m.pos.x + 0.6, y: 0, z: m.pos.z - 2.4 };
+    old.player.yaw = 0;
+    old.player.drawn = true;
+    const evs3 = run(old, at + 60, (i) => (i === at - 12 ? frame({ held: Btn.Special, pressed: Btn.Sub }) : i < at - 12 ? hold(Btn.Special) : frame()));
+    expect(starts(evs3)).toContain('player.long_lance.counter_thrust');
+  });
+
+  it('突進（v0.59.0）: 同時押しで走り出し、スタミナを使い続け、同じ相手に何度も当たる。走りながら向きを変えられ、主でフィニッシュ突き', () => {
     const sim = mk('long_lance');
+    const m = sim.monsters[0]!;
+    m.aiEnabled = false;
     sim.player.drawn = true;
-    expect(starts(run(sim, 3, (i) => (i === 0 ? frame({ pressed: Btn.Dodge, moveZ: 1 }) : frame())))).toEqual(['player.long_lance.hop']);
+    sim.player.pos = { x: m.pos.x, y: 0, z: m.pos.z - 9 };
+    sim.player.yaw = 0;
+    const st0 = sim.player.stamina;
+    const evs = run(sim, 110, (i) => (i === 0 ? press(Btn.Combo) : frame()));
+    expect(starts(evs)).toEqual(['player.long_lance.charge']);
+    expect(sim.player.action?.def.actionId).toBe('player.long_lance.charge');
+    expect(sim.player.stamina).toBeLessThan(st0 - 10);
+    const charged = hits(evs).filter((h) => h.actionId === 'player.long_lance.charge');
+    expect(charged.length).toBeGreaterThanOrEqual(2);
+    // 向きを変える: 右へ入れると、走りながら右へ回る
+    const yaw0 = sim.player.yaw;
+    run(sim, 20, () => frame({ moveX: -1, moveZ: 0 }));
+    expect(sim.player.yaw).toBeLessThan(yaw0 - 0.3);
+    const evs2 = run(sim, 60, (i) => (i === 0 ? press(Btn.Main) : frame()));
+    expect(starts(evs2)[0]).toBe('player.long_lance.charge_finish');
+  });
+
+  it('突進は、終わりまで走ると止まり、スタミナが尽きても止まり、副でも止まる（v0.59.0）', () => {
+    const go = (setup: (sim: Simulation) => void, f: (i: number) => ReturnType<typeof frame>): string[] => {
+      const sim = mk('long_lance');
+      sim.monsters[0]!.aiEnabled = false;
+      sim.player.drawn = true;
+      sim.player.pos = { x: 0, y: 0, z: -14 };
+      sim.player.yaw = Math.PI;
+      setup(sim);
+      return starts(run(sim, 260, (i) => (i === 0 ? press(Btn.Combo) : f(i))));
+    };
+    const full = go(() => {}, () => frame());
+    expect(full.slice(0, 2)).toEqual(['player.long_lance.charge', 'player.long_lance.charge_stop']);
+    const tired = go((sim) => { sim.player.stamina = 30; }, () => frame());
+    expect(tired.slice(0, 2)).toEqual(['player.long_lance.charge', 'player.long_lance.charge_stop']);
+    const sub = go(() => {}, (i) => (i === 40 ? press(Btn.Sub) : frame()));
+    expect(sub.slice(0, 2)).toEqual(['player.long_lance.charge', 'player.long_lance.charge_stop']);
+    // スタミナが尽きた時は、終わりまで走るより早く止まる
+    const at = (sim0: (sim: Simulation) => void): number => {
+      const sim = mk('long_lance');
+      sim.monsters[0]!.aiEnabled = false;
+      sim.player.drawn = true;
+      sim.player.pos = { x: 0, y: 0, z: -14 };
+      sim.player.yaw = Math.PI;
+      sim0(sim);
+      for (let i = 0; i < 260; i++) {
+        sim.step(i === 0 ? press(Btn.Combo) : frame());
+        if (sim.drainEvents().some((e) => e.type === 'action_start' && e.actionId === 'player.long_lance.charge_stop')) return i;
+      }
+      return -1;
+    };
+    expect(at((sim) => { sim.player.stamina = 30; })).toBeLessThan(at(() => {}) - 60);
+  });
+
+  it('回避は跳び（v0.59.0。前へは跳ばない）: 入力なし・前は後ろへ、左右は横へ、後ろへ入れると大きく後ろへ。納刀中は共通の回避', () => {
+    const dodge = (moveX: number, moveZ: number): { id: string; dx: number; dz: number } => {
+      const sim = mk('long_lance');
+      sim.monsters[0]!.aiEnabled = false;
+      sim.player.drawn = true;
+      sim.player.pos = { x: 0, y: 0, z: -14 };
+      sim.player.yaw = 0;
+      const evs = run(sim, 40, (i) => (i === 0 ? frame({ pressed: Btn.Dodge, moveX, moveZ }) : frame()));
+      return { id: starts(evs)[0]!, dx: sim.player.pos.x, dz: sim.player.pos.z + 14 };
+    };
+    const n = dodge(0, 0), f = dodge(0, 1), l = dodge(1, 0), b = dodge(0, -1);
+    expect([n.id, f.id, l.id, b.id]).toEqual(['player.long_lance.hop', 'player.long_lance.hop', 'player.long_lance.hop', 'player.long_lance.backstep']);
+    expect(n.dz).toBeLessThan(-1);
+    expect(f.dz).toBeLessThan(-1);
+    expect(l.dx).toBeGreaterThan(1);
+    expect(b.dz).toBeLessThan(n.dz - 0.4);
     const sim2 = mk('long_lance');
     expect(starts(run(sim2, 3, (i) => (i === 0 ? frame({ pressed: Btn.Dodge, moveZ: 1 }) : frame())))).toEqual([content.player.rollActionId]);
+  });
+
+  it('構え歩き（v0.59.0）: 防御を構えたまま、向いている方へゆっくり歩ける（1m/s）。後ろへ入れると、まずその場で回る', () => {
+    const sim = mk('long_lance');
+    sim.monsters[0]!.aiEnabled = false;
+    sim.player.drawn = true;
+    sim.player.pos = { x: 0, y: 0, z: -14 };
+    sim.player.yaw = Math.PI;
+    run(sim, 12, () => hold(Btn.Special));
+    expect(sim.player.mode).toBe('guard');
+    const z0 = sim.player.pos.z;
+    run(sim, 60, () => ({ ...hold(Btn.Special), moveZ: -1 }));
+    expect(sim.player.mode).toBe('guard');
+    expect(z0 - sim.player.pos.z).toBeGreaterThan(0.8);
+    expect(z0 - sim.player.pos.z).toBeLessThan(1.1);
+    const x0 = sim.player.pos.x, z1 = sim.player.pos.z;
+    run(sim, 10, () => ({ ...hold(Btn.Special), moveZ: 1 }));
+    expect(Math.hypot(sim.player.pos.x - x0, sim.player.pos.z - z1)).toBeLessThan(0.02);
+    // 護刃（盾の片手剣）は、これまでどおり構えたまま歩かない
+    const gb = mk('guard_blade');
+    gb.player.drawn = true;
+    run(gb, 12, () => hold(Btn.Special));
+    const g0 = { ...gb.player.pos };
+    run(gb, 30, () => ({ ...hold(Btn.Special), moveZ: 1 }));
+    expect(Math.hypot(gb.player.pos.x - g0.x, gb.player.pos.z - g0.z)).toBeLessThan(0.01);
   });
 });
 

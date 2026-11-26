@@ -240,6 +240,20 @@ export function crossCheck(c: Content, errors: string[]): void {
       if (!last || last.level !== 0 || last.moving !== undefined) errors.push(`${w}: charge.release の最後は、段階 0・動きを問わないもの（どの放し方でも移る先がある）`);
       if (a.hitWindows.length > 0) errors.push(`${w}: charge.release を持つ行動は溜めて待つだけ（判定は移った先が持つ）`);
     }
+    // 続く行動と、終わった後に移る行動（v0.59.0）: 移る先がある・同じ系統・区間が行動の中
+    const fam = (id: string): string => id.split('.').slice(0, 2).join('.');
+    if (a.sustain) {
+      const su = a.sustain;
+      if (!c.actions.has(su.out)) errors.push(`${w}: sustain.out の ${su.out} が無い`);
+      else if (fam(su.out) !== fam(a.actionId)) errors.push(`${w}: sustain.out は同じ系統の行動にする`);
+      if (!isNum(su.staminaPerSec) || su.staminaPerSec <= 0) errors.push(`${w}: sustain.staminaPerSec が不正`);
+      if (!Number.isInteger(su.from) || su.from < 0 || su.from >= a.durationTicks) errors.push(`${w}: sustain.from が行動の外`);
+    }
+    if (a.next !== undefined) {
+      if (!c.actions.has(a.next)) errors.push(`${w}: next の ${a.next} が無い`);
+      else if (fam(a.next) !== fam(a.actionId)) errors.push(`${w}: next は同じ系統の行動にする`);
+      if (a.next === a.actionId) errors.push(`${w}: next に自分を書かない`);
+    }
   }
   for (const f of c.families.values()) {
     const w = `family ${f.id}`;
@@ -255,6 +269,9 @@ export function crossCheck(c: Content, errors: string[]): void {
       if (key === 'combo' && !f.actions.combo) errors.push(`${w}: cancelButtons.${name} は combo だが、actions.combo が無い`);
     }
     if (f.labels && f.actions.combo && !f.labels.combo) errors.push(`${w}: actions.combo があるのに labels.combo（ボタンの表示名）が無い`);
+    // 跳びの回避（v0.59.0）: 大きく後ろへ跳ぶ行動は、跳び（actions.dodge）を持つ系統だけ。構え歩きの速さ
+    if (f.actions.dodgeBack && !f.actions.dodge) errors.push(`${w}: actions.dodgeBack があるのに actions.dodge（跳び）が無い`);
+    if (f.guard?.walkSpeed !== undefined && (!isNum(f.guard.walkSpeed) || f.guard.walkSpeed <= 0 || f.guard.walkSpeed > 3)) errors.push(`${w}: guard.walkSpeed が不正（0〜3 m/s）`);
     // 猛り（v0.54.0）: 入る行動は固有ボタン、解く行動は swap で替わる先。替える行動はどれもこの系統の行動
     const D = f.demon;
     const own = (id: string): boolean => id.startsWith(`player.${f.id}.`) && c.actions.has(id);
