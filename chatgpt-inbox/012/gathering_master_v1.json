@@ -45,7 +45,8 @@
     "higherRankNodeAccess": "same field node anchors, new loot tables chosen by accepted quest rank, not hunter inventory rank",
     "rarityAssurance": "no guaranteed rare per use; first-clear dedicated exploration quests may award one non-monster rare material as relief",
     "rareRollVisibility": "rare point visuals distinguish seam strength, never disclose final result",
-    "dropBounds": "never grant a material requiring a higher rank than the active quest"
+    "dropBounds": "never grant a material requiring a higher rank than the active quest",
+    "ecologyFirst": "Global plant/insect/fish tables are tier reference templates, not immediately usable in basin. Use basin.ecologicalLootOverrides to prevent wetland, coastline and forest materials from dry basin."
   },
   "actions": [
     {
@@ -2057,7 +2058,15 @@
         "mine"
       ],
       "placementRule": "魚影は置かず、湿った地形でも水面が無ければ釣り不可",
-      "unimplementedAreasNeedAuthoring": false
+      "unimplementedAreasNeedAuthoring": false,
+      "plannedFishingAfterPoolConstruction": true,
+      "allowedNodeKindsAfterWaterConstruction": [
+        "plant",
+        "bone",
+        "insect",
+        "mine",
+        "fish"
+      ]
     },
     {
       "fieldName": "根絡み湿原",
@@ -3253,7 +3262,682 @@
         "reason": "現行の涸れ沢に水面定義が無いため、釣りはここを追加した後だけ有効"
       }
     ],
-    "status": "precise_candidate_points_not_yet_playable_or_navmesh_tested"
+    "status": "precise_candidate_points_not_yet_playable_or_navmesh_tested",
+    "ecologicalLootOverrides": [
+      {
+        "id": "loot.basin.plant.r1.ordinary",
+        "nodeKind": "plant",
+        "rankId": "rank.1",
+        "quality": "ordinary",
+        "sourceTemplateId": "loot.plant.r1.ordinary",
+        "entries": [
+          {
+            "itemId": "mat.gather.flatnagi_leaf",
+            "weightBps": 6600,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.gather.dewbreak_fruit",
+            "weightBps": 3100,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.gather.threadbind_fiber",
+            "weightBps": 300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.plant.r1.deep",
+        "nodeKind": "plant",
+        "rankId": "rank.1",
+        "quality": "deep",
+        "sourceTemplateId": "loot.plant.r1.deep",
+        "entries": [
+          {
+            "itemId": "mat.gather.flatnagi_leaf",
+            "weightBps": 4000,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.gather.dewbreak_fruit",
+            "weightBps": 4700,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.gather.threadbind_fiber",
+            "weightBps": 1300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.insect.r1.ordinary",
+        "nodeKind": "insect",
+        "rankId": "rank.1",
+        "quality": "ordinary",
+        "sourceTemplateId": "loot.insect.r1.ordinary",
+        "entries": [
+          {
+            "itemId": "mat.equip.insect.gap_beetle_shell",
+            "weightBps": 6600,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.equip.insect.thread_moth_silk",
+            "weightBps": 3100,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.equip.insect.holding_light_sac",
+            "weightBps": 300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.insect.r1.deep",
+        "nodeKind": "insect",
+        "rankId": "rank.1",
+        "quality": "deep",
+        "sourceTemplateId": "loot.insect.r1.deep",
+        "entries": [
+          {
+            "itemId": "mat.equip.insect.gap_beetle_shell",
+            "weightBps": 4000,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.equip.insect.thread_moth_silk",
+            "weightBps": 4700,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.equip.insect.holding_light_sac",
+            "weightBps": 1300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.fish.r1.ordinary",
+        "nodeKind": "fish",
+        "rankId": "rank.1",
+        "quality": "ordinary",
+        "sourceTemplateId": "loot.fish.r1.ordinary",
+        "entries": [
+          {
+            "itemId": "mat.fish.streamfin",
+            "weightBps": 6600,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.fish.shallow_crest",
+            "weightBps": 3100,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.fish.dusk_needle",
+            "weightBps": 300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.fish.r1.deep",
+        "nodeKind": "fish",
+        "rankId": "rank.1",
+        "quality": "deep",
+        "sourceTemplateId": "loot.fish.r1.deep",
+        "entries": [
+          {
+            "itemId": "mat.fish.streamfin",
+            "weightBps": 4000,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.fish.shallow_crest",
+            "weightBps": 4700,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.fish.dusk_needle",
+            "weightBps": 1300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.plant.r2.ordinary",
+        "nodeKind": "plant",
+        "rankId": "rank.2",
+        "quality": "ordinary",
+        "sourceTemplateId": "loot.plant.r1.ordinary",
+        "entries": [
+          {
+            "itemId": "mat.gather.flatnagi_leaf",
+            "weightBps": 6600,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.gather.dewbreak_fruit",
+            "weightBps": 3100,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.gather.threadbind_fiber",
+            "weightBps": 300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.plant.r2.deep",
+        "nodeKind": "plant",
+        "rankId": "rank.2",
+        "quality": "deep",
+        "sourceTemplateId": "loot.plant.r1.deep",
+        "entries": [
+          {
+            "itemId": "mat.gather.flatnagi_leaf",
+            "weightBps": 4000,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.gather.dewbreak_fruit",
+            "weightBps": 4700,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.gather.threadbind_fiber",
+            "weightBps": 1300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.insect.r2.ordinary",
+        "nodeKind": "insect",
+        "rankId": "rank.2",
+        "quality": "ordinary",
+        "sourceTemplateId": "loot.insect.r1.ordinary",
+        "entries": [
+          {
+            "itemId": "mat.equip.insect.gap_beetle_shell",
+            "weightBps": 6600,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.equip.insect.thread_moth_silk",
+            "weightBps": 3100,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.equip.insect.holding_light_sac",
+            "weightBps": 300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.insect.r2.deep",
+        "nodeKind": "insect",
+        "rankId": "rank.2",
+        "quality": "deep",
+        "sourceTemplateId": "loot.insect.r1.deep",
+        "entries": [
+          {
+            "itemId": "mat.equip.insect.gap_beetle_shell",
+            "weightBps": 4000,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.equip.insect.thread_moth_silk",
+            "weightBps": 4700,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.equip.insect.holding_light_sac",
+            "weightBps": 1300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.fish.r2.ordinary",
+        "nodeKind": "fish",
+        "rankId": "rank.2",
+        "quality": "ordinary",
+        "sourceTemplateId": "loot.fish.r1.ordinary",
+        "entries": [
+          {
+            "itemId": "mat.fish.streamfin",
+            "weightBps": 6600,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.fish.shallow_crest",
+            "weightBps": 3100,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.fish.dusk_needle",
+            "weightBps": 300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.fish.r2.deep",
+        "nodeKind": "fish",
+        "rankId": "rank.2",
+        "quality": "deep",
+        "sourceTemplateId": "loot.fish.r1.deep",
+        "entries": [
+          {
+            "itemId": "mat.fish.streamfin",
+            "weightBps": 4000,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.fish.shallow_crest",
+            "weightBps": 4700,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.fish.dusk_needle",
+            "weightBps": 1300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.plant.r3.ordinary",
+        "nodeKind": "plant",
+        "rankId": "rank.3",
+        "quality": "ordinary",
+        "sourceTemplateId": "loot.plant.r1.ordinary",
+        "entries": [
+          {
+            "itemId": "mat.gather.flatnagi_leaf",
+            "weightBps": 6600,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.gather.dewbreak_fruit",
+            "weightBps": 3100,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.gather.threadbind_fiber",
+            "weightBps": 300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.plant.r3.deep",
+        "nodeKind": "plant",
+        "rankId": "rank.3",
+        "quality": "deep",
+        "sourceTemplateId": "loot.plant.r1.deep",
+        "entries": [
+          {
+            "itemId": "mat.gather.flatnagi_leaf",
+            "weightBps": 4000,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.gather.dewbreak_fruit",
+            "weightBps": 4700,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.gather.threadbind_fiber",
+            "weightBps": 1300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.insect.r3.ordinary",
+        "nodeKind": "insect",
+        "rankId": "rank.3",
+        "quality": "ordinary",
+        "sourceTemplateId": "loot.insect.r1.ordinary",
+        "entries": [
+          {
+            "itemId": "mat.equip.insect.gap_beetle_shell",
+            "weightBps": 6600,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.equip.insect.thread_moth_silk",
+            "weightBps": 3100,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.equip.insect.holding_light_sac",
+            "weightBps": 300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.insect.r3.deep",
+        "nodeKind": "insect",
+        "rankId": "rank.3",
+        "quality": "deep",
+        "sourceTemplateId": "loot.insect.r1.deep",
+        "entries": [
+          {
+            "itemId": "mat.equip.insect.gap_beetle_shell",
+            "weightBps": 4000,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.equip.insect.thread_moth_silk",
+            "weightBps": 4700,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.equip.insect.holding_light_sac",
+            "weightBps": 1300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.fish.r3.ordinary",
+        "nodeKind": "fish",
+        "rankId": "rank.3",
+        "quality": "ordinary",
+        "sourceTemplateId": "loot.fish.r1.ordinary",
+        "entries": [
+          {
+            "itemId": "mat.fish.streamfin",
+            "weightBps": 6600,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.fish.shallow_crest",
+            "weightBps": 3100,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.fish.dusk_needle",
+            "weightBps": 300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.fish.r3.deep",
+        "nodeKind": "fish",
+        "rankId": "rank.3",
+        "quality": "deep",
+        "sourceTemplateId": "loot.fish.r1.deep",
+        "entries": [
+          {
+            "itemId": "mat.fish.streamfin",
+            "weightBps": 4000,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.fish.shallow_crest",
+            "weightBps": 4700,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.fish.dusk_needle",
+            "weightBps": 1300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.plant.r4.ordinary",
+        "nodeKind": "plant",
+        "rankId": "rank.4",
+        "quality": "ordinary",
+        "sourceTemplateId": "loot.plant.r1.ordinary",
+        "entries": [
+          {
+            "itemId": "mat.gather.flatnagi_leaf",
+            "weightBps": 6600,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.gather.dewbreak_fruit",
+            "weightBps": 3100,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.gather.threadbind_fiber",
+            "weightBps": 300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.plant.r4.deep",
+        "nodeKind": "plant",
+        "rankId": "rank.4",
+        "quality": "deep",
+        "sourceTemplateId": "loot.plant.r1.deep",
+        "entries": [
+          {
+            "itemId": "mat.gather.flatnagi_leaf",
+            "weightBps": 4000,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.gather.dewbreak_fruit",
+            "weightBps": 4700,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.gather.threadbind_fiber",
+            "weightBps": 1300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.insect.r4.ordinary",
+        "nodeKind": "insect",
+        "rankId": "rank.4",
+        "quality": "ordinary",
+        "sourceTemplateId": "loot.insect.r1.ordinary",
+        "entries": [
+          {
+            "itemId": "mat.equip.insect.gap_beetle_shell",
+            "weightBps": 6600,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.equip.insect.thread_moth_silk",
+            "weightBps": 3100,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.equip.insect.holding_light_sac",
+            "weightBps": 300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.insect.r4.deep",
+        "nodeKind": "insect",
+        "rankId": "rank.4",
+        "quality": "deep",
+        "sourceTemplateId": "loot.insect.r1.deep",
+        "entries": [
+          {
+            "itemId": "mat.equip.insect.gap_beetle_shell",
+            "weightBps": 4000,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.equip.insect.thread_moth_silk",
+            "weightBps": 4700,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.equip.insect.holding_light_sac",
+            "weightBps": 1300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.fish.r4.ordinary",
+        "nodeKind": "fish",
+        "rankId": "rank.4",
+        "quality": "ordinary",
+        "sourceTemplateId": "loot.fish.r1.ordinary",
+        "entries": [
+          {
+            "itemId": "mat.fish.streamfin",
+            "weightBps": 6600,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.fish.shallow_crest",
+            "weightBps": 3100,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.fish.dusk_needle",
+            "weightBps": 300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      },
+      {
+        "id": "loot.basin.fish.r4.deep",
+        "nodeKind": "fish",
+        "rankId": "rank.4",
+        "quality": "deep",
+        "sourceTemplateId": "loot.fish.r1.deep",
+        "entries": [
+          {
+            "itemId": "mat.fish.streamfin",
+            "weightBps": 4000,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.fish.shallow_crest",
+            "weightBps": 4700,
+            "minCount": 1,
+            "maxCount": 1
+          },
+          {
+            "itemId": "mat.fish.dusk_needle",
+            "weightBps": 1300,
+            "minCount": 1,
+            "maxCount": 1
+          }
+        ],
+        "ecologyNote": "盆地で他地域固有名の素材が抽選されないように初級の盆地在来プールを維持。上級の地域素材は当該地域の採取点から入手する"
+      }
+    ],
+    "habitatPoolPolicy": "At runtime select basin.ecologicalLootOverrides for plant/insect/fish and global lootTables for mine/bone; on all other fields use only a field-specific ecology-resolved table, never raw global table with mismatched field names."
   },
   "equipment": {
     "series": [
