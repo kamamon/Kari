@@ -221,6 +221,9 @@ for o in legacy['rocks']:
 for p in (legacy['spawn'], legacy['monsterSpawn']):
     assert wall_dist(shapes['a3'][0], p['x'], p['z']) > 4, ('a3 の出発地点が外周に近い', p)
 
+# 登攀の棚を置くエリアと、棚の高さ（v0.44.0。設計の relative_rise_m）
+CLIMB_SHELVES = {'a4': 3.0, 'a9': 3.0}
+
 def keep_zones(aid, a):
     cx, cz = a['center']['x'], a['center']['z']
     keep = [(e['x'], e['z'], 11.0) for e in a['exits']] + [(cx, cz, 9.0)]
@@ -285,6 +288,39 @@ for aid, a in areas.items():
             break
         else:
             print(f'{aid}: 段を置ける所が無い（段なし）')
+    # 登攀の棚（v0.44.0。#19 の H07・F02 の最初の一切れ。ChatGPT の field_blueprints の a4_climb_01・a9_climb_01: 3m 上の採取棚へ、壁を登る）。
+    # 外周に寄せた 9 × 6m の棚（高さ 3m）。エリアの中心を向いた辺が登れる壁で、その前（1.2m）が登り口。乱数は使わず、ます目を順に調べて、いちばん良い所
+    if aid in CLIMB_SHELVES:
+        cx, cz = a['center']['x'], a['center']['z']
+        best = None
+        for pw, pd in ((9.0, 6.0), (6.0, 9.0)):
+            for x0 in np.arange(b['minX'], b['maxX'] - pw, 1.0):
+                for z0 in np.arange(b['minZ'], b['maxZ'] - pd, 1.0):
+                    x0, z0 = float(x0), float(z0)
+                    corners = [(x0, z0), (x0 + pw, z0), (x0, z0 + pd), (x0 + pw, z0 + pd)]
+                    wd = [wall_dist(poly, x, z) for x, z in corners]
+                    if min(wd) < 0.8 or min(wd) > 4: continue
+                    mx, mz = x0 + pw / 2, z0 + pd / 2
+                    if any(math.hypot(mx - kx, mz - kz) < kr + max(pw, pd) / 2 + 2 for kx, kz, kr in keep): continue
+                    if near_arm(aid, mx, mz, max(pw, pd) / 2 + 2): continue
+                    if any(x0 - o['r'] - 1 < o['x'] < x0 + pw + o['r'] + 1 and z0 - o['r'] - 1 < o['z'] < z0 + pd + o['r'] + 1 for o in a['rocks']): continue
+                    if any(x0 - 2 < q['maxX'] and q['minX'] < x0 + pw + 2 and z0 - 2 < q['maxZ'] and q['minZ'] < z0 + pd + 2 for q in a['platforms']): continue
+                    # 中心を向いた辺（外向きの向きが、中心への向きにいちばん近い辺）
+                    sides = [((x0, mz), (-1.0, 0.0)), ((x0 + pw, mz), (1.0, 0.0)), ((mx, z0), (0.0, -1.0)), ((mx, z0 + pd), (0.0, 1.0))]
+                    tx, tz = cx - mx, cz - mz
+                    (fx_, fz_), (nx_, nz_) = max(sides, key=lambda s_: s_[1][0] * tx + s_[1][1] * tz)
+                    bx, bz = fx_ + nx_ * 1.2, fz_ + nz_ * 1.2
+                    if wall_dist(poly, bx, bz) < 2.5: continue
+                    if any(math.hypot(bx - o['x'], bz - o['z']) < o['r'] + 1.5 for o in a['rocks']): continue
+                    # 登る壁の両脇の角も、外周から離す（壁の前を歩いて回り込める）
+                    score = min(wd) + 0.02 * math.hypot(bx - cx, bz - cz)
+                    if best is None or score < best[0]:
+                        best = (score, dict(minX=r1(x0), maxX=r1(x0 + pw), minZ=r1(z0), maxZ=r1(z0 + pd), h=CLIMB_SHELVES[aid]), (fx_, fz_), (nx_, nz_), (bx, bz))
+        assert best, f'{aid}: 登攀の棚を置ける所が無い'
+        _, shelf, (fx_, fz_), (nx_, nz_), (bx, bz) = best
+        a['platforms'].append(shelf)
+        a['climbs'] = [dict(id=f'{aid}_climb_01', x=r1(bx), z=r1(bz), yaw=round(math.atan2(-nx_, -nz_), 4), width=2.4, faceDist=1.2, top=shelf['h'],
+                            exit=dict(x=r1(fx_ - nx_ * 1.6), z=r1(fz_ - nz_ * 1.6)))]
 
 ccx, ccz = center('camp')
 field = dict(

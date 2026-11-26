@@ -7,7 +7,8 @@ import {
 } from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { SeededRng } from '../core/seededRng';
-import type { MapDef, PlatformLook } from '../data/schemas';
+import type { ClimbDef, MapDef, PlatformLook } from '../data/schemas';
+import { buildClimbFaces } from './climbArt';
 import { groundAt } from '../game/world';
 import { ENV_SPRITES, ENV_TILES, SpriteField, boxUv, buildBackdrop, tileMaterial, type EnvPlace, type EnvTile } from './envArt';
 import { AreaShape, type Pt } from '../game/areaShape';
@@ -60,6 +61,8 @@ export interface AreaLook {
   clear?: { x: number; z: number; r: number }[];
   /** 外周の岩壁の高さ [いちばん低い所, ばらつきの幅]（m）。無ければ [4, 4.5]。里は低くして、遠くの景色を見せる */
   wallHeight?: [number, number];
+  /** 登攀（v0.44.0）。壁の面に蔦の板を貼る */
+  climbs?: readonly ClimbDef[];
 }
 
 /** これまでの狩場（エリアが 1 つ）: 空と光を用意して、狩場を描く。 */
@@ -206,6 +209,8 @@ export function buildAreaGroup(map: AreaLook): Group {
     ledge.receiveShadow = true;
     group.add(ledge);
   }
+  // 登れる壁の蔦（v0.44.0。仮の見た目）
+  if (map.climbs?.length) group.add(buildClimbFaces(map.climbs, (x, z) => groundAt(map.platforms, x, z)));
   // 0 より低い段差（v0.31.0。里の下の段と階段）: 床・擁壁・柵。里（v0.35.0）は、5 つの段・階段・沢・吊り橋のすべて
   if (village) group.add(buildTerraces(map.platforms, GROUND_GAIN, b));
   else if (sunken.length > 0) group.add(buildTerraces(sunken, GROUND_GAIN));

@@ -527,6 +527,16 @@ export class Hud {
         }
       }
     }
+    // 登攀の案内（v0.44.0。#19 の H07。スマホ向けの補助）: 登り口の前・上の段の登り切った所・壁にいる間
+    if (field && here && p.mode === 'climb') exitText = '↑↓ 登る・下りる　回避: 手を離す';
+    else if (field && here && p.mode === 'free' && p.grounded) {
+      for (const c of here.climbs ?? []) {
+        const fx = Math.sin(c.yaw), fz = Math.cos(c.yaw);
+        const along = (p.pos.x - c.x) * fx + (p.pos.z - c.z) * fz, side = Math.abs((p.pos.x - c.x) * fz - (p.pos.z - c.z) * fx);
+        if (Math.abs(p.pos.y - c.top) > 0.3 && side <= c.width / 2 + 0.6 && along >= -2.5 && along <= c.faceDist) exitText = '↑ 壁へ押すと登る';
+        else if (Math.abs(p.pos.y - c.top) <= 0.3 && Math.hypot(p.pos.x - c.exit.x, p.pos.z - c.exit.z) <= 2.2) exitText = '↓ 縁へ押すと下りる';
+      }
+    }
     this.set('exit', exitText, () => {
       this.exitHint.textContent = exitText;
       this.exitHint.hidden = exitText === '';

@@ -122,9 +122,11 @@ export function ledgeGeometry(rng: SeededRng, p: { minX: number; maxX: number; m
   const topCount = idx.length;
   // 横の面
   const base = pos.length / 3;
+  // v0.44.0: 1 周の終わりに、始めの列をもう 1 度（u を 1 周の長さで）置く。これまでは最後の帯が u を 1 周ぶん逆に詰めて、
+  // 岩肌が縦の縞に潰れていた（低い段では目立たないが、登攀の 3m の棚ではっきり見えた）
   let s = 0;
-  for (let i = 0; i < R; i++) {
-    const q = ring[i]!;
+  for (let i = 0; i <= R; i++) {
+    const q = ring[i % R]!;
     if (i > 0) s += Math.hypot(q.x - ring[i - 1]!.x, q.z - ring[i - 1]!.z);
     const bump = fbm3(n, q.x * 0.9 + cx, 0, q.z * 0.9 + cz, 3) - 0.5;
     for (let k = 0; k < prof.length; k++) {
@@ -139,7 +141,7 @@ export function ledgeGeometry(rng: SeededRng, p: { minX: number; maxX: number; m
   }
   const P = prof.length;
   for (let i = 0; i < R; i++) {
-    const i2 = (i + 1) % R;
+    const i2 = i + 1;
     for (let k = 0; k < P - 1; k++) {
       const a = base + i * P + k, b = base + i2 * P + k, c = base + i * P + k + 1, e = base + i2 * P + k + 1;
       // 段は上から下へ並ぶので、この向きで、外から見て表になる

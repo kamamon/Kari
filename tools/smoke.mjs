@@ -1497,6 +1497,52 @@ const startTraining = async (page, tap = false) => {
   await ctx.close();
 }
 
+// ---- 登攀（v0.44.0。#19 の H07）: エリア 4 の 3m の棚へ、蔦の壁を登る・下りる ----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  await page.evaluate(() => window.__vh.startHunt('quest.basin.003'));
+  await until(page, () => window.__vh.sim.tick > 5 && !!window.__vh.sim.field);
+  // エリア 4 の登り口の 1.5m 手前に、壁を向いて立つ（標的は止めておく）
+  await page.evaluate(() => {
+    const v = window.__vh, s = v.sim, p = s.player, c = s.field.areas.find((a) => a.id === 'a4').climbs[0];
+    p.pos = { x: c.x - Math.sin(c.yaw) * 1.5, y: 0, z: c.z - Math.cos(c.yaw) * 1.5 };
+    p.prevPos = { ...p.pos };
+    p.yaw = c.yaw;
+    p.prevYaw = c.yaw;
+    s.areaId = 'a4';
+    for (const m of s.monsters) m.aiEnabled = false;
+    v.view.cam.snap(c.yaw);
+  });
+  await until(page, () => window.__vh.view.areaGroups.get('a4')?.visible === true, 30000);
+  await page.waitForTimeout(600);
+  const look = await page.evaluate(() => {
+    let faces = 0;
+    window.__vh.view.areaGroups.get('a4').traverse((o) => { if (o.userData.climbId === 'a4_climb_01' && o.material?.map) faces++; });
+    return { faces, hint: document.querySelector('.hud-exit').hidden ? '' : document.querySelector('.hud-exit').textContent };
+  });
+  check('登攀（v0.44.0）: エリア 4 の棚の登れる壁に蔦が描かれ、登り口の前で「↑ 壁へ押すと登る」と出る', look.faces === 1 && look.hint === '↑ 壁へ押すと登る', JSON.stringify(look));
+  // 壁へ向かって W を押し続ける: 取り付いて登り、上の段（3m）に立つ
+  await page.keyboard.down('KeyW');
+  const mounted = await until(page, () => window.__vh.sim.player.mode === 'climb', 4000);
+  await page.waitForTimeout(600);
+  const mid = await page.evaluate(() => ({ y: window.__vh.sim.player.pos.y, drawn: window.__vh.sim.player.drawn, hint: document.querySelector('.hud-exit').textContent }));
+  await page.screenshot({ path: `${OUT}86_climb.png` });
+  const topped = await until(page, () => window.__vh.sim.player.mode === 'free' && window.__vh.sim.player.pos.y === 3, 8000);
+  await page.keyboard.up('KeyW');
+  await page.waitForTimeout(300);
+  const top = await page.evaluate(() => ({ y: window.__vh.sim.player.pos.y, grounded: window.__vh.sim.player.grounded, hint: document.querySelector('.hud-exit').textContent }));
+  check('登攀（v0.44.0）: 壁へ押し続けると、武器を納めて取り付き、登って、上の段（3m）に立つ。登る間は「↑↓ 登る・下りる」の案内', mounted && mid.y > 0.2 && mid.y < 3 && !mid.drawn && /登る・下りる/.test(mid.hint) && topped && top.grounded && top.hint === '↓ 縁へ押すと下りる', JSON.stringify({ mid, top }));
+  // 縁へ向かって S（後ろ）を押すと、向きを変えて取り付き、下まで下りる
+  await page.keyboard.down('KeyS');
+  const down = await until(page, () => window.__vh.sim.player.climb?.phase === 'climb', 4000);
+  const bottom = await until(page, () => window.__vh.sim.player.mode === 'free' && window.__vh.sim.player.pos.y === 0, 8000);
+  await page.keyboard.up('KeyS');
+  check('登攀（v0.44.0）: 上の段で縁へ向かって押すと、向きを変えて取り付き、下まで下りて地面に立つ', down && bottom, JSON.stringify(await page.evaluate(() => ({ mode: window.__vh.sim.player.mode, y: window.__vh.sim.player.pos.y }))));
+  await ctx.close();
+}
+
 // ---- 自然な形のエリアと、出ていく大型の速さ（v0.20.0）----
 {
   const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');

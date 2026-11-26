@@ -664,6 +664,22 @@ export interface FieldExit {
   arriveLarge?: { x: number; z: number; yaw: number };
 }
 
+/**
+ * 登攀（v0.44.0。#19 の H07。docs/spec.md の 32.9）: 壁に取り付いて、上の段へ登る・上の段から下りる所。狩人だけ（大型・幼体は登らない）。
+ * (x, z) は登り口（壁の前の地面）、yaw は壁を向いた向き。壁の面は、登り口から yaw の向きへ faceDist 先。width は取り付ける幅。
+ * top は上の段の高さ（その段の platform の h と同じ）。exit は登り切って立つ所（上の段の上。壁の面から内側）
+ */
+export interface ClimbDef {
+  id: string;
+  x: number;
+  z: number;
+  yaw: number;
+  width: number;
+  faceDist: number;
+  top: number;
+  exit: { x: number; z: number };
+}
+
 /** フィールドのエリア。形（bounds・岩・段差）は MapDef と同じ決まり。座標は、フィールド全体で 1 つの空間。 */
 export interface FieldAreaDef {
   id: string;
@@ -692,6 +708,8 @@ export interface FieldAreaDef {
   rocks: { x: number; z: number; r: number; h: number }[];
   platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number }[];
   exits: FieldExit[];
+  /** 登攀（v0.44.0）。無ければ登れる所は無い */
+  climbs?: ClimbDef[];
 }
 
 /** 大型の移動と休息の決まり（src/game/roam.ts）。 */

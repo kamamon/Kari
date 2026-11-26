@@ -443,6 +443,41 @@ function statusPose(kind: 'para' | 'stun' | 'sleep', base: J, basePy: number, ti
   return blendPose(a, b, inT * outT);
 }
 
+// ---- 登攀（v0.44.0。#19 の H07。仮の手付けの姿勢）----
+/** 壁に取り付いた姿勢: 左手が高く右手が低い、右脚を上げた形（B は左右を入れ替えた形）。上体は壁へ少し寄せ、上を見る */
+const CLIMB_A: J = {
+  spine: [10, 0, 0], chest: [4, 0, 0], head: [-24, 0, 0],
+  upperArmL: [-165, 0, 14], forearmL: [-28, 0, 0], upperArmR: [-118, 0, -14], forearmR: [-62, 0, 0],
+  thighL: [-18, 0, 7], shinL: [38, 0, 0], thighR: [-62, 0, -7], shinR: [86, 0, 0],
+};
+const CLIMB_B: J = {
+  spine: [10, 0, 0], chest: [4, 0, 0], head: [-24, 0, 0],
+  upperArmL: [-118, 0, 14], forearmL: [-62, 0, 0], upperArmR: [-165, 0, -14], forearmR: [-28, 0, 0],
+  thighL: [-62, 0, 7], shinL: [86, 0, 0], thighR: [-18, 0, -7], shinR: [38, 0, 0],
+};
+/** 縁に手を掛けて体を引き上げる: 両手で上の面を押し、右膝を縁へ掛ける */
+const CLIMB_PULL: J = {
+  spine: [30, 0, 0], chest: [10, 0, 0], head: [-6, 0, 0],
+  upperArmL: [-70, 0, 16], forearmL: [-70, 0, 0], upperArmR: [-70, 0, -16], forearmR: [-70, 0, 0],
+  thighL: [-10, 0, 5], shinL: [30, 0, 0], thighR: [-95, 0, -5], shinR: [110, 0, 0],
+};
+/** 1 回の手足の入れ替えで登る高さ（m）。高さから姿勢を決めるので、止まると姿勢も止まる */
+const CLIMB_STRIDE = 0.65;
+
+/**
+ * 登攀の姿勢。phase は simulation の登攀の段階、u はその段階の進み（0〜1）、h は壁での足の高さ（m）。
+ * mount / down は立った姿から壁の姿へ、climb は高さで A と B を行き来する、exit は引き上げてから立つ
+ */
+export function climbPose(phase: 'mount' | 'down' | 'climb' | 'exit', u: number, h: number): BodyPose {
+  const k = 0.5 - 0.5 * Math.cos((Math.PI * h) / CLIMB_STRIDE);
+  const wall = blendPose(fromKey(CLIMB_A, 0, { t: 0 }), fromKey(CLIMB_B, 0, { t: 0 }), k);
+  const stand = fromKey(NEUTRAL, 0, { t: 0 });
+  if (phase === 'climb') return wall;
+  if (phase === 'mount' || phase === 'down') return blendPose(stand, wall, smoothstep(u));
+  const pull = fromKey(CLIMB_PULL, 0, { t: 0 });
+  return u < 0.55 ? blendPose(wall, pull, smoothstep(u / 0.55)) : blendPose(pull, stand, smoothstep((u - 0.55) / 0.45));
+}
+
 export function deadPose(ticks: number): BodyPose {
   const u = smoothstep(ticks / 30);
   return blendPose(fromKey(NEUTRAL, 0, { t: 0 }), fromKey(NEUTRAL, 0, { t: 0, j: LYING, tumble: -90, drop: -0.43 }), u);

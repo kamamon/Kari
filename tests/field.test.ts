@@ -270,7 +270,7 @@ describe('大型の移動', () => {
       expect(moves).toBeGreaterThanOrEqual(12);
       expect(worst).toBeLessThan(3600);
     }
-  }, 40000);
+  }, 120_000); // 4 × 40 分（57 万 tick）。手元で 35〜47 秒とぶれ、40 秒の上限を超えることがあった（v0.44.0。調べる中身は変えていない）
 
   it('戦っている最中でも、居る時間が過ぎれば、技の後に立ち去る（立ち去る間は、技を出さない）', () => {
     const sim = fieldSim();

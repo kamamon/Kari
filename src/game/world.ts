@@ -5,7 +5,7 @@
 // 外周は、四角（bounds）か、自然な形の多角形（shape。v0.20.0。src/game/areaShape.ts）。
 import { clamp, type V3 } from '../core/math';
 import type { SeededRng } from '../core/seededRng';
-import type { MapDef, PlatformLook } from '../data/schemas';
+import type { ClimbDef, MapDef, PlatformLook } from '../data/schemas';
 import { AreaShape, NavGraph, type Pt } from './areaShape';
 
 export interface Circle {
@@ -31,6 +31,8 @@ export interface AreaGeom {
   nav?: Pt[];
   /** エリアの中心（必ず歩ける所。出てくる所・寝床の目安）。無ければ bounds の中央 */
   center?: { x: number; z: number };
+  /** 登攀（v0.44.0。狩人だけ）。無ければ登れる所は無い */
+  climbs?: readonly ClimbDef[];
 }
 
 /** 段のある区画（stepDown）で、体の半径の先に空ける余り（m）。柵は縁の上（縁から 0.07m）に立つので、それより広く */
@@ -147,12 +149,15 @@ export class World {
   /** steerTo が覚えておく、歩く者ごとの、次に目指す点 */
   private readonly steerCache = new WeakMap<object, { area: AreaGeom; tx: number; tz: number; x: number; z: number; uses: number }>();
 
-  /** 自然な形のエリアの中の、外周から inset 以上離れた点を、乱数で 1 つ（20 回試して無ければ中心） */
+  /**
+   * 自然な形のエリアの中の、外周から inset 以上離れた点を、乱数で 1 つ（20 回試して無ければ中心）。
+   * v0.44.0: 歩いて上がれない高い段（登攀の棚）の上は選ばない（大型・幼体は登らないので、そこへ向かうと壁の前で止まる）
+   */
   randomPoint(area: AreaGeom, rng: SeededRng, inset: number): { x: number; z: number } {
     const b = area.bounds;
     for (let i = 0; i < 20; i++) {
       const x = b.minX + rng.next() * (b.maxX - b.minX), z = b.minZ + rng.next() * (b.maxZ - b.minZ);
-      if (this.inArea(area, x, z, inset)) return { x, z };
+      if (this.inArea(area, x, z, inset) && groundAt(area.platforms, x, z) <= area.stepUp) return { x, z };
     }
     return this.centerOf(area);
   }
@@ -232,6 +237,25 @@ export class World {
     const h = this.groundHeight(nx, nz);
     if (h > pos.y) pos.y = h;
     else if (grounded && pos.y - h <= area.stepDown! + 1e-6) pos.y = h;
+  }
+
+  /**
+   * 登攀の取り付き（v0.44.0。#19 の H07）: (pos) に立って move の向きへ進もうとしている狩人が、取り付ける登攀。
+   * up = 登り口の前で壁へ向かって押している（地面の高さに居る）。down = 上の段の登り切った所の近くで、縁（壁と逆向き）へ向かって押している。
+   * どちらでもなければ null。向きは yaw の ±55° 以内
+   */
+  climbAt(pos: V3, moveYaw: number): { climb: ClimbDef; dir: 'up' | 'down' } | null {
+    const area = this.areaAt(pos.x, pos.z);
+    for (const c of area.climbs ?? []) {
+      const fx = Math.sin(c.yaw), fz = Math.cos(c.yaw);
+      const facing = Math.cos(moveYaw - c.yaw);
+      const dx = pos.x - c.x, dz = pos.z - c.z;
+      const along = dx * fx + dz * fz;
+      const side = Math.abs(dx * fz - dz * fx);
+      if (facing > Math.cos((55 * Math.PI) / 180) && Math.abs(pos.y - this.groundHeight(c.x, c.z)) < 0.3 && side <= c.width / 2 && along >= -0.8 && along <= c.faceDist) return { climb: c, dir: 'up' };
+      if (facing < -Math.cos((55 * Math.PI) / 180) && Math.abs(pos.y - c.top) < 0.3 && Math.hypot(pos.x - c.exit.x, pos.z - c.exit.z) <= 1.6) return { climb: c, dir: 'down' };
+    }
+    return null;
   }
 
   /** 重力。接地していれば true。 */

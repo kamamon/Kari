@@ -6,7 +6,7 @@ import { STATUS_KINDS, type Content, type ElementId, type MonsterDef, type Statu
 import { inWindow, renderTick } from '../game/action';
 import type { SimEvent } from '../game/events';
 import { monsterBlockers, monsterShapes, type MonsterState } from '../game/monster';
-import { familyOf, isGuarding, playerHurtCapsule } from '../game/player';
+import { CLIMB_DOWN_TICKS, CLIMB_EXIT_TICKS, CLIMB_MOUNT_TICKS, familyOf, isGuarding, playerHurtCapsule } from '../game/player';
 import type { Simulation } from '../game/sim';
 import { sampleTrack, sampleTrackNormal, trackSegment } from '../game/tracks';
 import type { Settings } from '../save/settings';
@@ -24,7 +24,7 @@ import { CreatureRig } from './creatureRig';
 import type { HazardLook } from '../data/schemas';
 import { CREATURE_PLANS } from './creaturePlans';
 import { DummyRig, type MonsterRig } from './monsterRig';
-import { blendPose, clipPose, deadPose, emptyPose, guardPose, hurtPose, locomotionPose, type BodyPose } from './poses';
+import { blendPose, climbPose, clipPose, deadPose, emptyPose, guardPose, hurtPose, locomotionPose, type BodyPose } from './poses';
 import { HunterAnimator, applySolved, canSolve, playerContactFrame, playerRenderTick, stowOffhand, type AnimState } from './hunterAnim';
 import type { Solved } from './bodySolve';
 import { GroundedLocomotion, freeStride } from './contactLocomotion';
@@ -308,7 +308,7 @@ export class GameView {
     let g = this.areaGroups.get(area.id);
     if (!g) {
       g = buildAreaGroup({
-        bounds: area.bounds, shape: area.shape, rocks: area.rocks, platforms: area.platforms, kind: area.kind, seed: 9001 + area.no * 131,
+        bounds: area.bounds, shape: area.shape, rocks: area.rocks, platforms: area.platforms, kind: area.kind, seed: 9001 + area.no * 131, climbs: area.climbs,
         camp: area.kind === 'camp' ? field.camp : null,
         gates: area.exits.map((e) => ({ x: e.x, z: e.z, marker: true })),
       });
@@ -662,6 +662,12 @@ export class GameView {
     } else if (p.mode === 'dead') {
       pose = deadPose(p.deadTicks + alpha);
       key = 'dead';
+    } else if (p.mode === 'climb' && p.climb) {
+      // 登攀（v0.44.0。仮の姿勢）: 武器は背に納めたまま
+      const c = p.climb;
+      const n = c.phase === 'mount' ? CLIMB_MOUNT_TICKS : c.phase === 'down' ? CLIMB_DOWN_TICKS : c.phase === 'exit' ? CLIMB_EXIT_TICKS : 1;
+      pose = climbPose(c.phase, Math.min(1, (c.t + alpha) / n), c.h);
+      key = 'climb';
     } else {
       pose = locomotionPose(p.drawn, visualSpeed, this.phase, this.time);
       if (!p.drawn || fam.id === 'heavy_blade') pose = this.groundLocomotion.frame(pose, p.drawn, visualSpeed, this.phase, dt, { x: pos.x, z: pos.z, yaw });

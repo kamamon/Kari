@@ -829,6 +829,7 @@ export function validateField(c: Content, f: FieldDef, errors: string[]): void {
     errors.push(`${w}: エリアが無い`);
     return;
   }
+  const climbIds = new Set<string>();
   // 自然な形のエリア（v0.20.0）は、外周の多角形で、内か外かを見る
   const shapes = new Map<string, AreaShape>();
   for (const a of areas.values()) {
@@ -864,6 +865,28 @@ export function validateField(c: Content, f: FieldDef, errors: string[]): void {
     }
     // 岩は、まるごと外周の中（自然な形のエリア）。四角のエリアは、中心が中
     for (const r of a.rocks ?? []) if (!(isNum(r.x) && isNum(r.z) && r.r > 0 && inside(a, r.x, r.z, shapes.has(a.id) ? r.r : 0))) errors.push(`${wa}: rock が不正（エリアの外）`);
+    // 登攀（v0.44.0。#19 の H07）: 登り口は歩ける地面、壁の面の先は上の段（top）、手前は登れない高さ、登り切って立つ所は上の段の上
+    for (const c of a.climbs ?? []) {
+      const wc = `${wa} climb ${String(c.id)}`;
+      if (typeof c.id !== 'string' || c.id === '' || climbIds.has(c.id)) errors.push(`${wc}: id が無いか重複`);
+      climbIds.add(c.id);
+      if (![c.x, c.z, c.yaw, c.width, c.faceDist, c.top].every(isNum) || !(c.exit && isNum(c.exit.x) && isNum(c.exit.z))) {
+        errors.push(`${wc}: 値が不正`);
+        continue;
+      }
+      if (!(c.width >= 1.2 && c.width <= 6) || !(c.faceDist >= 0.6 && c.faceDist <= 2.5)) errors.push(`${wc}: width（1.2〜6m）か faceDist（0.6〜2.5m）が範囲の外`);
+      const fx = Math.sin(c.yaw), fz = Math.cos(c.yaw);
+      const base = groundAt(a.platforms ?? [], c.x, c.z);
+      const faceX = c.x + fx * c.faceDist, faceZ = c.z + fz * c.faceDist;
+      if (!inside(a, c.x, c.z, 1.5)) errors.push(`${wc}: 登り口が外周に近すぎる（1.5m より内側に）`);
+      if (!(c.top - base >= 1.5 && c.top - base <= 8)) errors.push(`${wc}: 登る高さ ${c.top - base}m が 1.5〜8m の外`);
+      if (Math.abs(groundAt(a.platforms ?? [], faceX + fx * 0.2, faceZ + fz * 0.2) - c.top) > 1e-6) errors.push(`${wc}: 壁の面の先が、高さ top の段ではない`);
+      if (groundAt(a.platforms ?? [], faceX - fx * 0.2, faceZ - fz * 0.2) > c.top - a.stepUp - 1e-6) errors.push(`${wc}: 壁の面の手前が、歩いて上がれる高さ（壁になっていない）`);
+      if (Math.abs(groundAt(a.platforms ?? [], c.exit.x, c.exit.z) - c.top) > 1e-6 || !inside(a, c.exit.x, c.exit.z, 0.5)) errors.push(`${wc}: 登り切って立つ所が、上の段の上ではない`);
+      const back = (c.exit.x - faceX) * fx + (c.exit.z - faceZ) * fz;
+      if (!(back >= 0.8 && back <= 3)) errors.push(`${wc}: 登り切って立つ所が、壁の面から 0.8〜3m 内側ではない`);
+      for (const r of a.rocks ?? []) if (Math.hypot(r.x - c.x, r.z - c.z) < r.r + 1) errors.push(`${wc}: 登り口が岩にかかる`);
+    }
     const sh = shapes.get(a.id);
     if (sh) {
       // 外周を囲む四角 = bounds

@@ -1,9 +1,9 @@
 // プレイヤーの状態機械。行動の可否はここ（ロジック）が決め、アニメーションの終了には頼らない。
 // 状態: free（移動）/ action（データ定義の行動）/ guard / hurt / dead
-import { DEG, angleDiff, forwardOf, turnToward, v3, yawOf, type V3 } from '../core/math';
+import { DEG, angleDiff, forwardOf, smoothstep, turnToward, v3, yawOf, type V3 } from '../core/math';
 import type { SeededRng } from '../core/seededRng';
 import type { GearEffects } from './gear';
-import { STATUS_KINDS, type FieldDef, type ActionDef, type CancelWindowDef, type Content, type GuardDef, type HazardDef, type ItemDef, type ItemStack, type MonsterDef, type ShootDef, type StatusHit, type StatusKind, type StatusTuning, type WeaponDef, type WeaponFamilyDef } from '../data/schemas';
+import { STATUS_KINDS, type ClimbDef, type FieldDef, type ActionDef, type CancelWindowDef, type Content, type GuardDef, type HazardDef, type ItemDef, type ItemStack, type MonsterDef, type ShootDef, type StatusHit, type StatusKind, type StatusTuning, type WeaponDef, type WeaponFamilyDef } from '../data/schemas';
 import { inWindow, newRun, type ActionRun } from './action';
 import { edgeStage } from './combat';
 import type { SimEvent } from './events';
@@ -12,7 +12,8 @@ import { sampleCurve } from './tracks';
 import type { Circle, World } from './world';
 import type { ErrandTarget } from './errand';
 
-export type PlayerMode = 'free' | 'action' | 'guard' | 'hurt' | 'dead';
+/** climb = 登攀（v0.44.0。#19 の H07）: 取り付き・登る・登り切る・上から取り付く。その間は登攀が位置を持つ（重力・地面に合わせない） */
+export type PlayerMode = 'free' | 'action' | 'guard' | 'hurt' | 'dead' | 'climb';
 export type HurtKind = 'flinch' | 'knockdown' | 'bounce' | 'para' | 'sleep' | 'stun';
 /** 動けなくなる状態異常 */
 export const isDisabled = (p: PlayerState): boolean => p.mode === 'hurt' && (p.hurt?.kind === 'para' || p.hurt?.kind === 'sleep' || p.hurt?.kind === 'stun');
@@ -70,6 +71,11 @@ export interface PlayerState {
   /** 見た目用の現在速度 (m/s) */
   moveSpeed: number;
   weaponId: string;
+  /**
+   * 登攀（v0.44.0）。phase: mount = 地面から壁へ取り付く / down = 上の段から向きを変えて壁へ取り付く / climb = 壁にいる / exit = 上の段へ登り切る。
+   * h は登り口の地面からの足の高さ。from は取り付き・登り切りを始めた時の位置と向き
+   */
+  climb: { def: ClimbDef; phase: 'mount' | 'down' | 'climb' | 'exit'; t: number; h: number; from: { x: number; y: number; z: number; yaw: number } } | null;
 }
 
 export interface SimCtx {
@@ -185,6 +191,7 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
     sprinting: false,
     moveSpeed: 0,
     weaponId,
+    climb: null,
   };
 }
 
@@ -502,11 +509,125 @@ function stepAction(p: PlayerState, inp: InputFrame, ctx: SimCtx, depth = 0): vo
   if (run.tick >= def.durationTicks) finishAction(p);
 }
 
+// ---- 登攀（v0.44.0。#19 の H07。docs/spec.md の 32.9。値は Kari の仮の値）----
+/** 登る速さ・下りる速さ（m/tick） */
+export const CLIMB_UP = 1.5 / 60;
+export const CLIMB_DOWN = 2.1 / 60;
+/** 地面から取り付く・上の段から取り付く・登り切る、の長さ（tick） */
+export const CLIMB_MOUNT_TICKS = 14;
+export const CLIMB_DOWN_TICKS = 30;
+export const CLIMB_EXIT_TICKS = 36;
+/** 上の端からこれだけ下まで登ると、登り切る（手が縁に掛かる高さ） */
+export const CLIMB_EXIT_BELOW = 1.45;
+/** 壁にいる時の、壁の面から体の中心までの距離 */
+const CLIMB_OFF = 0.38;
+
+/** 壁にいる時の位置（xz） */
+function climbSpot(d: ClimbDef): { x: number; z: number } {
+  return { x: d.x + Math.sin(d.yaw) * (d.faceDist - CLIMB_OFF), z: d.z + Math.cos(d.yaw) * (d.faceDist - CLIMB_OFF) };
+}
+
+/** 取り付く。武器は背へ納める（2G と同じく、武器を納めて登る） */
+function startClimb(p: PlayerState, d: ClimbDef, dir: 'up' | 'down', ctx: SimCtx): void {
+  for (const k of Object.keys(p.buffer) as (keyof PlayerState['buffer'])[]) p.buffer[k] = 0;
+  p.lastSingle = null;
+  p.drawn = false;
+  p.sprinting = false;
+  p.mode = 'climb';
+  p.vel.vy = 0;
+  const base = ctx.world.groundHeight(d.x, d.z);
+  p.climb = { def: d, phase: dir === 'up' ? 'mount' : 'down', t: 0, h: dir === 'up' ? 0 : d.top - base - CLIMB_EXIT_BELOW, from: { x: p.pos.x, y: p.pos.y, z: p.pos.z, yaw: p.yaw } };
+  ctx.emit({ type: 'climb', phase: 'start', climbId: d.id, dir });
+}
+
+/** 登攀を終えて、地面（または上の段）に立つ */
+function endClimb(p: PlayerState, ctx: SimCtx, how: 'top' | 'bottom' | 'release'): void {
+  const id = p.climb?.def.id ?? '';
+  p.climb = null;
+  p.mode = 'free';
+  p.vel.vy = 0;
+  p.moveSpeed = 0;
+  ctx.emit({ type: 'climb', phase: how, climbId: id, dir: how === 'top' ? 'up' : 'down' });
+}
+
+function stepClimb(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
+  const c = p.climb!;
+  const d = c.def;
+  const base = ctx.world.groundHeight(d.x, d.z);
+  const spot = climbSpot(d);
+  c.t++;
+  p.moveSpeed = 0;
+  if (c.phase === 'mount' || c.phase === 'down') {
+    const n = c.phase === 'mount' ? CLIMB_MOUNT_TICKS : CLIMB_DOWN_TICKS;
+    const u = smoothstep(Math.min(1, c.t / n));
+    p.pos.x = c.from.x + (spot.x - c.from.x) * u;
+    p.pos.z = c.from.z + (spot.z - c.from.z) * u;
+    p.pos.y = c.from.y + (base + c.h - c.from.y) * u;
+    p.yaw = turnToward(c.from.yaw, d.yaw, Math.PI * u + 1e-9);
+    if (c.t >= n) {
+      c.phase = 'climb';
+      c.t = 0;
+      p.yaw = d.yaw;
+    }
+    return;
+  }
+  if (c.phase === 'exit') {
+    const u = smoothstep(Math.min(1, c.t / CLIMB_EXIT_TICKS));
+    const uy = smoothstep(Math.min(1, c.t / (CLIMB_EXIT_TICKS * 0.6)));
+    p.pos.x = c.from.x + (d.exit.x - c.from.x) * u;
+    p.pos.z = c.from.z + (d.exit.z - c.from.z) * u;
+    p.pos.y = c.from.y + (d.top - c.from.y) * uy;
+    if (c.t >= CLIMB_EXIT_TICKS) {
+      p.pos = { x: d.exit.x, y: d.top, z: d.exit.z };
+      endClimb(p, ctx, 'top');
+    }
+    return;
+  }
+  // 壁にいる: 回避で手を離す（落ちる）。スティックを壁へ押すと登り、引くと下りる（カメラから見た向きを、壁の向きへ写す）
+  if (inp.pressed & Btn.Dodge) {
+    p.pos.x -= Math.sin(d.yaw) * 0.25;
+    p.pos.z -= Math.cos(d.yaw) * 0.25;
+    endClimb(p, ctx, 'release');
+    return;
+  }
+  const push = inp.moveX * Math.sin(d.yaw) + inp.moveZ * Math.cos(d.yaw);
+  if (push > 0.3) c.h += CLIMB_UP * Math.min(1, push);
+  else if (push < -0.3) c.h -= CLIMB_DOWN * Math.min(1, -push);
+  p.moveSpeed = push > 0.3 ? CLIMB_UP * 60 : push < -0.3 ? CLIMB_DOWN * 60 : 0;
+  p.pos.x = spot.x;
+  p.pos.z = spot.z;
+  p.yaw = d.yaw;
+  if (base + c.h >= d.top - CLIMB_EXIT_BELOW) {
+    c.h = d.top - base - CLIMB_EXIT_BELOW;
+    p.pos.y = base + c.h;
+    c.phase = 'exit';
+    c.t = 0;
+    c.from = { x: p.pos.x, y: p.pos.y, z: p.pos.z, yaw: p.yaw };
+    ctx.emit({ type: 'climb', phase: 'exit', climbId: d.id, dir: 'up' });
+    return;
+  }
+  if (c.h <= 0) {
+    // 下まで下りた: 壁から半歩離れて地面に立つ
+    p.pos = { x: spot.x - Math.sin(d.yaw) * 0.3, y: base, z: spot.z - Math.cos(d.yaw) * 0.3 };
+    endClimb(p, ctx, 'bottom');
+    return;
+  }
+  p.pos.y = base + c.h;
+}
+
 function stepFree(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   const T = ctx.content.player;
   const fam = familyOf(p, ctx.content);
 
   if (consume(p, 'dodge') && tryStartRoll(p, inp, ctx)) return stepAction(p, inp, ctx, 1);
+  // 登攀（v0.44.0）: 登り口で壁へ向かって押すと取り付く。上の段の登り切った所で縁へ向かって押すと、向きを変えて取り付いて下りる
+  if (p.grounded && Math.hypot(inp.moveX, inp.moveZ) > 0.5) {
+    const c = ctx.world.climbAt(p.pos, yawOf(inp.moveX, inp.moveZ));
+    if (c) {
+      startClimb(p, c.climb, c.dir, ctx);
+      return stepClimb(p, inp, ctx);
+    }
+  }
   // 剥ぎ取り: 達成後、対象の近くで攻撃ボタン（道具ボタンでもよい）
   if (p.buffer.main > 0 || p.buffer.item > 0) {
     const source = ctx.carveTarget();
@@ -763,6 +884,9 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     case 'free':
       stepFree(p, inp, ctx);
       break;
+    case 'climb':
+      stepClimb(p, inp, ctx);
+      break;
   }
 
   // 道具の効果と剥ぎ取り: 行動がその tick まで進んだ時にだけ起きる。途中で妨害されたら何も起きない。
@@ -807,7 +931,9 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     }
   }
 
-  p.grounded = ctx.world.settle(p.pos, p.vel, T.gravity, 1 / 60);
+  // 登攀の間は、登攀が位置を持つ（重力も、地面への合わせも無い）。終えた時に、立つ面（地面・上の段）が決まる
+  if (p.mode === 'climb') p.grounded = false;
+  else p.grounded = ctx.world.settle(p.pos, p.vel, T.gravity, 1 / 60);
 
   // スタミナ: 消費が終わってから待ち時間を置いて回復
   if (p.mode !== 'dead' && !p.sprinting) {
@@ -836,6 +962,8 @@ export type HitOutcome = 'ignored' | 'evaded' | 'guarded' | 'guard_break' | 'hit
 export function resolveIncomingHit(p: PlayerState, hit: IncomingHit, ctx: SimCtx): HitOutcome {
   if (p.mode === 'dead') return 'ignored';
   if (isInvulnerable(p)) return 'evaded';
+  // 登攀の途中で当たると、壁から落とされる（防御はできない。ここからは、ふつうの被弾として落ちていく）
+  if (p.mode === 'climb') endClimb(p, ctx, 'release');
   const T = ctx.content.player;
   const fam = familyOf(p, ctx.content);
   const G = fam.guard;

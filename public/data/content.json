@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.43.0",
+  "contentVersion": "0.44.0",
   "files": {
     "actions": [
       "actions/player_common.json",
