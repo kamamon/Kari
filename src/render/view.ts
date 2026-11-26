@@ -16,6 +16,8 @@ import { WIND } from './envArt';
 import { buildHubGroup } from './hubScene';
 import { HubLifeScene } from './hubLifeScene';
 import type { HubLifeState } from '../data/hubLife';
+import type { HubThreat } from '../data/hubNarrative';
+import type { HubSample } from '../core/hubSoundtrack';
 import type { FieldGatherKind } from '../data/fieldGathering';
 import type { Ambience, Village } from './villageScene';
 import { buildNpcSprites, updateNpcSprites } from './npcSprites';
@@ -211,7 +213,8 @@ export class GameView {
   hubGather:FieldGatherKind|null=null;
   private gatherKind:FieldGatherKind|null=null;
   private gatherT=0;
-  setHubLife(state:HubLifeState,cycle:number,level:number):void{this.hubLifeScene?.set(state,cycle,level);}
+  onHubSample:((id:HubSample,k:number)=>void)|null=null;
+  setHubLife(state:HubLifeState,cycle:number,level:number,threat:HubThreat=0):void{this.hubLifeScene?.set(state,cycle,level,threat);}
   snapHubHeight(y:number):void{this.renderY=y;this.lastPlayerXZ=null;this.groundLocomotion.reset();}
   private tmpSize = new Vector2();
   /** モンスターの見た目が出す効果: 足音と土ぼこり。近いほど大きく、画面も少し揺れる。 */
@@ -920,7 +923,7 @@ export class GameView {
     }
     if(this.fieldGatherProps)updateFieldGatherProps(this.fieldGatherProps,sim,this.time);
     if (this.errandProps && sim.errand) updateErrandProps(this.errandProps, sim.errand, sim.areaId, sim.hunt?.phase === 'active', this.cam.camera.position, this.time);
-    if(this.hubLifeScene){this.hubLifeScene.update(this.time,dt,this.cam.camera.position);const cue=this.hubLifeScene.ambienceCue(this.time);if(cue)this.onSound?.(cue.id,cue.k);}
+    if(this.hubLifeScene){this.hubLifeScene.update(this.time,dt,this.cam.camera.position);const cue=this.hubLifeScene.ambienceCue(this.time);if(cue)this.onSound?.(cue.id,cue.k);const sample=this.hubLifeScene.sampleCue(this.time,this.cam.camera.position);if(sample)this.onHubSample?.(sample.id,sample.k);}
     this.arena.sky?.setTime(this.time);
     WIND.value = this.time;
     this.ailmentFx(sim, dt);

@@ -396,6 +396,8 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     this.view = new GameView(this.canvas, this.content, this.sim, this.store.value);
     this.view.onSound = (id, k) => void this.audio.play(id, k);
     this.view.onAmbience = (a) => this.audio.setAmbience(a);
+    this.view.onHubSample=(id,k)=>this.audio.playHubSample(id,k);
+    this.audio.setHubMusic(this.place==='hub',hubThreat(this.content,this.save.doc.progress.questClears)===2);
     this.recorded = [];
     this.recordOverflow = false;
     this.clock.reset();
@@ -877,7 +879,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     this.view.portrait = pv ? { baseYaw: this.looksYaw, spin: pv.spin, focus: pv.focus, zoom: pv.zoom, pane: pv.pane, clothes: pv.clothes } : null;
     this.syncLook(pv?.look ?? null);
     if(this.place==='hub'){
-      if(this.lifeRevision!==this.save.doc.revision){this.lifeRevision=this.save.doc.revision;this.view.setHubLife(lifeOf(this.save.doc),resourceCycle(this.save.doc,this.content),villageLevel(this.save.doc,this.content),hubThreat(this.content,this.save.doc.progress.questClears));}
+      if(this.lifeRevision!==this.save.doc.revision){this.lifeRevision=this.save.doc.revision;this.audio.setHubMusic(true,hubThreat(this.content,this.save.doc.progress.questClears)===2);this.view.setHubLife(lifeOf(this.save.doc),resourceCycle(this.save.doc,this.content),villageLevel(this.save.doc,this.content),hubThreat(this.content,this.save.doc.progress.questClears));}
       this.view.hubGather=this.fishing?'fish':this.gatheringVisual&&this.sim.tick<this.gatheringVisual.until?this.gatheringVisual.kind:null;
     }
     let look = paused ? { x: 0, y: 0 } : this.hub.consumeLook();

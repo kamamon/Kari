@@ -1,6 +1,7 @@
 // 効果音。M1 は音声ファイルを持たず、Web Audio で合成した「仮の音」を鳴らす（asset-manifest に仮素材として記録）。
 // ブラウザの自動再生制限のため、開始ボタンの操作から初期化する。復帰に失敗した時は設定の「音声を再開」を使う。
 import type { Settings } from '../save/settings';
+import { HubSoundtrack, type HubSample } from './hubSoundtrack';
 
 type Bus = 'se' | 'bgm' | 'env';
 
@@ -26,6 +27,10 @@ export interface AmbienceLevels {
 
 export class AudioSystem {
   private ctx: AudioContext | null = null;
+  private hubSoundtrack:HubSoundtrack|null=null;
+  private hubMusicWant={active:false,watch:false};
+  setHubMusic(active:boolean,watch=false):void{this.hubMusicWant={active,watch};this.hubSoundtrack?.set(active,watch);}
+  playHubSample(id:HubSample,k=1):void{this.hubSoundtrack?.play(id,k);}
   private master!: GainNode;
   private buses!: Record<Bus, GainNode>;
   private noise!: AudioBuffer;
@@ -53,6 +58,8 @@ export class AudioSystem {
       this.master.connect(ctx.destination);
       this.buses = { se: ctx.createGain(), bgm: ctx.createGain(), env: ctx.createGain() };
       for (const b of Object.values(this.buses)) b.connect(this.master);
+      this.hubSoundtrack=new HubSoundtrack(ctx,this.buses.bgm,this.buses.env,this.buses.se);
+      this.hubSoundtrack.set(this.hubMusicWant.active,this.hubMusicWant.watch);
       const len = ctx.sampleRate;
       this.noise = ctx.createBuffer(1, len, ctx.sampleRate);
       const data = this.noise.getChannelData(0);

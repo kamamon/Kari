@@ -9,6 +9,9 @@ import { HUB_RESOURCE_POINTS } from '../game/hubResources';
 import { SeededRng } from '../core/seededRng';
 import { VILLAGE_FOG_DENSITY, type Arena } from './arena';
 import { SKY_LOOKS, type SkyLook } from './sky';
+import { HubLivestock, PENS } from './hubLivestock';
+import type { HubThreat } from '../data/hubNarrative';
+import type { HubSample } from '../core/hubSoundtrack';
 type V=readonly [number,number,number];
 type Part={p:V;s:V;color:number;ry:number;rx:number;rz:number;resource?:ResourceId;level?:number;village?:number;decor?:string};
 const wood=0x644831, stone=0x818175, roof=0x4d5348, gold=0xd2a664, cloth=0xaa7851, moss=0x708b4f, warm=0xfac17b;
@@ -37,6 +40,7 @@ export class HubLifeScene {
  private rain:LineSegments;private snow:Points;private steam:Points;private rainPos:Float32Array;private snowPos:Float32Array;
  private originals=new Map<InstancedMesh,Float32Array>();private lastSeason='';
  private agentLocations:V[];
+ private livestock:HubLivestock;private threat:HubThreat=0;private livestockTimer=0;private flashTimer=0;private flash=0;
  private timer=0;private env:HubVisualEnvironment={daylight:'day',weather:'clear',season:'spring'};
  constructor(private map:MapDef,private scene:Scene,private arena:Arena){
   this.group.name='hub-life-scene';
@@ -99,11 +103,12 @@ export class HubLifeScene {
   const sg=new BufferGeometry();sg.setAttribute('position',new Float32BufferAttribute(new Float32Array(100*3),3));this.snowPos=sg.getAttribute('position').array as Float32Array;this.snow=new Points(sg,new PointsMaterial({color:0xe9eef0,size:.10,transparent:true,opacity:.78,depthWrite:false}));this.snow.frustumCulled=false;this.snow.name='hub-snow';
   const tg=new BufferGeometry();tg.setAttribute('position',new Float32BufferAttribute(new Float32Array(8*3),3));this.steam=new Points(tg,new PointsMaterial({color:0xe0e4d7,size:.9,transparent:true,opacity:.18,depthWrite:false}));this.steam.frustumCulled=false;this.steam.name='hub-bath-steam';this.steam.userData.origin=[bx,by+.48,bz];
   this.group.add(this.rain,this.snow,this.steam);
+  this.livestock=new HubLivestock(map);this.group.add(this.livestock.group);
   this.set(freshHubLife(),0,1);
   this.update(0,0,new Vector3(0,0,0));
  }
- set(state:HubLifeState,cycle:number,village:number){
-  this.state=state;this.cycle=cycle;this.village=village;this.lastEnv='';
+ set(state:HubLifeState,cycle:number,village:number,threat:HubThreat=0){
+  this.state=state;this.cycle=cycle;this.village=village;this.threat=threat;this.lastEnv='';this.livestock.set(state.livestock??{});
   for(const [i,a] of this.parts.entries()){
    const show=(!a.resource||(state.levels[a.resource]>=a.level!))&&(!a.village||village>=a.village)&&(!a.decor||state.decor===a.decor);
    place(this.structure,i,a.p,show?a.s:[0,0,0],a.ry,a.rx,a.rz);tint(this.structure,i,a.color);
@@ -111,7 +116,7 @@ export class HubLifeScene {
   this.structure.instanceMatrix.needsUpdate=true;if(this.structure.instanceColor)this.structure.instanceColor.needsUpdate=true;
  }
  private environment(time:number){
-  const env=hubEnvironment(this.state,this.cycle,time),key=Object.values(env).join(':');this.env=env;if(key===this.lastEnv)return;this.lastEnv=key;
+  const env=hubEnvironment(this.state,this.cycle,time);if(this.threat===2&&this.state.weather==='auto')env.weather='mist';const key=Object.values(env).join(':')+':'+this.threat;this.env=env;if(key===this.lastEnv)return;this.lastEnv=key;
   const k=SKY[env.daylight],wet=env.weather==='rain'||env.weather==='snow',mist=env.weather==='mist';
   const fog=new Color(k.horizon);if(mist||wet)fog.lerp(new Color(0xa6b2b3),.22);
   const sky:SkyLook={...SKY_LOOKS.village,zenith:k.zenith,horizon:fog.getHex(),sun:k.sun,cloudLit:k.cloudLit,cloudShade:k.cloudShade,coverage:mist||wet?.33:.56};
@@ -140,8 +145,18 @@ export class HubLifeScene {
   if(this.env.weather==='clear')return {id:this.village>=3&&Math.floor(time/12)%3===0?'bell_far':'bird_screech',k:.12};
   return null;
  }
+ sampleCue(time:number,listener:Vector3):{id:HubSample;k:number}|null{
+  if(this.threat===2&&this.state.weather==='auto'&&time>this.flashTimer+37){this.flashTimer=time;this.flash=time;return {id:'thunder',k:.35};}
+  if(time<this.livestockTimer+9)return null;this.livestockTimer=time;
+  const kinds=['goat','hen','ox'] as const;const k=kinds[Math.floor(time/9)%3]!,p=PENS[k],dist=Math.hypot(listener.x-p.x,listener.z-p.z);
+  return dist<18&&Math.abs(listener.y-8)<9?{id:k,k:.48*(1-dist/18)}:null;
+ }
  update(time:number,_dt:number,camera:Vector3){
-  this.environment(time);
+  this.environment(time);this.livestock.update(time,camera);
+  if(this.threat===2&&this.state.weather==='auto'){
+   const base=SKY[this.env.daylight].sunPower,age=time-this.flash;
+   this.arena.sun.intensity=base*(this.env.weather==='rain'||this.env.weather==='snow'?.70:1)+(this.flash>0&&age<.28?.23*(1-age/.28):0);
+  }
   for(const [i,a] of this.agentLocations.entries()){
    const phase=time*1.6+i*1.9,walk=i===2?Math.sin(time*.35)*.65:0,bob=Math.sin(phase*2)*.018;
    const x=a[0]+walk,y=a[1],z=a[2]+(i===2?.24*Math.cos(time*.35):0);
