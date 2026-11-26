@@ -81,6 +81,177 @@
       "height": 512,
       "bytes": 72498,
       "gitBlob": "53a00fe450b2d4083ca72e3db1408906fadee5b9"
+    },
+    {
+      "name": "wood_detail",
+      "file": "wood_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 37682,
+      "gitBlob": "d39a32872d9e6923ce10948e10ced15fa25adcf3",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "masonry_detail",
+      "file": "masonry_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 48112,
+      "gitBlob": "22d6df790113b883b8f87dd11a40be884cb6644e",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "roof_detail",
+      "file": "roof_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 28842,
+      "gitBlob": "92c6d67c62d0de98f7d4ab42b1e8f7c86f85c5db",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "bronze_detail",
+      "file": "bronze_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 33664,
+      "gitBlob": "c61b40020de72230f12118478bd8825bbdf92030",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "cloth_detail",
+      "file": "cloth_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 72938,
+      "gitBlob": "2996b3d5875526bbc25330e3ae1960bef81a81a0",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "earth_detail",
+      "file": "earth_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 61638,
+      "gitBlob": "90ef6925d8aac8ad3840418dba7982c4a17c7e7e",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "grass_detail",
+      "file": "grass_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 73868,
+      "gitBlob": "32d31d53f16424f012062a8cad3d05cad4580f81",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "cliff_detail",
+      "file": "cliff_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 57616,
+      "gitBlob": "9fdd5c2ebe88c98f98151e711280eec357dea34c",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "bark_detail",
+      "file": "bark_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 56892,
+      "gitBlob": "17190971cdd2f1ce26a2108ce740daddb50450ad",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "moss_detail",
+      "file": "moss_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 55140,
+      "gitBlob": "1e187cba7222b9849462742416c55d599e4993bf",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "plaster_detail",
+      "file": "plaster_detail.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 8254,
+      "gitBlob": "370abd397a3fa424760ed49422f45eca1240b525",
+      "source": "image-derived production support approximation"
+    },
+    {
+      "name": "bone_detail",
+      "file": "bone_detail.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 7184,
+      "gitBlob": "1510d46cb19915211f11b970a0b3ef8665fa07aa",
+      "source": "image-derived production support approximation"
+    },
+    {
+      "name": "skin_detail",
+      "file": "skin_detail.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 7212,
+      "gitBlob": "848183828c191c085519387d7b1270ae0b50a385",
+      "source": "image-derived production support approximation"
+    },
+    {
+      "name": "fur_detail",
+      "file": "fur_detail.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 7358,
+      "gitBlob": "0300742121c05a90a90ce40e9b92bcaf8f723d71",
+      "source": "image-derived production support approximation"
+    },
+    {
+      "name": "feather_detail",
+      "file": "feather_detail.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 13168,
+      "gitBlob": "2fe6edd5bf45c8e1f20f655e15792386c8d3f13e",
+      "source": "image-derived production support approximation"
+    },
+    {
+      "name": "scale_detail",
+      "file": "scale_detail.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 7054,
+      "gitBlob": "db41689b3e9211866a11f47100236c9236d4f260",
+      "source": "image-derived production support approximation"
+    },
+    {
+      "name": "leaf_detail",
+      "file": "leaf_detail.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 8304,
+      "gitBlob": "d81044bcdaa94fb342d158827e79ca5f03cda56e",
+      "source": "image-derived production support approximation"
+    },
+    {
+      "name": "crystal_detail",
+      "file": "crystal_detail.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 11988,
+      "gitBlob": "e96f3f629117d0e3c76b6e14e3b47f23d5d6729d",
+      "source": "image-derived production support approximation"
+    },
+    {
+      "name": "water",
+      "file": "water.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 5180,
+      "gitBlob": "ce6276bdf9cd040dbaec480733dca22008716a2b",
+      "source": "periodic ripple raster + image-derived microdetail"
     }
   ]
 }
