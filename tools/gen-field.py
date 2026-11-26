@@ -223,6 +223,10 @@ for p in (legacy['spawn'], legacy['monsterSpawn']):
 
 # 登攀の棚を置くエリアと、棚の高さ（v0.44.0。設計の relative_rise_m）
 CLIMB_SHELVES = {'a4': 3.0, 'a9': 3.0}
+# 目印の立ち岩（v0.48.0。#19 の 04 の 3 章「各エリアは少なくとも一つ、入口から見える固有の目印を持つ」と、a4「割れた立ち岩が分岐の目印」・
+# a7「高い岩柱で位置を読む」）。依頼 10 の立ち岩の図 R-16（これまで使っていなかった）を、当たりの円柱として置く。
+# a4 は 2 つの丘をつなぐくびれ（骨組みの m）の真ん中に、割れた 2 本。a7 は外周寄りに 2 本の高い柱
+LANDMARK_ART = 'R-16'
 
 def keep_zones(aid, a):
     cx, cz = a['center']['x'], a['center']['z']
@@ -321,6 +325,39 @@ for aid, a in areas.items():
         a['platforms'].append(shelf)
         a['climbs'] = [dict(id=f'{aid}_climb_01', x=r1(bx), z=r1(bz), yaw=round(math.atan2(-nx_, -nz_), 4), width=2.4, faceDist=1.2, top=shelf['h'],
                             exit=dict(x=r1(fx_ - nx_ * 1.6), z=r1(fz_ - nz_ * 1.6)))]
+    # 目印の立ち岩（v0.48.0）: 岩の並びの最後に足す（これまでの岩の見た目の選び方を変えない）
+    def free_for_landmark(x, z, r):
+        if wall_dist(poly, x, z) < r + 2.5: return False
+        if any(math.hypot(x - kx, z - kz) < kr + r for kx, kz, kr in keep): return False
+        if any(math.hypot(x - o['x'], z - o['z']) < r + o['r'] + 3 for o in a['rocks']): return False
+        if any(q['minX'] - r - 2.5 < x < q['maxX'] + r + 2.5 and q['minZ'] - r - 2.5 < z < q['maxZ'] + r + 2.5 for q in a['platforms']): return False
+        if any(math.hypot(x - c['x'], z - c['z']) < r + 4 for c in a.get('climbs', [])): return False
+        return True
+    if aid == 'a4':
+        # くびれの真ん中に、割れた 2 本（間は 0.5m。両脇は大型が通れる幅を残す）
+        cx_, cz_ = center(aid)
+        mx_, mz_, _r = SKELETON['a4']['nodes']['m']
+        ax_, az_, _ = SKELETON['a4']['nodes']['a']; bx_, bz_, _ = SKELETON['a4']['nodes']['b']
+        ux_, uz_ = (bx_ - ax_), (bz_ - az_); ul = math.hypot(ux_, uz_); ux_, uz_ = ux_ / ul, uz_ / ul
+        placed = []
+        for k in (-1, 1):
+            # 2 本は、くびれの向き（a → b）に沿って並ぶ（横に並べると通り道を塞ぐ）
+            x, z = cx_ + mx_ + ux_ * k * 1.45, cz_ + mz_ + uz_ * k * 1.45
+            placed.append(dict(x=r1(x), z=r1(z), r=1.2, h=6.2, art=LANDMARK_ART))
+        for o in placed:
+            assert wall_dist(poly, o['x'], o['z']) > o['r'] + 4.5, ('a4 の立ち岩の脇が狭い', o, wall_dist(poly, o['x'], o['z']))
+        a['rocks'] += placed
+    if aid == 'a7':
+        # 外周から 7〜12m の所に 2 本（互いにいちばん離れる 2 点。ます目を順に調べる）
+        cands = []
+        for x in np.arange(b['minX'], b['maxX'], 2.0):
+            for z in np.arange(b['minZ'], b['maxZ'], 2.0):
+                x, z = float(x), float(z)
+                wd_ = wall_dist(poly, x, z)
+                if 7 <= wd_ <= 12 and free_for_landmark(x, z, 1.5) and not near_arm(aid, x, z, 6): cands.append((x, z))
+        assert len(cands) >= 2, 'a7 の岩柱を置ける所が無い'
+        best_pair = max(((p_, q_) for i_, p_ in enumerate(cands) for q_ in cands[i_ + 1:]), key=lambda pq: math.hypot(pq[0][0] - pq[1][0], pq[0][1] - pq[1][1]))
+        a['rocks'] += [dict(x=r1(x), z=r1(z), r=1.5, h=8.0, art=LANDMARK_ART) for x, z in best_pair]
 
 # ---- 高低差（v0.46.0。#19 の F02 の一切れ。ChatGPT の field_blueprints の height_band_m）----
 # 設計の高さの帯は「エリアの中の地形の幅」（ポータルをまたいで続く座標ではない）。各エリアの床は 0 のまま、外周に近いほど上がる「盆」の形にする。

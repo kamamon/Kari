@@ -707,7 +707,8 @@ export interface FieldAreaDef {
   /** エリアの広さの種類（v0.20.0）: narrow = 狭い谷・沢、wide = 広くて戦いやすい原、medium = その間 */
   size?: 'narrow' | 'medium' | 'wide';
   stepUp: number;
-  rocks: { x: number; z: number; r: number; h: number }[];
+  /** 岩（当たりの円柱）。art は描く岩の図を決める時（v0.48.0。目印の立ち岩 R-16 など。描画だけ）。無ければ大きさから選ぶ */
+  rocks: { x: number; z: number; r: number; h: number; art?: string }[];
   platforms: { minX: number; maxX: number; minZ: number; maxZ: number; h: number }[];
   exits: FieldExit[];
   /** 登攀（v0.44.0）。無ければ登れる所は無い */

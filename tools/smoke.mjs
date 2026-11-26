@@ -1581,6 +1581,14 @@ const startTraining = async (page, tap = false) => {
     return { faces, hint: document.querySelector('.hud-exit').hidden ? '' : document.querySelector('.hud-exit').textContent };
   });
   check('登攀（v0.44.0）: エリア 4 の棚の登れる壁に蔦が描かれ、登り口の前で「↑ 壁へ押すと登る」と出る', look.faces === 1 && look.hint === '↑ 壁へ押すと登る', JSON.stringify(look));
+  // 目印（v0.48.0）: エリア 4 のくびれの割れた立ち岩（依頼 10 の R-16 が 2 本。当たりの円柱もデータのとおり）
+  const marks = await page.evaluate(() => {
+    let ids = [];
+    window.__vh.view.areaGroups.get('a4').traverse((o) => { if (o.userData.rockArt) ids = ids.concat(o.userData.rockArt); });
+    const data = window.__vh.sim.field.areas.find((a) => a.id === 'a4').rocks.filter((r) => r.art === 'R-16');
+    return { drawn: ids.filter((id) => id === 'R-16').length, data: data.length, rocks: ids.length, all: window.__vh.sim.field.areas.find((a) => a.id === 'a4').rocks.length };
+  });
+  check('目印（v0.48.0）: エリア 4 のくびれに、割れた立ち岩（R-16 の図）が 2 本描かれ、データの岩の数と描いた岩の数が同じ', marks.drawn === 2 && marks.data === 2 && marks.rocks === marks.all, JSON.stringify(marks));
   // 壁へ向かって W を押し続ける: 取り付いて登り、上の段（3m）に立つ
   await page.keyboard.down('KeyW');
   const mounted = await until(page, () => window.__vh.sim.player.mode === 'climb', 4000);

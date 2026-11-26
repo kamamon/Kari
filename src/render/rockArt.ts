@@ -162,9 +162,11 @@ function footReach(a: RockArt, sx: number, sz: number): number {
  * （伸ばし方の差は 1.25 倍まで）。高さは h × 0.92 に近づけるが、図の高さの比から 0.8〜1.25 倍まで（埋まった低い岩のまま）。
  * 候補のうち、高さの合う 4 つから、種で 1 つ選ぶ。
  */
-export function placeBigRock(rng: SeededRng, r: { x: number; z: number; r: number; h: number }, reach: number): RockPlacement {
+export function placeBigRock(rng: SeededRng, r: { x: number; z: number; r: number; h: number; art?: string }, reach: number): RockPlacement {
   const R = r.r * reach;
-  const scored = BIG_ROCKS.map((id) => {
+  // 図を決めた岩（v0.48.0。目印の立ち岩）: その図だけ。高さは、決めた図の比を広く許す（立ち岩は背が高い）。乱数の使い方は同じ（後の岩の選び方を変えない）
+  const forced = r.art && ROCK_ART.some((a) => a.id === r.art) ? r.art : null;
+  const scored = (forced ? [forced] : BIG_ROCKS).map((id) => {
     const a = rockArt(id);
     let sx = R / (a.w / 2), sz = R / (a.d / 2);
     const lim = 1.25;
@@ -175,7 +177,7 @@ export function placeBigRock(rng: SeededRng, r: { x: number; z: number; r: numbe
     sz *= k;
     const s = Math.sqrt(sx * sz);
     const want = r.h * 0.92;
-    const sy = clamp(want / a.h, s * 0.8, s * 1.25);
+    const sy = forced ? clamp(want / a.h, s * 0.6, s * 2.2) : clamp(want / a.h, s * 0.8, s * 1.25);
     const score = Math.abs(Math.log((a.h * sy) / want)) + 0.35 * Math.abs(Math.log(sz / sx));
     return { id, sx, sy, sz, score };
   }).sort((p, q) => p.score - q.score);

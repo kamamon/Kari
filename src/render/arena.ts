@@ -3,7 +3,7 @@
 // フィールドでは、エリアごとに 1 つの Group を作る（setupSky で空と光を 1 回だけ用意し、buildAreaGroup をエリアの数だけ呼ぶ）。
 import {
   type BufferGeometry, CircleGeometry, Color, ConeGeometry, CylinderGeometry, DirectionalLight, Float32BufferAttribute, FogExp2, Group, HemisphereLight, IcosahedronGeometry,
-  InstancedMesh, Matrix4, Mesh, MeshBasicMaterial, MeshLambertMaterial, Object3D, PlaneGeometry, Quaternion, Scene, Vector3,
+  DoubleSide, InstancedMesh, Matrix4, Mesh, MeshBasicMaterial, MeshLambertMaterial, Object3D, PlaneGeometry, Quaternion, Scene, Vector3,
 } from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { SeededRng } from '../core/seededRng';
@@ -495,6 +495,24 @@ function addCamp(group: Group, at: { x: number; z: number; r: number }, rockDark
   mat.rotation.x = -Math.PI / 2;
   mat.position.y = 0.02;
   camp.add(tent, post, lamp, mat);
+  // 帰る目印（v0.48.0。#19 の 04「石積みと高い帆布を帰還の目印にする」。仮の形）: 6m の竿に下げた帆布と、根元の石積み
+  const pole = new Mesh(new CylinderGeometry(0.08, 0.11, 6.4, 6), rockDark);
+  // 天幕の奥（出発地点・出口の通り道から外す。当たりは持たない）
+  pole.position.set(-5.6, 3.2, 2.0);
+  pole.castShadow = true;
+  const cloth = new Mesh(new PlaneGeometry(1.3, 2.4, 1, 3), new MeshLambertMaterial({ color: 0xb8643a, side: DoubleSide }));
+  cloth.position.set(-4.92, 4.9, 2.0);
+  cloth.rotation.y = 0.35;
+  cloth.castShadow = true;
+  cloth.userData.campBanner = true;
+  camp.add(pole, cloth);
+  for (const [s, y, dx, dz] of [[0.62, 0.3, 0, 0], [0.48, 0.78, 0.08, -0.05], [0.34, 1.15, -0.04, 0.06], [0.22, 1.42, 0.02, 0]] as const) {
+    const stone = new Mesh(new IcosahedronGeometry(s, 0), rockDark);
+    stone.scale.set(1, 0.62, 1);
+    stone.position.set(-4.9 + dx, y, 2.9 + dz);
+    stone.castShadow = true;
+    camp.add(stone);
+  }
   group.add(camp);
 }
 

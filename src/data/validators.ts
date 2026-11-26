@@ -866,6 +866,7 @@ export function validateField(c: Content, f: FieldDef, errors: string[]): void {
     }
     // 岩は、まるごと外周の中（自然な形のエリア）。四角のエリアは、中心が中
     for (const r of a.rocks ?? []) if (!(isNum(r.x) && isNum(r.z) && r.r > 0 && inside(a, r.x, r.z, shapes.has(a.id) ? r.r : 0))) errors.push(`${wa}: rock が不正（エリアの外）`);
+    for (const r of a.rocks ?? []) if (r.art !== undefined && !(typeof r.art === 'string' && /^R-\d{2}$/.test(r.art))) errors.push(`${wa}: rock の art "${String(r.art)}" が不正（R-01 の形）`);
     // 地面の起伏（v0.46.0。#19 の F02）: 格子が外周を覆い、坂は 30° まで、出口・着く所・中心・登り口は平ら、段は起伏に埋まらない
     const rl = a.relief;
     if (rl) {

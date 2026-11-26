@@ -123,3 +123,26 @@ describe('地面の起伏（#19 の F02。v0.46.0）', () => {
     }
   });
 });
+
+describe('目印（#19 の 04。v0.48.0）', () => {
+  it('エリア 4 のくびれに割れた立ち岩 2 本、エリア 7 の外周寄りに岩柱 2 本（どれも図 R-16）。ほかのエリアには無い。出口・着く所・登り口から離れる', () => {
+    const marks = (id: string) => area(id).rocks.filter((r) => r.art);
+    expect(marks('a4').map((r) => r.art)).toEqual(['R-16', 'R-16']);
+    expect(marks('a7').map((r) => r.art)).toEqual(['R-16', 'R-16']);
+    for (const a of field.areas) if (a.id !== 'a4' && a.id !== 'a7') expect(marks(a.id), a.id).toEqual([]);
+    // 割れた 2 本は寄り添う（間 0.5m ほど）。a7 の 2 本は離れる
+    const [p, q] = marks('a4');
+    expect(Math.hypot(p!.x - q!.x, p!.z - q!.z)).toBeLessThan(p!.r + q!.r + 1);
+    const [u, v] = marks('a7');
+    expect(Math.hypot(u!.x - v!.x, u!.z - v!.z)).toBeGreaterThan(40);
+    for (const id of ['a4', 'a7']) {
+      const a = area(id);
+      for (const r of marks(id)) {
+        for (const e of a.exits) expect(Math.hypot(r.x - e.x, r.z - e.z), `${id} ${e.to}`).toBeGreaterThan(10);
+        for (const c of a.climbs ?? []) expect(Math.hypot(r.x - c.x, r.z - c.z), c.id).toBeGreaterThan(4);
+        expect(r.h).toBeGreaterThan(6);
+      }
+    }
+  });
+});
+
