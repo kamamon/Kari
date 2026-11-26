@@ -440,8 +440,15 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   }
 }
 
+/**
+ * 反応の契約（v0.43.0。#19 の M03・M04。D-134）:
+ * - 終端（死亡・捕獲）は、ほかのすべてより先（markDead・捕獲が動き・怯み・怒り・状態異常を止める。ここへは来ない）。
+ * - 転倒は決まった長さを最後まで続ける。転倒の間の破壊・切断・怯みは、部位が壊れ・切れて知らせも出るが、反応（怯みの動き）は吸い込む
+ *   （転倒の途中で起き上がって怯みへ替わる、を起こさない。倒れる向きと長さは、始めた tick で決まったまま）。
+ * - それ以外は、残りの長い方（切断 110 > 破壊 80 > 怯み 46〜50。長さは Kari の仮の値）。怯みの蓄積は、何もしていない時だけたまる。
+ */
 function stagger(m: MonsterState, kind: StaggerKind, ticks: number, partIndex: number, ctx: SimCtx): void {
-  // 長い方を優先（切断 > 破壊 > 転倒 > 怯み の順に長くしてある）
+  if (m.staggerTicks > 0 && m.staggerKind === 'topple') return;
   if (ticks <= m.staggerTicks) return;
   m.action = null;
   m.staggerTicks = ticks;

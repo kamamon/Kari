@@ -4,7 +4,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import type { Content } from '../src/data/schemas';
 import type { SimEvent } from '../src/game/events';
 import { yawOf } from '../src/core/math';
-import type { MonsterState } from '../src/game/monster';
+import { applyDamageToMonster, monsterShapes, type MonsterState } from '../src/game/monster';
 import { COMBO_SLACK_TICKS, resolveIncomingHit } from '../src/game/player';
 import { Simulation } from '../src/game/sim';
 import { areaFrame } from '../src/ui/localMap';
@@ -395,3 +395,148 @@ describe('居場所の追跡（#19 の F04。v0.42.0）: 標識玉と、最後�
     expect(arena.trackOf(arena.monsters[0]!)).toMatchObject({ state: 'visible' });
   });
 });
+
+describe('反応の契約（#19 の M03・M04。v0.43.0）: 転倒は最後まで・終端の後は動かない・起きた頭に当たる', () => {
+  const setup = (): { sim: Simulation; m: MonsterState } => {
+    const sim = new Simulation(content, baseOptions({ questId: 'quest.basin.003' }));
+    const m = sim.monsters[0]!;
+    m.aiEnabled = false;
+    m.aware = true;
+    sim.drainEvents();
+    return { sim, m };
+  };
+  const pi = (m: MonsterState, id: string): number => m.def.parts.findIndex((p) => p.id === id);
+  /** 前脚を叩いて転倒させる（前脚は壊れない。打撃なので切れない） */
+  const topple = (sim: Simulation, m: MonsterState): void => {
+    const leg = pi(m, 'foreleg');
+    applyDamageToMonster(m, leg, m.parts[leg]!.flinchThreshold, 'blunt', sim);
+    expect(m.staggerKind).toBe('topple');
+  };
+  const head = (m: MonsterState): { y: number; x: number }[] => monsterShapes(m).filter((s) => s.partIndex === pi(m, 'head')).map((s) => ({ y: s.a.y, x: s.a.x }));
+
+  it('転倒の間に尾を切っても、頭を壊しても、転倒は始めた時の長さのまま続く（切断・破壊の怯みに替わらない）。部位は切れ・壊れ、知らせも出る', () => {
+    const { sim, m } = setup();
+    topple(sim, m);
+    const total = m.staggerTotal;
+    run(sim, 120);
+    const left = m.staggerTicks;
+    expect(m.staggerKind).toBe('topple');
+    const tail = pi(m, 'tail');
+    applyDamageToMonster(m, tail, m.def.parts[tail]!.sever!.threshold, 'cut', sim);
+    applyDamageToMonster(m, pi(m, 'head'), m.def.parts[pi(m, 'head')]!.breakDurability!, 'cut', sim);
+    const ev = sim.drainEvents();
+    expect(m.parts[tail]!.severed).toBe(true);
+    expect(m.parts[pi(m, 'head')]!.broken).toBe(true);
+    expect(ev.filter((e) => e.type === 'part_sever')).toHaveLength(1);
+    expect(ev.filter((e) => e.type === 'part_break')).toHaveLength(1);
+    expect(ev.filter((e) => e.type === 'monster_stagger')).toHaveLength(0);
+    expect(m.staggerKind).toBe('topple');
+    expect([m.staggerTicks, m.staggerTotal]).toEqual([left, total]);
+    // 起き上がるまで転倒のまま。起きた後に、吸い込んだ怯みが後から来ない
+    const after = run(sim, left + 30);
+    expect(m.staggerTicks).toBe(0);
+    expect(after.filter((e) => e.type === 'monster_stagger')).toHaveLength(0);
+  });
+
+  it('転倒していない時の切断は、これまでどおり切断の怯み（110 tick）。怯みの間の破壊は、残りの長い方', () => {
+    const { sim, m } = setup();
+    const tail = pi(m, 'tail');
+    applyDamageToMonster(m, tail, m.def.parts[tail]!.sever!.threshold, 'cut', sim);
+    expect([m.staggerKind, m.staggerTicks]).toEqual(['sever', 110]);
+    run(sim, 60);
+    applyDamageToMonster(m, pi(m, 'head'), m.def.parts[pi(m, 'head')]!.breakDurability!, 'cut', sim);
+    expect([m.staggerKind, m.staggerTicks]).toEqual(['break', m.def.breakStaggerTicks]);
+  });
+
+  it('転倒の間は、頭が低く体の右（−X の側）へ下がる。起き上がると、立った時の頭の位置へ戻り、そこへの攻撃は頭に入る', () => {
+    const { sim, m } = setup();
+    const stand = head(m);
+    topple(sim, m);
+    run(sim, Math.round(m.staggerTotal / 2));
+    const down = head(m);
+    expect(down[0]!.y).toBeLessThan(stand[0]!.y - 0.15);
+    run(sim, m.staggerTicks + 1);
+    expect(m.staggerKind).toBeNull();
+    const up = head(m);
+    up.forEach((h, i) => {
+      expect(h.y).toBeCloseTo(stand[i]!.y, 6);
+      expect(h.x).toBeCloseTo(stand[i]!.x, 6);
+    });
+    // 立った時の頭の位置にいちばん近い部位は、頭（同時接触の優先は形の並び順）
+    const p = monsterShapes(m).find((s) => s.partIndex === pi(m, 'head'))!.a;
+    const nearest = monsterShapes(m).map((s) => ({ part: s.partIndex, d: Math.hypot(s.a.x - p.x, s.a.y - p.y, s.a.z - p.z) })).sort((a, b) => a.d - b.d)[0]!;
+    expect(m.def.parts[nearest.part]!.id).toBe('head');
+  });
+
+  it('終端: 転倒の途中で倒すと、転倒も技も止まり、AI を動かしても、技を始めず、動かず、攻撃の判定が出ない。捕獲の後も同じ', () => {
+    const { sim, m } = setup();
+    topple(sim, m);
+    run(sim, 30);
+    applyDamageToMonster(m, pi(m, 'body'), m.hp, 'cut', sim);
+    expect([m.dead, m.staggerTicks, m.staggerKind, m.action]).toEqual([true, 0, null, null]);
+    m.aiEnabled = true;
+    const pos = { ...m.pos };
+    const ev = run(sim, 600);
+    expect(ev.filter((e) => e.type === 'action_start' && e.actor === m.id)).toHaveLength(0);
+    expect(ev.filter((e) => e.type === 'player_hurt' || e.type === 'guard')).toHaveLength(0);
+    expect(m.pos).toEqual(pos);
+    // 捕獲: 弱って罠にかかり、鎮静がたまると捕獲（終端）。その後は動かない
+    const c = setup();
+    const cap = c.m.def.capture!;
+    c.m.hp = Math.floor(c.m.def.hp * cap.hpRatio) - 1;
+    c.m.trapTicks = 300;
+    c.m.tranq = cap.tranqNeeded;
+    run(c.sim, 1);
+    expect(c.m.captured).toBe(true);
+    c.m.aiEnabled = true;
+    const cpos = { ...c.m.pos };
+    const cev = run(c.sim, 600);
+    expect(cev.filter((e) => e.type === 'action_start' && e.actor === c.m.id)).toHaveLength(0);
+    expect(c.m.pos).toEqual(cpos);
+  });
+});
+
+describe('離れる前の牽制（#19 の M05。v0.43.0）', () => {
+  /** 弱らせた標的を、狩人と同じエリア 3 に置き、標的が出ていくまで進める。near なら狩人は同じエリアの 28m 先（技は届かない）、でなければ野営地 */
+  function untilLeave(near: boolean): { evs: SimEvent[]; m: MonsterState } {
+    const sim = new Simulation(content, baseOptions({ questId: 'quest.basin.003', field: true }));
+    const m = sim.monsters[0]!;
+    expect(sim.monsterArea(m)!.id).toBe('a3');
+    m.hp = Math.round(m.def.hp * 0.2);
+    m.aware = near;
+    const evs: SimEvent[] = [];
+    for (let i = 0; i < 3000 && m.roam!.state !== 'leave'; i++) {
+      if (near) {
+        const c = sim.world.centerOf(sim.world.areaAt(m.pos.x, m.pos.z));
+        const d = Math.hypot(c.x - m.pos.x, c.z - m.pos.z) || 1;
+        const k = Math.min(28, d + 10) / d;
+        sim.player.pos = { x: m.pos.x + (c.x - m.pos.x) * k, y: 0, z: m.pos.z + (c.z - m.pos.z) * k };
+        sim.player.prevPos = { ...sim.player.pos };
+        sim.player.hp = 100;
+        sim.areaId = 'a3';
+      }
+      sim.step(frame());
+      evs.push(...sim.drainEvents());
+    }
+    expect(m.roam!.state).toBe('leave');
+    return { evs, m };
+  }
+  const mine = (evs: SimEvent[], m: MonsterState): string[] =>
+    evs.flatMap((e) => (e.type === 'action_start' && e.actor === m.id ? [e.actionId] : e.type === 'monster_feint' ? ['feint'] : e.type === 'monster_leave' ? ['leave'] : []));
+
+  it('戦っている相手が同じエリアに居ると、1 度だけ威嚇を見せてから走り出す（威嚇の後は、ほかの技を挟まずに出る）', () => {
+    const { evs, m } = untilLeave(true);
+    const seq = mine(evs, m);
+    const at = seq.indexOf('feint');
+    expect(at).toBeGreaterThan(0);
+    expect(seq[at - 1]).toBe('monster.galdros.threat');
+    expect(seq.slice(at + 1)).toEqual(['leave']);
+    expect(seq.filter((x) => x === 'feint')).toHaveLength(1);
+  });
+
+  it('相手が別のエリアに居れば（見ていない）、牽制せずに出る', () => {
+    const { evs, m } = untilLeave(false);
+    expect(mine(evs, m)).toEqual(['leave']);
+  });
+});
+

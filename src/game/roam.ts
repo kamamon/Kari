@@ -2,6 +2,7 @@
 // エリアは 1 つの座標の中に離して置いてあるので、モンスターは、誰も見ていないエリアでも、同じ処理で出口まで歩いて次のエリアへ移る。
 import { DEG, angleDiff, forwardOf, turnToward, yawOf } from '../core/math';
 import type { FieldDef, FieldExit } from '../data/schemas';
+import { newRun } from './action';
 import type { MonsterState } from './monster';
 import type { SimCtx } from './player';
 
@@ -22,6 +23,8 @@ export interface RoamState {
   idle: number;
   /** 気づいた相手が、同じエリアに居ない時間（長くなると、見失う） */
   lost: number;
+  /** 離れる前の牽制（v0.43.0。#19 の M05）を、このエリアでもう見せた。エリアに着いた時と、起きた時に戻す */
+  feinted: boolean;
 }
 
 /** 出口へ歩き出してから、これだけ経っても着かなければ、そのまま次のエリアへ移る（何かに引っかかって、いつまでも動けないことを避ける） */
@@ -51,7 +54,7 @@ export function createRoam(field: FieldDef, monsterId: string, ctx: SimCtx): Roa
   const route = field.routes[monsterId];
   if (!route) return null;
   const [lo, hi] = field.roam.stayTicks;
-  return { areaId: route.start, state: 'stay', ticks: lo + ctx.rng.int(hi - lo + 1), via: null, routeIndex: Math.max(0, route.roam.indexOf(route.start)), limping: false, wander: null, idle: 120 + ctx.rng.int(240), lost: 0 };
+  return { areaId: route.start, state: 'stay', ticks: lo + ctx.rng.int(hi - lo + 1), via: null, routeIndex: Math.max(0, route.roam.indexOf(route.start)), limping: false, wander: null, idle: 120 + ctx.rng.int(240), lost: 0, feinted: false };
 }
 
 /** 眠りから起こす（攻撃された時と、眠り終えた時）。 */
@@ -60,6 +63,7 @@ export function wakeMonster(m: MonsterState, ctx: SimCtx, byHit: boolean): void 
   m.asleep = false;
   m.roam.state = 'stay';
   m.roam.ticks = ctx.field?.roam.wakeStayTicks ?? 1800;
+  m.roam.feinted = false;
   // 眠り終えて起きたら、もう巣へ向かう理由は無い（また弱れば、また向かう）。
   // 攻撃されて起きた時は、弱ったままなので、しばらく戦った後、また眠る
   if (!byHit) m.roam.limping = false;
@@ -221,6 +225,17 @@ export function stepRoam(m: MonsterState, playerHere: boolean, ctx: SimCtx): boo
       r.ticks = 600;
       return false;
     }
+    // 離れる前の牽制（v0.43.0。#19 の M05。D-135）: 戦っている相手が同じエリアに居れば、1 度だけ、その種の威嚇（<id>.threat）を見せてから走り出す。
+    // 牽制の後は必ず出る（牽制を繰り返して、いつまでも退かない、にしない）。走る速さはこれまでどおり（追いつかれない）
+    const feint = `${m.def.id}.threat`;
+    if (playerHere && m.aware && !r.feinted && ctx.content.actions.has(feint)) {
+      r.feinted = true;
+      m.stall = 0;
+      m.action = newRun(ctx.content.actions.get(feint)!, ctx.newInstanceId(), m.yaw);
+      ctx.emit({ type: 'action_start', actor: m.id, actionId: feint, instanceId: m.action.instanceId });
+      ctx.emit({ type: 'monster_feint', target: m.id, actionId: feint });
+      return false;
+    }
     r.state = 'leave';
     r.via = via;
     r.wander = null;
@@ -245,6 +260,7 @@ export function stepRoam(m: MonsterState, playerHere: boolean, ctx: SimCtx): boo
     r.areaId = via.to;
     r.via = null;
     r.state = 'stay';
+    r.feinted = false;
     const [lo, hi] = R.stayTicks;
     // 目当てのエリアに着いたら、しばらく居る。途中のエリアは、少し立ち止まって通り抜ける
     // （弱って巣に着いたら、寝床まで歩いて眠る。気づいて戦いになった時は、相手を見失うまで眠らない。v0.41.0）

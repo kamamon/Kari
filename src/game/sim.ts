@@ -1321,7 +1321,7 @@ export class Simulation implements SimCtx {
     }
     if (this.field) {
       parts.push(this.areaId);
-      for (const m of this.monsters) if (m.roam) parts.push(m.roam.areaId, m.roam.state, m.roam.ticks, m.roam.routeIndex, m.roam.limping ? 1 : 0, m.roam.idle, m.roam.wander ? `${m.roam.wander.x},${m.roam.wander.z}` : '-', m.asleep ? 1 : 0);
+      for (const m of this.monsters) if (m.roam) parts.push(m.roam.areaId, m.roam.state, m.roam.ticks, m.roam.routeIndex, m.roam.limping ? 1 : 0, m.roam.idle, m.roam.wander ? `${m.roam.wander.x},${m.roam.wander.z}` : '-', m.asleep ? 1 : 0, m.roam.feinted ? 1 : 0);
     }
     return parts.join('|');
   }

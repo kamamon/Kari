@@ -68,6 +68,8 @@ export type SimEvent =
   | { type: 'monster_sleep'; target: string; areaId: string }
   | { type: 'monster_wake'; target: string; byHit: boolean }
   | { type: 'monster_lost'; target: string }
+  /** 離れる前の牽制（v0.43.0。#19 の M05）: 戦っている相手の前で、1 度だけ威嚇を見せた。この後、エリアを離れる */
+  | { type: 'monster_feint'; target: string; actionId: string }
   /** 突進の制動（v0.41.0）: 走る間に前へ進めなくなり、減速へ進めた（tick は、その時の技の tick） */
   | { type: 'monster_brake'; target: string; tick: number }
   /** 群れ（幼体）: 狩人に気づいた・逃げ出した（騒ぎごとに、段階が上がった時だけ）/ 別のエリアへ移り終えた */
