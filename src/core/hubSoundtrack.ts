@@ -33,7 +33,7 @@ export function hubScore(watch=false):Float32Array{
   if(watch)y+=.034*Math.sin(TAU*hz(root[bar]!-12)*t)*Math.sin(Math.PI*(t% (4*beat))/(4*beat))**2;
   if(b%4===0)y+=.06*noise(i)*Math.exp(-phase*23)*Math.min(1,phase/.01);
   const fade=Math.min(1,t/.15,(len-t)/.15);
-  out[i]=soft(y)*Math.max(0,fade);
+  out[i]=fade<=0?0:soft(y)*fade;
  }
  return out;
 }
