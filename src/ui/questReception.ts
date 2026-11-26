@@ -13,10 +13,10 @@ export interface ReceptionStarGroup {
   entries: ReceptionEntry[];
 }
 
-export type QuestActivity = 'hunt' | 'slay' | 'gather' | 'mining' | 'field_delivery';
+export type QuestActivity = 'hunt' | 'slay' | 'gather' | 'mining' | 'field_delivery' | 'tour';
 
 export const QUEST_ACTIVITY_LABELS: Readonly<Record<QuestActivity, string>> = {
-  hunt: '狩猟', slay: '討伐', gather: '採集', mining: '採掘', field_delivery: '現地納品',
+  hunt: '狩猟', slay: '討伐', gather: '採集', mining: '採掘', field_delivery: '現地納品', tour: '採取ツアー',
 };
 
 const validStars = (value: number | undefined): number | null =>
@@ -62,7 +62,7 @@ export function receptionGroups(
 export function questActivity(quest: QuestDef): QuestActivity {
   if (quest.kind !== 'gather') return quest.kind;
   const gather = quest.gather;
-  if(gather?.fieldGathering)return 'gather';
+  if(gather?.fieldGathering)return 'tour';
   if (!gather || gather.nodes.length === 0 || gather.needs.length !== 1) return 'field_delivery';
   if (gather.nodes.every((node) => node.kind === 'mine')) return 'mining';
   if (gather.nodes.every((node) => node.kind === 'gather')) return 'gather';
@@ -106,6 +106,7 @@ function categoryIcon(label: string, glyph: string, kind: string): HTMLSpanEleme
  */
 export function questIconStrip(content: MonsterContent, quest: QuestDef): HTMLSpanElement {
   const activity = questActivity(quest);
+  if (activity === 'tour') return categoryIcon('採取ツアー', '🌿', activity);
   if (activity === 'gather') return categoryIcon('採集', '🌿', activity);
   if (activity === 'mining') return categoryIcon('採掘', '⛏', activity);
   if (activity === 'field_delivery') return categoryIcon('現地納品', '📦', activity);

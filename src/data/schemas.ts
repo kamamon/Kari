@@ -1297,6 +1297,7 @@ export interface ContentIndex {
     /** 系列の装備（v0.32.0。武器・防具・作るレシピ。npm run equipment:gen の出力） */
     equipment?: string[];
     fieldGathering?: string;
+    regionalGathering?: string;
     /** 属性と状態異常の決まり（v0.33.0） */
     elements: string;
     /** 防具の技能（v0.33.0。npm run equipment:gen の出力） */
@@ -1321,6 +1322,8 @@ export interface MotionSetDef {
 export interface Content {
   contentVersion: string;
   fieldGathering?: FieldGatherCatalog;
+  /** 風礫盆地以外の採取カタログ。狩場 ID で引く。 */
+  regionalGathering?: Map<string, FieldGatherCatalog>;
   /** 読み込んだハンターの動きの組の名前（v0.57.0。D-150） */
   motionSet: string;
   /** 属性と状態異常の決まり（v0.33.0） */

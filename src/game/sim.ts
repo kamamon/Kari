@@ -19,7 +19,7 @@ import { createPlayer, familyOf, playerHurtCapsule, resolveIncomingHit, setSpiri
 import { aimDir, aimEye, aimTarget } from './aim';
 import { trackSegment } from './tracks';
 import { World, type Circle } from './world';
-import { usesFieldGather } from '../data/fieldGathering';
+import { gatheringCatalog, usesFieldGather } from '../data/fieldGathering';
 import { FieldGatherState, FIELD_NODE_REACH } from './fieldGather';
 import { DELIVER_ACTION, DEPOT_RADIUS, DEPOT_REACH, MINE_NODE_RADIUS, NODE_REACH, bagHasRoom, createErrand, errandReady, errandSurplus, nodeAction, type ErrandState, type ErrandTarget } from './errand';
 
@@ -323,7 +323,7 @@ export class Simulation implements SimCtx {
       this.main = m;
     }
     // 狩らない依頼（v0.27.0）: 大型も幼体も出さない（encounters: none）。採取点と採集袋を用意する
-    if (quest && field && usesFieldGather(content,quest)) this.fieldGather=new FieldGatherState(content.fieldGathering!,quest.rankId,options.seed);
+    if (quest && field && usesFieldGather(content,quest)) this.fieldGather=new FieldGatherState(gatheringCatalog(content,field.id)!,quest.rankId,options.seed);
     if (quest?.gather) this.errand = createErrand(quest.gather);
     else this.spawnHerds(quest, field ?? null, quest?.monsterSpawn ?? map.monsterSpawn);
     if (quest) {
@@ -501,7 +501,7 @@ export class Simulation implements SimCtx {
     if (this.fieldGather) {
       for(const n of this.fieldGather.nodes)if(n.kind==='mine'&&n.areaId===this.areaId)out.push({x:n.x,z:n.z,r:MINE_NODE_RADIUS});
     }
-    const cat=this.content.fieldGathering;
+    const cat=gatheringCatalog(this.content,this.field?.id);
     if(cat&&this.field?.id===cat.fieldId&&cat.pond.areaId===this.areaId){const p=cat.pond;out.push({x:p.x,z:p.z,r:p.radius});}
     return out;
   }
