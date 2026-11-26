@@ -8,12 +8,14 @@
 // - 新しい版が書いたデータ（schemaVersion がこの版より大きい）は、読まないし上書きもしない。
 import { ARMOR_SLOTS, recipeFrom, recipeIsWeapon, recipeResult, type ArmorDef, type ArmorSlot, type Content, type DeliveryDef, type ItemStack, type QuestDef, type RecipeDef, type ShopDef, type SupportPackDef } from '../data/schemas';
 import { appearanceShapeErrors, applyDraft, changedKinds, editableAppearance, legacyAppearance, validateDraft, type AppearanceDoc, type AppearanceDraft } from '../data/appearance';
+import { hubLifeShapeErrors, type HubLifeState } from '../data/hubLife';
 
 /**
  * 版 2（v0.9.0）: 防具（armor）を足した。版 3（v0.14.0）: 身に着けている防具（equippedArmorIds）を足した。
  * 版 4（v0.26.0）: 1 度だけの受け取りの記録（claims。工房からの支給・里の納品）を足した。
  * 版 5（v0.28.0）: ハンターの外見（appearance）を足した。
  */
+// 版5の任意の追加欄。旧データと、旧版への読み戻しを維持する。
 export const SAVE_SCHEMA_VERSION = 5;
 export const SLOT_ID = 'main';
 /** 書き出したファイルの目印 */
@@ -64,6 +66,8 @@ export interface SaveDoc {
    * 知らない欄・未知の ID も、そのまま持つ（描く時だけ A で代わりに描く）。能力には関わらない。
    */
   appearance: AppearanceDoc;
+  /** 拠点の発展と準備。旧版5のデータは省略可。 */
+  hubLife?: HubLifeState;
 }
 
 /** 保存する時に付ける情報（時刻は保存する側が渡す） */
@@ -143,7 +147,7 @@ export function validateSave(raw: unknown): string[] {
   if (!Array.isArray(raw.settledRuns) || raw.settledRuns.some((r) => typeof r !== 'string')) e.push('処理済みの依頼の記録が不正です');
   if (!Array.isArray(raw.claims) || raw.claims.some((r) => typeof r !== 'string' || r === '')) e.push('受け取りの記録が不正です');
   else if (new Set(raw.claims).size !== raw.claims.length) e.push('同じ受け取りの記録が 2 つ入っています');
-  e.push(...appearanceShapeErrors(raw.appearance));
+  e.push(...appearanceShapeErrors(raw.appearance), ...hubLifeShapeErrors(raw.hubLife));
   return e;
 }
 

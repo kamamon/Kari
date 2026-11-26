@@ -23,7 +23,11 @@ import { usesFieldGather } from '../data/fieldGathering';
 import { FieldGatherState, FIELD_NODE_REACH } from './fieldGather';
 import { DELIVER_ACTION, DEPOT_RADIUS, DEPOT_REACH, MINE_NODE_RADIUS, NODE_REACH, bagHasRoom, createErrand, errandReady, errandSurplus, nodeAction, type ErrandState, type ErrandTarget } from './errand';
 
+import { prepBonus, type HuntPrep } from '../data/hubLife';
+
 export interface SimOptions {
+  /** 出発時に消費した温泉・食事。リプレイにも保存する。 */
+  hubPrep?: HuntPrep;
   seed: number;
   mapId: string;
   weaponId: string;
@@ -243,6 +247,8 @@ export class Simulation implements SimCtx {
   readonly aimAssist: boolean;
 
   constructor(content: Content, options: SimOptions) {
+    const preparation=prepBonus(options.questId?options.hubPrep:null);
+    if(preparation.hp||preparation.stamina)content={...content,player:{...content.player,maxHp:content.player.maxHp+preparation.hp,maxStamina:content.player.maxStamina+preparation.stamina}};
     this.content = content;
     this.options = options;
     this.aimAssist = !!options.aimAssist;
@@ -286,8 +292,9 @@ export class Simulation implements SimCtx {
     this.player = createPlayer(content, this.world.spawn, options.weaponId, carry);
     this.armorIds = [...(options.armorIds ?? [])];
     this.defense = totalDefense(content, this.armorIds);
-    this.defenseScale = defenseScale(content, this.defense);
+    this.defenseScale = defenseScale(content, this.defense)/preparation.defense;
     this.gear = computeGear(content, content.weapons.get(options.weaponId)!, this.armorIds);
+    this.gear.statusResist.poison*=preparation.poison;
     if (quest) {
       this.rank = content.ranks.get(quest.rankId) ?? null;
       if (!this.rank) throw new Error(`rank ${quest.rankId} が無い`);
@@ -1157,7 +1164,7 @@ export class Simulation implements SimCtx {
     // 状態異常の睡眠: 覚ます最初の命中だけ wakeScale 倍（v0.33.0）
     const woke = !m.dead && wakeFromSleep(m.ailments, R);
     const damage = computeDamage({
-      attack: weapon.attack,
+      attack: weapon.attack * prepBonus(this.options.questId?this.options.hubPrep:null).attack,
       motion: h.motion,
       sharpness: weapon.sharpnessModifier * (stage?.damageScale ?? 1),
       hitzone,

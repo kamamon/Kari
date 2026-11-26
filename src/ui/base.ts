@@ -22,7 +22,15 @@ import { DRAFT_KIND_NAMES, changedKinds, describeKind, draftOf, editableAppearan
 import { computeGear } from '../game/gear';
 import { armorStat, gearSummary, weaponShortName, weaponStat } from './gearText';
 
-export interface BaseHost {
+import { HubLifePanel, type HubLifeHost } from './hubLife';
+import { lifeOf, prepText, type HubTab } from '../data/hubLife';
+
+function lifePreviewLink(id:string):HTMLAnchorElement{
+ const a=el('a','life-button','3Dで試着'),q=new URLSearchParams({bones:'0',shapes:'0',stance:'idle',yaw:'0.5'});
+ q.set(id.startsWith('armor.')?'previewArmor':'previewWeapon',id);
+ a.href=assetUrl('viewer.html')+'?'+q.toString();a.target='_blank';a.rel='noopener';return a;
+}
+export interface BaseHost extends HubLifeHost {
   startTraining(): void;
   startHunt(questId: string): void;
   /** 依頼を、フィールド（エリアに分かれた狩場）で始めるか */
@@ -73,7 +81,7 @@ const BACKUP_REASON: Record<string, string> = {
 };
 
 /** 拠点の画面に出す範囲。all = すべて（一覧）。ほかは、施設 1 つぶん */
-export type BaseSection = 'all' | FacilityKind;
+export type BaseSection = 'all' | 'life' | FacilityKind;
 
 /** 図鑑の絵の説明。adopted = 採用した設定図（ガルドロス）。ほかは ChatGPT の原画案（真横 1 方向。採用は利用者が決める） */
 export function artCaption(state: string, cls: string, adopted: boolean): string {
@@ -155,6 +163,8 @@ export class BaseScreen {
   private dataBody: HTMLElement;
   /** 画面の下に出す、直前の操作の結果 */
   private message: HTMLElement;
+  private lifePanel: HubLifePanel;
+  private lifeButton: HTMLButtonElement;
   private busy = false;
   /** 強化の確認を出しているレシピ */
   private confirming: string | null = null;
@@ -178,6 +188,11 @@ export class BaseScreen {
     headingText.append(this.title, this.lead);
     header.appendChild(headingText);
     card.append(header, this.banners);
+    this.lifeButton = el('button', 'base-close life-entry', '里の暮らし・施設地図');
+    this.lifeButton.addEventListener('click', () => { if (!this.busy) this.showLife('map'); });
+    card.appendChild(this.lifeButton);
+    this.lifePanel=new HubLifePanel(content,host);
+    card.appendChild(this.lifePanel.root);
     // 施設ごとの画面では、その施設のものだけを出す（data-sec と、root の data-section を CSS で突き合わせる）
     const sec = <T extends HTMLElement>(e: T, s: FacilityKind): T => {
       e.dataset.sec = s;
@@ -336,7 +351,9 @@ export class BaseScreen {
     this.facilityId = f?.id ?? null;
     this.root.dataset.section = section;
     this.root.dataset.facility = this.facilityId ?? '';
-    this.title.textContent = f ? f.name : section === 'quest' ? '依頼の受付案内' : this.content.hub.name;
+    this.title.textContent = f ? f.name : section === 'quest' ? '依頼の受付案内' : section==='life'?'灯継ぎの里・暮らし':this.content.hub.name;
+    this.lifePanel.root.hidden=section!=='life';
+    this.lifeButton.hidden=section==='life';
     this.lead.textContent = f?.kind === 'quest' ? '星を選び、依頼の内容を確認してください。' : f ? `${f.summary}。` : '行き先を選んでください。';
     this.closeBtn.hidden = !this.host.hubWalk && section === 'all';
     this.closeBtn.textContent = this.host.hubWalk ? '里へ戻る' : '拠点の一覧へ';
@@ -358,6 +375,8 @@ export class BaseScreen {
       this.questBox.querySelector<HTMLButtonElement>('.reception-star[aria-pressed="true"], .reception-star')?.focus({ preventScroll: true });
     }
   }
+
+  showLife(tab:HubTab):void { this.setOpen(true,'life');this.lifePanel.open(tab); }
 
   /** 直前の操作の結果を、画面の下に出す（ほかの画面から戻った時） */
   notify(text: string, bad = false): void {
@@ -393,6 +412,7 @@ export class BaseScreen {
     const save = this.host.save;
     const doc = save.doc;
     const c = this.content;
+    if(this.section==='life'){this.lifePanel.refresh();return;}
 
     // 知らせ
     this.banners.textContent = '';
@@ -1030,6 +1050,7 @@ export class BaseScreen {
       const need = (q.requires ?? []).filter((id) => !(doc.progress.questClears[id] ?? 0)).map((id) => `「${c.quests.get(id)?.name ?? id}」`);
       pane.appendChild(el('p', 'reception-locked-note', `${need.join('と')}を達成すると受けられます。`));
     }
+    pane.appendChild(el('p','reception-detail-note','出発準備：'+prepText(lifeOf(doc).prep)+'｜装備 '+(c.weapons.get(doc.equippedWeaponId)?.name??'現在の武器')));
     const canDepart = (): boolean => !this.busy && this.receptionRank() === q.rankId && this.receptionView()?.selected === q.id && questUnlocked(this.host.save.doc, q);
     if (unlocked && this.huntConfirmId === q.id) {
       actions.appendChild(el('p', 'reception-confirm-question', 'この依頼を受注しますか？'));
@@ -1175,6 +1196,7 @@ export class BaseScreen {
         box.dataset.recipe = r.id;
         box.appendChild(el('b', undefined, `${nameOf(from)} → ${nameOf(to)}`));
         box.appendChild(el('span', 'forge-stat', `${statOf(from)} → ${statOf(to).replace(/^\S+ /, '')}`));
+        box.appendChild(lifePreviewLink(to));
         const ul = el('ul', 'forge-cost');
         for (const i of chk.items) {
           const short = i.have < i.need;
@@ -1256,6 +1278,7 @@ export class BaseScreen {
         row.dataset.recipe = r.id;
         row.appendChild(el('b', undefined, nameOf(to)));
         row.appendChild(el('span', 'forge-stat', w ? weaponStat(c, w) : a ? armorStat(c, a, '防御力') : ''));
+        row.appendChild(lifePreviewLink(to));
         if (chk.ownsResult) {
           have++;
           row.classList.add('owned');
