@@ -1,0 +1,25 @@
+{
+  "records": [
+    {
+      "id": "sky_crown",
+      "frames": 58,
+      "width": 448,
+      "height": 280,
+      "durationSeconds": 5.8,
+      "activeFrames": 5,
+      "bytes": 707860,
+      "sha": "fefc18041df4896ee35f40f13bfa04d6f1439b9c"
+    },
+    {
+      "id": "ground_dual_arc",
+      "frames": 46,
+      "width": 448,
+      "height": 280,
+      "durationSeconds": 4.6,
+      "activeFrames": 2,
+      "bytes": 551420,
+      "sha": "ccc147a6de6e44d9891ec855cf98ef1a7a4742fd"
+    }
+  ],
+  "scope": "CPU rendered from actual skinned model, locked attack geometry, debug boundary off, 10fps. No game/physical device."
+}
