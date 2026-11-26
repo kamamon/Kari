@@ -1,0 +1,38 @@
+{
+  "modelBlob": "caf0fa7575cad6ed66091aa6aac5aa44e5330360",
+  "records": [
+    {
+      "name": "ultimate_warning",
+      "clip": "sky_crown",
+      "t": 2.75,
+      "phase": "warning",
+      "sha": "9e3f098042be3d3f65fef235f7db0a1ac7fe63a0",
+      "bytes": 768523
+    },
+    {
+      "name": "ultimate_active",
+      "clip": "sky_crown",
+      "t": 3.31,
+      "phase": "active",
+      "sha": "f75739727c86572334976e3aa58f7f8d716b23ca",
+      "bytes": 768523
+    },
+    {
+      "name": "dual_arc_active",
+      "clip": "ground_dual_arc",
+      "t": 2.84,
+      "phase": "active",
+      "sha": "ca440fa61cff64bfe4ef2b5e40d1f171a913f231",
+      "bytes": 768523
+    },
+    {
+      "name": "wing_thunder",
+      "clip": "wing_thunder_l",
+      "t": 1.57,
+      "phase": "active",
+      "sha": "295c3745600075b7b28c19600488b9582a4a8ecf",
+      "bytes": 768523
+    }
+  ],
+  "notes": "CPU LBS + corrective deformation + depth-tested layered glow; not production PBR. Snapshot hit test only, no Kari damage pipeline. Four rendered PNGs; visual quality of final game not established."
+}
