@@ -536,6 +536,12 @@ export class Hud {
         if (Math.abs(p.pos.y - c.top) > 0.3 && side <= c.width / 2 + 0.6 && along >= -2.5 && along <= c.faceDist) exitText = '↑ 壁へ押すと登る';
         else if (Math.abs(p.pos.y - c.top) <= 0.3 && Math.hypot(p.pos.x - c.exit.x, p.pos.z - c.exit.z) <= 2.2) exitText = '↓ 縁へ押すと下りる';
       }
+      // 低い岩棚（v0.49.0）: 乗り越える帯の前（段の下に居る時だけ）
+      for (const v of here.vaults ?? []) {
+        const fx = Math.sin(v.yaw), fz = Math.cos(v.yaw);
+        const along = (p.pos.x - v.x) * fx + (p.pos.z - v.z) * fz, side = Math.abs((p.pos.x - v.x) * fz - (p.pos.z - v.z) * fx);
+        if (p.pos.y < v.top - 0.5 && side <= v.width / 2 && along >= v.faceDist - 2.5 && along <= v.faceDist + 0.05) exitText = '↑ 段へ押すと乗り越える';
+      }
     }
     this.set('exit', exitText, () => {
       this.exitHint.textContent = exitText;

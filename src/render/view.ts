@@ -6,7 +6,7 @@ import { STATUS_KINDS, type Content, type ElementId, type MonsterDef, type Statu
 import { inWindow, renderTick } from '../game/action';
 import type { SimEvent } from '../game/events';
 import { monsterBlockers, monsterShapes, type MonsterState } from '../game/monster';
-import { CLIMB_DOWN_TICKS, CLIMB_EXIT_TICKS, CLIMB_MOUNT_TICKS, familyOf, isGuarding, playerHurtCapsule } from '../game/player';
+import { CLIMB_DOWN_TICKS, CLIMB_EXIT_TICKS, CLIMB_MOUNT_TICKS, VAULT_TICKS, familyOf, isGuarding, playerHurtCapsule } from '../game/player';
 import type { Simulation } from '../game/sim';
 import { sampleTrack, sampleTrackNormal, trackSegment } from '../game/tracks';
 import type { Settings } from '../save/settings';
@@ -24,7 +24,7 @@ import { CreatureRig } from './creatureRig';
 import type { HazardLook } from '../data/schemas';
 import { CREATURE_PLANS } from './creaturePlans';
 import { DummyRig, type MonsterRig } from './monsterRig';
-import { blendPose, climbPose, clipPose, deadPose, dropPose, emptyPose, guardPose, hurtPose, landPose, locomotionPose, type BodyPose } from './poses';
+import { blendPose, climbPose, clipPose, deadPose, dropPose, emptyPose, guardPose, hurtPose, landPose, locomotionPose, vaultPose, type BodyPose } from './poses';
 import { HunterAnimator, applySolved, canSolve, playerContactFrame, playerRenderTick, stowOffhand, type AnimState } from './hunterAnim';
 import type { Solved } from './bodySolve';
 import { GroundedLocomotion, freeStride } from './contactLocomotion';
@@ -675,6 +675,10 @@ export class GameView {
     } else if (p.mode === 'free' && p.land) {
       pose = landPose(p.land.ticks - alpha, p.land.total);
       key = 'land';
+    } else if (p.mode === 'vault' && p.vault) {
+      // 低い岩棚の乗り越え（v0.49.0。仮の姿勢）: 武器は背に納めたまま
+      pose = vaultPose(Math.min(1, (p.vault.t + alpha) / VAULT_TICKS));
+      key = 'vault';
     } else if (p.mode === 'climb' && p.climb) {
       // 登攀（v0.44.0。仮の姿勢）: 武器は背に納めたまま
       const c = p.climb;

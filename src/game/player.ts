@@ -3,7 +3,7 @@
 import { DEG, angleDiff, forwardOf, smoothstep, turnToward, v3, yawOf, type V3 } from '../core/math';
 import type { SeededRng } from '../core/seededRng';
 import type { GearEffects } from './gear';
-import { STATUS_KINDS, type ClimbDef, type FieldDef, type ActionDef, type CancelWindowDef, type Content, type GuardDef, type HazardDef, type ItemDef, type ItemStack, type MonsterDef, type ShootDef, type StatusHit, type StatusKind, type StatusTuning, type WeaponDef, type WeaponFamilyDef } from '../data/schemas';
+import { STATUS_KINDS, type ClimbDef, type VaultDef, type FieldDef, type ActionDef, type CancelWindowDef, type Content, type GuardDef, type HazardDef, type ItemDef, type ItemStack, type MonsterDef, type ShootDef, type StatusHit, type StatusKind, type StatusTuning, type WeaponDef, type WeaponFamilyDef } from '../data/schemas';
 import { inWindow, newRun, type ActionRun } from './action';
 import { edgeStage } from './combat';
 import type { SimEvent } from './events';
@@ -12,8 +12,11 @@ import { sampleCurve } from './tracks';
 import type { Circle, World } from './world';
 import type { ErrandTarget } from './errand';
 
-/** climb = 登攀（v0.44.0。#19 の H07）: 取り付き・登る・登り切る・上から取り付く。その間は登攀が位置を持つ（重力・地面に合わせない） */
-export type PlayerMode = 'free' | 'action' | 'guard' | 'hurt' | 'dead' | 'climb';
+/**
+ * climb = 登攀（v0.44.0。#19 の H07）: 取り付き・登る・登り切る・上から取り付く。その間は登攀が位置を持つ（重力・地面に合わせない）。
+ * vault = 低い岩棚の乗り越え（v0.49.0）: 縁に手を掛けて、段の上へ。その間も乗り越えが位置を持つ
+ */
+export type PlayerMode = 'free' | 'action' | 'guard' | 'hurt' | 'dead' | 'climb' | 'vault';
 export type HurtKind = 'flinch' | 'knockdown' | 'bounce' | 'para' | 'sleep' | 'stun';
 /** 動けなくなる状態異常 */
 export const isDisabled = (p: PlayerState): boolean => p.mode === 'hurt' && (p.hurt?.kind === 'para' || p.hurt?.kind === 'sleep' || p.hurt?.kind === 'stun');
@@ -83,6 +86,8 @@ export interface PlayerState {
   drop: { top: number; drift: { x: number; z: number }; ticks: number } | null;
   /** 着地の立て直し（v0.45.0）。高い所から降りて地面に着いた後、ticks の間は動けない（total は始めの長さ） */
   land: { ticks: number; total: number } | null;
+  /** 低い岩棚の乗り越え（v0.49.0）。t は始めてからの tick、from は始めた時の位置と向き、base は帯の地面の高さ */
+  vault: { def: VaultDef; t: number; base: number; from: { x: number; y: number; z: number; yaw: number } } | null;
 }
 
 export interface SimCtx {
@@ -201,6 +206,7 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
     climb: null,
     drop: null,
     land: null,
+    vault: null,
   };
 }
 
@@ -537,6 +543,83 @@ export const LAND_HIGH = 2.5;
 export const LAND_TICKS = 10;
 export const LAND_TICKS_HIGH = 20;
 
+// ---- 低い岩棚の乗り越え（v0.49.0。#19 の H07 の低棚。docs/spec.md の 32.14。値は Kari の仮の値）----
+/** 縁へ寄って手を掛けるまで / 乗り越えて立つまで（全体）の長さ（tick） */
+export const VAULT_REACH_TICKS = 6;
+export const VAULT_TICKS = 24;
+/** 手を掛けた時の、縁の面から体の中心までの距離 / 乗り越えて立つ所の、縁の面からの内側の距離（m） */
+const VAULT_OFF = 0.36;
+export const VAULT_IN = 0.6;
+
+/** 縁の面の、いまの位置に向き合う点から off だけ進んだ所（縁と平行な向きの位置は、帯の中に保つ） */
+function vaultSpot(v: VaultDef, at: { x: number; z: number }, off: number): { x: number; z: number } {
+  const fx = Math.sin(v.yaw), fz = Math.cos(v.yaw);
+  const side = Math.max(-v.width / 2, Math.min(v.width / 2, (at.x - v.x) * fz - (at.z - v.z) * fx));
+  return { x: v.x + fx * (v.faceDist + off) + fz * side, z: v.z + fz * (v.faceDist + off) - fx * side };
+}
+
+/** 乗り越え始める。武器は背へ納める（登攀と同じ。Kari の仮の決まり） */
+function startVault(p: PlayerState, v: VaultDef, ctx: SimCtx): void {
+  for (const k of Object.keys(p.buffer) as (keyof PlayerState['buffer'])[]) p.buffer[k] = 0;
+  p.lastSingle = null;
+  p.drawn = false;
+  p.sprinting = false;
+  p.mode = 'vault';
+  p.vel.vy = 0;
+  p.vault = { def: v, t: 0, base: ctx.world.groundHeight(v.x, v.z), from: { x: p.pos.x, y: p.pos.y, z: p.pos.z, yaw: p.yaw } };
+  ctx.emit({ type: 'vault', phase: 'start', vaultId: v.id });
+}
+
+/**
+ * 乗り越えを終える。top = 段の上に立つ。release = 途中で落とされた: 縁の前（手を掛けた所）へ戻して、そこから落ちる
+ * （段の中や縁の上へは出さない。#19 の 04 の 3.3「落下・復帰の行先を決定的に選ぶ」）
+ */
+function endVault(p: PlayerState, ctx: SimCtx, how: 'top' | 'release'): void {
+  const v = p.vault;
+  if (!v) return;
+  if (how === 'release') {
+    const at = vaultSpot(v.def, p.pos, -VAULT_OFF);
+    p.pos.x = at.x;
+    p.pos.z = at.z;
+  }
+  p.vault = null;
+  p.mode = 'free';
+  p.vel.vy = 0;
+  p.moveSpeed = 0;
+  ctx.emit({ type: 'vault', phase: how, vaultId: v.def.id });
+}
+
+/** 乗り越えの 1 tick: 縁へ寄って手を掛け（VAULT_REACH_TICKS）、体を持ち上げてから前へ運び、段の上に立つ。入力は受けない */
+function stepVault(p: PlayerState, ctx: SimCtx): void {
+  const v = p.vault!;
+  const d = v.def;
+  v.t++;
+  p.moveSpeed = 0;
+  for (const k of Object.keys(p.buffer) as (keyof PlayerState['buffer'])[]) p.buffer[k] = 0;
+  const hand = vaultSpot(d, v.from, -VAULT_OFF);
+  if (v.t <= VAULT_REACH_TICKS) {
+    const u = smoothstep(v.t / VAULT_REACH_TICKS);
+    p.pos.x = v.from.x + (hand.x - v.from.x) * u;
+    p.pos.z = v.from.z + (hand.z - v.from.z) * u;
+    p.pos.y = v.from.y + (v.base - v.from.y) * u;
+    p.yaw = turnToward(v.from.yaw, d.yaw, Math.PI * u + 1e-9);
+    return;
+  }
+  p.yaw = d.yaw;
+  const stand = vaultSpot(d, v.from, VAULT_IN);
+  const u = Math.min(1, (v.t - VAULT_REACH_TICKS) / (VAULT_TICKS - VAULT_REACH_TICKS));
+  // 先に体を持ち上げ（上がり切るのは 65% の所）、少し遅れて前へ（25% から）
+  const uy = smoothstep(Math.min(1, u / 0.65));
+  const ux = smoothstep(Math.max(0, (u - 0.25) / 0.75));
+  p.pos.x = hand.x + (stand.x - hand.x) * ux;
+  p.pos.z = hand.z + (stand.z - hand.z) * ux;
+  p.pos.y = v.base + (d.top - v.base) * uy;
+  if (v.t >= VAULT_TICKS) {
+    p.pos = { x: stand.x, y: d.top, z: stand.z };
+    endVault(p, ctx, 'top');
+  }
+}
+
 /** 壁にいる時の位置（xz） */
 function climbSpot(d: ClimbDef): { x: number; z: number } {
   return { x: d.x + Math.sin(d.yaw) * (d.faceDist - CLIMB_OFF), z: d.z + Math.cos(d.yaw) * (d.faceDist - CLIMB_OFF) };
@@ -689,6 +772,12 @@ function stepFree(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     if (c) {
       startClimb(p, c.climb, c.dir, ctx);
       return stepClimb(p, inp, ctx);
+    }
+    // 低い岩棚（v0.49.0）: 縁の前の帯で縁へ押すと、手を掛けて乗り越える
+    const v = ctx.world.vaultAt(p.pos, yawOf(inp.moveX, inp.moveZ));
+    if (v) {
+      startVault(p, v, ctx);
+      return stepVault(p, ctx);
     }
   }
   // 剥ぎ取り: 達成後、対象の近くで攻撃ボタン（道具ボタンでもよい）
@@ -950,6 +1039,9 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     case 'climb':
       stepClimb(p, inp, ctx);
       break;
+    case 'vault':
+      stepVault(p, ctx);
+      break;
   }
 
   // 道具の効果と剥ぎ取り: 行動がその tick まで進んだ時にだけ起きる。途中で妨害されたら何も起きない。
@@ -994,9 +1086,9 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
     }
   }
 
-  // 登攀の間は、登攀が位置を持つ（重力も、地面への合わせも無い）。終えた時に、立つ面（地面・上の段）が決まる
+  // 登攀・乗り越えの間は、その動きが位置を持つ（重力も、地面への合わせも無い）。終えた時に、立つ面（地面・上の段）が決まる
   const wasGrounded = p.grounded;
-  if (p.mode === 'climb') p.grounded = false;
+  if (p.mode === 'climb' || p.mode === 'vault') p.grounded = false;
   else p.grounded = ctx.world.settle(p.pos, p.vel, T.gravity, 1 / 60);
   stepDrop(p, wasGrounded, ctx);
 
@@ -1029,6 +1121,8 @@ export function resolveIncomingHit(p: PlayerState, hit: IncomingHit, ctx: SimCtx
   if (isInvulnerable(p)) return 'evaded';
   // 登攀の途中で当たると、壁から落とされる（防御はできない。ここからは、ふつうの被弾として落ちていく）
   if (p.mode === 'climb') endClimb(p, ctx, 'release');
+  // 乗り越えの途中も同じ（縁の前へ戻して落とす。v0.49.0）
+  if (p.mode === 'vault') endVault(p, ctx, 'release');
   const T = ctx.content.player;
   const fam = familyOf(p, ctx.content);
   const G = fam.guard;

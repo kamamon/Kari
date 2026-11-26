@@ -478,6 +478,45 @@ export function climbPose(phase: 'mount' | 'down' | 'climb' | 'exit', u: number,
   return u < 0.55 ? blendPose(wall, pull, smoothstep(u / 0.55)) : blendPose(pull, stand, smoothstep((u - 0.55) / 0.45));
 }
 
+// ---- 低い岩棚の乗り越え（v0.49.0。#19 の H07 の低棚。仮の手付けの姿勢）----
+/** 縁へ手を伸ばす: 上体を前へ倒し、両腕を前へ（手が縁の上の面に届く） */
+const VAULT_REACH_J: J = {
+  spine: [18, 0, 0], chest: [6, 0, 0], head: [-10, 0, 0],
+  upperArmL: [-62, 0, 12], forearmL: [-18, 0, 0], upperArmR: [-62, 0, -12], forearmR: [-18, 0, 0],
+  thighL: [-10, 0, 4], shinL: [20, 0, 0], thighR: [-10, 0, -4], shinR: [20, 0, 0],
+};
+/** 縁に手を突いて体を押し上げる: 腕は下へ押し、右膝を縁へ掛ける。左脚は下に残る */
+const VAULT_PUSH_J: J = {
+  spine: [28, 0, 0], chest: [8, 0, 0], head: [-14, 0, 0],
+  upperArmL: [-22, 0, 18], forearmL: [-28, 0, 0], upperArmR: [-22, 0, -18], forearmR: [-28, 0, 0],
+  thighL: [12, 0, 4], shinL: [34, 0, 0], thighR: [-100, 0, -6], shinR: [118, 0, 0],
+};
+/** 段の上でしゃがむ: 右足が乗り、左脚を引き寄せる */
+const VAULT_KNEEL_J: J = {
+  spine: [30, 0, 0], chest: [8, 0, 0], head: [-12, 0, 0],
+  upperArmL: [-30, 0, 20], forearmL: [-40, 0, 0], upperArmR: [-30, 0, -20], forearmR: [-40, 0, 0],
+  thighL: [-44, 0, 6], shinL: [84, 0, 0], thighR: [-70, 0, -8], shinR: [100, 0, 0],
+};
+
+/**
+ * 乗り越えの姿勢。u は乗り越え全体の進み（0〜1。simulation の VAULT_TICKS を 1 とする）。
+ * 縁へ寄る（〜0.25）→ 押し上げる（〜0.55）→ 段の上でしゃがむ（〜0.8）→ 立つ
+ */
+export function vaultPose(u: number): BodyPose {
+  const keys: [number, BodyPose][] = [
+    [0, fromKey(NEUTRAL, 0, { t: 0 })],
+    [0.25, fromKey(VAULT_REACH_J, 0, { t: 0, py: -0.06 })],
+    [0.55, fromKey(VAULT_PUSH_J, 0, { t: 0 })],
+    [0.8, fromKey(VAULT_KNEEL_J, 0, { t: 0, py: -0.3 })],
+    [1, fromKey(NEUTRAL, 0, { t: 0 })],
+  ];
+  const v = Math.min(1, Math.max(0, u));
+  let i = 0;
+  while (i < keys.length - 2 && keys[i + 1]![0] <= v) i++;
+  const [t0, a] = keys[i]!, [t1, b] = keys[i + 1]!;
+  return blendPose(a, b, smoothstep((v - t0) / (t1 - t0)));
+}
+
 // ---- 降下と着地（v0.45.0。仮の手付けの姿勢）----
 /** 段の端から降りる間: 両腕を横へ広げ、膝を前へ曲げる */
 const DROPPING: J = {

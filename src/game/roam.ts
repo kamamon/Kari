@@ -5,6 +5,7 @@ import type { FieldDef, FieldExit } from '../data/schemas';
 import { newRun } from './action';
 import type { MonsterState } from './monster';
 import type { SimCtx } from './player';
+import { isWallStep } from './world';
 
 /** stay = そのエリアに居る（ふつうに戦う）/ leave = 出口へ歩いている（戦わない）/ sleep = 巣で眠っている */
 export interface RoamState {
@@ -93,6 +94,37 @@ export function headingTo(m: MonsterState, tx: number, tz: number, ctx: SimCtx):
     if (Math.abs(lat) >= clear) continue;
     if (!near || t < near.t) near = { t, lat, x: c.x, z: c.z, clear };
   }
+  // 歩いて上がれない段（登攀の棚・低い岩棚。v0.49.0）: 進む線が段（体の半径だけ広げた四角）を横切り、岩より手前なら、段の角（さらに外）を
+  // 1 つか、となり合う 2 つを通る道のうち、どの区間も段にかからず、いちばん短い道の、最初の角へ向かう（角の上で迷わない）
+  const e = m.def.bodyRadius + 0.6;
+  let detour: { t: number; x: number; z: number } | null = null;
+  for (const q of area.platforms) {
+    // 段の重なりで上がれる段（訓練場の階段など）は、回り込まない
+    if (!isWallStep(area, q, m.pos.y)) continue;
+    const t = segmentRectEntry(m.pos.x, m.pos.z, tx, tz, q.minX - e, q.maxX + e, q.minZ - e, q.maxZ + e);
+    if (t === null || (near && t * dist >= near.t) || (detour && t * dist >= detour.t)) continue;
+    const pad = e + 0.8, h = e * 0.5;
+    const clear = (ax: number, az: number, bx: number, bz: number): boolean => segmentRectEntry(ax, az, bx, bz, q.minX - h, q.maxX + h, q.minZ - h, q.maxZ + h) === null;
+    const cs = ([[q.minX - pad, q.minZ - pad], [q.maxX + pad, q.minZ - pad], [q.maxX + pad, q.maxZ + pad], [q.minX - pad, q.maxZ + pad]] as const).map(([x, z]) => ({ x, z, ok: ctx.world.inArea(area, x, z, m.def.bodyRadius + 0.2) }));
+    let best: { x: number; z: number; cost: number } | null = null;
+    for (let k = 0; k < 4; k++) {
+      const c = cs[k]!;
+      if (!c.ok || !clear(m.pos.x, m.pos.z, c.x, c.z)) continue;
+      const to = Math.hypot(c.x - m.pos.x, c.z - m.pos.z);
+      if (clear(c.x, c.z, tx, tz)) {
+        const cost = to + Math.hypot(tx - c.x, tz - c.z);
+        if (!best || cost < best.cost) best = { x: c.x, z: c.z, cost };
+      }
+      for (const k2 of [(k + 1) % 4, (k + 3) % 4]) {
+        const c2 = cs[k2]!;
+        if (!c2.ok || !clear(c2.x, c2.z, tx, tz)) continue;
+        const cost = to + Math.hypot(c2.x - c.x, c2.z - c.z) + Math.hypot(tx - c2.x, tz - c2.z);
+        if (!best || cost < best.cost) best = { x: c.x, z: c.z, cost };
+      }
+    }
+    if (best) detour = { t: t * dist, x: best.x, z: best.z };
+  }
+  if (detour) return yawOf(detour.x - m.pos.x, detour.z - m.pos.z);
   if (!near) return yawOf(dx, dz);
   const pad = m.def.bodyRadius + 0.2;
   const side = (s: number): { x: number; z: number; ok: boolean } => {
@@ -106,6 +138,26 @@ export function headingTo(m: MonsterState, tx: number, tz: number, ctx: SimCtx):
     if (o.ok) w = o;
   }
   return yawOf(w.x - m.pos.x, w.z - m.pos.z);
+}
+
+/** 線分 (a → b) が四角に入る所の、線分の上の割合（0〜1。a が中なら 0）。かからなければ null（Liang–Barsky） */
+function segmentRectEntry(ax: number, az: number, bx: number, bz: number, x0: number, x1: number, z0: number, z1: number): number | null {
+  const dx = bx - ax, dz = bz - az;
+  let t0 = 0, t1 = 1;
+  const clip = (p: number, q: number): boolean => {
+    if (Math.abs(p) < 1e-12) return q >= 0;
+    const r = q / p;
+    if (p < 0) {
+      if (r > t1) return false;
+      if (r > t0) t0 = r;
+    } else {
+      if (r < t0) return false;
+      if (r < t1) t1 = r;
+    }
+    return true;
+  };
+  if (!clip(-dx, ax - x0) || !clip(dx, x1 - ax) || !clip(-dz, az - z0) || !clip(dz, z1 - az)) return null;
+  return t0;
 }
 
 /** 気づいていない間、エリアの中をゆっくり歩いては立ち止まる。 */

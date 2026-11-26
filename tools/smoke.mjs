@@ -1623,6 +1623,26 @@ const startTraining = async (page, tap = false) => {
   const landed = await until(page, () => !!window.__vh.sim.player.land || (window.__vh.sim.player.grounded && window.__vh.sim.player.pos.y === 0), 4000);
   const after = await until(page, () => window.__vh.sim.player.land === null && window.__vh.sim.player.pos.y === 0 && window.__vh.sim.player.mode === 'free', 4000);
   check('降下と着地（v0.45.0）: 3m の棚の縁から歩いて出ると降下になり、地面に着いて立て直し、また歩ける', dropped && landed && after, JSON.stringify(await page.evaluate(() => ({ y: window.__vh.sim.player.pos.y, drop: window.__vh.sim.player.drop, land: window.__vh.sim.player.land }))));
+  // 低い岩棚の乗り越え（v0.49.0。#19 の H07 の低棚）: エリア 4 の 1.1m の棚の帯で、棚へ押すと手を掛けて乗り越える
+  await page.evaluate(() => {
+    const v = window.__vh, s = v.sim, p = s.player, vt = s.field.areas.find((x) => x.id === 'a4').vaults[0];
+    p.pos = { x: vt.x - Math.sin(vt.yaw) * 1.2, y: 0, z: vt.z - Math.cos(vt.yaw) * 1.2 };
+    p.prevPos = { ...p.pos };
+    p.yaw = vt.yaw;
+    p.prevYaw = vt.yaw;
+    p.drawn = true;
+    v.view.cam.snap(vt.yaw);
+  });
+  await page.waitForTimeout(400);
+  const vhint = await page.evaluate(() => (document.querySelector('.hud-exit').hidden ? '' : document.querySelector('.hud-exit').textContent));
+  await page.keyboard.down('KeyW');
+  const vaulting = await until(page, () => window.__vh.sim.player.mode === 'vault', 4000);
+  await page.waitForTimeout(120);
+  await page.screenshot({ path: `${OUT}87_vault.png` });
+  const vtop = await until(page, () => window.__vh.sim.player.mode === 'free' && window.__vh.sim.player.pos.y === 1.1, 4000);
+  await page.keyboard.up('KeyW');
+  const vst = await page.evaluate(() => ({ y: window.__vh.sim.player.pos.y, drawn: window.__vh.sim.player.drawn, grounded: window.__vh.sim.player.grounded }));
+  check('低い岩棚（v0.49.0）: エリア 4 の 1.1m の棚の前で「↑ 段へ押すと乗り越える」と出て、押すと武器を納めて手を掛け、段の上に立つ', vhint === '↑ 段へ押すと乗り越える' && vaulting && vtop && !vst.drawn && vst.grounded, JSON.stringify({ vhint, vaulting, vtop, vst }));
   await ctx.close();
 }
 

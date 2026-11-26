@@ -682,6 +682,22 @@ export interface ClimbDef {
   exit: { x: number; z: number };
 }
 
+/**
+ * 低い岩棚の乗り越え（v0.49.0。#19 の H07 の低棚。docs/spec.md の 32.14）: 0.8〜1.2m の段の縁。狩人だけ（大型・幼体は乗り越えない。段は壁）。
+ * (x, z) は乗り越える帯の真ん中（縁の前の地面）、yaw は縁を向いた向き。縁の面は (x, z) から yaw の向きへ faceDist 先。width は縁に沿った帯の幅。
+ * top は段の上の面の高さ（その段の platform の h と同じ）。乗り越えた後は、縁から VAULT_IN（src/game/player.ts）内側に立つ。
+ * 下りは、縁から歩いて出る（降下。v0.45.0）
+ */
+export interface VaultDef {
+  id: string;
+  x: number;
+  z: number;
+  yaw: number;
+  width: number;
+  faceDist: number;
+  top: number;
+}
+
 /** フィールドのエリア。形（bounds・岩・段差）は MapDef と同じ決まり。座標は、フィールド全体で 1 つの空間。 */
 export interface FieldAreaDef {
   id: string;
@@ -713,6 +729,8 @@ export interface FieldAreaDef {
   exits: FieldExit[];
   /** 登攀（v0.44.0）。無ければ登れる所は無い */
   climbs?: ClimbDef[];
+  /** 低い岩棚の乗り越え（v0.49.0）。無ければ乗り越えられる所は無い */
+  vaults?: VaultDef[];
   /** 地面の起伏（v0.46.0。src/game/relief.ts。field:gen の出力）。無ければ平ら（0） */
   relief?: ReliefDef;
 }

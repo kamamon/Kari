@@ -99,7 +99,8 @@ pelvis 高さ 0.92 / 肩幅 0.37（肩の関節は左右 0.185）/ 上腕 0.29�
 
 いま手続き生成で代用していて、正式素材では clip が必要なもの（台帳の `clipsPlanned`）:
 待機・歩く・走る・疾走（納刀）、構え待機・構え歩行（断岳剣）、防御・防御の反動、怯み・転倒・起き上がり・力尽き、
-登攀（v0.44.0。#19 の H07。simulation の登攀の段階 `mount`（14 tick）・`down`（30 tick。上の段から向きを変えて取り付く）・`climb`（高さで手足を入れ替える。0.65m で 1 回）・`exit`（36 tick。縁に手を掛けて引き上げ、立つ）。いまは src/render/poses.ts の climbPose の手付けの姿勢。位置は simulation の登攀が持つので、clip は root motion を持たない）。
+登攀（v0.44.0。#19 の H07。simulation の登攀の段階 `mount`（14 tick）・`down`（30 tick。上の段から向きを変えて取り付く）・`climb`（高さで手足を入れ替える。0.65m で 1 回）・`exit`（36 tick。縁に手を掛けて引き上げ、立つ）。いまは src/render/poses.ts の climbPose の手付けの姿勢。位置は simulation の登攀が持つので、clip は root motion を持たない）、
+低い岩棚の乗り越え（v0.49.0。状態 `vault`。全体 24 tick: 縁へ寄って手を掛ける 6 tick → 押し上げて右膝を縁へ → 段の上でしゃがむ → 立つ。いまは poses.ts の vaultPose の手付けの姿勢。位置は simulation が持つ）。
 人型の共通クリップは最終的に 20〜30 本、武器 1 系統で 10〜20 本を見込む（設計書 p.22）。
 
 ## 7. イベント

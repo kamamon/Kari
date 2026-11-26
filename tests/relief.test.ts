@@ -64,7 +64,8 @@ describe('地面の起伏（#19 の F02。v0.46.0）', () => {
     expect(e1.some((e) => /30° を超える/.test(e))).toBe(true);
     expect(e1.some((e) => /中心 が平らでない/.test(e))).toBe(true);
     const buried = structuredClone(field);
-    const a4 = buried.areas.find((a) => a.id === 'a4')!;
+    // エリア 9 の低い段（0.3m）。エリア 4 の低い段は、v0.49.0 から低い岩棚（1.1m）
+    const a4 = buried.areas.find((a) => a.id === 'a9')!;
     const low = a4.platforms.find((p) => p.h === 0.3)!;
     for (let j = 0; j < a4.relief!.nz; j++) {
       for (let i = 0; i < a4.relief!.nx; i++) {

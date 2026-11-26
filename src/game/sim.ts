@@ -1310,6 +1310,7 @@ export class Simulation implements SimCtx {
     for (const t of this.traps) parts.push(t.x, t.z, t.state, t.arm, t.life);
     parts.push(p.momentum, p.momentumTicks);
     if (p.climb) parts.push(p.climb.def.id, p.climb.phase, p.climb.t, p.climb.h);
+    if (p.vault) parts.push(p.vault.def.id, p.vault.t);
     if (this.errand) parts.push(this.errand.used.join(','), Object.entries(this.errand.bag).map(([k, v]) => `${k}=${v}`).join(','), this.errand.delivered ? 1 : 0, p.errandOp ? `${p.errandOp.target.kind}:${p.errandOp.done ? 1 : 0}` : '-');
     for (const a of this.projectiles) parts.push(a.pos.x, a.pos.y, a.pos.z, a.life);
     if (this.hunt) {

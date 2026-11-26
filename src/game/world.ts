@@ -5,7 +5,7 @@
 // 外周は、四角（bounds）か、自然な形の多角形（shape。v0.20.0。src/game/areaShape.ts）。
 import { clamp, type V3 } from '../core/math';
 import type { SeededRng } from '../core/seededRng';
-import type { ClimbDef, MapDef, PlatformLook } from '../data/schemas';
+import type { ClimbDef, MapDef, PlatformLook, VaultDef } from '../data/schemas';
 import { AreaShape, NavGraph, type Pt } from './areaShape';
 import { reliefAt, type ReliefDef } from './relief';
 
@@ -34,12 +34,16 @@ export interface AreaGeom {
   center?: { x: number; z: number };
   /** 登攀（v0.44.0。狩人だけ）。無ければ登れる所は無い */
   climbs?: readonly ClimbDef[];
+  /** 低い岩棚の乗り越え（v0.49.0。狩人だけ）。無ければ乗り越えられる所は無い */
+  vaults?: readonly VaultDef[];
   /** 地面の起伏（v0.46.0）。無ければ平ら */
   relief?: ReliefDef;
 }
 
 /** 段のある区画（stepDown）で、体の半径の先に空ける余り（m）。柵は縁の上（縁から 0.07m）に立つので、それより広く */
 export const EDGE_GAP = 0.12;
+/** 低い岩棚の乗り越え（v0.49.0）: 縁からこれだけ手前までの帯で、縁へ押すと乗り越える（Kari の仮の値） */
+export const VAULT_REACH = 0.9;
 
 /** steerTo が、求めた点を使い回す回数（1 tick に 1 回呼ぶなら、およそ 1/3 秒） */
 const STEER_REUSE = 20;
@@ -60,6 +64,15 @@ export function groundAt(platforms: readonly { minX: number; maxX: number; minZ:
     if (x >= p.minX && x <= p.maxX && z >= p.minZ && z <= p.maxZ && p.h > h) h = p.h;
   }
   return h === -Infinity ? reliefAt(relief, x, z) : h;
+}
+
+/**
+ * 段 q が、高さ y に立つ者にとって、歩いては上がれない壁か（v0.49.0）: 上の面が y より stepUp を超えて高く、
+ * しかも、重なる・接する低い段から一歩（stepUp 以内）で上がれない（訓練場の階段のような段の重なりは、壁ではない）
+ */
+export function isWallStep(area: Pick<AreaGeom, 'platforms' | 'stepUp'>, q: AreaGeom['platforms'][number], y: number): boolean {
+  if (q.h - y <= area.stepUp) return false;
+  return !area.platforms.some((o) => o !== q && o.h < q.h && q.h - o.h <= area.stepUp && o.minX <= q.maxX + 0.1 && o.maxX >= q.minX - 0.1 && o.minZ <= q.maxZ + 0.1 && o.maxZ >= q.minZ - 0.1);
 }
 
 export class World {
@@ -263,6 +276,23 @@ export class World {
       const side = Math.abs(dx * fz - dz * fx);
       if (facing > Math.cos((55 * Math.PI) / 180) && Math.abs(pos.y - this.groundHeight(c.x, c.z)) < 0.3 && side <= c.width / 2 && along >= -0.8 && along <= c.faceDist) return { climb: c, dir: 'up' };
       if (facing < -Math.cos((55 * Math.PI) / 180) && Math.abs(pos.y - c.top) < 0.3 && Math.hypot(pos.x - c.exit.x, pos.z - c.exit.z) <= 1.6) return { climb: c, dir: 'down' };
+    }
+    return null;
+  }
+
+  /**
+   * 低い岩棚の乗り越え（v0.49.0。#19 の H07 の低棚）: (pos) に立って move の向きへ進もうとしている狩人が、乗り越えられる縁。
+   * 帯（縁から VAULT_REACH 手前まで。幅 width）の中の、帯の地面の高さに居て、縁へ向かって（yaw の ±55° 以内）押している時。無ければ null
+   */
+  vaultAt(pos: V3, moveYaw: number): VaultDef | null {
+    const area = this.areaAt(pos.x, pos.z);
+    for (const v of area.vaults ?? []) {
+      const fx = Math.sin(v.yaw), fz = Math.cos(v.yaw);
+      if (Math.cos(moveYaw - v.yaw) <= Math.cos((55 * Math.PI) / 180)) continue;
+      const dx = pos.x - v.x, dz = pos.z - v.z;
+      const along = dx * fx + dz * fz;
+      const side = Math.abs(dx * fz - dz * fx);
+      if (Math.abs(pos.y - this.groundHeight(v.x, v.z)) < 0.3 && side <= v.width / 2 && along >= v.faceDist - VAULT_REACH && along <= v.faceDist + 0.05) return v;
     }
     return null;
   }

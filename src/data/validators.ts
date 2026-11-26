@@ -4,7 +4,8 @@
 
 import { buildFollowTable } from '../game/follow';
 import { AreaShape, NavGraph } from '../game/areaShape';
-import { groundAt } from '../game/world';
+import { VAULT_REACH, groundAt } from '../game/world';
+import { VAULT_IN } from '../game/player';
 import { reliefAt } from '../game/relief';
 import { validateBestiary, type BestiaryDef } from './bestiary';
 import { validateStory, type StoryDef } from './story';
@@ -831,6 +832,7 @@ export function validateField(c: Content, f: FieldDef, errors: string[]): void {
     return;
   }
   const climbIds = new Set<string>();
+  const vaultIds = new Set<string>();
   // 自然な形のエリア（v0.20.0）は、外周の多角形で、内か外かを見る
   const shapes = new Map<string, AreaShape>();
   for (const a of areas.values()) {
@@ -892,6 +894,7 @@ export function validateField(c: Content, f: FieldDef, errors: string[]): void {
         for (const e of a.exits ?? []) flat(e.x, e.z, `出口 ${e.to}`);
         if (a.center) flat(a.center.x, a.center.z, '中心');
         for (const c of a.climbs ?? []) flat(c.x, c.z, `登り口 ${c.id}`);
+        for (const v of a.vaults ?? []) flat(v.x, v.z, `乗り越える帯 ${v.id}`);
         for (const other of areas.values()) {
           for (const e of other.exits ?? []) {
             if (e.to !== a.id) continue;
@@ -926,6 +929,33 @@ export function validateField(c: Content, f: FieldDef, errors: string[]): void {
       const back = (c.exit.x - faceX) * fx + (c.exit.z - faceZ) * fz;
       if (!(back >= 0.8 && back <= 3)) errors.push(`${wc}: 登り切って立つ所が、壁の面から 0.8〜3m 内側ではない`);
       for (const r of a.rocks ?? []) if (Math.hypot(r.x - c.x, r.z - c.z) < r.r + 1) errors.push(`${wc}: 登り口が岩にかかる`);
+    }
+    // 低い岩棚の乗り越え（v0.49.0。#19 の H07 の低棚）: 帯は歩ける地面、縁の面の先は高さ top の段、段は 0.8〜1.2m 高く（歩いては上がれない）、
+    // 帯の両端まで同じ段に向き合い、乗り越えて立つ所は段の上で、岩にかからない
+    for (const v of a.vaults ?? []) {
+      const wv = `${wa} vault ${String(v.id)}`;
+      if (typeof v.id !== 'string' || v.id === '' || vaultIds.has(v.id) || climbIds.has(v.id)) errors.push(`${wv}: id が無いか重複`);
+      vaultIds.add(v.id);
+      if (![v.x, v.z, v.yaw, v.width, v.faceDist, v.top].every(isNum)) {
+        errors.push(`${wv}: 値が不正`);
+        continue;
+      }
+      if (!(v.width >= 1.5 && v.width <= 24) || !(v.faceDist >= 0.6 && v.faceDist <= 1.5)) errors.push(`${wv}: width（1.5〜24m）か faceDist（0.6〜1.5m）が範囲の外`);
+      const fx = Math.sin(v.yaw), fz = Math.cos(v.yaw);
+      const base = groundAt(a.platforms ?? [], v.x, v.z, a.relief);
+      if (!(v.top - base >= 0.8 && v.top - base <= 1.2)) errors.push(`${wv}: 乗り越える高さ ${(v.top - base).toFixed(2)}m が 0.8〜1.2m の外`);
+      if (v.top - base <= a.stepUp) errors.push(`${wv}: 歩いて上がれる高さ（乗り越えにしない）`);
+      for (const k of [-0.5, 0, 0.5]) {
+        // 帯の端と真ん中: 縁の前から縁まで（帯）、縁の先、立つ所
+        const sx = v.x + fz * v.width * k, sz = v.z - fx * v.width * k;
+        const at = (d: number): [number, number] => [sx + fx * d, sz + fz * d];
+        const [ax, az] = at(v.faceDist - VAULT_REACH), [ix, iz] = at(v.faceDist + 0.2), [ox, oz] = at(v.faceDist - 0.2), [tx, tz] = at(v.faceDist + VAULT_IN);
+        if (!inside(a, ax, az, 0.5) || !inside(a, ox, oz, 0.5)) errors.push(`${wv}: 帯（${k}）が外周に近すぎる`);
+        if (Math.abs(groundAt(a.platforms ?? [], ix, iz) - v.top) > 1e-6) errors.push(`${wv}: 縁の面の先（${k}）が、高さ top の段ではない`);
+        if (Math.abs(groundAt(a.platforms ?? [], ox, oz, a.relief) - base) > 0.05) errors.push(`${wv}: 縁の前（${k}）が、帯の地面と同じ高さではない`);
+        if (Math.abs(groundAt(a.platforms ?? [], tx, tz) - v.top) > 1e-6 || !inside(a, tx, tz, 0.5)) errors.push(`${wv}: 乗り越えて立つ所（${k}）が、段の上ではない`);
+        for (const r of a.rocks ?? []) for (const [px, pz] of [[ax, az], [ox, oz], [tx, tz]] as const) if (Math.hypot(r.x - px, r.z - pz) < r.r + 0.5) errors.push(`${wv}: 帯（${k}）が岩にかかる`);
+      }
     }
     const sh = shapes.get(a.id);
     if (sh) {

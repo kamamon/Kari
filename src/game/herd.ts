@@ -18,7 +18,8 @@ import type { MonsterState } from './monster';
 import type { PlayerState, SimCtx } from './player';
 import { activeControl } from './ailment';
 import { headingTo, nextHop, wakeMonster } from './roam';
-import type { AreaGeom, Circle, World } from './world';
+import { isWallStep, type AreaGeom, type Circle, type World } from './world';
+import { reliefAt } from './relief';
 
 export type HerdMood = 'graze' | 'rest' | 'alert' | 'flee' | 'fight' | 'regroup' | 'hide' | 'travel';
 export type HerdTemperament = 'timid' | 'cautious' | 'aggressive';
@@ -340,6 +341,17 @@ function settle(pt: { x: number; z: number }, area: AreaGeom, pad: number, world
       const ux = d > 1e-6 ? dx / d : 1, uz = d > 1e-6 ? dz / d : 0;
       ({ x, z } = keep(r.x + ux * need, r.z + uz * need));
     }
+  }
+  // 歩いては上がれない段（登攀の棚・低い岩棚。v0.49.0）の上と縁には置かない: いちばん近い辺の外（2.5m）へ
+  for (const q of area.platforms) {
+    if (!isWallStep(area, q, reliefAt(area.relief, x, z))) continue;
+    const m = 2.5;
+    if (!(x > q.minX - m && x < q.maxX + m && z > q.minZ - m && z < q.maxZ + m)) continue;
+    // 外周の側（段の裏）へは出さない: エリアの中に残る辺の外だけから選ぶ
+    const outs = ([[q.minX - m, z], [q.maxX + m, z], [x, q.minZ - m], [x, q.maxZ + m]] as [number, number][]).filter(([ox, oz]) => world.inArea(area, ox, oz, inset));
+    let best: [number, number] | null = null;
+    for (const o of outs) if (!best || Math.hypot(o[0] - x, o[1] - z) < Math.hypot(best[0] - x, best[1] - z)) best = o;
+    if (best) ({ x, z } = keep(best[0], best[1]));
   }
   return { x, z };
 }

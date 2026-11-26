@@ -227,6 +227,14 @@ CLIMB_SHELVES = {'a4': 3.0, 'a9': 3.0}
 # a7「高い岩柱で位置を読む」）。依頼 10 の立ち岩の図 R-16（これまで使っていなかった）を、当たりの円柱として置く。
 # a4 は 2 つの丘をつなぐくびれ（骨組みの m）の真ん中に、割れた 2 本。a7 は外周寄りに 2 本の高い柱
 LANDMARK_ART = 'R-16'
+# 低い岩棚（v0.49.0。#19 の H07 の低棚と、04 のエリアの表の a4「縁に低棚」・a10「周囲を囲む低い棚」）。設計の高さの候補 0.8〜1.2m の中の 1.1m
+# （Kari の仮の値。歩いて出ると降下になる高さ: src/game/player.ts の DROP_MIN）。外周寄りの低い段を低い岩棚にし、a10 はもう 1 つ足す。
+# 縁のうち、前に 2.5m の地面があり、岩にかからない辺に、乗り越える帯（vaults）を置く
+LOW_LEDGE_H = 1.1
+LOW_LEDGES = {'a4': 1, 'a10': 2}
+VAULT_FACE = 1.0   # 帯の真ん中から縁の面まで（faceDist）
+VAULT_REACH = 0.9  # src/game/world.ts と同じ
+VAULT_IN = 0.6     # src/game/player.ts と同じ
 
 def keep_zones(aid, a):
     cx, cz = a['center']['x'], a['center']['z']
@@ -292,6 +300,32 @@ for aid, a in areas.items():
             break
         else:
             print(f'{aid}: 段を置ける所が無い（段なし）')
+    # 低い岩棚（v0.49.0）: いま置いた外周寄りの低い段を高くし、a10 は、最初の棚からいちばん離れた外周寄りの所に、もう 1 つ
+    if aid in LOW_LEDGES:
+        assert a['platforms'] and a['platforms'][-1]['h'] == 0.3, f'{aid}: 低い岩棚にする段が無い'
+        a['platforms'][-1]['h'] = LOW_LEDGE_H
+        ledges = [a['platforms'][-1]]
+        while len(ledges) < LOW_LEDGES[aid]:
+            best = None
+            for pw, pd in ((12.0, 7.0), (7.0, 12.0)):
+                for x0 in np.arange(b['minX'], b['maxX'] - pw, 1.0):
+                    for z0 in np.arange(b['minZ'], b['maxZ'] - pd, 1.0):
+                        x0, z0 = float(x0), float(z0)
+                        corners = [(x0, z0), (x0 + pw, z0), (x0, z0 + pd), (x0 + pw, z0 + pd)]
+                        wd = [wall_dist(poly, x, z) for x, z in corners]
+                        if min(wd) < 1.5 or min(wd) > 5: continue
+                        mx, mz = x0 + pw / 2, z0 + pd / 2
+                        if any(math.hypot(mx - kx, mz - kz) < kr + max(pw, pd) / 2 + 2 for kx, kz, kr in keep): continue
+                        if near_arm(aid, mx, mz, max(pw, pd) / 2 + 3): continue
+                        if any(x0 - o['r'] - 1 < o['x'] < x0 + pw + o['r'] + 1 and z0 - o['r'] - 1 < o['z'] < z0 + pd + o['r'] + 1 for o in a['rocks']): continue
+                        if any(x0 - 4 < q['maxX'] and q['minX'] < x0 + pw + 4 and z0 - 4 < q['maxZ'] and q['minZ'] < z0 + pd + 4 for q in a['platforms']): continue
+                        apart = min(math.hypot(mx - (q['minX'] + q['maxX']) / 2, mz - (q['minZ'] + q['maxZ']) / 2) for q in ledges)
+                        score = apart - 0.5 * min(wd)
+                        if best is None or score > best[0]:
+                            best = (score, dict(minX=r1(x0), maxX=r1(x0 + pw), minZ=r1(z0), maxZ=r1(z0 + pd), h=LOW_LEDGE_H))
+            assert best, f'{aid}: 低い岩棚をもう 1 つ置ける所が無い'
+            a['platforms'].append(best[1])
+            ledges.append(best[1])
     # 登攀の棚（v0.44.0。#19 の H07・F02 の最初の一切れ。ChatGPT の field_blueprints の a4_climb_01・a9_climb_01: 3m 上の採取棚へ、壁を登る）。
     # 外周に寄せた 9 × 6m の棚（高さ 3m）。エリアの中心を向いた辺が登れる壁で、その前（1.2m）が登り口。乱数は使わず、ます目を順に調べて、いちばん良い所
     if aid in CLIMB_SHELVES:
@@ -358,6 +392,31 @@ for aid, a in areas.items():
         assert len(cands) >= 2, 'a7 の岩柱を置ける所が無い'
         best_pair = max(((p_, q_) for i_, p_ in enumerate(cands) for q_ in cands[i_ + 1:]), key=lambda pq: math.hypot(pq[0][0] - pq[1][0], pq[0][1] - pq[1][1]))
         a['rocks'] += [dict(x=r1(x), z=r1(z), r=1.5, h=8.0, art=LANDMARK_ART) for x, z in best_pair]
+    # 乗り越える帯（v0.49.0）: 低い岩棚の辺ごとに、角から 1m を除いた幅。前に 2.5m の地面があり、帯・縁の前・立つ所が岩にかからない辺だけ
+    vaults = []
+    for q in a['platforms']:
+        if q['h'] != LOW_LEDGE_H: continue
+        qx, qz = (q['minX'] + q['maxX']) / 2, (q['minZ'] + q['maxZ']) / 2
+        for (mx, mz), (nx_, nz_), length in (((q['minX'], qz), (-1.0, 0.0), q['maxZ'] - q['minZ']), ((q['maxX'], qz), (1.0, 0.0), q['maxZ'] - q['minZ']),
+                                            ((qx, q['minZ']), (0.0, -1.0), q['maxX'] - q['minX']), ((qx, q['maxZ']), (0.0, 1.0), q['maxX'] - q['minX'])):
+            width = length - 2.0
+            if width < 3: continue
+            tx, tz = nz_, -nx_  # 縁に沿った向き
+            ok = True
+            for k in (-0.5, 0.0, 0.5):
+                sx, sz = mx + tx * width * k, mz + tz * width * k
+                pts = [(sx + nx_ * d, sz + nz_ * d) for d in (VAULT_FACE - VAULT_REACH, 0.2, VAULT_FACE, 2.5)]
+                if any(wall_dist(poly, x, z) < 1.0 for x, z in pts): ok = False
+                if wall_dist(poly, sx - nx_ * VAULT_IN, sz - nz_ * VAULT_IN) < 0.8: ok = False
+                for x, z in pts[:3] + [(sx - nx_ * VAULT_IN, sz - nz_ * VAULT_IN)]:
+                    if any(math.hypot(x - o['x'], z - o['z']) < o['r'] + 0.8 for o in a['rocks']): ok = False
+                    if any(o is not q and o['minX'] - 0.5 < x < o['maxX'] + 0.5 and o['minZ'] - 0.5 < z < o['maxZ'] + 0.5 for o in a['platforms']): ok = False
+            if not ok: continue
+            vaults.append(dict(id=f'{aid}_vault_{len(vaults) + 1:02d}', x=r1(mx + nx_ * VAULT_FACE), z=r1(mz + nz_ * VAULT_FACE),
+                               yaw=round(math.atan2(-nx_, -nz_), 4) + 0.0, width=r1(width), faceDist=VAULT_FACE, top=LOW_LEDGE_H))
+    if aid in LOW_LEDGES:
+        assert vaults, f'{aid}: 低い岩棚に乗り越える帯が無い'
+        a['vaults'] = vaults
 
 # ---- 高低差（v0.46.0。#19 の F02 の一切れ。ChatGPT の field_blueprints の height_band_m）----
 # 設計の高さの帯は「エリアの中の地形の幅」（ポータルをまたいで続く座標ではない）。各エリアの床は 0 のまま、外周に近いほど上がる「盆」の形にする。
@@ -405,6 +464,7 @@ def relief_of(aid, a):
         dx = np.maximum(np.maximum(q['minX'] - X, X - q['maxX']), 0); dz = np.maximum(np.maximum(q['minZ'] - Z, Z - q['maxZ']), 0)
         mask = mask * sstep(2.5, 8, np.hypot(dx, dz))
     for c in a.get('climbs', []): flat_pt(c['x'], c['z'], 3, 8)
+    for v in a.get('vaults', []): flat_pt(v['x'], v['z'], 3, 8)
     if aid == 'camp': flat_pt(ccx_ - 9, ccz_ + 4, 5, 10)
     # 大型が戦う床（設計の combat_core: 中心 uv [0.5, 0.52]、半径 uv [0.29, 0.28]、坂 6° まで）は平ら
     if a['large']:
