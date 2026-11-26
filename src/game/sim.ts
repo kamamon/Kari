@@ -484,8 +484,9 @@ export class Simulation implements SimCtx {
     }
     if (this.fieldGather) {
       for(const n of this.fieldGather.nodes)if(n.kind==='mine'&&n.areaId===this.areaId)out.push({x:n.x,z:n.z,r:MINE_NODE_RADIUS});
-      const p=this.fieldGather.catalog.pond;if(p.areaId===this.areaId)out.push({x:p.x,z:p.z,r:p.radius});
     }
+    const cat=this.content.fieldGathering;
+    if(cat&&this.field?.id===cat.fieldId&&cat.pond.areaId===this.areaId){const p=cat.pond;out.push({x:p.x,z:p.z,r:p.radius});}
     return out;
   }
 

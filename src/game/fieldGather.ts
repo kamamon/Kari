@@ -1,6 +1,5 @@
 import { SeededRng } from '../core/seededRng';
 import { FIELD_GATHER_LABEL, type FieldGatherCatalog, type FieldGatherKind, type FieldGatherNode } from '../data/fieldGathering';
-import type { Content } from '../data/schemas';
 import type { ErrandTarget } from './errand';
 export const FIELD_GATHER_ACTIONS:Record<FieldGatherKind,string>={
   mine:'player.common.mine',plant:'player.common.gather',bone:'player.common.field_bone',insect:'player.common.field_net',fish:'player.common.field_fish'
