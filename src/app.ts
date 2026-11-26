@@ -839,6 +839,14 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
         case 'stamina_empty':
           play('no_stamina');
           break;
+        case 'spirit':
+          // 気（太刀）: 満ちた時に溜めの音
+          if (e.full) play('charge_2');
+          break;
+        case 'spirit_empty':
+          play('no_stamina');
+          this.hud.toast('気が無い（斬ってためる）');
+          break;
         case 'demon':
           // 猛り（双剣）: 入った時は溜めの音、スタミナが尽きて解けた時は知らせ
           if (e.on) play('charge_2');

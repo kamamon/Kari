@@ -89,6 +89,9 @@ export type SimEvent =
   | { type: 'parry'; kind: 'parry' | 'counter'; pos: V3 }
   /** 猛り（双剣。v0.54.0）に入った・解けた。reason: toggle = 固有ボタン / stamina = スタミナが尽きた / sheathe = 抜刀していない（納刀・登攀など）・力尽きた */
   | { type: 'demon'; on: boolean; reason: 'toggle' | 'stamina' | 'sheathe' }
+  /** 気（太刀。v0.56.0）が満ちた・満ちていなくなった / 気が無くて気合い斬りを出せなかった */
+  | { type: 'spirit'; full: boolean }
+  | { type: 'spirit_empty' }
   | { type: 'shoot'; count: number; level: number; pos: V3 }
   | { type: 'guard_break'; damage: number; pos: V3 }
   | { type: 'evade'; pos: V3 }

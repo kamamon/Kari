@@ -49,6 +49,9 @@ export class Hud {
   private edgeLabel!: HTMLElement;
   private edgeFill!: HTMLElement;
   private edgeStageEl!: HTMLElement;
+  /** 気（太刀。v0.56.0）: 名前・棒。満ちると光る */
+  private spiritBox!: HTMLElement;
+  private spiritFill!: HTMLElement;
   private time: HTMLElement;
   private goal: HTMLElement;
   private faints: HTMLElement;
@@ -108,6 +111,11 @@ export class Hud {
     this.edgeLabel = el('span', '', this.edgeBox, '刃');
     this.edgeFill = el('i', '', el('div', 'gauge', this.edgeBox));
     this.edgeStageEl = el('span', 'stage', this.edgeBox, '');
+    // 気（太刀。v0.56.0）: 気のある武器だけ出す
+    this.spiritBox = el('div', 'spirit', blade);
+    el('span', 'label', this.spiritBox, '気');
+    this.spiritFill = el('i', '', el('div', 'gauge', this.spiritBox));
+    this.spiritBox.hidden = true;
     const charge = el('div', 'charge', blade);
     for (let i = 0; i < 3; i++) this.pips.push(el('b', '', charge));
 
@@ -453,6 +461,17 @@ export class Hud {
     const lv = p.action?.chargeLevel ?? 0;
     this.set('charge', lv, () => this.pips.forEach((b, i) => b.classList.toggle('on', i < lv)));
     // 刃の状態
+    // 気（太刀）: 量を棒で、満ちている間は光らせる
+    const SP = familyOf(p, sim.content).spirit;
+    this.set('spiriton', SP ? SP.label : '', () => {
+      this.spiritBox.hidden = !SP;
+      if (SP) (this.spiritBox.querySelector('.label') as HTMLElement).textContent = SP.label;
+    });
+    if (SP) {
+      const fill = p.spirit / SP.max;
+      this.set('spirit', Math.round(fill * 200), () => (this.spiritFill.style.transform = `scaleX(${fill})`));
+      this.set('spiritfull', fill >= 1 ? 1 : 0, () => this.spiritBox.classList.toggle('full', fill >= 1));
+    }
     const famEdge = familyOf(p, sim.content).edge;
     const E = sim.content.edge;
     this.set('edgeon', famEdge ? famEdge.label : '', () => {

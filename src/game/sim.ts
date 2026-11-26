@@ -15,7 +15,7 @@ import { applyDamageToMonster, createMonster, monsterBlockers, monsterShapes, st
 import { questTimeLimitTicks } from './field';
 import { addMember, createHerdGroup, herdArea, herdHurt, livingMembers, slotOf, stepHerdGroup, type HerdGroup } from './herd';
 import { createRoam } from './roam';
-import { createPlayer, familyOf, playerHurtCapsule, resolveIncomingHit, stepPlayer, weaponOf, type PlayerState, type SimCtx } from './player';
+import { createPlayer, familyOf, playerHurtCapsule, resolveIncomingHit, setSpirit, stepPlayer, weaponOf, type PlayerState, type SimCtx } from './player';
 import { trackSegment } from './tracks';
 import { World, type Circle } from './world';
 import { DELIVER_ACTION, DEPOT_RADIUS, DEPOT_REACH, MINE_NODE_RADIUS, NODE_REACH, bagHasRoom, createErrand, errandReady, errandSurplus, nodeAction, type ErrandState, type ErrandTarget } from './errand';
@@ -1030,11 +1030,19 @@ export class Simulation implements SimCtx {
     const charge = run.def.charge;
     let scale = charge ? charge.coefficientScale[run.chargeLevel] ?? 1 : 1;
     // 猛り（双剣。v0.54.0）: 入っている間は、命中の係数に倍率を掛ける
-    if (this.player.demon) scale *= familyOf(this.player, this.content).demon?.damageScale ?? 1;
+    const fam = familyOf(this.player, this.content);
+    if (this.player.demon) scale *= fam.demon?.damageScale ?? 1;
+    // 気（太刀。v0.56.0）: 満ちている間は倍率を掛ける。気を使わない技が当たると、気がたまる（この命中の後から）
+    const SP = fam.spirit;
+    if (SP && this.player.spirit >= SP.max) scale *= SP.fullScale;
     const hitstop = hw.hitstopTicks + (charge ? charge.hitstopBonus[run.chargeLevel] ?? 0 : 0);
     run.hitstop = hitstop;
     // 刃の減り方は、溜めや猛りの倍率を掛ける前の、技そのものの係数で決める
     const bounced = this.dealPlayerDamage(m, partIndex, point, { actionId: run.def.actionId, windowId: hw.id, actionTick: t, motion: hw.damageCoefficient * scale, damageType: hw.damageType, hitstop, chargeLevel: run.chargeLevel, wearMotion: hw.damageCoefficient, contact: hw.contact });
+    if (SP && !run.def.spirit) {
+      setSpirit(this.player, this.player.spirit + SP.gainPerHit, this);
+      this.player.spiritIdle = 0;
+    }
     if (bounced) this.bouncePlayer(run);
   }
 
@@ -1297,7 +1305,7 @@ export class Simulation implements SimCtx {
       parts.push(STATUS_KINDS.map((k) => `${a.gauge[k]}/${a.count[k]}/${a.idle[k]}/${a.ticks[k]}`).join(','), a.poisonTotal, a.poisonDone, a.grace);
     }
     for (const t of this.traps) parts.push(t.x, t.z, t.state, t.arm, t.life);
-    parts.push(p.demon ? 1 : 0);
+    parts.push(p.demon ? 1 : 0, p.spirit, p.spiritIdle);
     if (p.climb) parts.push(p.climb.def.id, p.climb.phase, p.climb.t, p.climb.h);
     if (p.vault) parts.push(p.vault.def.id, p.vault.t);
     if (this.errand) parts.push(this.errand.used.join(','), Object.entries(this.errand.bag).map(([k, v]) => `${k}=${v}`).join(','), this.errand.delivered ? 1 : 0, p.errandOp ? `${p.errandOp.target.kind}:${p.errandOp.done ? 1 : 0}` : '-');

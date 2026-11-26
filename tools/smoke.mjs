@@ -1796,6 +1796,59 @@ const startTraining = async (page, tap = false) => {
   await ctx.close();
 }
 
+// ---- 太刀の気と気合い斬り（v0.56.0。#19 の H03）: 当てると「気」の棒が伸び、満ちると光る。固有で 気合い斬り 一 → 二 → 三 → 大回り斬り
+// （途中で体が後ろを向く）。ボタンの表示名、新しい動きはどれも描ける ----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false);
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  await page.locator('.base-weapon[data-weapon="weapon.long_blade.001"]').click();
+  await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy'), 6000, 'weapon.long_blade.001');
+  await startTraining(page);
+  await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+  await page.evaluate(() => {
+    const v = window.__vh, s = v.sim, m = s.monsters[0], p = s.player;
+    m.aiEnabled = false;
+    v.clock.advance = () => 0;
+    p.mode = 'free'; p.action = null; p.drawn = true;
+    p.pos = { x: m.pos.x, y: 0, z: m.pos.z - 1.75 - 1.3 }; p.prevPos = { ...p.pos }; p.yaw = 0; p.prevYaw = 0;
+  });
+  const drive = (ticks, stopAt) => page.evaluate(([ticks, stopAt]) => {
+    const s = window.__vh.sim, p = s.player;
+    const seen = [];
+    for (const [held, pressed] of ticks) {
+      s.step({ moveX: 0, moveZ: 0, held, pressed, released: 0 });
+      for (const e of s.drainEvents()) if (e.type === 'action_start') seen.push(e.actionId.replace('player.long_blade.', ''));
+      if (stopAt && p.action?.def.actionId === `player.long_blade.${stopAt[0]}` && p.action.tick >= stopAt[1]) break;
+    }
+    return { now: p.action?.def.actionId.replace('player.long_blade.', '') ?? null, yaw: Math.round(p.yaw * 100) / 100, spirit: Math.round(p.spirit * 10) / 10, seen };
+  }, [ticks, stopAt]);
+  const T = (n, f) => Array.from({ length: n }, (_, i) => f(i));
+  const hud = async () => page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => {
+    const box = document.querySelector('#hud .hud-blade .spirit');
+    r({
+      missing: [...window.__vh.view.missingClips],
+      shown: !!box && !box.hidden, label: box?.querySelector('.label')?.textContent ?? '', full: !!box?.classList.contains('full'),
+      fill: box?.querySelector('.gauge i')?.style.transform ?? '',
+      special: document.querySelector('.tbtn-special')?.textContent ?? null, sub: document.querySelector('.tbtn-sub')?.textContent ?? null, combo: document.querySelector('.tbtn-combo')?.textContent ?? null,
+    });
+  }))));
+  const h0 = await hud();
+  const hit = await drive(T(40, (i) => (i === 0 ? [1, 1] : [0, 0])));
+  const h1 = await hud();
+  await page.evaluate(() => { window.__vh.sim.player.spirit = 100; });
+  const h2 = await hud();
+  const chain = await drive(T(260, (i) => (i % 10 === 0 ? [8, 8] : [0, 0])), ['round', 29]);
+  const h3 = await hud();
+  await page.screenshot({ path: `${OUT}85i_long_blade_round.png` });
+  check('太刀（v0.56.0）: 「気」の棒が出て、当てると伸び、満ちると光る。固有で 気合い斬り 一 → 二 → 三 → 大回り斬り（途中で体が後ろを向く）。ボタンは「突き」「気合い斬り」「下がり斬り」。新しい動きはどれも描ける',
+    h0.shown && h0.label === '気' && !h0.full && hit.spirit > 0 && h1.fill !== h0.fill && h2.full && !h1.full
+      && chain.seen.join() === 'spirit1,spirit2,spirit3,round' && chain.now === 'round' && Math.abs(Math.abs(chain.yaw) - Math.PI) < 0.3 && !h3.full
+      && h0.sub === '突き' && h0.special === '気合い斬り' && h0.combo === '下がり斬り' && [...h0.missing, ...h3.missing].length === 0,
+    JSON.stringify({ h0, hit, h1, h2, chain, h3 }));
+  await ctx.close();
+}
+
 // ---- 弱った足取り（v0.52.0。#19 の M05）: 弱って巣へ向かう大型が歩くと、一歩ごとに体が片側へ傾き、頭が下がる。弱っていなければ傾かない ----
 {
   const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');

@@ -170,8 +170,8 @@
     {
       "id": "long_blade",
       "edge": { "wearPerMotion": 1.6, "label": "刃" },
-      "labels": { "main": "斬る", "sub": "下がり斬り", "special": "兜割り" },
-      "summary": "太刀。大剣より軽く速い両手の斬り。主は踏み込む 3 連、副は下がりながらの斬り、固有は隙の大きい兜割り。守りは無い。",
+      "labels": { "main": "斬る", "sub": "突き", "special": "気合い斬り", "combo": "下がり斬り" },
+      "summary": "太刀。大剣より軽く速い両手の斬り。主は 袈裟 → 斬り上げ → 突き、副は突き、主と副の同時押しは下がりながらの斬り。当てるほど「気」がたまり、固有で気を使う気合い斬り（一 → 二 → 三 → 大回り斬り）。気が満ちている間は威力が上がる。守りは無い。",
       "name": "太刀",
       "twoHanded": true,
       "otherHandAlong": -0.2,
@@ -181,20 +181,27 @@
       "blade": { "from": 0.15, "to": 1.2, "radius": 0.12 },
       "actions": {
         "main": "player.long_blade.kesa",
-        "sub": "player.long_blade.back_cut",
+        "sub": "player.long_blade.thrust",
+        "combo": "player.long_blade.back_cut",
         "drawAttack": "player.long_blade.draw_cut",
         "draw": "player.long_blade.draw",
         "sheathe": "player.long_blade.sheathe",
-        "special": "player.long_blade.helm"
+        "special": "player.long_blade.spirit1"
       },
       "cancelNames": {
         "lb_kesa": "player.long_blade.kesa",
         "lb_rise": "player.long_blade.rise",
         "lb_thrust": "player.long_blade.thrust",
+        "lb_stab": "player.long_blade.thrust",
+        "lb_rise_s": "player.long_blade.rise",
         "lb_back": "player.long_blade.back_cut",
-        "lb_helm": "player.long_blade.helm"
+        "lb_spirit": "player.long_blade.spirit1",
+        "lb_spirit2": "player.long_blade.spirit2",
+        "lb_spirit3": "player.long_blade.spirit3",
+        "lb_round": "player.long_blade.round"
       },
-      "cancelButtons": { "lb_rise": "main", "lb_thrust": "main", "lb_helm": "special" },
+      "cancelButtons": { "lb_rise": "main", "lb_thrust": "main", "lb_stab": "sub", "lb_rise_s": "sub", "lb_spirit": "special", "lb_spirit2": "special", "lb_spirit3": "special", "lb_round": "special" },
+      "spirit": { "max": 100, "gainPerHit": 9, "decayDelayTicks": 240, "decayPerSec": 4, "fullScale": 1.1, "label": "気" },
       "guard": null
     },
     {

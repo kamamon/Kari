@@ -128,6 +128,8 @@ export interface ActionDef {
   counter?: { from: number; to: number; into: string };
   /** 猛り（双剣。v0.54.0）: この行動を始めた tick に、猛りに入る（on）・解く（off）。系統に demon が要る */
   demon?: 'on' | 'off';
+  /** 気（太刀。v0.56.0）: この行動を始めた tick に、気を cost だけ使う（気が 0 なら始められない）。この行動の命中では、気はたまらない。系統に spirit が要る */
+  spirit?: { cost: number };
   shoot?: ShootDef[];
   /** この区間に、体ごと回る（度。+ が左回り）。護刃と双剣の回転斬り（v0.53.0・v0.54.0）。武器の軌道は体に対して決まるので、判定も一緒に回る。 */
   spin?: { from: number; to: number; degrees: number };
@@ -234,6 +236,12 @@ export interface WeaponFamilyDef {
    * 入っている間は、命中の係数に damageScale を掛け、swap の行動を替える（同時押しの突き込み → 連ね斬り、入る → 解く）。labels はボタンの表示名の上書き
    */
   demon?: { staminaPerSec: number; damageScale: number; swap: Record<string, string>; labels?: { special?: string; combo?: string } };
+  /**
+   * 気（太刀。v0.56.0。#19 の「攻撃で蓄積する資源を用いた斬り連係」に当たる Kari の形。値は Kari の仮の値。docs/spec.md の 32.22）。
+   * 気を使わない技が当たるたびに gainPerHit たまり（最大 max）、最後にためた・使ってから decayDelayTicks 経つと、毎秒 decayPerSec 減る。
+   * 満ちている間は、命中の係数に fullScale を掛ける。label は画面に出す名前。後年の色の段階・見切りは混ぜない
+   */
+  spirit?: { max: number; gainPerHit: number; decayDelayTicks: number; decayPerSec: number; fullScale: number; label: string };
   // ---- ここから下は見た目だけに使う ----
   /** 両手で持つ時、もう片方の手を握りから dir の向きへ何 m 離すか。省くと 0.2。 */
   otherHandAlong?: number;

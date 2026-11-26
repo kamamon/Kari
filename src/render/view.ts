@@ -495,6 +495,10 @@ export class GameView {
           this.sparks.emit(8 + e.level * 4, tip, 2.2, 1, 0.4, [1, 0.85, 0.5]);
           break;
         }
+        case 'spirit':
+          // 気（太刀。v0.56.0）が満ちた: 刃先から赤い火花（見た目は仮）
+          if (e.full) this.sparks.emit(14, this.bladePoint(1), 2.2, 1, 0.45, [1, 0.42, 0.3]);
+          break;
         case 'demon':
           // 猛り（双剣。v0.54.0）に入った: 刃先から赤い火花（見た目は仮）
           if (e.on) {
@@ -771,7 +775,9 @@ export class GameView {
     this.playerShadow.position.set(pos.x, sim.world.groundHeight(pos.x, pos.z) + 0.03, pos.z);
 
     if (p.mode !== 'action') this.trail.active = false;
-    this.trail.hot = p.demon;
+    // 刃の軌跡が赤みを帯びる: 双剣の猛りの間・太刀の気が満ちている間
+    const SP = fam.spirit;
+    this.trail.hot = p.demon || (!!SP && p.spirit >= SP.max);
     const base = this.bladePoint(0.05);
     const tip = this.bladePoint(1);
     this.trail.update(dt, this.tmpA.set(base.x, base.y, base.z), new Vector3(tip.x, tip.y, tip.z));

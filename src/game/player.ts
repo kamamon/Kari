@@ -61,6 +61,9 @@ export interface PlayerState {
    * 抜刀している間だけ（納刀・登攀・乗り越え・剥ぎ取り・力尽きで解ける）。猛りの無い武器では false のまま
    */
   demon: boolean;
+  /** 気（太刀。v0.56.0。docs/spec.md の 32.22）と、最後にためた・使ってからの tick 数。気の無い武器では 0 のまま */
+  spirit: number;
+  spiritIdle: number;
   /** 刃の状態（0〜最大）。当てると減り、研磨石で最大へ戻る。狩りごとの値で、保存はしない。刃の状態の無い武器（環弓）では最大のまま */
   edge: number;
   /** 狩猟中の持ち物（依頼の支給品）。数が 0 になっても欄は残る。 */
@@ -195,6 +198,8 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
     buffer: { main: 0, sub: 0, dodge: 0, weapon: 0, item: 0, special: 0, combo: 0 },
     lastSingle: null,
     demon: false,
+    spirit: 0,
+    spiritIdle: 0,
     edge: content.edge.max,
     items: carried.map((s) => ({ itemId: s.itemId, count: s.count })),
     itemIndex: 0,
@@ -320,10 +325,21 @@ export function resolveActionId(p: PlayerState, actionId: string, ctx: SimCtx): 
   return familyOf(p, ctx.content).demon?.swap[actionId] ?? actionId;
 }
 
-/** その行動を、いまのスタミナで始められるか（猛りに入るには、スタミナが残っている必要がある） */
+/** その行動を、いま始められるか（スタミナの消費・猛りに入るにはスタミナが残っている・気合い斬りには気が残っている） */
 function enoughStamina(p: PlayerState, def: ActionDef, ctx: SimCtx): boolean {
   if (p.stamina < staminaCostOf(p, def, ctx)) return false;
+  if (def.spirit && p.spirit <= 0) return false;
   return def.demon !== 'on' || p.stamina > 0;
+}
+
+/** 気（太刀）を変える。満ちた・満ちていなくなった時だけ知らせる */
+export function setSpirit(p: PlayerState, value: number, ctx: SimCtx): void {
+  const S = familyOf(p, ctx.content).spirit;
+  if (!S) return;
+  const before = p.spirit >= S.max;
+  p.spirit = Math.max(0, Math.min(S.max, value));
+  const after = p.spirit >= S.max;
+  if (before !== after) ctx.emit({ type: 'spirit', full: after });
 }
 
 export function startAction(p: PlayerState, actionId: string, ctx: SimCtx): ActionRun {
@@ -338,6 +354,11 @@ export function startAction(p: PlayerState, actionId: string, ctx: SimCtx): Acti
   if (cost > 0) spendStamina(p, cost, ctx);
   // 猛り（双剣）: 入る・解く行動は、始めた tick に状態を変える（動きの途中で止められても、変わったまま）。納刀を始めても解ける
   if (def.demon) setDemon(p, def.demon === 'on', ctx, actionId === familyOf(p, ctx.content).actions.sheathe ? 'sheathe' : 'toggle');
+  // 気（太刀）: 気合い斬りは、始めた tick に気を使う
+  if (def.spirit) {
+    setSpirit(p, p.spirit - def.spirit.cost, ctx);
+    p.spiritIdle = 0;
+  }
   ctx.emit({ type: 'action_start', actor: p.id, actionId, instanceId: run.instanceId });
   return run;
 }
@@ -857,7 +878,8 @@ function stepFree(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   }
   // 固有ボタンの技（防御の無い武器）。双剣は猛りに入る・解く（スタミナが空なら入れない）
   if (p.drawn && !fam.guard && fam.actions.special && consume(p, 'special')) {
-    if (!enoughStamina(p, ctx.content.actions.get(resolveActionId(p, fam.actions.special, ctx))!, ctx)) ctx.emit({ type: 'stamina_empty' });
+    const sp = ctx.content.actions.get(resolveActionId(p, fam.actions.special, ctx))!;
+    if (!enoughStamina(p, sp, ctx)) ctx.emit(sp.spirit && p.spirit <= 0 ? { type: 'spirit_empty' } : { type: 'stamina_empty' });
     else {
       startAction(p, fam.actions.special, ctx);
       return stepAction(p, inp, ctx, 1);
@@ -1118,6 +1140,12 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
       spendStamina(p, D.staminaPerSec / 60, ctx);
       if (p.stamina <= 0) setDemon(p, false, ctx, 'stamina');
     }
+  }
+  // 気（太刀。v0.56.0）: ためた・使ってから決まった時間が経つと、少しずつ減る
+  const SP = familyOf(p, ctx.content).spirit;
+  if (SP && p.spirit > 0 && p.mode !== 'dead') {
+    if (p.spiritIdle < SP.decayDelayTicks) p.spiritIdle++;
+    else setSpirit(p, p.spirit - SP.decayPerSec / 60, ctx);
   }
   // スタミナ: 消費が終わってから待ち時間を置いて回復（猛りの間は戻らない）
   if (p.mode !== 'dead' && !p.sprinting && !p.demon) {

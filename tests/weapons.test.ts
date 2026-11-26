@@ -384,11 +384,18 @@ describe('太刀', () => {
     expect(hits(evs).length).toBeGreaterThanOrEqual(3);
   });
 
-  it('下がり斬りは、当てながら後ろへ 2m 跳び退く（v0.16.0。0.5m から広げた）', () => {
+  it('副は構えからの突き。突きの後の副で斬り上げ（v0.56.0）', () => {
+    const sim = mk('long_blade');
+    placeInFrontOfHead(sim, 1.3);
+    const evs = run(sim, 80, (i) => (i === 0 || i === 26 ? press(Btn.Sub) : frame()));
+    expect(starts(evs)).toEqual(['player.long_blade.thrust', 'player.long_blade.rise']);
+  });
+
+  it('下がり斬り（主と副の同時押し。v0.56.0 までは副）は、当てながら後ろへ 2m 跳び退く（v0.16.0。0.5m から広げた）', () => {
     const sim = mk('long_blade');
     placeInFrontOfHead(sim, 1.2);
     const z0 = sim.player.pos.z;
-    const evs = run(sim, 60, (i) => (i === 0 ? press(Btn.Sub) : frame()));
+    const evs = run(sim, 60, (i) => (i === 0 ? press(Btn.Main | Btn.Sub) : frame()));
     expect(hits(evs)).toHaveLength(1);
     expect(starts(evs)[0]).toBe('player.long_blade.back_cut');
     expect(z0 - sim.player.pos.z).toBeGreaterThan(1.95);
@@ -401,15 +408,50 @@ describe('太刀', () => {
     }
   });
 
-  it('兜割りは遅いが、袈裟より大きく削る', () => {
-    const one = (btn: number, ticks: number): number => {
-      const sim = mk('long_blade');
-      placeInFrontOfHead(sim, 1.3);
-      const h = hits(run(sim, ticks, (i) => (i === 0 ? press(btn) : frame())));
-      expect(h).toHaveLength(1);
-      return h[0]!.damage;
+  it('当てると気がたまり、固有で気合い斬り 一 → 二 → 三 → 大回り斬り。気合い斬りは気を使い、その命中では気はたまらない（v0.56.0）', () => {
+    const S = content.families.get('long_blade')!.spirit!;
+    const sim = mk('long_blade');
+    placeInFrontOfHead(sim, 1.3);
+    const a = run(sim, 40, (i) => (i === 0 ? press(Btn.Main) : frame()));
+    expect(hits(a)).toHaveLength(1);
+    expect(sim.player.spirit).toBe(S.gainPerHit);
+    sim.player.spirit = S.max;
+    placeInFrontOfHead(sim, 1.3);
+    // 大回り斬りが始まるまで、10 tick ごとに固有を押す
+    const evs: SimEvent[] = [];
+    for (let i = 0; i < 260; i++) {
+      const done = starts(evs).includes('player.long_blade.round');
+      sim.step(!done && i % 10 === 0 ? press(Btn.Special) : frame());
+      evs.push(...sim.drainEvents());
+    }
+    expect(starts(evs)).toEqual(['player.long_blade.spirit1', 'player.long_blade.spirit2', 'player.long_blade.spirit3', 'player.long_blade.round']);
+    const cost = ['spirit1', 'spirit2', 'spirit3', 'round'].reduce((sum, x) => sum + content.actions.get(`player.long_blade.${x}`)!.spirit!.cost, 0);
+    expect(sim.player.spirit).toBeCloseTo(S.max - cost, 5);
+    expect(hits(evs).length).toBeGreaterThanOrEqual(4);
+    expect(evs.filter((e) => e.type === 'spirit')).toEqual([{ type: 'spirit', full: false }]);
+  });
+
+  it('気が無いと気合い斬りは出ない（知らせが出る）。気が満ちている間は威力が上がり、しばらく何もしないと気は減る（v0.56.0）', () => {
+    const S = content.families.get('long_blade')!.spirit!;
+    const none = mk('long_blade');
+    none.player.drawn = true;
+    const evs = run(none, 3, (i) => (i === 0 ? press(Btn.Special) : frame()));
+    expect(starts(evs)).toEqual([]);
+    expect(evs.some((e) => e.type === 'spirit_empty')).toBe(true);
+    const dmg = (spirit: number): number => {
+      const s1 = mk('long_blade');
+      placeInFrontOfHead(s1, 1.3);
+      s1.player.spirit = spirit;
+      return hits(run(s1, 40, (i) => (i === 0 ? press(Btn.Main) : frame())))[0]!.damage;
     };
-    expect(one(Btn.Special, 80)).toBeGreaterThan(one(Btn.Main, 40) * 2);
+    expect(dmg(S.max)).toBeGreaterThan(dmg(S.max - 1));
+    const decay = mk('long_blade');
+    decay.player.drawn = true;
+    decay.player.spirit = 50;
+    run(decay, S.decayDelayTicks);
+    expect(decay.player.spirit).toBe(50);
+    run(decay, 60);
+    expect(decay.player.spirit).toBeCloseTo(50 - S.decayPerSec, 5);
   });
 });
 

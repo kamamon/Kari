@@ -82,6 +82,13 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 .hud-blade .edge[data-stage='worn'] .gauge i { background: #e2c56a; }
 .hud-blade .edge[data-stage='dull'] .gauge i { background: #d9785a; }
 .hud-blade .edge .stage { min-width: 2.2em; }
+/* 気（太刀。v0.56.0）: 満ちている間は赤く光る */
+.hud-blade .spirit { display: flex; align-items: center; gap: 6px; }
+.hud-blade .spirit[hidden] { display: none; }
+.hud-blade .spirit .gauge { width: 64px; }
+.hud-blade .spirit .gauge i { background: #c9b07a; }
+.hud-blade .spirit.full .gauge i { background: #e0664a; box-shadow: 0 0 6px rgba(255, 110, 80, 0.8); }
+.hud-blade .spirit.full .label { color: #ffb59a; }
 .hud-blade .edge[data-stage='worn'] .stage { color: #e2c56a; }
 .hud-blade .edge[data-stage='dull'] .stage { color: #e79a80; font-weight: 700; }
 .charge { display: flex; gap: 4px; margin-left: 8px; }

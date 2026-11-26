@@ -271,6 +271,19 @@ export function crossCheck(c: Content, errors: string[]): void {
     for (const a of c.actions.values()) {
       if (a.demon && a.actionId.startsWith(`player.${f.id}.`) && !D) errors.push(`action ${a.actionId}: demon（猛り）を持つが、系統 ${f.id} に demon が無い`);
     }
+    // 気（v0.56.0）: 値の範囲。気を使う行動は、気のある系統だけ
+    const SP = f.spirit;
+    if (SP) {
+      if (!isNum(SP.max) || SP.max <= 0 || !isNum(SP.gainPerHit) || SP.gainPerHit <= 0 || SP.gainPerHit > SP.max) errors.push(`${w}: spirit の max・gainPerHit が不正`);
+      if (!isNum(SP.decayDelayTicks) || SP.decayDelayTicks < 0 || !isNum(SP.decayPerSec) || SP.decayPerSec < 0) errors.push(`${w}: spirit の減り方が不正`);
+      if (!isNum(SP.fullScale) || SP.fullScale < 1 || SP.fullScale > 2) errors.push(`${w}: spirit.fullScale が不正（1〜2）`);
+      if (!SP.label) errors.push(`${w}: spirit.label（画面の名前）が無い`);
+    }
+    for (const a of c.actions.values()) {
+      if (!a.spirit || !a.actionId.startsWith(`player.${f.id}.`)) continue;
+      if (!SP) errors.push(`action ${a.actionId}: spirit（気）を使うが、系統 ${f.id} に spirit が無い`);
+      if (!isNum(a.spirit.cost) || a.spirit.cost <= 0) errors.push(`action ${a.actionId}: spirit.cost が不正`);
+    }
   }
   for (const wpn of c.weapons.values()) {
     if (!c.families.has(wpn.family)) errors.push(`weapon ${wpn.id}: family ${wpn.family} が無い`);
