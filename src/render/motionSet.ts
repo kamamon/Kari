@@ -1,9 +1,11 @@
 // ハンターの動きの組（v0.57.0。D-150）。利用者の指示で、ハンターの動きを 2G の動きを手本に作り直している。いまの組（'2g'）と、
 // 作り直す前の動きを残した保留の組（'v056' = v0.56.0 までの動き）を、設定の「ハンターの動き」で切り替える。
 // - データ（技・軌道・移動曲線・武器の系統）は、読み込みの時に入れ替わる（src/data/validators.ts の assembleContent の motionSet）。
-// - 描画の動き（weaponClipSpecs.ts の WEAPON_STANCES・WEAPON_MOTIONS）は、ここで中身を入れ替える。どちらも起動の時に 1 度だけ。
+// - 描画の動き（weaponClipSpecs.ts の WEAPON_STANCES・WEAPON_MOTIONS、poses.ts の共通の動き CLIPS の common_* と納刀の歩き・走りの形 LOCO_STYLE。
+//   v0.58.0 から）は、ここで中身を入れ替える。どちらも起動の時に 1 度だけ。
 // 保留の組の断岳剣は、キー姿勢の方式（poses.ts・heavyBodyMotion.ts）のまま。WEAPON_STANCES に断岳剣が無いので、view.ts がその方式で描く。
 import { WEAPON_MOTIONS, WEAPON_STANCES, type WeaponStances } from './weaponClipSpecs';
+import { CLIPS, LOCO_STYLE, type Clip, type LocoStyle } from './poses';
 import type { Motion } from './bodySolve';
 
 /** いまの組の名前（public/data/content.json の motionSets.current と同じ） */
@@ -19,7 +21,12 @@ export const MOTION_SETS: readonly { id: string; name: string; note: string }[] 
 export const motionSetOf = (id: string | null | undefined): string => (MOTION_SETS.some((s) => s.id === id) ? id! : CURRENT_MOTION_SET);
 
 // いまの組の中身（入れ替えた後でも戻せるように、起動の時に写しておく）
-const CURRENT = { stances: { ...WEAPON_STANCES }, motions: { ...WEAPON_MOTIONS } };
+const CURRENT = {
+  stances: { ...WEAPON_STANCES },
+  motions: { ...WEAPON_MOTIONS },
+  clips: Object.fromEntries(Object.entries(CLIPS).filter(([k]) => k.startsWith('common_'))) as Record<string, Clip>,
+  loco: { ...LOCO_STYLE } as LocoStyle,
+};
 let applied = CURRENT_MOTION_SET;
 
 function replace<T>(target: Record<string, T>, from: Record<string, T>): void {
@@ -33,13 +40,21 @@ export async function useMotionSet(id: string): Promise<void> {
   if (want === applied) return;
   let stances: Record<string, WeaponStances> = CURRENT.stances;
   let motions: Record<string, Motion> = CURRENT.motions;
+  let clips: Record<string, Clip> = CURRENT.clips;
+  let loco: LocoStyle = CURRENT.loco;
   if (want === 'v056') {
     const m = await import('./motionsets/v056');
     stances = m.WEAPON_STANCES;
     motions = m.WEAPON_MOTIONS;
+    clips = m.COMMON_CLIPS;
+    loco = m.LOCO_STYLE;
   }
   replace(WEAPON_STANCES, stances);
   replace(WEAPON_MOTIONS, motions);
+  // 共通の動きは common_* だけを替える（断岳剣の hb_* は保留の組のためにそのまま残っている）
+  for (const k of Object.keys(CLIPS)) if (k.startsWith('common_')) delete CLIPS[k];
+  Object.assign(CLIPS, clips);
+  Object.assign(LOCO_STYLE, loco);
   applied = want;
 }
 

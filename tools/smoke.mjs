@@ -1916,6 +1916,36 @@ const startTraining = async (page, tap = false) => {
     JSON.stringify({ now, held }));
 }
 
+// ---- 共通の動き（v0.58.0。D-150）: 回復液・前転・納刀の疾走を 2G を手本に作り直した。保留の組 v056（?motions=v056）では前の形のまま。
+// 素材ビューアで、同じ tick の右手の高さ・頭の前後を比べる ----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false);
+  const probe = async (q) => {
+    await page.goto(`http://localhost:${PORT}${BASE}viewer.html${q}`);
+    await page.waitForFunction(() => window.__viewer, null, { timeout: 15000 });
+    await nextFrames(page);
+    await page.waitForTimeout(200);
+    return page.evaluate(() => {
+      const h = window.__viewer.hunter;
+      h.root.updateMatrixWorld(true);
+      const at = (o) => { const e = o.matrixWorld.elements; return [e[12], e[13], e[14]].map((v) => Math.round(v * 1000) / 1000); };
+      return { handR: at(h.sockets.hand_r), head: at(h.joints.head), panel: document.getElementById('panel').textContent.includes('欠落') };
+    });
+  };
+  const drink = await probe('?action=player.item.drink&tick=12');
+  const drinkOld = await probe('?action=player.item.drink&tick=12&motions=v056');
+  const roll = await probe('?action=player.common.roll&tick=6');
+  const rollOld = await probe('?action=player.common.roll&tick=6&motions=v056');
+  const sprint = await probe('?tick=75&move=6.4');
+  const sprintOld = await probe('?tick=75&move=6.4&motions=v056');
+  await page.screenshot({ path: `${OUT}86b_viewer_sprint_v056.png` });
+  check('共通の動き（v0.58.0）: 回復液は腰の袋から取り出し（12 tick で右手が腰の高さ）、前転は腰を落として飛び込み、納刀の疾走は前へ倒れる。保留の組 v056 では前の形（同じ tick で違う）。欠落 clip なし',
+    drink.handR[1] < 1.05 && drinkOld.handR[1] > drink.handR[1] + 0.15 && Math.abs(roll.head[1] - rollOld.head[1]) > 0.05 && sprint.head[2] > sprintOld.head[2] + 0.03
+      && ![drink, drinkOld, roll, rollOld, sprint, sprintOld].some((x) => x.panel),
+    JSON.stringify({ drink, drinkOld, roll, rollOld, sprint, sprintOld }));
+  await ctx.close();
+}
+
 // ---- 弱った足取り（v0.52.0。#19 の M05）: 弱って巣へ向かう大型が歩くと、一歩ごとに体が片側へ傾き、頭が下がる。弱っていなければ傾かない ----
 {
   const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');
@@ -2283,7 +2313,9 @@ const startTraining = async (page, tap = false) => {
     const lift = v.children.find((o) => o.userData.lift);
     return { kinds, props: props?.userData.props ?? 0, propsArt: !!props?.material.map && props.material.visible, wheel: wheel?.rotation.x ?? null, lift: lift?.position.y ?? null, trails: v.children.find((o) => o.userData.trails)?.userData.trails ?? 0 };
   });
-  await page.waitForTimeout(1500);
+  // 水車は描画の時間で回る。手元の描画が遅い時もあるので、壁の時計で決めずに、回り終わるまで（15 秒まで）待つ
+  await until(page, (w0) => (window.__vh.view.scene.getObjectByName('village')?.children.find((o) => o.userData.wheel)?.rotation.x ?? 0) > w0 + 0.35, 15000, village?.wheel ?? 0);
+  await page.waitForTimeout(300);
   const village2 = await page.evaluate(() => {
     const v = window.__vh.view.scene.getObjectByName('village');
     const puffs = v.children.find((o) => o.isPoints);

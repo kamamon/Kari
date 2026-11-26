@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import type { ActionDef, ContentIndex, CurveDef, ShapeTrackDef, WeaponFamilyDef } from '../src/data/schemas';
 import { ContentError } from '../src/data/validators';
 import { Simulation } from '../src/game/sim';
-import { CLIPS } from '../src/render/poses';
+import { CLIPS, LOCO_STYLE, locomotionPose } from '../src/render/poses';
 import { WEAPON_MOTIONS, WEAPON_STANCES } from '../src/render/weaponClipSpecs';
 import * as HELD from '../src/render/motionsets/v056';
 import { CURRENT_MOTION_SET, MOTION_SETS, appliedMotionSet, motionSetOf, useMotionSet } from '../src/render/motionSet';
@@ -76,14 +76,41 @@ describe('ハンターの動きの組（v0.57.0。D-150）', () => {
   it('描画の動きを組で入れ替えられ、いまの組へ戻せる', async () => {
     const stances = { ...WEAPON_STANCES }, motions = { ...WEAPON_MOTIONS };
     expect(appliedMotionSet()).toBe(CURRENT_MOTION_SET);
+    const clips = { ...CLIPS }, loco = { ...LOCO_STYLE };
     await useMotionSet('v056');
     expect(appliedMotionSet()).toBe('v056');
     expect(WEAPON_STANCES).toEqual(HELD.WEAPON_STANCES);
     expect(WEAPON_MOTIONS).toEqual(HELD.WEAPON_MOTIONS);
+    // 共通の動き（v0.58.0）: common_* と納刀の歩き・走りの形が替わり、断岳剣のキー姿勢（hb_*）はそのまま
+    for (const [k, v] of Object.entries(HELD.COMMON_CLIPS)) expect(CLIPS[k], k).toEqual(v);
+    expect(Object.keys(CLIPS).sort()).toEqual(Object.keys(clips).sort());
+    for (const k of Object.keys(clips).filter((k) => k.startsWith('hb_'))) expect(CLIPS[k], k).toBe(clips[k]);
+    expect(LOCO_STYLE).toEqual(HELD.LOCO_STYLE);
     await useMotionSet(CURRENT_MOTION_SET);
     expect(appliedMotionSet()).toBe(CURRENT_MOTION_SET);
     expect(WEAPON_STANCES).toEqual(stances);
     expect(WEAPON_MOTIONS).toEqual(motions);
+    expect(CLIPS).toEqual(clips);
+    expect(LOCO_STYLE).toEqual(loco);
+  });
+
+  it('保留の組の納刀の歩き・走りは、v0.57.0 までの式と同じ姿勢になる（v0.58.0 で形を値にした）', async () => {
+    await useMotionSet('v056');
+    try {
+      for (const speed of [0.5, 1.2, 4, 6.4]) for (const phase of [0, 0.7, 1.9, 3.3, 5.1]) {
+        const p = locomotionPose(false, speed, phase, 1.3);
+        const run = Math.min(1, speed / 6.4), amp = 26 + 18 * run, s = Math.sin(phase);
+        const knee = (ph: number): number => 10 + (46 + 20 * run) * Math.max(0, Math.sin(ph - 0.9));
+        expect(p.j.thighL).toEqual([-amp * s - 4 * run, 0, 2]);
+        expect(p.j.shinR).toEqual([knee(phase + Math.PI), 0, 0]);
+        expect(p.j.upperArmL).toEqual([amp * 0.8 * s + 0, 0, 8]);
+        expect(p.j.forearmR).toEqual([-22 - 40 * run, 0, 0]);
+        expect(p.j.spine).toEqual([4 + 10 * run, 0, 0]);
+        expect(p.j.head).toEqual([0, 0, 0]);
+      }
+    } finally {
+      await useMotionSet(CURRENT_MOTION_SET);
+    }
   });
 
   it('保留の組でも戦える: 断岳剣の縦斬りと護刃の連係が標的に当たり、同じ入力で同じ結果になる', async () => {

@@ -143,6 +143,8 @@ const state = {
   lookY: NaN,
   lookZ: 0,
   lookX: 0,
+  /** 納刀の歩き・走りを見る速さ（m/s。確認用。URL の move=。v0.58.0） */
+  move: 4,
 };
 
 let content: Content;
@@ -423,7 +425,7 @@ function frame(ts: number): void {
     } else {
       lastSolved = null;
       hunter.setString(null);
-      const speed = t < 60 ? 0 : 4;
+      const speed = t < 60 ? 0 : state.move;
       const phase = t / 60 * speed * Math.PI * 2 / freeStride(speed, false);
       const pose = locomotionPose(false, speed, phase, time);
       // ビューアはその場で周期を確認する。ゲームでは状態を保持して世界接地する。
@@ -572,6 +574,7 @@ async function main(): Promise<void> {
   if (q.has('ty')) state.lookY = Number(q.get('ty'));
   if (q.has('tz')) state.lookZ = Number(q.get('tz'));
   if (q.has('tx')) state.lookX = Number(q.get('tx'));
+  if (q.has('move')) state.move = Number(q.get('move'));
   const stance = q.get('stance');
   if (stance === 'idle' || stance === 'walk' || stance === 'guard') state.stance = stance;
   if (q.get('family')) state.stanceFamily = q.get('family')!;

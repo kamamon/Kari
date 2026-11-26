@@ -8,7 +8,7 @@ import { smoothstep } from '../core/math';
 export { JOINTS, type BodyPose, type JRot, type JointName };
 type J = Partial<Record<JointName, JRot>>;
 
-interface Key {
+export interface Key {
   t: number;
   j?: J;
   py?: number;
@@ -60,7 +60,7 @@ const NEUTRAL: J = { upperArmL: [0, 0, 7], upperArmR: [0, 0, -7], forearmL: [-12
 const STANCE: J = { spine: [5, 0, 0], chest: [0, -18, 0], thighL: [-13, 0, 4], shinL: [17, 0, 0], thighR: [12, 0, -4], shinR: [15, 0, 0], head: [0, 14, 0] };
 const STANCE_PY = -0.035;
 
-interface Clip {
+export interface Clip {
   base: J;
   basePy: number;
   keys: Key[];
@@ -168,19 +168,22 @@ export const CLIPS: Record<string, Clip> = {
     ],
   },
   // ---- 道具と剥ぎ取り（M2 後半）----
-  // 回復液: 右手を口元へ上げ、上を向いて飲む。58 tick で効果。飲み終えたら決め姿勢（76〜106）
+  // 回復液（v0.58.0。2G を手本に、取り出す → 飲む → 効き目 → 決め姿勢 → しまう に分けた）: 右手で腰の袋から瓶を取り出し（〜12）、
+  // 口元へ上げて、左手を腰に当て、上を向いて飲み干す（20〜58。58 tick で効果）。腕を下ろし、両腕を横へ上げて力を込める決め姿勢（76〜106）
   common_item_drink_01: {
     base: NEUTRAL, basePy: 0,
     keys: [
       { t: 0 },
-      { t: 16, j: { upperArmR: [-70, 0, -18], forearmR: [-95, 0, 0], head: [6, 0, 0] } },
-      { t: 30, j: { upperArmR: [-98, 0, -22], forearmR: [-118, 0, 0], head: [-22, 0, 0], chest: [-6, 0, 0] } },
-      { t: 58, j: { upperArmR: [-102, 0, -22], forearmR: [-122, 0, 0], head: [-26, 0, 0], chest: [-8, 0, 0] } },
-      { t: 66, j: { upperArmR: [-40, 0, -12], forearmR: [-60, 0, 0], head: [-8, 0, 0] } },
+      { t: 12, j: { chest: [6, -10, 0], head: [12, -6, 0], upperArmR: [14, 0, -16], forearmR: [-34, 0, 0] }, py: -0.01 },
+      { t: 20, j: { chest: [0, -4, 0], head: [4, 0, 0], upperArmR: [-72, 0, -18], forearmR: [-100, 0, 0], upperArmL: [8, 0, 34], forearmL: [-64, 0, 0] } },
+      { t: 30, j: { spine: [-4, 0, 0], chest: [-8, 0, 0], head: [-24, 0, 0], upperArmR: [-104, 0, -22], forearmR: [-120, 0, 0], upperArmL: [8, 0, 36], forearmL: [-66, 0, 0] } },
+      { t: 58, j: { spine: [-6, 0, 0], chest: [-10, 0, 0], head: [-30, 0, 0], upperArmR: [-112, 0, -22], forearmR: [-126, 0, 0], upperArmL: [8, 0, 36], forearmL: [-66, 0, 0] } },
+      { t: 66, j: { chest: [-2, 0, 0], head: [-6, 0, 0], upperArmR: [-40, 0, -12], forearmR: [-60, 0, 0], upperArmL: [2, 0, 18], forearmL: [-30, 0, 0] } },
       // 決め姿勢（v0.40.0。2G に合わせた）: 両腕を横へ上げて力を込め（76〜106）、下ろして戻る。この間は動けない
       { t: 76, j: FLEX, py: -0.05 },
-      { t: 92, j: { ...FLEX, upperArmL: [-14, 0, 84], upperArmR: [-14, 0, -84], forearmL: [0, 0, 104], forearmR: [0, 0, -104] }, py: -0.06 },
-      { t: 106, j: FLEX, py: -0.05 },
+      { t: 84, j: { ...FLEX, upperArmL: [-14, 0, 84], upperArmR: [-14, 0, -84], forearmL: [0, 0, 104], forearmR: [0, 0, -104] }, py: -0.07 },
+      { t: 92, j: FLEX, py: -0.04 },
+      { t: 106, j: { ...FLEX, upperArmL: [-14, 0, 84], upperArmR: [-14, 0, -84], forearmL: [0, 0, 104], forearmR: [0, 0, -104] }, py: -0.06 },
       { t: 116, j: { upperArmL: [0, 0, 20], upperArmR: [0, 0, -20], forearmL: [-20, 0, 0], forearmR: [-20, 0, 0] }, py: -0.01 },
       { t: 124 },
     ],
@@ -282,15 +285,19 @@ export const CLIPS: Record<string, Clip> = {
       { t: 48 },
     ],
   },
+  // 前転（v0.58.0。2G を手本に、予備 → 蹴り出し → 回る → 着く → 立て直す に分けた）: 腰を落として両腕を前へ出し（〜3）、
+  // 後ろ足で蹴って前へ飛び込み、両手を地面へ（6）。丸まって肩から回り（10〜17）、足から着いて低くしゃがみ（22〜26）、立ち上がる
   common_roll_01: {
     base: NEUTRAL, basePy: 0,
     keys: [
       { t: 0, tumble: 0 },
-      { t: 4, j: HALF_TUCK, py: -0.12, tumble: 28, drop: -0.08 },
-      { t: 10, j: TUCK, py: -0.2, tumble: 120, drop: -0.2 },
-      { t: 18, j: TUCK, py: -0.2, tumble: 255, drop: -0.2 },
-      { t: 24, j: HALF_TUCK, py: -0.16, tumble: 340, drop: -0.1 },
-      { t: 28, j: HALF_TUCK, py: -0.1, tumble: 360, drop: 0 },
+      { t: 3, j: { spine: [22, 0, 0], chest: [10, 0, 0], head: [-10, 0, 0], thighL: [-38, 0, 2], shinL: [52, 0, 0], thighR: [-20, 0, -2], shinR: [40, 0, 0], upperArmL: [-55, 0, 14], upperArmR: [-55, 0, -14], forearmL: [-20, 0, 0], forearmR: [-20, 0, 0] }, py: -0.16, tumble: 10, drop: -0.04 },
+      { t: 6, j: { spine: [30, 0, 0], chest: [14, 0, 0], neck: [12, 0, 0], head: [-4, 0, 0], thighL: [-40, 0, 2], shinL: [50, 0, 0], thighR: [4, 0, -2], shinR: [30, 0, 0], upperArmL: [-85, 0, 16], upperArmR: [-85, 0, -16], forearmL: [-20, 0, 0], forearmR: [-20, 0, 0] }, py: -0.2, tumble: 48, drop: -0.12 },
+      { t: 10, j: TUCK, py: -0.2, tumble: 130, drop: -0.21 },
+      { t: 17, j: TUCK, py: -0.2, tumble: 250, drop: -0.21 },
+      { t: 22, j: { ...HALF_TUCK, thighL: [-80, 0, 4], shinL: [108, 0, 0], thighR: [-62, 0, -4], shinR: [96, 0, 0], upperArmL: [-45, 0, 14], upperArmR: [-45, 0, -14] }, py: -0.3, tumble: 345, drop: -0.12 },
+      { t: 26, j: { spine: [26, 0, 0], chest: [10, 0, 0], head: [-14, 0, 0], thighL: [-78, 0, 6], shinL: [104, 0, 0], thighR: [-58, 0, -6], shinR: [92, 0, 0], upperArmL: [-38, 0, 16], upperArmR: [-38, 0, -16], forearmL: [-34, 0, 0], forearmR: [-34, 0, 0] }, py: -0.32, tumble: 360, drop: 0 },
+      { t: 31, j: { spine: [12, 0, 0], chest: [4, 0, 0], thighL: [-30, 0, 4], shinL: [40, 0, 0], thighR: [-22, 0, -4], shinR: [32, 0, 0], upperArmL: [-14, 0, 12], upperArmR: [-14, 0, -12], forearmL: [-24, 0, 0], forearmR: [-24, 0, 0] }, py: -0.1, tumble: 360 },
       { t: 36, tumble: 360 },
     ],
   },
@@ -326,6 +333,29 @@ export const clipDuration = (name: string): number => {
 /** clip があるか（キー姿勢か、解く方式の動きのどちらか） */
 export const hasClip = (name: string): boolean => !!CLIPS[name] || !!WEAPON_MOTIONS[name];
 
+/**
+ * 納刀の歩き・走り・疾走の上半身の形（v0.58.0。動きの組で入れ替わる。D-150）。値は a + b × 走りの度合い（0 = 止まる〜 1 = 疾走 6.4m/s）。
+ * thigh: 太ももを振る角度、thighLean: 太ももを前へ寄せる量、knee: ひざを上げる量、arm: 腕を振る大きさ（太ももの振りに掛ける）、
+ * armForward: 腕を前へ寄せる量（負 = 前）、armOut: 腕を開く角度、forearm: ひじの曲げ（負 = 曲げる）、lean: 背の前傾、twist: 胸のひねり、head: 頭の上下（負 = 上）
+ */
+export interface LocoStyle {
+  thigh: [number, number];
+  thighLean: number;
+  knee: [number, number];
+  arm: number;
+  armForward: number;
+  armOut: number;
+  forearm: [number, number];
+  lean: [number, number];
+  twist: number;
+  head: [number, number];
+}
+/**
+ * 2G を手本にした形（v0.58.0）: 走るほど背を前へ倒し（疾走で 18°）、頭は前を見たまま。ひじを直角近くまで曲げ、腕を前寄りに大きく振る。
+ * 疾走はひざを高く上げる。v0.56.0 までの形は motionsets/v056.ts の LOCO_STYLE
+ */
+export const LOCO_STYLE: LocoStyle = { thigh: [24, 22], thighLean: 6, knee: [44, 28], arm: 0.95, armForward: -8, armOut: 10, forearm: [-30, -60], lean: [3, 15], twist: 10, head: [-2, -9] };
+
 /** 待機・歩行・疾走。phase は進んだ距離から作る（足の動きを移動量に合わせる）。 */
 export function locomotionPose(drawn: boolean, speed: number, phase: number, time: number): BodyPose {
   const p = fromKey(drawn ? STANCE : NEUTRAL, drawn ? STANCE_PY : 0, { t: 0 });
@@ -336,25 +366,27 @@ export function locomotionPose(drawn: boolean, speed: number, phase: number, tim
     return p;
   }
   const run = Math.min(1, speed / 6.4);
-  const amp = drawn ? 20 : 26 + 18 * run;
+  const S = LOCO_STYLE;
+  const amp = drawn ? 20 : S.thigh[0] + S.thigh[1] * run;
   const s = Math.sin(phase);
-  const knee = (ph: number): number => 10 + (drawn ? 30 : 46 + 20 * run) * Math.max(0, Math.sin(ph - 0.9));
+  const knee = (ph: number): number => 10 + (drawn ? 30 : S.knee[0] + S.knee[1] * run) * Math.max(0, Math.sin(ph - 0.9));
   if (drawn) {
     p.j.thighL[0] += -amp * s;
     p.j.thighR[0] += amp * s;
     p.j.shinL[0] += knee(phase) * 0.6;
     p.j.shinR[0] += knee(phase + Math.PI) * 0.6;
   } else {
-    p.j.thighL = [-amp * s - 4 * run, 0, 2];
-    p.j.thighR = [amp * s - 4 * run, 0, -2];
+    p.j.thighL = [-amp * s - S.thighLean * run, 0, 2];
+    p.j.thighR = [amp * s - S.thighLean * run, 0, -2];
     p.j.shinL = [knee(phase), 0, 0];
     p.j.shinR = [knee(phase + Math.PI), 0, 0];
-    p.j.upperArmL = [amp * 0.8 * s, 0, 8];
-    p.j.upperArmR = [-amp * 0.8 * s, 0, -8];
-    p.j.forearmL = [-22 - 40 * run, 0, 0];
-    p.j.forearmR = [-22 - 40 * run, 0, 0];
-    p.j.spine = [4 + 10 * run, 0, 0];
-    p.j.chest = [breathe * 1.2, -8 * s * run, 0];
+    p.j.upperArmL = [amp * S.arm * s + S.armForward * run, 0, S.armOut];
+    p.j.upperArmR = [-amp * S.arm * s + S.armForward * run, 0, -S.armOut];
+    p.j.forearmL = [S.forearm[0] + S.forearm[1] * run, 0, 0];
+    p.j.forearmR = [S.forearm[0] + S.forearm[1] * run, 0, 0];
+    p.j.spine = [S.lean[0] + S.lean[1] * run, 0, 0];
+    p.j.chest = [breathe * 1.2, -S.twist * s * run, 0];
+    p.j.head = [S.head[0] + S.head[1] * run, 0, 0];
   }
   // 腰の上下は、足の運びと一緒に GroundedLocomotion が決める（v0.28.1。ここで別の波を足すと、足の届きと食い違って腰が跳ねる）
   return p;
