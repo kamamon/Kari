@@ -46,7 +46,22 @@
     "rarityAssurance": "no guaranteed rare per use; first-clear dedicated exploration quests may award one non-monster rare material as relief",
     "rareRollVisibility": "rare point visuals distinguish seam strength, never disclose final result",
     "dropBounds": "never grant a material requiring a higher rank than the active quest",
-    "ecologyFirst": "Global plant/insect/fish tables are tier reference templates, not immediately usable in basin. Use basin.ecologicalLootOverrides to prevent wetland, coastline and forest materials from dry basin."
+    "ecologyFirst": "Global plant/insect/fish tables are tier reference templates, not immediately usable in basin. Use basin.ecologicalLootOverrides to prevent wetland, coastline and forest materials from dry basin.",
+    "rarityChanceForMinerals": {
+      "ordinaryBpsByRank": {
+        "rank.1": 300,
+        "rank.2": 600,
+        "rank.3": 1100,
+        "rank.4": 1800
+      },
+      "deepBpsByRank": {
+        "rank.1": 1300,
+        "rank.2": 2000,
+        "rank.3": 2600,
+        "rank.4": 3400
+      },
+      "note": "希少鉱石の抽選確率を級に合わせて上昇させる。単位1万分率、非保証"
+    }
   },
   "actions": [
     {
@@ -845,25 +860,25 @@
       "entries": [
         {
           "itemId": "mat.ore.basin_iron",
-          "weightBps": 1500,
+          "weightBps": 1800,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.ore.deepcopper",
-          "weightBps": 4750,
+          "weightBps": 5100,
           "minCount": 1,
           "maxCount": 2
         },
         {
           "itemId": "mat.ore.strata_copper",
-          "weightBps": 2900,
+          "weightBps": 2500,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.ore.mist_silver",
-          "weightBps": 850,
+          "weightBps": 600,
           "minCount": 1,
           "maxCount": 1
         }
@@ -878,25 +893,25 @@
       "entries": [
         {
           "itemId": "mat.ore.basin_iron",
-          "weightBps": 800,
+          "weightBps": 1000,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.ore.deepcopper",
-          "weightBps": 3100,
+          "weightBps": 4000,
           "minCount": 1,
           "maxCount": 2
         },
         {
           "itemId": "mat.ore.strata_copper",
-          "weightBps": 3500,
+          "weightBps": 3000,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.ore.mist_silver",
-          "weightBps": 2600,
+          "weightBps": 2000,
           "minCount": 1,
           "maxCount": 1
         }
@@ -917,19 +932,19 @@
         },
         {
           "itemId": "mat.ore.crystalseam_steel",
-          "weightBps": 4750,
+          "weightBps": 4800,
           "minCount": 1,
           "maxCount": 2
         },
         {
           "itemId": "mat.ore.highdensity_mica",
-          "weightBps": 2900,
+          "weightBps": 2600,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.ore.violet_vein",
-          "weightBps": 850,
+          "weightBps": 1100,
           "minCount": 1,
           "maxCount": 1
         }
@@ -950,13 +965,13 @@
         },
         {
           "itemId": "mat.ore.crystalseam_steel",
-          "weightBps": 3100,
+          "weightBps": 3600,
           "minCount": 1,
           "maxCount": 2
         },
         {
           "itemId": "mat.ore.highdensity_mica",
-          "weightBps": 3500,
+          "weightBps": 3000,
           "minCount": 1,
           "maxCount": 1
         },
@@ -977,13 +992,13 @@
       "entries": [
         {
           "itemId": "mat.ore.crystalseam_steel",
-          "weightBps": 1500,
+          "weightBps": 1200,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.ore.starlight_iron",
-          "weightBps": 4750,
+          "weightBps": 4100,
           "minCount": 1,
           "maxCount": 2
         },
@@ -995,7 +1010,7 @@
         },
         {
           "itemId": "mat.ore.prismheart",
-          "weightBps": 850,
+          "weightBps": 1800,
           "minCount": 1,
           "maxCount": 1
         }
@@ -1010,25 +1025,25 @@
       "entries": [
         {
           "itemId": "mat.ore.crystalseam_steel",
-          "weightBps": 800,
+          "weightBps": 600,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.ore.starlight_iron",
-          "weightBps": 3100,
+          "weightBps": 3000,
           "minCount": 1,
           "maxCount": 2
         },
         {
           "itemId": "mat.ore.pulse_ore",
-          "weightBps": 3500,
+          "weightBps": 3000,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.ore.prismheart",
-          "weightBps": 2600,
+          "weightBps": 3400,
           "minCount": 1,
           "maxCount": 1
         }
@@ -1097,25 +1112,25 @@
       "entries": [
         {
           "itemId": "mat.bone.weathered_fragment",
-          "weightBps": 1500,
+          "weightBps": 1800,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.bone.dense_long",
-          "weightBps": 4750,
+          "weightBps": 5100,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.bone.cave_rib",
-          "weightBps": 2900,
+          "weightBps": 2500,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.bone.stonebound_pelvis",
-          "weightBps": 850,
+          "weightBps": 600,
           "minCount": 1,
           "maxCount": 1
         }
@@ -1130,25 +1145,25 @@
       "entries": [
         {
           "itemId": "mat.bone.weathered_fragment",
-          "weightBps": 800,
+          "weightBps": 1000,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.bone.dense_long",
-          "weightBps": 3100,
+          "weightBps": 4000,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.bone.cave_rib",
-          "weightBps": 3500,
+          "weightBps": 3000,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.bone.stonebound_pelvis",
-          "weightBps": 2600,
+          "weightBps": 2000,
           "minCount": 1,
           "maxCount": 1
         }
@@ -1169,19 +1184,19 @@
         },
         {
           "itemId": "mat.bone.fossil_saber",
-          "weightBps": 4750,
+          "weightBps": 4800,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.bone.tower_vertebra",
-          "weightBps": 2900,
+          "weightBps": 2600,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.bone.crystal_femur",
-          "weightBps": 850,
+          "weightBps": 1100,
           "minCount": 1,
           "maxCount": 1
         }
@@ -1202,13 +1217,13 @@
         },
         {
           "itemId": "mat.bone.fossil_saber",
-          "weightBps": 3100,
+          "weightBps": 3600,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.bone.tower_vertebra",
-          "weightBps": 3500,
+          "weightBps": 3000,
           "minCount": 1,
           "maxCount": 1
         },
@@ -1229,13 +1244,13 @@
       "entries": [
         {
           "itemId": "mat.bone.fossil_saber",
-          "weightBps": 1500,
+          "weightBps": 1200,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.bone.ancient_ridge",
-          "weightBps": 4750,
+          "weightBps": 4100,
           "minCount": 1,
           "maxCount": 1
         },
@@ -1247,7 +1262,7 @@
         },
         {
           "itemId": "mat.bone.astral_spine",
-          "weightBps": 850,
+          "weightBps": 1800,
           "minCount": 1,
           "maxCount": 1
         }
@@ -1262,25 +1277,25 @@
       "entries": [
         {
           "itemId": "mat.bone.fossil_saber",
-          "weightBps": 800,
+          "weightBps": 600,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.bone.ancient_ridge",
-          "weightBps": 3100,
+          "weightBps": 3000,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.bone.deepfossil_core",
-          "weightBps": 3500,
+          "weightBps": 3000,
           "minCount": 1,
           "maxCount": 1
         },
         {
           "itemId": "mat.bone.astral_spine",
-          "weightBps": 2600,
+          "weightBps": 3400,
           "minCount": 1,
           "maxCount": 1
         }
