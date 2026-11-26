@@ -1,0 +1,235 @@
+{
+  "gltfMatches": true,
+  "geometry": {
+    "baseJoints": 95,
+    "joints": 95,
+    "animationCount": 34,
+    "sockets": 16,
+    "animationMetadataUnchanged": true,
+    "jointHierarchyUnchanged": true,
+    "scuteCount": 473,
+    "metalEdgeSections": 312,
+    "teeth": 36,
+    "membranePanels": 8,
+    "vertices": 72436,
+    "triangles": 106374,
+    "removedDegenerateTriangles": 0,
+    "perMaterial": [
+      {
+        "i": 0,
+        "vertices": 16972,
+        "triangles": 32556,
+        "bytes": 1281544
+      },
+      {
+        "i": 1,
+        "vertices": 26808,
+        "triangles": 32128,
+        "bytes": 1908480
+      },
+      {
+        "i": 2,
+        "vertices": 7356,
+        "triangles": 10490,
+        "bytes": 533724
+      },
+      {
+        "i": 3,
+        "vertices": 14085,
+        "triangles": 18008,
+        "bytes": 1009488
+      },
+      {
+        "i": 4,
+        "vertices": 3800,
+        "triangles": 6768,
+        "bytes": 283808
+      },
+      {
+        "i": 5,
+        "vertices": 1843,
+        "triangles": 3432,
+        "bytes": 138544
+      },
+      {
+        "i": 6,
+        "vertices": 854,
+        "triangles": 1632,
+        "bytes": 64448
+      },
+      {
+        "i": 7,
+        "vertices": 718,
+        "triangles": 1360,
+        "bytes": 54112
+      }
+    ],
+    "bounds": [
+      [
+        -12.905509655932601,
+        12.905385251404098
+      ],
+      [
+        -0.03783282135007815,
+        7.0174873485332565
+      ],
+      [
+        -11.440523972398013,
+        6.2613062674499105
+      ]
+    ],
+    "validWeights": true,
+    "validIndices": true,
+    "finite": true
+  },
+  "checked": 24,
+  "matching": 24,
+  "checks": [
+    {
+      "path": "model/orzelion_v4_motion.bin",
+      "bytes": 999804,
+      "sha": "0f0d5c16348a92a5d73e224b11cce3e4de0d34ca",
+      "match": true
+    },
+    {
+      "path": "model/orzelion_v4_mesh_0.bin",
+      "bytes": 1281544,
+      "sha": "45a205efc2d9ddbb002aa7aba4a037f05921e0f2",
+      "match": true
+    },
+    {
+      "path": "model/orzelion_v4_mesh_1.bin",
+      "bytes": 1908480,
+      "sha": "20dab1b9c3f9974efadd3fd8480ce3771a5c2684",
+      "match": true
+    },
+    {
+      "path": "model/orzelion_v4_mesh_2.bin",
+      "bytes": 533724,
+      "sha": "63a61d72b9eefc492e48056a20df75caa65665fa",
+      "match": true
+    },
+    {
+      "path": "model/orzelion_v4_mesh_3.bin",
+      "bytes": 1009488,
+      "sha": "a5f6c6d56f82e167338b46247c6385c35425f99b",
+      "match": true
+    },
+    {
+      "path": "model/orzelion_v4_mesh_4.bin",
+      "bytes": 283808,
+      "sha": "04a4180d16d610978542f90d17445cdeecdf9e2d",
+      "match": true
+    },
+    {
+      "path": "model/orzelion_v4_mesh_5.bin",
+      "bytes": 138544,
+      "sha": "d31f5acdab9eb234672c7c65d5d0e200c0923c5b",
+      "match": true
+    },
+    {
+      "path": "model/orzelion_v4_mesh_6.bin",
+      "bytes": 64448,
+      "sha": "edb1496dc4a34f07f6ccfdd3f245a29792a7bf20",
+      "match": true
+    },
+    {
+      "path": "model/orzelion_v4_mesh_7.bin",
+      "bytes": 54112,
+      "sha": "179dbeb5dc3314322fee3c16f32d1271e395784e",
+      "match": true
+    },
+    {
+      "path": "textures/hide_base.png",
+      "bytes": 787072,
+      "sha": "ff52b3de1d36ce4f595e890d0f3fdebeecacc7e9",
+      "match": true
+    },
+    {
+      "path": "textures/hide_normal.png",
+      "bytes": 787072,
+      "sha": "b7125320b18153bf3a2552138a889b8b2cfcf60e",
+      "match": true
+    },
+    {
+      "path": "textures/hide_orm.png",
+      "bytes": 787072,
+      "sha": "fd22e50c27195384f7655fe7e4010764a99b2ac1",
+      "match": true
+    },
+    {
+      "path": "textures/scute_base.png",
+      "bytes": 787072,
+      "sha": "6d48f7030c1492f441475dc683f0407235ad0fdc",
+      "match": true
+    },
+    {
+      "path": "textures/scute_normal.png",
+      "bytes": 787072,
+      "sha": "54ea54304d438935354da84e2995515e50597a5e",
+      "match": true
+    },
+    {
+      "path": "textures/scute_orm.png",
+      "bytes": 787072,
+      "sha": "87c5a9ce605df5e995a13d84fa02e221cc6b7512",
+      "match": true
+    },
+    {
+      "path": "textures/ivory_base.png",
+      "bytes": 787072,
+      "sha": "c013635abf83c7a51ec67a0dc86da06fe5838d9d",
+      "match": true
+    },
+    {
+      "path": "textures/ivory_normal.png",
+      "bytes": 787072,
+      "sha": "f65a86fe022de4e9306fcd854fde924665566403",
+      "match": true
+    },
+    {
+      "path": "textures/ivory_orm.png",
+      "bytes": 787072,
+      "sha": "5c045b275f4b22c846e090f1aeb8d5d50b9b6cad",
+      "match": true
+    },
+    {
+      "path": "textures/bronze_base.png",
+      "bytes": 787072,
+      "sha": "f79b46933212698a0dc35ef8744a182390a25574",
+      "match": true
+    },
+    {
+      "path": "textures/bronze_normal.png",
+      "bytes": 787072,
+      "sha": "e84b68026dbe6eb058a986b60d0e997f0169cc32",
+      "match": true
+    },
+    {
+      "path": "textures/bronze_orm.png",
+      "bytes": 787072,
+      "sha": "7db33c0091cf06c31873a57344ba99b0f53e4577",
+      "match": true
+    },
+    {
+      "path": "textures/membrane_base.png",
+      "bytes": 787072,
+      "sha": "125e13000afd55cf40ba583692d02b2e1fd52dae",
+      "match": true
+    },
+    {
+      "path": "textures/membrane_normal.png",
+      "bytes": 787072,
+      "sha": "bf4650aed63f89bbd7f71889faa1771d1ebad6fe",
+      "match": true
+    },
+    {
+      "path": "textures/membrane_orm.png",
+      "bytes": 787072,
+      "sha": "d3e435a1183149c801f3bf4d01cbeb2f5e1d07a6",
+      "match": true
+    }
+  ],
+  "allMatched": true,
+  "scope": "Regenerated from exact V2 blob; byte hashes compared to repository tree. Does not establish renderer or art quality."
+}
