@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.60.0",
+  "contentVersion": "0.61.0",
   "motionSets": {
     "current": "2g",
     "held": {

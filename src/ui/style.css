@@ -94,6 +94,16 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 .charge { display: flex; gap: 4px; margin-left: 8px; }
 .charge b { width: 12px; height: 12px; border: 1px solid var(--line); transform: rotate(45deg); background: rgba(12, 16, 13, 0.6); }
 .charge b.on { background: #ffd98a; box-shadow: 0 0 8px #ffd98a; }
+/* 照準（環弓で手で狙っている間。v0.61.0）: 画面の真ん中。モンスターに当たる時は明るく、適正距離なら金色 */
+#hud .hud-aim { position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; pointer-events: none; }
+#hud .hud-aim i { position: absolute; inset: 0; border: 2px solid rgba(235, 238, 228, 0.75); border-radius: 50%; box-shadow: 0 0 3px rgba(0, 0, 0, 0.6); }
+#hud .hud-aim i::before, #hud .hud-aim i::after { content: ''; position: absolute; background: rgba(235, 238, 228, 0.85); }
+#hud .hud-aim i::before { left: 50%; top: -7px; bottom: -7px; width: 2px; margin-left: -1px; }
+#hud .hud-aim i::after { top: 50%; left: -7px; right: -7px; height: 2px; margin-top: -1px; }
+#hud .hud-aim span { position: absolute; left: 50%; top: 36px; transform: translateX(-50%); font-size: 11px; color: var(--ink); text-shadow: 0 1px 2px #000; white-space: nowrap; }
+#hud .hud-aim.on i { border-color: #ffffff; }
+#hud .hud-aim.good i { border-color: #ffd98a; box-shadow: 0 0 8px rgba(255, 217, 138, 0.8); }
+#hud .hud-aim.good span { color: #ffd98a; }
 /* ビン（環弓。v0.60.0）: 付けている間は明るく */
 .coat { margin-left: 10px; font-size: 12px; padding: 1px 6px; border: 1px solid var(--line); border-radius: 3px; color: #b9c2b4; background: rgba(12, 16, 13, 0.6); white-space: nowrap; }
 .coat.on { color: #ffe2b0; border-color: #e0a85a; box-shadow: 0 0 6px rgba(224, 168, 90, 0.6); }

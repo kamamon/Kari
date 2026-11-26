@@ -207,6 +207,7 @@ export class Menu {
     this.row('上下を反転', '', this.check('invertY'));
     this.row('対象への向き直り補助', '操作補助。「背後」を押すと、狩人の背後ではなく標的の方向へ視点を向ける', this.check('targetAssist'));
     this.row('ロックオンのボタン', '操作補助。標的を画面の中に捉え続けるボタンを出す（標準は、手で視点を回す）', this.check('lockOnButton'));
+    this.row('弓の狙いの補助', '操作補助。環弓で手で狙っていない時に、矢を正面の近くの部位へ寄せる（標準は、固有ボタンで手で狙う。次の狩りから）', this.check('bowAimAssist'));
     this.row('画面の揺れ', '', this.select('shake', [['off', '無'], ['weak', '弱'], ['mid', '中']]));
     this.heading('タッチ操作');
     this.row('左利き配置', 'スティックを右、ボタンを左へ', this.check('leftHanded'));

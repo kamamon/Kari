@@ -273,6 +273,11 @@ export interface WeaponFamilyDef {
   shots?: ShotSpec[];
   /** ビン（道具の kind 'coating'）を持っていける（v0.60.0。環弓）。持っていけない系統では、持ち物のビンを里に置いていく */
   coatable?: boolean;
+  /**
+   * 手で狙う（v0.61.0。2G の弓の照準。#19 の H05。docs/spec.md の 32.27）: 抜刀中に固有ボタンを押している間、入力の狙いの向き（aimYaw・aimPitch）へ
+   * 体を向けて止まり（歩かない）、溜めて射ると、狙いの線の当たる所へ矢が飛ぶ。上下の範囲（度）
+   */
+  aim?: { pitchMinDeg: number; pitchMaxDeg: number };
   // ---- ここから下は見た目だけに使う ----
   /** 両手で持つ時、もう片方の手を握りから dir の向きへ何 m 離すか。省くと 0.2。 */
   otherHandAlong?: number;

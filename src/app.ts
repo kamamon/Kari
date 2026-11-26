@@ -3,7 +3,8 @@
 import { AudioSystem } from './core/audio';
 import { FixedClock } from './core/clock';
 import { FrameMeter, describeFrames, type FrameSummary } from './core/frameMeter';
-import { yawOf } from './core/math';
+import { DEG, clamp, yawOf } from './core/math';
+import { aimDir, aimEye, aimTarget } from './game/aim';
 import type { ArmorSlot, Content, FacilityDef } from './data/schemas';
 import { starLabel } from './data/questBoard';
 import { FIELD_GATHER_LABEL } from './data/fieldGathering';
@@ -39,6 +40,10 @@ import { resolveAppearance, type ResolvedAppearance } from './data/appearance';
 
 const DEFAULT_SEED = 20261122;
 const MAX_RECORD = 60 * 60 * 16;
+/** 手で狙う（v0.61.0）: 狙い始めの上下（少し上）と、スティックを倒し切った時に狙いが回る速さ（ラジアン/秒。左右・上下） */
+const AIM_START_PITCH = 0.06;
+const AIM_STICK_YAW = 1.5;
+const AIM_STICK_PITCH = 0.9;
 /** 依頼が終わってから結果を出すまでの間（倒れる動きを見せる） */
 /** 結果が閉じてから結果画面を出すまでの間 */
 const RESULT_DELAY_TICKS = { success: 50, failed: 90 };
@@ -191,6 +196,41 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
   private gatheringVisual:{kind:HubResourcePoint['kind'];until:number}|null=null;
   private resourceBusy = false;
   private fishing: { from: number; to: number; token: string } | null = null;
+  /**
+   * 手で狙う（v0.61.0。環弓。#19 の H05。docs/spec.md の 32.27）: 狙っている間の狙いの向き（入力の側の状態）。抜刀して固有ボタンを押している間。
+   * 視点の操作とスティックで動かし、毎 tick の入力に入れて simulation へ渡す（simulation が矢の向きを決める）
+   */
+  aim: { yaw: number; pitch: number } | null = null;
+  /**
+   * タッチでは、固有ボタン（狙う）は押すたびに切り替える（押し続けながら射るのは、同じ親指では難しい）。入っている間は、入力に固有を押した印を足す。
+   * キーボード・パッドは押している間だけ（2G の R と同じ）
+   */
+  private aimLatch = false;
+
+  /** 狙うかどうかを決め、スティックで狙いを動かす（描画フレームごと。tick を進める前） */
+  private updateAim(dt: number): void {
+    const pl = this.sim.player;
+    const fam = familyOf(pl, this.content);
+    const A = fam.aim;
+    const held = this.hub.isHeld(Btn.Special);
+    const touch = this.hub.lastDevice === 'touch';
+    if (this.hub.takePressed() & Btn.Special && touch && A) this.aimLatch = !this.aimLatch;
+    if (!touch) this.aimLatch = false;
+    const can = !!A && this.place !== 'hub' && pl.drawn && (touch ? this.aimLatch : held)
+      && (pl.mode === 'free' || (pl.mode === 'action' && pl.action?.def.actionId === fam.actions.main));
+    if (can && !this.aim) this.aim = { yaw: pl.yaw, pitch: AIM_START_PITCH };
+    else if (!can && this.aim) {
+      // 狙い終わったら、視点を狙っていた向きの背後へ。回避・近接・納刀などで狙えなくなったら、タッチの切り替えも戻す
+      this.view.cam.snap(this.aim.yaw);
+      this.aim = null;
+      this.aimLatch = false;
+    }
+    if (this.aim && A) {
+      const ax = this.hub.axis();
+      this.aim.yaw -= ax.x * AIM_STICK_YAW * dt;
+      this.aim.pitch = clamp(this.aim.pitch + ax.y * AIM_STICK_PITCH * dt, A.pitchMinDeg * DEG, A.pitchMaxDeg * DEG);
+    }
+  }
 
   private options(questId: string | null, hub = false): SimOptions {
     return {
@@ -205,6 +245,8 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       ...(questId&&this.huntPrep?{hubPrep:this.huntPrep}:{}),
       armorIds: wornArmor(this.save.doc, this.content).map((a) => a.id),
       field: this.fieldHunts,
+      // 操作補助: 弓の狙いの補助（v0.61.0）。狩りを始めた時の設定（途中で変えると、次の狩りから）
+      aimAssist: this.store.value.bowAimAssist,
     };
   }
 
@@ -763,9 +805,10 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     if (!paused) {
       this.gamepad.update(dt);
       this.keyboard.update(dt);
+      this.updateAim(dt);
       const n = this.clock.advance(dt);
       for (let i = 0; i < n; i++) {
-        const input = this.hub.sample(this.view.cam.yaw);
+        const input = this.hub.sample(this.view.cam.yaw, this.aim ?? undefined, this.aimLatch ? Btn.Special : 0);
         if (this.place === 'hub') {
           // 里: 歩く・走る・回避だけ。主ボタンは「施設へ入る」
           if (input.pressed & Btn.Main) interact = true;
@@ -815,7 +858,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
         weapon: pl.drawn ? '納刀' : '抜刀',
         main: inHub ? (this.nearFacility ? '入る' : this.resourcePrompt()?.action ?? '—') : this.sim.carveTarget() ? '剥ぎ取り' : errandLabel(this.sim) ?? labels?.main ?? '斬る',
         sub: labels?.sub ?? '薙ぐ',
-        special: labels?.special ?? '',
+        special: this.aim && this.aimLatch ? '狙い中' : labels?.special ?? '',
         combo: labels?.combo ?? '',
         dodge: (pl.drawn && labels?.dodge) || '回避',
         item: stack ? `${this.content.items.get(stack.itemId)?.name ?? ''}\n${sheathesFirst ? '納刀' : `×${stack.count}`}` : '道具',
@@ -836,7 +879,23 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       if(this.lifeRevision!==this.save.doc.revision){this.lifeRevision=this.save.doc.revision;this.view.setHubLife(lifeOf(this.save.doc),resourceCycle(this.save.doc,this.content),villageLevel(this.save.doc,this.content));}
       this.view.hubGather=this.fishing?'fish':this.gatheringVisual&&this.sim.tick<this.gatheringVisual.until?this.gatheringVisual.kind:null;
     }
-    this.view.update(this.sim, alpha, paused ? 0 : dt, paused ? { x: 0, y: 0 } : this.hub.consumeLook(), this.store.value.verify);
+    let look = paused ? { x: 0, y: 0 } : this.hub.consumeLook();
+    // 手で狙う（v0.61.0）: 狙っている間は、視点の操作で狙いを動かす（感度・反転の設定はそのまま。下へなぞると下を狙う）
+    const aimDef = familyOf(this.sim.player, this.content).aim;
+    if (this.aim && aimDef) {
+      const st = this.store.value;
+      this.aim.yaw -= (st.invertX ? -look.x : look.x) * st.camSensitivity;
+      this.aim.pitch = clamp(this.aim.pitch - (st.invertY ? -look.y : look.y) * st.camSensitivity, aimDef.pitchMinDeg * DEG, aimDef.pitchMaxDeg * DEG);
+      look = { x: 0, y: 0 };
+    }
+    this.view.aim = this.aim ? { ...this.aim } : null;
+    this.view.update(this.sim, alpha, paused ? 0 : dt, look, this.store.value.verify);
+    // 照準: 狙いの線が最初に当たる所（モンスターなら明るく、適正距離 6〜12m なら金色）。simulation が矢を飛ばす所と同じ
+    if (this.aim) {
+      const pl = this.sim.player;
+      const t = aimTarget(this.sim.monsters, this.sim.world, aimEye(pl.pos, this.aim.yaw), aimDir(this.aim.yaw, this.aim.pitch));
+      this.hud.setAim({ kind: t.kind, dist: t.dist });
+    } else this.hud.setAim(null);
     // ロックオン: 照準と、ボタンの印。標的が見えなくなって外れた時は、知らせる
     if (this.view.lockLost) {
       this.view.lockLost = false;

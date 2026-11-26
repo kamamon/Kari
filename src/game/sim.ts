@@ -16,6 +16,7 @@ import { questTimeLimitTicks } from './field';
 import { addMember, createHerdGroup, herdArea, herdHurt, livingMembers, slotOf, stepHerdGroup, type HerdGroup } from './herd';
 import { createRoam } from './roam';
 import { createPlayer, familyOf, playerHurtCapsule, resolveIncomingHit, setSpirit, stepPlayer, weaponOf, type PlayerState, type SimCtx } from './player';
+import { aimDir, aimEye, aimTarget } from './aim';
 import { trackSegment } from './tracks';
 import { World, type Circle } from './world';
 import { usesFieldGather } from '../data/fieldGathering';
@@ -46,6 +47,11 @@ export interface SimOptions {
    * 使う時は、支給品のぶんから先に減る。自分のぶんを何個使ったかは spentOwn() で分かる。
    */
   pouch?: readonly ItemStack[];
+  /**
+   * 操作補助: 弓の狙いの補助（v0.61.0。#19 の H05。設定の「弓の狙いの補助」）。手で狙っていない時に、正面 14° 以内の部位へ矢の向きと高さを寄せる。
+   * 標準（2G）は切: 手で狙っていなければ、矢は体の向きへ水平に飛ぶ。手で狙っている間は、どちらでも寄せない
+   */
+  aimAssist?: boolean;
 }
 
 /** 落下物など、位置が固定された判定。warn が 0 になった後、active の間だけ当たる。 */
@@ -237,12 +243,15 @@ export class Simulation implements SimCtx {
   /** 狩らない依頼（採集・採掘・現地の納品。v0.27.0）の、採った採取点と採集袋。狩りの依頼・訓練場では null */
   errand: ErrandState | null = null;
   fieldGather: FieldGatherState | null = null;
+  /** 操作補助: 弓の狙いの補助（v0.61.0。SimOptions.aimAssist。標準は切） */
+  readonly aimAssist: boolean;
 
   constructor(content: Content, options: SimOptions) {
     const preparation=prepBonus(options.questId?options.hubPrep:null);
     if(preparation.hp||preparation.stamina)content={...content,player:{...content.player,maxHp:content.player.maxHp+preparation.hp,maxStamina:content.player.maxStamina+preparation.stamina}};
     this.content = content;
     this.options = options;
+    this.aimAssist = !!options.aimAssist;
     const quest = options.questId ? content.quests.get(options.questId) : undefined;
     if (options.questId && !quest) throw new Error(`quest ${options.questId} が無い`);
     const map = content.maps.get(quest ? quest.mapId : options.mapId);
@@ -1218,8 +1227,9 @@ export class Simulation implements SimCtx {
   }
 
   /**
-   * 矢を放つ（環弓）。向きは体の向き。正面の近くに部位があれば、いちばん近いものへ向きと高さを合わせる（狙いの補助）。
-   * 何も無ければ、胸の高さから水平に飛ぶ。
+   * 矢を放つ（環弓）。胸の前から放つ。
+   * 手で狙っている間（v0.61.0。#19 の H05）は、狙いの線（目の点から狙いの向きへ）が最初に当たる所へ向けて飛ぶ（画面の照準の所）。
+   * 狙っていなければ、体の向きへ水平に飛ぶ。操作補助の「弓の狙いの補助」が入なら、正面の近くの部位へ向きと高さを寄せる（v0.60.0 までの標準）。
    */
   spawnProjectiles(spec: ShootDef, run: ActionRun): void {
     const p = this.player;
@@ -1228,7 +1238,13 @@ export class Simulation implements SimCtx {
     let yaw = p.yaw;
     let pitch = 0;
     let best = Infinity;
-    for (const m of this.monsters) {
+    if (p.aim) {
+      const t = aimTarget(this.monsters, this.world, aimEye(p.pos, p.aim.yaw), aimDir(p.aim.yaw, p.aim.pitch)).point;
+      const dx = t.x - from.x, dz = t.z - from.z;
+      yaw = yawOf(dx, dz);
+      pitch = Math.atan2(t.y - from.y, Math.hypot(dx, dz));
+    }
+    for (const m of p.aim || !this.aimAssist ? [] : this.monsters) {
       if (m.dead || m.captured) continue;
       for (const s of monsterShapes(m)) {
         const c = s.b ? { x: (s.a.x + s.b.x) / 2, y: (s.a.y + s.b.y) / 2, z: (s.a.z + s.b.z) / 2 } : s.a;
@@ -1404,6 +1420,7 @@ export class Simulation implements SimCtx {
     for (const t of this.traps) parts.push(t.x, t.z, t.state, t.arm, t.life);
     parts.push(p.demon ? 1 : 0, p.spirit, p.spiritIdle);
     if (p.coatings.length || p.coating) parts.push(p.coating ?? '-', p.coatings.map((s) => s.count).join(','));
+    if (p.aim) parts.push(p.aim.yaw, p.aim.pitch);
     for (const a of this.projectiles) if (a.pierce !== undefined) parts.push(a.pierce, a.hitParts!.join(','));
     if (p.climb) parts.push(p.climb.def.id, p.climb.phase, p.climb.t, p.climb.h);
     if (p.vault) parts.push(p.vault.def.id, p.vault.t);

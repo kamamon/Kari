@@ -4,6 +4,7 @@ import { CylinderGeometry, DoubleSide, Group, IcosahedronGeometry, Matrix4, Mesh
 import { angleDiff, fromArr, lerpV, norm, smoothstep, toWorld, type V3 } from '../core/math';
 import { STATUS_KINDS, type Content, type ElementId, type MonsterDef, type StatusKind } from '../data/schemas';
 import { inWindow, renderTick } from '../game/action';
+import { aimDir, aimEye } from '../game/aim';
 import type { SimEvent } from '../game/events';
 import { monsterBlockers, monsterShapes, type MonsterState } from '../game/monster';
 import { CLIMB_DOWN_TICKS, CLIMB_EXIT_TICKS, CLIMB_MOUNT_TICKS, VAULT_TICKS, familyOf, isGuarding, playerHurtCapsule } from '../game/player';
@@ -249,6 +250,8 @@ export class GameView {
   /** ロックオン（v0.16.0）。App が入・切する。標的が倒れた・別のエリアへ移った時は、ここで切り、lockLost を立てる */
   lockOn = false;
   lockLost = false;
+  /** 手で狙っている間の狙いの向き（v0.61.0。環弓。入力の側が決めて渡す。simulation の値ではなく、カメラを動かすためのもの） */
+  aim: { yaw: number; pitch: number } | null = null;
   /** ロック中の、照準の位置（ワールド座標。無ければ null） */
   lockPoint: Vector3 | null = null;
   /** ロックしている個体（群れの依頼で、倒れたら次の近い標的へ移る。v0.18.0） */
@@ -739,6 +742,7 @@ export class GameView {
         root: { x: pos.x, z: pos.z, yaw, y: pos.y, ground: (x, z) => sim.world.groundHeight(x, z) },
         active: st.kind === 'action' && !!p.action && playerContactFrame(p.action.def, st.t),
         frozen: !!p.action && p.action.hitstop > 0,
+        aimPitch: p.aim?.pitch,
       });
       pose = solved.pose;
     } else this.anim.reset();
@@ -878,7 +882,9 @@ export class GameView {
     if (!this.lockOn) this.lockId = null;
     this.cam.look(this.lockPoint ? 0 : look.x * sens, look.y * sens, this.settings.invertX, this.settings.invertY);
     const shake = this.settings.shake === 'off' ? 0 : this.settings.shake === 'weak' ? 0.5 : 1;
-    this.cam.update(dt, { x: pos.x, y: this.renderY, z: pos.z }, sim.world, shake, this.lockPoint);
+    // 手で狙う（v0.61.0。環弓）: 入力の側の狙いの向き（this.aim）で、カメラを狙いの線の上へ寄せる。ロックオンは使わない
+    const aimCam = this.aim ? { eye: aimEye({ x: pos.x, y: this.renderY, z: pos.z }, this.aim.yaw), dir: aimDir(this.aim.yaw, this.aim.pitch) } : null;
+    this.cam.update(dt, { x: pos.x, y: this.renderY, z: pos.z }, sim.world, shake, aimCam ? null : this.lockPoint, aimCam);
     if (this.portrait) this.placePortrait(this.portrait, pos);
     else if (this.viewOffset) {
       this.viewOffset = false;
