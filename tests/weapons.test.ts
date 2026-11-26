@@ -3,6 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import type { Content } from '../src/data/schemas';
 import type { SimEvent } from '../src/game/events';
 import { Simulation, arrowDistanceScale } from '../src/game/sim';
+import { sampleTrack } from '../src/game/tracks';
 import { Btn, baseOptions, frame, hold, loadContent, placeInFrontOfHead, press, run } from './helpers';
 
 let content: Content;
@@ -339,16 +340,18 @@ describe('大槌', () => {
     expect(lv1.level).toBe(1);
     expect(lv1.starts).toEqual(['player.war_maul.charge', 'player.war_maul.charge_smash']);
     expect(lv1.hits).toHaveLength(1);
+    // 段階 2（v0.62.0。2G の溜め 2）: 打ち下ろし（小）→ 振り上げ（大）の 2 回当たり
     const lv2 = chargeRelease(80);
     expect(lv2.level).toBe(2);
     expect(lv2.starts).toEqual(['player.war_maul.charge', 'player.war_maul.charge_upswing']);
-    expect(lv2.hits).toHaveLength(1);
-    expect(lv2.hits[0]!.damage).toBeGreaterThan(lv1.hits[0]!.damage * 1.3);
+    expect(lv2.hits.map((h) => h.windowId)).toEqual(['down', 'up']);
+    expect(lv2.hits[1]!.damage).toBeGreaterThan(lv1.hits[0]!.damage * 1.2);
+    expect(lv2.hits[0]!.damage).toBeLessThan(lv2.hits[1]!.damage);
     const lv3 = chargeRelease(115);
     expect(lv3.level).toBe(3);
     expect(lv3.starts).toEqual(['player.war_maul.charge', 'player.war_maul.pound']);
     expect(lv3.hits.map((h) => h.windowId)).toEqual(['head1', 'head2']);
-    expect(lv3.hits[1]!.damage).toBeGreaterThan(lv2.hits[0]!.damage);
+    expect(lv3.hits[1]!.damage).toBeGreaterThan(lv2.hits[1]!.damage);
     // すぐ放しても（段階 0）、溜め叩き
     expect(chargeRelease(3).starts).toEqual(['player.war_maul.charge', 'player.war_maul.charge_smash']);
   });
@@ -360,6 +363,52 @@ describe('大槌', () => {
     expect(ids).toContain('head');
     expect(ids.filter((x) => x.startsWith('spin')).length).toBeGreaterThanOrEqual(1);
     expect(content.actions.get('player.war_maul.spin')!.spin).toEqual({ from: 12, to: 80, degrees: -720 });
+  });
+
+  it('回転攻撃の間に主を押すと締めが替わる（v0.62.0。2G）: 1 回転目 = かち上げ、2 回転目 = 叩きつけ。押さなければ回り切って叩きつける', () => {
+    /** 段階 3 で動きながら放し、回り始めてから pressAt tick 後に主を押す */
+    const spinWith = (pressAt: number | null) => {
+      const sim = mk('war_maul');
+      placeInFrontOfHead(sim, 1.2);
+      const evs: SimEvent[] = [];
+      let spinStart = -1;
+      for (let i = 0; i < 360; i++) {
+        const move = i >= 111 && i <= 116 ? { moveX: 1 } : {};
+        const press_ = spinStart >= 0 && pressAt !== null && i === spinStart + pressAt;
+        sim.step(i === 0 ? press(Btn.Special) : i < 115 ? frame({ held: Btn.Special, ...move }) : frame({ ...move, ...(press_ ? { pressed: Btn.Main, held: Btn.Main } : {}) }));
+        const e = sim.drainEvents();
+        evs.push(...e);
+        if (spinStart < 0 && starts(e).includes('player.war_maul.spin')) spinStart = i;
+        // 締めは向いている方へ出る（回る途中で押すと、横や後ろへ出る）。締めが始まったら、標的をその向きの前へ置き直す
+        if (starts(e).some((id) => id === 'player.war_maul.spin_up' || id === 'player.war_maul.spin_slam')) {
+          const m = sim.monsters[0]!, p = sim.player;
+          m.pos = { x: p.pos.x + Math.sin(p.yaw) * 2.95, y: 0, z: p.pos.z + Math.cos(p.yaw) * 2.95 };
+          m.yaw = p.yaw + Math.PI;
+        }
+      }
+      return { starts: starts(evs), hits: hits(evs) };
+    };
+    const early = spinWith(30);
+    expect(early.starts).toEqual(['player.war_maul.charge', 'player.war_maul.spin', 'player.war_maul.spin_up']);
+    expect(early.hits.some((h) => h.actionId === 'player.war_maul.spin_up')).toBe(true);
+    const late = spinWith(62);
+    expect(late.starts).toEqual(['player.war_maul.charge', 'player.war_maul.spin', 'player.war_maul.spin_slam']);
+    expect(late.hits.some((h) => h.actionId === 'player.war_maul.spin_slam')).toBe(true);
+    const none = spinWith(null);
+    expect(none.starts).toEqual(['player.war_maul.charge', 'player.war_maul.spin']);
+    expect(none.hits.map((h) => h.windowId)).toContain('head');
+  });
+
+  it('抜刀攻撃は振り上げ（v0.62.0。2G のハンマー。叩きつけから替えた）。振り上げた後は主で叩きつけ', () => {
+    const sim = mk('war_maul');
+    const m = sim.monsters[0]!;
+    sim.player.pos = { x: m.pos.x, y: 0, z: m.pos.z - 1.75 - 1.8 };
+    sim.player.prevPos = { ...sim.player.pos };
+    sim.player.yaw = 0;
+    const evs = run(sim, 120, (i) => (i === 0 || i === 56 ? press(Btn.Main) : frame()));
+    expect(starts(evs)).toEqual(['player.war_maul.draw_upswing', 'player.war_maul.smash']);
+    expect(hits(evs).some((h) => h.actionId === 'player.war_maul.draw_upswing')).toBe(true);
+    expect(content.actions.has('player.war_maul.draw_smash')).toBe(false);
   });
 
   it('溜めている間は歩け（構えたまま）、スタミナが減って戻らない。回避へ移れる', () => {
@@ -376,12 +425,19 @@ describe('大槌', () => {
 });
 
 describe('太刀', () => {
-  it('主ボタンを続けて押すと、袈裟 → 斬り上げ → 突き とつながる', () => {
+  it('主ボタンを続けて押すと、縦斬り → 突き → 斬り上げ →（縦斬り）とつながる（v0.62.0。2G の太刀）', () => {
     const sim = mk('long_blade');
     placeInFrontOfHead(sim, 1.3);
-    const evs = run(sim, 130, (i) => (i % 8 === 0 ? press(Btn.Main) : frame()));
-    expect(starts(evs).slice(0, 3)).toEqual(['player.long_blade.kesa', 'player.long_blade.rise', 'player.long_blade.thrust']);
+    const evs = run(sim, 150, (i) => (i % 8 === 0 ? press(Btn.Main) : frame()));
+    expect(starts(evs).slice(0, 4)).toEqual(['player.long_blade.vertical', 'player.long_blade.thrust', 'player.long_blade.rise', 'player.long_blade.vertical']);
     expect(hits(evs).length).toBeGreaterThanOrEqual(3);
+    // 縦斬り: 刃は体の真ん中の縦の面を通る（判定の間、刃先の左右のずれが 0.15m より小さい）
+    const tr = content.tracks.get('lb_vertical')!;
+    for (let t = 12; t <= 18; t++) {
+      const k = sampleTrack(tr, t);
+      expect(Math.abs(k.grip.x + k.dir.x * tr.to)).toBeLessThan(0.15);
+    }
+    expect(content.actions.has('player.long_blade.kesa')).toBe(false);
   });
 
   it('副は構えからの突き。突きの後の副で斬り上げ（v0.56.0）', () => {
@@ -408,7 +464,7 @@ describe('太刀', () => {
     }
   });
 
-  it('当てると気がたまり、固有で気合い斬り 一 → 二 → 三 → 大回り斬り。気合い斬りは気を使い、その命中では気はたまらない（v0.56.0）', () => {
+  it('当てると気がたまり、固有で気合い斬り 一 → 二 → 三（ここで終わる。v0.62.0 で後年の大回り斬りを外した）。気合い斬りは気を使い、その命中では気はたまらない', () => {
     const S = content.families.get('long_blade')!.spirit!;
     const sim = mk('long_blade');
     placeInFrontOfHead(sim, 1.3);
@@ -417,18 +473,41 @@ describe('太刀', () => {
     expect(sim.player.spirit).toBe(S.gainPerHit);
     sim.player.spirit = S.max;
     placeInFrontOfHead(sim, 1.3);
-    // 大回り斬りが始まるまで、10 tick ごとに固有を押す
+    // 10 tick ごとに固有を押す。三の間も押し続けるが、三から先へはつながらない（三が終わるまで）
     const evs: SimEvent[] = [];
     for (let i = 0; i < 260; i++) {
-      const done = starts(evs).includes('player.long_blade.round');
-      sim.step(!done && i % 10 === 0 ? press(Btn.Special) : frame());
+      const s3 = starts(evs).includes('player.long_blade.spirit3');
+      if (s3 && sim.player.action?.def.actionId !== 'player.long_blade.spirit3') break;
+      sim.step(i % 10 === 0 ? press(Btn.Special) : frame());
       evs.push(...sim.drainEvents());
     }
-    expect(starts(evs)).toEqual(['player.long_blade.spirit1', 'player.long_blade.spirit2', 'player.long_blade.spirit3', 'player.long_blade.round']);
-    const cost = ['spirit1', 'spirit2', 'spirit3', 'round'].reduce((sum, x) => sum + content.actions.get(`player.long_blade.${x}`)!.spirit!.cost, 0);
+    expect(starts(evs)).toEqual(['player.long_blade.spirit1', 'player.long_blade.spirit2', 'player.long_blade.spirit3']);
+    const cost = ['spirit1', 'spirit2', 'spirit3'].reduce((sum, x) => sum + content.actions.get(`player.long_blade.${x}`)!.spirit!.cost, 0);
     expect(sim.player.spirit).toBeCloseTo(S.max - cost, 5);
     expect(hits(evs).length).toBeGreaterThanOrEqual(4);
     expect(evs.filter((e) => e.type === 'spirit')).toEqual([{ type: 'spirit', full: false }]);
+    expect(content.actions.has('player.long_blade.round')).toBe(false);
+  });
+
+  it('気合い斬り 一の後の突き・二の後の斬り上げを挟んでも、固有で次の段へ続く（v0.62.0。2G の 気刃1 → 突き → 気刃2 → 斬り上げ → 気刃3）', () => {
+    const sim = mk('long_blade');
+    placeInFrontOfHead(sim, 1.3);
+    sim.player.spirit = content.families.get('long_blade')!.spirit!.max;
+    // 一 → 主（突き）→ 固有（二）→ 主（斬り上げ）→ 固有（三）
+    const order = [Btn.Special, Btn.Main, Btn.Special, Btn.Main, Btn.Special];
+    const evs: SimEvent[] = [];
+    let k = 0;
+    for (let i = 0; i < 320 && k <= order.length; i++) {
+      const before = starts(evs).length;
+      sim.step(i % 6 === 0 && k < order.length ? press(order[k]!) : frame());
+      evs.push(...sim.drainEvents());
+      if (starts(evs).length > before) k++;
+    }
+    expect(starts(evs)).toEqual(['player.long_blade.spirit1', 'player.long_blade.thrust_s1', 'player.long_blade.spirit2', 'player.long_blade.rise_s2', 'player.long_blade.spirit3']);
+    // 挟んだ突き・斬り上げは、ふつうの突き・斬り上げと同じ動きと判定で、当てると気がたまる
+    const t = content.actions.get('player.long_blade.thrust_s1')!, n = content.actions.get('player.long_blade.thrust')!;
+    expect([t.clip, t.hitWindows[0]!.shapeTrack, t.hitWindows[0]!.damageCoefficient]).toEqual([n.clip, n.hitWindows[0]!.shapeTrack, n.hitWindows[0]!.damageCoefficient]);
+    expect(t.spirit).toBeUndefined();
   });
 
   it('気が無いと気合い斬りは出ない（知らせが出る）。気が満ちている間は威力が上がり、しばらく何もしないと気は減る（v0.56.0）', () => {

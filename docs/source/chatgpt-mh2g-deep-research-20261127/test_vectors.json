@@ -1,0 +1,215 @@
+{
+  "schema_version": 1,
+  "runtime_import": false,
+  "scope": "Kari独自の境界・保存則の検査例。既存テストへ統合し本体で実行する。原作実測値でない。",
+  "vectors": [
+    {
+      "id": "K-DMG-01",
+      "kind": "damage",
+      "given": {
+        "attack": 120,
+        "motion": 0.4,
+        "physicalEdge": 1.1,
+        "physicalZone": 0.5,
+        "crit": 1,
+        "element": 18,
+        "elementMotion": 0.8,
+        "elementEdge": 1,
+        "elementZone": 0.25,
+        "questModifier": 0.9
+      },
+      "expected": {
+        "physical": 26.4,
+        "elemental": 3.6,
+        "damage": 27
+      },
+      "note": "Kari検査用: 中間は丸めず最終floorの仮ルール。原作の丸めを確定する値ではない。"
+    },
+    {
+      "id": "K-DMG-02",
+      "kind": "damage",
+      "given": {
+        "attack": 120,
+        "motion": 0.4,
+        "physicalEdge": 1.1,
+        "physicalZone": 0,
+        "crit": 1,
+        "element": 18,
+        "elementMotion": 0.8,
+        "elementEdge": 1,
+        "elementZone": 0.25,
+        "questModifier": 1
+      },
+      "expected": {
+        "damage": 3
+      },
+      "note": "物理無効・属性有効"
+    },
+    {
+      "id": "K-DMG-03",
+      "kind": "damage",
+      "given": {
+        "attack": 120,
+        "motion": 0.4,
+        "physicalEdge": 1.1,
+        "physicalZone": 0,
+        "crit": 1,
+        "element": 18,
+        "elementMotion": 0.8,
+        "elementEdge": 1,
+        "elementZone": 0,
+        "questModifier": 1
+      },
+      "expected": {
+        "damage": 0
+      },
+      "note": "両方無効"
+    },
+    {
+      "id": "K-SKILL-01",
+      "kind": "skill",
+      "given": {
+        "points": [
+          4,
+          3,
+          2
+        ],
+        "decoration": 1,
+        "threshold": 10
+      },
+      "expected": {
+        "total": 10,
+        "active": true
+      },
+      "note": "境界直前9→装飾で10。値は検査用"
+    },
+    {
+      "id": "K-SKILL-02",
+      "kind": "skill",
+      "given": {
+        "chest": 4,
+        "decoration": 2,
+        "echoPieces": 2
+      },
+      "expected": {
+        "total": 18
+      },
+      "note": "胸参照採用時のみ。4+2+6+6、再帰や指数倍加しない"
+    },
+    {
+      "id": "K-SKILL-03",
+      "kind": "skill",
+      "given": {
+        "points": [
+          -4,
+          -3,
+          -3
+        ],
+        "negativeThreshold": -10
+      },
+      "expected": {
+        "total": -10,
+        "negativeActive": true
+      }
+    },
+    {
+      "id": "K-AMMO-01",
+      "kind": "ammo",
+      "given": {
+        "reserve": 8,
+        "loaded": 2,
+        "magazine": 5,
+        "reloadComplete": true
+      },
+      "expected": {
+        "reserve": 5,
+        "loaded": 5,
+        "total": 10
+      }
+    },
+    {
+      "id": "K-AMMO-02",
+      "kind": "ammo",
+      "given": {
+        "reserve": 8,
+        "loaded": 2,
+        "magazine": 5,
+        "reloadComplete": false
+      },
+      "expected": {
+        "reserve": 8,
+        "loaded": 2,
+        "total": 10
+      }
+    },
+    {
+      "id": "K-BOW-01",
+      "kind": "bow",
+      "given": {
+        "coatings": 5,
+        "shotCommitted": true,
+        "projectiles": 4,
+        "hits": 3
+      },
+      "expected": {
+        "coatings": 4
+      },
+      "note": "一射につき一つ。複数命中・空振りで再消費しない"
+    },
+    {
+      "id": "K-BOW-02",
+      "kind": "bow",
+      "given": {
+        "coatings": 5,
+        "shotCommitted": false,
+        "projectiles": 0,
+        "hits": 0
+      },
+      "expected": {
+        "coatings": 5
+      },
+      "note": "効果確定前の回避/被弾"
+    },
+    {
+      "id": "K-FIELD-01",
+      "kind": "gather",
+      "given": {
+        "usesRemaining": 2,
+        "inventoryHasRoom": false,
+        "commit": false
+      },
+      "expected": {
+        "usesRemaining": 2,
+        "draws": 0
+      }
+    },
+    {
+      "id": "K-FIELD-02",
+      "kind": "gather",
+      "given": {
+        "usesRemaining": 2,
+        "inventoryHasRoom": true,
+        "commit": true,
+        "leaveAndReturn": true
+      },
+      "expected": {
+        "usesRemaining": 1,
+        "draws": 1
+      }
+    },
+    {
+      "id": "K-REWARD-01",
+      "kind": "reward",
+      "given": {
+        "runId": "example-01",
+        "capture": true,
+        "settleAttempts": 2
+      },
+      "expected": {
+        "settled": 1,
+        "carveBody": false
+      },
+      "note": "既存精算契約の回帰。"
+    }
+  ]
+}

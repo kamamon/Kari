@@ -1803,11 +1803,34 @@ const startTraining = async (page, tap = false) => {
       && up.now === 'charge_upswing' && spin.now === 'spin' && Math.abs(Math.abs(spin.yaw) - Math.PI) < 0.3
       && f1.special === '溜め' && f1.sub === '横殴り' && [...f1.missing, ...f2.missing, ...f3.missing].length === 0,
     JSON.stringify({ chain, walk: { ...walk, z0 }, up, spin, f1, f2, f3 }));
+  // v0.62.0（2G のハンマー）: 回っている間に主を押すと締めが替わる（1 回転目 = かち上げ、2 回転目 = 叩きつけ）。抜刀攻撃は振り上げ
+  const reset = (drawn) => page.evaluate((drawn) => {
+    const s = window.__vh.sim, m = s.monsters[0], p = s.player;
+    p.mode = 'free'; p.action = null; p.drawn = drawn; p.stamina = 100;
+    p.pos = { x: m.pos.x, y: 0, z: m.pos.z - 1.75 - 1.2 }; p.prevPos = { ...p.pos }; p.yaw = 0; p.prevYaw = 0;
+  }, drawn);
+  const spinThen = async (at, stopAt) => {
+    await drive(T(170, () => [0, 0, 0, 0]));
+    await reset(true);
+    return drive([...T(118, (i) => [8, i === 0 ? 8 : 0, i > 115 ? 1 : 0, 0]), ...T(100, (i) => [i === at ? 1 : 0, i === at ? 1 : 0, i < 2 ? 1 : 0, 0])], stopAt);
+  };
+  const spinUp = await spinThen(30, ['spin_up', 16]);
+  const f4 = await frames();
+  const spinSlam = await spinThen(62, ['spin_slam', 28]);
+  const f5 = await frames();
+  await drive(T(120, () => [0, 0, 0, 0]));
+  await reset(false);
+  const drawUp = await drive(T(60, (i) => (i === 0 ? [1, 1, 0, 0] : [0, 0, 0, 0])), ['draw_upswing', 40]);
+  const f6 = await frames();
+  check('大槌（v0.62.0。2G）: 回転攻撃の 1 回転目に主でかち上げ、2 回転目に主で叩きつけて締める。納刀中の主は抜刀の振り上げ。新しい動きはどれも描ける',
+    spinUp.seen.join() === 'charge,spin,spin_up' && spinUp.now === 'spin_up' && spinSlam.seen.join() === 'charge,spin,spin_slam' && spinSlam.now === 'spin_slam'
+      && drawUp.seen.join() === 'draw_upswing' && drawUp.now === 'draw_upswing' && [...f4.missing, ...f5.missing, ...f6.missing].length === 0,
+    JSON.stringify({ spinUp, spinSlam, drawUp, f4, f5, f6 }));
   await ctx.close();
 }
 
-// ---- 太刀の気と気合い斬り（v0.56.0。#19 の H03）: 当てると「気」の棒が伸び、満ちると光る。固有で 気合い斬り 一 → 二 → 三 → 大回り斬り
-// （途中で体が後ろを向く）。ボタンの表示名、新しい動きはどれも描ける ----
+// ---- 太刀の気と気合い斬り（v0.56.0。#19 の H03）: 当てると「気」の棒が伸び、満ちると光る。固有で 気合い斬り 一 → 二 → 三（v0.62.0 から三で終わる）。
+// ボタンの表示名、新しい動きはどれも描ける。v0.62.0: 主は 縦斬り → 突き → 斬り上げ、気合い斬りの間に突き・斬り上げを挟める ----
 {
   const { ctx, page } = await open({ width: 1280, height: 720 }, false);
   await page.click('#boot-start');
@@ -1848,14 +1871,43 @@ const startTraining = async (page, tap = false) => {
   const h1 = await hud();
   await page.evaluate(() => { window.__vh.sim.player.spirit = 100; });
   const h2 = await hud();
-  const chain = await drive(T(260, (i) => (i % 10 === 0 ? [8, 8] : [0, 0])), ['round', 29]);
+  const chain = await drive(T(260, (i) => (i % 10 === 0 ? [8, 8] : [0, 0])), ['spirit3', 30]);
   const h3 = await hud();
-  await page.screenshot({ path: `${OUT}85i_long_blade_round.png` });
-  check('太刀（v0.56.0）: 「気」の棒が出て、当てると伸び、満ちると光る。固有で 気合い斬り 一 → 二 → 三 → 大回り斬り（途中で体が後ろを向く）。ボタンは「突き」「気合い斬り」「下がり斬り」。新しい動きはどれも描ける',
+  await page.screenshot({ path: `${OUT}85i_long_blade_spirit3.png` });
+  check('太刀（v0.56.0）: 「気」の棒が出て、当てると伸び、満ちると光る。固有で 気合い斬り 一 → 二 → 三（v0.62.0 から三で終わる）。ボタンは「突き」「気合い斬り」「下がり斬り」。新しい動きはどれも描ける',
     h0.shown && h0.label === '気' && !h0.full && hit.spirit > 0 && h1.fill !== h0.fill && h2.full && !h1.full
-      && chain.seen.join() === 'spirit1,spirit2,spirit3,round' && chain.now === 'round' && Math.abs(Math.abs(chain.yaw) - Math.PI) < 0.3 && !h3.full
+      && chain.seen.join() === 'spirit1,spirit2,spirit3' && chain.now === 'spirit3' && !h3.full
       && h0.sub === '突き' && h0.special === '気合い斬り' && h0.combo === '下がり斬り' && [...h0.missing, ...h3.missing].length === 0,
     JSON.stringify({ h0, hit, h1, h2, chain, h3 }));
+  // v0.62.0（2G の太刀）: 主の連打は 縦斬り → 突き → 斬り上げ。気合い斬り 一 → 主（突き）→ 固有（二）→ 主（斬り上げ）→ 固有（三）と挟める
+  const reset = () => page.evaluate(() => {
+    const s = window.__vh.sim, m = s.monsters[0], p = s.player;
+    p.mode = 'free'; p.action = null; p.drawn = true; p.spirit = 100;
+    p.pos = { x: m.pos.x, y: 0, z: m.pos.z - 1.75 - 1.3 }; p.prevPos = { ...p.pos }; p.yaw = 0; p.prevYaw = 0;
+  });
+  await drive(T(60, () => [0, 0]));
+  await reset();
+  const mainChain = await drive(T(150, (i) => (i % 8 === 0 ? [1, 1] : [0, 0])), ['rise', 12]);
+  const h4 = await hud();
+  await drive(T(60, () => [0, 0]));
+  await reset();
+  // 次のボタンを 6 tick ごとに押し、技が始まったら次のボタンへ
+  const weave = await page.evaluate(() => {
+    const s = window.__vh.sim, p = s.player, order = [8, 1, 8, 1, 8], seen = [];
+    let k = 0;
+    for (let i = 0; i < 320 && k <= order.length; i++) {
+      const b = i % 6 === 0 && k < order.length ? order[k] : 0;
+      s.step({ moveX: 0, moveZ: 0, held: b, pressed: b, released: 0 });
+      for (const e of s.drainEvents()) if (e.type === 'action_start') { seen.push(e.actionId.replace('player.long_blade.', '')); k++; }
+      if (k === order.length && p.action?.def.actionId === 'player.long_blade.spirit3' && p.action.tick >= 10) break;
+    }
+    return { seen, now: p.action?.def.actionId.replace('player.long_blade.', '') ?? null };
+  });
+  const h5 = await hud();
+  check('太刀（v0.62.0。2G）: 主の連打は 縦斬り → 突き → 斬り上げ。気合い斬り 一 → 突き → 二 → 斬り上げ → 三 と、間に主の技を挟める。新しい動き（縦斬り）も描ける',
+    mainChain.seen.join() === 'vertical,thrust,rise' && weave.seen.join() === 'spirit1,thrust_s1,spirit2,rise_s2,spirit3' && weave.now === 'spirit3'
+      && [...h4.missing, ...h5.missing].length === 0,
+    JSON.stringify({ mainChain, weave, h4, h5 }));
   await ctx.close();
 }
 
@@ -2574,7 +2626,7 @@ const startTraining = async (page, tap = false) => {
     // 属性・状態異常・防具の技能と耐性（v0.33.0）も、性能の欄に出る
     const stat = (r) => document.querySelector(`.forge-recipe[data-recipe="${r}"] .forge-stat`)?.textContent ?? '';
     return {
-      summary: document.querySelector('#base-forge summary').textContent, series: document.querySelectorAll('.forge-series').length, head: box.querySelector('summary').textContent, button: b?.textContent ?? '', enabled: b ? !b.disabled : false, weapon: window.__vh.save.doc.equippedWeaponId, rev: window.__vh.save.doc.revision,
+      summary: document.querySelector('#base-forge summary').textContent, series: document.querySelectorAll('.forge-series').length, gatherSeries: [...document.querySelectorAll('.forge-series')].map((b) => b.dataset.series).filter((s) => s.startsWith('gathering.')).sort().join(), head: box.querySelector('summary').textContent, button: b?.textContent ?? '', enabled: b ? !b.disabled : false, weapon: window.__vh.save.doc.equippedWeaponId, rev: window.__vh.save.doc.revision,
       wind: stat('recipe.craft.weapon.selvark.heavy_blade.r1'), poison: stat('recipe.craft.weapon.verito.heavy_blade.r1'), mud: stat('recipe.craft.armor.numeradon.head.r1'),
     };
   }, CRAFT);
@@ -2583,8 +2635,8 @@ const startTraining = async (page, tap = false) => {
   await page.click('.forge-confirm button.go');
   const made = await until(page, (w) => window.__vh.save.doc.weapons.includes(w) && /を作りました/.test(document.querySelector('.base-message')?.textContent ?? ''), 8000, MADE);
   const makeAfter = await page.evaluate((w) => ({ msg: document.querySelector('.base-message').textContent, weapon: window.__vh.save.doc.equippedWeaponId, rev: window.__vh.save.doc.revision, owned: !!document.querySelector('.forge-series[data-series="series.bornakel"] .forge-recipe.owned'), has: window.__vh.save.doc.weapons.includes(w) }), MADE);
-  check('工房で作る（v0.32.0）: 系列 19 の欄に「作る」が出て、素材をそろえると作れる。作ると持ち物に入り、装備は替わらない（保存の書き込みは 1 回）',
-    makeBefore.series === 19 && /作れます/.test(makeBefore.summary) && makeBefore.button === '作る' && makeBefore.enabled && made && makeAfter.has && makeAfter.owned && makeAfter.weapon === makeBefore.weapon && makeAfter.rev === makeBefore.rev + 1,
+  check('工房で作る（v0.32.0）: 系列 21 の欄（設計 #15 の 19 と、採集の純鉱石・純骨の 2。#32）に「作る」が出て、素材をそろえると作れる。作ると持ち物に入り、装備は替わらない（保存の書き込みは 1 回）',
+    makeBefore.series === 21 && makeBefore.gatherSeries === 'gathering.bone_only,gathering.ore_only' && /作れます/.test(makeBefore.summary) && makeBefore.button === '作る' && makeBefore.enabled && made && makeAfter.has && makeAfter.owned && makeAfter.weapon === makeBefore.weapon && makeAfter.rev === makeBefore.rev + 1,
     JSON.stringify({ makeBefore, makeAfter }));
   check('工房で作る（v0.33.0）: 属性・状態異常の武器と、防具の技能・耐性が、性能の欄に出る（帆角の断岳剣 風 26・絹霧の断岳剣 毒 9.2・泥冠の頭 個別属性耐性（水））',
     makeBefore.wind === '攻撃力 85・風 26' && makeBefore.poison === '攻撃力 86・毒 9.2' && makeBefore.mud === '防御力 6・個別属性耐性（水）・雷 -2 水 +3', JSON.stringify(makeBefore));
@@ -3114,10 +3166,11 @@ const startTraining = async (page, tap = false) => {
   // v0.38.0（ChatGPT の #17）: 依頼は級ごとの受付で、星ごとの短い一覧 → 詳細
   const boardRows = await receptionRows(page);
   const boardInfo = boardRows.map((r) => `${r.id}:${r.stars}`);
-  check('依頼の掲示: 39 件（狩り 33・狩らない 5・里の納品 1）が、4 つの受付の星ごとの一覧に 1 度ずつ。主線・昇級確認の札が短い行に出る。里の納品は、まだ', boardRows.length === 39 && new Set(boardRows.map((r) => r.id)).size === 39
+  check('依頼の掲示: 43 件（狩り 33・狩らない 5・採集の遠征 4（#32）・里の納品 1）が、4 つの受付の星ごとの一覧に 1 度ずつ。主線・昇級確認の札が短い行に出る。里の納品は、まだ', boardRows.length === 43 && new Set(boardRows.map((r) => r.id)).size === 43
+    && ['r1', 'r2', 'r3', 'r4'].every((k) => boardRows.some((r) => r.id === `quest.explore.basin.${k}`))
     && boardRows.every((r) => r.stars >= 1 && r.stars <= 8) && /主線/.test(boardRows.find((r) => r.id === 'quest.basin.003')?.text ?? '') && /昇級確認/.test(boardRows.find((r) => r.id === 'quest.basin.r4.001')?.text ?? '')
     && !/30 分/.test(boardRows.find((r) => r.id === 'quest.basin.003')?.text ?? '') && /未解放/.test(boardRows.find((r) => r.id === 'quest.delivery.009')?.text ?? '') && boardRows.find((r) => r.id === 'quest.basin.r4.001')?.stars === 8,
-    JSON.stringify(boardInfo).slice(0, 300));
+    `${boardRows.length} 件 ` + JSON.stringify(boardInfo).slice(0, 300));
   await page.evaluate(() => window.__vh.base.setOpen(true, 'quest', 'board'));
   check('初級の受付: おすすめの順の案内・星の札（件数つき）・押しても出発しない行。訓練場と物語は下にまとめてある', await page.evaluate(() => /おすすめ/.test(document.querySelector('.quest-recommend')?.textContent ?? '')
     && [...document.querySelectorAll('.reception-star')].every((b) => /件/.test(b.textContent)) && document.querySelectorAll('.reception-row').length === 0 && !document.querySelector('.reception-training').hidden && !!document.querySelector('.reception-story-fold')));

@@ -1,0 +1,300 @@
+{
+  "schema_version": 1,
+  "project": "kamamon/Kari",
+  "baseline": "6d7aee3dd96d9143a7ac48da0aead6fa853a975b",
+  "checked_date": "2026-11-27",
+  "runtime_import": false,
+  "sources": [
+    {
+      "id": "S01",
+      "kind": "一次資料・海外版",
+      "title": "CAPCOM MHFU Field Guide",
+      "url": "https://static.capcom.com/monsterhunter/MH_LRG.pdf",
+      "scope": "PDFテキストと図版の説明を参照。今回のスクリーンショット要求はcache miss。日本PSP版と同一とは限らない。"
+    },
+    {
+      "id": "S02",
+      "kind": "出版社一次情報",
+      "title": "KADOKAWA 2nd G 公式ガイドブック",
+      "url": "https://www.kadokawa.co.jp/product/301411000331/",
+      "scope": "2008年7月24日、1104頁、全20フィールド。本文の全頁は未入手。"
+    },
+    {
+      "id": "S03",
+      "kind": "当時の記事",
+      "title": "GAME Watch 発売日報道",
+      "url": "https://game.watch.impress.co.jp/docs/20080327/mhp2g.htm",
+      "scope": "2008年3月27日、G級・同行者等。記事の紹介。"
+    },
+    {
+      "id": "S04",
+      "kind": "専門誌レビュー",
+      "title": "ファミ通 PSP版レビュー",
+      "url": "https://www.famitsu.com/game/title/42/reviews",
+      "scope": "プレイ評価・発売時の機能。数値の根拠にしない。"
+    },
+    {
+      "id": "S05",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki ダメージ計算",
+      "url": "https://w.atwiki.jp/mhp2g/pages/919.html",
+      "scope": "物理/属性・肉質・斬れ味・会心・怯み・距離。非公式。"
+    },
+    {
+      "id": "S06",
+      "kind": "個人計算資料",
+      "title": "shuraba ダメージ計算",
+      "url": "https://shuraba.com/?p=game%2FMHP2G%2F%E6%AD%A6%E5%99%A8%2F%E3%83%80%E3%83%A1%E3%83%BC%E3%82%B8%E8%A8%88%E7%AE%97",
+      "scope": "丸め位置を細分化。非公式、S05との差を検証対象とする。"
+    },
+    {
+      "id": "S07",
+      "kind": "計算ツール",
+      "title": "WizeWeb MHP2G計算機",
+      "url": "https://wizeweb.net/mhp2gcalc/",
+      "scope": "比較用。Wiki等の共通資料に依存しているため完全に独立した裏付けではない。"
+    },
+    {
+      "id": "S08",
+      "kind": "攻略データ",
+      "title": "shuraba モーション値",
+      "url": "https://shuraba.com/?p=game%2FMHP2G%2F%E6%AD%A6%E5%99%A8%2F%E3%83%A2%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E5%80%A4",
+      "scope": "技別威力とゲージ。フレーム計測表ではない。"
+    },
+    {
+      "id": "S09",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki 弓",
+      "url": "https://w.atwiki.jp/mhp2g/pages/157.html",
+      "scope": "溜め・射線・近接・ビン・射種・距離・蓄積。"
+    },
+    {
+      "id": "S10",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki 太刀",
+      "url": "https://w.atwiki.jp/mhp2g/pages/147.html",
+      "scope": "気刃1〜3と通常連係、斬り下がり。"
+    },
+    {
+      "id": "S11",
+      "kind": "別攻略共同編集",
+      "title": "MHP2ndG @wiki 太刀",
+      "url": "https://w.atwiki.jp/mhp2ndg/pages/84.html",
+      "scope": "S10の連係の補助。情報の独立性は未確認。"
+    },
+    {
+      "id": "S12",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki 回避性能",
+      "url": "https://w.atwiki.jp/mhp2g/pages/523.html",
+      "scope": "回避の公称フレームを記載。測定手法・元映像未確認。"
+    },
+    {
+      "id": "S13",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki 技能一覧",
+      "url": "https://w.atwiki.jp/mhp2g/pages/160.html",
+      "scope": "閾値、正負効果、収集、射撃。"
+    },
+    {
+      "id": "S14",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki 胴系統倍加",
+      "url": "https://w.atwiki.jp/mhp2g/pages/470.html",
+      "scope": "胸部と装飾品の点を他部位から参照する仕組み。"
+    },
+    {
+      "id": "S15",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki 下位装備例",
+      "url": "https://w.atwiki.jp/mhp2g/pages/704.html",
+      "scope": "複数系列と装飾で目的技能を発動させる実例。原作セットの複製はしない。"
+    },
+    {
+      "id": "S16",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki 調合",
+      "url": "https://w.atwiki.jp/mhp2g/pages/177.html",
+      "scope": "材料・成功率・生成数・調合補助。"
+    },
+    {
+      "id": "S17",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki 報酬",
+      "url": "https://w.atwiki.jp/mhp2g/pages/277.html",
+      "scope": "基本、追加、捕獲、部位、剥ぎ取りの区分。"
+    },
+    {
+      "id": "S18",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki ガンランス",
+      "url": "https://w.atwiki.jp/mhp2g/pages/154.html",
+      "scope": "突き・砲撃・装填・冷却・ステップ。ゲーム内の架空武器。"
+    },
+    {
+      "id": "S19",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki 狩猟笛",
+      "url": "https://w.atwiki.jp/mhp2g/pages/152.html",
+      "scope": "攻撃と演奏モードの分離。"
+    },
+    {
+      "id": "S20",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki 弾性能",
+      "url": "https://w.atwiki.jp/mhp2g/pages/530.html",
+      "scope": "弾別反動・武器と技能の補正。秒数はサイト記載の概算。"
+    },
+    {
+      "id": "S21",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki ライトボウガン",
+      "url": "https://w.atwiki.jp/mhp2g/pages/155.html",
+      "scope": "弾適合・装填・速射・強化方式。"
+    },
+    {
+      "id": "S22",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki 自動装填",
+      "url": "https://w.atwiki.jp/mhp2g/pages/1034.html",
+      "scope": "自動装填の代償と速射の例外。"
+    },
+    {
+      "id": "S23",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki 雪山",
+      "url": "https://w.atwiki.jp/mhp2g/pages/71.html",
+      "scope": "採取点・種類・級による産物の変化。"
+    },
+    {
+      "id": "S24",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki 旧密林",
+      "url": "https://w.atwiki.jp/mhp2g/pages/74.html",
+      "scope": "エリアごとの寒さ・罠制限・採取。"
+    },
+    {
+      "id": "S25",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki 旧砂漠",
+      "url": "https://w.atwiki.jp/mhp2g/pages/76.html",
+      "scope": "地形ごとの暑さ・寒さ・移動境界。"
+    },
+    {
+      "id": "S26",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki 樹海",
+      "url": "https://w.atwiki.jp/mhp2g/pages/296.html",
+      "scope": "採取とエリアごとの役割。"
+    },
+    {
+      "id": "S27",
+      "kind": "二次DB・検索索引",
+      "title": "Wildwood 2G 樹海",
+      "url": "https://mh.mtwildwood.net/ja/mhfu/maps/great-forest/",
+      "scope": "攻略本参照の採取回数・確率・森林の解説。直接openはcache miss。"
+    },
+    {
+      "id": "S28",
+      "kind": "二次DB・検索索引",
+      "title": "Wildwood 2G 旧砂漠",
+      "url": "https://mh.mtwildwood.net/ja/mhfu/maps/old-desert/",
+      "scope": "攻略本参照の広場・採掘・確率。直接openはcache miss。"
+    },
+    {
+      "id": "S29",
+      "kind": "二次DB・検索索引",
+      "title": "Wildwood フィールド一覧",
+      "url": "https://mh.mtwildwood.net/ja/mhfu/maps/",
+      "scope": "フィールド・クエスト対応の入口。全20の各ページを網羅確認したわけではない。"
+    },
+    {
+      "id": "S30",
+      "kind": "マップ画像・目視",
+      "title": "MHP2G@Wiki 森丘 地図",
+      "url": "https://w.atwiki.jp/mhp2g/pages/81.html",
+      "scope": "番号付き非矩形の区域、狭い連絡路、異なる位置の採取印を画像で確認。実寸・立体形状は不明。"
+    },
+    {
+      "id": "S31",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki ティガレックス攻略",
+      "url": "https://w.atwiki.jp/mhp2g/pages/265.html",
+      "scope": "距離・怒り・突進・反撃機会。体の支持足と当たり判定の実測ではない。"
+    },
+    {
+      "id": "S32",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki リオレウス攻略",
+      "url": "https://w.atwiki.jp/mhp2g/pages/253.html",
+      "scope": "飛行と地上・閃光状態での行動制限。"
+    },
+    {
+      "id": "S33",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki ナルガクルガ攻略",
+      "url": "https://w.atwiki.jp/mhp2g/pages/266.html",
+      "scope": "跳躍連係・尾・怒りによる罠条件。"
+    },
+    {
+      "id": "S34",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki ダイミョウザザミ攻略",
+      "url": "https://w.atwiki.jp/mhp2g/pages/272.html",
+      "scope": "横移動・防御・部位破壊・潜行。"
+    },
+    {
+      "id": "S35",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki ガノトトス攻略",
+      "url": "https://w.atwiki.jp/mhp2g/pages/269.html",
+      "scope": "岸と水域・誘い出し・部位と立ち位置。"
+    },
+    {
+      "id": "S36",
+      "kind": "攻略共同編集",
+      "title": "MHP2G@Wiki クシャルダオラ攻略",
+      "url": "https://w.atwiki.jp/mhp2g/pages/287.html",
+      "scope": "風圧・毒・破壊・飛行と地上の相互関係。"
+    },
+    {
+      "id": "S37",
+      "kind": "動画索引のみ",
+      "title": "GameFAQs MHFU videos",
+      "url": "https://gamefaqs.gamespot.com/psp/943356-monster-hunter-freedom-unite/videos",
+      "scope": "PSP版として分類された訓練・実戦映像。各動画の再生、連続性、入力は未確認。"
+    },
+    {
+      "id": "S38",
+      "kind": "動画説明欄のみ",
+      "title": "FuranLilith Ch. 2G初心者演習・初見配信",
+      "url": "https://www.youtube.com/watch?v=gPHJlI8714o",
+      "scope": "公開者記載の章時刻を候補として記録。実動画は再生・コマ送り未実施。"
+    },
+    {
+      "id": "S39",
+      "kind": "公開DBプロジェクト情報",
+      "title": "Kolyn090/mhfu-db",
+      "url": "https://github.com/Kolyn090/mhfu-db",
+      "scope": "READMEの出典と手動検証の方針のみ確認。データ全件・利用許諾は未監査。"
+    },
+    {
+      "id": "S40",
+      "kind": "公開DBアプリ情報",
+      "title": "gaugustini/MHFUDatabase",
+      "url": "https://github.com/gaugustini/MHFUDatabase",
+      "scope": "海外版データの索引候補。S39依存。コードやデータは転載しない。"
+    }
+  ],
+  "coverage": {
+    "source_entries": 40,
+    "new_video_frames_observed": 0,
+    "new_map_images_observed": 1,
+    "full_guidebook_read": false
+  },
+  "limits": [
+    "検索結果で得た資料本文抜粋も含む。全ページを精読したという意味ではない。",
+    "動画説明欄は時刻候補のみ。原作フレーム・内部データ未計測。",
+    "二次資料の共通出典・誤りを考慮する。"
+  ]
+}

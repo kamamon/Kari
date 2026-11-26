@@ -2,6 +2,8 @@
 // 縦の叩きつけは、槌を頭上へ上げ、下の手を腹へ引きながら上の手で押し下ろす。横殴りは、腰・背・胸の回転で運ぶ。
 // v0.55.0 で 2G の動作構成へ（#19 の H03。docs/spec.md の 32.21、D-148）: 主 = 叩きつけ → 叩きつけ（二）→ 振り上げ、副 = 横殴り、
 // 固有を押し続けて溜める（歩ける）。放した時の段階と、動いているかで、溜め叩き・溜め振り上げ・大叩きつけ・回転攻撃に分かれる。
+// v0.62.0 で 2G の組み立てに寄せた（docs/spec.md の 32.28、D-157。依頼 11 の第 2 便の資料確認）: 溜め 2 は 打ち下ろし → 振り上げ の 2 回当たり、
+// 回転攻撃は回っている間に主を押すと締めが替わる（1 回転目 = かち上げ、2 回転目 = 叩きつけ、押さなければ回り切って叩きつけ）、抜刀攻撃は振り上げ。
 // 手のキーは「胸の座標」（両肩の中点が原点）。数値は机上の初期値（Kari の仮の値）。
 import { D2R, curve, family, sheathOf } from './lib.mjs';
 
@@ -189,21 +191,76 @@ export function warMaul() {
   });
   trackOf('wm_spin', HEAD, spin);
 
-  // ---- 抜刀叩き ----
-  // 右手で肩越しに柄を取り、前へ引き上げる。頭が背の後ろから上へ回った所で左手を添え、踏み込んで叩きつける。
-  const drawSmash = motion('wm_draw_smash_01', {
-    dur: 68, from: sheathed, root: 'w_step_060', skipBody: [0, 20],
+  // ---- 回転攻撃の締め（v0.62.0。回っている間に主）----
+  // 1 回転目で押すと、回る勢いのまま槌を低く下ろし、体の前を下から頭上へかち上げて締める
+  const UPSWING = [
+    { hip: [0, -0.14, 0.05], hipR: [10, -16, 0], spine: [12, -4, 0], chest: [4, -4, 0], look: [0, 10], ...S([-0.15, -0.24, 0.04], [0.28, 0.12, 0.95]) },
+    { hip: [0, -0.04, 0.02], hipR: [0, -18, 0], spine: [-2, -5, 0], chest: [-4, -5, 0], look: [0, -4], ...S([-0.12, -0.04, 0.16], [0.18, 0.86, 0.48]) },
+    { hip: [0, 0, 0], hipR: [-4, -20, 0], spine: [-8, -5, 0], chest: [-6, -6, 0], look: [0, -8], ...S([-0.08, 0.04, 0.2], [0.08, 0.92, -0.38]) },
+    { hip: [0, -0.02, 0], hipR: [-2, -22, 0], spine: [-6, -5, 0], chest: [-4, -6, 0], look: [0, -4], ...S([-0.09, 0.02, 0.2], [0.1, 0.94, -0.3]) },
+  ];
+  /** 低く沈めた槌（かち上げの始まり） */
+  const LOW = { hip: [0, -0.24, 0.07], hipR: [19, -13, 0], spine: [25, -3, 0], chest: [10, -3, 0], look: [0, 24], ...S([-0.16, -0.27, -0.08], [0.3, -0.25, 0.92]) };
+  const spinUp = motion('wm_spin_up_01', {
+    dur: 48, from: snap(spin, 30),
+    keys: [
+      { t: 6, ...LOW },
+      { t: 12, ...UPSWING[0] },
+      { t: 18, ...UPSWING[1] },
+      { t: 23, ...UPSWING[2] },
+      { t: 31, ...UPSWING[3] },
+    ],
+    feet: { L: [[2, 8, 0.1, 0.26, 6, 0.05], [40, 46, 0.1, 0.2, 6, 0.03]], R: [[4, 12, -0.14, -0.2, -42, 0.04]] },
+  });
+  trackOf('wm_spin_up', HEAD, spinUp);
+  // 2 回転目で押すと、回る勢いのまま頭上へ大きく振りかぶり、深く沈んで叩きつけて締める
+  const spinSlam = motion('wm_spin_slam_01', {
+    dur: 56, from: snap(spin, 62),
+    keys: [{ t: 10, ...LIFT }, ...smashKeys(18, 26, 34)],
+    feet: { L: [[3, 10, 0.1, 0.26, 6, 0.05], [48, 54, 0.1, 0.2, 6, 0.03]], R: [[5, 13, -0.14, -0.2, -42, 0.04]] },
+  });
+  trackOf('wm_spin_slam', HEAD, spinSlam);
+
+  // ---- 溜め振り上げ（段階 2 で放す。v0.62.0 で 2G の 2 回当たりへ）----
+  // 溜めの構えから小さく踏み込んで前の低い所を打ち下ろし（1 回目）、そのまま沈んで、体の前を下から頭上へ振り上げる（2 回目）
+  const chargeUpswing = motion('wm_charge_upswing_01', {
+    dur: 60, from: held, root: 'w_step_015',
+    keys: [
+      { t: 6, ...LIFT },
+      { t: 11, hip: [0, -0.12, 0.05], hipR: [12, -15, 0], spine: [15, -3, 0], chest: [6, -3, 0], look: [0, 14], ...DOWN2 },
+      { t: 14, ...LOW },
+      { t: 19, ...LOW },
+      { t: 25, ...UPSWING[0] },
+      { t: 31, ...UPSWING[1] },
+      { t: 36, ...UPSWING[2] },
+      { t: 44, ...UPSWING[3] },
+    ],
+    feet: { L: [[3, 9, 0.1, 0.28, 6, 0.05], [52, 58, 0.1, 0.2, 6, 0.03]], R: [[44, 52, -0.14, -0.2, -42, 0.04]] },
+  });
+  trackOf('wm_charge_upswing', HEAD, chargeUpswing);
+
+  // ---- 抜刀振り上げ（抜刀攻撃。v0.62.0 で 2G を手本に、叩きつけから振り上げへ）----
+  // 右手で肩越しに柄を取り、体の右で槌の頭を後ろから前へ低く回し（下手に振り出す。頭は体の右の横を通し、真下（地面）へは潜らせない）、
+  // 左手を添えて、右の低い所から体の前を頭上へ振り上げる。
+  const drawUpswing = motion('wm_draw_upswing_01', {
+    dur: 64, from: sheathed, root: 'w_step_060', skipBody: [0, 20],
     keys: [
       { t: 6, hipR: [2, -8, 0], chest: [0, -8, 0], grab: [1], grip: BACK.grip, dir: BACK.dir, edge: BACK.edge, on: [0], elbowR: OVER },
       { t: 14, hipR: [2, -16, 0], grip: [-0.24, 0.42, 0.12], dir: [0.35, -0.7, -0.62], edge: [0.5, 0.6, -0.4], elbowR: [-0.6, 0.5, 0.6] },
-      { t: 21, hipR: [0, -22, 0], spine: [-4, -5, 0], chest: [-3, -6, 0], grip: [-0.14, 0.26, 0.2], dir: [0.2, 0.45, -0.87], edge: [0, 0.87, 0.45], on: [0] },
+      { t: 21, hipR: [2, -24, 0], spine: [4, -5, 0], chest: [2, -6, 0], grip: [-0.3, -0.16, 0.14], dir: [-0.05, -0.8, -0.6], edge: [0.2, 0.6, -0.75], on: [0] },
       { t: 22, elbowR: [0, 0, 0] },
-      { t: 26, on: [1], hip: [0, -0.02, -0.03], hipR: [-2, -24, 0], spine: [-6, -5, 0], chest: [-4, -6, 0], look: [0, 4], ...TOP },
-      ...smashKeys(27, 36, 44),
+      // 頭は体の右の横を低く通す（地面へ潜らないよう、真下を通さない）
+      { t: 27, hip: [0, -0.2, 0.05], hipR: [14, -16, 0], spine: [20, -4, 0], chest: [8, -4, 0], look: [0, 18], ...S([-0.24, -0.26, 0.04], [-0.5, -0.76, 0.35]) },
+      { t: 29, ...S([-0.22, -0.24, 0.08], [-0.48, -0.32, 0.82]) },
+      { t: 35, on: [1] },
+      { t: 36, ...UPSWING[0] },
+      { t: 42, ...UPSWING[1] },
+      { t: 47, ...UPSWING[2] },
+      { t: 55, ...UPSWING[3] },
     ],
-    feet: { L: [[12, 28, 0.1, 0.3, 6, 0.07]], R: [[3, 9, -0.12, -0.02, -40, 0.03], [50, 60, -0.14, -0.2, -42, 0.05]] },
+    feet: { L: [[12, 28, 0.1, 0.3, 6, 0.07]], R: [[3, 9, -0.12, -0.02, -40, 0.03], [34, 44, -0.14, -0.2, -42, 0.05]] },
   });
-  trackOf('wm_draw_smash', HEAD, drawSmash);
+  trackOf('wm_draw_upswing', HEAD, drawUpswing);
 
   // ---- 抜刀・納刀 ----
   // 抜刀: 右手で肩越しに柄を取り、体の右を回して前へ。柄が前へ来た所で左手を添える。納刀はその逆。
@@ -261,12 +318,19 @@ export function warMaul() {
       ] },
     cancels: [[10, 12, ['roll']]] });
   action('charge_smash', { clip: 'wm_charge_smash_01', dur: 54, active: [22, 31], track: 'wm_charge_smash', hits: hit('wm_charge_smash', 0.75, { hitstop: 6 }), curve: 'w_step_015', sound: [20, 'hb_swing_01'], events: [{ tick: 30, type: 'sound', id: 'ground_slam' }], cancels: [[38, 54, ['wm_smash2', ...NEXT]]] });
-  action('charge_upswing', { clip: 'wm_upswing_01', dur: 50, active: [10, 20], track: 'wm_upswing', hits: hit('wm_upswing', 1.2, { hitstop: 8 }), curve: 'w_step_015', sound: [9, 'hb_swing_01'], cancels: [[36, 50, ['wm_smash', ...NEXT]]] });
+  // 溜め振り上げ（v0.62.0）: 打ち下ろし（小）→ 振り上げ（大）の 2 回当たり
+  action('charge_upswing', { clip: 'wm_charge_upswing_01', dur: 60, active: [11, 36], track: 'wm_charge_upswing', hits: [H('down', 'wm_charge_upswing', 0.3, 11, 15), H('up', 'wm_charge_upswing', 1.0, 26, 36, { hitstop: 8 })], curve: 'w_step_015',
+    sound: [10, 'hb_swing_01'], events: [{ tick: 24, type: 'sound', id: 'hb_swing_01' }], cancels: [[46, 60, ['wm_smash', ...NEXT]]] });
   action('pound', { clip: 'wm_pound_01', dur: 94, active: [23, 65], track: 'wm_pound', hits: [H('head1', 'wm_pound', 0.8, 23, 32, { hitstop: 6 }), H('head2', 'wm_pound', 1.5, 56, 65, { hitstop: 9 })], curve: 'w_step_015',
     sound: [21, 'hb_swing_01'], events: [{ tick: 31, type: 'sound', id: 'ground_slam' }, { tick: 54, type: 'sound', id: 'hb_swing_01' }, { tick: 64, type: 'sound', id: 'ground_slam' }], cancels: [[80, 94, ['roll']]] });
   action('spin', { clip: 'wm_spin_01', dur: 140, active: [14, 114], track: 'wm_spin', hits: [H('spin1', 'wm_spin', 0.5, 14, 46), H('spin2', 'wm_spin', 0.5, 46, 80), H('head', 'wm_spin', 0.9, 105, 114, { hitstop: 7 })], spin: { from: 12, to: 80, degrees: -720 },
-    sound: [12, 'hb_swing_01'], events: [{ tick: 46, type: 'sound', id: 'hb_swing_01' }, { tick: 103, type: 'sound', id: 'hb_swing_01' }, { tick: 113, type: 'sound', id: 'ground_slam' }], cancels: [[118, 140, ['roll']]] });
-  action('draw_smash', { clip: 'wm_draw_smash_01', dur: 68, active: [36, 44], track: 'wm_draw_smash', hits: hit('wm_draw_smash', 0.76), curve: 'w_step_060', turn: [20, 150], sound: [34, 'hb_swing_01'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }, { tick: 44, type: 'sound', id: 'ground_slam' }], cancels: [[54, 68, ['wm_smash2', ...NEXT]]] });
+    sound: [12, 'hb_swing_01'], events: [{ tick: 46, type: 'sound', id: 'hb_swing_01' }, { tick: 103, type: 'sound', id: 'hb_swing_01' }, { tick: 113, type: 'sound', id: 'ground_slam' }],
+    // 回っている間に主（v0.62.0）: 1 回転目 = かち上げで締める、2 回転目 = 叩きつけで締める。押さなければ回り切って叩きつける
+    cancels: [[20, 46, ['wm_spin_up']], [50, 80, ['wm_spin_slam']], [118, 140, ['roll']]] });
+  action('spin_up', { clip: 'wm_spin_up_01', dur: 48, active: [13, 23], track: 'wm_spin_up', hits: hit('wm_spin_up', 1.0, { hitstop: 7 }), sound: [11, 'hb_swing_01'], cancels: [[36, 48, ['roll']]] });
+  action('spin_slam', { clip: 'wm_spin_slam_01', dur: 56, active: [26, 34], track: 'wm_spin_slam', hits: hit('wm_spin_slam', 1.3, { hitstop: 9 }), sound: [24, 'hb_swing_01'], events: [{ tick: 34, type: 'sound', id: 'ground_slam' }], cancels: [[48, 56, ['roll']]] });
+  // 抜刀振り上げ（v0.62.0。抜刀叩きから替えた）。振り上げた後は主で叩きつけ
+  action('draw_upswing', { clip: 'wm_draw_upswing_01', dur: 64, active: [37, 46], track: 'wm_draw_upswing', hits: hit('wm_draw_upswing', 0.76, { hitstop: 6 }), curve: 'w_step_060', turn: [20, 150], sound: [34, 'hb_swing_01'], events: [{ tick: 3, type: 'sound', id: 'hb_draw_01' }], cancels: [[50, 64, ['wm_smash', ...NEXT]]] });
   action('draw', { clip: 'wm_draw_01', dur: 40, track: 'wm_draw', sound: [4, 'hb_draw_01'] });
   action('sheathe', { clip: 'wm_sheathe_01', dur: 42, track: 'wm_sheathe', sound: [29, 'hb_sheathe_01'], finish: 'sheathed_idle' });
 }
