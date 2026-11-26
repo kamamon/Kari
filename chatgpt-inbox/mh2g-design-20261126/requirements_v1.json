@@ -1,0 +1,948 @@
+{
+  "document_type": "implementation_requirements",
+  "schema_version": "1.0",
+  "runtime_import": false,
+  "date": "2026-11-26",
+  "baseline_commit": "0925487b686473e1a4d7e45fdc63449ef3a7d2ec",
+  "baseline_version": "0.34.0",
+  "target_profile": "classic_hunt_v1",
+  "scope": {
+    "weapon_families_existing": 7,
+    "weapon_families_target": 11,
+    "large_monsters_baseline": 12,
+    "juveniles_baseline": 8,
+    "fields_target": 20
+  },
+  "evidence_labels": [
+    "original_document_confirmed",
+    "visually_observed",
+    "kari_baseline",
+    "kari_proposal",
+    "unverified"
+  ],
+  "phase_order": [
+    "P0",
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+  ],
+  "stage_note": "Requirements may be implemented incrementally. P1 starts the heavy_blade path within H03; A10 full coverage remains a P4 goal. Dependencies indicate prerequisites, not permission to omit later scope.",
+  "requirements": [
+    {
+      "id": "D01",
+      "title": "2Gを実装の主仕様として採用",
+      "phase": "P0",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [],
+      "specification": "00_mh2g_design_directive_v1.md",
+      "current_paths": [
+        "docs/research-mh-notes.md",
+        "docs/chatgpt-board.md",
+        "docs/handoff.md"
+      ],
+      "baseline_observation": "以前のD-110は資料受領。",
+      "implementation_actions": [
+        "最新指示を採用方針へ反映する。",
+        "資料の移動だけで終了しない。",
+        "最新mainとの差分を読んで実装済みを再作成しない。",
+        "PR16/17の取り込み状況を確認し、同じ変更を二重実装しない。"
+      ],
+      "acceptance_ids": [
+        "A10"
+      ]
+    },
+    {
+      "id": "D02",
+      "title": "行動版・保存版と補助設定の境界",
+      "phase": "P0",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "D01"
+      ],
+      "specification": "00_mh2g_design_directive_v1.md",
+      "current_paths": [
+        "src/save/profile.ts",
+        "src/game/inputFrame.ts"
+      ],
+      "baseline_observation": "保存schema5。補助設定・旧入力が存在。",
+      "implementation_actions": [
+        "classic_hunt_v1を新標準にする。",
+        "旧保存・旧リプレイは版付き互換、旧技を新標準へ混ぜない。",
+        "既存利用者の操作補助と外見を保持する。"
+      ],
+      "acceptance_ids": [
+        "A01",
+        "A09"
+      ]
+    },
+    {
+      "id": "H01",
+      "title": "状態別入力と押下・保持・解放",
+      "phase": "P0",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "D02"
+      ],
+      "specification": "01_hunter_controls_motion_v1.md",
+      "current_paths": [
+        "src/game/player.ts",
+        "src/game/inputFrame.ts",
+        "src/input/hub.ts",
+        "src/input/touch.ts"
+      ],
+      "baseline_observation": "状態・入力バッファは実装済み。",
+      "implementation_actions": [
+        "納刀/抜刀/ガード/溜め/照準/環境/被弾の遷移表。",
+        "複合技優先、1命令1消費、失効、保持と再押下の区別。",
+        "納刀から使用までの自動連係を標準から分離。"
+      ],
+      "acceptance_ids": [
+        "A01"
+      ]
+    },
+    {
+      "id": "H02",
+      "title": "姿勢・支持脚・軌道・判定の共通時刻",
+      "phase": "P1",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "H01"
+      ],
+      "specification": "01_hunter_controls_motion_v1.md",
+      "current_paths": [
+        "src/render/hunterAnim.ts",
+        "src/render/contactLocomotion.ts",
+        "src/game/action.ts"
+      ],
+      "baseline_observation": "通常歩行の接地と攻撃トラックは別。",
+      "implementation_actions": [
+        "K0開始/K1準備/K2接触/K3終端/K4復帰を技ごとに作る。",
+        "攻撃のcontact区間とroot motionの実移動を同期。",
+        "命中停止・壁・斜面で握り/足/刃がずれない。"
+      ],
+      "acceptance_ids": [
+        "A02"
+      ]
+    },
+    {
+      "id": "H03",
+      "title": "既存7武器を2Gの動作構成へ",
+      "phase": "P2",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "H02"
+      ],
+      "specification": "01_hunter_controls_motion_v1.md",
+      "current_paths": [
+        "public/data/weapons.json",
+        "src/game/player.ts"
+      ],
+      "baseline_observation": "パリィ/槍カウンター/兜割り/双剣勢いがある。",
+      "implementation_actions": [
+        "P1では断岳剣を先行完成。",
+        "後年型の既定技を対応する2G型連係へ置換。",
+        "全7の抜刀/連係/固有/回避/収納を揃える。"
+      ],
+      "acceptance_ids": [
+        "A01",
+        "A02",
+        "A10"
+      ]
+    },
+    {
+      "id": "H04",
+      "title": "回避・ガード・停止道具動作",
+      "phase": "P1",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "H01"
+      ],
+      "specification": "01_hunter_controls_motion_v1.md",
+      "current_paths": [
+        "public/data/actions/player_common.json",
+        "src/game/player.ts"
+      ],
+      "baseline_observation": "共通回避・飲む動作・ガードは存在。",
+      "implementation_actions": [
+        "武器別の回避方向とガード反動を定義。",
+        "回復/研磨の効果確定と復帰を分ける。",
+        "護刃の抜刀道具はガード中の入力へ。"
+      ],
+      "acceptance_ids": [
+        "A01",
+        "A02",
+        "A08"
+      ]
+    },
+    {
+      "id": "H05",
+      "title": "手動照準と画面・射線の一致",
+      "phase": "P2",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "H01"
+      ],
+      "specification": "01_hunter_controls_motion_v1.md",
+      "current_paths": [
+        "src/game/sim.ts",
+        "src/game/inputFrame.ts",
+        "src/input/touch.ts"
+      ],
+      "baseline_observation": "弓は前方範囲内の部位を自動照準。",
+      "implementation_actions": [
+        "照準軸を記録しsimulationの射線へ使う。",
+        "移動/体の向き/カメラ/照準を区別。",
+        "自動補正は明示した任意補助へ。"
+      ],
+      "acceptance_ids": [
+        "A01",
+        "A08"
+      ]
+    },
+    {
+      "id": "H06",
+      "title": "手動カメラと戦闘HUD",
+      "phase": "P1",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "H01"
+      ],
+      "specification": "01_hunter_controls_motion_v1.md",
+      "current_paths": [
+        "src/render/camera.ts",
+        "src/ui/hud.ts"
+      ],
+      "baseline_observation": "視点戻し・ロックオン・検証用HP欄は存在。",
+      "implementation_actions": [
+        "背後戻しと手動旋回を新標準へ。",
+        "大型接近時の足元/攻撃部位/退路を確認。",
+        "敵HPは検証専用を維持、指で隠れる表示を確認。"
+      ],
+      "acceptance_ids": [
+        "A02",
+        "A06"
+      ]
+    },
+    {
+      "id": "H07",
+      "title": "登攀・低棚・降下",
+      "phase": "P1",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "H01",
+        "F01"
+      ],
+      "specification": "01_hunter_controls_motion_v1.md",
+      "current_paths": [
+        "src/game/player.ts",
+        "src/game/world.ts"
+      ],
+      "baseline_observation": "通常歩行と段差処理が基盤。",
+      "implementation_actions": [
+        "contextClimbと3段階の登攀状態。",
+        "非地上の位置所有と着地支持面を決める。",
+        "取り付き/手足/割込み/出口/戻り道を揃える。"
+      ],
+      "acceptance_ids": [
+        "A01",
+        "A02",
+        "A06"
+      ]
+    },
+    {
+      "id": "H08",
+      "title": "不足4武器の独立した機能役割",
+      "phase": "P3",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "H03",
+        "H05",
+        "E06"
+      ],
+      "specification": "01_hunter_controls_motion_v1.md",
+      "current_paths": [
+        "public/data/weapons.json",
+        "src/game/player.ts"
+      ],
+      "baseline_observation": "現行7系統。",
+      "implementation_actions": [
+        "resonant_maul/chamber_lance/light_launcher/heavy_launcherを追加。",
+        "演奏/音列、砲撃/装填/冷却、弾種/反動/装填の専用状態。",
+        "里基礎とガルドロスから全19系列の生産へ展開。"
+      ],
+      "acceptance_ids": [
+        "A01",
+        "A02",
+        "A07",
+        "A08",
+        "A10"
+      ]
+    },
+    {
+      "id": "M01",
+      "title": "足を踏み替える戦闘旋回",
+      "phase": "P1",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "D02"
+      ],
+      "specification": "02_monster_motion_behavior_v1.md",
+      "current_paths": [
+        "src/game/monster.ts",
+        "src/render/creatureMoves.ts"
+      ],
+      "baseline_observation": "自由状態は連続旋回。",
+      "implementation_actions": [
+        "種別の踏み替え区間と再判断時点。",
+        "攻撃確定方向をsimulationに保持。",
+        "歩行経路の旋回と戦闘の旋回を区別。"
+      ],
+      "acceptance_ids": [
+        "A03"
+      ]
+    },
+    {
+      "id": "M02",
+      "title": "攻撃方向・突進制動・後隙",
+      "phase": "P1",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "M01"
+      ],
+      "specification": "02_monster_motion_behavior_v1.md",
+      "current_paths": [
+        "src/game/monster.ts",
+        "src/render/creatureMoves.ts"
+      ],
+      "baseline_observation": "三段階とturning.untilTickは存在。",
+      "implementation_actions": [
+        "方向確定を準備姿勢の区切りへ対応。",
+        "加速/直進/減速/戻りを実移動と一致。",
+        "壁際の制動と空振り後の反撃部位を作る。"
+      ],
+      "acceptance_ids": [
+        "A02",
+        "A03"
+      ]
+    },
+    {
+      "id": "M03",
+      "title": "転倒・起床・切断と部位追従",
+      "phase": "P1",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "M02"
+      ],
+      "specification": "02_monster_motion_behavior_v1.md",
+      "current_paths": [
+        "src/game/monster.ts",
+        "src/game/follow.ts",
+        "tools/gen-monsters.py"
+      ],
+      "baseline_observation": "技/睡眠followはあるがガルドロスと転倒/起き上がりは不足。",
+      "implementation_actions": [
+        "ガルドロスfollowと状態別追従を追加。",
+        "転倒方向を固定tickで保持。",
+        "切断先端の判定消失と起きた頭への命中を確認。"
+      ],
+      "acceptance_ids": [
+        "A04"
+      ]
+    },
+    {
+      "id": "M04",
+      "title": "反応・怒り・異常・終端の優先",
+      "phase": "P1",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "M03"
+      ],
+      "specification": "02_monster_motion_behavior_v1.md",
+      "current_paths": [
+        "src/game/monster.ts",
+        "src/game/ailment.ts"
+      ],
+      "baseline_observation": "部位破壊/切断/怯み/怒り/状態異常は存在。",
+      "implementation_actions": [
+        "競合と持続を同じイベント契約へ。",
+        "原作由来と未確認の時間を区別。",
+        "死亡/捕獲終端後に再行動しない。"
+      ],
+      "acceptance_ids": [
+        "A04",
+        "A09"
+      ]
+    },
+    {
+      "id": "M05",
+      "title": "高速離脱と寝床での休眠",
+      "phase": "P1",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "M02",
+        "F02",
+        "F07"
+      ],
+      "specification": "02_monster_motion_behavior_v1.md",
+      "current_paths": [
+        "src/game/roam.ts",
+        "src/game/monster.ts"
+      ],
+      "baseline_observation": "高速離脱は採用済み。巣滞在時間で戦闘中も寝る余地がある。",
+      "implementation_actions": [
+        "速度は維持し牽制/離脱/到着を動作接続。",
+        "寝床到着/脅威消失/寝入りを条件化。",
+        "自然休眠/異常睡眠/捕獲鎮静を分離。"
+      ],
+      "acceptance_ids": [
+        "A04",
+        "A05",
+        "A06"
+      ]
+    },
+    {
+      "id": "M06",
+      "title": "幼体の持続する個体性格",
+      "phase": "P2",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "M04"
+      ],
+      "specification": "02_monster_motion_behavior_v1.md",
+      "current_paths": [
+        "src/game/herd.ts"
+      ],
+      "baseline_observation": "被攻撃反撃は既にある。",
+      "implementation_actions": [
+        "PR16の臆病/慎重/攻撃的の3性格と専用割当を用い、別の性格フィールドを重ねない。",
+        "警報を性格別反応へ。",
+        "群れ内同時攻撃枠と追撃の終わりを実装。"
+      ],
+      "acceptance_ids": [
+        "A05"
+      ]
+    },
+    {
+      "id": "M07",
+      "title": "全骨格への展開と飛行能力",
+      "phase": "P2",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "M03",
+        "M05",
+        "M06",
+        "F01"
+      ],
+      "specification": "02_monster_motion_behavior_v1.md",
+      "current_paths": [
+        "src/render/creatureMoves.ts",
+        "src/render/creatureRig.ts",
+        "src/game/roam.ts"
+      ],
+      "baseline_observation": "12大型/8幼体。翼形状は飛行能力と同一ではない。",
+      "implementation_actions": [
+        "重い四足/軽い四足/二足有翼/長胴/幼体へ適用。",
+        "飛行は能力/空中経路/着地点/判定を揃えて有効化。",
+        "全種の通常/怒り/弱り/転倒と戻りを記録。"
+      ],
+      "acceptance_ids": [
+        "A03",
+        "A04",
+        "A05",
+        "A10"
+      ]
+    },
+    {
+      "id": "E01",
+      "title": "装備個体と保存移行の基盤",
+      "phase": "P0",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "D02"
+      ],
+      "specification": "03_equipment_progression_v1.md",
+      "current_paths": [
+        "src/save/profile.ts",
+        "src/data/schemas.ts"
+      ],
+      "baseline_observation": "schema5の所持は主に定義ID。",
+      "implementation_actions": [
+        "個体ID/定義ID/防御強化/装飾の正本を設ける。",
+        "未知欄/所持/達成/四級/外見を保持し元保存を控える。",
+        "補填1回/競合/旧版書込み/中断消費を管理。"
+      ],
+      "acceptance_ids": [
+        "A09"
+      ]
+    },
+    {
+      "id": "E02",
+      "title": "正負技能点と発動閾値",
+      "phase": "P3",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "E01"
+      ],
+      "specification": "03_equipment_progression_v1.md",
+      "current_paths": [
+        "src/game/gear.ts",
+        "tools/gen-equipment.py",
+        "public/data/skills.json"
+      ],
+      "baseline_observation": "12技能、部位の点をLvへ直接変換。",
+      "implementation_actions": [
+        "正負の合計と効果段階を分離。",
+        "19系列の配分、新系統、負効果を実装。",
+        "条件付き弱点会心/部位蓄積技能は2G相当とせず標準配分を移行。"
+      ],
+      "acceptance_ids": [
+        "A07"
+      ]
+    },
+    {
+      "id": "E03",
+      "title": "装飾品・枠・セット",
+      "phase": "P3",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "E01",
+        "E02"
+      ],
+      "specification": "03_equipment_progression_v1.md",
+      "current_paths": [
+        "src/game/gear.ts",
+        "src/save/profile.ts",
+        "tools/gen-equipment.py"
+      ],
+      "baseline_observation": "装飾品と複数個体所持が不足。",
+      "implementation_actions": [
+        "0〜3枠と1〜3枠消費を独立して定義。",
+        "同じ装備内の枠だけ使用、複製/二重装着禁止。",
+        "強化返却と装備セットの個体参照を整える。"
+      ],
+      "acceptance_ids": [
+        "A07",
+        "A09"
+      ]
+    },
+    {
+      "id": "E04",
+      "title": "近接/射手の5部位適合",
+      "phase": "P3",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "E01",
+        "E02"
+      ],
+      "specification": "03_equipment_progression_v1.md",
+      "current_paths": [
+        "public/data/armor.json",
+        "tools/gen-equipment.py",
+        "src/save/profile.ts"
+      ],
+      "baseline_observation": "5部位はあるが近接/射手の適合は不足。",
+      "implementation_actions": [
+        "melee/ranged/sharedと系列の射手版。",
+        "旧ID保持と一度限りの射手版補填。",
+        "不適合出発を防ぎ外見と能力を一致。"
+      ],
+      "acceptance_ids": [
+        "A07",
+        "A09"
+      ]
+    },
+    {
+      "id": "E05",
+      "title": "斬れ味・命中項・種別耐性",
+      "phase": "P3",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "M04",
+        "E02"
+      ],
+      "specification": "03_equipment_progression_v1.md",
+      "current_paths": [
+        "src/game/gear.ts",
+        "src/game/ailment.ts",
+        "src/game/sim.ts"
+      ],
+      "baseline_observation": "共通斬れ味と異常が既にある。",
+      "implementation_actions": [
+        "武器別分布/消耗/弾かれを分離。",
+        "物理/属性/状態/気絶/部位の項を分離。",
+        "種別免疫と耐性、捕獲/罠例外を同じ定義へ。"
+      ],
+      "acceptance_ids": [
+        "A04",
+        "A07",
+        "A08"
+      ]
+    },
+    {
+      "id": "E06",
+      "title": "有限の弾瓶と基礎弾例外",
+      "phase": "P3",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "H05",
+        "E01"
+      ],
+      "specification": "03_equipment_progression_v1.md",
+      "current_paths": [
+        "src/game/sim.ts",
+        "src/game/player.ts",
+        "src/save/profile.ts"
+      ],
+      "baseline_observation": "弾薬基盤と瓶適合を拡張する。",
+      "implementation_actions": [
+        "対応弾/装填/反動/残数、瓶適合/矢型を実装。",
+        "通常持込弾は有限、基礎弾の無限所持は明示フラグ。",
+        "複数弾体/中断/弾種変更/帰還で重複消費しない。"
+      ],
+      "acceptance_ids": [
+        "A08",
+        "A09"
+      ]
+    },
+    {
+      "id": "E07",
+      "title": "生産・横派生・防御強化",
+      "phase": "P3",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "E03",
+        "E04",
+        "E05"
+      ],
+      "specification": "03_equipment_progression_v1.md",
+      "current_paths": [
+        "public/data/recipes.json",
+        "public/data/equipment_series.json",
+        "tools/gen-equipment.py",
+        "src/save/profile.ts"
+      ],
+      "baseline_observation": "基礎48強化と生成336レシピが存在。",
+      "implementation_actions": [
+        "旧レシピIDと到達先を保持して横分岐追加。",
+        "個体の防御強化を技能と分離。",
+        "素材/費用/返却/失う個体を確定前に表示。"
+      ],
+      "acceptance_ids": [
+        "A07",
+        "A09",
+        "A10"
+      ]
+    },
+    {
+      "id": "E08",
+      "title": "四級進行と素材の到達性",
+      "phase": "P4",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "E07",
+        "F03"
+      ],
+      "specification": "03_equipment_progression_v1.md",
+      "current_paths": [
+        "public/data/ranks.json",
+        "src/save/profile.ts",
+        "public/data/equipment_series.json"
+      ],
+      "baseline_observation": "四級と盆地3系列の上級経路がある。",
+      "implementation_actions": [
+        "重要依頼群と昇級依頼を明示。",
+        "既達成の級を閉じない。",
+        "全系列の素材経路と狩場を接続。",
+        "PR17の4受付・星別一覧・対象アイコンへ条件と結果を接続する。"
+      ],
+      "acceptance_ids": [
+        "A09",
+        "A10"
+      ]
+    },
+    {
+      "id": "E09",
+      "title": "由来別報酬と終端の一度限り精算",
+      "phase": "P1",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "E01",
+        "M04"
+      ],
+      "specification": "03_equipment_progression_v1.md",
+      "current_paths": [
+        "src/game/sim.ts",
+        "src/save/profile.ts"
+      ],
+      "baseline_observation": "報酬・claims・剥ぎ取りの基盤がある。",
+      "implementation_actions": [
+        "P1で既存狩りの精算を確認しP3拡張へ契約を維持。",
+        "基本/破壊/捕獲/本体剥ぎ取り/切断/採取の由来を持つ。",
+        "runIdと由来で重複を防ぎ最後の一撃の部位成果を保持。"
+      ],
+      "acceptance_ids": [
+        "A04",
+        "A09"
+      ]
+    },
+    {
+      "id": "F01",
+      "title": "共通地形と支持面選択",
+      "phase": "P0",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "D02"
+      ],
+      "specification": "04_fields_terrain_art_v1.md",
+      "current_paths": [
+        "src/game/world.ts",
+        "src/game/field.ts",
+        "src/render/arena.ts",
+        "src/data/schemas.ts"
+      ],
+      "baseline_observation": "高さは矩形platformの最高面中心。",
+      "implementation_actions": [
+        "足元Y/支持面/移動モードを伴う地形問合せ。",
+        "床/棚/斜面/壁/天井を描画と物理で共有。",
+        "非地上状態の位置所有と着地を明示。"
+      ],
+      "acceptance_ids": [
+        "A02",
+        "A04",
+        "A06"
+      ]
+    },
+    {
+      "id": "F02",
+      "title": "盆地11エリア・14接続の具体改修",
+      "phase": "P1",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "F01",
+        "H07"
+      ],
+      "specification": "04_fields_terrain_art_v1.md",
+      "current_paths": [
+        "tools/gen-field.py",
+        "public/data/fields/basin.json",
+        "src/game/areaShape.ts"
+      ],
+      "baseline_observation": "既存の輪郭・狭路・大型可否がある。",
+      "implementation_actions": [
+        "ID/接続/a3旧アリーナを初期保持。",
+        "広場/狭路/棚/目印/採取枝道を設計JSONから制作。",
+        "全接続・到着位置・大型の8接続を確認。"
+      ],
+      "acceptance_ids": [
+        "A06"
+      ]
+    },
+    {
+      "id": "F03",
+      "title": "全20フィールドの地形と実行データ",
+      "phase": "P4",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "F02",
+        "M07",
+        "F05",
+        "F06"
+      ],
+      "specification": "04_fields_terrain_art_v1.md",
+      "current_paths": [
+        "public/data/bestiary.json",
+        "tools/gen-field.py",
+        "src/game/field.ts"
+      ],
+      "baseline_observation": "実行可能な狩場は盆地。19地域は計画。",
+      "implementation_actions": [
+        "新19の恒久IDを採番し型/登録先/依頼へ接続。",
+        "8テンプレートを地域の地形/景観/種の経路へ具体化。",
+        "設計JSON配置を実装完成としない。"
+      ],
+      "acceptance_ids": [
+        "A06",
+        "A10"
+      ]
+    },
+    {
+      "id": "F04",
+      "title": "地理的なミニマップと期限付き追跡",
+      "phase": "P1",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "F02",
+        "M05"
+      ],
+      "specification": "04_fields_terrain_art_v1.md",
+      "current_paths": [
+        "src/ui/hud.ts",
+        "src/game/field.ts",
+        "src/game/sim.ts"
+      ],
+      "baseline_observation": "格子の地図と大型の現在地が常時表示。",
+      "implementation_actions": [
+        "地理的な輪郭・番号・自分の向きを表示。",
+        "unknown/visible/marked/last_seenの情報境界。",
+        "印の命中・期限・見失いを管理し睡眠等の内部情報を漏らさない。"
+      ],
+      "acceptance_ids": [
+        "A06"
+      ]
+    },
+    {
+      "id": "F05",
+      "title": "採取・環境と地形の結び付け",
+      "phase": "P4",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "F02"
+      ],
+      "specification": "04_fields_terrain_art_v1.md",
+      "current_paths": [
+        "src/game/field.ts",
+        "src/game/sim.ts",
+        "src/ui/hud.ts"
+      ],
+      "baseline_observation": "採集・納品依頼は存在。",
+      "implementation_actions": [
+        "資源を露頭/植生/生活痕跡と短い枝へ配置。",
+        "取得/枯渇/動作/進捗を同じ確定イベントへ。",
+        "寒暖や運搬を入れる地域は対策・制約・帰路を明示。"
+      ],
+      "acceptance_ids": [
+        "A01",
+        "A06",
+        "A10"
+      ]
+    },
+    {
+      "id": "F06",
+      "title": "地形の奥行き・色・音・視認",
+      "phase": "P1",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "F02"
+      ],
+      "specification": "04_fields_terrain_art_v1.md",
+      "current_paths": [
+        "src/render/arena.ts",
+        "src/render/sky.ts",
+        "src/render/terraces.ts"
+      ],
+      "baseline_observation": "採用済み岩/崖/草/里の段がある。",
+      "implementation_actions": [
+        "床を見やすく、縁/中景/遠景に地形差。",
+        "同高の全周壁を減らし目印と方角を一致。",
+        "敵の予兆を草/霧/環境音で埋めない。"
+      ],
+      "acceptance_ids": [
+        "A02",
+        "A06"
+      ]
+    },
+    {
+      "id": "F07",
+      "title": "別エリアの論理状態を維持",
+      "phase": "P0",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "F01"
+      ],
+      "specification": "04_fields_terrain_art_v1.md",
+      "current_paths": [
+        "src/game/roam.ts",
+        "src/game/field.ts",
+        "src/render/arena.ts"
+      ],
+      "baseline_observation": "エリア単位表示と大型の所在がある。",
+      "implementation_actions": [
+        "描画資源解放と論理状態維持を分離。",
+        "移動/睡眠回復/採取枯渇/追跡期限を決定論的に進める。",
+        "再表示時に初期化しない。"
+      ],
+      "acceptance_ids": [
+        "A05",
+        "A06",
+        "A09"
+      ]
+    },
+    {
+      "id": "V01",
+      "title": "画像・映像観察と動作比較の記録",
+      "phase": "P1",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "D01"
+      ],
+      "specification": "06_visual_evidence_to_design_v1.md",
+      "current_paths": [
+        "docs/source/chatgpt-research-mh-20261125/visual_observations_v2.json"
+      ],
+      "baseline_observation": "既存調査には2G/MH3/3rdが混在。",
+      "implementation_actions": [
+        "作品/機種/時刻/カットを区別。",
+        "K0〜K4とKari actionの差を記録。",
+        "原作実測とKari仮値を混同しない。"
+      ],
+      "acceptance_ids": [
+        "A02",
+        "A03"
+      ]
+    },
+    {
+      "id": "V02",
+      "title": "実装・自動検査・実機の別記録",
+      "phase": "P4",
+      "status": "adopted_design_not_implemented_in_this_package",
+      "depends_on": [
+        "H08",
+        "M07",
+        "E08",
+        "E09",
+        "F04",
+        "V01"
+      ],
+      "specification": "05_implementation_acceptance_v1.md",
+      "current_paths": [
+        "docs/handoff.md",
+        "docs/chatgpt-board.md"
+      ],
+      "baseline_observation": "今回の納品は設計のみ。",
+      "implementation_actions": [
+        "A01〜A10を武器/種/狩場の対象範囲と記録。",
+        "iPhone通常画面の録画と指の遮蔽・操作を確認。",
+        "未実装/未測定/未実機を区別して残件を続ける。"
+      ],
+      "acceptance_ids": [
+        "A01",
+        "A02",
+        "A03",
+        "A04",
+        "A05",
+        "A06",
+        "A07",
+        "A08",
+        "A09",
+        "A10"
+      ]
+    }
+  ],
+  "parallel_work": [
+    {
+      "pr": 16,
+      "url": "https://github.com/kamamon/Kari/pull/16",
+      "head": "dc47c375fd4718d6e6230c06292d1351fa8de35d",
+      "status_at_review": "draft_open_not_merged",
+      "integration": "Use existing three-temperament proposal and engagement slot; extend motion readability."
+    },
+    {
+      "pr": 17,
+      "url": "https://github.com/kamamon/Kari/pull/17",
+      "head": "7a22dc0f6a9c0a9217a5bc2326b5943730ae0385",
+      "status_at_review": "draft_open_not_merged",
+      "integration": "Preserve four receptions, star grouping and target icons; connect progression gates."
+    }
+  ]
+}
