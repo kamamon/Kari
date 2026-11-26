@@ -1173,8 +1173,8 @@ export class Simulation implements SimCtx {
   /** 状態異常をためる（v0.33.0）。発症したら、効き目を始めて知らせる（硬直は、いまの技を止める） */
   private storeAilment(m: MonsterState, kind: StatusKind, amount: number, pos: V3): void {
     const R = ailmentRules(this.content);
-    if (addAilment(m.ailments, R, kind, amount) !== 'triggered') return;
-    if (kind === 'poison') startPoison(m.ailments, R, m.def.hp);
+    if (addAilment(m.ailments, R, kind, amount, m.def.id) !== 'triggered') return;
+    if (kind === 'poison') startPoison(m.ailments, R, m.def.hp, m.def.id);
     else {
       m.action = null;
       m.attackEval = null;

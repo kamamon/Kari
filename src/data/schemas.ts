@@ -449,7 +449,25 @@ export interface ElementRules {
   ailment: MonsterAilmentRules;
 }
 
+/** 種・状態ごとの独立した耐性。値はKariの調整案で原作値ではない。 */
+export type SpeciesAilmentRule =
+  | { immune: true }
+  | {
+      immune?: false;
+      initial: number;
+      increase: number;
+      cap: number;
+      durationTicks: number;
+      decayIntervalTicks: number;
+      decayAmount: number;
+      /** 毒だけ: 1回で与える総ダメージ（最大HPとは独立）と分割回数 */
+      poisonDamage?: number;
+      poisonHits?: number;
+    };
+
 export interface MonsterAilmentRules {
+  /** 種ID → 状態ごとの上書き。省略した種/状態は従来の共通値。 */
+  species?: Record<string, Partial<Record<StatusKind, SpeciesAilmentRule>>>;
   /** 初めの閾値と、発症するたびの伸び（毒・麻痺・睡眠 / 気絶） */
   threshold: number;
   growth: number;

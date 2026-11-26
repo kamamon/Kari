@@ -289,7 +289,7 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   if (m.tranqTicks > 0 && --m.tranqTicks === 0) m.tranq = 0;
 
   // 状態異常（v0.33.0）: 効き目の残り・毒・猶予・ためた量の減り。毒で倒れることもある
-  const at = stepAilments(m.ailments, ailmentRules(ctx.content));
+  const at = stepAilments(m.ailments, ailmentRules(ctx.content), m.def.id);
   for (const k of at.ended) ctx.emit({ type: 'monster_ailment', target: m.id, kind: k, on: false });
   if (at.poison > 0) {
     ctx.emit({ type: 'ailment_damage', target: m.id, kind: 'poison', damage: at.poison, pos: { x: m.pos.x, y: m.pos.y + 1.2, z: m.pos.z } });
