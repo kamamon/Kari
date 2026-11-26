@@ -1,7 +1,7 @@
 {
   "artifact": "Kari_2G_11_Weapons_Package.zip",
-  "zipSha256": "6e17b64c0308a14a241a48940028d07541cc3f74c17a2f0fcdee45eb87d8cf24",
-  "zipSizeBytes": 6034416,
+  "zipSha256": "fb401f5d5e4214c1be2e1133f02565391fa6366be8f36d18aadbf135472efa51",
+  "zipSizeBytes": 6035065,
   "availability": "Full-res transparent PNGs, GLBs, material tiles, motion source, GIFs are supplied as a downloadable chat ZIP. NOT uploaded to this GitHub PR because current binary transfer through connector is unavailable.",
   "contents": {
     "weapons": 11,
