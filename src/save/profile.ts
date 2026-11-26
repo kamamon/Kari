@@ -614,7 +614,7 @@ export function changeClassicGear(doc:SaveDoc,c:Content,op:'craft'|'attach'|'det
  if(op==='fortify'){const a=c.armor.get(id);if(!a||a.starter)throw new RuleError('unknown','強化できる防具ではありません');const level=g.fortify[id]??0;if(level>=5)throw new RuleError('full','強化上限です');const rank=classicRank(a),ore=['mat.ore.basin_iron','mat.ore.deepcopper','mat.ore.crystalseam_steel','mat.ore.crystalseam_steel'][rank-1]!;pay(120*rank*(level+1),[{itemId:ore,count:level+1}]);g.fortify[id]=level+1;return next;}
  const j=JEWELS.find(x=>x.id===jewelId);if(!j)throw new RuleError('unknown','装飾品がありません');
  const list=g.sockets[id]??(g.sockets[id]=[]);
- if(op==='attach'){if((g.stock[j.id]??0)<=0)throw new RuleError('not_owned','装飾品を持っていません');if(installedSlots(id,g)+j.cost>socketCapacity(c,id))throw new RuleError('full','空きスロットがありません');g.stock[j.id]!--;list.push(j.id);}
+ if(op==='attach'){if((g.stock[j.id]??0)<=0)throw new RuleError('not_owned','装飾品を持っていません');if(installedSlots(id,g)+j.cost>socketCapacity(c,id))throw new RuleError('full','空きスロットがありません');g.stock[j.id]=(g.stock[j.id]??0)-1;list.push(j.id);}
  else {const i=list.indexOf(j.id);if(i<0)throw new RuleError('not_owned','装着されていません');if((g.stock[j.id]??0)>=MAX_COUNT)throw new RuleError('full','装飾品がいっぱいです');list.splice(i,1);g.stock[j.id]=(g.stock[j.id]??0)+1;}
  return next;
 }

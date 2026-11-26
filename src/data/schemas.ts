@@ -360,6 +360,8 @@ export type RecipeDef = WeaponRecipeDef | ArmorRecipeDef | WeaponCraftDef | Armo
 /** 武器の強化: 持っている武器（fromWeaponId）を、素材と通貨で別の武器（resultWeaponId）に変える。 */
 export interface WeaponRecipeDef {
   id: string;
+  /** 分岐強化: 同じ元装備から別系列へ。直接生産も残す。 */
+  branch?: boolean;
   kind: 'upgrade';
   fromWeaponId: string;
   resultWeaponId: string;

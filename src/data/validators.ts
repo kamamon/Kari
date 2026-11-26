@@ -502,6 +502,7 @@ export function crossCheck(c: Content, errors: string[]): void {
       if (from && to && from.family !== to.family) errors.push(`${w}: 元と結果の系統が違う`);
       if (to?.starter) errors.push(`${w}: 結果の武器が最初から持つ武器になっている`);
       if (from && to && !(to.attack > from.attack)) errors.push(`${w}: 強化しても攻撃力が上がらない`);
+      if(r.branch && (!from?.starter || !to?.series || to.rankId!=='rank.1')) errors.push(`${w}: 派生は初期武器から初級系列へ`);
     } else if (r.kind === 'armor_upgrade') {
       const from = c.armor.get(r.fromArmorId);
       const to = c.armor.get(r.resultArmorId);
@@ -529,11 +530,12 @@ export function crossCheck(c: Content, errors: string[]): void {
     if (fromId === resultId) errors.push(`${w}: 元と結果が同じ`);
     // 採集装備のみ直接生産と一段強化の両方を認める。同じ方式の重複は禁止。
     const pureSeries = c.weapons.get(resultId)?.series ?? c.armor.get(resultId)?.series;
-    const resultKey = pureSeries === 'gathering.ore_only' || pureSeries === 'gathering.bone_only' ? `${resultId}:${fromId === null ? 'craft' : 'upgrade'}` : resultId;
+    const branch = r.kind === 'upgrade' && r.branch === true;
+    const resultKey = branch ? `branch:${fromId}:${resultId}` : pureSeries === 'gathering.ore_only' || pureSeries === 'gathering.bone_only' ? `${resultId}:${fromId === null ? 'craft' : 'upgrade'}` : resultId;
     if (results.has(resultKey)) errors.push(`${w}: 結果 ${resultId} を作るレシピが重複`);
     results.add(resultKey);
     // 1 つの武器・防具から進める先は 1 つ（派生はまだ無い。工房の画面は「次の強化」を 1 つだけ出す）
-    if (fromId !== null) {
+    if (fromId !== null && !branch) {
       if (sources.has(fromId)) errors.push(`${w}: 元 ${fromId} から進めるレシピが重複`);
       sources.add(fromId);
     }
