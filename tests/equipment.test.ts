@@ -111,7 +111,8 @@ describe('系列の装備のデータ（#15 の初級・19 系列）', () => {
     const d = design();
     const ranked = ['selvark', 'kordopil', 'palseit'];
     const upgrades = [...content.recipes.values()].filter((r) => (r.kind === 'upgrade' && content.weapons.get(r.resultWeaponId)?.series?.startsWith('series.')) || (r.kind === 'armor_upgrade' && content.armor.get(r.resultArmorId)?.series?.startsWith('series.')));
-    expect(upgrades).toHaveLength(108);
+    expect(upgrades.filter(r=>r.kind!=='upgrade'||!r.branch)).toHaveLength(108);
+    expect(upgrades.filter(r=>r.kind==='upgrade'&&r.branch)).toHaveLength(105);
     expect([...content.weapons.values()].filter((w) => w.series?.startsWith('series.') && w.rankId !== 'rank.1')).toHaveLength(63);
     expect([...content.armor.values()].filter((a) => a.series?.startsWith('series.') && a.rankId !== 'rank.1')).toHaveLength(45);
     const dname = new Map(d.materials.map((m) => [m.id, m.name]));

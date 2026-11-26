@@ -1,3 +1,7 @@
+import { accumulateMonsterRecords, monsterRecordErrors, type MonsterRecords, type IndividualRecord } from './monsterRecords';
+import { PROVISIONS } from '../game/provisions';
+import {emptyClassicGear, JEWELS, socketCapacity, installedSlots, fortifyBonus, classicRank, type ClassicGearState} from '../game/classicGear';
+import {computeGear} from '../game/gear';
 // 保存データ（里の持ち物・装備・進行）の形と、それを変える処理。
 // ここは計算だけで、DOM・IndexedDB・現在時刻には触れない（Node のテストで同じコードを動かす）。
 // 実際の書き込みは saveDb.ts、画面とのやりとりは saveManager.ts。
@@ -15,8 +19,8 @@ import { hubLifeShapeErrors, type HubLifeState } from '../data/hubLife';
  * 版 4（v0.26.0）: 1 度だけの受け取りの記録（claims。工房からの支給・里の納品）を足した。
  * 版 5（v0.28.0）: ハンターの外見（appearance）を足した。
  */
-// 版5の任意の追加欄。旧データと、旧版への読み戻しを維持する。
-export const SAVE_SCHEMA_VERSION = 5;
+// 版6: 装飾品・強化を移行。里の生活の任意欄も保持する。
+export const SAVE_SCHEMA_VERSION = 6;
 export const SLOT_ID = 'main';
 /** 書き出したファイルの目印 */
 export const EXPORT_FORMAT = 'veilbound-hunters-save';
@@ -66,6 +70,9 @@ export interface SaveDoc {
    * 知らない欄・未知の ID も、そのまま持つ（描く時だけ A で代わりに描く）。能力には関わらない。
    */
   appearance: AppearanceDoc;
+  classicGear?: ClassicGearState;
+  /** 版6の任意欄。過去の未計測狩猟は推定で補完しない。 */
+  monsterRecords?: MonsterRecords;
   /** 拠点の発展と準備。旧版5のデータは省略可。 */
   hubLife?: HubLifeState;
 }
@@ -121,6 +128,7 @@ export function newSave(content: Content, stamp: SaveStamp): SaveDoc {
     settledRuns: [],
     claims: [],
     appearance: legacyAppearance(),
+    classicGear:emptyClassicGear(),
   };
 }
 
@@ -147,7 +155,8 @@ export function validateSave(raw: unknown): string[] {
   if (!Array.isArray(raw.settledRuns) || raw.settledRuns.some((r) => typeof r !== 'string')) e.push('処理済みの依頼の記録が不正です');
   if (!Array.isArray(raw.claims) || raw.claims.some((r) => typeof r !== 'string' || r === '')) e.push('受け取りの記録が不正です');
   else if (new Set(raw.claims).size !== raw.claims.length) e.push('同じ受け取りの記録が 2 つ入っています');
-  e.push(...appearanceShapeErrors(raw.appearance), ...hubLifeShapeErrors(raw.hubLife));
+  e.push(...appearanceShapeErrors(raw.appearance), ...hubLifeShapeErrors(raw.hubLife), ...monsterRecordErrors(raw.monsterRecords));
+  if(raw.classicGear!==undefined){const g=raw.classicGear;if(!isObj(g)||!isObj(g.stock)||!isObj(g.sockets)||!isObj(g.fortify))e.push('装飾品・防具強化の保存が不正です');else{if(Object.values(g.stock).some(n=>!isCount(n)))e.push('装飾品の数が不正です');if(Object.values(g.sockets).some(v=>!Array.isArray(v)||v.length>3||v.some(id=>typeof id!=='string')))e.push('装飾品の装着が不正です');if(Object.values(g.fortify).some(v=>!isCount(v)||Number(v)>5))e.push('防具強化が不正です');}}
   return e;
 }
 
@@ -166,6 +175,7 @@ const MIGRATIONS: Record<number, (doc: Record<string, unknown>) => Record<string
   2: (doc) => ({ ...doc, equippedArmorIds: Array.isArray(doc.equippedArmorIds) ? doc.equippedArmorIds : Array.isArray(doc.armor) ? [...(doc.armor as unknown[])] : [] }),
   3: (doc) => ({ ...doc, claims: Array.isArray(doc.claims) ? doc.claims : [] }),
   4: (doc) => ({ ...doc, appearance: doc.appearance !== undefined ? doc.appearance : legacyAppearance() }),
+  5: (doc) => ({ ...doc, classicGear:doc.classicGear??emptyClassicGear() }),
 };
 
 export type ReadResult =
@@ -241,6 +251,7 @@ export interface RunRewards {
   items: readonly ItemStack[];
   /** 狩りで使った、自分の道具（支給品のぶんは入れない）。持ち物から減らす */
   spent?: readonly ItemStack[];
+  individuals?: readonly IndividualRecord[];
   /** 達成したか。false（失敗・途中で帰った）なら、達成回数は増やさず、使った道具だけを減らす。無ければ達成 */
   cleared?: boolean;
 }
@@ -265,7 +276,10 @@ export function settleRun(doc: SaveDoc, r: RunRewards): SaveDoc | null {
     if (!(s.count > 0)) continue;
     next.items[s.itemId] = Math.min(MAX_COUNT, (next.items[s.itemId] ?? 0) + Math.floor(s.count));
   }
-  if (cleared) next.progress.questClears[r.questId] = Math.min(MAX_COUNT, (next.progress.questClears[r.questId] ?? 0) + 1);
+  if (cleared) {
+    next.progress.questClears[r.questId] = Math.min(MAX_COUNT, (next.progress.questClears[r.questId] ?? 0) + 1);
+    if (r.individuals?.length) next.monsterRecords=accumulateMonsterRecords(next.monsterRecords,r.individuals);
+  }
   next.settledRuns.push(r.runId);
   if (next.settledRuns.length > MAX_SETTLED_RUNS) next.settledRuns.splice(0, next.settledRuns.length - MAX_SETTLED_RUNS);
   return next;
@@ -332,6 +346,9 @@ export function craft(doc: SaveDoc, recipe: RecipeDef, rankOpen = true): SaveDoc
     next.equippedArmorIds = next.equippedArmorIds.map((a) => (a === recipe.fromArmorId ? recipe.resultArmorId : a));
   } else if (recipe.kind === 'craft') next.weapons = [...next.weapons, recipe.resultWeaponId];
   else next.armor = [...next.armor, recipe.resultArmorId];
+  const cg=next.classicGear;
+  const oldId=recipeFrom(recipe),newId=recipeResult(recipe);
+  if(cg&&oldId){for(const jid of cg.sockets[oldId]??[])cg.stock[jid]=Math.min(MAX_COUNT,(cg.stock[jid]??0)+1);delete cg.sockets[oldId];if(cg.fortify[oldId]){cg.fortify[newId]=cg.fortify[oldId]!;delete cg.fortify[oldId];}}
   return next;
 }
 
@@ -557,7 +574,8 @@ export function ownedArmor(doc: SaveDoc, content: Content): Record<ArmorSlot, Ar
 
 /** 防御力の合計（身に着けている防具） */
 export function defenseOf(doc: SaveDoc, content: Content): number {
-  return wornArmor(doc, content).reduce((n, a) => n + a.defense, 0);
+  const worn=wornArmor(doc,content),w=content.weapons.get(playWeaponId(doc,content));
+  return Math.max(0,worn.reduce((n,a)=>n+a.defense,0)+fortifyBonus(worn.map(a=>a.id),doc.classicGear)+(w&&doc.classicGear?computeGear(content,w,worn.map(a=>a.id),doc.classicGear).defenseBonus??0:0));
 }
 
 /** その依頼を受けられるか（先に達成しておく依頼を、すべて 1 回は達成している）。 */
@@ -593,4 +611,29 @@ export function parseImport(text: string): ReadResult {
     raw = raw.save;
   }
   return readSave(raw);
+}
+
+// 1個の装備定義を1個だけ所持する現行保存の範囲で、装着・防具強化を永続化する。
+export function changeClassicGear(doc:SaveDoc,c:Content,op:'craft'|'attach'|'detach'|'fortify',id:string,jewelId?:string):SaveDoc{
+ const next=cloneSave(doc),g=next.classicGear??(next.classicGear=emptyClassicGear());
+ const pay=(money:number,items:readonly {itemId:string;count:number}[])=>{if(next.money<money||items.some(s=>(next.items[s.itemId]??0)<s.count))throw new RuleError('insufficient','素材か通貨が足りません');next.money-=money;for(const s of items){const n=next.items[s.itemId]!-s.count;if(n)next.items[s.itemId]=n;else delete next.items[s.itemId];}};
+ if(op==='craft'){
+  const j=JEWELS.find(j=>j.id===id);if(!j)throw new RuleError('unknown','装飾品がありません');
+  if(![...c.quests.values()].some(q=>q.rankId===j.rank&&questUnlocked(doc,q)))throw new RuleError('locked','その級はまだ開いていません');
+  if((g.stock[id]??0)>=MAX_COUNT)throw new RuleError('full','装飾品がいっぱいです');pay(j.money,j.materials);g.stock[id]=(g.stock[id]??0)+1;return next;
+ }
+ const owned=next.armor.includes(id)||next.weapons.includes(id);if(!owned)throw new RuleError('not_owned','装備を持っていません');
+ if(op==='fortify'){const a=c.armor.get(id);if(!a||a.starter)throw new RuleError('unknown','強化できる防具ではありません');const level=g.fortify[id]??0;if(level>=5)throw new RuleError('full','強化上限です');const rank=classicRank(a),ore=['mat.ore.basin_iron','mat.ore.deepcopper','mat.ore.crystalseam_steel','mat.ore.crystalseam_steel'][rank-1]!;pay(120*rank*(level+1),[{itemId:ore,count:level+1}]);g.fortify[id]=level+1;return next;}
+ const j=JEWELS.find(x=>x.id===jewelId);if(!j)throw new RuleError('unknown','装飾品がありません');
+ const list=g.sockets[id]??(g.sockets[id]=[]);
+ if(op==='attach'){if((g.stock[j.id]??0)<=0)throw new RuleError('not_owned','装飾品を持っていません');if(installedSlots(id,g)+j.cost>socketCapacity(c,id))throw new RuleError('full','空きスロットがありません');g.stock[j.id]=(g.stock[j.id]??0)-1;list.push(j.id);}
+ else {const i=list.indexOf(j.id);if(i<0)throw new RuleError('not_owned','装着されていません');if((g.stock[j.id]??0)>=MAX_COUNT)throw new RuleError('full','装飾品がいっぱいです');list.splice(i,1);g.stock[j.id]=(g.stock[j.id]??0)+1;}
+ return next;
+}
+
+export function prepareProvisions(doc:SaveDoc,c:Content,id:string):SaveDoc{
+ const r=PROVISIONS.find(x=>x.id===id);if(!r||!c.items.has(r.output))throw new RuleError('unknown','調合がありません');
+ if(doc.money<r.money||r.materials.some(m=>(doc.items[m.itemId]??0)<m.count))throw new RuleError('insufficient','素材か通貨が足りません');
+ if((doc.items[r.output]??0)+r.count>MAX_COUNT)throw new RuleError('full','所持上限です');
+ const next=cloneSave(doc);next.money-=r.money;for(const m of r.materials){const n=next.items[m.itemId]!-m.count;if(n)next.items[m.itemId]=n;else delete next.items[m.itemId];}next.items[r.output]=(next.items[r.output]??0)+r.count;return next;
 }

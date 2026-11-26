@@ -5,6 +5,7 @@ import type { FrameSummary } from '../core/frameMeter';
 import type { FacilityDef } from '../data/schemas';
 import { phaseAt } from '../game/action';
 import { edgeStage } from '../game/combat';
+import { weaponEdgeRules } from '../game/weaponEdge';
 import { areaLabel, areaOf } from '../game/field';
 import type { SimEvent } from '../game/events';
 import { familyOf, isInvulnerable } from '../game/player';
@@ -331,7 +332,7 @@ export class Hud {
           break;
         case 'edge': {
           // 刃の状態の段階が下がった時だけ知らせる（研いで戻った時は「研ぎ上がった」が出る）
-          const stages = sim.content.edge.stages;
+          const stages = weaponEdgeRules(sim.content, sim.player.weaponId).stages;
           const i = stages.findIndex((s) => s.id === e.stage);
           const label = familyOf(sim.player, sim.content).edge?.label ?? '刃';
           if (i === stages.length - 1 && i > 0) this.toast(`${label}が鈍った: 弾かれやすい（研磨石で戻せる）`);
@@ -439,6 +440,10 @@ export class Hud {
         case 'item_effect': {
           const name = sim.content.items.get(e.itemId)?.name ?? '';
           if (e.kind === 'heal') this.toast(`${name}: 体力 +${e.amount}`);
+          else if(e.kind==='cook')this.toast(e.ok?`上手に焼けた！ スタミナ +${e.amount}`:`焼き加減失敗 スタミナ +${e.amount}`);
+          else if(e.kind==='stamina')this.toast(`${name}: スタミナ +${e.amount}`);
+          else if(e.kind==='heat'||e.kind==='cold')this.toast(`${name}: ${Math.round(e.amount/3600)}分間の気候対策`);
+          else if(e.kind==='flash')this.toast(e.ok?`白光玉が効いた（${Math.round(e.amount/60)}秒）`:'白光玉は効かなかった');
           else if (e.kind === 'whet') this.toast(`${name}: 研ぎ上がった`);
           else if (e.kind === 'trap') this.toast(e.ok ? `${name}を仕掛けた` : `${name}は置けなかった`);
           else if (e.kind === 'mark') this.toast(e.ok ? `${name}が当たった（${Math.round(e.amount / 60)} 分ほど、地図に居場所が出る）` : `${name}は外れた`);
@@ -525,7 +530,7 @@ export class Hud {
       this.set('spiritfull', fill >= 1 ? 1 : 0, () => this.spiritBox.classList.toggle('full', fill >= 1));
     }
     const famEdge = familyOf(p, sim.content).edge;
-    const E = sim.content.edge;
+    const E = weaponEdgeRules(sim.content, p.weaponId);
     this.set('edgeon', famEdge ? famEdge.label : '', () => {
       this.edgeBox.hidden = !famEdge;
       if (famEdge) this.edgeLabel.textContent = famEdge.label;
@@ -643,7 +648,9 @@ export class Hud {
     });
     // 道具
     const stack = p.items[p.itemIndex];
-    const itemText = stack ? `${sim.content.items.get(stack.itemId)?.name ?? ''} ×${stack.count}` : '';
+    let itemText = stack ? `${sim.content.items.get(stack.itemId)?.name ?? ''} ×${stack.count}` : '';
+    if(p.itemUse&&sim.content.items.get(p.itemUse.itemId)?.kind==='cook'&&!p.itemUse.done){const t=p.action?.tick??0;itemText+=t>=77&&t<=96?' ｜ 今！主ボタン':' ｜ 焼き中 '+Math.min(100,Math.round(t/96*100))+'%';}
+    if(sim.climate!=='normal'){const remain=sim.climate==='hot'?sim.hotProtection:sim.coldProtection;itemText+=' ｜ '+(sim.climate==='hot'?'暑さ':'寒さ')+(remain>0?'対策 '+Math.ceil(remain/60)+'秒':' 注意');}
     this.set('item', itemText, () => {
       this.item.textContent = '';
       if (stack) withIcon(this.item, stack.itemId, itemText);
@@ -682,7 +689,7 @@ export class Hud {
         })
         .filter(Boolean)
         .join('　');
-      const text = `${m.def.name}  HP ${m.hp}/${m.def.hp}　${parts}`;
+      const text = `${m.def.name} 個体 ${Math.round(m.sizeScale*100)}%  HP ${m.hp}/${m.def.hp}　${parts}`;
       this.set('eparts', text, () => (this.enemyParts.textContent = text));
     }
     const a = p.action;
@@ -691,7 +698,7 @@ export class Hud {
       `v${APP_VERSION} build ${BUILD_ID}  seed ${sim.options.seed}  tick ${sim.tick}`,
       `描画 ${stats.fps.toFixed(0)}fps / 計算 60Hz  calls ${info.calls}  tris ${(info.triangles / 1000).toFixed(1)}k  捨てtick ${stats.droppedTicks}`,
       `間隔 平均 ${stats.frames.avgMs.toFixed(1)}ms  p95 ${stats.frames.p95Ms.toFixed(1)}ms  最大 ${stats.frames.maxMs.toFixed(0)}ms  100ms超 ${stats.frames.longFrames}回`,
-      `player ${p.mode}${p.drawn ? ' 抜刀' : ' 納刀'}  HP ${p.hp}  ST ${p.stamina.toFixed(1)}  刃 ${p.edge.toFixed(1)}（${edgeStage(sim.content.edge, p.edge).name}）${isInvulnerable(p) ? '  無敵' : ''}`,
+      `player ${p.mode}${p.drawn ? ' 抜刀' : ' 納刀'}  HP ${p.hp}  ST ${p.stamina.toFixed(1)}  刃 ${p.edge.toFixed(1)}（${edgeStage(weaponEdgeRules(sim.content, p.weaponId), p.edge).name}）${isInvulnerable(p) ? '  無敵' : ''}`,
       a
         ? `  ${a.def.actionId}\n  tick ${a.tick}/${a.def.durationTicks} ${phaseAt(a.def, Math.min(a.tick, a.def.durationTicks - 1))?.id ?? ''}  hitstop ${a.hitstop}  溜め ${a.chargeTicks}(Lv${a.chargeLevel})`
         : p.guard

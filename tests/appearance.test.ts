@@ -94,9 +94,9 @@ describe('外見の選べるもの（public/data/appearance.json）', () => {
 });
 
 describe('保存の版 5: 外見（appearance）', () => {
-  it('新しいデータは基準ハンター A。版 4 のデータ（外見が無い）は、開いた時に A を足して版 5 へ（近い色や全軸 50 にしない）', () => {
+  it('新しいデータは基準ハンター A。版 4 のデータ（外見が無い）は、開いた時に A を足して現行版 6 へ（近い色や全軸 50 にしない）', () => {
     const fresh = newSave(content, stamp);
-    expect(SAVE_SCHEMA_VERSION).toBe(5);
+    expect(SAVE_SCHEMA_VERSION).toBe(6);
     expect(fresh.appearance).toEqual({ dataVersion: APPEARANCE_DATA_VERSION, profile: LEGACY_PROFILE, overrides: {} });
     const { appearance: _a, ...v4 } = { ...clone(fresh), schemaVersion: 4 };
     void _a;
@@ -104,7 +104,7 @@ describe('保存の版 5: 外見（appearance）', () => {
     expect(r.kind).toBe('ok');
     if (r.kind !== 'ok') return;
     expect(r.migratedFrom).toBe(4);
-    expect(r.doc.schemaVersion).toBe(5);
+    expect(r.doc.schemaVersion).toBe(6);
     expect(r.doc.appearance).toEqual(legacyAppearance());
     expect(draftOf(r.doc.appearance)).toEqual(emptyDraft());
   });

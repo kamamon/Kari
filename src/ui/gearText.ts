@@ -1,6 +1,8 @@
+import {armorPoints,socketCapacity} from '../game/classicGear';
 // 装備の性能の短い説明（v0.33.0）: 装備箱と工房で使う。属性・状態異常・防具の技能と耐性（docs/spec.md の 30 章）。
 import { ELEMENT_IDS, type ArmorDef, type ArmorSkill, type Content, type ElementId, type WeaponDef } from '../data/schemas';
 import { AILMENT_NAMES } from '../game/ailment';
+import { weaponEdgeRules } from '../game/weaponEdge';
 import { elementLabel, skillValue, type GearEffects } from '../game/gear';
 
 const elementName = (c: Content, id: ElementId): string => c.elements.elements.find((e) => e.id === id)?.name ?? id;
@@ -9,6 +11,7 @@ const signed = (v: number): string => (v > 0 ? `+${v}` : `${v}`);
 /** 武器の性能: 「攻撃力 85・風 26」「攻撃力 86・毒 9.2」「攻撃力 81・会心 25%」 */
 export function weaponStat(c: Content, w: WeaponDef): string {
   const parts = [`攻撃力 ${w.attack}`];
+  if(c.families.get(w.family)?.edge){const e=weaponEdgeRules(c,w.id);parts.push(`刃 ${Math.round(e.max-e.stages[0]!.min)}/${e.max}`);}
   const el = elementLabel(c, w);
   if (el) parts.push(`${el} ${w.element.value}`);
   if (w.status) parts.push(`${AILMENT_NAMES[w.status.kind]} ${w.status.potency}`);
@@ -48,7 +51,8 @@ export function resistText(c: Content, r: Partial<Record<ElementId, number>> | u
 /** 防具の性能: 「防御 6・受け支え・火 -2 雷 +3」 */
 export function armorStat(c: Content, a: ArmorDef, label = '防御'): string {
   const parts = [`${label} ${a.defense}`];
-  if (a.skill) parts.push(skillName(c, a.skill));
+  const points=armorPoints(c,a);if(points.length)parts.push(points.map(p=>skillName(c,p)+' '+signed(p.points)).join(' / '));
+  const sockets=socketCapacity(c,a.id);if(sockets)parts.push('空き枠 '+sockets);
   const r = resistText(c, a.resist);
   if (r) parts.push(r);
   return parts.join('・');
@@ -80,9 +84,10 @@ export function gearSummary(c: Content, g: GearEffects): { skills: string; resis
       if (id === 'status_resistance' && target) sk.status = target as ArmorSkill['status'];
       const v = skillValue(c, g.levels, key);
       const [what, sign, unit] = SKILL_EFFECT[id] ?? [c.skills.get(id)?.effect ?? '', '+', c.skills.get(id)?.unit ?? ''];
-      return `${skillName(c, sk)} Lv${lv}（${what} ${sign}${v}${unit}）`;
+      const value=sign==='-'?-v:v;return `${skillName(c, sk)} ${lv<0?'悪化':'Lv'+lv}（${what} ${signed(value)}${unit}）`;
     })
     .join('・');
   const resist = ELEMENT_IDS.filter((e) => g.resist[e] !== 0).map((e) => `${elementName(c, e)} ${signed(g.resist[e])}`).join('・');
-  return { skills, resist };
+  const points=g.points?[...g.points].map(([k,n])=>`${c.skills.get(k.split(':')[0]!)?.name??k}${k.includes(':')?'('+k.split(':')[1]+')':''} ${signed(n)}`).join(' / '):'';
+  return { skills: [skills,points?'技能点: '+points:''].filter(Boolean).join('｜'), resist };
 }

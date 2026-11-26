@@ -1,0 +1,143 @@
+{
+  "fields": 19,
+  "areas": 190,
+  "connections": 243,
+  "questHunts": 16,
+  "questSurveys": 19,
+  "checks": 3846,
+  "regions": [
+    {
+      "id": "field.classic_02",
+      "name": "根絡み湿原",
+      "areas": 10,
+      "connections": 13,
+      "native": 4
+    },
+    {
+      "id": "field.classic_03",
+      "name": "硝砂海岸",
+      "areas": 10,
+      "connections": 12,
+      "native": 4
+    },
+    {
+      "id": "field.classic_04",
+      "name": "灰鐘鉱山",
+      "areas": 9,
+      "connections": 11,
+      "native": 2
+    },
+    {
+      "id": "field.classic_05",
+      "name": "氷帆峡谷",
+      "areas": 9,
+      "connections": 11,
+      "native": 3
+    },
+    {
+      "id": "field.classic_06",
+      "name": "霧灯樹海",
+      "areas": 11,
+      "connections": 15,
+      "native": 3
+    },
+    {
+      "id": "field.classic_07",
+      "name": "燠脈台地",
+      "areas": 11,
+      "connections": 14,
+      "native": 0
+    },
+    {
+      "id": "field.classic_08",
+      "name": "雨裂断崖",
+      "areas": 9,
+      "connections": 11,
+      "native": 0
+    },
+    {
+      "id": "field.classic_09",
+      "name": "銅苔段丘",
+      "areas": 10,
+      "connections": 13,
+      "native": 0
+    },
+    {
+      "id": "field.classic_10",
+      "name": "枯響河床",
+      "areas": 10,
+      "connections": 13,
+      "native": 0
+    },
+    {
+      "id": "field.classic_11",
+      "name": "鉛雲高地",
+      "areas": 9,
+      "connections": 11,
+      "native": 0
+    },
+    {
+      "id": "field.classic_12",
+      "name": "沈根沢地",
+      "areas": 10,
+      "connections": 13,
+      "native": 0
+    },
+    {
+      "id": "field.classic_13",
+      "name": "玻璃裂原",
+      "areas": 11,
+      "connections": 14,
+      "native": 0
+    },
+    {
+      "id": "field.classic_14",
+      "name": "灰繭窪地",
+      "areas": 11,
+      "connections": 15,
+      "native": 0
+    },
+    {
+      "id": "field.classic_15",
+      "name": "冷銅洞庭",
+      "areas": 9,
+      "connections": 11,
+      "native": 0
+    },
+    {
+      "id": "field.classic_16",
+      "name": "響礫回廊",
+      "areas": 9,
+      "connections": 11,
+      "native": 0
+    },
+    {
+      "id": "field.classic_17",
+      "name": "重霧環谷",
+      "areas": 11,
+      "connections": 15,
+      "native": 0
+    },
+    {
+      "id": "field.classic_18",
+      "name": "伏熱石原",
+      "areas": 11,
+      "connections": 14,
+      "native": 0
+    },
+    {
+      "id": "field.classic_19",
+      "name": "錆星高原",
+      "areas": 9,
+      "connections": 11,
+      "native": 0
+    },
+    {
+      "id": "field.classic_20",
+      "name": "深帷樹洞",
+      "areas": 11,
+      "connections": 15,
+      "native": 0
+    }
+  ]
+}

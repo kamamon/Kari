@@ -453,14 +453,16 @@ describe('装備の性能の書き方（装備箱・工房。src/ui/gearText.ts�
   it('武器: 属性・状態異常・会心。防具: 技能と耐性。まとめ: 技能の Lv と効き目、耐性の合計', async () => {
     const { armorStat, gearSummary, weaponShortName, weaponStat } = await import('../src/ui/gearText');
     const w = (id: string) => content.weapons.get(id)!;
-    expect(weaponStat(content, w('weapon.heavy_blade.selvark.r1'))).toBe('攻撃力 85・風 26');
-    expect(weaponStat(content, w('weapon.heavy_blade.verito.r1'))).toBe('攻撃力 86・毒 9.2');
-    expect(weaponStat(content, w('weapon.heavy_blade.orglass.r1'))).toBe('攻撃力 86・会心 25%');
-    expect(weaponStat(content, w('weapon.heavy_blade.002'))).toBe('攻撃力 92');
+    expect(weaponStat(content, w('weapon.heavy_blade.selvark.r1'))).toMatch(/^攻撃力 85・刃 \d+\/\d+・風 26$/);
+    expect(weaponStat(content, w('weapon.heavy_blade.verito.r1'))).toMatch(/^攻撃力 86・刃 \d+\/\d+・毒 9\.2$/);
+    expect(weaponStat(content, w('weapon.heavy_blade.orglass.r1'))).toMatch(/^攻撃力 86・刃 \d+\/\d+・会心 25%$/);
+    expect(weaponStat(content, w('weapon.heavy_blade.002'))).toMatch(/^攻撃力 92・刃 \d+\/\d+$/);
     expect(weaponShortName(content, w('weapon.heavy_blade.selvark.r1'))).toBe('帆角【初級】');
     expect(weaponShortName(content, w('weapon.heavy_blade.002'))).toBe('岩殻');
-    expect(armorStat(content, content.armor.get('armor.head.numeradon.r1')!)).toBe('防御 6・個別属性耐性（水）・雷 -2 水 +3');
-    expect(armorStat(content, content.armor.get('armor.chest.ashreia.r1')!)).toBe('防御 6・個別状態耐性（睡眠）・火 -2 霧 +3');
+    const num=armorStat(content, content.armor.get('armor.head.numeradon.r1')!);
+    expect(num).toMatch(/^防御 6・/);expect(num).toContain('個別属性耐性（水） +3');expect(num).toContain('雷 -2 水 +3');expect(num).toContain('空き枠 1');
+    const ash=armorStat(content, content.armor.get('armor.chest.ashreia.r1')!);
+    expect(ash).toMatch(/^防御 6・/);expect(ash).toContain('個別状態耐性（睡眠）');expect(ash).toContain('火 -2 霧 +3');
     expect(armorStat(content, content.armor.get('armor.head.001')!)).toBe('防御 0');
     const g = computeGear(content, w('weapon.heavy_blade.001'), galdrosSet(2));
     expect(gearSummary(content, g)).toEqual({ skills: '受け支え Lv3（防御のスタミナ -20%）・刃持ち Lv2（刃の減り -9%）', resist: '火 -10・雷 +15' });

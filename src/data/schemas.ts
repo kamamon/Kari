@@ -33,6 +33,10 @@ export interface PhaseDef {
 
 /** 攻撃判定の窓。区間は開始を含み、終了を含まない（1 tick = 1/60 秒）。 */
 export interface HitWindowDef {
+  edgeCost?: number;
+  elementMotion?: number;
+  statusMotion?: number;
+  stunMotion?: number;
   id: string;
   from: number;
   to: number;
@@ -295,7 +299,12 @@ export interface WeaponFamilyDef {
   summary?: string;
 }
 
+/** 武器固有の刃の長さ・区間・1命中の消耗。省略時は級・系列から生成。 */
+export interface WeaponEdgeProfile {
+  max: number; keen: number; worn: number; wearPerHit: number;
+}
 export interface WeaponDef {
+  edgeProfile?: WeaponEdgeProfile;
   id: string;
   family: string;
   name: string;
@@ -329,6 +338,7 @@ export interface ShotSpec {
 
 /** 刃の状態の 1 段階。値が min 以上（で、上の段階の min 未満）の時にこの段階になる。 */
 export interface EdgeStageDef {
+  elementScale?: number;
   id: string;
   name: string;
   min: number;
@@ -355,6 +365,8 @@ export type RecipeDef = WeaponRecipeDef | ArmorRecipeDef | WeaponCraftDef | Armo
 /** 武器の強化: 持っている武器（fromWeaponId）を、素材と通貨で別の武器（resultWeaponId）に変える。 */
 export interface WeaponRecipeDef {
   id: string;
+  /** 分岐強化: 同じ元装備から別系列へ。直接生産も残す。 */
+  branch?: boolean;
   kind: 'upgrade';
   fromWeaponId: string;
   resultWeaponId: string;
@@ -413,6 +425,8 @@ export interface ArmorDef {
   resist?: Partial<Record<ElementId, number>>;
   /** 技能（v0.33.0。1 部位 1 点。element・status は、耐性の技能の対象） */
   skill?: ArmorSkill;
+  /** Explicit 2G-style point contributions, preferred over legacy adaptation. */
+  skillPoints?: ArmorSkill[];
 }
 
 /** 防具の技能（v0.33.0。ChatGPT の全装備四級版 #15 の 16 技能。public/data/skills.json） */
@@ -437,7 +451,25 @@ export interface SkillDef {
  * 属性と状態異常の決まり（public/data/elements.json。v0.33.0。docs/elements.md・ChatGPT の全装備四級版 #15 の rules）。
  * 部位の属性係数 = 部位の elementZone × （弱点 weak / 耐性 resist / ほか 1）。弱点と耐性はモンスターの登録簿の weak・resist。
  */
+/** 属性肉質の明示値は絶対係数。未設定属性は従来式で補う。 */
+export interface PartElementProfile {
+  normal: Partial<Record<ElementId, number>>;
+  broken?: Partial<Record<ElementId, number>>;
+}
+
+/** 現行の拘束罠に対する相性。怒り中の0は作動しない。倍率はKariの初期案。 */
+export interface TrapResponseProfile {
+  normalScale: number;
+  enragedScale: number;
+  repeatScale: number;
+  minTicks: number;
+}
+
 export interface ElementRules {
+  /** 種別相性。省略時は従来規則。 */
+  trapProfiles?: Record<string, TrapResponseProfile>;
+  /** 恒久種ID/部位ID。生成されるモンスター定義とは独立した調整表。 */
+  partZones?: Record<string, Record<string, PartElementProfile>>;
   elements: { id: ElementId; name: string }[];
   /** 部位の elementZone に掛ける倍率 */
   zone: { weak: number; resist: number };
@@ -455,7 +487,25 @@ export interface ElementRules {
   ailment: MonsterAilmentRules;
 }
 
+/** 種・状態ごとの独立した耐性。値はKariの調整案で原作値ではない。 */
+export type SpeciesAilmentRule =
+  | { immune: true }
+  | {
+      immune?: false;
+      initial: number;
+      increase: number;
+      cap: number;
+      durationTicks: number;
+      decayIntervalTicks: number;
+      decayAmount: number;
+      /** 毒だけ: 1回で与える総ダメージ（最大HPとは独立）と分割回数 */
+      poisonDamage?: number;
+      poisonHits?: number;
+    };
+
 export interface MonsterAilmentRules {
+  /** 種ID → 状態ごとの上書き。省略した種/状態は従来の共通値。 */
+  species?: Record<string, Partial<Record<StatusKind, SpeciesAilmentRule>>>;
   /** 初めの閾値と、発症するたびの伸び（毒・麻痺・睡眠 / 気絶） */
   threshold: number;
   growth: number;
@@ -1208,13 +1258,16 @@ export interface ItemDef {
   id: string;
   name: string;
   /** whet: 研磨石。刃の状態を最大まで戻す。抜刀して、手に持った武器を研ぐ */
-  kind: 'heal' | 'trap' | 'tranq' | 'whet' | 'mark' | 'coating';
+  kind: 'heal' | 'trap' | 'tranq' | 'whet' | 'mark' | 'coating' | 'flash' | 'stamina' | 'cook' | 'heat' | 'cold';
   carryMax: number;
   /** 使う行動と、効き目の tick。ビン（kind 'coating'）は道具の欄から使わないので持たない（v0.60.0） */
   useActionId?: string;
   effectTick?: number;
   summary: string;
   heal?: number;
+  stamina?: number;
+  protectTicks?: number;
+  flash?: {range:number; halfAngleDeg:number; ticks:number};
   /** 仕掛けてから armTicks で作動可能になり、大型が radius 内に入ると holdTicks の間止める。lifeTicks で消える。 */
   trap?: { armTicks: number; radius: number; holdTicks: number; lifeTicks: number };
   /** 正面 ±halfAngleDeg、range 以内の大型に当たる */

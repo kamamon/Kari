@@ -6,6 +6,7 @@ import type { GearEffects } from './gear';
 import { STATUS_KINDS, type ClimbDef, type VaultDef, type FieldDef, type ActionDef, type CancelWindowDef, type Content, type GuardDef, type HazardDef, type ItemDef, type ItemStack, type MonsterDef, type ShootDef, type StatusHit, type StatusKind, type StatusTuning, type WeaponDef, type WeaponFamilyDef } from '../data/schemas';
 import { inWindow, newRun, type ActionRun } from './action';
 import { edgeStage } from './combat';
+import { weaponEdgeRules } from './weaponEdge';
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
 import { sampleCurve } from './tracks';
@@ -81,7 +82,7 @@ export interface PlayerState {
    */
   aim: { yaw: number; pitch: number } | null;
   /** 使っている途中の道具。効果が出る tick より前に妨害されると、消費しない。 */
-  itemUse: { itemId: string; instanceId: number; done: boolean } | null;
+  itemUse: { itemId: string; instanceId: number; done: boolean; cookGood?:boolean; cookPressed?:boolean } | null;
   /** 剥ぎ取りの途中（source は剥ぎ取る対象） */
   carving: { source: string; instanceId: number; done: boolean } | null;
   /** 採る・納める途中（狩らない依頼。v0.27.0）。品が入る tick より前に止まると、何も起きない */
@@ -147,7 +148,7 @@ function itemBlock(p: PlayerState, ctx: SimCtx): 'empty' | 'not_now' | 'no_need'
   if (!stack || !item || stack.count <= 0) return 'empty';
   if (item.kind === 'whet') {
     if (!familyOf(p, ctx.content).edge) return 'not_now';
-    if (p.edge >= ctx.content.edge.max) return 'no_need';
+    if (p.edge >= weaponEdgeRules(ctx.content, p.weaponId).max) return 'no_need';
   }
   return ctx.canUseItem(item) ? null : 'not_now';
 }
@@ -169,7 +170,7 @@ function tryUseItem(p: PlayerState, ctx: SimCtx, keepDrawn = false): boolean {
   const run = startAction(p, item.useActionId!, ctx);
   run.keepDrawn = keepDrawn;
   // 防具の技能「道具整備」（v0.33.0）: 整備の道具（研磨石）を使う時間だけが短くなる（効き目は変えない）
-  if (item.maintenance && ctx.gear.itemTime < 1) run.speed = ctx.gear.itemTime;
+  if (item.maintenance && ctx.gear.itemTime !== 1) run.speed = ctx.gear.itemTime;
   p.itemUse = { itemId: item.id, instanceId: run.instanceId, done: false };
   ctx.emit({ type: 'item_use', itemId: item.id, pos: { ...p.pos } });
   return true;
@@ -213,7 +214,7 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
     demon: false,
     spirit: 0,
     spiritIdle: 0,
-    edge: content.edge.max,
+    edge: weaponEdgeRules(content, weaponId).max,
     items: carried.map((s) => ({ itemId: s.itemId, count: s.count })),
     itemIndex: 0,
     coatings: coatings.map((s) => ({ itemId: s.itemId, count: s.count })),
@@ -455,6 +456,8 @@ function tryStartRoll(p: PlayerState, inp: InputFrame, ctx: SimCtx): boolean {
     p.yaw = dir;
   }
   const run = startAction(p, def.actionId, ctx);
+  const extra=Math.max(0,ctx.gear.evadeExtraTicks??0);
+  if(extra&&run.def.invulnerable)run.def={...run.def,invulnerable:run.def.invulnerable.map(w=>({...w,to:Math.max(w.to,Math.min(run.def.durationTicks,w.from+25,w.to+extra))}))};
   run.moveYaw = dir;
   run.fixedDir = true;
   run.dirIndex = dirIndex;
@@ -1201,6 +1204,7 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   const use = p.itemUse;
   if (use) {
     const item = ctx.content.items.get(use.itemId)!;
+    if(item.kind==='cook'&&!use.done&&!use.cookPressed&&ev?.run.instanceId===use.instanceId&&(inp.pressed&Btn.Main)) {use.cookPressed=true;use.cookGood=ev.t>=76&&ev.t<96;p.buffer.main=0;}
     if (!use.done && ev && ev.run.instanceId === use.instanceId && ev.t >= item.effectTick!) {
       use.done = true;
       const stack = p.items.find((s) => s.itemId === use.itemId);
@@ -1361,7 +1365,7 @@ export function resolveIncomingHit(p: PlayerState, hit: IncomingHit, ctx: SimCtx
 
 /** 刃の状態を減らす。段階が替わったら知らせる */
 function wearEdge(p: PlayerState, amount: number, ctx: SimCtx): void {
-  const E = ctx.content.edge;
+  const E = weaponEdgeRules(ctx.content, p.weaponId);
   const before = edgeStage(E, p.edge).id;
   p.edge = Math.max(0, p.edge - amount);
   const now = edgeStage(E, p.edge);

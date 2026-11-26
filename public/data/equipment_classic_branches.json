@@ -1,0 +1,2472 @@
+{
+  "schemaVersion": 1,
+  "note": "既存初級装備への派生。直接生産は保持し、初期武器を使用する場合の費用と素材を抑える。Kari独自値。",
+  "weapons": [],
+  "armor": [],
+  "recipes": [
+    {
+      "id": "recipe.branch.heavy_blade.selvark.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.heavy_blade.001",
+      "resultWeaponId": "weapon.heavy_blade.selvark.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.selvark.sail_membrane",
+            "count": 4
+          },
+          {
+            "itemId": "mat.selvark.elastic_tendon",
+            "count": 2
+          },
+          {
+            "itemId": "mat.selvark.flow_concha",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.guard_blade.selvark.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.selvark.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.selvark.sail_membrane",
+            "count": 3
+          },
+          {
+            "itemId": "mat.selvark.elastic_tendon",
+            "count": 3
+          },
+          {
+            "itemId": "mat.selvark.flow_concha",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.war_maul.selvark.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.selvark.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.selvark.sail_membrane",
+            "count": 4
+          },
+          {
+            "itemId": "mat.selvark.elastic_tendon",
+            "count": 2
+          },
+          {
+            "itemId": "mat.selvark.flow_concha",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.twin_blades.selvark.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.selvark.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.selvark.sail_membrane",
+            "count": 4
+          },
+          {
+            "itemId": "mat.selvark.elastic_tendon",
+            "count": 2
+          },
+          {
+            "itemId": "mat.selvark.flow_concha",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_blade.selvark.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.selvark.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.selvark.sail_membrane",
+            "count": 3
+          },
+          {
+            "itemId": "mat.selvark.elastic_tendon",
+            "count": 2
+          },
+          {
+            "itemId": "mat.selvark.flow_concha",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_lance.selvark.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.selvark.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.selvark.sail_membrane",
+            "count": 5
+          },
+          {
+            "itemId": "mat.selvark.elastic_tendon",
+            "count": 3
+          },
+          {
+            "itemId": "mat.selvark.flow_concha",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.ring_bow.selvark.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.selvark.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.selvark.sail_membrane",
+            "count": 3
+          },
+          {
+            "itemId": "mat.selvark.elastic_tendon",
+            "count": 3
+          },
+          {
+            "itemId": "mat.selvark.flow_concha",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.heavy_blade.numeradon.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.heavy_blade.001",
+      "resultWeaponId": "weapon.heavy_blade.numeradon.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.numeradon.mud_crystal",
+            "count": 4
+          },
+          {
+            "itemId": "mat.numeradon.waterproof_hide",
+            "count": 2
+          },
+          {
+            "itemId": "mat.numeradon.pressure_sac",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.guard_blade.numeradon.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.numeradon.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.numeradon.mud_crystal",
+            "count": 3
+          },
+          {
+            "itemId": "mat.numeradon.waterproof_hide",
+            "count": 3
+          },
+          {
+            "itemId": "mat.numeradon.pressure_sac",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.war_maul.numeradon.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.numeradon.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.numeradon.mud_crystal",
+            "count": 4
+          },
+          {
+            "itemId": "mat.numeradon.waterproof_hide",
+            "count": 2
+          },
+          {
+            "itemId": "mat.numeradon.pressure_sac",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.twin_blades.numeradon.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.numeradon.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.numeradon.mud_crystal",
+            "count": 4
+          },
+          {
+            "itemId": "mat.numeradon.waterproof_hide",
+            "count": 2
+          },
+          {
+            "itemId": "mat.numeradon.pressure_sac",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_blade.numeradon.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.numeradon.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.numeradon.mud_crystal",
+            "count": 3
+          },
+          {
+            "itemId": "mat.numeradon.waterproof_hide",
+            "count": 2
+          },
+          {
+            "itemId": "mat.numeradon.pressure_sac",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_lance.numeradon.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.numeradon.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.numeradon.mud_crystal",
+            "count": 5
+          },
+          {
+            "itemId": "mat.numeradon.waterproof_hide",
+            "count": 3
+          },
+          {
+            "itemId": "mat.numeradon.pressure_sac",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.ring_bow.numeradon.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.numeradon.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.numeradon.mud_crystal",
+            "count": 3
+          },
+          {
+            "itemId": "mat.numeradon.waterproof_hide",
+            "count": 3
+          },
+          {
+            "itemId": "mat.numeradon.pressure_sac",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.heavy_blade.bornakel.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.heavy_blade.001",
+      "resultWeaponId": "weapon.heavy_blade.bornakel.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.bornakel.echo_sac",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bornakel.hard_hide",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bornakel.resonance_valve",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.guard_blade.bornakel.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.bornakel.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.bornakel.echo_sac",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bornakel.hard_hide",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bornakel.resonance_valve",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.war_maul.bornakel.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.bornakel.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.bornakel.echo_sac",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bornakel.hard_hide",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bornakel.resonance_valve",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.twin_blades.bornakel.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.bornakel.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.bornakel.echo_sac",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bornakel.hard_hide",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bornakel.resonance_valve",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_blade.bornakel.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.bornakel.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.bornakel.echo_sac",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bornakel.hard_hide",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bornakel.resonance_valve",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_lance.bornakel.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.bornakel.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.bornakel.echo_sac",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bornakel.hard_hide",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bornakel.resonance_valve",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.ring_bow.bornakel.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.bornakel.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.bornakel.echo_sac",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bornakel.hard_hide",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bornakel.resonance_valve",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.heavy_blade.ashreia.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.heavy_blade.001",
+      "resultWeaponId": "weapon.heavy_blade.ashreia.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.ashreia.ash_feather",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ashreia.veil_membrane",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ashreia.sleep_powder",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.guard_blade.ashreia.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.ashreia.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.ashreia.ash_feather",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ashreia.veil_membrane",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ashreia.sleep_powder",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.war_maul.ashreia.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.ashreia.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.ashreia.ash_feather",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ashreia.veil_membrane",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ashreia.sleep_powder",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.twin_blades.ashreia.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.ashreia.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.ashreia.ash_feather",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ashreia.veil_membrane",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ashreia.sleep_powder",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_blade.ashreia.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.ashreia.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.ashreia.ash_feather",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ashreia.veil_membrane",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ashreia.sleep_powder",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_lance.ashreia.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.ashreia.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.ashreia.ash_feather",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ashreia.veil_membrane",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ashreia.sleep_powder",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.ring_bow.ashreia.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.ashreia.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.ashreia.ash_feather",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ashreia.veil_membrane",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ashreia.sleep_powder",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.heavy_blade.lumisca.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.heavy_blade.001",
+      "resultWeaponId": "weapon.heavy_blade.lumisca.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.lumisca.phos_node",
+            "count": 4
+          },
+          {
+            "itemId": "mat.lumisca.light_hide",
+            "count": 2
+          },
+          {
+            "itemId": "mat.lumisca.storage_film",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.guard_blade.lumisca.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.lumisca.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.lumisca.phos_node",
+            "count": 3
+          },
+          {
+            "itemId": "mat.lumisca.light_hide",
+            "count": 3
+          },
+          {
+            "itemId": "mat.lumisca.storage_film",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.war_maul.lumisca.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.lumisca.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.lumisca.phos_node",
+            "count": 4
+          },
+          {
+            "itemId": "mat.lumisca.light_hide",
+            "count": 2
+          },
+          {
+            "itemId": "mat.lumisca.storage_film",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.twin_blades.lumisca.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.lumisca.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.lumisca.phos_node",
+            "count": 4
+          },
+          {
+            "itemId": "mat.lumisca.light_hide",
+            "count": 2
+          },
+          {
+            "itemId": "mat.lumisca.storage_film",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_blade.lumisca.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.lumisca.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.lumisca.phos_node",
+            "count": 3
+          },
+          {
+            "itemId": "mat.lumisca.light_hide",
+            "count": 2
+          },
+          {
+            "itemId": "mat.lumisca.storage_film",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_lance.lumisca.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.lumisca.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.lumisca.phos_node",
+            "count": 5
+          },
+          {
+            "itemId": "mat.lumisca.light_hide",
+            "count": 3
+          },
+          {
+            "itemId": "mat.lumisca.storage_film",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.ring_bow.lumisca.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.lumisca.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.lumisca.phos_node",
+            "count": 3
+          },
+          {
+            "itemId": "mat.lumisca.light_hide",
+            "count": 3
+          },
+          {
+            "itemId": "mat.lumisca.storage_film",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.heavy_blade.orglass.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.heavy_blade.001",
+      "resultWeaponId": "weapon.heavy_blade.orglass.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.orglass.glass_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.orglass.claw_core",
+            "count": 2
+          },
+          {
+            "itemId": "mat.orglass.forming_gland",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.guard_blade.orglass.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.orglass.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.orglass.glass_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.orglass.claw_core",
+            "count": 3
+          },
+          {
+            "itemId": "mat.orglass.forming_gland",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.war_maul.orglass.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.orglass.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.orglass.glass_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.orglass.claw_core",
+            "count": 2
+          },
+          {
+            "itemId": "mat.orglass.forming_gland",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.twin_blades.orglass.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.orglass.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.orglass.glass_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.orglass.claw_core",
+            "count": 2
+          },
+          {
+            "itemId": "mat.orglass.forming_gland",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_blade.orglass.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.orglass.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.orglass.glass_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.orglass.claw_core",
+            "count": 2
+          },
+          {
+            "itemId": "mat.orglass.forming_gland",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_lance.orglass.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.orglass.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.orglass.glass_shell",
+            "count": 5
+          },
+          {
+            "itemId": "mat.orglass.claw_core",
+            "count": 3
+          },
+          {
+            "itemId": "mat.orglass.forming_gland",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.ring_bow.orglass.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.orglass.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.orglass.glass_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.orglass.claw_core",
+            "count": 3
+          },
+          {
+            "itemId": "mat.orglass.forming_gland",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.heavy_blade.tengaro.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.heavy_blade.001",
+      "resultWeaponId": "weapon.heavy_blade.tengaro.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.tengaro.hook_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.tengaro.ring_segment",
+            "count": 2
+          },
+          {
+            "itemId": "mat.tengaro.venom_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.guard_blade.tengaro.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.tengaro.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.tengaro.hook_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.tengaro.ring_segment",
+            "count": 3
+          },
+          {
+            "itemId": "mat.tengaro.venom_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.war_maul.tengaro.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.tengaro.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.tengaro.hook_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.tengaro.ring_segment",
+            "count": 2
+          },
+          {
+            "itemId": "mat.tengaro.venom_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.twin_blades.tengaro.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.tengaro.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.tengaro.hook_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.tengaro.ring_segment",
+            "count": 2
+          },
+          {
+            "itemId": "mat.tengaro.venom_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_blade.tengaro.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.tengaro.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.tengaro.hook_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.tengaro.ring_segment",
+            "count": 2
+          },
+          {
+            "itemId": "mat.tengaro.venom_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_lance.tengaro.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.tengaro.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.tengaro.hook_shell",
+            "count": 5
+          },
+          {
+            "itemId": "mat.tengaro.ring_segment",
+            "count": 3
+          },
+          {
+            "itemId": "mat.tengaro.venom_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.ring_bow.tengaro.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.tengaro.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.tengaro.hook_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.tengaro.ring_segment",
+            "count": 3
+          },
+          {
+            "itemId": "mat.tengaro.venom_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.heavy_blade.verito.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.heavy_blade.001",
+      "resultWeaponId": "weapon.heavy_blade.verito.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.verito.mist_silk",
+            "count": 4
+          },
+          {
+            "itemId": "mat.verito.wing_bag",
+            "count": 2
+          },
+          {
+            "itemId": "mat.verito.venom_fluid",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.guard_blade.verito.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.verito.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.verito.mist_silk",
+            "count": 3
+          },
+          {
+            "itemId": "mat.verito.wing_bag",
+            "count": 3
+          },
+          {
+            "itemId": "mat.verito.venom_fluid",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.war_maul.verito.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.verito.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.verito.mist_silk",
+            "count": 4
+          },
+          {
+            "itemId": "mat.verito.wing_bag",
+            "count": 2
+          },
+          {
+            "itemId": "mat.verito.venom_fluid",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.twin_blades.verito.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.verito.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.verito.mist_silk",
+            "count": 4
+          },
+          {
+            "itemId": "mat.verito.wing_bag",
+            "count": 2
+          },
+          {
+            "itemId": "mat.verito.venom_fluid",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_blade.verito.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.verito.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.verito.mist_silk",
+            "count": 3
+          },
+          {
+            "itemId": "mat.verito.wing_bag",
+            "count": 2
+          },
+          {
+            "itemId": "mat.verito.venom_fluid",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_lance.verito.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.verito.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.verito.mist_silk",
+            "count": 5
+          },
+          {
+            "itemId": "mat.verito.wing_bag",
+            "count": 3
+          },
+          {
+            "itemId": "mat.verito.venom_fluid",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.ring_bow.verito.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.verito.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.verito.mist_silk",
+            "count": 3
+          },
+          {
+            "itemId": "mat.verito.wing_bag",
+            "count": 3
+          },
+          {
+            "itemId": "mat.verito.venom_fluid",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.heavy_blade.razmer.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.heavy_blade.001",
+      "resultWeaponId": "weapon.heavy_blade.razmer.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.razmer.ring_bone",
+            "count": 4
+          },
+          {
+            "itemId": "mat.razmer.vibration_gland",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.guard_blade.razmer.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.razmer.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.razmer.ring_bone",
+            "count": 3
+          },
+          {
+            "itemId": "mat.razmer.vibration_gland",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.war_maul.razmer.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.razmer.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.razmer.ring_bone",
+            "count": 4
+          },
+          {
+            "itemId": "mat.razmer.vibration_gland",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.twin_blades.razmer.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.razmer.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.razmer.ring_bone",
+            "count": 4
+          },
+          {
+            "itemId": "mat.razmer.vibration_gland",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_blade.razmer.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.razmer.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.razmer.ring_bone",
+            "count": 3
+          },
+          {
+            "itemId": "mat.razmer.vibration_gland",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_lance.razmer.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.razmer.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.razmer.ring_bone",
+            "count": 5
+          },
+          {
+            "itemId": "mat.razmer.vibration_gland",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.ring_bow.razmer.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.razmer.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.razmer.ring_bone",
+            "count": 3
+          },
+          {
+            "itemId": "mat.razmer.vibration_gland",
+            "count": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.heavy_blade.kirisave.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.heavy_blade.001",
+      "resultWeaponId": "weapon.heavy_blade.kirisave.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.kirisave.ice_sail",
+            "count": 4
+          },
+          {
+            "itemId": "mat.kirisave.cold_crystal",
+            "count": 2
+          },
+          {
+            "itemId": "mat.kirisave.crystal_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.guard_blade.kirisave.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.kirisave.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.kirisave.ice_sail",
+            "count": 3
+          },
+          {
+            "itemId": "mat.kirisave.cold_crystal",
+            "count": 3
+          },
+          {
+            "itemId": "mat.kirisave.crystal_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.war_maul.kirisave.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.kirisave.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.kirisave.ice_sail",
+            "count": 4
+          },
+          {
+            "itemId": "mat.kirisave.cold_crystal",
+            "count": 2
+          },
+          {
+            "itemId": "mat.kirisave.crystal_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.twin_blades.kirisave.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.kirisave.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.kirisave.ice_sail",
+            "count": 4
+          },
+          {
+            "itemId": "mat.kirisave.cold_crystal",
+            "count": 2
+          },
+          {
+            "itemId": "mat.kirisave.crystal_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_blade.kirisave.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.kirisave.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.kirisave.ice_sail",
+            "count": 3
+          },
+          {
+            "itemId": "mat.kirisave.cold_crystal",
+            "count": 2
+          },
+          {
+            "itemId": "mat.kirisave.crystal_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_lance.kirisave.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.kirisave.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.kirisave.ice_sail",
+            "count": 5
+          },
+          {
+            "itemId": "mat.kirisave.cold_crystal",
+            "count": 3
+          },
+          {
+            "itemId": "mat.kirisave.crystal_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.ring_bow.kirisave.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.kirisave.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.kirisave.ice_sail",
+            "count": 3
+          },
+          {
+            "itemId": "mat.kirisave.cold_crystal",
+            "count": 3
+          },
+          {
+            "itemId": "mat.kirisave.crystal_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.heavy_blade.velgait.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.heavy_blade.001",
+      "resultWeaponId": "weapon.heavy_blade.velgait.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.velgait.mist_lamp",
+            "count": 4
+          },
+          {
+            "itemId": "mat.velgait.tough_hide",
+            "count": 2
+          },
+          {
+            "itemId": "mat.velgait.mist_pore",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.guard_blade.velgait.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.velgait.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.velgait.mist_lamp",
+            "count": 3
+          },
+          {
+            "itemId": "mat.velgait.tough_hide",
+            "count": 3
+          },
+          {
+            "itemId": "mat.velgait.mist_pore",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.war_maul.velgait.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.velgait.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.velgait.mist_lamp",
+            "count": 4
+          },
+          {
+            "itemId": "mat.velgait.tough_hide",
+            "count": 2
+          },
+          {
+            "itemId": "mat.velgait.mist_pore",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.twin_blades.velgait.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.velgait.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.velgait.mist_lamp",
+            "count": 4
+          },
+          {
+            "itemId": "mat.velgait.tough_hide",
+            "count": 2
+          },
+          {
+            "itemId": "mat.velgait.mist_pore",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_blade.velgait.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.velgait.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.velgait.mist_lamp",
+            "count": 3
+          },
+          {
+            "itemId": "mat.velgait.tough_hide",
+            "count": 2
+          },
+          {
+            "itemId": "mat.velgait.mist_pore",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_lance.velgait.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.velgait.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.velgait.mist_lamp",
+            "count": 5
+          },
+          {
+            "itemId": "mat.velgait.tough_hide",
+            "count": 3
+          },
+          {
+            "itemId": "mat.velgait.mist_pore",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.ring_bow.velgait.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.velgait.r1",
+      "cost": {
+        "money": 84,
+        "items": [
+          {
+            "itemId": "mat.velgait.mist_lamp",
+            "count": 3
+          },
+          {
+            "itemId": "mat.velgait.tough_hide",
+            "count": 3
+          },
+          {
+            "itemId": "mat.velgait.mist_pore",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.heavy_blade.kordopil.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.heavy_blade.001",
+      "resultWeaponId": "weapon.heavy_blade.kordopil.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.kordopil.juv_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.kordopil.soft_bed",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.guard_blade.kordopil.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.kordopil.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.kordopil.juv_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.kordopil.soft_bed",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.war_maul.kordopil.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.kordopil.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.kordopil.juv_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.kordopil.soft_bed",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.twin_blades.kordopil.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.kordopil.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.kordopil.juv_shell",
+            "count": 4
+          },
+          {
+            "itemId": "mat.kordopil.soft_bed",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_blade.kordopil.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.kordopil.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.kordopil.juv_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.kordopil.soft_bed",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_lance.kordopil.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.kordopil.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.kordopil.juv_shell",
+            "count": 5
+          },
+          {
+            "itemId": "mat.kordopil.soft_bed",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.ring_bow.kordopil.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.kordopil.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.kordopil.juv_shell",
+            "count": 3
+          },
+          {
+            "itemId": "mat.kordopil.soft_bed",
+            "count": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.heavy_blade.kohalgis.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.heavy_blade.001",
+      "resultWeaponId": "weapon.heavy_blade.kohalgis.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.kohalgis.juv_glass",
+            "count": 4
+          },
+          {
+            "itemId": "mat.kohalgis.small_claw",
+            "count": 2
+          },
+          {
+            "itemId": "mat.kohalgis.thin_gland",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.guard_blade.kohalgis.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.kohalgis.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.kohalgis.juv_glass",
+            "count": 3
+          },
+          {
+            "itemId": "mat.kohalgis.small_claw",
+            "count": 3
+          },
+          {
+            "itemId": "mat.kohalgis.thin_gland",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.war_maul.kohalgis.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.kohalgis.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.kohalgis.juv_glass",
+            "count": 4
+          },
+          {
+            "itemId": "mat.kohalgis.small_claw",
+            "count": 2
+          },
+          {
+            "itemId": "mat.kohalgis.thin_gland",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.twin_blades.kohalgis.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.kohalgis.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.kohalgis.juv_glass",
+            "count": 4
+          },
+          {
+            "itemId": "mat.kohalgis.small_claw",
+            "count": 2
+          },
+          {
+            "itemId": "mat.kohalgis.thin_gland",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_blade.kohalgis.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.kohalgis.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.kohalgis.juv_glass",
+            "count": 3
+          },
+          {
+            "itemId": "mat.kohalgis.small_claw",
+            "count": 2
+          },
+          {
+            "itemId": "mat.kohalgis.thin_gland",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_lance.kohalgis.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.kohalgis.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.kohalgis.juv_glass",
+            "count": 5
+          },
+          {
+            "itemId": "mat.kohalgis.small_claw",
+            "count": 3
+          },
+          {
+            "itemId": "mat.kohalgis.thin_gland",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.ring_bow.kohalgis.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.kohalgis.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.kohalgis.juv_glass",
+            "count": 3
+          },
+          {
+            "itemId": "mat.kohalgis.small_claw",
+            "count": 3
+          },
+          {
+            "itemId": "mat.kohalgis.thin_gland",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.heavy_blade.mitogaron.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.heavy_blade.001",
+      "resultWeaponId": "weapon.heavy_blade.mitogaron.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.mitogaron.juv_hook",
+            "count": 4
+          },
+          {
+            "itemId": "mat.mitogaron.soft_ring",
+            "count": 2
+          },
+          {
+            "itemId": "mat.mitogaron.thin_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.guard_blade.mitogaron.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.mitogaron.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.mitogaron.juv_hook",
+            "count": 3
+          },
+          {
+            "itemId": "mat.mitogaron.soft_ring",
+            "count": 3
+          },
+          {
+            "itemId": "mat.mitogaron.thin_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.war_maul.mitogaron.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.mitogaron.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.mitogaron.juv_hook",
+            "count": 4
+          },
+          {
+            "itemId": "mat.mitogaron.soft_ring",
+            "count": 2
+          },
+          {
+            "itemId": "mat.mitogaron.thin_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.twin_blades.mitogaron.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.mitogaron.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.mitogaron.juv_hook",
+            "count": 4
+          },
+          {
+            "itemId": "mat.mitogaron.soft_ring",
+            "count": 2
+          },
+          {
+            "itemId": "mat.mitogaron.thin_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_blade.mitogaron.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.mitogaron.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.mitogaron.juv_hook",
+            "count": 3
+          },
+          {
+            "itemId": "mat.mitogaron.soft_ring",
+            "count": 2
+          },
+          {
+            "itemId": "mat.mitogaron.thin_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_lance.mitogaron.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.mitogaron.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.mitogaron.juv_hook",
+            "count": 5
+          },
+          {
+            "itemId": "mat.mitogaron.soft_ring",
+            "count": 3
+          },
+          {
+            "itemId": "mat.mitogaron.thin_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.ring_bow.mitogaron.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.mitogaron.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.mitogaron.juv_hook",
+            "count": 3
+          },
+          {
+            "itemId": "mat.mitogaron.soft_ring",
+            "count": 3
+          },
+          {
+            "itemId": "mat.mitogaron.thin_duct",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.heavy_blade.yurtepica.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.heavy_blade.001",
+      "resultWeaponId": "weapon.heavy_blade.yurtepica.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.yurtepica.juv_silk",
+            "count": 4
+          },
+          {
+            "itemId": "mat.yurtepica.thin_bag",
+            "count": 2
+          },
+          {
+            "itemId": "mat.yurtepica.weak_venom",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.guard_blade.yurtepica.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.guard_blade.001",
+      "resultWeaponId": "weapon.guard_blade.yurtepica.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.yurtepica.juv_silk",
+            "count": 3
+          },
+          {
+            "itemId": "mat.yurtepica.thin_bag",
+            "count": 3
+          },
+          {
+            "itemId": "mat.yurtepica.weak_venom",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.war_maul.yurtepica.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.war_maul.001",
+      "resultWeaponId": "weapon.war_maul.yurtepica.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.yurtepica.juv_silk",
+            "count": 4
+          },
+          {
+            "itemId": "mat.yurtepica.thin_bag",
+            "count": 2
+          },
+          {
+            "itemId": "mat.yurtepica.weak_venom",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.twin_blades.yurtepica.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.twin_blades.001",
+      "resultWeaponId": "weapon.twin_blades.yurtepica.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.yurtepica.juv_silk",
+            "count": 4
+          },
+          {
+            "itemId": "mat.yurtepica.thin_bag",
+            "count": 2
+          },
+          {
+            "itemId": "mat.yurtepica.weak_venom",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_blade.yurtepica.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_blade.001",
+      "resultWeaponId": "weapon.long_blade.yurtepica.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.yurtepica.juv_silk",
+            "count": 3
+          },
+          {
+            "itemId": "mat.yurtepica.thin_bag",
+            "count": 2
+          },
+          {
+            "itemId": "mat.yurtepica.weak_venom",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.long_lance.yurtepica.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.long_lance.001",
+      "resultWeaponId": "weapon.long_lance.yurtepica.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.yurtepica.juv_silk",
+            "count": 5
+          },
+          {
+            "itemId": "mat.yurtepica.thin_bag",
+            "count": 3
+          },
+          {
+            "itemId": "mat.yurtepica.weak_venom",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.branch.ring_bow.yurtepica.r1",
+      "kind": "upgrade",
+      "branch": true,
+      "fromWeaponId": "weapon.ring_bow.001",
+      "resultWeaponId": "weapon.ring_bow.yurtepica.r1",
+      "cost": {
+        "money": 72,
+        "items": [
+          {
+            "itemId": "mat.yurtepica.juv_silk",
+            "count": 3
+          },
+          {
+            "itemId": "mat.yurtepica.thin_bag",
+            "count": 3
+          },
+          {
+            "itemId": "mat.yurtepica.weak_venom",
+            "count": 1
+          }
+        ]
+      }
+    }
+  ]
+}

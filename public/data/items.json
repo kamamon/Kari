@@ -2,27 +2,204 @@
   "schemaVersion": 1,
   "note": "狩猟中に使う道具と、持ち帰る素材。道具は use の行動の effectTick で効果が出て、その時に 1 個減る（それより前に妨害されると減らない）。道具は納刀している時だけ使う（v0.40.0。2G に合わせた。抜刀中に道具ボタンを押すと納刀するだけ。護刃は防御を構えたまま使える）。研磨石（whet）は、片ひざを突いて背から武器を下ろして研ぎ、終わったら納める。",
   "items": [
-    {"id": "item.heal_tonic", "name": "回復液", "kind": "heal", "carryMax": 10, "useActionId": "player.item.drink", "effectTick": 58, "heal": 40, "summary": "体力を 40 回復する。飲み終わった後に力を込める姿があり、それが終わるまで動けない。"},
-    {"id": "item.bind_trap", "name": "拘束罠", "kind": "trap", "carryMax": 2, "useActionId": "player.item.set_trap", "effectTick": 84, "trap": {"armTicks": 60, "radius": 1.5, "holdTicks": 540, "lifeTicks": 5400}, "summary": "足元に仕掛ける。大型が踏むと 9 秒ほど動きを止める。"},
-    {"id": "item.calm_orb", "name": "鎮静玉", "kind": "tranq", "carryMax": 6, "useActionId": "player.item.throw_orb", "effectTick": 22, "tranq": {"range": 7, "halfAngleDeg": 50}, "summary": "正面 7m 以内の大型に当てる。弱って罠にかかった相手に 2 個当てると捕獲できる。"},
-    {"id": "item.marker_orb", "name": "標識玉", "kind": "mark", "carryMax": 3, "useActionId": "player.item.throw_orb", "effectTick": 22, "mark": {"range": 12, "halfAngleDeg": 40, "ticks": 18000}, "summary": "正面 12m 以内の大型に当てると、光る粉が付き、5 分の間、別のエリアに居ても地図に居場所が出る。外しても 1 個減る。"},
-    {"id": "item.power_coating", "name": "強撃ビン", "kind": "coating", "carryMax": 20, "coating": {"scale": 1.5, "label": "強撃"}, "summary": "環弓に付けるビン。付けている間は、射る矢の威力が 1.5 倍。1 回射るごとに 1 本使う。道具の欄には出ず、抜刀して主と副の同時押しで付ける・外す。環弓のほかの武器では持っていかない。"},
-    {"id": "item.whetstone", "name": "研磨石", "kind": "whet", "carryMax": 10, "useActionId": "player.item.whet", "effectTick": 96, "maintenance": true, "summary": "納刀して使う。片ひざを突いて武器を研ぎ、刃の状態を最大まで戻す。研ぎ終わるまで動けない。環弓には使えない。"}
+    {
+      "id": "item.heal_tonic",
+      "name": "回復液",
+      "kind": "heal",
+      "carryMax": 10,
+      "useActionId": "player.item.drink",
+      "effectTick": 58,
+      "heal": 40,
+      "summary": "体力を 40 回復する。飲み終わった後に力を込める姿があり、それが終わるまで動けない。"
+    },
+    {
+      "id": "item.bind_trap",
+      "name": "拘束罠",
+      "kind": "trap",
+      "carryMax": 2,
+      "useActionId": "player.item.set_trap",
+      "effectTick": 84,
+      "trap": {
+        "armTicks": 60,
+        "radius": 1.5,
+        "holdTicks": 540,
+        "lifeTicks": 5400
+      },
+      "summary": "足元の平らな地面に仕掛ける。大型を止める時間は種・怒り・使用回数で変わる。効かない状態もある。"
+    },
+    {
+      "id": "item.calm_orb",
+      "name": "鎮静玉",
+      "kind": "tranq",
+      "carryMax": 6,
+      "useActionId": "player.item.throw_orb",
+      "effectTick": 22,
+      "tranq": {
+        "range": 7,
+        "halfAngleDeg": 50
+      },
+      "summary": "正面 7m 以内の大型に当てる。弱って罠にかかった相手に 2 個当てると捕獲できる。"
+    },
+    {
+      "id": "item.marker_orb",
+      "name": "標識玉",
+      "kind": "mark",
+      "carryMax": 3,
+      "useActionId": "player.item.throw_orb",
+      "effectTick": 22,
+      "mark": {
+        "range": 12,
+        "halfAngleDeg": 40,
+        "ticks": 18000
+      },
+      "summary": "正面 12m 以内の大型に当てると、光る粉が付き、5 分の間、別のエリアに居ても地図に居場所が出る。外しても 1 個減る。"
+    },
+    {
+      "id": "item.power_coating",
+      "name": "強撃ビン",
+      "kind": "coating",
+      "carryMax": 20,
+      "coating": {
+        "scale": 1.5,
+        "label": "強撃"
+      },
+      "summary": "環弓に付けるビン。付けている間は、射る矢の威力が 1.5 倍。1 回射るごとに 1 本使う。道具の欄には出ず、抜刀して主と副の同時押しで付ける・外す。環弓のほかの武器では持っていかない。"
+    },
+    {
+      "id": "item.whetstone",
+      "name": "研磨石",
+      "kind": "whet",
+      "carryMax": 10,
+      "useActionId": "player.item.whet",
+      "effectTick": 96,
+      "maintenance": true,
+      "summary": "納刀して使う。片ひざを突いて武器を研ぎ、刃の状態を最大まで戻す。研ぎ終わるまで動けない。環弓には使えない。"
+    },
+    {
+      "id": "item.flash_orb",
+      "name": "白光玉",
+      "kind": "flash",
+      "carryMax": 5,
+      "useActionId": "player.item.throw_orb",
+      "effectTick": 22,
+      "flash": {
+        "range": 13,
+        "halfAngleDeg": 55,
+        "ticks": 300
+      },
+      "summary": "正面の大型が光を見た時、一時的に目くらまし。繰り返すと効きにくくなる。"
+    },
+    {
+      "id": "item.roast_meat",
+      "name": "焼き肉",
+      "kind": "stamina",
+      "carryMax": 10,
+      "useActionId": "player.item.drink",
+      "effectTick": 58,
+      "stamina": 65,
+      "summary": "携帯食。スタミナを65回復。"
+    },
+    {
+      "id": "item.raw_meat",
+      "name": "生肉",
+      "kind": "cook",
+      "carryMax": 10,
+      "useActionId": "player.item.whet",
+      "effectTick": 96,
+      "stamina": 75,
+      "summary": "狩場で焼いて食べる。焼き始めから主ボタンの合図に合わせると大きく回復。"
+    },
+    {
+      "id": "item.cool_tonic",
+      "name": "涼息液",
+      "kind": "heat",
+      "carryMax": 5,
+      "useActionId": "player.item.drink",
+      "effectTick": 58,
+      "protectTicks": 18000,
+      "summary": "5分間、高温による体力の減少を防ぐ。"
+    },
+    {
+      "id": "item.warm_tonic",
+      "name": "温息液",
+      "kind": "cold",
+      "carryMax": 5,
+      "useActionId": "player.item.drink",
+      "effectTick": 58,
+      "protectTicks": 18000,
+      "summary": "5分間、寒冷によるスタミナの消耗を防ぐ。"
+    },
+    {
+      "id": "item.hunter_stew",
+      "name": "里の狩人汁",
+      "kind": "stamina",
+      "carryMax": 3,
+      "useActionId": "player.item.drink",
+      "effectTick": 58,
+      "stamina": 100,
+      "summary": "魚と葉を使った里の食事。狩場へ持参でき、スタミナを100回復する。"
+    }
   ],
   "materials": [
-    {"id": "mat.galdros.shell_shard", "name": "岩殻片"},
-    {"id": "mat.galdros.hard_bone", "name": "硬骨"},
-    {"id": "mat.galdros.bronze_vein", "name": "青銅晶脈"},
-    {"id": "mat.galdros.foreleg_plate", "name": "前脚甲"},
-    {"id": "mat.galdros.veined_shell", "name": "脈岩殻"},
-    {"id": "mat.galdros.tail_crystal", "name": "尾端晶"},
-    {"id": "mat.galdros.crystal_shell", "name": "晶岩殻"},
-    {"id": "mat.galdros.bronze_lump", "name": "青銅晶塊"},
-    {"id": "mat.galdros.radiant_shell", "name": "輝岩殻"},
-    {"id": "mat.galdros.pulse_core", "name": "脈動晶芯"},
-    {"id": "mat.gather.flatnagi_leaf", "name": "ヒラナギの葉", "unit": "枚"},
-    {"id": "mat.gather.dewbreak_fruit", "name": "ツユワリの実", "unit": "個"},
-    {"id": "mat.ore.basin_iron", "name": "風礫鉄鉱", "unit": "個"},
-    {"id": "mat.ore.grit_whetstone", "name": "礫目砥石原石", "unit": "個"}
+    {
+      "id": "mat.galdros.shell_shard",
+      "name": "岩殻片"
+    },
+    {
+      "id": "mat.galdros.hard_bone",
+      "name": "硬骨"
+    },
+    {
+      "id": "mat.galdros.bronze_vein",
+      "name": "青銅晶脈"
+    },
+    {
+      "id": "mat.galdros.foreleg_plate",
+      "name": "前脚甲"
+    },
+    {
+      "id": "mat.galdros.veined_shell",
+      "name": "脈岩殻"
+    },
+    {
+      "id": "mat.galdros.tail_crystal",
+      "name": "尾端晶"
+    },
+    {
+      "id": "mat.galdros.crystal_shell",
+      "name": "晶岩殻"
+    },
+    {
+      "id": "mat.galdros.bronze_lump",
+      "name": "青銅晶塊"
+    },
+    {
+      "id": "mat.galdros.radiant_shell",
+      "name": "輝岩殻"
+    },
+    {
+      "id": "mat.galdros.pulse_core",
+      "name": "脈動晶芯"
+    },
+    {
+      "id": "mat.gather.flatnagi_leaf",
+      "name": "ヒラナギの葉",
+      "unit": "枚"
+    },
+    {
+      "id": "mat.gather.dewbreak_fruit",
+      "name": "ツユワリの実",
+      "unit": "個"
+    },
+    {
+      "id": "mat.ore.basin_iron",
+      "name": "風礫鉄鉱",
+      "unit": "個"
+    },
+    {
+      "id": "mat.ore.grit_whetstone",
+      "name": "礫目砥石原石",
+      "unit": "個"
+    }
   ]
 }

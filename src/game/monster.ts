@@ -1,3 +1,4 @@
+import {scalePoint,isAirborneAction} from './individual';
 // モンスターの状態と行動選択（訓練標的とガルドロスで共通）。
 // 技は開始時に一度だけ抽選し、攻撃中に毎 tick 選び直さない。旋回は turning.untilTick まで。
 // 本体 HP・部位の耐久・切断の蓄積・怯みの蓄積・怒りは、それぞれ別の値として持つ。
@@ -75,6 +76,10 @@ export interface MonsterState {
   stall: number;
   /** 目印（v0.42.0。標識玉）の残り tick。0 なら印は無い */
   markTicks: number;
+  flashTicks: number;
+  flashCount: number;
+  /** 描画・部位・技の当たりに共通の倍率 */
+  sizeScale: number;
   /** 最後に狩人が見たエリア（同じエリアに居た時。フィールドの大型だけ。見ていなければ null） */
   seenAreaId: string | null;
 }
@@ -139,6 +144,9 @@ export function createMonster(def: MonsterDef, spawn: { x: number; z: number; ya
     ailments: freshAilments(),
     stall: 0,
     markTicks: 0,
+    flashTicks: 0,
+    flashCount: 0,
+    sizeScale: 1,
     seenAreaId: null,
   };
 }
@@ -147,6 +155,7 @@ export function resetMonster(m: MonsterState): void {
   const fresh = createMonster(m.def, m.spawn, m.id);
   fresh.aiEnabled = m.aiEnabled;
   fresh.herd = m.herd;
+  fresh.sizeScale=m.sizeScale;
   Object.assign(m, fresh);
 }
 
@@ -183,13 +192,16 @@ export function monsterShapes(m: MonsterState): WorldShape[] {
     const shapes = severed ? part.sever!.shapesAfter : part.shapes;
     shapes.forEach((s, j) => {
       const d = grid ? grid[i]?.[severed ? part.shapes.length + j : j] : null;
-      out.push(shapeToWorld(d ? followShape(s, d, tick, dur, fol!.step) : s, i, m.pos, m.yaw));
+      const sh=shapeToWorld(d ? followShape(s, d, tick, dur, fol!.step) : s, i, m.pos, m.yaw);
+      out.push({...sh,a:scalePoint(sh.a,m.pos,m.sizeScale),b:sh.b?scalePoint(sh.b,m.pos,m.sizeScale):null,r:sh.r*m.sizeScale});
     });
   });
   return out;
 }
 
 /** プレイヤーが通り抜けられない円（ワールド座標）。 */
+export function monsterAirborne(m:MonsterState):boolean{return !m.dead&&!m.captured&&!m.trapTicks&&isAirborneAction(m.action?.def.actionId,m.action?.tick??0);}
+
 export function monsterBlockers(m: MonsterState): { x: number; z: number; r: number }[] {
   const list = m.def.collision ?? [{ z: 0, r: m.def.bodyRadius }];
   const f = forwardOf(m.yaw);
@@ -286,10 +298,12 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   }
 
   if (m.captured) return;
+  const dazzled=m.flashTicks>0;
+  if(dazzled)m.flashTicks--;
   if (m.tranqTicks > 0 && --m.tranqTicks === 0) m.tranq = 0;
 
   // 状態異常（v0.33.0）: 効き目の残り・毒・猶予・ためた量の減り。毒で倒れることもある
-  const at = stepAilments(m.ailments, ailmentRules(ctx.content));
+  const at = stepAilments(m.ailments, ailmentRules(ctx.content), m.def.id);
   for (const k of at.ended) ctx.emit({ type: 'monster_ailment', target: m.id, kind: k, on: false });
   if (at.poison > 0) {
     ctx.emit({ type: 'ailment_damage', target: m.id, kind: 'poison', damage: at.poison, pos: { x: m.pos.x, y: m.pos.y + 1.2, z: m.pos.z } });
@@ -317,6 +331,8 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
     return;
   }
 
+  // 白光玉: 気絶とは別の短い方向喪失。視界を失う間は追尾・技の選択を止める。
+  if(dazzled){m.action=null;m.yaw+=0.014;return;}
   // 群れの幼体: ふだんは群れの動き。反撃する間（fight）と技の途中だけ、下のふつうの技の選び方へ進む
   if (m.herd && stepHerdMember(m, player, ctx)) return;
 
@@ -425,7 +441,7 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
     }
   }
   for (const hz of adef.hazards ?? []) {
-    if (hz.tick === t) ctx.spawnHazards(hz, player.pos, hz.origin ? toWorld(fromArr(hz.origin), m.pos, m.yaw) : undefined, def);
+    if (hz.tick === t) ctx.spawnHazards(hz, player.pos, hz.origin ? scalePoint(toWorld(fromArr(hz.origin), m.pos, m.yaw),m.pos,m.sizeScale) : undefined, def);
   }
   for (const ev of adef.events) {
     if (ev.tick === t) ctx.emit({ type: 'action_event', actor: m.id, kind: ev.type, id: ev.id, pos: { ...m.pos } });
@@ -516,7 +532,7 @@ export function applyDamageToMonster(m: MonsterState, partIndex: number, damage:
     if (severed) {
       // 切り落とした先端の落ちる位置（切断前の形状の先端）
       const tip = def.shapes[def.shapes.length - 1]!;
-      const pos = toWorld(fromArr(tip.b ?? tip.a), m.pos, m.yaw);
+      const pos = scalePoint(toWorld(fromArr(tip.b ?? tip.a), m.pos, m.yaw),m.pos,m.sizeScale);
       ctx.emit({ type: 'part_sever', target: m.id, partId: def.id, partIndex, pos: { x: pos.x, y: m.pos.y, z: pos.z }, yaw: m.yaw });
     }
   };

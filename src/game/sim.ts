@@ -1,3 +1,5 @@
+import {individualScale,sizeMonster,scalePoint} from './individual';
+import { fortifyBonus, type ClassicGearState } from './classicGear';
 // simulation 本体。60Hz 固定 tick で step() を 1 回ずつ呼ぶ。
 // ここは DOM・Three.js・Math.random・現在時刻に触れない。同じ seed と同じ入力列なら同じ結果になる。
 import { DEG, angleDiff, forwardOf, toWorld, yawOf, type V3 } from '../core/math';
@@ -6,12 +8,13 @@ import { STATUS_KINDS, questTargets } from '../data/schemas';
 import type { Content, DamageType, ElementId, StatusKind, FieldAreaDef, FieldDef, HazardDef, HazardLook, HitWindowDef, ItemDef, ItemStack, LootDef, LootRoll, MonsterDef, QuestDef, QuestTarget, RankDef, ShootDef, StatusHit } from '../data/schemas';
 import { inWindow, type ActionRun } from './action';
 import { HitLedger, computeDamage, edgeStage, sweepCapsule, type WorldShape } from './combat';
+import { weaponEdgeRules, weaponEdgeProfile } from './weaponEdge';
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
 import { defenseScale, scaleMonsterDef, totalDefense } from './rank';
-import { computeGear, skillValue, critChance, incomingElementScale, weaponElementZone, type GearEffects } from './gear';
+import { computeGear, skillValue, critChance, incomingElementScale, weaponElementHit, type GearEffects } from './gear';
 import { addAilment, ailmentAmount, ailmentRules, activeControl, clearAilments, startPoison, wakeFromSleep } from './ailment';
-import { applyDamageToMonster, createMonster, monsterBlockers, monsterShapes, stepMonster, type MonsterState } from './monster';
+import { applyDamageToMonster, createMonster, monsterAirborne, monsterBlockers, monsterShapes, stepMonster, type MonsterState } from './monster';
 import { questTimeLimitTicks } from './field';
 import { addMember, createHerdGroup, herdArea, herdHurt, livingMembers, slotOf, stepHerdGroup, type HerdGroup } from './herd';
 import { createRoam } from './roam';
@@ -19,6 +22,7 @@ import { createPlayer, familyOf, playerHurtCapsule, resolveIncomingHit, setSpiri
 import { aimDir, aimEye, aimTarget } from './aim';
 import { trackSegment } from './tracks';
 import { World, type Circle } from './world';
+import { trapSite, trapGroundContact, trapHoldTicks } from './traps';
 import { usesFieldGather } from '../data/fieldGathering';
 import { FieldGatherState, FIELD_NODE_REACH } from './fieldGather';
 import { DELIVER_ACTION, DEPOT_RADIUS, DEPOT_REACH, MINE_NODE_RADIUS, NODE_REACH, bagHasRoom, createErrand, errandReady, errandSurplus, nodeAction, type ErrandState, type ErrandTarget } from './errand';
@@ -37,6 +41,7 @@ export interface SimOptions {
   questId?: string | null;
   /** 身に着けている防具の ID（部位ごとに 1 つ）。無ければ防御力 0。 */
   armorIds?: readonly string[];
+  classicGear?: ClassicGearState;
   /**
    * フィールド（エリアに分かれた狩場）で狩る。依頼に fieldId がある時だけ効く。野営地から出発し、標的はエリアを巡る。
    * 指定しなければ、これまでどおり 1 つの狩場（依頼の mapId）で始まる。
@@ -124,8 +129,7 @@ export interface HuntState {
 const CLOSE_AFTER_LAST_CARVE = 150;
 /** 捕獲した時に、結果が閉じるまでの時間 */
 const CAPTURE_RETURN_TICKS = 300;
-/** 罠を置く位置（足元から前へ）と、大型の中心がこれだけ罠の縁に近づくと作動する距離 */
-const TRAP_AHEAD = 0.9;
+/** 大型の中心がこれだけ罠の縁に近づくと作動する距離 */
 const TRAP_REACH = 0.9;
 /** 剥ぎ取りができる距離（本体は胴の半径に足す / 切り落とした部位） */
 const CARVE_REACH = 1.4;
@@ -200,6 +204,9 @@ export class Simulation implements SimCtx {
   readonly rng: SeededRng;
   readonly options: SimOptions;
   tick = 0;
+  hotProtection = 0;
+  coldProtection = 0;
+  get climate():'normal'|'hot'|'cold'{const id=this.field?.id??'';return ['field.classic_07','field.classic_18'].includes(id)?'hot':['field.classic_05','field.classic_11','field.classic_15'].includes(id)?'cold':'normal';}
   player: PlayerState;
   monsters: MonsterState[] = [];
   readonly ledger = new HitLedger();
@@ -291,9 +298,9 @@ export class Simulation implements SimCtx {
     }
     this.player = createPlayer(content, this.world.spawn, options.weaponId, carry);
     this.armorIds = [...(options.armorIds ?? [])];
-    this.defense = totalDefense(content, this.armorIds);
+    this.gear = computeGear(content, content.weapons.get(options.weaponId)!, this.armorIds, options.classicGear);
+    this.defense = Math.max(0,totalDefense(content, this.armorIds)+fortifyBonus(this.armorIds,options.classicGear)+(this.gear.defenseBonus??0));
     this.defenseScale = defenseScale(content, this.defense)/preparation.defense;
-    this.gear = computeGear(content, content.weapons.get(options.weaponId)!, this.armorIds);
     this.gear.statusResist.poison*=preparation.poison;
     if (quest) {
       this.rank = content.ranks.get(quest.rankId) ?? null;
@@ -306,8 +313,9 @@ export class Simulation implements SimCtx {
       const base = content.monsters.get(monsterId);
       if (!base) throw new Error(`monster ${monsterId} が無い`);
       // 段階が上の依頼では、強い個体（体力・部位・間隔を段階の倍率で変えた定義）が出る
-      const def = this.rank ? scaleMonsterDef(base, this.rank) : base;
-      const m = createMonster(def, quest?.monsterSpawn ?? map.monsterSpawn, 'monster#1');
+      const size=quest&&options.classicGear?individualScale(options.seed,base.id):1;
+      const def = sizeMonster(this.rank ? scaleMonsterDef(base, this.rank) : base,size);
+      const m = createMonster(def, quest?.monsterSpawn ?? map.monsterSpawn, 'monster#1');m.sizeScale=size;
       m.aiEnabled = quest ? true : options.monsterAttacks;
       if (field) {
         // 最初に居るエリア。「これまでの狩場」にあたるエリアなら依頼の位置、そうでなければエリアの中央
@@ -405,8 +413,12 @@ export class Simulation implements SimCtx {
     const g = createHerdGroup(index + 1, base.id, H, areas, areaId, at, rng);
     for (let i = 0; i < size; i++) {
       const s = slotOf(i, H.spacing);
-      const m = createMonster(def, { x: at.x, z: at.z, yaw: rng.next() * Math.PI * 2 }, `herd${index + 1}#${i + 1}`);
-      this.world.move(m.pos, def.bodyRadius, s.x, s.z);
+      const id=`herd${index + 1}#${i + 1}`;
+      const scale=this.options.questId&&this.options.classicGear?individualScale(this.options.seed,base.id+':'+id):1;
+      const individualDef=sizeMonster(def,scale);
+      const m = createMonster(individualDef, { x: at.x, z: at.z, yaw: rng.next() * Math.PI * 2 }, id);
+      m.sizeScale=scale;
+      this.world.move(m.pos, individualDef.bodyRadius, s.x, s.z);
       if (this.world.areaAt(m.pos.x, m.pos.z) !== area) m.pos = { x: at.x, y: 0, z: at.z };
       m.pos.y = this.world.groundHeight(m.pos.x, m.pos.z);
       m.prevPos = { ...m.pos };
@@ -561,9 +573,9 @@ export class Simulation implements SimCtx {
 
   canUseItem(item: ItemDef): boolean {
     // 回復と研磨石は依頼の外（訓練場）や達成後でも使える。罠と鎮静玉は狩猟中だけ。罠は同時に 1 つまで。
-    if (item.kind === 'heal' || item.kind === 'whet') return true;
+    if (item.kind === 'heal' || item.kind === 'whet' || item.kind === 'stamina') return true;
     if (this.hunt?.phase !== 'active') return false;
-    return item.kind !== 'trap' || this.traps.length === 0;
+    return item.kind !== 'trap' || (this.traps.length === 0 && trapSite(this.world, this.player.pos, this.player.yaw) !== null);
   }
 
   applyItem(item: ItemDef): boolean {
@@ -579,7 +591,7 @@ export class Simulation implements SimCtx {
     }
     if (item.kind === 'whet') {
       // 研磨石: 刃の状態を最大まで戻す
-      const E = this.content.edge;
+      const E = weaponEdgeRules(this.content, p.weaponId);
       const before = p.edge;
       const stage = edgeStage(E, before).id;
       p.edge = E.max;
@@ -592,12 +604,32 @@ export class Simulation implements SimCtx {
       this.emit({ type: 'item_effect', itemId: item.id, kind: item.kind, ok: false, amount: 0, pos });
       return false;
     }
+    if(item.kind==='stamina'||item.kind==='cook'){
+      const before=p.stamina,good=item.kind!=='cook'||p.itemUse?.cookGood===true;
+      p.stamina=Math.min(this.content.player.maxStamina,p.stamina+(good?item.stamina!:15));
+      this.emit({type:'item_effect',itemId:item.id,kind:item.kind,ok:good,amount:Math.round(p.stamina-before),pos});return true;
+    }
+    if(item.kind==='heat'||item.kind==='cold'){
+      if(item.kind==='heat')this.hotProtection=item.protectTicks!;else this.coldProtection=item.protectTicks!;
+      this.emit({type:'item_effect',itemId:item.id,kind:item.kind,ok:true,amount:item.protectTicks!,pos});return true;
+    }
+    if(item.kind==='flash'){
+      const k=item.flash!,area=this.world.areaAt(p.pos.x,p.pos.z);
+      const m=this.frontMonster(k.range,k.halfAngleDeg);
+      let ticks=0;
+      if(m&&this.world.areaAt(m.pos.x,m.pos.z)===area&&!m.asleep&&m.flashTicks===0&&Math.abs(angleDiff(yawOf(p.pos.x-m.pos.x,p.pos.z-m.pos.z),m.yaw))<=Math.PI*.60){
+        const g=this.world.geo(area),visible=!g||g.shape.clear(p.pos.x,p.pos.z,m.pos.x,m.pos.z,.05);
+        if(visible){ticks=Math.max(60,Math.round(k.ticks*Math.pow(.7,m.flashCount)));m.flashCount++;m.flashTicks=ticks;m.action=null;m.attackEval=null;m.aware=true;}
+      }
+      this.emit({type:'item_effect',itemId:item.id,kind:'flash',ok:ticks>0,amount:ticks,pos});return true;
+    }
     if (item.kind === 'trap') {
       const t = item.trap!;
-      const f = forwardOf(p.yaw);
-      const trap: Trap = { id: this.nextTrap++, x: p.pos.x + f.x * TRAP_AHEAD, z: p.pos.z + f.z * TRAP_AHEAD, radius: t.radius, holdTicks: t.holdTicks, arm: t.armTicks, life: t.lifeTicks, state: 'arming', target: null };
+      const site = trapSite(this.world, p.pos, p.yaw);
+      if (!site) return false;
+      const trap: Trap = { id: this.nextTrap++, x: site.x, z: site.z, radius: t.radius, holdTicks: t.holdTicks, arm: t.armTicks, life: t.lifeTicks, state: 'arming', target: null };
       this.traps.push(trap);
-      this.emit({ type: 'item_effect', itemId: item.id, kind: 'trap', ok: true, amount: 0, pos: { x: trap.x, y: p.pos.y, z: trap.z } });
+      this.emit({ type: 'item_effect', itemId: item.id, kind: 'trap', ok: true, amount: 0, pos: site });
       return true;
     }
     // 標識玉（v0.42.0。#19 の F04）: 正面の範囲に居る、いちばん近い大型に当たると、しばらく地図に居場所が出る。外しても 1 個減る
@@ -670,6 +702,7 @@ export class Simulation implements SimCtx {
         continue;
       }
       t.life--;
+      if (t.life <= 0) continue;
       if (t.state === 'arming') {
         if (--t.arm > 0) continue;
         t.state = 'armed';
@@ -679,8 +712,10 @@ export class Simulation implements SimCtx {
         // 罠は大型だけが踏む（幼体は軽くて作動しない）
         if (m.dead || m.captured || m.trapTicks > 0 || m.herd) continue;
         if (Math.hypot(m.pos.x - t.x, m.pos.z - t.z) > t.radius + TRAP_REACH) continue;
-        // 2 回目からは慣れて、止まる時間が 6 割ずつになる
-        m.trapTicks = Math.max(60, Math.round(t.holdTicks * Math.pow(0.6, m.trapCount)));
+        if (monsterAirborne(m)||!trapGroundContact(this.world, m.pos, t)) continue;
+        const ticks = trapHoldTicks(t.holdTicks, m.trapCount, m.enraged, this.content.elements.trapProfiles?.[m.def.id]);
+        if (ticks <= 0) continue; // 効かない相手では発動回数も増やさない。罠は有効期限まで残る
+        m.trapTicks = ticks;
         m.trapCount++;
         m.action = null;
         m.attackEval = null;
@@ -940,6 +975,11 @@ export class Simulation implements SimCtx {
     const fg=this.fieldGather,op=this.player.errandOp,run=this.player.action;
     if(fg&&op?.target.kind==='field_node'&&op.target.source==='fish'&&run?.instanceId===op.instanceId&&fg.bite(run.tick)&&(input.pressed&Btn.Main))fg.hookInstance=run.instanceId;
     stepPlayer(this.player, input, this);
+    if(this.hotProtection>0)this.hotProtection--;if(this.coldProtection>0)this.coldProtection--;
+    if(this.hunt?.phase==='active'&&this.player.mode!=='dead'){
+      if(this.climate==='hot'&&!this.hotProtection&&this.tick%120===0)this.player.hp=Math.max(1,this.player.hp-1);
+      if(this.climate==='cold'&&!this.coldProtection&&this.tick%60===0)this.player.stamina=Math.max(0,this.player.stamina-4);
+    }
     if(fg&&this.hunt?.phase==='active')fg.discover(this.areaId,this.player.pos.x,this.player.pos.z,10+skillValue(this.content,this.gear.levels,'gather_sense'));
     if (this.field) this.stepExits();
     for (const g of this.herds) stepHerdGroup(g, this);
@@ -1100,7 +1140,7 @@ export class Simulation implements SimCtx {
     const hitstop = hw.hitstopTicks + (charge ? charge.hitstopBonus[run.chargeLevel] ?? 0 : 0);
     run.hitstop = hitstop;
     // 刃の減り方は、溜めや猛りの倍率を掛ける前の、技そのものの係数で決める
-    const bounced = this.dealPlayerDamage(m, partIndex, point, { actionId: run.def.actionId, windowId: hw.id, actionTick: t, motion: hw.damageCoefficient * scale, damageType: hw.damageType, hitstop, chargeLevel: run.chargeLevel, wearMotion: hw.damageCoefficient, contact: hw.contact });
+    const bounced = this.dealPlayerDamage(m, partIndex, point, { actionId: run.def.actionId, windowId: hw.id, actionTick: t, motion: hw.damageCoefficient * scale, damageType: hw.damageType, hitstop, chargeLevel: run.chargeLevel, wearMotion: hw.damageCoefficient, edgeCost: hw.edgeCost, elementMotion: hw.elementMotion === undefined ? undefined : hw.elementMotion * scale, statusMotion: hw.statusMotion === undefined ? undefined : hw.statusMotion * scale, stunMotion: hw.stunMotion === undefined ? undefined : hw.stunMotion * scale, contact: hw.contact });
     if (SP && !run.def.spirit) {
       setSpirit(this.player, this.player.spirit + SP.gainPerHit, this);
       this.player.spiritIdle = 0;
@@ -1134,6 +1174,10 @@ export class Simulation implements SimCtx {
       chargeLevel: number;
       /** 武器で直接当てた時の、技の係数（刃の減り方に使う）。矢は省く */
       wearMotion?: number;
+      edgeCost?: number;
+      elementMotion?: number;
+      statusMotion?: number;
+      stunMotion?: number;
       /** 盾で打った（v0.33.0）。武器の属性・状態異常は乗らない */
       contact?: 'shield';
     },
@@ -1145,7 +1189,7 @@ export class Simulation implements SimCtx {
     const g = this.gear;
     const R = ailmentRules(C);
     // 刃の状態: 武器で直接当てた時だけ（矢には無い）。段階で刃補正が変わり、硬い部位では弾かれる
-    const E = C.edge;
+    const E = weaponEdgeRules(C, p.weaponId);
     const famEdge = h.wearMotion !== undefined ? familyOf(p, C).edge : undefined;
     const stage = famEdge ? edgeStage(E, p.edge) : null;
     const hitzone = (m.parts[partIndex]!.broken && part.brokenHitzone ? part.brokenHitzone : part.hitzone)[h.damageType];
@@ -1160,17 +1204,19 @@ export class Simulation implements SimCtx {
     else if (chance < 0 && roll < -chance) crit = -1;
     // 武器の属性は、武器そのもので当てた時だけ（盾には乗らない）。部位の係数は属性ごと（弱点・耐性。複合は大きい方、弱点でなければ半分）
     const weaponHit = h.contact !== 'shield';
-    const elementZone = weaponHit ? weaponElementZone(C, weapon, m.def, part) : 0;
+    const elementHit = weaponHit ? weaponElementHit(C, weapon, m.def, part, m.parts[partIndex]!.broken) : { zone: 0, element: null };
+    const elementZone = elementHit.zone;
     // 状態異常の睡眠: 覚ます最初の命中だけ wakeScale 倍（v0.33.0）
     const woke = !m.dead && wakeFromSleep(m.ailments, R);
     const damage = computeDamage({
-      attack: weapon.attack * prepBonus(this.options.questId?this.options.hubPrep:null).attack,
+      attack: weapon.attack*(g.rawPower??1)*prepBonus(this.options.questId?this.options.hubPrep:null).attack,
       motion: h.motion,
       sharpness: weapon.sharpnessModifier * (stage?.damageScale ?? 1),
       hitzone,
       crit: crit > 0 ? T.critMultiplier : crit < 0 ? 0.75 : 1,
       element: elementZone > 0 ? weapon.element.value * g.element : 0,
-      elementMotion: h.motion,
+      elementMotion: h.elementMotion ?? h.motion,
+      elementSharpness: stage?.elementScale ?? 1,
       elementZone,
       questModifier: this.questModifier * (woke ? R.sleep.wakeScale : 1),
     });
@@ -1196,18 +1242,18 @@ export class Simulation implements SimCtx {
       chargeLevel: h.chargeLevel,
       tick: this.tick,
       bounced,
-      ...(elementZone > 0 ? { element: (weapon.element.type === 'compound' ? weapon.element.elements![0] : weapon.element.type) as ElementId } : {}),
+      ...(elementHit.element ? { element: elementHit.element } : {}),
     });
     applyDamageToMonster(m, partIndex, damage, h.damageType, this, g.partDamage);
     if (m.herd) herdHurt(m, this);
     // 状態異常（v0.33.0）: 武器の毒・麻痺・睡眠は、武器そのもので当てた時だけ。気絶は、打撃が頭に当たった時だけ
     if (!m.dead && !m.captured) {
-      if (weaponHit && weapon.status) this.storeAilment(m, weapon.status.kind, ailmentAmount(weapon.status.potency, h.motion, g.status), point);
-      if (h.damageType === 'blunt' && part.head) this.storeAilment(m, 'stun', ailmentAmount(R.stunPerMotion, h.motion, g.stun), point);
+      if (weaponHit && weapon.status) this.storeAilment(m, weapon.status.kind, ailmentAmount(weapon.status.potency, h.statusMotion ?? h.motion, g.status), point);
+      if (h.damageType === 'blunt' && part.head) this.storeAilment(m, 'stun', ailmentAmount(R.stunPerMotion, h.stunMotion ?? h.motion, g.stun), point);
     }
     if (famEdge && stage) {
       // 当てるたびに減る。弾かれた時は余分に減る。防具の技能「刃持ち」で減り方が小さくなる（v0.33.0）
-      p.edge = Math.max(0, p.edge - famEdge.wearPerMotion * (h.wearMotion ?? 0) * (bounced ? E.bounce.wearScale : 1) * g.edgeWear);
+      p.edge = Math.max(0, p.edge - (h.edgeCost ?? weaponEdgeProfile(weapon)?.wearPerHit ?? (famEdge.wearPerMotion * (h.wearMotion ?? 0))) * (bounced ? E.bounce.wearScale : 1) * g.edgeWear);
       const now = edgeStage(E, p.edge);
       if (now.id !== stage.id) this.emit({ type: 'edge', stage: now.id, value: p.edge });
     }
@@ -1217,8 +1263,8 @@ export class Simulation implements SimCtx {
   /** 状態異常をためる（v0.33.0）。発症したら、効き目を始めて知らせる（硬直は、いまの技を止める） */
   private storeAilment(m: MonsterState, kind: StatusKind, amount: number, pos: V3): void {
     const R = ailmentRules(this.content);
-    if (addAilment(m.ailments, R, kind, amount) !== 'triggered') return;
-    if (kind === 'poison') startPoison(m.ailments, R, m.def.hp);
+    if (addAilment(m.ailments, R, kind, amount, m.def.id) !== 'triggered') return;
+    if (kind === 'poison') startPoison(m.ailments, R, m.def.hp, m.def.id);
     else {
       m.action = null;
       m.attackEval = null;
@@ -1352,6 +1398,7 @@ export class Simulation implements SimCtx {
         if (!inWindow(t, hw)) continue;
         if (this.ledger.count(run.instanceId, hw.id, p.id) >= hw.maxHitsPerTarget) continue;
         const sw = this.windowSweep(hw, t, m.pos, m.yaw);
+        sw.a0=scalePoint(sw.a0,m.pos,m.sizeScale);sw.b0=scalePoint(sw.b0,m.pos,m.sizeScale);sw.a1=scalePoint(sw.a1,m.pos,m.sizeScale);sw.b1=scalePoint(sw.b1,m.pos,m.sizeScale);sw.r*=m.sizeScale;
         const cap = playerHurtCapsule(p, this.content);
         const shape: WorldShape = { partIndex: 0, a: cap.a, b: cap.b, r: cap.r };
         const hit = sweepCapsule(sw.a0, sw.b0, sw.a1, sw.b1, sw.r, [shape]);
@@ -1405,6 +1452,7 @@ export class Simulation implements SimCtx {
       this.totalDamage,
       this.hitCount,
       this.damageTaken,
+      this.hotProtection,this.coldProtection,p.itemUse?.cookGood?1:0,p.itemUse?.cookPressed?1:0,
     ];
     for (const m of this.monsters) {
       parts.push(m.hp, m.pos.x, m.pos.z, m.yaw, m.dead ? 1 : 0, m.staggerTicks, m.cooldown, act(m.action), m.aware ? 1 : 0, m.enraged ? m.enragedTicks : 0, m.rageAcc);
@@ -1412,7 +1460,7 @@ export class Simulation implements SimCtx {
     }
     for (const h of this.hazards) parts.push(h.x, h.z, h.warn, h.active, h.hit ? 1 : 0);
     parts.push(p.itemIndex, p.items.map((s) => s.count).join(','), p.itemUse ? `${p.itemUse.itemId}:${p.itemUse.done ? 1 : 0}` : '-', p.lastSingle ? `${p.lastSingle.key}:${p.lastSingle.instanceId}` : '-', p.carving ? p.carving.source : '-');
-    for (const m of this.monsters) parts.push(m.trapTicks, m.trapCount, m.tranq, m.tranqTicks, m.captured ? 1 : 0, m.markTicks, m.seenAreaId ?? '-');
+    for (const m of this.monsters) parts.push(m.sizeScale,m.flashTicks,m.flashCount,m.trapTicks, m.trapCount, m.tranq, m.tranqTicks, m.captured ? 1 : 0, m.markTicks, m.seenAreaId ?? '-');
     for (const m of this.monsters) {
       const a = m.ailments;
       parts.push(STATUS_KINDS.map((k) => `${a.gauge[k]}/${a.count[k]}/${a.idle[k]}/${a.ticks[k]}`).join(','), a.poisonTotal, a.poisonDone, a.grace);

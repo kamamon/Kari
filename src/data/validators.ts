@@ -1,3 +1,4 @@
+import { registerClassicSkills } from '../game/classicGear';
 // 読み込んだ JSON を検証して Content へ組み立てる。
 // ブラウザ（fetch）と Node のテスト（fs）の両方から同じ関数を使う。
 // 問題は黙って直さず、すべて errors に積んで呼び出し側へ返す。
@@ -100,6 +101,7 @@ export function validateAction(a: ActionDef, errors: string[]): void {
     if (ids.has(h.id)) errors.push(`${w}: hitWindow id ${h.id} が重複`);
     ids.add(h.id);
     if (!isNum(h.damageCoefficient) || h.damageCoefficient < 0) errors.push(`${w}: hitWindow ${h.id} の damageCoefficient が不正`);
+    for(const key of ['edgeCost','elementMotion','statusMotion','stunMotion'] as const){const n=h[key];if(n!==undefined&&(!isNum(n)||n<0||n>100))errors.push(`${w}: hitWindow ${h.id} の ${key} が不正`);}
     if (!isInt(h.maxHitsPerTarget) || h.maxHitsPerTarget < 1) errors.push(`${w}: hitWindow ${h.id} の maxHitsPerTarget が不正`);
     if (!isInt(h.hitstopTicks) || h.hitstopTicks < 0) errors.push(`${w}: hitWindow ${h.id} の hitstopTicks が不正`);
     if (h.contact !== undefined && h.contact !== 'shield') errors.push(`${w}: hitWindow ${h.id} の contact が不正（shield だけ）`);
@@ -334,6 +336,8 @@ export function crossCheck(c: Content, errors: string[]): void {
   for (const wpn of c.weapons.values()) {
     if (!c.families.has(wpn.family)) errors.push(`weapon ${wpn.id}: family ${wpn.family} が無い`);
     if (!isNum(wpn.attack) || wpn.attack <= 0) errors.push(`weapon ${wpn.id}: attack が不正`);
+    const ep=wpn.edgeProfile;
+    if(ep!==undefined&&(!isObj(ep)||!c.families.get(wpn.family)?.edge||![ep.max,ep.keen,ep.worn,ep.wearPerHit].every(isNum)||!(ep.max>ep.keen&&ep.keen>ep.worn&&ep.worn>0&&ep.wearPerHit>0&&ep.max<=500))) errors.push(`weapon ${wpn.id}: edgeProfile が不正`);
     // 武器の射ち方（v0.60.0）: 系統の主の行動（溜めて射る）の段階の数だけ。射ち方の表を使わない組（保留の組 v056）では使われない
     const wf = c.families.get(wpn.family);
     if (wpn.shots && wf) checkShots(`weapon ${wpn.id}`, wpn.shots, c.actions.get(wf.actions.main));
@@ -429,6 +433,12 @@ export function crossCheck(c: Content, errors: string[]): void {
       if (!(it.tranq && it.tranq.range > 0 && it.tranq.halfAngleDeg > 0)) errors.push(`${w}: tranq が不正`);
     } else if (it.kind === 'mark') {
       if (!(it.mark && it.mark.range > 0 && it.mark.halfAngleDeg > 0 && Number.isInteger(it.mark.ticks) && it.mark.ticks > 0)) errors.push(`${w}: mark が不正`);
+    } else if (it.kind === 'stamina' || it.kind === 'cook') {
+      if(!isNum(it.stamina)||it.stamina<=0)errors.push(`${w}: stamina が不正`);
+    } else if (it.kind === 'heat' || it.kind === 'cold') {
+      if(!isInt(it.protectTicks)||it.protectTicks!<=0)errors.push(`${w}: protectTicks が不正`);
+    } else if (it.kind === 'flash') {
+      if(!it.flash||!isNum(it.flash.range)||it.flash.range<=0||!isNum(it.flash.halfAngleDeg)||it.flash.halfAngleDeg<=0||it.flash.halfAngleDeg>180||!isInt(it.flash.ticks)||it.flash.ticks<=0)errors.push(`${w}: flash が不正`);
     } else if (it.kind === 'whet') {
       // 研いだ後は納める（v0.40.0。2G に合わせて、納刀して使い、背から下ろして研ぐ。護刃が防御を構えたまま使った時だけ、抜刀のまま）
       if (a && a.onFinish !== 'sheathed_idle') errors.push(`${w}: 研ぐ行動の onFinish は sheathed_idle にする`);
@@ -504,6 +514,7 @@ export function crossCheck(c: Content, errors: string[]): void {
       if (from && to && from.family !== to.family) errors.push(`${w}: 元と結果の系統が違う`);
       if (to?.starter) errors.push(`${w}: 結果の武器が最初から持つ武器になっている`);
       if (from && to && !(to.attack > from.attack)) errors.push(`${w}: 強化しても攻撃力が上がらない`);
+      if(r.branch && (!from?.starter || !to?.series || to.rankId!=='rank.1')) errors.push(`${w}: 派生は初期武器から初級系列へ`);
     } else if (r.kind === 'armor_upgrade') {
       const from = c.armor.get(r.fromArmorId);
       const to = c.armor.get(r.resultArmorId);
@@ -531,11 +542,12 @@ export function crossCheck(c: Content, errors: string[]): void {
     if (fromId === resultId) errors.push(`${w}: 元と結果が同じ`);
     // 採集装備のみ直接生産と一段強化の両方を認める。同じ方式の重複は禁止。
     const pureSeries = c.weapons.get(resultId)?.series ?? c.armor.get(resultId)?.series;
-    const resultKey = pureSeries === 'gathering.ore_only' || pureSeries === 'gathering.bone_only' ? `${resultId}:${fromId === null ? 'craft' : 'upgrade'}` : resultId;
+    const branch = r.kind === 'upgrade' && r.branch === true;
+    const resultKey = branch ? `branch:${fromId}:${resultId}` : pureSeries === 'gathering.ore_only' || pureSeries === 'gathering.bone_only' ? `${resultId}:${fromId === null ? 'craft' : 'upgrade'}` : resultId;
     if (results.has(resultKey)) errors.push(`${w}: 結果 ${resultId} を作るレシピが重複`);
     results.add(resultKey);
     // 1 つの武器・防具から進める先は 1 つ（派生はまだ無い。工房の画面は「次の強化」を 1 つだけ出す）
-    if (fromId !== null) {
+    if (fromId !== null && !branch) {
       if (sources.has(fromId)) errors.push(`${w}: 元 ${fromId} から進めるレシピが重複`);
       sources.add(fromId);
     }
@@ -571,10 +583,90 @@ export function validateElementRules(e: ElementRules | undefined, errors: string
   const a = e.ailment;
   if (!(a && a.threshold > 0 && a.growth >= 1 && a.stunGrowth >= 1 && isInt(a.decayDelayTicks) && a.decayPerSec >= 0 && isInt(a.para?.ticks) && isInt(a.sleep?.ticks) && a.sleep.wakeScale >= 1
     && isInt(a.stun?.ticks) && a.poison?.hpRatio > 0 && isInt(a.poison.ticks) && isInt(a.poison.hits) && a.poison.hits > 0 && isInt(a.lockGraceTicks) && a.stunPerMotion >= 0)) errors.push(`${w}: ailment が不正`);
+  // 種別耐性は明示した状態だけを上書きする。null/誤記/範囲外を黙って採用しない。
+  if (!a || a.species === undefined) return;
+  if (!isObj(a.species)) { errors.push(`${w}: ailment.species が不正`); return; }
+  for (const [id, profile] of Object.entries(a.species)) {
+    if (!id.startsWith('monster.') || !isObj(profile) || Object.keys(profile).length === 0) {
+      errors.push(`${w}: ailment.species.${id} が不正`); continue;
+    }
+    for (const [kind, raw] of Object.entries(profile)) {
+      const label = `${w}: ailment.species.${id}.${kind}`;
+      if (!STATUS_KINDS.some((k) => k === kind) || !isObj(raw)) { errors.push(`${label} が不正`); continue; }
+      if (raw.immune === true) {
+        if (Object.keys(raw).length !== 1) errors.push(`${label}: 免疫には数値を併記しない`);
+        continue;
+      }
+      const { immune, initial, increase, cap, durationTicks, decayIntervalTicks, decayAmount, poisonDamage, poisonHits } = raw;
+      if (!((immune === undefined || immune === false) &&
+        isInt(initial) && initial > 0 && isInt(increase) && increase >= 0 &&
+        isInt(cap) && cap >= initial && cap <= 1000000 &&
+        isInt(durationTicks) && durationTicks > 0 && durationTicks <= 36000 &&
+        isInt(decayIntervalTicks) && decayIntervalTicks > 0 && decayIntervalTicks <= 36000 &&
+        isInt(decayAmount) && decayAmount >= 0 && decayAmount <= cap)) {
+        errors.push(`${label}: 耐性・時間・減衰の値が不正`); continue;
+      }
+      if (kind === 'poison') {
+        if (!(isInt(poisonDamage) && poisonDamage > 0 && poisonDamage <= 1000000 &&
+              isInt(poisonHits) && poisonHits > 0 && poisonHits <= durationTicks)) errors.push(`${label}: 毒の総量/回数が不正`);
+      } else if (poisonDamage !== undefined || poisonHits !== undefined) errors.push(`${label}: 毒専用の値は指定できない`);
+    }
+  }
 }
 
 /** 武器の属性・状態異常と、防具の耐性・技能（v0.33.0）が、決まりの中の名前と値か */
+/** 部位・属性の調整表: 全モンスターを読み込んだ後に参照先も検査する。 */
+export function validatePartZones(c: Content, errors: string[]): void {
+  const zones = c.elements?.partZones;
+  const els = new Set<string>(ELEMENT_IDS);
+  const table = (raw: unknown, label: string): void => {
+    if (!isObj(raw) || !Object.keys(raw).length) { errors.push(`${label}: 属性肉質表が不正`); return; }
+    for (const [e, v] of Object.entries(raw)) if (!els.has(e) || !isNum(v) || v < 0 || v > 1) errors.push(`${label}.${e}: 属性肉質が不正`);
+  };
+  if (zones === undefined) return;
+  if (!isObj(zones)) { errors.push('elements.partZones: 属性肉質表が不正'); return; }
+  for (const [id, entries] of Object.entries(zones)) {
+    const m = c.monsters.get(id);
+    if (!m || !isObj(entries) || !Object.keys(entries).length) { errors.push(`elements.partZones.${id}: 種または表が不正`); continue; }
+    for (const [partId, raw] of Object.entries(entries)) {
+      const p = m.parts.find(x => x.id === partId);
+      const label = `elements.partZones.${id}.${partId}`;
+      if (!p || !isObj(raw)) { errors.push(`${label}: 部位または表が不正`); continue; }
+      table(raw.normal, `${label}.normal`);
+      if (raw.broken !== undefined) {
+        if (p.breakDurability === null) errors.push(`${label}: 破壊できない部位の破壊後属性肉質`);
+        table(raw.broken, `${label}.broken`);
+      }
+      if (Object.keys(raw).some(k => k !== 'normal' && k !== 'broken')) errors.push(`${label}: 未知の欄`);
+    }
+  }
+}
+
+/** 種IDの存在・値の範囲を読み込み時に確認。 */
+export function validateTrapProfiles(c: Content, errors: string[]): void {
+  const profiles = c.elements?.trapProfiles;
+  if (profiles === undefined) return;
+  if (!isObj(profiles)) { errors.push('elements.trapProfiles: 表が不正'); return; }
+  for (const [id, raw] of Object.entries(profiles)) {
+    const m = c.monsters.get(id);
+    const label = `elements.trapProfiles.${id}`;
+    if (!m || m.herd || !isObj(raw)) { errors.push(`${label}: 大型の種または表が不正`); continue; }
+    const { normalScale, enragedScale, repeatScale, minTicks } = raw;
+    if (!(isNum(normalScale) && normalScale > 0 && normalScale <= 2 &&
+      isNum(enragedScale) && enragedScale >= 0 && enragedScale <= 2 &&
+      isNum(repeatScale) && repeatScale > 0 && repeatScale <= 1 &&
+      isInt(minTicks) && minTicks > 0 && minTicks <= 3600)) errors.push(`${label}: 相性の値が不正`);
+    if (Object.keys(raw).some(k => !['normalScale','enragedScale','repeatScale','minTicks'].includes(k))) errors.push(`${label}: 未知の欄`);
+  }
+}
+
 export function validateGear(c: Content, errors: string[]): void {
+  validatePartZones(c, errors);
+  validateTrapProfiles(c, errors);
+  const profiles = c.elements?.ailment?.species;
+  if (isObj(profiles)) for (const id of Object.keys(profiles)) {
+    if (!c.monsters.has(id)) errors.push(`elements: ailment.species の種 ${id} が無い`);
+  }
   const els = new Set<string>(ELEMENT_IDS);
   for (const wp of c.weapons.values()) {
     const w = `weapon ${wp.id}`;
@@ -1386,6 +1478,7 @@ export async function assembleContent(getRaw: JsonGetter, opts: LoadOptions = {}
     errors.push(...validateFieldGatherCatalog(content,g));
     carveGatherPond(content,g,errors);
   }
+  registerClassicSkills(content);
   validateGear(content, errors);
   content.shop = (await get(index.files.shop)) as ShopDef;
   checkVersion(index.files.shop, content.shop.schemaVersion, errors);

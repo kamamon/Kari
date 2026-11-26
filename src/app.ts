@@ -1,3 +1,4 @@
+import {emptyClassicGear} from './game/classicGear';
 // ゲーム全体のつなぎ役。入力 → 60Hz 固定 simulation → 描画 / 音 / HUD の順に 1 フレームを回す。
 // 行き先は 拠点（選択画面）/ 訓練場 / 依頼 の 3 つ。依頼の成否は simulation が決め、ここは表示するだけ。
 import { AudioSystem } from './core/audio';
@@ -244,6 +245,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       pouch: questId ? chosenPouch(this.save.doc, this.content) : [],
       ...(questId&&this.huntPrep?{hubPrep:this.huntPrep}:{}),
       armorIds: wornArmor(this.save.doc, this.content).map((a) => a.id),
+      classicGear:this.save.doc.classicGear??emptyClassicGear(),
       field: this.fieldHunts,
       // 操作補助: 弓の狙いの補助（v0.61.0）。狩りを始めた時の設定（途中で変えると、次の狩りから）
       aimAssist: this.store.value.bowAimAssist,
@@ -278,7 +280,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     const spent = this.sim.spentOwn();
     if (!success && spent.length === 0) return;
     const rewards: RunRewards = success
-      ? { runId: this.runId, questId: h.quest.id, money: h.rewards!.money, items: h.rewards!.items.map((s) => ({ ...s })), spent }
+      ? { runId: this.runId, questId: h.quest.id, money: h.rewards!.money, items: h.rewards!.items.map((s) => ({ ...s })), spent, individuals:this.sim.monsters.filter(m=>m.dead||m.captured).map(m=>({speciesId:m.def.id,sizePct:Math.round(m.sizeScale*100),outcome:m.captured?'capture' as const:'slay' as const})) }
       : { runId: this.runId, questId: h.quest.id, money: 0, items: [], spent, cleared: false };
     this.settleState = { runId: this.runId, state: 'saving', message: '', spentOnly: !success };
     if (success) this.runOutcome.set(this.runId, h.reason === 'capture' ? 'capture' : 'slay');

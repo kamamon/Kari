@@ -102,21 +102,61 @@
     ],
     "maps": [
       "maps/basin_training.json",
-      "maps/hub_village.json"
+      "maps/hub_village.json",
+      "maps/classic_02.json",
+      "maps/classic_03.json",
+      "maps/classic_04.json",
+      "maps/classic_05.json",
+      "maps/classic_06.json",
+      "maps/classic_07.json",
+      "maps/classic_08.json",
+      "maps/classic_09.json",
+      "maps/classic_10.json",
+      "maps/classic_11.json",
+      "maps/classic_12.json",
+      "maps/classic_13.json",
+      "maps/classic_14.json",
+      "maps/classic_15.json",
+      "maps/classic_16.json",
+      "maps/classic_17.json",
+      "maps/classic_18.json",
+      "maps/classic_19.json",
+      "maps/classic_20.json"
     ],
     "fields": [
-      "fields/basin.json"
+      "fields/basin.json",
+      "fields/classic_02.json",
+      "fields/classic_03.json",
+      "fields/classic_04.json",
+      "fields/classic_05.json",
+      "fields/classic_06.json",
+      "fields/classic_07.json",
+      "fields/classic_08.json",
+      "fields/classic_09.json",
+      "fields/classic_10.json",
+      "fields/classic_11.json",
+      "fields/classic_12.json",
+      "fields/classic_13.json",
+      "fields/classic_14.json",
+      "fields/classic_15.json",
+      "fields/classic_16.json",
+      "fields/classic_17.json",
+      "fields/classic_18.json",
+      "fields/classic_19.json",
+      "fields/classic_20.json"
     ],
     "player": "player.json",
     "quests": [
       "quests.json",
       "quests_creatures.json",
       "quests_herds.json",
-      "quests_errands.json"
+      "quests_errands.json",
+      "quests_classic_regions.json"
     ],
     "items": [
       "items.json",
-      "items_creatures.json"
+      "items_creatures.json",
+      "items_classic_regions.json"
     ],
     "loot": [
       "loot.json",
@@ -136,7 +176,8 @@
     "elements": "elements.json",
     "skills": "skills.json",
     "equipment": [
-      "equipment_series.json"
+      "equipment_series.json",
+      "equipment_classic_branches.json"
     ],
     "follow": [
       "follow/selvark.json",

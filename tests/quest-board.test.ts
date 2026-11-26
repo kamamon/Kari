@@ -30,7 +30,7 @@ const errorsOf = (fn: (b: QuestBoardDef) => void): string[] => {
 describe('依頼の掲示（星・分類・依頼人・話・目安の時間）', () => {
   it('狩りの依頼のどれにも掲示があり、読み込みの時に依頼へ付く。設計の 24 件は、星と依頼人が設計（current_quest_overrides_v1.json）のまま', () => {
     // 設計の 24 件と、v0.34.0 の上の級 9 件（文は Claude が書いた。下の「上の級」の検査）
-    expect([...content.quests.values()].filter((q) => q.kind !== 'gather')).toHaveLength(33);
+    expect([...content.quests.values()].filter((q) => q.kind !== 'gather')).toHaveLength(49);
     expect([...content.quests.values()].every((q) => !!q.board)).toBe(true);
     const design = JSON.parse(readFileSync('docs/source/chatgpt-quest-design-20261125/current_quest_overrides_v1.json', 'utf8')) as {
       questDesigns: { questId: string; stars: number; client: string; requestText: string; targetClearMinutes: [number, number]; effectiveTimeLimitMinutes: number }[];
