@@ -12,6 +12,7 @@ import {
   buy,
   claimSupport,
   craft,
+  changeClassicGear,
   craftRankOpen,
   deliver,
   equip,
@@ -253,6 +254,8 @@ export class SaveManager {
   isSettled(runId: string): boolean {
     return this.doc.settledRuns.includes(runId);
   }
+
+  classicGear(op:'craft'|'attach'|'detach'|'fortify',id:string,jewelId?:string):Promise<SaveResult>{return this.commit(doc=>changeClassicGear(doc,this.content,op,id,jewelId));}
 
   craft(recipeId: string): Promise<SaveResult> {
     const recipe = this.content.recipes.get(recipeId);

@@ -418,6 +418,8 @@ export interface ArmorDef {
   resist?: Partial<Record<ElementId, number>>;
   /** 技能（v0.33.0。1 部位 1 点。element・status は、耐性の技能の対象） */
   skill?: ArmorSkill;
+  /** Explicit 2G-style point contributions, preferred over legacy adaptation. */
+  skillPoints?: ArmorSkill[];
 }
 
 /** 防具の技能（v0.33.0。ChatGPT の全装備四級版 #15 の 16 技能。public/data/skills.json） */

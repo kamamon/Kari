@@ -1,3 +1,4 @@
+import { registerClassicSkills } from '../game/classicGear';
 // 読み込んだ JSON を検証して Content へ組み立てる。
 // ブラウザ（fetch）と Node のテスト（fs）の両方から同じ関数を使う。
 // 問題は黙って直さず、すべて errors に積んで呼び出し側へ返す。
@@ -1463,6 +1464,7 @@ export async function assembleContent(getRaw: JsonGetter, opts: LoadOptions = {}
     errors.push(...validateFieldGatherCatalog(content,g));
     carveGatherPond(content,g,errors);
   }
+  registerClassicSkills(content);
   validateGear(content, errors);
   content.shop = (await get(index.files.shop)) as ShopDef;
   checkVersion(index.files.shop, content.shop.schemaVersion, errors);

@@ -1,3 +1,4 @@
+import { classicSkillPoints, classicSkillLevel, classicNegativeValue, type ClassicGearState } from './classicGear';
 // 装備の効き目（v0.33.0。docs/spec.md の 30 章、D-114）: 防具の技能と耐性、武器の属性の係数、会心率、受ける攻撃の属性。
 // 計算だけ（DOM・Three.js・時刻に触れない）。数値は public/data/elements.json と skills.json（ChatGPT の全装備四級版 #15 の rules）。
 import { ARMOR_SLOTS, ELEMENT_IDS, STATUS_KINDS, type ArmorDef, type ArmorSkill, type Content, type ElementId, type MonsterDef, type MonsterPartDef, type StatusKind, type WeaponDef } from '../data/schemas';
@@ -6,6 +7,10 @@ import { ARMOR_SLOTS, ELEMENT_IDS, STATUS_KINDS, type ArmorDef, type ArmorSkill,
 export const SKILL_MAX_LEVEL = 3;
 
 export interface GearEffects {
+  points?: Map<string,number>;
+  rawPower?: number;
+  defenseBonus?: number;
+  evadeExtraTicks?: number;
   /** 技能の Lv（1〜3）。鍵は技能の id。個別耐性は「id:属性」「id:状態異常」（違う属性・状態異常の点は合わせない） */
   levels: Map<string, number>;
   /** 属性ごとの耐性（防具の合計 + 個別属性耐性。[-30, 30] に収める）。受ける攻撃の属性の項だけに (1 - 耐性/100) を掛ける */
@@ -69,15 +74,17 @@ export function skillLevels(pieces: readonly ArmorDef[]): Map<string, number> {
 /** 技能の、いまの Lv の値（skills.json の values。Lv 0 なら 0） */
 export function skillValue(content: Content, levels: ReadonlyMap<string, number>, key: string): number {
   const lv = levels.get(key) ?? 0;
-  if (lv <= 0) return 0;
+  if (lv < 0) return classicNegativeValue(key,lv);
+  if (lv === 0) return 0;
   const def = content.skills.get(key.split(':')[0]!);
   return def ? def.values[Math.min(SKILL_MAX_LEVEL, lv) - 1] ?? 0 : 0;
 }
 
 /** 装備の効き目。武器と、身に着けている防具から決まる（狩りの間は変わらない） */
-export function computeGear(content: Content, weapon: WeaponDef, armorIds: readonly string[]): GearEffects {
+export function computeGear(content: Content, weapon: WeaponDef, armorIds: readonly string[], classic?:ClassicGearState): GearEffects {
   const pieces = wornPieces(content, armorIds);
-  const levels = skillLevels(pieces);
+  const points = classic ? classicSkillPoints(content,pieces,weapon.id,classic) : undefined;
+  const levels = points ? new Map([...points].map(([k,v]):[string,number]=>[k,classicSkillLevel(k,v)]).filter(([,lv])=>lv!==0)) : skillLevels(pieces);
   const pct = (key: string): number => skillValue(content, levels, key) / 100;
   const [lo, hi] = content.elements.resistRange;
   const resist = {} as Record<ElementId, number>;
@@ -92,6 +99,10 @@ export function computeGear(content: Content, weapon: WeaponDef, armorIds: reado
   const bow = content.families.get(weapon.family)?.edge === undefined;
   return {
     levels,
+    ...(points?{points}:{}),
+    rawPower:1+pct('raw_power'),
+    defenseBonus:skillValue(content,levels,'defense'),
+    evadeExtraTicks:Math.min(8,Math.ceil(skillValue(content,levels,'evade_window')*60/1000)),
     resist,
     guardStamina: 1 - pct('guard_economy'),
     dodgeStamina: 1 - pct('dodge_economy'),

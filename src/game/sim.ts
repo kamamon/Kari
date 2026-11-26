@@ -1,3 +1,4 @@
+import { fortifyBonus, type ClassicGearState } from './classicGear';
 // simulation 本体。60Hz 固定 tick で step() を 1 回ずつ呼ぶ。
 // ここは DOM・Three.js・Math.random・現在時刻に触れない。同じ seed と同じ入力列なら同じ結果になる。
 import { DEG, angleDiff, forwardOf, toWorld, yawOf, type V3 } from '../core/math';
@@ -34,6 +35,7 @@ export interface SimOptions {
   questId?: string | null;
   /** 身に着けている防具の ID（部位ごとに 1 つ）。無ければ防御力 0。 */
   armorIds?: readonly string[];
+  classicGear?: ClassicGearState;
   /**
    * フィールド（エリアに分かれた狩場）で狩る。依頼に fieldId がある時だけ効く。野営地から出発し、標的はエリアを巡る。
    * 指定しなければ、これまでどおり 1 つの狩場（依頼の mapId）で始まる。
@@ -277,9 +279,9 @@ export class Simulation implements SimCtx {
     }
     this.player = createPlayer(content, this.world.spawn, options.weaponId, carry);
     this.armorIds = [...(options.armorIds ?? [])];
-    this.defense = totalDefense(content, this.armorIds);
+    this.gear = computeGear(content, content.weapons.get(options.weaponId)!, this.armorIds, options.classicGear);
+    this.defense = Math.max(0,totalDefense(content, this.armorIds)+fortifyBonus(this.armorIds,options.classicGear)+(this.gear.defenseBonus??0));
     this.defenseScale = defenseScale(content, this.defense);
-    this.gear = computeGear(content, content.weapons.get(options.weaponId)!, this.armorIds);
     if (quest) {
       this.rank = content.ranks.get(quest.rankId) ?? null;
       if (!this.rank) throw new Error(`rank ${quest.rankId} が無い`);
@@ -1158,7 +1160,7 @@ export class Simulation implements SimCtx {
     // 状態異常の睡眠: 覚ます最初の命中だけ wakeScale 倍（v0.33.0）
     const woke = !m.dead && wakeFromSleep(m.ailments, R);
     const damage = computeDamage({
-      attack: weapon.attack,
+      attack: weapon.attack*(g.rawPower??1),
       motion: h.motion,
       sharpness: weapon.sharpnessModifier * (stage?.damageScale ?? 1),
       hitzone,

@@ -1,3 +1,4 @@
+import {emptyClassicGear, JEWELS, socketCapacity, installedSlots, classicRank} from '../game/classicGear';
 // 拠点（仮）。武器を選び、依頼か訓練場へ出る。持ち物を確かめ、工房で強化し、データを書き出す / 取り込む。
 // 受付は級ごとの実施設とつなぎ、星ごとの短い一覧から詳細へ進む。
 //
@@ -410,7 +411,7 @@ export class BaseScreen {
     const defense = defenseOf(doc, c);
     this.armorNote.textContent = `防御力の合計 ${defense}（受けるダメージ ×${defenseScale(c, defense).toFixed(2)}）`;
     // 技能と耐性（v0.33.0）: 身に着けている防具の点から（1 部位 1 点、Lv 3 まで）
-    const gear = w ? computeGear(c, w, worn.map((a) => a.id)) : null;
+    const gear = w ? computeGear(c, w, worn.map((a) => a.id),doc.classicGear??emptyClassicGear()) : null;
     const sum = gear ? gearSummary(c, gear) : { skills: '', resist: '' };
     this.gearNote.textContent = '';
     this.gearNote.append(el('span', 'skills', `技能: ${sum.skills || 'なし'}`), el('span', 'resist', `耐性: ${sum.resist || 'なし'}`));
@@ -1012,6 +1013,7 @@ export class BaseScreen {
     section('武器', 'upgrade', doc.weapons);
     section('防具', 'armor_upgrade', doc.armor);
     const made = this.renderMake(nameOf);
+    this.renderClassicForge();
     const notes = [ready > 0 ? `強化できます: ${ready}` : '', made > 0 ? `作れます: ${made}` : '', packs > 0 ? '支給を受け取れます' : ''].filter(Boolean);
     this.forge.querySelector('summary')!.textContent = notes.length ? `工房（${notes.join('・')}）` : '工房';
   }
@@ -1020,6 +1022,25 @@ export class BaseScreen {
    * 作る（v0.32.0。ChatGPT の全装備四級版 #15 の直接生産）: 系列ごとにたたんだ欄。作れる数を返す。
    * 級の開いていない物は「まだ作れない級」、持っている物は「持っています」。作った物は装備箱で持ち替える（装備は替えない）。
    */
+  private renderClassicForge():void{
+    const c=this.content,doc=this.host.save.doc,g=doc.classicGear??emptyClassicGear();
+    const section=el('details','forge-make');section.appendChild(el('summary','forge-head','装飾品・防具の追加強化'));
+    section.appendChild(el('p','base-note','技能点を合計し、10点以上または負の閾値で発動します。強化派生時、装飾品は倉庫に戻ります。'));
+    for(const j of JEWELS){const row=el('div','forge-recipe');row.appendChild(el('b',undefined,j.name+'　所持 '+(g.stock[j.id]??0)+'　'+j.cost+'枠'));
+      row.appendChild(el('p',undefined,Object.entries(j.points).map(([id,n])=>(c.skills.get(id)?.name??id)+' '+(n>0?'+':'')+n).join(' / ')));
+      row.appendChild(el('span',undefined,j.materials.map(s=>(c.materials.get(s.itemId)?.name??s.itemId)+' ×'+s.count).join('、')+' / '+j.money+'通貨'));
+      const b=el('button','go','作る');b.disabled=doc.money<j.money||j.materials.some(s=>(doc.items[s.itemId]??0)<s.count)||![...c.quests.values()].some(q=>q.rankId===j.rank&&questUnlocked(doc,q));b.addEventListener('click',()=>void this.run('作成中',()=>this.host.save.classicGear('craft',j.id),'装飾品を作成しました。'));row.appendChild(b);section.appendChild(row);
+    }
+    for(const id of [this.host.weaponId,...wornArmor(doc,c).map(a=>a.id)]){
+      const item=c.armor.get(id)??c.weapons.get(id);if(!item)continue;const cap=socketCapacity(c,id),used=installedSlots(id,g),row=el('div','forge-recipe');row.appendChild(el('b',undefined,item.name+'　枠 '+used+'/'+cap));
+      for(const [i,jid]of (g.sockets[id]??[]).entries()){const j=JEWELS.find(j=>j.id===jid);if(!j)continue;const b=el('button',undefined,j.name+' を外す');b.addEventListener('click',()=>void this.run('取り外し中',()=>this.host.save.classicGear('detach',id,jid),'倉庫に戻しました。'));row.appendChild(b);}
+      for(const j of JEWELS.filter(j=>(g.stock[j.id]??0)>0&&used+j.cost<=cap)){const b=el('button',undefined,j.name+' を装着');b.addEventListener('click',()=>void this.run('装着中',()=>this.host.save.classicGear('attach',id,j.id),'装着しました。'));row.appendChild(b);}
+      const a=c.armor.get(id);if(a&&!a.starter){const lv=g.fortify[id]??0,rank=classicRank(a),ore=['mat.ore.basin_iron','mat.ore.deepcopper','mat.ore.crystalseam_steel','mat.ore.crystalseam_steel'][rank-1]!,cost=120*rank*(lv+1);const b=el('button','go','防具強化 Lv'+lv+'/5（防御+'+(lv*2)+'）');b.disabled=lv>=5||doc.money<cost||(doc.items[ore]??0)<lv+1;b.addEventListener('click',()=>void this.run('強化中',()=>this.host.save.classicGear('fortify',id),'防御力を強化しました。'));row.append(el('p',undefined,(c.materials.get(ore)?.name??ore)+' ×'+(lv+1)+' / '+cost+'通貨'),b);}
+      section.appendChild(row);
+    }
+    this.forgeBody.appendChild(section);
+  }
+
   private renderMake(nameOf: (id: string) => string): number {
     const c = this.content;
     const doc = this.host.save.doc;

@@ -1,3 +1,4 @@
+import {emptyClassicGear} from './game/classicGear';
 // ゲーム全体のつなぎ役。入力 → 60Hz 固定 simulation → 描画 / 音 / HUD の順に 1 フレームを回す。
 // 行き先は 拠点（選択画面）/ 訓練場 / 依頼 の 3 つ。依頼の成否は simulation が決め、ここは表示するだけ。
 import { AudioSystem } from './core/audio';
@@ -195,6 +196,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       // 依頼へは、持っている道具を、持ち出せる数まで持っていく
       pouch: questId ? pouchOf(this.save.doc, this.content) : [],
       armorIds: wornArmor(this.save.doc, this.content).map((a) => a.id),
+      classicGear:this.save.doc.classicGear??emptyClassicGear(),
       field: this.fieldHunts,
     };
   }

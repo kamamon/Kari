@@ -165,7 +165,7 @@ function tryUseItem(p: PlayerState, ctx: SimCtx, keepDrawn = false): boolean {
   const run = startAction(p, item.useActionId!, ctx);
   run.keepDrawn = keepDrawn;
   // 防具の技能「道具整備」（v0.33.0）: 整備の道具（研磨石）を使う時間だけが短くなる（効き目は変えない）
-  if (item.maintenance && ctx.gear.itemTime < 1) run.speed = ctx.gear.itemTime;
+  if (item.maintenance && ctx.gear.itemTime !== 1) run.speed = ctx.gear.itemTime;
   p.itemUse = { itemId: item.id, instanceId: run.instanceId, done: false };
   ctx.emit({ type: 'item_use', itemId: item.id, pos: { ...p.pos } });
   return true;
@@ -431,6 +431,8 @@ function tryStartRoll(p: PlayerState, inp: InputFrame, ctx: SimCtx): boolean {
     p.yaw = dir;
   }
   const run = startAction(p, def.actionId, ctx);
+  const extra=Math.max(0,ctx.gear.evadeExtraTicks??0);
+  if(extra&&run.def.invulnerable)run.def={...run.def,invulnerable:run.def.invulnerable.map(w=>({...w,to:Math.min(run.def.durationTicks,w.from+25,w.to+extra)}))};
   run.moveYaw = dir;
   run.fixedDir = true;
   run.dirIndex = dirIndex;
