@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "purpose": "GitHub PR #20 remote publication audit after restarted upload",
+  "repository": "kamamon/Kari",
+  "branch": "chatgpt/equipment-specialization-20261126",
+  "verifiedHeadBeforeReport": "c9f70031d3b5d2041882f1824d5d1a57ee862957",
+  "status": "remote-contents-verified",
+  "remoteDirectoryCounts": {
+    "speciesDesignJson": 86,
+    "generatedCatalogPages": 86,
+    "seriesEquipmentJson": 95,
+    "appearanceJsonParts": 9,
+    "mechanicJsonParts": 35,
+    "materialJsonParts": 12,
+    "pngConceptBoards": 22,
+    "packedBinaryParts": 236
+  },
+  "imagePackedAudit": {
+    "treeSha": "271642a8e1144d7e55301ef0d14e0ffd5b056ced",
+    "expectedChunks": 236,
+    "matchedGitBlobShaAndSizes": 236,
+    "missingOrMismatched": 0,
+    "totalOriginalPngBytesFromManifest": 59570121,
+    "scope": "Checked every GitHub packed binary entry's recorded gitSha and byte length against the index through GitHub's recursive tree. The completed PNG files were not locally reconstructed within this audit."
+  },
+  "storedTestArtifacts": {
+    "static": "analysis/validation-report.json",
+    "staticAssertions": 61212,
+    "staticErrors": 0,
+    "reference": "analysis/reference-tests.log",
+    "referenceTests": 19,
+    "referenceFailures": 0,
+    "art": "analysis/art-validation.json",
+    "artAssertions": 4300,
+    "artErrors": 0,
+    "scope": "Results read from checked-in audit artifacts; tests were not rerun by this publication audit."
+  },
+  "githubPullRequest": {
+    "number": 20,
+    "changedFilesBeforeReport": 627,
+    "mergeable": true,
+    "mergeableState": "clean",
+    "draft": true
+  },
+  "exclusions": [
+    "No runtime game code edits",
+    "No main branch merge",
+    "No 3D runtime test",
+    "No individual four-grade all-weapon renderings",
+    "No independent full PNG pixel decode"
+  ],
+  "notes": "Restored content was regenerated after prior unuploaded workspace loss. The 22 board PNGs are stored as lossless concatenations of Git blobs to avoid upload limits; use reference/materialize_art.py. PR text was previously stale and should now reflect full package."
+}
