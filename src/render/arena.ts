@@ -19,6 +19,7 @@ import { SKY_LOOKS, SkyDome } from './sky';
 import { patchNoise } from './noise';
 import { imageLambert, projectSurfaceUV } from './materialImages';
 import { PlatformIndex, buildTerraces, holedGround } from './terraces';
+import { buildLandscapeSurface, buildLandscapeExterior, type LandscapeProfile } from './fieldLandscape';
 
 export const FOG_COLOR = 0xaebcab;
 /**
@@ -70,6 +71,8 @@ export interface AreaLook {
   relief?: ReliefDef;
   /** 地面の色に掛ける倍率（v0.51.0。フィールドのエリアの look.ground）。無ければ 1 */
   groundTint?: readonly [number, number, number];
+  /** 実フィールドだけ: 外側の立体景観。里と旧1区画の描画は従来のまま。 */
+  landscape?: LandscapeProfile;
 }
 
 /** これまでの狩場（エリアが 1 つ）: 空と光を用意して、狩場を描く。 */
@@ -138,7 +141,10 @@ export function buildAreaGroup(map: AreaLook): Group {
   const cx = (b.minX + b.maxX) / 2, cz = (b.minZ + b.maxZ) / 2;
   const gates = map.gates ?? [];
 
-  const look = KIND_LOOK[map.kind ?? 'hunt'];
+  const initial = KIND_LOOK[map.kind ?? 'hunt'];
+  const landscape = map.landscape;
+  const cover = landscape && landscape.fieldId !== 'field.basin' ? landscape.cover : 1;
+  const look = {...initial,short:initial.short*cover,tall:initial.tall*cover,dry:initial.dry*cover,flower:initial.flower*cover,bush:initial.bush*cover,branch:initial.branch*cover};
   const noise = patchNoise(map.seed ?? 9001);
   // 自然な形のエリア（v0.20.0）: 内か外か・縁までの距離・外向きを、外周から測る
   const outline = map.shape && map.shape.length >= 3 ? new AreaShape(map.shape) : null;
@@ -149,7 +155,8 @@ export function buildAreaGroup(map: AreaLook): Group {
   const village = map.kind === 'village';
   const plats = new PlatformIndex(map.platforms);
   // 里（v0.35.0）: 地面の板は、外周の 1m 外まで（外は霧の谷）。段差の無い所（広場の高さ）だけに敷く
-  const gw = village ? w + 2 : w + GROUND_MARGIN * 2, gd = village ? d + 2 : d + GROUND_MARGIN * 2;
+  const margin = village ? 1 : landscape ? 6 : GROUND_MARGIN;
+  const gw = w + margin * 2, gd = d + margin * 2;
   /** 外周の内側へ寄せた点 */
   const clampIn = (x: number, z: number): [number, number] => [Math.min(b.maxX - 0.05, Math.max(b.minX + 0.05, x)), Math.min(b.maxZ - 0.05, Math.max(b.minZ + 0.05, z))];
   /** 地面の起伏（v0.46.0。無ければ 0） */
@@ -159,10 +166,13 @@ export function buildAreaGroup(map: AreaLook): Group {
   // 0 より低い段差（v0.31.0）があれば、その形の穴を開けた格子にする（無ければ、これまでと同じ板）。里は、どの段差も穴にする
   const sunken = map.platforms.filter((p) => p.h < 0);
   const holes = village ? map.platforms : sunken;
+  const exteriorInput = landscape ? {bounds:b,shape:map.shape,relief:map.relief,gates,profile:landscape} : null;
+  const exterior = exteriorInput ? buildLandscapeSurface(exteriorInput) : null;
   let groundGeo: BufferGeometry;
   if (holes.length > 0) groundGeo = holedGround(cx, cz, gw, gd, holes, 5, village ? (x, z) => plats.top(...clampIn(x, z)) === null : undefined);
+  else if(exterior)groundGeo=exterior.near;
   else {
-    // 起伏のある狩場（v0.46.0）は 2m おきに分けて、起伏の高さへ持ち上げる（外周の外は、縁の高さのまま崖の下へ続く）
+    // 旧1区画と里。実フィールドの外側は専用景観に分ける。
     const seg = map.relief ? 2 : 5;
     groundGeo = new PlaneGeometry(gw, gd, Math.ceil(gw / seg), Math.ceil(gd / seg));
     groundGeo.rotateX(-Math.PI / 2);
@@ -192,15 +202,18 @@ export function buildAreaGroup(map: AreaLook): Group {
     groundGeo.setAttribute('uv', new Float32BufferAttribute(uv, 2));
     groundGeo.setAttribute('color', new Float32BufferAttribute(col, 3));
   }
-  const ground = new Mesh(groundGeo, tileMaterial(look.ground, 0xffffff, { vertexColors: true, gain: GROUND_GAIN }));
+  const regionalFloor = landscape && landscape.fieldId !== 'field.basin';
+  const floorMaterial = regionalFloor ? imageLambert(landscape.floor,{color:landscape.floorColor,vertexColors:true},{gain:1.16}) : tileMaterial(look.ground, 0xffffff, { vertexColors: true, gain: GROUND_GAIN });
+  const ground = new Mesh(groundGeo, floorMaterial);
   ground.receiveShadow = true;
   ground.userData.noMerge = true;
   ground.userData.ground = true;
   group.add(ground);
+  if(exterior&&exteriorInput){if(groundGeo!==exterior.near)exterior.near.dispose();group.add(buildLandscapeExterior(exteriorInput,exterior));}
 
   const rockDark = tileMaterial('rock', 0xd2d6ce, { flat: true, gain: ROCK_GAIN });
   const bronze = imageLambert('bronze',{color:0xb08d57,emissive:0x2a1d08,flatShading:true});
-  const stepTop = tileMaterial(look.ground, 0xffffff, { gain: GROUND_GAIN * 0.95 });
+  const stepTop = regionalFloor ? imageLambert(landscape.floor,{color:landscape.floorColor},{gain:1.10}) : tileMaterial(look.ground, 0xffffff, { gain: GROUND_GAIN * 0.95 });
   const moss = map.kind === 'nest' ? 0.15 : map.kind === 'path' ? 0.35 : map.kind === 'village' ? 0.5 : 0.65;
   // 段差の横の面と、崖の上の縁から外へ下る背（岩肌の絵と、頂点の色）。苔の多いエリア（野営地・狩り）は、苔の溜まった岩肌（依頼 10 の T-04）
   const sideTile = moss >= 0.6 ? 'moss' : 'rock';
@@ -243,7 +256,7 @@ export function buildAreaGroup(map: AreaLook): Group {
 
   // 外周の崖（v0.22.0）: 依頼 10 の崖の図（横 24m）を、外周の外 0.5m の道に沿って並べる。出口のわきは C-19・C-20 で、出口の前は開く。
   // 上の縁から外へ下る背は、岩肌の絵（見た目のみ。衝突は外周で止まり、出口は simulation が扱う）
-  const wallH = map.wallHeight ?? [5, 5.5];
+  const wallH = map.wallHeight ?? (landscape?[landscape.wall,5.5]:[5,5.5]);
   const low = wallH[0] < 3.6;
   const cliff = artCliffGeometry({
     path: wallPath(b, outline?.points() ?? null, 0.5, 0.5), gates, vk: low ? wallH[0] / 3.0 : Math.min(1.25, Math.max(0.85, wallH[0] / 4.6)),
