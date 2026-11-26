@@ -11,7 +11,7 @@ export const D2R = Math.PI / 180;
 export const r4 = (n) => Math.round(n * 10000) / 10000;
 export const v3 = (v) => v.map(r4);
 
-const BODY = ['hip', 'hipR', 'spine', 'chest', 'look', 'elbowR', 'elbowL', 'pull', 'on', 'arrow', 'grab'];
+const BODY = ['hip', 'hipR', 'spine', 'chest', 'look', 'elbowR', 'elbowL', 'pull', 'on', 'arrow', 'grab', 'hold'];
 const HAND_POS = ['grip', 'off'];
 const HAND_DIR = ['dir', 'edge', 'offN', 'offE'];
 
@@ -70,7 +70,7 @@ export function family(id, hands, shape) {
   /**
    * 体の動き。o = { dur, from, to, root, spin, keys, feet }
    *  from / to: 始まりと終わりの姿（pose() か snap() の結果。to を null にすると、最後のキーのまま終わる）
-   *  keys: [{ t, hip, hipR, spine, chest, look, gripA, dirA, edgeA, offA, offNA, elbowR, elbowL, pull, on, arrow }]
+   *  keys: [{ t, hip, hipR, spine, chest, look, gripA, dirA, edgeA, offA, offNA, elbowR, elbowL, pull, on, arrow, hold }]
    *  feet: { L: [[離す, 着く, x, z, つま先, 高さ, 軸足]...], R: [...] }
    */
   const motion = (clip, o) => {
@@ -97,6 +97,10 @@ export function family(id, hands, shape) {
       for (const c of Object.keys(hk)) if (conv[c]) hk[c].push([k.t, ...conv[c]]);
     }
     for (const c of Object.keys(hk)) if (hk[c].length > 0) m.ch[c] = hk[c];
+    // 同じチャンネルに、同じ時刻のキーが 2 つあると、補間が割り切れない（v0.60.0）
+    for (const [c, ks] of Object.entries(m.ch)) {
+      for (let i = 1; i < ks.length; i++) if (ks[i][0] === ks[i - 1][0]) state.problems.push(`${clip}: ${c} のキーが tick ${ks[i][0]} に 2 つある（始まり・終わりの姿と重なっていないか）`);
+    }
     // 向きのキーが離れすぎていないか（離れていると、補間の途中で向きが潰れる）
     for (const c of HAND_DIR) {
       const ks = m.ch[c] ?? [];
@@ -150,7 +154,7 @@ export function family(id, hands, shape) {
       onFinish: o.finish ?? 'drawn_idle',
       ...(o.track ? { weaponTrack: o.track } : {}),
     };
-    for (const k of ['staminaCost', 'invulnerable', 'charge', 'freeMove', 'guardWindows', 'counter', 'demon', 'spirit', 'sustain', 'next', 'shoot', 'spin', 'offhandTrack']) if (o[k] !== undefined) def[k] = o[k];
+    for (const k of ['staminaCost', 'invulnerable', 'charge', 'freeMove', 'guardWindows', 'counter', 'demon', 'spirit', 'sustain', 'next', 'shoot', 'coat', 'spin', 'offhandTrack']) if (o[k] !== undefined) def[k] = o[k];
     F.actions.push(def);
     const prev = state.clips.get(o.clip);
     if (prev && prev.dur !== o.dur) throw new Error(`clip ${o.clip} の長さが技ごとに違う`);

@@ -1996,6 +1996,65 @@ const startTraining = async (page, tap = false) => {
   await ctx.close();
 }
 
+// ---- 環弓の 2G の組み立て（v0.60.0。#19 の H03・D-154）: 副で矢を握って斬る → 突く（2 回まで）。主と副の同時押しでビンを付ける
+// （持っていなければ知らせだけ）。溜めの段階で射ち方が変わる（里鍛ちは連射型）。入力なしの回避は後ろへ跳ぶ ----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false);
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  await page.locator('.base-weapon[data-weapon="weapon.ring_bow.001"]').click();
+  await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy'), 6000, 'weapon.ring_bow.001');
+  await startTraining(page);
+  await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+  const place = (dz) => page.evaluate((dz) => {
+    const v = window.__vh, s = v.sim, m = s.monsters[0], p = s.player;
+    m.aiEnabled = false;
+    v.clock.advance = () => 0;
+    p.mode = 'free'; p.action = null; p.guard = null; p.drawn = true; p.stamina = 100;
+    p.pos = { x: m.pos.x, y: 0, z: m.pos.z - 1.75 - dz }; p.prevPos = { ...p.pos }; p.yaw = 0; p.prevYaw = 0;
+    return p.pos.z;
+  }, dz);
+  const drive = (ticks) => page.evaluate((ticks) => {
+    const s = window.__vh.sim, p = s.player;
+    const seen = [], hit = [], shots = [], coat = [];
+    for (const [pressed, held] of ticks) {
+      s.step({ moveX: 0, moveZ: 0, held: held ?? pressed, pressed, released: 0 });
+      for (const e of s.drainEvents()) {
+        if (e.type === 'action_start' && e.actor === 'player') seen.push(e.actionId.replace('player.ring_bow.', '').replace('player.common.', ''));
+        if (e.type === 'hit' && e.attacker === 'player') hit.push(e.windowId);
+        if (e.type === 'shoot') shots.push(`${e.kind ?? '-'}${e.count}${e.coated ? '+' : ''}`);
+        if (e.type === 'coating' || e.type === 'coating_empty') coat.push(e.type === 'coating' ? `${e.on ? 'on' : 'off'}:${e.left}` : 'empty');
+      }
+    }
+    return { seen, hit, shots, coat, z: Math.round(p.pos.z * 100) / 100, coating: p.coating };
+  }, ticks);
+  const T = (n, f) => Array.from({ length: n }, (_, i) => f(i));
+  await place(1.0);
+  const btn = await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r({ combo: document.querySelector('.tbtn-combo')?.textContent ?? null, sub: document.querySelector('.tbtn-sub')?.textContent ?? null, coat: document.getElementById('hud-coat')?.textContent ?? null })))));
+  const melee = await drive(T(100, (i) => [i === 0 || i === 24 || i === 54 ? 2 : 0]));
+  await place(8);
+  // 訓練場の支給（強撃ビン 10 本）を空にして、持っていない時を見る
+  await page.evaluate(() => { window.__vh.sim.player.coatings = []; });
+  const empty = await drive(T(50, (i) => [i === 0 ? 1024 : 0]));
+  await page.evaluate(() => { window.__vh.sim.player.coatings = [{ itemId: 'item.power_coating', count: 3 }]; });
+  const load = await drive(T(50, (i) => [i === 0 ? 1024 : 0]));
+  await nextFrames(page);
+  const hud = await page.evaluate(() => { const e = document.getElementById('hud-coat'); return { text: e?.textContent ?? null, on: !!e?.classList.contains('on'), hidden: !!e?.hidden }; });
+  const shot = await drive(T(240, (i) => [i === 0 ? 1 : 0, i < 140 ? 1 : 0]));
+  await nextFrames(page);
+  await page.screenshot({ path: `${OUT}86d_bow_coat.png` });
+  const z0 = await place(8);
+  const step = await drive(T(34, (i) => [i === 0 ? 4 : 0]));
+  step.back = Math.round((z0 - step.z) * 100) / 100;
+  const missing = await page.evaluate(() => [...window.__vh.view.missingClips]);
+  check('環弓（v0.60.0）: 副で斬る → 突く（どちらも当たる）。訓練場では強撃ビン 10 本。ビンが無ければ同時押しは知らせだけ。強撃ビンを付けると HUD に出て、溜めた射撃（連射 4 本）が 1 本使う。入力なしの回避は後ろへ跳ぶ。新しい動きはどれも描ける',
+    btn.combo === 'ビン' && btn.sub === '斬る' && btn.coat === 'ビン 10' && melee.seen.join() === 'melee1,melee2' && melee.hit.filter((h) => h === 'melee').length === 2
+      && empty.seen.join() === 'coat' && empty.coat.join() === 'empty' && load.coat.join() === 'on:3' && hud.on && !hud.hidden && /強撃 3/.test(hud.text ?? '')
+      && shot.shots.join() === 'rapid4+' && shot.hit.filter((h) => h === 'arrow').length >= 3 && step.seen.join() === 'backstep' && step.back > 1.2 && missing.length === 0,
+    JSON.stringify({ btn, melee, empty, load, hud, shot, step, missing }));
+  await ctx.close();
+}
+
 // ---- 弱った足取り（v0.52.0。#19 の M05）: 弱って巣へ向かう大型が歩くと、一歩ごとに体が片側へ傾き、頭が下がる。弱っていなければ傾かない ----
 {
   const { ctx, page } = await open({ width: 1280, height: 720 }, false, '?hub=menu');
@@ -2287,8 +2346,8 @@ const startTraining = async (page, tap = false) => {
   await page.click('#hud-facility');
   await until(page, () => !document.getElementById('base').hidden);
   h = await hubState();
-  // 道具 5 つ（v0.42.0 で標識玉）× 1 個・5 個
-  check('里: 商店の前のボタンを押すと、商店の画面が開く。通貨が無い間は、買うボタンが押せない', h.section === 'shop' && h.title === '商店' && h.shop !== 'none' && h.quests === 'none' && await page.evaluate(() => [...document.querySelectorAll('.shop-buy')].length === 10 && !!document.querySelector('.shop-buy[data-item="item.marker_orb"]') && [...document.querySelectorAll('.shop-buy')].every((b) => b.disabled) && /売れる素材を持っていません/.test(document.getElementById('base-shop').textContent)), JSON.stringify(h));
+  // 道具 6 つ（v0.42.0 で標識玉、v0.60.0 で強撃ビン）× 1 個・5 個
+  check('里: 商店の前のボタンを押すと、商店の画面が開く。通貨が無い間は、買うボタンが押せない', h.section === 'shop' && h.title === '商店' && h.shop !== 'none' && h.quests === 'none' && await page.evaluate(() => [...document.querySelectorAll('.shop-buy')].length === 12 && !!document.querySelector('.shop-buy[data-item="item.marker_orb"]') && !!document.querySelector('.shop-buy[data-item="item.power_coating"]') && [...document.querySelectorAll('.shop-buy')].every((b) => b.disabled) && /売れる素材を持っていません/.test(document.getElementById('base-shop').textContent)), JSON.stringify(h));
   await page.evaluate(() => window.__vh.save.settle({ runId: 'smoke-hub-seed', questId: 'quest.basin.003', money: 1000, items: [{ itemId: 'mat.galdros.shell_shard', count: 3 }] }));
   await until(page, () => window.__vh.save.doc.money === 1000 && !document.querySelector('.shop-buy[data-item="item.heal_tonic"][data-count="1"]').disabled);
   await page.click('.shop-buy[data-item="item.heal_tonic"][data-count="1"]');

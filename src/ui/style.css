@@ -94,6 +94,9 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 .charge { display: flex; gap: 4px; margin-left: 8px; }
 .charge b { width: 12px; height: 12px; border: 1px solid var(--line); transform: rotate(45deg); background: rgba(12, 16, 13, 0.6); }
 .charge b.on { background: #ffd98a; box-shadow: 0 0 8px #ffd98a; }
+/* ビン（環弓。v0.60.0）: 付けている間は明るく */
+.coat { margin-left: 10px; font-size: 12px; padding: 1px 6px; border: 1px solid var(--line); border-radius: 3px; color: #b9c2b4; background: rgba(12, 16, 13, 0.6); white-space: nowrap; }
+.coat.on { color: #ffe2b0; border-color: #e0a85a; box-shadow: 0 0 6px rgba(224, 168, 90, 0.6); }
 .hud-top-right {
   position: absolute; right: calc(var(--sar) + 14px); top: calc(var(--sat) + 8px); text-align: right;
   font-size: 12px; text-shadow: 0 1px 2px #000; display: flex; gap: 8px; align-items: flex-start;

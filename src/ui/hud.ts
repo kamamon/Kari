@@ -52,6 +52,8 @@ export class Hud {
   /** 気（太刀。v0.56.0）: 名前・棒。満ちると光る */
   private spiritBox!: HTMLElement;
   private spiritFill!: HTMLElement;
+  /** ビン（環弓。v0.60.0）: 付けているビンの名前と残り、付けていない時は持っている本数 */
+  private coatBox!: HTMLElement;
   private time: HTMLElement;
   private goal: HTMLElement;
   private faints: HTMLElement;
@@ -118,6 +120,9 @@ export class Hud {
     this.spiritBox.hidden = true;
     const charge = el('div', 'charge', blade);
     for (let i = 0; i < 3; i++) this.pips.push(el('b', '', charge));
+    this.coatBox = el('div', 'coat', blade, '');
+    this.coatBox.id = 'hud-coat';
+    this.coatBox.hidden = true;
 
     const tr = el('div', 'hud-top-right', this.root);
     const quest = el('div', 'hud-quest', tr);
@@ -395,6 +400,15 @@ export class Hud {
         case 'stamina_empty':
           this.toast('スタミナ不足');
           break;
+        case 'coating': {
+          // ビン（環弓。v0.60.0）
+          const name = sim.content.items.get(e.itemId)?.name ?? 'ビン';
+          this.toast(e.reason === 'out' ? `${name}を使い切った` : e.on ? `${name}を付けた（残り ${e.left} 本）` : `${name}を外した`);
+          break;
+        }
+        case 'coating_empty':
+          this.toast('ビンを持っていない（商店で買える）');
+          break;
         case 'item_effect': {
           const name = sim.content.items.get(e.itemId)?.name ?? '';
           if (e.kind === 'heal') this.toast(`${name}: 体力 +${e.amount}`);
@@ -460,6 +474,15 @@ export class Hud {
     });
     const lv = p.action?.chargeLevel ?? 0;
     this.set('charge', lv, () => this.pips.forEach((b, i) => b.classList.toggle('on', i < lv)));
+    // ビン（環弓。v0.60.0）: 付けていれば名前と残り、付けていなければ持っている本数（持っていける武器の時だけ）
+    const coatable = !!familyOf(p, sim.content).coatable;
+    const loaded = p.coating ? sim.content.items.get(p.coating) : undefined;
+    const coatText = !coatable ? '' : loaded ? `${loaded.coating?.label ?? loaded.name} ${p.coatings.find((s) => s.itemId === p.coating)?.count ?? 0}` : `ビン ${p.coatings.reduce((n, s) => n + s.count, 0)}`;
+    this.set('coat', `${coatText}|${loaded ? 1 : 0}`, () => {
+      this.coatBox.hidden = !coatable;
+      this.coatBox.textContent = coatText;
+      this.coatBox.classList.toggle('on', !!loaded);
+    });
     // 刃の状態
     // 気（太刀）: 量を棒で、満ちている間は光らせる
     const SP = familyOf(p, sim.content).spirit;

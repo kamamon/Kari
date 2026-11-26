@@ -69,6 +69,12 @@ export interface PlayerState {
   /** 狩猟中の持ち物（依頼の支給品）。数が 0 になっても欄は残る。 */
   items: ItemStack[];
   itemIndex: number;
+  /**
+   * ビン（v0.60.0。環弓。2G の弓のビン。docs/spec.md の 32.26）: 道具の欄とは別に持つ（道具の欄には出ない）。数が 0 になっても欄は残る。
+   * coating は付けているビン（道具の id）。付けている間に射ると 1 本使い、無くなると外れる。ビンを持っていけない系統では空のまま
+   */
+  coatings: ItemStack[];
+  coating: string | null;
   /** 使っている途中の道具。効果が出る tick より前に妨害されると、消費しない。 */
   itemUse: { itemId: string; instanceId: number; done: boolean } | null;
   /** 剥ぎ取りの途中（source は剥ぎ取る対象） */
@@ -155,7 +161,7 @@ function tryUseItem(p: PlayerState, ctx: SimCtx, keepDrawn = false): boolean {
     return false;
   }
   const item = selectedItem(p, ctx)!;
-  const run = startAction(p, item.useActionId, ctx);
+  const run = startAction(p, item.useActionId!, ctx);
   run.keepDrawn = keepDrawn;
   // 防具の技能「道具整備」（v0.33.0）: 整備の道具（研磨石）を使う時間だけが短くなる（効き目は変えない）
   if (item.maintenance && ctx.gear.itemTime < 1) run.speed = ctx.gear.itemTime;
@@ -171,9 +177,11 @@ export const COMBO_SLACK_TICKS = 3;
 export function createPlayer(content: Content, spawn: { x: number; z: number; yaw: number }, weaponId: string, supplies: readonly ItemStack[] = []): PlayerState {
   const T = content.player;
   const pos = v3(spawn.x, 0, spawn.z);
-  // 研磨石は、刃の状態のある武器でだけ持つ（環弓では使えないので、持たせない）
+  // 研磨石は、刃の状態のある武器でだけ持つ（環弓では使えないので、持たせない）。ビン（v0.60.0）は道具の欄と分け、持っていける系統（環弓）だけ
   const fam = content.families.get(content.weapons.get(weaponId)!.family)!;
-  const carried = supplies.filter((s) => fam.edge || content.items.get(s.itemId)?.kind !== 'whet');
+  const kindOf = (s: ItemStack): string | undefined => content.items.get(s.itemId)?.kind;
+  const carried = supplies.filter((s) => (fam.edge || kindOf(s) !== 'whet') && kindOf(s) !== 'coating');
+  const coatings = fam.coatable ? supplies.filter((s) => kindOf(s) === 'coating') : [];
   return {
     id: 'player',
     pos,
@@ -203,6 +211,8 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
     edge: content.edge.max,
     items: carried.map((s) => ({ itemId: s.itemId, count: s.count })),
     itemIndex: 0,
+    coatings: coatings.map((s) => ({ itemId: s.itemId, count: s.count })),
+    coating: null,
     itemUse: null,
     carving: null,
     errandOp: null,
@@ -363,6 +373,26 @@ export function startAction(p: PlayerState, actionId: string, ctx: SimCtx): Acti
   return run;
 }
 
+/**
+ * ビンを付ける・外す（v0.60.0。環弓の主と副の同時押し。2G の弓の △+○）。付けていれば外す。付けていなければ、持っているビンの最初のもの
+ * （残りが 1 本以上）を付ける。どちらも無ければ、何も変えずに知らせる
+ */
+function toggleCoating(p: PlayerState, ctx: SimCtx): void {
+  if (p.coating) {
+    const left = p.coatings.find((s) => s.itemId === p.coating)?.count ?? 0;
+    ctx.emit({ type: 'coating', itemId: p.coating, on: false, left, reason: 'toggle' });
+    p.coating = null;
+    return;
+  }
+  const s = p.coatings.find((x) => x.count > 0);
+  if (!s) {
+    ctx.emit({ type: 'coating_empty' });
+    return;
+  }
+  p.coating = s.itemId;
+  ctx.emit({ type: 'coating', itemId: s.itemId, on: true, left: s.count, reason: 'toggle' });
+}
+
 function tryStartRoll(p: PlayerState, inp: InputFrame, ctx: SimCtx): boolean {
   const T = ctx.content.player;
   const fam = familyOf(p, ctx.content);
@@ -378,6 +408,12 @@ function tryStartRoll(p: PlayerState, inp: InputFrame, ctx: SimCtx): boolean {
     stepIndex = i === 0 ? 2 : i;
     if (i === 2) dodgeId = fam.actions.dodgeBack;
     dir = p.yaw + (stepIndex * Math.PI) / 2;
+  }
+  // 入力なしの回避（v0.60.0。2G の弓のバックステップ）: 体の向きのまま、後ろへ跳ぶ。入力があれば、ふつうの回避
+  if (p.drawn && fam.actions.dodgeIdle && mag <= MOVE_DEADZONE) {
+    dodgeId = fam.actions.dodgeIdle;
+    stepIndex = 2;
+    dir = p.yaw + Math.PI;
   }
   const def = ctx.content.actions.get(p.drawn ? dodgeId : T.rollActionId)!;
   if (p.stamina < staminaCostOf(p, def, ctx)) {
@@ -564,6 +600,7 @@ function stepAction(p: PlayerState, inp: InputFrame, ctx: SimCtx, depth = 0): vo
       if (ev.tick === t) ctx.emit({ type: 'action_event', actor: p.id, kind: ev.type, id: ev.id, pos: { ...p.pos } });
     }
     for (const sh of def.shoot ?? []) if (sh.tick === t) ctx.spawnProjectiles(sh, run);
+    if (def.coat && def.coat.tick === t) toggleCoating(p, ctx);
     p.attackEval = { run, t };
     run.advanced = true;
     run.tick++;
@@ -1135,7 +1172,7 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   const use = p.itemUse;
   if (use) {
     const item = ctx.content.items.get(use.itemId)!;
-    if (!use.done && ev && ev.run.instanceId === use.instanceId && ev.t >= item.effectTick) {
+    if (!use.done && ev && ev.run.instanceId === use.instanceId && ev.t >= item.effectTick!) {
       use.done = true;
       const stack = p.items.find((s) => s.itemId === use.itemId);
       if (stack && stack.count > 0 && ctx.applyItem(item)) stack.count--;

@@ -118,6 +118,26 @@ describe('見える武器と判定が同じ場所にある', () => {
     }
   });
 
+  it('環弓の近接（v0.60.0）: 判定の軌道は、握った矢（体の動きを解いた手と前腕の向き）と同じ。判定のある間は矢を握っている', () => {
+    for (const id of ['player.ring_bow.melee1', 'player.ring_bow.melee2']) {
+      const a = content.actions.get(id)!;
+      const m = WEAPON_MOTIONS[a.clip]!;
+      const S = WEAPON_STANCES[m.family]!;
+      for (const hw of a.hitWindows) {
+        const tr = content.tracks.get(hw.shapeTrack)!;
+        expect(tr.to - tr.from).toBeGreaterThan(0.5);
+        for (let t = hw.from; t < hw.to; t++) {
+          const e = evalMotion(m, t);
+          const s = solveBody(e.ctl, e.footL, e.footR, S.hands);
+          expect(s.held, `${id} tick ${t} 矢を握っている`).not.toBeNull();
+          const k = sampleTrack(tr, t);
+          expect(vlen(vsub([k.grip.x, k.grip.y, k.grip.z], s.held!.pos)), `${id} tick ${t} 握り`).toBeLessThan(0.002);
+          expect(vlen(vsub([k.dir.x, k.dir.y, k.dir.z], s.held!.dir)), `${id} tick ${t} 向き`).toBeLessThan(0.002);
+        }
+      }
+    }
+  });
+
   it('構えの握り（weapons.json の ready）は、構えを解いた値と同じ。技は構えから始まり、構えへ戻る', () => {
     for (const fam of FAMILIES) {
       const F = content.families.get(fam)!;

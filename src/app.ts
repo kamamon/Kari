@@ -847,6 +847,14 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
           play('no_stamina');
           this.hud.toast('気が無い（斬ってためる）');
           break;
+        case 'coating':
+          // ビン（環弓。v0.60.0）: 付けた時は溜めの音、使い切った時は知らせの音
+          if (e.on) play('charge_1');
+          else if (e.reason === 'out') play('no_stamina');
+          break;
+        case 'coating_empty':
+          play('no_stamina');
+          break;
         case 'demon':
           // 猛り（双剣）: 入った時は溜めの音、スタミナが尽きて解けた時は知らせ
           if (e.on) play('charge_2');

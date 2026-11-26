@@ -96,7 +96,10 @@ export interface ShootDef {
   count: number;
   spreadDeg: number;
   speed: number[];
+  /** その段階の矢の力（table があれば、射撃の力の合計） */
   coefficient: number[];
+  /** 武器・系統の射ち方の表（shots）で、力を矢へ分ける（v0.60.0。環弓の溜め撃ち）。count・spreadDeg は使わない */
+  table?: boolean;
 }
 
 export interface ActionDef {
@@ -137,6 +140,11 @@ export interface ActionDef {
   /** 終わりまで進んだら、待機ではなく、この行動へ移る（v0.59.0。長尖槍の突進 → 止まる） */
   next?: string;
   shoot?: ShootDef[];
+  /**
+   * ビンを付ける・外す（v0.60.0。2G の弓の △+○。docs/spec.md の 32.26）: tick で、付けていれば外し、付けていなければ
+   * 持っているビン（道具の kind 'coating'）の最初のものを付ける。どちらも無ければ「ビンが無い」
+   */
+  coat?: { tick: number };
   /** この区間に、体ごと回る（度。+ が左回り）。護刃と双剣の回転斬り（v0.53.0・v0.54.0）。武器の軌道は体に対して決まるので、判定も一緒に回る。 */
   spin?: { from: number; to: number; degrees: number };
   /** 左腕の盾の軌道（見た目用。盾打ちでは判定の形と同じ軌道を指す） */
@@ -226,6 +234,8 @@ export interface WeaponFamilyDef {
      * 入力なし・前 = dodge で後ろへ、後ろ = これ、左右 = dodge で横へ
      */
     dodgeBack?: string;
+    /** 入力なしの回避（v0.60.0。2G の弓のバックステップ）。後ろへ跳ぶ。入力があれば、ふつうの回避（dodge か共通の転がる回避） */
+    dodgeIdle?: string;
     /** 主と副の同時押し（複合入力。v0.40.0）で出す技。抜刀して立っている時（断岳剣の斬り上げ） */
     combo?: string;
   };
@@ -255,6 +265,13 @@ export interface WeaponFamilyDef {
    * 満ちている間は、命中の係数に fullScale を掛ける。label は画面に出す名前。後年の色の段階・見切りは混ぜない
    */
   spirit?: { max: number; gainPerHit: number; decayDelayTicks: number; decayPerSec: number; fullScale: number; label: string };
+  /**
+   * 溜めの段階ごとの射ち方（v0.60.0。2G の弓の「射撃の種類を武器と溜め段階へ結び付ける」。docs/spec.md の 32.26）。
+   * 武器（WeaponDef.shots）が持っていれば、そちら。行動の shoot の coefficient がその段階の矢の力の合計で、射ち方がそれを矢へ分ける
+   */
+  shots?: ShotSpec[];
+  /** ビン（道具の kind 'coating'）を持っていける（v0.60.0。環弓）。持っていけない系統では、持ち物のビンを里に置いていく */
+  coatable?: boolean;
   // ---- ここから下は見た目だけに使う ----
   /** 両手で持つ時、もう片方の手を握りから dir の向きへ何 m 離すか。省くと 0.2。 */
   otherHandAlong?: number;
@@ -291,6 +308,17 @@ export interface WeaponDef {
   /** 系列（v0.32.0。ChatGPT の全装備四級版 #15 の series の id）と級（ranks の id）。級の開いていない物は作れない */
   series?: string;
   rankId?: string;
+  /** 溜めの段階ごとの射ち方（v0.60.0。環弓だけ。省くと系統の shots） */
+  shots?: ShotSpec[];
+}
+
+/**
+ * 射ち方（v0.60.0。2G の弓の射撃の種類。値は Kari の仮の値）。
+ * rapid = 連射（n 本が同じ線を飛ぶ）、spread = 拡散（n 本が扇に広がる。3 か 5）、pierce = 貫通（1 本が体を抜けて、別々の部位へ n 回まで当たる）
+ */
+export interface ShotSpec {
+  type: 'rapid' | 'spread' | 'pierce';
+  n: number;
 }
 
 /** 刃の状態の 1 段階。値が min 以上（で、上の段階の min 未満）の時にこの段階になる。 */
@@ -1172,10 +1200,11 @@ export interface ItemDef {
   id: string;
   name: string;
   /** whet: 研磨石。刃の状態を最大まで戻す。抜刀して、手に持った武器を研ぐ */
-  kind: 'heal' | 'trap' | 'tranq' | 'whet' | 'mark';
+  kind: 'heal' | 'trap' | 'tranq' | 'whet' | 'mark' | 'coating';
   carryMax: number;
-  useActionId: string;
-  effectTick: number;
+  /** 使う行動と、効き目の tick。ビン（kind 'coating'）は道具の欄から使わないので持たない（v0.60.0） */
+  useActionId?: string;
+  effectTick?: number;
   summary: string;
   heal?: number;
   /** 仕掛けてから armTicks で作動可能になり、大型が radius 内に入ると holdTicks の間止める。lifeTicks で消える。 */
@@ -1189,6 +1218,11 @@ export interface ItemDef {
   mark?: { range: number; halfAngleDeg: number; ticks: number };
   /** 整備の道具（v0.33.0）。防具の技能「道具整備」で、使う時間が短くなる（研磨石） */
   maintenance?: boolean;
+  /**
+   * ビン（v0.60.0。kind 'coating'。2G の弓のビン）: 道具の欄には出ず、環弓の主と副の同時押しで付ける。付けている間の矢の命中に scale を掛け、
+   * 1 回射るごとに 1 本使う。useActionId は付ける行動
+   */
+  coating?: { scale: number; label: string };
 }
 
 export interface MaterialDef {

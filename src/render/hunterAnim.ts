@@ -184,6 +184,7 @@ export function applySolved(rig: HunterRig, s: Solved, familyId: string): void {
   if (s.shield) rig.placeShield(s.shield.pos, s.shield.quat);
   else stowOffhand(rig, familyId);
   rig.setString(s.string);
+  rig.placeHandArrow(s.held);
 }
 
 /** 左手のもの（盾・双剣のもう 1 本）を、納めた時の置き場所へ付ける。姿勢を設定した後に呼ぶ。 */

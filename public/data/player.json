@@ -19,7 +19,7 @@
   "respawnTicks": 210,
   "critMultiplier": 1.25,
   "gravity": 22,
-  "trainingSupplies": [{ "itemId": "item.whetstone", "count": 10 }],
+  "trainingSupplies": [{ "itemId": "item.whetstone", "count": 10 }, { "itemId": "item.power_coating", "count": 10 }],
   "huntSupplies": [{ "itemId": "item.marker_orb", "count": 2 }],
   "status": {
     "threshold": 100,

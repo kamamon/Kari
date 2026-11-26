@@ -53,6 +53,14 @@ RANKED = {f'series.{sp}' for sp in D15.RANK_SPECIES}
 PROFILES = {'raw', 'precision', 'single', 'status'}
 PROFILE_NAMES = {'raw': '無属性', 'precision': '会心', 'single': '単属性', 'status': '状態異常'}
 ELEMENTS = {'fire', 'thunder', 'ice', 'water', 'wind', 'mist'}
+# 環弓の溜めの段階ごとの射ち方（v0.60.0。2G の弓の「射撃の種類を武器と溜め段階へ結び付ける」。設計 #15 には無いので、Kari の仮の決め方:
+# 系列の型で 3 つに分ける。無属性・会心 = 連射型、単属性・複合 = 拡散型、状態異常 = 貫通型。docs/spec.md の 32.26、D-154）
+BOW_SHOTS = {
+    'rapid': [{'type': 'rapid', 'n': 1}, {'type': 'rapid', 'n': 2}, {'type': 'rapid', 'n': 3}, {'type': 'rapid', 'n': 4}],
+    'spread': [{'type': 'rapid', 'n': 1}, {'type': 'spread', 'n': 3}, {'type': 'spread', 'n': 3}, {'type': 'spread', 'n': 5}],
+    'pierce': [{'type': 'rapid', 'n': 1}, {'type': 'pierce', 'n': 2}, {'type': 'pierce', 'n': 3}, {'type': 'pierce', 'n': 4}],
+}
+BOW_SHOTS_OF = {'raw': 'rapid', 'precision': 'rapid', 'single': 'spread', 'compound': 'spread', 'status': 'pierce'}
 STATUS = {'poison': 'poison', 'paralysis': 'para', 'sleep': 'sleep'}
 # いまの計算で働く技能（src/game/gear.ts）
 SKILLS = ['guard_economy', 'edge_keep', 'dodge_economy', 'stamina_recovery', 'part_damage', 'element_tuning',
@@ -176,6 +184,8 @@ def main():
                 if status:
                     o['status'] = status
                 o.update({'assetId': f'model.weapon.{fam}.001', 'series': sid, 'rankId': f'rank.{rank}'})
+                if fam == 'ring_bow':
+                    o['shots'] = BOW_SHOTS[BOW_SHOTS_OF[prof]]
                 weapons.append(o)
             for slot in SLOTS:
                 a = ars[slot]

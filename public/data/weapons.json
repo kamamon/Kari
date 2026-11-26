@@ -257,8 +257,8 @@
     },
     {
       "id": "ring_bow",
-      "labels": { "main": "射る", "sub": "散らし" },
-      "summary": "弓。主を押し続けて溜め、離して射る。6〜12m が適正距離。守りは無い。",
+      "labels": { "main": "射る", "sub": "斬る", "dodge": "回避", "combo": "ビン" },
+      "summary": "弓。主を押し続けて溜め、離して射る。溜めの段階で射ち方（連射・拡散・貫通）が変わる。6〜12m が適正距離。副で矢を握って斬る → 突く。主と副の同時押しでビンを付ける（射る矢が強くなる。1 回ごとに 1 本使う）。入力なしの回避は後ろへ跳ぶ。守りは無い。",
       "name": "環弓",
       "twoHanded": false,
       "primaryHand": "left",
@@ -268,15 +268,22 @@
       "blade": { "from": -0.75, "to": 0.75, "radius": 0.05 },
       "actions": {
         "main": "player.ring_bow.shot",
-        "sub": "player.ring_bow.spread",
+        "sub": "player.ring_bow.melee1",
+        "combo": "player.ring_bow.coat",
         "drawAttack": "player.ring_bow.shot",
         "draw": "player.ring_bow.draw",
-        "sheathe": "player.ring_bow.sheathe"
+        "sheathe": "player.ring_bow.sheathe",
+        "dodgeIdle": "player.ring_bow.backstep"
       },
       "cancelNames": {
         "rb_shot": "player.ring_bow.shot",
-        "rb_spread": "player.ring_bow.spread"
+        "rb_melee1": "player.ring_bow.melee1",
+        "rb_melee2": "player.ring_bow.melee2",
+        "rb_coat": "player.ring_bow.coat"
       },
+      "cancelButtons": { "rb_melee2": "sub" },
+      "shots": [{ "type": "rapid", "n": 1 }, { "type": "rapid", "n": 2 }, { "type": "rapid", "n": 3 }, { "type": "rapid", "n": 4 }],
+      "coatable": true,
       "guard": null
     }
   ],

@@ -143,7 +143,23 @@ export interface Projectile {
   actionId: string;
   coefficient: number;
   level: number;
+  /** 貫通の矢（v0.60.0）: あと何回当たれるか（1 で、次に当たると消える）と、当たった部位（モンスター id: 部位の番号）。同じ部位へは 1 回だけ */
+  pierce?: number;
+  hitParts?: string[];
 }
+
+/**
+ * 射ち方ごとの、1 回の射撃の力（合計）の分け方（v0.60.0。2G の弓の連射・拡散・貫通。値は Kari の仮の値。docs/spec.md の 32.26）。
+ * 連射: n 本が同じ線を飛ぶ（上下に 7cm ずつずらす）。拡散: 扇に広がる（3 本は ±10°、5 本は ±8°・±16°）。
+ * 貫通: 1 本が体を抜け、別々の部位へ n 回まで当たる（1 回ごとに 1.35 ÷ n。全部当たると 1.35 倍）
+ */
+export const RAPID_SHARE: Record<number, number[]> = { 1: [1], 2: [0.6, 0.4], 3: [0.45, 0.33, 0.22], 4: [0.37, 0.28, 0.2, 0.15] };
+export const SPREAD_FAN: Record<number, { deg: number; share: number }[]> = {
+  3: [{ deg: 0, share: 0.5 }, { deg: -10, share: 0.25 }, { deg: 10, share: 0.25 }],
+  5: [{ deg: 0, share: 0.36 }, { deg: -8, share: 0.2 }, { deg: 8, share: 0.2 }, { deg: -16, share: 0.12 }, { deg: 16, share: 0.12 }],
+};
+export const PIERCE_TOTAL = 1.35;
+const RAPID_GAP = 0.07;
 
 /** 矢の適正距離: 6〜12m で威力そのまま。近すぎ・遠すぎは下がる。 */
 export function arrowDistanceScale(d: number): number {
@@ -528,6 +544,8 @@ export class Simulation implements SimCtx {
   applyItem(item: ItemDef): boolean {
     const p = this.player;
     const pos = { ...p.pos };
+    // ビン（v0.60.0）は道具の欄から使わない（環弓の同時押しで付ける）
+    if (item.kind === 'coating') return false;
     if (item.kind === 'heal') {
       const before = p.hp;
       p.hp = Math.min(this.content.player.maxHp, p.hp + (item.heal ?? 0));
@@ -915,7 +933,7 @@ export class Simulation implements SimCtx {
     const out: ItemStack[] = [];
     for (const [itemId, b] of Object.entries(this.brought)) {
       if (b.own <= 0) continue;
-      const stack = this.player.items.find((s) => s.itemId === itemId);
+      const stack = this.player.items.find((s) => s.itemId === itemId) ?? this.player.coatings.find((s) => s.itemId === itemId);
       if (!stack) continue;
       const used = b.supplied + b.own - stack.count;
       const own = Math.min(b.own, Math.max(0, used - b.supplied));
@@ -1194,13 +1212,46 @@ export class Simulation implements SimCtx {
       }
     }
     const speed = (spec.speed[level] ?? spec.speed[0] ?? 30) / 60;
-    for (let i = 0; i < spec.count; i++) {
-      const spread = spec.count > 1 ? (i / (spec.count - 1) - 0.5) * spec.spreadDeg * DEG : 0;
-      const y = yaw + spread;
-      const vel: V3 = { x: Math.sin(y) * Math.cos(pitch) * speed, y: Math.sin(pitch) * speed, z: Math.cos(y) * Math.cos(pitch) * speed };
-      this.projectiles.push({ id: this.nextProjectile++, pos: { ...from }, prevPos: { ...from }, vel, life: ARROW_LIFE_TICKS, travelled: 0, actionId: run.def.actionId, coefficient: spec.coefficient[level] ?? spec.coefficient[0] ?? 0.3, level });
+    let total = spec.coefficient[level] ?? spec.coefficient[0] ?? 0.3;
+    // ビン（v0.60.0）: 付けていれば、この射撃の矢の力に scale を掛け、1 本使う。使い切ると外れる
+    let coated: string | undefined;
+    if (p.coating) {
+      const stack = p.coatings.find((s) => s.itemId === p.coating);
+      const it = this.content.items.get(p.coating);
+      if (stack && stack.count > 0 && it?.coating) {
+        total *= it.coating.scale;
+        coated = p.coating;
+        stack.count--;
+        if (stack.count <= 0) {
+          this.emit({ type: 'coating', itemId: p.coating, on: false, left: 0, reason: 'out' });
+          p.coating = null;
+        }
+      } else p.coating = null;
     }
-    this.emit({ type: 'shoot', count: spec.count, level, pos: from });
+    const arrow = (dy: number, dyaw: number, coefficient: number, pierce?: number): void => {
+      const y = yaw + dyaw;
+      const vel: V3 = { x: Math.sin(y) * Math.cos(pitch) * speed, y: Math.sin(pitch) * speed, z: Math.cos(y) * Math.cos(pitch) * speed };
+      const pos = { x: from.x, y: from.y + dy, z: from.z };
+      this.projectiles.push({ id: this.nextProjectile++, pos, prevPos: { ...pos }, vel, life: ARROW_LIFE_TICKS, travelled: 0, actionId: run.def.actionId, coefficient, level, ...(pierce ? { pierce, hitParts: [] } : {}) });
+    };
+    // 射ち方の表（v0.60.0）: 武器の shots、無ければ系統の shots。その段階の射ち方で、力の合計を矢へ分ける
+    const shot = spec.table ? (weaponOf(p, this.content).shots ?? familyOf(p, this.content).shots)?.[level] : undefined;
+    let count = spec.count;
+    if (shot?.type === 'rapid') {
+      const share = RAPID_SHARE[shot.n] ?? [1];
+      share.forEach((f, i) => arrow((i - (share.length - 1) / 2) * RAPID_GAP, 0, total * f));
+      count = share.length;
+    } else if (shot?.type === 'spread') {
+      const fan = SPREAD_FAN[shot.n] ?? SPREAD_FAN[3]!;
+      for (const f of fan) arrow(0, f.deg * DEG, total * f.share);
+      count = fan.length;
+    } else if (shot?.type === 'pierce') {
+      arrow(0, 0, (total * PIERCE_TOTAL) / shot.n, shot.n);
+      count = 1;
+    } else {
+      for (let i = 0; i < spec.count; i++) arrow(0, spec.count > 1 ? (i / (spec.count - 1) - 0.5) * spec.spreadDeg * DEG : 0, total);
+    }
+    this.emit({ type: 'shoot', count, level, pos: from, ...(shot ? { kind: shot.type } : {}), ...(coated ? { coated } : {}) });
   }
 
   private stepProjectiles(): void {
@@ -1211,13 +1262,24 @@ export class Simulation implements SimCtx {
       const next: V3 = { x: a.pos.x + a.vel.x, y: a.pos.y + a.vel.y, z: a.pos.z + a.vel.z };
       let done = false;
       for (const m of this.monsters) {
+        if (done) break;
         if (m.dead || m.captured) continue;
-        const hit = sweepCapsule(a.pos, a.pos, next, next, ARROW_RADIUS, monsterShapes(m));
-        if (!hit) continue;
-        const dist = a.travelled + Math.hypot(hit.point.x - a.pos.x, hit.point.y - a.pos.y, hit.point.z - a.pos.z);
-        this.dealPlayerDamage(m, hit.partIndex, hit.point, { actionId: a.actionId, windowId: 'arrow', actionTick: 0, motion: a.coefficient * arrowDistanceScale(dist), damageType: 'shot', hitstop: 2, chargeLevel: a.level });
-        done = true;
-        break;
+        const all = monsterShapes(m);
+        // 貫通の矢（v0.60.0）: 当たった部位を除いて、同じ区間をもう 1 度調べる（1 tick の間に、体の別の部位へも当たる）
+        for (;;) {
+          const shapes = a.hitParts?.length ? all.filter((sh) => !a.hitParts!.includes(`${m.id}:${sh.partIndex}`)) : all;
+          const hit = sweepCapsule(a.pos, a.pos, next, next, ARROW_RADIUS, shapes);
+          if (!hit) break;
+          const dist = a.travelled + Math.hypot(hit.point.x - a.pos.x, hit.point.y - a.pos.y, hit.point.z - a.pos.z);
+          this.dealPlayerDamage(m, hit.partIndex, hit.point, { actionId: a.actionId, windowId: 'arrow', actionTick: 0, motion: a.coefficient * arrowDistanceScale(dist), damageType: 'shot', hitstop: 2, chargeLevel: a.level });
+          if (a.pierce !== undefined && a.pierce > 1 && !m.dead) {
+            a.pierce--;
+            a.hitParts!.push(`${m.id}:${hit.partIndex}`);
+            continue;
+          }
+          done = true;
+          break;
+        }
       }
       if (done) continue;
       a.pos = next;
@@ -1306,6 +1368,8 @@ export class Simulation implements SimCtx {
     }
     for (const t of this.traps) parts.push(t.x, t.z, t.state, t.arm, t.life);
     parts.push(p.demon ? 1 : 0, p.spirit, p.spiritIdle);
+    if (p.coatings.length || p.coating) parts.push(p.coating ?? '-', p.coatings.map((s) => s.count).join(','));
+    for (const a of this.projectiles) if (a.pierce !== undefined) parts.push(a.pierce, a.hitParts!.join(','));
     if (p.climb) parts.push(p.climb.def.id, p.climb.phase, p.climb.t, p.climb.h);
     if (p.vault) parts.push(p.vault.def.id, p.vault.t);
     if (this.errand) parts.push(this.errand.used.join(','), Object.entries(this.errand.bag).map(([k, v]) => `${k}=${v}`).join(','), this.errand.delivered ? 1 : 0, p.errandOp ? `${p.errandOp.target.kind}:${p.errandOp.done ? 1 : 0}` : '-');

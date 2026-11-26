@@ -13,7 +13,17 @@ export function weaponStat(c: Content, w: WeaponDef): string {
   if (el) parts.push(`${el} ${w.element.value}`);
   if (w.status) parts.push(`${AILMENT_NAMES[w.status.kind]} ${w.status.potency}`);
   if (w.affinity) parts.push(`会心 ${w.affinity}%`);
+  const shots = shotsText(c, w);
+  if (shots) parts.push(`射ち方 ${shots}`);
   return parts.join('・');
+}
+
+const SHOT_NAMES = { rapid: '連射', spread: '拡散', pierce: '貫通' } as const;
+
+/** 環弓の溜めの段階ごとの射ち方（v0.60.0）: 「連射1→拡散3→拡散3→拡散5」。射ち方の無い武器は空 */
+export function shotsText(c: Content, w: WeaponDef): string {
+  const shots = w.shots ?? c.families.get(w.family)?.shots;
+  return shots ? shots.map((s) => `${SHOT_NAMES[s.type]}${s.n}`).join('→') : '';
 }
 
 /** 武器の、系列を表す短い名前: 「帆角の断岳剣【初級】」→「帆角【初級】」、「岩殻の断岳剣」→「岩殻」 */

@@ -38,6 +38,7 @@ import {
   type FieldDef,
   type HubDef,
   type ItemDef,
+  type ShotSpec,
   type LootDef,
   type LootRoll,
   type MapDef,
@@ -222,6 +223,16 @@ function validateMap(m: MapDef, errors: string[]): void {
 
 /** 相互参照の検査。存在しない曲線・軌道・技を指していないか。 */
 export function crossCheck(c: Content, errors: string[]): void {
+  /** 射ち方（v0.60.0）: 射る行動（溜めがあり、矢を放つ）の溜めの段階の数（levelTicks + 1）だけ並べる。本数は 連射 1〜4・拡散 3 か 5・貫通 2〜5 */
+  const checkShots = (w: string, shots: readonly ShotSpec[], shot: ActionDef | undefined): void => {
+    const levels = shot?.charge && shot.shoot?.length ? shot.charge.levelTicks.length + 1 : 0;
+    if (!levels) errors.push(`${w}: shots があるのに、主の行動が溜めて射る行動でない`);
+    else if (!Array.isArray(shots) || shots.length !== levels) errors.push(`${w}: shots は溜めの段階の数（${levels}）だけ並べる`);
+    for (const sp of Array.isArray(shots) ? shots : []) {
+      const ok = sp.type === 'rapid' ? isInt(sp.n) && sp.n >= 1 && sp.n <= 4 : sp.type === 'spread' ? sp.n === 3 || sp.n === 5 : sp.type === 'pierce' ? isInt(sp.n) && sp.n >= 2 && sp.n <= 5 : false;
+      if (!ok) errors.push(`${w}: 射ち方 ${JSON.stringify(sp)} が不正（連射 1〜4・拡散 3 か 5・貫通 2〜5）`);
+    }
+  };
   for (const a of c.actions.values()) {
     const w = `action ${a.actionId}`;
     if (a.rootMotion.curveId && !c.curves.has(a.rootMotion.curveId)) errors.push(`${w}: curve ${a.rootMotion.curveId} が無い`);
@@ -254,6 +265,14 @@ export function crossCheck(c: Content, errors: string[]): void {
       else if (fam(a.next) !== fam(a.actionId)) errors.push(`${w}: next は同じ系統の行動にする`);
       if (a.next === a.actionId) errors.push(`${w}: next に自分を書かない`);
     }
+    // 射ち方の表で分ける射撃（v0.60.0）は、射ち方のある系統の行動だけ
+    if (a.shoot?.some((sh) => sh.table) && !c.families.get(a.actionId.split('.')[1] ?? '')?.shots) errors.push(`${w}: shoot.table があるのに、系統に shots（射ち方）が無い`);
+    // ビンを付ける・外す（v0.60.0）: tick が行動の中。付けられる系統（coatable）の行動だけ
+    if (a.coat) {
+      if (!Number.isInteger(a.coat.tick) || a.coat.tick < 0 || a.coat.tick >= a.durationTicks) errors.push(`${w}: coat.tick が行動の外`);
+      const f = c.families.get(a.actionId.split('.')[1] ?? '');
+      if (!f?.coatable) errors.push(`${w}: coat を持つが、系統がビンを持っていけない（coatable）`);
+    }
   }
   for (const f of c.families.values()) {
     const w = `family ${f.id}`;
@@ -272,6 +291,8 @@ export function crossCheck(c: Content, errors: string[]): void {
     // 跳びの回避（v0.59.0）: 大きく後ろへ跳ぶ行動は、跳び（actions.dodge）を持つ系統だけ。構え歩きの速さ
     if (f.actions.dodgeBack && !f.actions.dodge) errors.push(`${w}: actions.dodgeBack があるのに actions.dodge（跳び）が無い`);
     if (f.guard?.walkSpeed !== undefined && (!isNum(f.guard.walkSpeed) || f.guard.walkSpeed <= 0 || f.guard.walkSpeed > 3)) errors.push(`${w}: guard.walkSpeed が不正（0〜3 m/s）`);
+    // 射ち方（v0.60.0）: 射る行動の溜めの段階の数だけ。種類と本数の範囲
+    if (f.shots) checkShots(w, f.shots, c.actions.get(f.actions.main));
     // 猛り（v0.54.0）: 入る行動は固有ボタン、解く行動は swap で替わる先。替える行動はどれもこの系統の行動
     const D = f.demon;
     const own = (id: string): boolean => id.startsWith(`player.${f.id}.`) && c.actions.has(id);
@@ -306,6 +327,9 @@ export function crossCheck(c: Content, errors: string[]): void {
   for (const wpn of c.weapons.values()) {
     if (!c.families.has(wpn.family)) errors.push(`weapon ${wpn.id}: family ${wpn.family} が無い`);
     if (!isNum(wpn.attack) || wpn.attack <= 0) errors.push(`weapon ${wpn.id}: attack が不正`);
+    // 武器の射ち方（v0.60.0）: 系統の主の行動（溜めて射る）の段階の数だけ。射ち方の表を使わない組（保留の組 v056）では使われない
+    const wf = c.families.get(wpn.family);
+    if (wpn.shots && wf) checkShots(`weapon ${wpn.id}`, wpn.shots, c.actions.get(wf.actions.main));
   }
   for (const m of c.monsters.values()) {
     const partIds = new Set(m.parts.map((p) => p.id));
@@ -382,9 +406,12 @@ export function crossCheck(c: Content, errors: string[]): void {
   }
   for (const it of c.items.values()) {
     const w = `item ${it.id}`;
-    const a = c.actions.get(it.useActionId);
-    if (!a) errors.push(`${w}: useActionId ${it.useActionId} が無い`);
-    else if (!(isInt(it.effectTick) && it.effectTick >= 0 && it.effectTick < a.durationTicks)) errors.push(`${w}: effectTick が行動の長さの外`);
+    // ビン（v0.60.0）は道具の欄から使わない: 使う行動を持たない。ほかの道具は持つ
+    const a = it.kind === 'coating' ? undefined : c.actions.get(it.useActionId ?? '');
+    if (it.kind === 'coating') {
+      if (it.useActionId !== undefined || it.effectTick !== undefined) errors.push(`${w}: ビンは道具の欄から使わない（useActionId・effectTick を書かない）`);
+    } else if (!a) errors.push(`${w}: useActionId ${it.useActionId} が無い`);
+    else if (!(isInt(it.effectTick) && it.effectTick! >= 0 && it.effectTick! < a.durationTicks)) errors.push(`${w}: effectTick が行動の長さの外`);
     if (!(isInt(it.carryMax) && it.carryMax > 0)) errors.push(`${w}: carryMax が不正`);
     if (it.maintenance !== undefined && typeof it.maintenance !== 'boolean') errors.push(`${w}: maintenance が不正`);
     if (it.kind === 'heal') {
@@ -398,6 +425,8 @@ export function crossCheck(c: Content, errors: string[]): void {
     } else if (it.kind === 'whet') {
       // 研いだ後は納める（v0.40.0。2G に合わせて、納刀して使い、背から下ろして研ぐ。護刃が防御を構えたまま使った時だけ、抜刀のまま）
       if (a && a.onFinish !== 'sheathed_idle') errors.push(`${w}: 研ぐ行動の onFinish は sheathed_idle にする`);
+    } else if (it.kind === 'coating') {
+      if (!(it.coating && isNum(it.coating.scale) && it.coating.scale >= 1 && it.coating.scale <= 2 && it.coating.label)) errors.push(`${w}: coating が不正（scale 1〜2・label）`);
     } else errors.push(`${w}: kind "${String(it.kind)}" は未定義`);
   }
   const checkRoll = (w: string, r: LootRoll | undefined): void => {

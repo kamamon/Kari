@@ -92,7 +92,14 @@ export type SimEvent =
   /** 気（太刀。v0.56.0）が満ちた・満ちていなくなった / 気が無くて気合い斬りを出せなかった */
   | { type: 'spirit'; full: boolean }
   | { type: 'spirit_empty' }
-  | { type: 'shoot'; count: number; level: number; pos: V3 }
+  /** 矢を放った（環弓）。kind は射ち方（v0.60.0。shots の無い技では無い）、coated は付けていたビンの道具 id（v0.60.0） */
+  | { type: 'shoot'; count: number; level: number; pos: V3; kind?: 'rapid' | 'spread' | 'pierce'; coated?: string }
+  /**
+   * ビン（環弓。v0.60.0）: 付けた（on）・外した / 射って使い切って外れた（reason: out）。left は残りの本数。
+   * coating_empty は、付けようとしたが持っていなかった
+   */
+  | { type: 'coating'; itemId: string; on: boolean; left: number; reason: 'toggle' | 'out' }
+  | { type: 'coating_empty' }
   | { type: 'guard_break'; damage: number; pos: V3 }
   | { type: 'evade'; pos: V3 }
   | { type: 'player_dead' }

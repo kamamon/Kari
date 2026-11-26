@@ -137,13 +137,15 @@ export interface Ctl {
   on: number[];
   /** 武器を握っている度合い (0〜1)。0 では、手は体の横に下がる（納刀中） */
   grab: number[];
+  /** 弓: 弦を引く手が、矢を握っている (0〜1。0.5 以上で握る)。近接（v0.60.0。2G の弓の ○）で矢を振る。保留の組の動きには無い（無ければ 0） */
+  hold?: number[];
 }
 export type Channel = keyof Ctl;
-export const CHANNELS: readonly Channel[] = ['hip', 'hipR', 'spine', 'chest', 'look', 'grip', 'dir', 'edge', 'off', 'offN', 'offE', 'elbowR', 'elbowL', 'pull', 'on', 'arrow', 'grab'];
+export const CHANNELS: readonly Channel[] = ['hip', 'hipR', 'spine', 'chest', 'look', 'grip', 'dir', 'edge', 'off', 'offN', 'offE', 'elbowR', 'elbowL', 'pull', 'on', 'arrow', 'grab', 'hold'];
 const DEFAULT_CTL: Ctl = {
   hip: [0, 0, 0], hipR: [0, 0, 0], spine: [0, 0, 0], chest: [0, 0, 0], look: [0, 0],
   grip: [-0.2, -0.45, 0.25], dir: [0, 0.8, 0.6], edge: [0, -0.6, 0.8],
-  off: [0.2, -0.5, 0.1], offN: [0, 0, 1], offE: [0, -0.6, 0.8], elbowR: [0, 0, 0], elbowL: [0, 0, 0], pull: [0], on: [0], arrow: [0], grab: [1],
+  off: [0.2, -0.5, 0.1], offN: [0, 0, 1], offE: [0, -0.6, 0.8], elbowR: [0, 0, 0], elbowL: [0, 0, 0], pull: [0], on: [0], arrow: [0], grab: [1], hold: [0],
 };
 /** 何も持たない手が下がる位置（胸の座標。side は 左 +1 / 右 -1） */
 export const hangHand = (side: number): Vec => [side * 0.235, -0.555, 0.07];
@@ -278,14 +280,17 @@ export function evalMotion(m: Motion, t: number, dirAngle = 0): { ctl: Ctl; foot
   const ctl = {} as Ctl;
   for (const c of CHANNELS) {
     const keys = m.ch[c];
-    ctl[c] = keys && keys.length > 0 ? sampleKeys(keys, t) : m.base[c].slice();
+    ctl[c] = keys && keys.length > 0 ? sampleKeys(keys, t) : (m.base[c] ?? DEFAULT_CTL[c]!).slice();
   }
   return { ctl, footL: footAt(m, m.feet.L, t, dirAngle), footR: footAt(m, m.feet.R, t, dirAngle) };
 }
 
 export const mixCtl = (a: Ctl, b: Ctl, u: number): Ctl => {
   const o = {} as Ctl;
-  for (const c of CHANNELS) o[c] = a[c].map((x, i) => x + ((b[c][i] ?? x) - x) * u);
+  for (const c of CHANNELS) {
+    const ac = a[c] ?? DEFAULT_CTL[c]!, bc = b[c] ?? DEFAULT_CTL[c]!;
+    o[c] = ac.map((x, i) => x + ((bc[i] ?? x) - x) * u);
+  }
   return o;
 };
 export const mixFoot = (a: Foot, b: Foot, u: number): Foot => [a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u, a[3] + (b[3] - a[3]) * u, a[4] + (b[4] - a[4]) * u];
@@ -324,7 +329,14 @@ export interface Solved {
   off: { grip: Vec; dir: Vec } | null;
   /** 弓: 弦を引いた点（弓のローカル座標）と、矢をつがえているか */
   string: { y: number; z: number; arrow: boolean } | null;
+  /** 弓: 弦を引く手が握った矢（v0.60.0。近接）。握りの位置と、矢じりの向き（前腕の向き。アクターの座標）。握っていない時は null */
+  held: { pos: Vec; dir: Vec } | null;
   frames: Frames;
+}
+
+/** 弦を引く手が握った矢（v0.60.0）: 手の位置と、ひじから手への向き（矢じりは前腕の先の方へ出る） */
+function heldOf(arm: { E: Vec; H: Vec }): { pos: Vec; dir: Vec } {
+  return { pos: arm.H, dir: vnorm(vsub(arm.H, arm.E), [0, 0, 1]) };
 }
 
 function solveArm(S: Vec, T: Vec, pole: Vec): { E: Vec; H: Vec; qU: Quat; qF: Quat } {
@@ -555,6 +567,7 @@ export function solveBody(ctl: Ctl, footL: Foot, footR: Foot, hands: Hands): Sol
     shield,
     off,
     string,
+    held: hands.second === 'string' && (ctl.hold?.[0] ?? 0) >= 0.5 ? heldOf(hands.primary === 'L' ? armR : armL) : null,
     frames: {
       pelvis: P, chest: chestP, sc, head: headP, qPelvis: qP, qChest: qC, qHead: qH,
       shoulderL: shL, shoulderR: shR, elbowL: armL.E, elbowR: armR.E, handL: armL.H, handR: armR.H, targetL: tL!, targetR: tR!,

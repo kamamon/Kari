@@ -6,6 +6,7 @@
     {"id": "item.bind_trap", "name": "拘束罠", "kind": "trap", "carryMax": 2, "useActionId": "player.item.set_trap", "effectTick": 84, "trap": {"armTicks": 60, "radius": 1.5, "holdTicks": 540, "lifeTicks": 5400}, "summary": "足元に仕掛ける。大型が踏むと 9 秒ほど動きを止める。"},
     {"id": "item.calm_orb", "name": "鎮静玉", "kind": "tranq", "carryMax": 6, "useActionId": "player.item.throw_orb", "effectTick": 22, "tranq": {"range": 7, "halfAngleDeg": 50}, "summary": "正面 7m 以内の大型に当てる。弱って罠にかかった相手に 2 個当てると捕獲できる。"},
     {"id": "item.marker_orb", "name": "標識玉", "kind": "mark", "carryMax": 3, "useActionId": "player.item.throw_orb", "effectTick": 22, "mark": {"range": 12, "halfAngleDeg": 40, "ticks": 18000}, "summary": "正面 12m 以内の大型に当てると、光る粉が付き、5 分の間、別のエリアに居ても地図に居場所が出る。外しても 1 個減る。"},
+    {"id": "item.power_coating", "name": "強撃ビン", "kind": "coating", "carryMax": 20, "coating": {"scale": 1.5, "label": "強撃"}, "summary": "環弓に付けるビン。付けている間は、射る矢の威力が 1.5 倍。1 回射るごとに 1 本使う。道具の欄には出ず、抜刀して主と副の同時押しで付ける・外す。環弓のほかの武器では持っていかない。"},
     {"id": "item.whetstone", "name": "研磨石", "kind": "whet", "carryMax": 10, "useActionId": "player.item.whet", "effectTick": 96, "maintenance": true, "summary": "納刀して使う。片ひざを突いて武器を研ぎ、刃の状態を最大まで戻す。研ぎ終わるまで動けない。環弓には使えない。"}
   ],
   "materials": [

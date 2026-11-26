@@ -6,7 +6,8 @@
     {"itemId": "item.heal_tonic", "price": 60},
     {"itemId": "item.whetstone", "price": 40},
     {"itemId": "item.calm_orb", "price": 150}, {"itemId": "item.marker_orb", "price": 90},
-    {"itemId": "item.bind_trap", "price": 300}
+    {"itemId": "item.bind_trap", "price": 300},
+    {"itemId": "item.power_coating", "price": 30}
   ],
   "sell": [
     {"itemId": "mat.galdros.shell_shard", "price": 20},

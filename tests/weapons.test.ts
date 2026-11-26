@@ -612,27 +612,34 @@ describe('長尖槍（ランス）', () => {
 });
 
 describe('環弓（弓）', () => {
-  const shoot = (dist: number, holdTicks: number): { h: Hit[]; minStamina: number } => {
-    const sim = mk('ring_bow');
+  /** 溜めて射る。hits は矢の命中、shot は放った知らせ */
+  const shoot = (dist: number, holdTicks: number, weapon = 'weapon.ring_bow.001', setup?: (sim: Simulation) => void) => {
+    const sim = new Simulation(content, baseOptions({ weaponId: weapon }));
     placeInFrontOfHead(sim, dist);
+    setup?.(sim);
     const h: Hit[] = [];
+    const shots: Extract<SimEvent, { type: 'shoot' }>[] = [];
     let minStamina = 100;
     for (let i = 0; i < holdTicks + 120; i++) {
       sim.step(i === 0 ? press(Btn.Main) : i < holdTicks ? hold(Btn.Main) : frame());
-      h.push(...hits(sim.drainEvents()));
+      const evs = sim.drainEvents();
+      h.push(...hits(evs));
+      shots.push(...evs.filter((e): e is Extract<SimEvent, { type: 'shoot' }> => e.type === 'shoot'));
       minStamina = Math.min(minStamina, sim.player.stamina);
     }
-    return { h, minStamina };
+    const total = h.reduce((n, x) => n + x.damage, 0);
+    return { h, shots, total, minStamina, sim };
   };
 
-  it('矢が飛んで当たる。溜めるほど強い', () => {
+  it('矢が飛んで当たる。溜めるほど強い（v0.60.0: 射撃の合計。里鍛ちの環弓は連射型で、段階ごとに 1・2・4 本）', () => {
     const weak = shoot(8, 5), mid = shoot(8, 60), strong = shoot(8, 140);
-    for (const s of [weak, mid, strong]) {
-      expect(s.h).toHaveLength(1);
-      expect(s.h[0]!.windowId).toBe('arrow');
-    }
-    expect(mid.h[0]!.damage).toBeGreaterThan(weak.h[0]!.damage);
-    expect(strong.h[0]!.damage).toBeGreaterThan(mid.h[0]!.damage);
+    expect(weak.h).toHaveLength(1);
+    expect(mid.h).toHaveLength(2);
+    expect(strong.h).toHaveLength(4);
+    for (const s of [weak, mid, strong]) for (const x of s.h) expect(x.windowId).toBe('arrow');
+    expect(strong.shots[0]).toMatchObject({ kind: 'rapid', count: 4, level: 3 });
+    expect(mid.total).toBeGreaterThan(weak.total);
+    expect(strong.total).toBeGreaterThan(mid.total);
   });
 
   it('溜めている間はスタミナが減る', () => {
@@ -645,17 +652,107 @@ describe('環弓（弓）', () => {
     expect(arrowDistanceScale(3)).toBe(0.6);
     expect(arrowDistanceScale(20)).toBe(0.5);
     const near = shoot(3, 140), good = shoot(8, 140), far = shoot(18, 140);
-    expect(good.h[0]!.damage).toBeGreaterThan(near.h[0]!.damage);
-    expect(good.h[0]!.damage).toBeGreaterThan(far.h[0]!.damage);
+    expect(good.total).toBeGreaterThan(near.total);
+    expect(good.total).toBeGreaterThan(far.total);
   });
 
-  it('散らし撃ちは 3 本。近くなら複数当たることがある', () => {
+  it('射ち方は武器ごと（v0.60.0。系列の型で決まる）: 拡散型は扇に 3 本・5 本、貫通型は 1 本が体を抜けて別々の部位へ当たる', () => {
+    const w = (id: string) => content.weapons.get(id)!;
+    expect(w('weapon.ring_bow.selvark.r1').shots?.map((x) => `${x.type}${x.n}`)).toEqual(['rapid1', 'spread3', 'spread3', 'spread5']);
+    expect(w('weapon.ring_bow.ashreia.r1').shots?.map((x) => `${x.type}${x.n}`)).toEqual(['rapid1', 'pierce2', 'pierce3', 'pierce4']);
+    expect(w('weapon.ring_bow.001').shots).toBeUndefined(); // 系統の連射型
+    const spread = shoot(4, 140, 'weapon.ring_bow.selvark.r1');
+    expect(spread.shots[0]).toMatchObject({ kind: 'spread', count: 5 });
+    expect(spread.h.length).toBeGreaterThanOrEqual(1);
+    const pierce = shoot(8, 140, 'weapon.ring_bow.ashreia.r1');
+    expect(pierce.shots[0]).toMatchObject({ kind: 'pierce', count: 1 });
+    // 頭から体の奥へ抜ける: 別々の部位へ 2 回以上（同じ部位へは 1 回だけ）
+    const parts = pierce.h.map((x) => x.partId);
+    expect(parts.length).toBeGreaterThanOrEqual(2);
+    expect(new Set(parts).size).toBe(parts.length);
+    expect(pierce.sim.projectiles).toHaveLength(0);
+  });
+
+  it('強撃ビン（v0.60.0）: 主と副の同時押しで付け、射ると矢が 1.5 倍になって 1 本使う。使い切ると外れ、もう 1 度押すと外す', () => {
+    const plain = shoot(8, 5);
+    const coated = shoot(8, 5, 'weapon.ring_bow.001', (sim) => {
+      sim.player.coatings = [{ itemId: 'item.power_coating', count: 2 }];
+      const evs = run(sim, 60, (i) => (i === 0 ? press(Btn.Combo) : frame()));
+      expect(starts(evs)).toContain('player.ring_bow.coat');
+      expect(evs.find((e) => e.type === 'coating')).toMatchObject({ on: true, left: 2, reason: 'toggle' });
+      expect(sim.player.coating).toBe('item.power_coating');
+    });
+    expect(coated.h).toHaveLength(1);
+    // 1.5 倍（命中の値は整数へ丸めるので、±0.1）
+    expect(coated.h[0]!.damage / plain.h[0]!.damage).toBeGreaterThan(1.4);
+    expect(coated.h[0]!.damage / plain.h[0]!.damage).toBeLessThan(1.6);
+    expect(coated.shots[0]!.coated).toBe('item.power_coating');
+    expect(coated.sim.player.coatings[0]!.count).toBe(1);
+    // もう 1 回射ると使い切って外れる
+    const sim = coated.sim;
+    const evs = run(sim, 120, (i) => (i === 0 ? press(Btn.Main) : frame()));
+    expect(evs.find((e) => e.type === 'coating')).toMatchObject({ on: false, left: 0, reason: 'out' });
+    expect(sim.player.coating).toBeNull();
+    // 付けて、もう 1 度押すと外す（残りは減らない）
+    sim.player.coatings[0]!.count = 3;
+    run(sim, 60, (i) => (i === 0 ? press(Btn.Combo) : frame()));
+    expect(sim.player.coating).toBe('item.power_coating');
+    const off = run(sim, 60, (i) => (i === 0 ? press(Btn.Combo) : frame()));
+    expect(off.find((e) => e.type === 'coating')).toMatchObject({ on: false, left: 3, reason: 'toggle' });
+    expect(sim.player.coating).toBeNull();
+  });
+
+  it('ビン（v0.60.0）は、持っていなければ付かない。道具の欄には出ず、環弓のほかの武器では持っていかない。使った自分のビンは持ち物から減る', () => {
+    // 訓練場では、環弓に強撃ビン 10 本（支給。ほかの武器には持たせない）
+    expect(mk('ring_bow').player.coatings).toEqual([{ itemId: 'item.power_coating', count: 10 }]);
+    expect(mk('heavy_blade').player.coatings).toEqual([]);
     const sim = mk('ring_bow');
-    placeInFrontOfHead(sim, 2.5);
-    const evs = run(sim, 80, (i) => (i === 0 ? press(Btn.Sub) : frame()));
-    const shot = evs.find((e) => e.type === 'shoot') as Extract<SimEvent, { type: 'shoot' }>;
-    expect(shot.count).toBe(3);
-    expect(hits(evs).length).toBeGreaterThanOrEqual(1);
-    expect(sim.projectiles.length).toBe(0); // 飛び終わった矢は残らない
+    sim.player.coatings = [];
+    placeInFrontOfHead(sim, 8);
+    const evs = run(sim, 60, (i) => (i === 0 ? press(Btn.Combo) : frame()));
+    expect(evs.some((e) => e.type === 'coating_empty')).toBe(true);
+    expect(sim.player.coating).toBeNull();
+    const pouch = [{ itemId: 'item.power_coating', count: 25 }, { itemId: 'item.heal_tonic', count: 3 }];
+    const bow = new Simulation(content, baseOptions({ questId: 'quest.basin.003', weaponId: 'weapon.ring_bow.001', pouch }));
+    expect(bow.player.coatings).toEqual([{ itemId: 'item.power_coating', count: 20 }]);
+    expect(bow.player.items.some((x) => x.itemId === 'item.power_coating')).toBe(false);
+    const blade = new Simulation(content, baseOptions({ questId: 'quest.basin.003', weaponId: 'weapon.heavy_blade.001', pouch }));
+    expect(blade.player.coatings).toEqual([]);
+    expect(blade.player.items.some((x) => x.itemId === 'item.power_coating')).toBe(false);
+    // 2 本使うと、自分の持ち物から 2 本減る
+    bow.player.coating = 'item.power_coating';
+    bow.player.coatings[0]!.count -= 2;
+    expect(bow.spentOwn()).toContainEqual({ itemId: 'item.power_coating', count: 2 });
+  });
+
+  it('近接（v0.60.0。2G の弓の ○）: 副で矢を握って斬り、続けて副で突く（2 回まで）。どちらも当たる。3 回目の副は出ない', () => {
+    const sim = mk('ring_bow');
+    placeInFrontOfHead(sim, 1.0);
+    const evs = run(sim, 160, (i) => (i === 0 || i === 24 || i === 54 ? press(Btn.Sub) : frame()));
+    expect(starts(evs)).toEqual(['player.ring_bow.melee1', 'player.ring_bow.melee2']);
+    const h = hits(evs);
+    expect(h.map((x) => x.actionId)).toEqual(['player.ring_bow.melee1', 'player.ring_bow.melee2']);
+    for (const x of h) expect(x.windowId).toBe('melee');
+  });
+
+  it('回避（v0.60.0）: 入力なしは後ろへ跳ぶ（向きはそのまま、1.3m ほど）。入力があれば、ふつうに転がる。納刀中は転がる', () => {
+    const sim = mk('ring_bow');
+    placeInFrontOfHead(sim, 8);
+    const z0 = sim.player.pos.z, yaw0 = sim.player.yaw;
+    const evs = run(sim, 40, (i) => (i === 0 ? press(Btn.Dodge) : frame()));
+    expect(starts(evs)).toEqual(['player.ring_bow.backstep']);
+    expect(z0 - sim.player.pos.z).toBeGreaterThan(1.2);
+    expect(sim.player.yaw).toBeCloseTo(yaw0, 6);
+    const side = mk('ring_bow');
+    placeInFrontOfHead(side, 8);
+    const evs2 = run(side, 40, (i) => (i === 0 ? frame({ pressed: Btn.Dodge, held: Btn.Dodge, moveX: 1 }) : frame()));
+    expect(starts(evs2)).toEqual(['player.common.roll']);
+    const sheathed = mk('ring_bow');
+    expect(starts(run(sheathed, 40, (i) => (i === 0 ? press(Btn.Dodge) : frame())))).toEqual(['player.common.roll']);
+  });
+
+  it('散らし撃ちは無い（v0.60.0。射ち方の拡散へ）。保留の組 v056 には、これまでどおり残る', () => {
+    expect(content.actions.has('player.ring_bow.spread')).toBe(false);
+    expect(content.families.get('ring_bow')!.actions.sub).toBe('player.ring_bow.melee1');
   });
 });

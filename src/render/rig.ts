@@ -105,6 +105,8 @@ export class HunterRig {
   /** 弓の弦（上の先 → 引いた点 → 下の先）と、つがえた矢 */
   private bowString: Line | null = null;
   private bowArrow: Group | null = null;
+  /** 弦を引く手が握った矢（v0.60.0。環弓の近接）。アクターの座標に置く */
+  private handArrow: Group | null = null;
   /** 体の絵を貼る区画（書き出しと検査用）と、区画の並びが焼いた絵と同じか */
   atlasCharts: AtlasChart[] = [];
   atlasStored = false;
@@ -374,10 +376,14 @@ export class HunterRig {
         this.bowString.frustumCulled = false;
         this.bowArrow = buildArrow().group;
         this.bowArrow.rotation.x = -Math.PI / 2;
+        this.handArrow = buildArrow().group;
+        this.handArrow.matrixAutoUpdate = false;
+        this.handArrow.visible = false;
+        this.root.add(this.handArrow);
       }
       this.weapon.add(this.bowString, this.bowArrow!);
       this.setString(null);
-    }
+    } else if (this.handArrow) this.handArrow.visible = false;
     this.shield.clear();
     this.shield.visible = !!offhand;
     if (offhand) {
@@ -433,6 +439,20 @@ export class HunterRig {
     // 矢: 矢はずを弦の引いた点に掛け、矢じりを的（弓の背の方）へ向ける。矢の原点は中央（長さ 0.8m）。
     this.bowArrow.visible = !!s && s.arrow;
     this.bowArrow.position.set(0, y, z - 0.4);
+  }
+
+  /**
+   * 弦を引く手が握った矢（v0.60.0。環弓の近接）: 握りの位置から、矢じりを dir の方へ向けて置く（矢はずは手の 0.15m 後ろ）。null なら隠す
+   */
+  placeHandArrow(h: { pos: readonly number[]; dir: readonly number[] } | null): void {
+    if (!this.handArrow) return;
+    this.handArrow.visible = !!h && this.familyId === 'ring_bow';
+    if (!h || !this.handArrow.visible) return;
+    const d = this.v4.set(h.dir[0]!, h.dir[1]!, h.dir[2]!).normalize();
+    const b = this.basis(d, new Vector3(0, 1, 0).cross(d).lengthSq() > 1e-4 ? new Vector3(0, 1, 0).cross(d) : new Vector3(1, 0, 0));
+    b.setPosition(h.pos[0]! + d.x * 0.25, h.pos[1]! + d.y * 0.25, h.pos[2]! + d.z * 0.25);
+    this.handArrow.matrix.copy(b);
+    this.handArrow.matrixWorldNeedsUpdate = true;
   }
 
   /** 武器を、納めた時の置き場所（骨と、その骨の座標での位置・向き）へ付ける。姿勢を設定した後に呼ぶ。 */
