@@ -33,6 +33,10 @@ export interface PhaseDef {
 
 /** 攻撃判定の窓。区間は開始を含み、終了を含まない（1 tick = 1/60 秒）。 */
 export interface HitWindowDef {
+  edgeCost?: number;
+  elementMotion?: number;
+  statusMotion?: number;
+  stunMotion?: number;
   id: string;
   from: number;
   to: number;
@@ -290,7 +294,12 @@ export interface WeaponFamilyDef {
   summary?: string;
 }
 
+/** 武器固有の刃の長さ・区間・1命中の消耗。省略時は級・系列から生成。 */
+export interface WeaponEdgeProfile {
+  max: number; keen: number; worn: number; wearPerHit: number;
+}
 export interface WeaponDef {
+  edgeProfile?: WeaponEdgeProfile;
   id: string;
   family: string;
   name: string;
@@ -324,6 +333,7 @@ export interface ShotSpec {
 
 /** 刃の状態の 1 段階。値が min 以上（で、上の段階の min 未満）の時にこの段階になる。 */
 export interface EdgeStageDef {
+  elementScale?: number;
   id: string;
   name: string;
   min: number;

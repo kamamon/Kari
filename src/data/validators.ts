@@ -100,6 +100,7 @@ export function validateAction(a: ActionDef, errors: string[]): void {
     if (ids.has(h.id)) errors.push(`${w}: hitWindow id ${h.id} が重複`);
     ids.add(h.id);
     if (!isNum(h.damageCoefficient) || h.damageCoefficient < 0) errors.push(`${w}: hitWindow ${h.id} の damageCoefficient が不正`);
+    for(const key of ['edgeCost','elementMotion','statusMotion','stunMotion'] as const){const n=h[key];if(n!==undefined&&(!isNum(n)||n<0||n>100))errors.push(`${w}: hitWindow ${h.id} の ${key} が不正`);}
     if (!isInt(h.maxHitsPerTarget) || h.maxHitsPerTarget < 1) errors.push(`${w}: hitWindow ${h.id} の maxHitsPerTarget が不正`);
     if (!isInt(h.hitstopTicks) || h.hitstopTicks < 0) errors.push(`${w}: hitWindow ${h.id} の hitstopTicks が不正`);
     if (h.contact !== undefined && h.contact !== 'shield') errors.push(`${w}: hitWindow ${h.id} の contact が不正（shield だけ）`);
@@ -328,6 +329,8 @@ export function crossCheck(c: Content, errors: string[]): void {
   for (const wpn of c.weapons.values()) {
     if (!c.families.has(wpn.family)) errors.push(`weapon ${wpn.id}: family ${wpn.family} が無い`);
     if (!isNum(wpn.attack) || wpn.attack <= 0) errors.push(`weapon ${wpn.id}: attack が不正`);
+    const ep=wpn.edgeProfile;
+    if(ep!==undefined&&(!isObj(ep)||!c.families.get(wpn.family)?.edge||![ep.max,ep.keen,ep.worn,ep.wearPerHit].every(isNum)||!(ep.max>ep.keen&&ep.keen>ep.worn&&ep.worn>0&&ep.wearPerHit>0&&ep.max<=500))) errors.push(`weapon ${wpn.id}: edgeProfile が不正`);
     // 武器の射ち方（v0.60.0）: 系統の主の行動（溜めて射る）の段階の数だけ。射ち方の表を使わない組（保留の組 v056）では使われない
     const wf = c.families.get(wpn.family);
     if (wpn.shots && wf) checkShots(`weapon ${wpn.id}`, wpn.shots, c.actions.get(wf.actions.main));

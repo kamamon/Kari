@@ -6,6 +6,7 @@ import type { GearEffects } from './gear';
 import { STATUS_KINDS, type ClimbDef, type VaultDef, type FieldDef, type ActionDef, type CancelWindowDef, type Content, type GuardDef, type HazardDef, type ItemDef, type ItemStack, type MonsterDef, type ShootDef, type StatusHit, type StatusKind, type StatusTuning, type WeaponDef, type WeaponFamilyDef } from '../data/schemas';
 import { inWindow, newRun, type ActionRun } from './action';
 import { edgeStage } from './combat';
+import { weaponEdgeRules } from './weaponEdge';
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
 import { sampleCurve } from './tracks';
@@ -142,7 +143,7 @@ function itemBlock(p: PlayerState, ctx: SimCtx): 'empty' | 'not_now' | 'no_need'
   if (!stack || !item || stack.count <= 0) return 'empty';
   if (item.kind === 'whet') {
     if (!familyOf(p, ctx.content).edge) return 'not_now';
-    if (p.edge >= ctx.content.edge.max) return 'no_need';
+    if (p.edge >= weaponEdgeRules(ctx.content, p.weaponId).max) return 'no_need';
   }
   return ctx.canUseItem(item) ? null : 'not_now';
 }
@@ -208,7 +209,7 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
     demon: false,
     spirit: 0,
     spiritIdle: 0,
-    edge: content.edge.max,
+    edge: weaponEdgeRules(content, weaponId).max,
     items: carried.map((s) => ({ itemId: s.itemId, count: s.count })),
     itemIndex: 0,
     coatings: coatings.map((s) => ({ itemId: s.itemId, count: s.count })),
@@ -1334,7 +1335,7 @@ export function resolveIncomingHit(p: PlayerState, hit: IncomingHit, ctx: SimCtx
 
 /** 刃の状態を減らす。段階が替わったら知らせる */
 function wearEdge(p: PlayerState, amount: number, ctx: SimCtx): void {
-  const E = ctx.content.edge;
+  const E = weaponEdgeRules(ctx.content, p.weaponId);
   const before = edgeStage(E, p.edge).id;
   p.edge = Math.max(0, p.edge - amount);
   const now = edgeStage(E, p.edge);

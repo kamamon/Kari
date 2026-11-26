@@ -1,6 +1,7 @@
 // 装備の性能の短い説明（v0.33.0）: 装備箱と工房で使う。属性・状態異常・防具の技能と耐性（docs/spec.md の 30 章）。
 import { ELEMENT_IDS, type ArmorDef, type ArmorSkill, type Content, type ElementId, type WeaponDef } from '../data/schemas';
 import { AILMENT_NAMES } from '../game/ailment';
+import { weaponEdgeRules } from '../game/weaponEdge';
 import { elementLabel, skillValue, type GearEffects } from '../game/gear';
 
 const elementName = (c: Content, id: ElementId): string => c.elements.elements.find((e) => e.id === id)?.name ?? id;
@@ -9,6 +10,7 @@ const signed = (v: number): string => (v > 0 ? `+${v}` : `${v}`);
 /** 武器の性能: 「攻撃力 85・風 26」「攻撃力 86・毒 9.2」「攻撃力 81・会心 25%」 */
 export function weaponStat(c: Content, w: WeaponDef): string {
   const parts = [`攻撃力 ${w.attack}`];
+  if(c.families.get(w.family)?.edge){const e=weaponEdgeRules(c,w.id);parts.push(`刃 ${Math.round(e.max-e.stages[0]!.min)}/${e.max}`);}
   const el = elementLabel(c, w);
   if (el) parts.push(`${el} ${w.element.value}`);
   if (w.status) parts.push(`${AILMENT_NAMES[w.status.kind]} ${w.status.potency}`);

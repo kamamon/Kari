@@ -6,6 +6,7 @@ import { STATUS_KINDS, questTargets } from '../data/schemas';
 import type { Content, DamageType, ElementId, StatusKind, FieldAreaDef, FieldDef, HazardDef, HazardLook, HitWindowDef, ItemDef, ItemStack, LootDef, LootRoll, MonsterDef, QuestDef, QuestTarget, RankDef, ShootDef, StatusHit } from '../data/schemas';
 import { inWindow, type ActionRun } from './action';
 import { HitLedger, computeDamage, edgeStage, sweepCapsule, type WorldShape } from './combat';
+import { weaponEdgeRules, weaponEdgeProfile } from './weaponEdge';
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
 import { defenseScale, scaleMonsterDef, totalDefense } from './rank';
@@ -563,7 +564,7 @@ export class Simulation implements SimCtx {
     }
     if (item.kind === 'whet') {
       // 研磨石: 刃の状態を最大まで戻す
-      const E = this.content.edge;
+      const E = weaponEdgeRules(this.content, p.weaponId);
       const before = p.edge;
       const stage = edgeStage(E, before).id;
       p.edge = E.max;
@@ -1088,7 +1089,7 @@ export class Simulation implements SimCtx {
     const hitstop = hw.hitstopTicks + (charge ? charge.hitstopBonus[run.chargeLevel] ?? 0 : 0);
     run.hitstop = hitstop;
     // 刃の減り方は、溜めや猛りの倍率を掛ける前の、技そのものの係数で決める
-    const bounced = this.dealPlayerDamage(m, partIndex, point, { actionId: run.def.actionId, windowId: hw.id, actionTick: t, motion: hw.damageCoefficient * scale, damageType: hw.damageType, hitstop, chargeLevel: run.chargeLevel, wearMotion: hw.damageCoefficient, contact: hw.contact });
+    const bounced = this.dealPlayerDamage(m, partIndex, point, { actionId: run.def.actionId, windowId: hw.id, actionTick: t, motion: hw.damageCoefficient * scale, damageType: hw.damageType, hitstop, chargeLevel: run.chargeLevel, wearMotion: hw.damageCoefficient, edgeCost: hw.edgeCost, elementMotion: hw.elementMotion === undefined ? undefined : hw.elementMotion * scale, statusMotion: hw.statusMotion === undefined ? undefined : hw.statusMotion * scale, stunMotion: hw.stunMotion === undefined ? undefined : hw.stunMotion * scale, contact: hw.contact });
     if (SP && !run.def.spirit) {
       setSpirit(this.player, this.player.spirit + SP.gainPerHit, this);
       this.player.spiritIdle = 0;
@@ -1122,6 +1123,10 @@ export class Simulation implements SimCtx {
       chargeLevel: number;
       /** 武器で直接当てた時の、技の係数（刃の減り方に使う）。矢は省く */
       wearMotion?: number;
+      edgeCost?: number;
+      elementMotion?: number;
+      statusMotion?: number;
+      stunMotion?: number;
       /** 盾で打った（v0.33.0）。武器の属性・状態異常は乗らない */
       contact?: 'shield';
     },
@@ -1133,7 +1138,7 @@ export class Simulation implements SimCtx {
     const g = this.gear;
     const R = ailmentRules(C);
     // 刃の状態: 武器で直接当てた時だけ（矢には無い）。段階で刃補正が変わり、硬い部位では弾かれる
-    const E = C.edge;
+    const E = weaponEdgeRules(C, p.weaponId);
     const famEdge = h.wearMotion !== undefined ? familyOf(p, C).edge : undefined;
     const stage = famEdge ? edgeStage(E, p.edge) : null;
     const hitzone = (m.parts[partIndex]!.broken && part.brokenHitzone ? part.brokenHitzone : part.hitzone)[h.damageType];
@@ -1159,7 +1164,8 @@ export class Simulation implements SimCtx {
       hitzone,
       crit: crit > 0 ? T.critMultiplier : crit < 0 ? 0.75 : 1,
       element: elementZone > 0 ? weapon.element.value * g.element : 0,
-      elementMotion: h.motion,
+      elementMotion: h.elementMotion ?? h.motion,
+      elementSharpness: stage?.elementScale ?? 1,
       elementZone,
       questModifier: this.questModifier * (woke ? R.sleep.wakeScale : 1),
     });
@@ -1191,12 +1197,12 @@ export class Simulation implements SimCtx {
     if (m.herd) herdHurt(m, this);
     // 状態異常（v0.33.0）: 武器の毒・麻痺・睡眠は、武器そのもので当てた時だけ。気絶は、打撃が頭に当たった時だけ
     if (!m.dead && !m.captured) {
-      if (weaponHit && weapon.status) this.storeAilment(m, weapon.status.kind, ailmentAmount(weapon.status.potency, h.motion, g.status), point);
-      if (h.damageType === 'blunt' && part.head) this.storeAilment(m, 'stun', ailmentAmount(R.stunPerMotion, h.motion, g.stun), point);
+      if (weaponHit && weapon.status) this.storeAilment(m, weapon.status.kind, ailmentAmount(weapon.status.potency, h.statusMotion ?? h.motion, g.status), point);
+      if (h.damageType === 'blunt' && part.head) this.storeAilment(m, 'stun', ailmentAmount(R.stunPerMotion, h.stunMotion ?? h.motion, g.stun), point);
     }
     if (famEdge && stage) {
       // 当てるたびに減る。弾かれた時は余分に減る。防具の技能「刃持ち」で減り方が小さくなる（v0.33.0）
-      p.edge = Math.max(0, p.edge - famEdge.wearPerMotion * (h.wearMotion ?? 0) * (bounced ? E.bounce.wearScale : 1) * g.edgeWear);
+      p.edge = Math.max(0, p.edge - (h.edgeCost ?? weaponEdgeProfile(weapon)?.wearPerHit ?? (famEdge.wearPerMotion * (h.wearMotion ?? 0))) * (bounced ? E.bounce.wearScale : 1) * g.edgeWear);
       const now = edgeStage(E, p.edge);
       if (now.id !== stage.id) this.emit({ type: 'edge', stage: now.id, value: p.edge });
     }

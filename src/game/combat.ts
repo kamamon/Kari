@@ -16,6 +16,7 @@ export interface DamageInput {
   crit: number;
   element: number;
   elementMotion: number;
+  elementSharpness?: number;
   elementZone: number;
   questModifier: number;
 }
@@ -27,7 +28,7 @@ export interface DamageInput {
  */
 export function computeDamage(d: DamageInput): number {
   const physical = d.attack * d.motion * d.sharpness * d.hitzone * d.crit;
-  const elemental = d.element * d.elementMotion * d.elementZone;
+  const elemental = d.element * d.elementMotion * d.elementZone * (d.elementSharpness ?? 1);
   if (physical <= 0 && elemental <= 0) return 0;
   return Math.max(1, Math.floor((physical + elemental) * d.questModifier + 1e-9));
 }
