@@ -1,0 +1,61 @@
+{
+  "sizeTarget": {
+    "length": 17.6,
+    "wingspan": 25.8
+  },
+  "rank": [
+    {
+      "rank": "rank.2",
+      "role": "TQ07任意",
+      "hpRelativeToPeer": 1.12
+    },
+    {
+      "rank": "rank.3",
+      "role": "再戦",
+      "hpRelativeToPeer": 1.15
+    },
+    {
+      "rank": "rank.4",
+      "role": "TQ04決戦 / TQ06別個体",
+      "hpRelativeToPeer": 1.22
+    }
+  ],
+  "parts": [
+    {
+      "id": "crown",
+      "name": "冠角",
+      "effect": "集束雷の外側射程短縮"
+    },
+    {
+      "id": "wing_l",
+      "name": "左翼導電板",
+      "effect": "左雷打縮小・飛行短縮"
+    },
+    {
+      "id": "wing_r",
+      "name": "右翼導電板",
+      "effect": "右雷打縮小・飛行短縮"
+    },
+    {
+      "id": "chest",
+      "name": "蓄雷嚢",
+      "effect": "中断しやすい・冷却延長"
+    },
+    {
+      "id": "legs",
+      "name": "両後脚爪甲",
+      "effect": "着地硬直延長"
+    },
+    {
+      "id": "tail",
+      "name": "尾槍",
+      "effect": "先端射程短縮"
+    }
+  ],
+  "constraints": [
+    "両翼破壊後は新規離陸禁止、飛行中は安全床へ着地",
+    "尾全体は切断しない",
+    "12秒滞空上限・8秒地上下限",
+    "固定tickの判定とVFXを同期。演出の全域白飛び禁止"
+  ]
+}

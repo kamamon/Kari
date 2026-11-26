@@ -1,0 +1,31 @@
+{
+  "rigNodes": 95,
+  "sockets": 16,
+  "animations": 34,
+  "vertices": 12365,
+  "triangles": 20640,
+  "bufferBytes": 999804,
+  "bounds": [
+    [
+      -12.903432454516548,
+      12.903432454516548
+    ],
+    [
+      0.009846530392543879,
+      6.832644986584581
+    ],
+    [
+      -11.260785630215524,
+      6.229245886010129
+    ]
+  ],
+  "weightSumsOK": true,
+  "indicesOK": true,
+  "finite": true,
+  "parentOrderOK": true,
+  "socketParentsOK": true,
+  "weaponCount": 21,
+  "armorCount": 15,
+  "materials": 6,
+  "notes": "Structural checks only; not loaded in Blender/Three, no glTF validator, game/IK/FPS/import testing. SVG studies not finished paintings; no baked texture maps."
+}
