@@ -13,6 +13,7 @@ import { sampleTrack, sampleTrackNormal, trackSegment } from '../game/tracks';
 import type { Settings } from '../save/settings';
 import { blobShadow, buildArena, buildAreaGroup, setupSky, type Arena } from './arena';
 import { WIND } from './envArt';
+import { imageLambert } from './materialImages';
 import { buildHubGroup } from './hubScene';
 import { HubLifeScene } from './hubLifeScene';
 import type { HubLifeState } from '../data/hubLife';
@@ -178,7 +179,7 @@ export class GameView {
   private hazardMats = new Map<HazardLook, MeshStandardMaterial>();
   private trapViews = new Map<number, { group: Group; ring: Mesh; core: Mesh }>();
   private hazardRock = new IcosahedronGeometry(1, 0);
-  private hazardRockMat = new MeshLambertMaterial({ color: 0x80847a, flatShading: true });
+  private hazardRockMat=imageLambert('cliff',{color:0x80847a,flatShading:true});
   private arena: Arena;
   /** フィールド: 作ったエリアの地形（入った時に作り、居るエリアだけ見せる）と、いま見せているエリア */
   private areaGroups = new Map<string, Group>();
@@ -1038,7 +1039,7 @@ export class GameView {
         const ring = new Mesh(new RingGeometry(0.8, 1, 24), new MeshBasicMaterial({ color: 0xd8b56a, transparent: true, depthWrite: false, side: DoubleSide, fog: false }));
         ring.rotation.x = -Math.PI / 2;
         ring.position.y = 0.05;
-        const core = new Mesh(new CylinderGeometry(0.22, 0.3, 0.12, 8), new MeshLambertMaterial({ color: 0x8a7a55 }));
+        const core = new Mesh(new CylinderGeometry(0.22, 0.3, 0.12, 8), imageLambert('bronze',{color:0x8a7a55}));
         core.position.y = 0.06;
         group.add(ring, core);
         group.position.set(t.x, sim.world.groundHeight(t.x, t.z), t.z);

@@ -17,6 +17,7 @@ import { ROCK_REACH, ledgeGeometry, polyPath, wallPath } from './rockGeo';
 import { artCliffGeometry, cliffArtMaterial, mergeRocks, placeBigRock, rockArt, rockArtGeometry, rockArtMaterial, type RockPlacement } from './rockArt';
 import { SKY_LOOKS, SkyDome } from './sky';
 import { patchNoise } from './noise';
+import { imageLambert, projectSurfaceUV } from './materialImages';
 import { PlatformIndex, buildTerraces, holedGround } from './terraces';
 
 export const FOG_COLOR = 0xaebcab;
@@ -198,7 +199,7 @@ export function buildAreaGroup(map: AreaLook): Group {
   group.add(ground);
 
   const rockDark = tileMaterial('rock', 0xd2d6ce, { flat: true, gain: ROCK_GAIN });
-  const bronze = new MeshLambertMaterial({ color: 0xb08d57, emissive: 0x2a1d08, flatShading: true });
+  const bronze = imageLambert('bronze',{color:0xb08d57,emissive:0x2a1d08,flatShading:true});
   const stepTop = tileMaterial(look.ground, 0xffffff, { gain: GROUND_GAIN * 0.95 });
   const moss = map.kind === 'nest' ? 0.15 : map.kind === 'path' ? 0.35 : map.kind === 'village' ? 0.5 : 0.65;
   // 段差の横の面と、崖の上の縁から外へ下る背（岩肌の絵と、頂点の色）。苔の多いエリア（野営地・狩り）は、苔の溜まった岩肌（依頼 10 の T-04）
@@ -309,7 +310,7 @@ export function buildAreaGroup(map: AreaLook): Group {
 
   // 巣: 壁ぎわに、晶の柱が立つ
   if (map.kind === 'nest') {
-    const crystal = new MeshLambertMaterial({ color: 0xc9a86a, emissive: 0x5a3c12, flatShading: true });
+    const crystal = imageLambert('crystal',{color:0xc9a86a,emissive:0x5a3c12,flatShading:true});
     const rim = outline ? polyPath(outline.points(), 0, 1) : null;
     for (let i = 0; i < 26; i++) {
       let x: number, z: number;
@@ -490,24 +491,24 @@ function addCamp(group: Group, at: { x: number; z: number; r: number }, rockDark
   const camp = new Group();
   camp.position.set(at.x, 0, at.z);
 
-  const tent = new Mesh(new ConeGeometry(2.1, 2.6, 4), new MeshLambertMaterial({ color: 0xd4c9a8, flatShading: true }));
+  const tent = new Mesh(new ConeGeometry(2.1, 2.6, 4), imageLambert('cloth',{color:0xd4c9a8,flatShading:true},{bump:.02}));
   tent.position.set(-3.2, 1.3, -0.4);
   tent.rotation.y = Math.PI / 4;
   tent.castShadow = true;
-  const post = new Mesh(new CylinderGeometry(0.06, 0.08, 2.2, 6), rockDark);
+  const post=new Mesh(new CylinderGeometry(.06,.08,2.2,6),imageLambert('wood',{color:0x6a5035}));
   post.position.set(2.4, 1.1, 0.2);
   const lamp = new Mesh(new IcosahedronGeometry(0.2, 0), new MeshBasicMaterial({ color: 0xffd98a }));
   lamp.position.set(2.4, 2.3, 0.2);
-  const mat = new Mesh(new CircleGeometry(at.r, 20), new MeshLambertMaterial({ color: 0x8c8468 }));
+  const mat = new Mesh(new CircleGeometry(at.r, 20), imageLambert('earth',{color:0x8c8468},{bump:.025}));
   mat.rotation.x = -Math.PI / 2;
   mat.position.y = 0.02;
   camp.add(tent, post, lamp, mat);
   // 帰る目印（v0.48.0。#19 の 04「石積みと高い帆布を帰還の目印にする」。仮の形）: 6m の竿に下げた帆布と、根元の石積み
-  const pole = new Mesh(new CylinderGeometry(0.08, 0.11, 6.4, 6), rockDark);
+  const pole=new Mesh(new CylinderGeometry(.08,.11,6.4,6),imageLambert('wood',{color:0x6a5035}));
   // 天幕の奥（出発地点・出口の通り道から外す。当たりは持たない）
   pole.position.set(-5.6, 3.2, 2.0);
   pole.castShadow = true;
-  const cloth = new Mesh(new PlaneGeometry(1.3, 2.4, 1, 3), new MeshLambertMaterial({ color: 0xb8643a, side: DoubleSide }));
+  const cloth = new Mesh(new PlaneGeometry(1.3, 2.4, 1, 3), imageLambert('cloth',{color:0xb8643a,side:DoubleSide}));
   cloth.position.set(-4.92, 4.9, 2.0);
   cloth.rotation.y = 0.35;
   cloth.castShadow = true;

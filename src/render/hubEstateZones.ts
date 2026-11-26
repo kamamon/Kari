@@ -3,6 +3,7 @@ import { BoxGeometry, BufferGeometry, Color, CylinderGeometry, DoubleSide, Float
 import { CraftKit, craftMaterials, lantern } from './hubCraft';
 import { ZONES, zoneContains, type GatherZone } from '../data/hubEstate';
 import { SeededRng } from '../core/seededRng';
+import { bindSurfaceImage } from './materialImages';
 type Materials=ReturnType<typeof craftMaterials>;
 export interface ZoneRender {group:Group;update(time:number):void}
 const wood=0x816345,dark=0x493a2b,stone=0x818578,water=0x518681;
@@ -12,14 +13,14 @@ function mine(kit:CraftKit,zone:GatherZone,lv:number){
  // 0.5m の歩行グリッドごとに床と露出端の岩壁を作る。接続済みの区画にだけ面を作る。
  for(let z=b.z0+step/2;z<b.z1;z+=step)for(let x=b.x0+step/2;x<b.x1;x+=step){
   if(!zoneContains(zone,x,z,lv))continue;
-  kit.box('stone',[x,-.06,z],[step+.004,.12,step+.004],rng.next()>.45?0x77786f:0x6b6e64);
-  kit.box('stone',[x,4.1,z],[step+.01,.3,step+.01],0x65685f);
+  kit.box('cliff',[x,-.06,z],[step+.004,.12,step+.004],rng.next()>.45?0x77786f:0x6b6e64);
+  kit.box('cliff',[x,4.1,z],[step+.01,.3,step+.01],0x65685f);
   for(const [dx,dz] of [[1,0],[-1,0],[0,1],[0,-1]] as const){
    if(zoneContains(zone,x+dx*step,z+dz*step,lv))continue;
    const wx=x+dx*step*.5,wz=z+dz*step*.5;
-   kit.box('stone',[wx,1.95,wz],[dx?.38:step+.018,4.06,dz?.38:step+.018],0x777c6d);
+   kit.box('cliff',[wx,1.95,wz],[dx?.38:step+.018,4.06,dz?.38:step+.018],0x777c6d);
    for(let h=0;h<4;h++){const zz=wz+rng.range(-.09,.09),xx=wx+rng.range(-.09,.09),r=rng.range(.18,.28);
-    kit.sphere('stone',[xx,h+.38,zz],[dx?.26:r,.48,dz?.26:r],h%2?0x73776c:0x8d8d7c,0,[rng.range(-.25,.25),rng.range(0,6),.07]);
+    kit.sphere('cliff',[xx,h+.38,zz],[dx?.26:r,.48,dz?.26:r],h%2?0x73776c:0x8d8d7c,0,[rng.range(-.25,.25),rng.range(0,6),.07]);
    }
   }
  }
@@ -27,7 +28,7 @@ function mine(kit:CraftKit,zone:GatherZone,lv:number){
  for(let z=6.5;z>-10;z-=3.2){
   for(const x of [-1.78,1.78]){
    kit.box('wood',[x,1.77,z],[.23,3.54,.25],dark,[0,0,0],.025);
-   kit.box('stone',[x,.15,z],[.42,.30,.43],stone);
+   kit.box('cliff',[x,.15,z],[.42,.30,.43],stone);
    kit.beam('wood',[x,2.67,z],[x*.54,3.53,z],.16,wood);
   }
   kit.box('wood',[0,3.65,z],[3.85,.29,.27],wood,[0,0,0],.022);
@@ -41,7 +42,7 @@ function mine(kit:CraftKit,zone:GatherZone,lv:number){
   // 採集点の足元は空ける。鉱石は壁際の端に付く。
   const toward=n.x===0?1:Math.sign(n.x),x=n.x+toward*.55,z=n.z-.45;
   for(let i=0;i<7;i++){const a=i*2.39;
-   kit.sphere('stone',[x+.24*Math.cos(a),.23+i*.035,z+.25*Math.sin(a)],[.24,.29+i*.025,.24],i%2?0x7c837a:0x636b64,1,[0,a,.2]);
+   kit.sphere('cliff',[x+.24*Math.cos(a),.23+i*.035,z+.25*Math.sin(a)],[.24,.29+i*.025,.24],i%2?0x7c837a:0x636b64,1,[0,a,.2]);
   }
   const tint=n.level>=4?0xd4b580:n.level>=3?0x8db8c1:n.level>=2?0x96b898:0xb7b2a1;
   for(let i=0;i<6;i++){
@@ -62,7 +63,7 @@ function pond(kit:CraftKit,zone:GatherZone,lv:number){
  for(let z=b.z0+step/2;z<b.z1;z+=step)for(let x=b.x0+step/2;x<b.x1;x+=step){
   if(!zoneContains(zone,x,z,lv))continue;
   const overWater=Math.abs(x)<7&&z<3&&z>-8;
-  kit.box(overWater?'wood':'stone',[x,-.06,z],[step+.002,.12,step+.002],overWater?0x9c7b54:rng.next()<.4?0x8c9a78:0x8e8c78);
+  kit.box(overWater?'wood':'soil',[x,-.06,z],[step+.002,.12,step+.002],overWater?0x9c7b54:rng.next()<.4?0x8c9a78:0x8e8c78);
   // 水辺の端の岩、木杭。通れる桟橋は地面を切り欠いて追加。
   if(!overWater&&Math.abs(Math.abs(x)-7.25)<.01&&z>-8&&z<3&&Math.floor((z+8)*2)%3===0)kit.sphere('stone',[Math.sign(x)*6.98,-.15,z],[.25,.32,.30],0x788478,0);
  }
@@ -98,10 +99,10 @@ function pond(kit:CraftKit,zone:GatherZone,lv:number){
  // 外側の自然な岩・樹木、畑の空を包む山並み。
  for(let i=0;i<33;i++){
   const a=i*2.39996,x=Math.cos(a)*(14+rng.range(0,4)),z=Math.sin(a)*(16+rng.range(0,5))-1;
-  kit.sphere('stone',[x,.4,z],[rng.range(1.1,2.5),rng.range(1.1,4.0),rng.range(1.1,2.5)],0x839084,0);
+  kit.sphere('cliff',[x,.4,z],[rng.range(1.1,2.5),rng.range(1.1,4.0),rng.range(1.1,2.5)],0x839084,0);
   const h=rng.range(3.3,7.0);
-  kit.cyl('wood',[x,h*.28,z],.10,.15,h*.56,dark,[0,0,0],7);
-  for(let j=0;j<3;j++)kit.cyl('plain',[x,h*(.43+j*.18),z],.05,h*(.20-j*.04),h*.44,0x49674c+j*0x030402,[0,a,0],8);
+  kit.cyl('bark',[x,h*.28,z],.10,.15,h*.56,dark,[0,0,0],7);
+  for(let j=0;j<3;j++)kit.cyl('leaf',[x,h*(.43+j*.18),z],.05,h*(.20-j*.04),h*.44,0x49674c+j*0x030402,[0,a,0],8);
  }
 }
 export function buildGatherZone(id:'mine'|'pond',level:number,materials:Materials):ZoneRender{
@@ -116,19 +117,20 @@ export function buildGatherZone(id:'mine'|'pond',level:number,materials:Material
  if(id==='mine')return {group:g,update(t){for(const r of rings.children)r.scale.setScalar(1+.09*Math.sin(t*2));}};
  const waterGeo=new PlaneGeometry(14,11,28,22);waterGeo.rotateX(-Math.PI/2);waterGeo.translate(0,-.33,-2.5);
  const waterMat=new MeshStandardMaterial({color:0x548982,roughness:.29,metalness:.10,transparent:true,opacity:.72,depthWrite:false,side:DoubleSide});
+ bindSurfaceImage(waterMat,'water',{animated:true,gain:2.1,bump:.025});
  const w=new Mesh(waterGeo,waterMat);w.name='pond-surface';w.renderOrder=2;g.add(w);
- const bed=new Mesh(new BoxGeometry(14,.16,11),new MeshStandardMaterial({color:0x6d7960,roughness:.95}));bed.position.set(0,-.67,-2.5);g.add(bed);
+ const bed=new Mesh(new BoxGeometry(14,.16,11),bindSurfaceImage(new MeshStandardMaterial({color:0x6d7960,roughness:.95}),'moss',{bump:.035}));bed.position.set(0,-.67,-2.5);g.add(bed);
  const fishKit=new CraftKit(materials);
- fishKit.sphere('plain',[0,0,0],[.10,.055,.27],0x8b9c82,2);
- fishKit.sphere('plain',[0,.015,.20],[.077,.045,.065],0x9fad91,1);
- fishKit.tri('plain',[0,0,-.21],[-.085,.02,-.39],[.085,.02,-.39],0x658b83);
+ fishKit.sphere('scale',[0,0,0],[.10,.055,.27],0x8b9c82,2);
+ fishKit.sphere('scale',[0,.015,.20],[.077,.045,.065],0x9fad91,1);
+ fishKit.tri('scale',[0,0,-.21],[-.085,.02,-.39],[.085,.02,-.39],0x658b83);
  const fg=fishKit.build('pond-fish-template'),mesh=fg.children[0] as Mesh;
  const fish=new InstancedMesh(mesh.geometry,mesh.material,12);fish.frustumCulled=false;fish.name='pond-fish';g.add(fish);
  const matrix=new Matrix4(),q=new Quaternion(),pos=new Vector3(),s=new Vector3(1,1,1);
  const attr=w.geometry.getAttribute('position');
  return {group:g,update(t){
   for(let i=0;i<attr.count;i++){const x=attr.getX(i),z=attr.getZ(i);attr.setY(i,-.33+.025*Math.sin(1.6*x+.95*z+t*2)+.015*Math.sin(2.3*z-t*1.7));}
-  attr.needsUpdate=true;w.geometry.computeVertexNormals();
+  attr.needsUpdate=true;w.geometry.computeVertexNormals();if(waterMat.map)waterMat.map.offset.set(t*.025,-t*.045);
   for(let i=0;i<12;i++){const a=t*.45+i*2.39996,rx=2.0+(i%4)*1.05,rz=2.1+(i%3)*.8;pos.set(rx*Math.cos(a),-.46+.045*Math.sin(a*3),-2.5+rz*Math.sin(a));q.setFromAxisAngle(new Vector3(0,1,0),Math.atan2(-rx*Math.sin(a),rz*Math.cos(a)));matrix.compose(pos,q,s);fish.setMatrixAt(i,matrix);}
   fish.instanceMatrix.needsUpdate=true;for(const r of rings.children)r.scale.setScalar(1+.09*Math.sin(t*2));
  }};

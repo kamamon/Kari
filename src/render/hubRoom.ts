@@ -4,12 +4,13 @@ import type {Content} from '../data/schemas';
 import {HunterRig} from './rig';
 import {emptyPose} from './poses';
 import {armorTierOf} from './hunterArmor';
+import {bindSurfaceImage} from './materialImages';
 
 export function startHubRoom(renderer:WebGLRenderer,canvas:HTMLCanvasElement,panel:HTMLElement,content:Content,q:URLSearchParams):void{
  const scene=new Scene();scene.background=new Color(0x708477);scene.add(new HemisphereLight(0xf3e1c3,0x554739,1.8));const sun=new DirectionalLight(0xffe5bb,2);sun.position.set(-3,6,-4);scene.add(sun);
  const wood=0x74503a,dark=0x453327,trim=0xb38a58,plaster=0xc7bb9e,cloth=q.get('decor')==='green'?0x6e8557:q.get('decor')==='bronze'?0xb58244:0x9b6d49;
  const layout=q.get('layout')==='right'?-1:1, room=new Group();scene.add(room);
- const materials=new Map<number,MeshStandardMaterial>();function material(color:number){let m=materials.get(color);if(!m){m=new MeshStandardMaterial({color,roughness:.92});materials.set(color,m);}return m;}
+ const materials=new Map<number,MeshStandardMaterial>();function material(color:number){let m=materials.get(color);if(!m){m=bindSurfaceImage(new MeshStandardMaterial({color,roughness:.92}),color===plaster?'plaster':color===cloth||color===0xdfd2aa||color===0xe9dab9?'cloth':color===0x6d8176||color===0x839487?'cliff':color===0xc5a96e?'bronze':'wood',{bump:.035});materials.set(color,m);}return m;}
  const box=(x:number,y:number,z:number,w:number,h:number,d:number,c:number,parent=room)=>{const m=new Mesh(new BoxGeometry(w,h,d),material(c));m.position.set(x,y,z);parent.add(m);return m;};
  box(0,-.1,0,8,.2,7,wood);for(let i=-7;i<=7;i++)box(i*.52,.01,0,.02,.015,6.98,dark);
  box(-4,1.5,0,.18,3,7,plaster);box(4,1.5,0,.18,3,7,plaster);box(0,1.5,3.5,8,3,.18,plaster);

@@ -1,0 +1,275 @@
+{
+  "version": 1,
+  "source": "ChatGPT image generation, 2026-11-27 JST; seamless edge blend, resized, WebP",
+  "materials": [
+    {
+      "name": "wood",
+      "file": "wood.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 43756,
+      "gitBlob": "e4ba7e1838a9a9e574d946519be066618fa2c6a1"
+    },
+    {
+      "name": "masonry",
+      "file": "masonry.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 70972,
+      "gitBlob": "8e71fcad2773b8895f520556c1bf768eb6e0b6b5"
+    },
+    {
+      "name": "roof",
+      "file": "roof.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 34186,
+      "gitBlob": "089051e30edf36337e0f46a87899ac0228133515"
+    },
+    {
+      "name": "bronze",
+      "file": "bronze.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 33812,
+      "gitBlob": "25be6d8603d3c6c51b547f4e8d6d0281f290b457"
+    },
+    {
+      "name": "cloth",
+      "file": "cloth.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 78070,
+      "gitBlob": "3b07e4a45d464c94170b2f3b285e13b3f62843d1"
+    },
+    {
+      "name": "earth",
+      "file": "earth.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 60178,
+      "gitBlob": "81b855ddbddf9149fd6c54ee49cea55e98e5f231"
+    },
+    {
+      "name": "grass",
+      "file": "grass.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 88220,
+      "gitBlob": "f667be25f9e93a921cb730902d294dfb470b6d72"
+    },
+    {
+      "name": "cliff",
+      "file": "cliff.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 78942,
+      "gitBlob": "8ae1ec95947731c4476bbe77b27aeefb1e60a449"
+    },
+    {
+      "name": "bark",
+      "file": "bark.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 76214,
+      "gitBlob": "46b2c0455c71c12aa552e90c1981995a62639bbe"
+    },
+    {
+      "name": "moss",
+      "file": "moss.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 72498,
+      "gitBlob": "53a00fe450b2d4083ca72e3db1408906fadee5b9"
+    },
+    {
+      "name": "wood_detail",
+      "file": "wood_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 37682,
+      "gitBlob": "d39a32872d9e6923ce10948e10ced15fa25adcf3",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "masonry_detail",
+      "file": "masonry_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 48112,
+      "gitBlob": "22d6df790113b883b8f87dd11a40be884cb6644e",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "roof_detail",
+      "file": "roof_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 28842,
+      "gitBlob": "92c6d67c62d0de98f7d4ab42b1e8f7c86f85c5db",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "bronze_detail",
+      "file": "bronze_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 33664,
+      "gitBlob": "c61b40020de72230f12118478bd8825bbdf92030",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "cloth_detail",
+      "file": "cloth_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 72938,
+      "gitBlob": "2996b3d5875526bbc25330e3ae1960bef81a81a0",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "earth_detail",
+      "file": "earth_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 61638,
+      "gitBlob": "90ef6925d8aac8ad3840418dba7982c4a17c7e7e",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "grass_detail",
+      "file": "grass_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 73868,
+      "gitBlob": "32d31d53f16424f012062a8cad3d05cad4580f81",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "cliff_detail",
+      "file": "cliff_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 57616,
+      "gitBlob": "9fdd5c2ebe88c98f98151e711280eec357dea34c",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "bark_detail",
+      "file": "bark_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 56892,
+      "gitBlob": "17190971cdd2f1ce26a2108ce740daddb50450ad",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "moss_detail",
+      "file": "moss_detail.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 55140,
+      "gitBlob": "1e187cba7222b9849462742416c55d599e4993bf",
+      "source": "image-derived neutral detail"
+    },
+    {
+      "name": "plaster_detail",
+      "file": "plaster_detail.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 8254,
+      "gitBlob": "370abd397a3fa424760ed49422f45eca1240b525",
+      "source": "image-derived production support approximation"
+    },
+    {
+      "name": "bone_detail",
+      "file": "bone_detail.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 7184,
+      "gitBlob": "1510d46cb19915211f11b970a0b3ef8665fa07aa",
+      "source": "image-derived production support approximation"
+    },
+    {
+      "name": "skin_detail",
+      "file": "skin_detail.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 7212,
+      "gitBlob": "848183828c191c085519387d7b1270ae0b50a385",
+      "source": "image-derived production support approximation"
+    },
+    {
+      "name": "fur_detail",
+      "file": "fur_detail.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 7358,
+      "gitBlob": "0300742121c05a90a90ce40e9b92bcaf8f723d71",
+      "source": "image-derived production support approximation"
+    },
+    {
+      "name": "feather_detail",
+      "file": "feather_detail.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 13168,
+      "gitBlob": "2fe6edd5bf45c8e1f20f655e15792386c8d3f13e",
+      "source": "image-derived production support approximation"
+    },
+    {
+      "name": "scale_detail",
+      "file": "scale_detail.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 7054,
+      "gitBlob": "db41689b3e9211866a11f47100236c9236d4f260",
+      "source": "image-derived production support approximation"
+    },
+    {
+      "name": "leaf_detail",
+      "file": "leaf_detail.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 8304,
+      "gitBlob": "d81044bcdaa94fb342d158827e79ca5f03cda56e",
+      "source": "image-derived production support approximation"
+    },
+    {
+      "name": "crystal_detail",
+      "file": "crystal_detail.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 11988,
+      "gitBlob": "e96f3f629117d0e3c76b6e14e3b47f23d5d6729d",
+      "source": "image-derived production support approximation"
+    },
+    {
+      "name": "water",
+      "file": "water.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 5180,
+      "gitBlob": "ce6276bdf9cd040dbaec480733dca22008716a2b",
+      "source": "periodic ripple raster + image-derived microdetail"
+    },
+    {
+      "name": "ivy",
+      "file": "ivy.webp",
+      "width": 256,
+      "height": 512,
+      "bytes": 26766,
+      "gitBlob": "0f975f34a664c8054181fba544a5f26e26c4c16c",
+      "source": "original image-derived cutout / animated alpha raster"
+    },
+    {
+      "name": "waterfall",
+      "file": "waterfall.webp",
+      "width": 256,
+      "height": 512,
+      "bytes": 48196,
+      "gitBlob": "9767c8be37a6c087555d27eb1948b3eaabefdac9",
+      "source": "original image-derived cutout / animated alpha raster"
+    }
+  ]
+}

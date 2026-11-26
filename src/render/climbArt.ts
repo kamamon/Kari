@@ -4,6 +4,7 @@
 import { DataTexture, Group, Mesh, MeshLambertMaterial, PlaneGeometry, RGBAFormat, SRGBColorSpace, UnsignedByteType } from 'three';
 import { SeededRng } from '../core/seededRng';
 import type { ClimbDef } from '../data/schemas';
+import { bindSurfaceImage } from './materialImages';
 
 const W = 64, H = 128;
 let shared: DataTexture | null = null;
@@ -52,7 +53,7 @@ function ivyTexture(): DataTexture {
 export function buildClimbFaces(climbs: readonly ClimbDef[], ground: (x: number, z: number) => number): Group {
   const g = new Group();
   g.name = 'climb-faces';
-  const mat = new MeshLambertMaterial({ map: ivyTexture(), alphaTest: 0.5 });
+  const mat=bindSurfaceImage(new MeshLambertMaterial({map:ivyTexture(),alphaTest:.5}),'ivy',{raw:true});
   for (const c of climbs) {
     const base = ground(c.x, c.z);
     const h = c.top - base;

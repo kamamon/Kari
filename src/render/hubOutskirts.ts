@@ -10,6 +10,7 @@ import { SeededRng } from '../core/seededRng';
 import type { HubDef, MapDef } from '../data/schemas';
 import { groundAt } from '../game/world';
 import { tileMaterial } from './envArt';
+import { bindSurfaceImage, imageLambert, ensureSurfaceUV, type ImageSurface } from './materialImages';
 
 type V = readonly [number, number, number];
 type B = MapDef['bounds'];
@@ -148,7 +149,7 @@ class Batch {
     this.items.push({ matrix: new Matrix4().compose(new Vector3(...a).add(new Vector3(...b)).multiplyScalar(0.5), q, new Vector3(w, l, w)), color });
   }
   mesh(geometry: BufferGeometry, material: MeshLambertMaterial | MeshBasicMaterial, name: string): InstancedMesh {
-    const m = new InstancedMesh(geometry, material, this.items.length);
+    const m = new InstancedMesh(ensureSurfaceUV(geometry,.65), material, this.items.length);
     const color = new Color();
     this.items.forEach((p, i) => { m.setMatrixAt(i, p.matrix); m.setColorAt(i, color.set(p.color)); });
     m.instanceMatrix.needsUpdate = true;
@@ -161,16 +162,16 @@ class Batch {
 }
 
 /** 不規則な枝先の4段の針葉樹（幹込み）。各層の頂点に色を持つ。 */
-function cedarGeometry(): BufferGeometry {
+function cedarGeometry(trunkOnly=false): BufferGeometry {
   const p: number[] = [], c: number[] = [];
   const tri = (a: V, b: V, cc: V, rgb: V): void => { p.push(...a, ...b, ...cc); for (let i = 0; i < 3; i++) c.push(...rgb); };
-  for (let k = 0; k < 5; k++) {
+  if(trunkOnly)for (let k = 0; k < 5; k++) {
     const a = k * Math.PI * 2 / 5, b = (k + 1) * Math.PI * 2 / 5;
     const q: V = [0.035 * Math.cos(a), 0, 0.035 * Math.sin(a)], r: V = [0.035 * Math.cos(b), 0, 0.035 * Math.sin(b)];
     const qt: V = [q[0] * 0.5, 0.78, q[2] * 0.5], rt: V = [r[0] * 0.5, 0.78, r[2] * 0.5];
     tri(q, qt, r, [0.30, 0.21, 0.13]); tri(r, qt, rt, [0.26, 0.18, 0.11]);
   }
-  for (let layer = 0; layer < 4; layer++) {
+  if(!trunkOnly)for (let layer = 0; layer < 4; layer++) {
     const y = 0.17 + layer * 0.17, r = 0.23 - layer * 0.043, top: V = [0.013 * Math.sin(layer), y + 0.32, 0];
     const ring = Array.from({ length: 8 }, (_, k): V => {
       const a = (k + layer * 0.33) * Math.PI / 4, rr = r * (k % 2 ? 0.72 : 1);
@@ -223,13 +224,13 @@ export function buildHubOutskirts(hub: HubDef, map: MapDef): HubOutskirts {
   const terrain = landscape(hub, map);
   const { b, cx, cz, height, reserved, rivers } = terrain;
   const group = new Group(); group.name = 'hub-mountain-outskirts'; group.userData.noMerge = true;
-  const land = new Mesh(terrain.geo, tileMaterial('moss', 0xffffff, { vertexColors: true, gain: 1.4 }));
+  const land = new Mesh(terrain.geo, imageLambert('grass',{vertexColors:true},{raw:true,gain:1.65}));
   land.name = 'mountain-terrain'; land.userData.noMerge = true; land.receiveShadow = false; group.add(land);
   const boxes = new Batch(), gables = new Batch(), lights = new Batch(), rocks = new Batch(), cedars = new Batch(), leaves = new Batch();
   const sites: { x: number; z: number; r: number }[] = [];
   const rng = new SeededRng(27112026);
   const litMat = new MeshBasicMaterial({ color: 0xffffff });
-  const woodMat = new MeshLambertMaterial({ color: 0xffffff });
+  const woodMat = imageLambert('wood',{color:0xffffff});
   const marker = (x: number, y: number, z: number, s = 1): void => {
     boxes.add([x, y + 0.65 * s, z], [0.24 * s, 1.3 * s, 0.24 * s], C.rock);
     boxes.add([x, y + 1.35 * s, z], [0.65 * s, 0.16 * s, 0.65 * s], C.timber);
@@ -364,11 +365,17 @@ export function buildHubOutskirts(hub: HubDef, map: MapDef): HubOutskirts {
   }
 
   // 木の幹と葉、家屋と橋の角材を一括描画。遠景は従来の絵と霧も利用する。
-  if (cedars.items.length) group.add(cedars.mesh(cedarGeometry(), new MeshLambertMaterial({ vertexColors: true, color: 0xffffff, side: DoubleSide }), 'mountain-cedars'));
-  if (leaves.items.length) group.add(leaves.mesh(new IcosahedronGeometry(1, 1), woodMat, 'autumn-canopies'));
-  if (rocks.items.length) group.add(rocks.mesh(new IcosahedronGeometry(1, 0), woodMat, 'outer-boulders'));
-  if (boxes.items.length) group.add(boxes.mesh(new BoxGeometry(1, 1, 1), woodMat, 'outer-timber-stone'));
-  if (gables.items.length) group.add(gables.mesh(gableGeometry(), new MeshLambertMaterial({ color: 0xffffff, side: DoubleSide }), 'outer-gables'));
+  if(cedars.items.length){
+    group.add(cedars.mesh(cedarGeometry(),imageLambert('leaf',{vertexColors:true,color:0xffffff,side:DoubleSide}),'mountain-cedars'));
+    group.add(cedars.mesh(cedarGeometry(true),imageLambert('bark',{vertexColors:true,color:0xffffff,side:DoubleSide}),'mountain-trunks'));
+  }
+  if(leaves.items.length)group.add(leaves.mesh(new IcosahedronGeometry(1,1),imageLambert('leaf'),'autumn-canopies'));
+  if(rocks.items.length)group.add(rocks.mesh(new IcosahedronGeometry(1,0),imageLambert('cliff'),'outer-boulders'));
+  const kindOf=(color:number):ImageSurface=>color===C.rock?'masonry':color===C.roof?'roof':color===C.wall?'plaster':color===C.cloth?'cloth':color===0x719b91?'water':'wood';
+  for(const kind of ['wood','masonry','roof','plaster','cloth','water'] as const){
+    const batch=new Batch();batch.items.push(...boxes.items.filter(p=>kindOf(p.color)===kind));if(batch.items.length)group.add(batch.mesh(new BoxGeometry(1,1,1),kind==='wood'?woodMat:imageLambert(kind,{}, {gain:kind==='water'?2.5:1.35}),'outer-'+kind));
+  }
+  if(gables.items.length)group.add(gables.mesh(gableGeometry(),imageLambert('wood',{side:DoubleSide}),'outer-gables'));
   if (lights.items.length) group.add(lights.mesh(new BoxGeometry(1, 1, 1), litMat, 'outer-window-lights'));
 
   const ripple = rippleTexture(), waterPos: number[] = [], waterUv: number[] = [];
@@ -384,10 +391,12 @@ export function buildHubOutskirts(hub: HubDef, map: MapDef): HubOutskirts {
       waterUv.push(0, v, 1, v, 1, v2, 0, v, 1, v2, 0, v2);
     }
   }
+  let streamMat:MeshLambertMaterial|null=null;
   if (waterPos.length) {
     const g = new BufferGeometry(); g.setAttribute('position', new Float32BufferAttribute(waterPos, 3));
     g.setAttribute('uv', new Float32BufferAttribute(waterUv, 2)); g.computeVertexNormals();
-    const m = new Mesh(g, new MeshLambertMaterial({ map: ripple, color: 0xb7d4c4, side: DoubleSide }));
+    streamMat=bindSurfaceImage(new MeshLambertMaterial({map:ripple,color:0xb7d4c4,side:DoubleSide}),'water',{animated:true,gain:1.5,replaceFallback:true});
+    const m=new Mesh(g,streamMat);
     m.name = 'outer-streams'; group.add(m);
   } else ripple.dispose();
   group.userData.sceneryOnly = true;
@@ -396,7 +405,7 @@ export function buildHubOutskirts(hub: HubDef, map: MapDef): HubOutskirts {
   return {
     group,
     update(time: number): void {
-      ripple.offset.y = (time * 0.13) % 1;
+      if(streamMat?.map)streamMat.map.offset.y=(time*.13)%1;
       if (steam) {
         const o = steam.userData.origin as number[];
         const attr = steam.geometry.getAttribute('position');

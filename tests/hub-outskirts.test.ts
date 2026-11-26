@@ -57,7 +57,8 @@ describe('灯継ぎの里の山岳外周', () => {
       }
     });
     expect(tris).toBeLessThan(42000);
-    expect(draws).toBeLessThanOrEqual(8);
+    // 素材ごとの木・石・瓦・布・水・幹を別バッチに分けた。三角形の上限は維持。
+    expect(draws).toBeLessThanOrEqual(14);
     expect(VILLAGE_FOG_DENSITY).toBeLessThan(FOG_DENSITY);
   });
 

@@ -10,6 +10,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import type { PlatformLook } from '../data/schemas';
 import { ENV_TILES, tileMaterial } from './envArt';
 import { patchNoise } from './noise';
+import { bindSurfaceImage, imageLambert, projectSurfaceUV } from './materialImages';
 
 export interface TerracePlatform {
   minX: number;
@@ -467,6 +468,7 @@ function masonryMaterial(): MeshLambertMaterial {
   if (!masonryMat) {
     masonryMat = new MeshLambertMaterial({ map: masonryTexture(), vertexColors: true });
     masonryMat.color.setScalar(1.12);
+    bindSurfaceImage(masonryMat,'masonry',{raw:true,gain:1.5,replaceFallback:true,bump:.07});
     masonryMat.userData.uv = true;
   }
   return masonryMat;
@@ -478,10 +480,12 @@ function waterMaterials(): { water: MeshLambertMaterial; fall: MeshLambertMateri
   if (!waterMat) {
     waterMat = new MeshLambertMaterial({ map: waterTexture(false), emissive: 0x101c1b });
     waterMat.userData.uv = true;
+    bindSurfaceImage(waterMat,'water',{animated:true,replaceFallback:true,gain:1.28});
   }
   if (!fallMat) {
     fallMat = new MeshLambertMaterial({ map: waterTexture(true), transparent: true, side: DoubleSide, emissive: 0x3a4846 });
     fallMat.userData.uv = true;
+    bindSurfaceImage(fallMat,'waterfall',{animated:true,replaceFallback:true});
   }
   return { water: waterMat, fall: fallMat };
 }
@@ -717,8 +721,8 @@ export function buildTerraces(platforms: readonly TerracePlatform[], gain: numbe
     }
   }
   if (wood.length) {
-    for (const w of wood) if (w.getAttribute('uv')) w.deleteAttribute('uv');
-    const m = new Mesh(mergeGeometries(wood)!, new MeshLambertMaterial({ color: 0x5f4a35 }));
+    for (const w of wood) projectSurfaceUV(w,.9);
+    const m = new Mesh(mergeGeometries(wood)!, imageLambert('wood',{color:0x5f4a35},{bump:.025}));
     m.castShadow = true;
     m.receiveShadow = true;
     m.userData.terrace = 'rail';

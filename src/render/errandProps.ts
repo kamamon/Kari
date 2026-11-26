@@ -21,6 +21,7 @@ import { assetUrl } from '../core/assets';
 import type { GatherDef } from '../data/schemas';
 import { errandReady, type ErrandState } from '../game/errand';
 import { blobShadow } from './arena';
+import { imageLambert } from './materialImages';
 import { PROP_ART, type PropArt } from './npcArt';
 
 const loader = new TextureLoader();
@@ -123,8 +124,8 @@ export function buildErrandProps(def: GatherDef, ground: (x: number, z: number) 
   const depotRoot = new Group();
   depotRoot.position.set(d.x, ground(d.x, d.z), d.z);
   depotRoot.rotation.y = 0.35;
-  const wood = new MeshLambertMaterial({ color: 0x8a6a44 });
-  const woodDark = new MeshLambertMaterial({ color: 0x5f4a30 });
+  const wood = imageLambert('wood',{color:0x8a6a44});
+  const woodDark = imageLambert('wood',{color:0x5f4a30});
   const box = new Mesh(new BoxGeometry(1.0, 0.62, 0.72), wood);
   box.position.y = 0.31;
   box.castShadow = true;
@@ -132,7 +133,7 @@ export function buildErrandProps(def: GatherDef, ground: (x: number, z: number) 
   lid.position.y = 0.66;
   const pole = new Mesh(new CylinderGeometry(0.035, 0.045, 2.0, 6), woodDark);
   pole.position.set(0.62, 1.0, -0.3);
-  const cloth = new Mesh(new PlaneGeometry(0.55, 0.38), new MeshLambertMaterial({ color: 0xc9a05a, side: DoubleSide }));
+  const cloth = new Mesh(new PlaneGeometry(0.55, 0.38), imageLambert('cloth',{color:0xc9a05a,side:DoubleSide}));
   cloth.position.set(0.9, 1.75, -0.3);
   const marker = new Mesh(markerGeo, depotMarkerMat);
   marker.position.y = 1.15;
