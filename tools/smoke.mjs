@@ -1380,6 +1380,8 @@ const startTraining = async (page, tap = false) => {
     const groups = [...v.areaGroups.values()];
     return { sky: !!s && s.parent?.name === 'backdrop', time: s?.material.uniforms.uTime.value ?? -1, fogExp: v.scene.fog.isFogExp2 === true, sway, tinted, rocks, built: groups.length, shown: groups.filter((g) => g.visible).length };
   });
+  const outer=await page.evaluate(()=>{const v=window.__vh.view,g=v.areaGroups.get(window.__vh.sim.areaId),s=g?.getObjectByName('field-natural-exterior');return s?.userData.landscape??null;});
+  check('狩場外周: 平らな草原ではなく、起伏のある内外連続の地形・樹林・岩と出口の先が描かれる',outer?.outerMax-outer?.outerMin>9&&outer?.sharedVertices>0&&outer?.trees>10&&outer?.rocks>20,JSON.stringify(outer));
   const real1 = await real();
   const real2 = await until(page, () => window.__vh.view.areaGroups.size >= 2, 45000).then(() => real());
   check('景色（v0.19.0）: 空の球が遠景の中にあり、雲の時刻が進む。霧は距離の 2 乗の指数。岩と岩壁に頂点の色と凹凸。草は揺れる素材で、1 本ずつ色が違う', real1.sky && real2.time > real1.time && real1.fogExp && real1.rocks >= 1 && real1.sway > 100 && real1.tinted >= 2, JSON.stringify(real1));
