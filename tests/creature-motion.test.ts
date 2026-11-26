@@ -312,8 +312,8 @@ describe.skipIf(BAKE)('種ごとに固有の動きと、技以外の動き（v0.
       if (list.length < 2) continue;
       const ids = new Set(list.map((x) => x.split(':')[0]));
       expect(ids.size, list.join(', ')).toBe(1);
-      // 同じ種の中では、左右の組（_l_ / _r_）だけ
-      const bases = new Set(list.map((x) => x.split(':')[1]!.replace(/_01$/, '').replace(/_(l|r)$/, '')));
+      // 同じ種の中では、左右の組（_l_ / _r_。向き直りは turn_l90 / turn_r90 のように角度が後ろに付く）だけ
+      const bases = new Set(list.map((x) => x.split(':')[1]!.replace(/_01$/, '').replace(/_(l|r)(90|180)?$/, (_m, _s, n?: string) => (n ? `_${n}` : ''))));
       expect(bases.size, list.join(', ')).toBe(1);
     }
   });

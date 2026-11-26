@@ -18,6 +18,7 @@
   "breakStaggerTicks": 80,
   "collision": [{"z": 0.0, "r": 0.8}, {"z": 1.6, "r": 0.75}, {"z": 3.2, "r": 0.6}, {"z": -1.6, "r": 0.6}, {"z": -3.2, "r": 0.4}],
   "approach": {"stopDist": 5.0, "faceDeg": 45},
+  "turnSteps": {"faceDeg": 50, "backDeg": 130, "left": "monster.kirisave.turn_l90", "right": "monster.kirisave.turn_r90", "backLeft": "monster.kirisave.turn_l180", "backRight": "monster.kirisave.turn_r180"},
   "discover": {"range": 15, "fovDeg": 120, "closeRange": 6, "actionId": "monster.kirisave.roar"},
   "rage": {"threshold": 470, "durationTicks": 2100, "actionId": "monster.kirisave.roar", "speedScale": 1.25, "damageScale": 1.2, "cooldownScale": 0.6},
   "parts": [

@@ -52,11 +52,28 @@ def hazard(tick, count, spread, radius, warn, active, dmg, reaction, origin, loo
 
 
 def move(name, dur, startup, active, anim, *, side=None, hits=(), tracks=(), hazards=(), curve=None, dirDeg=None, turn=None, sounds=(), vfx=(), slamTrack=None,
-         ai=None, amp=None, bind=()):
-    """技 1 つ。startup = 攻撃の始まり、active = 攻撃の終わり（tick）。curve = (距離 m, 始め, 終わり)。anim = A(...)（種ごとの動き）。"""
+         ai=None, amp=None, bind=(), spinDeg=None):
+    """技 1 つ。startup = 攻撃の始まり、active = 攻撃の終わり（tick）。curve = (距離 m, 始め, 終わり)。anim = A(...)（種ごとの動き）。
+    spinDeg = 体ごと回る角度（v0.65.0。足を踏み替える向き直り。+ で左回り。startup 〜 active の間に simulation の向きが回る）。"""
     assert isinstance(anim, dict) and anim.get('K'), f'{name}: 動きは A(K(...)...) で書く'
     return dict(name=name, dur=dur, startup=startup, active=active, anim=anim, side=side, hits=list(hits), tracks=list(tracks), hazards=list(hazards), curve=curve,
-                dirDeg=dirDeg, turn=turn, sounds=list(sounds), vfx=list(vfx), slamTrack=slamTrack, ai=ai, amp=amp, bind=list(bind))
+                dirDeg=dirDeg, turn=turn, sounds=list(sounds), vfx=list(vfx), slamTrack=slamTrack, ai=ai, amp=amp, bind=list(bind), spinDeg=spinDeg)
+
+
+def turns(w, s1, s2, *, slow=0, flags=None, sound='galdros_scrape'):
+    """足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）の 4 つの技 turn_l90・turn_r90・turn_l180・turn_r180。
+    体の向きは simulation が回す（技の spin。ゆっくり始まってゆっくり止まる。回っている間は狩人を追わない）。判定は無い。
+    四足と二足の脚は、描画が向きの速さで踏み替えて、支えている足を地面に留める（ここで脚の鍵は書かない）。
+    w = 構えの終わり（回る向きへ首を向け始め、尾を少し反対へ）、s1 = 回り始め、s2 = 回り終わりの手前（どれも左へ回る時の値）。
+    90° は 0.65 倍。slow = 重い体・長い体の分だけ長くする tick（90° は 44 + slow、180° は 72 + slow × 1.5。ガルドロスと同じ形。Kari の仮の値）。"""
+    out = []
+    for deg, dur in ((90, 44 + slow), (180, 72 + slow + slow // 2)):
+        big = 1.0 if deg == 180 else 0.65
+        for sd, n in ((1, 'l'), (-1, 'r')):
+            anim = A(K('w', 1.0, None, **scale(w, big)), K('s', 0.3, None, **scale(s1, big)), K('s', 0.7, None, **scale(s2, big)),
+                     K('s', 1.0, None, **scale(s2, 0.25 * big)), K('r', 0.6, None, **scale(s2, 0.06)), **(flags or {}))
+            out.append(move(f'turn_{n}{deg}', dur, 6, dur - 8, anim, side=sd, spinDeg=deg * sd, sounds=[(4, sound)]))
+    return out
 
 
 def ai(minD, maxD, maxA, weight, minA=None, side=None, cd=None, clear=None):

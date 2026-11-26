@@ -17,6 +17,7 @@
   "breakStaggerTicks": 80,
   "collision": [{"z": 0.0, "r": 0.8}, {"z": -1.0, "r": 0.6}],
   "approach": {"stopDist": 3.8, "faceDeg": 50},
+  "turnSteps": {"faceDeg": 50, "backDeg": 130, "left": "monster.ashreia.turn_l90", "right": "monster.ashreia.turn_r90", "backLeft": "monster.ashreia.turn_l180", "backRight": "monster.ashreia.turn_r180"},
   "discover": {"range": 16, "fovDeg": 140, "closeRange": 6, "actionId": "monster.ashreia.roar"},
   "rage": {"threshold": 400, "durationTicks": 1800, "actionId": "monster.ashreia.roar", "speedScale": 1.3, "damageScale": 1.15, "cooldownScale": 0.6},
   "parts": [

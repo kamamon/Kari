@@ -18,6 +18,7 @@
   "breakStaggerTicks": 80,
   "collision": [{"z": 0.0, "r": 1.45}, {"z": 1.6, "r": 1.0}, {"z": -1.5, "r": 1.1}, {"z": 2.7, "r": 0.6}],
   "approach": {"stopDist": 4.5, "faceDeg": 50},
+  "turnSteps": {"faceDeg": 50, "backDeg": 130, "left": "monster.numeradon.turn_l90", "right": "monster.numeradon.turn_r90", "backLeft": "monster.numeradon.turn_l180", "backRight": "monster.numeradon.turn_r180"},
   "discover": {"range": 15, "fovDeg": 120, "closeRange": 6, "actionId": "monster.numeradon.roar"},
   "rage": {"threshold": 500, "durationTicks": 2100, "actionId": "monster.numeradon.roar", "speedScale": 1.25, "damageScale": 1.2, "cooldownScale": 0.6},
   "parts": [

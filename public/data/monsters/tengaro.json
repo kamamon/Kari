@@ -17,6 +17,7 @@
   "breakStaggerTicks": 80,
   "collision": [{"z": 1.9, "r": 0.75}, {"z": -1.9, "r": 0.75}, {"z": 1.35, "r": 0.6}, {"z": -1.45, "r": 0.6}],
   "approach": {"stopDist": 4.2, "faceDeg": 50},
+  "turnSteps": {"faceDeg": 50, "backDeg": 130, "left": "monster.tengaro.turn_l90", "right": "monster.tengaro.turn_r90", "backLeft": "monster.tengaro.turn_l180", "backRight": "monster.tengaro.turn_r180"},
   "discover": {"range": 14, "fovDeg": 130, "closeRange": 6, "actionId": "monster.tengaro.roar"},
   "rage": {"threshold": 450, "durationTicks": 2000, "actionId": "monster.tengaro.roar", "speedScale": 1.25, "damageScale": 1.2, "cooldownScale": 0.6},
   "parts": [

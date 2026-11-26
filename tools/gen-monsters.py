@@ -1270,6 +1270,9 @@ def build_moves(key, mid, moves, frame=None):
         a = {'schemaVersion': 1, 'actionId': aid, 'clip': clip, 'tickRate': 60, 'durationTicks': dur, 'phases': phases, 'rootMotion': rm}
         if mv['turn']:
             a['turning'] = {'untilTick': mv['turn'][0], 'maxDegreesPerSecond': mv['turn'][1]}
+        if mv.get('spinDeg'):
+            # 足を踏み替える向き直り（v0.65.0。#19 の M01）: 技の始まりから終わりまでの間に、体ごと回る（simulation の向き）
+            a['spin'] = {'from': a0, 'to': a1, 'degrees': mv['spinDeg']}
         a['hitWindows'] = mv['hits']
         a['cancelWindows'] = []
         # 体の部位に付けた判定（v0.21.0）: 軌道は npm run monsters:bake が動きから作る。ここでは仮の形を置く
@@ -1331,6 +1334,14 @@ def build_species(spec):
     st = spec['stats']
     actions, tracks, curves, choices, clips, plan_moves = build_moves(key, mid, spec['moves'](s), spec['frame'])
     roar = f'{mid}.roar'
+    # 足を踏み替える向き直り（v0.65.0。#19 の M01。ガルドロスと同じ形）: 正面から faceDeg を外れた相手へは、90° か（backDeg より後ろなら）180° 回る。
+    # 大型はどれも 4 つの技（turn_l90・turn_r90・turn_l180・turn_r180）を持つ
+    ids = {a['actionId'] for a in actions}
+    turns = {k: f'{mid}.turn_{k}' for k in ('l90', 'r90', 'l180', 'r180')}
+    steps = {}
+    if all(v in ids for v in turns.values()):
+        face, back = st.get('turnSteps', (50, 130))
+        steps = {'turnSteps': {'faceDeg': face, 'backDeg': back, 'left': turns['l90'], 'right': turns['r90'], 'backLeft': turns['l180'], 'backRight': turns['r180']}}
     mdef = {
         'schemaVersion': 1, 'id': mid, 'name': spec['name'], 'rigFamily': spec['rig'], 'assetId': f'model.monster.{key}',
         'hp': st['hp'], 'bodyRadius': st['bodyRadius'], 'turnDegPerSec': st['turn'], 'moveSpeed': st['moveSpeed'], 'captureAllowed': True,
@@ -1338,6 +1349,7 @@ def build_species(spec):
         'lootId': f'loot.{key}', 'capture': {'hpRatio': 0.25, 'tranqNeeded': 2, 'tranqDecayTicks': 900}, 'respawnTicks': None, 'breakStaggerTicks': 80,
         'collision': [{'z': z, 'r': r} for z, r in st['collision']],
         'approach': {'stopDist': st['approach'][0], 'faceDeg': st['approach'][1]},
+        **steps,
         'discover': {'range': st['discover'][0], 'fovDeg': st['discover'][1], 'closeRange': st['discover'][2], 'actionId': roar},
         'rage': {'threshold': st['rage'][0], 'durationTicks': st['rage'][1], 'actionId': roar, 'speedScale': st['rage'][2], 'damageScale': st['rage'][3], 'cooldownScale': st['rage'][4]},
         'parts': spec['parts'](s),
@@ -1398,34 +1410,19 @@ def replace_rows(path, list_key, prefixes, rows):
 
 
 def update_manifest(entries):
-    """素材台帳の、この生成器が書く行を差し替える。もうある行は、その場所のまま中身だけ替える（並びを変えない。v0.25.0）。無い行は終わりに足す。"""
+    """素材台帳の、この生成器が書く素材を差し替える。もうある素材は、その場所のまま中身だけ替える（並びを変えない。v0.25.0）。無い素材は終わりに足す。
+    台帳は 2 字下げの JSON（v0.60.0 の後に、1 素材 1 行から変わった）。読んで書き直す（v0.65.0。行で探すと、見つからずに同じ素材を足していた）。"""
     full = os.path.join(ROOT, 'docs', 'asset-manifest.json')
-    lines = open(full, encoding='utf-8').read().split('\n')
+    doc = json.loads(open(full, encoding='utf-8').read())
     by_id = {e['id']: e for e in entries}
-    row = lambda e: '    ' + json.dumps(e, ensure_ascii=False).replace('{"', '{ "', 1)[:-1] + ' }'
-    out = []
-    for l in lines:
-        m = re.match(r'\s*\{ "id": "([^"]+)"', l)
-        if m and m.group(1) in by_id:
-            out.append(row(by_id.pop(m.group(1))) + (',' if l.rstrip().endswith(',') else ''))
-            continue
-        out.append(l)
-    entries = list(by_id.values())
-    if not entries:
-        json.loads('\n'.join(out))
-        open(full, 'w', encoding='utf-8').write('\n'.join(out))
-        return
-    end = max(i for i, l in enumerate(out) if l.strip() == ']')
-    last = end - 1
-    while not out[last].strip():
-        last -= 1
-    if not out[last].rstrip().endswith(','):
-        out[last] = out[last].rstrip() + ','
-    rows = [row(e) for e in entries]
-    rows = [r + (',' if i < len(rows) - 1 else '') for i, r in enumerate(rows)]
-    out = out[:last + 1] + rows + out[last + 1:]
-    json.loads('\n'.join(out))
-    open(full, 'w', encoding='utf-8').write('\n'.join(out))
+    assets = doc['assets']
+    for i, a in enumerate(assets):
+        if a.get('id') in by_id:
+            assets[i] = by_id.pop(a['id'])
+    assets.extend(by_id.values())
+    ids = [a.get('id') for a in assets]
+    assert len(ids) == len(set(ids)), '素材台帳に同じ id がある'
+    open(full, 'w', encoding='utf-8').write(json.dumps(doc, ensure_ascii=False, indent=2) + '\n')
 
 
 def update_bestiary(states):
@@ -1529,7 +1526,9 @@ def main():
                          'path': f'assets/textures/monsters/{key}_side_v1.webp', 'source': f'art-source/monster/concepts/monster_{spec["no"]:02d}_{key}_concept_v2.png を tools/monster-art.py で加工（背景を抜き、体の外の色を近くの体の色で埋めた）',
                          'terms': '本作オリジナル（ChatGPT の原画からの二次加工。原画は採用待ち）', 'dims': '幅 1024px 以下の WebP'})
         manifest.append(skin_entry(key, spec['name'], f'art-source/monster/concepts/monster_{spec["no"]:02d}_{key}_concept_v2.png', '本作オリジナル（ChatGPT の原画からの二次加工。原画は採用待ち）'))
-        states[f'monster.{key}'] = (f'実装済み（v0.17.0。技と動きは v0.21.0 で {len(actions)} に。登録簿の 4 つ・咆哮・威嚇・退き・種に固有の技。'
+        nturn = sum(1 for a in actions if '.turn_' in a['actionId'])
+        states[f'monster.{key}'] = (f'実装済み（v0.17.0。技と動きは v0.21.0 で {len(actions) - nturn} に。登録簿の 4 つ・咆哮・威嚇・退き・種に固有の技。'
+                                    + (f'v0.65.0 から、足を踏み替える向き直り {nturn} つ。' if nturn else '')
                                     + ('初級〜極級の依頼 4 件（中級から先は v0.34.0）。' if key in D15.RANK_SPECIES else '初級の依頼 1 件。')
                                     + ('形は原画 1 枚から作った仮の形。狩場は風礫盆地）' if key in D15.RANK_SPECIES else '形は原画 1 枚から作った仮の形。狩場は風礫盆地を借りている）'))
         plans.append(dict(key=key, frame=spec['frame'], scale=s.s, origin=[s.ox, s.gy], **{k: v for k, v in spec['plan'].items()}, moves=plan_moves,

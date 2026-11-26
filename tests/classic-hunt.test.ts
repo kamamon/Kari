@@ -263,14 +263,46 @@ describe('ガルドロスの動き（#19 の M01・M02。v0.41.0）', () => {
     expect(first[0]).not.toMatch(/turn_/);
   });
 
-  it('向き直りの技を持たない種（セルヴァルク）は、これまでどおり少しずつ向く', () => {
+  it('大型 12 種とも、足を踏み替える向き直り（左右 90°・180°）を持ち、判定は無い。幼体は持たない（v0.65.0。D-162）', () => {
+    const large = [...content.monsters.values()].filter((d) => d.captureAllowed);
+    expect(large).toHaveLength(12);
+    for (const d of large) {
+      const ts = d.turnSteps;
+      expect(ts, d.id).toBeTruthy();
+      expect([ts!.faceDeg, ts!.backDeg], d.id).toEqual([50, 130]);
+      for (const [id, deg] of [[ts!.left, 90], [ts!.right, -90], [ts!.backLeft, 180], [ts!.backRight, -180]] as const) {
+        const a = content.actions.get(id)!;
+        expect(a, id).toBeTruthy();
+        expect(a.spin?.degrees, id).toBe(deg);
+        expect(a.hitWindows, id).toEqual([]);
+        expect(a.rootMotion.mode, id).toBe('none');
+        // 回るのは、技の始まり（構え）から後隙の前まで。AI の選ぶ技の表には入れない（正面の外に居る時だけ出す）
+        expect(a.spin!.from, id).toBeGreaterThan(0);
+        expect(a.spin!.to, id).toBeLessThan(a.durationTicks);
+        expect(d.ai.choices.some((c) => c.actionId === id), id).toBe(false);
+      }
+    }
+    for (const d of content.monsters.values()) if (!d.captureAllowed) expect(d.turnSteps, d.id).toBeUndefined();
+  });
+
+  it('セルヴァルクも、待ち時間の間に横へ回り込まれると、左へ 90° 回り、回り終わるまで狩人を追わない', () => {
     const sim = new Simulation(content, baseOptions({ questId: 'quest.selvark.r1' }));
     const m = sim.monsters[0]!;
     m.aware = true;
     m.cooldown = 200;
+    m.action = null;
+    const y0 = m.yaw;
+    // 体の左（+X）へ 6m
     sim.player.pos = { x: m.pos.x + Math.sin(m.yaw + Math.PI / 2) * 6, y: 0, z: m.pos.z + Math.cos(m.yaw + Math.PI / 2) * 6 };
-    const ev = run(sim, 60);
-    expect(startsOf(ev).some((id) => /turn_/.test(id))).toBe(false);
+    sim.player.prevPos = { ...sim.player.pos };
+    const ev = run(sim, 1);
+    expect(startsOf(ev)).toEqual(['monster.selvark.turn_l90']);
+    // 回っている間に右へ回り込んでも、回る量は変わらない
+    sim.player.pos = { x: m.pos.x - Math.sin(y0 + Math.PI / 2) * 6, y: 0, z: m.pos.z - Math.cos(y0 + Math.PI / 2) * 6 };
+    sim.player.prevPos = { ...sim.player.pos };
+    run(sim, content.actions.get('monster.selvark.turn_l90')!.durationTicks - 1);
+    expect(m.action).toBeNull();
+    expect(yawDiff(m.yaw, y0) / (Math.PI / 180)).toBeCloseTo(90, 6);
   });
 
   it('突進の制動: 走る間に壁で前へ進めなくなると、減速の始めへ進め、壁の前で走り続けない', () => {

@@ -17,6 +17,7 @@
   "breakStaggerTicks": 80,
   "collision": [{"z": 0.0, "r": 1.5}, {"z": 1.4, "r": 1.0}],
   "approach": {"stopDist": 4.0, "faceDeg": 50},
+  "turnSteps": {"faceDeg": 50, "backDeg": 130, "left": "monster.orglass.turn_l90", "right": "monster.orglass.turn_r90", "backLeft": "monster.orglass.turn_l180", "backRight": "monster.orglass.turn_r180"},
   "discover": {"range": 14, "fovDeg": 120, "closeRange": 6, "actionId": "monster.orglass.roar"},
   "rage": {"threshold": 480, "durationTicks": 2100, "actionId": "monster.orglass.roar", "speedScale": 1.25, "damageScale": 1.2, "cooldownScale": 0.6},
   "parts": [

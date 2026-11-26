@@ -17,6 +17,7 @@
   "breakStaggerTicks": 80,
   "collision": [{"z": 0.2, "r": 1.0}, {"z": -1.2, "r": 0.8}],
   "approach": {"stopDist": 3.8, "faceDeg": 50},
+  "turnSteps": {"faceDeg": 50, "backDeg": 130, "left": "monster.verito.turn_l90", "right": "monster.verito.turn_r90", "backLeft": "monster.verito.turn_l180", "backRight": "monster.verito.turn_r180"},
   "discover": {"range": 14, "fovDeg": 130, "closeRange": 6, "actionId": "monster.verito.roar"},
   "rage": {"threshold": 380, "durationTicks": 1800, "actionId": "monster.verito.roar", "speedScale": 1.3, "damageScale": 1.15, "cooldownScale": 0.6},
   "parts": [

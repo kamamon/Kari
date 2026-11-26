@@ -5,6 +5,7 @@
 //   - 背骨・脚は「筒」。輪ごとに、近い 2 本の骨へ重みを分けて、関節でなめらかに曲がる。
 //   - 角膜・翼・帆・嚢などは、骨を 1 本持つ「板・塊」。技の値（src/render/creatureMoves.ts）で開く・ふくらむ。
 //   - 歩く: 進んだ距離で足の周期を進める。v0.25.0 から、前後に振る脚は、支えている間の足先を地面に留める（plantFeet。描画だけ）。
+//     v0.65.0 から、足を踏み替える向き直りの技（判定の無い spin）の間も、回った量で周期を進めて足を留め、足音を出す。
 //   - 怯み・転倒・眠り・罠・死は、体の高さ・傾き・脚の折り方で表す。
 //   - 顎（v0.25.0）: 四足・二足・長胴は、頭の下の側に顎の骨があり、咆哮・威嚇・噛む技で口を開ける（口の中は暗い面）。
 // 形・色・動きは、原画 1 枚から作った仮素材。正式モデル（GLB）が来たら置き換える。
@@ -1592,16 +1593,18 @@ export class CreatureRig implements MonsterRig {
     this.apply(P, { gaitAmt: m.dead || this.rest > 0.5 ? 0 : gaitAmt, und, paddle, rollDist, rollTotal, seq, windup, side, time, H });
     this.groundParts(lieW, lieSteady);
     // 足の接地（v0.25.0。ChatGPT の設計提案 #6）: 技を出していない歩き・向き直りの間、支えている脚の足先を地面に留める
-    this.plantFeet(!m.action && !m.dead && !resting && m.staggerTicks <= 0 && m.trapTicks <= 0 && this.rest < 0.5 && lieW < 0.01);
+    // 足を踏み替える向き直り（v0.65.0。#19 の M01。判定の無い spin の技）の間も、歩きと同じに足を留める（向きの速さで踏み替える）
+    const turnStep = !!m.action && !!m.action.def.spin && m.action.def.hitWindows.length === 0;
+    this.plantFeet((!m.action || turnStep) && !m.dead && !resting && m.staggerTicks <= 0 && m.trapTicks <= 0 && this.rest < 0.5 && lieW < 0.01);
 
     // 光・叩かれた時の光
     this.flash = Math.max(0, this.flash - dt * 6);
     this.mat.emissive.setRGB(this.pale[0] + this.flash * 0.55, this.pale[1] + this.flash * 0.45, this.pale[2] + this.flash * 0.3);
     if (this.glowMat) this.glowMat.emissiveIntensity = m.dead ? 0.05 : clamp(0.2 + P.glow * 1.4, 0, 2.2);
 
-    // 足音（歩いた距離ごと）
+    // 足音（歩いた距離ごと。向き直りの技の間は、踏み替えた量も数える）
     if (c.fx && !m.dead && this.rest < 0.5) {
-      this.stepAcc += dist;
+      this.stepAcc += dist + (turnStep ? Math.abs(dyaw) * Math.max(0.6, m.def.bodyRadius) * 0.8 : 0);
       const stepLen = Math.max(0.6, plan.stride * 0.5);
       if (this.stepAcc > stepLen) {
         this.stepAcc = 0;

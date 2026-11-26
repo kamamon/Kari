@@ -8,7 +8,7 @@
   - 技以外の動き（気付く前・身構え・弱る・怒り・走る・眠る・怯み・転倒と起き上がり・倒れる・しぐさ）も、種ごとに書く。
 値の決まりは tools/monster_lib.py の先頭。数値は机上の値で、人が遊んで確かめていない。
 """
-from monster_lib import A, B, F, K, ai, hazard, hit, idle, lr, move, side_name, track
+from monster_lib import A, B, F, K, ai, hazard, hit, idle, lr, move, side_name, track, turns
 
 # =============================================================================================
 # 02 帆角獣 セルヴァルク（四足軽獣。風）: 細い脚の跳躍と、頭の分割角膜。用心深く、まず横へ跳ぶ。突きは短く繰り返す
@@ -170,6 +170,10 @@ def selvark_moves(s):
             side=sd, bind=[B(f'selvark_tail_whip_{n}', 'sp:3', 'sp:0', 0.35, ext=0.1)],
             hits=[hit('tail', 30, 40, f'selvark_tail_whip_{n}', 16, 'flinch', cost=20)],
             sounds=[(28, 'galdros_swing')], ai=ai(0, 3.6, 180, 1.8, minA=90, side=side_name(sd)))),
+        # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 軽い体。首を先に回して見定め、分割角膜を立てて見張る。内側へ少し傾く ----
+        *turns(dict(yH=-0.03, roll=0.02, neckYaw=0.16, headYaw=0.1, tailYaw=-0.1, crest=0.25),
+               dict(yH=-0.04, roll=-0.05, spineYaw=0.14, neckYaw=0.3, headYaw=0.18, crest=0.5),
+               dict(yH=-0.04, roll=-0.04, spineYaw=0.1, neckYaw=0.2, headYaw=0.1, crest=0.35)),
     ]
 
 
@@ -374,6 +378,10 @@ def numeradon_moves(s):
              curve=(12.0, 56, 120), turn=(50, 50), bind=[B('numeradon_charge', 'sp:5', 'sp:9', 1.0, ext=0.2)],
              hits=[hit('body', 56, 120, 'numeradon_charge', 28, 'knockdown', cost=45)],
              sounds=[(4, 'galdros_roar'), (52, 'galdros_charge')], ai=ai(7, 16, 25, 1.6, cd=520, clear=10)),
+        # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 重い体を低く沈め、泥皿を回る向きへ傾けて、ゆっくり踏み替える ----
+        *turns(dict(yH=-0.05, roll=0.03, neckYaw=0.1, headYaw=0.08, tailYaw=-0.08, dish=0.1),
+               dict(yH=-0.08, roll=-0.06, spineYaw=0.12, neckYaw=0.22, headYaw=0.12, dish=0.22),
+               dict(yH=-0.08, roll=-0.05, spineYaw=0.1, neckYaw=0.16, headYaw=0.08, dish=0.14), slow=6),
     ]
 
 
@@ -571,6 +579,10 @@ def bornakel_moves(s):
              curve=(13.0, 60, 124), turn=(54, 50), bind=[B('bornakel_charge', 'sp:5', 'sp:8', 0.95, ext=0.25)],
              hits=[hit('body', 60, 124, 'bornakel_charge', 28, 'knockdown', cost=45)],
              sounds=[(4, 'bell_boom'), (56, 'galdros_charge')], ai=ai(8, 16.5, 25, 1.4, cd=560, clear=11)),
+        # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 頭の鐘を下げたまま肩を入れ、嚢を揺らして重く踏み替える ----
+        *turns(dict(yH=-0.05, roll=0.03, neckPitch=-0.08, neckYaw=0.1, headYaw=0.06, tailYaw=-0.08, sac=0.1),
+               dict(yH=-0.07, roll=-0.06, neckPitch=-0.12, spineYaw=0.12, neckYaw=0.22, headYaw=0.1, sac=0.26),
+               dict(yH=-0.07, roll=-0.05, neckPitch=-0.1, spineYaw=0.1, neckYaw=0.16, headYaw=0.08, sac=0.12), slow=6),
     ]
 
 
@@ -758,6 +770,10 @@ def ashreia_moves(s):
              bind=[B('ashreia_wing_spin', 'tip:wing:L', 'tip:wing:R', 0.55)],
              hits=[hit('wings', 46, 66, 'ashreia_wing_spin', 14, 'flinch', cost=20, status=('sleep', 30))],
              sounds=[(4, 'bird_screech'), (44, 'gust'), (56, 'gust')], ai=ai(0, 2.6, 180, 1.3, cd=420)),
+        # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 長い首を大きく先に回し、帷羽を少し開いて釣り合いを取る。2 本の脚は描画が踏み替える ----
+        *turns(dict(yH=-0.04, roll=0.02, neckPitch=0.05, neckYaw=0.22, headYaw=0.15, tailYaw=-0.1, wing=0.1),
+               dict(yH=-0.04, roll=-0.06, spineYaw=0.12, neckYaw=0.42, headYaw=0.2, wing=0.32),
+               dict(yH=-0.03, roll=-0.05, spineYaw=0.08, neckYaw=0.28, headYaw=0.12, wing=0.2), slow=-4),
     ]
 
 
@@ -943,6 +959,10 @@ def lumisca_moves(s):
             side=sd, bind=[B(f'lumisca_wing_slap_{n}', 'own:wing:S', 'tip:wing:S', 0.45, ext=0.15)],
             hits=[hit('wing', 30, 40, f'lumisca_wing_slap_{n}', 14, 'flinch', cost=20)],
             sounds=[(28, 'gust')], ai=ai(0, 2.2, 120, 2, minA=30, side=side_name(sd)))),
+        # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 長い尾を先に反対へ振ってから回り、翼を少し開いて釣り合いを取る。燐節がほのかに灯る ----
+        *turns(dict(yH=-0.05, roll=0.02, neckYaw=0.18, headYaw=0.12, tailYaw=-0.3, tailPitch=0.1, glow=0.1),
+               dict(yH=-0.07, roll=-0.07, spineYaw=0.18, neckYaw=0.36, headYaw=0.2, tailPitch=0.15, wing=0.24, glow=0.3),
+               dict(yH=-0.05, roll=-0.05, spineYaw=0.12, neckYaw=0.24, headYaw=0.12, tailPitch=0.08, wing=0.12, glow=0.2), slow=-2),
     ]
 
 
@@ -1135,6 +1155,11 @@ def orglass_moves(s):
              curve=(11.0, 50, 104), turn=(44, 50), bind=[B('orglass_charge', 'leg:clawR:C:2', 'leg:clawL:C:2', 0.9)],
              hits=[hit('claws', 50, 104, 'orglass_charge', 26, 'knockdown', cost=40)],
              sounds=[(4, 'shell_clack'), (48, 'galdros_charge')], ai=ai(7, 13.5, 25, 1.5, cd=520, clear=10)),
+        # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 大鋏を胸の前に掲げて身を守り、六本の脚を小刻みに運んで、その場で回る ----
+        *turns(dict(yH=-0.03, yaw=0.05, headYaw=0.08, clawR=(0.2, 0.12), clawL=(0.12, 0.08), plates=0.1),
+               dict(yH=-0.04, yaw=0.08, roll=-0.04, spineYaw=0.08, headYaw=0.14, clawR=(0.32, 0.2), clawL=(0.22, 0.14), plates=0.16),
+               dict(yH=-0.04, yaw=0.06, roll=-0.03, spineYaw=0.06, headYaw=0.1, clawR=(0.26, 0.15), clawL=(0.16, 0.1), plates=0.12),
+               slow=2, flags=dict(scurry=1)),
     ]
 
 
@@ -1320,6 +1345,11 @@ def tengaro_moves(s):
             K('r', 0.5, None, archBack=0.1), shake=0.02, shakeIn='windup'),
              hazards=[hazard(58, 5, 4.2, 1.3, 44, 18, 6, 'flinch', [0, 1.6, -2.0], 'para', peak=5, status=('para', 45))],
              sounds=[(4, 'hiss'), (56, 'splash')], ai=ai(6, 18, 180, 1.2, cd=600)),
+        # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 弓なりの体の前の半身を少し持ち上げ、六対の脚を波打たせて、後ろの半身を軸に回る ----
+        *turns(dict(yaw=0.06, x=0.05, archFront=0.2, legs={'A': (0.12, 0.35)}),
+               dict(yaw=0.12, x=0.09, roll=-0.06, archFront=0.42, legs={'A': (0.2, 0.62)}),
+               dict(yaw=0.08, x=0.06, roll=-0.05, archFront=0.3, legs={'A': (-0.14, 0.5)}),
+               slow=4, flags=dict(scurry=1)),
     ]
 
 
@@ -1495,6 +1525,11 @@ def verito_moves(s):
              curve=(3.5, 26, 46), turn=(24, 80), bind=[mouth('verito_pounce')],
              hits=[hit('jaws', 44, 52, 'verito_pounce', 20, 'knockdown', kind='cut', cost=30, status=('poison', 30))],
              sounds=[(4, 'insect_buzz'), (26, 'gust'), (42, 'hiss')], ai=ai(3, 5.7, 30, 1.6, cd=300, clear=4)),
+        # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 糸櫛の前脚を胸の前に上げ、羽袋を少しふくらませて、細い脚を小刻みに運ぶ ----
+        *turns(dict(yH=-0.02, yaw=0.05, headYaw=0.1, tailYaw=-0.1, bags=0.1, legs={'M1': (0.2, 0.3)}),
+               dict(yaw=0.08, roll=-0.04, spineYaw=0.1, headYaw=0.18, bags=0.22, legs={'M1': (0.28, 0.45)}),
+               dict(yH=-0.02, yaw=0.06, roll=-0.03, spineYaw=0.08, headYaw=0.12, bags=0.15, legs={'M1': (0.24, 0.4)}),
+               slow=-2, flags=dict(scurry=1)),
     ]
 
 
@@ -1670,6 +1705,11 @@ def razmer_moves(s):
              curve=(1.4, 34, 44), turn=(30, 70), bind=[head('razmer_lunge_sweep_a'), front('razmer_lunge_sweep_b')],
              hits=[hit('bite', 36, 42, 'razmer_lunge_sweep_a', 18, 'flinch', kind='cut', cost=25), hit('sweep', 62, 78, 'razmer_lunge_sweep_b', 24, 'knockdown', cost=35)],
              sounds=[(4, 'hiss'), (34, 'galdros_swing'), (60, 'galdros_swing')], ai=ai(0, 6, 40, 1.6, cd=360)),
+        # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 頭と前半身を先に回る向きへ曲げ、骨環の体をうねらせて、短い脚で後半身を引き寄せる ----
+        *turns(dict(yH=-0.02, spineYaw=0.12, neckYaw=0.2, headYaw=0.12, tailYaw=-0.12),
+               dict(yH=-0.03, roll=-0.03, spineYaw=0.36, neckYaw=0.42, headYaw=0.22),
+               dict(yH=-0.03, roll=-0.02, spineYaw=0.26, neckYaw=0.3, headYaw=0.15),
+               slow=6, flags=dict(und=0.5)),
     ]
 
 
@@ -1838,6 +1878,11 @@ def kirisave_moves(s):
              curve=(15.0, 46, 100), turn=(40, 50), bind=[B('kirisave_slide_long', 'sp:7', 'sp:11', 0.65, ext=0.2)],
              hits=[hit('body', 46, 100, 'kirisave_slide_long', 26, 'knockdown', cost=40)],
              sounds=[(4, 'hiss'), (46, 'galdros_charge')], ai=ai(8, 19.5, 25, 1.5, cd=520, clear=14)),
+        # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 脚が無いので、頭を回る向きへ振り、氷帆を寝かせて、長い体を S 字にくねらせて腹で回る ----
+        *turns(dict(spineYaw=0.14, neckYaw=0.24, headYaw=0.14, tailYaw=-0.14, sail=-0.12, fin=0.12),
+               dict(roll=-0.03, spineYaw=0.4, neckYaw=0.5, headYaw=0.26, sail=-0.26, fin=0.3),
+               dict(roll=-0.02, spineYaw=0.3, neckYaw=0.36, headYaw=0.18, sail=-0.2, fin=0.2),
+               slow=8, flags=dict(und=0.8, wiggle=0.06)),
     ]
 
 
@@ -2017,6 +2062,10 @@ def velgait_moves(s):
              curve=(14.0, 44, 104), turn=(40, 60), bind=[crown('velgait_charge')],
              hits=[hit('crown', 44, 104, 'velgait_charge', 26, 'knockdown', cost=40)],
              sounds=[(4, 'beast_cry'), (40, 'galdros_charge')], ai=ai(7, 15.9, 25, 1.5, cd=520, clear=10)),
+        # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 環冠を回る向きへ傾けて先に見定め、軽い脚で踏み替える。灯節が揺らぐ ----
+        *turns(dict(yH=-0.03, roll=0.02, neckYaw=0.16, headYaw=0.12, headRoll=0.06, tailYaw=-0.12, crown=0.12),
+               dict(yH=-0.04, roll=-0.05, spineYaw=0.14, neckYaw=0.32, headYaw=0.2, headRoll=0.1, crown=0.25, glow=0.16),
+               dict(yH=-0.04, roll=-0.04, spineYaw=0.1, neckYaw=0.22, headYaw=0.12, headRoll=0.06, crown=0.18, glow=0.1)),
     ]
 
 

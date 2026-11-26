@@ -2311,7 +2311,11 @@
         "selvark_charge_01",
         "selvark_leap_stomp_01",
         "selvark_tail_whip_l_01",
-        "selvark_tail_whip_r_01"
+        "selvark_tail_whip_r_01",
+        "selvark_turn_l90_01",
+        "selvark_turn_r90_01",
+        "selvark_turn_l180_01",
+        "selvark_turn_r180_01"
       ],
       "dependsOn": [
         "tex.monster.selvark.side",
@@ -2382,7 +2386,11 @@
         "numeradon_bite_01",
         "numeradon_front_slam_01",
         "numeradon_mud_rain_01",
-        "numeradon_charge_01"
+        "numeradon_charge_01",
+        "numeradon_turn_l90_01",
+        "numeradon_turn_r90_01",
+        "numeradon_turn_l180_01",
+        "numeradon_turn_r180_01"
       ],
       "dependsOn": [
         "tex.monster.numeradon.side",
@@ -2451,7 +2459,11 @@
         "bornakel_sonic_ring_01",
         "bornakel_tap_line_01",
         "bornakel_scoop_01",
-        "bornakel_charge_01"
+        "bornakel_charge_01",
+        "bornakel_turn_l90_01",
+        "bornakel_turn_r90_01",
+        "bornakel_turn_l180_01",
+        "bornakel_turn_r180_01"
       ],
       "dependsOn": [
         "tex.monster.bornakel.side",
@@ -2520,7 +2532,11 @@
         "ashreia_tail_fan_01",
         "ashreia_wing_clap_01",
         "ashreia_ash_rain_01",
-        "ashreia_wing_spin_01"
+        "ashreia_wing_spin_01",
+        "ashreia_turn_l90_01",
+        "ashreia_turn_r90_01",
+        "ashreia_turn_l180_01",
+        "ashreia_turn_r180_01"
       ],
       "dependsOn": [
         "tex.monster.ashreia.side",
@@ -2589,7 +2605,11 @@
         "lumisca_tail_jab_01",
         "lumisca_leap_kick_01",
         "lumisca_wing_slap_l_01",
-        "lumisca_wing_slap_r_01"
+        "lumisca_wing_slap_r_01",
+        "lumisca_turn_l90_01",
+        "lumisca_turn_r90_01",
+        "lumisca_turn_l180_01",
+        "lumisca_turn_r180_01"
       ],
       "dependsOn": [
         "tex.monster.lumisca.side",
@@ -2658,7 +2678,11 @@
         "orglass_claw_double_01",
         "orglass_sand_rake_01",
         "orglass_rear_shove_01",
-        "orglass_charge_01"
+        "orglass_charge_01",
+        "orglass_turn_l90_01",
+        "orglass_turn_r90_01",
+        "orglass_turn_l180_01",
+        "orglass_turn_r180_01"
       ],
       "dependsOn": [
         "tex.monster.orglass.side",
@@ -2727,7 +2751,11 @@
         "tengaro_venom_spray_01",
         "tengaro_spring_drop_01",
         "tengaro_hook_rake_01",
-        "tengaro_para_rain_01"
+        "tengaro_para_rain_01",
+        "tengaro_turn_l90_01",
+        "tengaro_turn_r90_01",
+        "tengaro_turn_l180_01",
+        "tengaro_turn_r180_01"
       ],
       "dependsOn": [
         "tex.monster.tengaro.side",
@@ -2796,7 +2824,11 @@
         "verito_leg_rake_l_01",
         "verito_leg_rake_r_01",
         "verito_mist_cloud_01",
-        "verito_pounce_01"
+        "verito_pounce_01",
+        "verito_turn_l90_01",
+        "verito_turn_r90_01",
+        "verito_turn_l180_01",
+        "verito_turn_r180_01"
       ],
       "dependsOn": [
         "tex.monster.verito.side",
@@ -2865,7 +2897,11 @@
         "razmer_head_slam_01",
         "razmer_side_roll_l_01",
         "razmer_side_roll_r_01",
-        "razmer_lunge_sweep_01"
+        "razmer_lunge_sweep_01",
+        "razmer_turn_l90_01",
+        "razmer_turn_r90_01",
+        "razmer_turn_l180_01",
+        "razmer_turn_r180_01"
       ],
       "dependsOn": [
         "tex.monster.razmer.side",
@@ -2934,7 +2970,11 @@
         "kirisave_tail_whip_l_01",
         "kirisave_tail_whip_r_01",
         "kirisave_ice_burst_01",
-        "kirisave_slide_long_01"
+        "kirisave_slide_long_01",
+        "kirisave_turn_l90_01",
+        "kirisave_turn_r90_01",
+        "kirisave_turn_l180_01",
+        "kirisave_turn_r180_01"
       ],
       "dependsOn": [
         "tex.monster.kirisave.side",
@@ -3003,7 +3043,11 @@
         "velgait_mist_volley_01",
         "velgait_pounce_01",
         "velgait_stomp_double_01",
-        "velgait_charge_01"
+        "velgait_charge_01",
+        "velgait_turn_l90_01",
+        "velgait_turn_r90_01",
+        "velgait_turn_l180_01",
+        "velgait_turn_r180_01"
       ],
       "dependsOn": [
         "tex.monster.velgait.side",

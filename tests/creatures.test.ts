@@ -79,14 +79,20 @@ describe('大型 11 種のデータ', () => {
       const names = m.parts.map((p) => p.name);
       for (const n of sp.parts) expect(names, `${key} ${n}`).toContain(n);
       expect(m.parts.filter((p) => p.breakDurability !== null).length, key).toBeGreaterThanOrEqual(4);
-      const acts = [...content.actions.keys()].filter((a) => a.startsWith(`${m.id}.`));
+      const all = [...content.actions.keys()].filter((a) => a.startsWith(`${m.id}.`));
+      // 足を踏み替える向き直り（v0.65.0）の 4 つは、技の数に入れない（AI の表でなく、正面の外に居る時に turnSteps から出す）
+      const ts = m.turnSteps!;
+      const turns = [ts.left, ts.right, ts.backLeft, ts.backRight];
+      for (const a of turns) expect(all, key).toContain(a);
+      const acts = all.filter((a) => !turns.includes(a));
       expect(acts).toContain(`${m.id}.roar`);
       expect(acts).toContain(`${m.id}.threat`);
       expect(acts).toContain(`${m.id}.retreat`);
       expect(acts.length, key).toBeGreaterThanOrEqual(17);
-      // 咆哮のほかは、どれも AI で選ばれる
+      // 咆哮のほかは、どれも AI で選ばれる（向き直りは選ばれない）
       for (const a of acts) if (a !== `${m.id}.roar`) expect(m.ai.choices.some((c) => c.actionId === a), a).toBe(true);
-      expect(new Set(acts.map((a) => content.actions.get(a)!.clip)).size, key).toBe(acts.length);
+      for (const a of turns) expect(m.ai.choices.some((c) => c.actionId === a), a).toBe(false);
+      expect(new Set(all.map((a) => content.actions.get(a)!.clip)).size, key).toBe(all.length);
       expect(m.discover!.actionId).toBe(`${m.id}.roar`);
     }
   });

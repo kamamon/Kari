@@ -17,6 +17,7 @@
   "breakStaggerTicks": 80,
   "collision": [{"z": 0.0, "r": 1.0}, {"z": 1.4, "r": 0.9}, {"z": 2.8, "r": 0.6}, {"z": -1.3, "r": 0.85}, {"z": -2.6, "r": 0.5}],
   "approach": {"stopDist": 4.8, "faceDeg": 45},
+  "turnSteps": {"faceDeg": 50, "backDeg": 130, "left": "monster.razmer.turn_l90", "right": "monster.razmer.turn_r90", "backLeft": "monster.razmer.turn_l180", "backRight": "monster.razmer.turn_r180"},
   "discover": {"range": 15, "fovDeg": 120, "closeRange": 6, "actionId": "monster.razmer.roar"},
   "rage": {"threshold": 480, "durationTicks": 2100, "actionId": "monster.razmer.roar", "speedScale": 1.25, "damageScale": 1.25, "cooldownScale": 0.6},
   "parts": [
