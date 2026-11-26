@@ -30,6 +30,7 @@ import type { Solved } from './render/bodySolve';
 import { GroundedLocomotion, freeStride } from './render/contactLocomotion';
 import { groundedHeavyAttack } from './render/heavyBodyMotion';
 import { WEAPON_STANCES } from './render/weaponClipSpecs';
+import { motionSetOf, useMotionSet } from './render/motionSet';
 import { buildLongBlade, buildTwinBlade, buildWarMaul } from './render/forgedWeapons';
 import { withShell } from './render/shellPlates';
 
@@ -515,7 +516,10 @@ function frame(ts: number): void {
 
 async function main(): Promise<void> {
   try {
-    content = await loadContent();
+    // ハンターの動きの組（v0.57.0。D-150）: ?motions=v056 で、v0.56.0 までの動き（保留）を見る
+    const motionSet = motionSetOf(new URLSearchParams(location.search).get('motions'));
+    content = await loadContent({ motionSet });
+    await useMotionSet(motionSet);
     const doc = (await fetchJson('data/asset-manifest.json')) as { assets: ManifestAsset[] };
     manifest = doc.assets;
   } catch (e) {

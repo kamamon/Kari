@@ -31,6 +31,7 @@ import {
   type ArmorSlot,
   type Content,
   type ContentIndex,
+  type MotionSetDef,
   type CurveDef,
   type DeliveriesDef,
   type EdgeRules,
@@ -1135,13 +1136,45 @@ function putUnique<T>(map: Map<string, T>, id: string, value: T, kind: string, e
   map.set(id, value);
 }
 
+/** 読み込みの選択（v0.57.0）。motionSet: ハンターの動きの組（無ければ、いまの組） */
+export interface LoadOptions {
+  motionSet?: string;
+}
+
+/**
+ * 保留の組（D-150）の定義を確かめる: 版・名前・入れ替えるファイルが content.json の files にある技・軌道・移動曲線のファイルか。
+ */
+function validateMotionSet(set: MotionSetDef, id: string, index: ContentIndex, errors: string[]): void {
+  const where = `motionSets.${id}`;
+  checkVersion(where, set.schemaVersion, errors);
+  if (set.id !== id) errors.push(`${where}: 組の名前 "${set.id}" が content.json の名前と違う`);
+  if (!set.name) errors.push(`${where}: 表示名が無い`);
+  if (!set.families) errors.push(`${where}: 武器の系統のファイルが無い`);
+  const many = (f: string | string[]): string[] => (Array.isArray(f) ? f : [f]);
+  const known = new Set([...index.files.actions, ...index.files.tracks, ...many(index.files.curves)]);
+  for (const k of Object.keys(set.files ?? {})) if (!known.has(k)) errors.push(`${where}: 入れ替えるファイル ${k} が content.json の技・軌道・移動曲線に無い`);
+}
+
 /** content.json を起点に全データを読み、検証して返す。問題があれば ContentError を投げる。 */
-export async function assembleContent(get: JsonGetter): Promise<Content> {
+export async function assembleContent(getRaw: JsonGetter, opts: LoadOptions = {}): Promise<Content> {
   const errors: string[] = [];
-  const index = (await get('content.json')) as ContentIndex;
+  const index = (await getRaw('content.json')) as ContentIndex;
   checkVersion('content.json', index.schemaVersion, errors);
+  // ハンターの動きの組（v0.57.0。D-150）: 保留の組を選んだ時は、組のファイルを読む
+  const sets = index.motionSets;
+  const motionSet = opts.motionSet ?? sets?.current ?? 'current';
+  let set: MotionSetDef | null = null;
+  if (opts.motionSet !== undefined && opts.motionSet !== sets?.current) {
+    const path = sets?.held[opts.motionSet];
+    if (!path) throw new ContentError([`ハンターの動きの組 "${opts.motionSet}" が無い`]);
+    set = (await getRaw(path)) as MotionSetDef;
+    validateMotionSet(set, opts.motionSet, index, errors);
+  }
+  const files = set?.files ?? {};
+  const get: JsonGetter = (p) => getRaw(files[p] ?? p);
   const content: Content = {
     contentVersion: index.contentVersion,
+    motionSet,
     elements: (await get(index.files.elements)) as ElementRules,
     skills: new Map(),
     actions: new Map(),
@@ -1202,7 +1235,10 @@ export async function assembleContent(get: JsonGetter): Promise<Content> {
   const weapons = (await get(index.files.weapons)) as { families: WeaponFamilyDef[]; weapons: WeaponDef[]; edge: EdgeRules };
   content.edge = weapons.edge;
   validateEdge(weapons.edge, errors);
-  for (const f of weapons.families ?? []) putUnique(content.families, f.id, f, 'family', errors);
+  // 保留の組では、武器の系統（持ち方・技の組み立て・構えの握り）も組のもの
+  const families = set ? ((await getRaw(set.families)) as { schemaVersion: number; families: WeaponFamilyDef[] }) : null;
+  if (families) checkVersion(set!.families, families.schemaVersion, errors);
+  for (const f of families?.families ?? weapons.families ?? []) putUnique(content.families, f.id, f, 'family', errors);
   for (const w of weapons.weapons ?? []) putUnique(content.weapons, w.id, w, 'weapon', errors);
   for (const f of index.files.monsters) {
     const m = (await get(f)) as MonsterDef;

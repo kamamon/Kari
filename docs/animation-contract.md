@@ -56,7 +56,7 @@ pelvis 高さ 0.92 / 肩幅 0.37（肩の関節は左右 0.185）/ 上腕 0.29�
 
 ## 4. 移動（root motion）
 
-- clip は **その場（in-place）** で作る。前進は controller が移動曲線（`public/data/curves.json`、[tick, 累積距離 m]）で進める。
+- clip は **その場（in-place）** で作る。前進は controller が移動曲線（[tick, 累積距離 m]。ハンターの曲線は v0.57.0 から `public/data/curves_player.json`（`tools/gen-weapons.mjs` の出力）、モンスターは `curves.json`・`curves_creatures.json`）で進める。
 - 足の接地は移動曲線に合わせる。例: 縦斬り `hb_step_035m` は 14〜24 tick で 0.33m、30 tick までに 0.35m。
 - v0.23.0（D-092。描画だけ）: ふだんの歩き（納刀中は 7 系統とも、抜刀中は断岳剣）は、踏んでいる足の母指球を世界座標に留める（`src/render/contactLocomotion.ts`）。足の運びは、入力の速さではなく、実際に動いた量から進める。止まった時は浮いた足を下ろし、その場で大きく向きを変える時は踏み替える。走りには短い空中の時がある。急に反対へ向きを変えた時は、脚が届かなくなる前に 80ms で留めるのをやめる（その間は、足が滑ることがある）。断岳剣の縦斬り・横薙ぎ・抜刀斬りは、脚を地面に合わせる IK と骨盤の回転・上下・前後で支える（`src/render/heavyBodyMotion.ts`。横薙ぎのひねりは、骨盤 44° と背・胸 48° に分ける）。刃の軌道・技の時刻・移動曲線は変えない。
 - v0.28.1（D-108。描画だけ。利用者の指摘「歩くたびにバウンドするのは不自然」）: ふだんの歩き・走り（納刀中の 7 系統と抜刀中の断岳剣は `travelGait`、抜刀中のほか 6 系統は `gaitFeet`）で、**腰の上下を、足の運びに合わせたなめらかな 1 つの波にした**（4cm 以内。歩きは片足で立つ真ん中が高く、走りは片足の真ん中が低い）。接地の長さを脚が届く範囲（納刀 0.64〜0.74m・抜刀 0.62m。着く所は体の前 4 割まで）にし、歩幅がそれより長い時は両足が浮く間を作る。1 周の長さは速さから（`freeStride`。1.2m/s で約 1.1m・4m/s で約 2.2m・6.4m/s で約 2.9m。位相を進める側と足を置く側で同じ値）。かかとの角度は、浮いた後も歩き方のとおりに続ける（離れた瞬間に足首が下がらない）。足が届かずに腰を落とした時は、戻すのを 0.3m/s までにする（跳ね上がらない）。
@@ -64,12 +64,13 @@ pelvis 高さ 0.92 / 肩幅 0.37（肩の関節は左右 0.185）/ 上腕 0.29�
 ## 5. 武器の軌道と判定
 
 - `public/data/tracks/*.json` の shapeTrack が判定の正本。アクターのローカル座標で、tick ごとに握り位置 `grip` と向き `dir` を持つ。判定カプセルは `grip + dir × from` 〜 `grip + dir × to`、太さ `radius`。
-- 仮アニメーションは武器をこの軌道へ置き、腕を IK で伸ばしている（見える刃 = 判定）。断岳剣はこの方式。
-- 護刃・長尖槍・環弓・大槌・双剣・太刀は逆で、**体の動きが先**: 体の動きを解いた握りと向きを、毎 tick 書き出したものが shapeTrack（`tools/gen-weapons.mjs`）。描画も同じ動きを解くので、見える武器と判定は一致する（`tests/human-motion.test.ts` が、全 tick で 2mm 以内を確かめる）。
+- v0.56.0 までの断岳剣は、武器をこの軌道へ置き、腕を IK で伸ばしていた（見える刃 = 判定）。この方式は保留の組 v056 に残っている（下の「動きの組」）。
+- v0.57.0 から 7 系統とも（断岳剣も）、**体の動きが先**: 体の動きを解いた握りと向きを、毎 tick 書き出したものが shapeTrack（`tools/gen-weapons.mjs`）。描画も同じ動きを解くので、見える武器と判定は一致する（`tests/human-motion.test.ts` が、全 tick で 2mm 以内を確かめる）。
 - 双剣は左手にも剣を持つ。左の剣の判定は `<技>_l` の shapeTrack（同じ解き方から書き出す）。
 - **刃の面の向き**（v0.40.0。D-127）: 軌道の `planeNormal`（武器の +X）と、キーごとの `normal`（描画だけ。当たりの形には関わらない）で決める。武器の +Y = `dir`、+X = `normal` を `dir` に直交させたもの、+Z = X × Y で、断岳剣の刃は -Z。**刃が振る向きの前に来る**ように置く（v0.39.0 までの断岳剣は、縦斬り・薙ぎ払いで峰が前だった）。手首で刃を返す技は、キーごとに `normal` を持ち、隣り合うキーで真逆にしない（`validateTrack` が確かめる）。
 - **技が替わった時**（v0.40.0。断岳剣）: 手に持った武器の位置と向きを 0.1 秒混ぜる（向きは回転の球面補間）。判定のある tick は混ぜず、正本の軌道に合わせる。
-- この 6 系統の動きは、関節の曲がる範囲・手の届き・手首・重心・足の滑り・速さの検査（`src/render/humanLimits.ts`）を全 tick で通すこと。正式クリップへ替える時も、同じ検査を目安にする。
+- この 7 系統の動きは、関節の曲がる範囲・手の届き・手首・重心・足の滑り・速さの検査（`src/render/humanLimits.ts`）を全 tick で通すこと。正式クリップへ替える時も、同じ検査を目安にする。
+- **動きの組**（v0.57.0。D-150）: 利用者の指示で、ハンターの動きを 2G の動きを手本に作り直している。作り直す前の動きは、保留の組 `v056`（v0.56.0 までの動き）として残す: データ（技・軌道・移動曲線・武器の系統）は `public/data/motionsets/v056/`（読み込みの時に `assembleContent` の `motionSet` で入れ替わる）、描画の動きは `src/render/motionsets/v056.ts`（`src/render/motionSet.ts` の `useMotionSet` が `WEAPON_STANCES`・`WEAPON_MOTIONS` の中身を入れ替える）。設定の「ハンターの動き」か、アドレスの `?motions=v056` で選ぶ。保留の組の断岳剣は、キー姿勢の方式（`poses.ts` の hb_*・`heavyBodyMotion.ts`）のまま描く（`WEAPON_STANCES` に断岳剣が無いので、view.ts がその方式を選ぶ）。保留の組のファイルは手で編集しない。
 - 納めた武器の置き場所は、武器系統ごとに持つ（`weaponClipSpecs.ts` の sheath: 付く骨と位置と向き）。socket_back / socket_hip は断岳剣と、正式モデルの目安。
 - 正式クリップへ替える時は、クリップの刃の位置と shapeTrack の誤差を検証表示で比べ、**どちらを基準に直すかを先に決める**。
 - **モンスターの攻撃を受ける部位**（v0.25.0、docs/spec.md の 22.5）: 大型 11 種と幼体 8 種は、技の間と眠っている間、部位の形を、描画の動きから前もって作った表（`public/data/follow/`）のとおりに動かす。表は `npm run monsters:bake` の出力で、戦闘は表だけを読む（描画の `Bone.matrixWorld` を戦闘の正本にしない）。動きを変えたら、bake し直して、表と軌道を合わせる（`tests/creature-motion.test.ts` がずれを見つける）。
@@ -80,11 +81,11 @@ pelvis 高さ 0.92 / 肩幅 0.37（肩の関節は左右 0.185）/ 上腕 0.29�
 
 | clip | 対応する技 | 長さ | 備考 |
 | --- | --- | --- | --- |
-| hb_attack_vertical_01 | player.heavy_blade.overhead | 72 tick | 18 tick が最大振り上げ（溜めの保持姿勢） |
-| hb_attack_side_01 | player.heavy_blade.side_sweep | 66 tick | 右後ろ → 左前へ水平に払う |
-| hb_draw_slash_01 | player.heavy_blade.draw_slash | 64 tick | 背中から抜いてそのまま振り下ろす。v0.40.0 から 16 tick で溜めの保持姿勢 |
-| hb_attack_upswing_01 | player.heavy_blade.upswing | 66 tick | v0.40.0。構えから刃を返して前の低い所へ下ろし（12〜16）、左足を踏み込んで頭の上へ振り上げる（判定 18〜27） |
-| hb_attack_upswing_low_01 | player.heavy_blade.upswing_low | 54 tick | v0.40.0。縦斬り・抜刀斬りの後（刃が前の低い所）からの斬り上げ。上の 12 tick 目からと同じ動き（判定 6〜15） |
+| hb_attack_vertical_01 | player.heavy_blade.overhead | 72 tick | 18 tick が頭上に担いだ形（溜めの保持姿勢）。v0.57.0 から 2G を手本に: 左足を大きく踏み込んで叩き下ろし、切っ先が前の地面に届いて深く沈む（30〜46） |
+| hb_attack_side_01 | player.heavy_blade.side_sweep | 66 tick | 右後ろへ引いて腰を巻き、腰の高さを右 → 左へ払って左の後ろまで振り抜く |
+| hb_draw_slash_01 | player.heavy_blade.draw_slash | 64 tick | 肩越しに背から抜き上げ、16 tick で頭上に担いだ形（溜めの保持姿勢）、踏み込んで叩き下ろす |
+| hb_attack_upswing_01 | player.heavy_blade.upswing | 66 tick | v0.40.0。構えから手首で刃を返して前の低い所へ下ろし（4〜14）、頭の上へ振り上げる（判定 18〜27）。下ろす前に刃を返して構えへ |
+| hb_attack_upswing_low_01 | player.heavy_blade.upswing_low | 54 tick | v0.40.0。縦斬り・抜刀斬りの後（刃が前の地面）から、手首で刃を返して（0〜4）そのまま振り上げる（判定 6〜15） |
 | hb_draw_01 / hb_sheathe_01 | …draw / …sheathe | 26 / 44 tick | |
 | common_roll_01 | player.common.roll | 36 tick | 前転。抜刀中は前後左右の 4 方向が必要（いまは前転を回して代用している仮の処理） |
 | common_item_drink_01 | player.item.drink | 124 tick | 回復液を飲む。58 tick で効果（それまでに口元へ）。v0.40.0 から、飲み終えた後の決め姿勢（両腕を横へ上げて力を込める。76〜106） |

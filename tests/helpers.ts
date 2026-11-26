@@ -1,12 +1,13 @@
 import { readFile } from 'node:fs/promises';
 import type { Content } from '../src/data/schemas';
-import { assembleContent } from '../src/data/validators';
+import { assembleContent, type LoadOptions } from '../src/data/validators';
 import { Btn, type InputFrame } from '../src/game/inputFrame';
 import { Simulation, type SimOptions } from '../src/game/sim';
 import type { SimEvent } from '../src/game/events';
 
-export async function loadContent(): Promise<Content> {
-  return assembleContent(async (p) => JSON.parse(await readFile(new URL(`../public/data/${p}`, import.meta.url), 'utf8')) as unknown);
+/** ゲームのデータを読む。opts.motionSet: ハンターの動きの組（v0.57.0。'v056' で保留の組） */
+export async function loadContent(opts: LoadOptions = {}): Promise<Content> {
+  return assembleContent(async (p) => JSON.parse(await readFile(new URL(`../public/data/${p}`, import.meta.url), 'utf8')) as unknown, opts);
 }
 
 export const baseOptions = (over: Partial<SimOptions> = {}): SimOptions => ({

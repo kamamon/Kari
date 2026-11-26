@@ -1,10 +1,10 @@
-// 護刃・長尖槍・環弓・大槌・双剣・太刀の、技（actions）・軌道（tracks）・移動曲線・体の動きのデータを作る。
+// 断岳剣（v0.57.0 から）・護刃・長尖槍・環弓・大槌・双剣・太刀の、技（actions）・軌道（tracks）・移動曲線・体の動きのデータを作る。
 //
 //   node tools/gen-weapons.mjs
 //
 // 書き出すもの:
 //   public/data/actions/<系統>.json, public/data/tracks/<系統>.json … この道具の出力（手で編集しない）
-//   public/data/curves.json … id が "w_" で始まる行だけを入れ替える（ほかの行と書式は変えない）
+//   public/data/curves_player.json … ハンターの移動曲線（前転と各武器の技。v0.57.0 から。全部をこの道具が書く）
 //   public/data/weapons.json … 各系統の "ready" と防御の "pose" の行だけを入れ替える（構えから計算した値）
 //   src/render/weaponClipSpecs.ts … 体の動き（構え・各技のキー）。描画がこれを解いて、体と武器を置く
 // 技ごとの中身は tools/weapons/<系統>.mjs。体の解き方は src/render/bodySolve.ts、人にできる範囲の検査は src/render/humanLimits.ts。
@@ -19,9 +19,13 @@ import { twinBlades } from './weapons/twin_blades.mjs';
 import { longBlade } from './weapons/long_blade.mjs';
 import { longLance } from './weapons/long_lance.mjs';
 import { ringBow } from './weapons/ring_bow.mjs';
+import { common } from './weapons/common.mjs';
+import { heavyBlade } from './weapons/heavy_blade.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
+common();
+heavyBlade();
 guardBlade();
 warMaul();
 twinBlades();
@@ -37,16 +41,11 @@ for (const [id, F] of Object.entries(state.out)) {
   const t = ['{', '  "schemaVersion": 1,', '  "note": "tools/gen-weapons.mjs の出力。手で編集しない。体の動き（src/render/weaponClipSpecs.ts）を解いた、毎 tick の握りと向き。アクターのローカル座標（m、Y 上、+Z 前、右手側は -X）。",', '  "tracks": [', F.tracks.map((x) => '    ' + line(x)).join(',\n'), '  ]', '}', ''];
   writeFileSync(resolve(ROOT, `public/data/tracks/${id}.json`), t.join('\n'));
 }
-// 移動曲線: "w_" で始まる行だけを入れ替える
+// 移動曲線（v0.57.0 から、ハンターの曲線は curves_player.json に分けた。全部をこの道具が書く）
 {
-  const p = resolve(ROOT, 'public/data/curves.json');
-  const old = readFileSync(p, 'utf8').split('\n');
-  const rows = old.filter((l) => !l.includes('"id": "w_'));
-  const end = rows.findIndex((l) => l.trim() === ']');
-  rows[end - 1] = rows[end - 1].replace(/,?\s*$/, ',');
-  const add = state.curves.map((c) => `{"id": "${c.id}", "keys": ${JSON.stringify(c.keys).replace(/,/g, ', ')}}`);
-  rows.splice(end, 0, ...add.map((l, i) => `    ${l}${i < add.length - 1 ? ',' : ''}`));
-  writeFileSync(p, rows.join('\n'));
+  const rows = state.curves.map((c) => `    {"id": "${c.id}", "keys": ${JSON.stringify(c.keys).replace(/,/g, ', ')}}`);
+  const out = ['{', '  "schemaVersion": 1,', '  "note": "tools/gen-weapons.mjs の出力。手で編集しない。ハンターの移動曲線（前転と各武器の技）。[tick, 進んだ距離 m]。",', '  "curves": [', rows.join(',\n'), '  ]', '}', ''];
+  writeFileSync(resolve(ROOT, 'public/data/curves_player.json'), out.join('\n'));
 }
 // 構えの握り（weapons.json の ready と、防御の pose）: 構えを解いた値で、その行だけを入れ替える
 {
@@ -73,7 +72,7 @@ for (const [id, F] of Object.entries(state.out)) {
   const js = (o) => JSON.stringify(o, num);
   const ts = [
     '// 生成物（tools/gen-weapons.mjs）。手で編集しない。',
-    '// 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）の体の動き: 構え（立ち姿）と、技ごとのキー。解き方は bodySolve.ts。',
+    '// 7 系統の体の動き（断岳剣は v0.57.0 から）: 構え（立ち姿）と、技ごとのキー。解き方は bodySolve.ts。v0.56.0 までの動きは motionsets/v056.ts（保留の組。D-150）。',
     "import type { Ctl, Foot, Hands, Motion } from './bodySolve';",
     "import type { WeaponShape } from './humanLimits';",
     '',

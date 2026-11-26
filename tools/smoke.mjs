@@ -1448,8 +1448,14 @@ const startTraining = async (page, tap = false) => {
     return keep;
   });
   await page.keyboard.press('KeyE');
-  const orbHit = await until(page, () => window.__vh.sim.monsters[0].markTicks > 0 && window.__vh.sim.player.mode === 'free' && !window.__vh.sim.player.action, 8000);
-  const orbToast = await page.evaluate(() => document.getElementById('toasts').textContent);
+  // 待つ長さはゲームの中の tick で数える（手元の描画が遅い時にも、投げ終わるまで待つ。投げる動き 46 tick + 玉が飛ぶ間）。知らせは当たった時に読む
+  let orbToast = '';
+  const orbHit = await untilSim(page, () => {
+    const t = document.getElementById('toasts').textContent;
+    if (/標識玉が当たった/.test(t)) window.__orbToast = t;
+    return window.__vh.sim.monsters[0].markTicks > 0 && window.__vh.sim.player.mode === 'free' && !window.__vh.sim.player.action;
+  }, 400);
+  orbToast = await page.evaluate(() => window.__orbToast ?? document.getElementById('toasts').textContent);
   const orbLeft = await page.evaluate(() => window.__vh.sim.player.items.find((it) => it.itemId === 'item.marker_orb')?.count);
   check('標識玉（v0.42.0）: 標的の正面で投げると当たり、1 個減る（支給 2）。「地図に居場所が出る」と知らせる', orbHit && orbLeft === 1 && /標識玉が当たった（5 分ほど、地図に居場所が出る）/.test(orbToast), `${orbLeft} / ${orbToast}`);
   await page.evaluate((keep) => {
@@ -1847,6 +1853,67 @@ const startTraining = async (page, tap = false) => {
       && h0.sub === '突き' && h0.special === '気合い斬り' && h0.combo === '下がり斬り' && [...h0.missing, ...h3.missing].length === 0,
     JSON.stringify({ h0, hit, h1, h2, chain, h3 }));
   await ctx.close();
+}
+
+// ---- ハンターの動きの組（v0.57.0。D-150）: いまの組（断岳剣は 2G を手本に作り直した「解く方式」の動き）と、保留の組 v056（v0.56.0 までの動き。
+// ?motions=v056）。どちらも断岳剣の 抜刀斬り → 縦斬り → 斬り上げ → 薙ぎ払い が当たり、描けない動きが無い。設定に「ハンターの動き」が出る ----
+{
+  const COMBO = 1024;
+  const run = async (query) => {
+    const { ctx, page } = await open({ width: 1280, height: 720 }, false, query);
+    await page.click('#boot-start');
+    await until(page, () => window.__vh && !document.getElementById('base').hidden);
+    await startTraining(page);
+    await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+    await page.evaluate(() => {
+      const v = window.__vh, s = v.sim, m = s.monsters[0], p = s.player;
+      m.aiEnabled = false;
+      v.clock.advance = () => 0;
+      p.pos = { x: m.pos.x, y: 0, z: m.pos.z - 1.3 - 2.2 }; p.prevPos = { ...p.pos }; p.yaw = 0; p.prevYaw = 0;
+    });
+    // 主（抜刀斬り）→ 主（縦斬り）→ 同時押し（斬り上げ・低）→ 副（薙ぎ払い）。描画を挟みながら tick を進める
+    const seen = [];
+    const step = async (pressed, n) => {
+      for (let i = 0; i < n; i += 6) {
+        const r = await page.evaluate(([pressed, k]) => {
+          const s = window.__vh.sim, out = [];
+          for (let j = 0; j < k; j++) {
+            s.step({ moveX: 0, moveZ: 0, held: j === 0 ? pressed : 0, pressed: j === 0 ? pressed : 0, released: 0 });
+            for (const e of s.drainEvents()) if (e.type === 'action_start' && e.actor === 'player') out.push(e.actionId.replace('player.heavy_blade.', ''));
+          }
+          return out;
+        }, [i === 0 ? pressed : 0, Math.min(6, n - i)]);
+        seen.push(...r);
+        await nextFrames(page);
+      }
+    };
+    const hp0 = await page.evaluate(() => window.__vh.sim.monsters[0].hp);
+    await step(1, 66);
+    await step(1, 48);
+    await step(COMBO, 34);
+    await step(2, 40);
+    await page.screenshot({ path: `${OUT}86_motion_set_${query.includes('v056') ? 'v056' : '2g'}.png` });
+    const out = await page.evaluate((hp0) => ({ set: window.__vh.sim.content.motionSet, missing: [...window.__vh.view.missingClips], dmg: hp0 - window.__vh.sim.monsters[0].hp }), hp0);
+    // 設定の「ハンターの動き」
+    await page.keyboard.press('Escape');
+    await until(page, () => !document.getElementById('menu').hidden);
+    await page.evaluate(() => [...document.querySelectorAll('#menu .menu-head .tab')].find((b) => b.textContent === '設定').click());
+    const row = await page.evaluate(() => {
+      const r = [...document.querySelectorAll('#menu .row')].find((x) => x.querySelector('label')?.textContent.startsWith('ハンターの動き'));
+      const sel = r?.querySelector('select');
+      return r ? { value: sel?.value, options: [...(sel?.options ?? [])].map((o) => o.value), note: r.querySelector('small')?.textContent ?? '' } : null;
+    });
+    await ctx.close();
+    return { ...out, seen: seen.join(), row };
+  };
+  const now = await run(ARENA);
+  const held = await run(`${ARENA}&motions=v056`);
+  check('ハンターの動きの組（v0.57.0）: いまの組と保留の組 v056 のどちらでも、断岳剣の 抜刀斬り → 縦斬り → 斬り上げ → 薙ぎ払い が当たり、描けない動きが無い。設定に「ハンターの動き」（2G / v0.56.0 まで）が出て、いまの組の名前が書いてある',
+    now.set === '2g' && held.set === 'v056'
+      && now.seen === 'draw_slash,overhead,upswing_low,side_sweep' && held.seen === now.seen && now.dmg > 0 && held.dmg > 0
+      && now.missing.length === 0 && held.missing.length === 0
+      && now.row?.options.join() === '2g,v056' && now.row.value === '2g' && /いま: 2G の動き/.test(now.row.note) && /いま: v0\.56\.0 までの動き/.test(held.row?.note ?? ''),
+    JSON.stringify({ now, held }));
 }
 
 // ---- 弱った足取り（v0.52.0。#19 の M05）: 弱って巣へ向かう大型が歩くと、一歩ごとに体が片側へ傾き、頭が下がる。弱っていなければ傾かない ----

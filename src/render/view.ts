@@ -605,7 +605,8 @@ export class GameView {
       const cp = canSolve(fam.id, st) ? emptyPose() : clipPose(run.def.clip, t);
       if (!cp) this.missingClips.add(run.def.clip);
       pose = cp ?? emptyPose();
-      if (fam.id === 'heavy_blade') pose = groundedHeavyAttack(pose, run.def.clip, t);
+      // 断岳剣のキー姿勢の方式（保留の組 v056。D-150）: 下半身を接地させる。解く方式の時は、解いた姿が上書きする
+      if (fam.id === 'heavy_blade' && cp && !canSolve(fam.id, st)) pose = groundedHeavyAttack(pose, run.def.clip, t);
       pose.tumbleDir = (run.dirIndex * Math.PI) / 2;
       key = `action:${run.instanceId}`;
       if (run.def.weaponTrack) {
@@ -698,7 +699,8 @@ export class GameView {
       key = 'climb';
     } else {
       pose = locomotionPose(p.drawn, visualSpeed, this.phase, this.time);
-      if (!p.drawn || fam.id === 'heavy_blade') pose = this.groundLocomotion.frame(pose, p.drawn, visualSpeed, this.phase, dt, { x: pos.x, z: pos.z, yaw, y: pos.y, ground: (x, z) => sim.world.groundHeight(x, z) });
+      // 納刀と、キー姿勢の方式の断岳剣（保留の組 v056）の歩き。解く方式の武器の構え・歩きは hunterAnim が解く
+      if (!p.drawn || !WEAPON_STANCES[fam.id]) pose = this.groundLocomotion.frame(pose, p.drawn, visualSpeed, this.phase, dt, { x: pos.x, z: pos.z, yaw, y: pos.y, ground: (x, z) => sim.world.groundHeight(x, z) });
       key = p.drawn ? 'free-drawn' : 'free-sheathed';
       if (p.drawn) {
         weapon = ready;

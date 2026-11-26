@@ -1,0 +1,562 @@
+{
+  "schemaVersion": 1,
+  "note": "v0.56.0 までの武器の系統（持ち方・技の組み立て・構えの握り）。保留の組 v056（D-150）。手で編集しない。",
+  "families": [
+    {
+      "id": "heavy_blade",
+      "edge": {
+        "wearPerMotion": 1.6,
+        "label": "刃"
+      },
+      "labels": {
+        "main": "斬る",
+        "sub": "薙ぐ",
+        "special": "防御",
+        "combo": "斬上"
+      },
+      "summary": "大剣。隙を読んで、重い一撃を当てる。縦斬り・薙ぎ払い・斬り上げをつなぎ、溜め斬り（抜刀斬りからも溜められる）。刃で受ける遅い防御（受けるたびに刃が減る）。",
+      "name": "断岳剣",
+      "twoHanded": true,
+      "drawnMoveSpeed": 2.4,
+      "drawnTurnDegPerSec": 300,
+      "ready": {
+        "grip": [
+          -0.18,
+          1.02,
+          0.22
+        ],
+        "dir": [
+          -0.1,
+          0.92,
+          -0.38
+        ],
+        "planeNormal": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "blade": {
+        "from": 0.3,
+        "to": 1.75,
+        "radius": 0.2
+      },
+      "actions": {
+        "main": "player.heavy_blade.overhead",
+        "sub": "player.heavy_blade.side_sweep",
+        "drawAttack": "player.heavy_blade.draw_slash",
+        "draw": "player.heavy_blade.draw",
+        "sheathe": "player.heavy_blade.sheathe",
+        "combo": "player.heavy_blade.upswing"
+      },
+      "cancelNames": {
+        "overhead": "player.heavy_blade.overhead",
+        "side_sweep": "player.heavy_blade.side_sweep",
+        "upswing": "player.heavy_blade.upswing",
+        "upswing_low": "player.heavy_blade.upswing_low"
+      },
+      "cancelButtons": {
+        "upswing": "combo",
+        "upswing_low": "combo"
+      },
+      "guard": {
+        "startTicks": 10,
+        "activeFromTick": 5,
+        "endTicks": 14,
+        "recoilTicks": 24,
+        "breakTicks": 60,
+        "arcDegrees": 120,
+        "chipScale": 0.25,
+        "breakDamageScale": 0.7,
+        "turnDegPerSec": 90,
+        "edgeWear": 3,
+        "pose": {
+          "grip": [
+            -0.05,
+            1.05,
+            0.36
+          ],
+          "dir": [
+            0.55,
+            0.8,
+            0.1
+          ],
+          "planeNormal": [
+            0,
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "guard_blade",
+      "edge": {
+        "wearPerMotion": 1.5,
+        "label": "刃"
+      },
+      "labels": {
+        "main": "斬る",
+        "sub": "横斬り",
+        "special": "防御"
+      },
+      "summary": "短剣と盾。張り付いて手数。斬り下ろし（横斬り）から横斬り・斬り返し・回転斬りへつながり、連係の途中の副で盾打ち。防御を構えたまま道具が使え、構えから斬れる。",
+      "name": "護刃",
+      "twoHanded": false,
+      "drawnMoveSpeed": 3.6,
+      "drawnTurnDegPerSec": 540,
+      "ready": {
+        "grip": [
+          -0.31,
+          1.08,
+          0.14
+        ],
+        "dir": [
+          0.1001,
+          0.8008,
+          0.5906
+        ],
+        "planeNormal": [
+          -0.9753,
+          -0.0384,
+          0.2174
+        ]
+      },
+      "blade": {
+        "from": 0.13,
+        "to": 0.88,
+        "radius": 0.11
+      },
+      "actions": {
+        "main": "player.guard_blade.slash1",
+        "sub": "player.guard_blade.side",
+        "guardMain": "player.guard_blade.guard_slash",
+        "drawAttack": "player.guard_blade.lunge",
+        "draw": "player.guard_blade.draw",
+        "sheathe": "player.guard_blade.sheathe"
+      },
+      "cancelNames": {
+        "gb_slash1": "player.guard_blade.slash1",
+        "gb_side": "player.guard_blade.side",
+        "gb_slash2": "player.guard_blade.slash2",
+        "gb_return": "player.guard_blade.return",
+        "gb_round": "player.guard_blade.round",
+        "gb_bash": "player.guard_blade.bash"
+      },
+      "cancelButtons": {
+        "gb_slash2": "main",
+        "gb_return": "main",
+        "gb_round": "main",
+        "gb_bash": "sub"
+      },
+      "itemsWhileGuarding": true,
+      "offhand": "shield_small",
+      "offhandReady": [
+        0.3,
+        1.08,
+        0.28
+      ],
+      "offhandGuard": [
+        0.1,
+        1.2,
+        0.48
+      ],
+      "sheathSocket": "hip",
+      "guard": {
+        "startTicks": 4,
+        "activeFromTick": 2,
+        "endTicks": 8,
+        "recoilTicks": 14,
+        "breakTicks": 50,
+        "arcDegrees": 150,
+        "chipScale": 0.2,
+        "breakDamageScale": 0.7,
+        "turnDegPerSec": 180,
+        "recoilDistance": 0.5,
+        "pose": {
+          "grip": [
+            -0.34,
+            0.98,
+            0.02
+          ],
+          "dir": [
+            0.1507,
+            0.6027,
+            0.7836
+          ],
+          "planeNormal": [
+            -0.9738,
+            -0.0461,
+            0.2228
+          ]
+        }
+      }
+    },
+    {
+      "id": "war_maul",
+      "edge": {
+        "wearPerMotion": 1.3,
+        "label": "打面"
+      },
+      "labels": {
+        "main": "叩く",
+        "sub": "横殴り",
+        "special": "溜め"
+      },
+      "summary": "大槌。遅くて重い打撃。主は叩きつけ → 叩きつけ → 振り上げ、副は横殴り。固有を押し続けて溜め（溜めながら歩ける）、放した時の段階で溜め叩き・振り上げ・大叩きつけ（動きながらなら回転攻撃）。頭を叩くと気絶をためる。守りは無い。",
+      "name": "大槌",
+      "twoHanded": true,
+      "otherHandAlong": 0.5,
+      "drawnMoveSpeed": 2.6,
+      "drawnTurnDegPerSec": 300,
+      "ready": {
+        "grip": [
+          -0.2186,
+          0.8903,
+          -0.0045
+        ],
+        "dir": [
+          0.2516,
+          0.7346,
+          0.6301
+        ],
+        "planeNormal": [
+          -0.8461,
+          0.4831,
+          -0.2254
+        ]
+      },
+      "blade": {
+        "from": 0.95,
+        "to": 1.27,
+        "radius": 0.2
+      },
+      "actions": {
+        "main": "player.war_maul.smash",
+        "sub": "player.war_maul.swing",
+        "drawAttack": "player.war_maul.draw_smash",
+        "draw": "player.war_maul.draw",
+        "sheathe": "player.war_maul.sheathe",
+        "special": "player.war_maul.charge"
+      },
+      "cancelNames": {
+        "wm_smash": "player.war_maul.smash",
+        "wm_smash2": "player.war_maul.smash2",
+        "wm_upswing": "player.war_maul.upswing",
+        "wm_swing": "player.war_maul.swing",
+        "wm_charge": "player.war_maul.charge"
+      },
+      "cancelButtons": {
+        "wm_smash2": "main",
+        "wm_upswing": "main",
+        "wm_charge": "special"
+      },
+      "guard": null
+    },
+    {
+      "id": "twin_blades",
+      "edge": {
+        "wearPerMotion": 1.2,
+        "label": "刃"
+      },
+      "labels": {
+        "main": "斬る",
+        "sub": "回転斬り",
+        "special": "猛り",
+        "combo": "突き込む"
+      },
+      "summary": "双剣。両手の剣で手数。主は右・左・交差の連係、副は 1 回転して周りを斬る回転斬り、主と副の同時押しは突き込み。固有で「猛り」に入ると、スタミナが減り続ける間だけ威力が上がり、同時押しが連ね斬りになる。守りは無い。",
+      "name": "双剣",
+      "twoHanded": false,
+      "drawnMoveSpeed": 3.8,
+      "drawnTurnDegPerSec": 540,
+      "ready": {
+        "grip": [
+          -0.26,
+          1.1,
+          0.24
+        ],
+        "dir": [
+          0.1498,
+          0.7188,
+          0.6789
+        ],
+        "planeNormal": [
+          -0.9838,
+          0.0401,
+          0.1745
+        ]
+      },
+      "blade": {
+        "from": 0.1,
+        "to": 0.62,
+        "radius": 0.1
+      },
+      "actions": {
+        "main": "player.twin_blades.slash1",
+        "sub": "player.twin_blades.round",
+        "combo": "player.twin_blades.stab",
+        "drawAttack": "player.twin_blades.draw_cross",
+        "draw": "player.twin_blades.draw",
+        "sheathe": "player.twin_blades.sheathe",
+        "special": "player.twin_blades.demon_on"
+      },
+      "cancelNames": {
+        "tb_slash1": "player.twin_blades.slash1",
+        "tb_slash2": "player.twin_blades.slash2",
+        "tb_cross": "player.twin_blades.cross",
+        "tb_round": "player.twin_blades.round",
+        "tb_stab": "player.twin_blades.stab",
+        "tb_demon": "player.twin_blades.demon_on"
+      },
+      "cancelButtons": {
+        "tb_slash2": "main",
+        "tb_cross": "main",
+        "tb_demon": "special"
+      },
+      "demon": {
+        "staminaPerSec": 6,
+        "damageScale": 1.15,
+        "swap": {
+          "player.twin_blades.stab": "player.twin_blades.flurry",
+          "player.twin_blades.demon_on": "player.twin_blades.demon_off"
+        },
+        "labels": {
+          "special": "解く",
+          "combo": "連ね斬り"
+        }
+      },
+      "offhand": "blade_left",
+      "sheathSocket": "hip",
+      "guard": null
+    },
+    {
+      "id": "long_blade",
+      "edge": {
+        "wearPerMotion": 1.6,
+        "label": "刃"
+      },
+      "labels": {
+        "main": "斬る",
+        "sub": "突き",
+        "special": "気合い斬り",
+        "combo": "下がり斬り"
+      },
+      "summary": "太刀。大剣より軽く速い両手の斬り。主は 袈裟 → 斬り上げ → 突き、副は突き、主と副の同時押しは下がりながらの斬り。当てるほど「気」がたまり、固有で気を使う気合い斬り（一 → 二 → 三 → 大回り斬り）。気が満ちている間は威力が上がる。守りは無い。",
+      "name": "太刀",
+      "twoHanded": true,
+      "otherHandAlong": -0.2,
+      "drawnMoveSpeed": 3.2,
+      "drawnTurnDegPerSec": 420,
+      "ready": {
+        "grip": [
+          -0.04,
+          1.08,
+          0.34
+        ],
+        "dir": [
+          0.0201,
+          0.4511,
+          0.8922
+        ],
+        "planeNormal": [
+          -0.9998,
+          0.009,
+          0.0179
+        ]
+      },
+      "blade": {
+        "from": 0.15,
+        "to": 1.2,
+        "radius": 0.12
+      },
+      "actions": {
+        "main": "player.long_blade.kesa",
+        "sub": "player.long_blade.thrust",
+        "combo": "player.long_blade.back_cut",
+        "drawAttack": "player.long_blade.draw_cut",
+        "draw": "player.long_blade.draw",
+        "sheathe": "player.long_blade.sheathe",
+        "special": "player.long_blade.spirit1"
+      },
+      "cancelNames": {
+        "lb_kesa": "player.long_blade.kesa",
+        "lb_rise": "player.long_blade.rise",
+        "lb_thrust": "player.long_blade.thrust",
+        "lb_stab": "player.long_blade.thrust",
+        "lb_rise_s": "player.long_blade.rise",
+        "lb_back": "player.long_blade.back_cut",
+        "lb_spirit": "player.long_blade.spirit1",
+        "lb_spirit2": "player.long_blade.spirit2",
+        "lb_spirit3": "player.long_blade.spirit3",
+        "lb_round": "player.long_blade.round"
+      },
+      "cancelButtons": {
+        "lb_rise": "main",
+        "lb_thrust": "main",
+        "lb_stab": "sub",
+        "lb_rise_s": "sub",
+        "lb_spirit": "special",
+        "lb_spirit2": "special",
+        "lb_spirit3": "special",
+        "lb_round": "special"
+      },
+      "spirit": {
+        "max": 100,
+        "gainPerHit": 9,
+        "decayDelayTicks": 240,
+        "decayPerSec": 4,
+        "fullScale": 1.1,
+        "label": "気"
+      },
+      "guard": null
+    },
+    {
+      "id": "long_lance",
+      "edge": {
+        "wearPerMotion": 1.4,
+        "label": "穂先"
+      },
+      "labels": {
+        "main": "突く",
+        "sub": "上段",
+        "special": "防御",
+        "dodge": "跳び"
+      },
+      "summary": "ランス。固い盾で受けて刺す。防御中に主で構え突き、副で受け返し。回避は短い跳び。",
+      "name": "長尖槍",
+      "twoHanded": false,
+      "drawnMoveSpeed": 1.8,
+      "drawnTurnDegPerSec": 200,
+      "ready": {
+        "grip": [
+          -0.3,
+          1.02,
+          0.1
+        ],
+        "dir": [
+          0.0597,
+          0.0697,
+          0.9958
+        ],
+        "planeNormal": [
+          -0.9982,
+          0,
+          0.0599
+        ]
+      },
+      "blade": {
+        "from": 0.9,
+        "to": 2.36,
+        "radius": 0.1
+      },
+      "actions": {
+        "main": "player.long_lance.thrust1",
+        "sub": "player.long_lance.high",
+        "drawAttack": "player.long_lance.lunge",
+        "draw": "player.long_lance.draw",
+        "sheathe": "player.long_lance.sheathe",
+        "guardMain": "player.long_lance.guard_thrust",
+        "guardSub": "player.long_lance.counter",
+        "dodge": "player.long_lance.hop"
+      },
+      "cancelNames": {
+        "ll_thrust1": "player.long_lance.thrust1",
+        "ll_thrust2": "player.long_lance.thrust2",
+        "ll_thrust3": "player.long_lance.thrust3",
+        "ll_high": "player.long_lance.high"
+      },
+      "cancelButtons": {
+        "ll_thrust2": "main",
+        "ll_thrust3": "main"
+      },
+      "offhand": "shield_great",
+      "offhandReady": [
+        0.3,
+        1.0,
+        0.25
+      ],
+      "offhandGuard": [
+        0.05,
+        1.12,
+        0.5
+      ],
+      "guard": {
+        "startTicks": 6,
+        "activeFromTick": 3,
+        "endTicks": 10,
+        "recoilTicks": 16,
+        "breakTicks": 60,
+        "arcDegrees": 160,
+        "chipScale": 0.1,
+        "breakDamageScale": 0.6,
+        "turnDegPerSec": 120,
+        "recoilDistance": 0.3,
+        "pose": {
+          "grip": [
+            -0.32,
+            0.95,
+            -0.02
+          ],
+          "dir": [
+            0.0596,
+            0.0993,
+            0.9933
+          ],
+          "planeNormal": [
+            -0.9982,
+            0,
+            0.0599
+          ]
+        }
+      }
+    },
+    {
+      "id": "ring_bow",
+      "labels": {
+        "main": "射る",
+        "sub": "散らし"
+      },
+      "summary": "弓。主を押し続けて溜め、離して射る。6〜12m が適正距離。守りは無い。",
+      "name": "環弓",
+      "twoHanded": false,
+      "primaryHand": "left",
+      "drawnMoveSpeed": 3.0,
+      "drawnTurnDegPerSec": 420,
+      "ready": {
+        "grip": [
+          0.26,
+          1.08,
+          0.36
+        ],
+        "dir": [
+          -0.3015,
+          0.9045,
+          0.3015
+        ],
+        "planeNormal": [
+          -0.9534,
+          -0.2889,
+          -0.0867
+        ]
+      },
+      "blade": {
+        "from": -0.75,
+        "to": 0.75,
+        "radius": 0.05
+      },
+      "actions": {
+        "main": "player.ring_bow.shot",
+        "sub": "player.ring_bow.spread",
+        "drawAttack": "player.ring_bow.shot",
+        "draw": "player.ring_bow.draw",
+        "sheathe": "player.ring_bow.sheathe"
+      },
+      "cancelNames": {
+        "rb_shot": "player.ring_bow.shot",
+        "rb_spread": "player.ring_bow.spread"
+      },
+      "guard": null
+    }
+  ]
+}

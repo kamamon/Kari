@@ -1,6 +1,7 @@
 // メニュー（設定 / 操作表 / 検証）。設定画面は通常のスクロールを保つ（touch-action を殺さない）。
 import { APP_VERSION, BUILD_ID } from '../core/assets';
 import type { Settings, SettingsStore } from '../save/settings';
+import { MOTION_SETS, appliedMotionSet, motionSetOf } from '../render/motionSet';
 import { canFullscreen, fullscreenHint, isFullscreen, isStandalone, toggleFullscreen } from './fullscreen';
 
 export interface MenuHost {
@@ -225,6 +226,24 @@ export class Menu {
     this.row('描画の上限', '計算は常に 60Hz', this.select('fpsCap', [['60', '60fps'], ['30', '30fps（発熱を抑える）']], true));
     this.row('内部解像度', '3D だけを粗くする。文字は鮮明なまま', this.range('renderScale', 0.65, 1, 0.05));
     this.row('影', '切り替えは次回の起動から', this.check('shadows'));
+    // ハンターの動きの組（v0.57.0。D-150）: 読み込みの時に決まるので、切り替えは読み直した時から
+    this.heading('動き');
+    const motion = document.createElement('span');
+    const pick = this.select('motionSet', MOTION_SETS.map((m) => [m.id, m.name] as [string, string]));
+    motion.appendChild(pick);
+    const hunting = this.host.sessionInfo().hunt;
+    const reload = this.button('読み直す', () => location.reload());
+    const sync = (): void => {
+      reload.hidden = hunting || motionSetOf(this.store.value.motionSet) === appliedMotionSet();
+    };
+    pick.addEventListener('change', sync);
+    sync();
+    motion.appendChild(reload);
+    this.row(
+      'ハンターの動き',
+      `2G の動きを手本に作り直している途中。前の動きも選べる。切り替えは読み直した時から${hunting ? '（狩りの途中は、拠点へ戻ってから）' : ''}。いま: ${MOTION_SETS.find((m) => m.id === appliedMotionSet())?.name ?? ''}`,
+      motion,
+    );
     this.heading('音');
     this.row('全体', '', this.range('volMaster', 0, 1, 0.05));
     this.row('効果音', '', this.range('volSe', 0, 1, 0.05));

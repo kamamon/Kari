@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "kariActionId": "src/render/contactLocomotion.ts#GroundedLocomotion.sheathed_sprint",
+  "idKind": "rendererState",
+  "observed2gMove": "納刀疾走（スタミナ消費）",
+  "source": [
+    {
+      "title": "PSP日本版MHP2G／武器訓練後の最初の探索章（位置候補）",
+      "url": "https://www.youtube.com/watch?v=gPHJlI8714o",
+      "edition": "PSP日本版と動画に記載。映像は未直接検査",
+      "from": "02:41:50",
+      "to": "03:03:20",
+      "note": "雪山草摘みの章。走り・疾走・武器を納めた歩行の個別のコマは未測定"
+    }
+  ],
+  "startState": "平坦地／参考用。PSP版の実際の開始状態は未観測",
+  "keys": [
+    {
+      "key": "K0",
+      "time": "未測定",
+      "support": "左足",
+      "feet": {
+        "L": [
+          0.11,
+          0.25,
+          7
+        ],
+        "R": [
+          -0.13,
+          -0.22,
+          -20
+        ]
+      },
+      "pelvis": {
+        "height": 0.85,
+        "yaw": 0,
+        "pitch": 14,
+        "roll": 0
+      },
+      "chest": {
+        "yaw": 0,
+        "pitch": 11,
+        "roll": 0
+      },
+      "head": "視線は敵・進行方向。角度の原作値は不明",
+      "weapon": {
+        "grip": "不明",
+        "tip": "不明",
+        "edge": "収納中",
+        "leftHand": "武器を持たない腕は姿勢に追従（未観測）"
+      },
+      "root": "原作未測定",
+      "notes": "走りの蹴り出し。疾走はスタミナを使う。原作の歩幅と体幹角度は未測定",
+      "valueBasis": "Kariモデル用の暫定制作値（2Gの画像からの実測ではない）"
+    },
+    {
+      "key": "K1",
+      "time": "未測定",
+      "support": "空中",
+      "feet": {
+        "L": [
+          0.1,
+          0.22,
+          5
+        ],
+        "R": [
+          -0.1,
+          -0.1,
+          -5
+        ]
+      },
+      "pelvis": {
+        "height": 0.89,
+        "yaw": 0,
+        "pitch": 14,
+        "roll": 0
+      },
+      "chest": {
+        "yaw": 0,
+        "pitch": 11,
+        "roll": 0
+      },
+      "head": "視線は敵・進行方向。角度の原作値は不明",
+      "weapon": {
+        "grip": "不明",
+        "tip": "不明",
+        "edge": "収納中",
+        "leftHand": "武器を持たない腕は姿勢に追従（未観測）"
+      },
+      "root": "原作未測定",
+      "notes": "飛翔位相、足はどちらも空中。疾走はスタミナを使う。原作の歩幅と体幹角度は未測定",
+      "valueBasis": "Kariモデル用の暫定制作値（2Gの画像からの実測ではない）"
+    },
+    {
+      "key": "K2",
+      "time": "未測定",
+      "support": "右足",
+      "feet": {
+        "L": [
+          0.11,
+          0.22,
+          7
+        ],
+        "R": [
+          -0.13,
+          -0.13,
+          -22
+        ]
+      },
+      "pelvis": {
+        "height": 0.85,
+        "yaw": 0,
+        "pitch": 14,
+        "roll": 0
+      },
+      "chest": {
+        "yaw": 0,
+        "pitch": 11,
+        "roll": 0
+      },
+      "head": "視線は敵・進行方向。角度の原作値は不明",
+      "weapon": {
+        "grip": "不明",
+        "tip": "不明",
+        "edge": "収納中",
+        "leftHand": "武器を持たない腕は姿勢に追従（未観測）"
+      },
+      "root": "原作未測定",
+      "notes": "右足着地で衝撃を受ける。疾走はスタミナを使う。原作の歩幅と体幹角度は未測定",
+      "valueBasis": "Kariモデル用の暫定制作値（2Gの画像からの実測ではない）"
+    },
+    {
+      "key": "K3",
+      "time": "未測定",
+      "support": "空中",
+      "feet": {
+        "L": [
+          0.1,
+          0.22,
+          5
+        ],
+        "R": [
+          -0.1,
+          -0.1,
+          -5
+        ]
+      },
+      "pelvis": {
+        "height": 0.89,
+        "yaw": 0,
+        "pitch": 14,
+        "roll": 0
+      },
+      "chest": {
+        "yaw": 0,
+        "pitch": 11,
+        "roll": 0
+      },
+      "head": "視線は敵・進行方向。角度の原作値は不明",
+      "weapon": {
+        "grip": "不明",
+        "tip": "不明",
+        "edge": "収納中",
+        "leftHand": "武器を持たない腕は姿勢に追従（未観測）"
+      },
+      "root": "原作未測定",
+      "notes": "反対足の飛翔位相。疾走はスタミナを使う。原作の歩幅と体幹角度は未測定",
+      "valueBasis": "Kariモデル用の暫定制作値（2Gの画像からの実測ではない）"
+    },
+    {
+      "key": "K4",
+      "time": "未測定",
+      "support": "左足",
+      "feet": {
+        "L": [
+          0.11,
+          0.25,
+          7
+        ],
+        "R": [
+          -0.13,
+          -0.22,
+          -20
+        ]
+      },
+      "pelvis": {
+        "height": 0.85,
+        "yaw": 0,
+        "pitch": 14,
+        "roll": 0
+      },
+      "chest": {
+        "yaw": 0,
+        "pitch": 11,
+        "roll": 0
+      },
+      "head": "視線は敵・進行方向。角度の原作値は不明",
+      "weapon": {
+        "grip": "不明",
+        "tip": "不明",
+        "edge": "収納中",
+        "leftHand": "武器を持たない腕は姿勢に追従（未観測）"
+      },
+      "root": "原作未測定",
+      "notes": "左足接地。疾走はスタミナを使う。原作の歩幅と体幹角度は未測定",
+      "valueBasis": "Kariモデル用の暫定制作値（2Gの画像からの実測ではない）"
+    }
+  ],
+  "weaponPath": "構え・移動の暫定案。原作映像で未確認",
+  "rootMotion": "Kari simulationの移動を正本とする。原作の速度・距離未測定",
+  "contactEvents": "交互の着地と短い飛翔（暫定）",
+  "differencesFromKari": "原作との差は未測定。現在の移動速度・姿勢キーを保留し、映像比較後に上書きする",
+  "unknowns": [
+    "対象章の映像を直接再生・コマ確認していない",
+    "原作PSP版の支持脚、腰の回転、フレーム数、移動距離は未測定"
+  ],
+  "kariReference": {
+    "family": "common",
+    "implementation": "歩行と別の速度状態・足上げ量・胴の角度"
+  },
+  "evidenceStatus": "暫定制作票（原作の実測ではない）"
+}

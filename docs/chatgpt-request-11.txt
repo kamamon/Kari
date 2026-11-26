@@ -120,7 +120,7 @@ Kari の ID または場所 → 見てほしい 2G の動き
 5. 武器の技（Kari の ID → 見てほしい 2G の技）
 ============================================================
 
-断岳剣（大剣）: overhead=縦斬り、side_sweep=横殴り、upswing=斬り上げ、upswing_low=（縦斬りの後の）斬り上げ、
+断岳剣（大剣）: overhead=縦斬り、side_sweep=薙ぎ払い（2026-11-26 に直した。最初は「横殴り」と書き間違えていた）、upswing=斬り上げ、upswing_low=（縦斬りの後の）斬り上げ、
                 draw_slash=抜刀斬り、溜め斬り（overhead・draw_slash を押し続けた時の溜めの姿勢）、guard=武器で受ける
 護刃（片手剣）: slash1=斬り下ろし、side=横斬り、slash2=横斬り（返し）、return=斬り返し、round=回転斬り、bash=盾攻撃、
                 guard_slash=ガード中の攻撃、lunge=突進斬り（抜刀攻撃）、ガード中の道具

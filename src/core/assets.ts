@@ -1,6 +1,6 @@
 // 素材とデータの読み込み。URL は必ず Vite の BASE_URL から作る（ルート固定の /assets/ を書かない）。
 import type { Content } from '../data/schemas';
-import { assembleContent } from '../data/validators';
+import { assembleContent, type LoadOptions } from '../data/validators';
 
 declare const __BUILD_ID__: string;
 declare const __APP_VERSION__: string;
@@ -36,6 +36,7 @@ export async function fetchJson(path: string, retries = 2): Promise<unknown> {
   throw new LoadError(path, last);
 }
 
-export function loadContent(): Promise<Content> {
-  return assembleContent((p) => fetchJson(`data/${p}`));
+/** ゲームのデータを読む。opts.motionSet: ハンターの動きの組（v0.57.0。無ければ、いまの組） */
+export function loadContent(opts: LoadOptions = {}): Promise<Content> {
+  return assembleContent((p) => fetchJson(`data/${p}`), opts);
 }

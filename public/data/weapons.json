@@ -20,7 +20,7 @@
       "twoHanded": true,
       "drawnMoveSpeed": 2.4,
       "drawnTurnDegPerSec": 300,
-      "ready": { "grip": [-0.18, 1.02, 0.22], "dir": [-0.10, 0.92, -0.38], "planeNormal": [-1, 0, 0] },
+      "ready": { "grip": [-0.17, 1, 0.25], "dir": [-0.0499, 0.759, 0.6492], "planeNormal": [-0.9988, -0.0379, -0.0325] },
       "blade": { "from": 0.30, "to": 1.75, "radius": 0.20 },
       "actions": {
         "main": "player.heavy_blade.overhead",
@@ -48,7 +48,7 @@
         "breakDamageScale": 0.7,
         "turnDegPerSec": 90,
         "edgeWear": 3,
-        "pose": { "grip": [-0.05, 1.05, 0.36], "dir": [0.55, 0.80, 0.10], "planeNormal": [0, 0, 1] }
+        "pose": { "grip": [-0.08, 1.02, 0.4], "dir": [0.1005, 0.9849, 0.1407], "planeNormal": [0.014, 0.14, -0.9901] }
       }
     },
     {

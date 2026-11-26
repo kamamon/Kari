@@ -1206,6 +1206,11 @@ export interface LootDef {
 export interface ContentIndex {
   schemaVersion: number;
   contentVersion: string;
+  /**
+   * ハンターの動きの組（v0.57.0。D-150）: current はいまの組の名前。held は保留の組（名前 → 組の定義のファイル）。
+   * 保留の組を選ぶと、組の定義の files にあるファイル（技・軌道・移動曲線）と、武器の系統が、組のものへ入れ替わる。
+   */
+  motionSets?: { current: string; held: Record<string, string> };
   files: {
     actions: string[];
     tracks: string[];
@@ -1244,8 +1249,22 @@ export interface ContentIndex {
   };
 }
 
+/** 保留の組の定義（public/data/motionsets/<名前>/set.json。v0.57.0。D-150） */
+export interface MotionSetDef {
+  schemaVersion: number;
+  id: string;
+  name: string;
+  note?: string;
+  /** 武器の系統（weapons.json の families の代わり）のファイル。中身は { schemaVersion, families } */
+  families: string;
+  /** 入れ替えるファイル: content.json の files にある名前 → 組のファイル */
+  files: Record<string, string>;
+}
+
 export interface Content {
   contentVersion: string;
+  /** 読み込んだハンターの動きの組の名前（v0.57.0。D-150） */
+  motionSet: string;
   /** 属性と状態異常の決まり（v0.33.0） */
   elements: ElementRules;
   /** 防具の技能（v0.33.0） */

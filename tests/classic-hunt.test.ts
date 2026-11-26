@@ -9,6 +9,11 @@ import { COMBO_SLACK_TICKS, resolveIncomingHit } from '../src/game/player';
 import { Simulation } from '../src/game/sim';
 import { areaFrame } from '../src/ui/localMap';
 import { Btn, baseOptions, frame, loadContent, placeInFrontOfHead, press, run } from './helpers';
+import { evalMotion, rootAt, solveBody, vadd, vdot, vlen, vmul, vnorm, vsub, type Vec } from '../src/render/bodySolve';
+import { toAction } from '../src/render/humanLimits';
+import { WEAPON_MOTIONS, WEAPON_STANCES } from '../src/render/weaponClipSpecs';
+
+const cross = (a: Vec, b: Vec): Vec => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
 
 let content: Content;
 beforeAll(async () => {
@@ -161,13 +166,41 @@ describe('断岳剣（H03 の大剣。v0.40.0）', () => {
     }
   });
 
-  it('刃の向き（描画だけ）: 斬り上げは手首で刃を返し、隣り合うキーの面の向きが真逆にならない', () => {
+  it('刃の向き（描画だけ）: 判定のある間は、刃（武器の -Z）が振る向きの前に立つ（v0.57.0 から、解いた動きで。D-150）', () => {
+    const S = WEAPON_STANCES.heavy_blade!;
+    let n = 0;
+    for (const clip of ['hb_attack_vertical_01', 'hb_draw_slash_01', 'hb_attack_side_01', 'hb_attack_upswing_01', 'hb_attack_upswing_low_01']) {
+      const m = WEAPON_MOTIONS[clip]!;
+      const h = [...content.actions.values()].find((a) => a.clip === clip)!.hitWindows[0]!;
+      const tipAt = (t: number): { tip: Vec; edge: Vec } => {
+        const e = evalMotion(m, t);
+        const s = solveBody(e.ctl, e.footL, e.footR, S.hands);
+        const root = rootAt(m, t);
+        const tip = toAction(vadd(s.weapon.grip, vmul(s.weapon.dir, 1.5)), root);
+        // 武器の -Z = dir × normal（rig.ts の basis: x = normal、y = dir、z = x × y）。向きだけなので回転は yaw だけ
+        const c = cross(s.weapon.dir, s.weapon.normal);
+        const r = (root.yaw * Math.PI) / 180;
+        return { tip, edge: [c[0] * Math.cos(r) + c[2] * Math.sin(r), c[1], -c[0] * Math.sin(r) + c[2] * Math.cos(r)] };
+      };
+      for (let t = h.from; t < h.to; t++) {
+        const a = tipAt(t), b = tipAt(t + 1);
+        const v = vsub(b.tip, a.tip);
+        if (vlen(v) < 0.01) continue;
+        expect(vdot(vnorm(v), vnorm(a.edge)), `${clip} tick ${t}`).toBeGreaterThan(0.3);
+        n++;
+      }
+    }
+    expect(n).toBeGreaterThan(30);
+  });
+
+  it('保留の組 v056（D-150）: 手で書いた軌道の面の向きは、斬り上げで手首を返し、隣り合うキーで真逆にならない（v0.40.0 の決まり）', async () => {
+    const held = await loadContent({ motionSet: 'v056' });
     for (const id of ['hb_upswing_blade_sweep', 'hb_upswing_low_blade_sweep', 'hb_draw_track', 'hb_sheathe_track']) {
-      const tr = content.tracks.get(id)!;
+      const tr = held.tracks.get(id)!;
       expect(tr.keys.every((k) => k.normal), id).toBe(true);
     }
     // 振り上げる間（判定の区間）は、刃が上（+X の面の向きで、刃 = -Z が上を向く）
-    const up = content.tracks.get('hb_upswing_blade_sweep')!;
+    const up = held.tracks.get('hb_upswing_blade_sweep')!;
     for (const k of up.keys.filter((k) => k.t >= 16 && k.t <= 27)) expect(k.normal).toEqual([1, 0, 0]);
   });
 });

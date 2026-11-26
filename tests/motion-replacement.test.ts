@@ -110,7 +110,7 @@ describe('runtime の動作差し替え', () => {
     expect(maxLift).toBeGreaterThan(0.05);
   });
 
-  it('90/180° の急反転でも、6 系統×30/60/120fps で脚の届きと関節範囲を保つ', async () => {
+  it('90/180° の急反転でも、7 系統×30/60/120fps で脚の届きと関節範囲を保つ', async () => {
     const content = await loadContent();
     let scenarios = 0;
     for (const family of Object.keys(WEAPON_STANCES)) for (const turn of [Math.PI / 2, Math.PI]) for (const fps of [30, 60, 120]) {
@@ -132,7 +132,7 @@ describe('runtime の動作差し替え', () => {
       }
       scenarios++;
     }
-    expect(scenarios).toBe(36);
+    expect(scenarios).toBe(42);
   });
 
   it('疾走は、脚の届く歩幅で短い空中局面を持つ（接地する所は体の前 0.30m・後ろ 0.45m まで。v0.28.1）', () => {
@@ -187,7 +187,7 @@ describe('歩く・走る時に、体が跳ねない（v0.28.1。利用者の指
     }
   });
 
-  it('武器を構えて歩く（6 系統）: 腰の上下は 3cm 以内のなめらかな波（30/60/120fps）', async () => {
+  it('武器を構えて歩く（7 系統）: 腰の上下は 3cm 以内のなめらかな波（30/60/120fps）', async () => {
     const content = await loadContent();
     for (const family of Object.keys(WEAPON_STANCES)) {
       const full = content.families.get(family)!.drawnMoveSpeed;
@@ -220,11 +220,12 @@ describe('歩く・走る時に、体が跳ねない（v0.28.1。利用者の指
   });
 });
 
-describe('断岳剣の下半身と体幹', () => {
+// v0.56.0 までの断岳剣（キー姿勢の方式。保留の組 v056。D-150）。いまの組の断岳剣は「解く方式」で、tests/human-motion.test.ts が調べる
+describe('断岳剣の下半身と体幹（保留の組 v056）', () => {
   it('実際の靴メッシュ254頂点が、五つの攻撃（斬り上げ 2 つを含む。v0.40.0）の全1/4 tickで地面に埋まらない', async () => {
     const mock = vi.spyOn(TextureLoader.prototype, 'load').mockImplementation(() => new Texture());
     try {
-      const content = await loadContent(), rig = new HunterRig();
+      const content = await loadContent({ motionSet: 'v056' }), rig = new HunterRig();
       const mesh = rig.root.getObjectByName('hunter_body') as SkinnedMesh;
       const position = mesh.geometry.getAttribute('position'), indices = mesh.geometry.getAttribute('skinIndex'), weights = mesh.geometry.getAttribute('skinWeight');
       const footIds = mesh.skeleton.bones.flatMap((bone, i) => bone.name === 'footL' || bone.name === 'footR' ? [i] : []);
@@ -254,7 +255,7 @@ describe('断岳剣の下半身と体幹', () => {
     // GPU を使わず、テクスチャの通信だけを置き換えて、ゲームの本物の骨格/腕 IK を通す。
     const mock = vi.spyOn(TextureLoader.prototype, 'load').mockImplementation(() => new Texture());
     try {
-      const content = await loadContent(), rig = new HunterRig();
+      const content = await loadContent({ motionSet: 'v056' }), rig = new HunterRig();
       for (const name of ['overhead', 'side_sweep', 'draw_slash', 'upswing', 'upswing_low']) {
         const a = content.actions.get(`player.heavy_blade.${name}`)!;
         const track = content.tracks.get(a.weaponTrack!)!;

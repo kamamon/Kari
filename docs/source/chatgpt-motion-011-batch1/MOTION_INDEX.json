@@ -1,0 +1,218 @@
+{
+  "schemaVersion": 1,
+  "requestNo": "011",
+  "project": "Kari",
+  "editionTarget": "MHP2G PSP 日本版",
+  "referenceRepoMain": "7b22842c2cbce35f4eb41c515b5cd977a3682352",
+  "ticketCount": 41,
+  "observationConfirmed": 0,
+  "designDraft": 41,
+  "precision": "原作未観測・位置と角度はKari用仮案。章の時刻は動作時刻ではない",
+  "items": [
+    {
+      "path": "player.common.carve.json",
+      "blobSha": "ba4850e7ee3843e9955cf5cea02c0d3d23d0fd35",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.common.roll.json",
+      "blobSha": "30965166d8c1068c440682c82154a8a494c12487",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.guard_blade.draw.json",
+      "blobSha": "c0ba4fc3c78d0bf264f90e85e30d37db67ae0759",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.guard_blade.sheathe.json",
+      "blobSha": "5fe430409d61afb9baca7b6b580fa0994a54f8ae",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.heavy_blade.draw.json",
+      "blobSha": "9bf1fc9d4102da1160eb90ea9e35d57093a65650",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.heavy_blade.draw_slash.json",
+      "blobSha": "cad5c98962db49b0475d86a68f31159b82265707",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.heavy_blade.overhead.json",
+      "blobSha": "44192b1a9c53ca8d3b6751b7e6b92b48dece2d81",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.heavy_blade.sheathe.json",
+      "blobSha": "09b79b6b55a63cf7b799d219467ea5378d6610d8",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.heavy_blade.side_sweep.json",
+      "blobSha": "ec06296b25d467340965b9492056485d7d61e809",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.heavy_blade.upswing.json",
+      "blobSha": "23073b70e200db3f76ad6860dd1736003a8245ee",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.heavy_blade.upswing_low.json",
+      "blobSha": "670f2a933ef829412f980a3efe2e64161206b9cc",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.item.drink.json",
+      "blobSha": "f7b42865f5983191d9d277a5da26c1656894c164",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.item.whet.json",
+      "blobSha": "368ee94afc0e03a31c12dc9a66db1e0d7da21e83",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.long_blade.draw.json",
+      "blobSha": "d50de3214809c1d66c46dbd68e1a5664d2493192",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.long_blade.sheathe.json",
+      "blobSha": "9fda823d777784d7c3fdb473404becdf3c82a6d9",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.long_lance.draw.json",
+      "blobSha": "35ad9ebdd6b3666948a79fc49c1c24ebccc95b92",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.long_lance.sheathe.json",
+      "blobSha": "199875d12448a84361ee00d11c926761f45f2d65",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.ring_bow.draw.json",
+      "blobSha": "060a5098780091d66bbcc394db639cb3adeb84e0",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.ring_bow.sheathe.json",
+      "blobSha": "3105637a375168bbb0f7825dcbdaf12f5d4acf2b",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.twin_blades.draw.json",
+      "blobSha": "746f33dce9c9b2b3d4f34f28a11f1f0d119872fa",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.twin_blades.sheathe.json",
+      "blobSha": "bbeb5964f24e7c1d26bbe3899b53753f6d50f8f7",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.war_maul.draw.json",
+      "blobSha": "a0137e9f0f07d1ce92ad6e96745508ce1e43052b",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "player.war_maul.sheathe.json",
+      "blobSha": "a76c33485239ed4c84be2df84391c6d2399a6138",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_contactLocomotion.ts.GroundedLocomotion.sheathed_run.json",
+      "blobSha": "65ba44187a19ca516f9baed478aa0361aaa6b879",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_contactLocomotion.ts.GroundedLocomotion.sheathed_sprint.json",
+      "blobSha": "5a1c45eb96ca86a4b25ca197e55e6e337ae62c32",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_contactLocomotion.ts.GroundedLocomotion.sheathed_walk.json",
+      "blobSha": "903664dac8e685dae597582703a6f5c6d015f593",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_contactLocomotion.ts.GroundedLocomotion.walk.heavy_blade.json",
+      "blobSha": "f4ecb59e95d92165961b635665d8970b9e7cdca2",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.idle.guard_blade.json",
+      "blobSha": "39b9f4756fc22a7e638432a87a0aa2e4509cc53a",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.idle.long_blade.json",
+      "blobSha": "98247367a61963607e93b37fa0985ce28cfe85b9",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.idle.long_lance.json",
+      "blobSha": "25d52dabdb75cc209f3e11568244caaa600a7163",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.idle.ring_bow.json",
+      "blobSha": "2256e55b3e646b523f7c7ceb7ccc9bd81e5881dc",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.idle.twin_blades.json",
+      "blobSha": "b438f5f01b6c029039f9895222548f3e47e25889",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.idle.war_maul.json",
+      "blobSha": "f2933b62b5bcc65c86ef3c720f00adac4e9ae14b",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.walk.guard_blade.json",
+      "blobSha": "47a627fb5ee42bb4a3757a7e084c360a7ca77f4c",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.walk.long_blade.json",
+      "blobSha": "ab41bf847024f439804d35e03f38988cd790f932",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.walk.long_lance.json",
+      "blobSha": "bbbbc18404806fa6342fe66611c50210de72ddad",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.walk.ring_bow.json",
+      "blobSha": "6eff632acab62f586dd749705f3123ce9d7ce30e",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.walk.twin_blades.json",
+      "blobSha": "aa0614959aea0830ceaf34c0681e9af365a8bf24",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_hunterAnim.ts.walk.war_maul.json",
+      "blobSha": "073b37e3a9ed82836788b89fc1ff35f699ad062b",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_poses.ts.STANCE.json",
+      "blobSha": "e603c04c11aae4ece9ef6d9cf19ba8e3f7814e39",
+      "status": "provisional-not-observed"
+    },
+    {
+      "path": "src_render_view.ts.guard.heavy_blade.json",
+      "blobSha": "0238a933ee4c6c3e55fa5b2733f07a9b9dce9407",
+      "status": "provisional-not-observed"
+    }
+  ]
+}

@@ -27,6 +27,11 @@ export interface Settings {
   mute: boolean;
   verify: boolean;
   dummyAttacks: boolean;
+  /**
+   * ハンターの動きの組（v0.57.0。D-150）: '2g' = 2G を手本に作り直している動き、'v056' = v0.56.0 までの動き（保留）。
+   * 読み込みの時に使う（変えたら読み直す）。知らない値は '2g'（src/render/motionSet.ts の motionSetOf）
+   */
+  motionSet: string;
   /** ボタンごとの位置ずらし (CSS px) */
   layout: Record<string, { dx: number; dy: number }>;
 }
@@ -57,6 +62,7 @@ export function defaultSettings(): Settings {
     mute: false,
     verify: false,
     dummyAttacks: true,
+    motionSet: '2g',
     layout: {},
   };
 }

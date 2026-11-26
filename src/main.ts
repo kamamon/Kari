@@ -9,6 +9,7 @@ import { guardSurface, installGestureGuard } from './input/gestureGuard';
 import { IdbBackend, type SaveBackend } from './save/saveDb';
 import { SaveManager } from './save/saveManager';
 import { SettingsStore } from './save/settings';
+import { motionSetOf, useMotionSet } from './render/motionSet';
 import { enableSwipeToShrinkBars, fullscreenHint } from './ui/fullscreen';
 
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
@@ -37,9 +38,13 @@ async function boot(): Promise<void> {
   }
 
   status.textContent = '読み込み中…';
+  const store = new SettingsStore();
+  // ハンターの動きの組（v0.57.0。D-150）: 設定の「ハンターの動き」。URL の ?motions= は比べる・検査する時だけ（設定は変えない）
+  const motionSet = motionSetOf(new URLSearchParams(location.search).get('motions') ?? store.value.motionSet);
   let content: Content;
   try {
-    content = await loadContent();
+    content = await loadContent({ motionSet });
+    await useMotionSet(motionSet);
   } catch (e) {
     console.error(e);
     status.textContent = `読み込みに失敗しました。\n${e instanceof Error ? e.message.split('\n').slice(0, 4).join('\n') : String(e)}`;
@@ -63,7 +68,6 @@ async function boot(): Promise<void> {
     requestPersist: storage && typeof storage.persist === 'function' ? () => storage.persist() : undefined,
   });
 
-  const store = new SettingsStore();
   // v0.40.0: ロックオンのボタン（操作補助）。これまで遊んでいた人は入のまま、新しく始めた人は切
   store.settleLockOnButton(store.savedBefore || save.doc.revision > 0);
   const audio = new AudioSystem(store.value);

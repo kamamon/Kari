@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.56.0",
+  "contentVersion": "0.57.0",
+  "motionSets": { "current": "2g", "held": { "v056": "motionsets/v056/set.json" } },
   "files": {
     "actions": [
       "actions/player_common.json",
@@ -67,6 +68,7 @@
     ],
     "curves": [
       "curves.json",
+      "curves_player.json",
       "curves_creatures.json"
     ],
     "weapons": "weapons.json",
