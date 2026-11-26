@@ -9,7 +9,7 @@ import { HitLedger, computeDamage, edgeStage, sweepCapsule, type WorldShape } fr
 import type { SimEvent } from './events';
 import { Btn, type InputFrame } from './inputFrame';
 import { defenseScale, scaleMonsterDef, totalDefense } from './rank';
-import { computeGear, skillValue, critChance, incomingElementScale, weaponElementZone, type GearEffects } from './gear';
+import { computeGear, skillValue, critChance, incomingElementScale, weaponElementHit, type GearEffects } from './gear';
 import { addAilment, ailmentAmount, ailmentRules, activeControl, clearAilments, startPoison, wakeFromSleep } from './ailment';
 import { applyDamageToMonster, createMonster, monsterBlockers, monsterShapes, stepMonster, type MonsterState } from './monster';
 import { questTimeLimitTicks } from './field';
@@ -18,6 +18,7 @@ import { createRoam } from './roam';
 import { createPlayer, familyOf, playerHurtCapsule, resolveIncomingHit, setSpirit, stepPlayer, weaponOf, type PlayerState, type SimCtx } from './player';
 import { trackSegment } from './tracks';
 import { World, type Circle } from './world';
+import { trapSite, trapGroundContact, trapHoldTicks } from './traps';
 import { usesFieldGather } from '../data/fieldGathering';
 import { FieldGatherState, FIELD_NODE_REACH } from './fieldGather';
 import { DELIVER_ACTION, DEPOT_RADIUS, DEPOT_REACH, MINE_NODE_RADIUS, NODE_REACH, bagHasRoom, createErrand, errandReady, errandSurplus, nodeAction, type ErrandState, type ErrandTarget } from './errand';
@@ -114,8 +115,7 @@ export interface HuntState {
 const CLOSE_AFTER_LAST_CARVE = 150;
 /** 捕獲した時に、結果が閉じるまでの時間 */
 const CAPTURE_RETURN_TICKS = 300;
-/** 罠を置く位置（足元から前へ）と、大型の中心がこれだけ罠の縁に近づくと作動する距離 */
-const TRAP_AHEAD = 0.9;
+/** 大型の中心がこれだけ罠の縁に近づくと作動する距離 */
 const TRAP_REACH = 0.9;
 /** 剥ぎ取りができる距離（本体は胴の半径に足す / 切り落とした部位） */
 const CARVE_REACH = 1.4;
@@ -547,7 +547,7 @@ export class Simulation implements SimCtx {
     // 回復と研磨石は依頼の外（訓練場）や達成後でも使える。罠と鎮静玉は狩猟中だけ。罠は同時に 1 つまで。
     if (item.kind === 'heal' || item.kind === 'whet') return true;
     if (this.hunt?.phase !== 'active') return false;
-    return item.kind !== 'trap' || this.traps.length === 0;
+    return item.kind !== 'trap' || (this.traps.length === 0 && trapSite(this.world, this.player.pos, this.player.yaw) !== null);
   }
 
   applyItem(item: ItemDef): boolean {
@@ -578,10 +578,11 @@ export class Simulation implements SimCtx {
     }
     if (item.kind === 'trap') {
       const t = item.trap!;
-      const f = forwardOf(p.yaw);
-      const trap: Trap = { id: this.nextTrap++, x: p.pos.x + f.x * TRAP_AHEAD, z: p.pos.z + f.z * TRAP_AHEAD, radius: t.radius, holdTicks: t.holdTicks, arm: t.armTicks, life: t.lifeTicks, state: 'arming', target: null };
+      const site = trapSite(this.world, p.pos, p.yaw);
+      if (!site) return false;
+      const trap: Trap = { id: this.nextTrap++, x: site.x, z: site.z, radius: t.radius, holdTicks: t.holdTicks, arm: t.armTicks, life: t.lifeTicks, state: 'arming', target: null };
       this.traps.push(trap);
-      this.emit({ type: 'item_effect', itemId: item.id, kind: 'trap', ok: true, amount: 0, pos: { x: trap.x, y: p.pos.y, z: trap.z } });
+      this.emit({ type: 'item_effect', itemId: item.id, kind: 'trap', ok: true, amount: 0, pos: site });
       return true;
     }
     // 標識玉（v0.42.0。#19 の F04）: 正面の範囲に居る、いちばん近い大型に当たると、しばらく地図に居場所が出る。外しても 1 個減る
@@ -654,6 +655,7 @@ export class Simulation implements SimCtx {
         continue;
       }
       t.life--;
+      if (t.life <= 0) continue;
       if (t.state === 'arming') {
         if (--t.arm > 0) continue;
         t.state = 'armed';
@@ -663,8 +665,10 @@ export class Simulation implements SimCtx {
         // 罠は大型だけが踏む（幼体は軽くて作動しない）
         if (m.dead || m.captured || m.trapTicks > 0 || m.herd) continue;
         if (Math.hypot(m.pos.x - t.x, m.pos.z - t.z) > t.radius + TRAP_REACH) continue;
-        // 2 回目からは慣れて、止まる時間が 6 割ずつになる
-        m.trapTicks = Math.max(60, Math.round(t.holdTicks * Math.pow(0.6, m.trapCount)));
+        if (!trapGroundContact(this.world, m.pos, t)) continue;
+        const ticks = trapHoldTicks(t.holdTicks, m.trapCount, m.enraged, this.content.elements.trapProfiles?.[m.def.id]);
+        if (ticks <= 0) continue; // 効かない相手では発動回数も増やさない。罠は有効期限まで残る
+        m.trapTicks = ticks;
         m.trapCount++;
         m.action = null;
         m.attackEval = null;
@@ -1144,7 +1148,8 @@ export class Simulation implements SimCtx {
     else if (chance < 0 && roll < -chance) crit = -1;
     // 武器の属性は、武器そのもので当てた時だけ（盾には乗らない）。部位の係数は属性ごと（弱点・耐性。複合は大きい方、弱点でなければ半分）
     const weaponHit = h.contact !== 'shield';
-    const elementZone = weaponHit ? weaponElementZone(C, weapon, m.def, part) : 0;
+    const elementHit = weaponHit ? weaponElementHit(C, weapon, m.def, part, m.parts[partIndex]!.broken) : { zone: 0, element: null };
+    const elementZone = elementHit.zone;
     // 状態異常の睡眠: 覚ます最初の命中だけ wakeScale 倍（v0.33.0）
     const woke = !m.dead && wakeFromSleep(m.ailments, R);
     const damage = computeDamage({
@@ -1180,7 +1185,7 @@ export class Simulation implements SimCtx {
       chargeLevel: h.chargeLevel,
       tick: this.tick,
       bounced,
-      ...(elementZone > 0 ? { element: (weapon.element.type === 'compound' ? weapon.element.elements![0] : weapon.element.type) as ElementId } : {}),
+      ...(elementHit.element ? { element: elementHit.element } : {}),
     });
     applyDamageToMonster(m, partIndex, damage, h.damageType, this, g.partDamage);
     if (m.herd) herdHurt(m, this);
@@ -1201,8 +1206,8 @@ export class Simulation implements SimCtx {
   /** 状態異常をためる（v0.33.0）。発症したら、効き目を始めて知らせる（硬直は、いまの技を止める） */
   private storeAilment(m: MonsterState, kind: StatusKind, amount: number, pos: V3): void {
     const R = ailmentRules(this.content);
-    if (addAilment(m.ailments, R, kind, amount) !== 'triggered') return;
-    if (kind === 'poison') startPoison(m.ailments, R, m.def.hp);
+    if (addAilment(m.ailments, R, kind, amount, m.def.id) !== 'triggered') return;
+    if (kind === 'poison') startPoison(m.ailments, R, m.def.hp, m.def.id);
     else {
       m.action = null;
       m.attackEval = null;

@@ -432,7 +432,25 @@ export interface SkillDef {
  * 属性と状態異常の決まり（public/data/elements.json。v0.33.0。docs/elements.md・ChatGPT の全装備四級版 #15 の rules）。
  * 部位の属性係数 = 部位の elementZone × （弱点 weak / 耐性 resist / ほか 1）。弱点と耐性はモンスターの登録簿の weak・resist。
  */
+/** 属性肉質の明示値は絶対係数。未設定属性は従来式で補う。 */
+export interface PartElementProfile {
+  normal: Partial<Record<ElementId, number>>;
+  broken?: Partial<Record<ElementId, number>>;
+}
+
+/** 現行の拘束罠に対する相性。怒り中の0は作動しない。倍率はKariの初期案。 */
+export interface TrapResponseProfile {
+  normalScale: number;
+  enragedScale: number;
+  repeatScale: number;
+  minTicks: number;
+}
+
 export interface ElementRules {
+  /** 種別相性。省略時は従来規則。 */
+  trapProfiles?: Record<string, TrapResponseProfile>;
+  /** 恒久種ID/部位ID。生成されるモンスター定義とは独立した調整表。 */
+  partZones?: Record<string, Record<string, PartElementProfile>>;
   elements: { id: ElementId; name: string }[];
   /** 部位の elementZone に掛ける倍率 */
   zone: { weak: number; resist: number };
@@ -450,7 +468,25 @@ export interface ElementRules {
   ailment: MonsterAilmentRules;
 }
 
+/** 種・状態ごとの独立した耐性。値はKariの調整案で原作値ではない。 */
+export type SpeciesAilmentRule =
+  | { immune: true }
+  | {
+      immune?: false;
+      initial: number;
+      increase: number;
+      cap: number;
+      durationTicks: number;
+      decayIntervalTicks: number;
+      decayAmount: number;
+      /** 毒だけ: 1回で与える総ダメージ（最大HPとは独立）と分割回数 */
+      poisonDamage?: number;
+      poisonHits?: number;
+    };
+
 export interface MonsterAilmentRules {
+  /** 種ID → 状態ごとの上書き。省略した種/状態は従来の共通値。 */
+  species?: Record<string, Partial<Record<StatusKind, SpeciesAilmentRule>>>;
   /** 初めの閾値と、発症するたびの伸び（毒・麻痺・睡眠 / 気絶） */
   threshold: number;
   growth: number;
