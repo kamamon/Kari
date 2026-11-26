@@ -71,5 +71,19 @@
     "monster.mitogaron": {"hooks":{"normal":{"fire":0.31,"thunder":0.1},"broken":{"fire":0.44,"thunder":0.16}}},
     "monster.yurtepica": {"bag":{"normal":{"fire":0.46,"water":0.1},"broken":{"fire":0.5,"water":0.16}}},
     "monster.hinasalv": {"sails":{"normal":{"fire":0.46,"ice":0.06},"broken":{"fire":0.52,"ice":0.15}}}
+  },
+  "trapProfiles": {
+    "monster.galdros": {"normalScale":1,"enragedScale":1,"repeatScale":0.6,"minTicks":60},
+    "monster.selvark": {"normalScale":1.15,"enragedScale":0.8,"repeatScale":0.65,"minTicks":60},
+    "monster.numeradon": {"normalScale":0.9,"enragedScale":0.7,"repeatScale":0.65,"minTicks":60},
+    "monster.bornakel": {"normalScale":0.8,"enragedScale":0.6,"repeatScale":0.65,"minTicks":60},
+    "monster.ashreia": {"normalScale":1.05,"enragedScale":0.8,"repeatScale":0.65,"minTicks":60},
+    "monster.lumisca": {"normalScale":0.75,"enragedScale":0.45,"repeatScale":0.65,"minTicks":60},
+    "monster.orglass": {"normalScale":0.85,"enragedScale":0.65,"repeatScale":0.65,"minTicks":60},
+    "monster.tengaro": {"normalScale":0.9,"enragedScale":0,"repeatScale":0.65,"minTicks":60},
+    "monster.verito": {"normalScale":1.15,"enragedScale":0.85,"repeatScale":0.7,"minTicks":60},
+    "monster.razmer": {"normalScale":0.85,"enragedScale":0.65,"repeatScale":0.65,"minTicks":60},
+    "monster.kirisave": {"normalScale":0.95,"enragedScale":0.75,"repeatScale":0.65,"minTicks":60},
+    "monster.velgait": {"normalScale":1.1,"enragedScale":0.8,"repeatScale":0.7,"minTicks":60}
   }
 }

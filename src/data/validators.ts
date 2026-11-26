@@ -620,8 +620,27 @@ export function validatePartZones(c: Content, errors: string[]): void {
   }
 }
 
+/** 種IDの存在・値の範囲を読み込み時に確認。 */
+export function validateTrapProfiles(c: Content, errors: string[]): void {
+  const profiles = c.elements?.trapProfiles;
+  if (profiles === undefined) return;
+  if (!isObj(profiles)) { errors.push('elements.trapProfiles: 表が不正'); return; }
+  for (const [id, raw] of Object.entries(profiles)) {
+    const m = c.monsters.get(id);
+    const label = `elements.trapProfiles.${id}`;
+    if (!m || m.herd || !isObj(raw)) { errors.push(`${label}: 大型の種または表が不正`); continue; }
+    const { normalScale, enragedScale, repeatScale, minTicks } = raw;
+    if (!(isNum(normalScale) && normalScale > 0 && normalScale <= 2 &&
+      isNum(enragedScale) && enragedScale >= 0 && enragedScale <= 2 &&
+      isNum(repeatScale) && repeatScale > 0 && repeatScale <= 1 &&
+      isInt(minTicks) && minTicks > 0 && minTicks <= 3600)) errors.push(`${label}: 相性の値が不正`);
+    if (Object.keys(raw).some(k => !['normalScale','enragedScale','repeatScale','minTicks'].includes(k))) errors.push(`${label}: 未知の欄`);
+  }
+}
+
 export function validateGear(c: Content, errors: string[]): void {
   validatePartZones(c, errors);
+  validateTrapProfiles(c, errors);
   const profiles = c.elements?.ailment?.species;
   if (isObj(profiles)) for (const id of Object.keys(profiles)) {
     if (!c.monsters.has(id)) errors.push(`elements: ailment.species の種 ${id} が無い`);

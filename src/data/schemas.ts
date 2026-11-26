@@ -437,7 +437,17 @@ export interface PartElementProfile {
   broken?: Partial<Record<ElementId, number>>;
 }
 
+/** 現行の拘束罠に対する相性。怒り中の0は作動しない。倍率はKariの初期案。 */
+export interface TrapResponseProfile {
+  normalScale: number;
+  enragedScale: number;
+  repeatScale: number;
+  minTicks: number;
+}
+
 export interface ElementRules {
+  /** 種別相性。省略時は従来規則。 */
+  trapProfiles?: Record<string, TrapResponseProfile>;
   /** 恒久種ID/部位ID。生成されるモンスター定義とは独立した調整表。 */
   partZones?: Record<string, Record<string, PartElementProfile>>;
   elements: { id: ElementId; name: string }[];
