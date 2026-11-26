@@ -565,10 +565,90 @@ export function validateElementRules(e: ElementRules | undefined, errors: string
   const a = e.ailment;
   if (!(a && a.threshold > 0 && a.growth >= 1 && a.stunGrowth >= 1 && isInt(a.decayDelayTicks) && a.decayPerSec >= 0 && isInt(a.para?.ticks) && isInt(a.sleep?.ticks) && a.sleep.wakeScale >= 1
     && isInt(a.stun?.ticks) && a.poison?.hpRatio > 0 && isInt(a.poison.ticks) && isInt(a.poison.hits) && a.poison.hits > 0 && isInt(a.lockGraceTicks) && a.stunPerMotion >= 0)) errors.push(`${w}: ailment が不正`);
+  // 種別耐性は明示した状態だけを上書きする。null/誤記/範囲外を黙って採用しない。
+  if (!a || a.species === undefined) return;
+  if (!isObj(a.species)) { errors.push(`${w}: ailment.species が不正`); return; }
+  for (const [id, profile] of Object.entries(a.species)) {
+    if (!id.startsWith('monster.') || !isObj(profile) || Object.keys(profile).length === 0) {
+      errors.push(`${w}: ailment.species.${id} が不正`); continue;
+    }
+    for (const [kind, raw] of Object.entries(profile)) {
+      const label = `${w}: ailment.species.${id}.${kind}`;
+      if (!STATUS_KINDS.some((k) => k === kind) || !isObj(raw)) { errors.push(`${label} が不正`); continue; }
+      if (raw.immune === true) {
+        if (Object.keys(raw).length !== 1) errors.push(`${label}: 免疫には数値を併記しない`);
+        continue;
+      }
+      const { immune, initial, increase, cap, durationTicks, decayIntervalTicks, decayAmount, poisonDamage, poisonHits } = raw;
+      if (!((immune === undefined || immune === false) &&
+        isInt(initial) && initial > 0 && isInt(increase) && increase >= 0 &&
+        isInt(cap) && cap >= initial && cap <= 1000000 &&
+        isInt(durationTicks) && durationTicks > 0 && durationTicks <= 36000 &&
+        isInt(decayIntervalTicks) && decayIntervalTicks > 0 && decayIntervalTicks <= 36000 &&
+        isInt(decayAmount) && decayAmount >= 0 && decayAmount <= cap)) {
+        errors.push(`${label}: 耐性・時間・減衰の値が不正`); continue;
+      }
+      if (kind === 'poison') {
+        if (!(isInt(poisonDamage) && poisonDamage > 0 && poisonDamage <= 1000000 &&
+              isInt(poisonHits) && poisonHits > 0 && poisonHits <= durationTicks)) errors.push(`${label}: 毒の総量/回数が不正`);
+      } else if (poisonDamage !== undefined || poisonHits !== undefined) errors.push(`${label}: 毒専用の値は指定できない`);
+    }
+  }
 }
 
 /** 武器の属性・状態異常と、防具の耐性・技能（v0.33.0）が、決まりの中の名前と値か */
+/** 部位・属性の調整表: 全モンスターを読み込んだ後に参照先も検査する。 */
+export function validatePartZones(c: Content, errors: string[]): void {
+  const zones = c.elements?.partZones;
+  const els = new Set<string>(ELEMENT_IDS);
+  const table = (raw: unknown, label: string): void => {
+    if (!isObj(raw) || !Object.keys(raw).length) { errors.push(`${label}: 属性肉質表が不正`); return; }
+    for (const [e, v] of Object.entries(raw)) if (!els.has(e) || !isNum(v) || v < 0 || v > 1) errors.push(`${label}.${e}: 属性肉質が不正`);
+  };
+  if (zones === undefined) return;
+  if (!isObj(zones)) { errors.push('elements.partZones: 属性肉質表が不正'); return; }
+  for (const [id, entries] of Object.entries(zones)) {
+    const m = c.monsters.get(id);
+    if (!m || !isObj(entries) || !Object.keys(entries).length) { errors.push(`elements.partZones.${id}: 種または表が不正`); continue; }
+    for (const [partId, raw] of Object.entries(entries)) {
+      const p = m.parts.find(x => x.id === partId);
+      const label = `elements.partZones.${id}.${partId}`;
+      if (!p || !isObj(raw)) { errors.push(`${label}: 部位または表が不正`); continue; }
+      table(raw.normal, `${label}.normal`);
+      if (raw.broken !== undefined) {
+        if (p.breakDurability === null) errors.push(`${label}: 破壊できない部位の破壊後属性肉質`);
+        table(raw.broken, `${label}.broken`);
+      }
+      if (Object.keys(raw).some(k => k !== 'normal' && k !== 'broken')) errors.push(`${label}: 未知の欄`);
+    }
+  }
+}
+
+/** 種IDの存在・値の範囲を読み込み時に確認。 */
+export function validateTrapProfiles(c: Content, errors: string[]): void {
+  const profiles = c.elements?.trapProfiles;
+  if (profiles === undefined) return;
+  if (!isObj(profiles)) { errors.push('elements.trapProfiles: 表が不正'); return; }
+  for (const [id, raw] of Object.entries(profiles)) {
+    const m = c.monsters.get(id);
+    const label = `elements.trapProfiles.${id}`;
+    if (!m || m.herd || !isObj(raw)) { errors.push(`${label}: 大型の種または表が不正`); continue; }
+    const { normalScale, enragedScale, repeatScale, minTicks } = raw;
+    if (!(isNum(normalScale) && normalScale > 0 && normalScale <= 2 &&
+      isNum(enragedScale) && enragedScale >= 0 && enragedScale <= 2 &&
+      isNum(repeatScale) && repeatScale > 0 && repeatScale <= 1 &&
+      isInt(minTicks) && minTicks > 0 && minTicks <= 3600)) errors.push(`${label}: 相性の値が不正`);
+    if (Object.keys(raw).some(k => !['normalScale','enragedScale','repeatScale','minTicks'].includes(k))) errors.push(`${label}: 未知の欄`);
+  }
+}
+
 export function validateGear(c: Content, errors: string[]): void {
+  validatePartZones(c, errors);
+  validateTrapProfiles(c, errors);
+  const profiles = c.elements?.ailment?.species;
+  if (isObj(profiles)) for (const id of Object.keys(profiles)) {
+    if (!c.monsters.has(id)) errors.push(`elements: ailment.species の種 ${id} が無い`);
+  }
   const els = new Set<string>(ELEMENT_IDS);
   for (const wp of c.weapons.values()) {
     const w = `weapon ${wp.id}`;

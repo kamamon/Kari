@@ -113,7 +113,11 @@ export function noGear(content: Content, weapon: WeaponDef): GearEffects {
 }
 
 /** 部位の、その属性の係数: elementZone を、弱点なら zone.weak 倍、耐性なら zone.resist 倍 */
-export function typedElementZone(content: Content, def: MonsterDef, part: MonsterPartDef, el: ElementId): number {
+export function typedElementZone(content: Content, def: MonsterDef, part: MonsterPartDef, el: ElementId, broken = false): number {
+  const profile = content.elements.partZones?.[def.id]?.[part.id];
+  const specified = (broken ? profile?.broken?.[el] : undefined) ?? profile?.normal[el];
+  // 0も有効な指定。種全体の弱点/耐性を二重に掛けない。
+  if (specified !== undefined) return specified;
   const Z = content.elements.zone;
   const f = def.weak?.includes(el) ? Z.weak : def.resist?.includes(el) ? Z.resist : 1;
   return part.elementZone * f;
@@ -123,17 +127,27 @@ export function typedElementZone(content: Content, def: MonsterDef, part: Monste
  * 武器の属性の、この部位への係数。無属性は 0。
  * 複合（上級・極級）は 2 つの属性の係数の大きい方。2 つのどちらも相手の弱点でない時だけ compoundNonWeak 倍（設計 #15、docs/elements.md の 3 章）。
  */
-export function weaponElementZone(content: Content, w: WeaponDef, def: MonsterDef, part: MonsterPartDef): number {
+/** 命中計算と演出が同じ採用属性を使う。複合の全体弱点判定は現行仕様を維持。 */
+export function weaponElementHit(content: Content, w: WeaponDef, def: MonsterDef, part: MonsterPartDef, broken = false): { zone: number; element: ElementId | null } {
   const e = w.element;
-  if (e.type === 'none' || !(e.value > 0)) return 0;
+  if (e.type === 'none' || !(e.value > 0)) return { zone: 0, element: null };
   if (e.type === 'compound') {
     const [a, b] = e.elements ?? [];
-    if (!a || !b) return 0;
-    const z = Math.max(typedElementZone(content, def, part, a), typedElementZone(content, def, part, b));
+    if (!a || !b) return { zone: 0, element: null };
+    const za = typedElementZone(content, def, part, a, broken);
+    const zb = typedElementZone(content, def, part, b, broken);
+    const element = za >= zb ? a : b;
     const weakHit = !!def.weak?.includes(a) || !!def.weak?.includes(b);
-    return weakHit ? z : z * content.elements.compoundNonWeak;
+    const zone = Math.max(za, zb) * (weakHit ? 1 : content.elements.compoundNonWeak);
+    return { zone, element: zone > 0 ? element : null };
   }
-  return typedElementZone(content, def, part, e.type as ElementId);
+  const element = e.type as ElementId;
+  const zone = typedElementZone(content, def, part, element, broken);
+  return { zone, element: zone > 0 ? element : null };
+}
+
+export function weaponElementZone(content: Content, w: WeaponDef, def: MonsterDef, part: MonsterPartDef, broken = false): number {
+  return weaponElementHit(content, w, def, part, broken).zone;
 }
 
 /** 会心率（%）: 武器の会心 + 急所観察（物理の肉質が境目以上の時）。正の側は critCap まで（負の会心は、そのまま） */
