@@ -129,7 +129,7 @@ export class ResultScreen {
     this.body.append(table);
     const rw = h.rewards;
     if (h.phase === 'success' && rw) {
-      const SOURCE: Record<string, string> = { carve: '剥ぎ取り', capture: '捕獲', quest: '依頼の報酬', gather: '納品の余り（持ち帰り）' };
+      const SOURCE: Record<string, string> = { carve: '剥ぎ取り', capture: '捕獲', quest: '依頼の報酬', gather: '納品の余り（持ち帰り）',field_mine:'採掘',field_bone:'骨採取',field_plant:'植物採取',field_insect:'虫取り',field_fish:'釣り' };
       const label = (src: string): string => {
         if (SOURCE[src]) return SOURCE[src]!;
         const [kind, partId] = src.split(':');

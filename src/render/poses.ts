@@ -242,7 +242,19 @@ export const CLIPS: Record<string, Clip> = {
     ],
   },
   // 採集（v0.27.0。狩らない依頼）: 片ひざを突き、右手で草を探って摘み、左の腰の袋へ入れる。72 tick で品が入る（6〜72 は回避で止められる）
-  common_gather_01: {
+  common_net_01: {base:NEUTRAL,basePy:0,keys:[
+ {t:0},{t:15,j:{chest:[0,-24,0],upperArmR:[-65,-10,-45],forearmR:[-35,0,0],upperArmL:[-20,0,15]}},
+ {t:35,j:{chest:[-8,-38,0],upperArmR:[-125,-25,-32],forearmR:[-20,0,0],thighL:[-18,0,5],shinL:[25,0,0]},py:-.05},
+ {t:51,j:{chest:[24,26,0],upperArmR:[-48,22,-5],forearmR:[-14,0,0],thighR:[-32,0,0],shinR:[50,0,0]},py:-.12},
+ {t:70,j:{spine:[18,0,0],upperArmR:[-36,0,-10],forearmR:[-70,0,0],upperArmL:[-40,0,8],forearmL:[-45,0,0]},py:-.04},{t:89,j:{upperArmR:[-25,0,-8],forearmR:[-35,0,0]}},{t:105}]},
+ common_fish_01:{base:NEUTRAL,basePy:0,keys:[
+ {t:0},{t:14,j:{chest:[0,-12,0],upperArmR:[-100,-18,-16],forearmR:[-45,0,0]}},
+ {t:34,j:{chest:[14,8,0],upperArmR:[-55,0,-9],forearmR:[-20,0,0],upperArmL:[-38,0,8],forearmL:[-60,0,0]}},
+ {t:75,j:{upperArmR:[-35,0,-9],forearmR:[-38,0,0],upperArmL:[-24,0,8],forearmL:[-50,0,0]}},
+ {t:144,j:{upperArmR:[-35,0,-9],forearmR:[-38,0,0],upperArmL:[-24,0,8],forearmL:[-50,0,0]}},
+ {t:204,j:{upperArmR:[-35,0,-9],forearmR:[-38,0,0],upperArmL:[-24,0,8],forearmL:[-50,0,0]}},
+ {t:219,j:{chest:[-8,0,0],upperArmR:[-95,0,-15],forearmR:[-38,0,0]}},{t:240}]},
+ common_gather_01: {
     base: NEUTRAL, basePy: 0,
     keys: [
       { t: 0 },

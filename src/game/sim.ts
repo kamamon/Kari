@@ -758,8 +758,9 @@ export class Simulation implements SimCtx {
     const h = this.hunt;
     if (!h || h.phase !== 'active' || h.closed) return null;
     const p = this.player;
-    if (p.drawn || p.mode !== 'free' || !p.grounded) return null;
+    if (p.drawn || p.mode === 'dead') return null;
     if (!e || e.def.fieldGathering) {
+      if(p.mode!=='free'||!p.grounded)return null;
       if (e && e.def.depot.areaId===this.areaId && Math.hypot(p.pos.x-e.def.depot.x,p.pos.z-e.def.depot.z)<=DEPOT_REACH) return {kind:'deliver',actionId:DELIVER_ACTION};
       const speed=1-skillValue(this.content,this.gear.levels,'mining_haste')/100;
       return this.fieldGather?.target(this.areaId,p.pos.x,p.pos.z,p.yaw,(x,z)=>this.world.groundHeight(x,z),speed)??null;

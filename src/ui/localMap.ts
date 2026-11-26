@@ -36,6 +36,8 @@ export function areaFrame(area: FieldAreaDef, w: number, h: number, pad = 6): Ma
 export class LocalMap {
   readonly root: SVGSVGElement;
   private layer: SVGGElement;
+  private resources: SVGGElement;
+  private lastResources='';
   private me: SVGPathElement;
   private target: SVGCircleElement;
   private frame: MapFrame | null = null;
@@ -46,6 +48,7 @@ export class LocalMap {
   constructor(parent: HTMLElement, readonly width = 92, readonly height = 66) {
     this.root = svg('svg', parent, { class: 'hud-local', width, height, viewBox: `0 0 ${width} ${height}`, 'aria-hidden': 'true' });
     this.layer = svg('g', this.root);
+    this.resources=svg('g',this.root);
     this.target = svg('circle', this.root, { class: 'tgt', r: 3.4, cx: -10, cy: -10 });
     this.target.style.display = 'none';
     // 自分: 先の尖った矢じり（上を向いた形を、向きに合わせて回す）
@@ -58,6 +61,7 @@ export class LocalMap {
     if (id === this.areaId) return;
     this.areaId = id;
     this.layer.textContent = '';
+    this.resources.textContent='';this.lastResources='';
     this.lastMe = '';
     this.lastTarget = '';
     this.target.style.display = 'none';
@@ -92,6 +96,11 @@ export class LocalMap {
   }
 
   /** 毎フレーム: 自分の位置と向き、見えている標的（同じエリアに居る時だけ。null なら隠す） */
+  setGatherNodes(nodes:readonly {id:string;x:number;z:number;kind:string;left:number}[]):void{
+ const f=this.frame,key=nodes.map(n=>n.id+':'+n.left).join('|');if(key===this.lastResources)return;this.lastResources=key;this.resources.textContent='';if(!f)return;
+ const colors:Record<string,string>={mine:'#6cc4ff',bone:'#e8d5ad',plant:'#8edc77',insect:'#f3cd64',fish:'#6ce7df'},labels:Record<string,string>={mine:'鉱',bone:'骨',plant:'草',insect:'虫',fish:'魚'};
+ for(const n of nodes){const [x,z]=f.toMap(n.x,n.z),g=svg('g',this.resources,{opacity:n.left?1:.42});svg('circle',g,{cx:x,cy:z,r:2.9,fill:'#17212a',stroke:colors[n.kind]??'#fff','stroke-width':.65});const t=svg('text',g,{x,y:z+1.5,fill:colors[n.kind]??'#fff','text-anchor':'middle','font-size':4.4,'font-weight':700});t.textContent=labels[n.kind]??'?';}
+ }
   update(x: number, z: number, yaw: number, target: { x: number; z: number } | null): void {
     const f = this.frame;
     if (!f) return;

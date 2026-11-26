@@ -6,6 +6,7 @@ import { FrameMeter, describeFrames, type FrameSummary } from './core/frameMeter
 import { yawOf } from './core/math';
 import type { ArmorSlot, Content, FacilityDef } from './data/schemas';
 import { starLabel } from './data/questBoard';
+import { FIELD_GATHER_LABEL } from './data/fieldGathering';
 import { Btn, type InputFrame } from './game/inputFrame';
 import { firstMismatch, runReplay } from './game/replay';
 import { familyOf } from './game/player';
@@ -910,9 +911,10 @@ function makeRunId(): string {
 
 /** 狩らない依頼（v0.27.0）: 攻撃ボタンの名前（採集・採掘・納品）。できることが無ければ null */
 function errandLabel(sim: Simulation): string | null {
-  const t = sim.errandTarget();
-  if (!t) return null;
-  if (t.kind === 'deliver') return '納品';
+  const op=sim.player.errandOp;if(op?.target.kind==='field_node'&&op.target.source==='fish'&&sim.player.mode==='action')return '引く';
+  const t = sim.errandTarget();if(!t)return null;
+  if(t.kind==='deliver')return sim.errand?.def.fieldGathering?'帰還':'納品';
+  if(t.kind==='field_node')return FIELD_GATHER_LABEL[t.source];
   return sim.errand?.def.nodes.find((n) => n.id === t.nodeId)?.kind === 'mine' ? '採掘' : '採集';
 }
 

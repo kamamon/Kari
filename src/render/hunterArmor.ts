@@ -14,10 +14,12 @@ import { SHELL_PALETTES } from './shellPlates';
 
 /** 部位ごとの段（2 = 岩殻 … 5 = 輝殻）。1 か、無ければ、里の装束（何も足さない）。 */
 export type ArmorLook = Partial<Record<ArmorSlot, number>>;
-export const armorLookKey = (look: ArmorLook): string => ARMOR_SLOTS.map((s) => look[s] ?? 1).join('');
+export const armorLookKey = (look: ArmorLook): string => { const a=ARMOR_SLOTS.map(s=>look[s]??1);return a.join(a.some(t=>t>=10)?',':''); };
 
 /** 防具のモデルの ID（model.armor.galdros.t2 など）から段を読む。読めなければ 1（見た目なし）。 */
 export const armorTierOf = (assetId: string | undefined): number => {
+  const g=/^model\.armor\.(ore|bone)\.r([1-4])$/.exec(assetId??'');
+  if(g)return (g[1]==='ore'?10:20)+Number(g[2]);
   const t = Number(/^model\.armor\.galdros\.t(\d)$/.exec(assetId ?? '')?.[1] ?? 1);
   return SHELL_PALETTES[t] ? t : 1;
 };
@@ -230,11 +232,12 @@ export function buildHunterArmor(look: ArmorLook): ArmorGeo | null {
   const rock = new Geo(), rim = new Geo();
   let glow = 0;
   for (const slot of ARMOR_SLOTS) {
-    const tier = look[slot] ?? 1;
-    const T = ARMOR_TIERS[tier];
+    const encoded=look[slot]??1, style=encoded>=21?'bone':encoded>=11?'ore':'galdros';
+    const tier=style==='galdros'?encoded:encoded%10+1, base=ARMOR_TIERS[tier];
+    const T:ArmorTier|undefined=style==='galdros'||!base?base:{...base,rim:style==='ore'?0xb4ced3:0x9e8059,crystal:style==='ore'?0x8ec7d7:0xddc6a2,grown:0,glow:0,veins:style==='ore'?Math.max(0,tier-3):0};
     if (tier < 2 || !T) continue;
     // 岩の色は、どの段も設定図の灰褐色。段の違いは、縁の色と太さ・晶脈の筋・育った晶（設定図 B）
-    const rockCol: RGB = hex(ROCK), rimCol: RGB = hex(T.rim), crystalCol: RGB = hex(T.crystal);
+    const rockCol: RGB = hex(style==='ore'?[0x687d85,0x7e969e,0x90aeb8,0x9dbfc7][tier-2]!:style==='bone'?[0xb7a383,0xc8b79b,0xd6c5a4,0xe0d2b6][tier-2]!:ROCK), rimCol: RGB = hex(T.rim), crystalCol: RGB = hex(T.crystal);
     glow = Math.max(glow, T.glow);
     if (slot === 'head') helmDome(rock, rim, rockCol, rimCol, 0.0095 + 0.001 * (tier - 2));
     // 板の種（模様と筋の散らし方）は、部位と板の番号で決める（どの部位を着ているかで、ほかの部位の形が変わらない）
@@ -255,7 +258,7 @@ export function buildHunterArmor(look: ArmorLook): ArmorGeo | null {
       // 板の面の外向き（胴に沿う板は、前か後ろ）
       const out = s.torso ? new Vector3(0, 0, s.torso) : n;
       const from = rock.count, fromRim = rim.count;
-      plate(rock, { surface, inside, w: u.length() * 2, d: v.length() * 2, thickness, skirt: s.skirt ?? 0.014, bevel: T.bevel, seed, bone: s.bone, part: 0, rock: rockCol, points: s.points ?? 8, square: s.square ?? 0.62 }, { geo: rim, color: rimCol });
+      plate(rock, { surface, inside, w: u.length() * 2, d: v.length() * 2, thickness, skirt: s.skirt ?? 0.014, bevel: T.bevel, seed, bone: s.bone, part: 0, rock: rockCol, points: style==='ore'?8:style==='bone'?7:(s.points??8), square: style==='ore' ? .86 : style==='bone' ? .34 : (s.square??.62) }, { geo: rim, color: rimCol });
       // 脈殻から: 板に晶脈の筋が走る
       if (!s.plain) for (let i = 0; i < T.veins; i++) vein(rim, (a, b) => surface(a, b).addScaledVector(out, thickness * 1.1 + 0.0022), out, rimCol, s.bone, seed * 17, i, T.veins);
       // 晶殻から: 左側の板に、晶が育つ（輝殻は 1 回り大きい）
@@ -280,7 +283,7 @@ export function buildHunterArmor(look: ArmorLook): ArmorGeo | null {
       }
     });
     // 腰の真後ろの晶の塊（ガルドロスの尾の先の晶を小さくしたもの）。腰当てに固定
-    if (slot === 'waist') {
+    if (slot === 'waist' && style==='galdros') {
       const base = new Vector3(0, 1.012, -0.118);
       crystal(rim, base, new Vector3(0, 0.15, -1), 0.05, 0.022, crystalCol, B.pelvis, 0, 3);
       crystal(rim, base.clone().add(new Vector3(0.018, -0.006, 0.004)), new Vector3(0.5, 0.1, -1), 0.036, 0.015, crystalCol, B.pelvis, 0, 5);
