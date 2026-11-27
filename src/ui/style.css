@@ -892,3 +892,5 @@ button.reception-desk { cursor: pointer; }
 
 .classic-supply{position:absolute;left:50%;top:calc(var(--sat) + 52px);transform:translateX(-50%);z-index:9;background:#202b22eb;border:1px solid #b89460;padding:5px 9px;border-radius:5px;font-size:.8rem;max-width:min(50vw,340px);max-height:58vh;overflow:auto;pointer-events:auto}
 .classic-supply summary{cursor:pointer;color:#f5e0ab}.classic-supply button{display:block;width:100%;background:#384638;color:var(--ink);border:1px solid var(--line);padding:5px;margin-top:3px;text-align:left}.classic-supply button:disabled{opacity:.5}
+
+.classic-equipment-grid{max-width:420px;margin:5px 0}.classic-gear .classic-box-info{max-width:420px}.classic-gear .classic-count{font-size:7px}

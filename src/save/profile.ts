@@ -9,7 +9,7 @@
 import { ARMOR_SLOTS, recipeFrom, recipeIsWeapon, recipeResult, type ArmorDef, type ArmorSlot, type Content, type DeliveryDef, type ItemStack, type QuestDef, type RecipeDef, type ShopDef, type SupportPackDef } from '../data/schemas';
 import { appearanceShapeErrors, applyDraft, changedKinds, editableAppearance, legacyAppearance, validateDraft, type AppearanceDoc, type AppearanceDraft } from '../data/appearance';
 import { hubLifeShapeErrors, type HubLifeState } from '../data/hubLife';
-import { addPouch, boxRoom, boxShapeErrors, finishBox, freshClassicBox, pouchCount, pouchStacks, removePouch, type ClassicBox } from './classicBox';
+import { addPouch, boxRoom, boxShapeErrors, freshClassicBox, pouchCount, pouchStacks, removePouch, type ClassicBox } from './classicBox';
 
 /**
  * 版 2（v0.9.0）: 防具（armor）を足した。版 3（v0.14.0）: 身に着けている防具（equippedArmorIds）を足した。

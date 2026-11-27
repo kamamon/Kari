@@ -5,6 +5,7 @@ import type { SaveManager, SaveResult } from '../save/saveManager';
 import { MIXES, afford } from '../game/hubLife';
 import { lifeOf } from '../data/hubLife';
 import { iconEl } from './icons';
+import { weaponStat, armorStat } from './gearText';
 const el=<K extends keyof HTMLElementTagNameMap>(tag:K,cls='',txt=''):HTMLElementTagNameMap[K]=>{const e=document.createElement(tag);if(cls)e.className=cls;e.textContent=txt;return e;};
 export class ClassicBoxPanel{
  readonly root=el('details','base-section classic-box');
@@ -12,7 +13,7 @@ export class ClassicBoxPanel{
  private status=el('p','classic-box-status');
  private page={box:0,pouch:0};private zone:BoxZone='box';private index=0;
  private busy=false;private swapFrom:{zone:BoxZone;index:number;revision:number}|null=null;
- private equipment=false;
+ private equipment=false;private gearPage=0;private gearSelected=0;
  constructor(private c:Content,private save:SaveManager,private changed:()=>void){
   this.root.append(el('summary','','アイテムボックス'),this.status,this.body);
   this.status.setAttribute('role','status');
@@ -29,13 +30,14 @@ export class ClassicBoxPanel{
  private grid(zone:BoxZone,slots:BoxSlot[],size:number){
   const n=Math.ceil(slots.length/size),pane=el('section','classic-zone '+zone),nav=el('div','classic-box-nav');
   this.page[zone]=Math.max(0,Math.min(n-1,this.page[zone]));
-  const page=this.page[zone],change=(v:number)=>{this.page[zone]=v;this.zone=zone;this.index=v*size;this.swapFrom=null;this.render(this.equipment);};
+  const page=this.page[zone],change=(v:number)=>{this.page[zone]=v;this.zone=zone;this.index=v*size;this.render(this.equipment);};
   nav.append(this.button('◀',()=>change((page+n-1)%n)),el('b','',(zone==='box'?'ボックス':'ポーチ')+' '+(page+1)+' / '+n),this.button('▶',()=>change((page+1)%n)));
   const grid=el('div','classic-grid');
   for(let i=page*size;i<Math.min(slots.length,(page+1)*size);i++){
    const x=slots[i],b=this.button('',()=>{this.zone=zone;this.index=i;this.render(this.equipment);});
    b.className='classic-slot'+(this.zone===zone&&this.index===i?' selected':'')+(this.swapFrom?.zone===zone&&this.swapFrom.index===i?' marked':'');
-   b.dataset.zone=zone;b.dataset.index=String(i);b.setAttribute('aria-label',x?this.name(x.itemId)+' '+x.count+'個':'空き枠 '+(i+1));
+   b.dataset.zone=zone;b.dataset.index=String(i);
+   b.addEventListener('keydown',e=>{const cols=zone==='box'?10:2;const delta=({ArrowLeft:-1,ArrowRight:1,ArrowUp:-cols,ArrowDown:cols,PageUp:-size,PageDown:size} as Record<string,number>)[e.key];if(delta===undefined)return;e.preventDefault();e.stopPropagation();this.zone=zone;this.index=Math.max(0,Math.min(slots.length-1,i+delta));this.page[zone]=Math.floor(this.index/size);this.render(this.equipment);this.body.querySelector<HTMLElement>('.classic-slot[data-zone="'+zone+'"][data-index="'+this.index+'"]')?.focus({preventScroll:true});});b.setAttribute('aria-label',x?this.name(x.itemId)+' '+x.count+'個':'空き枠 '+(i+1));
    if(x){const icon=iconEl(x.itemId,'classic-icon');b.append(icon??el('span','classic-fallback',this.c.items.has(x.itemId)?'道':'材'),el('small','classic-count',String(x.count)));}
    grid.append(b);
   }
@@ -44,6 +46,9 @@ export class ClassicBoxPanel{
  render(equipment=false){
   this.equipment=equipment;if(!this.root.open)return;
   const d=this.save.doc,view=boxView(d),p=pouchSlots(d),slots=this.zone==='box'?view.slots:p,x=slots[this.index],pages=d.classicBox?.pages??8;
+  const openMix=this.body.querySelector<HTMLDetailsElement>('.classic-mix')?.open??false;
+  const openSets=this.body.querySelector<HTMLDetailsElement>('.classic-sets')?.open??false;
+  const openGear=this.body.querySelector<HTMLDetailsElement>('.classic-gear')?.open??false;
   this.body.replaceChildren();
   const top=el('div','classic-box-top');
   top.append(el('b','','収納 '+view.slots.filter(Boolean).length+' / '+view.slots.length+'　｜　ポーチ '+p.filter(Boolean).length+' / 24'),el('small','','通貨 '+d.money));
@@ -70,13 +75,34 @@ export class ClassicBoxPanel{
   actions.append(this.button('ボックス整頓',()=>this.cmd({kind:'sort',zone:'box'},'整頓しました')),this.button('ポーチ整頓',()=>this.cmd({kind:'sort',zone:'pouch'},'整頓しました')),this.button('すべてしまう',()=>this.cmd({kind:'depositAll'},'すべてしまいました'),p.every(x=>x===null)));
   if(pages<10){const cost=BOX_EXPANSION_COST[pages-8];actions.append(this.button('収納拡張 +100枠（'+cost+'）',()=>{if(window.confirm(cost+'通貨で収納を拡張しますか？'))this.cmd({kind:'expand'},'100枠拡張しました');},d.money<cost));}
   this.body.append(actions);
-  const mix=el('details','classic-mix');mix.append(el('summary','','ボックス内調合'));
+  const mix=el('details','classic-mix');mix.open=openMix;mix.append(el('summary','','ボックス内調合'));
   for(const m of MIXES){const row=el('div','classic-mix-row');row.append(el('span','',m.name+' ×'+m.out.count+'　'+m.cost.items.map(s=>this.name(s.itemId)+' '+(d.items[s.itemId]??0)+' / '+s.count).join('、')+'　'+m.cost.money+'通貨'),this.button('調合',()=>void this.run(()=>this.save.hubLife({kind:'mix',id:m.id},d.revision),'調合しました'),!afford(d,m.cost)));mix.append(row);}
   this.body.append(mix);
   if(equipment){
-   const sets=el('details','classic-sets');sets.append(el('summary','','装備マイセット（20組）・武器／防具 '+(d.weapons.length+d.armor.length)+' / '+pages*100));
+   this.body.append(this.gear(openGear));
+   const sets=el('details','classic-sets');sets.open=openSets;sets.append(el('summary','','装備マイセット（20組）・武器／防具 '+(d.weapons.length+d.armor.length)+' / '+pages*100));
    for(let i=1;i<=20;i++){const slot=String(i),set=lifeOf(d).sets[slot],r=el('div','classic-mix-row');r.append(el('span','','セット '+slot+'　'+(set?this.c.weapons.get(set.weapon)?.name??set.weapon:'未登録')),this.button('登録',()=>void this.run(()=>this.save.hubLife({kind:'saveSet',slot},d.revision),'登録しました')),this.button('装備',()=>void this.run(()=>this.save.hubLife({kind:'applySet',slot},d.revision),'装備しました'),!set),this.button('解除',()=>void this.run(()=>this.save.hubLife({kind:'deleteSet',slot},d.revision),'解除しました'),!set));sets.append(r);}
    this.body.append(sets);
   }
+ }
+ private gear(open:boolean):HTMLDetailsElement{
+  const d=this.save.doc,ids=[...d.weapons,...d.armor],capacity=(d.classicBox?.pages??8)*100,pages=Math.max(1,Math.ceil(Math.max(ids.length,capacity)/100));
+  const root=el('details','classic-gear');root.open=open;root.append(el('summary','','装備ボックス '+ids.length+' / '+capacity+'枠'));
+  this.gearPage=Math.min(pages-1,this.gearPage);
+  const nav=el('div','classic-box-nav');const go=(page:number)=>{this.gearPage=(page+pages)%pages;this.gearSelected=this.gearPage*100;this.render(this.equipment);};
+  nav.append(this.button('◀',()=>go(this.gearPage-1)),el('b','',(this.gearPage+1)+' / '+pages),this.button('▶',()=>go(this.gearPage+1)));
+  const grid=el('div','classic-grid classic-equipment-grid');
+  for(let i=this.gearPage*100;i<(this.gearPage+1)*100;i++){
+   const id=ids[i],w=id?this.c.weapons.get(id):undefined,a=id?this.c.armor.get(id):undefined,b=this.button('',()=>{this.gearSelected=i;this.render(this.equipment);});
+   b.className='classic-slot'+(i===this.gearSelected?' selected':'');b.setAttribute('aria-label',w?.name??a?.name??id??('空き枠 '+(i+1)));
+   if(id){const worn=d.equippedWeaponId===id||d.equippedArmorIds.includes(id);b.append(iconEl(id,'classic-icon')??el('span','classic-fallback',w?'武':a?'防':'？'));if(worn)b.append(el('small','classic-count','装備中'));}
+   grid.append(b);
+  }
+  const id=ids[this.gearSelected],w=id?this.c.weapons.get(id):undefined,a=id?this.c.armor.get(id):undefined,info=el('div','classic-box-info');
+  info.append(el('h4','',w?.name??a?.name??id??'空き枠'));
+  if(w){info.append(el('p','',weaponStat(this.c,w)),this.button('装備する',()=>void this.run(()=>this.save.equip(w.id),'装備しました'),d.equippedWeaponId===w.id));}
+  if(a){info.append(el('p','',armorStat(this.c,a)),this.button('装備する',()=>void this.run(()=>this.save.equipArmor(a.slot,a.id),'装備しました'),d.equippedArmorIds.includes(a.id)),this.button('外す',()=>void this.run(()=>this.save.equipArmor(a.slot,null),'装備を外しました'),!d.equippedArmorIds.includes(a.id)));}
+  if(id&&!w&&!a)info.append(el('p','','未収録の装備です。データは保持します。'));
+  root.append(nav,grid,info);return root;
  }
 }

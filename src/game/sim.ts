@@ -201,6 +201,8 @@ export class Simulation implements SimCtx {
   /** 出発した時の道具の内訳（道具ごとの、支給品の数と、自分で持ってきた数） */
   readonly brought: Record<string, { supplied: number; own: number }> = {};
   readonly supplyStock: ItemStack[] = [];
+  /** 自前品の消費を後から受け取った支給品で帳消しにしない。 */
+  private readonly ownSpentFloor: Record<string,number> = {};
   readonly rng: SeededRng;
   readonly options: SimOptions;
   tick = 0;
@@ -1010,6 +1012,8 @@ export class Simulation implements SimCtx {
     if(!choice||!stock||choice.room<=0)return;
     const n=Math.min(choice.room,stock.count),it=this.content.items.get(id)!;
     const list=it.kind==='coating'?this.player.coatings:this.player.items,stack=list.find(x=>x.itemId===id);
+    const prior=this.brought[id];
+    if(prior&&stack)this.ownSpentFloor[id]=Math.max(this.ownSpentFloor[id]??0,Math.max(0,prior.own-stack.count));
     if(stack)stack.count+=n;else list.push({itemId:id,count:n});
     (this.brought[id]??={supplied:0,own:0}).supplied+=n;stock.count-=n;
   }
@@ -1025,7 +1029,7 @@ export class Simulation implements SimCtx {
       const stack = this.player.items.find((s) => s.itemId === itemId) ?? this.player.coatings.find((s) => s.itemId === itemId);
       if (!stack) continue;
       const used = b.supplied + b.own - stack.count;
-      const own = Math.min(b.own, Math.max(0, used - b.supplied));
+      const own = Math.min(b.own, Math.max(this.ownSpentFloor[itemId]??0, used - b.supplied));
       if (own > 0) out.push({ itemId, count: own });
     }
     return out;
@@ -1469,7 +1473,7 @@ export class Simulation implements SimCtx {
     for (const a of this.projectiles) if (a.pierce !== undefined) parts.push(a.pierce, a.hitParts!.join(','));
     if (p.climb) parts.push(p.climb.def.id, p.climb.phase, p.climb.t, p.climb.h);
     if (p.vault) parts.push(p.vault.def.id, p.vault.t);
-    if(this.options.classicBox)parts.push(this.supplyStock.map(x=>x.itemId+'='+x.count).join(','),JSON.stringify(this.brought));
+    if(this.options.classicBox)parts.push(this.supplyStock.map(x=>x.itemId+'='+x.count).join(','),JSON.stringify(this.brought),JSON.stringify(this.ownSpentFloor));
     if(this.fieldGather)parts.push(this.fieldGather.hash());
     if (this.errand) parts.push(this.errand.used.join(','), Object.entries(this.errand.bag).map(([k, v]) => `${k}=${v}`).join(','), this.errand.delivered ? 1 : 0, p.errandOp ? `${p.errandOp.target.kind}:${p.errandOp.done ? 1 : 0}` : '-');
     for (const a of this.projectiles) parts.push(a.pos.x, a.pos.y, a.pos.z, a.life);

@@ -7,7 +7,7 @@ import { nearestFacility } from './hub';
 import { ANIMALS, furnitureErrors, type AnimalKind, type FurniturePlacement, type ZoneId } from '../data/hubEstate';
 import type { V3 } from '../core/math';
 import type { World } from './world';
-import { applyBox, pouchStacks, setPouchCount } from '../save/classicBox';
+import { pouchStacks, setPouchCount } from '../save/classicBox';
 
 export type HubService={id:string;name:string;tab:HubTab;x:number;z:number;r:number;floor:number;detail:string;zone?:ZoneId};
 export const HUB_SERVICES:readonly HubService[]=[

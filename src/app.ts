@@ -8,7 +8,7 @@ import { aimDir, aimEye, aimTarget } from './game/aim';
 import type { ArmorSlot, Content, FacilityDef } from './data/schemas';
 import { starLabel } from './data/questBoard';
 import { FIELD_GATHER_LABEL } from './data/fieldGathering';
-import { isCarriedLoot } from './save/classicBox';
+import { isCarriedLoot, pouchStacks } from './save/classicBox';
 import { Btn, type InputFrame } from './game/inputFrame';
 import { firstMismatch, runReplay } from './game/replay';
 import { familyOf } from './game/player';
@@ -261,7 +261,9 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
    * 中身を変えるのは保存の管理役だけで、書き込みが完了してから増える。
    */
   get inventory(): { money: number; items: Map<string, number> } {
-    return { money: this.save.doc.money, items: new Map(Object.entries(this.save.doc.items)) };
+    const items=new Map(Object.entries(this.save.doc.items));
+    for(const x of pouchStacks(this.save.doc))items.set(x.itemId,(items.get(x.itemId)??0)+x.count);
+    return { money: this.save.doc.money, items };
   }
 
   /** いまの依頼の識別子。出発のたびに新しくなる。報酬は、この識別子につき 1 度だけ持ち物へ入る（保存データに記録する） */
