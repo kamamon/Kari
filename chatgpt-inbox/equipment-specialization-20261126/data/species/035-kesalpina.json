@@ -1,0 +1,204 @@
+{
+  "no": 35,
+  "speciesId": "monster.kesalpina",
+  "name": "ケサルピナ",
+  "nativeRank": 2,
+  "identity": {
+    "role": "抜刀後の短い窓へ睡眠を濃縮",
+    "ecologyBasis": "左頬庇の裏に刷毛状の嚢があり、餌の菌胞子を細かく篩い分ける。頬庇を開いて短い翼で扇ぐと、睡眠成分を含む粉が片側だけへ流れる。 地上を歩いて尾で草を掃き、相手へ左頬を向けて距離を測る。翼は短い滑走と威嚇に使い、長く飛ばない。",
+    "combatLoop": "スタミナ70%以上まで整える→抜刀完了→次の別行動で睡眠を載せる→摩耗窓を長引かせず納刀する。",
+    "strength": "同級基準の物理倍率0.83、会心率+10ポイント。既存のsleep蓄積量を1.60倍。固有技能「片庇の乾いた一払い」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "物理基礎倍率0.83（同級基準比17%低い。系統補正前）、刃容量0.80倍、刃消耗1.40倍、防具一式の基準防御力0.78倍。弱点耐性は一式でthunder -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "long_blade",
+      "guard_blade"
+    ],
+    "avoidUse": "抜刀攻撃自体への技能加算を期待する一撃離脱。"
+  },
+  "stats": {
+    "rawScale": 0.83,
+    "affinity": 10,
+    "elementScale": 0,
+    "statusScale": 1.6,
+    "edgeCapacityScale": 0.8,
+    "edgeWearScale": 1.4,
+    "staminaCostScale": 0.95,
+    "defenseScale": 0.78,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 1.02,
+      "war_maul": 0.98,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 0.98,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.28,
+      "chest": 0.2,
+      "arms": 0.2,
+      "waist": 0.17,
+      "legs": 0.15
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": -20,
+      "ice": 20,
+      "water": 0,
+      "wind": 20,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "dodge_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.kesalpina",
+    "name": "片庇の粉払い",
+    "trigger": {
+      "event": "draw",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "抜刀完了後180tick以内の次の別行動の命中の睡眠蓄積+6%。抜刀攻撃自身には適用しない。480tick再使用。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、480tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.kesalpina",
+    "name": "片庇の乾いた一払い",
+    "trigger": {
+      "event": "draw",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 70,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 600,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "edgeWearPct",
+        "values": [
+          15,
+          25
+        ]
+      }
+    ],
+    "explanation": "スタミナ70%以上で抜刀を終え、乾いた刷毛粉を次の別行動へ載せる。粉が付く間は消耗も増え、長い抜刀連撃には向かない。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、600tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "左頬の一枚だけ長い低庇と、後腰へ平たく伏せた短い尾羽。右肩と右頬を大きく空け、正面から明確に左重心。",
+    "palette": [
+      "灰緑",
+      "生成り",
+      "淡い骨白"
+    ],
+    "organTranslation": [
+      "片側の頬庇→左顔側の低い一枚庇",
+      "刷毛状の嚢→左前腕の小さな閉じた刷毛房",
+      "扁平な尾→後腰の薄い三枚尾羽"
+    ],
+    "armorParts": {
+      "head": "左だけ横へ張る一枚庇。目の高さより上に収め、右耳と口は開ける",
+      "chest": "胸衣は生成りの薄い重ね布。左鎖骨だけ小さい灰緑の留め板",
+      "arms": "左前腕に細長い刷毛房を伏せ、右は細い羽軸の甲。房先は手首前で閉じる",
+      "waist": "後腰へ三枚の短い尾羽を水平に畳む。左腰に小さい粉嚢の覆い",
+      "legs": "短い細脚甲。左の脛外に短い刷毛の縁、足首に羽先を垂らさない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "左頬庇を一枚の長い峰板へ写し、根元の小刷毛房を硬い覆いで閉じる",
+      "guard_blade": "庇状の片鍔を持つ細剣と、左縁だけ広い低い楕円盾",
+      "war_maul": "扁尾骨の閉じた硬面を二つ置いた槌頭。刷毛は中央側室だけに収める",
+      "twin_blades": "平たい細刃二本の峰へ同じ短い刷毛覆い。刃側へ毛を出さない",
+      "long_blade": "長い庇を薄い峰へ写し、低い片鍔と短い尾羽形の鞘口を付ける",
+      "long_lance": "直槍の根元へ低い片庇、盾の左上だけ幅広くし中央は硬い平面",
+      "ring_bow": "左上の固定部に小さい庇と閉じた粉房。弓身は細く、一本弦と小環を保つ"
+    },
+    "gradeEvolution": {
+      "2": "左庇と三尾羽を灰緑、刷毛房を生成りにする。金属は小留めのみ。",
+      "3": "左庇の裏へ細い骨の支え、粉房に短い二重の留めを付ける。",
+      "4": "刷毛房の口縁だけに淡い白い点を並べる。右側へ庇を増やさず、尾羽は短い三枚のまま。"
+    },
+    "production": {
+      "primaryForm": "左の単庇",
+      "secondaryForm": "水平三尾羽",
+      "dominantRegion": "左頬と左前腕",
+      "asymmetry": "左だけ重く、右を開ける",
+      "repeatCount": 3,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "左前腕の刷毛房の短い口縁",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "両頬へ同じ長い庇を付けない",
+      "粉を常時大きな雲として出さない",
+      "尾羽を足首まで伸ばさない"
+    ]
+  }
+}

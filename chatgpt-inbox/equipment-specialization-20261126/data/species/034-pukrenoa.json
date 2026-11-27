@@ -1,0 +1,208 @@
+{
+  "no": 34,
+  "speciesId": "monster.pukrenoa",
+  "name": "プクレノア",
+  "nativeRank": 2,
+  "identity": {
+    "role": "背面を掬い取る霧の部位狙い",
+    "ecologyBasis": "匙形の下顎に細かい濾歯と霧嚢があり、泥の栄養分を集めた後の水を細霧にして戻す。食べた有毒菌の成分は、顎の側袋に分けて蓄える。 落ち着いて同じ泥筋をたどるが、顎へ触れられると強く抵抗する。敵に気づくと尻を上げ、進む方向を先に示す。",
+    "combatLoop": "背面へ移る→二つの別行動を当てる→同じ敵の部位に霧を重ねる→正面へ戻される前に離れる。",
+    "strength": "同級基準の物理倍率0.86、会心率-5ポイント。既存のmist属性量を1.55倍。固有技能「匙顎の背泥掬い」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "物理基礎倍率0.86（同級基準比14%低い。系統補正前）、会心率-5ポイント、刃消耗1.15倍、回避・ガード・ため維持など元々費用を持つ戦闘行動のスタミナ消費1.10倍、防具一式の基準防御力0.96倍。弱点耐性は一式でwind -20,fire -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "long_blade",
+      "ring_bow"
+    ],
+    "avoidUse": "正面に固定された戦い。"
+  },
+  "stats": {
+    "rawScale": 0.86,
+    "affinity": -5,
+    "elementScale": 1.55,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.02,
+    "edgeWearScale": 1.15,
+    "staminaCostScale": 1.1,
+    "defenseScale": 0.96,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 0.98,
+      "war_maul": 0.98,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 0.98,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.17,
+      "chest": 0.23,
+      "arms": 0.15,
+      "waist": 0.3,
+      "legs": 0.15
+    },
+    "setResistances": {
+      "fire": -20,
+      "thunder": 0,
+      "ice": 0,
+      "water": 20,
+      "wind": -20,
+      "mist": 20
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.pukrenoa",
+    "name": "匙縁の濾し残し",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "rear"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "匙顎で泥を薄く掬う動きを、背面から部位を削る一撃に写す。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、480tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.pukrenoa",
+    "name": "匙顎の背泥掬い",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "rear"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 240,
+    "cooldownTicks": 720,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          18,
+          24
+        ]
+      },
+      {
+        "stat": "elementPct",
+        "values": [
+          10,
+          14
+        ]
+      }
+    ],
+    "explanation": "背面へ二行動を当てると濾歯と霧嚢が連動する。背面を維持して部位を薄く削る構成。  240tick以内に異なる行動で2回。HP・スタミナ条件は行動費用確定後の残量%。発動から240tick有効、720tick再使用。攻撃への補正は起点と別の次行動から有効。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "胸前の低い匙面と、丸く高い後腰の甲を対にする。肩は小さく、前へ低い線と後ろへ上がる線が側面で分かれる。",
+    "palette": [
+      "灰褐",
+      "淡紫灰",
+      "骨白"
+    ],
+    "organTranslation": [
+      "匙顎→低い楕円の胸当てと武器の浅い匙断面",
+      "頬の側袋→頬下と後腰の小袋",
+      "高い尻→後腰だけ高い丸甲"
+    ],
+    "armorParts": {
+      "head": "前へ低く伸びる浅い匙庇。左右の小袋は頬の下で閉じ、視界を空ける",
+      "chest": "胸前に低い横楕円の匙板。みぞおちから下は短い二枚板で曲げる",
+      "arms": "外側へ浅い匙状の縁を沿わせた細い籠手。内側は暗い湿潤布",
+      "waist": "後腰に高い半球甲一枚、その左右に小袋二つ。前腰は低く短い",
+      "legs": "丸い膝甲から短い匙形脛甲へつなぐ。後腰の丸さを脚へ反復しない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "先端の面だけ浅い匙形に広がる一枚刃。峰の刃元に紫灰の小袋一つ",
+      "guard_blade": "薄い匙先の細剣と、前へ浅く凹んだ楕円盾。盾裏は骨の硬い面で閉じる",
+      "war_maul": "匙顎骨を横に束ね、丸い硬面で閉じた槌頭。袋は片側の小窪みに収納",
+      "twin_blades": "低い匙先を持つ二本の短刃。左右の小袋と鍔の幅は同じ",
+      "long_blade": "長い細刃の峰に浅い濾歯溝を一本。刃元の楕円鍔だけ匙を写す",
+      "long_lance": "細い匙形穂先と、後ろへ丸く膨らむ小袋を裏へ納めた楕円盾",
+      "ring_bow": "中央が浅い匙面になった細い弓。小袋を下側の固定部に一つ、一本弦と小環を保つ"
+    },
+    "gradeEvolution": {
+      "2": "胸の匙を骨白の低い面、後腰を灰褐の丸甲。小袋は淡紫灰。",
+      "3": "匙縁へ短い濾歯筋を加え、後腰の甲を二層にする。",
+      "4": "前胸の底と後腰の小袋だけに淡い霧色の窓。輪郭の前後差を維持し、袋は増やさない。"
+    },
+    "production": {
+      "primaryForm": "低い匙と高い丸甲",
+      "secondaryForm": "小さい袋",
+      "dominantRegion": "胸前と後腰",
+      "asymmetry": "左右は対称、前後の高さを大きく変える",
+      "repeatCount": 2,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "後腰左右の小袋の縫い目",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "胸板を長い嘴へ伸ばさない",
+      "顔を大きな防毒面で塞がない",
+      "後腰袋を長い尾にしない"
+    ]
+  }
+}

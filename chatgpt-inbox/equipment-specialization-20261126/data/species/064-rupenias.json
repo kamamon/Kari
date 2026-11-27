@@ -1,0 +1,201 @@
+{
+  "no": 64,
+  "speciesId": "monster.rupenias",
+  "name": "ルペニアス",
+  "nativeRank": 3,
+  "identity": {
+    "role": "袋の休息を次の睡眠打へ移す装備",
+    "ecologyBasis": "位置のずれた二つの袋肩発酵嚢。食べた草根を分解する共生菌が作る眠り成分を水滴へ移し、肩を縮めた側だけへ霧を出す。",
+    "combatLoop": "HPとスタミナを保って正式に納刀し、次の一撃に眠りを溜める。発動後の乱打は刃を消耗する。",
+    "strength": "睡眠量1.60倍、蓄えた次行動の睡眠+12/16%。",
+    "weakness": "基礎攻撃0.80倍、防御0.82倍、風耐性-30。発動中の消耗+10/18%、HP80%未満では起動しない。",
+    "recommendedFamilies": [
+      "heavy_blade",
+      "long_blade",
+      "twin_blades"
+    ],
+    "avoidUse": "不利な運用: HPを削られながら納刀を繰り返す運用"
+  },
+  "stats": {
+    "rawScale": 0.8,
+    "affinity": 0,
+    "elementScale": 0,
+    "statusScale": 1.6,
+    "edgeCapacityScale": 1.15,
+    "edgeWearScale": 1.12,
+    "staminaCostScale": 1.04,
+    "defenseScale": 0.82,
+    "familyBias": {
+      "heavy_blade": 1.04,
+      "guard_blade": 0.98,
+      "war_maul": 0.98,
+      "twin_blades": 1.02,
+      "long_blade": 1.02,
+      "long_lance": 0.98,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.12,
+      "chest": 0.34,
+      "arms": 0.18,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 0,
+      "ice": 0,
+      "water": 20,
+      "wind": -30,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "edge_keep",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "status_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "袋口の初滴",
+    "trigger": {
+      "event": "draw",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "抜刀後の次の別行動だけへ眠り滴を渡す。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 次の有効な別行動の命中で消費し、その行動の多段命中には同じ効果を使う。 持続180tick、発動時から再使用480tick。",
+    "id": "weapon_trait.rupenias"
+  },
+  "signature": {
+    "name": "ずれ袋の休息仕込み",
+    "trigger": {
+      "event": "sheathe",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 80,
+      "hpMax": 100,
+      "staminaMin": 80,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 1200,
+    "durationTicks": 600,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "edgeWearPct",
+        "values": [
+          10,
+          18
+        ]
+      }
+    ],
+    "explanation": "正式な納刀完了時にHP・スタミナとも80%以上なら眠り滴を蓄える。武器の自動収納では発動しない。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 次の有効な別行動の命中で消費し、その行動の多段命中には同じ効果を使う。 持続600tick、発動時から再使用1200tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.rupenias"
+  },
+  "appearance": {
+    "silhouette": "左前肩と右後肩の丸い袋を前後にずらし、顔と腰を小さく見せる。袋の間に背の空間が見える。",
+    "palette": [
+      "灰緑",
+      "灰褐",
+      "青銅"
+    ],
+    "organTranslation": [
+      "袋肩発酵嚢→前後にずれた二つの肩袋",
+      "袋の口→胸前と肩甲骨側の別々の小栓",
+      "水滴→袋下の短い灰白溝"
+    ],
+    "armorParts": {
+      "head": "小さい革鉢に袋口状の低い留め",
+      "chest": "胸前の左袋を高く置き右胸は平ら",
+      "arms": "左前腕は細い袋帯、右は短い発酵溝",
+      "waist": "小さな腰帯、袋を腰へ移さない",
+      "legs": "細い縦皮の脚衣と短い膝甲"
+    },
+    "weaponShapes": {
+      "heavy_blade": "前袋と後袋を峰の側室へずらした厚刃大剣",
+      "guard_blade": "小栓鍔の剣と、前後の丸みを側面で見せる硬盾",
+      "war_maul": "硬い両打面の間に前後ずれた二側室",
+      "twin_blades": "同長の短剣二本へ前袋の曲線と後袋の曲線を分ける",
+      "long_blade": "鍔元の小側室から細い眠滴溝を通す太刀",
+      "long_lance": "直槍の刃元に小袋を内蔵し、盾の裏へ二袋を低く配置",
+      "ring_bow": "握り周囲の二小室を前後にずらし、細い弓身・小環・一本の直線弦"
+    },
+    "gradeEvolution": {
+      "3": "灰緑の丸い肩を左右で前後にずらし、前袋は胸側、後袋は背側へ寄せる。兜と腰は小さくし、袋の非対称を輪郭の中心にする。 初登場級の形。武器は同じ器官の輪郭を用途に合わせて切り分ける。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。",
+      "4": "極級では袋の容器を内側へ収め、前後のずれを保つ。発酵液の継ぎ目を低く二段化し、外側の袋を巨大化しない。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "二つの丸袋",
+      "secondaryForm": "細い四肢",
+      "dominantRegion": "左前肩と右後肩",
+      "asymmetry": "袋を左右の前後へずらす",
+      "repeatCount": "袋2、小栓2",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "肩袋の二つの小栓",
+      "inactive": "袋に灰緑の皺",
+      "active": "前袋の栓から後袋へ小さい白点が移る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "HPを削られながら納刀を繰り返す運用",
+      "左右同位置の巨大肩球",
+      "腰や兜にも袋を増やす形"
+    ]
+  }
+}

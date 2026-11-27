@@ -1,0 +1,202 @@
+{
+  "no": 18,
+  "speciesId": "monster.kohalgis",
+  "name": "コハルギス",
+  "nativeRank": 1,
+  "identity": {
+    "role": "一枚硝板を受ける幼硝装",
+    "ecologyBasis": "四〜七体で同じ岩を使い、一体が鋏を上げると周囲も姿勢を低くする。逃げる時は一か所へ詰まらず別の割れ目へ散る。",
+    "combatLoop": "スタミナを保った通常ガードで薄い硝板の向きを揃え、短い部位攻撃へ移る。",
+    "strength": "刃容量1.15倍、防御1.02倍。高スタミナの通常ガードを入り口にする。",
+    "weakness": "基礎物理0.94倍、会心+10。スタミナ70%未満では固有を起動できず、大火力は持たない。",
+    "recommendedFamilies": [
+      "guard_blade",
+      "long_lance"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.94倍、会心+10。スタミナ70%未満では固有を起動できず、大火力は持たない。"
+  },
+  "stats": {
+    "rawScale": 0.94,
+    "affinity": 10,
+    "elementScale": 0,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.15,
+    "edgeWearScale": 0.88,
+    "staminaCostScale": 0.96,
+    "defenseScale": 1.02,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.04,
+      "war_maul": 1.0,
+      "twin_blades": 1.0,
+      "long_blade": 1.0,
+      "long_lance": 1.02,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": -25,
+      "ice": 0,
+      "water": 20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "edge_keep",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "edge_keep",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.kohalgis",
+    "name": "小鋏の面取り",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "thrust"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 420,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          5,
+          5
+        ]
+      }
+    ],
+    "explanation": "小鋏芯の突きから次の部位攻撃を整える。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.kohalgis",
+    "name": "乳硝の一受け",
+    "trigger": {
+      "event": "guard",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 70,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 660,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "guardCostPct",
+        "values": [
+          -12,
+          -20
+        ]
+      },
+      {
+        "stat": "partPct",
+        "values": [
+          8,
+          12
+        ]
+      }
+    ],
+    "explanation": "通常ガード後の残スタミナ70%以上なら、一枚硝板を整える4秒が生まれる。受け流し専用ではない。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "乳白の一枚板を左右ほぼ均等に配す成人装。右手の細い青銅縁だけが成長の偏りを示す。",
+    "armorParts": {
+      "head": "乳白の小額板一枚。透明な大兜にしない",
+      "chest": "左右同寸の薄い胸板二枚、背は灰緑の革",
+      "arms": "両腕同じ小板。右手の外縁だけ細青銅",
+      "waist": "腰に左右同寸の小板二枚。前後の裾を短くする",
+      "legs": "脛の薄い乳白板、膝と足首は革"
+    },
+    "weaponShapes": {
+      "heavy_blade": "乳白の薄い板を刃元へ二枚重ねた連続大刃",
+      "guard_blade": "細い小鋏刃と、一枚硝板を硬い枠へ収めた軽盾",
+      "war_maul": "閉じた硬骨打面を乳白小板で側面だけ覆う",
+      "twin_blades": "同寸の乳白短刃二本。右の鍔縁だけ青銅",
+      "long_blade": "細い曲刃の根元へ乳白一枚板を沿わせる",
+      "long_lance": "小鋏芯の直槍と、左右均等の乳白盾",
+      "ring_bow": "細い骨弓の握り横へ乳白小板二枚。直線弦と小環"
+    },
+    "production": {
+      "primaryForm": "左右均等の乳白小板",
+      "secondaryForm": "右手だけの青銅細縁",
+      "dominantRegion": "胸と両前腕",
+      "asymmetry": "ほぼ対称、右手の縁のみ差",
+      "repeatCount": "胸板2、前腕板2",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "乳白一枚板の薄さと左右対称を保つ。",
+      "2": "右手の青銅縁だけ少し明瞭化。",
+      "3": "小板の内側に細い支持革を追加。",
+      "4": "板面を磨くが透明化も巨大化もしない。"
+    },
+    "skillCue": {
+      "location": "右手の細い青銅縁",
+      "inactive": "くすんだ線",
+      "active": "通常ガード成功で縁一筋だけ反射",
+      "maxLitSurfacePercent": 1
+    },
+    "avoid": [
+      "オルグラスの右大鋏を縮めて付けない",
+      "硝板を完全透明の宝石にしない",
+      "左右を大きく非対称にしない"
+    ],
+    "palette": [
+      "乳白",
+      "淡い灰緑",
+      "細い青銅縁"
+    ],
+    "organTranslation": [
+      "右鋏の根元で発達途中の硝殻成形腺。板は乳白色で薄く、まだ重ねて硬くできない。",
+      "未発達の硝殻は乳白の一枚板。右だけ巨大な成体籠手を作らない。",
+      "周囲と同時に姿勢を低くする行動を、余裕を残した通常ガードへ置換。"
+    ]
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "no": 9,
+  "speciesId": "monster.verito",
+  "name": "ヴェリト",
+  "nativeRank": 1,
+  "identity": {
+    "role": "毒を見届けて刃を保つ糸装",
+    "ecologyBasis": "普段は糸を手繰りながらゆっくり歩く。逃げ道を塞がれると羽袋を縮めて跳び、低い糸の帯を残す。",
+    "combatLoop": "毒を成立させてから同じ相手の部位へ攻撃を集め、糸の被膜で刃を保つ。",
+    "strength": "毒倍率1.60。毒成立後は刃消耗-12/-20%と部位補正+10/+16%。",
+    "weakness": "基礎物理0.79倍、防御0.75倍。相手変更と被弾で仕込みが切れる。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "long_blade",
+      "guard_blade"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.79倍、防御0.75倍。相手変更と被弾で仕込みが切れる。"
+  },
+  "stats": {
+    "rawScale": 0.79,
+    "affinity": 15,
+    "elementScale": 0,
+    "statusScale": 1.6,
+    "edgeCapacityScale": 0.9,
+    "edgeWearScale": 1.08,
+    "staminaCostScale": 0.93,
+    "defenseScale": 0.75,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.02,
+      "war_maul": 1.0,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 1.0,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": -20,
+      "thunder": 0,
+      "ice": 0,
+      "water": 15,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "edge_keep",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "status_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.verito",
+    "name": "二糸の掛け直し",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "rear"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 240,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "背後へ回り込んだ接触で次の毒蓄積を仕込む。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.verito",
+    "name": "毒糸の被膜",
+    "trigger": {
+      "event": "status_inflicted",
+      "tagsAll": [
+        "poisoned"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 960,
+    "durationTicks": 480,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "target_change",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "edgeWearPct",
+        "values": [
+          -12,
+          -20
+        ]
+      },
+      {
+        "stat": "partPct",
+        "values": [
+          10,
+          16
+        ]
+      }
+    ],
+    "explanation": "自分が毒を成立させた相手への攻撃だけを糸で保護する。毒の継続ダメージ自体は増やさない。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "背上部に二つの柔らかな羽袋、胸下は細い糸布。肩幅を袋だけで作り、腰と足は絞る。",
+    "armorParts": {
+      "head": "浅い糸編みの鉢と目上の細い縁。触角は短い",
+      "chest": "肩甲骨上に二つの丸袋。胸は縦糸を交差させた薄布",
+      "arms": "前腕外側に糸の細巻き。手首と指に房を垂らさない",
+      "waist": "腰後ろに二本の短い糸縁、前腰に袋を置かない",
+      "legs": "細い糸布の脛巻き。裾を靴へ引きずらない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "刃元の背面にだけ二つの小袋を収める薄刃大剣",
+      "guard_blade": "小さな毒糸溝の短刃と、硬い骨板に糸布を張った盾",
+      "war_maul": "閉じた硬骨打頭の側面を糸で包み、小袋は下側二室",
+      "twin_blades": "峰に一本ずつ毒糸溝を持つ二短刃。刃先に糸を張らない",
+      "long_blade": "低い峰溝に糸を通す連続曲刃。鞘口に二つの短房",
+      "long_lance": "直槍の根元を二筋糸で締め、薄い硬板盾に小袋二室",
+      "ring_bow": "弓の握り背面に二小袋。弓弦は直線一本、小環一つ"
+    },
+    "production": {
+      "primaryForm": "背上の柔らかな二袋",
+      "secondaryForm": "細い編み糸",
+      "dominantRegion": "肩甲骨上",
+      "asymmetry": "背上だけ膨らみ、腹腰は細い",
+      "repeatCount": "主羽袋2、尾糸縁2",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "袋二つを淡い紫灰に、糸の編み目を粗く見せる。",
+      "2": "袋の付け根に生成り糸の細い輪を加える。",
+      "3": "糸縁を二筋に分け、袋の体積は増やさない。",
+      "4": "袋内側の縫い筋を明瞭化。光る毒液を外へ滴らせない。"
+    },
+    "skillCue": {
+      "location": "背上袋の縫い筋",
+      "inactive": "生成りの糸",
+      "active": "毒成立で二筋だけ鈍い紫へ変わる",
+      "maxLitSurfacePercent": 3
+    },
+    "avoid": [
+      "大きな蝶の翼にしない",
+      "糸を長い触手や刃間の線として張らない",
+      "毒色を全身の蛍光緑にしない"
+    ],
+    "palette": [
+      "淡い紫灰",
+      "生成り糸",
+      "灰茶"
+    ],
+    "organTranslation": [
+      "背の袋状の羽器と、尾端の二筋の紡糸管。袋で湿りを保った毒性の糸を低い位置へ張り、羽器は飛行には使わない。",
+      "飛行しない袋状羽器を背上の二袋へ、二本の紡糸管を短い糸縁へ。",
+      "毒を与えた後に糸を手繰る生態を、毒成立後の刃持ちと部位攻撃へ結ぶ。"
+    ]
+  }
+}

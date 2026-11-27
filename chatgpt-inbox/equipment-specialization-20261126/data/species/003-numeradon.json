@@ -1,0 +1,204 @@
+{
+  "no": 3,
+  "speciesId": "monster.numeradon",
+  "name": "ヌメラドン",
+  "nativeRank": 1,
+  "identity": {
+    "role": "水圧を集める部位掘削装",
+    "ecologyBasis": "採食中は鈍重だが、泥皿に触れられると敏感に反応する。移動前には必ず皿へ水を補う。",
+    "combatLoop": "同じ個体の未破壊部位へ別行動で三度触れ、水圧を保ったまま破壊まで押す。部位IDは固定しない。",
+    "strength": "水倍率1.75、防御1.05倍。三接触後の部位ダメージ+18/+25%。",
+    "weakness": "基礎物理0.82倍、会心-10、刃消耗1.30倍。技能中は刃消耗がさらに+12/+20%。",
+    "recommendedFamilies": [
+      "long_lance",
+      "guard_blade",
+      "heavy_blade"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.82倍、会心-10、刃消耗1.30倍。技能中は刃消耗がさらに+12/+20%。"
+  },
+  "stats": {
+    "rawScale": 0.82,
+    "affinity": -10,
+    "elementScale": 1.75,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.2,
+    "edgeWearScale": 1.3,
+    "staminaCostScale": 1.1,
+    "defenseScale": 1.05,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 1.02,
+      "war_maul": 1.0,
+      "twin_blades": 1.0,
+      "long_blade": 1.0,
+      "long_lance": 1.04,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.18,
+      "chest": 0.28,
+      "arms": 0.18,
+      "waist": 0.22,
+      "legs": 0.14
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": -25,
+      "ice": 0,
+      "water": 20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "part_damage",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.numeradon",
+    "name": "泥皿の圧返し",
+    "trigger": {
+      "event": "guard",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 240,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "通常ガードで泥皿の圧を揃え、次の別行動の水属性を強める。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.numeradon",
+    "name": "三掬いの穿皿",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "unbroken"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 3,
+    "windowTicks": 420,
+    "cooldownTicks": 720,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          18,
+          25
+        ]
+      },
+      {
+        "stat": "edgeWearPct",
+        "values": [
+          12,
+          20
+        ]
+      }
+    ],
+    "explanation": "同じ相手の未破壊部位へ三つの別行動を当てると、刃を磨耗させて破壊を進める。状態異常は追加しない。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "兜と前腰に二つの浅い泥皿。腹の耐水皮を横に張り、背は低くすぼめる前重心の半円形。",
+    "armorParts": {
+      "head": "低い浅皿の前縁だけ青緑の圧溝。視界の上を切り欠く",
+      "chest": "横に重なる耐水腹皮三層。胸上部は小さく前腹へ重さを寄せる",
+      "arms": "外前腕に短い水嚢覆い、肘内と手首は皮帯",
+      "waist": "前腰に一枚の浅皿を斜めに置き、左右腿を分ける",
+      "legs": "短い横皺の脛覆い。皿の模様を足へ繰り返さない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "広い泥受け面を峰の半面へ置く片刃。刃先は連続金属",
+      "guard_blade": "浅皿形の閉じた盾と、水圧溝一本の短い刃",
+      "war_maul": "低く幅広い硬質泥晶の打頭。丸い嚢は頭の下の側室",
+      "twin_blades": "二本の短刃の根元に小さな皿溝、先端は細く揃える",
+      "long_blade": "峰に浅い水樋一本を走らせた平たい連続曲刃",
+      "long_lance": "前縁を斜めに閉じた槍穂と、浅い半円皿の大盾",
+      "ring_bow": "弓の握り下だけ小さな水皿飾り。細い弓身、小環、直線弦"
+    },
+    "production": {
+      "primaryForm": "浅い半円皿",
+      "secondaryForm": "横方向の耐水皮",
+      "dominantRegion": "前腰と前腹",
+      "asymmetry": "前が厚く背が薄い。左右の脚は均等",
+      "repeatCount": "主要皿2、腹皮3層",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "二つの皿を浅く保ち、泥褐の皮を広く残す。",
+      "2": "皿の前縁へ一筋の青緑溝。後ろ縁は上げない。",
+      "3": "前腰の皿を二重縁にし、胸の三層皮へ短い留めを足す。",
+      "4": "圧溝を二筋へ整える。背に大型タンクや毒袋は付けない。"
+    },
+    "skillCue": {
+      "location": "前腰の皿溝",
+      "inactive": "乾いた青緑の溝",
+      "active": "三接触で前縁だけ水色の薄い反射",
+      "maxLitSurfacePercent": 3
+    },
+    "avoid": [
+      "毒属性や毒袋を追加しない",
+      "兜を深いバケツ状にしない",
+      "皿を足・肩すべてに繰り返さない"
+    ],
+    "palette": [
+      "泥褐色",
+      "灰白の皮",
+      "くすんだ青緑"
+    ],
+    "organTranslation": [
+      "頭頂の泥受け皿と、その縁に並ぶ水圧嚢。取り込んだ水と細泥を練り、皿の前端から小さな塊として飛ばす。",
+      "頭皿を兜と前腰の浅い板へ分割し、丸い水圧嚢は前腕の短い側室へ。",
+      "泥を三度掬ってから押す行動を未破壊部位の三接触へ置換。"
+    ]
+  }
+}

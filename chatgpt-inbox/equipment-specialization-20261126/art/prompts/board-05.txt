@@ -1,0 +1,43 @@
+Use case: stylized-concept. Create a beautiful production comparison concept sheet for the original grounded fantasy hunting game VEILBOUND HUNTERS. This is static fantasy costume and prop art, no combat or construction diagram. Wide landscape canvas, FOUR equally sized vertical panels in one row, soft parchment neutral backdrop, studio diffuse lighting, natural leather/bone/organic shell/aged bronze materials, restrained earth colors and tiny dim amber accents. Detailed painterly 3D game concept quality. Nothing resembling famous copyrighted armor.
+Each panel contains ONE full-body ADULT gender-neutral mannequin wearing five-region armor (helmet, chest, arms, waist, legs), head and both feet fully inside frame; and exactly TWO representative weapon-family prop groups beside it, arranged cleanly with breathing room. For twin_blades group show two matched short swords. For guard_blade show a short sword AND a separate shield. For long_lance show one long straight lance AND separate shield. Bow must have ONE straight taut bowstring between tips and ONE small aiming ring near grip, slender flexible bow limbs. All props are separate from mannequin and anatomically coherent. Hard closed hammer striking faces. Functional hand grips visible, fingers clear, shoulders/elbows/knees free, no extra limbs. Weapons stay their canonical shapes and lengths.
+Do not overfill panels with extra props. Adult-sized clothing also when source is juvenile. Literal panel labels at top only: three-digit number and LATIN ID provided below. A small title VEILBOUND HUNTERS at top. No Japanese paragraphs or stats. All silhouette, material color, organ placement, asymmetric side and counts below are intentional. Never mirror left/right. Left means the wearer's anatomical left. Do not put full bright magic over the figure. Show the native-rank concept, not four tiers. Render clear material differentiation, clean edges, readable silhouettes at small size.
+
+PANEL 1: label '017 CHILUMICANA'. rear three-quarter angle with the helmet profile visible, so the distinctive back organs are clearly visible.
+Silhouette: 淡い青灰の成人軽装。背の最下部に離れた琥珀二点だけを置き、長い灯列を作らない。
+Palette: 淡い青灰, 琥珀二点, 生成り
+Five regions: {"head": "小さな短羽の額帯。頭に点灯器を増やさない", "chest": "灰青の細い胸革、背下部に二つの小燐節", "arms": "前腕の外に小放電膜を一枚ずつ", "waist": "二燐節の下を生成り腰帯で留め、尾は付けない", "legs": "細い脚布と軽い短靴。大きな節甲を避ける"}
+Important count: 主要燐節2
+ring_bow PROP GROUP: 握り上に離れた二小節。小環一つと直線弦
+twin_blades PROP GROUP: 各短刃の根元に一つずつ小燐節
+Avoid: 成体の五節・長尾へ変えない / 点灯数を二つより増やさない / 幼児体型にしない
+These are ADULT wearable proportions made from small juvenile organs. Keep organs immature and small, not a child mannequin and not a miniaturized adult monster armor.
+
+PANEL 2: label '018 KOHALGIS'. front three-quarter angle.
+Silhouette: 乳白の一枚板を左右ほぼ均等に配す成人装。右手の細い青銅縁だけが成長の偏りを示す。
+Palette: 乳白, 淡い灰緑, 細い青銅縁
+Five regions: {"head": "乳白の小額板一枚。透明な大兜にしない", "chest": "左右同寸の薄い胸板二枚、背は灰緑の革", "arms": "両腕同じ小板。右手の外縁だけ細青銅", "waist": "腰に左右同寸の小板二枚。前後の裾を短くする", "legs": "脛の薄い乳白板、膝と足首は革"}
+Important count: 胸板2、前腕板2
+guard_blade PROP GROUP: 細い小鋏刃と、一枚硝板を硬い枠へ収めた軽盾
+long_lance PROP GROUP: 小鋏芯の直槍と、左右均等の乳白盾
+Avoid: オルグラスの右大鋏を縮めて付けない / 硝板を完全透明の宝石にしない / 左右を大きく非対称にしない
+These are ADULT wearable proportions made from small juvenile organs. Keep organs immature and small, not a child mannequin and not a miniaturized adult monster armor.
+
+PANEL 3: label '019 MITOGARON'. rear three-quarter angle with the helmet profile visible, so the distinctive back organs are clearly visible.
+Silhouette: 生成りの成人胴着に、閉じない半円板を三つずらす。鉤先は小さく丸く、成体の尖った螺旋にしない。
+Palette: 灰褐, 淡い赤銅, 生成り
+Five regions: {"head": "丸い短鉤二つの低い額当て", "chest": "胸の半円板は前中央を広く開き、背へ半周だけ", "arms": "外前腕の開いた半円板一つずつ。丸鉤を小さく", "waist": "腰後ろの半円板を低く置き、両脇を開く", "legs": "脛の細い革帯と小さい丸鉤片一枚"}
+Important count: 主半円3、各板の丸鉤1～2
+twin_blades PROP GROUP: 小さな丸鉤を峰の根元に一つずつ持つ二短刃
+long_blade PROP GROUP: 低い半円筋を峰へ沈めた連続曲刃
+Avoid: 成体の長い鉤や巨大な巻き角にしない / 閉じた輪へ完成させない / 成人装備を幼児サイズへしない
+These are ADULT wearable proportions made from small juvenile organs. Keep organs immature and small, not a child mannequin and not a miniaturized adult monster armor.
+
+PANEL 4: label '020 YURTEPICA'. rear three-quarter angle with the helmet profile visible, so the distinctive back organs are clearly visible.
+Silhouette: 背の上部に平たい羽袋一枚と、左右へ短く出る二本の糸縁。生成り布の成人軽装で、ふくらんだ成体袋を持たない。
+Palette: 淡い灰紫, 生成り糸, 灰茶
+Five regions: {"head": "細い灰紫の糸帯を額へ。大きな頭飾りなし", "chest": "肩甲骨上に平たい薄羽袋一枚。胸は生成り布", "arms": "前腕外側に細い糸巻き、指と手首は空ける", "waist": "腰帯の左右へ短い二糸縁。尾のように垂らさない", "legs": "生成りの脛布と灰茶の革靴"}
+Important count: 平羽袋1、糸縁2
+twin_blades PROP GROUP: 平たい刃元へ糸を一筋ずつ巻く二短剣
+guard_blade PROP GROUP: 細い毒糸溝の短刃と、薄羽袋の面を硬板へ貼る軽盾
+Avoid: ヴェリトの二つの大袋を縮小して載せない / 糸縁を長い触手にしない / 環弓の外見を整備技能の有効性と混同しない
+These are ADULT wearable proportions made from small juvenile organs. Keep organs immature and small, not a child mannequin and not a miniaturized adult monster armor.

@@ -1,0 +1,25 @@
+Use case: stylized-concept. Original fantasy game VEILBOUND HUNTERS equipment comparison board, rebuilt production reference.
+Create a polished wide landscape 3:2 illustration divided into 2 equal vertical panels, warm pale parchment background, thin quiet panel separators. Heading exactly "VEILBOUND HUNTERS". Every panel contains ONE full-body ADULT hunter mannequin wearing all five armor parts, and exactly TWO representative weapon-family sets neatly displayed separately beside the mannequin. Full helmet, torso, arms, waist and both feet visible, with generous head/foot margins. No cropped props, no labels beyond the specified panel labels, no other creatures or figures. Poses quiet and readable; three-quarter view chosen to show the stated asymmetry and rear-waist details. Mannequin unisex adult proportions, plain gray faceless head, no exposed skin emphasis.
+Visual style: grounded handcrafted original hunting-fantasy costume concept, like matte leather and weathered bone with stone shell and muted bronze fittings, subtle olive/gray/blue/purple organic coloration, restrained amber accent edges, realistic material rendering with soft studio light, no glossy plastic, no cyberpunk, no ornate golden knight costume. Clear structural silhouette, no battle scene. Equipment is fictional visual prop design only. Preserve a small number of meaningful anatomy-derived volumes; do not add generic spikes, horns, wings or large capes. Tiny skill cue glows at most 4% of armor surface.
+Weapon definitions are literal: swords retain real sword silhouettes in the fictional game, mauls have closed hard faces, shields have solid rigid backing, twin swords are exactly two swords, lance is straight with its own separate shield, bow is slender with one straight string and a small aiming ring, never a circular disc or crossbow. Use TWO family sets per panel, no extra weapon families. Separate props enough to identify every silhouette.
+
+PANEL 1, label exactly "085 NUCBAREA". Three-quarter rear-side view, showing the dominant rear/collar/waist structures without hiding both arms.
+Species-specific armor silhouette: 後腰だけ横へ広い扇甲、襟から短い二房。腕を同寸に保ち、胸を平らにする。
+Palette: 灰紫, 灰褐, 青銅
+Armor five regions: head: 低い扁甲の兜、襟に短い二本房; chest: 中央を平らにした灰紫胸甲; arms: 左右同寸の短い鋏芯籠手; waist: 後腰だけ扇形に広げ、腿の横へ張らない; legs: 扇縁の小片を脛へ縦に分ける
+Critical shape/count constraints: 腕は左右同寸、広がりは後腰のみ; 襟房2、主扇甲1
+Prop short sword AND its independent rigid shield: 双房の短い鍔の剣と、後扇の弧を写した硬盾
+Prop TWO matched short swords, one family: 二本房の細線をそれぞれの峰へ写す同長二短剣
+Avoid visual errors: 左右で大きさの違う腕甲; 襟房を胸下まで垂れる長い紐へ変える形
+
+PANEL 2, label exactly "086 TOWALSEM". THREE-QUARTER REAR VIEW of wearer, head turned sideways; all three rear-waist drops clearly visible; chest armor still implied in side turn.
+Species-specific armor silhouette: 滑らかな背と細い灰青の胴。三つの短い雫を後腰だけへ並べ、肩と頭を平らに保つ。
+Palette: 灰青, 白灰, 鈍い青銅
+Armor five regions: head: 滑甲を低くまとめる小兜、氷角を付けない; chest: 背面を滑らかな一枚面に見せる薄胴; arms: 細い腕甲に短い水路線、氷板は載せない; waist: 後腰だけ三つの短い雫を同間隔に並べる; legs: 支持尾骨を細い縦線へ分けた脛当て
+Critical shape/count constraints: 三滴は中央に等間隔、肩は平ら; 後腰の雫3
+Prop slender slightly curved long sword: 三つの低い滴室を鍔元へ寄せた細い太刀
+Prop slender traditional bow with ONE straight string and ONE small sight ring; arrow beside it: 三つの小室は握りの後ろへ、小照準環と一本の直線弦を空ける
+Avoid visual errors: 肩や兜へ大きい氷板を追加する形; 三滴を胸前や左右の肩へ移す形
+CRITICAL: exactly THREE small droplet shapes at REAR WAIST ONLY. Show them all in the rear-side view; none at chest, shoulders or head. Smooth back, no large ice plates.
+
+Final framing: all feet and all prop endpoints inside each panel. Balanced whitespace, each species unmistakably different. No game stats, no schematic measurements, no exploding mechanisms, no real-world instructions. This is a static concept comparison, not all-grade or all-seven-family coverage.

@@ -1,0 +1,37 @@
+Use case: stylized-concept. Original fantasy game VEILBOUND HUNTERS. A polished horizontal equipment concept comparison board, four equally wide vertical panels, warm light parchment backdrop, restrained realism, organic carved bone and mineral shells, matte weathered leather, muted bronze, soft studio light, no battle scene. Art direction: grounded weathered earth colors, legible strong shapes, subtle painted 3D volume, carefully sculpted organic armor, no glossy science-fiction or neon. Like a museum costume and stage-prop display.
+Layout: same height full-body ADULT faceless neutral mannequins in all four panels, head to both boots fully visible with margins. Neutral three-quarter stance with relaxed arms, hands and fingers visible. Each panel contains ONE complete 5-region armor design and TWO representative fantasy prop categories neatly beside the mannequin; neither category may be omitted or merged. Prop sets separate from the body and each other. The humanoid is not carrying them. Keep shoulders, elbows, wrists, knees, ankles open and mobile. No large floating magical effects. Species traits belong to the crafted armor, NOT animal anatomy or creature heads.
+Top small title exactly VEILBOUND HUNTERS. Only additional text: the four panel labels below. No Japanese text, no stats, no extra logos or explanatory paragraphs. The left/right asymmetry specified below always means the wearer's own left/right. Do not turn any specified shoulder into its opposite. Each entire prop must fit inside its own panel, including grips, strings and shield outlines.
+
+PANEL 1, exact label "053  HAUREMIKA". Native-rank design, same adult body size as every other panel.
+Silhouette: 左肩からだけ厚い短い苔帷が垂れ、右腕は骨の細線。長い襟を細く伸ばし、非対称の重さを左上へ集中する。
+Palette: 灰緑, 淡菌糸色, 暗骨色
+Armor parts: {"head": "後ろへ細く伸びる低い襟。左頬の小濾房を襟の内側へ沿わせる", "chest": "灰緑の短い胸衣に菌糸色の縫い目。左鎖骨から襟へ細い管線", "arms": "左肩から三枚の短い苔帷片を垂らす。右は細い骨縁の籠手、左右とも手首を開ける", "waist": "前腰は短い二枚布。後腰に小さい眠粉槽の覆い一つ", "legs": "細い脚衣へ暗骨の短甲。苔帷を脚まで延ばさず、膝裏を開ける"}
+Show these two prop categories only: TWO matching short blades: 二本の峰に同じ三枚の短帷片。刃先へ布や苔を垂らさない; a short sword AND its separate hard shield: 左片鍔に短帷を沿わせた剣と、左上のみ灰緑の濾房を持つ硬盾
+Preserve: 左だけ厚い帷、右は細い. Main repeated form: 3.
+Avoid: 右肩にも同じ厚い帷を付けない; 長いマントへ置き換えない; 環弓が整備技能を発動できるように見せない
+
+PANEL 2, exact label "054  ZEDBANIL". Native-rank design, same adult body size as every other panel.
+Silhouette: 左右へ低く開く二枚の青銅胸板が主役。背中を低くし、厚い灰黒の胴から前腕へ短い導管線を伏せる。
+Palette: 灰黒, 青銅, 琥珀
+Armor parts: {"head": "低い灰黒の兜、額の左右へ短い青銅片。頭頂の煙突を作らない", "chest": "左右二枚の青銅胸板を低く開く。胸中央は細い灰黒の硬面で閉じる", "arms": "外側に琥珀の導管線を伏せた厚い短甲。肘を横断する管は付けない", "waist": "前後の短い灰黒板。後腰は小さい平縁で背を高くしない", "legs": "厚い冷銅脛甲と丸い小膝板。足首の前を短い別甲に分ける"}
+Show these two prop categories only: a short sword AND its separate hard shield: 二枚の青銅鍔の剣と、中央を硬面で閉じた二層の開き胸板盾; a broad fantasy greatsword: 峰の刃元に左右へ低く開く二枚板。灰黒の連続刃へ細い琥珀線一本
+Preserve: 左右対称の二枚開き. Main repeated form: 2.
+Avoid: 胸の中央に大きな穴を開けない; 原種の炎炉や高い排気塔を残さない; 導管を肘の内側へ渡さない
+
+PANEL 3, exact label "055  OLDASEM". Native-rank design, same adult body size as every other panel.
+Silhouette: 左肩から左腰へ大きさの違う三段の岩棚。右側を低い短板だけにして、左側面の三つの水平な空隙を読み取れる形にする。
+Palette: 灰褐, 灰緑, 鈍青銅
+Armor parts: {"head": "低い岩兜の左だけ短い庇。頭へ三つの棚を増殖しない", "chest": "厚い胸板の左側に三段棚の根を置き、棚下の空隙を灰緑の細室で区切る", "arms": "左肩棚の下から前腕を見せる。左前腕は厚い短甲、右は一枚の小板", "waist": "左腰で三段目の棚を止め、右腰と前腰は短い革帯", "legs": "太い短い脛甲。膝と足首を広く開け、上の棚と脚甲の塊を離す"}
+Show these two prop categories only: a broad fantasy greatsword: 峰の左面へ三段の厚い棚を伏せた幅広刃。棚下に灰緑の細い空隙; a short sword AND its separate hard shield: 左片鍔の剣と、左側に三つの低い棚・右側に硬い平面を持つ盾
+Preserve: 左のみ三棚、右を低くする. Main repeated form: 3.
+Avoid: ボラゼルンの正面三庇と同じ形にしない; 左棚で腕全体を隠さない; 棚を大きな翼へ伸ばさない
+
+PANEL 4, exact label "056  NUOLVAN". Native-rank design, same adult body size as every other panel.
+Silhouette: 幅広い胴の胸前だけへ短い濾過房を並べ、低く膨らむ腰の左右に一対の丸い水室。肩は高くせず下側に量を置く。
+Palette: 灰褐, 泥緑, 生成り
+Armor parts: {"head": "低い太根甲の兜。頬に短い濾し房を一つずつ付け、口は空ける", "chest": "幅広い胸板の前下に短い濾し房三束。腹は低い丸面で屈曲部を分ける", "arms": "太い短甲の前腕に生成りの濾し縁。手首を柔らかな水腱帯で区切る", "waist": "左右の腰外側へ丸い水室を一つずつ。前腰は低く膨らむ短甲", "legs": "太い脛甲と丸い小膝受け。水室は腿の上で止め、膝へ重ねない"}
+Show these two prop categories only: a short sword AND its separate hard shield: 短い濾歯縁の剣と、左右下へ小水室を納めた幅広い硬盾; a straight long lance AND its separate hard shield: 太い直槍の根元に短い房筋、盾の左右下側に丸い小室
+Preserve: 左右対称の二室. Main repeated form: 3.
+Avoid: 濾過房を長い髭や触手にしない; 水室を肩へ移して高くしない; 腹甲を股下へ長く垂らさない
+
+Final composition: FOUR full adult mannequin outfits side by side, distinct silhouettes, two prop categories EACH. No repeated identical armor with color swaps. Cloth and organic shell surfaces are opaque except explicitly translucent plates. Every bow string straight and separate from the aiming ring. Every shield has a solid structural backing even if its decorative outer layers have slots. No oversized shoulder appendages or long tails. Muted art-quality concept reference, not a dimensioned engineering drawing.

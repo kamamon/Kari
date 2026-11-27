@@ -1,0 +1,205 @@
+{
+  "no": 57,
+  "speciesId": "monster.tarhegna",
+  "name": "テムソギア",
+  "nativeRank": 3,
+  "identity": {
+    "role": "三つのためで火と部位圧を満たす籠装",
+    "ecologyBasis": "背を囲む中空の籠晶肋と、肋の根元の熱交換嚢。鉱物を分解する共生層の熱を肋ごとに蓄え、開いた根元から熱い砂を狭く吐く。 巨体の背を岩へ擦り付けながら、菌膜の多い畝を巡る。籠の内側を触られると肋を順に開くが、警告の間に距離を取れば追わない。",
+    "combatLoop": "三つのため解放→次の別行動から火と部位蓄積を解放→摩耗と防御の薄さを見て納刀する。",
+    "strength": "同級基準の物理倍率0.82、会心率+10ポイント。既存のfire属性量を1.85倍。固有技能「三籠肋の熱合わせ」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "物理基礎倍率0.82（同級基準比18%低い。系統補正前）、刃容量0.78倍、刃消耗1.40倍、回避・ガード・ため維持など元々費用を持つ戦闘行動のスタミナ消費1.10倍、防具一式の基準防御力0.82倍。弱点耐性は一式でwater -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "heavy_blade",
+      "war_maul",
+      "ring_bow"
+    ],
+    "avoidUse": "最初のため一発に全効果が載る想定。"
+  },
+  "stats": {
+    "rawScale": 0.82,
+    "affinity": 10,
+    "elementScale": 1.85,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.78,
+    "edgeWearScale": 1.4,
+    "staminaCostScale": 1.1,
+    "defenseScale": 0.82,
+    "familyBias": {
+      "heavy_blade": 1.04,
+      "guard_blade": 0.98,
+      "war_maul": 1.02,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 0.98,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.13,
+      "chest": 0.34,
+      "arms": 0.19,
+      "waist": 0.2,
+      "legs": 0.14
+    },
+    "setResistances": {
+      "fire": 20,
+      "thunder": 20,
+      "ice": 0,
+      "water": -20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "element_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.tarhegna",
+    "name": "籠晶の芯熱",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "weakspot"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "柔らかい部位へ当てて熱交換嚢を整え、次の別行動へ火を渡す。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、480tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.tarhegna",
+    "name": "三籠肋の熱合わせ",
+    "trigger": {
+      "event": "charge_release",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 3,
+    "windowTicks": 600,
+    "cooldownTicks": 900,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "partPct",
+        "values": [
+          16,
+          22
+        ]
+      }
+    ],
+    "explanation": "三つの独立したため解放で三本の籠晶肋を順に温める。次の別行動から火と部位蓄積を増し、初撃一発だけでは完成しない。 1段階以上ためて放った行動だけ。ため中のtickは数えない。 600tick以内に異なる行動で3回。HP・スタミナ条件は行動費用確定後の残量%。発動から300tick有効、900tick再使用。攻撃への補正は起点と別の次行動から有効。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "厚い胴を低く締め、背に三本の丸い弧が低く湾曲する。弧の中央は必ず空洞を残し、背を塞ぐ大板を置かない。",
+    "palette": [
+      "灰褐",
+      "青銅",
+      "鈍琥珀"
+    ],
+    "organTranslation": [
+      "中空の籠晶肋→背の三本の丸い低弧",
+      "肋根の熱交換嚢→三弧の根元だけの小琥珀窓",
+      "空洞を囲む巨体→中央を抜いた背と低い厚胴"
+    ],
+    "armorParts": {
+      "head": "低い灰褐の兜。額に短い弧一本だけ、頭上へ籠を作らない",
+      "chest": "胸は低い厚板、背は三本の青銅色の丸弧で中央を空ける。肩より上に伸ばさない",
+      "arms": "短い半弧の籠手。肘内側を空け、丸い断面を見せる",
+      "waist": "前腰に短い厚殻。後腰に三本弧の根を低く受ける帯",
+      "legs": "太めの脛甲に丸い短支柱。琥珀窓は根元だけ、足甲は鈍い面"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の根元に三本の短い籠弧を低く沿わせる。刃は空洞を含まない連続硬面",
+      "guard_blade": "小さい三弧鍔の剣と、表に三本弧を置き裏を硬面で閉じた盾",
+      "war_maul": "閉じた硬い二打面の間に三本弧。側面の空隙だけで籠を表現する",
+      "twin_blades": "二本とも根元に三つの低い半弧。刃先は分岐させない",
+      "long_blade": "細い長刃の峰に三つの半弧筋。鞘の外へ弧を飛び出させない",
+      "long_lance": "直槍の根元に三弧の短い覆い。盾表の三弧の裏に硬い防護面を残す",
+      "ring_bow": "中央の背側に三つの短い弧。弓端は細く、一本弦と小照準環を弧とは別に設ける"
+    },
+    "gradeEvolution": {
+      "3": "背の三弧を鈍い青銅、胴を灰褐にする。中央空洞を維持し、根元だけ琥珀。",
+      "4": "弧の丸い断面へ細い成長線を追加。根元の窓を三つ独立させ、弧の本数と空洞を保つ。"
+    },
+    "production": {
+      "primaryForm": "背の三本の丸弧",
+      "secondaryForm": "低い厚胴",
+      "dominantRegion": "背と後腰",
+      "asymmetry": "左右対称の三弧",
+      "repeatCount": 3,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "背の三弧の根元の琥珀窓",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "背の中央を大板で塞がない",
+      "籠弧を頭上まで伸ばさない",
+      "盾の三弧の隙間を貫通穴のままにしない"
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "checks": 61212,
+  "categories": {
+    "coverage": 437,
+    "schema": 6656,
+    "compatibility": 1674,
+    "uniqueness": 8,
+    "mechanics": 10369,
+    "preservation": 2716,
+    "honesty": 5136,
+    "numeric": 2110,
+    "recipes": 32106
+  },
+  "errorCount": 0,
+  "errors": [],
+  "counts": {
+    "species": 86,
+    "gatheringSeries": 9,
+    "seriesRanks": 250,
+    "monsterSeriesRanks": 214,
+    "weapons": 1750,
+    "armor": 1250,
+    "recipes": 3000,
+    "materials": 583,
+    "signatures": 86,
+    "weaponTraits": 602,
+    "mechanics": 688,
+    "adaptedWeaponTraits": 143
+  },
+  "scope": "静的整合性・実装可能条件・既存データ保全。実戦バランス、端末描画、3D可動域は未検証。"
+}

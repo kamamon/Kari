@@ -1,0 +1,207 @@
+{
+  "no": 4,
+  "speciesId": "monster.bornakel",
+  "name": "ボルナケル",
+  "nativeRank": 1,
+  "identity": {
+    "role": "三拍を揃える鈍器装",
+    "ecologyBasis": "普段の音は仲間の位置確認で、見境なく大音量を出すわけではない。狭い正面へ近づく相手にだけ嚢を膨らめて警告する。",
+    "combatLoop": "頭へ別行動を二回当て、三連嚢の響きを次の打撃群へつなぐ。",
+    "strength": "基礎物理1.08倍、三連嚢の同期で気絶蓄積を強める。",
+    "weakness": "会心-10、刃容量0.85倍、戦闘スタミナ消費1.12倍。頭へ当てられないと固有が働かない。",
+    "recommendedFamilies": [
+      "war_maul",
+      "guard_blade"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。会心-10、刃容量0.85倍、戦闘スタミナ消費1.12倍。頭へ当てられないと固有が働かない。"
+  },
+  "stats": {
+    "rawScale": 1.08,
+    "affinity": -10,
+    "elementScale": 0,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.85,
+    "edgeWearScale": 1.12,
+    "staminaCostScale": 1.12,
+    "defenseScale": 1.02,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.02,
+      "war_maul": 1.04,
+      "twin_blades": 1.0,
+      "long_blade": 1.0,
+      "long_lance": 1.0,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 0,
+      "ice": -25,
+      "water": 0,
+      "wind": 20,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "stun_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "stun_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "stun_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.bornakel",
+    "name": "一鐘の返響",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "blunt",
+        "head"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 420,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "stunPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "頭への打撃で一つ目の嚢を鳴らし、次の別行動の正規の気絶蓄積だけを上げる。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.bornakel",
+    "name": "三嚢の重拍",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "blunt",
+        "head"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 300,
+    "cooldownTicks": 780,
+    "durationTicks": 360,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "stunPct",
+        "values": [
+          10,
+          15
+        ]
+      },
+      {
+        "stat": "staminaRecoveryPct",
+        "values": [
+          6,
+          10
+        ]
+      }
+    ],
+    "explanation": "同じ相手の頭へ二回の打撃行動を当てて嚢を同期。気絶を直接付与せず、気絶値を持つ頭打撃の蓄積を増やす。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "両肩と胸の三つの閉じた共鳴室が、低い鐘頭を囲む三角形。腹腰は布を絞って膨らみを限定。",
+    "armorParts": {
+      "head": "鐘口の低い縁を額と頬にだけ使い、上面は平たい硬皮",
+      "chest": "胸中央に閉じた一嚢、両肩に一嚢ずつ。三つの間を細帯で結ぶ",
+      "arms": "丸い弁板一枚を前腕外へ。肘を包まない",
+      "waist": "短い鐘縁の裾を二分し、前中央を大きく開ける",
+      "legs": "脛は細い縦骨二条。足先に丸い嚢を付けない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "幅広い刃元に閉じた小鐘室を一つ置く硬骨片刃",
+      "guard_blade": "短刃と、中央一嚢を硬板で覆う丸角盾",
+      "war_maul": "硬い両打面の間に三つの閉じた鐘室を横並び。開口打面にしない",
+      "twin_blades": "刃元の小弁板を左右一つずつ持つ短剣",
+      "long_blade": "細い峰の根元に小さい響室一つ。刃は滑らかな連続線",
+      "long_lance": "骨芯の直槍、胸嚢型の丸い硬板を低く収めた盾",
+      "ring_bow": "上下弓身の内側に小さな閉じた弁室。小環一つ、直線弦"
+    },
+    "production": {
+      "primaryForm": "三角配置の丸い共鳴室",
+      "secondaryForm": "細い連結帯と硬い弁板",
+      "dominantRegion": "肩と胸中央",
+      "asymmetry": "肩二つは対称、胸を中心軸にする",
+      "repeatCount": "主嚢3",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "三嚢の硬皮を灰褐色で分け、口縁を薄い骨白に。",
+      "2": "弁板に鈍い黄銅の線を一周だけ付ける。",
+      "3": "三嚢を別々の硬い縁で支え、腹の布を広く残す。",
+      "4": "胸から肩へ細い三本の連結筋。嚢を増やさず体積も抑える。"
+    },
+    "skillCue": {
+      "location": "胸と左右肩の弁縁",
+      "inactive": "鈍い骨白",
+      "active": "二接触の後に三縁だけ順に琥珀が灯る",
+      "maxLitSurfacePercent": 5
+    },
+    "avoid": [
+      "開口部を銃口のように前へ伸ばさない",
+      "腕や脚にも主嚢を追加しない",
+      "大槌の打面を膜や空洞にしない"
+    ],
+    "palette": [
+      "灰褐色",
+      "鈍い骨白",
+      "黄銅色"
+    ],
+    "organTranslation": [
+      "胸と両肩に一つずつある三連共鳴嚢。嚢の間の硬い弁を順に閉じると、狭い前方へ低い圧力波を出す。",
+      "三嚢は必ず胸一つ・肩二つ。武器でも三の拍を閉じた側室に反映。",
+      "反響で餌を探す生態を頭の打点を二回確認する仕組みへつなぐ。"
+    ]
+  }
+}

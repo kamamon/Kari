@@ -1,0 +1,201 @@
+{
+  "no": 15,
+  "speciesId": "monster.palseit",
+  "name": "パルセイト",
+  "nativeRank": 1,
+  "identity": {
+    "role": "小さな耳膜で一歩を拾う幼帆装",
+    "ecologyBasis": "四〜六頭で向きを違えて立ち、危険を見つけた個体から跳ねる。離された個体はまず群れへ戻ろうとする。",
+    "combatLoop": "体力を保って一度の接触回避を成功させ、短い回避効率の区間で位置を整える。",
+    "strength": "戦闘スタミナ消費0.90倍、風倍率1.25。高体力の回避成功を守りに変える。",
+    "weakness": "基礎物理0.88倍、防御0.80倍。HP75%未満では固有を始められず、成体帆装ほど属性は伸びない。",
+    "recommendedFamilies": [
+      "ring_bow",
+      "twin_blades",
+      "guard_blade"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.88倍、防御0.80倍。HP75%未満では固有を始められず、成体帆装ほど属性は伸びない。"
+  },
+  "stats": {
+    "rawScale": 0.88,
+    "affinity": 15,
+    "elementScale": 1.25,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.95,
+    "edgeWearScale": 1.02,
+    "staminaCostScale": 0.9,
+    "defenseScale": 0.8,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.02,
+      "war_maul": 1.0,
+      "twin_blades": 1.02,
+      "long_blade": 1.0,
+      "long_lance": 0.96,
+      "ring_bow": 1.04
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 0,
+      "ice": -20,
+      "water": 0,
+      "wind": 15,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.palseit",
+    "name": "幼膜の風聞き",
+    "trigger": {
+      "event": "sheathe",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          4,
+          4
+        ]
+      }
+    ],
+    "explanation": "明示的に納刀を終え、次の別行動に弱い風を備える。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.palseit",
+    "name": "二耳の身寄せ",
+    "trigger": {
+      "event": "dodge",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 75,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 600,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "dodgeCostPct",
+        "values": [
+          -12,
+          -20
+        ]
+      },
+      {
+        "stat": "staminaRecoveryPct",
+        "values": [
+          6,
+          10
+        ]
+      }
+    ],
+    "explanation": "HP75%以上で接触回避すると、4秒間だけ小さな移動を続けやすくする。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。 回避入力ではなく、敵の攻撃との接触を回避無敵で抜けた成功時だけ判定。"
+  },
+  "appearance": {
+    "silhouette": "成人の軽い生成り服に、肩後ろの閉じた小耳膜を二枚だけ。長い脚の線を見せ、翼や大帆の量は持たない。",
+    "armorParts": {
+      "head": "小さな耳膜を後頭部の左右へ寝かせる",
+      "chest": "薄い灰緑の胸帯と、肩後ろの小さな閉じ膜二枚",
+      "arms": "外腕は細腱の巻き帯。肘を覆う板はない",
+      "waist": "腰前の細い生成り帯、後ろの膜裾は短く二切れ",
+      "legs": "長い外脚帯と軽い革靴。膝裏を開く"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の根元へ閉じた小耳膜二片を沿わせる薄刃",
+      "guard_blade": "細い短刃と、閉じ膜を硬い小盾へ二枚貼る",
+      "war_maul": "閉じた硬骨打頭の側面へ小耳膜二片",
+      "twin_blades": "小耳の折り筋を峰に一本ずつ持つ二短刃",
+      "long_blade": "細い腱を巻く鍔と、低い折り筋だけの曲刃",
+      "long_lance": "幼腱の直槍と、小耳二枚の低い硬盾",
+      "ring_bow": "握り横の小耳膜二片。細い弓身、小環と直線弦"
+    },
+    "production": {
+      "primaryForm": "細い成人胴着と閉じた二耳",
+      "secondaryForm": "腱の縦帯",
+      "dominantRegion": "肩後ろ",
+      "asymmetry": "二耳は対称、背の大帆はない",
+      "repeatCount": "小耳膜2",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "閉じた二耳を淡い灰緑の小片として置く。",
+      "2": "耳の縁へ細い象牙線。開いた帆にはしない。",
+      "3": "足の腱帯を二重にし、耳のサイズは固定。",
+      "4": "耳の内折りへ細い青銅の点。成体の大帆を足さない。"
+    },
+    "skillCue": {
+      "location": "肩後ろの二耳の折り",
+      "inactive": "淡い灰緑",
+      "active": "回避成功で二つの内折りだけ薄く反射",
+      "maxLitSurfacePercent": 2
+    },
+    "avoid": [
+      "セルヴァルクの大帆を小型化して載せない",
+      "小児の体格にしない",
+      "背中を翼やマントで覆わない"
+    ],
+    "palette": [
+      "淡い灰緑",
+      "生成り",
+      "灰茶"
+    ],
+    "organTranslation": [
+      "閉じた耳状の幼角膜と未発達の整流孔。風を感じ取れるが、成体ほどの風圧を作れない。",
+      "閉じた幼角膜を肩後ろの小耳へ縮め、まだ風圧を作れない軽さを維持。",
+      "群れが危険を先に見つける行動を、高体力の最初の接触回避へ置換。"
+    ]
+  }
+}

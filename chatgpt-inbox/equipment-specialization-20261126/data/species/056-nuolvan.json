@@ -1,0 +1,205 @@
+{
+  "no": 56,
+  "speciesId": "monster.nuolvan",
+  "name": "ヌオルヴァン",
+  "nativeRank": 3,
+  "identity": {
+    "role": "低体力の受けから整備へ退く水重装",
+    "ecologyBasis": "胸下の濾沼ひげと、腹に分かれた押水室。太いひげで根を押し上げ、食料を濾した水だけを目立つ腹孔から短く放出する。 餌場ではゆっくり歩き、ひげで足元を調べてから進む。根の多い浅瀬を順に巡るが、腹の下に強い刺激があると体を持ち上げて警告する。",
+    "combatLoop": "HP60%以下で受けを成功→短い耐久窓に整備→回復薬の効果や時間は変えず安全に立て直す。",
+    "strength": "同級基準の物理倍率0.90、会心率-10ポイント。既存のwater属性量を1.40倍。固有技能「濾沼の低水位支度」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "物理基礎倍率0.90（同級基準比10%低い。系統補正前）、会心率-10ポイント、回避・ガード・ため維持など元々費用を持つ戦闘行動のスタミナ消費1.20倍。弱点耐性は一式でice -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "guard_blade",
+      "long_lance",
+      "heavy_blade"
+    ],
+    "avoidUse": "回復薬の短縮や受けた当の打撃の軽減を期待する運用。"
+  },
+  "stats": {
+    "rawScale": 0.9,
+    "affinity": -10,
+    "elementScale": 1.4,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.25,
+    "edgeWearScale": 0.9,
+    "staminaCostScale": 1.2,
+    "defenseScale": 1.1,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 1.04,
+      "war_maul": 0.98,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 1.02,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.15,
+      "chest": 0.31,
+      "arms": 0.18,
+      "waist": 0.22,
+      "legs": 0.14
+    },
+    "setResistances": {
+      "fire": 20,
+      "thunder": 0,
+      "ice": -20,
+      "water": 20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "item_efficiency",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "guard_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.nuolvan",
+    "name": "濾沼の排水節",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "finisher"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 600,
+    "durationTicks": 240,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "連撃の終段で水室を空け、次の別行動へ新しい水を通す。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から240tick有効、600tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.nuolvan",
+    "name": "濾沼の低水位支度",
+    "trigger": {
+      "event": "guard",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 60,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 900,
+    "durationTicks": 360,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          -8,
+          -12
+        ]
+      },
+      {
+        "stat": "itemUseTicksPct",
+        "values": [
+          -10,
+          -16
+        ]
+      }
+    ],
+    "explanation": "HP60%以下で受けを成功させ、腹室を畳んで整備へ移る。発動した受け自体は軽減せず、回復量も変えない。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から360tick有効、900tick再使用。攻撃への補正は起点と別の次行動から有効。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "幅広い胴の胸前だけへ短い濾過房を並べ、低く膨らむ腰の左右に一対の丸い水室。肩は高くせず下側に量を置く。",
+    "palette": [
+      "灰褐",
+      "泥緑",
+      "生成り"
+    ],
+    "organTranslation": [
+      "胸下の濾沼ひげ→胸前の短い濾し房三束",
+      "分かれた押水室→腰外側の二つの丸い小室",
+      "根を持ち上げる太いひげ→短い骨白の前腕縁"
+    ],
+    "armorParts": {
+      "head": "低い太根甲の兜。頬に短い濾し房を一つずつ付け、口は空ける",
+      "chest": "幅広い胸板の前下に短い濾し房三束。腹は低い丸面で屈曲部を分ける",
+      "arms": "太い短甲の前腕に生成りの濾し縁。手首を柔らかな水腱帯で区切る",
+      "waist": "左右の腰外側へ丸い水室を一つずつ。前腰は低く膨らむ短甲",
+      "legs": "太い脛甲と丸い小膝受け。水室は腿の上で止め、膝へ重ねない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "幅広い刃元の背へ短い濾し房三束と小水室。刃は一続きの硬い灰褐面",
+      "guard_blade": "短い濾歯縁の剣と、左右下へ小水室を納めた幅広い硬盾",
+      "war_maul": "閉じた太根甲の二打面と、中央側面の短い三束の濾し縁",
+      "twin_blades": "二本の峰に同じ短い濾し房。丸い小室を刃元に一つずつ置く",
+      "long_blade": "細い長刃の根元へ短い三本の濾し筋。柔らかな房は鞘の外へ垂らさない",
+      "long_lance": "太い直槍の根元に短い房筋、盾の左右下側に丸い小室",
+      "ring_bow": "中央下へ短い三束の濾し縁を置く。細い弓端、小環と一本弦を水室から離す"
+    },
+    "gradeEvolution": {
+      "3": "灰褐の広胴と左右二水室。生成りの短房は胸前に三束。",
+      "4": "水室の外縁へ短い二重留めを置く。濾し房の根だけ淡くし、長さと数を増やさない。"
+    },
+    "production": {
+      "primaryForm": "低い腹の量と二水室",
+      "secondaryForm": "胸前の三短房",
+      "dominantRegion": "胸下と腰外側",
+      "asymmetry": "左右対称の二室",
+      "repeatCount": 3,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "胸前三束の根元の小窓",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "濾過房を長い髭や触手にしない",
+      "水室を肩へ移して高くしない",
+      "腹甲を股下へ長く垂らさない"
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+Use case: stylized-concept. Original fantasy game VEILBOUND HUNTERS. A polished horizontal equipment concept comparison board, four equally wide vertical panels, warm light parchment backdrop, restrained realism, organic carved bone and mineral shells, matte weathered leather, muted bronze, soft studio light, no battle scene. Art direction: grounded weathered earth colors, legible strong shapes, subtle painted 3D volume, carefully sculpted organic armor, no glossy science-fiction or neon. Like a museum costume and stage-prop display.
+Layout: same height full-body ADULT faceless neutral mannequins in all four panels, head to both boots fully visible with margins. Neutral three-quarter stance with relaxed arms, hands and fingers visible. Each panel contains ONE complete 5-region armor design and TWO representative fantasy prop categories neatly beside the mannequin; neither category may be omitted or merged. Prop sets separate from the body and each other. The humanoid is not carrying them. Keep shoulders, elbows, wrists, knees, ankles open and mobile. No large floating magical effects. Species traits belong to the crafted armor, NOT animal anatomy or creature heads.
+Top small title exactly VEILBOUND HUNTERS. Only additional text: the four panel labels below. No Japanese text, no stats, no extra logos or explanatory paragraphs. The left/right asymmetry specified below always means the wearer's own left/right. Do not turn any specified shoulder into its opposite. Each entire prop must fit inside its own panel, including grips, strings and shield outlines.
+
+PANEL 1, exact label "029  ULNASET". Native-rank design, same adult body size as every other panel.
+Silhouette: 左右交互に下へ垂れる樋板三枚と、腰後ろの低い平尾板。肩を低く保ち、樋の縦溝が細くつながる。
+Palette: くすんだ青灰, 灰緑の皮, 鈍青銅
+Armor parts: {"head": "低い青灰額板と側頭部の短い樋筋", "chest": "左肩下と右脇へ樋板一枚ずつ。胸中央は灰緑皮", "arms": "外前腕に浅い樋状板。先端を手へ伸ばさない", "waist": "左腰に三枚目の樋板、後ろ中央に短い平尾板", "legs": "脛は短い灰緑皮。足首の前に樋口を置かない"}
+Show these two prop categories only: a straight long lance AND its separate hard shield: 長い直芯に一本の水樋、交互三板と平尾板の大盾; a short sword AND its separate hard shield: 樋筋の短刃と、交互三板を硬い芯へ添える盾
+Preserve: 左上・右中・左下の交互配置. Main repeated form: 主樋板3、平尾板1.
+Avoid: 氷帆の尖った三角形へ戻さない; 平尾板を長い尻尾へ伸ばさない; 薄い樋膜だけを盾の支持構造にしない
+
+PANEL 2, exact label "030  NEMBORAF". Native-rank design, same adult body size as every other panel.
+Silhouette: 肩幅より腹の横幅を大きくした低い台形。三段の濾膜を硬い胸の下へ吊り、四角い脛で支える。背中は平らで、後腰だけ薄い横扇。
+Palette: 灰緑, 泥褐, 鈍い青銅
+Armor parts: {"head": "平たい頭鉢の下に短い横長の顔窓。頬を濾膜で覆わず口を空ける", "chest": "広い一枚胸板の下へ三つの角丸の濾膜棚を埋め、前から三本の暗い段差を見せる", "arms": "柱脚由来の四角い前腕甲を外側に置き、肘内側から手首まで暗い革を通す", "waist": "後ろだけ薄い泥扇骨を水平に一枚広げ、腹の前は短い膜片二枚で分ける", "legs": "左右同幅の箱形脛甲。膝を丸い別甲にし、足首を露出させて柱脚を再現しすぎない"}
+Show these two prop categories only: a short sword AND its separate hard shield: 濾歯の細剣と、三本の水平濾膜窓を持つ角盾。窓の裏は連続した硬い板で閉じる; a straight long lance AND its separate hard shield: 角い濾歯の槍先と、柱状稜二本で挟む幅広い盾。膜は盾裏の縁に収める
+Preserve: 左右対称、後腰の扇だけ前後差. Main repeated form: 3.
+Avoid: 全身を丸い水袋にしない; 盾の濾膜窓を穴のままにしない; 水嚢を足先へ垂らさない
+
+PANEL 3, exact label "031  BORAZELN". Native-rank design, same adult body size as every other panel.
+Silhouette: 前胸と肩だけが三段の庇で前へ張り出す。後ろへ急に細く絞った腰と裸に近い背の輪郭で、前面の圧力を強調する。
+Palette: 灰褐, 骨白, 青銅
+Armor parts: {"head": "低い頭鉢の前だけに三本の短い横庇。後頭部は滑らかな革", "chest": "胸前に上小・中大・下小の三つの鈍い庇を重ねる。背は細い支持帯のみ", "arms": "前腕の上半分を三枚の短い厚板で覆い、手の甲を独立した小板に分ける", "waist": "前腰に短い直方形二枚、後腰は細い帯と小袋だけ。後ろへ殻を増やさない", "legs": "脛外側を一本の短い骨柱で支える。膝前は平らで、足甲は小さく収める"}
+Show these two prop categories only: a broad fantasy greatsword: 三段の庇を峰側へ階段状に積む重い台形大剣。刃は丸い角の連続面; a two-faced hard fantasy hammer: 三段の横板を束ねた厚い長方形の槌頭。打面は一体の平面
+Preserve: 左右対称、前重心の外形. Main repeated form: 3.
+Avoid: 後ろまで三段の殻で包まない; 庇の角を棘にしない; 大槌の打面を三枚の隙間に分割しない
+
+PANEL 4, exact label "032  KUDRIMAL". Native-rank design, same adult body size as every other panel.
+Silhouette: 右肩から右脇腰へ四つの薄い棚が斜めに降りる。左側は細く滑らかで、四棚の隙間が主なシルエットになる。
+Palette: 暗灰, 灰銅, 鈍い赤銅
+Armor parts: {"head": "前後に短く伸びる低い兜。右頬だけ四つの小窓、頭上に棚を作らない", "chest": "左胸を滑らかな暗灰板で閉じ、右脇だけ棚の根を見せる。右腹の熱槽は細い箱形", "arms": "右前腕へ一枚の低い排熱縁、左腕は細い一枚甲。肩の棚とは離して動かす", "waist": "右肩から続く四棚の末端を右腰で止める。左腰は革帯と小袋", "legs": "前面の脛甲は細い灰銅。両膝裏を暗い柔膜にし、棚を脚へ反復しない"}
+Show these two prop categories only: a straight long lance AND its separate hard shield: 槍先の右脇へ四本の低い熱筋。盾は右に四棚、左に平らな硬い面; TWO matching short blades: 二本とも峰へ四つの短い刻み棚。左手用だけ向きを反転し重量を揃える
+Preserve: 右側のみ棚、左側は面. Main repeated form: 4.
+Avoid: 棚を五枚以上にしない; 両肩を対称の炎翼にしない; 赤銅を明るい炎や噴出物にしない
+
+Final composition: FOUR full adult mannequin outfits side by side, distinct silhouettes, two prop categories EACH. No repeated identical armor with color swaps. Cloth and organic shell surfaces are opaque except explicitly translucent plates. Every bow string straight and separate from the aiming ring. Every shield has a solid structural backing even if its decorative outer layers have slots. No oversized shoulder appendages or long tails. Muted art-quality concept reference, not a dimensioned engineering drawing.

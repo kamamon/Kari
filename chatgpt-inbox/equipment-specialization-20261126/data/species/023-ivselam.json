@@ -1,0 +1,203 @@
+{
+  "no": 23,
+  "speciesId": "monster.ivselam",
+  "name": "イヴセラム",
+  "nativeRank": 2,
+  "identity": {
+    "role": "低体力で霜扇を返す左肩装",
+    "ecologyBasis": "風向きを確かめてから草場を渡り、危険には横跳びで距離を取る。角膜を傷つけられると左側を隠して警戒する。",
+    "combatLoop": "被弾を避けながら低体力の接触回避を通し、短い氷の反撃だけで勝負する。",
+    "strength": "会心+25、氷倍率1.80。HP60%以下の回避成功後に氷が伸びる。",
+    "weakness": "基礎物理0.79倍、防御0.77倍、刃容量0.78倍。固有中の物理補正は-4/-6%。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "long_blade",
+      "ring_bow"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.79倍、防御0.77倍、刃容量0.78倍。固有中の物理補正は-4/-6%。"
+  },
+  "stats": {
+    "rawScale": 0.79,
+    "affinity": 25,
+    "elementScale": 1.8,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.78,
+    "edgeWearScale": 1.24,
+    "staminaCostScale": 0.91,
+    "defenseScale": 0.77,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.0,
+      "war_maul": 1.0,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 0.96,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": -20,
+      "thunder": 0,
+      "ice": 15,
+      "water": 0,
+      "wind": 15,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "weak_crit",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "element_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.ivselam",
+    "name": "霜扇の返し縁",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "slash",
+        "finisher"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "斬る締め技の命中から、次の別行動の氷属性へ霜を渡す。系統適合版で同一技にないタグの組合せを解消する。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.ivselam",
+    "name": "左扇の薄氷返し",
+    "trigger": {
+      "event": "dodge",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 1,
+      "hpMax": 60,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 720,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "rawPct",
+        "values": [
+          -4,
+          -6
+        ]
+      }
+    ],
+    "explanation": "HP60%以下の接触回避成功で霜扇を返す。物理を減らして氷へ寄せる区間で、体力を回復しない。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。 回避入力ではなく、敵の攻撃との接触を回避無敵で抜けた成功時だけ判定。"
+  },
+  "appearance": {
+    "silhouette": "左肩にだけ半円の薄い霜扇、背は低い二折り。右肩と両脚を細い灰革で抜き、横に片寄る細身。",
+    "armorParts": {
+      "head": "左の額縁に小さな霜筋、頭冠は低く平たい",
+      "chest": "左肩に半円扇一枚、右胸は薄革。背の折りは低い",
+      "arms": "左前腕に扇骨一本、右腕は短い灰革帯",
+      "waist": "右腰は細帯だけ。左腰に短い扇の切れ端一枚",
+      "legs": "両脛を細い灰革で包み、氷板は足へ繰り返さない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "刃元の片側に半円霜扇の低い骨筋を添える大剣",
+      "guard_blade": "霜筋の短刃と、左側に半円扇を貼る硬い盾",
+      "war_maul": "硬い冷晶の打頭、片側面だけ半円筋",
+      "twin_blades": "峰に半円の一部を低く添える二短刃。長さは揃える",
+      "long_blade": "鍔の左側だけ半円霜筋を持つ連続曲刀",
+      "long_lance": "直槍の根元に短い扇骨、左張りの閉鎖盾",
+      "ring_bow": "握り上の片側へ小さな霜扇骨。小環と直線弦"
+    },
+    "production": {
+      "primaryForm": "左一枚の半円扇",
+      "secondaryForm": "細い灰革と低い背折り",
+      "dominantRegion": "左肩",
+      "asymmetry": "左のみ横へ張る。右肩は平ら",
+      "repeatCount": "主霜扇1、背折り2",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "2": "左の半円扇を薄く低く置く。",
+      "3": "扇骨を三本に分け、間の薄膜を残す。",
+      "4": "三本の内筋だけ霜白を濃くする。扇の半径を大きくしない。"
+    },
+    "skillCue": {
+      "location": "左肩扇の内筋三本",
+      "inactive": "くすんだ青灰",
+      "active": "回避成功で内筋三本だけ白く曇る",
+      "maxLitSurfacePercent": 3
+    },
+    "avoid": [
+      "右肩にも同じ霜扇を付けない",
+      "巨大な花冠や氷翼にしない",
+      "薄膜を硬い打面や盾の唯一の支持材にしない"
+    ],
+    "palette": [
+      "くすんだ青灰",
+      "淡霜白",
+      "灰革"
+    ],
+    "organTranslation": [
+      "左の角膜に冷晶を含む薄層が重なり、集めた水滴を細かな氷片へ変える。扇の開閉方向が、氷片の飛ぶ範囲を示す。",
+      "左だけ半円に育つ霜扇を一枚の左肩へ移し、背の低い折りを残す。",
+      "左側を隠す警戒を、低体力の接触回避からの短い属性反撃へ結ぶ。"
+    ]
+  }
+}

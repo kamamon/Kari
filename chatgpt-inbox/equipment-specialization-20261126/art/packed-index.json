@@ -1,0 +1,3144 @@
+{
+  "schemaVersion": 1,
+  "documentType": "lossless-packed-equipment-concept-art",
+  "status": "reconstructed-and-regenerated-2026-11-26",
+  "encoding": "raw-binary-concatenation-in-listed-order",
+  "partBytesMaximum": 262140,
+  "restoredFiles": "art/board-01.png through art/board-22.png",
+  "coverage": "86種を各1回。各種の初登場級の成人用防具と代表武器2系統。全級・全7武器の画像ではない。",
+  "counts": {
+    "boards": 22,
+    "species": 86,
+    "representativeWeaponFamilies": 172,
+    "parts": 236,
+    "originalPngBytes": 59570121,
+    "prompts": 31
+  },
+  "restoreCommand": "python3 chatgpt-inbox/equipment-specialization-20261126/reference/materialize_art.py",
+  "validationCommand": "python3 chatgpt-inbox/equipment-specialization-20261126/reference/validate_art.py",
+  "boards": [
+    {
+      "board": 1,
+      "file": "art/board-01.png",
+      "bytes": 2846834,
+      "sha256": "d95f3fcb4b94a9fc8ddd008f6c845c0ef0aa869ea914c0370839af6c605be9dd",
+      "parts": [
+        {
+          "path": "art/packed/board-01/000.part",
+          "bytes": 262140,
+          "sha256": "d81ccf1a205dc13a8962666d2b152f8b232f1e43daf87ba3c3bc1c392349edd7",
+          "gitSha": "dcd6c6f5ab6a5d48f4bbcd8525f469c8f9485973"
+        },
+        {
+          "path": "art/packed/board-01/001.part",
+          "bytes": 262140,
+          "sha256": "23608056daca031d06eb16cfa6c4b104669be1733dc18443fa74e5bf4be8c188",
+          "gitSha": "caf3041bf428ca34197af8a9382367c84ceb37e1"
+        },
+        {
+          "path": "art/packed/board-01/002.part",
+          "bytes": 262140,
+          "sha256": "492edea916182a6095df3614dd136bd5dd4f26df21e26c26a1b1b6b45994c79d",
+          "gitSha": "68223eec13e3eea5517f39b739294f6e1369d371"
+        },
+        {
+          "path": "art/packed/board-01/003.part",
+          "bytes": 262140,
+          "sha256": "80663e8db97bb553708ac6bc631f659458216d149c09ff5a207d6e0ac61254d4",
+          "gitSha": "34af3192cef3ea7cd744004b72b5b132d5d453d9"
+        },
+        {
+          "path": "art/packed/board-01/004.part",
+          "bytes": 262140,
+          "sha256": "34aff12e716f463ffe1d1b9e1a548bae8f303ae21f195cfae83c51960551d7d3",
+          "gitSha": "84160ea3b033c82be94801fa0d4ecf28630d9809"
+        },
+        {
+          "path": "art/packed/board-01/005.part",
+          "bytes": 262140,
+          "sha256": "c7a066b8a81b59e8cde64220256bbcc119380dce7b34c89007f384c079566365",
+          "gitSha": "afa17bad493e4c71af1be24c20b74ea8a3ee6cdb"
+        },
+        {
+          "path": "art/packed/board-01/006.part",
+          "bytes": 262140,
+          "sha256": "ffc6c6355c0092d0a14e99499b50fb0838fec43dca3fa00e83592dd6ab920d50",
+          "gitSha": "aba6a7dd9df4a18e687cac8ad5e5ff0124a271c5"
+        },
+        {
+          "path": "art/packed/board-01/007.part",
+          "bytes": 262140,
+          "sha256": "97c3e2f9b62c6a050f4a07a39892bfc5b5fd36c3a2b87e498c68212319ce0d57",
+          "gitSha": "72a4c07718583af38ce8d974f6ec58b28e03546c"
+        },
+        {
+          "path": "art/packed/board-01/008.part",
+          "bytes": 262140,
+          "sha256": "cc8afdd69cc7f422b31c4fd1b89675e85fee2f297b8c6b878a297a91c7f42924",
+          "gitSha": "1b0f2f8636cfd5553eadefa595f2f41d8d043cc7"
+        },
+        {
+          "path": "art/packed/board-01/009.part",
+          "bytes": 262140,
+          "sha256": "c023979af27933706a3eafd348772f24c03bf8571563ba5bd0a910a7f6584985",
+          "gitSha": "4600f3f0efaa8150004bae1e684f6189e1a3071b"
+        },
+        {
+          "path": "art/packed/board-01/010.part",
+          "bytes": 225434,
+          "sha256": "ec5d1f13bb5a01574d71f98c92c5f3394a9ec6916133669f65743191bd85875c",
+          "gitSha": "1794334b00c484439304c14efe73278989fb212c"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 1,
+          "speciesId": "monster.galdros",
+          "name": "ガルドロス",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "heavy_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/001-galdros.json"
+        },
+        {
+          "no": 2,
+          "speciesId": "monster.selvark",
+          "name": "セルヴァルク",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "twin_blades",
+            "ring_bow"
+          ],
+          "designFile": "data/species/002-selvark.json"
+        },
+        {
+          "no": 3,
+          "speciesId": "monster.numeradon",
+          "name": "ヌメラドン",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_blade"
+          ],
+          "designFile": "data/species/003-numeradon.json"
+        },
+        {
+          "no": 4,
+          "speciesId": "monster.bornakel",
+          "name": "ボルナケル",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "war_maul",
+            "guard_blade"
+          ],
+          "designFile": "data/species/004-bornakel.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-01.txt"
+      ],
+      "sourceManifest": "art/manifest-01.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-59722e82-78dd-4b70-917c-c63b21f1f3a1.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "visually-reviewed-with-production-notes",
+        "observations": "001 左の大岩板と断岳剣／長尖槍、002 細身の帆膜と双剣二本／一本弦・小環の環弓、003 浅い頭皿と前腰皿・護刃／太刀、004 肩二嚢と胸一嚢・閉じた両打面の大槌／護刃を確認。4成人の頭・胴・腕・腰・両足が枠内。盾はそれぞれ独立して描かれている。",
+        "limitations": [
+          "001 左腰の後ろに置く尾端晶は正面寄りの図では確認できない。背面図で腰後ろの低い一塊を示す。",
+          "002 肩膜は仕様の畳んだ帆より開いて見える。モデルでは二枚を背肩へ沿わせ、飛行翼に見える張り出しを抑える。",
+          "003 腹の皮の細かい重なりは3層より多く見える。主層をJSON通り3層とし、追加の線は皺として扱う。",
+          "004 三嚢の体積と硬い支持縁は見えるが、肩を上げた際の首・腕との干渉はリグで検査する。"
+        ],
+        "notVerified": [
+          "背面・側面の正投影と実寸",
+          "共通リグの最大可動域と装備の当たり",
+          "全7系統・全級の専用画像",
+          "正式3Dモデル・実機表示・ゲーム内技能演出"
+        ]
+      }
+    },
+    {
+      "board": 2,
+      "file": "art/board-02.png",
+      "bytes": 2976014,
+      "sha256": "41ba4ec708134e7ab6b2a4f79a3398ff9bdad4a3a259dcb26d6557a53b16b60f",
+      "parts": [
+        {
+          "path": "art/packed/board-02/000.part",
+          "bytes": 262140,
+          "sha256": "3e62982f12c2fc47e452da50b3b151205ed07c72304e5c8aae9ed041874144b1",
+          "gitSha": "5d78f01ffee1be943bb55100a5853be2f393b8bc"
+        },
+        {
+          "path": "art/packed/board-02/001.part",
+          "bytes": 262140,
+          "sha256": "53c1b13590f610b27122c19902fa63db75dedf08e152a79303717cafb14416ea",
+          "gitSha": "9c16b0faa431cb1056605a2bf59803ba52fc974d"
+        },
+        {
+          "path": "art/packed/board-02/002.part",
+          "bytes": 262140,
+          "sha256": "a5b53f41c86a81a2fe53bfd29733882b503206119a4505fb487bcac486dcb593",
+          "gitSha": "b41a8a28f0c80bfa8a9a9dac33b64be772ad1e9b"
+        },
+        {
+          "path": "art/packed/board-02/003.part",
+          "bytes": 262140,
+          "sha256": "a65556a173cdd4e13c25d36dfd63015ef3f7c012eb7a3dc00f1b20882e617809",
+          "gitSha": "a50d1a0f35639fc3c044a31bc5ab1e2f3773d30c"
+        },
+        {
+          "path": "art/packed/board-02/004.part",
+          "bytes": 262140,
+          "sha256": "5524a59bf1a6fdafabda75fdff1882c4e5d8239ff96aea99237c504c3bd9185e",
+          "gitSha": "678f5d87641581f7d841cac0062dcc8f65bfb12e"
+        },
+        {
+          "path": "art/packed/board-02/005.part",
+          "bytes": 262140,
+          "sha256": "333832dbe4f1891301be1b112aa7c42684876686a16db042d8d4ee21bf90d267",
+          "gitSha": "546a5adc3b8c29baf4f1cae89381ebeb64ecd111"
+        },
+        {
+          "path": "art/packed/board-02/006.part",
+          "bytes": 262140,
+          "sha256": "e69873c5688495d88fe34fcc3268788ac93ed38cfe7aba3058e5c2835a32a32f",
+          "gitSha": "d651ff074c53133f934c472eacd88a4da5f38ad3"
+        },
+        {
+          "path": "art/packed/board-02/007.part",
+          "bytes": 262140,
+          "sha256": "57db1a90e22961590d5cd71c78bff6635b6656fc1e8ffce29e098ed319416a97",
+          "gitSha": "e5041c2a25f8c6775e204ba5c9e41a2bf1acb4e1"
+        },
+        {
+          "path": "art/packed/board-02/008.part",
+          "bytes": 262140,
+          "sha256": "959e5cfcf9e2727f575c06127d894919f907395594f4f04088ce23086e10e72a",
+          "gitSha": "0633b2ead3703daa36ea5133ab9b96670a69b9fc"
+        },
+        {
+          "path": "art/packed/board-02/009.part",
+          "bytes": 262140,
+          "sha256": "73b7ce5924208b32cc1ecbcfe76aea207a5883fbc6d8cf20bfe715ebd29dcd89",
+          "gitSha": "907101854e2caedc36018cf46ceee62364c65767"
+        },
+        {
+          "path": "art/packed/board-02/010.part",
+          "bytes": 262140,
+          "sha256": "ef116669003f55f13e3fb3aad93c602ebba31fb548c13fd873c1420a92073de5",
+          "gitSha": "fa5517c93fc60a2c0c30508109b367de208b3e8f"
+        },
+        {
+          "path": "art/packed/board-02/011.part",
+          "bytes": 92474,
+          "sha256": "d8432887fe94ff19a21be7a93a62d416560178c81fbd0a9dca350085d04579c0",
+          "gitSha": "a967429fa8f48bae893eca60c662da3163c5ca6e"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 5,
+          "speciesId": "monster.ashreia",
+          "name": "アシュレイア",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "long_blade",
+            "ring_bow"
+          ],
+          "designFile": "data/species/005-ashreia.json"
+        },
+        {
+          "no": 6,
+          "speciesId": "monster.lumisca",
+          "name": "ルミスカ",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "ring_bow",
+            "twin_blades"
+          ],
+          "designFile": "data/species/006-lumisca.json"
+        },
+        {
+          "no": 7,
+          "speciesId": "monster.orglass",
+          "name": "オルグラス",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/007-orglass.json"
+        },
+        {
+          "no": 8,
+          "speciesId": "monster.tengaro",
+          "name": "テンガロ",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ],
+          "designFile": "data/species/008-tengaro.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-02.txt"
+      ],
+      "sourceManifest": "art/manifest-02-07.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-3715a22a-5d80-4caa-9f96-f3d75db08caa.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "visually-reviewed-with-production-notes",
+        "observations": "005 灰帷・細襟と太刀／環弓、006 背の大→小の燐節列と環弓／双剣、007 右大籠手と護刃／長尖槍の独立盾、008 右肩→左腰の節列と双剣／太刀を確認。4成人の頭・手・腰・両足が枠内。両環弓の一本弦と小環を確認。",
+        "limitations": [
+          "005 原画の帷は細かい羽状の段が多く見える。モデルでは仕様の主帷二層に整理し、腰より下へ垂らさない。",
+          "008 頭・腕の鉤は原画で大きめ。JSONの短く寝た鉤に縮め、肩上げで頭に当たらない寸法はリグで検査する。"
+        ],
+        "notVerified": [
+          "背面／側面が見えない部位の立体構造",
+          "共通リグの最大可動域と装備の当たり",
+          "全7系統・各級の専用画像",
+          "正式3Dモデル・実機表示・ゲーム内技能演出"
+        ]
+      }
+    },
+    {
+      "board": 3,
+      "file": "art/board-03.png",
+      "bytes": 2313653,
+      "sha256": "3ad50bb9837fe88993809b02c4cecdeb32d6691b0d25e522ff923543ab404205",
+      "parts": [
+        {
+          "path": "art/packed/board-03/000.part",
+          "bytes": 262140,
+          "sha256": "0251163eb412028f7d5391bd676b5f803bcfd5cbfd49b64aef8782ba5a20840a",
+          "gitSha": "c78d9c0a6927f516db6361df809ff3d65a28366a"
+        },
+        {
+          "path": "art/packed/board-03/001.part",
+          "bytes": 262140,
+          "sha256": "5f8c98bc8a6e207c551c31d276054dccbd3127646323f282e99d115d732403fa",
+          "gitSha": "9b9301f0b347a03587b60d81c3d464ec20d65f5b"
+        },
+        {
+          "path": "art/packed/board-03/002.part",
+          "bytes": 262140,
+          "sha256": "e3321172809b775d026e9406148a70f3d99233421f7d81f8baffbcf77bf668a6",
+          "gitSha": "fb2e37579fd35def3c1d0554b32e99c2ade8d076"
+        },
+        {
+          "path": "art/packed/board-03/003.part",
+          "bytes": 262140,
+          "sha256": "1b1a088d8674ce51b2d97ce08b2200ea3335df25f707bd87f756b9374d1da353",
+          "gitSha": "23f08892db823b5c2634611f5ddbf4529f3882e7"
+        },
+        {
+          "path": "art/packed/board-03/004.part",
+          "bytes": 262140,
+          "sha256": "44f9362514a63ee55477230b3d4cb5b5f4a53233f176da014c6de8fc56df798f",
+          "gitSha": "6a20a3f57cd79b189e311d36e89461acaefcbf27"
+        },
+        {
+          "path": "art/packed/board-03/005.part",
+          "bytes": 262140,
+          "sha256": "6d33e2116f5489372b105ed09054efc08e1095171c0ef2f5ea9feff127e7e960",
+          "gitSha": "8dabcf5e042eb0b60e9757088b0769b73a6508c9"
+        },
+        {
+          "path": "art/packed/board-03/006.part",
+          "bytes": 262140,
+          "sha256": "73a6f06d51d4dc08ce8e3793328e35598747c53677f23c68178104e582da63bf",
+          "gitSha": "e576063391014f41eaa7c079637e98aa02576d0f"
+        },
+        {
+          "path": "art/packed/board-03/007.part",
+          "bytes": 262140,
+          "sha256": "2acb53a1efca04ea41250d37d3c5495facba60b893f53ff399297d818965a557",
+          "gitSha": "3791e5ae7a4f0067ce0619628458d8502ca83cf1"
+        },
+        {
+          "path": "art/packed/board-03/008.part",
+          "bytes": 216533,
+          "sha256": "56985f0ab77d0cd4b5ca715de4b27d2a2879be074cd9deb82e212df1d50e2f16",
+          "gitSha": "187e96bdaa2ba21973321057a7835fbef16e3336"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 9,
+          "speciesId": "monster.verito",
+          "name": "ヴェリト",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ],
+          "designFile": "data/species/009-verito.json"
+        },
+        {
+          "no": 10,
+          "speciesId": "monster.razmer",
+          "name": "ラズメル",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "long_lance",
+            "heavy_blade"
+          ],
+          "designFile": "data/species/010-razmer.json"
+        },
+        {
+          "no": 11,
+          "speciesId": "monster.kirisave",
+          "name": "キリサーヴ",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "twin_blades",
+            "ring_bow"
+          ],
+          "designFile": "data/species/011-kirisave.json"
+        },
+        {
+          "no": 12,
+          "speciesId": "monster.velgait",
+          "name": "ヴェルガイト",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "ring_bow",
+            "long_blade"
+          ],
+          "designFile": "data/species/012-velgait.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-03-revision-01.txt",
+        "art/prompts/board-03.txt"
+      ],
+      "sourceManifest": "art/manifest-02-07.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-c7b7f30a-8f67-4ace-8bcf-d2bd19bdd0d5.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "visually-reviewed-with-production-notes",
+        "observations": "009 背上の二袋と短い二糸、010 胸腰の二つの開いた骨環、011 交互の低い氷帆、012 後頭の寝た環と背の六灯を確認。012は初稿5灯から6灯へ画像編集し再確認。武器は各2系統、双剣は二本、槍盾は別、環弓は一本弦と小環。",
+        "limitations": [
+          "011 氷板の左右交互配置は斜め後面で一部重なる。正式な三面図では左肩・右背・左腰を個別に示す。",
+          "012 原画の環弓の小窓は5点に見える。モデルはJSONの6小窓にする。背の主灯6点は修正済み。"
+        ],
+        "notVerified": [
+          "背面／側面が見えない部位の立体構造",
+          "共通リグの最大可動域と装備の当たり",
+          "全7系統・各級の専用画像",
+          "正式3Dモデル・実機表示・ゲーム内技能演出"
+        ]
+      }
+    },
+    {
+      "board": 4,
+      "file": "art/board-04.png",
+      "bytes": 2883319,
+      "sha256": "c8fae887d51489f69bd096f21d66cc0ac778935d8b1d91b78a698a6f8fa34d83",
+      "parts": [
+        {
+          "path": "art/packed/board-04/000.part",
+          "bytes": 262140,
+          "sha256": "1665d93fd2182cb88264a94a35665b8a975041379cafae9b331e17cbcd814e27",
+          "gitSha": "6330ce5dab8a11f6092fd37ea9511a8afb12439c"
+        },
+        {
+          "path": "art/packed/board-04/001.part",
+          "bytes": 262140,
+          "sha256": "78b3454b78c80277acf9e363a333d0ab297b1535ada87ae9c8bc20050bf5ec1b",
+          "gitSha": "f8b00e9773ab57e2902047a311e0ec2100d8f42e"
+        },
+        {
+          "path": "art/packed/board-04/002.part",
+          "bytes": 262140,
+          "sha256": "4afc13b552baf5addffe7246ff1e4d6092213dcbe5d18c4aa35eacfe41d26dfc",
+          "gitSha": "c4ffde0a18075ba3acaae985964fdd3b24ae7875"
+        },
+        {
+          "path": "art/packed/board-04/003.part",
+          "bytes": 262140,
+          "sha256": "26149af004205855bfaaff3e889916ca56116686b3a5a615e068e42057730fc5",
+          "gitSha": "da0b8b6824d188d3a3311981fc2b8332502d960d"
+        },
+        {
+          "path": "art/packed/board-04/004.part",
+          "bytes": 262140,
+          "sha256": "07b8ddabdee2b2a1d3c657f0b2435dc841825dab7d1276c8a075d9fabf8ae321",
+          "gitSha": "3ce5aeb47f452c59b1519bd20676e261804b2652"
+        },
+        {
+          "path": "art/packed/board-04/005.part",
+          "bytes": 262140,
+          "sha256": "f286341a98781f35a8391bb65e138985f53646800b37155b59114849c0015edf",
+          "gitSha": "1371998dafa1fc388cf2bdab729b6481425daa2b"
+        },
+        {
+          "path": "art/packed/board-04/006.part",
+          "bytes": 262140,
+          "sha256": "640befb7580407ef6b7df4fa7cd07412d072cae4af138d1214ec0bd02dff2599",
+          "gitSha": "1389c63c825468c8cbe69e6049d80a22a8ff980c"
+        },
+        {
+          "path": "art/packed/board-04/007.part",
+          "bytes": 262140,
+          "sha256": "fbf4a7dba2021232f82ba378827d3c2458d3277023f717b582277968222260c5",
+          "gitSha": "e3cbcb2f03557478aaa70b7ccfec10602b350d09"
+        },
+        {
+          "path": "art/packed/board-04/008.part",
+          "bytes": 262140,
+          "sha256": "30b57c228412351f34b1b9c946fd11eef9a196d8ac214cf8a745f5f2c1024d5c",
+          "gitSha": "88653383961c13672e6cef29eaab6dea1537adb6"
+        },
+        {
+          "path": "art/packed/board-04/009.part",
+          "bytes": 262140,
+          "sha256": "6ed26a86ece269a13b985c58407785f613c55f036e07959e4f56335a258d3499",
+          "gitSha": "81424096a218faea3083321c7ce05059d5f7301b"
+        },
+        {
+          "path": "art/packed/board-04/010.part",
+          "bytes": 261919,
+          "sha256": "9105f40aa4dacea88e64ac8fd3ae2cf784572e1a1c5a7906577018d11a041f97",
+          "gitSha": "1e0a2dc7ff11e23445ebe0008beed03101f2f464"
+        }
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "species": [
+        {
+          "no": 13,
+          "speciesId": "monster.embarg",
+          "name": "エンバルグ",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "heavy_blade",
+            "war_maul"
+          ],
+          "designFile": "data/species/013-embarg.json"
+        },
+        {
+          "no": 14,
+          "speciesId": "monster.kordopil",
+          "name": "コルドピル",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "heavy_blade",
+            "guard_blade"
+          ],
+          "designFile": "data/species/014-kordopil.json"
+        },
+        {
+          "no": 15,
+          "speciesId": "monster.palseit",
+          "name": "パルセイト",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "guard_blade",
+            "ring_bow"
+          ],
+          "designFile": "data/species/015-palseit.json"
+        },
+        {
+          "no": 16,
+          "speciesId": "monster.numaporon",
+          "name": "ヌマポロン",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/016-numaporon.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-04.txt"
+      ],
+      "sourceManifest": "art/manifest-02-07.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-eefb0542-cb0e-4d2d-85dc-0ac36decb483.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "visually-reviewed-with-production-notes",
+        "observations": "013 胸前の閉じた炉殻・黒灰と赤銅、大剣と硬い両打面の大槌。014 小さい丸岩板と成人生成り服、015 閉じた幼耳膜と細い成人脚、016 前腰の一皿と横耐水皮を確認。幼体3種は成人用で成体の大器官を持たない。護刃・長尖槍は独立盾付き。",
+        "limitations": [
+          "013 背の低い三弁は正面寄りの姿勢で全数を確認できない。背面図が必要。",
+          "014 左肩の小板三枚の一部は重なり、正面で全ての境界は見えない。モデルで三枚を個別ノードにする。",
+          "015 弓弦の線が薄い。実装では一本の直線弦を独立メッシュで用意し、握りから離す。"
+        ],
+        "notVerified": [
+          "背面／側面が見えない部位の立体構造",
+          "共通リグの最大可動域と装備の当たり",
+          "全7系統・各級の専用画像",
+          "正式3Dモデル・実機表示・ゲーム内技能演出"
+        ]
+      }
+    },
+    {
+      "board": 5,
+      "file": "art/board-05.png",
+      "bytes": 2348121,
+      "sha256": "967d0683b4528c9eeaf161c9690848fecda3e0115c24845d153032e205fc3120",
+      "parts": [
+        {
+          "path": "art/packed/board-05/000.part",
+          "bytes": 262140,
+          "sha256": "5d4311a93f6f0539ff9a31baf6a6b327486acc90954149520bb9dfef0fa23f01",
+          "gitSha": "9f6cfc8281b6b613b1c5702464630b416d01e97a"
+        },
+        {
+          "path": "art/packed/board-05/001.part",
+          "bytes": 262140,
+          "sha256": "384d9512e31122bf2283e909c4d12d2c055d0c99c95b48d20e5dc270459091d4",
+          "gitSha": "31e40c7ead7fc114981ff9f40aa744a5b77e1618"
+        },
+        {
+          "path": "art/packed/board-05/002.part",
+          "bytes": 262140,
+          "sha256": "c662ad680ad45789a9847ac82e641d9736dae7c1c081c5fca44c87582208a1f9",
+          "gitSha": "57d85d953625423db28def89e2eff451b26aac53"
+        },
+        {
+          "path": "art/packed/board-05/003.part",
+          "bytes": 262140,
+          "sha256": "c2c4bdc7e783451f4d9d7d312a0669d6d0290a8909bf76879906f8dc5178c4e4",
+          "gitSha": "257d3dbcaedcd09228dc19988d7c84827673c4f9"
+        },
+        {
+          "path": "art/packed/board-05/004.part",
+          "bytes": 262140,
+          "sha256": "fd5c879f664827d9a2c16992fb05c967ef3b4e6ff29293aacfb44cef70efe532",
+          "gitSha": "3b2e20d9523f66d486c945eb371112194cf60f00"
+        },
+        {
+          "path": "art/packed/board-05/005.part",
+          "bytes": 262140,
+          "sha256": "a61097d7e4d9733b90b7f8b4cb7cbace6626269a62379c0ba1e09a32aef33199",
+          "gitSha": "31575783e37c2454a0fea782c0604a7c8acce2b6"
+        },
+        {
+          "path": "art/packed/board-05/006.part",
+          "bytes": 262140,
+          "sha256": "c061951b7dfb50dd81c1edb77a6a57bcf2b37f467eec544d30d4df14b2585183",
+          "gitSha": "af3df5b4e887d4496e64201435651ecdac82c15a"
+        },
+        {
+          "path": "art/packed/board-05/007.part",
+          "bytes": 262140,
+          "sha256": "3c1d47d89247f1ac2af202f560cf1c2566122dc2c5ae35d08da29d93ad673ad4",
+          "gitSha": "c0195ec014c5a70f2c5ddf18f6790cf37db3ed2e"
+        },
+        {
+          "path": "art/packed/board-05/008.part",
+          "bytes": 251001,
+          "sha256": "d07cba664efc432ba7975b5f7ada7b9711bc21c6eb8e09981a126266127ced7f",
+          "gitSha": "f33565e5ac2a2e8516fbaf46dbb7d7598a3185d3"
+        }
+      ],
+      "dimensions": [
+        1672,
+        941
+      ],
+      "species": [
+        {
+          "no": 17,
+          "speciesId": "monster.chilumicana",
+          "name": "チルミカナ",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "ring_bow",
+            "twin_blades"
+          ],
+          "designFile": "data/species/017-chilumicana.json"
+        },
+        {
+          "no": 18,
+          "speciesId": "monster.kohalgis",
+          "name": "コハルギス",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/018-kohalgis.json"
+        },
+        {
+          "no": 19,
+          "speciesId": "monster.mitogaron",
+          "name": "ミトガロン",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ],
+          "designFile": "data/species/019-mitogaron.json"
+        },
+        {
+          "no": 20,
+          "speciesId": "monster.yurtepica",
+          "name": "ユルテピカ",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "twin_blades",
+            "guard_blade"
+          ],
+          "designFile": "data/species/020-yurtepica.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-05-revision-01.txt",
+        "art/prompts/board-05.txt"
+      ],
+      "sourceManifest": "art/manifest-02-07.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-94bef015-7c99-4f92-b06d-cecfb86396c3.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "visually-reviewed-with-production-notes",
+        "observations": "017 背下部の二灯、018 左右ほぼ同寸の乳白板、019 閉じない半円と小さい丸鉤、020 背上の平たい一面と二糸縁を確認。019初稿の大きい巻き鉤を丸い小突起へ編集済み。4体とも成人、五部位が枠内。双剣は二本、護刃・槍は盾を別に描写。",
+        "limitations": [
+          "018 盾の硝板は光の表現で半透明に見える。仕様は乳白の不透明寄り一枚板で、成体の透明板にしない。",
+          "020 平たい羽袋が羽状に重なって見える。モデルでは一つの平たい袋の面に小じわを付け、飛行翼や独立羽の束にしない。"
+        ],
+        "notVerified": [
+          "背面／側面が見えない部位の立体構造",
+          "共通リグの最大可動域と装備の当たり",
+          "全7系統・各級の専用画像",
+          "正式3Dモデル・実機表示・ゲーム内技能演出"
+        ]
+      }
+    },
+    {
+      "board": 6,
+      "file": "art/board-06.png",
+      "bytes": 2524435,
+      "sha256": "d1bc5546eefc566b2ed1b0b10e0f095d56125410f60d6390ddb92d6b4b7a1d49",
+      "parts": [
+        {
+          "path": "art/packed/board-06/000.part",
+          "bytes": 262140,
+          "sha256": "e571d58f79dcfb10ccdaeebab93cadcc7540efd7fa3de79ae7044e0b0aaf7a6a",
+          "gitSha": "ebcce862b73df0e90e6480edafd51fce655cd32e"
+        },
+        {
+          "path": "art/packed/board-06/001.part",
+          "bytes": 262140,
+          "sha256": "52e71ed9bfb69311a804c852a42ba7c4619137d3cb9aecd4a550bd0a4ecd3b8c",
+          "gitSha": "dce4ad13a23a23920f2cc1afe56aa26c6b312a6a"
+        },
+        {
+          "path": "art/packed/board-06/002.part",
+          "bytes": 262140,
+          "sha256": "a2eaff8cb8b37b991e1d00dd27c2635231518ca161c3399985d64562cec89bbf",
+          "gitSha": "87261d72d27591d70acfaa7f3c558f8224f9bb63"
+        },
+        {
+          "path": "art/packed/board-06/003.part",
+          "bytes": 262140,
+          "sha256": "587c53be54c70ba3329e7a4c5b4746ed4ca4d206be17c411f5cd63bc5339eafd",
+          "gitSha": "19a9e420cd6af7296e6263328c58c651a7e7ae63"
+        },
+        {
+          "path": "art/packed/board-06/004.part",
+          "bytes": 262140,
+          "sha256": "4fc672fa1d35b7d16f5167132b404a08c0105c7ed508bc04df8111ad9cee702d",
+          "gitSha": "129beb6a6166f4349905bdde88eb792d09693dc7"
+        },
+        {
+          "path": "art/packed/board-06/005.part",
+          "bytes": 262140,
+          "sha256": "e245720d1358c4c60bd9b9fda7f1b77239178a7a07014e4be3c17c5fec2b9552",
+          "gitSha": "ccbb788417397a7a2bf84c8c1dd6374fbf276bfd"
+        },
+        {
+          "path": "art/packed/board-06/006.part",
+          "bytes": 262140,
+          "sha256": "9b8079d5bff2a57a4b080d30abd5e5d050be11804cf69cd00aa48703039012ca",
+          "gitSha": "fa7fd2cdc2af458fbb8022b23a2c79ff23852727"
+        },
+        {
+          "path": "art/packed/board-06/007.part",
+          "bytes": 262140,
+          "sha256": "68ced46bb7ca01fe3c9911b48f8f8d5ba3eff9ba8d668e37c490d9e0112c7de9",
+          "gitSha": "7bd63f228f61d792485cedd43de1fdce8f4770c4"
+        },
+        {
+          "path": "art/packed/board-06/008.part",
+          "bytes": 262140,
+          "sha256": "6bb33971935577d204dd9d552f623bfe2f54ece8200ce3c7419a8395d91f2d21",
+          "gitSha": "2cbba901243f47df694bc0ae8931966f9e64aaab"
+        },
+        {
+          "path": "art/packed/board-06/009.part",
+          "bytes": 165175,
+          "sha256": "081d454c5ad40b00f5725bc86c8a2fedcc14eb6d230466ed753aede80aca3ebb",
+          "gitSha": "ba8961d0ca65afe284c8d6af40a5e0f496ee1bc4"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 21,
+          "speciesId": "monster.hinasalv",
+          "name": "ヒナサルヴ",
+          "representedRank": 1,
+          "representativeFamilies": [
+            "ring_bow",
+            "long_lance"
+          ],
+          "designFile": "data/species/021-hinasalv.json"
+        },
+        {
+          "no": 22,
+          "speciesId": "monster.hasdren",
+          "name": "ハスドレン",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "long_lance",
+            "guard_blade"
+          ],
+          "designFile": "data/species/022-hasdren.json"
+        },
+        {
+          "no": 23,
+          "speciesId": "monster.ivselam",
+          "name": "イヴセラム",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ],
+          "designFile": "data/species/023-ivselam.json"
+        },
+        {
+          "no": 24,
+          "speciesId": "monster.domelkano",
+          "name": "ドメルカノ",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "war_maul",
+            "heavy_blade"
+          ],
+          "designFile": "data/species/024-domelkano.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-06-revision-01.txt",
+        "art/prompts/board-06.txt"
+      ],
+      "sourceManifest": "art/manifest-02-07.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-92952efa-12a2-4031-8659-ad280dda16f7.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "visually-reviewed-with-production-notes",
+        "observations": "021 背の丸小板を初稿3枚から交互4枚へ、環弓の小晶を3から4へ編集済み。022 右腰の一槽、023 左肩の一霜扇、024 後高二段兜と胸三段を確認。各2系統、槍盾・双剣・硬い打面・一本の弦を確認。",
+        "limitations": [
+          "023 半円扇の内部が三本より細かい筋で描かれている。主支持骨をJSONの三本にし、残りは表面模様にする。",
+          "024 兜の後ろ縁高さは側面図で再検査が必要。原画から見たまま高さを決めない。"
+        ],
+        "notVerified": [
+          "背面／側面が見えない部位の立体構造",
+          "共通リグの最大可動域と装備の当たり",
+          "全7系統・各級の専用画像",
+          "正式3Dモデル・実機表示・ゲーム内技能演出"
+        ]
+      }
+    },
+    {
+      "board": 7,
+      "file": "art/board-07.png",
+      "bytes": 2489987,
+      "sha256": "d937f0a3b574b70442b5b9915e6c29f57249ba399388b117d7c711ffe57006a6",
+      "parts": [
+        {
+          "path": "art/packed/board-07/000.part",
+          "bytes": 262140,
+          "sha256": "f8016ff45980c08d803cfb33e2d418cd46c7e3988ad2fe77c17a3886ea01a370",
+          "gitSha": "b6d47d8ed016437eae1a061ddaf7130007884b8b"
+        },
+        {
+          "path": "art/packed/board-07/001.part",
+          "bytes": 262140,
+          "sha256": "87134a4d8c4110007640899d1682d2c0e8807eda0382ae3c8f7ebbba26bd1a10",
+          "gitSha": "4381be29eb45034e0b73303adddc5e6e7f500788"
+        },
+        {
+          "path": "art/packed/board-07/002.part",
+          "bytes": 262140,
+          "sha256": "2278ebeffdbdcbceaa81d2b9c4f396997a534283ace58dcd534498c8a4a103fb",
+          "gitSha": "35c2a61abfbfc9399583ff71076fccd2379bf160"
+        },
+        {
+          "path": "art/packed/board-07/003.part",
+          "bytes": 262140,
+          "sha256": "be9392a45a78436c0793e14f68720f7aed0b74310fb21af0ccbaa43a3bd8c879",
+          "gitSha": "81e3b4682f32457ea0fffece75955ceb89ca495c"
+        },
+        {
+          "path": "art/packed/board-07/004.part",
+          "bytes": 262140,
+          "sha256": "c60c6bb6829691fc29ce60b38858b3f25120dfc37c0ca307fee0ef6ded85155c",
+          "gitSha": "20d8631ecd30020daa8a0bc843ed9dce7f4c0286"
+        },
+        {
+          "path": "art/packed/board-07/005.part",
+          "bytes": 262140,
+          "sha256": "db651f7c8612aa8d0da5665323c6e225dc51b7c7223f95a031ce6493d7949f53",
+          "gitSha": "bc89d264416271be1364bcc3ba28380137564da8"
+        },
+        {
+          "path": "art/packed/board-07/006.part",
+          "bytes": 262140,
+          "sha256": "273df28426f2f1e6d5fb272577eea750f557ab3bf3316586fe4f46230e54c0b3",
+          "gitSha": "595fa5d781377e7f3c6dd2f8f50b0ae513df82f0"
+        },
+        {
+          "path": "art/packed/board-07/007.part",
+          "bytes": 262140,
+          "sha256": "56e30fdde86b5b17e92eeb63784454d1dc2badf778cf2c9b841226f56d31e713",
+          "gitSha": "5e3f223c5bf022fd7407ed57dde96b6e06484f60"
+        },
+        {
+          "path": "art/packed/board-07/008.part",
+          "bytes": 262140,
+          "sha256": "e55fad2d49a20f2d62e226be786665b8611625513c84c21fefb31a730f932bab",
+          "gitSha": "08921b1896b9c9cc8f74394fb7aa9b5eb2f760a9"
+        },
+        {
+          "path": "art/packed/board-07/009.part",
+          "bytes": 130727,
+          "sha256": "874f22e68eb532097703cc985eaa7930ee23e3396890ff1394a1c4a4e32cf055",
+          "gitSha": "fd93b085d1471224978ce04872c4fd074532f726"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 25,
+          "speciesId": "monster.holnebas",
+          "name": "ホルネバス",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "war_maul",
+            "ring_bow"
+          ],
+          "designFile": "data/species/025-holnebas.json"
+        },
+        {
+          "no": 26,
+          "speciesId": "monster.miltasea",
+          "name": "ミルタセア",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "long_blade",
+            "ring_bow"
+          ],
+          "designFile": "data/species/026-miltasea.json"
+        },
+        {
+          "no": 27,
+          "speciesId": "monster.talgrina",
+          "name": "タルグリナ",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "long_lance",
+            "guard_blade"
+          ],
+          "designFile": "data/species/027-talgrina.json"
+        },
+        {
+          "no": 28,
+          "speciesId": "monster.zanetolka",
+          "name": "ザネトルカ",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ],
+          "designFile": "data/species/028-zanetolka.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-07-revision-01.txt",
+        "art/prompts/board-07.txt"
+      ],
+      "sourceManifest": "art/manifest-02-07.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-a8491142-72fc-420b-8db0-3f8b47ccf66b.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "visually-reviewed-with-production-notes",
+        "observations": "025 右肩の室を初稿4開口から3つの閉じた丸室へ修正。026 腰後ろの三露珠、027 左前腕の三段、028 腰後ろの三段を確認。両環弓は直線一本弦・小環一つ、護刃／槍は独立盾。全身と全小物の先端が枠内。",
+        "limitations": [
+          "025 模型化では三室を斜めに少し前へ向けるが、閉じた先端を維持し長い筒にしない。",
+          "026 太刀の小珠が刃面側へ寄って描かれている。JSON通り鞘口後ろの低い留めへ戻し、刃と手の接触を避ける。",
+          "028 腕の鉤は大きめに描かれている。仕様の短い下向き鉤に縮小し、手首の可動域を空ける。"
+        ],
+        "notVerified": [
+          "背面／側面が見えない部位の立体構造",
+          "共通リグの最大可動域と装備の当たり",
+          "全7系統・各級の専用画像",
+          "正式3Dモデル・実機表示・ゲーム内技能演出"
+        ]
+      }
+    },
+    {
+      "board": 8,
+      "file": "art/board-08.png",
+      "bytes": 2936606,
+      "sha256": "1889c8391d5fd7d4c84cd7d27c18042d3e158083882bfcb95e968d18a1da6bc9",
+      "parts": [
+        {
+          "path": "art/packed/board-08/000.part",
+          "bytes": 262140,
+          "sha256": "dc29766bd783658e2de1a0c26c0a64897c0413f7a3926e3c87972f0c426148da",
+          "gitSha": "7112fc8bbea1943cc1e9a289245a25937a94a75c"
+        },
+        {
+          "path": "art/packed/board-08/001.part",
+          "bytes": 262140,
+          "sha256": "071bd71ebb42a3036e3eb7bf2cfcfab41f52a24d39b29203d82154b397b5247b",
+          "gitSha": "e81e428dfd63ab5694706ee56db4d689822faa61"
+        },
+        {
+          "path": "art/packed/board-08/002.part",
+          "bytes": 262140,
+          "sha256": "470978d3014402b8f8b24768c677ab7ff5252087897cda6a6cdda8e31ff13228",
+          "gitSha": "a862c3161ea956aa93a8bc76271a1b6060796317"
+        },
+        {
+          "path": "art/packed/board-08/003.part",
+          "bytes": 262140,
+          "sha256": "2efaae0c8a26db0f02e9d28e2c15792839dc32fde8ac0fd564bce1b0d2705987",
+          "gitSha": "04c2ee69359beca1d1758d3e1c2d9bbac55ed3e5"
+        },
+        {
+          "path": "art/packed/board-08/004.part",
+          "bytes": 262140,
+          "sha256": "5e6dbc1eb6fc47885cbdededca942c94a5e74d0007166fbbc2f9df0f916979b5",
+          "gitSha": "436463d38d29f8693f5fc7e2d61eb67f655bf138"
+        },
+        {
+          "path": "art/packed/board-08/005.part",
+          "bytes": 262140,
+          "sha256": "06a65ec7e0c204496962add1652f2b450b7cbd8d3cd19b282f673ed867c00b18",
+          "gitSha": "26c2cfbc2d4c070eacad844e614fc0986f9ba76c"
+        },
+        {
+          "path": "art/packed/board-08/006.part",
+          "bytes": 262140,
+          "sha256": "288a85e574ae3795f80a41c434e78e612b012fcd4b93078be27664124dd3469b",
+          "gitSha": "4a276687986a6b7cee5c684cd7bd7f98957389cb"
+        },
+        {
+          "path": "art/packed/board-08/007.part",
+          "bytes": 262140,
+          "sha256": "aacc5cfe0eb34ffe454bf4cff763d99ad2c08793fd66e53d98ec1f05995d1c90",
+          "gitSha": "12022adf891a64cde8cfecdfbd3ac2ed365c561a"
+        },
+        {
+          "path": "art/packed/board-08/008.part",
+          "bytes": 262140,
+          "sha256": "3136ed4be3b269997911cb2de0212b0f00377c6094e6ffce119e78c41601d7c6",
+          "gitSha": "7aec57f9057675b8637e789cbc756852d266367f"
+        },
+        {
+          "path": "art/packed/board-08/009.part",
+          "bytes": 262140,
+          "sha256": "3c91cb90ef4f5ffdc7b69bfa279c22f9f228ad1664ffb708b3b86a802d4a6b1c",
+          "gitSha": "6c141d7202298cb2d6498bbef13cdcc2561e7f6f"
+        },
+        {
+          "path": "art/packed/board-08/010.part",
+          "bytes": 262140,
+          "sha256": "731e09333c11bc649b793ee9d64ac92a2a47261cb63668946975e7c5d9aa40be",
+          "gitSha": "1760bedf8df1939522da6dfb257697841c96f991"
+        },
+        {
+          "path": "art/packed/board-08/011.part",
+          "bytes": 53066,
+          "sha256": "a9a2cd61124738ff6c8e12e84f0dd1639de098ff8692d0d3e38f7ed672e39308",
+          "gitSha": "92e8b7821b5be978ab9bfa41d4c27eb7c1549a7f"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 29,
+          "speciesId": "monster.ulnaset",
+          "name": "ウルナセト",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "long_lance",
+            "guard_blade"
+          ],
+          "designFile": "data/species/029-ulnaset.json"
+        },
+        {
+          "no": 30,
+          "speciesId": "monster.nemboraf",
+          "name": "ネムボラフ",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/030-nemboraf.json"
+        },
+        {
+          "no": 31,
+          "speciesId": "monster.borazeln",
+          "name": "ボラゼルン",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "heavy_blade",
+            "war_maul"
+          ],
+          "designFile": "data/species/031-borazeln.json"
+        },
+        {
+          "no": 32,
+          "speciesId": "monster.kudrimal",
+          "name": "クドリマル",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "long_lance",
+            "twin_blades"
+          ],
+          "designFile": "data/species/032-kudrimal.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-08.txt"
+      ],
+      "sourceManifest": "art/manifest-08-14.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-c18e333b-2433-457c-9954-8cdfb9c0c9a2.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "reviewed-with-production-notes",
+        "observations": "成人4体の頭から靴、5領域、各2武器系統と独立盾を確認。29の樋・30の腹三層と箱脛・31の前庇・32の右棚の差を確認。文字029–032とLatin名が一致。",
+        "limitations": [
+          "No29の交互3樋と後腰板は背面図で再確認が必要。",
+          "No32の棚は副甲を含めると枚数が曖昧。主棚4枚と右前腕1枚をモデリング時に分離して数える。",
+          "No30の盾濾膜窓は硬い裏板を持つ図として読めるが断面は未提示。",
+          "初登場級の比較原画のみ。全7武器・全級の造形はJSON定義を正とする。",
+          "背面・正投影・実寸・共通リグ可動域・衝突は未検証。"
+        ],
+        "notVerified": [
+          "正投影・実寸・最大可動域・衝突・正式3D・ゲーム内動作"
+        ]
+      }
+    },
+    {
+      "board": 9,
+      "file": "art/board-09.png",
+      "bytes": 2956891,
+      "sha256": "8efddea1aa833b018ae08c81c6ac9f32bd8fafc63251a3b0aa5772c1a503e14e",
+      "parts": [
+        {
+          "path": "art/packed/board-09/000.part",
+          "bytes": 262140,
+          "sha256": "48cf492c0bc362ca7b19b3a974e1e78a62a75df40a5275d19b2161a1da3be6a1",
+          "gitSha": "cb4dc7e4b900fed3c8f572942e01faa0feb5a31b"
+        },
+        {
+          "path": "art/packed/board-09/001.part",
+          "bytes": 262140,
+          "sha256": "38b2cc97321d6e72d033121caf16346b6414a8a9ea63ddc5074f80aa32b87cef",
+          "gitSha": "0247211c806185ce6dd51524ae0bd1d573098067"
+        },
+        {
+          "path": "art/packed/board-09/002.part",
+          "bytes": 262140,
+          "sha256": "da69e0181899e0275e7071c8920a0ad62cd09221bb127d51addcd82f038a787f",
+          "gitSha": "f8e19ebde279124d0de2844a8e8208f3e65174c2"
+        },
+        {
+          "path": "art/packed/board-09/003.part",
+          "bytes": 262140,
+          "sha256": "344668fb76188a569c1884baba26b1d9b86538b788a69d68718c7dc12a1d42c2",
+          "gitSha": "5d4839e7e27c65027cf328dfedad0e203c825a02"
+        },
+        {
+          "path": "art/packed/board-09/004.part",
+          "bytes": 262140,
+          "sha256": "74bcc1899de6058f244e64be7fbc76754db208a3d9f8ef0d7aca4d08209fb316",
+          "gitSha": "8e4dd3a819a235b7341bfcc8a7c544a02275b96c"
+        },
+        {
+          "path": "art/packed/board-09/005.part",
+          "bytes": 262140,
+          "sha256": "c489d240394d6522b0451def64c1cc4ebd4c89d95e07879e7672d2872bacf091",
+          "gitSha": "07ad849657568df5b701e60e0868af0806a27c2d"
+        },
+        {
+          "path": "art/packed/board-09/006.part",
+          "bytes": 262140,
+          "sha256": "00275aa9753855ad4866b2cc1aef5ca210f99f3a1566f968d1cd117827ef8538",
+          "gitSha": "59925031724b29bd42b95d22121c73dc8e89807e"
+        },
+        {
+          "path": "art/packed/board-09/007.part",
+          "bytes": 262140,
+          "sha256": "408fc94e1067b5698f183ac8a5edf4fa4f0a001c2f8f2e49763194fc79ff6fe7",
+          "gitSha": "8c04bf2638288a3655e5a1da58b76e2fa778daba"
+        },
+        {
+          "path": "art/packed/board-09/008.part",
+          "bytes": 262140,
+          "sha256": "bc0bf8db8064c84de312d362d46df9deaf621dabda3644824e326dc7f91a5334",
+          "gitSha": "280d7bee77aeca2918539b20c5df0cb68886cf98"
+        },
+        {
+          "path": "art/packed/board-09/009.part",
+          "bytes": 262140,
+          "sha256": "d65568935894098defe3db54e22c84287eb8f74d037f8f491ca0d9d869d34c93",
+          "gitSha": "33a0434aeb974561b27156dbf27c9f454937fc7a"
+        },
+        {
+          "path": "art/packed/board-09/010.part",
+          "bytes": 262140,
+          "sha256": "44def3412a56e1436f61fb1bdda30b8629624c9f7a191df983c145121aef6533",
+          "gitSha": "cfa132384d53d16db50fa1e4e4f182250e3a35f8"
+        },
+        {
+          "path": "art/packed/board-09/011.part",
+          "bytes": 73351,
+          "sha256": "180d835f76367651b0ea9f680eff7cd9b04a50873e34d9703f6456333a58601d",
+          "gitSha": "0f9e191ea8613ea9996fcfb2fdcfeaf9fd340a07"
+        }
+      ],
+      "dimensions": [
+        1752,
+        897
+      ],
+      "species": [
+        {
+          "no": 33,
+          "speciesId": "monster.tosamurie",
+          "name": "トサムリエ",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ],
+          "designFile": "data/species/033-tosamurie.json"
+        },
+        {
+          "no": 34,
+          "speciesId": "monster.pukrenoa",
+          "name": "プクレノア",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ],
+          "designFile": "data/species/034-pukrenoa.json"
+        },
+        {
+          "no": 35,
+          "speciesId": "monster.kesalpina",
+          "name": "ケサルピナ",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ],
+          "designFile": "data/species/035-kesalpina.json"
+        },
+        {
+          "no": 36,
+          "speciesId": "monster.riptaum",
+          "name": "リプタウム",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/036-riptaum.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-09.txt"
+      ],
+      "sourceManifest": "art/manifest-08-14.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-d8a125f5-8573-41f9-b7c2-e000107d2c45.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "reviewed-with-production-notes",
+        "observations": "成人4体の5部位と2系統ずつ（33双剣/太刀、34双剣/太刀、35双剣/太刀、36護刃/長尖槍）を確認。33の下向き肘鉤、35の左庇、36の左右同幅の二列が見分けられる。文字033–036一致。",
+        "limitations": [
+          "No34の高い後腰丸甲は正面寄りの姿勢で隠れるため背面設定が必要。",
+          "No35の刷毛房の覆いが省略気味。制作時は短い閉じた房としてJSONを優先する。",
+          "No33の膜が枝状に見える部分は支持骨と柔膜の境界を3Dで整理する。",
+          "初登場級の比較原画のみ。全7武器・全級の造形はJSON定義を正とする。",
+          "背面・正投影・実寸・共通リグ可動域・衝突は未検証。"
+        ],
+        "notVerified": [
+          "正投影・実寸・最大可動域・衝突・正式3D・ゲーム内動作"
+        ]
+      }
+    },
+    {
+      "board": 10,
+      "file": "art/board-10.png",
+      "bytes": 2883474,
+      "sha256": "0bda1d75543788a15b78f0643d8891ca25648cda5d15d67f47b095a9337ddd12",
+      "parts": [
+        {
+          "path": "art/packed/board-10/000.part",
+          "bytes": 262140,
+          "sha256": "8b4c1061884ed89a2cd750c4b751849d6d46dd659c7794255145c596660e155a",
+          "gitSha": "815b6b1d729c4eea60005a3f9dab6313f8608135"
+        },
+        {
+          "path": "art/packed/board-10/001.part",
+          "bytes": 262140,
+          "sha256": "5278ffc3d0981ec7bcc98dc31a2fc29cfa98fac9dbecfdd766201bb7a79301b5",
+          "gitSha": "cee2340d253c501632f357a2ed4baa7acea8785e"
+        },
+        {
+          "path": "art/packed/board-10/002.part",
+          "bytes": 262140,
+          "sha256": "aefd75c8f1563882c032a8e11e2d107ac82f60c114570471dbc6a7436d8d628c",
+          "gitSha": "e278593a1316d4d866f060a670ee4564894fce1d"
+        },
+        {
+          "path": "art/packed/board-10/003.part",
+          "bytes": 262140,
+          "sha256": "bec5f436af6ef1e9baa8e405c150539edaae422266aad87de41793f5930098d0",
+          "gitSha": "205cb29634e21e229ed5c50f1f4aa61304cf6058"
+        },
+        {
+          "path": "art/packed/board-10/004.part",
+          "bytes": 262140,
+          "sha256": "973b25669082c56300be7b520db56f20fefa4a865700d544033319bbec4777fc",
+          "gitSha": "128f21a78865968558326e94802e9f19e638abfa"
+        },
+        {
+          "path": "art/packed/board-10/005.part",
+          "bytes": 262140,
+          "sha256": "c4adec581d2485f8d6e2e3f3a603b58dbbbc6679fd2ffb9659968eb16ceae951",
+          "gitSha": "5931bd7c12efa3a9ccad3c6153ae24953f95c7c9"
+        },
+        {
+          "path": "art/packed/board-10/006.part",
+          "bytes": 262140,
+          "sha256": "a4ee8fdeb860e1e7be060414bfd578034f99087e465fb5cb7034f0fc0bf8b75f",
+          "gitSha": "5618980a6b15ea54e0238c2d011ad0d259f98e15"
+        },
+        {
+          "path": "art/packed/board-10/007.part",
+          "bytes": 262140,
+          "sha256": "c2edf69ec53a26af30272264d94f24e76df9099fd955e216f4092d6b3fcefb88",
+          "gitSha": "ff54113b32e27acf03a211bc3c71ce0f74beca3c"
+        },
+        {
+          "path": "art/packed/board-10/008.part",
+          "bytes": 262140,
+          "sha256": "2a61fe0ec1406120cd47e3d66d933479d6e8847634a9df38359b8598fcc0259d",
+          "gitSha": "8423df7c6ce4b3fea19cd0aa342dbca9c2939e1c"
+        },
+        {
+          "path": "art/packed/board-10/009.part",
+          "bytes": 262140,
+          "sha256": "58d763a2b9b87185988612cdb978181249831b581a4c587f3e6565d77ee4bbba",
+          "gitSha": "1087666d0df763905c4fad1d7b508b80d12b58fa"
+        },
+        {
+          "path": "art/packed/board-10/010.part",
+          "bytes": 262074,
+          "sha256": "9adc1b0cc94900d45b8063b371545819e8003b6297ed4bde9353f4ce1a1d7343",
+          "gitSha": "a806113d471a4b98a6fff1f89242330aa03a6ad1"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 37,
+          "speciesId": "monster.serinodam",
+          "name": "セリノダム",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ],
+          "designFile": "data/species/037-serinodam.json"
+        },
+        {
+          "no": 38,
+          "speciesId": "monster.nufraken",
+          "name": "ヌフラケン",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "ring_bow",
+            "heavy_blade"
+          ],
+          "designFile": "data/species/038-nufraken.json"
+        },
+        {
+          "no": 39,
+          "speciesId": "monster.akaunel",
+          "name": "アカウネル",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/039-akaunel.json"
+        },
+        {
+          "no": 40,
+          "speciesId": "monster.tsumarobek",
+          "name": "ツマロベク",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "war_maul",
+            "guard_blade"
+          ],
+          "designFile": "data/species/040-tsumarobek.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-10.txt"
+      ],
+      "sourceManifest": "art/manifest-08-14.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-150a6b97-e1ce-47d9-b1e0-580387f802a7.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "reviewed-with-production-notes",
+        "observations": "成人4体の5部位、37双剣/太刀、38環弓/断岳剣、39護刃/長尖槍、40大槌/護刃を確認。38の首後ろ一壺、39の四角襟、40の下胸単円が明確。38の一本弦・小環・矢と全盾の独立を確認。文字037–040一致。",
+        "limitations": [
+          "No37の後腰三櫂は側面から見えるが左右全数と後面を別図で確認する。",
+          "No38の壺は丸い背襟として確認できるが後ろ中央の配置は背面設定で詰める。",
+          "No39の小さい匙肩は図で簡略化されている。",
+          "初登場級の比較原画のみ。全7武器・全級の造形はJSON定義を正とする。",
+          "背面・正投影・実寸・共通リグ可動域・衝突は未検証。"
+        ],
+        "notVerified": [
+          "正投影・実寸・最大可動域・衝突・正式3D・ゲーム内動作"
+        ]
+      }
+    },
+    {
+      "board": 11,
+      "file": "art/board-11.png",
+      "bytes": 2436403,
+      "sha256": "db83d0b946c2ee22151d0890efa8838f477b4f9360c54f96dc5b0b87c6b2ef70",
+      "parts": [
+        {
+          "path": "art/packed/board-11/000.part",
+          "bytes": 262140,
+          "sha256": "e4eadf68d30371502cc8bc2b4aac5f81e886e7d51da102ead8afcbcd016a0104",
+          "gitSha": "0b538e411ffd9ea496fdef9ad48b2e9172241fc3"
+        },
+        {
+          "path": "art/packed/board-11/001.part",
+          "bytes": 262140,
+          "sha256": "e571105973f4656dd56dfc3a1fbe4c142919e6026141fe92a042ee922619481e",
+          "gitSha": "16e0a4b2a5af616fb8553bec2406dcf59224973c"
+        },
+        {
+          "path": "art/packed/board-11/002.part",
+          "bytes": 262140,
+          "sha256": "c15f2a49b6c9ddd82f3f785aad6f8ec9ab4c210153adb0c64dc4b9f4aa80cbb0",
+          "gitSha": "8c8c62fef990cba989a9b692c85b392ce5c0c456"
+        },
+        {
+          "path": "art/packed/board-11/003.part",
+          "bytes": 262140,
+          "sha256": "76a75d1dc834e9d86fb0e8adf699bb2c2aed62e0099c9522075f46545d40d695",
+          "gitSha": "343ee031742f3c06b0f473e1d01bcaca5e5d576f"
+        },
+        {
+          "path": "art/packed/board-11/004.part",
+          "bytes": 262140,
+          "sha256": "b1670706155623e43f5a3dfb4f735e1570c568b21d738386ec8f8c74e8c36aa5",
+          "gitSha": "c2e447068d4f2a9987bdb0db09932fce09c59379"
+        },
+        {
+          "path": "art/packed/board-11/005.part",
+          "bytes": 262140,
+          "sha256": "248b7d371ad4c0085242491b3936089eda35c5ebc05eae975aa86c376f342cc7",
+          "gitSha": "79d1018913a37f412fceca32e646105c10e6405f"
+        },
+        {
+          "path": "art/packed/board-11/006.part",
+          "bytes": 262140,
+          "sha256": "fef1adfeb51f99669f95f97c22a7009cb7e84b6ad0dcdd7ce40615b38b910ef8",
+          "gitSha": "a9ed243917db2bc98a440d7453c3ef6d6fa41373"
+        },
+        {
+          "path": "art/packed/board-11/007.part",
+          "bytes": 262140,
+          "sha256": "41b6e0757e735d90c9051f3aae9b43f4dbff7b9137175eb27f0b957576957b61",
+          "gitSha": "fa36470ec5c6521082fc2dd1fd71a2ebba675d56"
+        },
+        {
+          "path": "art/packed/board-11/008.part",
+          "bytes": 262140,
+          "sha256": "a7e1d595cf0a31074299ad0aca1b8475f71023ac9108cdf328b8ec1e38d6b8c4",
+          "gitSha": "4d2babfbc49cf9dd282f10ba8471e80c7ecefa61"
+        },
+        {
+          "path": "art/packed/board-11/009.part",
+          "bytes": 77143,
+          "sha256": "59b2dcb469c619c4e4e6718024fa8437c7296cb23cc3a159c3674caabdbe6f20",
+          "gitSha": "2862a197eafcec682a50b828272b4b05027cbe42"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 41,
+          "speciesId": "monster.furemsad",
+          "name": "フレムサド",
+          "representedRank": 2,
+          "representativeFamilies": [
+            "war_maul",
+            "guard_blade"
+          ],
+          "designFile": "data/species/041-furemsad.json"
+        },
+        {
+          "no": 42,
+          "speciesId": "monster.grasedon",
+          "name": "グラセドン",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "heavy_blade",
+            "war_maul"
+          ],
+          "designFile": "data/species/042-grasedon.json"
+        },
+        {
+          "no": 43,
+          "speciesId": "monster.ryuzelka",
+          "name": "リュゼルカ",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "ring_bow",
+            "twin_blades"
+          ],
+          "designFile": "data/species/043-ryuzelka.json"
+        },
+        {
+          "no": 44,
+          "speciesId": "monster.mordine",
+          "name": "モルディネ",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "long_blade",
+            "twin_blades"
+          ],
+          "designFile": "data/species/044-mordine.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-11-revision-01.txt",
+        "art/prompts/board-11.txt"
+      ],
+      "sourceManifest": "art/manifest-08-14.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-d261c4ac-cb7b-4527-80b4-47de6cbdeac9.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "reviewed-with-production-notes",
+        "observations": "成人4体の5領域と41大槌/護刃、42断岳剣/大槌、43環弓/双剣、44太刀/双剣を確認。No41を修正し後腰の骨と単一喉襟を背面斜めから示した。42左裂扇、43上下にずれる肩帆、44三段冠と右胸管が見分けられる。文字041–044一致。",
+        "limitations": [
+          "No41は後腰位置の確認を優先した背面斜め姿勢で、胸前の形はJSONと初回プロンプトを参照。骨下縁は制作時に丸く鈍らせる。",
+          "No43の弓弦は淡く、制作時は上下端を結ぶ一本の直線弦を明示する。",
+          "No44の冠の段差は三主皿と頭頂小留めを区別し、四段冠にしない。",
+          "初登場級の比較原画のみ。全7武器・全級の造形はJSON定義を正とする。",
+          "背面・正投影・実寸・共通リグ可動域・衝突は未検証。"
+        ],
+        "notVerified": [
+          "正投影・実寸・最大可動域・衝突・正式3D・ゲーム内動作"
+        ]
+      }
+    },
+    {
+      "board": 12,
+      "file": "art/board-12.png",
+      "bytes": 2949394,
+      "sha256": "428ecb899bb7614006fe256ad8f680cf24f6468e7e90efa04667018747e4507f",
+      "parts": [
+        {
+          "path": "art/packed/board-12/000.part",
+          "bytes": 262140,
+          "sha256": "b8da736211e98515220850107a6a68ab0490a453509ce60625bc62493d6781f7",
+          "gitSha": "413aa7ce90c37d29565ddf3ef47a96bbe957205f"
+        },
+        {
+          "path": "art/packed/board-12/001.part",
+          "bytes": 262140,
+          "sha256": "24f4d4a2f9378d9a198daf3941fe3ffeb0fe4818364e7055fcdfbe56aef6c671",
+          "gitSha": "98ce5c13186ff165d824cf65c8acf38e48664fc4"
+        },
+        {
+          "path": "art/packed/board-12/002.part",
+          "bytes": 262140,
+          "sha256": "e3e8abe5c216fcc4c404c53559226bf1c39b6da985b96a81016b0791b20baf06",
+          "gitSha": "cda89eae7b745aaf66e3b3661472477f3d7f4a35"
+        },
+        {
+          "path": "art/packed/board-12/003.part",
+          "bytes": 262140,
+          "sha256": "d6e7c2b1c6852df4bfbd0aaa7aef36d64ecae4ad23d7b56ba7be23af0f56050a",
+          "gitSha": "aa191a68c7f37aad1d42bd4342cfb018ee7f4aba"
+        },
+        {
+          "path": "art/packed/board-12/004.part",
+          "bytes": 262140,
+          "sha256": "3f38788738a49ce6e5036955feb73ede4a4ffcbf09daae7910bf124cab44b80e",
+          "gitSha": "67cc9d87ada2e03ce385340a6eaa5842b56fdb87"
+        },
+        {
+          "path": "art/packed/board-12/005.part",
+          "bytes": 262140,
+          "sha256": "06b52db93f40d69dbfa63fa23c101e1e0e06af353b2c09e7fe3e8fcd1da2c632",
+          "gitSha": "345b73f17e8d808f0f299354a093e61281d594c9"
+        },
+        {
+          "path": "art/packed/board-12/006.part",
+          "bytes": 262140,
+          "sha256": "9e6f2154f84628d1a5156a72294dc951fa6d2feab40fd3398b6625f1c93c7876",
+          "gitSha": "699266fb33d38b822c6650ac7db6d9af4b29b24a"
+        },
+        {
+          "path": "art/packed/board-12/007.part",
+          "bytes": 262140,
+          "sha256": "a79a9a315afd15ab53fbe2644f17815a01c8fb70d849a3b462dafb2d38b456f3",
+          "gitSha": "0815ad7938b727fb06c7f4f56a5859c8955774fe"
+        },
+        {
+          "path": "art/packed/board-12/008.part",
+          "bytes": 262140,
+          "sha256": "9592b84698fa3de4c7a70a7e5414f670e01d85c8ecf291b76cd462cde13753df",
+          "gitSha": "b4305765d348524c79ca8d455089faac62817a2b"
+        },
+        {
+          "path": "art/packed/board-12/009.part",
+          "bytes": 262140,
+          "sha256": "50436240dfa8e298bb91f454cb42f8fcf129a5a6ff5b9634108ccef40a37c4db",
+          "gitSha": "6b8e8da344b58ca2c76e926cd0ae2df50e65db9f"
+        },
+        {
+          "path": "art/packed/board-12/010.part",
+          "bytes": 262140,
+          "sha256": "21c7bc259bb26250606c21b9d29523952d6fb669e84d7be28254b26556dfca36",
+          "gitSha": "34705026112952cee509e241e6b945d468d9e89c"
+        },
+        {
+          "path": "art/packed/board-12/011.part",
+          "bytes": 65854,
+          "sha256": "eb181304906dec4fb6b90b6dfd7acced3b39944a6cba04bbcf36f8ffd9848721",
+          "gitSha": "c7b9c725fc08e38ec62473a0b479ad99c997057c"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 45,
+          "speciesId": "monster.doberken",
+          "name": "ドベルケン",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "war_maul",
+            "guard_blade"
+          ],
+          "designFile": "data/species/045-doberken.json"
+        },
+        {
+          "no": 46,
+          "speciesId": "monster.shilhatora",
+          "name": "シルハトラ",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ],
+          "designFile": "data/species/046-shilhatora.json"
+        },
+        {
+          "no": 47,
+          "speciesId": "monster.kuzanerio",
+          "name": "クザネリオ",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/047-kuzanerio.json"
+        },
+        {
+          "no": 48,
+          "speciesId": "monster.fesrami",
+          "name": "フェスラミ",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ],
+          "designFile": "data/species/048-fesrami.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-12.txt"
+      ],
+      "sourceManifest": "art/manifest-08-14.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-9916c509-428e-49cc-a2e9-a10925deb025.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "reviewed-with-production-notes",
+        "observations": "成人4体の5領域と各2系統を確認。45大槌/護刃と左大小2殻、46双剣/太刀と短い枝節、47護刃/長尖槍と右外反り板・左籠手の手首止まり、48双剣/太刀と胸上の1結節を確認。47の指が開き独立盾も明確。文字045–048一致。",
+        "limitations": [
+          "No46の後腰三枝の全数は側面からの重なりがあるため背面設定で確認する。",
+          "No48の糸房が前寄りにも描かれる。3Dでは後腰の短い三房だけとし、前の余分な房を省く。",
+          "No47の板は図で不透明寄り。右肩の限定した透過だけを材質で調整する。",
+          "初登場級の比較原画のみ。全7武器・全級の造形はJSON定義を正とする。",
+          "背面・正投影・実寸・共通リグ可動域・衝突は未検証。"
+        ],
+        "notVerified": [
+          "正投影・実寸・最大可動域・衝突・正式3D・ゲーム内動作"
+        ]
+      }
+    },
+    {
+      "board": 13,
+      "file": "art/board-13.png",
+      "bytes": 3061629,
+      "sha256": "383c197697c55a50d5f5dbcdc87b4d9ca0a103ceb86957aa3c12881b8213908d",
+      "parts": [
+        {
+          "path": "art/packed/board-13/000.part",
+          "bytes": 262140,
+          "sha256": "f9fce9554e866fe0505e90530c5bb971d313294e93e1f9e2459373b7d688aad8",
+          "gitSha": "83d460038b823b4d1031e539f4ceb80a29e5cd2e"
+        },
+        {
+          "path": "art/packed/board-13/001.part",
+          "bytes": 262140,
+          "sha256": "e19f071b0473fdc7294f1d2136e5adaa7e802191ef4bdf1f804e8ff51337294e",
+          "gitSha": "b1259c2c76d49818ec7d6a23d086042d9335efa5"
+        },
+        {
+          "path": "art/packed/board-13/002.part",
+          "bytes": 262140,
+          "sha256": "da77f700d6f2b0d1ad81380906bcfab41507bb9ce88d6136997a8d04baf21020",
+          "gitSha": "525a10cfa057fbf16fbe814f91fa1f9cd4389f31"
+        },
+        {
+          "path": "art/packed/board-13/003.part",
+          "bytes": 262140,
+          "sha256": "c903c886bfde9522d55cec5d1def85709afe7f8e3b12d2e394e391ed1efa671c",
+          "gitSha": "de5d58c41a6e9b9b113fdfda8643e73c07194ae2"
+        },
+        {
+          "path": "art/packed/board-13/004.part",
+          "bytes": 262140,
+          "sha256": "e6350f8ee7271906e29bd26b8e524e44a122039827aca02c7d0297a061adb8b0",
+          "gitSha": "35301f550346f94f0095a59d4d2133831f7b32e4"
+        },
+        {
+          "path": "art/packed/board-13/005.part",
+          "bytes": 262140,
+          "sha256": "be6563758bbb8d350d2b40272e42de9bb2b25bacd127c6b61c9dd23eb9d69fe6",
+          "gitSha": "deeb8e440c104c23e1d14306589fe37c4c201b3a"
+        },
+        {
+          "path": "art/packed/board-13/006.part",
+          "bytes": 262140,
+          "sha256": "dc7ba10f73ecf4b83244501e23a224e5c8d32ca96b6ec251014efa045e5d596e",
+          "gitSha": "731932418aa2413df92fbca7609b0cdbec2e4c17"
+        },
+        {
+          "path": "art/packed/board-13/007.part",
+          "bytes": 262140,
+          "sha256": "5d553e77017d11320b670272153513041b098ca925e6bdd0b6c8821e4d2fc696",
+          "gitSha": "a6d94cd2648b65af71638e99f978814e2b82ed06"
+        },
+        {
+          "path": "art/packed/board-13/008.part",
+          "bytes": 262140,
+          "sha256": "7b7c215d702ff6118ce074811ea2276cbceb0b1ee90814e1cee0175a64116da5",
+          "gitSha": "ea9ebab199af5a601af45abaf8b9acaa5b0120a1"
+        },
+        {
+          "path": "art/packed/board-13/009.part",
+          "bytes": 262140,
+          "sha256": "7682d55a7c8ecb25029f2827f5e826a5f9cdc6820fc7faa148c605efbe39f81e",
+          "gitSha": "9f8cb03650e245e35e6f73862ee1e9e3b479e696"
+        },
+        {
+          "path": "art/packed/board-13/010.part",
+          "bytes": 262140,
+          "sha256": "c0852c739df07a281214eb62f7757ff080b4cf1a09158b6bb0285add190d54f1",
+          "gitSha": "2bf4e978d7a0488709502867396c08da533be734"
+        },
+        {
+          "path": "art/packed/board-13/011.part",
+          "bytes": 178089,
+          "sha256": "355d96d50428385e3ac16e000242d964400eb33724b03cb854be574d915fb09d",
+          "gitSha": "9e8b0f5cf7121d6cf9c1663dda792382f881253f"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 49,
+          "speciesId": "monster.elmejika",
+          "name": "エルメジカ",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "ring_bow",
+            "long_blade"
+          ],
+          "designFile": "data/species/049-elmejika.json"
+        },
+        {
+          "no": 50,
+          "speciesId": "monster.azelnoto",
+          "name": "アゼルノト",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "long_lance",
+            "guard_blade"
+          ],
+          "designFile": "data/species/050-azelnoto.json"
+        },
+        {
+          "no": 51,
+          "speciesId": "monster.bezrakio",
+          "name": "ベズラキオ",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "heavy_blade",
+            "war_maul"
+          ],
+          "designFile": "data/species/051-bezrakio.json"
+        },
+        {
+          "no": 52,
+          "speciesId": "monster.murzenato",
+          "name": "ムルゼナト",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/052-murzenato.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-13.txt"
+      ],
+      "sourceManifest": "art/manifest-08-14.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-d6e06d5a-117d-41f1-9917-9792c819a575.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "reviewed-with-production-notes",
+        "observations": "成人4体の5領域と各2系統（49環弓/太刀、50長尖槍/護刃、51断岳剣/大槌、52護刃/長尖槍）を確認。49肩6節・一本弦小環矢、50腹側半環、51後傾帆と下胸嚢、52腰の低い水平節が見分けられる。文字049–052一致。",
+        "limitations": [
+          "No49の環冠の後ろ開口は背面図で確認する。",
+          "No51の帆は肩から外へ大きく見えるため、3DではJSONどおり三枚を背へ低く伏せ、腕との離隔を確認する。",
+          "No52の内向き鉤は裾の下面を別図で確認する。",
+          "初登場級の比較原画のみ。全7武器・全級の造形はJSON定義を正とする。",
+          "背面・正投影・実寸・共通リグ可動域・衝突は未検証。"
+        ],
+        "notVerified": [
+          "正投影・実寸・最大可動域・衝突・正式3D・ゲーム内動作"
+        ]
+      }
+    },
+    {
+      "board": 14,
+      "file": "art/board-14.png",
+      "bytes": 2988747,
+      "sha256": "2335906c112f917c2811a6d2d775b07a5abf750d0e9055db2b4c606e8a687d5e",
+      "parts": [
+        {
+          "path": "art/packed/board-14/000.part",
+          "bytes": 262140,
+          "sha256": "4f05ff349d33edb6fee17904fa8c02d29696f1783b58ac0edcb4318adc541eaa",
+          "gitSha": "3a5aa026e1d9c150d9350829642c466ef3e93417"
+        },
+        {
+          "path": "art/packed/board-14/001.part",
+          "bytes": 262140,
+          "sha256": "c3f1abc68744485e11a840f079239dfe2e97c2a9431f52d135d4a35ea34c6642",
+          "gitSha": "f7c9c528494d32b1d8c124573f1f01167744ceaa"
+        },
+        {
+          "path": "art/packed/board-14/002.part",
+          "bytes": 262140,
+          "sha256": "f675b5ed3e72ce8b593a2a5df0af21b1138ff832d61b45e960a289f309296f31",
+          "gitSha": "929df8c8b3d22f7cadceb215b20a74b1119fc347"
+        },
+        {
+          "path": "art/packed/board-14/003.part",
+          "bytes": 262140,
+          "sha256": "7c839fc65afea2b13e61334fe504e9e607bf93eebdfa1ec6a89e6cfcefb21ab0",
+          "gitSha": "3adb59df4a3c14e499306cc486b6c116c54c369e"
+        },
+        {
+          "path": "art/packed/board-14/004.part",
+          "bytes": 262140,
+          "sha256": "297926d1fa773cc5c47cb7522a0b05276237f7d8cf7de1fa254320a848fc414b",
+          "gitSha": "85c9c8df45e780b7ff74679096cfa26b431a6ca7"
+        },
+        {
+          "path": "art/packed/board-14/005.part",
+          "bytes": 262140,
+          "sha256": "c583c58a70f59f7cf85b49735b854cd02a033b5d3be22627cf0ba4c091648e38",
+          "gitSha": "ee417abd294d69b7ef131bbc4231ca16632800e9"
+        },
+        {
+          "path": "art/packed/board-14/006.part",
+          "bytes": 262140,
+          "sha256": "8667731d4693ef7df26233bc29a7cffe784f13fe3f357e3f37b5120cbd0d9479",
+          "gitSha": "114ab1450b1dd3c36cf3459f6c9cb872d2ccd83d"
+        },
+        {
+          "path": "art/packed/board-14/007.part",
+          "bytes": 262140,
+          "sha256": "4af6b60f485b8900de323027683c9582535dbd2556f3d2035f094a27e285fb31",
+          "gitSha": "bc76469293c6aa5247bab75e1af7b5f75aa153f4"
+        },
+        {
+          "path": "art/packed/board-14/008.part",
+          "bytes": 262140,
+          "sha256": "d6b28ca869a082fc7b122901c1282a7a809a00d698cfcf2d2e09ee6c2ceb8ae2",
+          "gitSha": "bd225a470a23c089b964853f6846f885015f9897"
+        },
+        {
+          "path": "art/packed/board-14/009.part",
+          "bytes": 262140,
+          "sha256": "463bb3c7e5678ad53058170ac01f1598dde5970f18f3d5322e1afa546533c244",
+          "gitSha": "9cc5602f50513179714a582973d93d185a84c82d"
+        },
+        {
+          "path": "art/packed/board-14/010.part",
+          "bytes": 262140,
+          "sha256": "2549d992f915310798844900545017d570c82beef09ab43f45da58ee2bd18b18",
+          "gitSha": "0f4013e736b81dbf46d4d7fb710025353a740eb9"
+        },
+        {
+          "path": "art/packed/board-14/011.part",
+          "bytes": 105207,
+          "sha256": "f93bd23aea482072ba667ee281b9669f5e6f3944f5317e3f696fd1e44ed357ec",
+          "gitSha": "3742f7c1a63c9fc897695d27cae284fd0c4f5cc3"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 53,
+          "speciesId": "monster.hauremika",
+          "name": "ハウレミカ",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "twin_blades",
+            "guard_blade"
+          ],
+          "designFile": "data/species/053-hauremika.json"
+        },
+        {
+          "no": 54,
+          "speciesId": "monster.zedbanil",
+          "name": "ゼドバニル",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "guard_blade",
+            "heavy_blade"
+          ],
+          "designFile": "data/species/054-zedbanil.json"
+        },
+        {
+          "no": 55,
+          "speciesId": "monster.oldasem",
+          "name": "オルダセム",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "heavy_blade",
+            "guard_blade"
+          ],
+          "designFile": "data/species/055-oldasem.json"
+        },
+        {
+          "no": 56,
+          "speciesId": "monster.nuolvan",
+          "name": "ヌオルヴァン",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/056-nuolvan.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-14.txt"
+      ],
+      "sourceManifest": "art/manifest-08-14.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-3c3288da-88d8-4c02-8f55-32cf7168577d.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "reviewed-with-production-notes",
+        "observations": "成人4体の5領域と53双剣/護刃、54護刃/断岳剣、55断岳剣/護刃、56護刃/長尖槍を確認。53は左の短い帷と細い右腕、54左右二胸板、55左の岩棚、56胸の短い三房と左右二水室で区別できる。文字053–056一致。53は環弓を含まない。",
+        "limitations": [
+          "No55は主棚3枚と腰の支持板が重なる。制作時は主棚3に固定し、左腕の可動域と棚下の空間を確認する。",
+          "No53の頭防具は襟主体で頭頂が露出する。頭覆いの境界は別図で整理する。",
+          "No54の導管は図で連続して見えるため3Dでは肘前後で分離し、内肘を空ける。",
+          "初登場級の比較原画のみ。全7武器・全級の造形はJSON定義を正とする。",
+          "背面・正投影・実寸・共通リグ可動域・衝突は未検証。"
+        ],
+        "notVerified": [
+          "正投影・実寸・最大可動域・衝突・正式3D・ゲーム内動作"
+        ]
+      }
+    },
+    {
+      "board": 15,
+      "file": "art/board-15.png",
+      "bytes": 2892789,
+      "sha256": "3744509650665165706a7b0e769a6b97205d1c1cd518b459325bbb8ca70ec913",
+      "parts": [
+        {
+          "path": "art/packed/board-15/000.part",
+          "bytes": 262140,
+          "sha256": "2c794f445534a928ccea2d051092b0c7666a2d4f061541acdbc11aedc03e45dd",
+          "gitSha": "c2abf4089f65fc7c722986c536cc211485b209ee"
+        },
+        {
+          "path": "art/packed/board-15/001.part",
+          "bytes": 262140,
+          "sha256": "f8bb296ad0fcfc25e1a06946b56c61c060b1a8f0362b6f8c64e10c77a3c1047d",
+          "gitSha": "7e2c5a1a0132bac7ec32b0caf9b36d752c5b6727"
+        },
+        {
+          "path": "art/packed/board-15/002.part",
+          "bytes": 262140,
+          "sha256": "0f2c3924a2e0c4d18fca8efce28d8b2b298d4707948b5e32f82e8355e81dab86",
+          "gitSha": "394e4cd076ef76cb43d9e7ac8036cc5b88535609"
+        },
+        {
+          "path": "art/packed/board-15/003.part",
+          "bytes": 262140,
+          "sha256": "b7a77e161922a02246a3027bdd681c40796ac7788faca27f02fb6335e65176e2",
+          "gitSha": "1f59e67e565cb8d5ebf4499bac325a0377f9913e"
+        },
+        {
+          "path": "art/packed/board-15/004.part",
+          "bytes": 262140,
+          "sha256": "a0978583240ae733ac2d76363b3898efa1b198ad764fde57da53944cff877c70",
+          "gitSha": "7ce09a3bdcbca3156232d797b401f8af15e1c6db"
+        },
+        {
+          "path": "art/packed/board-15/005.part",
+          "bytes": 262140,
+          "sha256": "d5fbbc312093b91810fc164048778283e8e8837fa1ddd4fa6147640729decead",
+          "gitSha": "85ab2451777db3a1841c65d18d6c86dfba1ed762"
+        },
+        {
+          "path": "art/packed/board-15/006.part",
+          "bytes": 262140,
+          "sha256": "af12ef1f148931cb34f5d1c0d2e02cd9d7ce3fe456dd15a380d0d8a0074fde86",
+          "gitSha": "6ec98e1a0458090048cc98d7451047ca9008880a"
+        },
+        {
+          "path": "art/packed/board-15/007.part",
+          "bytes": 262140,
+          "sha256": "47c3c347c0bc828ab744a86b3bb4e609a369d0db1629c5e66f983d1f8cf67a1f",
+          "gitSha": "6a54f4e334cca9f7e2505d31f29547a034fa1409"
+        },
+        {
+          "path": "art/packed/board-15/008.part",
+          "bytes": 262140,
+          "sha256": "cffc96ddc59fe6ea09ab6cf04c215d7b289c4a9f1152fc21c19a82597c900acf",
+          "gitSha": "04f340122fe9acf6fd192897ad2e5b210d39271c"
+        },
+        {
+          "path": "art/packed/board-15/009.part",
+          "bytes": 262140,
+          "sha256": "e2b5dae42cfd5d4307fd683d1d4a4874a35618f451dbe0d66d229a3d9def5b89",
+          "gitSha": "f90e68f0b3279ad159fd36dd9051e9b6511e82da"
+        },
+        {
+          "path": "art/packed/board-15/010.part",
+          "bytes": 262140,
+          "sha256": "8803bee4a65b55411794a32c90122181627313e159f7619161d14fdeb793b0de",
+          "gitSha": "c785ba516bdb14b43a92731f31fca1e4e0faf80f"
+        },
+        {
+          "path": "art/packed/board-15/011.part",
+          "bytes": 9249,
+          "sha256": "0c036ef1c869330d355b56bde455570c9a59176476eb27ba41fc56760a2c660e",
+          "gitSha": "06457facd10c5dc076c51b11775648546cf290ce"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 57,
+          "speciesId": "monster.tarhegna",
+          "name": "テムソギア",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "heavy_blade",
+            "war_maul"
+          ],
+          "designFile": "data/species/057-tarhegna.json"
+        },
+        {
+          "no": 58,
+          "speciesId": "monster.porgamis",
+          "name": "ポルガミス",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/058-porgamis.json"
+        },
+        {
+          "no": 59,
+          "speciesId": "monster.yarlshena",
+          "name": "ヤルシェナ",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "twin_blades",
+            "ring_bow"
+          ],
+          "designFile": "data/species/059-yarlshena.json"
+        },
+        {
+          "no": 60,
+          "speciesId": "monster.pizelta",
+          "name": "ピゼルタ",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "guard_blade",
+            "heavy_blade"
+          ],
+          "designFile": "data/species/060-pizelta.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-15.txt"
+      ],
+      "sourceManifest": "art/manifest-15-22.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-9713cd06-b83e-4198-b4bc-b0c407432a1a.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "reviewed-with-production-notes",
+        "observations": "57の低い背弧、58の平肩と短籠手、59の鞍襟と細腕、60の三葉足甲を確認。4成人の5部位、全端点、8系統の代表群、59の二短剣と弦のある弓を確認。",
+        "limitations": [
+          "初登場級の系列比較原画。全級・全7武器の個別画像ではない。",
+          "背面・側面の正投影、実寸、握り位置、可動域、衝突形状の最終確定は制作工程。",
+          "細い溝・小櫛・房の厳密な数と位置はJSON仕様を正とし、3D制作時に照合する。",
+          "57は背の上縁帯と三弧の分離、58の下額櫛の五本、60の接地幅を3Dで再確認する。",
+          "58の長尖槍は比較配置の縮尺。ゲームの既存有効長へ合わせ、図の短い配置寸法を採用しない。"
+        ],
+        "notVerified": [
+          "正投影・実寸・最大可動域・衝突・正式3D・ゲーム内動作"
+        ]
+      }
+    },
+    {
+      "board": 16,
+      "file": "art/board-16.png",
+      "bytes": 2800181,
+      "sha256": "02c509004fb1a110ef811f23386610cff42d1fa89c645eb04be9024d84a300cd",
+      "parts": [
+        {
+          "path": "art/packed/board-16/000.part",
+          "bytes": 262140,
+          "sha256": "78f1a564723acb9fc6461aef0472a46644dc8a4a04aad1302f3cd52b50a14398",
+          "gitSha": "4cc1ed89049b1edc7072bdfee2f5f933fb538d10"
+        },
+        {
+          "path": "art/packed/board-16/001.part",
+          "bytes": 262140,
+          "sha256": "3c3c07881380c5ccc674c28ca171f60f7b218d3770d98b9ae7ee9572dde39f39",
+          "gitSha": "306a1893fc9efff98502403f2fb2a63ffc2571bc"
+        },
+        {
+          "path": "art/packed/board-16/002.part",
+          "bytes": 262140,
+          "sha256": "c60876410699e7589e225cbe58d2c82416d84a95d6acc9dd91b99ef350021ef8",
+          "gitSha": "059f874ea59bdead3e0adfbd2c0ca00ce9a3c358"
+        },
+        {
+          "path": "art/packed/board-16/003.part",
+          "bytes": 262140,
+          "sha256": "09bbdd8f9cebde1e39fd4d0b24a3ae248681a3c4d151104240b401aafa9db4b4",
+          "gitSha": "660fa5894b9fe7aee5352c4e5e3991ed60b771f7"
+        },
+        {
+          "path": "art/packed/board-16/004.part",
+          "bytes": 262140,
+          "sha256": "edf876353af72a32e1bc811009616b9299a2ff61596e7a1b4d682b7f14a4739a",
+          "gitSha": "7a0ce47b9ddb7a378918b453e4a38f3e2b350539"
+        },
+        {
+          "path": "art/packed/board-16/005.part",
+          "bytes": 262140,
+          "sha256": "c2cad842cc55f0c6c3c93653e67b5cdf517b1d7a64c4e2964673b960dda63070",
+          "gitSha": "e697e9189baffecaf43f5e547b7a751bb7ce1343"
+        },
+        {
+          "path": "art/packed/board-16/006.part",
+          "bytes": 262140,
+          "sha256": "d58985f079391ba3b0ab0d29468bcb08aeffdb67fa4b07fc28db988b498bc51d",
+          "gitSha": "4115580e8eb2fe41038fd44b44d00132ee1b01e5"
+        },
+        {
+          "path": "art/packed/board-16/007.part",
+          "bytes": 262140,
+          "sha256": "713b6b2fa51acdf55ad19664e550be56c11f02c1f6fd397ab577cbf2aba06693",
+          "gitSha": "6d2329d0a2010921768a934db5a65fc3ac3f8145"
+        },
+        {
+          "path": "art/packed/board-16/008.part",
+          "bytes": 262140,
+          "sha256": "99674430fe87601fa45db7dfb259c698671546abe560210aff99dc87167974f2",
+          "gitSha": "dc702b15a8b1b6cdd4ff5973b4962f72f31ce05d"
+        },
+        {
+          "path": "art/packed/board-16/009.part",
+          "bytes": 262140,
+          "sha256": "26dcd149af87c5d3b0e18f327567ef62ac7ffe96956dab418e5a1d97dbe9b640",
+          "gitSha": "60c4e064d9a39e6c3439c6f0b6b1e6f222411569"
+        },
+        {
+          "path": "art/packed/board-16/010.part",
+          "bytes": 178781,
+          "sha256": "6878bb0a35ee971505f0b75b7d66d1360283536acf35f82371b9b7e121bc3a00",
+          "gitSha": "49311b80825a304bab6473ecb571fafed8eb8a20"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 61,
+          "speciesId": "monster.damorikus",
+          "name": "ダモリクス",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/061-damorikus.json"
+        },
+        {
+          "no": 62,
+          "speciesId": "monster.isarnem",
+          "name": "イサルネム",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "long_blade",
+            "heavy_blade"
+          ],
+          "designFile": "data/species/062-isarnem.json"
+        },
+        {
+          "no": 63,
+          "speciesId": "monster.regsanio",
+          "name": "レグサニオ",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/063-regsanio.json"
+        },
+        {
+          "no": 64,
+          "speciesId": "monster.rupenias",
+          "name": "ルペニアス",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "heavy_blade",
+            "long_blade"
+          ],
+          "designFile": "data/species/064-rupenias.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-16.txt"
+      ],
+      "sourceManifest": "art/manifest-15-22.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-aaf437cd-a825-4049-9fd0-759e6e30cb64.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "reviewed-with-production-notes",
+        "observations": "61の左丸甲と右細甲、62の三蓋帽と片胸熱室、63の左肩一枚盤、64の左前袋と右後袋を確認。4成人の全5部位と各2代表系統が収まる。",
+        "limitations": [
+          "初登場級の系列比較原画。全級・全7武器の個別画像ではない。",
+          "背面・側面の正投影、実寸、握り位置、可動域、衝突形状の最終確定は制作工程。",
+          "細い溝・小櫛・房の厳密な数と位置はJSON仕様を正とし、3D制作時に照合する。",
+          "62の肩・前腕板は原画でやや多層。制作時はJSONの短い薄板へ整理し、熱室の発光は表面4%以内に限定する。",
+          "61の壺籠手は側面深さ、63の盤裏二列背骨は別方向図で確認する。"
+        ],
+        "notVerified": [
+          "正投影・実寸・最大可動域・衝突・正式3D・ゲーム内動作"
+        ]
+      }
+    },
+    {
+      "board": 17,
+      "file": "art/board-17.png",
+      "bytes": 2342490,
+      "sha256": "23ba54508b6eae4fcf898086e1a917c90b6bc28af5796bc64a621202418a3214",
+      "parts": [
+        {
+          "path": "art/packed/board-17/000.part",
+          "bytes": 262140,
+          "sha256": "e721647db22953b5b655d2f5dc2e71e1d9e5d9669467daad2b4832fa7b6724f4",
+          "gitSha": "cd1313654c462102b29bd8718d3546c8b893cba2"
+        },
+        {
+          "path": "art/packed/board-17/001.part",
+          "bytes": 262140,
+          "sha256": "ef6fe61e5a625e33402495fa9d453d2ebad44fb5e6bbb420bf6f1f5ff11b97e5",
+          "gitSha": "dd1906cb9fa4495712649dd8765f9e866e7e6361"
+        },
+        {
+          "path": "art/packed/board-17/002.part",
+          "bytes": 262140,
+          "sha256": "c58538e6963574af2d3d5a73bb9bd6e239240230a85388d3af9448d32c487db9",
+          "gitSha": "ac768b68d63bd499d2d1feb889e1086060d76ead"
+        },
+        {
+          "path": "art/packed/board-17/003.part",
+          "bytes": 262140,
+          "sha256": "ee3d6b3c0745934ee2b1a05f4efbb00c0f5d4ec2037cdfd9f81acd2b189f67e2",
+          "gitSha": "0e9d5db9482e888c85dbb0ee9522e009405edaf8"
+        },
+        {
+          "path": "art/packed/board-17/004.part",
+          "bytes": 262140,
+          "sha256": "2df7c0d50eeba61a8932b234db701f1e16c03ba303971cef6be10e213251a807",
+          "gitSha": "1a54c76ace62d7bf718d0826fe17e14c9c363f7c"
+        },
+        {
+          "path": "art/packed/board-17/005.part",
+          "bytes": 262140,
+          "sha256": "a82f684810f6192fc1068671fd73a436b0c403c95875a6ca6d96077c965a44c5",
+          "gitSha": "4be5e4a7e8d00591f10bb7d07f053d7355bf6aec"
+        },
+        {
+          "path": "art/packed/board-17/006.part",
+          "bytes": 262140,
+          "sha256": "15fd0588b5527fdb610193912e491d280a4a23f80ea564d817f69592102f458d",
+          "gitSha": "491a2ff2ae0d9a50a0c898ddfb3b80b189ffd95c"
+        },
+        {
+          "path": "art/packed/board-17/007.part",
+          "bytes": 262140,
+          "sha256": "4a0efd3901f48d412eb6cef29e80792656468fffb910f15544a75926304180fa",
+          "gitSha": "31e7ae6a4e21811a3cd77bec0beb884fac9c8f63"
+        },
+        {
+          "path": "art/packed/board-17/008.part",
+          "bytes": 245370,
+          "sha256": "5be12ffcd4c5367b4cccdc0510d887c97cd13317a012c5c9595868ac4e6ba236",
+          "gitSha": "1e426c1ddc587a533c809ead0be13d5550536328"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 65,
+          "speciesId": "monster.sograpin",
+          "name": "ソグラピン",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "long_blade",
+            "twin_blades"
+          ],
+          "designFile": "data/species/065-sograpin.json"
+        },
+        {
+          "no": 66,
+          "speciesId": "monster.makuejira",
+          "name": "マクエジラ",
+          "representedRank": 3,
+          "representativeFamilies": [
+            "ring_bow",
+            "heavy_blade"
+          ],
+          "designFile": "data/species/066-makuejira.json"
+        },
+        {
+          "no": 67,
+          "speciesId": "monster.gumesald",
+          "name": "グメサルド",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "heavy_blade",
+            "guard_blade"
+          ],
+          "designFile": "data/species/067-gumesald.json"
+        },
+        {
+          "no": 68,
+          "speciesId": "monster.nericaus",
+          "name": "ネリカウス",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "ring_bow",
+            "twin_blades"
+          ],
+          "designFile": "data/species/068-nericaus.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-17-edit-01.txt",
+        "art/prompts/board-17.txt"
+      ],
+      "sourceManifest": "art/manifest-15-22.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-a30a2ef6-6e03-402b-a185-a0866bfc4371.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "reviewed-with-production-notes",
+        "observations": "65の踵と四角い足溝、66の梯胸、67の左大板、68の右後腰の開口輪を確認。68の輪は初稿の左寄りを画像編集で右後腰へ修正済み。全身と8代表群の端点は画内。",
+        "limitations": [
+          "初登場級の系列比較原画。全級・全7武器の個別画像ではない。",
+          "背面・側面の正投影、実寸、握り位置、可動域、衝突形状の最終確定は制作工程。",
+          "細い溝・小櫛・房の厳密な数と位置はJSON仕様を正とし、3D制作時に照合する。",
+          "65の後踵の曲がり、66の梯胸五段と喉室の分離は側面設計で確認する。",
+          "68の輪の開口は帯際にあり小さい。3Dでは開口と下半分のみの点灯を明確にする。"
+        ],
+        "notVerified": [
+          "正投影・実寸・最大可動域・衝突・正式3D・ゲーム内動作"
+        ]
+      }
+    },
+    {
+      "board": 18,
+      "file": "art/board-18.png",
+      "bytes": 2724821,
+      "sha256": "230b871202d9bb3fec345eec9d6d4ae2e8a41974bd2ee7f98e385b8d3173cd3a",
+      "parts": [
+        {
+          "path": "art/packed/board-18/000.part",
+          "bytes": 262140,
+          "sha256": "8b8a9fb8eece833b942cce675097b5c4d1097c56d1eea250d204ae74c03debcf",
+          "gitSha": "e00c522ae22876dfc6924da0b6b1f4a8b17e47ff"
+        },
+        {
+          "path": "art/packed/board-18/001.part",
+          "bytes": 262140,
+          "sha256": "d0e482147e805391aaaf129e87e38eec1c281e75ef71d5d5babe527b3761f632",
+          "gitSha": "628c3d94126765890f90c7a530d346695ac6b939"
+        },
+        {
+          "path": "art/packed/board-18/002.part",
+          "bytes": 262140,
+          "sha256": "bab36d0d1075b03c0ef57da30bae03f05e6a17effb1c5cbffe302f51747c38de",
+          "gitSha": "f762d4a9bad6f8b0195429bbf0855512c3f2843e"
+        },
+        {
+          "path": "art/packed/board-18/003.part",
+          "bytes": 262140,
+          "sha256": "a8ec30757375c9e0313de2f2726a80a5bf17bd3cb1c084da276084f23364fd9f",
+          "gitSha": "713c8f433b03caa6da6ef9b3a16bc44a5711ac00"
+        },
+        {
+          "path": "art/packed/board-18/004.part",
+          "bytes": 262140,
+          "sha256": "0cc472fd19fdae63d806d70f6b4f2ea02aa6326116d106c7617f591912d6e1ea",
+          "gitSha": "e89e768c0fb9be2916d79f557923fef39b9ef34d"
+        },
+        {
+          "path": "art/packed/board-18/005.part",
+          "bytes": 262140,
+          "sha256": "0a5b50fa035dca94ff1183e17eed280f89b7801f337c21775fd40f2c096e6b7e",
+          "gitSha": "9e0e8e078f9448f648c54a144352e4b669f79228"
+        },
+        {
+          "path": "art/packed/board-18/006.part",
+          "bytes": 262140,
+          "sha256": "9a77a4b2bcc527da33e46d227111a03f2fc1795aab61291a4c84d70d0bd7cd32",
+          "gitSha": "5d4e78ea89d293712e6f6ffc19030f33f8f8d11a"
+        },
+        {
+          "path": "art/packed/board-18/007.part",
+          "bytes": 262140,
+          "sha256": "a4eb106b79625a509f1d5a61fbb7cada0fde65ff015e5e70292f45662f8f3ff7",
+          "gitSha": "4ca0015cac6d7db93a27e8e4f8051f92fff6afb5"
+        },
+        {
+          "path": "art/packed/board-18/008.part",
+          "bytes": 262140,
+          "sha256": "c9504f095281c30b80ab877435d21a647bfc716581545b07d2d5c1dd8b459fb1",
+          "gitSha": "fdd6365fc0ffd777afab1da10e3159f04848cb24"
+        },
+        {
+          "path": "art/packed/board-18/009.part",
+          "bytes": 262140,
+          "sha256": "1010d46c59f7fdbe5e10a71098c512b3a6dc8d0279ac89724dabbca356e1ac15",
+          "gitSha": "f24095a73b744f36ab2c98885c74ce1f57e5e7c1"
+        },
+        {
+          "path": "art/packed/board-18/010.part",
+          "bytes": 103421,
+          "sha256": "08e683dfd42421c01ea639910daf4db28a2f39f071bab247df62e192216ad92c",
+          "gitSha": "658cf18203683934283e4f64d53a83aed7580456"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 69,
+          "speciesId": "monster.voltena",
+          "name": "ヴォルテナ",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "twin_blades",
+            "guard_blade"
+          ],
+          "designFile": "data/species/069-voltena.json"
+        },
+        {
+          "no": 70,
+          "speciesId": "monster.kitolnam",
+          "name": "キトルナム",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ],
+          "designFile": "data/species/070-kitolnam.json"
+        },
+        {
+          "no": 71,
+          "speciesId": "monster.segranio",
+          "name": "セオルミド",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "long_lance",
+            "ring_bow"
+          ],
+          "designFile": "data/species/071-segranio.json"
+        },
+        {
+          "no": 72,
+          "speciesId": "monster.dekoranze",
+          "name": "デコランゼ",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "heavy_blade",
+            "guard_blade"
+          ],
+          "designFile": "data/species/072-dekoranze.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-18.txt"
+      ],
+      "sourceManifest": "art/manifest-15-22.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-1f0f968f-6095-40af-923f-e05efcfb6d28.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "reviewed-with-production-notes",
+        "observations": "69の左肩三層帷と右細腕、70の左右ずれた低折板、71の大小斜環と細胴、72の右厚腰と左細脚を確認。71ラベルは恒久IDどおりSEGRANIO。全身・8代表系統が画内。",
+        "limitations": [
+          "初登場級の系列比較原画。全級・全7武器の個別画像ではない。",
+          "背面・側面の正投影、実寸、握り位置、可動域、衝突形状の最終確定は制作工程。",
+          "細い溝・小櫛・房の厳密な数と位置はJSON仕様を正とし、3D制作時に照合する。",
+          "70の背中央の空きと後腰滴は前面図で隠れるため、制作時に背面仕様を必ず参照する。",
+          "71の胸下の小灯は側面寄りに見える。最終モデルではJSONどおり左胸下へ固定する。"
+        ],
+        "notVerified": [
+          "正投影・実寸・最大可動域・衝突・正式3D・ゲーム内動作"
+        ]
+      }
+    },
+    {
+      "board": 19,
+      "file": "art/board-19.png",
+      "bytes": 2867731,
+      "sha256": "f4f65575574428d2fc3a5a7a56c23c0833e128fee0b252675a88d1aab5731ff4",
+      "parts": [
+        {
+          "path": "art/packed/board-19/000.part",
+          "bytes": 262140,
+          "sha256": "dc07c8518a7238b6251057eb3fecf309a2d69c53acb22118fce6f08161fdf973",
+          "gitSha": "a6574a66cdef034129a2f3d171dffe571d0465c3"
+        },
+        {
+          "path": "art/packed/board-19/001.part",
+          "bytes": 262140,
+          "sha256": "342a96ae3f56587e167592e2602eb6218161963fe45deb8836ba185fb6f6e26c",
+          "gitSha": "7644c1c113b3325b8ee3db19aca3502a5bfd6580"
+        },
+        {
+          "path": "art/packed/board-19/002.part",
+          "bytes": 262140,
+          "sha256": "714ed992f4d8bf35770aebc03bd7262cc587066a0c801c39f26466c704ece1ac",
+          "gitSha": "ce4155bbed6fec3cb54338f4f0430b70356968c0"
+        },
+        {
+          "path": "art/packed/board-19/003.part",
+          "bytes": 262140,
+          "sha256": "5e4ca4dfb7ed64c7a04496c3b5a3c218bd0657901e0222635eefc2e7d9db0867",
+          "gitSha": "d9aa638f4b3affd98412d5d0cbced8497c1c3d55"
+        },
+        {
+          "path": "art/packed/board-19/004.part",
+          "bytes": 262140,
+          "sha256": "84c5a63ed23e5f1460201c5c15d7b89c076b20acf9f38ea677803f9c92e19f5a",
+          "gitSha": "4d740c266f2de1a12ff725b38cb7c1e038cf05ba"
+        },
+        {
+          "path": "art/packed/board-19/005.part",
+          "bytes": 262140,
+          "sha256": "ce5e24932e62255dc75b6794e1bff4e2c37bcd96d1da145b572c5151f6a04d31",
+          "gitSha": "f9bdd010989697fb9987457baf46ba66c9d43cbd"
+        },
+        {
+          "path": "art/packed/board-19/006.part",
+          "bytes": 262140,
+          "sha256": "0dd251e2245ed3d4ea13632b0fc61fbb9c15fbe6c8ccf2dced51b9c6e5409e56",
+          "gitSha": "daa033e68b72b5de4d1e345e73cd55c2e8619f21"
+        },
+        {
+          "path": "art/packed/board-19/007.part",
+          "bytes": 262140,
+          "sha256": "1330b23572f128e7be94c6ff3677077a501ba859fdb06517608fda14f16d9bf0",
+          "gitSha": "ab87f69871a43bc5de89201ee2b6dc417257f389"
+        },
+        {
+          "path": "art/packed/board-19/008.part",
+          "bytes": 262140,
+          "sha256": "5283e36807139c8248486f670de47c80fe7d77ced7484a8d058d905999f0d19d",
+          "gitSha": "76a6c1374f412c5e29dfba7350d489757a4a8b73"
+        },
+        {
+          "path": "art/packed/board-19/009.part",
+          "bytes": 262140,
+          "sha256": "2425ae9509ffcfa365cf818cf5fb6fccb3e52a82bb815da9f5135e7bb95a7fa6",
+          "gitSha": "42299d1bc8b25d5b6eed4e1054436c9b05f4d5d3"
+        },
+        {
+          "path": "art/packed/board-19/010.part",
+          "bytes": 246331,
+          "sha256": "5cb688a25a077a447c126f5f672c47b5f7319caa42f98521b55a90009d7f856a",
+          "gitSha": "f7128e906b6d91d81915b9d30f5fa5df8e34b395"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 73,
+          "speciesId": "monster.fusaldom",
+          "name": "フサルドム",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/073-fusaldom.json"
+        },
+        {
+          "no": 74,
+          "speciesId": "monster.rimposera",
+          "name": "リムポセラ",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "guard_blade",
+            "heavy_blade"
+          ],
+          "designFile": "data/species/074-rimposera.json"
+        },
+        {
+          "no": 75,
+          "speciesId": "monster.dalhoina",
+          "name": "ダルホイナ",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "heavy_blade",
+            "war_maul"
+          ],
+          "designFile": "data/species/075-dalhoina.json"
+        },
+        {
+          "no": 76,
+          "speciesId": "monster.zonikebal",
+          "name": "ゾニケバル",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "war_maul",
+            "heavy_blade"
+          ],
+          "designFile": "data/species/076-zonikebal.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-19.txt"
+      ],
+      "sourceManifest": "art/manifest-15-22.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-0e403565-079f-487d-b5f9-3d117ece2f65.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "reviewed-with-production-notes",
+        "observations": "73の水平広肩と細腰、74の短い四室腰袋と平背、75の後襟三梁、76の縦二胸板と右琥珀/左青銅の縁を確認。74は護刃と断岳剣を描き環弓なし。4成人と8代表群の端点は画内。",
+        "limitations": [
+          "初登場級の系列比較原画。全級・全7武器の個別画像ではない。",
+          "背面・側面の正投影、実寸、握り位置、可動域、衝突形状の最終確定は制作工程。",
+          "細い溝・小櫛・房の厳密な数と位置はJSON仕様を正とし、3D制作時に照合する。",
+          "74の後ろ側の袋は前面から一部隠れる。背面モデルで腰四隅に四室あることを確認する。",
+          "73の肩板の上腕干渉、76の二板間の開閉余白はリグ工程で調整する。"
+        ],
+        "notVerified": [
+          "正投影・実寸・最大可動域・衝突・正式3D・ゲーム内動作"
+        ]
+      }
+    },
+    {
+      "board": 20,
+      "file": "art/board-20.png",
+      "bytes": 2310877,
+      "sha256": "4758f03ba34efcae3ebb353a7fc45e359a9532827dd0d85b9097ea7c0a320370",
+      "parts": [
+        {
+          "path": "art/packed/board-20/000.part",
+          "bytes": 262140,
+          "sha256": "df2bb5d2222553afb0b451d0393ec2019d7502f20a2e096cac32b59766eb1fc0",
+          "gitSha": "1fe1fb0fbe1c5de2a92639d254b86f796ffc5c0f"
+        },
+        {
+          "path": "art/packed/board-20/001.part",
+          "bytes": 262140,
+          "sha256": "bed14cd00a3035a28de1b7b782e11e1d87a9e21de054e3cb84e4402839569662",
+          "gitSha": "6135543c6faad83d96604e66b2a80e1b1863cafe"
+        },
+        {
+          "path": "art/packed/board-20/002.part",
+          "bytes": 262140,
+          "sha256": "35a8c0f0a336f08c7920c1e29576e2fed9a70e2a597358f226bd39fcaf36c4e2",
+          "gitSha": "93c74a1c303bbba523a6278ebcb36ea83110fe87"
+        },
+        {
+          "path": "art/packed/board-20/003.part",
+          "bytes": 262140,
+          "sha256": "2dbf28a5a62ffc7e0e72fd28570e83ec7c05d3fef9f8df57aa011d22ef17cec0",
+          "gitSha": "c69d5bf6eb5547a0ec8f3ea26854838a9f117c08"
+        },
+        {
+          "path": "art/packed/board-20/004.part",
+          "bytes": 262140,
+          "sha256": "291e7c751c18f531c2353f1725609cd1c886f29202261ad09c7758b111cb10e4",
+          "gitSha": "1ec4ffcc610ba8a0e3ad271cd5e3f5cb7ebca5d5"
+        },
+        {
+          "path": "art/packed/board-20/005.part",
+          "bytes": 262140,
+          "sha256": "e513ba83aefe7caff8ae01a518c5f618814b779f28db2ac2c0d5d7891b209424",
+          "gitSha": "7450db9dc90f28fa7835c76e7bd260fff6fa1cfd"
+        },
+        {
+          "path": "art/packed/board-20/006.part",
+          "bytes": 262140,
+          "sha256": "a71980854a9c12f48766845dbb363c7c2771fd6341b18f827d3371c3160e4169",
+          "gitSha": "55e41eee4f9d118c7fe72ed8fb15054ed94d5e76"
+        },
+        {
+          "path": "art/packed/board-20/007.part",
+          "bytes": 262140,
+          "sha256": "16d210ad9d35b4d8ab59023b4b2425a417ba546549464435165faa988671c2e2",
+          "gitSha": "977bba1e6181f5fba3d03234a38ef2760ef27534"
+        },
+        {
+          "path": "art/packed/board-20/008.part",
+          "bytes": 213757,
+          "sha256": "31ea1e1cd7a085d28e4bb81087e613a9ff58ee61b2d75c706bf9ece539bf9326",
+          "gitSha": "831b5dafdf30bda301226c4d51d9601aba406d3c"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 77,
+          "speciesId": "monster.ludopanea",
+          "name": "ルドパネア",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/077-ludopanea.json"
+        },
+        {
+          "no": 78,
+          "speciesId": "monster.salpinoc",
+          "name": "サルピノク",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/078-salpinoc.json"
+        },
+        {
+          "no": 79,
+          "speciesId": "monster.hemzario",
+          "name": "ヘムザリオ",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "war_maul",
+            "guard_blade"
+          ],
+          "designFile": "data/species/079-hemzario.json"
+        },
+        {
+          "no": 80,
+          "speciesId": "monster.pasnelim",
+          "name": "パスネリム",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ],
+          "designFile": "data/species/080-pasnelim.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-20-edit-01.txt",
+        "art/prompts/board-20-edit-02.txt",
+        "art/prompts/board-20.txt"
+      ],
+      "sourceManifest": "art/manifest-15-22.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-69256679-bfdc-4e7c-98fd-28ad247821cd.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "reviewed-with-production-notes",
+        "observations": "77の二枚短孔板と裏板付き盾、78の高い左肩と重い右籠手、79の低い三節額、80の前腰の四枚帆を確認。80は背面初稿を前面姿勢へ修正し、後ろの長い肩飾りを除いた。77の胸主孔も二孔へ整理。4成人と8代表群が画内。",
+        "limitations": [
+          "初登場級の系列比較原画。全級・全7武器の個別画像ではない。",
+          "背面・側面の正投影、実寸、握り位置、可動域、衝突形状の最終確定は制作工程。",
+          "細い溝・小櫛・房の厳密な数と位置はJSON仕様を正とし、3D制作時に照合する。",
+          "77の胸板上端には小留め孔のような点も残る。主孔は2/板とし、JSONどおり最終メッシュの孔数を固定する。",
+          "78の右籠手は原画では手の甲近くまで延びる。3Dでは手首より手前へ端を戻し、全指と手首の可動を確保する。"
+        ],
+        "notVerified": [
+          "正投影・実寸・最大可動域・衝突・正式3D・ゲーム内動作"
+        ]
+      }
+    },
+    {
+      "board": 21,
+      "file": "art/board-21.png",
+      "bytes": 2320055,
+      "sha256": "0819b34e4786d594bdc360c9e09e1820515c8dba095334cc5259fd7a758dcd8e",
+      "parts": [
+        {
+          "path": "art/packed/board-21/000.part",
+          "bytes": 262140,
+          "sha256": "d843e478b51f64e6602bc66710dda7c2ba861fd0454fa8f8dff838a50e903a6a",
+          "gitSha": "3efe0d0ebe667f135fb4933da442eebbb082a681"
+        },
+        {
+          "path": "art/packed/board-21/001.part",
+          "bytes": 262140,
+          "sha256": "e3450beda2ee53fdcd1d0807995a7167fe0e583ffd75e17f5baac8edf0c1ccf9",
+          "gitSha": "77af62f3762595dc9b39c53cc564e910acd2550f"
+        },
+        {
+          "path": "art/packed/board-21/002.part",
+          "bytes": 262140,
+          "sha256": "f0fd5b39c9035c8cff4be56bf74ff1ffe735ff146226ac9c3f379b2b028cd1a2",
+          "gitSha": "9fb08b9c4ed0cba4571f03f4f82689ce49b5dc03"
+        },
+        {
+          "path": "art/packed/board-21/003.part",
+          "bytes": 262140,
+          "sha256": "db0103f16e82bb10ae1ce1488781fada7f5e62643e0f2ea7f873680c9a9c9374",
+          "gitSha": "04da19429f5f778dba49447155d853e71a747613"
+        },
+        {
+          "path": "art/packed/board-21/004.part",
+          "bytes": 262140,
+          "sha256": "72ae18309c6d7fefc9cd068b9650d5150be7d6c72305d81a90a8ae8041e93f8f",
+          "gitSha": "5e27fb36163ba7b818fa9cf40074a54f50aabbe2"
+        },
+        {
+          "path": "art/packed/board-21/005.part",
+          "bytes": 262140,
+          "sha256": "0bf8cc7c538ff77280ccd403162880054723b85f6ff77e7de603724d16010356",
+          "gitSha": "5f004860e66ca70b1e3efd368bb356c369c8bee7"
+        },
+        {
+          "path": "art/packed/board-21/006.part",
+          "bytes": 262140,
+          "sha256": "322c278c7a8321f32f90cd286cf45ea18610c8a369c10073678c39fa3c595f9c",
+          "gitSha": "a029abccb167c7ebd83ed7fcdf3aa8d453d2aa4d"
+        },
+        {
+          "path": "art/packed/board-21/007.part",
+          "bytes": 262140,
+          "sha256": "17ad4658953bfe6934cff93c7367d3b110111e8e13109715d9aa4f9cd86a1246",
+          "gitSha": "bc51984ddd740a8917defc664d25c23407cbe957"
+        },
+        {
+          "path": "art/packed/board-21/008.part",
+          "bytes": 222935,
+          "sha256": "33ce021c831418d535296f09e01f8b2cd466c0a9cf3ccc7dac13ad2aba13b608",
+          "gitSha": "f454a2d362f5d566f13a5b698dc6a01fb3c796aa"
+        }
+      ],
+      "dimensions": [
+        1774,
+        887
+      ],
+      "species": [
+        {
+          "no": 81,
+          "speciesId": "monster.zaclatom",
+          "name": "ザクラトム",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "long_blade",
+            "ring_bow"
+          ],
+          "designFile": "data/species/081-zaclatom.json"
+        },
+        {
+          "no": 82,
+          "speciesId": "monster.izoflane",
+          "name": "イゾフラネ",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "guard_blade",
+            "long_lance"
+          ],
+          "designFile": "data/species/082-izoflane.json"
+        },
+        {
+          "no": 83,
+          "speciesId": "monster.queribas",
+          "name": "クェリバス",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "twin_blades",
+            "long_blade"
+          ],
+          "designFile": "data/species/083-queribas.json"
+        },
+        {
+          "no": 84,
+          "speciesId": "monster.enagrio",
+          "name": "エナグリオ",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "long_lance",
+            "ring_bow"
+          ],
+          "designFile": "data/species/084-enagrio.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-21-edit-01.txt",
+        "art/prompts/board-21.txt"
+      ],
+      "sourceManifest": "art/manifest-15-22.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-4af8dd8a-4fcd-4c6f-81b0-a900cb7c0a8c.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "reviewed-with-production-notes",
+        "observations": "81の左三角襟と内側の熱筋、82のずれた二皿と右長脛、83の左額三櫛と左前腕三櫛、84の後襟三段を確認。83の前腕は初稿の余分な一櫛を限定編集で除去済み。4成人と8代表群は画内。",
+        "limitations": [
+          "初登場級の系列比較原画。全級・全7武器の個別画像ではない。",
+          "背面・側面の正投影、実寸、握り位置、可動域、衝突形状の最終確定は制作工程。",
+          "細い溝・小櫛・房の厳密な数と位置はJSON仕様を正とし、3D制作時に照合する。",
+          "82の皿は甲板寄りに見えるため、最終モデルでは薄い凹面と二皿のずれを確保する。",
+          "84の襟内側の礫粒はこの縮尺では省略気味。三段襟の内側にのみ配置する。"
+        ],
+        "notVerified": [
+          "正投影・実寸・最大可動域・衝突・正式3D・ゲーム内動作"
+        ]
+      }
+    },
+    {
+      "board": 22,
+      "file": "art/board-22.png",
+      "bytes": 2715670,
+      "sha256": "a272eb1047393799ce0720496dd5a9084d9b397a6a6f706edc2a6d6bdaa53d23",
+      "parts": [
+        {
+          "path": "art/packed/board-22/000.part",
+          "bytes": 262140,
+          "sha256": "1bd851d5d80b9c61bd2b479afece566b570234fed1faa09447e2085ca22d97b7",
+          "gitSha": "38ea863e8107fb299db4b654c82e86711130ceab"
+        },
+        {
+          "path": "art/packed/board-22/001.part",
+          "bytes": 262140,
+          "sha256": "10542beb26d2f790df4bd8aa3a2c21e9879e54991022a219c351ad62dc014ccf",
+          "gitSha": "943b56b8ca1859cc854f7bf7a6228dba128ee8ee"
+        },
+        {
+          "path": "art/packed/board-22/002.part",
+          "bytes": 262140,
+          "sha256": "d6f3388a37b3a308c2b53f41ef1a6c439efd9111d63d09def56e9354a012fda0",
+          "gitSha": "6dbfaed57c9f0c2312aff863059a98a4fd41855b"
+        },
+        {
+          "path": "art/packed/board-22/003.part",
+          "bytes": 262140,
+          "sha256": "224a361367d21ba292290652a32253dab9cbf923ba0e2a88dbad9f6a554f5f55",
+          "gitSha": "886f4c21610992f9e3eebbf3828ab8311f9be81c"
+        },
+        {
+          "path": "art/packed/board-22/004.part",
+          "bytes": 262140,
+          "sha256": "ce9ebfe80cf268aec77386e7aa451e9cc5cc9c8834d3e9b7800d20ad808e848d",
+          "gitSha": "230ec7dd2dbae75e9028904c2f13b8fee16ad5dc"
+        },
+        {
+          "path": "art/packed/board-22/005.part",
+          "bytes": 262140,
+          "sha256": "714fad9f3d4455aa34451f8c693f61c83d5533e18050728829b5360af3ec7438",
+          "gitSha": "f8870cf7b196f11742bc1be1ec898388847c4109"
+        },
+        {
+          "path": "art/packed/board-22/006.part",
+          "bytes": 262140,
+          "sha256": "d3400673e253255b9bc13ee1de6f2753baaf8baea31852d88a231ed2e57e571e",
+          "gitSha": "00ae5d60327f1a4a79b48778ad9f5fbf34f07517"
+        },
+        {
+          "path": "art/packed/board-22/007.part",
+          "bytes": 262140,
+          "sha256": "589a71a071ffa6a73b1857db6e7807241cc2858e299668a83dd7880e07677557",
+          "gitSha": "e63b8fa3ac1ff16861560238b355a993125a5650"
+        },
+        {
+          "path": "art/packed/board-22/008.part",
+          "bytes": 262140,
+          "sha256": "dc8542eaf623531329e1668df70181985e1b0d588dfa76363bdb9ec3cad87be9",
+          "gitSha": "93f3fc267ca97fe0588fd868d6b7bedb6f651531"
+        },
+        {
+          "path": "art/packed/board-22/009.part",
+          "bytes": 262140,
+          "sha256": "8aef2f7239a80b26c12e37a2dcd31209af5dd7893deb3fe0dd492d4ba0c450c4",
+          "gitSha": "521c4a9649f1352ea10061a1f350c51d9bb8cdac"
+        },
+        {
+          "path": "art/packed/board-22/010.part",
+          "bytes": 94270,
+          "sha256": "683f0e4dded3c443356ed4e94fe92d99d40474bea6f9ded730b750db15eb13ec",
+          "gitSha": "cef7dc96a99a2d751d6500f9e217454e781f895c"
+        }
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "species": [
+        {
+          "no": 85,
+          "speciesId": "monster.nucbarea",
+          "name": "ヌクバレア",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "guard_blade",
+            "twin_blades"
+          ],
+          "designFile": "data/species/085-nucbarea.json"
+        },
+        {
+          "no": 86,
+          "speciesId": "monster.towalsem",
+          "name": "トワルセム",
+          "representedRank": 4,
+          "representativeFamilies": [
+            "long_blade",
+            "ring_bow"
+          ],
+          "designFile": "data/species/086-towalsem.json"
+        }
+      ],
+      "prompts": [
+        "art/prompts/board-22.txt"
+      ],
+      "sourceManifest": "art/manifest-15-22.json",
+      "sourceGeneratedFile": "/workspace/scratch/6ed5147653b6/generated_images/exec-44b2750b-8125-4da2-831e-fda832deb10b.png",
+      "generation": "built-in image_gen; final PNG copied without manual pixel editing",
+      "review": {
+        "status": "reviewed-with-production-notes",
+        "observations": "85の後腰だけの短扇と短い二房、左右同寸の腕、86の滑らかな背と後腰だけの三滴を確認。86は三滴が隠れない背面寄り姿勢。2成人の全5部位と4代表系統、弦・小環・矢を確認。",
+        "limitations": [
+          "初登場級の系列比較原画。全級・全7武器の個別画像ではない。",
+          "背面・側面の正投影、実寸、握り位置、可動域、衝突形状の最終確定は制作工程。",
+          "細い溝・小櫛・房の厳密な数と位置はJSON仕様を正とし、3D制作時に照合する。",
+          "85の短い二房はこの背面寄り図では襟後ろに見える。襟に付く短房として扱い、口元への干渉を制作時に確認する。",
+          "86の弓の滴飾りは握り近くで、手指と弦の通過域から外す。"
+        ],
+        "notVerified": [
+          "正投影・実寸・最大可動域・衝突・正式3D・ゲーム内動作"
+        ]
+      }
+    }
+  ]
+}

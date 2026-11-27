@@ -1,0 +1,9 @@
+{
+  "sourceCommit": "8adc7fe4fa584aa87c5a27286c8512de93a9b5a7",
+  "changedOnRepeat": [],
+  "canonicalSha256ListDigest": "f56037519d456f68a5030614b3b57268b5db2b66585f102548fd4bfc1aadd631",
+  "note": "Same pinned input and species blueprints produce byte-identical JSON. Does not verify gameplay balance.",
+  "checkedJsonFiles": 244,
+  "generatedJsonFiles": 158,
+  "speciesBlueprintInputs": 86
+}

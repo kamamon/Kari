@@ -1,0 +1,203 @@
+{
+  "no": 66,
+  "speciesId": "monster.makuejira",
+  "name": "マクエジラ",
+  "nativeRank": 3,
+  "identity": {
+    "role": "締めを二度通して風路を開く装備",
+    "ecologyBasis": "梯子状の胸骨に分かれた梯胸風路。喉の毒液を少量ずつ風路へ送って水滴にし、開いた骨の段から狭い前方へ吹き出す。",
+    "combatLoop": "同じ相手に締めの攻撃を二度通し、風と部位補正が重なる短い時間へ攻撃を集める。",
+    "strength": "風量1.80倍、固有技能で風+12/16%・部位+10/16%。",
+    "weakness": "基礎攻撃0.80倍、防御0.85倍、消耗1.30倍、氷耐性-30。通常連打だけでは風路が開かない。",
+    "recommendedFamilies": [
+      "ring_bow",
+      "heavy_blade",
+      "war_maul"
+    ],
+    "avoidUse": "不利な運用: 締めの技を使わず弱い通常打だけ続ける運用"
+  },
+  "stats": {
+    "rawScale": 0.8,
+    "affinity": 0,
+    "elementScale": 1.8,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.86,
+    "edgeWearScale": 1.3,
+    "staminaCostScale": 1.08,
+    "defenseScale": 0.85,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 0.98,
+      "war_maul": 1.02,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 0.98,
+      "ring_bow": 1.04
+    },
+    "slotWeights": {
+      "head": 0.12,
+      "chest": 0.34,
+      "arms": 0.16,
+      "waist": 0.16,
+      "legs": 0.22
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 0,
+      "ice": -30,
+      "water": 0,
+      "wind": 20,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "element_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "梯骨の溜め渡し",
+    "trigger": {
+      "event": "charge_release",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 660,
+    "durationTicks": 240,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          8,
+          8
+        ]
+      }
+    ],
+    "explanation": "1段階以上の溜め解放で、次の別行動の部位破壊だけを助ける。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 次の有効な別行動の命中で消費し、その行動の多段命中には同じ効果を使う。 持続240tick、発動時から再使用660tick。",
+    "id": "weapon_trait.makuejira"
+  },
+  "signature": {
+    "name": "梯胸の二段開路",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "finisher"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 300,
+    "cooldownTicks": 840,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "partPct",
+        "values": [
+          10,
+          16
+        ]
+      }
+    ],
+    "explanation": "同じ対象へ300tick以内に締めの攻撃を2行動通し、胸の風路を開く。部位補正はHPへ重複計上しない。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続300tick、発動時から再使用840tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.makuejira"
+  },
+  "appearance": {
+    "silhouette": "胸の水平骨を五段の梯子へ整理し、肩先だけ下へ折る。長い脚と暗い喉の小点が対比。",
+    "palette": [
+      "灰褐",
+      "くすんだ灰紫",
+      "青銅"
+    ],
+    "organTranslation": [
+      "梯胸風路→胸だけの五本横骨",
+      "毒喉→喉元に残る小さい紫室（武器は風のみ）",
+      "下降翼→下へ折れる肩先"
+    ],
+    "armorParts": {
+      "head": "低い額骨と開いた喉前",
+      "chest": "五本の横骨を段状に置き、間に灰褐の柔皮を見せる",
+      "arms": "肩先を短く下へ折り、前腕は薄い縦帯",
+      "waist": "横骨を増やさず短い腰帯に切り替える",
+      "legs": "長い脛の一条板、膝の前を広く空ける"
+    },
+    "weaponShapes": {
+      "heavy_blade": "五段梯子を峰側の浅い凹凸へ移す大剣",
+      "guard_blade": "段溝の短剣と、五本の骨を硬い裏板で支える盾",
+      "war_maul": "梯骨を側面に積んだ箱形の硬槌頭",
+      "twin_blades": "同長の二短剣へ二段と三段の低い峰飾りを分ける",
+      "long_blade": "五本の短い留めで細い連続刃を支える太刀",
+      "long_lance": "直槍の刃元へ梯段を縮め、盾胸部に五段骨",
+      "ring_bow": "弓身の握り近くへ五つの低い留め、小環と一本の直線弦"
+    },
+    "gradeEvolution": {
+      "3": "灰褐色の胸に横向きの骨縁を段状に並べ、肩先だけ下へ折る。喉元にくすんだ紫を小さく置き、脚は細く長く見せる。 初登場級の形。武器は同じ器官の輪郭を用途に合わせて切り分ける。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。",
+      "4": "極級は胸の梯子の間を薄い膜で連結し、横骨の段数を保つ。紫色は喉だけ、肩先の下折れを明瞭にする。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "五段梯子",
+      "secondaryForm": "下向き肩先",
+      "dominantRegion": "胸",
+      "asymmetry": "左右の肩先は同じ下折れ",
+      "repeatCount": "胸の横骨5、喉室1",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "五段骨の隙間",
+      "inactive": "喉の紫点だけ見える",
+      "active": "下から二段ずつ白い風筋が細く流れる",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "締めの技を使わず弱い通常打だけ続ける運用",
+      "梯子の隙間を盾の貫通穴にする形",
+      "喉の紫室を毒属性の追加と扱うこと"
+    ]
+  }
+}

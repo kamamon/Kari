@@ -1,0 +1,531 @@
+{
+  "schemaVersion": 1,
+  "checkedAtUtc": "2026-11-25T23:05:53+00:00",
+  "status": "passed",
+  "command": "python3 chatgpt-inbox/equipment-specialization-20261126/reference/validate_art.py",
+  "scope": "Local packed bytes, restored PNG bytes/IHDR, identity coverage and prompt presence. PNGs are never modified.",
+  "counts": {
+    "boards": 22,
+    "species": 86,
+    "representativeWeaponFamilies": 172,
+    "parts": 236,
+    "originalPngBytes": 59570121,
+    "prompts": 31
+  },
+  "checks": 4300,
+  "checksByCategory": {
+    "index": 102,
+    "coverage": 1019,
+    "parts": 2360,
+    "png": 440,
+    "prompts": 199,
+    "metadata": 180
+  },
+  "errors": [],
+  "boards": [
+    {
+      "board": 1,
+      "file": "art/board-01.png",
+      "bytes": 2846834,
+      "sha256": "d95f3fcb4b94a9fc8ddd008f6c845c0ef0aa869ea914c0370839af6c605be9dd",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 11,
+      "species": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-01.json",
+      "prompts": [
+        "art/prompts/board-01.txt"
+      ]
+    },
+    {
+      "board": 2,
+      "file": "art/board-02.png",
+      "bytes": 2976014,
+      "sha256": "41ba4ec708134e7ab6b2a4f79a3398ff9bdad4a3a259dcb26d6557a53b16b60f",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 12,
+      "species": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-02-07.json",
+      "prompts": [
+        "art/prompts/board-02.txt"
+      ]
+    },
+    {
+      "board": 3,
+      "file": "art/board-03.png",
+      "bytes": 2313653,
+      "sha256": "3ad50bb9837fe88993809b02c4cecdeb32d6691b0d25e522ff923543ab404205",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 9,
+      "species": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-02-07.json",
+      "prompts": [
+        "art/prompts/board-03-revision-01.txt",
+        "art/prompts/board-03.txt"
+      ]
+    },
+    {
+      "board": 4,
+      "file": "art/board-04.png",
+      "bytes": 2883319,
+      "sha256": "c8fae887d51489f69bd096f21d66cc0ac778935d8b1d91b78a698a6f8fa34d83",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "parts": 11,
+      "species": [
+        13,
+        14,
+        15,
+        16
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-02-07.json",
+      "prompts": [
+        "art/prompts/board-04.txt"
+      ]
+    },
+    {
+      "board": 5,
+      "file": "art/board-05.png",
+      "bytes": 2348121,
+      "sha256": "967d0683b4528c9eeaf161c9690848fecda3e0115c24845d153032e205fc3120",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "parts": 9,
+      "species": [
+        17,
+        18,
+        19,
+        20
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-02-07.json",
+      "prompts": [
+        "art/prompts/board-05-revision-01.txt",
+        "art/prompts/board-05.txt"
+      ]
+    },
+    {
+      "board": 6,
+      "file": "art/board-06.png",
+      "bytes": 2524435,
+      "sha256": "d1bc5546eefc566b2ed1b0b10e0f095d56125410f60d6390ddb92d6b4b7a1d49",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 10,
+      "species": [
+        21,
+        22,
+        23,
+        24
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-02-07.json",
+      "prompts": [
+        "art/prompts/board-06-revision-01.txt",
+        "art/prompts/board-06.txt"
+      ]
+    },
+    {
+      "board": 7,
+      "file": "art/board-07.png",
+      "bytes": 2489987,
+      "sha256": "d937f0a3b574b70442b5b9915e6c29f57249ba399388b117d7c711ffe57006a6",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 10,
+      "species": [
+        25,
+        26,
+        27,
+        28
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-02-07.json",
+      "prompts": [
+        "art/prompts/board-07-revision-01.txt",
+        "art/prompts/board-07.txt"
+      ]
+    },
+    {
+      "board": 8,
+      "file": "art/board-08.png",
+      "bytes": 2936606,
+      "sha256": "1889c8391d5fd7d4c84cd7d27c18042d3e158083882bfcb95e968d18a1da6bc9",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 12,
+      "species": [
+        29,
+        30,
+        31,
+        32
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-08-14.json",
+      "prompts": [
+        "art/prompts/board-08.txt"
+      ]
+    },
+    {
+      "board": 9,
+      "file": "art/board-09.png",
+      "bytes": 2956891,
+      "sha256": "8efddea1aa833b018ae08c81c6ac9f32bd8fafc63251a3b0aa5772c1a503e14e",
+      "dimensions": [
+        1752,
+        897
+      ],
+      "parts": 12,
+      "species": [
+        33,
+        34,
+        35,
+        36
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-08-14.json",
+      "prompts": [
+        "art/prompts/board-09.txt"
+      ]
+    },
+    {
+      "board": 10,
+      "file": "art/board-10.png",
+      "bytes": 2883474,
+      "sha256": "0bda1d75543788a15b78f0643d8891ca25648cda5d15d67f47b095a9337ddd12",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 11,
+      "species": [
+        37,
+        38,
+        39,
+        40
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-08-14.json",
+      "prompts": [
+        "art/prompts/board-10.txt"
+      ]
+    },
+    {
+      "board": 11,
+      "file": "art/board-11.png",
+      "bytes": 2436403,
+      "sha256": "db83d0b946c2ee22151d0890efa8838f477b4f9360c54f96dc5b0b87c6b2ef70",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 10,
+      "species": [
+        41,
+        42,
+        43,
+        44
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-08-14.json",
+      "prompts": [
+        "art/prompts/board-11-revision-01.txt",
+        "art/prompts/board-11.txt"
+      ]
+    },
+    {
+      "board": 12,
+      "file": "art/board-12.png",
+      "bytes": 2949394,
+      "sha256": "428ecb899bb7614006fe256ad8f680cf24f6468e7e90efa04667018747e4507f",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 12,
+      "species": [
+        45,
+        46,
+        47,
+        48
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-08-14.json",
+      "prompts": [
+        "art/prompts/board-12.txt"
+      ]
+    },
+    {
+      "board": 13,
+      "file": "art/board-13.png",
+      "bytes": 3061629,
+      "sha256": "383c197697c55a50d5f5dbcdc87b4d9ca0a103ceb86957aa3c12881b8213908d",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 12,
+      "species": [
+        49,
+        50,
+        51,
+        52
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-08-14.json",
+      "prompts": [
+        "art/prompts/board-13.txt"
+      ]
+    },
+    {
+      "board": 14,
+      "file": "art/board-14.png",
+      "bytes": 2988747,
+      "sha256": "2335906c112f917c2811a6d2d775b07a5abf750d0e9055db2b4c606e8a687d5e",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 12,
+      "species": [
+        53,
+        54,
+        55,
+        56
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-08-14.json",
+      "prompts": [
+        "art/prompts/board-14.txt"
+      ]
+    },
+    {
+      "board": 15,
+      "file": "art/board-15.png",
+      "bytes": 2892789,
+      "sha256": "3744509650665165706a7b0e769a6b97205d1c1cd518b459325bbb8ca70ec913",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 12,
+      "species": [
+        57,
+        58,
+        59,
+        60
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-15-22.json",
+      "prompts": [
+        "art/prompts/board-15.txt"
+      ]
+    },
+    {
+      "board": 16,
+      "file": "art/board-16.png",
+      "bytes": 2800181,
+      "sha256": "02c509004fb1a110ef811f23386610cff42d1fa89c645eb04be9024d84a300cd",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 11,
+      "species": [
+        61,
+        62,
+        63,
+        64
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-15-22.json",
+      "prompts": [
+        "art/prompts/board-16.txt"
+      ]
+    },
+    {
+      "board": 17,
+      "file": "art/board-17.png",
+      "bytes": 2342490,
+      "sha256": "23ba54508b6eae4fcf898086e1a917c90b6bc28af5796bc64a621202418a3214",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 9,
+      "species": [
+        65,
+        66,
+        67,
+        68
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-15-22.json",
+      "prompts": [
+        "art/prompts/board-17-edit-01.txt",
+        "art/prompts/board-17.txt"
+      ]
+    },
+    {
+      "board": 18,
+      "file": "art/board-18.png",
+      "bytes": 2724821,
+      "sha256": "230b871202d9bb3fec345eec9d6d4ae2e8a41974bd2ee7f98e385b8d3173cd3a",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 11,
+      "species": [
+        69,
+        70,
+        71,
+        72
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-15-22.json",
+      "prompts": [
+        "art/prompts/board-18.txt"
+      ]
+    },
+    {
+      "board": 19,
+      "file": "art/board-19.png",
+      "bytes": 2867731,
+      "sha256": "f4f65575574428d2fc3a5a7a56c23c0833e128fee0b252675a88d1aab5731ff4",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 11,
+      "species": [
+        73,
+        74,
+        75,
+        76
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-15-22.json",
+      "prompts": [
+        "art/prompts/board-19.txt"
+      ]
+    },
+    {
+      "board": 20,
+      "file": "art/board-20.png",
+      "bytes": 2310877,
+      "sha256": "4758f03ba34efcae3ebb353a7fc45e359a9532827dd0d85b9097ea7c0a320370",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 9,
+      "species": [
+        77,
+        78,
+        79,
+        80
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-15-22.json",
+      "prompts": [
+        "art/prompts/board-20-edit-01.txt",
+        "art/prompts/board-20-edit-02.txt",
+        "art/prompts/board-20.txt"
+      ]
+    },
+    {
+      "board": 21,
+      "file": "art/board-21.png",
+      "bytes": 2320055,
+      "sha256": "0819b34e4786d594bdc360c9e09e1820515c8dba095334cc5259fd7a758dcd8e",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "parts": 9,
+      "species": [
+        81,
+        82,
+        83,
+        84
+      ],
+      "representativeWeaponFamilies": 8,
+      "sourceManifest": "art/manifest-15-22.json",
+      "prompts": [
+        "art/prompts/board-21-edit-01.txt",
+        "art/prompts/board-21.txt"
+      ]
+    },
+    {
+      "board": 22,
+      "file": "art/board-22.png",
+      "bytes": 2715670,
+      "sha256": "a272eb1047393799ce0720496dd5a9084d9b397a6a6f706edc2a6d6bdaa53d23",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "parts": 11,
+      "species": [
+        85,
+        86
+      ],
+      "representativeWeaponFamilies": 4,
+      "sourceManifest": "art/manifest-15-22.json",
+      "prompts": [
+        "art/prompts/board-22.txt"
+      ]
+    }
+  ],
+  "visualReviewSources": [
+    "art/manifest-01.json",
+    "art/manifest-02-07.json",
+    "art/manifest-08-14.json",
+    "art/manifest-15-22.json"
+  ],
+  "notVerified": [
+    "GitHub branch/tree attachment and remote fetch: verified separately by publication workflow",
+    "Full PNG pixel decoding: visual reviews are recorded in the source manifests",
+    "3D geometry, orthographic views, real dimensions, maximum rig motion and collision",
+    "Every rank and all seven weapon families as individual images",
+    "In-game rendering, performance and skill cue visibility"
+  ]
+}

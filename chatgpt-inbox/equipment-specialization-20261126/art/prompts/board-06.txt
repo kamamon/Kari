@@ -1,0 +1,40 @@
+Use case: stylized-concept. Create a beautiful production comparison concept sheet for the original grounded fantasy hunting game VEILBOUND HUNTERS. This is static fantasy costume and prop art, no combat or construction diagram. Wide landscape canvas, FOUR equally sized vertical panels in one row, soft parchment neutral backdrop, studio diffuse lighting, natural leather/bone/organic shell/aged bronze materials, restrained earth colors and tiny dim amber accents. Detailed painterly 3D game concept quality. Nothing resembling famous copyrighted armor.
+Each panel contains ONE full-body ADULT gender-neutral mannequin wearing five-region armor (helmet, chest, arms, waist, legs), head and both feet fully inside frame; and exactly TWO representative weapon-family prop groups beside it, arranged cleanly with breathing room. For twin_blades group show two matched short swords. For guard_blade show a short sword AND a separate shield. For long_lance show one long straight lance AND separate shield. Bow must have ONE straight taut bowstring between tips and ONE small aiming ring near grip, slender flexible bow limbs. All props are separate from mannequin and anatomically coherent. Hard closed hammer striking faces. Functional hand grips visible, fingers clear, shoulders/elbows/knees free, no extra limbs. Weapons stay their canonical shapes and lengths.
+Do not overfill panels with extra props. Adult-sized clothing also when source is juvenile. Literal panel labels at top only: three-digit number and LATIN ID provided below. A small title VEILBOUND HUNTERS at top. No Japanese paragraphs or stats. All silhouette, material color, organ placement, asymmetric side and counts below are intentional. Never mirror left/right. Left means the wearer's anatomical left. Do not put full bright magic over the figure. Show the native-rank concept, not four tiers. Render clear material differentiation, clean edges, readable silhouettes at small size.
+
+PANEL 1: label '021 HINASALV'. rear three-quarter angle with the helmet profile visible, so the distinctive back organs are clearly visible.
+Silhouette: 背に丸い幼冷晶を左右交互に四つ置く成人軽装。襟は低く、三角の大氷帆は持たない。
+Palette: 淡い灰青, 曇り氷, 生成り
+Five regions: {"head": "低い灰青の額帯と丸い小板一枚", "chest": "背に交互の丸小板四つ、胸は薄い生成り皮", "arms": "小さな丸板を外前腕へ一つずつ", "waist": "腰帯は低く短い。背板を尾まで延ばさない", "legs": "丸い小脛板、膝裏と足首は薄布"}
+Important count: 背小板4
+ring_bow PROP GROUP: 握り上へ丸小晶四点。細い弓身、小環と直線弦
+long_lance PROP GROUP: 小冷晶の直芯槍と、丸板四つの低い盾
+Avoid: キリサーヴの尖った薄帆へ成長させない / 長い氷尾や高襟を付けない / 幼体用の人体比例へ変えない
+These are ADULT wearable proportions made from small juvenile organs. Keep organs immature and small, not a child mannequin and not a miniaturized adult monster armor.
+
+PANEL 2: label '022 HASDREN'. front three-quarter angle.
+Silhouette: 右腰の浅い槽殻一つを最も大きくし、頭肩は低い灰緑板。左上から右下へ荷重が流れる段差。
+Palette: 灰緑, 苔の鈍緑, 青銅溝
+Five regions: {"head": "薄い平らな頭冠、正面に浅い青銅溝", "chest": "低い胸殻二枚。右腰の槽へ向かう一本の溝筋", "arms": "左右前腕は短い苔膜板。肘の内側を開ける", "waist": "右腰だけ浅い大槽板。上縁は低く前後へは短い", "legs": "脛の前側へ灰緑板、右だけ細い溝筋"}
+Important count: 主槽1、胸板2
+long_lance PROP GROUP: 深い直芯の槍と、右下に槽板を寄せた大盾
+guard_blade PROP GROUP: 低い槽縁の短刃と、右下に浅槽を持つ閉じた盾
+Avoid: 背中に巨大な水タンクを付けない / 毒を新しい武器属性として足さない / 槽板を左腰にも同量複製しない
+
+PANEL 3: label '023 IVSELAM'. front three-quarter angle.
+Silhouette: 左肩にだけ半円の薄い霜扇、背は低い二折り。右肩と両脚を細い灰革で抜き、横に片寄る細身。
+Palette: くすんだ青灰, 淡霜白, 灰革
+Five regions: {"head": "左の額縁に小さな霜筋、頭冠は低く平たい", "chest": "左肩に半円扇一枚、右胸は薄革。背の折りは低い", "arms": "左前腕に扇骨一本、右腕は短い灰革帯", "waist": "右腰は細帯だけ。左腰に短い扇の切れ端一枚", "legs": "両脛を細い灰革で包み、氷板は足へ繰り返さない"}
+Important count: 主霜扇1、背折り2
+twin_blades PROP GROUP: 峰に半円の一部を低く添える二短刃。長さは揃える
+long_blade PROP GROUP: 鍔の左側だけ半円霜筋を持つ連続曲刀
+Avoid: 右肩にも同じ霜扇を付けない / 巨大な花冠や氷翼にしない / 薄膜を硬い打面や盾の唯一の支持材にしない
+
+PANEL 4: label '024 DOMELKANO'. front three-quarter angle.
+Silhouette: 兜の二段皿は後ろ縁だけ高く、胸の赤銅板を前へ張り出す。腰以下を暗い細帯にし上前方へ重さを寄せる。
+Palette: 暗灰褐, 赤銅, 暗い熱朱
+Five regions: {"head": "低い皿二段、後縁だけ高く前は視界を開ける", "chest": "赤銅の胸板三枚を前へ段違いに張る。腹は耐熱皮", "arms": "前腕外に短い熱皿板。内側は暗革を見せる", "waist": "前腰の短い二枚板、背腰は薄い帯", "legs": "黒灰の細い脛板。足首には熱袋を置かない"}
+Important count: 兜皿2、胸板3
+war_maul PROP GROUP: 閉じた硬い両打面、頭の上面を二段の皿形にする
+heavy_blade PROP GROUP: 峰の刃元に二段の低い熱皿筋を持つ重刃
+Avoid: 兜を顔の見えない深い鍋にしない / 胸を砲口や開いた炉口にしない / 炎の長い噴流を常時出さない

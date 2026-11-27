@@ -1,0 +1,200 @@
+{
+  "no": 24,
+  "speciesId": "monster.domelkano",
+  "name": "ドメルカノ",
+  "nativeRank": 2,
+  "identity": {
+    "role": "二段熱皿に溜めを残す火槌装",
+    "ecologyBasis": "採食中は鈍重だが、泥槽を奪おうとする相手には胸を高くして迫る。熱泥を使い切ると水場へ向かう。",
+    "combatLoop": "溜めを解放した次の別行動へ熱泥を残し、重い追撃を選ぶ。",
+    "strength": "基礎物理1.04倍、火倍率1.45、防御1.08倍。高体力の溜め解放後に属性を強める。",
+    "weakness": "会心-15、刃消耗1.25倍、戦闘スタミナ1.18倍。熱を逃がす装甲の隙間により、固有効果中は被ダメージ+8/+12%。",
+    "recommendedFamilies": [
+      "war_maul",
+      "heavy_blade",
+      "ring_bow"
+    ],
+    "avoidUse": "連続で被弾する状況。熱皿を開いている間は被ダメージ+8/+12%で、環弓でもこの代償を受ける。"
+  },
+  "stats": {
+    "rawScale": 1.04,
+    "affinity": -15,
+    "elementScale": 1.45,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.16,
+    "edgeWearScale": 1.25,
+    "staminaCostScale": 1.18,
+    "defenseScale": 1.08,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 1.0,
+      "war_maul": 1.04,
+      "twin_blades": 1.0,
+      "long_blade": 1.0,
+      "long_lance": 0.96,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": 20,
+      "thunder": 0,
+      "ice": 20,
+      "water": -25,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.domelkano",
+    "name": "二皿の熱移し",
+    "trigger": {
+      "event": "charge_release",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 540,
+    "durationTicks": 240,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "溜め解放の次の別行動へ火属性を残す。解放した攻撃自体は強くならない。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.domelkano",
+    "name": "後縁の蓄熱",
+    "trigger": {
+      "event": "charge_release",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 70,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 780,
+    "durationTicks": 300,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          8,
+          12
+        ]
+      }
+    ],
+    "explanation": "HP70%以上で溜めを解放すると、次の別行動一つの火を+12/+16%。熱を逃がすため装甲の隙間を開き、発動中の被ダメージは+8/+12%。この代償は弓を含む全武器に働く。発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "兜の二段皿は後ろ縁だけ高く、胸の赤銅板を前へ張り出す。腰以下を暗い細帯にし上前方へ重さを寄せる。",
+    "armorParts": {
+      "head": "低い皿二段、後縁だけ高く前は視界を開ける",
+      "chest": "赤銅の胸板三枚を前へ段違いに張る。腹は耐熱皮",
+      "arms": "前腕外に短い熱皿板。内側は暗革を見せる",
+      "waist": "前腰の短い二枚板、背腰は薄い帯",
+      "legs": "黒灰の細い脛板。足首には熱袋を置かない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の刃元に二段の低い熱皿筋を持つ重刃",
+      "guard_blade": "二段の刃元留めと、後縁だけ高い閉じた熱皿盾",
+      "war_maul": "閉じた硬い両打面、頭の上面を二段の皿形にする",
+      "twin_blades": "二本の刃元に低い熱皿一段ずつ。刃先は細く",
+      "long_blade": "鍔後ろに二段皿の小意匠を持つ連続曲刃",
+      "long_lance": "二重熱皿の根元を持つ直槍、前へ厚い赤銅盾",
+      "ring_bow": "弓の握り背面に二段の小皿留め。小環と直線弦"
+    },
+    "production": {
+      "primaryForm": "二段の後高皿と前張り胸板",
+      "secondaryForm": "暗い耐熱皮",
+      "dominantRegion": "兜後縁と胸前",
+      "asymmetry": "前後の高低差、左右はほぼ均等",
+      "repeatCount": "兜皿2、胸板3",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "2": "兜後縁二段と胸三枚の段差を明瞭にする。",
+      "3": "皿の内側へ赤銅の細い熱溝を加える。",
+      "4": "胸板の下縁を二重に磨く。二段皿を三段へ増やさない。"
+    },
+    "skillCue": {
+      "location": "兜の内側の二溝",
+      "inactive": "暗い熱朱",
+      "active": "溜め解放後だけ二溝の奥が鈍く灯る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "兜を顔の見えない深い鍋にしない",
+      "胸を砲口や開いた炉口にしない",
+      "炎の長い噴流を常時出さない"
+    ],
+    "palette": [
+      "暗灰褐",
+      "赤銅",
+      "暗い熱朱"
+    ],
+    "organTranslation": [
+      "二段の頭皿の下に、発酵熱と晶粉の反応熱を蓄える泥槽を持つ。首を縮めると片側の溝だけから熱泥が押し出される。",
+      "二段頭皿の高い後縁と持ち上がる胸を、兜後縁と胸の三枚板へ分ける。",
+      "熱泥を溜めてから一方へ押し出す生態を、次の別行動だけの熱へ結ぶ。"
+    ]
+  }
+}

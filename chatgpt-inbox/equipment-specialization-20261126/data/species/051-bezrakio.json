@@ -1,0 +1,202 @@
+{
+  "no": 51,
+  "speciesId": "monster.bezrakio",
+  "name": "ベズラキオ",
+  "nativeRank": 3,
+  "identity": {
+    "role": "二度のため解放で火と整備をつなぐ",
+    "ecologyBasis": "氷帆の冷却組織から変化した蒸帆熱嚢。温かい晶脈から蓄えた熱と餌由来の樹脂を、後ろへ伏せた帆の溝で分けて送る。 キリサーヴから温暖な晶脈帯へ適応し、冷却より蓄熱が優位になった亜種である。露頭と低木地を巡り、まず帆を起こして余熱を見せる。",
+    "combatLoop": "二つのため解放→次の別行動から火を強める→短縮された整備時間を使って刃を戻す。",
+    "strength": "同級基準の物理倍率0.89、会心率-5ポイント。既存のfire属性量を1.70倍。固有技能「蒸帆の二度伏せ」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "物理基礎倍率0.89（同級基準比11%低い。系統補正前）、会心率-5ポイント、刃容量0.85倍、刃消耗1.30倍、回避・ガード・ため維持など元々費用を持つ戦闘行動のスタミナ消費1.15倍、防具一式の基準防御力0.85倍。弱点耐性は一式でwater -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "heavy_blade",
+      "war_maul"
+    ],
+    "avoidUse": "ためを持たない武器での固有技能運用。"
+  },
+  "stats": {
+    "rawScale": 0.89,
+    "affinity": -5,
+    "elementScale": 1.7,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.85,
+    "edgeWearScale": 1.3,
+    "staminaCostScale": 1.15,
+    "defenseScale": 0.85,
+    "familyBias": {
+      "heavy_blade": 1.04,
+      "guard_blade": 0.98,
+      "war_maul": 1.02,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 0.98,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.14,
+      "chest": 0.34,
+      "arms": 0.19,
+      "waist": 0.2,
+      "legs": 0.13
+    },
+    "setResistances": {
+      "fire": 20,
+      "thunder": 0,
+      "ice": 20,
+      "water": -20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "item_efficiency",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "item_efficiency",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.bezrakio",
+    "name": "蒸帆の残圧",
+    "trigger": {
+      "event": "charge_release",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "rawPct",
+        "values": [
+          4,
+          4
+        ]
+      }
+    ],
+    "explanation": "ためを放って帆を伏せた後に、残圧を次の別行動へ渡す。 1段階以上ためて放った行動だけ。ため中のtickは数えない。 300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、480tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.bezrakio",
+    "name": "蒸帆の二度伏せ",
+    "trigger": {
+      "event": "charge_release",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 480,
+    "cooldownTicks": 720,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "itemUseTicksPct",
+        "values": [
+          -12,
+          -20
+        ]
+      }
+    ],
+    "explanation": "二度のため解放で板帆を伏せ、熱を火属性へ渡す。短い整備の窓を作るが、ためを放った当の行動には火を足さない。 1段階以上ためて放った行動だけ。ため中のtickは数えない。 480tick以内に異なる行動で2回。HP・スタミナ条件は行動費用確定後の残量%。発動から240tick有効、720tick再使用。攻撃への補正は起点と別の次行動から有効。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "肩から背へ伏せた三枚の板帆が後ろへ流れ、胸下だけが暗い嚢で膨れる。全体を低く長く見せ、上へ棘を出さない。",
+    "palette": [
+      "灰銅",
+      "暗灰",
+      "鈍琥珀"
+    ],
+    "organTranslation": [
+      "後ろへ伏せる蒸帆→背の三枚の低い重ね板",
+      "胸下の熱嚢→下胸の一つの暗灰の厚み",
+      "分かれた熱溝→板帆裏の短い琥珀線"
+    ],
+    "armorParts": {
+      "head": "後ろへ低く伏せた小さい帆板の兜。額は平らで低い",
+      "chest": "上胸を薄い灰銅板、下胸だけ暗灰の厚い嚢形。腹の屈曲部を分ける",
+      "arms": "肩から背の帆を前腕と分離。前腕は細い灰銅の短甲",
+      "waist": "後腰へ三枚帆の末端を低く重ね、前腰は細い暗革帯",
+      "legs": "滑らかな細い脛甲。足甲は丸く、尖りや帆を脚へ増やさない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の三枚板を後ろ向きに寝かせた長い平刃。刃元の下に小さな嚢覆い",
+      "guard_blade": "低い後傾帆の鍔を持つ剣と、三枚を下後ろへ重ねた硬い盾",
+      "war_maul": "槌頭の上側へ三枚の低い板帆、下側に閉じた小嚢。両打面は硬面",
+      "twin_blades": "二本とも峰の板を後ろへ伏せ、刃元の小嚢を同じ大きさにする",
+      "long_blade": "細い連続刃の峰を後ろ向きの三段線で区切る。鞘は滑らか",
+      "long_lance": "直槍の根元へ後傾の三小帆、盾は上が薄く下が厚い嚢形面",
+      "ring_bow": "中央の背側へ三枚の小帆を伏せる。弓端を細く保ち、一本弦と小環を帆へ埋めない"
+    },
+    "gradeEvolution": {
+      "3": "灰銅の三帆は低く後ろ向き、胸下は暗灰。琥珀は板裏の短い溝。",
+      "4": "板帆の根元を短い二重縁で締める。嚢と脚に棘を足さず、後ろへの流れを維持。"
+    },
+    "production": {
+      "primaryForm": "後ろへ伏せた三板",
+      "secondaryForm": "下胸の一嚢",
+      "dominantRegion": "背と下胸",
+      "asymmetry": "左右対称、上薄下厚",
+      "repeatCount": 3,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "三板帆裏の琥珀溝",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "帆を上へ高く立てない",
+      "原種の氷色の棘を付けない",
+      "胸嚢を金属の大砲口にしない"
+    ]
+  }
+}

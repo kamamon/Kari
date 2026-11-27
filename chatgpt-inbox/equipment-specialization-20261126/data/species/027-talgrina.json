@@ -1,0 +1,203 @@
+{
+  "no": 27,
+  "speciesId": "monster.talgrina",
+  "name": "タルグリナ",
+  "nativeRank": 2,
+  "identity": {
+    "role": "三擦板を受け流して帯電する左腕装",
+    "ecologyBasis": "体を横に向けたまま礫河床を移動し、接近者には鋏を鳴らして警告する。水から遠ざけられると膜を守るため退く。",
+    "combatLoop": "同じ敵を二度受け流し、三枚の擦晶板が揃う短い雷の連係へ移る。",
+    "strength": "雷倍率1.60。二受け流し後に雷と部位補正を同時に得る。",
+    "weakness": "基礎物理0.90倍、防御0.90倍、戦闘スタミナ1.10倍。通常ガードでは回数が進まない。",
+    "recommendedFamilies": [
+      "long_lance",
+      "guard_blade"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.90倍、防御0.90倍、戦闘スタミナ1.10倍。通常ガードでは回数が進まない。"
+  },
+  "stats": {
+    "rawScale": 0.9,
+    "affinity": 10,
+    "elementScale": 1.6,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.1,
+    "edgeWearScale": 1.18,
+    "staminaCostScale": 1.1,
+    "defenseScale": 0.9,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.02,
+      "war_maul": 1.0,
+      "twin_blades": 1.0,
+      "long_blade": 1.0,
+      "long_lance": 1.04,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 15,
+      "ice": -20,
+      "water": 0,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "status_resistance",
+      "parameters": {
+        "status": "para"
+      }
+    },
+    "waist": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "element_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.talgrina",
+    "name": "擦晶の一擦り",
+    "trigger": {
+      "event": "parry",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 540,
+    "durationTicks": 240,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "受け流した相手への次の別行動へ雷を渡す。麻痺は武器へ追加しない。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.talgrina",
+    "name": "三板の帯電合わせ",
+    "trigger": {
+      "event": "parry",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 360,
+    "cooldownTicks": 900,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "target_change",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "partPct",
+        "values": [
+          10,
+          15
+        ]
+      }
+    ],
+    "explanation": "同じ相手の二つの攻撃行動を受け流し、5秒間だけ擦晶板を同期する。麻痺耐性のパラメーターはpara。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "左前腕の三段擦晶籠手が最も大きく、肩殻を左から右へ低く落とす片流れ。顔と右手を軽く見せる。",
+    "armorParts": {
+      "head": "低い灰褐の額殻、左だけ細い青銅縁",
+      "chest": "左肩から右胸へ低く下がる三つの殻面",
+      "arms": "左前腕は三段の閉じた擦晶板。右腕は薄い一枚",
+      "waist": "前腰を細く、左腰へ短い帯電膜覆い一枚",
+      "legs": "両脛を低い灰褐殻。左脚を巨大化しない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の刃元を三段擦晶板で挟む雷大剣",
+      "guard_blade": "三つの低い擦筋を持つ短刃と、左上が大きい閉鎖盾",
+      "war_maul": "硬い両打面の内側へ三板筋を埋める横槌",
+      "twin_blades": "三筋を二対の峰へ細く彫る短剣二本",
+      "long_blade": "連続曲刃の鍔側に三段の低い擦板",
+      "long_lance": "三枚の擦晶芯を直線に揃える槍と、左上三段の硬盾",
+      "ring_bow": "握り横へ三枚の小擦晶板。小環、直線弦、細い弓身"
+    },
+    "production": {
+      "primaryForm": "左籠手の三段板",
+      "secondaryForm": "湿膜の細い継ぎ目",
+      "dominantRegion": "左前腕",
+      "asymmetry": "左大、肩は右へ低くなる",
+      "repeatCount": "左擦晶板3",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "2": "左の三段板を青銅で区切り、右腕を軽くする。",
+      "3": "三板の間へ湿膜の細筋を見せる。",
+      "4": "各板の内縁へ琥珀の小窓。板数や籠手の長さは増やさない。"
+    },
+    "skillCue": {
+      "location": "左籠手の三つの間隙",
+      "inactive": "鈍い青銅",
+      "active": "二受け流し後に三間隙だけ琥珀色",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "左腕を開閉する巨大鋏にしない",
+      "雷属性と麻痺属性を同時に武器へ足さない",
+      "三板を多数の機械フィンへ増やさない"
+    ],
+    "palette": [
+      "鈍青銅",
+      "灰褐",
+      "琥珀の細筋"
+    ],
+    "organTranslation": [
+      "左鋏の内部に三枚の擦晶板があり、順に締めると電荷を蓄える。板の間をつなぐ湿った膜が、触れた相手へ電気を渡す。",
+      "左鋏の三擦晶板を左籠手の三段へ、片流れ甲羅を肩から胸の斜め面へ移す。",
+      "晶板を順に締める充電行動を、二度の受け流しから始まる雷区間へ。"
+    ]
+  }
+}

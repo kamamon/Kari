@@ -1,0 +1,202 @@
+{
+  "no": 28,
+  "speciesId": "monster.zanetolka",
+  "name": "ザネトルカ",
+  "nativeRank": 2,
+  "identity": {
+    "role": "砂裾を払う消耗精密装",
+    "ecologyBasis": "普段は体を伸ばして礫の間を探り、追われると開けた方向へ丸まって逃げる。狭い通路では転がらず鉤で押し返す。",
+    "combatLoop": "スタミナを使い切る手前の接触回避で砂を払い、刃の短い切れ味区間を保つ。",
+    "strength": "会心+25、戦闘スタミナ0.90倍。低スタミナ回避後の精度と刃持ち。",
+    "weakness": "基礎物理0.94倍、防御0.78倍、刃容量0.72倍、刃消耗1.32倍。条件を外すと整備が頻繁になる。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "long_blade",
+      "guard_blade"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.94倍、防御0.78倍、刃容量0.72倍、刃消耗1.32倍。条件を外すと整備が頻繁になる。"
+  },
+  "stats": {
+    "rawScale": 0.94,
+    "affinity": 25,
+    "elementScale": 0,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.72,
+    "edgeWearScale": 1.32,
+    "staminaCostScale": 0.9,
+    "defenseScale": 0.78,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.02,
+      "war_maul": 1.0,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 1.0,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 0,
+      "ice": 0,
+      "water": -20,
+      "wind": 15,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "weak_crit",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "edge_keep",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "weak_crit",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "dodge_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.zanetolka",
+    "name": "砂鉤の払縁",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "rear"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 420,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "affinityPoints",
+        "values": [
+          4,
+          4
+        ]
+      }
+    ],
+    "explanation": "背後の接触で砂を払い、次の別行動の精度を上げる。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.zanetolka",
+    "name": "後三節の砂払い",
+    "trigger": {
+      "event": "dodge",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 30
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 780,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "affinityPoints",
+        "values": [
+          8,
+          12
+        ]
+      },
+      {
+        "stat": "edgeWearPct",
+        "values": [
+          -12,
+          -20
+        ]
+      }
+    ],
+    "explanation": "残スタミナ30%以下の接触回避で後三節を開く。毒脂の生態は外見に用い、無属性武器へ毒は追加しない。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。 回避入力ではなく、敵の攻撃との接触を回避無敵で抜けた成功時だけ判定。"
+  },
+  "appearance": {
+    "silhouette": "前身は細く、腰後ろの三節だけを横へ低く広げる砂裾装。外鉤は短く下向き、上半身の輪郭は平たい。",
+    "armorParts": {
+      "head": "灰黄の低い半円額板、角は持たない",
+      "chest": "細い灰黄胸皮と横向きの小節二枚",
+      "arms": "外前腕へ短い下向き鉤板一つずつ",
+      "waist": "腰後ろに三段の横広節板。膝上で止め前腰は開く",
+      "legs": "脛は細い砂褐革。後ろ裾の量を脚へ反復しない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の刃元へ後三節を模す低い三段を置く大剣",
+      "guard_blade": "砂鉤筋の短刃と、下側へ三段を寄せた硬盾",
+      "war_maul": "閉じた砂晶打頭の側面に三段の低い節",
+      "twin_blades": "峰へ下向きの短い鉤を持つ二短剣。指側へ出さない",
+      "long_blade": "低い三段峰を刃元にだけ残した連続曲刀",
+      "long_lance": "直槍の根元に短い砂鉤、盾の下側へ低い三段板",
+      "ring_bow": "握り下に三段の小節留め。細い弓身、直線弦、小環"
+    },
+    "production": {
+      "primaryForm": "腰後ろの低い三段裾",
+      "secondaryForm": "短い下向き鉤と砂膜",
+      "dominantRegion": "腰後ろ",
+      "asymmetry": "前細、後ろ広。左右は均等",
+      "repeatCount": "後裾節3",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "2": "後ろ三節を低く横へ開き、砂膜を薄く残す。",
+      "3": "節の内側に細い脂砂の溝。鉤の先は短い。",
+      "4": "三段の縁を鈍い赤銅で磨く。上半身を輪甲へ変えない。"
+    },
+    "skillCue": {
+      "location": "後ろ三節の内側溝",
+      "inactive": "砂褐の乾いた溝",
+      "active": "回避成功で三筋の砂色が鈍く濡れる",
+      "maxLitSurfacePercent": 3
+    },
+    "avoid": [
+      "テンガロと同じ閉じた螺旋にしない",
+      "毒脂を毒属性の追加と解釈しない",
+      "三段裾を長い尾や床を引くスカートにしない"
+    ],
+    "palette": [
+      "灰黄",
+      "砂褐",
+      "鈍い赤銅"
+    ],
+    "organTranslation": [
+      "後部の腹砂腺が細かな礫と毒を含む樹皮脂を混ぜ、外鉤の根に塗る。丸まる直前に後ろ三節が開くため、転がる方向が分かる。",
+      "後ろ三節だけ広がる体を腰後ろの低い三段へ。毒脂は鈍い砂色の膜として留める。",
+      "開けた方へ転がって砂を払い直す生態を、息切れ際の接触回避と刃管理へ。"
+    ]
+  }
+}

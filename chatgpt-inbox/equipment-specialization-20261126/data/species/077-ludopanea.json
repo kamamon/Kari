@@ -1,0 +1,207 @@
+{
+  "no": 77,
+  "speciesId": "monster.ludopanea",
+  "name": "ルドパネア",
+  "nativeRank": 4,
+  "identity": {
+    "role": "二孔帆で刺突の水氷を合わせる装備",
+    "ecologyBasis": "顎下の二枚の孔帆と、孔ごとに繋がる冷水嚢。取り込んだ水を細い筋へ分け、孔を閉じる順序で水と氷粒を出し分ける。",
+    "combatLoop": "同じ対象の未破壊部位へ二度の刺突を通し、孔の順番を揃えて水氷を強める。部位IDまでは固定しない。",
+    "strength": "水氷量1.85倍、防御1.06倍。刺突二行動後の属性+12/16%。",
+    "weakness": "基礎攻撃0.82倍、回避・ガード等の消費1.16倍、雷耐性-25。技能中のガード消費+6/10%。",
+    "recommendedFamilies": [
+      "guard_blade",
+      "long_lance"
+    ],
+    "avoidUse": "不利な運用: 射撃だけで刺突条件の防具技能を起動する運用"
+  },
+  "stats": {
+    "rawScale": 0.82,
+    "affinity": 0,
+    "elementScale": 1.85,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.9,
+    "edgeWearScale": 1.14,
+    "staminaCostScale": 1.16,
+    "defenseScale": 1.06,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 1.04,
+      "war_maul": 0.98,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 1.02,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.22,
+      "chest": 0.3,
+      "arms": 0.16,
+      "waist": 0.18,
+      "legs": 0.14
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": -25,
+      "ice": 15,
+      "water": 15,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_resistance",
+      "parameters": {
+        "element": "ice"
+      }
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "guard_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "孔縁の細い照準",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "projectile",
+        "weakspot"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 600,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "弱点へ射撃を通した後、次の別行動の属性を孔へ集める。近接系は適合定義で締めの命中へ置き換える。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 次の有効な別行動の命中で消費し、その行動の多段命中には同じ効果を使う。 持続180tick、発動時から再使用600tick。",
+    "id": "weapon_trait.ludopanea"
+  },
+  "signature": {
+    "name": "二孔帆の閉順",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "thrust",
+        "unbroken"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 240,
+    "cooldownTicks": 900,
+    "durationTicks": 360,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "guardCostPct",
+        "values": [
+          6,
+          10
+        ]
+      }
+    ],
+    "explanation": "同じ対象の未破壊部位へ240tick内に2行動の刺突を当てて孔の順を整える。水を保持する間は盾の負担が増す。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続360tick、発動時から再使用900tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.ludopanea"
+  },
+  "appearance": {
+    "silhouette": "顎から胸へ短い孔板を二枚垂らし、後腰をわずかに上げる。孔の奥には暗い裏板が見える。",
+    "palette": [
+      "灰青",
+      "淡灰",
+      "暗い青銅"
+    ],
+    "organTranslation": [
+      "二枚孔帆→顎下の短い二枚板",
+      "孔ごとの冷水嚢→各板の小さな暗い側室",
+      "帆を畳む動き→胸前で止まる短い折れ"
+    ],
+    "armorParts": {
+      "head": "顎下へ二枚の短板を下げ、顔は開く",
+      "chest": "二枚板の下に暗い硬い胸裏板",
+      "arms": "前腕外へ小さい孔縁、腕の内側は柔皮",
+      "waist": "後腰だけ少し高い短甲、前腰は低い帯",
+      "legs": "脛の小孔は凹み表現で貫通させない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "孔板の段を峰へ二段に収め、刃に穴を開けない大剣",
+      "guard_blade": "孔縁の細剣と、穴飾りの奥に剛体裏板を持つ盾",
+      "war_maul": "孔は側面の凹みだけ、閉じた硬い二打面",
+      "twin_blades": "二短剣の刃元に二枚の小孔縁、切先は連続刃",
+      "long_blade": "低い孔鍔を胸板状に重ねた太刀",
+      "long_lance": "直槍の根元に二室、独立盾の孔は裏板で塞ぐ",
+      "ring_bow": "二つの浅い孔飾りを握り側面へ、小照準環と一本の直線弦"
+    },
+    "gradeEvolution": {
+      "4": "灰青の穴あき短板を顎から胸へ二枚垂らし、後ろ腰を少し高くする。孔の縁は暗い青銅色にする。 極級完成形のみ。孔は少数の大きな丸孔として残し、全身へ穴模様を増殖させない。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "二枚の短孔板",
+      "secondaryForm": "高い後腰",
+      "dominantRegion": "顎下から胸",
+      "asymmetry": "左右の孔板は小さくずれる",
+      "repeatCount": "主孔板2、各板の代表孔2",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "胸前の孔の内縁",
+      "inactive": "奥は暗い裏板",
+      "active": "孔縁だけ順に白青へ曇る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "射撃だけで刺突条件の防具技能を起動する運用",
+      "盾へ防護の欠ける貫通穴を作る形",
+      "孔板を長い顎垂れや翼へ伸ばす形"
+    ]
+  }
+}

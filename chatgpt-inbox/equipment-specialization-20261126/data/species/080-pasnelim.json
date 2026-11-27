@@ -1,0 +1,200 @@
+{
+  "no": 80,
+  "speciesId": "monster.pasnelim",
+  "name": "パスネリム",
+  "nativeRank": 4,
+  "identity": {
+    "role": "四枚の逆帆で逃げ切る風軽装",
+    "ecologyBasis": "腰の前向き逆帆と、その根元の散眠嚢。食べた苦葉由来の眠り粉を少量蓄え、帆に沿う空気で狭い前方へ押し流す。",
+    "combatLoop": "四回の回避成功で逆帆を開き、軽い回避と回復速度を使って攻める位置へ戻る。",
+    "strength": "風量1.42倍、会心20、消費0.90倍。技能で回避消費-12/20%、回復速度+12/20%。",
+    "weakness": "基礎攻撃0.86倍、防御0.75倍、刃容量0.80倍、火耐性-30。四回を揃える前の被弾で準備が消える。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "long_blade",
+      "ring_bow"
+    ],
+    "avoidUse": "不利な運用: 回避ボタンの空振りで四回を貯める運用"
+  },
+  "stats": {
+    "rawScale": 0.86,
+    "affinity": 20,
+    "elementScale": 1.42,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.8,
+    "edgeWearScale": 1.12,
+    "staminaCostScale": 0.9,
+    "defenseScale": 0.75,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 0.98,
+      "war_maul": 0.98,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 0.98,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.12,
+      "chest": 0.2,
+      "arms": 0.16,
+      "waist": 0.3,
+      "legs": 0.22
+    },
+    "setResistances": {
+      "fire": -30,
+      "thunder": 0,
+      "ice": 0,
+      "water": 0,
+      "wind": 20,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "dodge_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "逆穂の抜け風",
+    "trigger": {
+      "event": "draw",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 540,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "抜刀完了後の次の別行動へ、前向きの帆の風を渡す。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 次の有効な別行動の命中で消費し、その行動の多段命中には同じ効果を使う。 持続180tick、発動時から再使用540tick。",
+    "id": "weapon_trait.pasnelim"
+  },
+  "signature": {
+    "name": "四逆帆の息継ぎ",
+    "trigger": {
+      "event": "dodge",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 4,
+    "windowTicks": 600,
+    "cooldownTicks": 960,
+    "durationTicks": 360,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "staminaRecoveryPct",
+        "values": [
+          12,
+          20
+        ]
+      },
+      {
+        "stat": "dodgeCostPct",
+        "values": [
+          -12,
+          -20
+        ]
+      }
+    ],
+    "explanation": "600tick内に敵の接触を4行動で回避して逆帆を開く。回復速度を変えるだけでスタミナを即時加算しない。 回避入力ではなく、回避無敵中に敵攻撃の接触を避けた成功だけを数える。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 持続360tick、発動時から再使用960tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.pasnelim"
+  },
+  "appearance": {
+    "silhouette": "腰の四枚短帆を前へ向け、襟を長く低く流す。後ろに広がる量を徹底して小さくする。",
+    "palette": [
+      "灰緑",
+      "生成り",
+      "青銅"
+    ],
+    "organTranslation": [
+      "前向き逆帆→腰前の四枚短板",
+      "散眠嚢→帆根の小さい暗室（武器は風のみ）",
+      "低い長首→後ろを低く流す襟"
+    ],
+    "armorParts": {
+      "head": "頭に沿う小兜から低い長襟へつなぐ",
+      "chest": "灰緑の胴を斜め皮で細く絞る",
+      "arms": "短い腱編み籠手、肘と手首を露出",
+      "waist": "前向きの短帆を四枚、腿の前後運動を空ける",
+      "legs": "細い膝甲と軽い足首、後ろへ飾りを伸ばさない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "四枚の逆帆を峰の刃元へ前向きに低く添える大剣",
+      "guard_blade": "前向きの低い鍔の剣と四枚帆縁の硬盾",
+      "war_maul": "逆帆は硬い槌頭の側面に低く添えるのみ",
+      "twin_blades": "各二枚の短帆を峰へ持つ同長二短剣",
+      "long_blade": "四つの前向き低留めを刃元へ並べた太刀",
+      "long_lance": "前向き帆根の直槍と、下縁へ短帆を寄せる独立盾",
+      "ring_bow": "四つの低い留めを握り付近へ寄せ、小環と一本の直線弦"
+    },
+    "gradeEvolution": {
+      "4": "灰緑の四枚の短帆を腰から前へ向け、襟を低く長く流す。後ろへ広がる装飾は控える。 極級完成形のみ。四枚の帆を前向きに保ち、後ろへ広がる翼やマントを追加しない。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "四枚の前向き帆",
+      "secondaryForm": "低い長襟",
+      "dominantRegion": "腰前",
+      "asymmetry": "左右二枚ずつ、後ろは狭い",
+      "repeatCount": "腰帆4",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "腰前の四枚の根元",
+      "inactive": "灰緑の小さい暗室",
+      "active": "四つの根元へ白点が一つずつ増える",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "回避ボタンの空振りで四回を貯める運用",
+      "後ろへ大きく広がるマント",
+      "睡眠粉の設定から武器へ睡眠値を追加すること"
+    ]
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "no": 32,
+  "speciesId": "monster.kudrimal",
+  "name": "クドリマル",
+  "nativeRank": 2,
+  "identity": {
+    "role": "四つの終段で熱を蓄える火特化装",
+    "ecologyBasis": "右脇の四枚の棚膜が、樹脂を分解する腹の熱槽から余熱を逃がす。棚の根が順に赤銅色へ変わってから、一枚ずつ短い熱息を吐く。 低木を押し分けながら歩き、右側を壁へ向けることを嫌う。熱がこもると棚を順に開き、進路を空けるよう警告する。",
+    "combatLoop": "終段を四つの別行動でつなぐ→棚を開く→次の別行動の火を当てて消費→被ダメージが増す窓から退く。",
+    "strength": "同級基準の物理倍率0.82、会心率+5ポイント。既存のfire属性量を1.85倍。固有技能「四棚の赤銅巡り」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "物理基礎倍率0.82（同級基準比18%低い。系統補正前）、刃容量0.78倍、刃消耗1.30倍、回避・ガード・ため維持など元々費用を持つ戦闘行動のスタミナ消費1.02倍、防具一式の基準防御力0.82倍。弱点耐性は一式でwater -20,wind -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "long_lance",
+      "twin_blades",
+      "long_blade"
+    ],
+    "avoidUse": "終段を四回通す前に敵が倒れる短い交戦。"
+  },
+  "stats": {
+    "rawScale": 0.82,
+    "affinity": 5,
+    "elementScale": 1.85,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.78,
+    "edgeWearScale": 1.3,
+    "staminaCostScale": 1.02,
+    "defenseScale": 0.82,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 0.98,
+      "war_maul": 0.98,
+      "twin_blades": 1.02,
+      "long_blade": 1.02,
+      "long_lance": 1.04,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.13,
+      "chest": 0.27,
+      "arms": 0.19,
+      "waist": 0.26,
+      "legs": 0.15
+    },
+    "setResistances": {
+      "fire": 20,
+      "thunder": 0,
+      "ice": 20,
+      "water": -20,
+      "wind": -20,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.kudrimal",
+    "name": "棚端の予熱",
+    "trigger": {
+      "event": "draw",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "抜刀で右棚の熱を通し、抜刀攻撃そのものではなく次の別行動へ渡す。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、480tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.kudrimal",
+    "name": "四棚の赤銅巡り",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "finisher"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 4,
+    "windowTicks": 600,
+    "cooldownTicks": 720,
+    "durationTicks": 300,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          10,
+          15
+        ]
+      }
+    ],
+    "explanation": "四枚の棚を順に温めるため終段を四行動つなぐ。次の一撃は強い火を帯びるが、開いた棚は被ダメージを増やす。  600tick以内に異なる行動で4回。HP・スタミナ条件は行動費用確定後の残量%。発動から300tick有効、720tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "右肩から右脇腰へ四つの薄い棚が斜めに降りる。左側は細く滑らかで、四棚の隙間が主なシルエットになる。",
+    "palette": [
+      "暗灰",
+      "灰銅",
+      "鈍い赤銅"
+    ],
+    "organTranslation": [
+      "右脇の排熱棚四枚→肩から腰の四つの低い段",
+      "腹の熱槽→右腹へ寄せた小さい暗色槽",
+      "長く低い首→前の低い細長い襟"
+    ],
+    "armorParts": {
+      "head": "前後に短く伸びる低い兜。右頬だけ四つの小窓、頭上に棚を作らない",
+      "chest": "左胸を滑らかな暗灰板で閉じ、右脇だけ棚の根を見せる。右腹の熱槽は細い箱形",
+      "arms": "右前腕へ一枚の低い排熱縁、左腕は細い一枚甲。肩の棚とは離して動かす",
+      "waist": "右肩から続く四棚の末端を右腰で止める。左腰は革帯と小袋",
+      "legs": "前面の脛甲は細い灰銅。両膝裏を暗い柔膜にし、棚を脚へ反復しない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の右面だけ四枚の短い排熱棚を伏せた片刃。刃元に小さな赤銅の槽",
+      "guard_blade": "右面に四段の棚を持つ細剣と、片側だけ四本の薄い庇を持つ角盾",
+      "war_maul": "灰銅の閉じた槌頭の右側に四つの浅い棚窓。打面には穴を開けない",
+      "twin_blades": "二本とも峰へ四つの短い刻み棚。左手用だけ向きを反転し重量を揃える",
+      "long_blade": "刃元から峰へ四段を低く連ね、先端側は無装飾の細い連続刃",
+      "long_lance": "槍先の右脇へ四本の低い熱筋。盾は右に四棚、左に平らな硬い面",
+      "ring_bow": "中央の右側へ四つの小棚を集めた非対称の飾り。弓の両端の曲率と一本弦は対称に保つ"
+    },
+    "gradeEvolution": {
+      "2": "四棚は暗灰の薄い板。鈍い赤銅は根元の細い隙間だけ。",
+      "3": "棚の裏へ短い灰銅の支えを加え、四つの根元を同じ大きさに揃える。",
+      "4": "四棚の上縁へ赤銅の細い被覆を付ける。槽は小さいまま、炎や高い角を加えない。"
+    },
+    "production": {
+      "primaryForm": "右側の四枚棚",
+      "secondaryForm": "左側の滑らかな面",
+      "dominantRegion": "右肩から右腰",
+      "asymmetry": "右側のみ棚、左側は面",
+      "repeatCount": 4,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "右脇四棚の根元",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "棚を五枚以上にしない",
+      "両肩を対称の炎翼にしない",
+      "赤銅を明るい炎や噴出物にしない"
+    ]
+  }
+}

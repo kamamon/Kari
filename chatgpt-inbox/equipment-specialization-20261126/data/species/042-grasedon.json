@@ -1,0 +1,205 @@
+{
+  "no": 42,
+  "speciesId": "monster.grasedon",
+  "name": "グラセドン",
+  "nativeRank": 3,
+  "identity": {
+    "role": "部位破壊を境に火力を解放する裂扇装",
+    "ecologyBasis": "長年の晶脈摂取で左背の岩板にだけ育つ裂扇炉。隙間の共生菌が鉱物を酸化して蓄熱し、開いた板の間へ熱い砂を通す。 ガルドロスのうち裂扇炉が成熟した、まれな長寿個体である。普段は草地と露頭を順に巡り、接近者にはまず左背を開いて警告する。",
+    "combatLoop": "未破壊部位へ集中的に当てる→破壊で裂扇を開く→同じ敵へ火と物理を集中→大きい摩耗を整備する。",
+    "strength": "同級基準の物理倍率1.10、会心率-20ポイント。既存のfire属性量を1.25倍。固有技能「裂扇炉の開いた傷」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "会心率-20ポイント、刃消耗1.50倍、回避・ガード・ため維持など元々費用を持つ戦闘行動のスタミナ消費1.16倍。弱点耐性は一式でwater -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "heavy_blade",
+      "war_maul",
+      "long_lance"
+    ],
+    "avoidUse": "破壊済みの敵から別の敵へ効果を運ぶ運用。"
+  },
+  "stats": {
+    "rawScale": 1.1,
+    "affinity": -20,
+    "elementScale": 1.25,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.1,
+    "edgeWearScale": 1.5,
+    "staminaCostScale": 1.16,
+    "defenseScale": 1.05,
+    "familyBias": {
+      "heavy_blade": 1.04,
+      "guard_blade": 0.98,
+      "war_maul": 1.02,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 1.02,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.3,
+      "arms": 0.26,
+      "waist": 0.15,
+      "legs": 0.13
+    },
+    "setResistances": {
+      "fire": 20,
+      "thunder": 20,
+      "ice": 0,
+      "water": -20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "part_damage",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.grasedon",
+    "name": "裂扇の焦げ縁",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "broken"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 40,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 600,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "rawPct",
+        "values": [
+          4,
+          4
+        ]
+      }
+    ],
+    "explanation": "HP40%以下で壊れた部位へ触れた後の短い攻め。自動回復や不死効果はない。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、600tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.grasedon",
+    "name": "裂扇炉の開いた傷",
+    "trigger": {
+      "event": "part_break",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 900,
+    "durationTicks": 360,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "rawPct",
+        "values": [
+          8,
+          10
+        ]
+      },
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      }
+    ],
+    "explanation": "部位破壊で左の裂扇炉を開く。壊した敵に対してのみ物理と火を強め、別の敵へ乗り換えて効果を持ち越さない。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から360tick有効、900tick再使用。攻撃への補正は起点と別の次行動から有効。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "左肩だけ縦に割れた厚い扇板が立つ。胴は低く重く、右腕は小さいまま。原種の横広い岩板との差を縦裂きの断面で出す。",
+    "palette": [
+      "灰褐",
+      "青銅",
+      "琥珀"
+    ],
+    "organTranslation": [
+      "成熟した左裂扇炉→左肩の三枚の厚い縦割れ板",
+      "鉱物の共生層→割れの奥の短い琥珀線",
+      "長寿の岩殻→低い胴の厚い段違い断面"
+    ],
+    "armorParts": {
+      "head": "低い岩鉢の左側に短い縦割れ二本。高い冠を足さない",
+      "chest": "厚い灰褐の胸板と、左肩だけの三枚縦扇。右胸は低い一枚板",
+      "arms": "左前腕に厚い割れ板二枚、右前腕は小さい滑らかな甲",
+      "waist": "左腰だけ短い厚板。後腰の晶は小さく低く保つ",
+      "legs": "低い重い脛甲。左外面に縦の割れ筋一本、足首は別の革靴"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の左面を縦の三板に割った重い一枚刃。琥珀線は隙間の奥だけ",
+      "guard_blade": "左峰が縦割れの短剣と、左寄りの三枚扇を持つ厚い盾",
+      "war_maul": "三つの割れ板を閉じた硬面で挟む槌頭。開口部を打面にしない",
+      "twin_blades": "厚い二本刃の峰を同じ三本線で割り、見た目の左右重量を揃える",
+      "long_blade": "細い連続刃の根元に三つの低い縦割れ。鞘の外周へ突起を出さない",
+      "long_lance": "槍の根元の左側に三条の裂扇、盾は左に厚板・右に小面の非対称",
+      "ring_bow": "中央左側に低い裂扇三枚。両端のしなる骨弓と一本弦は確保し、小環を前へ離す"
+    },
+    "gradeEvolution": {
+      "3": "灰褐の左縦扇三枚を厚い断面で見せ、青銅は割れの外縁だけ。",
+      "4": "三裂の根元へ小さな琥珀窓。厚板の成長線を一本足すが、右側は小さいまま。"
+    },
+    "production": {
+      "primaryForm": "左側の縦三裂扇",
+      "secondaryForm": "低い厚殻",
+      "dominantRegion": "左肩と左前腕",
+      "asymmetry": "左のみ大板、右は小さい面",
+      "repeatCount": 3,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "左肩三裂の根元",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "原種の岩板を単に赤く塗らない",
+      "右肩にも同じ扇を付けない",
+      "割れ目を炎の大面積にしない"
+    ]
+  }
+}

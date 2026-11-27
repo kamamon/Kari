@@ -1,0 +1,206 @@
+{
+  "no": 17,
+  "speciesId": "monster.chilumicana",
+  "name": "チルミカナ",
+  "nativeRank": 1,
+  "identity": {
+    "role": "二点を合わせる幼燐精密装",
+    "ecologyBasis": "三〜五羽が交替で尾を光らせ、岩陰の仲間へ居場所を示す。追われると翼で低く滑ってから走る。",
+    "combatLoop": "短い間隔で同じ弱点へ二つの行動を合わせ、二点灯の短い射線を作る。",
+    "strength": "会心+20、雷倍率1.35。二弱点命中後の短時間精度。",
+    "weakness": "基礎物理0.84倍、防御0.77倍。三秒以内の二行動を外すと蓄積が途切れる。",
+    "recommendedFamilies": [
+      "ring_bow",
+      "twin_blades",
+      "long_blade"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.84倍、防御0.77倍。三秒以内の二行動を外すと蓄積が途切れる。"
+  },
+  "stats": {
+    "rawScale": 0.84,
+    "affinity": 20,
+    "elementScale": 1.35,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.9,
+    "edgeWearScale": 1.07,
+    "staminaCostScale": 0.92,
+    "defenseScale": 0.77,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.0,
+      "war_maul": 1.0,
+      "twin_blades": 1.02,
+      "long_blade": 1.02,
+      "long_lance": 0.96,
+      "ring_bow": 1.04
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 15,
+      "ice": -20,
+      "water": 0,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "weak_crit",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "weak_crit",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.chilumicana",
+    "name": "幼灯の一視",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "weakspot"
+      ],
+      "tagsAny": [],
+      "hpMin": 85,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 420,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "affinityPoints",
+        "values": [
+          4,
+          4
+        ]
+      }
+    ],
+    "explanation": "HP85%以上で弱点を捉え、次の別行動の精度を小さく上げる。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.chilumicana",
+    "name": "二燐の瞬き",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "weakspot"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 180,
+    "cooldownTicks": 600,
+    "durationTicks": 180,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "affinityPoints",
+        "values": [
+          8,
+          12
+        ]
+      },
+      {
+        "stat": "elementPct",
+        "values": [
+          8,
+          12
+        ]
+      }
+    ],
+    "explanation": "同じ相手の弱点へ3秒以内に二つの行動を通すと、3秒だけ二灯が揃う。成体の長い放電区間より短い。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "淡い青灰の成人軽装。背の最下部に離れた琥珀二点だけを置き、長い灯列を作らない。",
+    "armorParts": {
+      "head": "小さな短羽の額帯。頭に点灯器を増やさない",
+      "chest": "灰青の細い胸革、背下部に二つの小燐節",
+      "arms": "前腕の外に小放電膜を一枚ずつ",
+      "waist": "二燐節の下を生成り腰帯で留め、尾は付けない",
+      "legs": "細い脚布と軽い短靴。大きな節甲を避ける"
+    },
+    "weaponShapes": {
+      "heavy_blade": "刃元の片面に二小燐節だけ置く薄い大剣",
+      "guard_blade": "細い短刃と、下縁に二点を持つ小盾",
+      "war_maul": "閉じた小骨打頭の両側へ一小燐節ずつ",
+      "twin_blades": "各短刃の根元に一つずつ小燐節",
+      "long_blade": "峰の根元へ二点を寄せた細い曲刃",
+      "long_lance": "直槍の握り上へ二小節、細い盾の下縁に二点",
+      "ring_bow": "握り上に離れた二小節。小環一つと直線弦"
+    },
+    "production": {
+      "primaryForm": "細い灰青胴着と離れた二点",
+      "secondaryForm": "短い放電膜",
+      "dominantRegion": "背下部",
+      "asymmetry": "二点は背中心の左右、他部位は無灯",
+      "repeatCount": "主要燐節2",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "二点の燐節は小さく淡い。",
+      "2": "二点の間に生成りの革幅を明瞭に残す。",
+      "3": "節の外周を細い骨縁で支える。",
+      "4": "二節の内面だけ琥珀を濃くする。数は二のまま。"
+    },
+    "skillCue": {
+      "location": "背下部の二灯",
+      "inactive": "淡い琥珀",
+      "active": "二命中後に二点が同時に短く点く",
+      "maxLitSurfacePercent": 2
+    },
+    "avoid": [
+      "成体の五節・長尾へ変えない",
+      "点灯数を二つより増やさない",
+      "幼児体型にしない"
+    ],
+    "palette": [
+      "淡い青灰",
+      "琥珀二点",
+      "生成り"
+    ],
+    "organTranslation": [
+      "二節だけの幼燐節器。光は点滅するが蓄電量が少なく、放電は尾先のすぐ近くに限られる。",
+      "幼燐節は必ず二つだけ。背の下部へ置き、成体の長尾の列と区別。",
+      "交替で居場所を知らせる二灯を、短い二命中の精度区間へ結ぶ。"
+    ]
+  }
+}

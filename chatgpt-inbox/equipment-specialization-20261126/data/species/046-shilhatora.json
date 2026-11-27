@@ -1,0 +1,207 @@
+{
+  "no": 46,
+  "speciesId": "monster.shilhatora",
+  "name": "シルハトラ",
+  "nativeRank": 3,
+  "identity": {
+    "role": "背面の三行動で部位と息をつなぐ",
+    "ecologyBasis": "ルミスカの尾節が枝分かれした枝燐導条。三本を別々に帯電させ、翼の送風で短い放電路を順に変える。 尾の再生時に導電節が三枝へ分かれたルミスカの希少個体である。岸の餌場を徒歩で巡り、短い滑空も着地できる近い砂州へ限る。",
+    "combatLoop": "背面へ三つの別行動→部位攻撃とスタミナ回復→細い刃が摩耗する前に接近し直す。",
+    "strength": "同級基準の物理倍率0.82、会心率+15ポイント。既存のthunder/wind属性量を1.70倍。固有技能「三枝の背風渡り」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "物理基礎倍率0.82（同級基準比18%低い。系統補正前）、刃容量0.72倍、刃消耗1.40倍、防具一式の基準防御力0.76倍。弱点耐性は一式でice -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "long_blade",
+      "ring_bow"
+    ],
+    "avoidUse": "正面固定の盾運用。"
+  },
+  "stats": {
+    "rawScale": 0.82,
+    "affinity": 15,
+    "elementScale": 1.7,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.72,
+    "edgeWearScale": 1.4,
+    "staminaCostScale": 0.9,
+    "defenseScale": 0.76,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 0.98,
+      "war_maul": 0.98,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 0.98,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.12,
+      "chest": 0.2,
+      "arms": 0.19,
+      "waist": 0.31,
+      "legs": 0.18
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 20,
+      "ice": -20,
+      "water": 0,
+      "wind": 20,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.shilhatora",
+    "name": "枝燐の送り矢",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "projectile"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "先に届いた矢の灯を、次の別行動へ渡す。すでに発射した同一行動の矢には遡らない。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、480tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.shilhatora",
+    "name": "三枝の背風渡り",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "rear"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 3,
+    "windowTicks": 300,
+    "cooldownTicks": 600,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          18,
+          24
+        ]
+      },
+      {
+        "stat": "staminaRecoveryPct",
+        "values": [
+          12,
+          18
+        ]
+      }
+    ],
+    "explanation": "敵の背面へ三行動を通し、三枝の導条に順を付ける。部位破壊と息継ぎで背後を保ち、正面の火力勝負では条件を満たさない。  300tick以内に異なる行動で3回。HP・スタミナ条件は行動費用確定後の残量%。発動から240tick有効、600tick再使用。攻撃への補正は起点と別の次行動から有効。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "細い胴と低い肩膜に対し、後腰の三枝だけが短く分かれる。枝は水平に近く、胸と頭へ大きな角を付けない。",
+    "palette": [
+      "灰青",
+      "青銅",
+      "小さい琥珀点"
+    ],
+    "organTranslation": [
+      "三枝の尾節→後腰の短い三分枝",
+      "枝燐導条→三枝それぞれの小さい琥珀点",
+      "短い送風翼→低い肩膜二枚"
+    ],
+    "armorParts": {
+      "head": "小さい灰青の頭覆い。額に三本の短い節線、頭上へ枝角を出さない",
+      "chest": "細い胸甲と低い肩膜。中央の胸骨線だけを青銅で締める",
+      "arms": "細い前腕に三節の短甲。手首を広く開け、肩膜と分離する",
+      "waist": "後腰で短く三枝へ分かれる節甲。中央枝を短く、左右枝を低く伏せる",
+      "legs": "細い脚甲と短い踵板。脚の外側へ枝を伸ばさない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の刃元を三つの短い枝節へ分け、先の連続刃は一本のまま",
+      "guard_blade": "三分枝の低い鍔を持つ細剣と、下縁に短い三枝節を収めた盾",
+      "war_maul": "側面に三枝の導条を伏せた閉じた槌頭。枝の先を打面へ出さない",
+      "twin_blades": "二本の峰の根元に同じ三枝模様。分かれた刃先を作らない",
+      "long_blade": "細い長刃の峰へ三つの短い節線。鞘口の小鍔だけ三分枝",
+      "long_lance": "直槍の穂は一本、根元だけ短い三枝節。盾下側へ三つの小節を置く",
+      "ring_bow": "中央から三つの小節が短く開く骨弓。主弓身は二本の細い枝と一本弦、小環を保つ"
+    },
+    "gradeEvolution": {
+      "3": "灰青の細身に後腰三枝。青銅は枝の節を細く囲み、琥珀点は三つだけ。",
+      "4": "三枝の各節へ独立した小さい導条窓。枝の長さを増やさず、肩膜を低く保つ。"
+    },
+    "production": {
+      "primaryForm": "後腰の短い三枝",
+      "secondaryForm": "細い胸骨線",
+      "dominantRegion": "後腰",
+      "asymmetry": "左右の枝を同高にし中央枝を短くする",
+      "repeatCount": 3,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "後腰三枝の琥珀点",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "三本の長い尾を引きずらない",
+      "槍や剣の刃先を三又にしない",
+      "雷の大きな翼を追加しない"
+    ]
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "sourceCommit": "8adc7fe4fa584aa87c5a27286c8512de93a9b5a7",
+  "version": "0.39.0",
+  "files": [
+    {
+      "path": "docs/source/chatgpt-equipment-20261125/data/all-equipment.json",
+      "sha256": "ac307b1be1c27a018b34493a64857dd2099744b73804d7b9dc965a7c8e6e850f"
+    },
+    {
+      "path": "public/data/bestiary.json",
+      "sha256": "37d49075f65cf85a957d1b1d4eef46a218736a3db578d78f668bc14ab14a6a64"
+    },
+    {
+      "path": "public/data/weapons.json",
+      "sha256": "9dc926df758f90edabb5d565a51e9868ba4f26a075823c520785d911d124b78a"
+    },
+    {
+      "path": "public/data/armor.json",
+      "sha256": "535e9ea4bf8bef96d05ca9fe86b625d201a72428cae77da9a4c3eed4a396ce6b"
+    },
+    {
+      "path": "public/data/equipment_series.json",
+      "sha256": "e910a5e0e96475661be70f166bd15d9f56c74d967ea23153ca68774083c93e9e"
+    },
+    {
+      "path": "public/data/recipes.json",
+      "sha256": "5b4b442f29a11bd2c4371c43076aca66e59811646c9a9f1e262f530a5bde464d"
+    },
+    {
+      "path": "public/data/items.json",
+      "sha256": "74a269d1dd4a02c3163389174305737877b536f2a85253bdca6211ae9a95800e"
+    },
+    {
+      "path": "public/data/items_creatures.json",
+      "sha256": "07f015b46192dcf632ff59e53aec4ecbe34afcf8117bd981603a374711661456"
+    },
+    {
+      "path": "public/data/skills.json",
+      "sha256": "4e1f7b68f9d9de29b6393f70836d8b1c64c119e0938faf0f5d485a3d74058e14"
+    },
+    {
+      "path": "package.json",
+      "sha256": "dfdb674bd465745a50f625d39a7d61cd499e147d4a3b1f29e72780c4e9371aa1"
+    },
+    {
+      "path": "src/game/gear.ts",
+      "sha256": "09ac0d9054e5ee41057340c7aed3eeafd935d6df737bb9ed01562ea738f81ec3"
+    },
+    {
+      "path": "src/game/sim.ts",
+      "sha256": "8291603deb622b913a9f3683f86dfb51169b45f986ca2bf8e111fe8950f55558"
+    },
+    {
+      "path": "src/game/monster.ts",
+      "sha256": "e255672599ae826b2fbeb2913393775163428a0811f0938ab1d33b5179a7b309"
+    },
+    {
+      "path": "public/data/actions/heavy_blade.json",
+      "sha256": "112ae3a2a4564b220314628cf0ac11c9255a93d9a6e62df5e339ae974c81e1c3"
+    },
+    {
+      "path": "public/data/actions/guard_blade.json",
+      "sha256": "28a25334f61f39787e42718825556596eab324784e680eb7cc048d4c96ef44a6"
+    },
+    {
+      "path": "public/data/actions/war_maul.json",
+      "sha256": "cedbcde8bf4331c92c5a25cb5df830d398698572775a3c16220ce235f29ae8c5"
+    },
+    {
+      "path": "public/data/actions/twin_blades.json",
+      "sha256": "a2607f28ec759c4d52f0789154c5bdbd98ad545bb56aa322f99d6f6acd2fff8d"
+    },
+    {
+      "path": "public/data/actions/long_blade.json",
+      "sha256": "bf7495a907d76d72fe4a1f3ab9aeff07b2b8332645c00842de4731ca1cc398c9"
+    },
+    {
+      "path": "public/data/actions/long_lance.json",
+      "sha256": "717a7a03e6fd2dd4081d130a02d99f3d417bb7e32f3124b6652d72e9d68e9182"
+    },
+    {
+      "path": "public/data/actions/ring_bow.json",
+      "sha256": "3d4883856d28c34e1ff4c81fd5c25d2eb6d5dcf240c0cb98ab4269f7716046ed"
+    }
+  ],
+  "counts": {
+    "species": 86,
+    "gatheringSeries": 9,
+    "seriesRanks": 250,
+    "monsterSeriesRanks": 214,
+    "weapons": 1750,
+    "armor": 1250,
+    "recipes": 3000,
+    "materials": 583,
+    "signatures": 86,
+    "weaponTraits": 602,
+    "mechanics": 688,
+    "adaptedWeaponTraits": 143
+  },
+  "oldUnpublishedTree": "31efccb0db89ce14f489f5cb37062e8c93687081",
+  "byteIdenticalRecovery": false
+}

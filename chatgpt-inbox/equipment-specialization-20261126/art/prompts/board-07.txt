@@ -1,0 +1,40 @@
+Use case: stylized-concept. Create a beautiful production comparison concept sheet for the original grounded fantasy hunting game VEILBOUND HUNTERS. This is static fantasy costume and prop art, no combat or construction diagram. Wide landscape canvas, FOUR equally sized vertical panels in one row, soft parchment neutral backdrop, studio diffuse lighting, natural leather/bone/organic shell/aged bronze materials, restrained earth colors and tiny dim amber accents. Detailed painterly 3D game concept quality. Nothing resembling famous copyrighted armor.
+Each panel contains ONE full-body ADULT gender-neutral mannequin wearing five-region armor (helmet, chest, arms, waist, legs), head and both feet fully inside frame; and exactly TWO representative weapon-family prop groups beside it, arranged cleanly with breathing room. For twin_blades group show two matched short swords. For guard_blade show a short sword AND a separate shield. For long_lance show one long straight lance AND separate shield. Bow must have ONE straight taut bowstring between tips and ONE small aiming ring near grip, slender flexible bow limbs. All props are separate from mannequin and anatomically coherent. Hard closed hammer striking faces. Functional hand grips visible, fingers clear, shoulders/elbows/knees free, no extra limbs. Weapons stay their canonical shapes and lengths.
+Do not overfill panels with extra props. Adult-sized clothing also when source is juvenile. Literal panel labels at top only: three-digit number and LATIN ID provided below. A small title VEILBOUND HUNTERS at top. No Japanese paragraphs or stats. All silhouette, material color, organ placement, asymmetric side and counts below are intentional. Never mirror left/right. Left means the wearer's anatomical left. Do not put full bright magic over the figure. Show the native-rank concept, not four tiers. Render clear material differentiation, clean edges, readable silhouettes at small size.
+
+PANEL 1: label '025 HOLNEBAS'. front three-quarter angle.
+Silhouette: 右肩へ斜め前に並ぶ三つの長い鐘縁。先端を硬く閉じ、左肩と首を低くして右だけ段状の重量を作る。
+Palette: 灰緑, 青銅管, 骨灰
+Five regions: {"head": "骨灰の低い鐘縁兜。頭頂に長い筒を立てない", "chest": "右肩に斜めの三鐘室、胸へ細い青銅管筋を渡す", "arms": "右前腕に短い管筋二本、左は低い硬皮板", "waist": "腰は低い灰緑の分割板。鐘室を腰へ増やさない", "legs": "硬皮の細い脛覆いと低い革靴"}
+Important count: 主鐘室3
+war_maul PROP GROUP: 硬い両打面の側面に閉じた三段の響室を並べる
+ring_bow PROP GROUP: 握り外側に閉じた三小鐘室。弓身は細く、直線弦一本、小環
+Avoid: 鐘室の口を開いて砲口風にしない / 弓弦を曲がる管や複数弦にしない / 左肩へ同じ三鐘を足さない
+
+PANEL 2: label '026 MILTASEA'. rear three-quarter angle with the helmet profile visible, so the distinctive back organs are clearly visible.
+Silhouette: 細い紫灰の襟から軽い胴へつなぎ、腰後ろの低い三つの露珠袋だけが丸い。前と肩は細く背下に重さを置く。
+Palette: 淡い紫灰, 灰緑, 琥珀の細縁
+Five regions: {"head": "淡紫灰の低い額帯、頭に珠を付けない", "chest": "細い襟と薄い胸皮。首の前面は大きく開ける", "arms": "前腕外に短い露膜一枚、手首は細い帯だけ", "waist": "腰後ろへ低く下がる露珠袋三つ。左右同列で脚へ接触しない", "legs": "灰緑の細い脛革。珠袋は脚へ増やさない"}
+Important count: 主露珠3
+long_blade PROP GROUP: 鞘口の後ろに三つの低い露留めを付ける曲刃
+ring_bow PROP GROUP: 握り下へ三小珠を短く固定。細い弓身、直線弦一本、小環
+Avoid: 露珠を胸・肩・正面腰へ移さない / 三つ以外の大珠を増やさない / 眠りを無条件付与したり睡眠薬必須にしない
+
+PANEL 3: label '027 TALGRINA'. front three-quarter angle.
+Silhouette: 左前腕の三段擦晶籠手が最も大きく、肩殻を左から右へ低く落とす片流れ。顔と右手を軽く見せる。
+Palette: 鈍青銅, 灰褐, 琥珀の細筋
+Five regions: {"head": "低い灰褐の額殻、左だけ細い青銅縁", "chest": "左肩から右胸へ低く下がる三つの殻面", "arms": "左前腕は三段の閉じた擦晶板。右腕は薄い一枚", "waist": "前腰を細く、左腰へ短い帯電膜覆い一枚", "legs": "両脛を低い灰褐殻。左脚を巨大化しない"}
+Important count: 左擦晶板3
+long_lance PROP GROUP: 三枚の擦晶芯を直線に揃える槍と、左上三段の硬盾
+guard_blade PROP GROUP: 三つの低い擦筋を持つ短刃と、左上が大きい閉鎖盾
+Avoid: 左腕を開閉する巨大鋏にしない / 雷属性と麻痺属性を同時に武器へ足さない / 三板を多数の機械フィンへ増やさない
+
+PANEL 4: label '028 ZANETOLKA'. rear three-quarter angle with the helmet profile visible, so the distinctive back organs are clearly visible.
+Silhouette: 前身は細く、腰後ろの三節だけを横へ低く広げる砂裾装。外鉤は短く下向き、上半身の輪郭は平たい。
+Palette: 灰黄, 砂褐, 鈍い赤銅
+Five regions: {"head": "灰黄の低い半円額板、角は持たない", "chest": "細い灰黄胸皮と横向きの小節二枚", "arms": "外前腕へ短い下向き鉤板一つずつ", "waist": "腰後ろに三段の横広節板。膝上で止め前腰は開く", "legs": "脛は細い砂褐革。後ろ裾の量を脚へ反復しない"}
+Important count: 後裾節3
+twin_blades PROP GROUP: 峰へ下向きの短い鉤を持つ二短剣。指側へ出さない
+long_blade PROP GROUP: 低い三段峰を刃元にだけ残した連続曲刀
+Avoid: テンガロと同じ閉じた螺旋にしない / 毒脂を毒属性の追加と解釈しない / 三段裾を長い尾や床を引くスカートにしない
+Critical counting and placement: 025 has EXACTLY THREE CLOSED resonator capsules on the wearer's RIGHT shoulder; their end caps are solid and rounded. 026 has EXACTLY THREE pear-shaped soft dew pouches hanging LOW AT THE REAR WAIST, clearly visible in its rear three-quarter view, never on chest or shoulders; no other large beads. 027 has EXACTLY THREE stacked shell plates on the wearer's LEFT forearm, with the hand and wrist free. 028 has EXACTLY THREE low wide plates at the REAR waist, not chest. Both displayed bows must show ONE clearly visible straight taut string between tips and ONE small ring by the grip. Keep all hands, feet, and prop tips inside the frame.

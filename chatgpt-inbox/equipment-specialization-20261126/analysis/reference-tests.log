@@ -1,0 +1,28 @@
+✔ All 688 actual catalog mechanics activate at all 774 supported definition/level pairs (29.711932ms)
+✔ A proc never buffs its origin action, including later hits in the same action (1.740194ms)
+✔ Release and draw cannot buff their own attack; the next different action consumes (0.57031ms)
+✔ Delayed arrows keep the first landed hit snapshot across expiry, without affecting new actions (1.457077ms)
+✔ Only one contribution per action; repeated event IDs are no-ops even after time has advanced (8.008535ms)
+✔ Counter window and duration are half-open, cooldown begins at activation (0.310748ms)
+✔ Target-bound bonuses neither leak nor consume on an ineligible target (0.45737ms)
+✔ Same-target counters restart on a different target instead of sharing marks (0.27233ms)
+✔ Damage, explicit sheath and target-change resets remove buffs without refunding cooldown (0.455777ms)
+✔ HP/stamina ranges and all/any tags are inclusive and evaluated on resolved event (0.346743ms)
+✔ Common and dynamic effects add before channel caps; weak-spot crit is checked for each hit (1.436566ms)
+✔ Non-attack effects expire immediately even if an old action snapshot remains (0.255946ms)
+✔ 2+2 mixed sets, rank mixing, 4-piece Lv2; duplicates/unknown/unowned do not create skills (0.433423ms)
+✔ Gathering armor grants common skills without inventing a monster signature (0.258359ms)
+✔ Common resist parameters stay separate and values never exceed Lv3 (0.232801ms)
+✔ HP, break/sever accumulation, status and head-only stun use separate terms (0.249225ms)
+✔ Edge capacity scales max and thresholds; static stamina cost has an explicit combat scope (0.237709ms)
+✔ Adapter rejects dodge-input farming, invulnerable revival, chip, DoT, lethal damage and bow maintenance (0.387534ms)
+✔ State is deterministic, action snapshots are reclaimed, and quest reset leaves only common effects (0.405791ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 355.837836
+

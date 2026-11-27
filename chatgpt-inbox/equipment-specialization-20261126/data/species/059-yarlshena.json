@@ -1,0 +1,203 @@
+{
+  "no": 59,
+  "speciesId": "monster.yarlshena",
+  "name": "ヤルシェナ",
+  "nativeRank": 3,
+  "identity": {
+    "role": "高い間合いから麻痺を差す軽装",
+    "ecologyBasis": "目の下でつながる鞍頬風膜と頬底腺。膜を左右別々に縮め、腺で作る麻痺性の微滴を細い風へ乗せる。",
+    "combatLoop": "敵の接触を二度かわして頬膜を張り、別行動の連撃で麻痺蓄積を稼ぐ。被弾で準備が崩れる。",
+    "strength": "麻痺量1.55倍・回避等の消費0.91倍。手数よりも無傷の回避継続を評価する。",
+    "weakness": "基礎攻撃0.82倍、防御0.79倍、火耐性-30。発動中も回避消費が8/12%増える。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "ring_bow",
+      "long_blade"
+    ],
+    "avoidUse": "不利な運用: 正面で被弾を受けながら蓄積を維持する運用"
+  },
+  "stats": {
+    "rawScale": 0.82,
+    "affinity": 10,
+    "elementScale": 0,
+    "statusScale": 1.55,
+    "edgeCapacityScale": 0.88,
+    "edgeWearScale": 1.15,
+    "staminaCostScale": 0.91,
+    "defenseScale": 0.79,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 0.98,
+      "war_maul": 0.98,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 0.98,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.14,
+      "chest": 0.26,
+      "arms": 0.28,
+      "waist": 0.12,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": -30,
+      "thunder": 0,
+      "ice": 0,
+      "water": 0,
+      "wind": 20,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "weak_crit",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "dodge_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "頬滴の裏差し",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "rear"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 300,
+    "cooldownTicks": 600,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "同じ対象の背側へ異なる2行動を当てて、薄い麻痺滴の筋を保つ。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続240tick、発動時から再使用600tick。",
+    "id": "weapon_trait.yarlshena"
+  },
+  "signature": {
+    "name": "鞍膜の二歩張り",
+    "trigger": {
+      "event": "dodge",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 70,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 240,
+    "cooldownTicks": 780,
+    "durationTicks": 300,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "statusPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "dodgeCostPct",
+        "values": [
+          8,
+          12
+        ]
+      }
+    ],
+    "explanation": "HP70%以上で240tick内に2回の回避成功。頬膜を張る間は麻痺蓄積が上がるが、張力で回避の負担も増す。 回避入力ではなく、回避無敵中に敵攻撃の接触を避けた成功だけを数える。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 持続300tick、発動時から再使用780tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.yarlshena"
+  },
+  "appearance": {
+    "silhouette": "胸元を高い逆U字の鞍襟で囲み、肩幅を狭く保つ。長い前腕と低い骨盤の縦比率が主役。",
+    "palette": [
+      "灰緑",
+      "生成り",
+      "鈍い青銅"
+    ],
+    "organTranslation": [
+      "頬膜→頬から胸上へ落ちる一続きの鞍襟",
+      "頬底腺→襟内側の左右独立した短い滴溝",
+      "高い前脚→長い前腕板と短い上腕袖"
+    ],
+    "armorParts": {
+      "head": "頭頂は細い革鉢、頬当てを襟へ連続させて口前を開ける",
+      "chest": "胸上だけ鞍形の硬い縁、胸下は横皺の柔皮で腹を細くする",
+      "arms": "前腕外面に長い一条板、肘側を二叉に割って手首は露出",
+      "waist": "腰骨へ低い帯を置き、後ろだけ短い膜弧を返す",
+      "legs": "膝下を細い腱帯で縦に結び、足先の板は増やさない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "鞍膜の折れを峰側の深い一段凹みにし、細い連続刃を内側へ通す大剣",
+      "guard_blade": "滴溝のある細剣と、中央だけ鞍形に盛る小型の硬い盾",
+      "war_maul": "頬底腺を左右側室へ収めた細長い硬殻の両打面槌",
+      "twin_blades": "左右の鞍線を対にした短剣二本、刃先は同長で内側に滴筋",
+      "long_blade": "鞍の落ち込みを鍔元へ寄せ、先端は細い連続刃の太刀",
+      "long_lance": "細い直槍の刃元に二条溝、盾上縁だけ低い鞍形",
+      "ring_bow": "長い膜筋を細い弓身に沿わせ、握り上の小環と一本の直線弦を空ける"
+    },
+    "gradeEvolution": {
+      "3": "灰緑の頬膜を頬当てから襟へ鞍状につなぎ、胸を高く腰を低く見せる。前腕だけ長い細板を置き、肩は張らせない。 初登場級の形。武器は同じ器官の輪郭を用途に合わせて切り分ける。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。",
+      "4": "極級では頬膜の張りを二重に分け、麻痺滴を収める筋を根元側だけ太くする。灰緑の細身と長い前腕を維持し、肩幅を増やさない。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "逆U字の鞍襟",
+      "secondaryForm": "細い縦板",
+      "dominantRegion": "胸上と前腕",
+      "asymmetry": "左右の滴溝は別室、肩幅は等しい",
+      "repeatCount": "頬側の滴溝2、前腕板左右1",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "左右の襟内面",
+      "inactive": "灰緑の溝が閉じる",
+      "active": "左右の細い滴筋が交互に琥珀色へ変わる",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "正面で被弾を受けながら蓄積を維持する運用",
+      "肩を横へ膨らませた大型翼",
+      "口前を閉じる鞍膜や長いマント"
+    ]
+  }
+}

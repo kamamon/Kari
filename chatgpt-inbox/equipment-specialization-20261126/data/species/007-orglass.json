@@ -1,0 +1,201 @@
+{
+  "no": 7,
+  "speciesId": "monster.orglass",
+  "name": "オルグラス",
+  "nativeRank": 1,
+  "identity": {
+    "role": "硝殻を合わせる受け流し装",
+    "ecologyBasis": "正面の接近には鋏を広げるが、背後へ回られると横歩きで向き直る。脱皮の直後は硬い板が育つまで争いを避ける。",
+    "combatLoop": "受け流しで敵の向きを読み、次の別行動を未破壊部位へ戻す。",
+    "strength": "会心+25、刃容量1.20倍。受け流し後の部位攻撃が得意。",
+    "weakness": "基礎物理0.92倍、防御0.88倍。受け流しの失敗を防御で押し切れない。",
+    "recommendedFamilies": [
+      "guard_blade",
+      "long_lance"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.92倍、防御0.88倍。受け流しの失敗を防御で押し切れない。"
+  },
+  "stats": {
+    "rawScale": 0.92,
+    "affinity": 25,
+    "elementScale": 0,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.2,
+    "edgeWearScale": 0.85,
+    "staminaCostScale": 1.02,
+    "defenseScale": 0.88,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.04,
+      "war_maul": 1.0,
+      "twin_blades": 1.0,
+      "long_blade": 1.0,
+      "long_lance": 1.02,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": -20,
+      "ice": 0,
+      "water": 15,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "weak_crit",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "weak_crit",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.orglass",
+    "name": "硝角の返し",
+    "trigger": {
+      "event": "parry",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 420,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "護刃の受け流し、または長尖槍のカウンター成立から次の別行動へ部位補正。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.orglass",
+    "name": "片鋏の面合わせ",
+    "trigger": {
+      "event": "parry",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 600,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "affinityPoints",
+        "values": [
+          8,
+          12
+        ]
+      },
+      {
+        "stat": "partPct",
+        "values": [
+          12,
+          18
+        ]
+      }
+    ],
+    "explanation": "薄い硝板の面を合わせ、受け流した相手への短い会心・部位攻撃区間を作る。通常ガードでは発動しない。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "右前腕の大きな三角硝板と、右肩から左腰へ下がる斜めの板列。左腕と腹の革面は広く見せる。",
+    "armorParts": {
+      "head": "低い角付き硝額板一枚。顔中央は開ける",
+      "chest": "右肩から左腹へ三枚の透けた板を斜めに継ぐ",
+      "arms": "右前腕だけ大鋏の閉じた三角面。左は細い硝筋",
+      "waist": "左腰へ薄い板一枚、右腰は道具帯で軽くする",
+      "legs": "膝外側と脛に小さな菱形板。関節を囲まない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "片側だけ三角硝板を三枚重ねた鋭い片刃大剣",
+      "guard_blade": "硝殻の細い刺突刃と、右上が高い三角盾",
+      "war_maul": "硬い硝骨打面を持つ角柱頭。透明な板は側面のみ",
+      "twin_blades": "小鋏の内面を形にした細い二本。刃の重さは一致",
+      "long_blade": "薄い硝板を低く連ねる滑らかな曲刃",
+      "long_lance": "硝鋏芯のまっすぐな槍穂と、斜め三枚の硬板盾",
+      "ring_bow": "硝板は握り横の小三角二枚だけ。細い骨弓身、直線弦、小環"
+    },
+    "production": {
+      "primaryForm": "右の大三角面",
+      "secondaryForm": "斜めに重なる半透明板",
+      "dominantRegion": "右前腕と右肩",
+      "asymmetry": "右大、左小。ガルドロスの左偏りと逆",
+      "repeatCount": "胸硝板3、主籠手1",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "硝板三枚を浅い灰緑に。右籠手の輪郭を一段だけ大きく。",
+      "2": "板縁の青銅留めを細く増やし、板同士の間を残す。",
+      "3": "右籠手に内外二層の面。透明度を上げ過ぎない。",
+      "4": "斜め三板の内面に小さな晶片。左腕は軽いまま。"
+    },
+    "skillCue": {
+      "location": "右籠手の三角縁",
+      "inactive": "灰緑の半透明",
+      "active": "受け流しで三角の内側二辺だけ白く反射",
+      "maxLitSurfacePercent": 3
+    },
+    "avoid": [
+      "右籠手を実物の巨大な鋏へしない",
+      "全身を宝石で覆わない",
+      "透明板を顔全面に被せない"
+    ],
+    "palette": [
+      "灰緑の半透明",
+      "鈍い青銅",
+      "灰茶"
+    ],
+    "organTranslation": [
+      "右大鋏の内側にある硝殻成形腺。硝砂から得た成分を薄い半透明板として外殻へ重ね、鋏の当たり面だけ厚くする。",
+      "右大鋏を右籠手一か所へ集約し、全身を透明装甲にしない。",
+      "硬い板の面を正確に合わせる特性を、受け流し後の会心へ結ぶ。"
+    ]
+  }
+}

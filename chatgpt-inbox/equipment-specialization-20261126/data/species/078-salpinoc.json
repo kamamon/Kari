@@ -1,0 +1,202 @@
+{
+  "no": 78,
+  "speciesId": "monster.salpinoc",
+  "name": "サルピノク",
+  "nativeRank": 4,
+  "identity": {
+    "role": "左帷で受け右鋏で一手を返す装備",
+    "ecologyBasis": "左の柔らかな帷甲に付く圧露嚢と、右鋏の内側の毒溝。帷で空気を押し、鋏から落ちる毒性の水滴を低い霧へ散らす。",
+    "combatLoop": "同じ相手を二度受けて左帷へ圧を溜め、別行動の物理を一度だけ強める。",
+    "strength": "風霧量1.62倍、二度受け後の物理+8/10%。",
+    "weakness": "基礎攻撃0.90倍、防御0.90倍、刃容量0.85倍、消耗1.38倍。技能中の消耗+15/25%、火耐性-25。",
+    "recommendedFamilies": [
+      "guard_blade",
+      "long_lance",
+      "heavy_blade"
+    ],
+    "avoidUse": "不利な運用: 被弾しながら二度受けを貯める運用"
+  },
+  "stats": {
+    "rawScale": 0.9,
+    "affinity": 0,
+    "elementScale": 1.62,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.85,
+    "edgeWearScale": 1.38,
+    "staminaCostScale": 1.12,
+    "defenseScale": 0.9,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 1.04,
+      "war_maul": 0.98,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 1.02,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.14,
+      "chest": 0.28,
+      "arms": 0.3,
+      "waist": 0.14,
+      "legs": 0.14
+    },
+    "setResistances": {
+      "fire": -25,
+      "thunder": 0,
+      "ice": 0,
+      "water": 0,
+      "wind": 15,
+      "mist": 15
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "guard_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "右溝の背差し",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "rear"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 660,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "背側から当てた後に右鋏の溝を通し、風霧属性を維持する。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続240tick、発動時から再使用660tick。",
+    "id": "weapon_trait.salpinoc"
+  },
+  "signature": {
+    "name": "左帷右鋏の一返し",
+    "trigger": {
+      "event": "guard",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 300,
+    "cooldownTicks": 720,
+    "durationTicks": 240,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "rawPct",
+        "values": [
+          8,
+          10
+        ]
+      },
+      {
+        "stat": "edgeWearPct",
+        "values": [
+          15,
+          25
+        ]
+      }
+    ],
+    "explanation": "同じ相手を300tick内に通常ガード2回で受け、次の別行動へ圧を渡す。返しの強さと刃の消耗が同時に増す。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 次の有効な別行動の命中で消費し、その行動の多段命中には同じ効果を使う。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続240tick、発動時から再使用720tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.salpinoc"
+  },
+  "appearance": {
+    "silhouette": "左肩だけ縦の帷板を高くし、右籠手は下へ重く垂れる形。左右の高さが逆になる輪郭。",
+    "palette": [
+      "灰緑",
+      "暗灰紫",
+      "青銅"
+    ],
+    "organTranslation": [
+      "圧露嚢→左肩の高い薄板の裏",
+      "右鋏の毒溝→右籠手の短い暗紫溝（武器は風霧のみ）",
+      "脚を揃える待機→細い左右対称の脚"
+    ],
+    "armorParts": {
+      "head": "左額を低い縦線で包む小兜",
+      "chest": "左肩だけ高い縦板、右胸は平たい皮",
+      "arms": "右前腕外に重い鋏甲、手首の手前で切り拳を空ける",
+      "waist": "左腰を薄く、右の短い甲だけ低く置く",
+      "legs": "両脛は細い同形甲、肩と腕の左右差を支える"
+    },
+    "weaponShapes": {
+      "heavy_blade": "左帷の縦面を峰へ、刃元の右側へ鋏の短溝を置く大剣",
+      "guard_blade": "短い鋏刃と、左帷を硬い裏板で支える独立盾",
+      "war_maul": "右鋏の硬殻を打面に、左帷は側面の低い室だけ",
+      "twin_blades": "同長二刃の片方は薄帷峰、片方は鋏溝峰",
+      "long_blade": "短い鋏溝を刃元へ収めた細長い太刀",
+      "long_lance": "右鋏線の直槍と左帷板を写す縦長盾",
+      "ring_bow": "左帷を薄い弓身の筋へ、右鋏溝を握りへ。小環と一本の直線弦"
+    },
+    "gradeEvolution": {
+      "4": "灰緑の縦板を左肩だけ高くし、右籠手は太く下へ伸ばす。毒溝は暗い灰紫で短く区切る。 極級完成形のみ。右腕の毒溝は暗灰紫の短区間に限定し、左肩と右前腕の非対称を固定。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "高い左帷",
+      "secondaryForm": "重い右前腕",
+      "dominantRegion": "左肩と右籠手",
+      "asymmetry": "左は上、右は下へ体積を寄せる",
+      "repeatCount": "左主板1、右鋏甲1",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "左肩板の裏と右籠手溝",
+      "inactive": "暗い灰紫の短溝",
+      "active": "左裏の白筋が消えた後、右の短溝が細く灯る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "被弾しながら二度受けを貯める運用",
+      "右籠手が手首と指を覆って曲がらなくなる形",
+      "毒溝の外見から毒蓄積を追加すること"
+    ]
+  }
+}

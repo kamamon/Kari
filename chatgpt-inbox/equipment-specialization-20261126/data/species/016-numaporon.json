@@ -1,0 +1,205 @@
+{
+  "no": 16,
+  "speciesId": "monster.numaporon",
+  "name": "ヌマポロン",
+  "nativeRank": 1,
+  "identity": {
+    "role": "浅皿の水を戻す幼泥装",
+    "ecologyBasis": "三〜六頭で同じ泥筋を歩き、互いの頭皿へ水が跳ねる距離を保つ。乾き始めると群れごと水場へ向かう。",
+    "combatLoop": "軽い一撃を受けて生き残った後に一度落ち着き、短い守りと呼吸で立て直す。",
+    "strength": "水倍率1.20、防御1.04倍。HP60%以上を保った直撃後の立て直し。",
+    "weakness": "基礎物理0.87倍、刃容量0.82倍。HP60%未満の大きい損傷には固有が働かない。",
+    "recommendedFamilies": [
+      "guard_blade",
+      "long_lance",
+      "heavy_blade"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.87倍、刃容量0.82倍。HP60%未満の大きい損傷には固有が働かない。"
+  },
+  "stats": {
+    "rawScale": 0.87,
+    "affinity": 5,
+    "elementScale": 1.2,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.82,
+    "edgeWearScale": 1.1,
+    "staminaCostScale": 0.97,
+    "defenseScale": 1.04,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 1.04,
+      "war_maul": 1.0,
+      "twin_blades": 1.0,
+      "long_blade": 1.0,
+      "long_lance": 1.02,
+      "ring_bow": 0.96
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": -25,
+      "ice": 0,
+      "water": 20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_resistance",
+      "parameters": {
+        "element": "water"
+      }
+    },
+    "chest": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_resistance",
+      "parameters": {
+        "element": "water"
+      }
+    },
+    "legs": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.numaporon",
+    "name": "浅水の留め",
+    "trigger": {
+      "event": "guard",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          4,
+          4
+        ]
+      }
+    ],
+    "explanation": "通常ガードから次の別行動の水属性を小さく支える。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.numaporon",
+    "name": "幼皿の水戻し",
+    "trigger": {
+      "event": "damage_taken",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 60,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 720,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          -6,
+          -10
+        ]
+      },
+      {
+        "stat": "staminaRecoveryPct",
+        "values": [
+          8,
+          12
+        ]
+      }
+    ],
+    "explanation": "敵の直接・非ガードの非致死被弾後、HP60%以上なら4秒だけ姿勢を整える。HPを回復する効果ではない。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "浅い丸皿を前腰一か所に置き、腹の生成り皮が見える成人の作業軽装。肩は低く、前腰だけ丸い。",
+    "armorParts": {
+      "head": "額へ幼冠甲の短い横板。浅皿を頭全体にしない",
+      "chest": "生成り耐水皮を腹へ横重ねし、胸上は細帯",
+      "arms": "小水嚢の覆いを前腕外に一枚ずつ",
+      "waist": "前腰へ低い丸皿一つ。腿側の縁は切り欠く",
+      "legs": "灰緑の短い脛巻きと防水革靴"
+    },
+    "weaponShapes": {
+      "heavy_blade": "浅い水溝を刃元だけへ持つ薄い大剣",
+      "guard_blade": "幼冠甲の短刃と、浅い丸皿の軽い硬盾",
+      "war_maul": "小さな閉じた泥骨打頭。下面に幼嚢二つ",
+      "twin_blades": "短刃の根元へ水溝一筋ずつ、先端は揃える",
+      "long_blade": "耐水皮を巻いた鍔と、低い水溝の曲刃",
+      "long_lance": "小皿状の留めを持つ直槍と、低い丸盾",
+      "ring_bow": "弓の握り下に小さな浅皿。細い弓身、小環、直線弦"
+    },
+    "production": {
+      "primaryForm": "一つの低い前腰皿",
+      "secondaryForm": "生成りの横重ね皮",
+      "dominantRegion": "前腰と腹",
+      "asymmetry": "前のみ丸い、背は平たい",
+      "repeatCount": "主皿1、幼嚢覆い2",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "1": "一つの丸皿を浅くし、生成り腹皮を広く見せる。",
+      "2": "皿の縁に灰緑の細線。頭を深い皿兜にしない。",
+      "3": "腹皮の横重ねを三層に整える。",
+      "4": "前皿の内縁を二重に磨く。大きな貯水槽は足さない。"
+    },
+    "skillCue": {
+      "location": "前腰皿の内縁",
+      "inactive": "淡い泥褐",
+      "active": "軽い直撃後に内縁だけ濡れ色へ変わる",
+      "maxLitSurfacePercent": 2
+    },
+    "avoid": [
+      "成体の前重装をそのまま縮小しない",
+      "丸皿を頭肩脚へ大量反復しない",
+      "小児服の比率にしない"
+    ],
+    "palette": [
+      "淡い泥褐",
+      "生成り皮",
+      "灰緑"
+    ],
+    "organTranslation": [
+      "浅い頭皿に通じる一対の幼水圧嚢。少量の水を保持でき、泥玉は近距離の小粒に留まる。",
+      "幼体の低い頭皿を前腰の一皿に移し、腹側の薄皮を成人の腹巻へ。",
+      "互いの皿へ水を戻す小さな群れの動きを、軽い損傷後の呼吸へ結ぶ。"
+    ]
+  }
+}

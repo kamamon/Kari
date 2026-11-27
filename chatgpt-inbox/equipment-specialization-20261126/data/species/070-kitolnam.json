@@ -1,0 +1,200 @@
+{
+  "no": 70,
+  "speciesId": "monster.kitolnam",
+  "name": "キトルナム",
+  "nativeRank": 4,
+  "identity": {
+    "role": "息が細い時に折帆を返す氷霧装備",
+    "ecologyBasis": "キリサーヴの帆根に育つ折返し冷霧管。冷却液を薄い霧へ変え、菌食で得た眠り成分を混ぜた滴を帆の間へ蓄える。",
+    "combatLoop": "余力が減った抜刀時に折帆を開き、軽い回避と氷霧補正で狭い間を抜ける。",
+    "strength": "氷霧量1.64倍、スタミナ40%以下の抜刀で回避消費-12/20%・属性+10/14%。",
+    "weakness": "基礎攻撃0.84倍、防御0.84倍、刃容量0.82倍、火耐性-30。高スタミナの抜刀では起動しない。",
+    "recommendedFamilies": [
+      "twin_blades",
+      "long_blade",
+      "ring_bow"
+    ],
+    "avoidUse": "不利な運用: 満タンのスタミナで抜刀を反復して発動を狙う運用"
+  },
+  "stats": {
+    "rawScale": 0.84,
+    "affinity": 15,
+    "elementScale": 1.64,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.82,
+    "edgeWearScale": 1.18,
+    "staminaCostScale": 0.96,
+    "defenseScale": 0.84,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 0.98,
+      "war_maul": 0.98,
+      "twin_blades": 1.04,
+      "long_blade": 1.02,
+      "long_lance": 0.98,
+      "ring_bow": 1.02
+    },
+    "slotWeights": {
+      "head": 0.12,
+      "chest": 0.32,
+      "arms": 0.18,
+      "waist": 0.2,
+      "legs": 0.18
+    },
+    "setResistances": {
+      "fire": -30,
+      "thunder": 0,
+      "ice": 15,
+      "water": 0,
+      "wind": 0,
+      "mist": 15
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "element_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "折帆の水切り",
+    "trigger": {
+      "event": "dodge",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 660,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "edgeWearPct",
+        "values": [
+          -6,
+          -6
+        ]
+      }
+    ],
+    "explanation": "敵の接触を避けて折帆の露を払う。環弓では同値の回避消費軽減へ適合させる。 回避入力ではなく、回避無敵中に敵攻撃の接触を避けた成功だけを数える。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 持続240tick、発動時から再使用660tick。",
+    "id": "weapon_trait.kitolnam"
+  },
+  "signature": {
+    "name": "折返しの薄息",
+    "trigger": {
+      "event": "draw",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 40
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 660,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "dodgeCostPct",
+        "values": [
+          -12,
+          -20
+        ]
+      },
+      {
+        "stat": "elementPct",
+        "values": [
+          10,
+          14
+        ]
+      }
+    ],
+    "explanation": "抜刀完了時のスタミナが40%以下なら折帆を返す。スタミナそのものは回復せず、抜刀攻撃へ属性は乗らない。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 持続240tick、発動時から再使用660tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.kitolnam"
+  },
+  "appearance": {
+    "silhouette": "左右の低い折板を前後にずらし、背中の中央を空ける。後腰の短滴だけを垂らす。",
+    "palette": [
+      "灰青",
+      "白灰",
+      "青銅"
+    ],
+    "organTranslation": [
+      "折返し冷霧管→肩の低い二重折板",
+      "帆を畳む向き→左右でずらした折れ線",
+      "冷霧滴→後腰の短い小滴"
+    ],
+    "armorParts": {
+      "head": "低い折板を片額へ添えた小兜",
+      "chest": "背中央を空け、左右の肩へ低い折板",
+      "arms": "前腕に浅い返し板、肘内側は布",
+      "waist": "後腰だけ短い霧滴、前腰は細帯",
+      "legs": "脛の折れ線は外面に限定し足首を空ける"
+    },
+    "weaponShapes": {
+      "heavy_blade": "折返し線を厚い峰へ寄せた平たい大剣",
+      "guard_blade": "返し鍔の細剣と、二重折板を硬い面へ重ねる盾",
+      "war_maul": "側面に折管の二段線、打面は硬く閉じる",
+      "twin_blades": "左右の折れ向きを対にした同長二剣",
+      "long_blade": "浅い返しを刃元の峰へ置く細い太刀",
+      "long_lance": "直槍の基部へ折管、盾は低い二重折れ",
+      "ring_bow": "折板は握り近くだけ、細い弓身に小環と一本の直線弦"
+    },
+    "gradeEvolution": {
+      "4": "灰青の低い折板を左右ずらして肩へ重ね、背中の中央を空ける。後ろの腰だけに短い霧滴形を下げる。 極級完成形のみ。中央の背の空隙と、後腰だけの霧滴形を保つ。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "ずれた折板",
+      "secondaryForm": "短い霧滴",
+      "dominantRegion": "両肩と後腰",
+      "asymmetry": "肩板を前後へずらす",
+      "repeatCount": "肩の主折板左右1、背中央は0",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "肩の折れ線",
+      "inactive": "灰青の細溝",
+      "active": "折れ線だけ白く曇り、中央の背は暗いまま",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "満タンのスタミナで抜刀を反復して発動を狙う運用",
+      "背の空隙を大きな板で塞ぐ形",
+      "折板を長い翼や肩氷柱へ変える形"
+    ]
+  }
+}

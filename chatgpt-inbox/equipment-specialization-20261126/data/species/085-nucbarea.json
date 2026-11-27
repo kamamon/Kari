@@ -1,0 +1,205 @@
+{
+  "no": 85,
+  "speciesId": "monster.nucbarea",
+  "name": "ヌクバレア",
+  "nativeRank": 4,
+  "identity": {
+    "role": "毒が入った未破壊部位を見届ける装備",
+    "ecologyBasis": "後縁の扁甲に沿う濾霧鰓と、口房の毒粘腺。湿った空気を鰓で集め、口房を絞ると毒の滴を含む低い霧へ変える。",
+    "combatLoop": "まず毒を入れ、毒中の未破壊部位へ二行動を通して崩す。安全な横位置へ移る手を残す。",
+    "strength": "毒量1.48倍、防御1.03倍、刃容量1.20倍。条件成立後の部位+18/25%。",
+    "weakness": "基礎攻撃0.86倍、会心-5、消耗1.18倍、消費1.10倍、風耐性-25。技能中の被ダメージ+8/12%。",
+    "recommendedFamilies": [
+      "guard_blade",
+      "twin_blades",
+      "long_blade"
+    ],
+    "avoidUse": "不利な運用: 毒になっていない相手だけを殴って固有技能を狙う運用"
+  },
+  "stats": {
+    "rawScale": 0.86,
+    "affinity": -5,
+    "elementScale": 0,
+    "statusScale": 1.48,
+    "edgeCapacityScale": 1.2,
+    "edgeWearScale": 1.18,
+    "staminaCostScale": 1.1,
+    "defenseScale": 1.03,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 1.04,
+      "war_maul": 0.98,
+      "twin_blades": 1.02,
+      "long_blade": 1.02,
+      "long_lance": 0.98,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.22,
+      "arms": 0.2,
+      "waist": 0.28,
+      "legs": 0.14
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 0,
+      "ice": 0,
+      "water": 0,
+      "wind": -25,
+      "mist": 20
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "status_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "edge_keep",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "status_tuning",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "name": "双房の引き足",
+    "trigger": {
+      "event": "status_inflicted",
+      "tagsAll": [
+        "poisoned"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 780,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "dodgeCostPct",
+        "values": [
+          -8,
+          -8
+        ]
+      }
+    ],
+    "explanation": "新しく毒を成立させた時だけ後退の負担を軽くする。すでに毒中の命中や毒の継続ダメージでは発動しない。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 持続240tick、発動時から再使用780tick。",
+    "id": "weapon_trait.nucbarea"
+  },
+  "signature": {
+    "name": "毒房の見届け",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "poisoned",
+        "unbroken"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 240,
+    "cooldownTicks": 960,
+    "durationTicks": 480,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe"
+    ],
+    "effects": [
+      {
+        "stat": "partPct",
+        "values": [
+          18,
+          25
+        ]
+      },
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          8,
+          12
+        ]
+      }
+    ],
+    "explanation": "毒中の同じ対象の未破壊部位へ240tick内に2行動を通す。毒の成立そのものを無料で起こさず、部位補正と被弾の代償だけを付ける。 1行動につき1回だけ数える。攻撃への効果は発動した行動自身には乗らず、次の別行動から適用する。 同じ対象に蓄積し、攻撃効果もその対象に限定する。 持続480tick、発動時から再使用960tick。 同系列の異なる防具2部位でLv1、4部位でLv2。",
+    "id": "signature.nucbarea"
+  },
+  "appearance": {
+    "silhouette": "後腰だけ横へ広い扇甲、襟から短い二房。腕を同寸に保ち、胸を平らにする。",
+    "palette": [
+      "灰紫",
+      "灰褐",
+      "青銅"
+    ],
+    "organTranslation": [
+      "霧扁甲→後腰の短い扇甲",
+      "毒口房→襟から下がる短い二房",
+      "濾霧鰓→扇甲の後縁の細い襞"
+    ],
+    "armorParts": {
+      "head": "低い扁甲の兜、襟に短い二本房",
+      "chest": "中央を平らにした灰紫胸甲",
+      "arms": "左右同寸の短い鋏芯籠手",
+      "waist": "後腰だけ扇形に広げ、腿の横へ張らない",
+      "legs": "扇縁の小片を脛へ縦に分ける"
+    },
+    "weaponShapes": {
+      "heavy_blade": "扇甲の低い弧を峰へ寄せる幅広大剣",
+      "guard_blade": "双房の短い鍔の剣と、後扇の弧を写した硬盾",
+      "war_maul": "短い二房は側室へ、前後は硬く閉じる槌",
+      "twin_blades": "二本房の細線をそれぞれの峰へ写す同長二短剣",
+      "long_blade": "後扇の浅い反りを低い峰へ写す太刀",
+      "long_lance": "直槍の刃元に短い二房縁、扇形の閉じた独立盾",
+      "ring_bow": "扇筋を細い上下弓身へ、握りに二短溝、小環と一本の直線弦"
+    },
+    "gradeEvolution": {
+      "4": "灰紫の扇形板を腰の後ろだけ広げ、襟から二本の短い房を下げる。腕は左右同じ大きさにまとめる。 極級完成形のみ。後腰だけの扇幅と左右同寸の腕を維持し、長い房は付けない。 この再設計の器官位置・枚数・握り位置を優先し、武器の有効長と防具の衝突外形を変えない。"
+    },
+    "production": {
+      "primaryForm": "短い後扇",
+      "secondaryForm": "二本房",
+      "dominantRegion": "後腰と襟",
+      "asymmetry": "腕は左右同寸、広がりは後腰のみ",
+      "repeatCount": "襟房2、主扇甲1",
+      "jointClearance": "首の回旋、肩の挙上、肘・膝の屈曲、手首・足首を妨げない。厚い器官は関節軸から外す。",
+      "gripRule": "既存7系統の握り・有効長・判定を固定。盾は独立した剛体で、弓は一本の直線弦と小照準環を持つ。軟部は打面と握りへ置かない。"
+    },
+    "skillCue": {
+      "location": "襟の二本房の根元",
+      "inactive": "暗い灰紫の対点",
+      "active": "二つの小点が交互に紫灰へ曇る",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "毒になっていない相手だけを殴って固有技能を狙う運用",
+      "左右で大きさの違う腕甲",
+      "襟房を胸下まで垂れる長い紐へ変える形"
+    ]
+  }
+}

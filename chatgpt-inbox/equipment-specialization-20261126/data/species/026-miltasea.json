@@ -1,0 +1,204 @@
+{
+  "no": 26,
+  "speciesId": "monster.miltasea",
+  "name": "ミルタセア",
+  "nativeRank": 2,
+  "identity": {
+    "role": "三露を納めて霧を一手に渡す軽装",
+    "ecologyBasis": "首を伸ばして草越しに周囲を見ながら地上を歩く。翼は低い段差を滑り降りるために使い、飛び続けない。",
+    "combatLoop": "残スタミナ85%以上で明示的に納刀し、三露を保ったまま次の別行動一つへ霧を渡す。",
+    "strength": "霧倍率1.85、会心+15。納刀後の一行動に属性+12/+16%。",
+    "weakness": "基礎物理0.81倍、防御0.76倍。蓄えた区間は被ダメージ+8/+12%。睡眠属性や睡眠道具は追加しない。",
+    "recommendedFamilies": [
+      "ring_bow",
+      "long_blade",
+      "twin_blades"
+    ],
+    "avoidUse": "条件を満たさない立ち回りでは固有効果が出ない。基礎物理0.81倍、防御0.76倍。蓄えた区間は被ダメージ+8/+12%。睡眠属性や睡眠道具は追加しない。"
+  },
+  "stats": {
+    "rawScale": 0.81,
+    "affinity": 15,
+    "elementScale": 1.85,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.86,
+    "edgeWearScale": 1.12,
+    "staminaCostScale": 0.92,
+    "defenseScale": 0.76,
+    "familyBias": {
+      "heavy_blade": 1.0,
+      "guard_blade": 1.0,
+      "war_maul": 1.0,
+      "twin_blades": 1.02,
+      "long_blade": 1.02,
+      "long_lance": 0.96,
+      "ring_bow": 1.04
+    },
+    "slotWeights": {
+      "head": 0.16,
+      "chest": 0.28,
+      "arms": 0.2,
+      "waist": 0.16,
+      "legs": 0.2
+    },
+    "setResistances": {
+      "fire": 0,
+      "thunder": 0,
+      "ice": 0,
+      "water": 15,
+      "wind": -20,
+      "mist": 15
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "status_resistance",
+      "parameters": {
+        "status": "sleep"
+      }
+    },
+    "arms": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "stamina_recovery",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.miltasea",
+    "name": "露の細縁",
+    "trigger": {
+      "event": "hit",
+      "tagsAll": [
+        "weakspot"
+      ],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "弱点への接触から次の別行動へ小さな霧属性補正を残す。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "signature": {
+    "id": "signature.miltasea",
+    "name": "三露の封じ溜め",
+    "trigger": {
+      "event": "sheathe",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 85,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 900,
+    "durationTicks": 420,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          8,
+          12
+        ]
+      }
+    ],
+    "explanation": "残スタミナ85%以上で明示的な納刀を完了し、7秒以内の次の別行動の命中へ霧を渡す。空振りでは消費しない。睡眠アイテムを要求しない。 発動した行動そのものには攻撃補正を与えず、次の別行動の命中から適用。1行動につき進行は1回、時間は60tick/秒。"
+  },
+  "appearance": {
+    "silhouette": "細い紫灰の襟から軽い胴へつなぎ、腰後ろの低い三つの露珠袋だけが丸い。前と肩は細く背下に重さを置く。",
+    "armorParts": {
+      "head": "淡紫灰の低い額帯、頭に珠を付けない",
+      "chest": "細い襟と薄い胸皮。首の前面は大きく開ける",
+      "arms": "前腕外に短い露膜一枚、手首は細い帯だけ",
+      "waist": "腰後ろへ低く下がる露珠袋三つ。左右同列で脚へ接触しない",
+      "legs": "灰緑の細い脛革。珠袋は脚へ増やさない"
+    },
+    "weaponShapes": {
+      "heavy_blade": "刃元背面に三小珠を低く収める霧の片刃",
+      "guard_blade": "細い霧刃と、盾の下縁裏へ三小珠を置く硬盾",
+      "war_maul": "閉じた硬骨打頭の下面に三小珠。打面に袋を使わない",
+      "twin_blades": "刃元の小珠を二つと一つへ分けた二短刃。重さは同じ",
+      "long_blade": "鞘口の後ろに三つの低い露留めを付ける曲刃",
+      "long_lance": "直槍の根元へ三小珠、盾下縁に短い露膜",
+      "ring_bow": "握り下へ三小珠を短く固定。細い弓身、直線弦一本、小環"
+    },
+    "production": {
+      "primaryForm": "細襟と低い三珠",
+      "secondaryForm": "淡い露膜と細い琥珀縁",
+      "dominantRegion": "腰後ろ",
+      "asymmetry": "珠は背下中央、肩は低く均等",
+      "repeatCount": "主露珠3",
+      "gripRule": "採用済み武器系統の握り位置・刃長・リーチを保持。手指は閉じずに通せる。装飾に当たり判定を足さない。",
+      "jointClearance": "首の振り向き、肩上げ、肘屈曲、手首、股関節、膝、足首の内側を空ける。最大可動域は共通リグで別途検査。"
+    },
+    "gradeEvolution": {
+      "2": "腰後ろ三珠を淡い紫灰で低く揃え、襟は細い。",
+      "3": "三珠の各根元へ二重の細い留めを足す。",
+      "4": "露膜の内縁だけ琥珀の細線。珠の数と腰後ろの位置は維持。"
+    },
+    "skillCue": {
+      "location": "腰後ろ三珠の細い縁",
+      "inactive": "淡紫灰の閉じた縁",
+      "active": "納刀完了で三縁だけ鈍く琥珀色へ",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "露珠を胸・肩・正面腰へ移さない",
+      "三つ以外の大珠を増やさない",
+      "眠りを無条件付与したり睡眠薬必須にしない"
+    ],
+    "palette": [
+      "淡い紫灰",
+      "灰緑",
+      "琥珀の細縁"
+    ],
+    "organTranslation": [
+      "尾節の二重露腺が霧の水滴を集め、餌の菌から得た眠気を誘う成分を薄く混ぜる。尾節が順に膨らんだ後だけ、狭い帯へ霧を散らす。",
+      "尾の三露珠を腰後ろへ低く置く。細首は襟で示し、珠を頭や肩へ移さない。",
+      "明け方に露を集めて風下で保つ習性を、高スタミナの納刀で一手だけ保つ霧へ。"
+    ]
+  }
+}

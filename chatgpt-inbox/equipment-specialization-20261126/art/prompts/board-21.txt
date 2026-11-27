@@ -1,0 +1,43 @@
+Use case: stylized-concept. Original fantasy game VEILBOUND HUNTERS equipment comparison board, rebuilt production reference.
+Create a polished wide landscape 2:1 illustration divided into 4 equal vertical panels, warm pale parchment background, thin quiet panel separators. Heading exactly "VEILBOUND HUNTERS". Every panel contains ONE full-body ADULT hunter mannequin wearing all five armor parts, and exactly TWO representative weapon-family sets neatly displayed separately beside the mannequin. Full helmet, torso, arms, waist and both feet visible, with generous head/foot margins. No cropped props, no labels beyond the specified panel labels, no other creatures or figures. Poses quiet and readable; three-quarter view chosen to show the stated asymmetry and rear-waist details. Mannequin unisex adult proportions, plain gray faceless head, no exposed skin emphasis.
+Visual style: grounded handcrafted original hunting-fantasy costume concept, like matte leather and weathered bone with stone shell and muted bronze fittings, subtle olive/gray/blue/purple organic coloration, restrained amber accent edges, realistic material rendering with soft studio light, no glossy plastic, no cyberpunk, no ornate golden knight costume. Clear structural silhouette, no battle scene. Equipment is fictional visual prop design only. Preserve a small number of meaningful anatomy-derived volumes; do not add generic spikes, horns, wings or large capes. Tiny skill cue glows at most 4% of armor surface.
+Weapon definitions are literal: swords retain real sword silhouettes in the fictional game, mauls have closed hard faces, shields have solid rigid backing, twin swords are exactly two swords, lance is straight with its own separate shield, bow is slender with one straight string and a small aiming ring, never a circular disc or crossbow. Use TWO family sets per panel, no extra weapon families. Separate props enough to identify every silhouette.
+
+PANEL 1, label exactly "081 ZACLATOM". Slight three-quarter front view; anatomical left/right belong to the wearer, not the viewer.
+Species-specific armor silhouette: 左襟だけ細長い三角を立て、灰褐の胴を細くする。短い扇板を後腰へ広げる。
+Palette: 灰褐, 琥珀, 青銅
+Armor five regions: head: 小兜の左頬を低い三角襟へつなぐ; chest: 細い灰褐胸甲、熱筋は左襟の内だけ; arms: 灰翼腱を縦に張る薄い腕甲; waist: 後腰に短い扇板、腿裏へ長く下げない; legs: 小さな扇片を膝脛へ低く分ける
+Critical shape/count constraints: 三角は左側のみ; 主三角1、内側熱筋2
+Prop slender slightly curved long sword: 刃元の低い三角鍔から伸びる細長い太刀
+Prop slender traditional bow with ONE straight string and ONE small sight ring; arrow beside it: 握り周りに小三角室、細い弓身・小環・一本の直線弦
+Avoid visual errors: 右襟にも同寸の三角を増やす形; 炎の翼や全面の赤熱表現
+
+PANEL 2, label exactly "082 IZOFLANE". Slight three-quarter front view; anatomical left/right belong to the wearer, not the viewer.
+Species-specific armor silhouette: 胸下の二皿を横へずらし、右前腕と右脛を細長くする。皿同士の段差が正面でも見える。
+Palette: 灰緑, 灰青, 青銅
+Armor five regions: head: 嘴片を短く置いた低い額; chest: 胸下に灰緑の二皿、左皿を少し高くずらす; arms: 右腕へ皿甲を寄せ、左腕は細い甲; waist: 皿筋だけを腰の短板へつなぐ; legs: 右脛は長い一枚、左は短い二枚、足首の可動は同じ
+Critical shape/count constraints: 左皿は高い、右脛だけ長い; 主皿2
+Prop short sword AND its independent rigid shield: 細い水溝剣と、ずれた二皿を硬い裏面で支える盾
+Prop long straight pointed lance AND its independent rigid shield: 直槍の刃元に二枚縁、独立盾の中央にずれた二皿
+Avoid visual errors: 胸皿のずれを消して一枚板にする形; 右脛甲が足首まで固定する形
+
+PANEL 3, label exactly "083 QUERIBAS". Slight three-quarter front view; anatomical left/right belong to the wearer, not the viewer.
+Species-specific armor silhouette: 前半身の左側だけ短い櫛、背腰は平面。琥珀は櫛先の点だけで灰青の面を保つ。
+Palette: 灰青, 暗灰, 琥珀の点
+Armor five regions: head: 左額だけ三つの短櫛、右額は平ら; chest: 胸は灰青の平節甲、背を滑らかに閉じる; arms: 左前腕外に短櫛三つ、右は平甲。両手首を空ける; waist: 短い平節帯で腰を囲み棘を増やさない; legs: 脛に小さな平甲、脚へ櫛を移さない
+Critical shape/count constraints: 左前だけ櫛、背と右は平面; 額櫛3、前腕櫛3
+Prop TWO matched short swords, one family: 同長二剣の峰に短い三櫛、刃先の線を途切れさせない
+Prop slender slightly curved long sword: 左側の刃元へ低い三櫛を置き鞘と干渉させない太刀
+Avoid visual errors: 背や右肩まで櫛を増やす形; 櫛を長くして武器判定や防具外形を広げる形
+Precisely three SHORT comb protrusions on left forehead and three on LEFT forearm; no comb anywhere else.
+
+PANEL 4, label exactly "084 ENAGRIO". Three-quarter rear-side view, showing the dominant rear/collar/waist structures without hiding both arms.
+Species-specific armor silhouette: 首の後ろだけ三段の礫環を高め、胴腰を滑らかに絞る。粒は襟の内側へ隠す。
+Palette: 灰褐, 青銅, 暗灰
+Armor five regions: head: 三段襟を頭後ろへ積み額は低い板; chest: 滑らかな灰褐の細胴、胸面に粒を散らさない; arms: 小さい細尾片を前腕の外へ一枚; waist: 環骨留め一つの細い腰帯; legs: 短い脛甲の内側へ礫室を収める
+Critical shape/count constraints: 後ろだけ高く前襟は低い; 礫環3
+Prop long straight pointed lance AND its independent rigid shield: 三つの低環で刃元を支える直槍と三段襟の独立盾
+Prop slender traditional bow with ONE straight string and ONE small sight ring; arrow beside it: 三つの低い留めを細い弓身へ、小照準環と一本の直線弦
+Avoid visual errors: 礫粒を身体全体へ散りばめる形; 三段襟を頭上の三輪へ浮かせる表現
+
+Final framing: all feet and all prop endpoints inside each panel. Balanced whitespace, each species unmistakably different. No game stats, no schematic measurements, no exploding mechanisms, no real-world instructions. This is a static concept comparison, not all-grade or all-seven-family coverage.

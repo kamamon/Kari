@@ -1,0 +1,203 @@
+{
+  "no": 43,
+  "speciesId": "monster.ryuzelka",
+  "name": "リュゼルカ",
+  "nativeRank": 3,
+  "identity": {
+    "role": "低スタミナで二度避けて冷風を集約",
+    "ecologyBasis": "原種の分割角膜が上下二層へ分かれた双帆冷腺。上層で風を受け、下層の揮発液で冷やした微細な氷粒を狭い扇へ流す。 セルヴァルクの一部で角膜の分岐が二重になった希少個体である。見張り場と採食斜面を歩いて巡り、逃げ道を塞がれた時だけ跳びかかる。",
+    "combatLoop": "スタミナ40%以下で二度接触を回避→次の別行動で冷風と会心を集中→薄い防御を補う位置へ退く。",
+    "strength": "同級基準の物理倍率0.78、会心率+20ポイント。既存のwind/ice属性量を1.85倍。固有技能「双帆の冷気すり替え」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "物理基礎倍率0.78（同級基準比22%低い。系統補正前）、刃容量0.82倍、刃消耗1.35倍、防具一式の基準防御力0.75倍。弱点耐性は一式でfire -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "ring_bow",
+      "twin_blades",
+      "long_blade"
+    ],
+    "avoidUse": "回避入力だけを二度数える運用と被弾覚悟の殴り合い。"
+  },
+  "stats": {
+    "rawScale": 0.78,
+    "affinity": 20,
+    "elementScale": 1.85,
+    "statusScale": 0,
+    "edgeCapacityScale": 0.82,
+    "edgeWearScale": 1.35,
+    "staminaCostScale": 0.92,
+    "defenseScale": 0.75,
+    "familyBias": {
+      "heavy_blade": 0.98,
+      "guard_blade": 0.98,
+      "war_maul": 0.98,
+      "twin_blades": 1.02,
+      "long_blade": 1.02,
+      "long_lance": 0.98,
+      "ring_bow": 1.04
+    },
+    "slotWeights": {
+      "head": 0.14,
+      "chest": 0.22,
+      "arms": 0.23,
+      "waist": 0.16,
+      "legs": 0.25
+    },
+    "setResistances": {
+      "fire": -20,
+      "thunder": 0,
+      "ice": 20,
+      "water": 20,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "dodge_economy",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "weak_crit",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "dodge_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.ryuzelka",
+    "name": "双帆の冷風返し",
+    "trigger": {
+      "event": "dodge",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "敵の接触をすり抜け、上下二層の帆が整った後の一撃へ風氷を渡す。 回避入力ではなく、敵の接触を回避の無敵時間で実際に避けた時だけ数える。 300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、480tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.ryuzelka",
+    "name": "双帆の冷気すり替え",
+    "trigger": {
+      "event": "dodge",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 40
+    },
+    "hitsRequired": 2,
+    "windowTicks": 300,
+    "cooldownTicks": 720,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": false,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "affinityPoints",
+        "values": [
+          8,
+          12
+        ]
+      }
+    ],
+    "explanation": "スタミナ40%以下で二度接触を避け、上下の帆を入れ替える。次の別行動だけ風氷と会心へ集中する。 回避入力ではなく、敵の接触を回避の無敵時間で実際に避けた時だけ数える。 300tick以内に異なる行動で2回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、720tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "肩の二つの薄帆が上下にずれ、細い胴から高く見える脚へ抜ける。頭は小さく、頭上に帆角を巨大化させない。",
+    "palette": [
+      "灰青",
+      "白氷",
+      "生成り"
+    ],
+    "organTranslation": [
+      "上下二層の帆角→左右肩で高さをずらした二つの薄帆",
+      "下層の冷腺→帆の下縁の小白膜",
+      "高い後肢→長く見える細い脛と短い腰"
+    ],
+    "armorParts": {
+      "head": "細い頭鉢の上に小さい二枚の低鰭。肩帆より十分小さくする",
+      "chest": "細い胸衣と短い背板。左肩を高く右肩を低くした薄帆を一枚ずつ",
+      "arms": "前腕は細い一本甲。肩帆から腕へ膜を渡さず、脇を開ける",
+      "waist": "短い後腰膜を後ろへ畳む。前腰は薄い帯で脚を長く見せる",
+      "legs": "細い長脛甲と小さい膝板。踵へ白い膜縁を短く置く"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の根元で上下にずれた二枚帆を伏せ、連続刃を細く保つ",
+      "guard_blade": "二段の薄い片鍔の剣と、上左・下右に薄帆面を分けた硬い盾",
+      "war_maul": "上下にずれた白膜窓を側面に持つ小さめの閉じた槌頭",
+      "twin_blades": "二本の細刃の峰の帆位置を上下にずらすが、全長と重心は揃える",
+      "long_blade": "細い湾曲刃の根元に上下二筋の帆縁。鞘の中へ収まる低さ",
+      "long_lance": "直槍の根元に二層の薄い帆筋。盾面の左右を上下に少しずらす",
+      "ring_bow": "中央の上下へ小さな帆を一枚ずつ。しなる弓端と一本弦、小照準環を帆から独立させる"
+    },
+    "gradeEvolution": {
+      "3": "灰青の二帆を異なる高さに置く。白氷は下縁、生成りは短い腰膜。",
+      "4": "二帆の下縁へ独立した細い冷筋を追加。帆の数と低さを保ち、脚を太くしない。"
+    },
+    "production": {
+      "primaryForm": "上下にずれた二帆",
+      "secondaryForm": "長く細い脚",
+      "dominantRegion": "両肩",
+      "asymmetry": "左帆が高く、右帆が低い",
+      "repeatCount": 2,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "肩帆の下縁の白膜",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "頭の鰭を肩帆より大きくしない",
+      "大きな鳥翼を背へ付けない",
+      "全身を透明な氷鎧にしない"
+    ]
+  }
+}

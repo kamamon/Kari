@@ -1,0 +1,203 @@
+{
+  "no": 54,
+  "speciesId": "monster.zedbanil",
+  "name": "ゼドバニル",
+  "nativeRank": 3,
+  "identity": {
+    "role": "二度受けて胸炉を開く雷の攻勢装",
+    "ecologyBasis": "熾炉の組織から変化した二層の銅炉導膜。熱を逃がしながら発電細胞の電位を蓄え、胸板を開くと前脚側の短い導管へ放電する。 エンバルグから冷たい鉱洞へ適応し、蓄熱より放電が発達した亜種である。採食場と滴水場を歩いて巡り、胸板を開く警告後に攻撃する。",
+    "combatLoop": "同じ敵を二度受ける→胸炉を開いて雷で反撃→開いた胸板の被ダメージ増を回避位置で補う。",
+    "strength": "同級基準の物理倍率0.94、会心率-10ポイント。既存のthunder属性量を1.60倍。固有技能「銅炉二層の開電」は同系列2部位でLv1、4部位でLv2。",
+    "weakness": "物理基礎倍率0.94（同級基準比6%低い。系統補正前）、会心率-10ポイント、刃消耗1.20倍、回避・ガード・ため維持など元々費用を持つ戦闘行動のスタミナ消費1.14倍。弱点耐性は一式でfire -20。形状による当たり判定・リーチの優遇はない。",
+    "recommendedFamilies": [
+      "guard_blade",
+      "heavy_blade",
+      "long_lance"
+    ],
+    "avoidUse": "開炉中も被ダメージ増を無視して受け続ける運用。"
+  },
+  "stats": {
+    "rawScale": 0.94,
+    "affinity": -10,
+    "elementScale": 1.6,
+    "statusScale": 0,
+    "edgeCapacityScale": 1.12,
+    "edgeWearScale": 1.2,
+    "staminaCostScale": 1.14,
+    "defenseScale": 1.04,
+    "familyBias": {
+      "heavy_blade": 1.02,
+      "guard_blade": 1.04,
+      "war_maul": 0.98,
+      "twin_blades": 0.98,
+      "long_blade": 0.98,
+      "long_lance": 1.02,
+      "ring_bow": 0.98
+    },
+    "slotWeights": {
+      "head": 0.14,
+      "chest": 0.34,
+      "arms": 0.25,
+      "waist": 0.15,
+      "legs": 0.12
+    },
+    "setResistances": {
+      "fire": -20,
+      "thunder": 20,
+      "ice": 20,
+      "water": 0,
+      "wind": 0,
+      "mist": 0
+    }
+  },
+  "commonSkills": {
+    "head": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "chest": {
+      "id": "guard_economy",
+      "parameters": {}
+    },
+    "arms": {
+      "id": "part_damage",
+      "parameters": {}
+    },
+    "waist": {
+      "id": "element_tuning",
+      "parameters": {}
+    },
+    "legs": {
+      "id": "guard_economy",
+      "parameters": {}
+    }
+  },
+  "weaponTrait": {
+    "id": "weapon_trait.zedbanil",
+    "name": "銅炉の返電",
+    "trigger": {
+      "event": "parry",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 1,
+    "windowTicks": 300,
+    "cooldownTicks": 480,
+    "durationTicks": 180,
+    "consumeOnHit": true,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          6,
+          6
+        ]
+      }
+    ],
+    "explanation": "受け流しで二層の導膜を切り替え、次の別行動へ雷を流す。  300tick以内に異なる行動で1回。HP・スタミナ条件は行動費用確定後の残量%。発動から180tick有効、480tick再使用。攻撃への補正は起点と別の次行動から有効。次の適合する別行動の初命中で消費し、同じ行動の多段命中には共通の補正を使う。空振りでは消費しない。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "signature": {
+    "id": "signature.zedbanil",
+    "name": "銅炉二層の開電",
+    "trigger": {
+      "event": "guard",
+      "tagsAll": [],
+      "tagsAny": [],
+      "hpMin": 0,
+      "hpMax": 100,
+      "staminaMin": 0,
+      "staminaMax": 100
+    },
+    "hitsRequired": 2,
+    "windowTicks": 300,
+    "cooldownTicks": 600,
+    "durationTicks": 240,
+    "consumeOnHit": false,
+    "sameTarget": true,
+    "resetOn": [
+      "damage_taken",
+      "sheathe",
+      "target_change"
+    ],
+    "effects": [
+      {
+        "stat": "elementPct",
+        "values": [
+          12,
+          16
+        ]
+      },
+      {
+        "stat": "incomingDamagePct",
+        "values": [
+          6,
+          10
+        ]
+      }
+    ],
+    "explanation": "同じ敵を二度受けて胸炉の左右を開く。雷が増す一方で開いた胸板が被ダメージを増やす。削りを被弾トリガーとして重複計上しない。  300tick以内に異なる行動で2回。HP・スタミナ条件は行動費用確定後の残量%。発動から240tick有効、600tick再使用。攻撃への補正は起点と別の次行動から有効。蓄積と効果は同じ敵個体に限定。解除しても再使用時間は戻さない。"
+  },
+  "appearance": {
+    "silhouette": "左右へ低く開く二枚の青銅胸板が主役。背中を低くし、厚い灰黒の胴から前腕へ短い導管線を伏せる。",
+    "palette": [
+      "灰黒",
+      "青銅",
+      "琥珀"
+    ],
+    "organTranslation": [
+      "二層銅炉導膜→胸の左右二枚板と内側の二短線",
+      "前脚側の導管→胸から前腕へ分離した短い琥珀線",
+      "低い背排気口→背上の小さい平らな開口縁"
+    ],
+    "armorParts": {
+      "head": "低い灰黒の兜、額の左右へ短い青銅片。頭頂の煙突を作らない",
+      "chest": "左右二枚の青銅胸板を低く開く。胸中央は細い灰黒の硬面で閉じる",
+      "arms": "外側に琥珀の導管線を伏せた厚い短甲。肘を横断する管は付けない",
+      "waist": "前後の短い灰黒板。後腰は小さい平縁で背を高くしない",
+      "legs": "厚い冷銅脛甲と丸い小膝板。足首の前を短い別甲に分ける"
+    },
+    "weaponShapes": {
+      "heavy_blade": "峰の刃元に左右へ低く開く二枚板。灰黒の連続刃へ細い琥珀線一本",
+      "guard_blade": "二枚の青銅鍔の剣と、中央を硬面で閉じた二層の開き胸板盾",
+      "war_maul": "左右の硬い打面の間に二層の導膜。側面窓は低く、発射口を作らない",
+      "twin_blades": "二本の刃元に同じ低い二層板。導管は峰に伏せて指へ掛けない",
+      "long_blade": "細い連続刃の根元に二枚の低い青銅板。導線は鞘に触れない内側",
+      "long_lance": "直槍の根元へ二層導膜の覆い、盾は左右へ低い胸板型",
+      "ring_bow": "中央に低い二枚の青銅板。細い弓端へ導線を短く伏せ、一本弦と小環を独立させる"
+    },
+    "gradeEvolution": {
+      "3": "灰黒の厚胴と青銅二胸板。琥珀は内側の二線だけ。",
+      "4": "二層膜を短い段差で見せ、前腕の細線を小窓で区切る。背の高さを増やさない。"
+    },
+    "production": {
+      "primaryForm": "左右二枚の胸炉板",
+      "secondaryForm": "前腕の低い導管",
+      "dominantRegion": "胸と前腕",
+      "asymmetry": "左右対称の二枚開き",
+      "repeatCount": 2,
+      "jointClearance": "首の左右回旋、脇、肘内側、手首、膝裏、足首を開ける。装飾は身体寄りに伏せ、実装済みの握り・リグ可動域・攻撃判定を変更しない。",
+      "gripRule": "全7系統の既存の握り位置と有効長を保つ。護刃と長尖槍は独立盾。双剣は二本。大槌の打面は閉じた硬面。環弓は一本の直線弦・細い弓身・小照準環・矢を保つ。"
+    },
+    "skillCue": {
+      "location": "胸板の内側の二本導膜",
+      "inactive": "主材と同じ鈍い色で線を閉じ、待機中は常時発光させない。",
+      "active": "固有技能の蓄積では主反復形の小窓を順に淡く示し、成立時だけ細い縁を点灯。効果終了で静かに戻す。HUDの残り時間と同じ状態を参照する。",
+      "maxLitSurfacePercent": 4
+    },
+    "avoid": [
+      "胸の中央に大きな穴を開けない",
+      "原種の炎炉や高い排気塔を残さない",
+      "導管を肘の内側へ渡さない"
+    ]
+  }
+}
