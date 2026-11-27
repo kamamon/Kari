@@ -1,0 +1,1123 @@
+{
+  "joints": 77,
+  "animationClips": 53,
+  "materials": 8,
+  "vertices": 98863,
+  "triangles": 171772,
+  "stats": {
+    "hide": {
+      "vertices": 52073,
+      "triangles": 91820
+    },
+    "mouth": {
+      "vertices": 918,
+      "triangles": 1560
+    },
+    "keratin": {
+      "vertices": 20788,
+      "triangles": 35936
+    },
+    "tooth": {
+      "vertices": 3212,
+      "triangles": 5280
+    },
+    "eye": {
+      "vertices": 918,
+      "triangles": 1560
+    },
+    "pupil": {
+      "vertices": 1248,
+      "triangles": 2064
+    },
+    "membrane": {
+      "vertices": 2106,
+      "triangles": 3952
+    },
+    "feather": {
+      "vertices": 17600,
+      "triangles": 29600
+    }
+  },
+  "clips": [
+    {
+      "name": "sg_idle",
+      "durationTicks": 120,
+      "loop": true,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_walk",
+      "durationTicks": 48,
+      "loop": true,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_trot",
+      "durationTicks": 36,
+      "loop": true,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_sprint",
+      "durationTicks": 28,
+      "loop": true,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_brake",
+      "durationTicks": 56,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_turn_l",
+      "durationTicks": 60,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_turn_r",
+      "durationTicks": 60,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_pivot_l",
+      "durationTicks": 40,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_pivot_r",
+      "durationTicks": 40,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_backstep",
+      "durationTicks": 55,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_limp",
+      "durationTicks": 80,
+      "loop": true,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_look_around",
+      "durationTicks": 150,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_sniff",
+      "durationTicks": 100,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_eat",
+      "durationTicks": 120,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_drink",
+      "durationTicks": 120,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_sleep_enter",
+      "durationTicks": 120,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_sleep_loop",
+      "durationTicks": 180,
+      "loop": true,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_sleep_exit",
+      "durationTicks": 105,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_blink",
+      "durationTicks": 24,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_preen",
+      "durationTicks": 150,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_bite",
+      "durationTicks": 64,
+      "loop": false,
+      "hitWindows": [
+        [
+          24,
+          31
+        ]
+      ]
+    },
+    {
+      "name": "sg_double_bite",
+      "durationTicks": 112,
+      "loop": false,
+      "hitWindows": [
+        [
+          26,
+          33
+        ],
+        [
+          56,
+          63
+        ]
+      ]
+    },
+    {
+      "name": "sg_dash",
+      "durationTicks": 144,
+      "loop": false,
+      "hitWindows": [
+        [
+          30,
+          96
+        ]
+      ]
+    },
+    {
+      "name": "sg_pounce",
+      "durationTicks": 132,
+      "loop": false,
+      "hitWindows": [
+        [
+          36,
+          52
+        ]
+      ]
+    },
+    {
+      "name": "sg_jump_kick",
+      "durationTicks": 120,
+      "loop": false,
+      "hitWindows": [
+        [
+          38,
+          53
+        ]
+      ]
+    },
+    {
+      "name": "sg_tail_sweep_l",
+      "durationTicks": 100,
+      "loop": false,
+      "hitWindows": [
+        [
+          32,
+          48
+        ]
+      ]
+    },
+    {
+      "name": "sg_tail_sweep_r",
+      "durationTicks": 100,
+      "loop": false,
+      "hitWindows": [
+        [
+          32,
+          48
+        ]
+      ]
+    },
+    {
+      "name": "sg_turn_bite",
+      "durationTicks": 88,
+      "loop": false,
+      "hitWindows": [
+        [
+          30,
+          40
+        ]
+      ]
+    },
+    {
+      "name": "sg_side_strike_l",
+      "durationTicks": 96,
+      "loop": false,
+      "hitWindows": [
+        [
+          28,
+          40
+        ]
+      ]
+    },
+    {
+      "name": "sg_side_strike_r",
+      "durationTicks": 96,
+      "loop": false,
+      "hitWindows": [
+        [
+          28,
+          40
+        ]
+      ]
+    },
+    {
+      "name": "sg_triple_dash",
+      "durationTicks": 240,
+      "loop": false,
+      "hitWindows": [
+        [
+          38,
+          64
+        ],
+        [
+          105,
+          130
+        ],
+        [
+          172,
+          197
+        ]
+      ]
+    },
+    {
+      "name": "sg_pack_call",
+      "durationTicks": 96,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_fatigue_enter",
+      "durationTicks": 40,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_fatigue_pant_loop",
+      "durationTicks": 90,
+      "loop": true,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_fatigue_recover",
+      "durationTicks": 50,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_fatigue_full",
+      "durationTicks": 600,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_flinch_head",
+      "durationTicks": 46,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_flinch_body",
+      "durationTicks": 46,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_flinch_leg_l",
+      "durationTicks": 55,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_flinch_leg_r",
+      "durationTicks": 55,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_flinch_tail",
+      "durationTicks": 52,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_fall_l",
+      "durationTicks": 95,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_fall_r",
+      "durationTicks": 95,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_rise",
+      "durationTicks": 115,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_break_crest",
+      "durationTicks": 75,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_break_spine",
+      "durationTicks": 75,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_sever_tail",
+      "durationTicks": 92,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_rage_roar",
+      "durationTicks": 85,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_stun",
+      "durationTicks": 180,
+      "loop": true,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_paralysis",
+      "durationTicks": 180,
+      "loop": true,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_trap",
+      "durationTicks": 240,
+      "loop": true,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_capture",
+      "durationTicks": 120,
+      "loop": false,
+      "hitWindows": []
+    },
+    {
+      "name": "sg_death",
+      "durationTicks": 180,
+      "loop": false,
+      "hitWindows": []
+    }
+  ],
+  "rig": [
+    {
+      "name": "root",
+      "parent": null,
+      "restM": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "pelvis",
+      "parent": "root",
+      "restM": [
+        0.0,
+        1.17,
+        -0.36
+      ]
+    },
+    {
+      "name": "body",
+      "parent": "pelvis",
+      "restM": [
+        0.0,
+        1.34,
+        -0.15
+      ]
+    },
+    {
+      "name": "lumbar",
+      "parent": "body",
+      "restM": [
+        0.0,
+        1.39,
+        0.03
+      ]
+    },
+    {
+      "name": "chest",
+      "parent": "lumbar",
+      "restM": [
+        0.0,
+        1.47,
+        0.42
+      ]
+    },
+    {
+      "name": "neck_01",
+      "parent": "chest",
+      "restM": [
+        0.0,
+        1.65,
+        0.72
+      ]
+    },
+    {
+      "name": "neck_02",
+      "parent": "neck_01",
+      "restM": [
+        0.0,
+        1.84,
+        0.94
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "neck_02",
+      "restM": [
+        0.0,
+        1.87,
+        1.18
+      ]
+    },
+    {
+      "name": "jaw",
+      "parent": "head",
+      "restM": [
+        0.0,
+        1.73,
+        1.22
+      ]
+    },
+    {
+      "name": "tongue_01",
+      "parent": "jaw",
+      "restM": [
+        0.0,
+        1.72,
+        1.32
+      ]
+    },
+    {
+      "name": "tongue_02",
+      "parent": "tongue_01",
+      "restM": [
+        0.0,
+        1.71,
+        1.5
+      ]
+    },
+    {
+      "name": "eye_l",
+      "parent": "head",
+      "restM": [
+        0.125,
+        1.91,
+        1.32
+      ]
+    },
+    {
+      "name": "eye_r",
+      "parent": "head",
+      "restM": [
+        -0.125,
+        1.91,
+        1.32
+      ]
+    },
+    {
+      "name": "lid_l",
+      "parent": "head",
+      "restM": [
+        0.125,
+        1.91,
+        1.32
+      ]
+    },
+    {
+      "name": "lid_r",
+      "parent": "head",
+      "restM": [
+        -0.125,
+        1.91,
+        1.32
+      ]
+    },
+    {
+      "name": "snout",
+      "parent": "head",
+      "restM": [
+        0.0,
+        1.8,
+        1.58
+      ]
+    },
+    {
+      "name": "hind_upper_l",
+      "parent": "pelvis",
+      "restM": [
+        0.265,
+        1.2,
+        -0.3
+      ]
+    },
+    {
+      "name": "hind_lower_l",
+      "parent": "hind_upper_l",
+      "restM": [
+        0.32,
+        0.78,
+        0.07
+      ]
+    },
+    {
+      "name": "hock_l",
+      "parent": "hind_lower_l",
+      "restM": [
+        0.33,
+        0.41,
+        -0.42
+      ]
+    },
+    {
+      "name": "metatarsus_l",
+      "parent": "hock_l",
+      "restM": [
+        0.33,
+        0.13,
+        -0.05
+      ]
+    },
+    {
+      "name": "toe_inner_l",
+      "parent": "metatarsus_l",
+      "restM": [
+        0.23,
+        0.075,
+        0.12
+      ]
+    },
+    {
+      "name": "toe_inner_tip_l",
+      "parent": "toe_inner_l",
+      "restM": [
+        0.23,
+        0.045,
+        0.29000000000000004
+      ]
+    },
+    {
+      "name": "toe_middle_l",
+      "parent": "metatarsus_l",
+      "restM": [
+        0.33,
+        0.075,
+        0.16
+      ]
+    },
+    {
+      "name": "toe_middle_tip_l",
+      "parent": "toe_middle_l",
+      "restM": [
+        0.33,
+        0.045,
+        0.33
+      ]
+    },
+    {
+      "name": "toe_outer_l",
+      "parent": "metatarsus_l",
+      "restM": [
+        0.43,
+        0.075,
+        0.1
+      ]
+    },
+    {
+      "name": "toe_outer_tip_l",
+      "parent": "toe_outer_l",
+      "restM": [
+        0.43,
+        0.045,
+        0.27
+      ]
+    },
+    {
+      "name": "toe_rear_l",
+      "parent": "metatarsus_l",
+      "restM": [
+        0.34,
+        0.095,
+        -0.18
+      ]
+    },
+    {
+      "name": "hind_twist_l",
+      "parent": "hind_lower_l",
+      "restM": [
+        0.325,
+        0.58,
+        -0.15
+      ]
+    },
+    {
+      "name": "fore_upper_l",
+      "parent": "chest",
+      "restM": [
+        0.23,
+        1.47,
+        0.42
+      ]
+    },
+    {
+      "name": "fore_lower_l",
+      "parent": "fore_upper_l",
+      "restM": [
+        0.32,
+        1.22,
+        0.27
+      ]
+    },
+    {
+      "name": "wrist_l",
+      "parent": "fore_lower_l",
+      "restM": [
+        0.34,
+        1.08,
+        0.55
+      ]
+    },
+    {
+      "name": "palm_l",
+      "parent": "wrist_l",
+      "restM": [
+        0.34,
+        1.02,
+        0.64
+      ]
+    },
+    {
+      "name": "digit_1_l",
+      "parent": "palm_l",
+      "restM": [
+        0.294,
+        0.98,
+        0.68
+      ]
+    },
+    {
+      "name": "digit_2_l",
+      "parent": "palm_l",
+      "restM": [
+        0.34,
+        0.98,
+        0.68
+      ]
+    },
+    {
+      "name": "digit_3_l",
+      "parent": "palm_l",
+      "restM": [
+        0.386,
+        0.98,
+        0.68
+      ]
+    },
+    {
+      "name": "hind_upper_r",
+      "parent": "pelvis",
+      "restM": [
+        -0.265,
+        1.2,
+        -0.3
+      ]
+    },
+    {
+      "name": "hind_lower_r",
+      "parent": "hind_upper_r",
+      "restM": [
+        -0.32,
+        0.78,
+        0.07
+      ]
+    },
+    {
+      "name": "hock_r",
+      "parent": "hind_lower_r",
+      "restM": [
+        -0.33,
+        0.41,
+        -0.42
+      ]
+    },
+    {
+      "name": "metatarsus_r",
+      "parent": "hock_r",
+      "restM": [
+        -0.33,
+        0.13,
+        -0.05
+      ]
+    },
+    {
+      "name": "toe_inner_r",
+      "parent": "metatarsus_r",
+      "restM": [
+        -0.23,
+        0.075,
+        0.12
+      ]
+    },
+    {
+      "name": "toe_inner_tip_r",
+      "parent": "toe_inner_r",
+      "restM": [
+        -0.23,
+        0.045,
+        0.29000000000000004
+      ]
+    },
+    {
+      "name": "toe_middle_r",
+      "parent": "metatarsus_r",
+      "restM": [
+        -0.33,
+        0.075,
+        0.16
+      ]
+    },
+    {
+      "name": "toe_middle_tip_r",
+      "parent": "toe_middle_r",
+      "restM": [
+        -0.33,
+        0.045,
+        0.33
+      ]
+    },
+    {
+      "name": "toe_outer_r",
+      "parent": "metatarsus_r",
+      "restM": [
+        -0.43,
+        0.075,
+        0.1
+      ]
+    },
+    {
+      "name": "toe_outer_tip_r",
+      "parent": "toe_outer_r",
+      "restM": [
+        -0.43,
+        0.045,
+        0.27
+      ]
+    },
+    {
+      "name": "toe_rear_r",
+      "parent": "metatarsus_r",
+      "restM": [
+        -0.34,
+        0.095,
+        -0.18
+      ]
+    },
+    {
+      "name": "hind_twist_r",
+      "parent": "hind_lower_r",
+      "restM": [
+        -0.325,
+        0.58,
+        -0.15
+      ]
+    },
+    {
+      "name": "fore_upper_r",
+      "parent": "chest",
+      "restM": [
+        -0.23,
+        1.47,
+        0.42
+      ]
+    },
+    {
+      "name": "fore_lower_r",
+      "parent": "fore_upper_r",
+      "restM": [
+        -0.32,
+        1.22,
+        0.27
+      ]
+    },
+    {
+      "name": "wrist_r",
+      "parent": "fore_lower_r",
+      "restM": [
+        -0.34,
+        1.08,
+        0.55
+      ]
+    },
+    {
+      "name": "palm_r",
+      "parent": "wrist_r",
+      "restM": [
+        -0.34,
+        1.02,
+        0.64
+      ]
+    },
+    {
+      "name": "digit_1_r",
+      "parent": "palm_r",
+      "restM": [
+        -0.294,
+        0.98,
+        0.68
+      ]
+    },
+    {
+      "name": "digit_2_r",
+      "parent": "palm_r",
+      "restM": [
+        -0.34,
+        0.98,
+        0.68
+      ]
+    },
+    {
+      "name": "digit_3_r",
+      "parent": "palm_r",
+      "restM": [
+        -0.386,
+        0.98,
+        0.68
+      ]
+    },
+    {
+      "name": "tail_01",
+      "parent": "pelvis",
+      "restM": [
+        0.0,
+        1.4,
+        -0.61
+      ]
+    },
+    {
+      "name": "tail_02",
+      "parent": "tail_01",
+      "restM": [
+        0.0,
+        1.4218929240104212,
+        -0.9279999999999999
+      ]
+    },
+    {
+      "name": "tail_03",
+      "parent": "tail_02",
+      "restM": [
+        0.0,
+        1.4400731070940107,
+        -1.246
+      ]
+    },
+    {
+      "name": "tail_04",
+      "parent": "tail_03",
+      "restM": [
+        0.0,
+        1.4512756196739327,
+        -1.564
+      ]
+    },
+    {
+      "name": "tail_05",
+      "parent": "tail_04",
+      "restM": [
+        0.0,
+        1.453077142215543,
+        -1.8820000000000001
+      ]
+    },
+    {
+      "name": "tail_06",
+      "parent": "tail_05",
+      "restM": [
+        0.0,
+        1.4441882533266541,
+        -2.2
+      ]
+    },
+    {
+      "name": "tail_07",
+      "parent": "tail_06",
+      "restM": [
+        0.0,
+        1.424608953007266,
+        -2.518
+      ]
+    },
+    {
+      "name": "tail_08",
+      "parent": "tail_07",
+      "restM": [
+        0.0,
+        1.3956286626495662,
+        -2.836
+      ]
+    },
+    {
+      "name": "tail_09",
+      "parent": "tail_08",
+      "restM": [
+        0.0,
+        1.359670701788199,
+        -3.154
+      ]
+    },
+    {
+      "name": "tail_10",
+      "parent": "tail_09",
+      "restM": [
+        0.0,
+        1.3199999999999998,
+        -3.472
+      ]
+    },
+    {
+      "name": "fan_l",
+      "parent": "tail_10",
+      "restM": [
+        0.06,
+        1.34,
+        -3.48
+      ]
+    },
+    {
+      "name": "fan_r",
+      "parent": "tail_10",
+      "restM": [
+        -0.06,
+        1.34,
+        -3.48
+      ]
+    },
+    {
+      "name": "dewlap_01",
+      "parent": "neck_01",
+      "restM": [
+        0.0,
+        1.49,
+        0.91
+      ]
+    },
+    {
+      "name": "dewlap_02",
+      "parent": "dewlap_01",
+      "restM": [
+        0.0,
+        1.32,
+        0.9550000000000001
+      ]
+    },
+    {
+      "name": "dewlap_03",
+      "parent": "dewlap_02",
+      "restM": [
+        0.0,
+        1.15,
+        1.0
+      ]
+    },
+    {
+      "name": "ribs_l",
+      "parent": "chest",
+      "restM": [
+        0.2,
+        1.43,
+        0.3
+      ]
+    },
+    {
+      "name": "ribs_r",
+      "parent": "chest",
+      "restM": [
+        -0.2,
+        1.43,
+        0.3
+      ]
+    },
+    {
+      "name": "dorsal_01",
+      "parent": "neck_01",
+      "restM": [
+        0.0,
+        1.74,
+        0.62
+      ]
+    },
+    {
+      "name": "dorsal_02",
+      "parent": "chest",
+      "restM": [
+        0.0,
+        1.74,
+        0.2
+      ]
+    },
+    {
+      "name": "dorsal_03",
+      "parent": "body",
+      "restM": [
+        0.0,
+        1.74,
+        -0.24
+      ]
+    },
+    {
+      "name": "dorsal_04",
+      "parent": "tail_01",
+      "restM": [
+        0.0,
+        1.74,
+        -0.66
+      ]
+    },
+    {
+      "name": "crest_l",
+      "parent": "head",
+      "restM": [
+        0.05,
+        2.01,
+        1.18
+      ]
+    },
+    {
+      "name": "crest_r",
+      "parent": "head",
+      "restM": [
+        -0.05,
+        2.01,
+        1.18
+      ]
+    }
+  ]
+}
