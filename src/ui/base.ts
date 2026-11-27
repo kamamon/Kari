@@ -1214,7 +1214,7 @@ export class BaseScreen {
         const to = recipeResult(r);
         const box = el('div', 'forge-recipe');
         box.dataset.recipe = r.id;
-        box.appendChild(el('b', undefined, `${nameOf(from)} → ${nameOf(to)}`));
+        box.appendChild(withIcon(el('b'), to, `${nameOf(from)} → ${nameOf(to)}`));
         box.appendChild(el('span', 'forge-stat', `${statOf(from)} → ${statOf(to).replace(/^\S+ /, '')}`));
         box.appendChild(lifePreviewLink(to));
         const ul = el('ul', 'forge-cost');
@@ -1283,7 +1283,7 @@ export class BaseScreen {
     let ready = 0;
     for (const [series, list] of groups) {
       const species = c.monsters.get(`monster.${series.split('.')[1] ?? ''}`)?.name ?? '';
-      const label = nameOf(recipeResult(list[0]!)).split('の')[0] ?? series;
+      const label = series === 'series.spinegale' ? '疾棘竜シリーズ' : (nameOf(recipeResult(list[0]!)).split('の')[0] ?? series);
       const box = el('details', 'forge-series');
       box.dataset.series = series;
       const head = el('summary');
@@ -1296,7 +1296,7 @@ export class BaseScreen {
         const w = c.weapons.get(to), a = c.armor.get(to);
         const row = el('div', 'forge-recipe');
         row.dataset.recipe = r.id;
-        row.appendChild(el('b', undefined, nameOf(to)));
+        row.appendChild(withIcon(el('b'), to, nameOf(to)));
         row.appendChild(el('span', 'forge-stat', w ? weaponStat(c, w) : a ? armorStat(c, a, '防御力') : ''));
         row.appendChild(lifePreviewLink(to));
         if (chk.ownsResult) {

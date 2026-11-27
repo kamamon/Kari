@@ -4,3 +4,4 @@ dist
 *.log
 tools/out
 __pycache__/
+public/assets/models/monsters/spinegale_v3_game.glb

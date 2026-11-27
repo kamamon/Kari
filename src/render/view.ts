@@ -29,6 +29,7 @@ import { FollowCamera } from './camera';
 import { DebugDraw } from './debugDraw';
 import { BladeTrail, GroundRings, Particles } from './effects';
 import { GaldrosRig } from './galdrosRig';
+import { SpinegaleRig } from './spinegaleRig';
 import { CreatureRig, limpGait } from './creatureRig';
 import type { HazardLook } from '../data/schemas';
 import { CREATURE_PLANS } from './creaturePlans';
@@ -375,7 +376,7 @@ export class GameView {
     if (had) return had;
     const ids = m.def.parts.map((p) => p.id);
     const plan = CREATURE_PLANS[m.def.id];
-    const rig: MonsterRig = plan ? new CreatureRig(plan, ids) : m.def.id === 'monster.galdros' ? new GaldrosRig(ids) : new DummyRig(ids);
+    const rig: MonsterRig = m.def.id === 'monster.spinegale' ? new SpinegaleRig() : plan ? new CreatureRig(plan, ids) : m.def.id === 'monster.galdros' ? new GaldrosRig(ids) : new DummyRig(ids);
     const shadow = blobShadow(1.7);
     shadow.scale.setScalar(plan ? Math.max(m.herd ? 0.3 : 1, m.def.bodyRadius * 1.1) : m.def.id === 'monster.galdros' ? 1.45 : 1);
     this.scene.add(rig.root, shadow, ...(rig.extras ?? []));

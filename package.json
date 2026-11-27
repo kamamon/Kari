@@ -8,6 +8,10 @@
     "node": ">=22"
   },
   "scripts": {
+    "spinegale:build": "node tools/spinegale/ensure.mjs",
+    "predev": "npm run spinegale:build",
+    "prebuild": "npm run spinegale:build",
+    "pretest": "npm run spinegale:build",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",

@@ -1,4 +1,4 @@
-import { AnimationMixer, AnimationAction, Group, LoopOnce, Mesh, SkinnedMesh, Vector3, MeshStandardMaterial, SphereGeometry } from 'three';
+import { AnimationMixer, type AnimationAction, Group, LoopOnce, Mesh, SkinnedMesh, Vector3, MeshStandardMaterial, SphereGeometry } from 'three';
 import { GLTFLoader, type GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { assetUrl } from '../core/assets';
@@ -12,6 +12,8 @@ function load(): Promise<GLTF> {
   if (!cached) cached = new GLTFLoader().loadAsync(assetUrl(path)).catch(err => { cached = null; throw err; });
   return cached;
 }
+/** モデルが読めなければ出発を開始しない。 */
+export async function preloadSpinegale(): Promise<void> { await load(); }
 export class SpinegaleRig implements MonsterRig {
   readonly root = new Group();
   private readonly pending = new Mesh(new SphereGeometry(.35, 12, 8), new MeshStandardMaterial({color: 0x999999}));
@@ -23,11 +25,23 @@ export class SpinegaleRig implements MonsterRig {
   private lastPos: Vector3 | null = null;
   private flash = 0;
   private tail = false;
+  private readonly flashMaterials: MeshStandardMaterial[] = [];
   constructor() {
     this.pending.position.y = 1.2; this.root.add(this.pending);
     void load().then(g => {
       const model = clone(g.scene) as Group;
-      model.traverse(o => { if (o instanceof Mesh) { o.castShadow = true; o.receiveShadow = true; if(o instanceof SkinnedMesh) o.frustumCulled = false; } });
+      model.traverse(o => {
+        if (!(o instanceof Mesh)) return;
+        o.castShadow = true; o.receiveShadow = true;
+        // 個体の破棄・被弾発光がキャッシュ元の材質を変更しないようにする。
+        o.geometry = o.geometry.clone();
+        const duplicate = (mat: import('three').Material): import('three').Material => {
+          const m = mat.clone(); if (m instanceof MeshStandardMaterial) this.flashMaterials.push(m);
+          return m;
+        };
+        o.material = Array.isArray(o.material) ? o.material.map(duplicate) : duplicate(o.material);
+        if(o instanceof SkinnedMesh) o.frustumCulled = false;
+      });
       this.root.remove(this.pending); this.pending.geometry.dispose(); this.pending.material.dispose();
       this.model = model; this.root.add(model); this.mixer = new AnimationMixer(model);
       for (const clip of g.animations) this.clips.set(clip.name, this.mixer.clipAction(clip));
@@ -71,5 +85,6 @@ export class SpinegaleRig implements MonsterRig {
     const ti=m.def.parts.findIndex(x=>x.id==='tail');const cut=ti>=0&&m.parts[ti]?.severed===true;
     if(cut!==this.tail){this.tail=cut;this.model.getObjectByName('tail_05')?.scale.setScalar(cut ? .001 : 1);}
     this.flash=Math.max(0,this.flash-c.dt);
+    for (const mat of this.flashMaterials) mat.emissive.setRGB(this.flash*2,this.flash*.8,this.flash*.35);
   }
 }
