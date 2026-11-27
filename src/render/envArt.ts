@@ -39,6 +39,8 @@ export type EnvPlace = keyof typeof ENV_FAR;
 
 /** 遠景の絵の、上の帯の色（tools/env-art.py が合わせる色。v0.19.0 からは、この部分は透明で、空は src/render/sky.ts が描く） */
 export const SKY_COLOR = 0xc5d2cb;
+/** Original transparent foliage atlas, also validated by env-art.test. */
+export const SCENERY_FOLIAGE_FILE='scenery-v2-foliage.svg';
 
 /**
  * 切り抜きの絵（2 × 2 のマス）。rect は絵のある範囲 [x0, y0, x1, y1]（px、1024 四方の中）、rootX は根元の横位置、
@@ -87,7 +89,7 @@ function loadEnv(file: string, setup: (t: Texture) => void, done: (t: Texture) =
   cache.set(dir + file, e);
   const entry = e;
   loader.load(
-    assetUrl(`${dir}${file}.webp`),
+    assetUrl(`${dir}${file.endsWith('.svg')?file:file+'.webp'}`),
     (t) => {
       t.colorSpace = SRGBColorSpace;
       setup(t);
@@ -122,6 +124,8 @@ export function envArtStatus(): { loaded: number; asked: number; failed: number 
   return { loaded, asked: cache.size, failed };
 }
 
+/** Cached environment textures outlive individual views. */
+export function isCachedEnvTexture(t:Texture):boolean{for(const e of cache.values())if(e.tex===t)return true;return false;}
 const tmpColor = new Color();
 
 /**

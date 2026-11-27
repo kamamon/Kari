@@ -19,7 +19,7 @@ import { SKY_LOOKS, SkyDome } from './sky';
 import { patchNoise } from './noise';
 import { imageLambert, projectSurfaceUV } from './materialImages';
 import { PlatformIndex, buildTerraces, holedGround } from './terraces';
-import { buildLandscapeSurface, buildLandscapeExterior, type LandscapeProfile } from './fieldLandscape';
+import { buildLandscapeSurface, buildLandscapeExterior, landscapeProfile, type LandscapeProfile } from './fieldLandscape';
 
 export const FOG_COLOR = 0xaebcab;
 /**
@@ -54,7 +54,7 @@ export interface AreaLook {
   /** 天幕を置く場所（無ければ置かない） */
   camp?: { x: number; z: number; r: number } | null;
   /** 外周の岩壁を開ける場所。marker が付いたものは、出口の目印（門柱と踏み跡）も置く */
-  gates?: { x: number; z: number; marker?: boolean }[];
+  gates?: { x: number; z: number; marker?: boolean; to?:string }[];
   /** 種類。地面の絵と、草の生え方が変わる。nest は晶の柱が立つ。village は里（踏み固めた土） */
   kind?: 'camp' | 'hunt' | 'path' | 'nest' | 'village';
   /** 草や岩壁の散らし方の種（エリアごとに変える） */
@@ -79,7 +79,8 @@ export interface AreaLook {
 export function buildArena(scene: Scene, map: MapDef, shadows: boolean): Arena {
   const sky = setupSky(scene, shadows, 'basin');
   // キャンプ側の出入口だけ開ける（見た目のみ。衝突は外周で止まる）
-  const group = buildAreaGroup({ bounds: map.bounds, rocks: map.rocks, platforms: map.platforms, camp: map.camp, gates: [{ x: map.camp.x, z: map.bounds.minZ }] });
+  const fieldId=map.id.endsWith('_survey')?'field.'+map.id.replace('map.','').replace('_survey',''):'field.basin';
+  const group = buildAreaGroup({ bounds: map.bounds, rocks: map.rocks, platforms: map.platforms, camp: map.camp, landscape:landscapeProfile(fieldId,{id:'legacy',name:map.name,kind:'hunt',size:'medium'}),gates: [{ x: map.camp.x, z: map.bounds.minZ }] });
   scene.add(group);
   return { group, ...sky };
 }
@@ -290,16 +291,19 @@ export function buildAreaGroup(map: AreaLook): Group {
     if (!g.marker) continue;
     const [ox, oz] = outward(g);
     // 踏み跡: 出口から内へ、外向きに沿った細長い帯
-    const gy = baseAt(g.x, g.z);
-    const path = new Mesh(new PlaneGeometry(5.4, 16, 3, exterior ? 18 : 8), trail);
+    const gy = baseAt(g.x, g.z),anchor=landscape?.plan?.gates.find(a=>a.toAreaId===g.to);
+    const routeMat=exterior?imageLambert(landscape?.style==='alpine'?'cliff':'earth',{color:landscape?.style==='alpine'?0xa3b5b5:0xb9a88a,vertexColors:true,transparent:true,depthWrite:false},{gain:1.12}):trail;
+    const path = new Mesh(new PlaneGeometry(anchor?.widthM??5.4, 16, exterior ? 4 : 3, exterior ? 18 : 8), routeMat);
     if(exterior){
       // 奥へ続く道の入口を長方形ではなく、両端と路肩を不規則に絞る。
-      const pp=path.geometry.getAttribute('position');
+      const pp=path.geometry.getAttribute('position'),col=new Float32Array(pp.count*4);
       for(let i=0;i<pp.count;i++){
+        const alpha=Math.max(0,1-Math.abs(pp.getX(i))/((anchor?.widthM??5.4)*.5));col.set([1,1,1,Math.min(1,alpha*1.7)],i*4);
         const y=pp.getY(i),u=(y+8)/16,t=Math.min(1,Math.max(0,u*4));
         const width=(.24+.76*t*t*(3-2*t))*(.94+.065*Math.sin(y*1.63+g.x));
         pp.setX(i,pp.getX(i)*width+.27*Math.sin(y*.45+g.z)*Math.sin(Math.PI*u));
       }
+      path.geometry.setAttribute('color',new Float32BufferAttribute(col,4));
     }
     path.rotation.x = -Math.PI / 2;
     path.rotation.z = Math.atan2(ox, oz) + Math.PI;
@@ -320,10 +324,11 @@ export function buildAreaGroup(map: AreaLook): Group {
     for (const s of [-1, 1]) {
       const px = g.x + ox * 2.3 - oz * s * 3.1, pz = g.z + oz * 2.3 + ox * s * 3.1;
       const post = new Mesh(new CylinderGeometry(0.42, 0.6, 3.4, 6), rockDark);
-      post.position.set(px, gy + 1.7, pz);
+      const py=exterior?exterior.height(px,pz):gy;
+      post.position.set(px, py + 1.7, pz);
       post.castShadow = true;
       const cap = new Mesh(new ConeGeometry(0.5, 0.7, 6), bronze);
-      cap.position.set(px, gy + 3.75, pz);
+      cap.position.set(px, py + 3.75, pz);
       group.add(post, cap);
     }
   }

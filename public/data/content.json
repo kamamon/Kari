@@ -199,6 +199,10 @@
       "follow/galdros.json"
     ],
     "fieldGathering": "field_gathering.json",
-    "regionalGathering": "regional_gathering.json"
+    "regionalGathering": "regional_gathering.json",
+    "fieldScenery": [
+      "field_landscape_v2_a.json",
+      "field_landscape_v2_b.json"
+    ]
   }
 }

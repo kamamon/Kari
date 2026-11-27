@@ -1,4 +1,5 @@
 import type { FieldGatherCatalog } from './fieldGathering';
+import type { SceneryArea } from './fieldScenery';
 import type { BestiaryDef } from './bestiary';
 import type { StoryDef } from './story';
 // データ定義の型。public/data/*.json はすべてこの形で書き、読み込み時に validators.ts で検証する。
@@ -1298,6 +1299,7 @@ export interface ContentIndex {
     equipment?: string[];
     fieldGathering?: string;
     regionalGathering?: string;
+    fieldScenery?: string[];
     /** 属性と状態異常の決まり（v0.33.0） */
     elements: string;
     /** 防具の技能（v0.33.0。npm run equipment:gen の出力） */
@@ -1324,6 +1326,7 @@ export interface Content {
   fieldGathering?: FieldGatherCatalog;
   /** 風礫盆地以外の採取カタログ。狩場 ID で引く。 */
   regionalGathering?: Map<string, FieldGatherCatalog>;
+  fieldScenery?: Map<string, SceneryArea>;
   /** 読み込んだハンターの動きの組の名前（v0.57.0。D-150） */
   motionSet: string;
   /** 属性と状態異常の決まり（v0.33.0） */
