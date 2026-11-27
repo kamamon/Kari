@@ -11,6 +11,7 @@ import { HubEstatePanel } from './hubEstate';
 import { ANIMALS, type AnimalKind, type ZoneId } from '../data/hubEstate';
 import { hubReports,hubThreat } from '../data/hubNarrative';
 import type { HubSample } from '../core/hubSoundtrack';
+import { ClassicBoxPanel } from './classicBox';
 
 const el=<K extends keyof HTMLElementTagNameMap>(tag:K,cls='',txt=''):HTMLElementTagNameMap[K]=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt)e.textContent=txt;return e;};
 const STAGES:Record<ResourceId,string[]>={farm:['小さな畑','段々畑','育苗小屋','大規模農園'],mine:['露出鉱脈','採掘坑','深層坑道','晶脈採掘所'],fish:['川岸','釣り桟橋','養魚池','大型釣り堀'],insect:['草むら','昆虫樹','飼育場','希少昆虫園'],bone:['骨置き場','発掘場','化石層','深層発掘場']};
@@ -26,6 +27,7 @@ export class HubLifePanel {
  readonly root=el('div','hub-life');
  private tabs=el('nav','life-tabs');private body=el('div','life-body');private notice=el('p','life-notice');
  private estate:HubEstatePanel|null=null;
+ private classicBox:ClassicBoxPanel;
  get estateActive():boolean{return !!this.estate;}
  closeEstate(){if(!this.estate)return;this.estate.destroy();this.estate=null;this.root.classList.remove('life-estate-open');this.tabs.hidden=false;this.body.hidden=false;this.notice.hidden=false;}
  openEstate(id:ZoneId){
@@ -35,6 +37,7 @@ export class HubLifePanel {
  }
  private tab:HubTab='map'; private busy=false; private search='';private researchSearch='';
  constructor(private c:Content,private h:HubLifeHost){
+   this.classicBox=new ClassicBoxPanel(c,h.save,()=>h.saveChanged());
    this.root.dataset.sec='life';this.root.hidden=true;this.notice.setAttribute('role','status');this.root.append(this.tabs,this.notice,this.body);
  }
  open(tab:HubTab){this.closeEstate();this.tab=tab;this.notice.textContent='';this.refresh();}
@@ -51,6 +54,7 @@ export class HubLifePanel {
     case 'map':this.map(d,s);break;case 'prep':this.prep(d,s);break;case 'farm':this.farm(d,s);break;case 'economy':this.economy(d,s);break;
     case 'home':this.home(d,s);break;case 'research':this.research(d,s);break;case 'training':this.training(d,s);break;case 'hall':this.hall(d,s);break;case 'world':this.world(s);break;
    }
+   if(['home','farm','economy','hall'].includes(this.tab)){this.body.append(this.classicBox.root);this.classicBox.render(false);}
    this.body.scrollTop=scroll;
  }
  private button(txt:string,fn:()=>void,disabled=false){const b=el('button','life-button',txt);b.type='button';b.disabled=disabled;b.addEventListener('click',()=>{if(!this.busy&&!b.disabled)fn();});return b;}
@@ -140,12 +144,8 @@ export class HubLifePanel {
    this.row(a,'武器の展示','所持品から選択',selectDisplay('displayWeapon',weaponIds,s.displayWeapon),...(s.displayWeapon&&weaponIds.includes(s.displayWeapon)?[this.preview(s.displayWeapon)]:[]));
    this.row(a,'防具の展示','所持品から選択',selectDisplay('displayArmor',armorIds,s.displayArmor),...(s.displayArmor&&armorIds.includes(s.displayArmor)?[this.preview(s.displayArmor)]:[]));
    this.row(a,'外見の変更','既存のキャラメイクを開く',this.button('外見を変える',()=>this.h.openLooks()));
-   const sets=this.section('装備セット','武器・防具・持ち込み道具を3組保存。装備を強化して元の品が無くなった場合は再登録。');
-   for(const slot of ['1','2','3']){const set=s.sets[slot];this.row(sets,'セット '+slot,set?this.name(set.weapon)+' / '+set.armor.length+'部位':'未登録',this.cmd('現在の装備を登録',{kind:'saveSet',slot}),this.cmd('装備する',{kind:'applySet',slot},!set),this.cmd('解除',{kind:'deleteSet',slot},!set));}
-   const p=this.section('持ち込み道具','在庫と支給品の上限に従う。使用した自分の道具だけ帰還時に精算。');
-   p.appendChild(this.cmd('所持数に合わせて自動設定',{kind:'autoPouch'},s.pouch===null));
-   for(const it of this.c.items.values()){const value=s.pouch===null?Math.min(d.items[it.id]??0,it.carryMax):s.pouch[it.id]??0;const options=Array.from({length:it.carryMax+1},(_,n)=>({id:String(n),name:String(n)+'個'}));
-    this.row(p,it.name,'在庫 '+(d.items[it.id]??0)+'｜上限 '+it.carryMax,this.select(options,String(Math.min(value,it.carryMax)),id=>void this.run({kind:'pouch',itemId:it.id,count:Number(id)})));}
+   const sets=this.section('装備セット','武器・防具を20組保存。ポーチは装備セットとは独立。装備を強化して元の品が無くなった場合は再登録。');
+   for(const slot of Array.from({length:20},(_,i)=>String(i+1))){const set=s.sets[slot];this.row(sets,'セット '+slot,set?this.name(set.weapon)+' / '+set.armor.length+'部位':'未登録',this.cmd('現在の装備を登録',{kind:'saveSet',slot}),this.cmd('装備する',{kind:'applySet',slot},!set),this.cmd('解除',{kind:'deleteSet',slot},!set));}
    const g=this.section('装備展示目録',weaponIds.length+'武器・'+armorIds.length+'防具を所持。');
    for(const id of [...weaponIds,...armorIds].slice(0,30))this.row(g,this.name(id),'所持装備',this.preview(id));
  }

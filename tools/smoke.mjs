@@ -605,7 +605,7 @@ const startTraining = async (page, tap = false) => {
   const saved = (pg) => pg.evaluate(() => JSON.parse(JSON.stringify(window.__vh.save.doc)));
   const before = await saved(page);
   check('保存の場所は IndexedDB（ゲーム固有の名前）で、2 回の報酬が revision 2 として入っている',
-    (await page.evaluate(() => window.__vh.save.mode)) === 'persistent' && before.revision === 2 && before.settledRuns.length === 2 && before.schemaVersion === 5 && before.claims.length === 0 && before.appearance.profile === 'legacy_hunter_a_v1' && before.armor.length === 5 && before.equippedArmorIds.length === 5
+    (await page.evaluate(() => window.__vh.save.mode)) === 'persistent' && before.revision === 2 && before.settledRuns.length === 2 && before.schemaVersion === 6 && before.claims.length === 0 && before.appearance.profile === 'legacy_hunter_a_v1' && before.armor.length === 5 && before.equippedArmorIds.length === 5
       && (await page.evaluate(async () => (await indexedDB.databases()).some((d) => d.name === 'veilbound-hunters:prod:save'))),
     `通貨 ${before.money} / 素材 ${JSON.stringify(before.items)} / 達成 ${JSON.stringify(before.progress.questClears)}`);
   await page.reload();
@@ -639,7 +639,7 @@ const startTraining = async (page, tap = false) => {
   await page.click('#base-data > summary');
   const exported = await page.evaluate(() => window.__vh.save.exportText());
   const rich = JSON.parse(exported);
-  check('書き出した内容に、目印・版・持ち物が入っている', rich.format === 'veilbound-hunters-save' && rich.save.schemaVersion === 5 && rich.save.money === 1250);
+  check('書き出した内容に、目印・版・持ち物が入っている', rich.format === 'veilbound-hunters-save' && rich.save.schemaVersion === 6 && rich.save.money === 1250);
   await page.fill('.data-paste', exported.slice(0, 80));
   await page.click('text=貼り付けた内容を確かめる');
   check('途中で切れた内容は取り込まない（理由が出る）', await until(page, () => /取り込めません/.test(document.querySelector('.base-message').textContent), 4000) && (await saved(page)).revision === 3);
@@ -806,7 +806,7 @@ const startTraining = async (page, tap = false) => {
   check('版 1 のデータ（v0.7.0 の実機）を開くと、いまの版（4）へ直して保存する。持ち物・武器・進行はそのまま、里の装束が配られ、元のデータは控えに残る', await page.evaluate(async (orig) => {
     const s = window.__vh.save, d = s.doc;
     const bs = await s.backups();
-    return s.mode === 'persistent' && d.schemaVersion === 5 && d.claims.length === 0 && d.appearance.profile === 'legacy_hunter_a_v1' && d.equippedArmorIds.join() === d.armor.join() && d.money === 1200 && d.items['mat.galdros.shell_shard'] === 7 && d.equippedWeaponId === 'weapon.long_blade.001' && d.weapons.length === 7
+    return s.mode === 'persistent' && d.schemaVersion === 6 && d.claims.length === 0 && d.appearance.profile === 'legacy_hunter_a_v1' && d.equippedArmorIds.join() === d.armor.join() && d.money === 1200 && d.items['mat.galdros.shell_shard'] === 7 && d.equippedWeaponId === 'weapon.long_blade.001' && d.weapons.length === 7
       && d.armor.join() === 'armor.head.001,armor.chest.001,armor.arms.001,armor.waist.001,armor.legs.001' && d.progress.questClears['quest.basin.003'] === 2 && d.revision === 4
       && bs.some((b) => b.reason === 'migrate' && JSON.stringify(b.doc) === JSON.stringify(orig)) && /新しい形へ直しました/.test(document.querySelector('.base-banner')?.textContent ?? '');
   }, v1), await page.evaluate(() => `${window.__vh.save.mode} v${window.__vh.save.doc.schemaVersion} r${window.__vh.save.doc.revision} ${window.__vh.save.notice}`));
@@ -839,7 +839,7 @@ const startTraining = async (page, tap = false) => {
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   check('読み込み直しても、岩殻の兜のまま（控えは増えない）', await page.evaluate(async () => {
     const s = window.__vh.save;
-    return s.doc.armor.includes('armor.head.002') && s.doc.equippedArmorIds.includes('armor.head.002') && s.doc.schemaVersion === 5 && s.notice === null && (await s.backups()).filter((b) => b.reason === 'migrate').length === 1;
+    return s.doc.armor.includes('armor.head.002') && s.doc.equippedArmorIds.includes('armor.head.002') && s.doc.schemaVersion === 6 && s.notice === null && (await s.backups()).filter((b) => b.reason === 'migrate').length === 1;
   }));
   await ctx.close();
 }
@@ -1299,6 +1299,10 @@ const startTraining = async (page, tap = false) => {
   await page.click('.reception-depart[data-quest="quest.basin.003"]');
   await page.click('.reception-confirm-go[data-quest="quest.basin.003"]');
   await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+  await page.click('.classic-supply summary');
+  await page.getByRole('button',{name:/標識玉 ×2.*受取 2/}).click();
+  await until(page,()=>window.__vh.sim.player.items.some(x=>x.itemId==='item.marker_orb'&&x.count===2));
+  await page.click('.classic-supply summary');
   const hudField = () => page.evaluate(() => {
     const s = window.__vh.sim, m = s.monsters[0];
     const cells = [...document.querySelectorAll('.hud-map .cell')];
@@ -2795,7 +2799,7 @@ const startTraining = async (page, tap = false) => {
     zukan.fields === 20 && zukan.walkable.split(',').length === 20 && zukan.fieldHead === '狩場の案 20（歩けるのは 20）' && zukan.basinState === '歩ける' && /燠脈台地/.test(zukan.fieldText) && /熾炉獣 エンバルグ/.test(zukan.fieldText) && zukan.fieldState === '採取可（暫定）', JSON.stringify({ fields: zukan.fields, walkable: zukan.walkable, head: zukan.fieldHead, state: zukan.fieldState, text: zukan.fieldText }));
   await page.evaluate(() => document.getElementById('base-bestiary').scrollIntoView({ block: 'start' }));
   await page.screenshot({ path: `${OUT}99_bestiary.png` });
-  // 依頼へ: 買った回復液を、支給品に足して持っていく（v0.38.0: 一覧には受付の案内だけ。初級の受付まで行って、詳細から出発する）
+  // 依頼へ: 箱から実体ポーチへ移し、野営地の支給箱は手動で受け取る。
   check('里: 「一覧」の依頼の欄は、4 つの受付の案内（全部の依頼を縦に並べない。歩く里では、そこから出発しない）', await page.evaluate(() => document.querySelectorAll('article.reception-desk[data-reception]').length === 4 && !document.querySelector('.reception-row, .reception-depart')));
   await page.click('.base-close');
   await until(page, () => document.getElementById('base').hidden);
@@ -2803,21 +2807,25 @@ const startTraining = async (page, tap = false) => {
   await until(page, () => window.__vh.nearFacility?.id === 'board');
   await page.click('#hud-facility');
   await until(page, () => !document.getElementById('base').hidden);
+  await page.evaluate(async()=>{const m=window.__vh.save;const i=m.doc.classicBox.layout.findIndex(x=>x?.itemId==='item.heal_tonic');const r=await m.box({kind:'move',from:'box',index:i,itemId:'item.heal_tonic',count:1});if(!r.ok)throw Error(r.message);});
   await departQuest(page, 'quest.basin.003');
   await until(page, () => window.__vh.place === 'hunt' && window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
   const pouch = await page.evaluate(() => {
     const s = window.__vh.sim;
     return { tonic: s.player.items.find((x) => x.itemId === 'item.heal_tonic').count, brought: s.brought['item.heal_tonic'], area: s.areaId };
   });
-  check('里: 依頼へ出ると、買った回復液が支給品に足されている（5 + 1 = 6）。野営地から始まる', pouch.tonic === 6 && pouch.brought.supplied === 5 && pouch.brought.own === 1 && pouch.area === 'camp', JSON.stringify(pouch));
+  check('里: 実体ポーチの回復液1個で出発し、支給品は未取得。野営地から始まる', pouch.tonic === 1 && pouch.brought.supplied === 0 && pouch.brought.own === 1 && pouch.area === 'camp', JSON.stringify(pouch));
   check('里: 依頼へは、装備箱で選んだ防具で出る（兜あり・胴なし。防御力 6）', await page.evaluate(() => window.__vh.sim.defense === 6 && window.__vh.sim.armorIds.join() === 'armor.head.002,armor.arms.001,armor.waist.001,armor.legs.001' && window.__vh.view.hunter.armorKey === '21111'), await page.evaluate(() => `${window.__vh.sim.defense} ${window.__vh.sim.armorIds.join()}`));
-  // 6 個とも使ったことにして、リタイアする → 自分の 1 個だけが減る
+  // 支給品は野営地で手動受取。リタイアは自前の品を出発前に戻す。
+  await page.click('.classic-supply summary');
+  await page.getByRole('button',{name:/回復液 ×5.*受取 5/}).click();
+  check('里: 支給箱で手動受取',await until(page,()=>window.__vh.sim.brought['item.heal_tonic'].supplied===5));
   await page.evaluate(() => (window.__vh.sim.player.items.find((x) => x.itemId === 'item.heal_tonic').count = 0));
   await page.keyboard.press('Escape');
   await page.waitForSelector('.menu-body button');
   await page.click('.menu-body button');
   const settled = await until(page, () => !document.getElementById('result').hidden && window.__vh.save.doc.items['item.heal_tonic'] === undefined, 15000);
-  check('里: 失敗（リタイア）しても、使った自分の道具は減る（1 個）。達成回数と通貨は変わらない', settled && await page.evaluate(() => window.__vh.save.doc.money === 960 && window.__vh.save.doc.progress.questClears['quest.basin.003'] === 1 && /使った自分の道具を、持ち物から減らしました/.test(document.getElementById('result').textContent)), await page.evaluate(() => document.getElementById('result').textContent.slice(0, 200)));
+  check('里: リタイアで出発前のポーチに戻る。達成回数と通貨は変わらない', settled && await page.evaluate(() => window.__vh.save.doc.money === 960 && window.__vh.save.doc.progress.questClears['quest.basin.003'] === 1 && window.__vh.save.doc.classicBox.pouch.some(x=>x?.itemId==='item.heal_tonic'&&x.count===1)), await page.evaluate(() => document.getElementById('result').textContent.slice(0, 200)));
   await page.screenshot({ path: `${OUT}96_hub_result.png` });
   // 結果から拠点へ → 里に立つ
   await page.evaluate(() => window.__vh.toBase());
@@ -2829,7 +2837,7 @@ const startTraining = async (page, tap = false) => {
   await until(page, () => window.__vh && window.__vh.place === 'hub');
   h = await hubState();
   check('里: 読み込み直しても、買い物の結果が残っている（通貨 960、岩殻片 2、回復液 0）', h.money === 960 && h.shell === 2 && h.tonic === 0, JSON.stringify(h));
-  check('里: 読み込み直しても、選んだ防具が残っている（兜は着たまま、胴は外したまま。胸当ては持っている）', await page.evaluate(() => { const d = window.__vh.save.doc; return d.schemaVersion === 5 && d.armor.includes('armor.chest.002') && !d.equippedArmorIds.includes('armor.chest.002') && d.equippedArmorIds.includes('armor.head.002') && window.__vh.sim.armorIds.join() === 'armor.head.002,armor.arms.001,armor.waist.001,armor.legs.001'; }), await page.evaluate(() => JSON.stringify(window.__vh.save.doc.equippedArmorIds)));
+  check('里: 読み込み直しても、選んだ防具が残っている（兜は着たまま、胴は外したまま。胸当ては持っている）', await page.evaluate(() => { const d = window.__vh.save.doc; return d.schemaVersion === 6 && d.armor.includes('armor.chest.002') && !d.equippedArmorIds.includes('armor.chest.002') && d.equippedArmorIds.includes('armor.head.002') && window.__vh.sim.armorIds.join() === 'armor.head.002,armor.arms.001,armor.waist.001,armor.legs.001'; }), await page.evaluate(() => JSON.stringify(window.__vh.save.doc.equippedArmorIds)));
 
   // ---- 里の人と、物語「帰り道の灯」（v0.23.0。ChatGPT の Pull Request #5・#7）----
   const npcs = await until(page, () => {
@@ -3262,7 +3270,7 @@ const startTraining = async (page, tap = false) => {
   await showQuest(page, 'quest.delivery.009');
   check('読み込み直しても、受け取りの記録が残る（保存の版 4 からの記録）。支給も納品も、もう受けられない', supportClaimed && await page.evaluate(() => {
     const d = window.__vh.save.doc;
-    return d.schemaVersion === 5 && d.claims.length === 2 && document.querySelector('.base-delivery')?.dataset.state === 'claimed';
+    return d.schemaVersion === 6 && d.claims.length === 2 && document.querySelector('.base-delivery')?.dataset.state === 'claimed';
   }));
   await page.evaluate(() => window.__vh.startHunt('quest.basin.r2.001'));
   await until(page, () => window.__vh.sim.hunt && window.__vh.sim.tick > 5);
@@ -3328,7 +3336,7 @@ const startTraining = async (page, tap = false) => {
   }, 1200), await page.evaluate(() => document.getElementById('result').textContent.slice(0, 200)));
   check('保存: 余りの 2 枚と通貨と達成回数（納品した 6 枚は入らない）', await until(page, () => {
     const d = window.__vh.save.doc;
-    return d.items['mat.gather.flatnagi_leaf'] === 2 && d.progress.questClears['quest.gather.001'] === 1 && d.money === 240;
+    return d.classicBox.pouch.some(x=>x?.itemId==='mat.gather.flatnagi_leaf'&&x.count===2) && d.progress.questClears['quest.gather.001'] === 1 && d.money === 240;
   }, 20000));
   await page.screenshot({ path: `${OUT}9z_errand_result.png` });
   // 採掘: 道具を持って、3 回振る
@@ -3353,7 +3361,7 @@ const startTraining = async (page, tap = false) => {
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
   const entry = await page.evaluate(() => ({ btn: document.querySelector('.base-looks-open')?.textContent ?? '', note: document.querySelector('.base-looks-note')?.textContent ?? '', ap: window.__vh.save.doc.appearance, v: window.__vh.save.doc.schemaVersion }));
-  check('見た目: 装備箱に「見た目を変える」。新しいデータは基準ハンター A（保存の版 5）', entry.btn === '見た目を変える' && /いまは基準ハンター A の姿/.test(entry.note) && entry.v === 5 && entry.ap.profile === 'legacy_hunter_a_v1' && entry.ap.dataVersion === 1, JSON.stringify(entry));
+  check('見た目: 装備箱に「見た目を変える」。新しいデータは基準ハンター A（保存の版 6）', entry.btn === '見た目を変える' && /いまは基準ハンター A の姿/.test(entry.note) && entry.v === 6 && entry.ap.profile === 'legacy_hunter_a_v1' && entry.ap.dataVersion === 1, JSON.stringify(entry));
   await page.tap('.base-looks-open');
   await until(page, () => !document.getElementById('looks').hidden, 3000);
   await page.waitForTimeout(300);

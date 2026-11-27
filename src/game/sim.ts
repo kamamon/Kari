@@ -24,6 +24,7 @@ import { FieldGatherState, FIELD_NODE_REACH } from './fieldGather';
 import { DELIVER_ACTION, DEPOT_RADIUS, DEPOT_REACH, MINE_NODE_RADIUS, NODE_REACH, bagHasRoom, createErrand, errandReady, errandSurplus, nodeAction, type ErrandState, type ErrandTarget } from './errand';
 
 import { prepBonus, type HuntPrep } from '../data/hubLife';
+import { carryLimit, isCarriedLoot, POUCH_SLOTS } from '../save/classicBox';
 
 export interface SimOptions {
   /** 出発時に消費した温泉・食事。リプレイにも保存する。 */
@@ -47,6 +48,8 @@ export interface SimOptions {
    * 使う時は、支給品のぶんから先に減る。自分のぶんを何個使ったかは spentOwn() で分かる。
    */
   pouch?: readonly ItemStack[];
+  /** 実際のゲームの狩場では支給品を野営地で手動取得。旧テスト/アリーナは従来方式。 */
+  classicBox?: boolean;
   /**
    * 操作補助: 弓の狙いの補助（v0.61.0。#19 の H05。設定の「弓の狙いの補助」）。手で狙っていない時に、正面 14° 以内の部位へ矢の向きと高さを寄せる。
    * 標準（2G）は切: 手で狙っていなければ、矢は体の向きへ水平に飛ぶ。手で狙っている間は、どちらでも寄せない
@@ -197,6 +200,9 @@ export class Simulation implements SimCtx {
   areaId = '';
   /** 出発した時の道具の内訳（道具ごとの、支給品の数と、自分で持ってきた数） */
   readonly brought: Record<string, { supplied: number; own: number }> = {};
+  readonly supplyStock: ItemStack[] = [];
+  /** 自前品の消費を後から受け取った支給品で帳消しにしない。 */
+  private readonly ownSpentFloor: Record<string,number> = {};
   readonly rng: SeededRng;
   readonly options: SimOptions;
   tick = 0;
@@ -275,7 +281,10 @@ export class Simulation implements SimCtx {
     // フィールドで大型を狩る依頼（v0.42.0）: 標識玉を足す（群れの依頼・狩らない依頼・エリアが 1 つの狩場には足さない。依頼に同じ道具があれば、そちら）
     const bigHunt = !!field && !!quest && quest.kind !== 'gather' && !quest.targets && !!quest.targetMonsterId;
     const extra = bigHunt ? (content.player.huntSupplies ?? []).filter((x) => !base.some((b) => b.itemId === x.itemId)) : [];
-    const supplies = [...base, ...extra];
+    const allSupplies = [...base, ...extra];
+    const manual = !!quest && !!options.classicBox;
+    if(manual)this.supplyStock.push(...allSupplies.map(s=>({...s})));
+    const supplies = manual?[]:allSupplies;
     const carry: ItemStack[] = supplies.map((s) => ({ ...s }));
     for (const s of supplies) this.brought[s.itemId] = { supplied: s.count, own: 0 };
     for (const own of quest ? options.pouch ?? [] : []) {
@@ -787,7 +796,7 @@ export class Simulation implements SimCtx {
     let best: ErrandTarget | null = null;
     let bd = Infinity;
     for (const n of e.def.nodes) {
-      if (n.areaId !== this.areaId || e.used.includes(n.id) || !bagHasRoom(e, n)) continue;
+      if (n.areaId !== this.areaId || e.used.includes(n.id) || !bagHasRoom(e, n) || (this.options.classicBox&&this.fieldPouchRoom(n.itemId)<e.def.yieldPerNode)) continue;
       const dist = Math.hypot(p.pos.x - n.x, p.pos.z - n.z);
       if (dist <= NODE_REACH && dist < bd) {
         bd = dist;
@@ -807,8 +816,11 @@ export class Simulation implements SimCtx {
       if(!g||!n||n.areaId!==this.areaId||Math.hypot(p.pos.x-n.x,p.pos.z-n.z)>FIELD_NODE_REACH+.2||p.drawn)return;
       if(n.kind==='fish'&&g.hookInstance!==p.errandOp?.instanceId){this.emit({type:'field_gather_miss',kind:'fish'});return;}
       const hit=g.take(n);if(!hit)return;
-      for(let i=0;i<hit.count;i++)h.loot.push({itemId:hit.itemId,source:'field_'+hit.kind});
-      this.emit({type:'field_gather',nodeId:n.id,...hit,pos:{x:n.x,y:this.world.groundHeight(n.x,n.z),z:n.z}});
+      const accepted=this.options.classicBox?Math.min(hit.count,this.fieldPouchRoom(hit.itemId)):hit.count;
+      if(accepted<hit.count)this.emit({type:'pouch_full',itemId:hit.itemId});
+      if(!accepted)return;
+      for(let i=0;i<accepted;i++)h.loot.push({itemId:hit.itemId,source:'field_'+hit.kind});
+      this.emit({type:'field_gather',nodeId:n.id,...hit,count:accepted,pos:{x:n.x,y:this.world.groundHeight(n.x,n.z),z:n.z}});
       return;
     }
     if(!e)return;
@@ -820,6 +832,7 @@ export class Simulation implements SimCtx {
     }
     const n = e.def.nodes.find((x) => x.id === t.nodeId);
     if (!n || e.used.includes(n.id) || !bagHasRoom(e, n)) return;
+    if(this.options.classicBox&&this.fieldPouchRoom(n.itemId)<e.def.yieldPerNode){this.emit({type:'pouch_full',itemId:n.itemId});return;}
     e.used.push(n.id);
     e.bag[n.itemId] = (e.bag[n.itemId] ?? 0) + e.def.yieldPerNode;
     this.emit({ type: 'errand_gather', nodeId: n.id, itemId: n.itemId, count: e.def.yieldPerNode, total: e.bag[n.itemId]!, kind: n.kind, pos: { x: n.x, y: 0, z: n.z } });
@@ -845,6 +858,7 @@ export class Simulation implements SimCtx {
     for (const e of table.table) total += e.weight;
     const itemId = this.pick(table, total);
     const tag = juvenile ? `carve:${juvenile.def.id}` : source === 'body' ? 'carve' : `severed:${source}`;
+    if(this.options.classicBox&&this.fieldPouchRoom(itemId)<=0){this.emit({type:'pouch_full',itemId});return;}
     h.loot.push({ itemId, source: tag });
     this.emit({ type: 'carve', itemId, source: tag, pos: { ...this.player.pos } });
   }
@@ -937,6 +951,7 @@ export class Simulation implements SimCtx {
 
   step(input: InputFrame): void {
     this.tick++;
+    if(input.supplyId)this.takeSupply(input.supplyId);
     const fg=this.fieldGather,op=this.player.errandOp,run=this.player.action;
     if(fg&&op?.target.kind==='field_node'&&op.target.source==='fish'&&run?.instanceId===op.instanceId&&fg.bite(run.tick)&&(input.pressed&Btn.Main))fg.hookInstance=run.instanceId;
     stepPlayer(this.player, input, this);
@@ -972,6 +987,37 @@ export class Simulation implements SimCtx {
     this.ledger.prune(active);
   }
 
+  /** Physical field pouch counts: real carried items, supplies and field-acquired materials. */
+  private fieldPouchCounts():Map<string,number>{
+    const counts=new Map((this.options.pouch??[]).map(x=>[x.itemId,x.count]));
+    for(const x of [...this.player.items,...this.player.coatings])counts.set(x.itemId,x.count);
+    for(const g of this.hunt?.loot??[])if(isCarriedLoot(g.source))counts.set(g.itemId,(counts.get(g.itemId)??0)+1);
+    if(this.errand&&!this.errand.delivered)for(const [id,n] of Object.entries(this.errand.bag))counts.set(id,(counts.get(id)??0)+n);
+    return counts;
+  }
+  fieldPouchRoom(id:string):number{
+    const counts=this.fieldPouchCounts(),have=counts.get(id)??0,limit=carryLimit(this.content,id);
+    return Math.max(0,have>0||[...counts.values()].filter(n=>n>0).length<POUCH_SLOTS?limit-have:0);
+  }
+  get supplyAccessible():boolean{
+    return !!this.options.classicBox&&this.hunt?.phase==='active'&&!this.hunt.closed&&this.field?.areas.some(a=>a.id===this.areaId&&a.kind==='camp')===true&&!this.player.drawn&&this.player.mode==='free';
+  }
+  supplyChoices():{itemId:string;count:number;room:number}[]{
+    if(!this.supplyAccessible)return [];
+    const fam=familyOf(this.player,this.content);
+    return this.supplyStock.filter(x=>x.count>0).map(x=>{const it=this.content.items.get(x.itemId);return {...x,room:!it||(it.kind==='whet'&&!fam.edge)||(it.kind==='coating'&&!fam.coatable)?0:this.fieldPouchRoom(x.itemId)};});
+  }
+  takeSupply(id:string):void{
+    const choice=this.supplyChoices().find(x=>x.itemId===id),stock=this.supplyStock.find(x=>x.itemId===id);
+    if(!choice||!stock||choice.room<=0)return;
+    const n=Math.min(choice.room,stock.count),it=this.content.items.get(id)!;
+    const list=it.kind==='coating'?this.player.coatings:this.player.items,stack=list.find(x=>x.itemId===id);
+    const prior=this.brought[id];
+    if(prior&&stack)this.ownSpentFloor[id]=Math.max(this.ownSpentFloor[id]??0,Math.max(0,prior.own-stack.count));
+    if(stack)stack.count+=n;else list.push({itemId:id,count:n});
+    (this.brought[id]??={supplied:0,own:0}).supplied+=n;stock.count-=n;
+  }
+
   /**
    * 自分で持ってきた道具のうち、使った数（支給品のぶんから先に使ったことにする）。
    * 狩りが終わった時に、これを持ち物から減らす。持ってこなかった道具（環弓の研磨石など）は入らない。
@@ -983,7 +1029,7 @@ export class Simulation implements SimCtx {
       const stack = this.player.items.find((s) => s.itemId === itemId) ?? this.player.coatings.find((s) => s.itemId === itemId);
       if (!stack) continue;
       const used = b.supplied + b.own - stack.count;
-      const own = Math.min(b.own, Math.max(0, used - b.supplied));
+      const own = Math.min(b.own, Math.max(this.ownSpentFloor[itemId]??0, used - b.supplied));
       if (own > 0) out.push({ itemId, count: own });
     }
     return out;
@@ -1427,6 +1473,7 @@ export class Simulation implements SimCtx {
     for (const a of this.projectiles) if (a.pierce !== undefined) parts.push(a.pierce, a.hitParts!.join(','));
     if (p.climb) parts.push(p.climb.def.id, p.climb.phase, p.climb.t, p.climb.h);
     if (p.vault) parts.push(p.vault.def.id, p.vault.t);
+    if(this.options.classicBox)parts.push(this.supplyStock.map(x=>x.itemId+'='+x.count).join(','),JSON.stringify(this.brought),JSON.stringify(this.ownSpentFloor));
     if(this.fieldGather)parts.push(this.fieldGather.hash());
     if (this.errand) parts.push(this.errand.used.join(','), Object.entries(this.errand.bag).map(([k, v]) => `${k}=${v}`).join(','), this.errand.delivered ? 1 : 0, p.errandOp ? `${p.errandOp.target.kind}:${p.errandOp.done ? 1 : 0}` : '-');
     for (const a of this.projectiles) parts.push(a.pos.x, a.pos.y, a.pos.z, a.life);

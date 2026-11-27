@@ -9,6 +9,7 @@
 import { ARMOR_SLOTS, recipeFrom, recipeIsWeapon, recipeResult, type ArmorDef, type ArmorSlot, type Content, type DeliveryDef, type ItemStack, type QuestDef, type RecipeDef, type ShopDef, type SupportPackDef } from '../data/schemas';
 import { appearanceShapeErrors, applyDraft, changedKinds, editableAppearance, legacyAppearance, validateDraft, type AppearanceDoc, type AppearanceDraft } from '../data/appearance';
 import { hubLifeShapeErrors, type HubLifeState } from '../data/hubLife';
+import { addPouch, boxRoom, boxShapeErrors, freshClassicBox, pouchCount, pouchStacks, removePouch, type ClassicBox } from './classicBox';
 
 /**
  * 版 2（v0.9.0）: 防具（armor）を足した。版 3（v0.14.0）: 身に着けている防具（equippedArmorIds）を足した。
@@ -16,7 +17,7 @@ import { hubLifeShapeErrors, type HubLifeState } from '../data/hubLife';
  * 版 5（v0.28.0）: ハンターの外見（appearance）を足した。
  */
 // 版5の任意の追加欄。旧データと、旧版への読み戻しを維持する。
-export const SAVE_SCHEMA_VERSION = 5;
+export const SAVE_SCHEMA_VERSION = 6;
 export const SLOT_ID = 'main';
 /** 書き出したファイルの目印 */
 export const EXPORT_FORMAT = 'veilbound-hunters-save';
@@ -39,6 +40,8 @@ export interface SaveDoc {
   money: number;
   /** 素材などの数（ID → 個数）。この版に無い ID も、そのまま持つ */
   items: Record<string, number>;
+  /** 版6: 箱の枠配置と独立した実体ポーチ。items は箱の合計。 */
+  classicBox?: ClassicBox;
   /** 持っている武器の ID。この版に無い ID も、そのまま持つ */
   weapons: string[];
   equippedWeaponId: string;
@@ -113,6 +116,7 @@ export function newSave(content: Content, stamp: SaveStamp): SaveDoc {
     updatedAt: stamp.now,
     money: 0,
     items: {},
+    classicBox: freshClassicBox(),
     weapons,
     equippedWeaponId: weapons[0] ?? '',
     armor: starterArmor(content),
@@ -147,7 +151,7 @@ export function validateSave(raw: unknown): string[] {
   if (!Array.isArray(raw.settledRuns) || raw.settledRuns.some((r) => typeof r !== 'string')) e.push('処理済みの依頼の記録が不正です');
   if (!Array.isArray(raw.claims) || raw.claims.some((r) => typeof r !== 'string' || r === '')) e.push('受け取りの記録が不正です');
   else if (new Set(raw.claims).size !== raw.claims.length) e.push('同じ受け取りの記録が 2 つ入っています');
-  e.push(...appearanceShapeErrors(raw.appearance), ...hubLifeShapeErrors(raw.hubLife));
+  e.push(...appearanceShapeErrors(raw.appearance), ...hubLifeShapeErrors(raw.hubLife), ...boxShapeErrors(raw.classicBox));
   return e;
 }
 
@@ -166,6 +170,7 @@ const MIGRATIONS: Record<number, (doc: Record<string, unknown>) => Record<string
   2: (doc) => ({ ...doc, equippedArmorIds: Array.isArray(doc.equippedArmorIds) ? doc.equippedArmorIds : Array.isArray(doc.armor) ? [...(doc.armor as unknown[])] : [] }),
   3: (doc) => ({ ...doc, claims: Array.isArray(doc.claims) ? doc.claims : [] }),
   4: (doc) => ({ ...doc, appearance: doc.appearance !== undefined ? doc.appearance : legacyAppearance() }),
+  5: (doc) => ({ ...doc, classicBox: doc.classicBox ?? freshClassicBox() }),
 };
 
 export type ReadResult =
@@ -241,6 +246,10 @@ export interface RunRewards {
   items: readonly ItemStack[];
   /** 狩りで使った、自分の道具（支給品のぶんは入れない）。持ち物から減らす */
   spent?: readonly ItemStack[];
+  /** 版6の実体ポーチから消費する。旧APIの呼出しとは明確に区別。 */
+  pouchSpent?: boolean;
+  pouchSnapshot?: readonly ItemStack[];
+  carried?: readonly ItemStack[];
   /** 達成したか。false（失敗・途中で帰った）なら、達成回数は増やさず、使った道具だけを減らす。無ければ達成 */
   cleared?: boolean;
 }
@@ -252,10 +261,15 @@ export interface RunRewards {
 export function settleRun(doc: SaveDoc, r: RunRewards): SaveDoc | null {
   if (doc.settledRuns.includes(r.runId)) return null;
   const cleared = r.cleared !== false;
-  const spent = (r.spent ?? []).filter((s) => s.count > 0 && (doc.items[s.itemId] ?? 0) > 0);
+  const spent = (r.spent ?? []).filter((s) => s.count > 0 && (r.pouchSpent || (doc.items[s.itemId] ?? 0) > 0));
+  if(r.pouchSpent && r.pouchSnapshot && (spent.length || r.carried?.length)) {
+    const norm=(a:readonly ItemStack[])=>JSON.stringify([...a].sort((x,y)=>x.itemId.localeCompare(y.itemId)));
+    if(norm(pouchStacks(doc))!==norm(r.pouchSnapshot))throw new RuleError('locked','出発後にポーチが変更されました。元の内容に戻してから報酬を再保存してください。');
+  }
   if (!cleared && spent.length === 0) return null;
   const next = cloneSave(doc);
   for (const s of spent) {
+    if(r.pouchSpent){if(pouchCount(next,s.itemId)<s.count)throw new RuleError('insufficient','ポーチの消費数を確認できません');removePouch(next,s.itemId,Math.floor(s.count));continue;}
     const left = (next.items[s.itemId] ?? 0) - Math.floor(s.count);
     if (left > 0) next.items[s.itemId] = left;
     else delete next.items[s.itemId];
@@ -265,6 +279,7 @@ export function settleRun(doc: SaveDoc, r: RunRewards): SaveDoc | null {
     if (!(s.count > 0)) continue;
     next.items[s.itemId] = Math.min(MAX_COUNT, (next.items[s.itemId] ?? 0) + Math.floor(s.count));
   }
+  if (cleared && r.pouchSpent) for(const s of r.carried??[]) addPouch(next,s.itemId,s.count,99);
   if (cleared) next.progress.questClears[r.questId] = Math.min(MAX_COUNT, (next.progress.questClears[r.questId] ?? 0) + 1);
   next.settledRuns.push(r.runId);
   if (next.settledRuns.length > MAX_SETTLED_RUNS) next.settledRuns.splice(0, next.settledRuns.length - MAX_SETTLED_RUNS);
@@ -352,7 +367,7 @@ export interface BuyCheck {
 export function checkBuy(doc: SaveDoc, shop: ShopDef, itemId: string, count: number): BuyCheck {
   const g = shop.goods.find((x) => x.itemId === itemId);
   const have = doc.items[itemId] ?? 0;
-  const room = Math.max(0, shop.holdMax - have);
+  const room = doc.classicBox ? boxRoom(doc,itemId) : Math.max(0, shop.holdMax - have);
   const price = g ? g.price * count : 0;
   return { ok: !!g && Number.isInteger(count) && count > 0 && count <= room && doc.money >= price, sold: !!g, price, have, room, money: doc.money };
 }
@@ -362,7 +377,7 @@ export function buy(doc: SaveDoc, shop: ShopDef, itemId: string, count: number):
   const c = checkBuy(doc, shop, itemId, count);
   if (!c.sold) throw new RuleError('not_sold', 'その道具は売っていません');
   if (!(Number.isInteger(count) && count > 0)) throw new RuleError('bad_count', '数が正しくありません');
-  if (count > c.room) throw new RuleError('full', `これ以上は持てません（${shop.holdMax} 個まで）`);
+  if (count > c.room) throw new RuleError('full', '物品箱に空きがありません。');
   if (c.money < c.price) throw new RuleError('insufficient', '通貨が足りません');
   const next = cloneSave(doc);
   next.money -= c.price;

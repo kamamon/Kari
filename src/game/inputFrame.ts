@@ -38,6 +38,8 @@ export interface InputFrame {
    */
   aimYaw?: number;
   aimPitch?: number;
+  /** 物品箱方式: 野営地で選択した支給品。入力列に残し再生でも同じ取得を行う。 */
+  supplyId?: string;
 }
 
 export const EMPTY_INPUT: Readonly<InputFrame> = Object.freeze({ moveX: 0, moveZ: 0, held: 0, pressed: 0, released: 0 });

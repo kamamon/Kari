@@ -8,6 +8,7 @@ import { aimDir, aimEye, aimTarget } from './game/aim';
 import type { ArmorSlot, Content, FacilityDef } from './data/schemas';
 import { starLabel } from './data/questBoard';
 import { FIELD_GATHER_LABEL } from './data/fieldGathering';
+import { isCarriedLoot, pouchStacks } from './save/classicBox';
 import { Btn, type InputFrame } from './game/inputFrame';
 import { firstMismatch, runReplay } from './game/replay';
 import { familyOf } from './game/player';
@@ -77,6 +78,8 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
   private editBar: HTMLElement;
   private rotate: HTMLElement;
   private recorded: InputFrame[] = [];
+  private readonly supplyUI=document.createElement('details');
+  private supplyKey='';private pendingSupply:string|undefined;
   private recordOverflow = false;
   private questId: string | null = null;
   private lastTs = 0;
@@ -103,6 +106,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     this.keyboard = new KeyboardMouse(this.hub, canvas);
     this.gamepad = new GamepadInput(this.hub);
     this.hud = new Hud(ui, this.hub);
+    this.supplyUI.className='classic-supply';this.supplyUI.hidden=true;ui.appendChild(this.supplyUI);
     this.touch = new TouchControls(this.hub, store, ui);
     this.menu = new Menu(ui, store, this);
     this.result = new ResultScreen(ui, this);
@@ -243,6 +247,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       questId,
       // 依頼へは、持っている道具を、持ち出せる数まで持っていく
       pouch: questId ? chosenPouch(this.save.doc, this.content) : [],
+      classicBox: !!questId&&this.fieldHunts,
       ...(questId&&this.huntPrep?{hubPrep:this.huntPrep}:{}),
       armorIds: wornArmor(this.save.doc, this.content).map((a) => a.id),
       field: this.fieldHunts,
@@ -256,7 +261,9 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
    * 中身を変えるのは保存の管理役だけで、書き込みが完了してから増える。
    */
   get inventory(): { money: number; items: Map<string, number> } {
-    return { money: this.save.doc.money, items: new Map(Object.entries(this.save.doc.items)) };
+    const items=new Map(Object.entries(this.save.doc.items));
+    for(const x of pouchStacks(this.save.doc))items.set(x.itemId,(items.get(x.itemId)??0)+x.count);
+    return { money: this.save.doc.money, items };
   }
 
   /** いまの依頼の識別子。出発のたびに新しくなる。報酬は、この識別子につき 1 度だけ持ち物へ入る（保存データに記録する） */
@@ -276,11 +283,14 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     const success = h.closed && h.phase === 'success' && !!h.rewards;
     // 達成した後、剥ぎ取りの途中で帰る場合は、報酬がまだ決まっていない（ここでは送らない）
     if (!success && (h.phase === 'success' || !(h.phase === 'failed' || leaving))) return;
-    const spent = this.sim.spentOwn();
+    const spent = (h.reason==='retire'||(leaving&&h.phase==='active'))?[]:this.sim.spentOwn();
     if (!success && spent.length === 0) return;
+    const carried=new Map<string,number>(),boxed=new Map<string,number>();
+    if(success&&this.sim.options.classicBox)for(const x of h.loot){const dest=isCarriedLoot(x.source)?carried:boxed;dest.set(x.itemId,(dest.get(x.itemId)??0)+1);}
+    const stacks=(m:Map<string,number>)=>[...m].map(([itemId,count])=>({itemId,count}));
     const rewards: RunRewards = success
-      ? { runId: this.runId, questId: h.quest.id, money: h.rewards!.money, items: h.rewards!.items.map((s) => ({ ...s })), spent }
-      : { runId: this.runId, questId: h.quest.id, money: 0, items: [], spent, cleared: false };
+      ? { runId: this.runId, questId: h.quest.id, money: h.rewards!.money, items: this.sim.options.classicBox?stacks(boxed):h.rewards!.items.map((s) => ({ ...s })), carried:stacks(carried), spent, pouchSpent:true,pouchSnapshot:this.sim.options.pouch }
+      : { runId: this.runId, questId: h.quest.id, money: 0, items: [], spent, cleared: false,pouchSpent:true,pouchSnapshot:this.sim.options.pouch };
     this.settleState = { runId: this.runId, state: 'saving', message: '', spentOnly: !success };
     if (success) this.runOutcome.set(this.runId, h.reason === 'capture' ? 'capture' : 'slay');
     void this.saveRewards(rewards);
@@ -391,6 +401,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     this.gatheringVisual=null;
     this.fishing = null;
     this.runId = questId ? makeRunId() : '';
+    this.pendingSupply=undefined;this.supplyKey='';this.supplyUI.open=false;
     this.sim = new Simulation(this.content, this.options(questId, hub));
     this.view?.dispose();
     this.view = new GameView(this.canvas, this.content, this.sim, this.store.value);
@@ -634,6 +645,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     // 狩らない依頼（v0.27.0）は、フィールドでだけ遊べる（1 つの狩場 ?hunt=arena では始めない）
     if (quest.kind === 'gather' && !this.fieldHunts) return;
     if(this.departing)return;
+    if(this.unsaved.length||this.settleState?.state==='saving'){this.base.notify('未保存の報酬を先に保存してください。',true);return;}
     const prep={...lifeOf(this.save.doc).prep};
     const start=()=>{this.huntPrep=prep;this.createSession(questId);this.huntPrep=undefined;this.setOverlay(null);this.audio.play('ui');};
     if(!hasPrep(prep)){start();return;}
@@ -823,6 +835,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
           input.pressed &= keep;
           input.released &= keep;
         }
+        if(this.pendingSupply!==undefined){input.supplyId=this.pendingSupply;this.pendingSupply=undefined;}
         if (this.recorded.length < MAX_RECORD) this.recorded.push(input);
         else this.recordOverflow = true;
         this.sim.step(input);
@@ -913,8 +926,17 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     this.touch.setHidden(['lock'], this.place === 'hub' || !this.store.value.lockOnButton);
     if(!this.base.estateActive)this.view.render();
     this.hud.setFacility(this.place === 'hub' && !paused ? (this.nearFacility ?? this.resourcePrompt()) : null, this.place === 'hub');
+    this.renderSupply(!paused&&this.place==='hunt');
     this.hud.update(this.sim, this.view, { fps: this.fps, droppedTicks: this.clock.droppedTicks, frames: this.meterSummary }, dt);
   };
+
+  private renderSupply(active:boolean):void{
+    const choices=active?this.sim.supplyChoices():[];this.supplyUI.hidden=choices.length===0;
+    if(!choices.length){this.supplyUI.open=false;this.supplyKey='';return;}
+    const key=JSON.stringify(choices);if(key===this.supplyKey)return;this.supplyKey=key;
+    const summary=document.createElement('summary');summary.textContent='支給品ボックス';this.supplyUI.replaceChildren(summary);
+    for(const x of choices){const b=document.createElement('button');b.type='button';b.textContent=(this.content.items.get(x.itemId)?.name??x.itemId)+' ×'+x.count+'　受取 '+Math.min(x.count,x.room);b.disabled=x.room<=0;b.onclick=()=>{if(!this.paused&&!this.pendingSupply)this.pendingSupply=x.itemId;};this.supplyUI.appendChild(b);}
+  }
 
   private playSounds(events: ReturnType<Simulation['drainEvents']>): void {
     const play = (id: string, k = 1): void => {

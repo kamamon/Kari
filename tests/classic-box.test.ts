@@ -1,0 +1,23 @@
+import {beforeAll,describe,it,expect} from 'vitest';
+import type {Content} from '../src/data/schemas';
+import {applyBox,boxView,pouchStacks,finishBox,boxRoom,BOX_EXPANSION_COST} from '../src/save/classicBox';
+import {newSave,readSave,settleRun,validateSave} from '../src/save/profile';
+import {SaveManager} from '../src/save/saveManager';
+import {MemoryBackend} from '../src/save/saveDb';
+import {Simulation} from '../src/game/sim';
+import {EMPTY_INPUT} from '../src/game/inputFrame';
+import {loadContent,baseOptions} from './helpers';
+let c:Content;beforeAll(async()=>{c=await loadContent()});
+const heal='item.heal_tonic',ore='mat.galdros.shell_shard',q='quest.basin.003';
+const fresh=()=>newSave(c,{now:'x',appVersion:'test',contentVersion:c.contentVersion});
+describe('classic storage',()=>{
+ it('99個で分割・800枠・24枠',()=>{const d=fresh();d.items[ore]=100;expect(boxView(d).slots.slice(0,2)).toEqual([{itemId:ore,count:99},{itemId:ore,count:1}]);expect(boxView(d).slots.length).toBe(800);expect(d.classicBox!.pouch.length).toBe(24);});
+ it('指定枠から取り出し、戻す。持ち物を二重計上しない',()=>{const d=fresh();d.items[heal]=105;const n=applyBox(d,c,{kind:'move',from:'box',index:0,itemId:heal,count:10});expect(n.items[heal]).toBe(95);expect(pouchStacks(n)).toEqual([{itemId:heal,count:10}]);const back=applyBox(n,c,{kind:'depositAll'});expect(back.items[heal]).toBe(105);expect(pouchStacks(back)).toEqual([]);expect(d.items[heal]).toBe(105);});
+ it('上限を超える操作は元のデータを変更しない',()=>{const d=fresh();d.items[heal]=100;const old=JSON.stringify(d);expect(()=>applyBox(d,c,{kind:'move',from:'box',index:0,itemId:heal,count:11})).toThrow();expect(JSON.stringify(d)).toBe(old);});
+ it('容量超過を拒否し、旧データ超過は保持する',()=>{const d=fresh();d.items[ore]=800*99;const n=structuredClone(d);n.items[heal]=1;expect(()=>finishBox(d,n)).toThrow();const old={...d,schemaVersion:5,items:{[ore]:800*99+17}};delete old.classicBox;const r=readSave(old);expect(r.kind).toBe('ok');if(r.kind==='ok'){expect(boxView(r.doc).overflow[0].count).toBe(17);expect(r.doc.items[ore]).toBe(800*99+17);}});
+ it('拡張2段・手動の入替と整頓',()=>{const d=fresh();d.money=9999;d.items[ore]=100;let n=applyBox(d,c,{kind:'expand'});n=applyBox(n,c,{kind:'expand'});expect(n.money).toBe(9999-BOX_EXPANSION_COST[0]-BOX_EXPANSION_COST[1]);expect(boxView(n).slots.length).toBe(1000);expect(()=>applyBox(n,c,{kind:'expand'})).toThrow();n=applyBox(n,c,{kind:'swap',zone:'box',a:0,b:8});expect(boxView(n).slots[8]?.itemId).toBe(ore);n=applyBox(n,c,{kind:'sort',zone:'box'});expect(boxView(n).slots[0]?.count).toBe(99);});
+ it('自前消費はポーチのみ、現地素材はポーチ、依頼報酬は箱、runIdで一度',()=>{const d=fresh();d.items[heal]=15;const n=applyBox(d,c,{kind:'move',from:'box',index:0,itemId:heal,count:5});const r={runId:'r',questId:q,money:10,items:[{itemId:ore,count:2}],spent:[{itemId:heal,count:1}],carried:[{itemId:ore,count:3}],pouchSpent:true,pouchSnapshot:pouchStacks(n)};const a=settleRun(n,r)!;expect(a.items[heal]).toBe(10);expect(a.items[ore]).toBe(2);expect(pouchStacks(a)).toEqual([{itemId:heal,count:4},{itemId:ore,count:3}]);expect(settleRun(a,r)).toBeNull();expect(validateSave(a)).toEqual([]);});
+ it('保存を再読込してもポーチと配置が残る',async()=>{const b=new MemoryBackend(),env={now:()=> 'x',appVersion:'test'};const m=await SaveManager.open(c,b,env);await m.settle({runId:'seed',questId:q,money:1000,items:[{itemId:heal,count:12}]});expect(await m.box({kind:'move',from:'box',index:0,itemId:heal,count:3})).toEqual({ok:true});const after=await SaveManager.open(c,b,env);expect(pouchStacks(after.doc)[0].count).toBe(3);expect(after.doc.items[heal]).toBe(9);});
+ it('後から支給品を受け取っても先に消費した自前品を復活させない',()=>{const s=new Simulation(c,baseOptions({questId:q,field:true,classicBox:true,pouch:[{itemId:heal,count:3}]}));s.player.items.find(x=>x.itemId===heal)!.count=2;s.step({...EMPTY_INPUT,supplyId:heal});expect(s.spentOwn()).toEqual([{itemId:heal,count:1}]);});
+ it('野営地では支給品を手動で取得し、満杯で追加しない',()=>{const s=new Simulation(c,baseOptions({questId:q,field:true,classicBox:true,pouch:[{itemId:heal,count:8}]}));expect(s.brought[heal]).toEqual({supplied:0,own:8});expect(s.player.items.find(x=>x.itemId===heal)?.count).toBe(8);s.step({...EMPTY_INPUT,supplyId:heal});expect(s.brought[heal].supplied).toBe(2);expect(s.player.items.find(x=>x.itemId===heal)?.count).toBe(10);s.step({...EMPTY_INPUT,supplyId:heal});expect(s.brought[heal].supplied).toBe(2);});
+});

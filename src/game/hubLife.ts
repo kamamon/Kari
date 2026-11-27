@@ -7,6 +7,7 @@ import { nearestFacility } from './hub';
 import { ANIMALS, furnitureErrors, type AnimalKind, type FurniturePlacement, type ZoneId } from '../data/hubEstate';
 import type { V3 } from '../core/math';
 import type { World } from './world';
+import { pouchStacks, setPouchCount } from '../save/classicBox';
 
 export type HubService={id:string;name:string;tab:HubTab;x:number;z:number;r:number;floor:number;detail:string;zone?:ZoneId};
 export const HUB_SERVICES:readonly HubService[]=[
@@ -74,6 +75,7 @@ function gain(n:SaveDoc,c:Content,s:ItemStack):void{
  n.items[s.itemId]=(n.items[s.itemId]??0)+s.count;
 }
 export const chosenPouch=(d:SaveDoc,c:Content):ItemStack[]=>{
+ if(d.classicBox)return pouchStacks(d);
  const p=lifeOf(d).pouch,all=pouchOf(d,c);
  return p===null?all:all.map(s=>({...s,count:Math.min(s.count,p[s.itemId]??0)})).filter(s=>s.count>0);
 };
@@ -135,16 +137,16 @@ export function applyHubLife(doc:SaveDoc,c:Content,cmd:LifeCommand):SaveDoc|null
  }
  case 'receive':{const ex=s.expedition;requireIt(ex&&cycle>=ex.readyCycle,'探索隊はまだ帰還していません');const r=expeditionReward(c,ex);requireIt(r,'素材表がありません');gain(n,c,r);s.expedition=null;break;}
  case 'saveSet':case 'applySet':case 'deleteSet':{
-  requireIt(['1','2','3'].includes(cmd.slot),'セット番号が不正です');
-  if(cmd.kind==='saveSet'){s.sets[cmd.slot]={weapon:playWeaponId(doc,c),armor:wornArmor(doc,c).map(a=>a.id),pouch:s.pouch===null?null:{...s.pouch}};break;}
+  requireIt(/^(?:[1-9]|1[0-9]|20)$/.test(cmd.slot),'セット番号が不正です');
+  if(cmd.kind==='saveSet'){s.sets[cmd.slot]={weapon:playWeaponId(doc,c),armor:wornArmor(doc,c).map(a=>a.id),pouch:null};break;}
   if(cmd.kind==='deleteSet'){delete s.sets[cmd.slot];break;}
   const set=s.sets[cmd.slot];requireIt(set&&doc.weapons.includes(set.weapon)&&c.weapons.has(set.weapon),'セットの武器が現在ありません');
   requireIt(set.armor.every(id=>doc.armor.includes(id)&&c.armor.has(id)),'セットの防具が現在ありません（強化済みの可能性）');
   const slots=set.armor.map(id=>c.armor.get(id)!.slot);requireIt(new Set(slots).size===slots.length&&slots.every(x=>ARMOR_SLOTS.includes(x)),'防具の部位が不正です');
-  n.equippedWeaponId=set.weapon;n.equippedArmorIds=[...doc.equippedArmorIds.filter(id=>!c.armor.has(id)),...set.armor];s.pouch=set.pouch===null?null:{...set.pouch};break;
+  n.equippedWeaponId=set.weapon;n.equippedArmorIds=[...doc.equippedArmorIds.filter(id=>!c.armor.has(id)),...set.armor];break;
  }
- case 'pouch':{const it=c.items.get(cmd.itemId);requireIt(it&&Number.isInteger(cmd.count)&&cmd.count>=0&&cmd.count<=it.carryMax,'持ち込み数が不正です');if(s.pouch===null)s.pouch=Object.fromEntries(pouchOf(doc,c).map(x=>[x.itemId,x.count]));s.pouch[cmd.itemId]=cmd.count;break;}
- case 'autoPouch':s.pouch=null;break;
+ case 'pouch':return setPouchCount(doc,c,cmd.itemId,cmd.count);
+ case 'autoPouch':throw new RuleError('locked','道具は物品箱からポーチに移してください。');
  case 'furniture':{const errors=furnitureErrors(cmd.items);requireIt(!errors.length,errors.join('、'));s.furniture=cmd.items.map(p=>({...p}));break;}
  case 'animalBuy':case 'animalFeed':case 'animalCollect':{
   requireIt(Object.prototype.hasOwnProperty.call(ANIMALS,cmd.id),'家畜の種類が不正です');

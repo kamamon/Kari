@@ -33,6 +33,7 @@ import { MemoryBackend, type SaveBackend, type StoredBackup } from './saveDb';
 import type { AppearanceDraft } from '../data/appearance';
 import { useHubResource } from '../game/hubResources';
 import { applyHubLife, type LifeCommand } from '../game/hubLife';
+import { applyBox, BoxRuleError, finishBox, type BoxCommand } from './classicBox';
 
 /**
  * persistent: 端末に保存
@@ -198,6 +199,7 @@ export class SaveManager {
         const next = mutate(starters ?? base);
         if (next === null && !starters && cur !== null) return { result: null };
         const out = cloneSave(next ?? starters ?? base);
+        finishBox(base,out,opt.backupReason==='import'||opt.backupReason==='restore');
         out.slotId = SLOT_ID;
         out.revision = base.revision + 1;
         out.updatedAt = stamp.now;
@@ -219,7 +221,7 @@ export class SaveManager {
         this.setDoc(granted ?? e.latest);
         return { ok: false, reason: 'conflict', message: 'ほかのタブで内容が変わっていたので、読み込み直しました。もう一度お試しください。' };
       }
-      if (e instanceof RuleError) return { ok: false, reason: 'rule', message: e.message };
+      if (e instanceof RuleError || e instanceof BoxRuleError) return { ok: false, reason: 'rule', message: e.message };
       if (e instanceof UnreadableError) return { ok: false, reason: 'failed', message: `${e.message}。保存していません。` };
       return { ok: false, reason: 'failed', message: `保存できませんでした（${e instanceof Error ? e.message : String(e)}）。` };
     }
@@ -260,6 +262,11 @@ export class SaveManager {
     if (!recipe) return Promise.resolve({ ok: false, reason: 'rule', message: 'その強化はありません。' });
     // 級が開いているかも、書き込みの中の最新の内容で確かめる（v0.32.0）
     return this.commit((doc) => craft(doc, recipe, craftRankOpen(doc, this.content, recipe)));
+  }
+
+  /** 選択枠・個数・現在のrevisionを検証して、物品箱を1回の書き込みで変更する。 */
+  box(command: BoxCommand, expected = this.doc.revision): Promise<SaveResult> {
+    return this.commit(doc=>applyBox(doc,this.content,command),{expected});
   }
 
   /** 商店で道具を買う / 素材を売る（通貨と持ち物を、1 回の書き込みで変える） */

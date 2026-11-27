@@ -868,3 +868,29 @@ button.reception-desk { cursor: pointer; }
 .estate-range{display:flex;flex-direction:column;gap:2px}.estate-range input{width:100%;min-height:32px;touch-action:pan-x;accent-color:#c4a66e}
 .estate-move{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;touch-action:none}.estate-move button{min-height:42px!important;touch-action:none!important}
 @media(max-height:450px){.estate-head .life-button{min-height:35px!important}.estate-head h3{font-size:14px}.estate-side{padding:4px}.estate-side .life-text{font-size:11px}.estate-panel{grid-template-columns:minmax(0,1fr) minmax(172px,31%)}}
+
+/* Classic box – original Kari colors, paged grids; only one page of each container is rendered. */
+.classic-box{border:1px solid var(--line);background:#202820;color:var(--ink);margin:8px 0;padding:6px;border-radius:5px}
+.classic-box summary{cursor:pointer;padding:6px;color:#e8d2a0;font-weight:700}
+.classic-box-body{display:grid;gap:7px}
+.classic-box-top,.classic-box-nav,.classic-box-actions,.classic-qty-row,.classic-mix-row{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.classic-box-top{justify-content:space-between;font-size:.82rem}
+.classic-box-main{display:grid;grid-template-columns:minmax(180px,1.35fr) minmax(75px,.55fr) minmax(115px,.8fr);gap:7px;align-items:start}
+.classic-zone{min-width:0}.classic-box-nav{justify-content:space-between;font-size:.7rem;margin-bottom:4px;flex-wrap:nowrap}
+.classic-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:2px}
+.classic-zone.pouch .classic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.classic-slot{position:relative;aspect-ratio:1;min-width:0;min-height:0;padding:0;border:1px solid #61705d;background:#303c31;border-radius:2px;color:#ddd;display:grid;place-items:center;touch-action:manipulation}
+.classic-slot.selected{border:2px solid #ffd48a;background:#625139}.classic-slot.marked{outline:1px dashed #8cc5ce}
+.classic-icon{width:85%;height:85%;object-fit:contain}.classic-fallback{font-size:clamp(8px,1.8vw,16px);color:#cfdbbc}
+.classic-count{position:absolute;right:1px;bottom:0;background:#101810be;font-size:clamp(7px,1.4vw,12px);line-height:1.05;color:#fff;font-variant-numeric:tabular-nums}
+.classic-box-info{background:#182019;border:1px solid var(--line);border-radius:4px;padding:5px;font-size:.73rem;display:grid;gap:4px}
+.classic-box-info h4,.classic-box-info p{margin:0;overflow-wrap:anywhere}.classic-qty-row{flex-wrap:nowrap}.classic-qty{width:3em;min-width:0;background:#101812;color:var(--ink);border:1px solid var(--line);text-align:center}
+.classic-box-btn,.shop-pouch-buy{padding:5px 7px;border:1px solid #87734c;background:#3a4536;border-radius:3px;color:var(--ink);font-size:.72rem;min-height:28px}
+.classic-box-btn:disabled,.shop-pouch-buy:disabled{opacity:.45}.classic-box-status{margin:3px;font-size:.75rem}.classic-box-status.bad,.classic-warning{color:#ffba9f}
+.classic-mix-row{justify-content:space-between;padding:4px;border-bottom:1px solid var(--line);font-size:.75rem}.classic-mix-row span{flex:1}
+@media(max-width:680px){.classic-box-main{grid-template-columns:minmax(160px,1.35fr) minmax(65px,.5fr) minmax(95px,.8fr);gap:4px}.classic-box-btn{padding:4px;min-height:26px}.classic-grid{gap:1px}}
+
+.classic-supply{position:absolute;left:50%;top:calc(var(--sat) + 52px);transform:translateX(-50%);z-index:9;background:#202b22eb;border:1px solid #b89460;padding:5px 9px;border-radius:5px;font-size:.8rem;max-width:min(50vw,340px);max-height:58vh;overflow:auto;pointer-events:auto}
+.classic-supply summary{cursor:pointer;color:#f5e0ab}.classic-supply button{display:block;width:100%;background:#384638;color:var(--ink);border:1px solid var(--line);padding:5px;margin-top:3px;text-align:left}.classic-supply button:disabled{opacity:.5}
+
+.classic-equipment-grid{max-width:420px;margin:5px 0}.classic-gear .classic-box-info{max-width:420px}.classic-gear .classic-count{font-size:7px}
