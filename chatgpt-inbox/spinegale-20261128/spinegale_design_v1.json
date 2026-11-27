@@ -1,0 +1,526 @@
+{
+  "status": "design_proposal_only",
+  "basis": "Kari v0.72.0, user-selected candidate D. 2nd in new construction/early appearance order, not bestiary number.",
+  "id": "monster.spinegale",
+  "size": {
+    "lengthM": 6.3,
+    "heightM": 2.2,
+    "massKg": 430
+  },
+  "combat": {
+    "hp": 1450,
+    "captureHpRatio": 0.25,
+    "walkMps": 2.8,
+    "runMps": 7.2,
+    "dashMps": 10.5,
+    "stamina": {
+      "max": 100,
+      "fatigueThreshold": 20,
+      "minimumFatigueTicks": 600,
+      "combatSprintCostPerSecond": 4,
+      "regenInCombat": 0,
+      "outOfCombatRegenPerSecond": 2,
+      "rageSpeedScale": 1.15,
+      "rageCostScale": 1.2,
+      "fatigueAttack": false,
+      "fatigueMovement": false,
+      "notes": "攻撃開始時にコストを1回減算、攻撃に含まれる走行には別途消費を重ねない。通常疾走のみ4/s。20以下は現在の行動終了後に疲労開始。開始時の残量から600tickで100へ線形回復。疲労状態は怒りで中断・回復しない。怯み/罠/気絶と同時でも疲労タイマは進み、終了時に行動不能なら解消後に再開。疲労中に攻撃判定を発生させない。残量・乱数・状態はsimで管理し描画と分離。疲労予告は35以下。"
+    },
+    "moves": [
+      {
+        "id": "bite",
+        "durationTicks": 64,
+        "hitWindows": [
+          [
+            24,
+            31
+          ]
+        ],
+        "damagePerHit": 14,
+        "staminaCost": 6,
+        "notes": "首を引き前へ踏み出す"
+      },
+      {
+        "id": "double_bite",
+        "durationTicks": 112,
+        "hitWindows": [
+          [
+            26,
+            33
+          ],
+          [
+            56,
+            63
+          ]
+        ],
+        "damagePerHit": 11,
+        "staminaCost": 12,
+        "notes": "左右へ噛む。二段目[56,63)"
+      },
+      {
+        "id": "dash",
+        "durationTicks": 144,
+        "hitWindows": [
+          [
+            30,
+            96
+          ]
+        ],
+        "damagePerHit": 24,
+        "staminaCost": 20,
+        "notes": "予告30tick、発進後追尾なし、最大移動11m"
+      },
+      {
+        "id": "pounce",
+        "durationTicks": 132,
+        "hitWindows": [
+          [
+            36,
+            52
+          ]
+        ],
+        "damagePerHit": 28,
+        "staminaCost": 22,
+        "notes": "腰を沈め、放物線で跳躍、着地の衝撃を吸収"
+      },
+      {
+        "id": "jump_kick",
+        "durationTicks": 120,
+        "hitWindows": [
+          [
+            38,
+            53
+          ]
+        ],
+        "damagePerHit": 26,
+        "staminaCost": 18,
+        "notes": "脚を畳み跳ぶ、着地後に体重移動"
+      },
+      {
+        "id": "tail_sweep_l",
+        "durationTicks": 100,
+        "hitWindows": [
+          [
+            32,
+            48
+          ]
+        ],
+        "damagePerHit": 18,
+        "staminaCost": 12,
+        "notes": "尾扇を開く。左向き"
+      },
+      {
+        "id": "tail_sweep_r",
+        "durationTicks": 100,
+        "hitWindows": [
+          [
+            32,
+            48
+          ]
+        ],
+        "damagePerHit": 18,
+        "staminaCost": 12,
+        "notes": "尾扇を開く。右向き"
+      },
+      {
+        "id": "turn_bite",
+        "durationTicks": 88,
+        "hitWindows": [
+          [
+            30,
+            40
+          ]
+        ],
+        "damagePerHit": 17,
+        "staminaCost": 10,
+        "notes": "足を踏み替え、頭を向ける"
+      },
+      {
+        "id": "side_strike_l",
+        "durationTicks": 96,
+        "hitWindows": [
+          [
+            28,
+            40
+          ]
+        ],
+        "damagePerHit": 16,
+        "staminaCost": 12,
+        "notes": "左へ踏み切り横へ跳ぶ"
+      },
+      {
+        "id": "side_strike_r",
+        "durationTicks": 96,
+        "hitWindows": [
+          [
+            28,
+            40
+          ]
+        ],
+        "damagePerHit": 16,
+        "staminaCost": 12,
+        "notes": "右へ踏み切り横へ跳ぶ"
+      },
+      {
+        "id": "triple_dash",
+        "durationTicks": 240,
+        "hitWindows": [
+          [
+            38,
+            64
+          ],
+          [
+            105,
+            130
+          ],
+          [
+            172,
+            197
+          ]
+        ],
+        "damagePerHit": 12,
+        "staminaCost": 30,
+        "notes": "各走行を別窓[38,64),[105,130),[172,197)。間に制動。発進ごとに狙い固定"
+      },
+      {
+        "id": "pack_call",
+        "durationTicks": 96,
+        "hitWindows": [],
+        "damagePerHit": 0,
+        "staminaCost": 8,
+        "notes": "攻撃判定なし。喉袋を広げて鳴く"
+      }
+    ],
+    "parts": [
+      {
+        "name": "頭",
+        "cut": 0.65,
+        "impact": 0.7,
+        "shot": 0.55,
+        "breakAt": 140
+      },
+      {
+        "name": "喉袋",
+        "cut": 0.75,
+        "impact": 0.65,
+        "shot": 0.65,
+        "breakAt": 160
+      },
+      {
+        "name": "背棘",
+        "cut": 0.35,
+        "impact": 0.5,
+        "shot": 0.3,
+        "breakAt": 180
+      },
+      {
+        "name": "後脚左右",
+        "cut": 0.5,
+        "impact": 0.55,
+        "shot": 0.4,
+        "breakAt": 180
+      },
+      {
+        "name": "尾扇",
+        "cut": 0.55,
+        "impact": 0.4,
+        "shot": 0.45,
+        "severAt": 200
+      },
+      {
+        "name": "胴",
+        "cut": 0.45,
+        "impact": 0.45,
+        "shot": 0.4
+      }
+    ]
+  },
+  "model": {
+    "coordinate": "+Y up, +Z forward, right = -X, origin at ground between feet, meters",
+    "lodTriangleTargets": {
+      "hero": 80000,
+      "lod0": 36000,
+      "lod1": 18000,
+      "lod2": 7000
+    },
+    "materials": "PBR; hide scales albedo, normal, ORM; crest/tail keratin; dewlap skin; mouth and eyes. PC 2048 maps, mobile 1024 maps KTX2 if supported.",
+    "bones": "77-node initial target: axial/head 16, hind 24, fore 14, tail 10, fan 2, dewlap 3, ribs 2, dorsal spines 4, crest 2. Max 4 weights, sum 1. Names/indices not yet official; Claude to agree and add to contract.",
+    "clips": {
+      "locomotion": [
+        "idle",
+        "walk",
+        "trot",
+        "sprint",
+        "brake",
+        "turn_l",
+        "turn_r",
+        "pivot_l",
+        "pivot_r",
+        "backstep",
+        "limp"
+      ],
+      "ecology": [
+        "look_around",
+        "sniff",
+        "eat",
+        "drink",
+        "sleep_enter",
+        "sleep_loop",
+        "sleep_exit",
+        "blink",
+        "preen"
+      ],
+      "attack": [
+        "bite",
+        "double_bite",
+        "dash",
+        "pounce",
+        "jump_kick",
+        "tail_sweep_l",
+        "tail_sweep_r",
+        "turn_bite",
+        "side_strike_l",
+        "side_strike_r",
+        "triple_dash",
+        "pack_call"
+      ],
+      "fatigue": [
+        "fatigue_enter",
+        "fatigue_pant_loop",
+        "fatigue_recover"
+      ],
+      "reaction": [
+        "flinch_head",
+        "flinch_body",
+        "flinch_leg_l",
+        "flinch_leg_r",
+        "flinch_tail",
+        "fall_l",
+        "fall_r",
+        "rise",
+        "break_crest",
+        "break_spine",
+        "sever_tail",
+        "rage_roar",
+        "stun",
+        "paralysis",
+        "trap",
+        "capture",
+        "death"
+      ]
+    },
+    "technical": "60 tick/sec; in-place; controller curves own movement; bones and shapeTracks use same local coordinate; no root motion applied twice. IK lock foot contacts. Ground clamp during landing. Swept hit shapes only active windows; no passive damage by proximity. Morphs for jaw/neck/hock/dewlap, optional heat breathing blend. Separate intact/broken meshes and tail fan sever mesh."
+  },
+  "gear": {
+    "weapons": [
+      {
+        "family": "heavy_blade",
+        "name": "疾棘断剣",
+        "look": "後方へ反った背棘を刃の峰に連結、喉膜の柄巻き",
+        "attackRatio": 0.93,
+        "affinityPercent": 10,
+        "element": "none"
+      },
+      {
+        "family": "guard_blade",
+        "name": "疾棘護刃",
+        "look": "細い鉤爪の短剣、尾扇を左右へ広げた小盾",
+        "attackRatio": 0.9,
+        "affinityPercent": 15,
+        "element": "none"
+      },
+      {
+        "family": "twin_blades",
+        "name": "双棘牙",
+        "look": "左右の背棘で対となる二枚刃、黒い刃筋",
+        "attackRatio": 0.88,
+        "affinityPercent": 20,
+        "element": "none"
+      },
+      {
+        "family": "long_blade",
+        "name": "疾風棘刀",
+        "look": "長い反りのある細身の無属性刀、二股の鍔",
+        "attackRatio": 0.92,
+        "affinityPercent": 15,
+        "element": "none"
+      },
+      {
+        "family": "war_maul",
+        "name": "疾棘穿槌",
+        "look": "軽量中空骨を芯に束ねた背棘冠、打面は平ら",
+        "attackRatio": 0.94,
+        "affinityPercent": 10,
+        "element": "none"
+      },
+      {
+        "family": "long_lance",
+        "name": "疾棘穿槍",
+        "look": "長く細い穂先と尾扇型の盾",
+        "attackRatio": 0.93,
+        "affinityPercent": 10,
+        "element": "none"
+      },
+      {
+        "family": "ring_bow",
+        "name": "疾棘環弓",
+        "look": "弾性腱の弦、黄緑の二股尾扇を思わせる湾曲弓",
+        "attackRatio": 0.9,
+        "affinityPercent": 15,
+        "element": "none"
+      }
+    ],
+    "armor": [
+      {
+        "slot": "head",
+        "name": "疾棘頭冠",
+        "defense": 8,
+        "points": {
+          "回避性能": 3
+        }
+      },
+      {
+        "slot": "chest",
+        "name": "疾棘胴衣",
+        "defense": 8,
+        "points": {
+          "体術": 4
+        }
+      },
+      {
+        "slot": "arms",
+        "name": "疾棘腕甲",
+        "defense": 7,
+        "points": {
+          "回避性能": 3
+        }
+      },
+      {
+        "slot": "waist",
+        "name": "疾棘腰帯",
+        "defense": 7,
+        "points": {
+          "体術": 3
+        }
+      },
+      {
+        "slot": "legs",
+        "name": "疾棘脚装",
+        "defense": 8,
+        "points": {
+          "回避性能": 4,
+          "体術": 3
+        }
+      }
+    ],
+    "set": "回避性能+10、体術+10。技能点対応未確定のため、発動値と実効果は現行データに合わせる。重装との棲み分け。氷・水耐性低め。会心率と攻撃比は同級無属性基準、現行の武器式に移植する際に検証。",
+    "loot": {
+      "body": [
+        [
+          "疾棘竜の鱗",
+          42
+        ],
+        [
+          "疾棘竜の鋭爪",
+          25
+        ],
+        [
+          "疾棘竜の背棘",
+          18
+        ],
+        [
+          "疾棘竜の喉膜",
+          10
+        ],
+        [
+          "疾棘竜の弾性腱",
+          5
+        ]
+      ],
+      "capture": [
+        [
+          "疾棘竜の鱗",
+          30
+        ],
+        [
+          "疾棘竜の鋭爪",
+          15
+        ],
+        [
+          "疾棘竜の背棘",
+          15
+        ],
+        [
+          "疾棘竜の喉膜",
+          20
+        ],
+        [
+          "疾棘竜の弾性腱",
+          20
+        ]
+      ],
+      "tail": [
+        [
+          "疾棘竜の尾扇",
+          80
+        ],
+        [
+          "疾棘竜の鱗",
+          20
+        ]
+      ],
+      "breaks": {
+        "頭": [
+          [
+            "疾棘竜の背棘",
+            70
+          ],
+          [
+            "疾棘竜の鱗",
+            30
+          ]
+        ],
+        "喉": [
+          [
+            "疾棘竜の喉膜",
+            100
+          ]
+        ],
+        "背": [
+          [
+            "疾棘竜の背棘",
+            100
+          ]
+        ],
+        "脚": [
+          [
+            "疾棘竜の鋭爪",
+            65
+          ],
+          [
+            "疾棘竜の弾性腱",
+            35
+          ]
+        ]
+      }
+    }
+  },
+  "quest": {
+    "title": "渓谷を駆ける疾棘",
+    "rank": "rank.1",
+    "stars": 2,
+    "limitMinutes": 15,
+    "expectedClearMinutes": [
+      5,
+      8
+    ],
+    "field": "風礫盆地",
+    "type": "hunt",
+    "packSize": [
+      2,
+      3
+    ],
+    "rewardMoney": 700,
+    "notes": "新規初級導線への挿入は既存クエスト/セルヴァルクとの順序調整後。小型は同時攻撃を最大1体に制限。疲労中は群れの新規攻撃指示なし。"
+  }
+}

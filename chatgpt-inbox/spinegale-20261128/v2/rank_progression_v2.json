@@ -1,0 +1,1265 @@
+{
+  "schema": "kari-spinegale-design-v2-proposal",
+  "monsterId": "monster.spinegale",
+  "note": "提案JSON。既存型への変換・ID確認・実機調整はClaude。原種は上級まで、極級の追加なし。上位見た目は今後差分メッシュを制作する。初級GLBの既存クリップは60 tick/s。疲労は怒りで解除しない。中級・上級は疲労ループ区間のみ短縮し始動・復帰を維持する。",
+  "tiers": [
+    {
+      "rank": "rank.1",
+      "name": "初級",
+      "hp": 1450,
+      "walkMps": 2.8,
+      "runMps": 7.2,
+      "staminaMax": 100,
+      "fatigueTicks": 600,
+      "fatigueThresholdRatio": 0.2,
+      "attackScale": 1,
+      "rageSpeedScale": 1.15,
+      "rageStaminaCostScale": 1.2,
+      "fatigueAttack": false,
+      "fatigueMove": false,
+      "comboPolicy": "基本単発・二連",
+      "appearance": "基準の黄緑・炭色",
+      "loot": {
+        "body": [
+          {
+            "item": "item.spinegale.scale.r1",
+            "weight": 42
+          },
+          {
+            "item": "item.spinegale.claw.r1",
+            "weight": 25
+          },
+          {
+            "item": "item.spinegale.spine.r1",
+            "weight": 18
+          },
+          {
+            "item": "item.spinegale.dewlap.r1",
+            "weight": 10
+          },
+          {
+            "item": "item.spinegale.tendon.r1",
+            "weight": 5
+          }
+        ],
+        "capture": [
+          {
+            "item": "item.spinegale.scale.r1",
+            "weight": 30
+          },
+          {
+            "item": "item.spinegale.claw.r1",
+            "weight": 15
+          },
+          {
+            "item": "item.spinegale.spine.r1",
+            "weight": 15
+          },
+          {
+            "item": "item.spinegale.dewlap.r1",
+            "weight": 20
+          },
+          {
+            "item": "item.spinegale.tendon.r1",
+            "weight": 20
+          }
+        ],
+        "tail": [
+          {
+            "item": "item.spinegale.fan.r1",
+            "weight": 80
+          },
+          {
+            "item": "item.spinegale.scale.r1",
+            "weight": 20
+          }
+        ],
+        "headBreak": [
+          {
+            "item": "item.spinegale.spine.r1",
+            "weight": 70
+          },
+          {
+            "item": "item.spinegale.scale.r1",
+            "weight": 30
+          }
+        ],
+        "dewlapBreak": [
+          {
+            "item": "item.spinegale.dewlap.r1",
+            "weight": 100
+          }
+        ],
+        "spineBreak": [
+          {
+            "item": "item.spinegale.spine.r1",
+            "weight": 100
+          }
+        ],
+        "legBreak": [
+          {
+            "item": "item.spinegale.claw.r1",
+            "weight": 65
+          },
+          {
+            "item": "item.spinegale.tendon.r1",
+            "weight": 35
+          }
+        ]
+      }
+    },
+    {
+      "rank": "rank.2",
+      "name": "中級",
+      "hp": 3200,
+      "walkMps": 3.0,
+      "runMps": 7.8,
+      "staminaMax": 120,
+      "fatigueTicks": 540,
+      "fatigueThresholdRatio": 0.2,
+      "attackScale": 1.55,
+      "rageSpeedScale": 1.15,
+      "rageStaminaCostScale": 1.2,
+      "fatigueAttack": false,
+      "fatigueMove": false,
+      "comboPolicy": "最大三連・間合いに応じて追撃",
+      "appearance": "発達した背棘・暗い金の縞",
+      "loot": {
+        "body": [
+          {
+            "item": "item.spinegale.scale.r2",
+            "weight": 37
+          },
+          {
+            "item": "item.spinegale.claw.r2",
+            "weight": 22
+          },
+          {
+            "item": "item.spinegale.spine.r2",
+            "weight": 17
+          },
+          {
+            "item": "item.spinegale.dewlap.r2",
+            "weight": 10
+          },
+          {
+            "item": "item.spinegale.tendon.r2",
+            "weight": 8
+          },
+          {
+            "item": "item.spinegale.crown.r2",
+            "weight": 6
+          }
+        ],
+        "capture": [
+          {
+            "item": "item.spinegale.scale.r2",
+            "weight": 26
+          },
+          {
+            "item": "item.spinegale.claw.r2",
+            "weight": 15
+          },
+          {
+            "item": "item.spinegale.spine.r2",
+            "weight": 15
+          },
+          {
+            "item": "item.spinegale.dewlap.r2",
+            "weight": 17
+          },
+          {
+            "item": "item.spinegale.tendon.r2",
+            "weight": 16
+          },
+          {
+            "item": "item.spinegale.crown.r2",
+            "weight": 11
+          }
+        ],
+        "tail": [
+          {
+            "item": "item.spinegale.fan.r2",
+            "weight": 80
+          },
+          {
+            "item": "item.spinegale.scale.r2",
+            "weight": 20
+          }
+        ],
+        "headBreak": [
+          {
+            "item": "item.spinegale.crown.r2",
+            "weight": 55
+          },
+          {
+            "item": "item.spinegale.spine.r2",
+            "weight": 45
+          }
+        ],
+        "dewlapBreak": [
+          {
+            "item": "item.spinegale.dewlap.r2",
+            "weight": 100
+          }
+        ],
+        "spineBreak": [
+          {
+            "item": "item.spinegale.spine.r2",
+            "weight": 100
+          }
+        ],
+        "legBreak": [
+          {
+            "item": "item.spinegale.claw.r2",
+            "weight": 65
+          },
+          {
+            "item": "item.spinegale.tendon.r2",
+            "weight": 35
+          }
+        ]
+      }
+    },
+    {
+      "rank": "rank.3",
+      "name": "上級",
+      "hp": 5800,
+      "walkMps": 3.2,
+      "runMps": 8.5,
+      "staminaMax": 140,
+      "fatigueTicks": 480,
+      "fatigueThresholdRatio": 0.2,
+      "attackScale": 2.15,
+      "rageSpeedScale": 1.15,
+      "rageStaminaCostScale": 1.2,
+      "fatigueAttack": false,
+      "fatigueMove": false,
+      "comboPolicy": "フェイント・最大三連、予告と終了硬直維持",
+      "appearance": "冠棘と尾扇の成長・濃い縞",
+      "loot": {
+        "body": [
+          {
+            "item": "item.spinegale.scale.r3",
+            "weight": 32
+          },
+          {
+            "item": "item.spinegale.claw.r3",
+            "weight": 20
+          },
+          {
+            "item": "item.spinegale.spine.r3",
+            "weight": 16
+          },
+          {
+            "item": "item.spinegale.dewlap.r3",
+            "weight": 10
+          },
+          {
+            "item": "item.spinegale.tendon.r3",
+            "weight": 10
+          },
+          {
+            "item": "item.spinegale.crown.r3",
+            "weight": 9
+          },
+          {
+            "item": "item.spinegale.core.r3",
+            "weight": 3
+          }
+        ],
+        "capture": [
+          {
+            "item": "item.spinegale.scale.r3",
+            "weight": 23
+          },
+          {
+            "item": "item.spinegale.claw.r3",
+            "weight": 14
+          },
+          {
+            "item": "item.spinegale.spine.r3",
+            "weight": 14
+          },
+          {
+            "item": "item.spinegale.dewlap.r3",
+            "weight": 16
+          },
+          {
+            "item": "item.spinegale.tendon.r3",
+            "weight": 16
+          },
+          {
+            "item": "item.spinegale.crown.r3",
+            "weight": 13
+          },
+          {
+            "item": "item.spinegale.core.r3",
+            "weight": 4
+          }
+        ],
+        "tail": [
+          {
+            "item": "item.spinegale.fan.r3",
+            "weight": 80
+          },
+          {
+            "item": "item.spinegale.scale.r3",
+            "weight": 20
+          }
+        ],
+        "headBreak": [
+          {
+            "item": "item.spinegale.crown.r3",
+            "weight": 55
+          },
+          {
+            "item": "item.spinegale.spine.r3",
+            "weight": 45
+          }
+        ],
+        "dewlapBreak": [
+          {
+            "item": "item.spinegale.dewlap.r3",
+            "weight": 100
+          }
+        ],
+        "spineBreak": [
+          {
+            "item": "item.spinegale.spine.r3",
+            "weight": 100
+          }
+        ],
+        "legBreak": [
+          {
+            "item": "item.spinegale.claw.r3",
+            "weight": 57
+          },
+          {
+            "item": "item.spinegale.tendon.r3",
+            "weight": 38
+          },
+          {
+            "item": "item.spinegale.core.r3",
+            "weight": 5
+          }
+        ]
+      }
+    }
+  ],
+  "materials": [
+    {
+      "id": "item.spinegale.scale.r1",
+      "name": "疾棘竜の鱗",
+      "rank": "rank.1",
+      "kind": "scale",
+      "icon": "icons/scale_r1.png",
+      "rarity": 2
+    },
+    {
+      "id": "item.spinegale.claw.r1",
+      "name": "疾棘竜の鋭爪",
+      "rank": "rank.1",
+      "kind": "claw",
+      "icon": "icons/claw_r1.png",
+      "rarity": 2
+    },
+    {
+      "id": "item.spinegale.spine.r1",
+      "name": "疾棘竜の背棘",
+      "rank": "rank.1",
+      "kind": "spine",
+      "icon": "icons/spine_r1.png",
+      "rarity": 2
+    },
+    {
+      "id": "item.spinegale.dewlap.r1",
+      "name": "疾棘竜の喉膜",
+      "rank": "rank.1",
+      "kind": "dewlap",
+      "icon": "icons/dewlap_r1.png",
+      "rarity": 3
+    },
+    {
+      "id": "item.spinegale.fan.r1",
+      "name": "疾棘竜の尾扇",
+      "rank": "rank.1",
+      "kind": "fan",
+      "icon": "icons/fan_r1.png",
+      "rarity": 3
+    },
+    {
+      "id": "item.spinegale.tendon.r1",
+      "name": "疾棘竜の弾性腱",
+      "rank": "rank.1",
+      "kind": "tendon",
+      "icon": "icons/tendon_r1.png",
+      "rarity": 4
+    },
+    {
+      "id": "item.spinegale.scale.r2",
+      "name": "疾棘竜の上鱗",
+      "rank": "rank.2",
+      "kind": "scale",
+      "icon": "icons/scale_r2.png",
+      "rarity": 4
+    },
+    {
+      "id": "item.spinegale.claw.r2",
+      "name": "疾棘竜の硬爪",
+      "rank": "rank.2",
+      "kind": "claw",
+      "icon": "icons/claw_r2.png",
+      "rarity": 4
+    },
+    {
+      "id": "item.spinegale.spine.r2",
+      "name": "疾棘竜の硬背棘",
+      "rank": "rank.2",
+      "kind": "spine",
+      "icon": "icons/spine_r2.png",
+      "rarity": 4
+    },
+    {
+      "id": "item.spinegale.dewlap.r2",
+      "name": "疾棘竜の強喉膜",
+      "rank": "rank.2",
+      "kind": "dewlap",
+      "icon": "icons/dewlap_r2.png",
+      "rarity": 5
+    },
+    {
+      "id": "item.spinegale.fan.r2",
+      "name": "疾棘竜の上尾扇",
+      "rank": "rank.2",
+      "kind": "fan",
+      "icon": "icons/fan_r2.png",
+      "rarity": 5
+    },
+    {
+      "id": "item.spinegale.tendon.r2",
+      "name": "疾棘竜の強靭腱",
+      "rank": "rank.2",
+      "kind": "tendon",
+      "icon": "icons/tendon_r2.png",
+      "rarity": 6
+    },
+    {
+      "id": "item.spinegale.crown.r2",
+      "name": "疾棘竜の冠骨",
+      "rank": "rank.2",
+      "kind": "crown",
+      "icon": "icons/crown_r2.png",
+      "rarity": 6
+    },
+    {
+      "id": "item.spinegale.scale.r3",
+      "name": "疾棘竜の煌鱗",
+      "rank": "rank.3",
+      "kind": "scale",
+      "icon": "icons/scale_r3.png",
+      "rarity": 6
+    },
+    {
+      "id": "item.spinegale.claw.r3",
+      "name": "疾棘竜の穿爪",
+      "rank": "rank.3",
+      "kind": "claw",
+      "icon": "icons/claw_r3.png",
+      "rarity": 6
+    },
+    {
+      "id": "item.spinegale.spine.r3",
+      "name": "疾棘竜の裂風棘",
+      "rank": "rank.3",
+      "kind": "spine",
+      "icon": "icons/spine_r3.png",
+      "rarity": 6
+    },
+    {
+      "id": "item.spinegale.dewlap.r3",
+      "name": "疾棘竜の彩喉膜",
+      "rank": "rank.3",
+      "kind": "dewlap",
+      "icon": "icons/dewlap_r3.png",
+      "rarity": 7
+    },
+    {
+      "id": "item.spinegale.fan.r3",
+      "name": "疾棘竜の双翼尾扇",
+      "rank": "rank.3",
+      "kind": "fan",
+      "icon": "icons/fan_r3.png",
+      "rarity": 7
+    },
+    {
+      "id": "item.spinegale.tendon.r3",
+      "name": "疾棘竜の瞬発腱",
+      "rank": "rank.3",
+      "kind": "tendon",
+      "icon": "icons/tendon_r3.png",
+      "rarity": 8
+    },
+    {
+      "id": "item.spinegale.crown.r3",
+      "name": "疾棘竜の嵐冠骨",
+      "rank": "rank.3",
+      "kind": "crown",
+      "icon": "icons/crown_r3.png",
+      "rarity": 8
+    },
+    {
+      "id": "item.spinegale.core.r3",
+      "name": "疾棘竜の疾走核",
+      "rank": "rank.3",
+      "kind": "core",
+      "icon": "icons/core_r3.png",
+      "rarity": 8
+    }
+  ],
+  "weapons": [
+    {
+      "id": "weapon.spinegale.heavy_blade.r1",
+      "name": "疾棘断剣",
+      "rank": "rank.1",
+      "family": "heavy_blade",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.93,
+      "affinityPercent": 10,
+      "upgradeFrom": null,
+      "recipe": {
+        "item.spinegale.scale.r1": 3,
+        "item.spinegale.spine.r1": 2,
+        "item.spinegale.tendon.r1": 1
+      },
+      "cost": 850,
+      "appearance": "背棘を連ねた峰、上級は二重の長い棘"
+    },
+    {
+      "id": "weapon.spinegale.guard_blade.r1",
+      "name": "疾棘護刃",
+      "rank": "rank.1",
+      "family": "guard_blade",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.9,
+      "affinityPercent": 15,
+      "upgradeFrom": null,
+      "recipe": {
+        "item.spinegale.scale.r1": 3,
+        "item.spinegale.claw.r1": 2,
+        "item.spinegale.fan.r1": 1
+      },
+      "cost": 850,
+      "appearance": "鉤爪型短剣と二股尾扇盾"
+    },
+    {
+      "id": "weapon.spinegale.twin_blades.r1",
+      "name": "双棘牙",
+      "rank": "rank.1",
+      "family": "twin_blades",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.88,
+      "affinityPercent": 20,
+      "upgradeFrom": null,
+      "recipe": {
+        "item.spinegale.scale.r1": 3,
+        "item.spinegale.claw.r1": 2,
+        "item.spinegale.tendon.r1": 1
+      },
+      "cost": 850,
+      "appearance": "左右対称の細身の爪刃"
+    },
+    {
+      "id": "weapon.spinegale.long_blade.r1",
+      "name": "疾風棘刀",
+      "rank": "rank.1",
+      "family": "long_blade",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.92,
+      "affinityPercent": 15,
+      "upgradeFrom": null,
+      "recipe": {
+        "item.spinegale.scale.r1": 3,
+        "item.spinegale.spine.r1": 2,
+        "item.spinegale.claw.r1": 1
+      },
+      "cost": 850,
+      "appearance": "反り刃と二股の鍔"
+    },
+    {
+      "id": "weapon.spinegale.war_maul.r1",
+      "name": "疾棘穿槌",
+      "rank": "rank.1",
+      "family": "war_maul",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.94,
+      "affinityPercent": 10,
+      "upgradeFrom": null,
+      "recipe": {
+        "item.spinegale.scale.r1": 3,
+        "item.spinegale.spine.r1": 2,
+        "item.spinegale.claw.r1": 1
+      },
+      "cost": 850,
+      "appearance": "束ねた背棘と冠骨を打面に"
+    },
+    {
+      "id": "weapon.spinegale.long_lance.r1",
+      "name": "疾棘穿槍",
+      "rank": "rank.1",
+      "family": "long_lance",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.93,
+      "affinityPercent": 10,
+      "upgradeFrom": null,
+      "recipe": {
+        "item.spinegale.scale.r1": 3,
+        "item.spinegale.spine.r1": 2,
+        "item.spinegale.fan.r1": 1
+      },
+      "cost": 850,
+      "appearance": "細長い穂先と尾扇盾"
+    },
+    {
+      "id": "weapon.spinegale.ring_bow.r1",
+      "name": "疾棘環弓",
+      "rank": "rank.1",
+      "family": "ring_bow",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.9,
+      "affinityPercent": 15,
+      "upgradeFrom": null,
+      "recipe": {
+        "item.spinegale.scale.r1": 3,
+        "item.spinegale.fan.r1": 2,
+        "item.spinegale.tendon.r1": 1
+      },
+      "cost": 850,
+      "appearance": "湾曲棘と弾性腱の弦"
+    },
+    {
+      "id": "weapon.spinegale.heavy_blade.r2",
+      "name": "裂風断剣",
+      "rank": "rank.2",
+      "family": "heavy_blade",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.945,
+      "affinityPercent": 15,
+      "upgradeFrom": "weapon.spinegale.heavy_blade.r1",
+      "recipe": {
+        "item.spinegale.scale.r2": 4,
+        "item.spinegale.spine.r2": 3,
+        "item.spinegale.tendon.r2": 2
+      },
+      "cost": 3200,
+      "appearance": "背棘を連ねた峰、上級は二重の長い棘"
+    },
+    {
+      "id": "weapon.spinegale.guard_blade.r2",
+      "name": "迅棘護刃",
+      "rank": "rank.2",
+      "family": "guard_blade",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.915,
+      "affinityPercent": 20,
+      "upgradeFrom": "weapon.spinegale.guard_blade.r1",
+      "recipe": {
+        "item.spinegale.scale.r2": 4,
+        "item.spinegale.claw.r2": 3,
+        "item.spinegale.fan.r2": 2
+      },
+      "cost": 3200,
+      "appearance": "鉤爪型短剣と二股尾扇盾"
+    },
+    {
+      "id": "weapon.spinegale.twin_blades.r2",
+      "name": "双迅爪",
+      "rank": "rank.2",
+      "family": "twin_blades",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.895,
+      "affinityPercent": 25,
+      "upgradeFrom": "weapon.spinegale.twin_blades.r1",
+      "recipe": {
+        "item.spinegale.scale.r2": 4,
+        "item.spinegale.claw.r2": 3,
+        "item.spinegale.tendon.r2": 2
+      },
+      "cost": 3200,
+      "appearance": "左右対称の細身の爪刃"
+    },
+    {
+      "id": "weapon.spinegale.long_blade.r2",
+      "name": "裂風迅刀",
+      "rank": "rank.2",
+      "family": "long_blade",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.935,
+      "affinityPercent": 20,
+      "upgradeFrom": "weapon.spinegale.long_blade.r1",
+      "recipe": {
+        "item.spinegale.scale.r2": 4,
+        "item.spinegale.spine.r2": 3,
+        "item.spinegale.claw.r2": 2
+      },
+      "cost": 3200,
+      "appearance": "反り刃と二股の鍔"
+    },
+    {
+      "id": "weapon.spinegale.war_maul.r2",
+      "name": "迅棘破槌",
+      "rank": "rank.2",
+      "family": "war_maul",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.955,
+      "affinityPercent": 15,
+      "upgradeFrom": "weapon.spinegale.war_maul.r1",
+      "recipe": {
+        "item.spinegale.scale.r2": 4,
+        "item.spinegale.spine.r2": 3,
+        "item.spinegale.claw.r2": 2
+      },
+      "cost": 3200,
+      "appearance": "束ねた背棘と冠骨を打面に"
+    },
+    {
+      "id": "weapon.spinegale.long_lance.r2",
+      "name": "裂風尖槍",
+      "rank": "rank.2",
+      "family": "long_lance",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.945,
+      "affinityPercent": 15,
+      "upgradeFrom": "weapon.spinegale.long_lance.r1",
+      "recipe": {
+        "item.spinegale.scale.r2": 4,
+        "item.spinegale.spine.r2": 3,
+        "item.spinegale.fan.r2": 2
+      },
+      "cost": 3200,
+      "appearance": "細長い穂先と尾扇盾"
+    },
+    {
+      "id": "weapon.spinegale.ring_bow.r2",
+      "name": "迅翼環弓",
+      "rank": "rank.2",
+      "family": "ring_bow",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.915,
+      "affinityPercent": 20,
+      "upgradeFrom": "weapon.spinegale.ring_bow.r1",
+      "recipe": {
+        "item.spinegale.scale.r2": 4,
+        "item.spinegale.fan.r2": 3,
+        "item.spinegale.tendon.r2": 2
+      },
+      "cost": 3200,
+      "appearance": "湾曲棘と弾性腱の弦"
+    },
+    {
+      "id": "weapon.spinegale.heavy_blade.r3",
+      "name": "絶迅断剣",
+      "rank": "rank.3",
+      "family": "heavy_blade",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.955,
+      "affinityPercent": 20,
+      "upgradeFrom": "weapon.spinegale.heavy_blade.r2",
+      "recipe": {
+        "item.spinegale.scale.r3": 5,
+        "item.spinegale.spine.r3": 4,
+        "item.spinegale.tendon.r3": 3,
+        "item.spinegale.crown.r3": 1
+      },
+      "cost": 8400,
+      "appearance": "背棘を連ねた峰、上級は二重の長い棘"
+    },
+    {
+      "id": "weapon.spinegale.guard_blade.r3",
+      "name": "嵐牙護刃",
+      "rank": "rank.3",
+      "family": "guard_blade",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.925,
+      "affinityPercent": 25,
+      "upgradeFrom": "weapon.spinegale.guard_blade.r2",
+      "recipe": {
+        "item.spinegale.scale.r3": 5,
+        "item.spinegale.claw.r3": 4,
+        "item.spinegale.fan.r3": 3
+      },
+      "cost": 8400,
+      "appearance": "鉤爪型短剣と二股尾扇盾"
+    },
+    {
+      "id": "weapon.spinegale.twin_blades.r3",
+      "name": "双嵐閃",
+      "rank": "rank.3",
+      "family": "twin_blades",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.905,
+      "affinityPercent": 30,
+      "upgradeFrom": "weapon.spinegale.twin_blades.r2",
+      "recipe": {
+        "item.spinegale.scale.r3": 5,
+        "item.spinegale.claw.r3": 4,
+        "item.spinegale.tendon.r3": 3,
+        "item.spinegale.core.r3": 1
+      },
+      "cost": 8400,
+      "appearance": "左右対称の細身の爪刃"
+    },
+    {
+      "id": "weapon.spinegale.long_blade.r3",
+      "name": "天駆嵐刀",
+      "rank": "rank.3",
+      "family": "long_blade",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.945,
+      "affinityPercent": 25,
+      "upgradeFrom": "weapon.spinegale.long_blade.r2",
+      "recipe": {
+        "item.spinegale.scale.r3": 5,
+        "item.spinegale.spine.r3": 4,
+        "item.spinegale.claw.r3": 3,
+        "item.spinegale.crown.r3": 1
+      },
+      "cost": 8400,
+      "appearance": "反り刃と二股の鍔"
+    },
+    {
+      "id": "weapon.spinegale.war_maul.r3",
+      "name": "嵐冠轟槌",
+      "rank": "rank.3",
+      "family": "war_maul",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.965,
+      "affinityPercent": 20,
+      "upgradeFrom": "weapon.spinegale.war_maul.r2",
+      "recipe": {
+        "item.spinegale.scale.r3": 5,
+        "item.spinegale.spine.r3": 4,
+        "item.spinegale.claw.r3": 3,
+        "item.spinegale.crown.r3": 1
+      },
+      "cost": 8400,
+      "appearance": "束ねた背棘と冠骨を打面に"
+    },
+    {
+      "id": "weapon.spinegale.long_lance.r3",
+      "name": "天駆穿槍",
+      "rank": "rank.3",
+      "family": "long_lance",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.955,
+      "affinityPercent": 20,
+      "upgradeFrom": "weapon.spinegale.long_lance.r2",
+      "recipe": {
+        "item.spinegale.scale.r3": 5,
+        "item.spinegale.spine.r3": 4,
+        "item.spinegale.fan.r3": 3,
+        "item.spinegale.crown.r3": 1
+      },
+      "cost": 8400,
+      "appearance": "細長い穂先と尾扇盾"
+    },
+    {
+      "id": "weapon.spinegale.ring_bow.r3",
+      "name": "双嵐天弓",
+      "rank": "rank.3",
+      "family": "ring_bow",
+      "element": "none",
+      "attackRatioVsRankStandard": 0.925,
+      "affinityPercent": 25,
+      "upgradeFrom": "weapon.spinegale.ring_bow.r2",
+      "recipe": {
+        "item.spinegale.scale.r3": 5,
+        "item.spinegale.fan.r3": 4,
+        "item.spinegale.tendon.r3": 3,
+        "item.spinegale.core.r3": 1
+      },
+      "cost": 8400,
+      "appearance": "湾曲棘と弾性腱の弦"
+    }
+  ],
+  "armor": [
+    {
+      "id": "armor.spinegale.head.r1",
+      "name": "疾棘頭冠",
+      "rank": "rank.1",
+      "slot": "head",
+      "defense": 8,
+      "skills": {
+        "回避性能": 3
+      },
+      "recipe": {
+        "item.spinegale.scale.r1": 2,
+        "item.spinegale.spine.r1": 1
+      },
+      "cost": 450,
+      "appearance": "冠棘と喉膜の襟",
+      "resistanceProposal": {
+        "ice": -2,
+        "water": -1,
+        "fire": 0,
+        "thunder": 0,
+        "wind": 0,
+        "mist": 0
+      }
+    },
+    {
+      "id": "armor.spinegale.chest.r1",
+      "name": "疾棘胴衣",
+      "rank": "rank.1",
+      "slot": "chest",
+      "defense": 8,
+      "skills": {
+        "体術": 4
+      },
+      "recipe": {
+        "item.spinegale.scale.r1": 2,
+        "item.spinegale.dewlap.r1": 1
+      },
+      "cost": 450,
+      "appearance": "細い鱗板と後流形の胸当て",
+      "resistanceProposal": {
+        "ice": -2,
+        "water": -1,
+        "fire": 0,
+        "thunder": 0,
+        "wind": 0,
+        "mist": 0
+      }
+    },
+    {
+      "id": "armor.spinegale.arms.r1",
+      "name": "疾棘腕甲",
+      "rank": "rank.1",
+      "slot": "arms",
+      "defense": 7,
+      "skills": {
+        "回避性能": 3
+      },
+      "recipe": {
+        "item.spinegale.scale.r1": 2,
+        "item.spinegale.claw.r1": 1
+      },
+      "cost": 450,
+      "appearance": "湾曲棘の腕甲",
+      "resistanceProposal": {
+        "ice": -2,
+        "water": -1,
+        "fire": 0,
+        "thunder": 0,
+        "wind": 0,
+        "mist": 0
+      }
+    },
+    {
+      "id": "armor.spinegale.waist.r1",
+      "name": "疾棘腰帯",
+      "rank": "rank.1",
+      "slot": "waist",
+      "defense": 7,
+      "skills": {
+        "体術": 3
+      },
+      "recipe": {
+        "item.spinegale.scale.r1": 2,
+        "item.spinegale.fan.r1": 1
+      },
+      "cost": 450,
+      "appearance": "二股尾扇の腰布",
+      "resistanceProposal": {
+        "ice": -2,
+        "water": -1,
+        "fire": 0,
+        "thunder": 0,
+        "wind": 0,
+        "mist": 0
+      }
+    },
+    {
+      "id": "armor.spinegale.legs.r1",
+      "name": "疾棘脚装",
+      "rank": "rank.1",
+      "slot": "legs",
+      "defense": 8,
+      "skills": {
+        "回避性能": 4,
+        "体術": 3
+      },
+      "recipe": {
+        "item.spinegale.scale.r1": 2,
+        "item.spinegale.tendon.r1": 1
+      },
+      "cost": 450,
+      "appearance": "脚の腱を模した関節可動帯",
+      "resistanceProposal": {
+        "ice": -2,
+        "water": -1,
+        "fire": 0,
+        "thunder": 0,
+        "wind": 0,
+        "mist": 0
+      }
+    },
+    {
+      "id": "armor.spinegale.head.r2",
+      "name": "迅棘風冠",
+      "rank": "rank.2",
+      "slot": "head",
+      "defense": 18,
+      "skills": {
+        "回避性能": 3,
+        "高速研磨": 2
+      },
+      "recipe": {
+        "item.spinegale.scale.r2": 3,
+        "item.spinegale.spine.r2": 2,
+        "item.spinegale.crown.r2": 1
+      },
+      "cost": 1500,
+      "appearance": "冠棘と喉膜の襟",
+      "resistanceProposal": {
+        "ice": -2,
+        "water": -1,
+        "fire": 0,
+        "thunder": 0,
+        "wind": 0,
+        "mist": 0
+      }
+    },
+    {
+      "id": "armor.spinegale.chest.r2",
+      "name": "迅棘軽鎧",
+      "rank": "rank.2",
+      "slot": "chest",
+      "defense": 19,
+      "skills": {
+        "体術": 4,
+        "高速研磨": 2
+      },
+      "recipe": {
+        "item.spinegale.scale.r2": 3,
+        "item.spinegale.dewlap.r2": 2
+      },
+      "cost": 1500,
+      "appearance": "細い鱗板と後流形の胸当て",
+      "resistanceProposal": {
+        "ice": -2,
+        "water": -1,
+        "fire": 0,
+        "thunder": 0,
+        "wind": 0,
+        "mist": 0
+      }
+    },
+    {
+      "id": "armor.spinegale.arms.r2",
+      "name": "迅棘腕甲",
+      "rank": "rank.2",
+      "slot": "arms",
+      "defense": 17,
+      "skills": {
+        "回避性能": 3,
+        "高速研磨": 2
+      },
+      "recipe": {
+        "item.spinegale.scale.r2": 3,
+        "item.spinegale.claw.r2": 2
+      },
+      "cost": 1500,
+      "appearance": "湾曲棘の腕甲",
+      "resistanceProposal": {
+        "ice": -2,
+        "water": -1,
+        "fire": 0,
+        "thunder": 0,
+        "wind": 0,
+        "mist": 0
+      }
+    },
+    {
+      "id": "armor.spinegale.waist.r2",
+      "name": "迅棘尾腰",
+      "rank": "rank.2",
+      "slot": "waist",
+      "defense": 17,
+      "skills": {
+        "体術": 3,
+        "高速研磨": 2
+      },
+      "recipe": {
+        "item.spinegale.scale.r2": 3,
+        "item.spinegale.fan.r2": 2
+      },
+      "cost": 1500,
+      "appearance": "二股尾扇の腰布",
+      "resistanceProposal": {
+        "ice": -2,
+        "water": -1,
+        "fire": 0,
+        "thunder": 0,
+        "wind": 0,
+        "mist": 0
+      }
+    },
+    {
+      "id": "armor.spinegale.legs.r2",
+      "name": "迅棘走脚",
+      "rank": "rank.2",
+      "slot": "legs",
+      "defense": 19,
+      "skills": {
+        "回避性能": 4,
+        "体術": 3,
+        "高速研磨": 2
+      },
+      "recipe": {
+        "item.spinegale.scale.r2": 3,
+        "item.spinegale.tendon.r2": 2
+      },
+      "cost": 1500,
+      "appearance": "脚の腱を模した関節可動帯",
+      "resistanceProposal": {
+        "ice": -2,
+        "water": -1,
+        "fire": 0,
+        "thunder": 0,
+        "wind": 0,
+        "mist": 0
+      }
+    },
+    {
+      "id": "armor.spinegale.head.r3",
+      "name": "嵐棘天冠",
+      "rank": "rank.3",
+      "slot": "head",
+      "defense": 33,
+      "skills": {
+        "回避性能": 3,
+        "見切り": 2
+      },
+      "recipe": {
+        "item.spinegale.scale.r3": 4,
+        "item.spinegale.spine.r3": 3,
+        "item.spinegale.crown.r3": 1
+      },
+      "cost": 3600,
+      "appearance": "冠棘と喉膜の襟",
+      "resistanceProposal": {
+        "ice": -2,
+        "water": -1,
+        "fire": 0,
+        "thunder": 0,
+        "wind": 0,
+        "mist": 0
+      }
+    },
+    {
+      "id": "armor.spinegale.chest.r3",
+      "name": "嵐棘翔鎧",
+      "rank": "rank.3",
+      "slot": "chest",
+      "defense": 34,
+      "skills": {
+        "体術": 4,
+        "見切り": 2
+      },
+      "recipe": {
+        "item.spinegale.scale.r3": 4,
+        "item.spinegale.dewlap.r3": 3
+      },
+      "cost": 3600,
+      "appearance": "細い鱗板と後流形の胸当て",
+      "resistanceProposal": {
+        "ice": -2,
+        "water": -1,
+        "fire": 0,
+        "thunder": 0,
+        "wind": 0,
+        "mist": 0
+      }
+    },
+    {
+      "id": "armor.spinegale.arms.r3",
+      "name": "嵐棘裂腕",
+      "rank": "rank.3",
+      "slot": "arms",
+      "defense": 32,
+      "skills": {
+        "回避性能": 3,
+        "見切り": 2
+      },
+      "recipe": {
+        "item.spinegale.scale.r3": 4,
+        "item.spinegale.claw.r3": 3
+      },
+      "cost": 3600,
+      "appearance": "湾曲棘の腕甲",
+      "resistanceProposal": {
+        "ice": -2,
+        "water": -1,
+        "fire": 0,
+        "thunder": 0,
+        "wind": 0,
+        "mist": 0
+      }
+    },
+    {
+      "id": "armor.spinegale.waist.r3",
+      "name": "嵐棘双翼腰",
+      "rank": "rank.3",
+      "slot": "waist",
+      "defense": 32,
+      "skills": {
+        "体術": 3,
+        "見切り": 2
+      },
+      "recipe": {
+        "item.spinegale.scale.r3": 4,
+        "item.spinegale.fan.r3": 3
+      },
+      "cost": 3600,
+      "appearance": "二股尾扇の腰布",
+      "resistanceProposal": {
+        "ice": -2,
+        "water": -1,
+        "fire": 0,
+        "thunder": 0,
+        "wind": 0,
+        "mist": 0
+      }
+    },
+    {
+      "id": "armor.spinegale.legs.r3",
+      "name": "嵐棘天駆脚",
+      "rank": "rank.3",
+      "slot": "legs",
+      "defense": 34,
+      "skills": {
+        "回避性能": 4,
+        "体術": 3,
+        "見切り": 2
+      },
+      "recipe": {
+        "item.spinegale.scale.r3": 4,
+        "item.spinegale.tendon.r3": 3,
+        "item.spinegale.core.r3": 1
+      },
+      "cost": 3600,
+      "appearance": "脚の腱を模した関節可動帯",
+      "resistanceProposal": {
+        "ice": -2,
+        "water": -1,
+        "fire": 0,
+        "thunder": 0,
+        "wind": 0,
+        "mist": 0
+      }
+    }
+  ],
+  "weaponDesign": "軽量・無属性・高会心。強化前装備を消費する派生案。会心は現行の式に合わせる。",
+  "armorDesign": "男女同じ性能。各級の5部位セットは回避性能10・体術10。中級は高速研磨10、上級は見切り10。技能名や発動値は現行実装と照合。"
+}
