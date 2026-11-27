@@ -274,10 +274,12 @@ export function buildLandscapeExterior(input:LandscapeInput,s:LandscapeSurface):
   mat.onBeforeCompile=sh=>{sh.uniforms.sceneryFlow=WIND;sh.fragmentShader='uniform float sceneryFlow;\n'+sh.fragmentShader.replace('#include <map_fragment>',`#ifdef USE_MAP
    vec2 flow=vMapUv+vec2(sceneryFlow*.006,sceneryFlow*.011); diffuseColor*=texture2D(map,flow);
    #endif`);};mat.customProgramCacheKey=()=> 'field-water-flow';
+  // Flat transparent water needs no separate back-face pass.
+  mat.forceSinglePass=true;
   const water=new Mesh(s.water,mat);water.name='field-exterior-water';water.userData.noMerge=true;group.add(water);
  }
  const trail=trailGeometry(s);
- if(trail.getIndex()!.count){const path=new Mesh(trail,imageLambert(p.style==='alpine'?'cliff':'earth',{color:p.style==='alpine'?0x8faaa8:0x978976,side:DoubleSide,vertexColors:true,transparent:true,depthWrite:false},{gain:1.12}));path.name='field-exit-continuation';path.userData.noMerge=true;group.add(path);}else trail.dispose();
+ if(trail.getIndex()!.count){const path=new Mesh(trail,imageLambert(p.style==='alpine'?'cliff':'earth',{color:p.style==='alpine'?0x8faaa8:0x978976,side:DoubleSide,vertexColors:true,transparent:true,depthWrite:false},{gain:1.12}));path.material.forceSinglePass=true;path.name='field-exit-continuation';path.userData.noMerge=true;group.add(path);}else trail.dispose();
  group.add(distantRidge(input,0),distantRidge(input,1));
  const trunks:Instance[]=[],crowns:Instance[]=[],rocks:Instance[]=[],treeSites:{x:number;z:number}[]=[],plants:SceneryInstance[]=[],deadwood:SceneryInstance[]=[];
  const w=b.maxX-b.minX,d=b.maxZ-b.minZ;
