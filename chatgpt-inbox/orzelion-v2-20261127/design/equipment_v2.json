@@ -1,0 +1,1158 @@
+{
+  "status": "proposal IDs; validate against same-rank existing gear",
+  "materials": [
+    {
+      "id": "proposal.orzelion.scale",
+      "name": "鳴天竜の蒼甲",
+      "sources": [
+        "body",
+        "legs"
+      ],
+      "rarity": "common"
+    },
+    {
+      "id": "proposal.orzelion.crown",
+      "name": "鳴天竜の冠角",
+      "sources": [
+        "crown"
+      ],
+      "rarity": "common"
+    },
+    {
+      "id": "proposal.orzelion.membrane",
+      "name": "鳴天竜の導電翼膜",
+      "sources": [
+        "wing_l",
+        "wing_r"
+      ],
+      "rarity": "common"
+    },
+    {
+      "id": "proposal.orzelion.sac",
+      "name": "鳴天竜の蓄雷嚢",
+      "sources": [
+        "chest"
+      ],
+      "rarity": "uncommon"
+    },
+    {
+      "id": "proposal.orzelion.tail",
+      "name": "鳴天竜の尾槍",
+      "sources": [
+        "tail"
+      ],
+      "rarity": "common"
+    },
+    {
+      "id": "proposal.orzelion.core",
+      "name": "天鳴晶",
+      "sources": [
+        "chest",
+        "quest_reward"
+      ],
+      "rarity": "rare"
+    }
+  ],
+  "weapons": [
+    {
+      "id": "proposal.orzelion.heavy_blade.t2",
+      "family": "heavy_blade",
+      "rank": "rank.2",
+      "name": "鳴天・裂天の大刃",
+      "attackRelativeToSameRankPeer": 0.98,
+      "element": {
+        "type": "thunder",
+        "value": 34
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.tail",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 1
+        }
+      ],
+      "design": "三層槍尾を幅広い刃に鍛え、中央のくぼみと金銅峰"
+    },
+    {
+      "id": "proposal.orzelion.guard_blade.t2",
+      "family": "guard_blade",
+      "rank": "rank.2",
+      "name": "鳴天・護雷の双冠",
+      "attackRelativeToSameRankPeer": 0.94,
+      "element": {
+        "type": "thunder",
+        "value": 40
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.crown",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 1
+        }
+      ],
+      "design": "短い冠角形の剣と二条導電板の小盾"
+    },
+    {
+      "id": "proposal.orzelion.war_maul.t2",
+      "family": "war_maul",
+      "rank": "rank.2",
+      "name": "鳴天・天鐘の雷槌",
+      "attackRelativeToSameRankPeer": 1.02,
+      "element": {
+        "type": "thunder",
+        "value": 29
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 1
+        }
+      ],
+      "design": "胸嚢を内蔵する環状打頭と対向二冠"
+    },
+    {
+      "id": "proposal.orzelion.twin_blades.t2",
+      "family": "twin_blades",
+      "rank": "rank.2",
+      "name": "鳴天・双閃の翼牙",
+      "attackRelativeToSameRankPeer": 0.91,
+      "element": {
+        "type": "thunder",
+        "value": 42
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 1
+        }
+      ],
+      "design": "左右で反対向きの翼板、低いガード"
+    },
+    {
+      "id": "proposal.orzelion.long_blade.t2",
+      "family": "long_blade",
+      "rank": "rank.2",
+      "name": "鳴天・宵鳴の蒼刃",
+      "attackRelativeToSameRankPeer": 0.97,
+      "element": {
+        "type": "thunder",
+        "value": 36
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.tail",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 1
+        }
+      ],
+      "design": "細長い三枚尾槍の刃、銅の切先"
+    },
+    {
+      "id": "proposal.orzelion.long_lance.t2",
+      "family": "long_lance",
+      "rank": "rank.2",
+      "name": "鳴天・穿雲の雷杭",
+      "attackRelativeToSameRankPeer": 1,
+      "element": {
+        "type": "thunder",
+        "value": 32
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.tail",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 1
+        }
+      ],
+      "design": "三枚槍尾の穂と二条の縦長盾"
+    },
+    {
+      "id": "proposal.orzelion.ring_bow.t2",
+      "family": "ring_bow",
+      "rank": "rank.2",
+      "name": "鳴天・鳴環の天弓",
+      "attackRelativeToSameRankPeer": 0.92,
+      "element": {
+        "type": "thunder",
+        "value": 38
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 1
+        }
+      ],
+      "design": "灰琥珀膜を張り、四本の翼指の曲線"
+    },
+    {
+      "id": "proposal.orzelion.heavy_blade.t3",
+      "family": "heavy_blade",
+      "rank": "rank.3",
+      "name": "轟天・裂天の大刃",
+      "attackRelativeToSameRankPeer": 0.98,
+      "element": {
+        "type": "thunder",
+        "value": 43
+      },
+      "affinity": 9,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 5
+        },
+        {
+          "material": "proposal.orzelion.tail",
+          "count": 3
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 1
+        }
+      ],
+      "design": "三層槍尾を幅広い刃に鍛え、中央のくぼみと金銅峰"
+    },
+    {
+      "id": "proposal.orzelion.guard_blade.t3",
+      "family": "guard_blade",
+      "rank": "rank.3",
+      "name": "轟天・護雷の双冠",
+      "attackRelativeToSameRankPeer": 0.94,
+      "element": {
+        "type": "thunder",
+        "value": 49
+      },
+      "affinity": 9,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 5
+        },
+        {
+          "material": "proposal.orzelion.crown",
+          "count": 3
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 1
+        }
+      ],
+      "design": "短い冠角形の剣と二条導電板の小盾"
+    },
+    {
+      "id": "proposal.orzelion.war_maul.t3",
+      "family": "war_maul",
+      "rank": "rank.3",
+      "name": "轟天・天鐘の雷槌",
+      "attackRelativeToSameRankPeer": 1.02,
+      "element": {
+        "type": "thunder",
+        "value": 38
+      },
+      "affinity": 9,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 5
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 3
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 1
+        }
+      ],
+      "design": "胸嚢を内蔵する環状打頭と対向二冠"
+    },
+    {
+      "id": "proposal.orzelion.twin_blades.t3",
+      "family": "twin_blades",
+      "rank": "rank.3",
+      "name": "轟天・双閃の翼牙",
+      "attackRelativeToSameRankPeer": 0.91,
+      "element": {
+        "type": "thunder",
+        "value": 51
+      },
+      "affinity": 9,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 5
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 3
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 1
+        }
+      ],
+      "design": "左右で反対向きの翼板、低いガード"
+    },
+    {
+      "id": "proposal.orzelion.long_blade.t3",
+      "family": "long_blade",
+      "rank": "rank.3",
+      "name": "轟天・宵鳴の蒼刃",
+      "attackRelativeToSameRankPeer": 0.97,
+      "element": {
+        "type": "thunder",
+        "value": 45
+      },
+      "affinity": 9,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 5
+        },
+        {
+          "material": "proposal.orzelion.tail",
+          "count": 3
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 1
+        }
+      ],
+      "design": "細長い三枚尾槍の刃、銅の切先"
+    },
+    {
+      "id": "proposal.orzelion.long_lance.t3",
+      "family": "long_lance",
+      "rank": "rank.3",
+      "name": "轟天・穿雲の雷杭",
+      "attackRelativeToSameRankPeer": 1,
+      "element": {
+        "type": "thunder",
+        "value": 41
+      },
+      "affinity": 9,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 5
+        },
+        {
+          "material": "proposal.orzelion.tail",
+          "count": 3
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 1
+        }
+      ],
+      "design": "三枚槍尾の穂と二条の縦長盾"
+    },
+    {
+      "id": "proposal.orzelion.ring_bow.t3",
+      "family": "ring_bow",
+      "rank": "rank.3",
+      "name": "轟天・鳴環の天弓",
+      "attackRelativeToSameRankPeer": 0.92,
+      "element": {
+        "type": "thunder",
+        "value": 47
+      },
+      "affinity": 9,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 5
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 3
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 1
+        }
+      ],
+      "design": "灰琥珀膜を張り、四本の翼指の曲線"
+    },
+    {
+      "id": "proposal.orzelion.heavy_blade.t4",
+      "family": "heavy_blade",
+      "rank": "rank.4",
+      "name": "極鳴・裂天の大刃",
+      "attackRelativeToSameRankPeer": 0.98,
+      "element": {
+        "type": "thunder",
+        "value": 54
+      },
+      "affinity": 13,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 6
+        },
+        {
+          "material": "proposal.orzelion.tail",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.core",
+          "count": 1
+        }
+      ],
+      "design": "三層槍尾を幅広い刃に鍛え、中央のくぼみと金銅峰"
+    },
+    {
+      "id": "proposal.orzelion.guard_blade.t4",
+      "family": "guard_blade",
+      "rank": "rank.4",
+      "name": "極鳴・護雷の双冠",
+      "attackRelativeToSameRankPeer": 0.94,
+      "element": {
+        "type": "thunder",
+        "value": 60
+      },
+      "affinity": 13,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 6
+        },
+        {
+          "material": "proposal.orzelion.crown",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.core",
+          "count": 1
+        }
+      ],
+      "design": "短い冠角形の剣と二条導電板の小盾"
+    },
+    {
+      "id": "proposal.orzelion.war_maul.t4",
+      "family": "war_maul",
+      "rank": "rank.4",
+      "name": "極鳴・天鐘の雷槌",
+      "attackRelativeToSameRankPeer": 1.02,
+      "element": {
+        "type": "thunder",
+        "value": 49
+      },
+      "affinity": 13,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 6
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.core",
+          "count": 1
+        }
+      ],
+      "design": "胸嚢を内蔵する環状打頭と対向二冠"
+    },
+    {
+      "id": "proposal.orzelion.twin_blades.t4",
+      "family": "twin_blades",
+      "rank": "rank.4",
+      "name": "極鳴・双閃の翼牙",
+      "attackRelativeToSameRankPeer": 0.91,
+      "element": {
+        "type": "thunder",
+        "value": 62
+      },
+      "affinity": 13,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 6
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.core",
+          "count": 1
+        }
+      ],
+      "design": "左右で反対向きの翼板、低いガード"
+    },
+    {
+      "id": "proposal.orzelion.long_blade.t4",
+      "family": "long_blade",
+      "rank": "rank.4",
+      "name": "極鳴・宵鳴の蒼刃",
+      "attackRelativeToSameRankPeer": 0.97,
+      "element": {
+        "type": "thunder",
+        "value": 56
+      },
+      "affinity": 13,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 6
+        },
+        {
+          "material": "proposal.orzelion.tail",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.core",
+          "count": 1
+        }
+      ],
+      "design": "細長い三枚尾槍の刃、銅の切先"
+    },
+    {
+      "id": "proposal.orzelion.long_lance.t4",
+      "family": "long_lance",
+      "rank": "rank.4",
+      "name": "極鳴・穿雲の雷杭",
+      "attackRelativeToSameRankPeer": 1,
+      "element": {
+        "type": "thunder",
+        "value": 52
+      },
+      "affinity": 13,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 6
+        },
+        {
+          "material": "proposal.orzelion.tail",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.core",
+          "count": 1
+        }
+      ],
+      "design": "三枚槍尾の穂と二条の縦長盾"
+    },
+    {
+      "id": "proposal.orzelion.ring_bow.t4",
+      "family": "ring_bow",
+      "rank": "rank.4",
+      "name": "極鳴・鳴環の天弓",
+      "attackRelativeToSameRankPeer": 0.92,
+      "element": {
+        "type": "thunder",
+        "value": 58
+      },
+      "affinity": 13,
+      "sharpnessModifier": 1.06,
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 6
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.core",
+          "count": 1
+        }
+      ],
+      "design": "灰琥珀膜を張り、四本の翼指の曲線"
+    }
+  ],
+  "armor": [
+    {
+      "id": "proposal.orzelion.head.t2",
+      "slot": "head",
+      "rank": "rank.2",
+      "name": "鳴天・双冠兜",
+      "defense": 13,
+      "resist": {
+        "thunder": 3,
+        "ice": -2,
+        "fire": 0,
+        "water": 0,
+        "wind": 1,
+        "mist": 0
+      },
+      "skillPoints": {
+        "storm_return": 2
+      },
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 3
+        },
+        {
+          "material": "proposal.orzelion.crown",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 1
+        }
+      ],
+      "design": "後方二冠、開放顎、眉に蒼甲"
+    },
+    {
+      "id": "proposal.orzelion.chest.t2",
+      "slot": "chest",
+      "rank": "rank.2",
+      "name": "鳴天・鳴胸鎧",
+      "defense": 13,
+      "resist": {
+        "thunder": 3,
+        "ice": -2,
+        "fire": 0,
+        "water": 0,
+        "wind": 1,
+        "mist": 0
+      },
+      "skillPoints": {
+        "storm_return": 3
+      },
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 3
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 1
+        }
+      ],
+      "design": "象牙胸甲、側面の蓄雷嚢ケース"
+    },
+    {
+      "id": "proposal.orzelion.arms.t2",
+      "slot": "arms",
+      "rank": "rank.2",
+      "name": "鳴天・双条籠手",
+      "defense": 13,
+      "resist": {
+        "thunder": 3,
+        "ice": -2,
+        "fire": 0,
+        "water": 0,
+        "wind": 1,
+        "mist": 0
+      },
+      "skillPoints": {
+        "storm_return": 2
+      },
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 3
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 1
+        }
+      ],
+      "design": "前腕二条板と露出した可動関節"
+    },
+    {
+      "id": "proposal.orzelion.waist.t2",
+      "slot": "waist",
+      "rank": "rank.2",
+      "name": "鳴天・槍尾腰甲",
+      "defense": 13,
+      "resist": {
+        "thunder": 3,
+        "ice": -2,
+        "fire": 0,
+        "water": 0,
+        "wind": 1,
+        "mist": 0
+      },
+      "skillPoints": {
+        "storm_return": 2
+      },
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 3
+        },
+        {
+          "material": "proposal.orzelion.tail",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 1
+        }
+      ],
+      "design": "三枚の短い尾飾り、灰琥珀膜"
+    },
+    {
+      "id": "proposal.orzelion.legs.t2",
+      "slot": "legs",
+      "rank": "rank.2",
+      "name": "鳴天・嵐爪脚甲",
+      "defense": 13,
+      "resist": {
+        "thunder": 3,
+        "ice": -2,
+        "fire": 0,
+        "water": 0,
+        "wind": 1,
+        "mist": 0
+      },
+      "skillPoints": {
+        "storm_return": 2
+      },
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 3
+        },
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 1
+        }
+      ],
+      "design": "三趾風脛飾りと普通の靴底"
+    },
+    {
+      "id": "proposal.orzelion.head.t3",
+      "slot": "head",
+      "rank": "rank.3",
+      "name": "轟天・双冠兜",
+      "defense": 21,
+      "resist": {
+        "thunder": 3,
+        "ice": -2,
+        "fire": 0,
+        "water": 0,
+        "wind": 1,
+        "mist": 0
+      },
+      "skillPoints": {
+        "storm_return": 2
+      },
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.crown",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 1
+        }
+      ],
+      "design": "後方二冠、開放顎、眉に蒼甲"
+    },
+    {
+      "id": "proposal.orzelion.chest.t3",
+      "slot": "chest",
+      "rank": "rank.3",
+      "name": "轟天・鳴胸鎧",
+      "defense": 21,
+      "resist": {
+        "thunder": 3,
+        "ice": -2,
+        "fire": 0,
+        "water": 0,
+        "wind": 1,
+        "mist": 0
+      },
+      "skillPoints": {
+        "storm_return": 3
+      },
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 1
+        }
+      ],
+      "design": "象牙胸甲、側面の蓄雷嚢ケース"
+    },
+    {
+      "id": "proposal.orzelion.arms.t3",
+      "slot": "arms",
+      "rank": "rank.3",
+      "name": "轟天・双条籠手",
+      "defense": 21,
+      "resist": {
+        "thunder": 3,
+        "ice": -2,
+        "fire": 0,
+        "water": 0,
+        "wind": 1,
+        "mist": 0
+      },
+      "skillPoints": {
+        "storm_return": 2
+      },
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 1
+        }
+      ],
+      "design": "前腕二条板と露出した可動関節"
+    },
+    {
+      "id": "proposal.orzelion.waist.t3",
+      "slot": "waist",
+      "rank": "rank.3",
+      "name": "轟天・槍尾腰甲",
+      "defense": 21,
+      "resist": {
+        "thunder": 3,
+        "ice": -2,
+        "fire": 0,
+        "water": 0,
+        "wind": 1,
+        "mist": 0
+      },
+      "skillPoints": {
+        "storm_return": 2
+      },
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.tail",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 1
+        }
+      ],
+      "design": "三枚の短い尾飾り、灰琥珀膜"
+    },
+    {
+      "id": "proposal.orzelion.legs.t3",
+      "slot": "legs",
+      "rank": "rank.3",
+      "name": "轟天・嵐爪脚甲",
+      "defense": 21,
+      "resist": {
+        "thunder": 3,
+        "ice": -2,
+        "fire": 0,
+        "water": 0,
+        "wind": 1,
+        "mist": 0
+      },
+      "skillPoints": {
+        "storm_return": 2
+      },
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 4
+        },
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 1
+        }
+      ],
+      "design": "三趾風脛飾りと普通の靴底"
+    },
+    {
+      "id": "proposal.orzelion.head.t4",
+      "slot": "head",
+      "rank": "rank.4",
+      "name": "極鳴・双冠兜",
+      "defense": 30,
+      "resist": {
+        "thunder": 3,
+        "ice": -2,
+        "fire": 0,
+        "water": 0,
+        "wind": 1,
+        "mist": 0
+      },
+      "skillPoints": {
+        "storm_return": 2
+      },
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 5
+        },
+        {
+          "material": "proposal.orzelion.crown",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.core",
+          "count": 1
+        }
+      ],
+      "design": "後方二冠、開放顎、眉に蒼甲"
+    },
+    {
+      "id": "proposal.orzelion.chest.t4",
+      "slot": "chest",
+      "rank": "rank.4",
+      "name": "極鳴・鳴胸鎧",
+      "defense": 30,
+      "resist": {
+        "thunder": 3,
+        "ice": -2,
+        "fire": 0,
+        "water": 0,
+        "wind": 1,
+        "mist": 0
+      },
+      "skillPoints": {
+        "storm_return": 3
+      },
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 5
+        },
+        {
+          "material": "proposal.orzelion.sac",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.core",
+          "count": 1
+        }
+      ],
+      "design": "象牙胸甲、側面の蓄雷嚢ケース"
+    },
+    {
+      "id": "proposal.orzelion.arms.t4",
+      "slot": "arms",
+      "rank": "rank.4",
+      "name": "極鳴・双条籠手",
+      "defense": 30,
+      "resist": {
+        "thunder": 3,
+        "ice": -2,
+        "fire": 0,
+        "water": 0,
+        "wind": 1,
+        "mist": 0
+      },
+      "skillPoints": {
+        "storm_return": 2
+      },
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 5
+        },
+        {
+          "material": "proposal.orzelion.membrane",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.core",
+          "count": 1
+        }
+      ],
+      "design": "前腕二条板と露出した可動関節"
+    },
+    {
+      "id": "proposal.orzelion.waist.t4",
+      "slot": "waist",
+      "rank": "rank.4",
+      "name": "極鳴・槍尾腰甲",
+      "defense": 30,
+      "resist": {
+        "thunder": 3,
+        "ice": -2,
+        "fire": 0,
+        "water": 0,
+        "wind": 1,
+        "mist": 0
+      },
+      "skillPoints": {
+        "storm_return": 2
+      },
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 5
+        },
+        {
+          "material": "proposal.orzelion.tail",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.core",
+          "count": 1
+        }
+      ],
+      "design": "三枚の短い尾飾り、灰琥珀膜"
+    },
+    {
+      "id": "proposal.orzelion.legs.t4",
+      "slot": "legs",
+      "rank": "rank.4",
+      "name": "極鳴・嵐爪脚甲",
+      "defense": 30,
+      "resist": {
+        "thunder": 3,
+        "ice": -2,
+        "fire": 0,
+        "water": 0,
+        "wind": 1,
+        "mist": 0
+      },
+      "skillPoints": {
+        "storm_return": 2
+      },
+      "recipe": [
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 5
+        },
+        {
+          "material": "proposal.orzelion.scale",
+          "count": 2
+        },
+        {
+          "material": "proposal.orzelion.core",
+          "count": 1
+        }
+      ],
+      "design": "三趾風脛飾りと普通の靴底"
+    }
+  ],
+  "skill": {
+    "id": "proposal.skill.storm_return",
+    "name": "雷還",
+    "thresholds": [
+      {
+        "points": 6,
+        "effect": "雷属性与ダメージ1.06倍、雷被ダメージ0.95倍"
+      },
+      {
+        "points": 11,
+        "effect": "雷属性与ダメージ1.10倍、雷被ダメージ0.90倍"
+      }
+    ],
+    "stackRule": "最高段階のみ。既存耐性上限を維持。麻痺確定なし。"
+  }
+}

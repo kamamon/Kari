@@ -1,0 +1,80 @@
+{
+  "modelBlob": "caf0fa7575cad6ed66091aa6aac5aa44e5330360",
+  "cases": [
+    {
+      "name": "idle",
+      "samples": 41,
+      "stanceSamples": 82,
+      "maxJointTargetError": 9.286855081428796e-8,
+      "maxSocketHeightError": 5.610287189504459e-8
+    },
+    {
+      "name": "walk",
+      "samples": 41,
+      "stanceSamples": 52,
+      "maxJointTargetError": 0.0001587189666600305,
+      "maxSocketHeightError": 0.0001352096349000933
+    },
+    {
+      "name": "run",
+      "samples": 41,
+      "stanceSamples": 52,
+      "maxJointTargetError": 0.0002416404004290175,
+      "maxSocketHeightError": 0.00019639380276203176
+    },
+    {
+      "name": "limp",
+      "samples": 41,
+      "stanceSamples": 52,
+      "maxJointTargetError": 0.0002615804945893,
+      "maxSocketHeightError": 0.00019600637257099172
+    },
+    {
+      "name": "charge",
+      "samples": 41,
+      "stanceSamples": 82,
+      "maxJointTargetError": 9.286855081428796e-8,
+      "maxSocketHeightError": 5.610287189504459e-8
+    },
+    {
+      "name": "ground_dual_arc",
+      "samples": 41,
+      "stanceSamples": 82,
+      "maxJointTargetError": 9.286855081428796e-8,
+      "maxSocketHeightError": 5.610287189504459e-8
+    },
+    {
+      "name": "sky_crown",
+      "samples": 41,
+      "stanceSamples": 82,
+      "maxJointTargetError": 9.286855081428796e-8,
+      "maxSocketHeightError": 5.610287189504459e-8
+    },
+    {
+      "name": "wing_thunder_l",
+      "samples": 41,
+      "stanceSamples": 82,
+      "maxJointTargetError": 9.286855081428796e-8,
+      "maxSocketHeightError": 5.610287189504459e-8
+    },
+    {
+      "name": "land",
+      "samples": 41,
+      "stanceSamples": 0,
+      "maxJointTargetError": null,
+      "maxSocketHeightError": null
+    }
+  ],
+  "maxStanceTargetErrorMeters": 0.0002615804945893,
+  "maxSocketHeightErrorMeters": 0.00019639380276203176,
+  "maxBoneLengthDriftMeters": 2.3794032033563894e-7,
+  "maxConsecutiveStanceSlipMeters": 0.0002335130537737084,
+  "thresholds": {
+    "target": 0.02,
+    "socketHeight": 0.02,
+    "boneLength": 0.001,
+    "slip": 0.02
+  },
+  "pass": true,
+  "scope": "flat ground, original glTF, analytical support point; not collision with floor or game/iPhone"
+}

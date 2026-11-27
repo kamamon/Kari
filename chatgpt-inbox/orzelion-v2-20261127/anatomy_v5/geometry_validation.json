@@ -1,0 +1,82 @@
+{
+  "baseJoints": 95,
+  "joints": 95,
+  "animationCount": 34,
+  "sockets": 16,
+  "animationMetadataUnchanged": true,
+  "jointHierarchyUnchanged": true,
+  "scuteCount": 492,
+  "metalEdgeSections": 270,
+  "teeth": 36,
+  "membranePanels": 8,
+  "vertices": 82004,
+  "triangles": 123058,
+  "removedDegenerateTriangles": 0,
+  "perMaterial": [
+    {
+      "i": 0,
+      "vertices": 19359,
+      "triangles": 37176,
+      "bytes": 1462032
+    },
+    {
+      "i": 1,
+      "vertices": 33528,
+      "triangles": 40968,
+      "bytes": 2391600
+    },
+    {
+      "i": 2,
+      "vertices": 7328,
+      "triangles": 12234,
+      "bytes": 542396
+    },
+    {
+      "i": 3,
+      "vertices": 13657,
+      "triangles": 17664,
+      "bytes": 980032
+    },
+    {
+      "i": 4,
+      "vertices": 3800,
+      "triangles": 6768,
+      "bytes": 283808
+    },
+    {
+      "i": 5,
+      "vertices": 2488,
+      "triangles": 4712,
+      "bytes": 187504
+    },
+    {
+      "i": 6,
+      "vertices": 990,
+      "triangles": 1904,
+      "bytes": 74784
+    },
+    {
+      "i": 7,
+      "vertices": 854,
+      "triangles": 1632,
+      "bytes": 64448
+    }
+  ],
+  "bounds": [
+    [
+      -12.905509655932601,
+      12.905385251404098
+    ],
+    [
+      -0.03783282135007815,
+      6.959777386953973
+    ],
+    [
+      -11.418834471803573,
+      6.457051871421849
+    ]
+  ],
+  "validWeights": true,
+  "validIndices": true,
+  "finite": true
+}

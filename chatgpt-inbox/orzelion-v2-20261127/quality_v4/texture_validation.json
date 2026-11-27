@@ -1,0 +1,309 @@
+{
+  "size": 512,
+  "textureSets": 5,
+  "maps": [
+    {
+      "file": "hide_base.png",
+      "sha": "ff52b3de1d36ce4f595e890d0f3fdebeecacc7e9",
+      "bytes": 787072,
+      "min": [
+        40,
+        52,
+        70
+      ],
+      "max": [
+        82,
+        100,
+        131
+      ],
+      "mean": [
+        62.83,
+        77.85,
+        102.49
+      ]
+    },
+    {
+      "file": "hide_normal.png",
+      "sha": "b7125320b18153bf3a2552138a889b8b2cfcf60e",
+      "bytes": 787072,
+      "min": [
+        12,
+        13,
+        176
+      ],
+      "max": [
+        244,
+        241,
+        255
+      ],
+      "mean": [
+        127.49,
+        127.67,
+        242.1
+      ]
+    },
+    {
+      "file": "hide_orm.png",
+      "sha": "fd22e50c27195384f7655fe7e4010764a99b2ac1",
+      "bytes": 787072,
+      "min": [
+        92,
+        150,
+        0
+      ],
+      "max": [
+        250,
+        226,
+        0
+      ],
+      "mean": [
+        229.3,
+        179.59,
+        0
+      ]
+    },
+    {
+      "file": "scute_base.png",
+      "sha": "6d48f7030c1492f441475dc683f0407235ad0fdc",
+      "bytes": 787072,
+      "min": [
+        60,
+        76,
+        103
+      ],
+      "max": [
+        85,
+        105,
+        139
+      ],
+      "mean": [
+        70.86,
+        88.93,
+        119.67
+      ]
+    },
+    {
+      "file": "scute_normal.png",
+      "sha": "54ea54304d438935354da84e2995515e50597a5e",
+      "bytes": 787072,
+      "min": [
+        100,
+        104,
+        251
+      ],
+      "max": [
+        153,
+        152,
+        255
+      ],
+      "mean": [
+        127.5,
+        127.5,
+        254.98
+      ]
+    },
+    {
+      "file": "scute_orm.png",
+      "sha": "87c5a9ce605df5e995a13d84fa02e221cc6b7512",
+      "bytes": 787072,
+      "min": [
+        198,
+        102,
+        31
+      ],
+      "max": [
+        244,
+        187,
+        77
+      ],
+      "mean": [
+        232.27,
+        154.48,
+        36.82
+      ]
+    },
+    {
+      "file": "ivory_base.png",
+      "sha": "c013635abf83c7a51ec67a0dc86da06fe5838d9d",
+      "bytes": 787072,
+      "min": [
+        147,
+        135,
+        116
+      ],
+      "max": [
+        202,
+        187,
+        161
+      ],
+      "mean": [
+        174.72,
+        161.8,
+        139.14
+      ]
+    },
+    {
+      "file": "ivory_normal.png",
+      "sha": "f65a86fe022de4e9306fcd854fde924665566403",
+      "bytes": 787072,
+      "min": [
+        104,
+        98,
+        250
+      ],
+      "max": [
+        151,
+        157,
+        255
+      ],
+      "mean": [
+        127.5,
+        127.5,
+        254.59
+      ]
+    },
+    {
+      "file": "ivory_orm.png",
+      "sha": "5c045b275f4b22c846e090f1aeb8d5d50b9b6cad",
+      "bytes": 787072,
+      "min": [
+        206,
+        173,
+        0
+      ],
+      "max": [
+        247,
+        215,
+        0
+      ],
+      "mean": [
+        237.21,
+        199.15,
+        0
+      ]
+    },
+    {
+      "file": "bronze_base.png",
+      "sha": "f79b46933212698a0dc35ef8744a182390a25574",
+      "bytes": 787072,
+      "min": [
+        114,
+        96,
+        72
+      ],
+      "max": [
+        202,
+        160,
+        112
+      ],
+      "mean": [
+        156.62,
+        125.95,
+        90.36
+      ]
+    },
+    {
+      "file": "bronze_normal.png",
+      "sha": "e84b68026dbe6eb058a986b60d0e997f0169cc32",
+      "bytes": 787072,
+      "min": [
+        96,
+        91,
+        249
+      ],
+      "max": [
+        158,
+        166,
+        255
+      ],
+      "mean": [
+        127.5,
+        127.5,
+        254.73
+      ]
+    },
+    {
+      "file": "bronze_orm.png",
+      "sha": "7db33c0091cf06c31873a57344ba99b0f53e4577",
+      "bytes": 787072,
+      "min": [
+        179,
+        66,
+        202
+      ],
+      "max": [
+        240,
+        194,
+        247
+      ],
+      "mean": [
+        233.83,
+        129.65,
+        232.95
+      ]
+    },
+    {
+      "file": "membrane_base.png",
+      "sha": "125e13000afd55cf40ba583692d02b2e1fd52dae",
+      "bytes": 787072,
+      "min": [
+        97,
+        83,
+        69
+      ],
+      "max": [
+        152,
+        126,
+        100
+      ],
+      "mean": [
+        127.43,
+        108.28,
+        90.83
+      ]
+    },
+    {
+      "file": "membrane_normal.png",
+      "sha": "bf4650aed63f89bbd7f71889faa1771d1ebad6fe",
+      "bytes": 787072,
+      "min": [
+        73,
+        88,
+        240
+      ],
+      "max": [
+        176,
+        167,
+        255
+      ],
+      "mean": [
+        127.5,
+        127.5,
+        254.43
+      ]
+    },
+    {
+      "file": "membrane_orm.png",
+      "sha": "d3e435a1183149c801f3bf4d01cbeb2f5e1d07a6",
+      "bytes": 787072,
+      "min": [
+        184,
+        182,
+        0
+      ],
+      "max": [
+        235,
+        221,
+        0
+      ],
+      "mean": [
+        232.22,
+        210.07,
+        0
+      ]
+    }
+  ],
+  "periodic": true,
+  "normalMapConvention": "OpenGL +Y; derived from height field, RGB; ORM R=AO G=roughness B=metalness",
+  "scope": "procedural tile maps, not baked from hand-sculpted high-poly or extracted from key art"
+}

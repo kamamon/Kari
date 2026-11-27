@@ -1,0 +1,166 @@
+{
+  "modelBlob": "caf0fa7575cad6ed66091aa6aac5aa44e5330360",
+  "sourceHead": "e26a29977f0e3652e91966421b35ee28c8bfb73e",
+  "renderer": "CPU linear blend skinning, quaternion nlerp, indexed shading, static camera",
+  "records": [
+    {
+      "path": "motion/previews/01_walk_run.gif",
+      "title": "歩行・走行",
+      "segments": [
+        [
+          "walk",
+          1.7,
+          2
+        ],
+        [
+          "run",
+          0.9,
+          2
+        ]
+      ],
+      "frames": 42,
+      "delayCentiseconds": 13,
+      "durationSeconds": 5.46,
+      "width": 360,
+      "height": 224,
+      "bytes": 341183,
+      "sha": "80334a061d6aadcbea9b659049f3506c4b467aa1",
+      "fxOverlay": false,
+      "skeletonOverlay": false
+    },
+    {
+      "path": "motion/previews/02_takeoff_flight_land.gif",
+      "title": "離陸・羽ばたき・着地",
+      "segments": [
+        [
+          "takeoff",
+          1.8,
+          1
+        ],
+        [
+          "flight_loop",
+          1.2,
+          2
+        ],
+        [
+          "land",
+          4.6,
+          1
+        ]
+      ],
+      "frames": 71,
+      "delayCentiseconds": 13,
+      "durationSeconds": 9.23,
+      "width": 360,
+      "height": 224,
+      "bytes": 642514,
+      "sha": "1859496248036caf628d18863cdb94d6f5d11ee2",
+      "fxOverlay": false,
+      "skeletonOverlay": false
+    },
+    {
+      "path": "motion/previews/03_charge_discharge.gif",
+      "title": "蓄電・双条地雷走・冷却",
+      "segments": [
+        [
+          "ground_dual_arc",
+          4.6,
+          1
+        ],
+        [
+          "cooldown",
+          4.8,
+          1
+        ]
+      ],
+      "frames": 75,
+      "delayCentiseconds": 13,
+      "durationSeconds": 9.75,
+      "width": 360,
+      "height": 224,
+      "bytes": 690714,
+      "sha": "89fd92012f726866e29544182aab6310b455fe58",
+      "fxOverlay": true,
+      "skeletonOverlay": false
+    },
+    {
+      "path": "motion/previews/04_attacks.gif",
+      "title": "翼腕払い・二連噛み・尾薙ぎ",
+      "segments": [
+        [
+          "wing_sweep_l",
+          2.8,
+          1
+        ],
+        [
+          "double_bite",
+          3.2,
+          1
+        ],
+        [
+          "tail_sweep",
+          3.4,
+          1
+        ]
+      ],
+      "frames": 75,
+      "delayCentiseconds": 13,
+      "durationSeconds": 9.75,
+      "width": 360,
+      "height": 224,
+      "bytes": 624436,
+      "sha": "103ccb49df439e991b8639ff85e8bcc37c2051e0",
+      "fxOverlay": false,
+      "skeletonOverlay": false
+    },
+    {
+      "path": "motion/previews/05_fall_getup.gif",
+      "title": "転倒・起き上がり（骨表示）",
+      "segments": [
+        [
+          "fall",
+          2.6,
+          1
+        ],
+        [
+          "getup",
+          2.7,
+          1
+        ]
+      ],
+      "frames": 43,
+      "delayCentiseconds": 13,
+      "durationSeconds": 5.59,
+      "width": 360,
+      "height": 224,
+      "bytes": 341595,
+      "sha": "ddb590e8434da148930ddca515d70f9fca25e599",
+      "fxOverlay": false,
+      "skeletonOverlay": true
+    },
+    {
+      "path": "motion/previews/06_ultimate.gif",
+      "title": "鳴天放電（仮エフェクト）",
+      "segments": [
+        [
+          "sky_crown",
+          8.8,
+          1
+        ]
+      ],
+      "frames": 70,
+      "delayCentiseconds": 13,
+      "durationSeconds": 9.1,
+      "width": 360,
+      "height": 224,
+      "bytes": 721148,
+      "sha": "92adb681d9a64d5ad7522f6458fc04b326fb9fca",
+      "fxOverlay": true,
+      "skeletonOverlay": false
+    }
+  ],
+  "limitations": [
+    "No source texture maps, no collision/IK, no motion blending or game integration. FX is illustrative overlay based on event times.",
+    "GIF clips have hard cuts. GIF 13cs/frame ≈7.69fps. No audio. Browser player not tested on device."
+  ]
+}

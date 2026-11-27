@@ -1,0 +1,91 @@
+{
+  "records": [
+    {
+      "id": "v4_hero",
+      "camera": [
+        0.73,
+        0.3,
+        1
+      ],
+      "width": 900,
+      "height": 550,
+      "clip": "sky_crown",
+      "t": 3,
+      "stats": {
+        "visibleFragments": 166032,
+        "frontFacingTriangles": 60457,
+        "minSkinnedY": -0.03783288225531578,
+        "textureSampling": "base sRGB + ORM linear + tangent-space normal; directional shadow map; CPU approximated PBR; no game renderer"
+      },
+      "sha": "c112c20369ca3633c16e00183ec3d89253c4d1aa",
+      "bytes": 1485728
+    },
+    {
+      "id": "v4_head_detail",
+      "camera": [
+        0.9,
+        0.15,
+        1
+      ],
+      "width": 800,
+      "height": 540,
+      "clip": "roar",
+      "t": 1.1,
+      "detail": "head",
+      "span": 5.3,
+      "ground": false,
+      "stats": {
+        "visibleFragments": 324916,
+        "frontFacingTriangles": 59594,
+        "minSkinnedY": -0.03783288225531578,
+        "textureSampling": "base sRGB + ORM linear + tangent-space normal; directional shadow map; CPU approximated PBR; no game renderer"
+      },
+      "sha": "0edeb15281257dea4787a2977f5f310ef2ba9326",
+      "bytes": 1296703
+    },
+    {
+      "id": "v4_side",
+      "camera": [
+        1,
+        0.12,
+        0.04
+      ],
+      "width": 900,
+      "height": 500,
+      "clip": "idle",
+      "t": 0.3,
+      "stats": {
+        "visibleFragments": 207986,
+        "frontFacingTriangles": 57466,
+        "minSkinnedY": -0.03783288225531578,
+        "textureSampling": "base sRGB + ORM linear + tangent-space normal; directional shadow map; CPU approximated PBR; no game renderer"
+      },
+      "sha": "9f509133a2b55bba0c19e16abda1a3d4a6b02aae",
+      "bytes": 1350668
+    },
+    {
+      "id": "v4_wing_detail",
+      "camera": [
+        0.2,
+        0.68,
+        1
+      ],
+      "width": 800,
+      "height": 520,
+      "clip": "flight_loop",
+      "t": 0.3,
+      "detail": "wrist_r",
+      "span": 8,
+      "ground": false,
+      "stats": {
+        "visibleFragments": 312215,
+        "frontFacingTriangles": 62638,
+        "minSkinnedY": 3.4386985301971436,
+        "textureSampling": "base sRGB + ORM linear + tangent-space normal; directional shadow map; CPU approximated PBR; no game renderer"
+      },
+      "sha": "004fbb16ca358e386f808b748647d4e63414bcdf",
+      "bytes": 1248683
+    }
+  ],
+  "scope": "Actual regenerated V4 geometry, V2 animation via V3 pose corrections and regenerated PBR maps. CPU approximation, not WebGL screenshot. Art parity not certified."
+}

@@ -1,0 +1,35 @@
+{
+  "records": [
+    {
+      "id": "v5_hero",
+      "clip": "sky_crown",
+      "t": 3,
+      "width": 640,
+      "height": 400,
+      "stats": {
+        "visibleFragments": 86743,
+        "frontFacingTriangles": 67829,
+        "minSkinnedY": -0.03783288225531578,
+        "textureSampling": "base sRGB + ORM linear + tangent-space normal; directional shadow map; CPU approximated PBR; no game renderer"
+      },
+      "bytes": 768523,
+      "sha": "7e4861eedb355a4e6520f9fad7ea6f0cf75dfe8a"
+    },
+    {
+      "id": "v5_head",
+      "clip": "roar",
+      "t": 1.1,
+      "width": 640,
+      "height": 400,
+      "stats": {
+        "visibleFragments": 182105,
+        "frontFacingTriangles": 66984,
+        "minSkinnedY": -0.03783288225531578,
+        "textureSampling": "base sRGB + ORM linear + tangent-space normal; directional shadow map; CPU approximated PBR; no game renderer"
+      },
+      "bytes": 768523,
+      "sha": "9eefb17448aab2529fa3ff619b92b92bc8eddaae"
+    }
+  ],
+  "scope": "Actual V5 geometry and V3 corrected pose, V4 texture maps, V5 tint, CPU approximated PBR; not GPU/game screenshot"
+}
