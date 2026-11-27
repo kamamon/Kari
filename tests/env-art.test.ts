@@ -5,7 +5,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { BoxGeometry, Box3, Mesh, PlaneGeometry, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
-import { ENV_FAR, ENV_SPRITES, ENV_TILES, boxUv } from '../src/render/envArt';
+import { ENV_FAR, ENV_SPRITES, ENV_TILES, SCENERY_FOLIAGE_FILE, boxUv } from '../src/render/envArt';
 import { BUILDINGS } from '../src/render/hubScene';
 import { DETAIL_TILES } from '../src/render/rockArt';
 import { CLIFF_ATLAS, ROCK_ATLAS, ROCK_TILES } from '../src/render/rockArtData';
@@ -55,7 +55,10 @@ describe('景色の絵のファイル', () => {
 
   it('ゲームで読む絵の置き場に、使っていない絵が無い。合わせて 5MB を超えない（v0.22.0 で、岩と崖の図集 2 枚が約 2.4MB）', () => {
     const files = readdirSync(ENV);
-    expect(files.sort()).toEqual(used.map((f) => `${f}.webp`).sort());
+    expect(files.sort()).toEqual([...used.map((f) => `${f}.webp`),SCENERY_FOLIAGE_FILE].sort());
+    // Atlas has an original, identical SVG source. The existing 5 MB cap remains unchanged.
+    expect(readFileSync(join(ENV,SCENERY_FOLIAGE_FILE),'utf8')).toBe(readFileSync(join(ROOT,'art-source/env',SCENERY_FOLIAGE_FILE),'utf8'));
+    expect(statSync(join(ENV,SCENERY_FOLIAGE_FILE)).size).toBeLessThan(900000);
     const total = files.reduce((n, f) => n + statSync(join(ENV, f)).size, 0);
     expect(total).toBeLessThan(5 * 1024 * 1024);
   });

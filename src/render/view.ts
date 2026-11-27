@@ -13,7 +13,8 @@ import { sampleTrack, sampleTrackNormal, trackSegment } from '../game/tracks';
 import type { Settings } from '../save/settings';
 import { blobShadow, buildArena, buildAreaGroup, setupSky, type Arena } from './arena';
 import { landscapeProfile } from './fieldLandscape';
-import { WIND } from './envArt';
+import { sceneryKey } from '../data/fieldScenery';
+import { WIND, isCachedEnvTexture } from './envArt';
 import { imageLambert } from './materialImages';
 import { buildHubGroup } from './hubScene';
 import { HubLifeScene } from './hubLifeScene';
@@ -196,6 +197,9 @@ export class GameView {
   private shownArea = '';
   /** まだ入っていないエリアの地形を、前もって 1 つずつ作るまでのフレーム数（エリアを移った時に、作る間だけ止まらないように） */
   private prebuildIn = 90;
+  private areaUse=new Map<string,number>();
+  private areaUseSerial=0;
+  private readonly areaCacheLimit=5;
   private trail: BladeTrail;
   private sparks: Particles;
   private dust: Particles;
@@ -322,13 +326,15 @@ export class GameView {
     const area = sim.area();
     if (!area) return false;
     this.areaGroupOf(sim, area.id);
-    const landscape=landscapeProfile(field.id,area);
+    const landscape=landscapeProfile(field.id,area,sim.content.fieldScenery?.get(sceneryKey(field.id,area.id)));
     this.arena.sky?.setLook(landscape.sky);
     if(this.scene.fog instanceof FogExp2){this.scene.fog.color.set(landscape.sky.horizon);this.scene.fog.density=landscape.fog;}
     if(this.scene.background instanceof Color)this.scene.background.set(landscape.sky.horizon);
     for(const obj of this.arena.backdrop.children)if(obj.name!=='sky')obj.visible=!!landscape.basinBackdrop;
     for (const [id, grp] of this.areaGroups) grp.visible = id === area.id;
     this.shownArea = area.id;
+    this.areaUse.set(area.id,++this.areaUseSerial);
+    this.trimAreaCache(sim);
     return true;
   }
 
@@ -341,12 +347,13 @@ export class GameView {
     if (!g) {
       g = buildAreaGroup({
         bounds: area.bounds, shape: area.shape, rocks: area.rocks, platforms: area.platforms, kind: area.kind, seed: 9001 + area.no * 131, climbs: area.climbs, relief: area.relief, groundTint: area.look?.ground,
-        landscape: landscapeProfile(field.id,area),
+        landscape: landscapeProfile(field.id,area,sim.content.fieldScenery?.get(sceneryKey(field.id,area.id))),
         camp: area.kind === 'camp' ? field.camp : null,
-        gates: area.exits.map((e) => ({ x: e.x, z: e.z, marker: true })),
+        gates: area.exits.map((e) => ({ x: e.x, z: e.z, marker: true, to:e.to })),
       });
       g.visible = false;
       this.areaGroups.set(area.id, g);
+      this.areaUse.set(area.id,++this.areaUseSerial);
       this.scene.add(g);
     }
     return g;
@@ -356,14 +363,24 @@ export class GameView {
    * フィールド: まだ作っていないエリアの地形を、少しずつ前もって作る（v0.19.0。20 フレームに 1 つ。いま居るエリアの隣から）。
    * 見えない状態で足すので、画面は変わらない。
    */
+  private trimAreaCache(sim:Simulation):void {
+    const preferred=new Set([sim.areaId,...(sim.area()?.exits.map(e=>e.to)??[])]);
+    while(this.areaGroups.size>this.areaCacheLimit){
+      const candidates=[...this.areaGroups.keys()].filter(id=>id!==sim.areaId).sort((a,b)=>Number(preferred.has(a))-Number(preferred.has(b))||(this.areaUse.get(a)??0)-(this.areaUse.get(b)??0));
+      const id=candidates[0];if(!id)break;const group=this.areaGroups.get(id)!;group.removeFromParent();this.areaGroups.delete(id);this.areaUse.delete(id);
+      const materials=new Set<import('three').Material>();group.traverse(o=>{if(o instanceof Mesh){o.geometry.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material])materials.add(m);}});
+      const shared=new Set<import('three').Material>();this.scene.traverse(o=>{if(o instanceof Mesh)for(const m of Array.isArray(o.material)?o.material:[o.material])shared.add(m);});
+      for(const mat of materials){if(shared.has(mat)||mat.userData.rockArt||mat.userData.art)continue;mat.dispose();}
+    }
+  }
   private prebuildAreas(sim: Simulation): void {
     const field = sim.field;
-    if (!field || this.areaGroups.size >= field.areas.length) return;
+    if (!field || this.areaGroups.size >= Math.min(field.areas.length,this.areaCacheLimit)) return;
     if (--this.prebuildIn > 0) return;
     this.prebuildIn = 20;
     const here = field.areas.find((a) => a.id === sim.areaId);
-    const next = [...(here?.exits.map((e) => e.to) ?? []), ...field.areas.map((a) => a.id)].find((id) => !this.areaGroups.has(id));
-    if (next) this.areaGroupOf(sim, next);
+    const next = (here?.exits.map((e) => e.to) ?? []).find((id) => !this.areaGroups.has(id));
+    if (next){this.areaGroupOf(sim, next);this.trimAreaCache(sim);}
   }
 
   /**
@@ -1273,8 +1290,9 @@ export class GameView {
       if (!mesh.geometry) return;
       mesh.geometry.dispose();
       for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
-        (mat as MeshLambertMaterial).map?.dispose();
-        (mat as MeshLambertMaterial).normalMap?.dispose();
+        const map=(mat as MeshLambertMaterial).map, normal=(mat as MeshLambertMaterial).normalMap;
+        if(map&&!isCachedEnvTexture(map))map.dispose();
+        if(normal&&!isCachedEnvTexture(normal))normal.dispose();
         mat?.dispose();
       }
       (mesh as unknown as { skeleton?: { dispose(): void } }).skeleton?.dispose();
