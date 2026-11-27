@@ -264,9 +264,9 @@ describe('ガルドロスの動き（#19 の M01・M02。v0.41.0）', () => {
     expect(first[0]).not.toMatch(/turn_/);
   });
 
-  it('大型 12 種とも、足を踏み替える向き直り（左右 90°・180°）を持ち、判定は無い。幼体は持たない（v0.65.0。D-162）', () => {
+  it('大型 13 種とも、足を踏み替える向き直り（左右 90°・180°）を持ち、判定は無い。幼体は持たない（v0.65.0。D-162）', () => {
     const large = [...content.monsters.values()].filter((d) => d.captureAllowed);
-    expect(large).toHaveLength(12);
+    expect(large).toHaveLength(13);
     for (const d of large) {
       const ts = d.turnSteps;
       expect(ts, d.id).toBeTruthy();
@@ -647,7 +647,7 @@ describe('ほかの種の転倒・気絶の、攻撃を受ける部位の追従�
   const species = (): string[] => [...content.monsters.values()].filter((d) => d.id !== 'monster.training_dummy' && d.id !== 'monster.galdros').map((d) => d.id);
 
   it('どの種も、転倒・怯み・気絶の表を持つ（転倒する部位の無いキリサーヴは、怯みと気絶だけ）', () => {
-    expect(species()).toHaveLength(19);
+    expect(species()).toHaveLength(20);
     for (const id of species()) {
       const d = content.monsters.get(id)!;
       const st = d.follow!.states;

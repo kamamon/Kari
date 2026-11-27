@@ -63,7 +63,7 @@ export class SpinegaleRig implements MonsterRig {
       tick=(1-m.staggerTicks/Math.max(1,m.staggerTotal))*dur*60; loop=false;
     } else if(m.trapTicks>0){name='sg_trap';tick=c.time*60;}
     else if(['para','paralysis'].includes(String(activeControl(m.ailments)))){name='sg_paralysis';tick=c.time*60;}
-    else if(ail.stun>0){name='sg_stun';tick=c.time*60;}
+    else if(ail.stun>0){name='sg_fall_l';tick=94;loop=false;} // Hold the downed pose; matching 164-tick follow table.
     else if(m.asleep || ail.sleep>0){name='sg_sleep_loop';tick=c.time*60;}
     else if(m.action) {
       name=m.action.def.clip; tick=Math.max(0,renderTick(m.action,c.alpha)); loop=false;
