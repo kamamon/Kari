@@ -953,8 +953,11 @@ export class Simulation implements SimCtx {
       }
     }
     this.separateHerds();
-    // 歩いてきた大型に重なったら押し出す（プレイヤーが動いていなくても胴を抜けない）
-    if (this.player.mode !== 'dead') this.world.move(this.player.pos, this.content.player.radius, 0, 0, this.blockers());
+    // 歩いてきた大型に重なったら押し出す（プレイヤーが動いていなくても胴を抜けない）。
+    // 登攀・乗り越えの間は、その動きが位置を持つので押し出さない（v0.69.0。押し出しが体を地面の高さへ上げ、登り切る・上から取り付く途中で
+    // 縁を越えた時に高さが跳んでいた。D-167）
+    const pm = this.player.mode;
+    if (pm !== 'dead' && pm !== 'climb' && pm !== 'vault') this.world.move(this.player.pos, this.content.player.radius, 0, 0, this.blockers());
     this.resolvePlayerAttacks();
     this.stepProjectiles();
     if (this.hunt?.phase !== 'success' && this.hunt?.phase !== 'failed') this.resolveMonsterAttacks();

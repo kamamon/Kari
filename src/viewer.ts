@@ -21,7 +21,7 @@ import { buildArrow, buildBow, buildQuiver } from './render/bow';
 import { buildGuardBladeShield, buildGuardBladeSword } from './render/guardBlade';
 import { buildHeavyBlade, type WeaponModel } from './render/heavyBlade';
 import { DummyRig, type MonsterRig } from './render/monsterRig';
-import { CLIPS, JOINTS, clipPose, deadPose, emptyPose, hurtPose, locomotionPose } from './render/poses';
+import { CLIPS, JOINTS, climbPose, clipPose, deadPose, emptyPose, hurtPose, locomotionPose, vaultPose } from './render/poses';
 import { buildGreatShield, buildLance } from './render/lance';
 import { HunterRig } from './render/rig';
 import { armorTierOf, type ArmorLook } from './render/hunterArmor';
@@ -79,6 +79,8 @@ let damaged = false;
 let posePreview: { kind: 'topple' | 'flinch' | 'sleep' | 'stun' | 'dead'; tick: number } | null = null;
 /** ハンターの被弾の形の確認（v0.64.0。?hurt=flinch|knockdown|bounce&rel=押された向き（体から測った角度。π = 後ろへ）&tick=） */
 let hurtPreview: { kind: 'flinch' | 'knockdown' | 'bounce' | 'dead'; tick: number; rel: number } | null = null;
+/** 登攀と乗り越えの形の確認（v0.69.0。?climb=mount|down|climb|exit&u=段の進み（0〜1）&h=壁での足の高さ（m） / ?vault=進み（0〜1）） */
+let climbPreview: { phase: 'mount' | 'down' | 'climb' | 'exit' | 'vault'; u: number; h: number } | null = null;
 const socketAxes: AxesHelper[] = [];
 for (const s of Object.values(hunter.sockets)) {
   const a = new AxesHelper(0.14);
@@ -401,7 +403,16 @@ function frame(ts: number): void {
     let missing = false;
     const st: AnimState | null = a ? { kind: 'action', clip: a.clip, t, dirAngle: 0, chargeTicks: 0, freeMove: false } : state.stance !== 'none' ? (state.stance === 'guard' ? { kind: 'guard', blend: 1, shake: 0 } : { kind: 'idle' }) : null;
     const stFam = a ? fam : content.families.get(state.stanceFamily) ?? fam;
-    if (hurtPreview && !a) {
+    if (climbPreview && !a) {
+      // 登攀・乗り越え（納刀したまま。ゲームと同じ climbPose / vaultPose。再生中は climb の高さを上へ動かす）
+      lastSolved = null;
+      hunter.setString(null);
+      const cp = climbPreview;
+      const pose = cp.phase === 'vault' ? vaultPose(state.playing ? (time * 0.9) % 1 : cp.u) : climbPose(cp.phase, state.playing && cp.phase !== 'climb' ? (time * 0.8) % 1 : cp.u, state.playing && cp.phase === 'climb' ? time * 1.5 : cp.h);
+      hunter.setPose(pose);
+      sheathWeapon(fam);
+      if (fam.offhand) stowOffhand(hunter, fam.id);
+    } else if (hurtPreview && !a) {
       // 被弾の形（納刀したまま。ゲームと同じ hurtPose。転倒は押された向きへ倒れる）
       lastSolved = null;
       hunter.setString(null);
@@ -584,6 +595,9 @@ async function main(): Promise<void> {
   if (q.has('damaged')) damaged = true;
   const hz = q.get('hurt');
   if (hz === 'flinch' || hz === 'knockdown' || hz === 'bounce' || hz === 'dead') hurtPreview = { kind: hz, tick: Number(q.get('tick') ?? 0), rel: q.has('rel') ? Number(q.get('rel')) : Math.PI };
+  const cz = q.get('climb');
+  if (cz === 'mount' || cz === 'down' || cz === 'climb' || cz === 'exit') climbPreview = { phase: cz, u: Number(q.get('u') ?? 0.5), h: Number(q.get('h') ?? 0) };
+  if (q.has('vault')) climbPreview = { phase: 'vault', u: Number(q.get('vault') ?? 0.5), h: 0 };
   const pz = q.get('pose');
   if (pz === 'topple' || pz === 'flinch' || pz === 'sleep' || pz === 'stun' || pz === 'dead') {
     setSubject('galdros');

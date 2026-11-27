@@ -2,10 +2,10 @@
 // 作り直す前の動きを残した保留の組（'v056' = v0.56.0 までの動き）を、設定の「ハンターの動き」で切り替える。
 // - データ（技・軌道・移動曲線・武器の系統）は、読み込みの時に入れ替わる（src/data/validators.ts の assembleContent の motionSet）。
 // - 描画の動き（weaponClipSpecs.ts の WEAPON_STANCES・WEAPON_MOTIONS、poses.ts の共通の動き CLIPS の common_* と納刀の歩き・走りの形 LOCO_STYLE。
-//   v0.58.0 から。被弾の形 HURT_STYLE は v0.64.0 から）は、ここで中身を入れ替える。どちらも起動の時に 1 度だけ。
+//   v0.58.0 から。被弾の形 HURT_STYLE は v0.64.0 から。登攀の形と研磨の確かめ MOTION_STYLE は v0.69.0 から）は、ここで中身を入れ替える。どちらも起動の時に 1 度だけ。
 // 保留の組の断岳剣は、キー姿勢の方式（poses.ts・heavyBodyMotion.ts）のまま。WEAPON_STANCES に断岳剣が無いので、view.ts がその方式で描く。
 import { WEAPON_MOTIONS, WEAPON_STANCES, type WeaponStances } from './weaponClipSpecs';
-import { CLIPS, HURT_STYLE, LOCO_STYLE, type Clip, type LocoStyle } from './poses';
+import { CLIPS, HURT_STYLE, LOCO_STYLE, MOTION_STYLE, type Clip, type LocoStyle } from './poses';
 import type { Motion } from './bodySolve';
 
 /** いまの組の名前（public/data/content.json の motionSets.current と同じ） */
@@ -58,6 +58,8 @@ export async function useMotionSet(id: string): Promise<void> {
   Object.assign(LOCO_STYLE, loco);
   // 被弾の形（v0.64.0）: 保留の組は v0.63.0 までの形
   HURT_STYLE.style = want === 'v056' ? 'v056' : '2g';
+  // 登攀の形と研磨の終わりの確かめ（v0.69.0）: 保留の組は v0.68.0 までの形
+  MOTION_STYLE.style = want === 'v056' ? 'v056' : '2g';
   applied = want;
 }
 

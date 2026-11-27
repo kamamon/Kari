@@ -103,6 +103,35 @@ describe('登攀（#19 の H07。v0.44.0）', () => {
     expect(Math.hypot(sim.player.pos.x - c.x, sim.player.pos.z - c.z)).toBeLessThan(1.2);
   });
 
+  it('登り切る・上から取り付く間、高さは 1 tick ごとに少しずつ変わる（縁を越えた所で上の段の高さへ跳ばない。v0.69.0、D-167）', () => {
+    // 登り切る: 縁の下 1.45m から 36 tick のうち 6 割で縁の上へ（1 tick の上がり方は最大でも 1.45 × 1.5 / 21.6 ≒ 0.1m）
+    const { sim, c } = atClimb();
+    const ys: { phase: string; y: number }[] = [];
+    for (let i = 0; i < 400 && (sim.player.mode === 'climb' || i < 2); i++) {
+      sim.step(push(c));
+      ys.push({ phase: sim.player.climb?.phase ?? sim.player.mode, y: sim.player.pos.y });
+    }
+    const exit = ys.filter((s) => s.phase === 'exit').map((s) => s.y);
+    expect(exit.length).toBeGreaterThan(30);
+    for (let i = 1; i < exit.length; i++) expect(exit[i]! - exit[i - 1]!, `exit ${i}`).toBeLessThan(0.105);
+    // 上から取り付く: 縁の上から 30 tick で縁の下 1.45m へ（1 tick の下がり方は最大でも 1.45 × 1.5 / 30 ≒ 0.073m）
+    const top = atClimb();
+    top.sim.player.pos = { x: top.c.exit.x, y: top.c.top, z: top.c.exit.z };
+    top.sim.player.prevPos = { ...top.sim.player.pos };
+    top.sim.player.yaw = top.c.yaw + Math.PI;
+    run(top.sim, 2);
+    let last = top.sim.player.pos.y, n = 0;
+    for (let i = 0; i < 60; i++) {
+      top.sim.step(push(top.c, false));
+      if (top.sim.player.climb?.phase !== 'down') break;
+      expect(last - top.sim.player.pos.y, `down ${i}`).toBeLessThan(0.075);
+      expect(top.sim.player.pos.y).toBeLessThanOrEqual(last + 1e-9);
+      last = top.sim.player.pos.y;
+      n++;
+    }
+    expect(n).toBeGreaterThan(25);
+  });
+
   it('回避で手を離すと、重力で落ちて地面に立つ。登る途中で攻撃を受けると、壁から落とされる（防御はできない）', () => {
     const { sim, c } = atClimb();
     run(sim, 40, () => push(c));

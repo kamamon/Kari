@@ -218,7 +218,7 @@ export const CLIPS: Record<string, Clip> = {
       { t: 46 },
     ],
   },
-  // 研磨石: 片ひざを突き、ひざの前に渡した武器を研ぐ。96 tick で研ぎ上がる。
+  // 研磨石: 片ひざを突き、ひざの前に渡した武器を研ぐ。96 tick で研ぎ上がる。研ぎ終わりに刃を起こして確かめてから立つ（v0.69.0）。
   // ここで決めるのは脚と体だけ。武器の位置と腕は、描画の側（view.ts）が構えから渡した位置へ動かして、手を合わせる。
   common_item_whet_01: {
     base: STANCE, basePy: STANCE_PY,
@@ -229,8 +229,10 @@ export const CLIPS: Record<string, Clip> = {
       { t: 51, j: { spine: [24, 0, 0], chest: [12, 4, 0], head: [16, 8, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0] } },
       { t: 64, j: { spine: [26, 0, 0], chest: [14, 10, 0], head: [18, 10, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0] } },
       { t: 77, j: { spine: [24, 0, 0], chest: [12, 4, 0], head: [16, 8, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0] } },
-      { t: 96, j: { spine: [22, 0, 0], chest: [10, 8, 0], head: [12, 8, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0] } },
-      { t: 110, j: { spine: [10, 0, 0], thighL: [-30, 0, 4], shinL: [40, 0, 0], thighR: [-8, 0, -4], shinR: [30, 0, 0] }, py: -0.12 },
+      { t: 94, j: { spine: [22, 0, 0], chest: [10, 8, 0], head: [12, 8, 0], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0] } },
+      // 研ぎ終わり（v0.69.0。D-167）: 背を起こし、起こした刃へ顔を向けて確かめる。ひざは突いたまま
+      { t: 102, j: { spine: [10, 0, 0], chest: [2, 16, 0], head: [-8, 26, 4], thighL: [-82, 0, 6], shinL: [112, 0, 0], thighR: [-16, 0, -6], shinR: [98, 0, 0] } },
+      { t: 114, j: { spine: [10, 0, 0], thighL: [-30, 0, 4], shinL: [40, 0, 0], thighR: [-8, 0, -4], shinR: [30, 0, 0] }, py: -0.12 },
       { t: 120 },
     ],
   },
@@ -591,27 +593,133 @@ const CLIMB_B: J = {
   upperArmL: [-118, 0, 14], forearmL: [-62, 0, 0], upperArmR: [-165, 0, -14], forearmR: [-28, 0, 0],
   thighL: [-62, 0, 7], shinL: [86, 0, 0], thighR: [-18, 0, -7], shinR: [38, 0, 0],
 };
-/** 縁に手を掛けて体を引き上げる: 両手で上の面を押し、右膝を縁へ掛ける */
-const CLIMB_PULL: J = {
-  spine: [30, 0, 0], chest: [10, 0, 0], head: [-6, 0, 0],
-  upperArmL: [-70, 0, 16], forearmL: [-70, 0, 0], upperArmR: [-70, 0, -16], forearmR: [-70, 0, 0],
-  thighL: [-10, 0, 5], shinL: [30, 0, 0], thighR: [-95, 0, -5], shinR: [110, 0, 0],
+/**
+ * 手足を入れ替える途中（v0.69.0。D-167）: A から B へ移る半ば。下にあった右手は壁から離れて肘を曲げ、顔の前を通って上へ伸びる。
+ * 上にあった左手は壁を押さえたまま下がる（体が上がる分）。左脚は膝を高く上げて次の足場へ、右脚は踏み込んで体を押し上げる。
+ * 体は支えている左手の側へ少し寄り、胸は伸ばす手の側へひねる。MID_BA は左右を入れ替えた形
+ */
+const CLIMB_MID_AB: J = {
+  spine: [13, 3, -5], chest: [6, 8, 0], head: [-30, 10, 0],
+  upperArmL: [-142, 0, 12], forearmL: [-44, 0, 0], upperArmR: [-150, 0, -24], forearmR: [-96, 0, 0],
+  thighL: [-80, 0, 10], shinL: [114, 0, 0], thighR: [-38, 0, -7], shinR: [60, 0, 0],
+};
+const CLIMB_MID_BA: J = {
+  spine: [13, -3, 5], chest: [6, -8, 0], head: [-30, -10, 0],
+  upperArmL: [-150, 0, 24], forearmL: [-96, 0, 0], upperArmR: [-142, 0, -12], forearmR: [-44, 0, 0],
+  thighL: [-38, 0, 7], shinL: [60, 0, 0], thighR: [-80, 0, -10], shinR: [114, 0, 0],
+};
+/** 取り付く: 両手を上へ伸ばして蔦をつかみ、右膝を上げて最初の足場へ掛ける（少し跳ぶ） */
+const CLIMB_GRAB: J = {
+  spine: [4, 0, 0], chest: [-4, 0, 0], head: [-30, 0, 0],
+  upperArmL: [-168, 0, 16], forearmL: [-14, 0, 0], upperArmR: [-160, 0, -16], forearmR: [-22, 0, 0],
+  thighL: [-6, 0, 6], shinL: [20, 0, 0], thighR: [-56, 0, -6], shinR: [80, 0, 0],
+};
+/** 上から取り付く: 縁で後ろ向きにしゃがみ、両手で縁をつかんで、片脚から下ろす */
+const CLIMB_EDGE_CROUCH: J = {
+  spine: [36, 0, 0], chest: [10, 0, 0], head: [-8, 0, 0],
+  upperArmL: [-46, 0, 18], forearmL: [-40, 0, 0], upperArmR: [-46, 0, -18], forearmR: [-40, 0, 0],
+  thighL: [-86, 0, 8], shinL: [118, 0, 0], thighR: [-40, 0, -8], shinR: [70, 0, 0],
+};
+/** 縁へ両手を掛けて肘を引き、胸を縁へ寄せる（登り切る始め。上から下りる時は終わり近く） */
+const CLIMB_HANG: J = {
+  spine: [16, 0, 0], chest: [6, 0, 0], head: [-18, 0, 0],
+  upperArmL: [-104, 0, 20], forearmL: [-92, 0, 0], upperArmR: [-104, 0, -20], forearmR: [-92, 0, 0],
+  thighL: [-26, 0, 6], shinL: [48, 0, 0], thighR: [-44, 0, -6], shinR: [70, 0, 0],
+};
+/** 縁の上の面へ両手を突いて腕を伸ばし、上体を縁の上へ乗り出す（体が腰まで縁の上へ出た所） */
+const CLIMB_PRESS: J = {
+  spine: [40, 0, 0], chest: [10, 0, 0], head: [-22, 0, 0],
+  upperArmL: [-26, 0, 16], forearmL: [-14, 0, 0], upperArmR: [-26, 0, -16], forearmR: [-14, 0, 0],
+  thighL: [-8, 0, 5], shinL: [28, 0, 0], thighR: [-52, 0, -5], shinR: [82, 0, 0],
+};
+/** 右膝を縁へ掛ける: 両手は面を押したまま、左脚は下に残る */
+const CLIMB_KNEE: J = {
+  spine: [34, 0, 0], chest: [10, 0, 0], head: [-14, 0, 0],
+  upperArmL: [-34, 0, 16], forearmL: [-36, 0, 0], upperArmR: [-34, 0, -16], forearmR: [-36, 0, 0],
+  thighL: [4, 0, 5], shinL: [36, 0, 0], thighR: [-100, 0, -5], shinR: [118, 0, 0],
+};
+/** 縁の上でしゃがんで立ち上がる手前: 右足が乗り、左膝を引き上げる */
+const CLIMB_RISE: J = {
+  spine: [28, 0, 0], chest: [8, 0, 0], head: [-10, 0, 0],
+  upperArmL: [-26, 0, 20], forearmL: [-36, 0, 0], upperArmR: [-26, 0, -20], forearmR: [-36, 0, 0],
+  thighL: [-50, 0, 6], shinL: [90, 0, 0], thighR: [-74, 0, -8], shinR: [100, 0, 0],
 };
 /** 1 回の手足の入れ替えで登る高さ（m）。高さから姿勢を決めるので、止まると姿勢も止まる */
 const CLIMB_STRIDE = 0.65;
 
 /**
- * 登攀の姿勢。phase は simulation の登攀の段階、u はその段階の進み（0〜1）、h は壁での足の高さ（m）。
- * mount / down は立った姿から壁の姿へ、climb は高さで A と B を行き来する、exit は引き上げてから立つ
+ * 登攀の形と、研磨の終わりの確かめ（v0.69.0。D-167）の組。保留の組 v056（設定の「ハンターの動き」）は、作り直す前の形
+ * （登攀は v0.44.0 の 2 つの姿勢を混ぜる形、研磨は刃を確かめない）。src/render/motionSet.ts が入れ替える
  */
-export function climbPose(phase: 'mount' | 'down' | 'climb' | 'exit', u: number, h: number): BodyPose {
+export const MOTION_STYLE: { style: '2g' | 'v056' } = { style: '2g' };
+
+/** 保留の組 v056 の引き上げ（v0.44.0 の形）: 両手で上の面を押し、右膝を縁へ掛ける */
+const CLIMB_PULL_V056: J = {
+  spine: [30, 0, 0], chest: [10, 0, 0], head: [-6, 0, 0],
+  upperArmL: [-70, 0, 16], forearmL: [-70, 0, 0], upperArmR: [-70, 0, -16], forearmR: [-70, 0, 0],
+  thighL: [-10, 0, 5], shinL: [30, 0, 0], thighR: [-95, 0, -5], shinR: [110, 0, 0],
+};
+/** 保留の組 v056 の登攀の姿勢（v0.44.0〜v0.68.0 の形。A と B を高さで混ぜ、引き上げてから立つ） */
+function climbPoseV056(phase: 'mount' | 'down' | 'climb' | 'exit', u: number, h: number): BodyPose {
   const k = 0.5 - 0.5 * Math.cos((Math.PI * h) / CLIMB_STRIDE);
   const wall = blendPose(fromKey(CLIMB_A, 0, { t: 0 }), fromKey(CLIMB_B, 0, { t: 0 }), k);
   const stand = fromKey(NEUTRAL, 0, { t: 0 });
   if (phase === 'climb') return wall;
   if (phase === 'mount' || phase === 'down') return blendPose(stand, wall, smoothstep(u));
-  const pull = fromKey(CLIMB_PULL, 0, { t: 0 });
+  const pull = fromKey(CLIMB_PULL_V056, 0, { t: 0 });
   return u < 0.55 ? blendPose(wall, pull, smoothstep(u / 0.55)) : blendPose(pull, stand, smoothstep((u - 0.55) / 0.45));
+}
+
+/** 鍵の並び（進み 0〜1 の位置と姿勢）を、間を smoothstep で混ぜて引く */
+function keyed(keys: readonly (readonly [number, BodyPose])[], u: number): BodyPose {
+  const v = Math.min(1, Math.max(0, u));
+  let i = 0;
+  while (i < keys.length - 2 && keys[i + 1]![0] <= v) i++;
+  const [t0, a] = keys[i]!, [t1, b] = keys[i + 1]!;
+  return blendPose(a, b, smoothstep((v - t0) / (t1 - t0)));
+}
+
+/** 壁にいる姿勢（高さ h から、手足の入れ替えのどこにいるか）。A → 半ば → B → 半ば → A を 2 歩でひと回り（v0.69.0） */
+export function climbWallPose(h: number): BodyPose {
+  const s = h / CLIMB_STRIDE;
+  const half = ((Math.floor(s) % 2) + 2) % 2;
+  const u = s - Math.floor(s);
+  const [a, mid, b] = half === 0 ? [CLIMB_A, CLIMB_MID_AB, CLIMB_B] : [CLIMB_B, CLIMB_MID_BA, CLIMB_A];
+  return keyed([[0, fromKey(a, 0, { t: 0 })], [0.5, fromKey(mid, 0, { t: 0, py: 0.03 })], [1, fromKey(b, 0, { t: 0 })]], u);
+}
+
+/**
+ * 登攀の姿勢。phase は simulation の登攀の段階、u はその段階の進み（0〜1）、h は壁での足の高さ（m）。
+ * v0.69.0（D-150・D-167）から、2G を手本に段を分けた（形は Claude の形。2G の映像とは並べていない）:
+ * - 取り付く（mount）: 立つ → 両手を上へ伸ばして蔦をつかみ、片膝を掛ける（少し跳ぶ）→ 壁の姿勢
+ * - 上から取り付く（down）: 立つ → 縁で後ろ向きにしゃがむ → 上の面へ手を突いて脚から下ろす → 縁に手を掛けてぶら下がる → 壁の姿勢
+ * - 登る（climb）: 手足を左右交互に入れ替える。伸ばす手は壁から離れて顔の前を通り、上げる足は膝を高く上げる。体は支える手の側へ寄る
+ * - 登り切る（exit）: 縁へ両手を掛けて肘を引く → 上の面へ手を突いて腕を伸ばし、上体を乗り出す → 右膝を縁へ掛ける → しゃがむ → 立つ
+ * 鍵の位置は、simulation が体を動かす速さ（登り切るは 36 tick のうち 6 割で縁の上まで上がる）に合わせた: 縁が肩の高さ → 腰 → 膝の順に下がる
+ */
+export function climbPose(phase: 'mount' | 'down' | 'climb' | 'exit', u: number, h: number): BodyPose {
+  if (MOTION_STYLE.style === 'v056') return climbPoseV056(phase, u, h);
+  const wall = climbWallPose(h);
+  const stand = fromKey(NEUTRAL, 0, { t: 0 });
+  if (phase === 'climb') return wall;
+  if (phase === 'mount') return keyed([[0, stand], [0.6, fromKey(CLIMB_GRAB, 0, { t: 0, py: 0.05 })], [1, wall]], u);
+  if (phase === 'down') {
+    return keyed([
+      [0, stand],
+      [0.22, fromKey(CLIMB_EDGE_CROUCH, 0, { t: 0, py: -0.3 })],
+      [0.45, fromKey(CLIMB_PRESS, 0, { t: 0 })],
+      [0.72, fromKey(CLIMB_HANG, 0, { t: 0, py: 0.02 })],
+      [1, wall],
+    ], u);
+  }
+  return keyed([
+    [0, wall],
+    [0.1, fromKey(CLIMB_HANG, 0, { t: 0, py: 0.02 })],
+    [0.28, fromKey(CLIMB_PRESS, 0, { t: 0 })],
+    [0.44, fromKey(CLIMB_KNEE, 0, { t: 0 })],
+    [0.66, fromKey(CLIMB_RISE, 0, { t: 0, py: -0.24 })],
+    [1, stand],
+  ], u);
 }
 
 // ---- 低い岩棚の乗り越え（v0.49.0。#19 の H07 の低棚。仮の手付けの姿勢）----
@@ -646,11 +754,7 @@ export function vaultPose(u: number): BodyPose {
     [0.8, fromKey(VAULT_KNEEL_J, 0, { t: 0, py: -0.3 })],
     [1, fromKey(NEUTRAL, 0, { t: 0 })],
   ];
-  const v = Math.min(1, Math.max(0, u));
-  let i = 0;
-  while (i < keys.length - 2 && keys[i + 1]![0] <= v) i++;
-  const [t0, a] = keys[i]!, [t1, b] = keys[i + 1]!;
-  return blendPose(a, b, smoothstep((v - t0) / (t1 - t0)));
+  return keyed(keys, u);
 }
 
 // ---- 降下と着地（v0.45.0。仮の手付けの姿勢）----

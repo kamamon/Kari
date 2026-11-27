@@ -33,7 +33,7 @@ import { CreatureRig } from './creatureRig';
 import type { HazardLook } from '../data/schemas';
 import { CREATURE_PLANS } from './creaturePlans';
 import { DummyRig, type MonsterRig } from './monsterRig';
-import { blendPose, climbPose, clipPose, deadPose, dropPose, emptyPose, guardPose, hurtPose, landPose, locomotionPose, vaultPose, type BodyPose } from './poses';
+import { MOTION_STYLE, blendPose, climbPose, clipPose, deadPose, dropPose, emptyPose, guardPose, hurtPose, landPose, locomotionPose, vaultPose, type BodyPose } from './poses';
 import { HunterAnimator, applySolved, canSolve, playerContactFrame, playerRenderTick, stowOffhand, type AnimState } from './hunterAnim';
 import type { Solved } from './bodySolve';
 import { GroundedLocomotion, freeStride } from './contactLocomotion';
@@ -69,6 +69,8 @@ function weaponQuat(dir: V3, normal: readonly number[]): Quaternion {
 /** 研磨石で研ぐ時の動きの名前と、武器を渡す位置（アクターのローカル座標。片ひざを突いた時の、ひざの前） */
 const WHET_CLIP = 'common_item_whet_01';
 const WHET_HOLD = { grip: { x: -0.2, y: 0.74, z: 0.28 }, dir: norm({ x: 0.9, y: -0.08, z: 0.42 }), normal: [0, 1, 0] as [number, number, number] };
+/** 研ぎ終わりに、刃を顔の前へ起こして確かめる（v0.69.0。D-167。形は Claude の形）: 柄を胸の前へ寄せ、刃先を斜め上へ */
+const WHET_CHECK = { grip: { x: -0.12, y: 0.98, z: 0.3 }, dir: norm({ x: 0.62, y: 0.62, z: 0.48 }), normal: [0, 0.4, -1] as [number, number, number] };
 const MATERIAL_SPARK: Record<string, [number, number, number]> = { rock: [1, 0.8, 0.45], shell: [0.9, 0.85, 0.6], hide: [0.95, 0.9, 0.8] };
 /** 武器の属性が乗った命中の火花の色（v0.33.0。見た目だけ） */
 const ELEMENT_SPARK: Record<ElementId, [number, number, number]> = {
@@ -650,7 +652,11 @@ export class GameView {
       // 研磨石: 武器をひざの前へ渡し（片ひざを突く）、研ぎ終わったら戻す。v0.40.0 から、納刀して使う（背の置き場所から下ろして、背へ納める）。
       // 護刃が防御を構えたまま使った時（抜刀のまま）は、これまでどおり構えの位置から
       if (run.def.clip === WHET_CLIP) {
-        const u = smoothstep(Math.min(1, t / 18)) * (1 - smoothstep((t - 102) / 18));
+        // 渡す（〜18）→ 研ぐ（〜96）→ 刃を起こして確かめる（96〜106）→ 納める（106〜120）
+        const u = smoothstep(Math.min(1, t / 18)) * (1 - smoothstep((t - 106) / 14));
+        // 刃を起こして確かめる（v0.69.0）。保留の組 v056 は確かめない（体の形 common_item_whet_01 も v0.68.0 までの形）
+        const ck = MOTION_STYLE.style === 'v056' ? 0 : smoothstep((t - 94) / 8) * (1 - smoothstep((t - 104) / 6));
+        const hold = { grip: lerpV(WHET_HOLD.grip, WHET_CHECK.grip, ck), dir: norm(lerpV(WHET_HOLD.dir, WHET_CHECK.dir, ck)), normal: WHET_HOLD.normal.map((v, i) => v + (WHET_CHECK.normal[i]! - v) * ck) };
         const drawTr = !run.keepDrawn ? content.actions.get(fam.actions.draw)?.weaponTrack : undefined;
         const tr = drawTr ? content.tracks.get(drawTr) : undefined;
         const home = tr ? { ...sampleTrack(tr, 0), normal: sampleTrackNormal(tr, 0) } : null;
@@ -659,13 +665,13 @@ export class GameView {
         const homeNormal = home ? [home.normal.x, home.normal.y, home.normal.z] : fam.ready.planeNormal;
         weapon = {
           mode: 'track',
-          grip: lerpV(homeGrip, WHET_HOLD.grip, u),
-          dir: norm(lerpV(homeDir, WHET_HOLD.dir, u)),
-          normal: u < 0.5 ? homeNormal : WHET_HOLD.normal,
+          grip: lerpV(homeGrip, hold.grip, u),
+          dir: norm(lerpV(homeDir, hold.dir, u)),
+          normal: u < 0.5 ? homeNormal : hold.normal,
         };
         shieldOut = true;
         // 左手が空く武器（両手持ち、または左の剣を腰へ納める双剣）は、左手の石で刃をなでる（3 往復）。左腕に盾を持つ武器は、右手で支えるだけ（仮）
-        if ((!fam.offhand || !fam.offhandReady) && fam.primaryHand !== 'left' && u > 0.5) {
+        if ((!fam.offhand || !fam.offhandReady) && fam.primaryHand !== 'left' && u > 0.5 && ck < 0.3) {
           const s = 0.5 - 0.5 * Math.cos(Math.min(1, Math.max(0, (t - 20) / 76)) * Math.PI * 6);
           const from = Math.min(fam.blade.from + 0.05, 0.4);
           hands.two = false;
