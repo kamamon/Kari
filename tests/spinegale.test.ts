@@ -33,14 +33,15 @@ describe('疾棘竜の本体統合',()=>{
       const sim=new Simulation(content,baseOptions({questId:id(r)}));
       const m=sim.monsters[0]!;
       m.aware=true;m.aiEnabled=true;m.action=null;m.enraged=true;m.enragedTicks=1200;m.pendingRoar=true;m.spinegale!.stamina=20;
+      const actionId=()=>m.action?.def.actionId;
       const pos={...m.pos};const ticks=[600,540,480][r-1]!;
       for(let t=0;t<ticks;t++){
         stepMonster(m,sim.player,sim);
         expect(m.pos).toEqual(pos);expect(m.attackEval).toBeNull();
-        expect(m.action?.def.actionId).toContain('monster.spinegale.fatigue_');
+        expect(actionId()).toContain('monster.spinegale.fatigue_');
       }
       expect(m.spinegale!.remaining).toBe(0);expect(m.spinegale!.stamina).toBe(m.spinegale!.max);
-      stepMonster(m,sim.player,sim);expect(m.action?.def.actionId).toBe(m.def.rage!.actionId);
+      stepMonster(m,sim.player,sim);expect(actionId()).toBe(m.def.rage!.actionId);
     }
   });
   it('全69アイコンの対応、既存系統だけを生産可能にする',()=>{
