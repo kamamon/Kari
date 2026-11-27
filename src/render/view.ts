@@ -29,7 +29,7 @@ import { FollowCamera } from './camera';
 import { DebugDraw } from './debugDraw';
 import { BladeTrail, GroundRings, Particles } from './effects';
 import { GaldrosRig } from './galdrosRig';
-import { CreatureRig } from './creatureRig';
+import { CreatureRig, limpGait } from './creatureRig';
 import type { HazardLook } from '../data/schemas';
 import { CREATURE_PLANS } from './creaturePlans';
 import { DummyRig, type MonsterRig } from './monsterRig';
@@ -894,10 +894,13 @@ export class GameView {
         const moved = Math.hypot(mp.x - L.x, mp.z - L.z);
         L.x = mp.x;
         L.z = mp.z;
-        const walking = !!m.roam?.limping && !m.action && !m.dead && !m.asleep && m.staggerTicks <= 0 && moved > 0.002 && moved < 2;
+        // v0.72.0（D-170）: 弱って巣へ向かう間だけ（気づいた相手と戦っている間は除く。limpGait）。引きずる脚のある体（CreatureRig の四足・二足・
+        // 脚のある長胴）は、rig が脚の周期に合わせて傾ける（体の根元ごと回すと、反対の側の足が浮く）。ここで傾けるのは、それ以外の体だけ
+        const walking = limpGait(m) && moved > 0.002 && moved < 2;
         if (walking) L.d += moved;
         L.w += ((walking ? 1 : 0) - L.w) * Math.min(1, dt * 4);
-        if (L.w > 0.001) {
+        const own = e.rig instanceof CreatureRig && e.rig.hasDragLeg;
+        if (!own && L.w > 0.001) {
           const stride = Math.max(1.2, m.def.bodyRadius * 1.8);
           const hitch = Math.max(0, Math.sin((2 * Math.PI * L.d) / stride)) ** 3;
           e.rig.root.rotation.z += 0.11 * hitch * L.w;

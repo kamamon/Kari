@@ -28,6 +28,17 @@ const TAU = Math.PI * 2;
 export const CREATURE_STUN_LOOP = 164;
 /** 転がる技が突進の制動で止まった時に、輪を元の向きへ揺り戻す長さ（tick。v0.68.0） */
 const ROLL_SETTLE_TICKS = 18;
+
+/**
+ * 弱って足を引きずって歩く時か（v0.72.0。#19 の M05。D-170。描画だけ）: 弱って（`roam.limping`）巣へ向かう・エリアを出る・寝床へ歩く間。
+ * 気づいた相手と同じエリアで戦っている間は、引きずらない（2G の弱った大型は、逃げる時に足を引きずる）。技・怯み・眠り・死の間も除く
+ */
+export function limpGait(m: MonsterState): boolean {
+  const r = m.roam;
+  return !!r?.limping && (r.state === 'leave' || !m.aware) && !m.action && !m.dead && !m.asleep && m.staggerTicks <= 0;
+}
+/** 引きずる脚に体重が乗る時に、腰がその脚の側へ傾く大きさの上限（rad。値は Kari の仮の値） */
+const LIMP_ROLL = 0.12;
 const clamp = (v: number, a: number, b: number): number => Math.max(a, Math.min(b, v));
 /** 体の面の細かさ（v0.21.0 で、なめらかに）: 背骨の輪の点の数と、輪の間隔 (m)。脚も同じ */
 const SPINE_SEG = 28;
@@ -962,6 +973,34 @@ export class CreatureRig implements MonsterRig {
   private unaware = 0;
   private alertW = 0;
   private weakW = 0;
+  /**
+   * 足を引きずる（v0.72.0。#19 の M05。D-170。描画だけ）: 弱って巣へ向かう間に引きずる脚（四足と脚のある長胴は右の後ろ脚、二足は右脚。
+   * 前後に振る脚が無い体は null）と、その重み（limpW）。limpHitch は、引きずる脚に体重が乗る間（支える半周期の真ん中が 1）の、かばう揺れの大きさ
+   */
+  private dragLeg: LegRec | null | undefined;
+  /** 引きずる脚の足先の、体の真ん中からの横の距離（m。立った形で） */
+  private dragW = 0;
+  /** 体重が乗る時に腰を傾ける大きさ（rad。LIMP_ROLL か、胴の下が地面へ 4cm より深く潜らない所まで）と、いまの傾き */
+  private limpRoll = 0;
+  private hipRoll = 0;
+  /** 腰だけを傾けるために、逆へ回す、根元のすぐ前の背骨の点（無ければ -1） */
+  private frontSpine = -1;
+  /** 引きずる脚がある体か（v0.72.0。まだ形を見ていない時は false。view.ts は、ある体では体の傾きを rig に任せる） */
+  get hasDragLeg(): boolean {
+    return !!this.dragLeg;
+  }
+  /** 検査用（v0.72.0）: 引きずる脚の、群れ（H・B）と左右 */
+  dragLegOf(): { group: string; side: number } | null {
+    return this.dragLeg ? { group: this.dragLeg.plan.group, side: this.dragLeg.side } : null;
+  }
+  private limpW = 0;
+  limpHitch = 0;
+  /** 検査用（v0.72.0）: 横たわる重み（0 = 立っている … 1 = 横たわりきった。眠り・転倒・死・捕獲） */
+  get lieRest(): number {
+    return this.rest;
+  }
+  /** 巣に着いて眠りへ入る（弱って歩いて来た時だけ。ゆっくり、後ろから腰を下ろす） */
+  private settling = false;
   private rageW = 0;
   private runW = 0;
   /** 尾の付け根が向いている向き（体の向きに遅れて付いてくる） */
@@ -1351,6 +1390,11 @@ export class CreatureRig implements MonsterRig {
     this.runW += (runT - this.runW) * (1 - Math.exp(-dt * 5));
     const gaitAmt = clamp(this.speed / moveSpeed, 0, 1.4) + clamp(Math.abs(this.yawVel) * 0.6, 0, 0.6) + 0.35 * this.runW;
     this.phase += (dist + Math.abs(dyaw) * Math.max(0.6, m.def.bodyRadius) * 0.8) / Math.max(0.3, plan.stride * (1 + 0.9 * this.runW));
+    // 足を引きずる（v0.72.0。D-170）: 弱って巣へ向かって歩く間（limpGait）。重みは 0.25 秒ほどで混ぜる
+    if (this.dragLeg === undefined) this.initDragLeg();
+    const limping = limpGait(m) && gaitAmt > 0.05 && !!this.dragLeg;
+    this.limpW += ((limping ? 1 : 0) - this.limpW) * (1 - Math.exp(-dt * 4));
+    this.limpHitch = this.dragLeg && this.limpW > 0.001 ? this.limpW * Math.max(0, -Math.cos(TAU * (this.phase + this.dragLeg.phase))) ** 3 : 0;
 
     const P = ZERO_POSE();
     const k2 = 1 - Math.exp(-dt * 3);
@@ -1405,6 +1449,14 @@ export class CreatureRig implements MonsterRig {
       if (this.runW > 0.01) addPose(P, idle.run, this.runW);
     } else if (enraged) {
       P.crest += 0.25; P.wing += 0.15; P.sail += 0.2;
+    }
+    // 足を引きずる（v0.72.0。D-170）: 引きずる脚に体重が乗る度に、腰がその側へ傾いて沈み（肩は傾けない。反対の側の後ろ足は地面に着いたまま。
+    // 引きずる脚は、足の接地で地面へ押し戻されて折れる）、首と頭が落ちる
+    this.hipRoll = this.limpRoll * this.limpHitch;
+    if (this.limpHitch > 0.001) {
+      P.yH -= (this.dragW * Math.sin(this.hipRoll)) / H;
+      P.neckPitch -= 0.14 * this.limpHitch;
+      P.headPitch -= 0.06 * this.limpHitch;
     }
 
     // ---- 群れ（幼体）: 立ち止まって頭を下げて食む / 顔を上げて見る（v0.18.0）----
@@ -1509,7 +1561,10 @@ export class CreatureRig implements MonsterRig {
     if (scurry) this.phase += dt * 3.5 * scurry;
 
     // ---- 状態: 怯み・転倒・罠・眠り・死 ----
-    this.rest = resting ? Math.min(1, this.rest + dt * 0.8) : Math.max(0, this.rest - dt * 1.5);
+    // 巣に着いて眠る（v0.72.0。D-170）: 弱って歩いて来た時は、2 秒ほどかけて、後ろから腰を下ろしてから前を下ろす
+    if (!resting) this.settling = false;
+    else if (this.rest <= 0 && m.asleep && m.roam?.limping) this.settling = true;
+    this.rest = resting ? Math.min(1, this.rest + dt * (this.settling ? 0.45 : 0.8)) : Math.max(0, this.rest - dt * 1.5);
     // 横たわる重み（眠る・倒れる・死ぬ）: 潜った脚を地面の上へ出す（v0.21.0）。steady = 姿勢がほとんど変わらない
     let lieW = 0;
     let lieSteady = false;
@@ -1518,8 +1573,16 @@ export class CreatureRig implements MonsterRig {
       const lie: Pose = idle?.sleep ?? (plan.frame === 'arch'
         ? { yH: -0.12, archFront: -0.5, archBack: -0.5, ring: -0.2 }
         : { yH: plan.frame === 'serpent' ? -0.15 : -0.42, neckPitch: -0.35, neckYaw: 0.5, headPitch: -0.2, tailYaw: 0.6, crest: -0.4, wing: -0.1, legs: { '*': [0, 1, 0.2] } });
-      blendInto(P, this.fitLie('sleep', lie, H), w);
+      const fitted = this.fitLie('sleep', lie, H);
+      blendInto(P, fitted, w);
       P.pitch += Math.sin(time * 0.9) * 0.01 * w;
+      // 腰を後ろから下ろす（下ろす途中は、体の前が上がる。頭は体に付いて上を向かないよう、首で戻す）。
+      // 眠っても体がほとんど下がらない種（ヌメラドン）は、下がる分だけ
+      if (this.settling && this.rest < 1) {
+        const k = clamp(-(fitted.yH ?? 0) / 0.25, 0, 1) * Math.sin(Math.PI * this.rest);
+        P.pitch += 0.14 * k;
+        P.neckPitch -= 0.12 * k;
+      }
       lieW = w;
       lieSteady = this.rest >= 1 && m.trapTicks <= 0;
     }
@@ -1785,6 +1848,36 @@ export class CreatureRig implements MonsterRig {
     b.quaternion.setFromEuler(this.euler);
   }
 
+  /**
+   * 弱った時に引きずる脚（v0.72.0）: 四足・脚のある長胴は右の後ろ脚（H）、二足は右脚（B）。前後に振る脚が無い体は null。
+   * 腰を傾ける大きさは、立った形の胴の下（地面に着ける点）が、傾けて沈めた時に地面へ 4cm より深く潜らない所まで（胴が地面に近いヌメラドン・ラズメルは小さい）
+   */
+  private initDragLeg(): void {
+    const plan = this.plan, body = this.body;
+    this.dragLeg = null;
+    if (plan.frame !== 'quad' && plan.frame !== 'biped' && plan.frame !== 'serpent') return;
+    const group = plan.frame === 'biped' ? 'B' : 'H';
+    const leg = body.legs.find((l) => l.plan.group === group && l.side < 0 && (l.plan.swing ?? 'x') === 'x' && l.reach > 0.05);
+    if (!leg) return;
+    this.dragLeg = leg;
+    this.dragW = Math.abs(body.bones[leg.bones[leg.bones.length - 1]!]!.world.x);
+    // 根元のすぐ前の背骨の点（肩の側。ここで逆へ回して、腰だけを傾ける）
+    for (let i = plan.root + 1; i < plan.spine.length && this.frontSpine < 0; i++) if (body.spineBone.has(i)) this.frontSpine = i;
+    // 胴の点の沈み: 肩の側は体ごと下げる分（dragW）、腰の側はそれに傾きの分（右 = −X の側ほど深い）
+    const rootZ = body.spinePts[plan.root]!.z;
+    const pos = body.main.pos, sup = body.support;
+    let r = LIMP_ROLL;
+    for (let i = 0; i < sup.length; i++) {
+      if (!sup[i]) continue;
+      const x = pos[i * 3]!, y = pos[i * 3 + 1]!, z = pos[i * 3 + 2]!;
+      const br = body.bones[body.mainBone(i)]!;
+      const front = this.frontSpine >= 0 && (br.kind === 'spine' ? br.index >= this.frontSpine : z > rootZ);
+      const f = front ? this.dragW : this.dragW - x;
+      if (f > 1e-3) r = Math.min(r, Math.asin(Math.min(1, (Math.max(0, y) + 0.04) / f)));
+    }
+    this.limpRoll = r;
+  }
+
   private apply(P: FullPose, o: { gaitAmt: number; und: number; paddle: number; rollDist: number; rollTotal: number; seq: number; windup: number; side: number; time: number; H: number }): void {
     const body = this.body;
     const plan = this.plan;
@@ -1803,10 +1896,12 @@ export class CreatureRig implements MonsterRig {
     for (const b of spine) {
       let rx = 0, ry = 0, rz = 0;
       const i = b.index;
+      // 足を引きずる（v0.72.0）: 腰だけを傾ける（根元で傾け、すぐ前の点で戻す）
+      if (i === this.frontSpine) rz -= this.hipRoll;
       if (i === root) {
         rx += -P.pitch;
         ry += P.yaw;
-        rz += P.roll;
+        rz += P.roll + this.hipRoll;
         if (plan.frame === 'biped' || plan.frame === 'quad') rz += Math.sin(TAU * this.phase) * 0.025 * Math.min(1, o.gaitAmt);
         const pos = b.rest.clone();
         pos.y += P.yH * o.H + Math.abs(Math.sin(TAU * this.phase)) * 0.03 * Math.min(1, o.gaitAmt) * (plan.frame === 'serpent' ? 0 : 1);
@@ -1899,7 +1994,11 @@ export class CreatureRig implements MonsterRig {
         const stride = plan.stride * (1 + 0.9 * this.runW);
         swing += Math.sin(ph) * Math.asin(clamp(stride / (4 * leg.reach), 0.1, 0.85)) * Math.min(1, amt * 2.5);
       } else swing += Math.sin(ph) * 0.3 * amt;
-      lift += Math.max(0, Math.cos(ph)) * 0.55 * Math.min(1, amt * 1.5);
+      const drag = leg === this.dragLeg ? this.limpW : 0;
+      lift += Math.max(0, Math.cos(ph)) * 0.55 * Math.min(1, amt * 1.5) * (1 - 0.8 * drag);
+      // 引きずる脚は、振りが小さく（走る間は、留めた足が離れすぎないよう少しだけ）、いつも少し後ろへ流れ（体の後ろに残る）、
+      // 足先がほとんど上がらない（地面をこする）
+      if (drag > 0) swing = swing * (1 - (0.35 - 0.25 * this.runW) * drag) - 0.12 * drag;
       if (o.paddle && g === 'F') lift += Math.max(0, Math.sin(o.time * 12 * (s > 0 ? 1 : -1))) * 0.7 * o.paddle;
       lift += crouch * (plan.frame === 'serpent' ? 0.6 : 1.6);
       lift = clamp(lift, 0, 1.3);
