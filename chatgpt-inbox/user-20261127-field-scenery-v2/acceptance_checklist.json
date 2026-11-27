@@ -1,0 +1,416 @@
+{
+  "schemaVersion": 1,
+  "baseline": "3c350c6bc142861af410e89af7a47882e4707023",
+  "status": "PROPOSED_NOT_EXECUTED",
+  "scope": {
+    "fieldIds": [
+      "field.basin",
+      "field.wetland",
+      "field.coast",
+      "field.ashmine",
+      "field.icegorge",
+      "field.mistforest",
+      "field.emberplateau",
+      "field.raincliff",
+      "field.copperterrace",
+      "field.dryriver",
+      "field.leadcloud",
+      "field.sunkenroot",
+      "field.glassplain",
+      "field.ashcocoon",
+      "field.coldcopper",
+      "field.echohall",
+      "field.heavyfog",
+      "field.buriedheat",
+      "field.ruststar",
+      "field.deepveil"
+    ],
+    "areaCoverage": "ALL_RUNTIME_AREAS_FROM_CONTENT",
+    "basinAreaIds": [
+      "camp",
+      "a1",
+      "a2",
+      "a3",
+      "a4",
+      "a5",
+      "a6",
+      "a7",
+      "a8",
+      "a9",
+      "a10"
+    ],
+    "basinConnections": 14,
+    "includeLegacyArena": true,
+    "includeTraining": true,
+    "preserveHub": true
+  },
+  "hardGates": [
+    {
+      "id": "P0-version",
+      "requirement": "再現時に公開ビルドSHA・main SHA・URL・fieldId/areaId・視点を記録"
+    },
+    {
+      "id": "P1-geometry",
+      "requirement": "外側の平坦な空き草原、地面の端、穴、浮遊、外景のプレイ領域への侵入なし"
+    },
+    {
+      "id": "P1-contact",
+      "requirement": "プレイ範囲の頂点の地面高と正本との差1mm以内を目標。内部面も検査"
+    },
+    {
+      "id": "P1-exits",
+      "requirement": "全出口の到達・相互anchorKey・接続先の視覚的連続性"
+    },
+    {
+      "id": "P2-art",
+      "requirement": "全地域/全エリア固有景観。原作資産の流用なし、画像素材台帳整合"
+    },
+    {
+      "id": "P2-vision",
+      "requirement": "通常戦闘、採取、弓、登攀、高所からの視認性を維持"
+    },
+    {
+      "id": "P3-render",
+      "maxDrawCalls": 100,
+      "maxTriangles": 200000,
+      "scope": "狩場の代表/最悪視点・大型戦・群れ"
+    },
+    {
+      "id": "P4-regression",
+      "requirement": "最新mainの全テスト＋追加検査、全ブラウザsmoke、本番build"
+    },
+    {
+      "id": "P4-mobile",
+      "requirement": "iPhone/iPadで性能/エリア往復を記録。未実施なら未検証"
+    },
+    {
+      "id": "P4-release",
+      "requirement": "GitHub Pagesで公開SHAと新画面を確認"
+    }
+  ],
+  "cameraSweep": {
+    "positions": [
+      "center",
+      "each_exit_interior",
+      "highest_accessible_surface",
+      "open_boundary_interior"
+    ],
+    "yawDegrees": [
+      0,
+      45,
+      90,
+      135,
+      180,
+      225,
+      270,
+      315
+    ],
+    "pitchRadians": [
+      -0.25,
+      0.3,
+      1.15
+    ],
+    "mode": "simplified sweep + full WebGL failure captures and representative screenshots"
+  },
+  "visualReview": {
+    "dimensions": [
+      "boundary",
+      "depth",
+      "silhouette",
+      "ecology_and_geology",
+      "combat_readability"
+    ],
+    "scores": [
+      0,
+      1,
+      2
+    ],
+    "minimumEach": 1,
+    "minimumTotal": 8,
+    "failOn": [
+      "empty_flat_external_grassland",
+      "visible_mesh_end",
+      "hole",
+      "floating_objects",
+      "blocked_exit"
+    ]
+  },
+  "commands": [
+    "npm ci",
+    "npm run typecheck",
+    "npm run test",
+    "npm run build",
+    "npm run smoke",
+    "node tools/landscape-shots.mjs"
+  ],
+  "limits": "提案の受入れ値。現在の実機結果ではない。既存の狩場描画上限を緩めない。",
+  "regions": [
+    {
+      "fieldId": "field.basin",
+      "name": "風礫盆地",
+      "near": "層状の岩棚、草の斑、灌木",
+      "mid": "斜面の雑木林・浸食谷",
+      "far": "重なる低山と峰",
+      "mood": "晴れ間のある霧、草擦れ"
+    },
+    {
+      "fieldId": "field.wetland",
+      "name": "根絡み湿原",
+      "near": "浅瀬・根張り・葦の岸",
+      "mid": "湿地林・低い水路・小島",
+      "far": "霧に沈む樹林",
+      "mood": "濁水、水滴、虫"
+    },
+    {
+      "fieldId": "field.coast",
+      "name": "硝砂海岸",
+      "near": "白砂・岩礁・海食崖",
+      "mid": "湾、潮溝、水平線へ続く水面",
+      "far": "岬と離れた岩島（海側に山の環を作らない）",
+      "mood": "海風、波、塩害の植生"
+    },
+    {
+      "fieldId": "field.ashmine",
+      "name": "灰鐘鉱山",
+      "near": "採掘路を挟む堆積岩、坑口",
+      "mid": "岩盤の迫り出し・支保・崩落跡",
+      "far": "地上は山稜、坑内は岩の天井と明り",
+      "mood": "粉塵・採石の響き"
+    },
+    {
+      "fieldId": "field.icegorge",
+      "name": "氷帆峡谷",
+      "near": "雪の吹き溜まり、露岩、氷壁",
+      "mid": "氷河が刻む谷と雪棚",
+      "far": "雪稜と氷峰",
+      "mood": "青灰色の光、雪煙"
+    },
+    {
+      "fieldId": "field.mistforest",
+      "name": "霧灯樹海",
+      "near": "大樹の根、シダ、苔岩",
+      "mid": "幹と樹冠が重なる深い森",
+      "far": "霧で薄れる樹冠",
+      "mood": "木漏れ日、虫の微光"
+    },
+    {
+      "fieldId": "field.emberplateau",
+      "name": "燠脈台地",
+      "near": "草の冷たい段、琥珀色の晶脈",
+      "mid": "地層の段と局所的な蒸気",
+      "far": "なだらかな岩の尾根",
+      "mood": "寒色の霧と細雨、局所のみ暖色"
+    },
+    {
+      "fieldId": "field.raincliff",
+      "name": "雨裂断崖",
+      "near": "濡れた三段岩棚・浸食溝",
+      "mid": "対岸の断崖、細い滝",
+      "far": "雨雲に消える谷筋",
+      "mood": "濡れ岩、滴、風"
+    },
+    {
+      "fieldId": "field.copperterrace",
+      "name": "銅苔段丘",
+      "near": "苔の段丘、銅色の露頭",
+      "mid": "段丘を結ぶ湧水と樹林",
+      "far": "緩い緑の尾根",
+      "mood": "滴・水流、鈍い銅色"
+    },
+    {
+      "fieldId": "field.dryriver",
+      "name": "枯響河床",
+      "near": "礫・流木・残り淵",
+      "mid": "蛇行する旧河床、削られた岸",
+      "far": "水系に沿う崖、遠い河谷",
+      "mood": "湿った礫、薄霧"
+    },
+    {
+      "fieldId": "field.leadcloud",
+      "name": "鉛雲高地",
+      "near": "草の斑と霜、低い岩",
+      "mid": "谷側へ下る斜面、矮木群",
+      "far": "雲海と上に抜ける峰",
+      "mood": "強風・低雲"
+    },
+    {
+      "fieldId": "field.sunkenroot",
+      "name": "沈根沢地",
+      "near": "朽木、根丘、浅瀬の岸",
+      "mid": "根の絡んだ湿地林と水路",
+      "far": "低い霧の樹冠",
+      "mood": "濁水、朽木、泡"
+    },
+    {
+      "fieldId": "field.glassplain",
+      "name": "玻璃裂原",
+      "near": "層状の硝質板岩、晶脈の畝",
+      "mid": "地割れ・傾いた岩盤",
+      "far": "低く鋭い岩の稜線",
+      "mood": "青灰色の光、過度な発光なし"
+    },
+    {
+      "fieldId": "field.ashcocoon",
+      "name": "灰繭窪地",
+      "near": "菌糸を覆う根、湿った土",
+      "mid": "菌床、低木、湿った窪み",
+      "far": "霧に沈む林",
+      "mood": "拡散光、局所胞子"
+    },
+    {
+      "fieldId": "field.coldcopper",
+      "name": "冷銅洞庭",
+      "near": "冷たい露頭と銅脈、鉱洞の壁",
+      "mid": "岩のアーチ、側洞、天井の抜け",
+      "far": "開口部から限定的に空・遠景",
+      "mood": "淡い外光、滴"
+    },
+    {
+      "fieldId": "field.echohall",
+      "name": "響礫回廊",
+      "near": "礫の通路、張り出した岩棚",
+      "mid": "折れ曲がる側壁と岩盆",
+      "far": "谷の切れ目に岩稜",
+      "mood": "反響、岩陰"
+    },
+    {
+      "fieldId": "field.heavyfog",
+      "name": "重霧環谷",
+      "near": "湿った岩棚、水滴場",
+      "mid": "低い尾根、林、湿地",
+      "far": "重なる谷の稜線",
+      "mood": "灰緑の霧、近距離視認確保"
+    },
+    {
+      "fieldId": "field.buriedheat",
+      "name": "伏熱石原",
+      "near": "冷たい礫、根、温い晶脈",
+      "mid": "熱脈沿いの割れ目・低い蒸気",
+      "far": "起伏のある乾いた石原",
+      "mood": "細雨、蒸気、暖色を局所化"
+    },
+    {
+      "fieldId": "field.ruststar",
+      "name": "錆星高原",
+      "near": "青銅鉱床・鉱物藻・岩棚",
+      "mid": "風化鉱脈と緩い起伏",
+      "far": "灰青の遠い高原",
+      "mood": "風・金属質の小石"
+    },
+    {
+      "fieldId": "field.deepveil",
+      "name": "深帷樹洞",
+      "near": "倒れた巨木、木屑床、根棚",
+      "mid": "幹洞・根のアーチ・浅い流れ",
+      "far": "深い林、開口部だけ遠景",
+      "mood": "薄暗い昼光、木の軋み"
+    }
+  ],
+  "basin": [
+    {
+      "areaId": "camp",
+      "name": "野営地",
+      "connectedAreas": [
+        "a1"
+      ],
+      "direction": "天幕背後に岩の張り出し＋雑木。a1側に狭い踏み跡、奥に岩の切れ目。"
+    },
+    {
+      "areaId": "a1",
+      "name": "礫の坂",
+      "connectedAreas": [
+        "camp",
+        "a5",
+        "a3"
+      ],
+      "direction": "礫の流れに沿う両岸の地層。3出口の方向を樹林と岩棚の色・形で区別。"
+    },
+    {
+      "areaId": "a2",
+      "name": "風の草原",
+      "connectedAreas": [
+        "a3",
+        "a4"
+      ],
+      "direction": "草の斑と低い岩稜、外周の斜面にまとまった林。低い一方向だけ眺望を開く。"
+    },
+    {
+      "areaId": "a3",
+      "name": "岩原",
+      "connectedAreas": [
+        "a1",
+        "a2",
+        "a6",
+        "a7"
+      ],
+      "direction": "中央は戦闘視界を保つ。割れた露岩・層状の崖、出口ごとに異なる岩脈。"
+    },
+    {
+      "areaId": "a4",
+      "name": "立ち岩の丘",
+      "connectedAreas": [
+        "a2",
+        "a7"
+      ],
+      "direction": "既存立ち岩、登攀棚・低棚を保つ。高所から谷底と対岸の林、背後に連なる峰。"
+    },
+    {
+      "areaId": "a5",
+      "name": "涸れ沢",
+      "connectedAreas": [
+        "a1",
+        "a8",
+        "a6"
+      ],
+      "direction": "既存釣り池を保護。旧水路を外へ延長し、礫・小滝跡・水際の草を配置。"
+    },
+    {
+      "areaId": "a6",
+      "name": "晶脈の露頭",
+      "connectedAreas": [
+        "a5",
+        "a3",
+        "a9",
+        "a10"
+      ],
+      "direction": "鉱脈の方向を岩盤に揃える。背景に露頭と結晶層。採掘点を見失わせない。"
+    },
+    {
+      "areaId": "a7",
+      "name": "北の台地",
+      "connectedAreas": [
+        "a3",
+        "a4",
+        "a10"
+      ],
+      "direction": "風で低くなった樹木、露出岩、谷を見下ろす眺望。既存岩柱を目印とする。"
+    },
+    {
+      "areaId": "a8",
+      "name": "崩れ谷",
+      "connectedAreas": [
+        "a5",
+        "a9"
+      ],
+      "direction": "高い両岸の崩落岩、狭い屈曲道。草地は谷底の少量のみ。"
+    },
+    {
+      "areaId": "a9",
+      "name": "西の礫原",
+      "connectedAreas": [
+        "a8",
+        "a6"
+      ],
+      "direction": "既存登攀棚を保護。片側に層状崖、反対側に礫斜面と対岸の岩稜。"
+    },
+    {
+      "areaId": "a10",
+      "name": "晶の窪地",
+      "connectedAreas": [
+        "a6",
+        "a7"
+      ],
+      "direction": "巣の晶脈を地層に連続させ、低棚・寝床を確保。高い外壁と限定した外光。"
+    }
+  ]
+}
