@@ -2,12 +2,12 @@ import { existsSync,readFileSync } from 'node:fs';
 import { beforeAll,describe,expect,it } from 'vitest';
 import type { Content } from '../src/data/schemas';
 import { Simulation } from '../src/game/sim';
-import { stepMonster } from '../src/game/monster';
+import { applyDamageToMonster, stepMonster } from '../src/game/monster';
 import { questUnlocked,newSave } from '../src/save/profile';
 import { questMaterials } from '../src/data/validators';
 import { iconUrl } from '../src/ui/icons';
 import { monsterQuestImageUrl } from '../src/ui/questReception';
-import { loadContent,baseOptions } from './helpers';
+import { loadContent,baseOptions,frame,Btn } from './helpers';
 let content:Content;
 beforeAll(async()=>{content=await loadContent()});
 const id=(r:number)=>'quest.spinegale.r'+r;
@@ -24,8 +24,9 @@ describe('疾棘竜の本体統合',()=>{
       const sim=new Simulation(content,baseOptions({questId:id(r)}));
       expect(sim.monsters[0]!.hp).toBe([1450,3200,5800][r-1]);
       expect(sim.monsterAttackScale).toBeCloseTo([1,1.55,2.15][r-1]!);
-      expect(questMaterials(content,q).size).toBe([6,7,8][r-1]);
-      for(const m of questMaterials(content,q))expect(m.endsWith('.r'+r)).toBe(true);
+      const own=[...questMaterials(content,q)].filter(m=>m.startsWith('mat.spinegale.'));
+      expect(own).toHaveLength([6,7,8][r-1]!);
+      for(const m of own)expect(m.endsWith('.r'+r)).toBe(true);
     }
   });
   it('初級600・中級540・上級480tickの停止。怒りで上書きされない',()=>{
@@ -42,6 +43,26 @@ describe('疾棘竜の本体統合',()=>{
       }
       expect(m.spinegale!.remaining).toBe(0);expect(m.spinegale!.stamina).toBe(m.spinegale!.max);
       stepMonster(m,sim.player,sim);expect(actionId()).toBe(m.def.rage!.actionId);
+    }
+  });
+  it('三段階の部位破壊・尾切断・討伐・剥ぎ取り・帰還報酬',()=>{
+    for(const r of [1,2,3]){
+      const sim=new Simulation(content,baseOptions({questId:id(r)}));
+      const m=sim.monsters[0]!;
+      const tail=m.def.parts.findIndex(p=>p.id==='tail');
+      applyDamageToMonster(m,tail,m.def.parts[tail]!.sever!.threshold+1,'cut',sim);
+      expect(m.parts[tail]!.severed).toBe(true);
+      expect(sim.severedAt.tail).toBeDefined();
+      applyDamageToMonster(m,0,m.hp+1,'cut',sim);
+      sim.step(frame());
+      expect(sim.hunt?.phase).toBe('success');expect(sim.hunt?.reason).toBe('slay');
+      for(let i=0;i<3;i++)sim.carve('body');
+      sim.carve('tail');
+      expect(sim.hunt!.loot.filter(x=>x.source==='carve')).toHaveLength(3);
+      expect(sim.hunt!.loot.filter(x=>x.source==='severed:tail')).toHaveLength(1);
+      sim.step(frame({pressed:Btn.Retire}));
+      expect(sim.hunt?.rewards?.money).toBe([700,1600,3200][r-1]);
+      expect(sim.hunt!.rewards!.items.every(x=>x.itemId.endsWith('.r'+r))).toBe(true);
     }
   });
   it('全69アイコンの対応、既存系統だけを生産可能にする',()=>{

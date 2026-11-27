@@ -154,8 +154,8 @@ const startTraining = async (page, tap = false) => {
   const rows0 = await receptionRows(page);
   const rowRank = (id) => rows0.find((r) => r.id === id);
   check('拠点: 依頼は級ごとの受付に分かれる（v0.38.0。初級 21 件 + 里の納品 1・中級 4・上級 4・極級 4）。最初に受けられるのは初級だけで、ほかは未解放', desks0.length === 4
-    && ['rank.1', 'rank.2', 'rank.3', 'rank.4'].map((r) => rows0.filter((x) => x.rank === r).length).join() === '22,4,4,4'
-    && rows0.filter((x) => x.rank === 'rank.1' && x.id !== 'quest.delivery.009').every((x) => !x.locked) && rows0.find((x) => x.id === 'quest.delivery.009')?.locked === true && rows0.filter((x) => x.rank !== 'rank.1').every((x) => x.locked)
+    && ['rank.1', 'rank.2', 'rank.3', 'rank.4'].map((r) => rows0.filter((x) => x.rank === r).length).join() === '23,5,5,4'
+    && rows0.filter((x) => x.rank === 'rank.1' && x.id !== 'quest.delivery.009' && x.id !== 'quest.spinegale.r1').every((x) => !x.locked) && rows0.find((x) => x.id === 'quest.delivery.009')?.locked === true && rows0.find(x=>x.id==='quest.spinegale.r1')?.locked===true && rows0.filter((x) => x.rank !== 'rank.1').every((x) => x.locked)
     && rowRank('quest.basin.003')?.rank === 'rank.1' && rowRank('quest.basin.r2.001')?.rank === 'rank.2' && rowRank('quest.basin.r4.001')?.rank === 'rank.4'
     && await page.evaluate(() => /^防御力の合計 0（受けるダメージ ×1\.00）$/.test(document.querySelector('.base-armor-note').textContent) && document.querySelectorAll('.base-armor-row').length === 5),
     JSON.stringify({ desks: desks0.length, n: ['rank.1', 'rank.2', 'rank.3', 'rank.4'].map((r) => rows0.filter((x) => x.rank === r).length) }));
@@ -2667,7 +2667,7 @@ const startTraining = async (page, tap = false) => {
   const made = await until(page, (w) => window.__vh.save.doc.weapons.includes(w) && /を作りました/.test(document.querySelector('.base-message')?.textContent ?? ''), 8000, MADE);
   const makeAfter = await page.evaluate((w) => ({ msg: document.querySelector('.base-message').textContent, weapon: window.__vh.save.doc.equippedWeaponId, rev: window.__vh.save.doc.revision, owned: !!document.querySelector('.forge-series[data-series="series.bornakel"] .forge-recipe.owned'), has: window.__vh.save.doc.weapons.includes(w) }), MADE);
   check('工房で作る（v0.32.0）: 系列 21 の欄（設計 #15 の 19 と、採集の純鉱石・純骨の 2。#32）に「作る」が出て、素材をそろえると作れる。作ると持ち物に入り、装備は替わらない（保存の書き込みは 1 回）',
-    makeBefore.series === 21 && makeBefore.gatherSeries === 'gathering.bone_only,gathering.ore_only' && /作れます/.test(makeBefore.summary) && makeBefore.button === '作る' && makeBefore.enabled && made && makeAfter.has && makeAfter.owned && makeAfter.weapon === makeBefore.weapon && makeAfter.rev === makeBefore.rev + 1,
+    makeBefore.series === 22 && makeBefore.gatherSeries === 'gathering.bone_only,gathering.ore_only' && /作れます/.test(makeBefore.summary) && makeBefore.button === '作る' && makeBefore.enabled && made && makeAfter.has && makeAfter.owned && makeAfter.weapon === makeBefore.weapon && makeAfter.rev === makeBefore.rev + 1,
     JSON.stringify({ makeBefore, makeAfter }));
   check('工房で作る（v0.33.0）: 属性・状態異常の武器と、防具の技能・耐性が、性能の欄に出る（帆角の断岳剣 風 26・絹霧の断岳剣 毒 9.2・泥冠の頭 個別属性耐性（水））',
     makeBefore.wind === '攻撃力 85・風 26' && makeBefore.poison === '攻撃力 86・毒 9.2' && makeBefore.mud === '防御力 6・個別属性耐性（水）・雷 -2 水 +3', JSON.stringify(makeBefore));
@@ -2785,7 +2785,7 @@ const startTraining = async (page, tap = false) => {
     };
   });
   check('図鑑: 依頼の欄に、86 種（78 種と幼体 8 種）が段階ごとに並ぶ（初級 13 / 13、中級 20 / 20、上級 25 / 25、極級 20 / 20）。遊べるのは、はじめの 12 種と幼体 8 種で、原画あり 66、案 0（v0.24.0 で原画案 73 枚を受け取った）',
-    zukan.shown && zukan.summary === '図鑑 86種' && zukan.n === 86 && zukan.heads.join('|') === '初級から 13 / 13 種 幼体 8|中級から 20 / 20 種|上級から 25 / 25 種|極級から 20 / 20 種' && zukan.done.split(',').length === 20 && zukan.done.startsWith('monster.galdros,monster.selvark') && zukan.done.endsWith('monster.yurtepica,monster.hinasalv') && zukan.art === 66 && zukan.planned === 0 && zukan.lazy === 5, JSON.stringify({ ...zukan, rare: '', juv: '', fieldText: '' }));
+    zukan.shown && zukan.summary === '図鑑 87種' && zukan.n === 87 && zukan.heads.join('|') === '初級から 14 / 14 種 幼体 8|中級から 20 / 20 種|上級から 25 / 25 種|極級から 20 / 20 種' && zukan.done.split(',').length === 21 && zukan.done.startsWith('monster.galdros,monster.selvark') && zukan.done.split(',').includes('monster.spinegale') && zukan.done.includes('monster.yurtepica,monster.hinasalv') && zukan.art === 66 && zukan.planned === 0 && zukan.lazy === 5, JSON.stringify({ ...zukan, rare: '', juv: '', fieldText: '' }));
   check('図鑑: 原画のある種を開くと、原画と、生態 8 項目が出る。体と動きがまだ無いことが分かる。遊べる種には「仮の形」と出る', zukan.img === 720 && /まだありません/.test(zukan.cap) && /食べ物,行動と気性,なわばり,1 日の動き,巣と眠り,ほかとの関わり,幼体,痕跡$/.test(zukan.eco) && /仮の形/.test(zukan.selCap), JSON.stringify({ img: zukan.img, cap: zukan.cap, selCap: zukan.selCap, eco: zukan.eco }));
   check('図鑑: 希少種には、もとの種と、一緒に出る相手が出る。幼体には、群れの数と、幼体自身の原画案（体はまだ親の絵から）が出る。超大型は、原画案だけで体が無いと分かる。ガルドロスは採用した設定図',
     /上級|大型・希少種/.test(zukan.rare) && /もとの種/.test(zukan.rareLabels) && /一緒に出る相手/.test(zukan.rareLabels) && /帆角獣 セルヴァルク/.test(zukan.rare) && /裂扇獣 グラセドン/.test(zukan.rare) && /群れ3〜5 体/.test(zukan.juv) && /岩殻獣 ガルドロス/.test(zukan.juv) && /^超大型／巨躯／沈根沢地／水・睡眠$/.test(zukan.hugeTags) && /原画案.*まだありません/.test(zukan.hugeCap) && zukan.hugeState === '原画あり'
@@ -3201,7 +3201,7 @@ const startTraining = async (page, tap = false) => {
   // v0.38.0（ChatGPT の #17）: 依頼は級ごとの受付で、星ごとの短い一覧 → 詳細
   const boardRows = await receptionRows(page);
   const boardInfo = boardRows.map((r) => `${r.id}:${r.stars}`);
-  check('依頼の掲示: 119 件（狩り 33・狩らない 5・採取ツアー80・里の納品 1）が、4 つの受付の星ごとの一覧に 1 度ずつ。主線・昇級確認の札が短い行に出る。里の納品は、まだ', boardRows.length === 119 && new Set(boardRows.map((r) => r.id)).size === 119
+  check('依頼の掲示: 119 件（狩り 33・狩らない 5・採取ツアー80・里の納品 1）が、4 つの受付の星ごとの一覧に 1 度ずつ。主線・昇級確認の札が短い行に出る。里の納品は、まだ', boardRows.length === 122 && new Set(boardRows.map((r) => r.id)).size === 122
     && ['r1', 'r2', 'r3', 'r4'].every((k) => boardRows.some((r) => r.id === `quest.explore.basin.${k}`))
     && boardRows.every((r) => r.stars >= 1 && r.stars <= 8) && /主線/.test(boardRows.find((r) => r.id === 'quest.basin.003')?.text ?? '') && /昇級確認/.test(boardRows.find((r) => r.id === 'quest.basin.r4.001')?.text ?? '')
     && !/30 分/.test(boardRows.find((r) => r.id === 'quest.basin.003')?.text ?? '') && /未解放/.test(boardRows.find((r) => r.id === 'quest.delivery.009')?.text ?? '') && boardRows.find((r) => r.id === 'quest.basin.r4.001')?.stars === 8,
