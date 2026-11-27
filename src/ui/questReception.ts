@@ -75,7 +75,7 @@ type MonsterContent = Pick<Content, 'bestiary' | 'monsters'>;
 export function monsterQuestImageUrl(content: Pick<Content, 'bestiary'>, monsterId: string): string | null {
   const art = content.bestiary.species.find((species) => species.id === monsterId)?.art;
   const file = art?.split('/').pop();
-  if (!file || !/\.png$/i.test(file)) return null;
+  if (!file || !/\.(?:png|webp)$/i.test(file)) return null;
   return assetUrl(`assets/bestiary/${file.replace(/\.png$/i, '.webp')}`);
 }
 

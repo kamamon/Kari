@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "0.72.0",
+  "contentVersion": "0.73.0-spinegale.1",
   "motionSets": {
     "current": "2g",
     "held": {
@@ -38,7 +38,8 @@
       "actions/kohalgis.json",
       "actions/mitogaron.json",
       "actions/yurtepica.json",
-      "actions/hinasalv.json"
+      "actions/hinasalv.json",
+      "actions/spinegale.json"
     ],
     "tracks": [
       "tracks/heavy_blade.json",
@@ -69,12 +70,14 @@
       "tracks/kohalgis.json",
       "tracks/mitogaron.json",
       "tracks/yurtepica.json",
-      "tracks/hinasalv.json"
+      "tracks/hinasalv.json",
+      "tracks/spinegale.json"
     ],
     "curves": [
       "curves.json",
       "curves_player.json",
-      "curves_creatures.json"
+      "curves_creatures.json",
+      "curves_spinegale.json"
     ],
     "weapons": "weapons.json",
     "monsters": [
@@ -98,7 +101,8 @@
       "monsters/kohalgis.json",
       "monsters/mitogaron.json",
       "monsters/yurtepica.json",
-      "monsters/hinasalv.json"
+      "monsters/hinasalv.json",
+      "monsters/spinegale.json"
     ],
     "maps": [
       "maps/basin_training.json",
@@ -150,15 +154,18 @@
       "quests.json",
       "quests_creatures.json",
       "quests_herds.json",
-      "quests_errands.json"
+      "quests_errands.json",
+      "quests_spinegale.json"
     ],
     "items": [
       "items.json",
-      "items_creatures.json"
+      "items_creatures.json",
+      "items_spinegale.json"
     ],
     "loot": [
       "loot.json",
-      "loot_creatures.json"
+      "loot_creatures.json",
+      "loot_spinegale.json"
     ],
     "recipes": "recipes.json",
     "ranks": "ranks.json",
@@ -174,7 +181,8 @@
     "elements": "elements.json",
     "skills": "skills.json",
     "equipment": [
-      "equipment_series.json"
+      "equipment_series.json",
+      "equipment_spinegale.json"
     ],
     "follow": [
       "follow/selvark.json",
@@ -196,7 +204,8 @@
       "follow/mitogaron.json",
       "follow/yurtepica.json",
       "follow/hinasalv.json",
-      "follow/galdros.json"
+      "follow/galdros.json",
+      "follow/spinegale.json"
     ],
     "fieldGathering": "field_gathering.json",
     "regionalGathering": "regional_gathering.json"

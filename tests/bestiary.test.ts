@@ -48,21 +48,21 @@ const FIRST_13: [string, string, string, string | null][] = [
 ];
 
 describe('登録簿のデータ', () => {
-  it('86 種（成体 78・幼体 8）が入っていて、どの種も、生態 8 項目・器官・部位・素材と、絵までそろっている。遊べるのは、はじめの 12 種と幼体 8 種（v0.18.0）', () => {
+  it('87 種（成体 79・幼体 8）が入っていて、どの種も、生態 8 項目・器官・部位・素材と、絵までそろっている。遊べるのは、はじめの 12 種と幼体 8 種（v0.18.0）', () => {
     const b = content.bestiary;
     expect(validateBestiary(b, env)).toEqual([]);
     // 受け取る案と同じ厳しさで、全部の種を見ても、合わない所が無い
     expect(validateBestiary(b, env, () => true)).toEqual([]);
-    expect(b.species.length).toBe(86);
-    expect(b.species.filter((s) => s.class !== 'juvenile').length).toBe(78);
+    expect(b.species.length).toBe(87);
+    expect(b.species.filter((s) => s.class !== 'juvenile').length).toBe(79);
     expect(b.species.filter((s) => s.class === 'juvenile').length).toBe(8);
-    expect(b.species.filter((s) => s.state === 'implemented').map((s) => s.no)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21]);
+    expect(b.species.filter((s) => s.state === 'implemented').map((s) => s.no)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 87]);
     // v0.24.0: ChatGPT の原画案 73 枚（14〜86）を受け取った。体の無い種は、どれも「原画あり」（採用待ち）
     expect(b.species.filter((s) => s.state === 'art').length).toBe(66);
     expect(b.species.filter((s) => s.state === 'art').map((s) => s.no)).toEqual([13, ...Array.from({ length: 65 }, (_, i) => i + 22)]);
     expect(b.species.filter((s) => s.state === 'planned').length).toBe(0);
     expect(b.species.every((s) => s.art)).toBe(true);
-    expect(b.species.map((s) => s.no)).toEqual(Array.from({ length: 86 }, (_, i) => i + 1));
+    expect(b.species.map((s) => s.no)).toEqual(Array.from({ length: 87 }, (_, i) => i + 1));
   });
 
   it('はじめの 13 種は、id・番号・名前・骨格・原画・段階が、案を取り込む前のまま', () => {
@@ -72,9 +72,9 @@ describe('登録簿のデータ', () => {
   });
 
   it('数は、計画どおり: 初級 13、中級 20（亜種 8・超大型 3）、上級 25（希少種 8・亜種 5・超大型 3）、極級 20（希少種 5・超大型 4）', () => {
-    expect(content.bestiary.plan).toEqual({ 'rank.1': 13, 'rank.2': 20, 'rank.3': 25, 'rank.4': 20 });
+    expect(content.bestiary.plan).toEqual({ 'rank.1': 14, 'rank.2': 20, 'rank.3': 25, 'rank.4': 20 });
     const c = bestiaryCounts(content.bestiary, env.ranks);
-    expect(c.map((x) => [x.have, x.plan])).toEqual([[13, 13], [20, 20], [25, 25], [20, 20]]);
+    expect(c.map((x) => [x.have, x.plan])).toEqual([[14, 14], [20, 20], [25, 25], [20, 20]]);
     expect(c.map((x) => [x.subspecies, x.rare, x.huge, x.juveniles])).toEqual([[0, 0, 0, 8], [8, 0, 3, 0], [5, 8, 3, 0], [0, 5, 4, 0]]);
   });
 
@@ -139,19 +139,19 @@ describe('案の取り込み', () => {
     expect(r.added).toEqual(['monster.test_base', 'monster.test_galdros_sub', 'monster.test_galdros_child']);
     expect(r.updated).toEqual([]);
     const added = r.bestiary.species.filter((s) => s.id.startsWith('monster.test_'));
-    expect(added.map((s) => s.no)).toEqual([87, 88, 89]);
+    expect(added.map((s) => s.no)).toEqual([88, 89, 90]);
     expect(added.every((s) => s.state === 'planned' && s.source === 'chatgpt:test')).toBe(true);
     expect(r.bestiary.frames.find((f) => f.id === 'frame.test_hopper')).toMatchObject({ name: '跳脚獣', built: false });
     expect(validateBestiary(r.bestiary, env)).toEqual([]);
     // 数: 中級に 2 種（原種 1・亜種 1）。幼体は、種の数に入れない
     const c = bestiaryCounts(r.bestiary, env.ranks);
     expect(c[1]).toMatchObject({ have: 22, large: 19, subspecies: 9 });
-    expect(c[0]).toMatchObject({ have: 13, juveniles: 9 });
+    expect(c[0]).toMatchObject({ have: 14, juveniles: 9 });
     // 案に書いた新しい狩場も入る（v0.15.0。それまでは、検査を通るのに、黙って捨てていた）
     expect(r.addedFields).toEqual(['試しの原']);
     expect(r.bestiary.fields.find((f) => f.name === '試しの原')).toEqual({ name: '試しの原', terrain: '検査用', mood: '検査用', source: 'chatgpt:test' });
     // もとの登録簿は変えない
-    expect(content.bestiary.species.length).toBe(86);
+    expect(content.bestiary.species.length).toBe(87);
     expect(content.bestiary.fields.length).toBe(20);
   });
 
@@ -223,7 +223,7 @@ describe('案の取り込み', () => {
     const r = mergeBestiary(base(), inc, env, 't');
     expect(r.errors.length).toBe(1);
     expect(r.added).toEqual([]);
-    expect(r.bestiary.species.length).toBe(86);
+    expect(r.bestiary.species.length).toBe(87);
   });
 
   it('狩場の決まり: 種の狩場は、狩場の一覧に無ければ断る。地形の無い狩場・見本の例・同じ名前 2 つも断る（どれも、何も入れない）', () => {
@@ -291,7 +291,7 @@ describe('取り込みの道具（npm run bestiary:import）', () => {
   it('--check: いまの登録簿を検査して、段階ごとの数を出す（計画の数に届いているので、「あと何種」は出ない）', () => {
     const r = run('--check');
     expect(r.code).toBe(0);
-    expect(r.out).toContain('登録簿は決まりどおりです（86 種、狩場の案 20）');
+    expect(r.out).toContain('登録簿は決まりどおりです（87 種、狩場の案 20）');
     expect(r.out).toContain('中級: 20 / 20 種　大型 17・超大型 3・亜種 8・希少種 0');
     expect(r.out).not.toContain('あと');
   });
@@ -301,8 +301,8 @@ describe('取り込みの道具（npm run bestiary:import）', () => {
     const r = run('tests/fixtures/bestiary-sample.json', '--dry', '--source', 'chatgpt:検査');
     expect(r.code).toBe(0);
     expect(r.out).toContain('足す種 3、書き換える種 0');
-    expect(r.out).toContain('+  087 試跳獣 テストホップ（中級・大型）');
-    expect(r.out).toContain('+  089 岩殻仔 ガルドロスの幼体（初級・幼体）');
+    expect(r.out).toContain('+  088 試跳獣 テストホップ（中級・大型）');
+    expect(r.out).toContain('+  090 岩殻仔 ガルドロスの幼体（初級・幼体）');
     expect(r.out).toContain('足す狩場 1、書き換える狩場 0');
     expect(r.out).toContain('+  狩場 試しの原');
     expect(r.out).toContain('（--dry: 書き込んでいません）');
@@ -316,7 +316,7 @@ describe('取り込みの道具（npm run bestiary:import）', () => {
     expect(r.code).toBe(0);
     expect(r.out).toContain('（登録簿 public/data/bestiary.json は変えていません）');
     const written = JSON.parse(readFileSync(out, 'utf8')) as BestiaryDef;
-    expect(written.species.length).toBe(89);
+    expect(written.species.length).toBe(90);
     expect(written.fields.length).toBe(21);
     expect(written.fields.at(-1)).toMatchObject({ name: '試しの原', terrain: '検査用' });
     expect(validateBestiary(written, env)).toEqual([]);

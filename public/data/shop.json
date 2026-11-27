@@ -432,6 +432,90 @@
     {
       "itemId": "mat.hub.packbeast_sheath",
       "price": 38
+    },
+    {
+      "itemId": "mat.spinegale.scale.r1",
+      "price": 38
+    },
+    {
+      "itemId": "mat.spinegale.claw.r1",
+      "price": 52
+    },
+    {
+      "itemId": "mat.spinegale.spine.r1",
+      "price": 56
+    },
+    {
+      "itemId": "mat.spinegale.dewlap.r1",
+      "price": 70
+    },
+    {
+      "itemId": "mat.spinegale.tail_fan.r1",
+      "price": 85
+    },
+    {
+      "itemId": "mat.spinegale.tendon.r1",
+      "price": 72
+    },
+    {
+      "itemId": "mat.spinegale.scale.r2",
+      "price": 68
+    },
+    {
+      "itemId": "mat.spinegale.claw.r2",
+      "price": 94
+    },
+    {
+      "itemId": "mat.spinegale.spine.r2",
+      "price": 101
+    },
+    {
+      "itemId": "mat.spinegale.dewlap.r2",
+      "price": 126
+    },
+    {
+      "itemId": "mat.spinegale.tail_fan.r2",
+      "price": 153
+    },
+    {
+      "itemId": "mat.spinegale.tendon.r2",
+      "price": 130
+    },
+    {
+      "itemId": "mat.spinegale.crest_bone.r2",
+      "price": 216
+    },
+    {
+      "itemId": "mat.spinegale.scale.r3",
+      "price": 114
+    },
+    {
+      "itemId": "mat.spinegale.claw.r3",
+      "price": 156
+    },
+    {
+      "itemId": "mat.spinegale.spine.r3",
+      "price": 168
+    },
+    {
+      "itemId": "mat.spinegale.dewlap.r3",
+      "price": 210
+    },
+    {
+      "itemId": "mat.spinegale.tail_fan.r3",
+      "price": 255
+    },
+    {
+      "itemId": "mat.spinegale.tendon.r3",
+      "price": 216
+    },
+    {
+      "itemId": "mat.spinegale.crest_bone.r3",
+      "price": 360
+    },
+    {
+      "itemId": "mat.spinegale.sprint_core.r3",
+      "price": 1950
     }
   ]
 }

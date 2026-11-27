@@ -559,6 +559,8 @@ export interface HazardDef {
 }
 
 export interface MonsterDef {
+  /** スパインゲイル専用の級。疲労・走行の設定に使う。 */
+  spinegaleRank?: number;
   schemaVersion: number;
   id: string;
   name: string;

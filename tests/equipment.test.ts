@@ -68,10 +68,10 @@ describe('系列の装備のデータ（#15 の初級・19 系列）', () => {
     const d = design();
     const weapons = [...content.weapons.values()].filter((w) => w.series?.startsWith('series.') && w.rankId === 'rank.1');
     const armor = [...content.armor.values()].filter((a) => a.series?.startsWith('series.') && a.rankId === 'rank.1');
-    expect(weapons).toHaveLength(133);
-    expect(armor).toHaveLength(95);
-    expect(crafts()).toHaveLength(228);
-    expect(new Set(weapons.map((w) => w.series))).toEqual(new Set(SERIES));
+    expect(weapons).toHaveLength(140);
+    expect(armor).toHaveLength(100);
+    expect(crafts()).toHaveLength(240);
+    expect(new Set(weapons.map((w) => w.series))).toEqual(new Set([...SERIES,'series.spinegale']));
     const profiles: Record<string, number> = {};
     for (const sid of SERIES) {
       const s = d.series.find((x) => x.id === sid)!;
@@ -111,9 +111,9 @@ describe('系列の装備のデータ（#15 の初級・19 系列）', () => {
     const d = design();
     const ranked = ['selvark', 'kordopil', 'palseit'];
     const upgrades = [...content.recipes.values()].filter((r) => (r.kind === 'upgrade' && content.weapons.get(r.resultWeaponId)?.series?.startsWith('series.')) || (r.kind === 'armor_upgrade' && content.armor.get(r.resultArmorId)?.series?.startsWith('series.')));
-    expect(upgrades).toHaveLength(108);
-    expect([...content.weapons.values()].filter((w) => w.series?.startsWith('series.') && w.rankId !== 'rank.1')).toHaveLength(63);
-    expect([...content.armor.values()].filter((a) => a.series?.startsWith('series.') && a.rankId !== 'rank.1')).toHaveLength(45);
+    expect(upgrades).toHaveLength(132);
+    expect([...content.weapons.values()].filter((w) => w.series?.startsWith('series.') && w.rankId !== 'rank.1')).toHaveLength(77);
+    expect([...content.armor.values()].filter((a) => a.series?.startsWith('series.') && a.rankId !== 'rank.1')).toHaveLength(55);
     const dname = new Map(d.materials.map((m) => [m.id, m.name]));
     for (const sp of ranked) {
       const sid = `series.${sp}`;
@@ -138,7 +138,7 @@ describe('系列の装備のデータ（#15 の初級・19 系列）', () => {
       }
     }
     // ほかの 16 系列は初級だけ（設計の上の級の狩場が、まだ無い）
-    expect([...content.weapons.values()].filter((w) => w.series?.startsWith('series.') && w.rankId !== 'rank.1' && !ranked.some((sp) => w.series === `series.${sp}`))).toEqual([]);
+    expect([...content.weapons.values()].filter((w) => w.series?.startsWith('series.') && w.rankId !== 'rank.1' && w.series !== 'series.spinegale' && !ranked.some((sp) => w.series === `series.${sp}`))).toEqual([]);
   });
 
   it('中級の強化: 帆角の断岳剣【初級】を持っていて、中級の素材がそろうと【中級】になる（元は無くなる）。素材は中級のセルヴァルクの依頼で手に入る', () => {
