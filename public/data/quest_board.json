@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "note": "依頼の掲示（v0.26.0）。星（1〜8）・分類・依頼人・依頼人の話・目安の時間を、依頼ごとに持つ正本。ChatGPT のクエスト設計 v1（Pull Request #9。原本は docs/source/chatgpt-quest-design-20261125/）の current_quest_overrides_v1.json から取った。星と目安の時間は試遊の前の案。依頼そのもの（標的・段階・報酬など）は quests*.json が持つ（生成した依頼も、ここで文を足す）。v0.27.0 で、狩らない依頼 5 件（採集・採掘・現地の納品。nonhunt_catalog_v2.json の G01・G02・M01・M02・D01 の文と星と目安）を足した。",
   "recommend": {
-    "text": "訓練場で操作を確かめ、群れの依頼 →「岩場の足音」→「渓谷を駆ける疾棘」→「帆角の風」へ。疾棘竜はガルドロスを狩猟すると解放される。",
+    "text": "はじめてなら、訓練場で操作を確かめてから、群れの依頼 →「岩場の足音」→「渓谷を駆ける疾棘」→「帆角の風」の順がおすすめです。「渓谷を駆ける疾棘」は「岩場の足音」の後に受けられます。",
     "questIds": [
       "quest.kordopil.pack1",
       "quest.palseit.pack1",

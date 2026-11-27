@@ -72,8 +72,9 @@ describe('依頼の掲示（星・分類・依頼人・話・目安の時間）'
       if (q.targets) expect([1, 2]).toContain(q.board!.stars);
       else expect(q.board!.stars).toBe(2);
     }
-    // おすすめの順は、どれも最初から受けられる依頼（表示だけで、受けられる条件は変えない）
+    // おすすめの順は、スパインゲイルの依頼（#50。「岩場の足音」を達成すると受けられる。おすすめの文にも書く）のほかは、最初から受けられる依頼（表示だけで、受けられる条件は変えない）
     const doc = newSave(content, stamp);
+    expect(content.board.recommend.text).toMatch(/おすすめ/);
     expect(content.board.recommend.questIds.filter(id=>!questUnlocked(doc,content.quests.get(id)!))).toEqual(['quest.spinegale.r1']);
   });
 

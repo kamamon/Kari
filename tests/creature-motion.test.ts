@@ -214,6 +214,9 @@ function writeFollow(docs: Map<string, FollowDef>): void {
   }
   const path = resolve(ROOT, 'public/data/content.json');
   const idx = JSON.parse(readFileSync(path, 'utf8')) as { files: Record<string, unknown> };
+  // この道具が作らない表（スパインゲイルの、GLB の動きから作った表など）は、一覧に残す（v0.73.0。それまでは、作った表だけの一覧に置き換えていた）
+  const others = (Array.isArray(idx.files.follow) ? (idx.files.follow as string[]) : []).filter((f) => !files.includes(f));
+  files.push(...others);
   if (JSON.stringify(idx.files.follow) !== JSON.stringify(files)) {
     idx.files.follow = files;
     writeFileSync(path, JSON.stringify(idx, null, 2) + '\n');

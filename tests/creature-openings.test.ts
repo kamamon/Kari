@@ -10,6 +10,7 @@ import type { ActionDef, Content, MonsterDef } from '../src/data/schemas';
 import { newRun } from '../src/game/action';
 import { Simulation } from '../src/game/sim';
 import { trackSegment } from '../src/game/tracks';
+import { CREATURE_PLANS } from '../src/render/creaturePlans';
 import { firstCounter, partTrace, type HunterKind } from './openingLab';
 import { baseOptions, frame, loadContent } from './helpers';
 
@@ -32,8 +33,12 @@ const NO_OPENING: Record<string, string> = {
   'monster.velgait.mist_volley': '7m より遠くの相手へ撃つ技（近づく間が無い）',
 };
 
-/** monsters:gen で作る大型 11 種（ガルドロスは専用の体。下で別に見る） */
-const generated = (): MonsterDef[] => [...content.monsters.values()].filter((m) => !m.herd && m.turnSteps && m.id !== 'monster.galdros');
+/** monsters:gen で作る大型 11 種（設計図 CREATURE_PLANS のある種。ガルドロスとスパインゲイルは、体と動きを別に作った種。下で別に見る） */
+const generated = (): MonsterDef[] => [...content.monsters.values()].filter((m) => !m.herd && m.turnSteps && !!CREATURE_PLANS[m.id]);
+/** 動きを変えずに、いまの動きで決まりを満たす区間だけを書いた種（専用の体のガルドロスと、GLB のスパインゲイル） */
+const KEPT = ['monster.galdros', 'monster.spinegale'];
+/** 決まりを確かめる種の全部 */
+const all = (): MonsterDef[] => [...generated(), ...KEPT.map((id) => content.monsters.get(id)!)];
 const attacksOf = (m: MonsterDef): ActionDef[] => [...content.actions.values()].filter((a) => a.actionId.startsWith(`${m.id}.`) && (a.hitWindows.length > 0 || (a.hazards?.length ?? 0) > 0));
 const damageOf = (a: ActionDef): number => Math.max(0, ...a.hitWindows.map((h) => h.baseDamage ?? 0), ...(a.hazards ?? []).map((h) => h.baseDamage ?? 0));
 const isHeavy = (m: MonsterDef, a: ActionDef): boolean => damageOf(a) >= 0.9 * Math.max(...attacksOf(m).map(damageOf));
@@ -74,8 +79,30 @@ describe('後隙の反撃（v0.73.0。D-171）', () => {
     }
   });
 
-  it('区間の端は、部位の追従の表の刻み（6 tick）の上。後隙の中で、最後の判定の後。区間の後に、構えへ戻る間が 8 tick 以上ある（動きを変えていないガルドロスは 2 tick 以上）', () => {
-    for (const m of [...generated(), content.monsters.get('monster.galdros')!]) {
+  it('スパインゲイル（ChatGPT の #50。体と動きは GLB。動きは変えていない）: いまの動きで決まりを満たす区間を 12 の技に書いてある。突進は無い', () => {
+    const sg = content.monsters.get('monster.spinegale')!;
+    const atk = attacksOf(sg);
+    expect(atk.length).toBe(13);
+    // 突進: 走り抜けた後、止まるまで 0.55m 滑り、止まってからは 12 tick しか無い（この種の大きな隙は、走った後の息切れ）
+    expect(atk.filter((a) => !a.opening).map((a) => a.actionId)).toEqual(['monster.spinegale.dash']);
+    const dash = content.actions.get('monster.spinegale.dash')!;
+    const keys = content.curves.get(dash.rootMotion.curveId!)!.keys;
+    const stop = keys.findIndex(([, v]) => v === keys[keys.length - 1]![1]);
+    expect(dash.durationTicks - keys[stop]![0]).toBeLessThan(OPEN_MIN);
+    // 尾を切った後に替わる技も、元の技と同じ区間
+    for (const side of ['l', 'r']) expect(content.actions.get(`monster.spinegale.tail_sweep_${side}_short`)!.opening).toEqual(content.actions.get(`monster.spinegale.tail_sweep_${side}`)!.opening);
+    // 狙える部位は 3 種類。斬りがいちばん通る喉袋が狙える技が 3 つ以上（頭の冠棘は、3 連の突進の後だけ）
+    const opens = atk.map((a) => a.opening).filter((o): o is NonNullable<ActionDef['opening']> => !!o);
+    expect(new Set(opens.map((o) => o.partId))).toEqual(new Set(['dewlap', 'legs', 'head']));
+    const cut = (id: string): number => sg.parts.find((p) => p.id === id)!.hitzone.cut;
+    expect(Math.max(...sg.parts.map((p) => p.hitzone.cut))).toBe(cut('dewlap'));
+    expect(opens.filter((o) => o.partId === 'dewlap').length).toBeGreaterThanOrEqual(3);
+    // 息切れ（専用の疲労。8〜10 秒止まる）は、技の隙とは別にある
+    for (const id of ['fatigue_full', 'fatigue_r2', 'fatigue_r3']) expect(content.actions.get(`monster.spinegale.${id}`)!.durationTicks).toBeGreaterThanOrEqual(480);
+  });
+
+  it('区間の端は、部位の追従の表の刻み（6 tick）の上。後隙の中で、最後の判定の後。区間の後に、構えへ戻る間が 8 tick 以上ある（動きを変えていないガルドロスとスパインゲイルは 2 tick 以上）', () => {
+    for (const m of all()) {
       const step = m.follow!.step;
       expect(step).toBe(6);
       for (const a of attacksOf(m)) {
@@ -86,7 +113,7 @@ describe('後隙の反撃（v0.73.0。D-171）', () => {
         expect(o.to % step, a.actionId).toBe(0);
         expect(o.from, a.actionId).toBeGreaterThanOrEqual(rec.from);
         expect(o.from, a.actionId).toBeGreaterThanOrEqual(Math.max(0, ...a.hitWindows.map((h) => h.to)));
-        expect(a.durationTicks - o.to, a.actionId).toBeGreaterThanOrEqual(m.id === 'monster.galdros' ? 2 : 8);
+        expect(a.durationTicks - o.to, a.actionId).toBeGreaterThanOrEqual(KEPT.includes(m.id) ? 2 : 8);
         expect(m.parts.some((p) => p.id === o.partId), a.actionId).toBe(true);
       }
     }
@@ -94,7 +121,7 @@ describe('後隙の反撃（v0.73.0。D-171）', () => {
 
   it('区間は 20 tick 以上（大技は 30 tick 以上）。その間、部位の下の端は 1.6m 以下で、ほとんど動かない。技の移動も終わっている', () => {
     const bad: string[] = [];
-    for (const m of [...generated(), content.monsters.get('monster.galdros')!]) {
+    for (const m of all()) {
       for (const a of attacksOf(m)) {
         const o = a.opening;
         if (!o) continue;
@@ -131,7 +158,7 @@ describe('後隙の反撃（v0.73.0。D-171）', () => {
   it('技を避けた狩人が、区間が終わる前に、その部位へ斬りを当てられる（護刃。大技は断岳剣も）', { timeout: 300000 }, () => {
     const bad: string[] = [];
     const report: string[] = [];
-    for (const m of [...generated(), content.monsters.get('monster.galdros')!]) {
+    for (const m of all()) {
       for (const a of attacksOf(m)) {
         const o = a.opening;
         if (!o) continue;

@@ -1197,6 +1197,38 @@ def write(path, text):
         f.write(text)
 
 
+# スパインゲイル（ChatGPT の Pull Request #50。体と動きは GLB、技データは public/data/actions/spinegale.json）の後隙の反撃（v0.73.0。D-171）。
+# 動きは変えない。いまの動きで決まり（20 tick 以上・大技は 30 以上・下の端が 1.6m 以下・ほとんど動かない・技の移動が終わっている・避けた狩人が斬れる）を
+# 満たす区間だけを書く（ガルドロスの tools/gen-galdros-moves.mjs の OPEN と同じ考え）。部位は 喉袋（斬りがいちばん通る）・後脚・頭の冠棘。
+# 突進（dash）は書かない: 走り抜けた後、止まるまで 0.55m 滑り、止まってからは 12 tick しか無い（この種の大きな隙は、走った後の息切れ）。
+SPINEGALE_OPEN = {
+    'bite': ('dewlap', 36, 60), 'double_bite': ('legs', 66, 102), 'turn_bite': ('dewlap', 54, 78),
+    'pounce': ('dewlap', 78, 120), 'jump_kick': ('dewlap', 78, 114),
+    'tail_sweep_l': ('legs', 54, 90), 'tail_sweep_r': ('legs', 54, 90), 'tail_sweep_l_short': ('legs', 54, 90), 'tail_sweep_r_short': ('legs', 54, 90),
+    'side_strike_l': ('legs', 54, 84), 'side_strike_r': ('legs', 54, 84),
+    'triple_dash': ('head', 204, 234),
+}
+
+
+def apply_spinegale_openings():
+    """public/data/actions/spinegale.json の技へ、SPINEGALE_OPEN の区間（opening）を書く。ほかの値は変えない。1 つの技を 1 行にして書く（差分を読みやすくする）。"""
+    path = 'public/data/actions/spinegale.json'
+    full = os.path.join(ROOT, path)
+    if not os.path.exists(full):
+        return
+    doc = json.loads(open(full, encoding='utf-8').read())
+    assert list(doc) == ['schemaVersion', 'actions'], list(doc)
+    left = dict(SPINEGALE_OPEN)
+    for a in doc['actions']:
+        a.pop('opening', None)
+        o = left.pop(a['actionId'].split('.')[-1], None)
+        if o:
+            assert a['hitWindows'], a['actionId']
+            a['opening'] = {'partId': o[0], 'from': o[1], 'to': o[2]}
+    assert not left, f'スパインゲイルに無い技: {sorted(left)}'
+    write(path, list_doc({'schemaVersion': doc['schemaVersion']}, 'actions', doc['actions']))
+
+
 def openings_doc():
     """後隙の反撃（v0.73.0。D-171）の一覧 docs/monster-openings.md: 大型（足を踏み替える向き直りを持つ種）の攻撃の技ごとに、狙える部位と区間。
     いま書いた技データ（public/data/actions/）から作る。ガルドロスの技（galdros.json は手で書く。galdros_ext.json は tools/gen-galdros-moves.mjs）も読む。"""
@@ -1204,7 +1236,9 @@ def openings_doc():
             '`npm run monsters:gen` の出力（手で編集しない）。決まりは docs/spec.md の 32.39、検査は tests/creature-openings.test.ts。', '',
             '- 区間は、技の始めから数えた tick（60 tick = 1 秒）。その間、部位の下の端は 1.6m 以下で、ほとんど動かない。',
             '- 大技 = その種のいちばん強い一撃の 9 割以上の技（区間は 30 tick 以上。ほかは 20 tick 以上）。',
-            '- 「−」は、隙を作らない技（退きながら当てる技・遠くの相手へ撃つ技）と、ガルドロスの横への体当たり（いまの動きでは、止まる間が短い）。', '']
+            '- 「−」は、隙を作らない技（退きながら当てる技・遠くの相手へ撃つ技）と、ガルドロスの横への体当たり（いまの動きでは、止まる間が短い）と、',
+            '  スパインゲイルの突進（走り抜けた後、止まるまで滑る。この種の大きな隙は、走った後の息切れ）。',
+            '- ガルドロスとスパインゲイル（体と動きを別に作った種）は、動きを変えずに、いまの動きで決まりを満たす区間だけを書いてある。', '']
     mdir = os.path.join(DATA, 'monsters')
     for fn in sorted(os.listdir(mdir)):
         with open(os.path.join(mdir, fn), encoding='utf-8') as f:
@@ -1510,24 +1544,26 @@ def update_manifest(entries):
 
 
 def update_bestiary(states):
+    """登録簿の、この生成器が作る種を「遊べる」（state と stateNote）にする。
+    JSON として読んで、bestiary:import（tools/bestiary-import.mjs）と同じ形（1 種を 1 行）で書く
+    （v0.73.0。それまでは行で探していて、登録簿が 2 字下げの形で届いた時に、種が見つからずに止まった。素材台帳の v0.65.0 と同じ）。"""
     full = os.path.join(DATA, 'bestiary.json')
-    lines = open(full, encoding='utf-8').read().split('\n')
+    doc = json.loads(open(full, encoding='utf-8').read())
+    assert list(doc) == ['schemaVersion', 'note', 'plan', 'frames', 'fields', 'species'], list(doc)
     done = set()
-    for i, l in enumerate(lines):
-        m = re.search(r'"id":"(monster\.[a-z_]+)"', l)
-        if not m or m.group(1) not in states:
-            continue
-        tail = ',' if l.rstrip().endswith(',') else ''
-        body = l.strip().rstrip(',')
-        obj = json.loads(body)
-        obj['state'] = 'implemented'
-        obj['stateNote'] = states[m.group(1)]
-        indent = re.match(r'\s*', l).group(0)
-        lines[i] = indent + json.dumps(obj, ensure_ascii=False, separators=(',', ':')) + tail
-        done.add(m.group(1))
+    for sp in doc['species']:
+        if sp['id'] in states:
+            sp['state'] = 'implemented'
+            sp['stateNote'] = states[sp['id']]
+            done.add(sp['id'])
     assert done == set(states), set(states) - done
-    json.loads('\n'.join(lines))
-    open(full, 'w', encoding='utf-8').write('\n'.join(lines))
+    J = lambda x: json.dumps(x, ensure_ascii=False, separators=(',', ':'))
+    rows = lambda l: ['  ' + J(x) + (',' if i < len(l) - 1 else '') for i, x in enumerate(l)]
+    out = ['{', ' "schemaVersion": %d,' % doc['schemaVersion'], ' "note": ' + J(doc['note']) + ',', ' "plan": ' + J(doc['plan']) + ',',
+           ' "frames": [', *rows(doc['frames']), ' ],', ' "fields": [', *rows(doc['fields']), ' ],', ' "species": [', *rows(doc['species']), ' ]', '}']
+    text = '\n'.join(out) + '\n'
+    assert json.loads(text) == doc
+    open(full, 'w', encoding='utf-8').write(text)
 
 
 def update_content_index(add):
@@ -1713,6 +1749,7 @@ def main():
         out.append(f"  'monster.{mkey}': {json.dumps(p, ensure_ascii=False)},")
     out.append('};')
     write('src/render/creaturePlans.ts', '\n'.join(out) + '\n')
+    apply_spinegale_openings()
     write('docs/monster-openings.md', openings_doc())
     print(f'{len(SPECIES)} 種: 技 {sum(len(sp["moves"](sp["sp"])) for sp in SPECIES)}、依頼 {len(quests)}')
     print(f'幼体 {len(JUVENILES)} 種: 技 {sum(len(j["moves"](j["J"])) for j in JUVENILES)}、群れの依頼 {len(herd_quests)}')
