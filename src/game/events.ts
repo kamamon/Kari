@@ -3,6 +3,7 @@ import type { V3 } from '../core/math';
 import type { ElementId, StatusKind } from '../data/schemas';
 
 export type SimEvent =
+  | { type: 'pouch_full'; itemId: string }
   | { type: 'action_start'; actor: string; actionId: string; instanceId: number }
   | { type: 'action_event'; actor: string; kind: 'sound' | 'trail_on' | 'trail_off' | 'vfx'; id: string; pos: V3 }
   | {

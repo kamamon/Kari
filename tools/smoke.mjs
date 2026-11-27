@@ -2795,7 +2795,7 @@ const startTraining = async (page, tap = false) => {
     zukan.fields === 20 && zukan.walkable.split(',').length === 20 && zukan.fieldHead === '狩場の案 20（歩けるのは 20）' && zukan.basinState === '歩ける' && /燠脈台地/.test(zukan.fieldText) && /熾炉獣 エンバルグ/.test(zukan.fieldText) && zukan.fieldState === '採取可（暫定）', JSON.stringify({ fields: zukan.fields, walkable: zukan.walkable, head: zukan.fieldHead, state: zukan.fieldState, text: zukan.fieldText }));
   await page.evaluate(() => document.getElementById('base-bestiary').scrollIntoView({ block: 'start' }));
   await page.screenshot({ path: `${OUT}99_bestiary.png` });
-  // 依頼へ: 買った回復液を、支給品に足して持っていく（v0.38.0: 一覧には受付の案内だけ。初級の受付まで行って、詳細から出発する）
+  // 依頼へ: 箱から実体ポーチへ移し、野営地の支給箱は手動で受け取る。
   check('里: 「一覧」の依頼の欄は、4 つの受付の案内（全部の依頼を縦に並べない。歩く里では、そこから出発しない）', await page.evaluate(() => document.querySelectorAll('article.reception-desk[data-reception]').length === 4 && !document.querySelector('.reception-row, .reception-depart')));
   await page.click('.base-close');
   await until(page, () => document.getElementById('base').hidden);
@@ -2803,21 +2803,25 @@ const startTraining = async (page, tap = false) => {
   await until(page, () => window.__vh.nearFacility?.id === 'board');
   await page.click('#hud-facility');
   await until(page, () => !document.getElementById('base').hidden);
+  await page.evaluate(async()=>{const m=window.__vh.save;const i=m.doc.classicBox.layout.findIndex(x=>x?.itemId==='item.heal_tonic');const r=await m.box({kind:'move',from:'box',index:i,itemId:'item.heal_tonic',count:1});if(!r.ok)throw Error(r.message);});
   await departQuest(page, 'quest.basin.003');
   await until(page, () => window.__vh.place === 'hunt' && window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
   const pouch = await page.evaluate(() => {
     const s = window.__vh.sim;
     return { tonic: s.player.items.find((x) => x.itemId === 'item.heal_tonic').count, brought: s.brought['item.heal_tonic'], area: s.areaId };
   });
-  check('里: 依頼へ出ると、買った回復液が支給品に足されている（5 + 1 = 6）。野営地から始まる', pouch.tonic === 6 && pouch.brought.supplied === 5 && pouch.brought.own === 1 && pouch.area === 'camp', JSON.stringify(pouch));
+  check('里: 実体ポーチの回復液1個で出発し、支給品は未取得。野営地から始まる', pouch.tonic === 1 && pouch.brought.supplied === 0 && pouch.brought.own === 1 && pouch.area === 'camp', JSON.stringify(pouch));
   check('里: 依頼へは、装備箱で選んだ防具で出る（兜あり・胴なし。防御力 6）', await page.evaluate(() => window.__vh.sim.defense === 6 && window.__vh.sim.armorIds.join() === 'armor.head.002,armor.arms.001,armor.waist.001,armor.legs.001' && window.__vh.view.hunter.armorKey === '21111'), await page.evaluate(() => `${window.__vh.sim.defense} ${window.__vh.sim.armorIds.join()}`));
-  // 6 個とも使ったことにして、リタイアする → 自分の 1 個だけが減る
+  // 支給品は野営地で手動受取。リタイアは自前の品を出発前に戻す。
+  await page.click('.classic-supply summary');
+  await page.getByRole('button',{name:/回復液 ×5.*受取 5/}).click();
+  check('里: 支給箱で手動受取',await until(page,()=>window.__vh.sim.brought['item.heal_tonic'].supplied===5));
   await page.evaluate(() => (window.__vh.sim.player.items.find((x) => x.itemId === 'item.heal_tonic').count = 0));
   await page.keyboard.press('Escape');
   await page.waitForSelector('.menu-body button');
   await page.click('.menu-body button');
   const settled = await until(page, () => !document.getElementById('result').hidden && window.__vh.save.doc.items['item.heal_tonic'] === undefined, 15000);
-  check('里: 失敗（リタイア）しても、使った自分の道具は減る（1 個）。達成回数と通貨は変わらない', settled && await page.evaluate(() => window.__vh.save.doc.money === 960 && window.__vh.save.doc.progress.questClears['quest.basin.003'] === 1 && /使った自分の道具を、持ち物から減らしました/.test(document.getElementById('result').textContent)), await page.evaluate(() => document.getElementById('result').textContent.slice(0, 200)));
+  check('里: リタイアで出発前のポーチに戻る。達成回数と通貨は変わらない', settled && await page.evaluate(() => window.__vh.save.doc.money === 960 && window.__vh.save.doc.progress.questClears['quest.basin.003'] === 1 && window.__vh.save.doc.classicBox.pouch.some(x=>x?.itemId==='item.heal_tonic'&&x.count===1)), await page.evaluate(() => document.getElementById('result').textContent.slice(0, 200)));
   await page.screenshot({ path: `${OUT}96_hub_result.png` });
   // 結果から拠点へ → 里に立つ
   await page.evaluate(() => window.__vh.toBase());

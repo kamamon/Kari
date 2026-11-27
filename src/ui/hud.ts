@@ -457,7 +457,8 @@ export class Hud {
         case 'monster_captured':
           this.toast('捕獲した');
           break;
-        case 'carve':
+        case 'pouch_full': this.toast('ポーチが満杯です。取得できませんでした。'); break;
+      case 'carve':
           this.toast(`${sim.content.materials.get(e.itemId)?.name ?? e.itemId} を手に入れた`);
           break;
         // 狩らない依頼（v0.27.0）

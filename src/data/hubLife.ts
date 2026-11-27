@@ -59,7 +59,7 @@ export function hubLifeShapeErrors(v:unknown):string[]{
   {const errors=livestockErrors(v.livestock);if(errors.length)return errors;}
   if(v.roomLayout!==undefined&&!one(v.roomLayout,['left','right']))return ['家具の配置が不正です'];
   if(!one(v.crop,CROPS)||!one(v.decor,DECORS)||!list(v.visited,256)||!list(v.tasks,64)||!pouch(v.pouch))return ['里の生活記録が不正です'];
-  if(!obj(v.sets)||Object.entries(v.sets).some(([k,s])=>!['1','2','3'].includes(k)||!obj(s)||!str(s.weapon)||!list(s.armor,5)||!pouch(s.pouch)))return ['装備セットが不正です'];
+  if(!obj(v.sets)||Object.entries(v.sets).some(([k,s])=>!(/^(?:[1-9]|1[0-9]|20)$/.test(k))||!obj(s)||!str(s.weapon)||!list(s.armor,5)||!pouch(s.pouch)))return ['装備セットが不正です'];
   if(![v.displayWeapon,v.displayArmor,v.wish].every(nullableStr)||!int(v.tradeCycle,-1)||!int(v.festivalCycle,-1))return ['里の受取記録が不正です'];
   const ex=v.expedition;
   if(ex!==null&&(!obj(ex)||!one(ex.kind,['mine','plant','insect','fish','bone'])||!str(ex.rankId)||!int(ex.readyCycle)))return ['探索隊の記録が不正です'];

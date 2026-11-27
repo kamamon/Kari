@@ -94,12 +94,12 @@ describe('買う', () => {
     expect(m.doc.money).toBe(5000);
   });
 
-  it('持っておける数（99）を超えては、買えない', async () => {
+  it('99個を超えても次の収納枠に入る', async () => {
     const { m } = await rich(9_000_000);
     expect((await m.buy(STONE, 99)).ok).toBe(true);
-    expect((await m.buy(STONE, 1)).ok).toBe(false);
-    expect(m.doc.items[STONE]).toBe(99);
-    expect(checkBuy(m.doc, content.shop, STONE, 1)).toMatchObject({ ok: false, room: 0, have: 99 });
+    expect((await m.buy(STONE, 1)).ok).toBe(true);
+    expect(m.doc.items[STONE]).toBe(100);
+    expect(checkBuy(m.doc, content.shop, STONE, 1)).toMatchObject({ ok: true, have: 100 });
   });
 
   it('別のタブが先に書いていたら、古い内容からは買わない（読み直す）', async () => {

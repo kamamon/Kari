@@ -324,7 +324,7 @@ describe('装備箱: 防具を、部位ごとに着る・外す（v0.14.0。保�
 
   it('新しいデータは、里の装束 5 部位を身に着けている。選択肢は、部位ごとに 1 つ', async () => {
     const m = await open(new MemoryBackend());
-    expect(m.doc.schemaVersion).toBe(5);
+    expect(m.doc.schemaVersion).toBe(6);
     expect(m.doc.claims).toEqual([]);
     // 外見（v0.28.0。版 5）: 新しいデータは、基準ハンター A
     expect(m.doc.appearance).toEqual(legacyAppearance());
@@ -419,7 +419,7 @@ describe('装備箱: 防具を、部位ごとに着る・外す（v0.14.0。保�
     expect(r.kind === 'ok' && r.migratedFrom).toBe(2);
     const m = await open(b);
     expect(m.notice).toBe('保存データを新しい形へ直しました（元のデータは控えに残してあります）。');
-    expect(m.doc).toMatchObject({ schemaVersion: 5, revision: 8, money: 300, claims: [], appearance: legacyAppearance() });
+    expect(m.doc).toMatchObject({ schemaVersion: 6, revision: 8, money: 300, claims: [], appearance: legacyAppearance() });
     expect(m.doc.armor).toEqual(v2.armor);
     expect(worn(m.doc)).toEqual(v2.armor);
     expect(defenseOf(m.doc, content)).toBe(6 + 13 + 0 + 0 + 21);
@@ -660,8 +660,8 @@ describe('実機で書き出したデータ（tests/fixtures/save-v1-device-0.7.
     expect(r.doc.armor).toEqual([]);
     expect(r.doc.equippedArmorIds).toEqual([]);
     expect(unknownIds(r.doc, content)).toEqual({ items: [], weapons: [], armor: [] });
-    expect(SAVE_SCHEMA_VERSION).toBe(5);
-    expect(r.doc).toMatchObject({ schemaVersion: 5, revision: 3, claims: [], appearance: legacyAppearance(), money: 1200, equippedWeaponId: 'weapon.long_blade.001', progress: { questClears: { 'quest.basin.003': 2 } } });
+    expect(SAVE_SCHEMA_VERSION).toBe(6);
+    expect(r.doc).toMatchObject({ schemaVersion: 6, revision: 3, claims: [], appearance: legacyAppearance(), money: 1200, equippedWeaponId: 'weapon.long_blade.001', progress: { questClears: { 'quest.basin.003': 2 } } });
     expect(r.doc.settledRuns).toHaveLength(2);
     expect(playWeaponId(r.doc, content)).toBe('weapon.long_blade.001');
     expect(usableWeapons(r.doc, content)).toHaveLength(7);
@@ -682,7 +682,7 @@ describe('実機で書き出したデータ（tests/fixtures/save-v1-device-0.7.
   it('版 1 のデータを取り込むと、持ち物・武器・進行はそのままで、里の装束（5 部位）が配られる。初級を達成済みなので中級が受けられる', async () => {
     const m = await open(new MemoryBackend());
     expect(await m.importText(text)).toEqual({ ok: true });
-    expect(m.doc).toMatchObject({ schemaVersion: 5, money: 1200, equippedWeaponId: 'weapon.long_blade.001', items: { [SHELL]: 7, [VEIN]: 2, [BONE]: 1 } });
+    expect(m.doc).toMatchObject({ schemaVersion: 6, money: 1200, equippedWeaponId: 'weapon.long_blade.001', items: { [SHELL]: 7, [VEIN]: 2, [BONE]: 1 } });
     expect(m.doc.weapons).toHaveLength(7);
     expect(m.doc.armor).toEqual(['armor.head.001', 'armor.chest.001', 'armor.arms.001', 'armor.waist.001', 'armor.legs.001']);
     expect(m.doc.equippedArmorIds).toEqual(m.doc.armor);
@@ -699,7 +699,7 @@ describe('実機で書き出したデータ（tests/fixtures/save-v1-device-0.7.
     expect(m.notice).toBe('保存データを新しい形へ直しました（元のデータは控えに残してあります）。');
     expect(m.unreadable).toBeNull();
     const stored = b.peek(SLOT_ID) as SaveDoc;
-    expect(stored).toMatchObject({ schemaVersion: 5, money: 1200, revision: 4, equippedWeaponId: 'weapon.long_blade.001', items: { [SHELL]: 7, [VEIN]: 2, [BONE]: 1 } });
+    expect(stored).toMatchObject({ schemaVersion: 6, money: 1200, revision: 4, equippedWeaponId: 'weapon.long_blade.001', items: { [SHELL]: 7, [VEIN]: 2, [BONE]: 1 } });
     expect(stored.armor).toHaveLength(5);
     expect(stored.equippedArmorIds).toEqual(stored.armor);
     expect(stored.settledRuns).toHaveLength(2);
@@ -709,7 +709,7 @@ describe('実機で書き出したデータ（tests/fixtures/save-v1-device-0.7.
     expect(backups[0]!.doc).toEqual(v1);
     // その後の強化も、ふつうに保存される
     expect(await m.craft('recipe.armor.head.002')).toEqual({ ok: true });
-    expect(b.peek(SLOT_ID)).toMatchObject({ schemaVersion: 5, money: 1120, revision: 5 });
+    expect(b.peek(SLOT_ID)).toMatchObject({ schemaVersion: 6, money: 1120, revision: 5 });
     // 着ていた頭巾を強化したので、強化した兜を着ている
     expect(defenseOf(m.doc, content)).toBe(6);
     // 開き直しても同じ（2 度目は直さない）

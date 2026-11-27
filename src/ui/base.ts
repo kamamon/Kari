@@ -24,6 +24,8 @@ import { computeGear } from '../game/gear';
 import { armorStat, gearSummary, weaponShortName, weaponStat } from './gearText';
 
 import { HubLifePanel, type HubLifeHost } from './hubLife';
+import { ClassicBoxPanel } from './classicBox';
+import { pouchRoom } from '../save/classicBox';
 import { lifeOf, prepText, type HubTab } from '../data/hubLife';
 
 function lifePreviewLink(id:string):HTMLAnchorElement{
@@ -165,6 +167,7 @@ export class BaseScreen {
   /** 画面の下に出す、直前の操作の結果 */
   private message: HTMLElement;
   private lifePanel: HubLifePanel;
+  private classicBox: ClassicBoxPanel;
   private lifeButton: HTMLButtonElement;
   private busy = false;
   /** 強化の確認を出しているレシピ */
@@ -200,6 +203,9 @@ export class BaseScreen {
       return e;
     };
 
+    this.classicBox = new ClassicBoxPanel(content,host.save,()=>host.saveChanged());
+    this.classicBox.root.dataset.sec='chest workshop shop';
+    card.appendChild(this.classicBox.root);
     this.weaponRow = sec(el('div', 'base-weapons'), 'chest');
     this.weaponNote = sec(el('p', 'base-weapon-note'), 'chest');
     card.append(sec(el('p', 'base-weapon-label', '武器（持ち替え）'), 'chest'), this.weaponRow, this.weaponNote);
@@ -361,6 +367,8 @@ export class BaseScreen {
     this.lead.textContent = f?.kind === 'quest' ? '星を選び、依頼の内容を確認してください。' : f ? `${f.summary}。` : '行き先を選んでください。';
     this.closeBtn.hidden = !this.host.hubWalk && section === 'all';
     this.closeBtn.textContent = this.host.hubWalk ? '里へ戻る' : '拠点の一覧へ';
+    if (section === 'chest') this.classicBox.root.open=true;
+    else if(fresh||wasHidden)this.classicBox.root.open=false;
     if (section === 'workshop') this.forge.open = true;
     if (section === 'shop') this.shop.open = true;
     if (fresh || wasHidden) {
@@ -432,6 +440,7 @@ export class BaseScreen {
 
     if (this.section !== 'quest' && [...c.recipes.values()].some((r) => checkCraft(doc, r, craftRankOpen(doc, c, r)).ok)) this.banners.appendChild(el('p', 'base-banner', '強化できる装備があります（下の「工房」）。'));
 
+    this.classicBox.render(this.section==='chest'||this.section==='all');
     // 武器（持っていて、この版で使えるもの）
     this.weaponRow.textContent = '';
     const current = this.host.weaponId;
@@ -651,7 +660,7 @@ export class BaseScreen {
     const shop = c.shop;
     this.shopBody.textContent = '';
     this.shopBody.appendChild(el('p', 'shop-money', `通貨 ${doc.money}`));
-    this.shopBody.appendChild(el('p', 'shop-note', '買った道具は、依頼の支給品に足して持っていきます（道具ごとに、持ち出せる数まで）。支給品から先に使い、自分の道具は、使ったぶんだけ減ります。'));
+    this.shopBody.appendChild(el('p', 'shop-note', '購入先を選べます。箱に買った道具は出発前にポーチへ取り出してください。'));
     const row = (name: string, sub: string, buttons: HTMLButtonElement[], iconId = ''): HTMLElement => {
       const r = el('div', 'shop-row');
       const t = el('div', 'shop-text');
@@ -673,6 +682,7 @@ export class BaseScreen {
         b.addEventListener('click', () => void this.run('買っています', () => this.host.buy(g.itemId, n), `${it.name}を ${n} 個買いました。`));
         return b;
       });
+      for(const n of [1,5]){const b=el('button','shop-pouch-buy',`ポーチへ ×${n}`);b.disabled=pouchRoom(doc,c,g.itemId)<n||doc.money<g.price*n;b.onclick=()=>void this.run('買っています',()=>this.host.save.box({kind:'buyPouch',itemId:g.itemId,count:n},doc.revision),`${it.name}をポーチへ入れました。`);buttons.push(b);}
       const r = row(`${it.name}　${g.price} 通貨`, `${it.summary ?? ''}　持っている数 ${have}（狩りへ持ち出せるのは ${it.carryMax} 個まで）`, buttons, g.itemId);
       r.dataset.item = g.itemId;
       this.shopBody.appendChild(r);
