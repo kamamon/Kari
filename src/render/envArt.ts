@@ -87,7 +87,7 @@ function loadEnv(file: string, setup: (t: Texture) => void, done: (t: Texture) =
   cache.set(dir + file, e);
   const entry = e;
   loader.load(
-    assetUrl(`${dir}${file}.webp`),
+    assetUrl(`${dir}${file.endsWith('.svg')?file:file+'.webp'}`),
     (t) => {
       t.colorSpace = SRGBColorSpace;
       setup(t);

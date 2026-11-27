@@ -6,9 +6,9 @@ import { AreaShape, type Pt } from '../game/areaShape';
 import { reliefAt, type ReliefDef } from '../game/relief';
 import type { FieldAreaDef } from '../data/schemas';
 import { sectorAt, type SceneryArea, type SceneryGate, type Geology } from '../data/fieldScenery';
-import { assembleSceneryMeshes, crownAsset, deadwoodAsset, outcropAsset, plantAsset, trunkAsset, type SceneryInstance } from './sceneryAssets';
+import { assembleSceneryMeshes, crownAsset, leafCardAsset, deadwoodAsset, outcropAsset, plantAsset, trunkAsset, type SceneryInstance } from './sceneryAssets';
 import { imageLambert, imageFile, MATERIAL_DIR, type ImageSurface } from './materialImages';
-import { loadEnvTexture } from './envArt';
+import { loadEnvTexture, WIND } from './envArt';
 import { RepeatWrapping, type Texture } from 'three';
 import { patchNoise } from './noise';
 import { valueNoise3 } from './rockGeo';
@@ -129,7 +129,7 @@ export function buildLandscapeSurface(input:LandscapeInput):LandscapeSurface{
  const gateBlend=(x:number,z:number):number=>{
   let v=0;
   for(const g of gates){const dx=x-g.x,dz=z-g.z,a=dx*g.nx+dz*g.nz,side=Math.abs(dx*g.nz-dz*g.nx-g.bend*smooth(5,21,a));
-   if(a>=-1&&a<25)v=Math.max(v,(1-smooth(g.width*.52,g.width*.52+3.2,side))*(1-smooth(18,25,a)));
+   if(a>=-1&&a<42){const shoulder=g.width*.52+4+Math.min(5,Math.max(0,a)*.12);v=Math.max(v,(1-smooth(g.width*.52,shoulder,side))*(1-smooth(23,42,a)));}
   }
   return v;
  };
@@ -150,7 +150,8 @@ export function buildLandscapeSurface(input:LandscapeInput):LandscapeSurface{
    height=lerp(height,waterY-1.6-2*crag,channel*smooth(4,17,d));
   }
   // 出口の先は岩・樹林へ折れる緩やかな道。手前の15mを遮らず、遠くで地形へ溶かす。
-  height=lerp(height,.28+Math.min(2.0,d*.065),gateBlend(x,z));
+  const routeHeight=.28+Math.min(5.0,d*.12);
+  height=lerp(height,routeHeight,gateBlend(x,z));
   ys[k]=base+height*smooth(3.2,7.5,d);
   outerMin=Math.min(outerMin,ys[k]!);outerMax=Math.max(outerMax,ys[k]!);
  }
@@ -211,25 +212,24 @@ function lump(seed:number,detail:0|1|2):BufferGeometry{
 /** 斜面の一番低い側まで根を埋める。木の根元・露岩に共通。 */
 function groundedBase(s:LandscapeSurface,x:number,z:number,r:number):number{let y=s.height(x,z);for(let i=0;i<8;i++){const a=i*Math.PI/4;y=Math.min(y,s.height(x+Math.cos(a)*r,z+Math.sin(a)*r));}return y;}
 function isGateClear(s:LandscapeSurface,x:number,z:number,r:number):boolean{
- return s.gates.every(g=>{const dx=x-g.x,dz=z-g.z,a=dx*g.nx+dz*g.nz,side=Math.abs(dx*g.nz-dz*g.nx-g.bend*smooth(5,21,a));return !(a> -2&&a<24&&side<g.width*.5+3+r);});
+ return s.gates.every(g=>{const dx=x-g.x,dz=z-g.z,a=dx*g.nx+dz*g.nz,side=Math.abs(dx*g.nz-dz*g.nx-g.bend*smooth(5,21,a));return !(a> -2&&a<30&&side<g.width*.5+3+r);});
 }
 function trailGeometry(s:LandscapeSurface):BufferGeometry{
- const pos:number[]=[],uv:number[]=[],idx:number[]=[];
+ const pos:number[]=[],uv:number[]=[],idx:number[]=[],color:number[]=[];
  for(const g of s.gates){
   let prev=-1;
-  for(let a=4.2;a<=24;a+=1.5){
-   const bend=g.bend*smooth(5,21,a),w=lerp(g.width*.5,.16,smooth(6,24,a))*(.94+.08*Math.sin(a*1.7+g.x));
+  for(let a=4.2;a<=27;a+=1.3){
+   const bend=g.bend*smooth(5,21,a),w=lerp(g.width*.5,.16,smooth(6,27,a))*(.94+.08*Math.sin(a*1.7+g.x));
    const x=g.x+g.nx*a+g.nz*bend,z=g.z+g.nz*a-g.nx*bend;
-   const left=[x-g.nz*w,z+g.nx*w],right=[x+g.nz*w,z-g.nx*w];
-   if(s.distance(left[0]!,left[1]!)<.45||s.distance(right[0]!,right[1]!)<.45){prev=-1;continue;}
+   const row=[-1,0,1].map(t=>[x+g.nz*w*t,z-g.nx*w*t]);
+   if(row.some(v=>s.distance(v[0]!,v[1]!)<.45)){prev=-1;continue;}
    const j=pos.length/3;
-   for(const v of [left,right])pos.push(v[0]!,s.height(v[0]!,v[1]!)+.035,v[1]!);
-   uv.push(0,a/5,1,a/5);
-   if(prev>=0)idx.push(prev,prev+1,j,j,prev+1,j+1);
+   for(let i=0;i<row.length;i++){const v=row[i]!;pos.push(v[0]!,s.height(v[0]!,v[1]!)+.045,v[1]!);uv.push(i*.5,a/5);color.push(1,1,1,i===1?.90*(1-smooth(17,27,a)):0);}
+   if(prev>=0)for(let k=0;k<2;k++)idx.push(prev+k,prev+k+1,j+k,j+k,prev+k+1,j+k+1);
    prev=j;
   }
  }
- const geo=new BufferGeometry();geo.setAttribute('position',new Float32BufferAttribute(pos,3));geo.setAttribute('uv',new Float32BufferAttribute(uv,2));geo.setIndex(idx);geo.computeVertexNormals();return geo;
+ const geo=new BufferGeometry();geo.setAttribute('position',new Float32BufferAttribute(pos,3));geo.setAttribute('uv',new Float32BufferAttribute(uv,2));geo.setAttribute('color',new Float32BufferAttribute(color,4));geo.setIndex(idx);geo.computeVertexNormals();return geo;
 }
 /** 遠景の稜線は実際の形で2層。距離感は手前の3D地形と霧で作り、空の色とつなぐ。 */
 function distantRidge(input:LandscapeInput,layer:number):Mesh{
@@ -269,9 +269,15 @@ export function buildLandscapeExterior(input:LandscapeInput,s:LandscapeSurface):
  const p=input.profile,b=input.bounds,rng=new SeededRng(p.seed^0xa142c),noise=patchNoise(p.seed^8873),group=new Group();group.name='field-natural-exterior';
  const surface=landscapeMaterial(p);
  const ground=new Mesh(s.outer,surface);ground.name='field-exterior-relief';ground.userData.noMerge=true;group.add(ground);
- if(s.water){const water=new Mesh(s.water,imageLambert('water',{color:p.waterColor,transparent:true,opacity:.92,side:DoubleSide},{raw:true,gain:.93}));water.name='field-exterior-water';water.userData.noMerge=true;group.add(water);}
+ if(s.water){
+  const mat=imageLambert('water',{color:p.waterColor,transparent:true,opacity:.92,side:DoubleSide},{raw:true,gain:.93});
+  mat.onBeforeCompile=sh=>{sh.uniforms.sceneryFlow=WIND;sh.fragmentShader='uniform float sceneryFlow;\n'+sh.fragmentShader.replace('#include <map_fragment>',`#ifdef USE_MAP
+   vec2 flow=vMapUv+vec2(sceneryFlow*.006,sceneryFlow*.011); diffuseColor*=texture2D(map,flow);
+   #endif`);};mat.customProgramCacheKey=()=> 'field-water-flow';
+  const water=new Mesh(s.water,mat);water.name='field-exterior-water';water.userData.noMerge=true;group.add(water);
+ }
  const trail=trailGeometry(s);
- if(trail.getIndex()!.count){const path=new Mesh(trail,imageLambert('earth',{color:p.style==='alpine'?0xc9d4d4:0x948571,side:DoubleSide},{gain:1.1}));path.name='field-exit-continuation';path.userData.noMerge=true;group.add(path);}else trail.dispose();
+ if(trail.getIndex()!.count){const path=new Mesh(trail,imageLambert(p.style==='alpine'?'cliff':'earth',{color:p.style==='alpine'?0x8faaa8:0x978976,side:DoubleSide,vertexColors:true,transparent:true,depthWrite:false},{gain:1.12}));path.name='field-exit-continuation';path.userData.noMerge=true;group.add(path);}else trail.dispose();
  group.add(distantRidge(input,0),distantRidge(input,1));
  const trunks:Instance[]=[],crowns:Instance[]=[],rocks:Instance[]=[],treeSites:{x:number;z:number}[]=[],plants:SceneryInstance[]=[],deadwood:SceneryInstance[]=[];
  const w=b.maxX-b.minX,d=b.maxZ-b.minZ;
@@ -309,7 +315,17 @@ export function buildLandscapeExterior(input:LandscapeInput,s:LandscapeSurface):
  batch(group,trunkAsset(p.seed),imageLambert('bark',{color:p.tree==='swamp'?0x6c6149:0x6a6253,flatShading:true},{gain:1.15}),trunks,'field-exterior-trunks');
  // Near/mid crown variants use one material batch. Far crowns have a cheaper mesh.
  const crownGeo=assembleSceneryMeshes(crowns,i=>{const q=crowns[i]!,dist=s.distance(q.x,q.z);return crownAsset(p.tree,i%(p.tree==='broadleaf'?6:4),dist<43);});
- if(crownGeo){const crown=new Mesh(crownGeo,imageLambert('leaf',{color:p.foliage,vertexColors:true},{gain:1.26}));crown.name='field-exterior-canopy';crown.userData.noMerge=true;group.add(crown);}
+ if(crownGeo){
+  const canopy=new Group();canopy.name='field-exterior-canopy';
+  const fallback=new Mesh(crownGeo,imageLambert('leaf',{color:p.foliage,vertexColors:true},{gain:1.26}));fallback.name='field-canopy-fallback';fallback.userData.noMerge=true;canopy.add(fallback);
+  const cards=assembleSceneryMeshes(crowns,i=>{const q=crowns[i]!,dist=s.distance(q.x,q.z);return leafCardAsset(p.tree,i%(p.tree==='broadleaf'?6:4),dist<43);});
+  if(cards){
+   const leaf=new MeshLambertMaterial({color:p.style==='alpine'?0xd7e0dc:0xffffff,vertexColors:true,side:DoubleSide,alphaTest:.38});leaf.userData.uv=true;leaf.userData.surfaceFile='assets/textures/env/scenery-v2-foliage.svg';
+   const leafMesh=new Mesh(cards,leaf);leafMesh.name='field-foliage-cutouts';leafMesh.userData.noMerge=true;leafMesh.visible=false;canopy.add(leafMesh);
+   loadEnvTexture('scenery-v2-foliage.svg',t=>{t.anisotropy=4;},t=>{leaf.map=t;leaf.color.multiplyScalar(1.30);leaf.needsUpdate=true;leafMesh.visible=true;fallback.visible=false;});
+  }
+  group.add(canopy);
+ }
  const geology=p.plan?.geology??(p.style==='alpine'?'glacial':p.style==='coast'?'sea_stack':p.style==='canyon'?'strata':'layered');
  batch(group,outcropAsset(geology,p.seed%8),imageLambert('cliff',{color:p.rock,flatShading:true},{gain:1.22}),rocks,'field-exterior-rocks');
  const extras=new Group();extras.name='field-exterior-ecology';
@@ -332,6 +348,19 @@ export function buildLandscapeExterior(input:LandscapeInput,s:LandscapeSurface):
    const a=rng.next()*Math.PI*2,x=(b.minX+b.maxX)*.5+Math.cos(a)*(w*.5+16+rng.next()*24),z=(b.minZ+b.maxZ)*.5+Math.sin(a)*(d*.5+16+rng.next()*24),dist=s.distance(x,z),radius=2+rng.next()*1.7;
    if(dist<12+radius||dist>74||!isGateClear(s,x,z,radius+1))continue;
    const y=groundedBase(s,x,z,radius*.65);features.push({x,z,y:y+.12,sx:radius,sy:(cavern?5:2.2)+rng.next()*2,sz:radius*.7,yaw:rng.next()*6.28,shade:.8+rng.next()*.25});k++;
+  }
+  if(cavern&&(p.plan.landmark==='cave'||p.plan.landmark==='corridor')){
+   const arch:SceneryInstance[]=[];
+   for(const g of s.gates.slice(0,2)){
+    const a=16.5,bend=g.bend*smooth(5,21,a),x=g.x+g.nx*a+g.nz*bend,z=g.z+g.nz*a-g.nx*bend;
+    const w0=g.width*.5+2.2,ground=s.height(x,z);
+    if(s.distance(x,z)<11)continue;
+    for(let i=0;i<9;i++){const angle=i*Math.PI/8,off=Math.cos(angle)*w0,px=x+g.nz*off,pz=z-g.nx*off;
+     if(s.distance(px,pz)<6.4)continue;const bottom=s.height(px,pz),y=Math.max(bottom,ground)+Math.sin(angle)*5.8;
+     arch.push({x:px,y,z:pz,sx:2.05,sy:i===0||i===8?3.2:2.0,sz:1.9,yaw:Math.atan2(g.nx,g.nz)+i*.22,shade:.82+i%3*.05});
+    }
+   }
+   const ag=assembleSceneryMeshes(arch,i=>outcropAsset(p.plan!.geology,i%8));if(ag){const a=new Mesh(ag,imageLambert('cliff',{color:p.rock,vertexColors:true},{gain:1.13}));a.name='field-outer-cave-mouth';a.userData.noMerge=true;extras.add(a);}
   }
   if((mineral||cavern||waterfall)&&features.length){
    const geo=assembleSceneryMeshes(features,i=>outcropAsset(mineral?'shale':p.plan!.geology,i%8));

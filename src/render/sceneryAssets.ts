@@ -51,6 +51,18 @@ export function crownAsset(tree:Tree,variant:number,near:boolean):BufferGeometry
  }
  return merged(pieces);
 }
+/** Original cutout atlas: 6 broadleaf, 4 conifer, 4 wetland cells. Crossed planes give natural, perforated silhouettes. */
+export function leafCardAsset(tree:Tree,variant:number,near:boolean):BufferGeometry{
+ const id=tree==='pine'?6+variant%4:tree==='swamp'?10+variant%4:variant%6;
+ const col=id%4,row=Math.floor(id/4),margin=1.5/1024,u0=col*.25+margin,u1=(col+1)*.25-margin,v0=1-(row+1)*.25+margin,v1=1-row*.25-margin;
+ const pos:number[]=[],uv:number[]=[];
+ for(let k=0;k<(near?3:2);k++){
+  const a=k*Math.PI/(near?3:2)+variant*.49,c=Math.cos(a),s=Math.sin(a),w=tree==='pine'?.91:1.08,h=tree==='pine'?1.27:.92;
+  const points=[[-c*w,-h,-s*w],[c*w,-h,s*w],[c*w,h,s*w],[-c*w,h,-s*w]],us=[[u0,v0],[u1,v0],[u1,v1],[u0,v1]];
+  for(const i of [0,1,2,0,2,3]){pos.push(...points[i]!);uv.push(...us[i]!);}
+ }
+ const g=new BufferGeometry();g.setAttribute('position',new Float32BufferAttribute(pos,3));g.setAttribute('uv',new Float32BufferAttribute(uv,2));g.computeVertexNormals();return g;
+}
 /** Region-specific erosion and bedding shapes; eight reusable strata variants. */
 export function outcropAsset(geology:Geology,variant:number):BufferGeometry{
  const g=irregular(variant*199+GEO_SEED[geology],1),p=g.getAttribute('position');

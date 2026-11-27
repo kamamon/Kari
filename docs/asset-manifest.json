@@ -5494,6 +5494,19 @@
         "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
       },
       "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "tex.env.scenery_v2_foliage",
+      "name": "外周植生 葉群アトラス14種",
+      "type": "texture",
+      "use": "広葉樹6・針葉樹4・湿地樹4の透過切抜き",
+      "owner": "ChatGPT",
+      "status": "generated",
+      "version": 1,
+      "path": "assets/textures/env/scenery-v2-foliage.svg",
+      "sourcePath": "art-source/env/scenery-v2-foliage.svg",
+      "terms": "本作オリジナル・手続き型の描画原本",
+      "verification": "ブラウザ読み込み・外観の確認はCI記録参照"
     }
   ]
 }

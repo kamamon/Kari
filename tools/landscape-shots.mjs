@@ -29,7 +29,7 @@ try{
  if(process.env.SCENERY_ALL==='1'){
   const more=await page.evaluate(()=>[...window.__vh.content.fields.values()].map(f=>({id:f.id.split('.')[1],area:f.areas.find(a=>a.kind==='hunt')?.id??f.areas[0].id})));
   for(const f of more)if(!shots.some(x=>x[0]===f.id))shots.push([f.id,f.area,'field-'+f.id,false]);
-  shots.push(['basin','a7','field-basin-plateau',true]);
+  shots.push(['basin','a7','field-basin-plateau',true],['coast','a2','field-coast-horizon',false]);
  }
  let current='';
  for(const [region,areaId,name,high] of shots){
@@ -39,19 +39,20 @@ try{
    await page.waitForFunction(q=>window.__vh.sim.hunt?.quest.id===q&&window.__vh.sim.tick>3,q,{timeout:45000});
    current=region;
   }
-  await page.evaluate(({areaId,high})=>{
+  await page.evaluate(({areaId,high,name})=>{
    const app=window.__vh,s=app.sim,p=s.player,a=s.field.areas.find(a=>a.id===areaId)??s.field.areas[1];
    for(const m of s.monsters)m.aiEnabled=false;
    const center=a.center??{x:(a.bounds.minX+a.bounds.maxX)/2,z:(a.bounds.minZ+a.bounds.maxZ)/2};
    let x=center.x,z=center.z;
    const exit=a.exits[0],dx=exit?exit.x-x:0,dz=exit?exit.z-z:1,L=Math.hypot(dx,dz)||1;
    let yaw=Math.atan2(dx,dz);
+   if(name==='field-coast-horizon'){const plan=app.content.fieldScenery?.get(s.field.id+'/'+a.id),a0=plan?.seaAngle??Math.PI/2;yaw=Math.atan2(Math.cos(a0),Math.sin(a0));}
    if(high&&a.platforms.length){const top=[...a.platforms].sort((a,b)=>b.h-a.h)[0];x=(top.minX+top.maxX)/2;z=(top.minZ+top.maxZ)/2;}
    else if(exit&&L>10){const xx=exit.x-dx/L*11,zz=exit.z-dz/L*11;if(s.world.inArea(a,xx,zz,1.5)&&!a.rocks.some(r=>Math.hypot(xx-r.x,zz-r.z)<r.r+.8)){x=xx;z=zz;}}
    if(s.areaId!==a.id)s.areaId=a.id;
    p.pos={x,y:s.world.groundHeight(x,z),z};p.prevPos={...p.pos};p.drawn=false;p.yaw=yaw;p.prevYaw=yaw;
    app.view.cam.snap(yaw);app.view.cam.pitch=high?.16:-.06;
-  },{areaId,high});
+  },{areaId,high,name});
   await page.waitForFunction(areaId=>{
    const v=window.__vh.view,g=v.areaGroups.get(window.__vh.sim.areaId),ext=g?.getObjectByName('field-natural-exterior'),floor=ext?.getObjectByName('field-exterior-relief');
    return !!g?.visible&&!!ext?.userData.landscape&&!!floor?.material.map&&window.__vh.sim.areaId===areaId;
@@ -65,7 +66,7 @@ try{
   const path=out+name+'.jpg',bytes=await page.screenshot({path,type:'jpeg',quality:65});
   report.push({name,...data});
   console.log('LANDSCAPE_OK '+name+' '+JSON.stringify(data));
-  if(['field-basin-high','field-mistforest','field-coast','field-icegorge'].includes(name))console.log('LANDSCAPE_JPEG_'+name+' '+bytes.toString('base64'));
+  if(['field-basin-high','field-mistforest','field-coast','field-icegorge','field-coast-horizon'].includes(name))console.log('LANDSCAPE_JPEG_'+name+' '+bytes.toString('base64'));
  }
  await ctx.close();
  if(errors.length)throw Error('browser errors: '+errors.join('\n'));

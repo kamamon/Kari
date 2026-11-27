@@ -292,15 +292,18 @@ export function buildAreaGroup(map: AreaLook): Group {
     const [ox, oz] = outward(g);
     // 踏み跡: 出口から内へ、外向きに沿った細長い帯
     const gy = baseAt(g.x, g.z),anchor=landscape?.plan?.gates.find(a=>a.toAreaId===g.to);
-    const path = new Mesh(new PlaneGeometry(anchor?.widthM??5.4, 16, 3, exterior ? 18 : 8), trail);
+    const routeMat=exterior?imageLambert(landscape?.style==='alpine'?'cliff':'earth',{color:landscape?.style==='alpine'?0xa3b5b5:0xb9a88a,vertexColors:true,transparent:true,depthWrite:false},{gain:1.12}):trail;
+    const path = new Mesh(new PlaneGeometry(anchor?.widthM??5.4, 16, exterior ? 4 : 3, exterior ? 18 : 8), routeMat);
     if(exterior){
       // 奥へ続く道の入口を長方形ではなく、両端と路肩を不規則に絞る。
-      const pp=path.geometry.getAttribute('position');
+      const pp=path.geometry.getAttribute('position'),col=new Float32Array(pp.count*4);
       for(let i=0;i<pp.count;i++){
+        const alpha=Math.max(0,1-Math.abs(pp.getX(i))/((anchor?.widthM??5.4)*.5));col.set([1,1,1,Math.min(1,alpha*1.7)],i*4);
         const y=pp.getY(i),u=(y+8)/16,t=Math.min(1,Math.max(0,u*4));
         const width=(.24+.76*t*t*(3-2*t))*(.94+.065*Math.sin(y*1.63+g.x));
         pp.setX(i,pp.getX(i)*width+.27*Math.sin(y*.45+g.z)*Math.sin(Math.PI*u));
       }
+      path.geometry.setAttribute('color',new Float32BufferAttribute(col,4));
     }
     path.rotation.x = -Math.PI / 2;
     path.rotation.z = Math.atan2(ox, oz) + Math.PI;
