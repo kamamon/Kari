@@ -122,6 +122,8 @@ export function envArtStatus(): { loaded: number; asked: number; failed: number 
   return { loaded, asked: cache.size, failed };
 }
 
+/** Cached environment textures outlive individual views. */
+export function isCachedEnvTexture(t:Texture):boolean{for(const e of cache.values())if(e.tex===t)return true;return false;}
 const tmpColor = new Color();
 
 /**

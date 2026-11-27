@@ -13,7 +13,8 @@ import { sampleTrack, sampleTrackNormal, trackSegment } from '../game/tracks';
 import type { Settings } from '../save/settings';
 import { blobShadow, buildArena, buildAreaGroup, setupSky, type Arena } from './arena';
 import { landscapeProfile } from './fieldLandscape';
-import { WIND } from './envArt';
+import { sceneryKey } from '../data/fieldScenery';
+import { WIND, isCachedEnvTexture } from './envArt';
 import { imageLambert } from './materialImages';
 import { buildHubGroup } from './hubScene';
 import { HubLifeScene } from './hubLifeScene';
@@ -320,7 +321,7 @@ export class GameView {
     const area = sim.area();
     if (!area) return false;
     this.areaGroupOf(sim, area.id);
-    const landscape=landscapeProfile(field.id,area);
+    const landscape=landscapeProfile(field.id,area,sim.content.fieldScenery?.get(sceneryKey(field.id,area.id)));
     this.arena.sky?.setLook(landscape.sky);
     if(this.scene.fog instanceof FogExp2){this.scene.fog.color.set(landscape.sky.horizon);this.scene.fog.density=landscape.fog;}
     if(this.scene.background instanceof Color)this.scene.background.set(landscape.sky.horizon);
@@ -339,9 +340,9 @@ export class GameView {
     if (!g) {
       g = buildAreaGroup({
         bounds: area.bounds, shape: area.shape, rocks: area.rocks, platforms: area.platforms, kind: area.kind, seed: 9001 + area.no * 131, climbs: area.climbs, relief: area.relief, groundTint: area.look?.ground,
-        landscape: landscapeProfile(field.id,area),
+        landscape: landscapeProfile(field.id,area,sim.content.fieldScenery?.get(sceneryKey(field.id,area.id))),
         camp: area.kind === 'camp' ? field.camp : null,
-        gates: area.exits.map((e) => ({ x: e.x, z: e.z, marker: true })),
+        gates: area.exits.map((e) => ({ x: e.x, z: e.z, marker: true, to:e.to })),
       });
       g.visible = false;
       this.areaGroups.set(area.id, g);
@@ -1248,8 +1249,9 @@ export class GameView {
       if (!mesh.geometry) return;
       mesh.geometry.dispose();
       for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
-        (mat as MeshLambertMaterial).map?.dispose();
-        (mat as MeshLambertMaterial).normalMap?.dispose();
+        const map=(mat as MeshLambertMaterial).map, normal=(mat as MeshLambertMaterial).normalMap;
+        if(map&&!isCachedEnvTexture(map))map.dispose();
+        if(normal&&!isCachedEnvTexture(normal))normal.dispose();
         mat?.dispose();
       }
       (mesh as unknown as { skeleton?: { dispose(): void } }).skeleton?.dispose();

@@ -2,6 +2,7 @@
 // ブラウザ（fetch）と Node のテスト（fs）の両方から同じ関数を使う。
 // 問題は黙って直さず、すべて errors に積んで呼び出し側へ返す。
 
+import { assembleScenery, type SceneryDocument } from './fieldScenery';
 import { carveGatherPond, gatheringCatalog, fieldGatherMaterials, validateFieldGatherCatalog, type FieldGatherCatalog } from './fieldGathering';
 import { buildFollowTable } from '../game/follow';
 import { AreaShape, NavGraph } from '../game/areaShape';
@@ -1325,6 +1326,7 @@ export async function assembleContent(getRaw: JsonGetter, opts: LoadOptions = {}
     checkVersion(f, fd.schemaVersion, errors);
     putUnique(content.fields, fd.id, fd, 'field', errors);
   }
+  if(index.files.fieldScenery)content.fieldScenery=assembleScenery(await Promise.all(index.files.fieldScenery.map(async f=>(await get(f)) as SceneryDocument)),content.fields,errors);
   for (const f of many(index.files.quests)) {
     const quests = (await get(f)) as { quests: QuestDef[] };
     for (const q of quests.quests ?? []) putUnique(content.quests, q.id, q, 'quest', errors);

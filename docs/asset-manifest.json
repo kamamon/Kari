@@ -4797,6 +4797,703 @@
         "note": "専用の原画・正式3Dモデルは未制作。"
       },
       "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "scenery.tree.broadleaf.1",
+      "name": "広葉樹 1",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.tree.broadleaf.2",
+      "name": "広葉樹 2",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.tree.broadleaf.3",
+      "name": "広葉樹 3",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.tree.broadleaf.4",
+      "name": "広葉樹 4",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.tree.broadleaf.5",
+      "name": "広葉樹 5",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.tree.broadleaf.6",
+      "name": "広葉樹 6",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.tree.pine.1",
+      "name": "針葉樹 1",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.tree.pine.2",
+      "name": "針葉樹 2",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.tree.pine.3",
+      "name": "針葉樹 3",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.tree.pine.4",
+      "name": "針葉樹 4",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.tree.swamp.1",
+      "name": "湿地樹 1",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.tree.swamp.2",
+      "name": "湿地樹 2",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.tree.swamp.3",
+      "name": "湿地樹 3",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.tree.swamp.4",
+      "name": "湿地樹 4",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.deadwood.1",
+      "name": "朽木 1",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.deadwood.2",
+      "name": "朽木 2",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.deadwood.3",
+      "name": "朽木 3",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.deadwood.4",
+      "name": "朽木 4",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.outcrop.1",
+      "name": "露頭 1",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.outcrop.2",
+      "name": "露頭 2",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.outcrop.3",
+      "name": "露頭 3",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.outcrop.4",
+      "name": "露頭 4",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.outcrop.5",
+      "name": "露頭 5",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.outcrop.6",
+      "name": "露頭 6",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.outcrop.7",
+      "name": "露頭 7",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.outcrop.8",
+      "name": "露頭 8",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.plant.fern.1",
+      "name": "fern 1",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.plant.fern.2",
+      "name": "fern 2",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.plant.fern.3",
+      "name": "fern 3",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.plant.shrub.1",
+      "name": "shrub 1",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.plant.shrub.2",
+      "name": "shrub 2",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.plant.shrub.3",
+      "name": "shrub 3",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.plant.drygrass.1",
+      "name": "drygrass 1",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.plant.drygrass.2",
+      "name": "drygrass 2",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.plant.drygrass.3",
+      "name": "drygrass 3",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.plant.reed.1",
+      "name": "reed 1",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.plant.reed.2",
+      "name": "reed 2",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.plant.reed.3",
+      "name": "reed 3",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.plant.snowgrass.1",
+      "name": "snowgrass 1",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.plant.snowgrass.2",
+      "name": "snowgrass 2",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
+    },
+    {
+      "id": "scenery.plant.snowgrass.3",
+      "name": "snowgrass 3",
+      "type": "model",
+      "use": "狩場外周の描画専用景観",
+      "owner": "ChatGPT",
+      "status": "concept",
+      "version": 1,
+      "path": null,
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/sceneryAssets.ts",
+        "note": "オリジナルの手続き型メッシュと既存画像材質。正式な専用原画/スキャンではない。"
+      },
+      "verification": "型検査・描画・実機の結果は別途記録"
     }
   ]
 }
