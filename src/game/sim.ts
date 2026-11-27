@@ -1457,6 +1457,7 @@ export class Simulation implements SimCtx {
     ];
     for (const m of this.monsters) {
       parts.push(m.hp, m.pos.x, m.pos.z, m.yaw, m.dead ? 1 : 0, m.staggerTicks, m.cooldown, act(m.action), m.aware ? 1 : 0, m.enraged ? m.enragedTicks : 0, m.rageAcc);
+      if (m.spinegale) parts.push(m.spinegale.stamina,m.spinegale.remaining,m.spinegale.rank);
       for (const q of m.parts) parts.push(q.durability, q.broken ? 1 : 0, q.severed ? 1 : 0, q.severAcc, q.flinchAcc, q.flinchThreshold);
     }
     for (const h of this.hazards) parts.push(h.x, h.z, h.warn, h.active, h.hit ? 1 : 0);

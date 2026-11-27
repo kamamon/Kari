@@ -25,6 +25,7 @@ export interface MonsterPartState {
 }
 
 export interface MonsterState {
+  spinegale?: { stamina: number; remaining: number; max: number; restTicks: number; rank: number };
   /** フィールドでの移動と休息（フィールドでなければ null） */
   roam: RoamState | null;
   /** 巣で眠っている（攻撃されると起きる） */
@@ -103,6 +104,7 @@ export function createMonster(def: MonsterDef, spawn: { x: number; z: number; ya
   return {
     id,
     def,
+    ...(def.id === 'monster.spinegale' ? { spinegale: spinegaleState(def.spinegaleRank ?? 1) } : {}),
     pos,
     prevPos: { ...pos },
     yaw: spawn.yaw,
@@ -226,6 +228,7 @@ function chooseAction(m: MonsterState, player: PlayerState, ctx: SimCtx): Monste
   const ang = Math.abs(rel);
   let cands = m.def.ai.choices.filter(
     (c) =>
+      (!m.spinegale || m.spinegale.rank >= 2 || !c.actionId.endsWith('.triple_dash')) &&
       dist >= c.minDist &&
       dist <= c.maxDist &&
       ang <= c.maxAngleDeg &&
@@ -248,7 +251,19 @@ function chooseAction(m: MonsterState, player: PlayerState, ctx: SimCtx): Monste
   return cands[cands.length - 1]!;
 }
 
+// スパインゲイル専用。描画ではなく60Hzの戦闘状態として持つ。
+const SG_COST: Record<string, number> = {"bite":6,"double_bite":12,"dash":20,"pounce":22,"jump_kick":18,"tail_sweep_l":12,"tail_sweep_r":12,"turn_bite":10,"side_strike_l":12,"side_strike_r":12,"triple_dash":30,"pack_call":8,"tail_sweep_l_short":12,"tail_sweep_r_short":12};
+function spinegaleState(rank: number) {
+  const i = Math.max(0, Math.min(2, rank - 1));
+  const max = [100,120,140][i]!;
+  return { stamina: max, remaining: 0, max, restTicks: [600,540,480][i]!, rank: i+1 };
+}
+function sgFatigueAction(id: string | undefined): boolean { return !!id && id.startsWith('monster.spinegale.fatigue_'); }
 function begin(m: MonsterState, actionId: string, ctx: SimCtx): void {
+  if (m.spinegale) {
+    const cost = SG_COST[actionId.slice('monster.spinegale.'.length)] ?? 0;
+    m.spinegale.stamina = Math.max(0, m.spinegale.stamina - cost * (m.enraged ? 1.2 : 1));
+  }
   m.stall = 0;
   m.action = newRun(ctx.content.actions.get(actionId)!, ctx.newInstanceId(), m.yaw);
   ctx.emit({ type: 'action_start', actor: m.id, actionId, instanceId: m.action.instanceId });
@@ -286,6 +301,12 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   }
 
   if (m.captured) return;
+  const sg = m.spinegale;
+  if (sg && sg.remaining === 0 && sgFatigueAction(m.action?.def.actionId)) m.action = null;
+  if (sg && sg.remaining === 0 && sg.stamina <= 20 && !m.action && m.aware && m.aiEnabled) sg.remaining = sg.restTicks;
+  const sgResting = !!sg && sg.remaining > 0;
+  const sgElapsed = sgResting ? sg!.restTicks - sg!.remaining : 0;
+  if (sgResting && --sg!.remaining === 0) sg!.stamina = sg!.max;
   if (m.tranqTicks > 0 && --m.tranqTicks === 0) m.tranq = 0;
 
   // 状態異常（v0.33.0）: 効き目の残り・毒・猶予・ためた量の減り。毒で倒れることもある
@@ -317,6 +338,12 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
     return;
   }
 
+  // 疲労の残りは罠・怯み・状態異常と同時に進む。新規攻撃・移動は発生しない。
+  if (sgResting && sg) {
+    if (!sgFatigueAction(m.action?.def.actionId)) begin(m, 'monster.spinegale.' + (sg.rank === 1 ? 'fatigue_full' : 'fatigue_r' + sg.rank), ctx);
+    if (m.action) { m.action.tick = sgElapsed + 1; m.action.advanced = true; }
+    return;
+  }
   // 群れの幼体: ふだんは群れの動き。反撃する間（fight）と技の途中だけ、下のふつうの技の選び方へ進む
   if (m.herd && stepHerdMember(m, player, ctx)) return;
 
@@ -358,9 +385,16 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
         m.yaw = turnToward(m.yaw, toPlayer, (def.turnDegPerSec * (rage ? rage.speedScale : 1) * DEG) / 60);
         // 間合い取り: 正面に捉えていて遠ければ歩いて近づく
         if (def.moveSpeed && def.approach && dist > def.approach.stopDist && ang < def.approach.faceDeg) {
-          const step = (def.moveSpeed * (rage ? rage.speedScale : 1)) / 60;
+          const sprint = !!sg && dist >= 6;
+          const speed = sprint ? [7.2,7.8,8.5][sg!.rank-1]! : def.moveSpeed;
+          const step = (speed * (rage ? rage.speedScale : 1)) / 60;
           const f = forwardOf(m.yaw);
+          const x0=m.pos.x,z0=m.pos.z;
           ctx.world.move(m.pos, def.bodyRadius, f.x * step, f.z * step);
+          if (sprint && Math.hypot(m.pos.x-x0,m.pos.z-z0) > .01) {
+            sg!.stamina=Math.max(0,sg!.stamina-(4/60)*(m.enraged?1.2:1));
+            if (sg!.stamina <= 20) return;
+          }
         }
       }
       // 相手が左（rel > 0）なら左回り。backDeg より後ろなら 180°
