@@ -7,7 +7,9 @@ import { reliefAt, type ReliefDef } from '../game/relief';
 import type { FieldAreaDef } from '../data/schemas';
 import { sectorAt, type SceneryArea, type SceneryGate, type Geology } from '../data/fieldScenery';
 import { assembleSceneryMeshes, crownAsset, deadwoodAsset, outcropAsset, plantAsset, trunkAsset, type SceneryInstance } from './sceneryAssets';
-import { imageLambert, type ImageSurface } from './materialImages';
+import { imageLambert, imageFile, MATERIAL_DIR, type ImageSurface } from './materialImages';
+import { loadEnvTexture } from './envArt';
+import { RepeatWrapping, type Texture } from 'three';
 import { patchNoise } from './noise';
 import { valueNoise3 } from './rockGeo';
 import { SKY_LOOKS, type SkyLook } from './sky';
@@ -154,7 +156,7 @@ export function buildLandscapeSurface(input:LandscapeInput):LandscapeSurface{
  }
  const land=new Color(p.land),rock=new Color(p.rock),fog=new Color(p.sky.horizon),temp=new Color();
  const geo=(indices:number[],type:'near'|'outer'|'water'):BufferGeometry=>{
-  const verts:number[]=[],uv:number[]=[],cols:number[]=[],index:number[]=[],remap=new Map<number,number>();
+  const verts:number[]=[],uv:number[]=[],cols:number[]=[],weights:number[]=[],index:number[]=[],remap=new Map<number,number>();
   for(const k of indices){let m=remap.get(k);if(m===undefined){
    m=verts.length/3;remap.set(k,m);const i=k%nx,j=Math.floor(k/nx),x=xs[i]!,z=zs[j]!,y=type==='water'?waterY:ys[k]!;
    verts.push(x,y,z);uv.push(x/(type==='water'?12:9),-z/(type==='water'?12:9));
@@ -162,13 +164,14 @@ export function buildLandscapeSurface(input:LandscapeInput):LandscapeSurface{
     const lx=Math.max(0,i-1),rx=Math.min(nx-1,i+1),lz=Math.max(0,j-1),rz=Math.min(nz-1,j+1);
     const slope=Math.hypot((ys[j*nx+rx]!-ys[j*nx+lx]!)/(xs[rx]!-xs[lx]!||1),(ys[rz*nx+i]!-ys[lz*nx+i]!)/(zs[rz]!-zs[lz]!||1));
     const blend=Math.max(0,Math.min(1,slope*.58+noise(x+18,z+37)*.47-(p.style==='forest'?.21:0)));
-    temp.copy(land).lerp(rock,blend).multiplyScalar(.77+noise(x,z)*.42);
+    temp.copy(land).lerp(rock,blend).multiplyScalar(.83+noise(x,z)*.33);
+    weights.push(Math.max(0,Math.min(1,blend*.85+(p.style==='alpine'?.22:0))));
     if(p.water!=='none'&&y<waterY+.55)temp.lerp(rock,.42);
     temp.lerp(fog,smooth(123,190,ds[k]!)*.54);
     cols.push(temp.r,temp.g,temp.b);
    }
   }index.push(m);}
-  const g=new BufferGeometry();g.setAttribute('position',new Float32BufferAttribute(verts,3));g.setAttribute('uv',new Float32BufferAttribute(uv,2));if(type==='outer')g.setAttribute('color',new Float32BufferAttribute(cols,3));g.setIndex(index);g.computeVertexNormals();g.computeBoundingSphere();return g;
+  const g=new BufferGeometry();g.setAttribute('position',new Float32BufferAttribute(verts,3));g.setAttribute('uv',new Float32BufferAttribute(uv,2));if(type==='outer'){g.setAttribute('color',new Float32BufferAttribute(cols,3));g.setAttribute('sceneryBlend',new Float32BufferAttribute(weights,1));}g.setIndex(index);g.computeVertexNormals();g.computeBoundingSphere();return g;
  };
  const wp:number[]=[],wu:number[]=[],wi:number[]=[];
  // Clip submerged triangles to the waterline instead of displaying the whole triangle above land.
@@ -243,9 +246,28 @@ function distantRidge(input:LandscapeInput,layer:number):Mesh{
  const g=new BufferGeometry();g.setAttribute('position',new Float32BufferAttribute(vertices,3));g.setAttribute('color',new Float32BufferAttribute(colors,3));g.setIndex(idx);g.computeVertexNormals();
  const m=new Mesh(g,new MeshBasicMaterial({vertexColors:true,side:DoubleSide,fog:false}));m.name='field-distant-ridge-'+layer;m.userData.noMerge=true;return m;
 }
+/** Two image surfaces blended by slope and moisture. Before either image loads, use the existing color fallback. */
+function landscapeMaterial(p:LandscapeProfile):MeshLambertMaterial{
+ const primary:ImageSurface=p.style==='forest'?'moss':p.style==='meadow'?'grass':p.style==='wetland'?'earth':p.style==='coast'?'earth':'cliff';
+ const secondary:ImageSurface=p.style==='alpine'?'earth':p.style==='coast'?'cliff':primary==='cliff'?(p.style==='thermal'?'earth':'moss'):'cliff';
+ const mat=imageLambert(primary,{color:0xffffff,vertexColors:true},{gain:1.12});
+ const uniforms={scenerySecond:{value:null as Texture|null},scenerySecondReady:{value:0}};
+ loadEnvTexture(imageFile(secondary),t=>{t.wrapS=t.wrapT=RepeatWrapping;t.anisotropy=4;},t=>{uniforms.scenerySecond.value=t;uniforms.scenerySecondReady.value=1;},MATERIAL_DIR);
+ mat.onBeforeCompile=sh=>{
+  Object.assign(sh.uniforms,uniforms);
+  sh.vertexShader='attribute float sceneryBlend;\nvarying float vSceneryBlend;\n'+sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\n vSceneryBlend = sceneryBlend;');
+  sh.fragmentShader='uniform sampler2D scenerySecond;\nuniform float scenerySecondReady;\nvarying float vSceneryBlend;\n'+sh.fragmentShader.replace('#include <map_fragment>',`#ifdef USE_MAP
+   vec4 baseSample=texture2D(map,vMapUv);
+   vec4 secondSample=texture2D(scenerySecond,vMapUv*.77);
+   diffuseColor *= mix(baseSample,secondSample,clamp(vSceneryBlend*scenerySecondReady,0.0,1.0));
+   #endif`);
+ };
+ mat.customProgramCacheKey=()=> 'field-scenery-v2-mix';
+ return mat;
+}
 export function buildLandscapeExterior(input:LandscapeInput,s:LandscapeSurface):Group{
  const p=input.profile,b=input.bounds,rng=new SeededRng(p.seed^0xa142c),noise=patchNoise(p.seed^8873),group=new Group();group.name='field-natural-exterior';
- const surface=imageLambert(p.style==='forest'?'moss':p.style==='meadow'?'grass':p.style==='wetland'?'earth':'cliff',{color:0xffffff,vertexColors:true},{gain:1.12});
+ const surface=landscapeMaterial(p);
  const ground=new Mesh(s.outer,surface);ground.name='field-exterior-relief';ground.userData.noMerge=true;group.add(ground);
  if(s.water){const water=new Mesh(s.water,imageLambert('water',{color:p.waterColor,transparent:true,opacity:.92,side:DoubleSide},{raw:true,gain:.93}));water.name='field-exterior-water';water.userData.noMerge=true;group.add(water);}
  const trail=trailGeometry(s);
@@ -301,6 +323,21 @@ export function buildLandscapeExterior(input:LandscapeInput,s:LandscapeSurface):
  const plantGeo=assembleSceneryMeshes(plants,i=>plantAsset(kind,i%3));if(plantGeo){const mesh=new Mesh(plantGeo,imageLambert('leaf',{color:p.style==='alpine'?0xb1b49e:p.foliage,vertexColors:true,side:DoubleSide},{gain:1.3}));mesh.name='field-understory';mesh.userData.noMerge=true;extras.add(mesh);}
  if(p.tree!=='none'&&p.plan&&(p.plan.vegetation==='wetland'||p.plan.theme==='fallen_giants'||p.plan.theme==='fungal_grove'))for(const site of treeSites.slice(0,5)){const x=site.x+1,z=site.z,dist=s.distance(x,z);if(dist<9||!isGateClear(s,x,z,4))continue;deadwood.push({x,z,y:groundedBase(s,x,z,2)+.2,sx:6,sy:1.2,sz:1.2,yaw:rng.next()*6.28,shade:.9});}
  const logs=assembleSceneryMeshes(deadwood,i=>deadwoodAsset(i%4));if(logs){const m=new Mesh(logs,imageLambert('bark',{color:0x736454,vertexColors:true},{gain:1.2}));m.name='field-deadwood';m.userData.noMerge=true;extras.add(m);}
+ if(p.plan){
+  const theme=p.plan.theme,features:SceneryInstance[]=[];
+  const mineral=/crystal|glass_shale|copper|bronze|warm_fissures|steam/.test(theme)||/crystal/.test(p.plan.landmark);
+  const cavern=/mine|copper_cavern|echo_gorge|fallen_giants/.test(theme);
+  const waterfall=/waterfall|copper/.test(theme)&&p.water==='stream';
+  for(let k=0,t=0;k<6&&t<160;t++){
+   const a=rng.next()*Math.PI*2,x=(b.minX+b.maxX)*.5+Math.cos(a)*(w*.5+16+rng.next()*24),z=(b.minZ+b.maxZ)*.5+Math.sin(a)*(d*.5+16+rng.next()*24),dist=s.distance(x,z),radius=2+rng.next()*1.7;
+   if(dist<12+radius||dist>74||!isGateClear(s,x,z,radius+1))continue;
+   const y=groundedBase(s,x,z,radius*.65);features.push({x,z,y:y+.12,sx:radius,sy:(cavern?5:2.2)+rng.next()*2,sz:radius*.7,yaw:rng.next()*6.28,shade:.8+rng.next()*.25});k++;
+  }
+  if((mineral||cavern||waterfall)&&features.length){
+   const geo=assembleSceneryMeshes(features,i=>outcropAsset(mineral?'shale':p.plan!.geology,i%8));
+   if(geo){const feat=new Mesh(geo,imageLambert(mineral?'crystal':'cliff',{color:mineral?0x9b8764:p.rock,vertexColors:true,flatShading:true},{gain:1.2}));feat.name='field-landmark-'+p.plan.landmark;feat.userData.noMerge=true;extras.add(feat);}
+  }
+ }
  if(extras.children.length)group.add(extras);
  group.userData.landscape={fieldId:p.fieldId,areaId:p.areaId,style:p.style,theme:p.plan?.theme??p.style,landmark:p.plan?.landmark??'legacy',anchors:s.gates.map(g=>g.anchor?.anchorKey??'legacy'),plants:plants.length,trees:treeSites.length,rocks:rocks.length,water:!!s.water,gates:s.gates.length,...s.metrics};
  return group;

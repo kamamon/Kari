@@ -1,6 +1,7 @@
 // 本番ビルドから地域ごとの実際のWebGL画面を撮る。外周の描画・素材・フレームの量も検査。
 import { spawn } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
+import {execSync} from 'node:child_process';
 import { chromium } from 'playwright-core';
 const out=new URL('./out/landscape/',import.meta.url).pathname;
 mkdirSync(out,{recursive:true});
@@ -25,6 +26,11 @@ try{
   ['mistforest','a3','field-mistforest',false],['coast','a2','field-coast',false],['icegorge','a4','field-icegorge',false],
   ['wetland','a2','field-wetland',false],['ashmine','a2','field-ashmine',false],['buriedheat','a2','field-buriedheat',false]
  ];
+ if(process.env.SCENERY_ALL==='1'){
+  const more=await page.evaluate(()=>[...window.__vh.content.fields.values()].map(f=>({id:f.id.split('.')[1],area:f.areas.find(a=>a.kind==='hunt')?.id??f.areas[0].id})));
+  for(const f of more)if(!shots.some(x=>x[0]===f.id))shots.push([f.id,f.area,'field-'+f.id,false]);
+  shots.push(['basin','a7','field-basin-plateau',true]);
+ }
  let current='';
  for(const [region,areaId,name,high] of shots){
   const q='quest.explore.'+region+'.r1';
@@ -53,7 +59,7 @@ try{
   await page.waitForTimeout(550);
   const data=await page.evaluate(()=>{
    const app=window.__vh,s=app.sim,v=app.view,g=v.areaGroups.get(s.areaId),ext=g.getObjectByName('field-natural-exterior');
-   return{field:s.field.id,area:s.areaId,landscape:ext.userData.landscape,camera:v.cam.camera.position.toArray(),visible:[...v.areaGroups.values()].filter(g=>g.visible).length,...v.stats()};
+   return{field:s.field.id,area:s.areaId,landscape:ext.userData.landscape,camera:v.cam.camera.position.toArray(),yaw:v.cam.yaw,pitch:v.cam.pitch,cache:v.areaGroups.size,visible:[...v.areaGroups.values()].filter(g=>g.visible).length,...v.stats()};
   });
   if(data.visible!==1||data.landscape.outerMax-data.landscape.outerMin<9||data.calls>100||data.triangles>200000)throw Error(name+' '+JSON.stringify(data));
   const path=out+name+'.jpg',bytes=await page.screenshot({path,type:'jpeg',quality:65});
@@ -64,7 +70,7 @@ try{
  await ctx.close();
  if(errors.length)throw Error('browser errors: '+errors.join('\n'));
 }finally{
- writeFileSync(out+'report.json',JSON.stringify({report,errors},null,2));
+ writeFileSync(out+'report.json',JSON.stringify({build:execSync('git rev-parse HEAD').toString().trim(),report,errors},null,2));
  if(browser)await browser.close();
  server.kill();
 }
