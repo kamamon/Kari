@@ -254,6 +254,43 @@ describe('攻撃を受ける部位の追従（v0.25.0）', () => {
   }, 120000);
 });
 
+describe('転がる突進の制動と輪の向き（v0.68.0。D-166）', () => {
+  it('テンガロの転がる突進が、突進の制動で走る区間の終わりへ跳んでも、輪の向きは跳ばずに揺り戻り、揺り戻した後は跳ばない時と同じ形', () => {
+    const id = 'monster.tengaro';
+    const def = content.monsters.get(id)!;
+    const plan = CREATURE_PLANS[id]!;
+    const a = content.actions.get(`${id}.roll_straight`)!;
+    expect(a.brake).toEqual({ from: 56, to: 100 });
+    const marks = plan.spine.map((_, i) => `sp:${i}`);
+    /** 1 回描くごとに 1 tick 進め、jumpAt の tick で制動と同じに走る区間の終わりへ跳ぶ。描いた tick → 背骨の点 */
+    const play = (jumpAt: number | null): Map<number, Vector3[]> => {
+      const rig = new CreatureRig(plan, def.parts.map((p) => p.id), { seed: 0 });
+      const m = createMonster(def, { x: 0, z: 0, yaw: 0 }, 'roll');
+      m.aware = true;
+      m.action = newRun(a, 1, 0);
+      const out = new Map<number, Vector3[]>();
+      while (m.action.tick < a.durationTicks) {
+        if (m.action.tick === jumpAt) m.action.tick = a.brake!.to - 1;
+        rig.update(m, { alpha: 0, dt: 1 / 60, time: m.action.tick / 60, content });
+        out.set(m.action.tick, marks.map((k) => rig.marker(k).clone()));
+        m.action.tick++;
+      }
+      return out;
+    };
+    const plain = play(null);
+    const braked = play(72);
+    // 跳ぶ前の tick 71 と、跳んだ先の tick 99 の間で、背骨の点は 1 回の描画で 0.35m より大きく動かない（跳ぶ分を回すと何 m も動く）
+    const before = braked.get(71)!, after = braked.get(99)!;
+    const jump = Math.max(...before.map((p, i) => p.distanceTo(after[i]!)));
+    expect(jump).toBeLessThan(0.35);
+    // 揺り戻しが終わった後（18 tick）は、跳ばない時と同じ形（輪が何周かした元の向き）
+    for (let tick = 99 + 18; tick < a.durationTicks; tick += 4) {
+      const d = Math.max(...braked.get(tick)!.map((p, i) => p.distanceTo(plain.get(tick)![i]!)));
+      expect(d, `tick ${tick}`).toBeLessThan(0.01);
+    }
+  });
+});
+
 describe('判定の形を体の部位に付けた技（v0.21.0）', () => {
   it(BAKE ? '動きから軌道を作って、public/data/tracks/ へ書く（npm run monsters:bake）' : '技データの軌道が、動きの中の部位の位置と一致する（ずれていたら npm run monsters:bake）', () => {
     const baked = bakeAll();

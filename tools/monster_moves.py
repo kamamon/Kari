@@ -1296,7 +1296,7 @@ def tengaro_moves(s):
             K('s', 1.0, None, ring=1.05, yH=-0.12),
             K('r', 0.25, None, ring=0.7, yH=-0.04, archFront=0.3),
             K('r', 0.6, None, ring=0.2, archFront=0.1), roll=1),
-             curve=(12.0, 50, 100), turn=(44, 50),
+             curve=(12.0, 50, 100), turn=(44, 50), brake=(56, 100),
              tracks=[track('tengaro_roll_straight', 1.5, 3.6, [(50, [0, 1.25, -1.8], [0, 0, 1]), (100, [0, 1.25, -1.8], [0, 0, 1])])],
              hits=[hit('ring', 50, 100, 'tengaro_roll_straight', 26, 'knockdown', cost=40)],
              sounds=[(4, 'insect_buzz'), (50, 'galdros_charge')], ai=ai(7, 13.9, 25, 1.4, cd=520, clear=12)),

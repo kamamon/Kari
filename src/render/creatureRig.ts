@@ -26,6 +26,8 @@ import type { MonsterRig, MonsterRigCtx } from './monsterRig';
 const TAU = Math.PI * 2;
 /** 気絶の首のふらつきのひと回り（tick。v0.67.0。ガルドロスの STUN_LOOP と同じ長さ。部位の追従の表もこの長さで繰り返す） */
 export const CREATURE_STUN_LOOP = 164;
+/** 転がる技が突進の制動で止まった時に、輪を元の向きへ揺り戻す長さ（tick。v0.68.0） */
+const ROLL_SETTLE_TICKS = 18;
 const clamp = (v: number, a: number, b: number): number => Math.max(a, Math.min(b, v));
 /** 体の面の細かさ（v0.21.0 で、なめらかに）: 背骨の輪の点の数と、輪の間隔 (m)。脚も同じ */
 const SPINE_SEG = 28;
@@ -954,6 +956,8 @@ export class CreatureRig implements MonsterRig {
   /** 気絶で倒れている重み（v0.33.0。0〜1） */
   private stunW = 0;
   private stepAcc = 0;
+  /** 転がる技の輪の回る量（v0.68.0）: 技の番号・前の tick・前の曲線の距離・描く距離・跳んだ後の揺り戻し */
+  private readonly roll: { inst: number; t: number; d: number; shown: number; settle: { from: number; to: number; t0: number } | null } = { inst: -1, t: 0, d: 0, shown: 0, settle: null };
   /** 種ごとの構えの重み（v0.21.0） */
   private unaware = 0;
   private alertW = 0;
@@ -1125,6 +1129,32 @@ export class CreatureRig implements MonsterRig {
    * 横たわる姿勢の、体の下を地面に着けるための上下のずれ（m。v0.21.0）。体の形と姿勢ごとに 1 回だけ、その姿勢を置いて測る。
    * 胴の下を少しだけ草へ沈め、首・頭・尾が胴より下へ潜るなら、そちらが沈みすぎないように合わせる
    */
+  /**
+   * 転がる技（テンガロの輪）の、輪の回る量（曲線の距離 m）。ふだんは曲線の距離と同じ。突進の制動（v0.68.0。D-166）で技が走る区間の終わりへ跳んだ時は、
+   * 跳んだ分を回さず、いちばん近い「何周かして元の向きに戻る」量へ ROLL_SETTLE_TICKS で揺り戻す（輪の向きが跳ばない）。
+   * 跳んだかは、描画の時間で進むはずの tick より 3 tick 以上多く進んだかで見る（描くのが遅い時に間違えない）。
+   */
+  private rollShownAt(inst: number, t: number, d: number, total: number, dt: number): number {
+    const r = this.roll;
+    if (r.inst !== inst) {
+      r.inst = inst; r.t = t; r.d = d; r.shown = d; r.settle = null;
+      return d;
+    }
+    if (r.settle === null && t - r.t > dt * 60 + 3) {
+      const R = Math.max(0.5, this.body.length / TAU);
+      const turns = Math.max(1, Math.round(Math.abs(total) / R / TAU));
+      const step = total / turns;
+      r.settle = { from: r.shown, to: Math.round(r.shown / step) * step, t0: t };
+    }
+    if (r.settle) {
+      const u = clamp((t - r.settle.t0) / ROLL_SETTLE_TICKS, 0, 1);
+      r.shown = r.settle.from + (r.settle.to - r.settle.from) * u * u * (3 - 2 * u);
+    } else r.shown += d - r.d;
+    r.t = t;
+    r.d = d;
+    return r.shown;
+  }
+
   private lieFit(key: string, pose: Pose, H: number): number {
     let map = LIE_FIT.get(this.body);
     if (!map) {
@@ -1453,7 +1483,7 @@ export class CreatureRig implements MonsterRig {
           const prog = total !== 0 ? clamp(sampleCurve(curve, t) / total, 0, 1) : 0;
           if (def.hop) P.yH += def.hop * Math.sin(Math.PI * prog);
           if (def.roll) {
-            rollDist = sampleCurve(curve, t);
+            rollDist = this.rollShownAt(run.instanceId, t, sampleCurve(curve, t), total, c.dt);
             rollTotal = total;
           }
         }

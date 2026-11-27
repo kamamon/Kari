@@ -340,8 +340,9 @@ describe('ガルドロスの動き（#19 の M01・M02。v0.41.0）', () => {
   });
 
   // v0.66.0（#19 の M02。D-163）: ほかの大型の、長く走る突進 7 つにも、ガルドロスと同じ制動
-  const CHARGES: [string, string][] = [['selvark', 'charge'], ['numeradon', 'charge'], ['bornakel', 'charge'], ['orglass', 'charge'], ['razmer', 'crawl_charge'], ['kirisave', 'slide_long'], ['velgait', 'charge']];
-  it('突進の制動は、ほかの大型の長い突進 7 つにも（壁の 3m 手前から走らせると、走る間に 1 度だけ走る区間の終わりへ進め、壁を越えない）', () => {
+  // v0.68.0（D-166）: テンガロの転がる突進も（輪の向きは描画が元の向きへ揺り戻す）
+  const CHARGES: [string, string][] = [['selvark', 'charge'], ['numeradon', 'charge'], ['bornakel', 'charge'], ['orglass', 'charge'], ['tengaro', 'roll_straight'], ['razmer', 'crawl_charge'], ['kirisave', 'slide_long'], ['velgait', 'charge']];
+  it('突進の制動は、ほかの大型の長い突進 8 つにも（壁の 3m 手前から走らせると、走る間に 1 度だけ走る区間の終わりへ進め、壁を越えない）', () => {
     for (const [sp, name] of CHARGES) {
       const id = `monster.${sp}.${name}`;
       const def = content.actions.get(id)!;
