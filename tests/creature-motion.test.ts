@@ -7,14 +7,14 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { Vector3 } from 'three';
-import type { ActionDef, Content, FollowDef, FollowSetDef, ShapeTrackDef } from '../src/data/schemas';
+import type { ActionDef, Content, FollowDef, FollowSetDef, FollowStateDef, FollowStateId, ShapeTrackDef } from '../src/data/schemas';
 import { newRun } from '../src/game/action';
 import { followKeys, followTick } from '../src/game/follow';
 import { sampleCurve, trackSegment } from '../src/game/tracks';
 import { createMonster } from '../src/game/monster';
 import { CREATURE_PLANS } from '../src/render/creaturePlans';
 import { sampleMove, type Pose } from '../src/render/creatureMoves';
-import { CreatureRig } from '../src/render/creatureRig';
+import { CREATURE_STUN_LOOP, CreatureRig } from '../src/render/creatureRig';
 import type { BindPlan } from '../src/render/creaturePlan';
 import { GALDROS_ID, bakeGaldrosFollow } from './galdrosFollow';
 import { loadContent } from './helpers';
@@ -149,10 +149,48 @@ function bakeFollow(only?: string): Map<string, FollowDef> {
       rig.update(m, { alpha: 0, dt: 1 / 60, time, content });
     }
     const sleep = pick([sampleAll(rig)]);
+    // 転倒・怯み・気絶（v0.67.0。#19 の M03。ガルドロスの tests/galdrosFollow.ts と同じ決まり）: 転倒と怯みは経過の tick ごとに作り、
+    // 戦闘は経過の割合で引く（表の長さは、その種の転倒・怯みのいちばん長いもの）。気絶は、残りの tick を CREATURE_STUN_LOOP で割った余りで引く繰り返しの表
+    const states: Partial<Record<FollowStateId, FollowStateDef>> = {};
+    const lengthOf = (topple: boolean): number => Math.max(0, ...def.parts.filter((p) => p.flinch && !!p.flinch.topple === topple).map((p) => p.flinch!.ticks));
+    for (const kind of ['topple', 'flinch'] as const) {
+      const T = lengthOf(kind === 'topple');
+      if (T < 2) continue;
+      const r = new CreatureRig(plan, ids, { seed: 0 });
+      const s = createMonster(def, { x: 0, z: 0, yaw: 0 }, 'follow');
+      s.aware = true;
+      const want = new Set(Array.from({ length: followKeys(T, FOLLOW_STEP) }, (_, k) => followTick(k, T, FOLLOW_STEP)));
+      const keys: number[][][] = [];
+      for (let t = 0; t < T; t++) {
+        s.staggerKind = kind;
+        s.staggerTotal = T;
+        s.staggerTicks = T - t;
+        r.update(s, { alpha: 0, dt: 1 / 60, time: t / 60, content });
+        if (want.has(t)) keys.push(sampleAll(r));
+      }
+      const set = pick(keys);
+      if (set.shapes.length) states[kind] = { ticks: T, ...set };
+    }
+    {
+      const L = CREATURE_STUN_LOOP;
+      const r = new CreatureRig(plan, ids, { seed: 0 });
+      const s = createMonster(def, { x: 0, z: 0, yaw: 0 }, 'follow');
+      s.aware = true;
+      const keyAt = new Map(Array.from({ length: followKeys(L, FOLLOW_STEP) }, (_, k) => [followTick(k, L, FOLLOW_STEP), k] as const));
+      const keys: number[][][] = [];
+      for (let t = 0; t < 2 * L; t++) {
+        s.ailments.ticks.stun = 3 * L - t;
+        r.update(s, { alpha: 0, dt: 1 / 60, time: t / 60, content });
+        const k = keyAt.get(s.ailments.ticks.stun % L);
+        if (t >= L && k !== undefined) keys[k] = sampleAll(r);
+      }
+      const set = pick(keys);
+      if (set.shapes.length) states.stun = { ticks: L, ...set };
+    }
     out.set(id, {
       schemaVersion: 1, monsterId: id, step: FOLLOW_STEP,
-      note: '攻撃を受ける部位の追従（v0.25.0。npm run monsters:bake の出力。手で編集しない）。d は部位の形の端 a・b のずれ（cm）を、技の step tick ごとに並べたもの',
-      actions, poses: sleep.shapes.length ? { sleep } : {},
+      note: '攻撃を受ける部位の追従（v0.25.0。npm run monsters:bake の出力。手で編集しない）。d は部位の形の端 a・b のずれ（cm）を、技の step tick ごとに並べたもの。states は転倒・怯み・気絶（v0.67.0）',
+      actions, poses: sleep.shapes.length ? { sleep } : {}, states,
     });
   }
   return out;
@@ -165,7 +203,7 @@ function writeFollow(docs: Map<string, FollowDef>): void {
     const f = `follow/${id.split('.')[1]}.json`;
     files.push(f);
     const rows = (o: Record<string, FollowSetDef>): string[] => Object.entries(o).map(([k, v], i, all) => `  ${JSON.stringify(k)}: ${JSON.stringify(v)}${i < all.length - 1 ? ',' : ''}`);
-    // 転倒・怯み・気絶の表（v0.36.0。いまはガルドロスだけ）
+    // 転倒・怯み・気絶の表（v0.36.0 のガルドロスから。v0.67.0 から全部の種）
     const states = d.states && Object.keys(d.states).length ? [' "states": {', ...rows(d.states as Record<string, FollowSetDef>), ' }'] : [];
     const text = ['{', ` "schemaVersion": ${d.schemaVersion},`, ` "monsterId": ${JSON.stringify(d.monsterId)},`, ` "step": ${d.step},`, ` "note": ${JSON.stringify(d.note)},`,
       ' "actions": {', ...rows(d.actions), ' },', ' "poses": {', ...rows(d.poses ?? {}), states.length ? ' },' : ' }', ...states, '}', ''].join('\n');
@@ -195,16 +233,22 @@ describe('攻撃を受ける部位の追従（v0.25.0）', () => {
       const doc = bakeFollow(id).get(id)!;
       const table = content.monsters.get(id)!.follow!;
       expect(table, id).toBeDefined();
-      for (const [aid, set] of Object.entries(doc.actions)) {
-        const grid = table.actions.get(aid);
-        expect(grid, aid).toBeDefined();
-        const def = content.monsters.get(id)!;
+      const def = content.monsters.get(id)!;
+      const same = (name: string, set: FollowSetDef, grid: (Int16Array | null)[][] | undefined): void => {
+        expect(grid, name).toBeDefined();
         for (const sh of set.shapes) {
           const d = grid![def.parts.findIndex((p) => p.id === sh.part)]![sh.i]!;
-          expect(d, `${aid} ${sh.part}[${sh.i}]`).not.toBeNull();
+          expect(d, `${name} ${sh.part}[${sh.i}]`).not.toBeNull();
           const flat = sh.d.flat();
-          expect(flat.every((v, k) => Math.abs(v - d[k]!) <= 2), `${aid} ${sh.part}[${sh.i}]`).toBe(true);
+          expect(flat.every((v, k) => Math.abs(v - d[k]!) <= 2), `${name} ${sh.part}[${sh.i}]`).toBe(true);
         }
+      };
+      for (const [aid, set] of Object.entries(doc.actions)) same(aid, set, table.actions.get(aid));
+      // 転倒・怯み・気絶の表（v0.67.0）も、作り直したものと同じ
+      for (const [sid, set] of Object.entries(doc.states ?? {})) {
+        const st = table.states[sid as FollowStateId];
+        expect(st?.ticks, `${id} ${sid}`).toBe(set!.ticks);
+        same(`${id} ${sid}`, set!, st?.grid);
       }
     }
   }, 120000);

@@ -8,6 +8,8 @@ const OUT = new URL('./out/', import.meta.url).pathname;
 mkdirSync(OUT, { recursive: true });
 const PORT = 4179;
 const BASE = process.env.SMOKE_BASE ?? '/Kari/';
+/** 里の描画の呼び出しの目標（v0.67.0。D-165。狩場は 100） */
+const HUB_CALLS = 130;
 
 const server = spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--port', String(PORT), '--strictPort', '--base', BASE], { stdio: 'pipe' });
 await new Promise((resolve, reject) => {
@@ -2466,7 +2468,8 @@ const startTraining = async (page, tap = false) => {
     return { art: window.__vh.envArt(), buildings: files.sort(), craft, far: v.scene.getObjectByName('backdrop').children.filter((m) => m.material.map && m.material.visible).length, ...v.stats() };
   });
   check('景色の絵（里）: 頼んだ絵がすべて読めている。主要施設と家屋 12 棟（工房・商店・装備箱・級別の受付 4 つと、宿・民家 2 棟・集会所・倉庫）は専用の立体（#40）で、切り抜きの図の建物は無い', hubArt && hubLook.far === 2 && hubLook.buildings.length === 0 && hubLook.craft?.buildings === 12 && hubLook.craft.facilities === 7 && hubLook.craft.meshes > 0 && hubLook.craft.triangles > 0, JSON.stringify(hubLook));
-  check('景色の絵（里）: 描画量は目標内（100 draw calls / 20万 tri）', hubLook.calls <= 100 && hubLook.triangles <= 200000, JSON.stringify(hubLook));
+  // 里の描画の目標は 130 呼び出し（v0.67.0。D-165。#42 の画像の材質で、材質ごとに描く物を分けたため。狩場は 100 のまま）
+  check('景色の絵（里）: 描画量は里の目標内（130 draw calls / 20万 tri。D-165）', hubLook.calls <= HUB_CALLS && hubLook.triangles <= 200000, JSON.stringify(hubLook));
   await page.screenshot({ path: `${OUT}90_hub_start.png` });
   // 攻撃のボタンを押しても、武器を抜かない
   await click(page);
@@ -2629,7 +2632,7 @@ const startTraining = async (page, tap = false) => {
   await page.waitForTimeout(600);
   await page.screenshot({ path: `${OUT}95e_hub_lookout_down.png` });
   const topLook = await page.evaluate(() => window.__vh.view.stats());
-  check('里の 5 つの段: 灯見の台から見下ろしても、描画量は目標内（100 draw calls / 20万 tri）', topLook.calls <= 100 && topLook.triangles <= 200000, JSON.stringify(topLook));
+  check('里の 5 つの段: 灯見の台から見下ろしても、描画量は里の目標内（130 draw calls / 20万 tri。D-165）', topLook.calls <= HUB_CALLS && topLook.triangles <= 200000, JSON.stringify(topLook));
   await page.evaluate(() => { window.__vh.view.cam.pitch = 0.3; });
   await place(0, -9, 0);
   // ---- 工房で作る（v0.32.0。ChatGPT の全装備四級版 #15 の直接生産）: 鐘嚢の大槌【初級】を作って、装備箱で持つ ----

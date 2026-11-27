@@ -24,6 +24,8 @@ import type { CreaturePlan, ExtraPlan, FidgetPlan, LegPlan } from './creaturePla
 import type { MonsterRig, MonsterRigCtx } from './monsterRig';
 
 const TAU = Math.PI * 2;
+/** 気絶の首のふらつきのひと回り（tick。v0.67.0。ガルドロスの STUN_LOOP と同じ長さ。部位の追従の表もこの長さで繰り返す） */
+export const CREATURE_STUN_LOOP = 164;
 const clamp = (v: number, a: number, b: number): number => Math.max(a, Math.min(b, v));
 /** 体の面の細かさ（v0.21.0 で、なめらかに）: 背骨の輪の点の数と、輪の間隔 (m)。脚も同じ */
 const SPINE_SEG = 28;
@@ -934,7 +936,6 @@ export class CreatureRig implements MonsterRig {
   private flash = 0;
   private phase = 0;
   private speed = 0;
-  private lat = 0;
   private yawVel = 0;
   private look = 0;
   private lookUp = 0;
@@ -948,7 +949,8 @@ export class CreatureRig implements MonsterRig {
   private brokenBones = new Set<number>();
   /** 肌の細かな模様の絵（読み込めるまで null。シェーダーの uniform と同じもの） */
   private skinUniform: { value: Texture | null };
-  private toppleSide = 1;
+  /** 倒れる向き（1 = 体の右へ。v0.67.0 から、転倒・気絶・死はいつも右。ガルドロスと同じ。戦闘の部位の追従の表と合わせる） */
+  private readonly toppleSide = 1;
   /** 気絶で倒れている重み（v0.33.0。0〜1） */
   private stunW = 0;
   private stepAcc = 0;
@@ -1311,7 +1313,6 @@ export class CreatureRig implements MonsterRig {
     if (dt > 0) {
       const k = 1 - Math.exp(-dt * 8);
       this.speed += (Math.min(20, dist / dt) - this.speed) * k;
-      this.lat += (((dx * Math.cos(yaw) - dz * Math.sin(yaw)) / dt) - this.lat) * k;
       this.yawVel += (dyaw / dt - this.yawVel) * k;
     }
     const moveSpeed = m.def.moveSpeed ?? 2.5;
@@ -1503,7 +1504,6 @@ export class CreatureRig implements MonsterRig {
       P.tailWave += 0.15;
     }
     const stunT = !m.dead && ail.stun > 0 ? 1 : 0;
-    if (stunT > 0 && this.stunW < 0.02) this.toppleSide = this.lat >= 0 ? 1 : -1;
     this.stunW += (stunT - this.stunW) * (1 - Math.exp(-dt * (stunT ? 6 : 3)));
     if (this.stunW > 0.001) {
       const w = smoothstep(this.stunW);
@@ -1512,8 +1512,10 @@ export class CreatureRig implements MonsterRig {
       addScaled(tp, lie, 1, this.toppleSide);
       blendInto(P, tp, w);
       lieW = Math.max(lieW, w);
-      P.neckYaw += Math.sin(time * 2.3 + this.seed) * 0.3 * w;
-      P.headPitch += Math.sin(time * 1.7) * 0.15 * w;
+      // 首のふらつきは、気絶の残りの tick で決める（v0.67.0。戦闘の部位の追従の表と同じ。CREATURE_STUN_LOOP tick でひと回り）
+      const sp = (TAU * (ail.stun % CREATURE_STUN_LOOP)) / CREATURE_STUN_LOOP;
+      P.neckYaw += Math.sin(sp) * 0.3 * w;
+      P.headPitch += Math.sin(2 * sp) * 0.15 * w;
       P.jaw += 0.25 * w;
     }
     if (m.trapTicks > 0 && !m.dead) {
@@ -1528,8 +1530,9 @@ export class CreatureRig implements MonsterRig {
       const total = Math.max(1, m.staggerTotal);
       const prog = 1 - m.staggerTicks / total;
       if (m.staggerKind === 'topple') {
-        // 倒れる → もがく → 起き上がる（種ごとの姿勢。v0.21.0）
-        if (prog < 0.02) this.toppleSide = this.lat >= 0 ? 1 : -1;
+        // 倒れる → もがく → 起き上がる（種ごとの姿勢。v0.21.0）。v0.67.0 から、倒れる向きはいつも体の右（ガルドロスと同じ。D-134）で、
+        // もがく動きは転倒の経過の tick で決める（戦闘の部位の追従の表と同じ形になるように、描画の時刻と個体ごとのずれを使わない）
+        const et = (total - m.staggerTicks) / 60;
         const down = smoothstep(prog / 0.15) * (1 - smoothstep((prog - 0.76) / 0.12));
         const rise = smoothstep((prog - 0.72) / 0.1) * (1 - smoothstep((prog - 0.86) / 0.14));
         const lie = this.fitLie('topple', idle?.topple ?? { roll: 1.25, yH: -0.42, neckPitch: -0.2, tailPitch: -0.2, legs: { '*': [0, 0.4, 0.3] } }, H);
@@ -1539,11 +1542,11 @@ export class CreatureRig implements MonsterRig {
         lieW = Math.max(lieW, down);
         if (idle?.rise && rise > 0) addPose(P, idle.rise, rise);
         const kick = down * (1 - rise);
-        P.legs['*'] = [(P.legs['*']?.[0] ?? 0) + Math.sin(time * 9 + this.seed) * 0.35 * kick, (P.legs['*']?.[1] ?? 0) + 0.15 * kick * (0.5 + 0.5 * Math.sin(time * 7)), P.legs['*']?.[2] ?? 0];
-        P.neckPitch += Math.sin(time * 4.2) * 0.2 * kick;
-        P.jaw += (0.35 + 0.1 * Math.sin(time * 11)) * kick;
+        P.legs['*'] = [(P.legs['*']?.[0] ?? 0) + Math.sin(et * 9) * 0.35 * kick, (P.legs['*']?.[1] ?? 0) + 0.15 * kick * (0.5 + 0.5 * Math.sin(et * 7)), P.legs['*']?.[2] ?? 0];
+        P.neckPitch += Math.sin(et * 4.2) * 0.2 * kick;
+        P.jaw += (0.35 + 0.1 * Math.sin(et * 11)) * kick;
         P.tailWave += 0.3 * kick;
-        P.roll += Math.sin(time * 5.5) * 0.05 * kick * this.toppleSide;
+        P.roll += Math.sin(et * 5.5) * 0.05 * kick * this.toppleSide;
       } else {
         const r = Math.sin(Math.PI * clamp(prog * 1.4, 0, 1));
         const k = m.staggerKind === 'break' || m.staggerKind === 'sever' ? 1.5 : 1;

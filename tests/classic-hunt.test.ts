@@ -621,6 +621,82 @@ describe('反応の契約（#19 の M03・M04。v0.43.0）: 転倒は最後ま�
   });
 });
 
+describe('ほかの種の転倒・気絶の、攻撃を受ける部位の追従（#19 の M03・M07。v0.67.0。D-164）', () => {
+  /** 種を訓練区画に置く（AI は止め、気付いた状態） */
+  const put = (id: string): { sim: Simulation; m: MonsterState } => {
+    const sim = new Simulation(content, baseOptions({ monsterId: id }));
+    const m = sim.monsters[0]!;
+    m.aiEnabled = false;
+    m.aware = true;
+    sim.drainEvents();
+    return { sim, m };
+  };
+  const headOf = (m: MonsterState): { x: number; y: number; z: number }[] => {
+    const hi = m.def.parts.findIndex((p) => p.head);
+    // 体の向き 0 の、体からの位置
+    return monsterShapes(m).filter((s) => s.partIndex === hi).map((s) => ({ x: s.a.x - m.pos.x, y: s.a.y, z: s.a.z - m.pos.z }));
+  };
+  /** 転倒させる（壊れる部位なら先に壊れた扱いにして、破壊の怯みで転倒が出ないことを避ける） */
+  const toppleNow = (sim: Simulation, m: MonsterState): void => {
+    const tp = m.def.parts.findIndex((p) => p.flinch?.topple);
+    if (m.def.parts[tp]!.breakDurability !== null) m.parts[tp]!.broken = true;
+    applyDamageToMonster(m, tp, m.parts[tp]!.flinchThreshold, 'blunt', sim);
+    expect(m.staggerKind, m.def.id).toBe('topple');
+  };
+  const species = (): string[] => [...content.monsters.values()].filter((d) => d.id !== 'monster.training_dummy' && d.id !== 'monster.galdros').map((d) => d.id);
+
+  it('どの種も、転倒・怯み・気絶の表を持つ（転倒する部位の無いキリサーヴは、怯みと気絶だけ）', () => {
+    expect(species()).toHaveLength(19);
+    for (const id of species()) {
+      const d = content.monsters.get(id)!;
+      const st = d.follow!.states;
+      const topples = d.parts.some((p) => p.flinch?.topple);
+      expect(!!st.topple, id).toBe(topples);
+      expect(st.flinch, id).toBeTruthy();
+      expect(st.stun?.ticks, id).toBe(164);
+    }
+  });
+
+  const moved = (a: { x: number; y: number; z: number }, b: { x: number; y: number; z: number }): number => Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
+
+  it('転倒の半ばでは、頭の形が体といっしょに倒れて動き（大型は 0.2m 以上。ヴェリトのほかは低くなる。幼体は 3cm 以上）、起き上がると立った時の位置へ戻る', () => {
+    for (const id of species()) {
+      const d = content.monsters.get(id)!;
+      if (!d.parts.some((p) => p.flinch?.topple)) continue;
+      const { sim, m } = put(id);
+      const stand = headOf(m);
+      toppleNow(sim, m);
+      run(sim, Math.round(m.staggerTotal / 2));
+      const down = headOf(m);
+      const msg = `${id}: 立った時 ${JSON.stringify(stand[0])} 転倒の半ば ${JSON.stringify(down[0])}`;
+      expect(moved(down[0]!, stand[0]!), msg).toBeGreaterThan(d.captureAllowed ? 0.2 : 0.03);
+      // ヴェリトは、羽袋の重い体が横に倒れると、頭が持ち上がる形
+      if (id !== 'monster.verito') expect(down[0]!.y, msg).toBeLessThan(stand[0]!.y);
+      run(sim, m.staggerTicks + 1);
+      expect(m.staggerKind, id).toBeNull();
+      headOf(m).forEach((h, i) => {
+        expect(h.y, id).toBeCloseTo(stand[i]!.y, 6);
+        expect(h.x, id).toBeCloseTo(stand[i]!.x, 6);
+      });
+    }
+  });
+
+  it('大型は、気絶の間も頭の形が倒れた体といっしょに動き（0.2m 以上）、気絶が終わると戻る', () => {
+    for (const id of species()) {
+      const d = content.monsters.get(id)!;
+      if (!d.captureAllowed) continue;
+      const { sim, m } = put(id);
+      const stand = headOf(m);
+      m.ailments.ticks.stun = 300;
+      run(sim, 100);
+      expect(moved(headOf(m)[0]!, stand[0]!), id).toBeGreaterThan(0.2);
+      run(sim, 250);
+      expect(m.ailments.ticks.stun, id).toBe(0);
+      expect(headOf(m)[0]!.y, id).toBeCloseTo(stand[0]!.y, 6);
+    }
+  });
+});
+
 describe('離れる前の牽制（#19 の M05。v0.43.0）', () => {
   /** 弱らせた標的を、狩人と同じエリア 3 に置き、標的が出ていくまで進める。near なら狩人は同じエリアの 28m 先（技は届かない）、でなければ野営地 */
   function untilLeave(near: boolean): { evs: SimEvent[]; m: MonsterState } {
