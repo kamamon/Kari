@@ -8,7 +8,7 @@ import type { FieldAreaDef } from '../data/schemas';
 import { sectorAt, type SceneryArea, type SceneryGate, type Geology } from '../data/fieldScenery';
 import { assembleSceneryMeshes, crownAsset, leafCardAsset, deadwoodAsset, outcropAsset, plantAsset, trunkAsset, type SceneryInstance } from './sceneryAssets';
 import { imageLambert, imageFile, MATERIAL_DIR, type ImageSurface } from './materialImages';
-import { loadEnvTexture, WIND } from './envArt';
+import { loadEnvTexture, WIND, SCENERY_FOLIAGE_FILE } from './envArt';
 import { RepeatWrapping, type Texture } from 'three';
 import { patchNoise } from './noise';
 import { valueNoise3 } from './rockGeo';
@@ -322,7 +322,7 @@ export function buildLandscapeExterior(input:LandscapeInput,s:LandscapeSurface):
   if(cards){
    const leaf=new MeshLambertMaterial({color:p.style==='alpine'?0xd7e0dc:0xffffff,vertexColors:true,side:DoubleSide,alphaTest:.38});leaf.userData.uv=true;leaf.userData.surfaceFile='assets/textures/env/scenery-v2-foliage.svg';
    const leafMesh=new Mesh(cards,leaf);leafMesh.name='field-foliage-cutouts';leafMesh.userData.noMerge=true;leafMesh.visible=false;canopy.add(leafMesh);
-   loadEnvTexture('scenery-v2-foliage.svg',t=>{t.anisotropy=4;},t=>{leaf.map=t;leaf.color.multiplyScalar(1.30);leaf.needsUpdate=true;leafMesh.visible=true;fallback.visible=false;});
+   loadEnvTexture(SCENERY_FOLIAGE_FILE,t=>{t.anisotropy=4;},t=>{leaf.map=t;leaf.color.multiplyScalar(1.30);leaf.needsUpdate=true;leafMesh.visible=true;fallback.visible=false;});
   }
   group.add(canopy);
  }
