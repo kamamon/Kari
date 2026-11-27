@@ -155,6 +155,12 @@ export interface ActionDef {
    * 壁の前で走り続けたり、壁に沿って滑ったりしない
    */
   brake?: { from: number; to: number };
+  /**
+   * 後隙の反撃（v0.73.0。#19 の M02。D-171。モンスターの技）: 後隙の中の from〜to の間、部位 partId が低い所（下の端が 1.3m 以下）でほとんど動かずに止まり、
+   * 技を避けた狩人が斬りに行ける。戦闘の計算は読まない（決まりを tests/creature-openings.test.ts が確かめる。当たりの表示で色を変える）。
+   * 02〜12 の種は tools/monster_moves.py の `open`（npm run monsters:gen の出力）
+   */
+  opening?: { partId: string; from: number; to: number };
 }
 
 /** 移動曲線。keys は [tick, 累積距離m]。controller がこの距離だけ進める。 */

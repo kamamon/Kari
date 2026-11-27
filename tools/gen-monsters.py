@@ -34,6 +34,7 @@ DATA = os.path.join(ROOT, 'public', 'data')
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from monster_lib import A, K, ai, both, hazard, hit, move, r3, track, unit  # noqa: E402
+import monster_lib as ML  # noqa: E402
 import monster_moves as MV  # noqa: E402
 import design15 as D15  # noqa: E402
 
@@ -1196,6 +1197,45 @@ def write(path, text):
         f.write(text)
 
 
+def openings_doc():
+    """後隙の反撃（v0.73.0。D-171）の一覧 docs/monster-openings.md: 大型（足を踏み替える向き直りを持つ種）の攻撃の技ごとに、狙える部位と区間。
+    いま書いた技データ（public/data/actions/）から作る。ガルドロスの技（galdros.json は手で書く。galdros_ext.json は tools/gen-galdros-moves.mjs）も読む。"""
+    rows = ['# 大型の技の後隙に、狙える部位（後隙の反撃）', '',
+            '`npm run monsters:gen` の出力（手で編集しない）。決まりは docs/spec.md の 32.39、検査は tests/creature-openings.test.ts。', '',
+            '- 区間は、技の始めから数えた tick（60 tick = 1 秒）。その間、部位の下の端は 1.6m 以下で、ほとんど動かない。',
+            '- 大技 = その種のいちばん強い一撃の 9 割以上の技（区間は 30 tick 以上。ほかは 20 tick 以上）。',
+            '- 「−」は、隙を作らない技（退きながら当てる技・遠くの相手へ撃つ技）と、ガルドロスの横への体当たり（いまの動きでは、止まる間が短い）。', '']
+    mdir = os.path.join(DATA, 'monsters')
+    for fn in sorted(os.listdir(mdir)):
+        with open(os.path.join(mdir, fn), encoding='utf-8') as f:
+            m = json.load(f)
+        if 'turnSteps' not in m:
+            continue
+        key = fn[:-5]
+        acts = []
+        for af in (f'{key}.json', f'{key}_ext.json'):
+            ap = os.path.join(DATA, 'actions', af)
+            if os.path.exists(ap):
+                with open(ap, encoding='utf-8') as f:
+                    acts += json.load(f)['actions']
+        dmg = lambda a: max([h.get('baseDamage', 0) for h in a['hitWindows']] + [h.get('baseDamage', 0) for h in a.get('hazards', [])] + [0])
+        atk = [a for a in acts if a['hitWindows'] or a.get('hazards')]
+        top = max(dmg(a) for a in atk)
+        pname = {p['id']: p.get('name', p['id']) for p in m['parts']}
+        n = sum(1 for a in atk if a.get('opening'))
+        rows += [f'## {m["name"]}（`{m["id"]}`。{n} / {len(atk)}）', '', '| 技 | 狙える部位 | 区間（tick） | 長さ | 大技 |', '| --- | --- | --- | --- | --- |']
+        for a in atk:
+            o = a.get('opening')
+            name = a['actionId'].split('.')[-1]
+            heavy = '大技' if dmg(a) >= 0.9 * top else ''
+            if o:
+                rows.append(f'| `{name}` | {pname[o["partId"]]}（`{o["partId"]}`） | {o["from"]}〜{o["to"]} | {o["to"] - o["from"]} | {heavy} |')
+            else:
+                rows.append(f'| `{name}` | − | − | − | {heavy} |')
+        rows.append('')
+    return '\n'.join(rows)
+
+
 def smooth_curve(cid, dur, dist, t0, t1):
     """t0〜t1 で dist 進む（なめらかに加速・減速）"""
     keys = [[0, 0]]
@@ -1245,7 +1285,21 @@ def add_jaw(name, anim):
             put(k, 0.05 if i % 2 == 0 else 0.75)
 
 
-def build_moves(key, mid, moves, frame=None):
+def add_opening(mv, a1, dur):
+    """後隙の反撃（v0.73.0。#19 の M02。D-171）: 隙の終わりの tick に、止まる姿勢と同じ姿勢（わずかに戻した形）の鍵を足して、隙の区間（tick）を返す。
+    区間と止まる姿勢は tools/monster_lib.py の opened(...) が決めてある。区間の両端は、部位の追従の表の刻み（6 tick）の上:
+    表は刻みの間をまっすぐつなぐので、刻みの上に鍵が無いと、区間の端で部位が動いて見える。"""
+    part, t0, t1, relax = mv['open']
+    rec = dur - a1
+    keys = mv['anim']['K']
+    k0 = next(k for k in keys if k.get('open'))
+    del k0['open']
+    hold = {'p': 'r', 't': round((t1 - a1) / rec, 5), 'pose': ML._clean({kk: ML.scale({kk: vv}, relax)[kk] for kk, vv in k0['pose'].items()}), 'e': 'lin'}
+    keys.insert(keys.index(k0) + 1, hold)
+    return {'partId': part, 'from': t0, 'to': t1}
+
+
+def build_moves(key, mid, moves, frame=None, parts=()):
     """技の一覧から、技データ・軌道・曲線・AI の選び方・clip・見た目の動きの対応を作る。"""
     actions, tracks, curves, choices, clips, plan_moves = [], [], [], [], [], {}
     for mv in moves:
@@ -1276,6 +1330,14 @@ def build_moves(key, mid, moves, frame=None):
         if mv.get('brake'):
             # 突進の制動（v0.66.0。#19 の M02。ガルドロスと同じ形）: 走る間に前へ進めなくなったら、走る区間の終わりへ進める
             a['brake'] = {'from': mv['brake'][0], 'to': mv['brake'][1]}
+        if mv.get('open'):
+            # 後隙の反撃（v0.73.0。#19 の M02）: 後隙の間に、狙える部位が低い所で止まる区間
+            assert isinstance(mv['open'], tuple) and len(mv['open']) == 4, f'{aid}: 技の一覧を opened(...) に通す'
+            assert not parts or mv['open'][0] in parts, (aid, mv['open'][0], parts)
+            a['opening'] = add_opening(mv, a1, dur)
+        elif parts and (mv['hits'] or mv['hazards']):
+            # 大型（部位を渡された種）の攻撃の技は、隙を作るか、作らないと書いてある
+            assert mv.get('open') is False, f'{aid}: 攻撃の技は open を書く（隙を作らない技は open=False）'
         a['hitWindows'] = mv['hits']
         a['cancelWindows'] = []
         # 体の部位に付けた判定（v0.21.0）: 軌道は npm run monsters:bake が動きから作る。ここでは仮の形を置く
@@ -1335,7 +1397,8 @@ def build_species(spec):
     key = s.key
     mid = f'monster.{key}'
     st = spec['stats']
-    actions, tracks, curves, choices, clips, plan_moves = build_moves(key, mid, spec['moves'](s), spec['frame'])
+    parts = spec['parts'](s)
+    actions, tracks, curves, choices, clips, plan_moves = build_moves(key, mid, spec['moves'](s), spec['frame'], [p['id'] for p in parts])
     roar = f'{mid}.roar'
     # 足を踏み替える向き直り（v0.65.0。#19 の M01。ガルドロスと同じ形）: 正面から faceDeg を外れた相手へは、90° か（backDeg より後ろなら）180° 回る。
     # 大型はどれも 4 つの技（turn_l90・turn_r90・turn_l180・turn_r180）を持つ
@@ -1355,7 +1418,7 @@ def build_species(spec):
         **steps,
         'discover': {'range': st['discover'][0], 'fovDeg': st['discover'][1], 'closeRange': st['discover'][2], 'actionId': roar},
         'rage': {'threshold': st['rage'][0], 'durationTicks': st['rage'][1], 'actionId': roar, 'speedScale': st['rage'][2], 'damageScale': st['rage'][3], 'cooldownScale': st['rage'][4]},
-        'parts': spec['parts'](s),
+        'parts': parts,
         'ai': {'aggroRange': 200, 'cooldownTicks': list(st['cooldown']), 'choices': choices},
     }
     return mdef, actions, tracks, curves, clips, plan_moves
@@ -1650,6 +1713,7 @@ def main():
         out.append(f"  'monster.{mkey}': {json.dumps(p, ensure_ascii=False)},")
     out.append('};')
     write('src/render/creaturePlans.ts', '\n'.join(out) + '\n')
+    write('docs/monster-openings.md', openings_doc())
     print(f'{len(SPECIES)} 種: 技 {sum(len(sp["moves"](sp["sp"])) for sp in SPECIES)}、依頼 {len(quests)}')
     print(f'幼体 {len(JUVENILES)} 種: 技 {sum(len(j["moves"](j["J"])) for j in JUVENILES)}、群れの依頼 {len(herd_quests)}')
     print(f'曲線 {len(all_curves)}、素材 {len(mats)}')

@@ -52,15 +52,86 @@ def hazard(tick, count, spread, radius, warn, active, dmg, reaction, origin, loo
 
 
 def move(name, dur, startup, active, anim, *, side=None, hits=(), tracks=(), hazards=(), curve=None, dirDeg=None, turn=None, sounds=(), vfx=(), slamTrack=None,
-         ai=None, amp=None, bind=(), spinDeg=None, brake=None):
+         ai=None, amp=None, bind=(), spinDeg=None, brake=None, open=None):
     """技 1 つ。startup = 攻撃の始まり、active = 攻撃の終わり（tick）。curve = (距離 m, 始め, 終わり)。anim = A(...)（種ごとの動き）。
     spinDeg = 体ごと回る角度（v0.65.0。足を踏み替える向き直り。+ で左回り。startup 〜 active の間に simulation の向きが回る）。
-    brake = (始め, 終わり)（v0.66.0。突進の制動。#19 の M02）: 走る間（始め〜終わり）に壁・段・岩で前へ進めない tick が 3 つ続くと、終わりへ進める。"""
+    brake = (始め, 終わり)（v0.66.0。突進の制動。#19 の M02）: 走る間（始め〜終わり）に壁・段・岩で前へ進めない tick が 3 つ続くと、終わりへ進める。
+    open = 後隙の反撃（v0.73.0。#19 の M02。D-171）: 後隙の中に、狙える部位が低い所で止まる区間を作る。攻撃の技には必ず書く。
+    種の技の一覧を opened(...) に通すと決まる（書き方と決まりは opened の説明）。'部位' / (部位, 始めの tick, 終わりの tick) / False（隙を作らない）。"""
     assert isinstance(anim, dict) and anim.get('K'), f'{name}: 動きは A(K(...)...) で書く'
     if brake:
         assert curve and curve[1] <= brake[0] < brake[1] <= curve[2] <= dur, f'{name}: 制動の区間は、走る区間の中に置く'
     return dict(name=name, dur=dur, startup=startup, active=active, anim=anim, side=side, hits=list(hits), tracks=list(tracks), hazards=list(hazards), curve=curve,
-                dirDeg=dirDeg, turn=turn, sounds=list(sounds), vfx=list(vfx), slamTrack=slamTrack, ai=ai, amp=amp, bind=list(bind), spinDeg=spinDeg, brake=brake)
+                dirDeg=dirDeg, turn=turn, sounds=list(sounds), vfx=list(vfx), slamTrack=slamTrack, ai=ai, amp=amp, bind=list(bind), spinDeg=spinDeg, brake=brake, open=open)
+
+
+FOLLOW_STEP = 6
+OPEN_TICKS, OPEN_HEAVY_TICKS = 24, 30
+
+
+def move_damage(mv):
+    return max([h.get('baseDamage', 0) for h in mv['hits']] + [h.get('baseDamage', 0) for h in mv['hazards']] + [0])
+
+
+def opened(expose, moves, *, lead=4, back=8):
+    """後隙の反撃（v0.73.0。#19 の M02 の「空振り後の反撃部位」。D-171）: 種の技の一覧に、後隙の「狙える部位が低い所で止まる区間」を付ける。
+    技の open の書き方:
+      '部位'                               区間は自動（始め = 攻撃の終わり + lead tick より後の、最初の 6 の倍数。長さ 24 tick、大技は 30 tick）
+      (部位, 始めの tick, 終わりの tick)     区間を決める（技の始めから数えて、6 の倍数 = 部位の追従の表の刻み）。4 つ目に、終わりの鍵の戻し方（既定 0.94）
+      False                                隙を作らない技（退きながら当てる技など。理由を横に書き、tests/creature-openings.test.ts の NO_OPENING にも書く）
+    大技 = その種のいちばん強い一撃の 9 割以上の技。
+    止まる姿勢:
+      動きに KO(...) があれば、その姿勢（技ごとに書いた形）。その間に、ほかの後隙の鍵は置かない。
+      無ければ、後隙の最初の鍵（無ければ攻撃の最後の鍵）の姿勢に、expose[部位]（種ごとの「その部位を低く出す形」）を上書きした姿勢。
+      後隙の残りの鍵は、区間の後ろへ詰める。
+    生成器が、区間の終わりに同じ姿勢（わずかに戻した形）の鍵を足す。区間の後、技の終わりまで back tick 以上を残す（足りなければ、技の長さをのばす）。"""
+    top = max(move_damage(mv) for mv in moves)
+    for mv in moves:
+        op, name = mv['open'], mv['name']
+        keys = mv['anim']['K']
+        ko = [k for k in keys if k.get('open')]
+        if not op:
+            assert op is False or not (mv['hits'] or mv['hazards']), f'{name}: 攻撃の技は open を書く（隙を作らない技は open=False）'
+            assert not ko, f'{name}: KO(...) は open と一緒に書く'
+            continue
+        a1, dur = mv['active'], mv['dur']
+        rec = dur - a1
+        if isinstance(op, str):
+            op = (op,)
+        part = op[0]
+        t0 = op[1] if len(op) > 1 else -(-(a1 + lead) // FOLLOW_STEP) * FOLLOW_STEP
+        t1 = op[2] if len(op) > 2 else t0 + (OPEN_HEAVY_TICKS if move_damage(mv) >= 0.9 * top else OPEN_TICKS)
+        relax = op[3] if len(op) > 3 else 0.94
+        assert t0 % FOLLOW_STEP == 0 and t1 % FOLLOW_STEP == 0 and a1 < t0 < t1, f'{name}: 隙の区間（{t0}〜{t1}）は、後隙の中の 6 の倍数'
+        assert t1 + back <= dur, f'{name}: 隙（{t0}〜{t1}）の後に戻る間が無い（技の長さ {dur} を {t1 + back} 以上に）'
+        assert all(h['to'] <= t0 for h in mv['hits']), f'{name}: 隙は最後の判定の後'
+        f0, f1 = (t0 - a1) / rec, (t1 - a1) / rec
+        rk = sorted([k for k in keys if k['p'] == 'r' and not k.get('open')], key=lambda k: k['t'])
+        if ko:
+            assert len(ko) == 1, f'{name}: KO(...) は 1 つ'
+            k0 = ko[0]
+            assert all(k['t'] < f0 - 1e-6 or k['t'] > f1 + 1e-6 for k in rk), f'{name}: 隙の間（{t0}〜{t1}）に、ほかの鍵を置かない'
+        else:
+            assert part in expose, f'{name}: 部位 {part} を低く出す形（expose）が無い。KO(...) で書くか、expose に足す'
+            if rk:
+                base, old = rk[0], rk[0]['t']
+                at = keys.index(base)
+                keys.remove(base)
+            else:
+                base, old = [k for k in keys if k['p'] == 's'][-1], 0.0
+                at = len(keys)
+            pose = dict(base['pose'])
+            pose.update(_clean(expose[part]))
+            k0 = {'p': 'r', 't': None, 'open': True, 'pose': pose}
+            if base['p'] == 'r' and base.get('e'):
+                k0['e'] = base['e']
+            keys.insert(at, k0)
+            for k in rk[1:]:
+                k['t'] = round(f1 + (k['t'] - old) / (1 - old) * (1 - f1), 5)
+                assert f1 < k['t'] <= 1, (name, k['t'])
+        k0['t'] = round(f0, 5)
+        mv['open'] = (part, t0, t1, relax)
+    return moves
 
 
 def turns(w, s1, s2, *, slow=0, flags=None, sound='galdros_scrape'):
@@ -128,6 +199,14 @@ def K(p, t, e=None, **pose):
     """鍵の姿勢。p = 'w' / 's' / 'r'、t = 区間の中の位置（0〜1）、e = その鍵へ向かう補間（io・o・i・lin）"""
     assert p in ('w', 's', 'r') and 0 <= t <= 1, (p, t)
     d = {'p': p, 't': t, 'pose': _clean(pose)}
+    if e:
+        d['e'] = e
+    return d
+
+
+def KO(e=None, **pose):
+    """隙で止まる姿勢（v0.73.0。後隙の反撃）。技の open=(部位, 始めの tick, 終わりの tick) の始めの tick に置かれる（位置は opened が決める）"""
+    d = {'p': 'r', 't': None, 'open': True, 'pose': _clean(pose)}
     if e:
         d['e'] = e
     return d

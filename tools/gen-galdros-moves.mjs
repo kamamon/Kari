@@ -27,6 +27,15 @@ const hit = (id, shapeTrack, baseDamage, o = {}) => ({ id, ...(o.from !== undefi
 const snd = (tick, id) => ({ tick, type: 'sound', id });
 const SLAM = (tick) => ({ tick, type: 'vfx', id: 'ground_slam' });
 
+// 後隙の反撃（v0.73.0。#19 の M02。D-171）: 後隙の中で、狙える部位が低い所で止まる区間 [部位, 始め, 終わり]（tick。6 の倍数）。
+// ガルドロスは動きを変えていない: いまの動きで、決まり（tests/creature-openings.test.ts）を満たす区間を測って書いた。
+// 横への体当たり（side_bash_l・side_bash_r）は、止まる間が 12 tick しか無いので、書いていない
+const OPEN = {
+  bite: ['head', 48, 84], head_swing: ['foreleg', 54, 90], double_slam: ['foreleg', 72, 114], stomp: ['foreleg', 42, 78], body_press: ['back', 78, 114],
+  charge_short: ['back', 96, 126], tail_slam: ['tail', 90, 114], tail_slam_short: ['tail', 90, 114], tail_sweep_rev: ['hindleg', 60, 96], tail_sweep_rev_short: ['hindleg', 60, 96],
+  rockfall: ['back', 60, 96], rock_stomp: ['back', 60, 96], rock_fling: ['head', 54, 90],
+};
+
 function action(name, o) {
   const [a0, a1] = o.active;
   const def = {
@@ -41,6 +50,7 @@ function action(name, o) {
     ...(o.track ? { weaponTrack: o.track } : {}),
     ...(o.spin ? { spin: o.spin } : {}),
     ...(o.brake ? { brake: { from: o.brake[0], to: o.brake[1] } } : {}),
+    ...(OPEN[name] ? { opening: { partId: OPEN[name][0], from: OPEN[name][1], to: OPEN[name][2] } } : {}),
   };
   actions.push(def);
   if (!clips.includes(def.clip)) clips.push(def.clip);

@@ -8,7 +8,7 @@
   - 技以外の動き（気付く前・身構え・弱る・怒り・走る・眠る・怯み・転倒と起き上がり・倒れる・しぐさ）も、種ごとに書く。
 値の決まりは tools/monster_lib.py の先頭。数値は机上の値で、人が遊んで確かめていない。
 """
-from monster_lib import A, B, F, K, ai, hazard, hit, idle, lr, move, side_name, track, turns
+from monster_lib import A, B, F, K, KO, ai, hazard, hit, idle, lr, move, opened, side_name, track, turns
 
 # =============================================================================================
 # 02 帆角獣 セルヴァルク（四足軽獣。風）: 細い脚の跳躍と、頭の分割角膜。用心深く、まず横へ跳ぶ。突きは短く繰り返す
@@ -19,7 +19,8 @@ from monster_lib import A, B, F, K, ai, hazard, hit, idle, lr, move, side_name, 
 
 def selvark_moves(s):
     crouch = dict(yH=-0.14, legs={'*': (0, 0.55)})
-    return [
+    # 後隙の反撃（v0.73.0。D-171）: セルヴァルクは、どの技も止まる姿勢を技ごとに書いてある（KO）
+    return opened({}, [
         move('roar', 90, 90, 90, A(
             K('w', 0.55, None, yH=-0.04, neckPitch=-0.25, headPitch=-0.2, crest=-0.3, legs={'F': (0.1, 0.1)}),
             K('w', 1.0, None, pitch=0.12, neckPitch=0.35, headPitch=0.25, crest=0.6, tailPitch=0.3),
@@ -47,9 +48,9 @@ def selvark_moves(s):
             K('w', 1.0, None, yH=-0.15, roll=0.14, headYaw=0.3, legs={'*': (0, 0.5), 'H.S': (0.2, 1.0)}),
             K('s', 0.3, 'o', yH=0.02, roll=-0.22, yaw=0.1, headYaw=0.3, crest=0.6, legs={'H.S': (-0.4, 0.05, 1.1), 'F': (0, 0.6)}),
             K('s', 1.0, None, roll=-0.18, yaw=0.08, headYaw=0.25, crest=0.5, legs={'H.S': (-0.45, 0.0, 1.15), 'F': (0, 0.5)}),
-            K('r', 0.3, 'i', yH=-0.1, roll=-0.05, legs={'*': (0, 0.4)}),
-            K('r', 0.7, None, yH=-0.02), hop=0.28),
-            side=sd, curve=(2.6, 24, 44), dirDeg=90 * sd,
+            KO('i', yH=-0.12, roll=-0.05, pitch=-0.12, neckPitch=-0.6, headPitch=-0.25, neckYaw=0.45, headYaw=0.3, crest=0.3, legs={'*': (0, 0.45)}),
+            K('r', 0.92, None, yH=-0.02), hop=0.28),
+            side=sd, curve=(2.6, 24, 44), dirDeg=90 * sd, open=('head', 48, 72),
             bind=[B(f'selvark_hop_kick_{n}', 'leg:H:S:1', 'leg:H:S:end', 0.42, ext=0.15)],
             hits=[hit('kick', 30, 40, f'selvark_hop_kick_{n}', 20, 'knockdown', cost=25)],
             sounds=[(4, 'galdros_warn'), (28, 'galdros_swing')], ai=ai(0, 4.4, 140, 2.5, minA=35, side=side_name(sd)))),
@@ -58,8 +59,8 @@ def selvark_moves(s):
             K('w', 1.0, None, neckPitch=0.45, headPitch=0.35, pitch=0.14, yH=0.03, crest=1.4, legs={'F': (-0.1, 0.1)}),
             K('s', 0.25, 'o', neckPitch=-0.25, headPitch=-0.2, pitch=-0.1, yH=-0.04, crest=0.6, legs={'F': (0.15, 0)}),
             K('s', 1.0, None, neckPitch=-0.3, headPitch=-0.22, pitch=-0.1, yH=-0.04, crest=0.8),
-            K('r', 0.4, None, neckPitch=-0.28, headPitch=-0.2, pitch=-0.08, crest=0.8),
-            K('r', 0.8, None, crest=0.2)), turn=(30, 90),
+            KO(neckPitch=-0.62, headPitch=-0.3, pitch=-0.14, yH=-0.06, crest=0.3),
+            K('r', 0.93, None, crest=0.1)), turn=(30, 90), open=('head', 72, 96),
              tracks=[track('selvark_gust', 1.5, 6.8, [(52, [0, 2.0, 1.4], [0, -0.17, 1]), (62, [0, 1.9, 1.4], [0, -0.2, 1])])],
              hits=[hit('wind', 52, 62, 'selvark_gust', 12, 'knockdown', cost=30)],
              sounds=[(4, 'beast_cry'), (50, 'gust')], vfx=[(52, 'gust')], ai=ai(3, 9.5, 35, 2, cd=360)),
@@ -68,9 +69,9 @@ def selvark_moves(s):
             K('w', 1.0, None, yH=-0.15, pitch=-0.15, z=-0.05, neckPitch=-0.25, headPitch=0.1, crest=-0.45, legs={'F': (0.25, 0.55), 'H': (-0.15, 0.45)}),
             K('s', 0.4, 'o', yH=-0.06, pitch=-0.25, z=0.12, neckPitch=-0.5, headPitch=-0.25, crest=0.3, legs={'F': (0.6, 0.2), 'H': (-0.6, 0.15)}),
             K('s', 1.0, None, yH=-0.06, pitch=-0.26, z=0.12, neckPitch=-0.52, headPitch=-0.26, crest=0.35, legs={'F': (0.6, 0.15), 'H': (-0.6, 0.1)}),
-            K('r', 0.35, None, yH=-0.05, pitch=-0.2, z=0.08, neckPitch=-0.4, headPitch=-0.2, crest=0.2, legs={'F': (0.4, 0.2), 'H': (-0.4, 0.15)}),
-            K('r', 0.8, None, yH=-0.01, pitch=-0.03)),
-             curve=(2.8, 28, 44), turn=(24, 80),
+            KO(yH=-0.06, pitch=-0.24, z=0.1, neckPitch=-0.52, headPitch=-0.25, crest=0.2, legs={'F': (0.5, 0.18), 'H': (-0.5, 0.12)}),
+            K('r', 0.92, None, yH=-0.01, pitch=-0.03)),
+             curve=(2.8, 28, 44), turn=(24, 80), open=('head', 54, 78),
              bind=[B('selvark_lunge', 'sp:10', 'sp:12', 0.5, ext=0.3)],
              hits=[hit('horn', 34, 44, 'selvark_lunge', 22, 'knockdown', kind='cut', cost=30)],
              sounds=[(4, 'galdros_warn'), (32, 'galdros_swing')], ai=ai(3, 5.4, 30, 2.5)),
@@ -80,7 +81,7 @@ def selvark_moves(s):
             K('s', 1.0, None, yH=0.06, pitch=0.38, neckPitch=0.25, crest=0.6, legs={'F': (0.65, 0.9), 'H': (-0.3, 0.3)}),
             K('r', 0.3, 'i', yH=-0.1, pitch=0.1, legs={'F': (0.2, 0.5), 'H': (0, 0.4)}),
             K('r', 0.65, None, yH=-0.04, pitch=-0.03), hop=0.32),
-             curve=(-4.0, 26, 54),
+             curve=(-4.0, 26, 54), open=False,  # 後ろへ跳び退きながら前脚で払う（離れる技。隙を作らない）
              bind=[B('selvark_back_flip', 'leg:F:L:end', 'leg:F:R:end', 0.55)],
              hits=[hit('fore', 28, 38, 'selvark_back_flip', 18, 'flinch', cost=25)],
              sounds=[(26, 'gust')], ai=ai(0, 2.9, 70, 2, cd=420)),
@@ -90,9 +91,9 @@ def selvark_moves(s):
             K('s', 0.45, None, yH=-0.1, pitch=-0.1, z=0.0, neckPitch=-0.1, headPitch=0.05, crest=-0.3, legs={'F': (0.2, 0.45)}),
             K('s', 0.82, 'o', yH=-0.05, pitch=-0.27, z=0.14, neckPitch=-0.56, headPitch=-0.3, crest=0.4, legs={'F': (0.6, 0.15), 'H': (-0.5, 0.1)}),
             K('s', 1.0, None, yH=-0.05, pitch=-0.27, z=0.14, neckPitch=-0.56, headPitch=-0.3, crest=0.4, legs={'F': (0.6, 0.15), 'H': (-0.5, 0.1)}),
-            K('r', 0.4, None, yH=-0.04, pitch=-0.2, z=0.08, neckPitch=-0.4, headPitch=-0.2, crest=0.25, legs={'F': (0.35, 0.2)}),
-            K('r', 0.85, None, yH=-0.01)),
-             curve=(2.2, 26, 64), turn=(26, 70),
+            KO(yH=-0.05, pitch=-0.25, z=0.12, neckPitch=-0.54, headPitch=-0.28, crest=0.3, legs={'F': (0.5, 0.18), 'H': (-0.4, 0.1)}),
+            K('r', 0.92, None, yH=-0.01)),
+             curve=(2.2, 26, 64), turn=(26, 70), open=('head', 78, 102),
              bind=[B('selvark_double_thrust', 'sp:10', 'sp:12', 0.5, ext=0.3)],
              hits=[hit('horn1', 30, 37, 'selvark_double_thrust', 14, 'flinch', kind='cut', cost=20),
                    hit('horn2', 54, 62, 'selvark_double_thrust', 20, 'knockdown', kind='cut', cost=30)],
@@ -102,8 +103,8 @@ def selvark_moves(s):
             K('w', 1.0, None, pitch=-0.18, yH=-0.06, neckPitch=-0.25, headPitch=-0.15, tailPitch=0.4, legs={'H': (0.3, 0.7)}),
             K('s', 0.4, 'o', pitch=-0.32, yH=0.04, neckPitch=-0.3, headPitch=-0.1, tailPitch=0.7, legs={'H': (-1.1, 0.15), 'F': (-0.1, 0)}),
             K('s', 1.0, None, pitch=-0.3, yH=0.03, neckPitch=-0.28, tailPitch=0.65, legs={'H': (-1.15, 0.1), 'F': (-0.1, 0)}),
-            K('r', 0.3, None, pitch=-0.05, legs={'H': (-0.2, 0.4)}),
-            K('r', 0.7, None, pitch=0.0)),
+            KO(pitch=-0.05, yH=-0.05, tailPitch=-0.4, legs={'H': (-0.2, 0.4)}),
+            K('r', 0.92, None, pitch=0.0)), open=('tail', 54, 78),
              bind=[B('selvark_rear_kick', 'leg:H:L:end', 'leg:H:R:end', 0.5)],
              hits=[hit('hind', 36, 44, 'selvark_rear_kick', 22, 'knockdown', cost=30)],
              sounds=[(4, 'galdros_warn'), (34, 'galdros_swing')], ai=ai(0, 3, 180, 2.5, minA=120)),
@@ -112,8 +113,8 @@ def selvark_moves(s):
             K('w', 1.0, None, yaw=-0.28, spineYaw=-0.22, neckYaw=-0.65, headYaw=-0.32, x=-0.03, crest=0.9, legs={'F.O': (0, 0.3)}),
             K('s', 0.5, 'o', yaw=0.35, spineYaw=0.3, pitch=-0.1, neckYaw=0.8, headYaw=0.35, neckPitch=-0.7, headPitch=-0.2, roll=-0.1, crest=1.1, legs={'F.S': (0, 0.35)}),
             K('s', 1.0, None, yaw=0.45, spineYaw=0.35, pitch=-0.1, neckYaw=0.95, headYaw=0.4, neckPitch=-0.7, headPitch=-0.2, roll=-0.08, crest=1.0),
-            K('r', 0.4, None, yaw=0.3, spineYaw=0.25, neckYaw=0.7, headYaw=0.3, crest=0.6),
-            K('r', 0.85, None, neckYaw=0.1)),
+            KO(yaw=0.4, spineYaw=0.32, pitch=-0.12, yH=-0.04, neckYaw=0.9, headYaw=0.38, neckPitch=-0.72, headPitch=-0.25, roll=-0.06, crest=0.6),
+            K('r', 0.93, None, neckYaw=0.1)), open=('head', 60, 84),
             side=sd, bind=[B(f'selvark_head_sweep_{n}', 'sp:9', 'sp:12', 0.55, ext=0.25)],
             hits=[hit('head', 36, 48, f'selvark_head_sweep_{n}', 18, 'knockdown', cost=25)],
             sounds=[(4, 'galdros_warn'), (34, 'galdros_swing')], ai=ai(0, 2.8, 110, 2.2, minA=25, side=side_name(sd)))),
@@ -122,9 +123,9 @@ def selvark_moves(s):
             K('w', 1.0, None, pitch=0.5, yH=0.1, neckPitch=0.4, headPitch=0.1, crest=0.7, tailPitch=0.3, legs={'F': (0.7, 1.0), 'H': (0.1, 0.1)}),
             K('s', 0.6, 'i', pitch=-0.06, yH=-0.08, neckPitch=-0.2, headPitch=-0.15, crest=0.9, legs={'F': (0.35, 0.0)}),
             K('s', 1.0, None, pitch=-0.08, yH=-0.1, neckPitch=-0.22, headPitch=-0.15, crest=0.9, legs={'F': (0.35, 0.0)}),
-            K('r', 0.3, None, pitch=-0.06, yH=-0.08, neckPitch=-0.15, crest=0.6, legs={'F': (0.3, 0.0)}),
-            K('r', 0.75, None, yH=-0.02)),
-             turn=(30, 70), slamTrack='selvark_stomp',
+            KO(pitch=-0.16, yH=-0.12, neckPitch=-1.0, headPitch=0.3, crest=0.5, legs={'F': (0.32, 0.0)}),
+            K('r', 0.94, None, yH=-0.02)),
+             turn=(30, 70), slamTrack='selvark_stomp', open=('head', 60, 90),
              bind=[B('selvark_stomp', 'leg:F:L:end', 'leg:F:R:end', 0.6)],
              hits=[hit('hooves', 46, 52, 'selvark_stomp', 24, 'knockdown', cost=35)],
              sounds=[(4, 'beast_cry'), (44, 'galdros_swing')], vfx=[(50, 'ground_slam')], ai=ai(0, 3.1, 45, 2.2)),
@@ -133,20 +134,20 @@ def selvark_moves(s):
             K('w', 1.0, None, yaw=-0.4, spineYaw=-0.3, neckPitch=0.2, crest=1.4, yH=-0.06),
             K('s', 0.5, None, yH=0.04, pitch=0.1, crest=1.4, legs={'F': (0.2, 0.6)}),
             K('s', 1.0, None, crest=1.2, yH=0.0),
-            K('r', 0.4, None, crest=0.6, yH=-0.05),
-            K('r', 0.85, None, crest=0.1), spin=1),
+            KO(crest=0.5, yH=-0.07, pitch=-0.12, neckPitch=-0.6, headPitch=-0.3, legs={'*': (0, 0.25)}),
+            K('r', 0.92, None, crest=0.1), spin=1), open=('head', 90, 114),
              tracks=[track('selvark_wind_spin', 2.6, 2.4, [(50, [0, 1.0, -1.2], [0, 0, 1]), (74, [0, 1.0, -1.2], [0, 0, 1])])],
              hits=[hit('wind', 56, 70, 'selvark_wind_spin', 14, 'knockdown', cost=25)],
              sounds=[(4, 'beast_cry'), (48, 'gust'), (60, 'gust')], vfx=[(56, 'wind_ring')], ai=ai(0, 3.5, 180, 1.4, cd=600)),
-        move('charge', 150, 44, 104, A(
+        move('charge', 152, 44, 104, A(
             K('w', 0.3, None, yH=-0.04, neckPitch=-0.25, headPitch=-0.2, crest=-0.4, legs={'F.S': (0.3, 0.7)}),
             K('w', 0.55, 'i', yH=-0.06, neckPitch=-0.3, headPitch=-0.25, crest=-0.5, legs={'F.S': (0.1, 0.0)}),
             K('w', 1.0, None, yH=-0.12, pitch=-0.12, neckPitch=-0.4, headPitch=-0.3, crest=-0.6, legs={'H': (0.2, 0.5)}),
             K('s', 0.12, 'o', yH=-0.04, pitch=-0.1, neckPitch=-0.45, headPitch=-0.3, crest=-0.6),
             K('s', 0.92, None, yH=-0.04, pitch=-0.1, neckPitch=-0.45, headPitch=-0.3, crest=-0.6),
-            K('r', 0.3, None, yH=-0.06, pitch=0.18, neckPitch=0.1, crest=0.3, legs={'F': (0.6, 0.1), 'H': (0.3, 0.2)}),
-            K('r', 0.7, None, pitch=0.03, crest=0.1)),
-             curve=(14.0, 44, 104), turn=(40, 60), brake=(50, 104),
+            KO(yH=-0.07, pitch=0.18, neckPitch=0.1, crest=0.3, tailPitch=-0.5, legs={'F': (0.6, 0.1), 'H': (0.3, 0.25)}),
+            K('r', 0.95, None, pitch=0.03, crest=0.1)),
+             curve=(14.0, 44, 104), turn=(40, 60), brake=(50, 104), open=('tail', 114, 144),
              bind=[B('selvark_charge', 'sp:7', 'sp:12', 0.62, ext=0.25)],
              hits=[hit('body', 44, 104, 'selvark_charge', 26, 'knockdown', cost=40)],
              sounds=[(4, 'beast_cry'), (40, 'galdros_charge')], ai=ai(7, 16.1, 25, 1.6, cd=520, clear=10)),
@@ -156,9 +157,9 @@ def selvark_moves(s):
             K('w', 0.9, None, pitch=0.2, neckPitch=0.2, crest=0.9, legs={'F': (0.8, 0.8), 'H': (-0.2, 0.7)}),
             K('s', 0.4, 'i', pitch=-0.1, yH=-0.1, neckPitch=-0.25, crest=0.9, legs={'F': (0.3, 0.0), 'H': (0, 0.4)}),
             K('s', 1.0, None, pitch=-0.1, yH=-0.12, neckPitch=-0.25, crest=0.8, legs={'F': (0.3, 0.0), 'H': (0, 0.4)}),
-            K('r', 0.4, None, yH=-0.06, neckPitch=-0.1, crest=0.4),
-            K('r', 0.8, None, yH=-0.01), hop=0.45),
-             curve=(6.0, 30, 54), turn=(26, 80), slamTrack='selvark_leap_stomp',
+            KO(yH=-0.11, pitch=-0.12, neckPitch=-0.6, headPitch=-0.3, crest=0.6, legs={'F': (0.3, 0.0), 'H': (0, 0.35)}),
+            K('r', 0.92, None, yH=-0.01), hop=0.45),
+             curve=(6.0, 30, 54), turn=(26, 80), slamTrack='selvark_leap_stomp', open=('head', 72, 102),
              bind=[B('selvark_leap_stomp', 'leg:F:L:end', 'leg:F:R:end', 0.7)],
              hits=[hit('land', 50, 58, 'selvark_leap_stomp', 24, 'knockdown', cost=35)],
              sounds=[(4, 'beast_cry'), (30, 'gust'), (50, 'galdros_swing')], vfx=[(54, 'ground_slam')], ai=ai(5, 8.5, 30, 1.6, cd=360, clear=6)),
@@ -166,7 +167,8 @@ def selvark_moves(s):
             K('w', 1.0, None, tailYaw=-0.8, tailPitch=0.3, yaw=-0.1, spineYaw=-0.1, headYaw=0.3, neckYaw=0.2),
             K('s', 0.6, 'o', tailYaw=1.3, tailPitch=0.1, tailCurl=0.3, yaw=0.25, headYaw=0.3, neckYaw=0.2),
             K('s', 1.0, None, tailYaw=1.5, tailPitch=0.05, tailCurl=0.3, yaw=0.28, headYaw=0.25),
-            K('r', 0.5, None, tailYaw=0.6, yaw=0.1)),
+            KO(tailYaw=1.35, tailPitch=-0.3, tailCurl=0.25, yaw=0.24, yH=-0.03),
+            K('r', 0.93, None, tailYaw=0.2, yaw=0.04)), open=('tail', 48, 72),
             side=sd, bind=[B(f'selvark_tail_whip_{n}', 'sp:3', 'sp:0', 0.35, ext=0.1)],
             hits=[hit('tail', 30, 40, f'selvark_tail_whip_{n}', 16, 'flinch', cost=20)],
             sounds=[(28, 'galdros_swing')], ai=ai(0, 3.6, 180, 1.8, minA=90, side=side_name(sd)))),
@@ -174,7 +176,7 @@ def selvark_moves(s):
         *turns(dict(yH=-0.03, roll=0.02, neckYaw=0.16, headYaw=0.1, tailYaw=-0.1, crest=0.25),
                dict(yH=-0.04, roll=-0.05, spineYaw=0.14, neckYaw=0.3, headYaw=0.18, crest=0.5),
                dict(yH=-0.04, roll=-0.04, spineYaw=0.1, neckYaw=0.2, headYaw=0.1, crest=0.35)),
-    ]
+    ])
 
 
 SELVARK_IDLE = idle(
@@ -212,7 +214,9 @@ SELVARK_IDLE = idle(
 
 def numeradon_moves(s):
     dish_front = s.m(1450, 250)
-    return [
+    # 後隙の反撃（v0.73.0。D-171）: 部位を低く出して止まる形（技の open で使う。技ごとの形は KO で書く）
+    OP = dict(head=dict(neckPitch=-0.3, headPitch=-0.2, pitch=-0.04), sacs=dict(neckPitch=-0.3, headPitch=-0.2, pitch=-0.04), hindleg=dict(yH=-0.05), foreclaw=dict(yH=-0.06))
+    return opened(OP, [
         move('roar', 100, 100, 100, A(
             K('w', 0.6, None, pitch=-0.06, yH=-0.05, neckPitch=-0.15, headPitch=-0.1, dish=-0.3),
             K('w', 1.0, None, pitch=0.1, neckPitch=0.3, headPitch=0.2, dish=0.6, tailPitch=0.2),
@@ -245,7 +249,7 @@ def numeradon_moves(s):
             K('r', 0.4, None, neckPitch=-0.15, headPitch=-0.15, dish=-0.3),
             K('r', 0.8, None, dish=0.0)), turn=(40, 60),
              hazards=[hazard(48, 3, 2.4, 1.6, 42, 8, 18, 'flinch', dish_front, 'mud', peak=4)],
-             sounds=[(4, 'galdros_warn'), (46, 'splash')], ai=ai(6, 18, 45, 2.5, cd=300)),
+             sounds=[(4, 'galdros_warn'), (46, 'splash')], ai=ai(6, 18, 45, 2.5, cd=300), open='head'),
         move('belly_slide', 110, 40, 66, A(
             K('w', 0.6, None, yH=0.06, pitch=0.12, legs={'F': (-0.1, 0.0), 'H': (0.1, 0.0)}),
             K('w', 1.0, None, yH=0.08, pitch=0.15, neckPitch=0.15, dish=0.3),
@@ -255,7 +259,7 @@ def numeradon_moves(s):
             K('r', 0.8, None, yH=-0.04), wiggle=0.1),
              curve=(7.0, 40, 66), bind=[B('numeradon_belly_slide', 'sp:2', 'sp:6', 1.15)],
              hits=[hit('belly', 40, 66, 'numeradon_belly_slide', 26, 'knockdown', cost=40)],
-             sounds=[(4, 'galdros_warn'), (40, 'galdros_charge')], vfx=[(42, 'mud_splash')], ai=ai(5, 9.8, 25, 2, cd=420, clear=8)),
+             sounds=[(4, 'galdros_warn'), (40, 'galdros_charge')], vfx=[(42, 'mud_splash')], ai=ai(5, 9.8, 25, 2, cd=420, clear=8), open='hindleg'),
         *lr(lambda sd, n: move(f'push_{n}', 90, 36, 46, A(
             K('w', 0.6, None, roll=-0.1, twist=-0.06, yaw=-0.08, yH=-0.06, x=-0.02, neckYaw=-0.2, legs={'F.S': (0, 0.4)}),
             K('w', 1.0, None, roll=-0.13, twist=-0.08, yaw=-0.1, yH=-0.08, x=-0.03, neckYaw=-0.22, legs={'F.S': (0, 0.5)}),
@@ -266,7 +270,7 @@ def numeradon_moves(s):
             side=sd, curve=(1.6, 34, 48), dirDeg=90 * sd,
             bind=[B(f'numeradon_push_{n}', 'leg:F:S:0', 'leg:H:S:0', 1.0)],
             hits=[hit('shoulder', 36, 46, f'numeradon_push_{n}', 22, 'knockdown', cost=35)],
-            sounds=[(4, 'galdros_warn'), (34, 'galdros_swing')], ai=ai(0, 3.8, 135, 2.5, minA=40, side=side_name(sd)))),
+            sounds=[(4, 'galdros_warn'), (34, 'galdros_swing')], ai=ai(0, 3.8, 135, 2.5, minA=40, side=side_name(sd)), open='head')),
         move('splash', 80, 30, 40, A(
             K('w', 0.5, None, pitch=0.08, legs={'F.S': (0.4, 0.8)}),
             K('w', 1.0, None, pitch=0.12, neckPitch=0.1, legs={'F.S': (0.6, 0.9), 'F.O': (0.1, 0.2)}),
@@ -275,17 +279,17 @@ def numeradon_moves(s):
             K('r', 0.4, None, legs={'F.S': (0.1, 0.2)}), paddle=1),
              tracks=[track('numeradon_splash', 1.1, 3.6, [(30, [-1.8, 0.4, 3.0], [1, 0, 0]), (40, [-1.8, 0.4, 3.2], [1, 0, 0])])],
              hits=[hit('splash', 30, 40, 'numeradon_splash', 14, 'flinch', cost=20)],
-             sounds=[(28, 'splash')], vfx=[(32, 'mud_splash')], ai=ai(0, 4.6, 60, 3)),
+             sounds=[(28, 'splash')], vfx=[(32, 'mud_splash')], ai=ai(0, 4.6, 60, 3), open='head'),
         move('dish_slam', 110, 48, 56, A(
             K('w', 0.6, None, pitch=0.12, neckPitch=0.45, headPitch=0.35, dish=-0.6, legs={'F': (0.15, 0.3)}),
             K('w', 1.0, None, pitch=0.18, yH=0.04, neckPitch=0.55, headPitch=0.4, dish=-0.8, legs={'F': (0.15, 0.35)}),
             K('s', 0.5, 'i', pitch=-0.12, yH=-0.08, neckPitch=-0.45, headPitch=-0.35, dish=-0.9),
             K('s', 1.0, None, pitch=-0.12, yH=-0.08, neckPitch=-0.45, headPitch=-0.35, dish=-0.9),
-            K('r', 0.4, None, pitch=-0.1, yH=-0.06, neckPitch=-0.35, headPitch=-0.3, dish=-0.6),
-            K('r', 0.8, None, dish=-0.1)), turn=(30, 50), slamTrack='numeradon_dish_slam',
+            KO(pitch=-0.12, yH=-0.08, neckPitch=-0.45, headPitch=-0.35, dish=-0.85),
+            K('r', 0.92, None, dish=-0.1)), turn=(30, 50), slamTrack='numeradon_dish_slam',
              bind=[B('numeradon_dish_slam', 'sp:6', 'sp:9', 0.9, ext=0.2)],
              hits=[hit('dish', 48, 56, 'numeradon_dish_slam', 28, 'knockdown', cost=40)],
-             sounds=[(4, 'galdros_warn'), (46, 'galdros_swing')], vfx=[(54, 'ground_slam'), (54, 'mud_splash')], ai=ai(0, 4.5, 35, 2.5)),
+             sounds=[(4, 'galdros_warn'), (46, 'galdros_swing')], vfx=[(54, 'ground_slam'), (54, 'mud_splash')], ai=ai(0, 4.5, 35, 2.5), open='dish'),
         move('mud_volley', 130, 56, 62, A(
             K('w', 0.35, None, yH=-0.04, neckPitch=-0.3, headPitch=-0.2, dish=-0.5),
             K('w', 0.7, None, neckPitch=0.3, headPitch=0.3, pitch=0.06, dish=1.1),
@@ -295,7 +299,7 @@ def numeradon_moves(s):
             K('r', 0.3, None, neckPitch=-0.2, headPitch=-0.2, dish=-0.4),
             K('r', 0.8, None, dish=0.0), shake=0.02, shakeIn='windup'), turn=(46, 60),
              hazards=[hazard(58, 3, 3.6, 1.6, 44, 8, 16, 'flinch', dish_front, 'mud', peak=5)],
-             sounds=[(4, 'galdros_warn'), (40, 'splash'), (56, 'splash')], ai=ai(7, 20, 50, 1.6, cd=420)),
+             sounds=[(4, 'galdros_warn'), (40, 'splash'), (56, 'splash')], ai=ai(7, 20, 50, 1.6, cd=420), open='head'),
         move('pressure_jet', 120, 52, 64, A(
             K('w', 0.6, None, pitch=0.06, yH=0.03, neckPitch=-0.1, headPitch=0.1, legs={'F': (-0.15, 0.1)}),
             K('w', 1.0, None, pitch=0.1, yH=0.03, z=-0.04, neckPitch=0.05, headPitch=0.15, legs={'F': (-0.15, 0.1)}),
@@ -305,26 +309,26 @@ def numeradon_moves(s):
             K('r', 0.8, None, z=0.0), shake=0.02, shakeIn='all'), turn=(40, 50),
              tracks=[track('numeradon_pressure_jet', 0.75, 6.4, [(52, [0, 1.5, 3.1], [0, -0.12, 1]), (64, [0, 1.4, 3.1], [0, -0.14, 1])])],
              hits=[hit('jet', 52, 64, 'numeradon_pressure_jet', 20, 'knockdown', cost=35)],
-             sounds=[(4, 'galdros_warn'), (50, 'splash'), (58, 'splash')], vfx=[(52, 'water_jet')], ai=ai(4, 10.1, 25, 1.8, cd=400)),
+             sounds=[(4, 'galdros_warn'), (50, 'splash'), (58, 'splash')], vfx=[(52, 'water_jet')], ai=ai(4, 10.1, 25, 1.8, cd=400), open='head'),
         move('tail_slap', 100, 42, 50, A(
             K('w', 0.6, None, pitch=-0.08, yH=-0.03, neckYaw=0.2, tailPitch=0.8, tailCurl=0.3),
             K('w', 1.0, None, pitch=-0.1, yH=-0.03, neckYaw=0.25, tailPitch=1.0, tailCurl=0.4),
             K('s', 0.5, 'i', pitch=0.06, neckYaw=0.2, tailPitch=-0.6, tailCurl=-0.1),
             K('s', 1.0, None, pitch=0.06, tailPitch=-0.6, tailCurl=-0.1),
-            K('r', 0.4, None, tailPitch=-0.4),
-            K('r', 0.8, None, tailPitch=-0.05)),
+            KO(pitch=0.04, tailPitch=-0.12, tailCurl=-0.05),
+            K('r', 0.92, None, tailPitch=-0.05)),
              bind=[B('numeradon_tail_slap', 'sp:2', 'sp:0', 0.55, ext=0.2)],
              hits=[hit('tail', 42, 50, 'numeradon_tail_slap', 22, 'knockdown', cost=30)],
-             sounds=[(4, 'galdros_warn'), (40, 'galdros_swing'), (48, 'splash')], vfx=[(48, 'mud_rear')], ai=ai(0, 3.8, 180, 2.5, minA=130)),
+             sounds=[(4, 'galdros_warn'), (40, 'galdros_swing'), (48, 'splash')], vfx=[(48, 'mud_rear')], ai=ai(0, 3.8, 180, 2.5, minA=130), open='hindleg'),
         *lr(lambda sd, n: move(f'tail_sweep_{n}', 100, 40, 56, A(
             K('w', 1.0, None, tailYaw=-0.7, yaw=-0.15, spineYaw=-0.1, neckYaw=0.3),
             K('s', 0.5, 'o', tailYaw=1.2, yaw=0.35, spineYaw=0.15, neckYaw=0.2),
             K('s', 1.0, None, tailYaw=1.35, yaw=0.4, spineYaw=0.15),
-            K('r', 0.4, None, tailYaw=0.6, yaw=0.2),
-            K('r', 0.8, None, tailYaw=0.1)),
+            KO(tailYaw=1.25, yaw=0.36, spineYaw=0.12),
+            K('r', 0.92, None, tailYaw=0.1)),
             side=sd, bind=[B(f'numeradon_tail_sweep_{n}', 'sp:2', 'sp:0', 0.55, ext=0.15)],
             hits=[hit('tail', 40, 56, f'numeradon_tail_sweep_{n}', 20, 'knockdown', cost=30)],
-            sounds=[(4, 'galdros_warn'), (38, 'galdros_swing')], ai=ai(0, 3.3, 180, 2, minA=70, side=side_name(sd)))),
+            sounds=[(4, 'galdros_warn'), (38, 'galdros_swing')], ai=ai(0, 3.3, 180, 2, minA=70, side=side_name(sd)), open='hindleg')),
         *lr(lambda sd, n: move(f'wallow_{n}', 120, 50, 64, A(
             K('w', 0.6, None, roll=0.15, yH=-0.06, neckYaw=-0.2, legs={'F.O': (0, 0.4), 'H.O': (0, 0.4)}),
             K('w', 1.0, None, roll=0.2, yH=-0.08, neckYaw=-0.2, legs={'F.O': (0, 0.5), 'H.O': (0, 0.5)}),
@@ -336,7 +340,7 @@ def numeradon_moves(s):
             bind=[B(f'numeradon_wallow_{n}', 'leg:F:S:0', 'leg:H:S:0', 1.0)],
             hits=[hit('body', 52, 64, f'numeradon_wallow_{n}', 26, 'knockdown', cost=40)],
             sounds=[(4, 'galdros_warn'), (50, 'galdros_rumble'), (60, 'splash')], vfx=[(60, 'mud_splash')],
-            ai=ai(0, 3.4, 130, 1.6, minA=40, side=side_name(sd), cd=300))),
+            ai=ai(0, 3.4, 130, 1.6, minA=40, side=side_name(sd), cd=300), open='sacs')),
         move('bite', 90, 34, 42, A(
             K('w', 0.7, None, yH=-0.03, z=-0.03, neckPitch=0.2, headPitch=0.2),
             K('w', 1.0, None, yH=-0.03, z=-0.05, neckPitch=0.25, headPitch=0.25),
@@ -346,7 +350,7 @@ def numeradon_moves(s):
             K('r', 0.8, None, z=0.0)),
              curve=(0.8, 30, 42), turn=(26, 60), bind=[B('numeradon_bite', 'sp:6', 'sp:9', 0.6, ext=0.2)],
              hits=[hit('mouth', 34, 42, 'numeradon_bite', 22, 'knockdown', cost=30)],
-             sounds=[(4, 'galdros_warn'), (32, 'galdros_swing')], ai=ai(0, 4.8, 30, 2.5)),
+             sounds=[(4, 'galdros_warn'), (32, 'galdros_swing')], ai=ai(0, 4.8, 30, 2.5), open='head'),
         move('front_slam', 120, 54, 60, A(
             K('w', 0.5, None, pitch=0.3, yH=0.06, neckPitch=0.25, dish=0.4, legs={'F': (0.45, 0.9)}),
             K('w', 1.0, None, pitch=0.45, yH=0.1, neckPitch=0.35, dish=0.6, tailPitch=-0.2, legs={'F': (0.6, 1.0)}),
@@ -356,7 +360,7 @@ def numeradon_moves(s):
             K('r', 0.8, None, yH=-0.02)), turn=(36, 50), slamTrack='numeradon_front_slam',
              bind=[B('numeradon_front_slam', 'leg:F:L:end', 'leg:F:R:end', 0.8)],
              hits=[hit('fore', 54, 60, 'numeradon_front_slam', 28, 'knockdown', cost=40)],
-             sounds=[(4, 'galdros_roar'), (52, 'galdros_swing')], vfx=[(58, 'ground_slam'), (58, 'mud_splash')], ai=ai(0, 3.9, 45, 2, cd=260)),
+             sounds=[(4, 'galdros_roar'), (52, 'galdros_swing')], vfx=[(58, 'ground_slam'), (58, 'mud_splash')], ai=ai(0, 3.9, 45, 2, cd=260), open='foreclaw'),
         move('mud_rain', 150, 60, 68, A(
             K('w', 0.3, None, yH=-0.05, neckPitch=-0.35, headPitch=-0.2, dish=-0.6),
             K('w', 0.7, None, pitch=0.12, neckPitch=0.5, headPitch=0.5, dish=1.2),
@@ -366,23 +370,24 @@ def numeradon_moves(s):
             K('r', 0.4, None, pitch=0.08, neckPitch=0.3, headPitch=0.25, dish=0.0),
             K('r', 0.85, None, neckPitch=0.05)),
              hazards=[hazard(64, 6, 5.0, 1.5, 56, 10, 14, 'flinch', dish_front, 'mud', peak=7)],
-             sounds=[(4, 'galdros_warn'), (24, 'splash'), (62, 'splash')], vfx=[(62, 'mud_up')], ai=ai(0, 20, 180, 1.2, cd=700)),
+             sounds=[(4, 'galdros_warn'), (24, 'splash'), (62, 'splash')], vfx=[(62, 'mud_up')], ai=ai(0, 20, 180, 1.2, cd=700), open=('head', 84, 132)),
         move('charge', 170, 56, 120, A(
             K('w', 0.3, None, neckPitch=-0.2, dish=-0.3, legs={'F.S': (0.4, 0.7)}),
             K('w', 0.55, 'i', neckPitch=-0.22, dish=-0.3, legs={'F.S': (0.1, 0.0)}),
             K('w', 1.0, None, yH=-0.08, pitch=-0.08, neckPitch=-0.25, headPitch=-0.15, dish=-0.4, legs={'H': (0.2, 0.4)}),
             K('s', 0.12, 'o', yH=-0.04, pitch=-0.06, neckPitch=-0.25, headPitch=-0.12, dish=-0.4),
             K('s', 0.9, None, yH=-0.04, pitch=-0.06, neckPitch=-0.25, headPitch=-0.12, dish=-0.4),
-            K('r', 0.3, None, pitch=0.12, yH=-0.03, legs={'F': (0.5, 0.1)}),
-            K('r', 0.7, None, pitch=0.02)),
+            K('r', 0.08, None, pitch=0.1, yH=-0.03, legs={'F': (0.5, 0.1)}),
+            KO(pitch=-0.05, yH=-0.02, neckPitch=-0.2, headPitch=-0.1, dish=-0.2, legs={'F': (0.25, 0.05)}),
+            K('r', 0.94, None, pitch=0.0)),
              curve=(12.0, 56, 120), turn=(50, 50), brake=(62, 120), bind=[B('numeradon_charge', 'sp:5', 'sp:9', 1.0, ext=0.2)],
              hits=[hit('body', 56, 120, 'numeradon_charge', 28, 'knockdown', cost=45)],
-             sounds=[(4, 'galdros_roar'), (52, 'galdros_charge')], ai=ai(7, 16, 25, 1.6, cd=520, clear=10)),
+             sounds=[(4, 'galdros_roar'), (52, 'galdros_charge')], ai=ai(7, 16, 25, 1.6, cd=520, clear=10), open='hindleg'),
         # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 重い体を低く沈め、泥皿を回る向きへ傾けて、ゆっくり踏み替える ----
         *turns(dict(yH=-0.05, roll=0.03, neckYaw=0.1, headYaw=0.08, tailYaw=-0.08, dish=0.1),
                dict(yH=-0.08, roll=-0.06, spineYaw=0.12, neckYaw=0.22, headYaw=0.12, dish=0.22),
                dict(yH=-0.08, roll=-0.05, spineYaw=0.1, neckYaw=0.16, headYaw=0.08, dish=0.14), slow=6),
-    ]
+    ])
 
 
 NUMERADON_IDLE = idle(
@@ -418,7 +423,9 @@ NUMERADON_IDLE = idle(
 
 def bornakel_moves(s):
     bell = [0, 2.3, 2.9]
-    return [
+    # 後隙の反撃（v0.73.0。D-171）: 部位を低く出して止まる形（技の open で使う。技ごとの形は KO で書く）
+    OP = dict(head=dict(neckPitch=-0.3, headPitch=-0.2, pitch=-0.05, yH=-0.03), tail=dict(tailPitch=-0.25), sac_chest=dict(sac=0.9, yH=-0.04))
+    return opened(OP, [
         move('roar', 100, 100, 100, A(
             K('w', 0.6, None, yH=-0.04, neckPitch=-0.1, sac=0.6),
             K('w', 1.0, None, pitch=0.08, neckPitch=0.25, headPitch=0.2, sac=1.0),
@@ -449,7 +456,7 @@ def bornakel_moves(s):
             K('r', 0.8, None, sac=0.0), seq=True, shake=0.025, shakeIn='windup'), turn=(36, 60),
              tracks=[track('bornakel_sound_blast', 1.6, 6.6, [(56, [0, 2.1, 3.0], [0, -0.22, 1]), (70, [0, 2.0, 3.0], [0, -0.25, 1])])],
              hits=[hit('sound', 56, 70, 'bornakel_sound_blast', 10, 'flinch', cost=30, status=('stun', 55))],
-             sounds=[(4, 'galdros_warn'), (54, 'bell_boom')], vfx=[(56, 'sound_wave')], ai=ai(3, 10.9, 35, 2.5, cd=300)),
+             sounds=[(4, 'galdros_warn'), (54, 'bell_boom')], vfx=[(56, 'sound_wave')], ai=ai(3, 10.9, 35, 2.5, cd=300), open='head'),
         *[move(nm, 100, 38, 50, A(
             K('w', 0.6, None, yaw=0.25, twist=0.1, roll=0.05, yH=-0.04, sac=0.6, legs={'F.S': (0, 0.3)}),
             K('w', 1.0, None, yaw=0.3, twist=0.12, roll=0.05, yH=-0.04, sac=0.9, legs={'F.S': (0, 0.3)}),
@@ -460,18 +467,18 @@ def bornakel_moves(s):
             side=sd, curve=(3.0, 34, 52),
             bind=[B(f'bornakel_{nm}', f'own:{own}:C', 'leg:F:S:1', 0.9)],
             hits=[hit('sac', 38, 50, f'bornakel_{nm}', 26, 'knockdown', cost=40)],
-            sounds=[(4, 'galdros_warn'), (36, 'galdros_charge')], ai=ai(0, 5.2, 70, 2.2, side=side_name(sd)))
+            sounds=[(4, 'galdros_warn'), (36, 'galdros_charge')], ai=ai(0, 5.2, 70, 2.2, side=side_name(sd)), open='head')
           for nm, sd, own in (('sac_slam', -1, 'sac1'), ('sac_slam_l', 1, 'sac0'))],
         move('bell_slam', 110, 48, 56, A(
             K('w', 0.6, None, pitch=0.18, neckPitch=0.55, headPitch=0.45, sac=0.4, legs={'F': (0.15, 0.25)}),
             K('w', 1.0, None, pitch=0.22, yH=0.04, neckPitch=0.65, headPitch=0.5, sac=0.5, legs={'F': (0.15, 0.3)}),
             K('s', 0.5, 'i', pitch=-0.16, yH=-0.07, neckPitch=-0.55, headPitch=-0.4, sac=0.2),
             K('s', 1.0, None, pitch=-0.16, yH=-0.07, neckPitch=-0.55, headPitch=-0.4, sac=0.2),
-            K('r', 0.4, None, pitch=-0.12, yH=-0.05, neckPitch=-0.45, headPitch=-0.32),
-            K('r', 0.8, None, neckPitch=-0.05)), turn=(30, 50), slamTrack='bornakel_bell_slam',
+            KO(pitch=-0.14, yH=-0.06, neckPitch=-0.52, headPitch=-0.38, sac=0.1),
+            K('r', 0.92, None, neckPitch=-0.05)), turn=(30, 50), slamTrack='bornakel_bell_slam',
              bind=[B('bornakel_bell_slam', 'sp:6', 'sp:8', 0.75, ext=0.35)],
              hits=[hit('bell', 48, 56, 'bornakel_bell_slam', 28, 'knockdown', cost=40, status=('stun', 35))],
-             sounds=[(4, 'bell_boom'), (46, 'galdros_swing'), (54, 'bell_boom')], vfx=[(54, 'ground_slam')], ai=ai(0, 4.2, 35, 2.5)),
+             sounds=[(4, 'bell_boom'), (46, 'galdros_swing'), (54, 'bell_boom')], vfx=[(54, 'ground_slam')], ai=ai(0, 4.2, 35, 2.5), open='head'),
         move('shiver_step', 90, 36, 46, A(
             K('w', 0.25, None, yH=-0.03, sac=0.6),
             K('w', 0.45, None, yH=-0.02, sac=0.2),
@@ -482,7 +489,7 @@ def bornakel_moves(s):
             K('r', 0.5, None, z=0.02, sac=0.2), shake=0.04, shakeIn='windup'),
              curve=(2.2, 34, 46), bind=[B('bornakel_shiver_step', 'own:sac2:C', 'sp:7', 0.9)],
              hits=[hit('chest', 36, 46, 'bornakel_shiver_step', 18, 'flinch', cost=25, status=('stun', 20))],
-             sounds=[(6, 'bell_boom'), (34, 'galdros_swing')], ai=ai(2, 5.8, 40, 2)),
+             sounds=[(6, 'bell_boom'), (34, 'galdros_swing')], ai=ai(2, 5.8, 40, 2), open='head'),
         *lr(lambda sd, n: move(f'bell_swing_{n}', 100, 40, 52, A(
             K('w', 1.0, None, yaw=-0.18, spineYaw=-0.15, x=-0.03, neckYaw=-0.6, headYaw=-0.3, neckPitch=-0.1, sac=0.4),
             K('s', 0.5, 'o', yaw=0.28, spineYaw=0.2, roll=-0.06, neckYaw=0.75, headYaw=0.35, neckPitch=-0.3, headPitch=-0.15, sac=0.6),
@@ -491,7 +498,7 @@ def bornakel_moves(s):
             K('r', 0.8, None, neckYaw=0.08)),
             side=sd, bind=[B(f'bornakel_bell_swing_{n}', 'sp:6', 'sp:8', 0.75, ext=0.35)],
             hits=[hit('bell', 40, 52, f'bornakel_bell_swing_{n}', 22, 'knockdown', cost=35, status=('stun', 20))],
-            sounds=[(4, 'galdros_warn'), (38, 'galdros_swing'), (46, 'bell_boom')], ai=ai(0, 4.1, 110, 2.2, minA=25, side=side_name(sd)))),
+            sounds=[(4, 'galdros_warn'), (38, 'galdros_swing'), (46, 'bell_boom')], ai=ai(0, 4.1, 110, 2.2, minA=25, side=side_name(sd)), open='head')),
         move('triple_boom', 150, 50, 92, A(
             K('w', 0.6, None, neckPitch=0.2, headPitch=0.15, sac=1.0),
             K('w', 1.0, None, neckPitch=0.25, headPitch=0.2, sac=1.2),
@@ -509,7 +516,7 @@ def bornakel_moves(s):
                    hit('sound2', 66, 72, 'bornakel_boom2', 10, 'flinch', cost=25, status=('stun', 25)),
                    hit('sound3', 82, 90, 'bornakel_boom3', 12, 'knockdown', cost=30, status=('stun', 35))],
              sounds=[(4, 'galdros_warn'), (50, 'bell_boom'), (66, 'bell_boom'), (82, 'bell_boom')], vfx=[(50, 'sound_wave'), (66, 'sound_wave'), (82, 'sound_wave')],
-             ai=ai(3, 10, 35, 1.4, cd=600)),
+             ai=ai(3, 10, 35, 1.4, cd=600), open='head'),
         move('resonant_stomp', 130, 56, 64, A(
             K('w', 0.5, None, pitch=0.32, yH=0.05, sac=0.6, legs={'F': (0.45, 0.9)}),
             K('w', 1.0, None, pitch=0.45, yH=0.08, neckPitch=0.3, sac=1.0, legs={'F': (0.6, 1.0)}),
@@ -521,7 +528,7 @@ def bornakel_moves(s):
              tracks=[track('bornakel_stomp_ring', 2.6, 1.6, [(58, [0, 0.6, 0.6], [0, 0, 1])])],
              hits=[hit('fore', 56, 62, 'bornakel_resonant_stomp', 20, 'knockdown', cost=35),
                    hit('ring', 58, 64, 'bornakel_stomp_ring', 8, 'flinch', cost=20, status=('stun', 30))],
-             sounds=[(4, 'bell_boom'), (54, 'galdros_swing'), (58, 'bell_boom')], vfx=[(58, 'ground_slam'), (58, 'sound_ring')], ai=ai(0, 4.5, 60, 1.8, cd=360)),
+             sounds=[(4, 'bell_boom'), (54, 'galdros_swing'), (58, 'bell_boom')], vfx=[(58, 'ground_slam'), (58, 'sound_ring')], ai=ai(0, 4.5, 60, 1.8, cd=360), open='sac_chest'),
         move('rump_bump', 100, 40, 48, A(
             K('w', 1.0, None, yH=-0.06, pitch=0.1, neckYaw=0.25, legs={'H': (0.3, 0.4)}),
             K('s', 0.5, 'o', pitch=-0.12, z=-0.08, neckYaw=0.2, legs={'H': (-0.3, 0.1)}),
@@ -529,7 +536,7 @@ def bornakel_moves(s):
             K('r', 0.5, None, z=-0.03, pitch=-0.04)),
              curve=(-1.2, 36, 50), bind=[B('bornakel_rump_bump', 'sp:2', 'sp:0', 1.0, ext=0.2)],
              hits=[hit('rump', 40, 48, 'bornakel_rump_bump', 22, 'knockdown', cost=30)],
-             sounds=[(4, 'galdros_warn'), (38, 'galdros_swing')], ai=ai(0, 4.2, 180, 2.5, minA=120)),
+             sounds=[(4, 'galdros_warn'), (38, 'galdros_swing')], ai=ai(0, 4.2, 180, 2.5, minA=120), open='tail'),
         move('chest_ram', 130, 46, 84, A(
             K('w', 0.6, None, yH=-0.06, pitch=-0.05, sac=0.8, legs={'F.S': (0.3, 0.6)}),
             K('w', 1.0, None, yH=-0.1, pitch=-0.08, neckPitch=0.15, sac=1.0),
@@ -539,7 +546,7 @@ def bornakel_moves(s):
             K('r', 0.7, None, pitch=0.02, sac=0.1)),
              curve=(8.0, 46, 84), turn=(40, 50), bind=[B('bornakel_chest_ram', 'own:sac2:C', 'sp:7', 1.0)],
              hits=[hit('chest', 46, 84, 'bornakel_chest_ram', 26, 'knockdown', cost=40, status=('stun', 25))],
-             sounds=[(4, 'bell_boom'), (44, 'galdros_charge')], ai=ai(6, 11.3, 25, 1.6, cd=420, clear=8)),
+             sounds=[(4, 'bell_boom'), (44, 'galdros_charge')], ai=ai(6, 11.3, 25, 1.6, cd=420, clear=8), open='tail'),
         move('sonic_ring', 140, 62, 76, A(
             K('w', 0.4, None, yH=-0.06, sac=0.6, legs={'*': (0, 0.3)}),
             K('w', 0.8, None, yH=-0.08, sac=1.4, legs={'*': (0, 0.35)}),
@@ -549,7 +556,7 @@ def bornakel_moves(s):
             K('r', 0.4, None, sac=0.0, neckPitch=0.1), shake=0.035, shakeIn='windup'),
              tracks=[track('bornakel_sonic_ring', 3.2, 2.0, [(62, [0, 1.0, -0.6], [0, 0, 1])])],
              hits=[hit('ring', 62, 76, 'bornakel_sonic_ring', 10, 'flinch', cost=25, status=('stun', 45))],
-             sounds=[(4, 'bell_boom'), (60, 'bell_boom')], vfx=[(62, 'sound_ring')], ai=ai(0, 4, 180, 1.2, cd=640)),
+             sounds=[(4, 'bell_boom'), (60, 'bell_boom')], vfx=[(62, 'sound_ring')], ai=ai(0, 4, 180, 1.2, cd=640), open='head'),
         move('tap_line', 140, 60, 66, A(
             K('w', 0.2, 'i', neckPitch=-0.35, headPitch=-0.3),
             K('w', 0.35, None, neckPitch=0.1),
@@ -559,7 +566,7 @@ def bornakel_moves(s):
             K('s', 1.0, None, neckPitch=-0.45, headPitch=-0.35, pitch=-0.05),
             K('r', 0.5, None, neckPitch=-0.15)), turn=(40, 50),
              hazards=[hazard(62, 5, 0.5, 1.2, 30, 8, 16, 'flinch', [0, 0.3, 3.0], 'rock', peak=2, pattern='line', status=('stun', 20))],
-             sounds=[(12, 'bell_boom'), (33, 'bell_boom'), (60, 'bell_boom')], ai=ai(5, 16, 40, 1.4, cd=420)),
+             sounds=[(12, 'bell_boom'), (33, 'bell_boom'), (60, 'bell_boom')], ai=ai(5, 16, 40, 1.4, cd=420), open='head'),
         move('scoop', 90, 34, 42, A(
             K('w', 1.0, None, yH=-0.06, pitch=-0.06, neckPitch=-0.4, headPitch=-0.3),
             K('s', 0.5, 'o', yH=0.03, pitch=0.1, neckPitch=0.45, headPitch=0.35),
@@ -567,7 +574,7 @@ def bornakel_moves(s):
             K('r', 0.5, None, neckPitch=0.15)),
              turn=(26, 60), bind=[B('bornakel_scoop', 'sp:6', 'sp:8', 0.7, ext=0.3)],
              hits=[hit('bell', 34, 42, 'bornakel_scoop', 22, 'knockdown', cost=30)],
-             sounds=[(4, 'galdros_warn'), (32, 'galdros_swing')], ai=ai(0, 4.1, 35, 2.5)),
+             sounds=[(4, 'galdros_warn'), (32, 'galdros_swing')], ai=ai(0, 4.1, 35, 2.5), open='sac_chest'),
         move('charge', 180, 60, 124, A(
             K('w', 0.35, None, neckPitch=-0.2, sac=0.5, legs={'F.S': (0.35, 0.7)}),
             K('w', 0.55, 'i', neckPitch=-0.25, sac=0.3, legs={'F.S': (0.1, 0.0)}),
@@ -578,12 +585,12 @@ def bornakel_moves(s):
             K('r', 0.7, None, pitch=0.02)),
              curve=(13.0, 60, 124), turn=(54, 50), brake=(66, 124), bind=[B('bornakel_charge', 'sp:5', 'sp:8', 0.95, ext=0.25)],
              hits=[hit('body', 60, 124, 'bornakel_charge', 28, 'knockdown', cost=45)],
-             sounds=[(4, 'bell_boom'), (56, 'galdros_charge')], ai=ai(8, 16.5, 25, 1.4, cd=560, clear=11)),
+             sounds=[(4, 'bell_boom'), (56, 'galdros_charge')], ai=ai(8, 16.5, 25, 1.4, cd=560, clear=11), open='tail'),
         # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 頭の鐘を下げたまま肩を入れ、嚢を揺らして重く踏み替える ----
         *turns(dict(yH=-0.05, roll=0.03, neckPitch=-0.08, neckYaw=0.1, headYaw=0.06, tailYaw=-0.08, sac=0.1),
                dict(yH=-0.07, roll=-0.06, neckPitch=-0.12, spineYaw=0.12, neckYaw=0.22, headYaw=0.1, sac=0.26),
                dict(yH=-0.07, roll=-0.05, neckPitch=-0.1, spineYaw=0.1, neckYaw=0.16, headYaw=0.08, sac=0.12), slow=6),
-    ]
+    ])
 
 
 BORNAKEL_IDLE = idle(
@@ -618,7 +625,9 @@ BORNAKEL_IDLE = idle(
 
 
 def ashreia_moves(s):
-    return [
+    # 後隙の反撃（v0.73.0。D-171）: 部位を低く出して止まる形（技の open で使う。技ごとの形は KO で書く）
+    OP = dict(crest=dict(pitch=-0.32, yH=-0.08, neckPitch=-0.95, headPitch=-0.1), tail=dict(tailPitch=0.0), tuft_l=dict(yH=-0.05), tuft_r=dict(yH=-0.05))
+    return opened(OP, [
         move('roar', 90, 90, 90, A(
             K('w', 0.6, None, yH=-0.05, neckPitch=-0.3, headPitch=-0.2, wing=0.2),
             K('w', 1.0, None, pitch=0.1, neckPitch=0.3, headPitch=0.3, wing=0.8, tailPitch=0.2),
@@ -649,7 +658,7 @@ def ashreia_moves(s):
             K('r', 0.8, None, wing=0.1)), turn=(36, 70),
              tracks=[track('ashreia_ash_curtain', 1.3, 5.2, [(54, [-2.6, 1.2, 3.0], [1, 0, 0]), (74, [-2.6, 1.1, 3.4], [1, 0, 0])])],
              hits=[hit('ash', 54, 74, 'ashreia_ash_curtain', 6, 'flinch', cost=15, status=('sleep', 100))],
-             sounds=[(4, 'bird_screech'), (52, 'gust')], vfx=[(54, 'ash_cloud')], ai=ai(2, 5.6, 40, 2.5, cd=360)),
+             sounds=[(4, 'bird_screech'), (52, 'gust')], vfx=[(54, 'ash_cloud')], ai=ai(2, 5.6, 40, 2.5, cd=360), open='crest'),
         move('beak_thrust', 80, 32, 40, A(
             K('w', 0.7, None, yH=-0.06, pitch=-0.1, z=-0.06, neckPitch=-0.5, headPitch=0.55),
             K('w', 1.0, None, yH=-0.08, pitch=-0.12, z=-0.08, neckPitch=-0.6, headPitch=0.65),
@@ -659,7 +668,7 @@ def ashreia_moves(s):
             K('r', 0.8, None, pitch=-0.03)),
              curve=(1.0, 28, 40), turn=(22, 90), bind=[B('ashreia_beak_thrust', 'sp:8', 'sp:11', 0.35, ext=0.2)],
              hits=[hit('beak', 32, 40, 'ashreia_beak_thrust', 20, 'flinch', kind='cut', cost=25)],
-             sounds=[(30, 'galdros_swing')], ai=ai(0, 3.1, 30, 3)),
+             sounds=[(30, 'galdros_swing')], ai=ai(0, 3.1, 30, 3), open='crest'),
         move('glide', 110, 40, 68, A(
             K('w', 0.7, None, yH=-0.18, pitch=-0.06, wing=0.6, legs={'B': (0, 0.7)}),
             K('w', 1.0, None, yH=-0.2, pitch=-0.06, wing=0.8, legs={'B': (0, 0.75)}),
@@ -669,7 +678,7 @@ def ashreia_moves(s):
             K('r', 0.7, None, yH=-0.02), hop=0.12),
              curve=(8.0, 40, 68), bind=[B('ashreia_glide', 'sp:3', 'sp:6', 0.95)],
              hits=[hit('body', 40, 68, 'ashreia_glide', 22, 'knockdown', cost=35)],
-             sounds=[(4, 'bird_screech'), (40, 'gust')], ai=ai(6, 9.6, 25, 2, cd=420, clear=9)),
+             sounds=[(4, 'bird_screech'), (40, 'gust')], ai=ai(6, 9.6, 25, 2, cd=420, clear=9), open='tail'),
         *lr(lambda sd, n: move(f'wing_sweep_{n}', 90, 34, 44, A(
             K('w', 1.0, None, yaw=-0.2, roll=0.06, neckYaw=-0.2, wing=0.2, wingS=1.0),
             K('s', 0.5, 'o', yaw=0.4, roll=-0.08, neckYaw=0.1, wing=0.1, wingS=0.7),
@@ -678,7 +687,7 @@ def ashreia_moves(s):
             K('r', 0.8, None, yaw=0.05)),
             side=sd, bind=[B(f'ashreia_wing_sweep_{n}', 'own:wing:S', 'tip:wing:S', 0.55, ext=0.2)],
             hits=[hit('wing', 34, 44, f'ashreia_wing_sweep_{n}', 14, 'flinch', cost=20, status=('sleep', 40))],
-            sounds=[(32, 'gust')], ai=ai(0, 2.8, 150, 2.5, minA=40, side=side_name(sd)))),
+            sounds=[(32, 'gust')], ai=ai(0, 2.8, 150, 2.5, minA=40, side=side_name(sd)), open=f'tuft_{n}')),
         move('peck_combo', 120, 30, 78, A(
             K('w', 1.0, None, z=-0.05, neckPitch=0.3, headPitch=0.3),
             K('s', 0.08, 'o', z=0.08, yH=-0.06, pitch=-0.38, neckPitch=-1.0, headPitch=-0.3),
@@ -693,7 +702,7 @@ def ashreia_moves(s):
              hits=[hit('peck1', 30, 36, 'ashreia_peck_combo', 8, 'flinch', kind='cut', cost=12),
                    hit('peck2', 48, 54, 'ashreia_peck_combo', 8, 'flinch', kind='cut', cost=12),
                    hit('peck3', 68, 76, 'ashreia_peck_combo', 14, 'flinch', kind='cut', cost=20)],
-             sounds=[(28, 'galdros_swing'), (46, 'galdros_swing'), (66, 'galdros_swing')], ai=ai(0, 3.5, 35, 2.2, cd=240)),
+             sounds=[(28, 'galdros_swing'), (46, 'galdros_swing'), (66, 'galdros_swing')], ai=ai(0, 3.5, 35, 2.2, cd=240), open='crest'),
         *lr(lambda sd, n: move(f'neck_whip_{n}', 96, 36, 48, A(
             K('w', 1.0, None, yaw=-0.15, neckYaw=-0.8, headYaw=-0.3, neckPitch=-0.2, wing=0.3),
             K('s', 0.5, 'o', yaw=0.25, pitch=-0.4, yH=-0.08, neckYaw=0.9, headYaw=0.35, neckPitch=-1.2, headPitch=-0.1, wingS=0.3),
@@ -702,7 +711,7 @@ def ashreia_moves(s):
             K('r', 0.8, None, neckYaw=0.1)),
             side=sd, bind=[B(f'ashreia_neck_whip_{n}', 'sp:6', 'sp:11', 0.4, ext=0.15)],
             hits=[hit('neck', 36, 48, f'ashreia_neck_whip_{n}', 16, 'knockdown', cost=25)],
-            sounds=[(4, 'bird_screech'), (34, 'galdros_swing')], ai=ai(0, 2.1, 120, 2.2, minA=20, side=side_name(sd)))),
+            sounds=[(4, 'bird_screech'), (34, 'galdros_swing')], ai=ai(0, 2.1, 120, 2.2, minA=20, side=side_name(sd)), open='crest')),
         move('stomp_kick', 96, 40, 46, A(
             K('w', 0.6, None, pitch=0.1, roll=-0.05, neckPitch=0.15, wing=0.4, legs={'B.S': (0.6, 1.0)}),
             K('w', 1.0, None, pitch=0.14, roll=-0.05, neckPitch=0.15, wing=0.6, legs={'B.S': (0.8, 1.1)}),
@@ -712,7 +721,7 @@ def ashreia_moves(s):
             K('r', 0.8, None, legs={'B.S': (0.05, 0.0)})),
              turn=(30, 80), slamTrack='ashreia_stomp_kick', bind=[B('ashreia_stomp_kick', 'leg:B:S:2', 'leg:B:S:end', 0.4, ext=0.2)],
              hits=[hit('talon', 40, 46, 'ashreia_stomp_kick', 22, 'knockdown', kind='cut', cost=30)],
-             sounds=[(4, 'bird_screech'), (38, 'galdros_swing')], vfx=[(44, 'ground_slam')], ai=ai(0, 2, 40, 2.5)),
+             sounds=[(4, 'bird_screech'), (38, 'galdros_swing')], vfx=[(44, 'ground_slam')], ai=ai(0, 2, 40, 2.5), open='crest'),
         move('leap_dive', 130, 56, 64, A(
             K('w', 0.4, None, yH=-0.2, wing=0.6, legs={'B': (0, 0.8)}),
             K('w', 0.55, 'o', yH=0.05, pitch=0.15, wing=1.4, legs={'B': (0.3, 0.9)}),
@@ -723,8 +732,8 @@ def ashreia_moves(s):
             K('r', 0.8, None, yH=-0.01), hop=0.6),
              curve=(6.5, 30, 58), turn=(28, 80), bind=[B('ashreia_leap_dive', 'leg:B:L:end', 'leg:B:R:end', 0.7)],
              hits=[hit('talons', 56, 64, 'ashreia_leap_dive', 24, 'knockdown', kind='cut', cost=35)],
-             sounds=[(4, 'bird_screech'), (30, 'gust'), (54, 'galdros_swing')], vfx=[(60, 'dust_ring')], ai=ai(5, 7.9, 30, 1.6, cd=400, clear=6)),
-        move('ash_burst', 130, 56, 76, A(
+             sounds=[(4, 'bird_screech'), (30, 'gust'), (54, 'galdros_swing')], vfx=[(60, 'dust_ring')], ai=ai(5, 7.9, 30, 1.6, cd=400, clear=6), open='crest'),
+        move('ash_burst', 142, 56, 76, A(
             K('w', 0.4, None, yH=-0.08, wing=0.8),
             K('w', 1.0, None, yH=-0.1, wing=1.3),
             K('s', 0.2, 'o', yH=0.02, pitch=0.08, neckPitch=0.3, wing=1.5),
@@ -732,7 +741,7 @@ def ashreia_moves(s):
             K('r', 0.4, None, wing=0.4), shake=0.04, shakeIn='windup'),
              tracks=[track('ashreia_ash_burst', 3.0, 1.6, [(56, [0, 1.0, -0.8], [0, 0, 1])])],
              hits=[hit('ash', 58, 76, 'ashreia_ash_burst', 6, 'flinch', cost=15, status=('sleep', 60))],
-             sounds=[(4, 'bird_screech'), (54, 'gust')], vfx=[(58, 'ash_ring')], ai=ai(0, 4, 180, 1.2, cd=600)),
+             sounds=[(4, 'bird_screech'), (54, 'gust')], vfx=[(58, 'ash_ring')], ai=ai(0, 4, 180, 1.2, cd=600), open=('crest', 90, 132)),
         move('tail_fan', 100, 40, 54, A(
             K('w', 1.0, None, yaw=-0.2, tailYaw=-0.6, tailPitch=0.3, wing=0.3, neckYaw=0.3),
             K('s', 0.5, 'o', yaw=0.35, tailYaw=1.1, tailPitch=0.1, wing=0.3),
@@ -741,7 +750,7 @@ def ashreia_moves(s):
             K('r', 0.8, None, tailYaw=0.05)),
              bind=[B('ashreia_tail_fan', 'sp:3', 'sp:0', 0.6, ext=0.2)],
              hits=[hit('tail', 40, 54, 'ashreia_tail_fan', 14, 'flinch', cost=20, status=('sleep', 30))],
-             sounds=[(4, 'bird_screech'), (38, 'gust')], ai=ai(0, 3.9, 180, 2, minA=100)),
+             sounds=[(4, 'bird_screech'), (38, 'gust')], ai=ai(0, 3.9, 180, 2, minA=100), open='tail'),
         move('wing_clap', 100, 42, 50, A(
             K('w', 1.0, None, pitch=0.12, yH=0.03, neckPitch=0.25, wing=1.3),
             K('s', 0.5, 'i', pitch=-0.12, neckPitch=-0.15, wing=-0.1),
@@ -750,7 +759,7 @@ def ashreia_moves(s):
             K('r', 0.8, None, wing=0.0)),
              turn=(30, 70), bind=[B('ashreia_wing_clap', 'tip:wing:L', 'tip:wing:R', 0.6)],
              hits=[hit('wings', 42, 50, 'ashreia_wing_clap', 12, 'flinch', cost=20, status=('sleep', 50))],
-             sounds=[(4, 'bird_screech'), (44, 'gust')], vfx=[(46, 'ash_cloud')], ai=ai(0, 2.8, 40, 2)),
+             sounds=[(4, 'bird_screech'), (44, 'gust')], vfx=[(46, 'ash_cloud')], ai=ai(0, 2.8, 40, 2), open='tuft_l'),
         move('ash_rain', 150, 60, 80, A(
             K('w', 0.5, None, neckPitch=0.3, wing=1.0),
             K('w', 1.0, None, pitch=0.1, neckPitch=0.35, wing=1.4),
@@ -761,7 +770,7 @@ def ashreia_moves(s):
             K('s', 1.0, None, neckPitch=0.2, wing=0.4),
             K('r', 0.5, None, wing=0.1)),
              hazards=[hazard(66, 5, 4.0, 1.4, 50, 24, 4, 'flinch', [0, 3.0, 0], 'ash', peak=4, status=('sleep', 45))],
-             sounds=[(4, 'bird_screech'), (60, 'gust'), (72, 'gust')], vfx=[(62, 'ash_ring')], ai=ai(6, 18, 60, 1.2, cd=600)),
+             sounds=[(4, 'bird_screech'), (60, 'gust'), (72, 'gust')], vfx=[(62, 'ash_ring')], ai=ai(6, 18, 60, 1.2, cd=600), open='crest'),
         move('wing_spin', 120, 46, 66, A(
             K('w', 1.0, None, yaw=-0.3, wing=1.1, legs={'B.S': (0, 0.5)}),
             K('s', 0.5, None, yH=0.03, wing=1.2),
@@ -769,12 +778,12 @@ def ashreia_moves(s):
             K('r', 0.4, None, wing=0.4), spin=1),
              bind=[B('ashreia_wing_spin', 'tip:wing:L', 'tip:wing:R', 0.55)],
              hits=[hit('wings', 46, 66, 'ashreia_wing_spin', 14, 'flinch', cost=20, status=('sleep', 30))],
-             sounds=[(4, 'bird_screech'), (44, 'gust'), (56, 'gust')], ai=ai(0, 2.6, 180, 1.3, cd=420)),
+             sounds=[(4, 'bird_screech'), (44, 'gust'), (56, 'gust')], ai=ai(0, 2.6, 180, 1.3, cd=420), open='tail'),
         # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 長い首を大きく先に回し、帷羽を少し開いて釣り合いを取る。2 本の脚は描画が踏み替える ----
         *turns(dict(yH=-0.04, roll=0.02, neckPitch=0.05, neckYaw=0.22, headYaw=0.15, tailYaw=-0.1, wing=0.1),
                dict(yH=-0.04, roll=-0.06, spineYaw=0.12, neckYaw=0.42, headYaw=0.2, wing=0.32),
                dict(yH=-0.03, roll=-0.05, spineYaw=0.08, neckYaw=0.28, headYaw=0.12, wing=0.2), slow=-4),
-    ]
+    ])
 
 
 ASHREIA_IDLE = idle(
@@ -810,7 +819,9 @@ ASHREIA_IDLE = idle(
 
 
 def lumisca_moves(s):
-    return [
+    # 後隙の反撃（v0.73.0。D-171）: 部位を低く出して止まる形（技の open で使う。技ごとの形は KO で書く）
+    OP = dict(head=dict(pitch=-0.25, yH=-0.06, neckPitch=-0.8, headPitch=-0.1), tail_tip=dict(tailPitch=-0.1))
+    return opened(OP, [
         move('roar', 90, 90, 90, A(
             K('w', 0.6, None, yH=-0.05, neckPitch=-0.2, tailPitch=0.2, glow=0.5),
             K('w', 1.0, None, pitch=0.1, neckPitch=0.3, headPitch=0.25, wing=0.5, tailPitch=0.6, glow=1.2),
@@ -843,7 +854,7 @@ def lumisca_moves(s):
             K('r', 0.4, None, tailPitch=-0.2, glow=0.8),
             K('r', 0.8, None, glow=0.2)), turn=(40, 70),
              hazards=[hazard(60, 6, 0.3, 1.1, 30, 10, 18, 'flinch', [0, 0.2, 1.2], 'spark', peak=0, pattern='line')],
-             sounds=[(6, 'zap'), (58, 'zap')], vfx=[(60, 'spark_rear')], ai=ai(4, 16, 45, 2.5, cd=360)),
+             sounds=[(6, 'zap'), (58, 'zap')], vfx=[(60, 'spark_rear')], ai=ai(4, 16, 45, 2.5, cd=360), open='head'),
         move('kick', 80, 30, 38, A(
             K('w', 0.7, None, pitch=0.08, roll=0.04, wing=0.3, legs={'B.S': (-0.5, 1.0)}),
             K('w', 1.0, None, pitch=0.1, roll=0.04, wing=0.3, legs={'B.S': (-0.6, 1.1)}),
@@ -853,16 +864,16 @@ def lumisca_moves(s):
             K('r', 0.8, None, legs={'B.S': (0.05, 0.05)})),
              side=1, curve=(0.8, 26, 38), turn=(20, 90), bind=[B('lumisca_kick', 'leg:B:S:2', 'leg:B:S:end', 0.4, ext=0.25)],
              hits=[hit('kick', 30, 38, 'lumisca_kick', 22, 'knockdown', cost=30)],
-             sounds=[(28, 'galdros_swing')], ai=ai(0, 3.1, 35, 3)),
+             sounds=[(28, 'galdros_swing')], ai=ai(0, 3.1, 35, 3), open='head'),
         *lr(lambda sd, n: move(f'tail_sweep_{n}', 100, 40, 54, A(
             K('w', 1.0, None, yaw=-0.2, spineYaw=-0.15, neckYaw=0.4, tailYaw=-0.9, glow=0.8),
             K('s', 0.5, 'o', yaw=0.45, spineYaw=0.2, neckYaw=0.2, tailYaw=1.2, glow=1.2),
             K('s', 1.0, None, yaw=0.55, spineYaw=0.2, tailYaw=1.4, glow=1.0),
-            K('r', 0.4, None, yaw=0.3, tailYaw=0.6, glow=0.5),
+            KO(yaw=0.5, spineYaw=0.18, tailYaw=1.3, glow=0.6),
             K('r', 0.8, None, tailYaw=0.08)),
             side=sd, bind=[B(f'lumisca_tail_sweep_{n}', 'sp:3', 'sp:0', 0.45, ext=0.2)],
             hits=[hit('tail', 40, 54, f'lumisca_tail_sweep_{n}', 22, 'knockdown', cost=30)],
-            sounds=[(4, 'galdros_warn'), (38, 'galdros_swing')], ai=ai(0, 4.5, 180, 2.5, minA=60, side=side_name(sd)))),
+            sounds=[(4, 'galdros_warn'), (38, 'galdros_swing')], ai=ai(0, 4.5, 180, 2.5, minA=60, side=side_name(sd)), open='tail_tip')),
         move('leap_in', 100, 44, 52, A(
             K('w', 0.5, None, yH=-0.18, wing=-0.2, legs={'B': (0, 0.7)}),
             K('w', 0.75, 'o', yH=0.05, pitch=0.15, wing=0.9, legs={'B': (0.4, 0.9)}),
@@ -873,7 +884,7 @@ def lumisca_moves(s):
             K('r', 0.8, None, yH=-0.01), hop=0.35),
              curve=(5.5, 34, 50), slamTrack='lumisca_leap_in', bind=[B('lumisca_leap_in', 'leg:B:L:end', 'leg:B:R:end', 0.8)],
              hits=[hit('land', 44, 52, 'lumisca_leap_in', 24, 'knockdown', cost=35)],
-             sounds=[(4, 'bird_screech'), (34, 'gust')], vfx=[(50, 'ground_slam')], ai=ai(4, 7.2, 30, 2, cd=300, clear=6)),
+             sounds=[(4, 'bird_screech'), (34, 'gust')], vfx=[(50, 'ground_slam')], ai=ai(4, 7.2, 30, 2, cd=300, clear=6), open='head'),
         move('kick_double', 110, 30, 66, A(
             K('w', 1.0, None, pitch=0.08, roll=0.04, wing=0.3, legs={'B.S': (-0.5, 1.0)}),
             K('s', 0.2, 'o', pitch=-0.08, wing=0.5, legs={'B.S': (1.0, 0.1)}),
@@ -885,7 +896,7 @@ def lumisca_moves(s):
              side=1, curve=(1.4, 26, 62), turn=(24, 80),
              bind=[B('lumisca_kick_double_a', 'leg:B:S:2', 'leg:B:S:end', 0.4, ext=0.25), B('lumisca_kick_double_b', 'leg:B:O:2', 'leg:B:O:end', 0.4, ext=0.25)],
              hits=[hit('kick1', 30, 38, 'lumisca_kick_double_a', 14, 'flinch', cost=20), hit('kick2', 56, 64, 'lumisca_kick_double_b', 22, 'knockdown', cost=30)],
-             sounds=[(28, 'galdros_swing'), (54, 'galdros_swing')], ai=ai(0, 3.7, 35, 2, cd=300)),
+             sounds=[(28, 'galdros_swing'), (54, 'galdros_swing')], ai=ai(0, 3.7, 35, 2, cd=300), open='head'),
         move('peck', 80, 30, 36, A(
             K('w', 1.0, None, z=-0.05, neckPitch=0.3, headPitch=0.3),
             K('s', 0.5, 'o', z=0.08, yH=-0.06, pitch=-0.32, neckPitch=-0.9, headPitch=-0.4),
@@ -894,17 +905,17 @@ def lumisca_moves(s):
             K('r', 0.8, None, z=0.0)),
              curve=(0.6, 26, 36), turn=(24, 90), bind=[B('lumisca_peck', 'sp:9', 'sp:11', 0.3, ext=0.2)],
              hits=[hit('beak', 30, 36, 'lumisca_peck', 16, 'flinch', kind='cut', cost=20)],
-             sounds=[(28, 'galdros_swing')], ai=ai(0, 2.4, 30, 2.5)),
+             sounds=[(28, 'galdros_swing')], ai=ai(0, 2.4, 30, 2.5), open='head'),
         move('tail_slam', 130, 56, 62, A(
             K('w', 0.5, None, pitch=-0.1, tailPitch=0.9, glow=1.0),
             K('w', 1.0, None, pitch=-0.15, tailPitch=1.3, tailCurl=0.4, glow=1.8, legs={'B': (0.1, 0.2)}),
             K('s', 0.5, 'i', pitch=0.1, tailPitch=-0.7, tailCurl=-0.2, glow=2.0),
             K('s', 1.0, None, pitch=0.1, tailPitch=-0.75, tailCurl=-0.2, glow=1.6),
-            K('r', 0.4, None, tailPitch=-0.5, glow=1.0),
+            KO(pitch=0.08, tailPitch=-0.45, tailCurl=-0.15, glow=0.9),
             K('r', 0.8, None, tailPitch=-0.05, glow=0.3)),
              bind=[B('lumisca_tail_slam', 'sp:3', 'sp:0', 0.5, ext=0.2)],
              hits=[hit('tail', 56, 62, 'lumisca_tail_slam', 26, 'knockdown', cost=35)],
-             sounds=[(4, 'zap'), (54, 'galdros_swing'), (58, 'zap')], vfx=[(60, 'spark_rear')], ai=ai(0, 4.6, 180, 2.2, minA=135)),
+             sounds=[(4, 'zap'), (54, 'galdros_swing'), (58, 'zap')], vfx=[(60, 'spark_rear')], ai=ai(0, 4.6, 180, 2.2, minA=135), open='tail_tip'),
         move('tail_spin', 110, 44, 62, A(
             K('w', 1.0, None, yaw=-0.3, tailYaw=-0.6, glow=1.2, legs={'B': (0, 0.3)}),
             K('s', 0.5, None, tailYaw=0.3, glow=1.5),
@@ -912,8 +923,8 @@ def lumisca_moves(s):
             K('r', 0.4, None, tailYaw=0.1, glow=0.5), spin=1),
              bind=[B('lumisca_tail_spin', 'sp:3', 'sp:0', 0.5, ext=0.2)],
              hits=[hit('tail', 44, 62, 'lumisca_tail_spin', 18, 'knockdown', cost=30)],
-             sounds=[(4, 'galdros_warn'), (42, 'galdros_swing'), (52, 'galdros_swing')], ai=ai(0, 4.2, 180, 1.4, cd=420)),
-        move('spark_ring', 120, 52, 66, A(
+             sounds=[(4, 'galdros_warn'), (42, 'galdros_swing'), (52, 'galdros_swing')], ai=ai(0, 4.2, 180, 1.4, cd=420), open='head'),
+        move('spark_ring', 132, 52, 66, A(
             K('w', 0.6, None, yH=-0.05, wing=0.6, tailPitch=0.4, glow=1.5),
             K('w', 1.0, None, yH=-0.06, wing=0.8, tailPitch=0.5, glow=2.0),
             K('s', 0.2, 'o', yH=0.03, wing=1.3, tailPitch=0.6, glow=2.5),
@@ -921,7 +932,7 @@ def lumisca_moves(s):
             K('r', 0.5, None, wing=0.3, glow=0.6), shake=0.03, shakeIn='windup'),
              tracks=[track('lumisca_spark_ring', 3.2, 2.0, [(52, [0, 1.0, -1.0], [0, 0, 1])])],
              hits=[hit('spark', 54, 66, 'lumisca_spark_ring', 16, 'knockdown', cost=30)],
-             sounds=[(4, 'zap'), (52, 'zap')], vfx=[(54, 'spark_ring')], ai=ai(0, 4, 180, 1.2, cd=600)),
+             sounds=[(4, 'zap'), (52, 'zap')], vfx=[(54, 'spark_ring')], ai=ai(0, 4, 180, 1.2, cd=600), open=('head', 78, 120)),
         move('chain_discharge', 160, 60, 96, A(
             K('w', 1.0, None, neckPitch=0.15, tailPitch=0.9, glow=2.0),
             K('s', 0.05, 'i', pitch=-0.05, tailPitch=-0.4, glow=2.2),
@@ -931,7 +942,7 @@ def lumisca_moves(s):
             K('r', 0.5, None, glow=0.5)), turn=(40, 70),
              hazards=[hazard(62, 6, 0.3, 1.1, 30, 10, 16, 'flinch', [0, 0.2, 1.2], 'spark', peak=0, pattern='line'),
                       hazard(92, 7, 0.4, 1.1, 28, 10, 18, 'flinch', [0, 0.2, 1.2], 'spark', peak=0, pattern='line')],
-             sounds=[(6, 'zap'), (60, 'zap'), (90, 'zap')], vfx=[(62, 'spark_rear'), (92, 'spark_rear')], ai=ai(6, 18, 45, 1.4, cd=520)),
+             sounds=[(6, 'zap'), (60, 'zap'), (90, 'zap')], vfx=[(62, 'spark_rear'), (92, 'spark_rear')], ai=ai(6, 18, 45, 1.4, cd=520), open=False),  # 遠くの相手へだけ撃つ技（近づく間が無い。隙を作らない）
         move('tail_jab', 90, 34, 42, A(
             K('w', 1.0, None, z=0.04, tailPitch=0.3, tailCurl=0.5, glow=0.8),
             K('s', 0.5, 'o', z=-0.05, tailPitch=-0.1, tailCurl=-0.3, glow=1.4),
@@ -939,7 +950,7 @@ def lumisca_moves(s):
             K('r', 0.5, None, glow=0.4)),
              bind=[B('lumisca_tail_jab', 'sp:2', 'sp:0', 0.4, ext=0.5)],
              hits=[hit('tail', 34, 42, 'lumisca_tail_jab', 18, 'flinch', cost=25)],
-             sounds=[(32, 'zap')], ai=ai(0, 4.8, 180, 2, minA=150)),
+             sounds=[(32, 'zap')], ai=ai(0, 4.8, 180, 2, minA=150), open='tail_tip'),
         move('leap_kick', 110, 46, 54, A(
             K('w', 0.5, None, yH=-0.15, wing=0.3, legs={'B': (0, 0.7)}),
             K('w', 0.75, 'o', yH=0.05, wing=1.0, legs={'B.S': (-0.4, 1.0), 'B.O': (0.2, 0.6)}),
@@ -949,7 +960,7 @@ def lumisca_moves(s):
             K('r', 0.8, None, yH=-0.01), hop=0.3),
              side=1, curve=(4.0, 30, 50), turn=(26, 80), bind=[B('lumisca_leap_kick', 'leg:B:S:2', 'leg:B:S:end', 0.45, ext=0.25)],
              hits=[hit('kick', 46, 54, 'lumisca_leap_kick', 24, 'knockdown', cost=35)],
-             sounds=[(4, 'bird_screech'), (30, 'gust'), (44, 'galdros_swing')], ai=ai(4, 6.2, 30, 1.6, cd=300, clear=5)),
+             sounds=[(4, 'bird_screech'), (30, 'gust'), (44, 'galdros_swing')], ai=ai(4, 6.2, 30, 1.6, cd=300, clear=5), open='head'),
         *lr(lambda sd, n: move(f'wing_slap_{n}', 84, 30, 40, A(
             K('w', 1.0, None, yaw=-0.15, roll=0.05, wingS=1.2),
             K('s', 0.5, 'o', yaw=0.35, roll=-0.06, wingS=0.3),
@@ -958,12 +969,12 @@ def lumisca_moves(s):
             K('r', 0.8, None, yaw=0.03)),
             side=sd, bind=[B(f'lumisca_wing_slap_{n}', 'own:wing:S', 'tip:wing:S', 0.45, ext=0.15)],
             hits=[hit('wing', 30, 40, f'lumisca_wing_slap_{n}', 14, 'flinch', cost=20)],
-            sounds=[(28, 'gust')], ai=ai(0, 2.2, 120, 2, minA=30, side=side_name(sd)))),
+            sounds=[(28, 'gust')], ai=ai(0, 2.2, 120, 2, minA=30, side=side_name(sd)), open='head')),
         # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 長い尾を先に反対へ振ってから回り、翼を少し開いて釣り合いを取る。燐節がほのかに灯る ----
         *turns(dict(yH=-0.05, roll=0.02, neckYaw=0.18, headYaw=0.12, tailYaw=-0.3, tailPitch=0.1, glow=0.1),
                dict(yH=-0.07, roll=-0.07, spineYaw=0.18, neckYaw=0.36, headYaw=0.2, tailPitch=0.15, wing=0.24, glow=0.3),
                dict(yH=-0.05, roll=-0.05, spineYaw=0.12, neckYaw=0.24, headYaw=0.12, tailPitch=0.08, wing=0.12, glow=0.2), slow=-2),
-    ]
+    ])
 
 
 LUMISCA_IDLE = idle(
@@ -1000,7 +1011,9 @@ LUMISCA_IDLE = idle(
 def orglass_moves(s):
     big = lambda n: B(n, 'leg:clawR:C:1', 'tip:finger_R:C', 0.7)
     small = lambda n: B(n, 'leg:clawL:C:1', 'tip:finger_L:C', 0.4, ext=0.1)
-    return [
+    # 後隙の反撃（v0.73.0。D-171）: 部位を低く出して止まる形（技の open で使う。技ごとの形は KO で書く）
+    OP = dict(head=dict(pitch=-0.14, yH=-0.1), claw_r=dict(clawR=(-0.4, 0.2), pitch=-0.06), greave=dict(yH=-0.04), plates=dict(yH=-0.12, plates=0.3))
+    return opened(OP, [
         move('roar', 100, 100, 100, A(
             K('w', 0.6, None, yH=-0.05, clawR=(-0.2, 0.2), clawL=(-0.2, 0.2)),
             K('w', 1.0, None, yH=0.04, plates=0.6, finger=1.0, clawR=(0.8, -0.3), clawL=(0.8, -0.3)),
@@ -1024,7 +1037,7 @@ def orglass_moves(s):
             K('s', 0.9, None, yH=-0.04, clawR=(0.3, 0.3), clawL=(0.3, 0.3)),
             K('r', 0.5, None, clawR=(0.1, 0.1)), scurry=1),
              curve=(-3.5, 14, 50), sounds=[(14, 'shell_clack')], ai=ai(0, 3.2, 180, 0.8, cd=520)),
-        move('pinch', 90, 38, 46, A(
+        move('pinch', 92, 38, 46, A(
             K('w', 0.5, None, yaw=-0.05, finger=1.2, clawR=(0.4, -0.4)),
             K('w', 1.0, None, yaw=-0.08, z=-0.03, finger=1.4, clawR=(0.5, -0.5)),
             K('s', 0.5, 'o', yaw=0.1, z=0.06, pitch=-0.04, finger=-0.3, clawR=(-0.1, 0.35)),
@@ -1033,8 +1046,8 @@ def orglass_moves(s):
             K('r', 0.8, None, clawR=(0.0, 0.05))),
              curve=(0.8, 34, 46), turn=(30, 60), bind=[big('orglass_pinch')],
              hits=[hit('claw', 38, 46, 'orglass_pinch', 28, 'knockdown', kind='cut', cost=40)],
-             sounds=[(4, 'shell_clack'), (36, 'galdros_swing'), (44, 'shell_clack')], ai=ai(0, 4.7, 40, 3)),
-        *lr(lambda sd, n: move(f'dash_{n}', 90, 30, 52, A(
+             sounds=[(4, 'shell_clack'), (36, 'galdros_swing'), (44, 'shell_clack')], ai=ai(0, 4.7, 40, 3), open='claw_r'),
+        *lr(lambda sd, n: move(f'dash_{n}', 92, 30, 52, A(
             K('w', 1.0, None, yH=-0.12, roll=0.05, clawR=(0.1, 0.3), clawL=(0.1, 0.3), legs={'*': (0, 0.5)}),
             K('s', 0.1, None, yH=-0.04, roll=-0.06, clawR=(0.1, 0.3), clawL=(0.1, 0.3)),
             K('s', 0.9, None, yH=-0.04, roll=-0.06, clawR=(0.1, 0.3), clawL=(0.1, 0.3)),
@@ -1043,7 +1056,7 @@ def orglass_moves(s):
             side=sd, curve=(5.0, 30, 52), dirDeg=90 * sd,
             bind=[B(f'orglass_dash_{n}', 'leg:M1:S:0', 'leg:M3:S:0', 1.2)],
             hits=[hit('body', 30, 52, f'orglass_dash_{n}', 24, 'knockdown', cost=35)],
-            sounds=[(4, 'shell_clack'), (30, 'galdros_charge')], ai=ai(2, 7, 135, 2.5, minA=45, side=side_name(sd), cd=240))),
+            sounds=[(4, 'shell_clack'), (30, 'galdros_charge')], ai=ai(2, 7, 135, 2.5, minA=45, side=side_name(sd), cd=240), open='greave')),
         move('fan_pinch', 100, 44, 54, A(
             K('w', 1.0, None, finger=1.2, clawR=(0.4, -0.7), clawL=(0.4, -0.7)),
             K('s', 0.5, 'o', finger=-0.2, z=0.03, clawR=(0.0, 0.5), clawL=(0.0, 0.5)),
@@ -1052,7 +1065,7 @@ def orglass_moves(s):
             K('r', 0.8, None, clawR=(0.0, 0.05), clawL=(0.0, 0.05))), turn=(30, 60),
              bind=[B('orglass_fan_pinch', 'tip:finger_R:C', 'tip:finger_L:C', 0.6)],
              hits=[hit('claws', 44, 54, 'orglass_fan_pinch', 20, 'flinch', kind='cut', cost=30)],
-             sounds=[(4, 'shell_clack'), (42, 'galdros_swing'), (52, 'shell_clack')], ai=ai(0, 4, 60, 2.5)),
+             sounds=[(4, 'shell_clack'), (42, 'galdros_swing'), (52, 'shell_clack')], ai=ai(0, 4, 60, 2.5), open='head'),
         move('shell_swing', 100, 40, 56, A(
             K('w', 1.0, None, yaw=-0.25, yH=0.03, plates=1.0, clawR=(0.2, 0.4), clawL=(0.2, 0.4)),
             K('s', 0.5, None, yH=0.02, plates=1.0, clawR=(0.2, 0.4), clawL=(0.2, 0.4)),
@@ -1060,7 +1073,7 @@ def orglass_moves(s):
             K('r', 0.4, None, plates=0.3), spin=1),
              tracks=[track('orglass_shell_swing', 2.2, 3.2, [(40, [0, 1.6, -1.6], [0, 0, 1]), (56, [0, 1.6, -1.6], [0, 0, 1])])],
              hits=[hit('shell', 40, 56, 'orglass_shell_swing', 16, 'flinch', cost=25)],
-             sounds=[(4, 'galdros_warn'), (38, 'galdros_swing')], ai=ai(0, 3.6, 180, 2, cd=300)),
+             sounds=[(4, 'galdros_warn'), (38, 'galdros_swing')], ai=ai(0, 3.6, 180, 2, cd=300), open=('plates', 60, 90)),
         move('claw_slam', 120, 52, 58, A(
             K('w', 0.6, None, pitch=0.08, yH=0.05, finger=0.2, clawR=(1.0, 0.1)),
             K('w', 1.0, None, pitch=0.12, yH=0.06, yaw=0.05, clawR=(1.25, 0.15)),
@@ -1070,7 +1083,7 @@ def orglass_moves(s):
             K('r', 0.8, None, clawR=(-0.05, 0.05))), turn=(40, 50), slamTrack='orglass_claw_slam',
              bind=[big('orglass_claw_slam')],
              hits=[hit('claw', 52, 58, 'orglass_claw_slam', 30, 'knockdown', cost=45)],
-             sounds=[(4, 'shell_clack'), (50, 'galdros_swing')], vfx=[(56, 'ground_slam')], ai=ai(0, 4, 45, 2.2)),
+             sounds=[(4, 'shell_clack'), (50, 'galdros_swing')], vfx=[(56, 'ground_slam')], ai=ai(0, 4, 45, 2.2), open='claw_r'),
         move('claw_sweep', 100, 42, 54, A(
             K('w', 1.0, None, yaw=-0.3, twist=0.05, clawR=(0.2, -0.8)),
             K('s', 0.5, 'o', yaw=0.35, clawR=(0.1, 0.7)),
@@ -1079,7 +1092,7 @@ def orglass_moves(s):
             K('r', 0.8, None, clawR=(0.0, 0.05))), turn=(30, 60),
              bind=[big('orglass_claw_sweep')],
              hits=[hit('claw', 42, 54, 'orglass_claw_sweep', 24, 'knockdown', cost=35)],
-             sounds=[(4, 'shell_clack'), (40, 'galdros_swing')], ai=ai(0, 4.1, 80, 2.2)),
+             sounds=[(4, 'shell_clack'), (40, 'galdros_swing')], ai=ai(0, 4.1, 80, 2.2), open='head'),
         move('jab', 70, 24, 30, A(
             K('w', 1.0, None, z=-0.02, clawL=(0.3, -0.2)),
             K('s', 0.5, 'o', z=0.04, pitch=-0.08, clawL=(-0.65, 0.15)),
@@ -1087,7 +1100,7 @@ def orglass_moves(s):
             K('r', 0.4, None, clawL=(0.0, 0.1))),
              turn=(20, 80), bind=[small('orglass_jab')],
              hits=[hit('claw', 24, 30, 'orglass_jab', 12, 'flinch', kind='cut', cost=15)],
-             sounds=[(22, 'shell_clack')], ai=ai(0, 3.7, 35, 2.5)),
+             sounds=[(22, 'shell_clack')], ai=ai(0, 3.7, 35, 2.5), open='head'),
         move('jab_combo', 120, 26, 70, A(
             K('w', 1.0, None, clawL=(0.3, -0.2)),
             K('s', 0.1, 'o', z=0.03, pitch=-0.08, clawL=(-0.65, 0.2)),
@@ -1098,7 +1111,7 @@ def orglass_moves(s):
             K('r', 0.8, None, clawR=(0.0, 0.05))), turn=(24, 60), curve=(1.0, 24, 66),
              bind=[small('orglass_jab_combo_a'), big('orglass_jab_combo_b')],
              hits=[hit('jab', 26, 32, 'orglass_jab_combo_a', 10, 'flinch', kind='cut', cost=15), hit('pinch', 60, 68, 'orglass_jab_combo_b', 24, 'knockdown', kind='cut', cost=35)],
-             sounds=[(24, 'shell_clack'), (58, 'galdros_swing'), (66, 'shell_clack')], ai=ai(0, 4.5, 40, 2, cd=240)),
+             sounds=[(24, 'shell_clack'), (58, 'galdros_swing'), (66, 'shell_clack')], ai=ai(0, 4.5, 40, 2, cd=240), open='head'),
         move('shell_drop', 120, 50, 56, A(
             K('w', 0.5, None, yH=0.12, pitch=0.05, plates=0.6, legs={'*': (0, -0.2)}),
             K('w', 1.0, None, yH=0.18, plates=0.9, legs={'*': (0, -0.25)}),
@@ -1108,7 +1121,7 @@ def orglass_moves(s):
             K('r', 0.8, None, yH=-0.02)),
              tracks=[track('orglass_shell_drop', 2.4, 2.4, [(50, [0, 0.6, -1.0], [0, 0, 1])])],
              hits=[hit('shell', 52, 56, 'orglass_shell_drop', 22, 'knockdown', cost=35)],
-             sounds=[(4, 'shell_clack'), (52, 'rock_impact')], vfx=[(54, 'dust_ring')], ai=ai(0, 3.4, 180, 1.6, cd=360)),
+             sounds=[(4, 'shell_clack'), (52, 'rock_impact')], vfx=[(54, 'dust_ring')], ai=ai(0, 3.4, 180, 1.6, cd=360), open='plates'),
         move('glass_shards', 140, 58, 64, A(
             K('w', 0.35, None, yH=0.03, pitch=0.06, plates=0.7, clawR=(0.3, -0.3), clawL=(0.3, -0.3), legs={'*': (0, 0.2, 0.1)}),
             K('w', 1.0, 'i', yH=0.09, pitch=0.1, plates=1.4, finger=0.8, clawR=(0.55, -0.45), clawL=(0.5, -0.4), legs={'*': (0, 0.35, 0.15)}),
@@ -1116,7 +1129,7 @@ def orglass_moves(s):
             K('s', 1.0, None, yH=-0.05, pitch=-0.03, plates=-0.15, clawR=(-0.15, 0.4), clawL=(-0.15, 0.35), legs={'*': (0, 0.05, 0.3)}),
             K('r', 0.5, None, yH=-0.01, plates=0.0, clawR=(0, 0.1), clawL=(0, 0.1)), shake=0.03, shakeIn='windup'),
              hazards=[hazard(60, 6, 4.0, 1.2, 46, 8, 16, 'flinch', [0, 2.6, -0.5], 'ice', peak=5)],
-             sounds=[(4, 'shell_clack'), (56, 'ice_crack')], vfx=[(60, 'glass_burst')], ai=ai(5, 18, 180, 1.2, cd=600)),
+             sounds=[(4, 'shell_clack'), (56, 'ice_crack')], vfx=[(60, 'glass_burst')], ai=ai(5, 18, 180, 1.2, cd=600), open='head'),
         move('claw_double', 150, 50, 90, A(
             K('w', 1.0, None, pitch=0.12, yH=0.06, clawR=(1.2, 0.15)),
             K('s', 0.15, 'i', pitch=-0.1, yH=-0.06, clawR=(-0.5, 0.2)),
@@ -1127,7 +1140,7 @@ def orglass_moves(s):
             K('r', 0.8, None, clawR=(-0.05, 0.05))), turn=(40, 50), slamTrack='orglass_claw_double',
              bind=[big('orglass_claw_double')],
              hits=[hit('claw1', 50, 56, 'orglass_claw_double', 22, 'flinch', cost=30), hit('claw2', 82, 88, 'orglass_claw_double', 30, 'knockdown', cost=45)],
-             sounds=[(4, 'shell_clack'), (48, 'galdros_swing'), (80, 'galdros_swing')], vfx=[(54, 'ground_slam'), (86, 'ground_slam')], ai=ai(0, 4, 45, 1.6, cd=360)),
+             sounds=[(4, 'shell_clack'), (48, 'galdros_swing'), (80, 'galdros_swing')], vfx=[(54, 'ground_slam'), (86, 'ground_slam')], ai=ai(0, 4, 45, 1.6, cd=360), open='claw_r'),
         move('sand_rake', 90, 34, 44, A(
             K('w', 0.5, None, pitch=0.06, legs={'M1': (0.6, 0.6)}),
             K('w', 1.0, None, pitch=0.08, legs={'M1': (0.7, 0.7)}),
@@ -1137,7 +1150,7 @@ def orglass_moves(s):
             K('r', 0.8, None, legs={'M1': (0.05, 0.05)})), turn=(26, 70),
              tracks=[track('orglass_sand_rake', 0.9, 2.6, [(34, [0, 0.45, 2.0], [0, 0, 1])])],
              hits=[hit('sand', 34, 44, 'orglass_sand_rake', 10, 'flinch', cost=15)],
-             sounds=[(32, 'galdros_scrape')], vfx=[(36, 'mud_splash')], ai=ai(0, 4.5, 40, 2)),
+             sounds=[(32, 'galdros_scrape')], vfx=[(36, 'mud_splash')], ai=ai(0, 4.5, 40, 2), open='greave'),
         move('rear_shove', 90, 34, 42, A(
             K('w', 1.0, None, pitch=-0.06, legs={'M3': (0.3, 0.6)}),
             K('s', 0.5, 'o', pitch=0.05, z=-0.04, legs={'M3': (-0.8, 0.1)}),
@@ -1145,7 +1158,7 @@ def orglass_moves(s):
             K('r', 0.5, None, legs={'M3': (-0.2, 0.2)})),
              bind=[B('orglass_rear_shove', 'leg:M3:L:end', 'leg:M3:R:end', 0.6)],
              hits=[hit('legs', 34, 42, 'orglass_rear_shove', 18, 'knockdown', cost=25)],
-             sounds=[(32, 'shell_clack')], ai=ai(0, 3.8, 180, 2.2, minA=120)),
+             sounds=[(32, 'shell_clack')], ai=ai(0, 3.8, 180, 2.2, minA=120), open='plates'),
         move('charge', 150, 50, 104, A(
             K('w', 1.0, None, yH=-0.08, pitch=-0.04, clawR=(0.3, 0.3), clawL=(0.3, 0.3), legs={'*': (0, 0.4)}),
             K('s', 0.1, None, yH=-0.04, clawR=(0.3, 0.3), clawL=(0.3, 0.3)),
@@ -1154,13 +1167,13 @@ def orglass_moves(s):
             K('r', 0.7, None, clawR=(0.05, 0.0)), scurry=1),
              curve=(11.0, 50, 104), turn=(44, 50), brake=(56, 104), bind=[B('orglass_charge', 'leg:clawR:C:2', 'leg:clawL:C:2', 0.9)],
              hits=[hit('claws', 50, 104, 'orglass_charge', 26, 'knockdown', cost=40)],
-             sounds=[(4, 'shell_clack'), (48, 'galdros_charge')], ai=ai(7, 13.5, 25, 1.5, cd=520, clear=10)),
+             sounds=[(4, 'shell_clack'), (48, 'galdros_charge')], ai=ai(7, 13.5, 25, 1.5, cd=520, clear=10), open='greave'),
         # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 大鋏を胸の前に掲げて身を守り、六本の脚を小刻みに運んで、その場で回る ----
         *turns(dict(yH=-0.03, yaw=0.05, headYaw=0.08, clawR=(0.2, 0.12), clawL=(0.12, 0.08), plates=0.1),
                dict(yH=-0.04, yaw=0.08, roll=-0.04, spineYaw=0.08, headYaw=0.14, clawR=(0.32, 0.2), clawL=(0.22, 0.14), plates=0.16),
                dict(yH=-0.04, yaw=0.06, roll=-0.03, spineYaw=0.06, headYaw=0.1, clawR=(0.26, 0.15), clawL=(0.16, 0.1), plates=0.12),
                slow=2, flags=dict(scurry=1)),
-    ]
+    ])
 
 
 ORGLASS_IDLE = idle(
@@ -1198,7 +1211,9 @@ ORGLASS_IDLE = idle(
 def tengaro_moves(s):
     head = lambda n: B(n, 'sp:11', 'sp:14', 0.75, ext=0.1)
     rear = lambda n: B(n, 'sp:3', 'sp:0', 0.75, ext=0.1)
-    return [
+    # 後隙の反撃（v0.73.0。D-171）: 部位を低く出して止まる形（技の open で使う。技ごとの形は KO で書く）
+    OP = dict(head=dict(archFront=0.3), hooks=dict(yH=-0.08))
+    return opened(OP, [
         move('roar', 100, 100, 100, A(
             K('w', 0.6, None, yH=-0.03, archFront=-0.3),
             K('w', 1.0, None, yH=0.03, archFront=0.8, archBack=0.2),
@@ -1221,7 +1236,7 @@ def tengaro_moves(s):
             K('r', 0.3, None, ring=0.6, yH=-0.05),
             K('r', 0.7, None, ring=0.1), roll=1),
              curve=(-4.5, 18, 60), sounds=[(18, 'insect_buzz')], ai=ai(0, 3.2, 180, 0.8, cd=520)),
-        *lr(lambda sd, n: move(f'roll_{n}', 130, 44, 92, A(
+        *lr(lambda sd, n: move(f'roll_{n}', 140, 44, 92, A(
             K('w', 0.6, None, ring=0.6, yH=-0.05),
             K('w', 1.0, None, ring=1.0, yH=-0.1),
             K('s', 0.5, None, ring=1.0, yH=-0.1),
@@ -1231,7 +1246,7 @@ def tengaro_moves(s):
             side=sd, curve=(11.0, 44, 92), dirDeg=25 * sd,
             tracks=[track(f'tengaro_roll_{n}', 1.5, 3.6, [(44, [0, 1.25, -1.8], [0, 0, 1]), (92, [0, 1.25, -1.8], [0, 0, 1])])],
             hits=[hit('ring', 44, 92, f'tengaro_roll_{n}', 26, 'knockdown', cost=40)],
-            sounds=[(4, 'insect_buzz'), (44, 'galdros_charge')], ai=ai(6, 12.9, 40, 1.5, side=side_name(sd), cd=480, clear=10))),
+            sounds=[(4, 'insect_buzz'), (44, 'galdros_charge')], ai=ai(6, 12.9, 40, 1.5, side=side_name(sd), cd=480, clear=10), open=('hooks', 96, 132))),
         *lr(lambda sd, n: move(f'hook_sweep_{n}', 90, 36, 46, A(
             K('w', 1.0, None, yaw=-0.3, roll=0.1, twist=0.1, archFront=0.3),
             K('s', 0.5, 'o', yaw=0.4, roll=-0.15, twist=-0.1, archFront=0.1),
@@ -1240,7 +1255,7 @@ def tengaro_moves(s):
             K('r', 0.8, None, yaw=0.03)),
             side=sd, bind=[B(f'tengaro_hook_sweep_{n}', 'sp:9', 'sp:13', 0.8)],
             hits=[hit('hooks', 36, 46, f'tengaro_hook_sweep_{n}', 18, 'flinch', kind='cut', cost=25, status=('para', 35))],
-            sounds=[(4, 'hiss'), (34, 'galdros_swing')], ai=ai(0, 3.2, 140, 2.5, minA=40, side=side_name(sd)))),
+            sounds=[(4, 'hiss'), (34, 'galdros_swing')], ai=ai(0, 3.2, 140, 2.5, minA=40, side=side_name(sd)), open='hooks')),
         move('arch_drop', 100, 44, 52, A(
             K('w', 1.0, None, yH=0.05, archFront=1.2, legs={'A': (0.2, 0.5)}),
             K('s', 0.5, 'i', yH=-0.06, archFront=-0.5),
@@ -1249,7 +1264,7 @@ def tengaro_moves(s):
             K('r', 0.8, None, archFront=-0.05)),
              curve=(1.5, 40, 52), turn=(30, 50), slamTrack='tengaro_arch_drop', bind=[head('tengaro_arch_drop')],
              hits=[hit('drop', 44, 52, 'tengaro_arch_drop', 26, 'knockdown', cost=40)],
-             sounds=[(4, 'insect_buzz'), (42, 'galdros_swing')], vfx=[(50, 'ground_slam')], ai=ai(0, 4.6, 35, 2.5)),
+             sounds=[(4, 'insect_buzz'), (42, 'galdros_swing')], vfx=[(50, 'ground_slam')], ai=ai(0, 4.6, 35, 2.5), open='head'),
         move('venom_strike', 100, 42, 48, A(
             K('w', 1.0, None, yH=0.04, archBack=1.2, archFront=-0.1),
             K('s', 0.5, 'i', archBack=-0.4),
@@ -1259,7 +1274,7 @@ def tengaro_moves(s):
              bind=[rear('tengaro_venom_strike')],
              hits=[hit('tail', 42, 48, 'tengaro_venom_strike', 14, 'flinch', cost=20, status=('para', 45))],
              hazards=[hazard(44, 3, 2.2, 1.4, 36, 20, 8, 'flinch', [0, 1.5, -2.0], 'para', peak=3, status=('para', 55))],
-             sounds=[(4, 'hiss'), (42, 'splash')], ai=ai(2, 12, 180, 2, cd=360)),
+             sounds=[(4, 'hiss'), (42, 'splash')], ai=ai(2, 12, 180, 2, cd=360), open='head'),
         move('head_bite', 80, 30, 38, A(
             K('w', 1.0, None, z=-0.03, archFront=0.5),
             K('s', 0.5, 'o', z=0.05, archFront=-0.3),
@@ -1267,7 +1282,7 @@ def tengaro_moves(s):
             K('r', 0.5, None, archFront=-0.1)),
              turn=(24, 70), bind=[head('tengaro_head_bite')],
              hits=[hit('jaws', 30, 38, 'tengaro_head_bite', 18, 'flinch', kind='cut', cost=25, status=('para', 20))],
-             sounds=[(28, 'hiss')], ai=ai(0, 3.6, 35, 2.5)),
+             sounds=[(28, 'hiss')], ai=ai(0, 3.6, 35, 2.5), open='head'),
         move('rear_drop', 100, 44, 52, A(
             K('w', 1.0, None, yH=0.04, archBack=1.3),
             K('s', 0.5, 'i', yH=-0.05, archBack=-0.5),
@@ -1276,7 +1291,7 @@ def tengaro_moves(s):
             K('r', 0.8, None, archBack=-0.05)),
              bind=[rear('tengaro_rear_drop')],
              hits=[hit('drop', 44, 52, 'tengaro_rear_drop', 24, 'knockdown', cost=35)],
-             sounds=[(4, 'insect_buzz'), (42, 'galdros_swing')], vfx=[(50, 'dust_ring')], ai=ai(0, 4.3, 180, 2.2, minA=130)),
+             sounds=[(4, 'insect_buzz'), (42, 'galdros_swing')], vfx=[(50, 'dust_ring')], ai=ai(0, 4.3, 180, 2.2, minA=130), open='hooks'),
         move('double_drop', 150, 44, 92, A(
             K('w', 1.0, None, yH=0.05, archFront=1.2),
             K('s', 0.15, 'i', yH=-0.06, archFront=-0.5),
@@ -1287,8 +1302,8 @@ def tengaro_moves(s):
             K('r', 0.8, None, archBack=-0.03)), turn=(30, 50),
              bind=[head('tengaro_double_drop_a'), rear('tengaro_double_drop_b')],
              hits=[hit('front', 44, 52, 'tengaro_double_drop_a', 20, 'knockdown', cost=30), hit('rear', 84, 92, 'tengaro_double_drop_b', 20, 'knockdown', cost=30)],
-             sounds=[(4, 'insect_buzz'), (42, 'galdros_swing'), (82, 'galdros_swing')], vfx=[(50, 'dust_ring'), (90, 'dust_ring')], ai=ai(0, 4.1, 70, 1.6, cd=360)),
-        move('roll_straight', 140, 50, 100, A(
+             sounds=[(4, 'insect_buzz'), (42, 'galdros_swing'), (82, 'galdros_swing')], vfx=[(50, 'dust_ring'), (90, 'dust_ring')], ai=ai(0, 4.1, 70, 1.6, cd=360), open='head'),
+        move('roll_straight', 152, 50, 100, A(
             K('w', 0.3, None, yH=0.04, archFront=0.5),
             K('w', 0.7, None, ring=0.7, yH=-0.06),
             K('w', 1.0, None, ring=1.05, yH=-0.12),
@@ -1299,7 +1314,7 @@ def tengaro_moves(s):
              curve=(12.0, 50, 100), turn=(44, 50), brake=(56, 100),
              tracks=[track('tengaro_roll_straight', 1.5, 3.6, [(50, [0, 1.25, -1.8], [0, 0, 1]), (100, [0, 1.25, -1.8], [0, 0, 1])])],
              hits=[hit('ring', 50, 100, 'tengaro_roll_straight', 26, 'knockdown', cost=40)],
-             sounds=[(4, 'insect_buzz'), (50, 'galdros_charge')], ai=ai(7, 13.9, 25, 1.4, cd=520, clear=12)),
+             sounds=[(4, 'insect_buzz'), (50, 'galdros_charge')], ai=ai(7, 13.9, 25, 1.4, cd=520, clear=12), open=('hooks', 108, 144)),
         move('spin_hooks', 110, 44, 62, A(
             K('w', 1.0, None, yaw=-0.3, archFront=0.2, archBack=0.2),
             K('s', 0.5, None, archFront=0.1, archBack=0.1, roll=0.05),
@@ -1308,7 +1323,7 @@ def tengaro_moves(s):
              bind=[head('tengaro_spin_hooks_a'), rear('tengaro_spin_hooks_b')],
              hits=[hit('front', 44, 62, 'tengaro_spin_hooks_a', 16, 'flinch', kind='cut', cost=25, status=('para', 25)),
                    hit('rear', 44, 62, 'tengaro_spin_hooks_b', 16, 'flinch', kind='cut', cost=25, status=('para', 25))],
-             sounds=[(4, 'hiss'), (42, 'galdros_swing'), (52, 'galdros_swing')], ai=ai(0, 3.4, 180, 1.4, cd=420)),
+             sounds=[(4, 'hiss'), (42, 'galdros_swing'), (52, 'galdros_swing')], ai=ai(0, 3.4, 180, 1.4, cd=420), open='hooks'),
         move('venom_spray', 110, 48, 60, A(
             K('w', 0.6, None, archFront=0.7, z=-0.03),
             K('w', 1.0, None, archFront=0.9, z=-0.04),
@@ -1317,7 +1332,7 @@ def tengaro_moves(s):
             K('r', 0.5, None, archFront=0.1), shake=0.02, shakeIn='strike'), turn=(40, 60),
              tracks=[track('tengaro_venom_spray', 1.0, 4.2, [(48, [0, 1.2, 2.0], [0, -0.2, 1]), (60, [0, 1.0, 2.0], [0, -0.25, 1])])],
              hits=[hit('venom', 48, 60, 'tengaro_venom_spray', 6, 'flinch', cost=15, status=('para', 60))],
-             sounds=[(4, 'hiss'), (46, 'splash')], vfx=[(48, 'venom_spray')], ai=ai(2, 7, 30, 1.8, cd=360)),
+             sounds=[(4, 'hiss'), (46, 'splash')], vfx=[(48, 'venom_spray')], ai=ai(2, 7, 30, 1.8, cd=360), open='head'),
         move('spring_drop', 130, 58, 66, A(
             K('w', 0.4, None, yH=-0.12, ring=0.3, legs={'A': (0, 0.6)}),
             K('w', 0.55, 'o', yH=0.05, ring=-0.2, archFront=0.4),
@@ -1328,7 +1343,7 @@ def tengaro_moves(s):
             K('r', 0.8, None, yH=-0.01), hop=0.5),
              curve=(6.0, 34, 60), turn=(30, 60), bind=[B('tengaro_spring_drop', 'sp:3', 'sp:11', 1.1)],
              hits=[hit('land', 58, 66, 'tengaro_spring_drop', 26, 'knockdown', cost=40)],
-             sounds=[(4, 'insect_buzz'), (34, 'gust'), (58, 'galdros_swing')], vfx=[(62, 'dust_ring')], ai=ai(5, 8.7, 30, 1.5, cd=400, clear=6)),
+             sounds=[(4, 'insect_buzz'), (34, 'gust'), (58, 'galdros_swing')], vfx=[(62, 'dust_ring')], ai=ai(5, 8.7, 30, 1.5, cd=400, clear=6), open='head'),
         move('hook_rake', 96, 38, 48, A(
             K('w', 1.0, None, archFront=0.8, z=0.04, legs={'A': (0.3, 0.4)}),
             K('s', 0.5, 'o', archFront=-0.2, z=-0.05),
@@ -1336,7 +1351,7 @@ def tengaro_moves(s):
             K('r', 0.5, None, archFront=-0.1)),
              turn=(30, 60), bind=[head('tengaro_hook_rake')],
              hits=[hit('hooks', 38, 48, 'tengaro_hook_rake', 20, 'knockdown', kind='cut', cost=30, status=('para', 25))],
-             sounds=[(4, 'hiss'), (36, 'galdros_scrape')], ai=ai(0, 4, 40, 2)),
+             sounds=[(4, 'hiss'), (36, 'galdros_scrape')], ai=ai(0, 4, 40, 2), open='hooks'),
         move('para_rain', 140, 56, 62, A(
             K('w', 0.5, None, archBack=0.9),
             K('w', 1.0, None, archBack=1.2, archFront=-0.1),
@@ -1344,13 +1359,13 @@ def tengaro_moves(s):
             K('s', 1.0, None, archBack=0.4),
             K('r', 0.5, None, archBack=0.1), shake=0.02, shakeIn='windup'),
              hazards=[hazard(58, 5, 4.2, 1.3, 44, 18, 6, 'flinch', [0, 1.6, -2.0], 'para', peak=5, status=('para', 45))],
-             sounds=[(4, 'hiss'), (56, 'splash')], ai=ai(6, 18, 180, 1.2, cd=600)),
+             sounds=[(4, 'hiss'), (56, 'splash')], ai=ai(6, 18, 180, 1.2, cd=600), open=False),  # 遠くの相手へだけ撃つ技（近づく間が無い。隙を作らない）
         # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 弓なりの体の前の半身を少し持ち上げ、六対の脚を波打たせて、後ろの半身を軸に回る ----
         *turns(dict(yaw=0.06, x=0.05, archFront=0.2, legs={'A': (0.12, 0.35)}),
                dict(yaw=0.12, x=0.09, roll=-0.06, archFront=0.42, legs={'A': (0.2, 0.62)}),
                dict(yaw=0.08, x=0.06, roll=-0.05, archFront=0.3, legs={'A': (-0.14, 0.5)}),
                slow=4, flags=dict(scurry=1)),
-    ]
+    ])
 
 
 TENGARO_IDLE = idle(
@@ -1384,7 +1399,9 @@ TENGARO_IDLE = idle(
 def verito_moves(s):
     fore = lambda n: B(n, 'leg:M1:L:end', 'leg:M1:R:end', 0.55)
     mouth = lambda n: B(n, 'sp:5', 'sp:7', 0.5, ext=0.2)
-    return [
+    # 後隙の反撃（v0.73.0。D-171）: 部位を低く出して止まる形（技の open で使う。技ごとの形は KO で書く）
+    OP = dict(head=dict(pitch=-0.05, yH=-0.02), spinner=dict(tailPitch=0.1), comb=dict(pitch=-0.06), bag_l=dict(yH=-0.1), bag_r=dict(yH=-0.1))
+    return opened(OP, [
         move('roar', 90, 90, 90, A(
             K('w', 0.6, None, yH=-0.05, bags=-0.3, legs={'M1': (0.2, 0.3)}),
             K('w', 1.0, None, pitch=0.15, yH=0.05, bags=0.8, legs={'M1': (0.6, 0.9)}),
@@ -1415,7 +1432,7 @@ def verito_moves(s):
             K('r', 0.8, None, yaw=0.02)),
              tracks=[track('verito_thread_spray', 0.7, 3.4, [(46, [0, 0.5, -2.0], [-1, 0, -0.45]), (54, [0, 0.5, -2.0], [0, 0, -1]), (62, [0, 0.5, -2.0], [1, 0, -0.45])])],
              hits=[hit('threads', 46, 62, 'verito_thread_spray', 8, 'flinch', cost=15, status=('poison', 70))],
-             sounds=[(4, 'hiss'), (46, 'gust')], vfx=[(46, 'poison_threads')], ai=ai(0, 6, 180, 2.5, minA=100, cd=300)),
+             sounds=[(4, 'hiss'), (46, 'gust')], vfx=[(46, 'poison_threads')], ai=ai(0, 6, 180, 2.5, minA=100, cd=300), open='spinner'),
         move('hop', 100, 46, 54, A(
             K('w', 0.5, None, yH=-0.15, bags=-0.6, legs={'*': (0, 0.6)}),
             K('w', 0.7, 'o', yH=0.05, pitch=0.12, bags=0.8, legs={'M1': (0.6, 0.9), 'M4': (-0.4, 0.5)}),
@@ -1426,7 +1443,7 @@ def verito_moves(s):
             K('r', 0.8, None, yH=-0.01), hop=0.4),
              curve=(5.0, 34, 52), slamTrack='verito_hop', bind=[B('verito_hop', 'sp:1', 'sp:7', 1.0)],
              hits=[hit('land', 46, 54, 'verito_hop', 22, 'knockdown', cost=35)],
-             sounds=[(4, 'insect_buzz'), (34, 'gust')], vfx=[(52, 'ground_slam')], ai=ai(4, 7.4, 30, 2, cd=300, clear=6)),
+             sounds=[(4, 'insect_buzz'), (34, 'gust')], vfx=[(52, 'ground_slam')], ai=ai(4, 7.4, 30, 2, cd=300, clear=6), open='head'),
         move('foreleg_sweep', 80, 32, 42, A(
             K('w', 1.0, None, pitch=0.1, legs={'M1': (0.4, 0.9, 0.3)}),
             K('s', 0.5, 'o', pitch=-0.05, legs={'M1': (0.6, 0.3, -0.3)}),
@@ -1435,7 +1452,7 @@ def verito_moves(s):
             K('r', 0.8, None, legs={'M1': (0.05, 0.05)})), turn=(24, 80),
              bind=[fore('verito_foreleg_sweep')],
              hits=[hit('legs', 32, 42, 'verito_foreleg_sweep', 16, 'flinch', kind='cut', cost=25, status=('poison', 35))],
-             sounds=[(30, 'galdros_swing')], ai=ai(0, 3.1, 50, 3)),
+             sounds=[(30, 'galdros_swing')], ai=ai(0, 3.1, 50, 3), open='head'),
         move('drip', 100, 40, 44, A(
             K('w', 0.6, None, pitch=-0.2, yH=0.05, bags=0.6),
             K('w', 1.0, None, pitch=-0.25, yH=0.06, bags=0.9, tailPitch=0.4),
@@ -1443,7 +1460,7 @@ def verito_moves(s):
             K('s', 1.0, None, pitch=0.05, bags=0.2),
             K('r', 0.5, None, bags=0.0)),
              hazards=[hazard(42, 4, 2.5, 1.2, 30, 24, 6, 'flinch', [0, 1.5, -1.6], 'poison', peak=2.5, status=('poison', 60))],
-             sounds=[(4, 'hiss'), (40, 'splash')], ai=ai(0, 7, 180, 2, cd=300)),
+             sounds=[(4, 'hiss'), (40, 'splash')], ai=ai(0, 7, 180, 2, cd=300), open='head'),
         move('foreleg_stab', 90, 36, 42, A(
             K('w', 0.6, None, pitch=0.15, yH=0.04, legs={'M1': (0.4, 1.0)}),
             K('w', 1.0, None, pitch=0.2, yH=0.05, legs={'M1': (0.5, 1.1)}),
@@ -1453,7 +1470,7 @@ def verito_moves(s):
             K('r', 0.8, None, legs={'M1': (0.05, 0.05)})), turn=(26, 70), slamTrack='verito_foreleg_stab',
              bind=[fore('verito_foreleg_stab')],
              hits=[hit('legs', 36, 42, 'verito_foreleg_stab', 20, 'knockdown', kind='cut', cost=30, status=('poison', 30))],
-             sounds=[(4, 'hiss'), (34, 'galdros_swing')], ai=ai(0, 3.1, 40, 2.5)),
+             sounds=[(4, 'hiss'), (34, 'galdros_swing')], ai=ai(0, 3.1, 40, 2.5), open='head'),
         move('bite', 80, 30, 36, A(
             K('w', 1.0, None, z=-0.05, pitch=0.12, headPitch=0.3, legs={'M1': (0.3, 0.5)}),
             K('s', 0.5, 'o', z=0.1, pitch=-0.1, headPitch=-0.25, legs={'M1': (0.5, 0.2)}),
@@ -1461,7 +1478,7 @@ def verito_moves(s):
             K('r', 0.5, None, z=0.03, legs={'M1': (0.2, 0.1)})),
              curve=(0.6, 26, 36), turn=(24, 80), bind=[mouth('verito_bite')],
              hits=[hit('jaws', 30, 36, 'verito_bite', 16, 'flinch', kind='cut', cost=20, status=('poison', 25))],
-             sounds=[(28, 'hiss')], ai=ai(0, 3, 30, 2.5)),
+             sounds=[(28, 'hiss')], ai=ai(0, 3, 30, 2.5), open='head'),
         *lr(lambda sd, n: move(f'thread_whip_{n}', 96, 38, 50, A(
             K('w', 1.0, None, yaw=-0.2, tailYaw=-0.8, tailPitch=0.3),
             K('s', 0.5, 'o', yaw=0.35, tailYaw=1.1, tailPitch=0.1),
@@ -1470,7 +1487,7 @@ def verito_moves(s):
             K('r', 0.8, None, tailYaw=0.05)),
             side=sd, bind=[B(f'verito_thread_whip_{n}', 'sp:3', 'sp:0', 0.4, ext=0.8)],
             hits=[hit('thread', 38, 50, f'verito_thread_whip_{n}', 10, 'flinch', cost=15, status=('poison', 45))],
-            sounds=[(4, 'hiss'), (36, 'gust')], ai=ai(0, 3.2, 180, 2, minA=70, side=side_name(sd)))),
+            sounds=[(4, 'hiss'), (36, 'gust')], ai=ai(0, 3.2, 180, 2, minA=70, side=side_name(sd)), open='spinner')),
         move('web_volley', 130, 56, 62, A(
             K('w', 0.6, None, pitch=0.15, bags=0.8, legs={'M1': (0.3, 0.6)}),
             K('w', 1.0, None, pitch=0.2, yH=0.04, bags=1.1, legs={'M1': (0.4, 0.7)}),
@@ -1478,7 +1495,7 @@ def verito_moves(s):
             K('s', 1.0, None, pitch=-0.05, bags=0.2),
             K('r', 0.5, None, bags=0.0)), turn=(46, 60),
              hazards=[hazard(58, 5, 0.6, 1.2, 34, 26, 6, 'flinch', [0, 1.0, 1.4], 'poison', peak=2, pattern='line', status=('poison', 50))],
-             sounds=[(4, 'hiss'), (56, 'gust')], vfx=[(58, 'web_spray')], ai=ai(5, 16, 40, 1.6, cd=420)),
+             sounds=[(4, 'hiss'), (56, 'gust')], vfx=[(58, 'web_spray')], ai=ai(5, 16, 40, 1.6, cd=420), open='head'),
         move('body_slam', 110, 46, 52, A(
             K('w', 0.6, None, pitch=0.35, yH=0.08, bags=0.6, legs={'M1': (0.5, 1.0), 'M2': (0.3, 0.6)}),
             K('w', 1.0, None, pitch=0.45, yH=0.1, bags=0.9, legs={'M1': (0.6, 1.1), 'M2': (0.4, 0.7)}),
@@ -1488,7 +1505,7 @@ def verito_moves(s):
             K('r', 0.8, None, yH=-0.01)), turn=(34, 60), slamTrack='verito_body_slam',
              bind=[B('verito_body_slam', 'sp:4', 'sp:7', 0.85)],
              hits=[hit('body', 46, 52, 'verito_body_slam', 24, 'knockdown', cost=35)],
-             sounds=[(4, 'insect_buzz'), (44, 'galdros_swing')], vfx=[(50, 'ground_slam')], ai=ai(0, 2.6, 40, 2, cd=240)),
+             sounds=[(4, 'insect_buzz'), (44, 'galdros_swing')], vfx=[(50, 'ground_slam')], ai=ai(0, 2.6, 40, 2, cd=240), open='head'),
         move('spin_threads', 120, 46, 66, A(
             K('w', 1.0, None, yaw=-0.3, tailPitch=0.4, bags=0.6),
             K('s', 0.5, None, tailPitch=0.3, bags=0.8),
@@ -1496,7 +1513,7 @@ def verito_moves(s):
             K('r', 0.4, None, bags=0.1), spin=1),
              tracks=[track('verito_spin_threads', 2.8, 1.4, [(46, [0, 0.4, -0.7], [0, 0, 1])])],
              hits=[hit('threads', 48, 66, 'verito_spin_threads', 8, 'flinch', cost=15, status=('poison', 50))],
-             sounds=[(4, 'hiss'), (44, 'gust'), (56, 'gust')], vfx=[(48, 'poison_cloud')], ai=ai(0, 3.6, 180, 1.3, cd=420)),
+             sounds=[(4, 'hiss'), (44, 'gust'), (56, 'gust')], vfx=[(48, 'poison_cloud')], ai=ai(0, 3.6, 180, 1.3, cd=420), open=('head', 72, 108)),
         *lr(lambda sd, n: move(f'leg_rake_{n}', 84, 30, 40, A(
             K('w', 1.0, None, roll=0.08, legs={'M2.S': (0.5, 0.9), 'M3.S': (0.3, 0.7)}),
             K('s', 0.5, 'o', roll=-0.08, x=0.03, legs={'M2.S': (-0.4, 0.2, 0.3), 'M3.S': (-0.4, 0.2, 0.2)}),
@@ -1505,8 +1522,8 @@ def verito_moves(s):
             K('r', 0.8, None, legs={'M2.S': (0.0, 0.05)})),
             side=sd, bind=[B(f'verito_leg_rake_{n}', 'leg:M2:S:1', 'leg:M2:S:end', 0.5, ext=0.15)],
             hits=[hit('legs', 30, 40, f'verito_leg_rake_{n}', 14, 'flinch', kind='cut', cost=20, status=('poison', 25))],
-            sounds=[(28, 'galdros_swing')], ai=ai(0, 2.8, 130, 2, minA=40, side=side_name(sd)))),
-        move('mist_cloud', 140, 56, 96, A(
+            sounds=[(28, 'galdros_swing')], ai=ai(0, 2.8, 130, 2, minA=40, side=side_name(sd)), open=f'bag_{n}')),
+        move('mist_cloud', 148, 56, 96, A(
             K('w', 0.35, None, yH=-0.08, pitch=-0.05, bags=0.7, legs={'*': (0, 0.45, -0.1)}),
             K('w', 1.0, 'i', yH=-0.12, pitch=-0.14, bags=1.5, legs={'*': (0, 0.7, -0.15)}),
             K('s', 0.15, 'o', yH=0.08, pitch=0.08, bags=-0.4, legs={'*': (0, 0.0, 0.35)}),
@@ -1514,7 +1531,7 @@ def verito_moves(s):
             K('r', 0.5, None, bags=0.0, legs={'*': (0, 0.05, 0.1)}), shake=0.03, shakeIn='windup'),
              tracks=[track('verito_mist_cloud', 3.0, 1.6, [(56, [0, 0.8, -0.8], [0, 0, 1])])],
              hits=[hit('mist', 58, 96, 'verito_mist_cloud', 4, 'flinch', cost=10, status=('poison', 70))],
-             sounds=[(4, 'hiss'), (56, 'gust')], vfx=[(58, 'poison_cloud'), (76, 'poison_cloud')], ai=ai(0, 4, 180, 1.1, cd=640)),
+             sounds=[(4, 'hiss'), (56, 'gust')], vfx=[(58, 'poison_cloud'), (76, 'poison_cloud')], ai=ai(0, 4, 180, 1.1, cd=640), open=('head', 102, 138)),
         move('pounce', 100, 44, 52, A(
             K('w', 0.5, None, yH=-0.14, bags=-0.4, legs={'*': (0, 0.55)}),
             K('w', 0.75, 'o', yH=0.04, pitch=0.12, bags=0.6, legs={'M1': (0.6, 0.8)}),
@@ -1524,13 +1541,13 @@ def verito_moves(s):
             K('r', 0.8, None, yH=-0.01), hop=0.25),
              curve=(3.5, 26, 46), turn=(24, 80), bind=[mouth('verito_pounce')],
              hits=[hit('jaws', 44, 52, 'verito_pounce', 20, 'knockdown', kind='cut', cost=30, status=('poison', 30))],
-             sounds=[(4, 'insect_buzz'), (26, 'gust'), (42, 'hiss')], ai=ai(3, 5.7, 30, 1.6, cd=300, clear=4)),
+             sounds=[(4, 'insect_buzz'), (26, 'gust'), (42, 'hiss')], ai=ai(3, 5.7, 30, 1.6, cd=300, clear=4), open='head'),
         # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 糸櫛の前脚を胸の前に上げ、羽袋を少しふくらませて、細い脚を小刻みに運ぶ ----
         *turns(dict(yH=-0.02, yaw=0.05, headYaw=0.1, tailYaw=-0.1, bags=0.1, legs={'M1': (0.2, 0.3)}),
                dict(yaw=0.08, roll=-0.04, spineYaw=0.1, headYaw=0.18, bags=0.22, legs={'M1': (0.28, 0.45)}),
                dict(yH=-0.02, yaw=0.06, roll=-0.03, spineYaw=0.08, headYaw=0.12, bags=0.15, legs={'M1': (0.24, 0.4)}),
                slow=-2, flags=dict(scurry=1)),
-    ]
+    ])
 
 
 VERITO_IDLE = idle(
@@ -1566,7 +1583,9 @@ def razmer_moves(s):
     head = lambda n: B(n, 'sp:9', 'sp:11', 0.5, ext=0.2)
     front = lambda n: B(n, 'sp:6', 'sp:10', 0.85)
     tail = lambda n: B(n, 'sp:3', 'sp:0', 0.55, ext=0.2)
-    return [
+    # 後隙の反撃（v0.73.0。D-171）: 部位を低く出して止まる形（技の open で使う。技ごとの形は KO で書く）
+    OP = dict(head=dict(neckPitch=-0.2, headPitch=-0.1), tail_ring=dict(tailPitch=0.0), ring_f=dict(spinePitch=-0.08), ring_b=dict(yH=-0.02))
+    return opened(OP, [
         move('roar', 100, 100, 100, A(
             K('w', 0.6, None, yH=-0.05, neckPitch=-0.2, spinePitch=-0.1),
             K('w', 1.0, None, spinePitch=0.3, neckPitch=0.4, headPitch=0.25, tailWave=0.15),
@@ -1592,12 +1611,12 @@ def razmer_moves(s):
             K('w', 1.0, None, spineYaw=-0.6, neckYaw=-0.65, headYaw=-0.3, yaw=-0.12, tailYaw=0.35),
             K('s', 0.5, 'o', spineYaw=0.6, neckYaw=0.75, headYaw=0.3, yaw=0.3, tailYaw=-0.4, roll=-0.06),
             K('s', 1.0, None, spineYaw=0.7, neckYaw=0.85, headYaw=0.35, yaw=0.35, tailYaw=-0.45),
-            K('r', 0.4, None, spineYaw=0.45, neckYaw=0.5, yaw=0.2, tailYaw=-0.25),
+            KO(spineYaw=0.65, neckYaw=0.8, headYaw=0.3, yaw=0.32, tailYaw=-0.4, neckPitch=-0.15),
             K('r', 0.8, None, spineYaw=0.05)),
             side=sd, bind=[front(f'razmer_body_sweep_{n}')],
             hits=[hit('body', 40, 54, f'razmer_body_sweep_{n}', 26, 'knockdown', cost=40)],
-            sounds=[(4, 'hiss'), (38, 'galdros_swing')], ai=ai(0, 4.5, 110, 2.5, side=side_name(sd)))),
-        move('crawl_charge', 120, 40, 84, A(
+            sounds=[(4, 'hiss'), (38, 'galdros_swing')], ai=ai(0, 4.5, 110, 2.5, side=side_name(sd)), open='head')),
+        move('crawl_charge', 128, 40, 84, A(
             K('w', 0.7, None, yH=-0.12, neckPitch=-0.1, legs={'*': (-0.4, 0.4)}),
             K('w', 1.0, None, yH=-0.14, neckPitch=-0.12, headPitch=0.1, legs={'*': (-0.5, 0.45)}),
             K('s', 0.1, None, yH=-0.1, neckPitch=-0.1, legs={'*': (-0.5, 0.3)}),
@@ -1606,7 +1625,7 @@ def razmer_moves(s):
             K('r', 0.7, None, yH=-0.01), und=1),
              curve=(13.0, 40, 84), brake=(46, 84), bind=[head('razmer_crawl_charge')],
              hits=[hit('head', 40, 84, 'razmer_crawl_charge', 28, 'knockdown', cost=45)],
-             sounds=[(4, 'hiss'), (40, 'galdros_charge')], ai=ai(6, 16.7, 25, 2, cd=480, clear=14)),
+             sounds=[(4, 'hiss'), (40, 'galdros_charge')], ai=ai(6, 16.7, 25, 2, cd=480, clear=14), open='tail_ring'),
         move('ring_slam', 100, 46, 54, A(
             K('w', 0.6, None, spinePitch=0.4, neckPitch=0.25, legs={'F': (0.3, 0.8)}),
             K('w', 1.0, None, spinePitch=0.5, neckPitch=0.3, headPitch=0.1, legs={'F': (0.3, 0.9)}),
@@ -1616,16 +1635,16 @@ def razmer_moves(s):
             K('r', 0.8, None, spinePitch=-0.02)), turn=(30, 50), slamTrack='razmer_ring_slam',
              bind=[B('razmer_ring_slam', 'sp:6', 'sp:8', 0.9)],
              hits=[hit('ring', 46, 54, 'razmer_ring_slam', 30, 'knockdown', cost=45)],
-             sounds=[(4, 'galdros_warn'), (44, 'galdros_swing')], vfx=[(52, 'ground_slam')], ai=ai(0, 3.7, 35, 2.5)),
+             sounds=[(4, 'galdros_warn'), (44, 'galdros_swing')], vfx=[(52, 'ground_slam')], ai=ai(0, 3.7, 35, 2.5), open='ring_f'),
         *lr(lambda sd, n: move(f'tail_wrap_{n}', 100, 40, 54, A(
             K('w', 1.0, None, yaw=-0.15, spineYaw=0.15, neckYaw=0.4, tailYaw=-0.6, tailCurl=0.1),
             K('s', 0.5, 'o', yaw=0.3, spineYaw=-0.1, neckYaw=0.3, tailYaw=1.3, tailCurl=0.5),
             K('s', 1.0, None, yaw=0.35, neckYaw=0.25, tailYaw=1.5, tailCurl=0.6),
-            K('r', 0.4, None, yaw=0.2, tailYaw=0.7, tailCurl=0.3),
+            KO(yaw=0.32, neckYaw=0.2, tailYaw=1.4, tailCurl=0.5),
             K('r', 0.8, None, tailYaw=0.08)),
             side=sd, bind=[tail(f'razmer_tail_wrap_{n}')],
             hits=[hit('tail', 40, 54, f'razmer_tail_wrap_{n}', 24, 'knockdown', cost=35)],
-            sounds=[(4, 'hiss'), (38, 'galdros_swing')], ai=ai(0, 4.7, 180, 2.5, minA=70, side=side_name(sd)))),
+            sounds=[(4, 'hiss'), (38, 'galdros_swing')], ai=ai(0, 4.7, 180, 2.5, minA=70, side=side_name(sd)), open='tail_ring')),
         move('bite', 80, 32, 38, A(
             K('w', 1.0, None, z=-0.05, neckPitch=0.45, headPitch=0.25, spinePitch=0.1),
             K('s', 0.5, 'o', z=0.12, neckPitch=-0.25, headPitch=-0.15, spinePitch=-0.05),
@@ -1634,7 +1653,7 @@ def razmer_moves(s):
             K('r', 0.8, None, z=0.0)),
              curve=(1.2, 30, 38), turn=(26, 80), bind=[head('razmer_bite')],
              hits=[hit('jaws', 32, 38, 'razmer_bite', 22, 'knockdown', kind='cut', cost=30)],
-             sounds=[(4, 'hiss'), (30, 'galdros_swing')], ai=ai(0, 6, 30, 2.5)),
+             sounds=[(4, 'hiss'), (30, 'galdros_swing')], ai=ai(0, 6, 30, 2.5), open='head'),
         move('double_bite', 120, 32, 74, A(
             K('w', 1.0, None, z=-0.05, neckPitch=0.45, headPitch=0.25),
             K('s', 0.12, 'o', z=0.12, neckPitch=-0.25, headPitch=-0.15),
@@ -1645,7 +1664,7 @@ def razmer_moves(s):
             K('r', 0.8, None, z=0.0)),
              curve=(2.0, 30, 72), turn=(30, 80), bind=[head('razmer_double_bite')],
              hits=[hit('bite1', 32, 38, 'razmer_double_bite', 16, 'flinch', kind='cut', cost=20), hit('bite2', 66, 72, 'razmer_double_bite', 22, 'knockdown', kind='cut', cost=30)],
-             sounds=[(4, 'hiss'), (30, 'galdros_swing'), (64, 'galdros_swing')], ai=ai(0, 6.5, 30, 1.8, cd=300)),
+             sounds=[(4, 'hiss'), (30, 'galdros_swing'), (64, 'galdros_swing')], ai=ai(0, 6.5, 30, 1.8, cd=300), open='head'),
         move('tail_slam', 110, 48, 56, A(
             K('w', 0.6, None, tailPitch=0.8, tailCurl=0.3, neckYaw=0.3),
             K('w', 1.0, None, tailPitch=1.1, tailCurl=0.4, neckYaw=0.35),
@@ -1655,7 +1674,7 @@ def razmer_moves(s):
             K('r', 0.8, None, tailPitch=-0.05)),
              slamTrack='razmer_tail_slam', bind=[tail('razmer_tail_slam')],
              hits=[hit('tail', 48, 56, 'razmer_tail_slam', 28, 'knockdown', cost=40)],
-             sounds=[(4, 'hiss'), (46, 'galdros_swing')], vfx=[(54, 'ground_slam')], ai=ai(0, 5.1, 180, 2.2, minA=135)),
+             sounds=[(4, 'hiss'), (46, 'galdros_swing')], vfx=[(54, 'ground_slam')], ai=ai(0, 5.1, 180, 2.2, minA=135), open='tail_ring'),
         move('coil_spin', 130, 50, 72, A(
             K('w', 1.0, None, spineYaw=-0.5, neckYaw=-0.5, tailYaw=0.6, yaw=-0.3),
             K('s', 0.5, None, spineYaw=0.4, neckYaw=0.4, tailYaw=-0.4),
@@ -1663,7 +1682,7 @@ def razmer_moves(s):
             K('r', 0.4, None, spineYaw=0.15), spin=1),
              bind=[front('razmer_coil_spin_a'), tail('razmer_coil_spin_b')],
              hits=[hit('front', 50, 72, 'razmer_coil_spin_a', 20, 'knockdown', cost=30), hit('tail', 50, 72, 'razmer_coil_spin_b', 20, 'knockdown', cost=30)],
-             sounds=[(4, 'hiss'), (48, 'galdros_swing'), (60, 'galdros_swing')], ai=ai(0, 5, 180, 1.4, cd=480)),
+             sounds=[(4, 'hiss'), (48, 'galdros_swing'), (60, 'galdros_swing')], ai=ai(0, 5, 180, 1.4, cd=480), open='ring_f'),
         move('quake', 140, 60, 70, A(
             K('w', 0.5, None, yH=-0.08, spinePitch=-0.1, neckPitch=-0.2),
             K('w', 1.0, None, yH=-0.12, spinePitch=-0.15, neckPitch=-0.3, tailWave=0.3),
@@ -1672,7 +1691,7 @@ def razmer_moves(s):
             K('r', 0.5, None, yH=-0.03), shake=0.04, shakeIn='all'),
              tracks=[track('razmer_quake', 3.4, 4.0, [(60, [0, 0.3, -2.0], [0, 0, 1])])],
              hits=[hit('quake', 60, 70, 'razmer_quake', 14, 'flinch', cost=25)],
-             sounds=[(4, 'galdros_rumble'), (58, 'rock_impact')], vfx=[(60, 'quake_ring')], ai=ai(0, 5, 180, 1.2, cd=600)),
+             sounds=[(4, 'galdros_rumble'), (58, 'rock_impact')], vfx=[(60, 'quake_ring')], ai=ai(0, 5, 180, 1.2, cd=600), open='head'),
         move('head_slam', 110, 48, 54, A(
             K('w', 0.6, None, spinePitch=0.35, neckPitch=0.6, headPitch=0.3),
             K('w', 1.0, None, spinePitch=0.4, neckPitch=0.7, headPitch=0.35, yH=0.04),
@@ -1682,7 +1701,7 @@ def razmer_moves(s):
             K('r', 0.8, None, neckPitch=-0.05)), turn=(36, 50), slamTrack='razmer_head_slam',
              bind=[head('razmer_head_slam')],
              hits=[hit('head', 48, 54, 'razmer_head_slam', 28, 'knockdown', cost=40)],
-             sounds=[(4, 'hiss'), (46, 'galdros_swing')], vfx=[(52, 'ground_slam')], ai=ai(2, 4.8, 30, 2)),
+             sounds=[(4, 'hiss'), (46, 'galdros_swing')], vfx=[(52, 'ground_slam')], ai=ai(2, 4.8, 30, 2), open='head'),
         *lr(lambda sd, n: move(f'side_roll_{n}', 120, 48, 64, A(
             K('w', 0.6, None, roll=0.2, yH=-0.04, neckYaw=-0.3, legs={'*.S': (0, 0.4)}),
             K('w', 1.0, None, roll=0.25, yH=-0.05, neckYaw=-0.3),
@@ -1693,7 +1712,7 @@ def razmer_moves(s):
             side=sd, curve=(1.6, 46, 64), dirDeg=90 * sd,
             bind=[B(f'razmer_side_roll_{n}', 'leg:F:S:0', 'leg:H:S:0', 1.0)],
             hits=[hit('body', 50, 64, f'razmer_side_roll_{n}', 24, 'knockdown', cost=35)],
-            sounds=[(4, 'hiss'), (48, 'galdros_rumble')], vfx=[(58, 'dust_ring')], ai=ai(0, 3.6, 130, 1.6, minA=40, side=side_name(sd), cd=300))),
+            sounds=[(4, 'hiss'), (48, 'galdros_rumble')], vfx=[(58, 'dust_ring')], ai=ai(0, 3.6, 130, 1.6, minA=40, side=side_name(sd), cd=300), open='ring_f')),
         move('lunge_sweep', 130, 36, 78, A(
             K('w', 1.0, None, z=-0.05, neckPitch=0.4, headPitch=0.2, spineYaw=-0.2),
             K('s', 0.12, 'o', z=0.12, neckPitch=-0.25, headPitch=-0.15),
@@ -1704,13 +1723,13 @@ def razmer_moves(s):
             K('r', 0.8, None, spineYaw=0.05)),
              curve=(1.4, 34, 44), turn=(30, 70), bind=[head('razmer_lunge_sweep_a'), front('razmer_lunge_sweep_b')],
              hits=[hit('bite', 36, 42, 'razmer_lunge_sweep_a', 18, 'flinch', kind='cut', cost=25), hit('sweep', 62, 78, 'razmer_lunge_sweep_b', 24, 'knockdown', cost=35)],
-             sounds=[(4, 'hiss'), (34, 'galdros_swing'), (60, 'galdros_swing')], ai=ai(0, 6, 40, 1.6, cd=360)),
+             sounds=[(4, 'hiss'), (34, 'galdros_swing'), (60, 'galdros_swing')], ai=ai(0, 6, 40, 1.6, cd=360), open='head'),
         # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 頭と前半身を先に回る向きへ曲げ、骨環の体をうねらせて、短い脚で後半身を引き寄せる ----
         *turns(dict(yH=-0.02, spineYaw=0.12, neckYaw=0.2, headYaw=0.12, tailYaw=-0.12),
                dict(yH=-0.03, roll=-0.03, spineYaw=0.36, neckYaw=0.42, headYaw=0.22),
                dict(yH=-0.03, roll=-0.02, spineYaw=0.26, neckYaw=0.3, headYaw=0.15),
                slow=6, flags=dict(und=0.5)),
-    ]
+    ])
 
 
 RAZMER_IDLE = idle(
@@ -1745,7 +1764,9 @@ def kirisave_moves(s):
     head = lambda n: B(n, 'sp:9', 'sp:11', 0.45, ext=0.2)
     rear = lambda n: B(n, 'sp:4', 'sp:1', 0.6)
     tail = lambda n: B(n, 'sp:2', 'sp:0', 0.5, ext=0.25)
-    return [
+    # 後隙の反撃（v0.73.0。D-171）: 部位を低く出して止まる形（技の open で使う。技ごとの形は KO で書く）
+    OP = dict(head=dict(neckPitch=-0.2, headPitch=-0.1), tail=dict(tailPitch=0.0), sails_l=dict(sail=0.6), sails_r=dict(sail=0.6))
+    return opened(OP, [
         move('roar', 100, 100, 100, A(
             K('w', 0.6, None, neckPitch=-0.15, sail=0.4),
             K('w', 1.0, None, spinePitch=0.25, neckPitch=0.4, headPitch=0.25, sail=1.0, fin=0.5),
@@ -1774,7 +1795,7 @@ def kirisave_moves(s):
             K('r', 0.4, None, sail=0.6),
             K('r', 0.8, None, sail=0.1), seq=True), turn=(40, 60),
              hazards=[hazard(58, 6, 0.5, 1.1, 32, 8, 18, 'flinch', [0, 1.6, 2.0], 'ice', peak=2.5, pattern='line')],
-             sounds=[(6, 'ice_crack'), (56, 'ice_crack')], ai=ai(5, 18, 45, 2.5, cd=360)),
+             sounds=[(6, 'ice_crack'), (56, 'ice_crack')], ai=ai(5, 18, 45, 2.5, cd=360), open='head'),
         move('slide', 110, 40, 70, A(
             K('w', 0.7, None, yH=-0.2, neckPitch=-0.2, sail=-0.3, fin=-0.5),
             K('w', 1.0, None, yH=-0.25, neckPitch=-0.25, headPitch=0.1, sail=-0.4, fin=-0.9),
@@ -1784,16 +1805,16 @@ def kirisave_moves(s):
             K('r', 0.7, None, yH=-0.02), wiggle=0.08),
              curve=(9.0, 40, 70), bind=[B('kirisave_slide', 'sp:8', 'sp:11', 0.6, ext=0.2)],
              hits=[hit('head', 40, 70, 'kirisave_slide', 24, 'knockdown', cost=35)],
-             sounds=[(4, 'hiss'), (40, 'galdros_charge')], ai=ai(2.5, 13.7, 25, 2.5, cd=300, clear=10)),
+             sounds=[(4, 'hiss'), (40, 'galdros_charge')], ai=ai(2.5, 13.7, 25, 2.5, cd=300, clear=10), open='tail'),
         *lr(lambda sd, n: move(f'body_sweep_{n}', 90, 36, 48, A(
             K('w', 1.0, None, spineYaw=0.4, tailYaw=-0.5, roll=0.1, sail=0.6),
             K('s', 0.5, 'o', spineYaw=-0.35, tailYaw=0.9, roll=-0.15, sail=0.6),
             K('s', 1.0, None, spineYaw=-0.4, tailYaw=1.0, roll=-0.15, sail=0.5),
-            K('r', 0.4, None, spineYaw=-0.2, tailYaw=0.5, sail=0.3),
+            KO(spineYaw=-0.35, tailYaw=0.9, roll=-0.1, sail=0.4),
             K('r', 0.8, None, tailYaw=0.05)),
             side=sd, bind=[rear(f'kirisave_body_sweep_{n}')],
             hits=[hit('body', 36, 48, f'kirisave_body_sweep_{n}', 20, 'flinch', cost=30)],
-            sounds=[(4, 'ice_crack'), (34, 'galdros_swing')], ai=ai(0, 5, 140, 2.5, minA=40, side=side_name(sd)))),
+            sounds=[(4, 'ice_crack'), (34, 'galdros_swing')], ai=ai(0, 5, 140, 2.5, minA=40, side=side_name(sd)), open='tail')),
         move('tail_slam', 110, 50, 58, A(
             K('w', 0.5, None, tailPitch=0.6, tailCurl=0.6, neckYaw=0.3),
             K('w', 1.0, None, tailPitch=1.0, tailCurl=0.9, neckYaw=0.35),
@@ -1803,7 +1824,7 @@ def kirisave_moves(s):
             K('r', 0.8, None, tailPitch=-0.03)),
              slamTrack='kirisave_tail_slam', bind=[tail('kirisave_tail_slam')],
              hits=[hit('tail', 50, 58, 'kirisave_tail_slam', 28, 'knockdown', cost=40)],
-             sounds=[(4, 'hiss'), (48, 'galdros_swing')], vfx=[(56, 'ground_slam')], ai=ai(0, 5.7, 180, 2.5, minA=120)),
+             sounds=[(4, 'hiss'), (48, 'galdros_swing')], vfx=[(56, 'ground_slam')], ai=ai(0, 5.7, 180, 2.5, minA=120), open='tail'),
         move('bite', 80, 32, 38, A(
             K('w', 1.0, None, z=-0.1, neckPitch=0.4, headPitch=0.2),
             K('s', 0.5, 'o', z=0.2, neckPitch=-0.2, headPitch=-0.15),
@@ -1812,7 +1833,7 @@ def kirisave_moves(s):
             K('r', 0.8, None, z=0.0)),
              curve=(1.2, 30, 38), turn=(26, 80), bind=[head('kirisave_bite')],
              hits=[hit('jaws', 32, 38, 'kirisave_bite', 20, 'knockdown', kind='cut', cost=30)],
-             sounds=[(4, 'hiss'), (30, 'galdros_swing')], ai=ai(0, 6, 30, 2.5)),
+             sounds=[(4, 'hiss'), (30, 'galdros_swing')], ai=ai(0, 6, 30, 2.5), open='head'),
         move('frost_breath', 130, 56, 76, A(
             K('w', 0.6, None, neckPitch=0.3, headPitch=0.2, sail=0.6),
             K('w', 1.0, None, neckPitch=0.35, headPitch=0.25, z=-0.06, sail=0.9),
@@ -1822,7 +1843,7 @@ def kirisave_moves(s):
             K('r', 0.8, None, sail=0.1), seq=True), turn=(50, 50),
              tracks=[track('kirisave_frost_breath', 1.3, 5.4, [(56, [0, 1.2, 4.0], [0, -0.15, 1]), (76, [0, 1.1, 4.0], [0, -0.18, 1])])],
              hits=[hit('frost', 56, 76, 'kirisave_frost_breath', 18, 'knockdown', cost=30)],
-             sounds=[(4, 'hiss'), (54, 'ice_crack'), (64, 'gust')], vfx=[(56, 'frost_breath'), (66, 'frost_breath')], ai=ai(3, 10.5, 30, 1.8, cd=420)),
+             sounds=[(4, 'hiss'), (54, 'ice_crack'), (64, 'gust')], vfx=[(56, 'frost_breath'), (66, 'frost_breath')], ai=ai(3, 10.5, 30, 1.8, cd=420), open='head'),
         *lr(lambda sd, n: move(f'sail_slash_{n}', 100, 40, 52, A(
             K('w', 1.0, None, roll=0.2, twist=0.15, spineYaw=-0.2, sail=1.2),
             K('s', 0.5, 'o', roll=-0.5, twist=-0.3, spineYaw=0.3, x=0.08, sail=1.3),
@@ -1831,7 +1852,7 @@ def kirisave_moves(s):
             K('r', 0.8, None, roll=-0.03, sail=0.1)),
             side=sd, bind=[B(f'kirisave_sail_slash_{n}', 'own:sail1:C', 'own:sail6:C', 1.0)],
             hits=[hit('sails', 40, 52, f'kirisave_sail_slash_{n}', 22, 'knockdown', kind='cut', cost=35)],
-            sounds=[(4, 'ice_crack'), (38, 'galdros_swing')], ai=ai(0, 4.2, 120, 2, minA=30, side=side_name(sd)))),
+            sounds=[(4, 'ice_crack'), (38, 'galdros_swing')], ai=ai(0, 4.2, 120, 2, minA=30, side=side_name(sd)), open=f'sails_{n}')),
         move('ice_ring', 140, 62, 76, A(
             K('w', 0.5, None, yH=-0.1, sail=1.0),
             K('w', 1.0, None, yH=-0.12, sail=1.4),
@@ -1840,7 +1861,7 @@ def kirisave_moves(s):
             K('r', 0.5, None, sail=0.0), seq=True, shake=0.03, shakeIn='windup'),
              tracks=[track('kirisave_ice_ring', 3.0, 5.0, [(62, [0, 0.6, -2.4], [0, 0, 1])])],
              hits=[hit('ice', 62, 76, 'kirisave_ice_ring', 16, 'knockdown', cost=30)],
-             sounds=[(4, 'ice_crack'), (60, 'ice_crack')], vfx=[(62, 'ice_ring')], ai=ai(0, 4.5, 180, 1.2, cd=600)),
+             sounds=[(4, 'ice_crack'), (60, 'ice_crack')], vfx=[(62, 'ice_ring')], ai=ai(0, 4.5, 180, 1.2, cd=600), open='head'),
         move('coil_slam', 120, 52, 58, A(
             K('w', 0.6, None, spinePitch=0.5, neckPitch=0.4, sail=0.6),
             K('w', 1.0, None, spinePitch=0.65, neckPitch=0.5, headPitch=0.2, yH=0.1, sail=0.8),
@@ -1850,16 +1871,16 @@ def kirisave_moves(s):
             K('r', 0.8, None, neckPitch=-0.03, sail=0.1)), turn=(40, 50), slamTrack='kirisave_coil_slam',
              bind=[B('kirisave_coil_slam', 'sp:7', 'sp:11', 0.8, ext=0.1)],
              hits=[hit('body', 52, 58, 'kirisave_coil_slam', 28, 'knockdown', cost=40)],
-             sounds=[(4, 'hiss'), (50, 'galdros_swing')], vfx=[(56, 'ground_slam')], ai=ai(0, 5.4, 35, 2.2)),
+             sounds=[(4, 'hiss'), (50, 'galdros_swing')], vfx=[(56, 'ground_slam')], ai=ai(0, 5.4, 35, 2.2), open='head'),
         *lr(lambda sd, n: move(f'tail_whip_{n}', 90, 34, 46, A(
             K('w', 1.0, None, yaw=-0.12, tailYaw=-0.7, neckYaw=0.3),
             K('s', 0.5, 'o', yaw=0.25, tailYaw=1.2, tailCurl=0.3),
             K('s', 1.0, None, yaw=0.3, tailYaw=1.4, tailCurl=0.35),
-            K('r', 0.4, None, yaw=0.15, tailYaw=0.6),
+            KO(yaw=0.28, tailYaw=1.3, tailCurl=0.3),
             K('r', 0.8, None, tailYaw=0.05)),
             side=sd, bind=[tail(f'kirisave_tail_whip_{n}')],
             hits=[hit('tail', 34, 46, f'kirisave_tail_whip_{n}', 18, 'flinch', cost=25)],
-            sounds=[(32, 'galdros_swing')], ai=ai(0, 5.8, 180, 2, minA=100, side=side_name(sd)))),
+            sounds=[(32, 'galdros_swing')], ai=ai(0, 5.8, 180, 2, minA=100, side=side_name(sd)), open='tail')),
         move('ice_burst', 140, 60, 66, A(
             K('w', 0.5, None, neckPitch=0.3, sail=0.9, fin=0.3),
             K('w', 1.0, None, neckPitch=0.35, headPitch=0.2, sail=1.3, fin=0.7),
@@ -1867,8 +1888,8 @@ def kirisave_moves(s):
             K('s', 1.0, None, neckPitch=-0.2, sail=0.3),
             K('r', 0.5, None, sail=0.0), seq=True),
              hazards=[hazard(62, 5, 3.6, 1.3, 48, 8, 16, 'flinch', [0, 1.5, 0.0], 'ice', peak=5)],
-             sounds=[(4, 'ice_crack'), (60, 'ice_crack')], ai=ai(6, 18, 90, 1.4, cd=480)),
-        move('slide_long', 140, 46, 100, A(
+             sounds=[(4, 'ice_crack'), (60, 'ice_crack')], ai=ai(6, 18, 90, 1.4, cd=480), open=False),  # 遠くの相手へだけ撃つ技（近づく間が無い。隙を作らない）
+        move('slide_long', 146, 46, 100, A(
             K('w', 0.7, None, yH=-0.2, neckPitch=-0.2, sail=-0.3, fin=-0.5),
             K('w', 1.0, None, yH=-0.25, neckPitch=-0.25, headPitch=0.1, sail=-0.4, fin=-0.9),
             K('s', 0.1, 'o', yH=-0.3, neckPitch=-0.15, sail=-0.4, fin=-1.0),
@@ -1877,13 +1898,13 @@ def kirisave_moves(s):
             K('r', 0.7, None, yH=-0.02), wiggle=0.1),
              curve=(15.0, 46, 100), turn=(40, 50), brake=(52, 100), bind=[B('kirisave_slide_long', 'sp:7', 'sp:11', 0.65, ext=0.2)],
              hits=[hit('body', 46, 100, 'kirisave_slide_long', 26, 'knockdown', cost=40)],
-             sounds=[(4, 'hiss'), (46, 'galdros_charge')], ai=ai(8, 19.5, 25, 1.5, cd=520, clear=14)),
+             sounds=[(4, 'hiss'), (46, 'galdros_charge')], ai=ai(8, 19.5, 25, 1.5, cd=520, clear=14), open='tail'),
         # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 脚が無いので、頭を回る向きへ振り、氷帆を寝かせて、長い体を S 字にくねらせて腹で回る ----
         *turns(dict(spineYaw=0.14, neckYaw=0.24, headYaw=0.14, tailYaw=-0.14, sail=-0.12, fin=0.12),
                dict(roll=-0.03, spineYaw=0.4, neckYaw=0.5, headYaw=0.26, sail=-0.26, fin=0.3),
                dict(roll=-0.02, spineYaw=0.3, neckYaw=0.36, headYaw=0.18, sail=-0.2, fin=0.2),
                slow=8, flags=dict(und=0.8, wiggle=0.06)),
-    ]
+    ])
 
 
 KIRISAVE_IDLE = idle(
@@ -1921,7 +1942,9 @@ def velgait_moves(s):
     head = lambda n: B(n, 'sp:11', 'sp:13', 0.5, ext=0.2)
     tail = lambda n: B(n, 'sp:5', 'sp:2', 0.45, ext=0.2)
     crown_pos = s.m(1258, 125)
-    return [
+    # 後隙の反撃（v0.73.0。D-171）: 部位を低く出して止まる形（技の open で使う。技ごとの形は KO で書く）
+    OP = dict(head=dict(pitch=-0.14, yH=-0.06, neckPitch=-1.0, headPitch=-0.35), tail=dict(tailPitch=0.0))
+    return opened(OP, [
         move('roar', 90, 90, 90, A(
             K('w', 0.6, None, yH=-0.04, neckPitch=-0.25, headPitch=-0.15, crown=-0.3, glow=0.4),
             K('w', 1.0, None, pitch=0.1, neckPitch=0.3, headPitch=0.25, crown=0.6, glow=1.0, tailPitch=0.2),
@@ -1951,17 +1974,17 @@ def velgait_moves(s):
             K('r', 0.4, None, crown=0.0, glow=0.6),
             K('r', 0.8, None, glow=0.2)), turn=(36, 70),
              hazards=[hazard(52, 2, 3.0, 2.4, 70, 10, 20, 'knockdown', crown_pos, 'mist', peak=2.5)],
-             sounds=[(6, 'mist_pop'), (50, 'mist_pop')], ai=ai(5, 16, 45, 2.5, cd=300)),
+             sounds=[(6, 'mist_pop'), (50, 'mist_pop')], ai=ai(5, 16, 45, 2.5, cd=300), open='head'),
         *lr(lambda sd, n: move(f'side_thrust_{n}', 85, 32, 42, A(
             K('w', 0.6, None, roll=-0.12, x=-0.03, yH=-0.08, neckYaw=0.2, legs={'F.S': (0, 0.5)}),
             K('w', 1.0, None, roll=-0.15, yH=-0.12, neckYaw=0.25, headYaw=0.15, crown=0.5, legs={'*': (0, 0.45)}),
             K('s', 0.4, 'o', roll=0.1, yaw=0.2, pitch=-0.15, yH=-0.06, neckYaw=0.5, headYaw=0.25, neckPitch=-1.05, headPitch=-0.45, crown=0.8, legs={'F': (0.2, 0.6)}),
             K('s', 1.0, None, roll=0.08, yaw=0.22, pitch=-0.15, yH=-0.06, neckYaw=0.55, headYaw=0.25, neckPitch=-1.05, headPitch=-0.45, crown=0.7),
-            K('r', 0.3, 'i', yH=-0.08, neckYaw=0.3, legs={'*': (0, 0.35)}),
+            KO('i', roll=0.06, yaw=0.2, pitch=-0.15, yH=-0.07, neckYaw=0.5, headYaw=0.22, neckPitch=-1.0, headPitch=-0.4, crown=0.5, legs={'*': (0, 0.3)}),
             K('r', 0.7, None, neckYaw=0.05), hop=0.22),
             side=sd, curve=(2.4, 28, 44), dirDeg=60 * sd, bind=[B(f'velgait_side_thrust_{n}', 'sp:13', 'tip:crown:C', 0.65)],
             hits=[hit('head', 32, 42, f'velgait_side_thrust_{n}', 20, 'flinch', kind='cut', cost=25)],
-            sounds=[(4, 'galdros_warn'), (30, 'galdros_swing')], ai=ai(2, 4.9, 120, 2.5, minA=30, side=side_name(sd)))),
+            sounds=[(4, 'galdros_warn'), (30, 'galdros_swing')], ai=ai(2, 4.9, 120, 2.5, minA=30, side=side_name(sd)), open='head')),
         move('stomp', 95, 42, 50, A(
             K('w', 0.5, None, pitch=0.35, yH=0.06, neckPitch=0.3, crown=0.4, legs={'F': (0.5, 0.9)}),
             K('w', 1.0, None, pitch=0.5, yH=0.1, neckPitch=0.4, crown=0.6, glow=0.8, legs={'F': (0.7, 1.0)}),
@@ -1971,17 +1994,17 @@ def velgait_moves(s):
             K('r', 0.75, None, yH=-0.01)), turn=(30, 70), slamTrack='velgait_stomp',
              bind=[B('velgait_stomp', 'leg:F:L:end', 'leg:F:R:end', 0.6)],
              hits=[hit('fore', 42, 50, 'velgait_stomp', 26, 'knockdown', cost=40)],
-             sounds=[(4, 'beast_cry'), (40, 'galdros_swing')], vfx=[(48, 'ground_slam')], ai=ai(0, 3.7, 35, 3)),
+             sounds=[(4, 'beast_cry'), (40, 'galdros_swing')], vfx=[(48, 'ground_slam')], ai=ai(0, 3.7, 35, 3), open='head'),
         *lr(lambda sd, n: move(f'tail_sweep_{n}', 95, 38, 52, A(
             K('w', 1.0, None, yaw=-0.15, spineYaw=-0.1, neckYaw=0.35, tailYaw=-0.8, glow=0.6),
             K('s', 0.5, 'o', yaw=0.35, spineYaw=0.15, neckYaw=0.2, tailYaw=1.2, glow=0.8),
             K('s', 1.0, None, yaw=0.42, spineYaw=0.15, tailYaw=1.35),
-            K('r', 0.4, None, yaw=0.2, tailYaw=0.6),
+            KO(yaw=0.4, spineYaw=0.14, tailYaw=1.25),
             K('r', 0.8, None, tailYaw=0.06)),
             side=sd, bind=[tail(f'velgait_tail_sweep_{n}')],
             hits=[hit('tail', 38, 52, f'velgait_tail_sweep_{n}', 20, 'knockdown', cost=30)],
-            sounds=[(4, 'galdros_warn'), (36, 'galdros_swing')], ai=ai(0, 4, 180, 2.5, minA=60, side=side_name(sd)))),
-        move('crown_ram', 120, 40, 78, A(
+            sounds=[(4, 'galdros_warn'), (36, 'galdros_swing')], ai=ai(0, 4, 180, 2.5, minA=60, side=side_name(sd)), open='tail')),
+        move('crown_ram', 122, 40, 78, A(
             K('w', 0.6, None, yH=-0.06, neckPitch=-0.35, headPitch=-0.3, crown=0.6, glow=1.0, legs={'F.S': (0.3, 0.6)}),
             K('w', 1.0, None, yH=-0.1, pitch=-0.12, neckPitch=-0.95, headPitch=-0.5, crown=0.8, glow=1.5),
             K('s', 0.1, 'o', yH=-0.06, pitch=-0.12, neckPitch=-0.95, headPitch=-0.5, crown=0.8, glow=1.5),
@@ -1990,17 +2013,17 @@ def velgait_moves(s):
             K('r', 0.7, None, pitch=0.02, glow=0.3)),
              curve=(8.0, 40, 78), turn=(34, 60), bind=[crown('velgait_crown_ram')],
              hits=[hit('crown', 40, 78, 'velgait_crown_ram', 24, 'knockdown', cost=35)],
-             sounds=[(4, 'beast_cry'), (38, 'galdros_charge')], ai=ai(5, 10.2, 25, 1.8, cd=360, clear=8)),
+             sounds=[(4, 'beast_cry'), (38, 'galdros_charge')], ai=ai(5, 10.2, 25, 1.8, cd=360, clear=8), open='tail'),
         *lr(lambda sd, n: move(f'crown_swing_{n}', 96, 36, 48, A(
             K('w', 0.7, None, yaw=-0.2, spineYaw=-0.15, neckYaw=-0.55, headYaw=-0.25, neckPitch=-0.15, crown=0.6),
             K('w', 1.0, None, yaw=-0.22, spineYaw=-0.18, neckYaw=-0.6, headYaw=-0.3, neckPitch=-0.2, crown=0.7),
             K('s', 0.5, 'o', yaw=0.3, spineYaw=0.25, pitch=-0.15, yH=-0.05, neckYaw=0.75, headYaw=0.3, neckPitch=-1.05, headPitch=-0.45, roll=-0.08, crown=0.9, glow=1.0),
             K('s', 1.0, None, yaw=0.38, spineYaw=0.3, pitch=-0.15, yH=-0.05, neckYaw=0.85, headYaw=0.35, neckPitch=-1.05, headPitch=-0.45, crown=0.8),
-            K('r', 0.4, None, yaw=0.2, neckYaw=0.5, neckPitch=-0.2, crown=0.4),
+            KO(yaw=0.36, spineYaw=0.28, pitch=-0.15, yH=-0.05, neckYaw=0.8, headYaw=0.33, neckPitch=-1.0, headPitch=-0.42, crown=0.6),
             K('r', 0.85, None, neckYaw=0.05)),
             side=sd, bind=[crown(f'velgait_crown_swing_{n}')],
             hits=[hit('crown', 36, 48, f'velgait_crown_swing_{n}', 20, 'knockdown', cost=30)],
-            sounds=[(4, 'galdros_warn'), (34, 'galdros_swing')], ai=ai(0, 2.7, 110, 2.2, minA=25, side=side_name(sd)))),
+            sounds=[(4, 'galdros_warn'), (34, 'galdros_swing')], ai=ai(0, 2.7, 110, 2.2, minA=25, side=side_name(sd)), open='head')),
         move('rear_kick', 96, 36, 44, A(
             K('w', 0.6, None, pitch=-0.12, yH=-0.05, neckPitch=-0.2, legs={'H': (0.25, 0.6)}),
             K('w', 1.0, None, pitch=-0.18, yH=-0.06, neckPitch=-0.25, headPitch=-0.15, legs={'H': (0.3, 0.7)}),
@@ -2010,7 +2033,7 @@ def velgait_moves(s):
             K('r', 0.7, None, pitch=0.0)),
              bind=[B('velgait_rear_kick', 'leg:H:L:end', 'leg:H:R:end', 0.5)],
              hits=[hit('hind', 36, 44, 'velgait_rear_kick', 22, 'knockdown', cost=30)],
-             sounds=[(4, 'galdros_warn'), (34, 'galdros_swing')], ai=ai(0, 3.4, 180, 2.4, minA=120)),
+             sounds=[(4, 'galdros_warn'), (34, 'galdros_swing')], ai=ai(0, 3.4, 180, 2.4, minA=120), open='tail'),
         move('mist_burst', 130, 54, 60, A(
             K('w', 0.5, None, yH=-0.06, crown=0.6, glow=1.4, legs={'*': (0, 0.3)}),
             K('w', 1.0, None, yH=-0.08, crown=0.9, glow=2.2, legs={'*': (0, 0.35)}),
@@ -2019,7 +2042,7 @@ def velgait_moves(s):
             K('r', 0.5, None, glow=0.3), shake=0.03, shakeIn='windup'),
              tracks=[track('velgait_mist_burst', 3.2, 2.0, [(54, [0, 1.0, -1.0], [0, 0, 1])])],
              hits=[hit('mist', 68, 78, 'velgait_mist_burst', 18, 'knockdown', cost=30)],
-             sounds=[(4, 'mist_pop'), (54, 'mist_pop'), (68, 'mist_pop')], vfx=[(54, 'mist_gather'), (68, 'mist_burst')], ai=ai(0, 4.4, 180, 1.2, cd=600)),
+             sounds=[(4, 'mist_pop'), (54, 'mist_pop'), (68, 'mist_pop')], vfx=[(54, 'mist_gather'), (68, 'mist_burst')], ai=ai(0, 4.4, 180, 1.2, cd=600), open=('head', 84, 114)),
         move('mist_volley', 130, 56, 60, A(
             K('w', 0.4, None, pitch=0.08, neckPitch=0.2, headPitch=-0.05, crown=0.6, glow=1.0, legs={'H': (0, 0.3)}),
             K('w', 1.0, 'i', pitch=0.2, yH=0.04, neckPitch=0.45, headPitch=0.12, headRoll=-0.12, crown=1.1, glow=2.2, legs={'F': (0.3, 0.35), 'H': (-0.12, 0.4)}),
@@ -2028,7 +2051,7 @@ def velgait_moves(s):
             K('r', 0.4, None, crown=0.0, glow=0.5),
             K('r', 0.8, None, glow=0.2)), turn=(40, 70),
              hazards=[hazard(58, 3, 4.2, 2.0, 72, 10, 18, 'knockdown', crown_pos, 'mist', peak=3)],
-             sounds=[(6, 'mist_pop'), (54, 'mist_pop'), (58, 'mist_pop')], ai=ai(7, 18, 50, 1.5, cd=480)),
+             sounds=[(6, 'mist_pop'), (54, 'mist_pop'), (58, 'mist_pop')], ai=ai(7, 18, 50, 1.5, cd=480), open=False),  # 遠くの相手へだけ撃つ技（近づく間が無い。隙を作らない）
         move('pounce', 110, 46, 54, A(
             K('w', 0.5, None, yH=-0.16, pitch=-0.08, crown=0.3, legs={'*': (0, 0.6)}),
             K('w', 0.72, 'o', yH=0.05, pitch=0.3, neckPitch=0.2, crown=0.6, legs={'F': (0.7, 0.9), 'H': (-0.5, 0.3)}),
@@ -2039,7 +2062,7 @@ def velgait_moves(s):
             K('r', 0.8, None, yH=-0.01), hop=0.4),
              curve=(5.0, 30, 50), turn=(28, 80), slamTrack='velgait_pounce', bind=[B('velgait_pounce', 'leg:F:L:end', 'leg:F:R:end', 0.65)],
              hits=[hit('fore', 46, 54, 'velgait_pounce', 22, 'knockdown', cost=35)],
-             sounds=[(4, 'beast_cry'), (30, 'gust'), (44, 'galdros_swing')], vfx=[(50, 'ground_slam')], ai=ai(4, 8.1, 30, 1.6, cd=320, clear=5)),
+             sounds=[(4, 'beast_cry'), (30, 'gust'), (44, 'galdros_swing')], vfx=[(50, 'ground_slam')], ai=ai(4, 8.1, 30, 1.6, cd=320, clear=5), open='head'),
         move('stomp_double', 130, 40, 82, A(
             K('w', 1.0, None, pitch=0.12, legs={'F.S': (0.5, 1.0)}),
             K('s', 0.1, 'i', pitch=-0.05, yH=-0.04, legs={'F.S': (0.3, 0.0)}),
@@ -2050,7 +2073,7 @@ def velgait_moves(s):
             K('r', 0.8, None, yH=-0.01)), turn=(34, 70), side=1,
              bind=[B('velgait_stomp_double_a', 'leg:F:S:2', 'leg:F:S:end', 0.55, ext=0.1), B('velgait_stomp_double_b', 'leg:F:O:2', 'leg:F:O:end', 0.55, ext=0.1)],
              hits=[hit('fore1', 40, 46, 'velgait_stomp_double_a', 16, 'flinch', cost=25), hit('fore2', 74, 82, 'velgait_stomp_double_b', 22, 'knockdown', cost=35)],
-             sounds=[(4, 'beast_cry'), (38, 'galdros_step'), (72, 'galdros_step')], vfx=[(44, 'dust_ring'), (78, 'dust_ring')], ai=ai(0, 3.5, 50, 1.8, cd=280)),
+             sounds=[(4, 'beast_cry'), (38, 'galdros_step'), (72, 'galdros_step')], vfx=[(44, 'dust_ring'), (78, 'dust_ring')], ai=ai(0, 3.5, 50, 1.8, cd=280), open='head'),
         move('charge', 150, 44, 104, A(
             K('w', 0.3, None, neckPitch=-0.25, headPitch=-0.2, crown=0.5, legs={'F.S': (0.3, 0.7)}),
             K('w', 0.55, 'i', neckPitch=-0.3, headPitch=-0.25, crown=0.6, legs={'F.S': (0.1, 0.0)}),
@@ -2061,12 +2084,12 @@ def velgait_moves(s):
             K('r', 0.7, None, pitch=0.03, glow=0.3)),
              curve=(14.0, 44, 104), turn=(40, 60), brake=(50, 104), bind=[crown('velgait_charge')],
              hits=[hit('crown', 44, 104, 'velgait_charge', 26, 'knockdown', cost=40)],
-             sounds=[(4, 'beast_cry'), (40, 'galdros_charge')], ai=ai(7, 15.9, 25, 1.5, cd=520, clear=10)),
+             sounds=[(4, 'beast_cry'), (40, 'galdros_charge')], ai=ai(7, 15.9, 25, 1.5, cd=520, clear=10), open='tail'),
         # ---- 足を踏み替える向き直り（v0.65.0。#19 の M01。D-162）: 環冠を回る向きへ傾けて先に見定め、軽い脚で踏み替える。灯節が揺らぐ ----
         *turns(dict(yH=-0.03, roll=0.02, neckYaw=0.16, headYaw=0.12, headRoll=0.06, tailYaw=-0.12, crown=0.12),
                dict(yH=-0.04, roll=-0.05, spineYaw=0.14, neckYaw=0.32, headYaw=0.2, headRoll=0.1, crown=0.25, glow=0.16),
                dict(yH=-0.04, roll=-0.04, spineYaw=0.1, neckYaw=0.22, headYaw=0.12, headRoll=0.06, crown=0.18, glow=0.1)),
-    ]
+    ])
 
 
 VELGAIT_IDLE = idle(

@@ -94,6 +94,14 @@ export function validateAction(a: ActionDef, errors: string[]): void {
   }
   if (cursor !== a.durationTicks) errors.push(`${w}: phases の終わり ${cursor} が durationTicks ${a.durationTicks} と一致しない`);
   const inRange = (from: number, to: number): boolean => isInt(from) && isInt(to) && from >= 0 && to > from && to <= a.durationTicks;
+  // 後隙の反撃（v0.73.0）: 後隙の中で、最後の判定が終わった後。部位が有るかは、種と突き合わせる所で見る
+  if (a.opening) {
+    const o = a.opening;
+    const rec = (a.phases ?? []).find((p) => p.id === 'recovery');
+    if (!isStr(o.partId) || !inRange(o.from, o.to)) errors.push(`${w}: opening が不正`);
+    else if (!rec || o.from < rec.from || o.to > rec.to) errors.push(`${w}: opening は後隙（recovery）の中に置く`);
+    else if ((a.hitWindows ?? []).some((h) => h.to > o.from)) errors.push(`${w}: opening は最後の判定が終わった後に置く`);
+  }
   const ids = new Set<string>();
   for (const h of a.hitWindows ?? []) {
     if (!inRange(h.from, h.to)) errors.push(`${w}: hitWindow ${h.id} の区間が範囲外`);
@@ -346,6 +354,10 @@ export function crossCheck(c: Content, errors: string[]): void {
         if (!c.actions.has(ch.ifSevered.actionId)) errors.push(`monster ${m.id}: ifSevered の ${ch.ifSevered.actionId} が無い`);
         if (!partIds.has(ch.ifSevered.partId)) errors.push(`monster ${m.id}: ifSevered の部位 ${ch.ifSevered.partId} が無い`);
       }
+    }
+    // 後隙の反撃（v0.73.0）: 狙える部位は、その種の部位
+    for (const a of c.actions.values()) {
+      if (a.opening && a.actionId.startsWith(`${m.id}.`) && !partIds.has(a.opening.partId)) errors.push(`action ${a.actionId}: opening の部位 ${a.opening.partId} が ${m.id} に無い`);
     }
     if (m.discover && !c.actions.has(m.discover.actionId)) errors.push(`monster ${m.id}: discover の ${m.discover.actionId} が無い`);
     if (m.rage && !c.actions.has(m.rage.actionId)) errors.push(`monster ${m.id}: rage の ${m.rage.actionId} が無い`);
@@ -1197,6 +1209,11 @@ function putUnique<T>(map: Map<string, T>, id: string, value: T, kind: string, e
 /** 読み込みの選択（v0.57.0）。motionSet: ハンターの動きの組（無ければ、いまの組） */
 export interface LoadOptions {
   motionSet?: string;
+  /**
+   * 部位の追従の表（public/data/follow/）が技の長さと合わなくても、止めない（v0.73.0）。表を作り直す時（npm run monsters:bake）だけ使う:
+   * 技の長さを変えると、作り直す前の表は鍵の数が合わない
+   */
+  rebake?: boolean;
 }
 
 /**
@@ -1313,7 +1330,7 @@ export async function assembleContent(getRaw: JsonGetter, opts: LoadOptions = {}
       continue;
     }
     if (m.follow) errors.push(`${f}: ${doc.monsterId} の追従が 2 つある`);
-    m.follow = buildFollowTable(m, doc, (id) => content.actions.get(id)?.durationTicks, errors);
+    m.follow = buildFollowTable(m, doc, (id) => content.actions.get(id)?.durationTicks, opts.rebake ? [] : errors);
   }
   for (const f of index.files.maps) {
     const m = (await get(f)) as MapDef;

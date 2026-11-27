@@ -92,6 +92,11 @@
      "id": "ground_slam"
     }
    ],
+   "opening": {
+    "partId": "back",
+    "from": 60,
+    "to": 96
+   },
    "onFinish": "keep",
    "weaponTrack": "galdros_slam_l"
   },
@@ -159,6 +164,11 @@
      "id": "ground_slam"
     }
    ],
+   "opening": {
+    "partId": "back",
+    "from": 60,
+    "to": 96
+   },
    "onFinish": "keep",
    "weaponTrack": "galdros_slam_r"
   },
@@ -236,6 +246,11 @@
      "id": "galdros_charge"
     }
    ],
+   "opening": {
+    "partId": "tail",
+    "from": 150,
+    "to": 186
+   },
    "onFinish": "keep",
    "weaponTrack": "galdros_charge_front"
   },
@@ -294,6 +309,11 @@
      "id": "galdros_swing"
     }
    ],
+   "opening": {
+    "partId": "hindleg",
+    "from": 60,
+    "to": 108
+   },
    "onFinish": "keep",
    "weaponTrack": "galdros_tail_sweep"
   },
@@ -352,6 +372,11 @@
      "id": "galdros_swing"
     }
    ],
+   "opening": {
+    "partId": "hindleg",
+    "from": 60,
+    "to": 108
+   },
    "onFinish": "keep",
    "weaponTrack": "galdros_tail_sweep_short"
   }

@@ -2616,7 +2616,8 @@ const startTraining = async (page, tap = false) => {
   await page.screenshot({ path: `${OUT}95d_hub_garden.png` });
   // 沢のそば（小滝の下）では、沢の音が大きい。灯見の台では、風が強い（里の音の大きさ。音そのものは合成の仮の音）
   await place(-38, -22.5, -Math.PI / 2);
-  await page.waitForTimeout(700);
+  // 里の音の大きさは、描画の時間で 0.25 秒おきに決まる。描画が遅い時は 0.7 秒では届かないことがあるので、沢の音が大きくなるまで待つ（v0.73.0。5 秒まで）
+  await until(page, () => window.__vh.audio.ambWant.water > 0.6, 5000);
   const ambWater = await page.evaluate(() => window.__vh.audio.ambWant);
   // 見晴らしの道: 暮らしの段の石段の上から、灯見の台への崖沿いの石段を上り、吊り橋を渡る
   await place(-4.5, 41.5, -Math.PI / 2);

@@ -55,6 +55,8 @@ const PART_COLORS: Record<string, [number, number, number]> = {
   legs: [0.5, 1, 0.5],
   body: [0.45, 0.7, 1],
 };
+/** 後隙の反撃（v0.73.0）: 技の隙の間、狙える部位の当たりの表示の色 */
+const OPEN_COLOR: [number, number, number] = [0.3, 1, 0.35];
 /** 技が替わった時に、武器の位置と向きを混ぜる時間（秒。v0.40.0） */
 const WEAPON_BLEND_SEC = 0.1;
 const v3From = (v: Vector3): V3 => ({ x: v.x, y: v.y, z: v.z });
@@ -1238,9 +1240,12 @@ export class GameView {
         }
       }
       for (const m of sim.monsters) {
+        // 後隙の反撃（v0.73.0。D-171）: 技の隙の区間の間、狙える部位を明るい緑で描く（当たりの表示だけ）
+        const open = m.action?.def.opening;
+        const openPart = open && m.action!.tick >= open.from && m.action!.tick < open.to ? open.partId : null;
         for (const s of monsterShapes(m)) {
           const part = m.def.parts[s.partIndex]!;
-          const c = PART_COLORS[part.id] ?? [1, 1, 1];
+          const c = part.id === openPart && !m.dead ? OPEN_COLOR : (PART_COLORS[part.id] ?? [1, 1, 1]);
           const k = m.dead ? 0.25 : m.parts[s.partIndex]!.broken ? 0.55 : 1;
           d.capsule(s.a, s.b, s.r, [c[0] * k, c[1] * k, c[2] * k]);
         }

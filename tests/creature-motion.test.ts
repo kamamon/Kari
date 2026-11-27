@@ -19,12 +19,14 @@ import type { BindPlan } from '../src/render/creaturePlan';
 import { GALDROS_ID, bakeGaldrosFollow } from './galdrosFollow';
 import { loadContent } from './helpers';
 
+const BAKE = process.env.CREATURE_BAKE === '1';
+
 let content: Content;
 beforeAll(async () => {
-  content = await loadContent();
+  // 作り直す時は、古い表が技の長さと合わなくても読む（v0.73.0）
+  content = await loadContent({ rebake: BAKE });
 });
 
-const BAKE = process.env.CREATURE_BAKE === '1';
 const ROOT = resolve(__dirname, '..');
 const r3 = (v: number): number => Math.round(v * 1000) / 1000;
 
