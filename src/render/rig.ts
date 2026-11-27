@@ -3,7 +3,7 @@
 // 骨と socket の名前・向きは docs/animation-contract.md と揃える。
 //   root → pelvis → spine → chest → neck → head / 腕 / 脚、socket_hand_r / socket_hand_l / socket_back / socket_hip
 // 単位 m、Y 上、+Z 前。身長 1.75m。右手側は -X。
-import { Bone, BoxGeometry, BufferAttribute, BufferGeometry, ConeGeometry, CylinderGeometry, DataTexture, DoubleSide, Group, Line, LineBasicMaterial, Matrix4, Mesh, MeshLambertMaterial, Object3D, Quaternion, SRGBColorSpace, Skeleton, SkinnedMesh, TextureLoader, TorusGeometry, CircleGeometry, Vector3 } from 'three';
+import { Bone, BoxGeometry, BufferAttribute, BufferGeometry, ConeGeometry, CylinderGeometry, DataTexture, DoubleSide, Group, Line, LineBasicMaterial, Matrix4, Mesh, MeshLambertMaterial, Object3D, Quaternion, SRGBColorSpace, Skeleton, SkinnedMesh, SphereGeometry, TextureLoader, TorusGeometry, CircleGeometry, Vector3 } from 'three';
 import { assetUrl } from '../core/assets';
 import { BOW_STRING, buildArrow, buildBow } from './bow';
 import { buildGuardBladeShield, buildGuardBladeSword } from './guardBlade';
@@ -29,6 +29,9 @@ const D2R = Math.PI / 180;
 const UPPER_ARM = REST.upperArm;
 const FOREARM = REST.forearm;
 const HAND = 0.04;
+/** 釣り竿の先（竿の座標の +Y）と、釣り糸の区切りの数（v0.70.0） */
+const ROD_TIP = 1.455;
+const FISH_LINE_SEG = 12;
 const TUMBLE_PIVOT = 0.55;
 
 /** 武器系統ごとの仮モデル（握りが原点、+Y が武器の先）。無い系統は断岳剣で代用する。 */
@@ -103,6 +106,9 @@ export class HunterRig {
   readonly tool = new Group();
   readonly netTool = new Group();
   readonly fishTool = new Group();
+  /** 釣り糸と浮き（竿の子。v0.70.0） */
+  private fishLine!: Line;
+  private fishFloat!: Mesh;
   readonly shield = new Group();
   familyId = '';
   /** いま手に持たせている形（武器ごとの形があればモデルの ID、無ければ系統の ID） */
@@ -279,8 +285,11 @@ export class HunterRig {
       const hoop=new Mesh(new TorusGeometry(.27,.023,6,24),rim);hoop.position.y=.95;
       const web=new Mesh(new CircleGeometry(.25,24),net);web.position.y=.95;this.netTool.add(h,hoop,web);
       const rod=new Mesh(new CylinderGeometry(.009,.027,1.55,8),wood);rod.position.y=.68;
-      const line=new Line(new BufferGeometry().setFromPoints([new Vector3(0,1.45,0),new Vector3(0,1.60,-.15),new Vector3(0,1.36,-.70)]),new LineBasicMaterial({color:0xd2dfdc}));
-      this.fishTool.add(rod,line);this.netTool.visible=false;this.fishTool.visible=false;this.sockets.hand_r.add(this.netTool,this.fishTool);
+      // 釣り糸（v0.70.0）: 竿先から浮きまで。点は fishLineTo が毎回置き直す（はじめは竿先から少し垂れる）
+      const linePts:Vector3[]=[];for(let i=0;i<=FISH_LINE_SEG;i++)linePts.push(new Vector3(0,ROD_TIP-.3*i/FISH_LINE_SEG,0));
+      this.fishLine=new Line(new BufferGeometry().setFromPoints(linePts),new LineBasicMaterial({color:0xd2dfdc}));this.fishLine.frustumCulled=false;
+      this.fishFloat=new Mesh(new SphereGeometry(.035,8,6),new MeshLambertMaterial({color:0xd8492e}));
+      this.fishTool.add(rod,this.fishLine,this.fishFloat);this.netTool.visible=false;this.fishTool.visible=false;this.sockets.hand_r.add(this.netTool,this.fishTool);
     }
 
     // 腰の socket: 短い剣を納める（握りが左腰の前寄り、刃は後ろ下へ）。右手が届く位置にしてある。
@@ -570,6 +579,78 @@ export class HunterRig {
       const o = new Vector3(hands.other.x, hands.other.y, hands.other.z).applyMatrix4(this.weapon.matrix).applyMatrix4(this.root.matrixWorld);
       this.solveArm(second[0], second[1], o, second[2]);
     }
+  }
+
+  /**
+   * 採掘・虫網・釣りの道具を、決めた位置と向きに置き、右手で握って左手を添える（v0.70.0。D-168。src/render/toolMotion.ts の鍵から）。
+   * 道具は右手の socket から外して体の根元に付け直す（toolToHand で戻す）。dir = 柄の向き（道具の +Y）、face = 頭の向き（道具の +Z）。
+   * 左手は道具の座標の点 left へ、重み leftW だけ寄せる（0 なら体の動きの左腕のまま）。姿勢を設定した後に呼ぶ。
+   */
+  toolToTrack(kind: 'pick' | 'net' | 'rod', grip: { x: number; y: number; z: number }, dir: { x: number; y: number; z: number }, face: { x: number; y: number; z: number }, left: readonly [number, number, number], leftW: number): void {
+    const g = kind === 'pick' ? this.tool : kind === 'net' ? this.netTool : this.fishTool;
+    if (g.parent !== this.root) {
+      this.root.add(g);
+      g.matrixAutoUpdate = false;
+    }
+    const y = this.v4.set(dir.x, dir.y, dir.z).normalize();
+    const normal = new Vector3().crossVectors(y, new Vector3(face.x, face.y, face.z));
+    const b = this.basis(y, normal);
+    b.setPosition(grip.x, grip.y, grip.z);
+    g.matrix.copy(b);
+    g.matrixWorldNeedsUpdate = true;
+    this.root.updateMatrixWorld(true);
+    const gripW = new Vector3(grip.x, grip.y, grip.z).applyMatrix4(this.root.matrixWorld);
+    const rootQ = this.root.getWorldQuaternion(this.q2);
+    const J = this.joints;
+    this.solveArm(J.upperArmR, J.forearmR, gripW, new Vector3(-0.6, -0.6, -0.5).applyQuaternion(rootQ));
+    if (leftW > 0.001) {
+      const fu = J.upperArmL.quaternion.clone(), ff = J.forearmL.quaternion.clone();
+      const at = new Vector3(left[0], left[1], left[2]).applyMatrix4(g.matrixWorld);
+      this.solveArm(J.upperArmL, J.forearmL, at, new Vector3(0.6, -0.6, -0.5).applyQuaternion(rootQ));
+      if (leftW < 0.999) {
+        J.upperArmL.quaternion.copy(fu.slerp(J.upperArmL.quaternion, leftW));
+        J.forearmL.quaternion.copy(ff.slerp(J.forearmL.quaternion, leftW));
+        J.upperArmL.updateMatrixWorld(true);
+      }
+    }
+  }
+
+  /** 道具を右手の socket へ戻す（保留の組の採掘は、これまでどおり手に付いたまま。v0.70.0） */
+  toolToHand(kind: 'pick' | 'net' | 'rod'): void {
+    const g = kind === 'pick' ? this.tool : kind === 'net' ? this.netTool : this.fishTool;
+    if (g.parent === this.sockets.hand_r) return;
+    this.sockets.hand_r.add(g);
+    g.matrixAutoUpdate = true;
+    g.position.set(0, 0, 0);
+    g.quaternion.identity();
+    g.scale.set(1, 1, 1);
+  }
+
+  /**
+   * 釣り糸を竿先から浮きまで張る（v0.70.0）。landing = 投げた浮きが落ちる所（ワールド）、cast = 竿先から落ちる所までの進み
+   * （0 なら竿先から短く垂らす。途中は山なりに飛ぶ）。糸は少したるませる。toolToTrack の後に呼ぶ。
+   */
+  fishLineTo(landing: Vector3 | null, cast: number): void {
+    this.fishTool.updateMatrixWorld(true);
+    const inv = this.m2.copy(this.fishTool.matrixWorld).invert();
+    const tipW = new Vector3(0, ROD_TIP, 0).applyMatrix4(this.fishTool.matrixWorld);
+    const flying = !!landing && cast > 0;
+    const end = flying ? tipW.clone().lerp(landing!, cast).add(new Vector3(0, 0.9 * 4 * cast * (1 - cast), 0)) : tipW.clone().add(new Vector3(0, -0.3, 0));
+    const float = flying ? end : null;
+    const sag = flying ? 0.25 * cast : 0;
+    const pos = this.fishLine.geometry.getAttribute('position') as BufferAttribute;
+    const p = new Vector3();
+    for (let i = 0; i <= FISH_LINE_SEG; i++) {
+      const u = i / FISH_LINE_SEG;
+      p.copy(tipW).lerp(end, u);
+      p.y -= sag * 4 * u * (1 - u);
+      p.applyMatrix4(inv);
+      pos.setXYZ(i, p.x, p.y, p.z);
+    }
+    pos.needsUpdate = true;
+    this.fishLine.geometry.computeBoundingSphere();
+    this.fishFloat.position.copy(end).applyMatrix4(inv);
+    this.fishFloat.visible = !!float;
   }
 
   /** 2 本骨の IK。肩から target へ腕を伸ばし、肘は pole の側へ曲げる。 */

@@ -34,6 +34,8 @@ import type { HazardLook } from '../data/schemas';
 import { CREATURE_PLANS } from './creaturePlans';
 import { DummyRig, type MonsterRig } from './monsterRig';
 import { MOTION_STYLE, blendPose, climbPose, clipPose, deadPose, dropPose, emptyPose, guardPose, hurtPose, landPose, locomotionPose, vaultPose, type BodyPose } from './poses';
+import { TOOL_TRACKS, fishLineAt, toolHoldAt } from './toolMotion';
+import { gatheringCatalog } from '../data/fieldGathering';
 import { HunterAnimator, applySolved, canSolve, playerContactFrame, playerRenderTick, stowOffhand, type AnimState } from './hunterAnim';
 import type { Solved } from './bodySolve';
 import { GroundedLocomotion, freeStride } from './contactLocomotion';
@@ -382,6 +384,15 @@ export class GameView {
     return e;
   }
 
+  /** 釣りの浮きが落ちる所（v0.70.0。描画だけ）: 狩人の前 3.2m。狩場の釣り場の池のエリアなら、その水面の高さ。食いつく間は少し沈む */
+  private fishLanding(sim: Simulation, pos: V3, yaw: number, sink: number): Vector3 {
+    const d = 3.2;
+    const x = pos.x + Math.sin(yaw) * d, z = pos.z + Math.cos(yaw) * d;
+    const pond = gatheringCatalog(sim.content, sim.field?.id)?.pond;
+    const y = pond && pond.areaId === sim.areaId && Math.hypot(x - pond.x, z - pond.z) < pond.radius ? pond.waterY : sim.world.groundHeight(x, z);
+    return new Vector3(x, y + 0.02 - sink, z);
+  }
+
   /** 見えている（同じエリアに居る）モンスター。フィールドでなければ、全部 */
   private shown(sim: Simulation, m: MonsterState): boolean {
     return !sim.field || sim.monsterArea(m)?.id === sim.areaId;
@@ -627,6 +638,8 @@ export class GameView {
     const ready: WeaponPlace = { mode: 'track', grip: fromArr(fam.ready.grip), dir: norm(fromArr(fam.ready.dir)), normal: fam.ready.planeNormal };
     // 体を解ける状態（技・構え・防御）なら、その中身。解けない状態（被弾・納刀など）は null のまま。
     let st: AnimState | null = null;
+    // 採掘・虫網・釣りの道具を持つ動き（v0.70.0）: 動きの名前と tick。体の後で、両腕を道具へ付ける
+    let toolRun: { clip: string; t: number } | null = null;
 
     if (p.mode === 'action' && p.action) {
       const run = p.action;
@@ -635,6 +648,7 @@ export class GameView {
       st = { kind: 'action', clip: run.def.clip, t, dirAngle: (run.dirIndex * Math.PI) / 2, chargeTicks: run.chargeTicks, freeMove: !!fm && t >= (fm.from ?? 0) && t < (fm.to ?? run.def.durationTicks) };
       const cp = canSolve(fam.id, st) ? emptyPose() : clipPose(run.def.clip, t);
       if (!cp) this.missingClips.add(run.def.clip);
+      if (TOOL_TRACKS[run.def.clip]) toolRun = { clip: run.def.clip, t };
       pose = cp ?? emptyPose();
       // 断岳剣のキー姿勢の方式（保留の組 v056。D-150）: 下半身を接地させる。解く方式の時は、解いた姿が上書きする
       if (fam.id === 'heavy_blade' && cp && !canSolve(fam.id, st)) pose = groundedHeavyAttack(pose, run.def.clip, t);
@@ -749,7 +763,9 @@ export class GameView {
       const clip=this.hubGather==='mine'?'common_mine_01':this.hubGather==='insect'?'common_net_01':this.hubGather==='fish'?'common_fish_01':'common_gather_01';
       const duration=this.hubGather==='mine'?150:this.hubGather==='insect'?105:this.hubGather==='fish'?240:90;
       this.gatherT+=dt*60;
-      pose=clipPose(clip,this.hubGather==='fish'?Math.min(204,this.gatherT):Math.min(duration,this.gatherT*duration/52))??pose;
+      const tt=this.hubGather==='fish'?Math.min(204,this.gatherT):Math.min(duration,this.gatherT*duration/52);
+      pose=clipPose(clip,tt)??pose;
+      if(TOOL_TRACKS[clip])toolRun={clip,t:tt};
       key='hub-gather:'+this.hubGather;st=null;this.groundLocomotion.reset();
     }
     // 断岳剣以外（護刃・長尖槍・環弓・大槌・双剣・太刀）: 体・武器・盾（双剣は左の剣）をまとめて解く（足は地面に、手は武器に付いたままになる）
@@ -807,6 +823,15 @@ export class GameView {
         if (weapon.mode === 'back' && sheath) this.hunter.weaponToSheath(sheath);
         else this.hunter.weaponToSocket(weapon.mode === 'back' ? fam.sheathSocket ?? 'back' : fam.primaryHand === 'left' ? 'hand_l' : 'hand_r');
       }
+      // 道具（v0.70.0。D-168）: 決めた位置と向きに道具を置き、両腕を付ける。保留の組の採掘は、これまでどおり右手に付いたまま
+      const hold = toolRun && !(MOTION_STYLE.style === 'v056' && toolRun.clip === 'common_mine_01') ? toolHoldAt(toolRun.clip, toolRun.t) : null;
+      if (hold) {
+        this.hunter.toolToTrack(hold.tool, hold.grip, hold.dir, hold.face, hold.left, hold.leftW);
+        if (hold.tool === 'rod') {
+          const f = fishLineAt(toolRun!.t);
+          this.hunter.fishLineTo(this.fishLanding(sim, pos, yaw, f.sink), f.cast);
+        }
+      } else this.hunter.toolToHand('pick');
     }
     if (fam.offhand && !solved) {
       // 盾: 抜刀中は左腕で前に持ち、納刀中・被弾中・力尽きた時は背中へ

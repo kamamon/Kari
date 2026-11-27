@@ -21,7 +21,8 @@ import { buildArrow, buildBow, buildQuiver } from './render/bow';
 import { buildGuardBladeShield, buildGuardBladeSword } from './render/guardBlade';
 import { buildHeavyBlade, type WeaponModel } from './render/heavyBlade';
 import { DummyRig, type MonsterRig } from './render/monsterRig';
-import { CLIPS, JOINTS, climbPose, clipPose, deadPose, emptyPose, hurtPose, locomotionPose, vaultPose } from './render/poses';
+import { CLIPS, JOINTS, MOTION_STYLE, climbPose, clipPose, deadPose, emptyPose, hurtPose, locomotionPose, vaultPose } from './render/poses';
+import { fishLineAt, toolHoldAt } from './render/toolMotion';
 import { buildGreatShield, buildLance } from './render/lance';
 import { HunterRig } from './render/rig';
 import { armorTierOf, type ArmorLook } from './render/hunterArmor';
@@ -401,6 +402,7 @@ function frame(ts: number): void {
     hunter.setArmor(armorLook);
     hunter.setFamily(fam.id, fam.offhand, held(fam.id));
     let missing = false;
+    let showTool = '';
     const st: AnimState | null = a ? { kind: 'action', clip: a.clip, t, dirAngle: 0, chargeTicks: 0, freeMove: false } : state.stance !== 'none' ? (state.stance === 'guard' ? { kind: 'guard', blend: 1, shake: 0 } : { kind: 'idle' }) : null;
     const stFam = a ? fam : content.families.get(state.stanceFamily) ?? fam;
     if (climbPreview && !a) {
@@ -432,6 +434,8 @@ function frame(ts: number): void {
     } else if (a) {
       lastSolved = null;
       hunter.setString(null);
+      // 採掘・虫網・釣りの道具（ゲームと同じく、その動きの間だけ右手に。v0.70.0）
+      showTool = a.clip;
       let pose = clipPose(a.clip, t);
       if (pose && fam.id === 'heavy_blade') pose = groundedHeavyAttack(pose, a.clip, t);
       missing = !pose;
@@ -451,6 +455,15 @@ function frame(ts: number): void {
         sheathWeapon(fam);
         if (fam.offhand) stowOffhand(hunter, fam.id);
       }
+      // 道具を持つ動き（v0.70.0）: ゲームと同じく、道具を決めた所に置いて両腕を付ける（保留の組の採掘は右手に付いたまま）。釣り糸は前 3.2m の地面へ
+      const hold = MOTION_STYLE.style === 'v056' && a.clip === 'common_mine_01' ? null : toolHoldAt(a.clip, t);
+      if (hold) {
+        hunter.toolToTrack(hold.tool, hold.grip, hold.dir, hold.face, hold.left, hold.leftW);
+        if (hold.tool === 'rod') {
+          const f = fishLineAt(t);
+          hunter.fishLineTo(new Vector3(0, 0.02 - f.sink, 3.2), f.cast);
+        }
+      } else hunter.toolToHand('pick');
     } else {
       lastSolved = null;
       hunter.setString(null);
@@ -462,6 +475,9 @@ function frame(ts: number): void {
       sheathWeapon(fam);
       if (fam.offhand) stowOffhand(hunter, fam.id);
     }
+    hunter.tool.visible = showTool === 'common_mine_01';
+    hunter.netTool.visible = showTool === 'common_net_01';
+    hunter.fishTool.visible = showTool === 'common_fish_01';
     hunter.root.updateMatrixWorld(true);
     lines.push(`仮リグ: 関節 ${JOINTS.length} / socket ${Object.keys(hunter.sockets).length} / 全高 ${restHeight.toFixed(3)}m（基準姿勢。規格は 1.75m）`);
     lines.push(`socket: ${Object.values(hunter.sockets).map((s) => s.name).join(', ')}`);
