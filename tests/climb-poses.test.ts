@@ -90,10 +90,32 @@ describe('登攀の形（v0.69.0）', () => {
     expect(climbPose('climb', 0, 0.325).j.forearmR[0]).toBeLessThan(-80);
   });
 
-  it('乗り越えは、これまでと同じ鍵（寄る → 押し上げる → しゃがむ → 立つ）', () => {
-    expect(vaultPose(0.55).j.thighR[0]).toBe(-100);
-    expect(vaultPose(0.8).py).toBeCloseTo(-0.3, 6);
+  it('乗り越え（v0.71.0。D-169）: 手を伸ばす → 上の面へ手を突いて腕を伸ばす（縁が腰の高さ）→ 右ひざを縁へ → しゃがむ → 立つ。1 tick の変わり方は 25° 未満', () => {
+    const reach = vaultPose(0.2), press = vaultPose(0.4), knee = vaultPose(0.55);
+    expect(reach.j.upperArmL[0]).toBeLessThan(-55);
+    // 押す時は腕が下を向いて伸びる（ひじがほとんど曲がらない）
+    expect(press.j.upperArmL[0]).toBeGreaterThan(-30);
+    expect(press.j.forearmL[0]).toBeGreaterThan(-15);
+    expect(knee.j.thighR[0]).toBe(-100);
+    expect(vaultPose(0.75).py).toBeCloseTo(-0.3, 6);
     expect(diff(vaultPose(0), vaultPose(1)).deg).toBeLessThan(1e-6);
+    // simulation の 24 tick（VAULT_TICKS）で、1 tick の変わり方
+    for (let i = 0; i < 24; i++) {
+      const d = diff(vaultPose(i / 24), vaultPose((i + 1) / 24));
+      expect(d.deg, `${i}`).toBeLessThan(25);
+    }
+  });
+
+  it('乗り越え: 保留の組 v056 では、v0.70.0 までの鍵（寄る → 押し上げる → しゃがむ → 立つ）', () => {
+    MOTION_STYLE.style = 'v056';
+    try {
+      expect(vaultPose(0.55).j.thighR[0]).toBe(-100);
+      expect(vaultPose(0.55).j.upperArmL[0]).toBe(-22);
+      expect(vaultPose(0.8).py).toBeCloseTo(-0.3, 6);
+    } finally {
+      MOTION_STYLE.style = '2g';
+    }
+    expect(vaultPose(0.55).j.upperArmL[0]).toBe(-30);
   });
 });
 

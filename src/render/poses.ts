@@ -774,18 +774,30 @@ export function climbPose(phase: 'mount' | 'down' | 'climb' | 'exit', u: number,
   ], u);
 }
 
-// ---- 低い岩棚の乗り越え（v0.49.0。#19 の H07 の低棚。仮の手付けの姿勢）----
+// ---- 低い岩棚の乗り越え（v0.49.0。#19 の H07 の低棚。v0.71.0 で 2G を手本に段を分けた。D-169）----
 /** 縁へ手を伸ばす: 上体を前へ倒し、両腕を前へ（手が縁の上の面に届く） */
 const VAULT_REACH_J: J = {
   spine: [18, 0, 0], chest: [6, 0, 0], head: [-10, 0, 0],
   upperArmL: [-62, 0, 12], forearmL: [-18, 0, 0], upperArmR: [-62, 0, -12], forearmR: [-18, 0, 0],
   thighL: [-10, 0, 4], shinL: [20, 0, 0], thighR: [-10, 0, -4], shinR: [20, 0, 0],
 };
-/** 縁に手を突いて体を押し上げる: 腕は下へ押し、右膝を縁へ掛ける。左脚は下に残る */
+/** 保留の組 v056 の押し上げ（v0.49.0 の形）: 腕は下へ押し、右膝を縁へ掛ける。左脚は下に残る */
 const VAULT_PUSH_J: J = {
   spine: [28, 0, 0], chest: [8, 0, 0], head: [-14, 0, 0],
   upperArmL: [-22, 0, 18], forearmL: [-28, 0, 0], upperArmR: [-22, 0, -18], forearmR: [-28, 0, 0],
   thighL: [12, 0, 4], shinL: [34, 0, 0], thighR: [-100, 0, -6], shinR: [118, 0, 0],
+};
+/** 縁の上の面へ手を突いて、腕を伸ばして体を持ち上げる（縁が腰の高さ。v0.71.0） */
+const VAULT_PRESS_J: J = {
+  spine: [30, 0, 0], chest: [10, 0, 0], head: [-16, 0, 0],
+  upperArmL: [-24, 0, 16], forearmL: [-10, 0, 0], upperArmR: [-24, 0, -16], forearmR: [-10, 0, 0],
+  thighL: [4, 0, 4], shinL: [24, 0, 0], thighR: [-58, 0, -6], shinR: [86, 0, 0],
+};
+/** 右ひざを縁へ掛ける（縁がひざの高さ。v0.71.0）: 両手は面を押したまま、左脚は下に残る */
+const VAULT_KNEE_J: J = {
+  spine: [34, 0, 0], chest: [10, 0, 0], head: [-12, 0, 0],
+  upperArmL: [-30, 0, 16], forearmL: [-30, 0, 0], upperArmR: [-30, 0, -16], forearmR: [-30, 0, 0],
+  thighL: [10, 0, 4], shinL: [36, 0, 0], thighR: [-100, 0, -6], shinR: [118, 0, 0],
 };
 /** 段の上でしゃがむ: 右足が乗り、左脚を引き寄せる */
 const VAULT_KNEEL_J: J = {
@@ -796,17 +808,29 @@ const VAULT_KNEEL_J: J = {
 
 /**
  * 乗り越えの姿勢。u は乗り越え全体の進み（0〜1。simulation の VAULT_TICKS を 1 とする）。
- * 縁へ寄る（〜0.25）→ 押し上げる（〜0.55）→ 段の上でしゃがむ（〜0.8）→ 立つ
+ * 縁へ寄って手を伸ばす（〜0.2）→ 上の面へ手を突いて腕を伸ばし、体を持ち上げる（0.4。縁が腰の高さ）→ 右ひざを縁へ掛ける（0.55。縁がひざの高さ）
+ * → 段の上でしゃがむ（0.75）→ 立つ。鍵の位置は、simulation が体を持ち上げる速さ（6 tick で縁へ寄り、残りの 18 tick の 65% で段の上の高さ）に合わせた。
+ * 保留の組 v056 は v0.70.0 までの形（寄る → 押し上げる → しゃがむ → 立つ）
  */
 export function vaultPose(u: number): BodyPose {
-  const keys: [number, BodyPose][] = [
-    [0, fromKey(NEUTRAL, 0, { t: 0 })],
-    [0.25, fromKey(VAULT_REACH_J, 0, { t: 0, py: -0.06 })],
-    [0.55, fromKey(VAULT_PUSH_J, 0, { t: 0 })],
-    [0.8, fromKey(VAULT_KNEEL_J, 0, { t: 0, py: -0.3 })],
-    [1, fromKey(NEUTRAL, 0, { t: 0 })],
-  ];
-  return keyed(keys, u);
+  const stand = fromKey(NEUTRAL, 0, { t: 0 });
+  if (MOTION_STYLE.style === 'v056') {
+    return keyed([
+      [0, stand],
+      [0.25, fromKey(VAULT_REACH_J, 0, { t: 0, py: -0.06 })],
+      [0.55, fromKey(VAULT_PUSH_J, 0, { t: 0 })],
+      [0.8, fromKey(VAULT_KNEEL_J, 0, { t: 0, py: -0.3 })],
+      [1, stand],
+    ], u);
+  }
+  return keyed([
+    [0, stand],
+    [0.2, fromKey(VAULT_REACH_J, 0, { t: 0, py: -0.06 })],
+    [0.4, fromKey(VAULT_PRESS_J, 0, { t: 0 })],
+    [0.55, fromKey(VAULT_KNEE_J, 0, { t: 0 })],
+    [0.75, fromKey(VAULT_KNEEL_J, 0, { t: 0, py: -0.3 })],
+    [1, stand],
+  ], u);
 }
 
 // ---- 降下と着地（v0.45.0。仮の手付けの姿勢）----

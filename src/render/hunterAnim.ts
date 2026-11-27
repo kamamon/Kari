@@ -4,6 +4,7 @@ import { evalMotion, gaitFeet, mixCtl, mixFoot, solveBody, type Ctl, type Foot, 
 import type { HunterRig } from './rig';
 import { ContactLocomotion, fitFeetToGround, type RenderRoot } from './contactLocomotion';
 import { WEAPON_MOTIONS, WEAPON_STANCES } from './weaponClipSpecs';
+import { MOTION_STYLE } from './poses';
 import { renderTick, type ActionRun } from '../game/action';
 import type { ActionDef } from '../data/schemas';
 
@@ -42,7 +43,26 @@ const smooth = (x: number): number => {
   return u * u * (3 - 2 * u);
 };
 /** 歩幅（2 歩ぶん）: ゆっくりなら短く、速いほど長く */
-const strideOf = (speed: number): number => Math.min(1.3, Math.max(0.7, 0.6 + 0.25 * speed));
+export const strideOf = (speed: number): number => Math.min(1.3, Math.max(0.7, 0.6 + 0.25 * speed));
+/**
+ * 抜刀中の歩き（v0.71.0。D-169。2G を手本に。描画だけ。値は Claude の仮の値）: 歩みに合わせて体が動く量。
+ * lean = 前かがみ（度）、shift = 支える足の側へ腰が寄る（m）、twist = 腰が左右へひねれて胸で戻す（度）、
+ * roll = 支える足の側へ肩が傾く（度）、lag = 着く度に、胸と武器が遅れて上下に揺れる（度）、swing = 手が足と逆に前後へ振れる（m。胸の座標の握り）。
+ * 重い武器（断岳剣・大槌・長尖槍）ほど前かがみで、胸と武器の揺れが大きく、手は振らない。双剣・護刃・環弓は手が振れる。
+ * 腰の上下は増やさない（v0.28.1 の利用者の指摘「歩くたびにバウンドするのは不自然」。腰の上下は 3cm 以内。tests/motion-replacement.test.ts）
+ */
+interface WalkCarry { lean: number; shift: number; twist: number; roll: number; lag: number; swing: number }
+const WALK_CARRY: Record<string, WalkCarry> = {
+  heavy_blade: { lean: 5, shift: 0.02, twist: 5, roll: 2.5, lag: 3, swing: 0 },
+  war_maul: { lean: 4, shift: 0.02, twist: 5, roll: 2.5, lag: 3, swing: 0 },
+  long_lance: { lean: 3, shift: 0.018, twist: 3, roll: 2, lag: 1.8, swing: 0 },
+  long_blade: { lean: 2, shift: 0.015, twist: 7, roll: 1.5, lag: 1.4, swing: 0 },
+  guard_blade: { lean: 2, shift: 0.014, twist: 7, roll: 1.5, lag: 1.2, swing: 0.035 },
+  twin_blades: { lean: 4, shift: 0.012, twist: 8, roll: 1.5, lag: 1.2, swing: 0.06 },
+  ring_bow: { lean: 1, shift: 0.014, twist: 6, roll: 1.5, lag: 1, swing: 0.03 },
+};
+const WALK_CARRY_DEFAULT: WalkCarry = { lean: 2, shift: 0.015, twist: 5, roll: 1.5, lag: 1.2, swing: 0 };
+
 /** 状態が替わった時に、直前の姿から混ぜる時間（秒） */
 const BLEND_SEC = 0.08;
 /** 弓: 溜めるほど深く引く（引く長さに掛ける割増と、引き切るまでの tick） */
@@ -141,6 +161,23 @@ export class HunterAnimator {
       f.ctl.hipR = [f.ctl.hipR[0]! + 3 * walk, f.ctl.hipR[1]! - back, f.ctl.hipR[2]!];
       f.ctl.spine = [f.ctl.spine[0]!, f.ctl.spine[1]! + back, f.ctl.spine[2]!];
       f.ctl.hip = [f.ctl.hip[0]!, f.ctl.hip[1]! + g.bob * walk, f.ctl.hip[2]!];
+      // 抜刀中の歩き（v0.71.0。D-169）: 左足が前へ着く所を位相 0 とする（gaitFeet と同じ）。防御のまま歩く時は半分。保留の組 v056 は動かさない
+      if (MOTION_STYLE.style !== 'v056') {
+        const C = WALK_CARRY[familyId] ?? WALK_CARRY_DEFAULT;
+        const k = walk * (st.kind === 'guard' ? 0.5 : 1);
+        const c1 = Math.cos(this.phase);
+        const c = f.ctl;
+        c.hip = [c.hip[0]! + C.shift * c1 * k, c.hip[1]!, c.hip[2]!];
+        c.hipR = [c.hipR[0]!, c.hipR[1]! - C.twist * c1 * k, c.hipR[2]! + C.roll * 0.5 * c1 * k];
+        c.spine = [c.spine[0]! + C.lean * k, c.spine[1]! + C.twist * 0.55 * c1 * k, c.spine[2]! - C.roll * c1 * k];
+        c.chest = [c.chest[0]! + C.lag * Math.cos(2 * this.phase - 1.4) * k, c.chest[1]! + C.twist * 0.35 * c1 * k, c.chest[2]!];
+        if (C.swing > 0) {
+          // 右手（左手が主の環弓は左手）は、左足が前の時に前へ。双剣の左の剣は、その逆
+          const sw = C.swing * c1 * k * (S.hands.primary === 'L' ? -1 : 1);
+          c.grip = [c.grip[0]!, c.grip[1]!, c.grip[2]! + sw];
+          if (S.hands.second === 'blade') c.off = [c.off[0]!, c.off[1]!, c.off[2]! - sw];
+        }
+      }
     }
     // 状態が替わった瞬間は、直前の姿から短く混ぜる（手は武器に、足は地面に付いたまま混ざる）
     if (key !== this.key) {
