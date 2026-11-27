@@ -1,1 +1,156 @@
-{"schemaVersion":1,"quests":[{"id":"quest.spinegale.r1","name":"渓谷を駆ける疾棘","kind":"hunt","summary":"風礫盆地の交易路を塞ぐ疾棘竜を一頭狩猟せよ。高速攻撃をかわし、長い息切れを狙う。","mapId":"map.basin.training","fieldId":"field.basin","targetMonsterId":"monster.spinegale","rankId":"rank.1","requires":["quest.basin.003"],"monsterSpawn":{"x":4,"z":15,"yaw":2.6},"timeLimitTicks":54000,"fieldTimeLimitTicks":54000,"maxFaints":3,"returnTicks":3600,"supplies":[{"itemId":"item.heal_tonic","count":5},{"itemId":"item.bind_trap","count":1},{"itemId":"item.calm_orb","count":3},{"itemId":"item.whetstone","count":3}],"rewards":{"money":700,"items":[{"itemId":"mat.spinegale.scale.r1","count":1}]}},{"id":"quest.spinegale.r2","name":"疾風、岩間を裂く","kind":"hunt","summary":"背棘の発達した成体が荷道へ戻った。連続突進に注意し、疲労の隙を狙う。","mapId":"map.basin.training","fieldId":"field.basin","targetMonsterId":"monster.spinegale","rankId":"rank.2","requires":["quest.basin.003","quest.spinegale.r1"],"monsterSpawn":{"x":4,"z":15,"yaw":2.6},"timeLimitTicks":108000,"fieldTimeLimitTicks":108000,"maxFaints":3,"returnTicks":3600,"supplies":[{"itemId":"item.heal_tonic","count":5},{"itemId":"item.bind_trap","count":1},{"itemId":"item.calm_orb","count":3},{"itemId":"item.whetstone","count":3}],"rewards":{"money":1600,"items":[{"itemId":"mat.spinegale.scale.r2","count":1}]}},{"id":"quest.spinegale.r3","name":"嵐を纏う双尾","kind":"hunt","summary":"老練な疾棘竜が岩場を縄張りにした。怒りの連撃を見極め、短くなった疲労の隙を逃すな。","mapId":"map.basin.training","fieldId":"field.basin","targetMonsterId":"monster.spinegale","rankId":"rank.3","requires":["quest.basin.r2.001","quest.spinegale.r2"],"monsterSpawn":{"x":4,"z":15,"yaw":2.6},"timeLimitTicks":144000,"fieldTimeLimitTicks":144000,"maxFaints":3,"returnTicks":3600,"supplies":[{"itemId":"item.heal_tonic","count":5},{"itemId":"item.bind_trap","count":1},{"itemId":"item.calm_orb","count":3},{"itemId":"item.whetstone","count":3}],"rewards":{"money":3200,"items":[{"itemId":"mat.spinegale.scale.r3","count":1}]}}]}
+{
+  "schemaVersion": 1,
+  "quests": [
+    {
+      "id": "quest.spinegale.r1",
+      "name": "渓谷を駆ける疾棘",
+      "kind": "hunt",
+      "summary": "風礫盆地の交易路を塞ぐ疾棘竜を一頭狩猟せよ。高速攻撃をかわし、長い息切れを狙う。",
+      "mapId": "map.basin.training",
+      "fieldId": "field.basin",
+      "targetMonsterId": "monster.spinegale",
+      "rankId": "rank.1",
+      "requires": [
+        "quest.basin.003"
+      ],
+      "monsterSpawn": {
+        "x": 4,
+        "z": 15,
+        "yaw": 2.6
+      },
+      "timeLimitTicks": 54000,
+      "fieldTimeLimitTicks": 54000,
+      "maxFaints": 3,
+      "returnTicks": 3600,
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "rewards": {
+        "money": 700,
+        "items": [
+          {
+            "itemId": "mat.spinegale.scale.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "quest.spinegale.r2",
+      "name": "疾風、岩間を裂く",
+      "kind": "hunt",
+      "summary": "背棘の発達した成体が荷道へ戻った。連続突進に注意し、疲労の隙を狙う。",
+      "mapId": "map.basin.training",
+      "fieldId": "field.basin",
+      "targetMonsterId": "monster.spinegale",
+      "rankId": "rank.2",
+      "requires": [
+        "quest.basin.003",
+        "quest.spinegale.r1"
+      ],
+      "monsterSpawn": {
+        "x": 4,
+        "z": 15,
+        "yaw": 2.6
+      },
+      "timeLimitTicks": 108000,
+      "fieldTimeLimitTicks": 108000,
+      "maxFaints": 3,
+      "returnTicks": 3600,
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "rewards": {
+        "money": 1600,
+        "items": [
+          {
+            "itemId": "mat.spinegale.scale.r2",
+            "count": 1
+          }
+        ]
+      },
+      "monsterAttackScale": 1.1923076923076923
+    },
+    {
+      "id": "quest.spinegale.r3",
+      "name": "嵐を纏う双尾",
+      "kind": "hunt",
+      "summary": "老練な疾棘竜が岩場を縄張りにした。怒りの連撃を見極め、短くなった疲労の隙を逃すな。",
+      "mapId": "map.basin.training",
+      "fieldId": "field.basin",
+      "targetMonsterId": "monster.spinegale",
+      "rankId": "rank.3",
+      "requires": [
+        "quest.basin.r2.001",
+        "quest.spinegale.r2"
+      ],
+      "monsterSpawn": {
+        "x": 4,
+        "z": 15,
+        "yaw": 2.6
+      },
+      "timeLimitTicks": 144000,
+      "fieldTimeLimitTicks": 144000,
+      "maxFaints": 3,
+      "returnTicks": 3600,
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        }
+      ],
+      "rewards": {
+        "money": 3200,
+        "items": [
+          {
+            "itemId": "mat.spinegale.scale.r3",
+            "count": 1
+          }
+        ]
+      },
+      "monsterAttackScale": 1.303030303030303
+    }
+  ]
+}

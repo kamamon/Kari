@@ -1357,9 +1357,12 @@ export async function assembleContent(getRaw: JsonGetter, opts: LoadOptions = {}
   for (const f of index.files.equipment ?? []) {
     const eq = (await get(f)) as { schemaVersion: number; weapons?: WeaponDef[]; armor?: ArmorDef[]; recipes?: RecipeDef[]; armorTraits?: Record<string, Pick<ArmorDef, 'resist' | 'skill'>> };
     checkVersion(f, eq.schemaVersion, errors);
-    for (const w of eq.weapons ?? []) putUnique(content.weapons, w.id, w, 'weapon', errors);
+    // スパインゲイルの11系統を保存し、実装済みの系統だけを有効化する（保留モーションセットも対応）。
+    const deferred = f === 'equipment_spinegale.json';
+    const enabled = new Set((eq.weapons ?? []).filter(w => !deferred || content.families.has(w.family)).map(w => w.id));
+    for (const w of eq.weapons ?? []) if (!deferred || enabled.has(w.id)) putUnique(content.weapons, w.id, w, 'weapon', errors);
     for (const a of eq.armor ?? []) putUnique(content.armor, a.id, a, 'armor', errors);
-    for (const r of eq.recipes ?? []) putUnique(content.recipes, r.id, r, 'recipe', errors);
+    for (const r of eq.recipes ?? []) if (!deferred || !('resultWeaponId' in r) || enabled.has(r.resultWeaponId)) putUnique(content.recipes, r.id, r, 'recipe', errors);
     // これまでの防具（ガルドロスの岩殻〜輝殻）の耐性と技能（v0.33.0。設計の proposedAdditions。armor.json は変えない）
     for (const [id, t] of Object.entries(eq.armorTraits ?? {})) {
       const a = content.armor.get(id);
