@@ -16,7 +16,8 @@ export function scaleMonsterDef(def: MonsterDef, rank: RankDef): MonsterDef {
   return {
     ...def,
     ...(def.id === 'monster.spinegale' ? { spinegaleRank: rank.order, moveSpeed: [2.8, 3.0, 3.2][Math.min(2,rank.order-1)]! } : {}),
-    hp: def.id === 'monster.spinegale' ? [1450, 3200, 5800][Math.min(2,rank.order-1)]! : Math.max(1, Math.round(def.hp * s.hpScale)),
+    ...(def.id === 'monster.frostald' ? { frostaldRank: rank.order, moveSpeed: [2.45,2.65,2.85][Math.min(2,rank.order-1)]! } : {}),
+    hp: def.id === 'monster.frostald' ? [1750,3700,6400][Math.min(2,rank.order-1)]! : def.id === 'monster.spinegale' ? [1450, 3200, 5800][Math.min(2,rank.order-1)]! : Math.max(1, Math.round(def.hp * s.hpScale)),
     rage: def.rage ? { ...def.rage, threshold: Math.max(1, Math.round(def.rage.threshold * s.hpScale)) } : def.rage,
     parts: def.parts.map((p) => ({
       ...p,

@@ -21,6 +21,7 @@ import { CREATURE_PLANS } from './render/creaturePlans';
 import { envArtStatus } from './render/envArt';
 import { GameView } from './render/view';
 import { preloadSpinegale } from './render/spinegaleRig';
+import { preloadFrostald } from './render/frostaldRig';
 import { armorTierOf } from './render/hunterArmor';
 import { defenseOf, playWeaponId, pouchOf, questUnlocked, wornArmor, type RunRewards } from './save/profile';
 import type { SaveManager, SaveResult } from './save/saveManager';
@@ -649,16 +650,16 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     if(this.unsaved.length||this.settleState?.state==='saving'){this.base.notify('未保存の報酬を先に保存してください。',true);return;}
     const prep={...lifeOf(this.save.doc).prep};
     const start=()=>{this.huntPrep=prep;this.createSession(questId);this.huntPrep=undefined;this.setOverlay(null);this.audio.play('ui');};
-    if (quest.targetMonsterId === 'monster.spinegale') {
+    if (quest.targetMonsterId === 'monster.spinegale' || quest.targetMonsterId === 'monster.frostald') {
       this.departing=true;
-      this.base.notify('疾棘竜のモデルを読み込んでいます…',false);
-      void preloadSpinegale().then(async()=>{
+      this.base.notify('大型モンスターのモデルを読み込んでいます…',false);
+      void (quest.targetMonsterId==='monster.frostald'?preloadFrostald():preloadSpinegale()).then(async()=>{
         if(hasPrep(prep)){
           const r=await this.save.hubLife({kind:'consumePrep'},this.save.doc.revision);
           if(!r.ok){this.base.notify(r.message,true);return;}
         }
         start();
-      }).catch(()=>this.base.notify('疾棘竜の読み込みに失敗しました。通信を確認して再度出発してください。',true))
+      }).catch(()=>this.base.notify('大型モンスターの読み込みに失敗しました。通信を確認して再度出発してください。',true))
         .finally(()=>{this.departing=false;});
       return;
     }

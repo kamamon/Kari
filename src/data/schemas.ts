@@ -567,6 +567,8 @@ export interface HazardDef {
 export interface MonsterDef {
   /** スパインゲイル専用の級。疲労・走行の設定に使う。 */
   spinegaleRank?: number;
+  /** フロストアルド専用の蓄冷容量。 */
+  frostaldRank?: number;
   schemaVersion: number;
   id: string;
   name: string;
