@@ -244,8 +244,8 @@ describe('狩場の地面の作り込み（踏み分け道と際の陰）', () =
     const layers: { n: number; lum: number[]; tone: number[]; shade: number[] }[] = [];
     g.traverse((o) => {
       const im = o as InstancedMesh;
-      // 崖の向こうの木の葉の板（v0.78.0。src/render/exteriorFlora.ts）は、地面の草ではない
-      if (!im.isInstancedMesh || !((im.material as MeshLambertMaterial).alphaTest > 0) || !im.instanceColor || im.name === 'field-exterior-leaves') return;
+      // 崖の向こうの木の葉の板（v0.78.0。src/render/exteriorFlora.ts）と丘の草（v0.79.0。src/render/exteriorShade.ts）は、エリアの中の草ではない
+      if (!im.isInstancedMesh || !((im.material as MeshLambertMaterial).alphaTest > 0) || !im.instanceColor || im.name.startsWith('field-exterior-')) return;
       const L = { n: im.count, lum: [] as number[], tone: [] as number[], shade: [] as number[] };
       for (let i = 0; i < im.count; i++) {
         im.getMatrixAt(i, m4);
@@ -324,8 +324,8 @@ describe('狩場の地面の作り込み（踏み分け道と際の陰）', () =
   it('草むら: フィールドの草の地面は、短い草と背の高い草が 1.3 倍（上限 2600 本）。これまでの 1 つの狩場の草の数は変わらない', () => {
     const count = (g: ReturnType<typeof buildAreaGroup>): number[] => {
       const out: number[] = [];
-      // 草と小物の板（崖の向こうの木の葉の板は数えない。v0.78.0）
-      g.traverse((o) => { const im = o as InstancedMesh; if (im.isInstancedMesh && (im.material as MeshLambertMaterial).alphaTest > 0 && im.name !== 'field-exterior-leaves') out.push(im.count); });
+      // エリアの中の草と小物の板（崖の向こうの木の葉の板と丘の草は数えない。v0.78.0・v0.79.0）
+      g.traverse((o) => { const im = o as InstancedMesh; if (im.isInstancedMesh && (im.material as MeshLambertMaterial).alphaTest > 0 && !im.name.startsWith('field-exterior-')) out.push(im.count); });
       return out.sort((p, q) => q - p);
     };
     const a = basin.areas.find((x) => x.id === 'a3')!, shape = new AreaShape(a.shape!);

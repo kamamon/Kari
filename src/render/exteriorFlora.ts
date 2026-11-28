@@ -252,6 +252,9 @@ export interface TreeSpec {
   shade: number;
 }
 
+/** 木 1 本の大きさ: 樹冠の半径・樹冠の真ん中の地面からの高さ・樹冠の厚みの半分・幹の根元の半径（m） */
+export interface TreeExtent { crownR: number; crownUp: number; crownHalf: number; trunkR: number }
+
 export interface FloraOptions {
   seed: number;
   tree: FloraTree;
@@ -286,15 +289,35 @@ export class ExteriorFlora {
     list.push({ m: new Matrix4().compose(this.v.set(x, y, z), q, this.s.set(sx, sy, sz)), r, g, b });
   }
 
-  /** 1 本足す */
-  tree(rng: SeededRng, t: TreeSpec): void {
+  /** 1 本足す。返すのは、木の大きさ（影を落とす側 = src/render/exteriorShade.ts の treeShade が使う） */
+  tree(rng: SeededRng, t: TreeSpec): TreeExtent {
     this.trees++;
-    if (this.o.tree === 'pine') this.pine(rng, t);
-    else this.broadleaf(rng, t);
+    return this.o.tree === 'pine' ? this.pine(rng, t) : this.broadleaf(rng, t);
+  }
+
+  /** 茂みの数（shrub で足した数） */
+  shrubs = 0;
+
+  /**
+   * 丘の低い茂み（v0.79.0）: 葉の板 3 枚を、根元を合わせて、少し外へ開いて立てる。木の葉の板と同じ描画に入る（描画は増えない）。
+   * 広葉樹・湿地の木の狩場だけ（針葉樹の狩場には、葉の板の描画が無い）。w は幅（m。高さは、その半分ほど）、lit は明るさ（影の中は暗く）。
+   */
+  shrub(rng: SeededRng, x: number, y: number, z: number, w: number, lit: number): boolean {
+    if (this.o.tree === 'pine') return false;
+    this.shrubs++;
+    const warm = (rng.next() - 0.5) * 0.2, base = rng.next() * Math.PI;
+    for (let i = 0; i < 3; i++) {
+      // 3 枚を 60° ずつ回し、それぞれ、板の面の向きへ少し倒す（上から見ても、薄い線に見えない）
+      const yaw = base + (i * Math.PI) / 3 + (rng.next() - 0.5) * 0.4, lean = 0.18 + rng.next() * 0.22;
+      this.q.setFromAxisAngle(UP, yaw).multiply(this.q2.setFromAxisAngle(this.v.set(1, 0, 0), (i % 2 ? -1 : 1) * lean));
+      const k = lit * (0.8 + rng.next() * 0.2), s = w * (0.85 + rng.next() * 0.3);
+      this.put(this.tufts, x, y - 0.06 * w, z, this.q, s, s * (1 + rng.next() * 0.25), s, k * (1 + warm) * this.tuft.r, k * this.tuft.g, k * (1 - warm * 1.3) * this.tuft.b);
+    }
+    return true;
   }
 
   /** 針葉樹: 幹と、傘を 5 段（上ほど小さい）。段ごとに、向きと大きさを少し変える */
-  private pine(rng: SeededRng, t: TreeSpec): void {
+  private pine(rng: SeededRng, t: TreeSpec): TreeExtent {
     const { x, z, h, shade } = t;
     const r = h * 0.04;
     const top = t.ground + h * 0.9;
@@ -305,10 +328,12 @@ export class ExteriorFlora {
       const k = shade * (0.9 + j * 0.035);
       this.put(this.crowns, x, t.ground + h * (0.2 + j * 0.15), z, this.q.setFromAxisAngle(UP, t.yaw + j * 0.9 + rng.next()), rad, hh, rad, k * (1 - cool), k, k * (1 + cool));
     }
+    // 傘の重なり（下の段の半径は 高さ × 0.235。上ほど細い）: 影は、細長い
+    return { crownR: h * 0.19, crownUp: h * 0.52, crownHalf: h * 0.36, trunkR: r };
   }
 
   /** 広葉樹（と、湿地の木: 低く広い）: 幹、枝 2 本、葉のかたまり（芯・頂・横に 2〜3 つ）、かたまりごとに葉の板 */
-  private broadleaf(rng: SeededRng, t: TreeSpec): void {
+  private broadleaf(rng: SeededRng, t: TreeSpec): TreeExtent {
     const { x, z, h, shade } = t;
     const swamp = this.o.tree === 'swamp';
     // 樹冠の半径は、高さの 1/3 ほど（湿地の木は、低く広い）。幹が見えるのは、下の 1/3 ほど
@@ -358,6 +383,8 @@ export class ExteriorFlora {
         this.put(this.tufts, l.x + dx * l.rx * 0.66, l.y + dy * l.ry * (dy < 0 ? 0.42 : 0.66), l.z + dz * l.rz * 0.66, this.q, w, w, w, lit * tr * this.tuft.r, lit * this.tuft.g, lit * tb * this.tuft.b);
       }
     }
+    // 樹冠ぜんぶ（横のかたまりと葉の板まで）の広がり
+    return { crownR: R * 1.2, crownUp: h * (swamp ? 0.56 : 0.64), crownHalf: h * (swamp ? 0.14 : 0.2), trunkR: r };
   }
 
   /** 木を、幹・葉のかたまり・葉の板の 3 つ（針葉樹は 2 つ）の描画にまとめて、group へ足す */

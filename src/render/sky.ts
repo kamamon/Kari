@@ -4,6 +4,12 @@
 // 雲は、空の上の平らな面に、なめらかな雑音を重ねたもの（時間で少しずつ流れる）。戦闘の計算には関わらない。
 import { BackSide, Color, Mesh, ShaderMaterial, SphereGeometry, Vector3 } from 'three';
 
+/**
+ * 太陽の向き（光の当たる側から見た、空の上の太陽の位置）。光（DirectionalLight）と空の日の位置を合わせる。
+ * 崖の向こうの木と岩の影（src/render/exteriorShade.ts。v0.79.0）も、この向きから落とす。
+ */
+export const SUN_DIR = new Vector3(-14, 26, -11).normalize();
+
 export interface SkyLook {
   /** 真上の色・地平線の色（霧の色と同じにする）・太陽の光の色 */
   zenith: number;

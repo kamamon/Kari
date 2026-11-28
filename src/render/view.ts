@@ -1298,6 +1298,8 @@ export class GameView {
     this.scene.traverse((o) => {
       // 地面の作り込みの絵（v0.74.0。エリアごとに 1 枚）
       (o.userData.groundMask as { dispose(): void } | undefined)?.dispose();
+      // 崖の向こうの影の絵（v0.79.0。エリアごとに 1 枚）
+      (o.userData.outerShade as { dispose(): void } | undefined)?.dispose();
       const mesh = o as Mesh;
       if (!mesh.geometry) return;
       mesh.geometry.dispose();

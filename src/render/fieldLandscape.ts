@@ -11,8 +11,10 @@ import { valueNoise3 } from './rockGeo';
 import { SKY_LOOKS, type SkyLook } from './sky';
 // v0.78.0（Claude。docs/spec.md の 21.7、D-178）: 木と岩の形・外側の地面の絵は、別のファイルが作る（ここは、置く場所と大きさ）
 import { ExteriorFlora, ROCK_SLOPE_MAX, placeExteriorRock } from './exteriorFlora';
-import { OUTER_TILE, outerGroundMaterial, outerPaint, outerSteep, paintsOuter } from './exteriorGround';
-import { mergeRocks, rockArtMaterial, type RockPlacement } from './rockArt';
+import { OUTER_TILE, outerGroundMaterial, outerPaint, outerSteep, paintsOuter, setOuterShade } from './exteriorGround';
+// v0.79.0（Claude。docs/spec.md の 21.8、D-179）: 木と岩の影の絵と、丘の草
+import { HILL_SHRUB_W, addHillGrass, buildOuterShade, hillPicker, hillShrubCount, rockShade, setShadeUv, shadeTexture, treeShade, type HillInput, type ShadeBlob } from './exteriorShade';
+import { mergeRocks, rockArt, rockArtMaterial, type RockPlacement } from './rockArt';
 
 export type LandscapeStyle='meadow'|'forest'|'wetland'|'coast'|'alpine'|'canyon'|'cave'|'thermal'|'crystal';
 type TreeStyle='broadleaf'|'pine'|'swamp'|'none';
@@ -215,20 +217,24 @@ function trailGeometry(s:LandscapeSurface):BufferGeometry{
  }
  const geo=new BufferGeometry();geo.setAttribute('position',new Float32BufferAttribute(pos,3));geo.setAttribute('uv',new Float32BufferAttribute(uv,2));geo.setIndex(idx);geo.computeVertexNormals();return geo;
 }
-/** 遠景の稜線は実際の形で2層。距離感は手前の3D地形と霧で作り、空の色とつなぐ。 */
-function distantRidge(input:LandscapeInput,layer:number):Mesh{
+/** 遠景の稜線は実際の形で2層。距離感は手前の3D地形と霧で作り、空の色とつなぐ。v0.79.0: 2 層を 1 つの形にまとめた（描画 1 回。色も形も同じ） */
+function distantRidges(input:LandscapeInput):Mesh{
+ const vertices:number[]=[],colors:number[]=[],idx:number[]=[];
+ for(const layer of [0,1])ridgeLayer(input,layer,vertices,colors,idx);
+ const g=new BufferGeometry();g.setAttribute('position',new Float32BufferAttribute(vertices,3));g.setAttribute('color',new Float32BufferAttribute(colors,3));g.setIndex(idx);g.computeVertexNormals();
+ const m=new Mesh(g,new MeshBasicMaterial({vertexColors:true,side:DoubleSide,fog:false}));m.name='field-distant-ridge';m.userData.noMerge=true;m.userData.layers=2;return m;
+}
+function ridgeLayer(input:LandscapeInput,layer:number,vertices:number[],colors:number[],idx:number[]):void{
  const p=input.profile,b=input.bounds,xc=(b.minX+b.maxX)/2,zc=(b.minZ+b.maxZ)/2,r=Math.max(b.maxX-b.minX,b.maxZ-b.minZ)/2+158+layer*42;
- const N=100,vertices:number[]=[],colors:number[]=[],idx:number[]=[],n=valueNoise3(p.seed+layer*123),sky=new Color(p.sky.horizon),shade=new Color(p.rock),c=new Color();
+ const N=100,base=vertices.length/3,n=valueNoise3(p.seed+layer*123),sky=new Color(p.sky.horizon),shade=new Color(p.rock),c=new Color();
  for(let i=0;i<=N;i++){const a=i/N*Math.PI*2,x=Math.cos(a),z=Math.sin(a),f=n(x*3.8,layer*4.5,z*3.8),f2=n(x*7.5,layer*3.3,z*7.5);
   const open=smooth(.05,.9,Math.cos(a-p.viewAngle)),sea=p.water==='sea'?smooth(-.05,.9,Math.cos(a-p.viewAngle)):0;
   const h=(17+p.peak*(.42+f*.85)+f2*11)*(1-.42*open)*(1-.67*sea);
   for(const [rad,y,t] of [[r-12,-12,0],[r,h,1],[r+23,-14,0]] as const){
    vertices.push(xc+x*rad,y,zc+z*rad);c.copy(sky).lerp(shade,t*(layer?.16:.27)*(.7+f*.5));colors.push(c.r,c.g,c.b);
   }
-  if(i<N)for(let j=0;j<2;j++){const a=i*3+j,b=a+3;idx.push(a,b,a+1,a+1,b,b+1);}
+  if(i<N)for(let j=0;j<2;j++){const a=base+i*3+j,b=a+3;idx.push(a,b,a+1,a+1,b,b+1);}
  }
- const g=new BufferGeometry();g.setAttribute('position',new Float32BufferAttribute(vertices,3));g.setAttribute('color',new Float32BufferAttribute(colors,3));g.setIndex(idx);g.computeVertexNormals();
- const m=new Mesh(g,new MeshBasicMaterial({vertexColors:true,side:DoubleSide,fog:false}));m.name='field-distant-ridge-'+layer;m.userData.noMerge=true;return m;
 }
 export function buildLandscapeExterior(input:LandscapeInput,s:LandscapeSurface):Group{
  const p=input.profile,b=input.bounds,rng=new SeededRng(p.seed^0xa142c),noise=patchNoise(p.seed^8873),group=new Group();group.name='field-natural-exterior';
@@ -237,8 +243,8 @@ export function buildLandscapeExterior(input:LandscapeInput,s:LandscapeSurface):
  if(s.water){const water=new Mesh(s.water,imageLambert('water',{color:p.waterColor,transparent:true,opacity:.92,side:DoubleSide},{raw:true,gain:.93}));water.name='field-exterior-water';water.userData.noMerge=true;group.add(water);}
  const trail=trailGeometry(s);
  if(trail.getIndex()!.count){const path=new Mesh(trail,imageLambert('earth',{color:p.style==='alpine'?0xc9d4d4:0x948571,side:DoubleSide},{gain:1.1}));path.name='field-exit-continuation';path.userData.noMerge=true;group.add(path);}else trail.dispose();
- group.add(distantRidge(input,0),distantRidge(input,1));
- const rocks:RockPlacement[]=[],treeSites:{x:number;z:number}[]=[];
+ group.add(distantRidges(input));
+ const rocks:RockPlacement[]=[],treeSites:{x:number;z:number}[]=[],blobs:ShadeBlob[]=[],rockSites:{x:number;z:number;r:number}[]=[];
  const flora=p.tree==='none'?null:new ExteriorFlora({seed:p.seed,tree:p.tree,foliage:p.foliage,dense:p.trees>90});
  const w=b.maxX-b.minX,d=b.maxZ-b.minZ;
  // 地形に追従する不規則な樹林。描画専用の大きな物は境界の外だけ。
@@ -250,7 +256,9 @@ export function buildLandscapeExterior(input:LandscapeInput,s:LandscapeSurface):
   const h=(p.tree==='pine'?8:p.tree==='swamp'?7.3:10)*(0.65+rng.next()*.9)*(near?1:1.12);
   const shade=.78+rng.next()*.35,yaw=rng.next()*6.283;treeSites.push({x,z});i++;
   // v0.78.0: 1 本の形（幹・枝・葉のかたまり・葉の板。針葉樹は傘の段）は src/render/exteriorFlora.ts
-  flora.tree(rng,{x,z,ground:y,root:groundedBase(s,x,z,h*.06),h,yaw,shade});
+  const size=flora.tree(rng,{x,z,ground:y,root:groundedBase(s,x,z,h*.06),h,yaw,shade});
+  // v0.79.0: 木の影（外側の地面の色に掛ける絵へ。src/render/exteriorShade.ts）
+  blobs.push(...treeShade(x,z,size.crownR,size.crownUp,size.crownHalf,size.trunkR));
  }
  // v0.78.0: 岩は、エリアの中の岩と同じ図（依頼 10）を、斜面へ傾けて、根元を地面より下へ埋める（それまでは、いびつな球を斜面に置いていて、下の側が浮いて見えた）
  // 狩場ごとの岩の色（景観の定義の rock）は、盆地の岩の色からの倍率にして、少しだけ効かせる（図の色は、どの狩場も同じ。氷の素材には掛けない）
@@ -266,14 +274,26 @@ export function buildLandscapeExterior(input:LandscapeInput,s:LandscapeSurface):
   // 急な斜面（35° より急）には置かない（試す回数の 8 割まで。それでも足りなければ置く）
   if(rock.slope>ROCK_SLOPE_MAX){if(tries<p.stones*20)continue;steep++;}
   rocks.push(rock);i++;
+  rockSites.push({x,z,r:rad});blobs.push(rockShade(x,z,rad,rockArt(rock.id).h*rock.sy));
  }
- flora?.addTo(group);
  if(rocks.length){
   const geo=mergeRocks(rocks);
   // 白霧氷谷は、エリアの中の岩と同じ氷の素材
   const stone=new Mesh(frost?projectSurfaceUV(geo,4):geo,frost?imageLambert('frost_ice',{color:0xa6bfd3,vertexColors:true},{gain:1.06}):rockArtMaterial());
-  stone.name='field-exterior-rocks';stone.userData.noMerge=true;stone.userData.rocks=rocks.map(r=>({id:r.id,x:r.x,y:r.y??0,z:r.z,lod:r.lod??1}));group.add(stone);
+  stone.name='field-exterior-rocks';stone.userData.noMerge=true;stone.userData.rocks=rocks.map((r,i)=>({id:r.id,x:r.x,y:r.y??0,z:r.z,lod:r.lod??1,r:rockSites[i]!.r}));group.add(stone);
  }
- group.userData.landscape={fieldId:p.fieldId,areaId:p.areaId,style:p.style,trees:treeSites.length,rocks:rocks.length,steepRocks:steep,water:!!s.water,gates:s.gates.length,...s.metrics};
+ // v0.79.0: 木と岩の影の絵を、外側の地面の色に掛ける（影を落とす描画はしない。描画の回数は増えない）
+ const shade=buildOuterShade(b,blobs),shadeTex=shadeTexture(shade);
+ setShadeUv(s.outer,shade);setOuterShade(surface,shadeTex);ground.userData.outerShade=shadeTex;ground.userData.shade=shade;
+ // v0.79.0: 丘の草（エリアの中の背の高い草と同じ絵。外周の近くに多い。色は、外側の地面の色むらと影）
+ let perimeter=0;{const pts=input.shape&&input.shape.length>=3?input.shape:[[b.minX,b.minZ],[b.maxX,b.minZ],[b.maxX,b.maxZ],[b.minX,b.maxZ]];for(let i=0;i<pts.length;i++){const a=pts[i]!,c=pts[(i+1)%pts.length]!;perimeter+=Math.hypot(c[0]!-a[0]!,c[1]!-a[1]!);}}
+ const paint=paintsOuter(p)?outerPaint(p,BASE.meadow.land):null,tintColor=new Color(),tone=patchNoise(p.seed);
+ const hill:HillInput={bounds:b,perimeter,cover:p.cover,distance:s.distance,height:s.height,clear:(x,z)=>isGateClear(s,x,z,.8),rocks:rockSites,noise:tone,shade:shade.at,minY:p.water!=='none'?-.9:undefined,
+  tint:(_x,_z,n)=>{if(paint){paint(tintColor,n,0,0);return[tintColor.r,tintColor.g,tintColor.b];}const k=.9+.16*(1-n);return[k,k,k];}};
+ // 丘の茂み（葉の板 3 枚。木の葉の板と同じ描画に入る。広葉樹・湿地の木の狩場だけ）
+ if(flora&&p.tree!=='pine'){const pick=hillPicker(rng,hill);for(let i=hillShrubCount(perimeter,p.cover);i>0;i--){const sp=pick();if(sp)flora.shrub(rng,sp.x,sp.y,sp.z,HILL_SHRUB_W[0]+rng.next()*(HILL_SHRUB_W[1]-HILL_SHRUB_W[0]),(.82+.3*rng.next())*(1-.85*sp.shade));}}
+ flora?.addTo(group);
+ const grass=addHillGrass(group,rng,hill);
+ group.userData.landscape={fieldId:p.fieldId,areaId:p.areaId,style:p.style,trees:treeSites.length,rocks:rocks.length,steepRocks:steep,grass:grass?.count??0,shrubs:flora?.shrubs??0,shadeBlobs:blobs.length,water:!!s.water,gates:s.gates.length,...s.metrics};
  return group;
 }

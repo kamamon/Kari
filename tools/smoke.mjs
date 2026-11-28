@@ -1367,8 +1367,8 @@ const startTraining = async (page, tap = false) => {
   const sky = await page.evaluate(() => {
     const v = window.__vh.view, b = v.scene.getObjectByName('backdrop'), c = v.cam.camera.position;
     let cutouts = 0;
-    // 草と小物の板（崖の向こうの木の葉の板は数えない。v0.78.0）
-    v.scene.traverse((o) => { if (o.isInstancedMesh && o.visible && o.material.alphaTest > 0 && o.material.map && o.material.visible && o.name !== 'field-exterior-leaves') cutouts += o.count; });
+    // エリアの中の草と小物の板（崖の向こうの木の葉の板と丘の草は数えない。v0.78.0・v0.79.0）
+    v.scene.traverse((o) => { if (o.isInstancedMesh && o.visible && o.material.alphaTest > 0 && o.material.map && o.material.visible && !o.name.startsWith('field-exterior-')) cutouts += o.count; });
     return { art: window.__vh.envArt(), off: Math.abs(b.position.x - c.x) + Math.abs(b.position.z - c.z), far: b.children.filter((m) => m.material.map && m.material.visible).length, fog: v.scene.fog.color.getHexString(), cutouts, ...v.stats() };
   });
   check('景色の絵（狩場）: 頼んだ絵がすべて読めている。空と遠景の筒（絵 2 枚）が、カメラと一緒に動く。霧の色は絵の下の帯と同じ', art && sky.off < 0.01 && sky.far === 2 && sky.fog === 'aebcab', JSON.stringify(sky));
@@ -1399,13 +1399,30 @@ const startTraining = async (page, tap = false) => {
     const v = window.__vh.view, ext = v.areaGroups.get(window.__vh.sim.areaId)?.getObjectByName('field-natural-exterior');
     const leaves = ext?.getObjectByName('field-exterior-leaves'), canopy = ext?.getObjectByName('field-exterior-canopy'), rocks = ext?.getObjectByName('field-exterior-rocks'), relief = ext?.getObjectByName('field-exterior-relief');
     return {
-      trees: ext?.userData.landscape.trees, canopy: canopy?.count ?? 0, leaves: leaves?.count ?? 0, leafArt: !!leaves?.material.map && leaves.material.visible === true, key: leaves?.material.customProgramCacheKey?.(),
+      trees: ext?.userData.landscape.trees, shrubs: ext?.userData.landscape.shrubs, canopy: canopy?.count ?? 0, leaves: leaves?.count ?? 0, leafArt: !!leaves?.material.map && leaves.material.visible === true, key: leaves?.material.customProgramCacheKey?.(),
       rocks: rocks?.userData.rocks?.length ?? 0, steep: ext?.userData.landscape.steepRocks, rockArt: rocks?.material.userData.rockArt === true && rocks.material.userData.art?.artOn.value === 1, merged: !!rocks && rocks.isInstancedMesh !== true,
       outer: relief?.material.userData.outerGround === true && !!relief.material.map, kids: ext?.children.length,
     };
   }));
-  check('崖の向こう（v0.78.0）: 野営地の外の木は、1 本に葉のかたまり 5 つと葉の板 39 枚（茂みの絵が読めている。草の揺れの素材とは別）。岩は、依頼 10 の図をまとめた 1 つの形（急な斜面には無い）。外側の地面は、内側と同じ絵。景観の描画は 9 回まで',
-    far.trees > 10 && far.canopy === far.trees * 5 && far.leaves === far.trees * 39 && far.leafArt && far.key === 'canopy-tuft' && far.rocks > 20 && far.steep === 0 && far.rockArt && far.merged && far.outer && far.kids <= 9, JSON.stringify(far));
+  check('崖の向こう（v0.78.0）: 野営地の外の木は、1 本に葉のかたまり 5 つと葉の板 39 枚（茂みの絵が読めている。草の揺れの素材とは別。v0.79.0 から、丘の茂み 1 つに 3 枚が加わる）。岩は、依頼 10 の図をまとめた 1 つの形（急な斜面には無い）。外側の地面は、内側と同じ絵。景観の描画は 9 回まで',
+    far.trees > 10 && far.canopy === far.trees * 5 && far.leaves === far.trees * 39 + far.shrubs * 3 && far.leafArt && far.key === 'canopy-tuft' && far.rocks > 20 && far.steep === 0 && far.rockArt && far.merged && far.outer && far.kids <= 9, JSON.stringify(far));
+  // 崖の向こうの影と、丘の草・茂み（v0.79.0）: 外側の地面が、木と岩の影の絵（エリアごとに 1 枚）を読む。丘に、草の株と茂み。遠い稜線は 1 つの形（景観の描画は増えない）
+  const hill = await until(page, () => {
+    const v = window.__vh.view, ext = v.areaGroups.get(window.__vh.sim.areaId)?.getObjectByName('field-natural-exterior'), grass = ext?.getObjectByName('field-exterior-grass');
+    return !!grass?.material.map && grass.material.visible;
+  }, 15000).then(() => page.evaluate(() => {
+    const v = window.__vh.view, ext = v.areaGroups.get(window.__vh.sim.areaId)?.getObjectByName('field-natural-exterior');
+    const relief = ext?.getObjectByName('field-exterior-relief'), grass = ext?.getObjectByName('field-exterior-grass'), sh = relief?.material.userData.exShade?.value;
+    let on = 0;
+    if (sh?.image?.data) for (const b of sh.image.data) if (b > 0) on++;
+    return {
+      shade: !!sh && sh === relief.userData.outerShade, px: sh ? [sh.image.width, sh.image.height] : null, on: sh ? Math.round((on / sh.image.data.length) * 1000) / 1000 : 0, aShade: !!relief?.geometry.getAttribute('aShade'), key: relief?.material.customProgramCacheKey?.(),
+      grass: grass?.count ?? 0, grassArt: !!grass?.material.map && grass.material.visible === true, grassKey: grass?.material.customProgramCacheKey?.(), shrubs: ext?.userData.landscape.shrubs,
+      ridge: ext?.getObjectByName('field-distant-ridge')?.userData.layers, kids: ext?.children.length, ...v.stats(),
+    };
+  }));
+  check('崖の向こうの影と丘の草（v0.79.0）: 野営地の外側の地面が、木と岩の影の絵を読む（512 画素まで。影のある所は絵の 3〜40%）。丘に草の株（150 より多い）と茂み（15 より多い）。遠い稜線は 2 層を 1 つの形に。景観の描画は 8 回、全体は目標内（100 draw calls / 20万 tri）',
+    hill.shade && hill.aShade && hill.key === 'outer-ground' && Math.max(...hill.px) <= 512 && hill.on > 0.03 && hill.on < 0.4 && hill.grass > 150 && hill.grassArt && hill.grassKey === 'sway-in-wind' && hill.shrubs > 15 && hill.ridge === 2 && hill.kids === 8 && hill.calls <= 100 && hill.triangles <= 200000, JSON.stringify(hill));
   const real1 = await real();
   const real2 = await until(page, () => window.__vh.view.areaGroups.size >= 2, 45000).then(() => real());
   check('景色（v0.19.0）: 空の球が遠景の中にあり、雲の時刻が進む。霧は距離の 2 乗の指数。岩と岩壁に頂点の色と凹凸。草は揺れる素材で、1 本ずつ色が違う', real1.sky && real2.time > real1.time && real1.fogExp && real1.rocks >= 1 && real1.sway > 100 && real1.tinted >= 2, JSON.stringify(real1));
@@ -2549,8 +2566,8 @@ const startTraining = async (page, tap = false) => {
   await page.click('#hud-facility');
   await until(page, () => !document.getElementById('base').hidden);
   h = await hubState();
-  // 道具 6 つ（v0.42.0 で標識玉、v0.60.0 で強撃ビン）× 1 個・5 個
-  check('里: 商店の前のボタンを押すと、商店の画面が開く。通貨が無い間は、買うボタンが押せない', h.section === 'shop' && h.title === '商店' && h.shop !== 'none' && h.quests === 'none' && await page.evaluate(() => [...document.querySelectorAll('.shop-buy')].length === 12 && !!document.querySelector('.shop-buy[data-item="item.marker_orb"]') && !!document.querySelector('.shop-buy[data-item="item.power_coating"]') && [...document.querySelectorAll('.shop-buy')].every((b) => b.disabled) && /売れる素材を持っていません/.test(document.getElementById('base-shop').textContent)), JSON.stringify(h));
+  // 道具 7 つ（v0.42.0 で標識玉、v0.60.0 で強撃ビン、ChatGPT の #56 で解毒薬）× 1 個・5 個
+  check('里: 商店の前のボタンを押すと、商店の画面が開く。通貨が無い間は、買うボタンが押せない', h.section === 'shop' && h.title === '商店' && h.shop !== 'none' && h.quests === 'none' && await page.evaluate(() => [...document.querySelectorAll('.shop-buy')].length === 14 && !!document.querySelector('.shop-buy[data-item="item.marker_orb"]') && !!document.querySelector('.shop-buy[data-item="item.power_coating"]') && !!document.querySelector('.shop-buy[data-item="item.antidote"]') && [...document.querySelectorAll('.shop-buy')].every((b) => b.disabled) && /売れる素材を持っていません/.test(document.getElementById('base-shop').textContent)), JSON.stringify(h));
   await page.evaluate(() => window.__vh.save.settle({ runId: 'smoke-hub-seed', questId: 'quest.basin.003', money: 1000, items: [{ itemId: 'mat.galdros.shell_shard', count: 3 }] }));
   await until(page, () => window.__vh.save.doc.money === 1000 && !document.querySelector('.shop-buy[data-item="item.heal_tonic"][data-count="1"]').disabled);
   await page.click('.shop-buy[data-item="item.heal_tonic"][data-count="1"]');

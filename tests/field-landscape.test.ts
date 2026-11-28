@@ -56,8 +56,9 @@ describe('自然な外周景観（描画専用）',()=>{
    const s=buildLandscapeSurface(data),g=buildLandscapeExterior(data,s),stats=g.userData.landscape;
    expect(stats.fieldId).toBe(f.id);expect(stats.outerTriangles).toBeGreaterThan(0);
    expect(g.children.length).toBeLessThanOrEqual(9);
-   expect(g.getObjectByName('field-distant-ridge-0')).toBeDefined();
-   expect(g.getObjectByName('field-distant-ridge-1')).toBeDefined();
+   // v0.79.0: 遠い稜線の 2 層は、1 つの形にまとめた（描画 1 回。丘の草の描画 1 回ぶんを空ける）。頂点は 2 層ぶん（101 × 3 × 2）
+   const ridge=g.getObjectByName('field-distant-ridge') as Mesh;
+   expect(ridge.userData.layers).toBe(2);expect(ridge.geometry.getAttribute('position').count).toBe(606);
    const m=g.getObjectByName('field-exterior-relief') as Mesh;
    // v0.78.0: 盆地の外側は、内側と同じ地面の絵（src/render/exteriorGround.ts。印は outerGround）。ほかの狩場は、画像の材質
    const ud=(m.material as {userData:Record<string,unknown>}).userData;

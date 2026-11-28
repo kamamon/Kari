@@ -333,8 +333,9 @@ describe('狩場の外側に置く（全エリア）', () => {
         expect(steep.getX(i)).toBeLessThanOrEqual(1);
       }
       const leaves = g.getObjectByName('field-exterior-leaves') as InstancedMesh | undefined;
-      const st = g.userData.landscape as { trees: number; rocks: number };
-      if (st.trees > 0) expect(leaves!.count, a.id).toBe(st.trees * 39);
+      const st = g.userData.landscape as { trees: number; rocks: number; shrubs: number };
+      // 葉の板: 木 1 本に 39 枚と、丘の茂み（v0.79.0）1 つに 3 枚
+      if (st.trees > 0) expect(leaves!.count, a.id).toBe(st.trees * 39 + st.shrubs * 3);
       const stone = g.getObjectByName('field-exterior-rocks') as Mesh;
       expect((stone as unknown as { isInstancedMesh?: boolean }).isInstancedMesh, a.id).toBeUndefined();
       expect((stone.userData.rocks as unknown[]).length, a.id).toBe(st.rocks);

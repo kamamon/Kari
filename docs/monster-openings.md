@@ -76,3 +76,23 @@
 | `triple_dash` | 頭の冠棘（`head`） | 204〜234 | 30 |  |
 | `tail_sweep_l_short` | 後脚（`legs`） | 54〜90 | 36 |  |
 | `tail_sweep_r_short` | 後脚（`legs`） | 54〜90 | 36 |  |
+
+## 毒羽竜 ヴェノルカ（`monster.venolka`。15 / 15）
+
+| 技 | 狙える部位 | 区間（tick） | 長さ | 大技 |
+| --- | --- | --- | --- | --- |
+| `peck` | 頭（`head`） | 72〜120 | 48 |  |
+| `double_peck` | 頭（`head`） | 102〜156 | 54 |  |
+| `rush` | 頭（`head`） | 114〜174 | 60 |  |
+| `hop_kick` | 頭（`head`） | 90〜156 | 66 |  |
+| `glide` | 頭（`head`） | 156〜240 | 84 | 大技 |
+| `back_peck` | 頭（`head`） | 78〜138 | 60 |  |
+| `wing_l` | 頭（`head`） | 84〜144 | 60 |  |
+| `tail_l` | 頭（`head`） | 84〜138 | 54 |  |
+| `poison_tail_l` | 毒嚢（`sac`） | 90〜156 | 66 |  |
+| `wing_r` | 頭（`head`） | 84〜144 | 60 |  |
+| `tail_r` | 頭（`head`） | 84〜138 | 54 |  |
+| `poison_tail_r` | 毒嚢（`sac`） | 90〜156 | 66 |  |
+| `poison_spit` | 毒嚢（`sac`） | 72〜156 | 84 |  |
+| `poison_fan` | 毒嚢（`sac`） | 126〜204 | 78 |  |
+| `poison_cloud` | 毒嚢（`sac`） | 84〜216 | 132 |  |

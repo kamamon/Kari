@@ -3,7 +3,7 @@
 // 崖の上の線から先が「何も無い丘」に見えていた。外側にも、内側と同じ地面の絵（1 枚 = 6m）を貼り、同じ色むら（湿った所は濃い緑・乾いた所は明るい黄み）を
 // 頂点の色で掛ける。絵の繰り返しは、内側（src/render/groundDetailMaterial.ts の TILE_BREAK）と同じやり方で崩す。
 // 形（起伏・格子）は src/render/fieldLandscape.ts（ChatGPT の #43）のまま。ほかの狩場の外側は、これまでどおり。
-import { Color, type MeshLambertMaterial } from 'three';
+import { Color, DataTexture, type MeshLambertMaterial, RedFormat, type Texture, UnsignedByteType } from 'three';
 import { ENV_TILES, tileMaterial } from './envArt';
 import { baseTone, toneTint } from './groundDetail';
 
@@ -58,19 +58,59 @@ export function outerPaint(p: { land: number; sky: { horizon: number } }, refLan
   };
 }
 
+let blank: DataTexture | null = null;
+/** 影の無い絵（1 画素。影の絵が付くまで、素材が読む） */
+function blankShade(): DataTexture {
+  if (!blank) {
+    blank = new DataTexture(new Uint8Array([0]), 1, 1, RedFormat, UnsignedByteType);
+    blank.unpackAlignment = 1;
+    blank.needsUpdate = true;
+  }
+  return blank;
+}
+
+const SHADE_VERT = 'attribute vec2 aShade;\nvarying vec2 vExShade;\n';
+const SHADE_FRAG = 'uniform sampler2D tExShade;\nvarying vec2 vExShade;\n';
+
+/**
+ * 外側の地面の素材へ、木と岩の影の絵（src/render/exteriorShade.ts。v0.79.0）を付ける。地面の色に（1 - 絵の値）を掛ける。
+ * 地面の板の頂点に、絵の座標 aShade が要る（setShadeUv）。盆地の素材（outerGroundMaterial）は、はじめから読む形になっている。
+ * ほかの狩場の素材（画像の材質）は、ここで、絵を読む計算を足す。
+ */
+export function setOuterShade(mat: MeshLambertMaterial, tex: Texture): void {
+  const held = mat.userData.exShade as { value: Texture } | undefined;
+  if (held) {
+    held.value = tex;
+    return;
+  }
+  const uni = { value: tex };
+  mat.userData.exShade = uni;
+  mat.onBeforeCompile = (sh) => {
+    sh.uniforms.tExShade = uni;
+    sh.vertexShader = SHADE_VERT + sh.vertexShader.replace('#include <uv_vertex>', '#include <uv_vertex>\n  vExShade = aShade;');
+    sh.fragmentShader = SHADE_FRAG + sh.fragmentShader.replace('#include <map_fragment>', '#include <map_fragment>\n  diffuseColor.rgb *= 1.0 - texture2D( tExShade, vExShade ).r;');
+  };
+  mat.customProgramCacheKey = () => 'outer-shade';
+  mat.needsUpdate = true;
+}
+
 /**
  * 外側の地面の素材（内側と同じ草の地面の絵。頂点の色を掛ける）。uv は「m ÷ OUTER_TILE」。
  * 絵の繰り返しを崩す: 同じ絵を、向き（37°）と大きさ（1.23 倍）を変えてもう 1 度読み、8〜25m の大きなむらで混ぜる（内側と同じ）。
- * 急な斜面（頂点の aSteep。無ければ 0）では、模様を平均の色へ寄せる。
+ * 急な斜面（頂点の aSteep。無ければ 0）では、模様を平均の色へ寄せる。木と岩の影の絵（頂点の aShade の所）を、色に掛ける（v0.79.0。setOuterShade で付ける）。
  */
 export function outerGroundMaterial(): MeshLambertMaterial {
   const mat = tileMaterial('grass', 0xffffff, { vertexColors: true, gain: OUTER_GAIN });
   mat.userData.outerGround = true;
   const mean = new Color(ENV_TILES.grass.mean);
+  // 木と岩の影の絵（v0.79.0）。付くまでは、影の無い絵
+  const shade = { value: blankShade() as Texture };
+  mat.userData.exShade = shade;
   mat.onBeforeCompile = (sh) => {
     sh.uniforms.uExMean = { value: mean };
-    sh.vertexShader = 'attribute float aSteep;\nvarying float vExSteep;\n' + sh.vertexShader.replace('#include <uv_vertex>', '#include <uv_vertex>\n  vExSteep = aSteep;');
-    sh.fragmentShader =
+    sh.uniforms.tExShade = shade;
+    sh.vertexShader = 'attribute float aSteep;\nvarying float vExSteep;\n' + SHADE_VERT + sh.vertexShader.replace('#include <uv_vertex>', '#include <uv_vertex>\n  vExSteep = aSteep;\n  vExShade = aShade;');
+    sh.fragmentShader = SHADE_FRAG +
       `uniform vec3 uExMean;
 varying float vExSteep;
 float exHash(vec2 p) { p = fract(p * vec2(0.1031, 0.1030)); p += dot(p, p.yx + 33.33); return fract((p.x + p.y) * p.x); }
@@ -89,6 +129,7 @@ float exNoise(vec2 p) {
   sampledDiffuseColor = mix( sampledDiffuseColor, texture2D( map, mat2( 0.6493, 0.4893, -0.4893, 0.6493 ) * vMapUv + vec2( 0.37, 0.11 ) ), exB );
   sampledDiffuseColor.rgb = mix( sampledDiffuseColor.rgb, uExMean, vExSteep * ${OUTER_STEEP_FLAT.toFixed(2)} );
   diffuseColor *= sampledDiffuseColor;
+  diffuseColor.rgb *= 1.0 - texture2D( tExShade, vExShade ).r;
 #endif`,
       );
   };

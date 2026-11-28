@@ -15,7 +15,7 @@ import { ENV_SPRITES, ENV_TILES, SpriteField, boxUv, buildBackdrop, tileMaterial
 import { AreaShape, type Pt } from '../game/areaShape';
 import { ROCK_REACH, ledgeGeometry, polyPath, wallPath } from './rockGeo';
 import { artCliffGeometry, cliffArtMaterial, mergeRocks, placeBigRock, rockArt, rockArtGeometry, rockArtMaterial, type RockPlacement } from './rockArt';
-import { SKY_LOOKS, SkyDome } from './sky';
+import { SKY_LOOKS, SUN_DIR, SkyDome } from './sky';
 import { patchNoise } from './noise';
 import { imageLambert, projectSurfaceUV } from './materialImages';
 import { PlatformIndex, buildTerraces, holedGround } from './terraces';
@@ -30,8 +30,8 @@ export const FOG_COLOR = 0xaebcab;
  */
 export const FOG_DENSITY = 0.0112;
 export const VILLAGE_FOG_DENSITY = 0.0076;
-/** 太陽の向き（光の当たる側から見た、空の上の太陽の位置）。光（DirectionalLight）と空の日の位置を合わせる */
-export const SUN_DIR = new Vector3(-14, 26, -11).normalize();
+// 太陽の向き SUN_DIR は src/render/sky.ts（v0.79.0。崖の向こうの影 = src/render/exteriorShade.ts も、同じ向きを使う）
+export { SUN_DIR };
 
 export interface Arena {
   group: Group;
