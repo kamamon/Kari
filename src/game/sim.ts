@@ -582,6 +582,7 @@ export class Simulation implements SimCtx {
     if (item.kind === 'coating') return false;
     if (item.kind === 'heal') {
       const before = p.hp;
+      if(item.curePoison){const poisoned=p.ailment.poisonTicks>0;p.ailment.poisonTicks=0;p.ailment.build.poison=0;if(poisoned)this.emit({type:'status',kind:'poison',on:false});}
       p.hp = Math.min(this.content.player.maxHp, p.hp + (item.heal ?? 0));
       this.emit({ type: 'item_effect', itemId: item.id, kind: 'heal', ok: true, amount: p.hp - before, pos });
       return true;
@@ -1459,6 +1460,7 @@ export class Simulation implements SimCtx {
       parts.push(m.hp, m.pos.x, m.pos.z, m.yaw, m.dead ? 1 : 0, m.staggerTicks, m.cooldown, act(m.action), m.aware ? 1 : 0, m.enraged ? m.enragedTicks : 0, m.rageAcc);
       if (m.spinegale) parts.push(m.spinegale.stamina,m.spinegale.remaining,m.spinegale.rank);
       if(m.frostald)parts.push(m.frostald.charge,m.frostald.capacity,m.frostald.rank);
+      if(m.venolka)parts.push(m.venolka.charge,m.venolka.capacity,m.venolka.rank);
       for (const q of m.parts) parts.push(q.durability, q.broken ? 1 : 0, q.severed ? 1 : 0, q.severAcc, q.flinchAcc, q.flinchThreshold);
     }
     for (const h of this.hazards) parts.push(h.x, h.z, h.warn, h.active, h.hit ? 1 : 0);

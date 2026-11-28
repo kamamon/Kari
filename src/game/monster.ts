@@ -27,6 +27,7 @@ export interface MonsterPartState {
 export interface MonsterState {
   spinegale?: { stamina: number; remaining: number; max: number; restTicks: number; rank: number };
   frostald?: { charge:number; capacity:number; rank:number };
+  venolka?: { charge:number; capacity:number; rank:number };
   /** フィールドでの移動と休息（フィールドでなければ null） */
   roam: RoamState | null;
   /** 巣で眠っている（攻撃されると起きる） */
@@ -106,6 +107,7 @@ export function createMonster(def: MonsterDef, spawn: { x: number; z: number; ya
     id,
     def,
     ...(def.id === 'monster.frostald' ? { frostald: frostaldState(def.frostaldRank ?? 1) } : {}),
+    ...(def.id === 'monster.venolka' ? { venolka: venolkaState(def.venolkaRank ?? 1) } : {}),
     ...(def.id === 'monster.spinegale' ? { spinegale: spinegaleState(def.spinegaleRank ?? 1) } : {}),
     pos,
     prevPos: { ...pos },
@@ -231,6 +233,7 @@ function chooseAction(m: MonsterState, player: PlayerState, ctx: SimCtx): Monste
   let cands = m.def.ai.choices.filter(
     (c) =>
       (!m.frostald || (m.frostald.charge >= frostCost(c.actionId) && (m.frostald.rank > 1 || !c.actionId.includes('.ice_sweep_')) && (m.frostald.rank > 2 || !c.actionId.endsWith('.ice_burst')))) &&
+      (!m.venolka || venolkaCan(m,c.actionId)) &&
       (!m.spinegale || m.spinegale.rank >= 2 || !c.actionId.endsWith('.triple_dash')) &&
       dist >= c.minDist &&
       dist <= c.maxDist &&
@@ -267,7 +270,22 @@ const FA_COST:Record<string,number>={ice_breath:30,ice_sweep_l:35,ice_sweep_r:35
 function frostCost(id:string):number { return FA_COST[id.slice(FA_PREFIX.length)]??0; }
 function frostaldState(rank:number) { const i=Math.max(0,Math.min(2,rank-1));const capacity=[100,120,140][i]!;return {charge:capacity,capacity,rank:i+1}; }
 function maneBroken(m:MonsterState):boolean { const i=m.def.parts.findIndex(p=>p.id==='mane');return i>=0 && !!m.parts[i]?.broken; }
+const VN_PREFIX='monster.venolka.';
+const VN_COST:Record<string,number>={poison_spit:26,poison_fan:39,poison_cloud:45,poison_tail_l:12,poison_tail_r:12};
+function venomCost(id:string):number{return VN_COST[id.slice(VN_PREFIX.length)]??0;}
+function venolkaState(rank:number){const i=Math.max(0,Math.min(2,rank-1));const capacity=[100,120,140][i]!;return {charge:capacity,capacity,rank:i+1};}
+export function venolkaBroken(m:MonsterState,id:string):boolean {const i=m.def.parts.findIndex(p=>p.id===id);return i>=0&&!!m.parts[i]?.broken;}
+export function venolkaCan(m:MonsterState,id:string):boolean{
+  const v=m.venolka;if(!v)return true;
+  const n=id.slice(VN_PREFIX.length);
+  if(v.charge<venomCost(id))return false;
+  if(n==='poison_fan'&&v.rank<2||n==='poison_cloud'&&v.rank<3)return false;
+  if(n==='glide'&&(venolkaBroken(m,'wing_l')||venolkaBroken(m,'wing_r')))return false;
+  if(n.startsWith('poison_tail_')&&venolkaBroken(m,'tail'))return false;
+  return true;
+}
 function begin(m: MonsterState, actionId: string, ctx: SimCtx): void {
+  if(m.venolka)m.venolka.charge=Math.max(0,m.venolka.charge-venomCost(actionId));
   if(m.frostald)m.frostald.charge=Math.max(0,m.frostald.charge-frostCost(actionId));
   if (m.spinegale) {
     const cost = SG_COST[actionId.slice('monster.spinegale.'.length)] ?? 0;
@@ -311,6 +329,8 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
 
   if (m.captured) return;
   const fa = m.frostald;
+  const vn=m.venolka;
+  if(vn&&venolkaBroken(m,'sac')){vn.capacity=Math.min(vn.capacity,[50,60,70][vn.rank-1]!);vn.charge=Math.min(vn.charge,vn.capacity);}
   if(fa && maneBroken(m)){fa.capacity=Math.min(fa.capacity,[55,65,75][fa.rank-1]!);fa.charge=Math.min(fa.charge,fa.capacity);}
   const sg = m.spinegale;
   if (sg && sg.remaining === 0 && sgFatigueAction(m.action?.def.actionId)) m.action = null;
@@ -383,7 +403,9 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   const active = m.aiEnabled && sameArea && player.mode !== 'dead' && dist <= def.ai.aggroRange;
 
   if (!m.action) {
-    if (fa && active && fa.charge < 25) {
+    if(vn&&active&&vn.charge<26){
+      begin(m,VN_PREFIX+'refill',ctx);
+    } else if (fa && active && fa.charge < 25) {
       begin(m,FA_PREFIX+'recharge',ctx);
     } else if (m.pendingRoar && def.rage) {
       m.pendingRoar = false;
@@ -474,7 +496,8 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   for (const hz of adef.hazards ?? []) {
     if (hz.tick === t) {
       const h = fa && maneBroken(m) ? {...hz, count:Math.max(1,Math.ceil(hz.count*.65)),radius:hz.radius*.85,baseDamage:Math.round(hz.baseDamage*.7)} : hz;
-      ctx.spawnHazards(h, player.pos, h.origin ? toWorld(fromArr(h.origin), m.pos, m.yaw) : undefined, def);
+      const v=vn&&venolkaBroken(m,'sac')?{...h,count:Math.max(1,Math.ceil(h.count*.6)),radius:h.radius*.8,baseDamage:Math.round(h.baseDamage*.7),status:h.status?{...h.status,power:Math.ceil(h.status.power*.45)}:undefined}:h;
+      ctx.spawnHazards(v, player.pos, v.origin ? toWorld(fromArr(v.origin), m.pos, m.yaw) : undefined, def);
     }
   }
   for (const ev of adef.events) {
@@ -485,6 +508,7 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   run.tick++;
   if (run.tick >= adef.durationTicks) {
     if(fa && adef.actionId===FA_PREFIX+'recharge')fa.charge=fa.capacity;
+    if(vn&&adef.actionId===VN_PREFIX+'refill')vn.charge=vn.capacity;
     m.action = null;
     const [lo, hi] = def.ai.cooldownTicks;
     m.cooldown = Math.round((lo + rngOf(m, ctx).int(hi - lo + 1)) * (rage ? rage.cooldownScale : 1));

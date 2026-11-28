@@ -21,6 +21,7 @@ import { envArtStatus } from './render/envArt';
 import { GameView } from './render/view';
 import { preloadSpinegale } from './render/spinegaleRig';
 import { preloadFrostald } from './render/frostaldRig';
+import { preloadVenolka } from './render/venolkaRig';
 import { armorTierOf } from './render/hunterArmor';
 import { defenseOf, playWeaponId, pouchOf, questUnlocked, wornArmor, type RunRewards } from './save/profile';
 import type { SaveManager, SaveResult } from './save/saveManager';
@@ -649,10 +650,10 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     if(this.unsaved.length||this.settleState?.state==='saving'){this.base.notify('未保存の報酬を先に保存してください。',true);return;}
     const prep={...lifeOf(this.save.doc).prep};
     const start=()=>{this.huntPrep=prep;this.createSession(questId);this.huntPrep=undefined;this.setOverlay(null);this.audio.play('ui');};
-    if (quest.targetMonsterId === 'monster.spinegale' || quest.targetMonsterId === 'monster.frostald') {
+    if (quest.targetMonsterId === 'monster.spinegale' || quest.targetMonsterId === 'monster.frostald' || quest.targetMonsterId === 'monster.venolka') {
       this.departing=true;
       this.base.notify('大型モンスターのモデルを読み込んでいます…',false);
-      void (quest.targetMonsterId==='monster.frostald'?preloadFrostald():preloadSpinegale()).then(async()=>{
+      void (quest.targetMonsterId==='monster.venolka'?preloadVenolka():quest.targetMonsterId==='monster.frostald'?preloadFrostald():preloadSpinegale()).then(async()=>{
         if(hasPrep(prep)){
           const r=await this.save.hubLife({kind:'consumePrep'},this.save.doc.revision);
           if(!r.ok){this.base.notify(r.message,true);return;}
