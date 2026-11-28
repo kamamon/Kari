@@ -1,152 +1,670 @@
 {
   "hide": {
     "file": "hide.webp",
-    "source": "approved original",
-    "crop": [
-      715,
-      584,
-      761,
-      667
-    ],
+    "source": "毒羽飛竜ヴェノルカ.png",
+    "sourceImageSha256": "0c6abb4e39bc08529ee90d32abfd319baebb92ad8805dc22b8d2a630dbd23cb4",
     "nativeSize": [
-      46,
-      83
+      512,
+      512
     ],
-    "sha256": "86fa485201d6fe6ed389f861193831644206ddb433b534795e4cafa7388af692"
+    "referenceViewport": [
+      1408,
+      1056
+    ],
+    "regions": [
+      [
+        699,
+        550,
+        761,
+        646
+      ],
+      [
+        698,
+        595,
+        768,
+        682
+      ],
+      [
+        976,
+        594,
+        1057,
+        637
+      ],
+      [
+        898,
+        585,
+        982,
+        628
+      ]
+    ],
+    "layout": "periodic",
+    "mapping": "four actual scale regions; broad scale patchwork",
+    "sha256": "1e5eb6239bc5b3591250e40bd4a6013e6f3e14e37a1be26d4901ff011d1831a2"
   },
   "belly": {
     "file": "belly.webp",
-    "source": "approved original",
-    "crop": [
-      465,
-      488,
-      506,
-      544
-    ],
+    "source": "毒羽飛竜ヴェノルカ.png",
+    "sourceImageSha256": "0c6abb4e39bc08529ee90d32abfd319baebb92ad8805dc22b8d2a630dbd23cb4",
     "nativeSize": [
-      41,
-      56
+      384,
+      384
     ],
-    "sha256": "d319588b44c7e765637668d6c80b9bf7a0f97625146279275866c7d39d73cc9f"
+    "referenceViewport": [
+      1408,
+      1056
+    ],
+    "regions": {
+      "scutes": [
+        [
+          451,
+          497,
+          485,
+          544
+        ],
+        [
+          483,
+          534,
+          515,
+          565
+        ],
+        [
+          526,
+          573,
+          563,
+          606
+        ]
+      ],
+      "side": [
+        699,
+        550,
+        761,
+        646
+      ]
+    },
+    "layout": "anatomical",
+    "mapping": "real neck and chest scale patches; soft flank transition",
+    "sha256": "cd03841c4dfbddbd2fd1c3923e76200bead7678a537c71caccb04436930b33f3"
   },
   "face": {
     "file": "face.webp",
-    "source": "approved original",
-    "crop": [
-      211,
-      254,
-      247,
-      273
-    ],
+    "source": "毒羽飛竜ヴェノルカ.png",
+    "sourceImageSha256": "0c6abb4e39bc08529ee90d32abfd319baebb92ad8805dc22b8d2a630dbd23cb4",
     "nativeSize": [
-      36,
-      19
+      768,
+      384
     ],
-    "sha256": "b509090355822b0a82ddf9ff55e5614b6730fefcb1c509796282c268e1b3da53"
+    "referenceViewport": [
+      1408,
+      1056
+    ],
+    "regions": {
+      "brow": [
+        208,
+        236,
+        242,
+        259
+      ],
+      "muzzle": [
+        180,
+        298,
+        220,
+        316
+      ],
+      "cheek": [
+        365,
+        312,
+        394,
+        357
+      ],
+      "neck": [
+        387,
+        358,
+        416,
+        401
+      ],
+      "jaw": [
+        235,
+        353,
+        259,
+        385
+      ]
+    },
+    "layout": "2x1",
+    "mapping": "original eyebrow, muzzle and cheek scale patches; dedicated lower jaw; no painted eye",
+    "sha256": "0877c2b3e6845d54fd016307a90f531b543bd78e50e058b601f10f7f382d16dc"
   },
   "leg": {
     "file": "leg.webp",
-    "source": "approved original",
-    "crop": [
-      902,
-      873,
-      925,
-      932
-    ],
+    "source": "毒羽飛竜ヴェノルカ.png",
+    "sourceImageSha256": "0c6abb4e39bc08529ee90d32abfd319baebb92ad8805dc22b8d2a630dbd23cb4",
     "nativeSize": [
-      23,
-      59
+      512,
+      512
     ],
-    "sha256": "f31491f53ebbfc463952e6c60564ceaf9ac46334a15144c50d54166d906683d9"
+    "referenceViewport": [
+      1408,
+      1056
+    ],
+    "regions": [
+      [
+        755,
+        687,
+        783,
+        714
+      ],
+      [
+        832,
+        762,
+        859,
+        790
+      ],
+      [
+        855,
+        797,
+        880,
+        834
+      ],
+      [
+        882,
+        857,
+        906,
+        890
+      ]
+    ],
+    "layout": "periodic",
+    "mapping": "metric original lower-leg scute tile; four real patches",
+    "sha256": "134b5ce683e98c0449445398f7b40e0dda2ece152a2abdc0dd208c2ba83eda66"
   },
   "feather": {
     "file": "feather.webp",
-    "source": "approved original",
-    "crop": [
-      417,
-      153,
-      458,
-      188
-    ],
+    "source": "毒羽飛竜ヴェノルカ.png",
+    "sourceImageSha256": "0c6abb4e39bc08529ee90d32abfd319baebb92ad8805dc22b8d2a630dbd23cb4",
     "nativeSize": [
-      41,
-      35
+      1024,
+      512
     ],
-    "sha256": "08632f7d074d8f2e29ebf3edb9b5d04f15fb0924e93f19a9b34d096c2ed4b2df"
+    "referenceViewport": [
+      1408,
+      1056
+    ],
+    "regions": [
+      [
+        [
+          [
+            267,
+            238
+          ],
+          [
+            345,
+            160
+          ],
+          [
+            410,
+            94
+          ],
+          [
+            484,
+            36
+          ]
+        ],
+        [
+          5,
+          9,
+          8,
+          1
+        ]
+      ],
+      [
+        [
+          [
+            292,
+            219
+          ],
+          [
+            366,
+            147
+          ],
+          [
+            445,
+            117
+          ],
+          [
+            548,
+            112
+          ]
+        ],
+        [
+          6,
+          11,
+          9,
+          2
+        ]
+      ],
+      [
+        [
+          [
+            328,
+            220
+          ],
+          [
+            400,
+            166
+          ],
+          [
+            479,
+            150
+          ],
+          [
+            552,
+            175
+          ]
+        ],
+        [
+          7,
+          10,
+          9,
+          2
+        ]
+      ],
+      [
+        [
+          [
+            325,
+            222
+          ],
+          [
+            384,
+            223
+          ],
+          [
+            448,
+            249
+          ],
+          [
+            508,
+            284
+          ]
+        ],
+        [
+          6,
+          11,
+          8,
+          2
+        ]
+      ],
+      [
+        [
+          [
+            506,
+            381
+          ],
+          [
+            541,
+            420
+          ],
+          [
+            557,
+            460
+          ],
+          [
+            574,
+            493
+          ]
+        ],
+        [
+          6,
+          10,
+          9,
+          2
+        ]
+      ],
+      [
+        [
+          [
+            566,
+            386
+          ],
+          [
+            598,
+            416
+          ],
+          [
+            627,
+            450
+          ],
+          [
+            649,
+            476
+          ]
+        ],
+        [
+          6,
+          12,
+          9,
+          2
+        ]
+      ],
+      [
+        [
+          [
+            1180,
+            622
+          ],
+          [
+            1229,
+            667
+          ],
+          [
+            1271,
+            733
+          ],
+          [
+            1298,
+            831
+          ]
+        ],
+        [
+          8,
+          14,
+          12,
+          2
+        ]
+      ],
+      [
+        [
+          [
+            1216,
+            628
+          ],
+          [
+            1280,
+            666
+          ],
+          [
+            1325,
+            732
+          ],
+          [
+            1362,
+            820
+          ]
+        ],
+        [
+          8,
+          12,
+          10,
+          2
+        ]
+      ]
+    ],
+    "layout": "4x2",
+    "mapping": "8 actual crest, ruff, and tail plume strips; UV base→tip",
+    "sha256": "5ee5ec3af4c99e3e30d75e6500d08b4bfc50133ef13cf10620d172ecb632a00c"
   },
   "wing": {
     "file": "wing.webp",
-    "source": "approved original",
-    "crop": [
-      1041,
-      147,
-      1173,
-      242
-    ],
+    "source": "毒羽飛竜ヴェノルカ.png",
+    "sourceImageSha256": "0c6abb4e39bc08529ee90d32abfd319baebb92ad8805dc22b8d2a630dbd23cb4",
     "nativeSize": [
-      132,
-      95
+      960,
+      640
     ],
-    "sha256": "1cb17fbfb8ce329dcac63a2fff93077362612a8e221a6344b1586e6df0d1c7bc"
+    "referenceViewport": [
+      1408,
+      1056
+    ],
+    "regions": [
+      [
+        [
+          756,
+          162
+        ],
+        [
+          867,
+          145
+        ],
+        [
+          1000,
+          113
+        ],
+        [
+          1167,
+          81
+        ],
+        [
+          1309,
+          91
+        ],
+        [
+          1370,
+          132
+        ]
+      ],
+      [
+        [
+          758,
+          172
+        ],
+        [
+          870,
+          187
+        ],
+        [
+          1011,
+          228
+        ],
+        [
+          1154,
+          272
+        ],
+        [
+          1262,
+          325
+        ],
+        [
+          1333,
+          383
+        ]
+      ],
+      [
+        [
+          757,
+          181
+        ],
+        [
+          833,
+          224
+        ],
+        [
+          908,
+          296
+        ],
+        [
+          978,
+          368
+        ],
+        [
+          1040,
+          421
+        ],
+        [
+          1073,
+          476
+        ]
+      ],
+      [
+        [
+          752,
+          190
+        ],
+        [
+          803,
+          238
+        ],
+        [
+          835,
+          311
+        ],
+        [
+          866,
+          359
+        ],
+        [
+          874,
+          398
+        ],
+        [
+          861,
+          438
+        ]
+      ],
+      [
+        [
+          749,
+          190
+        ],
+        [
+          748,
+          244
+        ],
+        [
+          722,
+          302
+        ],
+        [
+          697,
+          342
+        ],
+        [
+          672,
+          388
+        ],
+        [
+          646,
+          426
+        ]
+      ],
+      [
+        [
+          744,
+          186
+        ],
+        [
+          735,
+          230
+        ],
+        [
+          710,
+          280
+        ],
+        [
+          681,
+          321
+        ],
+        [
+          661,
+          344
+        ],
+        [
+          640,
+          368
+        ]
+      ]
+    ],
+    "layout": "3x2",
+    "mapping": "5 distinct radial membrane panels from original wing; original gold edge and purple mottling",
+    "sha256": "e75f52ddaa07f24becf43e1dd65253f10db7698791b8c31860452f7d52d0d1b1"
   },
   "sac": {
     "file": "sac.webp",
-    "source": "approved design board",
-    "crop": [
-      1158,
-      298,
-      1209,
-      339
-    ],
+    "source": "毒羽飛竜ヴェノルカ.png",
+    "sourceImageSha256": "0c6abb4e39bc08529ee90d32abfd319baebb92ad8805dc22b8d2a630dbd23cb4",
     "nativeSize": [
-      51,
-      41
+      320,
+      320
     ],
-    "sha256": "bdb72c794d17aa4d0fba9467b5d11697a16ac7edb919b27895065a67fb7ba628"
-  },
-  "claw": {
-    "file": "claw.webp",
-    "source": "approved original",
-    "crop": [
-      846,
-      994,
-      874,
-      1015
+    "referenceViewport": [
+      1408,
+      1056
     ],
-    "nativeSize": [
-      28,
-      21
-    ],
-    "sha256": "d016a2d291e6d7aaaba1088d39626a402d9c70a161b52565b1f2691cc22116d1"
+    "regions": {
+      "center": [
+        335,
+        313
+      ],
+      "radii": [
+        44,
+        52
+      ]
+    },
+    "layout": "anatomical",
+    "mapping": "full cheek poison gland, yellow green and violet scale pattern",
+    "sha256": "85e2ed1b9e01bed09a4ba657f3bc59bafa7f1f8325f19d19a7d8556c66efe994"
   },
   "beak": {
     "file": "beak.webp",
-    "source": "approved original",
-    "crop": [
-      110,
-      311,
-      129,
+    "source": "毒羽飛竜ヴェノルカ.png",
+    "sourceImageSha256": "0c6abb4e39bc08529ee90d32abfd319baebb92ad8805dc22b8d2a630dbd23cb4",
+    "nativeSize": [
+      256,
+      256
+    ],
+    "referenceViewport": [
+      1408,
+      1056
+    ],
+    "regions": [
+      108,
+      306,
+      132,
       330
     ],
+    "layout": "periodic",
+    "mapping": "clean original-art beak patch",
+    "sha256": "6a8b9fca37c9827310cd88872f9c23644909fd4e3bfb7d8becc93204f1372c99"
+  },
+  "claw": {
+    "file": "claw.webp",
+    "source": "毒羽飛竜ヴェノルカ.png",
+    "sourceImageSha256": "0c6abb4e39bc08529ee90d32abfd319baebb92ad8805dc22b8d2a630dbd23cb4",
     "nativeSize": [
-      19,
-      19
+      256,
+      256
     ],
-    "sha256": "99a64650166b8364e97d8dbda1ed5cef3ac79d2302e8d4cb5dc1b7928f51b940"
+    "referenceViewport": [
+      1408,
+      1056
+    ],
+    "regions": [
+      933,
+      968,
+      946,
+      990
+    ],
+    "layout": "periodic",
+    "mapping": "clean original-art claw patch",
+    "sha256": "74eb1ca5402e898966883024610f1a6cb3f8bb17d264435f8a789a07ebc75eb4"
   },
   "mouth": {
     "file": "mouth.webp",
-    "source": "approved original",
-    "crop": [
-      220,
-      360,
-      240,
-      385
-    ],
+    "source": "毒羽飛竜ヴェノルカ.png",
+    "sourceImageSha256": "0c6abb4e39bc08529ee90d32abfd319baebb92ad8805dc22b8d2a630dbd23cb4",
     "nativeSize": [
-      20,
-      25
+      256,
+      256
     ],
-    "sha256": "9c3577a0d519038edc48d4cd12bb925b76ca56d5b3c6569d8402d4a540fda71a"
+    "referenceViewport": [
+      1408,
+      1056
+    ],
+    "regions": [
+      217,
+      360,
+      236,
+      383
+    ],
+    "layout": "periodic",
+    "mapping": "clean original-art mouth patch",
+    "sha256": "814cc747bc1616b5ece0b4f291b80feec54f1d0b8f9258aaf02acdfe082b9ca7"
   }
 }

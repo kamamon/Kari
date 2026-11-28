@@ -1,4 +1,5 @@
 import { existsSync,readFileSync,statSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { beforeAll,describe,it,expect } from 'vitest';
 import type { Content } from '../src/data/schemas';
 import { Simulation } from '../src/game/sim';
@@ -41,7 +42,30 @@ describe('毒羽竜ヴェノルカ',()=>{
   for(const [id,x] of Object.entries(ix)){const p='assets/icons/venolka/'+x.file;expect(iconUrl(id)).toBe(import.meta.env.BASE_URL+p);expect(existsSync(new URL('../public/'+p,import.meta.url))).toBe(true);}
   const eq=JSON.parse(readFileSync(new URL('../public/data/equipment_venolka.json',import.meta.url),'utf8'));expect(eq.weapons).toHaveLength(33);expect(eq.armor).toHaveLength(15);expect(eq.recipes).toHaveLength(48);
   const base=new URL('../public/assets/models/monsters/venolka_hd/',import.meta.url);const g=JSON.parse(readFileSync(new URL('venolka.gltf',base),'utf8'));expect(g.skins[0].joints).toHaveLength(111);expect(g.animations).toHaveLength(56);expect(g.materials).toHaveLength(12);expect(g.materials.filter((m:{normalTexture?:unknown})=>m.normalTexture)).toHaveLength(10);
-  const tris=g.meshes[0].primitives.reduce((n:number,p:{indices:number})=>n+g.accessors[p.indices].count/3,0);expect(tris).toBeGreaterThan(1900000);for(const b of g.buffers as {uri:string;byteLength:number}[]){expect(statSync(new URL(b.uri,base)).size).toBe(b.byteLength);expect(b.byteLength).toBeLessThan(90000000);}
+  const tris=g.meshes[0].primitives.reduce((n:number,p:{indices:number})=>n+g.accessors[p.indices].count/3,0);expect(tris).toBe(2298702);for(const b of g.buffers as {uri:string;byteLength:number}[]){expect(statSync(new URL(b.uri,base)).size).toBe(b.byteLength);expect(b.byteLength).toBeLessThan(90000000);}
   for(const a of c.actions.values())if(a.actionId.startsWith('monster.venolka.'))expect(g.animations.some((x:{name:string})=>x.name===a.clip)).toBe(true);
+ });
+ it('承認済み原画投影V2が両モデルに実装され、素材とUVレイアウトが一致する',()=>{
+  const base=new URL('../public/assets/models/monsters/venolka_hd/',import.meta.url);
+  const hd=JSON.parse(readFileSync(new URL('venolka.gltf',base),'utf8'));
+  const raw=readFileSync(new URL('../public/assets/models/monsters/venolka_game.glb',import.meta.url));
+  const low=JSON.parse(raw.toString('utf8',20,20+raw.readUInt32LE(12)));
+  const delivery=JSON.parse(readFileSync(new URL('delivery.json',base),'utf8'));
+  expect(delivery.materialDesign).toBe('venolka-art-projection-v2');
+  const source=new URL('../tools/venolka/material_source/',import.meta.url);
+  const meta=JSON.parse(readFileSync(new URL('provenance.json',source),'utf8')) as Record<string,{file:string;sha256:string;layout:string}>;
+  expect(Object.keys(meta)).toHaveLength(10);
+  const sizes:Record<string,number>={hide:2048,belly:1024,face:2048,leg:2048,feather:2048,wing:2048,sac:1024,claw:1024,beak:1024,mouth:1024};
+  expect(meta.wing?.layout).toBe('3x2');expect(meta.feather?.layout).toBe('4x2');expect(meta.face?.layout).toBe('2x1');
+  for(const [quality,g] of [[1,hd],[.5,low]] as const){
+   expect(g.extras.materialDesign).toBe('venolka-art-projection-v2');expect(g.extras.sourceSha256).toBe(delivery.sourceSha256);expect(g.skins[0].joints).toHaveLength(111);expect(g.animations).toHaveLength(56);
+   expect(g.meshes[0].primitives.reduce((n:number,p:{indices:number})=>n+g.accessors[p.indices].count/3,0)).toBe(quality===1?2298702:285404);
+   for(const [name,m] of Object.entries(meta)){
+    expect(createHash('sha256').update(readFileSync(new URL(m.file,source))).digest('hex')).toBe(m.sha256);
+    const mat=g.materials.find((x:{name:string})=>x.name===name);
+    expect(mat.extras.layout).toBe(m.layout);expect(mat.extras.sourceSha256).toBe(m.sha256);expect(mat.extras.resolution).toBe(sizes[name]!*quality);
+    expect(mat.pbrMetallicRoughness.baseColorTexture).toBeDefined();expect(mat.normalTexture).toBeDefined();expect(mat.pbrMetallicRoughness.metallicRoughnessTexture).toBeDefined();expect(mat.occlusionTexture).toBeDefined();
+   }
+  }
  });
 });

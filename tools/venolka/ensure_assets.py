@@ -4,18 +4,20 @@ import hashlib,json,os,struct,subprocess,sys,tempfile,shutil
 from PIL import Image
 import numpy as np
 P=Path(__file__).parent;ROOT=P.parent.parent;AS=ROOT/'public/assets';TARGET=AS/'models/monsters';TARGET.mkdir(parents=True,exist_ok=True)
-from materials import digest
+from materials import digest,VERSION
 key=digest(P);CACHE=ROOT/'tools/out/venolka';CACHE.mkdir(parents=True,exist_ok=True)
 def parse(p):
  b=p.read_bytes();magic,v,size=struct.unpack_from('<4sII',b);assert magic==b'glTF' and v==2 and size==len(b);n=struct.unpack_from('<I',b,12)[0];g=json.loads(b[20:20+n]);return g,memoryview(b)[28+n:]
 def validate(p,quality):
- g,b=parse(p);assert g['extras']['sourceSha256']==key and g['extras']['quality']==quality;assert len(g['skins'][0]['joints'])==111 and len(g['animations'])==56
+ g,b=parse(p);assert g['extras']['sourceSha256']==key and g['extras']['quality']==quality and g['extras']['materialDesign']==VERSION;assert len(g['skins'][0]['joints'])==111 and len(g['animations'])==56
  tris=0
  for pr in g['meshes'][0]['primitives']:
   def acc(k):
    a=g['accessors'][k];v=g['bufferViews'][a['bufferView']];typ={'SCALAR':1,'VEC3':3,'VEC4':4}[a['type']];return np.frombuffer(b,dtype={5126:'<f4',5123:'<u2',5125:'<u4'}[a['componentType']],offset=v.get('byteOffset',0)+a.get('byteOffset',0),count=a['count']*typ)
   at=pr['attributes'];p0=acc(at['POSITION']);w=acc(at['WEIGHTS_0']).reshape(-1,4);j=acc(at['JOINTS_0']);f=acc(pr['indices']);assert f.max()<len(p0)//3 and j.max()<111 and np.isfinite(p0).all() and np.isfinite(w).all() and (w>=0).all() and np.max(abs(w.sum(1)-1))<1e-5;tris+=len(f)//3
- assert 240000<tris<400000 if quality=='game' else 1900000<tris<2700000
+ assert tris==(285404 if quality=='game' else 2298702),(quality,tris)
+ assert len(g['extras']['materialMaps'])==10
+ assert g['extras']['materialMaps']['wing']['layout']=='3x2' and g['extras']['materialMaps']['feather']['layout']=='4x2' and g['extras']['materialMaps']['face']['layout']=='2x1'
  return g,b,tris
 for q in ('game','master'):
  f=CACHE/f'venolka_{q}.glb'
@@ -41,7 +43,7 @@ for q in ('game','master'):
   for i,chunk in enumerate(groups):
    name=f'chunk_{i:02}.bin';(dest/name).write_bytes(chunk);g['buffers'].append({'uri':name,'byteLength':len(chunk)});files[name]={'bytes':len(chunk),'sha256':hashlib.sha256(chunk).hexdigest()}
   for v,(off,n) in zip(g['bufferViews'],orig):assert memoryview(groups[v['buffer']])[v['byteOffset']:v['byteOffset']+n]==b[off:off+n]
-  (dest/'venolka.gltf').write_text(json.dumps(g,separators=(',',':')));(dest/'delivery.json').write_text(json.dumps({'triangles':tris,'joints':111,'clips':56,'sourceSha256':key,'files':files},indent=2));del b,groups,chunks
+  (dest/'venolka.gltf').write_text(json.dumps(g,separators=(',',':')));(dest/'delivery.json').write_text(json.dumps({'triangles':tris,'joints':111,'clips':56,'sourceSha256':key,'materialDesign':VERSION,'files':files},indent=2));del b,groups,chunks
  print('Venolka',q,tris,'triangles, 111 joints, 56 clips',flush=True)
 for f in ('venolka_concept.webp',):
  target=AS/'bestiary'/f;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(P/f,target)
