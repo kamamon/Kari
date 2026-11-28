@@ -5,3 +5,12 @@ dist
 tools/out
 __pycache__/
 public/assets/models/monsters/spinegale_v3_game.glb
+
+public/assets/models/monsters/frostald_game.glb
+public/assets/icons/frostald/
+public/assets/bestiary/frostald_concept.webp
+public/assets/fields/whitefrost_concept.webp
+public/assets/textures/materials/frost_snow_detail.webp
+public/assets/textures/materials/frost_ice_detail.webp
+tools/frostald/frostald_game.glb
+tools/frostald/textures/

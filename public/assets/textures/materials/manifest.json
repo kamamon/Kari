@@ -270,6 +270,16 @@
       "bytes": 48196,
       "gitBlob": "9767c8be37a6c087555d27eb1948b3eaabefdac9",
       "source": "original image-derived cutout / animated alpha raster"
+    },
+    {
+      "file": "frost_snow_detail.webp",
+      "bytes": 52832,
+      "gitBlob": "d8a9bc265a4387b629d9a0074476fe27db0a5b13"
+    },
+    {
+      "file": "frost_ice_detail.webp",
+      "bytes": 59350,
+      "gitBlob": "1d5cd9ebe25d3aba4637f7d85900923aa3fc5dd1"
     }
   ]
 }
