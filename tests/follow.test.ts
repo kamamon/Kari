@@ -21,7 +21,7 @@ const dist = (p: number[], q: number[]): number => Math.hypot(p[0]! - q[0]!, p[1
 
 describe('部位の追従（v0.25.0）', () => {
   it('遊べる 3 種（ガルドロス・スパインゲイル・フロストアルド）に表があり、技の多くで部位が動く（訓練標的には無い。v0.75.0 で、生成の体の 19 種は外した）', () => {
-    for (const id of ['monster.galdros', 'monster.spinegale', 'monster.frostald']) {
+    for (const id of ['monster.galdros', 'monster.spinegale', 'monster.frostald', 'monster.venolka']) {
       const f = content.monsters.get(id)!.follow;
       expect(f, id).toBeDefined();
       const acts = [...content.actions.values()].filter((a) => a.actionId.startsWith(`${id}.`));

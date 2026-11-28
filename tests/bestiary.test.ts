@@ -36,10 +36,11 @@ const SPECIES: [string, string, string, string | null][] = [
   ['monster.galdros', '岩殻獣 ガルドロス', 'frame.quad_heavy', 'galdros/galdros_left_v1.png'], // v0.24.0: 採用した設定図（左の側面）を図鑑へ
   ['monster.spinegale', '疾棘竜 スパインゲイル', 'frame.biped_wing', 'spinegale_concept_v1.webp'],
   ['monster.frostald', '氷冠獣 フロストアルド', 'frame.quad_heavy', 'frostald_concept.webp'],
+  ['monster.venolka', '毒羽竜 ヴェノルカ', 'frame.biped_wing', 'venolka_concept.webp'],
 ];
 
 describe('登録簿のデータ', () => {
-  it('3 種（ガルドロス・スパインゲイル・フロストアルド）が入っていて、どれも遊べる。生態 8 項目・器官・部位・素材と、絵までそろっている。番号は入った順', () => {
+  it('4 種（ガルドロス・スパインゲイル・フロストアルド・ヴェノルカ）が入っていて、どれも遊べる。生態 8 項目・器官・部位・素材と、絵までそろっている。番号は入った順', () => {
     const b = content.bestiary;
     expect(validateBestiary(b, env)).toEqual([]);
     // 受け取る案と同じ厳しさで、全部の種を見ても、合わない所が無い
@@ -51,8 +52,8 @@ describe('登録簿のデータ', () => {
     expect(new Set(b.species.map((s) => s.id))).toEqual(new Set([...content.monsters.keys()].filter((id) => id !== 'monster.training_dummy')));
   });
 
-  it('数の計画は持たない: plan は、いま入っている数（初級 3、ほかは 0）。幼体・亜種・希少種・超大型は居ない', () => {
-    expect(content.bestiary.plan).toEqual({ 'rank.1': 3, 'rank.2': 0, 'rank.3': 0, 'rank.4': 0 });
+  it('数の計画は持たない: plan は、いま入っている数（初級 4、ほかは 0）。幼体・亜種・希少種・超大型は居ない', () => {
+    expect(content.bestiary.plan).toEqual({ 'rank.1': 4, 'rank.2': 0, 'rank.3': 0, 'rank.4': 0 });
     const c = bestiaryCounts(content.bestiary, env.ranks);
     expect(c.map((x) => [x.have, x.plan])).toEqual([[4, 4], [0, 0], [0, 0], [0, 0]]);
     expect(c.map((x) => [x.subspecies, x.rare, x.huge, x.juveniles])).toEqual([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);

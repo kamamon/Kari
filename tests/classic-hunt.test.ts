@@ -647,14 +647,14 @@ describe('ほかの種の転倒・気絶の、攻撃を受ける部位の追従�
   const species = (): string[] => [...content.monsters.values()].filter((d) => d.id !== 'monster.training_dummy' && d.id !== 'monster.galdros').map((d) => d.id);
 
   it('どの種も、転倒・怯み・気絶の表を持つ（v0.75.0 から、ここで見るのはスパインゲイルとフロストアルド）', () => {
-    expect(species().sort()).toEqual(['monster.frostald', 'monster.spinegale']);
+    expect(species().sort()).toEqual(['monster.frostald', 'monster.spinegale', 'monster.venolka']);
     for (const id of species()) {
       const d = content.monsters.get(id)!;
       const st = d.follow!.states;
       const topples = d.parts.some((p) => p.flinch?.topple);
       expect(!!st.topple, id).toBe(topples);
       expect(st.flinch, id).toBeTruthy();
-      expect(st.stun?.ticks, id).toBe(164);
+      expect(st.stun?.ticks, id).toBe(id === 'monster.venolka' ? 150 : 164);
     }
   });
 
