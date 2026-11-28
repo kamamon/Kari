@@ -7,7 +7,7 @@
 //   - 転倒・怯み（部位破壊・切断も同じ姿勢）・気絶の表（states）。転倒は 190 tick、怯みは 46 tick で作り、経過の割合で引く。
 //     気絶は首のふらつきのひと回り（STUN_LOOP tick）の繰り返しの表で、残りの tick で引く
 //   - 尾を切った後に残る形（sever.shapesAfter）も、残った尾の骨で測って after として書く（切った先の骨は使わない）
-// npm run monsters:bake（tests/creature-motion.test.ts）が、一般の種と一緒に public/data/follow/galdros.json へ書く。
+// npm run monsters:bake（tests/monster-bake.test.ts）が、public/data/follow/galdros.json へ書く（v0.75.0 で、一般の種 = 生成の体の 19 種は外した）。
 import { Vector3 } from 'three';
 import type { Content, FollowDef, FollowSetDef, FollowStateDef, FollowStateId, HurtShapeDef } from '../src/data/schemas';
 import { newRun } from '../src/game/action';

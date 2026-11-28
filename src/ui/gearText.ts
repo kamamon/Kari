@@ -26,7 +26,7 @@ export function shotsText(c: Content, w: WeaponDef): string {
   return shots ? shots.map((s) => `${SHOT_NAMES[s.type]}${s.n}`).join('→') : '';
 }
 
-/** 武器の、系列を表す短い名前: 「帆角の断岳剣【初級】」→「帆角【初級】」、「岩殻の断岳剣」→「岩殻」 */
+/** 武器の、系列を表す短い名前: 「岩殻の断岳剣」→「岩殻」（名前に「の + 武器種の名前」が無い武器は、そのまま: 「疾棘断剣」） */
 export function weaponShortName(c: Content, w: WeaponDef): string {
   const fam = c.families.get(w.family)?.name ?? '';
   return fam ? w.name.replace(`の${fam}`, '') : w.name;

@@ -4,6 +4,7 @@ import type { Content } from '../src/data/schemas';
 import type { SimEvent } from '../src/game/events';
 import { Simulation, arrowDistanceScale } from '../src/game/sim';
 import { sampleTrack } from '../src/game/tracks';
+import { labContent, labWeapon } from './gearLab';
 import { Btn, baseOptions, frame, hold, loadContent, placeInFrontOfHead, press, run } from './helpers';
 
 let content: Content;
@@ -770,14 +771,20 @@ describe('環弓（弓）', () => {
   });
 
   it('射ち方は武器ごと（v0.60.0。系列の型で決まる）: 拡散型は扇に 3 本・5 本、貫通型は 1 本が体を抜けて別々の部位へ当たる', () => {
+    // v0.75.0（D-175）: 拡散型・貫通型の環弓は、外した系列の物だった。いまのデータの環弓は、どれも系統の連射型なので、試しの環弓（tests/gearLab.ts）で確かめる
+    for (const wp of content.weapons.values()) if (wp.family === 'ring_bow') expect(wp.shots, wp.id).toBeUndefined();
+    const real = content;
+    content = labContent(real);
     const w = (id: string) => content.weapons.get(id)!;
-    expect(w('weapon.ring_bow.selvark.r1').shots?.map((x) => `${x.type}${x.n}`)).toEqual(['rapid1', 'spread3', 'spread3', 'spread5']);
-    expect(w('weapon.ring_bow.ashreia.r1').shots?.map((x) => `${x.type}${x.n}`)).toEqual(['rapid1', 'pierce2', 'pierce3', 'pierce4']);
+    const SPREAD = labWeapon('ring_bow', 'wind'), PIERCE = labWeapon('ring_bow', 'sleep');
+    expect(w(SPREAD).shots?.map((x) => `${x.type}${x.n}`)).toEqual(['rapid1', 'spread3', 'spread3', 'spread5']);
+    expect(w(PIERCE).shots?.map((x) => `${x.type}${x.n}`)).toEqual(['rapid1', 'pierce2', 'pierce3', 'pierce4']);
     expect(w('weapon.ring_bow.001').shots).toBeUndefined(); // 系統の連射型
-    const spread = shoot(4, 140, 'weapon.ring_bow.selvark.r1');
+    const spread = shoot(4, 140, SPREAD);
     expect(spread.shots[0]).toMatchObject({ kind: 'spread', count: 5 });
     expect(spread.h.length).toBeGreaterThanOrEqual(1);
-    const pierce = shoot(8, 140, 'weapon.ring_bow.ashreia.r1');
+    const pierce = shoot(8, 140, PIERCE);
+    content = real;
     expect(pierce.shots[0]).toMatchObject({ kind: 'pierce', count: 1 });
     // 頭から体の奥へ抜ける: 別々の部位へ 2 回以上（同じ部位へは 1 回だけ）
     const parts = pierce.h.map((x) => x.partId);

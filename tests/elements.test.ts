@@ -2,6 +2,8 @@
 // - 装備の効き目（src/game/gear.ts）: 技能の Lv（1 部位 1 点、3 まで。個別耐性は対象ごと）、耐性の合計と上限、属性の部位の係数、複合、会心の上限
 // - モンスターの状態異常（src/game/ailment.ts）: 閾値の伸び、減り方、硬直どうしの重なりと猶予、毒の分け方、眠りを覚ます命中
 // - simulation: 属性のダメージ、盾には乗らない、毒・麻痺・睡眠・気絶、受ける攻撃の属性と耐性、技能（スタミナ・回復・研ぐ時間・刃・部位）
+// v0.75.0（D-175）: 白紙にした 19 種の系列の装備を外した。風・毒・麻痺・睡眠の武器と、砕き・急所観察・道具整備・個別状態耐性などの防具は、遊べるデータに無くなったので、
+//   ここの検査は、試しの装備（tests/gearLab.ts。値は外す前の系列のまま）で確かめる。
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { ArmorDef, Content, MonsterDef } from '../src/data/schemas';
 import { AILMENT_UNIT, addAilment, ailmentThreshold, freshAilments, poisonHitDamage, startPoison, stepAilments, wakeFromSleep } from '../src/game/ailment';
@@ -9,15 +11,15 @@ import type { SimEvent } from '../src/game/events';
 import { computeGear, critChance, incomingElementScale, typedElementZone, weaponElementZone } from '../src/game/gear';
 import { applyStatus, resolveIncomingHit } from '../src/game/player';
 import { Simulation } from '../src/game/sim';
+import { labArmor, labContent, labWeapon } from './gearLab';
 import { Btn, baseOptions, frame, loadContent, placeInFrontOfHead, press, run } from './helpers';
 
 let content: Content;
 beforeAll(async () => {
-  content = await loadContent();
+  content = labContent(await loadContent());
 });
 
 const SLOTS = ['head', 'chest', 'arms', 'waist', 'legs'];
-const seriesSet = (sp: string): string[] => SLOTS.map((s) => `armor.${s}.${sp}.r1`);
 const galdrosSet = (tier: number): string[] => SLOTS.map((s) => `armor.${s}.00${tier}`);
 const R = (): Content['elements']['ailment'] => content.elements.ailment;
 /** 内容の写し（モンスターや防具を試しに変える） */
@@ -41,8 +43,8 @@ describe('装備の効き目（技能・耐性）', () => {
     expect(computeGear(content, content.weapons.get('weapon.ring_bow.001')!, galdrosSet(2)).edgeWear).toBe(1);
   });
 
-  it('泥冠一式: 個別属性耐性（水）Lv3 = 9 点を水の耐性へ足す。個別状態耐性（毒）Lv2 = 35%', () => {
-    const g = computeGear(content, content.weapons.get('weapon.heavy_blade.001')!, seriesSet('numeradon'));
+  it('試しの水の一式: 個別属性耐性（水）Lv3 = 9 点を水の耐性へ足す。個別状態耐性（毒）Lv2 = 35%', () => {
+    const g = computeGear(content, content.weapons.get('weapon.heavy_blade.001')!, labArmor('water'));
     expect(Object.fromEntries(g.levels)).toEqual({ 'element_resistance:water': 3, 'status_resistance:poison': 2 });
     expect(g.resist.water).toBe(3 * 5 + 9);
     expect(g.resist.thunder).toBe(-2 * 5);
@@ -51,10 +53,10 @@ describe('装備の効き目（技能・耐性）', () => {
   });
 
   it('混ぜた防具は点から数える。個別耐性は対象ごと（水と氷を合わせない）。部位ごとに 1 つ。耐性は -30〜30', () => {
-    // 泥冠の頭（水）・氷帆の胴（氷帆の胴は個別属性耐性の氷）・泥冠の腕（水）
-    const kc = content.armor.get('armor.chest.kirisave.r1')!;
+    // 水の頭・氷の胴（氷の組の胴は、個別属性耐性の氷）・水の腕
+    const kc = content.armor.get('armor.chest.lab.ice')!;
     expect(kc.skill).toEqual({ id: 'element_resistance', points: 1, element: 'ice' });
-    const g = computeGear(content, content.weapons.get('weapon.heavy_blade.001')!, ['armor.head.numeradon.r1', 'armor.chest.kirisave.r1', 'armor.arms.numeradon.r1']);
+    const g = computeGear(content, content.weapons.get('weapon.heavy_blade.001')!, ['armor.head.lab.water', 'armor.chest.lab.ice', 'armor.arms.lab.water']);
     expect(g.levels.get('element_resistance:water')).toBe(2);
     expect(g.levels.get('element_resistance:ice')).toBe(1);
     // 同じ部位を 2 つ渡すと、防御力の高い方だけ
@@ -78,7 +80,7 @@ describe('装備の効き目（技能・耐性）', () => {
     expect(typedElementZone(content, gd, head, 'thunder')).toBeCloseTo(0.1, 10);
     expect(typedElementZone(content, gd, head, 'ice')).toBeCloseTo(0.2, 10);
     // 複合: 大きい方。どちらも弱点でない時だけ半分（火 + 氷 は火が弱点 → 0.30、氷 + 水 → 0.20 × 0.5）
-    const w = content.weapons.get('weapon.heavy_blade.selvark.r1')!;
+    const w = content.weapons.get(labWeapon('heavy_blade', 'wind'))!;
     expect(weaponElementZone(content, { ...w, element: { type: 'compound', value: 39, elements: ['fire', 'ice'] } }, gd, head)).toBeCloseTo(0.3, 10);
     expect(weaponElementZone(content, { ...w, element: { type: 'compound', value: 39, elements: ['ice', 'water'] } }, gd, head)).toBeCloseTo(0.1, 10);
     // 雷（耐性 0.10）+ 水（0.20）: 大きい方 0.20 の半分
@@ -88,21 +90,22 @@ describe('装備の効き目（技能・耐性）', () => {
   });
 
   it('会心率: 急所観察は物理の肉質 0.55 以上の時だけ足す。正の側は 60% まで', () => {
-    const orglass = content.weapons.get('weapon.heavy_blade.orglass.r1')!;
-    const g = computeGear(content, orglass, []);
-    const lumisca = computeGear(content, orglass, ['armor.head.lumisca.r1', 'armor.arms.lumisca.r1', 'armor.legs.lumisca.r1']);
-    expect(lumisca.weakCrit).toBe(10);
-    expect(critChance(content, orglass, g, 0.7)).toBe(25);
-    expect(critChance(content, orglass, lumisca, 0.55)).toBe(35);
-    expect(critChance(content, orglass, lumisca, 0.54)).toBe(25);
-    expect(critChance(content, { ...orglass, affinity: 55 }, lumisca, 0.7)).toBe(60);
-    expect(critChance(content, { ...orglass, affinity: -20 }, lumisca, 0.7)).toBe(-10);
+    const sharp = content.weapons.get(labWeapon('heavy_blade', 'crit'))!;
+    const g = computeGear(content, sharp, []);
+    const keen = computeGear(content, sharp, ['armor.head.lab.weak', 'armor.arms.lab.weak', 'armor.legs.lab.weak']);
+    expect(keen.weakCrit).toBe(10);
+    expect(critChance(content, sharp, g, 0.7)).toBe(25);
+    expect(critChance(content, sharp, keen, 0.55)).toBe(35);
+    expect(critChance(content, sharp, keen, 0.54)).toBe(25);
+    expect(critChance(content, { ...sharp, affinity: 55 }, keen, 0.7)).toBe(60);
+    expect(critChance(content, { ...sharp, affinity: -20 }, keen, 0.7)).toBe(-10);
   });
 
   it('受ける攻撃: 属性を持つ種は 30% が属性の項。(物理 + 属性 × (1 - 耐性/100)) の倍率。属性の無い種は 1', () => {
     const g = computeGear(content, content.weapons.get('weapon.heavy_blade.001')!, galdrosSet(2));
-    const sv = content.monsters.get('monster.selvark')!;
-    expect(sv.element).toBe('wind');
+    // フロストアルドは氷の種: 岩殻一式は氷の耐性が 0 なので、倍率は 1（30% が属性の項でも、耐性 0 なら変わらない）
+    const sv = content.monsters.get('monster.frostald')!;
+    expect(sv.element).toBe('ice');
     expect(incomingElementScale(content, sv, g)).toBe(1);
     expect(incomingElementScale(content, { ...sv, element: 'thunder' }, g)).toBeCloseTo(0.7 + 0.3 * 0.85, 12);
     expect(incomingElementScale(content, { ...sv, element: 'fire' }, g)).toBeCloseTo(0.7 + 0.3 * 1.1, 12);
@@ -183,9 +186,9 @@ describe('モンスターの状態異常（計算）', () => {
 });
 
 describe('属性・状態異常の命中（simulation）', () => {
-  it('帆角の断岳剣（攻撃力 85・風 26）の縦斬り: 風が弱点なら 0.30、耐性なら 0.10、どちらでもなければ 0.20', () => {
+  it('風の断岳剣（試しの装備。攻撃力 85・風 26）の縦斬り: 風が弱点なら 0.30、耐性なら 0.10、どちらでもなければ 0.20', () => {
     const dmg = (c: Content): number => {
-      const sim = new Simulation(c, baseOptions({ weaponId: 'weapon.heavy_blade.selvark.r1' }));
+      const sim = new Simulation(c, baseOptions({ weaponId: labWeapon('heavy_blade', 'wind') }));
       placeInFrontOfHead(sim);
       swing(sim);
       expect(sim.recentHits[0]!.partId).toBe('head');
@@ -195,15 +198,15 @@ describe('属性・状態異常の命中（simulation）', () => {
     expect(dmg(content)).toBe(Math.floor(phys + 26 * 1.05 * 0.2 + 1e-9));
     expect(dmg(withMonster('monster.training_dummy', (d) => ({ ...d, weak: ['wind'] })))).toBe(Math.floor(phys + 26 * 1.05 * 0.3 + 1e-9));
     expect(dmg(withMonster('monster.training_dummy', (d) => ({ ...d, resist: ['wind'] })))).toBe(Math.floor(phys + 26 * 1.05 * 0.1 + 1e-9));
-    // 属性調律 Lv3（氷帆の頭・腕・脚）は、属性の項だけを 1.1 倍
-    const sim = new Simulation(content, baseOptions({ weaponId: 'weapon.heavy_blade.selvark.r1', armorIds: ['armor.head.kirisave.r1', 'armor.arms.kirisave.r1', 'armor.legs.kirisave.r1'] }));
+    // 属性調律 Lv3（氷の組の頭・腕・脚）は、属性の項だけを 1.1 倍
+    const sim = new Simulation(content, baseOptions({ weaponId: labWeapon('heavy_blade', 'wind'), armorIds: ['armor.head.lab.ice', 'armor.arms.lab.ice', 'armor.legs.lab.ice'] }));
     placeInFrontOfHead(sim);
     swing(sim);
     expect(sim.recentHits[0]!.damage).toBe(Math.floor(phys + 26 * 1.1 * 1.05 * 0.2 + 1e-9));
   });
 
   it('毒の断岳剣: 1 命中で 9.2 × 1.05 をためる。届くと毒になり、15 秒で最大体力の 2% が減る（怯み・怒りには関わらない）', () => {
-    const sim = new Simulation(content, baseOptions({ weaponId: 'weapon.heavy_blade.verito.r1' }));
+    const sim = new Simulation(content, baseOptions({ weaponId: labWeapon('heavy_blade', 'poison') }));
     const m = sim.monsters[0]!;
     placeInFrontOfHead(sim);
     swing(sim);
@@ -223,7 +226,7 @@ describe('属性・状態異常の命中（simulation）', () => {
   });
 
   it('盾で打つ（護刃の盾打ち）には、武器の状態異常が乗らない。刃で斬ると乗る', () => {
-    const sim = new Simulation(content, baseOptions({ weaponId: 'weapon.guard_blade.verito.r1' }));
+    const sim = new Simulation(content, baseOptions({ weaponId: labWeapon('guard_blade', 'poison') }));
     const m = sim.monsters[0]!;
     placeInFrontOfHead(sim, 1.4);
     // v0.53.0: 盾打ちは、連係の途中の副（斬り下ろしの後）。斬り下ろし（刃）で毒がたまり、続く盾打ち（盾）では増えない
@@ -237,7 +240,7 @@ describe('属性・状態異常の命中（simulation）', () => {
   });
 
   it('睡眠: 眠らせた後、覚ます最初の命中だけ 1.5 倍', () => {
-    const sim = new Simulation(content, baseOptions({ weaponId: 'weapon.heavy_blade.ashreia.r1' }));
+    const sim = new Simulation(content, baseOptions({ weaponId: labWeapon('heavy_blade', 'sleep') }));
     const m = sim.monsters[0]!;
     placeInFrontOfHead(sim);
     m.ailments.gauge.sleep = 100 * AILMENT_UNIT - 1;
@@ -254,7 +257,7 @@ describe('属性・状態異常の命中（simulation）', () => {
   });
 
   it('麻痺: 効いている間は技が止まり、攻撃も当たらない。終わると、また動く', () => {
-    const sim = new Simulation(content, baseOptions({ weaponId: 'weapon.heavy_blade.tengaro.r1', monsterAttacks: true }));
+    const sim = new Simulation(content, baseOptions({ weaponId: labWeapon('heavy_blade', 'para'), monsterAttacks: true }));
     const m = sim.monsters[0]!;
     placeInFrontOfHead(sim);
     m.ailments.gauge.para = 100 * AILMENT_UNIT - 1;
@@ -375,14 +378,14 @@ describe('受ける攻撃と、防具の技能（simulation）', () => {
     expect(spent(galdrosSet(2))).toBeCloseTo(24, 10);
   });
 
-  it('身軽 Lv3（帆角の頭・腕・脚）: 回避のスタミナが 13% 減る。息継ぎ Lv2（胴・腰）: 自然な回復が 7% 速い', () => {
+  it('身軽 Lv3（試しの風の頭・腕・脚）: 回避のスタミナが 13% 減る。息継ぎ Lv2（胴・腰）: 自然な回復が 7% 速い', () => {
     const roll = (armorIds: string[]): Simulation => {
       const sim = new Simulation(content, baseOptions({ armorIds }));
       run(sim, 1, () => press(Btn.Dodge));
       return sim;
     };
     expect(100 - roll([]).player.stamina).toBe(25);
-    const s = roll(seriesSet('selvark'));
+    const s = roll(labArmor('wind'));
     expect(100 - s.player.stamina).toBeCloseTo(25 * 0.87, 10);
     const regen = (armorIds: string[]): number => {
       const sim = new Simulation(content, baseOptions({ armorIds }));
@@ -391,11 +394,11 @@ describe('受ける攻撃と、防具の技能（simulation）', () => {
       return sim.player.stamina - 50;
     };
     expect(regen([])).toBeCloseTo(content.player.staminaRegenPerSec, 6);
-    expect(regen(seriesSet('selvark'))).toBeCloseTo(content.player.staminaRegenPerSec * 1.07, 6);
+    expect(regen(labArmor('wind'))).toBeCloseTo(content.player.staminaRegenPerSec * 1.07, 6);
   });
 
-  it('個別状態耐性（泥冠の胴・腰で毒 35%）: 毒の発症までにためる量が 135 になる', () => {
-    const sim = new Simulation(content, baseOptions({ armorIds: seriesSet('numeradon') }));
+  it('個別状態耐性（試しの水の胴・腰で毒 35%）: 毒の発症までにためる量が 135 になる', () => {
+    const sim = new Simulation(content, baseOptions({ armorIds: labArmor('water') }));
     applyStatus(sim.player, { kind: 'poison', power: 100 }, sim);
     expect(sim.player.ailment.poisonTicks).toBe(0);
     applyStatus(sim.player, { kind: 'poison', power: 40 }, sim);
@@ -406,7 +409,7 @@ describe('受ける攻撃と、防具の技能（simulation）', () => {
     expect(bare.player.ailment.poisonTicks).toBeGreaterThan(0);
   });
 
-  it('道具整備 Lv2（絹霧の胴・腰）: 研磨石を使う時間が 9% 短い（効き目は同じ）。刃持ち Lv2: 刃の減りが 9% 少ない', () => {
+  it('道具整備 Lv2（試しの毒の胴・腰）: 研磨石を使う時間が 9% 短い（効き目は同じ）。刃持ち Lv2: 刃の減りが 9% 少ない', () => {
     const whet = (armorIds: string[]): number => {
       const sim = new Simulation(content, baseOptions({ armorIds }));
       sim.player.edge = 10;
@@ -418,7 +421,7 @@ describe('受ける攻撃と、防具の技能（simulation）', () => {
       throw new Error('研げなかった');
     };
     const base = whet([]);
-    const fast = whet(seriesSet('verito'));
+    const fast = whet(labArmor('poison'));
     expect(fast).toBeLessThan(base);
     expect(fast).toBeGreaterThanOrEqual(Math.floor(base * 0.91) - 1);
     expect(fast).toBeLessThanOrEqual(Math.ceil(base * 0.91) + 1);
@@ -432,7 +435,7 @@ describe('受ける攻撃と、防具の技能（simulation）', () => {
     expect(wear(galdrosSet(2))).toBeCloseTo(wear([]) * 0.91, 6);
   });
 
-  it('砕き Lv2（鐘嚢の胴・腰）: 部位の耐久の減りだけが 9% 多い（体力の減りは同じ）', () => {
+  it('砕き Lv2（試しの砕の胴・腰）: 部位の耐久の減りだけが 9% 多い（体力の減りは同じ）', () => {
     const hitPart = (armorIds: string[]): [number, number] => {
       const sim = new Simulation(content, baseOptions({ armorIds }));
       const m = sim.monsters[0]!;
@@ -443,7 +446,7 @@ describe('受ける攻撃と、防具の技能（simulation）', () => {
       return [hp - m.hp, dur - m.parts[0]!.durability];
     };
     const [hp0, d0] = hitPart([]);
-    const [hp1, d1] = hitPart(seriesSet('bornakel'));
+    const [hp1, d1] = hitPart(labArmor('break'));
     expect(hp1).toBe(hp0);
     expect(d1).toBeCloseTo(d0 * 1.09, 6);
   });
@@ -453,18 +456,18 @@ describe('装備の性能の書き方（装備箱・工房。src/ui/gearText.ts�
   it('武器: 属性・状態異常・会心。防具: 技能と耐性。まとめ: 技能の Lv と効き目、耐性の合計', async () => {
     const { armorStat, gearSummary, weaponShortName, weaponStat } = await import('../src/ui/gearText');
     const w = (id: string) => content.weapons.get(id)!;
-    expect(weaponStat(content, w('weapon.heavy_blade.selvark.r1'))).toBe('攻撃力 85・風 26');
-    expect(weaponStat(content, w('weapon.heavy_blade.verito.r1'))).toBe('攻撃力 86・毒 9.2');
-    expect(weaponStat(content, w('weapon.heavy_blade.orglass.r1'))).toBe('攻撃力 86・会心 25%');
+    expect(weaponStat(content, w(labWeapon('heavy_blade', 'wind')))).toBe('攻撃力 85・風 26');
+    expect(weaponStat(content, w(labWeapon('heavy_blade', 'poison')))).toBe('攻撃力 86・毒 9.2');
+    expect(weaponStat(content, w(labWeapon('heavy_blade', 'crit')))).toBe('攻撃力 86・会心 25%');
     expect(weaponStat(content, w('weapon.heavy_blade.002'))).toBe('攻撃力 92');
-    expect(weaponShortName(content, w('weapon.heavy_blade.selvark.r1'))).toBe('帆角【初級】');
+    expect(weaponShortName(content, w(labWeapon('heavy_blade', 'wind')))).toBe('試風【初級】');
     expect(weaponShortName(content, w('weapon.heavy_blade.002'))).toBe('岩殻');
-    expect(armorStat(content, content.armor.get('armor.head.numeradon.r1')!)).toBe('防御 6・個別属性耐性（水）・雷 -2 水 +3');
-    expect(armorStat(content, content.armor.get('armor.chest.ashreia.r1')!)).toBe('防御 6・個別状態耐性（睡眠）・火 -2 霧 +3');
+    expect(armorStat(content, content.armor.get('armor.head.lab.water')!)).toBe('防御 6・個別属性耐性（水）・雷 -2 水 +3');
+    expect(armorStat(content, content.armor.get('armor.chest.lab.sleep')!)).toBe('防御 6・個別状態耐性（睡眠）・火 -2 霧 +3');
     expect(armorStat(content, content.armor.get('armor.head.001')!)).toBe('防御 0');
     const g = computeGear(content, w('weapon.heavy_blade.001'), galdrosSet(2));
     expect(gearSummary(content, g)).toEqual({ skills: '受け支え Lv3（防御のスタミナ -20%）・刃持ち Lv2（刃の減り -9%）', resist: '火 -10・雷 +15' });
-    const n = computeGear(content, w('weapon.heavy_blade.001'), seriesSet('numeradon'));
+    const n = computeGear(content, w('weapon.heavy_blade.001'), labArmor('water'));
     expect(gearSummary(content, n).skills).toBe('個別属性耐性（水） Lv3（耐性 +9）・個別状態耐性（毒） Lv2（発症まで +35%）');
   });
 });

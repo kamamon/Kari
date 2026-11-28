@@ -29,7 +29,8 @@ function report(b) {
   console.log('段階ごとの数（その段階から新しく登場する種。幼体は別）');
   for (const c of bestiaryCounts(b, rankIds)) {
     const left = c.plan - c.have;
-    console.log(`  ${rankName[c.rank]}: ${c.have} / ${c.plan} 種${left > 0 ? `（あと ${left}）` : left < 0 ? `（${-left} 多い）` : ''}　大型 ${c.large}・超大型 ${c.huge}・亜種 ${c.subspecies}・希少種 ${c.rare}　幼体 ${c.juveniles}`);
+    // v0.75.0（D-175）: 数の計画は持たない（モンスターは 1 匹ずつ足す）。plan が、いまの数より多い時だけ、残りを出す
+    console.log(`  ${rankName[c.rank]}: ${c.have}${c.plan > c.have ? ` / ${c.plan}` : ''} 種${left > 0 ? `（あと ${left}）` : ''}　大型 ${c.large}・超大型 ${c.huge}・亜種 ${c.subspecies}・希少種 ${c.rare}　幼体 ${c.juveniles}`);
   }
 }
 

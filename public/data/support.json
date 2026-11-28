@@ -7,8 +7,7 @@
       "name": "工房からの支給（2 段目・岩殻）",
       "tier": 2,
       "requires": [
-        "quest.basin.003",
-        "quest.selvark.r1"
+        "quest.basin.003"
       ],
       "items": [
         {

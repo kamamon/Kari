@@ -17,7 +17,6 @@ import { GamepadInput } from './input/gamepad';
 import { InputHub } from './input/hub';
 import { KeyboardMouse } from './input/keyboard';
 import { TouchControls } from './input/touch';
-import { CREATURE_PLANS } from './render/creaturePlans';
 import { envArtStatus } from './render/envArt';
 import { GameView } from './render/view';
 import { preloadSpinegale } from './render/spinegaleRig';
@@ -973,8 +972,8 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
           break;
         case 'herd_alarm': {
           // 群れが気づいた・逃げ出した: 体つきに合った短い鳴き声
-          const frame = CREATURE_PLANS[this.sim.herds.find((g) => g.id === e.herdId)?.monsterId ?? '']?.frame;
-          play(HERD_CRY[frame ?? 'quad'] ?? 'beast_cry', e.flee ? 0.4 : 0.25);
+          // v0.75.0: 体の作りごとの鳴き声を持っていた生成の種を外したので、四足の声（群れのデータは、いまは無い）
+          play(HERD_CRY.quad ?? 'beast_cry', e.flee ? 0.4 : 0.25);
           break;
         }
         case 'hit':

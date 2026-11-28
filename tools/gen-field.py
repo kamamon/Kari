@@ -518,26 +518,19 @@ field = dict(
     timeLimitScale=2,
     roam=dict(note='大型の移動と休息。stayTicks の間エリアに居て、次のエリアへ出ていく。出ていく速さ leaveSpeed（弱っていれば limpLeaveSpeed。m/s）は、狩人が走っても追いつけない速さ（v0.20.0）。体力が limpHpRatio 以下になると、巣（nest）へ向かい、sleepTicks の間眠って、体力を sleepHealCap まで戻す。攻撃されると起きる。机上の値',
               stayTicks=[5400, 9000], leaveSpeed=9.0, limpLeaveSpeed=7.6, leaveTurnScale=4, limpSpeedScale=0.7, limpHpRatio=0.25, sleepTicks=3600, sleepHealPerSec=0.004, sleepHealCap=0.4, wakeStayTicks=1800, wanderSpeedScale=0.55, wanderIdleTicks=[240, 540], wanderInset=10, loseSightTicks=600),
-    # 大型 11 種（v0.17.0）は、本来の狩場が無いので、ここを借りる（巡り方は tools/gen-monsters.py の route と同じ）
+    # 大型の巡り方。v0.75.0 で、白紙にした 11 種（v0.17.0 の 02〜12。本来の狩場が無く、ここを借りていた）を外した（利用者の指示。D-175）
     # スパインゲイル（ChatGPT の Pull Request #50）は、この盆地に住む種。巡り方はガルドロスと同じ（#50 が出力へ直に書いていたものを、ここへ移した。v0.73.0）
     routes={'monster.galdros': dict(start='a3', roam=['a3', 'a7', 'a4', 'a2'], nest='a10'),
-            'monster.spinegale': dict(start='a3', roam=['a3', 'a7', 'a4', 'a2'], nest='a10'),
-            'monster.selvark': dict(start='a2', roam=['a2', 'a4', 'a3'], nest='a10'), 'monster.numeradon': dict(start='a4', roam=['a4', 'a7', 'a3'], nest='a10'), 'monster.bornakel': dict(start='a7', roam=['a7', 'a4', 'a2'], nest='a10'), 'monster.ashreia': dict(start='a6', roam=['a6', 'a9', 'a3'], nest='a10'), 'monster.lumisca': dict(start='a9', roam=['a9', 'a6', 'a3'], nest='a10'), 'monster.orglass': dict(start='a3', roam=['a3', 'a6', 'a9'], nest='a10'), 'monster.tengaro': dict(start='a7', roam=['a7', 'a3', 'a6'], nest='a10'), 'monster.verito': dict(start='a4', roam=['a4', 'a2', 'a3'], nest='a10'), 'monster.razmer': dict(start='a2', roam=['a2', 'a3', 'a7'], nest='a10'), 'monster.kirisave': dict(start='a6', roam=['a6', 'a3', 'a2'], nest='a10'), 'monster.velgait': dict(start='a9', roam=['a9', 'a6', 'a7'], nest='a10')},
-    # 幼体の群れの住みか（v0.18.0。docs/spec.md の 23 章）。areas の順に、ときどき移り住む。
-    # native = この狩場に住む群れ（いつも居る）。そうでない群れは、親か自分が依頼の標的の時だけ出る（本来の狩場が、まだ無い種）。
-    # 大型が入れない通り道（1・5・8）にも住む（小さな体の逃げ場）。
-    herds=[dict(monsterId='monster.kordopil', areas=['a1', 'a2'], native=True), dict(monsterId='monster.kordopil', areas=['a7', 'a4'], native=True),
-           dict(monsterId='monster.palseit', areas=['a5', 'a6'], native=True), dict(monsterId='monster.palseit', areas=['a4', 'a2'], native=True),
-           dict(monsterId='monster.numaporon', areas=['a7', 'a4'], native=False), dict(monsterId='monster.chilumicana', areas=['a9', 'a6'], native=False),
-           dict(monsterId='monster.kohalgis', areas=['a6', 'a9'], native=False), dict(monsterId='monster.mitogaron', areas=['a7', 'a3'], native=False),
-           dict(monsterId='monster.yurtepica', areas=['a8', 'a5'], native=False), dict(monsterId='monster.hinasalv', areas=['a6', 'a3'], native=False)],
+            'monster.spinegale': dict(start='a3', roam=['a3', 'a7', 'a4', 'a2'], nest='a10')},
+    # 幼体の群れの住みか（v0.18.0。docs/spec.md の 23 章）。v0.75.0 で、幼体 8 種を外したので、群れは無い（群れの仕組み src/game/herd.ts は残してある）
+    herds=[],
     areas=[areas[a[0]] for a in AREAS],
 )
 def dump(o): return json.dumps(o, ensure_ascii=False)
 out = ['{']
 for k in ('schemaVersion', 'id', 'name', 'note', 'legacyMapId', 'legacyAreaId', 'start', 'camp', 'timeLimitScale', 'roam', 'routes'):
     out.append(f'  {json.dumps(k)}: {dump(field[k])},')
-out.append('  "herds": [\n    ' + ',\n    '.join(dump(h) for h in field['herds']) + '\n  ],')
+out.append('  "herds": [' + ('\n    ' + ',\n    '.join(dump(h) for h in field['herds']) + '\n  ' if field['herds'] else '') + '],')
 out.append('  "areas": [')
 for i, a in enumerate(field['areas']):
     out.append('    {')

@@ -86,12 +86,14 @@ const BACKUP_REASON: Record<string, string> = {
 /** 拠点の画面に出す範囲。all = すべて（一覧）。ほかは、施設 1 つぶん */
 export type BaseSection = 'all' | 'life' | FacilityKind;
 
-/** 図鑑の絵の説明。adopted = 採用した設定図（ガルドロス）。ほかは ChatGPT の原画案（真横 1 方向。採用は利用者が決める） */
-export function artCaption(state: string, cls: string, adopted: boolean): string {
-  if (adopted) return '設定図（採用済み。左の側面）。ゲームの中の体は、この図から作った仮の形です。';
-  const head = '原画案（ChatGPT。採用待ち・真横 1 方向）。';
-  if (state !== 'implemented') return head + 'ゲームの中の体と動きは、まだありません。';
-  return head + (cls === 'juvenile' ? 'ゲームの中の体は、まだ親の原画から作った仮の形です。' : 'ゲームの中の体は、この絵から作った仮の形です。');
+/**
+ * 図鑑の絵の説明。adopted = 採用した設定図（ガルドロス）。ほかは ChatGPT の原画。
+ * v0.75.0: 側面の原画から作った仮の体の種（19 種）を外したので、遊べる種の体は、専用の体（ガルドロス）か、専用の 3D モデル（1 匹ずつ足される種）。
+ */
+export function artCaption(state: string, _cls: string, adopted: boolean): string {
+  if (adopted) return '設定図（採用済み。左の側面）。ゲームの中の体は、この図から作った専用の形です。';
+  if (state !== 'implemented') return '原画（ChatGPT）。ゲームの中の体と動きは、まだありません。';
+  return '原画（ChatGPT）。ゲームの中の体は、この絵をもとにした専用の 3D モデルです。';
 }
 
 interface ReceptionBookmark {
@@ -562,14 +564,16 @@ export class BaseScreen {
     const ranks = [...c.ranks.values()].sort((x, y) => x.order - y.order);
     const frameName = new Map(b.frames.map((f) => [f.id, f.name]));
     const byId = new Map(b.species.map((s) => [s.id, s]));
-    box.appendChild(el('p', 'bestiary-note', '遊べるのは「実装済み」の種だけです。ほかは、これから作る計画です（数は、その段階から新しく登場する種）。属性・弱点・狩場は、どれも案です。'));
+    // v0.75.0（D-175）: 登録簿は、ゲームに居る種だけ（モンスターは 1 種ずつ足す。この先の数の計画は持たない）
+    box.appendChild(el('p', 'bestiary-note', 'いま狩れる種の一覧です。モンスターは、これから 1 種ずつ増えます（段階は、その種がはじめて登場する級）。'));
     for (const count of bestiaryCounts(b, ranks.map((r) => r.id))) {
       const rank = c.ranks.get(count.rank)!;
-      const head = el('h4', undefined, `${rank.name}から　${count.have} / ${count.plan} 種${count.juveniles ? `　幼体 ${count.juveniles}` : ''}`);
+      const here = b.species.filter((s) => s.rank === rank.id);
+      // 種の居ない段階は出さない（数の計画が無いので、「まだ登録がありません」を並べない）
+      if (here.length === 0) continue;
+      const head = el('h4', undefined, `${rank.name}から　${count.have} 種${count.juveniles ? `　幼体 ${count.juveniles}` : ''}`);
       head.dataset.rank = rank.id;
       box.appendChild(head);
-      const here = b.species.filter((s) => s.rank === rank.id);
-      if (here.length === 0) box.appendChild(el('p', 'bestiary-note', 'まだ登録がありません。'));
       for (const s of here) {
         const d = el('details', `bestiary-item ${s.state}`);
         d.dataset.species = s.id;
@@ -613,23 +617,25 @@ export class BaseScreen {
         box.appendChild(d);
       }
     }
-    // 狩場の案（種の「狩場」に出てくる名前の一覧。歩けるのは、fieldId が付いたものだけ）
+    // 狩場の一覧（歩けるのは、fieldId が付いたもの。大型を狩る依頼があるのは、その一部）
     const fields = b.fields ?? [];
     const walkable = fields.filter((f) => f.fieldId).length;
-    const fh = el('h4', undefined, `狩場の案　${fields.length}（歩けるのは ${walkable}）`);
+    const huntable = new Set([...c.quests.values()].filter((q) => q.kind !== 'gather' && q.fieldId).map((q) => q.fieldId!));
+    const fh = el('h4', undefined, `狩場　${fields.length}（歩けるのは ${walkable}。狩りの依頼があるのは ${fields.filter((f) => f.fieldId && huntable.has(f.fieldId)).length}）`);
     fh.dataset.fields = String(fields.length);
     box.appendChild(fh);
     for (const f of fields) {
       const d = el('details', `bestiary-item bestiary-field ${f.fieldId ? 'implemented' : 'planned'}`);
       d.dataset.field = f.name;
       const here = b.species.filter((x) => x.habitat === f.name);
-      const gatheringOnly = !!f.fieldId && f.fieldId !== 'field.basin';
+      // 狩りの依頼がまだ無い狩場は、採取だけ（v0.75.0: 盆地かどうかでなく、依頼から決める。白霧氷谷は狩れる）
+      const gatheringOnly = !!f.fieldId && !huntable.has(f.fieldId);
       const sum = el('summary');
       sum.append(el('b', undefined, f.name), el('span', 'tags', f.terrain), el('span', 'state', gatheringOnly ? '採取可（暫定）' : f.fieldId ? '歩ける' : '案'));
       d.appendChild(sum);
       const dl = el('dl');
       if (f.mood) dl.append(el('dt', undefined, '天気・光・音'), el('dd', undefined, f.mood));
-      dl.append(el('dt', undefined, gatheringOnly ? '生息予定の種' : 'ここに出る種'), el('dd', undefined, here.map((x) => `${x.title} ${x.name}`).join('、') || '—'));
+      dl.append(el('dt', undefined, 'ここに出る種'), el('dd', undefined, here.map((x) => `${x.title} ${x.name}`).join('、') || 'まだ居ません'));
       if (gatheringOnly) dl.append(el('dt', undefined, '現在の実装'), el('dd', undefined, '採取ツアー専用の暫定地形。専用景観・大型の狩猟は未実装。'));
       // 景色の原画（v0.23.0。ChatGPT の追加原画。地形を作る前の絵で、ゲームの中の形ではない）。開いた時に読む
       const art = fieldArtUrl(f.name);
@@ -1058,7 +1064,7 @@ export class BaseScreen {
       if(field.id!=='field.basin') pane.appendChild(el('p','reception-detail-note','調査用の暫定地形です。地域の正式な狩場・専用景観は制作中です。'));
     } else if (q.gather && field) {
       const areas = [...new Set(q.gather.nodes.map((n) => n.areaId))].map((id) => field.areas.find((a) => a.id === id)).filter((a) => !!a).map((a) => a.kind === 'camp' ? a.name : `エリア${a.no} ${a.name}`);
-      pane.appendChild(el('p', 'reception-detail-note', `採取点: ${areas.join('・')}。この出発で採った品を野営地の納品箱へ。大型・幼体は出ません。`));
+      pane.appendChild(el('p', 'reception-detail-note', `採取点: ${areas.join('・')}。この出発で採った品を野営地の納品箱へ。モンスターは出ません。`));
     }
     pane.appendChild(el('p', 'reception-summary', q.summary));
     if (q.board) {

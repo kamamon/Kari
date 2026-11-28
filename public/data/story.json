@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "story.homeward_lights",
   "title": "帰り道の灯",
-  "note": "ChatGPT のストーリー設計 v1（Pull Request #7。原本は docs/source/chatgpt-story-20261125/）。v0.23.0 で入れたのは、序章と第 1 章（S0: いまある 2 つの依頼に、前後の話と記録を重ねる）。第 2 章から先は、狩場と依頼がそろった章から入れる。台詞は台本（dialogue_samples_v1.md）のまま。狩りの前の短い説明（brief）は、設計の文から Claude が書いた。人物の名前は仮。 v0.29.0: ChatGPT の人物原画・物語素材（Pull Request #13）から、会話の表情（faces と、台詞の face）・場面の絵（art）・セナキの顔を足した。どの表情をどの台詞に当てるかは、#13 の catalog の使い方から Claude が決めた。",
+  "note": "ChatGPT のストーリー設計 v1（Pull Request #7。原本は docs/source/chatgpt-story-20261125/）。v0.23.0 で入れたのは、序章と第 1 章（S0: いまある 2 つの依頼に、前後の話と記録を重ねる）。第 2 章から先は、狩場と依頼がそろった章から入れる。台詞は台本（dialogue_samples_v1.md）のまま。狩りの前の短い説明（brief）は、設計の文から Claude が書いた。人物の名前は仮。 v0.29.0: ChatGPT の人物原画・物語素材（Pull Request #13）から、会話の表情（faces と、台詞の face）・場面の絵（art）・セナキの顔を足した。どの表情をどの台詞に当てるかは、#13 の catalog の使い方から Claude が決めた。 v0.75.0: 白紙にした種（利用者の指示。D-175）を外した。第 1 章の 2 つ目の狩り（帆角の風）と、2 つの仕事を並べる場面 sc03 を外し、第 2 章〜第 8 章の標的を空にした（章の題・場所・目当ては、設計のまま残してある。標的は、種が決まってから）。",
   "speakers": {
     "minagi": {
       "name": "ミナギ",
@@ -59,8 +59,7 @@
       "field": "風礫盆地",
       "goal": "止まっていた補給を通す",
       "targets": [
-        "ガルドロス",
-        "セルヴァルク"
+        "ガルドロス"
       ],
       "playable": true,
       "steps": [
@@ -71,15 +70,8 @@
           "briefScene": "sc01",
           "brief": "盆地の道で、ガルドロスが荷車を止めている。その区間を、安全に通れるようにする。",
           "reportScene": "sc02"
-        },
-        {
-          "id": "st02",
-          "questId": "quest.selvark.r1",
-          "label": "帆角の風（セルヴァルク）",
-          "brief": "別の荷道で、セルヴァルクが穀物の荷を狙い、運搬を止めている。荷が通れるようにする。"
         }
-      ],
-      "reportScene": "sc03"
+      ]
     },
     {
       "id": "ch2",
@@ -88,10 +80,7 @@
       "place": "根絡み湿原",
       "field": "根絡み湿原",
       "goal": "水路の点検と補修に入れるようにする",
-      "targets": [
-        "ヌメラドン",
-        "ヴェリト"
-      ],
+      "targets": [],
       "playable": false
     },
     {
@@ -101,10 +90,7 @@
       "place": "硝砂海岸",
       "field": "硝砂海岸",
       "goal": "海岸側の補給をつなぎ直す",
-      "targets": [
-        "オルグラス",
-        "ルミスカ"
-      ],
+      "targets": [],
       "playable": false
     },
     {
@@ -115,10 +101,7 @@
       "art": "event_story_old_records_v1",
       "field": "灰鐘鉱山",
       "goal": "古い作業路を調べ、設備の経緯を知る",
-      "targets": [
-        "ボルナケル",
-        "アシュレイア"
-      ],
+      "targets": [],
       "playable": false
     },
     {
@@ -128,10 +111,7 @@
       "place": "氷帆峡谷",
       "field": "氷帆峡谷",
       "goal": "湧水の上流側の変化を確かめる",
-      "targets": [
-        "キリサーヴ",
-        "ラズメル"
-      ],
+      "targets": [],
       "playable": false
     },
     {
@@ -141,10 +121,7 @@
       "place": "霧灯樹海",
       "field": "霧灯樹海",
       "goal": "光の正体と、谷へつながる観測の結果を得る",
-      "targets": [
-        "テンガロ",
-        "ヴェルガイト"
-      ],
+      "targets": [],
       "playable": false
     },
     {
@@ -155,9 +132,7 @@
       "art": "event_story_limited_lights_v1",
       "field": "風礫盆地",
       "goal": "里の暮らしをつなぎ、小さな区間の補修を成功させる",
-      "targets": [
-        "グラセドン"
-      ],
+      "targets": [],
       "playable": false
     },
     {
@@ -167,9 +142,7 @@
       "place": "重霧環谷",
       "field": "重霧環谷",
       "goal": "最後の補修の作業区間を確保する",
-      "targets": [
-        "セオルミド"
-      ],
+      "targets": [],
       "playable": false
     },
     {
@@ -284,34 +257,6 @@
         }
       ],
       "art": "event_story_first_delivery_v1"
-    },
-    {
-      "id": "sc03",
-      "title": "第1章　二つの仕事を並べる",
-      "place": "灯継ぎの里、依頼板",
-      "summary": "補給を再開した。二種の採食地が荷道に近づいている。次は湿りの変化を調べる。",
-      "lines": [
-        {
-          "who": "minagi",
-          "text": "「穀物の荷も通った。二つの報告を並べたら、気になることがあって。」",
-          "face": "focus"
-        },
-        {
-          "who": "minagi",
-          "text": "「ガルドロスが掘った場所に新芽が出て、セルヴァルクが来る。それは、いつもどおり。」",
-          "face": "focus"
-        },
-        {
-          "who": "senaki",
-          "text": "「だが、その場所が荷道に寄ってる。前は、もっと離れた斜面だった。」"
-        },
-        {
-          "who": "minagi",
-          "text": "「獣が変わったのか、土地が変わったのか。湿原の記録とも比べてみよう。」",
-          "face": "focus"
-        }
-      ],
-      "art": "event_story_arrival_board_v1"
     }
   ],
   "common": {

@@ -53,7 +53,7 @@ describe('灯継ぎの里の専用区画・模型・家畜',()=>{
   expect(validateSave(d)).toEqual([]);
  });
  it('看板の未実装依頼は達成扱いにしない。既存主線から予兆と警戒報告が解禁',()=>{
-  const a={'quest.basin.003':1},b={...a,'quest.selvark.r1':1};expect(hubThreat(c,{})).toBe(0);expect(hubThreat(c,a)).toBe(1);expect(hubThreat(c,b)).toBe(2);
+  const a={'quest.basin.003':1},b={...a,'quest.spinegale.r1':1};expect(hubThreat(c,{})).toBe(0);expect(hubThreat(c,a)).toBe(1);expect(hubThreat(c,b)).toBe(2);
   expect(newHubReports(c,{},a)).toEqual(['hub.thunder.rumor']);expect(newHubReports(c,a,b)).toEqual(['hub.thunder.watch']);expect(newHubReports(c,b,b)).toEqual([]);
   expect(hubThreat(c,{...b,'quest.story.thunder_return':1})).toBe(2);
   for(const s of hubReports(c,b))for(const l of s.lines){expect(c.story.speakers[l.who!]).toBeDefined();expect(l.text!.length).toBeLessThanOrEqual(60);}

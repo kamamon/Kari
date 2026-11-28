@@ -158,7 +158,7 @@ export interface ActionDef {
   /**
    * 後隙の反撃（v0.73.0。#19 の M02。D-171。モンスターの技）: 後隙の中の from〜to の間、部位 partId が低い所（下の端が 1.3m 以下）でほとんど動かずに止まり、
    * 技を避けた狩人が斬りに行ける。戦闘の計算は読まない（決まりを tests/creature-openings.test.ts が確かめる。当たりの表示で色を変える）。
-   * 02〜12 の種は tools/monster_moves.py の `open`（npm run monsters:gen の出力）
+   * ガルドロスは tools/gen-galdros-moves.mjs の `OPEN` と actions/galdros.json、スパインゲイルは tools/gen-openings.py の `SPINEGALE_OPEN`（npm run monsters:gen）
    */
   opening?: { partId: string; from: number; to: number };
 }
@@ -1137,7 +1137,7 @@ export const QUEST_LANE_NAMES: Record<QuestLane, string> = { main: '主線', fre
 
 /**
  * 依頼の掲示（public/data/quest_board.json。v0.26.0、ChatGPT のクエスト設計 #9）。依頼ごとの、星・分類・依頼人・依頼人の話・目安の時間。
- * 生成した依頼（quests_creatures.json・quests_herds.json）も、文はここに書く（生成器を走らせ直しても消えない）。
+ * v0.74.0 までの、生成した依頼（白紙にした 19 種の依頼。v0.75.0 で外した）の文も、ここに書いていた。
  */
 export interface QuestBoardEntry {
   questId: string;

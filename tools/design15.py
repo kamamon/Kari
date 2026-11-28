@@ -1,6 +1,6 @@
 """ChatGPT の全装備四級版（Pull Request #15）の設計データを読む共通の道具（v0.34.0）。
 
-tools/gen-monsters.py（上の級の素材・剥ぎ取り・依頼）と tools/gen-equipment.py（上の級の装備・強化のレシピ）が、
+tools/gen-equipment.py（上の級の装備・強化のレシピ）と、v0.74.0 までの tools/gen-monsters.py（上の級の素材・剥ぎ取り・依頼。v0.75.0 で外した）が、
 同じ「上の級の素材の恒久 ID と名前」を使うために、ここで 1 回だけ決める。設計の JSON は資料（runtimeImportable: false）で、
 値を読むだけ（中のスクリプトは走らせない）。
 """
@@ -13,7 +13,8 @@ SRC = os.path.join(ROOT, 'docs/source/chatgpt-equipment-20261125/data/all-equipm
 
 # 中級〜極級を入れる種（設計の requiredField が、いまある狩場「風礫盆地」の種。ガルドロスは前から 4 段ある）。
 # ほかの種は、設計の狩場（根絡み湿原・灰鐘鉱山・硝砂海岸・霧灯樹海・氷帆峡谷）ができてから（盆地で代わりにしない）
-RANK_SPECIES = ['selvark', 'kordopil', 'palseit']
+# v0.75.0 で、白紙にした 3 種（帆角・幼岩・幼帆）を外した（利用者の指示。D-175）。いまは無い
+RANK_SPECIES = []
 RANKS = [2, 3, 4]
 FIELD = '風礫盆地'
 

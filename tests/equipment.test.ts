@@ -1,4 +1,6 @@
 // 系列の装備（v0.32.0。ChatGPT の全装備四級版 #15 の最初の一切れ。docs/spec.md の 29 章、D-113）。v0.33.0 で 19 系列（属性・状態異常も）
+// v0.75.0（利用者の指示。D-175）: 白紙にした 19 種を外したので、equipment:gen の出力の系列は空（これまでの防具の耐性と技能 armorTraits だけ）。
+//   いま作れる系列は、スパインゲイルとフロストアルド（ChatGPT の #50・#51 のデータ。equipment:gen の出力ではない）。作る・強化の仕組みは、この 2 系列で確かめる。
 // - 生成した public/data/equipment_series.json が、設計のデータ（docs/source/chatgpt-equipment-20261125/data/all-equipment.json）の値のまま
 //   （属性・状態異常・防具の耐性と技能も。これまでの防具 岩殻〜輝殻 の耐性と技能 armorTraits も）
 // - 工房の「作る」: 素材と通貨を 1 回の書き込みで減らし、持ち物へ足す（装備は替えない）。2 度は作れない。足りなければ何も変えない
@@ -39,11 +41,8 @@ interface Design {
   materials: { id: string; name: string; rankOrder: number }[];
 }
 const design = (): Design => JSON.parse(readFileSync(root('docs/source/chatgpt-equipment-20261125/data/all-equipment.json'), 'utf8')) as Design;
-// 遊べる 20 種のうち、ガルドロスの他（登録簿の順）
-const SERIES = [
-  'series.selvark', 'series.numeradon', 'series.bornakel', 'series.ashreia', 'series.lumisca', 'series.orglass', 'series.tengaro', 'series.verito', 'series.razmer', 'series.kirisave', 'series.velgait',
-  'series.kordopil', 'series.palseit', 'series.numaporon', 'series.chilumicana', 'series.kohalgis', 'series.mitogaron', 'series.yurtepica', 'series.hinasalv',
-];
+/** いま作れる系列（v0.75.0。どちらも ChatGPT のデータ） */
+const SERIES = ['series.spinegale', 'series.frostald'];
 const STATUS_ID: Record<string, string> = { poison: 'poison', paralysis: 'para', sleep: 'sleep' };
 /** 設計の防具の耐性（0 でないもの）と技能を、ゲームの形に */
 const traitsOf = (a: Design['armorCandidates'][number]): { resist?: Record<string, number>; skill?: Record<string, unknown> } => {
@@ -63,97 +62,40 @@ let clock = 0;
 const env: SaveEnv = { now: () => `2026-11-25T00:00:${String(clock++ % 60).padStart(2, '0')}.000Z`, appVersion: 'test' };
 const STAMP = { now: '2026-11-25T00:00:00.000Z', appVersion: 'test', contentVersion: 'test' };
 
-describe('系列の装備のデータ（#15 の初級・19 系列）', () => {
-  it('19 系列 × 武器 7・防具 5 = 228 点と、作るレシピ 228。数値・属性・状態異常・耐性・技能・素材・費用は設計のまま、恒久 ID に付け直した', () => {
-    const d = design();
-    const weapons = [...content.weapons.values()].filter((w) => w.series?.startsWith('series.') && w.rankId === 'rank.1');
-    const armor = [...content.armor.values()].filter((a) => a.series?.startsWith('series.') && a.rankId === 'rank.1');
-    expect(weapons).toHaveLength(147);
-    expect(armor).toHaveLength(105);
-    expect(crafts()).toHaveLength(252);
-    expect(new Set(weapons.map((w) => w.series))).toEqual(new Set([...SERIES,'series.spinegale','series.frostald']));
-    const profiles: Record<string, number> = {};
-    for (const sid of SERIES) {
-      const s = d.series.find((x) => x.id === sid)!;
-      // 初級に複合は無い（上級・極級だけ）
-      expect(['raw', 'precision', 'single', 'status']).toContain(s.weaponProfile);
-      profiles[s.weaponProfile] = (profiles[s.weaponProfile] ?? 0) + 1;
-      const sp = s.sourceSpeciesId.split('.')[1];
-      for (const w of d.weaponCandidates.filter((x) => x.seriesId === sid && x.rank === 1)) {
-        const g = content.weapons.get(`weapon.${w.family}.${sp}.r1`)!;
-        expect(g, w.id).toBeDefined();
-        const element = w.elements.length ? { type: w.elements[0], value: w.elementValue } : { type: 'none', value: 0 };
-        const status = w.status ? { kind: STATUS_ID[w.status], potency: w.statusPotency } : undefined;
-        expect({ name: g.name, attack: g.attack, affinity: g.affinity, family: g.family, element: g.element, status: g.status, rankId: g.rankId }).toEqual({ name: w.name, attack: w.attack, affinity: w.affinity, family: w.family, element, status, rankId: 'rank.1' });
-        // 形は、その武器種の里の武器（仮）
-        expect(g.assetId).toBe(`model.weapon.${w.family}.001`);
-        const r = d.recipes.find((x) => x.resultId === w.id && x.kind === 'craft')!;
-        const mine = crafts().find((x) => x.kind === 'craft' && x.resultWeaponId === g.id)!;
-        expect(mine.cost).toEqual({ money: r.money, items: r.ingredients.map((i) => ({ itemId: i.materialId, count: i.count })) });
-      }
-      for (const a of d.armorCandidates.filter((x) => x.seriesId === sid && x.rank === 1)) {
-        const g = content.armor.get(`armor.${a.slot}.${sp}.r1`)!;
-        expect({ name: g.name, defense: g.defense, slot: g.slot, assetId: g.assetId }).toEqual({ name: a.name, defense: a.defense, slot: a.slot, assetId: undefined });
-        expect({ resist: g.resist, skill: g.skill }).toEqual({ resist: undefined, skill: undefined, ...traitsOf(a) });
-        const r = d.recipes.find((x) => x.resultId === a.id && x.kind === 'craft')!;
-        const mine = crafts().find((x) => x.kind === 'armor_craft' && x.resultArmorId === g.id)!;
-        expect(mine.cost).toEqual({ money: r.money, items: r.ingredients.map((i) => ({ itemId: i.materialId, count: i.count })) });
-      }
-    }
-    expect(profiles).toEqual({ raw: 2, precision: 3, single: 9, status: 5 });
-    // ガルドロスの 35 武器・25 防具・48 強化は、そのまま
+describe('系列の装備のデータ', () => {
+  it('equipment:gen の出力の系列は空（19 種の系列を外した。v0.75.0）。いまある系列はスパインゲイルとフロストアルドで、ガルドロスの 35 武器・25 防具・48 強化は、そのまま', () => {
+    const gen = JSON.parse(readFileSync(root('public/data/equipment_series.json'), 'utf8')) as { weapons: unknown[]; armor: unknown[]; recipes: unknown[]; armorTraits: Record<string, unknown> };
+    expect([gen.weapons.length, gen.armor.length, gen.recipes.length, Object.keys(gen.armorTraits).length]).toEqual([0, 0, 0, 20]);
+    const weapons = [...content.weapons.values()].filter((w) => w.series?.startsWith('series.'));
+    const armor = [...content.armor.values()].filter((a) => a.series?.startsWith('series.'));
+    expect(new Set(weapons.map((w) => w.series))).toEqual(new Set(SERIES));
+    expect(new Set(armor.map((a) => a.series))).toEqual(new Set(SERIES));
+    // 2 系列 × 3 級 × （いまある 7 系統の武器 + 防具 5）。初級は作る、上の級は 1 つ下からの強化
+    expect(weapons).toHaveLength(2 * 3 * 7);
+    expect(armor).toHaveLength(2 * 3 * 5);
+    expect(crafts()).toHaveLength(2 * 12);
+    for (const w of weapons) expect(content.families.has(w.family), w.id).toBe(true);
     expect([...content.weapons.values()].filter((w) => !w.series)).toHaveLength(35);
     expect([...content.armor.values()].filter((a) => !a.series)).toHaveLength(25);
     expect([...content.recipes.values()].filter((r) => (r.kind === 'upgrade' && !content.weapons.get(r.resultWeaponId)!.series) || (r.kind === 'armor_upgrade' && !content.armor.get(r.resultArmorId)!.series))).toHaveLength(48);
+    // 外した 19 種の装備・素材は、どこにも残っていない
+    const gone = /\.(selvark|numeradon|bornakel|ashreia|lumisca|orglass|tengaro|verito|razmer|kirisave|velgait|kordopil|palseit|numaporon|chilumicana|kohalgis|mitogaron|yurtepica|hinasalv)\./;
+    expect([...content.weapons.keys(), ...content.armor.keys(), ...content.recipes.keys(), ...content.materials.keys()].filter((id) => gone.test(id))).toEqual([]);
   });
 
-  it('中級〜極級（v0.34.0）: 帆角・幼岩・幼帆の 3 系列 × 3 級 × 武器 7・防具 5 = 108 点と、1 つ下の級からの強化 108。数値・素材の名前と数・費用は設計のまま', () => {
-    const d = design();
-    const ranked = ['selvark', 'kordopil', 'palseit'];
-    const upgrades = [...content.recipes.values()].filter((r) => (r.kind === 'upgrade' && content.weapons.get(r.resultWeaponId)?.series?.startsWith('series.')) || (r.kind === 'armor_upgrade' && content.armor.get(r.resultArmorId)?.series?.startsWith('series.')));
-    expect(upgrades).toHaveLength(156);
-    expect([...content.weapons.values()].filter((w) => w.series?.startsWith('series.') && w.rankId !== 'rank.1')).toHaveLength(91);
-    expect([...content.armor.values()].filter((a) => a.series?.startsWith('series.') && a.rankId !== 'rank.1')).toHaveLength(65);
-    const dname = new Map(d.materials.map((m) => [m.id, m.name]));
-    for (const sp of ranked) {
-      const sid = `series.${sp}`;
-      for (const rank of [2, 3, 4]) {
-        for (const w of d.weaponCandidates.filter((x) => x.seriesId === sid && x.rank === rank)) {
-          const g = content.weapons.get(`weapon.${w.family}.${sp}.r${rank}`)!;
-          expect({ name: g.name, attack: g.attack, affinity: g.affinity, rankId: g.rankId, value: g.element.value }).toEqual({ name: w.name, attack: w.attack, affinity: w.affinity, rankId: `rank.${rank}`, value: w.elementValue });
-          const r = d.recipes.find((x) => x.resultId === w.id && x.kind === 'upgrade')!;
-          expect(r.consumesPrevious).toBe(true);
-          const mine = upgrades.find((x) => x.kind === 'upgrade' && x.resultWeaponId === g.id) as Extract<RecipeDef, { kind: 'upgrade' }>;
-          expect(mine.fromWeaponId).toBe(`weapon.${w.family}.${sp}.r${rank - 1}`);
-          expect(mine.cost.money).toBe(r.money);
-          // 素材は、設計の名前のまま（「帆膜［中級］」）、同じ数
-          expect(mine.cost.items.map((s) => [content.materials.get(s.itemId)!.name, s.count])).toEqual(r.ingredients.map((i) => [dname.get(i.materialId) ?? i.name, i.count]));
-        }
-        for (const a of d.armorCandidates.filter((x) => x.seriesId === sid && x.rank === rank)) {
-          const g = content.armor.get(`armor.${a.slot}.${sp}.r${rank}`)!;
-          expect({ name: g.name, defense: g.defense, resist: g.resist, skill: g.skill }).toEqual({ name: a.name, defense: a.defense, resist: undefined, skill: undefined, ...traitsOf(a) });
-          const mine = upgrades.find((x) => x.kind === 'armor_upgrade' && x.resultArmorId === g.id) as Extract<RecipeDef, { kind: 'armor_upgrade' }>;
-          expect(mine.fromArmorId).toBe(`armor.${a.slot}.${sp}.r${rank - 1}`);
-        }
-      }
-    }
-    // ほかの 16 系列は初級だけ（設計の上の級の狩場が、まだ無い）
-    expect([...content.weapons.values()].filter((w) => w.series?.startsWith('series.') && w.rankId !== 'rank.1' && w.series !== 'series.spinegale' && w.series !== 'series.frostald' && !ranked.some((sp) => w.series === `series.${sp}`))).toEqual([]);
-  });
-
-  it('中級の強化: 帆角の断岳剣【初級】を持っていて、中級の素材がそろうと【中級】になる（元は無くなる）。素材は中級のセルヴァルクの依頼で手に入る', () => {
-    const r = content.recipes.get('recipe.upgrade.weapon.selvark.heavy_blade.r2')!;
+  it('中級の強化: 疾棘断剣（スパインゲイルの初級の断岳剣）を持っていて、中級の素材がそろうと裂風断剣になる（元は無くなる）。素材は中級のスパインゲイルの依頼で手に入る', () => {
+    const r = content.recipes.get('recipe.upgrade.weapon.spinegale.heavy_blade.r2')!;
     expect(r.kind).toBe('upgrade');
-    const doc: SaveDoc = { ...newSave(content, STAMP), weapons: [...newSave(content, STAMP).weapons, 'weapon.heavy_blade.selvark.r1'], money: r.cost.money, items: Object.fromEntries(r.cost.items.map((s) => [s.itemId, s.count])) };
+    const doc: SaveDoc = { ...newSave(content, STAMP), weapons: [...newSave(content, STAMP).weapons, 'weapon.heavy_blade.spinegale.r1'], money: r.cost.money, items: Object.fromEntries(r.cost.items.map((s) => [s.itemId, s.count])) };
     // 中級は、岩場の足音を達成するまで開かない
     expect(craftRankOpen(doc, content, r)).toBe(false);
     const cleared: SaveDoc = { ...doc, progress: { ...doc.progress, questClears: { ...doc.progress.questClears, 'quest.basin.003': 1 } } };
     expect(craftRankOpen(cleared, content, r)).toBe(true);
     const next = craft(cleared, r);
-    expect(next.weapons).toContain('weapon.heavy_blade.selvark.r2');
-    expect(next.weapons).not.toContain('weapon.heavy_blade.selvark.r1');
+    expect(next.weapons).toContain('weapon.heavy_blade.spinegale.r2');
+    expect(next.weapons).not.toContain('weapon.heavy_blade.spinegale.r1');
     expect(next.money).toBe(0);
-    const q = content.quests.get('quest.selvark.r2')!;
+    const q = content.quests.get('quest.spinegale.r2')!;
     for (const s of r.cost.items) expect(questMaterials(content, q).has(s.itemId), s.itemId).toBe(true);
   });
 
@@ -196,7 +138,7 @@ describe('系列の装備のデータ（#15 の初級・19 系列）', () => {
       c.recipes.set(r.id, { ...r, resultWeaponId: 'weapon.none' });
     })).toMatch(/結果の武器 weapon.none が無い/);
     expect(check((c) => {
-      const w = content.weapons.get('weapon.heavy_blade.bornakel.r1')!;
+      const w = content.weapons.get('weapon.heavy_blade.spinegale.r1')!;
       c.weapons.set(w.id, { ...w, rankId: 'rank.9' });
     })).toMatch(/級 rank.9 が無い/);
   });
@@ -206,14 +148,14 @@ describe('工房で作る（直接生産）', () => {
   const give = (doc: SaveDoc, items: Record<string, number>, money: number): SaveDoc => ({ ...doc, money, items: { ...doc.items, ...items } });
 
   it('素材と通貨を減らして持ち物に足す。装備は替えない。2 度は作れない。足りなければ何も変えない', () => {
-    const r = content.recipes.get('recipe.craft.weapon.bornakel.war_maul.r1')!;
+    const r = content.recipes.get('recipe.craft.weapon.spinegale.war_maul.r1')!;
     expect(r.kind).toBe('craft');
     const need = Object.fromEntries(r.cost.items.map((s) => [s.itemId, s.count]));
     const doc = give(newSave(content, STAMP), need, r.cost.money + 5);
     const before = JSON.stringify(doc);
     expect(checkCraft(doc, r).ok).toBe(true);
     const next = craft(doc, r);
-    expect(next.weapons).toContain('weapon.war_maul.bornakel.r1');
+    expect(next.weapons).toContain('weapon.war_maul.spinegale.r1');
     expect(next.equippedWeaponId).toBe(doc.equippedWeaponId);
     expect(next.money).toBe(5);
     for (const s of r.cost.items) expect(next.items[s.itemId] ?? 0).toBe(0);
@@ -224,19 +166,19 @@ describe('工房で作る（直接生産）', () => {
     expect(checkCraft(short, r).ok).toBe(false);
     expect(() => craft(short, r)).toThrow(/足りません/);
     // 防具も同じ: 持ち物に足し、身に着けない
-    const a = content.recipes.get('recipe.craft.armor.kohalgis.head.r1')!;
+    const a = content.recipes.get('recipe.craft.armor.frostald.head.r1')!;
     const adoc = give(newSave(content, STAMP), Object.fromEntries(a.cost.items.map((s) => [s.itemId, s.count])), a.cost.money);
     const anext = craft(adoc, a);
-    expect(anext.armor).toContain('armor.head.kohalgis.r1');
+    expect(anext.armor).toContain('armor.head.frostald.r1');
     expect(anext.equippedArmorIds).toEqual(adoc.equippedArmorIds);
   });
 
   it('級が開いていない物は作れない（その級の依頼が 1 つも受けられない）。初級は最初から開いている', () => {
-    const r = content.recipes.get('recipe.craft.weapon.orglass.long_blade.r1')!;
+    const r = content.recipes.get('recipe.craft.weapon.frostald.long_blade.r1')!;
     const doc = give(newSave(content, STAMP), Object.fromEntries(r.cost.items.map((s) => [s.itemId, s.count])), r.cost.money);
     expect(craftRankOpen(doc, content, r)).toBe(true);
     // 試しに、この武器を中級（rank.2）の物にする: 中級の依頼は、岩場の足音を達成するまで受けられない
-    const w = content.weapons.get('weapon.long_blade.orglass.r1')!;
+    const w = content.weapons.get('weapon.long_blade.frostald.r1')!;
     const c2: Content = { ...content, weapons: new Map(content.weapons) };
     c2.weapons.set(w.id, { ...w, rankId: 'rank.2' });
     expect(craftRankOpen(doc, c2, r)).toBe(false);
@@ -249,63 +191,43 @@ describe('工房で作る（直接生産）', () => {
   it('保存の管理役を通して作る: 1 回の書き込みで確定し、読み直しても残る', async () => {
     const b = new MemoryBackend();
     const m = await SaveManager.open(content, b, env);
-    const r = content.recipes.get('recipe.craft.weapon.razmer.ring_bow.r1')!;
+    const r = content.recipes.get('recipe.craft.weapon.spinegale.ring_bow.r1')!;
     await m.settle({ runId: 'eq-1', questId: 'quest.basin.003', money: r.cost.money, items: r.cost.items.map((s) => ({ itemId: s.itemId, count: s.count })) });
     const rev = m.doc.revision;
     expect(await m.craft(r.id)).toEqual({ ok: true });
     expect(m.doc.revision).toBe(rev + 1);
-    expect(m.doc.weapons).toContain('weapon.ring_bow.razmer.r1');
+    expect(m.doc.weapons).toContain('weapon.ring_bow.spinegale.r1');
     const again = await SaveManager.open(content, b, env);
-    expect(again.doc.weapons).toContain('weapon.ring_bow.razmer.r1');
+    expect(again.doc.weapons).toContain('weapon.ring_bow.spinegale.r1');
     expect((await again.craft(r.id)).ok).toBe(false);
   });
 });
 
 describe('作った武器で狩る', () => {
-  it('鐘嚢の断岳剣（攻撃力 92）の縦斬り: 92 × 1.05 × 0.70 = 67.62 → 67', () => {
-    const sim = new Simulation(content, baseOptions({ weaponId: 'weapon.heavy_blade.bornakel.r1' }));
+  it('氷冠断剣（フロストアルドの初級の断岳剣。攻撃力 80・氷 22）の縦斬り: 80 × 1.05 × 0.70 + 22 × 1.05 × 0.20 = 63.42 → 63', () => {
+    const w = content.weapons.get('weapon.heavy_blade.frostald.r1')!;
+    expect([w.name, w.attack, w.element, w.affinity]).toEqual(['氷冠断剣', 80, { type: 'ice', value: 22 }, 0]);
+    const sim = new Simulation(content, baseOptions({ weaponId: w.id }));
     placeInFrontOfHead(sim);
     run(sim, 100, (i) => (i === 0 ? press(Btn.Main) : frame()));
-    expect(sim.recentHits[0]!.damage).toBe(67);
+    expect(sim.recentHits[0]!.damage).toBe(63);
   });
 
-  it('硝殻の断岳剣（攻撃力 86・会心 25%）: 会心でない時は 63、会心の時は 86 × 1.05 × 0.70 × 会心の倍率', () => {
-    const seen = new Set<number>();
-    const critTo = Math.floor(86 * 1.05 * 0.7 * content.player.critMultiplier + 1e-9);
-    for (let seed = 1; seed <= 24; seed++) {
-      const sim = new Simulation(content, baseOptions({ seed, weaponId: 'weapon.heavy_blade.orglass.r1' }));
+  it('疾棘断剣（スパインゲイルの初級の断岳剣。攻撃力 82・会心 10%）: 会心でない時は 60、会心の時は 82 × 1.05 × 0.70 × 会心の倍率', () => {
+    const w = content.weapons.get('weapon.heavy_blade.spinegale.r1')!;
+    expect([w.name, w.attack, w.element.type, w.affinity]).toEqual(['疾棘断剣', 82, 'none', 10]);
+    const seen = new Map<number, number>();
+    const critTo = Math.floor(82 * 1.05 * 0.7 * content.player.critMultiplier + 1e-9);
+    for (let seed = 1; seed <= 120; seed++) {
+      const sim = new Simulation(content, baseOptions({ seed, weaponId: w.id }));
       placeInFrontOfHead(sim);
       run(sim, 100, (i) => (i === 0 ? press(Btn.Main) : frame()));
-      seen.add(sim.recentHits[0]!.damage);
+      const d = sim.recentHits[0]!.damage;
+      seen.set(d, (seen.get(d) ?? 0) + 1);
     }
-    expect([...seen].sort((a, b) => a - b)).toEqual([63, critTo]);
-  });
-});
-
-describe('上の級の依頼（v0.34.0）', () => {
-  it('中級のセルヴァルク: 中級の倍率で出て、剥ぎ取り・報酬は中級の素材だけ。中級の群れの幼体も、中級の素材を落とす', () => {
-    const r2 = content.ranks.get('rank.2')!;
-    const sim = new Simulation(content, baseOptions({ questId: 'quest.selvark.r2' }));
-    const m = sim.monsters[0]!;
-    expect(m.def.hp).toBe(Math.round(content.monsters.get('monster.selvark')!.hp * r2.monster.hpScale));
-    expect(sim.monsterAttackScale).toBe(r2.monster.attackScale);
-    m.hp = 0;
-    m.dead = true;
-    for (let i = 0; i < 30 && sim.hunt!.phase === 'active'; i++) sim.step(frame());
-    expect(sim.hunt!.phase).toBe('success');
-    for (let i = 0; i < 3; i++) sim.carve('body');
-    const r2mats = new Set([...content.materials.keys()].filter((k) => k.startsWith('mat.selvark.') && k.endsWith('.r2')));
-    expect(sim.hunt!.loot.length).toBeGreaterThan(0);
-    for (const l of sim.hunt!.loot) expect(r2mats.has(l.itemId), l.itemId).toBe(true);
-    // 群れ: 中級の依頼の幼体は、中級の倍率と中級の表
-    const pack = new Simulation(content, baseOptions({ questId: 'quest.palseit.pack.r2' }));
-    const j = pack.monsters.find((x) => x.herd)!;
-    expect(j.def.hp).toBe(Math.round(content.monsters.get('monster.palseit')!.hp * r2.monster.hpScale));
-    j.hp = 0;
-    j.dead = true;
-    pack.hunt!.carves[`body:${j.id}`] = 1;
-    pack.carve(`body:${j.id}`);
-    expect(pack.hunt!.loot.map((l) => l.itemId)).toHaveLength(1);
-    expect(pack.hunt!.loot[0]!.itemId).toMatch(/^mat\.palseit\.[a-z_]+\.r2$/);
+    expect([...seen.keys()].sort((a, b) => a - b)).toEqual([60, critTo]);
+    // 会心は 10% のあたり（120 回のうち 3〜24 回）
+    expect(seen.get(critTo)!).toBeGreaterThanOrEqual(3);
+    expect(seen.get(critTo)!).toBeLessThanOrEqual(24);
   });
 });

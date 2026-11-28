@@ -39,13 +39,10 @@ DATA = os.path.join(ROOT, 'public/data')
 OUT = os.path.join(DATA, 'equipment_series.json')
 SKILLS_OUT = os.path.join(DATA, 'skills.json')
 
-# 入れる系列（設計の series の id）。遊べる種（ガルドロスの他）。登録簿の順
-SERIES = [
-    'series.selvark', 'series.numeradon', 'series.bornakel', 'series.ashreia', 'series.lumisca', 'series.orglass',
-    'series.tengaro', 'series.verito', 'series.razmer', 'series.kirisave', 'series.velgait',
-    'series.kordopil', 'series.palseit', 'series.numaporon', 'series.chilumicana', 'series.kohalgis',
-    'series.mitogaron', 'series.yurtepica', 'series.hinasalv',
-]
+# 入れる系列（設計の series の id）。v0.75.0 で、白紙にした 19 種の系列を外した（利用者の指示。D-175）。いまは無い
+# （ガルドロスの防具の耐性と技能 armorTraits と、技能の一覧 skills.json は、これまでどおり、この道具が書く。
+#  スパインゲイル・フロストアルドの装備は、種ごとのファイル equipment_*.json が持つ）
+SERIES = []
 RANK = 1
 # 中級〜極級まで入れる系列（tools/design15.py）
 RANKED = {f'series.{sp}' for sp in D15.RANK_SPECIES}
@@ -129,11 +126,11 @@ def main():
         sys.exit('設計のデータの runtimeImportable が false でない（形が変わった？）')
     # いまある素材と、手に入る所
     mats = {}
-    for name in ('items.json', 'items_creatures.json'):
+    for name in ('items.json',):
         for m in load(name).get('materials', []):
             mats[m['id']] = m['name']
     obtain = set()
-    for name in ('loot.json', 'loot_creatures.json', 'quests_errands.json'):
+    for name in ('loot.json', 'quests_errands.json'):
         with open(os.path.join(DATA, name), encoding='utf-8') as f:
             obtain |= set(re.findall(r'"(mat\.[a-z0-9_.]+)"', f.read()))
     series = {s['id']: s for s in d['series']}
@@ -242,11 +239,12 @@ def main():
         profiles[p] = profiles.get(p, 0) + 1
     out = {
         'schemaVersion': 1,
-        'note': 'tools/gen-equipment.py（npm run equipment:gen）の出力。手で編集しない。ChatGPT の全装備四級版（Pull Request #15、docs/source/chatgpt-equipment-20261125/）のうち、'
-                f'遊べる種の {len(SERIES)} 系列（{"・".join(f"{PROFILE_NAMES[k]} {profiles[k]}" for k in PROFILE_NAMES if k in profiles)}）の初級と、そのうち {ranked} 系列（設計の上の級の狩場が風礫盆地）の中級〜極級の、'
-                f'武器 {len(weapons)}・防具 {len(armor)} と、作るレシピ {sum(1 for r in recipes if r["kind"] in ("craft", "armor_craft"))}・強化のレシピ {sum(1 for r in recipes if r["kind"] in ("upgrade", "armor_upgrade"))}、'
-                'これまでの防具（岩殻〜輝殻）の耐性と技能 armorTraits（docs/spec.md の 29 章・30 章・31 章、D-113・D-114・D-116）。'
-                '数値・素材・費用・耐性・技能は設計のまま。形の絵は、まだ入れていない（武器の形は里の武器、防具は里の服のまま）',
+        'note': 'tools/gen-equipment.py（npm run equipment:gen）の出力。手で編集しない。ChatGPT の全装備四級版（Pull Request #15、docs/source/chatgpt-equipment-20261125/）から作る。'
+                + (f'遊べる種の {len(SERIES)} 系列（{"・".join(f"{PROFILE_NAMES[k]} {profiles[k]}" for k in PROFILE_NAMES if k in profiles)}）の初級と、そのうち {ranked} 系列（設計の上の級の狩場が風礫盆地）の中級〜極級の、'
+                   f'武器 {len(weapons)}・防具 {len(armor)} と、作るレシピ {sum(1 for r in recipes if r["kind"] in ("craft", "armor_craft"))}・強化のレシピ {sum(1 for r in recipes if r["kind"] in ("upgrade", "armor_upgrade"))}、'
+                   if SERIES else 'v0.75.0 で、白紙にした 19 種の系列を外した（利用者の指示。D-175）ので、系列の武器・防具・レシピは無い。入っているのは、')
+                + 'これまでの防具（岩殻〜輝殻）の耐性と技能 armorTraits（docs/spec.md の 29 章・30 章・31 章、D-113・D-114・D-116）。'
+                '数値・耐性・技能は設計のまま',
         'source': 'docs/source/chatgpt-equipment-20261125/data/all-equipment.json',
         'weapons': weapons, 'armor': armor, 'recipes': recipes, 'armorTraits': armor_traits,
     }

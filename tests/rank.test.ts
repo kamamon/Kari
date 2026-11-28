@@ -50,31 +50,34 @@ describe('段階のデータ', () => {
     expect(ranks[0]!.monster).toEqual({ hpScale: 1, partScale: 1, attackScale: 1, cooldownScale: 1 });
   });
 
-  it('ガルドロスの依頼は段階ごとに 1 件。上の段階は、1 つ下の依頼の達成が条件。ほかの 11 種は初級 1 件ずつ、群れの依頼は 9 件で、最初から受けられる（v0.18.0）。セルヴァルク・コルドピル・パルセイトは中級〜極級も（v0.34.0。ガルドロスの段の道で開く）', () => {
+  it('ガルドロスの依頼は段階ごとに 1 件。上の段階は、1 つ下の依頼の達成が条件。スパインゲイルとフロストアルドは初級〜上級で、ガルドロスの段の道と、自分の 1 つ下の依頼で開く（v0.75.0 で、白紙にした 19 種の依頼を外した。D-175）', () => {
     expect(QUESTS.map((id) => content.quests.get(id)!.rankId)).toEqual(['rank.1', 'rank.2', 'rank.3', 'rank.4']);
     expect(QUESTS.map((id) => content.quests.get(id)!.requires ?? [])).toEqual([[], ['quest.basin.003'], ['quest.basin.r2.001'], ['quest.basin.r3.001']]);
     const others = [...content.quests.values()].filter((q) => q.kind !== 'gather' && q.targetMonsterId !== 'monster.galdros');
     const first = others.filter((q) => q.rankId === 'rank.1');
-    expect(first.filter((q) => !q.targets)).toHaveLength(13);
-    expect(first.filter((q) => q.targets)).toHaveLength(9);
-    for (const q of first) expect(q.requires ?? []).toEqual(q.id === 'quest.frostald.r1' ? ['quest.spinegale.r1'] : q.id === 'quest.spinegale.r1' ? ['quest.basin.003'] : []);
-    // 上の級（v0.34.0）: 3 種 × 中級〜極級。級を開く依頼は、ガルドロスの 1 つ下の段の依頼
+    expect(first.map((q) => q.id).sort()).toEqual(['quest.frostald.r1', 'quest.spinegale.r1']);
+    // 群れの依頼（targets）は、いまは無い
+    expect(others.filter((q) => q.targets)).toEqual([]);
+    for (const q of first) expect(q.requires ?? []).toEqual(q.id === 'quest.frostald.r1' ? ['quest.spinegale.r1'] : ['quest.basin.003']);
+    // 上の級: 級を開く依頼は、ガルドロスの 1 つ下の段の依頼
     const upper = others.filter((q) => q.rankId !== 'rank.1');
-    expect(upper.map((q) => q.id).sort()).toEqual(['quest.frostald.r2', 'quest.frostald.r3', 'quest.kordopil.pack.r2', 'quest.kordopil.pack.r3', 'quest.kordopil.pack.r4', 'quest.palseit.pack.r2', 'quest.palseit.pack.r3', 'quest.palseit.pack.r4', 'quest.selvark.r2', 'quest.selvark.r3', 'quest.selvark.r4', 'quest.spinegale.r2', 'quest.spinegale.r3']);
+    expect(upper.map((q) => q.id).sort()).toEqual(['quest.frostald.r2', 'quest.frostald.r3', 'quest.spinegale.r2', 'quest.spinegale.r3']);
     const gate: Record<string, string> = { 'rank.2': 'quest.basin.003', 'rank.3': 'quest.basin.r2.001', 'rank.4': 'quest.basin.r3.001' };
-    for (const q of upper) expect(q.requires, q.id).toEqual(q.id.startsWith('quest.frostald.') ? [gate[q.rankId], `quest.frostald.r${Number(q.rankId.split('.')[1])-1}`] : q.id.startsWith('quest.spinegale.') ? [gate[q.rankId], `quest.spinegale.r${Number(q.rankId.split('.')[1])-1}`] : [gate[q.rankId]]);
-    // 狩りの依頼 33 件と、狩らない依頼 5 件（v0.27.0。初級・最初から受けられる）
+    for (const q of upper) expect(q.requires, q.id).toEqual([gate[q.rankId], `${q.id.slice(0, q.id.lastIndexOf('.r'))}.r${Number(q.rankId.split('.')[1]) - 1}`]);
+    // 狩りの依頼 10 件と、狩らない依頼（盆地の 5 件は、初級・最初から受けられる。v0.27.0。ほかは地域の採取）
     const errands = [...content.quests.values()].filter((q) => q.kind === 'gather' && !q.gather?.fieldGathering);
     for (const q of errands) expect([q.rankId, q.requires ?? []]).toEqual(['rank.1', []]);
-    expect([content.quests.size, errands.length]).toEqual([128, 5]);
+    expect([content.quests.size, errands.length]).toEqual([99, 5]);
   });
 
   it('段階ごとに、その段階からしか出ない素材が 2 つずつある。初級の 4 種は初級から出る', () => {
     const rankOf = materialRanks(content);
-    // ガルドロスの素材（ほかの 11 種は初級だけ。素材は 4 つずつ。幼体 8 種は初級だけで、2〜3 つずつ）
+    // ガルドロスの素材
     const from = (order: number): string[] => [...rankOf].filter(([id, o]) => o === order && id.startsWith('mat.galdros.')).map(([id]) => content.materials.get(id)!.name).sort();
-    // ほかの 11 種 44・幼体 23・採集と採掘 4（v0.27.0）
-    expect([...rankOf].filter(([id, o]) => !id.startsWith('mat.galdros.') && o === 1)).toHaveLength(44 + 23 + 15 + 19 * 5 + 6 + 11);
+    // ガルドロスのほかで、初級から出る素材: 127（採集と採掘・地域の採取・スパインゲイルとフロストアルドの初級の素材。
+    // v0.75.0 で、白紙にした 19 種の素材 67（大型 11 種 44・幼体 23）を外した）
+    expect([...rankOf].filter(([id, o]) => !id.startsWith('mat.galdros.') && o === 1)).toHaveLength(15 + 19 * 5 + 6 + 11);
+    expect([...content.materials.keys()].filter((id) => /^mat\.(selvark|numeradon|bornakel|ashreia|lumisca|orglass|tengaro|verito|razmer|kirisave|velgait|kordopil|palseit|numaporon|chilumicana|kohalgis|mitogaron|yurtepica|hinasalv)\./.test(id))).toEqual([]);
     expect(from(1)).toEqual(['前脚甲', '岩殻片', '硬骨', '青銅晶脈'].sort());
     expect(from(2)).toEqual(['尾端晶', '脈岩殻'].sort());
     expect(from(3)).toEqual(['晶岩殻', '青銅晶塊'].sort());

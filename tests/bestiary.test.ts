@@ -1,6 +1,7 @@
 // モンスターの登録簿（図鑑）と、ChatGPT の案の取り込み（v0.13.0、docs/spec.md 20 章）。
 // v0.15.0: 依頼 9 の返事（86 種と、狩場の案 14）を取り込んだ。狩場の案（fields）も、登録簿に持つ。
 // 案は機械で検査し、決まりに合わない種が 1 つでもあれば、登録簿は変えない。
+// v0.75.0（利用者の指示。D-173・D-175）: 白紙にした種を外した。登録簿は、ゲームに居る 3 種だけ（モンスターは 1 匹ずつ足す）。
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -30,90 +31,62 @@ const reject = (edit: (s: Partial<SpeciesDef>, all: Partial<SpeciesDef>[]) => vo
   return r.errors.join('\n');
 };
 
-/** はじめの 13 種（初級の大型）。id・番号・名前・骨格・原画は、案を取り込んでも変えない */
-const FIRST_13: [string, string, string, string | null][] = [
+/** いま居る種（入った順）。id・名前・骨格・原画 */
+const SPECIES: [string, string, string, string | null][] = [
   ['monster.galdros', '岩殻獣 ガルドロス', 'frame.quad_heavy', 'galdros/galdros_left_v1.png'], // v0.24.0: 採用した設定図（左の側面）を図鑑へ
-  ['monster.selvark', '帆角獣 セルヴァルク', 'frame.quad_light', 'monster_02_selvark_concept_v2.png'],
-  ['monster.numeradon', '泥冠獣 ヌメラドン', 'frame.quad_heavy', 'monster_03_numeradon_concept_v2.png'],
-  ['monster.bornakel', '鐘嚢獣 ボルナケル', 'frame.quad_heavy', 'monster_04_bornakel_concept_v2.png'],
-  ['monster.ashreia', '灰帷鳥 アシュレイア', 'frame.biped_wing', 'monster_05_ashreia_concept_v2.png'],
-  ['monster.lumisca', '燐尾鳥 ルミスカ', 'frame.biped_wing', 'monster_06_lumisca_concept_v2.png'],
-  ['monster.orglass', '硝殻蟹 オルグラス', 'frame.crust_six', 'monster_07_orglass_concept_v2.png'],
-  ['monster.tengaro', '鉤輪蟲 テンガロ', 'frame.crust_many', 'monster_08_tengaro_concept_v2.png'],
-  ['monster.verito', '絹霧蟲 ヴェリト', 'frame.crust_many', 'monster_09_verito_concept_v2.png'],
-  ['monster.razmer', '環骨蛇 ラズメル', 'frame.long', 'monster_10_razmer_concept_v2.png'],
-  ['monster.kirisave', '氷帆蛇 キリサーヴ', 'frame.long', 'monster_11_kirisave_concept_v2.png'],
-  ['monster.velgait', '霧灯獣 ヴェルガイト', 'frame.quad_light', 'monster_12_velgait_concept_v2.png'],
-  ['monster.embarg', '熾炉獣 エンバルグ', 'frame.quad_heavy', 'monster_13_embarg_concept_v2.png'],
+  ['monster.spinegale', '疾棘竜 スパインゲイル', 'frame.biped_wing', 'spinegale_concept_v1.webp'],
+  ['monster.frostald', '氷冠獣 フロストアルド', 'frame.quad_heavy', 'frostald_concept.webp'],
 ];
 
 describe('登録簿のデータ', () => {
-  it('88 種（成体 80・幼体 8）が入っていて、どの種も、生態 8 項目・器官・部位・素材と、絵までそろっている。遊べるのは、はじめの 12 種と幼体 8 種（v0.18.0）', () => {
+  it('3 種（ガルドロス・スパインゲイル・フロストアルド）が入っていて、どれも遊べる。生態 8 項目・器官・部位・素材と、絵までそろっている。番号は入った順', () => {
     const b = content.bestiary;
     expect(validateBestiary(b, env)).toEqual([]);
     // 受け取る案と同じ厳しさで、全部の種を見ても、合わない所が無い
     expect(validateBestiary(b, env, () => true)).toEqual([]);
-    expect(b.species.length).toBe(88);
-    expect(b.species.filter((s) => s.class !== 'juvenile').length).toBe(80);
-    expect(b.species.filter((s) => s.class === 'juvenile').length).toBe(8);
-    expect(b.species.filter((s) => s.state === 'implemented').map((s) => s.no)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 87, 88]);
-    // v0.24.0: ChatGPT の原画案 73 枚（14〜86）を受け取った。体の無い種は、どれも「原画あり」（採用待ち）
-    expect(b.species.filter((s) => s.state === 'art').length).toBe(66);
-    expect(b.species.filter((s) => s.state === 'art').map((s) => s.no)).toEqual([13, ...Array.from({ length: 65 }, (_, i) => i + 22)]);
-    expect(b.species.filter((s) => s.state === 'planned').length).toBe(0);
-    expect(b.species.every((s) => s.art)).toBe(true);
-    expect(b.species.map((s) => s.no)).toEqual(Array.from({ length: 88 }, (_, i) => i + 1));
+    expect(b.species.map((s) => [s.id, `${s.title} ${s.name}`, s.frame, s.art ?? null])).toEqual(SPECIES);
+    expect(b.species.map((s) => s.no)).toEqual([1, 2, 3]);
+    expect(b.species.every((s) => s.state === 'implemented' && s.rank === 'rank.1' && s.class === 'large' && s.variant === 'base')).toBe(true);
+    // 登録簿の種 = 遊べる種（訓練標的は、登録簿に入れない）
+    expect(new Set(b.species.map((s) => s.id))).toEqual(new Set([...content.monsters.keys()].filter((id) => id !== 'monster.training_dummy')));
   });
 
-  it('はじめの 13 種は、id・番号・名前・骨格・原画・段階が、案を取り込む前のまま', () => {
-    const first = content.bestiary.species.slice(0, 13);
-    expect(first.map((s) => [s.id, `${s.title} ${s.name}`, s.frame, s.art ?? null])).toEqual(FIRST_13);
-    expect(first.every((s) => s.rank === 'rank.1' && s.class === 'large' && s.variant === 'base')).toBe(true);
-  });
-
-  it('数は、計画どおり: 初級 13、中級 20（亜種 8・超大型 3）、上級 25（希少種 8・亜種 5・超大型 3）、極級 20（希少種 5・超大型 4）', () => {
-    expect(content.bestiary.plan).toEqual({ 'rank.1': 15, 'rank.2': 20, 'rank.3': 25, 'rank.4': 20 });
+  it('数の計画は持たない: plan は、いま入っている数（初級 3、ほかは 0）。幼体・亜種・希少種・超大型は居ない', () => {
+    expect(content.bestiary.plan).toEqual({ 'rank.1': 3, 'rank.2': 0, 'rank.3': 0, 'rank.4': 0 });
     const c = bestiaryCounts(content.bestiary, env.ranks);
-    expect(c.map((x) => [x.have, x.plan])).toEqual([[15, 15], [20, 20], [25, 25], [20, 20]]);
-    expect(c.map((x) => [x.subspecies, x.rare, x.huge, x.juveniles])).toEqual([[0, 0, 0, 8], [8, 0, 3, 0], [5, 8, 3, 0], [0, 5, 4, 0]]);
+    expect(c.map((x) => [x.have, x.plan])).toEqual([[3, 3], [0, 0], [0, 0], [0, 0]]);
+    expect(c.map((x) => [x.subspecies, x.rare, x.huge, x.juveniles])).toEqual([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);
   });
 
-  it('ガルドロスは無属性で、弱点は火、雷に強い。初級の火の持ち主はエンバルグだけ', () => {
+  it('ガルドロスは無属性で、弱点は火、雷に強い。フロストアルドは氷で、弱点は火と雷', () => {
     const g = content.bestiary.species.find((s) => s.id === 'monster.galdros')!;
     expect([g.elements, g.weak, g.resist]).toEqual([['none'], ['fire'], ['thunder']]);
-    expect(content.bestiary.species.filter((s) => s.rank === 'rank.1' && s.class === 'large' && s.elements.includes('fire')).map((s) => s.name)).toEqual(['エンバルグ']);
-  });
-
-  it('複合属性は、上級に 3 種、極級に 8 種。幼体は 8 種とも、初級の大型の子で、群れの数を持つ', () => {
-    const sp = content.bestiary.species;
-    const compound = (rank: string): number => sp.filter((s) => s.rank === rank && s.elements.length === 2).length;
-    expect([compound('rank.1'), compound('rank.2'), compound('rank.3'), compound('rank.4')]).toEqual([0, 0, 3, 8]);
-    const first = new Set(FIRST_13.map((x) => x[0]));
-    for (const j of sp.filter((s) => s.class === 'juvenile')) {
-      expect(first.has(j.baseId!), j.id).toBe(true);
-      expect(j.pack![0], j.id).toBeGreaterThanOrEqual(2);
+    const f = content.bestiary.species.find((s) => s.id === 'monster.frostald')!;
+    expect([f.elements, f.weak, f.resist]).toEqual([['ice'], ['fire', 'thunder'], ['ice']]);
+    // 登録簿の属性・弱点・耐性は、遊べるデータと同じ
+    for (const s of content.bestiary.species) {
+      const m = content.monsters.get(s.id)!;
+      expect([m.element ?? 'none', m.weak ?? [], m.resist ?? []], s.id).toEqual([s.elements[0], s.weak, s.resist]);
     }
   });
 
-  it('一緒に出る相手（2 体の狩りの組）は 17 組。どの組も、同じ狩場に居る', () => {
+  it('一緒に出る相手（2 体の狩りの組）は、居る種どうしだけ。同じ狩場に居る', () => {
     const sp = content.bestiary.species;
     const byId = new Map(sp.map((s) => [s.id, s]));
-    const pairs = new Set<string>();
     for (const s of sp) for (const p of s.pairs ?? []) {
-      pairs.add([s.id, p].sort().join(' + '));
+      expect(byId.has(p), `${s.id} + ${p}`).toBe(true);
       expect(byId.get(p)!.habitat, `${s.id} + ${p}`).toBe(s.habitat);
     }
-    expect(pairs.size).toBe(17);
   });
 
-  it('狩場の案は 20。20 地域を採取用に歩ける。どの種の狩場も、この一覧にあり、どの狩場にも種が居る', () => {
+  it('狩場の一覧は 21 で、どれも歩ける。どの種の狩場も、この一覧にある（種が居るのは、風礫盆地と白霧氷谷）', () => {
     const b = content.bestiary;
     expect(b.fields.length).toBe(21);
     expect(b.fields.filter((f) => f.fieldId)).toHaveLength(21);
     for(const f of b.fields) expect(content.fields.get(f.fieldId!)?.name).toBe(f.name);
     const names = new Set(b.fields.map((f) => f.name));
     for (const s of b.species) expect(names.has(s.habitat), s.id).toBe(true);
-    for (const f of b.fields) expect(b.species.some((s) => s.habitat === f.name), f.name).toBe(true);
+    expect(b.fields.filter((f) => b.species.some((s) => s.habitat === f.name)).map((f) => f.name)).toEqual(['風礫盆地', '白霧氷谷']);
     expect(b.fields.every((f) => f.terrain.length > 5)).toBe(true);
   });
 
@@ -126,8 +99,7 @@ describe('登録簿のデータ', () => {
 
   it('「実装済み」と書いた種が、遊べるデータに無ければ、検査で分かる', () => {
     const b = base();
-    const embarg = b.species.find((s) => s.id === 'monster.embarg')!;
-    embarg.state = 'implemented';
+    b.species.push({ ...clone(b.species[0]!), id: 'monster.nowhere', no: 4, title: '無居獣', name: 'ノーウェア', state: 'implemented' });
     expect(validateBestiary(b, env).join('\n')).toContain('public/data/monsters/ に無い');
   });
 });
@@ -139,32 +111,32 @@ describe('案の取り込み', () => {
     expect(r.added).toEqual(['monster.test_base', 'monster.test_galdros_sub', 'monster.test_galdros_child']);
     expect(r.updated).toEqual([]);
     const added = r.bestiary.species.filter((s) => s.id.startsWith('monster.test_'));
-    expect(added.map((s) => s.no)).toEqual([89, 90, 91]);
+    expect(added.map((s) => s.no)).toEqual([4, 5, 6]);
     expect(added.every((s) => s.state === 'planned' && s.source === 'chatgpt:test')).toBe(true);
     expect(r.bestiary.frames.find((f) => f.id === 'frame.test_hopper')).toMatchObject({ name: '跳脚獣', built: false });
     expect(validateBestiary(r.bestiary, env)).toEqual([]);
     // 数: 中級に 2 種（原種 1・亜種 1）。幼体は、種の数に入れない
     const c = bestiaryCounts(r.bestiary, env.ranks);
-    expect(c[1]).toMatchObject({ have: 22, large: 19, subspecies: 9 });
-    expect(c[0]).toMatchObject({ have: 15, juveniles: 9 });
+    expect(c[1]).toMatchObject({ have: 2, large: 2, subspecies: 1 });
+    expect(c[0]).toMatchObject({ have: 3, juveniles: 1 });
     // 案に書いた新しい狩場も入る（v0.15.0。それまでは、検査を通るのに、黙って捨てていた）
     expect(r.addedFields).toEqual(['試しの原']);
     expect(r.bestiary.fields.find((f) => f.name === '試しの原')).toEqual({ name: '試しの原', terrain: '検査用', mood: '検査用', source: 'chatgpt:test' });
     // もとの登録簿は変えない
-    expect(content.bestiary.species.length).toBe(88);
+    expect(content.bestiary.species.length).toBe(3);
     expect(content.bestiary.fields.length).toBe(21);
   });
 
   it('いまある種の書き直し（生態を足す）は、番号・状態・原画の印を残して、上書きする', () => {
-    const inc = { species: [{ ...clone(content.bestiary.species[1]!), organ: '帆のように開く角膜', moves: ['横跳び', '風圧', '角膜の突き'], parts: ['頭', '角膜'], gear: '帆膜・弾性腱 / 回避', state: 'planned' as const, art: 'x.png',
+    const inc = { species: [{ ...clone(content.bestiary.species[1]!), organ: '熱を逃がす喉の皮膜', moves: ['突進', '尾払い', '喉袋の威嚇'], parts: ['頭', '喉袋'], gear: '棘鱗・喉膜 / 回避', state: 'planned' as const, art: 'x.png',
       ecology: { diet: 'a。', behavior: 'b。', territory: 'c。', rhythm: 'd。', nest: 'e。', relations: 'f。', juvenile: 'g。', signs: 'h。' } }] };
     const r = mergeBestiary(base(), inc, env, 'chatgpt:test');
     expect(r.errors).toEqual([]);
-    expect(r.updated).toEqual(['monster.selvark']);
-    const s = r.bestiary.species.find((x) => x.id === 'monster.selvark')!;
+    expect(r.updated).toEqual(['monster.spinegale']);
+    const s = r.bestiary.species.find((x) => x.id === 'monster.spinegale')!;
     expect(s.ecology!.diet).toBe('a。');
-    // 案の側で「案」「原画」と書いてあっても、事実（v0.17.0 で実装済み）は変えない
-    expect([s.no, s.state, s.art]).toEqual([2, 'implemented', 'monster_02_selvark_concept_v2.png']);
+    // 案の側で「案」「原画」と書いてあっても、事実（実装済み）は変えない
+    expect([s.no, s.state, s.art]).toEqual([2, 'implemented', 'spinegale_concept_v1.webp']);
   });
 
   it('生態・器官・部位・素材が欠けた案は、断る（どの種の、何が無いかを言う）', () => {
@@ -223,7 +195,7 @@ describe('案の取り込み', () => {
     const r = mergeBestiary(base(), inc, env, 't');
     expect(r.errors.length).toBe(1);
     expect(r.added).toEqual([]);
-    expect(r.bestiary.species.length).toBe(88);
+    expect(r.bestiary.species.length).toBe(3);
   });
 
   it('狩場の決まり: 種の狩場は、狩場の一覧に無ければ断る。地形の無い狩場・見本の例・同じ名前 2 つも断る（どれも、何も入れない）', () => {
@@ -288,11 +260,12 @@ describe('取り込みの道具（npm run bestiary:import）', () => {
     }
   };
 
-  it('--check: いまの登録簿を検査して、段階ごとの数を出す（計画の数に届いているので、「あと何種」は出ない）', () => {
+  it('--check: いまの登録簿を検査して、段階ごとの数を出す（数の計画は無いので、「あと何種」は出ない）', () => {
     const r = run('--check');
     expect(r.code).toBe(0);
-    expect(r.out).toContain('登録簿は決まりどおりです（88 種、狩場の案 21）');
-    expect(r.out).toContain('中級: 20 / 20 種　大型 17・超大型 3・亜種 8・希少種 0');
+    expect(r.out).toContain('登録簿は決まりどおりです（3 種、狩場の案 21）');
+    expect(r.out).toContain('初級: 3 種　大型 3・超大型 0・亜種 0・希少種 0');
+    expect(r.out).not.toContain('多い');
     expect(r.out).not.toContain('あと');
   });
 
@@ -301,8 +274,8 @@ describe('取り込みの道具（npm run bestiary:import）', () => {
     const r = run('tests/fixtures/bestiary-sample.json', '--dry', '--source', 'chatgpt:検査');
     expect(r.code).toBe(0);
     expect(r.out).toContain('足す種 3、書き換える種 0');
-    expect(r.out).toContain('+  089 試跳獣 テストホップ（中級・大型）');
-    expect(r.out).toContain('+  091 岩殻仔 ガルドロスの幼体（初級・幼体）');
+    expect(r.out).toContain('+  004 試跳獣 テストホップ（中級・大型）');
+    expect(r.out).toContain('+  006 岩殻仔 ガルドロスの幼体（初級・幼体）');
     expect(r.out).toContain('足す狩場 1、書き換える狩場 0');
     expect(r.out).toContain('+  狩場 試しの原');
     expect(r.out).toContain('（--dry: 書き込んでいません）');
@@ -316,7 +289,7 @@ describe('取り込みの道具（npm run bestiary:import）', () => {
     expect(r.code).toBe(0);
     expect(r.out).toContain('（登録簿 public/data/bestiary.json は変えていません）');
     const written = JSON.parse(readFileSync(out, 'utf8')) as BestiaryDef;
-    expect(written.species.length).toBe(91);
+    expect(written.species.length).toBe(6);
     expect(written.fields.length).toBe(22);
     expect(written.fields.at(-1)).toMatchObject({ name: '試しの原', terrain: '検査用' });
     expect(validateBestiary(written, env)).toEqual([]);

@@ -264,9 +264,9 @@ describe('ガルドロスの動き（#19 の M01・M02。v0.41.0）', () => {
     expect(first[0]).not.toMatch(/turn_/);
   });
 
-  it('大型 13 種とも、足を踏み替える向き直り（左右 90°・180°）を持ち、判定は無い。幼体は持たない（v0.65.0。D-162）', () => {
+  it('大型 3 種（ガルドロス・スパインゲイル・フロストアルド）とも、足を踏み替える向き直り（左右 90°・180°）を持ち、判定は無い（v0.65.0。D-162。v0.75.0 で、生成の体の 19 種を外した）', () => {
     const large = [...content.monsters.values()].filter((d) => d.captureAllowed);
-    expect(large).toHaveLength(14);
+    expect(large.map((d) => d.id).sort()).toEqual(['monster.frostald', 'monster.galdros', 'monster.spinegale']);
     for (const d of large) {
       const ts = d.turnSteps;
       expect(ts, d.id).toBeTruthy();
@@ -286,8 +286,8 @@ describe('ガルドロスの動き（#19 の M01・M02。v0.41.0）', () => {
     for (const d of content.monsters.values()) if (!d.captureAllowed) expect(d.turnSteps, d.id).toBeUndefined();
   });
 
-  it('セルヴァルクも、待ち時間の間に横へ回り込まれると、左へ 90° 回り、回り終わるまで狩人を追わない', () => {
-    const sim = new Simulation(content, baseOptions({ questId: 'quest.selvark.r1' }));
+  it('スパインゲイルも、待ち時間の間に横へ回り込まれると、左へ 90° 回り、回り終わるまで狩人を追わない', () => {
+    const sim = new Simulation(content, baseOptions({ questId: 'quest.spinegale.r1' }));
     const m = sim.monsters[0]!;
     m.aware = true;
     m.cooldown = 200;
@@ -297,11 +297,11 @@ describe('ガルドロスの動き（#19 の M01・M02。v0.41.0）', () => {
     sim.player.pos = { x: m.pos.x + Math.sin(m.yaw + Math.PI / 2) * 6, y: 0, z: m.pos.z + Math.cos(m.yaw + Math.PI / 2) * 6 };
     sim.player.prevPos = { ...sim.player.pos };
     const ev = run(sim, 1);
-    expect(startsOf(ev)).toEqual(['monster.selvark.turn_l90']);
+    expect(startsOf(ev)).toEqual(['monster.spinegale.turn_l']);
     // 回っている間に右へ回り込んでも、回る量は変わらない
     sim.player.pos = { x: m.pos.x - Math.sin(y0 + Math.PI / 2) * 6, y: 0, z: m.pos.z - Math.cos(y0 + Math.PI / 2) * 6 };
     sim.player.prevPos = { ...sim.player.pos };
-    run(sim, content.actions.get('monster.selvark.turn_l90')!.durationTicks - 1);
+    run(sim, content.actions.get('monster.spinegale.turn_l')!.durationTicks - 1);
     expect(m.action).toBeNull();
     expect(yawDiff(m.yaw, y0) / (Math.PI / 180)).toBeCloseTo(90, 6);
   });
@@ -339,10 +339,10 @@ describe('ガルドロスの動き（#19 の M01・M02。v0.41.0）', () => {
     expect(m.pos.z).toBeLessThanOrEqual(b.maxZ - m.def.bodyRadius + 1e-6);
   });
 
-  // v0.66.0（#19 の M02。D-163）: ほかの大型の、長く走る突進 7 つにも、ガルドロスと同じ制動
-  // v0.68.0（D-166）: テンガロの転がる突進も（輪の向きは描画が元の向きへ揺り戻す）
-  const CHARGES: [string, string][] = [['selvark', 'charge'], ['numeradon', 'charge'], ['bornakel', 'charge'], ['orglass', 'charge'], ['tengaro', 'roll_straight'], ['razmer', 'crawl_charge'], ['kirisave', 'slide_long'], ['velgait', 'charge']];
-  it('突進の制動は、ほかの大型の長い突進 8 つにも（壁の 3m 手前から走らせると、走る間に 1 度だけ走る区間の終わりへ進め、壁を越えない）', () => {
+  // v0.66.0〜v0.68.0（D-163・D-166）で、生成の体の大型の長い突進 8 つにも同じ制動を付けて、ここで確かめていた。v0.75.0（D-175）で、その 8 種を外した。
+  // いまは、制動を持って届いた種の技（スパインゲイルの突進、フロストアルドの体当たりと滑走）を、同じ決まりで見る
+  const CHARGES: [string, string][] = [['spinegale', 'dash'], ['frostald', 'body_ram'], ['frostald', 'slide']];
+  it('突進の制動は、ほかの大型の長い突進にも（壁の 3m 手前から走らせると、走る間に 1 度だけ走る区間の終わりへ進め、壁を越えない）', () => {
     for (const [sp, name] of CHARGES) {
       const id = `monster.${sp}.${name}`;
       const def = content.actions.get(id)!;
@@ -646,8 +646,8 @@ describe('ほかの種の転倒・気絶の、攻撃を受ける部位の追従�
   };
   const species = (): string[] => [...content.monsters.values()].filter((d) => d.id !== 'monster.training_dummy' && d.id !== 'monster.galdros').map((d) => d.id);
 
-  it('どの種も、転倒・怯み・気絶の表を持つ（転倒する部位の無いキリサーヴは、怯みと気絶だけ）', () => {
-    expect(species()).toHaveLength(21);
+  it('どの種も、転倒・怯み・気絶の表を持つ（v0.75.0 から、ここで見るのはスパインゲイルとフロストアルド）', () => {
+    expect(species().sort()).toEqual(['monster.frostald', 'monster.spinegale']);
     for (const id of species()) {
       const d = content.monsters.get(id)!;
       const st = d.follow!.states;

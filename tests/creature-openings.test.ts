@@ -4,13 +4,14 @@
 //   - 区間の間、その部位の下の端は 1.6m 以下（どの武器の基本の斬り・突きも届く高さ）で、形の端は 1 tick に 2cm より動かない
 //   - 技が選ばれる位置から前転 1 回で届く、当たらない所へ避けた狩人が、区間が終わる前に、その部位へ斬りを当てられる
 //     （護刃の主の斬り。大技は、断岳剣の縦斬りも）
-//   隙を作らない技（退きながら当てる技）は、ここに理由を書く。
+//   v0.75.0（利用者の指示。D-175）で、生成の体の 19 種を外した。ここで確かめるのは、動きを変えずに、いまの動きで決まりを満たす区間だけを書いた
+//   2 種（ガルドロスとスパインゲイル）。フロストアルドの区間は届いたまま（決まりを満たさない技がある）で、ここに入れていない（docs/monster-openings.md）。
+//   これから足される種を入れる時は、KEPT に足す（技の全部に区間が要る種は、技の数と、隙を作らない技の理由もここに書く）。
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { ActionDef, Content, MonsterDef } from '../src/data/schemas';
 import { newRun } from '../src/game/action';
 import { Simulation } from '../src/game/sim';
 import { trackSegment } from '../src/game/tracks';
-import { CREATURE_PLANS } from '../src/render/creaturePlans';
 import { firstCounter, partTrace, type HunterKind } from './openingLab';
 import { baseOptions, frame, loadContent } from './helpers';
 
@@ -24,21 +25,10 @@ const OPEN_MIN = 20, OPEN_HEAVY_MIN = 30;
 /** 部位の下の端の高さの上限（m）と、形の端が 1 tick に動いてよい距離（m） */
 const LOW_Y = 1.6, STILL = 0.02;
 
-/** 隙を作らない技と、その理由（tools/monster_moves.py の open=False と同じ） */
-const NO_OPENING: Record<string, string> = {
-  'monster.selvark.back_flip': '後ろへ跳び退きながら前脚で払う（離れる技）',
-  'monster.lumisca.chain_discharge': '6m より遠くの相手へ撃つ技（近づく間が無い）',
-  'monster.tengaro.para_rain': '6m より遠くの相手へ撃つ技（近づく間が無い）',
-  'monster.kirisave.ice_burst': '6m より遠くの相手へ撃つ技（近づく間が無い）',
-  'monster.velgait.mist_volley': '7m より遠くの相手へ撃つ技（近づく間が無い）',
-};
-
-/** monsters:gen で作る大型 11 種（設計図 CREATURE_PLANS のある種。ガルドロスとスパインゲイルは、体と動きを別に作った種。下で別に見る） */
-const generated = (): MonsterDef[] => [...content.monsters.values()].filter((m) => !m.herd && m.turnSteps && !!CREATURE_PLANS[m.id]);
 /** 動きを変えずに、いまの動きで決まりを満たす区間だけを書いた種（専用の体のガルドロスと、GLB のスパインゲイル） */
 const KEPT = ['monster.galdros', 'monster.spinegale'];
 /** 決まりを確かめる種の全部 */
-const all = (): MonsterDef[] => [...generated(), ...KEPT.map((id) => content.monsters.get(id)!)];
+const all = (): MonsterDef[] => KEPT.map((id) => content.monsters.get(id)!);
 const attacksOf = (m: MonsterDef): ActionDef[] => [...content.actions.values()].filter((a) => a.actionId.startsWith(`${m.id}.`) && (a.hitWindows.length > 0 || (a.hazards?.length ?? 0) > 0));
 const damageOf = (a: ActionDef): number => Math.max(0, ...a.hitWindows.map((h) => h.baseDamage ?? 0), ...(a.hazards ?? []).map((h) => h.baseDamage ?? 0));
 const isHeavy = (m: MonsterDef, a: ActionDef): boolean => damageOf(a) >= 0.9 * Math.max(...attacksOf(m).map(damageOf));
@@ -47,27 +37,6 @@ const isHeavy = (m: MonsterDef, a: ActionDef): boolean => damageOf(a) >= 0.9 * M
 const best = (m: MonsterDef, a: ActionDef, hunter: HunterKind): ReturnType<typeof firstCounter> => firstCounter(content, m.id, a.actionId, a.opening!.partId, a.opening!.to, hunter);
 
 describe('後隙の反撃（v0.73.0。D-171）', () => {
-  it('大型 11 種の攻撃の技は、どれも後隙に狙える部位の区間を持つ（隙を作らない技は、理由を書いたものだけ）', () => {
-    const species = generated();
-    expect(species.length).toBe(11);
-    const missing: string[] = [];
-    let n = 0;
-    for (const m of species) {
-      for (const a of attacksOf(m)) {
-        if (a.opening) n++;
-        else if (!NO_OPENING[a.actionId]) missing.push(a.actionId);
-        if (a.opening && NO_OPENING[a.actionId]) missing.push(`${a.actionId}（隙が無いと書いてあるのに、区間がある）`);
-      }
-    }
-    expect(missing).toEqual([]);
-    for (const id of Object.keys(NO_OPENING)) expect(content.actions.has(id), id).toBe(true);
-    // 隙を作らない技は、種ごとに 2 つまで
-    for (const m of species) expect(Object.keys(NO_OPENING).filter((id) => id.startsWith(`${m.id}.`)).length, m.id).toBeLessThanOrEqual(2);
-    // 167 の攻撃の技のうち、隙があるのは 162（隙を作らない技 5）
-    expect(n).toBe(162);
-    expect(n + Object.keys(NO_OPENING).length).toBe(species.reduce((k, m) => k + attacksOf(m).length, 0));
-  });
-
   it('ガルドロス（専用の体。動きは変えていない）: いまの動きで決まりを満たす区間を 18 の技に書いてある。横への体当たり 2 つは無い', () => {
     const g = content.monsters.get('monster.galdros')!;
     const atk = attacksOf(g);
@@ -101,7 +70,7 @@ describe('後隙の反撃（v0.73.0。D-171）', () => {
     for (const id of ['fatigue_full', 'fatigue_r2', 'fatigue_r3']) expect(content.actions.get(`monster.spinegale.${id}`)!.durationTicks).toBeGreaterThanOrEqual(480);
   });
 
-  it('区間の端は、部位の追従の表の刻み（6 tick）の上。後隙の中で、最後の判定の後。区間の後に、構えへ戻る間が 8 tick 以上ある（動きを変えていないガルドロスとスパインゲイルは 2 tick 以上）', () => {
+  it('区間の端は、部位の追従の表の刻み（6 tick）の上。後隙の中で、最後の判定の後。区間の後に、構えへ戻る間が 2 tick 以上ある', () => {
     for (const m of all()) {
       const step = m.follow!.step;
       expect(step).toBe(6);
@@ -113,7 +82,7 @@ describe('後隙の反撃（v0.73.0。D-171）', () => {
         expect(o.to % step, a.actionId).toBe(0);
         expect(o.from, a.actionId).toBeGreaterThanOrEqual(rec.from);
         expect(o.from, a.actionId).toBeGreaterThanOrEqual(Math.max(0, ...a.hitWindows.map((h) => h.to)));
-        expect(a.durationTicks - o.to, a.actionId).toBeGreaterThanOrEqual(KEPT.includes(m.id) ? 2 : 8);
+        expect(a.durationTicks - o.to, a.actionId).toBeGreaterThanOrEqual(2);
         expect(m.parts.some((p) => p.id === o.partId), a.actionId).toBe(true);
       }
     }
@@ -197,7 +166,7 @@ describe('後隙の反撃（v0.73.0。D-171）', () => {
   });
 
   it('怒っていても、技の長さと隙の区間は変わらない（怒りで変わるのは、技の間の待ち時間・歩く速さ・向く速さ・威力）', () => {
-    for (const id of ['monster.selvark', 'monster.galdros']) {
+    for (const id of KEPT) {
       const m = content.monsters.get(id)!;
       const a = attacksOf(m).find((x) => x.opening)!;
       const ticksOf = (enraged: boolean): number => {
@@ -217,16 +186,6 @@ describe('後隙の反撃（v0.73.0。D-171）', () => {
       expect(ticksOf(true), id).toBe(a.durationTicks);
       expect(ticksOf(false), id).toBe(a.durationTicks);
       expect(m.rage!.cooldownScale).toBeLessThan(1);
-    }
-  });
-
-  it('どの種も、弱点（頭）が狙える技が 3 つ以上あり、狙える部位は 2 種類以上', () => {
-    for (const m of generated()) {
-      const opens = attacksOf(m).map((a) => a.opening).filter((o): o is NonNullable<ActionDef['opening']> => !!o);
-      const head = m.parts.find((p) => p.head);
-      expect(head, m.id).toBeTruthy();
-      expect(opens.filter((o) => o.partId === head!.id).length, `${m.id}: 頭が狙える技`).toBeGreaterThanOrEqual(3);
-      expect(new Set(opens.map((o) => o.partId)).size, `${m.id}: 狙える部位の種類`).toBeGreaterThanOrEqual(2);
     }
   });
 });

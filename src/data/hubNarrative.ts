@@ -7,7 +7,8 @@ const known=(c:Content,clears:Clears,id:string)=>c.quests.has(id)&&(clears[id]??
 export function hubThreat(c:Content,clears:Clears):HubThreat{
  // 正式な看板の戦闘個体と依頼が揃い、成功保存された場合だけ帰還報告。
  if(c.monsters.has('monster.orzelion')&&[...c.quests.values()].some(q=>q.targetMonsterId==='monster.orzelion'&&q.id==='quest.story.thunder_return'&&(clears[q.id]??0)>0))return 3;
- if(known(c,clears,'quest.basin.003')&&known(c,clears,'quest.selvark.r1'))return 2;
+ // v0.75.0: 2 つ目の主線は、白紙にした「帆角の風」の代わりに「渓谷を駆ける疾棘」（利用者の指示で、ほかの種を外した。D-175）
+ if(known(c,clears,'quest.basin.003')&&known(c,clears,'quest.spinegale.r1'))return 2;
  if(known(c,clears,'quest.basin.003'))return 1;
  return 0;
 }

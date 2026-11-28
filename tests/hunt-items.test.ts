@@ -65,7 +65,8 @@ describe('支給品と道具', () => {
       kinds.add(q.kind === 'gather' ? 'gather' : 'herd');
       expect(new Simulation(content, baseOptions({ questId: q.id, field: true })).player.items.some((s) => s.itemId === 'item.marker_orb'), q.id).toBe(false);
     }
-    expect([...kinds].sort()).toEqual(['gather', 'herd']);
+    // v0.75.0: 群れの依頼は、いまは無い（白紙にした幼体を外した。D-175）
+    expect([...kinds].sort()).toEqual(['gather']);
   });
 
   it('道具の切り替えは端で回り込む', () => {

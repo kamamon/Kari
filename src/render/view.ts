@@ -31,9 +31,7 @@ import { BladeTrail, GroundRings, Particles } from './effects';
 import { GaldrosRig } from './galdrosRig';
 import { SpinegaleRig } from './spinegaleRig';
 import { FrostaldRig } from './frostaldRig';
-import { CreatureRig, limpGait } from './creatureRig';
 import type { HazardLook } from '../data/schemas';
-import { CREATURE_PLANS } from './creaturePlans';
 import { DummyRig, type MonsterRig } from './monsterRig';
 import { MOTION_STYLE, blendPose, climbPose, clipPose, deadPose, dropPose, emptyPose, guardPose, hurtPose, landPose, locomotionPose, vaultPose, type BodyPose } from './poses';
 import { TOOL_TRACKS, fishLineAt, toolHoldAt } from './toolMotion';
@@ -169,6 +167,16 @@ export interface Portrait {
   pane: { cx: number; cy: number; w: number; h: number };
   /** 服: base = 里の装束（防具なし）/ worn = いまの装備 / helmet = いまの装備に兜（持っていなければ参考の兜 = 2 段） */
   clothes: 'base' | 'worn' | 'helmet';
+}
+
+/**
+ * 弱って足を引きずって歩く時か（v0.72.0。#19 の M05。D-170。描画だけ）: 弱って（`roam.limping`）巣へ向かう・エリアを出る・寝床へ歩く間。
+ * 気づいた相手と同じエリアで戦っている間は、引きずらない（2G の弱った大型は、逃げる時に足を引きずる）。技・怯み・眠り・死の間も除く。
+ * v0.75.0 で、生成の種の体（creatureRig.ts）を外した時に、ここへ移した。
+ */
+export function limpGait(m: MonsterState): boolean {
+  const r = m.roam;
+  return !!r?.limping && (r.state === 'leave' || !m.aware) && !m.action && !m.dead && !m.asleep && m.staggerTicks <= 0;
 }
 
 export class GameView {
@@ -379,10 +387,9 @@ export class GameView {
     const had = this.rigs.get(m.id);
     if (had) return had;
     const ids = m.def.parts.map((p) => p.id);
-    const plan = CREATURE_PLANS[m.def.id];
-    const rig: MonsterRig = m.def.id === 'monster.frostald' ? new FrostaldRig() : m.def.id === 'monster.spinegale' ? new SpinegaleRig() : plan ? new CreatureRig(plan, ids) : m.def.id === 'monster.galdros' ? new GaldrosRig(ids) : new DummyRig(ids);
+    const rig: MonsterRig = m.def.id === 'monster.frostald' ? new FrostaldRig() : m.def.id === 'monster.spinegale' ? new SpinegaleRig() : m.def.id === 'monster.galdros' ? new GaldrosRig(ids) : new DummyRig(ids);
     const shadow = blobShadow(1.7);
-    shadow.scale.setScalar(plan ? Math.max(m.herd ? 0.3 : 1, m.def.bodyRadius * 1.1) : m.def.id === 'monster.galdros' ? 1.45 : 1);
+    shadow.scale.setScalar(m.def.id === 'monster.galdros' ? 1.45 : 1);
     this.scene.add(rig.root, shadow, ...(rig.extras ?? []));
     const e = { rig, shadow };
     this.rigs.set(m.id, e);
@@ -899,13 +906,12 @@ export class GameView {
         const moved = Math.hypot(mp.x - L.x, mp.z - L.z);
         L.x = mp.x;
         L.z = mp.z;
-        // v0.72.0（D-170）: 弱って巣へ向かう間だけ（気づいた相手と戦っている間は除く。limpGait）。引きずる脚のある体（CreatureRig の四足・二足・
-        // 脚のある長胴）は、rig が脚の周期に合わせて傾ける（体の根元ごと回すと、反対の側の足が浮く）。ここで傾けるのは、それ以外の体だけ
+        // v0.72.0（D-170）: 弱って巣へ向かう間だけ（気づいた相手と戦っている間は除く。limpGait）、体の根元を、歩幅に合わせて少し傾ける。
+        // （v0.75.0 で外した生成の種は、rig が引きずる脚の周期に合わせて腰だけを傾けていた。いまの体は、どれも、ここで傾ける）
         const walking = limpGait(m) && moved > 0.002 && moved < 2;
         if (walking) L.d += moved;
         L.w += ((walking ? 1 : 0) - L.w) * Math.min(1, dt * 4);
-        const own = e.rig instanceof CreatureRig && e.rig.hasDragLeg;
-        if (!own && L.w > 0.001) {
+        if (L.w > 0.001) {
           const stride = Math.max(1.2, m.def.bodyRadius * 1.8);
           const hitch = Math.max(0, Math.sin((2 * Math.PI * L.d) / stride)) ** 3;
           e.rig.root.rotation.z += 0.11 * hitch * L.w;
@@ -1147,10 +1153,9 @@ export class GameView {
       this.cam.addShake(0.12);
       return;
     }
-    const plan = CREATURE_PLANS[m.def.id];
-    const tip = plan ? plan.spine[v.rear ? 0 : plan.spine.length - 1]! : null;
-    const z = tip && plan ? (tip[0] - plan.origin[0]) * plan.scale : v.rear ? -2 : 2;
-    const y = tip && plan ? Math.max(0.4, (plan.origin[1] - tip[1]) * plan.scale) : 1.2;
+    // v0.75.0: 体の設計図（背骨の先）から口と尾の位置を取っていた生成の種を外した。体の半径から決める
+    const z = (v.rear ? -1 : 1) * Math.max(2, m.def.bodyRadius * 1.2);
+    const y = 1.2;
     const f = { x: Math.sin(m.yaw), z: Math.cos(m.yaw) };
     const s = v.rear ? -1 : 1;
     const at = { x: m.pos.x + f.x * z, y: Math.min(y, v.y ?? y), z: m.pos.z + f.z * z };

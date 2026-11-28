@@ -12,20 +12,21 @@ import { buildNpcSprites, updateNpcSprites } from '../src/render/npcSprites';
 import { questUnlocked } from '../src/save/profile';
 import { loadContent } from './helpers';
 
+// v0.75.0（利用者の指示。D-175）: 白紙にした種を外したので、第 1 章の狩りは「岩場の足音」だけ（2 つ目の狩り「帆角の風」と、2 つの仕事を並べる場面 sc03 を外した）
 const GALDROS = 'quest.basin.003';
-const SELVARK = 'quest.selvark.r1';
 
 describe('物語のデータ', () => {
   it('読み込みの検査を通る。顔の絵は、どの話す人にもある（v0.29.0 からセナキも。ChatGPT #13 の表情の顔）', async () => {
     const c = await loadContent();
     expect(validateStory(c.story, new Set(c.quests.keys()), new Set(Object.keys(PORTRAITS)), new Set(STORY_ART))).toEqual([]);
     expect(Object.values(c.story.speakers).filter((s) => s.portrait).map((s) => s.name).sort()).toEqual(['イサネ', 'セナキ', 'ミナギ', 'ロクハ'].sort());
-    // 序章・8 章・終章。遊べるのは序章と第 1 章だけ（第 1 章は、いまある 2 つの依頼）
+    // 序章・8 章・終章。遊べるのは序章と第 1 章だけ（第 1 章は、いまある依頼 1 つ）
     expect(c.story.chapters.map((x) => x.no)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]); // v0.39.0: 9 は追加決戦章（ChatGPT の #18）、終章は 10
     expect(c.story.chapters.filter((x) => x.playable).map((x) => x.id)).toEqual(['ch0', 'ch1']);
-    expect(c.story.chapters[1]!.steps!.map((s) => s.questId)).toEqual([GALDROS, SELVARK]);
-    // 場面は台本の 4 つ（SC00〜SC03）。どの台詞も短い（1 発言 60 文字まで。iPhone の 2〜3 行）
-    expect(c.story.scenes.map((s) => s.id)).toEqual(['sc00', 'sc01', 'sc02', 'sc03']);
+    expect(c.story.chapters[1]!.steps!.map((s) => s.questId)).toEqual([GALDROS]);
+    expect(c.story.chapters[1]!.reportScene).toBeUndefined();
+    // 場面は台本の 3 つ（SC00〜SC02）。どの台詞も短い（1 発言 60 文字まで。iPhone の 2〜3 行）
+    expect(c.story.scenes.map((s) => s.id)).toEqual(['sc00', 'sc01', 'sc02']);
     for (const s of c.story.scenes) for (const l of s.lines) for (const t of [l.text, ...(l.variants ? Object.values(l.variants) : []), ...(l.choices ?? [])]) if (t) expect(t.length, `${s.id}: ${t}`).toBeLessThanOrEqual(60);
   });
 
@@ -51,10 +52,9 @@ describe('物語のデータ', () => {
     const sc02 = c.story.scenes.find((s) => s.id === 'sc02')!;
     // 荷が通った時のイサネは安堵、ロクハは平静（表情の指定なし）、ミナギは安堵
     expect(sc02.lines.map((l) => lineFace(sp[l.who ?? ''], l) ?? '')).toEqual(['merchant_relief', 'smith', 'minagi_relief', 'minagi', 'minagi_focus']);
-    expect(c.story.scenes.map((s) => s.art)).toEqual(['event_story_arrival_board_v1', 'event_story_arrival_board_v1', 'event_story_first_delivery_v1', 'event_story_arrival_board_v1']);
-    // セナキの台詞は、セナキの顔（平静）
-    const sc03 = c.story.scenes.find((s) => s.id === 'sc03')!;
-    expect(lineFace(sp.senaki, sc03.lines.find((l) => l.who === 'senaki')!)).toBe('senaki');
+    expect(c.story.scenes.map((s) => s.art)).toEqual(['event_story_arrival_board_v1', 'event_story_arrival_board_v1', 'event_story_first_delivery_v1']);
+    // セナキの台詞は、セナキの顔（平静。いまの場面にセナキの台詞は無いので、試しの台詞で）
+    expect(lineFace(sp.senaki, { who: 'senaki', text: '「道は、通れる。」' })).toBe('senaki');
     const bad = JSON.parse(JSON.stringify(c.story)) as StoryDef;
     bad.scenes[0]!.lines[0]!.face = 'anger';
     bad.scenes[1]!.art = 'event_nothing';
@@ -104,27 +104,23 @@ describe('進み方（保存データの達成回数から。保存の形は変�
     expect(v.chapters.map((x) => x.status)).toEqual(['open', 'current', 'unplayable', 'unplayable', 'unplayable', 'unplayable', 'unplayable', 'unplayable', 'unplayable', 'unplayable', 'unplayable']);
   });
 
-  it('ガルドロスの後: 最初の帰還が読め、次は「帆角の風」。両方の後: 第 1 章の報告が読め、次の狩りは無い（まだ遊べない章の知らせ）', async () => {
+  it('ガルドロスの後: 最初の帰還が読め、第 1 章は終わり。次の狩りは無い（まだ遊べない章の知らせ）', async () => {
     const c = await loadContent();
-    let v = storyView(c.story, { [GALDROS]: 1 });
+    const v = storyView(c.story, { [GALDROS]: 1 });
     expect(v.readable).toEqual(['sc00', 'sc01', 'sc02']);
-    expect(v.next?.step.questId).toBe(SELVARK);
-    v = storyView(c.story, { [GALDROS]: 3, [SELVARK]: 1 });
-    expect(v.readable).toEqual(['sc00', 'sc01', 'sc02', 'sc03']);
     expect(v.next).toBeNull();
     expect(v.chapters[1]!.status).toBe('done');
     expect(c.story.common.unplayable).toMatch(/まだ遊べません/);
   });
 
-  it('受入 3: セルヴァルクを先に狩っても、進めなくならない（ガルドロスの後で、報告が 2 つとも読める）', async () => {
+  it('受入 3: ほかの依頼を先に達成していても、進めなくならない（ガルドロスの後で、帰還の報告が読める）', async () => {
     const c = await loadContent();
-    let v = storyView(c.story, { [SELVARK]: 1 });
+    const other = { 'quest.gather.001': 2, 'quest.mine.001': 1 };
+    const v = storyView(c.story, other);
     expect(v.next?.step.questId).toBe(GALDROS);
     expect(v.readable).toEqual(['sc00', 'sc01']);
-    // ガルドロスを達成した保存の後: 最初の帰還と、第 1 章の報告の 2 つが、この順で開く
-    expect(scenesUnlocked(c.story, { [SELVARK]: 1 }, { [SELVARK]: 1, [GALDROS]: 1 })).toEqual(['sc02', 'sc03']);
-    v = storyView(c.story, { [SELVARK]: 1, [GALDROS]: 1 });
-    expect(v.next).toBeNull();
+    expect(scenesUnlocked(c.story, other, { ...other, [GALDROS]: 1 })).toEqual(['sc02']);
+    expect(storyView(c.story, { ...other, [GALDROS]: 1 }).next).toBeNull();
   });
 
   it('受入 5・9: 帰還の報告は、達成回数が 0 → 1 になった時だけ開く。同じ結果の保存し直し・2 回目からの達成・前の版からの保存では開かない', async () => {
@@ -132,12 +128,12 @@ describe('進み方（保存データの達成回数から。保存の形は変�
     expect(scenesUnlocked(c.story, {}, { [GALDROS]: 1 })).toEqual(['sc02']);
     expect(scenesUnlocked(c.story, { [GALDROS]: 1 }, { [GALDROS]: 1 })).toEqual([]);
     expect(scenesUnlocked(c.story, { [GALDROS]: 1 }, { [GALDROS]: 2 })).toEqual([]);
-    expect(scenesUnlocked(c.story, { [GALDROS]: 1 }, { [GALDROS]: 1, [SELVARK]: 1 })).toEqual(['sc03']);
-    // ほかの依頼（中級・群れ）では開かない
+    // ほかの依頼（中級・スパインゲイル）では開かない
     expect(scenesUnlocked(c.story, { [GALDROS]: 1 }, { [GALDROS]: 1, 'quest.basin.r2.001': 1 })).toEqual([]);
-    // 極級まで進んだ前の版の保存: 読める記録はそろっているが、自動では何も開かない
-    const old = { [GALDROS]: 9, 'quest.basin.r2.001': 4, 'quest.basin.r3.001': 2, 'quest.basin.r4.001': 1, [SELVARK]: 2 };
-    expect(storyView(c.story, old).readable).toEqual(['sc00', 'sc01', 'sc02', 'sc03']);
+    expect(scenesUnlocked(c.story, { [GALDROS]: 1 }, { [GALDROS]: 1, 'quest.spinegale.r1': 1 })).toEqual([]);
+    // 極級まで進んだ前の版の保存（外した依頼 quest.selvark.r1 の達成も持っている）: 読める記録はそろっているが、自動では何も開かない
+    const old = { [GALDROS]: 9, 'quest.basin.r2.001': 4, 'quest.basin.r3.001': 2, 'quest.basin.r4.001': 1, 'quest.selvark.r1': 2 };
+    expect(storyView(c.story, old).readable).toEqual(['sc00', 'sc01', 'sc02']);
     expect(scenesUnlocked(c.story, old, old)).toEqual([]);
   });
 

@@ -1,11 +1,8 @@
 // 依頼の標的の言い方（v0.18.0）。群れの依頼の「コルドピル 3 頭」など。表示だけで、計算には使わない。
 import type { Content, QuestDef } from '../data/schemas';
-import { CREATURE_PLANS } from '../render/creaturePlans';
 
-/** 数え方（鳥は羽、虫と甲殻は体、ほかは頭） */
-const COUNTER: Record<string, string> = { quad: '頭', biped: '羽', crab: '体', bug: '体', arch: '体', serpent: '頭' };
-
-export const counterOf = (monsterId: string): string => COUNTER[CREATURE_PLANS[monsterId]?.frame ?? 'quad'] ?? '頭';
+/** 数え方。v0.75.0 で、体の作りごとの数え方（鳥は羽、虫と甲殻は体）を持っていた生成の種を外したので、どれも「頭」 */
+export const counterOf = (_monsterId: string): string => '頭';
 
 /** 「岩殻獣の幼体 コルドピル」→「コルドピル」 */
 export const shortName = (name: string): string => name.split(' ').pop() ?? name;
