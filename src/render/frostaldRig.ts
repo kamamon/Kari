@@ -1,6 +1,5 @@
 import { AnimationMixer, type AnimationAction, Group, LoopOnce, Mesh, SkinnedMesh, Vector3, MeshStandardMaterial, SphereGeometry } from 'three';
 import { GLTFLoader, type GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { clone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { assetUrl } from '../core/assets';
 import { renderTick } from '../game/action';
 import { activeControl } from '../game/ailment';
@@ -8,10 +7,11 @@ import type { MonsterState } from '../game/monster';
 import type { MonsterRig, MonsterRigCtx } from './monsterRig';
 let cached: Promise<GLTF> | null = null;
 function load(): Promise<GLTF> {
-  // High-density master is opt-in; never load the 172 MB file on a normal mobile hunt.
-  // npm run frostald:master installs it for a local dev/build; the standard public build contains only the game LOD.
-  const master = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('frostaldQuality') === 'master';
-  const path = 'assets/models/monsters/frostald_' + (master ? 'master' : 'game') + '.glb';
+  // The full 2.28M-triangle model is the default, also on the public Pages build.
+  // Explicit ?frostaldQuality=game (or low) retains the lighter model for devices that need it.
+  const quality = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('frostaldQuality') : null;
+  const low = quality === 'game' || quality === 'low';
+  const path = low ? 'assets/models/monsters/frostald_game.glb' : 'assets/models/monsters/frostald_hd/frostald.gltf';
   if (!cached) cached = new GLTFLoader().loadAsync(assetUrl(path)).catch(err => { cached = null; throw err; });
   return cached;
 }
@@ -31,18 +31,19 @@ export class FrostaldRig implements MonsterRig {
   private readonly flashMaterials: MeshStandardMaterial[] = [];
   constructor() {
     this.pending.position.y = 1.2; this.root.add(this.pending);
-    void load().then(g => {
-      const model = clone(g.scene) as Group;
+    // Transfer ownership of the preloaded scene to this rig, rather than cloning >1M vertices.
+    // Each subsequent individual gets its own load; disposed views never share GPU resources.
+    const owned = load();
+    cached = null;
+    void owned.then(g => {
+      const model = g.scene;
       model.traverse(o => {
         if (!(o instanceof Mesh)) return;
         o.castShadow = true; o.receiveShadow = true;
-        // 個体の破棄・被弾発光がキャッシュ元の材質を変更しないようにする。
-        o.geometry = o.geometry.clone();
-        const duplicate = (mat: import('three').Material): import('three').Material => {
-          const m = mat.clone(); if (m instanceof MeshStandardMaterial) this.flashMaterials.push(m);
-          return m;
-        };
-        o.material = Array.isArray(o.material) ? o.material.map(duplicate) : duplicate(o.material);
+        // This scene owns its geometry and materials. Deduplicate shared material references.
+        for (const mat of Array.isArray(o.material) ? o.material : [o.material]) {
+          if (mat instanceof MeshStandardMaterial && !this.flashMaterials.includes(mat)) this.flashMaterials.push(mat);
+        }
         if(o instanceof SkinnedMesh) o.frustumCulled = false;
       });
       this.root.remove(this.pending); this.pending.geometry.dispose(); this.pending.material.dispose();
