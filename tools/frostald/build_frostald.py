@@ -4,7 +4,8 @@ import numpy as np, math, json, struct, os
 from scipy.ndimage import gaussian_filter
 from scipy.spatial.transform import Rotation as R
 from PIL import Image
-from material_atlas import VERSION as MATERIAL_DESIGN, PROFILES, bake_maps, apply_materials, source_digest
+from material_atlas import VERSION as MATERIAL_DESIGN, PROFILES, bake_maps, source_digest
+from organic_sculpt import VERSION as SCULPT_DESIGN, make_sculpt
 P=Path(__file__).parent; T=P/'textures';T.mkdir(exist_ok=True)
 LOD=float(os.environ.get('FROST_LOD','1.25'));SUFFIX=os.environ.get('FROST_SUFFIX','game')
 PI=np.pi;rng=np.random.default_rng(281127);N=int(os.environ.get('FROST_TEX','1024'));v,u=np.mgrid[:N,:N].astype(np.float32)/N
@@ -115,45 +116,14 @@ def calm_eye(side,d):
 def spike(mat,points,bn,r=(.04,.035),sides=12):
     tube(mat,[(*p,r[0]*max(.025,1-i/(len(points)-1)),r[1]*max(.025,1-i/(len(points)-1)),bn) for i,p in enumerate(points)],5,sides)
 
-# Continuous low trunk, long muscular swimming tail and broad feet.
-C=[(0,1.40,2.05,.29,.27,'head'),(0,1.43,1.76,.40,.38,'neck_02'),(0,1.38,1.42,.56,.49,'neck_01'),(0,1.25,1.04,.72,.62,'chest'),(0,1.17,.69,.77,.69,'chest'),(0,1.12,.26,.75,.66,'body'),(0,1.10,-.12,.73,.63,'body'),(0,1.08,-.50,.67,.59,'pelvis'),(0,1.10,-.91,.66,.56,'pelvis'),(0,1.10,-1.26,.51,.46,'pelvis')]
-for i in range(12):
- t=i/11;bn=f'tail_{i+1:02}';x,y,z=rest[J[bn]];C.append((x,y,z,.43*(1-t)**.9+.015,.43*(1-t)**.75+.024,bn))
-C.append((0,.64,-4.65,.007,.006,'tail_12'));tube('hide',C,11,55)
-tube('hide',[(0,1.48,1.90,.35,.32,'head'),(0,1.52,2.17,.37,.28,'head'),(0,1.48,2.51,.30,.205,'head'),(0,1.40,2.83,.22,.115,'snout'),(0,1.39,3.05,.08,.045,'snout'),(0,1.39,3.12,.01,.01,'snout')],12,44)
-tube('hide',[(0,1.26,2.02,.30,.17,'jaw'),(0,1.19,2.34,.29,.13,'jaw'),(0,1.24,2.73,.23,.075,'jaw'),(0,1.31,3.04,.07,.032,'jaw')],10,38)
-ell('mouth',(0,1.31,2.49),(.24,.045,.53),'jaw',24,16);ell('mouth',(0,1.34,2.63),(.11,.033,.32),'tongue',18,10)
-for side,d in [('l',1),('r',-1)]:
- for i in range(13):
-  z=2.18+i*.062;x=d*(.30-.012*i);y=1.37-.004*i;length=.09+.055*(1-i/13)
-  spike('tooth',[(x,y,z),(x*.97,y-length*.68,z+.015),(x*.91,y-length,z-.015)],'head',(.028,.025),13)
-  if i<11:spike('tooth',[(x*.91,1.25,z+.02),(x*.90,1.30,z+.04),(x*.89,1.345,z+.02)],'jaw',(.018,.019),10)
- calm_eye(side,d)
- ell('pupil',(d*.17,1.47,2.95),(.019,.02,.04),'snout',12,9)
- for limb,z in [('fore',.93),('hind',-1.12)]:
-  bn=lambda v:f'{limb}_{v}_{side}';k=rest[J[bn('lower')]];e=rest[J[bn('ankle')]];paw=rest[J[bn('paw')]]
-  tube('hide',[(d*.41,1.29,z,.30,.38,bn('upper')),(d*.64,1.11,z,.36,.40,bn('upper')),(d*.77,.88,(z+k[2])/2,.27,.30,bn('upper')),(*k,.22,.23,bn('lower')),(d*.84,.40,z-.04,.17,.19,bn('lower')),(*e,.145,.16,bn('ankle')),(*paw,.245,.13,bn('paw'))],13,36)
-  for i in range(4):
-   tn=bn('toe'+str(i));x,y,zz=rest[J[tn]];tube('hide',[(d*.86,.14,z+.24,.09,.075,bn('paw')),(x,.095,zz,.095,.075,tn),(x+d*.02,.06,zz+.19,.067,.052,tn)],8,16);spike('keratin',[(x+d*.02,.073,zz+.16),(x+d*.028,.079,zz+.32),(x+d*.03,.012,zz+.43)],tn,(.067,.053),14)
-  for j in range(5):
-   t=j/5;x=d*(.76+.09*t);y=1.0-.68*t;zz=z+.06-.12*np.sin(t*np.pi);bn2=bn('upper' if j<3 else 'lower')
-   for k0 in range(3):
-    xx=x+d*(k0-1)*.083;spike('keratin',[(xx,y,zz),(xx+d*.055,y+.045,zz-.09),(xx+d*.075,y+.055,zz-.23)],bn2,(.067,.09),13)
- # layered ice-mud crown, large overlapping blue/white shards.
- for i in range(6):
-  bn=f'mane_{side}_{i+1:02}';cx,cy,cz=rest[J[bn]]
-  for j in range(8):
-   th=.19+j*1.75/7;xx=d*(abs(cx)+.13*np.sin(th));yy=cy+.15*np.cos(th);zz=cz+.11*np.cos(j*1.7);L=.34+.32*np.sin((i+1)*np.pi/8)+.10*np.sin(j*2.7);out=d*(.21+.19*np.sin(th));up=.29*np.cos(th)+.13
-   spike('feather',[(xx,yy,zz),(xx+out*.5,yy+up*.75,zz-.10),(xx+out,yy+up,zz-L*.68),(xx+out*.9,yy+up*.75,zz-L)],bn,(.055+.025*np.sin(th),.15),16)
-  for j in range(5):
-   x=d*(abs(cx)+.10+.033*j);y=cy-.23-.02*j;z=cz+.07*np.sin(j);spike('feather',[(x,y,z),(x+d*.055,y-.11,z-.12),(x+d*.07,y-.27-.035*np.sin(i+j),z-.26)],bn,(.036,.065),12)
- for i in range(7):
-  z=2.68-i*.10;y=1.64+.025*i;x=d*(.17+.018*i);spike('keratin',[(x,y,z),(x+d*.045,y+.13,z-.08),(x+d*.08,y+.19,z-.30)],'head',(.040,.085),14)
- ell('membrane',(d*.30,1.13,1.75),(.12,.20,.25),'gill_'+side,24,16)
-for i in range(19):
- z=.76-i*.255;y=1.75-.065*max(0,i-6);bn='body' if i<6 else f'tail_{min(12,max(1,round((-z-1.42)/.2727)+1)):02}'
- for side in [-1,1]:
-  x=side*(.17 if i<8 else .13*(1-i/22)+.02);h=.17+.075*np.sin(i*.9);spike('keratin',[(x,y,z),(x+side*.07,y+h,z-.08),(x+side*.12,y+h*.7,z-.34)],bn,(.065,.12),15)
+# V6 connected skin and individually sculpted ice plates. Existing rig stays in metre-space.
+sculpt_eyes=make_sculpt(add,J,rest,LOD,P/'material_source',ell,tube)
+for k,(side,d,sx) in enumerate(sculpt_eyes):
+    v=M['eye']['p'][k]; yy=(v[:,1]-1.613)/.039;zz=(v[:,2]-2.445)/.052;r=np.sqrt(yy*yy+zz*zz);theta=np.arctan2(yy,zz)
+    iris=np.array([.32,.59,.71])[None,:]*(1+.075*np.cos(theta*29)+.035*np.sin(theta*47+r*18))[:,None]
+    rim=np.clip((r-.70)/.30,0,1)[:,None];col=iris*(1-rim)+np.array([.13,.24,.32])[None,:]*rim
+    M['eye']['c'][k][:]=linear(col)
+
 Id=np.array([0.,0.,0.,1.]);PI=math.pi
 def rot(x=0,y=0,z=0):return R.from_euler('xyz',[x,y,z]).as_quat()
 def align(a,b):
@@ -215,7 +185,6 @@ class GLB:
 def main():
     global M
     source=P/'material_source';source_hash=source_digest(source)
-    M=apply_materials(M,B)
     assert set(M)==set(PROFILES)|{'eye','pupil','tooth'},set(M)
     M={name:M[name] for name in [*PROFILES,'tooth','eye','pupil']}
     maps=bake_maps(source,T,N,Path(os.environ['FROST_MATERIAL_MASTER']) if os.environ.get('FROST_MATERIAL_MASTER') else None)
@@ -225,11 +194,11 @@ def main():
         mi=len(materials);m={'name':mat,'doubleSided':mat in ['membrane','feather'],'pbrMetallicRoughness':{'metallicFactor':0,'roughnessFactor':.65}}
         if mat in PROFILES:
             m['pbrMetallicRoughness'].update(baseColorTexture={'index':texture(T/f'{mat}_basecolor.jpg')},metallicRoughnessTexture={'index':texture(T/f'{mat}_orm.png')},roughnessFactor=1)
-            m['normalTexture']={'index':texture(T/f'{mat}_normal.png'),'scale':.85 if mat in ('hide','head_skin','limb_skin','belly_skin') else .72}
+            m['normalTexture']={'index':texture(T/f'{mat}_normal.png'),'scale':.60 if mat in ('hide','head_skin','limb_skin','belly_skin') else .55}
             m['occlusionTexture']={'index':m['pbrMetallicRoughness']['metallicRoughnessTexture']['index'],'strength':.65}
             m['extensions']={'KHR_materials_clearcoat':{'clearcoatFactor':PROFILES[mat]['coat'],'clearcoatRoughnessFactor':.23 if mat in ('keratin','ice_plate','mouth','membrane') else .38}}
             m['extras']={'sourceAtlas':PROFILES[mat]['source'],'materialDesign':MATERIAL_DESIGN,'maps':maps[mat]}
-        else:m['pbrMetallicRoughness'].update(baseColorFactor={'tooth':[.72,.63,.42,1],'eye':[1,1,1,1],'pupil':[.014,.021,.027,1]}[mat],roughnessFactor=.32 if mat=='eye' else .26 if mat=='pupil' else .46)
+        else:m['pbrMetallicRoughness'].update(baseColorFactor={'tooth':[.84,.77,.61,1],'eye':[1,1,1,1],'pupil':[.014,.021,.027,1]}[mat],roughnessFactor=.32 if mat=='eye' else .26 if mat=='pupil' else .46)
         materials.append(m);a={k:np.concatenate(x,axis=0) for k,x in parts.items()};
         assert np.max(abs(a['w'].sum(1)-1))<1e-6 and a['j'].max()<len(B);stats[mat]={'vertices':len(a['p']),'triangles':len(a['f'])};attrs={'POSITION':g.accessor(a['p'],'VEC3',target=34962,bounds=True),'NORMAL':g.accessor(a['n'],'VEC3',target=34962),'TEXCOORD_0':g.accessor(a['uv'],'VEC2',target=34962),'JOINTS_0':g.accessor(a['j'],'VEC4',5123,target=34962),'WEIGHTS_0':g.accessor(a['w'],'VEC4',target=34962),'COLOR_0':g.accessor(a['c'],'VEC3',target=34962)};prims.append({'attributes':attrs,'indices':g.accessor(a['f'].ravel(),'SCALAR',5125,target=34963),'material':mi})
     nodes=[];ib=[]
@@ -252,7 +221,7 @@ def main():
         if np.max(abs(s))>1e-6:channel(J['body'],'translation',s+rest[J['body']],'VEC3')
         if np.max(abs(r))>1e-6:channel(0,'translation',r,'VEC3')
         animations.append({'name':'fa_'+name,'samplers':sam,'channels':chan,'extras':{'durationTicks':D,'loop':name in LOOP,'hitWindows':ATT.get(name,(0,[]))[1]}})
-    doc={'asset':{'version':'2.0','generator':'Kari Frostald v5 image-derived PBR calm blue eye'},'extensionsUsed':['KHR_materials_clearcoat'],'scene':0,'scenes':[{'nodes':[0,len(B)]}],'nodes':nodes,'skins':[skin],'meshes':[{'name':'Frostald','primitives':prims}],'materials':materials,'textures':textures,'images':images,'samplers':[{'magFilter':9729,'minFilter':9987,'wrapS':10497,'wrapT':10497}],'animations':animations,'bufferViews':g.views,'accessors':g.acc,'buffers':[{'byteLength':len(g.buf)}],'extras':{'status':'procedural skinned sculpt; concept parity unverified','coordinate':'Y up +Z forward metres','monsterId':'monster.frostald','eyeDesign':'calm-blue-v1','materialDesign':MATERIAL_DESIGN,'materialSourceSha256':source_hash,'materialMaps':maps,'stats':stats}}
+    doc={'asset':{'version':'2.0','generator':'Kari Frostald V6 connected anatomy and image PBR'},'extensionsUsed':['KHR_materials_clearcoat'],'scene':0,'scenes':[{'nodes':[0,len(B)]}],'nodes':nodes,'skins':[skin],'meshes':[{'name':'Frostald','primitives':prims}],'materials':materials,'textures':textures,'images':images,'samplers':[{'magFilter':9729,'minFilter':9987,'wrapS':10497,'wrapT':10497}],'animations':animations,'bufferViews':g.views,'accessors':g.acc,'buffers':[{'byteLength':len(g.buf)}],'extras':{'status':'procedural skinned sculpt; concept parity unverified','coordinate':'Y up +Z forward metres','monsterId':'monster.frostald','eyeDesign':'calm-blue-v1','sculptDesign':SCULPT_DESIGN,'materialDesign':MATERIAL_DESIGN,'materialSourceSha256':source_hash,'materialMaps':maps,'stats':stats}}
     j=json.dumps(doc,separators=(',',':')).encode();j+=b' '*((-len(j))%4);g.buf.extend(b'\0'*((-len(g.buf))%4));out=struct.pack('<4sII',b'glTF',2,12+8+len(j)+8+len(g.buf))+struct.pack('<I4s',len(j),b'JSON')+j+struct.pack('<I4s',len(g.buf),b'BIN\0')+g.buf;(P/f'frostald_{SUFFIX}.glb').write_bytes(out)
-    manifest={'joints':len(B),'animationClips':len(CLIPS),'materials':len(M),'materialDesign':MATERIAL_DESIGN,'materialSourceSha256':source_hash,'materialMaps':maps,'vertices':sum(x['vertices'] for x in stats.values()),'triangles':sum(x['triangles'] for x in stats.values()),'stats':stats,'clips':[{'name':x['name'],**x['extras']} for x in animations],'rig':[{'name':n,'parent':B[p][0] if p>=0 else None,'restM':xyz.tolist()} for n,p,xyz in B]};(P/('model_manifest.json' if SUFFIX=='v2' else f'model_manifest_{SUFFIX}.json')).write_text(json.dumps(manifest,indent=2));print({k:manifest[k] for k in ['joints','animationClips','materials','vertices','triangles']});print('GLB',len(out))
+    manifest={'joints':len(B),'animationClips':len(CLIPS),'materials':len(M),'sculptDesign':SCULPT_DESIGN,'materialDesign':MATERIAL_DESIGN,'materialSourceSha256':source_hash,'materialMaps':maps,'vertices':sum(x['vertices'] for x in stats.values()),'triangles':sum(x['triangles'] for x in stats.values()),'stats':stats,'clips':[{'name':x['name'],**x['extras']} for x in animations],'rig':[{'name':n,'parent':B[p][0] if p>=0 else None,'restM':xyz.tolist()} for n,p,xyz in B]};(P/('model_manifest.json' if SUFFIX=='v2' else f'model_manifest_{SUFFIX}.json')).write_text(json.dumps(manifest,indent=2));print({k:manifest[k] for k in ['joints','animationClips','materials','vertices','triangles']});print('GLB',len(out))
 if __name__=='__main__':main()

@@ -132,13 +132,13 @@ try{
        }
        if(o.material?.name==='pupil'){
          const pos=o.geometry.attributes.position,ys=[],zs=[];
-         for(let i=0;i<pos.count;i++)if(pos.getX(i)>.34&&pos.getY(i)>1.5){ys.push(pos.getY(i));zs.push(pos.getZ(i));}
+         for(let i=0;i<pos.count;i++)if(pos.getX(i)>0&&pos.getY(i)>1.5){ys.push(pos.getY(i));zs.push(pos.getZ(i));}
          if(ys.length){const ratio=(Math.max(...ys)-Math.min(...ys))/(Math.max(...zs)-Math.min(...zs));roundPupil=ratio>.85&&ratio<1.15;}
        }
      });
      return {quest:app.sim.hunt.quest.id,field:app.sim.field.id,area:app.sim.areaId,hp:m.def.hp,joints,triangles,clips:rig.clips.size,visible:rig.root.visible,eyeRoughness,blueIris,roundPupil,surfaces};
    });
-   if(data.field!=='field.whitefrost'||data.joints!==79||data.clips!==56||data.triangles!==(master?2283726:329250)||data.hp!==[1750,3700,6400][rank-1]||!data.blueIris||!data.roundPupil||Math.abs(data.eyeRoughness-.32)>.001)throw Error('Frostald '+JSON.stringify(data));
+   if(data.field!=='field.whitefrost'||data.joints!==79||data.clips!==56||(master?(data.triangles<2400000||data.triangles>2850000):(data.triangles<300000||data.triangles>500000))||data.hp!==[1750,3700,6400][rank-1]||!data.blueIris||!data.roundPupil||Math.abs(data.eyeRoughness-.32)>.001)throw Error('Frostald '+JSON.stringify(data));
    const expected={hide:2048,head_skin:2048,limb_skin:1024,belly_skin:1024,keratin:2048,ice_plate:1024,claw:1024,feather:2048,membrane:1024,mouth:1024};
    for(const [mat,res] of Object.entries(expected)){
      const x=data.surfaces[mat],size=master?res:res/2;
