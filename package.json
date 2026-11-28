@@ -36,7 +36,8 @@
     "design:doc": "python3 tools/design-doc/build.py tools/out/design-v2.html docs/design-v2/monsters && node tools/design-doc/pdf.mjs tools/out/design-v2.html docs/source/VEILBOUND_HUNTERS_design_v2.0.pdf",
     "publish:pages": "bash tools/publish-pages.sh",
     "preassets:validate": "npm run spinegale:build && npm run frostald:build",
-    "frostald:build": "node tools/frostald/ensure.mjs"
+    "frostald:build": "node tools/frostald/ensure.mjs",
+    "frostald:master": "npm run frostald:build && node tools/frostald/ensure.mjs --master --install"
   },
   "dependencies": {
     "three": "0.187.0"

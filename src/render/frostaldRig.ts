@@ -8,7 +8,10 @@ import type { MonsterState } from '../game/monster';
 import type { MonsterRig, MonsterRigCtx } from './monsterRig';
 let cached: Promise<GLTF> | null = null;
 function load(): Promise<GLTF> {
-  const path = 'assets/models/monsters/frostald_game.glb';
+  // High-density master is opt-in; never load the 172 MB file on a normal mobile hunt.
+  // npm run frostald:master installs it for a local dev/build; the standard public build contains only the game LOD.
+  const master = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('frostaldQuality') === 'master';
+  const path = 'assets/models/monsters/frostald_' + (master ? 'master' : 'game') + '.glb';
   if (!cached) cached = new GLTFLoader().loadAsync(assetUrl(path)).catch(err => { cached = null; throw err; });
   return cached;
 }
