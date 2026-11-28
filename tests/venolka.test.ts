@@ -22,7 +22,8 @@ describe('毒羽竜ヴェノルカ',()=>{
   expect(venolkaCan(m,'monster.venolka.poison_fan')).toBe(false);
   expect(venolkaCan(m,'monster.venolka.glide')).toBe(true);
   m.aware=true;m.aiEnabled=true;m.action=null;m.cooldown=0;s.player.pos={...m.pos,z:m.pos.z+5};
-  m.venolka!.charge=12;stepMonster(m,s.player,s);expect(m.action?.def.actionId).toBe('monster.venolka.refill');
+  const actionId=()=>m.action?.def.actionId;
+  m.venolka!.charge=12;stepMonster(m,s.player,s);expect(actionId()).toBe('monster.venolka.refill');
   for(let i=1;i<240;i++)stepMonster(m,s.player,s);
   expect(m.venolka!.charge).toBe(100);
   for(const id of ['sac','wing_l','tail']){const i=m.def.parts.findIndex(p=>p.id===id);applyDamageToMonster(m,i,m.def.parts[i]!.breakDurability!+1,'blunt',s);expect(m.parts[i]!.broken).toBe(true);}
