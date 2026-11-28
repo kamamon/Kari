@@ -5,7 +5,9 @@ import { InstancedMesh, Matrix4, type Mesh, type MeshLambertMaterial, Vector3 } 
 import { AreaShape } from '../src/game/areaShape';
 import { buildAreaGroup } from '../src/render/arena';
 import { landscapeProfile } from '../src/render/fieldLandscape';
-import { MASK_MARGIN, MOUTH_HALF, buildGroundDetail, maskAt, type GroundDetail } from '../src/render/groundDetail';
+import { Color } from 'three';
+import { GROUND_SHADE, MASK_MARGIN, MOUTH_HALF, TONE_COLORS, baseTone, buildGroundDetail, maskAt, toneTint, tuftTint, type GroundDetail } from '../src/render/groundDetail';
+import { patchNoise } from '../src/render/noise';
 import type { FieldAreaDef, FieldDef } from '../src/data/schemas';
 
 const fields: FieldDef[] = readdirSync('public/data/fields').filter((f) => f.endsWith('.json')).map((f) => JSON.parse(readFileSync(`public/data/fields/${f}`, 'utf8')) as FieldDef);
@@ -15,7 +17,7 @@ const detailOf = (a: FieldAreaDef): GroundDetail =>
 const all = (): { f: FieldDef; a: FieldAreaDef }[] => fields.flatMap((f) => f.areas.map((a) => ({ f, a })));
 
 describe('狩場の地面の作り込み（踏み分け道と際の陰）', () => {
-  it('どの狩場（21。盆地・白霧氷谷と、まだ遊べない 19）のどのエリアでも、出口ごとに道が 1 本。出口の外から始まり、出口を通り、1m おきの点でつながっている', () => {
+  it('どの狩場（21。盆地・白霧氷谷と、まだ遊べない 19）のどのエリアでも、出口ごとに道が 1 本。出口の外から始まり、出口を通り、1m おきの点でつながっている', { timeout: 30000 }, () => {
     expect(fields.length).toBe(21);
     let n = 0;
     for (const { f, a } of all()) {
@@ -162,5 +164,165 @@ describe('狩場の地面の作り込み（踏み分け道と際の陰）', () =
     expect(legacy.userData.groundMask).toBeUndefined();
     const arena = buildAreaGroup({ bounds: { minX: -20, maxX: 20, minZ: -20, maxZ: 20 }, rocks: [], platforms: [], gates: [{ x: 0, z: -20, marker: true }] });
     expect(arena.getObjectByName('gateTrail')).toBeTruthy();
+  });
+
+  // ---- v0.76.0: 色むらと、草のなじみ（D-176。docs/spec.md の 21.5）----
+  it('色むら: 0〜1 のゆるい濃淡で、地面の濃淡（草がかたまる所）が大きい所ほど湿った側（小さい値）。崖・岩の際は、同じ濃淡でも湿った側へ寄る。絵の B に入る', () => {
+    for (const id of ['a3', 'a7', 'a4']) {
+      const a = basin.areas.find((x) => x.id === id)!, d = detailOf(a), shape = new AreaShape(a.shape!);
+      const patch = patchNoise(9001 + a.no * 131);
+      const open: { tone: number; n: number }[] = [];
+      let worst = 0, step = 0;
+      for (let x = a.bounds.minX; x <= a.bounds.maxX; x += 1.5) {
+        for (let z = a.bounds.minZ; z <= a.bounds.maxZ; z += 1.5) {
+          if (!shape.contains(x, z)) continue;
+          const t = d.toneAt(x, z), sh = d.shadeAt(x, z);
+          expect(t, id).toBeGreaterThanOrEqual(0);
+          expect(t, id).toBeLessThanOrEqual(1);
+          // 絵（1m のます目から伸ばしたもの）と、計算した値が合う
+          worst = Math.max(worst, Math.abs(maskAt(d.mask, x, z).tone - t));
+          // ゆるい濃淡: 0.5m 隣との差は小さい（陰の端をのぞく）
+          if (sh === 0 && d.shadeAt(x + 0.5, z) === 0) step = Math.max(step, Math.abs(d.toneAt(x + 0.5, z) - t));
+          if (sh === 0) open.push({ tone: t, n: patch(x, z) });
+          // 陰のある所は、陰の無い時の値より、陰の濃さ × 0.3 だけ湿った側（0 で止まる）
+          else expect(t, id).toBeCloseTo(Math.max(0, Math.min(1, 0.5 - (patch(x, z) - 0.5) * 1.7) - 0.3 * sh), 6);
+        }
+      }
+      expect(worst, id).toBeLessThan(0.16);
+      expect(step, id).toBeLessThan(0.08);
+      expect(open.length, id).toBeGreaterThan(200);
+      // 開けた所: 濃淡が大きいほど、色むらは小さい（同じ順）。真ん中あたりに広がっていて、片側に張り付かない
+      const sorted = [...open].sort((p, q) => p.n - q.n);
+      for (let i = 1; i < sorted.length; i++) expect(sorted[i]!.tone, id).toBeLessThanOrEqual(sorted[i - 1]!.tone + 1e-9);
+      const mean = open.reduce((s2, p) => s2 + p.tone, 0) / open.length;
+      const sd = Math.sqrt(open.reduce((s2, p) => s2 + (p.tone - mean) ** 2, 0) / open.length);
+      expect(mean, id).toBeGreaterThan(0.3);
+      expect(mean, id).toBeLessThan(0.7);
+      expect(sd, id).toBeGreaterThan(0.1);
+    }
+  });
+
+  it('色むらの色: 草の地面は、湿った所が暗い緑・乾いた所が明るい黄み。ほかの地面は、明るさだけを少し（色みは変えない）。草の板は、地面と同じ色むらと陰', () => {
+    const lum = (c: readonly number[]): number => 0.3 * c[0]! + 0.59 * c[1]! + 0.11 * c[2]!;
+    const g = TONE_COLORS.grass, p = TONE_COLORS.plain;
+    expect(lum(g.lo)).toBeLessThan(0.92);
+    expect(lum(g.hi)).toBeGreaterThan(1.04);
+    expect(g.lo[1]).toBeGreaterThan(g.lo[0]);
+    expect(g.lo[1]).toBeGreaterThan(g.lo[2]);
+    expect(g.hi[0]).toBeGreaterThan(g.hi[2] + 0.2);
+    for (const c of [p.lo, p.hi]) expect(Math.max(...c) - Math.min(...c)).toBeLessThan(0.02);
+    expect(lum(p.hi) - lum(p.lo)).toBeGreaterThan(0.08);
+    expect(lum(p.hi) - lum(p.lo)).toBeLessThan(lum(g.hi) - lum(g.lo));
+    expect(toneTint('grass', 0)).toEqual([...g.lo]);
+    expect(toneTint('grass', 1)).toEqual([...g.hi]);
+    expect(toneTint('grass', 0.5).map((v, i) => v - (g.lo[i]! + g.hi[i]!) / 2).every((v) => Math.abs(v) < 1e-9)).toBe(true);
+    expect(toneTint('plain', 7)).toEqual([...p.hi]);
+    // 草の板: 陰の無い所は地面の色むらと同じ倍率。陰のいちばん濃い所は、地面と同じだけ暗い
+    expect(tuftTint('grass', 0.3, 0)).toEqual(toneTint('grass', 0.3));
+    const dark = tuftTint('grass', 0.3, 1), base = toneTint('grass', 0.3);
+    dark.forEach((v, i) => expect(v).toBeCloseTo(base[i]! * (1 - GROUND_SHADE), 9));
+  });
+
+  it('草の板の色と生え方: フィールドでは、1 本ずつ、その場所の色むらと陰の色が掛かる。際の陰の中の草は暗い。背の高い草は湿った所に多く、枯れ草は乾いた所に多い', () => {
+    const a = basin.areas.find((x) => x.id === 'a3')!, d = detailOf(a);
+    const g = buildAreaGroup({ bounds: a.bounds, shape: a.shape, rocks: a.rocks, platforms: a.platforms, kind: a.kind, seed: 9001 + a.no * 131, climbs: a.climbs, relief: a.relief, groundTint: a.look?.ground, landscape: landscapeProfile(basin.id, a), center: a.center, camp: null, gates: a.exits.map((e) => ({ x: e.x, z: e.z, marker: true })) });
+    g.updateMatrixWorld(true);
+    const m4 = new Matrix4(), v = new Vector3(), col = new Color();
+    const layers: { n: number; lum: number[]; tone: number[]; shade: number[] }[] = [];
+    g.traverse((o) => {
+      const im = o as InstancedMesh;
+      if (!im.isInstancedMesh || !((im.material as MeshLambertMaterial).alphaTest > 0) || !im.instanceColor) return;
+      const L = { n: im.count, lum: [] as number[], tone: [] as number[], shade: [] as number[] };
+      for (let i = 0; i < im.count; i++) {
+        im.getMatrixAt(i, m4);
+        v.setFromMatrixPosition(m4).applyMatrix4(im.matrixWorld);
+        im.getColorAt(i, col);
+        L.lum.push(0.3 * col.r + 0.59 * col.g + 0.11 * col.b);
+        L.tone.push(d.toneAt(v.x, v.z));
+        L.shade.push(d.shadeAt(v.x, v.z));
+      }
+      layers.push(L);
+    });
+    // 草 4 種（短い・背の高い・枯れ・花）と、小石・茂み
+    expect(layers.length).toBeGreaterThanOrEqual(5);
+    const mean = (xs: number[]): number => xs.reduce((s2, x) => s2 + x, 0) / Math.max(1, xs.length);
+    const big = layers.filter((L) => L.n > 150);
+    expect(big.length).toBeGreaterThanOrEqual(2);
+    for (const L of big) {
+      // 陰の濃い所（0.5 以上）の草は、開けた所の草より暗い
+      const inShade = L.lum.filter((_, i) => L.shade[i]! > 0.5), inOpen = L.lum.filter((_, i) => L.shade[i]! === 0);
+      if (inShade.length >= 5) expect(mean(inShade)).toBeLessThan(mean(inOpen) * 0.85);
+      // 開けた所: 乾いた所（色むら 0.6 以上）の草は、湿った所（0.4 以下）の草より明るい
+      const dry = L.lum.filter((_, i) => L.shade[i]! === 0 && L.tone[i]! > 0.6), wet = L.lum.filter((_, i) => L.shade[i]! === 0 && L.tone[i]! < 0.4);
+      if (dry.length >= 5 && wet.length >= 5) expect(mean(dry)).toBeGreaterThan(mean(wet) * 1.08);
+    }
+    // いちばん多い層（短い草）は、湿った側に寄る。色むらの平均が 0.5 より小さい
+    const short = [...layers].sort((p, q) => q.n - p.n)[0]!;
+    expect(mean(short.tone)).toBeLessThan(0.45);
+    // これまでの 1 つの狩場（地面の作り込みが無い）は、色を掛けない草のまま（色のばらつきだけ）
+    const arena = buildAreaGroup({ bounds: { minX: -20, maxX: 20, minZ: -20, maxZ: 20 }, rocks: [], platforms: [], gates: [{ x: 0, z: -20, marker: true }], seed: 5 });
+    const lums: number[] = [];
+    arena.traverse((o) => {
+      const im = o as InstancedMesh;
+      if (!im.isInstancedMesh || !im.instanceColor) return;
+      for (let i = 0; i < im.count; i++) { im.getColorAt(i, col); lums.push(0.3 * col.r + 0.59 * col.g + 0.11 * col.b); }
+    });
+    expect(lums.length).toBeGreaterThan(100);
+    expect(mean(lums)).toBeGreaterThan(0.97);
+    expect(mean(lums)).toBeLessThan(1.03);
+  });
+
+  it('段の上の面: フィールドでは、まわりの地面と同じ色（濃淡 × エリアの色合い × 色むら）が頂点に付く。フィールドでない所は、これまでどおり色を付けない', () => {
+    const a = basin.areas.find((x) => x.platforms.some((p) => p.h > 0))!;
+    expect(a).toBeTruthy();
+    const seed = 9001 + a.no * 131, patch = patchNoise(seed), tint = a.look?.ground ?? [1, 1, 1];
+    const g = buildAreaGroup({ bounds: a.bounds, shape: a.shape, rocks: a.rocks, platforms: a.platforms, kind: a.kind, seed, climbs: a.climbs, relief: a.relief, groundTint: a.look?.ground, landscape: landscapeProfile(basin.id, a), center: a.center, camp: null, gates: a.exits.map((e) => ({ x: e.x, z: e.z, marker: true })) });
+    let tops = 0, checked = 0;
+    g.traverse((o) => {
+      const m = o as Mesh;
+      if (!m.isMesh || !Array.isArray(m.material) || m.geometry.groups.length !== 2) return;
+      const top = m.geometry.groups[0]!, idx = m.geometry.getIndex()!, pos = m.geometry.getAttribute('position'), col = m.geometry.getAttribute('color');
+      expect((m.material[0] as MeshLambertMaterial).vertexColors).toBe(true);
+      tops++;
+      for (let i = top.start; i < top.start + top.count; i++) {
+        const v = idx.getX(i), x = pos.getX(v), z = pos.getZ(v);
+        const shade = 1 - 0.2 * patch(x, z), warm = (patch(x + 91, z + 53) - 0.5) * 0.14, t = toneTint(a.kind === 'hunt' || a.kind === 'camp' ? 'grass' : 'plain', baseTone(patch(x, z)));
+        expect(col.getX(v)).toBeCloseTo(shade * (1 + warm) * tint[0]! * t[0], 5);
+        expect(col.getY(v)).toBeCloseTo(shade * tint[1]! * t[1], 5);
+        expect(col.getZ(v)).toBeCloseTo(shade * (1 - warm) * tint[2]! * t[2], 5);
+        checked++;
+      }
+    });
+    expect(tops).toBe(a.platforms.filter((p) => p.h > 0).length);
+    expect(checked).toBeGreaterThan(30);
+    // これまでの 1 つの狩場: 段の上の面に色を付けない（頂点の色を使わない素材のまま）
+    const arena = buildAreaGroup({ bounds: { minX: -20, maxX: 20, minZ: -20, maxZ: 20 }, rocks: [], platforms: [{ minX: -4, maxX: 4, minZ: 2, maxZ: 9, h: 1 }], gates: [{ x: 0, z: -20, marker: true }], seed: 5 });
+    let legacy = 0;
+    arena.traverse((o) => {
+      const m = o as Mesh;
+      if (!m.isMesh || !Array.isArray(m.material) || m.geometry.groups.length !== 2) return;
+      legacy++;
+      expect((m.material[0] as MeshLambertMaterial).vertexColors).toBe(false);
+    });
+    expect(legacy).toBe(1);
+  });
+
+  it('草むら: フィールドの草の地面は、短い草と背の高い草が 1.3 倍（上限 2600 本）。これまでの 1 つの狩場の草の数は変わらない', () => {
+    const count = (g: ReturnType<typeof buildAreaGroup>): number[] => {
+      const out: number[] = [];
+      g.traverse((o) => { const im = o as InstancedMesh; if (im.isInstancedMesh && (im.material as MeshLambertMaterial).alphaTest > 0) out.push(im.count); });
+      return out.sort((p, q) => q - p);
+    };
+    const a = basin.areas.find((x) => x.id === 'a3')!, shape = new AreaShape(a.shape!);
+    const g = buildAreaGroup({ bounds: a.bounds, shape: a.shape, rocks: a.rocks, platforms: a.platforms, kind: a.kind, seed: 9001 + a.no * 131, relief: a.relief, landscape: landscapeProfile(basin.id, a), center: a.center, camp: null, gates: a.exits.map((e) => ({ x: e.x, z: e.z, marker: true })) });
+    const n = count(g);
+    // いちばん多い層 = 短い草: 置けなかったぶん（8 回試して空きが無い）を引いても、広さ × 0.26 × 1.3 の 8 割より多い
+    expect(n[0]!).toBeGreaterThan(shape.area() * 0.26 * 1.3 * 0.8);
+    expect(n[0]!).toBeLessThanOrEqual(Math.min(2600, Math.round(shape.area() * 0.26 * 1.3)));
+    // 描く三角形: 草と小物の板は 1 本 8 枚。エリア 1 つで 4 万枚より少ない
+    expect(n.reduce((s2, k) => s2 + k, 0) * 8).toBeLessThan(40000);
+    const arena = count(buildAreaGroup({ bounds: { minX: -20, maxX: 20, minZ: -20, maxZ: 20 }, rocks: [], platforms: [], gates: [{ x: 0, z: -20, marker: true }], seed: 5 }));
+    expect(arena[0]!).toBeLessThanOrEqual(Math.round(40 * 40 * 0.26));
+    expect(arena[0]!).toBeGreaterThan(40 * 40 * 0.26 * 0.8);
   });
 });

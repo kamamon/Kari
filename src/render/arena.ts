@@ -11,7 +11,7 @@ import type { ClimbDef, MapDef, PlatformLook } from '../data/schemas';
 import { buildClimbFaces } from './climbArt';
 import { reliefAt, type ReliefDef } from '../game/relief';
 import { groundAt } from '../game/world';
-import { ENV_SPRITES, ENV_TILES, SpriteField, boxUv, buildBackdrop, tileMaterial, type EnvPlace, type EnvTile } from './envArt';
+import { ENV_SPRITES, ENV_TILES, SpriteField, boxUv, buildBackdrop, tileMaterial, type EnvPlace, type EnvTile, type SpriteSpot } from './envArt';
 import { AreaShape, type Pt } from '../game/areaShape';
 import { ROCK_REACH, ledgeGeometry, polyPath, wallPath } from './rockGeo';
 import { artCliffGeometry, cliffArtMaterial, mergeRocks, placeBigRock, rockArt, rockArtGeometry, rockArtMaterial, type RockPlacement } from './rockArt';
@@ -20,7 +20,7 @@ import { patchNoise } from './noise';
 import { imageLambert, projectSurfaceUV } from './materialImages';
 import { PlatformIndex, buildTerraces, holedGround } from './terraces';
 import { buildLandscapeSurface, buildLandscapeExterior, type LandscapeProfile } from './fieldLandscape';
-import { buildGroundDetail, type GroundDetail } from './groundDetail';
+import { baseTone, buildGroundDetail, toneTint, tuftTint, type GroundDetail, type ToneKind } from './groundDetail';
 import { applyGroundDetail, setMaskUv } from './groundDetailMaterial';
 
 export const FOG_COLOR = 0xaebcab;
@@ -131,6 +131,10 @@ const KIND_LOOK: Record<NonNullable<AreaLook['kind']>, { ground: EnvTile; short:
 const GROUND_MARGIN = 130;
 /** 絵の明るさの倍率（envArt.tileMaterial の gain）。地面は、色むらで暗くなるぶんも持ち上げる。 */
 const GROUND_GAIN = 1.25;
+/** 巣の踏み分け道の色（v0.76.0）: 巣の暗い地面の上では、砂利の絵そのままの明るさだと、光の帯に見えた。暗い土の色へ落とす */
+const NEST_TRAIL = 0xbdb39c;
+/** 草むら（v0.76.0）: フィールドの草の地面で、短い草と背の高い草の数に掛ける倍率 */
+const GRASS_LUSH = 1.3;
 /** 踏み分け道（v0.74.0）: 道の濃さがこれより大きい所には、草・小石・茂みを置かない */
 const TRAIL_BARE = 0.4;
 const ROCK_GAIN = 1.5;
@@ -154,8 +158,19 @@ export function buildAreaGroup(map: AreaLook): Group {
     ? buildGroundDetail({ bounds: b, shape: map.shape, exits: gates.filter((g) => g.marker === true), center: map.center, rocks: map.rocks, platforms: map.platforms, kind: map.kind, seed: map.seed ?? 9001 })
     : null;
   const cover = landscape && landscape.fieldId !== 'field.basin' ? landscape.cover : 1;
-  const look = {...initial,short:initial.short*cover,tall:initial.tall*cover,dry:initial.dry*cover,flower:initial.flower*cover,bush:initial.bush*cover,branch:initial.branch*cover};
+  // 草むら（v0.76.0）: 地面の作り込みのあるフィールドの草の地面は、短い草と背の高い草を 1.3 倍に（湿った所へ寄せて生やすので、かたまりが草むらに見える）
+  const lush = detail && initial.ground === 'grass' ? GRASS_LUSH : 1;
+  const look = {...initial,short:initial.short*cover*lush,tall:initial.tall*cover*lush,dry:initial.dry*cover,flower:initial.flower*cover,bush:initial.bush*cover,branch:initial.branch*cover};
   const noise = patchNoise(map.seed ?? 9001);
+  // 色むらの色（v0.76.0）: 盆地の草の地面は、湿った所が濃い緑・乾いた所が明るい黄み。ほかの地面（砂利・巣・ほかの狩場の雪や砂）は、明るさだけを少し
+  const toneKind: ToneKind = !(landscape && landscape.fieldId !== 'field.basin') && look.ground === 'grass' ? 'grass' : 'plain';
+  /** 地面の頂点の色: 濃淡（暗い所 = 草がかたまる所）と、少しの色み、エリアの色合い（v0.51.0。#19 の F06。データの look.ground。無ければ 1） */
+  const groundTint = map.groundTint ?? [1, 1, 1];
+  const groundColor = (x: number, z: number): [number, number, number] => {
+    const shade = 1 - 0.2 * noise(x, z);
+    const warm = (noise(x + 91, z + 53) - 0.5) * 0.14;
+    return [shade * (1 + warm) * groundTint[0]!, shade * groundTint[1]!, shade * (1 - warm) * groundTint[2]!];
+  };
   // 自然な形のエリア（v0.20.0）: 内か外か・縁までの距離・外向きを、外周から測る
   const outline = map.shape && map.shape.length >= 3 ? new AreaShape(map.shape) : null;
   const inside = (x: number, z: number, margin: number): boolean =>
@@ -196,18 +211,15 @@ export function buildAreaGroup(map: AreaLook): Group {
   {
     const pos = groundGeo.getAttribute('position');
     const tile = ENV_TILES[look.ground].tile;
-    const tint = map.groundTint ?? [1, 1, 1];
     const uv = new Float32Array(pos.count * 2), col = new Float32Array(pos.count * 3);
     for (let i = 0; i < pos.count; i++) {
       const x = pos.getX(i), z = pos.getZ(i);
       uv[i * 2] = x / tile;
       uv[i * 2 + 1] = -z / tile;
-      const shade = 1 - 0.2 * noise(x, z);
-      const warm = (noise(x + 91, z + 53) - 0.5) * 0.14;
-      // エリアの色合い（v0.51.0。#19 の F06。データの look.ground。無ければ 1）
-      col[i * 3] = shade * (1 + warm) * tint[0];
-      col[i * 3 + 1] = shade * tint[1];
-      col[i * 3 + 2] = shade * (1 - warm) * tint[2];
+      const c = groundColor(x, z);
+      col[i * 3] = c[0];
+      col[i * 3 + 1] = c[1];
+      col[i * 3 + 2] = c[2];
     }
     groundGeo.setAttribute('uv', new Float32BufferAttribute(uv, 2));
     groundGeo.setAttribute('color', new Float32BufferAttribute(col, 3));
@@ -220,8 +232,8 @@ export function buildAreaGroup(map: AreaLook): Group {
     // ほかの狩場（地面の絵が狩場ごと）: 道は、地面の絵を暗くしたもの（雪は、踏み固めた青みの灰色。ほかは、土の色へ寄せる）。氷の上には、道を描かない
     const floor = regionalFloor ? landscape.floor : null;
     const mask = floor === null
-      ? applyGroundDetail(floorMaterial, detail.mask, look.ground === 'gravel' ? 'earth' : 'gravel', new Color(look.ground === 'gravel' ? 0xcfc6b4 : 0xffffff).multiplyScalar(GROUND_GAIN))
-      : applyGroundDetail(floorMaterial, detail.mask, floor === 'frost_ice' ? null : 'self', new Color(floor === 'frost_snow' ? 0xd3dde9 : 0xd2c2a6));
+      ? applyGroundDetail(floorMaterial, detail.mask, look.ground === 'gravel' ? 'earth' : 'gravel', new Color(look.ground === 'gravel' ? 0xcfc6b4 : look.ground === 'nest' ? NEST_TRAIL : 0xffffff).multiplyScalar(GROUND_GAIN), toneKind)
+      : applyGroundDetail(floorMaterial, detail.mask, floor === 'frost_ice' ? null : 'self', new Color(floor === 'frost_snow' ? 0xd3dde9 : 0xd2c2a6), toneKind);
     group.userData.groundMask = mask;
   }
   const ground = new Mesh(groundGeo, floorMaterial);
@@ -233,7 +245,11 @@ export function buildAreaGroup(map: AreaLook): Group {
 
   const rockDark = tileMaterial('rock', 0xd2d6ce, { flat: true, gain: ROCK_GAIN });
   const bronze = imageLambert('bronze',{color:0xb08d57,emissive:0x2a1d08,flatShading:true});
-  const stepTop = regionalFloor ? imageLambert(landscape.floor,{color:landscape.floorColor},{gain:1.10}) : tileMaterial(look.ground, 0xffffff, { gain: GROUND_GAIN * 0.95 });
+  // 段の上の面（v0.76.0）: フィールドでは、まわりの地面と同じ色（頂点の色 = 地面の濃淡・エリアの色合い・色むら。明るさも地面と同じ）。
+  // それまでは、色合いも濃淡も無い明るい緑の四角で、上から見ると、置いた板に見えた。フィールドでない所（これまでの 1 つの狩場）は、これまでどおり
+  const stepTop = detail
+    ? (regionalFloor ? imageLambert(landscape.floor,{color:landscape.floorColor,vertexColors:true},{gain:1.16}) : tileMaterial(look.ground, 0xffffff, { vertexColors: true, gain: GROUND_GAIN }))
+    : (regionalFloor ? imageLambert(landscape.floor,{color:landscape.floorColor},{gain:1.10}) : tileMaterial(look.ground, 0xffffff, { gain: GROUND_GAIN * 0.95 }));
   const moss = map.kind === 'nest' ? 0.15 : map.kind === 'path' ? 0.35 : map.kind === 'village' ? 0.5 : 0.65;
   // 段差の横の面と、崖の上の縁から外へ下る背（岩肌の絵と、頂点の色）。苔の多いエリア（野営地・狩り）は、苔の溜まった岩肌（依頼 10 の T-04）
   const sideTile = moss >= 0.6 ? 'moss' : 'rock';
@@ -263,7 +279,17 @@ export function buildAreaGroup(map: AreaLook): Group {
   // 段差（v0.20.0: 角の丸い岩の棚。上は、その場所の地面。横は岩肌で、下ほど外へ広がって地面に入る）。里は terraces が描く
   for (const p of map.platforms) {
     if (p.h < 0 || village) continue;
-    const ledge = new Mesh(ledgeGeometry(rng, p, ENV_TILES[look.ground].tile, ENV_TILES.rock.tile), [stepTop, boulderMat]);
+    const ledgeGeo = ledgeGeometry(rng, p, ENV_TILES[look.ground].tile, ENV_TILES.rock.tile);
+    if (detail) {
+      // 上の面の頂点へ、その場所の地面の色（色むらは、段の際の陰を入れない値。段の上は陰にならない）
+      const lp = ledgeGeo.getAttribute('position'), lc = ledgeGeo.getAttribute('color'), li = ledgeGeo.getIndex()!, top = ledgeGeo.groups[0]!;
+      for (let i = top.start; i < top.start + top.count; i++) {
+        const v = li.getX(i), x = lp.getX(v), z = lp.getZ(v);
+        const c = groundColor(x, z), t = toneTint(toneKind, baseTone(noise(x, z)));
+        lc.setXYZ(v, c[0] * t[0], c[1] * t[1], c[2] * t[2]);
+      }
+    }
+    const ledge = new Mesh(ledgeGeo, [stepTop, boulderMat]);
     ledge.castShadow = true;
     ledge.receiveShadow = true;
     group.add(ledge);
@@ -407,14 +433,22 @@ export function buildAreaGroup(map: AreaLook): Group {
       return along > -3 && along < 11 && side < 3.2;
     }) ||
     (map.camp != null && Math.hypot(x - map.camp.x, z - map.camp.z) < map.camp.r);
-  /** 濃い所（clump = 1）か、どこでも（clump = 0）か。置けなければ null */
-  const spot = (clump: number) => (): { x: number; z: number; y: number } | null => {
+  /**
+   * 濃い所（clump = 1）か、どこでも（clump = 0）か。置けなければ null。
+   * likes（v0.76.0。地面の作り込みのあるフィールドだけ）: 正なら湿った所（色むらの濃い側）に多く、負なら乾いた所に多い。
+   * 返す tint は、その場所の地面の色むらと際の陰（草が、まわりの地面と同じ明るさ・色みになる）。
+   */
+  const spot = (clump: number, likes = 0) => (): SpriteSpot | null => {
     for (let tries = 0; tries < 8; tries++) {
       const x = b.minX + 0.4 + rng.next() * (w - 0.8);
       const z = b.minZ + 0.4 + rng.next() * (d - 0.8);
       if (blocked(x, z)) continue;
       if (clump > 0 && rng.next() > 1 - clump + clump * Math.min(1, noise(x, z) * 1.7)) continue;
-      return { x, z, y: village ? groundAt(map.platforms, x, z) : rel(x, z) };
+      const y = village ? groundAt(map.platforms, x, z) : rel(x, z);
+      if (!detail) return { x, z, y };
+      const tone = detail.toneAt(x, z);
+      if (likes !== 0 && rng.next() < (likes > 0 ? tone : 1 - tone) * Math.abs(likes)) continue;
+      return { x, z, y, tint: tuftTint(toneKind, tone, detail.shadeAt(x, z)) };
     }
     return null;
   };
@@ -423,12 +457,12 @@ export function buildAreaGroup(map: AreaLook): Group {
   const count = (perM2: number, max: number): number => Math.min(max, Math.round(perM2 * area));
   const field = new SpriteField(group, rng);
   const G = ENV_SPRITES.grass, P = ENV_SPRITES.props;
-  field.scatter(G, G.cells.short, count(look.short, 2000), spot(0.75), [0.8, 1.25], 0.12);
-  field.scatter(G, G.cells.tall, count(look.tall, 700), spot(0.9), [0.8, 1.3], 0.12);
-  field.scatter(G, G.cells.dry, count(look.dry, 520), spot(0.5), [0.8, 1.25], 0.1);
-  field.scatter(G, G.cells.flower, count(look.flower, 260), spot(0.8), [0.8, 1.25], 0.08);
+  field.scatter(G, G.cells.short, count(look.short, 2600), spot(0.75, 0.7), [0.8, 1.25], 0.12);
+  field.scatter(G, G.cells.tall, count(look.tall, 700), spot(0.9, 0.85), [0.8, 1.3], 0.12);
+  field.scatter(G, G.cells.dry, count(look.dry, 520), spot(0.5, -0.8), [0.8, 1.25], 0.1);
+  field.scatter(G, G.cells.flower, count(look.flower, 260), spot(0.8, 0.5), [0.8, 1.25], 0.08);
   field.scatter(P, P.cells.stones, count(look.stones, 220), spot(0), [0.8, 1.25], 0.1);
-  field.scatter(P, P.cells.bush, count(look.bush, 70), spot(0.4), [0.8, 1.5], 0.1);
+  field.scatter(P, P.cells.bush, count(look.bush, 70), spot(0.4, 0.6), [0.8, 1.5], 0.1);
   field.scatter(P, P.cells.crystal, count(look.crystal, 120), spot(0), [0.7, 1.6]);
   field.scatter(P, P.cells.branch, count(look.branch, 60), spot(0), [0.8, 1.4]);
   // 里（v0.35.0）: 高い石積みの根元に、草と茂み（壁から 0.3〜0.9m。歩ける床の上だけ）

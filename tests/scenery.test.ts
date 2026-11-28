@@ -313,7 +313,7 @@ describe('草の揺れと、岩の絵の濃淡', () => {
   it('草の素材は、風の時刻（WIND）を読み、頂点を高さに応じてずらす（根元は動かない）', () => {
     const mat = new MeshLambertMaterial();
     swayInWind(mat);
-    const sh = { uniforms: {} as Record<string, unknown>, vertexShader: 'void main() {\n#include <begin_vertex>\n#include <project_vertex>\n}', fragmentShader: '' };
+    const sh = { uniforms: {} as Record<string, unknown>, vertexShader: 'void main() {\n#include <begin_vertex>\n#include <project_vertex>\n}', fragmentShader: 'void main() {\n#include <map_fragment>\n}' };
     mat.onBeforeCompile(sh as never, undefined as never);
     expect(sh.uniforms.uWind).toBe(WIND);
     expect(sh.vertexShader).toContain('uniform float uWind;');
@@ -322,6 +322,11 @@ describe('草の揺れと、岩の絵の濃淡', () => {
     expect(sh.vertexShader.indexOf('#include <begin_vertex>')).toBeLessThan(sh.vertexShader.indexOf('transformed.xz +='));
     // 揺らす素材は、揺らさない素材と別のシェーダーになる
     expect(mat.customProgramCacheKey()).toBe('sway-in-wind');
+    // 根元の陰（v0.76.0。D-176）: 板の高さを渡して、根元を 0.6 倍に暗くし、0.14m で元の明るさへ戻す（絵を読んだ後に掛ける）
+    expect(sh.vertexShader).toContain('vRootH = position.y;');
+    expect(sh.fragmentShader).toContain('varying float vRootH;');
+    expect(sh.fragmentShader).toContain('diffuseColor.rgb *= mix( 0.60, 1.0, smoothstep( 0.0, 0.14, vRootH ) );');
+    expect(sh.fragmentShader.indexOf('#include <map_fragment>')).toBeLessThan(sh.fragmentShader.indexOf('vRootH )'));
   });
 
   it('岩肌（v0.22.0 から依頼 10 の 4 枚）は、濃淡がはっきり（明るさのばらつき 18 以上）で、上下左右の端がつながる', () => {

@@ -1,12 +1,12 @@
 // 地面の作り込み（src/render/groundDetail.ts）の絵を、地面の素材へ混ぜる（v0.74.0）。
 // 道は、別の地面の絵（砂利）を、ふちを不ぞろいにして混ぜる。道のふちの草は、少し枯れた色にする。陰は、色を暗くする。
+// v0.76.0: 色むら（絵の B）で、湿った所と乾いた所の地面の色を少し変える。
 // 地面の板の頂点に、絵のどこを読むか（aMask）を持たせる。絵が届くまで・画面の無い所（Node の検査）では、これまでの地面のまま。
 import { type BufferGeometry, ClampToEdgeWrapping, Color, DataTexture, Float32BufferAttribute, LinearFilter, type MeshLambertMaterial, RGBAFormat, RepeatWrapping, type Texture, UnsignedByteType } from 'three';
 import { ENV_TILES, loadEnvTexture, type EnvTile } from './envArt';
-import type { GroundMask } from './groundDetail';
+import { GROUND_SHADE, TONE_COLORS, type GroundMask, type ToneKind } from './groundDetail';
 
-/** 陰のいちばん濃い所で、地面の色に掛ける減らし分 */
-export const GROUND_SHADE = 0.52;
+export { GROUND_SHADE };
 
 /** 地面の板の頂点へ、絵の座標を付ける */
 export function setMaskUv(geo: BufferGeometry, mask: GroundMask): void {
@@ -33,9 +33,10 @@ export function maskTexture(mask: GroundMask): DataTexture {
  *  - trail が絵の名前: 道は、その絵（地面の絵と同じ 1 枚 = 6m）に color を掛けたもの。道のふちの草地を、少し枯れた色にする（草の地面）。
  *  - trail が 'self': 道は、地面の絵そのものに color を掛けたもの（踏み固めた雪・土。盆地のほかの狩場）。ふちの色は変えない。
  *  - trail が null: 道を描かない（氷の上）。陰だけ。
+ * tone（v0.76.0）: 色むらの色。grass = 草の地面（湿った所は濃い緑、乾いた所は明るい黄み）、plain = ほかの地面（明るさだけを少し）。
  * 返すのは、絵（エリアを捨てる時に dispose する）。
  */
-export function applyGroundDetail(mat: MeshLambertMaterial, mask: GroundMask, trail: EnvTile | 'self' | null, color: Color): DataTexture {
+export function applyGroundDetail(mat: MeshLambertMaterial, mask: GroundMask, trail: EnvTile | 'self' | null, color: Color, tone: ToneKind = 'plain'): DataTexture {
   const tMask = maskTexture(mask);
   const uni = {
     tGdMask: { value: tMask as Texture },
@@ -45,6 +46,8 @@ export function applyGroundDetail(mat: MeshLambertMaterial, mask: GroundMask, tr
     uGdColor: { value: color },
     uGdRect: { value: [mask.minX, mask.minZ, mask.sizeX, mask.sizeZ] },
     uGdShade: { value: GROUND_SHADE },
+    uGdToneLo: { value: new Color(...TONE_COLORS[tone].lo) },
+    uGdToneHi: { value: new Color(...TONE_COLORS[tone].hi) },
   };
   if (trail !== null && trail !== 'self') loadEnvTexture(
     ENV_TILES[trail].file,
@@ -68,6 +71,8 @@ uniform float uGdSelf;
 uniform vec3 uGdColor;
 uniform vec4 uGdRect;
 uniform float uGdShade;
+uniform vec3 uGdToneLo;
+uniform vec3 uGdToneHi;
 varying vec2 vGdMask;
 float gdHash(vec2 p) { p = fract(p * vec2(0.1031, 0.1030)); p += dot(p, p.yx + 33.33); return fract((p.x + p.y) * p.x); }
 float gdNoise(vec2 p) {
@@ -85,8 +90,9 @@ float gdNoise(vec2 p) {
   vec2 gdAt = uGdRect.xy + vGdMask * uGdRect.zw;
   float gdN = gdNoise( gdAt * 0.9 ) * 0.6 + gdNoise( gdAt * 3.1 ) * 0.4;
   float gdW = smoothstep( 0.34, 0.6, gdMask.r + ( gdN - 0.5 ) * 0.36 ) * uGdOn;
-  vec3 gdBase = diffuseColor.rgb * sampledDiffuseColor.rgb;
-  vec3 gdTrail = mix( texture2D( tGdTrail, vMapUv ).rgb, gdBase, uGdSelf ) * uGdColor;
+  // 色むら（v0.76.0）: 湿った所と乾いた所で、地面の色を少し変える（道には掛けない）
+  vec3 gdBase = diffuseColor.rgb * sampledDiffuseColor.rgb * mix( uGdToneLo, uGdToneHi, gdMask.b );
+  vec3 gdTrail = mix( texture2D( tGdTrail, vMapUv ).rgb, diffuseColor.rgb * sampledDiffuseColor.rgb, uGdSelf ) * uGdColor;
   // 道のふちの草は、踏まれて少し枯れた色（道が別の絵の時だけ）
   gdBase *= mix( vec3( 1.0 ), vec3( 1.1, 1.02, 0.8 ), smoothstep( 0.03, 0.5, gdMask.r ) * 0.6 * uGdOn * ( 1.0 - uGdSelf ) );
   diffuseColor.rgb = mix( gdBase, gdTrail, gdW ) * ( 1.0 - uGdShade * gdMask.g * ( 0.8 + 0.4 * gdN ) );

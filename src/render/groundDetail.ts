@@ -1,10 +1,12 @@
 // 狩場の地面の作り込み（v0.74.0。docs/spec.md の 21.4）。描画だけで、当たり・移動・採取は変えない。
 //  - 踏み分け道: 出口から、エリアの真ん中へ続く道。岩と段をよけて、ゆるく曲がる。出口の所は広く、奥は細い。
 //  - 際の陰: 外周の崖・岩・段の根元の地面を暗くする（物が地面に乗って見える）。出口の開いた所は暗くしない。
-// 道と陰は、1 枚の小さな絵（1m を 3 画素。R = 道、G = 陰）にして、地面の素材が混ぜる（arena.ts の groundDetailMaterial）。
+//  - 色むら（v0.76.0）: 湿って草の濃い所と、乾いて明るい所。地面の色と、草の板の色・生え方が、同じむらに合う。
+// 道・陰・色むらは、1 枚の小さな絵（1m を 3 画素。R = 道、G = 陰、B = 色むら）にして、地面の素材が混ぜる（arena.ts の groundDetailMaterial）。
 // 計算は、ここだけで決まる（DOM・Three.js・乱数の Math.random を使わない。同じ入力なら同じ道）。
 import { SeededRng } from '../core/seededRng';
 import { AreaShape, type Pt } from '../game/areaShape';
+import { patchNoise } from './noise';
 
 export interface GroundDetailInput {
   bounds: { minX: number; maxX: number; minZ: number; maxZ: number };
@@ -26,7 +28,7 @@ export interface TrailPoint { x: number; z: number; w: number; k: number; s: num
 
 /** 地面の素材へ渡す絵。画素 (i, j) は、世界の (minX + (i + 0.5) / width * sizeX, minZ + (j + 0.5) / height * sizeZ) */
 export interface GroundMask {
-  /** RGBA。R = 道、G = 陰、B = 0、A = 255 */
+  /** RGBA。R = 道、G = 陰、B = 色むら（v0.76.0。0 = 湿って濃い … 255 = 乾いて明るい）、A = 255 */
   data: Uint8Array;
   width: number;
   height: number;
@@ -45,6 +47,8 @@ export interface GroundDetail {
   trailAt(x: number, z: number): number;
   /** その場所の陰の濃さ（0〜1） */
   shadeAt(x: number, z: number): number;
+  /** その場所の色むら（v0.76.0。0 = 湿って濃い … 1 = 乾いて明るい。崖・岩・段の際は、湿った側へ寄る） */
+  toneAt(x: number, z: number): number;
   mask: GroundMask;
 }
 
@@ -313,13 +317,24 @@ export function buildGroundDetail(input: GroundDetailInput): GroundDetail {
     return v;
   };
 
-  // 絵にする: 陰は 1m のます目で測って伸ばす（ゆるい濃淡なので足りる）。道は、線分の近くの画素だけを塗る
+  // 色むら（v0.76.0）: 地面の濃淡（11m と 27m のむら）を広げたもの。崖・岩・段の際（陰の濃い所）は、湿った側へ寄せる
+  const patch = patchNoise(input.seed);
+  const toneOf = (x: number, z: number, shade: number): number => clamp01(baseTone(patch(x, z)) - TONE_DAMP * shade);
+  const toneAt = (x: number, z: number): number => toneOf(x, z, shadeAt(x, z));
+
+  // 絵にする: 陰と色むらは 1m のます目で測って伸ばす（ゆるい濃淡なので足りる）。道は、線分の近くの画素だけを塗る
   const minX = b.minX - MASK_MARGIN, minZ = b.minZ - MASK_MARGIN, sizeX = b.maxX - b.minX + MASK_MARGIN * 2, sizeZ = b.maxZ - b.minZ + MASK_MARGIN * 2;
   const width = Math.min(MASK_MAX, Math.max(8, Math.ceil(sizeX * PX_PER_M))), height = Math.min(MASK_MAX, Math.max(8, Math.ceil(sizeZ * PX_PER_M)));
   const data = new Uint8Array(width * height * 4);
   const cw = Math.ceil(sizeX) + 2, ch = Math.ceil(sizeZ) + 2;
-  const coarse = new Float32Array(cw * ch);
-  for (let j = 0; j < ch; j++) for (let i = 0; i < cw; i++) coarse[j * cw + i] = shadeAt(minX + i, minZ + j);
+  const coarse = new Float32Array(cw * ch), coarseTone = new Float32Array(cw * ch);
+  for (let j = 0; j < ch; j++) {
+    for (let i = 0; i < cw; i++) {
+      const sh = shadeAt(minX + i, minZ + j);
+      coarse[j * cw + i] = sh;
+      coarseTone[j * cw + i] = toneOf(minX + i, minZ + j, sh);
+    }
+  }
   const trail = new Float32Array(width * height);
   const px = sizeX / width, pz = sizeZ / height;
   const paint = (x0: number, x1: number, z0: number, z1: number, at: (x: number, z: number) => number): void => {
@@ -340,13 +355,51 @@ export function buildGroundDetail(input: GroundDetailInput): GroundDetail {
       const ix = Math.min(cw - 2, Math.floor(fx)), iz = Math.min(ch - 2, Math.floor(fz)), tx = fx - ix, tz = fz - iz;
       const c00 = coarse[iz * cw + ix]!, c10 = coarse[iz * cw + ix + 1]!, c01 = coarse[(iz + 1) * cw + ix]!, c11 = coarse[(iz + 1) * cw + ix + 1]!;
       const shade = lerp(lerp(c00, c10, tx), lerp(c01, c11, tx), tz);
+      const tone = lerp(lerp(coarseTone[iz * cw + ix]!, coarseTone[iz * cw + ix + 1]!, tx), lerp(coarseTone[(iz + 1) * cw + ix]!, coarseTone[(iz + 1) * cw + ix + 1]!, tx), tz);
       const k = (j * width + i) * 4;
       data[k] = Math.round(clamp01(trail[j * width + i]!) * 255);
       data[k + 1] = Math.round(clamp01(shade) * 255);
+      data[k + 2] = Math.round(clamp01(tone) * 255);
       data[k + 3] = 255;
     }
   }
-  return { hub, trails, trailAt, shadeAt, mask: { data, width, height, minX, minZ, sizeX, sizeZ } };
+  return { hub, trails, trailAt, shadeAt, toneAt, mask: { data, width, height, minX, minZ, sizeX, sizeZ } };
+}
+
+/** 色むらの強さ（濃淡の真ん中 0.5 からの広げ方）と、陰の濃い所を湿った側へ寄せる量 */
+const TONE_CONTRAST = 1.7, TONE_DAMP = 0.3;
+
+/**
+ * 陰を入れる前の色むら（0〜1。真ん中は 0.5）。濃淡 n（src/render/noise.ts の patchNoise。地面の頂点の明るさと、草のかたまり方に使っているものと同じ）が
+ * 大きい所 = 草がかたまる所 = 湿って濃い（0 に近い）。
+ */
+export function baseTone(n: number): number {
+  return clamp01(0.5 - (n - 0.5) * TONE_CONTRAST);
+}
+
+/**
+ * 色むらに掛ける色（v0.76.0）。草の地面: 湿った所は濃い緑、乾いた所は明るい黄み。ほかの地面（雪・砂・岩など）: 明るさだけを少し。
+ * 地面の素材（src/render/groundDetailMaterial.ts）と、草の板の色（src/render/arena.ts）が、同じ値を使う。
+ */
+export const TONE_COLORS = {
+  grass: { lo: [0.84, 0.92, 0.82], hi: [1.13, 1.07, 0.88] },
+  plain: { lo: [0.93, 0.93, 0.94], hi: [1.06, 1.06, 1.05] },
+} as const;
+export type ToneKind = keyof typeof TONE_COLORS;
+
+/** 色むら tone（0〜1）の所の色の倍率 */
+export function toneTint(kind: ToneKind, tone: number): [number, number, number] {
+  const { lo, hi } = TONE_COLORS[kind], t = clamp01(tone);
+  return [lerp(lo[0], hi[0], t), lerp(lo[1], hi[1], t), lerp(lo[2], hi[2], t)];
+}
+
+/** 陰のいちばん濃い所で、地面の色に掛ける減らし分（地面の素材と、草の板の色が使う） */
+export const GROUND_SHADE = 0.52;
+
+/** 草の板 1 本の色の倍率（v0.76.0）: その場所の地面の色むらと、際の陰（地面と同じ濃さ）。草が、まわりの地面から浮いて見えない */
+export function tuftTint(kind: ToneKind, tone: number, shade: number): [number, number, number] {
+  const t = toneTint(kind, tone), k = 1 - GROUND_SHADE * clamp01(shade);
+  return [t[0] * k, t[1] * k, t[2] * k];
 }
 
 function polyLength(p: readonly { x: number; z: number }[]): number {
@@ -356,9 +409,9 @@ function polyLength(p: readonly { x: number; z: number }[]): number {
 }
 
 /** 絵の値を、世界の座標で読む（検査用。いちばん近い画素） */
-export function maskAt(m: GroundMask, x: number, z: number): { trail: number; shade: number } {
+export function maskAt(m: GroundMask, x: number, z: number): { trail: number; shade: number; tone: number } {
   const i = Math.max(0, Math.min(m.width - 1, Math.floor(((x - m.minX) / m.sizeX) * m.width)));
   const j = Math.max(0, Math.min(m.height - 1, Math.floor(((z - m.minZ) / m.sizeZ) * m.height)));
   const k = (j * m.width + i) * 4;
-  return { trail: m.data[k]! / 255, shade: m.data[k + 1]! / 255 };
+  return { trail: m.data[k]! / 255, shade: m.data[k + 1]! / 255, tone: m.data[k + 2]! / 255 };
 }

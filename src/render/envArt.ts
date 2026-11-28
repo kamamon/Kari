@@ -252,6 +252,9 @@ export function buildBackdrop(place: EnvPlace): Group {
   return group;
 }
 
+/** 草や小物を置く場所。y は地面の高さ（無ければ 0）。tint は、その 1 本の色の倍率（無ければ 1） */
+export interface SpriteSpot { x: number; z: number; y?: number; tint?: readonly [number, number, number] }
+
 /** 草や小物を、切り抜きの板（十字に組んだ 2 枚）としてたくさん立てる。1 種類につき、描画は 1 回。 */
 export class SpriteField {
   private mats = new Map<string, MeshLambertMaterial>();
@@ -260,9 +263,9 @@ export class SpriteField {
 
   /**
    * 1 種類を count 個、pick が返す場所へ置く（pick が null を返したら、その 1 個は置かない）。
-   * scale は大きさの幅 [最小, 最大]。
+   * scale は大きさの幅 [最小, 最大]。pick が tint（色の倍率）を返したら、その 1 本の色に掛ける（v0.76.0。その場所の地面の色むらと陰）。
    */
-  scatter(sheet: { file: string }, cell: SpriteCell, count: number, pick: () => { x: number; z: number; y?: number } | null, scale: [number, number] = [0.8, 1.25], vary = 0): void {
+  scatter(sheet: { file: string }, cell: SpriteCell, count: number, pick: () => SpriteSpot | null, scale: [number, number] = [0.8, 1.25], vary = 0): void {
     if (count <= 0) return;
     let mat = this.mats.get(sheet.file);
     if (!mat) {
@@ -285,8 +288,10 @@ export class SpriteField {
       if (vary > 0) {
         const lum = 1 + (this.rng.next() - 0.5) * 2 * vary;
         const warm = (this.rng.next() - 0.5) * 2 * vary * 0.7;
-        mesh.setColorAt(n, tint.setRGB(lum * (1 + warm * 0.6), lum * (1 + warm * 0.15), lum * (1 - warm)));
-      }
+        tint.setRGB(lum * (1 + warm * 0.6), lum * (1 + warm * 0.15), lum * (1 - warm));
+        if (p.tint) tint.setRGB(tint.r * p.tint[0], tint.g * p.tint[1], tint.b * p.tint[2]);
+        mesh.setColorAt(n, tint);
+      } else if (p.tint) mesh.setColorAt(n, tint.setRGB(p.tint[0], p.tint[1], p.tint[2]));
       n++;
     }
     mesh.count = n;
@@ -304,6 +309,8 @@ const SPRITE_GAIN = 1.2;
 export const WIND = { value: 0 };
 /** この高さ（m）の草の先が、いちばん大きく揺れる。低い草ほど、少しだけ揺れる */
 const SWAY_H = 0.6;
+/** 草の根元の明るさ（v0.76.0）と、そこから元の明るさへ戻る高さ（m） */
+const ROOT_SHADE = 0.6, ROOT_H = 0.14;
 
 /**
  * 草の板を風で揺らす（頂点の位置を、高さの 2 乗に比例して横へずらす。根元は動かない）。
@@ -313,9 +320,16 @@ const SWAY_H = 0.6;
 export function swayInWind(mat: MeshLambertMaterial): void {
   mat.onBeforeCompile = (sh) => {
     sh.uniforms.uWind = WIND;
-    sh.vertexShader = 'uniform float uWind;\n' + sh.vertexShader.replace(
+    // 根元の陰（v0.76.0）: 草の根元を暗くして、地面から生えて見せる（板の高さで決める。描画だけ）
+    sh.fragmentShader = 'varying float vRootH;\n' + sh.fragmentShader.replace(
+      '#include <map_fragment>',
+      `#include <map_fragment>
+      diffuseColor.rgb *= mix( ${ROOT_SHADE.toFixed(2)}, 1.0, smoothstep( 0.0, ${ROOT_H.toFixed(2)}, vRootH ) );`,
+    );
+    sh.vertexShader = 'uniform float uWind;\nvarying float vRootH;\n' + sh.vertexShader.replace(
       '#include <begin_vertex>',
       `#include <begin_vertex>
+      vRootH = position.y;
       {
         float hgt = clamp(position.y / ${SWAY_H.toFixed(2)}, 0.0, 1.0);
         hgt *= hgt;
