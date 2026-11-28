@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "0.81.0",
+  "motionSets": {
+    "current": "2g",
+    "held": {
+      "v056": "motionsets/v056/set.json"
+    }
+  },
+  "files": {
+    "actions": [
+      "actions/player_common.json",
+      "actions/heavy_blade.json",
+      "actions/guard_blade.json",
+      "actions/war_maul.json",
+      "actions/twin_blades.json",
+      "actions/long_blade.json",
+      "actions/long_lance.json",
+      "actions/ring_bow.json",
+      "actions/hunting_horn.json",
+      "actions/gunlance.json",
+      "actions/light_bowgun.json",
+      "actions/heavy_bowgun.json",
+      "actions/training_dummy.json",
+      "actions/galdros.json",
+      "actions/galdros_ext.json",
+      "actions/spinegale.json",
+      "actions/frostald.json",
+      "actions/venolka.json"
+    ],
+    "tracks": [
+      "tracks/heavy_blade.json",
+      "tracks/guard_blade.json",
+      "tracks/war_maul.json",
+      "tracks/twin_blades.json",
+      "tracks/long_blade.json",
+      "tracks/long_lance.json",
+      "tracks/ring_bow.json",
+      "tracks/hunting_horn.json",
+      "tracks/gunlance.json",
+      "tracks/light_bowgun.json",
+      "tracks/heavy_bowgun.json",
+      "tracks/training_dummy.json",
+      "tracks/galdros.json",
+      "tracks/galdros_ext.json",
+      "tracks/spinegale.json",
+      "tracks/frostald.json",
+      "tracks/venolka.json"
+    ],
+    "curves": [
+      "curves.json",
+      "curves_player.json",
+      "curves_extra_weapons.json",
+      "curves_spinegale.json",
+      "curves_frostald.json",
+      "curves_venolka.json"
+    ],
+    "weapons": "weapons.json",
+    "monsters": [
+      "monsters/training_dummy.json",
+      "monsters/galdros.json",
+      "monsters/spinegale.json",
+      "monsters/frostald.json",
+      "monsters/venolka.json"
+    ],
+    "maps": [
+      "maps/basin_training.json",
+      "maps/hub_village.json",
+      "maps/wetland_survey.json",
+      "maps/coast_survey.json",
+      "maps/ashmine_survey.json",
+      "maps/icegorge_survey.json",
+      "maps/mistforest_survey.json",
+      "maps/emberplateau_survey.json",
+      "maps/raincliff_survey.json",
+      "maps/copperterrace_survey.json",
+      "maps/dryriver_survey.json",
+      "maps/leadcloud_survey.json",
+      "maps/sunkenroot_survey.json",
+      "maps/glassplain_survey.json",
+      "maps/ashcocoon_survey.json",
+      "maps/coldcopper_survey.json",
+      "maps/echohall_survey.json",
+      "maps/heavyfog_survey.json",
+      "maps/buriedheat_survey.json",
+      "maps/ruststar_survey.json",
+      "maps/deepveil_survey.json",
+      "maps/whitefrost_survey.json"
+    ],
+    "fields": [
+      "fields/basin.json",
+      "fields/wetland.json",
+      "fields/coast.json",
+      "fields/ashmine.json",
+      "fields/icegorge.json",
+      "fields/mistforest.json",
+      "fields/emberplateau.json",
+      "fields/raincliff.json",
+      "fields/copperterrace.json",
+      "fields/dryriver.json",
+      "fields/leadcloud.json",
+      "fields/sunkenroot.json",
+      "fields/glassplain.json",
+      "fields/ashcocoon.json",
+      "fields/coldcopper.json",
+      "fields/echohall.json",
+      "fields/heavyfog.json",
+      "fields/buriedheat.json",
+      "fields/ruststar.json",
+      "fields/deepveil.json",
+      "fields/whitefrost.json"
+    ],
+    "player": "player.json",
+    "quests": [
+      "quests.json",
+      "quests_errands.json",
+      "quests_spinegale.json",
+      "quests_frostald.json",
+      "quests_venolka.json"
+    ],
+    "items": [
+      "items.json",
+      "items_spinegale.json",
+      "items_frostald.json",
+      "items_venolka.json"
+    ],
+    "loot": [
+      "loot.json",
+      "loot_spinegale.json",
+      "loot_frostald.json",
+      "loot_venolka.json"
+    ],
+    "recipes": "recipes.json",
+    "ranks": "ranks.json",
+    "armor": "armor.json",
+    "shop": "shop.json",
+    "hub": "hub.json",
+    "bestiary": "bestiary.json",
+    "story": "story.json",
+    "board": "quest_board.json",
+    "support": "support.json",
+    "deliveries": "deliveries.json",
+    "appearance": "appearance.json",
+    "elements": "elements.json",
+    "skills": "skills.json",
+    "equipment": [
+      "equipment_series.json",
+      "equipment_spinegale.json",
+      "equipment_frostald.json",
+      "equipment_venolka.json"
+    ],
+    "follow": [
+      "follow/galdros.json",
+      "follow/spinegale.json",
+      "follow/frostald.json",
+      "follow/venolka.json"
+    ],
+    "fieldGathering": "field_gathering.json",
+    "regionalGathering": "regional_gathering.json"
+  }
+}

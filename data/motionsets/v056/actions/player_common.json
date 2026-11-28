@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "actions": [
+    {
+      "schemaVersion": 1,
+      "actionId": "player.common.roll",
+      "clip": "common_roll_01",
+      "tickRate": 60, "durationTicks": 36,
+      "phases": [
+        {"id":"startup", "from":0, "to":3},
+        {"id":"invulnerable", "from":3, "to":11},
+        {"id":"recovery", "from":11, "to":36}
+      ],
+      "rootMotion": {"mode":"controller", "curveId":"roll_std"},
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [
+        {"tick":0, "type":"sound", "id":"roll_01"}
+      ],
+      "onFinish":"keep",
+      "staminaCost": 25,
+      "invulnerable": [{"from":3, "to":11}]
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.item.drink",
+      "clip": "common_item_drink_01",
+      "tickRate": 60, "durationTicks": 124,
+      "phases": [
+        {"id":"startup", "from":0, "to":58},
+        {"id":"recovery", "from":58, "to":124}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [{"tick":58, "type":"sound", "id":"item_drink"}],
+      "onFinish": "sheathed_idle"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.item.set_trap",
+      "clip": "common_item_place_01",
+      "tickRate": 60, "durationTicks": 112,
+      "phases": [
+        {"id":"startup", "from":0, "to":84},
+        {"id":"recovery", "from":84, "to":112}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [{"tick":84, "type":"sound", "id":"trap_set"}],
+      "onFinish": "sheathed_idle"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.item.throw_orb",
+      "clip": "common_item_throw_01",
+      "tickRate": 60, "durationTicks": 46,
+      "phases": [
+        {"id":"startup", "from":0, "to":22},
+        {"id":"recovery", "from":22, "to":46}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [{"tick":22, "type":"sound", "id":"orb_throw"}],
+      "onFinish": "sheathed_idle"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.common.carve",
+      "clip": "common_carve_01",
+      "tickRate": 60, "durationTicks": 100,
+      "phases": [
+        {"id":"startup", "from":0, "to":80},
+        {"id":"recovery", "from":80, "to":100}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [{"tick":80, "type":"sound", "id":"carve"}],
+      "onFinish": "sheathed_idle"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.common.gather",
+      "clip": "common_gather_01",
+      "tickRate": 60, "durationTicks": 90,
+      "phases": [
+        {"id":"startup", "from":0, "to":72},
+        {"id":"recovery", "from":72, "to":90}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [{"from":6, "to":72, "into":["roll"]}],
+      "events": [{"tick":30, "type":"sound", "id":"carve"}, {"tick":72, "type":"sound", "id":"carve_get"}],
+      "onFinish": "sheathed_idle"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.common.mine",
+      "clip": "common_mine_01",
+      "tickRate": 60, "durationTicks": 150,
+      "phases": [
+        {"id":"startup", "from":0, "to":126},
+        {"id":"recovery", "from":126, "to":150}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [{"from":6, "to":126, "into":["roll"]}],
+      "events": [{"tick":42, "type":"sound", "id":"hit_rock"}, {"tick":76, "type":"sound", "id":"hit_rock"}, {"tick":110, "type":"sound", "id":"hit_rock"}, {"tick":126, "type":"sound", "id":"carve_get"}],
+      "onFinish": "sheathed_idle"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.common.deliver",
+      "clip": "common_deliver_01",
+      "tickRate": 60, "durationTicks": 48,
+      "phases": [
+        {"id":"startup", "from":0, "to":30},
+        {"id":"recovery", "from":30, "to":48}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [{"tick":30, "type":"sound", "id":"carve_get"}],
+      "onFinish": "sheathed_idle"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.item.whet",
+      "clip": "common_item_whet_01",
+      "tickRate": 60, "durationTicks": 120,
+      "phases": [
+        {"id":"startup", "from":0, "to":96},
+        {"id":"recovery", "from":96, "to":120}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [{"from":102, "to":120, "into":["roll"]}],
+      "events": [{"tick":26, "type":"sound", "id":"hb_sheathe_01"}, {"tick":51, "type":"sound", "id":"hb_sheathe_01"}, {"tick":77, "type":"sound", "id":"hb_sheathe_01"}],
+      "onFinish": "sheathed_idle"
+    }
+  ]
+}

@@ -1,0 +1,341 @@
+{
+  "schemaVersion": 1,
+  "note": "里の商店（v0.12.0、docs/spec.md 19 章）。goods = 売っている道具と値段（通貨）。holdMax = 1 つの道具を持っておける数。sell = 素材の買い取り値（ここに無い素材は売れない）。値段はすべて机上の値。",
+  "holdMax": 99,
+  "goods": [
+    {
+      "itemId": "item.heal_tonic",
+      "price": 60
+    },
+    {
+      "itemId": "item.whetstone",
+      "price": 40
+    },
+    {
+      "itemId": "item.calm_orb",
+      "price": 150
+    },
+    {
+      "itemId": "item.marker_orb",
+      "price": 90
+    },
+    {
+      "itemId": "item.bind_trap",
+      "price": 300
+    },
+    {
+      "itemId": "item.power_coating",
+      "price": 30
+    },
+    {
+      "itemId": "item.antidote",
+      "price": 90
+    }
+  ],
+  "sell": [
+    {
+      "itemId": "mat.galdros.shell_shard",
+      "price": 20
+    },
+    {
+      "itemId": "mat.galdros.hard_bone",
+      "price": 25
+    },
+    {
+      "itemId": "mat.galdros.bronze_vein",
+      "price": 35
+    },
+    {
+      "itemId": "mat.galdros.foreleg_plate",
+      "price": 40
+    },
+    {
+      "itemId": "mat.galdros.veined_shell",
+      "price": 70
+    },
+    {
+      "itemId": "mat.galdros.tail_crystal",
+      "price": 90
+    },
+    {
+      "itemId": "mat.galdros.crystal_shell",
+      "price": 140
+    },
+    {
+      "itemId": "mat.galdros.bronze_lump",
+      "price": 180
+    },
+    {
+      "itemId": "mat.galdros.radiant_shell",
+      "price": 280
+    },
+    {
+      "itemId": "mat.galdros.pulse_core",
+      "price": 360
+    },
+    {
+      "itemId": "mat.hub.yamatsuno_wool",
+      "price": 18
+    },
+    {
+      "itemId": "mat.hub.ashihane_egg",
+      "price": 16
+    },
+    {
+      "itemId": "mat.hub.packbeast_sheath",
+      "price": 38
+    },
+    {
+      "itemId": "mat.spinegale.scale.r1",
+      "price": 38
+    },
+    {
+      "itemId": "mat.spinegale.claw.r1",
+      "price": 52
+    },
+    {
+      "itemId": "mat.spinegale.spine.r1",
+      "price": 56
+    },
+    {
+      "itemId": "mat.spinegale.dewlap.r1",
+      "price": 70
+    },
+    {
+      "itemId": "mat.spinegale.tail_fan.r1",
+      "price": 85
+    },
+    {
+      "itemId": "mat.spinegale.tendon.r1",
+      "price": 72
+    },
+    {
+      "itemId": "mat.spinegale.scale.r2",
+      "price": 68
+    },
+    {
+      "itemId": "mat.spinegale.claw.r2",
+      "price": 94
+    },
+    {
+      "itemId": "mat.spinegale.spine.r2",
+      "price": 101
+    },
+    {
+      "itemId": "mat.spinegale.dewlap.r2",
+      "price": 126
+    },
+    {
+      "itemId": "mat.spinegale.tail_fan.r2",
+      "price": 153
+    },
+    {
+      "itemId": "mat.spinegale.tendon.r2",
+      "price": 130
+    },
+    {
+      "itemId": "mat.spinegale.crest_bone.r2",
+      "price": 216
+    },
+    {
+      "itemId": "mat.spinegale.scale.r3",
+      "price": 114
+    },
+    {
+      "itemId": "mat.spinegale.claw.r3",
+      "price": 156
+    },
+    {
+      "itemId": "mat.spinegale.spine.r3",
+      "price": 168
+    },
+    {
+      "itemId": "mat.spinegale.dewlap.r3",
+      "price": 210
+    },
+    {
+      "itemId": "mat.spinegale.tail_fan.r3",
+      "price": 255
+    },
+    {
+      "itemId": "mat.spinegale.tendon.r3",
+      "price": 216
+    },
+    {
+      "itemId": "mat.spinegale.crest_bone.r3",
+      "price": 360
+    },
+    {
+      "itemId": "mat.spinegale.sprint_core.r3",
+      "price": 1950
+    },
+    {
+      "itemId": "mat.frostald.scale.r1",
+      "price": 55
+    },
+    {
+      "itemId": "mat.frostald.claw.r1",
+      "price": 55
+    },
+    {
+      "itemId": "mat.frostald.mane.r1",
+      "price": 55
+    },
+    {
+      "itemId": "mat.frostald.brine.r1",
+      "price": 55
+    },
+    {
+      "itemId": "mat.frostald.tail.r1",
+      "price": 55
+    },
+    {
+      "itemId": "mat.frostald.bone.r1",
+      "price": 55
+    },
+    {
+      "itemId": "mat.frostald.scale.r2",
+      "price": 99
+    },
+    {
+      "itemId": "mat.frostald.claw.r2",
+      "price": 99
+    },
+    {
+      "itemId": "mat.frostald.mane.r2",
+      "price": 99
+    },
+    {
+      "itemId": "mat.frostald.brine.r2",
+      "price": 99
+    },
+    {
+      "itemId": "mat.frostald.tail.r2",
+      "price": 99
+    },
+    {
+      "itemId": "mat.frostald.bone.r2",
+      "price": 99
+    },
+    {
+      "itemId": "mat.frostald.crown.r2",
+      "price": 216
+    },
+    {
+      "itemId": "mat.frostald.scale.r3",
+      "price": 165
+    },
+    {
+      "itemId": "mat.frostald.claw.r3",
+      "price": 165
+    },
+    {
+      "itemId": "mat.frostald.mane.r3",
+      "price": 165
+    },
+    {
+      "itemId": "mat.frostald.brine.r3",
+      "price": 165
+    },
+    {
+      "itemId": "mat.frostald.tail.r3",
+      "price": 165
+    },
+    {
+      "itemId": "mat.frostald.bone.r3",
+      "price": 165
+    },
+    {
+      "itemId": "mat.frostald.crown.r3",
+      "price": 360
+    },
+    {
+      "itemId": "mat.frostald.core.r3",
+      "price": 1950
+    },
+    {
+      "itemId": "mat.venolka.scale.r1",
+      "price": 35
+    },
+    {
+      "itemId": "mat.venolka.claw.r1",
+      "price": 42
+    },
+    {
+      "itemId": "mat.venolka.feather.r1",
+      "price": 46
+    },
+    {
+      "itemId": "mat.venolka.sac.r1",
+      "price": 63
+    },
+    {
+      "itemId": "mat.venolka.tail_plume.r1",
+      "price": 53
+    },
+    {
+      "itemId": "mat.venolka.membrane.r1",
+      "price": 42
+    },
+    {
+      "itemId": "mat.venolka.scale.r2",
+      "price": 60
+    },
+    {
+      "itemId": "mat.venolka.claw.r2",
+      "price": 72
+    },
+    {
+      "itemId": "mat.venolka.feather.r2",
+      "price": 78
+    },
+    {
+      "itemId": "mat.venolka.sac.r2",
+      "price": 108
+    },
+    {
+      "itemId": "mat.venolka.tail_plume.r2",
+      "price": 90
+    },
+    {
+      "itemId": "mat.venolka.membrane.r2",
+      "price": 72
+    },
+    {
+      "itemId": "mat.venolka.crest.r2",
+      "price": 126
+    },
+    {
+      "itemId": "mat.venolka.scale.r3",
+      "price": 115
+    },
+    {
+      "itemId": "mat.venolka.claw.r3",
+      "price": 138
+    },
+    {
+      "itemId": "mat.venolka.feather.r3",
+      "price": 150
+    },
+    {
+      "itemId": "mat.venolka.sac.r3",
+      "price": 207
+    },
+    {
+      "itemId": "mat.venolka.tail_plume.r3",
+      "price": 173
+    },
+    {
+      "itemId": "mat.venolka.membrane.r3",
+      "price": 138
+    },
+    {
+      "itemId": "mat.venolka.crest.r3",
+      "price": 242
+    },
+    {
+      "itemId": "mat.venolka.core.r3",
+      "price": 460
+    }
+  ]
+}

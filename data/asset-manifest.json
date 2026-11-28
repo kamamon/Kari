@@ -1,0 +1,5095 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-11-28",
+  "note": "素材台帳の正本。path は実行時に読む素材（public/ からの相対）、sourcePath は原画などの編集原本（リポジトリの先頭からの相対、配信物には含めない）。3D は planned→concept→modeled→rigged→animated→integrated→approved、2D と音は planned→generated→validated→integrated→approved。path が null の素材はまだファイルが無い。placeholder がある素材は、ゲーム内で仮素材（コードで生成）を使っている。",
+  "assets": [
+    {
+      "id": "model.player.hunter_base",
+      "name": "基準ハンター",
+      "type": "model",
+      "use": "プレイヤー本体（共通骨格 1 体型）",
+      "owner": "ChatGPT（設定画）→ Blender（モデル・リグ・動作）→ Claude（統合）",
+      "status": "planned",
+      "version": 0,
+      "path": null,
+      "source": "未制作。設定画は COPY 12 で依頼する",
+      "terms": "本作オリジナル",
+      "dims": "身長 1.75m / Y 上 / +Z 前",
+      "tris": "目標 1〜2 万",
+      "bones": "docs/animation-contract.md の人型骨格 + socket 4",
+      "clips": [
+        "common_roll_01",
+        "common_item_whet_01",
+        "common_item_drink_01",
+        "common_item_place_01",
+        "common_item_throw_01",
+        "common_carve_01",
+        "common_gather_01",
+        "common_mine_01",
+        "common_deliver_01",
+        "hb_attack_vertical_01",
+        "hb_attack_side_01",
+        "hb_draw_slash_01",
+        "hb_attack_upswing_01",
+        "hb_attack_upswing_low_01",
+        "hb_draw_01",
+        "hb_sheathe_01",
+        "gb_slash1_01",
+        "gb_side_01",
+        "gb_slash2_01",
+        "gb_return_01",
+        "gb_round_01",
+        "gb_bash_01",
+        "gb_guard_slash_01",
+        "gb_lunge_01",
+        "gb_jump_01",
+        "gb_draw_01",
+        "gb_sheathe_01",
+        "ll_thrust_01",
+        "ll_high_01",
+        "ll_guard_thrust_01",
+        "ll_charge_01",
+        "ll_charge_finish_01",
+        "ll_charge_stop_01",
+        "ll_lunge_01",
+        "ll_hop_01",
+        "ll_backstep_01",
+        "ll_draw_01",
+        "ll_sheathe_01",
+        "rb_shot_01",
+        "rb_melee1_01",
+        "rb_melee2_01",
+        "rb_coat_01",
+        "rb_backstep_01",
+        "rb_draw_01",
+        "rb_sheathe_01",
+        "wm_smash_01",
+        "wm_smash2_01",
+        "wm_upswing_01",
+        "wm_swing_01",
+        "wm_charge_01",
+        "wm_charge_smash_01",
+        "wm_charge_upswing_01",
+        "wm_pound_01",
+        "wm_spin_01",
+        "wm_spin_up_01",
+        "wm_spin_slam_01",
+        "wm_draw_upswing_01",
+        "wm_draw_01",
+        "wm_sheathe_01",
+        "tb_slash1_01",
+        "tb_slash2_01",
+        "tb_cross_01",
+        "tb_round_01",
+        "tb_sweep_01",
+        "tb_flurry_01",
+        "tb_demon_on_01",
+        "tb_demon_off_01",
+        "tb_draw_cross_01",
+        "tb_draw_01",
+        "tb_sheathe_01",
+        "lb_vertical_01",
+        "lb_rise_01",
+        "lb_thrust_01",
+        "lb_back_01",
+        "lb_spirit1_01",
+        "lb_spirit2_01",
+        "lb_spirit3_01",
+        "lb_draw_cut_01",
+        "lb_draw_01",
+        "lb_sheathe_01",
+        "common_net_01",
+        "common_fish_01",
+        "xw_hunting_horn_swing_left",
+        "xw_hunting_horn_swing_right",
+        "xw_hunting_horn_poke",
+        "xw_hunting_horn_slam",
+        "xw_hunting_horn_recital_enter",
+        "xw_hunting_horn_play_note1",
+        "xw_hunting_horn_play_note2",
+        "xw_hunting_horn_play_note3",
+        "xw_hunting_horn_recital_exit",
+        "xw_hunting_horn_draw",
+        "xw_hunting_horn_sheathe",
+        "xw_gunlance_thrust",
+        "xw_gunlance_thrust2",
+        "xw_gunlance_thrust3",
+        "xw_gunlance_uppercut",
+        "xw_gunlance_guard_thrust",
+        "xw_gunlance_shell",
+        "xw_gunlance_wyvern_fire",
+        "xw_gunlance_reload",
+        "xw_gunlance_guard",
+        "xw_gunlance_hop",
+        "xw_gunlance_backstep",
+        "xw_gunlance_draw",
+        "xw_gunlance_sheathe",
+        "xw_light_bowgun_fire",
+        "xw_light_bowgun_rapid_fire",
+        "xw_light_bowgun_reload",
+        "xw_light_bowgun_backstep",
+        "xw_light_bowgun_sheathe",
+        "xw_light_bowgun_draw",
+        "xw_heavy_bowgun_fire",
+        "xw_heavy_bowgun_charge_stance",
+        "xw_heavy_bowgun_reload",
+        "xw_heavy_bowgun_dodge",
+        "xw_heavy_bowgun_sheathe",
+        "xw_heavy_bowgun_draw"
+      ],
+      "clipsPlanned": [
+        "common_idle_01",
+        "common_walk_01",
+        "common_run_01",
+        "common_sprint_01",
+        "common_flinch_01",
+        "common_bounce_01",
+        "common_knockdown_01",
+        "common_getup_01",
+        "common_dead_01",
+        "hb_idle_01",
+        "hb_walk_01",
+        "hb_guard_01",
+        "hb_guard_recoil_01"
+      ],
+      "dependsOn": [
+        "art.player.hunter_base.turnaround"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts + src/render/poses.ts",
+        "note": "コードで組んだ仮モデル（2 代目、src/render/hunterBody.ts）。設定図の体つきに合わせた筒（頭・胴・外套・すそ・腕・脚・足）を、骨 17 本へ重み付けした 1 枚の皮にした。約 3400 面。色は設定図から焼いた絵（tex.player.hunter_base.body）。首はえりの前を開けて見せ、肩の布とすそは腕・脚の骨に付いて動く。髪の束・耳・親指・腰袋は単色の立体（D-044）。指と布のひだは絵だけ。断岳剣は箱のまま。待機・歩行・防御・被弾は手続き生成、技は手付けのキー姿勢。腕は武器の軌道へ IK で追従。"
+      },
+      "verification": "仮素材: ビューアで全高 1.75m・関節 17・socket 4 を確認。正面・背面・斜め・顔の近くと、縦斬り・横薙ぎ・回避・回復・剥ぎ取りの姿勢を画面で確認（腕を上げると外套を突き抜ける所がある）。足滑り・接地・握りは未調整（仮）。実機では未確認。"
+    },
+    {
+      "id": "model.weapon.heavy_blade.001",
+      "name": "里鍛ちの断岳剣",
+      "type": "model",
+      "use": "断岳剣の初期武器",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図は art-source/weapon/（2026-11-23 受領）",
+      "terms": "本作オリジナル",
+      "dims": "握り原点から刃先まで 1.795m、刃の幅 0.33m、厚み 約 4.4cm、柄頭の下端 -0.155m / +Y が刃先・X が厚み・Z が刃幅 / 判定は握りから 0.30〜1.75m・半径 0.20m",
+      "tris": "目標 1 千以下",
+      "bones": "なし（socket_hand_r に握り原点を合わせる）",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.dangaku"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/heavyBlade.ts buildHeavyBlade()（設定図の寸法で組んだ形へ、正面の図を貼る。2 代目）"
+      },
+      "verification": "仮素材（2 代目、v0.3.4）: 素材ビューアで、背負った姿・縦斬り・横薙ぎ・抜刀の姿を画面で確認。実機では未確認。見える刃と判定カプセルが同じ軌道データから動くことを検証表示で確認。"
+    },
+    {
+      "id": "model.weapon.heavy_blade.002",
+      "name": "岩殻の断岳剣",
+      "type": "model",
+      "use": "断岳剣の強化（工房で、里鍛ちの断岳剣から作る。v0.6.0）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの断岳剣の図を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちの断岳剣と同じ（握り原点から刃先まで 1.795m）。峰に岩の板 4 枚（高さ 0.5〜1.36m、峰から 4〜6.5cm 張り出す）と青銅色の留め帯。判定は里鍛ちと同じ",
+      "tris": "目標 1 千以下",
+      "bones": "なし（socket_hand_r に握り原点を合わせる）",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.dangaku"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/heavyBlade.ts buildHeavyBlade('shell')（里鍛ちの断岳剣に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.6.0）: 素材ビューアとゲーム内の静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.heavy_blade.003",
+      "name": "脈殻の断岳剣",
+      "type": "model",
+      "use": "強化の 3 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/heavyBlade.ts buildHeavyBlade('shell', 3)（里鍛ちの断岳剣に、色の違う板と留め帯を足しただけの仮の形）"
+      }
+    },
+    {
+      "id": "model.weapon.heavy_blade.004",
+      "name": "晶殻の断岳剣",
+      "type": "model",
+      "use": "強化の 4 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/heavyBlade.ts buildHeavyBlade('shell', 4)（里鍛ちの断岳剣に、色の違う板と留め帯を足しただけの仮の形）"
+      }
+    },
+    {
+      "id": "model.weapon.heavy_blade.005",
+      "name": "輝殻の断岳剣",
+      "type": "model",
+      "use": "強化の 5 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/heavyBlade.ts buildHeavyBlade('shell', 5)（里鍛ちの断岳剣に、色の違う板と留め帯を足しただけの仮の形）"
+      }
+    },
+    {
+      "id": "model.monster.training_dummy",
+      "name": "訓練標的・岩偶",
+      "type": "model",
+      "use": "M1 の部位付き標的（訓練区画専用）",
+      "owner": "Claude",
+      "status": "planned",
+      "version": 0,
+      "path": null,
+      "source": "コードで生成",
+      "terms": "本作オリジナル。正式素材へ置き換える予定は未定（ガルドロス実装後は訓練場専用）",
+      "dims": "全長 約 4.6m / 胴の衝突半径 1.3m",
+      "tris": "約 600",
+      "bones": "なし（腕だけ軌道データで動かす）",
+      "clips": [
+        "dummy_slam_01"
+      ],
+      "dependsOn": [],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/monsterRig.ts",
+        "note": "部位の見た目は当たり形状に合わせてある。頭と背殻は破壊で見た目が変わる。"
+      },
+      "verification": "仮素材: 部位判定の重ね表示で見た目と一致を確認。"
+    },
+    {
+      "id": "model.monster.galdros",
+      "name": "岩殻獣 ガルドロス",
+      "type": "model",
+      "use": "最初の大型モンスター（M2）",
+      "owner": "ChatGPT（設定図）→ Blender（モデル・リグ・動作）→ Claude（統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "設定図 4 枚を受領・採用済み（art.monster.galdros.turnaround）。3D モデルは未制作",
+      "terms": "本作オリジナル",
+      "dims": "全長 5.8m / 全高 約 2.45m / 全幅 約 3.2m。Y 上・+Z 前",
+      "tris": "目標 1.5〜3 万（仮モデルは約 1.5 万）",
+      "bones": "四足重の骨格群（未定義。代表 1 体としてこのモデルで決める）",
+      "clips": [
+        "galdros_roar_01",
+        "galdros_slam_l_01",
+        "galdros_slam_r_01",
+        "galdros_charge_01",
+        "galdros_tail_sweep_01",
+        "galdros_rockfall_01",
+        "galdros_bite_01",
+        "galdros_head_swing_01",
+        "galdros_double_slam_01",
+        "galdros_stomp_01",
+        "galdros_body_press_01",
+        "galdros_side_bash_l_01",
+        "galdros_side_bash_r_01",
+        "galdros_charge_short_01",
+        "galdros_tail_slam_01",
+        "galdros_tail_sweep_rev_01",
+        "galdros_rock_stomp_01",
+        "galdros_rock_fling_01",
+        "galdros_retreat_01",
+        "galdros_threat_01",
+        "galdros_turn_l90_01",
+        "galdros_turn_r90_01",
+        "galdros_turn_l180_01",
+        "galdros_turn_r180_01"
+      ],
+      "clipsPlanned": [
+        "galdros_idle_01",
+        "galdros_walk_01",
+        "galdros_turn_01",
+        "galdros_flinch_01",
+        "galdros_topple_01",
+        "galdros_getup_01",
+        "galdros_dead_01"
+      ],
+      "dependsOn": [
+        "art.monster.galdros.turnaround"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/galdrosRig.ts",
+        "note": "コードで組んだ仮モデル（3 代目）。骨 53 本（背骨 5 節・首 2 節・あご・舌・まぶた・尾 8 節・脚の指・岩板 15 枚）。骨の名前・番号・親は src/render/galdrosBones.ts の表（v0.30.0。#12 の設計のノード名。D-111）。歯・舌・瞳。背殻は、なめらかな殻の面を分け合う薄い板 6 枚（縁は青銅色）で、とげは無い。皮は設定図（右側面）から焼いた絵（tex.monster.galdros.hide）を貼り、岩は設定図から取った模様（tex.monster.galdros.rock）を重ねる。全長・頭・尾・腹の高さは設定図の比率に合わせた（当たり判定も同じ形）。脚の太さは設定図より細く、背殻は設定図より小さく 6 枚に分かれている。陰は Blender で焼いた値を頂点の色へ掛ける。前脚叩きの脚と尾払いの尾は判定と同じ軌道で動く。歩行は足先を地面に置く方式。しぐさ・のけぞり・怯み・転倒・咆哮・死亡は手続き生成。"
+      },
+      "verification": "仮素材: 素材ビューアで部位判定と見た目の重なり、破壊・切断後の姿を確認。ゲーム内で歩行・旋回・4 つの技・転倒・死亡・怒りの見た目を画面で確認（ヘッドレス Chrome）。v0.4.1 で技の clip を 20 に増やし、素材ビューアの静止画（各技の予備動作と判定が出ている時）で体の向きと判定の重なりを、ゲーム内の画面で落石が山なりに飛ぶことを確認。動いている様子を通して見てはいない。実機での見え方と性能は未確認。"
+    },
+    {
+      "id": "env.basin.training",
+      "name": "風礫盆地・外縁（訓練区画）",
+      "type": "env",
+      "use": "M0〜M1 の戦闘区画 80m×60m",
+      "owner": "ChatGPT（環境原画）→ Blender → Claude",
+      "status": "planned",
+      "version": 0,
+      "path": null,
+      "source": "未制作。環境原画は COPY 15 で依頼する",
+      "terms": "本作オリジナル",
+      "dims": "80m × 60m。寸法と衝突は public/data/maps/basin_training.json が正本",
+      "tris": "仮: 約 1.2 万（草・小石のインスタンス含む）",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "art.env.basin.overview"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/arena.ts",
+        "note": "地面・岩・段差・外周の岩壁・キャンプ・遠景をコードで生成。"
+      },
+      "verification": "仮素材: 壁・岩・高い段差を抜けないこと、0.3m の段を登れることを自動検査で確認。"
+    },
+    {
+      "id": "env.basin.field",
+      "name": "風礫盆地（野営地 + 10 エリア）",
+      "type": "env",
+      "use": "v0.11.0 からの狩場。エリアに分かれたフィールド（docs/spec.md 18 章）",
+      "owner": "ChatGPT（環境原画）→ Blender → Claude",
+      "status": "planned",
+      "version": 0,
+      "path": null,
+      "source": "未制作。エリアごとの環境原画は、まだ依頼していない",
+      "terms": "本作オリジナル",
+      "dims": "エリア 11 個（36×28m 〜 88×66m）。寸法・出口・衝突は public/data/fields/basin.json が正本（tools/gen-field.py が作る）",
+      "tris": "仮: 野営地で約 1.6 万（居るエリアだけ描く。草と小物の板を含む）",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "art.env.basin.overview",
+        "tex.env.request8"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/arena.ts",
+        "note": "エリアごとに、地面・岩・段差・外周の岩壁・出口の門柱と踏み跡をコードで作り、その面に、依頼 8 の絵を貼る（v0.13.0）。空と遠景は、筒の内側に貼った絵。草と小物は、切り抜きの板。岩と段の位置は種から置いた仮の配置で、エリアごとの環境原画は無い。外周の岩壁は、箱に岩肌を貼ったもの。巣だけ晶の柱が立つ。"
+      },
+      "verification": "仮素材: 出口でエリアが移ること、外へ出られないこと、大型がエリアを巡って巣で眠ることを自動検査とブラウザの操作検査で確認。絵を貼った画面は、野営地・エリア 1・3・10 を見た（ヘッドレス Chrome）。実機では未確認。"
+    },
+    {
+      "id": "env.hub.village",
+      "name": "灯継ぎの里（拠点）",
+      "type": "env",
+      "use": "v0.12.0 からの拠点。歩いて、工房・商店・依頼板・装備箱を使う（docs/spec.md 19 章）。v0.35.0 から 5 つの段（水音の庭 -10・炉の段 -3・広場 0・暮らしの段 +8・灯見の台 +22。ChatGPT の里の設計 #11 の P1）",
+      "owner": "ChatGPT（里の原画）→ Blender → Claude",
+      "status": "planned",
+      "version": 0,
+      "path": null,
+      "source": "未制作（正式な 3D）。建物の正面と右側面の図は、依頼 8 の D で受け取った。5 つの段の配置と寸法は、ChatGPT の里の設計 #11（docs/source/chatgpt-hub-design-20261125/。原画 4 枚は雰囲気の資料で、形の正本ではない）",
+      "terms": "本作オリジナル",
+      "dims": "70m × 106m（v0.35.0。歩ける床の高低差 32m）。施設・建物・小物の位置は public/data/hub.json、段差と当たりは public/data/maps/hub_village.json（tools/gen-hub.py の出力）が正本",
+      "tris": "仮: 約 9 万（v0.35.0。段の石積み・柵・建物・草と小物の板・山の岩を含む）",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "tex.env.request8",
+        "tex.props.story"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/hubScene.ts （v0.35.0 から src/render/terraces.ts・src/render/villageScene.ts も）",
+        "note": "工房・商店・依頼板・装備箱を、箱・切妻の屋根・板の簡単な立体で作り、その面に、依頼 8 の正面と右側面の図を貼る（v0.13.0）。後ろの壁は、横の壁の図で代用。v0.35.0: 段の床（土・石畳・草地）・石積みの擁壁（計算で作る石積みの絵。手で描いた絵ではない）・笠石・柵（階段に沿って斜め）・沢の水面と小滝（計算で作る水の絵）・吊り橋・裂け目の岩、宿・住居 2・集会所・調査の机・見張りの灯・水車小屋と水車・洗い場・資材庫・荷揚げの昇降台・半屋外の作業場・金床・丸太・箱・冷却槽・薪棚・畑・物干しを、箱・切妻の屋根・円柱の立体（頂点の色で塗る）で作った。灯見の台の後ろの山は、依頼 10 の岩の図の岩を大きくしたもの。外の斜面は草地の絵。煙・しぶき・水車・昇降台・布は動く。当たりは円のまま。新しい住民は居ない（原画の背景の人で代わりにしない）。"
+      },
+      "verification": "仮素材: 出発地点からどの施設の前へも歩けること、建物に入り込まないこと、2 つの回遊路を跳ばずに一周できること、段の縁・裂け目・沢・吊り橋のわきから落ちないことを自動検査で確認（tests/hub-tiers.test.ts、tests/hub-village.test.ts）。里の全景と、5 つの段の建物・階段・沢・吊り橋を、いくつかの向きから見た（ヘッドレス Chrome、tools/hub-shots.mjs。PC の大きさ）。実機（iPhone・iPad）の操作・見え方・描画の間隔は未確認。"
+    },
+    {
+      "id": "tex.props.story",
+      "name": "里に立てる小物の絵（道の灯・消えた灯・閉じた道の看板・荷車・替えの部品・記録の板）",
+      "type": "image",
+      "use": "里の 5 つの段（v0.35.0）の、道の灯（踊り場と階段の口）・谷への道の看板と消えた灯・荷揚げ場の荷車・資材庫の替えの部品・依頼板の横の記録台の板。カメラの方を向く板（記録の板だけ向きを変えない）。src/render/villageScene.ts",
+      "owner": "Claude（ChatGPT の絵から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/props/props_story_v1.webp",
+      "source": "art-source/story/prop_story_*_v1.png の 6 枚（ChatGPT の物語の原画 #13 の小物。RGBA の切り抜き）を tools/prop-art.py（npm run props:art）で 1 枚の図集に並べた（ますの場所は src/render/propArt.ts）",
+      "terms": "本作オリジナル（ChatGPT の絵からの二次加工）",
+      "dims": "1536×1024px WebP 1 枚（透明つき、約 286KB）。背丈は仮（灯 2.75m・看板 1.9m・荷車 1.55m・部品 0.75m・記録の板 0.76m）",
+      "clips": [],
+      "dependsOn": [
+        "art.story.20261125"
+      ],
+      "verification": "自動テスト（tests/hub-village.test.ts）で、小物の名前が図集の索引と同じで、原画と図集があることを確認。画面で見た（ヘッドレス Chrome）。実機では未確認"
+    },
+    {
+      "id": "model.ref.cube_1m",
+      "name": "基準 GLB（1m 立方体と +Z 矢印）",
+      "type": "model",
+      "use": "素材ビューアで単位・軸を照合する物差し。GLB 読み込み経路の確認用",
+      "owner": "Claude",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/models/ref_cube_1m.glb",
+      "source": "tools/make-ref-glb.mjs で生成",
+      "terms": "本作オリジナル",
+      "dims": "立方体 1×1×1m（底面中央が原点）+ 前方 +Z へ 1.5m まで伸びる矢印",
+      "tris": 36,
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [],
+      "verification": "ビューアで読み込み、大きさ 幅 1.000 / 高さ 1.000 / 奥行 2.000、前端 z=1.500 を確認（2026-11-22）。"
+    },
+    {
+      "id": "audio.se.placeholder_synth",
+      "name": "仮の効果音一式（合成音）",
+      "type": "audio",
+      "use": "M1 の効果音と環境音（風）",
+      "owner": "ChatGPT（音の役割設計）→ 音声制作ツール → Claude（接続）",
+      "status": "planned",
+      "version": 0,
+      "path": null,
+      "source": "Web Audio でコード合成",
+      "terms": "本作オリジナル",
+      "ids": [
+        "hb_swing_01",
+        "hb_swing_02",
+        "hb_draw_01",
+        "hb_sheathe_01",
+        "roll_01",
+        "hit_rock",
+        "hit_shell",
+        "hit_hide",
+        "part_break",
+        "guard",
+        "guard_break",
+        "hurt",
+        "evade",
+        "charge_1",
+        "charge_2",
+        "charge_3",
+        "dummy_warn_01",
+        "dummy_swing_01",
+        "ground_slam",
+        "monster_dead",
+        "no_stamina",
+        "ui",
+        "galdros_roar",
+        "galdros_warn",
+        "galdros_swing",
+        "galdros_scrape",
+        "galdros_charge",
+        "galdros_rumble",
+        "galdros_step",
+        "rock_impact",
+        "part_sever",
+        "monster_topple",
+        "hunt_clear",
+        "hunt_fail",
+        "item_drink",
+        "item_heal",
+        "item_fail",
+        "trap_set",
+        "trap_armed",
+        "trap_trigger",
+        "orb_throw",
+        "tranq_hit",
+        "capture",
+        "carve",
+        "carve_get",
+        "forge_clank",
+        "wheel_creak",
+        "bell_far",
+        "beast_cry",
+        "bird_screech",
+        "insect_buzz",
+        "hiss",
+        "gust",
+        "splash",
+        "bell_boom",
+        "zap",
+        "ice_crack",
+        "mist_pop",
+        "shell_clack",
+        "status_on",
+        "xw_note_1",
+        "xw_note_2",
+        "xw_note_3",
+        "xw_shell",
+        "xw_shell_heavy",
+        "xw_reload",
+        "xw_shot"
+      ],
+      "clips": [],
+      "dependsOn": [],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/core/audio.ts",
+        "note": "音声ファイルは 1 つも無い。BGM は未制作。"
+      },
+      "verification": "仮素材: 空振りは振り音だけ、命中時だけ材質別の命中音が鳴ることを確認。実機の音量バランスは未確認。"
+    },
+    {
+      "id": "art.board.style",
+      "name": "アート基準ボード",
+      "type": "image",
+      "use": "以後の画像依頼に必ず添付する見た目の基準",
+      "owner": "ChatGPT",
+      "status": "approved",
+      "version": 2,
+      "path": null,
+      "sourcePath": "art-source/board/style_board_v2.png",
+      "source": "COPY 10。ChatGPT で生成。v1・v2 とも 2026-11-22 受領（v1 は art-source/board/style_board_v1.png に保存）",
+      "terms": "本作オリジナル。既存作品のキャラクター・装備の輪郭・ロゴ・UI を写さない",
+      "dims": "1671×941px、確認用 1 枚（ハンター・ガルドロス・断岳剣・護刃・里・狩場）",
+      "clips": [],
+      "dependsOn": [],
+      "verification": "v2 を 2026-11-22 にユーザーが採用。以後の画像依頼に添付する基準。ガルドロスの岩板が大きく数枚になり部位の境目が明確。頭に壊せる岩が無い点を依頼 2 で補う。記録は art-source/board/style_board_v2.md"
+    },
+    {
+      "id": "art.monster.galdros.turnaround",
+      "name": "岩殻獣ガルドロス 設定図（正面・左・右・背面）",
+      "type": "image",
+      "use": "M2 のガルドロス 3D 化の資料",
+      "owner": "ChatGPT",
+      "status": "approved",
+      "version": 1,
+      "path": null,
+      "sourcePath": "art-source/monster/galdros",
+      "files": [
+        "galdros_front_v1.png",
+        "galdros_left_v1.png",
+        "galdros_right_v1.png",
+        "galdros_back_v1.png"
+      ],
+      "source": "COPY 11。ChatGPT で生成、2026-11-22 受領",
+      "terms": "本作オリジナル",
+      "dims": "各 1672×941px。全長 : 全高 = 2.37 : 1（全長 5.8m 換算で全高 約 2.45m、全幅 約 3.2m）",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style"
+      ],
+      "verification": "2026-11-22 にユーザーが採用。脚 4 本・頭の岩・左右で異なる岩板・尾先の晶は 4 枚で一致。左側面は真横でなく、背の岩板の継ぎ目に小さな食い違いあり。記録は art-source/monster/galdros/galdros_turnaround_v1.md"
+    },
+    {
+      "id": "art.player.hunter_base.turnaround",
+      "name": "基準ハンター 設定図（正面・背面・左・右）+ 顔と髪",
+      "type": "image",
+      "use": "基準ハンターの 3D 化の資料。体の輪郭、服と持ち物の位置、模様の投影元",
+      "owner": "ChatGPT",
+      "status": "validated",
+      "version": 1,
+      "path": null,
+      "sourcePath": "art-source/player",
+      "files": [
+        "hunter_base_front_v1.png",
+        "hunter_base_back_v1.png",
+        "hunter_base_left_v1.png",
+        "hunter_base_right_v1.png",
+        "hunter_base_front_alt_v1.png",
+        "hunter_face_front_v1.png",
+        "hunter_face_quarter_v1.png",
+        "hunter_face_left_v1.png",
+        "hunter_face_back_v1.png",
+        "hunter_face_right_v1.png",
+        "hunter_face_top_v1.png",
+        "hunter_base_tpose_left_v1.png",
+        "hunter_base_tpose_right_v1.png"
+      ],
+      "source": "ChatGPT で生成（依頼 3 の A と B、依頼 4 の A と B。2026-11-23 受領）",
+      "terms": "本作オリジナル",
+      "dims": "全身は各 1086×1448px。身長 1.75m 換算で 1px = 約 1.35mm。腕は体から約 36 度。約 8.5 頭身。顔と髪は各 1254×1254px",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style"
+      ],
+      "verification": "2026-11-23 に受領・照合。正面・背面・左・右の 4 枚は縮尺・腕の角度・服・持ち物の位置が一致（腰の小袋は右）。別案の正面 1 枚は縮尺が約 3% 大きく参考扱い。頭身が依頼（7.5）より大きい。顔と髪の近接図 4 枚（正面・斜め前・左真横・後ろ）も同日に受領し、全身図と同じ人物と確認。依頼 3 は A の採用後に B・C へ進む手順で、利用者が B・C へ進んだため採用として扱う（明示の返事は未取得）。依頼 4 の 4 枚（頭の右真横・真上、腕を水平に上げた体の左右の真横）も同日に受領・照合: 右真横は左真横の反転と輪郭が重なる（重なり 0.93）、体の真横は全身図と同じ縮尺。仮モデルの絵（tex.player.hunter_base.body）へ反映済み。記録は art-source/player/hunter_base_turnaround_v1.md と hunter_face_v1.md"
+    },
+    {
+      "id": "art.armor.galdros.t2.turnaround",
+      "name": "ガルドロスの防具（岩殻の防具一式）設定図（正面・背面・左・右）",
+      "type": "image",
+      "use": "防具の 3D 化の資料。板の枚数・左右の偏り・付ける位置（依頼 7 の A）",
+      "owner": "ChatGPT",
+      "status": "integrated",
+      "version": 2,
+      "path": null,
+      "sourcePath": "art-source/armor/galdros",
+      "files": [
+        "armor_galdros_t2_front_v2.png",
+        "armor_galdros_t2_back_v2.png",
+        "armor_galdros_t2_left_v2.png",
+        "armor_galdros_t2_right_v2.png",
+        "armor_galdros_t2_front_v1.png",
+        "armor_galdros_t2_back_v1.png",
+        "armor_galdros_t2_left_v1.png",
+        "armor_galdros_t2_right_v1.png"
+      ],
+      "source": "ChatGPT の画像生成（依頼 7。2026-11-24 受領）。作り方と使った指示文は README_armor_galdros_t2_v1.txt。照合は armor_galdros_t2_v1.md。兜を作り直した v2 の 4 枚は依頼 7 の続き（2026-11-24 受領。照合は armor_galdros_t2_v2.md）",
+      "terms": "本作オリジナル",
+      "note": "v1: 兜以外は利用者が採用、兜は不採用。v2（兜の作り直し）: 利用者の指示「実装して」（2026-11-24）で、v0.12.1 に組み込んだ（integrated）。兜の岩に細かい模様が残る・正面の図だけ頬当ての左右が同じ、などの食い違いは armor_galdros_t2_v2.md"
+    },
+    {
+      "id": "art.armor.galdros.tiers",
+      "name": "ガルドロスの防具 段ごとの違い（岩殻・脈殻・晶殻・輝殻、正面 1 枚）",
+      "type": "image",
+      "use": "防具の段ごとの形の資料（依頼 7 の B）。岩の色は変えず、脈殻で板に晶脈の筋、晶殻・輝殻で左側に晶が育つ",
+      "owner": "ChatGPT",
+      "status": "integrated",
+      "version": 1,
+      "path": null,
+      "sourcePath": "art-source/armor/galdros",
+      "files": [
+        "armor_galdros_tiers_front_v1.png",
+        "armor_galdros_tiers_front_v1b.png"
+      ],
+      "source": "ChatGPT の画像生成（依頼 7 の続き。2026-11-24 受領）。ChatGPT の説明文は未受領。照合は armor_galdros_t2_v2.md",
+      "terms": "本作オリジナル",
+      "note": "確認用の 1 枚（正面だけ）。段ごとの 4 方向の図は無い。v1b は、ほぼ同じ別の 1 枚（使っていない）。v0.12.1 で、段ごとの違いを形に写した"
+    },
+    {
+      "id": "model.armor.galdros.t2",
+      "name": "岩殻の防具一式（頭・胴・腕・腰・脚）",
+      "type": "model",
+      "use": "ガルドロスの素材の防具の見た目（2 段目。5 部位で共通の id。部位ごとに出し分ける）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "設定図（art.armor.galdros.t2.turnaround）を見て作る。正式モデルは未制作",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/hunterArmor.ts buildHunterArmor()（単色の岩板と縁の晶脈を、体の骨へ付けた仮の形。図を貼っていない。革の帯・留め具は無い）"
+      }
+    },
+    {
+      "id": "model.armor.galdros.t3",
+      "name": "脈殻の防具一式（頭・胴・腕・腰・脚）",
+      "type": "model",
+      "use": "ガルドロスの素材の防具の見た目（3 段目。5 部位で共通の id。部位ごとに出し分ける）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正面の 1 枚だけ（art.armor.galdros.tiers）。4 方向の図は無い。岩殻の板に、晶脈の筋と、左側の晶を足した形（v0.12.1）",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/hunterArmor.ts buildHunterArmor()（単色の岩板と縁の晶脈を、体の骨へ付けた仮の形。図を貼っていない。革の帯・留め具は無い）"
+      }
+    },
+    {
+      "id": "model.armor.galdros.t4",
+      "name": "晶殻の防具一式（頭・胴・腕・腰・脚）",
+      "type": "model",
+      "use": "ガルドロスの素材の防具の見た目（4 段目。5 部位で共通の id。部位ごとに出し分ける）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正面の 1 枚だけ（art.armor.galdros.tiers）。4 方向の図は無い。岩殻の板に、晶脈の筋と、左側の晶を足した形（v0.12.1）",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/hunterArmor.ts buildHunterArmor()（単色の岩板と縁の晶脈を、体の骨へ付けた仮の形。図を貼っていない。革の帯・留め具は無い）"
+      }
+    },
+    {
+      "id": "model.armor.galdros.t5",
+      "name": "輝殻の防具一式（頭・胴・腕・腰・脚）",
+      "type": "model",
+      "use": "ガルドロスの素材の防具の見た目（5 段目。5 部位で共通の id。部位ごとに出し分ける）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正面の 1 枚だけ（art.armor.galdros.tiers）。4 方向の図は無い。岩殻の板に、晶脈の筋と、左側の晶を足した形（v0.12.1）",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/hunterArmor.ts buildHunterArmor()（単色の岩板と縁の晶脈を、体の骨へ付けた仮の形。図を貼っていない。革の帯・留め具は無い）"
+      }
+    },
+    {
+      "id": "art.npc.minagi",
+      "name": "受付ミナギ（全身設定・会話用バストアップ）",
+      "type": "image",
+      "use": "里に立つ受付ミナギの絵の板（全身）と、物語の会話の顔（バストアップ）。v0.23.0",
+      "owner": "ChatGPT",
+      "status": "integrated",
+      "version": 1,
+      "path": null,
+      "sourcePath": "art-source/npc",
+      "files": [
+        "minagi_full_v1.png",
+        "minagi_bust_v1.png"
+      ],
+      "source": "ChatGPT で生成（依頼 3 の C、2026-11-23 受領。元は COPY 12）",
+      "terms": "本作オリジナル",
+      "dims": "各 1086×1448px。全身 1 枚 + バストアップ 1 枚",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style"
+      ],
+      "verification": "2026-11-23 に受領・照合。全身とバストアップで外見が一致。記録板に文字なし。全身図の縮尺は基準ハンターと揃っていない（背丈はゲーム側で決める。未決定）。v0.23.0 で、里の依頼板のそばに立てる板（tools/supplement-art.py で背景を抜いた）と、会話の顔に使い始めた。背丈は 1.64m（仮。D-093）。記録は art-source/npc/minagi_v1.md"
+    },
+    {
+      "id": "art.equip.galdros_set",
+      "name": "岩殻の断岳剣・護刃・防具 1 式",
+      "type": "image",
+      "use": "M3 の大型素材装備の資料",
+      "owner": "ChatGPT",
+      "status": "planned",
+      "version": 0,
+      "path": null,
+      "source": "COPY 13",
+      "terms": "本作オリジナル",
+      "dims": "武器は側面・裏面・握りの拡大。防具は着用した正面・側面・背面",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style",
+        "art.player.hunter_base.turnaround",
+        "art.monster.galdros.turnaround"
+      ],
+      "verification": "未受領"
+    },
+    {
+      "id": "icon.item.first6",
+      "name": "道具 4・ガルドロスの素材 10 のアイコン 14 点（はじめに頼んだ 6 点を含む）",
+      "type": "icon",
+      "use": "持ち物・商店・工房・報酬・道具の欄（HUD とタッチの道具のボタン）。素材の名前の前に出す（v0.23.0）",
+      "owner": "ChatGPT",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/icons/icon_item_heal_v1.webp",
+      "source": "ChatGPT の追加原画（頼んでいない提案。Pull Request #5、2026-11-25 受領）。原本は art-source/icons/。tools/supplement-art.py（npm run supplement:art）で、薄い不透明を消し、余白を 1 割にして 256 四方へ縮めた。ほかの 13 枚も同じ置き場",
+      "terms": "本作オリジナル",
+      "dims": "原本 1254×1254px（RGBA。依頼は 1024px）。ゲームが読むのは 256×256px WebP 14 枚、合わせて約 175KB",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style"
+      ],
+      "verification": "原本の透明の所に alpha 1〜15 の薄い残りがあった（0 にした）。余白は 1 割に作り直した（原本の余白は記録 art-source/supplement_v1.measure.json）。ブラウザ検査で、商店の行とタッチの道具のボタンに絵が出ることを確認。ガルドロス以外の素材 67 種のアイコンは無い。実機では未確認"
+    },
+    {
+      "id": "model.weapon.guard_blade.001",
+      "name": "里鍛ちの護刃（剣と盾）",
+      "type": "model",
+      "use": "護刃の初期武器（v0.4.0 で武器として実装。技は机上の初期値。体の動きは v0.4.2 で組み直し。盾の裏は、左腕で持てるよう、採用した図と左右を逆にして使っている = D-054）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図は art-source/weapon/（2026-11-23 受領）",
+      "terms": "本作オリジナル",
+      "dims": "剣: 握りの中央が原点、刃 0.128〜0.878m・幅 7.8cm・厚み 約 1.1cm、柄頭の下端 -0.122m / 盾: 裏面の中央が原点、+Z が表、高さ 0.6m・幅 0.47m・厚み 約 2.4cm、中央が約 3cm ふくらむ",
+      "tris": "剣 148 / 盾 約 1 千",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.gojin"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/guardBlade.ts buildGuardBladeSword() / buildGuardBladeShield()（設定図の寸法で組んだ形へ、図を貼る。盾の組み方は shield.ts）"
+      },
+      "verification": "仮素材（v0.3.5）: 素材ビューアで表・裏・斜めの姿を画面で確認。盾の裏の取っ手と革帯も形にした（v0.4.0）。v0.4.0 からゲーム内で使用。実機では未確認"
+    },
+    {
+      "id": "model.weapon.guard_blade.002",
+      "name": "岩殻の護刃",
+      "type": "model",
+      "use": "護刃の強化（工房で、里鍛ちから作る。v0.8.0）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。剣の峰に岩の板 3 枚（盾は里鍛ちのまま）。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.guard_blade.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildGuardBladeSword() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.guard_blade.003",
+      "name": "脈殻の護刃",
+      "type": "model",
+      "use": "強化の 3 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。剣の峰に岩の板 3 枚（盾は里鍛ちのまま）。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.guard_blade.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildGuardBladeSword() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.guard_blade.004",
+      "name": "晶殻の護刃",
+      "type": "model",
+      "use": "強化の 4 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。剣の峰に岩の板 3 枚（盾は里鍛ちのまま）。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.guard_blade.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildGuardBladeSword() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.guard_blade.005",
+      "name": "輝殻の護刃",
+      "type": "model",
+      "use": "強化の 5 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。剣の峰に岩の板 3 枚（盾は里鍛ちのまま）。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.guard_blade.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildGuardBladeSword() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.reap_scythe.001",
+      "name": "里鍛ちの旋鎌",
+      "type": "model",
+      "use": "不採用（D-055）。v0.5.0 でゲームから外した。形（src/render/scythe.ts）と絵は記録として残してあるが、ゲームも素材ビューアも読み込まない",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図は art-source/weapon/（2026-11-23 受領）",
+      "terms": "本作オリジナル",
+      "dims": "下の握りの中央が原点、+Y が柄の先、刃は -Z へ。石突 -0.43m 〜 刃の峰 1.52m（全高 1.95m）、柄の太さ 3.1cm、刃渡り 約 0.75m、刃先は 高さ 1.33m・横 0.75m。上の握りは 0.64m 上",
+      "tris": "約 300",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.senren"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/scythe.ts buildScythe()（設定図の輪郭を測った点で刃を組み、正面の図を貼る）"
+      },
+      "verification": "仮素材（v0.3.5）: 素材ビューアで表・裏・斜めの姿を画面で確認。v0.4.0〜v0.4.2 のゲーム内で使用。v0.5.0 で不採用（どこからも読み込まない）"
+    },
+    {
+      "id": "model.weapon.war_maul.001",
+      "name": "里鍛ちの大槌",
+      "type": "model",
+      "use": "大槌の初期武器（v0.5.0。技は机上の初期値）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図は art-source/weapon/（依頼 6、2026-11-25 受領）",
+      "terms": "本作オリジナル",
+      "dims": "下の握り（右手）の中央が原点、+Y が頭。石突 -0.2m 〜 冠 1.25m（全長 1.45m）。頭は高さ 0.995〜1.235m・厚み 0.20m（±X）・叩く面から反対まで 0.38m（±Z）、角を 2.2cm 落とす。柄 4.5cm。上の握りは 0.5m 上。判定は握りから 0.95〜1.27m・半径 0.20m（変えていない）",
+      "tris": "約 1000（鋲 8 つを含む）",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.request6"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/forgedWeapons.ts buildWarMaul()（依頼書の寸法で組んだ形へ、設定図の正面と真横を部品ごとに当てて貼る。v0.24.0）"
+      },
+      "verification": "仮素材（v0.24.0）: 寸法は tests/forged-weapons.test.ts。素材ビューアと構えた姿の静止画（ヘッドレス Chrome）で、頭の角・帯金と鋲・冠・口金・巻き革の握り・石突を確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.war_maul.002",
+      "name": "岩殻の大槌",
+      "type": "model",
+      "use": "大槌の強化（工房で、里鍛ちから作る。v0.8.0）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。頭の前後の叩く面と上に、岩のかたまり。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.war_maul.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildWarMaul() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.war_maul.003",
+      "name": "脈殻の大槌",
+      "type": "model",
+      "use": "強化の 3 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。頭の前後の叩く面と上に、岩のかたまり。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.war_maul.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildWarMaul() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.war_maul.004",
+      "name": "晶殻の大槌",
+      "type": "model",
+      "use": "強化の 4 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。頭の前後の叩く面と上に、岩のかたまり。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.war_maul.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildWarMaul() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.war_maul.005",
+      "name": "輝殻の大槌",
+      "type": "model",
+      "use": "強化の 5 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。頭の前後の叩く面と上に、岩のかたまり。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.war_maul.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildWarMaul() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.twin_blades.001",
+      "name": "里鍛ちの双剣（2 本）",
+      "type": "model",
+      "use": "双剣の初期武器（v0.5.0。技は机上の初期値）。左右で同じ形を 2 本使う",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図は art-source/weapon/（依頼 6、2026-11-25 受領）",
+      "terms": "本作オリジナル",
+      "dims": "握りの中央が原点、+Y が刃先。柄頭 -0.08m、握り -0.054〜0.047m、鍔 0.06〜0.08m（幅 8cm）、刃 0.08〜0.62m・幅 4.5cm・峰の厚み 0.8cm（切っ先は峰の側を 4.6cm 斜めに落とす）。全長 0.7m",
+      "tris": "約 440",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.request6"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/forgedWeapons.ts buildTwinBlade()（依頼書の寸法で組んだ形へ、設定図の正面を部品ごとに当てて貼る。v0.24.0）"
+      },
+      "verification": "仮素材（v0.24.0）: 寸法は tests/forged-weapons.test.ts。素材ビューアと構えた姿の静止画（ヘッドレス Chrome）で、刃・切っ先・留め金と鋲・鍔・巻き革の握り・柄頭を確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.twin_blades.002",
+      "name": "岩殻の双剣（2 本）",
+      "type": "model",
+      "use": "双剣（2 本）の強化（工房で、里鍛ちから作る。v0.8.0）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。左右とも、峰の根元寄りに岩の板 2 枚。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.twin_blades.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildTwinBlade() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.twin_blades.003",
+      "name": "脈殻の双剣（2 本）",
+      "type": "model",
+      "use": "強化の 3 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。左右とも、峰の根元寄りに岩の板 2 枚。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.twin_blades.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildTwinBlade() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.twin_blades.004",
+      "name": "晶殻の双剣（2 本）",
+      "type": "model",
+      "use": "強化の 4 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。左右とも、峰の根元寄りに岩の板 2 枚。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.twin_blades.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildTwinBlade() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.twin_blades.005",
+      "name": "輝殻の双剣（2 本）",
+      "type": "model",
+      "use": "強化の 5 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。左右とも、峰の根元寄りに岩の板 2 枚。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.twin_blades.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildTwinBlade() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.long_blade.001",
+      "name": "里鍛ちの太刀",
+      "type": "model",
+      "use": "太刀の初期武器（v0.5.0。技は机上の初期値）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図は art-source/weapon/（依頼 6、2026-11-25 受領）",
+      "terms": "本作オリジナル",
+      "dims": "上の手（右手）の握りの中央が原点、+Y が刃先。柄頭 -0.27m、握り -0.24〜0.042m、鍔 0.06〜0.08m（幅 8cm）、刃 0.08〜1.2m・幅 3.2cm → 先 2.6cm・峰の厚み 0.7cm。峰の側へ反り、切っ先は柄の線から +4cm。下の手は 0.2m 下。全長 1.47m",
+      "tris": "約 520",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.request6"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/forgedWeapons.ts buildLongBlade()（依頼書の寸法で組んだ形へ、設定図の正面を部品ごとに当てて貼る。図の反りは形の反りへ直す。v0.24.0）"
+      },
+      "verification": "仮素材（v0.24.0）: 寸法と反りは tests/forged-weapons.test.ts。素材ビューアと構えた姿の静止画（ヘッドレス Chrome）で、刃・切っ先・鍔と鋲・口金・巻き革の握り・柄頭を確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.long_blade.002",
+      "name": "岩殻の太刀",
+      "type": "model",
+      "use": "太刀の強化（工房で、里鍛ちから作る。v0.8.0）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。峰の根元寄りに岩の板 3 枚。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.long_blade.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildLongBlade() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.long_blade.003",
+      "name": "脈殻の太刀",
+      "type": "model",
+      "use": "強化の 3 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。峰の根元寄りに岩の板 3 枚。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.long_blade.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildLongBlade() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.long_blade.004",
+      "name": "晶殻の太刀",
+      "type": "model",
+      "use": "強化の 4 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。峰の根元寄りに岩の板 3 枚。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.long_blade.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildLongBlade() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.long_blade.005",
+      "name": "輝殻の太刀",
+      "type": "model",
+      "use": "強化の 5 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。峰の根元寄りに岩の板 3 枚。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.long_blade.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildLongBlade() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "art.weapon.gojin",
+      "name": "里鍛ちの護刃 設定図（剣の正面・真横、盾の表・裏・真横）+ 別案",
+      "type": "image",
+      "use": "護刃の 3D 化の資料。輪郭と寸法、絵の投影元",
+      "owner": "ChatGPT",
+      "status": "validated",
+      "version": 1,
+      "path": null,
+      "sourcePath": "art-source/weapon",
+      "files": [
+        "weapon_gojin_sword_front_v1.png",
+        "weapon_gojin_sword_side_v1.png",
+        "weapon_gojin_shield_front_v1.png",
+        "weapon_gojin_shield_back_v1.png",
+        "weapon_gojin_shield_side_v1.png",
+        "weapon_gojin_shield_back_alt_v1.png",
+        "weapon_gojin_shield_side_alt_v1.png"
+      ],
+      "source": "ChatGPT で生成（依頼 5 の A、2026-11-23 受領）",
+      "terms": "本作オリジナル",
+      "dims": "各 1086×1448px。剣は全長 1291px = 1.0m、盾は高さ 1109px = 0.6m",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style",
+        "art.weapon.dangaku"
+      ],
+      "verification": "2026-11-23 に受領・照合。剣の正面と真横は高さが合う。盾の裏は 2 案届き、腕を通して取っ手を握れる並びの方を Claude が採用（利用者の確認は未取得）。裏（採用）と真横で革帯の向きが合わない。記録は art-source/weapon/weapon_request5_v1.md"
+    },
+    {
+      "id": "art.weapon.senren",
+      "name": "里鍛ちの旋鎌 設定図（正面・真横）+ 別案",
+      "type": "image",
+      "use": "不採用になった旋鎌（D-055）の資料。受け取った絵の記録として保管",
+      "owner": "ChatGPT",
+      "status": "validated",
+      "version": 1,
+      "path": null,
+      "sourcePath": "art-source/weapon",
+      "files": [
+        "weapon_senren_front_v1.png",
+        "weapon_senren_side_v1.png",
+        "weapon_senren_front_alt_thick_v1.png"
+      ],
+      "source": "ChatGPT で生成（依頼 5 の B、2026-11-23 受領）",
+      "terms": "本作オリジナル",
+      "dims": "各 1086×1448px。全高 1312px = 1.95m",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style",
+        "art.weapon.dangaku"
+      ],
+      "verification": "2026-11-23 に受領・照合。正面は 2 案届き、真横の図と柄の太さが合う細い方を Claude が採用（利用者の確認は未取得）。記録は art-source/weapon/weapon_request5_v1.md"
+    },
+    {
+      "id": "art.weapon.chosenso",
+      "name": "里鍛ちの長尖槍 設定図（槍の正面・真横、大盾の表・裏・真横）",
+      "type": "image",
+      "use": "長尖槍の 3D 化の資料。輪郭と寸法、絵の投影元",
+      "owner": "ChatGPT",
+      "status": "validated",
+      "version": 1,
+      "path": null,
+      "sourcePath": "art-source/weapon",
+      "files": [
+        "weapon_chosenso_lance_front_v1.png",
+        "weapon_chosenso_lance_side_v1.png",
+        "weapon_chosenso_shield_front_v1.png",
+        "weapon_chosenso_shield_back_v1.png",
+        "weapon_chosenso_shield_side_v1.png"
+      ],
+      "source": "ChatGPT で生成（依頼 5 の C、2026-11-23 受領）",
+      "terms": "本作オリジナル",
+      "dims": "各 1086×1448px。槍は全長 1232px = 2.9m、大盾は高さ 1147px = 1.1m",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style",
+        "art.weapon.dangaku"
+      ],
+      "verification": "2026-11-23 に受領・照合。槍の正面と真横は同じ高さに描かれている。大盾の裏と真横は、取っ手と革帯の位置・向きが合う。大盾の幅は 0.585m（依頼は 0.6m）。形にする時は幅を 0.6m へ補正する。記録は art-source/weapon/weapon_request5_v1.md"
+    },
+    {
+      "id": "model.weapon.long_lance.001",
+      "name": "里鍛ちの長尖槍（槍と大盾）",
+      "type": "model",
+      "use": "長尖槍の初期武器（v0.4.0 で武器として実装。技は机上の初期値。体の動きは v0.4.2 で組み直し。大盾の裏は、左腕で持てるよう、採用した図と左右を逆にして使っている = D-054）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図は art-source/weapon/（2026-11-23 受領）",
+      "terms": "本作オリジナル",
+      "dims": "槍: 握りの中央が原点、+Y が穂先、石突 -0.54m 〜 穂先 2.36m（全長 2.9m）、穂先 0.63m・幅 5.6cm・厚み 約 2cm、柄 約 5cm / 大盾: 裏面の中央が原点、+Z が表、高さ 1.1m・幅 0.6m・厚み 3cm、中央が 4cm ふくらむ",
+      "tris": "槍 約 1.7 千 / 大盾 約 1.4 千",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.chosenso"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/lance.ts buildLance() / buildGreatShield()（設定図の輪郭を測った寸法で組み、図を貼る。盾の組み方は shield.ts）"
+      },
+      "verification": "仮素材（v0.3.7）: 素材ビューアで表・裏・斜めの姿を画面で確認。大盾の裏の取っ手と革帯も形にした（v0.4.0）。v0.4.0 からゲーム内で使用。実機では未確認"
+    },
+    {
+      "id": "model.weapon.long_lance.002",
+      "name": "岩殻の長尖槍",
+      "type": "model",
+      "use": "長尖槍の強化（工房で、里鍛ちから作る。v0.8.0）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。穂先の下の柄に岩の板 3 枚（大盾は里鍛ちのまま）。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.long_lance.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildLance() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.long_lance.003",
+      "name": "脈殻の長尖槍",
+      "type": "model",
+      "use": "強化の 3 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。穂先の下の柄に岩の板 3 枚（大盾は里鍛ちのまま）。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.long_lance.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildLance() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.long_lance.004",
+      "name": "晶殻の長尖槍",
+      "type": "model",
+      "use": "強化の 4 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。穂先の下の柄に岩の板 3 枚（大盾は里鍛ちのまま）。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.long_lance.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildLance() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.long_lance.005",
+      "name": "輝殻の長尖槍",
+      "type": "model",
+      "use": "強化の 5 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。穂先の下の柄に岩の板 3 枚（大盾は里鍛ちのまま）。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.long_lance.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildLance() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "tex.weapon.long_lance.lance",
+      "name": "里鍛ちの長尖槍の絵（槍）",
+      "type": "image",
+      "use": "長尖槍の仮モデルへ貼る色の絵",
+      "owner": "Claude（設定図から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/weapons/chosenso_lance_v1.webp",
+      "source": "art-source/weapon/weapon_chosenso_lance_front_v1.png を tools/art/weapon_bake.py で加工",
+      "terms": "本作オリジナル（設定図からの二次加工）",
+      "dims": "96×1536px WebP、約 11KB",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.chosenso"
+      ],
+      "verification": "素材ビューア（ヘッドレス Chrome）で読み込みと見た目を確認。実機では未確認"
+    },
+    {
+      "id": "tex.weapon.long_lance.shield_front",
+      "name": "里鍛ちの長尖槍の絵（大盾の表）",
+      "type": "image",
+      "use": "長尖槍の仮モデルへ貼る色の絵",
+      "owner": "Claude（設定図から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/weapons/chosenso_shield_front_v1.webp",
+      "source": "art-source/weapon/weapon_chosenso_shield_front_v1.png を tools/art/weapon_bake.py で加工",
+      "terms": "本作オリジナル（設定図からの二次加工）",
+      "dims": "512×944px WebP、約 74KB",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.chosenso"
+      ],
+      "verification": "素材ビューア（ヘッドレス Chrome）で読み込みと見た目を確認。実機では未確認"
+    },
+    {
+      "id": "tex.weapon.long_lance.shield_back",
+      "name": "里鍛ちの長尖槍の絵（大盾の裏）",
+      "type": "image",
+      "use": "長尖槍の仮モデルへ貼る色の絵",
+      "owner": "Claude（設定図から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/weapons/chosenso_shield_back_v1.webp",
+      "source": "art-source/weapon/weapon_chosenso_shield_back_v1.png を tools/art/weapon_bake.py で加工",
+      "terms": "本作オリジナル（設定図からの二次加工）",
+      "dims": "512×944px WebP、約 85KB",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.chosenso"
+      ],
+      "verification": "素材ビューア（ヘッドレス Chrome）で読み込みと見た目を確認。実機では未確認"
+    },
+    {
+      "id": "art.weapon.kankyu",
+      "name": "里鍛ちの環弓 設定図（弓の横・正面、矢と矢筒）+ 別案",
+      "type": "image",
+      "use": "環弓の 3D 化の資料。輪郭と寸法、絵の投影元",
+      "owner": "ChatGPT",
+      "status": "validated",
+      "version": 1,
+      "path": null,
+      "sourcePath": "art-source/weapon",
+      "files": [
+        "weapon_kankyu_bow_side_v1.png",
+        "weapon_kankyu_bow_front_v1.png",
+        "weapon_kankyu_arrow_quiver_v1.png",
+        "weapon_kankyu_bow_side_alt_v1.png",
+        "weapon_kankyu_bow_front_alt_smallring_v1.png",
+        "weapon_kankyu_bow_front_alt_loop_v1.png"
+      ],
+      "source": "ChatGPT で生成（依頼 5 の D、2026-11-23 受領）",
+      "terms": "本作オリジナル",
+      "dims": "各 1086×1448px。弓は横 1315px・正面 1337px = 1.5m、矢は 1285px = 0.8m",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style",
+        "art.weapon.dangaku"
+      ],
+      "verification": "2026-11-23 に受領・照合。弓の正面は 3 案届き、輪の大きさが横の図と合うものを Claude が採用（利用者の確認は未取得）。図は弦までが約 0.24m と深く、輪が約 10cm と大きい。形にする時は、依頼の指定（全高 1.5m・背から弦 0.20m・輪 8cm）へ数値で補正する。記録は art-source/weapon/weapon_request5_v1.md"
+    },
+    {
+      "id": "model.weapon.ring_bow.001",
+      "name": "里鍛ちの環弓（弓・矢・矢筒）",
+      "type": "model",
+      "use": "環弓の初期武器（v0.4.0 で武器として実装。技と動きは机上の初期値）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図は art-source/weapon/（2026-11-23 受領）",
+      "terms": "本作オリジナル",
+      "dims": "弓: 握りの中央が原点、-Z が弓の背、+Z が弦。全高 1.5m、握りの背から弦まで 0.20m、輪の直径 8cm / 矢: 中央が原点、+Y が矢じり、長さ 0.8m / 矢筒: 中央が原点、高さ 0.61m、太さ 約 12cm、矢 6 本",
+      "tris": "弓 約 3 千 / 矢 約 100 / 矢筒 約 600",
+      "bones": "なし（弓のしなりは未対応）",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.kankyu"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/bow.ts buildBow() / buildArrow() / buildQuiver()（設定図の輪郭を測った寸法で組み、図を貼る）"
+      },
+      "verification": "仮素材（v0.3.6）: 素材ビューアで表・裏・真横の姿を画面で確認。弓は引き絞っても曲がらない（形が 1 つだけ）。輪は青銅色 1 色。v0.4.0 からゲーム内で使用。実機では未確認"
+    },
+    {
+      "id": "model.weapon.ring_bow.002",
+      "name": "岩殻の環弓",
+      "type": "model",
+      "use": "環弓の強化（工房で、里鍛ちから作る。v0.8.0）",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。握りの上下の背に岩の板 2 枚（矢と矢筒は里鍛ちのまま）。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.ring_bow.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildBow() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.ring_bow.003",
+      "name": "脈殻の環弓",
+      "type": "model",
+      "use": "強化の 3 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。握りの上下の背に岩の板 2 枚（矢と矢筒は里鍛ちのまま）。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.ring_bow.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildBow() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.ring_bow.004",
+      "name": "晶殻の環弓",
+      "type": "model",
+      "use": "強化の 4 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。握りの上下の背に岩の板 2 枚（矢と矢筒は里鍛ちのまま）。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.ring_bow.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildBow() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.ring_bow.005",
+      "name": "輝殻の環弓",
+      "type": "model",
+      "use": "強化の 5 段目（工房で、1 つ前の段から作る。v0.9.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（設定画）→ Blender → Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。握りの上下の背に岩の板 2 枚（矢と矢筒は里鍛ちのまま）。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.ring_bow.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（buildBow() に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.8.0）: 素材ビューアの静止画で、里鍛ちと見分けがつくことを確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "tex.weapon.ring_bow.bow",
+      "name": "里鍛ちの環弓の絵（弓）",
+      "type": "image",
+      "use": "環弓の仮モデルへ貼る色の絵",
+      "owner": "Claude（設定図から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/weapons/kankyu_bow_v1.webp",
+      "source": "art-source/weapon/weapon_kankyu_bow_side_v1.png を tools/art/weapon_bake.py で加工",
+      "terms": "本作オリジナル（設定図からの二次加工）",
+      "dims": "256×1280px WebP、約 38KB",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.kankyu"
+      ],
+      "verification": "素材ビューア（ヘッドレス Chrome）で読み込みと見た目を確認。実機では未確認"
+    },
+    {
+      "id": "tex.weapon.ring_bow.arrow",
+      "name": "里鍛ちの環弓の絵（矢）",
+      "type": "image",
+      "use": "矢と、矢筒から出ている矢の仮モデルへ貼る色の絵",
+      "owner": "Claude（設定図から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/weapons/kankyu_arrow_v1.webp",
+      "source": "art-source/weapon/weapon_kankyu_arrow_quiver_v1.png の左側を tools/art/weapon_bake.py で加工",
+      "terms": "本作オリジナル（設定図からの二次加工）",
+      "dims": "96×1024px WebP、約 8KB",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.kankyu"
+      ],
+      "verification": "素材ビューア（ヘッドレス Chrome）で読み込みと見た目を確認。実機では未確認"
+    },
+    {
+      "id": "tex.weapon.ring_bow.quiver",
+      "name": "里鍛ちの環弓の絵（矢筒）",
+      "type": "image",
+      "use": "矢筒の仮モデルへ貼る色の絵",
+      "owner": "Claude（設定図から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/weapons/kankyu_quiver_v1.webp",
+      "source": "art-source/weapon/weapon_kankyu_arrow_quiver_v1.png の右側を tools/art/weapon_bake.py で加工",
+      "terms": "本作オリジナル（設定図からの二次加工）",
+      "dims": "256×1024px WebP、約 46KB",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.kankyu"
+      ],
+      "verification": "素材ビューア（ヘッドレス Chrome）で読み込みと見た目を確認。実機では未確認"
+    },
+    {
+      "id": "tex.weapon.guard_blade.sword",
+      "name": "里鍛ちの護刃の絵（剣）",
+      "type": "image",
+      "use": "護刃の仮モデルへ貼る色の絵",
+      "owner": "Claude（設定図から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/weapons/gojin_sword_v1.webp",
+      "source": "art-source/weapon/weapon_gojin_sword_front_v1.png を tools/art/weapon_bake.py で加工",
+      "terms": "本作オリジナル（設定図からの二次加工）",
+      "dims": "160×1024px WebP、約 17KB",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.gojin"
+      ],
+      "verification": "素材ビューア（ヘッドレス Chrome）で読み込みと見た目を確認。実機では未確認"
+    },
+    {
+      "id": "tex.weapon.guard_blade.shield_front",
+      "name": "里鍛ちの護刃の絵（盾の表）",
+      "type": "image",
+      "use": "護刃の仮モデルへ貼る色の絵",
+      "owner": "Claude（設定図から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/weapons/gojin_shield_front_v1.webp",
+      "source": "art-source/weapon/weapon_gojin_shield_front_v1.png を tools/art/weapon_bake.py で加工",
+      "terms": "本作オリジナル（設定図からの二次加工）",
+      "dims": "512×640px WebP、約 72KB",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.gojin"
+      ],
+      "verification": "素材ビューア（ヘッドレス Chrome）で読み込みと見た目を確認。実機では未確認"
+    },
+    {
+      "id": "tex.weapon.guard_blade.shield_back",
+      "name": "里鍛ちの護刃の絵（盾の裏）",
+      "type": "image",
+      "use": "護刃の仮モデルへ貼る色の絵",
+      "owner": "Claude（設定図から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/weapons/gojin_shield_back_v1.webp",
+      "source": "art-source/weapon/weapon_gojin_shield_back_v1.png を tools/art/weapon_bake.py で加工",
+      "terms": "本作オリジナル（設定図からの二次加工）",
+      "dims": "512×640px WebP、約 66KB",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.gojin"
+      ],
+      "verification": "素材ビューア（ヘッドレス Chrome）で読み込みと見た目を確認。実機では未確認"
+    },
+    {
+      "id": "tex.weapon.reap_scythe.senren",
+      "name": "里鍛ちの旋鎌の絵",
+      "type": "image",
+      "use": "不採用になった旋鎌（D-055）の色の絵。v0.5.0 から、ゲームも素材ビューアも読み込まない（記録として残す）",
+      "owner": "Claude（設定図から生成）",
+      "status": "validated",
+      "version": 1,
+      "path": "assets/textures/weapons/senren_v1.webp",
+      "source": "art-source/weapon/weapon_senren_front_v1.png を tools/art/weapon_bake.py で加工",
+      "terms": "本作オリジナル（設定図からの二次加工）",
+      "dims": "512×1216px WebP、約 20KB",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.senren"
+      ],
+      "verification": "素材ビューア（ヘッドレス Chrome）で読み込みと見た目を確認。実機では未確認"
+    },
+    {
+      "id": "art.weapon.dangaku",
+      "name": "里鍛ちの断岳剣 設定図（正面・真横）+ 別案",
+      "type": "image",
+      "use": "断岳剣の 3D 化の資料。輪郭と寸法、絵の投影元",
+      "owner": "ChatGPT",
+      "status": "validated",
+      "version": 1,
+      "path": null,
+      "sourcePath": "art-source/weapon",
+      "files": [
+        "weapon_dangaku_front_v1.png",
+        "weapon_dangaku_side_v1.png",
+        "weapon_dangaku_side_alt_v1.png",
+        "weapon_dangaku_front_alt_longgrip_v1.png",
+        "weapon_dangaku_front_alt_wide_v1.png",
+        "weapon_dangaku_front_alt_narrow_v1.png"
+      ],
+      "source": "ChatGPT で生成（依頼 4 の C、2026-11-23 受領）",
+      "terms": "本作オリジナル",
+      "dims": "各 1086×1448px。採用の 2 枚は全長 1304px = 1.95m（1px = 約 1.5mm）。刃 1.47m・幅 0.33m・厚み 約 4.5cm",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style"
+      ],
+      "verification": "2026-11-23 に受領・照合。6 枚のうち、依頼の寸法に合う正面 1 枚と真横 1 枚を採用（Claude が選んだ。利用者の確認は未取得）。残り 4 枚は別案として保存。記録は art-source/weapon/weapon_dangaku_v1.md"
+    },
+    {
+      "id": "tex.player.hunter_base.body",
+      "name": "基準ハンターの体の絵（区画に並べた 1 枚）",
+      "type": "image",
+      "use": "仮モデルの体へ貼る色の絵。体は全身図の正面と背面 + 腕を水平に上げた真横の図、頭は顔と髪の近接図（正面・左真横・右真横・後ろ・真上）から写した",
+      "owner": "Claude（設定図から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/hunter/hunter_body_v1.webp",
+      "source": "art-source/player/hunter_base_{front,back,left,right}_v1.png、hunter_base_tpose_{left,right}_v1.png、hunter_face_{front,left,right,back,top}_v1.png を tools/art/hunter_bake.py で加工",
+      "terms": "本作オリジナル（採用済みの設定図からの二次加工）",
+      "dims": "1024×1024px WebP、約 195KB。区画 10 個（並びは src/render/hunterAtlas.ts）",
+      "clips": [],
+      "dependsOn": [
+        "art.player.hunter_base.turnaround"
+      ],
+      "verification": "素材ビューアとゲーム内（ヘッドレス Chrome）で、顔・髪・外套と留め具・革帯・腕当て・前垂れ・ズボン・長靴が出ることを画面で確認。脚と長靴の横は、全身図の左・右真横の図から写した。v0.3.4: 顔の右側は右真横の図、頭のてっぺんは真上の図、胴とすその横は腕を水平に上げた真横の図から写す。腕の横と、肩を覆う布の横は、前後の絵の境目のまま。実機では未確認"
+    },
+    {
+      "id": "tex.weapon.heavy_blade.dangaku",
+      "name": "里鍛ちの断岳剣の絵",
+      "type": "image",
+      "use": "断岳剣の仮モデル（2 代目）へ貼る色の絵。設定図の正面を切り出し、背景を剣の色で埋めたもの",
+      "owner": "Claude（設定図から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/weapons/dangaku_v1.webp",
+      "source": "art-source/weapon/weapon_dangaku_front_v1.png を tools/art/weapon_bake.py で加工",
+      "terms": "本作オリジナル（設定図からの二次加工）",
+      "dims": "256×1024px WebP、約 29KB",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.dangaku"
+      ],
+      "verification": "素材ビューア（ヘッドレス Chrome）で、刃・鍔と鋲・留め金・巻き革の握り・柄頭が出ることを画面で確認。裏面は同じ絵の鏡写し。実機では未確認"
+    },
+    {
+      "id": "art.weapon.request6",
+      "name": "里鍛ちの大槌・双剣・太刀 設定図（正面・真横）+ 旧版",
+      "type": "image",
+      "use": "大槌・双剣・太刀の 3D 化の資料。部品の行と輪郭、絵の投影元",
+      "owner": "ChatGPT",
+      "status": "validated",
+      "version": 1,
+      "path": null,
+      "sourcePath": "art-source/weapon",
+      "files": [
+        "weapon_otsuchi_front_v2.png",
+        "weapon_otsuchi_side_v2.png",
+        "weapon_soken_front_v1.png",
+        "weapon_soken_side_v1.png",
+        "weapon_tachi_front_v2.png",
+        "weapon_tachi_side_v2.png",
+        "weapon_otsuchi_front_v1.png",
+        "weapon_otsuchi_side_v1.png",
+        "weapon_tachi_front_v1.png",
+        "weapon_tachi_side_v1.png"
+      ],
+      "source": "ChatGPT で生成（依頼 6、Pull Request #2。2026-11-25 受領）。説明・測った寸法・生成の記録は docs/source/chatgpt-006/",
+      "terms": "本作オリジナル",
+      "dims": "各 1086×1448px。大槌は全高 1301px = 1.45m、双剣は 1288px = 0.7m、太刀は 1335px = 1.47m。頭の幅・峰の厚み・反りなどが依頼書と少し違う（art-source/weapon/weapon_request6_v1.md）",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style",
+        "art.weapon.dangaku",
+        "art.weapon.gojin"
+      ],
+      "verification": "2026-11-25 に受領・照合（art-source/weapon/weapon_request6_v1.md）。6 枚を採用（剣の真横 2 枚は資料）。旧版 4 枚は履歴。寸法の違いは描き直しを頼まず、形を依頼書の寸法で組んで、図を部品ごとに当てる（D-095）"
+    },
+    {
+      "id": "tex.weapon.request6",
+      "name": "里鍛ちの大槌・双剣・太刀の絵（4 枚）",
+      "type": "image",
+      "use": "大槌・双剣・太刀の仮モデル（2 代目）へ貼る色の絵。設定図を切り出し、背景を武器の色で埋めたもの",
+      "owner": "Claude（設定図から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/weapons",
+      "source": "art-source/weapon/weapon_{otsuchi_front_v2,otsuchi_side_v2,soken_front_v1,tachi_front_v2}.png を tools/art/weapon_bake.py で加工（部品の行と刃の表は src/render/weaponSheets.ts）",
+      "terms": "本作オリジナル（設定図からの二次加工）",
+      "dims": "otsuchi_front_v1.webp 320×1024・otsuchi_side_v1.webp 176×320・soken_v1.webp 144×1024・tachi_v1.webp 96×1344px（WebP、合わせて約 61KB）",
+      "clips": [],
+      "dependsOn": [
+        "art.weapon.request6"
+      ],
+      "verification": "素材ビューア（ヘッドレス Chrome）で、図の部品が形の同じ部品に乗ることを画面で確認。裏面は同じ絵の鏡写し。実機では未確認"
+    },
+    {
+      "id": "tex.monster.galdros.hide",
+      "name": "ガルドロスの皮の絵（区画に並べた 1 枚）",
+      "type": "image",
+      "use": "仮モデルの皮へ貼る色の絵。設定図（右側面）から岩板・爪・目を除いた皮を、体の各部の筒へ写したもの",
+      "owner": "Claude（設定図から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/galdros/galdros_hide_v1.webp",
+      "source": "art-source/monster/galdros/galdros_right_v1.png を tools/art/galdros_skin.py と tools/art/galdros_bake.py で加工",
+      "terms": "本作オリジナル（採用済みの設定図からの二次加工）",
+      "dims": "2048×2048px WebP、約 420KB。区画 17 個（並びは src/render/galdrosAtlas.ts）",
+      "clips": [],
+      "dependsOn": [
+        "art.monster.galdros.turnaround"
+      ],
+      "verification": "素材ビューアとゲーム内（ヘッドレス Chrome）で、皮・顔・脚・尾に設定図のしわとうろこが出ることを画面で確認。左右は鏡写し。岩板に隠れていた所と爪・目の跡は、まわりの皮から埋めた絵。上下の面は引き伸ばし。実機では未確認"
+    },
+    {
+      "id": "tex.monster.galdros.rock",
+      "name": "ガルドロスの岩の模様",
+      "type": "image",
+      "use": "仮モデルの岩板へ重ねる、繰り返しの明暗の模様（色は頂点の色が持つ）",
+      "owner": "Claude（設定図から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/galdros/galdros_rock_v1.webp",
+      "source": "art-source/monster/galdros/galdros_left_v1.png の岩板の一部（220px 四方）を tools/art/galdros_bake.py で加工",
+      "terms": "本作オリジナル（採用済みの設定図からの二次加工）",
+      "dims": "256×256px WebP、約 19KB。端がつながる",
+      "clips": [],
+      "dependsOn": [
+        "art.monster.galdros.turnaround"
+      ],
+      "verification": "ゲーム内で岩板と砕けた岩に出ることを画面で確認。岩板の形と並びは設定図と違う（未着手）。実機では未確認"
+    },
+    {
+      "id": "ui.app_icon",
+      "name": "ホーム画面のアイコン",
+      "type": "icon",
+      "use": "ホーム画面に追加した時のアイコン（180 / 192 / 512px）とタブのアイコン",
+      "owner": "ChatGPT（正式版）/ Claude（仮）",
+      "status": "integrated",
+      "version": 0,
+      "path": "icons/icon-512.png",
+      "source": "Claude がスクリプトで描いた仮の絵（断岳剣と盆地）",
+      "terms": "本作オリジナル",
+      "dims": "正方形 512px。192px と 180px は同じ絵の縮小",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style"
+      ],
+      "placeholder": {
+        "kind": "generated",
+        "source": "public/icons/",
+        "note": "正式なアイコンは、採用した基準ボードに合わせて ChatGPT へ依頼する。"
+      },
+      "verification": "仮素材。ブラウザ検査で画像 3 枚と manifest の配信を確認。iPhone のホーム画面での見え方は未確認"
+    },
+    {
+      "id": "icon.weapon.family",
+      "name": "武器の系統の影絵 11 点（断岳剣〜環弓と、響笛・銃槍・軽弩・重弩）",
+      "type": "icon",
+      "use": "絵の無い武器（里鍛ち〜輝殻・採集の系列）の、物品箱と装備の一覧の印（v0.80.0。src/ui/icons.ts の iconUrl が、武器の id の系統から引く）",
+      "owner": "ChatGPT",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/icons/weapon_heavy_blade.svg",
+      "source": "ChatGPT の #39（11 武器種への拡張の下書き）の SVG。単純な線と面の影絵で、スクリプト・外部参照を含まないことを確かめて、そのまま置いた。ほかの 10 枚も同じ置き場（weapon_<系統>.svg）",
+      "terms": "本作オリジナル",
+      "dims": "256×256 の SVG 11 枚、合わせて約 6KB",
+      "clips": [],
+      "dependsOn": [],
+      "verification": "v0.80.0: 物品箱の一覧で出ることを画面で確認する。実機では未確認"
+    },
+    {
+      "id": "art.env.request8",
+      "name": "景色に貼る絵（空と遠景 4・地面と岩 7・草と小物 2・里の建物 4）",
+      "type": "image",
+      "use": "空と遠景は筒の内側に貼る。地面と岩は繰り返して敷く。草は板に貼って立てる。建物は、箱と屋根の立体に、正面と横の図を貼る（D-069）",
+      "owner": "ChatGPT",
+      "status": "integrated",
+      "version": 1,
+      "path": null,
+      "source": "ChatGPT の画像生成（依頼 8、docs/chatgpt-request-8.txt）。2026-11-24 受領。ChatGPT の説明文は art-source/env/README_request8_v1.txt。説明文にある補助ファイル 3 つ（manifest・atlas_layout・helpers）は未受領",
+      "terms": "本作オリジナル",
+      "dims": "遠景と建物 1536×1024、地面・岩・草 1024×1024（草と小物は背景が透明）",
+      "note": "v0.13.0 で貼った（D-072、docs/spec.md 21 章）。ゲームが読むのは tex.env.request8。採用の返事は、まだ無い。v0.22.0 から、岩肌の 2 枚（tex_rock_basin_v1・tex_rock_vein_v1）はゲームで使っていない（依頼 10 の岩肌に替えた。原本は残す）。v0.78.0 から、小物の図集（sprite_props_basin_v1）の茂みのマスを、崖の向こうの木の葉の板にも使う（src/render/exteriorFlora.ts。D-178。絵は足していない）",
+      "sourcePath": "art-source/env",
+      "files": [
+        "bld_board_v1.png",
+        "bld_chest_v1.png",
+        "bld_shop_v1.png",
+        "bld_workshop_v1.png",
+        "env_basin_far_a_v1.png",
+        "env_basin_far_b_v1.png",
+        "env_village_far_a_v1.png",
+        "env_village_far_b_v1.png",
+        "sprite_grass_basin_v1.png",
+        "sprite_props_basin_v1.png",
+        "tex_ground_basin_grass_v1.png",
+        "tex_ground_basin_gravel_v1.png",
+        "tex_ground_nest_v1.png",
+        "tex_ground_village_earth_v1.png",
+        "tex_ground_village_paving_v1.png",
+        "tex_rock_basin_v1.png",
+        "tex_rock_vein_v1.png"
+      ],
+      "verification": "17 枚を見て、依頼の条件と照合した（art-source/env/request8_v1.md）。合わない所: 遠景の上下の帯の色、地面と岩のつなぎ目、草の根元の位置、建物 2 図の縮尺。色とつなぎ目は tools/env-art.py で直した（絵は描き足していない）"
+    },
+    {
+      "id": "tex.env.request8",
+      "name": "景色に貼る絵（ゲームが読む形。15 枚）",
+      "type": "image",
+      "use": "空と遠景（筒の内側）、地面と岩（繰り返し）、草と小物（十字の板）、里の建物（立体の面）。読むのは src/render/envArt.ts",
+      "owner": "Claude（ChatGPT の絵から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/env",
+      "source": "art-source/env/*.png を tools/env-art.py（npm run env:art）で加工。測った値は art-source/env/request8_v1.measure.json",
+      "terms": "本作オリジナル（ChatGPT の絵からの二次加工）",
+      "dims": "WebP 15 枚、合わせて約 1.1MB。遠景と建物 1536×1024、地面・草 1024×1024（遠景・草・小物・建物は透明つき。遠景の透明は空の部分で、v0.19.0 から）。岩肌の 2 枚は v0.22.0 で外した（tex.env.request10.tiles へ）",
+      "clips": [],
+      "dependsOn": [
+        "art.env.request8"
+      ],
+      "verification": "自動テスト（tests/env-art.test.ts、tests/scenery.test.ts）で、ファイル・帯の色・つなぎ目・切り抜きの範囲・建物の大きさ・遠景の空の透明・岩の絵の濃淡を確認。ブラウザの操作検査で、狩場 8 枚・里 13 枚が読めること、建物 4 つに図が貼られていることを確認。画面は、里（全景と、建物 4 つを前・横・後ろから）、野営地、エリア 1・2・3・6、巣を見た（ヘッドレス Chrome）。v0.19.0 で、遠景の空を透明にし、岩肌 2 枚の濃淡を強め、狩場の地面 3 枚の細かな濃淡を少し強めた（D-083。原本は変えていない）。実機では未確認"
+    },
+    {
+      "id": "art.env.request10",
+      "name": "岩 20 種・崖 20 種の設定図と、岩肌 4 枚（依頼 10）",
+      "type": "image",
+      "use": "岩は 3 つの図（正面・右側面・平面）から形を作って色を貼る。崖は外周に沿って並べ、上の線を高さにする。岩肌は、岩と崖と段差に、細かな模様として重ねる（D-091）",
+      "owner": "ChatGPT",
+      "status": "integrated",
+      "version": 1,
+      "path": null,
+      "source": "ChatGPT の画像生成（依頼 10、docs/chatgpt-request-10.txt）。2026-11-25 受領（Pull Request #4）。ChatGPT の説明・測った値・生成の記録・閲覧用 PDF は docs/source/chatgpt-010/",
+      "terms": "本作オリジナル",
+      "dims": "岩 2172×724（依頼は 1536×512）、崖 2048×768、岩肌 1254×1254（依頼は 1024×1024）。合わせて約 78MB の PNG",
+      "note": "v0.22.0 で使い始めた（docs/spec.md の 21.3）。受け入れの確認は art-source/env/request10_v1.md。合わない所（岩の 3 つの図の寸法のずれ・地面の線の位置・薄い不透明の残り・岩肌のつなぎ目と大きさ）は、tools/rock-art.py で直した（絵は描き足していない）。崖の奥行きの図は届いていない（明るさから凹凸を作った）",
+      "sourcePath": "art-source/env",
+      "files": [
+        "rocks/rock_r01_v1.png",
+        "rocks/rock_r02_v1.png",
+        "rocks/rock_r03_v1.png",
+        "rocks/rock_r04_v1.png",
+        "rocks/rock_r05_v1.png",
+        "rocks/rock_r06_v1.png",
+        "rocks/rock_r07_v1.png",
+        "rocks/rock_r08_v1.png",
+        "rocks/rock_r09_v1.png",
+        "rocks/rock_r10_v1.png",
+        "rocks/rock_r11_v1.png",
+        "rocks/rock_r12_v1.png",
+        "rocks/rock_r13_v1.png",
+        "rocks/rock_r14_v1.png",
+        "rocks/rock_r15_v1.png",
+        "rocks/rock_r16_v1.png",
+        "rocks/rock_r17_v1.png",
+        "rocks/rock_r18_v1.png",
+        "rocks/rock_r19_v1.png",
+        "rocks/rock_r20_v1.png",
+        "cliffs/cliff_c01_v1.png",
+        "cliffs/cliff_c02_v1.png",
+        "cliffs/cliff_c03_v1.png",
+        "cliffs/cliff_c04_v1.png",
+        "cliffs/cliff_c05_v1.png",
+        "cliffs/cliff_c06_v1.png",
+        "cliffs/cliff_c07_v1.png",
+        "cliffs/cliff_c08_v1.png",
+        "cliffs/cliff_c09_v1.png",
+        "cliffs/cliff_c10_v1.png",
+        "cliffs/cliff_c11_v1.png",
+        "cliffs/cliff_c12_v1.png",
+        "cliffs/cliff_c13_v1.png",
+        "cliffs/cliff_c14_v1.png",
+        "cliffs/cliff_c15_v1.png",
+        "cliffs/cliff_c16_v1.png",
+        "cliffs/cliff_c17_v1.png",
+        "cliffs/cliff_c18_v1.png",
+        "cliffs/cliff_c19_v1.png",
+        "cliffs/cliff_c20_v1.png",
+        "tiles/tex_rock_t01_v2.png",
+        "tiles/tex_rock_t02_v2.png",
+        "tiles/tex_rock_t03_v2.png",
+        "tiles/tex_rock_t04_v2.png"
+      ],
+      "verification": "44 枚を tools/rock-art.py で測り、依頼の受け入れの確認（5 章）と照合した（art-source/env/request10_v1.measure.json・request10_v1.md）。画面は、狩場のエリア 1・2・3・5・6・7・10、野営地、里、訓練場を、ヘッドレス Chrome で見た。実機では未確認"
+    },
+    {
+      "id": "tex.env.request10.rocks",
+      "name": "岩 20 種の図集（ゲームが読む形）",
+      "type": "image",
+      "use": "岩の形（src/render/rockArtData.ts）の面に、3 つの図を、面の向きで混ぜて貼る（src/render/rockArt.ts）",
+      "owner": "Claude（ChatGPT の図から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/env/rocks_atlas_v1.webp",
+      "source": "art-source/env/rocks/*.png を tools/rock-art.py（npm run rocks:art）で加工（薄い不透明を消し、3 つの図の寸法をそろえ、図ごとに切り出して詰めた）",
+      "terms": "本作オリジナル（ChatGPT の図からの二次加工）",
+      "dims": "2048×2048px WebP（透明つき）、約 1.1MB。60 の図（20 種 × 3）",
+      "clips": [],
+      "dependsOn": [
+        "art.env.request10"
+      ],
+      "verification": "自動テスト（tests/scenery.test.ts）で、図の範囲が重ならないこと、形の大きさ・向き・図の位置を確認。画面で、岩が地面に埋まって見えることを確認（ヘッドレス Chrome）。実機では未確認"
+    },
+    {
+      "id": "tex.env.request10.cliffs",
+      "name": "崖 20 種の図集（ゲームが読む形）",
+      "type": "image",
+      "use": "外周の崖の面に貼る（上の線より上は透明で切り抜く。src/render/rockArt.ts）",
+      "owner": "Claude（ChatGPT の図から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/env/cliffs_atlas_v1.webp",
+      "source": "art-source/env/cliffs/*.png を tools/rock-art.py（npm run rocks:art）で加工（薄い不透明を消し、1024×384 に縮めて 2 列 × 10 段に並べた）",
+      "terms": "本作オリジナル（ChatGPT の図からの二次加工）",
+      "dims": "2048×3840px WebP（透明つき）、約 1.35MB",
+      "clips": [],
+      "dependsOn": [
+        "art.env.request10"
+      ],
+      "verification": "自動テスト（tests/scenery.test.ts）で、端の高さ・出口のわきの図・並べ方（出口の前は開く、ほかはすき間なし）・面が歩ける範囲へ入らないことを確認。画面で確認（ヘッドレス Chrome）。実機では未確認"
+    },
+    {
+      "id": "tex.env.request10.tiles",
+      "name": "岩肌 4 枚（ゲームが読む形）",
+      "type": "image",
+      "use": "T-01 は岩（細かな模様）・門柱と、道・巣・里の段差と崖の背、T-02 は崖の面（細かな模様）、T-03 は晶脈の岩、T-04 は野営地・狩りのエリアの段差と崖の背（苔の多い岩）",
+      "owner": "Claude（ChatGPT の絵から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/env/tex_rock_t01_v2.webp",
+      "source": "art-source/env/tiles/*.png を tools/rock-art.py で加工（大きな濃淡を除き、端をつないで、512 四方に縮めた）。tex_rock_t02〜t04_v2.webp も同じ",
+      "terms": "本作オリジナル（ChatGPT の絵からの二次加工）",
+      "dims": "512×512px WebP 4 枚、合わせて約 340KB。1 枚 = 3m",
+      "clips": [],
+      "dependsOn": [
+        "art.env.request10"
+      ],
+      "verification": "自動テスト（tests/scenery.test.ts、tests/env-art.test.ts）で、濃淡（明るさのばらつき 18 以上）と、つなぎ目（中の段の 90% の所の 1.3 倍より小さい）を確認。実機では未確認"
+    },
+    {
+      "id": "art.monster.concepts",
+      "name": "原画案 85 枚（真横から。v0.75.0 で白紙。ゲームには出していない）",
+      "type": "image",
+      "use": "v0.75.0（利用者の指示。D-173・D-175）で、ガルドロス・スパインゲイル・フロストアルドのほかの種を白紙にして、登録簿と図鑑から外した。この原画案は、資料として art-source に残してある（消すかどうかは利用者が決める）。ゲームは読まない（図鑑に出す小さな絵も外した）。それまでは、登録簿の art として図鑑に出し、02〜12 は体へ横から貼る絵の元にしていた",
+      "owner": "ChatGPT",
+      "status": "validated",
+      "version": 3,
+      "path": null,
+      "sourcePath": "art-source/monster/concepts",
+      "files": [
+        "monster_014_kordopil_concept_v1.png",
+        "monster_015_palseit_concept_v1.png",
+        "monster_016_numaporon_concept_v1.png",
+        "monster_017_chilumicana_concept_v1.png",
+        "monster_018_kohalgis_concept_v1.png",
+        "monster_019_mitogaron_concept_v1.png",
+        "monster_020_yurtepica_concept_v1.png",
+        "monster_021_hinasalv_concept_v1.png",
+        "monster_022_hasdren_concept_v1.png",
+        "monster_023_ivselam_concept_v1.png",
+        "monster_024_domelkano_concept_v1.png",
+        "monster_025_holnebas_concept_v1.png",
+        "monster_026_miltasea_concept_v1.png",
+        "monster_027_talgrina_concept_v1.png",
+        "monster_028_zanetolka_concept_v1.png",
+        "monster_029_ulnaset_concept_v1.png",
+        "monster_02_selvark_concept_v2.png",
+        "monster_030_nemboraf_concept_v1.png",
+        "monster_031_borazeln_concept_v1.png",
+        "monster_032_kudrimal_concept_v1.png",
+        "monster_033_tosamurie_concept_v1.png",
+        "monster_034_pukrenoa_concept_v1.png",
+        "monster_035_kesalpina_concept_v1.png",
+        "monster_036_riptaum_concept_v1.png",
+        "monster_037_serinodam_concept_v1.png",
+        "monster_038_nufraken_concept_v1.png",
+        "monster_039_akaunel_concept_v1.png",
+        "monster_03_numeradon_concept_v2.png",
+        "monster_040_tsumarobek_concept_v1.png",
+        "monster_041_furemsad_concept_v1.png",
+        "monster_042_grasedon_concept_v1.png",
+        "monster_043_ryuzelka_concept_v1.png",
+        "monster_044_mordine_concept_v1.png",
+        "monster_045_doberken_concept_v1.png",
+        "monster_046_shilhatora_concept_v1.png",
+        "monster_047_kuzanerio_concept_v1.png",
+        "monster_048_fesrami_concept_v1.png",
+        "monster_049_elmejika_concept_v1.png",
+        "monster_04_bornakel_concept_v2.png",
+        "monster_050_azelnoto_concept_v1.png",
+        "monster_051_bezrakio_concept_v1.png",
+        "monster_052_murzenato_concept_v1.png",
+        "monster_053_hauremika_concept_v1.png",
+        "monster_054_zedbanil_concept_v1.png",
+        "monster_055_oldasem_concept_v1.png",
+        "monster_056_nuolvan_concept_v1.png",
+        "monster_057_tarhegna_concept_v1.png",
+        "monster_058_porgamis_concept_v1.png",
+        "monster_059_yarlshena_concept_v1.png",
+        "monster_05_ashreia_concept_v2.png",
+        "monster_060_pizelta_concept_v1.png",
+        "monster_061_damorikus_concept_v1.png",
+        "monster_062_isarnem_concept_v1.png",
+        "monster_063_regsanio_concept_v1.png",
+        "monster_064_rupenias_concept_v1.png",
+        "monster_065_sograpin_concept_v1.png",
+        "monster_066_makuejira_concept_v1.png",
+        "monster_067_gumesald_concept_v1.png",
+        "monster_068_nericaus_concept_v1.png",
+        "monster_069_voltena_concept_v1.png",
+        "monster_06_lumisca_concept_v2.png",
+        "monster_070_kitolnam_concept_v1.png",
+        "monster_071_segranio_concept_v1.png",
+        "monster_072_dekoranze_concept_v1.png",
+        "monster_073_fusaldom_concept_v1.png",
+        "monster_074_rimposera_concept_v1.png",
+        "monster_075_dalhoina_concept_v1.png",
+        "monster_076_zonikebal_concept_v1.png",
+        "monster_077_ludopanea_concept_v1.png",
+        "monster_078_salpinoc_concept_v1.png",
+        "monster_079_hemzario_concept_v1.png",
+        "monster_07_orglass_concept_v2.png",
+        "monster_080_pasnelim_concept_v1.png",
+        "monster_081_zaclatom_concept_v1.png",
+        "monster_082_izoflane_concept_v1.png",
+        "monster_083_queribas_concept_v1.png",
+        "monster_084_enagrio_concept_v1.png",
+        "monster_085_nucbarea_concept_v1.png",
+        "monster_086_towalsem_concept_v1.png",
+        "monster_08_tengaro_concept_v2.png",
+        "monster_09_verito_concept_v2.png",
+        "monster_10_razmer_concept_v2.png",
+        "monster_11_kirisave_concept_v2.png",
+        "monster_12_velgait_concept_v2.png",
+        "monster_13_embarg_concept_v2.png"
+      ],
+      "source": "ChatGPT の画像生成。02〜13 は利用者が添付した PDF「制作計画・実装指示書 v2.0 原画改訂版」（2026-11-24）から取り出した。14〜86 の 73 枚は Pull Request #3（依頼 9 の追加。2026-11-25 にマージ。説明・生成の記録・図鑑 PDF 2 冊は docs/source/chatgpt-009/encyclopedia/）。図鑑に出す小さな絵（幅 720px、86 枚で約 2.2MB）は tools/concept-thumbs.py（npm run bestiary:thumbs）が作る",
+      "terms": "本作オリジナル",
+      "dims": "1536×1024（83 枚）、1774×887（2 枚）",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style"
+      ],
+      "verification": "12 枚を、登録簿の「外見の核」と見比べた（art-source/monster/concepts/concepts_v2.md）。73 枚は、ChatGPT の台帳（art-manifest.json）と、番号・ID・名前・大きさ・SHA256 が全部合う（art-source/monster/concepts/concepts_v3.md）。**どれも採用待ち**（利用者は「取り込む」と言った。採用は別）。02〜12 と幼体 14〜21 のほかは、ゲームの中の体と動きは無い。v0.75.0: ゲームから外した（図鑑の小さな絵 85 枚と、体へ横から貼る絵 24 枚を public/assets から消した。原画はそのまま）"
+    },
+    {
+      "id": "art.monster.bestiary",
+      "name": "図鑑に出す絵（いま居る 3 種: ガルドロス・スパインゲイル・フロストアルド）",
+      "type": "image",
+      "use": "登録簿（public/data/bestiary.json）の art。ゲームのモンスター図鑑と、依頼の受付の標的の小さな絵に出す",
+      "owner": "ChatGPT（原画）→ Claude（小さな絵）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/bestiary",
+      "sourcePath": "art-source/monster",
+      "files": [
+        "galdros/galdros_left_v1.png",
+        "concepts/spinegale_concept_v1.webp",
+        "concepts/frostald_concept.webp"
+      ],
+      "source": "ガルドロスは採用した設定図（左の側面）。スパインゲイルとフロストアルドは ChatGPT の原画（Pull Request #50・#51。利用者がマージ）。小さな絵（幅 720px）は tools/concept-thumbs.py（npm run bestiary:thumbs）が、登録簿の art から作る",
+      "terms": "本作オリジナル",
+      "dims": "幅 720px の WebP 3 枚",
+      "clips": [],
+      "dependsOn": [
+        "art.monster.galdros.turnaround"
+      ],
+      "verification": "v0.75.0: 登録簿の art の 3 枚とも、原画と小さな絵がある（tests/env-art.test.ts）。種が足されたら、その種の絵をここへ足す"
+    },
+    {
+      "id": "art.env.basin.overview",
+      "name": "風礫盆地 環境原画（斜め俯瞰・上面図・小物）",
+      "type": "image",
+      "use": "最初の戦闘区画の立体化資料",
+      "owner": "ChatGPT",
+      "status": "planned",
+      "version": 0,
+      "path": null,
+      "source": "COPY 15",
+      "terms": "本作オリジナル",
+      "dims": "約 80m×60m の区画。位置と寸法の正本は地形データ",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style"
+      ],
+      "verification": "未受領"
+    },
+    {
+      "id": "art.ui_fx.refs",
+      "name": "UI 枠・選択状態・素材枠 / 刃の軌跡・岩の粉塵・回復の光の見本",
+      "type": "image",
+      "use": "UI 装飾とエフェクトの設計資料",
+      "owner": "ChatGPT",
+      "status": "planned",
+      "version": 0,
+      "path": null,
+      "source": "COPY 16",
+      "terms": "本作オリジナル。文字と数値は焼き込まない",
+      "dims": "透過背景",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style"
+      ],
+      "verification": "未受領。実行用の粒子・整列済み素材への変換は別工程"
+    },
+    {
+      "id": "doc.motion.hb_overhead",
+      "name": "断岳剣・縦斬りの動作仕様（7 キー姿勢の表とキー画）",
+      "type": "doc",
+      "use": "Blender でキーフレームを作る資料。仮アニメーションの調整にも使う",
+      "owner": "ChatGPT",
+      "status": "planned",
+      "version": 0,
+      "path": null,
+      "source": "COPY 17",
+      "terms": "本作オリジナル。元作品のモーションを抽出しない",
+      "dims": "player.heavy_blade.overhead / 60Hz / 全 72tick",
+      "clips": [
+        "hb_attack_vertical_01"
+      ],
+      "dependsOn": [
+        "art.player.hunter_base.turnaround"
+      ],
+      "verification": "未受領"
+    },
+    {
+      "id": "art.supplement.20261125",
+      "name": "ChatGPT の追加原画 53 点（アイコン 14・岩殻の装備 9・人物と小物と材質 10・狩場 20）",
+      "type": "image",
+      "use": "アイコン（持ち物などの欄）・里の人（鍛冶ロクハ・商店イサネ）・狩場の景色（図鑑と物語の章）はゲームで使う。岩殻の防具の詳しい図・岩殻の武器 4 枚・天幕・革と木と鉄の材質は、まだ使っていない（受け取りの記録だけ）。採集草と露頭は v0.27.0 から、狩らない依頼の採取点の板（tex.props.errand）",
+      "owner": "ChatGPT",
+      "status": "integrated",
+      "version": 1,
+      "path": null,
+      "source": "ChatGPT の画像生成（頼んでいない提案。Pull Request #5、2026-11-25 受領）。説明・プロンプト・検査の記録・閲覧用 PDF（60 ページ）は docs/source/chatgpt-supplement-20261125/",
+      "terms": "本作オリジナル",
+      "dims": "アイコン 1254×1254（RGBA）、人物 1086×1448（RGB。無地の背景）、装備と小物と材質 1254×1254 ほか、狩場 1536×1024",
+      "note": "受け入れの確認は art-source/supplement_v1.md。v0.23.0 で使い始めた（D-093）。人物の名前は物語の仮の名前（鍛冶 = ロクハ、商店 = イサネ）",
+      "sourcePath": "art-source",
+      "files": [
+        "icons/icon_item_bind_trap_v1.png",
+        "icons/icon_item_calm_orb_v1.png",
+        "icons/icon_item_heal_v1.png",
+        "icons/icon_item_whetstone_v1.png",
+        "icons/icon_mat_bone_v1.png",
+        "icons/icon_mat_core_v1.png",
+        "icons/icon_mat_foreplate_v1.png",
+        "icons/icon_mat_galdros_bronze_lump_v1.png",
+        "icons/icon_mat_galdros_crystal_shell_v1.png",
+        "icons/icon_mat_galdros_radiant_shell_v1.png",
+        "icons/icon_mat_galdros_shell_v1.png",
+        "icons/icon_mat_galdros_veined_shell_v1.png",
+        "icons/icon_mat_tail_v1.png",
+        "icons/icon_mat_vein_v1.png",
+        "fields/field_01_overview_v1.png",
+        "fields/field_02_overview_v1.png",
+        "fields/field_03_overview_v1.png",
+        "fields/field_04_overview_v1.png",
+        "fields/field_05_overview_v1.png",
+        "fields/field_06_overview_v1.png",
+        "fields/field_07_overview_v1.png",
+        "fields/field_08_overview_v1.png",
+        "fields/field_09_overview_v1.png",
+        "fields/field_10_overview_v1.png",
+        "fields/field_11_overview_v1.png",
+        "fields/field_12_overview_v1.png",
+        "fields/field_13_overview_v1.png",
+        "fields/field_14_overview_v1.png",
+        "fields/field_15_overview_v1.png",
+        "fields/field_16_overview_v1.png",
+        "fields/field_17_overview_v1.png",
+        "fields/field_18_overview_v1.png",
+        "fields/field_19_overview_v1.png",
+        "fields/field_20_overview_v1.png",
+        "npc/ref_npc_merchant_back_v1.png",
+        "npc/ref_npc_merchant_front_v1.png",
+        "npc/ref_npc_smith_back_v1.png",
+        "npc/ref_npc_smith_front_v1.png",
+        "env/props/ref_fureki_prop_herb_v1.png",
+        "env/props/ref_fureki_prop_ore_v1.png",
+        "env/props/ref_village_tent_v1.png",
+        "materials/tex_shared_iron_basecolor_v1.png",
+        "materials/tex_shared_leather_basecolor_v1.png",
+        "materials/tex_shared_wood_basecolor_v1.png",
+        "armor/galdros/ref_armor_galdros_arms_v1.png",
+        "armor/galdros/ref_armor_galdros_head_v1.png",
+        "armor/galdros/ref_armor_galdros_legs_v1.png",
+        "armor/galdros/ref_armor_galdros_torso_v1.png",
+        "armor/galdros/ref_armor_galdros_waist_v1.png",
+        "weapon/weapon_dangaku_galdros_t2_back_v1.png",
+        "weapon/weapon_dangaku_galdros_t2_front_v1.png",
+        "weapon/weapon_gojin_galdros_t2_shield_front_v1.png",
+        "weapon/weapon_gojin_galdros_t2_sword_front_v1.png"
+      ],
+      "verification": "53 枚を目で見た（文字・枠なし）。アイコンと人物は tools/supplement-art.py で測った（art-source/supplement_v1.measure.json）。実機では未確認"
+    },
+    {
+      "id": "tex.npc.hub",
+      "name": "里に立つ人の絵の板（ミナギ・ロクハ・イサネ・セナキ。正面と背面）",
+      "type": "image",
+      "use": "里の依頼板・工房・商店のそばと、里の出口（狩りへ出る門）のそば（セナキ。v0.29.0）に立てる板（src/render/npcSprites.ts）。カメラの方を向き、後ろからは背面の絵",
+      "owner": "Claude（ChatGPT の絵から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/npc/npc_smith_front_v1.webp",
+      "source": "art-source/npc/ の 8 枚を tools/supplement-art.py で切り抜き（背景の色の差で抜き、足もとの床の影を消し、輪郭をなめらかに）。ミナギの背面とセナキの正面・背面は Pull Request #13（v0.29.0）。ほかの 7 枚も同じ置き場",
+      "terms": "本作オリジナル（ChatGPT の絵からの二次加工）",
+      "dims": "高さ 640px の WebP 8 枚（透明つき）、合わせて約 307KB",
+      "clips": [],
+      "dependsOn": [
+        "art.supplement.20261125",
+        "art.npc.minagi",
+        "art.story.20261125"
+      ],
+      "verification": "自動テスト（tests/story.test.ts）で、4 人とも板が正面と背面を替えることを確認。ブラウザ検査で、4 人の絵が読めることを確認。画面で見た（ヘッドレス Chrome）。背丈は仮（D-093。セナキは 1.68m）。実機では未確認"
+    },
+    {
+      "id": "tex.player.hunter_base.mask",
+      "name": "基準ハンターの体の絵の、肌と髪の印",
+      "type": "image",
+      "use": "見た目を変える（v0.28.0）: 肌の色・髪の色を、この印のある所だけ替える（R = 肌、G = 髪。src/render/appearance.ts）。服・革・金具・目は替えない",
+      "owner": "Claude（体の絵から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/hunter/hunter_mask_v1.png",
+      "source": "assets/textures/hunter/hunter_body_v1.webp を tools/hunter-masks.py（npm run hunter:masks）で、色（Lab）と区画で分けた。測った値は art-source/player/hunter_mask_v1.measure.json",
+      "terms": "本作オリジナル（自作の絵からの二次加工）",
+      "dims": "1024×1024px PNG（体の絵と同じ並び）、約 87KB。肌 約 10 万 px・髪 約 13 万 px",
+      "clips": [],
+      "dependsOn": [
+        "tex.player.hunter_base.body"
+      ],
+      "verification": "胴の区画の首もと（えりの間）まで肌に入ることを、絵に重ねて目で見た。色を替えた顔をヘッドレス Chrome で見た（眉は髪の色に付いていかない）。実機では未確認"
+    },
+    {
+      "id": "tex.props.errand",
+      "name": "採取点の絵の板（採集草・採掘の露頭）",
+      "type": "image",
+      "use": "狩らない依頼（採集・採掘・現地の納品。v0.27.0）の採取点に立てる板（src/render/errandProps.ts）。カメラの方を向く。採った後は、草は低く刈った株、露頭は暗く",
+      "owner": "Claude（ChatGPT の絵から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/textures/props/prop_herb_v1.webp",
+      "source": "art-source/env/props/ の採集草・採掘の露頭 2 枚を tools/supplement-art.py で切り抜いた（人の板と同じ抜き方）。もう 1 枚 prop_ore_v1.webp も同じ置き場",
+      "terms": "本作オリジナル（ChatGPT の絵からの二次加工）",
+      "dims": "高さ 384px の WebP 2 枚（透明つき。草 501×384・露頭 807×384）、合わせて約 107KB。高さは草 0.85m・露頭 0.7m（仮）",
+      "clips": [],
+      "dependsOn": [
+        "art.supplement.20261125"
+      ],
+      "verification": "切り抜きを緑の背景に重ねて目で見た（縁の残りなし）。画面で見たのはヘッドレス Chrome だけ。実機では未確認"
+    },
+    {
+      "id": "ui.portraits",
+      "name": "会話の顔（ミナギ・ロクハ・イサネ・セナキ。表情つき 9 枚）",
+      "type": "image",
+      "use": "物語の会話の窓（src/ui/story.ts）。台詞ごとの表情（story.json の face。v0.29.0）",
+      "owner": "Claude（ChatGPT の絵から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/portraits/portrait_minagi_v1.webp",
+      "source": "ミナギのいつもの顔はバストアップ（art.npc.minagi）、ほかの 8 枚は Pull Request #13 の会話の表情（ミナギの集中・安堵、ロクハ、ロクハの思案、イサネ、イサネの安堵、セナキ、セナキの回想）。どれも同じ決まりで頭と肩を切り抜いた（tools/supplement-art.py。v0.28 までのロクハ・イサネの顔は全身の正面からの切り抜きだった）",
+      "terms": "本作オリジナル（ChatGPT の絵からの二次加工）",
+      "dims": "256×256px WebP 9 枚（透明つき）、合わせて約 150KB",
+      "clips": [],
+      "dependsOn": [
+        "art.supplement.20261125",
+        "art.npc.minagi",
+        "art.story.20261125"
+      ],
+      "verification": "自動テスト（tests/story.test.ts）で、台詞の表情の名前が人ごとの表情の一覧にあることを確認。ブラウザ検査で、会話の窓に顔が出て、台詞ごとに表情が替わることを確認。顔の大きさと位置が 9 枚で揃うことを、並べて目で見た。実機では未確認"
+    },
+    {
+      "id": "art.story.20261125",
+      "name": "ChatGPT の物語の原画 24 点（会話の表情 8・人物の正面と背面 3・場面 5・小物 6・分流口 2）",
+      "type": "image",
+      "use": "会話の表情（ui.portraits）、里に立つミナギの背面とセナキ（tex.npc.hub）、序章と第 1 章の場面の絵（ui.story.scenes）はゲームで使う（v0.29.0）。第 4 章・第 7 章・終章の場面 3 枚は、v0.39.0 から章の一覧の章の絵（会話の場面は、章ができてから）。小物 6 点は v0.35.0 から里の小物の板。分流口の補修前・補修後の 2 枚は、まだ使っていない",
+      "owner": "ChatGPT",
+      "status": "integrated",
+      "version": 1,
+      "path": null,
+      "sourcePath": "art-source",
+      "files": [
+        "portraits/portrait_isane_neutral_v1.png",
+        "portraits/portrait_isane_relief_v1.png",
+        "portraits/portrait_minagi_focus_v1.png",
+        "portraits/portrait_minagi_relief_v1.png",
+        "portraits/portrait_rokuha_neutral_v1.png",
+        "portraits/portrait_rokuha_thinking_v1.png",
+        "portraits/portrait_senaki_neutral_v1.png",
+        "portraits/portrait_senaki_reflective_v1.png",
+        "npc/ref_npc_minagi_back_v1.png",
+        "npc/ref_npc_senaki_front_v1.png",
+        "npc/ref_npc_senaki_back_v1.png",
+        "story/event_story_arrival_board_v1.png",
+        "story/event_story_first_delivery_v1.png",
+        "story/event_story_old_records_v1.png",
+        "story/event_story_limited_lights_v1.png",
+        "story/event_story_homecoming_v1.png",
+        "story/prop_story_closed_route_sign_v1.png",
+        "story/prop_story_record_board_v1.png",
+        "story/prop_story_replaceable_parts_v1.png",
+        "story/prop_story_route_lamp_off_v1.png",
+        "story/prop_story_route_lamp_on_v1.png",
+        "story/prop_story_supply_cart_v1.png",
+        "story/ref_story_diversion_old_v1.png",
+        "story/ref_story_diversion_repaired_v1.png"
+      ],
+      "source": "ChatGPT の画像生成（Pull Request #13、2026-11-25 受領）。目録・使い方の注記・検査の記録・閲覧用 PDF は docs/source/chatgpt-story-art-20261125/",
+      "terms": "本作オリジナル",
+      "dims": "会話の表情 1086×1448（RGBA。胸から上）、人物 1086×1448（RGB。無地の背景）、場面 1672×941（RGB）、小物 1448×1086 か 1086×1448（RGBA）、分流口 1448×1086（RGB）",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style",
+        "art.npc.minagi",
+        "art.supplement.20261125"
+      ],
+      "note": "人物の名前は物語の仮の名前（ミナギ・ロクハ・イサネ・セナキ）。セナキの外見は #13 の新しい案。絵の中に文字は無い（台詞・名前・表示は実装で重ねる）",
+      "verification": "24 枚を目で見た（文字・枠なし）。使う 13 枚は tools/supplement-art.py で測った（art-source/supplement_v1.measure.json）。ChatGPT の検査の道具は走らせていない。実機では未確認"
+    },
+    {
+      "id": "art.story.flagship.20261126",
+      "name": "ChatGPT の看板の物語 v2 の原画 4 枚（雷の飛竜の最初の目撃・決戦の岩棚・野外観測所・里への帰還）と、看板飛竜オルゼリオンの参考の設定図 1 枚",
+      "type": "image",
+      "use": "最初の目撃（event_thunder_first_sighting_v1）は、v0.39.0 から物語の章の一覧の「追加決戦章」の章の絵（ui.story.scenes）。決戦の岩棚・野外観測所・帰還の 3 枚と、オルゼリオンの参考図は、まだ使っていない（追加決戦章・鉛雲高地・オルゼリオンができてから）",
+      "owner": "ChatGPT",
+      "status": "integrated",
+      "version": 1,
+      "path": null,
+      "sourcePath": "art-source",
+      "files": [
+        "story/event_thunder_first_sighting_v1.png",
+        "story/event_thunder_final_ridge_v1.png",
+        "story/event_thunder_homecoming_v1.png",
+        "story/ref_thunder_field_station_v1.png",
+        "monster/flagship/orzelion_concept_reference_v1.png"
+      ],
+      "source": "ChatGPT の画像生成（Pull Request #18、2026-11-26 受領。下書きのまま）。物語の本文・台本・依頼の案・台帳・閲覧用 PDF は docs/source/chatgpt-flagship-story-20261126/",
+      "terms": "本作オリジナル",
+      "dims": "場面 1672×941（RGB）4 枚。参考図は原寸のまま",
+      "clips": [],
+      "dependsOn": [
+        "art.story.20261125"
+      ],
+      "note": "オルゼリオンは登録簿に無い（設計の提案 monster.orzelion。登録簿へは bestiary:import の JSON が来てから）。絵の中に文字は無い",
+      "verification": "5 枚の SHA-256 が ChatGPT の checksums.sha256 と一致。最初の目撃を目で見た。ChatGPT の検査の道具（validate_package.py・build_review_book.py）は走らせていない。実機では未確認"
+    },
+    {
+      "id": "ui.story.scenes",
+      "name": "物語の場面の絵（序章と第 1 章の 2 枚 + 章の一覧の章の絵 4 枚）",
+      "type": "image",
+      "use": "物語の会話の窓の後ろに出す（story.json の scenes[].art。src/ui/story.ts。v0.29.0）。里への到着と帰還受付（SC00・SC01・SC03）、最初の荷が届く（SC02）。v0.39.0 から、章の一覧の章の絵（chapters[].art。序章・第 1 章・第 4 章「古い記録」・第 7 章「灯を減らす夜」・追加決戦章「最初の目撃」（#18）・終章「帰還」）",
+      "owner": "Claude（ChatGPT の絵から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/story/event_story_arrival_board_v1.webp",
+      "source": "art-source/story/ の 2 枚を tools/supplement-art.py で 1280×720 に縮めただけ（原画の縦横の比 1672:941 とほぼ同じ。切っていない）。もう 1 枚 event_story_first_delivery_v1.webp も同じ置き場",
+      "terms": "本作オリジナル（ChatGPT の絵からの二次加工）",
+      "dims": "1280×720px WebP 6 枚（約 1008KB。会話を開いた時にだけ読む）と、章の一覧の 480×270px の小さな絵 6 枚（assets/story/thumb/、約 159KB。章の一覧を開いた時に読む）",
+      "clips": [],
+      "dependsOn": [
+        "art.story.20261125"
+      ],
+      "verification": "自動テスト（tests/story.test.ts）で、場面の絵の名前が作った絵の一覧にあることを確認。ブラウザ検査で、会話の窓の後ろに絵が出ることを確認。場面の地理は里の形と合っていない（2D の情景）。実機では未確認"
+    },
+    {
+      "id": "art.equipment.series.20261125",
+      "name": "ChatGPT の全装備四級版の系列の原画（95 系列の主原画 95 枚と、修正前の 6 枚）",
+      "type": "image",
+      "use": "系列の装備の形の資料（武器 7 種と防具 5 部位を 1 枚に並べた設定画）。v0.32.0〜v0.33.0 で入れた 19 系列（遊べる種の初級）の装備の形は、まだこの絵から作っていない（里の武器・里の服のまま。仮）",
+      "owner": "ChatGPT",
+      "status": "generated",
+      "version": 1,
+      "path": null,
+      "sourcePath": "docs/source/chatgpt-equipment-20261125/art",
+      "source": "ChatGPT の画像生成（Pull Request #15、2026-11-25 受領）。系列ごとの確認の記録は docs/source/chatgpt-equipment-20261125/data/art-manifest.json と analysis/",
+      "terms": "本作オリジナル",
+      "dims": "系列ごとに 1 枚（PNG）",
+      "clips": [],
+      "dependsOn": [
+        "art.board.style"
+      ],
+      "note": "採用していない（形を作る時に、武器種ごとの寸法・握り・4 方向の図が要る）。設計の引き継ぎの手順 4（系列 ID と部位を扱える描画）と一緒に使う",
+      "verification": "受け取りだけ。Claude は 95 枚を 1 枚ずつ照合していない（ChatGPT の確認の記録はある）。実機では未確認"
+    },
+    {
+      "id": "art.fields.overview",
+      "name": "狩場 20 の景色の原画（縮めたもの）",
+      "type": "image",
+      "use": "図鑑の狩場の案と、物語の章の一覧に出す（地形を作るための資料で、ゲームの中の形ではない）",
+      "owner": "Claude（ChatGPT の絵から生成）",
+      "status": "integrated",
+      "version": 1,
+      "path": "assets/fields/field_01_overview_v1.webp",
+      "source": "art-source/fields/ の 20 枚を tools/supplement-art.py で 640×427 に縮めた",
+      "terms": "本作オリジナル（ChatGPT の絵からの二次加工）",
+      "dims": "640×427px WebP 20 枚、合わせて約 979KB。開いた時にだけ読む",
+      "clips": [],
+      "dependsOn": [
+        "art.supplement.20261125"
+      ],
+      "verification": "登録簿の狩場の名前と 20 枚が 1 対 1 で合う（道具が検査する）。ブラウザ検査で、図鑑と物語の章の一覧に絵が出ることを確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.heavy_blade.ore.r1",
+      "name": "晶鍛の断岳剣【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.guard_blade.ore.r1",
+      "name": "晶鍛の護刃【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.war_maul.ore.r1",
+      "name": "晶鍛の大槌【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.twin_blades.ore.r1",
+      "name": "晶鍛の双剣【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.long_blade.ore.r1",
+      "name": "晶鍛の太刀【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.long_lance.ore.r1",
+      "name": "晶鍛の長尖槍【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.ring_bow.ore.r1",
+      "name": "晶鍛の環弓【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.heavy_blade.ore.r2",
+      "name": "晶鍛の断岳剣【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.guard_blade.ore.r2",
+      "name": "晶鍛の護刃【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.war_maul.ore.r2",
+      "name": "晶鍛の大槌【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.twin_blades.ore.r2",
+      "name": "晶鍛の双剣【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.long_blade.ore.r2",
+      "name": "晶鍛の太刀【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.long_lance.ore.r2",
+      "name": "晶鍛の長尖槍【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.ring_bow.ore.r2",
+      "name": "晶鍛の環弓【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.heavy_blade.ore.r3",
+      "name": "晶鍛の断岳剣【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.guard_blade.ore.r3",
+      "name": "晶鍛の護刃【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.war_maul.ore.r3",
+      "name": "晶鍛の大槌【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.twin_blades.ore.r3",
+      "name": "晶鍛の双剣【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.long_blade.ore.r3",
+      "name": "晶鍛の太刀【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.long_lance.ore.r3",
+      "name": "晶鍛の長尖槍【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.ring_bow.ore.r3",
+      "name": "晶鍛の環弓【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.heavy_blade.ore.r4",
+      "name": "晶鍛の断岳剣【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.guard_blade.ore.r4",
+      "name": "晶鍛の護刃【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.war_maul.ore.r4",
+      "name": "晶鍛の大槌【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.twin_blades.ore.r4",
+      "name": "晶鍛の双剣【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.long_blade.ore.r4",
+      "name": "晶鍛の太刀【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.long_lance.ore.r4",
+      "name": "晶鍛の長尖槍【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.ring_bow.ore.r4",
+      "name": "晶鍛の環弓【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.heavy_blade.bone.r1",
+      "name": "骨紋の断岳剣【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.guard_blade.bone.r1",
+      "name": "骨紋の護刃【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.war_maul.bone.r1",
+      "name": "骨紋の大槌【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.twin_blades.bone.r1",
+      "name": "骨紋の双剣【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.long_blade.bone.r1",
+      "name": "骨紋の太刀【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.long_lance.bone.r1",
+      "name": "骨紋の長尖槍【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.ring_bow.bone.r1",
+      "name": "骨紋の環弓【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.heavy_blade.bone.r2",
+      "name": "骨紋の断岳剣【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.guard_blade.bone.r2",
+      "name": "骨紋の護刃【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.war_maul.bone.r2",
+      "name": "骨紋の大槌【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.twin_blades.bone.r2",
+      "name": "骨紋の双剣【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.long_blade.bone.r2",
+      "name": "骨紋の太刀【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.long_lance.bone.r2",
+      "name": "骨紋の長尖槍【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.ring_bow.bone.r2",
+      "name": "骨紋の環弓【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.heavy_blade.bone.r3",
+      "name": "骨紋の断岳剣【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.guard_blade.bone.r3",
+      "name": "骨紋の護刃【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.war_maul.bone.r3",
+      "name": "骨紋の大槌【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.twin_blades.bone.r3",
+      "name": "骨紋の双剣【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.long_blade.bone.r3",
+      "name": "骨紋の太刀【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.long_lance.bone.r3",
+      "name": "骨紋の長尖槍【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.ring_bow.bone.r3",
+      "name": "骨紋の環弓【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.heavy_blade.bone.r4",
+      "name": "骨紋の断岳剣【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.guard_blade.bone.r4",
+      "name": "骨紋の護刃【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.war_maul.bone.r4",
+      "name": "骨紋の大槌【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.twin_blades.bone.r4",
+      "name": "骨紋の双剣【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.long_blade.bone.r4",
+      "name": "骨紋の太刀【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.long_lance.bone.r4",
+      "name": "骨紋の長尖槍【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.ring_bow.bone.r4",
+      "name": "骨紋の環弓【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.hunting_horn.001",
+      "name": "里鍛ちの響笛",
+      "type": "model",
+      "use": "響笛の初期武器（v0.80.0 で武器として実装。技と動きは ChatGPT の #39 の候補で、係数と時間は Kari の仮の値）",
+      "owner": "ChatGPT（#39 の形の案）→ Claude（1 つのメッシュへまとめ直し・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（単色の箱・筒・石を組んだ仮の形）",
+      "terms": "本作オリジナル",
+      "dims": "握りが原点、+Y が先。石突 -0.26m 〜 響胴の口 1.33m、響胴の半径 0.23m。当たりの頭は 0.95〜1.27m（大槌と同じ）",
+      "tris": "1 千以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/extraWeaponModels.ts buildHuntingHorn()（色は頂点へ焼いた 1 つのメッシュ。設定図が無い間の仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: ゲーム内の静止画で、持ち方と形を確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.hunting_horn.002",
+      "name": "岩殻の響笛",
+      "type": "model",
+      "use": "響笛の強化の 2 段目（工房で、1 つ前の段から作る。v0.80.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（#39 の形の案）→ Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。岩の板 2〜3 枚を足す。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.hunting_horn.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（里鍛ちの形に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: 設定図が無いので見た目は未完成。画面では未確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.hunting_horn.003",
+      "name": "脈殻の響笛",
+      "type": "model",
+      "use": "響笛の強化の 3 段目（工房で、1 つ前の段から作る。v0.80.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（#39 の形の案）→ Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。岩の板 2〜3 枚を足す。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.hunting_horn.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（里鍛ちの形に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: 設定図が無いので見た目は未完成。画面では未確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.hunting_horn.004",
+      "name": "晶殻の響笛",
+      "type": "model",
+      "use": "響笛の強化の 4 段目（工房で、1 つ前の段から作る。v0.80.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（#39 の形の案）→ Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。岩の板 2〜3 枚を足す。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.hunting_horn.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（里鍛ちの形に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: 設定図が無いので見た目は未完成。画面では未確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.hunting_horn.005",
+      "name": "輝殻の響笛",
+      "type": "model",
+      "use": "響笛の強化の 5 段目（工房で、1 つ前の段から作る。v0.80.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（#39 の形の案）→ Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。岩の板 2〜3 枚を足す。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.hunting_horn.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（里鍛ちの形に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: 設定図が無いので見た目は未完成。画面では未確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.hunting_horn.ore.r1",
+      "name": "晶鍛の響笛【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.hunting_horn.ore.r2",
+      "name": "晶鍛の響笛【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.hunting_horn.ore.r3",
+      "name": "晶鍛の響笛【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.hunting_horn.ore.r4",
+      "name": "晶鍛の響笛【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.hunting_horn.bone.r1",
+      "name": "骨紋の響笛【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.hunting_horn.bone.r2",
+      "name": "骨紋の響笛【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.hunting_horn.bone.r3",
+      "name": "骨紋の響笛【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.hunting_horn.bone.r4",
+      "name": "骨紋の響笛【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.gunlance.001",
+      "name": "里鍛ちの銃槍",
+      "type": "model",
+      "use": "銃槍の初期武器（v0.80.0 で武器として実装。技と動きは ChatGPT の #39 の候補で、係数と時間は Kari の仮の値）",
+      "owner": "ChatGPT（#39 の形の案）→ Claude（1 つのメッシュへまとめ直し・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（単色の箱・筒・石を組んだ仮の形）",
+      "terms": "本作オリジナル",
+      "dims": "握りが原点、+Y が砲口。石突 -0.35m 〜 穂先 2.42m、砲の胴 0.23×0.68×0.22m。当たりは 0.9〜2.36m（長尖槍と同じ）。大盾は長尖槍のもの",
+      "tris": "1 千以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/extraWeaponModels.ts buildGunlance()（大盾は長尖槍の buildGreatShield()）（色は頂点へ焼いた 1 つのメッシュ。設定図が無い間の仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: ゲーム内の静止画で、持ち方と形を確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.gunlance.002",
+      "name": "岩殻の銃槍",
+      "type": "model",
+      "use": "銃槍の強化の 2 段目（工房で、1 つ前の段から作る。v0.80.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（#39 の形の案）→ Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。岩の板 2〜3 枚を足す。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.gunlance.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（里鍛ちの形に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: 設定図が無いので見た目は未完成。画面では未確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.gunlance.003",
+      "name": "脈殻の銃槍",
+      "type": "model",
+      "use": "銃槍の強化の 3 段目（工房で、1 つ前の段から作る。v0.80.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（#39 の形の案）→ Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。岩の板 2〜3 枚を足す。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.gunlance.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（里鍛ちの形に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: 設定図が無いので見た目は未完成。画面では未確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.gunlance.004",
+      "name": "晶殻の銃槍",
+      "type": "model",
+      "use": "銃槍の強化の 4 段目（工房で、1 つ前の段から作る。v0.80.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（#39 の形の案）→ Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。岩の板 2〜3 枚を足す。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.gunlance.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（里鍛ちの形に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: 設定図が無いので見た目は未完成。画面では未確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.gunlance.005",
+      "name": "輝殻の銃槍",
+      "type": "model",
+      "use": "銃槍の強化の 5 段目（工房で、1 つ前の段から作る。v0.80.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（#39 の形の案）→ Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。岩の板 2〜3 枚を足す。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.gunlance.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（里鍛ちの形に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: 設定図が無いので見た目は未完成。画面では未確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.gunlance.ore.r1",
+      "name": "晶鍛の銃槍【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.gunlance.ore.r2",
+      "name": "晶鍛の銃槍【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.gunlance.ore.r3",
+      "name": "晶鍛の銃槍【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.gunlance.ore.r4",
+      "name": "晶鍛の銃槍【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.gunlance.bone.r1",
+      "name": "骨紋の銃槍【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.gunlance.bone.r2",
+      "name": "骨紋の銃槍【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.gunlance.bone.r3",
+      "name": "骨紋の銃槍【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.gunlance.bone.r4",
+      "name": "骨紋の銃槍【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.light_bowgun.001",
+      "name": "里鍛ちの軽弩",
+      "type": "model",
+      "use": "軽弩の初期武器（v0.80.0 で武器として実装。技と動きは ChatGPT の #39 の候補で、係数と時間は Kari の仮の値）",
+      "owner": "ChatGPT（#39 の形の案）→ Claude（1 つのメッシュへまとめ直し・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（単色の箱・筒・石を組んだ仮の形）",
+      "terms": "本作オリジナル",
+      "dims": "握りが原点、+Y が銃口、+Z が上（照星の側）。銃床 -0.31m 〜 銃口 0.78m、機関部の幅 0.16m、弩の腕の開き 約 0.6m",
+      "tris": "1 千以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/extraWeaponModels.ts buildLightBowgun()（色は頂点へ焼いた 1 つのメッシュ。設定図が無い間の仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: ゲーム内の静止画で、持ち方と形を確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.light_bowgun.002",
+      "name": "岩殻の軽弩",
+      "type": "model",
+      "use": "軽弩の強化の 2 段目（工房で、1 つ前の段から作る。v0.80.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（#39 の形の案）→ Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。岩の板 2〜3 枚を足す。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.light_bowgun.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（里鍛ちの形に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: 設定図が無いので見た目は未完成。画面では未確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.light_bowgun.003",
+      "name": "脈殻の軽弩",
+      "type": "model",
+      "use": "軽弩の強化の 3 段目（工房で、1 つ前の段から作る。v0.80.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（#39 の形の案）→ Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。岩の板 2〜3 枚を足す。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.light_bowgun.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（里鍛ちの形に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: 設定図が無いので見た目は未完成。画面では未確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.light_bowgun.004",
+      "name": "晶殻の軽弩",
+      "type": "model",
+      "use": "軽弩の強化の 4 段目（工房で、1 つ前の段から作る。v0.80.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（#39 の形の案）→ Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。岩の板 2〜3 枚を足す。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.light_bowgun.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（里鍛ちの形に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: 設定図が無いので見た目は未完成。画面では未確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.light_bowgun.005",
+      "name": "輝殻の軽弩",
+      "type": "model",
+      "use": "軽弩の強化の 5 段目（工房で、1 つ前の段から作る。v0.80.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（#39 の形の案）→ Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。岩の板 2〜3 枚を足す。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.light_bowgun.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（里鍛ちの形に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: 設定図が無いので見た目は未完成。画面では未確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.light_bowgun.ore.r1",
+      "name": "晶鍛の軽弩【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.light_bowgun.ore.r2",
+      "name": "晶鍛の軽弩【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.light_bowgun.ore.r3",
+      "name": "晶鍛の軽弩【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.light_bowgun.ore.r4",
+      "name": "晶鍛の軽弩【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.light_bowgun.bone.r1",
+      "name": "骨紋の軽弩【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.light_bowgun.bone.r2",
+      "name": "骨紋の軽弩【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.light_bowgun.bone.r3",
+      "name": "骨紋の軽弩【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.light_bowgun.bone.r4",
+      "name": "骨紋の軽弩【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.heavy_bowgun.001",
+      "name": "里鍛ちの重弩",
+      "type": "model",
+      "use": "重弩の初期武器（v0.80.0 で武器として実装。技と動きは ChatGPT の #39 の候補で、係数と時間は Kari の仮の値）",
+      "owner": "ChatGPT（#39 の形の案）→ Claude（1 つのメッシュへまとめ直し・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（単色の箱・筒・石を組んだ仮の形）",
+      "terms": "本作オリジナル",
+      "dims": "握りが原点、+Y が銃口、+Z が上（照星の側）。銃床 -0.31m 〜 銃口 1.05m、機関部の幅 0.22m、弩の腕の開き 約 0.8m",
+      "tris": "1 千以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/extraWeaponModels.ts buildHeavyBowgun()（色は頂点へ焼いた 1 つのメッシュ。設定図が無い間の仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: ゲーム内の静止画で、持ち方と形を確認。設定図が無いので見た目は未完成。実機では未確認"
+    },
+    {
+      "id": "model.weapon.heavy_bowgun.002",
+      "name": "岩殻の重弩",
+      "type": "model",
+      "use": "重弩の強化の 2 段目（工房で、1 つ前の段から作る。v0.80.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（#39 の形の案）→ Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。岩の板 2〜3 枚を足す。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.heavy_bowgun.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（里鍛ちの形に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: 設定図が無いので見た目は未完成。画面では未確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.heavy_bowgun.003",
+      "name": "脈殻の重弩",
+      "type": "model",
+      "use": "重弩の強化の 3 段目（工房で、1 つ前の段から作る。v0.80.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（#39 の形の案）→ Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。岩の板 2〜3 枚を足す。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.heavy_bowgun.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（里鍛ちの形に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: 設定図が無いので見た目は未完成。画面では未確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.heavy_bowgun.004",
+      "name": "晶殻の重弩",
+      "type": "model",
+      "use": "重弩の強化の 4 段目（工房で、1 つ前の段から作る。v0.80.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（#39 の形の案）→ Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。岩の板 2〜3 枚を足す。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.heavy_bowgun.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（里鍛ちの形に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: 設定図が無いので見た目は未完成。画面では未確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.heavy_bowgun.005",
+      "name": "輝殻の重弩",
+      "type": "model",
+      "use": "重弩の強化の 5 段目（工房で、1 つ前の段から作る。v0.80.0）。元の形に、色の違う板を足した仮の形",
+      "owner": "ChatGPT（#39 の形の案）→ Claude",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "正式モデルは未制作。設定図も未依頼（里鍛ちの形を流用している）",
+      "terms": "本作オリジナル",
+      "dims": "里鍛ちと同じ。岩の板 2〜3 枚を足す。判定は里鍛ちと同じ",
+      "tris": "里鍛ち + 100 以下",
+      "bones": "なし",
+      "clips": [],
+      "dependsOn": [
+        "model.weapon.heavy_bowgun.001"
+      ],
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/shellPlates.ts withShell()（里鍛ちの形に、単色の箱で岩の板と留め帯を足しただけの仮の形）"
+      },
+      "verification": "仮素材（v0.80.0）: 設定図が無いので見た目は未完成。画面では未確認。実機では未確認"
+    },
+    {
+      "id": "model.weapon.heavy_bowgun.ore.r1",
+      "name": "晶鍛の重弩【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.heavy_bowgun.ore.r2",
+      "name": "晶鍛の重弩【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.heavy_bowgun.ore.r3",
+      "name": "晶鍛の重弩【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.heavy_bowgun.ore.r4",
+      "name": "晶鍛の重弩【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.heavy_bowgun.bone.r1",
+      "name": "骨紋の重弩【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.heavy_bowgun.bone.r2",
+      "name": "骨紋の重弩【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.heavy_bowgun.bone.r3",
+      "name": "骨紋の重弩【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.weapon.heavy_bowgun.bone.r4",
+      "name": "骨紋の重弩【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合。#39）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/rig.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.armor.ore.r1",
+      "name": "晶鍛防具【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/hunterArmor.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.armor.ore.r2",
+      "name": "晶鍛防具【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/hunterArmor.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.armor.ore.r3",
+      "name": "晶鍛防具【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/hunterArmor.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.armor.ore.r4",
+      "name": "晶鍛防具【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/hunterArmor.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.armor.bone.r1",
+      "name": "骨紋防具【初級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/hunterArmor.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.armor.bone.r2",
+      "name": "骨紋防具【中級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/hunterArmor.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.armor.bone.r3",
+      "name": "骨紋防具【上級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/hunterArmor.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.armor.bone.r4",
+      "name": "骨紋防具【極級】",
+      "type": "model",
+      "use": "採集専用の武器・防具",
+      "owner": "ChatGPT（仮造形・統合）",
+      "status": "concept",
+      "version": 0,
+      "path": null,
+      "source": "既存形状から材質・色を変えたゲーム内プロシージャル仮モデル",
+      "terms": "本作オリジナル",
+      "placeholder": {
+        "kind": "procedural",
+        "source": "src/render/hunterArmor.ts",
+        "note": "専用の原画・正式3Dモデルは未制作。"
+      },
+      "verification": "実機の外観確認は未実施。"
+    },
+    {
+      "id": "model.monster.spinegale",
+      "name": "疾棘竜 スパインゲイル",
+      "type": "model",
+      "use": "ガルドロス討伐後・初級〜上級の専用モンスター",
+      "owner": "ChatGPT（採用原画からの再現生成・統合）",
+      "status": "integrated",
+      "version": 3,
+      "path": "assets/models/monsters/spinegale_v3_game.glb",
+      "sourcePath": "tools/spinegale",
+      "files": [
+        "reference.webp",
+        "build_spinegale_refined.py",
+        "art_bake.py",
+        "model_manifest.json"
+      ],
+      "source": "原画Dの採用・再現生成",
+      "terms": "本作オリジナル",
+      "dims": "Y上 +Z前",
+      "tris": 171772,
+      "bones": 77,
+      "clips": [
+        "sg_idle",
+        "sg_walk",
+        "sg_trot",
+        "sg_sprint",
+        "sg_brake",
+        "sg_turn_l",
+        "sg_turn_r",
+        "sg_pivot_l",
+        "sg_pivot_r",
+        "sg_backstep",
+        "sg_limp",
+        "sg_look_around",
+        "sg_sniff",
+        "sg_eat",
+        "sg_drink",
+        "sg_sleep_enter",
+        "sg_sleep_loop",
+        "sg_sleep_exit",
+        "sg_blink",
+        "sg_preen",
+        "sg_bite",
+        "sg_double_bite",
+        "sg_dash",
+        "sg_pounce",
+        "sg_jump_kick",
+        "sg_tail_sweep_l",
+        "sg_tail_sweep_r",
+        "sg_turn_bite",
+        "sg_side_strike_l",
+        "sg_side_strike_r",
+        "sg_triple_dash",
+        "sg_pack_call",
+        "sg_fatigue_enter",
+        "sg_fatigue_pant_loop",
+        "sg_fatigue_recover",
+        "sg_fatigue_full",
+        "sg_flinch_head",
+        "sg_flinch_body",
+        "sg_flinch_leg_l",
+        "sg_flinch_leg_r",
+        "sg_flinch_tail",
+        "sg_fall_l",
+        "sg_fall_r",
+        "sg_rise",
+        "sg_break_crest",
+        "sg_break_spine",
+        "sg_sever_tail",
+        "sg_rage_roar",
+        "sg_stun",
+        "sg_paralysis",
+        "sg_trap",
+        "sg_capture",
+        "sg_death"
+      ],
+      "verification": "ローカル再生成GLBのSHA-256一致。ゲーム実機試験は未実施。"
+    },
+    {
+      "id": "model.monster.frostald",
+      "name": "氷冠獣 フロストアルド",
+      "type": "model",
+      "use": "初級〜上級・白霧氷谷",
+      "owner": "ChatGPT（専用メッシュ・リグ・動作・統合）",
+      "status": "integrated",
+      "version": 6,
+      "path": "assets/models/monsters/frostald_hd/frostald.gltf",
+      "sourcePath": "tools/frostald",
+      "files": [
+        "build_frostald.py",
+        "bake_frostald.py",
+        "model_manifest_game.json",
+        "build_master.py",
+        "ensure_assets.py",
+        "material_atlas.py",
+        "material_source/provenance.json",
+        "organic_sculpt.py",
+        "requirements.txt"
+      ],
+      "source": "採用原画の肌・氷晶の素材と連続SDFによる実体再造形",
+      "terms": "本作オリジナル",
+      "dims": "Y上 +Z前",
+      "tris": 2606400,
+      "bones": 79,
+      "clips": [
+        "fa_idle",
+        "fa_walk",
+        "fa_trot",
+        "fa_sprint",
+        "fa_limp",
+        "fa_turn_l",
+        "fa_turn_r",
+        "fa_pivot_l",
+        "fa_pivot_r",
+        "fa_retreat",
+        "fa_threat",
+        "fa_rage_roar",
+        "fa_drink",
+        "fa_shake_mane",
+        "fa_sniff",
+        "fa_eat",
+        "fa_sleep_enter",
+        "fa_sleep_loop",
+        "fa_sleep_exit",
+        "fa_swim",
+        "fa_dive",
+        "fa_surface",
+        "fa_bite",
+        "fa_double_bite",
+        "fa_claw_l",
+        "fa_claw_r",
+        "fa_body_ram",
+        "fa_slide",
+        "fa_tail_l",
+        "fa_tail_r",
+        "fa_roll_l",
+        "fa_roll_r",
+        "fa_ice_breath",
+        "fa_ice_sweep_l",
+        "fa_ice_sweep_r",
+        "fa_ice_burst",
+        "fa_head_slam",
+        "fa_back_bite",
+        "fa_flinch_head",
+        "fa_flinch_body",
+        "fa_flinch_leg_l",
+        "fa_flinch_leg_r",
+        "fa_flinch_tail",
+        "fa_fall_l",
+        "fa_fall_r",
+        "fa_rise",
+        "fa_break_mane",
+        "fa_break_head",
+        "fa_sever_tail",
+        "fa_stun",
+        "fa_paralysis",
+        "fa_trap",
+        "fa_capture",
+        "fa_death",
+        "fa_pant",
+        "fa_recharge"
+      ],
+      "verification": "ローカルで2606400/386612三角形・79関節・56モーション、V5とのノード・逆バインド・全キーフレームバイト一致を確認。配信側は実測数と全バッファ・PBRロードを検査する。原画同等の視覚品質とiPhone実機性能は未確認。"
+    },
+    {
+      "id": "model.monster.venolka",
+      "name": "毒羽竜 ヴェノルカ",
+      "type": "model",
+      "use": "初級〜上級・根絡み湿原",
+      "owner": "ChatGPT（専用メッシュ・動作・統合）",
+      "status": "integrated",
+      "version": 2,
+      "path": "assets/models/monsters/venolka_hd/venolka.gltf",
+      "sourcePath": "tools/venolka",
+      "files": [
+        "build_venolka.py",
+        "volume.py",
+        "materials.py",
+        "material_source/provenance.json",
+        "bake_combat.py",
+        "ensure_assets.py",
+        "ensure.mjs",
+        "material_source/hide_relief_v1.webp"
+      ],
+      "source": "利用者承認済みV2原画投影テクスチャと解剖別UV（同じ骨格付きメッシュ）",
+      "terms": "本作オリジナル",
+      "dims": "Y上 +Z前",
+      "tris": 2298702,
+      "bones": 111,
+      "clips": [
+        "vn_idle",
+        "vn_walk",
+        "vn_trot",
+        "vn_sprint",
+        "vn_limp",
+        "vn_turn_l",
+        "vn_turn_r",
+        "vn_pivot_l",
+        "vn_pivot_r",
+        "vn_threat",
+        "vn_rage_roar",
+        "vn_retreat",
+        "vn_refill",
+        "vn_takeoff",
+        "vn_hover",
+        "vn_land",
+        "vn_fly_forward",
+        "vn_sniff",
+        "vn_eat",
+        "vn_sleep_enter",
+        "vn_sleep_loop",
+        "vn_sleep_exit",
+        "vn_peck",
+        "vn_double_peck",
+        "vn_wing_l",
+        "vn_wing_r",
+        "vn_tail_l",
+        "vn_tail_r",
+        "vn_rush",
+        "vn_hop_kick",
+        "vn_glide",
+        "vn_poison_spit",
+        "vn_poison_fan",
+        "vn_poison_tail_l",
+        "vn_poison_tail_r",
+        "vn_poison_cloud",
+        "vn_back_peck",
+        "vn_flinch_head",
+        "vn_flinch_body",
+        "vn_flinch_leg_l",
+        "vn_flinch_leg_r",
+        "vn_flinch_wing_l",
+        "vn_flinch_wing_r",
+        "vn_fall_l",
+        "vn_fall_r",
+        "vn_rise",
+        "vn_stun",
+        "vn_paralysis",
+        "vn_trap",
+        "vn_capture",
+        "vn_death",
+        "vn_break_sac",
+        "vn_break_crest",
+        "vn_break_wing",
+        "vn_sever_tail",
+        "vn_pant"
+      ],
+      "verification": "高密度2298702・軽量285404三角形、111関節・56クリップ。原画V2の素材ハッシュ・両解像度・UVアトラスレイアウト・分割バッファを検査。原画同等の写実品質とiPhone実機性能は未確認。"
+    }
+  ]
+}

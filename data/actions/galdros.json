@@ -1,0 +1,384 @@
+{
+ "schemaVersion": 1,
+ "actions": [
+  {
+   "schemaVersion": 1,
+   "actionId": "monster.galdros.roar",
+   "clip": "galdros_roar_01",
+   "tickRate": 60,
+   "durationTicks": 80,
+   "phases": [
+    {
+     "id": "startup",
+     "from": 0,
+     "to": 80
+    }
+   ],
+   "rootMotion": {
+    "mode": "none"
+   },
+   "hitWindows": [],
+   "cancelWindows": [],
+   "events": [
+    {
+     "tick": 8,
+     "type": "sound",
+     "id": "galdros_roar"
+    }
+   ],
+   "onFinish": "keep"
+  },
+  {
+   "schemaVersion": 1,
+   "actionId": "monster.galdros.slam_l",
+   "clip": "galdros_slam_l_01",
+   "tickRate": 60,
+   "durationTicks": 120,
+   "phases": [
+    {
+     "id": "startup",
+     "from": 0,
+     "to": 48
+    },
+    {
+     "id": "active",
+     "from": 48,
+     "to": 54
+    },
+    {
+     "id": "recovery",
+     "from": 54,
+     "to": 120
+    }
+   ],
+   "rootMotion": {
+    "mode": "none"
+   },
+   "turning": {
+    "untilTick": 28,
+    "maxDegreesPerSecond": 55
+   },
+   "hitWindows": [
+    {
+     "id": "foreleg",
+     "from": 48,
+     "to": 54,
+     "shapeTrack": "galdros_slam_l",
+     "damageType": "blunt",
+     "damageCoefficient": 1.0,
+     "maxHitsPerTarget": 1,
+     "hitstopTicks": 0,
+     "baseDamage": 28,
+     "guardable": true,
+     "guardCost": 35,
+     "reaction": "knockdown"
+    }
+   ],
+   "cancelWindows": [],
+   "events": [
+    {
+     "tick": 2,
+     "type": "sound",
+     "id": "galdros_warn"
+    },
+    {
+     "tick": 46,
+     "type": "sound",
+     "id": "galdros_swing"
+    },
+    {
+     "tick": 53,
+     "type": "vfx",
+     "id": "ground_slam"
+    }
+   ],
+   "opening": {
+    "partId": "back",
+    "from": 60,
+    "to": 96
+   },
+   "onFinish": "keep",
+   "weaponTrack": "galdros_slam_l"
+  },
+  {
+   "schemaVersion": 1,
+   "actionId": "monster.galdros.slam_r",
+   "clip": "galdros_slam_r_01",
+   "tickRate": 60,
+   "durationTicks": 120,
+   "phases": [
+    {
+     "id": "startup",
+     "from": 0,
+     "to": 48
+    },
+    {
+     "id": "active",
+     "from": 48,
+     "to": 54
+    },
+    {
+     "id": "recovery",
+     "from": 54,
+     "to": 120
+    }
+   ],
+   "rootMotion": {
+    "mode": "none"
+   },
+   "turning": {
+    "untilTick": 28,
+    "maxDegreesPerSecond": 55
+   },
+   "hitWindows": [
+    {
+     "id": "foreleg",
+     "from": 48,
+     "to": 54,
+     "shapeTrack": "galdros_slam_r",
+     "damageType": "blunt",
+     "damageCoefficient": 1.0,
+     "maxHitsPerTarget": 1,
+     "hitstopTicks": 0,
+     "baseDamage": 28,
+     "guardable": true,
+     "guardCost": 35,
+     "reaction": "knockdown"
+    }
+   ],
+   "cancelWindows": [],
+   "events": [
+    {
+     "tick": 2,
+     "type": "sound",
+     "id": "galdros_warn"
+    },
+    {
+     "tick": 46,
+     "type": "sound",
+     "id": "galdros_swing"
+    },
+    {
+     "tick": 53,
+     "type": "vfx",
+     "id": "ground_slam"
+    }
+   ],
+   "opening": {
+    "partId": "back",
+    "from": 60,
+    "to": 96
+   },
+   "onFinish": "keep",
+   "weaponTrack": "galdros_slam_r"
+  },
+  {
+   "schemaVersion": 1,
+   "actionId": "monster.galdros.charge",
+   "clip": "galdros_charge_01",
+   "tickRate": 60,
+   "durationTicks": 190,
+   "phases": [
+    {
+     "id": "startup",
+     "from": 0,
+     "to": 60
+    },
+    {
+     "id": "active",
+     "from": 60,
+     "to": 132
+    },
+    {
+     "id": "recovery",
+     "from": 132,
+     "to": 190
+    }
+   ],
+   "rootMotion": {
+    "mode": "controller",
+    "curveId": "galdros_charge"
+   },
+   "turning": {
+    "untilTick": 40,
+    "maxDegreesPerSecond": 70
+   },
+   "brake": {
+    "from": 70,
+    "to": 125
+   },
+   "hitWindows": [
+    {
+     "id": "body_front",
+     "from": 60,
+     "to": 132,
+     "shapeTrack": "galdros_charge_front",
+     "damageType": "blunt",
+     "damageCoefficient": 1.0,
+     "maxHitsPerTarget": 1,
+     "hitstopTicks": 0,
+     "baseDamage": 34,
+     "guardable": true,
+     "guardCost": 45,
+     "reaction": "knockdown"
+    }
+   ],
+   "cancelWindows": [],
+   "events": [
+    {
+     "tick": 2,
+     "type": "sound",
+     "id": "galdros_warn"
+    },
+    {
+     "tick": 18,
+     "type": "sound",
+     "id": "galdros_scrape"
+    },
+    {
+     "tick": 36,
+     "type": "sound",
+     "id": "galdros_scrape"
+    },
+    {
+     "tick": 58,
+     "type": "sound",
+     "id": "galdros_charge"
+    }
+   ],
+   "opening": {
+    "partId": "tail",
+    "from": 150,
+    "to": 186
+   },
+   "onFinish": "keep",
+   "weaponTrack": "galdros_charge_front"
+  },
+  {
+   "schemaVersion": 1,
+   "actionId": "monster.galdros.tail_sweep",
+   "clip": "galdros_tail_sweep_01",
+   "tickRate": 60,
+   "durationTicks": 110,
+   "phases": [
+    {
+     "id": "startup",
+     "from": 0,
+     "to": 40
+    },
+    {
+     "id": "active",
+     "from": 40,
+     "to": 58
+    },
+    {
+     "id": "recovery",
+     "from": 58,
+     "to": 110
+    }
+   ],
+   "rootMotion": {
+    "mode": "none"
+   },
+   "hitWindows": [
+    {
+     "id": "tail",
+     "from": 40,
+     "to": 58,
+     "shapeTrack": "galdros_tail_sweep",
+     "damageType": "blunt",
+     "damageCoefficient": 1.0,
+     "maxHitsPerTarget": 1,
+     "hitstopTicks": 0,
+     "baseDamage": 26,
+     "guardable": true,
+     "guardCost": 30,
+     "reaction": "knockdown"
+    }
+   ],
+   "cancelWindows": [],
+   "events": [
+    {
+     "tick": 2,
+     "type": "sound",
+     "id": "galdros_warn"
+    },
+    {
+     "tick": 38,
+     "type": "sound",
+     "id": "galdros_swing"
+    }
+   ],
+   "opening": {
+    "partId": "hindleg",
+    "from": 60,
+    "to": 108
+   },
+   "onFinish": "keep",
+   "weaponTrack": "galdros_tail_sweep"
+  },
+  {
+   "schemaVersion": 1,
+   "actionId": "monster.galdros.tail_sweep_short",
+   "clip": "galdros_tail_sweep_01",
+   "tickRate": 60,
+   "durationTicks": 110,
+   "phases": [
+    {
+     "id": "startup",
+     "from": 0,
+     "to": 40
+    },
+    {
+     "id": "active",
+     "from": 40,
+     "to": 58
+    },
+    {
+     "id": "recovery",
+     "from": 58,
+     "to": 110
+    }
+   ],
+   "rootMotion": {
+    "mode": "none"
+   },
+   "hitWindows": [
+    {
+     "id": "tail",
+     "from": 40,
+     "to": 58,
+     "shapeTrack": "galdros_tail_sweep_short",
+     "damageType": "blunt",
+     "damageCoefficient": 1.0,
+     "maxHitsPerTarget": 1,
+     "hitstopTicks": 0,
+     "baseDamage": 22,
+     "guardable": true,
+     "guardCost": 30,
+     "reaction": "knockdown"
+    }
+   ],
+   "cancelWindows": [],
+   "events": [
+    {
+     "tick": 2,
+     "type": "sound",
+     "id": "galdros_warn"
+    },
+    {
+     "tick": 38,
+     "type": "sound",
+     "id": "galdros_swing"
+    }
+   ],
+   "opening": {
+    "partId": "hindleg",
+    "from": 60,
+    "to": 108
+   },
+   "onFinish": "keep",
+   "weaponTrack": "galdros_tail_sweep_short"
+  }
+ ]
+}

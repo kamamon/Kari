@@ -1,0 +1,443 @@
+{
+  "schemaVersion": 1,
+  "tables": [
+    {
+      "id": "loot.venolka",
+      "carve": {
+        "count": 3,
+        "table": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "weight": 34
+          },
+          {
+            "itemId": "mat.venolka.claw.r1",
+            "weight": 19
+          },
+          {
+            "itemId": "mat.venolka.feather.r1",
+            "weight": 18
+          },
+          {
+            "itemId": "mat.venolka.sac.r1",
+            "weight": 12
+          },
+          {
+            "itemId": "mat.venolka.membrane.r1",
+            "weight": 10
+          },
+          {
+            "itemId": "mat.venolka.tail_plume.r1",
+            "weight": 7
+          }
+        ]
+      },
+      "capture": {
+        "count": 4,
+        "table": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "weight": 27
+          },
+          {
+            "itemId": "mat.venolka.claw.r1",
+            "weight": 19
+          },
+          {
+            "itemId": "mat.venolka.feather.r1",
+            "weight": 18
+          },
+          {
+            "itemId": "mat.venolka.sac.r1",
+            "weight": 19
+          },
+          {
+            "itemId": "mat.venolka.membrane.r1",
+            "weight": 10
+          },
+          {
+            "itemId": "mat.venolka.tail_plume.r1",
+            "weight": 7
+          }
+        ]
+      },
+      "breaks": {
+        "head": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.claw.r1",
+              "weight": 55
+            },
+            {
+              "itemId": "mat.venolka.scale.r1",
+              "weight": 45
+            }
+          ]
+        },
+        "crest": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.feather.r1",
+              "weight": 100
+            }
+          ]
+        },
+        "sac": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.sac.r1",
+              "weight": 100
+            }
+          ]
+        },
+        "wing_l": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.membrane.r1",
+              "weight": 100
+            }
+          ]
+        },
+        "wing_r": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.membrane.r1",
+              "weight": 100
+            }
+          ]
+        },
+        "legs": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.claw.r1",
+              "weight": 80
+            },
+            {
+              "itemId": "mat.venolka.scale.r1",
+              "weight": 20
+            }
+          ]
+        },
+        "tail": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.tail_plume.r1",
+              "weight": 100
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "loot.venolka.r2",
+      "carve": {
+        "count": 3,
+        "table": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "weight": 29
+          },
+          {
+            "itemId": "mat.venolka.claw.r2",
+            "weight": 19
+          },
+          {
+            "itemId": "mat.venolka.feather.r2",
+            "weight": 18
+          },
+          {
+            "itemId": "mat.venolka.sac.r2",
+            "weight": 12
+          },
+          {
+            "itemId": "mat.venolka.membrane.r2",
+            "weight": 10
+          },
+          {
+            "itemId": "mat.venolka.tail_plume.r2",
+            "weight": 7
+          },
+          {
+            "itemId": "mat.venolka.crest.r2",
+            "weight": 5
+          }
+        ]
+      },
+      "capture": {
+        "count": 4,
+        "table": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "weight": 22
+          },
+          {
+            "itemId": "mat.venolka.claw.r2",
+            "weight": 19
+          },
+          {
+            "itemId": "mat.venolka.feather.r2",
+            "weight": 18
+          },
+          {
+            "itemId": "mat.venolka.sac.r2",
+            "weight": 19
+          },
+          {
+            "itemId": "mat.venolka.membrane.r2",
+            "weight": 10
+          },
+          {
+            "itemId": "mat.venolka.tail_plume.r2",
+            "weight": 7
+          },
+          {
+            "itemId": "mat.venolka.crest.r2",
+            "weight": 5
+          }
+        ]
+      },
+      "breaks": {
+        "head": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.claw.r2",
+              "weight": 55
+            },
+            {
+              "itemId": "mat.venolka.scale.r2",
+              "weight": 45
+            }
+          ]
+        },
+        "crest": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.crest.r2",
+              "weight": 65
+            },
+            {
+              "itemId": "mat.venolka.feather.r2",
+              "weight": 35
+            }
+          ]
+        },
+        "sac": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.sac.r2",
+              "weight": 100
+            }
+          ]
+        },
+        "wing_l": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.membrane.r2",
+              "weight": 100
+            }
+          ]
+        },
+        "wing_r": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.membrane.r2",
+              "weight": 100
+            }
+          ]
+        },
+        "legs": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.claw.r2",
+              "weight": 80
+            },
+            {
+              "itemId": "mat.venolka.scale.r2",
+              "weight": 20
+            }
+          ]
+        },
+        "tail": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.tail_plume.r2",
+              "weight": 100
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "loot.venolka.r3",
+      "carve": {
+        "count": 3,
+        "table": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "weight": 27
+          },
+          {
+            "itemId": "mat.venolka.claw.r3",
+            "weight": 19
+          },
+          {
+            "itemId": "mat.venolka.feather.r3",
+            "weight": 18
+          },
+          {
+            "itemId": "mat.venolka.sac.r3",
+            "weight": 12
+          },
+          {
+            "itemId": "mat.venolka.membrane.r3",
+            "weight": 10
+          },
+          {
+            "itemId": "mat.venolka.tail_plume.r3",
+            "weight": 7
+          },
+          {
+            "itemId": "mat.venolka.crest.r3",
+            "weight": 5
+          },
+          {
+            "itemId": "mat.venolka.core.r3",
+            "weight": 2
+          }
+        ]
+      },
+      "capture": {
+        "count": 4,
+        "table": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "weight": 20
+          },
+          {
+            "itemId": "mat.venolka.claw.r3",
+            "weight": 19
+          },
+          {
+            "itemId": "mat.venolka.feather.r3",
+            "weight": 18
+          },
+          {
+            "itemId": "mat.venolka.sac.r3",
+            "weight": 19
+          },
+          {
+            "itemId": "mat.venolka.membrane.r3",
+            "weight": 10
+          },
+          {
+            "itemId": "mat.venolka.tail_plume.r3",
+            "weight": 7
+          },
+          {
+            "itemId": "mat.venolka.crest.r3",
+            "weight": 5
+          },
+          {
+            "itemId": "mat.venolka.core.r3",
+            "weight": 2
+          }
+        ]
+      },
+      "breaks": {
+        "head": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.claw.r3",
+              "weight": 55
+            },
+            {
+              "itemId": "mat.venolka.scale.r3",
+              "weight": 45
+            }
+          ]
+        },
+        "crest": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.crest.r3",
+              "weight": 65
+            },
+            {
+              "itemId": "mat.venolka.feather.r3",
+              "weight": 35
+            }
+          ]
+        },
+        "sac": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.sac.r3",
+              "weight": 91
+            },
+            {
+              "itemId": "mat.venolka.core.r3",
+              "weight": 9
+            }
+          ]
+        },
+        "wing_l": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.membrane.r3",
+              "weight": 100
+            }
+          ]
+        },
+        "wing_r": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.membrane.r3",
+              "weight": 100
+            }
+          ]
+        },
+        "legs": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.claw.r3",
+              "weight": 80
+            },
+            {
+              "itemId": "mat.venolka.scale.r3",
+              "weight": 20
+            }
+          ]
+        },
+        "tail": {
+          "count": 1,
+          "table": [
+            {
+              "itemId": "mat.venolka.tail_plume.r3",
+              "weight": 100
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,414 @@
+{
+  "schemaVersion": 1,
+  "note": "狩らない依頼（採集・採掘・現地の納品。v0.27.0、docs/spec.md の 27 章）。ChatGPT のクエスト設計 v2（Pull Request #9、docs/source/chatgpt-quest-design-20261125/nonhunt_catalog_v2.json）の、風礫盆地の G01・G02・M01・M02・D01。採取点の位置と納品箱は Claude が決めた（エリアの中・外周と岩と出口から離す。検査は src/data/validators.ts の validateGather）。大型・幼体は出ない。依頼人の話・星・目安の時間は quest_board.json。",
+  "quests": [
+    {
+      "id": "quest.gather.001",
+      "name": "薬房へ、最初の六枚",
+      "kind": "gather",
+      "summary": "野営地の草場で、ヒラナギの葉を採集して、納品箱へ届ける。獣は出ない。",
+      "mapId": "map.basin.training",
+      "fieldId": "field.basin",
+      "rankId": "rank.1",
+      "timeLimitTicks": 54000,
+      "fieldTimeLimitTicks": 54000,
+      "maxFaints": 3,
+      "returnTicks": 300,
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewards": {
+        "money": 240,
+        "items": []
+      },
+      "gather": {
+        "needs": [
+          {
+            "itemId": "mat.gather.flatnagi_leaf",
+            "count": 6
+          }
+        ],
+        "yieldPerNode": 2,
+        "encounters": "none",
+        "depot": {
+          "areaId": "camp",
+          "x": -242.0,
+          "z": -245.5
+        },
+        "nodes": [
+          {
+            "id": "g1",
+            "kind": "gather",
+            "itemId": "mat.gather.flatnagi_leaf",
+            "areaId": "camp",
+            "x": -233.0,
+            "z": -247.5
+          },
+          {
+            "id": "g2",
+            "kind": "gather",
+            "itemId": "mat.gather.flatnagi_leaf",
+            "areaId": "camp",
+            "x": -225.0,
+            "z": -244.5
+          },
+          {
+            "id": "g3",
+            "kind": "gather",
+            "itemId": "mat.gather.flatnagi_leaf",
+            "areaId": "camp",
+            "x": -226.0,
+            "z": -234.5
+          },
+          {
+            "id": "g4",
+            "kind": "gather",
+            "itemId": "mat.gather.flatnagi_leaf",
+            "areaId": "camp",
+            "x": -235.0,
+            "z": -231.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "quest.gather.002",
+      "name": "炊事場の空いた籠",
+      "kind": "gather",
+      "summary": "野営地のわきの草場で、ツユワリの実を採集して、納品箱へ届ける。獣は出ない。",
+      "mapId": "map.basin.training",
+      "fieldId": "field.basin",
+      "rankId": "rank.1",
+      "timeLimitTicks": 54000,
+      "fieldTimeLimitTicks": 54000,
+      "maxFaints": 3,
+      "returnTicks": 300,
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewards": {
+        "money": 280,
+        "items": []
+      },
+      "gather": {
+        "needs": [
+          {
+            "itemId": "mat.gather.dewbreak_fruit",
+            "count": 8
+          }
+        ],
+        "yieldPerNode": 2,
+        "encounters": "none",
+        "depot": {
+          "areaId": "camp",
+          "x": -242.0,
+          "z": -245.5
+        },
+        "nodes": [
+          {
+            "id": "f1",
+            "kind": "gather",
+            "itemId": "mat.gather.dewbreak_fruit",
+            "areaId": "camp",
+            "x": -245.0,
+            "z": -230.5
+          },
+          {
+            "id": "f2",
+            "kind": "gather",
+            "itemId": "mat.gather.dewbreak_fruit",
+            "areaId": "camp",
+            "x": -239.5,
+            "z": -229.8
+          },
+          {
+            "id": "f3",
+            "kind": "gather",
+            "itemId": "mat.gather.dewbreak_fruit",
+            "areaId": "camp",
+            "x": -222.0,
+            "z": -245.5
+          },
+          {
+            "id": "f4",
+            "kind": "gather",
+            "itemId": "mat.gather.dewbreak_fruit",
+            "areaId": "camp",
+            "x": -221.0,
+            "z": -234.5
+          },
+          {
+            "id": "f5",
+            "kind": "gather",
+            "itemId": "mat.gather.dewbreak_fruit",
+            "areaId": "camp",
+            "x": -229.0,
+            "z": -248.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "quest.mine.001",
+      "name": "炉の火をつなぐ石",
+      "kind": "gather",
+      "summary": "礫の坂の手前の鉱床で、風礫鉄鉱を採掘して、野営地の納品箱へ届ける。獣は出ない。",
+      "mapId": "map.basin.training",
+      "fieldId": "field.basin",
+      "rankId": "rank.1",
+      "timeLimitTicks": 54000,
+      "fieldTimeLimitTicks": 54000,
+      "maxFaints": 3,
+      "returnTicks": 300,
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewards": {
+        "money": 280,
+        "items": []
+      },
+      "gather": {
+        "needs": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 6
+          }
+        ],
+        "yieldPerNode": 2,
+        "encounters": "none",
+        "depot": {
+          "areaId": "camp",
+          "x": -242.0,
+          "z": -245.5
+        },
+        "nodes": [
+          {
+            "id": "m1",
+            "kind": "mine",
+            "itemId": "mat.ore.basin_iron",
+            "areaId": "a1",
+            "x": -27.0,
+            "z": -243.0
+          },
+          {
+            "id": "m2",
+            "kind": "mine",
+            "itemId": "mat.ore.basin_iron",
+            "areaId": "a1",
+            "x": -21.0,
+            "z": -233.5
+          },
+          {
+            "id": "m3",
+            "kind": "mine",
+            "itemId": "mat.ore.basin_iron",
+            "areaId": "a1",
+            "x": -8.0,
+            "z": -245.0
+          },
+          {
+            "id": "m4",
+            "kind": "mine",
+            "itemId": "mat.ore.basin_iron",
+            "areaId": "a1",
+            "x": -3.0,
+            "z": -233.0
+          }
+        ]
+      }
+    },
+    {
+      "id": "quest.mine.002",
+      "name": "刃を整えるざら石",
+      "kind": "gather",
+      "summary": "涸れ沢の低い岩棚で、礫目砥石原石を採掘して、野営地の納品箱へ届ける。獣は出ない。",
+      "mapId": "map.basin.training",
+      "fieldId": "field.basin",
+      "rankId": "rank.1",
+      "timeLimitTicks": 54000,
+      "fieldTimeLimitTicks": 54000,
+      "maxFaints": 3,
+      "returnTicks": 300,
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewards": {
+        "money": 300,
+        "items": []
+      },
+      "gather": {
+        "needs": [
+          {
+            "itemId": "mat.ore.grit_whetstone",
+            "count": 6
+          }
+        ],
+        "yieldPerNode": 2,
+        "encounters": "none",
+        "depot": {
+          "areaId": "camp",
+          "x": -242.0,
+          "z": -245.5
+        },
+        "nodes": [
+          {
+            "id": "w1",
+            "kind": "mine",
+            "itemId": "mat.ore.grit_whetstone",
+            "areaId": "a5",
+            "x": 214.0,
+            "z": -243.5
+          },
+          {
+            "id": "w2",
+            "kind": "mine",
+            "itemId": "mat.ore.grit_whetstone",
+            "areaId": "a5",
+            "x": 228.0,
+            "z": -235.0
+          },
+          {
+            "id": "w3",
+            "kind": "mine",
+            "itemId": "mat.ore.grit_whetstone",
+            "areaId": "a5",
+            "x": 235.0,
+            "z": -244.0
+          },
+          {
+            "id": "w4",
+            "kind": "mine",
+            "itemId": "mat.ore.grit_whetstone",
+            "areaId": "a5",
+            "x": 260.0,
+            "z": -239.0
+          }
+        ]
+      }
+    },
+    {
+      "id": "quest.delivery.001",
+      "name": "薬房と工具棚の小包",
+      "kind": "gather",
+      "summary": "野営地の草場のヒラナギの葉と、涸れ沢の礫目砥石原石を、この出発で集めて、1 度に納める。獣は出ない。",
+      "mapId": "map.basin.training",
+      "fieldId": "field.basin",
+      "rankId": "rank.1",
+      "timeLimitTicks": 54000,
+      "fieldTimeLimitTicks": 54000,
+      "maxFaints": 3,
+      "returnTicks": 300,
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 1
+        }
+      ],
+      "rewards": {
+        "money": 300,
+        "items": []
+      },
+      "gather": {
+        "needs": [
+          {
+            "itemId": "mat.gather.flatnagi_leaf",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.grit_whetstone",
+            "count": 4
+          }
+        ],
+        "yieldPerNode": 2,
+        "encounters": "none",
+        "depot": {
+          "areaId": "camp",
+          "x": -242.0,
+          "z": -245.5
+        },
+        "nodes": [
+          {
+            "id": "l1",
+            "kind": "gather",
+            "itemId": "mat.gather.flatnagi_leaf",
+            "areaId": "camp",
+            "x": -233.0,
+            "z": -247.5
+          },
+          {
+            "id": "l2",
+            "kind": "gather",
+            "itemId": "mat.gather.flatnagi_leaf",
+            "areaId": "camp",
+            "x": -225.0,
+            "z": -244.5
+          },
+          {
+            "id": "l3",
+            "kind": "gather",
+            "itemId": "mat.gather.flatnagi_leaf",
+            "areaId": "camp",
+            "x": -235.0,
+            "z": -231.5
+          },
+          {
+            "id": "s1",
+            "kind": "mine",
+            "itemId": "mat.ore.grit_whetstone",
+            "areaId": "a5",
+            "x": 214.0,
+            "z": -243.5
+          },
+          {
+            "id": "s2",
+            "kind": "mine",
+            "itemId": "mat.ore.grit_whetstone",
+            "areaId": "a5",
+            "x": 235.0,
+            "z": -244.0
+          },
+          {
+            "id": "s3",
+            "kind": "mine",
+            "itemId": "mat.ore.grit_whetstone",
+            "areaId": "a5",
+            "x": 228.0,
+            "z": -235.0
+          }
+        ]
+      }
+    }
+  ]
+}

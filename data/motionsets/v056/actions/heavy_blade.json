@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "actions": [
+    {
+      "schemaVersion": 1,
+      "actionId": "player.heavy_blade.overhead",
+      "clip": "hb_attack_vertical_01",
+      "tickRate": 60, "durationTicks": 72,
+      "phases": [
+        {"id":"startup", "from":0, "to":22},
+        {"id":"active", "from":22, "to":30},
+        {"id":"recovery", "from":30, "to":72}
+      ],
+      "rootMotion": {"mode":"controller", "curveId":"hb_step_035m"},
+      "turning": {"untilTick":10, "maxDegreesPerSecond":90},
+      "hitWindows": [{
+        "id":"blade_main", "from":22, "to":30,
+        "shapeTrack":"hb_vertical_blade_sweep",
+        "damageType":"cut", "damageCoefficient":1.05,
+        "maxHitsPerTarget":1, "hitstopTicks":4
+      }],
+      "cancelWindows": [
+        {"from":40, "to":72, "into":["upswing_low", "side_sweep"]},
+        {"from":58, "to":72, "into":["roll"]}
+      ],
+      "events": [
+        {"tick":20, "type":"sound", "id":"hb_swing_01"},
+        {"tick":22, "type":"trail_on", "id":"blade"},
+        {"tick":30, "type":"trail_off", "id":"blade"}
+      ],
+      "onFinish":"drawn_idle",
+      "weaponTrack":"hb_vertical_blade_sweep",
+      "charge": {
+        "holdTick": 18, "button": "main",
+        "levelTicks": [30, 60, 90], "maxHoldTicks": 120,
+        "coefficientScale": [1.0, 1.5, 2.1, 2.8],
+        "hitstopBonus": [0, 2, 4, 6]
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.heavy_blade.side_sweep",
+      "clip": "hb_attack_side_01",
+      "tickRate": 60, "durationTicks": 66,
+      "phases": [
+        {"id":"startup", "from":0, "to":18},
+        {"id":"active", "from":18, "to":27},
+        {"id":"recovery", "from":27, "to":66}
+      ],
+      "rootMotion": {"mode":"controller", "curveId":"hb_step_025m"},
+      "turning": {"untilTick":8, "maxDegreesPerSecond":120},
+      "hitWindows": [{
+        "id":"blade_main", "from":18, "to":27,
+        "shapeTrack":"hb_side_blade_sweep",
+        "damageType":"cut", "damageCoefficient":0.7,
+        "maxHitsPerTarget":1, "hitstopTicks":3
+      }],
+      "cancelWindows": [
+        {"from":44, "to":66, "into":["upswing", "overhead", "roll"]}
+      ],
+      "events": [
+        {"tick":16, "type":"sound", "id":"hb_swing_02"},
+        {"tick":18, "type":"trail_on", "id":"blade"},
+        {"tick":27, "type":"trail_off", "id":"blade"}
+      ],
+      "onFinish":"drawn_idle",
+      "weaponTrack":"hb_side_blade_sweep"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.heavy_blade.draw_slash",
+      "clip": "hb_draw_slash_01",
+      "tickRate": 60, "durationTicks": 64,
+      "phases": [
+        {"id":"startup", "from":0, "to":20},
+        {"id":"active", "from":20, "to":28},
+        {"id":"recovery", "from":28, "to":64}
+      ],
+      "rootMotion": {"mode":"controller", "curveId":"hb_step_045m"},
+      "turning": {"untilTick":8, "maxDegreesPerSecond":120},
+      "hitWindows": [{
+        "id":"blade_main", "from":20, "to":28,
+        "shapeTrack":"hb_draw_slash_sweep",
+        "damageType":"cut", "damageCoefficient":1.0,
+        "maxHitsPerTarget":1, "hitstopTicks":4
+      }],
+      "cancelWindows": [
+        {"from":40, "to":64, "into":["upswing_low", "side_sweep"]},
+        {"from":50, "to":64, "into":["roll"]}
+      ],
+      "events": [
+        {"tick":4, "type":"sound", "id":"hb_draw_01"},
+        {"tick":18, "type":"sound", "id":"hb_swing_01"},
+        {"tick":20, "type":"trail_on", "id":"blade"},
+        {"tick":28, "type":"trail_off", "id":"blade"}
+      ],
+      "onFinish":"drawn_idle",
+      "weaponTrack":"hb_draw_slash_sweep",
+      "charge": {
+        "holdTick": 16, "button": "main",
+        "levelTicks": [30, 60, 90], "maxHoldTicks": 120,
+        "coefficientScale": [1.0, 1.5, 2.1, 2.8],
+        "hitstopBonus": [0, 2, 4, 6]
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.heavy_blade.upswing",
+      "clip": "hb_attack_upswing_01",
+      "tickRate": 60, "durationTicks": 66,
+      "phases": [
+        {"id":"startup", "from":0, "to":18},
+        {"id":"active", "from":18, "to":27},
+        {"id":"recovery", "from":27, "to":66}
+      ],
+      "rootMotion": {"mode":"controller", "curveId":"hb_step_030m"},
+      "turning": {"untilTick":8, "maxDegreesPerSecond":120},
+      "hitWindows": [{
+        "id":"blade_main", "from":18, "to":27,
+        "shapeTrack":"hb_upswing_blade_sweep",
+        "damageType":"cut", "damageCoefficient":0.95,
+        "maxHitsPerTarget":1, "hitstopTicks":4
+      }],
+      "cancelWindows": [
+        {"from":40, "to":66, "into":["overhead", "side_sweep"]},
+        {"from":46, "to":66, "into":["roll"]}
+      ],
+      "events": [
+        {"tick":15, "type":"sound", "id":"hb_swing_02"},
+        {"tick":18, "type":"trail_on", "id":"blade"},
+        {"tick":27, "type":"trail_off", "id":"blade"}
+      ],
+      "onFinish":"drawn_idle",
+      "weaponTrack":"hb_upswing_blade_sweep"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.heavy_blade.upswing_low",
+      "clip": "hb_attack_upswing_low_01",
+      "tickRate": 60, "durationTicks": 54,
+      "phases": [
+        {"id":"startup", "from":0, "to":6},
+        {"id":"active", "from":6, "to":15},
+        {"id":"recovery", "from":15, "to":54}
+      ],
+      "rootMotion": {"mode":"controller", "curveId":"hb_step_030m_low"},
+      "turning": {"untilTick":4, "maxDegreesPerSecond":120},
+      "hitWindows": [{
+        "id":"blade_main", "from":6, "to":15,
+        "shapeTrack":"hb_upswing_low_blade_sweep",
+        "damageType":"cut", "damageCoefficient":0.95,
+        "maxHitsPerTarget":1, "hitstopTicks":4
+      }],
+      "cancelWindows": [
+        {"from":28, "to":54, "into":["overhead", "side_sweep"]},
+        {"from":34, "to":54, "into":["roll"]}
+      ],
+      "events": [
+        {"tick":3, "type":"sound", "id":"hb_swing_02"},
+        {"tick":6, "type":"trail_on", "id":"blade"},
+        {"tick":15, "type":"trail_off", "id":"blade"}
+      ],
+      "onFinish":"drawn_idle",
+      "weaponTrack":"hb_upswing_low_blade_sweep"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.heavy_blade.draw",
+      "clip": "hb_draw_01",
+      "tickRate": 60, "durationTicks": 26,
+      "phases": [
+        {"id":"startup", "from":0, "to":26}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [
+        {"tick":4, "type":"sound", "id":"hb_draw_01"}
+      ],
+      "onFinish":"drawn_idle",
+      "weaponTrack":"hb_draw_track"
+    },
+    {
+      "schemaVersion": 1,
+      "actionId": "player.heavy_blade.sheathe",
+      "clip": "hb_sheathe_01",
+      "tickRate": 60, "durationTicks": 44,
+      "phases": [
+        {"id":"startup", "from":0, "to":44}
+      ],
+      "rootMotion": {"mode":"none"},
+      "hitWindows": [],
+      "cancelWindows": [],
+      "events": [
+        {"tick":30, "type":"sound", "id":"hb_sheathe_01"}
+      ],
+      "onFinish":"sheathed_idle",
+      "weaponTrack":"hb_sheathe_track"
+    }
+  ]
+}

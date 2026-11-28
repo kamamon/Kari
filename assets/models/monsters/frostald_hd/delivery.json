@@ -1,0 +1,40 @@
+{
+  "format": 1,
+  "eyeDesign": "calm-blue-v1",
+  "sculptDesign": "organic-v6",
+  "materialDesign": "frostald-art-pbr-v2",
+  "sourceSha256": "fd71ca99e2c08b6878f4cb982ac99b1f8febc40bb0bcc7b7f842c2af6030799f",
+  "triangles": 2606400,
+  "joints": 79,
+  "clips": 56,
+  "files": {
+    "buffer-00.bin": {
+      "bytes": 33101000,
+      "sha256": "4c77ec31b14666303c127423fcb941ab384068be25d8003ee60794ced91a1aaf"
+    },
+    "buffer-01.bin": {
+      "bytes": 32416774,
+      "sha256": "a7cbd63b3db537f43138802a767e88034476aaeeeeb91c71e0977abf4c4dfce4"
+    },
+    "buffer-02.bin": {
+      "bytes": 33023252,
+      "sha256": "64f738dec425dd2d7739027fa751910bee82d61010eb5cc8aa543bb57645710a"
+    },
+    "buffer-03.bin": {
+      "bytes": 33431316,
+      "sha256": "16a44b0dd8a0071569844d211bf6959685b0c25b6fa5d5e07d81908f6e48e32f"
+    },
+    "buffer-04.bin": {
+      "bytes": 33516748,
+      "sha256": "dc4dad3cdd0a17a73ec66d6c67ea8e298fd446af1eb7bbb48a8fc08db3f6c3dc"
+    },
+    "buffer-05.bin": {
+      "bytes": 11951696,
+      "sha256": "1a344d4355db949a8dfebaaf6716e1d27f196f3a8e56d9d6a263957287f8a0bb"
+    },
+    "frostald.gltf": {
+      "bytes": 505104,
+      "sha256": "317f8544171d2b56c9b0e10fd6c9ed9d0790374f56514790591ec5b263879d17"
+    }
+  }
+}

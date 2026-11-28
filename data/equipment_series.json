@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "note": "tools/gen-equipment.py（npm run equipment:gen）の出力。手で編集しない。ChatGPT の全装備四級版（Pull Request #15、docs/source/chatgpt-equipment-20261125/）から作る。v0.75.0 で、白紙にした 19 種の系列を外した（利用者の指示。D-175）ので、系列の武器・防具・レシピは無い。入っているのは、これまでの防具（岩殻〜輝殻）の耐性と技能 armorTraits（docs/spec.md の 29 章・30 章・31 章、D-113・D-114・D-116）。数値・耐性・技能は設計のまま",
+  "source": "docs/source/chatgpt-equipment-20261125/data/all-equipment.json",
+  "weapons": [
+
+  ],
+  "armor": [
+
+  ],
+  "recipes": [
+
+  ],
+  "armorTraits": {
+    "armor.head.002": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "guard_economy", "points": 1}},
+    "armor.chest.002": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "edge_keep", "points": 1}},
+    "armor.arms.002": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "guard_economy", "points": 1}},
+    "armor.waist.002": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "edge_keep", "points": 1}},
+    "armor.legs.002": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "guard_economy", "points": 1}},
+    "armor.head.003": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "guard_economy", "points": 1}},
+    "armor.chest.003": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "edge_keep", "points": 1}},
+    "armor.arms.003": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "guard_economy", "points": 1}},
+    "armor.waist.003": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "edge_keep", "points": 1}},
+    "armor.legs.003": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "guard_economy", "points": 1}},
+    "armor.head.004": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "guard_economy", "points": 1}},
+    "armor.chest.004": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "edge_keep", "points": 1}},
+    "armor.arms.004": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "guard_economy", "points": 1}},
+    "armor.waist.004": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "edge_keep", "points": 1}},
+    "armor.legs.004": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "guard_economy", "points": 1}},
+    "armor.head.005": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "guard_economy", "points": 1}},
+    "armor.chest.005": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "edge_keep", "points": 1}},
+    "armor.arms.005": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "guard_economy", "points": 1}},
+    "armor.waist.005": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "edge_keep", "points": 1}},
+    "armor.legs.005": {"resist": {"fire": -2, "thunder": 3}, "skill": {"id": "guard_economy", "points": 1}}
+  }
+}

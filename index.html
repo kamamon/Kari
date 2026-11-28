@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#161b18" />
+    <meta name="description" content="霧境の狩人 - VEILBOUND HUNTERS。横画面・三人称3Dのオリジナル狩猟アクション。" />
+    <!-- ホーム画面に追加したアイコンから開くと、ブラウザの枠なしで起動する -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="霧境の狩人" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./icons/icon-180.png" />
+    <link rel="icon" type="image/png" href="./icons/icon-192.png" />
+    <title>霧境の狩人 - VEILBOUND HUNTERS</title>
+    <script type="module" crossorigin src="./assets/main-D2nzWBhP.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/motionSet-DQFd7h2v.js">
+    <link rel="modulepreload" crossorigin href="./assets/GLTFLoader-BosR9UC1.js">
+    <link rel="stylesheet" crossorigin href="./assets/motionSet-CvZcn7cy.css">
+  </head>
+  <body>
+    <canvas id="game" aria-label="ゲーム画面"></canvas>
+    <div id="ui"></div>
+    <div id="boot">
+      <div class="boot-card">
+        <p class="boot-kicker">VEILBOUND HUNTERS</p>
+        <h1>霧境の狩人</h1>
+        <p id="boot-status">読み込み中…</p>
+        <button id="boot-start" hidden>はじめる</button>
+        <button id="boot-retry" hidden>もう一度読み込む</button>
+        <p id="boot-note" class="boot-note"></p>
+      </div>
+    </div>
+    <noscript>このゲームは JavaScript を有効にして遊びます。</noscript>
+    <script>
+      // GitHub Pages の配信元が main ブランチだと、ビルド前のこのファイルがそのまま表示され、ゲームは起動できない。
+      // その時に「読み込み中…」のまま黙って止まらず、直し方を表示する。ビルド後の index.html はこの条件に当たらない。
+      window.addEventListener('load', function () {
+        var unbuilt = document.querySelector('script[src$="/src/main.ts"]');
+        var devServer = document.querySelector('script[src*="@vite/client"]');
+        if (!unbuilt || devServer) return;
+        var status = document.getElementById('boot-status');
+        var note = document.getElementById('boot-note');
+        status.textContent = '公開の設定が、あと 1 つ必要です。';
+        var host = location.hostname.split('.');
+        var repo = location.pathname.split('/')[1];
+        var url = host[1] === 'github' && repo ? 'https://github.com/' + host[0] + '/' + repo + '/settings/pages' : '';
+        note.innerHTML =
+          'GitHub の <b>Settings → Pages → Build and deployment</b> で、<br>Source を<b>「Deploy from a branch」</b>、Branch を<b>「gh-pages」</b>と<b>「/ (root)」</b>にして Save を押してください。' +
+          '<br>1〜2 分後にこのページを開き直すと始まります。' +
+          (url ? '<br><br><a href="' + url + '" style="color:#b89460;font-size:1rem;font-weight:700">Pages の設定を開く</a>' : '');
+        note.style.fontSize = '0.86rem';
+      });
+    </script>
+  </body>
+</html>

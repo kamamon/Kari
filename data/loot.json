@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "note": "モンスターから得る素材。carve は討伐後の剥ぎ取り（本体）、severed は切り落とした部位からの剥ぎ取り、capture は捕獲した時、breaks は壊した部位ごとの追加。count 回、weight の重みで抽選する（seed 付き乱数）。loot.galdros は初級。.r2 / .r3 / .r4 は中級・上級・極級の個体（monsters/galdros.json の lootByRank）で、その段階から出る素材（中級: 脈岩殻・尾端晶 / 上級: 晶岩殻・青銅晶塊 / 極級: 輝岩殻・脈動晶芯）と、下の段階の素材が混ざる。尾端晶と脈動晶芯は設計書 p.17 の名前、ほかの 4 つは本作で決めた。重みは机上の値。",
+  "tables": [
+    {
+      "id": "loot.galdros",
+      "carve": {"count": 3, "table": [{"itemId": "mat.galdros.shell_shard", "weight": 45}, {"itemId": "mat.galdros.hard_bone", "weight": 30}, {"itemId": "mat.galdros.bronze_vein", "weight": 15}, {"itemId": "mat.galdros.foreleg_plate", "weight": 10}]},
+      "severed": {"tail": {"count": 1, "table": [{"itemId": "mat.galdros.hard_bone", "weight": 55}, {"itemId": "mat.galdros.bronze_vein", "weight": 45}]}},
+      "capture": {"count": 4, "table": [{"itemId": "mat.galdros.shell_shard", "weight": 35}, {"itemId": "mat.galdros.hard_bone", "weight": 30}, {"itemId": "mat.galdros.bronze_vein", "weight": 20}, {"itemId": "mat.galdros.foreleg_plate", "weight": 15}]},
+      "breaks": {
+        "head": {"count": 1, "table": [{"itemId": "mat.galdros.shell_shard", "weight": 60}, {"itemId": "mat.galdros.bronze_vein", "weight": 40}]},
+        "back": {"count": 1, "table": [{"itemId": "mat.galdros.shell_shard", "weight": 70}, {"itemId": "mat.galdros.bronze_vein", "weight": 30}]}
+      }
+    },
+    {
+      "id": "loot.galdros.r2",
+      "carve": {"count": 3, "table": [{"itemId": "mat.galdros.veined_shell", "weight": 35}, {"itemId": "mat.galdros.shell_shard", "weight": 17}, {"itemId": "mat.galdros.hard_bone", "weight": 20}, {"itemId": "mat.galdros.bronze_vein", "weight": 12}, {"itemId": "mat.galdros.foreleg_plate", "weight": 8}, {"itemId": "mat.galdros.tail_crystal", "weight": 8}]},
+      "severed": {"tail": {"count": 1, "table": [{"itemId": "mat.galdros.tail_crystal", "weight": 50}, {"itemId": "mat.galdros.hard_bone", "weight": 25}, {"itemId": "mat.galdros.bronze_vein", "weight": 25}]}},
+      "capture": {"count": 4, "table": [{"itemId": "mat.galdros.veined_shell", "weight": 35}, {"itemId": "mat.galdros.hard_bone", "weight": 20}, {"itemId": "mat.galdros.bronze_vein", "weight": 18}, {"itemId": "mat.galdros.foreleg_plate", "weight": 15}, {"itemId": "mat.galdros.tail_crystal", "weight": 12}]},
+      "breaks": {
+        "head": {"count": 1, "table": [{"itemId": "mat.galdros.veined_shell", "weight": 55}, {"itemId": "mat.galdros.bronze_vein", "weight": 45}]},
+        "back": {"count": 1, "table": [{"itemId": "mat.galdros.veined_shell", "weight": 70}, {"itemId": "mat.galdros.bronze_vein", "weight": 30}]}
+      }
+    },
+    {
+      "id": "loot.galdros.r3",
+      "carve": {"count": 3, "table": [{"itemId": "mat.galdros.crystal_shell", "weight": 32}, {"itemId": "mat.galdros.veined_shell", "weight": 18}, {"itemId": "mat.galdros.hard_bone", "weight": 15}, {"itemId": "mat.galdros.bronze_lump", "weight": 15}, {"itemId": "mat.galdros.tail_crystal", "weight": 10}, {"itemId": "mat.galdros.foreleg_plate", "weight": 10}]},
+      "severed": {"tail": {"count": 1, "table": [{"itemId": "mat.galdros.tail_crystal", "weight": 45}, {"itemId": "mat.galdros.bronze_lump", "weight": 35}, {"itemId": "mat.galdros.hard_bone", "weight": 20}]}},
+      "capture": {"count": 4, "table": [{"itemId": "mat.galdros.crystal_shell", "weight": 32}, {"itemId": "mat.galdros.bronze_lump", "weight": 20}, {"itemId": "mat.galdros.veined_shell", "weight": 15}, {"itemId": "mat.galdros.tail_crystal", "weight": 13}, {"itemId": "mat.galdros.foreleg_plate", "weight": 10}, {"itemId": "mat.galdros.hard_bone", "weight": 10}]},
+      "breaks": {
+        "head": {"count": 1, "table": [{"itemId": "mat.galdros.crystal_shell", "weight": 55}, {"itemId": "mat.galdros.bronze_lump", "weight": 45}]},
+        "back": {"count": 1, "table": [{"itemId": "mat.galdros.crystal_shell", "weight": 70}, {"itemId": "mat.galdros.bronze_lump", "weight": 30}]}
+      }
+    },
+    {
+      "id": "loot.galdros.r4",
+      "carve": {"count": 3, "table": [{"itemId": "mat.galdros.radiant_shell", "weight": 32}, {"itemId": "mat.galdros.crystal_shell", "weight": 18}, {"itemId": "mat.galdros.bronze_lump", "weight": 18}, {"itemId": "mat.galdros.tail_crystal", "weight": 12}, {"itemId": "mat.galdros.foreleg_plate", "weight": 10}, {"itemId": "mat.galdros.pulse_core", "weight": 10}]},
+      "severed": {"tail": {"count": 1, "table": [{"itemId": "mat.galdros.tail_crystal", "weight": 40}, {"itemId": "mat.galdros.bronze_lump", "weight": 35}, {"itemId": "mat.galdros.pulse_core", "weight": 25}]}},
+      "capture": {"count": 4, "table": [{"itemId": "mat.galdros.radiant_shell", "weight": 32}, {"itemId": "mat.galdros.bronze_lump", "weight": 20}, {"itemId": "mat.galdros.crystal_shell", "weight": 15}, {"itemId": "mat.galdros.tail_crystal", "weight": 13}, {"itemId": "mat.galdros.pulse_core", "weight": 12}, {"itemId": "mat.galdros.foreleg_plate", "weight": 8}]},
+      "breaks": {
+        "head": {"count": 1, "table": [{"itemId": "mat.galdros.radiant_shell", "weight": 55}, {"itemId": "mat.galdros.bronze_lump", "weight": 30}, {"itemId": "mat.galdros.pulse_core", "weight": 15}]},
+        "back": {"count": 1, "table": [{"itemId": "mat.galdros.radiant_shell", "weight": 65}, {"itemId": "mat.galdros.bronze_lump", "weight": 25}, {"itemId": "mat.galdros.pulse_core", "weight": 10}]}
+      }
+    }
+  ]
+}

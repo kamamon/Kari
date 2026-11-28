@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "note": "属性と状態異常の決まり（v0.33.0。docs/spec.md の 30 章、D-114・D-115）。複合の半減・会心の上限・急所観察の境目・状態異常（閾値・伸び・減り方・効き目の長さ・毒・硬直の猶予）は ChatGPT の全装備四級版（#15）の rules.json のまま。設計に無い 3 つ（部位の属性の係数への弱点 ×1.5・耐性 ×0.5、属性を持つ種の攻撃の属性の割合 0.3、気絶の 1 命中の量 = 25 × 命中の係数）は、こちらで決めた（D-115）",
+  "elements": [
+    {"id": "fire", "name": "火"},
+    {"id": "thunder", "name": "雷"},
+    {"id": "ice", "name": "氷"},
+    {"id": "water", "name": "水"},
+    {"id": "wind", "name": "風"},
+    {"id": "mist", "name": "霧"}
+  ],
+  "zone": {"weak": 1.5, "resist": 0.5},
+  "compoundNonWeak": 0.5,
+  "monsterElementShare": 0.3,
+  "resistRange": [-30, 30],
+  "critCap": 60,
+  "weakCritHitzone": 0.55,
+  "ailment": {
+    "threshold": 100,
+    "growth": 1.35,
+    "stunGrowth": 1.5,
+    "decayDelayTicks": 300,
+    "decayPerSec": 2,
+    "para": {"ticks": 150},
+    "sleep": {"ticks": 480, "wakeScale": 1.5},
+    "stun": {"ticks": 150},
+    "poison": {"hpRatio": 0.02, "ticks": 900, "hits": 10},
+    "lockGraceTicks": 180,
+    "stunPerMotion": 25
+  }
+}

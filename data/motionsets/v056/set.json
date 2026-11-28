@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "v056",
+  "name": "v0.56.0 までの動き（保留）",
+  "note": "利用者の指示（2026-11-26）でハンターの動きを 2G の動きへ作り直す前の動き。消さずに残し、設定の「ハンターの動き」で切り替える（D-150）。描画の動きは src/render/motionsets/v056.ts。手で編集しない。",
+  "families": "motionsets/v056/families.json",
+  "files": {
+    "actions/player_common.json": "motionsets/v056/actions/player_common.json",
+    "actions/heavy_blade.json": "motionsets/v056/actions/heavy_blade.json",
+    "actions/guard_blade.json": "motionsets/v056/actions/guard_blade.json",
+    "actions/war_maul.json": "motionsets/v056/actions/war_maul.json",
+    "actions/twin_blades.json": "motionsets/v056/actions/twin_blades.json",
+    "actions/long_blade.json": "motionsets/v056/actions/long_blade.json",
+    "actions/long_lance.json": "motionsets/v056/actions/long_lance.json",
+    "actions/ring_bow.json": "motionsets/v056/actions/ring_bow.json",
+    "tracks/heavy_blade.json": "motionsets/v056/tracks/heavy_blade.json",
+    "tracks/guard_blade.json": "motionsets/v056/tracks/guard_blade.json",
+    "tracks/war_maul.json": "motionsets/v056/tracks/war_maul.json",
+    "tracks/twin_blades.json": "motionsets/v056/tracks/twin_blades.json",
+    "tracks/long_blade.json": "motionsets/v056/tracks/long_blade.json",
+    "tracks/long_lance.json": "motionsets/v056/tracks/long_lance.json",
+    "tracks/ring_bow.json": "motionsets/v056/tracks/ring_bow.json",
+    "curves_player.json": "motionsets/v056/curves_player.json"
+  }
+}
