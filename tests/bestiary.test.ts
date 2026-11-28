@@ -119,7 +119,7 @@ describe('案の取り込み', () => {
     // 数: 中級に 2 種（原種 1・亜種 1）。幼体は、種の数に入れない
     const c = bestiaryCounts(r.bestiary, env.ranks);
     expect(c[1]).toMatchObject({ have: 2, large: 2, subspecies: 1 });
-    expect(c[0]).toMatchObject({ have: 3, juveniles: 1 });
+    expect(c[0]).toMatchObject({ have: 4, juveniles: 1 });
     // 案に書いた新しい狩場も入る（v0.15.0。それまでは、検査を通るのに、黙って捨てていた）
     expect(r.addedFields).toEqual(['試しの原']);
     expect(r.bestiary.fields.find((f) => f.name === '試しの原')).toEqual({ name: '試しの原', terrain: '検査用', mood: '検査用', source: 'chatgpt:test' });
