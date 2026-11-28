@@ -1,42 +1,451 @@
 {
- "schemaVersion": 1,
- "note": "モンスターの登録簿。v0.75.0（2026-11-28）で、白紙にした種を外した（利用者の指示。D-173・D-175）: モンスターは 1 匹ずつ足す。いま入っているのは、ゲームに居る種だけで、No. は入った順に付け直した（1 ガルドロス・2 スパインゲイル・3 フロストアルド。それまでは 1・87・88。次に足す種は 4）。種を足す時は npm run bestiary:import（docs/spec.md の 20 章）。plan は、いま入っている数（この先の数の計画は無い）。fields は、狩場の一覧（歩ける狩場の fieldId を持つ）。",
- "plan": {"rank.1": 3, "rank.2": 0, "rank.3": 0, "rank.4": 0},
- "frames": [
-  {"id": "frame.quad_heavy", "name": "四足重獣", "note": "重い四足。低く構え、叩きつけと突進。ガルドロスの体と動きを土台にする", "built": true},
-  {"id": "frame.quad_light", "name": "四足軽獣", "note": "細い四足。横跳びと飛びかかり。向き直りが速い", "built": false},
-  {"id": "frame.biped_wing", "name": "二足翼獣", "note": "二足で立つ鳥・竜。翼は短く、飛び続けない（低く滑るだけ）。蹴りと突き", "built": false},
-  {"id": "frame.crust_six", "name": "六脚甲殻", "note": "横に歩く甲殻。大きな鋏と硬い殻。正面が硬い", "built": false},
-  {"id": "frame.crust_many", "name": "多脚甲殻", "note": "節の多い虫。丸まる・転がる・跳ねる", "built": false},
-  {"id": "frame.long", "name": "長胴獣", "note": "長い胴で這う。体の薙ぎ払いと巻き込み。短い肢", "built": false},
-  {"id": "frame.colossus", "name": "巨躯", "note": "超大型（全長 25m 以上）。ゆっくり動く。足・腹・背など、部位ごとに場所を変えて戦う", "built": false}
- ],
- "fields": [
-  {"name": "風礫盆地", "terrain": "灰緑の草と岩原。見通しがよく、最初の練習に向く。", "fieldId": "field.basin", "source": "設計書 v1.0（14 章）"},
-  {"name": "根絡み湿原", "terrain": "浅い沼、網目状の根、乾いた小島。足場を選ぶ。", "source": "設計書 v1.0（14 章）", "fieldId": "field.wetland"},
-  {"name": "硝砂海岸", "terrain": "白砂、硝子層、低い海食洞。壁際の位置取り。", "source": "設計書 v1.0（14 章）", "fieldId": "field.coast"},
-  {"name": "灰鐘鉱山", "terrain": "採掘路と広い坑口。狭い所から誘い出して戦う。", "source": "設計書 v1.0（14 章）", "fieldId": "field.ashmine"},
-  {"name": "氷帆峡谷", "terrain": "断崖、薄い氷板、滑走の跡。長い攻撃の線を読む。", "source": "設計書 v1.0（14 章）", "fieldId": "field.icegorge"},
-  {"name": "霧灯樹海", "terrain": "環状の大樹、点在する光。予告を見失わない。", "source": "設計書 v1.0（14 章）", "fieldId": "field.mistforest"},
-  {"name": "燠脈台地", "terrain": "温い晶脈の割れ目と冷えた草の段が交互に続く、低く開けた岩台地。", "mood": "冷たい霧と細雨の昼。割れ目の琥珀色だけが鈍く見え、排気と風の低い音が響く。", "source": "chatgpt:bestiary_9A.json", "fieldId": "field.emberplateau"},
-  {"name": "雨裂断崖", "terrain": "雨水が刻んだ断崖と、地上で往来できる広い三段の岩棚。", "mood": "細い雨と低い雲が続き、崖の切れ目だけで風が鳴る。", "source": "chatgpt:bestiary_9B.json", "fieldId": "field.raincliff"},
-  {"name": "銅苔段丘", "terrain": "銅色の晶脈を含む湧水が、苔の厚い低い段丘をつなぐ。", "mood": "曇天の淡い光に濡れた苔が鈍く光り、水滴の音が近い。", "source": "chatgpt:bestiary_9B.json", "fieldId": "field.copperterrace"},
-  {"name": "枯響河床", "terrain": "増水時だけ流れが戻る幅広い礫河床と、浅い残り淵。", "mood": "灰黄の湿った礫に薄霧が流れ、足音が岩壁へ短く返る。", "source": "chatgpt:bestiary_9B.json", "fieldId": "field.dryriver"},
-  {"name": "鉛雲高地", "terrain": "地表近くまで雲が下りる草の高地と、霜の残る浅い窪み。", "mood": "光は鈍い灰色で、強風の合間だけ滴と草擦れが聞こえる。", "source": "chatgpt:bestiary_9B.json", "fieldId": "field.leadcloud"},
-  {"name": "沈根沢地", "terrain": "沈んだ根の網と膝下の浅瀬を、乾いた根丘が隔てる沢地。", "mood": "低い霧に樹冠が沈み、濁水の泡と朽木の軋みが響く。", "source": "chatgpt:bestiary_9B.json", "fieldId": "field.sunkenroot"},
-  {"name": "玻璃裂原", "terrain": "鈍い硝質の板岩が割れた平原で、広い裸地と低い晶脈の畝が交互に続く。", "mood": "冷たい曇天と低い霧の下で、薄板が触れる乾いた音がする。", "source": "chatgpt:bestiary_9C.json", "fieldId": "field.glassplain"},
-  {"name": "灰繭窪地", "terrain": "灰色の菌糸が根を包む浅い窪地で、乾いた根棚と湿った小盆地がつながる。", "mood": "弱い拡散光が差し、細かな胞子が見えるほど静かで湿っている。", "source": "chatgpt:bestiary_9C.json", "fieldId": "field.ashcocoon"},
-  {"name": "冷銅洞庭", "terrain": "天井の抜けた冷たい鉱洞が連なる地形で、銅色の露頭と平たい洞床がある。", "mood": "外光が淡く入り、冷えた滴の音が低く反響する。", "source": "chatgpt:bestiary_9C.json", "fieldId": "field.coldcopper"},
-  {"name": "響礫回廊", "terrain": "礫の通路と戦える広い岩盆が交互に連なり、側壁に低い棚状の岩が張り出す。", "mood": "霧を含む風が通り、礫の転がる音が方向ごとに遅れて聞こえる。", "source": "chatgpt:bestiary_9C.json", "fieldId": "field.echohall"},
-  {"name": "重霧環谷", "terrain": "環状の低い尾根に囲まれ、浅い水滴場と開けた岩棚が交互にある霧の谷。", "mood": "曇天の灰緑の霧。尾根では風音、谷底では葉から落ちる水滴が聞こえる。", "source": "chatgpt:bestiary_9D.json", "fieldId": "field.heavyfog"},
-  {"name": "伏熱石原", "terrain": "地中の温い晶脈と、根の残る冷たい縁が接する広い礫原。", "mood": "冷たい小雨と低い蒸気。裂け目の琥珀色だけが鈍く光り、石の収縮音がする。", "source": "chatgpt:bestiary_9D.json", "fieldId": "field.buriedheat"},
-  {"name": "錆星高原", "terrain": "点状の青銅鉱床と鉱物藻を載せた低い岩棚が続く、起伏の緩い高原。", "mood": "灰青の曇り空と細い霧。金属質の小石が風で触れ合う乾いた音が混じる。", "source": "chatgpt:bestiary_9D.json", "fieldId": "field.ruststar"},
-  {"name": "深帷樹洞", "terrain": "倒れた巨木と根棚が地上に大きな幹洞を作り、浅い流れと乾いた木屑床が並ぶ森林。", "mood": "灰緑の薄暗い昼光。霧滴が幹を伝い、湿った木の軋みがゆっくり響く。", "source": "chatgpt:bestiary_9D.json", "fieldId": "field.deepveil"},
-  {"name": "白霧氷谷", "terrain": "凍った湿地、凍河、氷洞、峡谷、高台、水際、巣域。", "source": "採用フィールド設定画", "fieldId": "field.whitefrost"}
- ],
- "species": [
-  {"statuses": [], "weak": ["fire"], "resist": ["thunder"], "parts": ["頭", "左前脚", "右前脚", "背の岩殻", "尾"], "materials": ["岩殻片", "硬骨", "青銅晶脈", "前脚甲", "脈岩殻", "尾端晶"], "organ": "背と頭に鉱物を析出させる皮下の晶脈床。左背面の成長が速く、尾端では塊になって打撃を重くする。", "gear": "岩殻・晶芯 / 防御と重剣。武器は「攻撃力が高い無属性」", "id": "monster.galdros", "no": 1, "title": "岩殻獣", "name": "ガルドロス", "class": "large", "variant": "base", "rank": "rank.1", "frame": "frame.quad_heavy", "size": 8.5, "habitat": "風礫盆地", "elements": ["none"], "look": "左が大きい数枚の岩板、頭頂の平岩冠と塊状の尾端", "moves": ["前脚を高く上げる→叩きつけ", "頭を下げて掻く→直線突進", "腰をひねる→半円尾払い", "尾を持ち上げる→予告輪への岩飛ばし"], "armorLook": "低く厚い輪郭。灰褐色の岩板と琥珀色の縁。腰の後ろに晶の塊。左が大きい", "state": "implemented", "elementNote": "無属性。弱点は火、雷に強い（決定）", "stateNote": "実装済み（初級〜極級の 4 段階。技 23 種）。設定図は採用済み", "source": "chatgpt:依頼9A（v0.13.0の既存設定を補完）", "ecology": {"diet": "硬い根と岩際の地衣を主食にし、前脚で浅く掘って食べる。晶脈を含む小石は殻の形成に必要な塩分として少量だけ飲み込む。", "behavior": "普段は決まった採食場所をゆっくり巡る。進路を塞がれると頭冠を低くして警告し、距離を取れば追い過ぎない。", "territory": "風礫盆地の岩柱の根元と草の斜面を使う。狭い岩間は避け、重い体が通れる土の帯を何度も踏み固める。", "rhythm": "朝夕に根を掘り、風が強い昼は岩陰へ移る。霧が濃い日も地面の踏み跡を使って同じ巡回路をたどる。", "nest": "風を遮る巣穴で、重い左背殻を壁へ預けて眠る。傷つくと巣のエリアへ戻って休息し、攻撃されれば目を覚ます。", "relations": "掘り返した地面の新芽は、ほかの草食の獣の餌になるが、同じ岩塩場では体を押し合う。里の畑には迷い込む程度で、人を餌とは認識しない。", "juvenile": "幼体は淡い灰褐色で、岩冠と尾端晶がまだ小さい。三〜五頭が親の掘り跡に集まり、成長すると離れる。", "signs": "幅広い四つの足跡、左側だけ深い擦り跡、端の丸い剥落岩板が残る。食べ跡には根を短く折った浅い穴が並ぶ。"}, "art": "galdros/galdros_left_v1.png"},
-  {"id": "monster.spinegale", "no": 2, "title": "疾棘竜", "name": "スパインゲイル", "class": "large", "variant": "base", "rank": "rank.1", "frame": "frame.biped_wing", "size": 6.3, "habitat": "風礫盆地", "elements": ["none"], "statuses": [], "weak": ["ice", "water"], "resist": [], "look": "黄黒の縞、橙の喉袋、背棘、二股の尾扇", "organ": "放熱する喉皮膜と尾扇、瞬発力の高い後脚。", "moves": ["高速突進", "二連噛みつき", "跳躍蹴り", "尾薙ぎ", "長い息切れ"], "parts": ["頭", "喉袋", "後脚", "背棘", "尾扇"], "materials": ["疾棘竜の鱗", "疾棘竜の鋭爪", "疾棘竜の背棘", "疾棘竜の喉膜", "疾棘竜の尾扇", "疾棘竜の弾性腱"], "gear": "会心・軽量・回避と息継ぎ。", "armorLook": "黄黒の鱗、背棘と喉膜、二股の腰布。", "ecology": {"diet": "小型動物を捕食する。", "behavior": "高速走行の後は放熱のため停止する。", "territory": "盆地の乾いた岩場。", "rhythm": "朝夕に活動し日中は岩陰で休む。", "nest": "風通しの良い岩棚。", "relations": "小型の群れを率いる。幼体の専用実装は後工程。", "juvenile": "尾扇と冠棘が小さい。", "signs": "三趾の足跡と制動時の爪痕。"}, "state": "implemented", "stateNote": "初級〜上級の3狩猟と専用疲労。", "source": "利用者採用案D / Spinegale V3", "art": "spinegale_concept_v1.webp"},
-  {"id": "monster.frostald", "no": 3, "title": "氷冠獣", "name": "フロストアルド", "class": "large", "variant": "base", "rank": "rank.1", "frame": "frame.quad_heavy", "size": 7.5, "habitat": "白霧氷谷", "elements": ["ice"], "statuses": [], "weak": ["fire", "thunder"], "resist": ["ice"], "look": "低い四足の体、白青の氷冠、深い青色の鱗、太く長い尾。", "organ": "塩水嚢と吸水性氷泥の氷冠。氷水を圧縮し放出する。", "moves": ["腹滑り突進", "氷水噴射", "横転攻撃", "尾薙ぎ", "氷冠補給"], "parts": ["頭", "氷冠", "前脚", "後脚", "尾", "胴"], "materials": ["氷冠獣の鱗", "氷冠獣の爪", "氷冠獣の氷鬣", "氷冠獣の塩水嚢", "氷冠獣の尾", "氷冠獣の骨"], "gear": "氷属性武器、氷耐性・属性調律の防具。", "armorLook": "濃紺の鱗と白い氷冠、銀色の骨材。", "ecology": {"diet": "氷の割れ目に集まる魚類や小動物。", "behavior": "氷水を蓄え、腹滑りと噴射で縄張りを守る。", "territory": "白霧氷谷の水際と湿地。", "rhythm": "薄明に魚を探し、日中は氷洞へ戻る。", "nest": "凍った岩の洞穴。", "relations": "群れを守る成体。小型個体は後工程。", "juvenile": "氷冠が薄い幼体。", "signs": "氷の滑走跡、塩水の白い結晶。"}, "state": "implemented", "stateNote": "独立GLB・初級〜上級の狩猟。", "source": "採用案A / Frostald", "art": "frostald_concept.webp"}
- ]
+  "schemaVersion": 1,
+  "note": "モンスターの登録簿。v0.75.0（2026-11-28）で、白紙にした種を外した（利用者の指示。D-173・D-175）: モンスターは 1 匹ずつ足す。いま入っているのは、ゲームに居る種だけで、No. は入った順に付け直した（1 ガルドロス・2 スパインゲイル・3 フロストアルド。それまでは 1・87・88。次に足す種は 4）。種を足す時は npm run bestiary:import（docs/spec.md の 20 章）。plan は、いま入っている数（この先の数の計画は無い）。fields は、狩場の一覧（歩ける狩場の fieldId を持つ）。",
+  "plan": {
+    "rank.1": 4,
+    "rank.2": 0,
+    "rank.3": 0,
+    "rank.4": 0
+  },
+  "frames": [
+    {
+      "id": "frame.quad_heavy",
+      "name": "四足重獣",
+      "note": "重い四足。低く構え、叩きつけと突進。ガルドロスの体と動きを土台にする",
+      "built": true
+    },
+    {
+      "id": "frame.quad_light",
+      "name": "四足軽獣",
+      "note": "細い四足。横跳びと飛びかかり。向き直りが速い",
+      "built": false
+    },
+    {
+      "id": "frame.biped_wing",
+      "name": "二足翼獣",
+      "note": "二足で立つ鳥・竜。翼は短く、飛び続けない（低く滑るだけ）。蹴りと突き",
+      "built": false
+    },
+    {
+      "id": "frame.crust_six",
+      "name": "六脚甲殻",
+      "note": "横に歩く甲殻。大きな鋏と硬い殻。正面が硬い",
+      "built": false
+    },
+    {
+      "id": "frame.crust_many",
+      "name": "多脚甲殻",
+      "note": "節の多い虫。丸まる・転がる・跳ねる",
+      "built": false
+    },
+    {
+      "id": "frame.long",
+      "name": "長胴獣",
+      "note": "長い胴で這う。体の薙ぎ払いと巻き込み。短い肢",
+      "built": false
+    },
+    {
+      "id": "frame.colossus",
+      "name": "巨躯",
+      "note": "超大型（全長 25m 以上）。ゆっくり動く。足・腹・背など、部位ごとに場所を変えて戦う",
+      "built": false
+    }
+  ],
+  "fields": [
+    {
+      "name": "風礫盆地",
+      "terrain": "灰緑の草と岩原。見通しがよく、最初の練習に向く。",
+      "fieldId": "field.basin",
+      "source": "設計書 v1.0（14 章）"
+    },
+    {
+      "name": "根絡み湿原",
+      "terrain": "浅い沼、網目状の根、乾いた小島。足場を選ぶ。",
+      "source": "設計書 v1.0（14 章）",
+      "fieldId": "field.wetland"
+    },
+    {
+      "name": "硝砂海岸",
+      "terrain": "白砂、硝子層、低い海食洞。壁際の位置取り。",
+      "source": "設計書 v1.0（14 章）",
+      "fieldId": "field.coast"
+    },
+    {
+      "name": "灰鐘鉱山",
+      "terrain": "採掘路と広い坑口。狭い所から誘い出して戦う。",
+      "source": "設計書 v1.0（14 章）",
+      "fieldId": "field.ashmine"
+    },
+    {
+      "name": "氷帆峡谷",
+      "terrain": "断崖、薄い氷板、滑走の跡。長い攻撃の線を読む。",
+      "source": "設計書 v1.0（14 章）",
+      "fieldId": "field.icegorge"
+    },
+    {
+      "name": "霧灯樹海",
+      "terrain": "環状の大樹、点在する光。予告を見失わない。",
+      "source": "設計書 v1.0（14 章）",
+      "fieldId": "field.mistforest"
+    },
+    {
+      "name": "燠脈台地",
+      "terrain": "温い晶脈の割れ目と冷えた草の段が交互に続く、低く開けた岩台地。",
+      "mood": "冷たい霧と細雨の昼。割れ目の琥珀色だけが鈍く見え、排気と風の低い音が響く。",
+      "source": "chatgpt:bestiary_9A.json",
+      "fieldId": "field.emberplateau"
+    },
+    {
+      "name": "雨裂断崖",
+      "terrain": "雨水が刻んだ断崖と、地上で往来できる広い三段の岩棚。",
+      "mood": "細い雨と低い雲が続き、崖の切れ目だけで風が鳴る。",
+      "source": "chatgpt:bestiary_9B.json",
+      "fieldId": "field.raincliff"
+    },
+    {
+      "name": "銅苔段丘",
+      "terrain": "銅色の晶脈を含む湧水が、苔の厚い低い段丘をつなぐ。",
+      "mood": "曇天の淡い光に濡れた苔が鈍く光り、水滴の音が近い。",
+      "source": "chatgpt:bestiary_9B.json",
+      "fieldId": "field.copperterrace"
+    },
+    {
+      "name": "枯響河床",
+      "terrain": "増水時だけ流れが戻る幅広い礫河床と、浅い残り淵。",
+      "mood": "灰黄の湿った礫に薄霧が流れ、足音が岩壁へ短く返る。",
+      "source": "chatgpt:bestiary_9B.json",
+      "fieldId": "field.dryriver"
+    },
+    {
+      "name": "鉛雲高地",
+      "terrain": "地表近くまで雲が下りる草の高地と、霜の残る浅い窪み。",
+      "mood": "光は鈍い灰色で、強風の合間だけ滴と草擦れが聞こえる。",
+      "source": "chatgpt:bestiary_9B.json",
+      "fieldId": "field.leadcloud"
+    },
+    {
+      "name": "沈根沢地",
+      "terrain": "沈んだ根の網と膝下の浅瀬を、乾いた根丘が隔てる沢地。",
+      "mood": "低い霧に樹冠が沈み、濁水の泡と朽木の軋みが響く。",
+      "source": "chatgpt:bestiary_9B.json",
+      "fieldId": "field.sunkenroot"
+    },
+    {
+      "name": "玻璃裂原",
+      "terrain": "鈍い硝質の板岩が割れた平原で、広い裸地と低い晶脈の畝が交互に続く。",
+      "mood": "冷たい曇天と低い霧の下で、薄板が触れる乾いた音がする。",
+      "source": "chatgpt:bestiary_9C.json",
+      "fieldId": "field.glassplain"
+    },
+    {
+      "name": "灰繭窪地",
+      "terrain": "灰色の菌糸が根を包む浅い窪地で、乾いた根棚と湿った小盆地がつながる。",
+      "mood": "弱い拡散光が差し、細かな胞子が見えるほど静かで湿っている。",
+      "source": "chatgpt:bestiary_9C.json",
+      "fieldId": "field.ashcocoon"
+    },
+    {
+      "name": "冷銅洞庭",
+      "terrain": "天井の抜けた冷たい鉱洞が連なる地形で、銅色の露頭と平たい洞床がある。",
+      "mood": "外光が淡く入り、冷えた滴の音が低く反響する。",
+      "source": "chatgpt:bestiary_9C.json",
+      "fieldId": "field.coldcopper"
+    },
+    {
+      "name": "響礫回廊",
+      "terrain": "礫の通路と戦える広い岩盆が交互に連なり、側壁に低い棚状の岩が張り出す。",
+      "mood": "霧を含む風が通り、礫の転がる音が方向ごとに遅れて聞こえる。",
+      "source": "chatgpt:bestiary_9C.json",
+      "fieldId": "field.echohall"
+    },
+    {
+      "name": "重霧環谷",
+      "terrain": "環状の低い尾根に囲まれ、浅い水滴場と開けた岩棚が交互にある霧の谷。",
+      "mood": "曇天の灰緑の霧。尾根では風音、谷底では葉から落ちる水滴が聞こえる。",
+      "source": "chatgpt:bestiary_9D.json",
+      "fieldId": "field.heavyfog"
+    },
+    {
+      "name": "伏熱石原",
+      "terrain": "地中の温い晶脈と、根の残る冷たい縁が接する広い礫原。",
+      "mood": "冷たい小雨と低い蒸気。裂け目の琥珀色だけが鈍く光り、石の収縮音がする。",
+      "source": "chatgpt:bestiary_9D.json",
+      "fieldId": "field.buriedheat"
+    },
+    {
+      "name": "錆星高原",
+      "terrain": "点状の青銅鉱床と鉱物藻を載せた低い岩棚が続く、起伏の緩い高原。",
+      "mood": "灰青の曇り空と細い霧。金属質の小石が風で触れ合う乾いた音が混じる。",
+      "source": "chatgpt:bestiary_9D.json",
+      "fieldId": "field.ruststar"
+    },
+    {
+      "name": "深帷樹洞",
+      "terrain": "倒れた巨木と根棚が地上に大きな幹洞を作り、浅い流れと乾いた木屑床が並ぶ森林。",
+      "mood": "灰緑の薄暗い昼光。霧滴が幹を伝い、湿った木の軋みがゆっくり響く。",
+      "source": "chatgpt:bestiary_9D.json",
+      "fieldId": "field.deepveil"
+    },
+    {
+      "name": "白霧氷谷",
+      "terrain": "凍った湿地、凍河、氷洞、峡谷、高台、水際、巣域。",
+      "source": "採用フィールド設定画",
+      "fieldId": "field.whitefrost"
+    }
+  ],
+  "species": [
+    {
+      "statuses": [],
+      "weak": [
+        "fire"
+      ],
+      "resist": [
+        "thunder"
+      ],
+      "parts": [
+        "頭",
+        "左前脚",
+        "右前脚",
+        "背の岩殻",
+        "尾"
+      ],
+      "materials": [
+        "岩殻片",
+        "硬骨",
+        "青銅晶脈",
+        "前脚甲",
+        "脈岩殻",
+        "尾端晶"
+      ],
+      "organ": "背と頭に鉱物を析出させる皮下の晶脈床。左背面の成長が速く、尾端では塊になって打撃を重くする。",
+      "gear": "岩殻・晶芯 / 防御と重剣。武器は「攻撃力が高い無属性」",
+      "id": "monster.galdros",
+      "no": 1,
+      "title": "岩殻獣",
+      "name": "ガルドロス",
+      "class": "large",
+      "variant": "base",
+      "rank": "rank.1",
+      "frame": "frame.quad_heavy",
+      "size": 8.5,
+      "habitat": "風礫盆地",
+      "elements": [
+        "none"
+      ],
+      "look": "左が大きい数枚の岩板、頭頂の平岩冠と塊状の尾端",
+      "moves": [
+        "前脚を高く上げる→叩きつけ",
+        "頭を下げて掻く→直線突進",
+        "腰をひねる→半円尾払い",
+        "尾を持ち上げる→予告輪への岩飛ばし"
+      ],
+      "armorLook": "低く厚い輪郭。灰褐色の岩板と琥珀色の縁。腰の後ろに晶の塊。左が大きい",
+      "state": "implemented",
+      "elementNote": "無属性。弱点は火、雷に強い（決定）",
+      "stateNote": "実装済み（初級〜極級の 4 段階。技 23 種）。設定図は採用済み",
+      "source": "chatgpt:依頼9A（v0.13.0の既存設定を補完）",
+      "ecology": {
+        "diet": "硬い根と岩際の地衣を主食にし、前脚で浅く掘って食べる。晶脈を含む小石は殻の形成に必要な塩分として少量だけ飲み込む。",
+        "behavior": "普段は決まった採食場所をゆっくり巡る。進路を塞がれると頭冠を低くして警告し、距離を取れば追い過ぎない。",
+        "territory": "風礫盆地の岩柱の根元と草の斜面を使う。狭い岩間は避け、重い体が通れる土の帯を何度も踏み固める。",
+        "rhythm": "朝夕に根を掘り、風が強い昼は岩陰へ移る。霧が濃い日も地面の踏み跡を使って同じ巡回路をたどる。",
+        "nest": "風を遮る巣穴で、重い左背殻を壁へ預けて眠る。傷つくと巣のエリアへ戻って休息し、攻撃されれば目を覚ます。",
+        "relations": "掘り返した地面の新芽は、ほかの草食の獣の餌になるが、同じ岩塩場では体を押し合う。里の畑には迷い込む程度で、人を餌とは認識しない。",
+        "juvenile": "幼体は淡い灰褐色で、岩冠と尾端晶がまだ小さい。三〜五頭が親の掘り跡に集まり、成長すると離れる。",
+        "signs": "幅広い四つの足跡、左側だけ深い擦り跡、端の丸い剥落岩板が残る。食べ跡には根を短く折った浅い穴が並ぶ。"
+      },
+      "art": "galdros/galdros_left_v1.png"
+    },
+    {
+      "id": "monster.spinegale",
+      "no": 2,
+      "title": "疾棘竜",
+      "name": "スパインゲイル",
+      "class": "large",
+      "variant": "base",
+      "rank": "rank.1",
+      "frame": "frame.biped_wing",
+      "size": 6.3,
+      "habitat": "風礫盆地",
+      "elements": [
+        "none"
+      ],
+      "statuses": [],
+      "weak": [
+        "ice",
+        "water"
+      ],
+      "resist": [],
+      "look": "黄黒の縞、橙の喉袋、背棘、二股の尾扇",
+      "organ": "放熱する喉皮膜と尾扇、瞬発力の高い後脚。",
+      "moves": [
+        "高速突進",
+        "二連噛みつき",
+        "跳躍蹴り",
+        "尾薙ぎ",
+        "長い息切れ"
+      ],
+      "parts": [
+        "頭",
+        "喉袋",
+        "後脚",
+        "背棘",
+        "尾扇"
+      ],
+      "materials": [
+        "疾棘竜の鱗",
+        "疾棘竜の鋭爪",
+        "疾棘竜の背棘",
+        "疾棘竜の喉膜",
+        "疾棘竜の尾扇",
+        "疾棘竜の弾性腱"
+      ],
+      "gear": "会心・軽量・回避と息継ぎ。",
+      "armorLook": "黄黒の鱗、背棘と喉膜、二股の腰布。",
+      "ecology": {
+        "diet": "小型動物を捕食する。",
+        "behavior": "高速走行の後は放熱のため停止する。",
+        "territory": "盆地の乾いた岩場。",
+        "rhythm": "朝夕に活動し日中は岩陰で休む。",
+        "nest": "風通しの良い岩棚。",
+        "relations": "小型の群れを率いる。幼体の専用実装は後工程。",
+        "juvenile": "尾扇と冠棘が小さい。",
+        "signs": "三趾の足跡と制動時の爪痕。"
+      },
+      "state": "implemented",
+      "stateNote": "初級〜上級の3狩猟と専用疲労。",
+      "source": "利用者採用案D / Spinegale V3",
+      "art": "spinegale_concept_v1.webp"
+    },
+    {
+      "id": "monster.frostald",
+      "no": 3,
+      "title": "氷冠獣",
+      "name": "フロストアルド",
+      "class": "large",
+      "variant": "base",
+      "rank": "rank.1",
+      "frame": "frame.quad_heavy",
+      "size": 7.5,
+      "habitat": "白霧氷谷",
+      "elements": [
+        "ice"
+      ],
+      "statuses": [],
+      "weak": [
+        "fire",
+        "thunder"
+      ],
+      "resist": [
+        "ice"
+      ],
+      "look": "低い四足の体、白青の氷冠、深い青色の鱗、太く長い尾。",
+      "organ": "塩水嚢と吸水性氷泥の氷冠。氷水を圧縮し放出する。",
+      "moves": [
+        "腹滑り突進",
+        "氷水噴射",
+        "横転攻撃",
+        "尾薙ぎ",
+        "氷冠補給"
+      ],
+      "parts": [
+        "頭",
+        "氷冠",
+        "前脚",
+        "後脚",
+        "尾",
+        "胴"
+      ],
+      "materials": [
+        "氷冠獣の鱗",
+        "氷冠獣の爪",
+        "氷冠獣の氷鬣",
+        "氷冠獣の塩水嚢",
+        "氷冠獣の尾",
+        "氷冠獣の骨"
+      ],
+      "gear": "氷属性武器、氷耐性・属性調律の防具。",
+      "armorLook": "濃紺の鱗と白い氷冠、銀色の骨材。",
+      "ecology": {
+        "diet": "氷の割れ目に集まる魚類や小動物。",
+        "behavior": "氷水を蓄え、腹滑りと噴射で縄張りを守る。",
+        "territory": "白霧氷谷の水際と湿地。",
+        "rhythm": "薄明に魚を探し、日中は氷洞へ戻る。",
+        "nest": "凍った岩の洞穴。",
+        "relations": "群れを守る成体。小型個体は後工程。",
+        "juvenile": "氷冠が薄い幼体。",
+        "signs": "氷の滑走跡、塩水の白い結晶。"
+      },
+      "state": "implemented",
+      "stateNote": "独立GLB・初級〜上級の狩猟。",
+      "source": "採用案A / Frostald",
+      "art": "frostald_concept.webp"
+    },
+    {
+      "id": "monster.venolka",
+      "no": 4,
+      "title": "毒羽竜",
+      "name": "ヴェノルカ",
+      "class": "large",
+      "variant": "base",
+      "rank": "rank.1",
+      "frame": "frame.biped_wing",
+      "size": 11,
+      "habitat": "根絡み湿原",
+      "elements": [
+        "none"
+      ],
+      "statuses": [
+        "poison"
+      ],
+      "weak": [
+        "fire",
+        "thunder"
+      ],
+      "resist": [],
+      "look": "深い緑色の鱗、紫色の冠羽と尾羽、毒嚢と翼膜を持つ鳥竜型飛竜。",
+      "organ": "頬の毒嚢で毒液を蓄え、短い滑空と毒液で獲物を追い詰める。",
+      "moves": [
+        "毒吐き",
+        "翼叩き",
+        "短距離滑空",
+        "尾羽薙ぎ",
+        "毒嚢補給"
+      ],
+      "parts": [
+        "頭",
+        "冠羽",
+        "毒嚢",
+        "左翼",
+        "右翼",
+        "後脚",
+        "尾羽",
+        "胴"
+      ],
+      "materials": [
+        "毒羽竜の鱗",
+        "毒羽竜の鉤爪",
+        "毒羽竜の毒羽",
+        "毒羽竜の毒嚢",
+        "毒羽竜の尾羽",
+        "毒羽竜の翼膜"
+      ],
+      "gear": "毒蓄積を持つ武器。個別毒耐性と状態調律の防具。",
+      "armorLook": "紫の冠羽と緑の甲鱗、毒嚢の意匠。",
+      "ecology": {
+        "diet": "湿原の小型動物、昆虫、毒性の果実。",
+        "behavior": "警戒時は冠羽と翼を広げ、短い滑空で間合いを変える。",
+        "territory": "水鏡の広場から乾いた中洲、根の間の広い湿地。",
+        "rhythm": "薄明に採餌し、昼は湿原の島で羽を整える。",
+        "nest": "根抱きの巣。",
+        "relations": "単独で縄張りを守る。",
+        "juvenile": "小型個体は未実装。",
+        "signs": "三趾の足跡と紫の尾羽。"
+      },
+      "state": "implemented",
+      "stateNote": "専用GLB・毒蓄積・地上と短距離飛行。",
+      "source": "採用案D / Venolka",
+      "art": "venolka_concept.webp"
+    }
+  ]
 }

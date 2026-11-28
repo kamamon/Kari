@@ -21,7 +21,8 @@
       "actions/galdros.json",
       "actions/galdros_ext.json",
       "actions/spinegale.json",
-      "actions/frostald.json"
+      "actions/frostald.json",
+      "actions/venolka.json"
     ],
     "tracks": [
       "tracks/heavy_blade.json",
@@ -35,20 +36,23 @@
       "tracks/galdros.json",
       "tracks/galdros_ext.json",
       "tracks/spinegale.json",
-      "tracks/frostald.json"
+      "tracks/frostald.json",
+      "tracks/venolka.json"
     ],
     "curves": [
       "curves.json",
       "curves_player.json",
       "curves_spinegale.json",
-      "curves_frostald.json"
+      "curves_frostald.json",
+      "curves_venolka.json"
     ],
     "weapons": "weapons.json",
     "monsters": [
       "monsters/training_dummy.json",
       "monsters/galdros.json",
       "monsters/spinegale.json",
-      "monsters/frostald.json"
+      "monsters/frostald.json",
+      "monsters/venolka.json"
     ],
     "maps": [
       "maps/basin_training.json",
@@ -102,17 +106,20 @@
       "quests.json",
       "quests_errands.json",
       "quests_spinegale.json",
-      "quests_frostald.json"
+      "quests_frostald.json",
+      "quests_venolka.json"
     ],
     "items": [
       "items.json",
       "items_spinegale.json",
-      "items_frostald.json"
+      "items_frostald.json",
+      "items_venolka.json"
     ],
     "loot": [
       "loot.json",
       "loot_spinegale.json",
-      "loot_frostald.json"
+      "loot_frostald.json",
+      "loot_venolka.json"
     ],
     "recipes": "recipes.json",
     "ranks": "ranks.json",
@@ -130,12 +137,14 @@
     "equipment": [
       "equipment_series.json",
       "equipment_spinegale.json",
-      "equipment_frostald.json"
+      "equipment_frostald.json",
+      "equipment_venolka.json"
     ],
     "follow": [
       "follow/galdros.json",
       "follow/spinegale.json",
-      "follow/frostald.json"
+      "follow/frostald.json",
+      "follow/venolka.json"
     ],
     "fieldGathering": "field_gathering.json",
     "regionalGathering": "regional_gathering.json"

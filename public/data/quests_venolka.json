@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 1,
+  "quests": [
+    {
+      "id": "quest.venolka.r1",
+      "name": "紫羽が濡れる根絡み湿原",
+      "kind": "hunt",
+      "summary": "根絡み湿原で毒羽竜を狩れ。滑空と毒吐きに注意し、毒嚢を狙え。",
+      "mapId": "map.wetland.survey",
+      "fieldId": "field.wetland",
+      "targetMonsterId": "monster.venolka",
+      "rankId": "rank.1",
+      "requires": [
+        "quest.frostald.r1"
+      ],
+      "monsterSpawn": {
+        "x": 900,
+        "z": 5.9,
+        "yaw": 3.141592653589793
+      },
+      "timeLimitTicks": 72000,
+      "fieldTimeLimitTicks": 72000,
+      "maxFaints": 3,
+      "returnTicks": 3600,
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        },
+        {
+          "itemId": "item.antidote",
+          "count": 3
+        }
+      ],
+      "rewards": {
+        "money": 950,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 1
+          }
+        ]
+      },
+      "monsterAttackScale": 1
+    },
+    {
+      "id": "quest.venolka.r2",
+      "name": "毒煙を渡る飛竜",
+      "kind": "hunt",
+      "summary": "毒液の連射を避け、両翼と毒嚢を破壊して狩猟せよ。",
+      "mapId": "map.wetland.survey",
+      "fieldId": "field.wetland",
+      "targetMonsterId": "monster.venolka",
+      "rankId": "rank.2",
+      "requires": [
+        "quest.basin.003",
+        "quest.venolka.r1"
+      ],
+      "monsterSpawn": {
+        "x": 900,
+        "z": 5.9,
+        "yaw": 3.141592653589793
+      },
+      "timeLimitTicks": 108000,
+      "fieldTimeLimitTicks": 108000,
+      "maxFaints": 3,
+      "returnTicks": 3600,
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        },
+        {
+          "itemId": "item.antidote",
+          "count": 3
+        }
+      ],
+      "rewards": {
+        "money": 1950,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 1
+          }
+        ]
+      },
+      "monsterAttackScale": 1.1923076923076923
+    },
+    {
+      "id": "quest.venolka.r3",
+      "name": "紫晶の翼、沼を覆う",
+      "kind": "hunt",
+      "summary": "毒霧を広げる成体。毒羽と滑空を見切り、根絡み湿原を取り戻せ。",
+      "mapId": "map.wetland.survey",
+      "fieldId": "field.wetland",
+      "targetMonsterId": "monster.venolka",
+      "rankId": "rank.3",
+      "requires": [
+        "quest.basin.r2.001",
+        "quest.venolka.r2"
+      ],
+      "monsterSpawn": {
+        "x": 900,
+        "z": 5.9,
+        "yaw": 3.141592653589793
+      },
+      "timeLimitTicks": 144000,
+      "fieldTimeLimitTicks": 144000,
+      "maxFaints": 3,
+      "returnTicks": 3600,
+      "supplies": [
+        {
+          "itemId": "item.heal_tonic",
+          "count": 5
+        },
+        {
+          "itemId": "item.bind_trap",
+          "count": 1
+        },
+        {
+          "itemId": "item.calm_orb",
+          "count": 3
+        },
+        {
+          "itemId": "item.whetstone",
+          "count": 3
+        },
+        {
+          "itemId": "item.antidote",
+          "count": 3
+        }
+      ],
+      "rewards": {
+        "money": 3800,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 1
+          }
+        ]
+      },
+      "monsterAttackScale": 1.272727272727273
+    }
+  ]
+}
