@@ -1,14 +1,18 @@
 // 狩場の外側だけを作る景観。戦闘・当たり・採取・地図の座標は変更しない。
 // 同じ格子を内側と外側へ分け、継ぎ目を共有する。外側を平らな草地として延長しない。
-import { BufferGeometry, Color, CylinderGeometry, Float32BufferAttribute, Group, IcosahedronGeometry, InstancedMesh, Matrix4, Mesh, MeshBasicMaterial, MeshLambertMaterial, Quaternion, Vector3, DoubleSide } from 'three';
+import { BufferGeometry, Color, Float32BufferAttribute, Group, Mesh, MeshBasicMaterial, DoubleSide } from 'three';
 import { SeededRng } from '../core/seededRng';
 import { AreaShape, type Pt } from '../game/areaShape';
 import { reliefAt, type ReliefDef } from '../game/relief';
 import type { FieldAreaDef } from '../data/schemas';
-import { imageLambert, type ImageSurface } from './materialImages';
+import { imageLambert, projectSurfaceUV, type ImageSurface } from './materialImages';
 import { patchNoise } from './noise';
 import { valueNoise3 } from './rockGeo';
 import { SKY_LOOKS, type SkyLook } from './sky';
+// v0.78.0（Claude。docs/spec.md の 21.7、D-178）: 木と岩の形・外側の地面の絵は、別のファイルが作る（ここは、置く場所と大きさ）
+import { ExteriorFlora, ROCK_SLOPE_MAX, placeExteriorRock } from './exteriorFlora';
+import { OUTER_TILE, outerGroundMaterial, outerPaint, outerSteep, paintsOuter } from './exteriorGround';
+import { mergeRocks, rockArtMaterial, type RockPlacement } from './rockArt';
 
 export type LandscapeStyle='meadow'|'forest'|'wetland'|'coast'|'alpine'|'canyon'|'cave'|'thermal'|'crystal';
 type TreeStyle='broadleaf'|'pine'|'swamp'|'none';
@@ -152,22 +156,27 @@ export function buildLandscapeSurface(input:LandscapeInput):LandscapeSurface{
   outerMin=Math.min(outerMin,ys[k]!);outerMax=Math.max(outerMax,ys[k]!);
  }
  const land=new Color(p.land),rock=new Color(p.rock),fog=new Color(p.sky.horizon),temp=new Color();
+ // v0.78.0: 盆地の外側は、内側と同じ地面の絵を貼る（色は、絵に掛ける倍率。src/render/exteriorGround.ts）
+ const paint=paintsOuter(p)?outerPaint(p,BASE.meadow.land):null,tile=paint?OUTER_TILE:9;
  const geo=(indices:number[],type:'near'|'outer'|'water'):BufferGeometry=>{
-  const verts:number[]=[],uv:number[]=[],cols:number[]=[],index:number[]=[],remap=new Map<number,number>();
+  const verts:number[]=[],uv:number[]=[],cols:number[]=[],steeps:number[]=[],index:number[]=[],remap=new Map<number,number>();
   for(const k of indices){let m=remap.get(k);if(m===undefined){
    m=verts.length/3;remap.set(k,m);const i=k%nx,j=Math.floor(k/nx),x=xs[i]!,z=zs[j]!,y=type==='water'?waterY:ys[k]!;
-   verts.push(x,y,z);uv.push(x/(type==='water'?12:9),-z/(type==='water'?12:9));
+   verts.push(x,y,z);uv.push(x/(type==='water'?12:tile),-z/(type==='water'?12:tile));
    if(type==='outer'){
     const lx=Math.max(0,i-1),rx=Math.min(nx-1,i+1),lz=Math.max(0,j-1),rz=Math.min(nz-1,j+1);
     const slope=Math.hypot((ys[j*nx+rx]!-ys[j*nx+lx]!)/(xs[rx]!-xs[lx]!||1),(ys[rz*nx+i]!-ys[lz*nx+i]!)/(zs[rz]!-zs[lz]!||1));
     const blend=Math.max(0,Math.min(1,slope*.58+noise(x+18,z+37)*.47-(p.style==='forest'?.21:0)));
-    temp.copy(land).lerp(rock,blend).multiplyScalar(.77+noise(x,z)*.42);
-    if(p.water!=='none'&&y<waterY+.55)temp.lerp(rock,.42);
-    temp.lerp(fog,smooth(123,190,ds[k]!)*.54);
+    if(paint){paint(temp,noise(x,z),blend,smooth(123,190,ds[k]!)*.54);steeps.push(outerSteep(slope));}
+    else{
+     temp.copy(land).lerp(rock,blend).multiplyScalar(.77+noise(x,z)*.42);
+     if(p.water!=='none'&&y<waterY+.55)temp.lerp(rock,.42);
+     temp.lerp(fog,smooth(123,190,ds[k]!)*.54);
+    }
     cols.push(temp.r,temp.g,temp.b);
    }
   }index.push(m);}
-  const g=new BufferGeometry();g.setAttribute('position',new Float32BufferAttribute(verts,3));g.setAttribute('uv',new Float32BufferAttribute(uv,2));if(type==='outer')g.setAttribute('color',new Float32BufferAttribute(cols,3));g.setIndex(index);g.computeVertexNormals();g.computeBoundingSphere();return g;
+  const g=new BufferGeometry();g.setAttribute('position',new Float32BufferAttribute(verts,3));g.setAttribute('uv',new Float32BufferAttribute(uv,2));if(type==='outer')g.setAttribute('color',new Float32BufferAttribute(cols,3));if(type==='outer'&&paint)g.setAttribute('aSteep',new Float32BufferAttribute(steeps,1));g.setIndex(index);g.computeVertexNormals();g.computeBoundingSphere();return g;
  };
  const wi:number[]=[];
  if(p.water!=='none')for(let i=0;i<oi.length;i+=3){
@@ -183,23 +192,6 @@ export function buildLandscapeSurface(input:LandscapeInput):LandscapeSurface{
  return{near,outer,water,outline,distance,height,gates,metrics:{nearTriangles:ni.length/3,outerTriangles:oi.length/3,outerMin,outerMax,sharedVertices:[...new Set(oi)].filter(i=>locked[i]).length}};
 }
 
-type Instance={x:number;y:number;z:number;sx:number;sy:number;sz:number;yaw:number;shade:number;lean?:number};
-function batch(group:Group,geo:BufferGeometry,mat:MeshLambertMaterial,items:Instance[],name:string):void{
- if(!items.length){geo.dispose();mat.dispose();return;}
- const mesh=new InstancedMesh(geo,mat,items.length),m=new Matrix4(),q=new Quaternion(),up=new Vector3(0,1,0),axis=new Vector3(0,0,1),lean=new Quaternion(),at=new Vector3(),s=new Vector3(),col=new Color();
- for(let i=0;i<items.length;i++){const a=items[i]!;q.setFromAxisAngle(up,a.yaw);if(a.lean)q.multiply(lean.setFromAxisAngle(axis,a.lean));m.compose(at.set(a.x,a.y,a.z),q,s.set(a.sx,a.sy,a.sz));mesh.setMatrixAt(i,m);mesh.setColorAt(i,col.setScalar(a.shade));}
- mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;
- mesh.name=name;mesh.userData.noMerge=true;mesh.computeBoundingSphere();group.add(mesh);
-}
-/** 画像を貼った、輪郭の不規則な岩塊・樹冠。単なる球の並びにしない。 */
-function lump(seed:number,detail:0|1|2):BufferGeometry{
- const g=new IcosahedronGeometry(1,detail),v=g.getAttribute('position'),n=valueNoise3(seed);
- for(let i=0;i<v.count;i++){const x=v.getX(i),y=v.getY(i),z=v.getZ(i),k=.76+n(x*3.3,y*3.3,z*3.3)*.40;v.setXYZ(i,x*k,y*k,z*k);}
- g.computeVertexNormals();
- // 樹冠は細かな葉群として見せ、岩の角張った法線と区別する。
- if(detail===2){const nrm=g.getAttribute('normal'),n=new Vector3(),r=new Vector3();for(let i=0;i<v.count;i++){n.fromBufferAttribute(nrm,i);r.fromBufferAttribute(v,i).normalize();n.lerp(r,.70).normalize();nrm.setXYZ(i,n.x,n.y,n.z);}}
- return g;
-}
 /** 斜面の一番低い側まで根を埋める。木の根元・露岩に共通。 */
 function groundedBase(s:LandscapeSurface,x:number,z:number,r:number):number{let y=s.height(x,z);for(let i=0;i<8;i++){const a=i*Math.PI/4;y=Math.min(y,s.height(x+Math.cos(a)*r,z+Math.sin(a)*r));}return y;}
 function isGateClear(s:LandscapeSurface,x:number,z:number,r:number):boolean{
@@ -240,48 +232,48 @@ function distantRidge(input:LandscapeInput,layer:number):Mesh{
 }
 export function buildLandscapeExterior(input:LandscapeInput,s:LandscapeSurface):Group{
  const p=input.profile,b=input.bounds,rng=new SeededRng(p.seed^0xa142c),noise=patchNoise(p.seed^8873),group=new Group();group.name='field-natural-exterior';
- const surface=imageLambert(p.fieldId==='field.whitefrost'?'frost_snow':p.style==='forest'?'moss':p.style==='meadow'?'grass':p.style==='wetland'?'earth':'cliff',{color:0xffffff,vertexColors:true},{gain:1.12});
+ const surface=paintsOuter(p)?outerGroundMaterial():imageLambert(p.fieldId==='field.whitefrost'?'frost_snow':p.style==='forest'?'moss':p.style==='meadow'?'grass':p.style==='wetland'?'earth':'cliff',{color:0xffffff,vertexColors:true},{gain:1.12});
  const ground=new Mesh(s.outer,surface);ground.name='field-exterior-relief';ground.userData.noMerge=true;group.add(ground);
  if(s.water){const water=new Mesh(s.water,imageLambert('water',{color:p.waterColor,transparent:true,opacity:.92,side:DoubleSide},{raw:true,gain:.93}));water.name='field-exterior-water';water.userData.noMerge=true;group.add(water);}
  const trail=trailGeometry(s);
  if(trail.getIndex()!.count){const path=new Mesh(trail,imageLambert('earth',{color:p.style==='alpine'?0xc9d4d4:0x948571,side:DoubleSide},{gain:1.1}));path.name='field-exit-continuation';path.userData.noMerge=true;group.add(path);}else trail.dispose();
  group.add(distantRidge(input,0),distantRidge(input,1));
- const trunks:Instance[]=[],crowns:Instance[]=[],rocks:Instance[]=[],treeSites:{x:number;z:number}[]=[];
+ const rocks:RockPlacement[]=[],treeSites:{x:number;z:number}[]=[];
+ const flora=p.tree==='none'?null:new ExteriorFlora({seed:p.seed,tree:p.tree,foliage:p.foliage,dense:p.trees>90});
  const w=b.maxX-b.minX,d=b.maxZ-b.minZ;
  // 地形に追従する不規則な樹林。描画専用の大きな物は境界の外だけ。
- for(let i=0,tries=0;i<p.trees&&tries<p.trees*45;tries++){
+ for(let i=0,tries=0;flora&&i<p.trees&&tries<p.trees*45;tries++){
   const x=b.minX-78+rng.next()*(w+156),z=b.minZ-78+rng.next()*(d+156),dist=s.distance(x,z);
   const near=dist<37,rad=p.tree==='pine'?2.4:3.4;
   if(dist<4.4+rad||dist>99||!isGateClear(s,x,z,rad)||rng.next()>.32+.68*noise(x,z)||treeSites.some(t=>Math.hypot(x-t.x,z-t.z)<(near?4.0:5.7)))continue;
   const y=s.height(x,z);if(p.water!=='none'&&y<-.9)continue;
-  const h=(p.tree==='pine'?8:p.tree==='swamp'?7.3:10)*(0.65+rng.next()*.9)*(near?1:1.12),r=h*(p.tree==='pine'?.055:.071);
+  const h=(p.tree==='pine'?8:p.tree==='swamp'?7.3:10)*(0.65+rng.next()*.9)*(near?1:1.12);
   const shade=.78+rng.next()*.35,yaw=rng.next()*6.283;treeSites.push({x,z});i++;
-  const root=groundedBase(s,x,z,r*1.2)-.24,top=y+h*.79;
-  trunks.push({x,y:(root+top)/2,z,sx:r,sy:top-root,sz:r,yaw,shade});
-  if(p.tree==='pine'){
-   for(let j=0;j<3;j++){const cy=h*(.55+j*.18),rr=h*(.31-j*.075);crowns.push({x,y:y+cy,z,sx:rr,sy:h*(.29-j*.035),sz:rr,yaw:yaw+j*.8,shade:shade*(1+j*.04)});}
-  }else{
-   const rr=h*.30;
-   for(let j=0;j<3;j++){
-    const a=yaw+j*2.09,off=j?rr*(.68+rng.next()*.22):0,cy=y+h*(j===0?.91:.70+rng.next()*.10);
-    crowns.push({x:x+Math.cos(a)*off,y:cy,z:z+Math.sin(a)*off,sx:rr*(.75+rng.next()*.38),sy:rr*(.72+rng.next()*.34),sz:rr*(.76+rng.next()*.38),yaw:a,shade:shade*(.86+rng.next()*.24)});
-    if(j){const len=h*.32;trunks.push({x:x+Math.cos(a)*off*.38,y:y+h*.63,z:z+Math.sin(a)*off*.38,sx:r*.39,sy:len,sz:r*.39,yaw:-a,lean:-.48,shade});}
-   }
-  }
+  // v0.78.0: 1 本の形（幹・枝・葉のかたまり・葉の板。針葉樹は傘の段）は src/render/exteriorFlora.ts
+  flora.tree(rng,{x,z,ground:y,root:groundedBase(s,x,z,h*.06),h,yaw,shade});
  }
+ // v0.78.0: 岩は、エリアの中の岩と同じ図（依頼 10）を、斜面へ傾けて、根元を地面より下へ埋める（それまでは、いびつな球を斜面に置いていて、下の側が浮いて見えた）
+ // 狩場ごとの岩の色（景観の定義の rock）は、盆地の岩の色からの倍率にして、少しだけ効かせる（図の色は、どの狩場も同じ。氷の素材には掛けない）
+ const frost=p.fieldId==='field.whitefrost',base=new Color(BASE.meadow.rock),want=new Color(p.rock);
+ const hue=[want.r/base.r,want.g/base.g,want.b/base.b].map(v=>frost?1:Math.max(.78,Math.min(1.3,1+(v-1)*.5)));
+ const crag=p.style==='canyon'||p.style==='cave'||p.style==='alpine';let steep=0;
  for(let i=0,tries=0;i<p.stones&&tries<p.stones*25;tries++){
   const x=b.minX-63+rng.next()*(w+126),z=b.minZ-63+rng.next()*(d+126),dist=s.distance(x,z),rad=1.6+rng.next()*4.8;
   if(dist<3.7+rad||dist>88||!isGateClear(s,x,z,rad))continue;
   const y=s.height(x,z);if(p.water!=='none'&&y<-2.8)continue;
-  const h=rad*(p.style==='canyon'||p.style==='cave'||p.style==='alpine'?1.1+rng.next()*1.4:.48+rng.next()*.75);
-  const base=groundedBase(s,x,z,rad*.72),sz=rad*(.56+rng.next()*.52);
-  // 岩を斜面の上に置くのではなく、下の地盤に埋めた露岩にする。
-  rocks.push({x,y:base+h*.04,z,sx:rad,sy:h,sz,yaw:rng.next()*6.283,shade:.74+rng.next()*.38});i++;
+  const h=rad*(crag?1.1+rng.next()*1.4:.48+rng.next()*.75),k=.84+rng.next()*.26;
+  const rock=placeExteriorRock(rng,s.height,{x,z,rad,h,dist,tall:crag&&h>rad*1.9,tint:[hue[0]!*k,hue[1]!*k,hue[2]!*k]});
+  // 急な斜面（35° より急）には置かない（試す回数の 8 割まで。それでも足りなければ置く）
+  if(rock.slope>ROCK_SLOPE_MAX){if(tries<p.stones*20)continue;steep++;}
+  rocks.push(rock);i++;
  }
- batch(group,new CylinderGeometry(.57,1,1,7),imageLambert('bark',{color:p.tree==='swamp'?0x6c6149:0x6a6253,flatShading:true},{gain:1.15}),trunks,'field-exterior-trunks');
- // 松も、枝葉の塊を縦に重ねて不規則な輪郭を作る。
- batch(group,lump(p.seed+11,2),imageLambert('leaf',{color:p.foliage,flatShading:false},{gain:1.2}),crowns,'field-exterior-canopy');
- batch(group,lump(p.seed+73,1),imageLambert('cliff',{color:p.rock,flatShading:true},{gain:1.15}),rocks,'field-exterior-rocks');
- group.userData.landscape={fieldId:p.fieldId,areaId:p.areaId,style:p.style,trees:treeSites.length,rocks:rocks.length,water:!!s.water,gates:s.gates.length,...s.metrics};
+ flora?.addTo(group);
+ if(rocks.length){
+  const geo=mergeRocks(rocks);
+  // 白霧氷谷は、エリアの中の岩と同じ氷の素材
+  const stone=new Mesh(frost?projectSurfaceUV(geo,4):geo,frost?imageLambert('frost_ice',{color:0xa6bfd3,vertexColors:true},{gain:1.06}):rockArtMaterial());
+  stone.name='field-exterior-rocks';stone.userData.noMerge=true;stone.userData.rocks=rocks.map(r=>({id:r.id,x:r.x,y:r.y??0,z:r.z,lod:r.lod??1}));group.add(stone);
+ }
+ group.userData.landscape={fieldId:p.fieldId,areaId:p.areaId,style:p.style,trees:treeSites.length,rocks:rocks.length,steepRocks:steep,water:!!s.water,gates:s.gates.length,...s.metrics};
  return group;
 }

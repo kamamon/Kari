@@ -130,7 +130,7 @@ const KIND_LOOK: Record<NonNullable<AreaLook['kind']>, { ground: EnvTile; short:
 /** 地面を、歩ける範囲の外へ広げる幅（m）。端が霧の向こうになるように。 */
 const GROUND_MARGIN = 130;
 /** 絵の明るさの倍率（envArt.tileMaterial の gain）。地面は、色むらで暗くなるぶんも持ち上げる。 */
-const GROUND_GAIN = 1.25;
+export const GROUND_GAIN = 1.25;
 /** 巣の踏み分け道の色（v0.76.0）: 巣の暗い地面の上では、砂利の絵そのままの明るさだと、光の帯に見えた。暗い土の色へ落とす */
 const NEST_TRAIL = 0xbdb39c;
 /** 草むら（v0.76.0）: フィールドの草の地面で、短い草と背の高い草の数に掛ける倍率 */

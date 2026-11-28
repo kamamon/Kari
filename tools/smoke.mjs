@@ -1367,7 +1367,8 @@ const startTraining = async (page, tap = false) => {
   const sky = await page.evaluate(() => {
     const v = window.__vh.view, b = v.scene.getObjectByName('backdrop'), c = v.cam.camera.position;
     let cutouts = 0;
-    v.scene.traverse((o) => { if (o.isInstancedMesh && o.visible && o.material.alphaTest > 0 && o.material.map && o.material.visible) cutouts += o.count; });
+    // 草と小物の板（崖の向こうの木の葉の板は数えない。v0.78.0）
+    v.scene.traverse((o) => { if (o.isInstancedMesh && o.visible && o.material.alphaTest > 0 && o.material.map && o.material.visible && o.name !== 'field-exterior-leaves') cutouts += o.count; });
     return { art: window.__vh.envArt(), off: Math.abs(b.position.x - c.x) + Math.abs(b.position.z - c.z), far: b.children.filter((m) => m.material.map && m.material.visible).length, fog: v.scene.fog.color.getHexString(), cutouts, ...v.stats() };
   });
   check('景色の絵（狩場）: 頼んだ絵がすべて読めている。空と遠景の筒（絵 2 枚）が、カメラと一緒に動く。霧の色は絵の下の帯と同じ', art && sky.off < 0.01 && sky.far === 2 && sky.fog === 'aebcab', JSON.stringify(sky));
@@ -1389,6 +1390,22 @@ const startTraining = async (page, tap = false) => {
   });
   const outer=await page.evaluate(()=>{const v=window.__vh.view,g=v.areaGroups.get(window.__vh.sim.areaId),s=g?.getObjectByName('field-natural-exterior');return s?.userData.landscape??null;});
   check('狩場外周: 平らな草原ではなく、起伏のある内外連続の地形・樹林・岩と出口の先が描かれる',outer?.outerMax-outer?.outerMin>9&&outer?.sharedVertices>0&&outer?.trees>10&&outer?.rocks>20,JSON.stringify(outer));
+  // 崖の向こう（v0.78.0）: 木は、葉のかたまりと葉の板（小物の図集の茂みの絵）。岩は、依頼 10 の図を 1 つの形にまとめたもの。盆地の外側の地面は、内側と同じ絵
+  const far = await until(page, () => {
+    const v = window.__vh.view, ext = v.areaGroups.get(window.__vh.sim.areaId)?.getObjectByName('field-natural-exterior');
+    const leaves = ext?.getObjectByName('field-exterior-leaves'), rocks = ext?.getObjectByName('field-exterior-rocks'), relief = ext?.getObjectByName('field-exterior-relief');
+    return !!leaves?.material.map && leaves.material.visible && rocks?.material.userData.art?.artOn.value === 1 && !!relief?.material.map;
+  }, 15000).then(() => page.evaluate(() => {
+    const v = window.__vh.view, ext = v.areaGroups.get(window.__vh.sim.areaId)?.getObjectByName('field-natural-exterior');
+    const leaves = ext?.getObjectByName('field-exterior-leaves'), canopy = ext?.getObjectByName('field-exterior-canopy'), rocks = ext?.getObjectByName('field-exterior-rocks'), relief = ext?.getObjectByName('field-exterior-relief');
+    return {
+      trees: ext?.userData.landscape.trees, canopy: canopy?.count ?? 0, leaves: leaves?.count ?? 0, leafArt: !!leaves?.material.map && leaves.material.visible === true, key: leaves?.material.customProgramCacheKey?.(),
+      rocks: rocks?.userData.rocks?.length ?? 0, steep: ext?.userData.landscape.steepRocks, rockArt: rocks?.material.userData.rockArt === true && rocks.material.userData.art?.artOn.value === 1, merged: !!rocks && rocks.isInstancedMesh !== true,
+      outer: relief?.material.userData.outerGround === true && !!relief.material.map, kids: ext?.children.length,
+    };
+  }));
+  check('崖の向こう（v0.78.0）: 野営地の外の木は、1 本に葉のかたまり 5 つと葉の板 39 枚（茂みの絵が読めている。草の揺れの素材とは別）。岩は、依頼 10 の図をまとめた 1 つの形（急な斜面には無い）。外側の地面は、内側と同じ絵。景観の描画は 9 回まで',
+    far.trees > 10 && far.canopy === far.trees * 5 && far.leaves === far.trees * 39 && far.leafArt && far.key === 'canopy-tuft' && far.rocks > 20 && far.steep === 0 && far.rockArt && far.merged && far.outer && far.kids <= 9, JSON.stringify(far));
   const real1 = await real();
   const real2 = await until(page, () => window.__vh.view.areaGroups.size >= 2, 45000).then(() => real());
   check('景色（v0.19.0）: 空の球が遠景の中にあり、雲の時刻が進む。霧は距離の 2 乗の指数。岩と岩壁に頂点の色と凹凸。草は揺れる素材で、1 本ずつ色が違う', real1.sky && real2.time > real1.time && real1.fogExp && real1.rocks >= 1 && real1.sway > 100 && real1.tinted >= 2, JSON.stringify(real1));

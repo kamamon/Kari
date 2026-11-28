@@ -59,14 +59,19 @@ describe('自然な外周景観（描画専用）',()=>{
    expect(g.getObjectByName('field-distant-ridge-0')).toBeDefined();
    expect(g.getObjectByName('field-distant-ridge-1')).toBeDefined();
    const m=g.getObjectByName('field-exterior-relief') as Mesh;
-   expect((m.material as {userData:Record<string,unknown>}).userData.surfaceImage).toBeDefined();
-   for(const name of ['field-exterior-trunks','field-exterior-rocks']){
+   // v0.78.0: 盆地の外側は、内側と同じ地面の絵（src/render/exteriorGround.ts。印は outerGround）。ほかの狩場は、画像の材質
+   const ud=(m.material as {userData:Record<string,unknown>}).userData;
+   if(key==='basin')expect(ud.outerGround,key).toBe(true);else expect(ud.surfaceImage,key).toBeDefined();
+   for(const name of ['field-exterior-trunks']){
     const mesh=g.getObjectByName(name) as InstancedMesh|undefined;if(!mesh)continue;
     const matrix=new Matrix4(),v=new Vector3(),q=new Quaternion(),scale=new Vector3();
     for(let i=0;i<mesh.count;i++){
      mesh.getMatrixAt(i,matrix);matrix.decompose(v,q,scale);expect(s.distance(v.x,v.z),key+'/'+name).toBeGreaterThan(5);
     }
    }
+   // v0.78.0: 岩は、依頼 10 の岩の図を 1 つの形にまとめたもの（描画 1 回）。置いた場所は userData.rocks
+   const stone=g.getObjectByName('field-exterior-rocks') as Mesh|undefined;
+   for(const r of (stone?.userData.rocks??[]) as {x:number;z:number}[])expect(s.distance(r.x,r.z),key+'/field-exterior-rocks').toBeGreaterThan(5);
    expect(stats.rocks,key).toBeGreaterThan(20);
    if(data.profile.trees)expect(stats.trees,key).toBeGreaterThan(15);
    if(key==='coast')expect(stats.water).toBe(true);

@@ -1962,7 +1962,7 @@
       "source": "ChatGPT の画像生成（依頼 8、docs/chatgpt-request-8.txt）。2026-11-24 受領。ChatGPT の説明文は art-source/env/README_request8_v1.txt。説明文にある補助ファイル 3 つ（manifest・atlas_layout・helpers）は未受領",
       "terms": "本作オリジナル",
       "dims": "遠景と建物 1536×1024、地面・岩・草 1024×1024（草と小物は背景が透明）",
-      "note": "v0.13.0 で貼った（D-072、docs/spec.md 21 章）。ゲームが読むのは tex.env.request8。採用の返事は、まだ無い。v0.22.0 から、岩肌の 2 枚（tex_rock_basin_v1・tex_rock_vein_v1）はゲームで使っていない（依頼 10 の岩肌に替えた。原本は残す）",
+      "note": "v0.13.0 で貼った（D-072、docs/spec.md 21 章）。ゲームが読むのは tex.env.request8。採用の返事は、まだ無い。v0.22.0 から、岩肌の 2 枚（tex_rock_basin_v1・tex_rock_vein_v1）はゲームで使っていない（依頼 10 の岩肌に替えた。原本は残す）。v0.78.0 から、小物の図集（sprite_props_basin_v1）の茂みのマスを、崖の向こうの木の葉の板にも使う（src/render/exteriorFlora.ts。D-178。絵は足していない）",
       "sourcePath": "art-source/env",
       "files": [
         "bld_board_v1.png",

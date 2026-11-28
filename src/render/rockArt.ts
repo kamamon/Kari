@@ -5,7 +5,7 @@
 // 崖: 外周に沿って、横 24m の図を並べる（出口のわきには C-19・C-20）。上の線が崖の高さ、明るさから作った凹凸で面を出し入れする。
 // どれも見た目だけ。当たりは、これまでどおりマップデータ（岩は円柱、外周は多角形）。
 import {
-  BufferGeometry, ClampToEdgeWrapping, Float32BufferAttribute, MeshLambertMaterial, RepeatWrapping, type Texture, Vector3,
+  BufferGeometry, ClampToEdgeWrapping, Float32BufferAttribute, MeshLambertMaterial, Quaternion, RepeatWrapping, type Texture, Vector3,
 } from 'three';
 import { SeededRng } from '../core/seededRng';
 import { loadEnvTexture } from './envArt';
@@ -148,6 +148,12 @@ export interface RockPlacement {
   sx: number;
   sy: number;
   sz: number;
+  /** 岩の上の向き（長さ 1。v0.78.0。崖の向こうの、斜面の岩。無ければ真上）。根元の中心を軸に、向きを決めた後で傾ける */
+  tilt?: readonly [number, number, number];
+  /** 色の倍率（v0.78.0。無ければ 1） */
+  tint?: readonly [number, number, number];
+  /** 形の細かさ（v0.78.0。0 = 粗い形。無ければ 1） */
+  lod?: 0 | 1;
 }
 
 /** 輪郭の点の、原点からのいちばん遠い所（横に sx、奥に sz 伸ばした時。向きによらない） */
@@ -185,24 +191,44 @@ export function placeBigRock(rng: SeededRng, r: { x: number; z: number; r: numbe
   return { id: pick.id, x: r.x, z: r.z, yaw: rng.next() * Math.PI * 2, sx: pick.sx, sy: pick.sy, sz: pick.sz };
 }
 
-/** 置いた岩を、1 つの形にまとめる（描画 1 回。法線は置いた後に作り直す。図の位置と混ぜ方は、置く前の向きのまま） */
+const UP = new Vector3(0, 1, 0);
+
+/** 置いた岩の傾き（無ければ null）。out へ入れて返す */
+export function rockTilt(p: RockPlacement, out: Quaternion): Quaternion | null {
+  return p.tilt ? out.setFromUnitVectors(UP, new Vector3(p.tilt[0], p.tilt[1], p.tilt[2]).normalize()) : null;
+}
+
+/**
+ * 図の形の点 (x, y, z) を、置いた岩の大きさ・向き・傾きで動かした、根元の中心からの差（out へ入れて返す）。
+ * mergeRocks と、崖の向こうの岩の根元の高さ（src/render/exteriorFlora.ts）が、同じ計算を使う。
+ */
+export function rockOffset(p: RockPlacement, tilt: Quaternion | null, x: number, y: number, z: number, out: Vector3): Vector3 {
+  const c = Math.cos(p.yaw), s = Math.sin(p.yaw);
+  const sx = x * p.sx, sz = z * p.sz;
+  out.set(sx * c + sz * s, y * p.sy - 0.03, -sx * s + sz * c);
+  return tilt ? out.applyQuaternion(tilt) : out;
+}
+
+/** 置いた岩を、1 つの形にまとめる（描画 1 回。法線は置いた後に作り直す。図の位置と混ぜ方は、置く前の向きのまま。v0.78.0: 傾き・色の倍率・粗い形） */
 export function mergeRocks(list: readonly RockPlacement[]): BufferGeometry {
   const names = ['position', 'color', 'uvF', 'uvS', 'uvT', 'wts'] as const;
   const out: Record<(typeof names)[number], number[]> = { position: [], color: [], uvF: [], uvS: [], uvT: [], wts: [] };
   const index: number[] = [];
+  const quat = new Quaternion(), v = new Vector3();
   for (const p of list) {
-    const g = rockArtGeometry(rockArt(p.id));
+    const g = rockArtGeometry(rockArt(p.id), p.lod ?? 1);
     const base = out.position.length / 3;
     const pos = g.getAttribute('position');
-    const c = Math.cos(p.yaw), s = Math.sin(p.yaw);
+    const tilt = rockTilt(p, quat);
     for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i) * p.sx, y = pos.getY(i) * p.sy, z = pos.getZ(i) * p.sz;
-      out.position.push(p.x + x * c + z * s, y - 0.03 + (p.y ?? 0), p.z - x * s + z * c);
+      rockOffset(p, tilt, pos.getX(i), pos.getY(i), pos.getZ(i), v);
+      out.position.push(p.x + v.x, v.y + (p.y ?? 0), p.z + v.z);
     }
     for (const nm of names) {
       if (nm === 'position') continue;
       const at = g.getAttribute(nm);
-      for (let i = 0; i < at.count * at.itemSize; i++) out[nm].push((at.array as Float32Array)[i]!);
+      const k = nm === 'color' ? p.tint : undefined;
+      for (let i = 0; i < at.count * at.itemSize; i++) out[nm].push((at.array as Float32Array)[i]! * (k ? k[i % 3]! : 1));
     }
     const idx = g.getIndex()!;
     for (let i = 0; i < idx.count; i++) index.push(base + idx.getX(i));
