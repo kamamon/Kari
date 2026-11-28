@@ -1289,7 +1289,7 @@ export class BaseScreen {
     let ready = 0;
     for (const [series, list] of groups) {
       const species = c.monsters.get(`monster.${series.split('.')[1] ?? ''}`)?.name ?? '';
-      const label = series === 'series.frostald' ? '氷冠獣シリーズ' : series === 'series.spinegale' ? '疾棘竜シリーズ' : (nameOf(recipeResult(list[0]!)).split('の')[0] ?? series);
+      const label = series === 'series.venolka' ? '毒羽竜シリーズ' : series === 'series.frostald' ? '氷冠獣シリーズ' : series === 'series.spinegale' ? '疾棘竜シリーズ' : (nameOf(recipeResult(list[0]!)).split('の')[0] ?? series);
       const box = el('details', 'forge-series');
       box.dataset.series = series;
       const head = el('summary');

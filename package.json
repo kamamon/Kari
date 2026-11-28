@@ -9,9 +9,9 @@
   },
   "scripts": {
     "spinegale:build": "node tools/spinegale/ensure.mjs",
-    "predev": "npm run spinegale:build && npm run frostald:build",
-    "prebuild": "npm run spinegale:build && npm run frostald:build",
-    "pretest": "npm run spinegale:build && npm run frostald:build",
+    "predev": "npm run spinegale:build && npm run frostald:build && npm run venolka:build",
+    "prebuild": "npm run spinegale:build && npm run frostald:build && npm run venolka:build",
+    "pretest": "npm run spinegale:build && npm run frostald:build && npm run venolka:build",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
@@ -34,9 +34,10 @@
     "hunter:masks": "python3 tools/hunter-masks.py",
     "design:doc": "python3 tools/design-doc/build.py tools/out/design-v2.html docs/design-v2/monsters && node tools/design-doc/pdf.mjs tools/out/design-v2.html docs/source/VEILBOUND_HUNTERS_design_v2.0.pdf",
     "publish:pages": "bash tools/publish-pages.sh",
-    "preassets:validate": "npm run spinegale:build && npm run frostald:build",
+    "preassets:validate": "npm run spinegale:build && npm run frostald:build && npm run venolka:build",
     "frostald:build": "node tools/frostald/ensure.mjs",
-    "frostald:master": "npm run frostald:build && node tools/frostald/ensure.mjs --master --install"
+    "frostald:master": "npm run frostald:build && node tools/frostald/ensure.mjs --master --install",
+    "venolka:build": "node tools/venolka/ensure.mjs"
   },
   "dependencies": {
     "three": "0.187.0"
