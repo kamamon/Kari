@@ -26,6 +26,7 @@ export interface MonsterPartState {
 
 export interface MonsterState {
   spinegale?: { stamina: number; remaining: number; max: number; restTicks: number; rank: number };
+  frostald?: { charge:number; capacity:number; rank:number };
   /** フィールドでの移動と休息（フィールドでなければ null） */
   roam: RoamState | null;
   /** 巣で眠っている（攻撃されると起きる） */
@@ -104,6 +105,7 @@ export function createMonster(def: MonsterDef, spawn: { x: number; z: number; ya
   return {
     id,
     def,
+    ...(def.id === 'monster.frostald' ? { frostald: frostaldState(def.frostaldRank ?? 1) } : {}),
     ...(def.id === 'monster.spinegale' ? { spinegale: spinegaleState(def.spinegaleRank ?? 1) } : {}),
     pos,
     prevPos: { ...pos },
@@ -228,6 +230,7 @@ function chooseAction(m: MonsterState, player: PlayerState, ctx: SimCtx): Monste
   const ang = Math.abs(rel);
   let cands = m.def.ai.choices.filter(
     (c) =>
+      (!m.frostald || (m.frostald.charge >= frostCost(c.actionId) && (m.frostald.rank > 1 || !c.actionId.includes('.ice_sweep_')) && (m.frostald.rank > 2 || !c.actionId.endsWith('.ice_burst')))) &&
       (!m.spinegale || m.spinegale.rank >= 2 || !c.actionId.endsWith('.triple_dash')) &&
       dist >= c.minDist &&
       dist <= c.maxDist &&
@@ -259,7 +262,13 @@ function spinegaleState(rank: number) {
   return { stamina: max, remaining: 0, max, restTicks: [600,540,480][i]!, rank: i+1 };
 }
 function sgFatigueAction(id: string | undefined): boolean { return !!id && id.startsWith('monster.spinegale.fatigue_'); }
+const FA_PREFIX='monster.frostald.';
+const FA_COST:Record<string,number>={ice_breath:30,ice_sweep_l:35,ice_sweep_r:35,ice_burst:45,slide:8};
+function frostCost(id:string):number { return FA_COST[id.slice(FA_PREFIX.length)]??0; }
+function frostaldState(rank:number) { const i=Math.max(0,Math.min(2,rank-1));const capacity=[100,120,140][i]!;return {charge:capacity,capacity,rank:i+1}; }
+function maneBroken(m:MonsterState):boolean { const i=m.def.parts.findIndex(p=>p.id==='mane');return i>=0 && !!m.parts[i]?.broken; }
 function begin(m: MonsterState, actionId: string, ctx: SimCtx): void {
+  if(m.frostald)m.frostald.charge=Math.max(0,m.frostald.charge-frostCost(actionId));
   if (m.spinegale) {
     const cost = SG_COST[actionId.slice('monster.spinegale.'.length)] ?? 0;
     m.spinegale.stamina = Math.max(0, m.spinegale.stamina - cost * (m.enraged ? 1.2 : 1));
@@ -301,6 +310,8 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   }
 
   if (m.captured) return;
+  const fa = m.frostald;
+  if(fa && maneBroken(m)){fa.capacity=Math.min(fa.capacity,[55,65,75][fa.rank-1]!);fa.charge=Math.min(fa.charge,fa.capacity);}
   const sg = m.spinegale;
   if (sg && sg.remaining === 0 && sgFatigueAction(m.action?.def.actionId)) m.action = null;
   if (sg && sg.remaining === 0 && sg.stamina <= 20 && !m.action && m.aware && m.aiEnabled) sg.remaining = sg.restTicks;
@@ -372,7 +383,9 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   const active = m.aiEnabled && sameArea && player.mode !== 'dead' && dist <= def.ai.aggroRange;
 
   if (!m.action) {
-    if (m.pendingRoar && def.rage) {
+    if (fa && active && fa.charge < 25) {
+      begin(m,FA_PREFIX+'recharge',ctx);
+    } else if (m.pendingRoar && def.rage) {
       m.pendingRoar = false;
       begin(m, def.rage.actionId, ctx);
     } else {
@@ -459,7 +472,10 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
     }
   }
   for (const hz of adef.hazards ?? []) {
-    if (hz.tick === t) ctx.spawnHazards(hz, player.pos, hz.origin ? toWorld(fromArr(hz.origin), m.pos, m.yaw) : undefined, def);
+    if (hz.tick === t) {
+      const h = fa && maneBroken(m) ? {...hz, count:Math.max(1,Math.ceil(hz.count*.65)),radius:hz.radius*.85,baseDamage:Math.round(hz.baseDamage*.7)} : hz;
+      ctx.spawnHazards(h, player.pos, h.origin ? toWorld(fromArr(h.origin), m.pos, m.yaw) : undefined, def);
+    }
   }
   for (const ev of adef.events) {
     if (ev.tick === t) ctx.emit({ type: 'action_event', actor: m.id, kind: ev.type, id: ev.id, pos: { ...m.pos } });
@@ -468,6 +484,7 @@ export function stepMonster(m: MonsterState, player: PlayerState, ctx: SimCtx): 
   run.advanced = true;
   run.tick++;
   if (run.tick >= adef.durationTicks) {
+    if(fa && adef.actionId===FA_PREFIX+'recharge')fa.charge=fa.capacity;
     m.action = null;
     const [lo, hi] = def.ai.cooldownTicks;
     m.cooldown = Math.round((lo + rngOf(m, ctx).int(hi - lo + 1)) * (rage ? rage.cooldownScale : 1));

@@ -232,7 +232,7 @@ export function buildAreaGroup(map: AreaLook): Group {
   };
   for (const r of map.drawRocks === false ? [] : map.rocks) placed.push({ ...placeBigRock(rng, r, ROCK_REACH), y: rockBase(r) });
   if (placed.length) {
-    const rocks = new Mesh(mergeRocks(placed), rockArtMaterial());
+    const rocks = new Mesh(mergeRocks(placed), landscape?.fieldId==='field.whitefrost' ? imageLambert('frost_ice',{color:0xa6bfd3,vertexColors:true},{gain:1.06}) : rockArtMaterial());
     rocks.castShadow = true;
     rocks.receiveShadow = true;
     rocks.userData.noMerge = true;
@@ -264,12 +264,12 @@ export function buildAreaGroup(map: AreaLook): Group {
     // 外周に沿って高さを変える（v0.50.0。#19 の F06）。段のある里は、段の擁壁とそろえるので変えない
     vary: village ? 0 : low ? 0.12 : 0.26,
   }, rng);
-  const face = new Mesh(cliff.face, cliffArtMaterial());
+  const face = new Mesh(cliff.face, landscape?.fieldId==='field.whitefrost' ? imageLambert('frost_ice',{color:0x9ab9cf,vertexColors:true},{gain:1.08}) : cliffArtMaterial());
   face.castShadow = true;
   face.receiveShadow = true;
   face.userData.noMerge = true;
   face.userData.cliffArt = cliff.pieces.map((p) => p.id);
-  const back = new Mesh(cliff.cap, capMat);
+  const back = new Mesh(cliff.cap, landscape?.fieldId==='field.whitefrost' ? imageLambert('frost_snow',{color:0xe0ebf4,vertexColors:true},{gain:1.04}) : capMat);
   back.receiveShadow = true;
   group.add(face, back);
   // 崖の根元の崩れた岩（歩ける範囲の外）と、大きな岩のまわりの小石（足首より低い）。どちらも依頼 10 の小さな岩の図
@@ -332,7 +332,7 @@ export function buildAreaGroup(map: AreaLook): Group {
 
   // 巣: 壁ぎわに、晶の柱が立つ
   if (map.kind === 'nest') {
-    const crystal = imageLambert('crystal',{color:0xc9a86a,emissive:0x5a3c12,flatShading:true});
+    const crystal = imageLambert('crystal',{color:landscape?.fieldId==='field.whitefrost'?0x96d6ff:0xc9a86a,emissive:landscape?.fieldId==='field.whitefrost'?0x153959:0x5a3c12,flatShading:true});
     const rim = outline ? polyPath(outline.points(), 0, 1) : null;
     for (let i = 0; i < 26; i++) {
       let x: number, z: number;

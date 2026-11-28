@@ -2,7 +2,7 @@
 // カラー付きのモデルには、生成絵から作った明度正規化版を貼って二重の色掛けを抑える。
 import { BufferGeometry, Float32BufferAttribute, MeshLambertMaterial, MeshStandardMaterial, MeshBasicMaterial, RepeatWrapping, type MeshLambertMaterialParameters } from 'three';
 import { loadEnvTexture } from './envArt';
-export const IMAGE_SURFACES=['wood','masonry','roof','bronze','cloth','earth','grass','cliff','bark','moss','plaster','bone','skin','fur','feather','scale','leaf','crystal','water','ivy','waterfall'] as const;
+export const IMAGE_SURFACES=['wood','masonry','roof','bronze','cloth','earth','grass','cliff','bark','moss','plaster','bone','skin','fur','feather','scale','leaf','crystal','water','ivy','waterfall','frost_snow','frost_ice'] as const;
 export type ImageSurface=typeof IMAGE_SURFACES[number];
 export const MATERIAL_DIR='assets/textures/materials/';
 export type ImageOptions={raw?:boolean;gain?:number;bump?:number;animated?:boolean;replaceFallback?:boolean};

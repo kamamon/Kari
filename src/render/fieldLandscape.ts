@@ -37,6 +37,7 @@ const REGIONS:Record<string,[LandscapeStyle,Partial<ProfileSeed>]>={
  'field.coast':['coast',{}],
  'field.ashmine':['cave',{floorColor:0x817362,rock:0x6c6155,sky:SKY(0x808c90,0xaba99d,.43)}],
  'field.icegorge':['alpine',{}],
+ 'field.whitefrost':['alpine',{floor:'frost_snow',floorColor:0xe2edf2,land:0xd3e4ed,rock:0x90b4ce,foliage:0x809b9e,trees:46,stones:80,cover:.025,ridge:27,peak:61,wall:6.6,fog:.0145,sky:SKY(0x88afcf,0xd2e5ef,.48,0xe6faff)}],
  'field.mistforest':['forest',{trees:138,tree:'broadleaf'}],
  'field.emberplateau':['thermal',{floorColor:0x928674,cover:.26,tree:'pine',trees:14,ridge:13}],
  'field.raincliff':['canyon',{floorColor:0x7d8678,land:0x72816e,foliage:0x4c6650,trees:38,fog:.0145,sky:SKY(0x7a929d,0xa9bab5,.31)}],
@@ -69,6 +70,12 @@ export function landscapeProfile(fieldId:string,area:Pick<FieldAreaDef,'id'|'nam
   if(area.id==='a5'){p.land=0x928b6a;p.rock=0x817968;p.trees=26;p.ridge=13;}
   if(area.id==='a6'||area.kind==='nest'){p.land=0x78847a;p.rock=0x66777a;p.trees=20;p.stones=75;p.ridge*=1.2;}
   if(area.id==='a8'){p.trees=20;p.ridge=24;p.peak=41;p.rock=0x777368;}
+ }
+ if(fieldId==='field.whitefrost'){
+  if(area.id==='a3'||area.id==='a7'){p.floor='frost_ice';p.floorColor=0xb2d7ee;p.land=0xd5e7ef;p.water='marsh';p.waterColor=0x6296b4;p.trees=22;}
+  if(area.id==='a4'){p.floor='frost_ice';p.floorColor=0x90c1df;p.rock=0x5e8eae;p.wall=9;p.ridge=37;p.trees=0;p.tree='none';p.fog=.018;}
+  if(area.id==='a6'){p.ridge=36;p.peak=77;p.trees=20;p.fog=.019;p.sky=SKY(0x9fbfda,0xdceaf3,.32,0xe5f6ff);}
+  if(area.kind==='nest'){p.wall=8;p.floorColor=0xc1dce9;p.rock=0x7eadd1;p.trees=0;p.tree='none';}
  }
  return p;
 }
@@ -233,7 +240,7 @@ function distantRidge(input:LandscapeInput,layer:number):Mesh{
 }
 export function buildLandscapeExterior(input:LandscapeInput,s:LandscapeSurface):Group{
  const p=input.profile,b=input.bounds,rng=new SeededRng(p.seed^0xa142c),noise=patchNoise(p.seed^8873),group=new Group();group.name='field-natural-exterior';
- const surface=imageLambert(p.style==='forest'?'moss':p.style==='meadow'?'grass':p.style==='wetland'?'earth':'cliff',{color:0xffffff,vertexColors:true},{gain:1.12});
+ const surface=imageLambert(p.fieldId==='field.whitefrost'?'frost_snow':p.style==='forest'?'moss':p.style==='meadow'?'grass':p.style==='wetland'?'earth':'cliff',{color:0xffffff,vertexColors:true},{gain:1.12});
  const ground=new Mesh(s.outer,surface);ground.name='field-exterior-relief';ground.userData.noMerge=true;group.add(ground);
  if(s.water){const water=new Mesh(s.water,imageLambert('water',{color:p.waterColor,transparent:true,opacity:.92,side:DoubleSide},{raw:true,gain:.93}));water.name='field-exterior-water';water.userData.noMerge=true;group.add(water);}
  const trail=trailGeometry(s);

@@ -39,7 +39,8 @@
       "actions/mitogaron.json",
       "actions/yurtepica.json",
       "actions/hinasalv.json",
-      "actions/spinegale.json"
+      "actions/spinegale.json",
+      "actions/frostald.json"
     ],
     "tracks": [
       "tracks/heavy_blade.json",
@@ -71,13 +72,15 @@
       "tracks/mitogaron.json",
       "tracks/yurtepica.json",
       "tracks/hinasalv.json",
-      "tracks/spinegale.json"
+      "tracks/spinegale.json",
+      "tracks/frostald.json"
     ],
     "curves": [
       "curves.json",
       "curves_player.json",
       "curves_creatures.json",
-      "curves_spinegale.json"
+      "curves_spinegale.json",
+      "curves_frostald.json"
     ],
     "weapons": "weapons.json",
     "monsters": [
@@ -102,7 +105,8 @@
       "monsters/mitogaron.json",
       "monsters/yurtepica.json",
       "monsters/hinasalv.json",
-      "monsters/spinegale.json"
+      "monsters/spinegale.json",
+      "monsters/frostald.json"
     ],
     "maps": [
       "maps/basin_training.json",
@@ -125,7 +129,8 @@
       "maps/heavyfog_survey.json",
       "maps/buriedheat_survey.json",
       "maps/ruststar_survey.json",
-      "maps/deepveil_survey.json"
+      "maps/deepveil_survey.json",
+      "maps/whitefrost_survey.json"
     ],
     "fields": [
       "fields/basin.json",
@@ -147,7 +152,8 @@
       "fields/heavyfog.json",
       "fields/buriedheat.json",
       "fields/ruststar.json",
-      "fields/deepveil.json"
+      "fields/deepveil.json",
+      "fields/whitefrost.json"
     ],
     "player": "player.json",
     "quests": [
@@ -155,17 +161,20 @@
       "quests_creatures.json",
       "quests_herds.json",
       "quests_errands.json",
-      "quests_spinegale.json"
+      "quests_spinegale.json",
+      "quests_frostald.json"
     ],
     "items": [
       "items.json",
       "items_creatures.json",
-      "items_spinegale.json"
+      "items_spinegale.json",
+      "items_frostald.json"
     ],
     "loot": [
       "loot.json",
       "loot_creatures.json",
-      "loot_spinegale.json"
+      "loot_spinegale.json",
+      "loot_frostald.json"
     ],
     "recipes": "recipes.json",
     "ranks": "ranks.json",
@@ -182,7 +191,8 @@
     "skills": "skills.json",
     "equipment": [
       "equipment_series.json",
-      "equipment_spinegale.json"
+      "equipment_spinegale.json",
+      "equipment_frostald.json"
     ],
     "follow": [
       "follow/selvark.json",
@@ -205,7 +215,8 @@
       "follow/yurtepica.json",
       "follow/hinasalv.json",
       "follow/galdros.json",
-      "follow/spinegale.json"
+      "follow/spinegale.json",
+      "follow/frostald.json"
     ],
     "fieldGathering": "field_gathering.json",
     "regionalGathering": "regional_gathering.json"

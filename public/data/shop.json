@@ -516,6 +516,90 @@
     {
       "itemId": "mat.spinegale.sprint_core.r3",
       "price": 1950
+    },
+    {
+      "itemId": "mat.frostald.scale.r1",
+      "price": 55
+    },
+    {
+      "itemId": "mat.frostald.claw.r1",
+      "price": 55
+    },
+    {
+      "itemId": "mat.frostald.mane.r1",
+      "price": 55
+    },
+    {
+      "itemId": "mat.frostald.brine.r1",
+      "price": 55
+    },
+    {
+      "itemId": "mat.frostald.tail.r1",
+      "price": 55
+    },
+    {
+      "itemId": "mat.frostald.bone.r1",
+      "price": 55
+    },
+    {
+      "itemId": "mat.frostald.scale.r2",
+      "price": 99
+    },
+    {
+      "itemId": "mat.frostald.claw.r2",
+      "price": 99
+    },
+    {
+      "itemId": "mat.frostald.mane.r2",
+      "price": 99
+    },
+    {
+      "itemId": "mat.frostald.brine.r2",
+      "price": 99
+    },
+    {
+      "itemId": "mat.frostald.tail.r2",
+      "price": 99
+    },
+    {
+      "itemId": "mat.frostald.bone.r2",
+      "price": 99
+    },
+    {
+      "itemId": "mat.frostald.crown.r2",
+      "price": 216
+    },
+    {
+      "itemId": "mat.frostald.scale.r3",
+      "price": 165
+    },
+    {
+      "itemId": "mat.frostald.claw.r3",
+      "price": 165
+    },
+    {
+      "itemId": "mat.frostald.mane.r3",
+      "price": 165
+    },
+    {
+      "itemId": "mat.frostald.brine.r3",
+      "price": 165
+    },
+    {
+      "itemId": "mat.frostald.tail.r3",
+      "price": 165
+    },
+    {
+      "itemId": "mat.frostald.bone.r3",
+      "price": 165
+    },
+    {
+      "itemId": "mat.frostald.crown.r3",
+      "price": 360
+    },
+    {
+      "itemId": "mat.frostald.core.r3",
+      "price": 1950
     }
   ]
 }
