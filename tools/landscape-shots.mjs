@@ -118,10 +118,14 @@ try{
    },null,{timeout:120000,polling:100});
    const data=await page.evaluate(()=>{
      const app=window.__vh,m=app.sim.monsters.find(x=>x.def.id==='monster.frostald'),rig=app.view.monsterRig;
-     let joints=0,triangles=0,eyeRoughness=null,blueIris=false,roundPupil=false;
+     let joints=0,triangles=0,eyeRoughness=null,blueIris=false,roundPupil=false;const surfaces={};
      rig.root.traverse(o=>{
        if(!o.isSkinnedMesh)return;
        joints=Math.max(joints,o.skeleton.bones.length);triangles+=o.geometry.index.count/3;
+       const material=o.material;
+       if(material?.map&&material.normalMap&&material.roughnessMap&&material.aoMap){
+         surfaces[material.name]={size:material.map.image.width,normal:material.normalMap.image.width,rough:material.roughnessMap.image.width,clearcoat:material.clearcoat??0};
+       }
        if(o.material?.name==='eye'){
          eyeRoughness=o.material.roughness;const color=o.geometry.attributes.color;
          if(color){let r=0,b=0;for(let i=0;i<color.count;i++){r+=color.getX(i);b+=color.getZ(i);}blueIris=b>r*1.5;}
@@ -132,11 +136,17 @@ try{
          if(ys.length){const ratio=(Math.max(...ys)-Math.min(...ys))/(Math.max(...zs)-Math.min(...zs));roundPupil=ratio>.85&&ratio<1.15;}
        }
      });
-     return {quest:app.sim.hunt.quest.id,field:app.sim.field.id,area:app.sim.areaId,hp:m.def.hp,joints,triangles,clips:rig.clips.size,visible:rig.root.visible,eyeRoughness,blueIris,roundPupil};
+     return {quest:app.sim.hunt.quest.id,field:app.sim.field.id,area:app.sim.areaId,hp:m.def.hp,joints,triangles,clips:rig.clips.size,visible:rig.root.visible,eyeRoughness,blueIris,roundPupil,surfaces};
    });
    if(data.field!=='field.whitefrost'||data.joints!==79||data.clips!==56||data.triangles!==(master?2283726:329250)||data.hp!==[1750,3700,6400][rank-1]||!data.blueIris||!data.roundPupil||Math.abs(data.eyeRoughness-.32)>.001)throw Error('Frostald '+JSON.stringify(data));
+   const expected={hide:2048,head_skin:2048,limb_skin:1024,belly_skin:1024,keratin:2048,ice_plate:1024,claw:1024,feather:2048,membrane:1024,mouth:1024};
+   for(const [mat,res] of Object.entries(expected)){
+     const x=data.surfaces[mat],size=master?res:res/2;
+     if(!x||x.size!==size||x.normal!==size||x.rough!==size||!(x.clearcoat>0))throw Error('Frostald texture binding '+mat+' '+JSON.stringify(x));
+   }
    const name=(master?'frostald-master':'frostald-game')+'-r'+rank;
-   await page.screenshot({path:out+name+'.jpg',type:'jpeg',quality:80,timeout:120000});
+   const image=await page.screenshot({path:out+name+'.jpg',type:'jpeg',quality:80,timeout:120000});
+   if(master)console.log('FROSTALD_PBR_JPEG '+image.toString('base64'));
    report.push({name,...data});console.log('FROSTALD_OK '+JSON.stringify(data));
    // Play recharge on the actual displayed model, including the default HD model.
    {

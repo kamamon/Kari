@@ -4,6 +4,7 @@ import numpy as np, math, json, struct, os
 from scipy.ndimage import gaussian_filter
 from scipy.spatial.transform import Rotation as R
 from PIL import Image
+from material_atlas import VERSION as MATERIAL_DESIGN, PROFILES, bake_maps, apply_materials, source_digest
 P=Path(__file__).parent; T=P/'textures';T.mkdir(exist_ok=True)
 LOD=float(os.environ.get('FROST_LOD','1.25'));SUFFIX=os.environ.get('FROST_SUFFIX','game')
 PI=np.pi;rng=np.random.default_rng(281127);N=int(os.environ.get('FROST_TEX','1024'));v,u=np.mgrid[:N,:N].astype(np.float32)/N
@@ -13,21 +14,7 @@ sites=np.array([((i+.5+.5*(j%2)+rng.uniform(-.19,.19))/12,(j+.5+rng.uniform(-.21
 pts=np.concatenate([sites+[a,b] for a in [-1,0,1] for b in [-1,0,1]])
 d,ix=cKDTree(pts).query(np.stack([u,v],-1).reshape(-1,2),k=2,workers=4);d=d.reshape(N,N,2);ix=ix[:,0].reshape(N,N)%144;edge=np.clip((d[:,:,1]-d[:,:,0])*95,0,1).astype(np.float32);center=np.clip(1-d[:,:,0]*13,0,1).astype(np.float32);del d
 HIDE=(.13+.67*np.sin(edge*PI/2)+.18*center)*rng.uniform(.82,1.12,144).astype(np.float32)[ix]
-for mat in ['hide','keratin','membrane','feather','mouth']:
-    if all((T/f'{mat}_{x}.png').is_file() for x in ('basecolor','normal','orm')):continue
-    n=rng.normal(0,1,(N,N)).astype(np.float32);s=gaussian_filter(n,5,mode='wrap');s/=s.std();noise=.015*n+.028*s
-    if mat=='hide':
-        h=np.clip(HIDE+noise,0,1);ao=.78+.22*edge;shade=(.64+.34*np.sqrt(edge))*(.94+.09*center+noise);col=np.array([235,230,218],np.float32)*shade[...,None];rough=.76-.16*h
-    elif mat=='keratin':
-        r=np.sin(2*PI*(u*34+.17*np.sin(v*21)+.04*s));h=.55+.075*r+.04*s;shade=.70+.12*np.sin(PI*v)+.08*r+.06*s;col=np.array([213,230,246])*shade[...,None];ao=.84+.16*h;rough=.44+.10*np.sin(v*PI)
-    elif mat=='membrane':
-        f=.5+.5*np.cos(2*PI*(u*10+.10*np.sin(v*13)));vein=np.exp(-(np.sin(2*PI*(u*12+v*.4+.12*np.sin(v*17)))/.15)**2);h=.38+.28*f+.07*vein+.04*s;a=np.clip(.20+.52*(1-v)+.18*f+noise,0,1);col=np.array([38,64,87])*(1-a[...,None])+np.array([196,231,246])*a[...,None];col*=(1-.12*vein+.035*s)[...,None];ao=.8+.2*h;rough=.59+.06*(1-f)
-    elif mat=='feather':
-        barb=np.sin(2*PI*(v*145+abs(u-.5)*18+.10*np.sin(v*17)));shaft=np.exp(-((u-.5)/.024)**2);h=.43+.07*barb+.25*shaft+.02*s;shade=.76+.09*barb+.09*shaft+.04*s;col=np.array([219,237,249])*shade[...,None];ao=.87+.13*h;rough=np.full_like(h,.69)
-    else:h=.5+.04*s+.02*n;col=np.array([86,47,57])*(.96+noise[...,None]);ao=np.full_like(h,.91);rough=np.full_like(h,.30)
-    gy,gx=np.gradient(h);strength=10*N/1024;normal=np.stack([-strength*gx,-strength*gy,np.ones_like(h)],-1);normal/=np.linalg.norm(normal,axis=-1,keepdims=True);orm=np.stack([np.clip(ao,0,1),rough,np.zeros_like(h)],-1)
-    for suff,a in [('basecolor',col),('normal',(normal*.5+.5)*255),('orm',orm*255)]:Image.fromarray(np.uint8(np.clip(a,0,255))).save(T/f'{mat}_{suff}.png',compress_level=3)
-    del n,s,h,normal,orm,col
+# Keep original HIDE geometry displacement; replace rendered material only.
 
 # Dedicated 79-node quadruped skeleton; rest coordinates in meters, Y up +Z front.
 B=[];J={}
@@ -226,12 +213,22 @@ class GLB:
         self.acc.append(r);return len(self.acc)-1
 
 def main():
+    global M
+    source=P/'material_source';source_hash=source_digest(source)
+    M=apply_materials(M,B)
+    assert set(M)==set(PROFILES)|{'eye','pupil','tooth'},set(M)
+    M={name:M[name] for name in [*PROFILES,'tooth','eye','pupil']}
+    maps=bake_maps(source,T,N,Path(os.environ['FROST_MATERIAL_MASTER']) if os.environ.get('FROST_MATERIAL_MASTER') else None)
     g=GLB();images=[];textures=[];materials=[];prims=[];stats={}
-    def texture(path):images.append({'bufferView':g.view(path.read_bytes()),'mimeType':'image/png','name':path.stem});textures.append({'source':len(images)-1,'sampler':0});return len(textures)-1
+    def texture(path):images.append({'bufferView':g.view(path.read_bytes()),'mimeType':'image/jpeg' if path.suffix=='.jpg' else 'image/png','name':path.stem});textures.append({'source':len(images)-1,'sampler':0});return len(textures)-1
     for mat,parts in M.items():
         mi=len(materials);m={'name':mat,'doubleSided':mat in ['membrane','feather'],'pbrMetallicRoughness':{'metallicFactor':0,'roughnessFactor':.65}}
-        if mat in ['hide','keratin','membrane','feather','mouth']:
-            m['pbrMetallicRoughness'].update(baseColorTexture={'index':texture(T/f'{mat}_basecolor.png')},metallicRoughnessTexture={'index':texture(T/f'{mat}_orm.png')},roughnessFactor=1);m['normalTexture']={'index':texture(T/f'{mat}_normal.png'),'scale':.65};m['occlusionTexture']={'index':m['pbrMetallicRoughness']['metallicRoughnessTexture']['index'],'strength':.55}
+        if mat in PROFILES:
+            m['pbrMetallicRoughness'].update(baseColorTexture={'index':texture(T/f'{mat}_basecolor.jpg')},metallicRoughnessTexture={'index':texture(T/f'{mat}_orm.png')},roughnessFactor=1)
+            m['normalTexture']={'index':texture(T/f'{mat}_normal.png'),'scale':.85 if mat in ('hide','head_skin','limb_skin','belly_skin') else .72}
+            m['occlusionTexture']={'index':m['pbrMetallicRoughness']['metallicRoughnessTexture']['index'],'strength':.65}
+            m['extensions']={'KHR_materials_clearcoat':{'clearcoatFactor':PROFILES[mat]['coat'],'clearcoatRoughnessFactor':.23 if mat in ('keratin','ice_plate','mouth','membrane') else .38}}
+            m['extras']={'sourceAtlas':PROFILES[mat]['source'],'materialDesign':MATERIAL_DESIGN,'maps':maps[mat]}
         else:m['pbrMetallicRoughness'].update(baseColorFactor={'tooth':[.72,.63,.42,1],'eye':[1,1,1,1],'pupil':[.014,.021,.027,1]}[mat],roughnessFactor=.32 if mat=='eye' else .26 if mat=='pupil' else .46)
         materials.append(m);a={k:np.concatenate(x,axis=0) for k,x in parts.items()};
         assert np.max(abs(a['w'].sum(1)-1))<1e-6 and a['j'].max()<len(B);stats[mat]={'vertices':len(a['p']),'triangles':len(a['f'])};attrs={'POSITION':g.accessor(a['p'],'VEC3',target=34962,bounds=True),'NORMAL':g.accessor(a['n'],'VEC3',target=34962),'TEXCOORD_0':g.accessor(a['uv'],'VEC2',target=34962),'JOINTS_0':g.accessor(a['j'],'VEC4',5123,target=34962),'WEIGHTS_0':g.accessor(a['w'],'VEC4',target=34962),'COLOR_0':g.accessor(a['c'],'VEC3',target=34962)};prims.append({'attributes':attrs,'indices':g.accessor(a['f'].ravel(),'SCALAR',5125,target=34963),'material':mi})
@@ -255,7 +252,7 @@ def main():
         if np.max(abs(s))>1e-6:channel(J['body'],'translation',s+rest[J['body']],'VEC3')
         if np.max(abs(r))>1e-6:channel(0,'translation',r,'VEC3')
         animations.append({'name':'fa_'+name,'samplers':sam,'channels':chan,'extras':{'durationTicks':D,'loop':name in LOOP,'hitWindows':ATT.get(name,(0,[]))[1]}})
-    doc={'asset':{'version':'2.0','generator':'Kari Frostald sculpted v4 calm blue eye'},'scene':0,'scenes':[{'nodes':[0,len(B)]}],'nodes':nodes,'skins':[skin],'meshes':[{'name':'Frostald','primitives':prims}],'materials':materials,'textures':textures,'images':images,'samplers':[{'magFilter':9729,'minFilter':9987,'wrapS':10497,'wrapT':10497}],'animations':animations,'bufferViews':g.views,'accessors':g.acc,'buffers':[{'byteLength':len(g.buf)}],'extras':{'status':'procedural skinned sculpt; concept parity unverified','coordinate':'Y up +Z forward metres','monsterId':'monster.frostald','eyeDesign':'calm-blue-v1','stats':stats}}
+    doc={'asset':{'version':'2.0','generator':'Kari Frostald v5 image-derived PBR calm blue eye'},'extensionsUsed':['KHR_materials_clearcoat'],'scene':0,'scenes':[{'nodes':[0,len(B)]}],'nodes':nodes,'skins':[skin],'meshes':[{'name':'Frostald','primitives':prims}],'materials':materials,'textures':textures,'images':images,'samplers':[{'magFilter':9729,'minFilter':9987,'wrapS':10497,'wrapT':10497}],'animations':animations,'bufferViews':g.views,'accessors':g.acc,'buffers':[{'byteLength':len(g.buf)}],'extras':{'status':'procedural skinned sculpt; concept parity unverified','coordinate':'Y up +Z forward metres','monsterId':'monster.frostald','eyeDesign':'calm-blue-v1','materialDesign':MATERIAL_DESIGN,'materialSourceSha256':source_hash,'materialMaps':maps,'stats':stats}}
     j=json.dumps(doc,separators=(',',':')).encode();j+=b' '*((-len(j))%4);g.buf.extend(b'\0'*((-len(g.buf))%4));out=struct.pack('<4sII',b'glTF',2,12+8+len(j)+8+len(g.buf))+struct.pack('<I4s',len(j),b'JSON')+j+struct.pack('<I4s',len(g.buf),b'BIN\0')+g.buf;(P/f'frostald_{SUFFIX}.glb').write_bytes(out)
-    manifest={'joints':len(B),'animationClips':len(CLIPS),'materials':len(M),'vertices':sum(x['vertices'] for x in stats.values()),'triangles':sum(x['triangles'] for x in stats.values()),'stats':stats,'clips':[{'name':x['name'],**x['extras']} for x in animations],'rig':[{'name':n,'parent':B[p][0] if p>=0 else None,'restM':xyz.tolist()} for n,p,xyz in B]};(P/('model_manifest.json' if SUFFIX=='v2' else f'model_manifest_{SUFFIX}.json')).write_text(json.dumps(manifest,indent=2));print({k:manifest[k] for k in ['joints','animationClips','materials','vertices','triangles']});print('GLB',len(out))
+    manifest={'joints':len(B),'animationClips':len(CLIPS),'materials':len(M),'materialDesign':MATERIAL_DESIGN,'materialSourceSha256':source_hash,'materialMaps':maps,'vertices':sum(x['vertices'] for x in stats.values()),'triangles':sum(x['triangles'] for x in stats.values()),'stats':stats,'clips':[{'name':x['name'],**x['extras']} for x in animations],'rig':[{'name':n,'parent':B[p][0] if p>=0 else None,'restM':xyz.tolist()} for n,p,xyz in B]};(P/('model_manifest.json' if SUFFIX=='v2' else f'model_manifest_{SUFFIX}.json')).write_text(json.dumps(manifest,indent=2));print({k:manifest[k] for k in ['joints','animationClips','materials','vertices','triangles']});print('GLB',len(out))
 if __name__=='__main__':main()
