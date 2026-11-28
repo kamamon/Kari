@@ -1,123 +1,123 @@
 {
   "skin": {
     "file": "skin.webp",
-    "sourceBoard": "フロストアルド皮膚素材アトラス.png",
+    "sourceBoard": "氷晶の巨獣フロストアルド.png",
     "sourceSize": [
       1448,
       1086
     ],
     "crop": [
-      546,
-      424,
-      774,
-      624
+      538,
+      433,
+      649,
+      579
     ],
     "nativeSize": [
-      228,
-      200
+      111,
+      146
     ],
-    "sha256": "53959ed3df84242ce58bc3985638a421cbbd37a551d371d495443ee48963e3b0",
-    "originalCropSha256": "39458a41f242af757428e9164117f2546a087cb534a23c7f364bdaa14d639b11"
+    "sha256": "9bda99b89ab4721bdaa869c4b64660a19281d64773902a37f9eee067f2e4edea",
+    "originalCropSha256": "da6a4a08fc5fd032dff9b9a09aecad74111017f60837a0827c87b20850be9b8f"
   },
   "belly": {
     "file": "belly.webp",
-    "sourceBoard": "フロストアルド皮膚素材アトラス.png",
+    "sourceBoard": "氷の巨獣フロスタルド.png",
     "sourceSize": [
       1448,
       1086
     ],
     "crop": [
-      296,
-      424,
-      513,
-      624
+      720,
+      691,
+      926,
+      856
     ],
     "nativeSize": [
-      217,
-      200
+      206,
+      165
     ],
-    "sha256": "8c7e4bfda57b07f5d6f56074117478dbef8501bca813c287ae12423a2567f181",
-    "originalCropSha256": "c3392595ab03e485989850bd798f3f28c6683658bfcc127b18e635df0354d41b"
+    "sha256": "8dde8a9d22baef3cd7c96b51a32abec9e683a9255981fba73ac6e9a404f5f471",
+    "originalCropSha256": "ef9f8d46ffd77194e6c76ecbd622103624f77ce3b254a06b37d91fa3ae95ac5e"
   },
   "head": {
     "file": "head.webp",
-    "sourceBoard": "フロストアルド皮膚素材アトラス.png",
+    "sourceBoard": "氷の巨獣フロスタルド.png",
     "sourceSize": [
       1448,
       1086
     ],
     "crop": [
-      1146,
-      44,
-      1426,
-      174
+      260,
+      406,
+      418,
+      465
     ],
     "nativeSize": [
-      280,
-      130
+      158,
+      59
     ],
-    "sha256": "8f8fd1a81445f54e82e40b39e4005ef080d4b435e20378176f1779c272343b1f",
-    "originalCropSha256": "faedc40b0c359fa1543ed697c5d52b88c62872ab2a24081e8ec90937fd37b52a"
+    "sha256": "b0fe85bf262d42a27167cdf7d4c833306d66b6acf7c5fdab31843e0d996b789b",
+    "originalCropSha256": "2dda0d96827f7d32b5ff80689cd43cd49e51ecab6ff1266d0114491daba474f0"
   },
   "wet": {
     "file": "wet.webp",
-    "sourceBoard": "フロストアルド皮膚素材アトラス.png",
+    "sourceBoard": "氷晶の巨獣フロストアルド.png",
     "sourceSize": [
       1448,
       1086
     ],
     "crop": [
-      805,
-      424,
+      955,
+      591,
       1016,
-      624
+      643
     ],
     "nativeSize": [
-      211,
-      200
+      61,
+      52
     ],
-    "sha256": "8372a424615e5726c49305daab095c613eda19a28a9ca61a8a63c6013b727b71",
-    "originalCropSha256": "73034699161cd95840729e41ea564d62e05f8ee5ba4a20c7fc92b2ef5d7e852c"
+    "sha256": "801b7b5e9174d564b0a2b548ea53d578bd78209777db3630e181e4e10e190155",
+    "originalCropSha256": "be9d4942339eaffc6608a431753f9b52931c107f21a1303a1864ab5ecd82a61a"
   },
   "ice": {
     "file": "ice.webp",
-    "sourceBoard": "フロストアルド氷晶マテリアルアトラス.png",
+    "sourceBoard": "氷の巨獣フロスタルド.png",
     "sourceSize": [
       1448,
       1086
     ],
     "crop": [
-      353,
-      342,
-      482,
-      478
+      770,
+      194,
+      946,
+      301
     ],
     "nativeSize": [
-      129,
-      136
+      176,
+      107
     ],
-    "sha256": "7f52f6fe5f40835819b7e1b50b15fb90d1be9d87383cd467b9035a301cb529da",
-    "originalCropSha256": "0aa3cb552c9a20bbdd193bd4a60247375c3c45232cc0889de8f6559e3c3060bd"
+    "sha256": "26a637e1676c6cc3f601a56e8be0bc7da450b1e1f7ef60c8b7597239c3b54c27",
+    "originalCropSha256": "8982ec19f23618897802ed9acaf20a785f1353631c82ea164c2199f39bbec5f0"
   },
   "plate": {
     "file": "plate.webp",
-    "sourceBoard": "フロストアルド氷晶マテリアルアトラス.png",
+    "sourceBoard": "氷晶の巨獣フロストアルド.png",
     "sourceSize": [
       1448,
       1086
     ],
     "crop": [
-      649,
-      343,
-      776,
-      478
+      779,
+      452,
+      873,
+      535
     ],
     "nativeSize": [
-      127,
-      135
+      94,
+      83
     ],
-    "sha256": "16e395022995852f8fe4661c387ed2f73f66a54b0330d9f10444aa7df2766c8b",
-    "originalCropSha256": "5aab0b80d19fb136037328c3df58ce6905a2754958b437a8d6bdd6170d1f36ee"
+    "sha256": "9ed653f107e027a18c6bffa6319e73001429217b9cee35eff917239d658ef990",
+    "originalCropSha256": "43c701f2fc6785635bc6605eef4ced7b34309638e87dc73627b1570402a425f5"
   },
   "claw": {
     "file": "claw.webp",
@@ -141,43 +141,43 @@
   },
   "mane": {
     "file": "mane.webp",
-    "sourceBoard": "フロストアルド素材アトラス_氷の質感図鑑.png",
+    "sourceBoard": "氷の巨獣フロスタルド.png",
     "sourceSize": [
       1448,
       1086
     ],
     "crop": [
-      506,
-      225,
       697,
-      364
+      40,
+      885,
+      138
     ],
     "nativeSize": [
-      191,
-      139
+      188,
+      98
     ],
-    "sha256": "4c3d8727453946410ddbc090a4d94e689f31dc0eb0e54430365c1c0f3d0daa87",
-    "originalCropSha256": "9e386db9b77620648d4faebcaa26a474546b6c1cf10fb21b168dfeec220afb54"
+    "sha256": "d6e7594e0d1609e55b05b2271b5423b3a024bc4656cefadccf505c8ea88ecd21",
+    "originalCropSha256": "8bb2311c312f5fd60c3be727163ccd019c62993371820d646295127ec8743de2"
   },
   "frost": {
     "file": "frost.webp",
-    "sourceBoard": "フロストアルド素材アトラス_氷の質感図鑑.png",
+    "sourceBoard": "氷の巨獣フロスタルド.png",
     "sourceSize": [
       1448,
       1086
     ],
     "crop": [
-      468,
-      402,
-      613,
-      542
+      939,
+      150,
+      1076,
+      209
     ],
     "nativeSize": [
-      145,
-      140
+      137,
+      59
     ],
-    "sha256": "47c86958fad7efe19414ee672e6942d057be350b20bc09b3c8958b685bcd810d",
-    "originalCropSha256": "6f2e6dc7b0e695f1ed1fb61d389535fc1b65e4a39e1b2265a394a832fe7323bc"
+    "sha256": "5b003351a8dbd3f20e3eb6040013aa07a1928120e01a960e5fdb1830e9465892",
+    "originalCropSha256": "36c7c898acd33693416619242d565cd6ce3ba6e8d5397eb3dd3c25f400b903d4"
   },
   "mouth": {
     "file": "mouth.webp",

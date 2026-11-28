@@ -1,41 +1,216 @@
 {
   "joints": 79,
   "animationClips": 56,
-  "materials": 8,
-  "vertices": 186375,
-  "triangles": 329250,
-  "stats": {
+  "materials": 13,
+  "sculptDesign": "organic-v6",
+  "materialDesign": "frostald-art-pbr-v2",
+  "materialSourceSha256": "9d58ae83bbb19a422aaf1e63c4d8d0eb38f568565ac5904c37b1a5e04d280946",
+  "materialMaps": {
     "hide": {
-      "vertices": 89843,
-      "triangles": 159026
+      "resolution": 1024,
+      "source": "skin",
+      "roughnessRange": [
+        0.528,
+        0.632
+      ],
+      "clearcoat": 0.12,
+      "meanRGB": [
+        0.4790000021457672,
+        0.503000020980835,
+        0.6159999966621399
+      ],
+      "normalVariation": 0.1682
     },
-    "mouth": {
-      "vertices": 950,
-      "triangles": 1624
+    "head_skin": {
+      "resolution": 1024,
+      "source": "head",
+      "roughnessRange": [
+        0.523,
+        0.598
+      ],
+      "clearcoat": 0.14,
+      "meanRGB": [
+        0.5720000267028809,
+        0.5649999976158142,
+        0.6299999952316284
+      ],
+      "normalVariation": 0.0915
     },
-    "tooth": {
-      "vertices": 9464,
-      "triangles": 16320
+    "limb_skin": {
+      "resolution": 512,
+      "source": "skin",
+      "roughnessRange": [
+        0.489,
+        0.583
+      ],
+      "clearcoat": 0.15,
+      "meanRGB": [
+        0.4620000123977661,
+        0.492000013589859,
+        0.609000027179718
+      ],
+      "normalVariation": 0.1364
+    },
+    "belly_skin": {
+      "resolution": 512,
+      "source": "belly",
+      "roughnessRange": [
+        0.572,
+        0.645
+      ],
+      "clearcoat": 0.08,
+      "meanRGB": [
+        0.44999998807907104,
+        0.4429999887943268,
+        0.47099998593330383
+      ],
+      "normalVariation": 0.0787
     },
     "keratin": {
-      "vertices": 31852,
-      "triangles": 55608
+      "resolution": 1024,
+      "source": "ice",
+      "roughnessRange": [
+        0.299,
+        0.43
+      ],
+      "clearcoat": 0.42,
+      "meanRGB": [
+        0.7179999947547913,
+        0.7749999761581421,
+        0.8640000224113464
+      ],
+      "normalVariation": 0.0774
     },
-    "eye": {
-      "vertices": 1302,
-      "triangles": 2280
+    "ice_plate": {
+      "resolution": 512,
+      "source": "plate",
+      "roughnessRange": [
+        0.377,
+        0.53
+      ],
+      "clearcoat": 0.27,
+      "meanRGB": [
+        0.5429999828338623,
+        0.5929999947547913,
+        0.6990000009536743
+      ],
+      "normalVariation": 0.0767
     },
-    "pupil": {
-      "vertices": 878,
-      "triangles": 1392
+    "claw": {
+      "resolution": 512,
+      "source": "claw",
+      "roughnessRange": [
+        0.32,
+        0.383
+      ],
+      "clearcoat": 0.19,
+      "meanRGB": [
+        0.5040000081062317,
+        0.46399998664855957,
+        0.460999995470047
+      ],
+      "normalVariation": 0.0878
     },
     "feather": {
-      "vertices": 50784,
-      "triangles": 90720
+      "resolution": 1024,
+      "source": "mane",
+      "roughnessRange": [
+        0.568,
+        0.78
+      ],
+      "clearcoat": 0.2,
+      "meanRGB": [
+        0.7250000238418579,
+        0.7789999842643738,
+        0.8659999966621399
+      ],
+      "normalVariation": 0.0741
     },
     "membrane": {
-      "vertices": 1302,
-      "triangles": 2280
+      "resolution": 512,
+      "source": "wet",
+      "roughnessRange": [
+        0.27,
+        0.297
+      ],
+      "clearcoat": 0.23,
+      "meanRGB": [
+        0.4819999933242798,
+        0.47200000286102295,
+        0.5350000262260437
+      ],
+      "normalVariation": 0.0737
+    },
+    "mouth": {
+      "resolution": 512,
+      "source": "mouth",
+      "roughnessRange": [
+        0.124,
+        0.161
+      ],
+      "clearcoat": 0.35,
+      "meanRGB": [
+        0.6209999918937683,
+        0.4359999895095825,
+        0.49799999594688416
+      ],
+      "normalVariation": 0.1069
+    }
+  },
+  "vertices": 202329,
+  "triangles": 386612,
+  "stats": {
+    "hide": {
+      "vertices": 44510,
+      "triangles": 87790
+    },
+    "head_skin": {
+      "vertices": 20403,
+      "triangles": 40495
+    },
+    "limb_skin": {
+      "vertices": 39814,
+      "triangles": 77727
+    },
+    "belly_skin": {
+      "vertices": 36057,
+      "triangles": 70044
+    },
+    "keratin": {
+      "vertices": 11550,
+      "triangles": 20800
+    },
+    "ice_plate": {
+      "vertices": 12012,
+      "triangles": 21632
+    },
+    "claw": {
+      "vertices": 3696,
+      "triangles": 6656
+    },
+    "feather": {
+      "vertices": 16632,
+      "triangles": 29952
+    },
+    "membrane": {
+      "vertices": 988,
+      "triangles": 1700
+    },
+    "mouth": {
+      "vertices": 1691,
+      "triangles": 2924
+    },
+    "tooth": {
+      "vertices": 12012,
+      "triangles": 21632
+    },
+    "eye": {
+      "vertices": 1872,
+      "triangles": 3360
+    },
+    "pupil": {
+      "vertices": 1092,
+      "triangles": 1900
     }
   },
   "clips": [

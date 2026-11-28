@@ -3820,7 +3820,7 @@
       "use": "初級〜上級・白霧氷谷",
       "owner": "ChatGPT（専用メッシュ・リグ・動作・統合）",
       "status": "integrated",
-      "version": 5,
+      "version": 6,
       "path": "assets/models/monsters/frostald_hd/frostald.gltf",
       "sourcePath": "tools/frostald",
       "files": [
@@ -3830,12 +3830,14 @@
         "build_master.py",
         "ensure_assets.py",
         "material_atlas.py",
-        "material_source/provenance.json"
+        "material_source/provenance.json",
+        "organic_sculpt.py",
+        "requirements.txt"
       ],
-      "source": "採用案Aの独自造形・生成素材アトラスから部位別PBRをベイク",
+      "source": "採用原画の肌・氷晶の素材と連続SDFによる実体再造形",
       "terms": "本作オリジナル",
       "dims": "Y上 +Z前",
-      "tris": 2283726,
+      "tris": 2606400,
       "bones": 79,
       "clips": [
         "fa_idle",
@@ -3895,7 +3897,7 @@
         "fa_pant",
         "fa_recharge"
       ],
-      "verification": "三角形数・79骨・56モーション・分割バッファを検査、原画由来10材質のBaseColor/Normal/ORM/clearcoatのロード検査を追加。実機性能・原画同等の視覚評価は未確認。"
+      "verification": "ローカルで2606400/386612三角形・79関節・56モーション、V5とのノード・逆バインド・全キーフレームバイト一致を確認。配信側は実測数と全バッファ・PBRロードを検査する。原画同等の視覚品質とiPhone実機性能は未確認。"
     }
   ]
 }

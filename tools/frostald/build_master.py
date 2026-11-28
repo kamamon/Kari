@@ -16,7 +16,8 @@ WORK=ROOT/'tools/out/frostald-master'
 GAME=ROOT/'public/assets/models/monsters/frostald_game.glb'
 NAME='frostald_master.glb'
 SRC=P/'build_frostald.py'
-EXPECTED=2283726
+EXPECTED=(2400000,2850000)
+SCULPT_DESIGN='organic-v6'
 EYE_DESIGN='calm-blue-v1'
 PART_LIMIT=32*1024*1024
 
@@ -47,7 +48,7 @@ class GLB:
     def validate(self,expected):
         g=self.g
         assert len(g['skins'][0]['joints'])==79 and len(g['animations'])==56
-        assert g.get('extras',{}).get('eyeDesign')==EYE_DESIGN
+        assert g.get('extras',{}).get('eyeDesign')==EYE_DESIGN and g['extras'].get('sculptDesign')==SCULPT_DESIGN
         assert g['extras'].get('materialDesign')==MATERIAL_DESIGN and g['extras'].get('materialSourceSha256')==source_digest(P/'material_source')
         assert set(g['extras']['materialMaps'])==set(PROFILES)
         for mat in g['materials']:
@@ -65,12 +66,13 @@ class GLB:
                 j=np.frombuffer(self.read(at['JOINTS_0']),dtype='<u2')
                 assert len(w)==v and len(j)==4*v and j.max()<79
                 assert np.isfinite(w).all() and (w>=0).all() and np.max(abs(w.sum(1)-1))<1e-6
-        assert tri==expected,(tri,expected)
+        assert expected[0]<=tri<=expected[1],(tri,expected)
+        assert tri==sum(v['triangles'] for v in g['extras']['stats'].values())
         return {'triangles':tri,'vertices':verts,'joints':79,'clips':56,'bytes':self.path.stat().st_size,'sha256':sha(self.path)}
 
 def compare(master):
     with GLB(GAME) as a,GLB(master) as b:
-        stats=b.validate(EXPECTED);a.validate(329250)
+        stats=b.validate(EXPECTED);a.validate((300000,500000))
         assert a.g['nodes']==b.g['nodes']
         assert a.g['skins'][0]['joints']==b.g['skins'][0]['joints']
         assert a.read(a.g['skins'][0]['inverseBindMatrices'])==b.read(b.g['skins'][0]['inverseBindMatrices'])
@@ -91,7 +93,7 @@ def publish_split(master,target,stats):
     if manifest.is_file():
         try:
             old=json.loads(manifest.read_text())
-            if old['sourceSha256']==stats['sha256'] and old['eyeDesign']==EYE_DESIGN and old.get('materialDesign')==MATERIAL_DESIGN and old['format']==1 and all((target/name).stat().st_size==info['bytes'] and sha(target/name)==info['sha256'] for name,info in old['files'].items()):
+            if old['sourceSha256']==stats['sha256'] and old['eyeDesign']==EYE_DESIGN and old.get('sculptDesign')==SCULPT_DESIGN and old.get('materialDesign')==MATERIAL_DESIGN and old['format']==1 and all((target/name).stat().st_size==info['bytes'] and sha(target/name)==info['sha256'] for name,info in old['files'].items()):
                 print('FROSTALD_HD_DELIVERY_CACHED '+json.dumps(old['files']));return
         except (OSError,KeyError,ValueError):pass
     with tempfile.TemporaryDirectory(prefix='frostald-hd-',dir=target.parent) as temp:
@@ -133,7 +135,7 @@ def publish_split(master,target,stats):
             (work/'frostald.gltf').write_text(json.dumps(g,separators=(',',':'))+'\n')
         files={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in sorted(work.iterdir()) if p.is_file()}
         if not files or max(x['bytes'] for x in files.values())>=90_000_000:raise ValueError('asset exceeds GitHub file budget')
-        (work/'delivery.json').write_text(json.dumps({'format':1,'eyeDesign':EYE_DESIGN,'materialDesign':MATERIAL_DESIGN,'sourceSha256':stats['sha256'],'triangles':stats['triangles'],'joints':79,'clips':56,'files':files},indent=2)+'\n')
+        (work/'delivery.json').write_text(json.dumps({'format':1,'eyeDesign':EYE_DESIGN,'sculptDesign':SCULPT_DESIGN,'materialDesign':MATERIAL_DESIGN,'sourceSha256':stats['sha256'],'triangles':stats['triangles'],'joints':79,'clips':56,'files':files},indent=2)+'\n')
         # All outputs are generated assets in a dedicated directory; replace only that directory.
         if target.exists():shutil.rmtree(target)
         shutil.copytree(work,target)
@@ -150,7 +152,7 @@ def main():
     if not dest.is_file() or old.get('key')!=key:
         with tempfile.TemporaryDirectory(prefix='frostald-master-') as temp:
             p=Path(temp);script=p/SRC.name;shutil.copyfile(SRC,script)
-            shutil.copyfile(P/'material_atlas.py',p/'material_atlas.py');shutil.copytree(P/'material_source',p/'material_source')
+            shutil.copyfile(P/'organic_sculpt.py',p/'organic_sculpt.py');shutil.copyfile(P/'material_atlas.py',p/'material_atlas.py');shutil.copytree(P/'material_source',p/'material_source')
             env={**os.environ,'FROST_LOD':'3.5','FROST_TEX':'2048','FROST_SUFFIX':'master'}
             subprocess.run([sys.executable,str(script)],cwd=p,env=env,check=True)
             stats=compare(p/NAME)

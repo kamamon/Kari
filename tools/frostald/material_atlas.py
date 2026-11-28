@@ -8,7 +8,7 @@ import numpy as np
 from PIL import Image
 from scipy.ndimage import gaussian_filter
 
-VERSION='frostald-art-pbr-v1'
+VERSION='frostald-art-pbr-v2'
 # game delivery map dimensions: 2K main surfaces; smaller details 1K (half for mobile).
 PROFILES={
  'hide':       dict(source='skin', resolution=2048, rough=(.43,.76), height=.58, coat=.12),
@@ -44,6 +44,9 @@ def luma(x):return x[...,0]*.2126+x[...,1]*.7152+x[...,2]*.0722
 def source_digest(source):
     # Invalidate GLB caches when source pixels, provenance or baker change.
     h=hashlib.sha256(Path(__file__).read_bytes())
+    for name in ('organic_sculpt.py','build_frostald.py'):
+        f=Path(__file__).with_name(name)
+        if f.is_file():h.update(f.read_bytes())
     for f in sorted(source.iterdir()):
         if f.is_file():h.update(f.name.encode());h.update(f.read_bytes())
     return h.hexdigest()
@@ -75,35 +78,26 @@ def build_tile(name,tiles):
     def rep(key,rx=2,ry=2):
         a=tiles[key];ix=(np.arange(s)*rx*len(a)//s)%len(a);iy=(np.arange(s)*ry*len(a)//s)%len(a);return a[iy[:,None],ix[None,:]]
     color=rep(PROFILES[name]['source'],1,1);wet=np.zeros((s,s),np.float32);frost=wet.copy()
-    if name=='hide':
-        # Axial tube is head->tail; its +V tangent is local -Z, and sin(U angle)>0 is ventral.
-        # Repeat different image patches around its circumference, blend actual pale belly scales.
-        dorsal=rep('skin',6,2);belly=rep('belly',6,2);wet_tile=rep('wet',6,2)
-        sin=np.sin(u*2*np.pi);ventral=smooth(.28,.74,sin)
-        wet=np.broadcast_to((1-ventral)*(.12+.35*np.abs(np.cos(u*2*np.pi)))*(.8+.2*np.cos(v*2*np.pi)),(s,s)).copy()
-        dorsal=dorsal*(1-.22*wet[...,None])+wet_tile*.22*wet[...,None]
-        color=dorsal*(1-ventral[...,None])+belly*ventral[...,None]
-        f=smooth(.48,.80,luma(rep('frost',6,3)))
-        frost=(1-ventral)*smooth(.28,.88,-sin)*f*.36
-    elif name=='head_skin':
-        color=.88*color+.12*rep('skin',1,1);wet=.22+.22*smooth(.35,.8,luma(color));frost=smooth(.58,.88,luma(rep('frost',2,2)))*.10
-    elif name=='limb_skin':
-        wet=.16+.37*smooth(.32,.72,luma(rep('wet',1,1)));color=color*(1-.12*wet[...,None])+rep('wet',1,1)*.12*wet[...,None]
-        frost=smooth(.58,.88,luma(rep('frost',2,2)))*.12
-    elif name=='belly_skin':wet=.18+.13*smooth(.4,.8,luma(color))
+    # V6 regional metre-scaled UVs; keep scale size natural rather than repeating six stripes.
+    if name in ('hide','head_skin','limb_skin','belly_skin'):
+        color=color*.94+.055
+        if name=='head_skin':color=.63*color+.37*rep('skin',1,1)
+        if name=='limb_skin':color=.82*color+.18*rep('plate',1,1)
+        wet=.18+.24*smooth(.25,.72,luma(color))
+        frost=smooth(.55,.87,luma(rep('frost',2,2)))*(.10 if name!='belly_skin' else .025)
+        color=color*(1-.18*frost[...,None])+np.array([.87,.92,.97],np.float32)*(.18*frost[...,None])
     elif name in ('keratin','ice_plate','feather'):
-        # Rime accumulates toward the tips of the UV-oriented plates and mane.
-        flecks=rep('frost',2,3);tip=smooth(.36,.92,v)
-        frost=smooth(.46,.83,luma(flecks))*(.13+.67*tip)*(1.0 if name=='feather' else .75)
-        color=color*(1-.16*frost[...,None])+np.array([.89,.94,.98],np.float32)*(.16*frost[...,None])
-        wet=.30*(1-frost)
+        raw=color.copy();tip=smooth(.12,.93,v);edge=smooth(.48,.95,np.abs(2*u-1))
+        frost=np.broadcast_to(.14+.48*tip+.22*edge,(s,s)).copy()
+        f=smooth(.40,.82,luma(rep('frost',2,2)));frost=np.clip(frost+.12*f,0,1)
+        whiten=.22+.56*frost if name in ('feather','keratin') else .12+.34*frost
+        raw=.35*raw+.65*rep('ice',1,1) if name=='feather' else raw
+        color=raw*(1-whiten[...,None])+np.array([.92,.96,1.],np.float32)*whiten[...,None]
+        wet=.28*(1-frost)
     elif name=='membrane':
-        # The brine sac is wet skin, not an opaque ice crystal.
-        color=.65*rep('head')+.35*rep('wet');wet=np.full((s,s),.82,np.float32)
-    elif name=='mouth':wet=.78+.16*smooth(.35,.72,luma(color))
-    elif name=='claw':wet=.2+.2*smooth(.32,.8,luma(color))
-    if name in ('hide','head_skin','limb_skin'):
-        color=color*(1-.19*frost[...,None])+rep('frost',4,4)*(.19*frost[...,None])
+        color=.58*rep('head')+.42*rep('wet');wet=np.full((s,s),.76,np.float32)
+    elif name=='mouth':wet=.80+.12*smooth(.35,.72,luma(color))
+    elif name=='claw':wet=.18+.26*smooth(.32,.8,luma(color))
     return np.clip(color,0,1),np.broadcast_to(wet,(s,s)).copy(),np.broadcast_to(frost,(s,s)).copy()
 
 def save_jpeg(path,a):Image.fromarray(np.uint8(np.clip(a,0,1)*255+.5)).save(path,quality=94,subsampling=0,optimize=True)
@@ -123,9 +117,9 @@ def bake_maps(source,out,quality=2048,master=None):
         wet=np.clip(resize_float(w,n),0,1);frost=np.clip(resize_float(f,n),0,1)
         lum=luma(c);mid=gaussian_filter(lum,max(2,n/96),mode='wrap');low=gaussian_filter(lum,max(4,n/30),mode='wrap')
         # Approximate height: combine scale contours and fine grain, not a recovered real depth map.
-        contrast=(lum-mid);height=np.clip(.52+1.55*(lum-low)+.65*contrast,0,1)
+        contrast=(lum-mid);height=np.clip(.52+1.25*(lum-low)+.42*contrast,0,1)
         rng=np.random.default_rng(9137+i);detail=rng.standard_normal((n,n),dtype=np.float32);detail=gaussian_filter(detail,.65,mode='wrap');detail/=max(1e-5,float(detail.std()))
-        height=np.clip(gaussian_filter(height,.75,mode='wrap')+detail*.014+frost*.075,0,1)
+        height=np.clip(gaussian_filter(height,.75,mode='wrap')+detail*.007+frost*.055,0,1)
         # Wrap-aware gradient avoids a discontinuity on the tiled surface. glTF tangent normal.
         strength=p['height']*n/60
         gx=(np.roll(height,-1,axis=1)-np.roll(height,1,axis=1))*.5*strength
