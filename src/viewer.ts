@@ -33,6 +33,7 @@ import { groundedHeavyAttack } from './render/heavyBodyMotion';
 import { WEAPON_STANCES } from './render/weaponClipSpecs';
 import { motionSetOf, useMotionSet } from './render/motionSet';
 import { buildLongBlade, buildTwinBlade, buildWarMaul } from './render/forgedWeapons';
+import { buildGunlance, buildHeavyBowgun, buildHuntingHorn, buildLightBowgun } from './render/extraWeaponModels';
 import { withShell } from './render/shellPlates';
 import {startHubRoom} from './render/hubRoom';
 
@@ -129,6 +130,11 @@ stand('longBlade', up(buildLongBlade(), 'long_blade'), 2.0, 0.29, Math.PI / 2);
 stand('bow', up(buildBow(), 'ring_bow'), 2.5, 0.75, Math.PI / 2);
 stand('arrow', buildArrow(), 2.9, 0.4, Math.PI / 2);
 stand('quiver', buildQuiver(), 3.2, 0.303, Math.PI / 2);
+// v0.80.0: 響笛・銃槍・軽弩・重弩（仮の形。extraWeaponModels.ts）。軽弩・重弩は、横から見えるように 90 度回す（+Z = 上の側が右を向く）
+stand('huntingHorn', up(buildHuntingHorn(), 'hunting_horn'), 3.8, 0.26, Math.PI / 2);
+stand('gunlance', up(buildGunlance(), 'gunlance'), 4.4, 0.35, Math.PI / 2);
+stand('lightBowgun', up(buildLightBowgun(), 'light_bowgun'), 5.0, 0.31, Math.PI / 2);
+stand('heavyBowgun', up(buildHeavyBowgun(), 'heavy_bowgun'), 5.6, 0.31, Math.PI / 2);
 
 let glbRoot: Object3D | null = null;
 let glbMixer: AnimationMixer | null = null;

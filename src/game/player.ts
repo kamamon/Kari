@@ -11,6 +11,7 @@ import { Btn, type InputFrame } from './inputFrame';
 import { sampleCurve } from './tracks';
 import type { Circle, World } from './world';
 import type { ErrandTarget } from './errand';
+import { BRACE_MOVE_SCALE, EXTRA_FAMILIES, HORN_STAMINA_REGEN_SCALE, RECITAL_MOVE_SCALE, changeAmmo, extraEvent, isBowgun, makeExtraWeapon, resolveExtra, tickExtra, type ExtraWeaponState } from './extraWeapons';
 
 /**
  * climb = 登攀（v0.44.0。#19 の H07）: 取り付き・登る・登り切る・上から取り付く。その間は登攀が位置を持つ（重力・地面に合わせない）。
@@ -90,6 +91,8 @@ export interface PlayerState {
   /** 見た目用の現在速度 (m/s) */
   moveSpeed: number;
   weaponId: string;
+  /** 響笛・銃槍・軽弩・重弩の、狩りの間だけの状態（v0.80.0。演奏・砲弾・弾。ほかの系統は null）。src/game/extraWeapons.ts */
+  extraWeapon?: ExtraWeaponState | null;
   /**
    * 登攀（v0.44.0）。phase: mount = 地面から壁へ取り付く / down = 上の段から向きを変えて壁へ取り付く / climb = 壁にいる / exit = 上の段へ登り切る。
    * h は登り口の地面からの足の高さ。from は取り付き・登り切りを始めた時の位置と向き
@@ -225,6 +228,7 @@ export function createPlayer(content: Content, spawn: { x: number; z: number; ya
     sprinting: false,
     moveSpeed: 0,
     weaponId,
+    extraWeapon: makeExtraWeapon(fam.id),
     climb: null,
     drop: null,
     land: null,
@@ -316,9 +320,15 @@ function spendStamina(p: PlayerState, amount: number, ctx: SimCtx): void {
   p.staminaDelay = ctx.content.player.staminaRegenDelayTicks;
 }
 
+/** 響笛の旋律「持久」の間の、スタミナの戻りの倍率 */
+function hornRegen(p: PlayerState): number {
+  return p.extraWeapon?.buffKind === 'stamina' && p.extraWeapon.buff > 0 ? HORN_STAMINA_REGEN_SCALE : 1;
+}
+
 /** 回避の行動か（共通の転がる回避と、武器ごとの回避。長尖槍の跳びなど） */
 function isDodgeAction(p: PlayerState, actionId: string, ctx: SimCtx): boolean {
-  return actionId === ctx.content.player.rollActionId || actionId === familyOf(p, ctx.content).actions.dodge;
+  const a = familyOf(p, ctx.content).actions;
+  return actionId === ctx.content.player.rollActionId || actionId === a.dodge || actionId === a.dodgeBack || actionId === a.dodgeIdle;
 }
 
 /** 行動のスタミナの消費。回避は、防具の技能「身軽」で減る（v0.33.0。無敵の区間・動く距離は変えない） */
@@ -335,8 +345,12 @@ function setDemon(p: PlayerState, on: boolean, ctx: SimCtx, reason: 'toggle' | '
   ctx.emit({ type: 'demon', on, reason });
 }
 
-/** いまの状態で実際に出る行動。猛りの間は、系統の demon.swap で替える（同時押しの突き込み → 連ね斬り、入る → 解く） */
+/**
+ * いまの状態で実際に出る行動。猛りの間は、系統の demon.swap で替える（同時押しの突き込み → 連ね斬り、入る → 解く）。
+ * 響笛の演奏・銃槍の砲弾・軽弩と重弩の弾（v0.80.0）は、その状態で替える（演奏の間の音、空なら装填）
+ */
 export function resolveActionId(p: PlayerState, actionId: string, ctx: SimCtx): string {
+  actionId = resolveExtra(p.extraWeapon, actionId);
   if (!p.demon) return actionId;
   return familyOf(p, ctx.content).demon?.swap[actionId] ?? actionId;
 }
@@ -383,10 +397,15 @@ export function startAction(p: PlayerState, actionId: string, ctx: SimCtx): Acti
  * 手で狙う（v0.61.0。2G の弓の照準。#19 の H05。docs/spec.md の 32.27）: 狙える系統（aim）で、抜刀していて、固有ボタンを押していて、
  * 入力に狙いの向きがあり、立っているか主の行動（溜めて射る）の途中の時だけ狙う。狙っている間は体をその向きへ向け、移動の入力を消して返す
  */
+/** 狙ったまま続けられる行動か: 主の行動（環弓の溜めて射る）と、射撃のある行動（軽弩・重弩の射つ・速射。v0.80.0） */
+export function aimsDuring(fam: WeaponFamilyDef, def: ActionDef): boolean {
+  return def.actionId === fam.actions.main || !!def.shoot?.length;
+}
+
 function stepAim(p: PlayerState, inp: InputFrame, fam: WeaponFamilyDef): InputFrame {
   const A = fam.aim;
   const ok = !!A && p.drawn && (inp.held & Btn.Special) !== 0 && inp.aimYaw !== undefined && inp.aimPitch !== undefined && Number.isFinite(inp.aimYaw) && Number.isFinite(inp.aimPitch)
-    && (p.mode === 'free' || (p.mode === 'action' && p.action?.def.actionId === fam.actions.main));
+    && (p.mode === 'free' || (p.mode === 'action' && !!p.action && aimsDuring(fam, p.action.def)));
   if (!ok) {
     p.aim = null;
     return inp;
@@ -621,10 +640,12 @@ function stepAction(p: PlayerState, inp: InputFrame, ctx: SimCtx, depth = 0): vo
       const y = p.yaw + (sp.degrees * DEG) / (sp.to - sp.from);
       p.yaw = Math.atan2(Math.sin(y), Math.cos(y));
     }
+    // 響笛・銃槍・軽弩・重弩（v0.80.0）: 行動の決まる tick に、音・砲弾・弾の状態を変える。出せなかった時（弾が無い・冷却中）は、音と射撃を出さない
+    extraEvent(p.extraWeapon, run, t);
     for (const ev of def.events) {
-      if (ev.tick === t) ctx.emit({ type: 'action_event', actor: p.id, kind: ev.type, id: ev.id, pos: { ...p.pos } });
+      if (ev.tick === t && run.extraAllowed !== false) ctx.emit({ type: 'action_event', actor: p.id, kind: ev.type, id: ev.id, pos: { ...p.pos } });
     }
-    for (const sh of def.shoot ?? []) if (sh.tick === t) ctx.spawnProjectiles(sh, run);
+    for (const sh of def.shoot ?? []) if (sh.tick === t && run.extraAllowed !== false) ctx.spawnProjectiles(sh, run);
     if (def.coat && def.coat.tick === t) toggleCoating(p, ctx);
     p.attackEval = { run, t };
     run.advanced = true;
@@ -983,7 +1004,7 @@ function stepFree(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   let speed: number;
   let turnRate: number;
   if (p.drawn) {
-    speed = fam.drawnMoveSpeed * mag;
+    speed = fam.drawnMoveSpeed * mag * (p.extraWeapon?.brace ? BRACE_MOVE_SCALE : p.extraWeapon?.recital ? RECITAL_MOVE_SCALE : 1);
     turnRate = fam.drawnTurnDegPerSec;
   } else {
     const sprint = (inp.held & Btn.Sprint) !== 0 && !p.exhausted && mag > 0.6 && p.stamina > 0;
@@ -1015,6 +1036,12 @@ function stepGuard(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   }
   // 構えたまま出す技（長尖槍の構え突き。受け返しは保留の組 v056 だけ。v0.59.0）
   if (isGuarding(p, G)) {
+    // 構えたままの同時押し（v0.80.0。銃槍の大砲撃）
+    if (fam.actions.guardCombo && comboIntent(p, fam)) {
+      clearAttackBuffers(p);
+      startAction(p, fam.actions.guardCombo, ctx);
+      return stepAction(p, inp, ctx, 1);
+    }
     for (const [key, id] of [['main', fam.actions.guardMain], ['sub', fam.actions.guardSub]] as const) {
       if (!id || p.buffer[key] <= 0) continue;
       const def = ctx.content.actions.get(id)!;
@@ -1132,6 +1159,10 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   for (const k of ['main', 'sub', 'dodge', 'weapon', 'item', 'special', 'combo'] as const) if (p.buffer[k] > 0) p.buffer[k]--;
   // 主と副を同じ tick に押した（または複合のボタン）: 複合の技を持つ系統では、1 つの命令（combo）。持たない系統では、これまでどおり主と副
   const fam = familyOf(p, ctx.content);
+  // 4 系統（v0.80.0）の状態は、持っている武器の系統に合わせる（武器を替えたら作り直す）
+  const extra = (EXTRA_FAMILIES as readonly string[]).includes(fam.id);
+  if (extra ? p.extraWeapon?.family !== fam.id : !!p.extraWeapon) p.extraWeapon = makeExtraWeapon(fam.id);
+  if (p.extraWeapon) tickExtra(p.extraWeapon, p.drawn, p.mode);
   const both = (inp.pressed & Btn.Main) !== 0 && (inp.pressed & Btn.Sub) !== 0;
   if (fam.actions.combo && ((inp.pressed & Btn.Combo) !== 0 || both)) {
     p.buffer.combo = T.inputBufferTicks;
@@ -1145,8 +1176,11 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   if (inp.pressed & Btn.Weapon) p.buffer.weapon = T.inputBufferTicks;
   if (inp.pressed & Btn.Item) p.buffer.item = T.inputBufferTicks;
   if (inp.pressed & Btn.Special) p.buffer.special = T.inputBufferTicks;
-  // 道具の切り替えは、いつでもできる（使っている途中の道具は変わらない）
-  if (p.items.length > 0) {
+  // 道具の切り替えは、いつでもできる（使っている途中の道具は変わらない）。軽弩・重弩を抜いている間は、同じボタンで弾の種類を選ぶ（v0.80.0。抜刀中は道具を使えない）
+  if (p.extraWeapon && isBowgun(p.extraWeapon) && p.drawn) {
+    if (inp.pressed & Btn.ItemNext) changeAmmo(p.extraWeapon, 1);
+    if (inp.pressed & Btn.ItemPrev) changeAmmo(p.extraWeapon, -1);
+  } else if (p.items.length > 0) {
     if (inp.pressed & Btn.ItemNext) p.itemIndex = (p.itemIndex + 1) % p.items.length;
     if (inp.pressed & Btn.ItemPrev) p.itemIndex = (p.itemIndex + p.items.length - 1) % p.items.length;
   }
@@ -1254,7 +1288,7 @@ export function stepPlayer(p: PlayerState, inp: InputFrame, ctx: SimCtx): void {
   // スタミナ: 消費が終わってから待ち時間を置いて回復（猛りの間は戻らない）
   if (p.mode !== 'dead' && !p.sprinting && !p.demon) {
     if (p.staminaDelay > 0) p.staminaDelay--;
-    else if (p.stamina < T.maxStamina) p.stamina = Math.min(T.maxStamina, p.stamina + (T.staminaRegenPerSec * ctx.gear.staminaRegen) / 60);
+    else if (p.stamina < T.maxStamina) p.stamina = Math.min(T.maxStamina, p.stamina + (T.staminaRegenPerSec * ctx.gear.staminaRegen * hornRegen(p)) / 60);
   }
   if (p.exhausted && p.stamina >= T.sprintRestartStamina) p.exhausted = false;
 }

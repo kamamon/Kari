@@ -42,9 +42,9 @@ describe('刃の状態の決まり（データ）', () => {
     expect(edgeStage(E, 0).id).toBe('dull');
   });
 
-  it('刃の状態があるのは、環弓以外の 6 系統', () => {
+  it('刃の状態があるのは、射る系統（環弓・軽弩・重弩）以外の 8 系統（v0.80.0 から。響笛は打面、銃槍は穂先）', () => {
     const withEdge = [...content.families.values()].filter((f) => f.edge).map((f) => f.id).sort();
-    expect(withEdge).toEqual(['guard_blade', 'heavy_blade', 'long_blade', 'long_lance', 'twin_blades', 'war_maul']);
+    expect(withEdge).toEqual(['guard_blade', 'gunlance', 'heavy_blade', 'hunting_horn', 'long_blade', 'long_lance', 'twin_blades', 'war_maul']);
   });
 
   it('鋭い時は、ガルドロスのどの部位でも弾かれない。並では背殻だけ、鈍いと脚も弾かれる（斬る武器）', () => {

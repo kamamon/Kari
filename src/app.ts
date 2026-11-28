@@ -11,7 +11,8 @@ import { FIELD_GATHER_LABEL } from './data/fieldGathering';
 import { isCarriedLoot, pouchStacks } from './save/classicBox';
 import { Btn, type InputFrame } from './game/inputFrame';
 import { firstMismatch, runReplay } from './game/replay';
-import { familyOf } from './game/player';
+import { aimsDuring, familyOf } from './game/player';
+import { isBowgun } from './game/extraWeapons';
 import { Simulation, type SimOptions } from './game/sim';
 import { GamepadInput } from './input/gamepad';
 import { InputHub } from './input/hub';
@@ -224,7 +225,7 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
     if (this.hub.takePressed() & Btn.Special && touch && A) this.aimLatch = !this.aimLatch;
     if (!touch) this.aimLatch = false;
     const can = !!A && this.place !== 'hub' && pl.drawn && (touch ? this.aimLatch : held)
-      && (pl.mode === 'free' || (pl.mode === 'action' && pl.action?.def.actionId === fam.actions.main));
+      && (pl.mode === 'free' || (pl.mode === 'action' && !!pl.action && aimsDuring(fam, pl.action.def)));
     if (can && !this.aim) this.aim = { yaw: pl.yaw, pitch: AIM_START_PITCH };
     else if (!can && this.aim) {
       // 狙い終わったら、視点を狙っていた向きの背後へ。回避・近接・納刀などで狙えなくなったら、タッチの切り替えも戻す
@@ -876,7 +877,9 @@ export class App implements MenuHost, BaseHost, ResultHost, LooksHost {
       const pl = this.sim.player;
       const stack = pl.items[pl.itemIndex];
       const inHub = this.place === 'hub';
-      this.touch.setHidden(['item', 'itemprev', 'itemnext'], inHub || pl.items.length === 0);
+      this.touch.setHidden(['item'], inHub || pl.items.length === 0);
+      // 軽弩・重弩を抜いている間（v0.80.0）は、道具の送りのボタンで弾の種類を選ぶので、道具を持っていなくても出す
+      this.touch.setHidden(['itemprev', 'itemnext'], inHub || (pl.items.length === 0 && !(pl.drawn && isBowgun(pl.extraWeapon))));
       const fam = familyOf(pl, this.content);
       // 猛り（双剣。v0.54.0）の間は、固有ボタン（解く）と同時押し（連ね斬り）の表示名が替わる
       const labels = pl.demon && fam.labels && fam.demon?.labels ? { ...fam.labels, ...fam.demon.labels } : fam.labels;

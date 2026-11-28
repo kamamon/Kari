@@ -217,12 +217,18 @@ const VENOLKA_ICONS: Record<string,string> = {
   "mat.venolka.crest.r3": "venolka/materials/high_crest.webp",
   "mat.venolka.core.r3": "venolka/materials/high_core.webp"
 };
+/** 系統の影絵がある武器の系統（public/assets/icons/weapon_<系統>.svg） */
+const WEAPON_FAMILY_ICONS: ReadonlySet<string> = new Set(['heavy_blade', 'guard_blade', 'war_maul', 'twin_blades', 'long_blade', 'long_lance', 'ring_bow', 'hunting_horn', 'gunlance', 'light_bowgun', 'heavy_bowgun']);
+
 export function iconUrl(id: string): string | null {
   if(VENOLKA_ICONS[id])return assetUrl('assets/icons/'+VENOLKA_ICONS[id]);
   if(FROSTALD_ICONS[id])return assetUrl('assets/icons/'+FROSTALD_ICONS[id]);
   if (SPINEGALE_ICONS[id]) return assetUrl('assets/icons/'+SPINEGALE_ICONS[id]);
   const f = ITEM_ICONS[id];
-  return f ? assetUrl(`assets/icons/${f}.webp`) : null;
+  if (f) return assetUrl(`assets/icons/${f}.webp`);
+  // 絵の無い武器（里鍛ち〜輝殻・採集の系列）は、系統の影絵（v0.80.0。ChatGPT の #39 の SVG 11 枚）
+  const family = id.startsWith('weapon.') ? id.split('.')[1] : undefined;
+  return family && WEAPON_FAMILY_ICONS.has(family) ? assetUrl(`assets/icons/weapon_${family}.svg`) : null;
 }
 
 /** 文字の前に置くアイコン。絵が無ければ null */

@@ -110,6 +110,9 @@ pelvis 高さ 0.92 / 肩幅 0.37（肩の関節は左右 0.185）/ 上腕 0.29�
 | common_gather_01 | player.common.gather | 90 tick | 狩らない依頼（v0.27.0）の採集。片ひざで摘み、腰の袋へ。72 tick で品が入る。6〜72 tick は回避で止められる |
 | common_mine_01 | player.common.mine | 150 tick | 採掘（v0.27.0）。右手に採掘道具（つるはし。見た目だけ）を持ち、3 回振り下ろし（42・76・110）、しゃがんで拾う。126 tick で品が入る。6〜126 tick は回避で止められる |
 | common_deliver_01 | player.common.deliver | 48 tick | 納品（v0.27.0）。かがんで、両手で納品箱へ入れる。30 tick で納まる |
+| xw_hunting_horn_*（11 本） | player.hunting_horn.* | 36〜102 tick | v0.80.0（D-180）。響笛。**ChatGPT の #39 の候補のまま**（2G を手本にした作り直しは、まだ）。swing_left・swing_right・slam・draw・sheathe は、大槌の動き（wm_swing_01・wm_smash_01・wm_pound_01・wm_draw_01・wm_sheathe_01）の時間を変えたもの。poke・recital_enter・play_note1〜3・recital_exit は、構えから腰と握りを少し動かすだけの身振り |
+| xw_gunlance_*（13 本） | player.gunlance.* | 30〜174 tick | v0.80.0。銃槍。#39 の候補のまま。thrust・thrust2・thrust3・uppercut・guard_thrust・hop・backstep・draw・sheathe は、長尖槍の動き（ll_thrust_01・ll_high_01・ll_guard_thrust_01・ll_hop_01・ll_backstep_01・ll_draw_01・ll_sheathe_01）の時間を変えたもの。shell・wyvern_fire・reload・guard は身振り（撃つ tick に握りを引く） |
+| xw_light_bowgun_*・xw_heavy_bowgun_*（6 本ずつ） | player.light_bowgun.* / player.heavy_bowgun.* | 38〜139 tick | v0.80.0。軽弩・重弩。#39 の候補のまま。構えは、両手で銃を胸の高さに持つ（握りへ両手が届く形を、道具が探す）。fire・rapid_fire・charge_stance・reload・backstep / dodge は身振り。sheathe は背へ納め、draw はその逆回し |
 | dummy_slam_01 | monster.training_dummy.slam | 130 tick | 訓練標的専用 |
 
 いま手続き生成で代用していて、正式素材では clip が必要なもの（台帳の `clipsPlanned`）:

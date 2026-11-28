@@ -712,7 +712,7 @@ const startTraining = async (page, tap = false) => {
   await ctx.close();
 }
 
-// ---- 工房: 7 武器すべての強化（岩殻の〜）----
+// ---- 工房: 11 の武器すべての強化（岩殻の〜。v0.80.0 から 11）----
 {
   const { ctx, page } = await open({ width: 1280, height: 720 }, false);
   await page.click('#boot-start');
@@ -725,12 +725,12 @@ const startTraining = async (page, tap = false) => {
   await page.click('#base-data button.go');
   check('実機の保存データ（v0.7.0）を取り込める。太刀を装備した状態になる', await until(page, () => window.__vh.save.doc.money === 1200 && window.__vh.weaponId === 'weapon.long_blade.001' && window.__vh.sim.player.weaponId === 'weapon.long_blade.001', 8000));
   await page.click('#base-forge > summary');
-  check('工房: 武器 7 と防具 5 の「次の強化」が並ぶ。いま装備している太刀がいちばん上で、強化できる（岩殻片 7 / 3、青銅晶脈 2 / 2）。断岳剣は硬骨が足りない', await page.evaluate(() => {
+  check('工房: 武器 11（v0.80.0 から。響笛・銃槍・軽弩・重弩を足した）と防具 5 の「次の強化」が並ぶ。いま装備している太刀がいちばん上で、強化できる（岩殻片 7 / 3、青銅晶脈 2 / 2）。断岳剣は硬骨が足りない', await page.evaluate(() => {
     // 強化の行だけ（v0.32.0 から、たたんだ「作る」の欄にも行がある）
     const boxes = [...document.querySelectorAll('.forge-recipe')].filter((b) => !b.closest('.forge-make'));
     const first = boxes[0]?.textContent ?? '';
     const heavy = boxes.find((b) => b.dataset.recipe === 'recipe.heavy_blade.002');
-    return boxes.length === 12 && /里鍛ちの太刀 → 岩殻の太刀/.test(first) && /攻撃力 76 → 87/.test(first) && /岩殻片 7 \/ 3/.test(first) && /青銅晶脈 2 \/ 2/.test(first) && !boxes[0].querySelector('button.go').disabled
+    return boxes.length === 16 && /里鍛ちの太刀 → 岩殻の太刀/.test(first) && /攻撃力 76 → 87/.test(first) && /岩殻片 7 \/ 3/.test(first) && /青銅晶脈 2 \/ 2/.test(first) && !boxes[0].querySelector('button.go').disabled
       && /不足 硬骨 1 \/ 2|硬骨 1 \/ 2/.test(heavy.textContent) && heavy.querySelector('button.go').disabled && /強化できます: 5/.test(document.querySelector('#base-forge > summary').textContent); // 武器は太刀と双剣、防具は頭・胴・腰（どちらも青銅晶脈 2 を使うので、作れるのは片方）
   }), await page.evaluate(() => document.querySelector('.forge-recipe')?.textContent ?? ''));
   await page.screenshot({ path: `${OUT}72_forge_seven.png` });
@@ -741,21 +741,22 @@ const startTraining = async (page, tap = false) => {
     return d.money === 1080 && d.items['mat.galdros.shell_shard'] === 4 && !('mat.galdros.bronze_vein' in d.items) && d.equippedWeaponId === 'weapon.long_blade.002'
       && window.__vh.view.hunter.modelKey === 'model.weapon.long_blade.002' && /岩殻の太刀（攻撃力 87）/.test(document.querySelector('.base-weapon-note').textContent);
   }, 8000));
-  // 残りの 5 つ（護刃・大槌・双剣・長尖槍・環弓）は、素材を持たせてから強化する
+  // 残りの 10（断岳剣・護刃・大槌・双剣・長尖槍・環弓と、v0.80.0 の響笛・銃槍・軽弩・重弩）は、素材と通貨を持たせてから強化する
   const all = await page.evaluate(async () => {
     const s = window.__vh.save;
     const text = JSON.parse(s.exportText());
     text.save.items = { 'mat.galdros.shell_shard': 30, 'mat.galdros.hard_bone': 20, 'mat.galdros.bronze_vein': 20, 'mat.galdros.foreleg_plate': 10 };
+    text.save.money += 480;
     await s.importText(JSON.stringify(text));
     const out = [];
-    for (const fam of ['heavy_blade', 'guard_blade', 'war_maul', 'twin_blades', 'long_lance', 'ring_bow']) out.push([fam, (await s.craft(`recipe.${fam}.002`)).ok]);
+    for (const fam of ['heavy_blade', 'guard_blade', 'war_maul', 'twin_blades', 'long_lance', 'ring_bow', 'hunting_horn', 'gunlance', 'light_bowgun', 'heavy_bowgun']) out.push([fam, (await s.craft(`recipe.${fam}.002`)).ok]);
     window.__vh.saveChanged();
     return { out, weapons: s.doc.weapons, money: s.doc.money };
   });
-  check('7 武器すべてを強化できる（1 つ 120 通貨）。持っている武器は 7 つのまま、すべて岩殻の〜に変わる',
-    all.out.every((x) => x[1]) && all.weapons.length === 7 && all.weapons.every((w) => w.endsWith('.002')) && all.money === 1080 - 120 * 6, JSON.stringify(all.out));
+  check('11 の武器すべてを強化できる（1 つ 120 通貨）。持っている武器は 11 のまま、すべて岩殻の〜に変わる',
+    all.out.every((x) => x[1]) && all.weapons.length === 11 && all.weapons.every((w) => w.endsWith('.002')) && all.money === 1080 + 480 - 120 * 10, JSON.stringify(all.out));
   const shapes = [];
-  for (const fam of ['guard_blade', 'war_maul', 'twin_blades', 'long_lance', 'ring_bow', 'heavy_blade']) {
+  for (const fam of ['guard_blade', 'war_maul', 'twin_blades', 'long_lance', 'ring_bow', 'hunting_horn', 'gunlance', 'light_bowgun', 'heavy_bowgun', 'heavy_blade']) {
     await page.click(`.base-weapon[data-weapon="weapon.${fam}.002"]`);
     await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy') && window.__vh.view.hunter.modelKey === id.replace('weapon.', 'model.weapon.'), 8000, `weapon.${fam}.002`);
     // 絵は読み込みに時間がかかる（遅い手元では、形が替わった時にまだ読めていない）
@@ -774,10 +775,10 @@ const startTraining = async (page, tap = false) => {
   await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
-  check('読み込み直しても、7 つとも岩殻の〜のまま。工房には、次の段（脈殻の〜）が 7 つ出る', await page.evaluate(() => {
+  check('読み込み直しても、11 とも岩殻の〜のまま。工房には、次の段（脈殻の〜）が 11 出る', await page.evaluate(() => {
     document.querySelector('#base-forge').open = true;
     const d = window.__vh.save.doc;
-    return d.weapons.every((w) => w.endsWith('.002')) && d.equippedWeaponId === 'weapon.heavy_blade.002' && [...document.querySelectorAll('.forge-recipe')].filter((b) => /岩殻の.+ → 脈殻の/.test(b.textContent)).length === 7 && document.querySelectorAll('.base-weapon').length === 7;
+    return d.weapons.every((w) => w.endsWith('.002')) && d.equippedWeaponId === 'weapon.heavy_blade.002' && [...document.querySelectorAll('.forge-recipe')].filter((b) => /岩殻の.+ → 脈殻の/.test(b.textContent)).length === 11 && document.querySelectorAll('.base-weapon').length === 11;
   }));
   await ctx.close();
 }
@@ -804,10 +805,10 @@ const startTraining = async (page, tap = false) => {
   await page.waitForSelector('#boot-start:not([hidden])', { timeout: 15000 });
   await page.click('#boot-start');
   await until(page, () => window.__vh && !document.getElementById('base').hidden);
-  check('版 1 のデータ（v0.7.0 の実機）を開くと、いまの版（4）へ直して保存する。持ち物・武器・進行はそのまま、里の装束が配られ、元のデータは控えに残る', await page.evaluate(async (orig) => {
+  check('版 1 のデータ（v0.7.0 の実機）を開くと、いまの版（6）へ直して保存する。持ち物・武器・進行はそのまま、里の装束と、後から増えた 4 系統（響笛・銃槍・軽弩・重弩。v0.80.0）の最初の武器が配られ、元のデータは控えに残る', await page.evaluate(async (orig) => {
     const s = window.__vh.save, d = s.doc;
     const bs = await s.backups();
-    return s.mode === 'persistent' && d.schemaVersion === 6 && d.claims.length === 0 && d.appearance.profile === 'legacy_hunter_a_v1' && d.equippedArmorIds.join() === d.armor.join() && d.money === 1200 && d.items['mat.galdros.shell_shard'] === 7 && d.equippedWeaponId === 'weapon.long_blade.001' && d.weapons.length === 7
+    return s.mode === 'persistent' && d.schemaVersion === 6 && d.claims.length === 0 && d.appearance.profile === 'legacy_hunter_a_v1' && d.equippedArmorIds.join() === d.armor.join() && d.money === 1200 && d.items['mat.galdros.shell_shard'] === 7 && d.equippedWeaponId === 'weapon.long_blade.001' && d.weapons.length === 11 && d.weapons.slice(0, 7).join() === orig.weapons.join() && d.weapons.slice(7).join() === 'weapon.hunting_horn.001,weapon.gunlance.001,weapon.light_bowgun.001,weapon.heavy_bowgun.001'
       && d.armor.join() === 'armor.head.001,armor.chest.001,armor.arms.001,armor.waist.001,armor.legs.001' && d.progress.questClears['quest.basin.003'] === 2 && d.revision === 4
       && bs.some((b) => b.reason === 'migrate' && JSON.stringify(b.doc) === JSON.stringify(orig)) && /新しい形へ直しました/.test(document.querySelector('.base-banner')?.textContent ?? '');
   }, v1), await page.evaluate(() => `${window.__vh.save.mode} v${window.__vh.save.doc.schemaVersion} r${window.__vh.save.doc.revision} ${window.__vh.save.notice}`));
@@ -1174,7 +1175,9 @@ const startTraining = async (page, tap = false) => {
     await until(page, () => !document.getElementById('base').hidden);
     return ok;
   })());
-  for (const [fam, name, dist, holdMs] of [['guard_blade', '護刃', 1.2, 60], ['long_lance', '長尖槍', 2.4, 60], ['ring_bow', '環弓', 8, 1300], ['war_maul', '大槌', 1.2, 60], ['twin_blades', '双剣', 0.9, 60], ['long_blade', '太刀', 1.3, 60]]) {
+  for (const [fam, name, dist, holdMs] of [['guard_blade', '護刃', 1.2, 60], ['long_lance', '長尖槍', 2.4, 60], ['ring_bow', '環弓', 8, 1300], ['war_maul', '大槌', 1.2, 60], ['twin_blades', '双剣', 0.9, 60], ['long_blade', '太刀', 1.3, 60],
+    // v0.80.0: 響笛（左振り）・銃槍（突き）・軽弩と重弩（1 発射つ）
+    ['hunting_horn', '響笛', 0.9, 60], ['gunlance', '銃槍', 2.4, 60], ['light_bowgun', '軽弩', 6, 60], ['heavy_bowgun', '重弩', 6, 60]]) {
     await page.locator(`.base-weapon[data-weapon="weapon.${fam}.001"]`).click();
     // 持ち替えは、保存が完了してから替わる
     await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy'), 6000, `weapon.${fam}.001`);
@@ -1202,8 +1205,11 @@ const startTraining = async (page, tap = false) => {
       art: window.__vh.view.hunter.weaponArt.every((a) => a.loaded && !a.failed),
       hits: window.__vh.sim.hitCount,
       missing: [...window.__vh.view.missingClips],
+      // 響笛・銃槍・軽弩・重弩は、HUD に状態の 1 行（演奏・砲弾・弾）が出る。ほかの系統は、ビンの欄のまま
+      extra: window.__vh.sim.player.extraWeapon ? document.querySelector('.hud-blade .coat').textContent : null,
     }));
-    check(`${name}: 拠点で持ち替えて、訓練場で主攻撃が当たる`, picked === `weapon.${fam}.001` && hit && info.fam === fam && info.art && info.missing.length === 0, `命中 ${info.hits} / 形 ${info.fam} / 絵 ${info.art} / 欠落 clip ${info.missing.join(',') || 'なし'}`);
+    const extraOk = { hunting_horn: /^演奏待ち/, gunlance: /^砲弾 3\/3 \/ 大砲撃可$/, light_bowgun: /^通常弾 5\/6 \/ 予備 54$/, heavy_bowgun: /^通常弾 4\/5 \/ 予備 43$/ }[fam];
+    check(`${name}: 拠点で持ち替えて、訓練場で主攻撃が当たる`, picked === `weapon.${fam}.001` && hit && info.fam === fam && info.art && info.missing.length === 0 && (extraOk ? extraOk.test(info.extra ?? '') : info.extra === null), `命中 ${info.hits} / 形 ${info.fam} / 絵 ${info.art} / 欠落 clip ${info.missing.join(',') || 'なし'}${info.extra ? ` / ${info.extra}` : ''}`);
     await page.evaluate(() => window.__vh.toBase());
     await until(page, () => !document.getElementById('base').hidden);
   }
@@ -2267,6 +2273,192 @@ const startTraining = async (page, tap = false) => {
     await page.tap('.tbtn-special');
     const off = await until(page, () => !window.__vh.aim && !window.__vh.sim.player.aim && document.querySelector('.tbtn-special')?.textContent === '狙う', 6000);
     check('手で狙う（v0.61.0。タッチ）: 「狙う」を押すと狙いに入り、指を離しても狙ったまま（「狙い中」）。もう 1 度押すと戻る', on && stays && off, JSON.stringify({ on, stays, off }));
+    await ctx.close();
+  }
+}
+
+// ---- 11 の武器（v0.80.0。D-180。ChatGPT の #39 を取り込んだ）: 響笛の演奏と旋律、銃槍の砲撃・装填・大砲撃、軽弩の狙い・弾の選び直し・装填、重弩の据え構え ----
+{
+  const { ctx, page } = await open({ width: 1280, height: 720 }, false);
+  await page.click('#boot-start');
+  await until(page, () => window.__vh && !document.getElementById('base').hidden);
+  const pick = async (fam, dist) => {
+    await page.locator(`.base-weapon[data-weapon="weapon.${fam}.001"]`).click();
+    await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy'), 6000, `weapon.${fam}.001`);
+    await startTraining(page);
+    await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+    await page.evaluate((d) => {
+      const s = window.__vh.sim, m = s.monsters[0], p = s.player;
+      m.aiEnabled = false;
+      p.mode = 'free'; p.action = null; p.drawn = true; p.stamina = 100;
+      p.pos = { x: m.pos.x, y: 0, z: m.pos.z - 1.75 - d }; p.prevPos = { ...p.pos }; p.yaw = 0; p.prevYaw = 0;
+      window.__vh.view.cam.snap(0.9);
+    }, dist);
+    await page.mouse.move(640, 360);
+  };
+  const back = async () => {
+    await page.evaluate(() => window.__vh.toBase());
+    await until(page, () => !document.getElementById('base').hidden);
+  };
+  // 入力を入れて、その行動が始まり、終わる（立ちに戻る）まで待つ
+  const act = async (input, actionId, { settle = true } = {}) => {
+    await input(true);
+    const began = await until(page, (id) => window.__vh.sim.player.action?.def.actionId === id, 6000, actionId);
+    await input(false);
+    if (settle) await until(page, () => window.__vh.sim.player.mode === 'free' || window.__vh.sim.player.mode === 'guard', 12000);
+    return began;
+  };
+  const key = (code) => (down) => (down ? page.keyboard.down(code) : page.keyboard.up(code));
+  const mouse = (button) => (down) => (down ? page.mouse.down({ button }) : page.mouse.up({ button }));
+  const coat = () => page.evaluate(() => document.querySelector('.hud-blade .coat').textContent);
+  const extra = () => page.evaluate(() => ({ ...window.__vh.sim.player.extraWeapon }));
+
+  // 響笛: 固有で演奏の構え、主・副・同時押しで音 1・2・3 → 攻撃の旋律
+  await pick('hunting_horn', 0.9);
+  const h0 = await page.evaluate(() => window.__vh.sim.hitCount);
+  const hornSteps = [
+    await act(key('KeyC'), 'player.hunting_horn.recital_enter'),
+    await act(mouse('left'), 'player.hunting_horn.play_note1'),
+    await act(mouse('right'), 'player.hunting_horn.play_note2'),
+    await act(key('KeyV'), 'player.hunting_horn.play_note3'),
+  ];
+  const horn = await extra();
+  const hornHud = await coat();
+  const hornQuiet = await page.evaluate((h) => window.__vh.sim.hitCount === h, h0);
+  await page.screenshot({ path: `${OUT}87a_horn_recital.png` });
+  const hornOut = await act(key('KeyC'), 'player.hunting_horn.recital_exit');
+  const hornSwing = await act(mouse('left'), 'player.hunting_horn.swing_left');
+  const hornHit = await page.evaluate((h) => window.__vh.sim.hitCount > h, h0);
+  check('響笛（v0.80.0）: 固有で演奏の構えに入り、主・副・同時押しで音 1・2・3（当たらない）。並べると攻撃の旋律が 60 秒かかり、HUD に出る。構えを解くと、主は左振りに戻って当たる',
+    hornSteps.every(Boolean) && horn.recital && horn.buffKind === 'attack' && /^演奏 ― \/ 攻撃 \d+秒$/.test(hornHud) && hornQuiet && hornOut && hornSwing && hornHit, JSON.stringify({ hornSteps, hornHud, hornQuiet, hornOut, hornSwing, hornHit }));
+  await back();
+
+  // 銃槍: 副で砲撃 3 発 → 4 発目は装填。防御を構えたままの同時押しで大砲撃 → 冷却
+  await pick('gunlance', 1.6);
+  const g0 = await page.evaluate(() => ({ hits: window.__vh.sim.hitCount, edge: window.__vh.sim.player.edge }));
+  const shells = [];
+  for (let i = 0; i < 3; i++) shells.push(await act(mouse('right'), 'player.gunlance.shell'));
+  const afterShells = await page.evaluate(() => ({ hits: window.__vh.sim.hitCount, edge: window.__vh.sim.player.edge, loaded: window.__vh.sim.player.extraWeapon.loaded }));
+  const emptyHud = await coat();
+  const reloaded = await act(mouse('right'), 'player.gunlance.reload');
+  const fullHud = await coat();
+  await page.keyboard.down('KeyC');
+  const guarding = await until(page, () => window.__vh.sim.player.mode === 'guard' && window.__vh.sim.player.guard?.phase === 'hold', 6000);
+  const big = await act(key('KeyV'), 'player.gunlance.wyvern_fire', { settle: false });
+  const bigHit = await until(page, (h) => window.__vh.sim.hitCount > h && window.__vh.sim.player.extraWeapon.cooldown > 0, 12000, afterShells.hits);
+  await page.screenshot({ path: `${OUT}87b_gunlance_big_shell.png` });
+  await page.keyboard.up('KeyC');
+  await until(page, () => window.__vh.sim.player.mode === 'free', 12000);
+  const coolHud = await coat();
+  check('銃槍（v0.80.0）: 副の砲撃は 3 発（刃の状態は減らない）で空になり、4 発目は装填。防御を構えたままの同時押しで大砲撃が当たり、冷却が HUD に出る',
+    shells.every(Boolean) && afterShells.hits - g0.hits === 3 && afterShells.edge === g0.edge && afterShells.loaded === 0 && /^砲弾 0\/3/.test(emptyHud) && reloaded && /^砲弾 3\/3 \/ 大砲撃可$/.test(fullHud) && guarding && big && bigHit && /^砲弾 3\/3 \/ 冷却 \d+秒$/.test(coolHud),
+    JSON.stringify({ shells, afterShells, g0, emptyHud, reloaded, fullHud, guarding, big, bigHit, coolHud }));
+  await back();
+
+  // 軽弩: 固有を押している間は手で狙う（環弓と同じ仕組み）。射っている間も狙いが続き、頭を狙うと当たる。Q（道具の送り）で弾を選び直すと、主は装填になる
+  await pick('light_bowgun', 8);
+  await page.keyboard.down('KeyC');
+  const aimOn = await until(page, () => !!window.__vh.aim && !!window.__vh.sim.player.aim && window.__vh.view.cam.aimBlend > 0.95 && !document.getElementById('hud-aim').hidden, 6000);
+  await page.evaluate(() => {
+    const v = window.__vh, s = v.sim, m = s.monsters[0], p = s.player;
+    const head = { x: m.pos.x, y: 1.25, z: m.pos.z - 1.75 };
+    let yaw = p.yaw, pitch = 0;
+    for (let i = 0; i < 3; i++) {
+      const e = { x: p.pos.x - Math.cos(yaw) * 0.32, y: p.pos.y + 1.6, z: p.pos.z + Math.sin(yaw) * 0.32 };
+      yaw = Math.atan2(head.x - e.x, head.z - e.z);
+      pitch = Math.atan2(head.y - e.y, Math.hypot(head.x - e.x, head.z - e.z));
+    }
+    v.aim.yaw = yaw; v.aim.pitch = pitch;
+  });
+  await until(page, () => document.getElementById('hud-aim').classList.contains('on') && Math.abs(window.__vh.sim.player.aim.yaw - window.__vh.aim.yaw) < 1e-6, 4000);
+  await nextFrames(page);
+  await page.screenshot({ path: `${OUT}87c_light_bowgun_aim.png` });
+  const b0 = await page.evaluate(() => window.__vh.sim.hitCount);
+  const fired = await act(mouse('left'), 'player.light_bowgun.fire', { settle: false });
+  const aimKept = await page.evaluate(() => !!window.__vh.sim.player.aim && !!window.__vh.aim);
+  const headHit = await until(page, (h) => window.__vh.sim.hitCount > h && window.__vh.sim.player.mode === 'free', 12000, b0);
+  const oneLess = await coat();
+  await page.keyboard.press('KeyQ');
+  const picked = await until(page, () => window.__vh.sim.player.extraWeapon.ammo === 2, 4000);
+  const spreadHud = await coat();
+  const loads = await act(mouse('left'), 'player.light_bowgun.reload');
+  const loadedHud = await coat();
+  await page.keyboard.up('KeyC');
+  const aimOff = await until(page, () => !window.__vh.aim && !window.__vh.sim.player.aim, 6000);
+  const labels = await page.evaluate(() => ['main', 'sub', 'special', 'combo'].map((n) => document.querySelector(`.tbtn-${n}`)?.textContent ?? null));
+  check('軽弩（v0.80.0）: 固有（C）を押している間は手で狙い、射っている間も狙いが続く。頭を狙うと弾が当たり、込めた弾が 1 つ減る。Q で散弾を選ぶと主は装填になり、予備から 4 つ込める',
+    aimOn && fired && aimKept && headHit && oneLess === '通常弾 5/6 / 予備 54' && picked && spreadHud === '散弾 0/4 / 予備 24' && loads && loadedHud === '散弾 4/4 / 予備 20' && aimOff && labels.join() === '射つ,装填,狙う,速射',
+    JSON.stringify({ aimOn, fired, aimKept, headHit, oneLess, picked, spreadHud, loads, loadedHud, aimOff, labels }));
+  await back();
+
+  // 重弩: 同時押しの据え構え → HUD に出て、次の 1 発で解ける
+  await pick('heavy_bowgun', 7);
+  const braced = await act(key('KeyV'), 'player.heavy_bowgun.charge_stance');
+  const braceHud = await coat();
+  const w0 = await page.evaluate(() => window.__vh.sim.hitCount);
+  const heavyShot = await act(mouse('left'), 'player.heavy_bowgun.fire');
+  const heavyHit = await until(page, (h) => window.__vh.sim.hitCount > h, 8000, w0);
+  const afterHud = await coat();
+  await page.screenshot({ path: `${OUT}87d_heavy_bowgun.png` });
+  check('重弩（v0.80.0）: 同時押しで据え構え（HUD に出る）。次の 1 発が当たると、構えは解ける',
+    braced && braceHud === '通常弾 5/5 / 予備 43 / 据え構え' && heavyShot && heavyHit && afterHud === '通常弾 4/5 / 予備 43', JSON.stringify({ braced, braceHud, heavyShot, heavyHit, afterHud }));
+  await ctx.close();
+  // タッチ: 軽弩の「狙う」も、押すたびに切り替える。抜いている間は、道具の ◀ ▶ で弾を選ぶ（道具の欄は動かない）
+  {
+    const { ctx, page } = await open({ width: 844, height: 390 }, true);
+    await page.tap('#boot-start');
+    await until(page, () => window.__vh && !document.getElementById('base').hidden);
+    await page.locator('.base-weapon[data-weapon="weapon.light_bowgun.001"]').tap();
+    await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy'), 6000, 'weapon.light_bowgun.001');
+    await startTraining(page);
+    await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+    await page.evaluate(() => { const s = window.__vh.sim; s.monsters[0].aiEnabled = false; s.player.drawn = true; s.player.mode = 'free'; s.player.action = null; });
+    await page.tap('.tbtn-special');
+    const on = await until(page, () => !!window.__vh.aim && !!window.__vh.sim.player.aim && document.querySelector('.tbtn-special')?.textContent === '狙い中', 6000);
+    const item0 = await page.evaluate(() => window.__vh.sim.player.itemIndex);
+    // 訓練場では道具を持っていない: 道具のボタンは出ないが、弾を選ぶ ◀ ▶ は出る
+    const buttons = await page.evaluate(() => ['item', 'itemprev', 'itemnext'].map((n) => !document.querySelector(`.tbtn-${n}`).hidden));
+    await page.tap('.tbtn-itemnext');
+    const ammo = await until(page, () => window.__vh.sim.player.extraWeapon.ammo === 1, 4000);
+    const sameItem = await page.evaluate((i) => window.__vh.sim.player.itemIndex === i, item0);
+    const hud = await page.evaluate(() => document.querySelector('.hud-blade .coat').textContent);
+    await nextFrames(page);
+    await page.screenshot({ path: `${OUT}87e_light_bowgun_touch.png` });
+    await page.tap('.tbtn-special');
+    const off = await until(page, () => !window.__vh.aim && !window.__vh.sim.player.aim && document.querySelector('.tbtn-special')?.textContent === '狙う', 6000);
+    check('軽弩（v0.80.0。タッチ）: 「狙う」を押すと狙いに入り（「狙い中」）、もう 1 度で戻る。抜いている間の ▶ は弾を選び（貫通弾）、道具の欄は動かない', on && buttons.join() === 'false,true,true' && ammo && sameItem && hud === '貫通弾 0/3 / 予備 30' && off, JSON.stringify({ on, buttons, ammo, sameItem, hud, off }));
+    await ctx.close();
+  }
+  // 保留の組 v056 でも、足した系統は動く（この 4 系統に、作り直す前の動きは無い。いまの組の動きを使う）
+  {
+    const { ctx, page } = await open({ width: 1280, height: 720 }, false, `${ARENA}&motions=v056`);
+    await page.click('#boot-start');
+    await until(page, () => window.__vh && !document.getElementById('base').hidden);
+    const out = [];
+    for (const [fam, dist, actionId] of [['hunting_horn', 0.9, 'player.hunting_horn.swing_left'], ['light_bowgun', 6, 'player.light_bowgun.fire']]) {
+      await page.locator(`.base-weapon[data-weapon="weapon.${fam}.001"]`).click();
+      await until(page, (id) => window.__vh.weaponId === id && !document.getElementById('base').classList.contains('busy'), 6000, `weapon.${fam}.001`);
+      await startTraining(page);
+      await until(page, () => window.__vh.sim.tick > 5 && document.getElementById('base').hidden);
+      await page.evaluate((d) => {
+        const s = window.__vh.sim, m = s.monsters[0], p = s.player;
+        m.aiEnabled = false;
+        p.mode = 'free'; p.action = null; p.drawn = true; p.stamina = 100;
+        p.pos = { x: m.pos.x, y: 0, z: m.pos.z - 1.75 - d }; p.prevPos = { ...p.pos }; p.yaw = 0; p.prevYaw = 0;
+        window.__vh.view.cam.snap(0.9);
+      }, dist);
+      await page.mouse.move(640, 360);
+      await page.mouse.down();
+      const began = await until(page, (id) => window.__vh.sim.player.action?.def.actionId === id, 6000, actionId);
+      await page.mouse.up();
+      const hit = await until(page, () => window.__vh.sim.hitCount >= 1, 8000);
+      await nextFrames(page);
+      out.push(await page.evaluate(([fam, began, hit]) => ({ fam, began, hit, set: window.__vh.sim.content.motionSet, shape: window.__vh.view.hunter.familyId, missing: [...window.__vh.view.missingClips] }), [fam, began, hit]));
+      await page.evaluate(() => window.__vh.toBase());
+      await until(page, () => !document.getElementById('base').hidden);
+    }
+    check('保留の組 v056 でも、響笛と軽弩は持てて、主の技が当たり、描けない動きが無い（v0.80.0。4 系統は、いまの組の動きを使う）',
+      out.length === 2 && out.every((x) => x.began && x.hit && x.set === 'v056' && x.shape === x.fam && x.missing.length === 0), JSON.stringify(out));
     await ctx.close();
   }
 }

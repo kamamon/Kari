@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import type { ActionDef, ContentIndex, CurveDef, ShapeTrackDef, WeaponFamilyDef } from '../src/data/schemas';
 import { ContentError } from '../src/data/validators';
+import { EXTRA_FAMILIES } from '../src/game/extraWeapons';
 import { Simulation } from '../src/game/sim';
 import { CLIPS, LOCO_STYLE, locomotionPose } from '../src/render/poses';
 import { WEAPON_MOTIONS, WEAPON_STANCES } from '../src/render/weaponClipSpecs';
@@ -13,6 +14,8 @@ import { CURRENT_MOTION_SET, MOTION_SETS, appliedMotionSet, motionSetOf, useMoti
 import { Btn, baseOptions, frame, loadContent, placeInFrontOfHead, press } from './helpers';
 
 const root = (p: string): string => fileURLToPath(new URL(`../${p}`, import.meta.url));
+/** v0.80.0 で足した 4 系統（保留の組に、動きが無い） */
+const EXTRA: readonly string[] = EXTRA_FAMILIES;
 const json = <T>(p: string): T => JSON.parse(readFileSync(root(`public/data/${p}`), 'utf8')) as T;
 
 describe('ハンターの動きの組（v0.57.0。D-150）', () => {
@@ -56,9 +59,16 @@ describe('ハンターの動きの組（v0.57.0。D-150）', () => {
   it('保留の組の描画の動き: ハンターのどの技の clip も描ける（解く方式の動きか、キー姿勢）。長さは技と同じ。断岳剣はキー姿勢の方式', async () => {
     const held = await loadContent({ motionSet: 'v056' });
     expect(Object.keys(HELD.WEAPON_STANCES)).not.toContain('heavy_blade');
-    let solved = 0, keyed = 0;
+    let solved = 0, keyed = 0, added = 0;
     for (const a of held.actions.values()) {
       if (!a.actionId.startsWith('player.')) continue;
+      // 響笛・銃槍・軽弩・重弩（v0.80.0）は、保留の組に動きが無い: いまの組の動きを使う（保留の組のファイルには入れない）
+      if (EXTRA.includes(a.actionId.split('.')[1]!)) {
+        expect(HELD.WEAPON_MOTIONS[a.clip], a.clip).toBeUndefined();
+        expect(WEAPON_MOTIONS[a.clip]?.dur, a.clip).toBe(a.durationTicks);
+        added++;
+        continue;
+      }
       const m = HELD.WEAPON_MOTIONS[a.clip];
       if (m) {
         expect(m.dur, a.clip).toBe(a.durationTicks);
@@ -71,6 +81,8 @@ describe('ハンターの動きの組（v0.57.0。D-150）', () => {
     }
     expect(solved).toBeGreaterThan(50);
     expect(keyed).toBeGreaterThan(10);
+    expect(added).toBe(36);
+    for (const family of EXTRA) expect(Object.keys(HELD.WEAPON_STANCES)).not.toContain(family);
   });
 
   it('描画の動きを組で入れ替えられ、いまの組へ戻せる', async () => {
@@ -79,8 +91,9 @@ describe('ハンターの動きの組（v0.57.0。D-150）', () => {
     const clips = { ...CLIPS }, loco = { ...LOCO_STYLE };
     await useMotionSet('v056');
     expect(appliedMotionSet()).toBe('v056');
-    expect(WEAPON_STANCES).toEqual(HELD.WEAPON_STANCES);
-    expect(WEAPON_MOTIONS).toEqual(HELD.WEAPON_MOTIONS);
+    // 保留の組のものに、いまの組の 4 系統（v0.80.0。保留の組に無い）を足したもの
+    expect(WEAPON_STANCES).toEqual({ ...HELD.WEAPON_STANCES, ...Object.fromEntries(Object.entries(stances).filter(([family]) => EXTRA.includes(family))) });
+    expect(WEAPON_MOTIONS).toEqual({ ...HELD.WEAPON_MOTIONS, ...Object.fromEntries(Object.entries(motions).filter(([, m]) => EXTRA.includes(m.family))) });
     // 共通の動き（v0.58.0）: common_* と納刀の歩き・走りの形が替わり、断岳剣のキー姿勢（hb_*）はそのまま
     for (const [k, v] of Object.entries(HELD.COMMON_CLIPS)) expect(CLIPS[k], k).toEqual(v);
     expect(Object.keys(CLIPS).sort()).toEqual(Object.keys(clips).sort());

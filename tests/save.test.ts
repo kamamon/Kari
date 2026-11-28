@@ -19,6 +19,8 @@ let clock = 0;
 const env = (): SaveEnv => ({ now: () => `2026-11-24T00:00:${String(clock++ % 60).padStart(2, '0')}.000Z`, appVersion: 'test' });
 const open = (b: MemoryBackend | null): Promise<SaveManager> => SaveManager.open(content, b, env());
 const SHELL = 'mat.galdros.shell_shard', BONE = 'mat.galdros.hard_bone', VEIN = 'mat.galdros.bronze_vein';
+/** 武器の系統の数（v0.80.0 から 11。断岳剣・護刃・大槌・双剣・太刀・長尖槍・環弓に、響笛・銃槍・軽弩・重弩） */
+const FAMILIES = 11;
 const RECIPE = 'recipe.heavy_blade.002';
 const rewards = (runId: string, money = 600, items: [string, number][] = [[SHELL, 2]]): { runId: string; questId: string; money: number; items: { itemId: string; count: number }[] } => ({
   runId,
@@ -30,12 +32,12 @@ const rewards = (runId: string, money = 600, items: [string, number][] = [[SHELL
 const enough = (runId: string): ReturnType<typeof rewards> => rewards(runId, 600, [[SHELL, 3], [BONE, 2], [VEIN, 1]]);
 
 describe('新しい保存データ', () => {
-  it('最初から持つ武器 7 つを持ち、断岳剣を装備している。まだ書き込まない', async () => {
+  it('最初から持つ武器 11（v0.80.0 から。それまでは 7）を持ち、断岳剣を装備している。まだ書き込まない', async () => {
     const b = new MemoryBackend();
     const m = await open(b);
     expect(m.mode).toBe('memory'); // 代用品は「ページを閉じると消える」扱い
     expect(m.doc.revision).toBe(0);
-    expect(m.doc.weapons).toHaveLength(7);
+    expect(m.doc.weapons).toHaveLength(FAMILIES);
     expect(m.doc.equippedWeaponId).toBe('weapon.heavy_blade.001');
     expect(m.doc.weapons).not.toContain('weapon.heavy_blade.002');
     expect(validateSave(m.doc)).toEqual([]);
@@ -134,7 +136,7 @@ describe('強化（岩殻の断岳剣）', () => {
     expect(m.doc.items).toEqual({ [SHELL]: 1 }); // 0 個になった素材は一覧から消える
     expect(m.doc.weapons).toContain('weapon.heavy_blade.002');
     expect(m.doc.weapons).not.toContain('weapon.heavy_blade.001');
-    expect(m.doc.weapons).toHaveLength(7);
+    expect(m.doc.weapons).toHaveLength(FAMILIES);
     expect(m.doc.equippedWeaponId).toBe('weapon.heavy_blade.002');
     expect(m.doc.revision).toBe(2);
     // 攻撃力が上がる
@@ -164,7 +166,7 @@ describe('強化（岩殻の断岳剣）', () => {
   });
 });
 
-describe('武器の強化（7 武器 × 5 段）', () => {
+describe('武器の強化（11 武器 × 5 段。v0.80.0 から。それまでは 7）', () => {
   const FORE = 'mat.galdros.foreleg_plate';
   // ガルドロスの段の道（里鍛ち → 輝殻）。系列の装備の強化（v0.34.0。tests/equipment.test.ts）は除く
   const weaponRecipes = (): WeaponRecipeDef[] => [...content.recipes.values()].filter((r): r is WeaponRecipeDef => r.kind === 'upgrade' && !content.weapons.get(r.resultWeaponId)?.series);
@@ -172,14 +174,15 @@ describe('武器の強化（7 武器 × 5 段）', () => {
   const tier = (id: string): number => Number(id.slice(-1));
 
   it('どの武器種も、里鍛ち → 岩殻 → 脈殻 → 晶殻 → 輝殻 の 1 本道（各段のレシピが 1 つずつ）', () => {
-    expect(weaponRecipes()).toHaveLength(7 * 4);
+    expect(weaponRecipes()).toHaveLength(FAMILIES * 4);
+    expect(content.families.size).toBe(FAMILIES);
     for (const fam of content.families.keys()) {
       const chain = weaponRecipes().filter((r) => content.weapons.get(r.fromWeaponId)!.family === fam);
       expect(chain.map((r) => `${tier(r.fromWeaponId)}>${tier(r.resultWeaponId)}`).sort(), fam).toEqual(['1>2', '2>3', '3>4', '4>5']);
       for (const r of chain) expect(content.weapons.get(r.resultWeaponId)!.family, r.id).toBe(fam);
       expect(content.weapons.get(chain.find((r) => tier(r.fromWeaponId) === 1)!.fromWeaponId)!.starter, fam).toBe(true);
     }
-    expect([...content.weapons.values()].filter((w) => w.starter)).toHaveLength(7);
+    expect([...content.weapons.values()].filter((w) => w.starter)).toHaveLength(FAMILIES);
   });
 
   it('攻撃力は 1 段ごとに 1.15 倍（里鍛ち × 1.15^段。端数は 0.5 以内）。ほかの値は変わらない', () => {
@@ -228,16 +231,17 @@ describe('武器の強化（7 武器 × 5 段）', () => {
         expect(m2.doc.items, r.id).toEqual({});
         expect(m2.doc.weapons, r.id).toContain(r.resultWeaponId);
         expect(m2.doc.weapons, r.id).not.toContain(r.fromWeaponId);
-        expect(m2.doc.weapons, r.id).toHaveLength(7);
+        expect(m2.doc.weapons, r.id).toHaveLength(FAMILIES);
         m2.doc.money > 0 && expect.fail(`${r.id}: 通貨が残った`);
       }
     }
   });
 
-  it('2 段目を 7 つ全部作ると、持っている武器は 7 つのまま、全部が岩殻の〜になる', async () => {
+  it('2 段目を 11 全部作ると、持っている武器は 11 のまま、全部が岩殻の〜になる', async () => {
     const b = new MemoryBackend();
     const m = await open(b);
-    await m.settle(rewards('run-1', 120 * 7, [[SHELL, 18], [BONE, 10], [VEIN, 6], [FORE, 3]]));
+    // 11 系統の 2 段目の材料の合計（響笛 = 大槌、銃槍 = 長尖槍、軽弩・重弩 = 環弓と同じ材料。v0.80.0）
+    await m.settle(rewards('run-1', 120 * FAMILIES, [[SHELL, 27], [BONE, 18], [VEIN, 8], [FORE, 5]]));
     const second = weaponRecipes().filter((r) => tier(r.resultWeaponId) === 2);
     for (const r of second) expect(await m.craft(r.id), r.id).toEqual({ ok: true });
     expect(m.doc.money).toBe(0);
@@ -246,7 +250,7 @@ describe('武器の強化（7 武器 × 5 段）', () => {
     // 読み込み直しても、最初の武器が配り直されることはない
     const again = await open(b);
     expect(again.doc).toEqual(m.doc);
-    expect(usableWeapons(again.doc, content)).toHaveLength(7);
+    expect(usableWeapons(again.doc, content)).toHaveLength(FAMILIES);
   });
 });
 
@@ -283,7 +287,7 @@ describe('防具（5 部位 × 5 段）', () => {
     expect(m.doc.money).toBe(40);
     expect(m.doc.items).toEqual({});
     // 武器と装備は変わらない
-    expect(m.doc.weapons).toHaveLength(7);
+    expect(m.doc.weapons).toHaveLength(FAMILIES);
     expect(m.doc.equippedWeaponId).toBe('weapon.heavy_blade.001');
     // 足りなければ何も変わらない / 2 回は作れない
     expect(await m.craft('recipe.armor.arms.002')).toMatchObject({ ok: false, reason: 'rule' });
@@ -683,7 +687,9 @@ describe('実機で書き出したデータ（tests/fixtures/save-v1-device-0.7.
     const m = await open(new MemoryBackend());
     expect(await m.importText(text)).toEqual({ ok: true });
     expect(m.doc).toMatchObject({ schemaVersion: 6, money: 1200, equippedWeaponId: 'weapon.long_blade.001', items: { [SHELL]: 7, [VEIN]: 2, [BONE]: 1 } });
-    expect(m.doc.weapons).toHaveLength(7);
+    // 実機のデータの 7 つに、後から増えた系統の最初の武器（響笛・銃槍・軽弩・重弩。v0.80.0）が配られる（持っていた武器はそのまま）
+    expect(m.doc.weapons).toHaveLength(FAMILIES);
+    expect(m.doc.weapons.slice(-4)).toEqual(['weapon.hunting_horn.001', 'weapon.gunlance.001', 'weapon.light_bowgun.001', 'weapon.heavy_bowgun.001']);
     expect(m.doc.armor).toEqual(['armor.head.001', 'armor.chest.001', 'armor.arms.001', 'armor.waist.001', 'armor.legs.001']);
     expect(m.doc.equippedArmorIds).toEqual(m.doc.armor);
     expect(defenseOf(m.doc, content)).toBe(0);

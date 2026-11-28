@@ -19,6 +19,7 @@ import { twinBlades } from './weapons/twin_blades.mjs';
 import { longBlade } from './weapons/long_blade.mjs';
 import { longLance } from './weapons/long_lance.mjs';
 import { ringBow } from './weapons/ring_bow.mjs';
+import { extraWeapons } from './weapons/extra_classes.mjs';
 import { common } from './weapons/common.mjs';
 import { heavyBlade } from './weapons/heavy_blade.mjs';
 
@@ -32,6 +33,7 @@ twinBlades();
 longBlade();
 longLance();
 ringBow();
+extraWeapons();
 
 // ---- 書き出し ----
 const line = (o) => JSON.stringify(o).replace(/"(\w+)":/g, '"$1": ').replace(/,"/g, ', "');
@@ -43,9 +45,11 @@ for (const [id, F] of Object.entries(state.out)) {
 }
 // 移動曲線（v0.57.0 から、ハンターの曲線は curves_player.json に分けた。全部をこの道具が書く）
 {
-  const rows = state.curves.map((c) => `    {"id": "${c.id}", "keys": ${JSON.stringify(c.keys).replace(/,/g, ', ')}}`);
-  const out = ['{', '  "schemaVersion": 1,', '  "note": "tools/gen-weapons.mjs の出力。手で編集しない。ハンターの移動曲線（前転と各武器の技）。[tick, 進んだ距離 m]。",', '  "curves": [', rows.join(',\n'), '  ]', '}', ''];
-  writeFileSync(resolve(ROOT, 'public/data/curves_player.json'), out.join('\n'));
+  // 響笛・銃槍・軽弩・重弩（v0.80.0）の曲線（id が xw_ で始まる）は、別のファイル curves_extra_weapons.json へ（保留の組 v056 は curves_player.json を入れ替えるので、分けておく）
+  const row = (c) => `    {"id": "${c.id}", "keys": ${JSON.stringify(c.keys).replace(/,/g, ', ')}}`;
+  const write = (file, note, list) => writeFileSync(resolve(ROOT, file), ['{', '  "schemaVersion": 1,', `  "note": "${note}",`, '  "curves": [', list.map(row).join(',\n'), '  ]', '}', ''].join('\n'));
+  write('public/data/curves_player.json', 'tools/gen-weapons.mjs の出力。手で編集しない。ハンターの移動曲線（前転と各武器の技）。[tick, 進んだ距離 m]。', state.curves.filter((c) => !c.id.startsWith('xw_')));
+  write('public/data/curves_extra_weapons.json', 'tools/gen-weapons.mjs の出力。手で編集しない。響笛・銃槍・軽弩・重弩の移動曲線（v0.80.0）。[tick, 進んだ距離 m]。', state.curves.filter((c) => c.id.startsWith('xw_')));
 }
 // 構えの握り（weapons.json の ready と、防御の pose）: 構えを解いた値で、その行だけを入れ替える
 {
@@ -72,7 +76,7 @@ for (const [id, F] of Object.entries(state.out)) {
   const js = (o) => JSON.stringify(o, num);
   const ts = [
     '// 生成物（tools/gen-weapons.mjs）。手で編集しない。',
-    '// 7 系統の体の動き（断岳剣は v0.57.0 から）: 構え（立ち姿）と、技ごとのキー。解き方は bodySolve.ts。v0.56.0 までの動きは motionsets/v056.ts（保留の組。D-150）。',
+    '// 11 系統の体の動き（断岳剣は v0.57.0 から。響笛・銃槍・軽弩・重弩は v0.80.0 から）: 構え（立ち姿）と、技ごとのキー。解き方は bodySolve.ts。v0.56.0 までの動きは motionsets/v056.ts（保留の組。D-150）。',
     "import type { Ctl, Foot, Hands, Motion } from './bodySolve';",
     "import type { WeaponShape } from './humanLimits';",
     '',

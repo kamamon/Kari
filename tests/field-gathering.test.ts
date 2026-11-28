@@ -13,9 +13,9 @@ function stand(sim:Simulation,n:{areaId:string;x:number;z:number},dx=-1.1,dz=0):
  p.pos={x,y:sim.world.groundHeight(x,z),z};p.prevPos={...p.pos};p.drawn=false;p.grounded=true;p.yaw=0;
 }
 describe('常設採取と純素材装備',()=>{
- it('61配置、60素材、4級の40抽選表、武器56・防具40・レシピ168がすべて読み込める',()=>{
+ it('61配置、60素材、4級の40抽選表、武器88（11系統。v0.80.0）・防具40・レシピ224がすべて読み込める',()=>{
   const g=content.fieldGathering!;expect(g.nodes).toHaveLength(61);expect(g.materials).toHaveLength(60);expect(g.tables).toHaveLength(40);
-  expect(g.weapons).toHaveLength(56);expect(g.armor).toHaveLength(40);expect(g.recipes).toHaveLength(168);expect(g.quests).toHaveLength(4);
+  expect(g.weapons).toHaveLength(88);expect(g.armor).toHaveLength(40);expect(g.recipes).toHaveLength(224);expect(g.quests).toHaveLength(4);
   for(const t of g.tables){expect(t.entries.reduce((a,b)=>a+b.weightBps,0)).toBe(10000);for(const e of t.entries)expect(content.materials.has(e.itemId)).toBe(true);}
   for(const q of g.quests){const can=questMaterials(content,q);for(const t of g.tables.filter(t=>t.rankId===q.rankId))for(const e of t.entries)expect(can.has(e.itemId)).toBe(true);}
   for(const r of g.recipes){expect(content.recipes.has(r.id)).toBe(true);const p=r.id.includes('ore_only')?'mat.ore.':'mat.bone.';expect(r.cost.items.every(i=>i.itemId.startsWith(p))).toBe(true);}

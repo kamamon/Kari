@@ -17,7 +17,7 @@ const el=<K extends keyof HTMLElementTagNameMap>(tag:K,cls='',txt=''):HTMLElemen
 const STAGES:Record<ResourceId,string[]>={farm:['小さな畑','段々畑','育苗小屋','大規模農園'],mine:['露出鉱脈','採掘坑','深層坑道','晶脈採掘所'],fish:['川岸','釣り桟橋','養魚池','大型釣り堀'],insect:['草むら','昆虫樹','飼育場','希少昆虫園'],bone:['骨置き場','発掘場','化石層','深層発掘場']};
 const KIND_NAMES={mine:'鉱石',plant:'植物',insect:'昆虫',fish:'魚',bone:'骨'};
 const FLOOR_NAMES:Record<number,string>={'-10':'水音の庭','-3':'炉の段',0:'灯の広場',8:'暮らしの段',22:'灯見の台'};
-const DRILLS:Record<string,string>={heavy_blade:'溜め斬り・抜刀斬り・回避後の納刀',guard_blade:'短い連撃・盾での防御・差し込み',long_lance:'上中段突き・防御・ステップ',bow:'溜め段階・射撃・ビン切替',war_maul:'溜め移動・頭部への一撃',twin_blades:'猛り・連ね斬り・スタミナ管理',long_blade:'気の管理・気合い斬り連係'};
+const DRILLS:Record<string,string>={heavy_blade:'溜め斬り・抜刀斬り・回避後の納刀',guard_blade:'短い連撃・盾での防御・差し込み',long_lance:'上中段突き・防御・ステップ',ring_bow:'溜め段階・射撃・ビン切替',war_maul:'溜め移動・頭部への一撃',twin_blades:'猛り・連ね斬り・スタミナ管理',long_blade:'気の管理・気合い斬り連係',hunting_horn:'左右の振り・演奏の音の並び・旋律の維持',gunlance:'突きと砲撃・装填・構えからの大砲撃',light_bowgun:'狙い・装填・弾の選び直し・速射',heavy_bowgun:'狙い・据え構えの一発・装填の間合い'};
 export interface HubLifeHost {
  save:SaveManager; hubWalk:boolean;
  lifeDestinations():HubDestination[]; lifePosition():{x:number;y:number;z:number}|null;

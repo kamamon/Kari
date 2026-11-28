@@ -7,6 +7,7 @@
 import { WEAPON_MOTIONS, WEAPON_STANCES, type WeaponStances } from './weaponClipSpecs';
 import { CLIPS, HURT_STYLE, LOCO_STYLE, MOTION_STYLE, type Clip, type LocoStyle } from './poses';
 import type { Motion } from './bodySolve';
+import { EXTRA_FAMILIES } from '../game/extraWeapons';
 
 /** いまの組の名前（public/data/content.json の motionSets.current と同じ） */
 export const CURRENT_MOTION_SET = '2g';
@@ -44,8 +45,10 @@ export async function useMotionSet(id: string): Promise<void> {
   let loco: LocoStyle = CURRENT.loco;
   if (want === 'v056') {
     const m = await import('./motionsets/v056');
-    stances = m.WEAPON_STANCES;
-    motions = m.WEAPON_MOTIONS;
+    // 響笛・銃槍・軽弩・重弩（v0.80.0）には、作り直す前の動きが無い: 保留の組でも、いまの組の構えと動きを使う（保留の組のファイルは変えない）
+    const added = (family: string): boolean => (EXTRA_FAMILIES as readonly string[]).includes(family);
+    stances = { ...m.WEAPON_STANCES, ...Object.fromEntries(Object.entries(CURRENT.stances).filter(([family]) => added(family))) };
+    motions = { ...m.WEAPON_MOTIONS, ...Object.fromEntries(Object.entries(CURRENT.motions).filter(([, mo]) => added(mo.family))) };
     // 共通追加アクションは保留の組に無い場合も現在の定義を使う。
     clips = { ...CURRENT.clips, ...m.COMMON_CLIPS };
     loco = m.LOCO_STYLE;

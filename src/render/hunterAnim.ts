@@ -60,6 +60,11 @@ const WALK_CARRY: Record<string, WalkCarry> = {
   guard_blade: { lean: 2, shift: 0.014, twist: 7, roll: 1.5, lag: 1.2, swing: 0.035 },
   twin_blades: { lean: 4, shift: 0.012, twist: 8, roll: 1.5, lag: 1.2, swing: 0.06 },
   ring_bow: { lean: 1, shift: 0.014, twist: 6, roll: 1.5, lag: 1, swing: 0.03 },
+  // v0.80.0: 響笛は大槌、銃槍は長尖槍と同じ重さ。軽弩は軽く、重弩は重く抱える（どれも両手か盾で、腕は振らない）
+  hunting_horn: { lean: 4, shift: 0.02, twist: 5, roll: 2.5, lag: 3, swing: 0 },
+  gunlance: { lean: 3, shift: 0.018, twist: 3, roll: 2, lag: 1.8, swing: 0 },
+  light_bowgun: { lean: 2, shift: 0.014, twist: 4, roll: 1.2, lag: 1, swing: 0 },
+  heavy_bowgun: { lean: 4, shift: 0.018, twist: 3, roll: 2, lag: 2, swing: 0 },
 };
 const WALK_CARRY_DEFAULT: WalkCarry = { lean: 2, shift: 0.015, twist: 5, roll: 1.5, lag: 1.2, swing: 0 };
 

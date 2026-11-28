@@ -70,14 +70,14 @@ describe('系列の装備のデータ', () => {
     const armor = [...content.armor.values()].filter((a) => a.series?.startsWith('series.'));
     expect(new Set(weapons.map((w) => w.series))).toEqual(new Set(SERIES));
     expect(new Set(armor.map((a) => a.series))).toEqual(new Set(SERIES));
-    // 2 系列 × 3 級 × （いまある 7 系統の武器 + 防具 5）。初級は作る、上の級は 1 つ下からの強化
-    expect(weapons).toHaveLength(3 * 3 * 7);
+    // 3 系列 × 3 級 × （11 系統の武器 + 防具 5）。初級は作る、上の級は 1 つ下からの強化。v0.80.0 で響笛・銃槍・軽弩・重弩が入って、届いていた 4 系統の武器も読み込まれるようになった
+    expect(weapons).toHaveLength(3 * 3 * 11);
     expect(armor).toHaveLength(3 * 3 * 5);
-    expect(crafts()).toHaveLength(3 * 12);
+    expect(crafts()).toHaveLength(3 * 16);
     for (const w of weapons) expect(content.families.has(w.family), w.id).toBe(true);
-    expect([...content.weapons.values()].filter((w) => !w.series)).toHaveLength(35);
+    expect([...content.weapons.values()].filter((w) => !w.series)).toHaveLength(55);
     expect([...content.armor.values()].filter((a) => !a.series)).toHaveLength(25);
-    expect([...content.recipes.values()].filter((r) => (r.kind === 'upgrade' && !content.weapons.get(r.resultWeaponId)!.series) || (r.kind === 'armor_upgrade' && !content.armor.get(r.resultArmorId)!.series))).toHaveLength(48);
+    expect([...content.recipes.values()].filter((r) => (r.kind === 'upgrade' && !content.weapons.get(r.resultWeaponId)!.series) || (r.kind === 'armor_upgrade' && !content.armor.get(r.resultArmorId)!.series))).toHaveLength(64);
     // 外した 19 種の装備・素材は、どこにも残っていない
     const gone = /\.(selvark|numeradon|bornakel|ashreia|lumisca|orglass|tengaro|verito|razmer|kirisave|velgait|kordopil|palseit|numaporon|chilumicana|kohalgis|mitogaron|yurtepica|hinasalv)\./;
     expect([...content.weapons.keys(), ...content.armor.keys(), ...content.recipes.keys(), ...content.materials.keys()].filter((id) => gone.test(id))).toEqual([]);

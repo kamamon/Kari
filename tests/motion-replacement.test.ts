@@ -110,7 +110,7 @@ describe('runtime の動作差し替え', () => {
     expect(maxLift).toBeGreaterThan(0.05);
   });
 
-  it('90/180° の急反転でも、7 系統×30/60/120fps で脚の届きと関節範囲を保つ', async () => {
+  it('90/180° の急反転でも、11 系統×30/60/120fps で脚の届きと関節範囲を保つ', async () => {
     const content = await loadContent();
     let scenarios = 0;
     for (const family of Object.keys(WEAPON_STANCES)) for (const turn of [Math.PI / 2, Math.PI]) for (const fps of [30, 60, 120]) {
@@ -132,7 +132,7 @@ describe('runtime の動作差し替え', () => {
       }
       scenarios++;
     }
-    expect(scenarios).toBe(42);
+    expect(scenarios).toBe(66);
   });
 
   it('疾走は、脚の届く歩幅で短い空中局面を持つ（接地する所は体の前 0.30m・後ろ 0.45m まで。v0.28.1）', () => {
@@ -187,7 +187,7 @@ describe('歩く・走る時に、体が跳ねない（v0.28.1。利用者の指
     }
   });
 
-  it('武器を構えて歩く（7 系統）: 腰の上下は 3cm 以内のなめらかな波（30/60/120fps）', async () => {
+  it('武器を構えて歩く（11 系統）: 腰の上下は 3cm 以内のなめらかな波（30/60/120fps）', async () => {
     const content = await loadContent();
     for (const family of Object.keys(WEAPON_STANCES)) {
       const full = content.families.get(family)!.drawnMoveSpeed;

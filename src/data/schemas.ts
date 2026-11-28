@@ -234,6 +234,8 @@ export interface WeaponFamilyDef {
     /** 防御を構えている時の、主・副ボタンの技（長尖槍の構え突き・受け返し） */
     guardMain?: string;
     guardSub?: string;
+    /** 防御を構えている時の、主と副の同時押しの技（v0.80.0。銃槍の大砲撃） */
+    guardCombo?: string;
     /** 回避の行動。省くと共通の転がる回避。 */
     dodge?: string;
     /**

@@ -147,13 +147,14 @@ describe('後隙の反撃（v0.73.0。D-171）', () => {
     expect(bad).toEqual([]);
   });
 
-  it('高さの決まり（1.6m）の根拠: 近接の 6 系統のどれにも、判定の上の端が 1.7m 以上に届く、主か副の攻撃がある', () => {
-    const melee = [...content.families.values()].filter((f) => f.id !== 'ring_bow');
-    expect(melee.length).toBe(6);
-    for (const f of melee) {
+  it('高さの決まり（1.6m）の根拠: 近接の 8 系統のどれにも、判定の上の端が 1.7m 以上に届く攻撃がある（これまでの 6 系統は主か副。響笛・銃槍は同時押しか連係の技）', () => {
+    // 射る系統（環弓・軽弩・重弩）は、狙って当てるので数えない
+    const melee = [...content.families.values()].filter((f) => !['ring_bow', 'light_bowgun', 'heavy_bowgun'].includes(f.id));
+    expect(melee.map((f) => f.id).sort()).toEqual(['guard_blade', 'gunlance', 'heavy_blade', 'hunting_horn', 'long_blade', 'long_lance', 'twin_blades', 'war_maul']);
+    const topOf = (ids: (string | undefined)[]): number => {
       let top = -Infinity;
-      for (const aid of [f.actions.main, f.actions.sub]) {
-        for (const hw of content.actions.get(aid)!.hitWindows) {
+      for (const aid of ids) {
+        for (const hw of (aid ? content.actions.get(aid)! : { hitWindows: [] }).hitWindows) {
           const tr = content.tracks.get(hw.shapeTrack)!;
           for (let t = hw.from; t <= hw.to; t++) {
             const seg = trackSegment(tr, t);
@@ -161,7 +162,19 @@ describe('後隙の反撃（v0.73.0。D-171）', () => {
           }
         }
       }
-      expect(top, `${f.id}: 主・副の判定の上の端 ${top.toFixed(2)} m`).toBeGreaterThanOrEqual(LOW_Y + 0.1);
+      return top;
+    };
+    // v0.80.0 で足した 2 系統（#39 の案の動き）は、主と副だけでは届かない: 響笛は主の 2 段目（打ち下ろし）と同時押しの叩きつけ、銃槍は同時押しの斬り上げで届く
+    const WIDER = ['hunting_horn', 'gunlance'];
+    for (const f of melee) {
+      const basic = topOf([f.actions.main, f.actions.sub]);
+      if (!WIDER.includes(f.id)) {
+        expect(basic, `${f.id}: 主・副の判定の上の端 ${basic.toFixed(2)} m`).toBeGreaterThanOrEqual(LOW_Y + 0.1);
+        continue;
+      }
+      expect(basic, `${f.id}: 主・副で届くようになったら、WIDER から外す`).toBeLessThan(LOW_Y + 0.1);
+      const wide = topOf([f.actions.combo, ...Object.values(f.cancelNames)]);
+      expect(wide, `${f.id}: 同時押し・連係の判定の上の端 ${wide.toFixed(2)} m`).toBeGreaterThanOrEqual(LOW_Y + 0.1);
     }
   });
 

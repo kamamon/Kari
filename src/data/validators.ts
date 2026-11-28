@@ -1313,7 +1313,11 @@ export async function assembleContent(getRaw: JsonGetter, opts: LoadOptions = {}
   // 保留の組では、武器の系統（持ち方・技の組み立て・構えの握り）も組のもの
   const families = set ? ((await getRaw(set.families)) as { schemaVersion: number; families: WeaponFamilyDef[] }) : null;
   if (families) checkVersion(set!.families, families.schemaVersion, errors);
-  for (const f of families?.families ?? weapons.families ?? []) putUnique(content.families, f.id, f, 'family', errors);
+  // 保留の組に無い系統（v0.80.0 の響笛・銃槍・軽弩・重弩。作り直す前の動きが無い）は、いまの系統を足す
+  const held = families?.families ?? [];
+  const current: WeaponFamilyDef[] = weapons.families ?? [];
+  const selected = families ? [...held, ...current.filter((f) => !held.some((h) => h.id === f.id))] : current;
+  for (const f of selected) putUnique(content.families, f.id, f, 'family', errors);
   for (const w of weapons.weapons ?? []) putUnique(content.weapons, w.id, w, 'weapon', errors);
   for (const f of index.files.monsters) {
     const m = (await get(f)) as MonsterDef;

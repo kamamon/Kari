@@ -17,7 +17,8 @@ import { addMember, createHerdGroup, herdArea, herdHurt, livingMembers, slotOf, 
 import { createRoam } from './roam';
 import { createPlayer, familyOf, playerHurtCapsule, resolveIncomingHit, setSpirit, stepPlayer, weaponOf, type PlayerState, type SimCtx } from './player';
 import { aimDir, aimEye, aimTarget } from './aim';
-import { trackSegment } from './tracks';
+import { trackSegment, sampleTrack } from './tracks';
+import { HORN_ATTACK_SCALE, isBowgun, shellAction } from './extraWeapons';
 import { World, type Circle } from './world';
 import { gatheringCatalog, usesFieldGather } from '../data/fieldGathering';
 import { FieldGatherState, FIELD_NODE_REACH } from './fieldGather';
@@ -158,6 +159,8 @@ export interface Projectile {
   actionId: string;
   coefficient: number;
   level: number;
+  /** 軽弩・重弩の弾（v0.80.0）。矢と見た目・距離の減り方が違う */
+  kind?: 'round';
   /** 貫通の矢（v0.60.0）: あと何回当たれるか（1 で、次に当たると消える）と、当たった部位（モンスター id: 部位の番号）。同じ部位へは 1 回だけ */
   pierce?: number;
   hitParts?: string[];
@@ -184,6 +187,17 @@ export function arrowDistanceScale(d: number): number {
   if (d < 16) return 1 - (0.5 * (d - 12)) / 4;
   return 0.5;
 }
+
+/**
+ * 軽弩・重弩の弾（v0.80.0。値は Kari の仮の値。docs/spec.md の 33 章）: 12m までは威力そのまま、そこから 36m で 0.35 まで下がる。
+ * 貫通弾は 1 回の力が 0.48（3 回まで）、散弾は 3 つ（±0.1 rad）で 1 つの力が 0.4
+ */
+export function roundDistanceScale(d: number): number {
+  return d <= 12 ? 1 : Math.max(0.35, 1 - (d - 12) / 24);
+}
+const ROUND_PIERCE_SHARE = 0.48;
+const ROUND_SPREAD_SHARE = 0.4;
+const ROUND_SPREAD_YAW = [-0.1, 0, 0.1];
 
 const ARROW_RADIUS = 0.1;
 const ARROW_LIFE_TICKS = 70;
@@ -1118,6 +1132,8 @@ export class Simulation implements SimCtx {
     const ev = p.attackEval;
     if (!ev) return;
     const { run, t } = ev;
+    // 砲弾が無い・冷却中で出せなかった砲撃（v0.80.0）は、当たらない
+    if (run.extraAllowed === false) return;
     for (const hw of run.def.hitWindows) {
       if (!inWindow(t, hw)) continue;
       // 体ごと回る技（spin。v0.5.0 の時点では使う技が無い）は、前の tick の向きから掃引する（1 tick で大きく回っても、間を飛び越えない）
@@ -1144,13 +1160,15 @@ export class Simulation implements SimCtx {
     // 猛り（双剣。v0.54.0）: 入っている間は、命中の係数に倍率を掛ける
     const fam = familyOf(this.player, this.content);
     if (this.player.demon) scale *= fam.demon?.damageScale ?? 1;
+    // 響笛の旋律「攻撃」（v0.80.0）: 効いている間は、命中の係数に倍率を掛ける
+    if (this.player.extraWeapon?.buffKind === 'attack' && this.player.extraWeapon.buff > 0) scale *= HORN_ATTACK_SCALE;
     // 気（太刀。v0.56.0）: 満ちている間は倍率を掛ける。気を使わない技が当たると、気がたまる（この命中の後から）
     const SP = fam.spirit;
     if (SP && this.player.spirit >= SP.max) scale *= SP.fullScale;
     const hitstop = hw.hitstopTicks + (charge ? charge.hitstopBonus[run.chargeLevel] ?? 0 : 0);
     run.hitstop = hitstop;
     // 刃の減り方は、溜めや猛りの倍率を掛ける前の、技そのものの係数で決める
-    const bounced = this.dealPlayerDamage(m, partIndex, point, { actionId: run.def.actionId, windowId: hw.id, actionTick: t, motion: hw.damageCoefficient * scale, damageType: hw.damageType, hitstop, chargeLevel: run.chargeLevel, wearMotion: hw.damageCoefficient, contact: hw.contact });
+    const bounced = this.dealPlayerDamage(m, partIndex, point, { actionId: run.def.actionId, windowId: hw.id, actionTick: t, motion: hw.damageCoefficient * scale, damageType: hw.damageType, hitstop, chargeLevel: run.chargeLevel, wearMotion: shellAction(run.def.actionId) ? undefined : hw.damageCoefficient, contact: hw.contact, fixedShell: shellAction(run.def.actionId) });
     if (SP && !run.def.spirit) {
       setSpirit(this.player, this.player.spirit + SP.gainPerHit, this);
       this.player.spiritIdle = 0;
@@ -1186,6 +1204,8 @@ export class Simulation implements SimCtx {
       wearMotion?: number;
       /** 盾で打った（v0.33.0）。武器の属性・状態異常は乗らない */
       contact?: 'shield';
+      /** 砲撃（v0.80.0。銃槍）: 肉質・刃の状態・会心・武器の属性を使わない、決まった力の命中 */
+      fixedShell?: boolean;
     },
   ): boolean {
     const p = this.player;
@@ -1198,25 +1218,25 @@ export class Simulation implements SimCtx {
     const E = C.edge;
     const famEdge = h.wearMotion !== undefined ? familyOf(p, C).edge : undefined;
     const stage = famEdge ? edgeStage(E, p.edge) : null;
-    const hitzone = (m.parts[partIndex]!.broken && part.brokenHitzone ? part.brokenHitzone : part.hitzone)[h.damageType];
+    const hitzone = h.fixedShell ? 1 : (m.parts[partIndex]!.broken && part.brokenHitzone ? part.brokenHitzone : part.hitzone)[h.damageType];
     const bounced = !!stage && hitzone < stage.bounceBelow;
     // 会心は seed 付き乱数。1 命中につき必ず 1 回引き、乱数列を入力だけで決まるようにする。
     // 会心率は武器の会心 + 急所観察（物理の肉質が境目以上の時）。上限は critCap（v0.33.0）
     const roll = this.rng.next() * 100;
     const T = C.player;
-    const chance = critChance(C, weapon, g, hitzone);
+    const chance = h.fixedShell ? 0 : critChance(C, weapon, g, hitzone);
     let crit = 0;
     if (chance > 0 && roll < chance) crit = 1;
     else if (chance < 0 && roll < -chance) crit = -1;
     // 武器の属性は、武器そのもので当てた時だけ（盾には乗らない）。部位の係数は属性ごと（弱点・耐性。複合は大きい方、弱点でなければ半分）
-    const weaponHit = h.contact !== 'shield';
+    const weaponHit = h.contact !== 'shield' && !h.fixedShell;
     const elementZone = weaponHit ? weaponElementZone(C, weapon, m.def, part) : 0;
     // 状態異常の睡眠: 覚ます最初の命中だけ wakeScale 倍（v0.33.0）
     const woke = !m.dead && wakeFromSleep(m.ailments, R);
     const damage = computeDamage({
       attack: weapon.attack * prepBonus(this.options.questId?this.options.hubPrep:null).attack,
       motion: h.motion,
-      sharpness: weapon.sharpnessModifier * (stage?.damageScale ?? 1),
+      sharpness: h.fixedShell ? 1 : weapon.sharpnessModifier * (stage?.damageScale ?? 1),
       hitzone,
       crit: crit > 0 ? T.critMultiplier : crit < 0 ? 0.75 : 1,
       element: elementZone > 0 ? weapon.element.value * g.element : 0,
@@ -1284,10 +1304,20 @@ export class Simulation implements SimCtx {
   spawnProjectiles(spec: ShootDef, run: ActionRun): void {
     const p = this.player;
     const level = Math.min(run.chargeLevel, spec.speed.length - 1);
-    const from: V3 = { x: p.pos.x + Math.sin(p.yaw) * 0.5, y: p.pos.y + 1.35, z: p.pos.z + Math.cos(p.yaw) * 0.5 };
+    const gun = isBowgun(p.extraWeapon) && run.extraAmmo !== undefined;
+    let from: V3 = { x: p.pos.x + Math.sin(p.yaw) * 0.5, y: p.pos.y + 1.35, z: p.pos.z + Math.cos(p.yaw) * 0.5 };
     let yaw = p.yaw;
     let pitch = 0;
+    // 軽弩・重弩（v0.80.0）: 弾は銃口（武器の軌道の先）から、銃身の向きへ出る
+    if (gun && run.def.weaponTrack) {
+      const s = sampleTrack(this.content.tracks.get(run.def.weaponTrack)!, spec.tick);
+      const len = familyOf(p, this.content).blade.to;
+      from = toWorld({ x: s.grip.x + s.dir.x * len, y: s.grip.y + s.dir.y * len, z: s.grip.z + s.dir.z * len }, p.pos, p.yaw);
+      yaw = p.yaw + yawOf(s.dir.x, s.dir.z);
+      pitch = Math.atan2(s.dir.y, Math.hypot(s.dir.x, s.dir.z));
+    }
     let best = Infinity;
+    // 手で狙う（v0.61.0）: 環弓と同じく、軽弩・重弩（v0.80.0）も、狙いの線の当たる所へ飛ばす（銃口から）
     if (p.aim) {
       const t = aimTarget(this.monsters, this.world, aimEye(p.pos, p.aim.yaw), aimDir(p.aim.yaw, p.aim.pitch)).point;
       const dx = t.x - from.x, dz = t.z - from.z;
@@ -1313,7 +1343,7 @@ export class Simulation implements SimCtx {
       }
     }
     const speed = (spec.speed[level] ?? spec.speed[0] ?? 30) / 60;
-    let total = spec.coefficient[level] ?? spec.coefficient[0] ?? 0.3;
+    let total = (spec.coefficient[level] ?? spec.coefficient[0] ?? 0.3) * (run.extraScale ?? 1);
     // ビン（v0.60.0）: 付けていれば、この射撃の矢の力に scale を掛け、1 本使う。使い切ると外れる
     let coated: string | undefined;
     if (p.coating) {
@@ -1333,12 +1363,24 @@ export class Simulation implements SimCtx {
       const y = yaw + dyaw;
       const vel: V3 = { x: Math.sin(y) * Math.cos(pitch) * speed, y: Math.sin(pitch) * speed, z: Math.cos(y) * Math.cos(pitch) * speed };
       const pos = { x: from.x, y: from.y + dy, z: from.z };
-      this.projectiles.push({ id: this.nextProjectile++, pos, prevPos: { ...pos }, vel, life: ARROW_LIFE_TICKS, travelled: 0, actionId: run.def.actionId, coefficient, level, ...(pierce ? { pierce, hitParts: [] } : {}) });
+      this.projectiles.push({ id: this.nextProjectile++, pos, prevPos: { ...pos }, vel, life: ARROW_LIFE_TICKS, travelled: 0, actionId: run.def.actionId, coefficient, level, ...(gun ? { kind: 'round' as const } : {}), ...(pierce ? { pierce, hitParts: [] } : {}) });
     };
     // 射ち方の表（v0.60.0）: 武器の shots、無ければ系統の shots。その段階の射ち方で、力の合計を矢へ分ける
     const shot = spec.table ? (weaponOf(p, this.content).shots ?? familyOf(p, this.content).shots)?.[level] : undefined;
     let count = spec.count;
-    if (shot?.type === 'rapid') {
+    if (gun) {
+      // 弾の種類（v0.80.0）: 貫通弾は 3 回まで当たる（1 回の力は小さい）、散弾は 3 つに分かれる、通常弾は 1 発
+      if (run.extraAmmo === 1) {
+        arrow(0, 0, total * ROUND_PIERCE_SHARE, 3);
+        count = 1;
+      } else if (run.extraAmmo === 2) {
+        for (const angle of ROUND_SPREAD_YAW) arrow(0, angle, total * ROUND_SPREAD_SHARE);
+        count = ROUND_SPREAD_YAW.length;
+      } else {
+        arrow(0, 0, total);
+        count = 1;
+      }
+    } else if (shot?.type === 'rapid') {
       const share = RAPID_SHARE[shot.n] ?? [1];
       share.forEach((f, i) => arrow((i - (share.length - 1) / 2) * RAPID_GAP, 0, total * f));
       count = share.length;
@@ -1372,7 +1414,7 @@ export class Simulation implements SimCtx {
           const hit = sweepCapsule(a.pos, a.pos, next, next, ARROW_RADIUS, shapes);
           if (!hit) break;
           const dist = a.travelled + Math.hypot(hit.point.x - a.pos.x, hit.point.y - a.pos.y, hit.point.z - a.pos.z);
-          this.dealPlayerDamage(m, hit.partIndex, hit.point, { actionId: a.actionId, windowId: 'arrow', actionTick: 0, motion: a.coefficient * arrowDistanceScale(dist), damageType: 'shot', hitstop: 2, chargeLevel: a.level });
+          this.dealPlayerDamage(m, hit.partIndex, hit.point, { actionId: a.actionId, windowId: 'arrow', actionTick: 0, motion: a.coefficient * (a.kind === 'round' ? roundDistanceScale(dist) : arrowDistanceScale(dist)), damageType: 'shot', hitstop: 2, chargeLevel: a.level });
           if (a.pierce !== undefined && a.pierce > 1 && !m.dead) {
             a.pierce--;
             a.hitParts!.push(`${m.id}:${hit.partIndex}`);
@@ -1472,6 +1514,7 @@ export class Simulation implements SimCtx {
     }
     for (const t of this.traps) parts.push(t.x, t.z, t.state, t.arm, t.life);
     parts.push(p.demon ? 1 : 0, p.spirit, p.spiritIdle);
+    if (p.extraWeapon) parts.push(JSON.stringify(p.extraWeapon), p.action?.extraDone ? 1 : 0, p.action?.extraAllowed === false ? 0 : 1, p.action?.extraAmmo ?? -1, p.action?.extraScale ?? 1);
     if (p.coatings.length || p.coating) parts.push(p.coating ?? '-', p.coatings.map((s) => s.count).join(','));
     if (p.aim) parts.push(p.aim.yaw, p.aim.pitch);
     for (const a of this.projectiles) if (a.pierce !== undefined) parts.push(a.pierce, a.hitParts!.join(','));

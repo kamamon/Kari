@@ -3230,6 +3230,486 @@
       "assetId": "model.weapon.ring_bow.bone.r4",
       "series": "gathering.bone_only",
       "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.hunting_horn.ore_only.r1",
+      "family": "hunting_horn",
+      "name": "晶鍛の響笛【初級】",
+      "attack": 82,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.hunting_horn.ore.r1",
+      "series": "gathering.ore_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.hunting_horn.ore_only.r2",
+      "family": "hunting_horn",
+      "name": "晶鍛の響笛【中級】",
+      "attack": 112,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.hunting_horn.ore.r2",
+      "series": "gathering.ore_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.hunting_horn.ore_only.r3",
+      "family": "hunting_horn",
+      "name": "晶鍛の響笛【上級】",
+      "attack": 146,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.hunting_horn.ore.r3",
+      "series": "gathering.ore_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.hunting_horn.ore_only.r4",
+      "family": "hunting_horn",
+      "name": "晶鍛の響笛【極級】",
+      "attack": 186,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.hunting_horn.ore.r4",
+      "series": "gathering.ore_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.hunting_horn.bone_only.r1",
+      "family": "hunting_horn",
+      "name": "骨紋の響笛【初級】",
+      "attack": 90,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.hunting_horn.bone.r1",
+      "series": "gathering.bone_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.hunting_horn.bone_only.r2",
+      "family": "hunting_horn",
+      "name": "骨紋の響笛【中級】",
+      "attack": 123,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.hunting_horn.bone.r2",
+      "series": "gathering.bone_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.hunting_horn.bone_only.r3",
+      "family": "hunting_horn",
+      "name": "骨紋の響笛【上級】",
+      "attack": 161,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.hunting_horn.bone.r3",
+      "series": "gathering.bone_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.hunting_horn.bone_only.r4",
+      "family": "hunting_horn",
+      "name": "骨紋の響笛【極級】",
+      "attack": 204,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.hunting_horn.bone.r4",
+      "series": "gathering.bone_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.gunlance.ore_only.r1",
+      "family": "gunlance",
+      "name": "晶鍛の銃槍【初級】",
+      "attack": 78,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.gunlance.ore.r1",
+      "series": "gathering.ore_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.gunlance.ore_only.r2",
+      "family": "gunlance",
+      "name": "晶鍛の銃槍【中級】",
+      "attack": 107,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.gunlance.ore.r2",
+      "series": "gathering.ore_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.gunlance.ore_only.r3",
+      "family": "gunlance",
+      "name": "晶鍛の銃槍【上級】",
+      "attack": 139,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.gunlance.ore.r3",
+      "series": "gathering.ore_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.gunlance.ore_only.r4",
+      "family": "gunlance",
+      "name": "晶鍛の銃槍【極級】",
+      "attack": 177,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.gunlance.ore.r4",
+      "series": "gathering.ore_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.gunlance.bone_only.r1",
+      "family": "gunlance",
+      "name": "骨紋の銃槍【初級】",
+      "attack": 86,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.gunlance.bone.r1",
+      "series": "gathering.bone_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.gunlance.bone_only.r2",
+      "family": "gunlance",
+      "name": "骨紋の銃槍【中級】",
+      "attack": 117,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.gunlance.bone.r2",
+      "series": "gathering.bone_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.gunlance.bone_only.r3",
+      "family": "gunlance",
+      "name": "骨紋の銃槍【上級】",
+      "attack": 153,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.gunlance.bone.r3",
+      "series": "gathering.bone_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.gunlance.bone_only.r4",
+      "family": "gunlance",
+      "name": "骨紋の銃槍【極級】",
+      "attack": 194,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.gunlance.bone.r4",
+      "series": "gathering.bone_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.light_bowgun.ore_only.r1",
+      "family": "light_bowgun",
+      "name": "晶鍛の軽弩【初級】",
+      "attack": 56,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.light_bowgun.ore.r1",
+      "series": "gathering.ore_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.light_bowgun.ore_only.r2",
+      "family": "light_bowgun",
+      "name": "晶鍛の軽弩【中級】",
+      "attack": 76,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.light_bowgun.ore.r2",
+      "series": "gathering.ore_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.light_bowgun.ore_only.r3",
+      "family": "light_bowgun",
+      "name": "晶鍛の軽弩【上級】",
+      "attack": 99,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.light_bowgun.ore.r3",
+      "series": "gathering.ore_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.light_bowgun.ore_only.r4",
+      "family": "light_bowgun",
+      "name": "晶鍛の軽弩【極級】",
+      "attack": 127,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.light_bowgun.ore.r4",
+      "series": "gathering.ore_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.light_bowgun.bone_only.r1",
+      "family": "light_bowgun",
+      "name": "骨紋の軽弩【初級】",
+      "attack": 62,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.light_bowgun.bone.r1",
+      "series": "gathering.bone_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.light_bowgun.bone_only.r2",
+      "family": "light_bowgun",
+      "name": "骨紋の軽弩【中級】",
+      "attack": 84,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.light_bowgun.bone.r2",
+      "series": "gathering.bone_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.light_bowgun.bone_only.r3",
+      "family": "light_bowgun",
+      "name": "骨紋の軽弩【上級】",
+      "attack": 110,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.light_bowgun.bone.r3",
+      "series": "gathering.bone_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.light_bowgun.bone_only.r4",
+      "family": "light_bowgun",
+      "name": "骨紋の軽弩【極級】",
+      "attack": 140,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.light_bowgun.bone.r4",
+      "series": "gathering.bone_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.heavy_bowgun.ore_only.r1",
+      "family": "heavy_bowgun",
+      "name": "晶鍛の重弩【初級】",
+      "attack": 78,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.heavy_bowgun.ore.r1",
+      "series": "gathering.ore_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.heavy_bowgun.ore_only.r2",
+      "family": "heavy_bowgun",
+      "name": "晶鍛の重弩【中級】",
+      "attack": 107,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.heavy_bowgun.ore.r2",
+      "series": "gathering.ore_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.heavy_bowgun.ore_only.r3",
+      "family": "heavy_bowgun",
+      "name": "晶鍛の重弩【上級】",
+      "attack": 139,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.heavy_bowgun.ore.r3",
+      "series": "gathering.ore_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.heavy_bowgun.ore_only.r4",
+      "family": "heavy_bowgun",
+      "name": "晶鍛の重弩【極級】",
+      "attack": 178,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1.08,
+      "assetId": "model.weapon.heavy_bowgun.ore.r4",
+      "series": "gathering.ore_only",
+      "rankId": "rank.4"
+    },
+    {
+      "id": "weapon.heavy_bowgun.bone_only.r1",
+      "family": "heavy_bowgun",
+      "name": "骨紋の重弩【初級】",
+      "attack": 86,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.heavy_bowgun.bone.r1",
+      "series": "gathering.bone_only",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "weapon.heavy_bowgun.bone_only.r2",
+      "family": "heavy_bowgun",
+      "name": "骨紋の重弩【中級】",
+      "attack": 118,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.heavy_bowgun.bone.r2",
+      "series": "gathering.bone_only",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "weapon.heavy_bowgun.bone_only.r3",
+      "family": "heavy_bowgun",
+      "name": "骨紋の重弩【上級】",
+      "attack": 154,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.heavy_bowgun.bone.r3",
+      "series": "gathering.bone_only",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "weapon.heavy_bowgun.bone_only.r4",
+      "family": "heavy_bowgun",
+      "name": "骨紋の重弩【極級】",
+      "attack": 196,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": -5,
+      "sharpnessModifier": 0.9,
+      "assetId": "model.weapon.heavy_bowgun.bone.r4",
+      "series": "gathering.bone_only",
+      "rankId": "rank.4"
     }
   ],
   "armor": [
@@ -7282,6 +7762,1230 @@
         ]
       },
       "fromArmorId": "armor.legs.bone_only.r3"
+    },
+    {
+      "id": "recipe.ore_only.hunting_horn.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.hunting_horn.ore_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.layered_ashstone",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.hunting_horn.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.hunting_horn.ore_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.hunting_horn.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.hunting_horn.ore_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.hunting_horn.ore_only.r1"
+    },
+    {
+      "id": "recipe.ore_only.hunting_horn.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.hunting_horn.ore_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 6
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.hunting_horn.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.hunting_horn.ore_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.hunting_horn.ore_only.r2"
+    },
+    {
+      "id": "recipe.ore_only.hunting_horn.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.hunting_horn.ore_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 7
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.hunting_horn.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.hunting_horn.ore_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.hunting_horn.ore_only.r3"
+    },
+    {
+      "id": "recipe.bone_only.hunting_horn.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.hunting_horn.bone_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.bone.weathered_fragment",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.hollow_rib",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.hunting_horn.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.hunting_horn.bone_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.hunting_horn.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.hunting_horn.bone_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.hunting_horn.bone_only.r1"
+    },
+    {
+      "id": "recipe.bone_only.hunting_horn.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.hunting_horn.bone_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 6
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.hunting_horn.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.hunting_horn.bone_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.hunting_horn.bone_only.r2"
+    },
+    {
+      "id": "recipe.bone_only.hunting_horn.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.hunting_horn.bone_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 7
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.hunting_horn.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.hunting_horn.bone_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.hunting_horn.bone_only.r3"
+    },
+    {
+      "id": "recipe.ore_only.gunlance.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.gunlance.ore_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.layered_ashstone",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.gunlance.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.gunlance.ore_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.gunlance.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.gunlance.ore_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.gunlance.ore_only.r1"
+    },
+    {
+      "id": "recipe.ore_only.gunlance.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.gunlance.ore_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 6
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.gunlance.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.gunlance.ore_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.gunlance.ore_only.r2"
+    },
+    {
+      "id": "recipe.ore_only.gunlance.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.gunlance.ore_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 7
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.gunlance.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.gunlance.ore_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.gunlance.ore_only.r3"
+    },
+    {
+      "id": "recipe.bone_only.gunlance.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.gunlance.bone_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.bone.weathered_fragment",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.hollow_rib",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.gunlance.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.gunlance.bone_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.gunlance.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.gunlance.bone_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.gunlance.bone_only.r1"
+    },
+    {
+      "id": "recipe.bone_only.gunlance.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.gunlance.bone_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 6
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.gunlance.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.gunlance.bone_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.gunlance.bone_only.r2"
+    },
+    {
+      "id": "recipe.bone_only.gunlance.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.gunlance.bone_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 7
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.gunlance.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.gunlance.bone_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.gunlance.bone_only.r3"
+    },
+    {
+      "id": "recipe.ore_only.light_bowgun.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.light_bowgun.ore_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.layered_ashstone",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.light_bowgun.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.light_bowgun.ore_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.light_bowgun.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.light_bowgun.ore_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.light_bowgun.ore_only.r1"
+    },
+    {
+      "id": "recipe.ore_only.light_bowgun.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.light_bowgun.ore_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 6
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.light_bowgun.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.light_bowgun.ore_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.light_bowgun.ore_only.r2"
+    },
+    {
+      "id": "recipe.ore_only.light_bowgun.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.light_bowgun.ore_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 7
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.light_bowgun.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.light_bowgun.ore_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.light_bowgun.ore_only.r3"
+    },
+    {
+      "id": "recipe.bone_only.light_bowgun.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.light_bowgun.bone_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.bone.weathered_fragment",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.hollow_rib",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.light_bowgun.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.light_bowgun.bone_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.light_bowgun.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.light_bowgun.bone_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.light_bowgun.bone_only.r1"
+    },
+    {
+      "id": "recipe.bone_only.light_bowgun.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.light_bowgun.bone_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 6
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.light_bowgun.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.light_bowgun.bone_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.light_bowgun.bone_only.r2"
+    },
+    {
+      "id": "recipe.bone_only.light_bowgun.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.light_bowgun.bone_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 7
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.light_bowgun.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.light_bowgun.bone_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.light_bowgun.bone_only.r3"
+    },
+    {
+      "id": "recipe.ore_only.heavy_bowgun.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_bowgun.ore_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.ore.basin_iron",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.layered_ashstone",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.heavy_bowgun.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_bowgun.ore_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.heavy_bowgun.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.heavy_bowgun.ore_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.ore.deepcopper",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.strata_copper",
+            "count": 2
+          },
+          {
+            "itemId": "mat.ore.mist_silver",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.heavy_bowgun.ore_only.r1"
+    },
+    {
+      "id": "recipe.ore_only.heavy_bowgun.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_bowgun.ore_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 6
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.heavy_bowgun.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.heavy_bowgun.ore_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.ore.crystalseam_steel",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.highdensity_mica",
+            "count": 3
+          },
+          {
+            "itemId": "mat.ore.violet_vein",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.heavy_bowgun.ore_only.r2"
+    },
+    {
+      "id": "recipe.ore_only.heavy_bowgun.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_bowgun.ore_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 7
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.ore_only.heavy_bowgun.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.heavy_bowgun.ore_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.ore.starlight_iron",
+            "count": 5
+          },
+          {
+            "itemId": "mat.ore.pulse_ore",
+            "count": 4
+          },
+          {
+            "itemId": "mat.ore.prismheart",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.heavy_bowgun.ore_only.r3"
+    },
+    {
+      "id": "recipe.bone_only.heavy_bowgun.r1.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_bowgun.bone_only.r1",
+      "cost": {
+        "money": 110,
+        "items": [
+          {
+            "itemId": "mat.bone.weathered_fragment",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.hollow_rib",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.heavy_bowgun.r2.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_bowgun.bone_only.r2",
+      "cost": {
+        "money": 370,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.heavy_bowgun.r2.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.heavy_bowgun.bone_only.r2",
+      "cost": {
+        "money": 234,
+        "items": [
+          {
+            "itemId": "mat.bone.dense_long",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.cave_rib",
+            "count": 2
+          },
+          {
+            "itemId": "mat.bone.stonebound_pelvis",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.heavy_bowgun.bone_only.r1"
+    },
+    {
+      "id": "recipe.bone_only.heavy_bowgun.r3.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_bowgun.bone_only.r3",
+      "cost": {
+        "money": 860,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 6
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.heavy_bowgun.r3.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.heavy_bowgun.bone_only.r3",
+      "cost": {
+        "money": 553,
+        "items": [
+          {
+            "itemId": "mat.bone.fossil_saber",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.tower_vertebra",
+            "count": 3
+          },
+          {
+            "itemId": "mat.bone.crystal_femur",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.heavy_bowgun.bone_only.r2"
+    },
+    {
+      "id": "recipe.bone_only.heavy_bowgun.r4.craft",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_bowgun.bone_only.r4",
+      "cost": {
+        "money": 1760,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 7
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.bone_only.heavy_bowgun.r4.upgrade",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.heavy_bowgun.bone_only.r4",
+      "cost": {
+        "money": 1138,
+        "items": [
+          {
+            "itemId": "mat.bone.ancient_ridge",
+            "count": 5
+          },
+          {
+            "itemId": "mat.bone.deepfossil_core",
+            "count": 4
+          },
+          {
+            "itemId": "mat.bone.astral_spine",
+            "count": 2
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.heavy_bowgun.bone_only.r3"
     }
   ],
   "actions": [

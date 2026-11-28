@@ -8,6 +8,7 @@ import { edgeStage } from '../game/combat';
 import { areaLabel, areaOf } from '../game/field';
 import type { SimEvent } from '../game/events';
 import { familyOf, isInvulnerable } from '../game/player';
+import { extraText } from '../game/extraWeapons';
 import type { Simulation } from '../game/sim';
 import { DEPOT_REACH, NODE_REACH, errandProgress, errandReady, openNodes } from '../game/errand';
 import { FIELD_GATHER_LABEL } from '../data/fieldGathering';
@@ -504,14 +505,15 @@ export class Hud {
     });
     const lv = p.action?.chargeLevel ?? 0;
     this.set('charge', lv, () => this.pips.forEach((b, i) => b.classList.toggle('on', i < lv)));
-    // ビン（環弓。v0.60.0）: 付けていれば名前と残り、付けていなければ持っている本数（持っていける武器の時だけ）
+    // ビン（環弓。v0.60.0）: 付けていれば名前と残り、付けていなければ持っている本数（持っていける武器の時だけ）。
+    // 響笛・銃槍・軽弩・重弩（v0.80.0）は、同じ欄に状態の 1 行（演奏と旋律・砲弾と冷却・弾の種類と数）。演奏の構え・据え構えの間は明るくする
     const coatable = !!familyOf(p, sim.content).coatable;
     const loaded = p.coating ? sim.content.items.get(p.coating) : undefined;
-    const coatText = !coatable ? '' : loaded ? `${loaded.coating?.label ?? loaded.name} ${p.coatings.find((s) => s.itemId === p.coating)?.count ?? 0}` : `ビン ${p.coatings.reduce((n, s) => n + s.count, 0)}`;
+    const coatText = p.extraWeapon ? extraText(p.extraWeapon) : !coatable ? '' : loaded ? `${loaded.coating?.label ?? loaded.name} ${p.coatings.find((s) => s.itemId === p.coating)?.count ?? 0}` : `ビン ${p.coatings.reduce((n, s) => n + s.count, 0)}`;
     this.set('coat', `${coatText}|${loaded ? 1 : 0}`, () => {
-      this.coatBox.hidden = !coatable;
+      this.coatBox.hidden = !coatable && !p.extraWeapon;
       this.coatBox.textContent = coatText;
-      this.coatBox.classList.toggle('on', !!loaded);
+      this.coatBox.classList.toggle('on', !!loaded || !!p.extraWeapon?.brace || !!p.extraWeapon?.recital);
     });
     // 刃の状態
     // 気（太刀）: 量を棒で、満ちている間は光らせる

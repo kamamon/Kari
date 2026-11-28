@@ -1,4 +1,4 @@
-// 7 系統（断岳剣は v0.57.0 から）の体の動きが「人にできる範囲」に収まっているかを、全部の技の全 tick で調べる。
+// 11 系統（断岳剣は v0.57.0 から。響笛・銃槍・軽弩・重弩は v0.80.0 から）の体の動きが「人にできる範囲」に収まっているかを、全部の技の全 tick で調べる。
 // 調べる中身（関節の曲がる範囲・手が武器に届くか・手首・重心・足の滑り・自分の体と武器の重なり・速さ）は src/render/humanLimits.ts。
 // v0.56.0 までの断岳剣（キー姿勢 + 腕の IK の方式）は保留の組 v056 に残してあり、ここでは調べない（tests/motion-replacement.test.ts）。
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -53,8 +53,8 @@ function worstOf(clip: string): Map<string, { v: Violation; t: number }> {
 }
 
 describe('体の動きが人にできる範囲にある', () => {
-  it('7 系統の技は、すべて「解く方式」の動きを持つ（断岳剣は v0.57.0 から。D-150）', () => {
-    expect(FAMILIES.sort()).toEqual(['guard_blade', 'heavy_blade', 'long_blade', 'long_lance', 'ring_bow', 'twin_blades', 'war_maul']);
+  it('11 系統の技は、すべて「解く方式」の動きを持つ（断岳剣は v0.57.0 から。D-150。響笛・銃槍・軽弩・重弩は v0.80.0 から。D-180）', () => {
+    expect(FAMILIES.sort()).toEqual(['guard_blade', 'gunlance', 'heavy_blade', 'heavy_bowgun', 'hunting_horn', 'light_bowgun', 'long_blade', 'long_lance', 'ring_bow', 'twin_blades', 'war_maul']);
     for (const a of content.actions.values()) {
       const fam = a.actionId.split('.')[1]!;
       if (!FAMILIES.includes(fam)) continue;

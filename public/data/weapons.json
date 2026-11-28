@@ -293,6 +293,135 @@
       "coatable": true,
       "aim": { "pitchMinDeg": -35, "pitchMaxDeg": 55 },
       "guard": null
+    },
+    {
+      "id": "hunting_horn",
+      "edge": { "wearPerMotion": 1.3, "label": "打面" },
+      "labels": { "main": "振る", "sub": "柄打ち", "special": "演奏", "combo": "叩き" },
+      "summary": "響笛（v0.80.0）。打撃と、自分を強める旋律。主は左振り → 右振り、副は柄で突く、主と副の同時押しは叩きつけ（2 回当たる）。固有で演奏の構えに入り、構えの間は主・副・同時押しが音 1・2・3（もう 1 度固有で構えを解く）。音を 1・2・3 か 1・1・1 と並べると攻撃、2・3・1 と並べると持久（スタミナの戻り）が 60 秒強まる。",
+      "name": "響笛",
+      "twoHanded": true,
+      "otherHandAlong": 0.5,
+      "drawnMoveSpeed": 2.6,
+      "drawnTurnDegPerSec": 300,
+      "ready": { "grip": [-0.2186, 0.8903, -0.0045], "dir": [0.2516, 0.7346, 0.6301], "planeNormal": [-0.8461, 0.4831, -0.2254] },
+      "blade": { "from": 0.95, "to": 1.27, "radius": 0.2 },
+      "actions": {
+        "main": "player.hunting_horn.swing_left",
+        "sub": "player.hunting_horn.poke",
+        "combo": "player.hunting_horn.slam",
+        "special": "player.hunting_horn.recital_enter",
+        "drawAttack": "player.hunting_horn.swing_left",
+        "draw": "player.hunting_horn.draw",
+        "sheathe": "player.hunting_horn.sheathe"
+      },
+      "cancelNames": {
+        "xw_hh_left": "player.hunting_horn.swing_left",
+        "xw_hh_right": "player.hunting_horn.swing_right",
+        "xw_hh_slam": "player.hunting_horn.slam"
+      },
+      "cancelButtons": { "xw_hh_left": "main", "xw_hh_right": "main", "xw_hh_slam": "combo" },
+      "guard": null
+    },
+    {
+      "id": "gunlance",
+      "edge": { "wearPerMotion": 1.4, "label": "穂先" },
+      "labels": { "main": "突く", "sub": "砲撃", "special": "防御", "dodge": "跳び", "combo": "斬り上げ" },
+      "summary": "銃槍（v0.80.0）。大盾と、穂先の砲。主は 3 段の突き、副は砲撃（砲弾 3 発。肉質に関わらない決まった力で、刃を使わない。空なら装填）、主と副の同時押しは斬り上げ。防御を構えたまま、主で構え突き、副で装填、同時押しで大砲撃（撃つと 75 秒の冷却）。回避は短い跳び。",
+      "name": "銃槍",
+      "twoHanded": false,
+      "drawnMoveSpeed": 1.65,
+      "drawnTurnDegPerSec": 200,
+      "ready": { "grip": [-0.3, 1.02, 0.1], "dir": [0.0597, 0.0697, 0.9958], "planeNormal": [-0.9982, 0, 0.0599] },
+      "blade": { "from": 0.9, "to": 2.36, "radius": 0.1 },
+      "actions": {
+        "main": "player.gunlance.thrust",
+        "sub": "player.gunlance.shell",
+        "combo": "player.gunlance.uppercut",
+        "drawAttack": "player.gunlance.thrust",
+        "draw": "player.gunlance.draw",
+        "sheathe": "player.gunlance.sheathe",
+        "guardMain": "player.gunlance.guard_thrust",
+        "guardSub": "player.gunlance.reload",
+        "guardCombo": "player.gunlance.wyvern_fire",
+        "dodge": "player.gunlance.hop",
+        "dodgeBack": "player.gunlance.backstep"
+      },
+      "cancelNames": {
+        "xw_gl_thrust": "player.gunlance.thrust",
+        "xw_gl_thrust2": "player.gunlance.thrust2",
+        "xw_gl_thrust3": "player.gunlance.thrust3",
+        "xw_gl_shell": "player.gunlance.shell",
+        "xw_gl_upper": "player.gunlance.uppercut"
+      },
+      "cancelButtons": { "xw_gl_thrust": "main", "xw_gl_thrust2": "main", "xw_gl_thrust3": "main", "xw_gl_shell": "sub", "xw_gl_upper": "combo" },
+      "offhand": "shield_great",
+      "offhandReady": [0.3, 1.0, 0.25],
+      "offhandGuard": [0.05, 1.12, 0.5],
+      "guard": {
+        "startTicks": 6,
+        "activeFromTick": 3,
+        "endTicks": 10,
+        "recoilTicks": 16,
+        "breakTicks": 60,
+        "arcDegrees": 160,
+        "chipScale": 0.1,
+        "breakDamageScale": 0.6,
+        "turnDegPerSec": 120,
+        "recoilDistance": 0.3,
+        "walkSpeed": 1.0,
+        "pose": { "grip": [-0.32, 0.95, -0.02], "dir": [0.0596, 0.0993, 0.9933], "planeNormal": [-0.9982, 0, 0.0599] }
+      }
+    },
+    {
+      "id": "light_bowgun",
+      "labels": { "main": "射つ", "sub": "装填", "special": "狙う", "dodge": "回避", "combo": "速射" },
+      "summary": "軽弩（v0.80.0）。弾を込めて射つ、身軽な弩。主で射つ、副で装填、主と副の同時押しは通常弾の速射（弾 1 つで 3 連射）。固有を押している間は、肩越しに手で狙う（照準の所へ弾が飛ぶ）。抜いている間は、道具の送りのボタンで通常弾・貫通弾・散弾を選ぶ（選び直したら装填）。12m までが適正距離。入力なしの回避は後ろへ跳ぶ。",
+      "name": "軽弩",
+      "twoHanded": true,
+      "otherHandAlong": 0.28,
+      "drawnMoveSpeed": 2.8,
+      "drawnTurnDegPerSec": 360,
+      "ready": { "grip": [-0.23, 1.12, 0.1], "dir": [0, 0.04, 0.9992], "planeNormal": [-1, 0, 0] },
+      "blade": { "from": 0.2, "to": 0.78, "radius": 0.065 },
+      "actions": {
+        "main": "player.light_bowgun.fire",
+        "sub": "player.light_bowgun.reload",
+        "combo": "player.light_bowgun.rapid_fire",
+        "drawAttack": "player.light_bowgun.draw",
+        "draw": "player.light_bowgun.draw",
+        "sheathe": "player.light_bowgun.sheathe",
+        "dodgeIdle": "player.light_bowgun.backstep"
+      },
+      "cancelNames": {},
+      "cancelButtons": {},
+      "aim": { "pitchMinDeg": -35, "pitchMaxDeg": 55 },
+      "guard": null
+    },
+    {
+      "id": "heavy_bowgun",
+      "labels": { "main": "射つ", "sub": "装填", "special": "狙う", "dodge": "回避", "combo": "据え構え" },
+      "summary": "重弩（v0.80.0）。重く、1 発が大きい弩。主で射つ、副で装填、主と副の同時押しは据え構え（次の 1 発が強まる。構えている間は歩みが遅い）。固有を押している間は、肩越しに手で狙う（照準の所へ弾が飛ぶ）。抜いている間は、道具の送りのボタンで通常弾・貫通弾・散弾を選ぶ（選び直したら装填）。12m までが適正距離。回避は短い身かわし。",
+      "name": "重弩",
+      "twoHanded": true,
+      "otherHandAlong": 0.28,
+      "drawnMoveSpeed": 1.7,
+      "drawnTurnDegPerSec": 220,
+      "ready": { "grip": [-0.23, 1.12, 0.1], "dir": [0, 0.04, 0.9992], "planeNormal": [-1, 0, 0] },
+      "blade": { "from": 0.2, "to": 1.05, "radius": 0.065 },
+      "actions": {
+        "main": "player.heavy_bowgun.fire",
+        "sub": "player.heavy_bowgun.reload",
+        "combo": "player.heavy_bowgun.charge_stance",
+        "drawAttack": "player.heavy_bowgun.draw",
+        "draw": "player.heavy_bowgun.draw",
+        "sheathe": "player.heavy_bowgun.sheathe",
+        "dodge": "player.heavy_bowgun.dodge"
+      },
+      "cancelNames": {},
+      "cancelButtons": {},
+      "aim": { "pitchMinDeg": -35, "pitchMaxDeg": 55 },
+      "guard": null
     }
   ],
   "weapons": [
@@ -652,6 +781,210 @@
       "affinity": 0,
       "sharpnessModifier": 1.0,
       "assetId": "model.weapon.ring_bow.005"
+    },
+    {
+      "id": "weapon.hunting_horn.001",
+      "family": "hunting_horn",
+      "name": "里鍛ちの響笛",
+      "attack": 78,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.hunting_horn.001",
+      "starter": true
+    },
+    {
+      "id": "weapon.hunting_horn.002",
+      "family": "hunting_horn",
+      "name": "岩殻の響笛",
+      "attack": 90,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.hunting_horn.002"
+    },
+    {
+      "id": "weapon.hunting_horn.003",
+      "family": "hunting_horn",
+      "name": "脈殻の響笛",
+      "attack": 103,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.hunting_horn.003"
+    },
+    {
+      "id": "weapon.hunting_horn.004",
+      "family": "hunting_horn",
+      "name": "晶殻の響笛",
+      "attack": 119,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.hunting_horn.004"
+    },
+    {
+      "id": "weapon.hunting_horn.005",
+      "family": "hunting_horn",
+      "name": "輝殻の響笛",
+      "attack": 136,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.hunting_horn.005"
+    },
+    {
+      "id": "weapon.gunlance.001",
+      "family": "gunlance",
+      "name": "里鍛ちの銃槍",
+      "attack": 76,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.gunlance.001",
+      "starter": true
+    },
+    {
+      "id": "weapon.gunlance.002",
+      "family": "gunlance",
+      "name": "岩殻の銃槍",
+      "attack": 87,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.gunlance.002"
+    },
+    {
+      "id": "weapon.gunlance.003",
+      "family": "gunlance",
+      "name": "脈殻の銃槍",
+      "attack": 101,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.gunlance.003"
+    },
+    {
+      "id": "weapon.gunlance.004",
+      "family": "gunlance",
+      "name": "晶殻の銃槍",
+      "attack": 116,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.gunlance.004"
+    },
+    {
+      "id": "weapon.gunlance.005",
+      "family": "gunlance",
+      "name": "輝殻の銃槍",
+      "attack": 133,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.gunlance.005"
+    },
+    {
+      "id": "weapon.light_bowgun.001",
+      "family": "light_bowgun",
+      "name": "里鍛ちの軽弩",
+      "attack": 60,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.light_bowgun.001",
+      "starter": true
+    },
+    {
+      "id": "weapon.light_bowgun.002",
+      "family": "light_bowgun",
+      "name": "岩殻の軽弩",
+      "attack": 69,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.light_bowgun.002"
+    },
+    {
+      "id": "weapon.light_bowgun.003",
+      "family": "light_bowgun",
+      "name": "脈殻の軽弩",
+      "attack": 79,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.light_bowgun.003"
+    },
+    {
+      "id": "weapon.light_bowgun.004",
+      "family": "light_bowgun",
+      "name": "晶殻の軽弩",
+      "attack": 91,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.light_bowgun.004"
+    },
+    {
+      "id": "weapon.light_bowgun.005",
+      "family": "light_bowgun",
+      "name": "輝殻の軽弩",
+      "attack": 105,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.light_bowgun.005"
+    },
+    {
+      "id": "weapon.heavy_bowgun.001",
+      "family": "heavy_bowgun",
+      "name": "里鍛ちの重弩",
+      "attack": 84,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.heavy_bowgun.001",
+      "starter": true
+    },
+    {
+      "id": "weapon.heavy_bowgun.002",
+      "family": "heavy_bowgun",
+      "name": "岩殻の重弩",
+      "attack": 97,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.heavy_bowgun.002"
+    },
+    {
+      "id": "weapon.heavy_bowgun.003",
+      "family": "heavy_bowgun",
+      "name": "脈殻の重弩",
+      "attack": 111,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.heavy_bowgun.003"
+    },
+    {
+      "id": "weapon.heavy_bowgun.004",
+      "family": "heavy_bowgun",
+      "name": "晶殻の重弩",
+      "attack": 128,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.heavy_bowgun.004"
+    },
+    {
+      "id": "weapon.heavy_bowgun.005",
+      "family": "heavy_bowgun",
+      "name": "輝殻の重弩",
+      "attack": 147,
+      "element": { "type": "none", "value": 0 },
+      "affinity": 0,
+      "sharpnessModifier": 1.0,
+      "assetId": "model.weapon.heavy_bowgun.005"
     }
   ]
 }

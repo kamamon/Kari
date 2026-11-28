@@ -97,7 +97,7 @@ describe('工房からの支給（物語の第 1 章の後に 1 度だけ）', (
     const rs = [...content.recipes.values()].filter((r: RecipeDef) => r.id.endsWith('.002'));
     const weapons = rs.filter((r) => r.kind === 'upgrade');
     const armor = rs.filter((r) => r.kind === 'armor_upgrade');
-    expect([weapons.length, armor.length]).toEqual([7, 5]);
+    expect([weapons.length, armor.length]).toEqual([11, 5]);
     const need = new Map<string, number>();
     for (const r of weapons) for (const s of r.cost.items) need.set(s.itemId, Math.max(need.get(s.itemId) ?? 0, s.count));
     for (const r of armor) for (const s of r.cost.items) need.set(s.itemId, (need.get(s.itemId) ?? 0) + s.count);

@@ -181,6 +181,10 @@ export function limpGait(m: MonsterState): boolean {
   return !!r?.limping && (r.state === 'leave' || !m.aware) && !m.action && !m.dead && !m.asleep && m.staggerTicks <= 0;
 }
 
+/** 軽弩・重弩の弾の粒（v0.80.0）。どの弾も同じ形と色を共有する */
+const ROUND_GEOMETRY = new IcosahedronGeometry(0.065, 1);
+const ROUND_MATERIAL = new MeshBasicMaterial({ color: 0xf4d29b });
+
 export class GameView {
   readonly renderer: WebGLRenderer;
   readonly scene = new Scene();
@@ -1081,11 +1085,18 @@ export class GameView {
         continue;
       }
       if (!g) {
-        g = buildArrow().group;
+        // 矢と、軽弩・重弩の弾（v0.80.0。細長い粒）。どちらかだけを出す
+        g = new Group();
+        g.add(buildArrow().group);
+        const round = new Mesh(ROUND_GEOMETRY, ROUND_MATERIAL);
+        round.scale.set(0.75, 1.8, 0.75);
+        g.add(round);
         this.arrows[i] = g;
         this.scene.add(g);
       }
       g.visible = true;
+      g.children[0]!.visible = a.kind !== 'round';
+      g.children[1]!.visible = a.kind === 'round';
       const pos = lerpV(a.prevPos, a.pos, alpha);
       g.position.set(pos.x, pos.y, pos.z);
       g.quaternion.setFromUnitVectors(this.tmpA.set(0, 1, 0), this.tmpB.set(a.vel.x, a.vel.y, a.vel.z).normalize());

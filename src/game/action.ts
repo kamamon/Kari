@@ -22,6 +22,14 @@ export interface ActionRun {
   /** 行動の時間の倍率（1 より小さいと速い）と、その端数の積み立て。防具の技能「道具整備」（研磨石を使う時間） */
   speed: number;
   speedAcc: number;
+  /**
+   * 響笛・銃槍・軽弩・重弩（v0.80.0。src/game/extraWeapons.ts）: この行動で状態（音・砲弾・弾）を変え終えたか、出せたか（false = 弾が無い・冷却中。
+   * 音・射撃・命中を出さない）、射った弾の種類（0 通常・1 貫通・2 散弾）と、その射撃の力の倍率（重弩の据え構え）
+   */
+  extraDone?: boolean;
+  extraAllowed?: boolean;
+  extraAmmo?: number;
+  extraScale?: number;
 }
 
 export function newRun(def: ActionDef, instanceId: number, yaw: number): ActionRun {

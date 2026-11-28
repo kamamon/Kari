@@ -10,6 +10,7 @@ import { buildGuardBladeShield, buildGuardBladeSword } from './guardBlade';
 import { buildHeavyBlade, type WeaponModel } from './heavyBlade';
 import { buildGreatShield, buildLance } from './lance';
 import { buildLongBlade, buildTwinBlade, buildWarMaul } from './forgedWeapons';
+import { buildHuntingHorn, buildGunlance, buildLightBowgun, buildHeavyBowgun } from './extraWeaponModels';
 import { withShell } from './shellPlates';
 import { HUNTER_ATLAS } from './hunterAtlas';
 import { armorLookKey, buildHunterArmor, type ArmorLook } from './hunterArmor';
@@ -44,6 +45,10 @@ const WEAPON_BUILDERS: Record<string, () => WeaponModel> = {
   long_lance: buildLance,
   // 弦は、引いた形に合わせてリグが張る
   ring_bow: () => buildBow(false),
+  hunting_horn: buildHuntingHorn,
+  gunlance: buildGunlance,
+  light_bowgun: buildLightBowgun,
+  heavy_bowgun: buildHeavyBowgun,
 };
 /** 左手に持つもの: 盾、または双剣のもう 1 本 */
 /**
@@ -60,6 +65,10 @@ const SHELL_BASES: Record<string, () => WeaponModel> = {
   long_blade: buildLongBlade,
   long_lance: buildLance,
   ring_bow: () => buildBow(false),
+  hunting_horn: buildHuntingHorn,
+  gunlance: buildGunlance,
+  light_bowgun: buildLightBowgun,
+  heavy_bowgun: buildHeavyBowgun,
 };
 for (const tier of [2, 3, 4, 5]) {
   MODEL_BUILDERS[`model.weapon.heavy_blade.00${tier}`] = () => buildHeavyBlade('shell', tier);
@@ -76,7 +85,7 @@ function gatherModel(model:WeaponModel,style:'ore'|'bone',rank:number):WeaponMod
 for(const style of ['ore','bone'] as const)for(const rank of [1,2,3,4])for(const [family,build] of Object.entries(WEAPON_BUILDERS)){
  const key=`model.weapon.${family}.${style}.r${rank}`;
  MODEL_BUILDERS[key]=()=>gatherModel(build(),style,rank);
- const off=family==='guard_blade'?SHIELD_BUILDERS.shield_small:family==='long_lance'?SHIELD_BUILDERS.shield_great:family==='twin_blades'?SHIELD_BUILDERS.blade_left:null;
+ const off=family==='guard_blade'?SHIELD_BUILDERS.shield_small:(family==='long_lance'||family==='gunlance')?SHIELD_BUILDERS.shield_great:family==='twin_blades'?SHIELD_BUILDERS.blade_left:null;
  if(off)OFFHAND_MODEL_BUILDERS[key]=()=>gatherModel(off(),style,rank);
 }
 

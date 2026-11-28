@@ -16,6 +16,8 @@ export const SOUND_IDS = [
   'item_drink', 'item_heal', 'item_fail', 'trap_set', 'trap_armed', 'trap_trigger', 'orb_throw', 'tranq_hit', 'capture', 'carve', 'carve_get',
   // 里の暮らし（v0.35.0）: 鍛冶の槌・水車のきしみ・灯見の台の遠い鐘
   'forge_clank', 'wheel_creak', 'bell_far',
+  // 響笛の音 3 つ・銃槍の砲撃と大砲撃・装填・軽弩と重弩の射撃（v0.80.0。合成の仮の音）
+  'xw_note_1', 'xw_note_2', 'xw_note_3', 'xw_shell', 'xw_shell_heavy', 'xw_reload', 'xw_shot',
 ] as const;
 
 /** 里の音の大きさ（v0.35.0。0〜1）: 沢・炉・風。環境音の音量（設定の「環境音」）の中で、ゆっくり変える */
@@ -202,6 +204,29 @@ export class AudioSystem {
     if (!this.ctx || this.ctx.state !== 'running') return false;
     const k = Math.min(1.6, intensity);
     switch (id) {
+      case 'xw_note_1':
+        this.tone('triangle', 196, 196, 0.42, 0.21 * k);
+        break;
+      case 'xw_note_2':
+        this.tone('triangle', 247, 247, 0.42, 0.21 * k);
+        break;
+      case 'xw_note_3':
+        this.tone('triangle', 294, 294, 0.48, 0.21 * k);
+        break;
+      case 'xw_shell':
+        this.noiseBurst(0.16, 'lowpass', 1100, 220, 0.62 * k);
+        this.tone('sine', 150, 60, 0.2, 0.25 * k);
+        break;
+      case 'xw_shell_heavy':
+        this.noiseBurst(0.46, 'lowpass', 1000, 150, 0.8 * k);
+        this.tone('sine', 120, 40, 0.5, 0.32 * k);
+        break;
+      case 'xw_reload':
+        this.noiseBurst(0.12, 'bandpass', 2300, 900, 0.25 * k);
+        break;
+      case 'xw_shot':
+        this.noiseBurst(0.11, 'bandpass', 1800, 500, 0.48 * k);
+        break;
       case 'hb_swing_01':
         this.noiseBurst(0.32, 'bandpass', 260, 1300, 0.5 * k, 0.9);
         break;
