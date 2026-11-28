@@ -1,0 +1,457 @@
+{
+  "schemaVersion": 1,
+  "proposalId": "KARI-11-CLASSES-20261127",
+  "basedOn": "kamamon/Kari v0.59.0 main 6d7aee3dd96d9143a7ac48da0aead6fa853a975b",
+  "purpose": "Same ELEVEN weapon categories as PSP MHP2G; ORIGINAL Kari art, content and stats. No extracted game geometry.",
+  "legacyFamilyIdPolicy": "Do not rename or delete any existing family ID/weapon ID. Keep saves and v056/2g animation selectors.",
+  "categoryOrder": [
+    "heavy_blade",
+    "long_blade",
+    "guard_blade",
+    "twin_blades",
+    "war_maul",
+    "hunting_horn",
+    "long_lance",
+    "gunlance",
+    "light_bowgun",
+    "heavy_bowgun",
+    "ring_bow"
+  ],
+  "newIds": [
+    "hunting_horn",
+    "gunlance",
+    "light_bowgun",
+    "heavy_bowgun"
+  ],
+  "families": [
+    {
+      "id": "heavy_blade",
+      "name": "大剣",
+      "english": "Great Sword",
+      "role": "大剣の溜めと三方向の斬撃",
+      "gripProfile": "heavy_two_hand",
+      "introduced": "existing",
+      "displayCategory": "大剣",
+      "starterWeapon": {
+        "id": "weapon.heavy_blade.001",
+        "name": "里鍛ちの大剣",
+        "attackProposal": 80,
+        "assetId": "model.weapon.heavy_blade.001",
+        "materials": [
+          "common_iron",
+          "wood",
+          "leather",
+          "amber_crystal"
+        ]
+      },
+      "model": {
+        "source": "models/heavy_blade_proxy.glb",
+        "icon": "icons/heavy_blade.svg",
+        "reference": "references/heavy_blade_concept.png",
+        "localWeaponAxis": "local +Y toward tip",
+        "unit": "m"
+      },
+      "motion": {
+        "source": "motion/heavy_blade_motion_proposal.json",
+        "canRestoreV056": true
+      },
+      "engineState": [],
+      "stability": "stable_existing_id"
+    },
+    {
+      "id": "long_blade",
+      "name": "太刀",
+      "english": "Long Sword",
+      "role": "気を用いた連続斬り（後年の兜割りは入れない）",
+      "gripProfile": "long_two_hand",
+      "introduced": "existing",
+      "displayCategory": "太刀",
+      "starterWeapon": {
+        "id": "weapon.long_blade.001",
+        "name": "里鍛ちの太刀",
+        "attackProposal": 74,
+        "assetId": "model.weapon.long_blade.001",
+        "materials": [
+          "common_iron",
+          "wood",
+          "leather",
+          "amber_crystal"
+        ]
+      },
+      "model": {
+        "source": "models/long_blade_proxy.glb",
+        "icon": "icons/long_blade.svg",
+        "reference": "references/long_blade_concept.png",
+        "localWeaponAxis": "local +Y toward tip",
+        "unit": "m"
+      },
+      "motion": {
+        "source": "motion/long_blade_motion_proposal.json",
+        "canRestoreV056": true
+      },
+      "engineState": [],
+      "stability": "stable_existing_id"
+    },
+    {
+      "id": "guard_blade",
+      "name": "片手剣",
+      "english": "Sword & Shield",
+      "role": "軽快な斬撃・盾・ガード中の道具",
+      "gripProfile": "one_hand_shield",
+      "introduced": "existing",
+      "displayCategory": "片手剣",
+      "starterWeapon": {
+        "id": "weapon.guard_blade.001",
+        "name": "里鍛ちの片手剣",
+        "attackProposal": 66,
+        "assetId": "model.weapon.guard_blade.001",
+        "materials": [
+          "common_iron",
+          "wood",
+          "leather",
+          "amber_crystal"
+        ]
+      },
+      "model": {
+        "source": "models/guard_blade_proxy.glb",
+        "icon": "icons/guard_blade.svg",
+        "reference": "references/guard_blade_concept.png",
+        "localWeaponAxis": "local +Y toward tip",
+        "unit": "m"
+      },
+      "motion": {
+        "source": "motion/guard_blade_motion_proposal.json",
+        "canRestoreV056": true
+      },
+      "engineState": [],
+      "stability": "stable_existing_id"
+    },
+    {
+      "id": "twin_blades",
+      "name": "双剣",
+      "english": "Dual Blades",
+      "role": "左右別の刃、鬼人化による手数",
+      "gripProfile": "dual_wield",
+      "introduced": "existing",
+      "displayCategory": "双剣",
+      "starterWeapon": {
+        "id": "weapon.twin_blades.001",
+        "name": "里鍛ちの双剣",
+        "attackProposal": 60,
+        "assetId": "model.weapon.twin_blades.001",
+        "materials": [
+          "common_iron",
+          "wood",
+          "leather",
+          "amber_crystal"
+        ]
+      },
+      "model": {
+        "source": "models/twin_blades_proxy.glb",
+        "icon": "icons/twin_blades.svg",
+        "reference": "references/twin_blades_concept.png",
+        "localWeaponAxis": "local +Y toward tip",
+        "unit": "m"
+      },
+      "motion": {
+        "source": "motion/twin_blades_motion_proposal.json",
+        "canRestoreV056": true
+      },
+      "engineState": [],
+      "stability": "stable_existing_id"
+    },
+    {
+      "id": "war_maul",
+      "name": "ハンマー",
+      "english": "Hammer",
+      "role": "溜めと頭への気絶蓄積",
+      "gripProfile": "hammer_two_hand",
+      "introduced": "existing",
+      "displayCategory": "ハンマー",
+      "starterWeapon": {
+        "id": "weapon.war_maul.001",
+        "name": "里鍛ちのハンマー",
+        "attackProposal": 86,
+        "assetId": "model.weapon.war_maul.001",
+        "materials": [
+          "common_iron",
+          "wood",
+          "leather",
+          "amber_crystal"
+        ]
+      },
+      "model": {
+        "source": "models/war_maul_proxy.glb",
+        "icon": "icons/war_maul.svg",
+        "reference": "references/war_maul_concept.png",
+        "localWeaponAxis": "local +Y toward tip",
+        "unit": "m"
+      },
+      "motion": {
+        "source": "motion/war_maul_motion_proposal.json",
+        "canRestoreV056": true
+      },
+      "engineState": [],
+      "stability": "stable_existing_id"
+    },
+    {
+      "id": "long_lance",
+      "name": "ランス",
+      "english": "Lance",
+      "role": "中段・上段、盾歩き、継続突進、ステップ",
+      "gripProfile": "lance_shield",
+      "introduced": "existing",
+      "displayCategory": "ランス",
+      "starterWeapon": {
+        "id": "weapon.long_lance.001",
+        "name": "里鍛ちのランス",
+        "attackProposal": 72,
+        "assetId": "model.weapon.long_lance.001",
+        "materials": [
+          "common_iron",
+          "wood",
+          "leather",
+          "amber_crystal"
+        ]
+      },
+      "model": {
+        "source": "models/long_lance_proxy.glb",
+        "icon": "icons/long_lance.svg",
+        "reference": "references/long_lance_concept.png",
+        "localWeaponAxis": "local +Y toward tip",
+        "unit": "m"
+      },
+      "motion": {
+        "source": "motion/long_lance_motion_proposal.json",
+        "canRestoreV056": true
+      },
+      "engineState": [],
+      "stability": "stable_existing_id"
+    },
+    {
+      "id": "ring_bow",
+      "name": "弓",
+      "english": "Bow",
+      "role": "溜め射撃、射種、ビン装着、矢切り、照準",
+      "gripProfile": "bow_left_hand",
+      "introduced": "existing",
+      "displayCategory": "弓",
+      "starterWeapon": {
+        "id": "weapon.ring_bow.001",
+        "name": "里鍛ちの弓",
+        "attackProposal": 70,
+        "assetId": "model.weapon.ring_bow.001",
+        "materials": [
+          "common_iron",
+          "wood",
+          "leather",
+          "amber_crystal"
+        ]
+      },
+      "model": {
+        "source": "models/ring_bow_proxy.glb",
+        "icon": "icons/ring_bow.svg",
+        "reference": "references/ring_bow_concept.png",
+        "localWeaponAxis": "local +Y toward tip",
+        "unit": "m"
+      },
+      "motion": {
+        "source": "motion/ring_bow_motion_proposal.json",
+        "canRestoreV056": true
+      },
+      "engineState": [],
+      "stability": "stable_existing_id"
+    },
+    {
+      "id": "hunting_horn",
+      "name": "狩猟笛",
+      "english": "Hunting Horn",
+      "role": "大振りの打撃と演奏による支援",
+      "gripProfile": "horn_two_hand",
+      "introduced": "proposed",
+      "displayCategory": "狩猟笛",
+      "starterWeapon": {
+        "id": "weapon.hunting_horn.001",
+        "name": "里鍛ちの狩猟笛",
+        "attackProposal": 78,
+        "assetId": "model.weapon.hunting_horn.001",
+        "materials": [
+          "common_iron",
+          "wood",
+          "leather",
+          "amber_crystal"
+        ]
+      },
+      "model": {
+        "source": "models/hunting_horn_proxy.glb",
+        "icon": "icons/hunting_horn.svg",
+        "reference": "references/hunting_horn_concept.png",
+        "localWeaponAxis": "local +Y toward tip",
+        "unit": "m"
+      },
+      "motion": {
+        "source": "motion/hunting_horn_motion_proposal.json",
+        "canRestoreV056": false
+      },
+      "engineState": [
+        "recitalActive",
+        "melodyNote",
+        "melodyBuffExpires"
+      ],
+      "stability": "NEW_ID_requires_schema_and_save_migration"
+    },
+    {
+      "id": "gunlance",
+      "name": "ガンランス",
+      "english": "Gunlance",
+      "role": "槍・盾に砲撃、リロード、竜撃砲",
+      "gripProfile": "gunlance_shield",
+      "introduced": "proposed",
+      "displayCategory": "ガンランス",
+      "starterWeapon": {
+        "id": "weapon.gunlance.001",
+        "name": "里鍛ちのガンランス",
+        "attackProposal": 76,
+        "assetId": "model.weapon.gunlance.001",
+        "materials": [
+          "common_iron",
+          "wood",
+          "leather",
+          "amber_crystal"
+        ]
+      },
+      "model": {
+        "source": "models/gunlance_proxy.glb",
+        "icon": "icons/gunlance.svg",
+        "reference": "references/gunlance_concept.png",
+        "localWeaponAxis": "local +Y toward tip",
+        "unit": "m"
+      },
+      "motion": {
+        "source": "motion/gunlance_motion_proposal.json",
+        "canRestoreV056": false
+      },
+      "engineState": [
+        "shellsLoaded",
+        "chamberCapacity",
+        "wyvernChargeRecovery"
+      ],
+      "stability": "NEW_ID_requires_schema_and_save_migration"
+    },
+    {
+      "id": "light_bowgun",
+      "name": "ライトボウガン",
+      "english": "Light Bowgun",
+      "role": "軽快な照準・射撃・リロード・対応弾の速射",
+      "gripProfile": "gun_two_hand_light",
+      "introduced": "proposed",
+      "displayCategory": "ライトボウガン",
+      "starterWeapon": {
+        "id": "weapon.light_bowgun.001",
+        "name": "里鍛ちのライトボウガン",
+        "attackProposal": 60,
+        "assetId": "model.weapon.light_bowgun.001",
+        "materials": [
+          "common_iron",
+          "wood",
+          "leather",
+          "amber_crystal"
+        ]
+      },
+      "model": {
+        "source": "models/light_bowgun_proxy.glb",
+        "icon": "icons/light_bowgun.svg",
+        "reference": "references/light_bowgun_concept.png",
+        "localWeaponAxis": "+Z muzzle",
+        "unit": "m"
+      },
+      "motion": {
+        "source": "motion/light_bowgun_motion_proposal.json",
+        "canRestoreV056": false
+      },
+      "engineState": [
+        "ammoType",
+        "magazine",
+        "recoil",
+        "rapidBurstState"
+      ],
+      "stability": "NEW_ID_requires_schema_and_save_migration"
+    },
+    {
+      "id": "heavy_bowgun",
+      "name": "ヘビィボウガン",
+      "english": "Heavy Bowgun",
+      "role": "重い射撃、反動、装填、銃身または盾の選択",
+      "gripProfile": "gun_two_hand_heavy",
+      "introduced": "proposed",
+      "displayCategory": "ヘビィボウガン",
+      "starterWeapon": {
+        "id": "weapon.heavy_bowgun.001",
+        "name": "里鍛ちのヘビィボウガン",
+        "attackProposal": 84,
+        "assetId": "model.weapon.heavy_bowgun.001",
+        "materials": [
+          "common_iron",
+          "wood",
+          "leather",
+          "amber_crystal"
+        ]
+      },
+      "model": {
+        "source": "models/heavy_bowgun_proxy.glb",
+        "icon": "icons/heavy_bowgun.svg",
+        "reference": "references/heavy_bowgun_concept.png",
+        "localWeaponAxis": "+Z muzzle",
+        "unit": "m"
+      },
+      "motion": {
+        "source": "motion/heavy_bowgun_motion_proposal.json",
+        "canRestoreV056": false
+      },
+      "engineState": [
+        "ammoType",
+        "magazine",
+        "reloadSpeed",
+        "barrelOrShield"
+      ],
+      "stability": "NEW_ID_requires_schema_and_save_migration"
+    }
+  ],
+  "integration": {
+    "required": [
+      "public/data/weapons.json",
+      "public/data/actions/<family>.json",
+      "tools/weapons/<family>.mjs",
+      "src/render/rig.ts",
+      "src/render/hunterAnim.ts",
+      "src/render/view.ts",
+      "src/game/player.ts",
+      "src/game/sim.ts",
+      "src/data/schemas.ts",
+      "UI weapon category selection / smithy / inventory / save schema",
+      "projectiles, shelling, melody buff and audio VFX where appropriate",
+      "test cases for all 11 class IDs"
+    ],
+    "acceptance": [
+      "11 distinct equippable categories with starter weapon each",
+      "Existing 7 and saved equipped weapons deserialize unchanged",
+      "3D blockout GLBs and hand/offhand socket transforms load correctly",
+      "No default heavy_blade fallback for new classes",
+      "Ammo/recital/shot cooldown persists and works after interruptions",
+      "No duplicate hit from one active hit window",
+      "All 11 are selectable on touch/iPhone and visible in smithy",
+      "30 fps mobile and 60 fps simulation stability after integration"
+    ]
+  },
+  "sources": [
+    {
+      "name": "MHP2G11 types",
+      "url": "https://mh.mtwildwood.net/ja/mhfu/weapons/"
+    },
+    {
+      "name": "2G weapon categories",
+      "url": "https://mhp2g.gorillawiki.jp/"
+    }
+  ],
+  "status": "PRODUCTION REQUEST / NOT YET APPLIED TO LIVE GAME"
+}
