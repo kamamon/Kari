@@ -5013,7 +5013,7 @@
       "use": "初級〜上級・根絡み湿原",
       "owner": "ChatGPT（専用メッシュ・動作・統合）",
       "status": "integrated",
-      "version": 1,
+      "version": 2,
       "path": "assets/models/monsters/venolka_hd/venolka.gltf",
       "sourcePath": "tools/venolka",
       "files": [
@@ -5023,9 +5023,10 @@
         "material_source/provenance.json",
         "bake_combat.py",
         "ensure_assets.py",
-        "ensure.mjs"
+        "ensure.mjs",
+        "material_source/hide_relief_v1.webp"
       ],
-      "source": "採用した原画の材質と連続SDF皮膚・骨格付き膜翼",
+      "source": "利用者承認済みV2原画投影テクスチャと解剖別UV（同じ骨格付きメッシュ）",
       "terms": "本作オリジナル",
       "dims": "Y上 +Z前",
       "tris": 2298702,
@@ -5088,7 +5089,7 @@
         "vn_sever_tail",
         "vn_pant"
       ],
-      "verification": "専用GLBと画像由来PBR。分割バッファと動作キーの一致をビルド時に検証する。端末性能と原画同等の写実品質は未確認。"
+      "verification": "高密度2298702・軽量285404三角形、111関節・56クリップ。原画V2の素材ハッシュ・両解像度・UVアトラスレイアウト・分割バッファを検査。原画同等の写実品質とiPhone実機性能は未確認。"
     }
   ]
 }
