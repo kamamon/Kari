@@ -242,7 +242,7 @@ describe('図鑑に出す原画', () => {
     const content = await loadContent();
     const withArt = content.bestiary.species.filter((s) => s.art);
     // v0.24.0: 86 種すべて（ガルドロスは採用した設定図 galdros/…。ほかは原画案で、concepts/ にある）
-    expect(withArt.length).toBe(87);
+    expect(withArt.length).toBe(88);
     for (const s of withArt) {
       const src = s.art!.includes('/') ? join(ROOT, 'art-source/monster', s.art!) : join(ROOT, 'art-source/monster/concepts', s.art!);
       expect(existsSync(src), s.art).toBe(true);

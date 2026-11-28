@@ -9,10 +9,10 @@ let c:Content;
 beforeAll(async()=>{c=await loadContent();});
 describe('全地域の採取ツアー',()=>{
  it('20地域・80遠征。19地域は固有のエリア・採取点・4級抽選を持つ',()=>{
-  expect(c.fields.size).toBe(20);
-  expect(c.regionalGathering?.size).toBe(19);
+  expect(c.fields.size).toBe(21);
+  expect(c.regionalGathering?.size).toBe(20);
   const tours=[...c.quests.values()].filter(q=>q.gather?.fieldGathering);
-  expect(tours).toHaveLength(80);
+  expect(tours).toHaveLength(84);
   for(const [id,g] of c.regionalGathering!){
    const f=c.fields.get(id)!;
    expect(f.areas.length).toBeGreaterThanOrEqual(9);

@@ -30,7 +30,7 @@ const errorsOf = (fn: (b: QuestBoardDef) => void): string[] => {
 describe('依頼の掲示（星・分類・依頼人・話・目安の時間）', () => {
   it('狩りの依頼のどれにも掲示があり、読み込みの時に依頼へ付く。設計の 24 件は、星と依頼人が設計（current_quest_overrides_v1.json）のまま', () => {
     // 設計の 24 件と、v0.34.0 の上の級 9 件（文は Claude が書いた。下の「上の級」の検査）
-    expect([...content.quests.values()].filter((q) => q.kind !== 'gather')).toHaveLength(36);
+    expect([...content.quests.values()].filter((q) => q.kind !== 'gather')).toHaveLength(39);
     expect([...content.quests.values()].every((q) => !!q.board)).toBe(true);
     const design = JSON.parse(readFileSync('docs/source/chatgpt-quest-design-20261125/current_quest_overrides_v1.json', 'utf8')) as {
       questDesigns: { questId: string; stars: number; client: string; requestText: string; targetClearMinutes: [number, number]; effectiveTimeLimitMinutes: number }[];
@@ -75,7 +75,7 @@ describe('依頼の掲示（星・分類・依頼人・話・目安の時間）'
     // おすすめの順は、スパインゲイルの依頼（#50。「岩場の足音」を達成すると受けられる。おすすめの文にも書く）のほかは、最初から受けられる依頼（表示だけで、受けられる条件は変えない）
     const doc = newSave(content, stamp);
     expect(content.board.recommend.text).toMatch(/おすすめ/);
-    expect(content.board.recommend.questIds.filter(id=>!questUnlocked(doc,content.quests.get(id)!))).toEqual(['quest.spinegale.r1']);
+    expect(content.board.recommend.questIds.filter(id=>!questUnlocked(doc,content.quests.get(id)!))).toEqual(['quest.spinegale.r1','quest.frostald.r1']);
   });
 
   it('検査が誤りを見つける: 掲示の無い依頼・星の範囲・知らない分類・制限を超える目安・知らない依頼', () => {

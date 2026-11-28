@@ -35,7 +35,7 @@ function tagged(root:Object3D,requireAll=false){
 }
 describe('環境の生成画像材質',()=>{
  it('31 WebP files and manifest hashes match',()=>{
-  expect(entries).toHaveLength(31);expect(filenames.size).toBe(31);
+  expect(entries).toHaveLength(33);expect(filenames.size).toBe(33);
   for(const entry of entries){
    const bytes=readFileSync(new URL(entry.file,root));
    expect(bytes.length,entry.file).toBe(entry.bytes);
@@ -55,7 +55,7 @@ describe('環境の生成画像材質',()=>{
   expect(tagged(buildEstateRoom(craftMaterials())).has('wood')).toBe(true);
  });
  it('全20地域の採取ツアーで採取物本体と池・魚が画像材質を参照する',()=>{
-  expect(c.fields.size).toBe(20);
+  expect(c.fields.size).toBe(21);
   for(const id of c.fields.keys()){
    const q=[...c.quests.values()].find(q=>q.fieldId===id&&q.gather?.fieldGathering&&q.rankId==='rank.1')!;
    expect(q,id).toBeTruthy();

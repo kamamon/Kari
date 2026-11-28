@@ -34,12 +34,12 @@ describe('級ごとの受付と、星ごとの依頼', () => {
     const groups = RANKS.map((rank) => receptionGroups(content, rank));
     const actual = groups.flatMap((list) => list.flatMap((group) => group.entries.map((entry) => entry.id)));
     const expected = [...content.quests.keys(), ...content.deliveries.keys()];
-    expect(expected).toHaveLength(122);
-    expect(actual).toHaveLength(122);
-    expect(new Set(actual).size).toBe(122);
+    expect(expected).toHaveLength(129);
+    expect(actual).toHaveLength(129);
+    expect(new Set(actual).size).toBe(129);
     expect([...actual].sort()).toEqual([...expected].sort());
     expect(groups.map((list) => list.map((group) => [group.stars, group.entries.length]))).toEqual([
-      [[1, 32], [2, 16]], [[3, 22], [4, 3]], [[5, 22], [6, 3]], [[7, 22], [8, 2]],
+      [[1, 33], [2, 17]], [[3, 23], [4, 4]], [[5, 23], [6, 4]], [[7, 23], [8, 2]],
     ]);
     for (let i = 0; i < RANKS.length; i++) {
       for (const group of groups[i]!) {
@@ -56,10 +56,10 @@ describe('級ごとの受付と、星ごとの依頼', () => {
     const arenaIds = RANKS.flatMap((rank) => idsAt(content, rank, false));
     const excluded = fieldIds.filter((id) => !arenaIds.includes(id)).sort();
     expect(excluded).toEqual([...content.quests.values()].filter(q=>q.kind==='gather').map(q=>q.id).sort());
-    expect(excluded).toHaveLength(85);
-    expect(arenaIds).toHaveLength(37);
+    expect(excluded).toHaveLength(89);
+    expect(arenaIds).toHaveLength(40);
     expect(arenaIds).toContain(DELIVERY);
-    expect(arenaIds.filter((id) => content.quests.get(id)?.kind !== 'gather')).toHaveLength(37);
+    expect(arenaIds.filter((id) => content.quests.get(id)?.kind !== 'gather')).toHaveLength(40);
   });
 
   it('上級の星が1でも上級に留まり、掲示が欠けても星未設定の末尾に残る。入力データは変わらない', () => {
@@ -81,7 +81,7 @@ describe('級ごとの受付と、星ごとの依頼', () => {
     const groups = receptionGroups(unposted, 'rank.3');
     expect(groups.at(-1)!.stars).toBeNull();
     expect(groups.at(-1)!.entries.map((entry) => entry.id)).toEqual([original.id]);
-    expect(groups.flatMap((group) => group.entries)).toHaveLength(25);
+    expect(groups.flatMap((group) => group.entries)).toHaveLength(27);
     expect(content.quests.get(original.id)).toBe(original);
     expect(content.board.quests.some((board) => board.questId === original.id)).toBe(true);
   });
@@ -90,7 +90,7 @@ describe('級ごとの受付と、星ごとの依頼', () => {
 describe('対象の小画像と、非狩猟の区別', () => {
   it('現行20標的種のURLが実在する図鑑WebPを指し、幼体8種は親の絵で代用しない', () => {
     const targetIds = new Set([...content.quests.values()].flatMap((quest) => questTargets(quest).map((target) => target.monsterId)));
-    expect(targetIds.size).toBe(21);
+    expect(targetIds.size).toBe(22);
     const juvenileIds: string[] = [];
     for (const id of targetIds) {
       const species = content.bestiary.species.find((entry) => entry.id === id)!;
