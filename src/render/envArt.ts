@@ -1,6 +1,7 @@
 // 景色に貼る絵（依頼 8、v0.13.0）。絵は tools/env-art.py が public/assets/textures/env/ へ出したもの。
 // ここは「読む・貼る」だけで、形や当たりは決めない（正本はマップデータ）。
 // 絵が届くまでは、その絵の平均の色で塗る（読めなくても、画面が黒くならない）。
+import { GRASS_PUSH, GRASS_PUSH_MAX, PUSH_FLAT, PUSH_LEAN } from './grassPush';
 import {
   BufferGeometry, Color, DoubleSide, Float32BufferAttribute, FrontSide, Group, InstancedMesh, Matrix4, Mesh, MeshBasicMaterial, MeshLambertMaterial,
   MirroredRepeatWrapping, Quaternion, RepeatWrapping, SRGBColorSpace, TextureLoader, Vector3, type Texture,
@@ -320,13 +321,14 @@ const ROOT_SHADE = 0.6, ROOT_H = 0.14;
 export function swayInWind(mat: MeshLambertMaterial): void {
   mat.onBeforeCompile = (sh) => {
     sh.uniforms.uWind = WIND;
+    sh.uniforms.uPush = GRASS_PUSH;
     // 根元の陰（v0.76.0）: 草の根元を暗くして、地面から生えて見せる（板の高さで決める。描画だけ）
     sh.fragmentShader = 'varying float vRootH;\n' + sh.fragmentShader.replace(
       '#include <map_fragment>',
       `#include <map_fragment>
       diffuseColor.rgb *= mix( ${ROOT_SHADE.toFixed(2)}, 1.0, smoothstep( 0.0, ${ROOT_H.toFixed(2)}, vRootH ) );`,
     );
-    sh.vertexShader = 'uniform float uWind;\nvarying float vRootH;\n' + sh.vertexShader.replace(
+    sh.vertexShader = `uniform float uWind;\nuniform vec4 uPush[${GRASS_PUSH_MAX}];\nvarying float vRootH;\n` + sh.vertexShader.replace(
       '#include <begin_vertex>',
       `#include <begin_vertex>
       vRootH = position.y;
@@ -344,6 +346,21 @@ export function swayInWind(mat: MeshLambertMaterial): void {
         vec2 w = vec2(0.8, 0.6) * (0.03 + 0.09 * gust * gust) + vec2(sin(uWind * 2.3 + ph), cos(uWind * 1.9 + ph * 1.3)) * 0.022;
         vec3 lw = transpose(im) * vec3(w.x, 0.0, w.y) / max(dot(im[0], im[0]), 1e-4);
         transformed.xz += lw.xz * hgt;
+        // 踏み分け（v0.77.0。src/render/grassPush.ts）: 狩人と大型の足元の草は、外へ倒れて、少し沈む
+        vec3 wroot = (modelMatrix * vec4(root, 1.0)).xyz;
+        vec2 push = vec2(0.0);
+        float pflat = 0.0;
+        for (int i = 0; i < ${GRASS_PUSH_MAX}; i++) {
+          vec2 pd = wroot.xz - uPush[i].xy;
+          float pl = length(pd);
+          float pk = (1.0 - smoothstep(uPush[i].z * 0.35, uPush[i].z, pl)) * uPush[i].w;
+          push += (pl > 0.001 ? pd / pl : vec2(0.7071)) * pk;
+          pflat = max(pflat, pk);
+        }
+        float ph2 = clamp(position.y / 0.3, 0.0, 1.0);
+        vec3 lp = transpose(im) * vec3(push.x, 0.0, push.y) / max(dot(im[0], im[0]), 1e-4);
+        transformed.xz += lp.xz * (${PUSH_LEAN.toFixed(2)} * ph2 * ph2);
+        transformed.y *= 1.0 - ${PUSH_FLAT.toFixed(2)} * min(pflat, 1.0);
       }`,
     );
   };

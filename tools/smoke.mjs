@@ -1393,6 +1393,20 @@ const startTraining = async (page, tap = false) => {
   const real2 = await until(page, () => window.__vh.view.areaGroups.size >= 2, 45000).then(() => real());
   check('景色（v0.19.0）: 空の球が遠景の中にあり、雲の時刻が進む。霧は距離の 2 乗の指数。岩と岩壁に頂点の色と凹凸。草は揺れる素材で、1 本ずつ色が違う', real1.sky && real2.time > real1.time && real1.fogExp && real1.rocks >= 1 && real1.sway > 100 && real1.tinted >= 2, JSON.stringify(real1));
   check('景色（v0.19.0）: まだ入っていないエリアも、前もって作られる（見えるのは、居るエリアだけ）', real2.built >= 2 && real2.shown === 1, JSON.stringify(real2));
+  // 草と地面（v0.76.0・v0.77.0）: 草の板 1 本ずつに、その場所の色むらと陰の色が掛かる。草の素材へ、狩人の位置が渡る（足元の草が倒れる）
+  const turf = await page.evaluate(() => {
+    const v = window.__vh, p = v.sim.player, q = v.view.grassPush.value;
+    const g = v.view.areaGroups.get(v.sim.areaId);
+    let lo = 9, hi = 0, n = 0;
+    g.traverse((o) => {
+      if (!o.isInstancedMesh || o.material.customProgramCacheKey?.() !== 'sway-in-wind' || !o.instanceColor) return;
+      const c = o.instanceColor.array;
+      for (let i = 0; i < o.count; i++) { const l = 0.3 * c[i * 3] + 0.59 * c[i * 3 + 1] + 0.11 * c[i * 3 + 2]; lo = Math.min(lo, l); hi = Math.max(hi, l); n++; }
+    });
+    return { n, lo: Math.round(lo * 100) / 100, hi: Math.round(hi * 100) / 100, mask: !!g.userData.groundMask, push: [q[0].x - p.pos.x, q[0].y - p.pos.z, q[0].z, q[0].w].map((x) => Math.round(x * 100) / 100), rest: q.slice(1).map((x) => x.w).join() };
+  });
+  check('草と地面（v0.76.0・v0.77.0）: 野営地の草は、場所ごとに明るさが違い（陰の中は暗い）、草の素材へ狩人の位置が渡る（半径 0.85m。野営地に大型は居ない）',
+    turf.mask && turf.n > 100 && turf.lo < 0.75 && turf.hi > 0.95 && Math.hypot(turf.push[0], turf.push[1]) < 0.6 && turf.push[2] === 0.85 && turf.push[3] === 1 && turf.rest === '0,0,0', JSON.stringify(turf));
   // 前へ歩く（東の出口へ向いて始まる）。出口に入ると、エリア 1 へ移る
   await page.keyboard.down('KeyW');
   await page.keyboard.down('ShiftLeft');

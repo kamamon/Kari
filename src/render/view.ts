@@ -14,6 +14,7 @@ import type { Settings } from '../save/settings';
 import { blobShadow, buildArena, buildAreaGroup, setupSky, type Arena } from './arena';
 import { landscapeProfile } from './fieldLandscape';
 import { WIND } from './envArt';
+import { GRASS_PUSH, HUNTER_PUSH_R, MONSTER_PUSH_SCALE, setGrassPushers, type GrassPusher } from './grassPush';
 import { imageLambert } from './materialImages';
 import { buildHubGroup } from './hubScene';
 import { HubLifeScene } from './hubLifeScene';
@@ -190,6 +191,8 @@ export class GameView {
   private rigs = new Map<string, { rig: MonsterRig; shadow: Object3D; tilt?: { x: number; z: number }; limp?: { d: number; w: number; x: number; z: number } }>();
   /** 1 体の標的（依頼の標的・訓練の標的。群れの依頼では、最初の 1 頭）の見た目 */
   monsterRig: MonsterRig | null = null;
+  /** 草の踏み分け（v0.77.0）で、草の素材へ渡している値（x, z, 半径, 強さ。4 つ）。検査が読む */
+  readonly grassPush = GRASS_PUSH;
   private hazardViews = new Map<number, { group: Group; ring: Mesh; rock: Mesh; look: HazardLook }>();
   /** 飛び道具の見た目（v0.17.0）: 種類ごとの材質。岩は従来どおり */
   private hazardBall = new IcosahedronGeometry(1, 1);
@@ -871,6 +874,9 @@ export class GameView {
     // フィールド: 別のエリアに居るモンスターは見せない（霧の向こうで、もともと見えない距離）。群れの幼体の体は、見える時に作る
     this.monsterFx.px = pos.x;
     this.monsterFx.pz = pos.z;
+    // 草の踏み分け（v0.77.0）: 狩人と、見えている大型（狩人に近い順に 3 体まで）の足元の草を倒す。描画だけ
+    const pushers: GrassPusher[] = [{ x: pos.x, z: pos.z, r: HUNTER_PUSH_R }];
+    const bodies: (GrassPusher & { d: number })[] = [];
     for (const m of sim.monsters) {
       const here = this.shown(sim, m);
       const e = here ? this.rigOf(m) : this.rigs.get(m.id);
@@ -880,6 +886,7 @@ export class GameView {
       if (!here) continue;
       const mp = lerpV(m.prevPos, m.pos, alpha);
       e.rig.root.position.set(mp.x, mp.y, mp.z);
+      bodies.push({ x: mp.x, z: mp.z, r: m.def.bodyRadius * MONSTER_PUSH_SCALE, d: Math.hypot(mp.x - pos.x, mp.z - pos.z) });
       const myaw = m.prevYaw + angleDiff(m.prevYaw, m.yaw) * alpha;
       e.rig.root.rotation.y = myaw;
       // 坂（v0.47.0。地面の起伏）: 体の前後・左右の地面の高さの差だけ、体を傾ける（描画だけ。当たりは傾けない。10° まで、なめらかに）
@@ -974,6 +981,9 @@ export class GameView {
       // 狩場の風の音は、居るエリアの大きさ（v0.51.0。#19 の F06。広い原・台地は強く、狭い谷・沢・巣は弱く）
       this.onAmbience?.({ water: 0, forge: 0, wind: sim.field ? sim.area()?.look?.wind ?? 1 : 1 });
     }
+    bodies.sort((a, b) => a.d - b.d);
+    for (const b of bodies.slice(0, 3)) pushers.push(b);
+    setGrassPushers(pushers);
     if(this.fieldGatherProps)updateFieldGatherProps(this.fieldGatherProps,sim,this.time);
     if (this.errandProps && sim.errand) updateErrandProps(this.errandProps, sim.errand, sim.areaId, sim.hunt?.phase === 'active', this.cam.camera.position, this.time);
     if(this.hubLifeScene){this.hubLifeScene.update(this.time,dt,this.cam.camera.position);const cue=this.hubLifeScene.ambienceCue(this.time);if(cue)this.onSound?.(cue.id,cue.k);const sample=this.hubLifeScene.sampleCue(this.time,this.cam.camera.position);if(sample)this.onHubSample?.(sample.id,sample.k);}

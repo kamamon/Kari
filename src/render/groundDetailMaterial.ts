@@ -1,12 +1,16 @@
 // 地面の作り込み（src/render/groundDetail.ts）の絵を、地面の素材へ混ぜる（v0.74.0）。
 // 道は、別の地面の絵（砂利）を、ふちを不ぞろいにして混ぜる。道のふちの草は、少し枯れた色にする。陰は、色を暗くする。
 // v0.76.0: 色むら（絵の B）で、湿った所と乾いた所の地面の色を少し変える。
+// v0.77.0: 地面の絵（6m ごとの繰り返し）を、向きと大きさを変えてもう 1 度読み、大きなむらで混ぜる（同じ模様が格子に並んで見えない）。
 // 地面の板の頂点に、絵のどこを読むか（aMask）を持たせる。絵が届くまで・画面の無い所（Node の検査）では、これまでの地面のまま。
 import { type BufferGeometry, ClampToEdgeWrapping, Color, DataTexture, Float32BufferAttribute, LinearFilter, type MeshLambertMaterial, RGBAFormat, RepeatWrapping, type Texture, UnsignedByteType } from 'three';
 import { ENV_TILES, loadEnvTexture, type EnvTile } from './envArt';
 import { GROUND_SHADE, TONE_COLORS, type GroundMask, type ToneKind } from './groundDetail';
 
 export { GROUND_SHADE };
+
+/** 地面の絵の繰り返しを崩す強さ（v0.77.0。0 = 崩さない … 1 = むらの濃い所は、向きと大きさを変えた絵だけ） */
+export const TILE_BREAK = 1;
 
 /** 地面の板の頂点へ、絵の座標を付ける */
 export function setMaskUv(geo: BufferGeometry, mask: GroundMask): void {
@@ -48,6 +52,7 @@ export function applyGroundDetail(mat: MeshLambertMaterial, mask: GroundMask, tr
     uGdShade: { value: GROUND_SHADE },
     uGdToneLo: { value: new Color(...TONE_COLORS[tone].lo) },
     uGdToneHi: { value: new Color(...TONE_COLORS[tone].hi) },
+    uGdBreak: { value: TILE_BREAK },
   };
   if (trail !== null && trail !== 'self') loadEnvTexture(
     ENV_TILES[trail].file,
@@ -73,6 +78,7 @@ uniform vec4 uGdRect;
 uniform float uGdShade;
 uniform vec3 uGdToneLo;
 uniform vec3 uGdToneHi;
+uniform float uGdBreak;
 varying vec2 vGdMask;
 float gdHash(vec2 p) { p = fract(p * vec2(0.1031, 0.1030)); p += dot(p, p.yx + 33.33); return fract((p.x + p.y) * p.x); }
 float gdNoise(vec2 p) {
@@ -89,6 +95,10 @@ float gdNoise(vec2 p) {
   // 世界の座標（m）で作る、ふちの不ぞろい
   vec2 gdAt = uGdRect.xy + vGdMask * uGdRect.zw;
   float gdN = gdNoise( gdAt * 0.9 ) * 0.6 + gdNoise( gdAt * 3.1 ) * 0.4;
+  // 繰り返しを崩す（v0.77.0）: 同じ絵を、向き（37°）と大きさ（1.23 倍）を変えてもう 1 度読み、8〜25m の大きなむらで混ぜる
+  // （地面の絵は 6m ごとに同じ模様。遠くまで見える所で、同じ土の斑が格子に並んで見えていた）
+  float gdB = smoothstep( 0.36, 0.64, gdNoise( gdAt * 0.12 + 17.0 ) * 0.7 + gdNoise( gdAt * 0.37 + 5.0 ) * 0.3 );
+  sampledDiffuseColor = mix( sampledDiffuseColor, texture2D( map, mat2( 0.6493, 0.4893, -0.4893, 0.6493 ) * vMapUv + vec2( 0.37, 0.11 ) ), gdB * uGdBreak );
   float gdW = smoothstep( 0.34, 0.6, gdMask.r + ( gdN - 0.5 ) * 0.36 ) * uGdOn;
   // 色むら（v0.76.0）: 湿った所と乾いた所で、地面の色を少し変える（道には掛けない）
   vec3 gdBase = diffuseColor.rgb * sampledDiffuseColor.rgb * mix( uGdToneLo, uGdToneHi, gdMask.b );
