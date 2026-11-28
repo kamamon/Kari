@@ -39,7 +39,7 @@ describe('氷冠獣・白霧氷谷',()=>{
   const ix=JSON.parse(readFileSync(new URL('../tools/frostald/data/icon_index.json',import.meta.url),'utf8')) as Record<string,{file:string}>;expect(Object.keys(ix)).toHaveLength(69);
   for(const [id,x] of Object.entries(ix)){const p='assets/icons/frostald/'+x.file;expect(iconUrl(id)).toBe(import.meta.env.BASE_URL+p);expect(existsSync(new URL('../public/'+p,import.meta.url))).toBe(true)}
   const eq=JSON.parse(readFileSync(new URL('../public/data/equipment_frostald.json',import.meta.url),'utf8'));expect(eq.weapons).toHaveLength(33);expect(eq.armor).toHaveLength(15);expect(eq.recipes).toHaveLength(48);for(const w of eq.weapons)expect(c.weapons.has(w.id)).toBe(c.families.has(w.family));
-  const b=readFileSync(new URL('../public/assets/models/monsters/frostald_game.glb',import.meta.url));const j=JSON.parse(b.toString('utf8',20,20+b.readUInt32LE(12)));expect(j.extras.eyeDesign).toBe('calm-blue-v1');expect(j.skins[0].joints).toHaveLength(79);expect(j.animations).toHaveLength(56);expect(j.meshes.flatMap((m:{primitives:{indices:number}[]})=>m.primitives).reduce((n:number,p:{indices:number})=>n+j.accessors[p.indices].count/3,0)).toBe(329250);
+  const b=readFileSync(new URL('../public/assets/models/monsters/frostald_game.glb',import.meta.url));const j=JSON.parse(b.toString('utf8',20,20+b.readUInt32LE(12)));expect(j.extras.eyeDesign).toBe('calm-blue-v1');expect(j.extras.materialDesign).toBe('frostald-art-pbr-v1');expect(j.skins[0].joints).toHaveLength(79);expect(j.animations).toHaveLength(56);expect(j.meshes.flatMap((m:{primitives:{indices:number}[]})=>m.primitives).reduce((n:number,p:{indices:number})=>n+j.accessors[p.indices].count/3,0)).toBe(329250);
   expect(monsterQuestImageUrl(c,'monster.frostald')).toContain('frostald_concept.webp');
  });
  it('標準配信の高密度版は228万三角形・79関節・56クリップ、青い丸瞳孔、100MB制限内',()=>{
@@ -47,6 +47,7 @@ describe('氷冠獣・白霧氷谷',()=>{
   const g=JSON.parse(readFileSync(new URL('frostald.gltf',dir),'utf8'));
   const info=JSON.parse(readFileSync(new URL('delivery.json',dir),'utf8'));
   expect(g.extras.eyeDesign).toBe('calm-blue-v1');expect(info.eyeDesign).toBe('calm-blue-v1');
+  expect(g.extras.materialDesign).toBe('frostald-art-pbr-v1');expect(info.materialDesign).toBe('frostald-art-pbr-v1');
   expect(g.skins[0].joints).toHaveLength(79);expect(g.animations).toHaveLength(56);
   const primitives=g.meshes[0].primitives as {indices:number;material:number;attributes:Record<string,number>}[];
   expect(primitives.reduce((sum,p)=>sum+g.accessors[p.indices].count/3,0)).toBe(2283726);
@@ -68,5 +69,26 @@ describe('氷冠獣・白霧氷谷',()=>{
   let ymin=Infinity,ymax=-Infinity,zmin=Infinity,zmax=-Infinity;
   for(let i=0;i<v.length;i+=3)if(v[i]!>.34&&v[i+1]!>1.5){ymin=Math.min(ymin,v[i+1]!);ymax=Math.max(ymax,v[i+1]!);zmin=Math.min(zmin,v[i+2]!);zmax=Math.max(zmax,v[i+2]!);}
   expect((ymax-ymin)/(zmax-zmin)).toBeGreaterThan(.85);expect((ymax-ymin)/(zmax-zmin)).toBeLessThan(1.15);
+ });
+ it('原画の10素材を実際の高密度メッシュのPBRへ割り当てる',()=>{
+  const dir=new URL('../public/assets/models/monsters/frostald_hd/',import.meta.url);
+  const g=JSON.parse(readFileSync(new URL('frostald.gltf',dir),'utf8'));
+  const expected:Record<string,number>={hide:2048,head_skin:2048,limb_skin:1024,belly_skin:1024,keratin:2048,ice_plate:1024,claw:1024,feather:2048,membrane:1024,mouth:1024};
+  const matNames=new Set(g.meshes[0].primitives.map((p:{material:number})=>g.materials[p.material].name));
+  for(const [name,res] of Object.entries(expected)){
+    expect(matNames.has(name)).toBe(true);
+    const m=g.materials.find((x:{name:string})=>x.name===name);
+    expect(m.extras.materialDesign).toBe('frostald-art-pbr-v1');expect(m.extras.maps.resolution).toBe(res);
+    expect(m.pbrMetallicRoughness.metallicFactor).toBe(0);
+    expect(m.extensions.KHR_materials_clearcoat.clearcoatFactor).toBeGreaterThan(0);
+    const base=g.images[g.textures[m.pbrMetallicRoughness.baseColorTexture.index].source];
+    const normal=g.images[g.textures[m.normalTexture.index].source];
+    const orm=g.images[g.textures[m.pbrMetallicRoughness.metallicRoughnessTexture.index].source];
+    expect(base.mimeType).toBe('image/jpeg');expect(normal.mimeType).toBe('image/png');expect(orm.mimeType).toBe('image/png');
+    expect(m.occlusionTexture.index).toBe(m.pbrMetallicRoughness.metallicRoughnessTexture.index);
+    expect(m.extras.maps.normalVariation).toBeGreaterThan(.01);
+  }
+  expect(g.extras.materialMaps.mouth.roughnessRange[1]).toBeLessThan(g.extras.materialMaps.hide.roughnessRange[0]);
+  expect(g.extensionsUsed).toContain('KHR_materials_clearcoat');
  });
 });

@@ -8,6 +8,7 @@ The raw master remains in tools/out and is never published as a >100MB Git blob.
 from pathlib import Path
 import argparse, hashlib, json, os, shutil, struct, subprocess, sys, tempfile
 import numpy as np
+from material_atlas import VERSION as MATERIAL_DESIGN,PROFILES,source_digest
 
 P=Path(__file__).resolve().parent
 ROOT=P.parent.parent
@@ -47,6 +48,12 @@ class GLB:
         g=self.g
         assert len(g['skins'][0]['joints'])==79 and len(g['animations'])==56
         assert g.get('extras',{}).get('eyeDesign')==EYE_DESIGN
+        assert g['extras'].get('materialDesign')==MATERIAL_DESIGN and g['extras'].get('materialSourceSha256')==source_digest(P/'material_source')
+        assert set(g['extras']['materialMaps'])==set(PROFILES)
+        for mat in g['materials']:
+            if mat['name'] in PROFILES:
+                assert all(k in mat['pbrMetallicRoughness'] for k in ('baseColorTexture','metallicRoughnessTexture')) and 'normalTexture' in mat and 'occlusionTexture' in mat
+                assert mat['extras']['maps']['normalVariation']>.01
         tri=verts=0
         for mesh in g['meshes']:
             for prim in mesh['primitives']:
@@ -84,7 +91,7 @@ def publish_split(master,target,stats):
     if manifest.is_file():
         try:
             old=json.loads(manifest.read_text())
-            if old['sourceSha256']==stats['sha256'] and old['eyeDesign']==EYE_DESIGN and old['format']==1 and all((target/name).stat().st_size==info['bytes'] and sha(target/name)==info['sha256'] for name,info in old['files'].items()):
+            if old['sourceSha256']==stats['sha256'] and old['eyeDesign']==EYE_DESIGN and old.get('materialDesign')==MATERIAL_DESIGN and old['format']==1 and all((target/name).stat().st_size==info['bytes'] and sha(target/name)==info['sha256'] for name,info in old['files'].items()):
                 print('FROSTALD_HD_DELIVERY_CACHED '+json.dumps(old['files']));return
         except (OSError,KeyError,ValueError):pass
     with tempfile.TemporaryDirectory(prefix='frostald-hd-',dir=target.parent) as temp:
@@ -126,7 +133,7 @@ def publish_split(master,target,stats):
             (work/'frostald.gltf').write_text(json.dumps(g,separators=(',',':'))+'\n')
         files={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in sorted(work.iterdir()) if p.is_file()}
         if not files or max(x['bytes'] for x in files.values())>=90_000_000:raise ValueError('asset exceeds GitHub file budget')
-        (work/'delivery.json').write_text(json.dumps({'format':1,'eyeDesign':EYE_DESIGN,'sourceSha256':stats['sha256'],'triangles':stats['triangles'],'joints':79,'clips':56,'files':files},indent=2)+'\n')
+        (work/'delivery.json').write_text(json.dumps({'format':1,'eyeDesign':EYE_DESIGN,'materialDesign':MATERIAL_DESIGN,'sourceSha256':stats['sha256'],'triangles':stats['triangles'],'joints':79,'clips':56,'files':files},indent=2)+'\n')
         # All outputs are generated assets in a dedicated directory; replace only that directory.
         if target.exists():shutil.rmtree(target)
         shutil.copytree(work,target)
@@ -138,11 +145,12 @@ def main():
     if not GAME.is_file():raise RuntimeError('Run npm run frostald:build first')
     WORK.mkdir(parents=True,exist_ok=True);dest=WORK/NAME;meta=WORK/'verification.json'
     # Both source and reference game hash participate in the cache key.
-    key={'sourceSha256':sha(SRC),'gameSha256':sha(GAME),'lod':3.5,'textureSize':2048}
+    key={'sourceSha256':sha(SRC),'materialSourceSha256':source_digest(P/'material_source'),'gameSha256':sha(GAME),'lod':3.5,'textureSize':2048}
     old=json.loads(meta.read_text()) if meta.is_file() else {}
     if not dest.is_file() or old.get('key')!=key:
         with tempfile.TemporaryDirectory(prefix='frostald-master-') as temp:
             p=Path(temp);script=p/SRC.name;shutil.copyfile(SRC,script)
+            shutil.copyfile(P/'material_atlas.py',p/'material_atlas.py');shutil.copytree(P/'material_source',p/'material_source')
             env={**os.environ,'FROST_LOD':'3.5','FROST_TEX':'2048','FROST_SUFFIX':'master'}
             subprocess.run([sys.executable,str(script)],cwd=p,env=env,check=True)
             stats=compare(p/NAME)

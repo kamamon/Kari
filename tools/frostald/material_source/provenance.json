@@ -1,0 +1,202 @@
+{
+  "skin": {
+    "file": "skin.webp",
+    "sourceBoard": "フロストアルド皮膚素材アトラス.png",
+    "sourceSize": [
+      1448,
+      1086
+    ],
+    "crop": [
+      546,
+      424,
+      774,
+      624
+    ],
+    "nativeSize": [
+      228,
+      200
+    ],
+    "sha256": "53959ed3df84242ce58bc3985638a421cbbd37a551d371d495443ee48963e3b0",
+    "originalCropSha256": "39458a41f242af757428e9164117f2546a087cb534a23c7f364bdaa14d639b11"
+  },
+  "belly": {
+    "file": "belly.webp",
+    "sourceBoard": "フロストアルド皮膚素材アトラス.png",
+    "sourceSize": [
+      1448,
+      1086
+    ],
+    "crop": [
+      296,
+      424,
+      513,
+      624
+    ],
+    "nativeSize": [
+      217,
+      200
+    ],
+    "sha256": "8c7e4bfda57b07f5d6f56074117478dbef8501bca813c287ae12423a2567f181",
+    "originalCropSha256": "c3392595ab03e485989850bd798f3f28c6683658bfcc127b18e635df0354d41b"
+  },
+  "head": {
+    "file": "head.webp",
+    "sourceBoard": "フロストアルド皮膚素材アトラス.png",
+    "sourceSize": [
+      1448,
+      1086
+    ],
+    "crop": [
+      1146,
+      44,
+      1426,
+      174
+    ],
+    "nativeSize": [
+      280,
+      130
+    ],
+    "sha256": "8f8fd1a81445f54e82e40b39e4005ef080d4b435e20378176f1779c272343b1f",
+    "originalCropSha256": "faedc40b0c359fa1543ed697c5d52b88c62872ab2a24081e8ec90937fd37b52a"
+  },
+  "wet": {
+    "file": "wet.webp",
+    "sourceBoard": "フロストアルド皮膚素材アトラス.png",
+    "sourceSize": [
+      1448,
+      1086
+    ],
+    "crop": [
+      805,
+      424,
+      1016,
+      624
+    ],
+    "nativeSize": [
+      211,
+      200
+    ],
+    "sha256": "8372a424615e5726c49305daab095c613eda19a28a9ca61a8a63c6013b727b71",
+    "originalCropSha256": "73034699161cd95840729e41ea564d62e05f8ee5ba4a20c7fc92b2ef5d7e852c"
+  },
+  "ice": {
+    "file": "ice.webp",
+    "sourceBoard": "フロストアルド氷晶マテリアルアトラス.png",
+    "sourceSize": [
+      1448,
+      1086
+    ],
+    "crop": [
+      353,
+      342,
+      482,
+      478
+    ],
+    "nativeSize": [
+      129,
+      136
+    ],
+    "sha256": "7f52f6fe5f40835819b7e1b50b15fb90d1be9d87383cd467b9035a301cb529da",
+    "originalCropSha256": "0aa3cb552c9a20bbdd193bd4a60247375c3c45232cc0889de8f6559e3c3060bd"
+  },
+  "plate": {
+    "file": "plate.webp",
+    "sourceBoard": "フロストアルド氷晶マテリアルアトラス.png",
+    "sourceSize": [
+      1448,
+      1086
+    ],
+    "crop": [
+      649,
+      343,
+      776,
+      478
+    ],
+    "nativeSize": [
+      127,
+      135
+    ],
+    "sha256": "16e395022995852f8fe4661c387ed2f73f66a54b0330d9f10444aa7df2766c8b",
+    "originalCropSha256": "5aab0b80d19fb136037328c3df58ce6905a2754958b437a8d6bdd6170d1f36ee"
+  },
+  "claw": {
+    "file": "claw.webp",
+    "sourceBoard": "フロストアルド氷晶マテリアルアトラス.png",
+    "sourceSize": [
+      1448,
+      1086
+    ],
+    "crop": [
+      935,
+      343,
+      1051,
+      478
+    ],
+    "nativeSize": [
+      116,
+      135
+    ],
+    "sha256": "1fde807e613c5c49a33e43a897421ecf74b6170994147fdb637637d240d9ff45",
+    "originalCropSha256": "81180f2f28b244126cfaade7663c64524c0d2439317cff603599167a9e7b56ad"
+  },
+  "mane": {
+    "file": "mane.webp",
+    "sourceBoard": "フロストアルド素材アトラス_氷の質感図鑑.png",
+    "sourceSize": [
+      1448,
+      1086
+    ],
+    "crop": [
+      506,
+      225,
+      697,
+      364
+    ],
+    "nativeSize": [
+      191,
+      139
+    ],
+    "sha256": "4c3d8727453946410ddbc090a4d94e689f31dc0eb0e54430365c1c0f3d0daa87",
+    "originalCropSha256": "9e386db9b77620648d4faebcaa26a474546b6c1cf10fb21b168dfeec220afb54"
+  },
+  "frost": {
+    "file": "frost.webp",
+    "sourceBoard": "フロストアルド素材アトラス_氷の質感図鑑.png",
+    "sourceSize": [
+      1448,
+      1086
+    ],
+    "crop": [
+      468,
+      402,
+      613,
+      542
+    ],
+    "nativeSize": [
+      145,
+      140
+    ],
+    "sha256": "47c86958fad7efe19414ee672e6942d057be350b20bc09b3c8958b685bcd810d",
+    "originalCropSha256": "6f2e6dc7b0e695f1ed1fb61d389535fc1b65e4a39e1b2265a394a832fe7323bc"
+  },
+  "mouth": {
+    "file": "mouth.webp",
+    "sourceBoard": "フロストアルド素材アトラス_氷の質感図鑑.png",
+    "sourceSize": [
+      1448,
+      1086
+    ],
+    "crop": [
+      475,
+      767,
+      608,
+      915
+    ],
+    "nativeSize": [
+      133,
+      148
+    ],
+    "sha256": "e76a3f73558d6bd835e7d6fc77f930222080a4efe5d3507db03342b2d1511672",
+    "originalCropSha256": "3a39afbbd18221d39e2555bdaac87cac7dadeded02e6aed76ea59bcc0c0a1cb4"
+  }
+}
