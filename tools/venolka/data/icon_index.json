@@ -1,0 +1,347 @@
+{
+  "weapon.heavy_blade.venolka.r1": {
+    "file": "weapons/low_heavy_blade.webp",
+    "column": 0,
+    "row": 0
+  },
+  "weapon.guard_blade.venolka.r1": {
+    "file": "weapons/low_guard_blade.webp",
+    "column": 1,
+    "row": 0
+  },
+  "weapon.twin_blades.venolka.r1": {
+    "file": "weapons/low_twin_blades.webp",
+    "column": 2,
+    "row": 0
+  },
+  "weapon.long_blade.venolka.r1": {
+    "file": "weapons/low_long_blade.webp",
+    "column": 3,
+    "row": 0
+  },
+  "weapon.war_maul.venolka.r1": {
+    "file": "weapons/low_war_maul.webp",
+    "column": 4,
+    "row": 0
+  },
+  "weapon.long_lance.venolka.r1": {
+    "file": "weapons/low_long_lance.webp",
+    "column": 5,
+    "row": 0
+  },
+  "weapon.ring_bow.venolka.r1": {
+    "file": "weapons/low_ring_bow.webp",
+    "column": 6,
+    "row": 0
+  },
+  "weapon.hunting_horn.venolka.r1": {
+    "file": "weapons/low_hunting_horn.webp",
+    "column": 7,
+    "row": 0
+  },
+  "weapon.gunlance.venolka.r1": {
+    "file": "weapons/low_gunlance.webp",
+    "column": 8,
+    "row": 0
+  },
+  "weapon.light_bowgun.venolka.r1": {
+    "file": "weapons/low_light_bowgun.webp",
+    "column": 9,
+    "row": 0
+  },
+  "weapon.heavy_bowgun.venolka.r1": {
+    "file": "weapons/low_heavy_bowgun.webp",
+    "column": 10,
+    "row": 0
+  },
+  "armor.head.venolka.r1": {
+    "file": "armor/low_head.webp",
+    "column": 0,
+    "row": 3
+  },
+  "armor.chest.venolka.r1": {
+    "file": "armor/low_chest.webp",
+    "column": 1,
+    "row": 3
+  },
+  "armor.arms.venolka.r1": {
+    "file": "armor/low_arms.webp",
+    "column": 2,
+    "row": 3
+  },
+  "armor.waist.venolka.r1": {
+    "file": "armor/low_waist.webp",
+    "column": 3,
+    "row": 3
+  },
+  "armor.legs.venolka.r1": {
+    "file": "armor/low_legs.webp",
+    "column": 4,
+    "row": 3
+  },
+  "mat.venolka.scale.r1": {
+    "file": "materials/low_scale.webp",
+    "column": 0,
+    "row": 6
+  },
+  "mat.venolka.claw.r1": {
+    "file": "materials/low_claw.webp",
+    "column": 1,
+    "row": 6
+  },
+  "mat.venolka.feather.r1": {
+    "file": "materials/low_feather.webp",
+    "column": 2,
+    "row": 6
+  },
+  "mat.venolka.sac.r1": {
+    "file": "materials/low_sac.webp",
+    "column": 3,
+    "row": 6
+  },
+  "mat.venolka.tail_plume.r1": {
+    "file": "materials/low_tail_plume.webp",
+    "column": 4,
+    "row": 6
+  },
+  "mat.venolka.membrane.r1": {
+    "file": "materials/low_membrane.webp",
+    "column": 5,
+    "row": 6
+  },
+  "weapon.heavy_blade.venolka.r2": {
+    "file": "weapons/mid_heavy_blade.webp",
+    "column": 0,
+    "row": 1
+  },
+  "weapon.guard_blade.venolka.r2": {
+    "file": "weapons/mid_guard_blade.webp",
+    "column": 1,
+    "row": 1
+  },
+  "weapon.twin_blades.venolka.r2": {
+    "file": "weapons/mid_twin_blades.webp",
+    "column": 2,
+    "row": 1
+  },
+  "weapon.long_blade.venolka.r2": {
+    "file": "weapons/mid_long_blade.webp",
+    "column": 3,
+    "row": 1
+  },
+  "weapon.war_maul.venolka.r2": {
+    "file": "weapons/mid_war_maul.webp",
+    "column": 4,
+    "row": 1
+  },
+  "weapon.long_lance.venolka.r2": {
+    "file": "weapons/mid_long_lance.webp",
+    "column": 5,
+    "row": 1
+  },
+  "weapon.ring_bow.venolka.r2": {
+    "file": "weapons/mid_ring_bow.webp",
+    "column": 6,
+    "row": 1
+  },
+  "weapon.hunting_horn.venolka.r2": {
+    "file": "weapons/mid_hunting_horn.webp",
+    "column": 7,
+    "row": 1
+  },
+  "weapon.gunlance.venolka.r2": {
+    "file": "weapons/mid_gunlance.webp",
+    "column": 8,
+    "row": 1
+  },
+  "weapon.light_bowgun.venolka.r2": {
+    "file": "weapons/mid_light_bowgun.webp",
+    "column": 9,
+    "row": 1
+  },
+  "weapon.heavy_bowgun.venolka.r2": {
+    "file": "weapons/mid_heavy_bowgun.webp",
+    "column": 10,
+    "row": 1
+  },
+  "armor.head.venolka.r2": {
+    "file": "armor/mid_head.webp",
+    "column": 0,
+    "row": 4
+  },
+  "armor.chest.venolka.r2": {
+    "file": "armor/mid_chest.webp",
+    "column": 1,
+    "row": 4
+  },
+  "armor.arms.venolka.r2": {
+    "file": "armor/mid_arms.webp",
+    "column": 2,
+    "row": 4
+  },
+  "armor.waist.venolka.r2": {
+    "file": "armor/mid_waist.webp",
+    "column": 3,
+    "row": 4
+  },
+  "armor.legs.venolka.r2": {
+    "file": "armor/mid_legs.webp",
+    "column": 4,
+    "row": 4
+  },
+  "mat.venolka.scale.r2": {
+    "file": "materials/mid_scale.webp",
+    "column": 0,
+    "row": 7
+  },
+  "mat.venolka.claw.r2": {
+    "file": "materials/mid_claw.webp",
+    "column": 1,
+    "row": 7
+  },
+  "mat.venolka.feather.r2": {
+    "file": "materials/mid_feather.webp",
+    "column": 2,
+    "row": 7
+  },
+  "mat.venolka.sac.r2": {
+    "file": "materials/mid_sac.webp",
+    "column": 3,
+    "row": 7
+  },
+  "mat.venolka.tail_plume.r2": {
+    "file": "materials/mid_tail_plume.webp",
+    "column": 4,
+    "row": 7
+  },
+  "mat.venolka.membrane.r2": {
+    "file": "materials/mid_membrane.webp",
+    "column": 5,
+    "row": 7
+  },
+  "mat.venolka.crest.r2": {
+    "file": "materials/mid_crest.webp",
+    "column": 6,
+    "row": 7
+  },
+  "weapon.heavy_blade.venolka.r3": {
+    "file": "weapons/high_heavy_blade.webp",
+    "column": 0,
+    "row": 2
+  },
+  "weapon.guard_blade.venolka.r3": {
+    "file": "weapons/high_guard_blade.webp",
+    "column": 1,
+    "row": 2
+  },
+  "weapon.twin_blades.venolka.r3": {
+    "file": "weapons/high_twin_blades.webp",
+    "column": 2,
+    "row": 2
+  },
+  "weapon.long_blade.venolka.r3": {
+    "file": "weapons/high_long_blade.webp",
+    "column": 3,
+    "row": 2
+  },
+  "weapon.war_maul.venolka.r3": {
+    "file": "weapons/high_war_maul.webp",
+    "column": 4,
+    "row": 2
+  },
+  "weapon.long_lance.venolka.r3": {
+    "file": "weapons/high_long_lance.webp",
+    "column": 5,
+    "row": 2
+  },
+  "weapon.ring_bow.venolka.r3": {
+    "file": "weapons/high_ring_bow.webp",
+    "column": 6,
+    "row": 2
+  },
+  "weapon.hunting_horn.venolka.r3": {
+    "file": "weapons/high_hunting_horn.webp",
+    "column": 7,
+    "row": 2
+  },
+  "weapon.gunlance.venolka.r3": {
+    "file": "weapons/high_gunlance.webp",
+    "column": 8,
+    "row": 2
+  },
+  "weapon.light_bowgun.venolka.r3": {
+    "file": "weapons/high_light_bowgun.webp",
+    "column": 9,
+    "row": 2
+  },
+  "weapon.heavy_bowgun.venolka.r3": {
+    "file": "weapons/high_heavy_bowgun.webp",
+    "column": 10,
+    "row": 2
+  },
+  "armor.head.venolka.r3": {
+    "file": "armor/high_head.webp",
+    "column": 0,
+    "row": 5
+  },
+  "armor.chest.venolka.r3": {
+    "file": "armor/high_chest.webp",
+    "column": 1,
+    "row": 5
+  },
+  "armor.arms.venolka.r3": {
+    "file": "armor/high_arms.webp",
+    "column": 2,
+    "row": 5
+  },
+  "armor.waist.venolka.r3": {
+    "file": "armor/high_waist.webp",
+    "column": 3,
+    "row": 5
+  },
+  "armor.legs.venolka.r3": {
+    "file": "armor/high_legs.webp",
+    "column": 4,
+    "row": 5
+  },
+  "mat.venolka.scale.r3": {
+    "file": "materials/high_scale.webp",
+    "column": 0,
+    "row": 8
+  },
+  "mat.venolka.claw.r3": {
+    "file": "materials/high_claw.webp",
+    "column": 1,
+    "row": 8
+  },
+  "mat.venolka.feather.r3": {
+    "file": "materials/high_feather.webp",
+    "column": 2,
+    "row": 8
+  },
+  "mat.venolka.sac.r3": {
+    "file": "materials/high_sac.webp",
+    "column": 3,
+    "row": 8
+  },
+  "mat.venolka.tail_plume.r3": {
+    "file": "materials/high_tail_plume.webp",
+    "column": 4,
+    "row": 8
+  },
+  "mat.venolka.membrane.r3": {
+    "file": "materials/high_membrane.webp",
+    "column": 5,
+    "row": 8
+  },
+  "mat.venolka.crest.r3": {
+    "file": "materials/high_crest.webp",
+    "column": 6,
+    "row": 8
+  },
+  "mat.venolka.core.r3": {
+    "file": "materials/high_core.webp",
+    "column": 7,
+    "row": 8
+  }
+}
