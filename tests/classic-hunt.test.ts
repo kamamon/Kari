@@ -266,7 +266,7 @@ describe('ガルドロスの動き（#19 の M01・M02。v0.41.0）', () => {
 
   it('大型 3 種（ガルドロス・スパインゲイル・フロストアルド）とも、足を踏み替える向き直り（左右 90°・180°）を持ち、判定は無い（v0.65.0。D-162。v0.75.0 で、生成の体の 19 種を外した）', () => {
     const large = [...content.monsters.values()].filter((d) => d.captureAllowed);
-    expect(large.map((d) => d.id).sort()).toEqual(['monster.frostald', 'monster.galdros', 'monster.spinegale']);
+    expect(large.map((d) => d.id).sort()).toEqual(['monster.frostald', 'monster.galdros', 'monster.spinegale', 'monster.venolka']);
     for (const d of large) {
       const ts = d.turnSteps;
       expect(ts, d.id).toBeTruthy();

@@ -45,7 +45,7 @@ describe('登録簿のデータ', () => {
     // 受け取る案と同じ厳しさで、全部の種を見ても、合わない所が無い
     expect(validateBestiary(b, env, () => true)).toEqual([]);
     expect(b.species.map((s) => [s.id, `${s.title} ${s.name}`, s.frame, s.art ?? null])).toEqual(SPECIES);
-    expect(b.species.map((s) => s.no)).toEqual([1, 2, 3]);
+    expect(b.species.map((s) => s.no)).toEqual([1, 2, 3, 4]);
     expect(b.species.every((s) => s.state === 'implemented' && s.rank === 'rank.1' && s.class === 'large' && s.variant === 'base')).toBe(true);
     // 登録簿の種 = 遊べる種（訓練標的は、登録簿に入れない）
     expect(new Set(b.species.map((s) => s.id))).toEqual(new Set([...content.monsters.keys()].filter((id) => id !== 'monster.training_dummy')));
@@ -54,7 +54,7 @@ describe('登録簿のデータ', () => {
   it('数の計画は持たない: plan は、いま入っている数（初級 3、ほかは 0）。幼体・亜種・希少種・超大型は居ない', () => {
     expect(content.bestiary.plan).toEqual({ 'rank.1': 3, 'rank.2': 0, 'rank.3': 0, 'rank.4': 0 });
     const c = bestiaryCounts(content.bestiary, env.ranks);
-    expect(c.map((x) => [x.have, x.plan])).toEqual([[3, 3], [0, 0], [0, 0], [0, 0]]);
+    expect(c.map((x) => [x.have, x.plan])).toEqual([[4, 4], [0, 0], [0, 0], [0, 0]]);
     expect(c.map((x) => [x.subspecies, x.rare, x.huge, x.juveniles])).toEqual([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);
   });
 
@@ -86,7 +86,7 @@ describe('登録簿のデータ', () => {
     for(const f of b.fields) expect(content.fields.get(f.fieldId!)?.name).toBe(f.name);
     const names = new Set(b.fields.map((f) => f.name));
     for (const s of b.species) expect(names.has(s.habitat), s.id).toBe(true);
-    expect(b.fields.filter((f) => b.species.some((s) => s.habitat === f.name)).map((f) => f.name)).toEqual(['風礫盆地', '白霧氷谷']);
+    expect(b.fields.filter((f) => b.species.some((s) => s.habitat === f.name)).map((f) => f.name)).toEqual(['風礫盆地', '根絡み湿原', '白霧氷谷']);
     expect(b.fields.every((f) => f.terrain.length > 5)).toBe(true);
   });
 
@@ -111,7 +111,7 @@ describe('案の取り込み', () => {
     expect(r.added).toEqual(['monster.test_base', 'monster.test_galdros_sub', 'monster.test_galdros_child']);
     expect(r.updated).toEqual([]);
     const added = r.bestiary.species.filter((s) => s.id.startsWith('monster.test_'));
-    expect(added.map((s) => s.no)).toEqual([4, 5, 6]);
+    expect(added.map((s) => s.no)).toEqual([5, 6, 7]);
     expect(added.every((s) => s.state === 'planned' && s.source === 'chatgpt:test')).toBe(true);
     expect(r.bestiary.frames.find((f) => f.id === 'frame.test_hopper')).toMatchObject({ name: '跳脚獣', built: false });
     expect(validateBestiary(r.bestiary, env)).toEqual([]);
@@ -123,7 +123,7 @@ describe('案の取り込み', () => {
     expect(r.addedFields).toEqual(['試しの原']);
     expect(r.bestiary.fields.find((f) => f.name === '試しの原')).toEqual({ name: '試しの原', terrain: '検査用', mood: '検査用', source: 'chatgpt:test' });
     // もとの登録簿は変えない
-    expect(content.bestiary.species.length).toBe(3);
+    expect(content.bestiary.species.length).toBe(4);
     expect(content.bestiary.fields.length).toBe(21);
   });
 
@@ -195,7 +195,7 @@ describe('案の取り込み', () => {
     const r = mergeBestiary(base(), inc, env, 't');
     expect(r.errors.length).toBe(1);
     expect(r.added).toEqual([]);
-    expect(r.bestiary.species.length).toBe(3);
+    expect(r.bestiary.species.length).toBe(4);
   });
 
   it('狩場の決まり: 種の狩場は、狩場の一覧に無ければ断る。地形の無い狩場・見本の例・同じ名前 2 つも断る（どれも、何も入れない）', () => {
@@ -263,8 +263,8 @@ describe('取り込みの道具（npm run bestiary:import）', () => {
   it('--check: いまの登録簿を検査して、段階ごとの数を出す（数の計画は無いので、「あと何種」は出ない）', () => {
     const r = run('--check');
     expect(r.code).toBe(0);
-    expect(r.out).toContain('登録簿は決まりどおりです（3 種、狩場の案 21）');
-    expect(r.out).toContain('初級: 3 種　大型 3・超大型 0・亜種 0・希少種 0');
+    expect(r.out).toContain('登録簿は決まりどおりです（4 種、狩場の案 21）');
+    expect(r.out).toContain('初級: 4 種　大型 4・超大型 0・亜種 0・希少種 0');
     expect(r.out).not.toContain('多い');
     expect(r.out).not.toContain('あと');
   });
@@ -274,8 +274,8 @@ describe('取り込みの道具（npm run bestiary:import）', () => {
     const r = run('tests/fixtures/bestiary-sample.json', '--dry', '--source', 'chatgpt:検査');
     expect(r.code).toBe(0);
     expect(r.out).toContain('足す種 3、書き換える種 0');
-    expect(r.out).toContain('+  004 試跳獣 テストホップ（中級・大型）');
-    expect(r.out).toContain('+  006 岩殻仔 ガルドロスの幼体（初級・幼体）');
+    expect(r.out).toContain('+  005 試跳獣 テストホップ（中級・大型）');
+    expect(r.out).toContain('+  007 岩殻仔 ガルドロスの幼体（初級・幼体）');
     expect(r.out).toContain('足す狩場 1、書き換える狩場 0');
     expect(r.out).toContain('+  狩場 試しの原');
     expect(r.out).toContain('（--dry: 書き込んでいません）');
@@ -289,7 +289,7 @@ describe('取り込みの道具（npm run bestiary:import）', () => {
     expect(r.code).toBe(0);
     expect(r.out).toContain('（登録簿 public/data/bestiary.json は変えていません）');
     const written = JSON.parse(readFileSync(out, 'utf8')) as BestiaryDef;
-    expect(written.species.length).toBe(6);
+    expect(written.species.length).toBe(7);
     expect(written.fields.length).toBe(22);
     expect(written.fields.at(-1)).toMatchObject({ name: '試しの原', terrain: '検査用' });
     expect(validateBestiary(written, env)).toEqual([]);

@@ -242,8 +242,8 @@ describe('図鑑に出す原画', () => {
     const content = await loadContent();
     const withArt = content.bestiary.species.filter((s) => s.art);
     // v0.75.0: いま居る 3 種すべて（ガルドロスは採用した設定図 galdros/…。ほかは ChatGPT の原画で、concepts/ にある）
-    expect(withArt.length).toBe(3);
-    expect(content.bestiary.species.length).toBe(3);
+    expect(withArt.length).toBe(4);
+    expect(content.bestiary.species.length).toBe(4);
     for (const s of withArt) {
       const src = s.art!.includes('/') ? join(ROOT, 'art-source/monster', s.art!) : join(ROOT, 'art-source/monster/concepts', s.art!);
       expect(existsSync(src), s.art).toBe(true);
