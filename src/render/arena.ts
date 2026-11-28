@@ -307,6 +307,8 @@ export function buildAreaGroup(map: AreaLook): Group {
   const cliff = artCliffGeometry({
     path: wallPath(b, outline?.points() ?? null, 0.5, 0.5), gates, vk: low ? wallH[0] / 3.0 : Math.min(1.25, Math.max(0.85, wallH[0] / 4.6)),
     low, nest: map.kind === 'nest', moss, baseAt: village || map.relief ? baseAt : undefined,
+    // 崖の向こうの景色（フィールド）があれば、背は、その地面の下まで下る（v0.81.0。D-181）
+    outerAt: exterior?.height,
     // 外周に沿って高さを変える（v0.50.0。#19 の F06）。段のある里は、段の擁壁とそろえるので変えない
     vary: village ? 0 : low ? 0.12 : 0.26,
   }, rng);
@@ -317,6 +319,9 @@ export function buildAreaGroup(map: AreaLook): Group {
   face.userData.cliffArt = cliff.pieces.map((p) => p.id);
   const back = new Mesh(cliff.cap, landscape?.fieldId==='field.whitefrost' ? imageLambert('frost_snow',{color:0xe0ebf4,vertexColors:true},{gain:1.04}) : capMat);
   back.receiveShadow = true;
+  // 崖の背（v0.81.0。D-181）: 崖の向こうの地面がある所（フィールド）では、その地面の下まで下る。検査が、名前と印で確かめる
+  back.name = 'cliff-back';
+  back.userData.grounded = !!exterior;
   group.add(face, back);
   // 崖の根元の崩れた岩（歩ける範囲の外）と、大きな岩のまわりの小石（足首より低い）。どちらも依頼 10 の小さな岩の図
   addRubble(group, rng, b, outline, gates, map.drawRocks === false ? [] : map.rocks, map.kind === 'village' ? 0.35 : 1, baseAt);

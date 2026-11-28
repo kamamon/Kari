@@ -11,11 +11,14 @@ import { FOG_COLOR, SUN_DIR } from '../src/render/arena';
 import { ENV_FAR, ENV_TILES, WIND, swayInWind } from '../src/render/envArt';
 import { ROCK_REACH, cavityOf, ledgeGeometry, polyPath, wallPath } from '../src/render/rockGeo';
 import {
-  BIG_ROCKS, GATE_HALF, artCliffGeometry, cliffArt, cliffArtMaterial, cliffHeightScale, cliffReliefAt, cliffTopAt, mergeRocks, pathLengths, pathSOf, placeBigRock, planCliffs, rockArt,
-  rockArtGeometry, rockArtMaterial,
+  BACK_ROWS, BACK_SINK, BIG_ROCKS, GATE_HALF, artCliffGeometry, cliffArt, cliffArtMaterial, cliffHeightScale, cliffReliefAt, cliffRim, cliffTopAt, mergeRocks, pathLengths, pathSOf, placeBigRock, planCliffs,
+  rockArt, rockArtGeometry, rockArtMaterial,
 } from '../src/render/rockArt';
 import { CLIFF_ART, CLIFF_M, CLIFF_RELIEF, ROCK_ART, ROCK_TILES } from '../src/render/rockArtData';
 import { AreaShape } from '../src/game/areaShape';
+import { reliefAt } from '../src/game/relief';
+import type { FieldAreaDef } from '../src/data/schemas';
+import { buildLandscapeSurface, landscapeProfile } from '../src/render/fieldLandscape';
 import { SKY_LOOKS, SkyDome } from '../src/render/sky';
 
 const ROOT = join(__dirname, '..');
@@ -268,6 +271,119 @@ describe('依頼 10 の崖の図から作る外周の崖（v0.22.0）', () => {
     }
     // 11 エリアの頂点（約 6 万）を外周と比べるので重い（手元 2 秒、Actions では 5.5 秒かかって、既定の 5 秒を超えた）
   }, 30000);
+
+  it('崖の上の線をならす（v0.81.0。D-181）: ならした線は、どこでも、もとの線より上へ出ない。幅を広げるほど、隣との差が小さい', () => {
+    for (const a of field.areas) {
+      const o = { path: wallPath(a.bounds, a.shape, 0.5, 0.5), gates: a.exits, vk: 1.087, low: false, nest: a.kind === 'nest', moss: 0.6, vary: 0.26 };
+      const { cum, L } = pathLengths(o.path);
+      const pieces = planCliffs(L, o.gates.map((g) => pathSOf(o.path, cum, g.x, g.z)), new SeededRng(5), o);
+      const rim = cliffRim(pieces, o, L);
+      const N = rim.top.length;
+      expect(rim.step, a.id).toBeCloseTo(0.5, 1);
+      // 出口の前は 0（何も無い）、壁のある所は 2.5m より高い
+      expect(Math.min(...rim.top), a.id).toBe(0);
+      expect(Math.max(...rim.top), a.id).toBeGreaterThan(2.5);
+      let last = Infinity;
+      for (const ease of [0, 0.5, 1.5, 3]) {
+        const at = rim.eased(ease);
+        let jump = 0;
+        for (let i = 0; i < N; i++) {
+          const v = at(i * rim.step);
+          expect(v, `${a.id} ならし ${ease} の ${i}`).toBeLessThanOrEqual(rim.top[i]! + 1e-5);
+          jump = Math.max(jump, Math.abs(at((i + 1) * rim.step) - v));
+        }
+        expect(jump, `${a.id} ならし ${ease}`).toBeLessThan(last);
+        last = jump;
+      }
+      // ならさない線は、測った線そのもの（間は、まっすぐ結ぶ）
+      expect(rim.eased(0)(3 * rim.step)).toBeCloseTo(rim.top[3]!, 6);
+      expect(rim.eased(0)(3.5 * rim.step)).toBeCloseTo((rim.top[3]! + rim.top[4]!) / 2, 6);
+    }
+  });
+
+  it('崖の背（v0.81.0。D-181）: 崖の向こうに地面があれば、縁から、その地面の下まで下る（宙に浮いた板にならない）。どの行も上の線より下。外の行は、隣の列との高さの差が小さい（外へ伸びる畝 = 縞にならない）。絵は伸びない', () => {
+    const CR = BACK_ROWS.length, R = 9;
+    // 崖の向こうの地面の代わり（±0.9m の起伏）
+    const outerAt = (x: number, z: number): number => 0.4 * Math.sin(x * 0.2) + 0.3 * Math.cos(z * 0.17) - 0.2;
+    for (const a of field.areas) {
+      const o = { path: wallPath(a.bounds, a.shape, 0.5, 0.5), gates: a.exits, vk: 1.087, low: false, nest: a.kind === 'nest', moss: 0.6, vary: 0.26 };
+      for (const grounded of [true, false]) {
+        const { face, cap } = artCliffGeometry({ ...o, outerAt: grounded ? outerAt : undefined }, new SeededRng(5));
+        const fp = face.getAttribute('position'), cp = cap.getAttribute('position'), uv = cap.getAttribute('uv'), idx = cap.getIndex()!;
+        const label = `${a.id} ${grounded ? '地面あり' : '地面なし'}`;
+        sane(cap, `${label} の崖の背`);
+        expect(cp.count, label).toBe((fp.count / R) * CR);
+        let highest = -Infinity;
+        for (let j = 0; j < cp.count / CR; j++) {
+          // 面のいちばん上の行は、上の線の 0.25m 上
+          const line = fp.getY(j * R + R - 1) - 0.25;
+          for (let k = 0; k < CR; k++) expect(cp.getY(j * CR + k), `${label} 列 ${j} 行 ${k}`).toBeLessThan(line - 0.2);
+          const end = j * CR + CR - 1;
+          highest = Math.max(highest, cp.getY(end));
+          // 地面あり: いちばん外の行は、崖の根元（0）と、その先の地面の、低い方より BACK_SINK 下
+          if (grounded) expect(cp.getY(end), `${label} 列 ${j}`).toBeCloseTo(Math.min(0, outerAt(cp.getX(end), cp.getZ(end))) - BACK_SINK, 4);
+          else expect(cp.getY(end), `${label} 列 ${j}`).toBeGreaterThanOrEqual(-0.3 - 1e-5);
+        }
+        // 地面なし（これまでの 1 つの狩場・里）: 上の線から 2.3m だけ下る、これまでの形（高い所に残る）
+        expect(highest, label)[grounded ? 'toBeLessThan' : 'toBeGreaterThan'](grounded ? -BACK_SINK + 1e-4 : 3);
+        // 面になっている所だけで: 同じ行の、隣の列との高さの差と、絵の伸び（絵の上の長さ ÷ 形の上の長さ）
+        const step = new Array<number>(CR).fill(0);
+        const ratio: number[] = [];
+        for (let t = 0; t < idx.count; t += 3) {
+          const tri = [idx.getX(t), idx.getX(t + 1), idx.getX(t + 2)];
+          for (let e = 0; e < 3; e++) {
+            const p = tri[e]!, q = tri[(e + 1) % 3]!;
+            const len = Math.hypot(cp.getX(p) - cp.getX(q), cp.getY(p) - cp.getY(q), cp.getZ(p) - cp.getZ(q));
+            if (p % CR === q % CR) step[p % CR] = Math.max(step[p % CR]!, Math.abs(cp.getY(p) - cp.getY(q)));
+            if (len > 0.05) ratio.push((3 * Math.hypot(uv.getX(p) - uv.getX(q), uv.getY(p) - uv.getY(q))) / len);
+          }
+        }
+        expect(step[0]!, label).toBeGreaterThan(0.4);
+        // いちばん外の行は、地面あり = その先の地面の起伏の分だけ、地面なし = ならした上の線の分だけ
+        expect(step[CR - 1]!, label).toBeLessThan(0.4);
+        expect(step[CR - 1]!, label).toBeLessThan(step[0]! * 0.75);
+        ratio.sort((x, y) => x - y);
+        // 絵は、ふつうの所で等倍。100 のうち 99 の辺で、1.5 倍より伸びない（外周が外へ曲がる所で、外の行が扇に開く分だけ伸びる）
+        expect(ratio[Math.floor(ratio.length / 2)]!, label).toBeCloseTo(1, 1);
+        expect(ratio[Math.floor(ratio.length * 0.01)]!, label).toBeGreaterThan(0.66);
+        expect(ratio[0]!, label).toBeGreaterThan(0.33);
+        // 同じ種なら同じ形
+        const again = artCliffGeometry({ ...o, outerAt: grounded ? outerAt : undefined }, new SeededRng(5)).cap;
+        expect(Array.from(again.getAttribute('position').array as Float32Array)).toEqual(Array.from(cp.array as Float32Array));
+        expect(Array.from(again.getAttribute('uv').array as Float32Array)).toEqual(Array.from(uv.array as Float32Array));
+      }
+    }
+  }, 30000);
+
+  it('崖の背（v0.81.0）: ゲームと同じ組み立て（起伏のある根元と、崖の向こうの景色の地面）で、いちばん外の行は、どの列も、その地面より 0.6m 下に埋まる。縁の近くは、地面より上に出ている（背は、岩の斜面として見える）', () => {
+    for (const id of ['basin', 'whitefrost', 'wetland', 'mistforest']) {
+      const f = JSON.parse(readFileSync(join(ROOT, `public/data/fields/${id}.json`), 'utf8')) as { id: string; areas: FieldAreaDef[] };
+      for (const a of f.areas) {
+        const b = a.bounds;
+        const surface = buildLandscapeSurface({ bounds: b, shape: a.shape, relief: a.relief, gates: a.exits, profile: landscapeProfile(f.id, a) });
+        const baseAt = (x: number, z: number): number => reliefAt(a.relief, Math.min(b.maxX - 0.05, Math.max(b.minX + 0.05, x)), Math.min(b.maxZ - 0.05, Math.max(b.minZ + 0.05, z)));
+        const { cap } = artCliffGeometry({
+          path: wallPath(b, a.shape ?? null, 0.5, 0.5), gates: a.exits, vk: 1.087, low: false, nest: a.kind === 'nest', moss: 0.6, vary: 0.26,
+          baseAt: a.relief ? baseAt : undefined, outerAt: surface.height,
+        }, new SeededRng(7));
+        const cp = cap.getAttribute('position'), CR = BACK_ROWS.length;
+        // 行ごとに、地面より上に出ている列の割合
+        const above = new Array<number>(CR).fill(0);
+        for (let i = 0; i < cp.count; i++) {
+          const ground = surface.height(cp.getX(i), cp.getZ(i));
+          if (i % CR === CR - 1) expect(cp.getY(i), `${f.id}/${a.id} 列 ${Math.floor(i / CR)}`).toBeLessThanOrEqual(ground - BACK_SINK + 1e-4);
+          if (cp.getY(i) > ground) above[i % CR] = above[i % CR]! + 1;
+        }
+        const share = above.map((n) => n / (cp.count / CR));
+        // 縁の近く（外へ 2m まで）は、出口の前の列を除いて、地面より上（岩の斜面として見える）。いちばん外の行は、どこも地面の下
+        for (const k of [0, 1, 2]) expect(share[k]!, `${f.id}/${a.id} 行 ${k}`).toBeGreaterThan(0.6);
+        expect(share[CR - 1]!, `${f.id}/${a.id}`).toBe(0);
+        surface.near.dispose();
+        surface.outer.dispose();
+        surface.water?.dispose();
+      }
+    }
+  }, 60000);
 
   it('崖の高さは外周に沿って変わる（v0.50.0。#19 の F06「同じ高さの全周の崖を減らす」）: 輪の始めと終わりで同じ、幅は 1 ± vary の中', () => {
     for (const a of field.areas) {

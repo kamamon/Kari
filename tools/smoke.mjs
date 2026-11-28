@@ -1429,6 +1429,16 @@ const startTraining = async (page, tap = false) => {
   }));
   check('崖の向こうの影と丘の草（v0.79.0）: 野営地の外側の地面が、木と岩の影の絵を読む（512 画素まで。影のある所は絵の 3〜40%）。丘に草の株（150 より多い）と茂み（15 より多い）。遠い稜線は 2 層を 1 つの形に。景観の描画は 8 回、全体は目標内（100 draw calls / 20万 tri）',
     hill.shade && hill.aShade && hill.key === 'outer-ground' && Math.max(...hill.px) <= 512 && hill.on > 0.03 && hill.on < 0.4 && hill.grass > 150 && hill.grassArt && hill.grassKey === 'sway-in-wind' && hill.shrubs > 15 && hill.ridge === 2 && hill.kids === 8 && hill.calls <= 100 && hill.triangles <= 200000, JSON.stringify(hill));
+  // 崖の背（v0.81.0。D-181）: フィールドでは、崖の向こうの地面の下まで下る（宙に浮いた板にしない）。上の縁から 3m より多く下り、絵の位置は面の上の長さ
+  const back = await page.evaluate(() => {
+    const v = window.__vh.view, g = v.areaGroups.get(window.__vh.sim.areaId), m = g?.getObjectByName('cliff-back');
+    if (!m) return null;
+    m.geometry.computeBoundingBox();
+    const bb = m.geometry.boundingBox, pos = m.geometry.getAttribute('position'), uv = m.geometry.getAttribute('uv');
+    return { grounded: m.userData.grounded, rows: pos.count % 6 === 0, drop: Math.round((bb.max.y - bb.min.y) * 10) / 10, minY: Math.round(bb.min.y * 10) / 10, uv: !!uv, art: !!m.material.map };
+  });
+  check('崖の背（v0.81.0）: フィールドの崖の背は、崖の向こうの地面の下まで下る形（6 行。上の縁から 3m より多く下る）。岩肌の絵が貼られている',
+    !!back && back.grounded === true && back.rows && back.drop > 3 && back.uv && back.art, JSON.stringify(back));
   const real1 = await real();
   const real2 = await until(page, () => window.__vh.view.areaGroups.size >= 2, 45000).then(() => real());
   check('景色（v0.19.0）: 空の球が遠景の中にあり、雲の時刻が進む。霧は距離の 2 乗の指数。岩と岩壁に頂点の色と凹凸。草は揺れる素材で、1 本ずつ色が違う', real1.sky && real2.time > real1.time && real1.fogExp && real1.rocks >= 1 && real1.sway > 100 && real1.tinted >= 2, JSON.stringify(real1));

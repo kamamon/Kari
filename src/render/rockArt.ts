@@ -549,6 +549,81 @@ export interface ArtCliffOptions {
    * 高さの倍率は 1 ± vary の間を、1 周に 1 回と 3 回の 2 つの波で行き来する（位相は道の形から決める。乱数を使わない）
    */
   vary?: number;
+  /**
+   * 崖の向こうの地面の高さ（v0.81.0。D-181。フィールドの崖の向こうの景色 = fieldLandscape の `height`）。
+   * あれば、背は、上の縁から、この地面の下まで下る（宙に浮いた板にならない）。無ければ（これまでの 1 つの狩場・里）、上の線から 2.3m だけ下る
+   */
+  outerAt?: (x: number, z: number) => number;
+}
+
+/**
+ * 崖の背の断面（v0.81.0。D-181。docs/spec.md の 21.9）: 上の縁から外へ下る面の行。
+ * out = 上の縁から外への距離（m）。fall = 下る割合（0 = 縁、1 = 根元。崖の向こうに地面がある時）。
+ * ease = 上の線をならす幅（m。外へ行くほど、上の線のぎざぎざを均す。列ごとの高さの差が、外へ 9.5m 伸びた畝 = 縞になっていた）。
+ * 縁の行も 0.5m ならす（細い尖りの後ろに、背が薄い板になって立つのを防ぐ。面の上の線は図の切り抜きなので、すき間は見えない）。
+ * legacy = 崖の向こうに地面が無い時の、上の線からの高さ（× 高さの倍率。v0.22.0 からの形）
+ */
+export const BACK_ROWS: readonly { out: number; fall: number; ease: number; legacy: number }[] = [
+  { out: 0.1, fall: 0, ease: 0.5, legacy: -0.3 },
+  { out: 0.8, fall: 0.07, ease: 0.9, legacy: -0.39 },
+  { out: 2.0, fall: 0.24, ease: 1.5, legacy: -0.58 },
+  { out: 3.8, fall: 0.5, ease: 2.3, legacy: -0.92 },
+  { out: 6.2, fall: 0.78, ease: 3, legacy: -1.45 },
+  { out: 9.5, fall: 1, ease: 3, legacy: -2.3 },
+];
+/** 背の根元を、地面（崖の根元と、崖の向こうの地面の低い方）より下へ埋める深さ（m） */
+export const BACK_SINK = 0.6;
+/** 上の線を測る間隔（m。外周に沿って） */
+const RIM_STEP = 0.5;
+
+/**
+ * 外周に沿った、崖の上の線の高さ（根元から。m）を RIM_STEP おきに測った輪と、それをならした線。
+ * ならし方: 幅 ±ease の中のいちばん低い値をとり（どこでも、もとの線より上へ出ない）、同じ幅で平均する。
+ * 図が重なる所（出口の前の、何も無い所）は高い方。図の無い所は 0
+ */
+export function cliffRim(pieces: readonly CliffPiece[], o: ArtCliffOptions, L: number): { step: number; top: Float32Array; eased: (ease: number) => (s: number) => number } {
+  const N = Math.max(8, Math.round(L / RIM_STEP));
+  const step = L / N;
+  const top = new Float32Array(N);
+  for (const pc of pieces) {
+    const c = cliffArt(pc.id);
+    const n0 = Math.ceil(pc.s0 / step), n1 = Math.floor((pc.s0 + CLIFF_M * pc.k) / step);
+    for (let n = n0; n <= n1; n++) {
+      const s = n * step, i = ((n % N) + N) % N;
+      top[i] = Math.max(top[i]!, cliffTopAt(c, (s - pc.s0) / pc.k) * o.vk * cliffHeightScale(o.path, L, o.vary ?? 0, s));
+    }
+  }
+  const cache = new Map<number, Float32Array>();
+  const line = (ease: number): Float32Array => {
+    const r = Math.round(ease / step);
+    let out = cache.get(r);
+    if (out) return out;
+    if (r <= 0) out = top;
+    else {
+      const low = new Float32Array(N);
+      for (let i = 0; i < N; i++) {
+        let m = Infinity;
+        for (let j = -r; j <= r; j++) m = Math.min(m, top[(((i + j) % N) + N) % N]!);
+        low[i] = m;
+      }
+      out = new Float32Array(N);
+      for (let i = 0; i < N; i++) {
+        let sum = 0;
+        for (let j = -r; j <= r; j++) sum += low[(((i + j) % N) + N) % N]!;
+        out[i] = sum / (2 * r + 1);
+      }
+    }
+    cache.set(r, out);
+    return out;
+  };
+  const eased = (ease: number) => {
+    const a = line(ease);
+    return (s: number): number => {
+      const f = (((s % L) + L) % L) / step, i = Math.floor(f) % N, t = f - Math.floor(f);
+      return lerp(a[i]!, a[(i + 1) % N]!, t);
+    };
+  };
+  return { step, top, eased };
 }
 
 /** 0〜1 の決まった値（同じ v なら同じ） */
@@ -566,9 +641,11 @@ export function cliffHeightScale(path: readonly WallPt[], L: number, vary: numbe
 }
 
 /**
- * 外周の崖: 面（図を貼る。uv・頂点の色）と、上の縁から外へ下る背（岩肌の絵。uv は m ÷ 3）の 2 つの形。
+ * 外周の崖: 面（図を貼る。uv・頂点の色）と、上の縁から外へ下る背（岩肌の絵。uv は、面の上の長さ m ÷ 3）の 2 つの形。
  * 面は、図の上の線より 0.25m 上まで作り、上の線より上は、素材の切り抜き（alphaTest）で消す。何も無い所（出口）には面を作らない。
  * 面の出し入れ: 上ほど 6% 外へ（奥へ傾く）、明るい所は手前へ、暗い所は奥へ（凹凸の 0.45m）。歩ける範囲へは入らない（外周の外 0.08m まで）。
+ * 背（v0.81.0 で作り直した。D-181）: 行ごとに、上の線をならした高さから下る（BACK_ROWS）。崖の向こうに地面があれば（outerAt）、その下まで下って埋まる。
+ * どの行も、その列の上の線より下（下から見上げても、面の上へはみ出さない）。絵は、面の上の長さで貼る（急な所でも伸びない）
  */
 export function artCliffGeometry(o: ArtCliffOptions, rng: SeededRng): { face: BufferGeometry; cap: BufferGeometry; pieces: CliffPiece[] } {
   const { cum, L } = pathLengths(o.path);
@@ -577,9 +654,13 @@ export function artCliffGeometry(o: ArtCliffOptions, rng: SeededRng): { face: Bu
   const fp: number[] = [], fuv: number[] = [], fcol: number[] = [], fidx: number[] = [];
   const cp: number[] = [], cuv: number[] = [], ccol: number[] = [], cidx: number[] = [];
   const R = ROWS.length;
-  // 背の断面: [面の上の縁から外への距離 m, 上の線からの高さ m]。どこも上の線より下（下から見上げても、面の上へはみ出さない）
-  const capRows: [number, number][] = [[0.1, -0.3], [1.0, -0.4], [3.0, -0.75], [6.0, -1.4], [9.5, -2.3]];
+  // 背: 行ごとの、ならした上の線（外周に沿って）。絵の横の位置は、行ごとに、面の上の長さを足していく
+  const rim = cliffRim(pieces, o, L);
+  const easedRim = BACK_ROWS.map((r) => rim.eased(r.ease));
+  const CR = BACK_ROWS.length;
+  let uLen = 0;
   for (const pc of pieces) {
+    let prevCol: [number, number, number][] | null = null;
     const c = cliffArt(pc.id);
     const base = fp.length / 3;
     const capBase = cp.length / 3;
@@ -618,14 +699,44 @@ export function artCliffGeometry(o: ArtCliffOptions, rng: SeededRng): { face: Bu
         fcol.push(ao, ao, ao);
       }
       // 背: 上の縁から外へ下る（道の reach を超えない）
-      for (const [out, dy] of capRows) {
-        const dd = Math.min(dTop + out, Math.max(dTop + 0.1, q.reach));
-        const y = Math.max(-0.3, H + dy * vk);
-        cp.push(q.x + q.nx * dd, y0 + y, q.z + q.nz * dd);
-        cuv.push(s / 3, (dd + y * 0.4) / 3);
-        const mossy = o.moss * (out <= 3 ? 0.65 : 0.35);
-        const sh = 0.82 - 0.12 * (out / 9.5);
-        ccol.push(sh * (1 - mossy * 0.25), sh * (1 + mossy * 0.08), sh * (1 - mossy * 0.35));
+      const col: [number, number, number][] = [];
+      for (let k = 0; k < CR; k++) {
+        const row = BACK_ROWS[k]!;
+        const dd = Math.min(dTop + row.out, Math.max(dTop + 0.1, q.reach));
+        const px = q.x + q.nx * dd, pz = q.z + q.nz * dd;
+        // 縁の高さ: ならした上の線（この列の上の線より上へは出ない）
+        const edge = row.ease > 0 ? Math.min(H, Math.max(0.3 * vk, easedRim[k]!(s))) : H;
+        let y: number;
+        if (o.outerAt) {
+          // 崖の向こうの地面がある: 縁から、地面（崖の根元と、その先の地面の低い方）の下まで下る
+          const foot = Math.min(y0, o.outerAt(px, pz)) - BACK_SINK;
+          y = lerp(y0 + edge - 0.3 * vk, foot, row.fall);
+        } else y = y0 + Math.max(-0.3, edge + row.legacy * vk);
+        col.push([px, y, pz]);
+        cp.push(px, y, pz);
+        if (o.outerAt) {
+          // 根元へ向かって暗く、苔を濃く（崖の向こうの草の丘へなじむ）
+          const mossy = o.moss * (0.5 + 0.4 * row.fall);
+          const sh = 0.84 - 0.18 * row.fall;
+          ccol.push(sh * (1 - mossy * 0.25), sh * (1 + mossy * 0.08), sh * (1 - mossy * 0.35));
+        } else {
+          const mossy = o.moss * (row.out <= 3 ? 0.65 : 0.35);
+          const sh = 0.82 - 0.12 * (row.out / 9.5);
+          ccol.push(sh * (1 - mossy * 0.25), sh * (1 + mossy * 0.08), sh * (1 - mossy * 0.35));
+        }
+      }
+      // 絵の位置（1 = 3m）: 横は、前の列から進んだ長さ（行の平均。どの行も同じ値 = 行の間で絵がずれていかない）。
+      // 縦は、縁からその行まで、面の上を下った長さ（急な所・行が重なる所でも、絵が伸びない）
+      if (prevCol) {
+        let step = 0;
+        for (let k = 0; k < CR; k++) step += Math.hypot(col[k]![0] - prevCol[k]![0], col[k]![1] - prevCol[k]![1], col[k]![2] - prevCol[k]![2]);
+        uLen += step / CR;
+      }
+      prevCol = col;
+      let vLen = 0;
+      for (let k = 0; k < CR; k++) {
+        if (k > 0) vLen += Math.hypot(col[k]![0] - col[k - 1]![0], col[k]![1] - col[k - 1]![1], col[k]![2] - col[k - 1]![2]);
+        cuv.push(uLen / 3, vLen / 3);
       }
     }
     for (let i = 0; i < COLS; i++) {
@@ -638,7 +749,6 @@ export function artCliffGeometry(o: ArtCliffOptions, rng: SeededRng): { face: Bu
         // 内側（歩ける範囲）から見て表になる向き（道は、上から見て x → z の向きに回る）
         fidx.push(a, b, cc, b, d, cc);
       }
-      const CR = capRows.length;
       for (let k = 0; k < CR - 1 && capOk; k++) {
         const a = capBase + i * CR + k, b = capBase + (i + 1) * CR + k, cc = capBase + i * CR + k + 1, d = capBase + (i + 1) * CR + k + 1;
         cidx.push(a, b, cc, b, d, cc);
