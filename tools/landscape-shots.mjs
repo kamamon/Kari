@@ -1,5 +1,5 @@
 // 本番ビルドから地域ごとの実際のWebGL画面を撮る。外周の描画・素材・フレームの量も検査。
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { chromium } from 'playwright-core';
 const out=new URL('./out/landscape/',import.meta.url).pathname;
@@ -23,7 +23,7 @@ try{
  const shots=[
   ['basin','a2','field-basin-meadow',false],['basin','a4','field-basin-high',true],['basin','a5','field-basin-exit',false],
   ['mistforest','a3','field-mistforest',false],['coast','a2','field-coast',false],['icegorge','a4','field-icegorge',false],
-  ['wetland','a2','field-wetland',false],['ashmine','a2','field-ashmine',false],['buriedheat','a2','field-buriedheat',false]
+  ['whitefrost','a2','field-whitefrost-wetland',false],['whitefrost','a3','field-whitefrost-river',false],['whitefrost','a4','field-whitefrost-cave',false],['wetland','a2','field-wetland',false],['ashmine','a2','field-ashmine',false],['buriedheat','a2','field-buriedheat',false]
  ];
  let current='';
  for(const [region,areaId,name,high] of shots){
@@ -95,6 +95,58 @@ try{
    report.push({name:'spinegale-r'+rank,...data});
    console.log('SPINEGALE_OK '+JSON.stringify(data));
  }
+ // Frostald: real renderer, three hunt ranks, full bone/mesh count, and active cold recharge animation.
+ const checkFrostald=async(page,rank,master=false)=>{
+   const q='quest.frostald.r'+rank;
+   await page.evaluate(q=>{
+     const app=window.__vh;
+     for(const req of app.content.quests.get(q).requires??[])app.save.doc.progress.questClears[req]=1;
+     app.startHunt(q);
+   },q);
+   await page.waitForFunction(q=>window.__vh.sim.hunt?.quest.id===q&&window.__vh.sim.tick>3,q,{timeout:120000});
+   await page.evaluate(()=>{
+     const app=window.__vh,s=app.sim,m=s.monsters.find(x=>x.def.id==='monster.frostald'),p=s.player;
+     const a=s.monsterArea(m);if(a)s.areaId=a.id;
+     m.aiEnabled=false;
+     const x=m.pos.x+6,z=m.pos.z-5,yaw=Math.atan2(m.pos.x-x,m.pos.z-z);
+     p.pos={x,y:s.world.groundHeight(x,z),z};p.prevPos={...p.pos};p.yaw=yaw;p.prevYaw=yaw;
+     app.view.cam.snap(yaw);
+   });
+   await page.waitForFunction(()=>{
+     const rig=window.__vh.view.monsterRig;
+     return !!rig?.root.visible && !!rig.root.getObjectByName('mane_l_01') && !!rig.clips?.get('fa_recharge');
+   },null,{timeout:120000,polling:100});
+   const data=await page.evaluate(()=>{
+     const app=window.__vh,m=app.sim.monsters.find(x=>x.def.id==='monster.frostald'),rig=app.view.monsterRig;
+     let joints=0,triangles=0;
+     rig.root.traverse(o=>{if(o.isSkinnedMesh){joints=Math.max(joints,o.skeleton.bones.length);triangles+=o.geometry.index.count/3;}});
+     return {quest:app.sim.hunt.quest.id,field:app.sim.field.id,area:app.sim.areaId,hp:m.def.hp,joints,triangles,clips:rig.clips.size,visible:rig.root.visible};
+   });
+   if(data.field!=='field.whitefrost'||data.joints!==79||data.clips!==56||data.triangles!==(master?2283726:329250)||data.hp!==[1750,3700,6400][rank-1])throw Error('Frostald '+JSON.stringify(data));
+   const name=(master?'frostald-master':'frostald-game')+'-r'+rank;
+   await page.screenshot({path:out+name+'.jpg',type:'jpeg',quality:80,timeout:120000});
+   report.push({name,...data});console.log('FROSTALD_OK '+JSON.stringify(data));
+   // Play the actual recharge action on the normal game mesh. Master has identical animation bytes.
+   if(!master){
+     await page.evaluate(()=>{
+       const app=window.__vh,m=app.sim.monsters.find(x=>x.def.id==='monster.frostald');
+       m.aware=true;m.aiEnabled=true;m.action=null;m.cooldown=0;m.frostald.charge=20;
+     });
+     await page.waitForFunction(()=>window.__vh.view.monsterRig.active?.getClip().name==='fa_recharge',null,{timeout:45000});
+     await page.screenshot({path:out+name+'-recharge.jpg',type:'jpeg',quality:80});
+   }
+ };
+ for(const rank of [1,2,3])await checkFrostald(page,rank);
+ // The master is built only into this CI preview (not the public release). Check the same runtime path.
+ await page.close();
+ const mk=spawnSync(process.execPath,['tools/frostald/ensure.mjs','--master','--dist'],{stdio:'inherit'});
+ if(mk.error||mk.status!==0)throw mk.error??Error('Frostald master build '+mk.status);
+ const hp=await ctx.newPage();await hp.setViewportSize({width:640,height:360});
+ hp.on('pageerror',e=>errors.push(String(e)));hp.on('console',m=>{if(m.type()==='error')errors.push(m.text());});hp.on('response',r=>{if(r.status()>=400)errors.push(r.status()+' '+r.url());});
+ await hp.goto('http://localhost:'+port+base+'?hub=menu&frostaldQuality=master');
+ await hp.waitForSelector('#boot-start:not([hidden])',{timeout:30000});await hp.click('#boot-start');
+ await hp.waitForFunction(()=>!!window.__vh,null,{timeout:30000});
+ await checkFrostald(hp,1,true);
  await ctx.close();
  if(errors.length)throw Error('browser errors: '+errors.join('\n'));
 }finally{
