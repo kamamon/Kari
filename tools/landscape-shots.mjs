@@ -1,5 +1,5 @@
 // 本番ビルドから地域ごとの実際のWebGL画面を撮る。外周の描画・素材・フレームの量も検査。
-import { spawn, spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { chromium } from 'playwright-core';
 const out=new URL('./out/landscape/',import.meta.url).pathname;
@@ -16,7 +16,7 @@ try{
  page.on('pageerror',e=>errors.push(String(e)));
  page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  page.on('response',r=>{if(r.status()>=400)errors.push(r.status()+' '+r.url());});
- await page.goto('http://localhost:'+port+base+'?hub=menu');
+ await page.goto('http://localhost:'+port+base+'?hub=menu&frostaldQuality=game');
  await page.waitForSelector('#boot-start:not([hidden])',{timeout:30000});
  await page.click('#boot-start');
  await page.waitForFunction(()=>!!window.__vh,null,{timeout:30000});
@@ -118,16 +118,28 @@ try{
    },null,{timeout:120000,polling:100});
    const data=await page.evaluate(()=>{
      const app=window.__vh,m=app.sim.monsters.find(x=>x.def.id==='monster.frostald'),rig=app.view.monsterRig;
-     let joints=0,triangles=0;
-     rig.root.traverse(o=>{if(o.isSkinnedMesh){joints=Math.max(joints,o.skeleton.bones.length);triangles+=o.geometry.index.count/3;}});
-     return {quest:app.sim.hunt.quest.id,field:app.sim.field.id,area:app.sim.areaId,hp:m.def.hp,joints,triangles,clips:rig.clips.size,visible:rig.root.visible};
+     let joints=0,triangles=0,eyeRoughness=null,blueIris=false,roundPupil=false;
+     rig.root.traverse(o=>{
+       if(!o.isSkinnedMesh)return;
+       joints=Math.max(joints,o.skeleton.bones.length);triangles+=o.geometry.index.count/3;
+       if(o.material?.name==='eye'){
+         eyeRoughness=o.material.roughness;const color=o.geometry.attributes.color;
+         if(color){let r=0,b=0;for(let i=0;i<color.count;i++){r+=color.getX(i);b+=color.getZ(i);}blueIris=b>r*1.5;}
+       }
+       if(o.material?.name==='pupil'){
+         const pos=o.geometry.attributes.position,ys=[],zs=[];
+         for(let i=0;i<pos.count;i++)if(pos.getX(i)>.34&&pos.getY(i)>1.5){ys.push(pos.getY(i));zs.push(pos.getZ(i));}
+         if(ys.length){const ratio=(Math.max(...ys)-Math.min(...ys))/(Math.max(...zs)-Math.min(...zs));roundPupil=ratio>.85&&ratio<1.15;}
+       }
+     });
+     return {quest:app.sim.hunt.quest.id,field:app.sim.field.id,area:app.sim.areaId,hp:m.def.hp,joints,triangles,clips:rig.clips.size,visible:rig.root.visible,eyeRoughness,blueIris,roundPupil};
    });
-   if(data.field!=='field.whitefrost'||data.joints!==79||data.clips!==56||data.triangles!==(master?2283726:329250)||data.hp!==[1750,3700,6400][rank-1])throw Error('Frostald '+JSON.stringify(data));
+   if(data.field!=='field.whitefrost'||data.joints!==79||data.clips!==56||data.triangles!==(master?2283726:329250)||data.hp!==[1750,3700,6400][rank-1]||!data.blueIris||!data.roundPupil||Math.abs(data.eyeRoughness-.32)>.001)throw Error('Frostald '+JSON.stringify(data));
    const name=(master?'frostald-master':'frostald-game')+'-r'+rank;
    await page.screenshot({path:out+name+'.jpg',type:'jpeg',quality:80,timeout:120000});
    report.push({name,...data});console.log('FROSTALD_OK '+JSON.stringify(data));
-   // Play the actual recharge action on the normal game mesh. Master has identical animation bytes.
-   if(!master){
+   // Play recharge on the actual displayed model, including the default HD model.
+   {
      await page.evaluate(()=>{
        const app=window.__vh,m=app.sim.monsters.find(x=>x.def.id==='monster.frostald');
        m.aware=true;m.aiEnabled=true;m.action=null;m.cooldown=0;m.frostald.charge=20;
@@ -137,13 +149,11 @@ try{
    }
  };
  for(const rank of [1,2,3])await checkFrostald(page,rank);
- // The master is built only into this CI preview (not the public release). Check the same runtime path.
+ // The published build must contain the full-density assets already; no test-only asset install.
  await page.close();
- const mk=spawnSync(process.execPath,['tools/frostald/ensure.mjs','--master','--dist'],{stdio:'inherit'});
- if(mk.error||mk.status!==0)throw mk.error??Error('Frostald master build '+mk.status);
  const hp=await ctx.newPage();await hp.setViewportSize({width:640,height:360});
  hp.on('pageerror',e=>errors.push(String(e)));hp.on('console',m=>{if(m.type()==='error')errors.push(m.text());});hp.on('response',r=>{if(r.status()>=400)errors.push(r.status()+' '+r.url());});
- await hp.goto('http://localhost:'+port+base+'?hub=menu&frostaldQuality=master');
+ await hp.goto('http://localhost:'+port+base+'?hub=menu');
  await hp.waitForSelector('#boot-start:not([hidden])',{timeout:30000});await hp.click('#boot-start');
  await hp.waitForFunction(()=>!!window.__vh,null,{timeout:30000});
  await checkFrostald(hp,1,true);

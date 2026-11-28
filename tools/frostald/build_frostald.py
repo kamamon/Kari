@@ -102,6 +102,29 @@ def tube(mat,C,steps=8,sides=24,scale=1):
     p=p.reshape(-1,3);nn=nn.reshape(-1,3);uv=uv.reshape(-1,2);I=np.repeat(np.asarray(I),sides+1,axis=0);W=np.repeat(np.asarray(W),sides+1,axis=0);add(mat,p,nn,uv,I,W,faces(len(S)-1,sides),tint(mat,p,nn,uv,region))
 def ell(mat,c,r,bn,sides=22,rings=13):
     sides=max(8,round(sides*LOD));rings=max(5,round(rings*LOD));r=np.asarray(r);c=np.asarray(c);ph=np.linspace(0,PI,rings+1)[:,None];th=np.linspace(0,2*PI,sides+1)[None,:];v=np.stack(np.broadcast_arrays(np.sin(ph)*np.cos(th),np.cos(ph),np.sin(ph)*np.sin(th)),-1);p=(c+v*r).reshape(-1,3);n=unit(v/r).reshape(-1,3);uv=np.stack(np.broadcast_arrays(th/(2*PI),ph/PI),-1).reshape(-1,2);I=np.tile([J[bn],0,0,0],(len(p),1));W=np.tile([1,0,0,0],(len(p),1));add(mat,p,n,uv,I,W,faces(rings,sides),tint(mat,p,n,uv,'head' if bn=='head' else 'other'))
+def soften_ell(mat,old,new,ratio):
+    # Transform an already triangulated ellipse; preserve index count, UVs and skin weights.
+    xyz=M[mat]['p'][-1];normal=M[mat]['n'][-1];scale=np.asarray(ratio,np.float32)
+    xyz[:]=np.asarray(new,np.float32)+(xyz-np.asarray(old,np.float32))*scale
+    normal[:]=unit(normal/scale)
+def calm_eye(side,d):
+    # A recessed socket, cool natural iris and round pupil (no emission or glowing eye).
+    socket=(d*.31,1.61,2.45)
+    ell('keratin',socket,(.052,.09,.13),'head',24,16)
+    soften_ell('keratin',socket,(d*.31,1.615,2.45),(.88,.78,.91))
+    old=(d*.356,1.62,2.47);new=(d*.350,1.62,2.47)
+    ell('eye',old,(.033,.044,.054),'eye_'+side,24,16)
+    soften_ell('eye',old,new,(.97,.96,.92))
+    v=M['eye']['p'][-1];y=(v[:,1]-new[1])/(.044*.96);z=(v[:,2]-new[2])/(.054*.92)
+    radius=np.sqrt(y*y+z*z);theta=np.arctan2(y,z)
+    # Subtle radial fibers and a dark limbal ring; no yellow or self-lit material.
+    iris=np.array([.32,.56,.67],np.float32)[None,:]*(1+.065*np.cos(theta*31)+.035*np.sin(theta*47+radius*18))[:,None]
+    rim=np.clip((radius-.72)/.28,0,1)[:,None]
+    col=iris*(1-rim)+np.array([.13,.25,.33],np.float32)[None,:]*rim
+    M['eye']['c'][-1][:]=linear(col)
+    old=(d*.384,1.622,2.48)
+    ell('pupil',old,(.006,.032,.013),'eye_'+side,14,10)
+    soften_ell('pupil',old,(d*.379,1.62,2.47),(1.0,.625,1.5384615385))
 def spike(mat,points,bn,r=(.04,.035),sides=12):
     tube(mat,[(*p,r[0]*max(.025,1-i/(len(points)-1)),r[1]*max(.025,1-i/(len(points)-1)),bn) for i,p in enumerate(points)],5,sides)
 
@@ -118,7 +141,8 @@ for side,d in [('l',1),('r',-1)]:
   z=2.18+i*.062;x=d*(.30-.012*i);y=1.37-.004*i;length=.09+.055*(1-i/13)
   spike('tooth',[(x,y,z),(x*.97,y-length*.68,z+.015),(x*.91,y-length,z-.015)],'head',(.028,.025),13)
   if i<11:spike('tooth',[(x*.91,1.25,z+.02),(x*.90,1.30,z+.04),(x*.89,1.345,z+.02)],'jaw',(.018,.019),10)
- ell('keratin',(d*.31,1.61,2.45),(.052,.09,.13),'head',24,16);ell('eye',(d*.356,1.62,2.47),(.033,.044,.054),'eye_'+side,24,16);ell('pupil',(d*.384,1.622,2.48),(.006,.032,.013),'eye_'+side,14,10);ell('pupil',(d*.17,1.47,2.95),(.019,.02,.04),'snout',12,9)
+ calm_eye(side,d)
+ ell('pupil',(d*.17,1.47,2.95),(.019,.02,.04),'snout',12,9)
  for limb,z in [('fore',.93),('hind',-1.12)]:
   bn=lambda v:f'{limb}_{v}_{side}';k=rest[J[bn('lower')]];e=rest[J[bn('ankle')]];paw=rest[J[bn('paw')]]
   tube('hide',[(d*.41,1.29,z,.30,.38,bn('upper')),(d*.64,1.11,z,.36,.40,bn('upper')),(d*.77,.88,(z+k[2])/2,.27,.30,bn('upper')),(*k,.22,.23,bn('lower')),(d*.84,.40,z-.04,.17,.19,bn('lower')),(*e,.145,.16,bn('ankle')),(*paw,.245,.13,bn('paw'))],13,36)
@@ -208,7 +232,7 @@ def main():
         mi=len(materials);m={'name':mat,'doubleSided':mat in ['membrane','feather'],'pbrMetallicRoughness':{'metallicFactor':0,'roughnessFactor':.65}}
         if mat in ['hide','keratin','membrane','feather','mouth']:
             m['pbrMetallicRoughness'].update(baseColorTexture={'index':texture(T/f'{mat}_basecolor.png')},metallicRoughnessTexture={'index':texture(T/f'{mat}_orm.png')},roughnessFactor=1);m['normalTexture']={'index':texture(T/f'{mat}_normal.png'),'scale':.65};m['occlusionTexture']={'index':m['pbrMetallicRoughness']['metallicRoughnessTexture']['index'],'strength':.55}
-        else:m['pbrMetallicRoughness'].update(baseColorFactor={'tooth':[.72,.63,.42,1],'eye':[.70,.34,.055,1],'pupil':[.012,.009,.005,1]}[mat],roughnessFactor=.2 if mat in ['eye','pupil'] else .46)
+        else:m['pbrMetallicRoughness'].update(baseColorFactor={'tooth':[.72,.63,.42,1],'eye':[1,1,1,1],'pupil':[.014,.021,.027,1]}[mat],roughnessFactor=.32 if mat=='eye' else .26 if mat=='pupil' else .46)
         materials.append(m);a={k:np.concatenate(x,axis=0) for k,x in parts.items()};
         assert np.max(abs(a['w'].sum(1)-1))<1e-6 and a['j'].max()<len(B);stats[mat]={'vertices':len(a['p']),'triangles':len(a['f'])};attrs={'POSITION':g.accessor(a['p'],'VEC3',target=34962,bounds=True),'NORMAL':g.accessor(a['n'],'VEC3',target=34962),'TEXCOORD_0':g.accessor(a['uv'],'VEC2',target=34962),'JOINTS_0':g.accessor(a['j'],'VEC4',5123,target=34962),'WEIGHTS_0':g.accessor(a['w'],'VEC4',target=34962),'COLOR_0':g.accessor(a['c'],'VEC3',target=34962)};prims.append({'attributes':attrs,'indices':g.accessor(a['f'].ravel(),'SCALAR',5125,target=34963),'material':mi})
     nodes=[];ib=[]
@@ -231,7 +255,7 @@ def main():
         if np.max(abs(s))>1e-6:channel(J['body'],'translation',s+rest[J['body']],'VEC3')
         if np.max(abs(r))>1e-6:channel(0,'translation',r,'VEC3')
         animations.append({'name':'fa_'+name,'samplers':sam,'channels':chan,'extras':{'durationTicks':D,'loop':name in LOOP,'hitWindows':ATT.get(name,(0,[]))[1]}})
-    doc={'asset':{'version':'2.0','generator':'Kari Frostald sculpted v3'},'scene':0,'scenes':[{'nodes':[0,len(B)]}],'nodes':nodes,'skins':[skin],'meshes':[{'name':'Frostald','primitives':prims}],'materials':materials,'textures':textures,'images':images,'samplers':[{'magFilter':9729,'minFilter':9987,'wrapS':10497,'wrapT':10497}],'animations':animations,'bufferViews':g.views,'accessors':g.acc,'buffers':[{'byteLength':len(g.buf)}],'extras':{'status':'procedural skinned sculpt; concept parity unverified','coordinate':'Y up +Z forward metres','monsterId':'monster.frostald','stats':stats}}
+    doc={'asset':{'version':'2.0','generator':'Kari Frostald sculpted v4 calm blue eye'},'scene':0,'scenes':[{'nodes':[0,len(B)]}],'nodes':nodes,'skins':[skin],'meshes':[{'name':'Frostald','primitives':prims}],'materials':materials,'textures':textures,'images':images,'samplers':[{'magFilter':9729,'minFilter':9987,'wrapS':10497,'wrapT':10497}],'animations':animations,'bufferViews':g.views,'accessors':g.acc,'buffers':[{'byteLength':len(g.buf)}],'extras':{'status':'procedural skinned sculpt; concept parity unverified','coordinate':'Y up +Z forward metres','monsterId':'monster.frostald','eyeDesign':'calm-blue-v1','stats':stats}}
     j=json.dumps(doc,separators=(',',':')).encode();j+=b' '*((-len(j))%4);g.buf.extend(b'\0'*((-len(g.buf))%4));out=struct.pack('<4sII',b'glTF',2,12+8+len(j)+8+len(g.buf))+struct.pack('<I4s',len(j),b'JSON')+j+struct.pack('<I4s',len(g.buf),b'BIN\0')+g.buf;(P/f'frostald_{SUFFIX}.glb').write_bytes(out)
     manifest={'joints':len(B),'animationClips':len(CLIPS),'materials':len(M),'vertices':sum(x['vertices'] for x in stats.values()),'triangles':sum(x['triangles'] for x in stats.values()),'stats':stats,'clips':[{'name':x['name'],**x['extras']} for x in animations],'rig':[{'name':n,'parent':B[p][0] if p>=0 else None,'restM':xyz.tolist()} for n,p,xyz in B]};(P/('model_manifest.json' if SUFFIX=='v2' else f'model_manifest_{SUFFIX}.json')).write_text(json.dumps(manifest,indent=2));print({k:manifest[k] for k in ['joints','animationClips','materials','vertices','triangles']});print('GLB',len(out))
 if __name__=='__main__':main()

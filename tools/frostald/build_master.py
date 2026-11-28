@@ -1,8 +1,9 @@
 """Generate and verify the approved high-density Frostald mesh, in an isolated texture directory.
 
-Normal predev/prebuild/pretest never generate or ship this large file.
---install makes the master selectable in the local game (?frostaldQuality=master).
---dist installs into an already built preview for CI verification only.
+Normal predev/prebuild/pretest generate and install the full-density model.
+--install writes the exact master as glTF with split binary buffers into public.
+--dist installs the same split assets into an already built preview.
+The raw master remains in tools/out and is never published as a >100MB Git blob.
 """
 from pathlib import Path
 import argparse, hashlib, json, os, shutil, struct, subprocess, sys, tempfile
@@ -15,6 +16,8 @@ GAME=ROOT/'public/assets/models/monsters/frostald_game.glb'
 NAME='frostald_master.glb'
 SRC=P/'build_frostald.py'
 EXPECTED=2283726
+EYE_DESIGN='calm-blue-v1'
+PART_LIMIT=32*1024*1024
 
 def sha(path):
     h=hashlib.sha256()
@@ -43,6 +46,7 @@ class GLB:
     def validate(self,expected):
         g=self.g
         assert len(g['skins'][0]['joints'])==79 and len(g['animations'])==56
+        assert g.get('extras',{}).get('eyeDesign')==EYE_DESIGN
         tri=verts=0
         for mesh in g['meshes']:
             for prim in mesh['primitives']:
@@ -71,6 +75,63 @@ def compare(master):
                 for k in ('input','output'):assert a.read(u[k])==b.read(v[k]),(x['name'],k)
         return stats
 
+def publish_split(master,target,stats):
+    # External glTF buffers preserve every source bufferView byte (positions, indices,
+    # all textures, skin data, and animation keys). Split only at view boundaries.
+    # GitHub rejects single files above 100 MB, so no raw master GLB in public/dist.
+    target=Path(target); target.parent.mkdir(parents=True,exist_ok=True)
+    manifest=target/'delivery.json'
+    if manifest.is_file():
+        try:
+            old=json.loads(manifest.read_text())
+            if old['sourceSha256']==stats['sha256'] and old['eyeDesign']==EYE_DESIGN and old['format']==1 and all((target/name).stat().st_size==info['bytes'] and sha(target/name)==info['sha256'] for name,info in old['files'].items()):
+                print('FROSTALD_HD_DELIVERY_CACHED '+json.dumps(old['files']));return
+        except (OSError,KeyError,ValueError):pass
+    with tempfile.TemporaryDirectory(prefix='frostald-hd-',dir=target.parent) as temp:
+        work=Path(temp)
+        with GLB(master) as src:
+            g=src.g
+            buffers=[];part=None;out=None;used=0
+            def close_part():
+                if out is not None:
+                    out.close();buffers.append({'uri':part.name,'byteLength':used})
+            try:
+                for view in g['bufferViews']:
+                    length=view['byteLength'];offset=view.get('byteOffset',0)
+                    pad=(-used)%4
+                    if out is None or (used and used+pad+length>PART_LIMIT):
+                        close_part();part=work/('buffer-%02d.bin'%len(buffers));out=part.open('wb');used=0;pad=0
+                    if length>=90_000_000:raise ValueError('single view exceeds publish budget')
+                    out.write(b'\0'*pad);used+=pad
+                    src.f.seek(src.base+offset)
+                    data=src.f.read(length)
+                    if len(data)!=length:raise ValueError('truncated bufferView')
+                    out.write(data)
+                    view['buffer']=len(buffers);view['byteOffset']=used;used+=length
+                close_part();out=None
+            finally:
+                if out is not None:out.close()
+            g['buffers']=buffers
+            # Re-read all mapped views and compare to the unmodified source GLB.
+            with GLB(master) as original:
+                handles=[(work/b['uri']).open('rb') for b in buffers]
+                try:
+                    for before,after in zip(original.g['bufferViews'],g['bufferViews']):
+                        original.f.seek(original.base+before.get('byteOffset',0))
+                        f=handles[after['buffer']];f.seek(after['byteOffset'])
+                        n=before['byteLength']
+                        if f.read(n)!=original.f.read(n):raise ValueError('split data mismatch')
+                finally:
+                    for f in handles:f.close()
+            (work/'frostald.gltf').write_text(json.dumps(g,separators=(',',':'))+'\n')
+        files={p.name:{'bytes':p.stat().st_size,'sha256':sha(p)} for p in sorted(work.iterdir()) if p.is_file()}
+        if not files or max(x['bytes'] for x in files.values())>=90_000_000:raise ValueError('asset exceeds GitHub file budget')
+        (work/'delivery.json').write_text(json.dumps({'format':1,'eyeDesign':EYE_DESIGN,'sourceSha256':stats['sha256'],'triangles':stats['triangles'],'joints':79,'clips':56,'files':files},indent=2)+'\n')
+        # All outputs are generated assets in a dedicated directory; replace only that directory.
+        if target.exists():shutil.rmtree(target)
+        shutil.copytree(work,target)
+        print('FROSTALD_HD_DELIVERY_OK '+json.dumps({'files':len(files),'bytes':sum(x['bytes'] for x in files.values()),'largest':max(x['bytes'] for x in files.values()),'triangles':stats['triangles']}))
+
 def main():
     cli=argparse.ArgumentParser();cli.add_argument('--install',action='store_true');cli.add_argument('--dist',action='store_true')
     args=cli.parse_args()
@@ -92,7 +153,9 @@ def main():
     meta.write_text(json.dumps({'key':key,'master':stats,'animationCompatibility':'identical nodes, inverse bind matrices, all 56 animation samplers and channels'},indent=2)+'\n')
     for folder,enabled in [('public',args.install),('dist',args.dist)]:
         if enabled:
-            target=ROOT/folder/'assets/models/monsters'/NAME;target.parent.mkdir(parents=True,exist_ok=True)
-            shutil.copyfile(dest,target.with_suffix('.tmp'));os.replace(target.with_suffix('.tmp'),target)
+            target=ROOT/folder/'assets/models/monsters'
+            publish_split(dest,target/'frostald_hd',stats)
+            # Remove only the obsolete generated master path from older development builds.
+            (target/NAME).unlink(missing_ok=True)
     print('FROSTALD_MASTER_OK '+json.dumps(stats))
 if __name__=='__main__':main()

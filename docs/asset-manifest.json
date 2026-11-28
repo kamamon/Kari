@@ -4883,18 +4883,20 @@
       "use": "初級〜上級・白霧氷谷",
       "owner": "ChatGPT（専用メッシュ・リグ・動作・統合）",
       "status": "integrated",
-      "version": 1,
-      "path": "assets/models/monsters/frostald_game.glb",
+      "version": 4,
+      "path": "assets/models/monsters/frostald_hd/frostald.gltf",
       "sourcePath": "tools/frostald",
       "files": [
         "build_frostald.py",
         "bake_frostald.py",
-        "model_manifest_game.json"
+        "model_manifest_game.json",
+        "build_master.py",
+        "ensure_assets.py"
       ],
       "source": "採用案Aの独自造形",
       "terms": "本作オリジナル",
       "dims": "Y上 +Z前",
-      "tris": 329250,
+      "tris": 2283726,
       "bones": 79,
       "clips": [
         "fa_idle",
@@ -4954,7 +4956,7 @@
         "fa_pant",
         "fa_recharge"
       ],
-      "verification": "ローカル生成と構造確認済み。実機性能は未検証。"
+      "verification": "高密度版と軽量版の骨格・全56クリップ互換性、分割配信の全bufferViewバイト一致を検査。青灰色虹彩と丸い瞳孔。iPhone実機は未確認。"
     }
   ]
 }

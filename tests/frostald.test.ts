@@ -1,4 +1,4 @@
-import { existsSync,readFileSync } from 'node:fs';
+import { existsSync,readFileSync,statSync } from 'node:fs';
 import { beforeAll,describe,expect,it } from 'vitest';
 import type { Content } from '../src/data/schemas';
 import { Simulation } from '../src/game/sim';
@@ -39,7 +39,34 @@ describe('氷冠獣・白霧氷谷',()=>{
   const ix=JSON.parse(readFileSync(new URL('../tools/frostald/data/icon_index.json',import.meta.url),'utf8')) as Record<string,{file:string}>;expect(Object.keys(ix)).toHaveLength(69);
   for(const [id,x] of Object.entries(ix)){const p='assets/icons/frostald/'+x.file;expect(iconUrl(id)).toBe(import.meta.env.BASE_URL+p);expect(existsSync(new URL('../public/'+p,import.meta.url))).toBe(true)}
   const eq=JSON.parse(readFileSync(new URL('../public/data/equipment_frostald.json',import.meta.url),'utf8'));expect(eq.weapons).toHaveLength(33);expect(eq.armor).toHaveLength(15);expect(eq.recipes).toHaveLength(48);for(const w of eq.weapons)expect(c.weapons.has(w.id)).toBe(c.families.has(w.family));
-  const b=readFileSync(new URL('../public/assets/models/monsters/frostald_game.glb',import.meta.url));const j=JSON.parse(b.toString('utf8',20,20+b.readUInt32LE(12)));expect(j.skins[0].joints).toHaveLength(79);expect(j.animations).toHaveLength(56);expect(j.meshes.flatMap((m:{primitives:{indices:number}[]})=>m.primitives).reduce((n:number,p:{indices:number})=>n+j.accessors[p.indices].count/3,0)).toBe(329250);
+  const b=readFileSync(new URL('../public/assets/models/monsters/frostald_game.glb',import.meta.url));const j=JSON.parse(b.toString('utf8',20,20+b.readUInt32LE(12)));expect(j.extras.eyeDesign).toBe('calm-blue-v1');expect(j.skins[0].joints).toHaveLength(79);expect(j.animations).toHaveLength(56);expect(j.meshes.flatMap((m:{primitives:{indices:number}[]})=>m.primitives).reduce((n:number,p:{indices:number})=>n+j.accessors[p.indices].count/3,0)).toBe(329250);
   expect(monsterQuestImageUrl(c,'monster.frostald')).toContain('frostald_concept.webp');
+ });
+ it('標準配信の高密度版は228万三角形・79関節・56クリップ、青い丸瞳孔、100MB制限内',()=>{
+  const dir=new URL('../public/assets/models/monsters/frostald_hd/',import.meta.url);
+  const g=JSON.parse(readFileSync(new URL('frostald.gltf',dir),'utf8'));
+  const info=JSON.parse(readFileSync(new URL('delivery.json',dir),'utf8'));
+  expect(g.extras.eyeDesign).toBe('calm-blue-v1');expect(info.eyeDesign).toBe('calm-blue-v1');
+  expect(g.skins[0].joints).toHaveLength(79);expect(g.animations).toHaveLength(56);
+  const primitives=g.meshes[0].primitives as {indices:number;material:number;attributes:Record<string,number>}[];
+  expect(primitives.reduce((sum,p)=>sum+g.accessors[p.indices].count/3,0)).toBe(2283726);
+  expect(info.triangles).toBe(2283726);
+  for(const b of g.buffers as {uri:string;byteLength:number}[]){
+    expect(b.byteLength).toBeLessThan(90000000);expect(statSync(new URL(b.uri,dir)).size).toBe(b.byteLength);
+  }
+  expect(existsSync(new URL('../public/assets/models/monsters/frostald_master.glb',import.meta.url))).toBe(false);
+  const read=(index:number)=>{
+    const a=g.accessors[index],v=g.bufferViews[a.bufferView],b=readFileSync(new URL(g.buffers[v.buffer].uri,dir));
+    const start=(v.byteOffset??0)+(a.byteOffset??0);
+    return new Float32Array(b.buffer,b.byteOffset+start,a.count*3);
+  };
+  const eye=primitives.find(p=>g.materials[p.material].name==='eye')!,pupil=primitives.find(p=>g.materials[p.material].name==='pupil')!;
+  expect(g.materials[eye.material].pbrMetallicRoughness.roughnessFactor).toBe(.32);
+  expect(g.materials[eye.material].emissiveFactor??[0,0,0]).toEqual([0,0,0]);
+  const colors=read(eye.attributes.COLOR_0!),v=read(pupil.attributes.POSITION!);
+  let red=0,blue=0;for(let i=0;i<colors.length;i+=3){red+=colors[i]!;blue+=colors[i+2]!;}expect(blue).toBeGreaterThan(red*1.5);
+  let ymin=Infinity,ymax=-Infinity,zmin=Infinity,zmax=-Infinity;
+  for(let i=0;i<v.length;i+=3)if(v[i]!>.34&&v[i+1]!>1.5){ymin=Math.min(ymin,v[i+1]!);ymax=Math.max(ymax,v[i+1]!);zmin=Math.min(zmin,v[i+2]!);zmax=Math.max(zmax,v[i+2]!);}
+  expect((ymax-ymin)/(zmax-zmin)).toBeGreaterThan(.85);expect((ymax-ymin)/(zmax-zmin)).toBeLessThan(1.15);
  });
 });

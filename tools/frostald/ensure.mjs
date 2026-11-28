@@ -9,4 +9,7 @@ const probe='import numpy,scipy,PIL; assert (numpy.__version__,scipy.__version__
 const valid=exe=>spawnSync(exe,['-c',probe],{stdio:'ignore'}).status===0;
 if(!valid(py)){const v=join(root,'tools/out/spinegale-venv');const exe=join(v,process.platform==='win32'?'Scripts/python.exe':'bin/python');if(!existsSync(exe)){mkdirSync(dirname(v),{recursive:true});run(py,['-m','venv',v])}py=exe;if(!valid(py))run(py,['-m','pip','install','-r',join(root,'tools/spinegale/requirements.txt')]);run(py,['-c',probe]);}
 if(process.argv.includes('--master'))run(py,[join(p,'build_master.py'),...process.argv.slice(2).filter(a=>a!=='--master')]);
-else run(py,[join(p,'ensure_assets.py')]);
+else {
+  run(py,[join(p,'ensure_assets.py')]);
+  run(py,[join(p,'build_master.py'),'--install']);
+}
