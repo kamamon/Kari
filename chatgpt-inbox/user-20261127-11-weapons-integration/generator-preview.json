@@ -1,0 +1,11 @@
+{
+  "scope": "Extracted actual base bodySolve.ts/humanLimits.ts and executed after type-only erasure in isolated JS, using current war_maul and long_lance generators and existing curves. Not full npm/Three.js/game execution.",
+  "actionCount": 38,
+  "curveCount": 10,
+  "tracks": 41,
+  "motionLimitViolations": [],
+  "generatorViolations": [],
+  "referenceMismatches": [],
+  "frames": 2260,
+  "baseCommit": "56578c6917ae1d958052c38db85fcd9707b5e336"
+}
