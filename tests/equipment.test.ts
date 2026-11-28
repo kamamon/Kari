@@ -42,7 +42,7 @@ interface Design {
 }
 const design = (): Design => JSON.parse(readFileSync(root('docs/source/chatgpt-equipment-20261125/data/all-equipment.json'), 'utf8')) as Design;
 /** いま作れる系列（v0.75.0。どちらも ChatGPT のデータ） */
-const SERIES = ['series.spinegale', 'series.frostald'];
+const SERIES = ['series.spinegale', 'series.frostald', 'series.venolka'];
 const STATUS_ID: Record<string, string> = { poison: 'poison', paralysis: 'para', sleep: 'sleep' };
 /** 設計の防具の耐性（0 でないもの）と技能を、ゲームの形に */
 const traitsOf = (a: Design['armorCandidates'][number]): { resist?: Record<string, number>; skill?: Record<string, unknown> } => {
@@ -71,9 +71,9 @@ describe('系列の装備のデータ', () => {
     expect(new Set(weapons.map((w) => w.series))).toEqual(new Set(SERIES));
     expect(new Set(armor.map((a) => a.series))).toEqual(new Set(SERIES));
     // 2 系列 × 3 級 × （いまある 7 系統の武器 + 防具 5）。初級は作る、上の級は 1 つ下からの強化
-    expect(weapons).toHaveLength(2 * 3 * 7);
-    expect(armor).toHaveLength(2 * 3 * 5);
-    expect(crafts()).toHaveLength(2 * 12);
+    expect(weapons).toHaveLength(3 * 3 * 7);
+    expect(armor).toHaveLength(3 * 3 * 5);
+    expect(crafts()).toHaveLength(3 * 12);
     for (const w of weapons) expect(content.families.has(w.family), w.id).toBe(true);
     expect([...content.weapons.values()].filter((w) => !w.series)).toHaveLength(35);
     expect([...content.armor.values()].filter((a) => !a.series)).toHaveLength(25);

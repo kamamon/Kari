@@ -1,0 +1,2024 @@
+{
+  "schemaVersion": 1,
+  "weapons": [
+    {
+      "id": "weapon.heavy_blade.venolka.r1",
+      "name": "毒羽断剣",
+      "family": "heavy_blade",
+      "attack": 73,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.heavy_blade.001",
+      "series": "series.venolka",
+      "rankId": "rank.1",
+      "status": {
+        "kind": "poison",
+        "potency": 25
+      }
+    },
+    {
+      "id": "weapon.guard_blade.venolka.r1",
+      "name": "毒羽護刃",
+      "family": "guard_blade",
+      "attack": 70,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.guard_blade.001",
+      "series": "series.venolka",
+      "rankId": "rank.1",
+      "status": {
+        "kind": "poison",
+        "potency": 25
+      }
+    },
+    {
+      "id": "weapon.twin_blades.venolka.r1",
+      "name": "双毒鉤",
+      "family": "twin_blades",
+      "attack": 68,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.twin_blades.001",
+      "series": "series.venolka",
+      "rankId": "rank.1",
+      "status": {
+        "kind": "poison",
+        "potency": 25
+      }
+    },
+    {
+      "id": "weapon.long_blade.venolka.r1",
+      "name": "毒翎刀",
+      "family": "long_blade",
+      "attack": 72,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.long_blade.001",
+      "series": "series.venolka",
+      "rankId": "rank.1",
+      "status": {
+        "kind": "poison",
+        "potency": 25
+      }
+    },
+    {
+      "id": "weapon.war_maul.venolka.r1",
+      "name": "毒冠砕槌",
+      "family": "war_maul",
+      "attack": 74,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.war_maul.001",
+      "series": "series.venolka",
+      "rankId": "rank.1",
+      "status": {
+        "kind": "poison",
+        "potency": 25
+      }
+    },
+    {
+      "id": "weapon.long_lance.venolka.r1",
+      "name": "毒羽尖槍",
+      "family": "long_lance",
+      "attack": 73,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.long_lance.001",
+      "series": "series.venolka",
+      "rankId": "rank.1",
+      "status": {
+        "kind": "poison",
+        "potency": 25
+      }
+    },
+    {
+      "id": "weapon.ring_bow.venolka.r1",
+      "name": "毒翼環弓",
+      "family": "ring_bow",
+      "attack": 70,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.ring_bow.001",
+      "series": "series.venolka",
+      "rankId": "rank.1",
+      "status": {
+        "kind": "poison",
+        "potency": 25
+      }
+    },
+    {
+      "id": "weapon.heavy_blade.venolka.r2",
+      "name": "紫翎断剣",
+      "family": "heavy_blade",
+      "attack": 86,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 8,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.heavy_blade.001",
+      "series": "series.venolka",
+      "rankId": "rank.2",
+      "status": {
+        "kind": "poison",
+        "potency": 34
+      }
+    },
+    {
+      "id": "weapon.guard_blade.venolka.r2",
+      "name": "紫毒護刃",
+      "family": "guard_blade",
+      "attack": 83,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 8,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.guard_blade.001",
+      "series": "series.venolka",
+      "rankId": "rank.2",
+      "status": {
+        "kind": "poison",
+        "potency": 34
+      }
+    },
+    {
+      "id": "weapon.twin_blades.venolka.r2",
+      "name": "双紫翎",
+      "family": "twin_blades",
+      "attack": 81,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 8,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.twin_blades.001",
+      "series": "series.venolka",
+      "rankId": "rank.2",
+      "status": {
+        "kind": "poison",
+        "potency": 34
+      }
+    },
+    {
+      "id": "weapon.long_blade.venolka.r2",
+      "name": "紫晶毒刀",
+      "family": "long_blade",
+      "attack": 85,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 8,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.long_blade.001",
+      "series": "series.venolka",
+      "rankId": "rank.2",
+      "status": {
+        "kind": "poison",
+        "potency": 34
+      }
+    },
+    {
+      "id": "weapon.war_maul.venolka.r2",
+      "name": "紫嚢重槌",
+      "family": "war_maul",
+      "attack": 86,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 8,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.war_maul.001",
+      "series": "series.venolka",
+      "rankId": "rank.2",
+      "status": {
+        "kind": "poison",
+        "potency": 34
+      }
+    },
+    {
+      "id": "weapon.long_lance.venolka.r2",
+      "name": "紫翎穿槍",
+      "family": "long_lance",
+      "attack": 86,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 8,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.long_lance.001",
+      "series": "series.venolka",
+      "rankId": "rank.2",
+      "status": {
+        "kind": "poison",
+        "potency": 34
+      }
+    },
+    {
+      "id": "weapon.ring_bow.venolka.r2",
+      "name": "紫翎環弓",
+      "family": "ring_bow",
+      "attack": 83,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 8,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.ring_bow.001",
+      "series": "series.venolka",
+      "rankId": "rank.2",
+      "status": {
+        "kind": "poison",
+        "potency": 34
+      }
+    },
+    {
+      "id": "weapon.heavy_blade.venolka.r3",
+      "name": "黒紫蝕断",
+      "family": "heavy_blade",
+      "attack": 100,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 10,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.heavy_blade.001",
+      "series": "series.venolka",
+      "rankId": "rank.3",
+      "status": {
+        "kind": "poison",
+        "potency": 46
+      }
+    },
+    {
+      "id": "weapon.guard_blade.venolka.r3",
+      "name": "幽翎毒盾",
+      "family": "guard_blade",
+      "attack": 96,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 10,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.guard_blade.001",
+      "series": "series.venolka",
+      "rankId": "rank.3",
+      "status": {
+        "kind": "poison",
+        "potency": 46
+      }
+    },
+    {
+      "id": "weapon.twin_blades.venolka.r3",
+      "name": "双蝕紫牙",
+      "family": "twin_blades",
+      "attack": 95,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 10,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.twin_blades.001",
+      "series": "series.venolka",
+      "rankId": "rank.3",
+      "status": {
+        "kind": "poison",
+        "potency": 46
+      }
+    },
+    {
+      "id": "weapon.long_blade.venolka.r3",
+      "name": "幽毒一閃",
+      "family": "long_blade",
+      "attack": 98,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 10,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.long_blade.001",
+      "series": "series.venolka",
+      "rankId": "rank.3",
+      "status": {
+        "kind": "poison",
+        "potency": 46
+      }
+    },
+    {
+      "id": "weapon.war_maul.venolka.r3",
+      "name": "紫晶轟槌",
+      "family": "war_maul",
+      "attack": 101,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 10,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.war_maul.001",
+      "series": "series.venolka",
+      "rankId": "rank.3",
+      "status": {
+        "kind": "poison",
+        "potency": 46
+      }
+    },
+    {
+      "id": "weapon.long_lance.venolka.r3",
+      "name": "黒紫貫槍",
+      "family": "long_lance",
+      "attack": 100,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 10,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.long_lance.001",
+      "series": "series.venolka",
+      "rankId": "rank.3",
+      "status": {
+        "kind": "poison",
+        "potency": 46
+      }
+    },
+    {
+      "id": "weapon.ring_bow.venolka.r3",
+      "name": "幽紫天弓",
+      "family": "ring_bow",
+      "attack": 96,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 10,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.ring_bow.001",
+      "series": "series.venolka",
+      "rankId": "rank.3",
+      "status": {
+        "kind": "poison",
+        "potency": 46
+      }
+    },
+    {
+      "id": "weapon.hunting_horn.venolka.r1",
+      "name": "毒羽響笛",
+      "family": "hunting_horn",
+      "attack": 73,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.hunting_horn.001",
+      "series": "series.venolka",
+      "rankId": "rank.1",
+      "status": {
+        "kind": "poison",
+        "potency": 25
+      }
+    },
+    {
+      "id": "weapon.gunlance.venolka.r1",
+      "name": "毒羽銃槍",
+      "family": "gunlance",
+      "attack": 73,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.gunlance.001",
+      "series": "series.venolka",
+      "rankId": "rank.1",
+      "status": {
+        "kind": "poison",
+        "potency": 25
+      }
+    },
+    {
+      "id": "weapon.light_bowgun.venolka.r1",
+      "name": "毒羽軽弩",
+      "family": "light_bowgun",
+      "attack": 69,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.light_bowgun.001",
+      "series": "series.venolka",
+      "rankId": "rank.1",
+      "status": {
+        "kind": "poison",
+        "potency": 25
+      }
+    },
+    {
+      "id": "weapon.heavy_bowgun.venolka.r1",
+      "name": "毒冠重弩",
+      "family": "heavy_bowgun",
+      "attack": 75,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 5,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.heavy_bowgun.001",
+      "series": "series.venolka",
+      "rankId": "rank.1",
+      "status": {
+        "kind": "poison",
+        "potency": 25
+      }
+    },
+    {
+      "id": "weapon.hunting_horn.venolka.r2",
+      "name": "紫冠奏笛",
+      "family": "hunting_horn",
+      "attack": 86,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 8,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.hunting_horn.001",
+      "series": "series.venolka",
+      "rankId": "rank.2",
+      "status": {
+        "kind": "poison",
+        "potency": 34
+      }
+    },
+    {
+      "id": "weapon.gunlance.venolka.r2",
+      "name": "紫嚢砲槍",
+      "family": "gunlance",
+      "attack": 86,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 8,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.gunlance.001",
+      "series": "series.venolka",
+      "rankId": "rank.2",
+      "status": {
+        "kind": "poison",
+        "potency": 34
+      }
+    },
+    {
+      "id": "weapon.light_bowgun.venolka.r2",
+      "name": "紫毒速弩",
+      "family": "light_bowgun",
+      "attack": 82,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 8,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.light_bowgun.001",
+      "series": "series.venolka",
+      "rankId": "rank.2",
+      "status": {
+        "kind": "poison",
+        "potency": 34
+      }
+    },
+    {
+      "id": "weapon.heavy_bowgun.venolka.r2",
+      "name": "紫冠重砲",
+      "family": "heavy_bowgun",
+      "attack": 87,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 8,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.heavy_bowgun.001",
+      "series": "series.venolka",
+      "rankId": "rank.2",
+      "status": {
+        "kind": "poison",
+        "potency": 34
+      }
+    },
+    {
+      "id": "weapon.hunting_horn.venolka.r3",
+      "name": "蝕音の宴",
+      "family": "hunting_horn",
+      "attack": 100,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 10,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.hunting_horn.001",
+      "series": "series.venolka",
+      "rankId": "rank.3",
+      "status": {
+        "kind": "poison",
+        "potency": 46
+      }
+    },
+    {
+      "id": "weapon.gunlance.venolka.r3",
+      "name": "蝕毒轟槍",
+      "family": "gunlance",
+      "attack": 100,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 10,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.gunlance.001",
+      "series": "series.venolka",
+      "rankId": "rank.3",
+      "status": {
+        "kind": "poison",
+        "potency": 46
+      }
+    },
+    {
+      "id": "weapon.light_bowgun.venolka.r3",
+      "name": "幽翎閃弩",
+      "family": "light_bowgun",
+      "attack": 96,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 10,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.light_bowgun.001",
+      "series": "series.venolka",
+      "rankId": "rank.3",
+      "status": {
+        "kind": "poison",
+        "potency": 46
+      }
+    },
+    {
+      "id": "weapon.heavy_bowgun.venolka.r3",
+      "name": "黒毒轟弩",
+      "family": "heavy_bowgun",
+      "attack": 102,
+      "element": {
+        "type": "none",
+        "value": 0
+      },
+      "affinity": 10,
+      "sharpnessModifier": 1,
+      "assetId": "model.weapon.heavy_bowgun.001",
+      "series": "series.venolka",
+      "rankId": "rank.3",
+      "status": {
+        "kind": "poison",
+        "potency": 46
+      }
+    }
+  ],
+  "armor": [
+    {
+      "id": "armor.head.venolka.r1",
+      "slot": "head",
+      "name": "毒羽冠",
+      "defense": 9,
+      "resist": {
+        "fire": -2,
+        "thunder": -2,
+        "water": 2
+      },
+      "skill": {
+        "id": "status_resistance",
+        "status": "poison",
+        "points": 1
+      },
+      "series": "series.venolka",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "armor.chest.venolka.r1",
+      "slot": "chest",
+      "name": "毒羽胴衣",
+      "defense": 9,
+      "resist": {
+        "fire": -2,
+        "thunder": -2,
+        "water": 2
+      },
+      "skill": {
+        "id": "status_resistance",
+        "status": "poison",
+        "points": 1
+      },
+      "series": "series.venolka",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "armor.arms.venolka.r1",
+      "slot": "arms",
+      "name": "毒羽腕甲",
+      "defense": 8,
+      "resist": {
+        "fire": -2,
+        "thunder": -2,
+        "water": 2
+      },
+      "skill": {
+        "id": "status_tuning",
+        "points": 1
+      },
+      "series": "series.venolka",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "armor.waist.venolka.r1",
+      "slot": "waist",
+      "name": "毒羽腰帯",
+      "defense": 8,
+      "resist": {
+        "fire": -2,
+        "thunder": -2,
+        "water": 2
+      },
+      "skill": {
+        "id": "status_resistance",
+        "status": "poison",
+        "points": 1
+      },
+      "series": "series.venolka",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "armor.legs.venolka.r1",
+      "slot": "legs",
+      "name": "毒羽脚装",
+      "defense": 9,
+      "resist": {
+        "fire": -2,
+        "thunder": -2,
+        "water": 2
+      },
+      "skill": {
+        "id": "status_tuning",
+        "points": 1
+      },
+      "series": "series.venolka",
+      "rankId": "rank.1"
+    },
+    {
+      "id": "armor.head.venolka.r2",
+      "slot": "head",
+      "name": "紫翎頭冠",
+      "defense": 19,
+      "resist": {
+        "fire": -2,
+        "thunder": -2,
+        "water": 2
+      },
+      "skill": {
+        "id": "status_resistance",
+        "status": "poison",
+        "points": 1
+      },
+      "series": "series.venolka",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "armor.chest.venolka.r2",
+      "slot": "chest",
+      "name": "紫翎胴鎧",
+      "defense": 19,
+      "resist": {
+        "fire": -2,
+        "thunder": -2,
+        "water": 2
+      },
+      "skill": {
+        "id": "status_resistance",
+        "status": "poison",
+        "points": 1
+      },
+      "series": "series.venolka",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "armor.arms.venolka.r2",
+      "slot": "arms",
+      "name": "紫翎腕甲",
+      "defense": 19,
+      "resist": {
+        "fire": -2,
+        "thunder": -2,
+        "water": 2
+      },
+      "skill": {
+        "id": "status_tuning",
+        "points": 1
+      },
+      "series": "series.venolka",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "armor.waist.venolka.r2",
+      "slot": "waist",
+      "name": "紫翼腰甲",
+      "defense": 19,
+      "resist": {
+        "fire": -2,
+        "thunder": -2,
+        "water": 2
+      },
+      "skill": {
+        "id": "status_resistance",
+        "status": "poison",
+        "points": 1
+      },
+      "series": "series.venolka",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "armor.legs.venolka.r2",
+      "slot": "legs",
+      "name": "紫翎走脚",
+      "defense": 19,
+      "resist": {
+        "fire": -2,
+        "thunder": -2,
+        "water": 2
+      },
+      "skill": {
+        "id": "status_tuning",
+        "points": 1
+      },
+      "series": "series.venolka",
+      "rankId": "rank.2"
+    },
+    {
+      "id": "armor.head.venolka.r3",
+      "slot": "head",
+      "name": "幽紫晶冠",
+      "defense": 36,
+      "resist": {
+        "fire": -2,
+        "thunder": -2,
+        "water": 2
+      },
+      "skill": {
+        "id": "status_resistance",
+        "status": "poison",
+        "points": 1
+      },
+      "series": "series.venolka",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "armor.chest.venolka.r3",
+      "slot": "chest",
+      "name": "黒紫蝕鎧",
+      "defense": 36,
+      "resist": {
+        "fire": -2,
+        "thunder": -2,
+        "water": 2
+      },
+      "skill": {
+        "id": "status_resistance",
+        "status": "poison",
+        "points": 1
+      },
+      "series": "series.venolka",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "armor.arms.venolka.r3",
+      "slot": "arms",
+      "name": "幽毒裂腕",
+      "defense": 36,
+      "resist": {
+        "fire": -2,
+        "thunder": -2,
+        "water": 2
+      },
+      "skill": {
+        "id": "status_tuning",
+        "points": 1
+      },
+      "series": "series.venolka",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "armor.waist.venolka.r3",
+      "slot": "waist",
+      "name": "紫晶羽腰",
+      "defense": 36,
+      "resist": {
+        "fire": -2,
+        "thunder": -2,
+        "water": 2
+      },
+      "skill": {
+        "id": "status_resistance",
+        "status": "poison",
+        "points": 1
+      },
+      "series": "series.venolka",
+      "rankId": "rank.3"
+    },
+    {
+      "id": "armor.legs.venolka.r3",
+      "slot": "legs",
+      "name": "黒紫踏脚",
+      "defense": 36,
+      "resist": {
+        "fire": -2,
+        "thunder": -2,
+        "water": 2
+      },
+      "skill": {
+        "id": "status_tuning",
+        "points": 1
+      },
+      "series": "series.venolka",
+      "rankId": "rank.3"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "recipe.craft.weapon.venolka.heavy_blade.r1",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_blade.venolka.r1",
+      "cost": {
+        "money": 850,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r1",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.craft.weapon.venolka.guard_blade.r1",
+      "kind": "craft",
+      "resultWeaponId": "weapon.guard_blade.venolka.r1",
+      "cost": {
+        "money": 850,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.claw.r1",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.craft.weapon.venolka.twin_blades.r1",
+      "kind": "craft",
+      "resultWeaponId": "weapon.twin_blades.venolka.r1",
+      "cost": {
+        "money": 850,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.claw.r1",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.craft.weapon.venolka.long_blade.r1",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_blade.venolka.r1",
+      "cost": {
+        "money": 850,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r1",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.craft.weapon.venolka.war_maul.r1",
+      "kind": "craft",
+      "resultWeaponId": "weapon.war_maul.venolka.r1",
+      "cost": {
+        "money": 850,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r1",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.craft.weapon.venolka.long_lance.r1",
+      "kind": "craft",
+      "resultWeaponId": "weapon.long_lance.venolka.r1",
+      "cost": {
+        "money": 850,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r1",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.craft.weapon.venolka.ring_bow.r1",
+      "kind": "craft",
+      "resultWeaponId": "weapon.ring_bow.venolka.r1",
+      "cost": {
+        "money": 850,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.tail_plume.r1",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.heavy_blade.r2",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.heavy_blade.venolka.r2",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r2",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r2",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.crest.r2",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.heavy_blade.venolka.r1"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.guard_blade.r2",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.guard_blade.venolka.r2",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.claw.r2",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r2",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.crest.r2",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.guard_blade.venolka.r1"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.twin_blades.r2",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.twin_blades.venolka.r2",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.claw.r2",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r2",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.crest.r2",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.twin_blades.venolka.r1"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.long_blade.r2",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.long_blade.venolka.r2",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r2",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r2",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.crest.r2",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.long_blade.venolka.r1"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.war_maul.r2",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.war_maul.venolka.r2",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r2",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r2",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.crest.r2",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.war_maul.venolka.r1"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.long_lance.r2",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.long_lance.venolka.r2",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r2",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r2",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.crest.r2",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.long_lance.venolka.r1"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.ring_bow.r2",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.ring_bow.venolka.r2",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.tail_plume.r2",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r2",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.crest.r2",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.ring_bow.venolka.r1"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.heavy_blade.r3",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.heavy_blade.venolka.r3",
+      "cost": {
+        "money": 3600,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r3",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r3",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.core.r3",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.heavy_blade.venolka.r2"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.guard_blade.r3",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.guard_blade.venolka.r3",
+      "cost": {
+        "money": 3600,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.claw.r3",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r3",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.core.r3",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.guard_blade.venolka.r2"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.twin_blades.r3",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.twin_blades.venolka.r3",
+      "cost": {
+        "money": 3600,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.claw.r3",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r3",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.core.r3",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.twin_blades.venolka.r2"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.long_blade.r3",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.long_blade.venolka.r3",
+      "cost": {
+        "money": 3600,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r3",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r3",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.core.r3",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.long_blade.venolka.r2"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.war_maul.r3",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.war_maul.venolka.r3",
+      "cost": {
+        "money": 3600,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r3",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r3",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.core.r3",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.war_maul.venolka.r2"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.long_lance.r3",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.long_lance.venolka.r3",
+      "cost": {
+        "money": 3600,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r3",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r3",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.core.r3",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.long_lance.venolka.r2"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.ring_bow.r3",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.ring_bow.venolka.r3",
+      "cost": {
+        "money": 3600,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.tail_plume.r3",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r3",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.core.r3",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.ring_bow.venolka.r2"
+    },
+    {
+      "id": "recipe.craft.armor.venolka.head.r1",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.head.venolka.r1",
+      "cost": {
+        "money": 450,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.feather.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.craft.armor.venolka.chest.r1",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.chest.venolka.r1",
+      "cost": {
+        "money": 450,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.sac.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.craft.armor.venolka.arms.r1",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.arms.venolka.r1",
+      "cost": {
+        "money": 450,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.claw.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.craft.armor.venolka.waist.r1",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.waist.venolka.r1",
+      "cost": {
+        "money": 450,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.tail_plume.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.craft.armor.venolka.legs.r1",
+      "kind": "armor_craft",
+      "resultArmorId": "armor.legs.venolka.r1",
+      "cost": {
+        "money": 450,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.upgrade.armor.venolka.head.r2",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.head.venolka.r2",
+      "cost": {
+        "money": 1100,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.feather.r2",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.crest.r2",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.head.venolka.r1"
+    },
+    {
+      "id": "recipe.upgrade.armor.venolka.chest.r2",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.chest.venolka.r2",
+      "cost": {
+        "money": 1100,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.sac.r2",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.chest.venolka.r1"
+    },
+    {
+      "id": "recipe.upgrade.armor.venolka.arms.r2",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.arms.venolka.r2",
+      "cost": {
+        "money": 1100,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.claw.r2",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.arms.venolka.r1"
+    },
+    {
+      "id": "recipe.upgrade.armor.venolka.waist.r2",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.waist.venolka.r2",
+      "cost": {
+        "money": 1100,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.tail_plume.r2",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.waist.venolka.r1"
+    },
+    {
+      "id": "recipe.upgrade.armor.venolka.legs.r2",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.legs.venolka.r2",
+      "cost": {
+        "money": 1100,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r2",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.legs.venolka.r1"
+    },
+    {
+      "id": "recipe.upgrade.armor.venolka.head.r3",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.head.venolka.r3",
+      "cost": {
+        "money": 2200,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.feather.r3",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.head.venolka.r2"
+    },
+    {
+      "id": "recipe.upgrade.armor.venolka.chest.r3",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.chest.venolka.r3",
+      "cost": {
+        "money": 2200,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.sac.r3",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.core.r3",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.chest.venolka.r2"
+    },
+    {
+      "id": "recipe.upgrade.armor.venolka.arms.r3",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.arms.venolka.r3",
+      "cost": {
+        "money": 2200,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.claw.r3",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.arms.venolka.r2"
+    },
+    {
+      "id": "recipe.upgrade.armor.venolka.waist.r3",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.waist.venolka.r3",
+      "cost": {
+        "money": 2200,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.tail_plume.r3",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.waist.venolka.r2"
+    },
+    {
+      "id": "recipe.upgrade.armor.venolka.legs.r3",
+      "kind": "armor_upgrade",
+      "resultArmorId": "armor.legs.venolka.r3",
+      "cost": {
+        "money": 2200,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r3",
+            "count": 1
+          }
+        ]
+      },
+      "fromArmorId": "armor.legs.venolka.r2"
+    },
+    {
+      "id": "recipe.craft.weapon.venolka.hunting_horn.r1",
+      "kind": "craft",
+      "resultWeaponId": "weapon.hunting_horn.venolka.r1",
+      "cost": {
+        "money": 850,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.sac.r1",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.craft.weapon.venolka.gunlance.r1",
+      "kind": "craft",
+      "resultWeaponId": "weapon.gunlance.venolka.r1",
+      "cost": {
+        "money": 850,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r1",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.craft.weapon.venolka.light_bowgun.r1",
+      "kind": "craft",
+      "resultWeaponId": "weapon.light_bowgun.venolka.r1",
+      "cost": {
+        "money": 850,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.tail_plume.r1",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.craft.weapon.venolka.heavy_bowgun.r1",
+      "kind": "craft",
+      "resultWeaponId": "weapon.heavy_bowgun.venolka.r1",
+      "cost": {
+        "money": 850,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r1",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r1",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r1",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.hunting_horn.r2",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.hunting_horn.venolka.r2",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.sac.r2",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r2",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.crest.r2",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.hunting_horn.venolka.r1"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.gunlance.r2",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.gunlance.venolka.r2",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r2",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r2",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.crest.r2",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.gunlance.venolka.r1"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.light_bowgun.r2",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.light_bowgun.venolka.r2",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.tail_plume.r2",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r2",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.crest.r2",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.light_bowgun.venolka.r1"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.heavy_bowgun.r2",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.heavy_bowgun.venolka.r2",
+      "cost": {
+        "money": 1800,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r2",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r2",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r2",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.crest.r2",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.heavy_bowgun.venolka.r1"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.hunting_horn.r3",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.hunting_horn.venolka.r3",
+      "cost": {
+        "money": 3600,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.sac.r3",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r3",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.core.r3",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.hunting_horn.venolka.r2"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.gunlance.r3",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.gunlance.venolka.r3",
+      "cost": {
+        "money": 3600,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r3",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r3",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.core.r3",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.gunlance.venolka.r2"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.light_bowgun.r3",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.light_bowgun.venolka.r3",
+      "cost": {
+        "money": 3600,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.tail_plume.r3",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r3",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.core.r3",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.light_bowgun.venolka.r2"
+    },
+    {
+      "id": "recipe.upgrade.weapon.venolka.heavy_bowgun.r3",
+      "kind": "upgrade",
+      "resultWeaponId": "weapon.heavy_bowgun.venolka.r3",
+      "cost": {
+        "money": 3600,
+        "items": [
+          {
+            "itemId": "mat.venolka.scale.r3",
+            "count": 3
+          },
+          {
+            "itemId": "mat.venolka.feather.r3",
+            "count": 2
+          },
+          {
+            "itemId": "mat.venolka.membrane.r3",
+            "count": 1
+          },
+          {
+            "itemId": "mat.venolka.core.r3",
+            "count": 1
+          }
+        ]
+      },
+      "fromWeaponId": "weapon.heavy_bowgun.venolka.r2"
+    }
+  ]
+}

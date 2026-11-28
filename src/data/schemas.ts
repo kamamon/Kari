@@ -569,6 +569,7 @@ export interface MonsterDef {
   spinegaleRank?: number;
   /** フロストアルド専用の蓄冷容量。 */
   frostaldRank?: number;
+  venolkaRank?: number;
   schemaVersion: number;
   id: string;
   name: string;
@@ -1225,6 +1226,8 @@ export interface ItemDef {
   effectTick?: number;
   summary: string;
   heal?: number;
+  /** 解毒薬: 毒と蓄積を解除する（飲む行動の効き目で発動）。 */
+  curePoison?: boolean;
   /** 仕掛けてから armTicks で作動可能になり、大型が radius 内に入ると holdTicks の間止める。lifeTicks で消える。 */
   trap?: { armTicks: number; radius: number; holdTicks: number; lifeTicks: number };
   /** 正面 ±halfAngleDeg、range 以内の大型に当たる */

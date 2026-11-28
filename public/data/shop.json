@@ -26,6 +26,10 @@
     {
       "itemId": "item.power_coating",
       "price": 30
+    },
+    {
+      "itemId": "item.antidote",
+      "price": 90
     }
   ],
   "sell": [
@@ -248,6 +252,90 @@
     {
       "itemId": "mat.frostald.core.r3",
       "price": 1950
+    },
+    {
+      "itemId": "mat.venolka.scale.r1",
+      "price": 35
+    },
+    {
+      "itemId": "mat.venolka.claw.r1",
+      "price": 42
+    },
+    {
+      "itemId": "mat.venolka.feather.r1",
+      "price": 46
+    },
+    {
+      "itemId": "mat.venolka.sac.r1",
+      "price": 63
+    },
+    {
+      "itemId": "mat.venolka.tail_plume.r1",
+      "price": 53
+    },
+    {
+      "itemId": "mat.venolka.membrane.r1",
+      "price": 42
+    },
+    {
+      "itemId": "mat.venolka.scale.r2",
+      "price": 60
+    },
+    {
+      "itemId": "mat.venolka.claw.r2",
+      "price": 72
+    },
+    {
+      "itemId": "mat.venolka.feather.r2",
+      "price": 78
+    },
+    {
+      "itemId": "mat.venolka.sac.r2",
+      "price": 108
+    },
+    {
+      "itemId": "mat.venolka.tail_plume.r2",
+      "price": 90
+    },
+    {
+      "itemId": "mat.venolka.membrane.r2",
+      "price": 72
+    },
+    {
+      "itemId": "mat.venolka.crest.r2",
+      "price": 126
+    },
+    {
+      "itemId": "mat.venolka.scale.r3",
+      "price": 115
+    },
+    {
+      "itemId": "mat.venolka.claw.r3",
+      "price": 138
+    },
+    {
+      "itemId": "mat.venolka.feather.r3",
+      "price": 150
+    },
+    {
+      "itemId": "mat.venolka.sac.r3",
+      "price": 207
+    },
+    {
+      "itemId": "mat.venolka.tail_plume.r3",
+      "price": 173
+    },
+    {
+      "itemId": "mat.venolka.membrane.r3",
+      "price": 138
+    },
+    {
+      "itemId": "mat.venolka.crest.r3",
+      "price": 242
+    },
+    {
+      "itemId": "mat.venolka.core.r3",
+      "price": 460
     }
   ]
 }

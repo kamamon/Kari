@@ -1375,7 +1375,7 @@ export async function assembleContent(getRaw: JsonGetter, opts: LoadOptions = {}
     const eq = (await get(f)) as { schemaVersion: number; weapons?: WeaponDef[]; armor?: ArmorDef[]; recipes?: RecipeDef[]; armorTraits?: Record<string, Pick<ArmorDef, 'resist' | 'skill'>> };
     checkVersion(f, eq.schemaVersion, errors);
     // スパインゲイルの11系統を保存し、実装済みの系統だけを有効化する（保留モーションセットも対応）。
-    const deferred = f === 'equipment_spinegale.json' || f === 'equipment_frostald.json';
+    const deferred = f === 'equipment_spinegale.json' || f === 'equipment_frostald.json' || f === 'equipment_venolka.json';
     const enabled = new Set((eq.weapons ?? []).filter(w => !deferred || content.families.has(w.family)).map(w => w.id));
     for (const w of eq.weapons ?? []) if (!deferred || enabled.has(w.id)) putUnique(content.weapons, w.id, w, 'weapon', errors);
     for (const a of eq.armor ?? []) putUnique(content.armor, a.id, a, 'armor', errors);

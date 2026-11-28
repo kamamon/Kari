@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "items": [],
+  "materials": [
+    {
+      "id": "mat.venolka.scale.r1",
+      "name": "毒羽竜の鱗",
+      "rarity": 2
+    },
+    {
+      "id": "mat.venolka.claw.r1",
+      "name": "毒羽竜の鉤爪",
+      "rarity": 2
+    },
+    {
+      "id": "mat.venolka.feather.r1",
+      "name": "毒羽竜の毒羽",
+      "rarity": 2
+    },
+    {
+      "id": "mat.venolka.sac.r1",
+      "name": "毒羽竜の毒嚢",
+      "rarity": 2
+    },
+    {
+      "id": "mat.venolka.tail_plume.r1",
+      "name": "毒羽竜の尾羽",
+      "rarity": 2
+    },
+    {
+      "id": "mat.venolka.membrane.r1",
+      "name": "毒羽竜の翼膜",
+      "rarity": 2
+    },
+    {
+      "id": "mat.venolka.scale.r2",
+      "name": "毒羽竜の上鱗",
+      "rarity": 3
+    },
+    {
+      "id": "mat.venolka.claw.r2",
+      "name": "毒羽竜の鋭鉤爪",
+      "rarity": 3
+    },
+    {
+      "id": "mat.venolka.feather.r2",
+      "name": "毒羽竜の上毒羽",
+      "rarity": 3
+    },
+    {
+      "id": "mat.venolka.sac.r2",
+      "name": "毒羽竜の猛毒嚢",
+      "rarity": 3
+    },
+    {
+      "id": "mat.venolka.tail_plume.r2",
+      "name": "毒羽竜の剛尾羽",
+      "rarity": 3
+    },
+    {
+      "id": "mat.venolka.membrane.r2",
+      "name": "毒羽竜の強翼膜",
+      "rarity": 3
+    },
+    {
+      "id": "mat.venolka.crest.r2",
+      "name": "毒羽竜の紫冠羽",
+      "rarity": 4
+    },
+    {
+      "id": "mat.venolka.scale.r3",
+      "name": "毒羽竜の艶鱗",
+      "rarity": 4
+    },
+    {
+      "id": "mat.venolka.claw.r3",
+      "name": "毒羽竜の穿鉤爪",
+      "rarity": 4
+    },
+    {
+      "id": "mat.venolka.feather.r3",
+      "name": "毒羽竜の艶毒羽",
+      "rarity": 4
+    },
+    {
+      "id": "mat.venolka.sac.r3",
+      "name": "毒羽竜の劇毒嚢",
+      "rarity": 4
+    },
+    {
+      "id": "mat.venolka.tail_plume.r3",
+      "name": "毒羽竜の幻紫尾羽",
+      "rarity": 4
+    },
+    {
+      "id": "mat.venolka.membrane.r3",
+      "name": "毒羽竜の艶翼膜",
+      "rarity": 4
+    },
+    {
+      "id": "mat.venolka.crest.r3",
+      "name": "毒羽竜の紫晶冠羽",
+      "rarity": 5
+    },
+    {
+      "id": "mat.venolka.core.r3",
+      "name": "毒羽竜の毒晶核",
+      "rarity": 5
+    }
+  ]
+}

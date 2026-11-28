@@ -1,0 +1,152 @@
+{
+  "hide": {
+    "file": "hide.webp",
+    "source": "approved original",
+    "crop": [
+      715,
+      584,
+      761,
+      667
+    ],
+    "nativeSize": [
+      46,
+      83
+    ],
+    "sha256": "86fa485201d6fe6ed389f861193831644206ddb433b534795e4cafa7388af692"
+  },
+  "belly": {
+    "file": "belly.webp",
+    "source": "approved original",
+    "crop": [
+      465,
+      488,
+      506,
+      544
+    ],
+    "nativeSize": [
+      41,
+      56
+    ],
+    "sha256": "d319588b44c7e765637668d6c80b9bf7a0f97625146279275866c7d39d73cc9f"
+  },
+  "face": {
+    "file": "face.webp",
+    "source": "approved original",
+    "crop": [
+      211,
+      254,
+      247,
+      273
+    ],
+    "nativeSize": [
+      36,
+      19
+    ],
+    "sha256": "b509090355822b0a82ddf9ff55e5614b6730fefcb1c509796282c268e1b3da53"
+  },
+  "leg": {
+    "file": "leg.webp",
+    "source": "approved original",
+    "crop": [
+      902,
+      873,
+      925,
+      932
+    ],
+    "nativeSize": [
+      23,
+      59
+    ],
+    "sha256": "f31491f53ebbfc463952e6c60564ceaf9ac46334a15144c50d54166d906683d9"
+  },
+  "feather": {
+    "file": "feather.webp",
+    "source": "approved original",
+    "crop": [
+      417,
+      153,
+      458,
+      188
+    ],
+    "nativeSize": [
+      41,
+      35
+    ],
+    "sha256": "08632f7d074d8f2e29ebf3edb9b5d04f15fb0924e93f19a9b34d096c2ed4b2df"
+  },
+  "wing": {
+    "file": "wing.webp",
+    "source": "approved original",
+    "crop": [
+      1041,
+      147,
+      1173,
+      242
+    ],
+    "nativeSize": [
+      132,
+      95
+    ],
+    "sha256": "1cb17fbfb8ce329dcac63a2fff93077362612a8e221a6344b1586e6df0d1c7bc"
+  },
+  "sac": {
+    "file": "sac.webp",
+    "source": "approved design board",
+    "crop": [
+      1158,
+      298,
+      1209,
+      339
+    ],
+    "nativeSize": [
+      51,
+      41
+    ],
+    "sha256": "bdb72c794d17aa4d0fba9467b5d11697a16ac7edb919b27895065a67fb7ba628"
+  },
+  "claw": {
+    "file": "claw.webp",
+    "source": "approved original",
+    "crop": [
+      846,
+      994,
+      874,
+      1015
+    ],
+    "nativeSize": [
+      28,
+      21
+    ],
+    "sha256": "d016a2d291e6d7aaaba1088d39626a402d9c70a161b52565b1f2691cc22116d1"
+  },
+  "beak": {
+    "file": "beak.webp",
+    "source": "approved original",
+    "crop": [
+      110,
+      311,
+      129,
+      330
+    ],
+    "nativeSize": [
+      19,
+      19
+    ],
+    "sha256": "99a64650166b8364e97d8dbda1ed5cef3ac79d2302e8d4cb5dc1b7928f51b940"
+  },
+  "mouth": {
+    "file": "mouth.webp",
+    "source": "approved original",
+    "crop": [
+      220,
+      360,
+      240,
+      385
+    ],
+    "nativeSize": [
+      20,
+      25
+    ],
+    "sha256": "9c3577a0d519038edc48d4cd12bb925b76ca56d5b3c6569d8402d4a540fda71a"
+  }
+}

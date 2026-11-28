@@ -32,6 +32,7 @@ import { BladeTrail, GroundRings, Particles } from './effects';
 import { GaldrosRig } from './galdrosRig';
 import { SpinegaleRig } from './spinegaleRig';
 import { FrostaldRig } from './frostaldRig';
+import { VenolkaRig } from './venolkaRig';
 import type { HazardLook } from '../data/schemas';
 import { DummyRig, type MonsterRig } from './monsterRig';
 import { MOTION_STYLE, blendPose, climbPose, clipPose, deadPose, dropPose, emptyPose, guardPose, hurtPose, landPose, locomotionPose, vaultPose, type BodyPose } from './poses';
@@ -390,7 +391,7 @@ export class GameView {
     const had = this.rigs.get(m.id);
     if (had) return had;
     const ids = m.def.parts.map((p) => p.id);
-    const rig: MonsterRig = m.def.id === 'monster.frostald' ? new FrostaldRig() : m.def.id === 'monster.spinegale' ? new SpinegaleRig() : m.def.id === 'monster.galdros' ? new GaldrosRig(ids) : new DummyRig(ids);
+    const rig: MonsterRig = m.def.id === 'monster.venolka' ? new VenolkaRig() : m.def.id === 'monster.frostald' ? new FrostaldRig() : m.def.id === 'monster.spinegale' ? new SpinegaleRig() : m.def.id === 'monster.galdros' ? new GaldrosRig(ids) : new DummyRig(ids);
     const shadow = blobShadow(1.7);
     shadow.scale.setScalar(m.def.id === 'monster.galdros' ? 1.45 : 1);
     this.scene.add(rig.root, shadow, ...(rig.extras ?? []));

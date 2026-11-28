@@ -74,6 +74,17 @@
       "effectTick": 96,
       "maintenance": true,
       "summary": "納刀して使う。片ひざを突いて武器を研ぎ、刃の状態を最大まで戻す。研ぎ終わるまで動けない。環弓には使えない。"
+    },
+    {
+      "id": "item.antidote",
+      "name": "解毒薬",
+      "kind": "heal",
+      "carryMax": 10,
+      "useActionId": "player.item.drink",
+      "effectTick": 58,
+      "heal": 1,
+      "curePoison": true,
+      "summary": "飲むと毒と毒の蓄積を解除し、体力を1回復する。効果が出る前に妨害されると消費しない。"
     }
   ],
   "materials": [
