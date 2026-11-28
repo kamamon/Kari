@@ -167,6 +167,19 @@ try{
  await hp.waitForSelector('#boot-start:not([hidden])',{timeout:30000});await hp.click('#boot-start');
  await hp.waitForFunction(()=>!!window.__vh,null,{timeout:30000});
  await checkFrostald(hp,1,true);
+ await hp.close();
+ const vp=await ctx.newPage();await vp.setViewportSize({width:960,height:540});
+ vp.on('pageerror',e=>errors.push(String(e)));vp.on('console',m=>{if(m.type()==='error')errors.push(m.text())});vp.on('response',r=>{if(r.status()>=400)errors.push(r.status()+' '+r.url())});
+ await vp.goto('http://localhost:'+port+base+'?hub=menu');
+ await vp.waitForSelector('#boot-start:not([hidden])',{timeout:30000});await vp.click('#boot-start');
+ await vp.waitForFunction(()=>!!window.__vh,null,{timeout:30000});
+ await vp.evaluate(()=>{const a=window.__vh,q='quest.venolka.r1';for(const r of a.content.quests.get(q).requires??[])a.save.doc.progress.questClears[r]=1;a.startHunt(q)});
+ await vp.waitForFunction(()=>window.__vh.sim.hunt?.quest.id==='quest.venolka.r1'&&window.__vh.sim.tick>3,null,{timeout:120000});
+ await vp.evaluate(()=>{const a=window.__vh,s=a.sim,m=s.monsters.find(x=>x.def.id==='monster.venolka'),p=s.player;const z=s.monsterArea(m);if(z)s.areaId=z.id;m.aiEnabled=false;const x=m.pos.x+8,zz=m.pos.z+5,yaw=Math.atan2(m.pos.x-x,m.pos.z-zz);p.pos={x,y:s.world.groundHeight(x,zz),z:zz};p.prevPos={...p.pos};p.yaw=yaw;p.prevYaw=yaw;a.view.cam.snap(yaw)});
+ await vp.waitForFunction(()=>{const r=window.__vh.view.monsterRig;return r?.root.visible&&r.root.getObjectByName('wing_wrist_l')&&r.clips?.get('vn_refill')},null,{timeout:120000,polling:100});
+ const vdata=await vp.evaluate(()=>{const a=window.__vh,r=a.view.monsterRig;let bones=0,tris=0,textures=0;r.root.traverse(o=>{if(o.isSkinnedMesh){bones=Math.max(bones,o.skeleton.bones.length);tris+=o.geometry.index.count/3;if(o.material.map&&o.material.normalMap&&o.material.roughnessMap)textures++}});return{field:a.sim.field.id,bones,tris,clips:r.clips.size,textures}});
+ if(vdata.field!=='field.wetland'||vdata.bones!==111||vdata.clips!==56||vdata.tris<1900000||vdata.textures!==10)throw Error('Venolka '+JSON.stringify(vdata));
+ await vp.screenshot({path:out+'venolka-master-r1.jpg',type:'jpeg',quality:85,timeout:120000});report.push({name:'venolka-master-r1',...vdata});console.log('VENOLKA_OK '+JSON.stringify(vdata));
  await ctx.close();
  if(errors.length)throw Error('browser errors: '+errors.join('\n'));
 }finally{
