@@ -1,6 +1,6 @@
 // 狩場の地面の作り込み（v0.74.0。docs/spec.md の 21.4）: 踏み分け道と、崖・岩・段の際の陰。描画だけ（当たり・移動は変えない）。
 import { readFileSync, readdirSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { InstancedMesh, Matrix4, type Mesh, type MeshLambertMaterial, Vector3 } from 'three';
 import { AreaShape } from '../src/game/areaShape';
 import { buildAreaGroup } from '../src/render/arena';
@@ -12,12 +12,24 @@ import type { FieldAreaDef, FieldDef } from '../src/data/schemas';
 
 const fields: FieldDef[] = readdirSync('public/data/fields').filter((f) => f.endsWith('.json')).map((f) => JSON.parse(readFileSync(`public/data/fields/${f}`, 'utf8')) as FieldDef);
 const basin = fields.find((f) => f.id === 'field.basin')!;
-const detailOf = (a: FieldAreaDef): GroundDetail =>
+// 21 の狩場の全エリア（201）を見る検査がある。遅い機械（GitHub Actions）では、1 つの検査が 5 秒を超える（v0.76.0 で、はじめて超えた）ので、
+// 作った結果を検査の間で使い回し（同じ入力なら同じ結果）、制限時間も延ばす
+vi.setConfig({ testTimeout: 60000 });
+const built = new Map<FieldAreaDef, GroundDetail>();
+const freshDetail = (a: FieldAreaDef): GroundDetail =>
   buildGroundDetail({ bounds: a.bounds, shape: a.shape, exits: a.exits, center: a.center, rocks: a.rocks, platforms: a.platforms, kind: a.kind, seed: 9001 + a.no * 131 });
+const detailOf = (a: FieldAreaDef): GroundDetail => {
+  let d = built.get(a);
+  if (!d) {
+    d = freshDetail(a);
+    built.set(a, d);
+  }
+  return d;
+};
 const all = (): { f: FieldDef; a: FieldAreaDef }[] => fields.flatMap((f) => f.areas.map((a) => ({ f, a })));
 
 describe('狩場の地面の作り込み（踏み分け道と際の陰）', () => {
-  it('どの狩場（21。盆地・白霧氷谷と、まだ遊べない 19）のどのエリアでも、出口ごとに道が 1 本。出口の外から始まり、出口を通り、1m おきの点でつながっている', { timeout: 30000 }, () => {
+  it('どの狩場（21。盆地・白霧氷谷と、まだ遊べない 19）のどのエリアでも、出口ごとに道が 1 本。出口の外から始まり、出口を通り、1m おきの点でつながっている', () => {
     expect(fields.length).toBe(21);
     let n = 0;
     for (const { f, a } of all()) {
@@ -130,7 +142,8 @@ describe('狩場の地面の作り込み（踏み分け道と際の陰）', () =
         // 陰は 1m のます目から伸ばすので、急に変わる所（岩の際）では少しずれる
         expect(Math.abs(v.shade - d.shadeAt(x, z)), a.id).toBeLessThan(0.3);
       }
-      expect(Buffer.from(detailOf(a).mask.data).equals(Buffer.from(m.data)), a.id).toBe(true);
+      // 同じ入力から、もう 1 度作っても同じ絵（使い回した結果ではなく、作り直して比べる）
+      expect(Buffer.from(freshDetail(a).mask.data).equals(Buffer.from(m.data)), a.id).toBe(true);
     }
   });
 
