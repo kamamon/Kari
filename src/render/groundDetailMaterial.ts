@@ -29,20 +29,24 @@ export function maskTexture(mask: GroundMask): DataTexture {
 }
 
 /**
- * 地面の素材へ、道と陰を足す。trail は道の絵（地面の絵と同じ 1 枚 = 6m）、color は道の絵に掛ける色。
+ * 地面の素材へ、道と陰を足す。
+ *  - trail が絵の名前: 道は、その絵（地面の絵と同じ 1 枚 = 6m）に color を掛けたもの。道のふちの草地を、少し枯れた色にする（草の地面）。
+ *  - trail が 'self': 道は、地面の絵そのものに color を掛けたもの（踏み固めた雪・土。盆地のほかの狩場）。ふちの色は変えない。
+ *  - trail が null: 道を描かない（氷の上）。陰だけ。
  * 返すのは、絵（エリアを捨てる時に dispose する）。
  */
-export function applyGroundDetail(mat: MeshLambertMaterial, mask: GroundMask, trail: EnvTile, color: Color): DataTexture {
+export function applyGroundDetail(mat: MeshLambertMaterial, mask: GroundMask, trail: EnvTile | 'self' | null, color: Color): DataTexture {
   const tMask = maskTexture(mask);
   const uni = {
     tGdMask: { value: tMask as Texture },
     tGdTrail: { value: null as Texture | null },
-    uGdOn: { value: 0 },
+    uGdOn: { value: trail === 'self' ? 1 : 0 },
+    uGdSelf: { value: trail === 'self' ? 1 : 0 },
     uGdColor: { value: color },
     uGdRect: { value: [mask.minX, mask.minZ, mask.sizeX, mask.sizeZ] },
     uGdShade: { value: GROUND_SHADE },
   };
-  loadEnvTexture(
+  if (trail !== null && trail !== 'self') loadEnvTexture(
     ENV_TILES[trail].file,
     (t) => {
       t.wrapS = t.wrapT = RepeatWrapping;
@@ -60,6 +64,7 @@ export function applyGroundDetail(mat: MeshLambertMaterial, mask: GroundMask, tr
       `uniform sampler2D tGdMask;
 uniform sampler2D tGdTrail;
 uniform float uGdOn;
+uniform float uGdSelf;
 uniform vec3 uGdColor;
 uniform vec4 uGdRect;
 uniform float uGdShade;
@@ -81,9 +86,9 @@ float gdNoise(vec2 p) {
   float gdN = gdNoise( gdAt * 0.9 ) * 0.6 + gdNoise( gdAt * 3.1 ) * 0.4;
   float gdW = smoothstep( 0.34, 0.6, gdMask.r + ( gdN - 0.5 ) * 0.36 ) * uGdOn;
   vec3 gdBase = diffuseColor.rgb * sampledDiffuseColor.rgb;
-  // 道のふちの草は、踏まれて少し枯れた色
-  gdBase *= mix( vec3( 1.0 ), vec3( 1.1, 1.02, 0.8 ), smoothstep( 0.03, 0.5, gdMask.r ) * 0.6 * uGdOn );
-  vec3 gdTrail = texture2D( tGdTrail, vMapUv ).rgb * uGdColor;
+  vec3 gdTrail = mix( texture2D( tGdTrail, vMapUv ).rgb, gdBase, uGdSelf ) * uGdColor;
+  // 道のふちの草は、踏まれて少し枯れた色（道が別の絵の時だけ）
+  gdBase *= mix( vec3( 1.0 ), vec3( 1.1, 1.02, 0.8 ), smoothstep( 0.03, 0.5, gdMask.r ) * 0.6 * uGdOn * ( 1.0 - uGdSelf ) );
   diffuseColor.rgb = mix( gdBase, gdTrail, gdW ) * ( 1.0 - uGdShade * gdMask.g * ( 0.8 + 0.4 * gdN ) );
   diffuseColor.a *= sampledDiffuseColor.a;
 #endif`,

@@ -216,9 +216,12 @@ export function buildAreaGroup(map: AreaLook): Group {
   const regionalFloor = landscape && landscape.fieldId !== 'field.basin';
   const floorMaterial = regionalFloor ? imageLambert(landscape.floor,{color:landscape.floorColor,vertexColors:true},{gain:1.16}) : tileMaterial(look.ground, 0xffffff, { vertexColors: true, gain: GROUND_GAIN });
   if (detail) {
-    // 道の絵は砂利（地面が砂利のエリアは、里の土）。色は、これまでの出口の踏み跡と同じ明るさ
-    const trailTile: EnvTile = look.ground === 'gravel' ? 'earth' : 'gravel';
-    const mask = applyGroundDetail(floorMaterial, detail.mask, trailTile, new Color(look.ground === 'gravel' ? 0xcfc6b4 : 0xffffff).multiplyScalar(GROUND_GAIN));
+    // 盆地: 道の絵は砂利（地面が砂利のエリアは、里の土）。色は、これまでの出口の踏み跡と同じ明るさ
+    // ほかの狩場（地面の絵が狩場ごと）: 道は、地面の絵を暗くしたもの（雪は、踏み固めた青みの灰色。ほかは、土の色へ寄せる）。氷の上には、道を描かない
+    const floor = regionalFloor ? landscape.floor : null;
+    const mask = floor === null
+      ? applyGroundDetail(floorMaterial, detail.mask, look.ground === 'gravel' ? 'earth' : 'gravel', new Color(look.ground === 'gravel' ? 0xcfc6b4 : 0xffffff).multiplyScalar(GROUND_GAIN))
+      : applyGroundDetail(floorMaterial, detail.mask, floor === 'frost_ice' ? null : 'self', new Color(floor === 'frost_snow' ? 0xd3dde9 : 0xd2c2a6));
     group.userData.groundMask = mask;
   }
   const ground = new Mesh(groundGeo, floorMaterial);

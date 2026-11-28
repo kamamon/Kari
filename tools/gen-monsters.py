@@ -1229,6 +1229,14 @@ def apply_spinegale_openings():
     write(path, list_doc({'schemaVersion': doc['schemaVersion']}, 'actions', doc['actions']))
 
 
+# 届いたままの区間（検査 tests/creature-openings.test.ts に入れていない種）。一覧に、そのことを書く（D-173: Claude は、届いた種の動きと区間を直さない）
+OPENINGS_AS_RECEIVED = {
+    'monster.frostald': '**この種の区間は、届いたまま（ChatGPT の #51。後隙のほぼ全体 = 最後の判定の 5 tick 後から、技の終わりの 3 tick 前まで）で、検査に入れていない。**'
+                        ' 載せ直しの時（2026-11-28）に測ると、どの区間も、技を避けた狩人が間に合って斬れるが、18 のうち 9（`bite`・`double_bite`・`body_ram`・`roll_l`・`roll_r`・`head_slam`・`back_bite`・`ice_sweep_l`・`ice_sweep_r`）は、'
+                        '部位が区間の間に 1 tick に 2cm より速く動く（「ほとんど動かない」の決まりに合わない）。区間の端は、追従の表の刻み（6 tick）の上に無い。',
+}
+
+
 def openings_doc():
     """後隙の反撃（v0.73.0。D-171）の一覧 docs/monster-openings.md: 大型（足を踏み替える向き直りを持つ種）の攻撃の技ごとに、狙える部位と区間。
     いま書いた技データ（public/data/actions/）から作る。ガルドロスの技（galdros.json は手で書く。galdros_ext.json は tools/gen-galdros-moves.mjs）も読む。"""
@@ -1257,7 +1265,10 @@ def openings_doc():
         top = max(dmg(a) for a in atk)
         pname = {p['id']: p.get('name', p['id']) for p in m['parts']}
         n = sum(1 for a in atk if a.get('opening'))
-        rows += [f'## {m["name"]}（`{m["id"]}`。{n} / {len(atk)}）', '', '| 技 | 狙える部位 | 区間（tick） | 長さ | 大技 |', '| --- | --- | --- | --- | --- |']
+        rows += [f'## {m["name"]}（`{m["id"]}`。{n} / {len(atk)}）', '']
+        if m['id'] in OPENINGS_AS_RECEIVED:
+            rows += [OPENINGS_AS_RECEIVED[m['id']], '']
+        rows += ['| 技 | 狙える部位 | 区間（tick） | 長さ | 大技 |', '| --- | --- | --- | --- | --- |']
         for a in atk:
             o = a.get('opening')
             name = a['actionId'].split('.')[-1]

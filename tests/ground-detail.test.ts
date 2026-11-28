@@ -15,8 +15,8 @@ const detailOf = (a: FieldAreaDef): GroundDetail =>
 const all = (): { f: FieldDef; a: FieldAreaDef }[] => fields.flatMap((f) => f.areas.map((a) => ({ f, a })));
 
 describe('狩場の地面の作り込み（踏み分け道と際の陰）', () => {
-  it('20 の狩場のどのエリアでも、出口ごとに道が 1 本。出口の外から始まり、出口を通り、1m おきの点でつながっている', () => {
-    expect(fields.length).toBe(20);
+  it('どの狩場（21。盆地・白霧氷谷と、まだ遊べない 19）のどのエリアでも、出口ごとに道が 1 本。出口の外から始まり、出口を通り、1m おきの点でつながっている', () => {
+    expect(fields.length).toBe(21);
     let n = 0;
     for (const { f, a } of all()) {
       const d = detailOf(a), tag = `${f.id} ${a.id}`;

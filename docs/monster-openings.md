@@ -48,6 +48,31 @@
 | `scoop` | 胸の共鳴嚢（`sac_chest`） | 48〜72 | 24 |  |
 | `charge` | 尾（`tail`） | 132〜162 | 30 | 大技 |
 
+## 氷冠獣 フロストアルド（`monster.frostald`。18 / 18）
+
+**この種の区間は、届いたまま（ChatGPT の #51。後隙のほぼ全体 = 最後の判定の 5 tick 後から、技の終わりの 3 tick 前まで）で、検査に入れていない。** 載せ直しの時（2026-11-28）に測ると、どの区間も、技を避けた狩人が間に合って斬れるが、18 のうち 9（`bite`・`double_bite`・`body_ram`・`roll_l`・`roll_r`・`head_slam`・`back_bite`・`ice_sweep_l`・`ice_sweep_r`）は、部位が区間の間に 1 tick に 2cm より速く動く（「ほとんど動かない」の決まりに合わない）。区間の端は、追従の表の刻み（6 tick）の上に無い。
+
+| 技 | 狙える部位 | 区間（tick） | 長さ | 大技 |
+| --- | --- | --- | --- | --- |
+| `bite` | 頭（`head`） | 43〜69 | 26 |  |
+| `double_bite` | 頭（`head`） | 77〜121 | 44 |  |
+| `claw_l` | 前脚（`foreleg`） | 54〜91 | 37 |  |
+| `claw_r` | 前脚（`foreleg`） | 54〜91 | 37 |  |
+| `body_ram` | 頭（`head`） | 81〜127 | 46 |  |
+| `slide` | 頭（`head`） | 114〜161 | 47 | 大技 |
+| `tail_l` | 後脚（`hindleg`） | 65〜108 | 43 |  |
+| `tail_r` | 後脚（`hindleg`） | 65〜108 | 43 |  |
+| `roll_l` | 前脚（`foreleg`） | 86〜135 | 49 |  |
+| `roll_r` | 前脚（`foreleg`） | 86〜135 | 49 |  |
+| `head_slam` | 頭（`head`） | 57〜107 | 50 |  |
+| `back_bite` | 頭（`head`） | 52〜93 | 41 |  |
+| `ice_breath` | 氷冠（`mane`） | 90〜147 | 57 |  |
+| `ice_sweep_l` | 氷冠（`mane`） | 99〜167 | 68 |  |
+| `ice_sweep_r` | 氷冠（`mane`） | 99〜167 | 68 |  |
+| `ice_burst` | 氷冠（`mane`） | 77〜153 | 76 |  |
+| `tail_l_short` | 後脚（`hindleg`） | 65〜108 | 43 |  |
+| `tail_r_short` | 後脚（`hindleg`） | 65〜108 | 43 |  |
+
 ## 岩殻獣 ガルドロス（`monster.galdros`。18 / 20）
 
 | 技 | 狙える部位 | 区間（tick） | 長さ | 大技 |
