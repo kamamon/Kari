@@ -346,6 +346,7 @@ export class GameView {
       g = buildAreaGroup({
         bounds: area.bounds, shape: area.shape, rocks: area.rocks, platforms: area.platforms, kind: area.kind, seed: 9001 + area.no * 131, climbs: area.climbs, relief: area.relief, groundTint: area.look?.ground,
         landscape: landscapeProfile(field.id,area),
+        center: area.center,
         camp: area.kind === 'camp' ? field.camp : null,
         gates: area.exits.map((e) => ({ x: e.x, z: e.z, marker: true })),
       });
@@ -1279,6 +1280,8 @@ export class GameView {
   /** 依頼の切り替えで作り直す時に、古いシーンの GPU 資源を解放する（同じ canvas を使い続けるため）。 */
   dispose(): void {
     this.scene.traverse((o) => {
+      // 地面の作り込みの絵（v0.74.0。エリアごとに 1 枚）
+      (o.userData.groundMask as { dispose(): void } | undefined)?.dispose();
       const mesh = o as Mesh;
       if (!mesh.geometry) return;
       mesh.geometry.dispose();

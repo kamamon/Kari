@@ -20,6 +20,8 @@ import { patchNoise } from './noise';
 import { imageLambert, projectSurfaceUV } from './materialImages';
 import { PlatformIndex, buildTerraces, holedGround } from './terraces';
 import { buildLandscapeSurface, buildLandscapeExterior, type LandscapeProfile } from './fieldLandscape';
+import { buildGroundDetail, type GroundDetail } from './groundDetail';
+import { applyGroundDetail, setMaskUv } from './groundDetailMaterial';
 
 export const FOG_COLOR = 0xaebcab;
 /**
@@ -73,6 +75,8 @@ export interface AreaLook {
   groundTint?: readonly [number, number, number];
   /** 実フィールドだけ: 外側の立体景観。里と旧1区画の描画は従来のまま。 */
   landscape?: LandscapeProfile;
+  /** エリアの真ん中（v0.74.0。踏み分け道の集まる所）。無ければ bounds の真ん中 */
+  center?: { x: number; z: number };
 }
 
 /** これまでの狩場（エリアが 1 つ）: 空と光を用意して、狩場を描く。 */
@@ -127,6 +131,8 @@ const KIND_LOOK: Record<NonNullable<AreaLook['kind']>, { ground: EnvTile; short:
 const GROUND_MARGIN = 130;
 /** 絵の明るさの倍率（envArt.tileMaterial の gain）。地面は、色むらで暗くなるぶんも持ち上げる。 */
 const GROUND_GAIN = 1.25;
+/** 踏み分け道（v0.74.0）: 道の濃さがこれより大きい所には、草・小石・茂みを置かない */
+const TRAIL_BARE = 0.4;
 const ROCK_GAIN = 1.5;
 /** 岩の絵を凹凸にも使う時の強さ（envArt.tileMaterial の bump） */
 const ROCK_BUMP = 2;
@@ -143,6 +149,10 @@ export function buildAreaGroup(map: AreaLook): Group {
 
   const initial = KIND_LOOK[map.kind ?? 'hunt'];
   const landscape = map.landscape;
+  // 地面の作り込み（v0.74.0。フィールドのエリアだけ）: 出口から真ん中へ続く踏み分け道と、崖・岩・段の際の陰
+  const detail: GroundDetail | null = landscape && map.kind !== 'village' && gates.some((g) => g.marker === true)
+    ? buildGroundDetail({ bounds: b, shape: map.shape, exits: gates.filter((g) => g.marker === true), center: map.center, rocks: map.rocks, platforms: map.platforms, kind: map.kind, seed: map.seed ?? 9001 })
+    : null;
   const cover = landscape && landscape.fieldId !== 'field.basin' ? landscape.cover : 1;
   const look = {...initial,short:initial.short*cover,tall:initial.tall*cover,dry:initial.dry*cover,flower:initial.flower*cover,bush:initial.bush*cover,branch:initial.branch*cover};
   const noise = patchNoise(map.seed ?? 9001);
@@ -201,9 +211,16 @@ export function buildAreaGroup(map: AreaLook): Group {
     }
     groundGeo.setAttribute('uv', new Float32BufferAttribute(uv, 2));
     groundGeo.setAttribute('color', new Float32BufferAttribute(col, 3));
+    if (detail) setMaskUv(groundGeo, detail.mask);
   }
   const regionalFloor = landscape && landscape.fieldId !== 'field.basin';
   const floorMaterial = regionalFloor ? imageLambert(landscape.floor,{color:landscape.floorColor,vertexColors:true},{gain:1.16}) : tileMaterial(look.ground, 0xffffff, { vertexColors: true, gain: GROUND_GAIN });
+  if (detail) {
+    // 道の絵は砂利（地面が砂利のエリアは、里の土）。色は、これまでの出口の踏み跡と同じ明るさ
+    const trailTile: EnvTile = look.ground === 'gravel' ? 'earth' : 'gravel';
+    const mask = applyGroundDetail(floorMaterial, detail.mask, trailTile, new Color(look.ground === 'gravel' ? 0xcfc6b4 : 0xffffff).multiplyScalar(GROUND_GAIN));
+    group.userData.groundMask = mask;
+  }
   const ground = new Mesh(groundGeo, floorMaterial);
   ground.receiveShadow = true;
   ground.userData.noMerge = true;
@@ -289,7 +306,7 @@ export function buildAreaGroup(map: AreaLook): Group {
   for (const g of gates) {
     if (!g.marker) continue;
     const [ox, oz] = outward(g);
-    // 踏み跡: 出口から内へ、外向きに沿った細長い帯
+    // 踏み跡: 出口から内へ、外向きに沿った細長い帯（v0.74.0 から、フィールドでは地面に混ぜた踏み分け道が代わりになる。板は置かない）
     const gy = baseAt(g.x, g.z);
     const path = new Mesh(new PlaneGeometry(5.4, 16, 3, exterior ? 18 : 8), trail);
     if(exterior){
@@ -316,7 +333,9 @@ export function buildAreaGroup(map: AreaLook): Group {
       }
     }
     boxUv(path, ENV_TILES.gravel.tile);
-    group.add(path);
+    path.name = 'gateTrail';
+    if (detail) path.geometry.dispose();
+    else group.add(path);
     for (const s of [-1, 1]) {
       const px = g.x + ox * 2.3 - oz * s * 3.1, pz = g.z + oz * 2.3 + ox * s * 3.1;
       const post = new Mesh(new CylinderGeometry(0.42, 0.6, 3.4, 6), rockDark);
@@ -376,8 +395,9 @@ export function buildAreaGroup(map: AreaLook): Group {
     map.rocks.some((r) => Math.hypot(x - r.x, z - r.z) < (map.drawRocks === false ? r.r + 0.35 : r.r * 0.85)) ||
     (village ? tierY(x, z) === null : map.platforms.some((p) => x > p.minX - 0.3 && x < p.maxX + 0.3 && z > p.minZ - 0.3 && z < p.maxZ + 0.3)) ||
     clear.some((c) => Math.hypot(x - c.x, z - c.z) < c.r) ||
+    (detail !== null && detail.trailAt(x, z) > TRAIL_BARE) ||
     gates.some((g) => {
-      if (g.marker !== true) return false;
+      if (g.marker !== true || detail) return false;
       // 踏み跡の帯（出口から内へ 11m、幅 6.4m）
       const [ox, oz] = outward(g);
       const along = -((x - g.x) * ox + (z - g.z) * oz), side = Math.abs((x - g.x) * oz - (z - g.z) * ox);
